@@ -1,0 +1,34 @@
+body, p, h1, h2, h3, h4, a, span {
+  font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 36px;
+  color: $Type-Primary;
+}
+
+h1 {
+  font-size: 2.074em;
+}
+
+h2 {
+font-size: 1.728em;
+}
+
+h3 {
+font-size: 1.44em;
+}
+
+h4 {
+font-size: 1.2em;
+}
+
+a {
+  color: $Type-Link;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}

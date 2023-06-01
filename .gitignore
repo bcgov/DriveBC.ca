@@ -1,0 +1,13 @@
+# file based env values
+.env
+
+# Build files
+*.pyc
+*.pyo
+
+# IDE config files
+.idea
+*.code-workspace
+
+# Virtual environments
+.venv

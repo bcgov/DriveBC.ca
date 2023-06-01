@@ -1,0 +1,53 @@
+@import "styles/variables";
+@import "styles/typography";
+@import "styles/bootstrap-customizations";
+
+body {
+  margin-top: 58px;
+}
+
+.demo-group {
+  padding-bottom: 60px;
+  max-width: 900px;
+
+  & > div {
+    margin-bottom: 40px;
+  }
+
+  &--button {
+    button + button {
+      margin-left: 20px;
+    }
+
+    &--dark {
+      background-color: #003366;
+      height: 120px;
+      width: 800px;
+      padding: 40px;
+      text-align: center;
+
+      .btn-outline-primary {
+        color: white;
+        border-color: white;
+        background-color: none;
+
+        &:hover {
+          color: $BC-Blue;
+          background-color: white;
+          border-color: white;
+        }
+      }
+    }
+  }
+
+  &--card .cards {
+    display: flex;
+    .card + .card {
+    margin-left: 40px;
+    }
+  }
+}
+
+.page-title {
+  margin-bottom: 80px;
+}

@@ -1,0 +1,110 @@
+{
+    "routeDescription": null,
+    "searchTimestamp": "2022-12-01 5:21:55",
+    "executionTime": 0,
+    "version": "2.1.7-RELEASE",
+    "disclaimer": "https://www2.gov.bc.ca/gov/content?id=79F93E018712422FBC8E674A67A70535",
+    "privacyStatement": "https://www2.gov.bc.ca/gov/content?id=9E890E16955E4FF4BF3B0E07B4722932",
+    "copyrightNotice": "Copyright 2022 Province of British Columbia - Open Government License",
+    "copyrightLicense": "https://www2.gov.bc.ca/gov/content?id=A519A56BC2BF44E4A008B33FCF527F61",
+    "srsCode": 4326,
+    "criteria": "fastest",
+    "enable": "gdf,ldf,tc,tr,xc",
+    "distanceUnit": "km",
+    "points": [
+        [
+            -123.3928,
+            48.43301
+        ],
+        [
+            -123.39407,
+            48.43601
+        ]
+    ],
+    "routeFound": true,
+    "distance": 1.079,
+    "time": 188.99601331524894,
+    "timeText": "3 minutes 9 seconds",
+    "route": [
+        [
+            -123.39275,
+            48.43301
+        ],
+        [
+            -123.39277,
+            48.43275
+        ],
+        [
+            -123.3935,
+            48.43285
+        ],
+        [
+            -123.39374,
+            48.43288
+        ],
+        [
+            -123.3937,
+            48.43414
+        ],
+        [
+            -123.39368,
+            48.43482
+        ],
+        [
+            -123.39366,
+            48.43563
+        ],
+        [
+            -123.39378,
+            48.43584
+        ],
+        [
+            -123.39385,
+            48.43596
+        ],
+        [
+            -123.39398,
+            48.43615
+        ],
+        [
+            -123.39385,
+            48.43664
+        ],
+        [
+            -123.39364,
+            48.43739
+        ],
+        [
+            -123.3936,
+            48.43754
+        ],
+        [
+            -123.39206,
+            48.43785
+        ],
+        [
+            -123.39168,
+            48.43708
+        ],
+        [
+            -123.39385,
+            48.43664
+        ],
+        [
+            -123.39398,
+            48.43615
+        ],
+        [
+            -123.39396,
+            48.43607
+        ],
+        [
+            -123.39397,
+            48.43601
+        ],
+        [
+            -123.39399,
+            48.43599
+        ]
+    ]
+}

@@ -1,0 +1,32 @@
+.pin {
+  font-size: 2rem;
+  background: none;
+  width: 64px;
+  border: 3px dotted rgb(204, 204, 204);
+  height: 64px;
+  border-radius: 50%;
+  text-align: center;
+  cursor: grab;
+  padding-top: 11px;
+}
+.pin svg {
+  margin: auto;
+}
+
+
+@media screen and (max-width: 729px) {
+  .pin {
+    background: none;
+    width: 48px;
+    border: 3px dotted rgb(204, 204, 204);
+    height: 48px;
+    border-radius: 50%;
+    text-align: center;
+    cursor: grab;
+    padding-top: 2px;
+  }
+
+  .pin svg {
+    width: 22px;
+  }
+}

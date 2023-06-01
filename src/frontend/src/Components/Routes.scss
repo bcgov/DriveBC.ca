@@ -1,0 +1,197 @@
+@import "../styles/variables";
+
+.open-routes, .routes {
+  top: 3rem;
+  left: 60px;
+  position: absolute;
+}
+
+.close-routes {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0;
+  min-width: 0;
+  line-height: 1.25rem;
+  height: auto;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+}
+
+.routes {
+  width: 22rem;
+  min-height: 20rem;
+  border-radius: 4px;
+  padding: 16px;
+  background: #fff;
+  border: solid 1px rgb(118, 118, 118);
+}
+
+
+.anchor {
+  width: 40px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 0;
+  height: 34px;
+  border-radius: 50%;
+  padding-top: 4px;
+  background: #003399;
+  color: #fff;
+}
+
+.anchor-b {
+  background: #009933;
+}
+
+.starting {
+  display: flex;
+}
+
+.starting .text {
+  border-bottom: 1px solid $Divider;
+  width: 100%;
+  padding-bottom: 24px;
+  margin-left: 12px;
+  margin-bottom: 24px;
+}
+.starting .text h3,
+.notification h3 {
+  margin-bottom: 6px;
+}
+
+.starting .text p,
+.notification p {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.notification p {
+  margin-bottom: 12px;
+}
+
+.options {
+  display: flex;
+}
+
+.option {
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 24px;
+}
+
+.option-label {
+  margin-top: 6px;
+}
+
+.current-location-icon {
+  font-size: 2rem;
+  font-weight: bold;
+  width: 64px;
+  border: 3px solid rgb(204, 204, 204);
+  height: 64px;
+  border-radius: 50%;
+  text-align: center;
+  padding-top: 11px;
+  padding-right: 4px;
+  cursor: grab;
+}
+
+button.btn.get-route {
+  margin: 1rem 0;
+  position: relative;
+  width: 100%;
+}
+
+.form-route.text_input {
+  font-size: 1em;
+  padding: 12px;
+  width: 100%;
+}
+
+@media screen and (max-width: 729px) {
+
+  .open-routes {
+    bottom: 2.1rem;
+    top: initial;
+    left: 14px;
+    position: absolute;
+  }
+
+  .routes {
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    top: initial;
+  }
+
+  .starting {
+    flex-direction: column;
+  }
+
+  .starting .text {
+    margin-left: 0;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+
+  .starting .text h3,
+  .notification h3 {
+    margin-top: 8px;
+  }
+
+  .options {
+    flex-direction: row-reverse;
+    margin-top: -8px;
+  }
+
+  .option-label {
+    text-align: center;
+  }
+  .option {
+    margin-right: 12px;
+  }
+  .option:first-child {
+    margin-right: 0;
+  }
+
+  .anchor {
+    width: 30px;
+    height: 30px;
+    padding-top: 3px;
+    margin: 10px 0 0;
+  }
+
+  .starting .panel-text-group {
+    width: 40%;
+  }
+  .starting .panel-text-group p {
+    display: none;
+  }
+  .notification .panel-text-group {
+    width: 100%;
+  }
+
+  .text {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .current-location-icon {
+    font-size: 2rem;
+    font-weight: bold;
+    width: 48px;
+    border: 3px solid rgb(204, 204, 204);
+    height: 48px;
+    border-radius: 50%;
+    text-align: center;
+    padding-top: 2px;
+    padding-right: 2px;
+    cursor: grab;
+  }
+}

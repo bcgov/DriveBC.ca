@@ -1,0 +1,4 @@
+# text files are given OS specific line endings on checkout, unix line endings
+# on commmit.
+* text=auto
+

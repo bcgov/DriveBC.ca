@@ -1,0 +1,138 @@
+from pathlib import Path
+
+import environ
+from corsheaders.defaults import default_headers
+
+# Base dir and env
+BASE_DIR = Path(__file__).resolve().parents[2]
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
+
+# Meta
+DEBUG = env('DEBUG')
+SECRET_KEY = env('SECRET_KEY')
+WSGI_APPLICATION = 'config.wsgi.application'
+
+# Paths and urls
+ROOT_URLCONF = 'config.urls'
+STATIC_URL = 'static/'
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "django", "*"]
+
+
+# CORS
+CORS_ORIGIN_WHITELIST = env.list(
+    "DJANGO_CORS_ORIGIN_WHITELIST", default=["http://localhost"]
+)
+CORS_ALLOW_HEADERS = default_headers + ("contenttype",)
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+# Auth
+AUTH_USER_MODEL = 'authentication.DriveBCUser'
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+# Language
+LANGUAGE_CODE = 'en-us'
+USE_I18N = True
+
+# Time
+TIME_ZONE = 'UTC'
+USE_TZ = True
+
+# Apps
+DJANGO_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.gis",
+    "django.contrib.sessions",
+    "django.contrib.staticfiles",
+    "django.contrib.messages",
+]
+
+THIRD_PARTY_APPS = [
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    "dj_rest_auth",
+    'dj_rest_auth.registration',
+    "huey.contrib.djhuey",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "rest_framework_gis",
+    "corsheaders",
+]
+
+LOCAL_APPS = [
+    "apps.authentication",
+    "apps.api",
+    "apps.shared",
+    "apps.route_planner",
+    "apps.drivebc_api",
+]
+
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+# DB and cache
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DATABASES = {
+    'default': {
+        "ENGINE": env("DB_ENGINE", default="django.db.backends.postgresql"),
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST", default="localhost"),
+        "PORT": env.int("DB_PORT", default=5432),
+    }
+}
+CACHES = {'default': env.cache('REDIS_URL')}
+
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # To be changed
+
+# Drive BC API Settings
+
+DRIVEBC_ROUTE_PLANNER_API_BASE_URL = "https://router.api.gov.bc.ca/"
+DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY = env("DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY")
+
+DRIVEBC_WEBCAM_API_BASE_URL = "https://tst-images.drivebc.ca/webcam/api/v1/"
+
+DRIVEBC_OPEN_511_API_BASE_URL = "https://tst-api.open511.gov.bc.ca/"

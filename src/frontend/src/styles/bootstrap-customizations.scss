@@ -1,0 +1,55 @@
+@import "variables";
+
+/*  Customizations */
+
+/* Bootstrap theme-colors map */
+// $theme-colors: (
+//   "primary":    $primary,
+//   "secondary":  $secondary,
+//   "success":    $success,
+//   "info":       $info,
+//   "warning":    $warning,
+//   "danger":     $danger,
+//   "light":      $light,
+//   "dark":       $dark
+// );
+
+$primary: $BC-Blue;
+$secondary: $BC-Yellow;
+$success: #2E8540;
+$danger: #D8292F;
+
+/* import bootstrap to set changes */
+@import "~bootstrap/scss/bootstrap";
+
+button.btn {
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+button.btn.btn-link {
+  color: $Type-Link;
+}
+
+button.btn.btn-primary {
+  border-color: $BC-Blue;
+  
+  &:hover {
+    background-color: $BC-Blue-Alt;
+  }
+}
+
+button.btn:not(.btn-link) {
+  font-weight: 700;
+}
+
+.container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+  max-width: 1120px;
+  margin: auto;
+  padding: 32px 16px;
+
+  @media (min-width: 576px) {
+    padding: 32px;
+  }
+}
