@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useDrag } from 'react-dnd';
 
-import './Pin.css';
+import './Pin.scss';
 
 export default function Pin({ role }) {
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import './Advisory.css';
+import './Advisory.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTriangleExclamation, faXmark  } from '@fortawesome/free-solid-svg-icons';
 

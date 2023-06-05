@@ -15,7 +15,7 @@ export default function Routes({ open, routeHandler, setRoutesOpen, setStartToLo
   if (!open) {
     return (
       <Button variant="primary"
-        className="open-routes BC-Gov-PrimaryButton"
+        className="open-routes"
         onClick={() => setRoutesOpen(true)}
       ><FontAwesomeIcon icon={faPlus} /> Add Route</Button>
     )
@@ -78,7 +78,7 @@ export default function Routes({ open, routeHandler, setRoutesOpen, setStartToLo
         </div>
 
         <Button variant="primary"
-          className='BC-Gov-PrimaryButton get-route'
+          className="get-route"
           onClick={() => routeHandler(inputRef.current.value)}
         ><FontAwesomeIcon icon={faPlus} /> Add Route</Button>
       </div>
