@@ -39,7 +39,7 @@ import {
   faMinus,
 } from "@fortawesome/free-solid-svg-icons";
 
-import "./Map.css";
+import "./Map.scss";
 
 export default function MapWrapper() {
   const mapElement = useRef();
@@ -455,17 +455,17 @@ export default function MapWrapper() {
       <div ref={mapElement} className="map" />
       <div className="map-control">
         <Button variant="outline-primary"
-          className="my-location BC-Gov-SecondaryButton"
+          className="my-location"
           onClick={myLocation}
         >
           <FontAwesomeIcon icon={faLocationArrow} />
         </Button>
         <Button variant="outline-primary"
-          className="zoom-in BC-Gov-SecondaryButton" onClick={zoomIn}>
+          className="zoom-in" onClick={zoomIn}>
           <FontAwesomeIcon icon={faPlus} />
         </Button>
         <Button variant="outline-primary"
-          className="zoom-out BC-Gov-SecondaryButton" onClick={zoomOut}>
+          className="zoom-out" onClick={zoomOut}>
           <FontAwesomeIcon icon={faMinus} />
         </Button>
       </div>

@@ -4,7 +4,8 @@ import videoIcon from '../assets/video-solid.png';
 import eventIcon from '../assets/exclamation-triangle-solid.png';
 import map from '../assets/map.png';
 import terrain from '../assets/terrain.png';
-import './Layers.css';
+
+import './Layers.scss';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLayerGroup, faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -15,7 +16,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer}) {
   if (!open) {
     return (
       <Button variant="outline-primary"
-      className="open-layers BC-Gov-SecondaryButton"
+      className="open-layers"
       onClick={() => setLayersOpen(true)}
     >
         <FontAwesomeIcon icon={faLayerGroup} />

@@ -1,6 +1,4 @@
 import React from 'react'
-import { DndProvider } from 'react-dnd-multi-backend'
-import { HTML5toTouch } from 'rdndmb-html5-to-touch'
 
 import { Route, Routes } from 'react-router-dom';
 import '@bcgov/bc-sans/css/BCSans.css';
