@@ -4,7 +4,7 @@ import environ
 from corsheaders.defaults import default_headers
 
 # Base dir and env
-BASE_DIR = Path(__file__).resolve().parents[2]
+BASE_DIR = Path(__file__).resolve().parents[4]
 env = environ.Env()
 environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
 
