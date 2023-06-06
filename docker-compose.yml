@@ -1,27 +1,12 @@
 x-function: &backend
+  env_file: .env
+
   build:
     context: .
     dockerfile: ./compose/backend/Dockerfile
 
   volumes:
     - ./src/backend:/app/backend
-
-  environment:
-    - DATABASE_URL=postgres://drivebc:Passw0rd!@postgres:5432/drivebc?sslmode=disabl
-    - DB_ENGINE=django.contrib.gis.db.backends.postgis
-    - REDIS_HOST=redis
-    - REDIS_URL=redis://localhost:6379
-    - REDIS_PORT=6379
-    - DB_NAME=drivebc
-    - DB_USER=drivebc
-    - DB_PASSWORD=Passw0rd!
-    - DB_HOST=db
-    - DJANGO_CORS_ORIGIN_WHITELIST=http://localhost:8000,http://localhost:3000
-    - DJANGO_SUPERUSER_USERNAME=admin
-    - DJANGO_SUPERUSER_EMAIL=admin@oxd.com
-    - DJANGO_SUPERUSER_PASSWORD=admin123
-    - DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY=Pgct8pXbdig7N2PLS8NKiOZATe5V3Fun
-    # - EMAIL_HOST=mailhog
 
   stdin_open: true
   tty: true
@@ -35,7 +20,6 @@ volumes:
     driver: local
 
 services:
-
   django:
     <<: *backend
     container_name: django
@@ -48,6 +32,7 @@ services:
   #   command: npm start
 
   node:
+    env_file: .env
     container_name: node
     build:
       context: ./src/frontend
@@ -56,21 +41,15 @@ services:
     tty: true
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=development
-      - NODE_OPTIONS=openssl-legacy-provider
     depends_on:
       - django
     command: npm start
 
   db:
+    env_file: .env
     image: postgis/postgis:15-3.3-alpine
     container_name: postgres
     restart: unless-stopped
-    environment:
-      - POSTGRES_DB=drivebc
-      - POSTGRES_USER=drivebc
-      - POSTGRES_PASSWORD=Passw0rd!
     ports:
       - "5432:5432"
     volumes:

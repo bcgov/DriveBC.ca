@@ -103,10 +103,9 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "apps.authentication",
-    "apps.api",
+    "apps.feed",
     "apps.shared",
-    "apps.route_planner",
-    "apps.drivebc_api",
+    "apps.webcam"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -115,24 +114,20 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DATABASES = {
     'default': {
-        "ENGINE": env("DB_ENGINE", default="django.db.backends.postgresql"),
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": env("DB_NAME"),
         "USER": env("DB_USER"),
         "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST", default="localhost"),
-        "PORT": env.int("DB_PORT", default=5432),
+        "HOST": env("DB_HOST"),
+        "PORT": env.int("DB_PORT"),
     }
 }
-CACHES = {'default': env.cache('REDIS_URL')}
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://" + env("REDIS_HOST") + ":" + env("REDIS_PORT"),
+    }
+}
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # To be changed
-
-# Drive BC API Settings
-
-DRIVEBC_ROUTE_PLANNER_API_BASE_URL = "https://router.api.gov.bc.ca/"
-DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY = env("DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY")
-
-DRIVEBC_WEBCAM_API_BASE_URL = "https://tst-images.drivebc.ca/webcam/api/v1/"
-
-DRIVEBC_OPEN_511_API_BASE_URL = "https://tst-api.open511.gov.bc.ca/"

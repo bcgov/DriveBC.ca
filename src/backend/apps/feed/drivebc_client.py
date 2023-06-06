@@ -3,8 +3,8 @@ from typing import Dict
 from urllib.parse import urljoin
 
 import httpx
-from apps.drivebc_api.constants import OPEN511, ROUTE_PLANNER, WEBCAMS
-from apps.drivebc_api.serializers import DrivebcRouteSerializer
+from apps.feed.constants import OPEN511, ROUTE_PLANNER, WEBCAMS
+from apps.feed.serializers import DrivebcRouteSerializer
 from django.conf import settings
 
 logger = logging.getLogger("drivebc_api")

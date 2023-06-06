@@ -1,7 +1,7 @@
 import json
 import os
 
-from apps.drivebc_api.serializers import DrivebcRouteSerializer
+from apps.feed.serializers import DrivebcRouteSerializer
 from django.test import TestCase
 
 
