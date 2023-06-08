@@ -16,14 +16,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Paths and urls
 ROOT_URLCONF = 'config.urls'
 STATIC_URL = 'static/'
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "django", "*"]
 
-
-# CORS
-CORS_ORIGIN_WHITELIST = env.list(
-    "DJANGO_CORS_ORIGIN_WHITELIST", default=["http://localhost"]
-)
+# Security
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
+CORS_ORIGIN_WHITELIST = env.list("DJANGO_CORS_ORIGIN_WHITELIST")
 CORS_ALLOW_HEADERS = default_headers + ("contenttype",)
+CSRF_COOKIE_SECURE = env.bool('DJANGO_CSRF_COOKIE_SECURE')
+SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT')
+SESSION_COOKIE_SECURE = env.bool('DJANGO_SESSION_COOKIE_SECURE')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
