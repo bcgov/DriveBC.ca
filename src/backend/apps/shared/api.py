@@ -1,7 +1,6 @@
 from django.urls import include, path
 
-from apps.authentication.routers import router as user_router
-
 urlpatterns = [
-    path('user/', include(user_router.urls)),
+    path('users/', include("apps.authentication.urls")),
+    path('webcams/', include("apps.webcam.urls")),
 ]
