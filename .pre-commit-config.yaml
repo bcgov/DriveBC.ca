@@ -1,0 +1,106 @@
+exclude: '^documents/'
+repos:
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v2.37.3
+    hooks:
+    -   id: pyupgrade
+        args: [--py37-plus, --keep-runtime-typing]
+        stages: [commit]
+-   repo: https://github.com/ambv/black
+    rev: 22.6.0
+    hooks:
+    -   id: black
+        stages: [commit]
+        exclude: '^backend/\w+/migrations'
+-   repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+    -   id: isort
+        stages: [commit]
+-   repo: https://github.com/pycqa/flake8
+    rev: 3.9.2
+    hooks:
+    -   id: flake8
+        additional_dependencies:
+        -   flake8-bugbear==22.7.1
+        -   flake8-django==1.1.2
+        -   flake8-isort==4.1.1
+        -   flake8-pytest-style==1.6.0
+        -   flake8-typing-imports==1.12.0
+        stages: [commit]
+        exclude: '^backend/\w+/migrations'
+-   repo: https://github.com/PyCQA/bandit
+    rev: 1.7.4
+    hooks:
+    -   id: bandit
+        args: [-r, -n, '10', -x, '*/*/tests/*']
+        stages: [commit]
+        exclude: '^backend/\w+/migrations'
+-   repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.0
+    hooks:
+    -   id: python-safety-dependencies-check
+        files: ^backend/requirements/.*\.txt$
+        stages: [commit]
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.971
+    hooks:
+    -   id: mypy
+        stages: [commit]
+        files: '^backend/'
+        exclude: '^backend/\w+/migrations'
+        additional_dependencies:
+        - types-pytz==2022.1.2
+        - types-bleach==5.0.3
+        - types-python-dateutil==2.8.19
+        - types-requests==2.28.7
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
+    hooks:
+    -   id: check-added-large-files
+        stages: [commit]
+        exclude: '^backend/(\w+/migrations)'
+    -   id: check-ast
+        stages: [commit]
+    -   id: fix-byte-order-marker
+        stages: [commit]
+    -   id: check-json
+        stages: [commit]
+    -   id: check-merge-conflict
+        stages: [commit]
+    -   id: check-yaml
+        stages: [commit]
+    -   id: end-of-file-fixer
+        stages: [commit]
+        exclude: '^(frontend/(build/|dist/))'
+    -   id: debug-statements
+        stages: [commit]
+    -   id: no-commit-to-branch
+        args: [--branch, master, --branch, develop]
+        stages: [commit]
+    -   id: trailing-whitespace
+        stages: [commit]
+-   repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.10.0
+    hooks:
+    -   id: eslint
+        args: [--ext, '.js', --ext, '.cjs', --ext, '.jsx', --rule, 'import/no-unresolved: 0', '--fix']
+        additional_dependencies:
+        -   eslint-config-airbnb-base@14.2.1
+        -   eslint-config-airbnb@18.2.1
+        -   eslint-plugin-mocha@8.0.0
+        -   eslint-plugin-compat@3.11.1
+        -   eslint-plugin-import@2.24.2
+        -   eslint-plugin-jsx-a11y@6.4.1
+        -   eslint-plugin-react-hooks@4.2.0
+        -   eslint-plugin-react@7.25.1
+        -   eslint@8.28.0
+        stages: [commit]
+        exclude: '^(frontend/(build/|dist/|public/)|backend/.+/static/.*/vendor/)'
+        types: [file]
+        files: \.(js|jsx)$
+-   repo: https://github.com/jorisroovers/gitlint
+    rev: v0.17.0
+    hooks:
+    -   id: gitlint
+        stages: [commit-msg]
