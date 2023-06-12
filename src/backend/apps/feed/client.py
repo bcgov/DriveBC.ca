@@ -3,15 +3,16 @@ from typing import Dict
 from urllib.parse import urljoin
 
 import httpx
-from apps.feed.constants import OPEN511, ROUTE_PLANNER, WEBCAMS
-from apps.feed.serializers import DrivebcRouteSerializer
 from django.conf import settings
 
-logger = logging.getLogger("drivebc_api")
+from apps.feed.constants import OPEN511, ROUTE_PLANNER, WEBCAMS
+from apps.feed.serializers import WebcamAPISerializer
+
+logger = logging.getLogger(__name__)
 
 
-class DrivebcClient:
-    """Client for DriveBC API."""
+class FeedClient:
+    """Feed client for external DriveBC APIs."""
 
     def __init__(self):
         self.resource_map: Dict[str, dict] = {
@@ -66,31 +67,10 @@ class DrivebcClient:
     def get_webcams(self):
         """Used for getting the list of webcams with details."""
         endpoint = self._get_endpoint(resource_type=WEBCAMS, resource_name="webcams")
-        return self._process_get_request(
-            endpoint, resource_type=ROUTE_PLANNER, params={}
+        response_data = self._process_get_request(
+            endpoint, resource_type=WEBCAMS, params={}
         )
 
-    def get_route_data(self, points="", follow_truck=True):
-        endpoint = self._get_endpoint(
-            resource_type=ROUTE_PLANNER, resource_name="truck/route.json"
-        )
-        response_data = self._process_get_request(
-            endpoint,
-            resource_type=ROUTE_PLANNER,
-            params={"points": points, "followTruckRoute": follow_truck},
-        )
-        serializer = DrivebcRouteSerializer(data=response_data)
+        serializer = WebcamAPISerializer(data=response_data)
         serializer.is_valid(raise_exception=True)
         return serializer.validated_data
-
-    def get_events(self, limit=500, bbox="", updated=None):
-        """Used for getting the list of events with details."""
-        endpoint = self._get_endpoint(resource_type=OPEN511, resource_name="events")
-        params = {"limit": limit}
-        if bbox:
-            params["bbox"] = bbox
-        if updated:
-            params["updated"] = f">{updated}"
-        return self._process_get_request(
-            endpoint, resource_type=ROUTE_PLANNER, params=params, timeout=10.0
-        )

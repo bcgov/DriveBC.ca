@@ -1,18 +1,20 @@
-import React from 'react'
+import React from "react";
 
-import { Route, Routes } from 'react-router-dom';
-import '@bcgov/bc-sans/css/BCSans.css';
-import './App.scss';
-import Header from './Header.js';
-import MapPage from './pages/MapPage';
-import StylesPage from './pages/StylesPage';
+import { Route, Routes } from "react-router-dom";
+import "@bcgov/bc-sans/css/BCSans.css";
+import "./App.scss";
+import Header from "./Header.js";
+import MapPage from "./pages/MapPage";
+import StylesPage from "./pages/StylesPage";
+import CamerasPage from "./pages/CamerasPage";
 
 function App() {
   return (
     <div className="App">
       <Header />
       <Routes>
-        <Route path="/" element={<MapPage />}/>
+        <Route path="/" element={<MapPage />} />
+        <Route path="/cameraspage" element={<CamerasPage />} />
         <Route path="/stylespage" element={<StylesPage />} />
       </Routes>
     </div>

@@ -11,3 +11,6 @@
 
 # Virtual environments
 .venv
+
+# Python coverage file
+.coverage
