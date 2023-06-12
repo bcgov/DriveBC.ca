@@ -24,8 +24,6 @@ import { applyStyle } from "ol-mapbox-style";
 import Advisory from "./Advisory.js";
 import Layers from "./Layers.js";
 import Routes from "./Routes.js";
-import events from "./data/events.js";
-import webcams from "./data/webcams.js";
 import { getEvents } from "./data/events.js";
 import { getWebcams } from "./data/webcams.js";
 import { getAdvisories } from "./data/advisories.js";
@@ -161,8 +159,8 @@ export default function MapWrapper() {
     mapRef.current.addOverlay(popup);
 
     mapRef.current.once("loadend", async () => {
-      const campoints = webcams;
-      const evpoints = events;
+      const campoints = await getWebcams();
+      const evpoints = await getEvents();
       layers.current["webcamsLayer"] = new VectorLayer({
         classname: "webcams",
         visible: true,

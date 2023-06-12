@@ -7,11 +7,20 @@ export async function getWebcams() {
     }
   }).then((response) => response.json())
     .then((data) => (
-      data.webcams.map((webcam) => (
+        mapWebcamData(data.webcams)
+    ))
+    .catch((error) => {
+        return mapWebcamData(webcamsDefault)
+    });
+}
+
+const mapWebcamData = (webcams) => {
+    return webcams.map((webcam) => (
         point([webcam.location.longitude, webcam.location.latitude], {
           url: webcam.links.currentImage,
           id: webcam.id,
           name: webcam.camName,
+          highway: webcam.highway.locationDescription,
           caption: webcam.caption,
           coords: {
             lng: webcam.location.longitude,
@@ -19,14 +28,9 @@ export async function getWebcams() {
           },
         }, { id: webcam.id })
       ))
-    ))
-    .catch((error) => {
-        console.log(error);
-    });
 }
 
-export default [
-    {
+const webcamsDefault = [{
         "links": {
             "self": "https://tst-images.drivebc.ca/webcam/api/v1/webcams/2",
             "imageSource": "https://tst-images.drivebc.ca/webcam/api/v1/webcams/2/imageSource",
@@ -2631,3 +2635,5 @@ export default [
         }
     }
 ];
+
+export default webcamsDefault;
