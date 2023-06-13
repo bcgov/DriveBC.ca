@@ -14,6 +14,7 @@ SECRET_KEY = env('SECRET_KEY')
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Paths and urls
+APPEND_SLASH = True
 ROOT_URLCONF = 'config.urls'
 STATIC_URL = 'static/'
 
@@ -70,11 +71,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Language
-LANGUAGE_CODE = 'en-us'
-USE_I18N = True
+USE_I18N = False
 
 # Time
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Vancouver'
 USE_TZ = True
 
 # Apps
@@ -98,6 +98,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_gis",
+    'django_filters',
     "corsheaders",
 ]
 

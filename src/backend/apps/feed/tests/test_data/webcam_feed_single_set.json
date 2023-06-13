@@ -1,0 +1,183 @@
+{
+  "webcams": [
+    {
+      "links": {
+        "self": "https://images.drivebc.ca/webcam/api/v1/webcams/8",
+        "imageSource": "https://images.drivebc.ca/webcam/api/v1/webcams/8/imageSource",
+        "imageDisplayAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/8/imageDisplay",
+        "imageThumbnailAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/8/imageThumbnail",
+        "imageDisplay": "https://images.drivebc.ca/bchighwaycam/pub/cameras/8.jpg",
+        "imageThumbnail": "https://images.drivebc.ca/bchighwaycam/pub/cameras/tn/8.jpg",
+        "currentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=8",
+        "updateCurrentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=8&update",
+        "replayTheDay": "https://images.drivebc.ca/ReplayTheDay/player.html?cam=8"
+      },
+      "id": 8,
+      "isOn": true,
+      "shouldAppear": true,
+      "region": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/regions/Vancouver+Island"
+        },
+        "name": "Vancouver Island",
+        "group": 3
+      },
+      "regionGroup": {
+        "highwayGroup": 0,
+        "highwayCamOrder": 29
+      },
+      "highway": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/highways/1"
+        },
+        "number": 1,
+        "locationDescription": "Vancouver Island"
+      },
+      "camName": "Malahat Drive - N",
+      "caption": "Hwy 1 at South Shawnigan Lake Road, looking north.",
+      "credit": "",
+      "dbcMark": "DriveBC.ca",
+      "orientation": "N",
+      "location": {
+        "links": {
+          "googleMap": "http://maps.google.com/maps?q=48.561231,-123.569743+(Malahat Drive - N)",
+          "googleStaticMap": "http://maps.google.com/maps/api/staticmap?center=48.561231,-123.569743&markers=color:blue%7C48.561231,-123.569743&zoom=11&size=240x240&sensor=false"
+        },
+        "latitude": 48.561231,
+        "longitude": -123.569743,
+        "elevation": 327
+      },
+      "weather": {
+        "observation": {
+          "links": {
+            "self": "https://www.drivebc.ca/api/weather/observations/62091?format=json"
+          },
+          "station": 62091
+        },
+        "forecast": {
+          "links": {
+            "self": "https://weather.drivebc.ca/EnvCanada/YYJ-YZTfull.html"
+          },
+          "id": "YYJ-YZTfull"
+        }
+      },
+      "message": {
+        "short": "",
+        "long": ""
+      },
+      "map": {
+        "image": "https://images.drivebc.ca/bchighwaycam/pub/maps/8.jpg",
+        "isDisplayedHorizontal": false,
+        "map": {
+          "boundingbox": {
+            "min": {
+              "latitude": 48.478235,
+              "longitude": -123.569743
+            },
+            "max": {
+              "latitude": 48.567912,
+              "longitude": -123.542123
+            }
+          },
+          "imageMap": {
+            "8": {
+              "cam": 8,
+              "shape": "poly",
+              "coordinates": "27,94,31,95,46,75,8,75",
+              "latitude": 48.561231,
+              "longitude": -123.569743
+            },
+            "272": {
+              "cam": 272,
+              "shape": "poly",
+              "coordinates": "3,80,3,111,25,94,21,89",
+              "latitude": 48.561231,
+              "longitude": -123.569743
+            },
+            "273": {
+              "cam": 273,
+              "shape": "poly",
+              "coordinates": "24,95,18,117,45,105,32,95",
+              "latitude": 48.561231,
+              "longitude": -123.569743
+            },
+            "424": {
+              "cam": 424,
+              "shape": "poly",
+              "coordinates": "84,55,77,29,57,40,61,55",
+              "latitude": 48.567912,
+              "longitude": -123.542123
+            },
+            "427": {
+              "cam": 427,
+              "shape": "poly",
+              "coordinates": "60,55,56,41,31,39,39,67",
+              "latitude": 48.567912,
+              "longitude": -123.542123
+            },
+            "909": {
+              "cam": 909,
+              "shape": "poly",
+              "coordinates": "39,132,31,155,65,147,50,129",
+              "latitude": 48.53235,
+              "longitude": -123.560143
+            },
+            "910": {
+              "cam": 910,
+              "shape": "poly",
+              "coordinates": "23,117,38,132,51,129,57,108",
+              "latitude": 48.53235,
+              "longitude": -123.560143
+            },
+            "926": {
+              "cam": 926,
+              "shape": "poly",
+              "coordinates": "28,157,41,179,51,179,65,157",
+              "latitude": 48.507134,
+              "longitude": -123.556923
+            },
+            "927": {
+              "cam": 927,
+              "shape": "poly",
+              "coordinates": "39,180,31,200,63,200,51,180",
+              "latitude": 48.507134,
+              "longitude": -123.556923
+            },
+            "974": {
+              "cam": 974,
+              "shape": "poly",
+              "coordinates": "32,213,51,229,62,225,62,203",
+              "latitude": 48.478235,
+              "longitude": -123.548597
+            },
+            "975": {
+              "cam": 975,
+              "shape": "poly",
+              "coordinates": "52,229,49,254,82,242,63,226",
+              "latitude": 48.478235,
+              "longitude": -123.548597
+            }
+          }
+        }
+      },
+      "isNew": false,
+      "isOnDemand": false,
+      "imageStats": {
+        "md5": "924b33e53aec24612af2a01df5dfda51",
+        "lastAttempt": {
+          "time": "2023-06-02 16:42:16",
+          "seconds": 303
+        },
+        "lastModified": {
+          "time": "2023-06-02 16:42:16",
+          "seconds": 303
+        },
+        "markedStale": false,
+        "markedDelayed": false,
+        "updatePeriodMean": 692,
+        "updatePeriodStdDev": 65,
+        "fetchMean": 0
+      }
+    }
+  ]
+}
