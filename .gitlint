@@ -1,0 +1,22 @@
+[title-max-length]
+# Shorter title as summary
+line-length=72
+
+[title-match-regex]
+# python like regex (https://docs.python.org/2/library/re.html) that the
+# commit-msg title must be matched to.
+# Note that the regex can contradict with other rules if not used correctly
+# (e.g. title-must-not-contain-word).
+# summary must start with a JIRA issue number
+regex=^DBC22-[0-9]+:\s.*
+
+[B1]
+# B1 = body-max-line-length
+line-length=120
+
+[body-min-length]
+min-length=0
+
+
+[general]
+ignore=body-is-missing
