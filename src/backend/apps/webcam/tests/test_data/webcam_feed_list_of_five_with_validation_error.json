@@ -1,0 +1,866 @@
+{
+  "links": {
+    "self": "https://images.drivebc.ca/webcam/api/v1/webcams"
+  },
+  "webcams": [
+    {
+      "links": {
+        "self": "https://images.drivebc.ca/webcam/api/v1/webcams/2",
+        "imageSource": "https://images.drivebc.ca/webcam/api/v1/webcams/2/imageSource",
+        "imageDisplayAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/2/imageDisplay",
+        "imageThumbnailAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/2/imageThumbnail",
+        "imageDisplay": "https://images.drivebc.ca/bchighwaycam/pub/cameras/2.jpg",
+        "imageThumbnail": "https://images.drivebc.ca/bchighwaycam/pub/cameras/tn/2.jpg",
+        "currentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=2",
+        "updateCurrentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=2&update",
+        "replayTheDay": "https://images.drivebc.ca/ReplayTheDay/player.html?cam=2"
+      },
+      "id": "e2",
+      "isOn": true,
+      "shouldAppear": true,
+      "region": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/regions/Southern+Interior"
+        },
+        "name": "Southern Interior",
+        "group": 1
+      },
+      "regionGroup": {
+        "highwayGroup": 6,
+        "highwayCamOrder": 20
+      },
+      "highway": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/highways/5"
+        },
+        "number": 5,
+        "locationDescription": "Coquihalla"
+      },
+      "camName": "Coquihalla Great Bear Snowshed - N",
+      "caption": "Hwy 5, Great Bear Snowshed looking north.",
+      "credit": "",
+      "dbcMark": "DriveBC.ca",
+      "orientation": "N",
+      "location": {
+        "links": {
+          "googleMap": "http://maps.google.com/maps?q=49.596374,-121.159832+(Coquihalla Great Bear Snowshed - N)",
+          "googleStaticMap": "http://maps.google.com/maps/api/staticmap?center=49.596374,-121.159832&markers=color:blue%7C49.596374,-121.159832&zoom=11&size=240x240&sensor=false"
+        },
+        "latitude": 49.596374,
+        "longitude": -121.159832,
+        "elevation": 980
+      },
+      "weather": {
+        "observation": null,
+        "forecast": {
+          "links": {
+            "self": "https://weather.drivebc.ca/EnvCanada/YHE-YKA5full.html"
+          },
+          "id": "YHE-YKA5full"
+        }
+      },
+      "message": {
+        "short": "",
+        "long": ""
+      },
+      "map": {
+        "image": "https://images.drivebc.ca/bchighwaycam/pub/maps/2.jpg",
+        "isDisplayedHorizontal": false,
+        "map": {
+          "boundingbox": {
+            "min": {
+              "latitude": 49.378052,
+              "longitude": -121.341169
+            },
+            "max": {
+              "latitude": 49.596374,
+              "longitude": -121.159832
+            }
+          },
+          "imageMap": {
+            "2": {
+              "cam": 2,
+              "shape": "poly",
+              "coordinates": "105,6,126,30,143,20,120,0",
+              "latitude": 49.596374,
+              "longitude": -121.159832
+            },
+            "281": {
+              "cam": 281,
+              "shape": "poly",
+              "coordinates": "65,245,76,260,99,250,76,223",
+              "latitude": 49.378052,
+              "longitude": -121.341169
+            },
+            "282": {
+              "cam": 282,
+              "shape": "poly",
+              "coordinates": "40,250,62,277,75,260,64,245",
+              "latitude": 49.378052,
+              "longitude": -121.341169
+            },
+            "666": {
+              "cam": 666,
+              "shape": "poly",
+              "coordinates": "98,115,117,116,131,95,87,95",
+              "latitude": 49.5084162,
+              "longitude": -121.1989411
+            },
+            "667": {
+              "cam": 667,
+              "shape": "poly",
+              "coordinates": "82,137,127,136,116,117,98,116",
+              "latitude": 49.5084162,
+              "longitude": -121.1989411
+            },
+            "674": {
+              "cam": 674,
+              "shape": "poly",
+              "coordinates": "79,60,118,60,124,42,79,42",
+              "latitude": 49.575593,
+              "longitude": -121.179854
+            },
+            "675": {
+              "cam": 675,
+              "shape": "poly",
+              "coordinates": "79,84,125,84,117,60,79,59",
+              "latitude": 49.575593,
+              "longitude": -121.179854
+            },
+            "734": {
+              "cam": 734,
+              "shape": "poly",
+              "coordinates": "87,19,111,41,124,31,104,7",
+              "latitude": 49.596374,
+              "longitude": -121.159832
+            }
+          }
+        }
+      },
+      "isNew": false,
+      "isOnDemand": false,
+      "imageStats": {
+        "md5": "cd1bea24b48ec0f134b1c65a89d542af",
+        "lastAttempt": {
+          "time": "2023-06-09 16:58:04",
+          "seconds": 360
+        },
+        "lastModified": {
+          "time": "2023-06-09 16:58:04",
+          "seconds": 360
+        },
+        "markedStale": false,
+        "markedDelayed": false,
+        "updatePeriodMean": 899,
+        "updatePeriodStdDev": 12,
+        "fetchMean": 0
+      }
+    },
+    {
+      "links": {
+        "self": "https://images.drivebc.ca/webcam/api/v1/webcams/5",
+        "imageSource": "https://images.drivebc.ca/webcam/api/v1/webcams/5/imageSource",
+        "imageDisplayAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/5/imageDisplay",
+        "imageThumbnailAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/5/imageThumbnail",
+        "imageDisplay": "https://images.drivebc.ca/bchighwaycam/pub/cameras/5.jpg",
+        "imageThumbnail": "https://images.drivebc.ca/bchighwaycam/pub/cameras/tn/5.jpg",
+        "currentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=5",
+        "updateCurrentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=5&update",
+        "replayTheDay": "https://images.drivebc.ca/ReplayTheDay/player.html?cam=5"
+      },
+      "id": 5,
+      "isOn": true,
+      "shouldAppear": true,
+      "region": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/regions/Southern+Interior"
+        },
+        "name": "Southern Interior",
+        "group": 1
+      },
+      "regionGroup": {
+        "highwayGroup": 1,
+        "highwayCamOrder": 25
+      },
+      "highway": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/highways/3"
+        },
+        "number": 3,
+        "locationDescription": ""
+      },
+      "camName": "Kootenay Pass",
+      "caption": "Hwy 3, Salmo Creston Highway Summit, looking east.",
+      "credit": "",
+      "dbcMark": "DriveBC.ca",
+      "orientation": "E",
+      "location": {
+        "links": {
+          "googleMap": "http://maps.google.com/maps?q=49.058727,-117.040771+(Kootenay Pass)",
+          "googleStaticMap": "http://maps.google.com/maps/api/staticmap?center=49.058727,-117.040771&markers=color:blue%7C49.058727,-117.040771&zoom=11&size=240x240&sensor=false"
+        },
+        "latitude": 49.058727,
+        "longitude": -117.040771,
+        "elevation": 1781
+      },
+      "weather": {
+        "observation": {
+          "links": {
+            "self": "https://www.drivebc.ca/api/weather/observations/39121?format=json"
+          },
+          "station": 39121
+        },
+        "forecast": {
+          "links": {
+            "self": "https://weather.drivebc.ca/EnvCanada/YHE-WRTfull.html"
+          },
+          "id": "YHE-WRTfull"
+        }
+      },
+      "message": {
+        "short": "",
+        "long": ""
+      },
+      "map": {
+        "image": "https://images.drivebc.ca/bchighwaycam/pub/maps/5.jpg",
+        "isDisplayedHorizontal": true,
+        "map": {
+          "boundingbox": {
+            "min": {
+              "latitude": 49.058727,
+              "longitude": -117.6619209
+            },
+            "max": {
+              "latitude": 49.2888559,
+              "longitude": -117.040771
+            }
+          },
+          "imageMap": {
+            "5": {
+              "cam": 5,
+              "shape": "rect",
+              "coordinates": "386,100,432,134",
+              "latitude": 49.058727,
+              "longitude": -117.040771
+            },
+            "158": {
+              "cam": 158,
+              "shape": "rect",
+              "coordinates": "267,72,304,98",
+              "latitude": 49.191666,
+              "longitude": -117.285096
+            },
+            "162": {
+              "cam": 162,
+              "shape": "rect",
+              "coordinates": "95,87,132,111",
+              "latitude": 49.2888559,
+              "longitude": -117.6619209
+            },
+            "334": {
+              "cam": 334,
+              "shape": "rect",
+              "coordinates": "159,100,205,128",
+              "latitude": 49.236003,
+              "longitude": -117.520886
+            },
+            "626": {
+              "cam": 626,
+              "shape": "rect",
+              "coordinates": "264,10,299,40",
+              "latitude": 49.27825,
+              "longitude": -117.21182
+            },
+            "793": {
+              "cam": 793,
+              "shape": "rect",
+              "coordinates": "221,99,257,127",
+              "latitude": 49.187798,
+              "longitude": -117.420674
+            }
+          }
+        }
+      },
+      "isNew": false,
+      "isOnDemand": false,
+      "imageStats": {
+        "md5": "6382ffb9c7c8a553a04f9820b1ae193e",
+        "lastAttempt": {
+          "time": "2023-06-09 17:03:39",
+          "seconds": 25
+        },
+        "lastModified": {
+          "time": "2023-06-09 17:03:39",
+          "seconds": 25
+        },
+        "markedStale": false,
+        "markedDelayed": false,
+        "updatePeriodMean": 899,
+        "updatePeriodStdDev": 13,
+        "fetchMean": 0
+      }
+    },
+    {
+      "links": {
+        "self": "https://images.drivebc.ca/webcam/api/v1/webcams/6",
+        "imageSource": "https://images.drivebc.ca/webcam/api/v1/webcams/6/imageSource",
+        "imageDisplayAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/6/imageDisplay",
+        "imageThumbnailAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/6/imageThumbnail",
+        "imageDisplay": "https://images.drivebc.ca/bchighwaycam/pub/cameras/6.jpg",
+        "imageThumbnail": "https://images.drivebc.ca/bchighwaycam/pub/cameras/tn/6.jpg",
+        "currentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=6",
+        "updateCurrentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=6&update",
+        "replayTheDay": "https://images.drivebc.ca/ReplayTheDay/player.html?cam=6"
+      },
+      "id": 6,
+      "isOn": true,
+      "shouldAppear": true,
+      "region": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/regions/Northern"
+        },
+        "name": "Northern",
+        "group": 0
+      },
+      "regionGroup": {
+        "highwayGroup": 2,
+        "highwayCamOrder": 25
+      },
+      "highway": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/highways/16"
+        },
+        "number": 16,
+        "locationDescription": ""
+      },
+      "camName": "Smithers - N",
+      "caption": "Hwy 16 in Smithers at Main Street, looking north.",
+      "credit": "",
+      "dbcMark": "DriveBC.ca",
+      "orientation": "N",
+      "location": {
+        "links": {
+          "googleMap": "http://maps.google.com/maps?q=54.782104,-127.1667312+(Smithers - N)",
+          "googleStaticMap": "http://maps.google.com/maps/api/staticmap?center=54.782104,-127.1667312&markers=color:blue%7C54.782104,-127.1667312&zoom=11&size=240x240&sensor=false"
+        },
+        "latitude": 54.782104,
+        "longitude": -127.1667312,
+        "elevation": 497
+      },
+      "weather": {
+        "observation": null,
+        "forecast": {
+          "links": {
+            "self": "https://weather.drivebc.ca/EnvCanada/YPR-WJWfull.html"
+          },
+          "id": "YPR-WJWfull"
+        }
+      },
+      "message": {
+        "short": "",
+        "long": ""
+      },
+      "map": {
+        "image": "https://images.drivebc.ca/bchighwaycam/pub/maps/6.jpg",
+        "isDisplayedHorizontal": false,
+        "map": {
+          "boundingbox": {
+            "min": {
+              "latitude": 54.782104,
+              "longitude": -127.325592
+            },
+            "max": {
+              "latitude": 54.941205,
+              "longitude": -127.1667312
+            }
+          },
+          "imageMap": {
+            "6": {
+              "cam": 6,
+              "shape": "poly",
+              "coordinates": "82,247,100,262,115,240",
+              "latitude": 54.782104,
+              "longitude": -127.1667312
+            },
+            "336": {
+              "cam": 336,
+              "shape": "rect",
+              "coordinates": "39,29,110,63",
+              "latitude": 54.941205,
+              "longitude": -127.325592
+            },
+            "701": {
+              "cam": 701,
+              "shape": "poly",
+              "coordinates": "101,264,91,288,125,279",
+              "latitude": 54.782104,
+              "longitude": -127.1667312
+            },
+            "702": {
+              "cam": 702,
+              "shape": "poly",
+              "coordinates": "119,244,101,264,127,275",
+              "latitude": 54.782104,
+              "longitude": -127.1667312
+            },
+            "703": {
+              "cam": 703,
+              "shape": "poly",
+              "coordinates": "72,259,80,286,101,264",
+              "latitude": 54.782104,
+              "longitude": -127.1667312
+            },
+            "799": {
+              "cam": 799,
+              "shape": "poly",
+              "coordinates": "60,214,78,229,93,207",
+              "latitude": 54.789028,
+              "longitude": -127.176373
+            },
+            "800": {
+              "cam": 800,
+              "shape": "poly",
+              "coordinates": "78,230,68,254,102,245",
+              "latitude": 54.789028,
+              "longitude": -127.176373
+            },
+            "823": {
+              "cam": 823,
+              "shape": "poly",
+              "coordinates": "55,223,55,247,79,229",
+              "latitude": 54.789028,
+              "longitude": -127.176373
+            },
+            "859": {
+              "cam": 859,
+              "shape": "poly",
+              "coordinates": "97,210,79,230,105,241",
+              "latitude": 54.789028,
+              "longitude": -127.176373
+            }
+          }
+        }
+      },
+      "isNew": false,
+      "isOnDemand": false,
+      "imageStats": {
+        "md5": "3d5e343fd85a51014e5c21eecab71ccc",
+        "lastAttempt": {
+          "time": "2023-06-09 16:57:20",
+          "seconds": 404
+        },
+        "lastModified": {
+          "time": "2023-06-09 16:57:20",
+          "seconds": 404
+        },
+        "markedStale": false,
+        "markedDelayed": false,
+        "updatePeriodMean": 907,
+        "updatePeriodStdDev": 14,
+        "fetchMean": 0
+      }
+    },
+    {
+      "links": {
+        "self": "https://images.drivebc.ca/webcam/api/v1/webcams/7",
+        "imageSource": "https://images.drivebc.ca/webcam/api/v1/webcams/7/imageSource",
+        "imageDisplayAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/7/imageDisplay",
+        "imageThumbnailAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/7/imageThumbnail",
+        "imageDisplay": "https://images.drivebc.ca/bchighwaycam/pub/cameras/7.jpg",
+        "imageThumbnail": "https://images.drivebc.ca/bchighwaycam/pub/cameras/tn/7.jpg",
+        "currentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=7",
+        "updateCurrentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=7&update",
+        "replayTheDay": "https://images.drivebc.ca/ReplayTheDay/player.html?cam=7"
+      },
+      "id": 7,
+      "isOn": true,
+      "shouldAppear": true,
+      "region": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/regions/Lower+Mainland"
+        },
+        "name": "Lower Mainland",
+        "group": 2
+      },
+      "regionGroup": {
+        "highwayGroup": 2,
+        "highwayCamOrder": 32
+      },
+      "highway": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/highways/1"
+        },
+        "number": 1,
+        "locationDescription": "Fraser Valley"
+      },
+      "camName": "Cole Road - E",
+      "caption": "Hwy 1 at Cole Road Rest Area, looking east.",
+      "credit": "",
+      "dbcMark": "DriveBC.ca",
+      "orientation": "E",
+      "location": {
+        "links": {
+          "googleMap": "http://maps.google.com/maps?q=49.0575,-122.177+(Cole Road - E)",
+          "googleStaticMap": "http://maps.google.com/maps/api/staticmap?center=49.0575,-122.177&markers=color:blue%7C49.0575,-122.177&zoom=11&size=240x240&sensor=false"
+        },
+        "latitude": 49.0575,
+        "longitude": -122.177,
+        "elevation": 12
+      },
+      "weather": {
+        "observation": null,
+        "forecast": {
+          "links": {
+            "self": "https://weather.drivebc.ca/EnvCanada/YVR-YHEfull.html"
+          },
+          "id": "YVR-YHEfull"
+        }
+      },
+      "message": {
+        "short": "",
+        "long": ""
+      },
+      "map": {
+        "image": "https://images.drivebc.ca/bchighwaycam/pub/maps/7.jpg",
+        "isDisplayedHorizontal": true,
+        "map": {
+          "boundingbox": {
+            "min": {
+              "latitude": 49.033129,
+              "longitude": -122.381465
+            },
+            "max": {
+              "latitude": 49.057775,
+              "longitude": -122.177
+            }
+          },
+          "imageMap": {
+            "7": {
+              "cam": 7,
+              "shape": "poly",
+              "coordinates": "400,58,417,79,441,67,412,37",
+              "latitude": 49.0575,
+              "longitude": -122.177
+            },
+            "204": {
+              "cam": 204,
+              "shape": "poly",
+              "coordinates": "259,121,235,130,234,105,259,112",
+              "latitude": 49.034253,
+              "longitude": -122.293112
+            },
+            "223": {
+              "cam": 223,
+              "shape": "poly",
+              "coordinates": "263,122,282,131,282,104,263,114",
+              "latitude": 49.034253,
+              "longitude": -122.293112
+            },
+            "224": {
+              "cam": 224,
+              "shape": "poly",
+              "coordinates": "277,86,244,85,258,112,265,113",
+              "latitude": 49.034253,
+              "longitude": -122.293112
+            },
+            "225": {
+              "cam": 225,
+              "shape": "poly",
+              "coordinates": "257,123,248,147,275,147,264,122",
+              "latitude": 49.034253,
+              "longitude": -122.293112
+            },
+            "268": {
+              "cam": 268,
+              "shape": "poly",
+              "coordinates": "217,88,184,87,198,114,205,115",
+              "latitude": 49.037659,
+              "longitude": -122.337231
+            },
+            "269": {
+              "cam": 269,
+              "shape": "poly",
+              "coordinates": "204,123,230,131,230,106,204,115",
+              "latitude": 49.037659,
+              "longitude": -122.337231
+            },
+            "270": {
+              "cam": 270,
+              "shape": "poly",
+              "coordinates": "197,124,188,148,215,148,204,123",
+              "latitude": 49.037659,
+              "longitude": -122.337231
+            },
+            "271": {
+              "cam": 271,
+              "shape": "poly",
+              "coordinates": "198,123,172,133,171,107,198,114",
+              "latitude": 49.037659,
+              "longitude": -122.337231
+            },
+            "403": {
+              "cam": 403,
+              "shape": "poly",
+              "coordinates": "299,122,283,132,283,105,299,113",
+              "latitude": 49.033129,
+              "longitude": -122.266335
+            },
+            "404": {
+              "cam": 404,
+              "shape": "poly",
+              "coordinates": "303,123,331,131,331,105,303,115",
+              "latitude": 49.033129,
+              "longitude": -122.266335
+            },
+            "405": {
+              "cam": 405,
+              "shape": "poly",
+              "coordinates": "315,87,282,86,296,113,303,114",
+              "latitude": 49.033129,
+              "longitude": -122.266335
+            },
+            "406": {
+              "cam": 406,
+              "shape": "poly",
+              "coordinates": "296,124,287,148,314,148,303,123",
+              "latitude": 49.033129,
+              "longitude": -122.266335
+            },
+            "461": {
+              "cam": 461,
+              "shape": "poly",
+              "coordinates": "154,44,121,43,135,70,142,71",
+              "latitude": 49.057775,
+              "longitude": -122.381465
+            },
+            "462": {
+              "cam": 462,
+              "shape": "poly",
+              "coordinates": "136,80,109,90,109,62,136,71",
+              "latitude": 49.057775,
+              "longitude": -122.381465
+            },
+            "463": {
+              "cam": 463,
+              "shape": "poly",
+              "coordinates": "139,72,139,79,169,93,169,63",
+              "latitude": 49.057775,
+              "longitude": -122.381465
+            },
+            "464": {
+              "cam": 464,
+              "shape": "poly",
+              "coordinates": "135,81,126,105,153,105,142,80",
+              "latitude": 49.057775,
+              "longitude": -122.381465
+            },
+            "656": {
+              "cam": 656,
+              "shape": "rect",
+              "coordinates": "376,69,402,100,416,80,401,60",
+              "latitude": 49.0575,
+              "longitude": -122.177
+            }
+          }
+        }
+      },
+      "isNew": false,
+      "isOnDemand": false,
+      "imageStats": {
+        "md5": "404c3b1a9458c7e1d020f2d1d5fd5d71",
+        "lastAttempt": {
+          "time": "2023-06-09 16:51:05",
+          "seconds": 779
+        },
+        "lastModified": {
+          "time": "2023-06-09 16:51:05",
+          "seconds": 779
+        },
+        "markedStale": false,
+        "markedDelayed": false,
+        "updatePeriodMean": 902,
+        "updatePeriodStdDev": 26,
+        "fetchMean": 0
+      }
+    },
+    {
+      "links": {
+        "self": "https://images.drivebc.ca/webcam/api/v1/webcams/8",
+        "imageSource": "https://images.drivebc.ca/webcam/api/v1/webcams/8/imageSource",
+        "imageDisplayAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/8/imageDisplay",
+        "imageThumbnailAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/8/imageThumbnail",
+        "imageDisplay": "https://images.drivebc.ca/bchighwaycam/pub/cameras/8.jpg",
+        "imageThumbnail": "https://images.drivebc.ca/bchighwaycam/pub/cameras/tn/8.jpg",
+        "currentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=8",
+        "updateCurrentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=8&update",
+        "replayTheDay": "https://images.drivebc.ca/ReplayTheDay/player.html?cam=8"
+      },
+      "id": 8,
+      "isOn": true,
+      "shouldAppear": true,
+      "region": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/regions/Vancouver+Island"
+        },
+        "name": "Vancouver Island",
+        "group": 3
+      },
+      "regionGroup": {
+        "highwayGroup": 0,
+        "highwayCamOrder": 29
+      },
+      "highway": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/highways/1"
+        },
+        "number": 1,
+        "locationDescription": "Vancouver Island"
+      },
+      "camName": "Malahat Drive - N",
+      "caption": "Hwy 1 at South Shawnigan Lake Road, looking north.",
+      "credit": "",
+      "dbcMark": "DriveBC.ca",
+      "orientation": "N",
+      "location": {
+        "links": {
+          "googleMap": "http://maps.google.com/maps?q=48.561231,-123.569743+(Malahat Drive - N)",
+          "googleStaticMap": "http://maps.google.com/maps/api/staticmap?center=48.561231,-123.569743&markers=color:blue%7C48.561231,-123.569743&zoom=11&size=240x240&sensor=false"
+        },
+        "latitude": 48.561231,
+        "longitude": -123.569743,
+        "elevation": 327
+      },
+      "weather": {
+        "observation": {
+          "links": {
+            "self": "https://www.drivebc.ca/api/weather/observations/62091?format=json"
+          },
+          "station": 62091
+        },
+        "forecast": {
+          "links": {
+            "self": "https://weather.drivebc.ca/EnvCanada/YYJ-YZTfull.html"
+          },
+          "id": "YYJ-YZTfull"
+        }
+      },
+      "message": {
+        "short": "",
+        "long": ""
+      },
+      "map": {
+        "image": "https://images.drivebc.ca/bchighwaycam/pub/maps/8.jpg",
+        "isDisplayedHorizontal": false,
+        "map": {
+          "boundingbox": {
+            "min": {
+              "latitude": 48.478235,
+              "longitude": -123.569743
+            },
+            "max": {
+              "latitude": 48.567912,
+              "longitude": -123.542123
+            }
+          },
+          "imageMap": {
+            "8": {
+              "cam": 8,
+              "shape": "poly",
+              "coordinates": "27,94,31,95,46,75,8,75",
+              "latitude": 48.561231,
+              "longitude": -123.569743
+            },
+            "272": {
+              "cam": 272,
+              "shape": "poly",
+              "coordinates": "3,80,3,111,25,94,21,89",
+              "latitude": 48.561231,
+              "longitude": -123.569743
+            },
+            "273": {
+              "cam": 273,
+              "shape": "poly",
+              "coordinates": "24,95,18,117,45,105,32,95",
+              "latitude": 48.561231,
+              "longitude": -123.569743
+            },
+            "424": {
+              "cam": 424,
+              "shape": "poly",
+              "coordinates": "84,55,77,29,57,40,61,55",
+              "latitude": 48.567912,
+              "longitude": -123.542123
+            },
+            "427": {
+              "cam": 427,
+              "shape": "poly",
+              "coordinates": "60,55,56,41,31,39,39,67",
+              "latitude": 48.567912,
+              "longitude": -123.542123
+            },
+            "909": {
+              "cam": 909,
+              "shape": "poly",
+              "coordinates": "39,132,31,155,65,147,50,129",
+              "latitude": 48.53235,
+              "longitude": -123.560143
+            },
+            "910": {
+              "cam": 910,
+              "shape": "poly",
+              "coordinates": "23,117,38,132,51,129,57,108",
+              "latitude": 48.53235,
+              "longitude": -123.560143
+            },
+            "926": {
+              "cam": 926,
+              "shape": "poly",
+              "coordinates": "28,157,41,179,51,179,65,157",
+              "latitude": 48.507134,
+              "longitude": -123.556923
+            },
+            "927": {
+              "cam": 927,
+              "shape": "poly",
+              "coordinates": "39,180,31,200,63,200,51,180",
+              "latitude": 48.507134,
+              "longitude": -123.556923
+            },
+            "974": {
+              "cam": 974,
+              "shape": "poly",
+              "coordinates": "32,213,51,229,62,225,62,203",
+              "latitude": 48.478235,
+              "longitude": -123.548597
+            },
+            "975": {
+              "cam": 975,
+              "shape": "poly",
+              "coordinates": "52,229,49,254,82,242,63,226",
+              "latitude": 48.478235,
+              "longitude": -123.548597
+            }
+          }
+        }
+      },
+      "isNew": false,
+      "isOnDemand": false,
+      "imageStats": {
+        "md5": "afd6c358bbebf53bb08df87f36c682a7",
+        "lastAttempt": {
+          "time": "2023-06-09 16:54:33",
+          "seconds": 571
+        },
+        "lastModified": {
+          "time": "2023-06-09 16:54:33",
+          "seconds": 571
+        },
+        "markedStale": false,
+        "markedDelayed": false,
+        "updatePeriodMean": 690,
+        "updatePeriodStdDev": 59,
+        "fetchMean": 0
+      }
+    }
+  ]
+}

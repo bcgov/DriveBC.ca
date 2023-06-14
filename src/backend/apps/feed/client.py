@@ -4,9 +4,10 @@ from urllib.parse import urljoin
 
 import httpx
 from django.conf import settings
+from rest_framework.exceptions import ValidationError
 
 from apps.feed.constants import OPEN511, ROUTE_PLANNER, WEBCAMS
-from apps.feed.serializers import WebcamAPISerializer
+from apps.feed.serializers import WebcamAPISerializer, WebcamFeedSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -35,11 +36,8 @@ class FeedClient:
         return {}
 
     def _get_endpoint(self, resource_type, resource_name):
-        try:
-            base_url = self.resource_map.get(resource_type)["base_url"]  # type: ignore
-            return urljoin(base_url, f"{resource_name}")
-        except KeyError:
-            raise
+        base_url = self.resource_map.get(resource_type)["base_url"]  # type: ignore
+        return urljoin(base_url, f"{resource_name}")
 
     @staticmethod
     def _get_response_data_or_raise(response):
@@ -64,7 +62,17 @@ class FeedClient:
         )
         return self._get_response_data_or_raise(response)
 
-    def get_webcams(self):
+    def get_webcam(self, webcam):
+        endpoint = self._get_endpoint(resource_type=WEBCAMS, resource_name=f"webcams/{webcam.id}")
+        response_data = self._process_get_request(
+            endpoint, resource_type=WEBCAMS, params={}
+        )
+
+        serializer = WebcamFeedSerializer(data=response_data)
+        serializer.is_valid(raise_exception=True)
+        return serializer.validated_data
+
+    def get_webcam_list(self):
         """Used for getting the list of webcams with details."""
         endpoint = self._get_endpoint(resource_type=WEBCAMS, resource_name="webcams")
         response_data = self._process_get_request(
@@ -72,5 +80,20 @@ class FeedClient:
         )
 
         serializer = WebcamAPISerializer(data=response_data)
-        serializer.is_valid(raise_exception=True)
-        return serializer.validated_data
+
+        try:
+            serializer.is_valid(raise_exception=True)
+            return serializer.validated_data
+
+        except ValidationError:
+            res = []
+            for index, data in enumerate(serializer.data['webcams']):
+                if serializer.errors['webcams'][index]:
+                    logger.warning(f"Error parsing webcam data for ID {data['id']}")
+
+                else:
+                    res.append(data)
+
+            new_serializer = WebcamAPISerializer(data={'webcams': res})
+            new_serializer.is_valid(raise_exception=True)
+            return new_serializer.validated_data

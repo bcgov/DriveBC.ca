@@ -3,6 +3,10 @@ import logging
 from django.test import TestCase
 from unittest.mock import MagicMock
 
+from httpx import HTTPStatusError
+
+from apps.webcam.models import Webcam
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,6 +21,9 @@ class MockResponse:
         mock = MagicMock()
         mock.return_value = data
         return mock
+
+    def raise_for_status(self):
+        raise HTTPStatusError('', request=None, response=self)
 
 
 class BaseTest(TestCase):
@@ -33,3 +40,4 @@ class BaseTest(TestCase):
 
     def tearDown(self):
         super(BaseTest, self).tearDown()
+        Webcam.objects.all().delete()
