@@ -41,6 +41,10 @@ services:
     tty: true
     ports:
       - "3000:3000"
+    volumes:
+      - ./src/frontend:/app
+      # One-way volume to use node_modules from inside image
+      - /app/node_modules
     depends_on:
       - django
     command: npm start

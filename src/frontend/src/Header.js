@@ -30,6 +30,9 @@ export default function Header() {
 						<LinkContainer to="/StylesPage">
 							<Nav.Link>Styleguide</Nav.Link>
 						</LinkContainer>
+						<LinkContainer to="/CamerasPage">
+							<Nav.Link>Cameras</Nav.Link>
+						</LinkContainer>
 					</Nav>
 					</Navbar.Collapse>
 				</Container>
