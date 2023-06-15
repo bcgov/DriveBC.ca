@@ -3,6 +3,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import "@bcgov/bc-sans/css/BCSans.css";
 import "./App.scss";
+import "./styles/variables.scss";
 import Header from "./Header.js";
 import MapPage from "./pages/MapPage";
 import StylesPage from "./pages/StylesPage";

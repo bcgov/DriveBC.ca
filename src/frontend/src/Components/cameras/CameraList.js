@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { getWebcams } from "../data/webcams";
+import './CameraList.scss';
+import Container from 'react-bootstrap/Container';
+import WebcamCard from'./WebcamCard.js';
 
 export default function CameraList() {
   const [webcams, setWebcams] = useState({});
@@ -29,19 +32,18 @@ export default function CameraList() {
     }
   }, []);
   return (
-    <div>
-      <div>search bar goes here</div>
+    <div className="camera-list">
       {Object.entries(webcams).map(([highway, cameras]) => (
-        <div key={highway}>
-          <h2>Highway {highway}</h2>
-          <ul>
-            {cameras.map((camera, id) => (
-              <li key={id}>
-                <img src={camera.properties.url} width="300" />
-                {camera.properties.name},{camera.properties.caption}
-              </li>
-            ))}
-          </ul>
+        <div className="highway-group" key={highway}>
+          <Container>
+            <h2 className="highway-name">Highway {highway}</h2>
+            <div className="webcam-group">
+              {cameras.map((camera, id) => (
+                <WebcamCard camera={camera} className="webcam" key={id}>
+                </WebcamCard>
+              ))}
+            </div>
+          </Container>
         </div>
       ))}
     </div>

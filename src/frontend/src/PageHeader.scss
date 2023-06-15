@@ -1,0 +1,16 @@
+@import "./styles/variables.scss";
+
+.page-header {
+  background-color: $BC-Blue-Light;
+  .page-title, .page-description {
+    color: $BC-Blue;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .page-description {
+    max-width: 454px;
+  }
+}

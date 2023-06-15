@@ -68,7 +68,7 @@ export default function StylesPage() {
           <div>
             <Button variant="outline-primary">Primary outlined button</Button>
           </div>
-          <div className="demo-group--button__dark">
+          <div className="demo-group--button--dark">
             <Button variant="outline-primary">Primary outlined button</Button>
           </div>
         </div>

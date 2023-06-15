@@ -1,0 +1,30 @@
+@import "../../styles/variables";
+
+.camera-list {
+  .highway-group {
+    &:nth-of-type(even) {
+      background-color: $Grey10;
+    }
+    .highway-name {
+      font-weight: 400;
+      margin-bottom: 1em;;
+    }
+  }
+
+  .webcam-group {
+    display: grid;
+    column-gap: 2em;
+    row-gap: 2em;
+    margin-bottom: 4em;
+    grid-template-columns: repeat(1, 1fr );
+    grid-template-rows: auto;
+
+    @media (min-width: 576px) {
+      grid-template-columns: repeat(2, 1fr );
+    }
+
+    @media (min-width: 992px) {
+      grid-template-columns: repeat(4, 1fr );
+    }
+  }
+}
