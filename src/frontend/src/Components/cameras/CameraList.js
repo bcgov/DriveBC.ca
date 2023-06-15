@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { getWebcams } from "../data/webcams";
 
-export default function CameraList({ cameras }) {
+export default function CameraList() {
   const [webcams, setWebcams] = useState({});
   const groupedCameras = {};
   const fetched = useRef();
@@ -25,6 +25,10 @@ export default function CameraList({ cameras }) {
     }
     if (!webcams.length) {
       getCameras();
+    }
+    return () =>{
+      //unmounting, so empty list object
+      setWebcams({});
     }
   }, []);
   return (
