@@ -1,13 +1,15 @@
 import React from 'react';
-import Container from 'react-bootstrap/Container';
-import CameraList from '../Components/cameras/CameraList'
+import CameraList from '../Components/cameras/CameraList';
+import PageHeader from "../PageHeader";
 
-export default function MapPage() {
+export default function CameraPage() {
   return (
-    <div>
-    <Container>
+    <div className="camera-page">
+      <PageHeader
+        title="Cameras"
+        description="Search by camera name to filter results or scroll to view all cameras sorted by highway.">
+      </PageHeader>
       <CameraList></CameraList>
-      </Container>
-      </div>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 @import "styles/variables";
-@import "styles/typography";
 @import "styles/bootstrap-customizations";
+@import "styles/typography";
 
 body {
   margin-top: 58px;
@@ -20,7 +20,7 @@ body {
     }
 
     &--dark {
-      background-color: #003366;
+      background-color: $BC-Blue;
       height: 120px;
       width: 800px;
       padding: 40px;
@@ -46,8 +46,4 @@ body {
     margin-left: 40px;
     }
   }
-}
-
-.page-title {
-  margin-bottom: 80px;
 }

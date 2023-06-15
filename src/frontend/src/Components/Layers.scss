@@ -1,11 +1,11 @@
 .open-layers, .layers {
-  top: 3rem;
+  top: 4rem;
   min-width: 3rem;
   right: 2rem;
   position: absolute;
 
   @media screen and (max-width: 729px) {
-    top: 3rem;
+    top: 4rem;
     right: 14px;
   }
 }
