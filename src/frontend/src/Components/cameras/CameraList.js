@@ -4,10 +4,8 @@ import { getWebcams } from "../data/webcams";
 export default function CameraList() {
   const [webcams, setWebcams] = useState({});
   const groupedCameras = {};
-  const fetched = useRef();
 
   useEffect(() => {
-    if (fetched.current) return;
 
     async function getCameras() {
       const retrievedCameras = await getWebcams();
@@ -21,7 +19,6 @@ export default function CameraList() {
       });
 
       setWebcams(groupedCameras);
-      fetched.current = true;
     }
     if (!webcams.length) {
       getCameras();
