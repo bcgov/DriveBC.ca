@@ -45,8 +45,5 @@ class TestWebcamSerializer(BaseTest):
 
         self.serializer = WebcamSerializer(self.webcam)
 
-    def tearDown(self):
-        Webcam.objects.all().delete()
-
     def test_serializer(self):
         self.assertEqual(len(self.serializer.data), 23)

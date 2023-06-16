@@ -13,11 +13,11 @@ class Webcam(BaseModel):
     region = models.PositiveSmallIntegerField(choices=enums.REGION_CHOICES)
     region_name = models.CharField(max_length=128)
     highway = models.CharField(max_length=32)
-    highway_description = models.CharField(max_length=128)
+    highway_description = models.CharField(max_length=128, blank=True, null=True)
     highway_group = models.PositiveSmallIntegerField()
     highway_cam_order = models.PositiveSmallIntegerField()
     location = models.PointField()
-    orientation = models.CharField(max_length=32, choices=enums.ORIENTATION_CHOICES, null=True)
+    orientation = models.CharField(max_length=32, choices=enums.ORIENTATION_CHOICES, blank=True, null=True)
     elevation = models.PositiveSmallIntegerField()
 
     # General status
@@ -33,3 +33,18 @@ class Webcam(BaseModel):
     last_update_modified = models.DateTimeField(null=True)
     update_period_mean = models.PositiveSmallIntegerField()
     update_period_stddev = models.PositiveSmallIntegerField()
+
+    # Within two standard deviations from mean
+    @property
+    def minimum_update_window(self):
+        if not self.update_period_mean or not self.update_period_stddev:
+            return 0  # Always update
+
+        return self.update_period_mean - (2 * self.update_period_stddev)
+
+    def should_update(self, time):
+        if not self.last_update_modified:
+            return True
+
+        time_delta = time - self.last_update_modified
+        return time_delta.seconds >= self.minimum_update_window

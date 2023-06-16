@@ -337,7 +337,7 @@
       "caption": "Hwy 16 in Smithers at Main Street, looking north.",
       "credit": "",
       "dbcMark": "DriveBC.ca",
-      "orientation": "N",
+      "orientation": "NULL",
       "location": {
         "links": {
           "googleMap": "http://maps.google.com/maps?q=54.782104,-127.1667312+(Smithers - N)",
@@ -491,13 +491,13 @@
           "self": "https://images.drivebc.ca/webcam/api/v1/highways/1"
         },
         "number": 1,
-        "locationDescription": "Fraser Valley"
+        "locationDescription": ""
       },
       "camName": "Cole Road - E",
       "caption": "Hwy 1 at Cole Road Rest Area, looking east.",
       "credit": "",
       "dbcMark": "DriveBC.ca",
-      "orientation": "E",
+      "orientation": "",
       "location": {
         "links": {
           "googleMap": "http://maps.google.com/maps?q=49.0575,-122.177+(Cole Road - E)",
@@ -848,11 +848,11 @@
       "imageStats": {
         "md5": "afd6c358bbebf53bb08df87f36c682a7",
         "lastAttempt": {
-          "time": "2023-06-09 16:54:33",
+          "time": null,
           "seconds": 571
         },
         "lastModified": {
-          "time": "2023-06-09 16:54:33",
+          "time": null,
           "seconds": 571
         },
         "markedStale": false,

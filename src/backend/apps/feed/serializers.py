@@ -1,87 +1,92 @@
+from django.contrib.gis.geos import Point
 from rest_framework import serializers
 
-from apps.shared import enums
+from apps.shared.helpers import parse_and_localize_time_str
 
 
-class RouteFeedSerializer(serializers.Serializer):
-    FASTEST = "fastest"
-    SHORTEST = "shortest"
-    CRITERIA_CHOICES = [(FASTEST, "Fastest"), (SHORTEST, "Shortest")]
-    KILOMETRES = "km"
-    MILES = "mi"
-    DISTANCE_UNIT_CHOICES = [(KILOMETRES, "km"), (MILES, "mi")]
-    srsCode = serializers.CharField(max_length=5, source="srs_code")
-    criteria = serializers.ChoiceField(choices=CRITERIA_CHOICES)
-    distanceUnit = serializers.ChoiceField(
-        choices=DISTANCE_UNIT_CHOICES, source="distance_unit"
-    )
-    distance = serializers.FloatField()
-    time = serializers.FloatField(source="route_time")
-    routeFound = serializers.BooleanField(source="is_route_found")
-    points = serializers.ListField(
-        child=serializers.ListField(child=serializers.FloatField())
-    )
-    route = serializers.ListField(
-        child=serializers.ListField(child=serializers.FloatField()),
-        source="route_points",
-    )
+class RegionField(serializers.Field):
+    def to_internal_value(self, data):
+        ret = {
+            "region": data['group'],
+            "region_name": data['name'],
+        }
+        return ret
 
 
-class RegionFeedSerializer(serializers.Serializer):
-    group = serializers.IntegerField()
-    name = serializers.CharField(max_length=128)
+class RegionGroupField(serializers.Field):
+    def to_internal_value(self, data):
+        ret = {
+            "highway_group": data['highwayGroup'],
+            "highway_cam_order": data['highwayCamOrder'],
+        }
+        return ret
 
 
-class RegionGroupFeedSerializer(serializers.Serializer):
-    highwayGroup = serializers.IntegerField()
-    highwayCamOrder = serializers.IntegerField()
+class HighwayField(serializers.Field):
+    def to_internal_value(self, data):
+        ret = {
+            "highway": str(data["number"]),
+            "highway_description": data["locationDescription"],
+        }
+        return ret
 
 
-class HighwayFeedSerializer(serializers.Serializer):
-    number = serializers.CharField(max_length=32)
-    locationDescription = serializers.CharField(max_length=128, allow_blank=True, allow_null=True)
+class LocationField(serializers.Field):
+    def to_internal_value(self, data):
+        res = {
+            "location": Point(data['longitude'], data['latitude']),
+            "elevation": data['elevation'],
+        }
+        return res
 
 
-class LocationFeedSerializer(serializers.Serializer):
-    latitude = serializers.FloatField()
-    longitude = serializers.FloatField()
-    elevation = serializers.IntegerField()
+class ImageStatsField(serializers.Field):
+    def to_internal_value(self, data):
+        res = {
+            "marked_stale": data["markedStale"],
+            "marked_delayed": data["markedDelayed"],
+            "last_update_attempt": parse_and_localize_time_str(data["lastAttempt"]['time']),
+            "last_update_modified": parse_and_localize_time_str(data["lastModified"]['time']),
+            "update_period_mean": data["updatePeriodMean"],
+            "update_period_stddev": data["updatePeriodStdDev"],
+        }
+        return res
 
 
-class DatetimeFeedSerializer(serializers.Serializer):
-    time = serializers.DateTimeField(format='%y-%m-%d %H:%M:%S', allow_null=True)
+class CustomDrivebcField(serializers.Field):
+    def __init__(self, custom_field_name, *args, **kwargs):
+        super(CustomDrivebcField, self).__init__(*args, **kwargs)
+        self.custom_field_name = custom_field_name
 
-
-class ImageStatsFeedSerializer(serializers.Serializer):
-    markedStale = serializers.BooleanField()
-    markedDelayed = serializers.BooleanField()
-    updatePeriodMean = serializers.IntegerField()
-    updatePeriodStdDev = serializers.IntegerField()
-    lastAttempt = DatetimeFeedSerializer()
-    lastModified = DatetimeFeedSerializer()
+    def to_internal_value(self, data):
+        res = {
+            self.custom_field_name: data,
+        }
+        return res
 
 
 class WebcamFeedSerializer(serializers.Serializer):
     id = serializers.IntegerField()
 
     # Description
-    camName = serializers.CharField(max_length=128)
+    camName = CustomDrivebcField('name', source='*')
     caption = serializers.CharField(max_length=256)
 
     # Location
-    region = RegionFeedSerializer()
-    regionGroup = RegionGroupFeedSerializer()
-    highway = HighwayFeedSerializer()
-    location = LocationFeedSerializer()
+    region = RegionField(source='*')
+    regionGroup = RegionGroupField(source='*')
+    highway = HighwayField(source='*')
+    location = LocationField(source='*')
     orientation = serializers.CharField(max_length=32, allow_blank=True, allow_null=True)  # Can be 'NULL'
 
-    isOn = serializers.BooleanField()
-    shouldAppear = serializers.BooleanField()
-    isNew = serializers.BooleanField()
-    isOnDemand = serializers.BooleanField()
+    # General status
+    isOn = CustomDrivebcField('is_on', source='*')
+    shouldAppear = CustomDrivebcField('should_appear', source='*')
+    isNew = CustomDrivebcField('is_new', source='*')
+    isOnDemand = CustomDrivebcField('is_on_demand', source='*')
 
-    # Update Period
-    imageStats = ImageStatsFeedSerializer()
+    # Update status
+    imageStats = ImageStatsField(source='*')
 
 
 class WebcamAPISerializer(serializers.Serializer):

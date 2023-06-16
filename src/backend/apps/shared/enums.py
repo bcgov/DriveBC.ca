@@ -24,6 +24,7 @@ class Orientation(object):
     SOUTH_WEST = 'SW'
     WEST = 'W'
     NORTH_WEST = 'NW'
+    NULL = 'NULL'
 
 
 ORIENTATION_CHOICES = (
@@ -34,4 +35,6 @@ ORIENTATION_CHOICES = (
     (Orientation.SOUTH, 'South'),
     (Orientation.SOUTH_WEST, 'South West'),
     (Orientation.WEST, 'West'),
+    (Orientation.NORTH_WEST, 'North West'),
+    (Orientation.NULL, 'null'),
 )
