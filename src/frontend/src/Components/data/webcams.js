@@ -16,6 +16,21 @@ export async function getWebcams() {
     });
 }
 
+export async function getWebcam(id) {
+    return fetch('http://localhost:8000/api/webcams/v1/' + id, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((response) => response.json())
+      .then((data) => {
+        return data;
+    })
+      .catch((error) => {
+          //TODO: define a more meaningful error handling event
+          mapWebcamData(defaultWebcams);
+      });
+  }
+
 const mapWebcamData = (webcams) => {
     return webcams.map((webcam) => (
         point([webcam.location.coordinates[0], webcam.location.coordinates[1]], {
