@@ -7,7 +7,7 @@ RUN chown node:root /app
 # Install dependencies
 COPY package.json /app/
 
-RUN npm install --legacy-peer-deps
+RUN npm install
 
 # Add rest of the client code
 COPY . /app/
