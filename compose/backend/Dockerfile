@@ -28,4 +28,4 @@ COPY ./src/backend /app/backend
 ENTRYPOINT ["/entrypoint"]
 
 # Make port 8000 available for the app
-  EXPOSE 8000
+EXPOSE 8000
