@@ -3,6 +3,7 @@
 This page details the steps to set up a local, non-containerized dev environment for our backend Django server.
 
 Using a local python venv is recommended for easier and faster access to server reloads and test modules, as well as direct access to Django management commands through terminal.
+**Verify all changes on the docker container before pushing though.**
 
 Alternatively, our Docker images innately supports hot-reloading on code changes. Refer to the [IDE - Pycharm](#ide-pycharm) section for more info.
 
@@ -69,7 +70,7 @@ Set sources root: in the project panel, right click Drivebc.ca/src/backend -> Ma
 ![pycharm_setup_1](./readme-images/pycharm-setup-1.jpg)
 
 ### <a name="pycharm-venv"></a>Virtual environment
-Set up [virtual environment](https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html#env-requirements). Specifying the 'Dependencies' file should install all required packages in the newly created venv. Otherwise, once the venv is created, run `pip install -r ./src/backend/requirements/development.txt
+Set up a [virtual environment](https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html#env-requirements). Specifying the 'Dependencies' file should install all required packages in the newly created venv. Otherwise, once the venv is created, run `pip install -r ./src/backend/requirements/development.txt
 ` in the Terminal tab on the bottom-left.
 ![pycharm_setup_2](./readme-images/pycharm-setup-2.jpg)
 
