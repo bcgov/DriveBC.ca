@@ -49,14 +49,14 @@ Install [PostGIS](https://postgis.net/documentation/getting_started/#installing-
 [Redis](https://redis.io/docs/getting-started/installation/) in your local environment and edit .env with the right
 hosts and ports.
 
-Alternatively, comment out the 'django' service in docker-compose.yml, run `docker-compose up` in the root folder, and connect to containers
+If Docker containers are preferred instead, comment out the 'django' service in docker-compose.yml, run `docker-compose up` in the root folder, and connect to containers
 mapped to the host machine via localhost:5432/localhost:6379.
 
 ## <a name="ide-pycharm"></a>IDE - PyCharm
 
 This section details setup for PyCharm run configurations on local Python virtual environments.
 
-Alternatively, see [documentation](https://code.visualstudio.com/docs/containers/debug-python) on setting up debugging
+For containerized environments, see [documentation](https://code.visualstudio.com/docs/containers/debug-python) on setting up debugging
 with VS code with  python containers.
 
 ### <a name="pycharm-installation"></a>Installation

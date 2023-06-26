@@ -40,15 +40,15 @@ Secrets and keys:
 - `SECRET_KEY` - Secret key for Django backend to create hashes for various security implications. Set to any value for development, or refer to .env.example on random key generation
 
 Django:
-- `DEBUG`[**](second-asterisk) - Enable or disable Django debug mode, set to "true" for development
+- `DEBUG`[**](#second-asterisk) - Enable or disable Django debug mode, set to "true" for development
 - `DJANGO_ALLOWED_HOSTS` - Comma-separated list of strings representing the host/domain names that this Django site can serve
 - `DJANGO_CORS_ORIGIN_WHITELIST` - Comma-separated list of hosts which are trusted origins for unsafe requests i.e. POST
 - `DJANGO_SUPERUSER_USERNAME` - Django superuser username
 - `DJANGO_SUPERUSER_EMAIL` - Django superuser email
 - `DJANGO_SUPERUSER_PASSWORD` - Django superuser password
-- `DJANGO_CSRF_COOKIE_SECURE`[**](second-asterisk) - See Django [documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-cookie-secure), set to "false" for development
-- `DJANGO_SECURE_SSL_REDIRECT`[**](second-asterisk) - See Django [documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#secure-ssl-redirect), set to "false" for development
-- `DJANGO_SESSION_COOKIE_SECURE`[**](second-asterisk) - See Django [documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#session-cookie-secure), set to "false" for development
+- `DJANGO_CSRF_COOKIE_SECURE`[**](#second-asterisk) - See Django [documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-cookie-secure), set to "false" for development
+- `DJANGO_SECURE_SSL_REDIRECT`[**](#second-asterisk) - See Django [documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#secure-ssl-redirect), set to "false" for development
+- `DJANGO_SESSION_COOKIE_SECURE`[**](#second-asterisk) - See Django [documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#session-cookie-secure), set to "false" for development
 - `DB_NAME` - database name for connection config in django. Use the same value as POSTGRES_DB for development.
 - `DB_USER` - database user for connection config in django. Use the same value as POSTGRES_USER for development.
 - `DB_PASSWORD` - database password for connection config in django. Use the same value as POSTGRES_PASSWORD for development.
