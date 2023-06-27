@@ -1,4 +1,5 @@
-.footer {
+.footer-container {
+  margin-top: 100px;
 
   .landAcknowledgement {
     background-color: rgb(41, 41, 41);
@@ -38,17 +39,25 @@
 
     .flex-container {
       display: flex;
-      gap: 32px;
-      -webkit-box-pack: justify;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 0px;
+
+      @media (min-width: 576px) {
+        flex-direction: row;
+        gap: 32px;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+      }
 
       .contact {
+        flex: 0 0 50%;
         .footer-logo {
           height: 56px;
         }
       }
 
       .more-info {
+        flex: 0 0 auto;
         h2 {
           text-transform: uppercase;
           font-size: 14px;
@@ -64,9 +73,13 @@
           gap: 48px;
 
           li {
-            width: 160px;
+            width: unset;
             margin-bottom: 16px;
             text-decoration: underline;
+
+            @media (min-width: 992px) {
+              width: 160px;
+            }
           }
         }
       }
