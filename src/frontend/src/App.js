@@ -8,7 +8,21 @@ import MapPage from './pages/MapPage';
 import CamerasPage from './pages/CamerasPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
 
+import { initws } from './websocket'
+
 function App() {
+  let ws = initws()
+  ws.onmessage = function(e){
+    console.log(e)
+  }
+
+  ws.onopen = function () {
+    ws.send(JSON.stringify({
+      action: "subscribe_to_webcam_activity",
+      request_id: new Date().getTime()
+    }))
+  }
+
   return (
     <div className="App">
       <Header />

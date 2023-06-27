@@ -4,6 +4,7 @@ import './CameraList.scss';
 import Container from 'react-bootstrap/Container';
 import WebcamCard from'./WebcamCard.js';
 import InfiniteScroll from "react-infinite-scroll-component";
+import { getws } from './../../websocket'
 
 export default function CameraList() {
   const [webcams, setWebcams] = useState({});
@@ -31,6 +32,8 @@ export default function CameraList() {
   }
 
   useEffect(() => {
+    let ws = getws()
+
     if (!webcams.length) {
       getCameras();
     }
