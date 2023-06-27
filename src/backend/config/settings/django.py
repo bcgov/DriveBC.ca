@@ -12,6 +12,7 @@ environ.Env.read_env(BASE_DIR / ".env", overwrite=True)
 DEBUG = env("DEBUG")
 SECRET_KEY = env("SECRET_KEY")
 WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = "config.asgi.application"
 
 # Paths and urls
 APPEND_SLASH = True
@@ -87,6 +88,8 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "channels",
+    "daphne",
     "dj_rest_auth",
     "dj_rest_auth.registration",
     "huey.contrib.djhuey",
@@ -99,7 +102,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = ["apps.authentication", "apps.feed", "apps.shared", "apps.webcam"]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS + LOCAL_APPS
 
 # DB and cache
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

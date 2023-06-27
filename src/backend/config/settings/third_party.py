@@ -7,6 +7,16 @@ BASE_DIR = Path(__file__).resolve().parents[4]
 env = environ.Env()
 environ.Env.read_env(BASE_DIR / ".env", overwrite=True)
 
+# Channels
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
 # Django REST
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
