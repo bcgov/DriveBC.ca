@@ -1,11 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useLocation, Link } from "react-router-dom";
-import { getWebcam } from "../Components/data/webcams";
-import "../Components/cameras/CameraList.scss";
-import Container from "react-bootstrap/Container";
-import Card from "react-bootstrap/Card";
-import WebcamCard from "../Components/cameras/WebcamCard.js";
-import PageHeader from "../PageHeader";
+import React, { useEffect, useState, useRef } from 'react';
+import { useLocation, Link } from 'react-router-dom';
+import { getWebcam } from '../Components/data/webcams';
+import Container from 'react-bootstrap/Container';
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
+import Form from 'react-bootstrap/Form';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import Footer from '../Footer.js';
+import '../CameraDetailsPage.scss';
 
 export default function CameraDetailsPage() {
   const [camera, setCamera] = useState(null);
@@ -28,32 +32,75 @@ export default function CameraDetailsPage() {
   const toggleReplay = () => {
     setReplay(!replay);
   };
+  function round(number) {
+    return Math.ceil(number);
+  }
   return (
     <div className="camera-page">
-      <PageHeader title="Camera Details" description=""></PageHeader>
+      <div className="page-header">
+        <Container>
+          <Link to="/CamerasPage" className="back-link"><FontAwesomeIcon icon={faArrowLeft} />Back to web camera list</Link>
+        </Container>
+      </div>
       <div>
-      <Link to="/CamerasPage">Back to web camera list</Link>
         {camera && (
           <Container>
-            <Card className="webcam-card">
-              <Card.Body>
-                <p className="label bold">{camera.name}</p>
-                <p className="label bold">{camera.caption}</p>
-                <p className="label">Highway {camera.highway}</p>
-                <p className="label">Elevation: {camera.Elevation}</p>
-                <div className="card-img-box">
-                    {replay ? <Card.Img variant="top" src={camera.links.currentImage} /> :  <Card.Img variant="top" src={camera.links.replayTheDay} />}
+            <div className="camera-details">
+              <div className="camera-details__description">
+                <h2>{camera.name}</h2>
+                <p className=".body--large">{camera.caption}</p>
+              </div>
+              <div className="camera-details__more">
+                <div className="camera-details__more__hwy">
+                <img className="hwy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/BC-1_%28TCH%29.svg/150px-BC-1_%28TCH%29.svg.png" />
+                  <p className="label--more">Trans Canada</p>
                 </div>
-                <p className="label">
-                  This camera updates its image approximately every{" "}
-                  {camera.update_period_mean / 60} minutes
-                </p>
-                <button onClick={toggleReplay}>Replay the day</button>
-              </Card.Body>
-            </Card>
+                <div className="camera-details__more__elevation">
+                  <p className="elevation"><span className="number">{camera.elevation}</span>m</p>
+                  <p className="label--more">Elevation</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="divider"></div>
+
+            <p className="bold">
+              This camera updates its image approximately every {round(camera.update_period_mean / 60)} minutes
+            </p>
+
+            <div className="camera-imagery">
+              <Tabs>
+                <Tab eventKey="webcam" title="Current web camera">
+                  <div className="replay-div">
+                    <div className="next-update">
+                      <p><FontAwesomeIcon icon={faArrowRotateRight} />Next update: TBD</p>
+                    </div>
+                    <Form className="replay-the-day">
+                      <Form.Check
+                        onChange={toggleReplay}
+                        type="switch"
+                        id="replay-toggle"
+                        label="Replay the day"
+                      />
+                    </Form>
+                  </div>
+                  <div className="card-img-box">
+                    {replay ? <img src={camera.links.imageSource} /> :  <img src={camera.links.replayTheDay} />}
+                  </div>
+                </Tab>
+                <Tab eventKey="nearby" title="Nearby">
+                  <div className="replay-div">
+                  </div>
+                  <div className="card-img-box">
+                    <img src="https://placehold.co/900x900" />
+                  </div>
+                </Tab>
+              </Tabs>
+            </div>
           </Container>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

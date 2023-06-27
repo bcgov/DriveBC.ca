@@ -2,7 +2,7 @@ import { point } from '@turf/helpers';
 import defaultWebcams from '../__tests__/test_data/webcam_results_five_set.json'
 
 export async function getWebcams() {
-  return fetch('http://localhost:8000/api/webcams/v1/', {
+  return fetch('http://localhost:8000/api/webcams/', {
     headers: {
       'Content-Type': 'application/json'
     }
@@ -17,7 +17,7 @@ export async function getWebcams() {
 }
 
 export async function getWebcam(id) {
-    return fetch('http://localhost:8000/api/webcams/v1/' + id, {
+    return fetch('http://localhost:8000/api/webcams/' + id, {
       headers: {
         'Content-Type': 'application/json'
       }

@@ -7,7 +7,7 @@ import twitter from './images/twitter.svg';
 
 export default function Footer() {
   return (
-    <div className="footer">
+    <div className="footer-container">
       <div className="landAcknowledgement">
         <Container>
           <p>The B.C. Public Service acknowledges the territories of First Nations around B.C. and is grateful to carry out our work on these lands. We acknowledge the rights, interests, priorities, and concerns of all Indigenous Peoples - First Nations, Métis, and Inuit - respecting and acknowledging their distinct cultures, histories, rights, laws, and governments.</p>
