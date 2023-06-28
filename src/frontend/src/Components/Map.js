@@ -159,7 +159,7 @@ export default function MapWrapper() {
     mapRef.current.addOverlay(popup);
 
     mapRef.current.once("loadend", async () => {
-      const campoints = await getWebcams();
+      const { webcamData } = await getWebcams();
       const evpoints = await getEvents();
       layers.current["webcamsLayer"] = new VectorLayer({
         classname: "webcams",
@@ -171,8 +171,8 @@ export default function MapWrapper() {
             loader: function (extent, resolution, projection) {
               var vectorSource = this;
               vectorSource.clear();
-              if (campoints) {
-                campoints.forEach((feature) => {
+              if (webcamData) {
+                webcamData.forEach((feature) => {
                   //Build a new OpenLayers feature
                   var olGeometry = new Point([
                     feature.properties.coords.lng,
