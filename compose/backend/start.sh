@@ -11,4 +11,6 @@ python manage.py createsuperuser \
     --username $DJANGO_SUPERUSER_USERNAME \
     --email $DJANGO_SUPERUSER_EMAIL || true
 
+python manage.py populate_webcams
+
 python manage.py runserver 0.0.0.0:8000
