@@ -17,7 +17,6 @@
   .camera-details {
     display: flex;
     flex-direction: column;
-
     
     @media (min-width: 992px) {
       flex-direction: row;
@@ -25,27 +24,39 @@
     }
 
     &__description {
+      h2 {
+        margin-bottom: 1em;
+      }
+
       .body--large {
-        margin-bottom: 0;
+        margin-bottom: 2em;
+
+        @media (min-width: 992px) {
+          margin-bottom: 0;
+        }
       }
     }
 
     &__more {
       display: flex;
       justify-content: space-between;
-      margin: 0 40px;
-      gap: 60px;
+      margin: 0;
 
       @media (min-width: 576px) {
-        margin: 0;
         justify-content: flex-start;
+        gap: 60px;
       }
 
       &__hwy, &__elevation {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-end;
+
+        .label--more {
+          margin-top: 1em;
+          white-space: nowrap;
+        }
       }
 
       &__hwy {
@@ -77,6 +88,8 @@
   }
 
   .camera-imagery {
+    max-width: 518px;
+    margin: 0 auto;
 
     .nav-tabs {
       border: none;
@@ -85,6 +98,11 @@
         .nav-link {
           color: $Type-Primary;
           border: none;
+          font-size: 0.875em;
+
+          svg {
+            margin-right: 8px;
+          }
 
           &.active {
             border-bottom: 2px solid $BC-Blue;
@@ -95,10 +113,15 @@
 
     .tab-content {
       & > .tab-pane {
-        margin-top: 36px;
+        margin-top: 24px;
 
         .card-img-box {
-          height: 350px;
+          margin: 0 -16px;
+
+          @media (min-width: 576px) {
+            margin: 0;
+          }
+
           img {
             width: 100%;
             height: 100%;
@@ -110,8 +133,21 @@
 
     .replay-div {
       display: flex;
-      justify-content: space-between;
-      height: 44px;
+      flex-direction: column;
+      align-items: flex-start;
+
+      @media (min-width: 420px) {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .next-update, .replay-the-day {
+        margin-bottom: 0.5em;
+
+        @media (min-width: 576px) {
+          margin-bottom: 0;
+        }
+      }
 
       .next-update {
         height: 24px;
@@ -124,6 +160,7 @@
         border-radius: 12px;
 
         svg {
+          font-size: 0.625em;
           margin-right: 8px;
         }
 
@@ -149,15 +186,72 @@
             height: 20px;
             margin-right: 8px;
           }
+
+          .form-check-label {
+            font-size: 0.875em;
+            white-space: nowrap;
+
+            @media (min-width: 576px) {
+              font-size: 1em;
+            }
+          }
         }
       }  
     }
 
+    //Responsive Tabs
+    .tab-content {
+      .tab-pane {
+        .replay-div {
+          height: 64px;
+        }
+        .card-img-box {
+          height: 400px;
+        }
+
+        &:last-of-type {
+          .replay-div {
+            height: 0;
+          }
+          .card-img-box {
+            height: 464px;
+          }
+        }
+
+        @media (min-width: 420px) {
+          .replay-div {
+            height: 44px;
+          }
+          &:last-of-type {
+            .card-img-box {
+              height: 444px;
+            }
+          }
+        }
+
+        @media (min-width: 992px) {
+          &, &:last-of-type {
+            .replay-div {
+              height: 44px;
+            }
+            .card-img-box {
+              height: 400px;
+            }
+          }
+        }
+      }
+    }
+
+
     //Desktop view without tabs
-    @media (min-width: 768px) {
+    @media (min-width: 992px) {
+      max-width: unset;
+      margin: 0;
+
       .nav-tabs {
         display: none;
       }
+
       .tab-content {
         display: flex;
 

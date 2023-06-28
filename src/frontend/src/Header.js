@@ -21,7 +21,7 @@ export default function Header() {
 							<img className="header-logo" src={logo} alt="Government of British Columbia" />
 						</a>
 					</Navbar.Brand>
-					<div className="divider"></div>
+					<div className="nav-divider"></div>
 					<Navbar.Collapse id="basic-navbar-nav">
 					<Nav className="me-auto">
 						<LinkContainer to="/">
