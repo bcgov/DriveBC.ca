@@ -16,8 +16,8 @@
 
 $primary: $BC-Blue;
 $secondary: $BC-Yellow;
-$success: #2E8540;
-$danger: #D8292F;
+$success: $Success;
+$danger: $Error;
 
 /* import bootstrap to set changes */
 @import "~bootstrap/scss/bootstrap";

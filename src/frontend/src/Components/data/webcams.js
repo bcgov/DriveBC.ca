@@ -37,7 +37,7 @@ export async function getWebcam(id) {
 const mapWebcamData = (webcams) => {
     return webcams.map((webcam) => (
         point([webcam.location.coordinates[0], webcam.location.coordinates[1]], {
-          url: webcam.links.currentImage,
+          url: webcam.links.imageSource,
           id: webcam.id,
           name: webcam.name,
           highway: webcam.highway,
@@ -47,6 +47,10 @@ const mapWebcamData = (webcams) => {
             lng: webcam.location.coordinates[0],
             lat: webcam.location.coordinates[1]
           },
+          marked_stale: webcam.marked_stale,
+          marked_delayed: webcam.marked_delayed,
+          is_on: webcam.is_on,
+          timestamp: webcam.last_update_modified
         }, { id: webcam.id })
       ))
 }

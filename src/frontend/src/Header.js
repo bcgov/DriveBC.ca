@@ -25,10 +25,7 @@ export default function Header() {
 					<Navbar.Collapse id="basic-navbar-nav">
 					<Nav className="me-auto">
 						<LinkContainer to="/">
-						<Nav.Link>Home</Nav.Link>
-						</LinkContainer>
-						<LinkContainer to="/StylesPage">
-							<Nav.Link>Styleguide</Nav.Link>
+						<Nav.Link>Map</Nav.Link>
 						</LinkContainer>
 						<LinkContainer to="/CamerasPage">
 							<Nav.Link>Cameras</Nav.Link>
