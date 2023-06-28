@@ -5,9 +5,28 @@
     &:nth-of-type(even) {
       background-color: $Grey10;
     }
-    .highway-name {
-      font-weight: 400;
-      margin-bottom: 1em;;
+    .highway-title {
+      margin-bottom: 1em;
+      display: flex;
+      align-items: center;
+
+      .highway-shield {
+        padding: 13px 0;
+        padding-right: 12px;
+        border-right: 1px solid $Grey40;
+        img {
+          height: 24px;
+        }
+      }
+      .highway-name {
+        margin-left: 12px;
+        &__number, &__alias {
+          margin-bottom: 0;
+        }
+        &__alias {
+          color: #00674E;
+        }
+      }
     }
   }
 
@@ -21,6 +40,10 @@
 
     @media (min-width: 576px) {
       grid-template-columns: repeat(2, 1fr );
+    }
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr );
     }
 
     @media (min-width: 992px) {

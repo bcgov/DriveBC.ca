@@ -52,7 +52,15 @@ export default function CameraList() {
         {Object.entries(webcams).map(([highway, cameras]) => (
           <div className="highway-group" key={highway}>
             <Container>
-              <h2 className="highway-name">Highway {highway}</h2>
+              <div className="highway-title">
+              <div className="highway-shield">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/BC-1_%28TCH%29.svg/150px-BC-1_%28TCH%29.svg.png" />
+              </div>
+              <div className="highway-name">
+                <p className="highway-name__number">Highway {highway}</p>
+                <h2 className="highway-name__alias">Trans Canada</h2>
+              </div>
+            </div>
               <div className="webcam-group">
                 {cameras.map((camera, id) => (
                   <WebcamCard camera={camera} className="webcam" key={id}>

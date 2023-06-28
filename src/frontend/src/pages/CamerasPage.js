@@ -1,6 +1,6 @@
 import React from 'react';
 import CameraList from '../Components/cameras/CameraList';
-import PageHeader from "../PageHeader";
+import PageHeader from '../PageHeader';
 
 export default function CameraPage() {
   return (
