@@ -1,15 +1,18 @@
 import { point } from '@turf/helpers';
 import defaultWebcams from '../__tests__/test_data/webcam_results_five_set.json'
 
-export async function getWebcams() {
-  return fetch('http://localhost:8000/api/webcams/', {
+export function getWebcams(url) {
+  return fetch(url ? url : 'http://localhost:8000/api/webcams/', {
     headers: {
       'Content-Type': 'application/json'
     }
   }).then((response) => response.json())
-    .then((data) => (
-       mapWebcamData(data.results)
-    ))
+    .then((data) => {
+       return {
+         webcamNextUrl: data.next,
+         webcamData: mapWebcamData(data.results)
+       }
+    })
     .catch((error) => {
         //TODO: define a more meaningful error handling event
         mapWebcamData(defaultWebcams);
