@@ -13,11 +13,10 @@
     .card-img-box {
       position: relative;
       overflow: hidden;
-      margin-bottom: 12px;
-      height: 200px;
+      height: 300px;
 
       @media (min-width: 992px) {
-        height: 180px;
+        height: 160px;
       }
 
       img.card-img-top {
@@ -92,6 +91,28 @@
     
     .label {
       margin-bottom: 0.5em;
+    }
+
+    .timestamp {
+      background-color: $Black;
+      padding: 0 10px;
+      margin-bottom: 1em;
+      display: flex;
+      justify-content: space-between;
+
+      p {
+        color: $White;
+        font-size: 0.625em;
+        margin-bottom: 0;
+      }
+      
+      .driveBC {
+        font-family: serif;
+        span {
+          color: $BC-Yellow;
+        }
+        margin-right: 10px;
+      }
     }
   }
 

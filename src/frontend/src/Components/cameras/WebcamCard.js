@@ -99,10 +99,13 @@ export default function WebcamCard({ camera }) {
         </div>
         }
         </div>
+        <div className="timestamp">
+          <p className="driveBC">Drive<span>BC</span></p>
+          <p className="label">{last_updated_time_formatted}</p>
+        </div>
+        {/* <p>Last updated {lastUpdateMin.toString()} minutes ago</p> */}
         <p className="label bold">{camera.properties.name}</p>
         <p className="label">{camera.properties.caption}</p>
-        <p className="label bold">{last_updated_time_formatted}</p>
-        <p>Last updated {lastUpdateMin.toString()} minutes ago</p>
       </Card.Body>
       <Button variant="primary">View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
     </Card>
