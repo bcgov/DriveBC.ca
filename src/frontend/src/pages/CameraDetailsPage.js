@@ -16,7 +16,18 @@ import '../CameraDetailsPage.scss';
 export default function CameraDetailsPage() {
   const [camera, setCamera] = useState(null);
   const [replay, setReplay] = useState(true);
+  const [nextUpdate, setNextUpdate] = useState(null);
+
   const { state } = useLocation();
+
+  const datetime_format = {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  };
+  
   const cameraTab = <FontAwesomeIcon icon={faVideo} />
   const nearby = <FontAwesomeIcon icon={faMagnifyingGlassLocation} />
   
@@ -24,21 +35,36 @@ export default function CameraDetailsPage() {
     async function getCamera(state) {
       const retrievedCamera = await getWebcam(state);
       setCamera(retrievedCamera);
+
+      const next_update_time = addSeconds(new Date(retrievedCamera.last_update_modified), retrievedCamera.update_period_mean);
+      const next_update_time_formatted = new Intl.DateTimeFormat("en-US", datetime_format).format(next_update_time);
+      setNextUpdate(next_update_time_formatted);
     }
+
     if (!camera) {
       getCamera(state);
     }
+
     return () => {
       //unmounting, so revert camera to null
       setCamera(null);
     };
   }, []);
+
   const toggleReplay = () => {
     setReplay(!replay);
   };
+
+  function addSeconds(date, seconds) {
+    date.setSeconds(date.getSeconds() + seconds);
+
+    return date;
+  }
+
   function round(number) {
     return Math.ceil(number);
   }
+
   return (
     <div className="camera-page">
       <div className="page-header">
@@ -77,8 +103,7 @@ export default function CameraDetailsPage() {
                 <Tab eventKey="webcam" title={<span>{cameraTab} Current web camera</span>} >
                   <div className="replay-div">
                     <div className="next-update">
-                      <FontAwesomeIcon icon={faArrowRotateRight} />
-                      <p>Next update attempt: 12:00pm</p>
+                      <p><FontAwesomeIcon icon={faArrowRotateRight} />Next update attempt: {nextUpdate}</p>
                     </div>
                     <Form className="replay-the-day">
                       <Form.Check

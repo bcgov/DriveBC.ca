@@ -7,7 +7,7 @@ import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faVideoSlash } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 
 export default function WebcamCard({ camera }) {
   const stale = camera.properties.marked_stale ? "stale" : "";
@@ -24,6 +24,32 @@ export default function WebcamCard({ camera }) {
     e.stopPropagation();
     setShow(!show);
   }
+
+  // Last updated time
+  const datetime_format = {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  };
+
+  const last_updated_time = new Date(camera.properties.timestamp);
+  const last_updated_time_formatted = new Intl.DateTimeFormat("en-US", datetime_format).format(last_updated_time);
+  function get_last_update_diff() {
+    return Math.trunc((new Date() - last_updated_time) / (1000 * 60));
+  }
+
+  const [lastUpdateMin,setLastUpdateMin] = useState(get_last_update_diff());
+
+  useEffect(() => {
+    var timer = setInterval(() => setLastUpdateMin(get_last_update_diff()), 60000)
+    return function cleanup() {
+      clearInterval(timer)
+    }
+  });
+
+  // Rendering
   return (
     <Card className={`webcam-card ${stale} ${delayed} ${unavailable}`}>
       <Card.Body onClick={handleClick}>
@@ -73,9 +99,13 @@ export default function WebcamCard({ camera }) {
         </div>
         }
         </div>
+        <div className="timestamp">
+          <p className="driveBC">Drive<span>BC</span></p>
+          <p className="label">{last_updated_time_formatted}</p>
+        </div>
+        {/* <p>Last updated {lastUpdateMin.toString()} minutes ago</p> */}
         <p className="label bold">{camera.properties.name}</p>
         <p className="label">{camera.properties.caption}</p>
-        <p className="label bold">{camera.properties.timestamp}</p>
       </Card.Body>
       <Button variant="primary">View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
     </Card>
