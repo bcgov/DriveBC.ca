@@ -79,14 +79,14 @@
 		}
 	}
 
-	.divider {
+	.nav-divider {
 		border: 1px solid $Divider;
 		margin: 0.5rem;
 		height: 38px;
-		visibility: hidden;
+		display: none;
 
 		@media (min-width: 992px) {
-			visibility: visible;
+			display: block;
 		}
 	}
 

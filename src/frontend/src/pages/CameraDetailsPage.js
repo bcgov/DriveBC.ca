@@ -8,6 +8,8 @@ import Form from 'react-bootstrap/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faVideo } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons';
 import Footer from '../Footer.js';
 import '../CameraDetailsPage.scss';
 
@@ -15,7 +17,9 @@ export default function CameraDetailsPage() {
   const [camera, setCamera] = useState(null);
   const [replay, setReplay] = useState(true);
   const { state } = useLocation();
-
+  const cameraTab = <FontAwesomeIcon icon={faVideo} />
+  const nearby = <FontAwesomeIcon icon={faMagnifyingGlassLocation} />
+  
   useEffect(() => {
     async function getCamera(state) {
       const retrievedCamera = await getWebcam(state);
@@ -48,7 +52,7 @@ export default function CameraDetailsPage() {
             <div className="camera-details">
               <div className="camera-details__description">
                 <h2>{camera.name}</h2>
-                <p className=".body--large">{camera.caption}</p>
+                <p className="body--large">{camera.caption}</p>
               </div>
               <div className="camera-details__more">
                 <div className="camera-details__more__hwy">
@@ -64,16 +68,17 @@ export default function CameraDetailsPage() {
 
             <div className="divider"></div>
 
-            <p className="bold">
+            <p className="camera-update bold">
               This camera updates its image approximately every {round(camera.update_period_mean / 60)} minutes
             </p>
 
             <div className="camera-imagery">
               <Tabs>
-                <Tab eventKey="webcam" title="Current web camera">
+                <Tab eventKey="webcam" title={<span>{cameraTab} Current web camera</span>} >
                   <div className="replay-div">
                     <div className="next-update">
-                      <p><FontAwesomeIcon icon={faArrowRotateRight} />Next update: TBD</p>
+                      <FontAwesomeIcon icon={faArrowRotateRight} />
+                      <p>Next update attempt: 12:00pm</p>
                     </div>
                     <Form className="replay-the-day">
                       <Form.Check
@@ -88,7 +93,7 @@ export default function CameraDetailsPage() {
                     {replay ? <img src={camera.links.imageSource} /> :  <img src={camera.links.replayTheDay} />}
                   </div>
                 </Tab>
-                <Tab eventKey="nearby" title="Nearby">
+                <Tab eventKey="nearby" title={<span>{nearby}Nearby</span>}>
                   <div className="replay-div">
                   </div>
                   <div className="card-img-box">
