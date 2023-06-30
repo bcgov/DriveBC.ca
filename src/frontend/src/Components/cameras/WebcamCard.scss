@@ -19,7 +19,7 @@
         height: 160px;
       }
 
-      img.card-img-top {
+      .card-img{
         height: 100%;
         width: 100%;
         object-fit: cover;
@@ -147,7 +147,7 @@
 
     .card-body {
       
-      .card-img-top {
+      .card-img {
         transform: scale(1.25);
       }
     }
