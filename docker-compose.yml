@@ -4,6 +4,8 @@ x-function: &backend
   build:
     context: .
     dockerfile: ./compose/backend/Dockerfile
+    args:
+      DEBUG_BUILD: true
 
   volumes:
     - ./src/backend:/app/backend
@@ -27,9 +29,10 @@ services:
       - "8000:8000"
     command: /start.sh
 
-  # static:
-  #   container_name: static
-  #   command: npm start
+  tasks:
+    <<: *backend
+    container_name: tasks
+    command: /start_tasks.sh
 
   node:
     env_file: .env
@@ -37,6 +40,8 @@ services:
     build:
       context: ./src/frontend
       dockerfile: ../../compose/frontend/Dockerfile
+      args:
+        DEBUG_BUILD: true
     stdin_open: true
     tty: true
     ports:

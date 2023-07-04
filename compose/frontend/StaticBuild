@@ -1,0 +1,42 @@
+# Use an official node runtime as a parent image
+FROM node:latest AS buildnode
+
+WORKDIR /app/
+RUN chown node:root /app
+
+# Install dependencies
+COPY ./src/frontend/package.json /app/
+
+RUN npm install
+
+# Add rest of the client code
+COPY ./src/frontend /app/
+RUN chown node:root /app/node_modules
+
+# OpenShift runs as node, not as root (while docker runs as root), so need to
+# ensure running user can write to its home directory--without setting this,
+# home is /, so node can't create a cache dir
+ENV HOME /home/node
+
+ARG API_HOST
+ENV REACT_APP_API_HOST=${API_HOST}
+
+RUN npm run build
+
+FROM nginx
+
+EXPOSE 3000
+
+RUN touch /run/nginx.pid
+RUN chmod -R 777 /run /var/log/nginx /var/cache/nginx
+
+COPY ./compose/frontend/default.conf /etc/nginx/conf.d
+# COPY nginx.conf /etc/nginx
+COPY --from=buildnode /app/build /usr/share/nginx/html
+
+ARG DEBUG_BUILD=false
+
+# Add debugging tools into builds if enabled
+RUN if [ $DEBUG_BUILD = true ]; then \
+  apt-get install -y jq vim procps less; \
+fi

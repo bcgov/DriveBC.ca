@@ -5,19 +5,21 @@ WORKDIR /app/
 RUN chown node:root /app
 
 # Install dependencies
-COPY package.json /app/
+COPY ./src/frontend/package.json /app/
 
 RUN npm install
 
 # Add rest of the client code
-COPY . /app/
+COPY ./src/frontend /app/
 RUN chown node:root /app/node_modules
 
 EXPOSE 3000
 
-# OpenShift runs as node, not as root (while docker runs as root), so need to
-# ensure running user can write to its home directory--without setting this,
-# home is /, so node can't create a cache dir
-ENV HOME /home/node
+ARG DEBUG_BUILD=false
+
+# Add debugging tools into builds if enabled
+RUN if [ $DEBUG_BUILD = true ]; then \
+  apt-get install -y jq vim procps less; \
+fi
 
 CMD npm start

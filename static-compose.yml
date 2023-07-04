@@ -1,0 +1,15 @@
+services:
+
+  static:
+    env_file: .env
+    container_name: static
+    build:
+      context: ./src/frontend
+      dockerfile: ../../compose/frontend/StaticBuild
+      args:
+        API_HOST: ${API_HOST:-localhost:8000}
+        DEBUG_BUILD: true
+    stdin_open: true
+    tty: true
+    ports:
+      - "3000:3000"

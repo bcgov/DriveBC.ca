@@ -13,3 +13,42 @@ jobs:
     steps:
     - name: checkout code
       uses: actions/checkout@v3
+
+    - name: build static
+      uses: redhat-actions/buildah-build@v2
+      with:
+        context: .
+        layers: true
+        image: static
+        tags: latest ${{ github.sha }}
+        labels: |
+          app=drivebc
+        containerfiles: ./compose/frontend/StaticBuild
+        build-args:
+          API_HOST=${{ vars.API_HOST }}
+          DEBUG_BUILD=true
+    - name: push to registry
+      uses: redhat-actions/push-to-registry@v2.7
+      with:
+        image: static
+        registry: ${{ secrets.REGISTRY }}
+        username: ${{ secrets.BUILDER_USERNAME }}
+        password: ${{ secrets.BUILDER_TOKEN }}
+
+    - name: build backend
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: django
+        tags: latest ${{ github.sha }}
+        labels: |
+          app=drivebc
+        containerfiles: ./compose/backend/Dockerfile
+        build-args:
+          DEBUG_BUILD=true
+    - name: push to registry
+      uses: redhat-actions/push-to-registry@v2.7
+      with:
+        image: django
+        registry: ${{ secrets.REGISTRY }}
+        username: ${{ secrets.BUILDER_USERNAME }}
+        password: ${{ secrets.BUILDER_TOKEN }}
