@@ -97,7 +97,13 @@ THIRD_PARTY_APPS = [
     "corsheaders",
 ]
 
-LOCAL_APPS = ["apps.authentication", "apps.feed", "apps.shared", "apps.webcam"]
+LOCAL_APPS = [
+    "apps.authentication",
+    "apps.feed",
+    "apps.shared",
+    "apps.event",
+    "apps.webcam",
+]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
