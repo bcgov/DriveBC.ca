@@ -6,16 +6,11 @@ repos:
     -   id: pyupgrade
         args: [--py37-plus, --keep-runtime-typing]
         stages: [commit]
--   repo: https://github.com/ambv/black
-    rev: 22.6.0
-    hooks:
-    -   id: black
-        stages: [commit]
-        exclude: '^backend/\w+/migrations'
 -   repo: https://github.com/pycqa/isort
     rev: 5.12.0
     hooks:
     -   id: isort
+        args: [ "--profile", "black" ]
         stages: [commit]
 -   repo: https://github.com/pycqa/flake8
     rev: 3.9.2
@@ -24,7 +19,6 @@ repos:
         additional_dependencies:
         -   flake8-bugbear==22.7.1
         -   flake8-django==1.1.2
-        -   flake8-isort==4.1.1
         -   flake8-pytest-style==1.6.0
         -   flake8-typing-imports==1.12.0
         args: [ --max-line-length=88 ]

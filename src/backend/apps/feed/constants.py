@@ -1,3 +1,3 @@
 ROUTE_PLANNER = "route_planner"
-WEBCAMS = "webcams"
+WEBCAM = "webcam"
 OPEN511 = "open511"
