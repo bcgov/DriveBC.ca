@@ -34,8 +34,8 @@ EVENT_STATUS_CHOICES = ((EVENT_STATUS.ACTIVE, "Active"),)
 
 
 class EVENT_SEVERITY:
-    MAJOR = "Major"
-    MINOR = "Minor"
+    MAJOR = "MAJOR"
+    MINOR = "MINOR"
 
 
 EVENT_SEVERITY_CHOICES = (

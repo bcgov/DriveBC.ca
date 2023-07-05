@@ -4,7 +4,12 @@ from urllib.parse import urljoin
 
 import httpx
 from apps.feed.constants import OPEN511, ROUTE_PLANNER, WEBCAM
-from apps.feed.serializers import WebcamAPISerializer, WebcamFeedSerializer
+from apps.feed.serializers import (
+    EventAPISerializer,
+    EventFeedSerializer,
+    WebcamAPISerializer,
+    WebcamFeedSerializer,
+)
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
 
@@ -61,27 +66,29 @@ class FeedClient:
         )
         return self._get_response_data_or_raise(response)
 
-    def get_webcam(self, webcam):
-        """Used for getting a single webcam with details."""
+    def get_single_feed(self, dbo, resource_type, resource_name, serializer_cls):
+        """Get data feed for a single object."""
         endpoint = self._get_endpoint(
-            resource_type=WEBCAM, resource_name=f"webcams/{webcam.id}"
+            resource_type=resource_type, resource_name=resource_name + str(dbo.id)
         )
         response_data = self._process_get_request(
-            endpoint, resource_type=WEBCAM, params={}
+            endpoint, resource_type=resource_type, params={}
         )
 
-        serializer = WebcamFeedSerializer(data=response_data)
+        serializer = serializer_cls(data=response_data)
         serializer.is_valid(raise_exception=True)
         return serializer.validated_data
 
-    def get_webcam_list(self):
-        """Used for getting the list of webcams with details."""
-        endpoint = self._get_endpoint(resource_type=WEBCAM, resource_name="webcams")
+    def get_list_feed(self, resource_type, resource_name, serializer_cls):
+        """Get data feed for list of objects."""
+        endpoint = self._get_endpoint(
+            resource_type=resource_type, resource_name=resource_name
+        )
         response_data = self._process_get_request(
-            endpoint, resource_type=WEBCAM, params={}
+            endpoint, resource_type=resource_type, params={}
         )
 
-        serializer = WebcamAPISerializer(data=response_data)
+        serializer = serializer_cls(data=response_data)
 
         try:
             serializer.is_valid(raise_exception=True)
@@ -89,13 +96,29 @@ class FeedClient:
 
         except ValidationError:
             res = []
-            for index, data in enumerate(serializer.data["webcams"]):
-                if serializer.errors["webcams"][index]:
-                    logger.warning(f"Error parsing webcam data for ID {data['id']}")
+            for index, data in enumerate(serializer.data[resource_name]):
+                if serializer.errors[resource_name][index]:
+                    logger.warning(
+                        f"Error parsing {resource_name} data for ID {data['id']}"
+                    )
 
                 else:
                     res.append(data)
 
-            new_serializer = WebcamAPISerializer(data={"webcams": res})
+            new_serializer = serializer_cls(data={resource_name: res})
             new_serializer.is_valid(raise_exception=True)
             return new_serializer.validated_data
+
+    # Webcam
+    def get_webcam(self, webcam):
+        return self.get_single_feed(webcam, WEBCAM, 'webcams/', WebcamFeedSerializer)
+
+    def get_webcam_list(self):
+        return self.get_list_feed(WEBCAM, 'webcams', WebcamAPISerializer)
+
+    # Events
+    def get_event(self, event):
+        return self.get_single_feed(event, OPEN511, 'events/', EventFeedSerializer)
+
+    def get_event_list(self):
+        return self.get_list_feed(OPEN511, 'events', EventAPISerializer)
