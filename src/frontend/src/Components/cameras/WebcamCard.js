@@ -53,52 +53,57 @@ export default function WebcamCard({ camera }) {
   return (
     <Card className={`webcam-card ${stale} ${delayed} ${unavailable}`}>
       <Card.Body onClick={handleClick}>
-        <div className="card-img-box">
-        {!unavailable &&
-          <Card.Img variant="top" src={camera.properties.url} />
+        {!unavailable && !delayed && !stale &&
+          <div className="card-img-box">
+            <img className="card-img" src={camera.properties.url} />
+          </div>
         }
 
-        {!unavailable && delayed &&
-          <div className="card-notification">
-            <div className={"card-banner " + (show ? "hidden" : "bounce") }>
-              <p>Longer than expected delay, displaying last image received.</p>
-              <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
-            </div>
-            <div className={"card-pill " + (show ? "bounce" : "hidden") }  onClick={handleChildClick} >
-              <p>Delayed</p>
-              <FontAwesomeIcon icon={faCircleInfo} />
+        {!unavailable && stale && !delayed &&
+          <div className="card-img-box">
+            <img className="card-img" src={camera.properties.url} />
+            <div className="card-notification">
+              <div className={"card-banner " + (show ? "hidden" : "bounce") }>
+                <p>Unable to retrieve the latest image, we're displaying last image received.</p>
+                <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+              </div>
+              <div className={"card-pill " + (show ? "bounce" : "hidden") }  onClick={handleChildClick} >
+                <p>Stale</p>
+                <FontAwesomeIcon icon={faCircleInfo} />
+              </div>
             </div>
           </div>
         }
 
-        {!unavailable && !delayed && stale &&
-          <div className="card-notification">
-            <div className={"card-banner " + (show ? "hidden" : "bounce") }>
-              <p>Unable to retrieve latest image. Showing last image received.</p>
-              <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+        {!unavailable && stale && delayed &&
+          <div className="card-img-box">
+            <img className="card-img" src={camera.properties.url} />
+            <div className="card-notification">
+              <div className={"card-banner " + (show ? "hidden" : "bounce") }>
+                <p>Experiencing longer than expected delay, displaying last image received.</p>
+                <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+              </div>
+              <div className={"card-pill " + (show ? "bounce" : "hidden") }  onClick={handleChildClick} >
+                <p>Delayed</p>
+                <FontAwesomeIcon icon={faCircleInfo} />
             </div>
-            <div className={"card-pill " + (show ? "bounce" : "hidden") }  onClick={handleChildClick} >
-              <p>Stale</p>
-              <FontAwesomeIcon icon={faCircleInfo} />
-            </div>
+          </div>
           </div>
         }
 
         {unavailable &&
-          <div className="card-notification">
-            <div className="card-pill">
-              <p>Unavailable</p>
+          <div className="card-img-box">
+            <div className="card-notification">
+              <div className="card-pill">
+                <p>Unavailable</p>
+              </div>
+            </div>
+            <div className="unavailable-message">
+              <FontAwesomeIcon icon={faVideoSlash} />
+              <p>This traffic camera image is temporarily unavailable. Please check again later.</p>
             </div>
           </div>
         }
-
-        {unavailable &&
-        <div className="unavailable-message">
-          <FontAwesomeIcon icon={faVideoSlash} />
-          <p>This traffic camera image is temporarily unavailable. Please check again later.</p>
-        </div>
-        }
-        </div>
         <div className="timestamp">
           <p className="driveBC">Drive<span>BC</span></p>
           <p className="label">{last_updated_time_formatted}</p>

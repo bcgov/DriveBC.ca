@@ -45,6 +45,7 @@ class ImageStatsField(serializers.Field):
         res = {
             "marked_stale": data["markedStale"],
             "marked_delayed": data["markedDelayed"],
+            "is_on": data["isOn"],
             "last_update_attempt": parse_and_localize_time_str(data["lastAttempt"]['time']),
             "last_update_modified": parse_and_localize_time_str(data["lastModified"]['time']),
             "update_period_mean": data["updatePeriodMean"],

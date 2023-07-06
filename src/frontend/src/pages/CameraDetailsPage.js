@@ -114,9 +114,32 @@ export default function CameraDetailsPage() {
                       />
                     </Form>
                   </div>
-                  <div className="card-img-box">
-                    {replay ? <img src={camera.links.imageSource} /> :  <img src={camera.links.replayTheDay} />}
-                  </div>
+                  {camera.is_on && !camera.marked_stale && !camera.marked_delayed &&
+                    <div className="card-img-box">
+                      {replay ? <img src={camera.links.imageSource} /> :  <img src={camera.links.replayTheDay} />}
+                    </div>
+                  }
+
+                  {camera.is_on && camera.marked_stale && !camera.marked_delayed &&
+                    <div className="card-img-box">
+                      {replay ? <img src={camera.links.imageSource} /> :  <img src={camera.links.replayTheDay} />}
+                      <p>Unable to retrieve the latest image, we're displaying last image received</p>
+                    </div>
+                  }
+
+                  {camera.is_on && camera.marked_delayed &&
+                    <div className="card-img-box">
+                      {replay ? <img src={camera.links.imageSource} /> :  <img src={camera.links.replayTheDay} />}
+                      <p>Experiencing longer than expected delay, displaying last image received</p>
+                    </div>
+                  }
+                  
+                  
+                  {!camera.is_on &&
+                    <div className="card-img-box">
+                      <p>Unable to communicate with web camera, image is unavailable</p>
+                    </div>
+                  }
                 </Tab>
                 <Tab eventKey="nearby" title={<span>{nearby}Nearby</span>}>
                   <div className="replay-div">
