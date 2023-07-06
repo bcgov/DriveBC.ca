@@ -4,6 +4,11 @@ import './CameraList.scss';
 import Container from 'react-bootstrap/Container';
 import WebcamCard from'./WebcamCard.js';
 import InfiniteScroll from "react-infinite-scroll-component";
+import BCHwyCrest1 from '../../images/BCHwyCrest1.svg';
+import BCHwyCrest3 from '../../images/BCHwyCrest3.svg';
+import BCHwyCrest5 from '../../images/BCHwyCrest5.svg';
+import BCHwyCrest16 from '../../images/BCHwyCrest16.svg';
+import BCHwyCrest from '../../images/BCHwyCrest.svg';
 
 export default function CameraList() {
   const [webcams, setWebcams] = useState({});
@@ -53,12 +58,42 @@ export default function CameraList() {
           <div className="highway-group" key={highway}>
             <Container>
               <div className="highway-title">
-              <div className="highway-shield">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/BC-1_%28TCH%29.svg/150px-BC-1_%28TCH%29.svg.png" />
+              <div className="highway-shield-box">
+                {highway == "1" &&
+                  <div className="highway-shield">
+                    <img src={BCHwyCrest1} />
+                  </div>
+                }
+                {highway == "3" &&
+                  <div className="highway-shield">
+                    <img src={BCHwyCrest3} />
+                  </div>
+                }
+                {highway == "5" &&
+                  <div className="highway-shield">
+                    <img src={BCHwyCrest5} />
+                  </div>
+                }
+                {highway == "16" &&
+                  <div className="highway-shield">
+                    <img src={BCHwyCrest16} />
+                  </div>
+                }
+                {highway != "1" && highway != "3" && highway != "5" && highway != "16" &&
+                  <div className="highway-shield">
+                    <span className="highway-shield__number">{highway}</span>
+                    <img src={BCHwyCrest} />
+                  </div>
+                }
               </div>
               <div className="highway-name">
                 <p className="highway-name__number">Highway {highway}</p>
-                <h2 className="highway-name__alias">Trans Canada</h2>
+                {highway == "1" &&
+                  <h2 className="highway-name__alias highway-name__alias--green">Trans Canada</h2>
+                }
+                {highway != "1" &&
+                  <h2 className="highway-name__alias">Highway {highway}</h2>
+                }
               </div>
             </div>
               <div className="webcam-group">

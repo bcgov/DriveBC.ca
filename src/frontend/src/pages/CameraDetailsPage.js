@@ -12,6 +12,11 @@ import { faVideo } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons';
 import Footer from '../Footer.js';
 import '../CameraDetailsPage.scss';
+import BCHwyCrest1 from '../images/BCHwyCrest1.svg';
+import BCHwyCrest3 from '../images/BCHwyCrest3.svg';
+import BCHwyCrest5 from '../images/BCHwyCrest5.svg';
+import BCHwyCrest16 from '../images/BCHwyCrest16.svg';
+import BCHwyCrest from '../images/BCHwyCrest.svg';
 
 export default function CameraDetailsPage() {
   const [camera, setCamera] = useState(null);
@@ -81,10 +86,52 @@ export default function CameraDetailsPage() {
                 <p className="body--large">{camera.caption}</p>
               </div>
               <div className="camera-details__more">
-                <div className="camera-details__more__hwy">
-                <img className="hwy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/BC-1_%28TCH%29.svg/150px-BC-1_%28TCH%29.svg.png" />
-                  <p className="label--more">Trans Canada</p>
-                </div>
+
+                {camera.highway == "1" &&
+                  <div className="camera-details__more__hwy">
+                    <div className="highway-shield">
+                      <img src={BCHwyCrest1} />
+                    </div>
+                    <p className="label--more">Highway {camera.highway}</p>
+                  </div>
+                }
+
+                {camera.highway == "3" &&
+                  <div className="camera-details__more__hwy">
+                    <div className="highway-shield">
+                      <img src={BCHwyCrest3} />
+                    </div>
+                    <p className="label--more">Highway {camera.highway}</p>
+                  </div>
+                }
+
+                {camera.highway == "5" &&
+                  <div className="camera-details__more__hwy">
+                    <div className="highway-shield">
+                      <img src={BCHwyCrest5} />
+                    </div>
+                    <p className="label--more">Highway {camera.highway}</p>
+                  </div>
+                }
+
+                {camera.highway == "16" &&
+                  <div className="camera-details__more__hwy">
+                   <div className="highway-shield">
+                      <img src={BCHwyCrest16} />
+                    </div>
+                    <p className="label--more">Highway {camera.highway}</p>
+                  </div>
+                }
+
+                {camera.highway != "1" && camera.highway != "3" && camera.highway != "5" && camera.highway != "16" &&
+                  <div className="camera-details__more__hwy">
+                    <div className="highway-shield">
+                      <span className="highway-shield__number">{camera.highway}</span>
+                      <img src={BCHwyCrest} />
+                    </div>
+                    <p className="label--more">Highway {camera.highway}</p>
+                  </div>
+                }
                 <div className="camera-details__more__elevation">
                   <p className="elevation"><span className="number">{camera.elevation}</span>m</p>
                   <p className="label--more">Elevation</p>
