@@ -10,12 +10,29 @@
       display: flex;
       align-items: center;
 
-      .highway-shield {
+      .highway-shield-box {
         padding: 13px 0;
         padding-right: 12px;
         border-right: 1px solid $Grey40;
-        img {
-          height: 24px;
+
+        .highway-shield {
+          position: relative;
+
+          &__number {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin-top: 4px;
+            color: $HwyCrest;
+            font-weight: 700;
+            font-size: 0.875em;
+            letter-spacing: -0.05em;
+          }
+
+          img {
+            height: 40px;
+          }
         }
       }
       .highway-name {
@@ -24,7 +41,10 @@
           margin-bottom: 0;
         }
         &__alias {
-          color: #00674E;
+          color: $HwyCrest;
+          &--green {
+            color: #00674E;
+          }
         }
       }
     }
