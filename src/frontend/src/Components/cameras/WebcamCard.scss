@@ -155,7 +155,7 @@
 
   &.unavailable {
     .card-img-box {
-      background-color: #F7E1E3;
+      background-color: $Surface-status-red;
       padding: 18px;
     }
     .card-notification {

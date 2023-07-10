@@ -9,7 +9,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faVideo } from '@fortawesome/free-solid-svg-icons';
+import { faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import Footer from '../Footer.js';
 import '../CameraDetailsPage.scss';
 import BCHwyCrest1 from '../images/BCHwyCrest1.svg';
@@ -141,6 +143,40 @@ export default function CameraDetailsPage() {
 
             <div className="divider"></div>
 
+            {camera.is_on && camera.marked_stale && !camera.marked_delayed &&
+              <div className="camera-message stale">
+                <p className="bold">Unable to retrieve the latest image, we're displaying last image received.</p>
+              </div>
+            }
+
+            {camera.is_on && camera.marked_delayed &&
+              <div className="camera-message delayed">
+                <FontAwesomeIcon icon={faExclamationTriangle} />
+                <p className="bold">There is a significant delay in receiving a new image from the camera.</p>
+                <p>This is sometimes due to:</p>
+                <ul>
+                  <li>Intermittent data signals in the areas</li>
+                  <li>Disruptions from weather</li>
+                  <li>Camera malfunction</li>
+                </ul>
+                <p>The image will be updated automatically as soon as we the camera comes back online and we receive a new image.</p>
+              </div>
+            }
+            
+            {!camera.is_on &&
+              <div className="camera-message unavailable">
+                <FontAwesomeIcon icon={faVideoSlash} />
+                <p className="bold">This camera image is currently unavailable due to technical difficulties.</p>
+                <p>This is sometimes due to:</p>
+                <ul>
+                  <li>Power disruptions to the camera</li>
+                  <li>Vandalism</li>
+                  <li>Signal transmission issues</li>
+                </ul>
+                <p>Our technicians have been alerted and service will resume as soon as possible. Repairs are subject to repair part availability and staff availability to access the location. Web camera function will return once repairs have been completed.</p>
+              </div>
+            }
+            
             <p className="camera-update bold">
               This camera updates its image approximately every {round(camera.update_period_mean / 60)} minutes
             </p>
@@ -161,30 +197,15 @@ export default function CameraDetailsPage() {
                       />
                     </Form>
                   </div>
-                  {camera.is_on && !camera.marked_stale && !camera.marked_delayed &&
+                  {camera.is_on &&
                     <div className="card-img-box">
                       {replay ? <img src={camera.links.imageSource} /> :  <img src={camera.links.replayTheDay} />}
                     </div>
                   }
-
-                  {camera.is_on && camera.marked_stale && !camera.marked_delayed &&
-                    <div className="card-img-box">
-                      {replay ? <img src={camera.links.imageSource} /> :  <img src={camera.links.replayTheDay} />}
-                      <p>Unable to retrieve the latest image, we're displaying last image received</p>
-                    </div>
-                  }
-
-                  {camera.is_on && camera.marked_delayed &&
-                    <div className="card-img-box">
-                      {replay ? <img src={camera.links.imageSource} /> :  <img src={camera.links.replayTheDay} />}
-                      <p>Experiencing longer than expected delay, displaying last image received</p>
-                    </div>
-                  }
-                  
                   
                   {!camera.is_on &&
-                    <div className="card-img-box">
-                      <p>Unable to communicate with web camera, image is unavailable</p>
+                    <div className="card-img-box unavailable">
+                      <FontAwesomeIcon icon={faVideoSlash} />
                     </div>
                   }
                 </Tab>
