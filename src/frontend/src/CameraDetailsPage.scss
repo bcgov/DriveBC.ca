@@ -101,6 +101,57 @@
     }
   }
 
+  .camera-message {
+    border-left: 3px solid;
+    margin-bottom: 2em;
+    padding: 40px;
+
+    p, ul {
+      margin-bottom: 0;
+    }
+
+    p.bold {
+      margin: 0.5em 0 1em;
+    }
+
+    svg {
+      font-size: 1.5em;
+    }
+
+    &.stale {
+      padding: 20px;
+      background-color: $Surface-status-grey;
+      border-color: $Type-status-grey;
+
+      p {
+        color: $Type-status-grey;
+        margin: 0;
+      }
+    }
+
+    &.delayed {
+      background-color: $Surface-status-yellow;
+      border-color: $Type-status-yellow;
+
+      p, ul, svg {
+        color: $Type-status-yellow;
+      }
+    }
+
+    &.unavailable {
+      background-color: $Surface-status-red;
+      border-color: $Type-status-red;
+
+      p, ul, svg {
+        color: $Type-status-red;
+      }
+    }
+  }
+
+  .camera-update {
+    margin-bottom: 0;
+  }
+
   .camera-imagery {
     max-width: 518px;
     margin: 0 auto;
@@ -127,10 +178,18 @@
 
     .tab-content {
       & > .tab-pane {
-        margin-top: 24px;
+        margin-top: 16px;
 
         .card-img-box {
           margin: 0 -16px;
+
+          &.unavailable {
+            background-color: $Type-Disabled;
+            font-size: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
 
           @media (min-width: 576px) {
             margin: 0;
