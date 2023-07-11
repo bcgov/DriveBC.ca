@@ -14,10 +14,8 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 // Components and functions
-import { getAdvisories } from "./data/advisories.js";
 import { getEventPoints } from "./data/events.js";
 import { getWebcams } from "./data/webcams.js";
-import Advisory from "./Advisory.js";
 import Layers from "./Layers.js";
 import Routes from "./Routes.js";
 
