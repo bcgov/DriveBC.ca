@@ -1,29 +1,41 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import { getWebcam } from '../Components/data/webcams';
-import Container from 'react-bootstrap/Container';
-import Tabs from 'react-bootstrap/Tabs';
-import Tab from 'react-bootstrap/Tab';
-import Form from 'react-bootstrap/Form';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// React
+import React, { useContext, useEffect, useRef, useState } from 'react';
+
+// Third party packages
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons';
 import { faVideo } from '@fortawesome/free-solid-svg-icons';
 import { faVideoSlash } from '@fortawesome/free-solid-svg-icons';
-import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons';
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useLocation, Link } from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+
+// Components and functions
+import { getWebcam } from '../Components/data/webcams';
+import { MapContext } from '../App.js';
 import Footer from '../Footer.js';
-import '../CameraDetailsPage.scss';
+
+// Static files
+import BCHwyCrest from '../images/BCHwyCrest.svg';
 import BCHwyCrest1 from '../images/BCHwyCrest1.svg';
 import BCHwyCrest3 from '../images/BCHwyCrest3.svg';
 import BCHwyCrest5 from '../images/BCHwyCrest5.svg';
 import BCHwyCrest16 from '../images/BCHwyCrest16.svg';
-import BCHwyCrest from '../images/BCHwyCrest.svg';
+
+// Styling
+import '../CameraDetailsPage.scss';
 
 export default function CameraDetailsPage() {
   const [camera, setCamera] = useState(null);
   const [replay, setReplay] = useState(true);
   const [nextUpdate, setNextUpdate] = useState(null);
+
+  const { mapContext, setMapContext } = useContext(MapContext);
 
   const { state } = useLocation();
 
@@ -34,10 +46,10 @@ export default function CameraDetailsPage() {
     hour: "numeric",
     minute: "numeric",
   };
-  
+
   const cameraTab = <FontAwesomeIcon icon={faVideo} />
   const nearby = <FontAwesomeIcon icon={faMagnifyingGlassLocation} />
-  
+
   useEffect(() => {
     async function getCamera(state) {
       const retrievedCamera = await getWebcam(state);
@@ -162,7 +174,7 @@ export default function CameraDetailsPage() {
                 <p>The image will be updated automatically as soon as we the camera comes back online and we receive a new image.</p>
               </div>
             }
-            
+
             {!camera.is_on &&
               <div className="camera-message unavailable">
                 <FontAwesomeIcon icon={faVideoSlash} />
@@ -176,7 +188,7 @@ export default function CameraDetailsPage() {
                 <p>Our technicians have been alerted and service will resume as soon as possible. Repairs are subject to repair part availability and staff availability to access the location. Web camera function will return once repairs have been completed.</p>
               </div>
             }
-            
+
             <p className="camera-update bold">
               This camera updates its image approximately every {round(camera.update_period_mean / 60)} minutes
             </p>
@@ -202,7 +214,7 @@ export default function CameraDetailsPage() {
                       {replay ? <img src={camera.links.imageSource} /> :  <img src={camera.links.replayTheDay} />}
                     </div>
                   }
-                  
+
                   {!camera.is_on &&
                     <div className="card-img-box unavailable">
                       <FontAwesomeIcon icon={faVideoSlash} />
