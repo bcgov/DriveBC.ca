@@ -1,49 +1,60 @@
-import React, { useRef, useEffect, useState } from "react";
-import { useDrop } from "react-dnd";
-import Popup from "ol-popup";
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
-import Point from "ol/geom/Point.js";
-import * as ol from "ol";
-import { Icon, Style } from "ol/style.js";
-import ImageWMS from "ol/source/ImageWMS.js";
-import GeoJSON from "ol/format/GeoJSON.js";
-import Map from "ol/Map";
-import View from "ol/View";
-import OSM from "ol/source/OSM.js";
-import TileLayer from "ol/layer/Tile";
-import { Image as ImageLayer } from "ol/layer.js";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import Cluster from "ol/source/Cluster.js";
-import MVT from "ol/format/MVT.js";
-import VectorTileLayer from "ol/layer/VectorTile.js";
-import VectorTileSource from "ol/source/VectorTile.js";
-import { fromLonLat } from "ol/proj";
-import { applyStyle } from "ol-mapbox-style";
-import Advisory from "./Advisory.js";
-import Layers from "./Layers.js";
-import Routes from "./Routes.js";
-import { getEvents } from "./data/events.js";
-import { getWebcams } from "./data/webcams.js";
-import { getAdvisories } from "./data/advisories.js";
-import videoIcon from "../assets/video-solid.png";
-import eventIcon from "../assets/exclamation-triangle-solid.png";
-import Button from 'react-bootstrap/Button';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// React
+import React, { useContext, useRef, useEffect, useState } from "react";
+
+// Third party packages
 import {
   faLocationArrow,
   faPlus,
   faMinus,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useDrop } from "react-dnd";
+import Button from 'react-bootstrap/Button';
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 
+// Components and functions
+import { getAdvisories } from "./data/advisories.js";
+import { getEvents } from "./data/events.js";
+import { getWebcams } from "./data/webcams.js";
+import Advisory from "./Advisory.js";
+import Layers from "./Layers.js";
+import Routes from "./Routes.js";
+
+// OpenLayers
+import { applyStyle } from "ol-mapbox-style";
+import { fromLonLat } from "ol/proj";
+import { Icon, Style } from "ol/style.js";
+import { Image as ImageLayer } from "ol/layer.js";
+import { MapContext } from '../App.js';
+import * as ol from "ol";
+import Cluster from "ol/source/Cluster.js";
+import GeoJSON from "ol/format/GeoJSON.js";
+import ImageWMS from "ol/source/ImageWMS.js";
+import Map from "ol/Map";
+import MVT from "ol/format/MVT.js";
+import OSM from "ol/source/OSM.js";
+import Point from "ol/geom/Point.js";
+import Popup from "ol-popup";
+import TileLayer from "ol/layer/Tile";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import VectorTileLayer from "ol/layer/VectorTile.js";
+import VectorTileSource from "ol/source/VectorTile.js";
+import View from "ol/View";
+
+// Static files
+import eventIcon from "../assets/exclamation-triangle-solid.png";
+import videoIcon from "../assets/video-solid.png";
+
+// Styling
 import "./Map.scss";
 
 export default function MapWrapper() {
+  const { mapContext, setMapContext } = useContext(MapContext);
+
   const mapElement = useRef();
   const mapRef = useRef();
-
-
   const layers = useRef({});
   const mapView = useRef();
   const lng = -120.7862;
@@ -91,7 +102,7 @@ export default function MapWrapper() {
       highwayLayer: new ImageLayer({
         classname: "highway",
         type: "overlay",
-        visible: false,
+        visible: mapContext.visible_layers.highwayLayer,
         source: new ImageWMS({
           url: "https://dev-maps.th.gov.bc.ca/geoV05/hwy/wms",
           serverType: "geoserver",
@@ -101,14 +112,11 @@ export default function MapWrapper() {
           transition: 0,
         }),
       }),
-      tid: Date.now(),
-
-
 
       open511Layer: new ImageLayer({
         className: "open511",
         type: "overlay",
-        visible: false,
+        visible: mapContext.visible_layers.highwayLayer,
         source: new ImageWMS({
           url: "https://dev-maps.th.gov.bc.ca/geoV05/op5/wms",
           params: {
@@ -118,6 +126,8 @@ export default function MapWrapper() {
           transition: 0,
         }),
       }),
+
+      tid: Date.now(),
     };
 
     mapView.current = new View({
@@ -142,7 +152,6 @@ export default function MapWrapper() {
 
     // create map
     mapRef.current = new Map({
-
       target: mapElement.current,
       layers: [
         vectorLayer,
@@ -163,7 +172,7 @@ export default function MapWrapper() {
       const evpoints = await getEvents();
       layers.current["webcamsLayer"] = new VectorLayer({
         classname: "webcams",
-        visible: true,
+        visible: mapContext.visible_layers.webcamsLayer,
         source: new Cluster({
           distance: 35,
           source: new VectorSource({
@@ -219,7 +228,7 @@ export default function MapWrapper() {
 
       layers.current["eventsLayer"] = new VectorLayer({
         classname: "events",
-        visible: true,
+        visible: mapContext.visible_layers.eventsLayer,
         source: new Cluster({
           distance: 35,
           source: new VectorSource({
@@ -299,6 +308,7 @@ export default function MapWrapper() {
             iconClicked = true;
           }
         });
+
       //if it wasn't a webcam icon, check if it was an event
       layers.current["eventsLayer"]
         .getFeatures(e.pixel)
@@ -316,6 +326,7 @@ export default function MapWrapper() {
             iconClicked = true;
           }
         });
+
         //if neither, hide any existing popup
         if(!iconClicked){
           popup.hide();
@@ -389,6 +400,11 @@ export default function MapWrapper() {
 
   function toggleLayer(layer, checked) {
     layers.current[layer].setVisible(checked);
+
+    // Set context and local storage
+    mapContext.visible_layers[layer] = checked;
+    setMapContext(mapContext);
+    localStorage.setItem('mapContext', JSON.stringify(mapContext))
   }
 
   function transformFeature(feature, sourceCRS, targetCRS) {
