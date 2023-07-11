@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { getWebcams } from "../data/webcams";
 import './CameraList.scss';
 import Container from 'react-bootstrap/Container';
@@ -36,9 +36,7 @@ export default function CameraList() {
   }
 
   useEffect(() => {
-    if (!webcams.length) {
       getCameras();
-    }
 
     return () =>{
       //unmounting, so empty list object
@@ -59,39 +57,39 @@ export default function CameraList() {
             <Container>
               <div className="highway-title">
               <div className="highway-shield-box">
-                {highway == "1" &&
+                {highway === "1" &&
                   <div className="highway-shield">
-                    <img src={BCHwyCrest1} />
+                    <img src={BCHwyCrest1} alt="1"/>
                   </div>
                 }
-                {highway == "3" &&
+                {highway === "3" &&
                   <div className="highway-shield">
-                    <img src={BCHwyCrest3} />
+                    <img src={BCHwyCrest3} alt="3"/>
                   </div>
                 }
-                {highway == "5" &&
+                {highway === "5" &&
                   <div className="highway-shield">
-                    <img src={BCHwyCrest5} />
+                    <img src={BCHwyCrest5} alt="5"/>
                   </div>
                 }
-                {highway == "16" &&
+                {highway === "16" &&
                   <div className="highway-shield">
-                    <img src={BCHwyCrest16} />
+                    <img src={BCHwyCrest16} alt="16"/>
                   </div>
                 }
-                {highway != "1" && highway != "3" && highway != "5" && highway != "16" &&
+                {highway !== "1" && highway !== "3" && highway !== "5" && highway !== "16" &&
                   <div className="highway-shield">
                     <span className="highway-shield__number">{highway}</span>
-                    <img src={BCHwyCrest} />
+                    <img src={BCHwyCrest} alt={highway}/>
                   </div>
                 }
               </div>
               <div className="highway-name">
                 <p className="highway-name__number">Highway {highway}</p>
-                {highway == "1" &&
+                {highway === "1" &&
                   <h2 className="highway-name__alias highway-name__alias--green">Trans Canada</h2>
                 }
-                {highway != "1" &&
+                {highway !== "1" &&
                   <h2 className="highway-name__alias">Highway {highway}</h2>
                 }
               </div>
