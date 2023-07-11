@@ -11,7 +11,7 @@ The DriveBC application is composed of several [Docker](https://www.docker.com/)
   - [Prerequisites](#prerequisites)
   - [Pre-commit](#pre-commit) hooks
   - [Backend setup](#backend-setup)
-  - [Frontend setup](#fronend-setup)
+  - [Frontend setup](#frontend-setup)
 
 ---
 
