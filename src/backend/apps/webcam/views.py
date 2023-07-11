@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 
 class WebcamViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Webcam.objects.all().order_by("highway", "highway_cam_order")
+    queryset = Webcam.objects.all().order_by("highway", "highway_cam_order", "id")
     serializer_class = WebcamSerializer
     filterset_fields = ["highway", "region"]
 
