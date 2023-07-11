@@ -1,11 +1,10 @@
 import logging
-
-from django.test import TestCase
 from unittest.mock import MagicMock
 
-from httpx import HTTPStatusError
-
+from apps.event.models import Event
 from apps.webcam.models import Webcam
+from django.test import TestCase
+from httpx import HTTPStatusError
 
 logger = logging.getLogger(__name__)
 
@@ -29,15 +28,16 @@ class MockResponse:
 class BaseTest(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(BaseTest, cls).setUpClass()
+        super().setUpClass()
 
     @classmethod
     def tearDownClass(cls):
-        super(BaseTest, cls).tearDownClass()
+        super().tearDownClass()
 
     def setUp(self):
-        super(BaseTest, self).setUp()
+        super().setUp()
 
     def tearDown(self):
-        super(BaseTest, self).tearDown()
+        super().tearDown()
         Webcam.objects.all().delete()
+        Event.objects.all().delete()
