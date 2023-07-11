@@ -16,11 +16,13 @@ from httpx import HTTPStatusError
 
 class TestWebcamModel(BaseTest):
     def setUp(self):
+        # Normal feed
         webcam_feed_data = open(
             str(Path(__file__).parent) + "/test_data/webcam_feed_list_of_five.json"
         )
         self.mock_webcam_feed_result = json.load(webcam_feed_data)
 
+        # Feed with error in data
         webcam_feed_data_with_errors = open(
             str(Path(__file__).parent)
             + "/test_data/webcam_feed_list_of_five_with_validation_error.json"
@@ -29,6 +31,7 @@ class TestWebcamModel(BaseTest):
             webcam_feed_data_with_errors
         )
 
+        # Parsed python dict
         self.parsed_feed = parsed_feed
 
     def test_populate_webcam_function(self):
@@ -101,7 +104,7 @@ class TestWebcamModel(BaseTest):
             MockResponse(self.mock_webcam_feed_result_with_errors, status_code=200),
         ]
 
-        # Only cams with validation error are omitted
+        # Only cams with validation error(2) are omitted
         populate_all_webcam_data()
         assert Webcam.objects.count() == 4
 
@@ -109,7 +112,7 @@ class TestWebcamModel(BaseTest):
         assert webcam_id_list == [5, 6, 7, 8]
 
     @patch("httpx.get")
-    def test_feed_client_error(self, mock_requests_get):
+    def test_webcam_feed_client_error(self, mock_requests_get):
         mock_requests_get.side_effect = [
             MockResponse({}, status_code=INTERNAL_SERVER_ERROR),
         ]

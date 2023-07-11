@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Event.objects.all()
+    queryset = Event.objects.all().order_by("id")
     serializer_class = EventSerializer
 
     def list(self, request, *args, **kwargs):

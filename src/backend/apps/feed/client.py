@@ -94,12 +94,13 @@ class FeedClient:
             serializer.is_valid(raise_exception=True)
             return serializer.validated_data
 
-        except ValidationError:
+        except (KeyError, ValidationError):
             res = []
             for index, data in enumerate(serializer.data[resource_name]):
                 if serializer.errors[resource_name][index]:
                     logger.warning(
-                        f"Error parsing {resource_name} data for ID {data['id']}"
+                        f"Error parsing {resource_name} data" +
+                        f" for ID {data['id']}" if 'id' in data else ""
                     )
 
                 else:

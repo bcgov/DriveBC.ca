@@ -13,6 +13,7 @@ omit =
         */sandbox.py
         */manage.py
         */venv/*
+        */management/*
 
 [report]
 omit =
