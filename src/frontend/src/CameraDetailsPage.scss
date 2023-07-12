@@ -17,7 +17,7 @@
   .camera-details {
     display: flex;
     flex-direction: column;
-    
+
     @media (min-width: 992px) {
       flex-direction: row;
       justify-content: space-between;
@@ -86,7 +86,7 @@
           line-height: 1;
           color: $BC-Blue;
           margin-bottom: 0;
-  
+
           .number {
             font-size: 4em;
           }
@@ -269,7 +269,7 @@
             }
           }
         }
-      }  
+      }
     }
 
     //Responsive Tabs
@@ -342,6 +342,103 @@
           }
         }
       }
+    }
+  }
+
+  .map-context-wrap {
+    position: relative;
+    top: 0rem;
+    bottom: 0;
+    height: 400px;
+    width: 100%;
+
+    .map {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .map-control {
+      position: absolute;
+      right: 2rem;
+      bottom: 2rem;
+      height: 200px;
+      width: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .map-control button {
+      height: 54px;
+      width: 54px;
+      text-align: center;
+      position: relative;
+      margin: auto;
+      padding: initial;
+      background: #fff;
+    }
+
+    @media screen and (max-width: 729px) {
+      .map-control {
+        right: 14px;
+      }
+    }
+
+    .ol-popup {
+      display: none;
+      position: absolute;
+      background-color: white;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      padding: 0px 0px 2px 0px;
+      border-radius: 4px;
+      border: 1px solid #cccccc;
+      bottom: 20px;
+      left: -50px;
+      min-width: 285px;
+      cursor: default;
+      z-index: -1;
+    }
+    .ol-popup:after, .ol-popup:before {
+      top: 100%;
+      border: solid transparent;
+
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+    .ol-popup:after {
+      border-top-color: white;
+      border-width: 10px;
+      left: 48px;
+      margin-left: -10px;
+    }
+    .ol-popup:before {
+      border-top-color: #cccccc;
+      border-width: 11px;
+      left: 48px;
+      margin-left: -11px;
+    }
+    .ol-popup-closer {
+      font-size: 11px;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      cursor: pointer;
+      color: #FFFFFF;
+    }
+    .ol-popup-closer:after {
+      content: "✖";
+    }
+    .ol-popup-closer:hover {
+      color: #808080;
+    }
+
+    .ol-popup-content {
+      max-width: 100%;
+      resize: horizontal;
+      overflow: hidden;
     }
   }
 }

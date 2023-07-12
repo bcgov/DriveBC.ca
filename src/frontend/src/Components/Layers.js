@@ -1,5 +1,5 @@
 // React
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 
 // Third party packages
 import { faLayerGroup, faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -19,7 +19,7 @@ import terrain from '../assets/terrain.png';
 import './Layers.scss';
 
 export default function Layers({ open, setLayersOpen, toggleLayer}) {
-  const { mapContext, setMapContext } = useContext(MapContext);
+  const { mapContext } = useContext(MapContext);
 
   if (!open) {
     return (

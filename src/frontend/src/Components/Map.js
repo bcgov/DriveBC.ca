@@ -2,16 +2,15 @@
 import React, { useContext, useRef, useEffect, useState } from "react";
 
 // Third party packages
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import Button from "react-bootstrap/Button";
 import {
   faLocationArrow,
   faPlus,
   faMinus,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useDrop } from "react-dnd";
-import Button from 'react-bootstrap/Button';
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
 
 // Components and functions
 import { getEventPoints } from "./data/events.js";
@@ -48,7 +47,7 @@ import videoIcon from "../assets/video-solid.png";
 // Styling
 import "./Map.scss";
 
-export default function MapWrapper() {
+export default function MapWrapper({startLocation, isPreview}) {
   const { mapContext, setMapContext } = useContext(MapContext);
 
   const mapElement = useRef();
@@ -66,22 +65,6 @@ export default function MapWrapper() {
     source: new OSM(),
   });
   osmLayer.setZIndex(400);
-
-  const [{ isOver }, drop] = useDrop(
-    () => ({
-      accept: "pin",
-      drop: (item, monitor) => {
-        const { x, y } = monitor.getClientOffset();
-        const { lat, lng } = mapRef.current.unproject([x, y - 48]);
-        if (item.role === "start") {
-          start.setLngLat([lng, lat]).addTo(mapRef.current);
-        } else {
-          end.setLngLat([lng, lat]).addTo(mapRef.current);
-        }
-      },
-    }),
-    []
-  );
 
   useEffect(() => {
     // initialization hook for the OpenLayers map logic
@@ -126,12 +109,12 @@ export default function MapWrapper() {
 
       tid: Date.now(),
     };
-
+    console.log("start location", startLocation)
     mapView.current = new View({
       projection: "EPSG:3857",
       constrainResolution: true,
-      center: fromLonLat([lng, lat]),
-      zoom: 9,
+      center: startLocation ? fromLonLat(startLocation) : fromLonLat([lng, lat]),
+      zoom: 12,
     });
     //Apply the basemap style from the arcgis resource
     fetch(
@@ -244,7 +227,7 @@ export default function MapWrapper() {
                   //Transfer properties to OpenLayers feature-friendly format
                   var properties = {};
                   properties["id"] = feature.id;
-                  properties["headline"] = feature.properties.route;
+                  properties["headline"] = feature.properties.event_type;
                   properties["status"] = feature.properties.status;
                   properties["description"] = feature.properties.description;
                   properties["event_type"] = feature.properties.description;
@@ -354,17 +337,11 @@ export default function MapWrapper() {
   }
 
   function myLocation() {
+    //TODO: reimpliment this in OpenLayers
     if (!mapRef.current) {
       return;
     }
-    navigator.geolocation.getCurrentPosition((position) => {
-      const pos = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      };
-      mapRef.current.setZoom(14);
-      mapRef.current.setCenter(pos);
-    });
+
   }
 
   function toggleLayers(openLayers) {
@@ -462,25 +439,23 @@ export default function MapWrapper() {
   }
 
   return (
-    <div className="map-wrap" style={{ opacity: isOver ? 0.5 : 1 }} ref={drop}>
+    <div>
       <div ref={mapElement} className="map" />
       <div className="map-control">
-        <Button variant="outline-primary"
-          className="my-location"
-          onClick={myLocation}
-        >
-          <FontAwesomeIcon icon={faLocationArrow} />
-        </Button>
-        <Button variant="outline-primary"
-          className="zoom-in" onClick={zoomIn}>
-          <FontAwesomeIcon icon={faPlus} />
-        </Button>
-        <Button variant="outline-primary"
-          className="zoom-out" onClick={zoomOut}>
-          <FontAwesomeIcon icon={faMinus} />
-        </Button>
-      </div>
-
+      <Button
+        variant="outline-primary"
+        className="my-location"
+        onClick={myLocation}
+      >
+        <FontAwesomeIcon icon={faLocationArrow} />
+      </Button>
+      <Button variant="outline-primary" className="zoom-in" onClick={zoomIn}>
+        <FontAwesomeIcon icon={faPlus} />
+      </Button>
+      <Button variant="outline-primary" className="zoom-out" onClick={zoomOut}>
+        <FontAwesomeIcon icon={faMinus} />
+      </Button>
+    </div>
       <Routes
         open={routesOpen}
         setRoutesOpen={toggleRoutes}

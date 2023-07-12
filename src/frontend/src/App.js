@@ -1,5 +1,5 @@
 // React
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 // Components and functions
@@ -10,10 +10,6 @@ import CameraDetailsPage from './pages/CameraDetailsPage';
 import EventsPage from './pages/EventsPage';
 import ScrollToTop from './Components/ScrollToTop';
 
-// OpenLayers
-import { Image as ImageLayer } from "ol/layer.js";
-import ImageWMS from "ol/source/ImageWMS.js";
-
 // Styling
 import '@bcgov/bc-sans/css/BCSans.css';
 import './App.scss';
@@ -21,16 +17,6 @@ import './styles/variables.scss';
 
 export const MapContext = createContext(null);
 
-// OpenLayers
-import { Image as ImageLayer } from "ol/layer.js";
-import ImageWMS from "ol/source/ImageWMS.js";
-
-// Styling
-import '@bcgov/bc-sans/css/BCSans.css';
-import './App.scss';
-import './styles/variables.scss';
-
-export const MapContext = createContext(null);
 
 function App() {
   function getInitialMapContext() {
