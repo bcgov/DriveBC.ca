@@ -21,6 +21,17 @@ import './styles/variables.scss';
 
 export const MapContext = createContext(null);
 
+// OpenLayers
+import { Image as ImageLayer } from "ol/layer.js";
+import ImageWMS from "ol/source/ImageWMS.js";
+
+// Styling
+import '@bcgov/bc-sans/css/BCSans.css';
+import './App.scss';
+import './styles/variables.scss';
+
+export const MapContext = createContext(null);
+
 function App() {
   function getInitialMapContext() {
     const context = localStorage.getItem('mapContext');
