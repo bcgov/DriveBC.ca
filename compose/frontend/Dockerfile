@@ -5,12 +5,12 @@ WORKDIR /app/
 RUN chown node:root /app
 
 # Install dependencies
-COPY package.json /app/
+COPY ./src/frontend/package.json /app/
 
 RUN npm install
 
 # Add rest of the client code
-COPY . /app/
+COPY ./src/frontend /app/
 RUN chown node:root /app/node_modules
 
 EXPOSE 3000
