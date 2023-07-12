@@ -14,10 +14,8 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 // Components and functions
-import { getAdvisories } from "./data/advisories.js";
-import { getEvents } from "./data/events.js";
+import { getEventPoints } from "./data/events.js";
 import { getWebcams } from "./data/webcams.js";
-import Advisory from "./Advisory.js";
 import Layers from "./Layers.js";
 import Routes from "./Routes.js";
 
@@ -63,7 +61,6 @@ export default function MapWrapper() {
   const end = new maplibregl.Marker({ color: "#009933", draggable: true });
   const [layersOpen, setLayersOpen] = useState(false);
   const [routesOpen, setRoutesOpen] = useState(false);
-  const [advisories, setAdvisories] = useState([]);
 
   const osmLayer = new TileLayer({
     source: new OSM(),
@@ -169,7 +166,7 @@ export default function MapWrapper() {
 
     mapRef.current.once("loadend", async () => {
       const { webcamData } = await getWebcams();
-      const evpoints = await getEvents();
+      const evpoints = await getEventPoints();
       layers.current["webcamsLayer"] = new VectorLayer({
         classname: "webcams",
         visible: mapContext.visible_layers.webcamsLayer,
@@ -247,7 +244,7 @@ export default function MapWrapper() {
                   //Transfer properties to OpenLayers feature-friendly format
                   var properties = {};
                   properties["id"] = feature.id;
-                  properties["headline"] = feature.properties.headline;
+                  properties["headline"] = feature.properties.route;
                   properties["status"] = feature.properties.status;
                   properties["description"] = feature.properties.description;
                   properties["event_type"] = feature.properties.description;
@@ -497,7 +494,6 @@ export default function MapWrapper() {
         toggleLayer={toggleLayer}
       />
 
-      {advisories.length > 0 ? <Advisory advisories={advisories} /> : null}
     </div>
   );
 }

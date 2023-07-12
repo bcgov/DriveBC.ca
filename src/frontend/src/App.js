@@ -7,6 +7,19 @@ import Header from './Header.js';
 import MapPage from './pages/MapPage';
 import CamerasPage from './pages/CamerasPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
+import EventsPage from './pages/EventsPage';
+import ScrollToTop from './Components/ScrollToTop';
+
+// OpenLayers
+import { Image as ImageLayer } from "ol/layer.js";
+import ImageWMS from "ol/source/ImageWMS.js";
+
+// Styling
+import '@bcgov/bc-sans/css/BCSans.css';
+import './App.scss';
+import './styles/variables.scss';
+
+export const MapContext = createContext(null);
 
 // OpenLayers
 import { Image as ImageLayer } from "ol/layer.js";
@@ -38,10 +51,12 @@ function App() {
     <MapContext.Provider value={{ mapContext, setMapContext }}>
       <div className="App">
         <Header />
+        <ScrollToTop/>
         <Routes>
           <Route path="/" element={<MapPage />} />
           <Route path="/cameraspage" element={<CamerasPage />} />
           <Route path="/cameradetailspage" element={<CameraDetailsPage />} />
+          <Route path="/eventspage" element={<EventsPage />} />
         </Routes>
       </div>
     </MapContext.Provider>
