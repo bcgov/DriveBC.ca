@@ -1,7 +1,5 @@
-from django.contrib.gis.db import models
-
-from apps.shared import enums
 from apps.shared.models import BaseModel
+from django.contrib.gis.db import models
 
 
 class Webcam(BaseModel):
@@ -10,14 +8,14 @@ class Webcam(BaseModel):
     caption = models.CharField(max_length=256)
 
     # Location
-    region = models.PositiveSmallIntegerField(choices=enums.REGION_CHOICES)
+    region = models.PositiveSmallIntegerField()
     region_name = models.CharField(max_length=128)
     highway = models.CharField(max_length=32)
-    highway_description = models.CharField(max_length=128, blank=True, null=True)
+    highway_description = models.CharField(max_length=128, blank=True)
     highway_group = models.PositiveSmallIntegerField()
     highway_cam_order = models.PositiveSmallIntegerField()
     location = models.PointField()
-    orientation = models.CharField(max_length=32, choices=enums.ORIENTATION_CHOICES, blank=True, null=True)
+    orientation = models.CharField(max_length=32, blank=True)
     elevation = models.PositiveSmallIntegerField()
 
     # General status
