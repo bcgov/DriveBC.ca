@@ -18,9 +18,8 @@ RUN sed -i 's/\r$//g' /entrypoint && chmod +x /entrypoint
 COPY ./compose/backend/start.sh /
 RUN sed -i 's/\r$//g' /start.sh && chmod +x /start.sh
 
-# COPY ./compose/backend/worker/start /start-worker
-# RUN sed -i 's/\r$//g' /start-worker
-# RUN chmod +x /start-worker
+COPY ./compose/backend/start_tasks.sh /
+RUN sed -i 's/\r$//g' /start_tasks.sh && chmod +x /start_tasks.sh
 
 # Add the rest of the code
 COPY ./src/backend /app/backend

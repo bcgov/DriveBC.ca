@@ -34,10 +34,10 @@ export default function CameraDetailsPage() {
     hour: "numeric",
     minute: "numeric",
   };
-  
+
   const cameraTab = <FontAwesomeIcon icon={faVideo} />
   const nearby = <FontAwesomeIcon icon={faMagnifyingGlassLocation} />
-  
+
   useEffect(() => {
     async function getCamera(state) {
       const retrievedCamera = await getWebcam(state);
@@ -162,7 +162,7 @@ export default function CameraDetailsPage() {
                 <p>The image will be updated automatically as soon as we the camera comes back online and we receive a new image.</p>
               </div>
             }
-            
+
             {!camera.is_on &&
               <div className="camera-message unavailable">
                 <FontAwesomeIcon icon={faVideoSlash} />
@@ -176,7 +176,7 @@ export default function CameraDetailsPage() {
                 <p>Our technicians have been alerted and service will resume as soon as possible. Repairs are subject to repair part availability and staff availability to access the location. Web camera function will return once repairs have been completed.</p>
               </div>
             }
-            
+
             <p className="camera-update bold">
               This camera updates its image approximately every {round(camera.update_period_mean / 60)} minutes
             </p>
@@ -202,7 +202,7 @@ export default function CameraDetailsPage() {
                       {replay ? <img src={camera.links.imageSource} /> :  <img src={camera.links.replayTheDay} />}
                     </div>
                   }
-                  
+
                   {!camera.is_on &&
                     <div className="card-img-box unavailable">
                       <FontAwesomeIcon icon={faVideoSlash} />

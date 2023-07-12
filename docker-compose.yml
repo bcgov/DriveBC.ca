@@ -27,9 +27,10 @@ services:
       - "8000:8000"
     command: /start.sh
 
-  # static:
-  #   container_name: static
-  #   command: npm start
+  tasks:
+    <<: *backend
+    container_name: tasks
+    command: /start_tasks.sh
 
   node:
     env_file: .env
@@ -48,6 +49,20 @@ services:
     depends_on:
       - django
     command: npm start
+
+  static:
+    env_file: .env
+    container_name: static
+    build:
+      context: ./src/frontend
+      dockerfile: ../../compose/frontend/StaticBuild
+    stdin_open: true
+    tty: true
+    ports:
+      - "80:80"
+    # depends_on:
+      # - django
+    command: npm run build
 
   db:
     env_file: .env

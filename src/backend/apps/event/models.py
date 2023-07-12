@@ -8,9 +8,9 @@ class Event(BaseModel):
 
     # Description
     description = models.CharField(max_length=1024)
-    event_type = models.CharField(max_length=32, choices=event_enums.EVENT_TYPE_CHOICES)
+    event_type = models.CharField(max_length=32)
     event_sub_type = models.CharField(
-        max_length=32, choices=event_enums.EVENT_SUB_TYPE_CHOICES
+        max_length=32
     )
 
     # General status
