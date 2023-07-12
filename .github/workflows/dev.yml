@@ -53,7 +53,7 @@ jobs:
         tags: latest ${{ github.sha }}
         labels: |
           app=drivebc
-        containerfiles: ./compose/frontend/BuildStatic
+        containerfiles: ./compose/frontend/StaticBuild
     - name: push to registry
       uses: redhat-actions/push-to-registry@v2.7
       with:
