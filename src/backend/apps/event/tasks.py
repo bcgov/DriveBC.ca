@@ -1,5 +1,6 @@
 import logging
 
+from apps.event.enums import EVENT_STATUS
 from apps.event.models import Event
 from apps.event.serializers import EventSerializer
 from apps.feed.client import FeedClient
@@ -24,5 +25,13 @@ def populate_event_from_data(event_data):
 
 def populate_all_event_data():
     feed_data = FeedClient().get_event_list()['events']
+    active_event_ids = []
     for event_data in feed_data:
         populate_event_from_data(event_data)
+
+        if "id" in event_data:
+            active_event_ids.append(event_data["id"])
+
+    # Mark events absent in the feed as inactive
+    Event.objects.all().exclude(id__in=active_event_ids)\
+        .update(status=EVENT_STATUS.INACTIVE)

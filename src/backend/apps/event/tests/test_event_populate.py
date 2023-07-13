@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from apps.event.enums import EVENT_DIRECTION
+from apps.event.enums import EVENT_DIRECTION, EVENT_STATUS
 from apps.event.models import Event
 from apps.event.tasks import populate_all_event_data, populate_event_from_data
 from apps.event.tests.test_data.event_parsed_feed import parsed_feed
@@ -18,9 +18,19 @@ from httpx import HTTPStatusError
 class TestEventModel(BaseTest):
     def setUp(self):
         # Normal feed
-        event_feed_data = open(str(Path(__file__).parent) +
-                               "/test_data/event_feed_list_of_five.json")
+        event_feed_data = open(
+            str(Path(__file__).parent) +
+            "/test_data/event_feed_list_of_five.json"
+        )
         self.mock_event_feed_result = json.load(event_feed_data)
+
+        # Feed with one missing event from normal feed
+        event_feed_data_with_missing_event = open(
+            str(Path(__file__).parent) +
+            "/test_data/event_feed_list_of_four.json"
+        )
+        self.mock_event_feed_result_with_missing_event = \
+            json.load(event_feed_data_with_missing_event)
 
         # Feed with error in data
         event_feed_data_with_errors = open(
@@ -74,6 +84,8 @@ class TestEventModel(BaseTest):
     def test_populate_event(self, mock_requests_get):
         mock_requests_get.side_effect = [
             MockResponse(self.mock_event_feed_result, status_code=200),
+            MockResponse(self.mock_event_feed_result_with_missing_event,
+                         status_code=200),
         ]
 
         populate_all_event_data()
@@ -92,6 +104,14 @@ class TestEventModel(BaseTest):
         # NONE direction
         event = Event.objects.get(id="drivebc.ca/DBC-52446")
         assert event.direction == EVENT_DIRECTION.NONE
+
+        # Second call with one missing event
+        populate_all_event_data()
+
+        assert Event.objects.filter(status=EVENT_STATUS.ACTIVE).count() == 4
+        assert Event.objects.filter(status=EVENT_STATUS.INACTIVE).count() == 1
+        assert Event.objects.get(id="drivebc.ca/DBC-28386").status \
+               == EVENT_STATUS.INACTIVE
 
     @patch("httpx.get")
     def test_populate_event_with_validation_error(self, mock_requests_get):

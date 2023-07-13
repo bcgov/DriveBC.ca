@@ -1,4 +1,3 @@
-from apps.event import enums as event_enums
 from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
 
@@ -8,22 +7,15 @@ class Event(BaseModel):
 
     # Description
     description = models.CharField(max_length=1024)
-    event_type = models.CharField(max_length=32, choices=event_enums.EVENT_TYPE_CHOICES)
-    event_sub_type = models.CharField(
-        max_length=32, choices=event_enums.EVENT_SUB_TYPE_CHOICES
-    )
+    event_type = models.CharField(max_length=32)
+    event_sub_type = models.CharField(max_length=32)
 
     # General status
-    status = models.CharField(max_length=32, choices=event_enums.EVENT_STATUS_CHOICES)
-    severity = models.CharField(
-        max_length=32, choices=event_enums.EVENT_SEVERITY_CHOICES
-    )
+    status = models.CharField(max_length=32)
+    severity = models.CharField(max_length=32)
 
     # Location
-    direction = models.CharField(
-        max_length=32,
-        choices=event_enums.EVENT_DIRECTION_CHOICES,
-    )
+    direction = models.CharField(max_length=32)
     location = models.LineStringField()
     route = models.CharField(max_length=128)
 
