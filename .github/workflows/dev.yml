@@ -49,6 +49,7 @@ jobs:
     - name: build static
       uses: redhat-actions/buildah-build@v2
       with:
+        context: .
         image: static
         tags: latest ${{ github.sha }}
         labels: |
