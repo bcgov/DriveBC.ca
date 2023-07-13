@@ -54,21 +54,25 @@ export default function CameraDetailsPage() {
   const cameraTab = <FontAwesomeIcon icon={faVideo} />;
   const nearby = <FontAwesomeIcon icon={faMagnifyingGlassLocation} />;
 
-  useEffect(() => {
-    async function getCamera(state) {
-      const retrievedCamera = await getWebcam(state);
-      setCamera(retrievedCamera);
-      const next_update_time = addSeconds(
-        new Date(retrievedCamera.last_update_modified),
-        retrievedCamera.update_period_mean
-      );
-      const next_update_time_formatted = new Intl.DateTimeFormat(
-        "en-US",
-        datetime_format
-      ).format(next_update_time);
-      setNextUpdate(next_update_time_formatted);
-    }
+  function initCamera(camera) {
+    setCamera(camera);
+    const next_update_time = addSeconds(
+      new Date(camera.last_update_modified),
+      camera.update_period_mean
+    );
+    const next_update_time_formatted = new Intl.DateTimeFormat(
+      "en-US",
+      datetime_format
+    ).format(next_update_time);
+    setNextUpdate(next_update_time_formatted);
+  }
 
+  async function getCamera(state) {
+    const retrievedCamera = await getWebcam(state);
+    initCamera(retrievedCamera);
+  }
+
+  useEffect(() => {
     if (!camera) {
       getCamera(state);
     }
@@ -272,7 +276,7 @@ export default function CameraDetailsPage() {
                   <div className="replay-div"></div>
                   <div className="map-context-wrap">
                     <DndProvider options={HTML5toTouch}>
-                      <Map startLocation={camera.location.coordinates} isPreview={true}/>
+                      <Map startLocation={camera.location.coordinates} isPreview={true} cameraHandler={initCamera}/>
                     </DndProvider>
                   </div>
                 </Tab>

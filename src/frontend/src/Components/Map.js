@@ -47,7 +47,7 @@ import videoIcon from "../assets/video-solid.png";
 // Styling
 import "./Map.scss";
 
-export default function MapWrapper({startLocation, isPreview}) {
+export default function MapWrapper({startLocation, isPreview, cameraHandler}) {
   const { mapContext, setMapContext } = useContext(MapContext);
 
   const mapElement = useRef();
@@ -173,6 +173,7 @@ export default function MapWrapper({startLocation, isPreview}) {
                   var properties = {};
                   properties["id"] = feature.id;
                   properties["name"] = feature.properties.name;
+                  properties["data"] = feature.properties.raw_data;
                   properties["description"] = feature.properties.caption;
                   properties["image_url"] =
                     "https://images.drivebc.ca/bchighwaycam/pub/cameras/" +
@@ -275,17 +276,22 @@ export default function MapWrapper({startLocation, isPreview}) {
         .getFeatures(e.pixel)
         .then((clickedFeatures) => {
           if (clickedFeatures[0]) {
-            const feature = clickedFeatures[0].values_.features[0].values_;
-            iconClicked = true;
-            popup.show(
-              coordinate,
-              `<div style='text-align: left; padding: 1rem'>
-             <h4>${feature.name}</h4>
-             <img src="${feature.image_url}" width='300'>
-            <p>${feature.description}</p>
-             </div>`
-            );
-            iconClicked = true;
+            if(isPreview) {
+              cameraHandler(clickedFeatures[0].values_.features[0].values_.data);
+
+            } else {
+              const feature = clickedFeatures[0].values_.features[0].values_;
+              iconClicked = true;
+              popup.show(
+                coordinate,
+                `<div style='text-align: left; padding: 1rem'>
+               <h4>${feature.name}</h4>
+               <img src="${feature.image_url}" width='300'>
+              <p>${feature.description}</p>
+               </div>`
+              );
+              iconClicked = true;
+            }
           }
         });
 
