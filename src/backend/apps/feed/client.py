@@ -60,7 +60,7 @@ class FeedClient:
         response = httpx.get(
             endpoint,
             headers=self._get_auth_headers(resource_type),
-            params=params,
+            params=params if params else {},
             timeout=timeout,
             verify=False,
         )
@@ -79,15 +79,12 @@ class FeedClient:
         serializer.is_valid(raise_exception=True)
         return serializer.validated_data
 
-    def get_list_feed(self, resource_type, resource_name, serializer_cls):
+    def get_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
         """Get data feed for list of objects."""
-        endpoint = self._get_endpoint(
-            resource_type=resource_type, resource_name=resource_name
-        )
-        response_data = self._process_get_request(
-            endpoint, resource_type=resource_type, params={}
-        )
-
+        if params is None:
+            params = {}
+        endpoint = self._get_endpoint(resource_type, resource_name)
+        response_data = self._process_get_request(endpoint, params, resource_type)
         serializer = serializer_cls(data=response_data)
 
         try:
@@ -122,4 +119,7 @@ class FeedClient:
         return self.get_single_feed(event, OPEN511, 'events/', EventFeedSerializer)
 
     def get_event_list(self):
-        return self.get_list_feed(OPEN511, 'events', EventAPISerializer)
+        return self.get_list_feed(
+            OPEN511, 'events', EventAPISerializer,
+            {"format": "json", "limit": 500}
+        )
