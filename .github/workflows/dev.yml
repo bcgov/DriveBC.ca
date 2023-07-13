@@ -50,6 +50,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         context: .
+        layers: true
         image: static
         tags: latest ${{ github.sha }}
         labels: |
