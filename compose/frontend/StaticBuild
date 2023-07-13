@@ -24,6 +24,6 @@ CMD npm run build
 
 FROM nginx
 
-COPY build /usr/share/nginx/html
+COPY ./src/frontend/build /usr/share/nginx/html
 
 
