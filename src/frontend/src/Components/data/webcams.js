@@ -50,7 +50,8 @@ const mapWebcamData = (webcams) => {
           marked_stale: webcam.marked_stale,
           marked_delayed: webcam.marked_delayed,
           is_on: webcam.is_on,
-          timestamp: webcam.last_update_modified
+          timestamp: webcam.last_update_modified,
+          raw_data: webcam,
         }, { id: webcam.id })
       ))
 }
