@@ -3,6 +3,7 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
 import "./EventsTable.scss"
@@ -18,14 +19,21 @@ const table = useReactTable(
       data: rowData,
       columns: columnData,
       state: {
-        sorting
+        sorting,
       },
       onSortingChange: setSorting,
+      getPaginationRowModel: getPaginationRowModel(),
       getCoreRowModel: getCoreRowModel(),
       getSortedRowModel: getSortedRowModel(),
+      initialState: {
+        pagination: {
+            pageSize: 50,
+        }
+      },
       debugTable: true,
     },
   );
+ console.log(table.getState().pagination.pageSize)
 return (
     <table>
         <thead>
