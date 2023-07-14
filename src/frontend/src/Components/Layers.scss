@@ -1,16 +1,15 @@
 .open-layers, .layers {
-  top: 4rem;
+  top: 2rem;
   min-width: 3rem;
   right: 2rem;
   position: absolute;
 
   @media screen and (max-width: 729px) {
-    top: 4rem;
-    right: 14px;
+    right: 1rem;
   }
 }
 
-.open-layers {
+button.open-layers {
   height: 54px;
   width: 54px;
   text-align: center;

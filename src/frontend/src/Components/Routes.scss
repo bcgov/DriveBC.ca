@@ -1,8 +1,8 @@
 @import "../styles/variables";
 
 .open-routes, .routes {
-  top: 4rem;
-  left: 60px;
+  top: 2rem;
+  left: 2rem;
   position: absolute;
 }
 
@@ -115,7 +115,8 @@
     width: 100%;
     left: 0;
     bottom: 0;
-    top: initial;
+    top: 0;
+    z-index: 1;
 
     .open-routes {
       bottom: 2.1rem;
