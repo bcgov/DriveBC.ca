@@ -26,7 +26,7 @@
   text-align: left;
   padding: 1rem;
   border-radius: 4px;
-  
+
   button.close-layers {
     position: absolute;
     top: 1rem;
@@ -39,42 +39,42 @@
     border:none;
     font-size: 1.4rem;
   }
-  
+
   h4 {
     margin-bottom: 12px;
   }
-  
+
   .layer-item {
     margin-bottom: 8px;
   }
   .layer-item .map-icon {
     margin-right: 12px;
   }
-  
+
   .layer-item label {
     margin-left: 4px;
   }
-  
+
   .layers-select {
     display: flex;
   }
-  
+
   .panel {
     display: flex;
     flex-direction: column;
     text-align: center;
   }
-  
+
   .panel + .panel {
     margin-left: 1rem;
   }
-  
+
   .map-image {
     height: 5rem;
     width: 5rem;
     border: solid 1px rgb(118, 118, 118);
   }
-  
+
   img.map-icon {
     width: 1rem;
   }
