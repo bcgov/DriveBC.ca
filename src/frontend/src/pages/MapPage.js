@@ -8,7 +8,6 @@ import Map from '../Components/Map.js';
 export default function MapPage() {
 
   const { state } = useLocation();
-  console.log(state);
   return (
     <DndProvider options={HTML5toTouch}>
       <div className="map-wrap">

@@ -104,9 +104,6 @@ export default function MapWrapper({
 
       tid: Date.now(),
     };
-    console.log("checking map")
-    console.log(camera);
-
     mapView.current = new View({
       projection: "EPSG:3857",
       constrainResolution: true,
