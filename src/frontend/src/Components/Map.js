@@ -2,14 +2,14 @@
 import React, { useContext, useRef, useEffect, useState } from "react";
 
 // Third party packages
-import Button from "react-bootstrap/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faLocationArrow,
   faPlus,
   faMinus,
-  faExpand,
+  faUpRightAndDownLeftFromCenter,
+  faLocationCrosshairs
 } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Button from "react-bootstrap/Button";
 
 // Components and functions
 import { getEventPoints } from "./data/events.js";
@@ -397,37 +397,28 @@ export default function MapWrapper({
   }
 
   return (
-    <div>
+    <div className="map-container">
       <div ref={mapElement} className="map" />
-      <div className="map-control">
         {isPreview && (
-        <Button
-          variant="outline-primary"
-          className="map-view"
-          onClick={mapViewRoute}
-        >
-          <FontAwesomeIcon icon={faExpand} />
+        <Button className="map-btn map-view" variant="outline-primary" onClick={mapViewRoute}>
+          <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+          Map View
         </Button>
-            )}
-          <Button
-            variant="outline-primary"
-            className="my-location"
-            onClick={handleRecenter}
-          >
-            <FontAwesomeIcon icon={faLocationArrow} />
-          </Button>
+        )}
+        
+        <Button className="map-btn cam-location" variant="outline-primary" onClick={handleRecenter}>
+          <FontAwesomeIcon icon={faLocationCrosshairs} />
+          Camera location
+        </Button>
 
-        <Button variant="outline-primary" className="zoom-in" onClick={zoomIn}>
+        <Button className="map-btn zoom-in" variant="outline-primary" onClick={zoomIn}>
           <FontAwesomeIcon icon={faPlus} />
         </Button>
-        <Button
-          variant="outline-primary"
-          className="zoom-out"
-          onClick={zoomOut}
-        >
+
+        <Button className="map-btn zoom-out" variant="outline-primary" onClick={zoomOut}>
           <FontAwesomeIcon icon={faMinus} />
         </Button>
-      </div>
+
       {!isPreview && (
         <div>
           <Routes

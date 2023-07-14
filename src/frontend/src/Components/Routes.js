@@ -14,8 +14,8 @@ export default function Routes({ open, routeHandler, setRoutesOpen, setStartToLo
 
   if (!open) {
     return (
-      <Button variant="primary"
-        className="open-routes"
+      <Button variant="outline-primary"
+        className="map-btn open-routes"
         onClick={() => setRoutesOpen(true)}
       ><FontAwesomeIcon icon={faPlus} /> Add Route</Button>
     )

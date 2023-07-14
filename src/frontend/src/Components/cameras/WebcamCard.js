@@ -112,7 +112,7 @@ export default function WebcamCard({ camera }) {
         <p className="label bold">{camera.properties.name}</p>
         <p className="label">{camera.properties.caption}</p>
       </Card.Body>
-      <Button variant="primary">View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
+      <Button variant="primary" className="viewmap-btn">View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
     </Card>
   )
 }
