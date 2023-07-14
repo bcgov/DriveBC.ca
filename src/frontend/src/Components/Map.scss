@@ -2,9 +2,13 @@
 
 .map-wrap {
   position: absolute;
-  top: 76px;
+  top: 50px;
   bottom: 0;
   width: 100%;
+
+  @media (min-width: 992px) {
+    top: 58px;
+  }
 
   .map {
     position: absolute;
