@@ -17,35 +17,35 @@ export default function Footer() {
         <div className="flex-container">
           <div className="contact">
             <img className="footer-logo" src={logo} alt="Government of B.C." />
-            <p>We can help in over 120 languages and through Telephone Device For The Deaf (TDD).&nbsp;<a class="footer-link-grey" href="/gov/content/home/get-help-with-government-services">Call, email or text us</a>, or&nbsp;<a class="footer-link-grey" href="/gov/content/home/services-a-z">find a service centre</a></p>
+            <p>We can help in over 120 languages and through Telephone Device For The Deaf (TDD).&nbsp;<a className="footer-link-grey" href="/gov/content/home/get-help-with-government-services">Call, email or text us</a>, or&nbsp;<a className="footer-link-grey" href="/gov/content/home/services-a-z">find a service centre</a></p>
           </div>
           <div className="more-info">
             <h2>More Info</h2>
             <ul className="link-list">
-              <li><a href="/gov/content/home" class="footer-link" target="_self">Home</a></li>
-              <li><a href="/gov/content/about-gov-bc-ca" class="footer-link" target="_self">About gov.bc.ca</a></li>
-              <li><a href="/gov/content/about-gov-bc-ca/alpha-gov" class="footer-link" target="_self">About Alpha Gov</a></li>
-              <li><a href="/gov/content/home/disclaimer" class="footer-link" target="_self">Disclaimer</a></li>
-              <li><a href="/gov/content/home/privacy" class="footer-link" target="_self">Privacy</a></li>
-              <li><a href="/gov/content/home/accessible-government" class="footer-link" target="_self">Accessibility</a></li>
-              <li><a href="/gov/content/home/copyright" class="footer-link" target="_self">Copyright</a></li>
-              <li><a href="/gov/content/home/get-help-with-government-services" class="footer-link" target="_self">Contact us</a></li>
+              <li><a href="/gov/content/home" className="footer-link" target="_self">Home</a></li>
+              <li><a href="/gov/content/about-gov-bc-ca" className="footer-link" target="_self">About gov.bc.ca</a></li>
+              <li><a href="/gov/content/about-gov-bc-ca/alpha-gov" className="footer-link" target="_self">About Alpha Gov</a></li>
+              <li><a href="/gov/content/home/disclaimer" className="footer-link" target="_self">Disclaimer</a></li>
+              <li><a href="/gov/content/home/privacy" className="footer-link" target="_self">Privacy</a></li>
+              <li><a href="/gov/content/home/accessible-government" className="footer-link" target="_self">Accessibility</a></li>
+              <li><a href="/gov/content/home/copyright" className="footer-link" target="_self">Copyright</a></li>
+              <li><a href="/gov/content/home/get-help-with-government-services" className="footer-link" target="_self">Contact us</a></li>
             </ul>
           </div>
         </div>
         <div className='bottom'>
-          <div class="connect">
-            <a href="https://www.facebook.com/BCProvincialGovernment" className="footer-link" target="_blank">
+          <div className="connect">
+            <a href="https://www.facebook.com/BCProvincialGovernment" className="footer-link" target="_blank" rel="noreferrer">
               <img src={facebook} alt="Facebook" />
             </a>
-            <a href="https://www.instagram.com/governmentofbc" className="footer-link" target="_blank">
+            <a href="https://www.instagram.com/governmentofbc" className="footer-link" target="_blank" rel="noreferrer">
               <img src={instagram} alt="Instagram" />
             </a>
-            <a href="https://twitter.com/BCGovNews" className="footer-link" target="_blank">
+            <a href="https://twitter.com/BCGovNews" className="footer-link" target="_blank" rel="noreferrer">
               <img src={twitter} alt="Twitter" />
             </a>
           </div>
-          <div class="copyright">© 2023 Government of British Columbia</div>
+          <div className="copyright">© 2023 Government of British Columbia</div>
         </div>
       </footer>
     </div>

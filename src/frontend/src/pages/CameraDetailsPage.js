@@ -9,7 +9,7 @@ import { faMagnifyingGlassLocation } from "@fortawesome/free-solid-svg-icons";
 import { faVideo } from "@fortawesome/free-solid-svg-icons";
 import { faVideoSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Tab from "react-bootstrap/Tab";
@@ -42,6 +42,8 @@ export default function CameraDetailsPage() {
   const { mapContext, setMapContext } = useContext(MapContext);
 
   const { state } = useLocation();
+
+  const navigate = useNavigate();
 
   const datetime_format = {
     weekday: "short",
@@ -95,6 +97,11 @@ export default function CameraDetailsPage() {
 
   function round(number) {
     return Math.ceil(number);
+  }
+
+  const mapViewRoute = () =>{
+    console.log("routing")
+    navigate("/", { state: camera})
   }
 
   return (
@@ -276,7 +283,7 @@ export default function CameraDetailsPage() {
                   <div className="replay-div"></div>
                   <div className="map-context-wrap">
                     <DndProvider options={HTML5toTouch}>
-                      <Map startLocation={camera.location.coordinates} isPreview={true} cameraHandler={initCamera}/>
+                      <Map camera={camera} isPreview={true} cameraHandler={initCamera} mapViewRoute={mapViewRoute}/>
                     </DndProvider>
                   </div>
                 </Tab>

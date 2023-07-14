@@ -20,6 +20,17 @@
     flex-direction: column;
     justify-content: space-between;
   }
+  .map-view {
+    top: 4rem;
+    min-width: 3rem;
+    right: 2rem;
+    position: absolute;
+
+    @media screen and (max-width: 729px) {
+      top: 4rem;
+      right: 14px;
+    }
+  }
 
   .map-control button {
     height: 54px;

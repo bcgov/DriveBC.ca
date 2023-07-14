@@ -2,13 +2,12 @@
 import React, { useContext, useRef, useEffect, useState } from "react";
 
 // Third party packages
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
 import Button from "react-bootstrap/Button";
 import {
   faLocationArrow,
   faPlus,
   faMinus,
+  faExpand,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -23,17 +22,15 @@ import { applyStyle } from "ol-mapbox-style";
 import { fromLonLat } from "ol/proj";
 import { Icon, Style } from "ol/style.js";
 import { Image as ImageLayer } from "ol/layer.js";
-import { MapContext } from '../App.js';
+import { MapContext } from "../App.js";
 import * as ol from "ol";
 import Cluster from "ol/source/Cluster.js";
 import GeoJSON from "ol/format/GeoJSON.js";
 import ImageWMS from "ol/source/ImageWMS.js";
 import Map from "ol/Map";
 import MVT from "ol/format/MVT.js";
-import OSM from "ol/source/OSM.js";
 import Point from "ol/geom/Point.js";
 import Popup from "ol-popup";
-import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import VectorTileLayer from "ol/layer/VectorTile.js";
@@ -47,7 +44,12 @@ import videoIcon from "../assets/video-solid.png";
 // Styling
 import "./Map.scss";
 
-export default function MapWrapper({startLocation, isPreview, cameraHandler}) {
+export default function MapWrapper({
+  camera,
+  isPreview,
+  cameraHandler,
+  mapViewRoute,
+}) {
   const { mapContext, setMapContext } = useContext(MapContext);
 
   const mapElement = useRef();
@@ -56,15 +58,8 @@ export default function MapWrapper({startLocation, isPreview, cameraHandler}) {
   const mapView = useRef();
   const lng = -120.7862;
   const lat = 50.113;
-  const start = new maplibregl.Marker({ color: "#003399", draggable: true });
-  const end = new maplibregl.Marker({ color: "#009933", draggable: true });
   const [layersOpen, setLayersOpen] = useState(false);
   const [routesOpen, setRoutesOpen] = useState(false);
-
-  const osmLayer = new TileLayer({
-    source: new OSM(),
-  });
-  osmLayer.setZIndex(400);
 
   useEffect(() => {
     // initialization hook for the OpenLayers map logic
@@ -109,11 +104,13 @@ export default function MapWrapper({startLocation, isPreview, cameraHandler}) {
 
       tid: Date.now(),
     };
-    console.log("start location", startLocation)
+
     mapView.current = new View({
       projection: "EPSG:3857",
       constrainResolution: true,
-      center: startLocation ? fromLonLat(startLocation) : fromLonLat([lng, lat]),
+      center: camera
+        ? fromLonLat(camera.location.coordinates)
+        : fromLonLat([lng, lat]),
       zoom: 12,
     });
     //Apply the basemap style from the arcgis resource
@@ -125,10 +122,11 @@ export default function MapWrapper({startLocation, isPreview, cameraHandler}) {
       }
     ).then(function (response) {
       response.json().then(function (glStyle) {
+        //overriding default font value so it doesn't return errors.
+        glStyle.metadata["ol:webfonts"] = "";
         applyStyle(vectorLayer, glStyle, "esri");
       });
     });
-
 
     // create map
     mapRef.current = new Map({
@@ -261,7 +259,6 @@ export default function MapWrapper({startLocation, isPreview, cameraHandler}) {
       });
       mapRef.current.addLayer(layers.current["eventsLayer"]);
 
-
       // let interval = setInterval(async () => {
       //   const travalad = await getAdvisories();
       //   setAdvisories(travalad);
@@ -276,9 +273,13 @@ export default function MapWrapper({startLocation, isPreview, cameraHandler}) {
         .getFeatures(e.pixel)
         .then((clickedFeatures) => {
           if (clickedFeatures[0]) {
-            if(isPreview) {
-              cameraHandler(clickedFeatures[0].values_.features[0].values_.data);
-
+            if (isPreview) {
+              const clickedCamera =
+                clickedFeatures[0].values_.features[0].values_.data;
+              mapView.current.animate({
+                center: fromLonLat(clickedCamera.location.coordinates),
+              });
+              cameraHandler(clickedCamera);
             } else {
               const feature = clickedFeatures[0].values_.features[0].values_;
               iconClicked = true;
@@ -313,10 +314,10 @@ export default function MapWrapper({startLocation, isPreview, cameraHandler}) {
           }
         });
 
-        //if neither, hide any existing popup
-        if(!iconClicked){
-          popup.hide();
-        }
+      //if neither, hide any existing popup
+      if (!iconClicked) {
+        popup.hide();
+      }
     });
   }, []);
 
@@ -342,12 +343,14 @@ export default function MapWrapper({startLocation, isPreview, cameraHandler}) {
     });
   }
 
-  function myLocation() {
+  function handleRecenter() {
     //TODO: reimpliment this in OpenLayers
-    if (!mapRef.current) {
+    if (camera) {
+      mapView.current.animate({
+        center: fromLonLat(camera.location.coordinates),
+      });
       return;
     }
-
   }
 
   function toggleLayers(openLayers) {
@@ -384,7 +387,7 @@ export default function MapWrapper({startLocation, isPreview, cameraHandler}) {
     // Set context and local storage
     mapContext.visible_layers[layer] = checked;
     setMapContext(mapContext);
-    localStorage.setItem('mapContext', JSON.stringify(mapContext))
+    localStorage.setItem("mapContext", JSON.stringify(mapContext));
   }
 
   function transformFeature(feature, sourceCRS, targetCRS) {
@@ -393,88 +396,52 @@ export default function MapWrapper({startLocation, isPreview, cameraHandler}) {
     return clone;
   }
 
-  function routeHandler(email) {
-    /* FIXME: We're using window.start/end everywhere for now because of odd scoping
-     * interactions between lexical start/end and the resulting marker in the map.  Despite
-     * the fact that all instances in Map.js should be the declared instances above, we
-     * would frequently see that start/end here have no lat/lng (while verifying in the
-     * console that they do).  In particular, the addition of setInterval above for travel
-     * advisories would cause the local references to find empty markers and fail to
-     * find a route.  Even without that enabled, starting with the routes dialog closed
-     * would cause the same failure.  Using window as an authoritative global scope seems
-     * to fix this, but the proper solution would likely rely more upon using a maplibre
-     * map layer to hold the pins.
-     */
-    if (!window.start.getLngLat() || !window.end.getLngLat()) {
-      console.log("start or end not set");
-      console.log(start.getLngLat());
-      console.log(end.getLngLat());
-      return;
-    }
-
-    if (!email) {
-      email = "test@oxd.com";
-    }
-
-    fetch("http://localhost:8000/api/routes/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email,
-        name: "Primary route",
-        start_location: window.start.getLngLat(),
-        destination: window.end.getLngLat(),
-      }),
-    })
-      .then((response) => {
-        if (response.status === 201) {
-          return response.json();
-        } else {
-          alert("Unable to calculate route. Please try again.");
-        }
-      })
-      .then((data) => {
-        if (data) {
-          mapRef.current.getSource("routed").setData(data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        alert("Unable to calculate route. Please try again.");
-      });
-  }
-
   return (
     <div>
       <div ref={mapElement} className="map" />
       <div className="map-control">
-      <Button
-        variant="outline-primary"
-        className="my-location"
-        onClick={myLocation}
-      >
-        <FontAwesomeIcon icon={faLocationArrow} />
-      </Button>
-      <Button variant="outline-primary" className="zoom-in" onClick={zoomIn}>
-        <FontAwesomeIcon icon={faPlus} />
-      </Button>
-      <Button variant="outline-primary" className="zoom-out" onClick={zoomOut}>
-        <FontAwesomeIcon icon={faMinus} />
-      </Button>
-    </div>
-      <Routes
-        open={routesOpen}
-        setRoutesOpen={toggleRoutes}
-        setStartToLocation={setStartToLocation}
-        routeHandler={routeHandler}
-      />
+        {isPreview && (
+        <Button
+          variant="outline-primary"
+          className="map-view"
+          onClick={mapViewRoute}
+        >
+          <FontAwesomeIcon icon={faExpand} />
+        </Button>
+            )}
+          <Button
+            variant="outline-primary"
+            className="my-location"
+            onClick={handleRecenter}
+          >
+            <FontAwesomeIcon icon={faLocationArrow} />
+          </Button>
 
-      <Layers
-        open={layersOpen}
-        setLayersOpen={toggleLayers}
-        toggleLayer={toggleLayer}
-      />
-
+        <Button variant="outline-primary" className="zoom-in" onClick={zoomIn}>
+          <FontAwesomeIcon icon={faPlus} />
+        </Button>
+        <Button
+          variant="outline-primary"
+          className="zoom-out"
+          onClick={zoomOut}
+        >
+          <FontAwesomeIcon icon={faMinus} />
+        </Button>
+      </div>
+      {!isPreview && (
+        <div>
+          <Routes
+            open={routesOpen}
+            setRoutesOpen={toggleRoutes}
+            setStartToLocation={setStartToLocation}
+          />
+          <Layers
+            open={layersOpen}
+            setLayersOpen={toggleLayers}
+            toggleLayer={toggleLayer}
+          />
+        </div>
+      )}
     </div>
   );
 }

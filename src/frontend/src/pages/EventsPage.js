@@ -7,7 +7,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
   const [nextUrl, setNext] = useState(
-    "http://localhost:8000/api/events/?limit=10&offset=0"
+    "http://localhost:8000/api/events/?limit=7&offset=0"
   );
   const [eventLength, setEventLength] = useState(0);
 

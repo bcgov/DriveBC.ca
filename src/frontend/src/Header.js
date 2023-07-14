@@ -12,9 +12,9 @@ export default function Header() {
 			<Navbar expand="lg">
 				<Container>
 					<Navbar.Toggle>
-						<span class="line line1"></span>
-						<span class="line line2"></span>
-						<span class="line line3"></span>
+						<span className="line line1"></span>
+						<span className="line line2"></span>
+						<span className="line line3"></span>
 					</Navbar.Toggle>
 					<Navbar.Brand href="#home">
 						<a href="https://gov.bc.ca" className="header-link">
