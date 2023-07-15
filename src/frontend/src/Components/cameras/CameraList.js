@@ -16,27 +16,27 @@ export default function CameraList() {
   const [webcamLength, setWebcamLength] = useState(0);
 
   async function getCameras() {
-    const { webcamNextUrl, webcamData } = await getWebcams(nextUrl);
+    const { webcamNextUrl, webcamResults } = await getWebcams(nextUrl);
 
     // Next URL and data length
     setNext(webcamNextUrl);
-    setWebcamLength(webcamLength + webcamData.length);
+    setWebcamLength(webcamLength + webcamResults.length);
 
     // Webcam data reduced to arrays grouped by highway
-    webcamData.forEach((camera) => {
-      const { highway } = camera.properties;
+    webcamResults.forEach((cameraData) => {
+      const { highway } = cameraData;
       if (!(highway in webcams)) {
         webcams[highway] = [];
       }
 
-      webcams[highway].push(camera);
+      webcams[highway].push(cameraData);
     });
 
     setWebcams(webcams);
   }
 
   useEffect(() => {
-      getCameras();
+    getCameras();
 
     return () =>{
       //unmounting, so empty list object
