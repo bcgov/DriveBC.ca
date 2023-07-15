@@ -10,14 +10,14 @@ import { faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from "react";
 
 export default function WebcamCard({ camera }) {
-  const stale = camera.properties.marked_stale ? "stale" : "";
-  const delayed = camera.properties.marked_delayed ? "delayed" : "";
-  const unavailable = camera.properties.is_on ? "" : "unavailable";
+  const stale = camera.marked_stale ? "stale" : "";
+  const delayed = camera.marked_delayed ? "delayed" : "";
+  const unavailable = camera.is_on ? "" : "unavailable";
   const [show, setShow] = useState(false)
   const navigate = useNavigate();
 
   function handleClick() {
-    navigate("/CameraDetailsPage", { state: camera.id})
+    navigate("/CameraDetailsPage", {state: { cameraData: camera }})
   }
 
   function handleChildClick(e) {
@@ -34,7 +34,7 @@ export default function WebcamCard({ camera }) {
     minute: "numeric",
   };
 
-  const last_updated_time = new Date(camera.properties.timestamp);
+  const last_updated_time = new Date(camera.last_update_modified);
   const last_updated_time_formatted = new Intl.DateTimeFormat("en-US", datetime_format).format(last_updated_time);
   function get_last_update_diff() {
     return Math.trunc((new Date() - last_updated_time) / (1000 * 60));
@@ -55,13 +55,13 @@ export default function WebcamCard({ camera }) {
       <Card.Body onClick={handleClick}>
         {!unavailable && !delayed && !stale &&
           <div className="card-img-box">
-            <img className="card-img" src={camera.properties.url} />
+            <img className="card-img" src={ camera.links.imageSource } />
           </div>
         }
 
         {!unavailable && stale && !delayed &&
           <div className="card-img-box">
-            <img className="card-img" src={camera.properties.url} />
+            <img className="card-img" src={ camera.links.imageSource } />
             <div className="card-notification">
               <div className={"card-banner " + (show ? "hidden" : "bounce") }>
                 <p>Unable to retrieve the latest image, we're displaying last image received.</p>
@@ -77,7 +77,7 @@ export default function WebcamCard({ camera }) {
 
         {!unavailable && stale && delayed &&
           <div className="card-img-box">
-            <img className="card-img" src={camera.properties.url} />
+            <img className="card-img" src={ camera.links.imageSource } />
             <div className="card-notification">
               <div className={"card-banner " + (show ? "hidden" : "bounce") }>
                 <p>Experiencing longer than expected delay, displaying last image received.</p>
@@ -109,8 +109,8 @@ export default function WebcamCard({ camera }) {
           <p className="label">{last_updated_time_formatted}</p>
         </div>
         {/* <p>Last updated {lastUpdateMin.toString()} minutes ago</p> */}
-        <p className="label bold">{camera.properties.name}</p>
-        <p className="label">{camera.properties.caption}</p>
+        <p className="label bold">{camera.name}</p>
+        <p className="label">{camera.caption}</p>
       </Card.Body>
       <Button variant="primary" className="viewmap-btn">View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
     </Card>

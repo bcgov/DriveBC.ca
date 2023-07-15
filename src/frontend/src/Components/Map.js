@@ -146,8 +146,9 @@ export default function MapWrapper({
     mapRef.current.addOverlay(popup);
 
     mapRef.current.once("loadend", async () => {
-      const { webcamData } = await getWebcams();
+      const { webcamResults } = await getWebcams();
       const evpoints = await getEventPoints();
+
       layers.current["webcamsLayer"] = new VectorLayer({
         classname: "webcams",
         visible: mapContext.visible_layers.webcamsLayer,
@@ -158,26 +159,15 @@ export default function MapWrapper({
             loader: function (extent, resolution, projection) {
               var vectorSource = this;
               vectorSource.clear();
-              if (webcamData) {
-                webcamData.forEach((feature) => {
+
+              if (webcamResults) {
+                webcamResults.forEach((cameraData) => {
                   //Build a new OpenLayers feature
-                  var olGeometry = new Point([
-                    feature.properties.coords.lng,
-                    feature.properties.coords.lat,
-                  ]);
+                  var olGeometry = new Point(cameraData.location.coordinates);
                   var olFeature = new ol.Feature({ geometry: olGeometry });
 
                   //Transfer properties
-                  var properties = {};
-                  properties["id"] = feature.id;
-                  properties["name"] = feature.properties.name;
-                  properties["data"] = feature.properties.raw_data;
-                  properties["description"] = feature.properties.caption;
-                  properties["image_url"] =
-                    "https://images.drivebc.ca/bchighwaycam/pub/cameras/" +
-                    feature.id +
-                    ".jpg";
-                  olFeature.setProperties(properties);
+                  olFeature.setProperties(cameraData);
 
                   // Transform the projection
                   var olFeatureForMap = transformFeature(
@@ -275,7 +265,7 @@ export default function MapWrapper({
           if (clickedFeatures[0]) {
             if (isPreview) {
               const clickedCamera =
-                clickedFeatures[0].values_.features[0].values_.data;
+                clickedFeatures[0].values_.features[0].values_;
               mapView.current.animate({
                 center: fromLonLat(clickedCamera.location.coordinates),
               });
@@ -287,8 +277,8 @@ export default function MapWrapper({
                 coordinate,
                 `<div style='text-align: left; padding: 1rem'>
                <h4>${feature.name}</h4>
-               <img src="${feature.image_url}" width='300'>
-              <p>${feature.description}</p>
+               <img src="${feature.links.imageSource}" width='300'>
+              <p>${feature.caption}</p>
                </div>`
               );
               iconClicked = true;
