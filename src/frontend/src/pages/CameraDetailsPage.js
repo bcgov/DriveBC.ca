@@ -18,7 +18,6 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 
 // Components and functions
-import { getWebcam } from "../Components/data/webcams";
 import { MapContext } from "../App.js";
 import { DndProvider } from "react-dnd-multi-backend";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
@@ -37,13 +36,14 @@ import "../CameraDetailsPage.scss";
 import "../Components/Map.scss"
 
 export default function CameraDetailsPage() {
+  // Context and router data
+  const { state } = useLocation();
+  const { mapContext, setMapContext } = useContext(MapContext);
+
+  // State hooks
   const [camera, setCamera] = useState(null);
   const [replay, setReplay] = useState(true);
   const [nextUpdate, setNextUpdate] = useState(null);
-
-  const { mapContext, setMapContext } = useContext(MapContext);
-
-  const { state } = useLocation();
 
   const navigate = useNavigate();
 
@@ -71,15 +71,8 @@ export default function CameraDetailsPage() {
     setNextUpdate(next_update_time_formatted);
   }
 
-  async function getCamera(state) {
-    const retrievedCamera = await getWebcam(state);
-    initCamera(retrievedCamera);
-  }
-
   useEffect(() => {
-    if (!camera) {
-      getCamera(state);
-    }
+    initCamera(state.cameraData);
 
     return () => {
       //unmounting, so revert camera to null
