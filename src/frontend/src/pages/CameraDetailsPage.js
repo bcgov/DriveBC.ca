@@ -2,13 +2,15 @@
 import React, { useContext, useEffect, useState } from "react";
 
 // Third party packages
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import { faMagnifyingGlassLocation } from "@fortawesome/free-solid-svg-icons";
-import { faVideo } from "@fortawesome/free-solid-svg-icons";
-import { faVideoSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowLeft,
+  faArrowRotateRight,
+  faExclamationTriangle,
+  faMagnifyingGlassLocation,
+  faVideo,
+  faVideoSlash
+} from "@fortawesome/free-solid-svg-icons";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
@@ -281,7 +283,7 @@ export default function CameraDetailsPage() {
                 </Tab>
                 <Tab eventKey="nearby" title={<span>{nearby}Nearby</span>}>
                   <div className="replay-div"></div>
-                  <div className="map-context-wrap">
+                  <div className="map-wrap map-context-wrap">
                     <DndProvider options={HTML5toTouch}>
                       <Map camera={camera} isPreview={true} cameraHandler={initCamera} mapViewRoute={mapViewRoute}/>
                     </DndProvider>

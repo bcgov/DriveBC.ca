@@ -1,106 +1,122 @@
+@import "../styles/variables.scss";
+
 .map-wrap {
   position: absolute;
-  top: 4rem;
+  top: 50px;
   bottom: 0;
   width: 100%;
+
+  @media (min-width: 992px) {
+    top: 58px;
+  }
 
   .map {
     position: absolute;
     width: 100%;
     height: 100vh;
-  }
 
-  .map-control {
-    position: absolute;
-    right: 2rem;
-    bottom: 2rem;
-    height: 200px;
-    width: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .map-view {
-    top: 4rem;
-    min-width: 3rem;
-    right: 2rem;
-    position: absolute;
-
-    @media screen and (max-width: 729px) {
-      top: 4rem;
-      right: 14px;
+    .ol-popup {
+      display: none;
+      position: absolute;
+      background-color: white;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      padding: 0px 0px 2px 0px;
+      border-radius: 4px;
+      border: 1px solid #cccccc;
+      bottom: 20px;
+      left: -50px;
+      min-width: 285px;
+      cursor: default;
+      z-index: -1;
+    }
+    .ol-popup:after, .ol-popup:before {
+      top: 100%;
+      border: solid transparent;
+  
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+    .ol-popup:after {
+      border-top-color: white;
+      border-width: 10px;
+      left: 48px;
+      margin-left: -10px;
+    }
+    .ol-popup:before {
+      border-top-color: #cccccc;
+      border-width: 11px;
+      left: 48px;
+      margin-left: -11px;
+    }
+    .ol-popup-closer {
+      font-size: 11px;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      cursor: pointer;
+      color: #FFFFFF;
+    }
+    .ol-popup-closer:after {
+      content: "✖";
+    }
+    .ol-popup-closer:hover {
+      color: #808080;
+    }
+  
+    .ol-popup-content {
+      max-width: 100%;
+      resize: horizontal;
+      overflow: hidden;
     }
   }
 
-  .map-control button {
-    height: 54px;
-    width: 54px;
-    text-align: center;
-    position: relative;
-    margin: auto;
-    padding: initial;
-    background: #fff;
-  }
+  .map-btn {
+    background: $White;
+    color: $Type-Primary;
+    position: absolute;
+    margin-bottom: 0;
+    font-size: 1em;
+    height: 36px;
+    border-radius: 18px;
+    border: none;
+    box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
 
-  @media screen and (max-width: 729px) {
-    .map-control {
-      right: 14px;
+    &.map-view, &.cam-location {
+      svg {
+        margin-right: 8px;
+      }
     }
-  }
 
-  .ol-popup {
-    display: none;
-    position: absolute;
-    background-color: white;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-    padding: 0px 0px 2px 0px;
-    border-radius: 4px;
-    border: 1px solid #cccccc;
-    bottom: 20px;
-    left: -50px;
-    min-width: 285px;
-    cursor: default;
-    z-index: -1;
-  }
-  .ol-popup:after, .ol-popup:before {
-    top: 100%;
-    border: solid transparent;
+    &.map-view {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+    }
+    
+    &.cam-location {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+    }
 
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-  }
-  .ol-popup:after {
-    border-top-color: white;
-    border-width: 10px;
-    left: 48px;
-    margin-left: -10px;
-  }
-  .ol-popup:before {
-    border-top-color: #cccccc;
-    border-width: 11px;
-    left: 48px;
-    margin-left: -11px;
-  }
-  .ol-popup-closer {
-    font-size: 11px;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    cursor: pointer;
-    color: #FFFFFF;
-  }
-  .ol-popup-closer:after {
-    content: "✖";
-  }
-  .ol-popup-closer:hover {
-    color: #808080;
-  }
+    &.zoom-in, &.zoom-out, &.open-layers {
+      height: 40px;
+      width: 40px;
+      border-radius: 20px;
+    }
 
-  .ol-popup-content {
-    max-width: 100%;
-    resize: horizontal;
-    overflow: hidden;
+    &.zoom-in{
+      position: absolute;
+      bottom: calc(3rem + 40px);
+      right: 2rem;
+    }
+    
+    &.zoom-out {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+    } 
   }
 }

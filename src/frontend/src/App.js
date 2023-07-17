@@ -2,6 +2,10 @@
 import React, { createContext, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+// Styling
+import '@bcgov/bc-sans/css/BCSans.css';
+import './App.scss';
+
 // Components and functions
 import Header from './Header.js';
 import MapPage from './pages/MapPage';
@@ -9,11 +13,6 @@ import CamerasPage from './pages/CamerasPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
 import EventsPage from './pages/EventsPage';
 import ScrollToTop from './Components/ScrollToTop';
-
-// Styling
-import '@bcgov/bc-sans/css/BCSans.css';
-import './App.scss';
-import './styles/variables.scss';
 
 export const MapContext = createContext(null);
 
