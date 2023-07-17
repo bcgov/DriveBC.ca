@@ -1,4 +1,4 @@
-name: Deploy main to dev
+name: Deploy main to test
 
 on:
   workflow_dispatch:
