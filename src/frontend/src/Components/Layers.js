@@ -78,7 +78,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer}) {
           onChange={(e) => toggleLayer('highwayLayer', e.target.checked)}
           defaultChecked={mapContext.visible_layers.highwayLayer}
         />
-        <label for="events">Highways</label>
+        <label for="highways">Highways</label>
       </div>
       <div className="layer-item">
       <img className="map-icon" src={eventIcon} alt="Event Icon" />
@@ -86,7 +86,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer}) {
           onChange={(e) => toggleLayer('open511Layer', e.target.checked)}
           defaultChecked={mapContext.visible_layers.open511Layer}
         />
-        <label for="events">Open511 events</label>
+        <label for="open511">Open511 events</label>
       </div>
     </div>
   )
