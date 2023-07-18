@@ -1,4 +1,5 @@
 @import "../styles/variables.scss";
+@import '~ol/ol.css';
 
 .map-wrap {
   position: absolute;
@@ -32,7 +33,7 @@
     .ol-popup:after, .ol-popup:before {
       top: 100%;
       border: solid transparent;
-  
+
       height: 0;
       width: 0;
       position: absolute;
@@ -64,7 +65,7 @@
     .ol-popup-closer:hover {
       color: #808080;
     }
-  
+
     .ol-popup-content {
       max-width: 100%;
       resize: horizontal;
@@ -94,7 +95,7 @@
       top: 2rem;
       right: 2rem;
     }
-    
+
     &.cam-location {
       position: absolute;
       bottom: 2rem;
@@ -112,11 +113,37 @@
       bottom: calc(3rem + 40px);
       right: 2rem;
     }
-    
+
     &.zoom-out {
       position: absolute;
       bottom: 2rem;
       right: 2rem;
-    } 
+    }
   }
+  .ol-zoom .ol-zoom-out {
+    margin-top: 200px;
+  }
+  .ol-zoomslider {
+    background-color: rgba(32, 177, 240, 0.395);
+    top: calc(0.5em + 2px + 1px + 1.14 * 1.375em);
+    top: 8px;
+    left: auto;
+    right: 8px;
+  }
+   .ol-zoomslider:hover {
+    background-color: rgba(32, 178, 240, 0.531);
+  }
+
+   .ol-zoomslider-thumb {
+    height: 15px;
+    width: 15px;
+    margin: 0;
+    filter: none;
+    background-color: rgba(14, 97, 252, 0.395);
+    border-radius: 7.5px;
+  }
+   a.ol-zoomslider-handle:hover {
+    background-color: rgba(14, 97, 252, 0.578);
+
+}
 }

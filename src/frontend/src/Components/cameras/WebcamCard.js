@@ -17,7 +17,7 @@ export default function WebcamCard({ camera }) {
   const navigate = useNavigate();
 
   function handleClick() {
-    navigate("/CameraDetailsPage", {state: { cameraData: camera }})
+    navigate("/camera-details-page", {state: { cameraData: camera }})
   }
 
   function handleChildClick(e) {
