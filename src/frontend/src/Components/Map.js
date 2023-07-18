@@ -146,10 +146,6 @@ export default function MapWrapper({
     var popup = new Popup();
     mapRef.current.addOverlay(popup);
 
-    // initialize zoom slider
-    // const zoomslider = new ZoomSlider();
-    // mapRef.current.addControl(zoomslider);
-
     mapRef.current.once("loadend", async () => {
       const { webcamResults } = await getWebcams();
       const evpoints = await getEventPoints();
