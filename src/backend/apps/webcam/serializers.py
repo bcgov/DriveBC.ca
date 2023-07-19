@@ -21,7 +21,7 @@ class WebcamSerializer(serializers.ModelSerializer):
             "imageDisplay": f"{api_root}bchighwaycam/pub/cameras/{webcam_id}.jpg",
             "imageThumbnail": f"{api_root}bchighwaycam/pub/cameras/tn/{webcam_id}.jpg",
             "currentImage": f"{api_root}webcam/imageUpdate.php?cam={webcam_id}",
-            "replayTheDay": f"{api_root}ReplayTheDay/player.html?cam={webcam_id}",
+            "replayTheDay": f"{api_root}ReplayTheDay/json/{webcam_id}.json",
         }
 
         return links

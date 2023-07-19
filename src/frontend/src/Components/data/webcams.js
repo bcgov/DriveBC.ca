@@ -20,4 +20,9 @@ export function getWebcams(url) {
     });
 }
 
+export function getWebcamReplay(webcam) {
+  //TODO: error handling
+  return fetch(webcam.links.replayTheDay).then((response) => response.json());
+}
+
 export default defaultWebcams;
