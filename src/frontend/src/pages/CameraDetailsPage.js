@@ -1,5 +1,5 @@
 // React
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 // Third party packages
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,12 +14,16 @@ import {
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
+import ImageGallery from 'react-image-gallery';
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import RangeSlider from 'react-bootstrap-range-slider';
+import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
 
 // Components and functions
 import { MapContext } from "../App.js";
 import { DndProvider } from "react-dnd-multi-backend";
+import { getWebcamReplay } from "../Components/data/webcams";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
 import Map from "../Components/Map.js";
 import Footer from "../Footer.js";
@@ -43,6 +47,7 @@ export default function CameraDetailsPage() {
   // State hooks
   const [camera, setCamera] = useState(null);
   const [replay, setReplay] = useState(true);
+  const [replayImages, setReplayImages] = useState([]);
   const [nextUpdate, setNextUpdate] = useState(null);
 
   const navigate = useNavigate();
@@ -58,7 +63,8 @@ export default function CameraDetailsPage() {
   const cameraTab = <FontAwesomeIcon icon={faVideo} />;
   const nearby = <FontAwesomeIcon icon={faMagnifyingGlassLocation} />;
 
-  function initCamera(camera) {
+  async function initCamera(camera) {
+    // Camera data
     setCamera(camera);
     const next_update_time = addSeconds(
       new Date(camera.last_update_modified),
@@ -69,6 +75,13 @@ export default function CameraDetailsPage() {
       datetime_format
     ).format(next_update_time);
     setNextUpdate(next_update_time_formatted);
+
+    // Replay images
+    const replayImageList = await getWebcamReplay(camera);
+    const replayImages = replayImageList.map(url => {
+      return {original: "https://images.drivebc.ca/ReplayTheDay/archive/" + `${camera.id}/${url}.jpg`};
+    });
+    setReplayImages(replayImages);
   }
 
   useEffect(() => {
@@ -97,6 +110,33 @@ export default function CameraDetailsPage() {
   const mapViewRoute = () =>{
     console.log("routing")
     navigate("/", { state: camera})
+  }
+
+  // ReplayTheDay
+  const refImg = useRef(null)
+  const startButtonHandler = () => {
+    refImg.current.slideToIndex(0);
+  }
+
+  const endButtonHandler = () => {
+    refImg.current.slideToIndex(replayImages.length - 1);
+  }
+
+  const customControls = () => {
+    return refImg.current && (
+      <div>
+        <button style={{ color: 'red', height : 50, width: 100 }} onClick={startButtonHandler}>To Start</button>
+        <button style={{ color: 'blue', height : 50, width: 100 }} onClick={endButtonHandler}>To End</button>
+        <RangeSlider
+          value={refImg.current.getCurrentIndex()}
+          max={replayImages.length}
+          tooltip='off'
+          onChange={e =>
+            refImg.current.slideToIndex(parseInt(e.target.value))
+          }
+        />
+      </div>
+    );
   }
 
   return (
@@ -263,7 +303,15 @@ export default function CameraDetailsPage() {
                       {replay ? (
                         <img src={camera.links.imageSource} alt="camera"/>
                       ) : (
-                        <img src={camera.links.replayTheDay} alt="replay" />
+                        <ImageGallery
+                          ref={refImg}
+                          slideInterval={300}
+                          items={replayImages}
+                          slideDuration={0}
+                          showFullscreenButton={false}
+                          alt="replay"
+                          disableKeyDown={true}
+                          renderCustomControls={customControls} />
                       )}
                     </div>
                   )}
