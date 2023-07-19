@@ -39,9 +39,9 @@ function App() {
         <ScrollToTop/>
         <Routes>
           <Route path="/" element={<MapPage />} />
-          <Route path="/cameraspage" element={<CamerasPage />} />
-          <Route path="/cameradetailspage" element={<CameraDetailsPage />} />
-          <Route path="/eventspage" element={<EventsPage />} />
+          <Route path="/cameras-page" element={<CamerasPage />} />
+          <Route path="/camera-details-page" element={<CameraDetailsPage />} />
+          <Route path="/events-page" element={<EventsPage />} />
         </Routes>
       </div>
     </MapContext.Provider>

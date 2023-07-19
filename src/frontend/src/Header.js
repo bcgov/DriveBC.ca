@@ -27,10 +27,10 @@ export default function Header() {
 						<LinkContainer to="/">
 						<Nav.Link>Map</Nav.Link>
 						</LinkContainer>
-						<LinkContainer to="/CamerasPage">
+						<LinkContainer to="/cameras-page">
 							<Nav.Link>Cameras</Nav.Link>
 						</LinkContainer>
-						<LinkContainer to="/EventsPage">
+						<LinkContainer to="/events-page">
 							<Nav.Link>Events</Nav.Link>
 						</LinkContainer>
 					</Nav>

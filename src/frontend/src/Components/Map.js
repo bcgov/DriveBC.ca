@@ -36,6 +36,7 @@ import VectorSource from "ol/source/Vector";
 import VectorTileLayer from "ol/layer/VectorTile.js";
 import VectorTileSource from "ol/source/VectorTile.js";
 import View from "ol/View";
+import {ZoomSlider} from 'ol/control.js';
 
 // Static files
 import eventIcon from "../assets/exclamation-triangle-solid.png";
@@ -138,7 +139,7 @@ export default function MapWrapper({
       ],
       overlays: [],
       view: mapView.current,
-      controls: [],
+      controls: [new ZoomSlider()],
     });
 
     // initialize event and webcam popup
@@ -395,7 +396,7 @@ export default function MapWrapper({
           Map View
         </Button>
         )}
-        
+
         <Button className="map-btn cam-location" variant="outline-primary" onClick={handleRecenter}>
           <FontAwesomeIcon icon={faLocationCrosshairs} />
           Camera location
