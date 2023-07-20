@@ -151,7 +151,7 @@ export default function CameraDetailsPage() {
       </div>
       <div>
         {camera && (
-          <Container>
+          <div className="container--full-width">
             <div className="camera-details">
               <div className="camera-details__description">
                 <h2>{camera.name}</h2>
@@ -271,10 +271,13 @@ export default function CameraDetailsPage() {
               </div>
             )}
 
-            <p className="camera-update bold">
-              This camera updates its image approximately every{" "}
-              {round(camera.update_period_mean / 60)} minutes
-            </p>
+
+            <div className="camera-update">
+              <p className="bold">
+                This camera updates its image approximately every{" "}
+                {round(camera.update_period_mean / 60)} minutes
+              </p>
+            </div>
 
             <div className="camera-imagery">
               <Tabs>
@@ -332,7 +335,7 @@ export default function CameraDetailsPage() {
                 </Tab>
               </Tabs>
             </div>
-          </Container>
+          </div>
         )}
       </div>
       <Footer />
