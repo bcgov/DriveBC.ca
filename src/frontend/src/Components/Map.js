@@ -112,7 +112,7 @@ export default function MapWrapper({
       center: camera
         ? fromLonLat(camera.location.coordinates)
         : fromLonLat([lng, lat]),
-      zoom: 12,
+      zoom: 10,
     });
     //Apply the basemap style from the arcgis resource
     fetch(
@@ -250,10 +250,6 @@ export default function MapWrapper({
       });
       mapRef.current.addLayer(layers.current["eventsLayer"]);
 
-      // let interval = setInterval(async () => {
-      //   const travalad = await getAdvisories();
-      //   setAdvisories(travalad);
-      // }, 10000);
     });
 
     mapRef.current.on("click", (e) => {
