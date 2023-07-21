@@ -143,7 +143,7 @@ export default function CameraDetailsPage() {
     <div className="camera-page">
       <div className="page-header">
         <Container>
-          <Link to="/CamerasPage" className="back-link">
+          <Link to="/cameras-page" className="back-link">
             <FontAwesomeIcon icon={faArrowLeft} />
             Back to web camera list
           </Link>
