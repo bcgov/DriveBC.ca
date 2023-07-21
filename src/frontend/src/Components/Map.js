@@ -19,12 +19,15 @@ import Routes from "./Routes.js";
 
 // OpenLayers
 import { applyStyle } from "ol-mapbox-style";
+import { Circle } from 'ol/geom.js';
 import { fromLonLat } from "ol/proj";
 import { Icon, Style } from "ol/style.js";
 import { Image as ImageLayer } from "ol/layer.js";
 import { MapContext } from "../App.js";
+import { ZoomSlider } from 'ol/control.js';
 import * as ol from "ol";
 import Cluster from "ol/source/Cluster.js";
+import Feature from 'ol/Feature.js';
 import GeoJSON from "ol/format/GeoJSON.js";
 import ImageWMS from "ol/source/ImageWMS.js";
 import Map from "ol/Map";
@@ -36,7 +39,6 @@ import VectorSource from "ol/source/Vector";
 import VectorTileLayer from "ol/layer/VectorTile.js";
 import VectorTileSource from "ol/source/VectorTile.js";
 import View from "ol/View";
-import {ZoomSlider} from 'ol/control.js';
 
 // Static files
 import eventIcon from "../assets/exclamation-triangle-solid.png";
@@ -62,6 +64,63 @@ export default function MapWrapper({
   const [layersOpen, setLayersOpen] = useState(false);
   const [routesOpen, setRoutesOpen] = useState(false);
 
+  function getCameraCircle(camera) {
+    if (!camera){
+      return {};
+    }
+
+    const circle = new Circle(fromLonLat(camera.location.coordinates), 5000);
+    const circleFeature = new Feature({
+      geometry: circle,
+    });
+
+    circleFeature.setStyle(
+      new Style({
+        renderer(coordinates, state) {
+          const [[x, y], [x1, y1]] = coordinates;
+          const ctx = state.context;
+          const dx = x1 - x;
+          const dy = y1 - y;
+          const radius = Math.sqrt(dx * dx + dy * dy);
+
+          const innerRadius = 0;
+          const outerRadius = radius * 1.4;
+
+          const gradient = ctx.createRadialGradient(
+            x,
+            y,
+            innerRadius,
+            x,
+            y,
+            outerRadius
+          );
+          gradient.addColorStop(0, 'rgba(255,0,0,0)');
+          gradient.addColorStop(0.6, 'rgba(255,0,0,0.2)');
+          gradient.addColorStop(1, 'rgba(255,0,0,0.8)');
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
+          ctx.fillStyle = gradient;
+          ctx.fill();
+
+          ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
+          ctx.strokeStyle = 'rgba(255,0,0,1)';
+          ctx.stroke();
+        },
+      })
+    );
+
+    const radiusLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [circleFeature],
+      }),
+    });
+
+    return {
+      circle: circle,
+      radiusLayer: radiusLayer
+    }
+  }
+
   useEffect(() => {
     // initialization hook for the OpenLayers map logic
     if (mapRef.current) return; //stops map from intializing more than once
@@ -72,6 +131,8 @@ export default function MapWrapper({
         url: "https://tiles.arcgis.com/tiles/ubm4tcTYICKBpist/arcgis/rest/services/BC_BASEMAP/VectorTileServer/tile/{z}/{y}/{x}.pbf",
       }),
     });
+
+    const { circle, radiusLayer } = getCameraCircle(camera);
 
     // initialize starting optional layers
     layers.current = {
@@ -132,7 +193,12 @@ export default function MapWrapper({
     // create map
     mapRef.current = new Map({
       target: mapElement.current,
-      layers: [
+      layers: radiusLayer ? [
+        vectorLayer,
+        radiusLayer,
+        layers.current["highwayLayer"],
+        layers.current["open511Layer"],
+      ] : [
         vectorLayer,
         layers.current["highwayLayer"],
         layers.current["open511Layer"],
@@ -267,10 +333,16 @@ export default function MapWrapper({
             if (isPreview) {
               const clickedCamera =
                 clickedFeatures[0].values_.features[0].values_;
-              mapView.current.animate({
-                center: fromLonLat(clickedCamera.location.coordinates),
-              });
-              cameraHandler(clickedCamera);
+
+              // Only switch context on clicking cameras within circle
+              if (circle && circle.intersectsCoordinate(fromLonLat(clickedCamera.location.coordinates))){
+                mapView.current.animate({
+                  center: fromLonLat(clickedCamera.location.coordinates),
+                });
+
+                cameraHandler(clickedCamera);
+              }
+
             } else {
               const feature = clickedFeatures[0].values_.features[0].values_;
               iconClicked = true;
