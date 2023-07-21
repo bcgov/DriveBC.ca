@@ -9,15 +9,19 @@ import {
   faExclamationTriangle,
   faMagnifyingGlassLocation,
   faVideo,
-  faVideoSlash
+  faVideoSlash,
+  faPlay,
+  faBackward,
+  faForward
 } from "@fortawesome/free-solid-svg-icons";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-import ImageGallery from 'react-image-gallery';
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import Button from "react-bootstrap/Button";
 import RangeSlider from 'react-bootstrap-range-slider';
+import ImageGallery from 'react-image-gallery';
 import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
 
 // Components and functions
@@ -114,19 +118,10 @@ export default function CameraDetailsPage() {
 
   // ReplayTheDay
   const refImg = useRef(null)
-  const startButtonHandler = () => {
-    refImg.current.slideToIndex(0);
-  }
-
-  const endButtonHandler = () => {
-    refImg.current.slideToIndex(replayImages.length - 1);
-  }
-
+  
   const customControls = () => {
     return refImg.current && (
-      <div>
-        <button style={{ color: 'red', height : 50, width: 100 }} onClick={startButtonHandler}>To Start</button>
-        <button style={{ color: 'blue', height : 50, width: 100 }} onClick={endButtonHandler}>To End</button>
+      <div className="range-slider-container">
         <RangeSlider
           value={refImg.current.getCurrentIndex()}
           max={replayImages.length}
@@ -138,6 +133,37 @@ export default function CameraDetailsPage() {
       </div>
     );
   }
+
+  const customLeftNav = (onClick, disabled) => {
+    return ( 
+      <div className="replay-control replay-control--backward">
+        <Button className="replay-btn replay-backward" onClick={onClick} disabled={disabled} >
+          <FontAwesomeIcon icon={faBackward} />
+        </Button>
+      </div>
+  );
+  }
+  
+  const customPlayPause = (onClick, isPlaying) => {
+    return ( 
+      <div className="replay-control replay-control--play">
+        <Button className="replay-btn replay-play" onClick={onClick} isPlaying={isPlaying} >
+          <FontAwesomeIcon icon={faPlay} />
+        </Button>
+      </div>
+    );
+  }
+
+  const customRightNav = (onClick, disabled) => {
+    return ( 
+      <div className="replay-control replay-control--forward">
+        <Button className="replay-btn replay-forward" onClick={onClick} disabled={disabled} >
+          <FontAwesomeIcon icon={faForward} />
+        </Button>
+      </div>
+    );
+  }
+
 
   return (
     <div className="camera-page">
@@ -287,8 +313,8 @@ export default function CameraDetailsPage() {
                 >
                   <div className="replay-div">
                     <div className="next-update">
+                      <FontAwesomeIcon icon={faArrowRotateRight} />
                       <p>
-                        <FontAwesomeIcon icon={faArrowRotateRight} />
                         Next update attempt: {nextUpdate}
                       </p>
                     </div>
@@ -314,7 +340,10 @@ export default function CameraDetailsPage() {
                           showFullscreenButton={false}
                           alt="replay"
                           disableKeyDown={true}
-                          renderCustomControls={customControls} />
+                          renderCustomControls={customControls}
+                          renderLeftNav={customLeftNav}
+                          renderPlayPauseButton={customPlayPause}
+                          renderRightNav={customRightNav} />
                       )}
                     </div>
                   )}
