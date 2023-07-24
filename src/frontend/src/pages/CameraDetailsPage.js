@@ -11,6 +11,7 @@ import {
   faVideo,
   faVideoSlash,
   faPlay,
+  faPause,
   faBackward,
   faForward
 } from "@fortawesome/free-solid-svg-icons";
@@ -155,7 +156,7 @@ export default function CameraDetailsPage() {
     return ( 
       <div className="replay-control replay-control--play">
         <Button className="replay-btn replay-play" onClick={onClick} isPlaying={isPlaying} >
-          <FontAwesomeIcon icon={faPlay} />
+          {isPlaying ? <FontAwesomeIcon icon={faPause} />  : <FontAwesomeIcon icon={faPlay} />}
         </Button>
       </div>
     );
