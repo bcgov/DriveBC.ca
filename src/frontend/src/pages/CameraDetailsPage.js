@@ -53,6 +53,7 @@ export default function CameraDetailsPage() {
   const [replay, setReplay] = useState(true);
   const [replayImages, setReplayImages] = useState([]);
   const [nextUpdate, setNextUpdate] = useState(null);
+  const [lastUpdate, setLastUpdate] = useState(null);
 
   const navigate = useNavigate();
 
@@ -70,15 +71,21 @@ export default function CameraDetailsPage() {
   async function initCamera(camera) {
     // Camera data
     setCamera(camera);
-    const next_update_time = addSeconds(
-      new Date(camera.last_update_modified),
-      camera.update_period_mean
-    );
-    const next_update_time_formatted = new Intl.DateTimeFormat(
-      "en-US",
-      datetime_format
+    
+    // Next update time
+    const current_time = new Date();
+    const next_update_time = addSeconds(current_time, camera.update_period_mean);
+    const next_update_time_formatted = new Intl.DateTimeFormat("en-US",
+    { hour: "numeric",
+      minute: "numeric",
+      timeZoneName: "short" }
     ).format(next_update_time);
     setNextUpdate(next_update_time_formatted);
+
+    // Last update timestamp
+    const last_updated_time = new Date(camera.last_update_modified);
+    const last_updated_timestamp = new Intl.DateTimeFormat("en-US", datetime_format).format(last_updated_time);
+      setLastUpdate(last_updated_timestamp);
 
     // Replay images
     const replayImageList = await getWebcamReplay(camera);
@@ -163,7 +170,6 @@ export default function CameraDetailsPage() {
       </div>
     );
   }
-
 
   return (
     <div className="camera-page">
@@ -327,6 +333,7 @@ export default function CameraDetailsPage() {
                       />
                     </Form>
                   </div>
+                  <div className="image-wrap">
                   {camera.is_on && (
                     <div className="card-img-box">
                       {replay ? (
@@ -353,6 +360,14 @@ export default function CameraDetailsPage() {
                       <FontAwesomeIcon icon={faVideoSlash} />
                     </div>
                   )}
+
+                  {replay && (
+                    <div className="timestamp">
+                      <p className="driveBC">Drive<span>BC</span></p>
+                      <p className="label">{lastUpdate}</p>
+                    </div>
+                  )}
+                </div>
                 </Tab>
                 <Tab eventKey="nearby" title={<span>{nearby}Nearby</span>}>
                   <div className="replay-div"></div>
