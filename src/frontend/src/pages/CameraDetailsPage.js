@@ -9,15 +9,20 @@ import {
   faExclamationTriangle,
   faMagnifyingGlassLocation,
   faVideo,
-  faVideoSlash
+  faVideoSlash,
+  faPlay,
+  faPause,
+  faBackward,
+  faForward
 } from "@fortawesome/free-solid-svg-icons";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-import ImageGallery from 'react-image-gallery';
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import Button from "react-bootstrap/Button";
 import RangeSlider from 'react-bootstrap-range-slider';
+import ImageGallery from 'react-image-gallery';
 import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
 
 // Components and functions
@@ -49,6 +54,7 @@ export default function CameraDetailsPage() {
   const [replay, setReplay] = useState(true);
   const [replayImages, setReplayImages] = useState([]);
   const [nextUpdate, setNextUpdate] = useState(null);
+  const [lastUpdate, setLastUpdate] = useState(null);
 
   const navigate = useNavigate();
 
@@ -66,15 +72,21 @@ export default function CameraDetailsPage() {
   async function initCamera(camera) {
     // Camera data
     setCamera(camera);
-    const next_update_time = addSeconds(
-      new Date(camera.last_update_modified),
-      camera.update_period_mean
-    );
-    const next_update_time_formatted = new Intl.DateTimeFormat(
-      "en-US",
-      datetime_format
+    
+    // Next update time
+    const current_time = new Date();
+    const next_update_time = addSeconds(current_time, camera.update_period_mean);
+    const next_update_time_formatted = new Intl.DateTimeFormat("en-US",
+    { hour: "numeric",
+      minute: "numeric",
+      timeZoneName: "short" }
     ).format(next_update_time);
     setNextUpdate(next_update_time_formatted);
+
+    // Last update timestamp
+    const last_updated_time = new Date(camera.last_update_modified);
+    const last_updated_timestamp = new Intl.DateTimeFormat("en-US", datetime_format).format(last_updated_time);
+      setLastUpdate(last_updated_timestamp);
 
     // Replay images
     const replayImageList = await getWebcamReplay(camera);
@@ -114,19 +126,10 @@ export default function CameraDetailsPage() {
 
   // ReplayTheDay
   const refImg = useRef(null)
-  const startButtonHandler = () => {
-    refImg.current.slideToIndex(0);
-  }
-
-  const endButtonHandler = () => {
-    refImg.current.slideToIndex(replayImages.length - 1);
-  }
-
+  
   const customControls = () => {
     return refImg.current && (
-      <div>
-        <button style={{ color: 'red', height : 50, width: 100 }} onClick={startButtonHandler}>To Start</button>
-        <button style={{ color: 'blue', height : 50, width: 100 }} onClick={endButtonHandler}>To End</button>
+      <div className="range-slider-container">
         <RangeSlider
           value={refImg.current.getCurrentIndex()}
           max={replayImages.length}
@@ -135,6 +138,36 @@ export default function CameraDetailsPage() {
             refImg.current.slideToIndex(parseInt(e.target.value))
           }
         />
+      </div>
+    );
+  }
+
+  const customLeftNav = (onClick, disabled) => {
+    return ( 
+      <div className="replay-control replay-control--backward">
+        <Button className="replay-btn replay-backward" onClick={onClick} disabled={disabled} >
+          <FontAwesomeIcon icon={faBackward} />
+        </Button>
+      </div>
+  );
+  }
+  
+  const customPlayPause = (onClick, isPlaying) => {
+    return ( 
+      <div className="replay-control replay-control--play">
+        <Button className="replay-btn replay-play" onClick={onClick} isPlaying={isPlaying} >
+          {isPlaying ? <FontAwesomeIcon icon={faPause} />  : <FontAwesomeIcon icon={faPlay} />}
+        </Button>
+      </div>
+    );
+  }
+
+  const customRightNav = (onClick, disabled) => {
+    return ( 
+      <div className="replay-control replay-control--forward">
+        <Button className="replay-btn replay-forward" onClick={onClick} disabled={disabled} >
+          <FontAwesomeIcon icon={faForward} />
+        </Button>
       </div>
     );
   }
@@ -287,8 +320,8 @@ export default function CameraDetailsPage() {
                 >
                   <div className="replay-div">
                     <div className="next-update">
+                      <FontAwesomeIcon icon={faArrowRotateRight} />
                       <p>
-                        <FontAwesomeIcon icon={faArrowRotateRight} />
                         Next update attempt: {nextUpdate}
                       </p>
                     </div>
@@ -301,6 +334,7 @@ export default function CameraDetailsPage() {
                       />
                     </Form>
                   </div>
+                  <div className="image-wrap">
                   {camera.is_on && (
                     <div className="card-img-box">
                       {replay ? (
@@ -314,7 +348,10 @@ export default function CameraDetailsPage() {
                           showFullscreenButton={false}
                           alt="replay"
                           disableKeyDown={true}
-                          renderCustomControls={customControls} />
+                          renderCustomControls={customControls}
+                          renderLeftNav={customLeftNav}
+                          renderPlayPauseButton={customPlayPause}
+                          renderRightNav={customRightNav} />
                       )}
                     </div>
                   )}
@@ -324,6 +361,14 @@ export default function CameraDetailsPage() {
                       <FontAwesomeIcon icon={faVideoSlash} />
                     </div>
                   )}
+
+                  {replay && (
+                    <div className="timestamp">
+                      <p className="driveBC">Drive<span>BC</span></p>
+                      <p className="label">{lastUpdate}</p>
+                    </div>
+                  )}
+                </div>
                 </Tab>
                 <Tab eventKey="nearby" title={<span>{nearby}Nearby</span>}>
                   <div className="replay-div"></div>

@@ -15,21 +15,6 @@
     }
   }
 
-  .container--full-width {
-    max-width: 1124px;
-    margin: auto;
-    padding: 32px 0;
-
-    @media (min-width: 576px) {
-      padding: 32px;
-    }
-
-    & > div:not(.camera-imagery) {
-      margin-left: 16px;
-      margin-right: 16px;
-    }
-  }
-
   .camera-details {
     display: flex;
     flex-direction: column;
@@ -55,7 +40,7 @@
 
     &__more {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-around;
       margin: 0;
 
       @media (min-width: 576px) {
@@ -165,6 +150,7 @@
   }
 
   .camera-update {
+    margin-bottom: 50px;
     p {
       margin-bottom: 0;
     }
@@ -199,6 +185,9 @@
         margin-top: 16px;
 
         .card-img-box {
+          @media (min-width: 576px) {
+            margin: 0;
+          }
 
           &.unavailable {
             background-color: $Type-Disabled;
@@ -208,14 +197,132 @@
             justify-content: center;
           }
 
-          @media (min-width: 576px) {
-            margin: 0;
-          }
-
           img {
             width: 100%;
-            height: 100%;
+            height: 365px;
             object-fit: cover;
+
+            &.image-gallery-image {
+              height: 388px;
+              cursor: auto;
+            }
+          }
+
+          .image-gallery {
+            box-shadow: 0px 1.600000023841858px 3.5999999046325684px 0px rgba(0, 0, 0, 0.13), 0px 0.30000001192092896px 0.8999999761581421px 0px rgba(0, 0, 0, 0.10);
+
+            &-slide-wrapper {
+              display: flex;
+              flex-wrap: wrap;
+
+              .replay-control {
+                display: flex;
+                justify-content: center;
+                margin: 0 0 12px 0;
+
+                @media (min-width: 992px) {
+                  margin: auto 0;
+                }
+
+                .replay-btn {
+                  color: $Type-Primary;
+                  background-color: $White;
+                  border: none;
+                  width: 60px;
+                  height: 60px;
+                  border-radius: 30px;
+                  padding: initial;
+                  margin-bottom: 0;
+
+                  @media(min-width: 992px) {
+                    width: 36px;
+                    height: 36px;
+                    border-radius: 18px;
+                  }
+    
+                  &:hover {
+                    background-color: $Grey30;
+                  }
+                }
+              }
+
+              //Replay the day on mobile
+              .range-slider-container {
+                order: 2;
+                margin: 0 15px;
+                width: calc(100% - 30px);
+              }
+
+              .replay-control--backward {
+                order: 3;
+                width: 33.33%;
+              }
+
+              .replay-control--forward {
+                order: 5;
+                width: 33.33%;
+              }
+
+              .image-gallery-swipe {
+                order: 1;
+                width: 100%;
+              }
+
+              .replay-control--play {
+                order: 4;
+                width: 33.33%;
+              }
+
+              //Replay the day on desktop
+              @media (min-width: 992px) {
+                .range-slider-container {
+                  order: 5;
+                  margin: 5px 15px;
+                  width: calc(70% - 30px);
+                }
+
+                .replay-control--backward {
+                  order: 2;
+                  width: 10%;
+                }
+
+                .replay-control--forward {
+                  order: 4;
+                  width: 10%;
+                }
+
+                .image-gallery-swipe {
+                  order: 1;
+                  width: 100%;
+                }
+
+                .replay-control--play {
+                  order: 3;
+                  width: 10%;
+                }
+              }
+            }
+          }
+        }
+
+        .timestamp {
+          background-color: $Black;
+          padding: 0 10px;
+          display: flex;
+          justify-content: space-between;
+    
+          p {
+            color: $White;
+            font-size: 0.875em;
+            margin-bottom: 0;
+          }
+          
+          .driveBC {
+            font-family: serif;
+            span {
+              color: $BC-Yellow;
+            }
+            margin-right: 10px;
           }
         }
       }
@@ -226,7 +333,7 @@
       flex-direction: column;
       align-items: flex-start;
 
-      @media (min-width: 420px) {
+      @media (min-width: 576px) {
         flex-direction: row;
         justify-content: space-between;
       }
@@ -249,14 +356,16 @@
         border: 1px solid $BC-Blue;
         border-radius: 12px;
 
+        svg, p {
+          font-size: 0.875em;
+        }
+
         svg {
-          font-size: 0.625em;
           margin-right: 8px;
         }
 
         p {
           margin-bottom: 0;
-          font-size: 0.75em;
           font-weight: 700;
           color: $BC-Blue;
         }
@@ -288,33 +397,33 @@
         }
       }
     }
-
+    
     //Responsive Tabs
     .tab-content {
       .tab-pane {
         .replay-div {
           height: 64px;
         }
-        .card-img-box {
-          height: 400px;
+        .image-wrap {
+          height: 388px;
         }
 
         &:last-of-type {
           .replay-div {
             height: 0;
           }
-          .card-img-box {
-            height: 464px;
+          .map-context-wrap {
+            height: 452px;
           }
         }
 
-        @media (min-width: 420px) {
+        @media (min-width: 576px) {
           .replay-div {
             height: 44px;
           }
           &:last-of-type {
-            .card-img-box {
-              height: 444px;
+            .map-context-wrap  {
+              height: 432px;
             }
           }
         }
@@ -324,8 +433,8 @@
             .replay-div {
               height: 44px;
             }
-            .card-img-box {
-              height: 400px;
+            .map-context-wrap  {
+              height: 388px;
             }
           }
         }
@@ -358,6 +467,29 @@
             margin-left: 12px;
           }
         }
+      }
+    }
+  }
+
+  //Custom container for full width on mobile, and padding for bigger width
+  .container--full-width {
+    max-width: 1124px;
+    margin: auto;
+    padding: 32px 0;
+
+    @media (min-width: 576px) {
+      padding: 32px;
+    }
+
+    & > div:not(.camera-imagery),
+    .camera-imagery .nav-tabs,
+    .replay-div {
+      margin-left: 16px;
+      margin-right: 16px;
+
+      @media (min-width: 576px) {
+        margin-left: 0;
+        margin-right: 0;
       }
     }
   }
@@ -434,5 +566,13 @@
         right: 8px;
       } 
     }
+  }
+
+  //Hide zoom slider on touch devices
+  .ol-zoomslider, .zoom-in, .zoom-out {
+    @media (pointer:coarse) {
+      display: none;
+    }
+
   }
 }
