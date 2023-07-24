@@ -25,6 +25,7 @@ CORS_ALLOW_HEADERS = default_headers + ("contenttype",)
 CSRF_COOKIE_SECURE = env.bool("DJANGO_CSRF_COOKIE_SECURE")
 SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT")
 SESSION_COOKIE_SECURE = env.bool("DJANGO_SESSION_COOKIE_SECURE")
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
