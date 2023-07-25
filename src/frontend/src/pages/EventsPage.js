@@ -3,6 +3,7 @@ import { getEvents } from "../Components/data/events";
 import PageHeader from "../PageHeader";
 import EventsTable from "../Components/events/EventsTable";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Container from "react-bootstrap/Container";
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
@@ -65,20 +66,24 @@ export default function EventsPage() {
   return (
     <div className="camera-page">
       <PageHeader
-        title="Events"
-        description="Events related to the BC highways."
+        title="Delays"
+        description="Find out if there are any delays that might impact your journey before you go."
       ></PageHeader>
+
+      <Container>
+      {/* <p>Display events: sorting</p> */}
+
       { events.length  && (
         <InfiniteScroll
         dataLength={eventLength}
         next={getRoadEvents}
         hasMore={nextUrl !== null}
         loader={<h4>Loading...</h4>}
-      >
-      <EventsTable columns={columns} data={events}/>
+        >
+        <EventsTable columns={columns} data={events}/>
       </InfiniteScroll>
-      )
-}
+      )}
+      </Container>
 
     </div>
   );
