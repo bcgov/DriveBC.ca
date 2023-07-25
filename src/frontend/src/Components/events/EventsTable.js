@@ -1,4 +1,7 @@
+// React
 import React, { useState } from "react";
+
+// Third party packages
 import {
   flexRender,
   getCoreRowModel,
@@ -6,6 +9,13 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowUpLong,
+  faArrowDownLong
+} from "@fortawesome/free-solid-svg-icons";
+
+// Styling
 import "./EventsTable.scss";
 
 export default function EventsTable({ columns, data }) {
@@ -27,6 +37,10 @@ export default function EventsTable({ columns, data }) {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
+
+  const asc_icon = <FontAwesomeIcon icon={faArrowUpLong} alt="ascending order" />;
+  const desc_icon = <FontAwesomeIcon icon={faArrowDownLong} alt="descending order" />;
+
   return (
     <table>
       <thead>
@@ -49,8 +63,8 @@ export default function EventsTable({ columns, data }) {
                         header.getContext()
                       )}
                       {{
-                        asc: " 🔼",
-                        desc: " 🔽",
+                        asc: asc_icon,
+                        desc: desc_icon,
                       }[header.column.getIsSorted()] ?? null}
                     </div>
                   )}
@@ -65,17 +79,16 @@ export default function EventsTable({ columns, data }) {
           .getRowModel()
           .rows
           .map((row) => {
+            console.log(row);
             return (
-              <tr key={row.id}>
+              <tr className={row.original.severity.toLowerCase()} key={row.id}>
                 {row.getVisibleCells().map((cell) => {
-                  return (
-                    <td key={cell.id}>
+                    return <td key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
                     </td>
-                  );
                 })}
               </tr>
             );

@@ -9,6 +9,15 @@ table {
       th {
         font-weight: 400;
         color: $BC-Blue;
+        cursor: pointer;
+
+        .cursor-pointer {
+          white-space: nowrap;
+
+          svg {
+            margin-left: 8px;
+          }
+        }
       }
     }
   }
@@ -18,12 +27,23 @@ table {
       &:nth-of-type(even) {
         background-color: $Grey10;
       }
+      &.major {
+        background-color: $Surface-status-red;
+      }
       &:hover {
         background-color: $BC-Blue-Light;
         cursor: pointer;
       }
       td {
         color: $Type-Primary;
+
+        &:first-of-type {
+          text-align: center;
+        }
+
+        svg {
+          color: $BC-Blue;
+        }
       }
     }
   }
@@ -34,5 +54,6 @@ table {
 
   th, td {
     padding: 16px;
+    text-transform: capitalize;
   }
 }
