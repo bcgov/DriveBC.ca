@@ -8,6 +8,9 @@ from rest_framework.response import Response
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Event.objects.filter(status=EVENT_STATUS.ACTIVE).order_by("id")
     serializer_class = EventSerializer
+    filterset_fields = {
+        'event_type': ["in", "exact"],
+    }
 
     def list(self, request, *args, **kwargs):
         # Use pagination only when offset or limit is in querystring
