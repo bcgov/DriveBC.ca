@@ -23,16 +23,17 @@ export default function CameraList() {
     setWebcamLength(webcamLength + webcamResults.length);
 
     // Webcam data reduced to arrays grouped by highway
+    const webcamList = {...webcams};
     webcamResults.forEach((cameraData) => {
       const { highway } = cameraData;
-      if (!(highway in webcams)) {
-        webcams[highway] = [];
+      if (!(highway in webcamList)) {
+        webcamList[highway] = [];
       }
 
-      webcams[highway].push(cameraData);
+      webcamList[highway].push(cameraData);
     });
 
-    setWebcams(webcams);
+    setWebcams(webcamList);
   }
 
   useEffect(() => {
