@@ -1,13 +1,13 @@
 // React
 import React, { useContext, useRef, useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 // Third party packages
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
   faMinus,
   faUpRightAndDownLeftFromCenter,
-  faLocationCrosshairs
+  faLocationCrosshairs,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
 
@@ -19,21 +19,21 @@ import Routes from "./Routes.js";
 
 // OpenLayers
 import { applyStyle } from "ol-mapbox-style";
-import { Circle } from 'ol/geom.js';
+import { Circle } from "ol/geom.js";
 import { fromLonLat } from "ol/proj";
 import { Icon, Style } from "ol/style.js";
 import { Image as ImageLayer } from "ol/layer.js";
 import { MapContext } from "../App.js";
-import { ZoomSlider } from 'ol/control.js';
+import { ZoomSlider } from "ol/control.js";
 import * as ol from "ol";
 import Cluster from "ol/source/Cluster.js";
-import Feature from 'ol/Feature.js';
+import Feature from "ol/Feature.js";
 import GeoJSON from "ol/format/GeoJSON.js";
 import ImageWMS from "ol/source/ImageWMS.js";
 import Map from "ol/Map";
+import Overlay from "ol/Overlay.js";
 import MVT from "ol/format/MVT.js";
 import Point from "ol/geom/Point.js";
-import Popup from "ol-popup";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import VectorTileLayer from "ol/layer/VectorTile.js";
@@ -57,15 +57,18 @@ export default function MapWrapper({
 
   const mapElement = useRef();
   const mapRef = useRef();
+  const popup = useRef();
   const layers = useRef({});
+  const clickedWebcam = useRef({});
   const mapView = useRef();
   const lng = -120.7862;
   const lat = 50.113;
   const [layersOpen, setLayersOpen] = useState(false);
   const [routesOpen, setRoutesOpen] = useState(false);
+  const navigate = useNavigate();
 
   function getCameraCircle(camera) {
-    if (!camera){
+    if (!camera) {
       return {};
     }
 
@@ -94,16 +97,16 @@ export default function MapWrapper({
             y,
             outerRadius
           );
-          gradient.addColorStop(0, 'rgba(255,0,0,0)');
-          gradient.addColorStop(0.6, 'rgba(255,0,0,0.2)');
-          gradient.addColorStop(1, 'rgba(255,0,0,0.8)');
+          gradient.addColorStop(0, "rgba(255,0,0,0)");
+          gradient.addColorStop(0.6, "rgba(255,0,0,0.2)");
+          gradient.addColorStop(1, "rgba(255,0,0,0.8)");
           ctx.beginPath();
           ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
           ctx.fillStyle = gradient;
           ctx.fill();
 
           ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
-          ctx.strokeStyle = 'rgba(255,0,0,1)';
+          ctx.strokeStyle = "rgba(255,0,0,1)";
           ctx.stroke();
         },
       })
@@ -117,13 +120,25 @@ export default function MapWrapper({
 
     return {
       circle: circle,
-      radiusLayer: radiusLayer
-    }
+      radiusLayer: radiusLayer,
+    };
   }
 
   useEffect(() => {
     // initialization hook for the OpenLayers map logic
     if (mapRef.current) return; //stops map from intializing more than once
+
+    const container = document.getElementById("popup");
+    const content = document.getElementById("popup-content");
+
+    popup.current = new Overlay({
+      element: container,
+      autoPan: {
+        animation: {
+          duration: 250,
+        },
+      },
+    });
 
     const vectorLayer = new VectorTileLayer({
       source: new VectorTileSource({
@@ -193,24 +208,22 @@ export default function MapWrapper({
     // create map
     mapRef.current = new Map({
       target: mapElement.current,
-      layers: radiusLayer ? [
-        vectorLayer,
-        radiusLayer,
-        layers.current["highwayLayer"],
-        layers.current["open511Layer"],
-      ] : [
-        vectorLayer,
-        layers.current["highwayLayer"],
-        layers.current["open511Layer"],
-      ],
-      overlays: [],
+      layers: radiusLayer
+        ? [
+            vectorLayer,
+            radiusLayer,
+            layers.current["highwayLayer"],
+            layers.current["open511Layer"],
+          ]
+        : [
+            vectorLayer,
+            layers.current["highwayLayer"],
+            layers.current["open511Layer"],
+          ],
+      overlays: [popup.current],
       view: mapView.current,
       controls: [new ZoomSlider()],
     });
-
-    // initialize event and webcam popup
-    var popup = new Popup();
-    mapRef.current.addOverlay(popup);
 
     mapRef.current.once("loadend", async () => {
       const { webcamResults } = await getWebcams();
@@ -315,7 +328,6 @@ export default function MapWrapper({
         }),
       });
       mapRef.current.addLayer(layers.current["eventsLayer"]);
-
     });
 
     mapRef.current.on("click", (e) => {
@@ -326,30 +338,31 @@ export default function MapWrapper({
         .getFeatures(e.pixel)
         .then((clickedFeatures) => {
           if (clickedFeatures[0]) {
+            const clickedCamera =
+              clickedFeatures[0].values_.features[0].values_;
             if (isPreview) {
-              const clickedCamera =
-                clickedFeatures[0].values_.features[0].values_;
-
               // Only switch context on clicking cameras within circle
-              if (circle && circle.intersectsCoordinate(fromLonLat(clickedCamera.location.coordinates))){
+              if (
+                circle &&
+                circle.intersectsCoordinate(
+                  fromLonLat(clickedCamera.location.coordinates)
+                )
+              ) {
                 mapView.current.animate({
                   center: fromLonLat(clickedCamera.location.coordinates),
                 });
 
                 cameraHandler(clickedCamera);
               }
-
             } else {
-              const feature = clickedFeatures[0].values_.features[0].values_;
               iconClicked = true;
-              popup.show(
-                coordinate,
-                `<div style='text-align: left; padding: 1rem'>
-               <h4>${feature.name}</h4>
-               <img src="${feature.links.imageSource}" width='300'>
-              <p>${feature.caption}</p>
-               </div>`
-              );
+              content.innerHTML = `<div style='text-align: left; padding: 1rem'>
+              <h4>${clickedCamera.name}</h4>
+              <img src="${clickedCamera.links.imageSource}" width='300'>
+             <p>${clickedCamera.caption}</p>
+              </div>`;
+              popup.current.setPosition(coordinate);
+              clickedWebcam.current = clickedCamera;
               iconClicked = true;
             }
           }
@@ -361,24 +374,32 @@ export default function MapWrapper({
         .then((clickedFeatures) => {
           if (clickedFeatures[0]) {
             const feature = clickedFeatures[0].values_.features[0].values_;
-
-            popup.show(
-              coordinate,
-              `<div style='text-align: left; padding: 1rem'>
-             <h4>${feature.headline}</h4>
-            <p>${feature.description}</p>
-             </div>`
-            );
+            content.innerHTML = `<div style='text-align: left; padding: 1rem'>
+            <h4>${feature.headline}</h4>
+           <p>${feature.description}</p>
+            </div>`;
+            popup.current.setPosition(coordinate);
             iconClicked = true;
           }
         });
 
       //if neither, hide any existing popup
       if (!iconClicked) {
-        popup.hide();
+        popup.current.setPosition(undefined);
+        clickedWebcam.current = null;
       }
     });
   }, []);
+
+  function webcamDetailRoute() {
+    //setting geometry to null so that the object may be passed
+    if (clickedWebcam.current) {
+      clickedWebcam.current.geometry = null;
+      navigate("/camera-details-page", {
+        state: { cameraData: clickedWebcam.current },
+      });
+    }
+  }
 
   function zoomIn() {
     if (!mapRef.current) {
@@ -458,25 +479,44 @@ export default function MapWrapper({
   return (
     <div className="map-container">
       <div ref={mapElement} className="map" />
-        {isPreview && (
-        <Button className="map-btn map-view" variant="outline-primary" onClick={mapViewRoute}>
+      <div id="popup" onClick={webcamDetailRoute} className="ol-popup">
+        <div id="popup-content" className="ol-popup-content"></div>
+      </div>
+      {isPreview && (
+        <Button
+          className="map-btn map-view"
+          variant="outline-primary"
+          onClick={mapViewRoute}
+        >
           <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
           Map View
         </Button>
-        )}
+      )}
 
-        <Button className="map-btn cam-location" variant="outline-primary" onClick={handleRecenter}>
-          <FontAwesomeIcon icon={faLocationCrosshairs} />
-          Camera location
-        </Button>
+      <Button
+        className="map-btn cam-location"
+        variant="outline-primary"
+        onClick={handleRecenter}
+      >
+        <FontAwesomeIcon icon={faLocationCrosshairs} />
+        Camera location
+      </Button>
 
-        <Button className="map-btn zoom-in" variant="outline-primary" onClick={zoomIn}>
-          <FontAwesomeIcon icon={faPlus} />
-        </Button>
+      <Button
+        className="map-btn zoom-in"
+        variant="outline-primary"
+        onClick={zoomIn}
+      >
+        <FontAwesomeIcon icon={faPlus} />
+      </Button>
 
-        <Button className="map-btn zoom-out" variant="outline-primary" onClick={zoomOut}>
-          <FontAwesomeIcon icon={faMinus} />
-        </Button>
+      <Button
+        className="map-btn zoom-out"
+        variant="outline-primary"
+        onClick={zoomOut}
+      >
+        <FontAwesomeIcon icon={faMinus} />
+      </Button>
 
       {!isPreview && (
         <div>

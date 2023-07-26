@@ -1,5 +1,6 @@
 @import "../styles/variables.scss";
 @import '~ol/ol.css';
+@import '~ol-popup/src/ol-popup.css';
 
 .map-wrap {
   position: absolute;
@@ -21,19 +22,27 @@
     }
 
     .ol-popup {
-      display: none;
-      position: absolute;
+      display:block;
+      height: 300px;
+      min-width: 300px;
       background-color: white;
       box-shadow: 0 1px 4px rgba(0,0,0,0.2);
       padding: 0px 0px 2px 0px;
       border-radius: 4px;
-      border: 1px solid #cccccc;
-      bottom: 20px;
       left: -50px;
       min-width: 285px;
-      cursor: default;
+      cursor: pointer;
       z-index: -1;
     }
+
+    .ol-popup-content{
+      max-height: 300px;
+      padding: 0 0.5em;
+      overflow-x: hidden;
+      overflow-y: auto;
+      max-width: 100%;
+      }
+
 
     .ol-popup:after, .ol-popup:before {
       top: 100%;
@@ -76,12 +85,6 @@
       color: #808080;
     }
 
-    .ol-popup-content {
-      max-width: 100%;
-      resize: horizontal;
-      overflow: hidden;
-    }
-
     .ol-zoom .ol-zoom-out {
       margin-top: 200px;
     }
@@ -100,7 +103,7 @@
         background-color: $White;
       }
 
-      &-thumb {  
+      &-thumb {
         height: 30px;
         width: 30px;
         margin: 0 auto;
