@@ -1,25 +1,59 @@
+@import "../../styles/variables.scss";
+
 table {
-    border: 1px solid lightgray;
+  font-size: 0.875em;
+
+  thead {
+    background-color: $BC-Blue-Light;
+    tr {
+      th {
+        font-weight: 400;
+        color: $BC-Blue;
+        cursor: pointer;
+
+        .cursor-pointer {
+          white-space: nowrap;
+
+          svg {
+            margin-left: 8px;
+          }
+        }
+      }
+    }
   }
 
   tbody {
-    border-bottom: 1px solid lightgray;
+    tr {
+      &:nth-of-type(even) {
+        background-color: $Grey10;
+      }
+      &.major {
+        background-color: $Surface-status-red;
+      }
+      &:hover {
+        background-color: $BC-Blue-Light;
+        cursor: pointer;
+      }
+      td {
+        color: $Type-Primary;
+
+        &:first-of-type {
+          text-align: center;
+        }
+
+        svg {
+          color: $BC-Blue;
+        }
+      }
+    }
   }
 
-  th {
-    border-bottom: 1px solid lightgray;
-    border-right: 1px solid lightgray;
-    padding: 2px 4px;
+  tr {
+    border-bottom: 1px solid $Divider;
   }
 
-  td {
-    padding: 10px 10px;
+  th, td {
+    padding: 16px;
+    text-transform: capitalize;
   }
-
-  tfoot {
-    color: gray;
-  }
-
-  tfoot th {
-    font-weight: normal;
-  }
+}
