@@ -79,7 +79,6 @@ export default function EventsTable({ columns, data }) {
           .getRowModel()
           .rows
           .map((row) => {
-            console.log(row);
             return (
               <tr className={row.original.severity.toLowerCase()} key={row.id}>
                 {row.getVisibleCells().map((cell) => {
