@@ -38,6 +38,25 @@ button.btn.btn-primary {
   &:hover {
     background-color: $BC-Blue-Alt;
   }
+
+  &:active, &:focus {
+    outline: 2px solid $Focus;
+  }
+}
+
+button.btn.btn-outline-primary {
+  background: none;
+  border-color: $Card-Border;
+  color: $Grey110;
+
+  &:hover {
+    background-color: $Grey30;
+  }
+
+  &:active, &:focus {
+    outline: 2px solid $Focus;
+    background: none;
+  }
 }
 
 .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
