@@ -85,7 +85,7 @@ export default function CameraDetailsPage() {
   }
 
   useEffect(() => {
-    initCamera(state.cameraData);
+   initCamera(state.cameraData);
 
     return () => {
       //unmounting, so revert camera to null
