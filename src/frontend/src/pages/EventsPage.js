@@ -1,10 +1,7 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { getEvents } from "../Components/data/events";
-import PageHeader from "../PageHeader";
-import EventsTable from "../Components/events/EventsTable";
-import InfiniteScroll from "react-infinite-scroll-component";
-import Container from "react-bootstrap/Container";
+// React
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
+// Third party packages
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTriangleExclamation,
@@ -13,14 +10,20 @@ import {
   faSnowflake,
   faMapLocationDot
 } from "@fortawesome/free-solid-svg-icons";
+import Container from "react-bootstrap/Container";
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Form from 'react-bootstrap/Form';
+import InfiniteScroll from "react-infinite-scroll-component";
+
+// Components and functions
+import { getEvents } from "../Components/data/events";
+import EventsTable from "../Components/events/EventsTable";
+import PageHeader from "../PageHeader";
 
 export default function EventsPage() {
-  const [events, setEvents] = useState([]);
-  const [nextUrl, setNext] = useState(
-    "http://localhost:8000/api/events/?limit=7&offset=0"
-  );
-  const [eventLength, setEventLength] = useState(0);
-  
+  const isInitialMount = useRef(true);
+
   const incident = <FontAwesomeIcon icon={faTriangleExclamation} alt="incident" />;
   const construction = <FontAwesomeIcon icon={faRoadBarrier} alt="construction" />;
   const special_event = <FontAwesomeIcon icon={faCalendarDays} alt="special event" />;
@@ -74,48 +77,120 @@ export default function EventsPage() {
     },
   ], []);
 
+  const filterProps = [
+    {
+      id: "checkbox-filter-construction",
+      label: "Construction",
+      value: "CONSTRUCTION",
+    },
+    {
+      id: "checkbox-filter-incident",
+      label: "Incident",
+      value: "INCIDENT",
+    },
+    {
+      id: "checkbox-filter-special",
+      label: "Special event",
+      value: "SPECIAL_EVENT",
+    },
+    {
+      id: "checkbox-filter-weather",
+      label: "Weather condition",
+      value: "WEATHER_CONDITION",
+    }
+  ];
 
-  async function getRoadEvents() {
-    const {eventNextUrl, eventData} = await getEvents(nextUrl);
-    // Next URL and data length
-    setNext(eventNextUrl);
-    setEventLength(eventLength + eventData.length);
-    setEvents(events ? events.concat(eventData) : eventData);
+  const [eventTypeFilter, setEventTypeFilter] = useState({
+    "CONSTRUCTION": false,
+    "INCIDENT": false,
+    "SPECIAL_EVENT": false,
+    "WEATHER_CONDITION": false,
+  });
+
+  const getDefaultEventsUrl = () => {
+    const default_params = {
+      limit: 7,
+      offset: 0
+    }
+
+    const event_type_filter = Object.keys(eventTypeFilter).filter(function(k){return eventTypeFilter[k]}).map(String);
+    if (event_type_filter.length) {
+      default_params.event_type__in = event_type_filter;
+    }
+
+    return "http://localhost:8000/api/events/?" + new URLSearchParams(default_params);
+  }
+
+  const [dataUrl, setDataUrl] = useState(getDefaultEventsUrl);
+  const [events, setEvents] = useState([]);
+
+  async function getData(url) {
+    const {eventNextUrl, eventData} = await getEvents(url ? url : dataUrl);
+
+    setDataUrl(eventNextUrl);
+
+    // Reset events on filter change
+    setEvents(url ? eventData : events.concat(eventData));
+
+    // Update initial mount state
+    isInitialMount.current = false;
   }
 
   useEffect(() => {
-    if (!events.length > 0) {
-      getRoadEvents();
+    if (!events.length) {
+      getData();
     }
 
     return () => {
-      //unmounting, so empty list object
-      setEvents({});
+      // Unmounting, set to empty list
+      setEvents([]);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isInitialMount.current) { // Only run on updates
+      setDataUrl(getDefaultEventsUrl());
+      getData(getDefaultEventsUrl());
+    }
+  }, [eventTypeFilter]);
+
+  const eventTypeFilterHandler = (e) => {
+    const event_type = e.target.value;
+
+    const newFilter = {...eventTypeFilter};
+    newFilter[event_type] = !newFilter[event_type];
+
+    setEventTypeFilter(newFilter);
+  }
 
   return (
     <div className="camera-page">
       <PageHeader
         title="Delays"
-        description="Find out if there are any delays that might impact your journey before you go."
-      ></PageHeader>
+        description="Find out if there are any delays that might impact your journey before you go.">
+      </PageHeader>
 
-      <Container>
-      {/* <p>Display events: sorting</p> */}
+      <DropdownButton id="filter-dropdown" title="Filters">
+        {filterProps.map((fp) => (
+          <Form.Check
+            id={fp.id}
+            label={fp.label}
+            value={fp.value}
+            checked={eventTypeFilter[fp.value]}
+            onChange={eventTypeFilterHandler} />
+        ))}
+      </DropdownButton>
 
-      { events.length  && (
+      { events && events.length && (
         <InfiniteScroll
-        dataLength={eventLength}
-        next={getRoadEvents}
-        hasMore={nextUrl !== null}
-        loader={<h4>Loading...</h4>}
-        >
-        <EventsTable columns={columns} data={events}/>
-      </InfiniteScroll>
-      )}
-      </Container>
+          dataLength={events.length}
+          next={getData}
+          hasMore={dataUrl !== null}
+          loader={<h4>Loading...</h4>}>
 
+          <EventsTable columns={columns} data={events}/>
+        </InfiniteScroll>
+      )}
     </div>
   );
 }
