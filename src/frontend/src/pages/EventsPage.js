@@ -81,9 +81,6 @@ export default function EventsPage() {
           hour: "numeric",
           minute: "numeric",
         };
-        const current_time = new Date();
-        const last_update_time = new Date(props.getValue());
-        const diff = current_time.getTime() - last_update_time.getTime();
         const last_update_time_formatted = new Intl.DateTimeFormat("en-US", datetime_format).format(last_update_time);
         return last_update_time_formatted;
       }

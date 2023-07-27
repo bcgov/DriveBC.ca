@@ -50,7 +50,7 @@ export default function EventsTable({ columns, data }) {
               return (
                 <th key={header.id} colSpan={header.colSpan}>
                   {header.isPlaceholder ? null : (
-                    <div
+                    <span
                       {...{
                         className: header.column.getCanSort()
                           ? "cursor-pointer select-none"
@@ -66,7 +66,7 @@ export default function EventsTable({ columns, data }) {
                         asc: asc_icon,
                         desc: desc_icon,
                       }[header.column.getIsSorted()] ?? null}
-                    </div>
+                    </span>
                   )}
                 </th>
               );
