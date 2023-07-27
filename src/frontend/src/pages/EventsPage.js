@@ -8,7 +8,8 @@ import {
   faRoadBarrier,
   faCalendarDays,
   faSnowflake,
-  faMapLocationDot
+  faMapLocationDot,
+  faFilter
 } from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -20,6 +21,9 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { getEvents } from "../Components/data/events";
 import EventsTable from "../Components/events/EventsTable";
 import PageHeader from "../PageHeader";
+
+//Styling
+import "../EventsPage.scss";
 
 export default function EventsPage() {
   const isInitialMount = useRef(true);
@@ -69,6 +73,18 @@ export default function EventsPage() {
     {
       header: "Last Update",
       accessorKey: "last_updated",
+      cell: props => {
+        const datetime_format = {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        };
+        const last_update_time = new Date(props.getValue());
+        const last_update_time_formatted = new Intl.DateTimeFormat("en-US", datetime_format).format(last_update_time);
+        return last_update_time_formatted;
+      }
     },
     {
       header: "Map",
@@ -79,24 +95,28 @@ export default function EventsPage() {
 
   const filterProps = [
     {
-      id: "checkbox-filter-construction",
-      label: "Construction",
-      value: "CONSTRUCTION",
-    },
-    {
       id: "checkbox-filter-incident",
-      label: "Incident",
+      label: "Incidents",
+      icon: incident,
       value: "INCIDENT",
     },
     {
-      id: "checkbox-filter-special",
-      label: "Special event",
-      value: "SPECIAL_EVENT",
+      id: "checkbox-filter-weather",
+      label: "Road Conditions",
+      icon: weather_condition,
+      value: "WEATHER_CONDITION",
     },
     {
-      id: "checkbox-filter-weather",
-      label: "Weather condition",
-      value: "WEATHER_CONDITION",
+      id: "checkbox-filter-construction",
+      label: "Current Events",
+      icon: construction,
+      value: "CONSTRUCTION",
+    },
+    {
+      id: "checkbox-filter-special",
+      label: "Future Events",
+      icon: special_event,
+      value: "SPECIAL_EVENT",
     }
   ];
 
@@ -164,33 +184,44 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="camera-page">
+    <div className="events-page">
       <PageHeader
         title="Delays"
         description="Find out if there are any delays that might impact your journey before you go.">
       </PageHeader>
+      <Container>
+        <div className="sort-and-filter">
+          <div className="sort"></div>
+          <Dropdown align="end">
+            <Dropdown.Toggle variant="outline-primary" id="filter-dropdown">
+              Filters<FontAwesomeIcon icon={faFilter} />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {filterProps.map((fp) => (
+                <Form.Check
+                  id={fp.id}
+                  label={
+                    <span>{fp.icon}{fp.label}</span>
+                  }
+                  value={fp.value}
+                  checked={eventTypeFilter[fp.value]}
+                  onChange={eventTypeFilterHandler} />
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
 
-      <DropdownButton id="filter-dropdown" title="Filters">
-        {filterProps.map((fp) => (
-          <Form.Check
-            id={fp.id}
-            label={fp.label}
-            value={fp.value}
-            checked={eventTypeFilter[fp.value]}
-            onChange={eventTypeFilterHandler} />
-        ))}
-      </DropdownButton>
+        { events && events.length && (
+          <InfiniteScroll
+            dataLength={events.length}
+            next={getData}
+            hasMore={dataUrl !== null}
+            loader={<h4>Loading...</h4>}>
 
-      { events && events.length && (
-        <InfiniteScroll
-          dataLength={events.length}
-          next={getData}
-          hasMore={dataUrl !== null}
-          loader={<h4>Loading...</h4>}>
-
-          <EventsTable columns={columns} data={events}/>
-        </InfiniteScroll>
-      )}
+            <EventsTable columns={columns} data={events}/>
+          </InfiniteScroll>
+        )}
+        </Container>
     </div>
   );
 }

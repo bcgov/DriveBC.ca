@@ -117,7 +117,7 @@
   }
 
   .map-btn {
-    background: $White;
+    background-color: $Surface-tinted;
     color: $Type-Link;
     position: absolute;
     margin-bottom: 0;
@@ -129,7 +129,7 @@
     box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
 
     &:hover {
-      background: $BC-Blue-Alt;
+      background: $Type-Link;
       color: $White;
     }
 
