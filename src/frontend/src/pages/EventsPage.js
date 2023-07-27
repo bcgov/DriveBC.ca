@@ -81,6 +81,7 @@ export default function EventsPage() {
           hour: "numeric",
           minute: "numeric",
         };
+        const last_update_time = new Date(props.getValue());
         const last_update_time_formatted = new Intl.DateTimeFormat("en-US", datetime_format).format(last_update_time);
         return last_update_time_formatted;
       }
