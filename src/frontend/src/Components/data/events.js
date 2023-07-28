@@ -1,7 +1,7 @@
 import { point } from "@turf/helpers";
 
 export function getEvents(url) {
-  return fetch(url ? url : "http://localhost:8000/api/events/", {
+  return fetch(url ? url : `//${process.env.REACT_APP_API_HOST}/api/events/`, {
     headers: {
       "Content-Type": "application/json"
     }
@@ -18,7 +18,7 @@ export function getEvents(url) {
 }
 
 export function getEventPoints() {
-  return fetch("http://localhost:8000/api/events/", {
+  return fetch(`//${process.env.REACT_APP_API_HOST}/api/events/`, {
     headers: {
       "Content-Type": "application/json"
     }

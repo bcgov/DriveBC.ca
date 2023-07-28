@@ -1,7 +1,7 @@
 import defaultWebcams from '../__tests__/test_data/webcam_results_five_set.json'
 
 export function getWebcams(url) {
-  return fetch(url ? url : 'http://localhost:8000/api/webcams/', {
+  return fetch(url ? url : `//${process.env.REACT_APP_API_HOST}/api/webcams/`, {
     headers: {
       'Content-Type': 'application/json'
     }

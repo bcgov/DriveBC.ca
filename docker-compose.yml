@@ -38,10 +38,11 @@ services:
     env_file: .env
     container_name: node
     build:
-      context: ./src/frontend
-      dockerfile: ../../compose/frontend/Dockerfile
+      context: ./
+      dockerfile: ./compose/frontend/Dockerfile
       args:
         DEBUG_BUILD: true
+        API_HOST: ${API_HOST}
     stdin_open: true
     tty: true
     ports:
