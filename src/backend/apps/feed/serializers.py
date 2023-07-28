@@ -59,7 +59,7 @@ class EventFeedSerializer(serializers.Serializer):
 
     # Location
     roads = EventRoadsField(source="*")
-    geography = EventGeographyField(source="*")
+    geography = EventGeographyField('location', source="*")
 
     # Update status
     created = DriveBCDateField('first_created', source="*")
