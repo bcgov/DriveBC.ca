@@ -16,7 +16,7 @@ class Event(BaseModel):
 
     # Location
     direction = models.CharField(max_length=32)
-    location = models.LineStringField()
+    location = models.GeometryField()
     route = models.CharField(max_length=128)
 
     # Update status

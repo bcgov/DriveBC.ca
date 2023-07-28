@@ -1,6 +1,7 @@
 from apps.shared.helpers import parse_and_localize_time_str
-from django.contrib.gis.geos import LineString, Point
+from django.contrib.gis.geos import Point
 from rest_framework import serializers
+from rest_framework_gis.fields import GeometryField
 
 
 # Shared
@@ -107,12 +108,5 @@ class EventRoadsField(serializers.Field):
         return res
 
 
-class EventGeographyField(serializers.Field):
-    def to_internal_value(self, data):
-        # Hack for points since LineString only accepts double arrays with len > 1
-        coordinates = [data["coordinates"], data["coordinates"]] \
-            if data["type"] == "Point" else data["coordinates"]
-        res = {
-            "location": LineString(coordinates),
-        }
-        return res
+class EventGeographyField(DriveBCField, GeometryField):
+    pass
