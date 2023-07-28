@@ -12,7 +12,7 @@ import BCHwyCrest from '../../images/BCHwyCrest.svg';
 
 export default function CameraList() {
   const [webcams, setWebcams] = useState({});
-  const [nextUrl, setNext] = useState('http://localhost:8000/api/webcams/?limit=50&offset=0');
+  const [nextUrl, setNext] = useState(`//${process.env.REACT_APP_API_HOST}/api/webcams/?limit=50&offset=0`);
   const [webcamLength, setWebcamLength] = useState(0);
 
   async function getCameras() {

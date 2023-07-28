@@ -13,6 +13,9 @@ RUN npm install
 COPY ./src/frontend /app/
 RUN chown node:root /app/node_modules
 
+ARG API_HOST
+ENV REACT_APP_API_HOST=${API_HOST}
+
 EXPOSE 3000
 
 ARG DEBUG_BUILD=false

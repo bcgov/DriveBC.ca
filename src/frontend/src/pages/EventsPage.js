@@ -138,7 +138,7 @@ export default function EventsPage() {
       default_params.event_type__in = event_type_filter;
     }
 
-    return "http://localhost:8000/api/events/?" + new URLSearchParams(default_params);
+    return `//${process.env.REACT_APP_API_HOST}/api/events/?${new URLSearchParams(default_params)}`;
   }
 
   const [dataUrl, setDataUrl] = useState(getDefaultEventsUrl);
