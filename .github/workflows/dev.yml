@@ -24,7 +24,7 @@ jobs:
         labels: |
           app=drivebc
         containerfiles: ./compose/frontend/StaticBuild
-        build-args:
+        build-args: |
           API_HOST=${{ vars.API_HOST }}
           DEBUG_BUILD=true
     - name: push to registry
