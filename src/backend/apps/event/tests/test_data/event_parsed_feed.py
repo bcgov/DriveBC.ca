@@ -15,7 +15,9 @@ parsed_feed = OrderedDict([
     ("event_sub_type", "ROAD_MAINTENANCE"),
     ("status", "ACTIVE"),
     ("severity", "MAJOR"),
-    ("route", "Highway 3 Bromley Pl to Frontage Rd"),
+    ("route_at", "Highway 3"),
+    ("route_from", "Bromley Pl"),
+    ("route_to", "Frontage Rd"),
     ("direction", "NONE"),
     ("location", LineString([
         [-120.528796, 49.446318],

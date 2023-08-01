@@ -59,7 +59,7 @@ export default function EventsPage() {
     },
     {
       header: "Route",
-      accessorKey: "route",
+      accessorKey: "route_at",
     },
     {
       header: "Direction",

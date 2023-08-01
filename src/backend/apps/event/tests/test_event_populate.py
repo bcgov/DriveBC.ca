@@ -72,7 +72,9 @@ class TestEventModel(BaseTest):
             [-120.526853, 49.451003],
             [-120.526427, 49.451752]
         ])) is True
-        assert event_one.route == "Highway 3 Bromley Pl to Frontage Rd"
+        assert event_one.route_at == "Highway 3"
+        assert event_one.route_from == "Bromley Pl"
+        assert event_one.route_to == "Frontage Rd"
         assert event_one.first_created == datetime.datetime(
             2023, 5, 19, 14, 29, 20, tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
         )

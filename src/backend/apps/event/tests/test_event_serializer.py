@@ -25,7 +25,9 @@ class TestEventSerializer(BaseTest):
             # Location
             direction=event_enums.EVENT_DIRECTION.NORTH,
             location=LineString([(-123.569743, 48.561231), (-123.569743, 48.561231)]),
-            route="Test route at test intersection",
+            route_at="Test Highway",
+            route_from="at Test Road",
+            route_to="Test Avenue",
 
             # Update status
             first_created=datetime.datetime(
@@ -40,4 +42,4 @@ class TestEventSerializer(BaseTest):
         self.serializer = EventSerializer(self.event)
 
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 11
+        assert len(self.serializer.data) == 13
