@@ -1,5 +1,6 @@
 import datetime
 import zoneinfo
+from copy import copy
 
 from apps.event import enums as event_enums
 from apps.event.models import Event
@@ -10,9 +11,7 @@ from django.contrib.gis.geos import LineString
 
 class TestEventSerializer(BaseTest):
     def setUp(self):
-        self.event = Event.objects.create(
-            id="1",
-
+        self.event = Event(
             # Description
             description="Test description for test construction event",
             event_type=event_enums.EVENT_TYPE.CONSTRUCTION,
@@ -26,8 +25,6 @@ class TestEventSerializer(BaseTest):
             direction=event_enums.EVENT_DIRECTION.NORTH,
             location=LineString([(-123.569743, 48.561231), (-123.569743, 48.561231)]),
             route_at="Test Highway",
-            route_from="at Test Road",
-            route_to="Test Avenue",
 
             # Update status
             first_created=datetime.datetime(
@@ -39,7 +36,28 @@ class TestEventSerializer(BaseTest):
                 tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
             ),
         )
+        self.event_two = copy(self.event)
+
+        self.event.id = "1"
+        self.event.route_from = "at Test Road"
+        self.event.route_to = "Test Avenue"
+        self.event.save()
+
+        self.event_two.id = "2"
+        self.event_two.route_from = "Test Road Two"
+        self.event_two.route_to = "Test Avenue Two"
+        self.event_two.save()
+
         self.serializer = EventSerializer(self.event)
+        self.serializer_two = EventSerializer(self.event_two)
 
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 13
+        assert len(self.serializer.data) == 14
+        # route_from beings with 'at '
+        assert self.serializer.data['route_display'] == \
+               "Test Road to Test Avenue"
+
+        assert len(self.serializer_two.data) == 14
+        # route_from doesn't being with 'at '
+        assert self.serializer_two.data['route_display'] == \
+               "Test Road Two to Test Avenue Two"
