@@ -96,14 +96,11 @@ class WebcamImageStatsField(serializers.Field):
 class EventRoadsField(serializers.Field):
     def to_internal_value(self, data):
         route_dict = data[0]
-        route_text = route_dict["name"] + " " + route_dict["from"]
-        if "to" in route_dict:
-            route_text += " to " + route_dict["to"]
-
         res = {
-            "route": route_text,
+            "route_at": route_dict["name"],
+            "route_from": route_dict["from"],
+            "route_to": route_dict["to"] if "to" in route_dict else "",
             "direction": route_dict["direction"]
-
         }
         return res
 
