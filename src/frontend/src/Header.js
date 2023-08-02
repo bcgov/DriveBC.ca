@@ -24,14 +24,14 @@ export default function Header() {
 					<div className="nav-divider"></div>
 					<Navbar.Collapse id="basic-navbar-nav">
 					<Nav className="me-auto">
-						<LinkContainer to="/">
-						<Nav.Link>Map</Nav.Link>
+						<LinkContainer exact to="/">
+						<Nav.Link active={false}>Map</Nav.Link>
 						</LinkContainer>
-						<LinkContainer to="/cameras-page">
-							<Nav.Link>Cameras</Nav.Link>
+						<LinkContainer exact to="/cameras-page">
+							<Nav.Link active={false}>Cameras</Nav.Link>
 						</LinkContainer>
-						<LinkContainer to="/events-page">
-							<Nav.Link>Events</Nav.Link>
+						<LinkContainer exact to="/events-page">
+							<Nav.Link active={false}>Events</Nav.Link>
 						</LinkContainer>
 					</Nav>
 					</Navbar.Collapse>
