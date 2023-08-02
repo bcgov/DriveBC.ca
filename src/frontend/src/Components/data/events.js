@@ -8,10 +8,7 @@ export function getEvents(url) {
   })
     .then((response) => response.json())
     .then((data) => {
-      return {
-        eventNextUrl: data.next,
-        eventData: data.results,
-      }
+      return data
     }).catch((error) => {
       console.log(error)
     });

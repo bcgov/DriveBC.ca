@@ -1,5 +1,5 @@
 // React
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 // Third party packages
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,7 +25,7 @@ import EventCard from "../Components/events/EventCard";
 import PageHeader from "../PageHeader";
 import Footer from "../Footer.js";
 
-//Styling
+// Styling
 import "./EventsPage.scss";
 
 export default function EventsPage() {
@@ -37,22 +37,22 @@ export default function EventsPage() {
   const special_event = <FontAwesomeIcon icon={faCalendarDays} alt="special event" />;
   const weather_condition = <FontAwesomeIcon icon={faSnowflake} alt="weather condition" />;
 
-  const columns = useMemo(() => [
+  const columns = [
     {
       header: "Type",
       accessorKey: "event_type",
       cell: props => {
-      switch(props.getValue().toLowerCase()) {
-        case "incident":
-          return <span>{incident}</span>;
-        case "construction":
-          return <span>{construction}</span>;
-        case "special_event":
-          return <span>{special_event}</span>;
-        case "weather_condition":
-          return <span>{weather_condition}</span>;
-        default:
-          return <span>{incident}</span>;
+        switch(props.getValue().toLowerCase()) {
+          case "incident":
+            return <span>{incident}</span>;
+          case "construction":
+            return <span>{construction}</span>;
+          case "special_event":
+            return <span>{special_event}</span>;
+          case "weather_condition":
+            return <span>{weather_condition}</span>;
+          default:
+            return <span>{incident}</span>;
         }
       }
     },
@@ -84,7 +84,7 @@ export default function EventsPage() {
       accessorKey: "map",
       cell: props => <FontAwesomeIcon icon={faMapLocationDot} />
     },
-  ], []);
+  ];
 
   const filterProps = [
     {
@@ -120,39 +120,38 @@ export default function EventsPage() {
     "WEATHER_CONDITION": false,
   });
 
-  const getDefaultEventsUrl = () => {
-    const default_params = {
-      limit: 7,
-      offset: 0
-    }
-
-    const event_type_filter = Object.keys(eventTypeFilter).filter(function(k){return eventTypeFilter[k]}).map(String);
-    if (event_type_filter.length) {
-      default_params.event_type__in = event_type_filter;
-    }
-
-    return `//${process.env.REACT_APP_API_HOST}/api/events/?${new URLSearchParams(default_params)}`;
-  }
-
-  const [dataUrl, setDataUrl] = useState(getDefaultEventsUrl);
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [displayedEvents, setDisplayedEvents] = useState([]);
 
-  async function getData(url) {
-    const {eventNextUrl, eventData} = await getEvents(url ? url : dataUrl);
+  const getData = async () => {
+    const eventsData = await getEvents();
+    setEvents(eventsData);
 
-    setDataUrl(eventNextUrl);
-
-    // Reset events on filter change
-    setEvents(url ? eventData : events.concat(eventData));
-
-    // Update initial mount state
     isInitialMount.current = false;
   }
 
-  useEffect(() => {
-    if (!events.length) {
-      getData();
+  const getFilteredEvents = () => {
+    const hasTrue = (val) => !!val;
+    const hasFilterOn = Object.values(eventTypeFilter).some(hasTrue);
+
+    let res = events;
+    if (hasFilterOn) {
+      res = res.filter((e) => !!eventTypeFilter[e.event_type]);
     }
+
+    setFilteredEvents(res);
+  }
+
+  const getDisplayedEvents = () => {
+    // Get sorted, filtered, paginated events here
+    const res = filteredEvents.slice(0, displayedEvents.length + 7);
+
+    setDisplayedEvents(res);
+  }
+
+  useEffect(() => {
+    getData();
 
     return () => {
       // Unmounting, set to empty list
@@ -162,10 +161,15 @@ export default function EventsPage() {
 
   useEffect(() => {
     if (!isInitialMount.current) { // Only run on updates
-      setDataUrl(getDefaultEventsUrl());
-      getData(getDefaultEventsUrl());
+      getDisplayedEvents();
     }
-  }, [eventTypeFilter]);
+  }, [filteredEvents]);
+
+  useEffect(() => {
+    if (!isInitialMount.current) { // Only run on updates
+      getFilteredEvents();
+    }
+  }, [events, eventTypeFilter]);
 
   const eventTypeFilterHandler = (e) => {
     const event_type = e.target.value;
@@ -206,15 +210,15 @@ export default function EventsPage() {
           </Dropdown>
         </div>
 
-        { events && events.length && (
+        { events && !!events.length && (
           <InfiniteScroll
-            dataLength={events.length}
-            next={getData}
-            hasMore={dataUrl !== null}
+            dataLength={displayedEvents.length}
+            next={getDisplayedEvents}
+            hasMore={displayedEvents.length < filteredEvents.length}
             loader={<h4>Loading...</h4>}>
 
             {largeScreen ?
-              <EventsTable columns={columns} data={events} /> :
+              <EventsTable columns={columns} data={displayedEvents} /> :
               <div className="events-list">
                 { events.map(
                   (event) => (
