@@ -1,12 +1,17 @@
-import Container from 'react-bootstrap/Container';
+// React
+import { useState } from 'react';
+
+// Third party packages
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import Collapse from 'react-bootstrap/Collapse';
+import Container from 'react-bootstrap/Container';
+import Fade from 'react-bootstrap/Fade';
 import Form from 'react-bootstrap/Form';
 import Pagination from 'react-bootstrap/Pagination';
-import Card from 'react-bootstrap/Card';
-import Alert from 'react-bootstrap/Alert';
-import Fade from 'react-bootstrap/Fade';
-import Collapse from 'react-bootstrap/Collapse';
-import { useState } from 'react';
+
+// Styling
 import Footer from '../Footer.js';
 
 export default function StylesPage() {
@@ -270,7 +275,7 @@ export default function StylesPage() {
                   </Card.Body>
                 </Card>
               </div>
-              
+
             </Collapse>
           </div>
 
