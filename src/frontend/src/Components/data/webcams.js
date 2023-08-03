@@ -5,19 +5,15 @@ export function getWebcams(url) {
     headers: {
       'Content-Type': 'application/json'
     }
-  }).then((response) => response.json())
-    .then((data) => {
-      return {
-        webcamNextUrl: data.next,
-        webcamResults: data.results
-      };
-    })
-    .catch((error) => {
-      //TODO: define a more meaningful error handling event
-      return {
-        webcamResults: defaultWebcams
-      };
-    });
+  })
+  .then((response) => response.json())
+  .then((data) => data)
+  .catch((error) => {
+    //TODO: define a more meaningful error handling event
+    return {
+      webcamResults: defaultWebcams
+    };
+  });
 }
 
 export function getWebcamReplay(webcam) {

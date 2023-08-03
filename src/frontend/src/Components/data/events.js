@@ -1,30 +1,16 @@
 import { point } from "@turf/helpers";
 
-export function getEvents(url) {
-  return fetch(url ? url : `//${process.env.REACT_APP_API_HOST}/api/events/`, {
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      return data
-    }).catch((error) => {
-      console.log(error)
-    });
-}
-
-export function getEventPoints() {
+export function getEvents(map_to_points) {
   return fetch(`//${process.env.REACT_APP_API_HOST}/api/events/`, {
     headers: {
       "Content-Type": "application/json"
     }
   })
-    .then((response) => response.json())
-    .then((data) => mapEventsData(data.results))
-    .catch((error) => {
-      console.log(error)
-    });
+  .then((response) => response.json())
+  .then((data) => map_to_points ? mapEventsData(data) : data)
+  .catch((error) => {
+    console.log(error)
+  });
 }
 
 const mapEventsData = (events) => {
