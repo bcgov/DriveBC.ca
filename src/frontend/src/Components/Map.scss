@@ -21,13 +21,15 @@
     }
 
     .ol-popup {
-      display:block;
+      position: absolute;
       background-color: white;
       box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-      padding: 0px 0px 2px 0px;
-      border-radius: 4px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #cccccc;
       left: -50px;
-      min-width: 285px;
+      bottom: 12px;
+      max-width: 375px;
       cursor: pointer;
       z-index: -1;
     }
@@ -43,12 +45,12 @@
 
     .ol-popup:after, .ol-popup:before {
       top: 100%;
-      border: solid transparent;
-
-      height: 0;
-      width: 0;
-      position: absolute;
-      pointer-events: none;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
     }
 
     .ol-popup:after {

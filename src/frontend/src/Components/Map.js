@@ -17,12 +17,13 @@ import { getEvents } from "./data/events.js";
 import { getWebcams } from "./data/webcams.js";
 import Layers from "./Layers.js";
 import Routes from "./Routes.js";
+import { eventStyles, webcamStyles } from "./data/eventStyleDefinitions.js";
 
 // OpenLayers
 import { applyStyle } from "ol-mapbox-style";
 import { Circle } from "ol/geom.js";
 import { fromLonLat } from "ol/proj";
-import { Icon, Style } from "ol/style.js";
+import { Style } from "ol/style.js";
 import { Image as ImageLayer } from "ol/layer.js";
 import { MapContext } from "../App.js";
 import { ZoomSlider } from "ol/control.js";
@@ -34,16 +35,12 @@ import ImageWMS from "ol/source/ImageWMS.js";
 import Map from "ol/Map";
 import Overlay from "ol/Overlay.js";
 import MVT from "ol/format/MVT.js";
-import Point from "ol/geom/Point.js";
+import {Point, LineString} from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import VectorTileLayer from "ol/layer/VectorTile.js";
 import VectorTileSource from "ol/source/VectorTile.js";
 import View from "ol/View";
-
-// Static files
-import eventIcon from "../assets/exclamation-triangle-solid.png";
-import videoIcon from "../assets/video-solid.png";
 
 // Styling
 import "./Map.scss";
@@ -140,11 +137,10 @@ export default function MapWrapper({
         },
       },
     });
-
     const vectorLayer = new VectorTileLayer({
       source: new VectorTileSource({
         format: new MVT(),
-        url: "https://tiles.arcgis.com/tiles/ubm4tcTYICKBpist/arcgis/rest/services/BC_BASEMAP/VectorTileServer/tile/{z}/{y}/{x}.pbf",
+        url: `${process.env.REACT_APP_BASE_MAP}`,
       }),
     });
 
@@ -157,7 +153,7 @@ export default function MapWrapper({
         type: "overlay",
         visible: mapContext.visible_layers.highwayLayer,
         source: new ImageWMS({
-          url: "https://dev-maps.th.gov.bc.ca/geoV05/hwy/wms",
+          url: `${process.env.REACT_APP_HIGHWAY_LAYER}`,
           serverType: "geoserver",
           params: {
             LAYERS: "hwy:DSA_CONTRACT_AREA",
@@ -169,9 +165,9 @@ export default function MapWrapper({
       open511Layer: new ImageLayer({
         className: "open511",
         type: "overlay",
-        visible: mapContext.visible_layers.highwayLayer,
+        visible: mapContext.visible_layers.open511Layer,
         source: new ImageWMS({
-          url: "https://dev-maps.th.gov.bc.ca/geoV05/op5/wms",
+          url: `${process.env.REACT_APP_OPEN511_LAYER}`,
           params: {
             LAYERS: "op5:OP5_EVENT511_ACTIVE_V",
           },
@@ -193,7 +189,7 @@ export default function MapWrapper({
     });
     //Apply the basemap style from the arcgis resource
     fetch(
-      "https://www.arcgis.com/sharing/rest/content/items/b1624fea73bd46c681fab55be53d96ae/resources/styles/root.json",
+      `${process.env.REACT_APP_MAP_STYLE}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -226,110 +222,12 @@ export default function MapWrapper({
       controls: [new ZoomSlider()],
     });
 
-    mapRef.current.once("loadend", async () => {
-      const webcamResults = await getWebcams();
-      const evpoints = await getEvents(true);
-
-      layers.current["webcamsLayer"] = new VectorLayer({
-        classname: "webcams",
-        visible: mapContext.visible_layers.webcamsLayer,
-        source: new Cluster({
-          distance: 35,
-          source: new VectorSource({
-            format: new GeoJSON(),
-            loader: function (extent, resolution, projection) {
-              var vectorSource = this;
-              vectorSource.clear();
-
-              if (webcamResults) {
-                webcamResults.forEach((cameraData) => {
-                  //Build a new OpenLayers feature
-                  var olGeometry = new Point(cameraData.location.coordinates);
-                  var olFeature = new ol.Feature({ geometry: olGeometry });
-
-                  //Transfer properties
-                  olFeature.setProperties(cameraData);
-
-                  // Transform the projection
-                  var olFeatureForMap = transformFeature(
-                    olFeature,
-                    "EPSG:4326",
-                    mapRef.current.getView().getProjection().getCode()
-                  );
-
-                  vectorSource.addFeature(olFeatureForMap);
-                });
-              }
-            },
-          }),
-        }),
-        style: new Style({
-          image: new Icon({
-            anchor: [24, 24],
-            anchorXUnits: "pixels",
-            anchorYUnits: "pixels",
-            scale: 0.5,
-            src: videoIcon,
-          }),
-        }),
-      });
-
-      mapRef.current.addLayer(layers.current["webcamsLayer"]);
-
-      layers.current["eventsLayer"] = new VectorLayer({
-        classname: "events",
-        visible: mapContext.visible_layers.eventsLayer,
-        source: new Cluster({
-          distance: 35,
-          source: new VectorSource({
-            format: new GeoJSON(),
-            loader: function (extent, resolution, projection) {
-              var vectorSource = this;
-              vectorSource.clear();
-              if (evpoints) {
-                evpoints.forEach((feature) => {
-                  var olGeometry = new Point([
-                    feature.geometry.coordinates[0],
-                    feature.geometry.coordinates[1],
-                  ]);
-                  var olFeature = new ol.Feature({ geometry: olGeometry });
-
-                  //Transfer properties to OpenLayers feature-friendly format
-                  var properties = {};
-                  properties["id"] = feature.id;
-                  properties["headline"] = feature.properties.event_type;
-                  properties["status"] = feature.properties.status;
-                  properties["description"] = feature.properties.description;
-                  properties["event_type"] = feature.properties.description;
-                  properties["event_subtypes"] =
-                    feature.properties.event_subtypes;
-                  olFeature.setProperties(properties);
-
-                  // Transform the projection
-                  var olFeatureForMap = transformFeature(
-                    olFeature,
-                    "EPSG:4326",
-                    mapRef.current.getView().getProjection().getCode()
-                  );
-
-                  vectorSource.addFeature(olFeatureForMap);
-                });
-              }
-            },
-          }),
-        }),
-        style: new Style({
-          image: new Icon({
-            anchor: [24, 24],
-            anchorXUnits: "pixels",
-            anchorYUnits: "pixels",
-            scale: 0.5,
-            src: eventIcon,
-          }),
-        }),
-      });
-      mapRef.current.addLayer(layers.current["eventsLayer"]);
+    mapRef.current.once("loadend", () => {
+      loadWebcams();
+      loadEvents();
     });
+
+
 
     mapRef.current.on("click", (e) => {
       let iconClicked = false;
@@ -374,10 +272,13 @@ export default function MapWrapper({
         .getFeatures(e.pixel)
         .then((clickedFeatures) => {
           if (clickedFeatures[0]) {
-            const feature = clickedFeatures[0].values_.features[0].values_;
+            const feature = clickedFeatures[0];
             content.innerHTML = `<div style='text-align: left; padding: 1rem'>
-            <h4>${feature.headline}</h4>
-           <p>${feature.description}</p>
+            <h4>${feature.get("route_display")}</h4>
+            <p>Direction: ${feature.get("direction")}</p>
+            <p>${feature.get("severity")} delays</p>
+            <p>${feature.get("last_updated")} delays</p>
+            <p>${feature.get("description")}</p>
             </div>`;
             popup.current.setPosition(coordinate);
             iconClicked = true;
@@ -391,6 +292,99 @@ export default function MapWrapper({
       }
     });
   }, []);
+
+  async function loadWebcams(){
+    const { webcamResults } = await getWebcams();
+
+    layers.current["webcamsLayer"] = new VectorLayer({
+      classname: "webcams",
+      visible: mapContext.visible_layers.webcamsLayer,
+      source: new Cluster({
+        distance: 35,
+        source: new VectorSource({
+          format: new GeoJSON(),
+          loader: function (extent, resolution, projection) {
+            var vectorSource = this;
+            vectorSource.clear();
+
+            if (webcamResults) {
+              webcamResults.forEach((cameraData) => {
+                //Build a new OpenLayers feature
+                var olGeometry = new Point(cameraData.location.coordinates);
+                var olFeature = new ol.Feature({ geometry: olGeometry });
+
+                //Transfer properties
+                olFeature.setProperties(cameraData);
+
+                // Transform the projection
+                var olFeatureForMap = transformFeature(
+                  olFeature,
+                  "EPSG:4326",
+                  mapRef.current.getView().getProjection().getCode()
+                );
+
+                vectorSource.addFeature(olFeatureForMap);
+              });
+            }
+          },
+        }),
+      }),
+      style: webcamStyles["default"]
+    });
+
+    mapRef.current.addLayer(layers.current["webcamsLayer"]);
+
+  }
+
+  async function loadEvents(){
+    const { eventData } = await getEvents();
+
+    //Events iterator
+    layers.current["eventsLayer"] = new VectorLayer({
+      classname: "events",
+      visible: mapContext.visible_layers.eventsLayer,
+        source: new VectorSource({
+          format: new GeoJSON(),
+          loader: function (extent, resolution, projection) {
+            var vectorSource = this;
+            vectorSource.clear();
+            if (eventData) {
+              eventData.forEach((record) => {
+                let olGeometry = null;
+                switch(record.location.type){
+                  case "Point":
+                     olGeometry = new Point(record.location.coordinates);
+                    break;
+                  case "LineString":
+                     olGeometry = new LineString(record.location.coordinates);
+                    break;
+                  default: console.log(Error);
+                }
+
+                var olFeature = new ol.Feature({ geometry: olGeometry });
+
+                //Transfer properties
+                olFeature.setProperties(record);
+
+                // Transform the projection
+                var olFeatureForMap = transformFeature(
+                  olFeature,
+                  "EPSG:4326",
+                  mapRef.current.getView().getProjection().getCode()
+                );
+
+                vectorSource.addFeature(olFeatureForMap);
+              });
+            }
+          },
+        }),
+      style: function(feature, resolution){
+        return feature.values_.location.type === "LineString" ? eventStyles["RoadConditions"] : eventStyles["Points"];
+      }
+    });
+    mapRef.current.addLayer(layers.current["eventsLayer"]);
+
+  }
 
   function webcamDetailRoute() {
     //setting geometry to null so that the object may be passed

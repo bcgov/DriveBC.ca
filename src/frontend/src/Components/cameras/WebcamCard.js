@@ -37,7 +37,7 @@ export default function WebcamCard({ camera }) {
     return Math.trunc((new Date() - last_updated_time) / (1000 * 60));
   }
 
-  const [lastUpdateMin,setLastUpdateMin] = useState(get_last_update_diff());
+  const [lastUpdateMin, setLastUpdateMin] = useState(get_last_update_diff());
 
   useEffect(() => {
     var timer = setInterval(() => setLastUpdateMin(get_last_update_diff()), 60000)
@@ -52,13 +52,13 @@ export default function WebcamCard({ camera }) {
       <Card.Body onClick={handleClick}>
         {!unavailable && !delayed && !stale &&
           <div className="card-img-box">
-            <img className="card-img" src={ camera.links.imageSource } />
+            <img className="card-img" src={ camera.links.imageSource } alt="card_image" />
           </div>
         }
 
         {!unavailable && stale && !delayed &&
           <div className="card-img-box">
-            <img className="card-img" src={ camera.links.imageSource } />
+            <img className="card-img" src={ camera.links.imageSource } alt="stale_image"/>
             <div className="card-notification">
               <div className={"card-banner" + (show ? " hidden" : " bounce") }>
                 <p>Unable to retrieve the latest image, we're displaying last image received.</p>
@@ -74,7 +74,7 @@ export default function WebcamCard({ camera }) {
 
         {!unavailable && stale && delayed &&
           <div className="card-img-box">
-            <img className="card-img" src={ camera.links.imageSource } />
+            <img className="card-img" src={ camera.links.imageSource } alt="delayed_image" />
             <div className="card-notification">
               <div className={"card-banner" + (show ? " hidden" : " bounce") }>
                 <p>Experiencing longer than expected delay, displaying last image received.</p>
