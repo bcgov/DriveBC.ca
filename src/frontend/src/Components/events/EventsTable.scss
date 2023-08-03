@@ -29,6 +29,11 @@ table {
       }
       &.major {
         background-color: $Surface-status-red;
+
+        td.severity {
+          color: $Type-status-red;
+          font-weight: 700;
+        }
       }
       &:hover {
         background-color: $BC-Blue-Light;
@@ -37,9 +42,15 @@ table {
       td {
         color: $Type-Primary;
 
-        &:first-of-type {
+        &.event-type {
           text-align: center;
         }
+
+        &.severity, &.direction {
+          text-transform: capitalize;
+        }
+
+        
 
         svg {
           color: $BC-Blue;
@@ -54,6 +65,5 @@ table {
 
   th, td {
     padding: 16px;
-    text-transform: capitalize;
   }
 }

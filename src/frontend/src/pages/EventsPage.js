@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTriangleExclamation,
-  faRoadBarrier,
+  faPersonDigging,
   faCalendarDays,
   faSnowflake,
   faMapLocationDot,
@@ -13,24 +13,26 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
 import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import Form from 'react-bootstrap/Form';
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 // Components and functions
 import { getEvents } from "../Components/data/events";
 import EventsTable from "../Components/events/EventsTable";
+import EventCard from "../Components/events/EventCard";
 import PageHeader from "../PageHeader";
 import Footer from "../Footer.js";
 
 //Styling
-import "../EventsPage.scss";
+import "./EventsPage.scss";
 
 export default function EventsPage() {
   const isInitialMount = useRef(true);
 
+  //event type icons
   const incident = <FontAwesomeIcon icon={faTriangleExclamation} alt="incident" />;
-  const construction = <FontAwesomeIcon icon={faRoadBarrier} alt="construction" />;
+  const construction = <FontAwesomeIcon icon={faPersonDigging} alt="construction" />;
   const special_event = <FontAwesomeIcon icon={faCalendarDays} alt="special event" />;
   const weather_condition = <FontAwesomeIcon icon={faSnowflake} alt="weather condition" />;
 
@@ -184,6 +186,8 @@ export default function EventsPage() {
     setEventTypeFilter(newFilter);
   }
 
+  const largeScreen = useMediaQuery("only screen and (min-width : 768px)");
+
   return (
     <div className="events-page">
       <PageHeader
@@ -219,7 +223,21 @@ export default function EventsPage() {
             hasMore={dataUrl !== null}
             loader={<h4>Loading...</h4>}>
 
-            <EventsTable columns={columns} data={events}/>
+            {largeScreen ?
+              <EventsTable columns={columns} data={events} /> :
+              <div className="events-list">
+                { events.map(
+                  (event) => (
+                    <EventCard
+                      className="event"
+                      event={event}
+                      icon={ filterProps.find(type => type.value === event.event_type).icon }
+                    />
+                  )
+                )}
+              </div>
+            }
+
           </InfiniteScroll>
         )}
       </Container>

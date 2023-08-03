@@ -1,0 +1,58 @@
+@import "../../styles/variables.scss";
+
+.event-card {
+  margin-bottom: 40px;
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    background-color: $BC-Blue;
+    color: $White;
+    padding: 8px;
+
+    .route {
+      font-weight: 700;
+    }
+  }
+  &__details {
+
+    & > div {
+      display: flex;
+
+      & > div {
+        padding: 8px;
+      }
+    }
+
+    .header {
+      background-color: $BC-Blue-Light;
+      width: 110px;
+      flex: 0 0 110px;
+    }
+
+    .content {
+      border-bottom: 1px solid $Divider;
+      flex-grow: 1;
+    }
+  }
+
+  &.major {
+    .event-card__details {
+      .type {
+        .header, .content {
+          background-color: $Surface-status-red;
+          color: $Type-status-red;
+        }
+
+        .header {
+          border-right: 1px solid $Type-status-red-darker;
+        }
+
+        .content {
+          font-weight: 700;
+          text-transform: capitalize;
+        }
+      }
+    }
+  }
+}

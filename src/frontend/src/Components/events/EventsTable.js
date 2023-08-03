@@ -48,7 +48,7 @@ export default function EventsTable({ columns, data }) {
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => {
               return (
-                <th key={header.id} colSpan={header.colSpan}>
+                <th className={header.id} key={header.id} colSpan={header.colSpan}>
                   {header.isPlaceholder ? null : (
                     <span
                       {...{
@@ -82,7 +82,7 @@ export default function EventsTable({ columns, data }) {
             return (
               <tr className={row.original.severity.toLowerCase()} key={row.id}>
                 {row.getVisibleCells().map((cell) => {
-                    return <td key={cell.id}>
+                    return <td className={cell.column.id} key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
