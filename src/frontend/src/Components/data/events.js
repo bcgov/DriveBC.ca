@@ -6,26 +6,16 @@ export function getEvents(map_to_points) {
       "Content-Type": "application/json"
     }
   })
-  .then((response) => response.json())
-  .then((data) => map_to_points ? mapEventsData(data) : data)
-  .catch((error) => {
-    console.log(error)
-  });
+    .then((response) => response.json())
+    .then((data) => {
+      return {
+        eventNextUrl: data.next,
+        eventData: data.results,
+      }
+    }).catch((error) => {
+      console.log(error)
+    });
 }
-
-const mapEventsData = (events) => {
-  const featureObject = events.map((event) => {
-    let lat, lng;
-    if (event.location.type === "Point") {
-      lng = event.location.coordinates[0];
-      lat = event.location.coordinates[1];
-    } else {
-      [lng, lat] = event.location.coordinates[0];
-    }
-    return point([lng, lat], event, { id: event.id });
-  });
-  return featureObject;
-};
 
 const eventsDefault = [
   {

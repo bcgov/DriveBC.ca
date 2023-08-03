@@ -61,7 +61,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer}) {
           onChange={(e) => toggleLayer('webcamsLayer', e.target.checked)}
           defaultChecked={mapContext.visible_layers.webcamsLayer}
         />
-        <label for="webcam">Webcam</label>
+        <label for="webcam">Webcams</label>
       </div>
 
       <div className="layer-item">
