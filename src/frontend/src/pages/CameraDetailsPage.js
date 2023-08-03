@@ -41,7 +41,7 @@ import BCHwyCrest5 from "../images/BCHwyCrest5.svg";
 import BCHwyCrest16 from "../images/BCHwyCrest16.svg";
 
 // Styling
-import "../CameraDetailsPage.scss";
+import "./CameraDetailsPage.scss";
 import "../Components/Map.scss"
 
 export default function CameraDetailsPage() {

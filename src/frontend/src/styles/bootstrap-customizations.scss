@@ -22,17 +22,17 @@ $danger: $Error;
 /* import bootstrap to set changes */
 @import "~bootstrap/scss/bootstrap";
 
-button.btn {
+.btn {
   margin-bottom: 14px;
   padding: 6px 12px;
   border-radius: 4px;
 }
 
-button.btn.btn-link {
+.btn.btn-link {
   color: $Type-Link;
 }
 
-button.btn.btn-primary {
+.btn.btn-primary {
   border-color: $BC-Blue;
   
   &:hover {
@@ -44,17 +44,19 @@ button.btn.btn-primary {
   }
 }
 
-button.btn.btn-outline-primary {
+.btn.btn-outline-primary {
+  color: $Grey110;
   background: none;
   border-color: $Card-Border;
-  color: $Grey110;
 
   &:hover {
+    color: $Grey110;
     background-color: $Grey30;
   }
 
-  &:active, &:focus {
-    outline: 2px solid $Focus;
+  &:active, &:focus, &.active, &.focus, &.show {
+    color: $Grey110;
+    border-color: $Focus;
     background: none;
   }
 }
