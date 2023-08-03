@@ -4,6 +4,12 @@ import logo from './images/BCID_H_rgb_pos.png';
 import facebook from './images/facebook.svg';
 import instagram from './images/instagram.svg';
 import twitter from './images/twitter.svg';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowUpRightFromSquare
+} from "@fortawesome/free-solid-svg-icons";
+
+
 
 export default function Footer() {
   return (
@@ -17,32 +23,37 @@ export default function Footer() {
         <div className="flex-container">
           <div className="contact">
             <img className="footer-logo" src={logo} alt="Government of B.C." />
-            <p>We can help in over 120 languages and through Telephone Device For The Deaf (TDD).&nbsp;<a className="footer-link-grey" href="/gov/content/home/get-help-with-government-services">Call, email or text us</a>, or&nbsp;<a className="footer-link-grey" href="/gov/content/home/services-a-z">find a service centre</a></p>
+            <p>BC Highways Conditions toll-free in North America: <a href="tel:1-800-550-4997">1-800-550-4997</a> including Telephone Device for the Deaf (TDD) support.</p>
           </div>
           <div className="more-info">
             <h2>More Info</h2>
             <ul className="link-list">
-              <li><a href="/gov/content/home" className="footer-link" target="_self">Home</a></li>
-              <li><a href="/gov/content/about-gov-bc-ca" className="footer-link" target="_self">About gov.bc.ca</a></li>
-              <li><a href="/gov/content/about-gov-bc-ca/alpha-gov" className="footer-link" target="_self">About Alpha Gov</a></li>
-              <li><a href="/gov/content/home/disclaimer" className="footer-link" target="_self">Disclaimer</a></li>
-              <li><a href="/gov/content/home/privacy" className="footer-link" target="_self">Privacy</a></li>
-              <li><a href="/gov/content/home/accessible-government" className="footer-link" target="_self">Accessibility</a></li>
-              <li><a href="/gov/content/home/copyright" className="footer-link" target="_self">Copyright</a></li>
-              <li><a href="/gov/content/home/get-help-with-government-services" className="footer-link" target="_self">Contact us</a></li>
+              <li>Website feedback</li>
+              <li>
+                <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" className="footer-link" target="_self">Disclaimer
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} alt="ascending order" /></a>
+              </li>
+              <li>
+                <a href="https://www2.gov.bc.ca/gov/content/home/privacy" className="footer-link" target="_self">Privacy
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} alt="ascending order" /></a>
+              </li>
+              <li>
+                <a href="https://www2.gov.bc.ca/gov/content/governments/about-the-bc-government/accessibility" className="footer-link" target="_self">Accessibility
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} alt="Acccessibility" /></a>
+              </li>
             </ul>
           </div>
         </div>
         <div className='bottom'>
           <div className="connect">
-            <a href="https://www.facebook.com/BCProvincialGovernment" className="footer-link" target="_blank" rel="noreferrer">
-              <img src={facebook} alt="Facebook" />
+            <a href="https://twitter.com/DriveBC" className="footer-link" target="_blank" rel="noreferrer">
+              <img src={twitter} alt="Twitter" />
             </a>
-            <a href="https://www.instagram.com/governmentofbc" className="footer-link" target="_blank" rel="noreferrer">
+            <a href="https://www.instagram.com/ministryoftranbc/" className="footer-link" target="_blank" rel="noreferrer">
               <img src={instagram} alt="Instagram" />
             </a>
-            <a href="https://twitter.com/BCGovNews" className="footer-link" target="_blank" rel="noreferrer">
-              <img src={twitter} alt="Twitter" />
+            <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-infrastructure/" className="footer-link" target="_blank" rel="noreferrer">
+              <img src={facebook} alt="Facebook" />
             </a>
           </div>
           <div className="copyright">© 2023 Government of British Columbia</div>

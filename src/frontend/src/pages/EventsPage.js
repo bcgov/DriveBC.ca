@@ -21,6 +21,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { getEvents } from "../Components/data/events";
 import EventsTable from "../Components/events/EventsTable";
 import PageHeader from "../PageHeader";
+import Footer from "../Footer.js";
 
 //Styling
 import "../EventsPage.scss";
@@ -221,7 +222,8 @@ export default function EventsPage() {
             <EventsTable columns={columns} data={events}/>
           </InfiniteScroll>
         )}
-        </Container>
+      </Container>
+      <Footer />
     </div>
   );
 }

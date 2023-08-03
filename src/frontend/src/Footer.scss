@@ -1,3 +1,5 @@
+@import "./styles/variables.scss";
+
 .footer-container {
   margin-top: 100px;
 
@@ -70,17 +72,30 @@
         .link-list {
           list-style-type: none;
           padding: 0;
-          columns: 2;
+          columns: 1;
           margin: 0px 0px 16px;
           gap: 48px;
 
           li {
             width: unset;
             margin-bottom: 16px;
-            text-decoration: underline;
 
             @media (min-width: 992px) {
               width: 160px;
+            }
+
+            a {
+              text-decoration: none;
+              color: $Type-Secondary;
+
+              &:hover {
+                text-decoration: underline;
+              }
+
+              svg {
+                margin-left: 4px;
+                font-size: 0.785em;
+              }
             }
           }
         }

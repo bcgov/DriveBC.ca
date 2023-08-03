@@ -1,6 +1,7 @@
 import React from 'react';
 import CameraList from '../Components/cameras/CameraList';
 import PageHeader from '../PageHeader';
+import Footer from '../Footer.js';
 
 export default function CameraPage() {
   return (
@@ -10,6 +11,7 @@ export default function CameraPage() {
         description="Search by camera name to filter results or scroll to view all cameras sorted by highway.">
       </PageHeader>
       <CameraList></CameraList>
+      <Footer />
     </div>
   );
 }
