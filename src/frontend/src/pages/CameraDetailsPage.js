@@ -21,8 +21,8 @@ import Form from "react-bootstrap/Form";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import Button from "react-bootstrap/Button";
-import RangeSlider from 'react-bootstrap-range-slider';
 import ImageGallery from 'react-image-gallery';
+import RangeSlider from 'react-bootstrap-range-slider';
 import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
 
 // Components and functions
@@ -55,6 +55,7 @@ export default function CameraDetailsPage() {
   const [replayImages, setReplayImages] = useState([]);
   const [nextUpdate, setNextUpdate] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [activeTab, setActiveTab] = useState('webcam');
 
   const navigate = useNavigate();
 
@@ -75,7 +76,7 @@ export default function CameraDetailsPage() {
     
     // Next update time
     const current_time = new Date();
-    const next_update_time = addSeconds(current_time, camera.update_period_mean);
+    const next_update_time = current_time.setSeconds(current_time.getSeconds() + camera.update_period_mean);
     const next_update_time_formatted = new Intl.DateTimeFormat("en-US",
     { hour: "numeric",
       minute: "numeric",
@@ -108,16 +109,6 @@ export default function CameraDetailsPage() {
   const toggleReplay = () => {
     setReplay(!replay);
   };
-
-  function addSeconds(date, seconds) {
-    date.setSeconds(date.getSeconds() + seconds);
-
-    return date;
-  }
-
-  function round(number) {
-    return Math.ceil(number);
-  }
 
   const mapViewRoute = () =>{
     console.log("routing")
@@ -308,16 +299,17 @@ export default function CameraDetailsPage() {
             <div className="camera-update">
               <p className="bold">
                 This camera updates its image approximately every{" "}
-                {round(camera.update_period_mean / 60)} minutes
+                {Math.ceil(camera.update_period_mean / 60)} minutes
               </p>
             </div>
 
             <div className="camera-imagery">
-              <Tabs>
-                <Tab
-                  eventKey="webcam"
-                  title={<span>{cameraTab} Current web camera</span>}
+              <Tabs
+                  id="camera-details"
+                  activeKey={activeTab}
+                  onSelect={ selectedTab => setActiveTab(selectedTab) }
                 >
+                <Tab eventKey="webcam" title={<span>{cameraTab} Current web camera</span>}>
                   <div className="replay-div">
                     <div className="next-update">
                       <FontAwesomeIcon icon={faArrowRotateRight} />
@@ -383,7 +375,9 @@ export default function CameraDetailsPage() {
           </div>
         )}
       </div>
-      <Footer />
+      { (activeTab === "webcam") &&
+        <Footer />
+      }
     </div>
   );
 }
