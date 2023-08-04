@@ -11,17 +11,17 @@ import {
   faMapLocationDot,
   faFilter
 } from "@fortawesome/free-solid-svg-icons";
+import { useMediaQuery } from "@uidotdev/usehooks";
 import Container from "react-bootstrap/Container";
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useMediaQuery } from "@uidotdev/usehooks";
-import FriendlyTime from "../Components/FriendlyTime";
 
 // Components and functions
 import { getEvents } from "../Components/data/events";
-import EventsTable from "../Components/events/EventsTable";
 import EventCard from "../Components/events/EventCard";
+import EventsTable from "../Components/events/EventsTable";
+import FriendlyTime from "../Components/FriendlyTime";
 import PageHeader from "../PageHeader";
 import Footer from "../Footer.js";
 
@@ -124,7 +124,7 @@ export default function EventsPage() {
   });
 
   const [events, setEvents] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [processedEvents, setProcessedEvents] = useState([]);
   const [displayedEvents, setDisplayedEvents] = useState([]);
 
   const getData = async () => {
@@ -151,22 +151,25 @@ export default function EventsPage() {
     });
   }
 
-  const getFilteredEvents = () => {
+  const processEvents = () => {
     const hasTrue = (val) => !!val;
     const hasFilterOn = Object.values(eventTypeFilter).some(hasTrue);
 
     let res = [...events];
+
+    // Filter
     if (hasFilterOn) {
       res = res.filter((e) => !!eventTypeFilter[e.event_type]);
     }
 
+    // Sort
     sortEvents(res);
-    setFilteredEvents(res);
+
+    setProcessedEvents(res);
   }
 
   const getDisplayedEvents = (reset) => {
-    // Get sorted, filtered, paginated events here
-    const res = filteredEvents.slice(0, reset? 7 : displayedEvents.length + 7);
+    const res = processedEvents.slice(0, reset? 10 : displayedEvents.length + 10);
     setDisplayedEvents(res);
   }
 
@@ -183,11 +186,11 @@ export default function EventsPage() {
     if (!isInitialMount.current) { // Do not run on startup
       getDisplayedEvents(true);
     }
-  }, [filteredEvents]);
+  }, [processedEvents]);
 
   useEffect(() => {
     if (!isInitialMount.current) { // Do not run on startup
-      getFilteredEvents();
+      processEvents();
     }
   }, [events, eventTypeFilter, sortingColumns]);
 
@@ -234,18 +237,18 @@ export default function EventsPage() {
           <InfiniteScroll
             dataLength={displayedEvents.length}
             next={getDisplayedEvents}
-            hasMore={displayedEvents.length < filteredEvents.length}
+            hasMore={displayedEvents.length < processedEvents.length}
             loader={<h4>Loading...</h4>}>
 
             {largeScreen ?
               <EventsTable columns={columns} data={displayedEvents} sortingHandler={setSortingColumns} /> :
               <div className="events-list">
-                { events.map(
-                  (event) => (
+                { displayedEvents.map(
+                  (e) => (
                     <EventCard
                       className="event"
-                      event={event}
-                      icon={ filterProps.find(type => type.value === event.event_type).icon }
+                      event={e}
+                      icon={ filterProps.find(type => type.value === e.event_type).icon }
                     />
                   )
                 )}
