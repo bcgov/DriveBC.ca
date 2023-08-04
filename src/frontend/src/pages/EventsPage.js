@@ -82,7 +82,8 @@ export default function EventsPage() {
     {
       header: "Map",
       accessorKey: "map",
-      cell: props => <FontAwesomeIcon icon={faMapLocationDot} />
+      cell: props => <FontAwesomeIcon icon={faMapLocationDot} />,
+      enableSorting: false
     },
   ];
 
@@ -113,6 +114,8 @@ export default function EventsPage() {
     }
   ];
 
+  const [sortingColumns, setSortingColumns] = useState([]);
+
   const [eventTypeFilter, setEventTypeFilter] = useState({
     "CONSTRUCTION": false,
     "INCIDENT": false,
@@ -131,22 +134,39 @@ export default function EventsPage() {
     isInitialMount.current = false;
   }
 
+  const sortEvents = (unsortedEvents) => {
+    // Sort by ID by default
+    let sortKey = "id";
+    let descending = false;
+
+    if (sortingColumns.length) {
+      const { id, desc } = sortingColumns[0];
+
+      sortKey = id;
+      descending = desc;
+    }
+
+    unsortedEvents.sort((first_event, second_event) => {
+      return first_event[sortKey] > second_event[sortKey] ? (descending ? -1 : 1) : (descending ? 1 : -1);
+    });
+  }
+
   const getFilteredEvents = () => {
     const hasTrue = (val) => !!val;
     const hasFilterOn = Object.values(eventTypeFilter).some(hasTrue);
 
-    let res = events;
+    let res = [...events];
     if (hasFilterOn) {
       res = res.filter((e) => !!eventTypeFilter[e.event_type]);
     }
 
+    sortEvents(res);
     setFilteredEvents(res);
   }
 
-  const getDisplayedEvents = () => {
+  const getDisplayedEvents = (reset) => {
     // Get sorted, filtered, paginated events here
-    const res = filteredEvents.slice(0, displayedEvents.length + 7);
-
+    const res = filteredEvents.slice(0, reset? 7 : displayedEvents.length + 7);
     setDisplayedEvents(res);
   }
 
@@ -160,16 +180,16 @@ export default function EventsPage() {
   }, []);
 
   useEffect(() => {
-    if (!isInitialMount.current) { // Only run on updates
-      getDisplayedEvents();
+    if (!isInitialMount.current) { // Do not run on startup
+      getDisplayedEvents(true);
     }
   }, [filteredEvents]);
 
   useEffect(() => {
-    if (!isInitialMount.current) { // Only run on updates
+    if (!isInitialMount.current) { // Do not run on startup
       getFilteredEvents();
     }
-  }, [events, eventTypeFilter]);
+  }, [events, eventTypeFilter, sortingColumns]);
 
   const eventTypeFilterHandler = (e) => {
     const event_type = e.target.value;
@@ -218,7 +238,7 @@ export default function EventsPage() {
             loader={<h4>Loading...</h4>}>
 
             {largeScreen ?
-              <EventsTable columns={columns} data={displayedEvents} /> :
+              <EventsTable columns={columns} data={displayedEvents} sortingHandler={setSortingColumns} /> :
               <div className="events-list">
                 { events.map(
                   (event) => (

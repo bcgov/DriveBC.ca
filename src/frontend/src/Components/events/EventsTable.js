@@ -1,5 +1,5 @@
 // React
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // Third party packages
 import {
@@ -18,7 +18,7 @@ import {
 // Styling
 import "./EventsTable.scss";
 
-export default function EventsTable({ columns, data }) {
+export default function EventsTable({ columns, data, sortingHandler }) {
   const [sorting, setSorting] = useState([]);
 
   const table = useReactTable({
@@ -37,6 +37,10 @@ export default function EventsTable({ columns, data }) {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
+
+  useEffect(() => {
+    sortingHandler(sorting);
+  }, [sorting]);
 
   const asc_icon = <FontAwesomeIcon icon={faArrowUpLong} alt="ascending order" />;
   const desc_icon = <FontAwesomeIcon icon={faArrowDownLong} alt="descending order" />;
@@ -75,23 +79,20 @@ export default function EventsTable({ columns, data }) {
         ))}
       </thead>
       <tbody>
-        {table
-          .getRowModel()
-          .rows
-          .map((row) => {
-            return (
-              <tr className={row.original.severity.toLowerCase()} key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                    return <td className={cell.column.id} key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                })}
-              </tr>
-            );
-          })}
+        {table.getRowModel().rows.map((row) => {
+          return (
+            <tr className={row.original.severity.toLowerCase()} key={row.id}>
+              {row.getVisibleCells().map((cell) => {
+                  return <td className={cell.column.id} key={cell.id}>
+                    {flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext()
+                    )}
+                  </td>
+              })}
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
