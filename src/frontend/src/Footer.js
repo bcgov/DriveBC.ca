@@ -8,6 +8,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowUpRightFromSquare
 } from "@fortawesome/free-solid-svg-icons";
+import {
+  faXTwitter,
+  faInstagram,
+  faLinkedinIn
+} from "@fortawesome/free-brands-svg-icons";
 
 
 
@@ -47,13 +52,13 @@ export default function Footer() {
         <div className='bottom'>
           <div className="connect">
             <a href="https://twitter.com/DriveBC" className="footer-link" target="_blank" rel="noreferrer">
-              <img src={twitter} alt="Twitter" />
+              <FontAwesomeIcon icon={faXTwitter} alt="Twitter" />
             </a>
             <a href="https://www.instagram.com/ministryoftranbc/" className="footer-link" target="_blank" rel="noreferrer">
-              <img src={instagram} alt="Instagram" />
+            <FontAwesomeIcon icon={faInstagram} alt="Instagram" />
             </a>
             <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-infrastructure/" className="footer-link" target="_blank" rel="noreferrer">
-              <img src={facebook} alt="Facebook" />
+            <FontAwesomeIcon icon={faLinkedinIn} alt="Linkedin" />
             </a>
           </div>
           <div className="copyright">© 2023 Government of British Columbia</div>

@@ -73,7 +73,7 @@
           list-style-type: none;
           padding: 0;
           columns: 1;
-          margin: 0px 0px 16px;
+          margin: 0;
           gap: 48px;
 
           li {
@@ -104,15 +104,25 @@
 
     .bottom{
       display: flex;
+      flex-direction: column;
       -webkit-box-pack: justify;
       justify-content: space-between;
       border-top: 1px solid rgb(1, 51, 102);
       padding-top: 32px;
       margin-top: 32px;
 
+      @media (min-width: 992px) {
+        flex-direction: row;
+      }
+
       .connect {
         display: flex;
         gap: 10px;
+        margin-bottom: 16px;
+
+        @media (min-width: 992px) {
+          margin-bottom: 0;
+        }
         
         .footer-link {
           background: rgb(250, 249, 248);
