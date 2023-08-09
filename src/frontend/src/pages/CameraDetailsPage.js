@@ -74,7 +74,7 @@ export default function CameraDetailsPage() {
   async function initCamera(camera) {
     // Camera data
     setCamera(camera);
-    
+
     // Next update time
     const current_time = new Date();
     const next_update_time = current_time.setSeconds(current_time.getSeconds() + camera.update_period_mean);
@@ -110,13 +110,12 @@ export default function CameraDetailsPage() {
   };
 
   const mapViewRoute = () =>{
-    console.log("routing")
     navigate("/", { state: camera})
   }
 
   // ReplayTheDay
   const refImg = useRef(null)
-  
+
   const customControls = () => {
     return refImg.current && (
       <div className="range-slider-container">
@@ -133,7 +132,7 @@ export default function CameraDetailsPage() {
   }
 
   const customLeftNav = (onClick, disabled) => {
-    return ( 
+    return (
       <div className="replay-control replay-control--backward">
         <Button className="replay-btn replay-backward" onClick={onClick} disabled={disabled} >
           <FontAwesomeIcon icon={faBackward} />
@@ -141,9 +140,9 @@ export default function CameraDetailsPage() {
       </div>
   );
   }
-  
+
   const customPlayPause = (onClick, isPlaying) => {
-    return ( 
+    return (
       <div className="replay-control replay-control--play">
         <Button className="replay-btn replay-play" onClick={onClick} isPlaying={isPlaying} >
           {isPlaying ? <FontAwesomeIcon icon={faPause} />  : <FontAwesomeIcon icon={faPlay} />}
@@ -153,7 +152,7 @@ export default function CameraDetailsPage() {
   }
 
   const customRightNav = (onClick, disabled) => {
-    return ( 
+    return (
       <div className="replay-control replay-control--forward">
         <Button className="replay-btn replay-forward" onClick={onClick} disabled={disabled} >
           <FontAwesomeIcon icon={faForward} />
