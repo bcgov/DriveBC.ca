@@ -1,0 +1,25 @@
+
+.friendly-time {
+  text-decoration: underline;
+
+  &.showTooltip {
+    color: inherit;
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    text-decoration: underline;
+
+    &:after {
+      content: attr(title);
+      position: absolute;
+      top: 100%;
+      color: #000;
+      background-color: #fff;
+      border: 1px solid;
+      width: fit-content;
+      padding: 4px;
+      white-space: nowrap;
+      z-index: 1;
+    }
+  }
+}

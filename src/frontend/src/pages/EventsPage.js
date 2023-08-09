@@ -16,6 +16,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useMediaQuery } from "@uidotdev/usehooks";
+import FriendlyTime from "../Components/FriendlyTime";
 
 // Components and functions
 import { getEvents } from "../Components/data/events";
@@ -76,18 +77,7 @@ export default function EventsPage() {
     {
       header: "Last Update",
       accessorKey: "last_updated",
-      cell: props => {
-        const datetime_format = {
-          weekday: "short",
-          month: "short",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-        };
-        const last_update_time = new Date(props.getValue());
-        const last_update_time_formatted = new Intl.DateTimeFormat("en-US", datetime_format).format(last_update_time);
-        return last_update_time_formatted;
-      }
+      cell: props => <FriendlyTime date={props.getValue()} />
     },
     {
       header: "Map",
