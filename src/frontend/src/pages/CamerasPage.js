@@ -1,4 +1,7 @@
+// React
 import React from 'react';
+
+// Components and functions
 import CameraList from '../Components/cameras/CameraList';
 import PageHeader from '../PageHeader';
 import Footer from '../Footer.js';

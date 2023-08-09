@@ -9,10 +9,10 @@ table {
       th {
         font-weight: 400;
         color: $BC-Blue;
-        cursor: pointer;
 
         .cursor-pointer {
           white-space: nowrap;
+          cursor: pointer;
 
           svg {
             margin-left: 8px;

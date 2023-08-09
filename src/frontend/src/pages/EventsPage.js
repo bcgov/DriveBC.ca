@@ -1,5 +1,5 @@
 // React
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 // Third party packages
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,21 +11,21 @@ import {
   faMapLocationDot,
   faFilter
 } from "@fortawesome/free-solid-svg-icons";
+import { useMediaQuery } from "@uidotdev/usehooks";
 import Container from "react-bootstrap/Container";
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useMediaQuery } from "@uidotdev/usehooks";
-import FriendlyTime from "../Components/FriendlyTime";
 
 // Components and functions
 import { getEvents } from "../Components/data/events";
-import EventsTable from "../Components/events/EventsTable";
 import EventCard from "../Components/events/EventCard";
+import EventsTable from "../Components/events/EventsTable";
+import FriendlyTime from "../Components/FriendlyTime";
 import PageHeader from "../PageHeader";
 import Footer from "../Footer.js";
 
-//Styling
+// Styling
 import "./EventsPage.scss";
 
 export default function EventsPage() {
@@ -37,22 +37,22 @@ export default function EventsPage() {
   const special_event = <FontAwesomeIcon icon={faCalendarDays} alt="special event" />;
   const weather_condition = <FontAwesomeIcon icon={faSnowflake} alt="weather condition" />;
 
-  const columns = useMemo(() => [
+  const columns = [
     {
       header: "Type",
       accessorKey: "event_type",
       cell: props => {
-      switch(props.getValue().toLowerCase()) {
-        case "incident":
-          return <span>{incident}</span>;
-        case "construction":
-          return <span>{construction}</span>;
-        case "special_event":
-          return <span>{special_event}</span>;
-        case "weather_condition":
-          return <span>{weather_condition}</span>;
-        default:
-          return <span>{incident}</span>;
+        switch(props.getValue().toLowerCase()) {
+          case "incident":
+            return <span>{incident}</span>;
+          case "construction":
+            return <span>{construction}</span>;
+          case "special_event":
+            return <span>{special_event}</span>;
+          case "weather_condition":
+            return <span>{weather_condition}</span>;
+          default:
+            return <span>{incident}</span>;
         }
       }
     },
@@ -82,9 +82,10 @@ export default function EventsPage() {
     {
       header: "Map",
       accessorKey: "map",
-      cell: props => <FontAwesomeIcon icon={faMapLocationDot} />
+      cell: props => <FontAwesomeIcon icon={faMapLocationDot} />,
+      enableSorting: false
     },
-  ], []);
+  ];
 
   const filterProps = [
     {
@@ -113,6 +114,8 @@ export default function EventsPage() {
     }
   ];
 
+  const [sortingColumns, setSortingColumns] = useState([]);
+
   const [eventTypeFilter, setEventTypeFilter] = useState({
     "CONSTRUCTION": false,
     "INCIDENT": false,
@@ -120,39 +123,58 @@ export default function EventsPage() {
     "WEATHER_CONDITION": false,
   });
 
-  const getDefaultEventsUrl = () => {
-    const default_params = {
-      limit: 7,
-      offset: 0
-    }
-
-    const event_type_filter = Object.keys(eventTypeFilter).filter(function(k){return eventTypeFilter[k]}).map(String);
-    if (event_type_filter.length) {
-      default_params.event_type__in = event_type_filter;
-    }
-
-    return `//${process.env.REACT_APP_API_HOST}/api/events/?${new URLSearchParams(default_params)}`;
-  }
-
-  const [dataUrl, setDataUrl] = useState(getDefaultEventsUrl);
   const [events, setEvents] = useState([]);
+  const [processedEvents, setProcessedEvents] = useState([]);
+  const [displayedEvents, setDisplayedEvents] = useState([]);
 
-  async function getData(url) {
-    const {eventNextUrl, eventData} = await getEvents(url ? url : dataUrl);
+  const getData = async () => {
+    const eventsData = await getEvents();
+    setEvents(eventsData);
 
-    setDataUrl(eventNextUrl);
-
-    // Reset events on filter change
-    setEvents(url ? eventData : events.concat(eventData));
-
-    // Update initial mount state
     isInitialMount.current = false;
   }
 
-  useEffect(() => {
-    if (!events.length) {
-      getData();
+  const sortEvents = (unsortedEvents) => {
+    // Sort by ID by default
+    let sortKey = "id";
+    let descending = false;
+
+    if (sortingColumns.length) {
+      const { id, desc } = sortingColumns[0];
+
+      sortKey = id;
+      descending = desc;
     }
+
+    unsortedEvents.sort((first_event, second_event) => {
+      return first_event[sortKey] > second_event[sortKey] ? (descending ? -1 : 1) : (descending ? 1 : -1);
+    });
+  }
+
+  const processEvents = () => {
+    const hasTrue = (val) => !!val;
+    const hasFilterOn = Object.values(eventTypeFilter).some(hasTrue);
+
+    let res = [...events];
+
+    // Filter
+    if (hasFilterOn) {
+      res = res.filter((e) => !!eventTypeFilter[e.event_type]);
+    }
+
+    // Sort
+    sortEvents(res);
+
+    setProcessedEvents(res);
+  }
+
+  const getDisplayedEvents = (reset) => {
+    const res = processedEvents.slice(0, reset? 10 : displayedEvents.length + 10);
+    setDisplayedEvents(res);
+  }
+
+  useEffect(() => {
+    getData();
 
     return () => {
       // Unmounting, set to empty list
@@ -161,11 +183,16 @@ export default function EventsPage() {
   }, []);
 
   useEffect(() => {
-    if (!isInitialMount.current) { // Only run on updates
-      setDataUrl(getDefaultEventsUrl());
-      getData(getDefaultEventsUrl());
+    if (!isInitialMount.current) { // Do not run on startup
+      getDisplayedEvents(true);
     }
-  }, [eventTypeFilter]);
+  }, [processedEvents]);
+
+  useEffect(() => {
+    if (!isInitialMount.current) { // Do not run on startup
+      processEvents();
+    }
+  }, [events, eventTypeFilter, sortingColumns]);
 
   const eventTypeFilterHandler = (e) => {
     const event_type = e.target.value;
@@ -206,22 +233,22 @@ export default function EventsPage() {
           </Dropdown>
         </div>
 
-        { events && events.length && (
+        { events && !!events.length && (
           <InfiniteScroll
-            dataLength={events.length}
-            next={getData}
-            hasMore={dataUrl !== null}
+            dataLength={displayedEvents.length}
+            next={getDisplayedEvents}
+            hasMore={displayedEvents.length < processedEvents.length}
             loader={<h4>Loading...</h4>}>
 
             {largeScreen ?
-              <EventsTable columns={columns} data={events} /> :
+              <EventsTable columns={columns} data={displayedEvents} sortingHandler={setSortingColumns} /> :
               <div className="events-list">
-                { events.map(
-                  (event) => (
+                { displayedEvents.map(
+                  (e) => (
                     <EventCard
                       className="event"
-                      event={event}
-                      icon={ filterProps.find(type => type.value === event.event_type).icon }
+                      event={e}
+                      icon={ filterProps.find(type => type.value === e.event_type).icon }
                     />
                   )
                 )}

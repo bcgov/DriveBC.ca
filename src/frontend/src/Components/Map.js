@@ -1,6 +1,7 @@
 // React
 import React, { useContext, useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 // Third party packages
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,7 +13,7 @@ import {
 import Button from "react-bootstrap/Button";
 
 // Components and functions
-import { getEventPoints } from "./data/events.js";
+import { getEvents } from "./data/events.js";
 import { getWebcams } from "./data/webcams.js";
 import Layers from "./Layers.js";
 import Routes from "./Routes.js";
@@ -226,8 +227,8 @@ export default function MapWrapper({
     });
 
     mapRef.current.once("loadend", async () => {
-      const { webcamResults } = await getWebcams();
-      const evpoints = await getEventPoints();
+      const webcamResults = await getWebcams();
+      const evpoints = await getEvents(true);
 
       layers.current["webcamsLayer"] = new VectorLayer({
         classname: "webcams",

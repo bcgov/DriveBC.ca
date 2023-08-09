@@ -1,5 +1,6 @@
 // React
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 
 // Third party packages
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,7 +16,6 @@ import {
   faBackward,
   faForward
 } from "@fortawesome/free-solid-svg-icons";
-import { useLocation, useNavigate, Link } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Tab from "react-bootstrap/Tab";

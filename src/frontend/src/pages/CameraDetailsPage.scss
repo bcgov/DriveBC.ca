@@ -241,7 +241,7 @@
                     height: 36px;
                     border-radius: 18px;
                   }
-    
+
                   &:hover {
                     background-color: $Grey30;
                   }
@@ -312,13 +312,13 @@
           padding: 0 10px;
           display: flex;
           justify-content: space-between;
-    
+
           p {
             color: $White;
             font-size: 0.875em;
             margin-bottom: 0;
           }
-          
+
           .driveBC {
             font-family: serif;
             span {
@@ -399,7 +399,7 @@
         }
       }
     }
-    
+
     //Responsive Tabs
     .tab-content {
       .tab-pane {
@@ -516,12 +516,12 @@
         right: 8px;
         width: 20px;
         border-radius: 10px;
-  
+
         &:hover {
           background-color: $White;
         }
-  
-        &-thumb {  
+
+        &-thumb {
           height: 16px;
           width: 16px;
           border-radius: 8px;
@@ -542,7 +542,7 @@
         top: 8px;
         right: 8px;
       }
-      
+
       &.cam-location {
         position: absolute;
         bottom: 8px;
@@ -561,12 +561,12 @@
         bottom: calc(200px - 20px + 8px);
         right: 8px;
       }
-      
+
       &.zoom-out {
         position: absolute;
         bottom: 8px;
         right: 8px;
-      } 
+      }
     }
   }
 
