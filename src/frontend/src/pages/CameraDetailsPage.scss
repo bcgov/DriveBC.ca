@@ -185,6 +185,8 @@
         margin-top: 16px;
 
         .card-img-box {
+          height: 365px;
+          
           @media (min-width: 576px) {
             margin: 0;
           }

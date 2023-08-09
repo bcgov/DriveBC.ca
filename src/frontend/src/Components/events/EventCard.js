@@ -1,19 +1,10 @@
 // Styling
 import "./EventCard.scss";
 
-const datetime_format = {
-  weekday: "short",
-  month: "short",
-  day: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-};
-const formatter = new Intl.DateTimeFormat("en-US", datetime_format);
+// Third party packages
+import FriendlyTime from "../FriendlyTime";
 
 export default function EventCard({event, icon}) {
-
-  const last_update_time = new Date(event.last_updated);
-  const last_update_time_formatted = formatter.format(last_update_time);
 
   // Rendering
   return (
@@ -33,7 +24,7 @@ export default function EventCard({event, icon}) {
         </div>
         <div className="last-update">
           <div className="header">Last Update</div>
-          <div className="content">{last_update_time_formatted}</div>
+          <div className="content"><FriendlyTime date={event.last_updated} /></div>
         </div>
         <div className="map">
           <div className="header">Map</div>

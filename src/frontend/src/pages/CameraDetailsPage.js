@@ -24,6 +24,7 @@ import Button from "react-bootstrap/Button";
 import ImageGallery from 'react-image-gallery';
 import RangeSlider from 'react-bootstrap-range-slider';
 import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
+import FriendlyTime from "../Components/FriendlyTime";
 
 // Components and functions
 import { MapContext } from "../App.js";
@@ -84,10 +85,8 @@ export default function CameraDetailsPage() {
     ).format(next_update_time);
     setNextUpdate(next_update_time_formatted);
 
-    // Last update timestamp
-    const last_updated_time = new Date(camera.last_update_modified);
-    const last_updated_timestamp = new Intl.DateTimeFormat("en-US", datetime_format).format(last_updated_time);
-      setLastUpdate(last_updated_timestamp);
+    // Last update time
+      setLastUpdate(camera.last_update_modified);
 
     // Replay images
     const replayImageList = await getWebcamReplay(camera);
@@ -357,7 +356,7 @@ export default function CameraDetailsPage() {
                   {replay && (
                     <div className="timestamp">
                       <p className="driveBC">Drive<span>BC</span></p>
-                      <p className="label">{lastUpdate}</p>
+                      <p className="label"><FriendlyTime date={lastUpdate} /></p>
                     </div>
                   )}
                 </div>
