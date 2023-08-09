@@ -46,18 +46,23 @@ class TestEventSerializer(BaseTest):
         self.event_two.id = "2"
         self.event_two.route_from = "Test Road Two"
         self.event_two.route_to = "Test Avenue Two"
+        self.event_two.direction = event_enums.EVENT_DIRECTION.BOTH
         self.event_two.save()
 
         self.serializer = EventSerializer(self.event)
         self.serializer_two = EventSerializer(self.event_two)
 
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 14
+        assert len(self.serializer.data) == 15
         # route_from beings with 'at '
         assert self.serializer.data['route_display'] == \
                "Test Road to Test Avenue"
+        assert self.serializer.data['direction_display'] == \
+               "Northbound"
 
-        assert len(self.serializer_two.data) == 14
+        assert len(self.serializer_two.data) == 15
         # route_from doesn't being with 'at '
         assert self.serializer_two.data['route_display'] == \
                "Test Road Two to Test Avenue Two"
+        assert self.serializer_two.data['direction_display'] == \
+               "Both Directions"

@@ -72,3 +72,13 @@ EVENT_DIRECTION_CHOICES = (
     (EVENT_DIRECTION.BOTH, "Both"),
     (EVENT_DIRECTION.NONE, "None"),
 )
+
+
+EVENT_DIRECTION_DISPLAY = {
+    EVENT_DIRECTION.NORTH: "Northbound",
+    EVENT_DIRECTION.EAST: "Eastbound",
+    EVENT_DIRECTION.SOUTH: "Southbound",
+    EVENT_DIRECTION.WEST: "Westbound",
+    EVENT_DIRECTION.BOTH: "Both Directions",
+    EVENT_DIRECTION.NONE: "Not Applicable"
+}
