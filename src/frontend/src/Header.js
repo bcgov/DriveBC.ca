@@ -31,7 +31,7 @@ export default function Header() {
 							<Nav.Link active={false}>Cameras</Nav.Link>
 						</LinkContainer>
 						<LinkContainer exact to="/events-page">
-							<Nav.Link active={false}>Events</Nav.Link>
+							<Nav.Link active={false}>Delays</Nav.Link>
 						</LinkContainer>
 					</Nav>
 					</Navbar.Collapse>
