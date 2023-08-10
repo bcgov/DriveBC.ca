@@ -18,7 +18,7 @@ import {
 // Styling
 import "./EventsTable.scss";
 
-export default function EventsTable({ columns, data, sortingHandler }) {
+export default function EventsTable({ columns, data, sortingHandler, routeHandler }) {
   const [sorting, setSorting] = useState([]);
 
   const table = useReactTable({
@@ -41,6 +41,7 @@ export default function EventsTable({ columns, data, sortingHandler }) {
   useEffect(() => {
     sortingHandler(sorting);
   }, [sorting]);
+
 
   const asc_icon = <FontAwesomeIcon icon={faArrowUpLong} alt="ascending order" />;
   const desc_icon = <FontAwesomeIcon icon={faArrowDownLong} alt="descending order" />;
@@ -81,7 +82,7 @@ export default function EventsTable({ columns, data, sortingHandler }) {
       <tbody>
         {table.getRowModel().rows.map((row) => {
           return (
-            <tr className={row.original.severity.toLowerCase()} key={row.id}>
+            <tr className={row.original.severity.toLowerCase()} onClick={() => routeHandler(row.original)} key={row.id}>
               {row.getVisibleCells().map((cell) => {
                   return <td className={cell.column.id} key={cell.id}>
                     {flexRender(

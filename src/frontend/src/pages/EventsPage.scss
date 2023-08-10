@@ -1,6 +1,9 @@
 @import "../styles/variables.scss";
 
 .events-page {
+  .card-selector{
+    cursor: pointer;
+  }
   .sort-and-filter {
     display: flex;
     justify-content: space-between;
