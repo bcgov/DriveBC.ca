@@ -26,6 +26,10 @@ jobs:
         containerfiles: ./compose/frontend/StaticBuild
         build-args: |
           API_HOST=${{ vars.API_HOST }}
+          BASE_MAP=${{ vars.BASE_MAP }}
+          MAP_STYLE=${{ vars.MAP_STYLE }}
+          HIGHWAY_LAYER=${{ vars.HIGHWAY_LAYER }}
+          OPEN511_LAYER=${{ vars.OPEN511_LAYER }}
           DEBUG_BUILD=true
     - name: push to registry
       uses: redhat-actions/push-to-registry@v2.7
