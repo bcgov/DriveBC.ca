@@ -1,6 +1,8 @@
 name: Deploy main to dev
 
 on:
+  push:
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
