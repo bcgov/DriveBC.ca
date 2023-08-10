@@ -7,12 +7,8 @@ export function getEvents(map_to_points) {
     }
   })
     .then((response) => response.json())
-    .then((data) => {
-      return {
-        eventNextUrl: data.next,
-        eventData: data.results,
-      }
-    }).catch((error) => {
+    .then((data) => data)
+    .catch((error) => {
       console.log(error)
     });
 }

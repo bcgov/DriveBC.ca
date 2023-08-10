@@ -294,7 +294,7 @@ export default function MapWrapper({
   }, []);
 
   async function loadWebcams(){
-    const { webcamResults } = await getWebcams();
+    const webcamResults = await getWebcams();
 
     layers.current["webcamsLayer"] = new VectorLayer({
       classname: "webcams",
@@ -337,7 +337,7 @@ export default function MapWrapper({
   }
 
   async function loadEvents(){
-    const { eventData } = await getEvents();
+    const eventData = await getEvents();
 
     //Events iterator
     layers.current["eventsLayer"] = new VectorLayer({
