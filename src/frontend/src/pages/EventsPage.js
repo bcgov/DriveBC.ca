@@ -1,6 +1,6 @@
 // React
 import React, { useEffect, useRef, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 // Third party packages
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -31,6 +31,7 @@ import "./EventsPage.scss";
 export default function EventsPage() {
   const isInitialMount = useRef(true);
 
+  const navigate = useNavigate();
   //event type icons
   const incident = <FontAwesomeIcon icon={faTriangleExclamation} alt="incident" />;
   const construction = <FontAwesomeIcon icon={faPersonDigging} alt="construction" />;
@@ -173,6 +174,11 @@ export default function EventsPage() {
     setDisplayedEvents(res);
   }
 
+  const handleRoute = (event) => {
+    console.log("routing", event)
+    navigate("/", { state: event})
+  }
+
   useEffect(() => {
     getData();
 
@@ -241,15 +247,17 @@ export default function EventsPage() {
             loader={<h4>Loading...</h4>}>
 
             {largeScreen ?
-              <EventsTable columns={columns} data={displayedEvents} sortingHandler={setSortingColumns} /> :
+              <EventsTable columns={columns} data={displayedEvents} sortingHandler={setSortingColumns} routeHandler={handleRoute} /> :
               <div className="events-list">
                 { displayedEvents.map(
                   (e) => (
+                    <div className="card-selector" onClick={() => handleRoute(e)}>
                     <EventCard
                       className="event"
                       event={e}
                       icon={ filterProps.find(type => type.value === e.event_type).icon }
                     />
+                    </div>
                   )
                 )}
               </div>

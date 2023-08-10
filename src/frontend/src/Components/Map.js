@@ -35,7 +35,7 @@ import ImageWMS from "ol/source/ImageWMS.js";
 import Map from "ol/Map";
 import Overlay from "ol/Overlay.js";
 import MVT from "ol/format/MVT.js";
-import {Point, LineString} from "ol/geom";
+import { Point, LineString } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import VectorTileLayer from "ol/layer/VectorTile.js";
@@ -63,6 +63,9 @@ export default function MapWrapper({
   const lat = 50.113;
   const [layersOpen, setLayersOpen] = useState(false);
   const [routesOpen, setRoutesOpen] = useState(false);
+  const container = useRef();
+  const content = useRef();
+  const iconClicked = useRef(false);
   const navigate = useNavigate();
 
   function getCameraCircle(camera) {
@@ -126,11 +129,12 @@ export default function MapWrapper({
     // initialization hook for the OpenLayers map logic
     if (mapRef.current) return; //stops map from intializing more than once
 
-    const container = document.getElementById("popup");
-    const content = document.getElementById("popup-content");
+    console.log("grabbing elements");
+    container.current = document.getElementById("popup");
+    content.current = document.getElementById("popup-content");
 
     popup.current = new Overlay({
-      element: container,
+      element: container.current,
       autoPan: {
         animation: {
           duration: 250,
@@ -182,19 +186,14 @@ export default function MapWrapper({
     mapView.current = new View({
       projection: "EPSG:3857",
       constrainResolution: true,
-      center: camera
-        ? fromLonLat(camera.location.coordinates)
-        : fromLonLat([lng, lat]),
+      center: camera ? handleCenter() : fromLonLat([lng, lat]),
       zoom: 10,
     });
     //Apply the basemap style from the arcgis resource
-    fetch(
-      `${process.env.REACT_APP_MAP_STYLE}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      }
-    ).then(function (response) {
+    fetch(`${process.env.REACT_APP_MAP_STYLE}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    }).then(function (response) {
       response.json().then(function (glStyle) {
         //overriding default font value so it doesn't return errors.
         glStyle.metadata["ol:webfonts"] = "";
@@ -227,10 +226,7 @@ export default function MapWrapper({
       loadEvents();
     });
 
-
-
     mapRef.current.on("click", (e) => {
-      let iconClicked = false;
       const coordinate = e.coordinate;
       //check if it was a webcam icon that was clicked
       layers.current["webcamsLayer"]
@@ -254,15 +250,14 @@ export default function MapWrapper({
                 cameraHandler(clickedCamera);
               }
             } else {
-              iconClicked = true;
-              content.innerHTML = `<div style='text-align: left; padding: 1rem'>
+              iconClicked.current = true;
+              content.current.innerHTML = `<div style='text-align: left; padding: 1rem'>
               <h4>${clickedCamera.name}</h4>
               <img src="${clickedCamera.links.imageSource}" width='300'>
              <p>${clickedCamera.caption}</p>
               </div>`;
               popup.current.setPosition(coordinate);
               clickedWebcam.current = clickedCamera;
-              iconClicked = true;
             }
           }
         });
@@ -273,7 +268,7 @@ export default function MapWrapper({
         .then((clickedFeatures) => {
           if (clickedFeatures[0]) {
             const feature = clickedFeatures[0];
-            content.innerHTML = `<div style='text-align: left; padding: 1rem'>
+            content.current.innerHTML = `<div style='text-align: left; padding: 1rem'>
             <h4>${feature.get("route_display")}</h4>
             <p>Direction: ${feature.get("direction")}</p>
             <p>${feature.get("severity")} delays</p>
@@ -281,19 +276,19 @@ export default function MapWrapper({
             <p>${feature.get("description")}</p>
             </div>`;
             popup.current.setPosition(coordinate);
-            iconClicked = true;
+            iconClicked.current = true;
           }
         });
 
       //if neither, hide any existing popup
-      if (!iconClicked) {
+      if (!iconClicked.current === false) {
         popup.current.setPosition(undefined);
         clickedWebcam.current = null;
       }
     });
   }, []);
 
-  async function loadWebcams(){
+  async function loadWebcams() {
     const webcamResults = await getWebcams();
 
     layers.current["webcamsLayer"] = new VectorLayer({
@@ -329,61 +324,74 @@ export default function MapWrapper({
           },
         }),
       }),
-      style: webcamStyles["default"]
+      style: webcamStyles["default"],
     });
 
     mapRef.current.addLayer(layers.current["webcamsLayer"]);
-
   }
 
-  async function loadEvents(){
+  async function loadEvents() {
     const eventData = await getEvents();
 
     //Events iterator
     layers.current["eventsLayer"] = new VectorLayer({
       classname: "events",
       visible: mapContext.visible_layers.eventsLayer,
-        source: new VectorSource({
-          format: new GeoJSON(),
-          loader: function (extent, resolution, projection) {
-            var vectorSource = this;
-            vectorSource.clear();
-            if (eventData) {
-              eventData.forEach((record) => {
-                let olGeometry = null;
-                switch(record.location.type){
-                  case "Point":
-                     olGeometry = new Point(record.location.coordinates);
-                    break;
-                  case "LineString":
-                     olGeometry = new LineString(record.location.coordinates);
-                    break;
-                  default: console.log(Error);
-                }
+      source: new VectorSource({
+        format: new GeoJSON(),
+        loader: function (extent, resolution, projection) {
+          var vectorSource = this;
+          vectorSource.clear();
+          if (eventData) {
+            eventData.forEach((record) => {
+              let olGeometry = null;
+              switch (record.location.type) {
+                case "Point":
+                  olGeometry = new Point(record.location.coordinates);
+                  break;
+                case "LineString":
+                  olGeometry = new LineString(record.location.coordinates);
+                  break;
+                default:
+                  console.log(Error);
+              }
 
-                var olFeature = new ol.Feature({ geometry: olGeometry });
+              var olFeature = new ol.Feature({ geometry: olGeometry });
 
-                //Transfer properties
-                olFeature.setProperties(record);
+              //Transfer properties
+              olFeature.setProperties(record);
 
-                // Transform the projection
-                var olFeatureForMap = transformFeature(
-                  olFeature,
-                  "EPSG:4326",
-                  mapRef.current.getView().getProjection().getCode()
-                );
+              // Transform the projection
+              var olFeatureForMap = transformFeature(
+                olFeature,
+                "EPSG:4326",
+                mapRef.current.getView().getProjection().getCode()
+              );
 
-                vectorSource.addFeature(olFeatureForMap);
-              });
-            }
-          },
-        }),
-      style: function(feature, resolution){
-        return feature.values_.location.type === "LineString" ? eventStyles["RoadConditions"] : eventStyles["Points"];
-      }
+              vectorSource.addFeature(olFeatureForMap);
+            });
+          }
+        },
+      }),
+      style: function (feature, resolution) {
+        return feature.values_.location.type === "LineString"
+          ? eventStyles["RoadConditions"]
+          : eventStyles["Points"];
+      },
     });
     mapRef.current.addLayer(layers.current["eventsLayer"]);
-
+    if (camera && camera.event_type) {
+      console.log(camera.location.coordinates);
+      content.current.innerHTML = `<div style='text-align: left; padding: 1rem'>
+            <h4>${camera["route_display"]}</h4>
+            <p>Direction: ${camera["direction"]}</p>
+            <p>${camera["severity"]} delays</p>
+            <p>${camera["last_updated"]} delays</p>
+            <p>${camera["description"]}</p>
+            </div>`;
+      popup.current.setPosition(handleCenter());
+      iconClicked.current = true;
+    }
   }
 
   function webcamDetailRoute() {
@@ -426,6 +434,16 @@ export default function MapWrapper({
       });
       return;
     }
+  }
+
+  function handleCenter() {
+    return Array.isArray(camera.location.coordinates[0])
+      ? fromLonLat(
+          camera.location.coordinates[
+            Math.floor(camera.location.coordinates.length / 2)
+          ]
+        )
+      : fromLonLat(camera.location.coordinates);
   }
 
   function toggleLayers(openLayers) {
