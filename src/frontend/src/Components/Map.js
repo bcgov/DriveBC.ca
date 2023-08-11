@@ -129,7 +129,6 @@ export default function MapWrapper({
     // initialization hook for the OpenLayers map logic
     if (mapRef.current) return; //stops map from intializing more than once
 
-    console.log("grabbing elements");
     container.current = document.getElementById("popup");
     content.current = document.getElementById("popup-content");
 
@@ -381,7 +380,6 @@ export default function MapWrapper({
     });
     mapRef.current.addLayer(layers.current["eventsLayer"]);
     if (camera && camera.event_type) {
-      console.log(camera.location.coordinates);
       content.current.innerHTML = `<div style='text-align: left; padding: 1rem'>
             <h4>${camera["route_display"]}</h4>
             <p>Direction: ${camera["direction"]}</p>
