@@ -73,6 +73,9 @@ export default function MapWrapper({
       return {};
     }
 
+    if(typeof camera === "string"){
+      camera = JSON.parse(camera);
+    }
     const circle = new Circle(fromLonLat(camera.location.coordinates), 5000);
     const circleFeature = new Feature({
       geometry: circle,
@@ -437,6 +440,9 @@ export default function MapWrapper({
   }
 
   function handleCenter() {
+    if(typeof camera === "string"){
+      camera = JSON.parse(camera);
+    }
     return Array.isArray(camera.location.coordinates[0])
       ? fromLonLat(
           camera.location.coordinates[

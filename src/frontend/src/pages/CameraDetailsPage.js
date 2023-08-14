@@ -110,7 +110,7 @@ export default function CameraDetailsPage() {
   };
 
   const mapViewRoute = () =>{
-    navigate("/", { state: camera})
+    navigate("/", { state: JSON.stringify(camera)})
   }
 
   // ReplayTheDay
