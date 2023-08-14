@@ -506,14 +506,16 @@ export default function MapWrapper({
         </Button>
       )}
 
-      <Button
-        className="map-btn cam-location"
-        variant="outline-primary"
-        onClick={handleRecenter}
-      >
-        <FontAwesomeIcon icon={faLocationCrosshairs} />
-        Camera location
-      </Button>
+      {isPreview && (
+          <Button
+          className="map-btn cam-location"
+          variant="outline-primary"
+          onClick={handleRecenter}
+        >
+          <FontAwesomeIcon icon={faLocationCrosshairs} />
+          Camera location
+        </Button>
+      )}
 
       <Button
         className="map-btn zoom-in"
