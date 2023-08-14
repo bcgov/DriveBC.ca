@@ -2,14 +2,19 @@ import datetime
 import zoneinfo
 
 from apps.shared import enums as shared_enums
+from apps.shared.enums import CacheKey
 from apps.shared.tests import BaseTest
 from apps.webcam.models import Webcam
+from apps.webcam.views import WebcamAPI
 from django.contrib.gis.geos import Point
+from django.core.cache import cache
 from rest_framework.test import APITestCase
 
 
 class TestWebcamAPI(APITestCase, BaseTest):
     def setUp(self):
+        super().setUp()
+
         for i in range(10):
             Webcam.objects.create(
                 id=i,
@@ -49,3 +54,23 @@ class TestWebcamAPI(APITestCase, BaseTest):
                 update_period_mean=56,
                 update_period_stddev=150,
             )
+
+    def test_webcam_list_caching(self):
+        # Empty cache
+        assert cache.get(CacheKey.WEBCAM_LIST) is None
+
+        # Cache miss
+        url = "/api/webcams/"
+        response = self.client.get(url, {})
+        assert len(response.data) == 10
+        assert cache.get(CacheKey.WEBCAM_LIST) is not None
+
+        # Cached result
+        Webcam.objects.filter(id__gte=5).delete()
+        response = self.client.get(url, {})
+        assert len(response.data) == 10
+
+        # Updated cached result
+        WebcamAPI().set_list_data()
+        response = self.client.get(url, {})
+        assert len(response.data) == 5

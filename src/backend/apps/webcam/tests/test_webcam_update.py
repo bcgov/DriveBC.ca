@@ -13,6 +13,8 @@ from django.contrib.gis.geos import Point
 
 class TestWebcamSerializer(BaseTest):
     def setUp(self):
+        super().setUp()
+
         self.webcam = Webcam.objects.create(
             id=8,
             # Description
