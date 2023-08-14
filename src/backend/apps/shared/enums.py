@@ -43,8 +43,8 @@ ORIENTATION_CHOICES = (
 # Caching
 class CacheTimeout:
     DEFAULT = 120
-    WEBCAM_LIST = 600
-    DELAY_LIST = 600
+    WEBCAM_LIST = 60*7  # 5min buffer + (2*1)min twice of task interval
+    DELAY_LIST = 60*15  # 5min buffer + (2*5)min twice of task interval
 
 
 class CacheKey:
