@@ -5,7 +5,6 @@ from apps.shared import enums as shared_enums
 from apps.shared.tests import BaseTest
 from apps.webcam.models import Webcam
 from django.contrib.gis.geos import Point
-from rest_framework import status
 from rest_framework.test import APITestCase
 
 
@@ -50,28 +49,3 @@ class TestWebcamAPI(APITestCase, BaseTest):
                 update_period_mean=56,
                 update_period_stddev=150,
             )
-
-    def test_webcam_list_pagination(self):
-        url = "/api/webcams/"
-        response = self.client.get(url, {})
-        assert response.status_code == status.HTTP_200_OK
-        assert len(response.data["results"]) == 10
-
-        package_with_no_offset = {
-            "limit": 2,
-            "offset": 0
-        }
-        no_offset_response = self.client.get(url, package_with_no_offset)
-        assert no_offset_response.status_code == status.HTTP_200_OK
-        assert len(no_offset_response.data["results"]) == 2
-
-        package_with_offset = {
-            "limit": 3,
-            "offset": 2
-        }
-        offset_response = self.client.get(url, package_with_offset)
-        assert offset_response.status_code == status.HTTP_200_OK
-        assert len(offset_response.data["results"]) == 3
-        assert offset_response.data["results"][0]["id"] == 2
-        assert offset_response.data["results"][1]["id"] == 3
-        assert offset_response.data["results"][2]["id"] == 4

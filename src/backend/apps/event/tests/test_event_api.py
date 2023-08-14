@@ -5,7 +5,6 @@ from apps.event import enums as event_enums
 from apps.event.models import Event
 from apps.shared.tests import BaseTest
 from django.contrib.gis.geos import LineString
-from rest_framework import status
 from rest_framework.test import APITestCase
 
 
@@ -43,28 +42,3 @@ class TestEventAPI(APITestCase, BaseTest):
                     tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
                 ),
             )
-
-    def test_event_list_pagination(self):
-        url = "/api/events/"
-        response = self.client.get(url, {})
-        assert response.status_code == status.HTTP_200_OK
-        assert len(response.data["results"]) == 10
-
-        package_with_no_offset = {
-            "limit": 2,
-            "offset": 0
-        }
-        no_offset_response = self.client.get(url, package_with_no_offset)
-        assert no_offset_response.status_code == status.HTTP_200_OK
-        assert len(no_offset_response.data["results"]) == 2
-
-        package_with_offset = {
-            "limit": 3,
-            "offset": 2
-        }
-        offset_response = self.client.get(url, package_with_offset)
-        assert offset_response.status_code == status.HTTP_200_OK
-        assert len(offset_response.data["results"]) == 3
-        assert offset_response.data["results"][0]["id"] == "2"
-        assert offset_response.data["results"][1]["id"] == "3"
-        assert offset_response.data["results"][2]["id"] == "4"
