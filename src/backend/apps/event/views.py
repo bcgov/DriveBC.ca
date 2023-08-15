@@ -15,3 +15,8 @@ class DelayAPI(CachedListModelMixin):
 
 class DelayViewSet(DelayAPI, viewsets.ReadOnlyModelViewSet):
     pass
+
+
+class DelayTestViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = DelayAPI.queryset
+    serializer_class = DelayAPI.serializer_class

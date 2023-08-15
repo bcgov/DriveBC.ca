@@ -1,6 +1,7 @@
 from apps.shared.enums import CacheKey, CacheTimeout
 from django.core.cache import cache
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 class CachedListModelMixin:
@@ -26,3 +27,11 @@ class CachedListModelMixin:
 
     def list(self, request, *args, **kwargs):
         return Response(self.get_or_set_list_data())
+
+
+class AppCacheTestViewSet(APIView):
+    def get(self, request, format=None):
+        val = cache.get(CacheKey.TEST_APP_CACHE) or 0
+        val += 1
+        cache.set(CacheKey.TEST_APP_CACHE, val, CacheTimeout.DEFAULT)
+        return Response(val)

@@ -14,3 +14,8 @@ class WebcamAPI(CachedListModelMixin):
 
 class WebcamViewSet(WebcamAPI, ReadOnlyModelViewSet):
     pass
+
+
+class WebcamTestViewSet(ReadOnlyModelViewSet):
+    queryset = WebcamAPI.queryset
+    serializer_class = WebcamAPI.serializer_class
