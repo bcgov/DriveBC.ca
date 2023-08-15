@@ -16,6 +16,8 @@ from httpx import HTTPStatusError
 
 class TestWebcamModel(BaseTest):
     def setUp(self):
+        super().setUp()
+
         # Normal feed
         webcam_feed_data = open(
             str(Path(__file__).parent) + "/test_data/webcam_feed_list_of_five.json"

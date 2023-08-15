@@ -5,6 +5,7 @@ import pytz
 from apps.feed.client import FeedClient
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
+from apps.webcam.views import WebcamAPI
 from django.core.exceptions import ObjectDoesNotExist
 
 logger = logging.getLogger(__name__)
@@ -29,6 +30,9 @@ def populate_all_webcam_data():
     for webcam_data in feed_data:
         populate_webcam_from_data(webcam_data)
 
+    # Rebuild cache
+    WebcamAPI().set_list_data()
+
 
 def update_single_webcam_data(webcam):
     webcam_data = FeedClient().get_webcam(webcam)
@@ -42,3 +46,6 @@ def update_all_webcam_data():
         current_time = datetime.datetime.now(tz=pytz.timezone("America/Vancouver"))
         if webcam.should_update(current_time):
             update_single_webcam_data(webcam)
+
+    # Rebuild cache
+    WebcamAPI().set_list_data()

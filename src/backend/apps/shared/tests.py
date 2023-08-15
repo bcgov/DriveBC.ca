@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 from apps.event.models import Event
 from apps.webcam.models import Webcam
+from django.core.cache import cache
 from django.test import TestCase
 from httpx import HTTPStatusError
 
@@ -36,8 +37,10 @@ class BaseTest(TestCase):
 
     def setUp(self):
         super().setUp()
+        cache.clear()
 
     def tearDown(self):
         super().tearDown()
+        cache.clear()
         Webcam.objects.all().delete()
         Event.objects.all().delete()

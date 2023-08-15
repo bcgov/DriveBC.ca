@@ -3,6 +3,7 @@ import logging
 from apps.event.enums import EVENT_STATUS
 from apps.event.models import Event
 from apps.event.serializers import EventSerializer
+from apps.event.views import DelayAPI
 from apps.feed.client import FeedClient
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -35,3 +36,6 @@ def populate_all_event_data():
     # Mark events absent in the feed as inactive
     Event.objects.all().exclude(id__in=active_event_ids)\
         .update(status=EVENT_STATUS.INACTIVE)
+
+    # Rebuild cache
+    DelayAPI().set_list_data()

@@ -11,6 +11,8 @@ from django.contrib.gis.geos import LineString
 
 class TestEventSerializer(BaseTest):
     def setUp(self):
+        super().setUp()
+
         self.event = Event(
             # Description
             description="Test description for test construction event",
