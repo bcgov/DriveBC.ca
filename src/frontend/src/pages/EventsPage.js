@@ -136,8 +136,8 @@ export default function EventsPage() {
   }
 
   const sortEvents = (unsortedEvents) => {
-    // Sort by ID by default
-    let sortKey = "id";
+    // Sort by severity by default
+    let sortKey = "severity";
     let descending = false;
 
     if (sortingColumns.length) {
