@@ -2,6 +2,7 @@
 
 .footer-container {
   margin-top: 100px;
+  background: $Grey10;
 
   .landAcknowledgement {
     background-color: rgb(41, 41, 41);
@@ -24,7 +25,6 @@
     color: rgb(70, 67, 65);
     line-height: 21px;
     padding: 16px;
-    background: #FAF9F8;
 
     p {
       font-size: 14px;
