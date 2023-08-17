@@ -24,6 +24,7 @@
     color: rgb(70, 67, 65);
     line-height: 21px;
     padding: 16px;
+    background: #FAF9F8;
 
     p {
       font-size: 14px;
@@ -135,6 +136,10 @@
           align-items: center;
           -webkit-box-pack: center;
           justify-content: center;
+        }
+
+        .footer-link:hover {
+          background: #DCDCDC;
         }
       }
     }
