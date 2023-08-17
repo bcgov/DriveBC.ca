@@ -24,6 +24,7 @@
     color: rgb(70, 67, 65);
     line-height: 21px;
     padding: 16px;
+    background: #FAF9F8;
 
     p {
       font-size: 14px;
@@ -123,7 +124,6 @@
         @media (min-width: 992px) {
           margin-bottom: 0;
         }
-        
         .footer-link {
           background: rgb(250, 249, 248);
           border: 1px solid rgb(59, 58, 57);
@@ -135,6 +135,9 @@
           align-items: center;
           -webkit-box-pack: center;
           justify-content: center;
+        }
+        .footer-link:hover {
+          background: #DCDCDC;
         }
       }
     }
