@@ -2,6 +2,7 @@
 
 .footer-container {
   margin-top: 100px;
+  background: $Grey10;
 
   .landAcknowledgement {
     background-color: rgb(41, 41, 41);
@@ -135,6 +136,10 @@
           align-items: center;
           -webkit-box-pack: center;
           justify-content: center;
+        }
+
+        .footer-link:hover {
+          background: #DCDCDC;
         }
       }
     }
