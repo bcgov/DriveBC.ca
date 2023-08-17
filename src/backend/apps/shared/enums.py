@@ -1,4 +1,4 @@
-class Region(object):
+class Region:
     NORTHERN = 0
     SOUTHERN_INTERIOR = 1
     LOWER_MAINLAND = 2
@@ -15,7 +15,7 @@ REGION_CHOICES = (
 )
 
 
-class Orientation(object):
+class Orientation:
     NORTH = 'N'
     NORTH_EAST = 'NE'
     EAST = 'E'
@@ -38,3 +38,17 @@ ORIENTATION_CHOICES = (
     (Orientation.NORTH_WEST, 'North West'),
     (Orientation.NULL, 'null'),
 )
+
+
+# Caching
+class CacheTimeout:
+    DEFAULT = 120
+    WEBCAM_LIST = 60*7  # 5min buffer + (2*1)min twice of task interval
+    DELAY_LIST = 60*15  # 5min buffer + (2*5)min twice of task interval
+
+
+class CacheKey:
+    DEFAULT = "default_key"
+    WEBCAM_LIST = "webcam_list"
+    DELAY_LIST = "delay_list"
+    TEST_APP_CACHE = "test_app_cache"

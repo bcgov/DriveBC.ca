@@ -17,6 +17,8 @@ from httpx import HTTPStatusError
 
 class TestEventModel(BaseTest):
     def setUp(self):
+        super().setUp()
+
         # Normal feed
         event_feed_data = open(
             str(Path(__file__).parent) +

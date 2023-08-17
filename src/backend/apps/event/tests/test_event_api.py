@@ -3,14 +3,18 @@ import zoneinfo
 
 from apps.event import enums as event_enums
 from apps.event.models import Event
+from apps.event.views import DelayAPI
+from apps.shared.enums import CacheKey
 from apps.shared.tests import BaseTest
 from django.contrib.gis.geos import LineString
-from rest_framework import status
+from django.core.cache import cache
 from rest_framework.test import APITestCase
 
 
 class TestEventAPI(APITestCase, BaseTest):
     def setUp(self):
+        super().setUp()
+
         for i in range(10):
             Event.objects.create(
                 id=str(i),
@@ -44,27 +48,22 @@ class TestEventAPI(APITestCase, BaseTest):
                 ),
             )
 
-    def test_event_list_pagination(self):
+    def test_delay_list_caching(self):
+        # Empty cache
+        assert cache.get(CacheKey.DELAY_LIST) is None
+
+        # Cache miss
         url = "/api/events/"
         response = self.client.get(url, {})
-        assert response.status_code == status.HTTP_200_OK
-        assert len(response.data["results"]) == 10
+        assert len(response.data) == 10
+        assert cache.get(CacheKey.DELAY_LIST) is not None
 
-        package_with_no_offset = {
-            "limit": 2,
-            "offset": 0
-        }
-        no_offset_response = self.client.get(url, package_with_no_offset)
-        assert no_offset_response.status_code == status.HTTP_200_OK
-        assert len(no_offset_response.data["results"]) == 2
+        # Cached result
+        Event.objects.filter(id__gte=5).delete()
+        response = self.client.get(url, {})
+        assert len(response.data) == 10
 
-        package_with_offset = {
-            "limit": 3,
-            "offset": 2
-        }
-        offset_response = self.client.get(url, package_with_offset)
-        assert offset_response.status_code == status.HTTP_200_OK
-        assert len(offset_response.data["results"]) == 3
-        assert offset_response.data["results"][0]["id"] == "2"
-        assert offset_response.data["results"][1]["id"] == "3"
-        assert offset_response.data["results"][2]["id"] == "4"
+        # Updated cached result
+        DelayAPI().set_list_data()
+        response = self.client.get(url, {})
+        assert len(response.data) == 5

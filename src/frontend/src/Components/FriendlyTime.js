@@ -31,8 +31,11 @@ export default function FriendlyTime( {date} ) {
     return <span 
             className={"friendly-time" + (showTooltip ? " showTooltip" : "") }
             title={date_formatted} 
-            onClick={() => setShowTooltip(!showTooltip)}>
-              <ReactTimeAgo date={date} locale="en-US"/>
+            onClick={(event) => {
+              event.stopPropagation();
+              setShowTooltip(!showTooltip)}
+            }>
+            <ReactTimeAgo date={date} locale="en-US"/>
             </span>
   }
 

@@ -1,6 +1,7 @@
 // React
 import React, { useContext, useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ReactDOMServer from 'react-dom/server';
 
 // Third party packages
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,6 +10,7 @@ import {
   faMinus,
   faUpRightAndDownLeftFromCenter,
   faLocationCrosshairs,
+  faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
 
@@ -18,6 +20,7 @@ import { getWebcams } from "./data/webcams.js";
 import Layers from "./Layers.js";
 import Routes from "./Routes.js";
 import { eventStyles, webcamStyles } from "./data/eventStyleDefinitions.js";
+import FriendlyTime from "./FriendlyTime";
 
 // OpenLayers
 import { applyStyle } from "ol-mapbox-style";
@@ -132,7 +135,6 @@ export default function MapWrapper({
     // initialization hook for the OpenLayers map logic
     if (mapRef.current) return; //stops map from intializing more than once
 
-    console.log("grabbing elements");
     container.current = document.getElementById("popup");
     content.current = document.getElementById("popup-content");
 
@@ -254,10 +256,24 @@ export default function MapWrapper({
               }
             } else {
               iconClicked.current = true;
-              content.current.innerHTML = `<div style='text-align: left; padding: 1rem'>
-              <h4>${clickedCamera.name}</h4>
-              <img src="${clickedCamera.links.imageSource}" width='300'>
-             <p>${clickedCamera.caption}</p>
+              content.current.innerHTML = 
+              `<div class="popup--camera">
+                <div class="popup--camera__title">
+                  <p class="bold name">${clickedCamera.name}
+                  <p class="bold orientation">${clickedCamera.orientation}</p>
+                </div>
+                <div class="popup--camera__description">
+                  <p class="label">${clickedCamera.caption}</p>
+                  <div class="camera-image">
+                    <img src="${clickedCamera.links.imageSource}" width='300'>
+                    <div class="timestamp">
+                      <p class="driveBC">Drive<span>BC</span></p>
+                      <p class="label">` + 
+                      ReactDOMServer.renderToString(<FriendlyTime date={clickedCamera.last_update_modified} />)
+                      + `</p>
+                    </div>
+                  </div>
+                </div>
               </div>`;
               popup.current.setPosition(coordinate);
               clickedWebcam.current = clickedCamera;
@@ -271,13 +287,15 @@ export default function MapWrapper({
         .then((clickedFeatures) => {
           if (clickedFeatures[0]) {
             const feature = clickedFeatures[0];
-            content.current.innerHTML = `<div style='text-align: left; padding: 1rem'>
+            content.current.innerHTML = 
+            `<div class="popup--delay">
             <h4>${feature.get("route_display")}</h4>
             <p>Direction: ${feature.get("direction")}</p>
             <p>${feature.get("severity")} delays</p>
             <p>${feature.get("last_updated")} delays</p>
             <p>${feature.get("description")}</p>
             </div>`;
+            
             popup.current.setPosition(coordinate);
             iconClicked.current = true;
           }
@@ -384,7 +402,6 @@ export default function MapWrapper({
     });
     mapRef.current.addLayer(layers.current["eventsLayer"]);
     if (camera && camera.event_type) {
-      console.log(camera.location.coordinates);
       content.current.innerHTML = `<div style='text-align: left; padding: 1rem'>
             <h4>${camera["route_display"]}</h4>
             <p>Direction: ${camera["direction"]}</p>
@@ -405,6 +422,11 @@ export default function MapWrapper({
         state: { cameraData: clickedWebcam.current },
       });
     }
+  }
+
+  function closePopup(event) {
+    event.stopPropagation();
+    popup.current.setPosition(undefined);
   }
 
   function zoomIn() {
@@ -499,6 +521,7 @@ export default function MapWrapper({
     <div className="map-container">
       <div ref={mapElement} className="map" />
       <div id="popup" onClick={webcamDetailRoute} className="ol-popup">
+        <FontAwesomeIcon id="ol-popup-closer" className="ol-popup-closer" icon={faXmark} onClick={closePopup} />
         <div id="popup-content" className="ol-popup-content"></div>
       </div>
       {isPreview && (
