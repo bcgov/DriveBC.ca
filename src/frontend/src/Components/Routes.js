@@ -1,16 +1,15 @@
-import React, { useRef } from 'react';
+import React, {useRef} from 'react';
 
 import Pin from './Pin.js';
 
 import './Routes.scss';
 import Button from 'react-bootstrap/Button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLocationArrow, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faLocationArrow, faPlus, faXmark} from '@fortawesome/free-solid-svg-icons';
 
 
-export default function Routes({ open, routeHandler, setRoutesOpen, setStartToLocation }) {
-
-  const inputRef = useRef(null)
+export default function Routes({open, routeHandler, setRoutesOpen, setStartToLocation}) {
+  const inputRef = useRef(null);
 
   if (!open) {
     return (
@@ -18,7 +17,7 @@ export default function Routes({ open, routeHandler, setRoutesOpen, setStartToLo
         className="map-btn open-routes"
         onClick={() => setRoutesOpen(true)}
       ><FontAwesomeIcon icon={faPlus} /> Add Route</Button>
-    )
+    );
   }
 
   return (
@@ -84,5 +83,5 @@ export default function Routes({ open, routeHandler, setRoutesOpen, setStartToLo
       </div>
 
     </div>
-  )
+  );
 };

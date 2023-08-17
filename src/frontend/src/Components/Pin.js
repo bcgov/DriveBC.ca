@@ -1,26 +1,25 @@
 import React from 'react';
 
-import { useDrag } from 'react-dnd';
+import {useDrag} from 'react-dnd';
 
 import './Pin.scss';
 
-export default function Pin({ role }) {
-
+export default function Pin({role}) {
   const fill = role === 'start' ? '#003399' : '#009933';
 
 
-  const [{ opacity }, dragRef] = useDrag(
-    () => ({
-      type: 'pin',
-      item: () => ({ role }),
-      collect: (monitor) => ({
-        opacity: monitor.isDragging() ? 0.5 : 1
+  const [{opacity}, dragRef] = useDrag(
+      () => ({
+        type: 'pin',
+        item: () => ({role}),
+        collect: (monitor) => ({
+          opacity: monitor.isDragging() ? 0.5 : 1,
+        }),
       }),
-    }),
   );
 
   return (
-    <div ref={dragRef} className="pin" style={{opacity, transform: "translate(0, 0)"}}>
+    <div ref={dragRef} className="pin" style={{opacity, transform: 'translate(0, 0)'}}>
       <svg display="block" height="41px" width="27px" viewBox="0 0 27 41">
         <g fillRule="nonzero">
           <g transform="translate(3.0, 29.0)" fill="#000000">
