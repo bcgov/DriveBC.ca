@@ -21,6 +21,7 @@ import Layers from "./Layers.js";
 import Routes from "./Routes.js";
 import { eventStyles, webcamStyles } from "./data/eventStyleDefinitions.js";
 import FriendlyTime from "./FriendlyTime";
+import EventTypeIcon from "./EventTypeIcon";
 
 // OpenLayers
 import { applyStyle } from "ol-mapbox-style";
@@ -257,18 +258,18 @@ export default function MapWrapper({
             } else {
               iconClicked.current = true;
               content.current.innerHTML = 
-              `<div class="popup--camera">
-                <div class="popup--camera__title">
+              `<div class="popup popup--camera">
+                <div class="popup__title">
                   <p class="bold name">${clickedCamera.name}
                   <p class="bold orientation">${clickedCamera.orientation}</p>
                 </div>
-                <div class="popup--camera__description">
-                  <p class="label">${clickedCamera.caption}</p>
+                <div class="popup__description">
+                  <p>${clickedCamera.caption}</p>
                   <div class="camera-image">
                     <img src="${clickedCamera.links.imageSource}" width='300'>
                     <div class="timestamp">
                       <p class="driveBC">Drive<span>BC</span></p>
-                      <p class="label">` + 
+                      <p>` + 
                       ReactDOMServer.renderToString(<FriendlyTime date={clickedCamera.last_update_modified} />)
                       + `</p>
                     </div>
@@ -287,13 +288,30 @@ export default function MapWrapper({
         .then((clickedFeatures) => {
           if (clickedFeatures[0]) {
             const feature = clickedFeatures[0];
+            const severity = feature.get("severity").toLowerCase();
+            const event_type = feature.get("event_type").toLowerCase();
             content.current.innerHTML = 
-            `<div class="popup--delay">
-            <h4>${feature.get("route_display")}</h4>
-            <p>Direction: ${feature.get("direction")}</p>
-            <p>${feature.get("severity")} delays</p>
-            <p>${feature.get("last_updated")} delays</p>
-            <p>${feature.get("description")}</p>
+            `<div class="popup popup--delay ${severity}">
+              <div class="popup__title">
+                <p class="bold name">${feature.get("route_display")}</p>
+                <p class="bold orientation">${feature.get("direction")}</p>
+              </div>
+              <div class="popup__description">
+                <div class="delay-type">
+                  <div class="bold delay-severity"><div class="delay-icon">` + 
+                  ReactDOMServer.renderToString(<EventTypeIcon event_type={event_type} />)
+                  + `</div><p class="bold">${severity} delays</p></div>
+                  <p class="bold friendly-time--mobile">` + 
+                    ReactDOMServer.renderToString(<FriendlyTime date={feature.get("last_updated")} />)
+                    + `</p>
+                </div>
+                <div class="delay-details">
+                  <p class="bold friendly-time-desktop">` + 
+                    ReactDOMServer.renderToString(<FriendlyTime date={feature.get("last_updated")} />)
+                    + `</p>
+                  <p>${feature.get("description")}</p>
+                </div>
+              </div>
             </div>`;
             
             popup.current.setPosition(coordinate);
