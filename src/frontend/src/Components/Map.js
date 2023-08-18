@@ -278,7 +278,6 @@ export default function MapWrapper({
               </div>`;
                 popup.current.setPosition(coordinate);
                 clickedWebcam.current = clickedCamera;
-              }
             }
           });
 
@@ -419,17 +418,6 @@ export default function MapWrapper({
       },
     });
     mapRef.current.addLayer(layers.current['eventsLayer']);
-    if (camera && camera.event_type) {
-      content.current.innerHTML = `<div style='text-align: left; padding: 1rem'>
-            <h4>${camera['route_display']}</h4>
-            <p>Direction: ${camera['direction']}</p>
-            <p>${camera['severity']} delays</p>
-            <p>${camera['last_updated']} delays</p>
-            <p>${camera['description']}</p>
-            </div>`;
-      popup.current.setPosition(handleCenter());
-      iconClicked.current = true;
-    }
   }
 
   function webcamDetailRoute() {
