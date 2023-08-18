@@ -279,7 +279,8 @@ export default function MapWrapper({
                 popup.current.setPosition(coordinate);
                 clickedWebcam.current = clickedCamera;
             }
-          });
+          }
+        });
 
       // if it wasn't a webcam icon, check if it was an event
       layers.current["eventsLayer"]

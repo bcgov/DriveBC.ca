@@ -1,4 +1,5 @@
 // Third Party packages
+import React from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTriangleExclamation,
@@ -7,8 +8,8 @@ import {
   faSnowflake,
 } from "@fortawesome/free-solid-svg-icons";
 
-export default function EventTypeIcon({event_type}) {
-  switch(event_type) {
+export default function EventTypeIcon({eventType}) {
+  switch(eventType) {
     case "incident":
       return <FontAwesomeIcon icon={faTriangleExclamation} alt="incident" />;
     case "construction":
