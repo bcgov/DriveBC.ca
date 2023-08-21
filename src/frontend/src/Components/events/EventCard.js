@@ -1,14 +1,14 @@
+import React from 'react';
 // Styling
-import "./EventCard.scss";
+import './EventCard.scss';
 
 // Third party packages
-import FriendlyTime from "../FriendlyTime";
+import FriendlyTime from '../FriendlyTime';
 
 export default function EventCard({event, icon}) {
-
   // Rendering
   return (
-    <div className={"event-card " + event.severity.toLowerCase()}>
+    <div className={'event-card ' + event.severity.toLowerCase()}>
       <div className="event-card__title">
         <div className="route">{event.route}</div>
         <div className="direction">{event.direction}</div>
@@ -32,5 +32,5 @@ export default function EventCard({event, icon}) {
         </div>
       </div>
     </div>
-  )
+  );
 }

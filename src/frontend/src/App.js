@@ -1,6 +1,6 @@
 // React
-import React, { createContext, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import React, {createContext, useState} from 'react';
+import {Route, Routes} from 'react-router-dom';
 
 // Styling
 import '@bcgov/bc-sans/css/BCSans.css';
@@ -25,7 +25,7 @@ function App() {
         eventsLayer: true,
         highwayLayer: false,
         open511Layer: false,
-        webcamsLayer: true
+        webcamsLayer: true,
       },
     };
   }
@@ -33,7 +33,7 @@ function App() {
   const [mapContext, setMapContext] = useState(getInitialMapContext());
 
   return (
-    <MapContext.Provider value={{ mapContext, setMapContext }}>
+    <MapContext.Provider value={{mapContext, setMapContext}}>
       <div className="App">
         <Header />
         <ScrollToTop/>

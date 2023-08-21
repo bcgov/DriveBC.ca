@@ -1,5 +1,5 @@
 // React
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from 'react';
 
 // Third party packages
 import {
@@ -8,17 +8,17 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+} from '@tanstack/react-table';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
   faArrowUpLong,
-  faArrowDownLong
-} from "@fortawesome/free-solid-svg-icons";
+  faArrowDownLong,
+} from '@fortawesome/free-solid-svg-icons';
 
 // Styling
-import "./EventsTable.scss";
+import './EventsTable.scss';
 
-export default function EventsTable({ columns, data, sortingHandler, routeHandler }) {
+export default function EventsTable({columns, data, sortingHandler, routeHandler}) {
   const [sorting, setSorting] = useState([]);
 
   const table = useReactTable({
@@ -43,8 +43,8 @@ export default function EventsTable({ columns, data, sortingHandler, routeHandle
   }, [sorting]);
 
 
-  const asc_icon = <FontAwesomeIcon icon={faArrowUpLong} alt="ascending order" />;
-  const desc_icon = <FontAwesomeIcon icon={faArrowDownLong} alt="descending order" />;
+  const ascIcon = <FontAwesomeIcon icon={faArrowUpLong} alt="ascending order" />;
+  const descIcon = <FontAwesomeIcon icon={faArrowDownLong} alt="descending order" />;
 
   return (
     <table>
@@ -57,19 +57,19 @@ export default function EventsTable({ columns, data, sortingHandler, routeHandle
                   {header.isPlaceholder ? null : (
                     <span
                       {...{
-                        className: header.column.getCanSort()
-                          ? "cursor-pointer select-none"
-                          : "",
+                        className: header.column.getCanSort() ?
+                          'cursor-pointer select-none' :
+                          '',
                         onClick: header.column.getToggleSortingHandler(),
                       }}
                     >
                       {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
+                          header.column.columnDef.header,
+                          header.getContext(),
                       )}
                       {{
-                        asc: asc_icon,
-                        desc: desc_icon,
+                        asc: ascIcon,
+                        desc: descIcon,
                       }[header.column.getIsSorted()] ?? null}
                     </span>
                   )}
@@ -84,12 +84,12 @@ export default function EventsTable({ columns, data, sortingHandler, routeHandle
           return (
             <tr className={row.original.severity.toLowerCase()} onClick={() => routeHandler(row.original)} key={row.id}>
               {row.getVisibleCells().map((cell) => {
-                  return <td className={cell.column.id} key={cell.id}>
-                    {flexRender(
+                return <td className={cell.column.id} key={cell.id}>
+                  {flexRender(
                       cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
-                  </td>
+                      cell.getContext(),
+                  )}
+                </td>;
               })}
             </tr>
           );

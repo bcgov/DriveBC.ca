@@ -1,29 +1,30 @@
 // React
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import {useNavigate} from 'react-router-dom';
 
 // Third party packages
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-import { faVideoSlash } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from "react";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faMapMarkerAlt} from '@fortawesome/free-solid-svg-icons';
+import {faXmark} from '@fortawesome/free-solid-svg-icons';
+import {faCircleInfo} from '@fortawesome/free-solid-svg-icons';
+import {faVideoSlash} from '@fortawesome/free-solid-svg-icons';
+import {useEffect, useState} from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import FriendlyTime from "../FriendlyTime";
+import FriendlyTime from '../FriendlyTime';
 
 // Styling
 import './WebcamCard.scss';
 
-export default function WebcamCard({ camera }) {
-  const stale = camera.marked_stale ? "stale" : "";
-  const delayed = camera.marked_delayed ? "delayed" : "";
-  const unavailable = camera.is_on ? "" : "unavailable";
-  const [show, setShow] = useState(false)
+export default function WebcamCard({camera}) {
+  const stale = camera.marked_stale ? 'stale' : '';
+  const delayed = camera.marked_delayed ? 'delayed' : '';
+  const unavailable = camera.is_on ? '' : 'unavailable';
+  const [show, setShow] = useState(false);
   const navigate = useNavigate();
 
   function handleClick() {
-    navigate("/camera-details-page", {state: { cameraData: camera }})
+    navigate('/camera-details-page', {state: {cameraData: camera}});
   }
 
   function handleChildClick(e) {
@@ -31,19 +32,19 @@ export default function WebcamCard({ camera }) {
     setShow(!show);
   }
 
-  const last_updated_time = new Date(camera.last_update_modified);
-  
-  function get_last_update_diff() {
-    return Math.trunc((new Date() - last_updated_time) / (1000 * 60));
+  const lastUpdatedTime = new Date(camera.last_update_modified);
+
+  function getLastUpdateDiff() {
+    return Math.trunc((new Date() - lastUpdatedTime) / (1000 * 60));
   }
 
-  const [lastUpdateMin, setLastUpdateMin] = useState(get_last_update_diff());
+  const [, setLastUpdateMin] = useState(getLastUpdateDiff());
 
   useEffect(() => {
-    var timer = setInterval(() => setLastUpdateMin(get_last_update_diff()), 60000)
+    const timer = setInterval(() => setLastUpdateMin(getLastUpdateDiff()), 60000);
     return function cleanup() {
-      clearInterval(timer)
-    }
+      clearInterval(timer);
+    };
   });
 
   // Rendering
@@ -60,11 +61,11 @@ export default function WebcamCard({ camera }) {
           <div className="card-img-box">
             <img className="card-img" src={ camera.links.imageSource } alt="stale_image"/>
             <div className="card-notification">
-              <div className={"card-banner" + (show ? " hidden" : " bounce") }>
-                <p>Unable to retrieve the latest image, we're displaying last image received.</p>
+              <div className={'card-banner' + (show ? ' hidden' : ' bounce') }>
+                <p>Unable to retrieve the latest image, we`re displaying last image received.</p>
                 <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
               </div>
-              <div className={"card-pill" + (show ? " bounce" : " hidden") }  onClick={handleChildClick} >
+              <div className={'card-pill' + (show ? ' bounce' : ' hidden') } onClick={handleChildClick} >
                 <p>Stale</p>
                 <FontAwesomeIcon icon={faCircleInfo} />
               </div>
@@ -76,15 +77,15 @@ export default function WebcamCard({ camera }) {
           <div className="card-img-box">
             <img className="card-img" src={ camera.links.imageSource } alt="delayed_image" />
             <div className="card-notification">
-              <div className={"card-banner" + (show ? " hidden" : " bounce") }>
+              <div className={'card-banner' + (show ? ' hidden' : ' bounce') }>
                 <p>Experiencing longer than expected delay, displaying last image received.</p>
                 <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
               </div>
-              <div className={"card-pill" + (show ? " bounce" : " hidden") }  onClick={handleChildClick} >
+              <div className={'card-pill' + (show ? ' bounce' : ' hidden') } onClick={handleChildClick} >
                 <p>Delayed</p>
                 <FontAwesomeIcon icon={faCircleInfo} />
+              </div>
             </div>
-          </div>
           </div>
         }
 
@@ -110,5 +111,5 @@ export default function WebcamCard({ camera }) {
       </Card.Body>
       <Button variant="primary" className="viewmap-btn">View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
     </Card>
-  )
+  );
 }

@@ -1,13 +1,13 @@
 // React
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from 'react';
 
 // Third party packages
 import Container from 'react-bootstrap/Container';
-import InfiniteScroll from "react-infinite-scroll-component";
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
-import { getWebcams } from "../data/webcams";
-import WebcamCard from'./WebcamCard.js';
+import {getWebcams} from '../data/webcams';
+import WebcamCard from './WebcamCard.js';
 
 // Static files
 import BCHwyCrest1 from '../../images/BCHwyCrest1.svg';
@@ -33,20 +33,20 @@ export default function CameraList() {
     setWebcams(webcamResults);
 
     isInitialMount.current = false;
-  }
+  };
 
   const getDisplayedWebcams = () => {
     const res = webcams.slice(0, displayedWebcams.length + 7);
     setDisplayedWebcams(res);
-  }
+  };
 
   useEffect(() => {
     getWebcamsData();
 
     return () =>{
-      //unmounting, so empty list object
+      // unmounting, so empty list object
       setWebcams({});
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function CameraList() {
     // Webcam data reduced to arrays grouped by highway
     const res = {};
     displayedWebcams.forEach((cameraData) => {
-      const { highway } = cameraData;
+      const {highway} = cameraData;
       if (!(highway in res)) {
         res[highway] = [];
       }
@@ -69,7 +69,7 @@ export default function CameraList() {
     });
 
     return res;
-  }
+  };
 
   const renderWebcams = () => {
     return Object.entries(mapDisplayedWebcams()).map(([highway, cameras]) => (
@@ -77,27 +77,27 @@ export default function CameraList() {
         <Container>
           <div className="highway-title">
             <div className="highway-shield-box">
-              {highway === "1" &&
+              {highway === '1' &&
                 <div className="highway-shield">
                   <img src={BCHwyCrest1} alt="1"/>
                 </div>
               }
-              {highway === "3" &&
+              {highway === '3' &&
                 <div className="highway-shield">
                   <img src={BCHwyCrest3} alt="3"/>
                 </div>
               }
-              {highway === "5" &&
+              {highway === '5' &&
                 <div className="highway-shield">
                   <img src={BCHwyCrest5} alt="5"/>
                 </div>
               }
-              {highway === "16" &&
+              {highway === '16' &&
                 <div className="highway-shield">
                   <img src={BCHwyCrest16} alt="16"/>
                 </div>
               }
-              {highway !== "1" && highway !== "3" && highway !== "5" && highway !== "16" &&
+              {highway !== '1' && highway !== '3' && highway !== '5' && highway !== '16' &&
                 <div className="highway-shield">
                   <span className="highway-shield__number">{highway}</span>
                   <img src={BCHwyCrest} alt={highway}/>
@@ -107,10 +107,10 @@ export default function CameraList() {
 
             <div className="highway-name">
               <p className="highway-name__number">Highway {highway}</p>
-              {highway === "1" &&
+              {highway === '1' &&
                 <h2 className="highway-name__alias highway-name__alias--green">Trans Canada</h2>
               }
-              {highway !== "1" &&
+              {highway !== '1' &&
                 <h2 className="highway-name__alias">Highway {highway}</h2>
               }
             </div>
@@ -124,8 +124,8 @@ export default function CameraList() {
           </div>
         </Container>
       </div>
-    ))
-  }
+    ));
+  };
 
   return (
     <div className="camera-list">
