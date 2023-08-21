@@ -1,6 +1,7 @@
 // React
 import React, {useEffect, useRef, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
+
 // Third party packages
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
@@ -32,6 +33,7 @@ export default function EventsPage() {
   const isInitialMount = useRef(true);
 
   const navigate = useNavigate();
+
   // event type icons
   const incident = <FontAwesomeIcon icon={faTriangleExclamation} alt="incident" />;
   const construction = <FontAwesomeIcon icon={faPersonDigging} alt="construction" />;
@@ -256,14 +258,12 @@ export default function EventsPage() {
                     <EventCard
                       className="event"
                       event={e}
-                          icon={ filterProps.find((type) => type.value === e.eventType).icon }
-                    />
+                      icon={ filterProps.find((type) => type.value === e.event_type).icon } />
                     </div>
-                    ),
+                  ),
                 )}
               </div>
             }
-
           </InfiniteScroll>
         )}
       </Container>
