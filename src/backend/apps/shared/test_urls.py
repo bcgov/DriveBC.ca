@@ -12,5 +12,7 @@ test_router.register(r"delays", delay_views.DelayTestViewSet,
 
 urlpatterns = [
     path("", include(test_router.urls)),
+    path("app/", shared_views.AppTestViewSet.as_view(), name="test_app"),
     path("appcache/", shared_views.AppCacheTestViewSet.as_view(), name="test_appcache"),
+    path("appdb/", shared_views.AppDbTestViewSet.as_view(), name="test_db"),
 ]
