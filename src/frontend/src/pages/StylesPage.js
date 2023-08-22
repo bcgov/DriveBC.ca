@@ -1,18 +1,18 @@
 // React
-import { useState } from 'react';
+import React, { useState } from "react";
 
 // Third party packages
-import Alert from 'react-bootstrap/Alert';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import Collapse from 'react-bootstrap/Collapse';
-import Container from 'react-bootstrap/Container';
-import Fade from 'react-bootstrap/Fade';
-import Form from 'react-bootstrap/Form';
-import Pagination from 'react-bootstrap/Pagination';
+import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
+import Collapse from "react-bootstrap/Collapse";
+import Container from "react-bootstrap/Container";
+import Fade from "react-bootstrap/Fade";
+import Form from "react-bootstrap/Form";
+import Pagination from "react-bootstrap/Pagination";
 
 // Styling
-import Footer from '../Footer.js';
+import Footer from "../Footer.js";
 
 export default function StylesPage() {
   const [open1, setOpen1] = useState(false);
@@ -23,22 +23,29 @@ export default function StylesPage() {
     <div className="styles-page">
       <Container>
         <h1 className="page-title">React-Bootstrap demo page</h1>
-        <p>This is a demo page gathering a few Bootstrap components that could be used in the DBC project, while learning how to use the ReactBootstrap library and discover other related ones. Styling has been applied to certain parts of this page as well as some Bootstrap UI elements to match the BC sites' look and feel, using the DevHub.</p>
+        <p>
+          This is a demo page gathering a few Bootstrap components that could be
+          used in the DBC project, while learning how to use the ReactBootstrap
+          library and discover other related ones. Styling has been applied to
+          certain parts of this page as well as some Bootstrap UI elements to
+          match the BC sites` look and feel, using the DevHub.
+        </p>
         <ul>
-          <li>
-            version used: React-Bootstrap v2.7.2 / Bootstrap 5.2
-          </li>
+          <li>version used: React-Bootstrap v2.7.2 / Bootstrap 5.2</li>
           <li>
             used React-bootstrap, React-router-dom, React-router-bootstrap
           </li>
           <li>
-            showcases typography, buttons, form elements, cards. alerts and transitions
+            showcases typography, buttons, form elements, cards. alerts and
+            transitions
           </li>
           <li>
-            trying out react-awesome-reveal (similar to Animate.css), react-spring
+            trying out react-awesome-reveal (similar to Animate.css),
+            react-spring
           </li>
           <li>
-            still needs to be updated with the design system from GDX (still in progress)
+            still needs to be updated with the design system from GDX (still in
+            progress)
           </li>
         </ul>
       </Container>
@@ -47,11 +54,27 @@ export default function StylesPage() {
           <h2 className="page-title">Typography</h2>
           <div>
             <h4>BC Sans</h4>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+              sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
           </div>
           <div>
             <h4>BC Sans italic</h4>
-            <i>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</i>
+            <i>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+              sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </i>
           </div>
           <div>
             <h1>Heading 1</h1>
@@ -59,7 +82,7 @@ export default function StylesPage() {
             <h3>Heading 3</h3>
             <h4>Heading 4</h4>
           </div>
-			  </div>
+        </div>
       </Container>
       <Container>
         <div className="demo-group demo-group--button">
@@ -83,11 +106,17 @@ export default function StylesPage() {
           <h1 className="page-title">Form</h1>
           <div>
             <Form>
-              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Group
+                className="mb-3"
+                controlId="exampleForm.ControlInput1"
+              >
                 <Form.Label>Email address</Form.Label>
                 <Form.Control type="email" placeholder="name@example.com" />
               </Form.Group>
-              <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+              <Form.Group
+                className="mb-3"
+                controlId="exampleForm.ControlTextarea1"
+              >
                 <Form.Label>Example textarea</Form.Label>
                 <Form.Control as="textarea" rows={3} />
               </Form.Group>
@@ -96,7 +125,7 @@ export default function StylesPage() {
 
           <div>
             <Form>
-              {['checkbox'].map((type) => (
+              {["checkbox"].map((type) => (
                 <div key={`inline-${type}`} className="mb-3">
                   <Form.Check
                     inline
@@ -125,8 +154,8 @@ export default function StylesPage() {
           </div>
 
           <div>
-          <Form>
-              {['radio'].map((type) => (
+            <Form>
+              {["radio"].map((type) => (
                 <div key={`inline-${type}`} className="mb-3">
                   <Form.Check
                     inline
@@ -155,22 +184,22 @@ export default function StylesPage() {
           </div>
           <div>
             <Pagination>
-            <Pagination.First />
-            <Pagination.Prev />
-            <Pagination.Item>{1}</Pagination.Item>
-            <Pagination.Ellipsis />
+              <Pagination.First />
+              <Pagination.Prev />
+              <Pagination.Item>{1}</Pagination.Item>
+              <Pagination.Ellipsis />
 
-            <Pagination.Item>{10}</Pagination.Item>
-            <Pagination.Item>{11}</Pagination.Item>
-            <Pagination.Item active>{12}</Pagination.Item>
-            <Pagination.Item>{13}</Pagination.Item>
-            <Pagination.Item disabled>{14}</Pagination.Item>
+              <Pagination.Item>{10}</Pagination.Item>
+              <Pagination.Item>{11}</Pagination.Item>
+              <Pagination.Item active>{12}</Pagination.Item>
+              <Pagination.Item>{13}</Pagination.Item>
+              <Pagination.Item disabled>{14}</Pagination.Item>
 
-            <Pagination.Ellipsis />
-            <Pagination.Item>{20}</Pagination.Item>
-            <Pagination.Next />
-            <Pagination.Last />
-          </Pagination>
+              <Pagination.Ellipsis />
+              <Pagination.Item>{20}</Pagination.Item>
+              <Pagination.Next />
+              <Pagination.Last />
+            </Pagination>
           </div>
         </div>
       </Container>
@@ -178,35 +207,35 @@ export default function StylesPage() {
         <div className="demo-group demo-group--card">
           <h1 className="page-title">Cards</h1>
           <div className="cards">
-            <Card style={{ width: '18rem' }}>
+            <Card style={{ width: "18rem" }}>
               <Card.Img variant="top" src="https://placehold.co/100x80" />
               <Card.Body>
                 <Card.Title>Card Title</Card.Title>
                 <Card.Text>
-                  Some quick example text to build on the card title and make up the
-                  bulk of the card's content.
+                  Some quick example text to build on the card title and make up
+                  the bulk of the card`s content.
                 </Card.Text>
                 <Button variant="primary">A button</Button>
               </Card.Body>
             </Card>
-            <Card style={{ width: '18rem' }}>
+            <Card style={{ width: "18rem" }}>
               <Card.Img variant="top" src="https://placehold.co/100x80" />
               <Card.Body>
                 <Card.Title>Card Title</Card.Title>
                 <Card.Text>
-                  Some quick example text to build on the card title and make up the
-                  bulk of the card's content.
+                  Some quick example text to build on the card title and make up
+                  the bulk of the card`s content.
                 </Card.Text>
                 <Button variant="primary">A button</Button>
               </Card.Body>
             </Card>
-            <Card style={{ width: '18rem' }}>
+            <Card style={{ width: "18rem" }}>
               <Card.Img variant="top" src="https://placehold.co/100x80" />
               <Card.Body>
                 <Card.Title>Card Title</Card.Title>
                 <Card.Text>
-                  Some quick example text to build on the card title and make up the
-                  bulk of the card's content.
+                  Some quick example text to build on the card title and make up
+                  the bulk of the card`s content.
                 </Card.Text>
                 <Button variant="primary">A button</Button>
               </Card.Body>
@@ -221,13 +250,15 @@ export default function StylesPage() {
             <Alert variant="success">
               <Alert.Heading>This is a success alert</Alert.Heading>
               <p>
-                Please read this important alert message. This is an example of a success variant of a bootstrap alert.
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                Please read this important alert message. This is an example of
+                a success variant of a bootstrap alert. Lorem ipsum dolor sit
+                amet, consectetur adipiscing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+                veniam, quis nostrud exercitation ullamco laboris nisi ut
+                aliquip ex ea commodo consequat.
               </p>
               <hr />
-              <p className="mb-0">
-                Lorem lorem ipsum ipsum.
-              </p>
+              <p className="mb-0">Lorem lorem ipsum ipsum.</p>
             </Alert>
           </div>
         </div>
@@ -248,9 +279,10 @@ export default function StylesPage() {
               <Card>
                 <Card.Body>
                   <div id="transition-demo-1">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life
+                    accusamus terry richardson ad squid. Nihil anim keffiyeh
+                    helvetica, craft beer labore wes anderson cred nesciunt
+                    sapiente ea proident.
                   </div>
                 </Card.Body>
               </Card>
@@ -269,13 +301,13 @@ export default function StylesPage() {
               <div id="transition-demo-2">
                 <Card>
                   <Card.Body>
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life
+                    accusamus terry richardson ad squid. Nihil anim keffiyeh
+                    helvetica, craft beer labore wes anderson cred nesciunt
+                    sapiente ea proident.
                   </Card.Body>
                 </Card>
               </div>
-
             </Collapse>
           </div>
 
@@ -287,14 +319,14 @@ export default function StylesPage() {
             >
               Slide in from left
             </Button>
-            <div style={{ minHeight: '150px' }}>
+            <div style={{ minHeight: "150px" }}>
               <Collapse in={open3} dimension="width">
                 <div id="transition-demo-3">
-                  <Card body style={{ width: '400px' }}>
+                  <Card body style={{ width: "400px" }}>
                     Anim pariatur cliche reprehenderit, enim eiusmod high life
                     accusamus terry richardson ad squid. Nihil anim keffiyeh
-                    helvetica, craft beer labore wes anderson cred nesciunt sapiente
-                    ea proident.
+                    helvetica, craft beer labore wes anderson cred nesciunt
+                    sapiente ea proident.
                   </Card>
                 </div>
               </Collapse>

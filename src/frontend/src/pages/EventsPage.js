@@ -1,127 +1,129 @@
 // React
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, {useEffect, useRef, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+
 // Third party packages
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
   faTriangleExclamation,
   faPersonDigging,
   faCalendarDays,
   faSnowflake,
   faMapLocationDot,
-  faFilter
-} from "@fortawesome/free-solid-svg-icons";
-import { useMediaQuery } from "@uidotdev/usehooks";
-import Container from "react-bootstrap/Container";
+  faFilter,
+} from '@fortawesome/free-solid-svg-icons';
+import {useMediaQuery} from '@uidotdev/usehooks';
+import Container from 'react-bootstrap/Container';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
-import InfiniteScroll from "react-infinite-scroll-component";
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
-import { getEvents } from "../Components/data/events";
-import EventCard from "../Components/events/EventCard";
-import EventsTable from "../Components/events/EventsTable";
-import FriendlyTime from "../Components/FriendlyTime";
-import PageHeader from "../PageHeader";
-import Footer from "../Footer.js";
+import {getEvents} from '../Components/data/events';
+import EventCard from '../Components/events/EventCard';
+import EventsTable from '../Components/events/EventsTable';
+import FriendlyTime from '../Components/FriendlyTime';
+import PageHeader from '../PageHeader';
+import Footer from '../Footer.js';
 
 // Styling
-import "./EventsPage.scss";
+import './EventsPage.scss';
 
 export default function EventsPage() {
   const isInitialMount = useRef(true);
 
   const navigate = useNavigate();
-  //event type icons
+
+  // event type icons
   const incident = <FontAwesomeIcon icon={faTriangleExclamation} alt="incident" />;
   const construction = <FontAwesomeIcon icon={faPersonDigging} alt="construction" />;
-  const special_event = <FontAwesomeIcon icon={faCalendarDays} alt="special event" />;
-  const weather_condition = <FontAwesomeIcon icon={faSnowflake} alt="weather condition" />;
+  const specialEvent = <FontAwesomeIcon icon={faCalendarDays} alt="special event" />;
+  const weatherCondition = <FontAwesomeIcon icon={faSnowflake} alt="weather condition" />;
 
   const columns = [
     {
-      header: "Type",
-      accessorKey: "event_type",
-      cell: props => {
-        switch(props.getValue().toLowerCase()) {
-          case "incident":
+      header: 'Type',
+      accessorKey: 'event_type',
+      cell: (props) => {
+        switch (props.getValue().toLowerCase()) {
+          case 'incident':
             return <span>{incident}</span>;
-          case "construction":
+          case 'construction':
             return <span>{construction}</span>;
-          case "special_event":
-            return <span>{special_event}</span>;
-          case "weather_condition":
-            return <span>{weather_condition}</span>;
+          case 'special_event':
+            return <span>{specialEvent}</span>;
+          case 'weather_condition':
+            return <span>{weatherCondition}</span>;
           default:
             return <span>{incident}</span>;
         }
-      }
+      },
     },
     {
-      header: "Severity",
-      accessorKey: "severity",
-      cell: props => <span>{props.getValue().toLowerCase()}</span>
+      header: 'Severity',
+      accessorKey: 'severity',
+      cell: (props) => <span>{props.getValue().toLowerCase()}</span>,
     },
     {
-      header: "Route",
-      accessorKey: "route_display",
+      header: 'Route',
+      accessorKey: 'route_display',
     },
     {
-      header: "Direction",
-      accessorKey: "direction",
-      cell: props => <span>{props.getValue().toLowerCase()}</span>
+      header: 'Direction',
+      accessorKey: 'direction',
+      cell: (props) => <span>{props.getValue().toLowerCase()}</span>,
     },
     {
-      header: "Description",
-      accessorKey: "description",
+      header: 'Description',
+      accessorKey: 'description',
     },
     {
-      header: "Last Update",
-      accessorKey: "last_updated",
-      cell: props => <FriendlyTime date={props.getValue()} />
+      header: 'Last Update',
+      accessorKey: 'last_updated',
+      cell: (props) => <FriendlyTime date={props.getValue()} />,
     },
     {
-      header: "Map",
-      accessorKey: "map",
-      cell: props => <FontAwesomeIcon icon={faMapLocationDot} />,
-      enableSorting: false
+      header: 'Map',
+      accessorKey: 'map',
+      cell: (props) => <FontAwesomeIcon icon={faMapLocationDot} />,
+      enableSorting: false,
     },
   ];
 
   const filterProps = [
     {
-      id: "checkbox-filter-incident",
-      label: "Incidents",
+      id: 'checkbox-filter-incident',
+      label: 'Incidents',
       icon: incident,
-      value: "INCIDENT",
+      value: 'INCIDENT',
     },
     {
-      id: "checkbox-filter-weather",
-      label: "Road Conditions",
-      icon: weather_condition,
-      value: "WEATHER_CONDITION",
+      id: 'checkbox-filter-weather',
+      label: 'Road Conditions',
+      icon: weatherCondition,
+      value: 'WEATHER_CONDITION',
     },
     {
-      id: "checkbox-filter-construction",
-      label: "Current Events",
+      id: 'checkbox-filter-construction',
+      label: 'Current Events',
       icon: construction,
-      value: "CONSTRUCTION",
+      value: 'CONSTRUCTION',
     },
     {
-      id: "checkbox-filter-special",
-      label: "Future Events",
-      icon: special_event,
-      value: "SPECIAL_EVENT",
-    }
+      id: 'checkbox-filter-special',
+      label: 'Future Events',
+      icon: specialEvent,
+      value: 'SPECIAL_EVENT',
+    },
   ];
 
   const [sortingColumns, setSortingColumns] = useState([]);
 
   const [eventTypeFilter, setEventTypeFilter] = useState({
-    "CONSTRUCTION": false,
-    "INCIDENT": false,
-    "SPECIAL_EVENT": false,
-    "WEATHER_CONDITION": false,
+    'CONSTRUCTION': false,
+    'INCIDENT': false,
+    'SPECIAL_EVENT': false,
+    'WEATHER_CONDITION': false,
   });
 
   const [events, setEvents] = useState([]);
@@ -133,7 +135,7 @@ export default function EventsPage() {
     setEvents(eventsData);
 
     isInitialMount.current = false;
-  }
+  };
 
   const sortEvents = (unsortedEvents) => {
     // Sort by severity by default
@@ -141,16 +143,16 @@ export default function EventsPage() {
     let descending = false;
 
     if (sortingColumns.length) {
-      const { id, desc } = sortingColumns[0];
+      const {id, desc} = sortingColumns[0];
 
       sortKey = id;
       descending = desc;
     }
 
-    unsortedEvents.sort((first_event, second_event) => {
-      return first_event[sortKey] > second_event[sortKey] ? (descending ? -1 : 1) : (descending ? 1 : -1);
+    unsortedEvents.sort((firstEvent, secondEvent) => {
+      return firstEvent[sortKey] > secondEvent[sortKey] ? (descending ? -1 : 1) : (descending ? 1 : -1);
     });
-  }
+  };
 
   const processEvents = () => {
     const hasTrue = (val) => !!val;
@@ -167,17 +169,17 @@ export default function EventsPage() {
     sortEvents(res);
 
     setProcessedEvents(res);
-  }
+  };
 
   const getDisplayedEvents = (reset) => {
     const res = processedEvents.slice(0, reset? 10 : displayedEvents.length + 10);
     setDisplayedEvents(res);
-  }
+  };
 
   const handleRoute = (event) => {
-    console.log("routing", event)
-    navigate("/", { state: event})
-  }
+    console.log('routing', event);
+    navigate('/', {state: event});
+  };
 
   useEffect(() => {
     getData();
@@ -201,15 +203,15 @@ export default function EventsPage() {
   }, [events, eventTypeFilter, sortingColumns]);
 
   const eventTypeFilterHandler = (e) => {
-    const event_type = e.target.value;
+    const eventType = e.target.value;
 
     const newFilter = {...eventTypeFilter};
-    newFilter[event_type] = !newFilter[event_type];
+    newFilter[eventType] = !newFilter[eventType];
 
     setEventTypeFilter(newFilter);
-  }
+  };
 
-  const largeScreen = useMediaQuery("only screen and (min-width : 768px)");
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
   return (
     <div className="events-page">
@@ -228,6 +230,7 @@ export default function EventsPage() {
               {filterProps.map((fp) => (
                 <Form.Check
                   id={fp.id}
+                  key={fp.id}
                   label={
                     <span>{fp.icon}{fp.label}</span>
                   }
@@ -251,18 +254,16 @@ export default function EventsPage() {
               <div className="events-list">
                 { displayedEvents.map(
                   (e) => (
-                    <div className="card-selector" onClick={() => handleRoute(e)}>
+                      <div className="card-selector" key={e.id} onClick={() => handleRoute(e)}>
                     <EventCard
                       className="event"
                       event={e}
-                      icon={ filterProps.find(type => type.value === e.event_type).icon }
-                    />
+                      icon={ filterProps.find((type) => type.value === e.event_type).icon } />
                     </div>
-                  )
+                  ),
                 )}
               </div>
             }
-
           </InfiniteScroll>
         )}
       </Container>

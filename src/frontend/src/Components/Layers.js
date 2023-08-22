@@ -1,13 +1,13 @@
 // React
-import React, { useContext } from 'react';
+import React, {useContext} from 'react';
 
 // Third party packages
-import { faLayerGroup, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faLayerGroup, faXmark} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Button from 'react-bootstrap/Button';
 
 // Components and functions
-import { MapContext } from '../App.js';
+import {MapContext} from '../App.js';
 
 // Static files
 import videoIcon from '../assets/video-solid.png';
@@ -18,18 +18,18 @@ import terrain from '../assets/terrain.png';
 // Styling
 import './Layers.scss';
 
-export default function Layers({ open, setLayersOpen, toggleLayer}) {
-  const { mapContext } = useContext(MapContext);
+export default function Layers({open, setLayersOpen, toggleLayer}) {
+  const {mapContext} = useContext(MapContext);
 
   if (!open) {
     return (
       <Button variant="outline-primary"
-      className="map-btn open-layers"
-      onClick={() => setLayersOpen(true)}
-    >
+        className="map-btn open-layers"
+        onClick={() => setLayersOpen(true)}
+      >
         <FontAwesomeIcon icon={faLayerGroup} />
       </Button>
-    )
+    );
   }
 
   return (
@@ -61,33 +61,33 @@ export default function Layers({ open, setLayersOpen, toggleLayer}) {
           onChange={(e) => toggleLayer('webcamsLayer', e.target.checked)}
           defaultChecked={mapContext.visible_layers.webcamsLayer}
         />
-        <label for="webcam">Webcams</label>
+        <label htmlFor="webcam">Webcams</label>
       </div>
 
       <div className="layer-item">
-      <img className="map-icon" src={eventIcon} alt="Event Icon" />
+        <img className="map-icon" src={eventIcon} alt="Event Icon" />
         <input type="checkbox" name="events" id="events"
           onChange={(e) => toggleLayer('eventsLayer', e.target.checked)}
           defaultChecked={mapContext.visible_layers.eventsLayer}
         />
-        <label for="events">Road Events</label>
+        <label htmlFor="events">Road Events</label>
       </div>
       <div className="layer-item">
-      <img className="map-icon" src={eventIcon} alt="Event Icon" />
+        <img className="map-icon" src={eventIcon} alt="Event Icon" />
         <input type="checkbox" name="highway" id="highways"
           onChange={(e) => toggleLayer('highwayLayer', e.target.checked)}
           defaultChecked={mapContext.visible_layers.highwayLayer}
         />
-        <label for="highways">Highways</label>
+        <label htmlFor="highways">Highways</label>
       </div>
       <div className="layer-item">
-      <img className="map-icon" src={eventIcon} alt="Event Icon" />
+        <img className="map-icon" src={eventIcon} alt="Event Icon" />
         <input type="checkbox" name="open511" id="open511"
           onChange={(e) => toggleLayer('open511Layer', e.target.checked)}
           defaultChecked={mapContext.visible_layers.open511Layer}
         />
-        <label for="open511">Open511 events</label>
+        <label htmlFor="open511">Open511 events</label>
       </div>
     </div>
-  )
+  );
 };

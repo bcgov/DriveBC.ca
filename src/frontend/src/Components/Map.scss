@@ -52,10 +52,11 @@
             margin-bottom: 0;
           }
   
-          .popup--camera {
-  
+          .popup {
+            font-size: 0.875em;
+            
             &__title, &__description {
-              padding: 8px 16px;
+              padding: 8px 44px 8px 16px;
             }
   
             &__title {
@@ -70,7 +71,7 @@
                 color: $Type-status-grey;
               }
             }
-  
+
             &__description {
               display: flex;
               gap: 24px;
@@ -80,42 +81,139 @@
 
               @media (max-width: 575px) {
                 flex-direction: column;
+                gap: 16px;
               }
-  
-              p {
-                @media (max-width: 575px) {
-                  order: 2;
-                }
-              }
-              .camera-image {
-                @media (max-width: 575px) {
-                  order: 1;
-                }
+            }
 
-                img {
+            &--camera {
+              .popup__description {
+                p {
                   @media (max-width: 575px) {
-                    width: 100%;
+                    order: 2;
                   }
                 }
-                
-                .timestamp {
-                  background-color: $Black;
-                  padding: 0 10px;
+                .camera-image {
+                  @media (max-width: 575px) {
+                    order: 1;
+                  }
+  
+                  img {
+                    @media (max-width: 575px) {
+                      width: 100%;
+                    }
+                  }
+                  
+                  .timestamp {
+                    background-color: $Black;
+                    padding: 0 10px;
+                    display: flex;
+                    justify-content: space-between;
+          
+                    p {
+                      color: $White;
+                      font-size: 0.625em;
+                      margin-bottom: 0;
+                    }
+          
+                    .driveBC {
+                      font-family: serif;
+                      span {
+                        color: $BC-Yellow;
+                      }
+                      margin-right: 10px;
+                    }
+                  }
+                }
+              }
+            }
+
+            &--delay {
+              .popup__description {
+                .delay-type {
                   display: flex;
                   justify-content: space-between;
-        
-                  p {
-                    color: $White;
-                    font-size: 0.625em;
-                    margin-bottom: 0;
-                  }
-        
-                  .driveBC {
-                    font-family: serif;
-                    span {
-                      color: $BC-Yellow;
+                  flex-flow: wrap;
+
+                  .delay-severity {
+                    text-transform: capitalize;
+                    white-space: nowrap;
+                    display: flex;
+
+                    .delay-icon {
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      width: 20px;
+                      height: 20px;
+                      border-radius: 10px;
+                      font-size: 0.6875em;
+                      margin-right: 8px;
                     }
-                    margin-right: 10px;
+                  }
+
+                  .friendly-time--mobile {
+                      display: none;
+                    @media (max-width: 575px) {
+                      display: flex;
+                    }
+                  }
+                }
+                .delay-details {
+                  .label + .label {
+                    margin-top: 8px;
+                  }
+
+                  .friendly-time-desktop {
+                    display: flex;
+                    @media (max-width: 575px) {
+                      display: none;
+                    }
+                  }
+                }
+              }
+
+              &.minor {
+                .popup__title {
+                  background-color: $Surface-tint-yellow;
+                  .name {
+                    color: $Type-status-yellow;
+                  }
+                }
+                .popup__description {
+                  .delay-severity {
+                    color: $Type-status-yellow;
+
+                    p {
+                      color: $Type-status-yellow;
+                    }
+
+                    .delay-icon {
+                      color: $Type-status-yellow;
+                      background-color: $BC-Yellow;
+                    }
+                  }
+                }
+              }
+
+              &.major {
+                .popup__title {
+                  background-color: $Surface-status-red;
+                  .name {
+                    color: $Type-status-red;
+                  }
+                }
+                .popup__description {
+                  .delay-severity {
+                    color: $Type-status-red;
+
+                    p {
+                      color: $Type-status-red;
+                    }
+                    
+                    .delay-icon {
+                      color: $White;
+                      background-color: $Type-status-red;
+                    }
                   }
                 }
               }

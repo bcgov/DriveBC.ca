@@ -1,8 +1,9 @@
-import "./PageHeader.scss";
+import React from 'react';
+import './PageHeader.scss';
 
 import Container from 'react-bootstrap/Container';
 
-export default function PageHeader({ title, description }) {
+export default function PageHeader({title, description}) {
   return (
     <div className="page-header">
       <Container>
@@ -10,5 +11,5 @@ export default function PageHeader({ title, description }) {
         <p className="page-description body--large">{description}</p>
       </Container>
     </div>
-  )
+  );
 }
