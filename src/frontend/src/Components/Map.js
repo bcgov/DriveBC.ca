@@ -71,6 +71,49 @@ export default function MapWrapper({
   const iconClicked = useRef(false);
   const navigate = useNavigate();
 
+  const centerMapToLocation = (coordinates) => {
+    if (mapRef.current) {
+      const view = mapRef.current.getView();
+      view.setCenter(fromLonLat(coordinates));
+    }
+  };
+
+  const addMarker = async (coordinates) => {
+    const svgMarkup = `
+                  <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
+                    <defs>
+                      <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="40%" style="stop-color:#2790F3;stop-opacity:0.5" />
+                        <stop offset="40%" style="stop-color:#7496EC;stop-opacity:0.5" />
+                      </linearGradient>
+                    </defs>
+                    <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
+                    <defs>
+                      <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="100%" style="stop-color:#2970F3;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#7496EC;stop-opacity:1" />
+                      </linearGradient>
+                    </defs>
+                    <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
+                  </svg>
+                `;
+
+    const svgImage = new Image();
+    svgImage.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgMarkup);
+
+    // Create an overlay for the marker
+    const markerOverlay = new Overlay({
+      position: fromLonLat(coordinates),
+      positioning: "bottom-center",
+      element: svgImage,
+      stopEvent: false, // Allow interactions with the overlay content
+    });
+
+    // Add the overlay to the map
+    mapRef.current.addOverlay(markerOverlay);
+  };
+
+
   function getCameraCircle(camera) {
     if (!camera) {
       return {};
@@ -194,6 +237,7 @@ export default function MapWrapper({
       center: camera ? handleCenter() : fromLonLat([lng, lat]),
       zoom: 10,
     });
+  
     //Apply the basemap style from the arcgis resource
     fetch(`${process.env.REACT_APP_MAP_STYLE}`, {
       method: "POST",
@@ -225,6 +269,20 @@ export default function MapWrapper({
       view: mapView.current,
       controls: [new ZoomSlider()],
     });
+
+    // Get user's current location
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          centerMapToLocation([longitude, latitude]);
+          addMarker([longitude, latitude]);
+        },
+        (error) => {
+          console.error('Error getting user location:', error);
+        }
+      );
+    }
 
     mapRef.current.once("loadend", () => {
       loadWebcams();
