@@ -72,14 +72,15 @@ export default function MapWrapper({
   const iconClicked = useRef(false);
   const navigate = useNavigate();
 
-  const centerMapToLocation = (coordinates) => {
+  
+  function centerMapToLocation(coordinates) {
     if (mapRef.current) {
       const view = mapRef.current.getView();
       view.setCenter(fromLonLat(coordinates));
     }
   };
 
-  const addMarker = async (coordinates) => {
+  function addMarker(coordinates) {
     const svgMarkup = `
                   <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
                     <defs>
@@ -270,6 +271,19 @@ export default function MapWrapper({
       controls: [new ZoomSlider()],
     });
 
+    // Get user's current location
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          centerMapToLocation([longitude, latitude]);
+          addMarker([longitude, latitude]);
+        },
+        (error) => {
+          console.error('Error getting user location:', error);
+        }
+      );
+    }
     
 
     mapRef.current.once('loadend', () => {
