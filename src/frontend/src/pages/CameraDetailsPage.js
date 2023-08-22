@@ -121,6 +121,7 @@ export default function CameraDetailsPage() {
     );
   };
 
+  // Component functions
   const customLeftNav = (onClick, disabled) => {
     return (
       <div className="replay-control replay-control--backward">
@@ -151,6 +152,51 @@ export default function CameraDetailsPage() {
     );
   };
 
+  const getHighwayShieldImg = (highway) => {
+    switch (highway) {
+      case '1':
+        return BCHwyCrest1;
+      case '3':
+        return BCHwyCrest3;
+      case '5':
+        return BCHwyCrest5;
+      case '16':
+        return BCHwyCrest16;
+      default:
+        return BCHwyCrest;
+    }
+  };
+
+  const getHighwayShield = (highway) => {
+    return (
+      <div className="camera-details__more__hwy">
+        <div className="highway-shield">
+          { ['1', '3', '5', '16'].indexOf(highway) < 0 &&
+            <span className="highway-shield__number">
+              {highway}
+            </span>
+          }
+
+          <img src={getHighwayShieldImg(highway)} alt="highway" />
+        </div>
+        <p className="label--more">Highway {highway}</p>
+      </div>
+    );
+  };
+
+  // Helper functions
+  const shouldRenderReplay = () => {
+    if (!lastUpdate) {
+      return false
+    };
+
+    const lastUpdatedDate = Date.parse(lastUpdate);
+    const oneDayAgo = new Date().getTime() - (1 * 24 * 60 * 60 * 1000);
+
+    return lastUpdatedDate > oneDayAgo;
+  };
+
+  // Rendering
   return (
     <div className="camera-page">
       <div className="page-header">
@@ -170,56 +216,8 @@ export default function CameraDetailsPage() {
                 <p className="body--large">{camera.caption}</p>
               </div>
               <div className="camera-details__more">
-                {camera.highway === '1' && (
-                  <div className="camera-details__more__hwy">
-                    <div className="highway-shield">
-                      <img src={BCHwyCrest1} alt="1" />
-                    </div>
-                    <p className="label--more">Highway {camera.highway}</p>
-                  </div>
-                )}
+                {getHighwayShield(camera.highway)}
 
-                {camera.highway === '3' && (
-                  <div className="camera-details__more__hwy">
-                    <div className="highway-shield">
-                      <img src={BCHwyCrest3} alt="3"/>
-                    </div>
-                    <p className="label--more">Highway {camera.highway}</p>
-                  </div>
-                )}
-
-                {camera.highway === '5' && (
-                  <div className="camera-details__more__hwy">
-                    <div className="highway-shield">
-                      <img src={BCHwyCrest5} alt="5"/>
-                    </div>
-                    <p className="label--more">Highway {camera.highway}</p>
-                  </div>
-                )}
-
-                {camera.highway === '16' && (
-                  <div className="camera-details__more__hwy">
-                    <div className="highway-shield">
-                      <img src={BCHwyCrest16} alt="16"/>
-                    </div>
-                    <p className="label--more">Highway {camera.highway}</p>
-                  </div>
-                )}
-
-                {camera.highway !== '1' &&
-                  camera.highway !== '3' &&
-                  camera.highway !== '5' &&
-                  camera.highway !== '16' && (
-                  <div className="camera-details__more__hwy">
-                    <div className="highway-shield">
-                      <span className="highway-shield__number">
-                        {camera.highway}
-                      </span>
-                      <img src={BCHwyCrest} alt={camera.highway}/>
-                    </div>
-                    <p className="label--more">Highway {camera.highway}</p>
-                  </div>
-                )}
                 <div className="camera-details__more__elevation">
                   <p className="elevation">
                     <span className="number">{camera.elevation}</span>m
@@ -283,7 +281,6 @@ export default function CameraDetailsPage() {
               </div>
             )}
 
-
             <div className="camera-update">
               <p className="bold">
                 This camera updates its image approximately every{' '}
@@ -305,14 +302,17 @@ export default function CameraDetailsPage() {
                         Next update attempt: {nextUpdate}
                       </p>
                     </div>
-                    <Form className="replay-the-day">
-                      <Form.Check
-                        onChange={toggleReplay}
-                        type="switch"
-                        id="replay-toggle"
-                        label="Replay the day"
-                      />
-                    </Form>
+
+                    {shouldRenderReplay() &&
+                      <Form className="replay-the-day">
+                        <Form.Check
+                          onChange={toggleReplay}
+                          type="switch"
+                          id="replay-toggle"
+                          label="Replay the day"
+                        />
+                      </Form>
+                    }
                   </div>
                   <div className="image-wrap">
                     {camera.is_on && (
