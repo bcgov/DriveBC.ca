@@ -1,12 +1,14 @@
 module.exports = {
   'env': {
     'browser': true,
+    'node': true,
     'es2021': true,
   },
   'extends': [
     'google',
     'prettier',
     'plugin:react/recommended',
+    "eslint:recommended",
   ],
   'overrides': [
     {
@@ -26,6 +28,7 @@ module.exports = {
     'sourceType': 'module',
   },
   'plugins': [
+    'prettier',
     'react',
   ],
   'rules': {
