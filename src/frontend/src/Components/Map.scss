@@ -26,7 +26,7 @@
         position: fixed !important;
         bottom: 0 !important;
         transform: none !important;
-        
+
       }
 
       .ol-popup {
@@ -36,8 +36,7 @@
         box-shadow: 0px 1.600000023841858px 3.5999999046325684px 0px rgba(0, 0, 0, 0.13), 0px 0.30000001192092896px 0.8999999761581421px 0px rgba(0, 0, 0, 0.10);
         border-radius: 4px;
         cursor: pointer;
-        z-index: -1;
-  
+
          @media (min-width: 576px) {
            width: 560px;
            height: auto;
@@ -46,19 +45,19 @@
            left: 50%;
            transform: translate(-50%, 0);
          }
-  
+
         &-content {
           p {
             margin-bottom: 0;
           }
-  
+
           .popup {
             font-size: 0.875em;
-            
+
             &__title, &__description {
               padding: 8px 44px 8px 16px;
             }
-  
+
             &__title {
               background-color: $BC-Blue-Light;
               border-top-left-radius: 4px;
@@ -66,7 +65,7 @@
               .name {
                 color: $HwyCrest;
               }
-  
+
               .orientation {
                 color: $Type-status-grey;
               }
@@ -96,25 +95,25 @@
                   @media (max-width: 575px) {
                     order: 1;
                   }
-  
+
                   img {
                     @media (max-width: 575px) {
                       width: 100%;
                     }
                   }
-                  
+
                   .timestamp {
                     background-color: $Black;
                     padding: 0 10px;
                     display: flex;
                     justify-content: space-between;
-          
+
                     p {
                       color: $White;
                       font-size: 0.625em;
                       margin-bottom: 0;
                     }
-          
+
                     .driveBC {
                       font-family: serif;
                       span {
@@ -209,7 +208,7 @@
                     p {
                       color: $Type-status-red;
                     }
-                    
+
                     .delay-icon {
                       color: $White;
                       background-color: $Type-status-red;
@@ -220,7 +219,7 @@
             }
           }
         }
-  
+
         .ol-popup-closer {
           position: absolute;
           top: 18px;
@@ -230,7 +229,7 @@
           padding: 9px 10px;
           border-radius: 15px;
           font-size: 0.6875em;
-  
+
           &:hover {
             background-color: rgba(0,0, 0,0.1);
           }
@@ -242,6 +241,32 @@
       margin-top: 200px;
     }
 
+    .ol-scale-line {
+      background: var(--ol-partial-background-color);
+      border-radius: 4px;
+      bottom: 1.8rem;
+      left: auto;
+      right: 6rem;
+      padding: 2px;
+      position: absolute;
+
+      @media (max-width: 575px) {
+        display: none;
+      }
+    }
+
+    .ol-scale-line-inner {
+      border: 1px solid var(--ol-subtle-foreground-color);
+      border-top: none;
+      color: var(--ol-foreground-color);
+      font-size: 12px;
+      text-align: center;
+      font-family: 'BC Sans';
+      margin: 1px;
+      will-change: contents, width;
+      transition: all 0.25s;
+    }
+
     .ol-zoomslider {
       background-color: $White;
       top: auto;
@@ -251,7 +276,7 @@
       right: 2rem;
       width: 40px;
       border-radius: 20px;
-      
+
       @media (max-width: 575px) {
         display: none;
       }
