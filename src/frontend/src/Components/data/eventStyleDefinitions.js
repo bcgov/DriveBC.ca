@@ -331,7 +331,7 @@ export const eventStyles = {
         width: 12,
       }),
     }),
-    hover: new Style({
+    active: new Style({
       stroke: new Stroke({
         color: 'rgba(0, 255, 255, 1)',
         width: 12,

@@ -322,6 +322,11 @@
         margin-right: 8px;
       }
     }
+    &.map-view, &.my-location {
+      svg {
+        margin-right: 8px;
+      }
+    }
 
     &.map-view {
       position: absolute;
@@ -330,6 +335,12 @@
     }
 
     &.cam-location {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+    }
+
+    &.my-location {
       position: absolute;
       bottom: 2rem;
       left: 2rem;
