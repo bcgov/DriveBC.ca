@@ -262,15 +262,15 @@ export default function MapWrapper({
             iconClicked.current = true;
             // reset previous clicked feature
             if (clickedCamera.current) {
-              clickedCamera.current.setStyle(cameraStyles["static"]);
+              clickedCamera.current.setStyle(cameraStyles['static']);
             }
             else if (clickedEvent.current) {
-              clickedEvent.current.setStyle(eventStyles["static"]);
+              clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'static'));
               clickedEvent.current = null;
             }
             // set new clicked camera feature
             clickedCamera.current = clickedFeatures[0];
-            clickedCamera.current.setStyle(cameraStyles["active"]);
+            clickedCamera.current.setStyle(cameraStyles['active']);
             clickedCamera.current.setProperties({"clicked": true}, true);
 
             content.current.innerHTML =
@@ -310,16 +310,16 @@ export default function MapWrapper({
 
             // reset previous clicked feature
             if (clickedCamera.current) {
-              clickedCamera.current.setStyle(cameraStyles["static"]);
+              clickedCamera.current.setStyle(cameraStyles['static']);
               clickedCamera.current = null;
             }
             else if (clickedEvent.current) {
-              clickedEvent.current.setStyle(eventStyles["static"]);
+              clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'static'));
             }
 
             // set new clicked event feature
             clickedEvent.current = clickedFeatures[0];
-            clickedEvent.current.setStyle(eventStyles["active"]);
+            clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'active'));
             clickedEvent.current.setProperties({"clicked": true}, true);
 
             content.current.innerHTML =
@@ -357,10 +357,10 @@ export default function MapWrapper({
 
         // reset previous clicked feature
         if (clickedCamera.current) {
-          clickedCamera.current.setStyle(cameraStyles["static"]);
+          clickedCamera.current.setStyle(cameraStyles['static']);
         }
         else if (clickedEvent.current) {
-          clickedEvent.current.setStyle(eventStyles["static"]);
+          clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'static'));
         }
 
         clickedCamera.current = null;
@@ -376,12 +376,12 @@ export default function MapWrapper({
           if (hoveredFeatures[0]) {
             hoveredCamera.current = hoveredFeatures[0];
             if (!hoveredCamera.current.getProperties().clicked) {
-              hoveredCamera.current.setStyle(cameraStyles["hover"]);
+              hoveredCamera.current.setStyle(cameraStyles['hover']);
             }
 
           } else if (hoveredCamera.current) {
             if (!hoveredCamera.current.getProperties().clicked) {
-              hoveredCamera.current.setStyle(cameraStyles["static"]);
+              hoveredCamera.current.setStyle(cameraStyles['static']);
             }
 
             hoveredCamera.current = null;
@@ -396,17 +396,16 @@ export default function MapWrapper({
             hoveredEvent.current = hoveredFeatures[0];
             if (!hoveredEvent.current.getProperties().clicked) {
               if (hoveredEvent.current.values_.location.type === 'Point') {
-                hoveredEvent.current.setStyle(eventStyles["hover"]);
+                hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'hover'));
               }
             }
 
           } else if (hoveredEvent.current) {
             if (!hoveredEvent.current.getProperties().clicked) {
               if (hoveredEvent.current.values_.location.type === 'Point') {
-                hoveredEvent.current.setStyle(eventStyles["static"]);
+                hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'static'));
               }
             }
-
             hoveredEvent.current = null;
           }
       });
@@ -500,8 +499,8 @@ export default function MapWrapper({
       }),
       style: function(feature, resolution) {
         return feature.values_.location.type === 'LineString' ?
-          eventStyles['RoadConditions'] :
-          eventStyles['static'];
+          eventStyles['segments']['static'] :
+          getEventIcon(feature, 'static')
       },
     });
     mapRef.current.addLayer(layers.current['eventsLayer']);
@@ -523,17 +522,51 @@ export default function MapWrapper({
     iconClicked.current = false;
     // check for active camera icons
     if(clickedCamera.current) {
-      clickedCamera.current.setStyle(cameraStyles["static"]);
+      clickedCamera.current.setStyle(cameraStyles['static']);
       clickedCamera.current.set("clicked", "false");
       clickedCamera.current = null;
     }
     // check for active event icons
     if(clickedEvent.current) {
-      clickedEvent.current.setStyle(eventStyles["static"]);
+      clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'static'));
       clickedEvent.current.set("clicked", "false");
       clickedEvent.current = null;
     }
   }
+
+  const getEventIcon = (event, state) => {
+    const severity = event.get("severity").toLowerCase();
+    const type = event.get("event_type").toLowerCase();
+
+    if (severity === 'major') {
+      switch (type) {
+        case 'incident':
+          return eventStyles['major_incident'][state];
+        case 'construction':
+          return eventStyles['major_construction'][state];
+        case 'special_event':
+          return eventStyles['major_special_event'][state];
+        case 'weather_condition':
+          return eventStyles['major_weather_condition'][state];
+        default:
+          return eventStyles['major_incident'][state];
+      }
+    }
+    else {
+      switch (type) {
+        case 'incident':
+          return eventStyles['incident'][state];
+        case 'construction':
+          return eventStyles['construction'][state];
+        case 'special_event':
+          return eventStyles['special_event'][state];
+        case 'weather_condition':
+          return eventStyles['weather_condition'][state];
+        default:
+          return eventStyles['incident'][state];
+      }
+    }
+  };
 
   function zoomIn() {
     if (!mapRef.current) {
