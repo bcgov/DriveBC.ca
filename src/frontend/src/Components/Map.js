@@ -13,6 +13,7 @@ import {
   faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
+import {useMediaQuery} from '@uidotdev/usehooks';
 
 // Components and functions
 import { getEvents } from "./data/events.js";
@@ -38,6 +39,7 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 import ImageWMS from 'ol/source/ImageWMS.js';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay.js';
+import Geolocation from 'ol/Geolocation.js';
 import MVT from 'ol/format/MVT.js';
 import {Point, LineString} from 'ol/geom';
 import VectorLayer from 'ol/layer/Vector';
@@ -69,7 +71,10 @@ export default function MapWrapper({
   const [routesOpen, setRoutesOpen] = useState(false);
   const container = useRef();
   const content = useRef();
-  const iconClicked = useRef(false);
+  const [iconClicked, setIconClicked] = useState(false);
+  const geolocation = useRef(null);
+  const geolocationTrack = useRef(false);
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
   const navigate = useNavigate();
   const hoveredCamera = useRef();
   const hoveredEvent = useRef();
@@ -231,12 +236,17 @@ export default function MapWrapper({
       controls: [new ZoomSlider(), new ScaleLine({units: 'metric'})],
     });
 
+    geolocation.current = new Geolocation({
+      projection: mapView.current.getProjection()
+    })
+
     mapRef.current.once('loadend', () => {
       loadWebcams();
       loadEvents();
     });
 
     mapRef.current.on('click', (e) => {
+      setIconClicked(false);
       const coordinate = e.coordinate;
       // check if it was a webcam icon that was clicked
       layers.current['webcamsLayer']
@@ -259,7 +269,7 @@ export default function MapWrapper({
               cameraHandler(featureDetails);
             }
           } else {
-            iconClicked.current = true;
+            setIconClicked(true);
             // reset previous clicked feature
             if (clickedCamera.current) {
               clickedCamera.current.setStyle(cameraStyles['static']);
@@ -302,7 +312,7 @@ export default function MapWrapper({
       layers.current["eventsLayer"]
         .getFeatures(e.pixel)
         .then((clickedFeatures) => {
-          iconClicked.current = true;
+          setIconClicked(true);
           if (clickedFeatures[0]) {
             const feature = clickedFeatures[0];
             const severity = feature.get("severity").toLowerCase();
@@ -351,7 +361,7 @@ export default function MapWrapper({
         });
 
       // if neither, hide any existing popup
-      if (iconClicked.current === true) {
+      if (iconClicked === false) {
         popup.current.setPosition(undefined);
         clickedWebcam.current = null;
 
@@ -519,7 +529,7 @@ export default function MapWrapper({
   function closePopup(event) {
     event.stopPropagation();
     popup.current.setPosition(undefined);
-    iconClicked.current = false;
+    setIconClicked(false);
     // check for active camera icons
     if(clickedCamera.current) {
       clickedCamera.current.setStyle(cameraStyles['static']);
@@ -598,6 +608,11 @@ export default function MapWrapper({
       });
       return;
     }
+  }
+
+  function toggleMyLocation() {
+    geolocationTrack.current = !geolocationTrack.current;
+    geolocation.current.setTracking(geolocationTrack.current);
   }
 
   function handleCenter() {
@@ -684,6 +699,16 @@ export default function MapWrapper({
           Camera location
         </Button>
       )}
+      {(!isPreview && !iconClicked || largeScreen) && (
+      <Button
+          className="map-btn my-location"
+          variant="outline-primary"
+          onClick={toggleMyLocation}
+        >
+          <FontAwesomeIcon icon={faLocationCrosshairs} />
+          My location
+        </Button>)
+      }
 
       <Button
         className="map-btn zoom-in"

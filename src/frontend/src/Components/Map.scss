@@ -26,7 +26,7 @@
         position: fixed !important;
         bottom: 0 !important;
         transform: none !important;
-        
+
       }
 
       .ol-popup {
@@ -37,7 +37,7 @@
         border-radius: 4px;
         cursor: pointer;
         z-index: -1;
-  
+
          @media (min-width: 576px) {
            width: 560px;
            height: auto;
@@ -46,19 +46,19 @@
            left: 50%;
            transform: translate(-50%, 0);
          }
-  
+
         &-content {
           p {
             margin-bottom: 0;
           }
-  
+
           .popup {
             font-size: 0.875em;
-            
+
             &__title, &__description {
               padding: 8px 44px 8px 16px;
             }
-  
+
             &__title {
               background-color: $BC-Blue-Light;
               border-top-left-radius: 4px;
@@ -66,7 +66,7 @@
               .name {
                 color: $HwyCrest;
               }
-  
+
               .orientation {
                 color: $Type-status-grey;
               }
@@ -96,25 +96,25 @@
                   @media (max-width: 575px) {
                     order: 1;
                   }
-  
+
                   img {
                     @media (max-width: 575px) {
                       width: 100%;
                     }
                   }
-                  
+
                   .timestamp {
                     background-color: $Black;
                     padding: 0 10px;
                     display: flex;
                     justify-content: space-between;
-          
+
                     p {
                       color: $White;
                       font-size: 0.625em;
                       margin-bottom: 0;
                     }
-          
+
                     .driveBC {
                       font-family: serif;
                       span {
@@ -209,7 +209,7 @@
                     p {
                       color: $Type-status-red;
                     }
-                    
+
                     .delay-icon {
                       color: $White;
                       background-color: $Type-status-red;
@@ -220,7 +220,7 @@
             }
           }
         }
-  
+
         .ol-popup-closer {
           position: absolute;
           top: 18px;
@@ -230,7 +230,7 @@
           padding: 9px 10px;
           border-radius: 15px;
           font-size: 0.6875em;
-  
+
           &:hover {
             background-color: rgba(0,0, 0,0.1);
           }
@@ -251,7 +251,7 @@
       right: 2rem;
       width: 40px;
       border-radius: 20px;
-      
+
       @media (max-width: 575px) {
         display: none;
       }
@@ -297,6 +297,11 @@
         margin-right: 8px;
       }
     }
+    &.map-view, &.my-location {
+      svg {
+        margin-right: 8px;
+      }
+    }
 
     &.map-view {
       position: absolute;
@@ -305,6 +310,12 @@
     }
 
     &.cam-location {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+    }
+
+    &.my-location {
       position: absolute;
       bottom: 2rem;
       left: 2rem;
