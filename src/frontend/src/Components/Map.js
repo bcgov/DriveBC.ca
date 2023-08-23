@@ -13,6 +13,7 @@ import {
   faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
+import {useMediaQuery} from '@uidotdev/usehooks';
 
 // Components and functions
 import { getEvents } from "./data/events.js";
@@ -70,9 +71,10 @@ export default function MapWrapper({
   const [routesOpen, setRoutesOpen] = useState(false);
   const container = useRef();
   const content = useRef();
-  const iconClicked = useRef(false);
+  const [iconClicked, setIconClicked] = useState(false);
   const geolocation = useRef(null);
   const geolocationTrack = useRef(false);
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
   const navigate = useNavigate();
   const hoveredCamera = useRef();
   const hoveredEvent = useRef();
@@ -244,6 +246,7 @@ export default function MapWrapper({
     });
 
     mapRef.current.on('click', (e) => {
+      setIconClicked(false);
       const coordinate = e.coordinate;
       // check if it was a webcam icon that was clicked
       layers.current['webcamsLayer']
@@ -266,7 +269,7 @@ export default function MapWrapper({
               cameraHandler(featureDetails);
             }
           } else {
-            iconClicked.current = true;
+            setIconClicked(true);
             // reset previous clicked feature
             if (clickedCamera.current) {
               clickedCamera.current.setStyle(cameraStyles['static']);
@@ -309,7 +312,7 @@ export default function MapWrapper({
       layers.current["eventsLayer"]
         .getFeatures(e.pixel)
         .then((clickedFeatures) => {
-          iconClicked.current = true;
+          setIconClicked(true);
           if (clickedFeatures[0]) {
             const feature = clickedFeatures[0];
             const severity = feature.get("severity").toLowerCase();
@@ -358,7 +361,7 @@ export default function MapWrapper({
         });
 
       // if neither, hide any existing popup
-      if (iconClicked.current === true) {
+      if (iconClicked === false) {
         popup.current.setPosition(undefined);
         clickedWebcam.current = null;
 
@@ -526,7 +529,7 @@ export default function MapWrapper({
   function closePopup(event) {
     event.stopPropagation();
     popup.current.setPosition(undefined);
-    iconClicked.current = false;
+    setIconClicked(false);
     // check for active camera icons
     if(clickedCamera.current) {
       clickedCamera.current.setStyle(cameraStyles['static']);
@@ -686,7 +689,7 @@ export default function MapWrapper({
         </Button>
       )}
 
-      {isPreview ? (
+      {isPreview && (
           <Button
           className="map-btn cam-location"
           variant="outline-primary"
@@ -695,7 +698,8 @@ export default function MapWrapper({
           <FontAwesomeIcon icon={faLocationCrosshairs} />
           Camera location
         </Button>
-      ) :
+      )}
+      {(!isPreview && !iconClicked || largeScreen) && (
       <Button
           className="map-btn my-location"
           variant="outline-primary"
@@ -703,7 +707,7 @@ export default function MapWrapper({
         >
           <FontAwesomeIcon icon={faLocationCrosshairs} />
           My location
-        </Button>
+        </Button>)
       }
 
       <Button

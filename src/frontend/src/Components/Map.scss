@@ -297,6 +297,11 @@
         margin-right: 8px;
       }
     }
+    &.map-view, &.my-location {
+      svg {
+        margin-right: 8px;
+      }
+    }
 
     &.map-view {
       position: absolute;
