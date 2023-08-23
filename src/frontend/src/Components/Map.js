@@ -38,6 +38,7 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 import ImageWMS from 'ol/source/ImageWMS.js';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay.js';
+import Geolocation from 'ol/Geolocation.js';
 import MVT from 'ol/format/MVT.js';
 import {Point, LineString} from 'ol/geom';
 import VectorLayer from 'ol/layer/Vector';
@@ -70,6 +71,8 @@ export default function MapWrapper({
   const container = useRef();
   const content = useRef();
   const iconClicked = useRef(false);
+  const geolocation = useRef(null);
+  const geolocationTrack = useRef(false);
   const navigate = useNavigate();
   const hoveredCamera = useRef();
   const hoveredEvent = useRef();
@@ -230,6 +233,10 @@ export default function MapWrapper({
       view: mapView.current,
       controls: [new ZoomSlider(), new ScaleLine({units: 'metric'})],
     });
+
+    geolocation.current = new Geolocation({
+      projection: mapView.current.getProjection()
+    })
 
     mapRef.current.once('loadend', () => {
       loadWebcams();
@@ -600,6 +607,11 @@ export default function MapWrapper({
     }
   }
 
+  function toggleMyLocation() {
+    geolocationTrack.current = !geolocationTrack.current;
+    geolocation.current.setTracking(geolocationTrack.current);
+  }
+
   function handleCenter() {
     if(typeof camera === "string"){
       camera = JSON.parse(camera);
@@ -674,7 +686,7 @@ export default function MapWrapper({
         </Button>
       )}
 
-      {isPreview && (
+      {isPreview ? (
           <Button
           className="map-btn cam-location"
           variant="outline-primary"
@@ -683,7 +695,16 @@ export default function MapWrapper({
           <FontAwesomeIcon icon={faLocationCrosshairs} />
           Camera location
         </Button>
-      )}
+      ) :
+      <Button
+          className="map-btn my-location"
+          variant="outline-primary"
+          onClick={toggleMyLocation}
+        >
+          <FontAwesomeIcon icon={faLocationCrosshairs} />
+          My location
+        </Button>
+      }
 
       <Button
         className="map-btn zoom-in"
