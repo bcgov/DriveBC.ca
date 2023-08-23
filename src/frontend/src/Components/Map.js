@@ -30,7 +30,7 @@ import {fromLonLat} from 'ol/proj';
 import {Style} from 'ol/style.js';
 import {Image as ImageLayer} from 'ol/layer.js';
 import {MapContext} from '../App.js';
-import {ZoomSlider} from 'ol/control.js';
+import {ZoomSlider, ScaleLine} from 'ol/control.js';
 import * as ol from 'ol';
 import Cluster from 'ol/source/Cluster.js';
 import Feature from 'ol/Feature.js';
@@ -224,7 +224,7 @@ export default function MapWrapper({
         ],
       overlays: [popup.current],
       view: mapView.current,
-      controls: [new ZoomSlider()],
+      controls: [new ZoomSlider(), new ScaleLine({units: 'metric'})],
     });
 
     mapRef.current.once('loadend', () => {
