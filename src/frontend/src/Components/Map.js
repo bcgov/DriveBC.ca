@@ -19,7 +19,7 @@ import { getEvents } from "./data/events.js";
 import { getWebcams } from "./data/webcams.js";
 import Layers from "./Layers.js";
 import Routes from "./Routes.js";
-import { eventStyles, webcamStyles } from "./data/eventStyleDefinitions.js";
+import { eventStyles, cameraStyles } from "./data/eventStyleDefinitions.js";
 import FriendlyTime from "./FriendlyTime";
 import EventTypeIcon from "./EventTypeIcon";
 
@@ -71,6 +71,10 @@ export default function MapWrapper({
   const content = useRef();
   const iconClicked = useRef(false);
   const navigate = useNavigate();
+  const hoveredCamera = useRef();
+  const hoveredEvent = useRef();
+  const clickedCamera = useRef();
+  const clickedEvent = useRef();
 
   function getCameraCircle(camera) {
     if (!camera) {
@@ -236,60 +240,88 @@ export default function MapWrapper({
       const coordinate = e.coordinate;
       // check if it was a webcam icon that was clicked
       layers.current['webcamsLayer']
-          .getFeatures(e.pixel)
-          .then((clickedFeatures) => {
-            if (clickedFeatures[0]) {
-              const clickedCamera =
-              clickedFeatures[0].values_.features[0].values_;
-              if (isPreview) {
-              // Only switch context on clicking cameras within circle
-                if (
-                  circle &&
-                circle.intersectsCoordinate(
-                    fromLonLat(clickedCamera.location.coordinates),
-                )
-                ) {
-                  mapView.current.animate({
-                    center: fromLonLat(clickedCamera.location.coordinates),
-                  });
+        .getFeatures(e.pixel)
+        .then((clickedFeatures) => {
+          if (clickedFeatures[0]) {
+            const featureDetails = clickedFeatures[0].values_.features[0].values_;
+            if (isPreview) {
+            // Only switch context on clicking cameras within circle
+              if (
+                circle &&
+              circle.intersectsCoordinate(
+                  fromLonLat(featureDetails.location.coordinates),
+              )
+              ) {
+                mapView.current.animate({
+                  center: fromLonLat(featureDetails.location.coordinates),
+                });
 
-                cameraHandler(clickedCamera);
-              }
-            } else {
-              iconClicked.current = true;
-              content.current.innerHTML =
-              `<div class="popup popup--camera">
-                <div class="popup__title">
-                  <p class="bold name">${clickedCamera.name}
-                  <p class="bold orientation">${clickedCamera.orientation}</p>
-                </div>
-                <div class="popup__description">
-                  <p>${clickedCamera.caption}</p>
-                  <div class="camera-image">
-                    <img src="${clickedCamera.links.imageSource}" width='300'>
-                    <div class="timestamp">
-                      <p class="driveBC">Drive<span>BC</span></p>
-                      <p>` +
-                      ReactDOMServer.renderToString(<FriendlyTime date={clickedCamera.last_update_modified} />)
-                      + `</p>
-                    </div>
+              cameraHandler(featureDetails);
+            }
+          } else {
+            iconClicked.current = true;
+            // reset previous clicked feature
+            if (clickedCamera.current) {
+              clickedCamera.current.setStyle(cameraStyles["static"]);
+            }
+            else if (clickedEvent.current) {
+              clickedEvent.current.setStyle(eventStyles["static"]);
+              clickedEvent.current = null;
+            }
+            // set new clicked camera feature
+            clickedCamera.current = clickedFeatures[0];
+            clickedCamera.current.setStyle(cameraStyles["active"]);
+            clickedCamera.current.setProperties({"clicked": true}, true);
+
+            content.current.innerHTML =
+            `<div class="popup popup--camera">
+              <div class="popup__title">
+                <p class="bold name">${featureDetails.name}
+                <p class="bold orientation">${featureDetails.orientation}</p>
+              </div>
+              <div class="popup__description">
+                <p>${featureDetails.caption}</p>
+                <div class="camera-image">
+                  <img src="${featureDetails.links.imageSource}" width='300'>
+                  <div class="timestamp">
+                    <p class="driveBC">Drive<span>BC</span></p>
+                    <p>` +
+                    ReactDOMServer.renderToString(<FriendlyTime date={featureDetails.last_update_modified} />)
+                    + `</p>
                   </div>
                 </div>
-              </div>`;
-                popup.current.setPosition(coordinate);
-                clickedWebcam.current = clickedCamera;
-            }
+              </div>
+            </div>`;
+            popup.current.setPosition(coordinate);
+            clickedWebcam.current = featureDetails;
           }
-        });
+        }
+      });
 
       // if it wasn't a webcam icon, check if it was an event
       layers.current["eventsLayer"]
         .getFeatures(e.pixel)
         .then((clickedFeatures) => {
+          iconClicked.current = true;
           if (clickedFeatures[0]) {
             const feature = clickedFeatures[0];
             const severity = feature.get("severity").toLowerCase();
             const eventType = feature.get("event_type").toLowerCase();
+
+            // reset previous clicked feature
+            if (clickedCamera.current) {
+              clickedCamera.current.setStyle(cameraStyles["static"]);
+              clickedCamera.current = null;
+            }
+            else if (clickedEvent.current) {
+              clickedEvent.current.setStyle(eventStyles["static"]);
+            }
+
+            // set new clicked event feature
+            clickedEvent.current = clickedFeatures[0];
+            clickedEvent.current.setStyle(eventStyles["active"]);
+            clickedEvent.current.setProperties({"clicked": true}, true);
+
             content.current.innerHTML =
             `<div class="popup popup--delay ${severity}">
               <div class="popup__title">
@@ -315,15 +347,69 @@ export default function MapWrapper({
             </div>`;
 
             popup.current.setPosition(coordinate);
-            iconClicked.current = true;
           }
         });
 
       // if neither, hide any existing popup
-      if (!iconClicked.current === false) {
+      if (iconClicked.current === true) {
         popup.current.setPosition(undefined);
         clickedWebcam.current = null;
+
+        // reset previous clicked feature
+        if (clickedCamera.current) {
+          clickedCamera.current.setStyle(cameraStyles["static"]);
+        }
+        else if (clickedEvent.current) {
+          clickedEvent.current.setStyle(eventStyles["static"]);
+        }
+
+        clickedCamera.current = null;
+        clickedEvent.current = null;
       }
+    });
+
+    mapRef.current.on('pointermove', (e) => {
+      // check if it was a camera icon that was hovered on
+      layers.current["webcamsLayer"]
+        .getFeatures(e.pixel)
+        .then((hoveredFeatures) => {
+          if (hoveredFeatures[0]) {
+            hoveredCamera.current = hoveredFeatures[0];
+            if (!hoveredCamera.current.getProperties().clicked) {
+              hoveredCamera.current.setStyle(cameraStyles["hover"]);
+            }
+
+          } else if (hoveredCamera.current) {
+            if (!hoveredCamera.current.getProperties().clicked) {
+              hoveredCamera.current.setStyle(cameraStyles["static"]);
+            }
+
+            hoveredCamera.current = null;
+          }
+      });
+
+      // if it wasn't a camera icon, check if it was an event
+      layers.current["eventsLayer"]
+        .getFeatures(e.pixel)
+        .then((hoveredFeatures) => {
+          if (hoveredFeatures[0]) {
+            hoveredEvent.current = hoveredFeatures[0];
+            if (!hoveredEvent.current.getProperties().clicked) {
+              if (hoveredEvent.current.values_.location.type === 'Point') {
+                hoveredEvent.current.setStyle(eventStyles["hover"]);
+              }
+            }
+
+          } else if (hoveredEvent.current) {
+            if (!hoveredEvent.current.getProperties().clicked) {
+              if (hoveredEvent.current.values_.location.type === 'Point') {
+                hoveredEvent.current.setStyle(eventStyles["static"]);
+              }
+            }
+
+            hoveredEvent.current = null;
+          }
+      });
     });
   }, []);
 
@@ -363,7 +449,7 @@ export default function MapWrapper({
           },
         }),
       }),
-      style: webcamStyles['default'],
+      style: cameraStyles['static'],
     });
 
     mapRef.current.addLayer(layers.current['webcamsLayer']);
@@ -415,7 +501,7 @@ export default function MapWrapper({
       style: function(feature, resolution) {
         return feature.values_.location.type === 'LineString' ?
           eventStyles['RoadConditions'] :
-          eventStyles['Points'];
+          eventStyles['static'];
       },
     });
     mapRef.current.addLayer(layers.current['eventsLayer']);
@@ -434,6 +520,19 @@ export default function MapWrapper({
   function closePopup(event) {
     event.stopPropagation();
     popup.current.setPosition(undefined);
+    iconClicked.current = false;
+    // check for active camera icons
+    if(clickedCamera.current) {
+      clickedCamera.current.setStyle(cameraStyles["static"]);
+      clickedCamera.current.set("clicked", "false");
+      clickedCamera.current = null;
+    }
+    // check for active event icons
+    if(clickedEvent.current) {
+      clickedEvent.current.setStyle(eventStyles["static"]);
+      clickedEvent.current.set("clicked", "false");
+      clickedEvent.current = null;
+    }
   }
 
   function zoomIn() {
