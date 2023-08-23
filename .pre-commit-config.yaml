@@ -81,15 +81,20 @@ repos:
     -   id: eslint
         args: [--ext, '.js', --ext, '.cjs', --ext, '.jsx', --rule, 'import/no-unresolved: 0', '--fix']
         additional_dependencies:
-        -   eslint-config-airbnb-base@14.2.1
-        -   eslint-config-airbnb@18.2.1
+        -   eslint@8.28.0
+        -   eslint-config-google@0.7.1
+        -   eslint-loader@1.6.1
+        -   babel-eslint@6.1.2
+        -   eslint-config-prettier@^3.3.0
+        -   eslint-plugin-prettier@^3.1.0
+        -   prettier@^3.0.2
         -   eslint-plugin-mocha@8.0.0
         -   eslint-plugin-compat@3.11.1
         -   eslint-plugin-import@2.24.2
         -   eslint-plugin-jsx-a11y@6.4.1
         -   eslint-plugin-react-hooks@4.2.0
         -   eslint-plugin-react@7.25.1
-        -   eslint@8.28.0
+        entry: bash -c "cd src/frontend && npx eslint --fix 'src/**/*.js'"
         stages: [commit]
         exclude: '^(frontend/(build/|dist/|public/)|backend/.+/static/.*/vendor/)'
         types: [file]

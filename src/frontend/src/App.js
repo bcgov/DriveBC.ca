@@ -1,6 +1,6 @@
 // React
-import React, {createContext, useState} from 'react';
-import {Route, Routes} from 'react-router-dom';
+import React, { createContext, useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
 
 // Styling
 import '@bcgov/bc-sans/css/BCSans.css';
@@ -16,27 +16,28 @@ import ScrollToTop from './Components/ScrollToTop';
 
 export const MapContext = createContext(null);
 
-
 function App() {
   function getInitialMapContext() {
     const context = localStorage.getItem('mapContext');
-    return context ? JSON.parse(context) : {
-      visible_layers: {
-        eventsLayer: true,
-        highwayLayer: false,
-        open511Layer: false,
-        webcamsLayer: true,
-      },
-    };
+    return context
+      ? JSON.parse(context)
+      : {
+          visible_layers: {
+            eventsLayer: true,
+            highwayLayer: false,
+            open511Layer: false,
+            webcamsLayer: true,
+          },
+        };
   }
 
   const [mapContext, setMapContext] = useState(getInitialMapContext());
 
   return (
-    <MapContext.Provider value={{mapContext, setMapContext}}>
+    <MapContext.Provider value={{ mapContext, setMapContext }}>
       <div className="App">
         <Header />
-        <ScrollToTop/>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<MapPage />} />
           <Route path="/cameras-page" element={<CamerasPage />} />
