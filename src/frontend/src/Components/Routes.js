@@ -84,4 +84,4 @@ export default function Routes({open, routeHandler, setRoutesOpen, setStartToLoc
 
     </div>
   );
-};
+}

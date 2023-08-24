@@ -13,13 +13,14 @@ import {
   faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
+import {useMediaQuery} from '@uidotdev/usehooks';
 
 // Components and functions
 import { getEvents } from "./data/events.js";
 import { getWebcams } from "./data/webcams.js";
 import Layers from "./Layers.js";
 import Routes from "./Routes.js";
-import { eventStyles, webcamStyles } from "./data/eventStyleDefinitions.js";
+import { eventStyles, cameraStyles } from "./data/eventStyleDefinitions.js";
 import FriendlyTime from "./FriendlyTime";
 import EventTypeIcon from "./EventTypeIcon";
 
@@ -30,7 +31,7 @@ import {fromLonLat} from 'ol/proj';
 import {Style} from 'ol/style.js';
 import {Image as ImageLayer} from 'ol/layer.js';
 import {MapContext} from '../App.js';
-import {ZoomSlider} from 'ol/control.js';
+import {ZoomSlider, ScaleLine} from 'ol/control.js';
 import * as ol from 'ol';
 import Cluster from 'ol/source/Cluster.js';
 import Feature from 'ol/Feature.js';
@@ -38,6 +39,7 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 import ImageWMS from 'ol/source/ImageWMS.js';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay.js';
+// import Geolocation from 'ol/Geolocation.js';
 import MVT from 'ol/format/MVT.js';
 import {Point, LineString} from 'ol/geom';
 import VectorLayer from 'ol/layer/Vector';
@@ -69,51 +71,57 @@ export default function MapWrapper({
   const [routesOpen, setRoutesOpen] = useState(false);
   const container = useRef();
   const content = useRef();
-  const iconClicked = useRef(false);
+  const [iconClicked, setIconClicked] = useState(false);
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
   const navigate = useNavigate();
 
-  
-  function centerMapToLocation(coordinates) {
-    if (mapRef.current) {
-      const view = mapRef.current.getView();
-      view.setCenter(fromLonLat(coordinates));
-    }
-  };
+  const hoveredCamera = useRef();
+  const hoveredEvent = useRef();
+  const clickedCamera = useRef();
+  const clickedEvent = useRef();
 
-  function addMarker(coordinates) {
-    const svgMarkup = `
-                  <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
-                    <defs>
-                      <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="40%" style="stop-color:#2790F3;stop-opacity:0.5" />
-                        <stop offset="40%" style="stop-color:#7496EC;stop-opacity:0.5" />
-                      </linearGradient>
-                    </defs>
-                    <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
-                    <defs>
-                      <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="100%" style="stop-color:#2970F3;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#7496EC;stop-opacity:1" />
-                      </linearGradient>
-                    </defs>
-                    <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
-                  </svg>
-                `;
-
-    const svgImage = new Image();
-    svgImage.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgMarkup);
-
-    // Create an overlay for the marker
-    const markerOverlay = new Overlay({
-      position: fromLonLat(coordinates),
-      positioning: "bottom-center",
-      element: svgImage,
-      stopEvent: false, // Allow interactions with the overlay content
+function centerMyLocation(coordinates) {
+  if (mapRef.current) {
+    mapView.current.animate({
+      center: fromLonLat(coordinates),
     });
+  }
+}
 
-    // Add the overlay to the map
-    mapRef.current.addOverlay(markerOverlay);
-  };
+function addMyLocationPinPoint(coordinates) {
+  const svgMarkup = `
+                <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
+                  <defs>
+                    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="40%" style="stop-color:#2790F3;stop-opacity:0.5" />
+                      <stop offset="40%" style="stop-color:#7496EC;stop-opacity:0.5" />
+                    </linearGradient>
+                  </defs>
+                  <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
+                  <defs>
+                    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="100%" style="stop-color:#2970F3;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#7496EC;stop-opacity:1" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
+                </svg>
+              `;
+
+  const svgImage = new Image();
+  svgImage.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgMarkup);
+
+  // Create an overlay for the marker
+  const markerOverlay = new Overlay({
+    position: fromLonLat(coordinates),
+    positioning: "bottom-center",
+    element: svgImage,
+    stopEvent: false, // Allow interactions with the overlay content
+  });
+
+  // Add the overlay to the map
+  mapRef.current.addOverlay(markerOverlay);
+}
 
 
   function getCameraCircle(camera) {
@@ -121,6 +129,7 @@ export default function MapWrapper({
       return {};
     }
 
+    
     if(typeof camera === "string"){
       camera = JSON.parse(camera);
     }
@@ -268,23 +277,8 @@ export default function MapWrapper({
         ],
       overlays: [popup.current],
       view: mapView.current,
-      controls: [new ZoomSlider()],
+      controls: [new ZoomSlider(), new ScaleLine({units: 'metric'})],
     });
-
-    // Get user's current location
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          centerMapToLocation([longitude, latitude]);
-          addMarker([longitude, latitude]);
-        },
-        (error) => {
-          console.error('Error getting user location:', error);
-        }
-      );
-    }
-    
 
     mapRef.current.once('loadend', () => {
       loadWebcams();
@@ -292,63 +286,92 @@ export default function MapWrapper({
     });
 
     mapRef.current.on('click', (e) => {
+      setIconClicked(false);
       const coordinate = e.coordinate;
       // check if it was a webcam icon that was clicked
       layers.current['webcamsLayer']
-          .getFeatures(e.pixel)
-          .then((clickedFeatures) => {
-            if (clickedFeatures[0]) {
-              const clickedCamera =
-              clickedFeatures[0].values_.features[0].values_;
-              if (isPreview) {
-              // Only switch context on clicking cameras within circle
-                if (
-                  circle &&
-                circle.intersectsCoordinate(
-                    fromLonLat(clickedCamera.location.coordinates),
-                )
-                ) {
-                  mapView.current.animate({
-                    center: fromLonLat(clickedCamera.location.coordinates),
-                  });
+        .getFeatures(e.pixel)
+        .then((clickedFeatures) => {
+          if (clickedFeatures[0]) {
+            const featureDetails = clickedFeatures[0].values_.features[0].values_;
+            if (isPreview) {
+            // Only switch context on clicking cameras within circle
+              if (
+                circle &&
+              circle.intersectsCoordinate(
+                  fromLonLat(featureDetails.location.coordinates),
+              )
+              ) {
+                mapView.current.animate({
+                  center: fromLonLat(featureDetails.location.coordinates),
+                });
 
-                cameraHandler(clickedCamera);
-              }
-            } else {
-              iconClicked.current = true;
-              content.current.innerHTML =
-              `<div class="popup popup--camera">
-                <div class="popup__title">
-                  <p class="bold name">${clickedCamera.name}
-                  <p class="bold orientation">${clickedCamera.orientation}</p>
-                </div>
-                <div class="popup__description">
-                  <p>${clickedCamera.caption}</p>
-                  <div class="camera-image">
-                    <img src="${clickedCamera.links.imageSource}" width='300'>
-                    <div class="timestamp">
-                      <p class="driveBC">Drive<span>BC</span></p>
-                      <p>` +
-                      ReactDOMServer.renderToString(<FriendlyTime date={clickedCamera.last_update_modified} />)
-                      + `</p>
-                    </div>
+              cameraHandler(featureDetails);
+            }
+          } else {
+            setIconClicked(true);
+            // reset previous clicked feature
+            if (clickedCamera.current) {
+              clickedCamera.current.setStyle(cameraStyles['static']);
+            }
+            else if (clickedEvent.current) {
+              clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'static'));
+              clickedEvent.current = null;
+            }
+            // set new clicked camera feature
+            clickedCamera.current = clickedFeatures[0];
+            clickedCamera.current.setStyle(cameraStyles['active']);
+            clickedCamera.current.setProperties({"clicked": true}, true);
+
+            content.current.innerHTML =
+            `<div class="popup popup--camera">
+              <div class="popup__title">
+                <p class="bold name">${featureDetails.name}
+                <p class="bold orientation">${featureDetails.orientation}</p>
+              </div>
+              <div class="popup__description">
+                <p>${featureDetails.caption}</p>
+                <div class="camera-image">
+                  <img src="${featureDetails.links.imageSource}" width='300'>
+                  <div class="timestamp">
+                    <p class="driveBC">Drive<span>BC</span></p>
+                    <p>` +
+                    ReactDOMServer.renderToString(<FriendlyTime date={featureDetails.last_update_modified} />)
+                    + `</p>
                   </div>
                 </div>
-              </div>`;
-                popup.current.setPosition(coordinate);
-                clickedWebcam.current = clickedCamera;
-            }
+              </div>
+            </div>`;
+            popup.current.setPosition(coordinate);
+            clickedWebcam.current = featureDetails;
           }
-        });
+        }
+      });
 
       // if it wasn't a webcam icon, check if it was an event
       layers.current["eventsLayer"]
         .getFeatures(e.pixel)
         .then((clickedFeatures) => {
+          setIconClicked(true);
           if (clickedFeatures[0]) {
             const feature = clickedFeatures[0];
             const severity = feature.get("severity").toLowerCase();
             const eventType = feature.get("event_type").toLowerCase();
+
+            // reset previous clicked feature
+            if (clickedCamera.current) {
+              clickedCamera.current.setStyle(cameraStyles['static']);
+              clickedCamera.current = null;
+            }
+            else if (clickedEvent.current) {
+              clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'static'));
+            }
+
+            // set new clicked event feature
+            clickedEvent.current = clickedFeatures[0];
+            clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'active'));
+            clickedEvent.current.setProperties({"clicked": true}, true);
+
             content.current.innerHTML =
             `<div class="popup popup--delay ${severity}">
               <div class="popup__title">
@@ -374,15 +397,68 @@ export default function MapWrapper({
             </div>`;
 
             popup.current.setPosition(coordinate);
-            iconClicked.current = true;
           }
         });
 
       // if neither, hide any existing popup
-      if (!iconClicked.current === false) {
+      if (iconClicked === false) {
         popup.current.setPosition(undefined);
         clickedWebcam.current = null;
+
+        // reset previous clicked feature
+        if (clickedCamera.current) {
+          clickedCamera.current.setStyle(cameraStyles['static']);
+        }
+        else if (clickedEvent.current) {
+          clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'static'));
+        }
+
+        clickedCamera.current = null;
+        clickedEvent.current = null;
       }
+    });
+
+    mapRef.current.on('pointermove', (e) => {
+      // check if it was a camera icon that was hovered on
+      layers.current["webcamsLayer"]
+        .getFeatures(e.pixel)
+        .then((hoveredFeatures) => {
+          if (hoveredFeatures[0]) {
+            hoveredCamera.current = hoveredFeatures[0];
+            if (!hoveredCamera.current.getProperties().clicked) {
+              hoveredCamera.current.setStyle(cameraStyles['hover']);
+            }
+
+          } else if (hoveredCamera.current) {
+            if (!hoveredCamera.current.getProperties().clicked) {
+              hoveredCamera.current.setStyle(cameraStyles['static']);
+            }
+
+            hoveredCamera.current = null;
+          }
+      });
+
+      // if it wasn't a camera icon, check if it was an event
+      layers.current["eventsLayer"]
+        .getFeatures(e.pixel)
+        .then((hoveredFeatures) => {
+          if (hoveredFeatures[0]) {
+            hoveredEvent.current = hoveredFeatures[0];
+            if (!hoveredEvent.current.getProperties().clicked) {
+              if (hoveredEvent.current.values_.location.type === 'Point') {
+                hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'hover'));
+              }
+            }
+
+          } else if (hoveredEvent.current) {
+            if (!hoveredEvent.current.getProperties().clicked) {
+              if (hoveredEvent.current.values_.location.type === 'Point') {
+                hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'static'));
+              }
+            }
+            hoveredEvent.current = null;
+          }
+      });
     });
   }, []);
 
@@ -422,7 +498,7 @@ export default function MapWrapper({
           },
         }),
       }),
-      style: webcamStyles['default'],
+      style: cameraStyles['static'],
     });
 
     mapRef.current.addLayer(layers.current['webcamsLayer']);
@@ -473,8 +549,8 @@ export default function MapWrapper({
       }),
       style: function(feature, resolution) {
         return feature.values_.location.type === 'LineString' ?
-          eventStyles['RoadConditions'] :
-          eventStyles['Points'];
+          eventStyles['segments']['static'] :
+          getEventIcon(feature, 'static')
       },
     });
     mapRef.current.addLayer(layers.current['eventsLayer']);
@@ -493,7 +569,54 @@ export default function MapWrapper({
   function closePopup(event) {
     event.stopPropagation();
     popup.current.setPosition(undefined);
+    setIconClicked(false);
+    // check for active camera icons
+    if(clickedCamera.current) {
+      clickedCamera.current.setStyle(cameraStyles['static']);
+      clickedCamera.current.set("clicked", "false");
+      clickedCamera.current = null;
+    }
+    // check for active event icons
+    if(clickedEvent.current) {
+      clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'static'));
+      clickedEvent.current.set("clicked", "false");
+      clickedEvent.current = null;
+    }
   }
+
+  const getEventIcon = (event, state) => {
+    const severity = event.get("severity").toLowerCase();
+    const type = event.get("event_type").toLowerCase();
+
+    if (severity === 'major') {
+      switch (type) {
+        case 'incident':
+          return eventStyles['major_incident'][state];
+        case 'construction':
+          return eventStyles['major_construction'][state];
+        case 'special_event':
+          return eventStyles['major_special_event'][state];
+        case 'weather_condition':
+          return eventStyles['major_weather_condition'][state];
+        default:
+          return eventStyles['major_incident'][state];
+      }
+    }
+    else {
+      switch (type) {
+        case 'incident':
+          return eventStyles['incident'][state];
+        case 'construction':
+          return eventStyles['construction'][state];
+        case 'special_event':
+          return eventStyles['special_event'][state];
+        case 'weather_condition':
+          return eventStyles['weather_condition'][state];
+        default:
+          return eventStyles['incident'][state];
+      }
+    }
+  };
 
   function zoomIn() {
     if (!mapRef.current) {
@@ -518,12 +641,28 @@ export default function MapWrapper({
   }
 
   function handleRecenter() {
-    // TODO: reimpliment this in OpenLayers
     if (camera) {
       mapView.current.animate({
         center: fromLonLat(camera.location.coordinates),
       });
+      
       return;
+    }
+    
+  }
+
+  function toggleMyLocation() {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude } = position.coords;
+          centerMyLocation([longitude, latitude]);
+          addMyLocationPinPoint([longitude, latitude]);
+        },
+        error => {
+          console.error('Error getting user location:', error);
+        },
+      );
     }
   }
 
@@ -611,6 +750,16 @@ export default function MapWrapper({
           Camera location
         </Button>
       )}
+      {(!isPreview && !iconClicked || largeScreen) && (
+      <Button
+          className="map-btn my-location"
+          variant="outline-primary"
+          onClick={toggleMyLocation}
+        >
+          <FontAwesomeIcon icon={faLocationCrosshairs} />
+          My location
+        </Button>)
+      }
 
       <Button
         className="map-btn zoom-in"

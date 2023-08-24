@@ -90,4 +90,4 @@ export default function Layers({open, setLayersOpen, toggleLayer}) {
       </div>
     </div>
   );
-};
+}

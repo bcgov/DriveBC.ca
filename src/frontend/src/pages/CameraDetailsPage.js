@@ -188,7 +188,7 @@ export default function CameraDetailsPage() {
   const shouldRenderReplay = () => {
     if (!lastUpdate) {
       return false
-    };
+    }
 
     const lastUpdatedDate = Date.parse(lastUpdate);
     const oneDayAgo = new Date().getTime() - (1 * 24 * 60 * 60 * 1000);

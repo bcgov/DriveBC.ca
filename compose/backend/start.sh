@@ -14,4 +14,7 @@ python manage.py createsuperuser \
     --email $DJANGO_SUPERUSER_EMAIL || true 2> /dev/null
 
 echo 'creating superuser done; starting service'
-python manage.py runserver 0.0.0.0:8000
+# python manage.py runserver 0.0.0.0:8000
+#trap : TERM INT; sleep 9999999999d & wait
+export DJANGO_SETTINGS_MODULE=config.settings
+gunicorn -b 0.0.0.0 config.wsgi 2> /dev/null
