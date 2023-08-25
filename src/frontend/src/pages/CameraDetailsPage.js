@@ -81,7 +81,7 @@ export default function CameraDetailsPage() {
     // Replay images
     const replayImageList = await getWebcamReplay(camera);
     const replayImages = replayImageList.map((url) => {
-      return {original: 'https://images.drivebc.ca/ReplayTheDay/archive/'.concat(`${camera.id}/${url}.jpg`)};
+      return {original: `//${process.env.REACT_APP_REPLAY_THE_DAY}${camera.id}/${url}.jpg`};
     });
     setReplayImages(replayImages);
   }

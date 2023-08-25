@@ -1,5 +1,13 @@
+from pathlib import Path
+
+import environ
 from apps.webcam.models import Webcam
 from rest_framework import serializers
+
+# Base dir and env
+BASE_DIR = Path(__file__).resolve().parents[4]
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
 
 
 class WebcamSerializer(serializers.ModelSerializer):
@@ -13,7 +21,7 @@ class WebcamSerializer(serializers.ModelSerializer):
         )
 
     def get_links(self, obj):
-        api_root = "https://images.drivebc.ca/"
+        api_root = env("DRIVEBC_IMAGE_API_BASE_URL")
         webcam_id = obj.id
 
         links = {
