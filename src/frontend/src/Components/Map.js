@@ -379,46 +379,50 @@ export default function MapWrapper({
     });
 
     mapRef.current.on('pointermove', (e) => {
-      // check if it was a camera icon that was hovered on
-      layers.current["webcamsLayer"]
-        .getFeatures(e.pixel)
-        .then((hoveredFeatures) => {
-          if (hoveredFeatures[0]) {
-            hoveredCamera.current = hoveredFeatures[0];
-            if (!hoveredCamera.current.getProperties().clicked) {
-              hoveredCamera.current.setStyle(cameraStyles['hover']);
-            }
-
-          } else if (hoveredCamera.current) {
-            if (!hoveredCamera.current.getProperties().clicked) {
-              hoveredCamera.current.setStyle(cameraStyles['static']);
-            }
-
-            hoveredCamera.current = null;
-          }
-      });
-
-      // if it wasn't a camera icon, check if it was an event
-      layers.current["eventsLayer"]
-        .getFeatures(e.pixel)
-        .then((hoveredFeatures) => {
-          if (hoveredFeatures[0]) {
-            hoveredEvent.current = hoveredFeatures[0];
-            if (!hoveredEvent.current.getProperties().clicked) {
-              if (hoveredEvent.current.values_.location.type === 'Point') {
-                hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'hover'));
+      if (layers.current && 'webcamsLayer' in layers.current) {
+        // check if it was a camera icon that was hovered on
+        layers.current["webcamsLayer"]
+          .getFeatures(e.pixel)
+          .then((hoveredFeatures) => {
+            if (hoveredFeatures[0]) {
+              hoveredCamera.current = hoveredFeatures[0];
+              if (!hoveredCamera.current.getProperties().clicked) {
+                hoveredCamera.current.setStyle(cameraStyles['hover']);
               }
-            }
 
-          } else if (hoveredEvent.current) {
-            if (!hoveredEvent.current.getProperties().clicked) {
-              if (hoveredEvent.current.values_.location.type === 'Point') {
-                hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'static'));
+            } else if (hoveredCamera.current) {
+              if (!hoveredCamera.current.getProperties().clicked) {
+                hoveredCamera.current.setStyle(cameraStyles['static']);
               }
+
+              hoveredCamera.current = null;
             }
-            hoveredEvent.current = null;
-          }
-      });
+        });
+      }
+
+      if (layers.current && 'eventsLayer' in layers.current) {
+        // if it wasn't a camera icon, check if it was an event
+        layers.current["eventsLayer"]
+          .getFeatures(e.pixel)
+          .then((hoveredFeatures) => {
+            if (hoveredFeatures[0]) {
+              hoveredEvent.current = hoveredFeatures[0];
+              if (!hoveredEvent.current.getProperties().clicked) {
+                if (hoveredEvent.current.values_.location.type === 'Point') {
+                  hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'hover'));
+                }
+              }
+
+            } else if (hoveredEvent.current) {
+              if (!hoveredEvent.current.getProperties().clicked) {
+                if (hoveredEvent.current.values_.location.type === 'Point') {
+                  hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'static'));
+                }
+              }
+              hoveredEvent.current = null;
+            }
+        });
+      }
     });
   }, []);
 
@@ -699,7 +703,7 @@ export default function MapWrapper({
           Camera location
         </Button>
       )}
-      {(!isPreview && !iconClicked || largeScreen) && (
+      {(!isPreview && (!iconClicked || largeScreen)) && (
       <Button
           className="map-btn my-location"
           variant="outline-primary"
