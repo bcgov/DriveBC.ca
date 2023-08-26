@@ -62,7 +62,7 @@ export default function WebcamCard({camera}) {
             <img className="card-img" src={ camera.links.imageSource } alt="stale_image"/>
             <div className="card-notification">
               <div className={'card-banner' + (show ? ' hidden' : ' bounce') }>
-                <p>Unable to retrieve the latest image, we`re displaying last image received.</p>
+                <p>Unable to retrieve latest image. Showing last image received.</p>
                 <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
               </div>
               <div className={'card-pill' + (show ? ' bounce' : ' hidden') } onClick={handleChildClick} >
@@ -78,7 +78,7 @@ export default function WebcamCard({camera}) {
             <img className="card-img" src={ camera.links.imageSource } alt="delayed_image" />
             <div className="card-notification">
               <div className={'card-banner' + (show ? ' hidden' : ' bounce') }>
-                <p>Experiencing longer than expected delay, displaying last image received.</p>
+                <p>Longer than expected delay, displaying last image received.</p>
                 <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
               </div>
               <div className={'card-pill' + (show ? ' bounce' : ' hidden') } onClick={handleChildClick} >

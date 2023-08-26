@@ -32,13 +32,7 @@ import {getWebcamReplay} from '../Components/data/webcams';
 import {HTML5toTouch} from 'rdndmb-html5-to-touch';
 import Map from '../Components/Map.js';
 import Footer from '../Footer.js';
-
-// Static files
-import BCHwyCrest from '../images/BCHwyCrest.svg';
-import BCHwyCrest1 from '../images/BCHwyCrest1.svg';
-import BCHwyCrest3 from '../images/BCHwyCrest3.svg';
-import BCHwyCrest5 from '../images/BCHwyCrest5.svg';
-import BCHwyCrest16 from '../images/BCHwyCrest16.svg';
+import highwayShield from '../Components/highwayShield.js';
 
 // Styling
 import './CameraDetailsPage.scss';
@@ -152,38 +146,6 @@ export default function CameraDetailsPage() {
     );
   };
 
-  const getHighwayShieldImg = (highway) => {
-    switch (highway) {
-      case '1':
-        return BCHwyCrest1;
-      case '3':
-        return BCHwyCrest3;
-      case '5':
-        return BCHwyCrest5;
-      case '16':
-        return BCHwyCrest16;
-      default:
-        return BCHwyCrest;
-    }
-  };
-
-  const getHighwayShield = (highway) => {
-    return (
-      <div className="camera-details__more__hwy">
-        <div className="highway-shield">
-          { ['1', '3', '5', '16'].indexOf(highway) < 0 &&
-            <span className="highway-shield__number">
-              {highway}
-            </span>
-          }
-
-          <img src={getHighwayShieldImg(highway)} alt="highway" />
-        </div>
-        <p className="label--more">Highway {highway}</p>
-      </div>
-    );
-  };
-
   // Helper functions
   const shouldRenderReplay = () => {
     if (!lastUpdate) {
@@ -216,8 +178,10 @@ export default function CameraDetailsPage() {
                 <p className="body--large">{camera.caption}</p>
               </div>
               <div className="camera-details__more">
-                {getHighwayShield(camera.highway)}
-
+                <div className="camera-details__more__hwy">
+                  {highwayShield(camera.highway)}
+                  <p className="label--more">Highway {camera.highway}</p>
+                </div>
                 <div className="camera-details__more__elevation">
                   <p className="elevation">
                     <span className="number">{camera.elevation}</span>m
