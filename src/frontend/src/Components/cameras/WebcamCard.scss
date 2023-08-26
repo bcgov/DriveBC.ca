@@ -6,7 +6,7 @@
   border: none;
   outline: 2px solid transparent;
   transition: all 0.3s ease;
-  width: 280px;
+  width: 100%;
   margin: 0 auto;
 
   @media (min-width: 576px) {
@@ -133,6 +133,7 @@
     color: $BC-Blue;
     transition: all 0.3s ease;
     font-size: 0.875em;
+    padding: 12px;
 
     &:hover {
       border-radius: 2px;
@@ -163,7 +164,7 @@
   &.unavailable {
     .card-img-box {
       background-color: $Surface-status-red;
-      padding: 18px;
+      padding: 12px;
     }
     .card-notification {
       .card-pill {
@@ -179,7 +180,7 @@
     }
 
     .unavailable-message {
-      margin-top: 24px;
+      margin-top: 48px;
 
       svg, p {
         color: $Error;

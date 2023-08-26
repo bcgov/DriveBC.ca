@@ -1,5 +1,7 @@
-// Third Party packages
+// React
 import React from 'react';
+
+// Third Party packages
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTriangleExclamation,

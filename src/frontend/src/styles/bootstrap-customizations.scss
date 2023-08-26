@@ -69,4 +69,8 @@ $danger: $Error;
   @media (min-width: 576px) {
     padding: 32px;
   }
+
+  @media (min-width: 1200px) {
+    padding: 32px 0;
+  }
 }
