@@ -48,7 +48,6 @@ class FeedClient:
         """Checks and returns the response if it has usable content.
         All responses with status 401 and up will be raised as an HTTP error.
         """
-        print("checking for errors...")
         if response and response.status_code <= httpx.codes.BAD_REQUEST:
             return response.json()
         elif response.status_code >= httpx.codes.UNAUTHORIZED:
