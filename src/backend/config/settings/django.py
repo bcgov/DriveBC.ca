@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import environ
@@ -16,7 +17,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Paths and urls
 APPEND_SLASH = True
 ROOT_URLCONF = "config.urls"
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # Security
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
@@ -36,6 +40,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
 TEMPLATES = [
@@ -96,6 +101,19 @@ THIRD_PARTY_APPS = [
     "rest_framework_gis",
     "django_filters",
     "corsheaders",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    "modelcluster",
+    "taggit",
 ]
 
 LOCAL_APPS = [

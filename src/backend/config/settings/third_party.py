@@ -28,3 +28,6 @@ HUEY = {
     },
     "immediate": False,
 }
+
+# Wagtail
+WAGTAIL_SITE_NAME = 'DriveBC'
