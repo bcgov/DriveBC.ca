@@ -8,13 +8,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 // Components and functions
 import {getWebcams} from '../data/webcams';
 import WebcamCard from './WebcamCard.js';
-
-// Static files
-import BCHwyCrest1 from '../../images/BCHwyCrest1.svg';
-import BCHwyCrest3 from '../../images/BCHwyCrest3.svg';
-import BCHwyCrest5 from '../../images/BCHwyCrest5.svg';
-import BCHwyCrest16 from '../../images/BCHwyCrest16.svg';
-import BCHwyCrest from '../../images/BCHwyCrest.svg';
+import highwayShield from '../highwayShield.js';
 
 // Styling
 import './CameraList.scss';
@@ -77,32 +71,7 @@ export default function CameraList() {
         <Container>
           <div className="highway-title">
             <div className="highway-shield-box">
-              {highway === '1' &&
-                <div className="highway-shield">
-                  <img src={BCHwyCrest1} alt="1"/>
-                </div>
-              }
-              {highway === '3' &&
-                <div className="highway-shield">
-                  <img src={BCHwyCrest3} alt="3"/>
-                </div>
-              }
-              {highway === '5' &&
-                <div className="highway-shield">
-                  <img src={BCHwyCrest5} alt="5"/>
-                </div>
-              }
-              {highway === '16' &&
-                <div className="highway-shield">
-                  <img src={BCHwyCrest16} alt="16"/>
-                </div>
-              }
-              {highway !== '1' && highway !== '3' && highway !== '5' && highway !== '16' &&
-                <div className="highway-shield">
-                  <span className="highway-shield__number">{highway}</span>
-                  <img src={BCHwyCrest} alt={highway}/>
-                </div>
-              }
+              {highwayShield(highway)}
             </div>
 
             <div className="highway-name">

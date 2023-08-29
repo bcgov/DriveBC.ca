@@ -42,11 +42,6 @@ services:
       dockerfile: ./compose/frontend/Dockerfile
       args:
         DEBUG_BUILD: true
-        API_HOST: ${API_HOST}
-        BASE_MAP: ${BASE_MAP}
-        MAP_STYLE: ${MAP_STYLE}
-        HIGHWAY_LAYER: ${HIGHWAY_LAYER}
-        OPEN511_LAYER: ${OPEN511_LAYER}
     stdin_open: true
     tty: true
     ports:
@@ -57,7 +52,7 @@ services:
       - /app/node_modules
     depends_on:
       - django
-    command: npm start
+    command: npm run start-frontend
 
   db:
     env_file: .env
