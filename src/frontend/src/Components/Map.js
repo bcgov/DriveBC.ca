@@ -39,7 +39,6 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 import ImageWMS from 'ol/source/ImageWMS.js';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay.js';
-// import Geolocation from 'ol/Geolocation.js';
 import MVT from 'ol/format/MVT.js';
 import {Point, LineString} from 'ol/geom';
 import VectorLayer from 'ol/layer/Vector';
@@ -90,22 +89,22 @@ function centerMyLocation(coordinates) {
 
 function addMyLocationPinPoint(coordinates) {
   const svgMarkup = `
-                <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
-                  <defs>
-                    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="40%" style="stop-color:#2790F3;stop-opacity:0.5" />
-                      <stop offset="40%" style="stop-color:#7496EC;stop-opacity:0.5" />
-                    </linearGradient>
-                  </defs>
-                  <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
-                  <defs>
-                    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="100%" style="stop-color:#2970F3;stop-opacity:1" />
-                      <stop offset="100%" style="stop-color:#7496EC;stop-opacity:1" />
-                    </linearGradient>
-                  </defs>
-                  <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
-                </svg>
+                  <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
+                    <defs>
+                      <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="40%" style="stop-color:#2790F3;stop-opacity:0.5" />
+                        <stop offset="40%" style="stop-color:#7496EC;stop-opacity:0.5" />
+                      </linearGradient>
+                    </defs>
+                    <circle id="circle1" cx="13" cy="13" r="13" fill="url(#gradient1)"/>
+                    <defs>
+                      <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="100%" style="stop-color:#2970F3;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#7496EC;stop-opacity:1" />
+                      </linearGradient>
+                    </defs>
+                    <circle cx="13" cy="13" r="6" fill="url(#gradient2)" stroke="white" stroke-width="2" />
+                  </svg>
               `;
 
   const svgImage = new Image();
