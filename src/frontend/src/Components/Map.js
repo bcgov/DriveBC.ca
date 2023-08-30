@@ -96,14 +96,14 @@ function addMyLocationPinPoint(coordinates) {
                         <stop offset="40%" style="stop-color:#7496EC;stop-opacity:0.5" />
                       </linearGradient>
                     </defs>
-                    <circle id="circle1" cx="13" cy="13" r="13" fill="url(#gradient1)"/>
+                    <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
                     <defs>
                       <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="100%" style="stop-color:#2970F3;stop-opacity:1" />
                         <stop offset="100%" style="stop-color:#7496EC;stop-opacity:1" />
                       </linearGradient>
                     </defs>
-                    <circle cx="13" cy="13" r="6" fill="url(#gradient2)" stroke="white" stroke-width="2" />
+                    <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
                   </svg>
               `;
 
@@ -118,8 +118,14 @@ function addMyLocationPinPoint(coordinates) {
     stopEvent: false, // Allow interactions with the overlay content
   });
 
-  // Add the overlay to the map
+  mapRef.current.on('moveend', function (event) {
+  const newZoom = mapRef.current.getView().getZoom();
+  // Calculate new marker size based on the zoom level
+  const newSize = 44 * (newZoom / 10);
+  svgImage.style.width = newSize + 'px';
+  svgImage.style.height = newSize + 'px';
   mapRef.current.addOverlay(markerOverlay);
+});
 }
 
 
