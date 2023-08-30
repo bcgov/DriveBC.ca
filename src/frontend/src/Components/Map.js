@@ -341,7 +341,7 @@ export default function MapWrapper({
               <div class="popup__description">
                 <div class="delay-type">
                   <div class="bold delay-severity"><div class="delay-icon">` +
-                  ReactDOMServer.renderToString(<EventTypeIcon event_type={eventType} />)
+                  ReactDOMServer.renderToString(<EventTypeIcon eventType={eventType} />)
                   + `</div><p class="bold">${severity} delays</p></div>
                   <p class="bold friendly-time--mobile">` +
                     ReactDOMServer.renderToString(<FriendlyTime date={feature.get("last_updated")} />)
