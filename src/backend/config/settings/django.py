@@ -101,6 +101,7 @@ THIRD_PARTY_APPS = [
     "rest_framework_gis",
     "django_filters",
     "corsheaders",
+    'wagtail.api.v2',
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -122,6 +123,7 @@ LOCAL_APPS = [
     "apps.shared",
     "apps.event",
     "apps.webcam",
+    "apps.cms"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
