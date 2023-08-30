@@ -5,10 +5,6 @@ import {useNavigate} from 'react-router-dom';
 // Third party packages
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
-  faTriangleExclamation,
-  faPersonDigging,
-  faCalendarDays,
-  faSnowflake,
   faMapLocationDot,
   faFilter,
 } from '@fortawesome/free-solid-svg-icons';
@@ -25,6 +21,7 @@ import EventsTable from '../Components/events/EventsTable';
 import FriendlyTime from '../Components/FriendlyTime';
 import PageHeader from '../PageHeader';
 import Footer from '../Footer.js';
+import EventTypeIcon from '../Components/EventTypeIcon';
 
 // Styling
 import './EventsPage.scss';
@@ -34,30 +31,11 @@ export default function EventsPage() {
 
   const navigate = useNavigate();
 
-  // event type icons
-  const incident = <FontAwesomeIcon icon={faTriangleExclamation} alt="incident" />;
-  const construction = <FontAwesomeIcon icon={faPersonDigging} alt="construction" />;
-  const specialEvent = <FontAwesomeIcon icon={faCalendarDays} alt="special event" />;
-  const weatherCondition = <FontAwesomeIcon icon={faSnowflake} alt="weather condition" />;
-
   const columns = [
     {
       header: 'Type',
       accessorKey: 'event_type',
-      cell: (props) => {
-        switch (props.getValue().toLowerCase()) {
-          case 'incident':
-            return <span>{incident}</span>;
-          case 'construction':
-            return <span>{construction}</span>;
-          case 'special_event':
-            return <span>{specialEvent}</span>;
-          case 'weather_condition':
-            return <span>{weatherCondition}</span>;
-          default:
-            return <span>{incident}</span>;
-        }
-      },
+      cell: (props) => <EventTypeIcon eventType={props.getValue().toLowerCase()} />,
     },
     {
       header: 'Severity',
@@ -94,25 +72,21 @@ export default function EventsPage() {
     {
       id: 'checkbox-filter-incident',
       label: 'Incidents',
-      icon: incident,
       value: 'INCIDENT',
     },
     {
       id: 'checkbox-filter-weather',
       label: 'Road Conditions',
-      icon: weatherCondition,
       value: 'WEATHER_CONDITION',
     },
     {
       id: 'checkbox-filter-construction',
       label: 'Current Events',
-      icon: construction,
       value: 'CONSTRUCTION',
     },
     {
       id: 'checkbox-filter-special',
       label: 'Future Events',
-      icon: specialEvent,
       value: 'SPECIAL_EVENT',
     },
   ];
@@ -177,7 +151,6 @@ export default function EventsPage() {
   };
 
   const handleRoute = (event) => {
-    console.log('routing', event);
     navigate('/', {state: event});
   };
 
@@ -254,11 +227,12 @@ export default function EventsPage() {
               <div className="events-list">
                 { displayedEvents.map(
                   (e) => (
-                      <div className="card-selector" key={e.id} onClick={() => handleRoute(e)}>
-                    <EventCard
-                      className="event"
-                      event={e}
-                      icon={ filterProps.find((type) => type.value === e.event_type).icon } />
+                    <div className="card-selector" key={e.id} onClick={() => handleRoute(e)}>
+                      <EventCard
+                        className="event"
+                        event={e}
+                        icon= {<EventTypeIcon eventType={e.event_type.toLowerCase()} />}
+                      />
                     </div>
                   ),
                 )}
