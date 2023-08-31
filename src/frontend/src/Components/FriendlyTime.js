@@ -28,15 +28,16 @@ export default function FriendlyTime( {date} ) {
 
   // if difference is less than 24hrs
   if (timeDiff < 86400000 ) {
-    return <span
-            className={"friendly-time" + (showTooltip ? " showTooltip" : "") }
+    return <div
+            className={"friendly-time" }
             title={dateFormatted}
             onClick={(event) => {
               event.stopPropagation();
               setShowTooltip(!showTooltip)}
             }>
             <ReactTimeAgo date={date} locale="en-US"/>
-            </span>
+            <span className={"friendly-time__tooltip" + (showTooltip ? " showTooltip" : "")}>{dateFormatted}</span>
+          </div>
   }
 
   // else return formatted date without tooltip

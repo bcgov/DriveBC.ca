@@ -8,14 +8,15 @@ import {
   faArrowLeft,
   faArrowRotateRight,
   faExclamationTriangle,
-  faMagnifyingGlassLocation,
-  faVideo,
   faVideoSlash,
   faPlay,
   faPause,
   faBackward,
   faForward,
 } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFlag
+} from '@fortawesome/free-regular-svg-icons';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Tab from 'react-bootstrap/Tab';
@@ -24,7 +25,6 @@ import Button from 'react-bootstrap/Button';
 import ImageGallery from 'react-image-gallery';
 import RangeSlider from 'react-bootstrap-range-slider';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
-import FriendlyTime from '../Components/FriendlyTime';
 
 // Components and functions
 import {DndProvider} from 'react-dnd-multi-backend';
@@ -32,7 +32,9 @@ import {getWebcamReplay} from '../Components/data/webcams';
 import {HTML5toTouch} from 'rdndmb-html5-to-touch';
 import Map from '../Components/Map.js';
 import Footer from '../Footer.js';
-import highwayShield from '../Components/highwayShield.js';
+import FriendlyTime from '../Components/FriendlyTime';
+import highwayShield from '../Components/highwayShield';
+import CurrentCameraIcon from '../Components/CurrentCameraIcon';
 
 // Styling
 import './CameraDetailsPage.scss';
@@ -52,8 +54,8 @@ export default function CameraDetailsPage() {
 
   const navigate = useNavigate();
 
-  const cameraTab = <FontAwesomeIcon icon={faVideo} />;
-  const nearby = <FontAwesomeIcon icon={faMagnifyingGlassLocation} />;
+  const cameraTab = <CurrentCameraIcon variant="outline" />;
+  const nearby = <FontAwesomeIcon icon={faFlag} />;
 
   async function initCamera(camera) {
     // Camera data
@@ -165,7 +167,7 @@ export default function CameraDetailsPage() {
         <Container>
           <Link to="/cameras-page" className="back-link">
             <FontAwesomeIcon icon={faArrowLeft} />
-            Back to web camera list
+            Back to camera list
           </Link>
         </Container>
       </div>
@@ -258,7 +260,7 @@ export default function CameraDetailsPage() {
                 activeKey={activeTab}
                 onSelect={ (selectedTab) => setActiveTab(selectedTab) }
               >
-                <Tab eventKey="webcam" title={<span>{cameraTab} Current web camera</span>}>
+                <Tab eventKey="webcam" title={<span>{cameraTab} Current camera</span>}>
                   <div className="replay-div">
                     <div className="next-update">
                       <FontAwesomeIcon icon={faArrowRotateRight} />

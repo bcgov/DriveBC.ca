@@ -105,7 +105,7 @@
   .camera-message {
     border-left: 3px solid;
     margin-bottom: 2em;
-    padding: 40px;
+    padding: 24px 36px 32px;
 
     p, ul {
       margin-bottom: 0;
@@ -150,7 +150,7 @@
   }
 
   .camera-update {
-    margin-bottom: 50px;
+    margin-bottom: 24px;
     p {
       margin-bottom: 0;
     }
@@ -167,13 +167,19 @@
         .nav-link {
           color: $Type-Primary;
           border: none;
+          border-radius: 0;
           font-size: 0.875em;
 
-          svg {
+          svg, img {
             margin-right: 8px;
           }
 
           &.active {
+            border-bottom: 2px solid $BC-Blue;
+          }
+
+          &:hover {
+            background-color: $Grey30;
             border-bottom: 2px solid $BC-Blue;
           }
         }
@@ -192,7 +198,8 @@
           }
 
           &.unavailable {
-            background-color: $Type-Disabled;
+            background-color: $Surface-status-red;
+            color: $Error;
             font-size: 110px;
             display: flex;
             align-items: center;
@@ -258,11 +265,17 @@
               .replay-control--backward {
                 order: 3;
                 width: 33.33%;
+                svg {
+                  font-size: 1.25em;
+                }
               }
 
               .replay-control--forward {
                 order: 5;
                 width: 33.33%;
+                svg {
+                  font-size: 1.25em;
+                }
               }
 
               .image-gallery-swipe {
@@ -273,6 +286,9 @@
               .replay-control--play {
                 order: 4;
                 width: 33.33%;
+                svg {
+                  font-size: 1.5em;
+                }
               }
 
               //Replay the day on desktop
@@ -330,13 +346,20 @@
       }
     }
 
+    #camera-details-tab-webcam {
+      display: flex;
+    }
+
     .replay-div {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
+
+      @media (min-width: 375px) {
+        flex-direction: row;
+      }
 
       @media (min-width: 576px) {
-        flex-direction: row;
         justify-content: space-between;
       }
 
@@ -349,14 +372,19 @@
       }
 
       .next-update {
-        height: 24px;
         display: flex;
         align-items: center;
-        padding: 6px;
+        padding: 0 6px;
         background-color: $BC-Blue-Light;
         color: $BC-Blue;
         border: 1px solid $BC-Blue;
-        border-radius: 12px;
+        border-radius: 16px;
+        margin-right: 18px;
+        order: 2;
+
+        @media (min-width: 375px) {
+          order: 1;
+        }
 
         svg, p {
           font-size: 0.875em;
@@ -374,6 +402,12 @@
       }
 
       .replay-the-day {
+        order: 1;
+
+        @media (min-width: 375px) {
+          order: 2;
+        }
+
         .form-switch {
           display: flex;
           align-items: center;
@@ -508,34 +542,13 @@
       width: 100%;
       height: 100%;
 
-      .ol-zoomslider {
-        background-color: $White;
-        top: auto;
+      .ol-scale-line { 
         bottom: 8px;
-        left: auto;
-        right: 8px;
-        width: 20px;
-        border-radius: 10px;
-
-        &:hover {
-          background-color: $White;
-        }
-
-        &-thumb {
-          height: 16px;
-          width: 16px;
-          border-radius: 8px;
-          filter: none;
-          background-color: $Focus;
-        }
+        right: 48px;
       }
     }
 
     .map-btn {
-      font-size: 0.75em;
-      padding: 4px 8px;
-      height: 28px;
-      border-radius: 14px;
 
       &.map-view {
         position: absolute;
@@ -547,34 +560,15 @@
         position: absolute;
         bottom: 8px;
         left: 8px;
-      }
-
-      &.zoom-in, &.zoom-out {
-        padding: 0;
-        height: 20px;
-        width: 20px;
-        border-radius: 10px;
-      }
-
-      &.zoom-in{
-        position: absolute;
-        bottom: calc(200px - 20px + 8px);
-        right: 8px;
-      }
-
-      &.zoom-out {
-        position: absolute;
-        bottom: 8px;
-        right: 8px;
+        display: flex;
+        align-items: center;
       }
     }
-  }
 
-  //Hide zoom slider on touch devices
-  .ol-zoomslider, .zoom-in, .zoom-out {
-    @media (pointer:coarse) {
-      display: none;
+    .zoom-btn {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
     }
-
   }
 }

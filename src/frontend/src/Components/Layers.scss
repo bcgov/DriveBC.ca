@@ -1,8 +1,7 @@
 .open-layers, .layers {
-  top: 2rem;
-  min-width: 3rem;
-  right: 2rem;
   position: absolute;
+  top: 2rem;
+  right: 2rem;
 
   @media screen and (max-width: 729px) {
     right: 1rem;

@@ -1,6 +1,6 @@
 // React
-import React, { useContext, useRef, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useRef, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ReactDOMServer from 'react-dom/server';
 
 // Third party packages
@@ -11,18 +11,19 @@ import {
   faUpRightAndDownLeftFromCenter,
   faLocationCrosshairs,
   faXmark
-} from "@fortawesome/free-solid-svg-icons";
-import Button from "react-bootstrap/Button";
+} from '@fortawesome/free-solid-svg-icons';
+import Button from 'react-bootstrap/Button';
 import {useMediaQuery} from '@uidotdev/usehooks';
 
 // Components and functions
-import { getEvents } from "./data/events.js";
-import { getWebcams } from "./data/webcams.js";
-import Layers from "./Layers.js";
-import Routes from "./Routes.js";
-import { eventStyles, cameraStyles } from "./data/eventStyleDefinitions.js";
-import FriendlyTime from "./FriendlyTime";
-import EventTypeIcon from "./EventTypeIcon";
+import { getEvents } from './data/events.js';
+import { getWebcams } from './data/webcams.js';
+import Layers from './Layers.js';
+import Routes from './Routes.js';
+import { eventStyles, cameraStyles } from './data/eventStyleDefinitions.js';
+import FriendlyTime from './FriendlyTime';
+import EventTypeIcon from './EventTypeIcon';
+import CurrentCameraIcon from './CurrentCameraIcon';
 
 // OpenLayers
 import {applyStyle} from 'ol-mapbox-style';
@@ -31,7 +32,7 @@ import {fromLonLat} from 'ol/proj';
 import {Style} from 'ol/style.js';
 import {Image as ImageLayer} from 'ol/layer.js';
 import {MapContext} from '../App.js';
-import {ZoomSlider, ScaleLine} from 'ol/control.js';
+import {ScaleLine} from 'ol/control.js';
 import * as ol from 'ol';
 import Cluster from 'ol/source/Cluster.js';
 import Feature from 'ol/Feature.js';
@@ -233,7 +234,7 @@ export default function MapWrapper({
         ],
       overlays: [popup.current],
       view: mapView.current,
-      controls: [new ZoomSlider(), new ScaleLine({units: 'metric'})],
+      controls: [new ScaleLine({units: 'metric'})],
     });
 
     geolocation.current = new Geolocation({
@@ -699,7 +700,7 @@ export default function MapWrapper({
           variant="outline-primary"
           onClick={handleRecenter}
         >
-          <FontAwesomeIcon icon={faLocationCrosshairs} />
+          <CurrentCameraIcon />
           Camera location
         </Button>
       )}
@@ -714,21 +715,23 @@ export default function MapWrapper({
         </Button>)
       }
 
-      <Button
-        className="map-btn zoom-in"
-        variant="outline-primary"
-        onClick={zoomIn}
-      >
-        <FontAwesomeIcon icon={faPlus} />
-      </Button>
-
-      <Button
-        className="map-btn zoom-out"
-        variant="outline-primary"
-        onClick={zoomOut}
-      >
-        <FontAwesomeIcon icon={faMinus} />
-      </Button>
+      <div className="zoom-btn">
+        <Button
+          className="zoom-in"
+          variant="outline-primary"
+          onClick={zoomIn}
+        >
+          <FontAwesomeIcon icon={faPlus} />
+        </Button>
+        <div className="zoom-divider" />
+        <Button
+          className="zoom-out"
+          variant="outline-primary"
+          onClick={zoomOut}
+        >
+          <FontAwesomeIcon icon={faMinus} />
+        </Button>
+      </div>
 
       {!isPreview && (
         <div>
