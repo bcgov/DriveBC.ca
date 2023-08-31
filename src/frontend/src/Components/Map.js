@@ -73,13 +73,61 @@ export default function MapWrapper({
   const content = useRef();
   const [iconClicked, setIconClicked] = useState(false);
   const geolocation = useRef(null);
-  const geolocationTrack = useRef(false);
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
   const navigate = useNavigate();
   const hoveredCamera = useRef();
   const hoveredEvent = useRef();
   const clickedCamera = useRef();
   const clickedEvent = useRef();
+
+  function centerMyLocation(coordinates) {
+    if (mapRef.current) {
+      mapView.current.animate({
+        center: fromLonLat(coordinates),
+      });
+    }
+  }
+  
+  function addMyLocationPinPoint(coordinates) {
+    const svgMarkup = `
+                    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
+                      <defs>
+                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="40%" style="stop-color:#2790F3;stop-opacity:0.5" />
+                          <stop offset="40%" style="stop-color:#7496EC;stop-opacity:0.5" />
+                        </linearGradient>
+                      </defs>
+                      <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
+                      <defs>
+                        <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="100%" style="stop-color:#2970F3;stop-opacity:1" />
+                          <stop offset="100%" style="stop-color:#7496EC;stop-opacity:1" />
+                        </linearGradient>
+                      </defs>
+                      <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
+                    </svg>
+                `;
+  
+    const svgImage = new Image();
+    svgImage.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgMarkup);
+  
+    // Create an overlay for the marker
+    const markerOverlay = new Overlay({
+      position: fromLonLat(coordinates),
+      positioning: "bottom-center",
+      element: svgImage,
+      stopEvent: false, // Allow interactions with the overlay content
+    });
+  
+    mapRef.current.on('moveend', function (event) {
+    const newZoom = mapRef.current.getView().getZoom();
+    // Calculate new marker size based on the zoom level
+    const newSize = 44 * (newZoom / 10);
+    svgImage.style.width = newSize + 'px';
+    svgImage.style.height = newSize + 'px';
+    mapRef.current.addOverlay(markerOverlay);
+  });
+  }
 
   function getCameraCircle(camera) {
     if (!camera) {
@@ -615,8 +663,18 @@ export default function MapWrapper({
   }
 
   function toggleMyLocation() {
-    geolocationTrack.current = !geolocationTrack.current;
-    geolocation.current.setTracking(geolocationTrack.current);
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude } = position.coords;
+          centerMyLocation([longitude, latitude]);
+          addMyLocationPinPoint([longitude, latitude]);
+        },
+        error => {
+          console.error('Error getting user location:', error);
+        },
+      );
+    }
   }
 
   function handleCenter() {
