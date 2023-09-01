@@ -321,20 +321,20 @@ export const eventStyles = {
   segments: {
     static: new Style({
       stroke: new Stroke({
-        color: 'rgba(0, 255, 255, 0.6)',
+        color: 'rgba(216 ,41 ,47, 0.5)',
         width: 8,
       }),
     }),
     hover: new Style({
       stroke: new Stroke({
-        color: 'rgba(0, 255, 255, 0.6)',
-        width: 12,
+        color: 'rgba(216 ,41 ,47, 0.5)',
+        width: 10,
       }),
     }),
     active: new Style({
       stroke: new Stroke({
-        color: 'rgba(0, 255, 255, 1)',
-        width: 12,
+        color: 'rgba(216 ,41 ,47, 0.9)',
+        width: 10,
       }),
     })
   }

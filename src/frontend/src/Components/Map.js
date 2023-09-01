@@ -457,16 +457,12 @@ export default function MapWrapper({
             if (hoveredFeatures[0]) {
               hoveredEvent.current = hoveredFeatures[0];
               if (!hoveredEvent.current.getProperties().clicked) {
-                if (hoveredEvent.current.values_.location.type === 'Point') {
-                  hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'hover'));
-                }
+                hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'hover'));
               }
 
             } else if (hoveredEvent.current) {
               if (!hoveredEvent.current.getProperties().clicked) {
-                if (hoveredEvent.current.values_.location.type === 'Point') {
-                  hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'static'));
-                }
+                hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'static'));
               }
               hoveredEvent.current = null;
             }
@@ -560,11 +556,7 @@ export default function MapWrapper({
           }
         },
       }),
-      style: function(feature, resolution) {
-        return feature.values_.location.type === 'LineString' ?
-          eventStyles['segments']['static'] :
-          getEventIcon(feature, 'static')
-      },
+      style: (feature, resolution) => getEventIcon(feature, 'static')
     });
     mapRef.current.addLayer(layers.current['eventsLayer']);
   }
@@ -598,36 +590,41 @@ export default function MapWrapper({
   }
 
   const getEventIcon = (event, state) => {
-    const severity = event.get("severity").toLowerCase();
-    const type = event.get("event_type").toLowerCase();
-
-    if (severity === 'major') {
-      switch (type) {
-        case 'incident':
-          return eventStyles['major_incident'][state];
-        case 'construction':
-          return eventStyles['major_construction'][state];
-        case 'special_event':
-          return eventStyles['major_special_event'][state];
-        case 'weather_condition':
-          return eventStyles['major_weather_condition'][state];
-        default:
-          return eventStyles['major_incident'][state];
+    const severity = event.get('severity').toLowerCase();
+    const type = event.get('event_type').toLowerCase();
+    const geometry = event.values_.location.type;
+    if (geometry === 'Point') {
+      if (severity === 'major') {
+        switch (type) {
+          case 'incident':
+            return eventStyles['major_incident'][state];
+          case 'construction':
+            return eventStyles['major_construction'][state];
+          case 'special_event':
+            return eventStyles['major_special_event'][state];
+          case 'weather_condition':
+            return eventStyles['major_weather_condition'][state];
+          default:
+            return eventStyles['major_incident'][state];
+        }
+      }
+      else {
+        switch (type) {
+          case 'incident':
+            return eventStyles['incident'][state];
+          case 'construction':
+            return eventStyles['construction'][state];
+          case 'special_event':
+            return eventStyles['special_event'][state];
+          case 'weather_condition':
+            return eventStyles['weather_condition'][state];
+          default:
+            return eventStyles['incident'][state];
+        }
       }
     }
     else {
-      switch (type) {
-        case 'incident':
-          return eventStyles['incident'][state];
-        case 'construction':
-          return eventStyles['construction'][state];
-        case 'special_event':
-          return eventStyles['special_event'][state];
-        case 'weather_condition':
-          return eventStyles['weather_condition'][state];
-        default:
-          return eventStyles['incident'][state];
-      }
+      return eventStyles['segments'][state];
     }
   };
 
