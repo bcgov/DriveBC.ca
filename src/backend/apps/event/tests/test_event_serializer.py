@@ -49,6 +49,12 @@ class TestEventSerializer(BaseTest):
         self.event_two.route_from = "Test Road Two"
         self.event_two.route_to = "Test Avenue Two"
         self.event_two.direction = event_enums.EVENT_DIRECTION.BOTH
+
+        # Manually updated to Eastern time
+        self.event_two.last_updated = datetime.datetime(
+            2023, 6, 2, 16, 42, 16,
+            tzinfo=zoneinfo.ZoneInfo(key="America/Toronto")
+        )
         self.event_two.save()
 
         self.serializer = EventSerializer(self.event)
@@ -68,3 +74,7 @@ class TestEventSerializer(BaseTest):
                "Test Road Two to Test Avenue Two"
         assert self.serializer_two.data['direction_display'] == \
                "Both Directions"
+
+        # Eastern time auto adjusted to Pacific time
+        assert self.serializer_two.data['last_updated'] == \
+               '2023-06-02T13:42:16-07:00'

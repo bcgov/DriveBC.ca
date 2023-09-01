@@ -56,9 +56,10 @@ class TestEventFeedSerializer(BaseTest):
         assert event_data["route_from"] == 'at Cottonwood bridge'
         assert event_data["route_to"] == ''
 
+        # Manually changed timezone to Eastern
         assert event_data["first_created"] == datetime.datetime(
-            2021, 4, 26, 8, 19, 2, tzinfo=zoneinfo.ZoneInfo(key='America/Vancouver')
+            2021, 4, 26, 5, 19, 2, tzinfo=zoneinfo.ZoneInfo(key='America/Vancouver')
         )
 
-        # Manually change year to future
+        # Manually changed year to future
         assert event_data["last_updated"].date() == datetime.date.today()
