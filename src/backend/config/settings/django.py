@@ -10,7 +10,7 @@ env = environ.Env()
 environ.Env.read_env(BASE_DIR / ".env", overwrite=True)
 
 # Meta
-DEBUG = env("DEBUG")
+DEBUG = env("DEBUG") == 'True'
 SECRET_KEY = env("SECRET_KEY")
 WSGI_APPLICATION = "config.wsgi.application"
 
@@ -33,6 +33,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -128,7 +129,7 @@ LOCAL_APPS = [
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-# DB and cache
+# Storage
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DATABASES = {
     "default": {
@@ -144,6 +145,14 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": "redis://" + env("REDIS_HOST") + ":" + env("REDIS_PORT"),
+    }
+}
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     }
 }
 
