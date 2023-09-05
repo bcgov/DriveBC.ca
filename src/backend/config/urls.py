@@ -17,5 +17,8 @@ urlpatterns = [
     path('drivebc-cms/', include(wagtailadmin_urls)),
     path('drivebc-documents/', include(wagtaildocs_urls)),
     path('drivebc-pages/', include(wagtail_urls)),
+    path('drivebc-cms/', include("apps.cms.urls")),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+

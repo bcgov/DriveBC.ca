@@ -13,6 +13,8 @@ import CamerasPage from './pages/CamerasPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
 import EventsPage from './pages/EventsPage';
 import ScrollToTop from './Components/ScrollToTop';
+import BulletinsListPage from './pages/BulletinsListPage';
+import AdvisoriesListPage from './pages/AdvisoriesListPage';
 
 export const MapContext = createContext(null);
 
@@ -43,6 +45,8 @@ function App() {
           <Route path="/cameras-page" element={<CamerasPage />} />
           <Route path="/camera-details-page" element={<CameraDetailsPage />} />
           <Route path="/events-page" element={<EventsPage />} />
+          <Route path="/bulletins-page" element={<BulletinsListPage />} />
+          <Route path="/advisories-page" element={<AdvisoriesListPage />} />
         </Routes>
       </div>
     </MapContext.Provider>
