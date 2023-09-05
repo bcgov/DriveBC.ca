@@ -24,6 +24,10 @@ RUN sed -i 's/\r$//g' /start_tasks.sh && chmod +x /start_tasks.sh
 # Add the rest of the code
 COPY ./src/backend /app/backend
 
+# Create static and media folders with rw permissions
+RUN mkdir -p /app/static && chmod +rw /app/static
+RUN mkdir -p /app/media && chmod +rw /app/media
+
 ARG DEBUG_BUILD=false
 
 # Add debugging tools into builds if enabled
