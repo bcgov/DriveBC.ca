@@ -7,6 +7,9 @@ set -o nounset
 echo 'migrating'
 python manage.py migrate
 
+echo 'collecting static files'
+python manage.py collectstatic
+
 echo 'migration done; creating superuser'
 python manage.py createsuperuser \
     --noinput \
