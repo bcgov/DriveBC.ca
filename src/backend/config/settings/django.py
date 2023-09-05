@@ -6,6 +6,7 @@ from corsheaders.defaults import default_headers
 
 # Base dir and env
 BASE_DIR = Path(__file__).resolve().parents[4]
+SRC_DIR = Path(__file__).resolve().parents[3]
 env = environ.Env()
 environ.Env.read_env(BASE_DIR / ".env", overwrite=True)
 
@@ -18,8 +19,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 APPEND_SLASH = True
 ROOT_URLCONF = "config.urls"
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = os.path.join(SRC_DIR, 'static')
+MEDIA_ROOT = os.path.join(SRC_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Security
