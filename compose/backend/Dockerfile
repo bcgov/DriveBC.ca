@@ -25,8 +25,8 @@ RUN sed -i 's/\r$//g' /start_tasks.sh && chmod +x /start_tasks.sh
 COPY ./src/backend /app/backend
 
 # Create static and media folders with rw permissions
-RUN mkdir -p /app/static && chmod +rw /app/static
-RUN mkdir -p /app/media && chmod +rw /app/media
+RUN mkdir -p /app/static && chgrp -R 0 /app/static && chmod -R g=u /app/static && chmod 775 /app/static
+RUN mkdir -p /app/media && chgrp -R 0 /app/media && chmod -R g=u /app/media && chmod 775 /app/media
 
 ARG DEBUG_BUILD=false
 
