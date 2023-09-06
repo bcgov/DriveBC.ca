@@ -7,6 +7,9 @@ from wagtail.models import DraftStateMixin, RevisionMixin
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
+from wagtail.templatetags import wagtailcore_tags
+from wagtail.api import APIField
+
 
 class DriveBCMapWidget(OSMWidget):
     # Defaults to Downtown Vancouver
@@ -55,6 +58,13 @@ class Bulletin(DraftStateMixin, RevisionMixin, index.Indexed, BaseModel):
 
     # Rich text field for the body content
     bulletin_body = RichTextField(blank=True)
+    
+    def rendered_body(self):
+        return wagtailcore_tags.richtext(self.bulletin_body)
+
+    api_fields = [
+        APIField('rendered_body'),
+    ]
 
     panels = [
         FieldPanel("bulletin_title"),
@@ -73,6 +83,13 @@ class Advisory(DraftStateMixin, RevisionMixin, index.Indexed, BaseModel):
 
     # Rich text field for the body content
     advisory_body = RichTextField(blank=True)
+    
+    def rendered_body(self):
+        return wagtailcore_tags.richtext(self.advisory_body)
+
+    api_fields = [
+        APIField('rendered_body'),
+    ]
 
     # Geo fields
     location_geometry = models.GeometryField()

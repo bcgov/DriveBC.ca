@@ -33,7 +33,7 @@ class AdvisoryAdmin(OSMGeoAdmin):
         'id', 'location_geometry',
         'created_at', 'modified_at',
         'advisory_title', 'advisory_body',
-        'advisory_teaser',
+        'advisory_teaser', 'api_fields'
     ]
 
 

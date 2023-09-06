@@ -194,6 +194,7 @@ export default function AdvisoriesListPage() {
                   <h2>{adv.advisory_teaser}</h2>
                   <div id={mapContainerId} className="advisory-map"></div>
                   <div>{parse(adv.advisory_body)}</div>
+                  {/* <div dangerouslySetInnerHTML={{ __html: parse(adv.advisory_body) }} /> */}
                 </div>
               </div>
             );
