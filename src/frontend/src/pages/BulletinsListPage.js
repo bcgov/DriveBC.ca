@@ -6,6 +6,7 @@ import parse from 'html-react-parser';
 // Components and functions
 import PageHeader from '../PageHeader';
 import Footer from '../Footer.js';
+import SharePanel from './SharePanel';
 
 // // OpenLayers
 // import { applyStyle } from 'ol-mapbox-style';
@@ -22,6 +23,7 @@ import Footer from '../Footer.js';
 
 // Styling
 import './BulletinsListPage.scss';
+import './SharePanel.scss'
 
 // Bulletins API function
 function getBulletins() {
@@ -120,6 +122,7 @@ export default function BulletinsListPage() {
             );
           })}
         </div>
+        <SharePanel/>
       </div>
       <Footer />
     </div>

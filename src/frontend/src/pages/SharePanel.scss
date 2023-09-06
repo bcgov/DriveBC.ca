@@ -1,0 +1,30 @@
+/* styles.css (or your preferred stylesheet) */
+
+.share-panel {
+    display: flex;
+    flex-direction: row; /* Arrange items in a row */
+    align-items: center; /* Vertically center align items */
+    padding: 16px;
+  }
+  
+  .share-icons {
+    display: flex;
+    flex-direction: row; /* Arrange icons in a row */
+  }
+  
+  .share-icon {
+    display: flex;
+    flex-direction: column; /* Stack image and text vertically */
+    align-items: center;
+    margin-right: 16px; /* Adjust spacing between icons */
+  }
+  
+  .share-icon img {
+    width: 32px; /* Adjust the size as needed */
+    height: 32px; /* Adjust the size as needed */
+  }
+  
+  .share-text {
+    margin-right: 16px; /* Adjust spacing between text and icons */
+  }
+  

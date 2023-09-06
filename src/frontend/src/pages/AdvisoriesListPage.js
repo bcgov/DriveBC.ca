@@ -19,9 +19,11 @@ import MVT from 'ol/format/MVT.js';
 import VectorTileLayer from 'ol/layer/VectorTile.js';
 import VectorTileSource from 'ol/source/VectorTile.js';
 import View from 'ol/View.js';
+import SharePanel from './SharePanel';
 
 // Styling
 import './AdvisoriesPage.scss';
+import './SharePanel.scss'
 
 function getMap(locationGeometry, mapContainerId) {
   const image = new CircleStyle({
@@ -196,6 +198,7 @@ export default function AdvisoriesListPage() {
                   <div>{parse(adv.advisory_body)}</div>
                   {/* <div dangerouslySetInnerHTML={{ __html: parse(adv.advisory_body) }} /> */}
                 </div>
+                <SharePanel />
               </div>
             );
           })}
