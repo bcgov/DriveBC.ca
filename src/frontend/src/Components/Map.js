@@ -14,7 +14,7 @@ import {
   faMinus,
   faUpRightAndDownLeftFromCenter,
   faLocationCrosshairs,
-  faXmark
+  faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 
 // react-bootstrap-typeahead
@@ -124,19 +124,19 @@ export default function MapWrapper({
     // Create an overlay for the marker
     const markerOverlay = new Overlay({
       position: fromLonLat(coordinates),
-      positioning: "bottom-center",
+      positioning: 'bottom-center',
       element: svgImage,
       stopEvent: false, // Allow interactions with the overlay content
     });
 
     mapRef.current.on('moveend', function (event) {
-    const newZoom = mapRef.current.getView().getZoom();
-    // Calculate new marker size based on the zoom level
-    const newSize = 44 * (newZoom / 10);
-    svgImage.style.width = newSize + 'px';
-    svgImage.style.height = newSize + 'px';
-    mapRef.current.addOverlay(markerOverlay);
-  });
+      const newZoom = mapRef.current.getView().getZoom();
+      // Calculate new marker size based on the zoom level
+      const newSize = 44 * (newZoom / 10);
+      svgImage.style.width = newSize + 'px';
+      svgImage.style.height = newSize + 'px';
+      mapRef.current.addOverlay(markerOverlay);
+    });
   }
 
   function getCameraCircle(camera) {
@@ -144,7 +144,7 @@ export default function MapWrapper({
       return {};
     }
 
-    if(typeof camera === "string"){
+    if (typeof camera === 'string') {
       camera = JSON.parse(camera);
     }
     const circle = new Circle(fromLonLat(camera.location.coordinates), 5000);
@@ -153,38 +153,38 @@ export default function MapWrapper({
     });
 
     circleFeature.setStyle(
-        new Style({
-          renderer(coordinates, state) {
-            const [[x, y], [x1, y1]] = coordinates;
-            const ctx = state.context;
-            const dx = x1 - x;
-            const dy = y1 - y;
-            const radius = Math.sqrt(dx * dx + dy * dy);
+      new Style({
+        renderer(coordinates, state) {
+          const [[x, y], [x1, y1]] = coordinates;
+          const ctx = state.context;
+          const dx = x1 - x;
+          const dy = y1 - y;
+          const radius = Math.sqrt(dx * dx + dy * dy);
 
-            const innerRadius = 0;
-            const outerRadius = radius * 1.4;
+          const innerRadius = 0;
+          const outerRadius = radius * 1.4;
 
-            const gradient = ctx.createRadialGradient(
-                x,
-                y,
-                innerRadius,
-                x,
-                y,
-                outerRadius,
-            );
-            gradient.addColorStop(0, 'rgba(255,0,0,0)');
-            gradient.addColorStop(0.6, 'rgba(255,0,0,0.2)');
-            gradient.addColorStop(1, 'rgba(255,0,0,0.8)');
-            ctx.beginPath();
-            ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
-            ctx.fillStyle = gradient;
-            ctx.fill();
+          const gradient = ctx.createRadialGradient(
+            x,
+            y,
+            innerRadius,
+            x,
+            y,
+            outerRadius,
+          );
+          gradient.addColorStop(0, 'rgba(255,0,0,0)');
+          gradient.addColorStop(0.6, 'rgba(255,0,0,0.2)');
+          gradient.addColorStop(1, 'rgba(255,0,0,0.8)');
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
+          ctx.fillStyle = gradient;
+          ctx.fill();
 
-            ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
-            ctx.strokeStyle = 'rgba(255,0,0,1)';
-            ctx.stroke();
-          },
-        }),
+          ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
+          ctx.strokeStyle = 'rgba(255,0,0,1)';
+          ctx.stroke();
+        },
+      }),
     );
 
     const radiusLayer = new VectorLayer({
@@ -203,8 +203,8 @@ export default function MapWrapper({
     // initialization hook for the OpenLayers map logic
     if (mapRef.current) return; // stops map from intializing more than once
 
-    container.current = document.getElementById("popup");
-    content.current = document.getElementById("popup-content");
+    container.current = document.getElementById('popup');
+    content.current = document.getElementById('popup-content');
 
     popup.current = new Overlay({
       element: container.current,
@@ -221,7 +221,7 @@ export default function MapWrapper({
       }),
     });
 
-    const {circle, radiusLayer} = getCameraCircle(camera);
+    const { circle, radiusLayer } = getCameraCircle(camera);
 
     // initialize starting optional layers
     layers.current = {
@@ -265,9 +265,9 @@ export default function MapWrapper({
     // Apply the basemap style from the arcgis resource
     fetch(`${process.env.REACT_APP_MAP_STYLE}`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-    }).then(function(response) {
-      response.json().then(function(glStyle) {
+      headers: { 'Content-Type': 'application/json' },
+    }).then(function (response) {
+      response.json().then(function (glStyle) {
         // overriding default font value so it doesn't return errors.
         glStyle.metadata['ol:webfonts'] = '';
         applyStyle(vectorLayer, glStyle, 'esri');
@@ -277,72 +277,74 @@ export default function MapWrapper({
     // create map
     mapRef.current = new Map({
       target: mapElement.current,
-      layers: radiusLayer ?
-        [
-          vectorLayer,
-          radiusLayer,
-          layers.current['highwayLayer'],
-          layers.current['open511Layer'],
-        ] :
-        [
-          vectorLayer,
-          layers.current['highwayLayer'],
-          layers.current['open511Layer'],
-        ],
+      layers: radiusLayer
+        ? [
+            vectorLayer,
+            radiusLayer,
+            layers.current['highwayLayer'],
+            layers.current['open511Layer'],
+          ]
+        : [
+            vectorLayer,
+            layers.current['highwayLayer'],
+            layers.current['open511Layer'],
+          ],
       overlays: [popup.current],
       view: mapView.current,
-      controls: [new ScaleLine({units: 'metric'})],
+      controls: [new ScaleLine({ units: 'metric' })],
     });
 
     geolocation.current = new Geolocation({
-      projection: mapView.current.getProjection()
-    })
+      projection: mapView.current.getProjection(),
+    });
 
     mapRef.current.once('loadend', () => {
       loadWebcams();
       loadEvents();
     });
 
-    mapRef.current.on('click', (e) => {
+    mapRef.current.on('click', e => {
       setIconClicked(false);
       const coordinate = e.coordinate;
       // check if it was a webcam icon that was clicked
       layers.current['webcamsLayer']
         .getFeatures(e.pixel)
-        .then((clickedFeatures) => {
+        .then(clickedFeatures => {
           if (clickedFeatures[0]) {
-            const featureDetails = clickedFeatures[0].values_.features[0].values_;
+            const featureDetails =
+              clickedFeatures[0].values_.features[0].values_;
             if (isPreview) {
-            // Only switch context on clicking cameras within circle
+              // Only switch context on clicking cameras within circle
               if (
                 circle &&
-              circle.intersectsCoordinate(
+                circle.intersectsCoordinate(
                   fromLonLat(featureDetails.location.coordinates),
-              )
+                )
               ) {
                 mapView.current.animate({
                   center: fromLonLat(featureDetails.location.coordinates),
                 });
 
-              cameraHandler(featureDetails);
-            }
-          } else {
-            setIconClicked(true);
-            // reset previous clicked feature
-            if (clickedCamera.current) {
-              clickedCamera.current.setStyle(cameraStyles['static']);
-            }
-            else if (clickedEvent.current) {
-              clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'static'));
-              clickedEvent.current = null;
-            }
-            // set new clicked camera feature
-            clickedCamera.current = clickedFeatures[0];
-            clickedCamera.current.setStyle(cameraStyles['active']);
-            clickedCamera.current.setProperties({"clicked": true}, true);
+                cameraHandler(featureDetails);
+              }
+            } else {
+              setIconClicked(true);
+              // reset previous clicked feature
+              if (clickedCamera.current) {
+                clickedCamera.current.setStyle(cameraStyles['static']);
+              } else if (clickedEvent.current) {
+                clickedEvent.current.setStyle(
+                  getEventIcon(clickedEvent.current, 'static'),
+                );
+                clickedEvent.current = null;
+              }
+              // set new clicked camera feature
+              clickedCamera.current = clickedFeatures[0];
+              clickedCamera.current.setStyle(cameraStyles['active']);
+              clickedCamera.current.setProperties({ clicked: true }, true);
 
-            content.current.innerHTML =
-            `<div class="popup popup--camera">
+              content.current.innerHTML =
+                `<div class="popup popup--camera">
               <div class="popup__title">
                 <p class="bold name">${featureDetails.name}
                 <p class="bold orientation">${featureDetails.orientation}</p>
@@ -354,62 +356,81 @@ export default function MapWrapper({
                   <div class="timestamp">
                     <p class="driveBC">Drive<span>BC</span></p>
                     <p>` +
-                    ReactDOMServer.renderToString(<FriendlyTime date={featureDetails.last_update_modified} />)
-                    + `</p>
+                ReactDOMServer.renderToString(
+                  <FriendlyTime date={featureDetails.last_update_modified} />,
+                ) +
+                `</p>
                   </div>
                 </div>
               </div>
             </div>`;
-            popup.current.setPosition(coordinate);
-            clickedWebcam.current = featureDetails;
+              popup.current.setPosition(coordinate);
+              clickedWebcam.current = featureDetails;
+            }
           }
-        }
-      });
+        });
 
       // if it wasn't a webcam icon, check if it was an event
-      layers.current["eventsLayer"]
+      layers.current['eventsLayer']
         .getFeatures(e.pixel)
-        .then((clickedFeatures) => {
+        .then(clickedFeatures => {
           setIconClicked(true);
           if (clickedFeatures[0]) {
             const feature = clickedFeatures[0];
-            const severity = feature.get("severity").toLowerCase();
-            const eventType = feature.get("event_type").toLowerCase();
+            const severity = feature.get('severity').toLowerCase();
+            const eventType = feature.get('event_type').toLowerCase();
 
             // reset previous clicked feature
             if (clickedCamera.current) {
               clickedCamera.current.setStyle(cameraStyles['static']);
               clickedCamera.current = null;
-            }
-            else if (clickedEvent.current) {
-              clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'static'));
+            } else if (clickedEvent.current) {
+              clickedEvent.current.setStyle(
+                getEventIcon(clickedEvent.current, 'static'),
+              );
             }
 
             // set new clicked event feature
             clickedEvent.current = clickedFeatures[0];
-            clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'active'));
-            clickedEvent.current.setProperties({"clicked": true}, true);
+            if (clickedEvent.current.values_.location.type === 'LineString') {
+              clickedEvent.current.setStyle(getSegmentStyles(
+                feature,
+                'active',
+              ));
+            } else {
+              clickedEvent.current.setStyle(
+                getEventIcon(clickedEvent.current, 'active'),
+              );
+            }
+
+            clickedEvent.current.setProperties({ clicked: true }, true);
 
             content.current.innerHTML =
-            `<div class="popup popup--delay ${severity}">
+              `<div class="popup popup--delay ${severity}">
               <div class="popup__title">
-                <p class="bold name">${feature.get("route_display")}</p>
-                <p class="bold orientation">${feature.get("direction")}</p>
+                <p class="bold name">${feature.get('route_display')}</p>
+                <p class="bold orientation">${feature.get('direction')}</p>
               </div>
               <div class="popup__description">
                 <div class="delay-type">
                   <div class="bold delay-severity"><div class="delay-icon">` +
-                  ReactDOMServer.renderToString(<EventTypeIcon eventType={eventType} />)
-                  + `</div><p class="bold">${severity} delays</p></div>
+              ReactDOMServer.renderToString(
+                <EventTypeIcon eventType={eventType} />,
+              ) +
+              `</div><p class="bold">${severity} delays</p></div>
                   <p class="bold friendly-time--mobile">` +
-                    ReactDOMServer.renderToString(<FriendlyTime date={feature.get("last_updated")} />)
-                    + `</p>
+              ReactDOMServer.renderToString(
+                <FriendlyTime date={feature.get('last_updated')} />,
+              ) +
+              `</p>
                 </div>
                 <div class="delay-details">
                   <p class="bold friendly-time-desktop">` +
-                    ReactDOMServer.renderToString(<FriendlyTime date={feature.get("last_updated")} />)
-                    + `</p>
-                  <p>${feature.get("description")}</p>
+              ReactDOMServer.renderToString(
+                <FriendlyTime date={feature.get('last_updated')} />,
+              ) +
+              `</p>
+                  <p>${feature.get('description')}</p>
                 </div>
               </div>
             </div>`;
@@ -426,9 +447,14 @@ export default function MapWrapper({
         // reset previous clicked feature
         if (clickedCamera.current) {
           clickedCamera.current.setStyle(cameraStyles['static']);
-        }
-        else if (clickedEvent.current) {
-          clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'static'));
+        } else if (clickedEvent.current) {
+          if (clickedEvent.current.values_.location.type === 'LineString') {
+            clickedEvent.current.setStyle(eventStyles['segments']['static']);
+          } else {
+            clickedEvent.current.setStyle(
+              getEventIcon(clickedEvent.current, 'static'),
+            );
+          }
         }
 
         clickedCamera.current = null;
@@ -436,18 +462,17 @@ export default function MapWrapper({
       }
     });
 
-    mapRef.current.on('pointermove', (e) => {
+    mapRef.current.on('pointermove', e => {
       if (layers.current && 'webcamsLayer' in layers.current) {
         // check if it was a camera icon that was hovered on
-        layers.current["webcamsLayer"]
+        layers.current['webcamsLayer']
           .getFeatures(e.pixel)
-          .then((hoveredFeatures) => {
+          .then(hoveredFeatures => {
             if (hoveredFeatures[0]) {
               hoveredCamera.current = hoveredFeatures[0];
               if (!hoveredCamera.current.getProperties().clicked) {
                 hoveredCamera.current.setStyle(cameraStyles['hover']);
               }
-
             } else if (hoveredCamera.current) {
               if (!hoveredCamera.current.getProperties().clicked) {
                 hoveredCamera.current.setStyle(cameraStyles['static']);
@@ -455,27 +480,36 @@ export default function MapWrapper({
 
               hoveredCamera.current = null;
             }
-        });
+          });
       }
 
       if (layers.current && 'eventsLayer' in layers.current) {
         // if it wasn't a camera icon, check if it was an event
-        layers.current["eventsLayer"]
+        layers.current['eventsLayer']
           .getFeatures(e.pixel)
-          .then((hoveredFeatures) => {
+          .then(hoveredFeatures => {
             if (hoveredFeatures[0]) {
               hoveredEvent.current = hoveredFeatures[0];
               if (!hoveredEvent.current.getProperties().clicked) {
-                hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'hover'));
+                hoveredEvent.current.setStyle(hoveredEvent.current.getGeometry().getType() === 'LineString'
+                ? getSegmentStyles(
+                    hoveredEvent.current,
+                    'hover',
+                  )
+                : getEventIcon(hoveredEvent.current, 'hover'));
               }
-
             } else if (hoveredEvent.current) {
               if (!hoveredEvent.current.getProperties().clicked) {
-                hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'static'));
+                hoveredEvent.current.setStyle(hoveredEvent.current.getGeometry().getType() === 'LineString'
+                ? getSegmentStyles(
+                    hoveredEvent.current,
+                    'static',
+                  )
+                : getEventIcon(hoveredEvent.current, 'static'));
               }
               hoveredEvent.current = null;
             }
-        });
+          });
       }
     });
   }, []);
@@ -494,24 +528,24 @@ export default function MapWrapper({
         distance: 35,
         source: new VectorSource({
           format: new GeoJSON(),
-          loader: function(extent, resolution, projection) {
+          loader: function (extent, resolution, projection) {
             const vectorSource = this;
             vectorSource.clear();
 
             if (webcamResults) {
-              webcamResults.forEach((cameraData) => {
+              webcamResults.forEach(cameraData => {
                 // Build a new OpenLayers feature
                 const olGeometry = new Point(cameraData.location.coordinates);
-                const olFeature = new ol.Feature({geometry: olGeometry});
+                const olFeature = new ol.Feature({ geometry: olGeometry });
 
                 // Transfer properties
                 olFeature.setProperties(cameraData);
-
+                console.log(mapRef.current.getView().getProjection().getCode())
                 // Transform the projection
                 const olFeatureForMap = transformFeature(
-                    olFeature,
-                    'EPSG:4326',
-                    mapRef.current.getView().getProjection().getCode(),
+                  olFeature,
+                  'EPSG:4326',
+                  mapRef.current.getView().getProjection().getCode(),
                 );
 
                 vectorSource.addFeature(olFeatureForMap);
@@ -535,33 +569,35 @@ export default function MapWrapper({
       visible: mapContext.visible_layers.eventsLayer,
       source: new VectorSource({
         format: new GeoJSON(),
-        loader: function(extent, resolution, projection) {
+        loader: function (extent, resolution, projection) {
           const vectorSource = this;
           vectorSource.clear();
           if (eventData) {
-            eventData.forEach((record) => {
+            const geometryCollection4326 = [];
+            eventData.forEach(record => {
               let olGeometry = null;
+
               switch (record.location.type) {
                 case 'Point':
                   olGeometry = new Point(record.location.coordinates);
                   break;
                 case 'LineString':
                   olGeometry = new LineString(record.location.coordinates);
+                  geometryCollection4326.push(olGeometry);
                   break;
                 default:
                   console.log(Error);
               }
-
-              const olFeature = new ol.Feature({geometry: olGeometry});
+              const olFeature = new ol.Feature({ geometry: olGeometry });
 
               // Transfer properties
               olFeature.setProperties(record);
 
               // Transform the projection
               const olFeatureForMap = transformFeature(
-                  olFeature,
-                  'EPSG:4326',
-                  mapRef.current.getView().getProjection().getCode(),
+                olFeature,
+                'EPSG:4326',
+                mapRef.current.getView().getProjection().getCode(),
               );
 
               vectorSource.addFeature(olFeatureForMap);
@@ -569,7 +605,16 @@ export default function MapWrapper({
           }
         },
       }),
-      style: (feature, resolution) => getEventIcon(feature, 'static')
+      style: function (feature, resolution) {
+        console.log()
+
+        return feature.getGeometry().getType() === 'LineString'
+          ? getSegmentStyles(
+              feature,
+              'static',
+            )
+          : getEventIcon(feature, 'static');
+      },
     });
     mapRef.current.addLayer(layers.current['eventsLayer']);
   }
@@ -600,15 +645,22 @@ export default function MapWrapper({
     popup.current.setPosition(undefined);
     setIconClicked(false);
     // check for active camera icons
-    if(clickedCamera.current) {
+    if (clickedCamera.current) {
       clickedCamera.current.setStyle(cameraStyles['static']);
-      clickedCamera.current.set("clicked", "false");
+      clickedCamera.current.set('clicked', 'false');
       clickedCamera.current = null;
     }
     // check for active event icons
-    if(clickedEvent.current) {
-      clickedEvent.current.setStyle(getEventIcon(clickedEvent.current, 'static'));
-      clickedEvent.current.set("clicked", "false");
+    if (clickedEvent.current) {
+      clickedEvent.current.setStyle(
+        (clickedEvent.current.getGeometry().getType() === 'LineString'
+                ? getSegmentStyles(
+                    clickedEvent.current,
+                    'static',
+                  )
+                : getEventIcon(clickedEvent.current, 'static'))
+      );
+      clickedEvent.current.set('clicked', 'false');
       clickedEvent.current = null;
     }
   }
@@ -700,16 +752,16 @@ export default function MapWrapper({
   }
 
   function handleCenter() {
-    if(typeof camera === "string"){
+    if (typeof camera === 'string') {
       camera = JSON.parse(camera);
     }
     return Array.isArray(camera.location.coordinates[0])
       ? fromLonLat(
           camera.location.coordinates[
-              Math.floor(camera.location.coordinates.length / 2)
+            Math.floor(camera.location.coordinates.length / 2)
           ],
-      ) :
-      fromLonLat(camera.location.coordinates);
+        )
+      : fromLonLat(camera.location.coordinates);
   }
 
   function toggleLayers(openLayers) {
@@ -735,55 +787,52 @@ export default function MapWrapper({
     <div className="map-container">
       <div ref={mapElement} className="map" />
       <div id="popup" onClick={webcamDetailRoute} className="ol-popup">
-        <FontAwesomeIcon id="ol-popup-closer" className="ol-popup-closer" icon={faXmark} onClick={closePopup} />
+        <FontAwesomeIcon
+          id="ol-popup-closer"
+          className="ol-popup-closer"
+          icon={faXmark}
+          onClick={closePopup}
+        />
         <div id="popup-content" className="ol-popup-content"></div>
       </div>
       {isPreview && (
         <Button
           className="map-btn map-view"
           variant="outline-primary"
-          onClick={mapViewRoute}
-        >
+          onClick={mapViewRoute}>
           <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
           Map View
         </Button>
       )}
 
       {isPreview && (
-          <Button
+        <Button
           className="map-btn cam-location"
           variant="outline-primary"
-          onClick={handleRecenter}
-        >
+          onClick={handleRecenter}>
           <CurrentCameraIcon />
           Camera location
         </Button>
       )}
-      {(!isPreview && (!iconClicked || largeScreen)) && (
-      <Button
+      {!isPreview && (!iconClicked || largeScreen) && (
+        <Button
           className="map-btn my-location"
           variant="outline-primary"
-          onClick={toggleMyLocation}
-        >
+          onClick={toggleMyLocation}>
           <FontAwesomeIcon icon={faLocationCrosshairs} />
           My location
-        </Button>)
-      }
+        </Button>
+      )}
 
       <div className="zoom-btn">
-        <Button
-          className="zoom-in"
-          variant="outline-primary"
-          onClick={zoomIn}
-        >
+        <Button className="zoom-in" variant="outline-primary" onClick={zoomIn}>
           <FontAwesomeIcon icon={faPlus} />
         </Button>
         <div className="zoom-divider" />
         <Button
           className="zoom-out"
           variant="outline-primary"
-          onClick={zoomOut}
-        >
+          onClick={zoomOut}>
           <FontAwesomeIcon icon={faMinus} />
         </Button>
       </div>
