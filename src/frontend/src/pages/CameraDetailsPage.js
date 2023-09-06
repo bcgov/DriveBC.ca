@@ -1,6 +1,6 @@
 // React
 import React, {useEffect, useRef, useState} from 'react';
-import {useLocation, useNavigate, Link} from 'react-router-dom';
+import {useParams, useNavigate, Link} from 'react-router-dom';
 
 // Third party packages
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -27,6 +27,7 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 
 // Components and functions
+import { getWebcams } from '../Components/data/webcams.js';
 import {DndProvider} from 'react-dnd-multi-backend';
 import {getWebcamReplay} from '../Components/data/webcams';
 import {HTML5toTouch} from 'rdndmb-html5-to-touch';
@@ -42,7 +43,7 @@ import '../Components/Map.scss';
 
 export default function CameraDetailsPage() {
   // Context and router data
-  const {state} = useLocation();
+  const params = useParams();
 
   // State hooks
   const [camera, setCamera] = useState(null);
@@ -57,7 +58,9 @@ export default function CameraDetailsPage() {
   const cameraTab = <CurrentCameraIcon variant="outline" />;
   const nearby = <FontAwesomeIcon icon={faFlag} />;
 
-  async function initCamera(camera) {
+  async function initCamera() {
+    console.log(params.id);
+    const camera= await getWebcams(`//${process.env.REACT_APP_API_HOST}/api/webcams/${params.id}`);
     // Camera data
     setCamera(camera);
 
@@ -83,7 +86,7 @@ export default function CameraDetailsPage() {
   }
 
   useEffect(() => {
-    initCamera(state.cameraData);
+    initCamera();
 
     return () => {
       // unmounting, so revert camera to null

@@ -42,7 +42,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MapPage />} />
           <Route path="/cameras-page" element={<CamerasPage />} />
-          <Route path="/camera-details-page" element={<CameraDetailsPage />} />
+          <Route path="/cameras-page/:id" element={<CameraDetailsPage />} />
           <Route path="/events-page" element={<EventsPage />} />
           <Route path="/faqs-page" element={<FAQsPage />} />
         </Routes>
