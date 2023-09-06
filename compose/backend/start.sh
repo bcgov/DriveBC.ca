@@ -8,7 +8,7 @@ echo 'migrating'
 python manage.py migrate
 
 echo 'collecting static files'
-python manage.py collectstatic
+python manage.py collectstatic --noinput
 
 echo 'migration done; creating superuser'
 python manage.py createsuperuser \
