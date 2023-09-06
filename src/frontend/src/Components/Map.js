@@ -1,6 +1,6 @@
 // React
-import React, { useContext, useRef, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useRef, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ReactDOMServer from 'react-dom/server';
 
 // Third party packages
@@ -11,18 +11,19 @@ import {
   faUpRightAndDownLeftFromCenter,
   faLocationCrosshairs,
   faXmark
-} from "@fortawesome/free-solid-svg-icons";
-import Button from "react-bootstrap/Button";
+} from '@fortawesome/free-solid-svg-icons';
+import Button from 'react-bootstrap/Button';
 import {useMediaQuery} from '@uidotdev/usehooks';
 
 // Components and functions
-import { getEvents } from "./data/events.js";
-import { getWebcams } from "./data/webcams.js";
-import Layers from "./Layers.js";
-import Routes from "./Routes.js";
-import { eventStyles, cameraStyles } from "./data/eventStyleDefinitions.js";
-import FriendlyTime from "./FriendlyTime";
-import EventTypeIcon from "./EventTypeIcon";
+import { getEvents } from './data/events.js';
+import { getWebcams } from './data/webcams.js';
+import Layers from './Layers.js';
+import Routes from './Routes.js';
+import { eventStyles, cameraStyles } from './data/eventStyleDefinitions.js';
+import FriendlyTime from './FriendlyTime';
+import EventTypeIcon from './EventTypeIcon';
+import CurrentCameraIcon from './CurrentCameraIcon';
 
 // OpenLayers
 import {applyStyle} from 'ol-mapbox-style';
@@ -31,7 +32,7 @@ import {fromLonLat} from 'ol/proj';
 import {Style} from 'ol/style.js';
 import {Image as ImageLayer} from 'ol/layer.js';
 import {MapContext} from '../App.js';
-import {ZoomSlider, ScaleLine} from 'ol/control.js';
+import {ScaleLine} from 'ol/control.js';
 import * as ol from 'ol';
 import Cluster from 'ol/source/Cluster.js';
 import Feature from 'ol/Feature.js';
@@ -73,13 +74,61 @@ export default function MapWrapper({
   const content = useRef();
   const [iconClicked, setIconClicked] = useState(false);
   const geolocation = useRef(null);
-  const geolocationTrack = useRef(false);
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
   const navigate = useNavigate();
   const hoveredCamera = useRef();
   const hoveredEvent = useRef();
   const clickedCamera = useRef();
   const clickedEvent = useRef();
+
+  function centerMyLocation(coordinates) {
+    if (mapRef.current) {
+      mapView.current.animate({
+        center: fromLonLat(coordinates),
+      });
+    }
+  }
+  
+  function addMyLocationPinPoint(coordinates) {
+    const svgMarkup = `
+                    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
+                      <defs>
+                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="40%" style="stop-color:#2790F3;stop-opacity:0.5" />
+                          <stop offset="40%" style="stop-color:#7496EC;stop-opacity:0.5" />
+                        </linearGradient>
+                      </defs>
+                      <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
+                      <defs>
+                        <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="100%" style="stop-color:#2970F3;stop-opacity:1" />
+                          <stop offset="100%" style="stop-color:#7496EC;stop-opacity:1" />
+                        </linearGradient>
+                      </defs>
+                      <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
+                    </svg>
+                `;
+  
+    const svgImage = new Image();
+    svgImage.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgMarkup);
+  
+    // Create an overlay for the marker
+    const markerOverlay = new Overlay({
+      position: fromLonLat(coordinates),
+      positioning: "bottom-center",
+      element: svgImage,
+      stopEvent: false, // Allow interactions with the overlay content
+    });
+  
+    mapRef.current.on('moveend', function (event) {
+    const newZoom = mapRef.current.getView().getZoom();
+    // Calculate new marker size based on the zoom level
+    const newSize = 44 * (newZoom / 10);
+    svgImage.style.width = newSize + 'px';
+    svgImage.style.height = newSize + 'px';
+    mapRef.current.addOverlay(markerOverlay);
+  });
+  }
 
   function getCameraCircle(camera) {
     if (!camera) {
@@ -233,7 +282,7 @@ export default function MapWrapper({
         ],
       overlays: [popup.current],
       view: mapView.current,
-      controls: [new ZoomSlider(), new ScaleLine({units: 'metric'})],
+      controls: [new ScaleLine({units: 'metric'})],
     });
 
     geolocation.current = new Geolocation({
@@ -408,16 +457,12 @@ export default function MapWrapper({
             if (hoveredFeatures[0]) {
               hoveredEvent.current = hoveredFeatures[0];
               if (!hoveredEvent.current.getProperties().clicked) {
-                if (hoveredEvent.current.values_.location.type === 'Point') {
-                  hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'hover'));
-                }
+                hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'hover'));
               }
 
             } else if (hoveredEvent.current) {
               if (!hoveredEvent.current.getProperties().clicked) {
-                if (hoveredEvent.current.values_.location.type === 'Point') {
-                  hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'static'));
-                }
+                hoveredEvent.current.setStyle(getEventIcon(hoveredEvent.current, 'static'));
               }
               hoveredEvent.current = null;
             }
@@ -511,11 +556,7 @@ export default function MapWrapper({
           }
         },
       }),
-      style: function(feature, resolution) {
-        return feature.values_.location.type === 'LineString' ?
-          eventStyles['segments']['static'] :
-          getEventIcon(feature, 'static')
-      },
+      style: (feature, resolution) => getEventIcon(feature, 'static')
     });
     mapRef.current.addLayer(layers.current['eventsLayer']);
   }
@@ -549,36 +590,41 @@ export default function MapWrapper({
   }
 
   const getEventIcon = (event, state) => {
-    const severity = event.get("severity").toLowerCase();
-    const type = event.get("event_type").toLowerCase();
-
-    if (severity === 'major') {
-      switch (type) {
-        case 'incident':
-          return eventStyles['major_incident'][state];
-        case 'construction':
-          return eventStyles['major_construction'][state];
-        case 'special_event':
-          return eventStyles['major_special_event'][state];
-        case 'weather_condition':
-          return eventStyles['major_weather_condition'][state];
-        default:
-          return eventStyles['major_incident'][state];
+    const severity = event.get('severity').toLowerCase();
+    const type = event.get('event_type').toLowerCase();
+    const geometry = event.values_.location.type;
+    if (geometry === 'Point') {
+      if (severity === 'major') {
+        switch (type) {
+          case 'incident':
+            return eventStyles['major_incident'][state];
+          case 'construction':
+            return eventStyles['major_construction'][state];
+          case 'special_event':
+            return eventStyles['major_special_event'][state];
+          case 'weather_condition':
+            return eventStyles['major_weather_condition'][state];
+          default:
+            return eventStyles['major_incident'][state];
+        }
+      }
+      else {
+        switch (type) {
+          case 'incident':
+            return eventStyles['incident'][state];
+          case 'construction':
+            return eventStyles['construction'][state];
+          case 'special_event':
+            return eventStyles['special_event'][state];
+          case 'weather_condition':
+            return eventStyles['weather_condition'][state];
+          default:
+            return eventStyles['incident'][state];
+        }
       }
     }
     else {
-      switch (type) {
-        case 'incident':
-          return eventStyles['incident'][state];
-        case 'construction':
-          return eventStyles['construction'][state];
-        case 'special_event':
-          return eventStyles['special_event'][state];
-        case 'weather_condition':
-          return eventStyles['weather_condition'][state];
-        default:
-          return eventStyles['incident'][state];
-      }
+      return eventStyles['segments'][state];
     }
   };
 
@@ -615,8 +661,18 @@ export default function MapWrapper({
   }
 
   function toggleMyLocation() {
-    geolocationTrack.current = !geolocationTrack.current;
-    geolocation.current.setTracking(geolocationTrack.current);
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude } = position.coords;
+          centerMyLocation([longitude, latitude]);
+          addMyLocationPinPoint([longitude, latitude]);
+        },
+        error => {
+          console.error('Error getting user location:', error);
+        },
+      );
+    }
   }
 
   function handleCenter() {
@@ -699,7 +755,7 @@ export default function MapWrapper({
           variant="outline-primary"
           onClick={handleRecenter}
         >
-          <FontAwesomeIcon icon={faLocationCrosshairs} />
+          <CurrentCameraIcon />
           Camera location
         </Button>
       )}
@@ -714,21 +770,23 @@ export default function MapWrapper({
         </Button>)
       }
 
-      <Button
-        className="map-btn zoom-in"
-        variant="outline-primary"
-        onClick={zoomIn}
-      >
-        <FontAwesomeIcon icon={faPlus} />
-      </Button>
-
-      <Button
-        className="map-btn zoom-out"
-        variant="outline-primary"
-        onClick={zoomOut}
-      >
-        <FontAwesomeIcon icon={faMinus} />
-      </Button>
+      <div className="zoom-btn">
+        <Button
+          className="zoom-in"
+          variant="outline-primary"
+          onClick={zoomIn}
+        >
+          <FontAwesomeIcon icon={faPlus} />
+        </Button>
+        <div className="zoom-divider" />
+        <Button
+          className="zoom-out"
+          variant="outline-primary"
+          onClick={zoomOut}
+        >
+          <FontAwesomeIcon icon={faMinus} />
+        </Button>
+      </div>
 
       {!isPreview && (
         <div>

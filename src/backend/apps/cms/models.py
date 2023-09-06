@@ -6,7 +6,6 @@ from wagtail.fields import RichTextField
 from wagtail.models import DraftStateMixin, RevisionMixin
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
-# from modelcluster.fields import ParentalKey
 
 
 class DriveBCMapWidget(OSMWidget):
@@ -16,11 +15,34 @@ class DriveBCMapWidget(OSMWidget):
     default_zoom = 14
 
 
-class MyMapWidget(OSMWidget):
-    # Defaults to Downtown Vancouver
-    default_lon = -123.396740
-    default_lat = 48.472620
-    default_zoom = 14
+@register_snippet
+class FAQ(DraftStateMixin, RevisionMixin, index.Indexed, BaseModel):
+    # Text fields
+    name = models.CharField(max_length=64)
+    body = RichTextField(blank=True)
+
+    # Int field
+    order = models.PositiveSmallIntegerField()
+
+    # Boolean Field
+    active = models.BooleanField(default=True)
+
+    # Other fields
+    email = models.EmailField()
+    url = models.URLField()
+
+    # Geo fields
+    location_geometry = models.GeometryField()
+
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("body"),
+        FieldPanel("order"),
+        FieldPanel("active"),
+        FieldPanel("email"),
+        FieldPanel("url"),
+        FieldPanel("location_geometry", widget=DriveBCMapWidget),
+    ]
 
 
 @register_snippet
@@ -59,5 +81,5 @@ class Advisory(DraftStateMixin, RevisionMixin, index.Indexed, BaseModel):
         FieldPanel("advisory_title"),
         FieldPanel("advisory_teaser"),
         FieldPanel("advisory_body"),
-        FieldPanel("location_geometry", widget=MyMapWidget),
+        FieldPanel("location_geometry", widget=DriveBCMapWidget),
     ]

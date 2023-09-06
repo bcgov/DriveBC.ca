@@ -1,10 +1,12 @@
-from django.core.cache import cache
-from django.db import connection
-
-from rest_framework.response import Response
-from rest_framework.views import APIView
+import re
 
 from apps.shared.enums import CacheKey, CacheTimeout
+from django.core.cache import cache
+from django.db import connection
+from django.urls import re_path
+from django.views.static import serve
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 class CachedListModelMixin:
@@ -62,3 +64,12 @@ class AppTestViewSet(APIView):
 
     def get(self, request, format=None):
         return Response("1")
+
+
+# TO BE REMOVED IN PRODUCTION
+def static_override(prefix, view=serve, **kwargs):
+    return [
+        re_path(
+            r"^%s(?P<path>.*)$" % re.escape(prefix.lstrip("/")), view, kwargs=kwargs
+        ),
+    ]

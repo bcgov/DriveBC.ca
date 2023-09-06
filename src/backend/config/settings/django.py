@@ -6,11 +6,12 @@ from corsheaders.defaults import default_headers
 
 # Base dir and env
 BASE_DIR = Path(__file__).resolve().parents[4]
+SRC_DIR = Path(__file__).resolve().parents[3]
 env = environ.Env()
 environ.Env.read_env(BASE_DIR / ".env", overwrite=True)
 
 # Meta
-DEBUG = env("DEBUG")
+DEBUG = env("DEBUG") == 'True'
 SECRET_KEY = env("SECRET_KEY")
 WSGI_APPLICATION = "config.wsgi.application"
 
@@ -18,8 +19,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 APPEND_SLASH = True
 ROOT_URLCONF = "config.urls"
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = os.path.join(SRC_DIR, 'static')
+MEDIA_ROOT = os.path.join(SRC_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Security
@@ -33,6 +34,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -101,6 +103,7 @@ THIRD_PARTY_APPS = [
     "rest_framework_gis",
     "django_filters",
     "corsheaders",
+    'wagtail.api.v2',
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -122,12 +125,12 @@ LOCAL_APPS = [
     "apps.shared",
     "apps.event",
     "apps.webcam",
-    "apps.cms",
+    "apps.cms"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-# DB and cache
+# Storage
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DATABASES = {
     "default": {
@@ -143,6 +146,14 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": "redis://" + env("REDIS_HOST") + ":" + env("REDIS_PORT"),
+    }
+}
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     }
 }
 

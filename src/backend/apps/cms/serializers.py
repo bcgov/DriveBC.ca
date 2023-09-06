@@ -1,5 +1,4 @@
-from apps.cms.models import Bulletin
-from apps.cms.models import Advisory
+from apps.cms.models import FAQ, Bulletin, Advisory
 from rest_framework import serializers
 
 CMS_FIELDS = [
@@ -11,8 +10,17 @@ CMS_FIELDS = [
     "expire_at",
     "expired",
     "latest_revision",
-    "live_revision",
+    "live_revision"
 ]
+
+
+class FAQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FAQ
+        exclude = [
+            "created_at",
+            "modified_at",
+        ] + CMS_FIELDS
 
 
 class BulletinSerializer(serializers.ModelSerializer):

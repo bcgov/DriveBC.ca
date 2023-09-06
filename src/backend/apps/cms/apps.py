@@ -1,6 +1,5 @@
 from django.apps import AppConfig
 
 
-class CmsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.cms'
+class CMSConfig(AppConfig):
+    name = "apps.cms"

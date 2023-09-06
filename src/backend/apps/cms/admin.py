@@ -1,7 +1,15 @@
-from apps.cms.models import Bulletin, Advisory
+from apps.cms.models import FAQ, Bulletin, Advisory
 from django.contrib import admin
 from django.contrib.gis.admin import OSMGeoAdmin
-# from wagtail.contrib.modeladmin.options import modeladmin_register, ModelAdmin
+
+
+class FAQAdmin(OSMGeoAdmin):
+    list_display = [
+        'id', 'name', 'body',
+        'order', 'active', 'email',
+        'url', 'location_geometry',
+        'created_at', 'modified_at'
+    ]
 
 
 class BulletinAdmin(OSMGeoAdmin):
@@ -29,5 +37,10 @@ class AdvisoryAdmin(OSMGeoAdmin):
     ]
 
 
+admin.site.register(FAQ, FAQAdmin)
 admin.site.register(Bulletin, BulletinAdmin)
 admin.site.register(Advisory, AdvisoryAdmin)
+
+
+
+

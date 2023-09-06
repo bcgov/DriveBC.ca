@@ -90,7 +90,7 @@ function getMap(locationGeometry, mapContainerId) {
     layers: [tileLayer, vectorLayer],
     view: new View({
       // Centered on Downtown Vancouver
-      center: transform([-123.39674, 48.47262], 'EPSG:4326', 'EPSG:3857'),
+      center: transform([-123.11768530084888, 49.28324595133542], 'EPSG:4326', 'EPSG:3857'),
       zoom: 14,
     }),
   });

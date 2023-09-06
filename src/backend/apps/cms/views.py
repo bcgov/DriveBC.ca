@@ -1,7 +1,12 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from .models import Bulletin, Advisory
-from .serializers import BulletinSerializer, AdvisorySerializer
+from .models import FAQ, Bulletin, Advisory
+from .serializers import FAQSerializer, BulletinSerializer, AdvisorySerializer
+
+
+class FAQAPIViewSet(ReadOnlyModelViewSet):
+    queryset = FAQ.objects.filter(live=True)
+    serializer_class = FAQSerializer
 
 
 class BulletinAPIViewSet(ReadOnlyModelViewSet):
