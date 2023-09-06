@@ -48,7 +48,9 @@ function App() {
           <Route path="/events-page" element={<EventsPage />} />
           <Route path="/faqs-page" element={<FAQsPage />} />
           <Route path="/bulletins-page" element={<BulletinsListPage />} />
+          <Route path="/bulletins-page/:id" element={<BulletinsListPage />} />
           <Route path="/advisories-page" element={<AdvisoriesListPage />} />
+          <Route path="/advisories-page/:id" element={<AdvisoriesListPage />} />
         </Routes>
       </div>
     </MapContext.Provider>

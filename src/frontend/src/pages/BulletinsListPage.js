@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
+import { useParams } from 'react-router-dom';
 
 // Third party packages
 import parse from 'html-react-parser';
@@ -40,13 +41,18 @@ function getBulletins() {
 }
 
 export default function BulletinsListPage() {
+  const { id } = useParams();
   // Ref and state hooks
   const isInitialMount = useRef(true);
   const [Bulletins, setBulletins] = useState([]);
 
   // Data function and initialization
   const getData = async () => {
-    const BulletinsData = await getBulletins();
+    let BulletinsData = await getBulletins();
+    if(id){
+      // Filter advisories with id equal to 1
+      BulletinsData = BulletinsData.filter(advisory => advisory.id.toString() === id);
+  }
     setBulletins(BulletinsData);
 
 
@@ -104,7 +110,7 @@ export default function BulletinsListPage() {
             return (
               <div key={bul.id} className="bul">
               <div>
-                <h1>{bul.bulletin_title}</h1>
+                <h1><a href={`/bulletins-page/${bul.id}`} className='bulletin-title'>{bul.bulletin_title}</a></h1>
                 {new Date().getTime() - timeToDateFormate(bul.modified_at) <=
                 2 * 60 * 60 * 1000 ? (
                   <p>Last Updated {formatTime(new Date(bul.modified_at))}</p>

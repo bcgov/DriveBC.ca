@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 // Third party packages
 import parse from 'html-react-parser';
@@ -98,7 +99,6 @@ function getMap(locationGeometry, mapContainerId) {
   });
 }
 
-// Supplementary API function
 function getAdvisories() {
   return fetch(`//${process.env.REACT_APP_API_HOST}/api/cms/advisories/`, {
     headers: {
@@ -113,13 +113,17 @@ function getAdvisories() {
 }
 
 export default function AdvisoriesListPage() {
+  const { id } = useParams();
   // Ref and state hooks
   const isInitialMount = useRef(true);
   const [Advisories, setAdvisories] = useState([]);
 
   // Data function and initialization
   const getData = async () => {
-    const AdvisoriesData = await getAdvisories();
+    let AdvisoriesData = await getAdvisories();
+    if(id){
+        AdvisoriesData = AdvisoriesData.filter(advisory => advisory.id.toString() === id);
+    }
     console.log(AdvisoriesData);
     setAdvisories(AdvisoriesData);
 
@@ -153,20 +157,10 @@ export default function AdvisoriesListPage() {
 
   const timeToDateFormate = timestamp => {
     // const timestamp = "2023-09-05T08:30:28.843581-07:00";
-
-    // Separate the timestamp and offset
     const [timestampPart, offsetPart] = timestamp.split('-');
-
-    // Remove the colon from the offset (e.g., "-07:00" => "-0700")
     const offset = offsetPart.replace(':', '');
-
-    // Combine the timestamp and offset
     const formattedTimestamp = timestampPart + offset;
-
-    // Create a Date object from the formatted timestamp
     const date = new Date(formattedTimestamp);
-
-    console.log(date); // This will give you the JavaScript Date object
     return date;
   };
 
@@ -183,7 +177,7 @@ export default function AdvisoriesListPage() {
             return (
               <div key={adv.id} className="adv">
                 <div>
-                  <h1>{adv.advisory_title}</h1>
+                  <h1><a href={`/advisories-page/${adv.id}`} className='advisory-title'>{adv.advisory_title}</a></h1>
                   {new Date().getTime() - timeToDateFormate(adv.modified_at) <=
                   2 * 60 * 60 * 1000 ? (
                     <p>Last Updated {formatTime(new Date(adv.modified_at))}</p>
@@ -196,7 +190,6 @@ export default function AdvisoriesListPage() {
                   <h2>{adv.advisory_teaser}</h2>
                   <div id={mapContainerId} className="advisory-map"></div>
                   <div>{parse(adv.advisory_body)}</div>
-                  {/* <div dangerouslySetInnerHTML={{ __html: parse(adv.advisory_body) }} /> */}
                 </div>
                 <SharePanel />
               </div>
