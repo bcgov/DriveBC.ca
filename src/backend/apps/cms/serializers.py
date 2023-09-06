@@ -30,11 +30,17 @@ class BulletinSerializer(serializers.ModelSerializer):
 
     def get_bulletin_body(self, obj):
         rended_body = wagtailcore_tags.richtext(obj.bulletin_body)
-        result = rended_body.replace("/media", "http://" + environ.Env()
-                                     .list("DJANGO_ALLOWED_HOSTS")[0] 
-                                     + ":8000/media")
+        result = (
+            rended_body.replace("/drivebc-cms", "http://" + 
+                                environ.Env().list("DJANGO_ALLOWED_HOSTS")[0] 
+                                + ":8000/drivebc-cms")
+            .replace("/media", "http://" + 
+                     environ.Env().list("DJANGO_ALLOWED_HOSTS")[0] + 
+                     ":8000/media") 
+        )
+
         return result
-    
+
     class Meta:
         model = Bulletin
         exclude = [
@@ -48,9 +54,14 @@ class AdvisorySerializer(serializers.ModelSerializer):
 
     def get_advisory_body(self, obj):
         rended_body = wagtailcore_tags.richtext(obj.advisory_body)
-        result = rended_body.replace("/media", "http://" + environ.Env()
-                                     .list("DJANGO_ALLOWED_HOSTS")[0] 
-                                     + ":8000/media")
+        result = (
+            rended_body.replace("/drivebc-cms", "http://" + 
+                                environ.Env().list("DJANGO_ALLOWED_HOSTS")[0] 
+                                + ":8000/drivebc-cms")
+            .replace("/media", "http://" + 
+                     environ.Env().list("DJANGO_ALLOWED_HOSTS")[0] + 
+                     ":8000/media") 
+        )
         return result
     
     class Meta:
