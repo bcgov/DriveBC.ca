@@ -1,4 +1,5 @@
 import {Icon, Stroke, Style} from 'ol/style.js';
+import { Point } from 'ol/geom';
 import cameraIconActive from "../../images/mapIcons/camera-active.png";
 import cameraIconHover from "../../images/mapIcons/camera-hover.png";
 import cameraIconStatic from "../../images/mapIcons/camera-static.png";
@@ -71,7 +72,7 @@ export const eventStyles = {
         src: incidentIconStatic,
       }),
     }),
-  
+
     hover: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -81,7 +82,7 @@ export const eventStyles = {
         src: incidentIconHover,
       }),
     }),
-  
+
     active: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -90,7 +91,7 @@ export const eventStyles = {
         scale: 0.25,
         src: incidentIconActive,
       }),
-    })
+    }),
   },
 
   major_incident: {
@@ -103,7 +104,7 @@ export const eventStyles = {
         src: incidentIconStaticMajor,
       }),
     }),
-  
+
     hover: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -113,7 +114,7 @@ export const eventStyles = {
         src: incidentIconHoverMajor,
       }),
     }),
-  
+
     active: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -122,7 +123,7 @@ export const eventStyles = {
         scale: 0.25,
         src: incidentIconActiveMajor,
       }),
-    })
+    }),
   },
 
   construction: {
@@ -135,7 +136,7 @@ export const eventStyles = {
         src: constructionIconStatic,
       }),
     }),
-  
+
     hover: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -145,7 +146,7 @@ export const eventStyles = {
         src: constructionIconHover,
       }),
     }),
-  
+
     active: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -154,7 +155,7 @@ export const eventStyles = {
         scale: 0.25,
         src: constructionIconActive,
       }),
-    })
+    }),
   },
 
   major_construction: {
@@ -167,7 +168,7 @@ export const eventStyles = {
         src: constructionIconStaticMajor,
       }),
     }),
-  
+
     hover: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -177,7 +178,7 @@ export const eventStyles = {
         src: constructionIconHoverMajor,
       }),
     }),
-  
+
     active: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -186,7 +187,7 @@ export const eventStyles = {
         scale: 0.25,
         src: constructionIconActiveMajor,
       }),
-    })
+    }),
   },
 
   special_event: {
@@ -199,7 +200,7 @@ export const eventStyles = {
         src: specialEventIconStatic,
       }),
     }),
-  
+
     hover: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -209,7 +210,7 @@ export const eventStyles = {
         src: specialEventIconHover,
       }),
     }),
-  
+
     active: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -218,7 +219,7 @@ export const eventStyles = {
         scale: 0.25,
         src: specialEventIconActive,
       }),
-    })
+    }),
   },
 
   major_special_event: {
@@ -231,7 +232,7 @@ export const eventStyles = {
         src: specialEventIconStaticMajor,
       }),
     }),
-  
+
     hover: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -241,7 +242,7 @@ export const eventStyles = {
         src: specialEventIconHoverMajor,
       }),
     }),
-  
+
     active: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -250,7 +251,7 @@ export const eventStyles = {
         scale: 0.25,
         src: specialEventIconActiveMajor,
       }),
-    })
+    }),
   },
 
   weather_condition: {
@@ -263,7 +264,7 @@ export const eventStyles = {
         src: weatherConditionIconStatic,
       }),
     }),
-  
+
     hover: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -273,7 +274,7 @@ export const eventStyles = {
         src: weatherConditionIconHover,
       }),
     }),
-  
+
     active: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -282,7 +283,7 @@ export const eventStyles = {
         scale: 0.25,
         src: weatherConditionIconActive,
       }),
-    })
+    }),
   },
 
   major_weather_condition: {
@@ -295,7 +296,7 @@ export const eventStyles = {
         src: weatherConditionIconStaticMajor,
       }),
     }),
-  
+
     hover: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -305,7 +306,7 @@ export const eventStyles = {
         src: weatherConditionIconHoverMajor,
       }),
     }),
-  
+
     active: new Style({
       image: new Icon({
         anchor: [24, 24],
@@ -314,7 +315,7 @@ export const eventStyles = {
         scale: 0.25,
         src: weatherConditionIconActiveMajor,
       }),
-    })
+    }),
   },
 
   // Event segments styles
@@ -336,6 +337,72 @@ export const eventStyles = {
         color: 'rgba(216 ,41 ,47, 0.9)',
         width: 10,
       }),
-    })
-  }
+    }),
+  },
 };
+export function getSegmentStyles(feature, state) {
+  // const pointTest = new Point(coordinates).transform('EPSG:4326', 'EPSG:3857');
+  // console.log(pointTest);
+  const centroidIndex = Math.floor(feature.getGeometry().getCoordinates().length / 2);
+  const centroid = feature.getGeometry().getCoordinates()[centroidIndex];
+  const centroidPoint = new Point(centroid);
+  switch (state) {
+    case 'static':
+      return [
+        new Style({
+          stroke: new Stroke({
+            color: 'rgba(216 ,41 ,47, 0.5)',
+            width: 12,
+          }),
+        }),
+        new Style({
+          geometry: centroidPoint,
+          image: new Icon({
+            src: weatherConditionIconStatic,
+            anchor: [24, 24],
+            anchorXUnits: 'pixels',
+            anchorYUnits: 'pixels',
+            scale: 1,
+          }),
+        }),
+      ];
+    case 'hover':
+      return [
+        new Style({
+          stroke: new Stroke({
+            color: 'rgba(216 ,41 ,47, 0.5)',
+            width: 12,
+          }),
+        }),
+        new Style({
+          geometry: centroidPoint,
+          image: new Icon({
+            src: weatherConditionIconHover,
+            anchor: [24, 24],
+            anchorXUnits: 'pixels',
+            anchorYUnits: 'pixels',
+            scale: 1,
+          }),
+        }),
+      ];
+    case 'active':
+      return [
+        new Style({
+          stroke: new Stroke({
+            color: 'rgba(216 ,41 ,47, 0.9)',
+            width: 12,
+          }),
+        }),
+        new Style({
+          geometry: centroidPoint,
+          image: new Icon({
+            src: weatherConditionIconActive,
+            anchor: [24, 24],
+            anchorXUnits: 'pixels',
+            anchorYUnits: 'pixels',
+            scale: 1,
+          }),
+        }),
+      ];
+  }
+}
