@@ -145,7 +145,8 @@ export default function FAQsPage() {
     const FAQsData = await getFAQs();
     setFAQs(FAQsData);
 
-    if (!isInitialMount.current){
+    // Run once on startup
+    if (isInitialMount.current){
       getMap(FAQsData);
     }
 
