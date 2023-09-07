@@ -88,7 +88,7 @@ export default function MapWrapper({
       });
     }
   }
-  
+
   function addMyLocationPinPoint(coordinates) {
     const svgMarkup = `
                     <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
@@ -108,10 +108,10 @@ export default function MapWrapper({
                       <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
                     </svg>
                 `;
-  
+
     const svgImage = new Image();
     svgImage.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgMarkup);
-  
+
     // Create an overlay for the marker
     const markerOverlay = new Overlay({
       position: fromLonLat(coordinates),
@@ -119,7 +119,7 @@ export default function MapWrapper({
       element: svgImage,
       stopEvent: false, // Allow interactions with the overlay content
     });
-  
+
     mapRef.current.on('moveend', function (event) {
     const newZoom = mapRef.current.getView().getZoom();
     // Calculate new marker size based on the zoom level
@@ -565,9 +565,7 @@ export default function MapWrapper({
     // setting geometry to null so that the object may be passed
     if (clickedWebcam.current) {
       clickedWebcam.current.geometry = null;
-      navigate('/camera-details-page', {
-        state: {cameraData: clickedWebcam.current},
-      });
+      navigate(`/cameras-page/${clickedWebcam.current.id}`);
     }
   }
 
