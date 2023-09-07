@@ -572,17 +572,14 @@ export default function MapWrapper({
           const vectorSource = this;
           vectorSource.clear();
           if (eventData) {
-            const geometryCollection4326 = [];
             eventData.forEach(record => {
               let olGeometry = null;
-
               switch (record.location.type) {
                 case 'Point':
                   olGeometry = new Point(record.location.coordinates);
                   break;
                 case 'LineString':
                   olGeometry = new LineString(record.location.coordinates);
-                  geometryCollection4326.push(olGeometry);
                   break;
                 default:
                   console.log(Error);
