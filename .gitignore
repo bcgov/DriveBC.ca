@@ -14,3 +14,6 @@
 
 # Python coverage file
 .coverage
+
+src/media/
+src/static/

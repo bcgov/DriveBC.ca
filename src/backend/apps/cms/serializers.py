@@ -1,4 +1,4 @@
-from apps.cms.models import FAQ
+from apps.cms.models import TestCMSData
 from rest_framework import serializers
 
 CMS_FIELDS = [
@@ -16,7 +16,7 @@ CMS_FIELDS = [
 
 class FAQSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FAQ
+        model = TestCMSData
         exclude = [
             "created_at",
             "modified_at",

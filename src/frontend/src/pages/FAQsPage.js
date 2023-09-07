@@ -114,8 +114,8 @@ function getMap(FAQsData) {
       vectorLayer,
     ],
     view: new View({
-      // Centered on Downtown Vancouver
-      center: transform([-123.11768530084888, 49.28324595133542], 'EPSG:4326', 'EPSG:3857'),
+      // Centered on Downtown Kelowna
+      center: transform([-119.49662112970556, 49.887338062986295], 'EPSG:4326', 'EPSG:3857'),
       zoom: 14,
     }),
   });
@@ -164,10 +164,10 @@ export default function FAQsPage() {
 
   // Rendering
   return (
-    <div className='faqs-page'>
+    <div className='cms-page'>
       <PageHeader
-        title='FAQs'
-        description='FAQs display from Wagtail CMS'>
+        title='Wagtail CMS Demo'
+        description='Data display from Wagtail CMS'>
       </PageHeader>
       <div className='faq-container'>
         <div className='faq-list'>

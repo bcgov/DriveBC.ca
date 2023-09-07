@@ -44,7 +44,7 @@ function App() {
           <Route path="/cameras-page" element={<CamerasPage />} />
           <Route path="/camera-details-page" element={<CameraDetailsPage />} />
           <Route path="/events-page" element={<EventsPage />} />
-          <Route path="/faqs-page" element={<FAQsPage />} />
+          <Route path="/cms-page" element={<FAQsPage />} />
         </Routes>
       </div>
     </MapContext.Provider>
