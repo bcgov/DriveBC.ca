@@ -540,7 +540,6 @@ export default function MapWrapper({
 
                 // Transfer properties
                 olFeature.setProperties(cameraData);
-                console.log(mapRef.current.getView().getProjection().getCode())
                 // Transform the projection
                 const olFeatureForMap = transformFeature(
                   olFeature,
@@ -606,8 +605,6 @@ export default function MapWrapper({
         },
       }),
       style: function (feature, resolution) {
-        console.log()
-
         return feature.getGeometry().getType() === 'LineString'
           ? getSegmentStyles(
               feature,

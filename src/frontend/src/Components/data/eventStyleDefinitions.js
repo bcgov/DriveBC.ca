@@ -317,32 +317,9 @@ export const eventStyles = {
       }),
     }),
   },
-
-  // Event segments styles
-  segments: {
-    static: new Style({
-      stroke: new Stroke({
-        color: 'rgba(216 ,41 ,47, 0.5)',
-        width: 8,
-      }),
-    }),
-    hover: new Style({
-      stroke: new Stroke({
-        color: 'rgba(216 ,41 ,47, 0.5)',
-        width: 10,
-      }),
-    }),
-    active: new Style({
-      stroke: new Stroke({
-        color: 'rgba(216 ,41 ,47, 0.9)',
-        width: 10,
-      }),
-    }),
-  },
 };
+// Event segments styles
 export function getSegmentStyles(feature, state) {
-  // const pointTest = new Point(coordinates).transform('EPSG:4326', 'EPSG:3857');
-  // console.log(pointTest);
   const centroidIndex = Math.floor(feature.getGeometry().getCoordinates().length / 2);
   const centroid = feature.getGeometry().getCoordinates()[centroidIndex];
   const centroidPoint = new Point(centroid);
