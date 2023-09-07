@@ -59,7 +59,6 @@ export default function CameraDetailsPage() {
   const nearby = <FontAwesomeIcon icon={faFlag} />;
 
   async function initCamera() {
-    console.log(params.id);
     const camera= await getWebcams(`//${process.env.REACT_APP_API_HOST}/api/webcams/${params.id}`);
     // Camera data
     setCamera(camera);
