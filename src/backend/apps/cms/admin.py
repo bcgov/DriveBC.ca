@@ -1,4 +1,4 @@
-from apps.cms.models import FAQ
+from apps.cms.models import TestCMSData
 from django.contrib import admin
 from django.contrib.gis.admin import OSMGeoAdmin
 
@@ -12,4 +12,4 @@ class FAQAdmin(OSMGeoAdmin):
     ]
 
 
-admin.site.register(FAQ, FAQAdmin)
+admin.site.register(TestCMSData, FAQAdmin)

@@ -52,8 +52,8 @@ export default function Header() {
               <LinkContainer exact to="/events-page">
                 {getNavLink('Delays')}
               </LinkContainer>
-              <LinkContainer exact to="/faqs-page">
-                {getNavLink('FAQs')}
+              <LinkContainer exact to="/cms-page">
+                {getNavLink('CMS Demo')}
               </LinkContainer>
             </Nav>
           </Navbar.Collapse>

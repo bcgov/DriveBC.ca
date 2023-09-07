@@ -9,14 +9,14 @@ from wagtail.snippets.models import register_snippet
 
 
 class DriveBCMapWidget(OSMWidget):
-    # Defaults to Downtown Vancouver
-    default_lon = -123.11768530084888
-    default_lat = 49.28324595133542
+    # Defaults to Kelowna
+    default_lon = -119.49662112970556
+    default_lat = 49.887338062986295
     default_zoom = 14
 
 
 @register_snippet
-class FAQ(DraftStateMixin, RevisionMixin, index.Indexed, BaseModel):
+class TestCMSData(DraftStateMixin, RevisionMixin, index.Indexed, BaseModel):
     # Text fields
     name = models.CharField(max_length=64)
     body = RichTextField(blank=True)
