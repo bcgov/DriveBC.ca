@@ -1,5 +1,9 @@
 from apps.cms.models import TestCMSData
 from rest_framework import serializers
+from apps.cms.models import Advisory
+from wagtail.templatetags import wagtailcore_tags
+import environ
+
 
 CMS_FIELDS = [
     "live",
@@ -21,3 +25,34 @@ class FAQSerializer(serializers.ModelSerializer):
             "created_at",
             "modified_at",
         ] + CMS_FIELDS
+
+
+class AdvisorySerializer(serializers.ModelSerializer):
+    advisory_description = serializers.SerializerMethodField()
+
+    def get_advisory_description(self, obj):
+        rended_description = wagtailcore_tags.richtext(
+            obj.advisory_description)
+        result = (
+            rended_description.replace("/drivebc-cms", "http://" 
+                                       + environ.Env()
+                                       .list("DJANGO_ALLOWED_HOSTS")[0] 
+                                       + ":8000/drivebc-cms")
+            .replace("/media", "http://" + 
+                     environ.Env().list("DJANGO_ALLOWED_HOSTS")[0] + 
+                     ":8000/media") 
+        )
+        return result
+    
+    class Meta:
+        model = Advisory
+        # fields = '__all__'
+        # fields = ['advisory_title', 'advisory_teaser', 
+        #           'advisory_body', 'advisory_map']
+        exclude = [
+            "title",
+            "depth",
+            "path",
+            "numchild",
+            "slug"
+        ]
