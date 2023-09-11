@@ -30,6 +30,7 @@ class FAQSerializer(serializers.ModelSerializer):
 class AdvisorySerializer(serializers.ModelSerializer):
     advisory_description = serializers.SerializerMethodField()
 
+    # get rendered html elements for description and access static media foder
     def get_advisory_description(self, obj):
         rended_description = wagtailcore_tags.richtext(
             obj.advisory_description)
@@ -46,9 +47,6 @@ class AdvisorySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Advisory
-        # fields = '__all__'
-        # fields = ['advisory_title', 'advisory_teaser', 
-        #           'advisory_body', 'advisory_map']
         exclude = [
             "title",
             "depth",
