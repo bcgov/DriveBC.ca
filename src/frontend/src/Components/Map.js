@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import ReactDOMServer from 'react-dom/server';
 
 // Third party packages
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlus,
   faMinus,
@@ -12,27 +12,26 @@ import {
   faLocationCrosshairs,
   faXmark
 } from '@fortawesome/free-solid-svg-icons';
+import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
-import {useMediaQuery} from '@uidotdev/usehooks';
 
 // Components and functions
 import { getEvents } from './data/events.js';
 import { getWebcams } from './data/webcams.js';
 import Layers from './Layers.js';
-import Routes from './Routes.js';
-import { eventStyles, cameraStyles } from './data/eventStyleDefinitions.js';
 import FriendlyTime from './FriendlyTime';
 import EventTypeIcon from './EventTypeIcon';
 import CurrentCameraIcon from './CurrentCameraIcon';
 
 // OpenLayers
-import {applyStyle} from 'ol-mapbox-style';
-import {Circle} from 'ol/geom.js';
-import {fromLonLat} from 'ol/proj';
-import {Style} from 'ol/style.js';
-import {Image as ImageLayer} from 'ol/layer.js';
-import {MapContext} from '../App.js';
-import {ScaleLine} from 'ol/control.js';
+import { applyStyle } from 'ol-mapbox-style';
+import { Circle } from 'ol/geom.js';
+import { fromLonLat } from 'ol/proj';
+import { Image as ImageLayer } from 'ol/layer.js';
+import { MapContext } from '../App.js';
+import { Point, LineString } from 'ol/geom';
+import { ScaleLine } from 'ol/control.js';
+import { Style } from 'ol/style.js';
 import * as ol from 'ol';
 import Cluster from 'ol/source/Cluster.js';
 import Feature from 'ol/Feature.js';
@@ -42,7 +41,6 @@ import Map from 'ol/Map';
 import Overlay from 'ol/Overlay.js';
 import Geolocation from 'ol/Geolocation.js';
 import MVT from 'ol/format/MVT.js';
-import {Point, LineString} from 'ol/geom';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import VectorTileLayer from 'ol/layer/VectorTile.js';
@@ -50,6 +48,7 @@ import VectorTileSource from 'ol/source/VectorTile.js';
 import View from 'ol/View';
 
 // Styling
+import { eventStyles, cameraStyles } from './data/eventStyleDefinitions.js';
 import './Map.scss';
 
 export default function MapWrapper({
@@ -58,8 +57,7 @@ export default function MapWrapper({
   cameraHandler,
   mapViewRoute,
 }) {
-  const {mapContext, setMapContext} = useContext(MapContext);
-
+  const { mapContext, setMapContext } = useContext(MapContext);
   const mapElement = useRef();
   const mapRef = useRef();
   const popup = useRef();
@@ -69,7 +67,6 @@ export default function MapWrapper({
   const lng = -120.7862;
   const lat = 50.113;
   const [layersOpen, setLayersOpen] = useState(false);
-  const [routesOpen, setRoutesOpen] = useState(false);
   const container = useRef();
   const content = useRef();
   const [iconClicked, setIconClicked] = useState(false);
@@ -688,30 +685,6 @@ export default function MapWrapper({
 
   function toggleLayers(openLayers) {
     setLayersOpen(openLayers);
-    if (openLayers) {
-      setRoutesOpen(false);
-    }
-  }
-
-  function toggleRoutes(openRoutes) {
-    setRoutesOpen(openRoutes);
-    if (openRoutes) {
-      setLayersOpen(false);
-    }
-  }
-
-  function setStartToLocation() {
-    if (!mapRef.current) {
-      return;
-    }
-    navigator.geolocation.getCurrentPosition((position) => {
-      const pos = [position.coords.longitude, position.coords.latitude];
-      mapRef.current.setZoom(12);
-      mapRef.current.setCenter(pos);
-
-      // see comment in routeHandler for why we're using window.start
-      window.start.setLngLat(pos).addTo(mapRef.current);
-    });
   }
 
   function toggleLayer(layer, checked) {
@@ -788,11 +761,6 @@ export default function MapWrapper({
 
       {!isPreview && (
         <div>
-          <Routes
-            open={routesOpen}
-            setRoutesOpen={toggleRoutes}
-            setStartToLocation={setStartToLocation}
-          />
           <Layers
             open={layersOpen}
             setLayersOpen={toggleLayers}
