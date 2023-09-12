@@ -4,6 +4,8 @@ import './EventCard.scss';
 
 // Third party packages
 import FriendlyTime from '../FriendlyTime';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faMapLocation} from '@fortawesome/free-solid-svg-icons';
 
 export default function EventCard({event, icon}) {
   // Rendering
@@ -28,7 +30,7 @@ export default function EventCard({event, icon}) {
         </div>
         <div className="map">
           <div className="header">Map</div>
-          <div className="content">map</div>
+          <div className="content"><FontAwesomeIcon icon={faMapLocation} /></div>
         </div>
       </div>
     </div>
