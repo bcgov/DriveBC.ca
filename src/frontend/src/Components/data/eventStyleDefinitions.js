@@ -1,31 +1,31 @@
 import {Icon, Stroke, Style} from 'ol/style.js';
-import cameraIconActive from "../../images/mapIcons/camera-active.svg";
-import cameraIconHover from "../../images/mapIcons/camera-hover.svg";
-import cameraIconStatic from "../../images/mapIcons/camera-static.svg";
-import incidentIconActive from "../../images/mapIcons/incident-active.svg";
-import incidentIconHover from "../../images/mapIcons/incident-hover.svg";
-import incidentIconStatic from "../../images/mapIcons/incident-static.svg";
-import incidentIconActiveMajor from "../../images/mapIcons/major-incident-active.svg";
-import incidentIconHoverMajor from "../../images/mapIcons/major-incident-hover.svg";
-import incidentIconStaticMajor from "../../images/mapIcons/major-incident-static.svg";
-import constructionIconActive from "../../images/mapIcons/construction-active.svg";
-import constructionIconHover from "../../images/mapIcons/construction-hover.svg";
-import constructionIconStatic from "../../images/mapIcons/construction-static.svg";
-import constructionIconActiveMajor from "../../images/mapIcons/major-construction-active.svg";
-import constructionIconHoverMajor from "../../images/mapIcons/major-construction-hover.svg";
-import constructionIconStaticMajor from "../../images/mapIcons/major-construction-static.svg";
-import specialEventIconActive from "../../images/mapIcons/special_event-active.svg";
-import specialEventIconHover from "../../images/mapIcons/special_event-hover.svg";
-import specialEventIconStatic from "../../images/mapIcons/special_event-static.svg";
-import specialEventIconActiveMajor from "../../images/mapIcons/major-special_event-active.svg";
-import specialEventIconHoverMajor from "../../images/mapIcons/major-special_event-hover.svg";
-import specialEventIconStaticMajor from "../../images/mapIcons/major-special_event-static.svg";
-import weatherConditionIconActive from "../../images/mapIcons/weather_condition-active.svg";
-import weatherConditionIconHover from "../../images/mapIcons/weather_condition-hover.svg";
-import weatherConditionIconStatic from "../../images/mapIcons/weather_condition-static.svg";
-import weatherConditionIconActiveMajor from "../../images/mapIcons/major-weather_condition-active.svg";
-import weatherConditionIconHoverMajor from "../../images/mapIcons/major-weather_condition-hover.svg";
-import weatherConditionIconStaticMajor from "../../images/mapIcons/major-weather_condition-static.svg";
+import cameraIconActive from "../../images/mapIcons/camera-active.png";
+import cameraIconHover from "../../images/mapIcons/camera-hover.png";
+import cameraIconStatic from "../../images/mapIcons/camera-static.png";
+import incidentIconActive from "../../images/mapIcons/incident-minor-active.png";
+import incidentIconHover from "../../images/mapIcons/incident-minor-hover.png";
+import incidentIconStatic from "../../images/mapIcons/incident-minor-static.png";
+import incidentIconActiveMajor from "../../images/mapIcons/incident-major-active.png";
+import incidentIconHoverMajor from "../../images/mapIcons/incident-major-hover.png";
+import incidentIconStaticMajor from "../../images/mapIcons/incident-major-static.png";
+import constructionIconActive from "../../images/mapIcons/currentevent-minor-active.png";
+import constructionIconHover from "../../images/mapIcons/currentevent-minor-hover.png";
+import constructionIconStatic from "../../images/mapIcons/currentevent-minor-static.png";
+import constructionIconActiveMajor from "../../images/mapIcons/currentevent-major-active.png";
+import constructionIconHoverMajor from "../../images/mapIcons/currentevent-major-hover.png";
+import constructionIconStaticMajor from "../../images/mapIcons/currentevent-major-static.png";
+import specialEventIconActive from "../../images/mapIcons/futureevent-minor-active.png";
+import specialEventIconHover from "../../images/mapIcons/futureevent-minor-hover.png";
+import specialEventIconStatic from "../../images/mapIcons/futureevent-minor-static.png";
+import specialEventIconActiveMajor from "../../images/mapIcons/futureevent-major-active.png";
+import specialEventIconHoverMajor from "../../images/mapIcons/futureevent-major-hover.png";
+import specialEventIconStaticMajor from "../../images/mapIcons/futureevent-major-static.png";
+import weatherConditionIconActive from "../../images/mapIcons/road-minor-active.png";
+import weatherConditionIconHover from "../../images/mapIcons/road-minor-hover.png";
+import weatherConditionIconStatic from "../../images/mapIcons/road-minor-static.png";
+import weatherConditionIconActiveMajor from "../../images/mapIcons/road-major-active.png";
+import weatherConditionIconHoverMajor from "../../images/mapIcons/road-major-hover.png";
+import weatherConditionIconStaticMajor from "../../images/mapIcons/road-major-static.png";
 
 
 // Camera icon styles
@@ -35,7 +35,7 @@ export const cameraStyles = {
       anchor: [24, 24],
       anchorXUnits: 'pixels',
       anchorYUnits: 'pixels',
-      scale: 1,
+      scale: 0.25,
       src: cameraIconStatic,
     }),
   }),
@@ -44,7 +44,7 @@ export const cameraStyles = {
       anchor: [24, 24],
       anchorXUnits: 'pixels',
       anchorYUnits: 'pixels',
-      scale: 1,
+      scale: 0.25,
       src: cameraIconHover,
     }),
   }),
@@ -53,7 +53,7 @@ export const cameraStyles = {
       anchor: [24, 24],
       anchorXUnits: 'pixels',
       anchorYUnits: 'pixels',
-      scale: 1,
+      scale: 0.25,
       src: cameraIconActive,
     }),
   }),
@@ -67,7 +67,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: incidentIconStatic,
       }),
     }),
@@ -77,7 +77,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: incidentIconHover,
       }),
     }),
@@ -87,7 +87,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: incidentIconActive,
       }),
     })
@@ -99,7 +99,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: incidentIconStaticMajor,
       }),
     }),
@@ -109,7 +109,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: incidentIconHoverMajor,
       }),
     }),
@@ -119,7 +119,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: incidentIconActiveMajor,
       }),
     })
@@ -131,7 +131,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: constructionIconStatic,
       }),
     }),
@@ -141,7 +141,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: constructionIconHover,
       }),
     }),
@@ -151,7 +151,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: constructionIconActive,
       }),
     })
@@ -163,7 +163,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: constructionIconStaticMajor,
       }),
     }),
@@ -173,7 +173,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: constructionIconHoverMajor,
       }),
     }),
@@ -183,7 +183,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: constructionIconActiveMajor,
       }),
     })
@@ -195,7 +195,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: specialEventIconStatic,
       }),
     }),
@@ -205,7 +205,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: specialEventIconHover,
       }),
     }),
@@ -215,7 +215,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: specialEventIconActive,
       }),
     })
@@ -227,7 +227,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: specialEventIconStaticMajor,
       }),
     }),
@@ -237,7 +237,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: specialEventIconHoverMajor,
       }),
     }),
@@ -247,7 +247,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: specialEventIconActiveMajor,
       }),
     })
@@ -259,7 +259,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: weatherConditionIconStatic,
       }),
     }),
@@ -269,7 +269,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: weatherConditionIconHover,
       }),
     }),
@@ -279,7 +279,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: weatherConditionIconActive,
       }),
     })
@@ -291,7 +291,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: weatherConditionIconStaticMajor,
       }),
     }),
@@ -301,7 +301,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: weatherConditionIconHoverMajor,
       }),
     }),
@@ -311,7 +311,7 @@ export const eventStyles = {
         anchor: [24, 24],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
-        scale: 1,
+        scale: 0.25,
         src: weatherConditionIconActiveMajor,
       }),
     })
