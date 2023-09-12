@@ -25,6 +25,7 @@
     }
 
     .header {
+      color: $BC-Blue;
       background-color: $BC-Blue-Light;
       width: 110px;
       flex: 0 0 110px;
@@ -33,6 +34,11 @@
     .content {
       border-bottom: 1px solid $Divider;
       flex-grow: 1;
+
+      svg {
+        color: $BC-Blue;
+        margin-right: 8px;
+      }
     }
   }
 
@@ -51,6 +57,10 @@
         .content {
           font-weight: 700;
           text-transform: capitalize;
+
+          svg {
+            color: $Type-status-red;
+          }
         }
       }
     }
