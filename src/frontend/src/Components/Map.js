@@ -4,6 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import ReactDOMServer from 'react-dom/server';
 
 // Third party packages
+import { useMediaQuery } from '@uidotdev/usehooks';
+import Button from 'react-bootstrap/Button';
+
+// FA
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlus,
@@ -12,11 +16,14 @@ import {
   faLocationCrosshairs,
   faXmark
 } from '@fortawesome/free-solid-svg-icons';
-import { useMediaQuery } from '@uidotdev/usehooks';
-import Button from 'react-bootstrap/Button';
+
+// react-bootstrap-typeahead
+import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 // Components and functions
 import { getEvents } from './data/events.js';
+import { getLocations } from './data/locations.js';
 import { getWebcams } from './data/webcams.js';
 import Layers from './Layers.js';
 import FriendlyTime from './FriendlyTime';
@@ -77,6 +84,11 @@ export default function MapWrapper({
   const hoveredEvent = useRef();
   const clickedCamera = useRef();
   const clickedEvent = useRef();
+
+  // Typeahead states
+  const [isSearching, setSearching] = useState(false);
+  const [options, setLocationOptions] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   function centerMyLocation(coordinates) {
     if (mapRef.current) {
@@ -468,6 +480,10 @@ export default function MapWrapper({
     });
   }, []);
 
+  useEffect(() => {
+    console.log(selectedLocation);
+  }, [selectedLocation]);
+
   async function loadWebcams() {
     const webcamResults = await getWebcams();
 
@@ -556,6 +572,19 @@ export default function MapWrapper({
       style: (feature, resolution) => getEventIcon(feature, 'static')
     });
     mapRef.current.addLayer(layers.current['eventsLayer']);
+  }
+
+  function loadLocationOptions(locationInput) {
+    setSearching(true);
+    getLocations(locationInput).then((locationsData) => {
+      setLocationOptions(locationsData.features.map((feature) => {
+        return {
+          ...feature,
+          label: feature.properties.fullAddress
+        }
+      }));
+      setSearching(false);
+    });
   }
 
   function webcamDetailRoute() {
@@ -761,6 +790,25 @@ export default function MapWrapper({
 
       {!isPreview && (
         <div>
+          <div className="typeahead-container">
+            <AsyncTypeahead
+              filterBy={() => true}
+              id="location-search-typeahead"
+              isLoading={isSearching}
+              labelKey="label"
+              minLength={3}
+              onChange={setSelectedLocation}
+              onSearch={loadLocationOptions}
+              options={options}
+              placeholder="Search for a location..."
+              renderMenuItemChildren={(location) => (
+                <div>
+                  <span>{location.properties.fullAddress}</span>
+                </div>
+              )}
+            />
+          </div>
+
           <Layers
             open={layersOpen}
             setLayersOpen={toggleLayers}
