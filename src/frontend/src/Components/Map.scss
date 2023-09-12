@@ -321,6 +321,13 @@
     }
   }
 
+  .typeahead-container {
+    width: 300px;
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+  }
+
   .zoom-btn {
     background-color: $Surface-tinted;
     color: $Type-Link;
