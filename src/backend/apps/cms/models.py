@@ -6,6 +6,9 @@ from wagtail.fields import RichTextField
 from wagtail.models import DraftStateMixin, RevisionMixin
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
+from wagtail.models import Page
+from wagtail.api import APIField
+from wagtail.templatetags import wagtailcore_tags
 
 
 class DriveBCMapWidget(OSMWidget):
@@ -43,3 +46,35 @@ class TestCMSData(DraftStateMixin, RevisionMixin, index.Indexed, BaseModel):
         FieldPanel("url"),
         FieldPanel("location_geometry", widget=DriveBCMapWidget),
     ]
+
+
+class Advisory(Page, BaseModel):
+    page_description = "Use this page for creating advisories"
+    advisory_title = models.CharField(max_length=255)
+    advisory_active = models.BooleanField(default=True)
+    advisory_description = RichTextField(blank=True)
+    
+    def rendered_description(self):
+        return wagtailcore_tags.richtext(self.advisory_description)
+
+    api_fields = [
+        APIField('rendered_description'),
+    ]
+
+    # Geo fields
+    advisory_geometry = models.GeometryField()
+
+    def save(self, *args, **kwargs):
+        self.title = self.advisory_title
+        super().save(*args, **kwargs)
+
+    # Editor panels configuration
+    content_panels = [
+        FieldPanel("advisory_title"),
+        FieldPanel("advisory_active"),
+        FieldPanel("advisory_description"),
+        FieldPanel("advisory_geometry", widget=DriveBCMapWidget),
+    ]
+    promote_panels = []
+
+    template = 'cms/advisory.html'
