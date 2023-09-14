@@ -33,11 +33,10 @@ class TestAdvisoryAPI(APITestCase, BaseTest):
 
         advisory = Advisory.objects.create(
             # id=3,  
-            advisory_title="Advisory title",
-            advisory_description="Advisory description",
-            advisory_active=True,
-            advisory_geometry=LineString([(-119, 35), (-118, 32)]),
             title="Advisory title",
+            description="Advisory description",
+            active=True,
+            geometry=LineString([(-119, 35), (-118, 32)]),
             path="000100010001",
             depth=3,
             content_type=ContentType.objects.get(app_label='cms', 
@@ -48,11 +47,10 @@ class TestAdvisoryAPI(APITestCase, BaseTest):
 
         advisory_2 = Advisory.objects.create(
             # id=3,  
-            advisory_title="Advisory title 2",
-            advisory_description="Advisory description 2",
-            advisory_active=True,
-            advisory_geometry=LineString([(-119, 35), (-118, 32)]),
             title="Advisory title 2",
+            description="Advisory description 2",
+            active=True,
+            geometry=LineString([(-119, 35), (-118, 32)]),
             path="000100010002",
             depth=3,
             content_type=ContentType.objects.get(app_label='cms', 
