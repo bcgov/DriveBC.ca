@@ -1,4 +1,4 @@
-from apps.cms.models import TestCMSData
+from apps.cms.models import TestCMSData, Advisory
 from django.contrib import admin
 from django.contrib.gis.admin import OSMGeoAdmin
 
@@ -12,4 +12,12 @@ class FAQAdmin(OSMGeoAdmin):
     ]
 
 
+class AdvisoryAdmin(OSMGeoAdmin):
+    list_display = [
+        'title', 'active', 'description', 'geometry',
+        'created_at', 'modified_at'
+    ]
+
+
 admin.site.register(TestCMSData, FAQAdmin)
+admin.site.register(Advisory, AdvisoryAdmin)

@@ -28,12 +28,12 @@ class FAQSerializer(serializers.ModelSerializer):
 
 
 class AdvisorySerializer(serializers.ModelSerializer):
-    advisory_description = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
 
     # get rendered html elements for description and access static media foder
-    def get_advisory_description(self, obj):
+    def get_description(self, obj):
         rended_description = wagtailcore_tags.richtext(
-            obj.advisory_description)
+            obj.description)
         result = (
             rended_description.replace("/drivebc-cms", "http://" 
                                        + environ.Env()
@@ -47,10 +47,4 @@ class AdvisorySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Advisory
-        exclude = [
-            "title",
-            "depth",
-            "path",
-            "numchild",
-            "slug"
-        ]
+        fields = "__all__"

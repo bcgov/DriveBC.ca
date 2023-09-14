@@ -50,30 +50,31 @@ class TestCMSData(DraftStateMixin, RevisionMixin, index.Indexed, BaseModel):
 
 class Advisory(Page, BaseModel):
     page_description = "Use this page for creating advisories"
-    advisory_title = models.CharField(max_length=255)
-    advisory_active = models.BooleanField(default=True)
-    advisory_description = RichTextField(blank=True)
+    # advisory_title = models.CharField(max_length=255)
+    active = models.BooleanField(default=True)
+    description = RichTextField(blank=True)
     
     def rendered_description(self):
-        return wagtailcore_tags.richtext(self.advisory_description)
+        return wagtailcore_tags.richtext(self.description)
 
     api_fields = [
         APIField('rendered_description'),
     ]
 
     # Geo fields
-    advisory_geometry = models.GeometryField()
+    geometry = models.GeometryField()
 
     def save(self, *args, **kwargs):
-        self.title = self.advisory_title
+        # self.title = self.advisory_title
         super().save(*args, **kwargs)
 
     # Editor panels configuration
     content_panels = [
-        FieldPanel("advisory_title"),
-        FieldPanel("advisory_active"),
-        FieldPanel("advisory_description"),
-        FieldPanel("advisory_geometry", widget=DriveBCMapWidget),
+        FieldPanel("title"),
+        FieldPanel("active"),
+        FieldPanel("description"),
+        FieldPanel("geometry", widget=DriveBCMapWidget),
+        
     ]
     promote_panels = []
 
