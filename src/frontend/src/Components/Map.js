@@ -366,11 +366,16 @@ export default function MapWrapper({
                 </div>
               </div>
             </div>`;
-              popup.current.setPosition(coordinate);
-              clickedWebcam.current = featureDetails;
+            popup.current.setPosition(coordinate);
+            clickedWebcam.current = featureDetails;
+            if(coordinate[1] < clickedFeatures[0].values_.geometry.extent_[1]){
+              popup.current.getElement().style.top = "10px";
+            } else {
+              popup.current.getElement().style.top = "30px";
             }
           }
-        });
+        }
+      });
 
       // if it wasn't a webcam icon, check if it was an event
       layers.current['eventsLayer']
@@ -433,6 +438,11 @@ export default function MapWrapper({
             </div>`;
 
             popup.current.setPosition(coordinate);
+            if(coordinate[1] < clickedFeatures[0].values_.geometry.extent_[1]){
+              popup.current.getElement().style.top = "10px";
+            } else {
+              popup.current.getElement().style.top = "30px";
+            }
           }
         });
 
