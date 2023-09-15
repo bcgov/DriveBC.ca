@@ -50,7 +50,6 @@ class TestCMSData(DraftStateMixin, RevisionMixin, index.Indexed, BaseModel):
 
 class Advisory(Page, BaseModel):
     page_description = "Use this page for creating advisories"
-    # advisory_title = models.CharField(max_length=255)
     active = models.BooleanField(default=True)
     description = RichTextField(blank=True)
     
@@ -65,7 +64,6 @@ class Advisory(Page, BaseModel):
     geometry = models.GeometryField()
 
     def save(self, *args, **kwargs):
-        # self.title = self.advisory_title
         super().save(*args, **kwargs)
 
     # Editor panels configuration

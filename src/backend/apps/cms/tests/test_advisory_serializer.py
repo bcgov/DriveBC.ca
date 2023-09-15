@@ -47,10 +47,14 @@ class TestAdvisorySerializer(BaseTest):
             'geometry': LineString([(-123.569743, 48.561231), 
                                     (-123.569743, 48.561231)]),
             'content_type': 55,
+            'depth': 1,
+            'path': '000100010005',
+            'numchild': 0,
+            'slug': 'title1',
         }
         serializer = AdvisorySerializer(data=valid_data)
         # Check if the serializer is valid
-        self.assertTrue(serializer.is_valid())
+        assert serializer.is_valid() is True
         # Save the serializer data to create a new Advisory instance
         saved_advisory = serializer.save()
-        assert saved_advisory.advisory_title == "Advisory title 1"
+        assert saved_advisory.title == "Advisory title 1"
