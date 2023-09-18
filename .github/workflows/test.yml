@@ -32,6 +32,9 @@ jobs:
           MAP_STYLE=${{ vars.MAP_STYLE }}
           HIGHWAY_LAYER=${{ vars.HIGHWAY_LAYER }}
           OPEN511_LAYER=${{ vars.OPEN511_LAYER }}
+          REPLAY_THE_DAY=${{ vars.REPLAY_THE_DAY }}
+          GEOCODER_HOST=${{ vars.GEOCODER_HOST }}
+          GEOCODER_API_AUTH_KEY=${{ vars.GEOCODER_API_AUTH_KEY }}
           DEBUG_BUILD=true
     - name: push to registry
       uses: redhat-actions/push-to-registry@v2.7

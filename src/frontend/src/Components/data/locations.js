@@ -10,7 +10,7 @@ export function getLocations(addressInput) {
       addressString: addressInput
     }, {
     headers: {
-      'Content-Type': 'application/json',
+      'apiKey': `${process.env.REACT_APP_GEOCODER_API_AUTH_KEY}`
     }
   }).then((data) => data)
   .catch((error) => {
