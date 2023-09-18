@@ -43,7 +43,7 @@ export default function EventsPage() {
       cell: (props) => <span>{props.getValue().toLowerCase()}</span>,
     },
     {
-      header: 'Route',
+      header: 'Road Name',
       accessorKey: 'route_display',
     },
     {

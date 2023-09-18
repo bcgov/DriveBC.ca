@@ -12,7 +12,7 @@ export default function EventCard({event, icon}) {
   return (
     <div className={'event-card ' + event.severity.toLowerCase()}>
       <div className="event-card__title">
-        <div className="route">{event.route}</div>
+        <div className="route">{event.route_display}</div>
         <div className="direction">{event.direction}</div>
       </div>
       <div className="event-card__details">
