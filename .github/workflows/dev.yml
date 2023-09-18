@@ -33,6 +33,7 @@ jobs:
           HIGHWAY_LAYER=${{ vars.HIGHWAY_LAYER }}
           OPEN511_LAYER=${{ vars.OPEN511_LAYER }}
           REPLAY_THE_DAY=${{ vars.REPLAY_THE_DAY }}
+          GEOCODER_HOST=${{ vars.GEOCODER_HOST }}
           DEBUG_BUILD=true
     - name: push to registry
       uses: redhat-actions/push-to-registry@v2.7
@@ -59,4 +60,3 @@ jobs:
         registry: ${{ secrets.REGISTRY }}
         username: ${{ secrets.BUILDER_USERNAME }}
         password: ${{ secrets.BUILDER_TOKEN }}
-
