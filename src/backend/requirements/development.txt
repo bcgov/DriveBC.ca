@@ -8,3 +8,4 @@ coverage==7.2.7
 # Experimental packages, could be removed or moved to base later
 gunicorn
 gunicorn[eventlet]
+pylint
