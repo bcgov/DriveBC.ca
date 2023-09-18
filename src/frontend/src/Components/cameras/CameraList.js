@@ -9,6 +9,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import {getWebcams} from '../data/webcams';
 import WebcamCard from './WebcamCard.js';
 import highwayShield from '../highwayShield.js';
+import Advisories from '../advisories/Advisories';
 
 // Styling
 import './CameraList.scss';
@@ -69,6 +70,7 @@ export default function CameraList() {
     return Object.entries(mapDisplayedWebcams()).map(([highway, cameras]) => (
       <div className="highway-group" key={highway}>
         <Container>
+          <Advisories />
           <div className="highway-title">
             <div className="highway-shield-box">
               {highwayShield(highway)}

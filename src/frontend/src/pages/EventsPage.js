@@ -22,6 +22,7 @@ import FriendlyTime from '../Components/FriendlyTime';
 import PageHeader from '../PageHeader';
 import Footer from '../Footer.js';
 import EventTypeIcon from '../Components/EventTypeIcon';
+import Advisories from '../Components/advisories/Advisories';
 
 // Styling
 import './EventsPage.scss';
@@ -193,6 +194,7 @@ export default function EventsPage() {
         description="Find out if there are any delays that might impact your journey before you go.">
       </PageHeader>
       <Container>
+      <Advisories />
         <div className="sort-and-filter">
           <div className="sort"></div>
           <Dropdown align="end">
