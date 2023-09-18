@@ -29,6 +29,7 @@ import Layers from './Layers.js';
 import FriendlyTime from './FriendlyTime';
 import EventTypeIcon from './EventTypeIcon';
 import CurrentCameraIcon from './CurrentCameraIcon';
+import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
 
 // OpenLayers
 import { applyStyle } from 'ol-mapbox-style';
@@ -873,6 +874,7 @@ export default function MapWrapper({
             setLayersOpen={toggleLayers}
             toggleLayer={toggleLayer}
           />
+          <AdvisoriesAccordion />
         </div>
       )}
     </div>
