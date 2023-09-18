@@ -119,7 +119,8 @@ export default function MapWrapper({
                 `;
 
     const svgImage = new Image();
-    svgImage.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgMarkup);
+    svgImage.src =
+      'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgMarkup);
 
     // Create an overlay for the marker
     const markerOverlay = new Overlay({
@@ -336,6 +337,7 @@ export default function MapWrapper({
                 clickedEvent.current.setStyle(
                   getEventIcon(clickedEvent.current, 'static'),
                 );
+                setRelatedGeometry(clickedEvent.current, 'static');
                 clickedEvent.current = null;
               }
               // set new clicked camera feature
@@ -388,20 +390,15 @@ export default function MapWrapper({
               clickedEvent.current.setStyle(
                 getEventIcon(clickedEvent.current, 'static'),
               );
+              setRelatedGeometry(clickedEvent.current, 'static');
             }
 
             // set new clicked event feature
             clickedEvent.current = clickedFeatures[0];
-            if (clickedEvent.current.values_.location.type === 'LineString') {
-              clickedEvent.current.setStyle(getSegmentStyles(
-                feature,
-                'active',
-              ));
-            } else {
-              clickedEvent.current.setStyle(
-                getEventIcon(clickedEvent.current, 'active'),
-              );
-            }
+            clickedEvent.current.setStyle(
+              getEventIcon(clickedEvent.current, 'active'),
+            );
+            setRelatedGeometry(clickedEvent.current, 'active');
 
             clickedEvent.current.setProperties({ clicked: true }, true);
 
@@ -448,13 +445,10 @@ export default function MapWrapper({
         if (clickedCamera.current) {
           clickedCamera.current.setStyle(cameraStyles['static']);
         } else if (clickedEvent.current) {
-          if (clickedEvent.current.values_.location.type === 'LineString') {
-            clickedEvent.current.setStyle(eventStyles['segments']['static']);
-          } else {
-            clickedEvent.current.setStyle(
-              getEventIcon(clickedEvent.current, 'static'),
-            );
-          }
+          clickedEvent.current.setStyle(
+            getEventIcon(clickedEvent.current, 'static'),
+          );
+          setRelatedGeometry(clickedEvent.current, 'static');
         }
 
         clickedCamera.current = null;
@@ -491,21 +485,17 @@ export default function MapWrapper({
             if (hoveredFeatures[0]) {
               hoveredEvent.current = hoveredFeatures[0];
               if (!hoveredEvent.current.getProperties().clicked) {
-                hoveredEvent.current.setStyle(hoveredEvent.current.getGeometry().getType() === 'LineString'
-                ? getSegmentStyles(
-                    hoveredEvent.current,
-                    'hover',
-                  )
-                : getEventIcon(hoveredEvent.current, 'hover'));
+                hoveredEvent.current.setStyle(
+                  getEventIcon(hoveredEvent.current, 'hover'),
+                );
+                setRelatedGeometry(hoveredEvent.current, 'hover');
               }
             } else if (hoveredEvent.current) {
               if (!hoveredEvent.current.getProperties().clicked) {
-                hoveredEvent.current.setStyle(hoveredEvent.current.getGeometry().getType() === 'LineString'
-                ? getSegmentStyles(
-                    hoveredEvent.current,
-                    'static',
-                  )
-                : getEventIcon(hoveredEvent.current, 'static'));
+                hoveredEvent.current.setStyle(
+                  getEventIcon(hoveredEvent.current, 'static'),
+                );
+                setRelatedGeometry(hoveredEvent.current, 'static');
               }
               hoveredEvent.current = null;
             }
@@ -574,6 +564,7 @@ export default function MapWrapper({
           if (eventData) {
             eventData.forEach(record => {
               let olGeometry = null;
+              let centroidFeatureForMap = null;
               switch (record.location.type) {
                 case 'Point':
                   olGeometry = new Point(record.location.coordinates);
@@ -596,18 +587,37 @@ export default function MapWrapper({
                 mapRef.current.getView().getProjection().getCode(),
               );
 
+              if (olFeature.getGeometry().getType() === 'LineString') {
+                const centroidGeometry = new Point(
+                  olFeature.getGeometry().getCoordinates()[
+                    Math.floor(
+                      olFeature.getGeometry().getCoordinates().length / 2,
+                    )
+                  ],
+                );
+                const centroidFeature = new ol.Feature({
+                  geometry: centroidGeometry,
+                });
+                // Transfer properties
+                centroidFeature.setProperties(record);
+                // Transform the projection
+                centroidFeatureForMap = transformFeature(
+                  centroidFeature,
+                  'EPSG:4326',
+                  mapRef.current.getView().getProjection().getCode(),
+                );
+                centroidFeatureForMap.setId(olFeatureForMap.ol_uid);
+                vectorSource.addFeature(centroidFeatureForMap);
+                olFeatureForMap.setId(centroidFeatureForMap.ol_uid);
+              }
+
               vectorSource.addFeature(olFeatureForMap);
             });
           }
         },
       }),
       style: function (feature, resolution) {
-        return feature.getGeometry().getType() === 'LineString'
-          ? getSegmentStyles(
-              feature,
-              'static',
-            )
-          : getEventIcon(feature, 'static');
+        return getEventIcon(feature, 'static');
       },
     });
     mapRef.current.addLayer(layers.current['eventsLayer']);
@@ -615,13 +625,15 @@ export default function MapWrapper({
 
   function loadLocationOptions(locationInput) {
     setSearching(true);
-    getLocations(locationInput).then((locationsData) => {
-      setLocationOptions(locationsData.features.map((feature) => {
-        return {
-          ...feature,
-          label: feature.properties.fullAddress
-        }
-      }));
+    getLocations(locationInput).then(locationsData => {
+      setLocationOptions(
+        locationsData.features.map(feature => {
+          return {
+            ...feature,
+            label: feature.properties.fullAddress,
+          };
+        }),
+      );
       setSearching(false);
     });
   }
@@ -647,22 +659,28 @@ export default function MapWrapper({
     // check for active event icons
     if (clickedEvent.current) {
       clickedEvent.current.setStyle(
-        (clickedEvent.current.getGeometry().getType() === 'LineString'
-                ? getSegmentStyles(
-                    clickedEvent.current,
-                    'static',
-                  )
-                : getEventIcon(clickedEvent.current, 'static'))
+        getEventIcon(clickedEvent.current, 'static'),
       );
+      setRelatedGeometry(clickedEvent.current, 'static');
       clickedEvent.current.set('clicked', 'false');
       clickedEvent.current = null;
     }
   }
 
+  const setRelatedGeometry = (event, state) => {
+    console.log("current feature: ", event);
+    const relatedGeometryId = event.ol_uid;
+      if (relatedGeometryId) {
+        const relatedFeature = layers.current["eventsLayer"].getSource().getFeatureById(relatedGeometryId);
+        console.log("related feature: ", relatedFeature )
+        relatedFeature.setStyle(getEventIcon(relatedFeature, state));
+      }
+  }
+
   const getEventIcon = (event, state) => {
     const severity = event.get('severity').toLowerCase();
     const type = event.get('event_type').toLowerCase();
-    const geometry = event.values_.location.type;
+    const geometry = event.getGeometry().getType();
     if (geometry === 'Point') {
       if (severity === 'major') {
         switch (type) {
@@ -677,8 +695,7 @@ export default function MapWrapper({
           default:
             return eventStyles['major_incident'][state];
         }
-      }
-      else {
+      } else {
         switch (type) {
           case 'incident':
             return eventStyles['incident'][state];
@@ -692,8 +709,7 @@ export default function MapWrapper({
             return eventStyles['incident'][state];
         }
       }
-    }
-    else {
+    } else {
       return eventStyles['segments'][state];
     }
   };
@@ -844,7 +860,7 @@ export default function MapWrapper({
               onSearch={loadLocationOptions}
               options={options}
               placeholder="Search for a location..."
-              renderMenuItemChildren={(location) => (
+              renderMenuItemChildren={location => (
                 <div>
                   <span>{location.properties.fullAddress}</span>
                 </div>
