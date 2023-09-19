@@ -669,11 +669,8 @@ export default function MapWrapper({
 
   const setRelatedGeometry = (event, state) => {
     if(event.getId()){
-    const relatedGeometryId = event.ol_uid;
-      if (relatedGeometryId) {
-        const relatedFeature = layers.current["eventsLayer"].getSource().getFeatureById(relatedGeometryId);
+        const relatedFeature = layers.current["eventsLayer"].getSource().getFeatureById(event.ol_uid);
         relatedFeature.setStyle(getEventIcon(relatedFeature, state));
-      }
     }
   }
 
