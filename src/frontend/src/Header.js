@@ -46,13 +46,13 @@ export default function Header() {
               <LinkContainer exact to="/">
                 {getNavLink('Map')}
               </LinkContainer>
-              <LinkContainer exact to="/cameras-page">
+              <LinkContainer exact to="/cameras">
                 {getNavLink('Cameras')}
               </LinkContainer>
-              <LinkContainer exact to="/events-page">
+              <LinkContainer exact to="/events">
                 {getNavLink('Delays')}
               </LinkContainer>
-              <LinkContainer exact to="/advisories-page">
+              <LinkContainer exact to="/advisories">
                 {getNavLink('Advisories')}
               </LinkContainer>
             </Nav>

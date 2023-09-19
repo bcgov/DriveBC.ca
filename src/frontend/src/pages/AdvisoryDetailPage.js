@@ -7,7 +7,7 @@ import Container from 'react-bootstrap/Container';
 // Components and functions
 import Footer from '../Footer';
 
-export default function AdvisoryPage() {
+export default function AdvisoryDetailPage() {
   return (
     <div className='advisory-page'>
       <div className="page-header">
