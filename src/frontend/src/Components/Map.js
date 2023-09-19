@@ -646,7 +646,7 @@ export default function MapWrapper({
     // setting geometry to null so that the object may be passed
     if (clickedWebcam.current) {
       clickedWebcam.current.geometry = null;
-      navigate(`/cameras-page/${clickedWebcam.current.id}`);
+      navigate(`/cameras/${clickedWebcam.current.id}`);
     }
   }
 

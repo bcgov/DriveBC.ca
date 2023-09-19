@@ -9,7 +9,7 @@ import PageHeader from '../PageHeader';
 import Footer from '../Footer';
 import AdvisoriesList from '../Components/advisories/AdvisoriesList';
 
-export default function AdvisoriesPage() {
+export default function AdvisoriesListPage() {
   return (
     <div className='advisories-page'>
       <PageHeader

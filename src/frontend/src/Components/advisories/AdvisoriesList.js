@@ -9,14 +9,14 @@ export default function Advisories() {
   const navigate = useNavigate();
 
   function handleClick() {
-    // navigate(`/advisory-page/${advisory.id}`);
-    navigate(`/advisory-page/`);
+    // navigate(`/advisories/${advisory.id}`);
+    navigate(`/advisories/123`);
   }
-  
+
   return (
     <ul className="advisories-list">
-      <li onClick={handleClick} >First advisory</li>
-      <li>Second advisory</li>
+      <li onClick={handleClick}>First advisory</li>
+      <li onClick={handleClick}>Second advisory</li>
     </ul>
   );
 }
