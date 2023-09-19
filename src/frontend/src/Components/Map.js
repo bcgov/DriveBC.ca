@@ -306,7 +306,7 @@ export default function MapWrapper({
 
     mapRef.current.on('click', e => {
       setIconClicked(false);
-      const coordinate = e.coordinate;
+
       // check if it was a webcam icon that was clicked
       layers.current['webcamsLayer']
         .getFeatures(e.pixel)
@@ -366,13 +366,10 @@ export default function MapWrapper({
                 </div>
               </div>
             </div>`;
-            popup.current.setPosition(coordinate);
             clickedWebcam.current = featureDetails;
-            if(coordinate[1] < clickedFeatures[0].values_.geometry.extent_[1]){
-              popup.current.getElement().style.top = "10px";
-            } else {
-              popup.current.getElement().style.top = "30px";
-            }
+
+            popup.current.setPosition(clickedCamera.current.getGeometry().getCoordinates());
+            popup.current.getElement().style.top = "40px";
           }
         }
       });
@@ -437,12 +434,8 @@ export default function MapWrapper({
               </div>
             </div>`;
 
-            popup.current.setPosition(coordinate);
-            if(coordinate[1] < clickedFeatures[0].values_.geometry.extent_[1]){
-              popup.current.getElement().style.top = "10px";
-            } else {
-              popup.current.getElement().style.top = "30px";
-            }
+            popup.current.setPosition(clickedEvent.current.getGeometry().getCoordinates());
+            popup.current.getElement().style.top = "40px";
           }
         });
 
