@@ -262,7 +262,7 @@
       color: var(--ol-foreground-color);
       font-size: 12px;
       text-align: center;
-      font-family: 'BCSans';
+      font-family: 'BCSans', serif;
       margin: 1px;
       will-change: contents, width;
       transition: all 0.25s;
@@ -340,7 +340,6 @@
     border-radius: 6px;
     border: 1px solid $Type-Link;
     box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
-    position: absolute;
     bottom: 2rem;
     right: 2rem;
     display: flex;
