@@ -2,21 +2,32 @@
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
 
+// Third party packages
+import parse from 'html-react-parser';
+
 // Styling
 import './AdvisoriesList.scss';
 
-export default function Advisories() {
+export default function Advisories(props) {
+  const { advisories } = props;
+
   const navigate = useNavigate();
 
-  function handleClick() {
-    // navigate(`/advisories/${advisory.id}`);
-    navigate(`/advisories/123`);
+  function handleClick(advisory) {
+     navigate(`/advisories/${advisory.id}`);
   }
 
   return (
     <ul className="advisories-list">
-      <li onClick={handleClick}>First advisory</li>
-      <li onClick={handleClick}>Second advisory</li>
+      {!!advisories && advisories.map((advisory, index) => {
+        return (
+          <li key={advisory.id} onClick={() => handleClick(advisory)}>
+            <h1 className='advisories-li-title'>{advisory.title}</h1>
+            <div className='advisories-li-description'>{parse(advisory.description)}</div>
+            <hr/>
+          </li>
+        );
+      })}
     </ul>
   );
 }
