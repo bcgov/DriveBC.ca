@@ -10,7 +10,7 @@ const request = (url, params = {}, headers = {}, method = "GET") => {
     options.body = JSON.stringify(params);
   }
 
-  const result = fetch(`https://${url}`, options).then((response) => response.json());
+  const result = fetch(`${url}`, options).then((response) => response.json());
   return result;
 };
 

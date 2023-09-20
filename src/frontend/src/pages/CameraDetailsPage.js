@@ -59,7 +59,7 @@ export default function CameraDetailsPage() {
   const nearby = <FontAwesomeIcon icon={faFlag} />;
 
   async function initCamera() {
-    const camera = await getWebcams(`//${process.env.REACT_APP_API_HOST}/api/webcams/${params.id}`);
+    const camera = await getWebcams(`${process.env.REACT_APP_API_HOST}/api/webcams/${params.id}`);
     // Camera data
     setCamera(camera);
 
@@ -79,7 +79,7 @@ export default function CameraDetailsPage() {
     // Replay images
     const replayImageList = await getWebcamReplay(camera);
     const replayImages = replayImageList.map((url) => {
-      return {original: `//${process.env.REACT_APP_REPLAY_THE_DAY}${camera.id}/${url}.jpg`};
+      return {original: `${process.env.REACT_APP_REPLAY_THE_DAY}${camera.id}/${url}.jpg`};
     });
     setReplayImages(replayImages);
   }
