@@ -1,15 +1,30 @@
 // React
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Third party packages
 import Container from 'react-bootstrap/Container';
 
 // Components and functions
-import PageHeader from '../PageHeader';
-import Footer from '../Footer';
+import { getAdvisories } from '../Components/data/advisories.js';
 import AdvisoriesList from '../Components/advisories/AdvisoriesList';
+import Footer from '../Footer';
+import PageHeader from '../PageHeader';
+
 
 export default function AdvisoriesListPage() {
+  const [advisories, setAdvisories] = useState(false);
+
+  async function loadAdvisories() {
+    const advisoriesData = await getAdvisories();
+    setAdvisories(advisoriesData);
+
+    console.log(advisoriesData);
+  }
+
+  useEffect(() => {
+    loadAdvisories();
+  }, []);
+
   return (
     <div className='advisories-page'>
       <PageHeader
@@ -17,7 +32,7 @@ export default function AdvisoriesListPage() {
         description='Get the latest critical travel status information during major events affecting travel on a highway or region.'>
       </PageHeader>
       <Container>
-        <AdvisoriesList />
+        <AdvisoriesList advisories={advisories} />
       </Container>
       <Footer />
     </div>
