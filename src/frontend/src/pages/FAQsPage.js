@@ -123,7 +123,7 @@ function getMap(FAQsData) {
 
 // FAQ API function
 function getFAQs() {
-  return fetch(`//${process.env.REACT_APP_API_HOST}/api/cms/faqs/`, {
+  return fetch(`${process.env.REACT_APP_API_HOST}/api/cms/faqs/`, {
     headers: {
       'Content-Type': 'application/json',
     },

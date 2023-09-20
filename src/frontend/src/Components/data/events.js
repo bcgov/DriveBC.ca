@@ -1,5 +1,5 @@
 export function getEvents() {
-  return fetch(`//${process.env.REACT_APP_API_HOST}/api/events/`, {
+  return fetch(`${process.env.REACT_APP_API_HOST}/api/events/`, {
     headers: {
       'Content-Type': 'application/json',
     },
