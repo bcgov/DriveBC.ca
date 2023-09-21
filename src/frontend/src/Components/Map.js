@@ -85,6 +85,7 @@ export default function MapWrapper({
   const hoveredEvent = useRef();
   const clickedCamera = useRef();
   const clickedEvent = useRef();
+  const locationPinRef = useRef(null);
 
   // Typeahead states
   const [isSearching, setSearching] = useState(false);
@@ -97,6 +98,48 @@ export default function MapWrapper({
         center: fromLonLat(coordinates),
       });
     }
+  }
+
+  function setLocationPinPoint(coordinates) {
+    const svgMarkup = `
+                    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
+                      <defs>
+                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="40%" style="stop-color:#f32947;stop-opacity:0.5" />
+                          <stop offset="40%" style="stop-color:#ed6f82;stop-opacity:0.5" />
+                        </linearGradient>
+                      </defs>
+                      <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
+                      <defs>
+                        <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="100%" style="stop-color:#f32947;stop-opacity:1" />
+                          <stop offset="100%" style="stop-color:#ed6f82;stop-opacity:1" />
+                        </linearGradient>
+                      </defs>
+                      <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
+                    </svg>
+                `;
+
+    const svgImage = new Image();
+    svgImage.src =
+      'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgMarkup);
+
+    // Create an overlay for the marker
+    locationPinRef.current = new Overlay({
+      position: fromLonLat(coordinates),
+      positioning: 'bottom-center',
+      element: svgImage,
+      stopEvent: false, // Allow interactions with the overlay content
+    });
+
+    mapRef.current.on('moveend', function (event) {
+      const newZoom = mapRef.current.getView().getZoom();
+      // Calculate new marker size based on the zoom level
+      const newSize = 44 * (newZoom / 10);
+      svgImage.style.width = newSize + 'px';
+      svgImage.style.height = newSize + 'px';
+      mapRef.current.addOverlay(locationPinRef.current);
+    });
   }
 
   function addMyLocationPinPoint(coordinates) {
@@ -367,13 +410,15 @@ export default function MapWrapper({
                 </div>
               </div>
             </div>`;
-            clickedWebcam.current = featureDetails;
+              clickedWebcam.current = featureDetails;
 
-            popup.current.setPosition(clickedCamera.current.getGeometry().getCoordinates());
-            popup.current.getElement().style.top = "40px";
+              popup.current.setPosition(
+                clickedCamera.current.getGeometry().getCoordinates(),
+              );
+              popup.current.getElement().style.top = '40px';
+            }
           }
-        }
-      });
+        });
 
       // if it wasn't a webcam icon, check if it was an event
       layers.current['eventsLayer']
@@ -435,8 +480,10 @@ export default function MapWrapper({
               </div>
             </div>`;
 
-            popup.current.setPosition(clickedEvent.current.getGeometry().getCoordinates());
-            popup.current.getElement().style.top = "40px";
+            popup.current.setPosition(
+              clickedEvent.current.getGeometry().getCoordinates(),
+            );
+            popup.current.getElement().style.top = '40px';
           }
         });
 
@@ -509,7 +556,13 @@ export default function MapWrapper({
   }, []);
 
   useEffect(() => {
-    console.log(selectedLocation);
+    if (selectedLocation && selectedLocation.length) {
+      if (locationPinRef.current) {
+        mapRef.current.removeOverlay(locationPinRef.current);
+      }
+      centerMyLocation(selectedLocation[0].geometry.coordinates);
+      setLocationPinPoint(selectedLocation[0].geometry.coordinates);
+    }
   }, [selectedLocation]);
 
   async function loadWebcams() {
@@ -672,11 +725,13 @@ export default function MapWrapper({
   }
 
   const setRelatedGeometry = (event, state) => {
-    if(event.getId()){
-        const relatedFeature = layers.current["eventsLayer"].getSource().getFeatureById(event.ol_uid);
-        relatedFeature.setStyle(getEventIcon(relatedFeature, state));
+    if (event.getId()) {
+      const relatedFeature = layers.current['eventsLayer']
+        .getSource()
+        .getFeatureById(event.ol_uid);
+      relatedFeature.setStyle(getEventIcon(relatedFeature, state));
     }
-  }
+  };
 
   const getEventIcon = (event, state) => {
     const severity = event.get('severity').toLowerCase();
