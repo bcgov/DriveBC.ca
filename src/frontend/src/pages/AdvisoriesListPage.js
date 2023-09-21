@@ -17,8 +17,6 @@ export default function AdvisoriesListPage() {
   async function loadAdvisories() {
     const advisoriesData = await getAdvisories();
     setAdvisories(advisoriesData);
-
-    console.log(advisoriesData);
   }
 
   useEffect(() => {
@@ -32,7 +30,7 @@ export default function AdvisoriesListPage() {
         description='Get the latest critical travel status information during major events affecting travel on a highway or region.'>
       </PageHeader>
       <Container>
-        <AdvisoriesList advisories={advisories} />
+        <AdvisoriesList advisories={advisories} showDescriptions={true} />
       </Container>
       <Footer />
     </div>
