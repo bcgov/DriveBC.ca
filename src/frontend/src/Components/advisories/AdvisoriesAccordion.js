@@ -12,7 +12,7 @@ import { getAdvisories } from '../data/advisories.js';
 import AdvisoriesList from './AdvisoriesList';
 
 export default function AdvisoriesAccordion() {
-  const [advisories, setAdvisories] = useState(false);
+  const [advisories, setAdvisories] = useState([]);
 
   async function loadAdvisories() {
     const advisoriesData = await getAdvisories();
@@ -26,7 +26,7 @@ export default function AdvisoriesAccordion() {
   return (
     <Accordion className="advisories-accordion">
       <Accordion.Item eventKey="0">
-        <Accordion.Header>Advisory in area (1)</Accordion.Header>
+        <Accordion.Header>Advisory in area ({advisories.length})</Accordion.Header>
         <Accordion.Body>
           <AdvisoriesList advisories={advisories} showDescription={false} />
         </Accordion.Body>
