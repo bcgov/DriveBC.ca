@@ -1,12 +1,7 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from .models import TestCMSData, Advisory
-from .serializers import FAQSerializer, AdvisorySerializer
-
-
-class FAQAPIViewSet(ReadOnlyModelViewSet):
-    queryset = TestCMSData.objects.filter(live=True)
-    serializer_class = FAQSerializer
+from .models import Advisory
+from .serializers import AdvisorySerializer
 
 
 class AdvisoryAPIViewSet(ReadOnlyModelViewSet):
