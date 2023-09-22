@@ -1,9 +1,7 @@
-from apps.cms.models import TestCMSData
-from rest_framework import serializers
-from apps.cms.models import Advisory
-from wagtail.templatetags import wagtailcore_tags
 import environ
-
+from apps.cms.models import Advisory
+from rest_framework import serializers
+from wagtail.templatetags import wagtailcore_tags
 
 CMS_FIELDS = [
     "live",
@@ -18,15 +16,6 @@ CMS_FIELDS = [
 ]
 
 
-class FAQSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TestCMSData
-        exclude = [
-            "created_at",
-            "modified_at",
-        ] + CMS_FIELDS
-
-
 class AdvisorySerializer(serializers.ModelSerializer):
     description = serializers.SerializerMethodField()
 
@@ -35,16 +24,16 @@ class AdvisorySerializer(serializers.ModelSerializer):
         rended_description = wagtailcore_tags.richtext(
             obj.description)
         result = (
-            rended_description.replace("/drivebc-cms", "http://" 
+            rended_description.replace("/drivebc-cms", "http://"
                                        + environ.Env()
-                                       .list("DJANGO_ALLOWED_HOSTS")[0] 
+                                       .list("DJANGO_ALLOWED_HOSTS")[0]
                                        + ":8000/drivebc-cms")
-            .replace("/media", "http://" + 
-                     environ.Env().list("DJANGO_ALLOWED_HOSTS")[0] + 
-                     ":8000/media") 
+            .replace("/media", "http://" +
+                     environ.Env().list("DJANGO_ALLOWED_HOSTS")[0] +
+                     ":8000/media")
         )
         return result
-    
+
     class Meta:
         model = Advisory
         fields = "__all__"
