@@ -42,6 +42,46 @@
           "id": "drivebc.ca/7"
         }
       ]
+    },
+    {
+      "jurisdiction_url": "https://api.open511.gov.bc.ca/jurisdiction",
+      "url": "https://api.open511.gov.bc.ca/events/drivebc.ca/DBC-28386",
+      "id": "drivebc.ca/DBC-11111",
+      "headline": "INCIDENT",
+      "status": "ACTIVE",
+      "created": "2021-04-26T08:19:02-04:00",
+      "updated": "2083-04-13T10:30:12-04:00",
+      "description": "Quesnel-Hixon Road, in both directions. Landslide at Cottonwood bridge. Road closed. Next update time Wed Jul 12 at 2:00 PM PDT. Last updated Thu Apr 13 at 10:30 AM PDT. (DBC-28386)",
+      "+ivr_message": "Quesnel-Hixon Road, in both directions. Landslide at Cottonwood bridge. Road closed. Next update time Wednesday, July 12 at 2:00 PM. Last updated Thursday, April 13 at 10:30 AM.",
+      "+linear_reference_km": -1,
+      "schedule": {
+        "intervals": [
+          "2021-04-26T15:19/"
+        ]
+      },
+      "event_type": "INCIDENT",
+      "severity": "MAJOR",
+      "geography": {
+        "type": "Point",
+        "coordinates": [
+          -122.479074,
+          53.155476
+        ]
+      },
+      "roads": [
+        {
+          "name": "Other Roads",
+          "from": "at Cottonwood bridge",
+          "direction": "BOTH"
+        }
+      ],
+      "areas": [
+        {
+          "url": "http://www.geonames.org/8630134",
+          "name": "Cariboo District",
+          "id": "drivebc.ca/7"
+        }
+      ]
     }
   ],
   "pagination": {

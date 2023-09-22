@@ -99,6 +99,8 @@ class FeedClient:
                         f" for ID {data['id']}" if 'id' in data else ""
                     )
 
+                    logger.warning(serializer.errors[resource_name][index])
+
                 else:
                     res.append(data)
 
