@@ -99,10 +99,6 @@ class FeedClient:
                         f" for ID {data['id']}" if 'id' in data else ""
                     )
 
-                    for key, value in data.items():
-                        logger.warning(key)
-                        logger.warning(value)
-
                 else:
                     res.append(data)
 
