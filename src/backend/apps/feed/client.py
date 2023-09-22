@@ -98,6 +98,7 @@ class FeedClient:
                         f"Error parsing {resource_name} data" +
                         f" for ID {data['id']}" if 'id' in data else ""
                     )
+                    logger.warning(data)
 
                 else:
                     res.append(data)
