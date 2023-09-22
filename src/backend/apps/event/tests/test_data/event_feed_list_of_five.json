@@ -60,9 +60,6 @@
         ]
       },
       "event_type": "CONSTRUCTION",
-      "event_subtypes": [
-        "ROAD_MAINTENANCE"
-      ],
       "severity": "MINOR",
       "geography": {
         "type": "LineString",

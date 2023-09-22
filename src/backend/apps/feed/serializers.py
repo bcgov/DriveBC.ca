@@ -51,7 +51,8 @@ class EventFeedSerializer(serializers.Serializer):
     # Description
     description = serializers.CharField(max_length=1024)
     event_type = serializers.CharField(max_length=32)
-    event_subtypes = DriveBCSingleListField('event_sub_type', source="*")
+    event_subtypes = DriveBCSingleListField('event_sub_type',
+                                            source="*", required=False)
 
     # General status
     status = serializers.CharField(max_length=32)
