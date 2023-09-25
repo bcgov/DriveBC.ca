@@ -21,14 +21,6 @@
     }
 
     .ol-overlay-container {
-      //overriding openlayers dynamic styles for mobile layout
-      @media (max-width: 575px) {
-        position: fixed !important;
-        bottom: 0 !important;
-        transform: none !important;
-
-      }
-
       .ol-popup {
         width: 100vw;
         height: 100%;
