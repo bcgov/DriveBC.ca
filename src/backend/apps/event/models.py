@@ -17,9 +17,9 @@ class Event(BaseModel):
     # Location
     direction = models.CharField(max_length=32)
     location = models.GeometryField()
-    route_at = models.CharField(max_length=64)
-    route_from = models.CharField(max_length=64)
-    route_to = models.CharField(max_length=64, blank=True)
+    route_at = models.CharField(max_length=128)
+    route_from = models.CharField(max_length=128)
+    route_to = models.CharField(max_length=128, blank=True)
 
     # Update status
     first_created = models.DateTimeField()
