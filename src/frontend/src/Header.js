@@ -55,6 +55,9 @@ export default function Header() {
               <LinkContainer exact to="/advisories">
                 {getNavLink('Advisories')}
               </LinkContainer>
+              <LinkContainer exact to="/bulletins">
+                {getNavLink('Bulletins')}
+              </LinkContainer>
             </Nav>
           </Navbar.Collapse>
         </Container>
