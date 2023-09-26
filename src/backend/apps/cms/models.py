@@ -8,6 +8,8 @@ from wagtail.models import Page
 from wagtail.templatetags import wagtailcore_tags
 
 
+
+
 class DriveBCMapWidget(OSMWidget):
     # Defaults to Kelowna
     default_lon = -119.49662112970556
@@ -44,3 +46,28 @@ class Advisory(Page, BaseModel):
     promote_panels = []
 
     template = 'cms/advisory.html'
+
+class Bulletin(Page, BaseModel):
+    page_description = "Use this page for creating bulletins"
+    active = models.BooleanField(default=True)
+    description = RichTextField(blank=True)
+
+    def rendered_description(self):
+        return wagtailcore_tags.richtext(self.description)
+
+    api_fields = [
+        APIField('rendered_description'),
+    ]
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+    # Editor panels configuration
+    content_panels = [
+        FieldPanel("title"),
+        FieldPanel("active"),
+        FieldPanel("description"),
+    ]
+    promote_panels = []
+
+    template = 'cms/bulletin.html'
