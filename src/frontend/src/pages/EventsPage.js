@@ -23,6 +23,7 @@ import PageHeader from '../PageHeader';
 import Footer from '../Footer.js';
 import EventTypeIcon from '../Components/EventTypeIcon';
 import Advisories from '../Components/advisories/Advisories';
+import Bulletins from '../Components/bulletins/Bulletins';
 
 // Styling
 import './EventsPage.scss';
@@ -195,6 +196,7 @@ export default function EventsPage() {
       </PageHeader>
       <Container>
       <Advisories />
+      <Bulletins />
         <div className="sort-and-filter">
           <div className="sort"></div>
           <Dropdown align="end">
