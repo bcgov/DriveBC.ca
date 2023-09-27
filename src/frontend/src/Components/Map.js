@@ -132,13 +132,13 @@ export default function MapWrapper({
       stopEvent: false, // Allow interactions with the overlay content
     });
 
+    mapRef.current.addOverlay(locationPinRef.current);
     mapRef.current.on('moveend', function (event) {
       const newZoom = mapRef.current.getView().getZoom();
       // Calculate new marker size based on the zoom level
       const newSize = 44 * (newZoom / 10);
       svgImage.style.width = newSize + 'px';
       svgImage.style.height = newSize + 'px';
-      mapRef.current.addOverlay(locationPinRef.current);
     });
   }
 
