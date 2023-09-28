@@ -70,7 +70,6 @@ export default function CameraList() {
     return Object.entries(mapDisplayedWebcams()).map(([highway, cameras]) => (
       <div className="highway-group" key={highway}>
         <Container>
-          <Advisories />
           <div className="highway-title">
             <div className="highway-shield-box">
               {highwayShield(highway)}
@@ -105,6 +104,10 @@ export default function CameraList() {
         next={getDisplayedWebcams}
         hasMore={displayedWebcams.length < webcams.length}
         loader={<h4>Loading...</h4>}>
+
+        <Container>
+          <Advisories />
+        </Container>
 
         {renderWebcams()}
       </InfiniteScroll>
