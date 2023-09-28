@@ -1,11 +1,23 @@
 @import "../../styles/variables.scss";
 
 .advisories-accordion {
-  width: 500px;
+  position: absolute;
+
+  @media (max-width: 767px) {
+    width: 100%;
+    top: 5rem;
+    padding: 0px 15px;
+  }
+
+  @media (min-width: 768px) {
+    width: 20%;
+    top: 2rem;
+    left: 40%;
+  }
 
   .accordion-header {
     font-size: 0.75em;
-    
+
     .accordion-button {
       font-size: 1em;
       padding: 6px 12px;

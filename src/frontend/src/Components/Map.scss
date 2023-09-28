@@ -322,10 +322,18 @@
   }
 
   .typeahead-container {
-    width: 300px;
+    @media (max-width: 767px) {
+      width: 66%;
+      padding-left: 15px;
+    }
+
+    @media (min-width: 768px) {
+      width: 25%;
+      left: 2rem;
+    }
+
     position: absolute;
     top: 2rem;
-    left: 2rem;
   }
 
   .zoom-btn {
@@ -377,12 +385,5 @@
       margin: 0 10px;
       border-bottom: 1px solid $Divider;
     }
-  }
-
-  .advisories-accordion {
-    top: 3rem;
-    left: 65%;
-    position: fixed;
-    transform: translateX(-50%);
   }
 }
