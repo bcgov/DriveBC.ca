@@ -20,9 +20,8 @@
       height: calc(100vh - 58px);
     }
 
-    .ol-overlay-container {
-
-      //overriding openlayers dynamic styles for mobile layout
+    .ol-overlay-container:not(:has(> img)) {
+      //overriding openlayers dynamic styles for mobile layout except for having img as a direct child
       @media (max-width: 575px) {
           position: fixed !important;
           bottom: 0 !important;
@@ -381,9 +380,9 @@
   }
 
   .advisories-accordion {
-    position: absolute;
-    top: 2rem;
-    left: 50%;
+    top: 3rem;
+    left: 65%;
+    position: fixed;
     transform: translateX(-50%);
   }
 }

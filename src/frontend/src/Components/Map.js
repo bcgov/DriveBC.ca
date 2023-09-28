@@ -174,11 +174,6 @@ export default function MapWrapper({
       stopEvent: false, // Allow interactions with the overlay content
     });
 
-    const overlayElement = markerOverlay.getElement();
-    if (overlayElement) {
-      overlayElement.parentElement.classList.remove('ol-overlay-container');
-    }
-
     mapRef.current.on('moveend', function (event) {
       const newZoom = mapRef.current.getView().getZoom();
       // Calculate new marker size based on the zoom level
