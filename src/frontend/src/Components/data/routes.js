@@ -1,13 +1,10 @@
 import { get } from "./helper.js";
 
-const demopoints = '-119.4966035314269,49.88630739700878,-123.11714625547849,49.28186293809236'
-
 export function getRoute(points) {
   const url = `${process.env.REACT_APP_ROUTE_PLANNER_API_HOST}/directions.json`;
 
   return get(url, {
-    points: demopoints,
-//    points: points,
+    points: points,
 //    criteria: 'fastest',
 //    outputSRS: 4036,
 //    distanceUnit: 'km',

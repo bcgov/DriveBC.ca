@@ -17,19 +17,15 @@ import {
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 
-// react-bootstrap-typeahead
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
-
 // Components and functions
 import { getEvents } from './data/events.js';
-import { getLocations } from './data/locations.js';
 import { getWebcams } from './data/webcams.js';
-import Layers from './Layers.js';
-import FriendlyTime from './FriendlyTime';
-import EventTypeIcon from './EventTypeIcon';
-import CurrentCameraIcon from './CurrentCameraIcon';
 import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
+import CurrentCameraIcon from './CurrentCameraIcon';
+import EventTypeIcon from './EventTypeIcon';
+import FriendlyTime from './FriendlyTime';
+import Layers from './Layers.js';
+import Routing from './map/Routing.js';
 
 // OpenLayers
 import { applyStyle } from 'ol-mapbox-style';
@@ -88,9 +84,8 @@ export default function MapWrapper({
   const locationPinRef = useRef(null);
 
   // Typeahead states
-  const [isSearching, setSearching] = useState(false);
-  const [options, setLocationOptions] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedLocationTwo, setSelectedLocationTwo] = useState(null);
 
   function centerMyLocation(coordinates) {
     if (mapRef.current) {
@@ -680,21 +675,6 @@ export default function MapWrapper({
     mapRef.current.addLayer(layers.current['eventsLayer']);
   }
 
-  function loadLocationOptions(locationInput) {
-    setSearching(true);
-    getLocations(locationInput).then(locationsData => {
-      setLocationOptions(
-        locationsData.features.map(feature => {
-          return {
-            ...feature,
-            label: feature.properties.fullAddress,
-          };
-        }),
-      );
-      setSearching(false);
-    });
-  }
-
   function webcamDetailRoute() {
     // setting geometry to null so that the object may be passed
     if (clickedWebcam.current) {
@@ -905,24 +885,12 @@ export default function MapWrapper({
 
       {!isPreview && (
         <div>
-          <div className="typeahead-container">
-            <AsyncTypeahead
-              filterBy={() => true}
-              id="location-search-typeahead"
-              isLoading={isSearching}
-              labelKey="label"
-              minLength={3}
-              onChange={setSelectedLocation}
-              onSearch={loadLocationOptions}
-              options={options}
-              placeholder="Search for a location..."
-              renderMenuItemChildren={location => (
-                <div>
-                  <span>{location.properties.fullAddress}</span>
-                </div>
-              )}
-            />
-          </div>
+          <Routing
+            selectedLocation={selectedLocation}
+            selectedLocationTwo={selectedLocationTwo}
+            setSelectedLocation={setSelectedLocation}
+            setSelectedLocationTwo={setSelectedLocationTwo}>
+          </Routing>
 
           <Layers
             open={layersOpen}
