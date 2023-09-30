@@ -321,21 +321,6 @@
     }
   }
 
-  .typeahead-container {
-    @media (max-width: 767px) {
-      width: 66%;
-      padding-left: 15px;
-    }
-
-    @media (min-width: 768px) {
-      width: 25%;
-      left: 2rem;
-    }
-
-    position: absolute;
-    top: 2rem;
-  }
-
   .zoom-btn {
     background-color: $Surface-tinted;
     color: $Type-Link;

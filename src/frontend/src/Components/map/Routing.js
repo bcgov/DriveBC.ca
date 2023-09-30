@@ -1,0 +1,51 @@
+// React
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
+
+// Components and functions
+import { getRoute } from '../data/routes.js';
+import { updateSelectedRoute } from '../..//slices/routesSlice'
+import LocationSearch from './LocationSearch.js';
+
+// Styling
+import './Routing.scss';
+
+export default function Routing(props) {
+  const { selectedLocation, selectedLocationTwo, setSelectedLocation, setSelectedLocationTwo } = props;
+
+  // Redux
+  const selectedRoute = useSelector((state) => state.routes.selectedRoute);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (selectedLocation && selectedLocation.length && selectedLocationTwo && selectedLocationTwo.length) {
+      const firstPoint = selectedLocation[0].geometry.coordinates.toString();
+      const secondPoint = selectedLocationTwo[0].geometry.coordinates.toString();
+
+      const points = firstPoint + ',' + secondPoint;
+
+      getRoute(points).then(routeData => {
+        dispatch(updateSelectedRoute(routeData));
+      });
+    }
+  }, [selectedLocationTwo]);
+
+  useEffect(() => {
+    console.log(selectedRoute);
+  }, [selectedRoute]);
+
+  // Rendering
+  return (
+    <div className="routing-container">
+      <div className="typeahead-container">
+        <LocationSearch setSelectedLocation={setSelectedLocation} />
+      </div>
+
+      {selectedLocation &&
+        <div className="typeahead-container typeahead-container-two">
+          <LocationSearch setSelectedLocation={setSelectedLocationTwo} />
+        </div>
+      }
+    </div>
+  );
+}

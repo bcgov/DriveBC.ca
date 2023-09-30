@@ -7,7 +7,6 @@ export const routesSlice = createSlice({
   },
   reducers: {
     updateSelectedRoute: (state, action) => {
-      console.log(action.payload);
       state.selectedRoute = action.payload;
     },
   },

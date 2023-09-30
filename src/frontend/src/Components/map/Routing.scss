@@ -1,0 +1,20 @@
+.routing-container {
+  background: white;
+
+  .typeahead-container {
+    @media (max-width: 767px) {
+      width: 66%;
+      padding-left: 15px;
+    }
+
+    @media (min-width: 768px) {
+      width: 25%;
+      padding-left: 2rem;
+      padding-top: 2rem;
+    }
+  }
+
+  .typeahead-container-two {
+    padding-top: 1rem;
+  }
+}
