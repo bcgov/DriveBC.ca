@@ -30,7 +30,6 @@ import FriendlyTime from './FriendlyTime';
 import EventTypeIcon from './EventTypeIcon';
 import CurrentCameraIcon from './CurrentCameraIcon';
 import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
-import BulletinsAccordion from './bulletins/BulletinsAccordion';
 
 // OpenLayers
 import { applyStyle } from 'ol-mapbox-style';
@@ -915,7 +914,6 @@ export default function MapWrapper({
             toggleLayer={toggleLayer}
           />
           <AdvisoriesAccordion />
-          <BulletinsAccordion />
         </div>
       )}
     </div>
