@@ -66,8 +66,8 @@ export function getRouteLayer(routeData, projectionCode) {
     }),
     style: new Style({
       stroke: new Stroke({
-        color: 'rgba(216 ,41 ,47, 0.9)',
-        width: 10,
+        color: 'rgba(66, 135, 245, 1)',
+        width: 8,
       })
     })
   });
