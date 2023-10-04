@@ -16,6 +16,6 @@ class BulletinAdmin(OSMGeoAdmin):
         'created_at', 'modified_at'
     ]
 
-admin.site.register(TestCMSData, FAQAdmin)
+
 admin.site.register(Advisory, AdvisoryAdmin)
 admin.site.register(Bulletin, BulletinAdmin)
