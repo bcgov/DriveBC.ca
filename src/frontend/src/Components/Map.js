@@ -419,7 +419,6 @@ export default function MapWrapper({
             }
           }
         });
-
       // if it wasn't a webcam icon, check if it was an event
       layers.current['eventsLayer']
         .getFeatures(e.pixel)
@@ -489,21 +488,7 @@ export default function MapWrapper({
 
       // if neither, hide any existing popup
       if (iconClicked === false) {
-        popup.current.setPosition(undefined);
-        clickedWebcam.current = null;
-
-        // reset previous clicked feature
-        if (clickedCamera.current) {
-          clickedCamera.current.setStyle(cameraStyles['static']);
-        } else if (clickedEvent.current) {
-          clickedEvent.current.setStyle(
-            getEventIcon(clickedEvent.current, 'static'),
-          );
-          setRelatedGeometry(clickedEvent.current, 'static');
-        }
-
-        clickedCamera.current = null;
-        clickedEvent.current = null;
+        closePopup();
       }
     });
 
@@ -703,14 +688,12 @@ export default function MapWrapper({
     }
   }
 
-  function closePopup(event) {
-    event.stopPropagation();
+  function closePopup() {
     popup.current.setPosition(undefined);
-    setIconClicked(false);
     // check for active camera icons
     if (clickedCamera.current) {
       clickedCamera.current.setStyle(cameraStyles['static']);
-      clickedCamera.current.set('clicked', 'false');
+      clickedCamera.current.set('clicked', false);
       clickedCamera.current = null;
     }
     // check for active event icons
@@ -719,9 +702,10 @@ export default function MapWrapper({
         getEventIcon(clickedEvent.current, 'static'),
       );
       setRelatedGeometry(clickedEvent.current, 'static');
-      clickedEvent.current.set('clicked', 'false');
+      clickedEvent.current.set('clicked', false);
       clickedEvent.current = null;
     }
+    setIconClicked(false);
   }
 
   const setRelatedGeometry = (event, state) => {
