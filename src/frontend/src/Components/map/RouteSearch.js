@@ -8,7 +8,7 @@ import { updateSelectedRoute } from '../..//slices/routesSlice'
 import LocationSearch from './LocationSearch.js';
 
 // Styling
-import './Routing.scss';
+import './RouteSearch.scss';
 
 export default function RouteSearch(props) {
   const { selectedLocation, selectedLocationTwo, setSelectedLocation, setSelectedLocationTwo } = props;
