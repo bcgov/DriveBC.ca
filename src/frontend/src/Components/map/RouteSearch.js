@@ -27,7 +27,7 @@ export default function RouteSearch(props) {
         dispatch(updateSelectedRoute(routeData));
       });
     }
-  }, [selectedLocationTwo]);
+  }, [selectedLocation, selectedLocationTwo]);
 
   // Rendering
   return (

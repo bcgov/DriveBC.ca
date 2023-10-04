@@ -566,9 +566,11 @@ export default function MapWrapper({
   }, [selectedLocation]);
 
   useEffect(() => {
-    console.log(selectedRoute);
-
     if (selectedRoute && selectedRoute.routeFound) {
+      if (layers.current['routeLayer']) {
+        mapRef.current.removeLayer(layers.current['routeLayer']);
+      }
+
       const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
       layers.current['routeLayer'] = routeLayer;
       mapRef.current.addLayer(routeLayer);
