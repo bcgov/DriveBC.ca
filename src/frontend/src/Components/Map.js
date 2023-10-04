@@ -1,6 +1,7 @@
 // React
 import React, { useContext, useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux'
 import ReactDOMServer from 'react-dom/server';
 
 // Third party packages
@@ -20,12 +21,13 @@ import {
 // Components and functions
 import { getEvents } from './data/events.js';
 import { getWebcams } from './data/webcams.js';
+import { getRouteLayer } from './map/routeLayer.js';
 import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
 import CurrentCameraIcon from './CurrentCameraIcon';
 import EventTypeIcon from './EventTypeIcon';
 import FriendlyTime from './FriendlyTime';
 import Layers from './Layers.js';
-import Routing from './map/Routing.js';
+import RouteSearch from './map/RouteSearch.js';
 
 // OpenLayers
 import { applyStyle } from 'ol-mapbox-style';
@@ -61,6 +63,9 @@ export default function MapWrapper({
   cameraHandler,
   mapViewRoute,
 }) {
+  // Redux
+  const selectedRoute = useSelector((state) => state.routes.selectedRoute);
+
   const { mapContext, setMapContext } = useContext(MapContext);
   const mapElement = useRef();
   const mapRef = useRef();
@@ -560,6 +565,16 @@ export default function MapWrapper({
     }
   }, [selectedLocation]);
 
+  useEffect(() => {
+    console.log(selectedRoute);
+
+    if (selectedRoute && selectedRoute.routeFound) {
+      const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
+      layers.current['routeLayer'] = routeLayer;
+      mapRef.current.addLayer(routeLayer);
+    }
+  }, [selectedRoute]);
+
   async function loadWebcams() {
     const webcamResults = await getWebcams();
 
@@ -885,12 +900,12 @@ export default function MapWrapper({
 
       {!isPreview && (
         <div>
-          <Routing
+          <RouteSearch
             selectedLocation={selectedLocation}
             selectedLocationTwo={selectedLocationTwo}
             setSelectedLocation={setSelectedLocation}
             setSelectedLocationTwo={setSelectedLocationTwo}>
-          </Routing>
+          </RouteSearch>
 
           <Layers
             open={layersOpen}

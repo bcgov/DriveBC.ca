@@ -1,6 +1,6 @@
 // React
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 // Components and functions
 import { getRoute } from '../data/routes.js';
@@ -10,11 +10,10 @@ import LocationSearch from './LocationSearch.js';
 // Styling
 import './Routing.scss';
 
-export default function Routing(props) {
+export default function RouteSearch(props) {
   const { selectedLocation, selectedLocationTwo, setSelectedLocation, setSelectedLocationTwo } = props;
 
   // Redux
-  const selectedRoute = useSelector((state) => state.routes.selectedRoute);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -29,10 +28,6 @@ export default function Routing(props) {
       });
     }
   }, [selectedLocationTwo]);
-
-  useEffect(() => {
-    console.log(selectedRoute);
-  }, [selectedRoute]);
 
   // Rendering
   return (
