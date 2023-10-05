@@ -760,8 +760,19 @@ export default function MapWrapper({
       navigator.geolocation.getCurrentPosition(
         position => {
           const { latitude, longitude } = position.coords;
-          centerMyLocation([longitude, latitude]);
-          addMyLocationPinPoint([longitude, latitude]);
+          if (
+            position.coords.longitude <= -113.7 &&
+            position.coords.longitude >= -139.3 &&
+            position.coords.latitude <= 60.1 &&
+            position.coords.latitude >= 48.2
+          ) {
+            centerMyLocation([longitude, latitude]);
+            addMyLocationPinPoint([longitude, latitude]);
+          } else {
+            // set my location to the center of BC for users outside of BC
+            centerMyLocation([-126.5, 54.2]);
+            addMyLocationPinPoint([-126.5, 54.2]);
+          }
         },
         error => {
           console.error('Error getting user location:', error);
