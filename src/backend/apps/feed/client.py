@@ -3,7 +3,7 @@ from typing import Dict
 from urllib.parse import urljoin
 
 import httpx
-from apps.feed.constants import OPEN511, ROUTE_PLANNER, WEBCAM
+from apps.feed.constants import OPEN511, WEBCAM
 from apps.feed.serializers import (
     EventAPISerializer,
     EventFeedSerializer,
@@ -21,10 +21,6 @@ class FeedClient:
 
     def __init__(self):
         self.resource_map: Dict[str, dict] = {
-            ROUTE_PLANNER: {
-                "base_url": settings.DRIVEBC_ROUTE_PLANNER_API_BASE_URL,
-                "auth_key": settings.DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY,
-            },
             WEBCAM: {
                 "base_url": settings.DRIVEBC_WEBCAM_API_BASE_URL,
             },
