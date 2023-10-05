@@ -1,5 +1,6 @@
 Django==4.2.3
 dj-rest-auth[with_social]==4.0.1
+django-allauth==0.54.0
 django-environ==0.10.0
 djangorestframework==3.14.0
 djangorestframework-gis==1.0
