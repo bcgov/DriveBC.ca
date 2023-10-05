@@ -33,6 +33,8 @@ jobs:
           HIGHWAY_LAYER=${{ vars.HIGHWAY_LAYER }}
           OPEN511_LAYER=${{ vars.OPEN511_LAYER }}
           REPLAY_THE_DAY=${{ vars.REPLAY_THE_DAY }}
+          ROUTE_PLANNER=${{ vars.ROUTE_PLANNER }}
+          ROUTE_PLANNER_KEY=${{ vars.ROUTE_PLANNER_KEY }}
           GEOCODER_HOST=${{ vars.GEOCODER_HOST }}
           GEOCODER_API_AUTH_KEY=${{ vars.GEOCODER_API_AUTH_KEY }}
           DEBUG_BUILD=true
