@@ -29,8 +29,8 @@ class Webcam(BaseModel):
     marked_delayed = models.BooleanField(default=False)
     last_update_attempt = models.DateTimeField(null=True)
     last_update_modified = models.DateTimeField(null=True)
-    update_period_mean = models.PositiveSmallIntegerField()
-    update_period_stddev = models.PositiveSmallIntegerField()
+    update_period_mean = models.PositiveIntegerField()
+    update_period_stddev = models.PositiveIntegerField()
 
     # Within two standard deviations from mean
     @property
