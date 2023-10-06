@@ -5,7 +5,7 @@ from django.contrib.gis.db import models
 class Webcam(BaseModel):
     # Description
     name = models.CharField(max_length=128)
-    caption = models.CharField(max_length=256)
+    caption = models.CharField(blank=True, max_length=256)
 
     # Location
     region = models.PositiveSmallIntegerField()
