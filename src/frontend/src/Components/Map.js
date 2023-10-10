@@ -1,7 +1,8 @@
 // React
 import React, { useContext, useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { updateMapState } from '../slices/mapSlice';
 import ReactDOMServer from 'react-dom/server';
 
 // Third party packages
@@ -32,7 +33,7 @@ import RouteSearch from './map/RouteSearch.js';
 // OpenLayers
 import { applyStyle } from 'ol-mapbox-style';
 import { Circle } from 'ol/geom.js';
-import { fromLonLat } from 'ol/proj';
+import { fromLonLat, toLonLat } from 'ol/proj';
 import { Image as ImageLayer } from 'ol/layer.js';
 import { MapContext } from '../App.js';
 import { Point, LineString } from 'ol/geom';
@@ -65,7 +66,9 @@ export default function MapWrapper({
 }) {
   // Redux
   const selectedRoute = useSelector((state) => state.routes.selectedRoute);
-
+  const zoom = useSelector((state) => state.map.zoom);
+  const pan = useSelector((state) => state.map.pan);
+  const dispatch = useDispatch();
   const { mapContext, setMapContext } = useContext(MapContext);
   const mapElement = useRef();
   const mapRef = useRef();
@@ -73,8 +76,6 @@ export default function MapWrapper({
   const layers = useRef({});
   const clickedWebcam = useRef(null);
   const mapView = useRef();
-  const lng = -120.7862;
-  const lat = 50.113;
   const [layersOpen, setLayersOpen] = useState(false);
   const container = useRef();
   const content = useRef();
@@ -304,8 +305,8 @@ export default function MapWrapper({
     mapView.current = new View({
       projection: 'EPSG:3857',
       constrainResolution: true,
-      center: camera ? handleCenter() : fromLonLat([lng, lat]),
-      zoom: 10,
+      center: camera ? handleCenter() : fromLonLat(pan),
+      zoom: zoom,
     });
     // Apply the basemap style from the arcgis resource
     fetch(`${process.env.REACT_APP_MAP_STYLE}`, {
@@ -346,6 +347,10 @@ export default function MapWrapper({
     mapRef.current.once('loadend', () => {
       loadWebcams();
       loadEvents();
+    });
+
+    mapRef.current.on('moveend', function () {
+      dispatch(updateMapState({pan: toLonLat(mapView.current.getCenter()), zoom: mapView.current.getZoom()}))
     });
 
     mapRef.current.on('click', e => {
