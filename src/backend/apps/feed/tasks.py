@@ -2,6 +2,7 @@ from apps.event.tasks import populate_all_event_data
 from apps.webcam.tasks import populate_all_webcam_data, update_all_webcam_data
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task
+from django.core.management import call_command
 
 
 @db_periodic_task(crontab(hour="*/6"))
@@ -17,3 +18,8 @@ def update_camera_task():
 @db_periodic_task(crontab(minute="*/5"))
 def populate_event_task():
     populate_all_event_data()
+
+
+@db_periodic_task(crontab(minute="*/1"))
+def publish_scheduled():
+    call_command('publish_scheduled') 
