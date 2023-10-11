@@ -1,6 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit'
-import routesReducer from './slices/routesSlice'
-import mapReducer from './slices/mapSlice'
+import { configureStore } from '@reduxjs/toolkit';
+import routesReducer from './slices/routesSlice';
+import mapReducer from './slices/mapSlice';
 
 import {
   persistStore,
@@ -11,9 +11,9 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from 'redux-persist'
+} from 'redux-persist';
 
-import storage from 'redux-persist/lib/storage'
+import storage from 'redux-persist/lib/storage';
 
 const persistConfig = {
   key: 'root',
@@ -28,12 +28,12 @@ const store = configureStore({
     routes: routesReducer,
     map: persistedReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: {
-                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-            },
-        }),
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
 
 const persistor = persistStore(store);
