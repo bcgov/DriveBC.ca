@@ -34,7 +34,6 @@ import RouteSearch from './map/RouteSearch.js';
 import { applyStyle } from 'ol-mapbox-style';
 import { Circle } from 'ol/geom.js';
 import { fromLonLat, toLonLat } from 'ol/proj';
-import { Image as ImageLayer } from 'ol/layer.js';
 import { MapContext } from '../App.js';
 import { Point, LineString } from 'ol/geom';
 import { ScaleLine } from 'ol/control.js';
@@ -43,7 +42,6 @@ import * as ol from 'ol';
 import Cluster from 'ol/source/Cluster.js';
 import Feature from 'ol/Feature.js';
 import GeoJSON from 'ol/format/GeoJSON.js';
-import ImageWMS from 'ol/source/ImageWMS.js';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay.js';
 import Geolocation from 'ol/Geolocation.js';
@@ -271,34 +269,6 @@ export default function MapWrapper({
 
     // initialize starting optional layers
     layers.current = {
-      highwayLayer: new ImageLayer({
-        classname: 'highway',
-        type: 'overlay',
-        visible: mapContext.visible_layers.highwayLayer,
-        source: new ImageWMS({
-          url: `${process.env.REACT_APP_HIGHWAY_LAYER}`,
-          serverType: 'geoserver',
-          params: {
-            LAYERS: 'hwy:DSA_CONTRACT_AREA',
-          },
-          transition: 0,
-        }),
-      }),
-
-      open511Layer: new ImageLayer({
-        className: 'open511',
-        type: 'overlay',
-        visible: mapContext.visible_layers.open511Layer,
-        source: new ImageWMS({
-          url: `${process.env.REACT_APP_OPEN511_LAYER}`,
-          params: {
-            LAYERS: 'op5:OP5_EVENT511_ACTIVE_V',
-          },
-          serverType: 'geoserver',
-          transition: 0,
-        }),
-      }),
-
       tid: Date.now(),
     };
 
@@ -327,13 +297,9 @@ export default function MapWrapper({
         ? [
             vectorLayer,
             radiusLayer,
-            layers.current['highwayLayer'],
-            layers.current['open511Layer'],
           ]
         : [
             vectorLayer,
-            layers.current['highwayLayer'],
-            layers.current['open511Layer'],
           ],
       overlays: [popup.current],
       view: mapView.current,
@@ -606,6 +572,7 @@ export default function MapWrapper({
     });
 
     mapRef.current.addLayer(layers.current['webcamsLayer']);
+    layers.current['webcamsLayer'].setZIndex(1);
   }
 
   async function loadEvents() {

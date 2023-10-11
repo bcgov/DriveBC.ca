@@ -28,8 +28,6 @@ function App() {
       : {
           visible_layers: {
             eventsLayer: true,
-            highwayLayer: false,
-            open511Layer: false,
             webcamsLayer: true,
           },
         };
