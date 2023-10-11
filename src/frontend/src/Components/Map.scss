@@ -250,8 +250,8 @@
       padding: 2px;
       position: absolute;
 
-      @media (max-width: 575px) {
-        display: none;
+      @media (pointer:coarse) {
+        right: 2rem;
       }
     }
 
