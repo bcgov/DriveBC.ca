@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
 export const routesSlice = createSlice({
   name: 'routes',
@@ -10,8 +10,8 @@ export const routesSlice = createSlice({
       state.selectedRoute = action.payload;
     },
   },
-})
+});
 
-export const { updateSelectedRoute } = routesSlice.actions
+export const { updateSelectedRoute } = routesSlice.actions;
 
-export default routesSlice.reducer
+export default routesSlice.reducer;

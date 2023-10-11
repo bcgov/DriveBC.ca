@@ -1,10 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
 export const mapSlice = createSlice({
   name: 'map',
   initialState: {
-      zoom: 10,
-      pan: [-120.7862, 50.113],
+    zoom: 10,
+    pan: [-120.7862, 50.113],
   },
   reducers: {
     updateMapState: (state, action) => {
@@ -12,8 +12,8 @@ export const mapSlice = createSlice({
       state.pan = action.payload.pan;
     },
   },
-})
+});
 
-export const { updateMapState } = mapSlice.actions
+export const { updateMapState } = mapSlice.actions;
 
-export default mapSlice.reducer
+export default mapSlice.reducer;
