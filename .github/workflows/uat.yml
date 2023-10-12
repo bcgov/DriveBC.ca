@@ -1,0 +1,63 @@
+name: Deploy to UAT
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    name: Build Docker images
+    environment: uat
+
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v3
+
+    - name: build static
+      uses: redhat-actions/buildah-build@v2
+      with:
+        context: .
+        layers: true
+        image: static
+        tags: latest ${{ github.sha }}
+        labels: |
+          app=uat-drivebc
+        containerfiles: ./compose/frontend/StaticBuild
+        build-args: |
+          API_HOST=${{ vars.API_HOST }}
+          BASE_MAP=${{ vars.BASE_MAP }}
+          MAP_STYLE=${{ vars.MAP_STYLE }}
+          HIGHWAY_LAYER=${{ vars.HIGHWAY_LAYER }}
+          OPEN511_LAYER=${{ vars.OPEN511_LAYER }}
+          REPLAY_THE_DAY=${{ vars.REPLAY_THE_DAY }}
+          ROUTE_PLANNER=${{ vars.ROUTE_PLANNER }}
+          ROUTE_PLANNER_KEY=${{ vars.ROUTE_PLANNER_KEY }}
+          GEOCODER_HOST=${{ vars.GEOCODER_HOST }}
+          GEOCODER_API_AUTH_KEY=${{ vars.GEOCODER_API_AUTH_KEY }}
+          DEBUG_BUILD=false
+    - name: push to registry
+      uses: redhat-actions/push-to-registry@v2.7
+      with:
+        image: static
+        registry: ${{ secrets.REGISTRY }}
+        username: ${{ secrets.BUILDER_USERNAME }}
+        password: ${{ secrets.BUILDER_TOKEN }}
+
+    - name: build backend
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: uat-django
+        tags: latest ${{ github.sha }}
+        labels: |
+          app=uat-drivebc
+        containerfiles: ./compose/backend/Dockerfile
+        build-args:
+          DEBUG_BUILD=false
+    - name: push to registry
+      uses: redhat-actions/push-to-registry@v2.7
+      with:
+        image: uat-django
+        registry: ${{ secrets.REGISTRY }}
+        username: ${{ secrets.BUILDER_USERNAME }}
+        password: ${{ secrets.BUILDER_TOKEN }}
