@@ -3,7 +3,7 @@ import zoneinfo
 
 from apps.event import enums as event_enums
 from apps.event.models import Event
-from apps.event.views import DelayAPI
+from apps.event.views import EventAPI
 from apps.shared.enums import CacheKey
 from apps.shared.tests import BaseTest
 from django.contrib.gis.geos import LineString
@@ -64,6 +64,6 @@ class TestEventAPI(APITestCase, BaseTest):
         assert len(response.data) == 10
 
         # Updated cached result
-        DelayAPI().set_list_data()
+        EventAPI().set_list_data()
         response = self.client.get(url, {})
         assert len(response.data) == 5

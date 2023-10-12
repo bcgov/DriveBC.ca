@@ -1,11 +1,11 @@
-from django.contrib.gis.geos import LineString
-from django.contrib.contenttypes.models import ContentType
-from apps.shared.tests import BaseTest
-from rest_framework.test import APITestCase
 from apps.cms.models import Advisory
-from apps.event.views import DelayAPI
+from apps.event.views import EventAPI
 from apps.shared.enums import CacheKey
+from apps.shared.tests import BaseTest
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.gis.geos import LineString
 from django.core.cache import cache
+from rest_framework.test import APITestCase
 
 
 class TestAdvisoryAPI(APITestCase, BaseTest):
@@ -18,7 +18,7 @@ class TestAdvisoryAPI(APITestCase, BaseTest):
             geometry=LineString([(-119, 35), (-118, 32)]),
             path="000100010001",
             depth=3,
-            content_type=ContentType.objects.get(app_label='cms', 
+            content_type=ContentType.objects.get(app_label='cms',
                                                  model='advisory'),
         )
         advisory.save()
@@ -30,11 +30,11 @@ class TestAdvisoryAPI(APITestCase, BaseTest):
             geometry=LineString([(-119, 35), (-118, 32)]),
             path="000100010002",
             depth=3,
-            content_type=ContentType.objects.get(app_label='cms', 
+            content_type=ContentType.objects.get(app_label='cms',
                                                  model='advisory'),
         )
         advisory_2.save()
-       
+
     def test_advisory_list_caching(self):
         # Empty cache
         assert cache.get(CacheKey.DELAY_LIST) is None
@@ -51,6 +51,6 @@ class TestAdvisoryAPI(APITestCase, BaseTest):
         assert len(response.data) == 0
 
         # Updated cached result
-        DelayAPI().set_list_data()
+        EventAPI().set_list_data()
         response = self.client.get(url, {})
         assert len(response.data) == 0
