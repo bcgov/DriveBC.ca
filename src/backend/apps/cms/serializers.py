@@ -20,8 +20,8 @@ class CMSSerializer(serializers.ModelSerializer):
 
     def get_host(self):
         request = self.context.get("request")
-        prefix = "https://" if request.is_secure() else "http://"
-        return prefix + request.get_host()
+        prefix = "https://" if request and request.is_secure() else "http://"
+        return prefix + request.get_host() if request else 'localhost:8000'
 
     # get rendered html elements for description and access static media foder
     def get_description(self, obj):
