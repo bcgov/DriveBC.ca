@@ -3,7 +3,7 @@ from django.urls import include, path
 from rest_framework import routers
 
 event_router = routers.DefaultRouter()
-event_router.register(r"", delay_views.DelayViewSet, basename="events")
+event_router.register(r"", delay_views.EventViewSet, basename="events")
 
 urlpatterns = [
     path("", include(event_router.urls)),
