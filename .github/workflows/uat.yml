@@ -19,7 +19,7 @@ jobs:
       with:
         context: .
         layers: true
-        image: static
+        image: uat-static
         tags: latest ${{ github.sha }}
         labels: |
           app=uat-drivebc
