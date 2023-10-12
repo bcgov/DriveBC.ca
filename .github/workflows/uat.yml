@@ -39,7 +39,7 @@ jobs:
     - name: push to registry
       uses: redhat-actions/push-to-registry@v2.7
       with:
-        image: static
+        image: uat-static
         registry: ${{ secrets.REGISTRY }}
         username: ${{ secrets.BUILDER_USERNAME }}
         password: ${{ secrets.BUILDER_TOKEN }}
