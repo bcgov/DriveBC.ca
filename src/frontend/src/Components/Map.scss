@@ -250,7 +250,7 @@
       padding: 2px;
       position: absolute;
 
-      @media (pointer:coarse) {
+      @media (max-width: 575px) {
         right: 2rem;
       }
     }
@@ -338,7 +338,7 @@
     flex-direction: column;
 
     //Hide zoom slider on touch devices
-    @media (pointer:coarse) {
+    @media (max-width: 575px) {
       display: none;
     }
 
