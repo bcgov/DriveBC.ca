@@ -38,11 +38,16 @@ class TestEventSerializer(BaseTest):
                 tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
             ),
         )
+        self.event.schedule =  {"intervals": [
+          "2023-05-23T14:00/2023-07-22T14:00"
+        ]
+      }
         self.event_two = copy(self.event)
 
         self.event.id = "1"
         self.event.route_from = "at Test Road"
         self.event.route_to = "Test Avenue"
+        
         self.event.save()
 
         self.event_two.id = "2"
@@ -61,14 +66,14 @@ class TestEventSerializer(BaseTest):
         self.serializer_two = EventSerializer(self.event_two)
 
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 15
+        assert len(self.serializer.data) == 16
         # route_from beings with 'at '
         assert self.serializer.data['route_display'] == \
                "Test Road to Test Avenue"
         assert self.serializer.data['direction_display'] == \
                "Northbound"
 
-        assert len(self.serializer_two.data) == 15
+        assert len(self.serializer_two.data) == 16
         # route_from doesn't being with 'at '
         assert self.serializer_two.data['route_display'] == \
                "Test Road Two to Test Avenue Two"
