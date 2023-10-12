@@ -66,6 +66,9 @@ class EventFeedSerializer(serializers.Serializer):
     created = DriveBCDateField('first_created', source="*")
     updated = DriveBCDateField('last_updated', source="*")
 
+    # Schedule
+    schedule = serializers.JSONField()
+
 
 class EventAPISerializer(serializers.Serializer):
     events = EventFeedSerializer(many=True)

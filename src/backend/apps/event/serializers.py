@@ -3,9 +3,13 @@ from apps.event.models import Event
 from rest_framework import serializers
 
 
+class ScheduleSerializer(serializers.Serializer):
+    intervals = serializers.ListField(child=serializers.CharField())
+
 class EventSerializer(serializers.ModelSerializer):
     direction_display = serializers.SerializerMethodField()
     route_display = serializers.SerializerMethodField()
+    schedule = ScheduleSerializer()
 
     class Meta:
         model = Event
