@@ -21,7 +21,6 @@ class WebcamSerializer(serializers.ModelSerializer):
         )
 
     def get_links(self, obj):
-        api_root = env("DRIVEBC_IMAGE_API_BASE_URL")
         proxy_root = env("DRIVEBC_IMAGE_PROXY_URL")
         webcam_id = obj.id
 
@@ -31,7 +30,7 @@ class WebcamSerializer(serializers.ModelSerializer):
             "imageThumbnail":
                 f"{proxy_root}bchighwaycam/pub/cameras/tn/{webcam_id}.jpg",
             "currentImage": f"{proxy_root}webcam/imageUpdate.php?cam={webcam_id}",
-            "replayTheDay": f"{api_root}ReplayTheDay/json/{webcam_id}.json",
+            "replayTheDay": f"{proxy_root}ReplayTheDay/json/{webcam_id}.json",
         }
 
         return links
