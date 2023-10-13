@@ -531,14 +531,20 @@ export default function MapWrapper({
       layers.current['routeLayer'] = routeLayer;
       mapRef.current.addLayer(routeLayer);
 
-      // Load filtered events
+      // Load filtered objects
       loadFilteredEvents(selectedRoute.route);
+      loadFilteredCameras(selectedRoute.route);
     }
   }, [selectedRoute]);
 
   async function loadFilteredEvents(routePoints) {
     const eventsData = await getEvents(routePoints);
     console.log(eventsData);
+  }
+
+  async function loadFilteredCameras(routePoints) {
+    const camerasData = await getWebcams(routePoints);
+    console.log(camerasData);
   }
 
   async function loadWebcams() {
