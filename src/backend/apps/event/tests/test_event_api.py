@@ -6,7 +6,7 @@ from apps.event.models import Event
 from apps.event.views import EventAPI
 from apps.shared.enums import CacheKey
 from apps.shared.tests import BaseTest
-from django.contrib.gis.geos import LineString
+from django.contrib.gis.geos import LineString, Point
 from django.core.cache import cache
 from rest_framework.test import APITestCase
 
@@ -30,8 +30,8 @@ class TestEventAPI(APITestCase, BaseTest):
 
                 # Location
                 direction=event_enums.EVENT_DIRECTION.NORTH,
-                location=LineString([(-123.569743, 48.561231),
-                                     (-123.569743, 48.561231)]),
+                location=LineString([Point(-123.569743, 48.561231),
+                                     Point(-123.569743, 48.561231)]),
 
                 route_at="Test Highway",
                 route_from="at Test Road",
@@ -67,3 +67,25 @@ class TestEventAPI(APITestCase, BaseTest):
         EventAPI().set_list_data()
         response = self.client.get(url, {})
         assert len(response.data) == 5
+
+    def test_events_list_filtering(self):
+        # No filtering
+        url = "/api/events/"
+        response = self.client.get(url, {})
+        assert len(response.data) == 10
+
+        # Manually update location of an event
+        event = Event.objects.get(id=1)
+        event.location = LineString([
+            Point(-120.569743, 48.561231),
+            Point(-123.569743, 48.561231)
+        ])
+        event.save()
+
+        # Filtered events - hit
+        response = self.client.get(url, {'route': '-120.569743,48.561231,-121.569743,48.561231'})
+        assert len(response.data) == 1
+
+        # Filtered events - miss
+        response = self.client.get(url, {'route': '-110.569743,38.561231,-110.569743,39.561231'})
+        assert len(response.data) == 0
