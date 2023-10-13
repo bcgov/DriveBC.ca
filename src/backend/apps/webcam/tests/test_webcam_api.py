@@ -11,7 +11,7 @@ from django.core.cache import cache
 from rest_framework.test import APITestCase
 
 
-class TestWebcamAPI(APITestCase, BaseTest):
+class TestCameraAPI(APITestCase, BaseTest):
     def setUp(self):
         super().setUp()
 
@@ -55,7 +55,7 @@ class TestWebcamAPI(APITestCase, BaseTest):
                 update_period_stddev=150,
             )
 
-    def test_webcam_list_caching(self):
+    def test_cameras_list_caching(self):
         # Empty cache
         assert cache.get(CacheKey.WEBCAM_LIST) is None
 
@@ -75,21 +75,21 @@ class TestWebcamAPI(APITestCase, BaseTest):
         response = self.client.get(url, {})
         assert len(response.data) == 5
 
-    def test_webcam_list_filtering(self):
+    def test_cameras_list_filtering(self):
         # No filtering
         url = "/api/webcams/"
         response = self.client.get(url, {})
         assert len(response.data) == 10
 
-        # Manually update location of camera
+        # Manually update location of a camera
         cam = Webcam.objects.get(id=1)
         cam.location = Point(-120.569743, 38.561231)
         cam.save()
 
-        # Filtered events - hit
+        # Filtered cams - hit
         response = self.client.get(url, {'route': '-120.569743,38.561231,-120.569743,39.561231'})
         assert len(response.data) == 1
 
-        # Filtered events - miss
+        # Filtered cams - miss
         response = self.client.get(url, {'route': '-110.569743,38.561231,-110.569743,39.561231'})
         assert len(response.data) == 0
