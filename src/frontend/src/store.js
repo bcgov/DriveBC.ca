@@ -15,18 +15,21 @@ import {
 
 import storage from 'redux-persist/lib/storage';
 
-const persistConfig = {
-  key: 'root',
-  version: 1,
-  storage,
-};
+const getConfig = (key) => {
+  return {
+    key: key,
+    version: 1,
+    storage,
+  }
+}
 
-const persistedReducer = persistReducer(persistConfig, mapReducer);
+const persistedMapReducer = persistReducer(getConfig('map'), mapReducer);
+const persistedRoutesReducer = persistReducer(getConfig('routes'), routesReducer);
 
 const store = configureStore({
   reducer: {
-    routes: routesReducer,
-    map: persistedReducer,
+    routes: persistedRoutesReducer,
+    map: persistedMapReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
