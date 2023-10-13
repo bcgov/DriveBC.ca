@@ -6,12 +6,11 @@ on:
   workflow_dispatch:
 
 jobs:
-
-  build:
+  build-static:
     runs-on: ubuntu-latest
-    name: Build Docker images
+    name: Build & Deploy Docker Static images
     environment: dev
-
+    
     steps:
     - name: checkout code
       uses: actions/checkout@v3
@@ -46,6 +45,14 @@ jobs:
         username: ${{ secrets.BUILDER_USERNAME }}
         password: ${{ secrets.BUILDER_TOKEN }}
 
+  build-backend:
+    runs-on: ubuntu-latest
+    name: Build & Deploy Docker Backend images
+    environment: dev
+    
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v3
     - name: build backend
       uses: redhat-actions/buildah-build@v2
       with:
