@@ -52,3 +52,6 @@ class CacheKey:
     WEBCAM_LIST = "webcam_list"
     DELAY_LIST = "delay_list"
     TEST_APP_CACHE = "test_app_cache"
+
+
+ROUTE_FILTER_TOLERANCE = 25
