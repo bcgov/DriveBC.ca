@@ -20,7 +20,7 @@ class CachedListModelMixin:
     cache_timeout = CacheTimeout.DEFAULT
 
     def fetch_list_data(self, queryset=None):
-        serializer = self.serializer_class(queryset if queryset else self.queryset, many=True)
+        serializer = self.serializer_class(queryset.all() if queryset is not None else self.queryset.all(), many=True)
         return serializer.data
 
     def set_list_data(self):
@@ -51,9 +51,10 @@ class CachedListModelMixin:
         for i in range(0, len(coords_list), 2):
             points_list.append(Point(float(coords_list[i]), float(coords_list[i + 1])))
 
-        return self.queryset.filter(
+        derp = self.queryset.filter(
             location__distance_lte=(LineString(points_list), D(m=ROUTE_FILTER_TOLERANCE))
         )
+        return derp
 
 
 class AppCacheTestViewSet(APIView):
