@@ -74,3 +74,22 @@ class TestWebcamAPI(APITestCase, BaseTest):
         WebcamAPI().set_list_data()
         response = self.client.get(url, {})
         assert len(response.data) == 5
+
+    def test_webcam_list_filtering(self):
+        # No filtering
+        url = "/api/webcams/"
+        response = self.client.get(url, {})
+        assert len(response.data) == 10
+
+        # Manually update location of camera
+        cam = Webcam.objects.get(id=1)
+        cam.location = Point(-120.569743, 38.561231)
+        cam.save()
+
+        # Filtered events - hit
+        response = self.client.get(url, {'route': '-120.569743,38.561231,-120.569743,39.561231'})
+        assert len(response.data) == 1
+
+        # Filtered events - miss
+        response = self.client.get(url, {'route': '-110.569743,38.561231,-110.569743,39.561231'})
+        assert len(response.data) == 0
