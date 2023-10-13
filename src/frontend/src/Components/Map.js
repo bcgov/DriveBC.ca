@@ -530,8 +530,16 @@ export default function MapWrapper({
       const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
       layers.current['routeLayer'] = routeLayer;
       mapRef.current.addLayer(routeLayer);
+
+      // Load filtered events
+      loadFilteredEvents(selectedRoute.route);
     }
   }, [selectedRoute]);
+
+  async function loadFilteredEvents(routePoints) {
+    const eventsData = await getEvents(routePoints);
+    console.log(eventsData);
+  }
 
   async function loadWebcams() {
     const webcamResults = await getWebcams();
