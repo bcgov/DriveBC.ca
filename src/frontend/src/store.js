@@ -1,4 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
+import camerasReducer from './slices/camerasSlice';
+import eventsReducer from './slices/eventsSlice';
 import routesReducer from './slices/routesSlice';
 import mapReducer from './slices/mapSlice';
 
@@ -23,13 +25,12 @@ const getConfig = (key) => {
   }
 }
 
-const persistedMapReducer = persistReducer(getConfig('map'), mapReducer);
-const persistedRoutesReducer = persistReducer(getConfig('routes'), routesReducer);
-
 const store = configureStore({
   reducer: {
-    routes: persistedRoutesReducer,
-    map: persistedMapReducer,
+    cameras: persistReducer(getConfig('cameras'), camerasReducer),
+    events: persistReducer(getConfig('events'), eventsReducer),
+    routes: persistReducer(getConfig('routes'), routesReducer),
+    map: persistReducer(getConfig('map'), mapReducer),
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

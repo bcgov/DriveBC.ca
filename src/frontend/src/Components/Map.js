@@ -63,10 +63,18 @@ export default function MapWrapper({
   mapViewRoute,
 }) {
   // Redux
-  const selectedRoute = useSelector((state) => state.routes.selectedRoute);
-  const zoom = useSelector((state) => state.map.zoom);
-  const pan = useSelector((state) => state.map.pan);
   const dispatch = useDispatch();
+  const [ cameras, events, selectedRoute, zoom, pan ] = useSelector((state) => [
+    state.cameras.cameras,
+    state.events.events,
+    state.routes.selectedRoute,
+    state.map.zoom,
+    state.map.pan
+  ]);
+
+  console.log(cameras);
+  console.log(events);
+
   const { mapContext, setMapContext } = useContext(MapContext);
   const mapElement = useRef();
   const mapRef = useRef();
