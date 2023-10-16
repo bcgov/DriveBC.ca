@@ -20,9 +20,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 // Components and functions
+import { getCamerasLayer } from './map/layers/camerasLayer.js';
 import { getEvents } from './data/events.js';
+import { getEventsLayer } from './map/layers/eventsLayer.js';
+import { getEventIcon } from './map/helper.js';
 import { getWebcams } from './data/webcams.js';
 import { getRouteLayer } from './map/routeLayer.js';
+import { MapContext } from '../App.js';
 import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
 import CurrentCameraIcon from './CurrentCameraIcon';
 import EventTypeIcon from './EventTypeIcon';
@@ -34,14 +38,9 @@ import RouteSearch from './map/RouteSearch.js';
 import { applyStyle } from 'ol-mapbox-style';
 import { Circle } from 'ol/geom.js';
 import { fromLonLat, toLonLat } from 'ol/proj';
-import { MapContext } from '../App.js';
-import { Point, LineString } from 'ol/geom';
 import { ScaleLine } from 'ol/control.js';
 import { Style } from 'ol/style.js';
-import * as ol from 'ol';
-import Cluster from 'ol/source/Cluster.js';
 import Feature from 'ol/Feature.js';
-import GeoJSON from 'ol/format/GeoJSON.js';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay.js';
 import Geolocation from 'ol/Geolocation.js';
@@ -53,7 +52,7 @@ import VectorTileSource from 'ol/source/VectorTile.js';
 import View from 'ol/View';
 
 // Styling
-import { eventStyles, cameraStyles } from './data/eventStyleDefinitions.js';
+import { cameraStyles } from './data/eventStyleDefinitions.js';
 import './Map.scss';
 
 export default function MapWrapper({
@@ -558,116 +557,26 @@ export default function MapWrapper({
   async function loadWebcams() {
     const webcamResults = await getWebcams();
 
-    layers.current['webcamsLayer'] = new VectorLayer({
-      classname: 'webcams',
-      visible: mapContext.visible_layers.webcamsLayer,
-      source: new Cluster({
-        distance: 35,
-        source: new VectorSource({
-          format: new GeoJSON(),
-          loader: function (extent, resolution, projection) {
-            const vectorSource = this;
-            vectorSource.clear();
-
-            if (webcamResults) {
-              webcamResults.forEach(cameraData => {
-                // Build a new OpenLayers feature
-                const olGeometry = new Point(cameraData.location.coordinates);
-                const olFeature = new ol.Feature({ geometry: olGeometry });
-
-                // Transfer properties
-                olFeature.setProperties(cameraData);
-                // Transform the projection
-                const olFeatureForMap = transformFeature(
-                  olFeature,
-                  'EPSG:4326',
-                  mapRef.current.getView().getProjection().getCode(),
-                );
-
-                vectorSource.addFeature(olFeatureForMap);
-              });
-            }
-          },
-        }),
-      }),
-      style: cameraStyles['static'],
-    });
+    layers.current['webcamsLayer'] = getCamerasLayer(
+      webcamResults,
+      mapRef.current.getView().getProjection().getCode(),
+      mapContext
+    )
 
     mapRef.current.addLayer(layers.current['webcamsLayer']);
     layers.current['webcamsLayer'].setZIndex(1);
   }
 
   async function loadEvents() {
-    const eventData = await getEvents();
+    const eventsData = await getEvents();
 
     // Events iterator
-    layers.current['eventsLayer'] = new VectorLayer({
-      classname: 'events',
-      visible: mapContext.visible_layers.eventsLayer,
-      source: new VectorSource({
-        format: new GeoJSON(),
-        loader: function (extent, resolution, projection) {
-          const vectorSource = this;
-          vectorSource.clear();
-          if (eventData) {
-            eventData.forEach(record => {
-              let olGeometry = null;
-              let centroidFeatureForMap = null;
-              switch (record.location.type) {
-                case 'Point':
-                  olGeometry = new Point(record.location.coordinates);
-                  break;
-                case 'LineString':
-                  olGeometry = new LineString(record.location.coordinates);
-                  break;
-                default:
-                  console.log(Error);
-              }
-              const olFeature = new ol.Feature({ geometry: olGeometry });
+    layers.current['eventsLayer'] = getEventsLayer(
+      eventsData,
+      mapRef.current.getView().getProjection().getCode(),
+      mapContext
+    )
 
-              // Transfer properties
-              olFeature.setProperties(record);
-
-              // Transform the projection
-              const olFeatureForMap = transformFeature(
-                olFeature,
-                'EPSG:4326',
-                mapRef.current.getView().getProjection().getCode(),
-              );
-
-              if (olFeature.getGeometry().getType() === 'LineString') {
-                const centroidGeometry = new Point(
-                  olFeature.getGeometry().getCoordinates()[
-                    Math.floor(
-                      olFeature.getGeometry().getCoordinates().length / 2,
-                    )
-                  ],
-                );
-                const centroidFeature = new ol.Feature({
-                  geometry: centroidGeometry,
-                });
-                // Transfer properties
-                centroidFeature.setProperties(record);
-                // Transform the projection
-                centroidFeatureForMap = transformFeature(
-                  centroidFeature,
-                  'EPSG:4326',
-                  mapRef.current.getView().getProjection().getCode(),
-                );
-                centroidFeatureForMap.setId(olFeatureForMap.ol_uid);
-                vectorSource.addFeature(centroidFeatureForMap);
-                olFeatureForMap.setId(centroidFeatureForMap.ol_uid);
-              }
-
-              vectorSource.addFeature(olFeatureForMap);
-            });
-          }
-        },
-      }),
-      style: function (feature, resolution) {
-        return getEventIcon(feature, 'static');
-      },
-    });
     mapRef.current.addLayer(layers.current['eventsLayer']);
   }
 
@@ -705,43 +614,6 @@ export default function MapWrapper({
         .getSource()
         .getFeatureById(event.ol_uid);
       relatedFeature.setStyle(getEventIcon(relatedFeature, state));
-    }
-  };
-
-  const getEventIcon = (event, state) => {
-    const severity = event.get('severity').toLowerCase();
-    const type = event.get('event_type').toLowerCase();
-    const geometry = event.getGeometry().getType();
-    if (geometry === 'Point') {
-      if (severity === 'major') {
-        switch (type) {
-          case 'incident':
-            return eventStyles['major_incident'][state];
-          case 'construction':
-            return eventStyles['major_construction'][state];
-          case 'special_event':
-            return eventStyles['major_special_event'][state];
-          case 'weather_condition':
-            return eventStyles['major_weather_condition'][state];
-          default:
-            return eventStyles['major_incident'][state];
-        }
-      } else {
-        switch (type) {
-          case 'incident':
-            return eventStyles['incident'][state];
-          case 'construction':
-            return eventStyles['construction'][state];
-          case 'special_event':
-            return eventStyles['special_event'][state];
-          case 'weather_condition':
-            return eventStyles['weather_condition'][state];
-          default:
-            return eventStyles['incident'][state];
-        }
-      }
-    } else {
-      return eventStyles['segments'][state];
     }
   };
 
@@ -827,12 +699,6 @@ export default function MapWrapper({
     mapContext.visible_layers[layer] = checked;
     setMapContext(mapContext);
     localStorage.setItem('mapContext', JSON.stringify(mapContext));
-  }
-
-  function transformFeature(feature, sourceCRS, targetCRS) {
-    const clone = feature.clone();
-    clone.getGeometry().transform(sourceCRS, targetCRS);
-    return clone;
   }
 
   return (
