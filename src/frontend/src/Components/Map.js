@@ -318,8 +318,10 @@ export default function MapWrapper({
     });
 
     mapRef.current.once('loadend', () => {
-      loadWebcams();
-      loadEvents();
+      if (!selectedRoute) {
+        loadWebcams();
+        loadEvents();
+      }
     });
 
     mapRef.current.on('moveend', function () {
@@ -539,23 +541,17 @@ export default function MapWrapper({
       mapRef.current.addLayer(routeLayer);
 
       // Load filtered objects
-      loadFilteredEvents(selectedRoute.route);
-      loadFilteredCameras(selectedRoute.route);
+      loadEvents(selectedRoute.route);
+      loadWebcams(selectedRoute.route);
     }
   }, [selectedRoute]);
 
-  async function loadFilteredEvents(routePoints) {
-    const eventsData = await getEvents(routePoints);
-    console.log(eventsData);
-  }
+  async function loadWebcams(route) {
+    const webcamResults = await getWebcams(route);
 
-  async function loadFilteredCameras(routePoints) {
-    const camerasData = await getWebcams(routePoints);
-    console.log(camerasData);
-  }
-
-  async function loadWebcams() {
-    const webcamResults = await getWebcams();
+    if (layers.current['webcamsLayer']) {
+      mapRef.current.removeLayer(layers.current['webcamsLayer']);
+    }
 
     layers.current['webcamsLayer'] = getCamerasLayer(
       webcamResults,
@@ -567,8 +563,12 @@ export default function MapWrapper({
     layers.current['webcamsLayer'].setZIndex(1);
   }
 
-  async function loadEvents() {
-    const eventsData = await getEvents();
+  async function loadEvents(route) {
+    const eventsData = await getEvents(route);
+
+    if (layers.current['eventsLayer']) {
+      mapRef.current.removeLayer(layers.current['eventsLayer']);
+    }
 
     // Events iterator
     layers.current['eventsLayer'] = getEventsLayer(
