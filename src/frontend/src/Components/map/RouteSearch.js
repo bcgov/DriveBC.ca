@@ -1,44 +1,49 @@
 // React
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 // Components and functions
 import { getRoute } from '../data/routes.js';
-import { updateSelectedRoute } from '../..//slices/routesSlice'
+import { clearSelectedRoute, updateSearchLocationFrom, updateSearchLocationTo, updateSelectedRoute } from '../../slices/routesSlice'
 import LocationSearch from './LocationSearch.js';
 
 // Styling
 import './RouteSearch.scss';
 
-export default function RouteSearch(props) {
-  const { selectedLocation, selectedLocationTwo, setSelectedLocation, setSelectedLocationTwo } = props;
-
+export default function RouteSearch() {
   // Redux
   const dispatch = useDispatch();
+  const [ searchLocationFrom, searchLocationTo ] = useSelector((state) => [
+    state.routes.searchLocationFrom,
+    state.routes.searchLocationTo,
+  ]);
 
   useEffect(() => {
-    if (selectedLocation && selectedLocation.length && selectedLocationTwo && selectedLocationTwo.length) {
-      const firstPoint = selectedLocation[0].geometry.coordinates.toString();
-      const secondPoint = selectedLocationTwo[0].geometry.coordinates.toString();
+    if (searchLocationFrom && searchLocationFrom.length && searchLocationTo && searchLocationTo.length) {
+      const firstPoint = searchLocationFrom[0].geometry.coordinates.toString();
+      const secondPoint = searchLocationTo[0].geometry.coordinates.toString();
 
       const points = firstPoint + ',' + secondPoint;
 
       getRoute(points).then(routeData => {
         dispatch(updateSelectedRoute(routeData));
       });
+
+    } else {
+      dispatch(clearSelectedRoute());
     }
-  }, [selectedLocation, selectedLocationTwo]);
+  }, [searchLocationFrom, searchLocationTo]);
 
   // Rendering
   return (
     <div className="routing-container">
       <div className="typeahead-container">
-        <LocationSearch setSelectedLocation={setSelectedLocation} />
+        <LocationSearch location={searchLocationFrom} action={updateSearchLocationFrom} />
       </div>
 
-      {selectedLocation &&
+      {(searchLocationFrom.length || searchLocationTo.length) &&
         <div className="typeahead-container typeahead-container-two">
-          <LocationSearch setSelectedLocation={setSelectedLocationTwo} />
+          <LocationSearch location={searchLocationTo} action={updateSearchLocationTo} />
         </div>
       }
     </div>

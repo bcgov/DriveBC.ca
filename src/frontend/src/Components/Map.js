@@ -63,16 +63,12 @@ export default function MapWrapper({
 }) {
   // Redux
   const dispatch = useDispatch();
-  const [ cameras, events, selectedRoute, zoom, pan ] = useSelector((state) => [
-    state.cameras.cameras,
-    state.events.events,
+  const [ searchLocationFrom, selectedRoute, zoom, pan ] = useSelector((state) => [
+    state.routes.searchLocationFrom,
     state.routes.selectedRoute,
     state.map.zoom,
     state.map.pan
   ]);
-
-  console.log(cameras);
-  console.log(events);
 
   const { mapContext, setMapContext } = useContext(MapContext);
   const mapElement = useRef();
@@ -93,10 +89,6 @@ export default function MapWrapper({
   const clickedCamera = useRef();
   const clickedEvent = useRef();
   const locationPinRef = useRef(null);
-
-  // Typeahead states
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [selectedLocationTwo, setSelectedLocationTwo] = useState(null);
 
   function centerMyLocation(coordinates) {
     if (mapRef.current) {
@@ -521,29 +513,33 @@ export default function MapWrapper({
   }, []);
 
   useEffect(() => {
-    if (selectedLocation && selectedLocation.length) {
+    if (searchLocationFrom && searchLocationFrom.length) {
       if (locationPinRef.current) {
         mapRef.current.removeOverlay(locationPinRef.current);
       }
-      centerMyLocation(selectedLocation[0].geometry.coordinates);
-      setLocationPinPoint(selectedLocation[0].geometry.coordinates);
+      centerMyLocation(searchLocationFrom[0].geometry.coordinates);
+      setLocationPinPoint(searchLocationFrom[0].geometry.coordinates);
     }
-  }, [selectedLocation]);
+  }, [searchLocationFrom]);
 
   useEffect(() => {
-    if (selectedRoute && selectedRoute.routeFound) {
-      if (layers.current['routeLayer']) {
-        mapRef.current.removeLayer(layers.current['routeLayer']);
-      }
+    if (layers.current['routeLayer']) {
+      mapRef.current.removeLayer(layers.current['routeLayer']);
+    }
 
+    if (selectedRoute && selectedRoute.routeFound) {
       const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
       layers.current['routeLayer'] = routeLayer;
       mapRef.current.addLayer(routeLayer);
 
-      // Load filtered objects
       loadEvents(selectedRoute.route);
       loadWebcams(selectedRoute.route);
+
+    } else {
+      loadEvents();
+      loadWebcams();
     }
+
   }, [selectedRoute]);
 
   async function loadWebcams(route) {
@@ -757,12 +753,7 @@ export default function MapWrapper({
 
       {!isPreview && (
         <div>
-          <RouteSearch
-            selectedLocation={selectedLocation}
-            selectedLocationTwo={selectedLocationTwo}
-            setSelectedLocation={setSelectedLocation}
-            setSelectedLocationTwo={setSelectedLocationTwo}>
-          </RouteSearch>
+          <RouteSearch />
 
           <Layers
             open={layersOpen}

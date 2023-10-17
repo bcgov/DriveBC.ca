@@ -1,5 +1,6 @@
 // React
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux'
 
 // react-bootstrap-typeahead
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
@@ -12,12 +13,19 @@ import { getLocations } from '../data/locations.js';
 import './LocationSearch.scss';
 
 export default function LocationSearch(props) {
-  const { setSelectedLocation } = props;
+  // Redux
+  const dispatch = useDispatch();
+
+  const { location, action } = props;
 
   const [isSearching, setSearching] = useState(false);
   const [options, setLocationOptions] = useState([]);
 
-  function loadLocationOptions(locationInput) {
+  const setSelectedLocation = (payload) => {
+    dispatch(action(payload));
+  }
+
+  const loadLocationOptions = (locationInput) => {
     setSearching(true);
     getLocations(locationInput).then(locationsData => {
       setLocationOptions(
@@ -35,6 +43,8 @@ export default function LocationSearch(props) {
   // Rendering
   return (
     <AsyncTypeahead
+      clearButton={true}
+      defaultSelected={location}
       filterBy={() => true}
       id="location-search-typeahead"
       isLoading={isSearching}
