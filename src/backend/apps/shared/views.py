@@ -1,9 +1,8 @@
 import re
 
+from apps.shared.enums import ROUTE_FILTER_TOLERANCE, CacheKey, CacheTimeout
 from django.contrib.gis.geos import LineString, Point
 from django.contrib.gis.measure import D
-
-from apps.shared.enums import CacheKey, CacheTimeout, ROUTE_FILTER_TOLERANCE
 from django.core.cache import cache
 from django.db import connection
 from django.urls import re_path
@@ -20,7 +19,9 @@ class CachedListModelMixin:
     cache_timeout = CacheTimeout.DEFAULT
 
     def fetch_list_data(self, queryset=None):
-        serializer = self.serializer_class(queryset.all() if queryset is not None else self.queryset.all(), many=True)
+        serializer = self.serializer_class(
+            queryset.all() if queryset is not None else self.queryset.all(), many=True
+        )
         return serializer.data
 
     def set_list_data(self):
@@ -45,16 +46,17 @@ class CachedListModelMixin:
         )
 
     def get_filtered_queryset(self, geo_filter):
-        # TODO: error handling and unit tests
         coords_list = geo_filter.split(',')
         points_list = []
         for i in range(0, len(coords_list), 2):
             points_list.append(Point(float(coords_list[i]), float(coords_list[i + 1])))
 
-        derp = self.queryset.filter(
-            location__distance_lte=(LineString(points_list), D(m=ROUTE_FILTER_TOLERANCE))
+        res = self.queryset.filter(
+            location__distance_lte=(
+                LineString(points_list), D(m=ROUTE_FILTER_TOLERANCE)
+            )
         )
-        return derp
+        return res
 
 
 class AppCacheTestViewSet(APIView):
