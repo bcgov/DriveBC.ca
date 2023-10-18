@@ -27,3 +27,7 @@ class Event(BaseModel):
 
     # Schedule
     schedule = models.JSONField(default={}) 
+
+    # Scheduled start and end
+    start = models.DateTimeField(null=True)
+    end = models.DateTimeField(null=True)
