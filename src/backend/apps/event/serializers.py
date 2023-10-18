@@ -10,6 +10,7 @@ class ScheduleSerializer(serializers.Serializer):
 class EventSerializer(serializers.ModelSerializer):
     direction_display = serializers.SerializerMethodField()
     route_display = serializers.SerializerMethodField()
+    schedule = ScheduleSerializer()
 
     class Meta:
         model = Event

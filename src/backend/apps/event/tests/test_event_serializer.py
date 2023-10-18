@@ -42,6 +42,10 @@ class TestEventSerializer(BaseTest):
           "2023-05-23T14:00/2023-07-22T14:00"
         ]
       }
+        self.event.schedule =  {"intervals": [
+          "2023-05-23T14:00/2023-07-22T14:00"
+        ]
+      }
         self.event_two = copy(self.event)
 
         self.event.id = "1"
