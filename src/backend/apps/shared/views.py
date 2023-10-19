@@ -35,7 +35,7 @@ class CachedListModelMixin:
         )
 
     def list(self, request, *args, **kwargs):
-        route = request.query_params.get('route')
+        route = request.data.get('route')
         if not route:
             return Response(self.get_or_set_list_data())
 
@@ -46,10 +46,7 @@ class CachedListModelMixin:
         )
 
     def get_filtered_queryset(self, geo_filter):
-        coords_list = geo_filter.split(',')
-        points_list = []
-        for i in range(0, len(coords_list), 2):
-            points_list.append(Point(float(coords_list[i]), float(coords_list[i + 1])))
+        points_list = [Point(p) for p in geo_filter]
 
         res = self.queryset.filter(
             location__distance_lte=(

@@ -2,7 +2,7 @@ from apps.shared.enums import CacheKey, CacheTimeout
 from apps.shared.views import CachedListModelMixin
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet
 
 
 class WebcamAPI(CachedListModelMixin):
@@ -12,10 +12,11 @@ class WebcamAPI(CachedListModelMixin):
     cache_timeout = CacheTimeout.WEBCAM_LIST
 
 
-class WebcamViewSet(WebcamAPI, ReadOnlyModelViewSet):
-    pass
+class WebcamViewSet(WebcamAPI, ModelViewSet):
+    def create(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 
-class WebcamTestViewSet(ReadOnlyModelViewSet):
+class WebcamTestViewSet(ModelViewSet):
     queryset = WebcamAPI.queryset
     serializer_class = WebcamAPI.serializer_class

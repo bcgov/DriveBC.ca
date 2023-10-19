@@ -1,4 +1,5 @@
 import datetime
+import json
 import zoneinfo
 
 from apps.shared import enums as shared_enums
@@ -87,9 +88,17 @@ class TestCameraAPI(APITestCase, BaseTest):
         cam.save()
 
         # Filtered cams - hit
-        response = self.client.get(url, {'route': '-120.569743,38.561231,-120.569743,39.561231'})
+        response = self.client.post(
+            url,
+            json.dumps({"route": [[-120.569743, 38.561231], [-120.569743, 39.561231]]}),
+            content_type='application/json'
+        )
         assert len(response.data) == 1
 
         # Filtered cams - miss
-        response = self.client.get(url, {'route': '-110.569743,38.561231,-110.569743,39.561231'})
+        response = self.client.post(
+            url,
+            json.dumps({"route": [[-110.569743, 40.561231], [-110.569743, 39.561231]]}),
+            content_type='application/json'
+        )
         assert len(response.data) == 0

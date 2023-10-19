@@ -1,10 +1,18 @@
-import { get } from "./helper.js";
+import { post } from "./helper.js";
 
 export function getWebcams(routePoints, url = null) {
   const payload = routePoints ? { route: routePoints } : {};
 
-  return get(url ? url : `${process.env.REACT_APP_API_HOST}/api/webcams/`, payload)
-  .then((data) => data)
+  return post(
+    url ? url : `${process.env.REACT_APP_API_HOST}/api/webcams/`,
+    payload,
+    {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+  ).then((data) => data)
   .catch((error) => {
     console.log(error);
   });

@@ -1,4 +1,5 @@
 import datetime
+import json
 import zoneinfo
 
 from apps.event import enums as event_enums
@@ -83,9 +84,17 @@ class TestEventAPI(APITestCase, BaseTest):
         event.save()
 
         # Filtered events - hit
-        response = self.client.get(url, {'route': '-120.569743,48.561231,-121.569743,48.561231'})
+        response = self.client.post(
+            url,
+            json.dumps({"route": [[-120.569743, 48.561231], [-121.569743, 48.561231]]}),
+            content_type='application/json'
+        )
         assert len(response.data) == 1
 
         # Filtered events - miss
-        response = self.client.get(url, {'route': '-110.569743,38.561231,-110.569743,39.561231'})
+        response = self.client.post(
+            url,
+            json.dumps({"route": [[-110.569743, 38.561231], [-110.569743, 39.561231]]}),
+            content_type='application/json'
+        )
         assert len(response.data) == 0
