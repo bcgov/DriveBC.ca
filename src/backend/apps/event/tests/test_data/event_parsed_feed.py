@@ -33,5 +33,11 @@ parsed_feed = OrderedDict([
     )),
     ("last_updated", datetime.datetime(
         2023, 6, 29, 10, 14, 55, tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
-    ))
+    )),
+    ("schedule", {"intervals": [
+          "2023-05-23T14:00/2023-07-22T14:00"
+        ]
+      }
+    )
+    
 ])
