@@ -1,0 +1,22 @@
+---
+# Source: main/charts/static/templates/static-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-static-frontend
+  labels: 
+    helm.sh/chart: static-0.1.0
+    app.kubernetes.io/name: static
+    app.kubernetes.io/instance: drivebc-dev
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+  internalTrafficPolicy: Cluster
+  selector:
+    
+    app.kubernetes.io/name: static
+    app.kubernetes.io/instance: drivebc-dev

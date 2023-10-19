@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels: {{ include "app.labels" . | nindent 4 }}
+  annotations:
+    image.openshift.io/triggers: >-
+      [{"from":{"kind":"ImageStreamTag","name":"{{ template "app.fullname" . }}:latest","namespace":"{{ .Values.namespace  }}"},"fieldPath":"spec.template.spec.containers[?(@.name==\"{{ template "app.fullname" . }}\")].image","pause":"false"}]
+
+spec:
+  replicas: {{ .Values.deployment.replicas  }}
+  selector:
+    matchLabels:
+      {{ include "app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{ include "app.selectorLabels" . | nindent 8 }}
+    spec:
+      volumes:
+        - name: django-media-volume
+          persistentVolumeClaim:
+            claimName: {{ include "app.fullname" . }}
+      containers:
+        - resources:
+            limits:
+              cpu: {{ .Values.deployment.resources.limits.cpu  }}
+              memory: {{ .Values.deployment.resources.limits.memory  }}
+            requests:
+              cpu: {{ .Values.deployment.resources.requests.cpu  }}
+              memory: {{ .Values.deployment.resources.requests.memory  }}
+          name: {{ include "app.fullname" . }}
+          command:
+            - /start.sh
+          env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: port
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: user
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: password
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: password
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: dbname
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: dbname
+            - name: DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.djangoSecret  }}
+                  key: DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.djangoSecret  }}
+                  key: SECRET_KEY
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: django-media-volume
+              mountPath: /app/media
+          terminationMessagePolicy: File
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.deployment.env.djangoConfigMap  }}
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/{{ .Values.namespace  }}/{{ template "app.fullname" . }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: "app.kubernetes.io/instance"
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: {{ template "app.name" . }}

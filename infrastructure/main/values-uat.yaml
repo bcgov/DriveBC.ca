@@ -1,0 +1,96 @@
+# See https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values
+global:
+  licensePlate: c59ecc
+  namespace: test
+
+nameOverride: uat-drivebc
+fullnameOverride: uat-drivebc
+
+
+django:
+  fullnameOverride: uat-django
+  namespace: c59ecc-test #The namespace you are running the application on. This is used to pull from the ImageStream
+  deployment:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        cpu: 150m
+        memory: 512Mi
+    env:
+      postgresSecret: uat-drivebc-pguser-uat-drivebc #By default this should be correct for Dev
+      djangoConfigMap: uat-drivebc-django #By default this should be correct for Dev
+      djangoSecret: uat-drivebc-django #By default this should be correct for dev
+  route:
+    host: uat-drivebc-backend.apps.silver.devops.gov.bc.ca
+  pvc:
+    port: 3000
+    storage: 1Gi
+
+
+tasks:
+  fullnameOverride: uat-tasks
+  namespace: c59ecc-test #enter the full namespace here to the deployment has the correct imagestream
+  deployment:
+    djangoImageName: uat-django #Since it needs to use the django imagestream. 
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        cpu: 150m
+        memory: 512Mi
+    env:
+      postgresSecret: uat-drivebc-pguser-uat-drivebc #By default this should be correct for Dev
+      djangoConfigMap: uat-drivebc-django #By default this should be correct for Dev
+      djangoSecret: uat-drivebc-django #By default this should be correct for dev
+
+image-caching:
+  fullnameOverride: uat-image-caching
+  namespace: c59ecc-test #enter the full namespace here to the deployment has the correct imagestream
+  environment: dev #enter the environment this is being deployed too. Needed to set the configmap reference
+  deployment:
+    replicas: 2
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 150m
+        memory: 128Mi
+  route:
+    host: uat-drivebc-image-caching.apps.silver.devops.gov.bc.ca
+
+
+redis:
+  fullnameOverride: uat-redis
+  namespace: c59ecc-test #enter the full namespace here to the deployment has the correct imagestream
+  deployment:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 150m
+        memory: 128Mi
+
+static:
+  fullnameOverride: uat-static
+  namespace: c59ecc-test #enter the full namespace here to the deployment has the correct imagestream
+
+  deployment:
+    replicas: 2
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 150m
+        memory: 128Mi
+
+  route:
+    host: uat-drivebc-frontend.apps.silver.devops.gov.bc.ca

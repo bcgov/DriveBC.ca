@@ -1,0 +1,23 @@
+---
+# Source: main/charts/redis/templates/redis-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-redis
+  labels: 
+    helm.sh/chart: redis-0.1.0
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/instance: drivebc-dev
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
+      name: 6379-tcp
+  internalTrafficPolicy: Cluster
+  selector:
+    
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/instance: drivebc-dev

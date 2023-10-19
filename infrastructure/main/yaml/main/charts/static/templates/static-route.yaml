@@ -1,0 +1,23 @@
+---
+# Source: main/charts/static/templates/static-route.yaml
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: dev-static-frontend
+  labels: 
+    helm.sh/chart: static-0.1.0
+    app.kubernetes.io/name: static
+    app.kubernetes.io/instance: drivebc-dev
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  host: dev-drivebc-frontend.apps.silver.devops.gov.bc.ca 
+  to:
+    kind: Service
+    name: dev-static-frontend
+  port:
+    targetPort: 3000
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

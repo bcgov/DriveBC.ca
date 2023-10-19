@@ -1,0 +1,58 @@
+---
+# Source: main/charts/redis/templates/redis-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-redis
+  labels: 
+    helm.sh/chart: redis-0.1.0
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/instance: drivebc-dev
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    image.openshift.io/triggers: >-
+      [{"from":{"kind":"ImageStreamTag","name":"dev-redis:latest","namespace":"c59ecc-tools"},"fieldPath":"spec.template.spec.containers[?(@.name==\"dev-redis\")].image","pause":"false"}]
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      
+      app.kubernetes.io/name: redis
+      app.kubernetes.io/instance: drivebc-dev
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: redis
+        app.kubernetes.io/instance: drivebc-dev
+    spec:
+      volumes:
+        - name: redis-1
+      containers:
+        - resources:
+            limits:
+              cpu: 150m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          name: dev-redis
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: redis-1
+              mountPath: /data
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/c59ecc-tools/dev-redis
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: "app.kubernetes.io/instance"
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: redis

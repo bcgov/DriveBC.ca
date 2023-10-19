@@ -1,0 +1,25 @@
+fullnameOverride: dev-django
+namespace: c59ecc-tools #enter the full namespace here to the deployment has the correct imagestream
+
+
+deployment:
+  image: #by default use the image from the ImageStream
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      cpu: 150m
+      memory: 512Mi
+  env:
+    postgresSecret: dev-drivebc-pguser-dev-drivebc
+    djangoConfigMap: dev-drivebc-django
+    djangoSecret: dev-drivebc-django
+
+route:
+  host: dev-drivebc-backend.apps.silver.devops.gov.bc.ca
+
+pvc:
+  port: 3000
+  storage: 1Gi
