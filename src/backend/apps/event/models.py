@@ -24,3 +24,10 @@ class Event(BaseModel):
     # Update status
     first_created = models.DateTimeField()
     last_updated = models.DateTimeField()
+
+    # Schedule
+    schedule = models.JSONField(default={}) 
+
+    # Scheduled start and end
+    start = models.DateTimeField(null=True)
+    end = models.DateTimeField(null=True)
