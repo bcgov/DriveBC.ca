@@ -712,7 +712,7 @@ export default function MapWrapper({
       {isPreview && (
         <Button
           className="map-btn map-view"
-          variant="outline-primary"
+          variant="primary"
           onClick={mapViewRoute}>
           <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
           Map View
@@ -722,7 +722,7 @@ export default function MapWrapper({
       {isPreview && (
         <Button
           className="map-btn cam-location"
-          variant="outline-primary"
+          variant="primary"
           onClick={handleRecenter}>
           <CurrentCameraIcon />
           Camera location
@@ -731,7 +731,7 @@ export default function MapWrapper({
       {!isPreview && (!iconClicked || largeScreen) && (
         <Button
           className="map-btn my-location"
-          variant="outline-primary"
+          variant="primary"
           onClick={toggleMyLocation}>
           <FontAwesomeIcon icon={faLocationCrosshairs} />
           My location
@@ -739,13 +739,13 @@ export default function MapWrapper({
       )}
 
       <div className="zoom-btn">
-        <Button className="zoom-in" variant="outline-primary" onClick={zoomIn}>
+        <Button className="zoom-in" variant="primary" onClick={zoomIn}>
           <FontAwesomeIcon icon={faPlus} />
         </Button>
         <div className="zoom-divider" />
         <Button
           className="zoom-out"
-          variant="outline-primary"
+          variant="primary"
           onClick={zoomOut}>
           <FontAwesomeIcon icon={faMinus} />
         </Button>
