@@ -27,7 +27,7 @@ export default function Advisories(props) {
           <li key={advisory.id} onClick={() => handleClick(advisory)}>
             <h5 className='advisories-li-title'>{advisory.title}</h5>
             {showDescriptions &&
-              <div className='advisories-li-description'>{parse(advisory.description)}</div>
+              <div className='advisories-li-body'>{parse(advisory.body)}</div>
             }
           </li>
         );

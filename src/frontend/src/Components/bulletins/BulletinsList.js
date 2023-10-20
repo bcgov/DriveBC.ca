@@ -27,7 +27,7 @@ export default function Bulletins(props) {
           <li key={bulletin.id} onClick={() => handleClick(bulletin)}>
             <h5 className='bulletins-li-title'>{bulletin.title}</h5>
             {showDescriptions &&
-              <div className='bulletins-li-description'>{parse(bulletin.description)}</div>
+              <div className='bulletins-li-body'>{parse(bulletin.body)}</div>
             }
           </li>
         );

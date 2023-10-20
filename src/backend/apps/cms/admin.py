@@ -5,14 +5,14 @@ from django.contrib.gis.admin import OSMGeoAdmin
 
 class AdvisoryAdmin(OSMGeoAdmin):
     list_display = [
-        'title', 'active', 'description', 'geometry',
+        'title', 'teaser', 'geometry', 'body',
         'created_at', 'modified_at'
     ]
 
 
 class BulletinAdmin(OSMGeoAdmin):
     list_display = [
-        'title', 'active', 'description',
+        'title', 'teaser', 'body',
         'created_at', 'modified_at'
     ]
 
