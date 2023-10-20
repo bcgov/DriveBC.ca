@@ -1,12 +1,12 @@
 # Use an official node runtime as a parent image
-FROM node:latest
+FROM node:20.8.1
 
 WORKDIR /app/
 RUN chown node:root /app
 
 # Install dependencies
 COPY ./src/frontend/package.json /app/
-
+COPY ./src/frontend/package-lock.json /app/
 RUN npm install
 
 # Add rest of the client code
