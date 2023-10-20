@@ -313,7 +313,7 @@ export default function CameraDetailsPage() {
                     {replay && (
                       <div className="timestamp">
                         <p className="driveBC">Drive<span>BC</span></p>
-                        <p className="label"><FriendlyTime date={lastUpdate} /></p>
+                        <FriendlyTime date={lastUpdate} />
                       </div>
                     )}
                   </div>

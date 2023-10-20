@@ -373,15 +373,15 @@ export default function MapWrapper({
                   <img src="${featureDetails.links.imageSource}" width='300'>
                   <div class="timestamp">
                     <p class="driveBC">Drive<span>BC</span></p>
-                    <p>` +
-                ReactDOMServer.renderToString(
-                  <FriendlyTime date={featureDetails.last_update_modified} />,
-                ) +
-                `</p>
+                    ` +
+                    ReactDOMServer.renderToString(
+                      <FriendlyTime date={featureDetails.last_update_modified} />,
+                    ) +
+                    `
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>`;
+              </div>`;
               clickedWebcam.current = featureDetails;
 
               popup.current.setPosition(

@@ -104,7 +104,7 @@ export default function WebcamCard({camera}) {
         }
         <div className="timestamp">
           <p className="driveBC">Drive<span>BC</span></p>
-          <p className="label"><FriendlyTime date={camera.last_update_modified} /></p>
+          <FriendlyTime date={camera.last_update_modified} />
         </div>
         <p className="label bold">{camera.name}</p>
         <p className="label">{camera.caption}</p>
