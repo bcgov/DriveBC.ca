@@ -42,7 +42,7 @@ export default function BulletinDetailsPage() {
           </div>
 
           <Container>
-            <p>{parse(bulletin.description)}</p>
+            <p>{parse(bulletin.body)}</p>
           </Container>
         </div>
       )}

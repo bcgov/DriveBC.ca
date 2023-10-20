@@ -16,15 +16,15 @@ class DriveBCMapWidget(OSMWidget):
 
 
 class Advisory(Page, BaseModel):
-    page_description = "Use this page for creating advisories"
-    active = models.BooleanField(default=True)
-    description = RichTextField(blank=True)
+    page_body = "Use this page for creating advisories."
+    teaser = models.CharField(max_length=250, blank=True)
+    body = RichTextField(blank=True)
 
-    def rendered_description(self):
-        return wagtailcore_tags.richtext(self.description)
+    def rendered_body(self):
+        return wagtailcore_tags.richtext(self.body)
 
     api_fields = [
-        APIField('rendered_description'),
+        APIField('rendered_body'),
     ]
 
     # Geo fields
@@ -36,10 +36,9 @@ class Advisory(Page, BaseModel):
     # Editor panels configuration
     content_panels = [
         FieldPanel("title"),
-        FieldPanel("active"),
-        FieldPanel("description"),
+        FieldPanel("teaser"),
         FieldPanel("geometry", widget=DriveBCMapWidget),
-
+        FieldPanel("body"),
     ]
     promote_panels = []
 
@@ -47,15 +46,15 @@ class Advisory(Page, BaseModel):
 
 
 class Bulletin(Page, BaseModel):
-    page_description = "Use this page for creating bulletins"
-    active = models.BooleanField(default=True)
-    description = RichTextField(blank=True)
+    page_body = "Use this page for creating bulletins."
+    teaser = models.CharField(max_length=250, blank=True)
+    body = RichTextField(blank=True)
 
-    def rendered_description(self):
-        return wagtailcore_tags.richtext(self.description)
+    def rendered_body(self):
+        return wagtailcore_tags.richtext(self.body)
 
     api_fields = [
-        APIField('rendered_description'),
+        APIField('rendered_body'),
     ]
 
     def save(self, *args, **kwargs):
@@ -64,8 +63,8 @@ class Bulletin(Page, BaseModel):
     # Editor panels configuration
     content_panels = [
         FieldPanel("title"),
-        FieldPanel("active"),
-        FieldPanel("description"),
+        FieldPanel("teaser"),
+        FieldPanel("body"),
     ]
     promote_panels = []
 
