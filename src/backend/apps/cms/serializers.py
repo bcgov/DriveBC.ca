@@ -16,16 +16,16 @@ CMS_FIELDS = [
 
 
 class CMSSerializer(serializers.ModelSerializer):
-    description = serializers.SerializerMethodField()
+    body = serializers.SerializerMethodField()
 
     def get_host(self):
         request = self.context.get("request")
         prefix = "https://" if request and request.is_secure() else "http://"
         return prefix + request.get_host() if request else 'localhost:8000'
 
-    # get rendered html elements for description and access static media foder
-    def get_description(self, obj):
-        res = wagtailcore_tags.richtext(obj.description)
+    # get rendered html elements for body and access static media foder
+    def get_body(self, obj):
+        res = wagtailcore_tags.richtext(obj.body)
         res = res.replace(
             'href="/drivebc-cms',
             'href="' + self.get_host() + '/drivebc-cms'

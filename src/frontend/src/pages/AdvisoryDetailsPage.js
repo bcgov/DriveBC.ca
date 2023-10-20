@@ -156,7 +156,7 @@ export default function AdvisoryDetailsPage() {
           </div>
 
           <Container>
-            <p>{parse(advisory.description)}</p>
+            <p>{parse(advisory.body)}</p>
           </Container>
         </div>
       )}
