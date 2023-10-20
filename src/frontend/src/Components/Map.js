@@ -5,6 +5,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { updateMapState } from '../slices/mapSlice';
 import ReactDOMServer from 'react-dom/server';
 
+
+
 // Third party packages
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
@@ -54,6 +56,13 @@ import View from 'ol/View';
 // Styling
 import { cameraStyles } from './data/eventStyleDefinitions.js';
 import './Map.scss';
+import RouteDetails from './route/RouteDetails';
+
+
+import { toggleIsRouteDetailsVisible, updateTestEvents, updateTestCameras } from '../slices/routesSlice';
+// import { updateEvents } from '../slices/eventsSlice';
+
+
 
 export default function MapWrapper({
   camera,
@@ -67,8 +76,17 @@ export default function MapWrapper({
     state.routes.searchLocationFrom,
     state.routes.selectedRoute,
     state.map.zoom,
-    state.map.pan
+    state.map.pan,
   ]);
+
+
+  
+  const isRouteDetailsVisible = useSelector((state) => state.routes.isRouteDetailsVisible);
+  
+  const testEvents = useSelector((state) => state.routes.testEvents);
+  const testCameras = useSelector((state) => state.routes.testCameras);
+  const testDirections = useSelector((state) => state.routes.testCameras);
+  const [myDirections, setMyDirections] = useState([]);
 
   const { mapContext, setMapContext } = useContext(MapContext);
   const mapElement = useRef();
@@ -89,6 +107,20 @@ export default function MapWrapper({
   const clickedCamera = useRef();
   const clickedEvent = useRef();
   const locationPinRef = useRef(null);
+
+  // const [routeDetailsVisible, setRouteDetailsVisible] = useState(false);
+  // const toggleRouteDetails = () => {
+  //   setRouteDetailsVisible(!routeDetailsVisible);
+  //   // routeDetailsVisible = !routeDetailsVisible;
+  // };
+
+  // const isRouteDetailsVisible = useSelector((state) => state.isRouteDetailsVisible);
+
+  // const toggleVisibility = () => {
+  //   dispatch(isRouteDetailsVisible()); // Dispatch your Redux action to toggle visibility
+  // };
+
+  
 
   function centerMyLocation(coordinates) {
     if (mapRef.current) {
@@ -458,6 +490,46 @@ export default function MapWrapper({
           }
         });
 
+      layers.current['routeLayer']
+            .getFeatures(e.pixel)
+            .then(clickedFeatures => {
+              // setIconClicked(true);
+              if (clickedFeatures[0]) {
+                const toggleVisibility = () => {                  
+                  dispatch(toggleIsRouteDetailsVisible());
+                };
+              // Call toggleVisibility when you need to toggle the value
+              toggleVisibility();
+              const feature = clickedFeatures[0];
+              const directions = feature.values_.directions;
+              setMyDirections(directions);
+              // dispatch(updateTestDirections(directions));
+              console.log(directions);
+              console.log(testDirections);
+              const route = feature.values_.route;
+              loadEvents(route).then(data => {
+                console.log(data);
+                console.log(testEvents);
+                dispatch(updateTestEvents(data));
+                console.log(testEvents);
+              }).catch(() => {
+                console.log('events error.');
+              });
+
+              loadWebcams(route).then(data => {
+                console.log(data);
+                dispatch(updateTestCameras(data));
+                console.log(testCameras);
+              }).catch(() => {
+                console.log('cameras error.');
+              });
+              
+              
+                          
+                
+              }
+            });
+
       // if neither, hide any existing popup
       if (iconClicked === false) {
         closePopup();
@@ -557,6 +629,7 @@ export default function MapWrapper({
 
     mapRef.current.addLayer(layers.current['webcamsLayer']);
     layers.current['webcamsLayer'].setZIndex(1);
+    return webcamResults;
   }
 
   async function loadEvents(route) {
@@ -574,6 +647,7 @@ export default function MapWrapper({
     )
 
     mapRef.current.addLayer(layers.current['eventsLayer']);
+    return eventsData;
   }
 
   function webcamDetailRoute() {
@@ -736,6 +810,13 @@ export default function MapWrapper({
           <FontAwesomeIcon icon={faLocationCrosshairs} />
           My location
         </Button>
+      )}
+  
+      {!isPreview && (!iconClicked || largeScreen) && (
+        <div>
+          {isRouteDetailsVisible && <RouteDetails events={testEvents} cameras={testCameras} directions={myDirections}/>}
+          
+        </div>
       )}
 
       <div className="zoom-btn">

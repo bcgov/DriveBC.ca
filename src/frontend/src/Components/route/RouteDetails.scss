@@ -1,0 +1,80 @@
+.open-layers, .layers {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+  
+    @media screen and (max-width: 729px) {
+      right: 1rem;
+    }
+  }
+  
+  button.open-layers {
+    height: 54px;
+    width: 54px;
+    text-align: center;
+    margin: auto;
+    padding: initial;
+    background: #fff;
+  }
+  
+  .layers {
+    width: 14rem;
+    background: white;
+    border: solid 1px rgb(118, 118, 118);
+    text-align: left;
+    padding: 1rem;
+    border-radius: 4px;
+  
+    button.close-layers {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0;
+      min-width: 0;
+      line-height: 1.25rem;
+      height: auto;
+      background: none;
+      border:none;
+      font-size: 1.4rem;
+    }
+  
+    h4 {
+      margin-bottom: 12px;
+    }
+  
+    .layer-item {
+      margin-bottom: 8px;
+    }
+    .layer-item .map-icon {
+      margin-right: 12px;
+    }
+  
+    .layer-item label {
+      margin-left: 4px;
+    }
+  
+    .layers-select {
+      display: flex;
+    }
+  
+    .panel {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .panel + .panel {
+      margin-left: 1rem;
+    }
+  
+    .map-image {
+      height: 5rem;
+      width: 5rem;
+      border: solid 1px rgb(118, 118, 118);
+    }
+  
+    img.map-icon {
+      width: 1rem;
+    }
+  }
+  
