@@ -1,1 +1,11 @@
 @import "../styles/variables.scss";
+
+.timestamp-container {
+  h4, .friendly-time {
+    display: inline-block;
+  }
+
+  .friendly-time {
+    margin-left: 15px;
+  }
+}
