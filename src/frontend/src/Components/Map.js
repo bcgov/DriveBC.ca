@@ -3,9 +3,8 @@ import React, { useContext, useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'
 import { updateMapState } from '../slices/mapSlice';
+import { toggleIsRouteDetailsVisible, updateRouteEvents, updateRouteCameras, updateRouteDirections } from '../slices/routesSlice';
 import ReactDOMServer from 'react-dom/server';
-
-
 
 // Third party packages
 import { useMediaQuery } from '@uidotdev/usehooks';
@@ -59,9 +58,6 @@ import './Map.scss';
 import RouteDetails from './route/RouteDetails';
 
 
-import { toggleIsRouteDetailsVisible, updateTestEvents, updateTestCameras } from '../slices/routesSlice';
-// import { updateEvents } from '../slices/eventsSlice';
-
 
 
 export default function MapWrapper({
@@ -83,10 +79,10 @@ export default function MapWrapper({
   
   const isRouteDetailsVisible = useSelector((state) => state.routes.isRouteDetailsVisible);
   
-  const testEvents = useSelector((state) => state.routes.testEvents);
-  const testCameras = useSelector((state) => state.routes.testCameras);
-  const testDirections = useSelector((state) => state.routes.testCameras);
-  const [myDirections, setMyDirections] = useState([]);
+  const routeEvents = useSelector((state) => state.routes.routeEvents);
+  const routeCameras = useSelector((state) => state.routes.routeCameras);
+  const routeDirections = useSelector((state) => state.routes.routeDirections);
+  // const [myDirections, setMyDirections] = useState([]);
 
   const { mapContext, setMapContext } = useContext(MapContext);
   const mapElement = useRef();
@@ -108,19 +104,6 @@ export default function MapWrapper({
   const clickedEvent = useRef();
   const locationPinRef = useRef(null);
 
-  // const [routeDetailsVisible, setRouteDetailsVisible] = useState(false);
-  // const toggleRouteDetails = () => {
-  //   setRouteDetailsVisible(!routeDetailsVisible);
-  //   // routeDetailsVisible = !routeDetailsVisible;
-  // };
-
-  // const isRouteDetailsVisible = useSelector((state) => state.isRouteDetailsVisible);
-
-  // const toggleVisibility = () => {
-  //   dispatch(isRouteDetailsVisible()); // Dispatch your Redux action to toggle visibility
-  // };
-
-  
 
   function centerMyLocation(coordinates) {
     if (mapRef.current) {
@@ -491,49 +474,34 @@ export default function MapWrapper({
         });
 
       layers.current['routeLayer']
-            .getFeatures(e.pixel)
-            .then(clickedFeatures => {
-              // setIconClicked(true);
-              if (clickedFeatures[0]) {
-                const toggleVisibility = () => {                  
-                  dispatch(toggleIsRouteDetailsVisible());
-                };
-              // Call toggleVisibility when you need to toggle the value
-              toggleVisibility();
-              const feature = clickedFeatures[0];
-              const directions = feature.values_.directions;
-              setMyDirections(directions);
-              // dispatch(updateTestDirections(directions));
-              console.log(directions);
-              console.log(testDirections);
-              const route = feature.values_.route;
-              loadEvents(route).then(data => {
-                console.log(data);
-                console.log(testEvents);
-                dispatch(updateTestEvents(data));
-                console.log(testEvents);
-              }).catch(() => {
+        .getFeatures(e.pixel)
+        .then(clickedFeatures => {
+          if (clickedFeatures[0]) {
+            const toggleRouteDetailsVisibility = () => {
+              dispatch(toggleIsRouteDetailsVisible());
+            };
+            toggleRouteDetailsVisibility();
+            const feature = clickedFeatures[0];
+            const directions = feature.values_.directions;
+            dispatch(updateRouteDirections(directions));
+            const route = feature.values_.route;
+            loadEvents(route)
+              .then(data => {
+                dispatch(updateRouteEvents(data));
+              })
+              .catch(() => {
                 console.log('events error.');
               });
 
-              loadWebcams(route).then(data => {
-                console.log(data);
-                dispatch(updateTestCameras(data));
-                console.log(testCameras);
-              }).catch(() => {
+            loadWebcams(route)
+              .then(data => {
+                dispatch(updateRouteCameras(data));
+              })
+              .catch(() => {
                 console.log('cameras error.');
               });
-              
-              
-                          
-                
-              }
-            });
-
-      // if neither, hide any existing popup
-      if (iconClicked === false) {
-        closePopup();
-      }
+          }
+        });
     });
 
     mapRef.current.on('pointermove', e => {
@@ -814,7 +782,7 @@ export default function MapWrapper({
   
       {!isPreview && (!iconClicked || largeScreen) && (
         <div>
-          {isRouteDetailsVisible && <RouteDetails events={testEvents} cameras={testCameras} directions={myDirections}/>}
+          {isRouteDetailsVisible && <RouteDetails events={routeEvents} cameras={routeCameras} directions={routeDirections}/>}
           
         </div>
       )}

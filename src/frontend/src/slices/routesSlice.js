@@ -7,9 +7,9 @@ export const routesSlice = createSlice({
     searchLocationTo: [],
     selectedRoute: {},
     isRouteDetailsVisible: false,
-    testEvents: [],
-    testCameras: [],
-    testDirections: [],
+    routeEvents: [],
+    routeCameras: [],
+    routeDirections: [],
   },
   reducers: {
     clearSelectedRoute: (state, action) => {
@@ -27,18 +27,18 @@ export const routesSlice = createSlice({
     toggleIsRouteDetailsVisible: (state) => {
       state.isRouteDetailsVisible = !state.isRouteDetailsVisible;
     },
-    updateTestEvents: (state, action) => {
-      state.testEvents = action.payload;
+    updateRouteEvents: (state, action) => {
+      state.routeEvents = action.payload;
     },
-    updateTestCameras: (state, action) => {
-      state.testCameras = action.payload;
+    updateRouteCameras: (state, action) => {
+      state.routeCameras = action.payload;
     },
-    updateTestDirections: (state, action) => {
-      state.testDirections = action.payload;
+    updateRouteDirections: (state, action) => {
+      state.routeDirections = action.payload;
     },
   },
 });
 
-export const { clearSelectedRoute, updateSelectedRoute, updateSearchLocationFrom, updateSearchLocationTo, toggleIsRouteDetailsVisible, updateTestEvents, updateTestCameras, updateTestDirections} = routesSlice.actions;
+export const { clearSelectedRoute, updateSelectedRoute, updateSearchLocationFrom, updateSearchLocationTo, toggleIsRouteDetailsVisible, updateRouteEvents, updateRouteCameras, updateRouteDirections} = routesSlice.actions;
 
 export default routesSlice.reducer;

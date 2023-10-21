@@ -16,10 +16,9 @@ const RouteDetailsContainer = styled.div`
 `;
 
 const ScrollableContainer = styled.div`
-  max-height: 400px; /* Adjust the maximum height as needed */
+  max-height: 370px; /* Adjust the maximum height as needed */
   overflow-y: auto;
 `;
-
 
 function calculateDistance(point1, point2) {
   const [lon1, lat1] = point1;
@@ -85,7 +84,7 @@ function isPointWithinMBR(point, mbr) {
 
 function findEventContainingPoint(point, events) {
   for (let i = 0; i < events.length; i++) {
-    const eventLocation = events[i].location.coordinates; // Replace this with your actual data structure
+    const eventLocation = events[i].location.coordinates;
     const mbr = calculateMBR(eventLocation);
     if (isPointWithinMBR(point, mbr)) {
       return i; // Return the index of the event containing the point
@@ -103,7 +102,7 @@ function findCamerasWithinDistance(cameras, currentPoint, maxDistance) {
     const distance = calculateDistance(currentPoint, cameraLocation);
 
     if (distance <= maxDistance) {
-      nearbyCameras.push(i); // Store the index of the camera within 100 meters
+      nearbyCameras.push(i); // Store the index of the camera within a range
     }
   }
 
@@ -123,17 +122,10 @@ function listCamerasByIndices(cameras, indices) {
 }
 
 
-
 export default function RouteDetails({events, cameras, directions}) {
-  console.log(events);
-  console.log(cameras);
-  console.log(directions);
-
-
   if (!directions || directions.length === 0) {
     return null;
   }
-
 
   const directionElements = directions.map((direction, index) => {
     if (direction.type === 'START') {
@@ -145,13 +137,11 @@ export default function RouteDetails({events, cameras, directions}) {
         // pass
       }
       else {
-        return <div key={index}>via: {direction.name}</div>;
-      }
-      
+        return <div key={index}>Via: {direction.name}</div>;
+      }      
     }
   });
 
-  // const totalDirectionTime = directions.reduce((total, direction) => total + direction.time, 0);
   const totalDirectionTime = directions.reduce((total, direction) => {
     if (!isNaN(direction.time)) {
       return total + direction.time;
@@ -161,7 +151,6 @@ export default function RouteDetails({events, cameras, directions}) {
 
   const totalHours = Math.floor(totalDirectionTime / 3600);
   const totalMinutes = Math.floor((totalDirectionTime % 3600) / 60);
-
   const totalDistance = directions.reduce((total, direction) => {
     if (!isNaN(direction.distance)) {
       return total + direction.distance;
@@ -170,66 +159,64 @@ export default function RouteDetails({events, cameras, directions}) {
   }, 0);
 
   const roundedTotalDistance = Math.floor(totalDistance);
-
   const textElements = directions.map((direction, index) => {
 
     // To calculate if the point of current direction is in any of the events
     let isPointWinthinEvent = false;
     let eIndex = 0;
     const maxDistance = 2000; // Maximum distance in meters
-  
-
     const point = [direction.point[0], direction.point[1]];
     events.map((event) => {
-      // const eventLocations = event.location.coordinates;
-  
       const eventIndex = findEventContainingPoint(point, events);
-      if (eventIndex !== -1) {
-        console.log(`Point is within event ${eventIndex + 1}`);
+      if (eventIndex !== -1) { 
         isPointWinthinEvent = true;
         eIndex = eventIndex;
-      } else {
-        console.log('Point is not within any event MBR');
       }      
     });
 
     const nearbyCameraIndices = findCamerasWithinDistance(cameras, point, maxDistance);
-    console.log('Cameras within 100 meters:', nearbyCameraIndices);
-
+   
     const nearbyCameras = listCamerasByIndices(cameras, nearbyCameraIndices);
 
     if (direction.type === 'START') {
       return (<div key={'e'-index}>
         <div key={index}><h3>Leave from: {direction.name}</h3></div>
-        <div key={'text-' + index}>{(index<directions.length-1) && direction.text}</div>
-        <div><div>
-        <img className="map-icon" src={eventIcon} alt="Event Icon" />
-          Event: </div><div>{isPointWinthinEvent && events[eIndex].description}</div></div>
+        
+        <div key={'text-' + index}>{(index<directions.length-1) && direction.text}</div> 
+        {isPointWinthinEvent && <div><div>
+        <br />
+        <div><img className="map-icon route-event-img" src={eventIcon} alt="Event Icon" />{events[eIndex].description}</div>
+            </div></div>}
+        <br />
         {nearbyCameras.map((camera, index) => (
           <div key={index}>
             <div>
-            <img className="map-icon" src={videoIcon} alt="Video Icon" />
-              Highway camera: {camera.caption}</div>
+            <img className="map-icon route-camera-img" src={videoIcon} alt="Video Icon" />
+              {camera.caption}</div>
           </div>
         ))}
-
+        <br />
         </div>
         );
     } else {
       if(index === directions.length - 2) {
         return (<div key={'c'-index}>
           <div key={index}><h3>To: {direction.name}</h3></div>
+          
           <div key={'text-' + index}>{(index<directions.length-1) && direction.text}</div>
-          <div><div>
-          <img className="map-icon" src={eventIcon} alt="Event Icon" />
-            Event: </div><div>{isPointWinthinEvent && events[eIndex].description}</div></div>
+          {isPointWinthinEvent && <div><div>
+          <br />
+          <div><img className="map-icon route-event-img" src={eventIcon} alt="Event Icon" />{events[eIndex].description}</div>
+            </div></div>}
+          <br />
           {nearbyCameras.map((camera, index) => (
           <div key={index}>
             <div>
-            <img className="map-icon" src={videoIcon} alt="Video Icon" />
-              Highway camera: {camera.caption}</div>
+            <img className="map-icon route-camera-img" src={videoIcon} alt="Video Icon" />
+              {camera.caption}</div>
           </div>
         ))}
+        <br />
           </div>
           )
       } else if((index === directions.length - 1)) {
@@ -237,22 +224,25 @@ export default function RouteDetails({events, cameras, directions}) {
       }
       else {
         return (<div key={'d'-index}>
-          <div key={index}><h3>via: {direction.name}</h3></div>
+          <div key={index}><h3>Via: {direction.name}</h3></div>
+          
           <div key={'text-' + index}>{(index<directions.length-1) && direction.text}</div>
-          <div><div>
-          <img className="map-icon" src={eventIcon} alt="Event Icon" />
-            Event: </div><div>{isPointWinthinEvent && events[eIndex].description}</div></div>
+          {isPointWinthinEvent && <div><div>
+          <br />
+          <div><img className="map-icon route-event-img" src={eventIcon} alt="Event Icon" />{events[eIndex].description}</div>
+            </div></div>}
+          <br />
           {nearbyCameras.map((camera, index) => (
           <div key={index}>
             <div>
-            <img className="map-icon" src={videoIcon} alt="Video Icon" />
-              Highway camera: {camera.caption}</div>
+            <img className="map-icon route-camera-img" src={videoIcon} alt="Video Icon" />
+              {camera.caption}</div>
           </div>
         ))}
+        <br />
           </div>
           );
       }
-      
     }
   });
 
@@ -270,8 +260,8 @@ export default function RouteDetails({events, cameras, directions}) {
               </div>
             </div>
         </div>
-        <div className="layer-item">
-            
+        <br />
+        <div className="layer-item">      
             <div>
               {textElements}
             </div>
