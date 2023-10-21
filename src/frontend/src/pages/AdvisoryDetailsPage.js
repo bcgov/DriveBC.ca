@@ -9,6 +9,7 @@ import parse from 'html-react-parser';
 // Components and functions
 import { getAdvisories } from '../Components/data/advisories.js';
 import Footer from '../Footer';
+import FriendlyTime from '../Components/FriendlyTime';
 
 // Styling
 import './AdvisoryDetailsPage.scss';
@@ -152,6 +153,11 @@ export default function AdvisoryDetailsPage() {
           <div className="page-header">
             <Container>
               <h1 className="page-title">{advisory.title}</h1>
+
+              <div className="timestamp-container">
+                <h4>Last updated</h4>
+                <FriendlyTime date={advisory.latest_revision_created_at} />
+              </div>
             </Container>
           </div>
 

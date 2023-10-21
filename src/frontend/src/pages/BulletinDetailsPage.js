@@ -9,6 +9,7 @@ import parse from 'html-react-parser';
 // Components and functions
 import { getBulletins } from '../Components/data/bulletins.js';
 import Footer from '../Footer.js';
+import FriendlyTime from '../Components/FriendlyTime';
 
 // Styling
 import './BulletinDetailsPage.scss';
@@ -38,6 +39,11 @@ export default function BulletinDetailsPage() {
           <div className="page-header">
             <Container>
               <h1 className="page-title">{bulletin.title}</h1>
+
+              <div className="timestamp-container">
+                <h4>Last updated</h4>
+                <FriendlyTime date={bulletin.latest_revision_created_at} />
+              </div>
             </Container>
           </div>
 

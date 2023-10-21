@@ -5,6 +5,9 @@ import {useNavigate} from 'react-router-dom';
 // Third party packages
 import parse from 'html-react-parser';
 
+// Components and functions
+import FriendlyTime from '../FriendlyTime';
+
 // Styling
 import './AdvisoriesList.scss';
 
@@ -26,6 +29,12 @@ export default function Advisories(props) {
         return (
           <li key={advisory.id} onClick={() => handleClick(advisory)}>
             <h5 className='advisories-li-title'>{advisory.title}</h5>
+
+            <div className="timestamp-container">
+              <span>Last updated</span>
+              <FriendlyTime date={advisory.latest_revision_created_at} />
+            </div>
+
             {showDescriptions &&
               <div className='advisories-li-body'>{parse(advisory.body)}</div>
             }

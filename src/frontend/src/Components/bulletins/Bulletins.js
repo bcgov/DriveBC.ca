@@ -34,7 +34,7 @@ export default function Bulletins() {
       </div>
       <div className="content">
         <h3>Bulletin</h3>
-        <BulletinsList bulletins={bulletins} showDescriptions={false} />
+        <BulletinsList bulletins={bulletins} />
       </div>
     </div>
   );

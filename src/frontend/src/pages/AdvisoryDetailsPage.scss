@@ -4,3 +4,13 @@
   width: 800px;
   height: 600px;
 }
+
+.timestamp-container {
+  h4, .friendly-time {
+    display: inline-block;
+  }
+
+  .friendly-time {
+    margin-left: 15px;
+  }
+}
