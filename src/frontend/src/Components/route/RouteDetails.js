@@ -1,6 +1,8 @@
 // React
 import React from 'react';
 
+// import { useDispatch } from 'react-redux'
+
 // Static files
 import videoIcon from '../../assets/video-solid.png';
 import eventIcon from '../../assets/exclamation-triangle-solid.png';
@@ -8,6 +10,8 @@ import eventIcon from '../../assets/exclamation-triangle-solid.png';
 // Styling
 import './RouteDetails.scss';
 import styled from 'styled-components'; 
+
+// import { toggleIsRouteDetailsVisible } from '../../slices/routesSlice';
 
 const RouteDetailsContainer = styled.div`
   display: flex;
@@ -18,6 +22,12 @@ const RouteDetailsContainer = styled.div`
 const ScrollableContainer = styled.div`
   max-height: 370px; /* Adjust the maximum height as needed */
   overflow-y: auto;
+
+  @media (max-width: 768px) {
+    /* Styles for small screens */
+    max-height: 100vh; /* Adjust the maximum height for full-screen on small screens */
+    top: 60px;
+  }
 `;
 
 function calculateDistance(point1, point2) {
@@ -122,22 +132,26 @@ function listCamerasByIndices(cameras, indices) {
 }
 
 
-export default function RouteDetails({events, cameras, directions}) {
+export default function RouteDetails({events, cameras, directions, handleBack}) {
+
+  // const dispatch = useDispatch();
+  // const isRouteDetailsVisible = useSelector((state) => state.routes.isRouteDetailsVisible);
+
   if (!directions || directions.length === 0) {
     return null;
   }
 
   const directionElements = directions.map((direction, index) => {
     if (direction.type === 'START') {
-      return <div key={index}>From: {direction.name}</div>;
+      return <div key={'from'-index}>From: {direction.name}</div>;
     } else {
       if(index === directions.length - 2) {
-        return <div key={index}>To: {direction.name}</div>
+        return <div key={'to-1'-index}>To: {direction.name}</div>
       } else if((index === directions.length - 1)) {
         // pass
       }
       else {
-        return <div key={index}>Via: {direction.name}</div>;
+        return <div key={'via'-index}>Via: {direction.name}</div>;
       }      
     }
   });
@@ -180,16 +194,16 @@ export default function RouteDetails({events, cameras, directions}) {
 
     if (direction.type === 'START') {
       return (<div key={'e'-index}>
-        <div key={index}><h3>Leave from: {direction.name}</h3></div>
+        <div key={'leave'-index}><h3>Leave from: {direction.name}</h3></div>
         
-        <div key={'text-' + index}>{(index<directions.length-1) && direction.text}</div> 
+        <div key={'text-1-' + index}>{(index<directions.length-1) && direction.text}</div> 
         {isPointWinthinEvent && <div><div>
         <br />
         <div><img className="map-icon route-event-img" src={eventIcon} alt="Event Icon" />{events[eIndex].description}</div>
             </div></div>}
         <br />
         {nearbyCameras.map((camera, index) => (
-          <div key={index}>
+          <div key={'camera-1'-index}>
             <div>
             <img className="map-icon route-camera-img" src={videoIcon} alt="Video Icon" />
               {camera.caption}</div>
@@ -201,16 +215,16 @@ export default function RouteDetails({events, cameras, directions}) {
     } else {
       if(index === directions.length - 2) {
         return (<div key={'c'-index}>
-          <div key={index}><h3>To: {direction.name}</h3></div>
+          <div key={'to'-index}><h3>To: {direction.name}</h3></div>
           
-          <div key={'text-' + index}>{(index<directions.length-1) && direction.text}</div>
+          <div key={'text-2-' + index}>{(index<directions.length-1) && direction.text}</div>
           {isPointWinthinEvent && <div><div>
           <br />
           <div><img className="map-icon route-event-img" src={eventIcon} alt="Event Icon" />{events[eIndex].description}</div>
             </div></div>}
           <br />
           {nearbyCameras.map((camera, index) => (
-          <div key={index}>
+          <div key={'near-2'-index}>
             <div>
             <img className="map-icon route-camera-img" src={videoIcon} alt="Video Icon" />
               {camera.caption}</div>
@@ -224,16 +238,16 @@ export default function RouteDetails({events, cameras, directions}) {
       }
       else {
         return (<div key={'d'-index}>
-          <div key={index}><h3>Via: {direction.name}</h3></div>
+          <div key={'direction'-index}><h3>Via: {direction.name}</h3></div>
           
-          <div key={'text-' + index}>{(index<directions.length-1) && direction.text}</div>
+          <div key={'text-3' + index}>{(index<directions.length-1) && direction.text}</div>
           {isPointWinthinEvent && <div><div>
           <br />
           <div><img className="map-icon route-event-img" src={eventIcon} alt="Event Icon" />{events[eIndex].description}</div>
             </div></div>}
           <br />
           {nearbyCameras.map((camera, index) => (
-          <div key={index}>
+          <div key={'near-1'-index}>
             <div>
             <img className="map-icon route-camera-img" src={videoIcon} alt="Video Icon" />
               {camera.caption}</div>
@@ -250,7 +264,7 @@ export default function RouteDetails({events, cameras, directions}) {
     <div className='route-details-wrapper'>
       <RouteDetailsContainer>
         <div className="route-details">
-        <h4>&lt; <a href='#'> Back to route options </a></h4>
+        <h4>&lt; <a href='#' onClick={handleBack}> Back to route options </a></h4>
         <ScrollableContainer>
         <div className="layer-item">
             <div>

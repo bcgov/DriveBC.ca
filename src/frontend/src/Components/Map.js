@@ -739,6 +739,10 @@ export default function MapWrapper({
     localStorage.setItem('mapContext', JSON.stringify(mapContext));
   }
 
+  function handleBack() {
+    dispatch(toggleIsRouteDetailsVisible(!isRouteDetailsVisible));
+  }
+
   return (
     <div className="map-container">
       <div ref={mapElement} className="map" />
@@ -779,11 +783,9 @@ export default function MapWrapper({
           My location
         </Button>
       )}
-  
-      {!isPreview && (!iconClicked || largeScreen) && (
+      {!isPreview && (
         <div>
-          {isRouteDetailsVisible && <RouteDetails events={routeEvents} cameras={routeCameras} directions={routeDirections}/>}
-          
+          {isRouteDetailsVisible && <RouteDetails events={routeEvents} cameras={routeCameras} directions={routeDirections} handleBack={handleBack}/>}  
         </div>
       )}
 
