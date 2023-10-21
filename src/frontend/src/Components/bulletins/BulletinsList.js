@@ -5,12 +5,15 @@ import {useNavigate} from 'react-router-dom';
 // Third party packages
 import parse from 'html-react-parser';
 
+// Components and functions
+import FriendlyTime from '../FriendlyTime';
+
 // Styling
 import './BulletinsList.scss';
 
 export default function Bulletins(props) {
   // State, props and context
-  const { bulletins, showDescriptions } = props;
+  const { bulletins } = props;
 
   // Navigation
   const navigate = useNavigate();
@@ -26,9 +29,13 @@ export default function Bulletins(props) {
         return (
           <li key={bulletin.id} onClick={() => handleClick(bulletin)}>
             <h5 className='bulletins-li-title'>{bulletin.title}</h5>
-            {showDescriptions &&
-              <div className='bulletins-li-body'>{parse(bulletin.body)}</div>
-            }
+
+            <div className="timestamp-container">
+              <span>{bulletin.live_revision > 1 ? "Published" : "Last updated" }</span>
+              <FriendlyTime date={bulletin.latest_revision_created_at} />
+            </div>
+
+            <div className='bulletins-li-body'>{parse(bulletin.body)}</div>
           </li>
         );
       })}
