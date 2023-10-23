@@ -161,15 +161,23 @@ export default function AdvisoryDetailsPage() {
             </Container>
           </div>
 
-          <Container>
-            <p>{parse(advisory.body)}</p>
-          </Container>
+          {advisory.teaser &&
+            <Container>
+              <p>{advisory.teaser}</p>
+            </Container>
+          }
         </div>
       )}
 
       <Container>
         <div id="map" className="advisory-map"></div>
       </Container>
+
+      {advisory && (
+        <Container>
+          <p>{parse(advisory.body)}</p>
+        </Container>
+      )}
 
       <Footer />
     </div>
