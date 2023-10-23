@@ -47,6 +47,12 @@ export default function BulletinDetailsPage() {
             </Container>
           </div>
 
+          {bulletin.teaser &&
+            <Container>
+              <p>{bulletin.teaser}</p>
+            </Container>
+          }
+
           <Container>
             <p>{parse(bulletin.body)}</p>
           </Container>
