@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:latest
+FROM python:3.11
 
 # Install Python Package Libraries
 RUN apt-get update && apt-get upgrade -y && apt-get autoremove && apt-get autoclean

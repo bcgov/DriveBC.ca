@@ -1,4 +1,4 @@
-FROM nginx:stable
+FROM nginx:1.24
 
 
 #COPY ./src/caching/nginx.conf /etc/nginx/nginx.conf

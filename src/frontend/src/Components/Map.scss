@@ -106,11 +106,11 @@
                     background-color: $Black;
                     padding: 0 10px;
                     display: flex;
-                    justify-content: space-between;
+                    color: $White;
+                    font-size: 0.714em;
 
                     p {
                       color: $White;
-                      font-size: 0.625em;
                       margin-bottom: 0;
                     }
 
@@ -120,6 +120,10 @@
                         color: $BC-Yellow;
                       }
                       margin-right: 10px;
+                    }
+
+                    .friendly-time, .formatted-date {
+                      margin-left: auto;
                     }
                   }
                 }

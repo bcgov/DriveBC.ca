@@ -22,7 +22,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
   if (!open) {
     return (
       <Button
-        variant="outline-primary"
+        variant="primary"
         className="map-btn open-layers"
         onClick={() => setLayersOpen(true)}>
         <FontAwesomeIcon icon={faLayerGroup} />
