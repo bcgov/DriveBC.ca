@@ -34,7 +34,7 @@ export default function Header() {
           </Navbar.Toggle>
 
           <Navbar.Brand href="#home">
-            <a href="https://gov.bc.ca" className="header-link">
+            <a href="/" className="header-link">
               <img className="header-logo" src={logo} alt="Government of British Columbia" />
             </a>
           </Navbar.Brand>
