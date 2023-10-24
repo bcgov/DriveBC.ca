@@ -29,7 +29,7 @@ export default function Bulletins(props) {
             <h5 className='bulletins-li-title'>{bulletin.title}</h5>
 
             <div className="timestamp-container">
-              <span>{bulletin.live_revision > 1 ? "Published" : "Last updated" }</span>
+              <span>{bulletin.live_revision > 1 ? "Last updated" : "Published" }</span>
               <FriendlyTime date={bulletin.latest_revision_created_at} />
             </div>
 

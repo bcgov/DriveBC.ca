@@ -31,7 +31,7 @@ export default function Advisories(props) {
             {showDescriptions &&
               <div>
                 <div className="timestamp-container">
-                  <span>{advisory.live_revision > 1 ? "Published" : "Last updated" }</span>
+                  <span>{advisory.live_revision > 1 ? "Last updated" : "Published" }</span>
                   <FriendlyTime date={advisory.latest_revision_created_at} />
                 </div>
 
