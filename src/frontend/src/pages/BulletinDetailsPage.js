@@ -41,7 +41,7 @@ export default function BulletinDetailsPage() {
               <h1 className="page-title">{bulletin.title}</h1>
 
               <div className="timestamp-container">
-                <h4>{bulletin.live_revision > 1 ? "Last updated" : "Published" }</h4>
+                <h4>{bulletin.first_published_at != bulletin.last_published_at ? "Last updated" : "Published" }</h4>
                 <FriendlyTime date={bulletin.latest_revision_created_at} />
               </div>
             </Container>
