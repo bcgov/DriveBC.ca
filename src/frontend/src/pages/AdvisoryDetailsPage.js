@@ -155,7 +155,7 @@ export default function AdvisoryDetailsPage() {
               <h1 className="page-title">{advisory.title}</h1>
 
               <div className="timestamp-container">
-                <h4>{advisory.live_revision > 1 ? "Last updated" : "Published" }</h4>
+                <h4>{advisory.first_published_at != advisory.last_published_at ? "Last updated" : "Published" }</h4>
                 <FriendlyTime date={advisory.latest_revision_created_at} />
               </div>
             </Container>
