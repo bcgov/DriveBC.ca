@@ -16,3 +16,8 @@ const request = (url, params = {}, headers = {}, method = "GET") => {
 
 export const get = (url, params, headers) => request(url, params, headers, "GET");
 export const post = (url, params, headers) => request(url, params, headers, "POST");
+
+export const stripRichText = (richText) => {
+  const strippedText = richText.replace(/(<([^>]+)>)/gi, "");
+  return strippedText.substring(0, 250);
+}
