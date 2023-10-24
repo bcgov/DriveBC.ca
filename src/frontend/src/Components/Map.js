@@ -37,7 +37,7 @@ import RouteSearch from './map/RouteSearch.js';
 // OpenLayers
 import { applyStyle } from 'ol-mapbox-style';
 import { Circle } from 'ol/geom.js';
-import { fromLonLat, toLonLat } from 'ol/proj';
+import { fromLonLat, toLonLat, transformExtent } from 'ol/proj';
 import { ScaleLine } from 'ol/control.js';
 import { Style } from 'ol/style.js';
 import Feature from 'ol/Feature.js';
@@ -271,12 +271,19 @@ export default function MapWrapper({
       tid: Date.now(),
     };
 
+    const extent = [-143.23013896362576, 61.59132385849652, -109.97743701256154, 46.18015377362468];
+    const transformedExtent = transformExtent(extent,'EPSG:4326','EPSG:3857')
+
     mapView.current = new View({
       projection: 'EPSG:3857',
       constrainResolution: true,
       center: camera ? handleCenter() : fromLonLat(pan),
       zoom: zoom,
+      maxZoom: 15,
+      minZoom: 5,
+      extent: transformedExtent
     });
+
     // Apply the basemap style from the arcgis resource
     fetch(`${process.env.REACT_APP_MAP_STYLE}`, {
       method: 'POST',
