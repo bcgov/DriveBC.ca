@@ -2,10 +2,8 @@
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
 
-// Third party packages
-import parse from 'html-react-parser';
-
 // Components and functions
+import { stripRichText } from '../data/helper';
 import FriendlyTime from '../FriendlyTime';
 
 // Styling
@@ -37,7 +35,13 @@ export default function Advisories(props) {
                   <FriendlyTime date={advisory.latest_revision_created_at} />
                 </div>
 
-                <div className='advisories-li-body'>{parse(advisory.body)}</div>
+                {advisory.teaser &&
+                  <div className='advisories-li-body'>{advisory.teaser}</div>
+                }
+
+                {!advisory.teaser &&
+                  <div className='advisories-li-body'>{stripRichText(advisory.body)}</div>
+                }
               </div>
             }
           </li>
