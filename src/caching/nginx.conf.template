@@ -40,16 +40,10 @@ http {
         # Load configuration files for the default server block.
         include /etc/nginx/default.d/*.conf;
 
-        # to get index.html page from my source instead of the images.drivebc.ca site
-        location / {
-          index  index.html;
-          try_files $uri $uri/ /index.html;
-        }       
-            
 
         proxy_cache images_cache;
         # Reverse proxy to ${DRIVEBC_IMAGE_API_BASE_URL} Webcam (includes caching)
-        location /webcam/ {
+        location /cache/webcam/ {
                 proxy_ssl_server_name on;
                 proxy_pass ${DRIVEBC_IMAGE_API_BASE_URL};
                 proxy_connect_timeout 5s;
@@ -63,7 +57,7 @@ http {
                 add_header X-Proxy-Cache $upstream_cache_status;
         }
         # Reverse proxy to ${DRIVEBC_IMAGE_API_BASE_URL} ReplayTheDay (includes caching)
-        location /ReplayTheDay/ {
+        location /cache/ReplayTheDay/ {
                 proxy_ssl_server_name on;
                 proxy_pass ${DRIVEBC_IMAGE_API_BASE_URL};
                 proxy_connect_timeout 5s;
