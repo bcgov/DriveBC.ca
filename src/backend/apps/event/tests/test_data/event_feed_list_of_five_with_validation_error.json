@@ -688,6 +688,9 @@
       "+ivr_message": "Highway 14, in both directions. Tree pruning between Sombrio Beach Trail and Petrel Dr for 13.0 km (2 to 15 km west of Jordan River). Until Thursday, July 27. From 9:00 AM to 3:00 PM daily. Single lane alternating traffic. Watch for traffic control. Expect delays. Last updated Sunday, June 25 at 2:42 PM.",
       "+linear_reference_km": 37.49,
       "schedule": {
+        "intervals": [
+          "2022-10-21T15:01/"
+        ],
         "recurring_schedules": [
           {
             "days": [
