@@ -14,4 +14,6 @@ deployment:
       memory: 128Mi
 
 route:
-  host: dev-drivebc-frontend.apps.silver.devops.gov.bc.ca
+  host: drivebc.apps.silver.devops.gov.bc.ca
+  path: #must be surrounded by /
+  govonly: true #Set to true so limited access is limited to gov IP's only. False for public access

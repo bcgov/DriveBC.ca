@@ -18,7 +18,10 @@ deployment:
     djangoSecret: dev-drivebc-django
 
 route:
-  host: dev-drivebc-backend.apps.silver.devops.gov.bc.ca
+  host: drivebc.apps.silver.devops.gov.bc.ca
+  backendpath: /backend/ #must be surrounded by /
+  apipath: /api/ #must be surrounded by /
+  govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
 
 pvc:
   port: 3000

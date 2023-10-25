@@ -20,11 +20,14 @@ django:
         cpu: 150m
         memory: 512Mi
     env:
-      postgresSecret: prod-drivebc-pguser-prod-drivebc #By default this should be correct for Dev
-      djangoConfigMap: prod-drivebc-django #By default this should be correct for Dev
-      djangoSecret: prod-drivebc-django #By default this should be correct for dev
+      postgresSecret: prod-drivebc-pguser-prod-drivebc #By default this should be correct for Prod
+      djangoConfigMap: prod-drivebc-django #By default this should be correct for Prod
+      djangoSecret: prod-drivebc-django #By default this should be correct for Prod
   route:
-    host: prod-drivebc-backend.apps.silver.devops.gov.bc.ca
+    host: prod-drivebc.apps.silver.devops.gov.bc.ca
+    backendpath: /backend/ #must be surrounded by /
+    apipath: /api/ #must be surrounded by /
+    govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
   pvc:
     port: 3000
     storage: 1Gi
@@ -44,16 +47,16 @@ tasks:
         cpu: 150m
         memory: 512Mi
     env:
-      postgresSecret: prod-drivebc-pguser-prod-drivebc #By default this should be correct for Dev
-      djangoConfigMap: prod-drivebc-django #By default this should be correct for Dev
-      djangoSecret: prod-drivebc-django #By default this should be correct for dev
+      postgresSecret: prod-drivebc-pguser-prod-drivebc #By default this should be correct for Prod
+      djangoConfigMap: prod-drivebc-django #By default this should be correct for Prod
+      djangoSecret: prod-drivebc-django #By default this should be correct for Prod
 
 image-caching:
   fullnameOverride: prod-image-caching
   namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
-  environment: dev #enter the environment this is being deployed too. Needed to set the configmap reference
+  environment: prod #enter the environment this is being deployed too. Needed to set the configmap reference
   deployment:
-    replicas: 1
+    replicas: 2
     resources:
       requests:
         cpu: 50m
@@ -62,7 +65,11 @@ image-caching:
         cpu: 150m
         memory: 128Mi
   route:
-    host: prod-drivebc-image-caching.apps.silver.devops.gov.bc.ca
+    host: prod-drivebc.apps.silver.devops.gov.bc.ca
+    govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
+    webcamPath: /webcam/
+    replayTheDayPath: /ReplayTheDay/
+
 
 
 redis:
@@ -93,4 +100,5 @@ static:
         memory: 128Mi
 
   route:
-    host: prod-drivebc-frontend.apps.silver.devops.gov.bc.ca
+    host: prod-drivebc.apps.silver.devops.gov.bc.ca
+    govonly: true #Set to true so limited access is limited to gov IP's only. False for public access

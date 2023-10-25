@@ -3,6 +3,10 @@ kind: Route
 metadata:
   name: {{ template "app.fullname" . }}-backend
   labels: {{ include "app.labels" . | nindent 4 }}
+{{ if .Values.route.govonly }}
+  annotations:
+    haproxy.router.openshift.io/ip_whitelist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13
+{{ end }}
 spec:
   to:
     kind: Service
@@ -14,3 +18,27 @@ spec:
     insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None
   host: {{ .Values.route.host  }}
+  path: {{ .Values.route.backendpath  }}
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" . }}-api
+  labels: {{ include "app.labels" . | nindent 4 }}
+{{ if .Values.route.govonly }}
+  annotations:
+    haproxy.router.openshift.io/ip_whitelist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13
+{{ end }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "app.fullname" . }}
+  port:
+    targetPort: 80-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+  host: {{ .Values.route.host  }}
+  path: {{ .Values.route.apipath  }}
