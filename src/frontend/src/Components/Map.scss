@@ -18,6 +18,13 @@
   z-index: 5;
 }
 
+.delay-filter {
+  background-color: black;
+  position: absolute;
+  top: 50px;
+  height: 100000px;
+}
+
 .map-wrap {
   position: absolute;
   top: 58px;
@@ -27,7 +34,6 @@
   @media (min-width: 992px) {
     top: 58px;
   }
-
   .map {
     position: absolute;
     width: 100%;

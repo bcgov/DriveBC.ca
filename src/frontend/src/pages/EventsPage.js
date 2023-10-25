@@ -1,23 +1,22 @@
 // React
 import React, {useEffect, useRef, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
+import { useSelector } from 'react-redux'
 
 // Third party packages
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
   faMapLocationDot,
-  faFilter,
 } from '@fortawesome/free-solid-svg-icons';
 import {useMediaQuery} from '@uidotdev/usehooks';
 import Container from 'react-bootstrap/Container';
-import Dropdown from 'react-bootstrap/Dropdown';
-import Form from 'react-bootstrap/Form';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
 import {getEvents} from '../Components/data/events';
 import EventCard from '../Components/events/EventCard';
 import EventsTable from '../Components/events/EventsTable';
+import EventFilter from '../Components/events/EventFilter';
 import FriendlyTime from '../Components/FriendlyTime';
 import PageHeader from '../PageHeader';
 import Footer from '../Footer.js';
@@ -31,6 +30,10 @@ export default function EventsPage() {
   const isInitialMount = useRef(true);
 
   const navigate = useNavigate();
+
+  const [ eventFilters ] = useSelector((state) => [
+    state.eventFilters.filterSet,
+  ]);
 
   const columns = [
     {
@@ -69,37 +72,7 @@ export default function EventsPage() {
     },
   ];
 
-  const filterProps = [
-    {
-      id: 'checkbox-filter-incident',
-      label: 'Incidents',
-      value: 'INCIDENT',
-    },
-    {
-      id: 'checkbox-filter-weather',
-      label: 'Road Conditions',
-      value: 'WEATHER_CONDITION',
-    },
-    {
-      id: 'checkbox-filter-construction',
-      label: 'Current Events',
-      value: 'CONSTRUCTION',
-    },
-    {
-      id: 'checkbox-filter-special',
-      label: 'Future Events',
-      value: 'SPECIAL_EVENT',
-    },
-  ];
-
   const [sortingColumns, setSortingColumns] = useState([]);
-
-  const [eventTypeFilter, setEventTypeFilter] = useState({
-    'CONSTRUCTION': false,
-    'INCIDENT': false,
-    'SPECIAL_EVENT': false,
-    'WEATHER_CONDITION': false,
-  });
 
   const [events, setEvents] = useState([]);
   const [processedEvents, setProcessedEvents] = useState([]);
@@ -131,13 +104,13 @@ export default function EventsPage() {
 
   const processEvents = () => {
     const hasTrue = (val) => !!val;
-    const hasFilterOn = Object.values(eventTypeFilter).some(hasTrue);
+    const hasFilterOn = Object.values(eventFilters).some(hasTrue);
 
     let res = [...events];
 
     // Filter
     if (hasFilterOn) {
-      res = res.filter((e) => !!eventTypeFilter[e.event_type]);
+      res = res.filter((e) => !!eventFilters[e.event_type]);
     }
 
     // Sort
@@ -174,16 +147,7 @@ export default function EventsPage() {
     if (!isInitialMount.current) { // Do not run on startup
       processEvents();
     }
-  }, [events, eventTypeFilter, sortingColumns]);
-
-  const eventTypeFilterHandler = (e) => {
-    const eventType = e.target.value;
-
-    const newFilter = {...eventTypeFilter};
-    newFilter[eventType] = !newFilter[eventType];
-
-    setEventTypeFilter(newFilter);
-  };
+  }, [events, eventFilters, sortingColumns]);
 
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
@@ -202,27 +166,7 @@ export default function EventsPage() {
       </PageHeader>
       <Container>
       <Advisories />
-        <div className="sort-and-filter">
-          <div className="sort"></div>
-          <Dropdown align="end">
-            <Dropdown.Toggle variant="outline-primary" id="filter-dropdown">
-              Filters<FontAwesomeIcon icon={faFilter} />
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {filterProps.map((fp) => (
-                <Form.Check
-                  id={fp.id}
-                  key={fp.id}
-                  label={
-                    <span>{fp.icon}{fp.label}</span>
-                  }
-                  value={fp.value}
-                  checked={eventTypeFilter[fp.value]}
-                  onChange={eventTypeFilterHandler} />
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
+       <EventFilter />
 
         { events && !!events.length && (
           <InfiniteScroll

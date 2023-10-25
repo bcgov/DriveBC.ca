@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import camerasReducer from './slices/camerasSlice';
 import eventsReducer from './slices/eventsSlice';
+import eventFiltersReducer from './slices/eventFiltersSlice';
 import routesReducer from './slices/routesSlice';
 import mapReducer from './slices/mapSlice';
 
@@ -29,6 +30,7 @@ const store = configureStore({
   reducer: {
     cameras: persistReducer(getConfig('cameras'), camerasReducer),
     events: persistReducer(getConfig('events'), eventsReducer),
+    eventFilters: persistReducer(getConfig('eventFilters'), eventFiltersReducer),
     routes: persistReducer(getConfig('routes'), routesReducer),
     map: persistReducer(getConfig('map'), mapReducer),
   },

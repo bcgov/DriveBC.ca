@@ -39,6 +39,7 @@ import { getRouteLayer } from './map/routeLayer.js';
 import { MapContext } from '../App.js';
 import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
 import CurrentCameraIcon from './CurrentCameraIcon';
+import EventFilter from '../Components/events/EventFilter';
 import Layers from './Layers.js';
 import RouteSearch from './map/RouteSearch.js';
 
@@ -705,6 +706,11 @@ export default function MapWrapper({
             toggleLayer={toggleLayer}
           />
           <AdvisoriesAccordion />
+        </div>
+      )}
+      {!isPreview && (
+        <div>
+          <EventFilter/>
         </div>
       )}
     </div>
