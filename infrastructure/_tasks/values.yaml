@@ -1,0 +1,19 @@
+fullnameOverride: dev-tasks
+namespace: c59ecc-tools #enter the full namespace here to the deployment has the correct imagestream
+
+
+deployment:
+  djangoImageName: dev-django #by default use the image from the ImageStream
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      cpu: 150m
+      memory: 512Mi
+  env:
+    postgresSecret: dev-drivebc-pguser-dev-drivebc
+    djangoConfigMap: dev-drivebc-django
+    djangoSecret: dev-drivebc-django
+

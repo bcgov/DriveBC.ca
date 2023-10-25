@@ -1,0 +1,89 @@
+fullnameOverride: test-drivebc
+
+crunchyImage: artifacts.developer.gov.bc.ca/bcgov-docker-local/crunchy-postgres-gis:ubi8-15.2-3.3-0
+
+postgresVersion: 15
+postGISVersion: '3.3'
+
+instances:
+  name: ha # high availability
+  replicas: 1
+  dataVolumeClaimSpec:
+    storage: 2Gi
+    storageClassName: netapp-block-standard
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 250m
+    memory: 512Mi
+  replicaCertCopy:
+    requests:
+      cpu: 1m
+      memory: 32Mi
+    limits:
+      cpu: 50m
+      memory: 64Mi
+
+pgBackRest:
+  image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+  retention: "2" # Ideally a larger number such as 30 backups/days
+  # If retention-full-type set to 'count' then the oldest backups will expire when the number of backups reach the number defined in retention
+  # If retention-full-type set to 'time' then the number defined in retention will take that many days worth of full backups before expiration
+  retentionFullType: count
+  repos:
+    schedules:
+      full: 0 8 * * *
+      incremental: 0,30 * * * * #set this to every 30 min to reduce chance of WAL log issues
+    volume:
+      accessModes: "ReadWriteOnce"
+      storage: 2Gi
+      storageClassName: netapp-file-backup
+  repoHost:
+    requests:
+      cpu: 1m
+      memory: 64Mi
+    limits:
+      cpu: 50m
+      memory: 128Mi
+  sidecars:
+    requests:
+      cpu: 1m
+      memory: 64Mi
+    limits:
+      cpu: 50m
+      memory: 128Mi
+
+patroni:
+  postgresql:
+    pg_hba: "host all all 0.0.0.0/0 md5"
+    parameters:
+      shared_buffers: 16MB # default is 128MB; a good tuned default for shared_buffers is 25% of the memory allocated to the pod
+      wal_buffers: "64kB" # this can be set to -1 to automatically set as 1/32 of shared_buffers or 64kB, whichever is larger
+      min_wal_size: 32MB
+      max_wal_size: 64MB # default is 1GB
+      max_slot_wal_keep_size: 128MB # default is -1, allowing unlimited wal growth when replicas fall behind
+
+proxy:
+  pgBouncer:
+    image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+    replicas: 1
+    requests:
+      cpu: 1m
+      memory: 64Mi
+    limits:
+      cpu: 50m
+      memory: 128Mi
+
+# Postgres Cluster resource values:
+pgmonitor:
+  enabled: true #Can be true or false
+  namespace: c59ecc #The high level namespace of your project without the -tools -dev, etc part.
+  exporter:
+    image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+    requests:
+      cpu: 1m
+      memory: 64Mi
+    limits:
+      cpu: 50m
+      memory: 128Mi

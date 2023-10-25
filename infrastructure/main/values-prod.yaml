@@ -1,0 +1,96 @@
+# See https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values
+global:
+  licensePlate: c59ecc
+  namespace: prod
+
+nameOverride: prod-drivebc
+fullnameOverride: prod-drivebc
+
+
+django:
+  fullnameOverride: prod-django
+  namespace: c59ecc-prod #The namespace you are running the application on. This is used to pull from the ImageStream
+  deployment:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        cpu: 150m
+        memory: 512Mi
+    env:
+      postgresSecret: prod-drivebc-pguser-prod-drivebc #By default this should be correct for Dev
+      djangoConfigMap: prod-drivebc-django #By default this should be correct for Dev
+      djangoSecret: prod-drivebc-django #By default this should be correct for dev
+  route:
+    host: prod-drivebc-backend.apps.silver.devops.gov.bc.ca
+  pvc:
+    port: 3000
+    storage: 1Gi
+
+
+tasks:
+  fullnameOverride: prod-tasks
+  namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
+  deployment:
+    djangoImageName: prod-django #Since it needs to use the django imagestream. 
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        cpu: 150m
+        memory: 512Mi
+    env:
+      postgresSecret: prod-drivebc-pguser-prod-drivebc #By default this should be correct for Dev
+      djangoConfigMap: prod-drivebc-django #By default this should be correct for Dev
+      djangoSecret: prod-drivebc-django #By default this should be correct for dev
+
+image-caching:
+  fullnameOverride: prod-image-caching
+  namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
+  environment: dev #enter the environment this is being deployed too. Needed to set the configmap reference
+  deployment:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 150m
+        memory: 128Mi
+  route:
+    host: prod-drivebc-image-caching.apps.silver.devops.gov.bc.ca
+
+
+redis:
+  fullnameOverride: prod-redis
+  namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
+  deployment:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 150m
+        memory: 128Mi
+
+static:
+  fullnameOverride: prod-static
+  namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
+
+  deployment:
+    replicas: 2
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 150m
+        memory: 128Mi
+
+  route:
+    host: prod-drivebc-frontend.apps.silver.devops.gov.bc.ca

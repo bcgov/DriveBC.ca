@@ -1,0 +1,27 @@
+apiVersion: v2
+name: main
+description: A Helm chart for DriveBC
+type: application
+version: 0.1.0
+appVersion: '0.1.0'
+dependencies:
+  - name: django
+    version: '0.1.0'
+    repository: 'file://../_django'
+    condition: django.enabled
+  - name: tasks
+    version: '0.1.0'
+    repository: 'file://../_tasks'
+    condition: tasks.enabled
+  - name: image-caching
+    version: '0.1.0'
+    repository: 'file://../_image-caching'
+    condition: image-caching.enabled
+  - name: redis
+    version: '0.1.0'
+    repository: 'file://../_redis'
+    condition: redis.enabled
+  - name: static
+    version: '0.1.0'
+    repository: 'file://../_static'
+    condition: static.enabled

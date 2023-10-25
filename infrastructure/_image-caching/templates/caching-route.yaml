@@ -1,0 +1,15 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels: {{ include "app.labels" . | nindent 4 }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "app.fullname" . }}
+    weight: 100
+  port:
+    targetPort: nginx
+  host: {{ .Values.route.host  }}
+  tls:
+    termination: edge  

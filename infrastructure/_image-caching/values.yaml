@@ -1,0 +1,19 @@
+fullnameOverride: 
+namespace:  #enter the full namespace here to the deployment has the correct imagestream
+environment:  #enter the environment this is being deployed too. Needed to set the configmap reference
+
+
+deployment:
+  image: #by default use the image from the ImageStream
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 150m
+      memory: 128Mi
+
+route:
+  host: 
+

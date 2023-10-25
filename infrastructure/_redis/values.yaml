@@ -1,0 +1,14 @@
+fullnameOverride: 
+namespace: c59ecc-tools #enter the full namespace here to the deployment has the correct imagestream
+
+
+deployment:
+  image: #by default use the image from the ImageStream
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 150m
+      memory: 128Mi
