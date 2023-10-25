@@ -41,7 +41,7 @@ export default function RouteSearch() {
         <LocationSearch location={searchLocationFrom} action={updateSearchLocationFrom} />
       </div>
 
-      {(searchLocationFrom.length || searchLocationTo.length) &&
+      {(!!searchLocationFrom.length || !!searchLocationTo.length) &&
         <div className="typeahead-container typeahead-container-two">
           <LocationSearch location={searchLocationTo} action={updateSearchLocationTo} />
         </div>
