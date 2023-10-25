@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 
 class ScheduleSerializer(serializers.Serializer):
-    intervals = serializers.ListField(child=serializers.CharField())
+    intervals = serializers.ListField(child=serializers.CharField(), required=False, default=[])
 
 class EventSerializer(serializers.ModelSerializer):
     direction_display = serializers.SerializerMethodField()
