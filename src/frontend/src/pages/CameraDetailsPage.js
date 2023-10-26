@@ -1,6 +1,6 @@
 // React
 import React, {useEffect, useRef, useState} from 'react';
-import {useParams, useNavigate, Link} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 // Third party packages
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -162,15 +162,23 @@ export default function CameraDetailsPage() {
     return lastUpdatedDate > oneDayAgo;
   };
 
+  const returnHandler = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+        navigate(-1);
+    } else {
+        navigate('/', { replace: true }); // the current entry in the history stack will be replaced with the new one with { replace: true }
+    }
+  }
+
   // Rendering
   return (
     <div className="camera-page">
       <div className="page-header">
         <Container>
-          <Link to="/cameras" className="back-link">
+          <a onClick={returnHandler} className="back-link">
             <FontAwesomeIcon icon={faArrowLeft} />
-            Back to camera list
-          </Link>
+            Back to last page
+          </a>
         </Container>
       </div>
       <div>
