@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { updateMapState } from '../slices/mapSlice';
 
 // Third party packages
-import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 
 // FA
@@ -92,7 +91,6 @@ export default function MapWrapper({
 
   // Misc
   const navigate = useNavigate();
-  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
   function centerMyLocation(coordinates) {
     if (mapView.current) {
@@ -658,7 +656,30 @@ export default function MapWrapper({
 
   return (
     <div className="map-container">
-      <div ref={mapElement} className="map" />
+      <div ref={mapElement} className="map">
+        <div className="zoom-btn">
+          <Button className="zoom-in" variant="primary" onClick={zoomIn}>
+            <FontAwesomeIcon icon={faPlus} />
+          </Button>
+          <div className="zoom-divider" />
+          <Button
+            className="zoom-out"
+            variant="primary"
+            onClick={zoomOut}>
+            <FontAwesomeIcon icon={faMinus} />
+          </Button>
+        </div>
+
+        {!isPreview && (
+          <Button
+            className="map-btn my-location"
+            variant="primary"
+            onClick={toggleMyLocation}>
+            <FontAwesomeIcon icon={faLocationCrosshairs} />
+            My location
+          </Button>
+        )}
+      </div>
 
       <div id="popup" onClick={cameraDetailRoute} className="ol-popup">
         <FontAwesomeIcon
@@ -689,29 +710,6 @@ export default function MapWrapper({
           Camera location
         </Button>
       )}
-
-      {!isPreview && (!iconClicked || largeScreen) && (
-        <Button
-          className="map-btn my-location"
-          variant="primary"
-          onClick={toggleMyLocation}>
-          <FontAwesomeIcon icon={faLocationCrosshairs} />
-          My location
-        </Button>
-      )}
-
-      <div className="zoom-btn">
-        <Button className="zoom-in" variant="primary" onClick={zoomIn}>
-          <FontAwesomeIcon icon={faPlus} />
-        </Button>
-        <div className="zoom-divider" />
-        <Button
-          className="zoom-out"
-          variant="primary"
-          onClick={zoomOut}>
-          <FontAwesomeIcon icon={faMinus} />
-        </Button>
-      </div>
 
       {!isPreview && (
         <div>
