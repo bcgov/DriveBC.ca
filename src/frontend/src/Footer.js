@@ -1,7 +1,7 @@
 import React from 'react';
 import './Footer.scss';
 import Container from 'react-bootstrap/Container';
-import logo from './images/BCID_H_rgb_pos.png';
+import logo from './images/dbc-logo.svg';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
   faArrowUpRightFromSquare,
