@@ -68,28 +68,34 @@ export default function MapWrapper({
     state.map.pan
   ]);
 
+  // Context
   const { mapContext, setMapContext } = useContext(MapContext);
+
+  // Refs
   const mapElement = useRef();
   const mapRef = useRef();
   const popup = useRef();
   const layers = useRef({});
-  const clickedWebcam = useRef(null);
   const mapView = useRef();
-  const [layersOpen, setLayersOpen] = useState(false);
   const container = useRef();
   const content = useRef();
-  const [iconClicked, setIconClicked] = useState(false);
   const geolocation = useRef(null);
-  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
-  const navigate = useNavigate();
   const hoveredCamera = useRef();
   const hoveredEvent = useRef();
   const clickedCamera = useRef();
   const clickedEvent = useRef();
   const locationPinRef = useRef(null);
 
+  // States
+  const [iconClicked, setIconClicked] = useState(false);
+  const [layersOpen, setLayersOpen] = useState(false);
+
+  // Misc
+  const navigate = useNavigate();
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+
   function centerMyLocation(coordinates) {
-    if (mapRef.current) {
+    if (mapView.current) {
       mapView.current.animate({
         center: fromLonLat(coordinates),
       });
@@ -98,23 +104,23 @@ export default function MapWrapper({
 
   function setLocationPinPoint(coordinates) {
     const svgMarkup = `
-                    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
-                      <defs>
-                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="40%" style="stop-color:#f32947;stop-opacity:0.5" />
-                          <stop offset="40%" style="stop-color:#ed6f82;stop-opacity:0.5" />
-                        </linearGradient>
-                      </defs>
-                      <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
-                      <defs>
-                        <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="100%" style="stop-color:#f32947;stop-opacity:1" />
-                          <stop offset="100%" style="stop-color:#ed6f82;stop-opacity:1" />
-                        </linearGradient>
-                      </defs>
-                      <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
-                    </svg>
-                `;
+      <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
+        <defs>
+          <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="40%" style="stop-color:#f32947;stop-opacity:0.5" />
+            <stop offset="40%" style="stop-color:#ed6f82;stop-opacity:0.5" />
+          </linearGradient>
+        </defs>
+        <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
+        <defs>
+          <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="100%" style="stop-color:#f32947;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#ed6f82;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
+      </svg>
+    `;
 
     const svgImage = new Image();
     svgImage.src =
@@ -140,23 +146,23 @@ export default function MapWrapper({
 
   function addMyLocationPinPoint(coordinates) {
     const svgMarkup = `
-                    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
-                      <defs>
-                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="40%" style="stop-color:#2790F3;stop-opacity:0.5" />
-                          <stop offset="40%" style="stop-color:#7496EC;stop-opacity:0.5" />
-                        </linearGradient>
-                      </defs>
-                      <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
-                      <defs>
-                        <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="100%" style="stop-color:#2970F3;stop-opacity:1" />
-                          <stop offset="100%" style="stop-color:#7496EC;stop-opacity:1" />
-                        </linearGradient>
-                      </defs>
-                      <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
-                    </svg>
-                `;
+      <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
+        <defs>
+          <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="40%" style="stop-color:#2790F3;stop-opacity:0.5" />
+            <stop offset="40%" style="stop-color:#7496EC;stop-opacity:0.5" />
+          </linearGradient>
+        </defs>
+        <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
+        <defs>
+          <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="100%" style="stop-color:#2970F3;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#7496EC;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
+      </svg>
+    `;
 
     const svgImage = new Image();
     svgImage.src =
@@ -317,7 +323,7 @@ export default function MapWrapper({
 
     mapRef.current.once('loadend', () => {
       if (!selectedRoute) {
-        loadWebcams();
+        loadCameras();
         loadEvents();
       }
     });
@@ -332,7 +338,7 @@ export default function MapWrapper({
       // check if it was a webcam icon that was clicked
       const camFeatures = await layers.current['webcamsLayer'].getFeatures(e.pixel);
       if (camFeatures.length) {
-        const featureDetails = camFeatures[0].values_.features[0].values_;
+        const featureDetails = camFeatures[0].getProperties().features[0].getProperties();
         if (isPreview) {
           // Only switch context on clicking cameras within circle
           if (circle &&
@@ -365,7 +371,6 @@ export default function MapWrapper({
           clickedCamera.current.setProperties({ clicked: true }, true);
 
           content.current.innerHTML = getCamPopup(featureDetails);
-          clickedWebcam.current = featureDetails;
 
           popup.current.setPosition(
             clickedCamera.current.getGeometry().getCoordinates(),
@@ -485,16 +490,16 @@ export default function MapWrapper({
       mapRef.current.addLayer(routeLayer);
 
       loadEvents(selectedRoute.route);
-      loadWebcams(selectedRoute.route);
+      loadCameras(selectedRoute.route);
 
     } else {
       loadEvents();
-      loadWebcams();
+      loadCameras();
     }
 
   }, [selectedRoute]);
 
-  async function loadWebcams(route) {
+  async function loadCameras(route) {
     const webcamResults = await getWebcams(route);
 
     if (layers.current['webcamsLayer']) {
@@ -528,11 +533,13 @@ export default function MapWrapper({
     mapRef.current.addLayer(layers.current['eventsLayer']);
   }
 
-  function webcamDetailRoute() {
+  function cameraDetailRoute() {
     // setting geometry to null so that the object may be passed
-    if (clickedWebcam.current) {
-      clickedWebcam.current.geometry = null;
-      navigate(`/cameras/${clickedWebcam.current.id}`);
+    if (clickedCamera.current) {
+      clickedCamera.current.geometry = null;
+
+      const camProps = clickedCamera.current.getProperties().features[0].getProperties();
+      navigate(`/cameras/${camProps.id}`);
     }
   }
 
@@ -652,7 +659,8 @@ export default function MapWrapper({
   return (
     <div className="map-container">
       <div ref={mapElement} className="map" />
-      <div id="popup" onClick={webcamDetailRoute} className="ol-popup">
+
+      <div id="popup" onClick={cameraDetailRoute} className="ol-popup">
         <FontAwesomeIcon
           id="ol-popup-closer"
           className="ol-popup-closer"
@@ -661,6 +669,7 @@ export default function MapWrapper({
         />
         <div id="popup-content" className="ol-popup-content"></div>
       </div>
+
       {isPreview && (
         <Button
           className="map-btn map-view"
@@ -680,6 +689,7 @@ export default function MapWrapper({
           Camera location
         </Button>
       )}
+
       {!isPreview && (!iconClicked || largeScreen) && (
         <Button
           className="map-btn my-location"
