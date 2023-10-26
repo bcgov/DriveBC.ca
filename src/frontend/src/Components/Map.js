@@ -3,7 +3,6 @@ import React, { useContext, useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'
 import { updateMapState } from '../slices/mapSlice';
-import ReactDOMServer from 'react-dom/server';
 
 // Third party packages
 import { useMediaQuery } from '@uidotdev/usehooks';
@@ -21,6 +20,7 @@ import {
 
 // Components and functions
 import { getCamerasLayer } from './map/layers/camerasLayer.js';
+import { getCamPopup, getEventPopup } from './map/mapPopup.js'
 import { getEvents } from './data/events.js';
 import { getEventsLayer } from './map/layers/eventsLayer.js';
 import { getEventIcon } from './map/helper.js';
@@ -29,8 +29,6 @@ import { getRouteLayer } from './map/routeLayer.js';
 import { MapContext } from '../App.js';
 import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
 import CurrentCameraIcon from './CurrentCameraIcon';
-import EventTypeIcon from './EventTypeIcon';
-import FriendlyTime from './FriendlyTime';
 import Layers from './Layers.js';
 import RouteSearch from './map/RouteSearch.js';
 
@@ -271,6 +269,7 @@ export default function MapWrapper({
       tid: Date.now(),
     };
 
+    // Set map extent
     const extent = [-143.23013896362576, 61.59132385849652, -109.97743701256154, 46.18015377362468];
     const transformedExtent = transformExtent(extent,'EPSG:4326','EPSG:3857')
 
@@ -327,147 +326,93 @@ export default function MapWrapper({
       dispatch(updateMapState({pan: toLonLat(mapView.current.getCenter()), zoom: mapView.current.getZoom()}))
     });
 
-    mapRef.current.on('click', e => {
+    mapRef.current.on('click', async (e) => {
       setIconClicked(false);
 
       // check if it was a webcam icon that was clicked
-      layers.current['webcamsLayer']
-        .getFeatures(e.pixel)
-        .then(clickedFeatures => {
-          if (clickedFeatures[0]) {
-            const featureDetails =
-              clickedFeatures[0].values_.features[0].values_;
-            if (isPreview) {
-              // Only switch context on clicking cameras within circle
-              if (
-                circle &&
-                circle.intersectsCoordinate(
-                  fromLonLat(featureDetails.location.coordinates),
-                )
-              ) {
-                mapView.current.animate({
-                  center: fromLonLat(featureDetails.location.coordinates),
-                });
+      const camFeatures = await layers.current['webcamsLayer'].getFeatures(e.pixel);
+      if (camFeatures.length) {
+        const featureDetails = camFeatures[0].values_.features[0].values_;
+        if (isPreview) {
+          // Only switch context on clicking cameras within circle
+          if (circle &&
+            circle.intersectsCoordinate(fromLonLat(featureDetails.location.coordinates))
+          ) {
+            mapView.current.animate({
+              center: fromLonLat(featureDetails.location.coordinates),
+            });
 
-                cameraHandler(featureDetails);
-              }
-            } else {
-              setIconClicked(true);
-              // reset previous clicked feature
-              if (clickedCamera.current) {
-                clickedCamera.current.setStyle(cameraStyles['static']);
-              } else if (clickedEvent.current) {
-                clickedEvent.current.setStyle(
-                  getEventIcon(clickedEvent.current, 'static'),
-                );
-                setRelatedGeometry(clickedEvent.current, 'static');
-                clickedEvent.current = null;
-              }
-              // set new clicked camera feature
-              clickedCamera.current = clickedFeatures[0];
-              clickedCamera.current.setStyle(cameraStyles['active']);
-              clickedCamera.current.setProperties({ clicked: true }, true);
-
-              content.current.innerHTML =
-                `<div class="popup popup--camera">
-              <div class="popup__title">
-                <p class="bold name">${featureDetails.name}
-                <p class="bold orientation">${featureDetails.orientation}</p>
-              </div>
-              <div class="popup__description">
-                <p>${featureDetails.caption}</p>
-                <div class="camera-image">
-                  <img src="${featureDetails.links.imageSource}" width='300'>
-                  <div class="timestamp">
-                    <p class="driveBC">Drive<span>BC</span></p>
-                    ` +
-                    ReactDOMServer.renderToString(
-                      <FriendlyTime date={featureDetails.last_update_modified} />,
-                    ) +
-                    `
-                    </div>
-                  </div>
-                </div>
-              </div>`;
-              clickedWebcam.current = featureDetails;
-
-              popup.current.setPosition(
-                clickedCamera.current.getGeometry().getCoordinates(),
-              );
-              popup.current.getElement().style.top = '40px';
-            }
+            cameraHandler(featureDetails);
           }
-        });
-      // if it wasn't a webcam icon, check if it was an event
-      layers.current['eventsLayer']
-        .getFeatures(e.pixel)
-        .then(clickedFeatures => {
+
+        } else {
           setIconClicked(true);
-          if (clickedFeatures[0]) {
-            const feature = clickedFeatures[0];
-            const severity = feature.get('severity').toLowerCase();
-            const eventType = feature.get('event_type').toLowerCase();
+          // reset previous clicked feature
+          if (clickedCamera.current) {
+            clickedCamera.current.setStyle(cameraStyles['static']);
 
-            // reset previous clicked feature
-            if (clickedCamera.current) {
-              clickedCamera.current.setStyle(cameraStyles['static']);
-              clickedCamera.current = null;
-            } else if (clickedEvent.current) {
-              clickedEvent.current.setStyle(
-                getEventIcon(clickedEvent.current, 'static'),
-              );
-              setRelatedGeometry(clickedEvent.current, 'static');
-            }
-
-            // set new clicked event feature
-            clickedEvent.current = clickedFeatures[0];
+          } else if (clickedEvent.current) {
             clickedEvent.current.setStyle(
-              getEventIcon(clickedEvent.current, 'active'),
+              getEventIcon(clickedEvent.current, 'static'),
             );
-            setRelatedGeometry(clickedEvent.current, 'active');
-
-            clickedEvent.current.setProperties({ clicked: true }, true);
-
-            content.current.innerHTML =
-              `<div class="popup popup--delay ${severity}">
-              <div class="popup__title">
-                <p class="bold name">${feature.get('route_display')}</p>
-                <p class="bold orientation">${feature.get('direction')}</p>
-              </div>
-              <div class="popup__description">
-                <div class="delay-type">
-                  <div class="bold delay-severity"><div class="delay-icon">` +
-              ReactDOMServer.renderToString(
-                <EventTypeIcon eventType={eventType} />,
-              ) +
-              `</div><p class="bold">${severity} delays</p></div>
-                  <p class="bold friendly-time--mobile">` +
-              ReactDOMServer.renderToString(
-                <FriendlyTime date={feature.get('last_updated')} />,
-              ) +
-              `</p>
-                </div>
-                <div class="delay-details">
-                  <p class="bold friendly-time-desktop">` +
-              ReactDOMServer.renderToString(
-                <FriendlyTime date={feature.get('last_updated')} />,
-              ) +
-              `</p>
-                  <p>${feature.get('description')}</p>
-                </div>
-              </div>
-            </div>`;
-
-            popup.current.setPosition(
-              clickedEvent.current.getGeometry().getCoordinates(),
-            );
-            popup.current.getElement().style.top = '40px';
+            setRelatedGeometry(clickedEvent.current, 'static');
+            clickedEvent.current = null;
           }
-        });
 
-      // if neither, hide any existing popup
-      if (iconClicked === false) {
-        closePopup();
+          // set new clicked camera feature
+          clickedCamera.current = camFeatures[0];
+          clickedCamera.current.setStyle(cameraStyles['active']);
+          clickedCamera.current.setProperties({ clicked: true }, true);
+
+          content.current.innerHTML = getCamPopup(featureDetails);
+          clickedWebcam.current = featureDetails;
+
+          popup.current.setPosition(
+            clickedCamera.current.getGeometry().getCoordinates(),
+          );
+          popup.current.getElement().style.top = '40px';
+        }
+      } else {
+        setIconClicked(true);
+
+        // if it wasn't a webcam icon, check if it was an event
+        const eventFeatures = await layers.current['eventsLayer'].getFeatures(e.pixel);
+        if (eventFeatures.length) {
+          const feature = eventFeatures[0];
+
+          // reset previous clicked feature
+          if (clickedCamera.current) {
+            clickedCamera.current.setStyle(cameraStyles['static']);
+            clickedCamera.current = null;
+          } else if (clickedEvent.current) {
+            clickedEvent.current.setStyle(
+              getEventIcon(clickedEvent.current, 'static'),
+            );
+            setRelatedGeometry(clickedEvent.current, 'static');
+          }
+
+          // set new clicked event feature
+          clickedEvent.current = eventFeatures[0];
+          clickedEvent.current.setStyle(
+            getEventIcon(clickedEvent.current, 'active'),
+          );
+          setRelatedGeometry(clickedEvent.current, 'active');
+
+          clickedEvent.current.setProperties({ clicked: true }, true);
+
+          content.current.innerHTML = getEventPopup(feature);
+
+          popup.current.setPosition(
+            clickedEvent.current.getGeometry().getCoordinates(),
+          );
+          popup.current.getElement().style.top = '40px';
+
+        } else {
+          // if neither, hide any existing popup
+          if (iconClicked === false) {
+            closePopup();
+          }
+        }
       }
     });
 
