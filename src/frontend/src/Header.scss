@@ -68,18 +68,34 @@
 
 	&-brand {
 		padding: 0;
-    margin-left: 48px;
+    	margin-left: 48px;
 
-    @media (min-width: 992px) {
-      margin-left: 0;
+    	@media (min-width: 992px) {
+      		margin-left: 0;
 		}
 
 		.header-logo {
 			width: 144px;
 			height: 37px;
-			position: absolute;
 			top: 6px;
 			left: 32px;
+			margin-right: 24px;
+		}
+	}
+
+	&-brand {
+		padding: 0;
+		margin-left: 48px;
+
+		@media (max-width: 992px) {
+			margin-left: 0;
+			}
+
+		.header-logo {
+			width: 144px;
+			height: 37px;
+			top: 6px;
+			left: 32px;			
 			margin-right: 24px;
 		}
 	}
