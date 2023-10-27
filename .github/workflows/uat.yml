@@ -42,7 +42,7 @@ jobs:
     - name: push to registry
       uses: redhat-actions/push-to-registry@v2.7
       with:
-        image: ${{ inputs.environment }}-static
+        image: test-static
         registry: ${{ secrets.REGISTRY }}
         username: ${{ secrets.BUILDER_USERNAME }}
         password: ${{ secrets.BUILDER_TOKEN }}
@@ -69,7 +69,7 @@ jobs:
     - name: push to registry
       uses: redhat-actions/push-to-registry@v2.7
       with:
-        image: ${{ inputs.environment }}-django
+        image: test-django
         registry: ${{ secrets.REGISTRY }}
         username: ${{ secrets.BUILDER_USERNAME }}
         password: ${{ secrets.BUILDER_TOKEN }}
