@@ -13,8 +13,7 @@ class TestAdvisoryAPI(APITestCase, BaseTest):
         super().setUp()
         advisory = Advisory.objects.create(
             title="Advisory title",
-            description="Advisory description",
-            active=True,
+            body="Advisory body",
             geometry=LineString([(-119, 35), (-118, 32)]),
             path="000100010001",
             depth=3,
@@ -25,8 +24,7 @@ class TestAdvisoryAPI(APITestCase, BaseTest):
 
         advisory_2 = Advisory.objects.create(
             title="Advisory title 2",
-            description="Advisory description 2",
-            active=True,
+            body="Advisory body 2",
             geometry=LineString([(-119, 35), (-118, 32)]),
             path="000100010002",
             depth=3,
