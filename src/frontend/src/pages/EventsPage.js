@@ -166,7 +166,7 @@ export default function EventsPage() {
       </PageHeader>
       <Container>
       <Advisories />
-       <EventFilter />
+       <EventFilter variant="outline-primary"/>
 
         { events && !!events.length && (
           <InfiniteScroll

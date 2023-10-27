@@ -1,9 +1,6 @@
 import React from 'react';
 import {useSelector, useDispatch } from 'react-redux'
 
-// Styling
-import '../../pages/EventsPage.scss';
-
 // Third party packages
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -11,7 +8,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import { updateEventFilters } from '../../slices/eventFiltersSlice';
 
-export default function EventFilter() {
+export default function EventFilter({variant}) {
   const dispatch = useDispatch();
   const [ eventTypeFilter ] = useSelector((state) => [
     state.eventFilters.filterSet,
@@ -52,7 +49,7 @@ export default function EventFilter() {
     <div className="sort-and-filter">
       <div className="sort"></div>
       <Dropdown align="end">
-        <Dropdown.Toggle variant="outline-primary" id="filter-dropdown">
+        <Dropdown.Toggle variant={variant} id="filter-dropdown">
           Filters
           <FontAwesomeIcon icon={faFilter} />
         </Dropdown.Toggle>

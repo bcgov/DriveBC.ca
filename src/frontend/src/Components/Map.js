@@ -699,20 +699,18 @@ export default function MapWrapper({
       {!isPreview && (
         <div>
           <RouteSearch />
-
           <Layers
             open={layersOpen}
             setLayersOpen={toggleLayers}
             toggleLayer={toggleLayer}
           />
+          <div>
+          <EventFilter variant="primary"/>
+        </div>
           <AdvisoriesAccordion />
         </div>
       )}
-      {!isPreview && (
-        <div>
-          <EventFilter/>
-        </div>
-      )}
+
     </div>
   );
 }

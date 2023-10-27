@@ -31,6 +31,12 @@
   bottom: 0;
   width: 100%;
 
+  .sort-and-filter {
+    position: absolute;
+    top: 6rem;
+    right: 2rem;
+  }
+
   @media (min-width: 992px) {
     top: 58px;
   }
