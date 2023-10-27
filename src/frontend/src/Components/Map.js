@@ -92,11 +92,19 @@ export default function MapWrapper({
   // Misc
   const navigate = useNavigate();
 
-  function centerMyLocation(coordinates) {
+  function centerMap(coordinates) {
     if (mapView.current) {
       mapView.current.animate({
         center: fromLonLat(coordinates),
       });
+    }
+  }
+
+  function fitMap() {
+    const routeExtent = transformExtent(selectedRoute.points.flat(),'EPSG:4326','EPSG:3857');
+
+    if (mapView.current) {
+      mapView.current.fit(routeExtent);
     }
   }
 
@@ -275,7 +283,7 @@ export default function MapWrapper({
 
     // Set map extent
     const extent = [-143.23013896362576, 61.59132385849652, -109.97743701256154, 46.18015377362468];
-    const transformedExtent = transformExtent(extent,'EPSG:4326','EPSG:3857')
+    const transformedExtent = transformExtent(extent,'EPSG:4326','EPSG:3857');
 
     mapView.current = new View({
       projection: 'EPSG:3857',
@@ -472,7 +480,7 @@ export default function MapWrapper({
       if (locationPinRef.current) {
         mapRef.current.removeOverlay(locationPinRef.current);
       }
-      centerMyLocation(searchLocationFrom[0].geometry.coordinates);
+      centerMap(searchLocationFrom[0].geometry.coordinates);
       setLocationPinPoint(searchLocationFrom[0].geometry.coordinates);
     }
   }, [searchLocationFrom]);
@@ -490,11 +498,12 @@ export default function MapWrapper({
       loadEvents(selectedRoute.route);
       loadCameras(selectedRoute.route);
 
+      fitMap();
+
     } else {
       loadEvents();
       loadCameras();
     }
-
   }, [selectedRoute]);
 
   async function loadCameras(route) {
@@ -613,11 +622,11 @@ export default function MapWrapper({
             position.coords.latitude <= 60.1 &&
             position.coords.latitude >= 48.2
           ) {
-            centerMyLocation([longitude, latitude]);
+            centerMap([longitude, latitude]);
             addMyLocationPinPoint([longitude, latitude]);
           } else {
             // set my location to the center of BC for users outside of BC
-            centerMyLocation([-126.5, 54.2]);
+            centerMap([-126.5, 54.2]);
             addMyLocationPinPoint([-126.5, 54.2]);
           }
         },
