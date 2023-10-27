@@ -1,7 +1,6 @@
 from apps.cms.models import Bulletin
 from apps.cms.serializers import BulletinSerializer
 from apps.shared.tests import BaseTest
-from django.contrib.gis.geos import LineString
 
 
 class TestBulletinSerializer(BaseTest):
@@ -10,27 +9,25 @@ class TestBulletinSerializer(BaseTest):
 
         self.bulletin = Bulletin(
             title="Bulletin title 1",
-            active=True,
-            description="Bulletin description 1",   
+            body="Bulletin body 1",
             path="000100010001",
             depth=3,
         )
         self.bulletin.save()
         self.serializer = BulletinSerializer(self.bulletin)
-        
+
     def test_serializer_valid_data(self):
         # Check if the serializer data matches the expected data
         assert self.serializer.data["title"] == \
             'Bulletin title 1'
-        assert self.serializer.data["active"], "The value is not True"
-        assert self.serializer.data["description"] == \
-            'Bulletin description 1'
+        assert self.serializer.data["body"] == \
+            'Bulletin body 1'
 
     def test_serializer_invalid_data(self):
         # Create a serializer with invalid data
         invalid_data = {
             'title': '',  # bulletin title is required, invalid data
-            'description': 'Bulletin description 1',
+            'body': 'Bulletin body 1',
         }
         self.serializer = BulletinSerializer(data=invalid_data)
 
@@ -39,8 +36,7 @@ class TestBulletinSerializer(BaseTest):
         valid_data = {
             'id': 3,
             'title': 'Bulletin title 1',
-            'active': True,
-            'description': 'Bulletin description 1',
+            'body': 'Bulletin body 1',
             'content_type': 55,
             'depth': 1,
             'path': '000100010005',
