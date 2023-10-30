@@ -25,25 +25,31 @@ export default function Advisories(props) {
     <ul className="advisories-list">
       {!!advisories && advisories.map((advisory, index) => {
         return (
-          <li key={advisory.id} onClick={() => handleClick(advisory)}>
-            <h5 className='advisories-li-title'>{advisory.title}</h5>
+          <li  className="advisory-li unread" key={advisory.id} onClick={() => handleClick(advisory)}>
+            <div className="advisory-li-title-container">
+              <h3 className='advisory-li-title'>{advisory.title}</h3>
+              <div className="timestamp-container">
+                <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
+                <FriendlyTime date={advisory.latest_revision_created_at} />
+              </div>
+            </div>
 
             {showDescriptions &&
-              <div>
-                <div className="timestamp-container">
-                  <span>{advisory.first_published_at != advisory.last_published_at ? "Last updated" : "Published" }</span>
-                  <FriendlyTime date={advisory.latest_revision_created_at} />
-                </div>
-
+              <div className='advisory-li-body-container'>
                 {advisory.teaser &&
-                  <div className='advisories-li-body'>{advisory.teaser}</div>
+                  <div className='advisory-li-body'>{advisory.teaser}</div>
                 }
 
                 {!advisory.teaser &&
-                  <div className='advisories-li-body'>{stripRichText(advisory.body)}</div>
+                  <div className='advisory-li-body'>{stripRichText(advisory.body)}</div>
                 }
               </div>
             }
+            
+            <div className="timestamp-container timestamp-container--mobile">
+              <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
+              <FriendlyTime date={advisory.latest_revision_created_at} />
+            </div>
           </li>
         );
       })}

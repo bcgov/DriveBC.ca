@@ -161,32 +161,6 @@
     max-width: 518px;
     margin: 0 auto;
 
-    .nav-tabs {
-      border: none;
-
-      .nav-item {
-        .nav-link {
-          color: $Type-Primary;
-          border: none;
-          border-radius: 0;
-          font-size: 0.875em;
-
-          svg, img {
-            margin-right: 8px;
-          }
-
-          &.active {
-            border-bottom: 2px solid $BC-Blue;
-          }
-
-          &:hover {
-            background-color: $Grey30;
-            border-bottom: 2px solid $BC-Blue;
-          }
-        }
-      }
-    }
-
     .tab-content {
       & > .tab-pane {
         margin-top: 16px;

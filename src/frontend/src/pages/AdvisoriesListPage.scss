@@ -1,0 +1,92 @@
+@import "../styles/variables.scss";
+
+.advisories-page {
+  ul.advisories-list {
+    list-style-type: none;
+
+    li.advisory-li {
+      border-bottom: 1px solid $Divider;
+      padding-bottom: 20px;
+      width: 100%;
+
+      @media (min-width: 992px) {
+        display: flex;
+        justify-content: space-between;
+        gap: 40px;
+      }
+
+      & + li.advisory-li {
+        margin-top: 24px;
+      }
+
+      .timestamp-container, .friendly-time-text {
+        color: $Type-Secondary;
+        font-weight: 400;
+      }
+
+      .advisory-li-title, .advisory-li-state, .friendly-time-text{
+        font-weight: 400;
+      }
+
+      .advisory-li-state, .friendly-time-text{
+        font-size: 0.875rem;
+      }
+
+      .advisory-li-title {
+        margin-bottom: 16px;
+        color: $Type-Link;
+      }
+
+      .timestamp-container {
+        display: none;
+
+        &--mobile {
+          display: flex;
+          margin-top: 20px;
+        }
+
+        @media (min-width: 992px) {
+          display: flex;
+
+          &--mobile {
+            display: none;
+          }
+        }
+        
+        .friendly-time, .formatted-date {
+          margin-left: 1ch;
+        }
+      }
+
+      &.unread {
+        .advisory-li-title, .advisory-li-state, .friendly-time-text{
+          font-weight: 700;
+        }
+
+        .timestamp-container, .friendly-time-text {
+          color: $Type-Link;
+        }
+
+        .timestamp-container:before {
+          content: '\2022';
+          font-size: 1.75rem;
+          line-height: 1rem;
+          margin-right: 0.5rem;
+          margin-top: 0.125rem;
+        }
+      }
+
+      .advisory-li-title-container {
+        @media (min-width: 992px) {
+          width: 358px;
+        }
+      }
+
+      .advisory-li-body-container {
+        @media (min-width: 992px) {
+          width: 645px;
+        }
+      }
+    }
+  }
+}

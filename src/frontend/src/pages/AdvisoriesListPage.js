@@ -10,6 +10,8 @@ import AdvisoriesList from '../Components/advisories/AdvisoriesList';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 
+// Styling
+import './AdvisoriesListPage.scss';
 
 export default function AdvisoriesListPage() {
   const [advisories, setAdvisories] = useState(false);
