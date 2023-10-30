@@ -1,16 +1,128 @@
 @import "../styles/variables.scss";
 
-.advisory-map {
-  width: 800px;
-  height: 600px;
-}
+.advisory-page {
+  .container {
+    max-width: 740px;
+  }
+  
+  .page-header {
+    .page-description {
+      max-width: initial;
+    }
 
-.timestamp-container {
-  h4, .friendly-time {
-    display: inline-block;
+    .timestamp-container {
+      h4, .friendly-time {
+        display: inline-block;
+      }
+    
+      .friendly-time {
+        margin-left: 15px;
+      }
+    }
+
+    .timestamp-container, .friendly-time-text{
+      color: $Type-Link;
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+
+    .timestamp-container {
+      display: flex;
+      .friendly-time, .formatted-date {
+        margin-left: 1ch;
+      }
+    }
   }
 
-  .friendly-time {
-    margin-left: 15px;
+  .nav-tabs {
+    max-width: 740px;
+    margin: 24px auto;
+    padding: 0 16px;
+
+    @media (min-width: 576px) {
+      padding: 0 32px;
+    }
+  }
+
+  .advisory-map-container {
+    padding-top: 0;
+    padding-bottom: 24px;
+
+    @media (min-width: 992px) {
+      padding-top: 48px;
+    }
+
+    .advisory-map {
+      width: 100%;
+      height: 480px;
+    }
+  }
+
+  .footer-container {
+    margin-top: 72px;
+  }
+
+  // Desktop view without tabs
+  @media (min-width: 992px) {
+    max-width: unset;
+    margin: 0;
+
+    .nav-tabs {
+      display: none;
+      margin: 0 16px;
+    }
+
+    .tab-content {
+      display: flex;
+      flex-direction: column;
+
+      & > .tab-pane {
+        opacity: 1;
+        display: block;
+        width: 100%;
+      }
+
+      #advisory-details-tabpane-details {
+        order: 2;
+      }
+
+      #advisory-details-tabpane-map {
+        order: 1;
+      }
+    }
+  }
+
+  .social-share-container {
+
+    .social-share-div {
+      background-color: $BC-Blue-Light;
+      padding: 16px 12px 24px 12px;
+
+      .social-share {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+
+        @media (min-width: 992px) {
+          margin-bottom: 0;
+        }
+        
+        .footer-link {
+          border: 1px solid $Type-Link;
+          border-radius: 25px;
+          width: 48px;
+          height: 48px;
+          display: flex;
+          -webkit-box-align: center;
+          align-items: center;
+          -webkit-box-pack: center;
+          justify-content: center;
+        }
+
+        .footer-link:hover {
+          background: #DCDCDC;
+        }
+      }
+    }
   }
 }
