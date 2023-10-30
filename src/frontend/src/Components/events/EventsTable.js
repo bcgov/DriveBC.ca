@@ -89,7 +89,8 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
                 key={cell.id}
                 title={
                   cell.column.id === "event_type"
-                    ? cell.row.original.severity.charAt(0) + cell.row.original.severity.slice(1).toLowerCase() + " delay"
+                    ? cell.row.original.event_type.charAt(0) + cell.row.original.event_type.slice(1).toLowerCase() + " - " 
+                    + cell.row.original.severity.charAt(0) + cell.row.original.severity.slice(1).toLowerCase() + " delay"
                     : cell.column.id === "map"
                     ? "View on map"
                     : ""
