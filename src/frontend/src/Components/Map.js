@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { updateMapState } from '../slices/mapSlice';
 
 // Third party packages
+import { lineString, bbox } from "@turf/turf";
 import Button from 'react-bootstrap/Button';
 
 // FA
@@ -101,7 +102,8 @@ export default function MapWrapper({
   }
 
   function fitMap() {
-    const routeExtent = transformExtent(selectedRoute.points.flat(),'EPSG:4326','EPSG:3857');
+    const routeBbox = bbox(lineString(selectedRoute.route));
+    const routeExtent = transformExtent(routeBbox,'EPSG:4326','EPSG:3857');
 
     if (mapView.current) {
       mapView.current.fit(routeExtent);
@@ -282,7 +284,7 @@ export default function MapWrapper({
     };
 
     // Set map extent
-    const extent = [-143.23013896362576, 61.59132385849652, -109.97743701256154, 46.18015377362468];
+    const extent = [-143.23013896362576, 65.59132385849652, -109.97743701256154, 46.18015377362468];
     const transformedExtent = transformExtent(extent,'EPSG:4326','EPSG:3857');
 
     mapView.current = new View({
@@ -291,7 +293,6 @@ export default function MapWrapper({
       center: camera ? handleCenter() : fromLonLat(pan),
       zoom: zoom,
       maxZoom: 15,
-      minZoom: 5,
       extent: transformedExtent
     });
 
