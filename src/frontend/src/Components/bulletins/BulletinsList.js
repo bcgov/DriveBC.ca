@@ -9,6 +9,9 @@ import FriendlyTime from '../FriendlyTime';
 // Styling
 import './BulletinsList.scss';
 
+// Static files
+import logo from '../../images/dbc-logo--white.svg';
+
 export default function Bulletins(props) {
   // State, props and context
   const { bulletins } = props;
@@ -25,21 +28,29 @@ export default function Bulletins(props) {
     <ul className="bulletins-list">
       {!!bulletins && bulletins.map((bulletin, index) => {
         return (
-          <li key={bulletin.id} onClick={() => handleClick(bulletin)}>
-            <h5 className='bulletins-li-title'>{bulletin.title}</h5>
+          <li className="bulletin-li unread" key={bulletin.id} onClick={() => handleClick(bulletin)}>
+            
+            <div className='bulletin-li-title-container'>
+              <h3 className='bulletin-li-title'>{bulletin.title}</h3>
 
-            <div className="timestamp-container">
-              <span>{bulletin.first_published_at != bulletin.last_published_at ? "Last updated" : "Published" }</span>
-              <FriendlyTime date={bulletin.latest_revision_created_at} />
+              {bulletin.teaser &&
+                <div className='bulletin-li-body'>{bulletin.teaser}</div>
+              }
+
+              {!bulletin.teaser &&
+                <div className='bulletin-li-body'>{stripRichText(bulletin.body)}</div>
+              }
+
+              <div className="timestamp-container">
+                <span className="bulletin-li-state">{bulletin.first_published_at != bulletin.last_published_at ? "Updated" : "Published" }</span>
+                <FriendlyTime date={bulletin.latest_revision_created_at} />
+              </div>
             </div>
-
-            {bulletin.teaser &&
-              <div className='bulletins-li-body'>{bulletin.teaser}</div>
-            }
-
-            {!bulletin.teaser &&
-              <div className='bulletins-li-body'>{stripRichText(bulletin.body)}</div>
-            }
+            <div className='bulletin-li-thumbnail-container'>
+              <div className='bulletin-li-thumbnail'>
+                <img className="thumbnail-logo" src={logo} alt="Government of British Columbia" />
+              </div>
+            </div>
           </li>
         );
       })}

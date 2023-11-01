@@ -1,10 +1,6 @@
 @import "../styles/variables.scss";
 
-.advisory-page {
-  .container {
-    max-width: 740px;
-  }
-  
+.advisory-page {  
   .page-header {
     .page-description {
       max-width: initial;
@@ -20,10 +16,8 @@
       }
     }
 
-    .timestamp-container, .friendly-time-text{
+    .timestamp-container, .friendly-time-text {
       color: $Type-Link;
-      font-size: 0.875rem;
-      font-weight: 700;
     }
 
     .timestamp-container {
