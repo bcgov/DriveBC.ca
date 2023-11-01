@@ -13,6 +13,10 @@ import logo from './images/dbc-logo.svg';
 // Styling
 import './Header.scss';
 
+
+// Third party packages
+import {useMediaQuery} from '@uidotdev/usehooks';
+
 export default function Header() {
   // State hooks
   const [expanded, setExpanded] = useState(false);
@@ -21,6 +25,8 @@ export default function Header() {
   const getNavLink = (title) => {
     return <Nav.Link active={false} onClick={() => setTimeout(() => setExpanded(false))}>{title}</Nav.Link>
   };
+
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
   // Rendering
   return (
@@ -33,11 +39,16 @@ export default function Header() {
             <span className="line line3"></span>
           </Navbar.Toggle>
 
-          <Navbar.Brand href="#home">
-            <a href="/" className="header-link">
+          { largeScreen ? (
+            <Navbar.Brand href="#home">
               <img className="header-logo" src={logo} alt="Government of British Columbia" />
-            </a>
-          </Navbar.Brand>
+            </Navbar.Brand>
+            ) : (
+            <Navbar.Brand href="#home" tabIndex="-1">
+              <img className="header-logo" src={logo} alt="Government of British Columbia" />
+            </Navbar.Brand>
+            )
+          }
 
           <div className="nav-divider"></div>
 
