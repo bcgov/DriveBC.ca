@@ -106,7 +106,7 @@ export default function MapWrapper({
     const routeExtent = transformExtent(routeBbox,'EPSG:4326','EPSG:3857');
 
     if (mapView.current) {
-      mapView.current.fit(routeExtent);
+      mapView.current.fit(routeExtent, { duration: 1000 });
     }
   }
 
