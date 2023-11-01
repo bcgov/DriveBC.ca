@@ -346,11 +346,6 @@ export default function MapWrapper({
       projection: mapView.current.getProjection(),
     });
 
-    // add the pre-made layers to the Map
-    console.log("checking segments layer:", layers.current.segmentsLayer)
-    // mapRef.current.addLayer(layers.current.segmentsLayer);
-    // mapRef.current.addLayer(layers.current.eventsLayer);
-
     mapRef.current.once('loadend', () => {
       if (!selectedRoute) {
         loadCameras();
@@ -591,9 +586,6 @@ export default function MapWrapper({
 
      mapRef.current.addLayer(layers.current['segmentsLayer']);
      mapRef.current.addLayer(layers.current['eventsLayer']);
-    console.log(layers.current['segmentsLayer'].getSource().getFeatures());
-    // layers.current['eventsLayer'].setZIndex(500);
-    // layers.current['segmentsLayer'].setZIndex(499);
   }
 
   function cameraDetailRoute() {
@@ -627,13 +619,12 @@ export default function MapWrapper({
   }
 
   const setRelatedGeometry = (event, state) => {
-    // if (event.getId()) {
-    //   console.log("checking current delay", event);
-    //   const relatedFeature = layers.current['eventsLayer']
-    //     .getSource()
-    //     .getFeatureById(event.ol_uid);
-    //   relatedFeature.setStyle(getEventIcon(relatedFeature, state));
-    // }
+    if (event.getId()) {
+      const relatedFeature = layers.current['eventsLayer']
+        .getSource()
+        .getFeatureById(event.ol_uid);
+      relatedFeature.setStyle(getEventIcon(relatedFeature, state));
+    }
   };
 
   function zoomIn() {
