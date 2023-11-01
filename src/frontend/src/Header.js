@@ -39,16 +39,9 @@ export default function Header() {
             <span className="line line3"></span>
           </Navbar.Toggle>
 
-          { largeScreen ? (
-            <Navbar.Brand href="#home">
-              <img className="header-logo" src={logo} alt="Government of British Columbia" />
-            </Navbar.Brand>
-            ) : (
-            <Navbar.Brand href="#home" tabIndex="-1">
-              <img className="header-logo" src={logo} alt="Government of British Columbia" />
-            </Navbar.Brand>
-            )
-          }
+          <Navbar.Brand href="#home" tabIndex={largeScreen ? "0": "-1"}>
+            <img className="header-logo" src={logo} alt="Government of British Columbia" />
+          </Navbar.Brand>
 
           <div className="nav-divider"></div>
 
