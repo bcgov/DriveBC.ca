@@ -267,6 +267,7 @@ export default function MapWrapper({
         },
       },
     });
+
     const vectorLayer = new VectorTileLayer({
       source: new VectorTileSource({
         format: new MVT(),
@@ -289,7 +290,7 @@ export default function MapWrapper({
       projection: 'EPSG:3857',
       constrainResolution: true,
       center: camera ? handleCenter() : fromLonLat(pan),
-      zoom: zoom,
+      zoom: isPreview ? 12 : zoom,
       maxZoom: 15,
       minZoom: 5,
       extent: transformedExtent
