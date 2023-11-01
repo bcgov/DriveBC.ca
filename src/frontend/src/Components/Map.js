@@ -21,7 +21,7 @@ import {
 import { getCamerasLayer } from './map/layers/camerasLayer.js';
 import { getCamPopup, getEventPopup } from './map/mapPopup.js'
 import { getEvents } from './data/events.js';
-import { getEventsLayer } from './map/layers/eventsLayer.js';
+import { eventLoader } from './map/layers/eventLoader.js';
 import { getEventIcon } from './map/helper.js';
 import { getWebcams } from './data/webcams.js';
 import { getRouteLayer } from './map/routeLayer.js';
@@ -278,8 +278,27 @@ export default function MapWrapper({
 
     // initialize starting optional layers
     layers.current = {
+      eventsLayer: new VectorLayer({
+        classname: 'events',
+        visible: mapContext.visible_layers.eventsLayer,
+        source: new VectorSource({}),
+        style: function (feature, resolution) {
+          return getEventIcon(feature, 'static');
+        },
+      }),
+      segmentsLayer: new VectorLayer({
+        classname: 'segments',
+        visible: mapContext.visible_layers.eventsLayer,
+        source: new VectorSource({}),
+        style: function (feature, resolution) {
+          return getEventIcon(feature, 'static');
+        },
+      }),
+
       tid: Date.now(),
     };
+
+
 
     // Set map extent
     const extent = [-143.23013896362576, 61.59132385849652, -109.97743701256154, 46.18015377362468];
@@ -326,6 +345,11 @@ export default function MapWrapper({
     geolocation.current = new Geolocation({
       projection: mapView.current.getProjection(),
     });
+
+    // add the pre-made layers to the Map
+    console.log("checking segments layer:", layers.current.segmentsLayer)
+    // mapRef.current.addLayer(layers.current.segmentsLayer);
+    // mapRef.current.addLayer(layers.current.eventsLayer);
 
     mapRef.current.once('loadend', () => {
       if (!selectedRoute) {
@@ -472,6 +496,30 @@ export default function MapWrapper({
             }
           });
       }
+      if (layers.current && 'segmentsLayer' in layers.current) {
+        // if it wasn't a camera icon, check if it was an event
+        layers.current['segmentsLayer']
+          .getFeatures(e.pixel)
+          .then(hoveredFeatures => {
+            if (hoveredFeatures[0]) {
+              hoveredEvent.current = hoveredFeatures[0];
+              if (!hoveredEvent.current.getProperties().clicked) {
+                hoveredEvent.current.setStyle(
+                  getEventIcon(hoveredEvent.current, 'hover'),
+                );
+                setRelatedGeometry(hoveredEvent.current, 'hover');
+              }
+            } else if (hoveredEvent.current) {
+              if (!hoveredEvent.current.getProperties().clicked) {
+                hoveredEvent.current.setStyle(
+                  getEventIcon(hoveredEvent.current, 'static'),
+                );
+                setRelatedGeometry(hoveredEvent.current, 'static');
+              }
+              hoveredEvent.current = null;
+            }
+          });
+      }
     });
   }, []);
 
@@ -520,7 +568,7 @@ export default function MapWrapper({
     )
 
     mapRef.current.addLayer(layers.current['webcamsLayer']);
-    layers.current['webcamsLayer'].setZIndex(1);
+    layers.current['webcamsLayer'].setZIndex(501);
   }
 
   async function loadEvents(route) {
@@ -530,14 +578,22 @@ export default function MapWrapper({
       mapRef.current.removeLayer(layers.current['eventsLayer']);
     }
 
+    if (layers.current['segmentsLayer']) {
+      mapRef.current.removeLayer(layers.current['segmentsLayer']);
+    }
+
     // Events iterator
-    layers.current['eventsLayer'] = getEventsLayer(
+    eventLoader(
       eventsData,
       mapRef.current.getView().getProjection().getCode(),
-      mapContext
-    )
+      layers.current
+    );
 
-    mapRef.current.addLayer(layers.current['eventsLayer']);
+     mapRef.current.addLayer(layers.current['segmentsLayer']);
+     mapRef.current.addLayer(layers.current['eventsLayer']);
+    console.log(layers.current['segmentsLayer'].getSource().getFeatures());
+    // layers.current['eventsLayer'].setZIndex(500);
+    // layers.current['segmentsLayer'].setZIndex(499);
   }
 
   function cameraDetailRoute() {
@@ -571,12 +627,13 @@ export default function MapWrapper({
   }
 
   const setRelatedGeometry = (event, state) => {
-    if (event.getId()) {
-      const relatedFeature = layers.current['eventsLayer']
-        .getSource()
-        .getFeatureById(event.ol_uid);
-      relatedFeature.setStyle(getEventIcon(relatedFeature, state));
-    }
+    // if (event.getId()) {
+    //   console.log("checking current delay", event);
+    //   const relatedFeature = layers.current['eventsLayer']
+    //     .getSource()
+    //     .getFeatureById(event.ol_uid);
+    //   relatedFeature.setStyle(getEventIcon(relatedFeature, state));
+    // }
   };
 
   function zoomIn() {
