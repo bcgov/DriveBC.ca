@@ -1,22 +1,24 @@
 @import "../styles/variables.scss";
 
-.advisories-page {
-  ul.advisories-list {
+.bulletins-page {
+  ul.bulletins-list {
     list-style-type: none;
     padding-left: 0;
 
-    li.advisory-li {
+    li.bulletin-li {
       border-bottom: 1px solid $Divider;
       padding-bottom: 20px;
       width: 100%;
+      display: flex;
+      flex-direction: column;
 
       @media (min-width: 992px) {
-        display: flex;
+        flex-direction: row;
         justify-content: space-between;
-        gap: 40px;
+        gap: 120px;
       }
 
-      & + li.advisory-li {
+      & + li.bulletin-li {
         margin-top: 24px;
       }
 
@@ -25,33 +27,25 @@
         font-weight: 400;
       }
 
-      .advisory-li-title, .advisory-li-state, .friendly-time-text{
+      .bulletin-li-title, .bulletin-li-state, .friendly-time-text{
         font-weight: 400;
       }
 
-      .advisory-li-state, .friendly-time-text{
+      .bulletin-li-state, .friendly-time-text{
         font-size: 0.875rem;
       }
 
-      .advisory-li-title {
-        margin-bottom: 16px;
+      .bulletin-li-title {
+        margin-bottom: 8px;
         color: $Type-Link;
       }
 
       .timestamp-container {
-        display: none;
-
-        &--mobile {
-          display: flex;
-          margin-top: 20px;
-        }
+        display: flex;
+        margin-top: 16px;
 
         @media (min-width: 992px) {
-          display: flex;
-
-          &--mobile {
-            display: none;
-          }
+          margin-top: 24px;
         }
         
         .friendly-time, .formatted-date {
@@ -60,7 +54,7 @@
       }
 
       &.unread {
-        .advisory-li-title, .advisory-li-state, .friendly-time-text{
+        .bulletin-li-title, .bulletin-li-state, .friendly-time-text{
           font-weight: 700;
         }
 
@@ -77,15 +71,35 @@
         }
       }
 
-      .advisory-li-title-container {
+      .bulletin-li-title-container {
+        flex: 1;
+        order: 2;
         @media (min-width: 992px) {
-          width: 358px;
+          order: 1;
         }
       }
 
-      .advisory-li-body-container {
+      .bulletin-li-thumbnail-container {
+        width: 100%;
+        order: 1;
+        margin-bottom: 16px;
+
         @media (min-width: 992px) {
-          width: 645px;
+          width: 360px;
+          order: 2;
+          margin-bottom: 0;
+        }
+
+        .bulletin-li-thumbnail {
+          height: 200px;
+          width: 100%;
+          background-color: $BC-Blue;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          .thumbnail-logo {
+          }
         }
       }
     }

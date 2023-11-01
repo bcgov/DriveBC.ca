@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react';
 // Third party packages
 import Container from 'react-bootstrap/Container';
 
+// Styling
+import './BulletinsListPage.scss';
+
 // Components and functions
 import { getBulletins } from '../Components/data/bulletins.js';
 import BulletinsList from '../Components/bulletins/BulletinsList';
