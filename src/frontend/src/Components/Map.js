@@ -689,14 +689,15 @@ export default function MapWrapper({
     <div className="map-container">
       <div ref={mapElement} className="map">
         <div className="zoom-btn">
-          <Button className="zoom-in" variant="primary" onClick={zoomIn}>
+          <Button className="zoom-in" variant="primary" onClick={zoomIn} aria-label="zoom in">
             <FontAwesomeIcon icon={faPlus} />
           </Button>
           <div className="zoom-divider" />
           <Button
             className="zoom-out"
             variant="primary"
-            onClick={zoomOut}>
+            onClick={zoomOut}
+            aria-label="zoom out">
             <FontAwesomeIcon icon={faMinus} />
           </Button>
         </div>
@@ -705,7 +706,8 @@ export default function MapWrapper({
           <Button
             className="map-btn my-location"
             variant="primary"
-            onClick={toggleMyLocation}>
+            onClick={toggleMyLocation}
+            aria-label="my location">
             <FontAwesomeIcon icon={faLocationCrosshairs} />
             My location
           </Button>
