@@ -24,7 +24,8 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
       <Button
         variant="primary"
         className="map-btn open-layers"
-        onClick={() => setLayersOpen(true)}>
+        onClick={() => setLayersOpen(true)}
+        aria-label="open layers options">
         <FontAwesomeIcon icon={faLayerGroup} />
       </Button>
     );
@@ -32,25 +33,26 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
 
   return (
     <div className="layers">
-      <button className="close-layers" onClick={() => setLayersOpen(false)}>
+      <button className="close-layers" onClick={() => setLayersOpen(false)} aria-label="close layers options">
         <FontAwesomeIcon icon={faXmark} />
       </button>
       <h4>Features</h4>
 
       <div className="layer-item">
-        <img className="map-icon" src={videoIcon} alt="Webcam Icon" />
+        <img className="map-icon" src={videoIcon} role="presentation" />
         <input
           type="checkbox"
-          name="webcam"
-          id="webcam"
+          name="cameras"
+          id="cameras"
+          aria-label="cameras"
           onChange={e => toggleLayer('webcamsLayer', e.target.checked)}
           defaultChecked={mapContext.visible_layers.webcamsLayer}
         />
-        <label htmlFor="webcam">Webcams</label>
+        <label htmlFor="cameras">Cameras</label>
       </div>
 
       <div className="layer-item">
-        <img className="map-icon" src={eventIcon} alt="Event Icon" />
+        <img className="map-icon" src={eventIcon} role="presentation" />
         <input
           type="checkbox"
           name="events"
