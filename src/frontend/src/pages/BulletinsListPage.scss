@@ -47,7 +47,7 @@
         @media (min-width: 992px) {
           margin-top: 24px;
         }
-        
+
         .friendly-time, .formatted-date {
           margin-left: 1ch;
         }
@@ -90,16 +90,21 @@
           margin-bottom: 0;
         }
 
-        .bulletin-li-thumbnail {
+        .bulletin-li-thumbnail, .bulletin-li-thumbnail-default {
           height: 200px;
           width: 100%;
-          background-color: $BC-Blue;
           display: flex;
           justify-content: center;
           align-items: center;
 
           .thumbnail-logo {
+            max-width: 360px;
+            max-height: 200px;
           }
+        }
+
+        .bulletin-li-thumbnail-default {
+          background-color: $BC-Blue;
         }
       }
     }
