@@ -115,25 +115,39 @@ function getMap(advisoryData) {
     });
   });
 
-  return new Map({
+  const mapViewObj = new View({
+    // Centered on Downtown Kelowna
+    center: transform([-119.49662112970556, 49.887338062986295], 'EPSG:4326', 'EPSG:3857'),
+    zoom: 14,
+  });
+
+  new Map({
     target: 'map',
     layers: [
       tileLayer,
       vectorLayer,
     ],
-    view: new View({
-      // Centered on Downtown Kelowna
-      center: transform([-119.49662112970556, 49.887338062986295], 'EPSG:4326', 'EPSG:3857'),
-      zoom: 14,
-    }),
+    view: mapViewObj,
   });
+
+  return mapViewObj;
 }
 
 export default function AdvisoryDetailsPage() {
   // Context and router data
   const params = useParams();
   const isInitialMount = useRef(true);
+  const mapView = useRef();
   const [advisory, setAdvisory] = useState(null);
+
+  const fitMap = (data) => {
+    const geom = new GeoJSON().readGeometry(data.geometry, {
+      dataProjection: 'EPSG:4326',
+      featureProjection: 'EPSG:3857'
+    });
+
+    mapView.current.fit(geom);
+  }
 
   // Data function and initialization
   const loadAdvisory = async () => {
@@ -142,8 +156,10 @@ export default function AdvisoryDetailsPage() {
 
     // Run once on startup
     if (isInitialMount.current){
-      getMap(advisoryData);
+      mapView.current = getMap(advisoryData);
     }
+
+    fitMap(advisoryData);
 
     isInitialMount.current = false;
   };
@@ -164,7 +180,7 @@ export default function AdvisoryDetailsPage() {
         <div className="page-header">
           <Container>
             <h1 className="page-title">{advisory.title}</h1>
-            
+
             {advisory.teaser &&
               <p className="page-description body--large">{advisory.teaser}</p>
             }
