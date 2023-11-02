@@ -30,7 +30,7 @@ export default function BulletinsListPage() {
     <div className='bulletins-page'>
       <PageHeader
         title='Bulletins'
-        description='Get the latest critical travel status information during major events affecting travel on a highway or region.'>
+        description='Find information regarding seasonal safety campaigns, and DriveBC related updates.'>
       </PageHeader>
       <Container>
         <BulletinsList bulletins={bulletins} />
