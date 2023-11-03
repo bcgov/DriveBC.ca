@@ -1,20 +1,29 @@
 .routing-container {
   background: white;
+  padding: 2rem 2rem 0;
 
   .typeahead-container {
-    @media (max-width: 767px) {
-      width: 66%;
-      padding-left: 15px;
+    width: calc(100% - 32px - 2rem);
+
+    @media (min-width: 992px) {
+      width: 360px;
     }
 
-    @media (min-width: 768px) {
-      width: 25%;
-      padding-left: 2rem;
-      padding-top: 2rem;
+    &:first-of-type {
+      padding-top: 4rem;
+      @media (min-width: 992px) {
+        padding-top: 0;
+      }
     }
-  }
 
-  .typeahead-container-two {
-    padding-top: 1rem;
+    &-two {
+      padding-top: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .form-control {
+      padding: 5px 12px;
+      line-height: 1;
+    }
   }
 }

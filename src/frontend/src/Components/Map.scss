@@ -20,7 +20,7 @@
 
 .map-wrap {
   position: absolute;
-  top: 50px;
+  top: 58px;
   bottom: 0;
   width: 100%;
 
@@ -69,7 +69,7 @@
           }
 
           .popup {
-            font-size: 0.875em;
+            font-size: 0.875rem;
 
             &__title, &__description {
               padding: 8px 44px 8px 16px;
@@ -124,7 +124,7 @@
                     padding: 0 10px;
                     display: flex;
                     color: $White;
-                    font-size: 0.714em;
+                    font-size: 0.714rem;
 
                     p {
                       color: $White;
@@ -166,7 +166,7 @@
                       width: 20px;
                       height: 20px;
                       border-radius: 10px;
-                      font-size: 0.6875em;
+                      font-size: 0.6875rem;
                       margin-right: 8px;
                     }
                   }
@@ -249,7 +249,7 @@
           color: $Type-status-grey;
           padding: 9px 10px;
           border-radius: 15px;
-          font-size: 0.6875em;
+          font-size: 0.6875rem;
 
           &:hover {
             background-color: rgba(0,0, 0,0.1);
@@ -280,7 +280,7 @@
       border: 1px solid var(--ol-subtle-foreground-color);
       border-top: none;
       color: var(--ol-foreground-color);
-      font-size: 12px;
+      font-size: 0.75rem;
       text-align: center;
       font-family: 'BCSans', serif;
       margin: 1px;
@@ -294,7 +294,7 @@
     color: $Type-Link;
     position: absolute;
     margin-bottom: 0;
-    font-size: 0.75em;
+    font-size: 0.75rem;
     font-weight: 700;
     height: auto;
     border-radius: 4px;
@@ -347,7 +347,7 @@
     color: $Type-Link;
     position: absolute;
     margin-bottom: 0;
-    font-size: 1em;
+    font-size: 1rem;
     font-weight: 700;
     height: auto;
     border-radius: 6px;

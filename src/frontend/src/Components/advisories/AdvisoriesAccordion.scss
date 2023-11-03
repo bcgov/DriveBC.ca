@@ -2,30 +2,29 @@
 
 .advisories-accordion {
   position: absolute;
+  top: 2rem;
+  left: 2rem;
+  width: calc(100% - 32px - 6rem);
 
-  @media (max-width: 767px) {
-    width: 100%;
-    top: 5rem;
-    padding: 0px 15px;
-  }
 
-  @media (min-width: 768px) {
-    width: 20%;
+  @media (min-width: 992px) {
     top: 2rem;
-    left: 40%;
+    left: calc(4rem + 360px );
+    width: calc(100% - 360px - 224px - 8rem);
+    min-width: 400px;
   }
 
   .accordion-header {
-    font-size: 0.75em;
+    font-size: 0.75rem;
 
     .accordion-button {
-      font-size: 1em;
+      font-size: 1rem;
       padding: 6px 12px;
     }
   }
 
   .accordion-body {
-    font-size: 0.75em;
+    font-size: 0.75rem;
 
     ul {
       margin-bottom: 4px;

@@ -4,6 +4,34 @@
   li {
     cursor: pointer;
     width: fit-content;
+    margin-bottom: 1rem;
+
+    .advisory-li-title {
+      color: $Type-Link;
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 0.25rem;
+
+      @media (min-width: 992px) {
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 36px;
+      }
+    }
+  }
+
+  .timestamp-container {
+    display: flex;
+
+    .advisory-li-state, .friendly-time, .formatted-date {
+      margin-left: 1ch;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .friendly-time, .formatted-date {
+      margin-left: 1ch;
+    }
   }
 
   .timestamp-container--mobile {

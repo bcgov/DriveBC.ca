@@ -90,7 +90,7 @@
           margin-bottom: 0;
 
           .number {
-            font-size: 4em;
+            font-size: 4rem;
           }
         }
       }
@@ -113,11 +113,11 @@
     }
 
     p.bold {
-      margin: 0.5em 0 1em;
+      margin: 0.5rem 0 1rem;
     }
 
     svg {
-      font-size: 1.5em;
+      font-size: 1.5rem;
     }
 
     &.stale {
@@ -175,7 +175,7 @@
           &.unavailable {
             background-color: $Surface-status-red;
             color: $Error;
-            font-size: 110px;
+            font-size: 6.875rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -241,7 +241,7 @@
                 order: 3;
                 width: 33.33%;
                 svg {
-                  font-size: 1.25em;
+                  font-size: 1.25rem;
                 }
               }
 
@@ -249,7 +249,7 @@
                 order: 5;
                 width: 33.33%;
                 svg {
-                  font-size: 1.25em;
+                  font-size: 1.25rem;
                 }
               }
 
@@ -262,7 +262,7 @@
                 order: 4;
                 width: 33.33%;
                 svg {
-                  font-size: 1.5em;
+                  font-size: 1.5rem;
                 }
               }
 
@@ -306,7 +306,7 @@
 
           p {
             color: $White;
-            font-size: 0.875em;
+            font-size: 0.875rem;
             margin-bottom: 0;
           }
 
@@ -362,7 +362,7 @@
         }
 
         svg, p {
-          font-size: 0.875em;
+          font-size: 0.875rem;
         }
 
         svg {
@@ -398,11 +398,11 @@
           }
 
           .form-check-label {
-            font-size: 0.875em;
+            font-size: 0.875rem;
             white-space: nowrap;
 
             @media (min-width: 576px) {
-              font-size: 1em;
+              font-size: 1rem;
             }
           }
         }
