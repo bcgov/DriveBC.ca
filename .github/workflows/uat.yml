@@ -1,4 +1,4 @@
-name: Deploy to Test, UAT & Prod
+name: Deploy to Test, UAT or Prod
 
 on:
   workflow_dispatch:
@@ -22,10 +22,10 @@ jobs:
       with:
         context: .
         layers: true
-        image: test-static
+        image: ${{ inputs.environment }}-static
         tags: latest ${{ github.sha }}
         labels: |
-          app=test-drivebc
+          app=${{ inputs.environment }}-drivebc
         containerfiles: ./compose/frontend/StaticBuild
         build-args: |
           API_HOST=${{ vars.API_HOST }}
@@ -42,7 +42,7 @@ jobs:
     - name: push to registry
       uses: redhat-actions/push-to-registry@v2.7
       with:
-        image: test-static
+        image: ${{ inputs.environment }}-static
         registry: ${{ secrets.REGISTRY }}
         username: ${{ secrets.BUILDER_USERNAME }}
         password: ${{ secrets.BUILDER_TOKEN }}
@@ -59,17 +59,17 @@ jobs:
     - name: build backend
       uses: redhat-actions/buildah-build@v2
       with:
-        image: test-django
+        image: ${{ inputs.environment }}-django
         tags: latest ${{ github.sha }}
         labels: |
-          app=test-drivebc
+          app=${{ inputs.environment }}-drivebc
         containerfiles: ./compose/backend/Dockerfile
         build-args:
           DEBUG_BUILD=false
     - name: push to registry
       uses: redhat-actions/push-to-registry@v2.7
       with:
-        image: test-django
+        image: ${{ inputs.environment }}-django
         registry: ${{ secrets.REGISTRY }}
         username: ${{ secrets.BUILDER_USERNAME }}
         password: ${{ secrets.BUILDER_TOKEN }}
