@@ -8,4 +8,4 @@ spec:
     - name: latest
       from:
         kind: DockerImage
-        name: redis
+        name: redis:7

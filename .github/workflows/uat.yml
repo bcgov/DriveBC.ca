@@ -1,7 +1,8 @@
-name: Deploy to UAT
+name: Deploy main to uat
 
 on:
   workflow_dispatch:
+
 
 jobs:
 

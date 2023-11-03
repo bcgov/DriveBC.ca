@@ -1,8 +1,12 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ template "app.fullname" . }}
+  name: {{ template "app.fullname" . }}-webcam
   labels: {{ include "app.labels" . | nindent 4 }}
+{{ if .Values.route.iprestricted }}
+  annotations:
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.route.ipallowlist  }}
+{{ end }}
 spec:
   to:
     kind: Service
@@ -10,6 +14,31 @@ spec:
     weight: 100
   port:
     targetPort: nginx
-  host: {{ .Values.route.host  }}
   tls:
     termination: edge  
+  host: {{ .Values.route.host  }}
+  path: {{ .Values.route.webcamPath  }}
+
+
+---
+
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" . }}-replaytheday
+  labels: {{ include "app.labels" . | nindent 4 }}
+{{ if .Values.route.iprestricted }}
+  annotations:
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.route.ipallowlist  }}
+{{ end }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "app.fullname" . }}
+    weight: 100
+  port:
+    targetPort: nginx
+  tls:
+    termination: edge  
+  host: {{ .Values.route.host  }}
+  path: {{ .Values.route.replayTheDayPath  }}
