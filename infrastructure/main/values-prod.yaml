@@ -1,8 +1,4 @@
 # See https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values
-global:
-  licensePlate: c59ecc
-  namespace: prod
-
 nameOverride: prod-drivebc
 fullnameOverride: prod-drivebc
 
@@ -11,7 +7,7 @@ django:
   fullnameOverride: prod-django
   namespace: c59ecc-prod #The namespace you are running the application on. This is used to pull from the ImageStream
   deployment:
-    replicas: 1
+    replicas: 2
     resources:
       requests:
         cpu: 50m
@@ -20,11 +16,15 @@ django:
         cpu: 150m
         memory: 512Mi
     env:
-      postgresSecret: prod-drivebc-pguser-prod-drivebc #By default this should be correct for Dev
-      djangoConfigMap: prod-drivebc-django #By default this should be correct for Dev
-      djangoSecret: prod-drivebc-django #By default this should be correct for dev
+      postgresSecret: prod-drivebc-pguser-prod-drivebc #By default this should be correct for Prod
+      djangoConfigMap: prod-drivebc-django #By default this should be correct for Prod
+      djangoSecret: prod-drivebc-django #By default this should be correct for Prod
   route:
-    host: prod-drivebc-backend.apps.silver.devops.gov.bc.ca
+    host: prod-drivebc.apps.silver.devops.gov.bc.ca
+    backendpath: /backend/ #must be surrounded by /
+    apipath: /api/ #must be surrounded by /
+    iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist below
+    ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
   pvc:
     port: 3000
     storage: 1Gi
@@ -44,16 +44,16 @@ tasks:
         cpu: 150m
         memory: 512Mi
     env:
-      postgresSecret: prod-drivebc-pguser-prod-drivebc #By default this should be correct for Dev
-      djangoConfigMap: prod-drivebc-django #By default this should be correct for Dev
-      djangoSecret: prod-drivebc-django #By default this should be correct for dev
+      postgresSecret: prod-drivebc-pguser-prod-drivebc #By default this should be correct for Prod
+      djangoConfigMap: prod-drivebc-django #By default this should be correct for Prod
+      djangoSecret: prod-drivebc-django #By default this should be correct for Prod
 
 image-caching:
   fullnameOverride: prod-image-caching
   namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
-  environment: dev #enter the environment this is being deployed too. Needed to set the configmap reference
+  environment: prod #enter the environment this is being deployed too. Needed to set the configmap reference
   deployment:
-    replicas: 1
+    replicas: 2
     resources:
       requests:
         cpu: 50m
@@ -62,7 +62,12 @@ image-caching:
         cpu: 150m
         memory: 128Mi
   route:
-    host: prod-drivebc-image-caching.apps.silver.devops.gov.bc.ca
+    host: prod-drivebc.apps.silver.devops.gov.bc.ca
+    iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist below
+    ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
+    webcamPath: /webcam/
+    replayTheDayPath: /ReplayTheDay/
+
 
 
 redis:
@@ -93,4 +98,6 @@ static:
         memory: 128Mi
 
   route:
-    host: prod-drivebc-frontend.apps.silver.devops.gov.bc.ca
+    host: prod-drivebc.apps.silver.devops.gov.bc.ca
+    iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist below
+    ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
