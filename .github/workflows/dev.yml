@@ -9,7 +9,10 @@ jobs:
   build-static:
     runs-on: ubuntu-latest
     name: Build & Deploy Docker Static images
-    environment: dev
+    environment: 
+      name: dev
+      url: https://dev-drivebc.apps.silver.devops.gov.bc.ca
+
     
     steps:
     - name: checkout code
@@ -20,10 +23,10 @@ jobs:
       with:
         context: .
         layers: true
-        image: static
+        image: dev-static
         tags: latest ${{ github.sha }}
         labels: |
-          app=drivebc
+          app=dev-drivebc
         containerfiles: ./compose/frontend/StaticBuild
         build-args: |
           API_HOST=${{ vars.API_HOST }}
@@ -40,7 +43,7 @@ jobs:
     - name: push to registry
       uses: redhat-actions/push-to-registry@v2.7
       with:
-        image: static
+        image: dev-static
         registry: ${{ secrets.REGISTRY }}
         username: ${{ secrets.BUILDER_USERNAME }}
         password: ${{ secrets.BUILDER_TOKEN }}
@@ -56,17 +59,17 @@ jobs:
     - name: build backend
       uses: redhat-actions/buildah-build@v2
       with:
-        image: django
+        image: dev-django
         tags: latest ${{ github.sha }}
         labels: |
-          app=drivebc
+          app=dev-drivebc
         containerfiles: ./compose/backend/Dockerfile
         build-args:
           DEBUG_BUILD=true
     - name: push to registry
       uses: redhat-actions/push-to-registry@v2.7
       with:
-        image: django
+        image: dev-django
         registry: ${{ secrets.REGISTRY }}
         username: ${{ secrets.BUILDER_USERNAME }}
         password: ${{ secrets.BUILDER_TOKEN }}
