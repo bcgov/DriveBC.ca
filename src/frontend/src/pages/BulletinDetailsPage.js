@@ -33,7 +33,7 @@ export default function BulletinDetailsPage() {
 
   // Rendering
   return (
-    <div className='bulletin-page'>
+    <div className='bulletin-page cms-page'>
       {bulletin && (
         <div>
           <div className="page-header">
@@ -41,7 +41,7 @@ export default function BulletinDetailsPage() {
               <h1 className="page-title">{bulletin.title}</h1>
 
               <div className="timestamp-container">
-                <h4>{bulletin.first_published_at != bulletin.last_published_at ? "Last updated" : "Published" }</h4>
+                <span>{bulletin.first_published_at != bulletin.last_published_at ? "Last updated" : "Published" }</span>
                 <FriendlyTime date={bulletin.latest_revision_created_at} />
               </div>
             </Container>
@@ -53,7 +53,7 @@ export default function BulletinDetailsPage() {
             </Container>
           }
 
-          <Container>
+          <Container className="bulletin-body-container cms-body">
             <p>{parse(bulletin.body)}</p>
           </Container>
         </div>

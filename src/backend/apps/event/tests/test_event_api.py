@@ -47,6 +47,11 @@ class TestEventAPI(APITestCase, BaseTest):
                     2023, 6, 2, 16, 42, 16,
                     tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
                 ),
+                schedule =  {"intervals": [
+                    "2023-05-23T14:00/2023-07-22T14:00"
+                    ]
+                },
+
             )
 
     def test_delay_list_caching(self):

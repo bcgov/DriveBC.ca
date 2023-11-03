@@ -35,7 +35,7 @@ export default function FriendlyTime( {date} ) {
               event.stopPropagation();
               setShowTooltip(!showTooltip)}
             }>
-            <p>
+            <p className={"friendly-time-text" }>
               <ReactTimeAgo date={date} locale="en-US"/>
             </p>
             <span className={"friendly-time__tooltip" + (showTooltip ? " showTooltip" : "")}>{dateFormatted}</span>
@@ -44,7 +44,7 @@ export default function FriendlyTime( {date} ) {
 
   // else return formatted date without tooltip
   else {
-    return <p className={"formatted-date" }>
+    return <p className={"friendly-time-text formatted-date" }>
             {dateFormatted}
           </p>
   }

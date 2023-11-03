@@ -1,3 +1,4 @@
+from datetime import datetime
 from apps.feed.fields import (
     DriveBCDateField,
     DriveBCField,
@@ -66,6 +67,23 @@ class EventFeedSerializer(serializers.Serializer):
     created = DriveBCDateField('first_created', source="*")
     updated = DriveBCDateField('last_updated', source="*")
 
+    # Schedule
+    schedule = serializers.JSONField()
+
+    def to_internal_value(self, data):
+        internal_data = super().to_internal_value(data)
+        schedule = internal_data.get('schedule', {})
+        if 'intervals' in schedule:
+            interval = schedule['intervals'][0]
+            start, end = interval.split('/')
+
+            # Parse start and end into datetime objects
+            if start != '':
+                internal_data['start'] = datetime.strptime(start, "%Y-%m-%dT%H:%M")
+            if end != '':
+                internal_data['end'] = datetime.strptime(end, "%Y-%m-%dT%H:%M")
+
+        return internal_data
 
 class EventAPISerializer(serializers.Serializer):
     events = EventFeedSerializer(many=True)

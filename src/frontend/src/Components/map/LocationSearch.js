@@ -22,6 +22,7 @@ export default function LocationSearch(props) {
   const [options, setLocationOptions] = useState([]);
 
   const setSelectedLocation = (payload) => {
+    window.document.activeElement.blur();  // De-focus textbox
     dispatch(action(payload));
   }
 
@@ -54,6 +55,14 @@ export default function LocationSearch(props) {
       onSearch={loadLocationOptions}
       options={options}
       placeholder="Search for a location..."
+      highlightOnlyResult={true}
+      inputProps={{
+        'aria-label': 'input field for location search',
+      }}
+      selectHint={(shouldSelect, e) => {
+        // Select the hint if the user hits 'enter'
+        return e.keyCode === 13 || shouldSelect;
+      }}
       renderMenuItemChildren={location => (
         <div>
           <span>{location.properties.fullAddress}</span>

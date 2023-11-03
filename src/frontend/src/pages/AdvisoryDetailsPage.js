@@ -5,6 +5,13 @@ import { useParams } from 'react-router-dom';
 // Third party packages
 import Container from 'react-bootstrap/Container';
 import parse from 'html-react-parser';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {
+  faMap,
+  faFileLines
+} from '@fortawesome/free-regular-svg-icons';
 
 // Components and functions
 import { getAdvisories } from '../Components/data/advisories.js';
@@ -108,25 +115,39 @@ function getMap(advisoryData) {
     });
   });
 
-  return new Map({
+  const mapViewObj = new View({
+    // Centered on Downtown Kelowna
+    center: transform([-119.49662112970556, 49.887338062986295], 'EPSG:4326', 'EPSG:3857'),
+    zoom: 14,
+  });
+
+  new Map({
     target: 'map',
     layers: [
       tileLayer,
       vectorLayer,
     ],
-    view: new View({
-      // Centered on Downtown Kelowna
-      center: transform([-119.49662112970556, 49.887338062986295], 'EPSG:4326', 'EPSG:3857'),
-      zoom: 14,
-    }),
+    view: mapViewObj,
   });
+
+  return mapViewObj;
 }
 
 export default function AdvisoryDetailsPage() {
   // Context and router data
   const params = useParams();
   const isInitialMount = useRef(true);
+  const mapView = useRef();
   const [advisory, setAdvisory] = useState(null);
+
+  const fitMap = (data) => {
+    const geom = new GeoJSON().readGeometry(data.geometry, {
+      dataProjection: 'EPSG:4326',
+      featureProjection: 'EPSG:3857'
+    });
+
+    mapView.current.fit(geom);
+  }
 
   // Data function and initialization
   const loadAdvisory = async () => {
@@ -135,8 +156,10 @@ export default function AdvisoryDetailsPage() {
 
     // Run once on startup
     if (isInitialMount.current){
-      getMap(advisoryData);
+      mapView.current = getMap(advisoryData);
     }
+
+    fitMap(advisoryData);
 
     isInitialMount.current = false;
   };
@@ -145,41 +168,53 @@ export default function AdvisoryDetailsPage() {
     loadAdvisory();
   }, []);
 
+  // Tabs view on mobile
+  const [activeTab, setActiveTab] = useState('details');
+  const advisoryDetails = <FontAwesomeIcon icon={faFileLines} />;
+  const advisoryMap = <FontAwesomeIcon icon={faMap} />;
+
   // Rendering
   return (
-    <div className='advisory-page'>
+    <div className='advisory-page cms-page'>
       {advisory && (
-        <div>
-          <div className="page-header">
-            <Container>
-              <h1 className="page-title">{advisory.title}</h1>
+        <div className="page-header">
+          <Container>
+            <h1 className="page-title">{advisory.title}</h1>
 
-              <div className="timestamp-container">
-                <h4>{advisory.first_published_at != advisory.last_published_at ? "Last updated" : "Published" }</h4>
-                <FriendlyTime date={advisory.latest_revision_created_at} />
-              </div>
-            </Container>
-          </div>
+            {advisory.teaser &&
+              <p className="page-description body--large">{advisory.teaser}</p>
+            }
 
-          {advisory.teaser &&
-            <Container>
-              <p>{advisory.teaser}</p>
-            </Container>
-          }
+            <div className="timestamp-container">
+              <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
+              <FriendlyTime date={advisory.latest_revision_created_at} />
+            </div>
+          </Container>
         </div>
       )}
 
-      <Container>
-        <div id="map" className="advisory-map"></div>
-      </Container>
+      <Tabs
+        id="advisory-details"
+        activeKey={activeTab}
+        onSelect={ (selectedTab) => setActiveTab(selectedTab) }
+      >
+        <Tab eventKey="details" title={<span>{advisoryDetails}Details</span>}>
+          {advisory && (
+            <Container className="advisory-body-container cms-body">
+              <p>{parse(advisory.body)}</p>
+            </Container>
+          )}
+        </Tab>
+        <Tab eventKey="map" title={<span>{advisoryMap}Map View</span>}>
+          <Container className="advisory-map-container">
+            <div id="map" className="advisory-map"></div>
+          </Container>
+        </Tab>
+      </Tabs>
 
-      {advisory && (
-        <Container>
-          <p>{parse(advisory.body)}</p>
-        </Container>
-      )}
-
-      <Footer />
+      { (activeTab === 'details') &&
+        <Footer />
+      }
     </div>
   );
 }

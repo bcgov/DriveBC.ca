@@ -12,8 +12,7 @@ class TestBulletinAPI(APITestCase, BaseTest):
         super().setUp()
         bulletin = Bulletin.objects.create(
             title="Bulletin title",
-            description="Bulletin description",
-            active=True,
+            body="Bulletin body",
             path="000100010001",
             depth=3,
             content_type=ContentType.objects.get(app_label='cms',
@@ -23,8 +22,7 @@ class TestBulletinAPI(APITestCase, BaseTest):
 
         bulletin_2 = Bulletin.objects.create(
             title="Bulletin title 2",
-            description="Bulletin description 2",
-            active=True,
+            body="Bulletin body 2",
             path="000100010002",
             depth=3,
             content_type=ContentType.objects.get(app_label='cms',

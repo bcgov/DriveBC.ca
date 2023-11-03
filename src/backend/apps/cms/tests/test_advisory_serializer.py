@@ -10,30 +10,28 @@ class TestAdvisorySerializer(BaseTest):
 
         self.advisory = Advisory(
             title="Advisory title 1",
-            active=True,
-            description="Advisory description 1",   
-            geometry=LineString([(-123.569743, 48.561231), 
+            body="Advisory body 1",
+            geometry=LineString([(-123.569743, 48.561231),
                                  (-123.569743, 48.561231)]),
             path="000100010001",
             depth=3,
         )
         self.advisory.save()
         self.serializer = AdvisorySerializer(self.advisory)
-        
+
     def test_serializer_valid_data(self):
         # Check if the serializer data matches the expected data
         assert self.serializer.data["title"] == \
             'Advisory title 1'
-        assert self.serializer.data["active"], "The value is not True"
-        assert self.serializer.data["description"] == \
-            'Advisory description 1'
+        assert self.serializer.data["body"] == \
+            'Advisory body 1'
         assert self.serializer.data["geometry"] is not None
 
     def test_serializer_invalid_data(self):
         # Create a serializer with invalid data
         invalid_data = {
             'title': '',  # advisory title is required, invalid data
-            'description': 'Advisory description 1',
+            'body': 'Advisory body 1',
         }
         self.serializer = AdvisorySerializer(data=invalid_data)
 
@@ -42,9 +40,8 @@ class TestAdvisorySerializer(BaseTest):
         valid_data = {
             'id': 3,
             'title': 'Advisory title 1',
-            'active': True,
-            'description': 'Advisory description 1',
-            'geometry': LineString([(-123.569743, 48.561231), 
+            'body': 'Advisory body 1',
+            'geometry': LineString([(-123.569743, 48.561231),
                                     (-123.569743, 48.561231)]),
             'content_type': 55,
             'depth': 1,

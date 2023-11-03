@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react';
 // Third party packages
 import Container from 'react-bootstrap/Container';
 
+// Styling
+import './BulletinsListPage.scss';
+
 // Components and functions
 import { getBulletins } from '../Components/data/bulletins.js';
 import BulletinsList from '../Components/bulletins/BulletinsList';
@@ -27,7 +30,7 @@ export default function BulletinsListPage() {
     <div className='bulletins-page'>
       <PageHeader
         title='Bulletins'
-        description='Get the latest critical travel status information during major events affecting travel on a highway or region.'>
+        description='Find information regarding seasonal safety campaigns, and DriveBC related updates.'>
       </PageHeader>
       <Container>
         <BulletinsList bulletins={bulletins} />
