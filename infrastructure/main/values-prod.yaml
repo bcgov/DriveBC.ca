@@ -1,8 +1,4 @@
 # See https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values
-global:
-  licensePlate: c59ecc
-  namespace: prod
-
 nameOverride: prod-drivebc
 fullnameOverride: prod-drivebc
 
@@ -11,7 +7,7 @@ django:
   fullnameOverride: prod-django
   namespace: c59ecc-prod #The namespace you are running the application on. This is used to pull from the ImageStream
   deployment:
-    replicas: 1
+    replicas: 2
     resources:
       requests:
         cpu: 50m
@@ -27,7 +23,8 @@ django:
     host: prod-drivebc.apps.silver.devops.gov.bc.ca
     backendpath: /backend/ #must be surrounded by /
     apipath: /api/ #must be surrounded by /
-    govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
+    iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist below
+    ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
   pvc:
     port: 3000
     storage: 1Gi
@@ -66,7 +63,8 @@ image-caching:
         memory: 128Mi
   route:
     host: prod-drivebc.apps.silver.devops.gov.bc.ca
-    govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
+    iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist below
+    ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
     webcamPath: /webcam/
     replayTheDayPath: /ReplayTheDay/
 
@@ -101,4 +99,5 @@ static:
 
   route:
     host: prod-drivebc.apps.silver.devops.gov.bc.ca
-    govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
+    iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist below
+    ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP

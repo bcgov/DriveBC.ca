@@ -3,9 +3,9 @@ kind: Route
 metadata:
   name: {{ template "app.fullname" . }}-webcam
   labels: {{ include "app.labels" . | nindent 4 }}
-{{ if .Values.route.govonly }}
+{{ if .Values.route.iprestricted }}
   annotations:
-    haproxy.router.openshift.io/ip_whitelist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.route.ipallowlist  }}
 {{ end }}
 spec:
   to:
@@ -27,9 +27,9 @@ kind: Route
 metadata:
   name: {{ template "app.fullname" . }}-replaytheday
   labels: {{ include "app.labels" . | nindent 4 }}
-{{ if .Values.route.govonly }}
+{{ if .Values.route.iprestricted }}
   annotations:
-    haproxy.router.openshift.io/ip_whitelist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.route.ipallowlist  }}
 {{ end }}
 spec:
   to:

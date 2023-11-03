@@ -1,9 +1,9 @@
-fullnameOverride: dev-tasks
-namespace: c59ecc-tools #enter the full namespace here to the deployment has the correct imagestream
+fullnameOverride: tasks
+namespace:  #enter the full namespace here to the deployment has the correct imagestream
 
 
 deployment:
-  djangoImageName: dev-django #by default use the image from the ImageStream
+  djangoImageName:  #by default use the image from the ImageStream
   replicas: 1
   resources:
     requests:

@@ -15,5 +15,5 @@ deployment:
 
 route:
   host: drivebc.apps.silver.devops.gov.bc.ca
-  path: #must be surrounded by /
-  govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
+  iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist below
+  ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
