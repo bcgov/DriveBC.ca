@@ -1,7 +1,7 @@
 import React from 'react';
 import './Footer.scss';
 import Container from 'react-bootstrap/Container';
-import logo from './images/BCID_H_rgb_pos.png';
+import logo from './images/dbc-logo.svg';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
   faArrowUpRightFromSquare,
@@ -9,7 +9,7 @@ import {
 import {
   faXTwitter,
   faInstagram,
-  faLinkedinIn,
+  faLinkedin,
 } from '@fortawesome/free-brands-svg-icons';
 
 
@@ -32,30 +32,30 @@ export default function Footer() {
             <ul className="link-list">
               <li>Website feedback</li>
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" className="footer-link" target="_self">Disclaimer
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} alt="ascending order" /></a>
+                <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" className="footer-link" target="_self"  alt="Disclaimer" >Disclaimer
+                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a>
               </li>
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/home/privacy" className="footer-link" target="_self">Privacy
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} alt="ascending order" /></a>
+                <a href="https://www2.gov.bc.ca/gov/content/home/privacy" className="footer-link" target="_self"  alt="Privacy" >Privacy
+                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a>
               </li>
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/governments/about-the-bc-government/accessibility" className="footer-link" target="_self">Accessibility
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} alt="Acccessibility" /></a>
+                <a href="https://www2.gov.bc.ca/gov/content/governments/about-the-bc-government/accessibility" className="footer-link" target="_self"  alt="Acccessibility" >Accessibility
+                  <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></a>
               </li>
             </ul>
           </div>
         </div>
         <div className='bottom'>
           <div className="connect">
-            <a href="https://twitter.com/DriveBC" className="footer-link" target="_blank" rel="noreferrer">
-              <FontAwesomeIcon icon={faXTwitter} alt="Twitter" />
+            <a href="https://twitter.com/DriveBC" className="footer-link" target="_blank" rel="noreferrer"  alt="Twitter" aria-hidden="true" aria-label="Twitter">
+              <FontAwesomeIcon icon={faXTwitter} />
             </a>
-            <a href="https://www.instagram.com/ministryoftranbc/" className="footer-link" target="_blank" rel="noreferrer">
-              <FontAwesomeIcon icon={faInstagram} alt="Instagram" />
+            <a href="https://www.instagram.com/ministryoftranbc/" className="footer-link" target="_blank" rel="noreferrer"  alt="Instagram" aria-hidden="true" aria-label="Instagram">
+              <FontAwesomeIcon icon={faInstagram}/>
             </a>
-            <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-infrastructure/" className="footer-link" target="_blank" rel="noreferrer">
-              <FontAwesomeIcon icon={faLinkedinIn} alt="Linkedin" />
+            <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-infrastructure/" className="footer-link" target="_blank" rel="noreferrer" alt="Linkedin" aria-hidden="true" aria-label="Linkedin">
+              <FontAwesomeIcon icon={faLinkedin}/>
             </a>
           </div>
           <div className="copyright">© 2023 Government of British Columbia</div>

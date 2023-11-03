@@ -187,6 +187,13 @@ export default function EventsPage() {
 
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
+  // Workaround for DBC22-1090
+  // https://github.com/TanStack/table/issues/3740
+  const dupeLastRow = (arr) => {
+    const cpy = [...arr, arr[arr.length-1]];
+    return cpy;
+  }
+
   return (
     <div className="events-page">
       <PageHeader
@@ -224,8 +231,11 @@ export default function EventsPage() {
             hasMore={displayedEvents.length < processedEvents.length}
             loader={<h4>Loading...</h4>}>
 
-            {largeScreen ?
-              <EventsTable columns={columns} data={displayedEvents} sortingHandler={setSortingColumns} routeHandler={handleRoute} /> :
+            { largeScreen && displayedEvents.length > 0 &&
+              <EventsTable columns={columns} data={dupeLastRow(displayedEvents)} sortingHandler={setSortingColumns} routeHandler={handleRoute} />
+            }
+
+            { !largeScreen &&
               <div className="events-list">
                 { displayedEvents.map(
                   (e) => (

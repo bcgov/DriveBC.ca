@@ -84,7 +84,18 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
           return (
             <tr className={row.original.severity.toLowerCase()} onClick={() => routeHandler(row.original)} key={row.id}>
               {row.getVisibleCells().map((cell) => {
-                return <td className={cell.column.id} key={cell.id}>
+                return <td
+                className={cell.column.id}
+                key={cell.id}
+                title={
+                  cell.column.id === "event_type"
+                    ? cell.row.original.event_type.charAt(0) + cell.row.original.event_type.slice(1).toLowerCase() + " - " 
+                    + cell.row.original.severity.charAt(0) + cell.row.original.severity.slice(1).toLowerCase() + " delay"
+                    : cell.column.id === "map"
+                    ? "View on map"
+                    : ""
+                }
+                >
                   {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext(),

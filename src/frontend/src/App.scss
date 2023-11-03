@@ -3,48 +3,6 @@
 @import "styles/typography";
 @import "~react-image-gallery/styles/scss/image-gallery.scss";
 
-.demo-group {
-  padding-bottom: 60px;
-  max-width: 900px;
-
-  & > div {
-    margin-bottom: 40px;
-  }
-
-  &--button {
-    button + button {
-      margin-left: 20px;
-    }
-
-    &--dark {
-      background-color: $BC-Blue;
-      height: 120px;
-      width: 800px;
-      padding: 40px;
-      text-align: center;
-
-      .btn-outline-primary {
-        color: white;
-        border-color: white;
-        background-color: none;
-
-        &:hover {
-          color: $BC-Blue;
-          background-color: white;
-          border-color: white;
-        }
-      }
-    }
-  }
-
-  &--card .cards {
-    display: flex;
-    .card + .card {
-    margin-left: 40px;
-    }
-  }
-}
-
 //Global styling
 body {
   margin-top: 58px;
@@ -54,4 +12,82 @@ body {
   padding-bottom: 2em;
   margin-bottom: 1.5em;
   border-bottom: 1px solid $Divider;
+}
+
+//Wagtail CMS content
+.cms-page {
+  .container {
+    max-width: 740px;
+  }
+
+  .page-header {
+    .timestamp-container, .friendly-time-text{
+      color: $Type-Link;
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+    
+    .timestamp-container {
+      display: flex;
+      .friendly-time, .formatted-date {
+        margin-left: 1ch;
+      }
+    }
+  }
+
+  .cms-body {
+    .responsive-object {
+      position: relative;
+    }
+
+    .responsive-object iframe,
+    .responsive-object object,
+    .responsive-object embed {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      margin: 12px 0;
+
+      &.full-width {
+        width: 100%;
+        height: auto;
+      }
+
+      &.left {
+        display: flex;
+        margin-right: auto;
+      }
+
+      &.right {
+        display: flex;
+        margin-left: auto;
+      }
+    }
+
+    padding-top: 0;
+
+    p, ol, ul {
+      margin-bottom: 0.25rem;
+    }
+
+    p:empty {
+      height: 24px;
+      margin-bottom: 0;
+    }
+
+    ol, ul {
+      padding-right: 1.5rem;
+      
+      li {
+        margin-bottom: 0.25rem;
+      }
+    }
+  }
 }

@@ -71,6 +71,33 @@ $danger: $Error;
   }
 
   @media (min-width: 1200px) {
-    padding: 32px 0;
+    padding: 44px 0;
+  }
+}
+
+// Tabs
+.nav-tabs {
+  border: none;
+
+  .nav-item {
+    .nav-link {
+      color: $Type-Primary;
+      border: none;
+      border-radius: 0;
+      font-size: 0.875em;
+
+      svg, img {
+        margin-right: 8px;
+      }
+
+      &.active {
+        border-bottom: 2px solid $BC-Blue;
+      }
+
+      &:hover {
+        background-color: $Grey30;
+        border-bottom: 2px solid $BC-Blue;
+      }
+    }
   }
 }
