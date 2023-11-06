@@ -1,0 +1,112 @@
+@import "../styles/variables.scss";
+
+.bulletins-page {
+  ul.bulletins-list {
+    list-style-type: none;
+    padding-left: 0;
+
+    li.bulletin-li {
+      border-bottom: 1px solid $Divider;
+      padding-bottom: 20px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+
+      @media (min-width: 992px) {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 120px;
+      }
+
+      & + li.bulletin-li {
+        margin-top: 24px;
+      }
+
+      .timestamp-container, .friendly-time-text {
+        color: $Type-Secondary;
+        font-weight: 400;
+      }
+
+      .bulletin-li-title, .bulletin-li-state, .friendly-time-text{
+        font-weight: 400;
+      }
+
+      .bulletin-li-state, .friendly-time-text{
+        font-size: 0.875rem;
+      }
+
+      .bulletin-li-title {
+        margin-bottom: 8px;
+        color: $Type-Link;
+      }
+
+      .timestamp-container {
+        display: flex;
+        margin-top: 16px;
+
+        @media (min-width: 992px) {
+          margin-top: 24px;
+        }
+
+        .friendly-time, .formatted-date {
+          margin-left: 1ch;
+        }
+      }
+
+      &.unread {
+        .bulletin-li-title, .bulletin-li-state, .friendly-time-text{
+          font-weight: 700;
+        }
+
+        .timestamp-container, .friendly-time-text {
+          color: $Type-Link;
+        }
+
+        .timestamp-container:before {
+          content: '\2022';
+          font-size: 1.75rem;
+          line-height: 1rem;
+          margin-right: 0.5rem;
+          margin-top: 0.125rem;
+        }
+      }
+
+      .bulletin-li-title-container {
+        flex: 1;
+        order: 2;
+        @media (min-width: 992px) {
+          order: 1;
+        }
+      }
+
+      .bulletin-li-thumbnail-container {
+        width: 100%;
+        order: 1;
+        margin-bottom: 16px;
+
+        @media (min-width: 992px) {
+          width: 360px;
+          order: 2;
+          margin-bottom: 0;
+        }
+
+        .bulletin-li-thumbnail, .bulletin-li-thumbnail-default {
+          height: 200px;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          .thumbnail-logo {
+            max-width: 360px;
+            max-height: 200px;
+          }
+        }
+
+        .bulletin-li-thumbnail-default {
+          background-color: $BC-Blue;
+        }
+      }
+    }
+  }
+}

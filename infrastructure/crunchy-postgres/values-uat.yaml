@@ -7,7 +7,7 @@ postGISVersion: '3.3'
 
 instances:
   name: ha # high availability
-  replicas: 3
+  replicas: 2
   dataVolumeClaimSpec:
     storage: 2Gi
     storageClassName: netapp-block-standard
@@ -34,7 +34,7 @@ pgBackRest:
   repos:
     schedules:
       full: 0 8 * * *
-      incremental: 0,30 * * * * #set this to every 30 min to reduce chance of WAL log issues
+      incremental: 15,45 * * * * #set this to every 30 min to reduce chance of WAL log issues
     volume:
       accessModes: "ReadWriteOnce"
       storage: 2Gi

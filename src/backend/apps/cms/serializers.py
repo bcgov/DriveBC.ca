@@ -44,6 +44,12 @@ class AdvisorySerializer(CMSSerializer):
 
 
 class BulletinSerializer(CMSSerializer):
+    image_url = serializers.SerializerMethodField('get_image_url')
+
     class Meta:
         model = Bulletin
         fields = "__all__"
+
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image.file.url) if obj.image else ''

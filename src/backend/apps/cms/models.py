@@ -4,6 +4,7 @@ from django.contrib.gis.forms import OSMWidget
 from wagtail.admin.panels import FieldPanel
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
+from wagtail.images.models import Image
 from wagtail.models import Page
 from wagtail.templatetags import wagtailcore_tags
 
@@ -49,6 +50,7 @@ class Bulletin(Page, BaseModel):
     page_body = "Use this page for creating bulletins."
     teaser = models.CharField(max_length=250, blank=True)
     body = RichTextField(blank=True)
+    image = models.ForeignKey(Image, on_delete=models.CASCADE, blank=True, null=True)
 
     def rendered_body(self):
         return wagtailcore_tags.richtext(self.body)
@@ -64,6 +66,7 @@ class Bulletin(Page, BaseModel):
     content_panels = [
         FieldPanel("title"),
         FieldPanel("teaser"),
+        FieldPanel("image"),
         FieldPanel("body"),
     ]
     promote_panels = []

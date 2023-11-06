@@ -12,10 +12,10 @@ instances:
     storage: 2Gi
     storageClassName: netapp-block-standard
   requests:
-    cpu: 100m
+    cpu: 250m
     memory: 256Mi
   limits:
-    cpu: 250m
+    cpu: 500m
     memory: 512Mi
   replicaCertCopy:
     requests:
@@ -34,7 +34,7 @@ pgBackRest:
   repos:
     schedules:
       full: 0 8 * * *
-      incremental: 0,30 * * * * #set this to every 30 min to reduce chance of WAL log issues
+      incremental: 15,45 * * * * #set this to every 30 min to reduce chance of WAL log issues
     volume:
       accessModes: "ReadWriteOnce"
       storage: 2Gi

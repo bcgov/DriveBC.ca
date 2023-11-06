@@ -1,13 +1,17 @@
 @import "../styles/variables.scss";
 
 .bulletin-page {
-  .timestamp-container {
-    h4, .friendly-time {
-      display: inline-block;
+  .page-header {
+    .timestamp-container, .friendly-time-text {
+      color: $Type-Secondary;
     }
+
+    & + .container {
+      padding-top: 24px;
   
-    .friendly-time {
-      margin-left: 15px;
+      @media (min-width: 992px) {
+        padding-top: 48px;
+      }
     }
   }
 }

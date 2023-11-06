@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { updateMapState } from '../slices/mapSlice';
 
 // Third party packages
+import { lineString, bbox } from "@turf/turf";
 import Button from 'react-bootstrap/Button';
 
 // FA
@@ -101,10 +102,11 @@ export default function MapWrapper({
   }
 
   function fitMap() {
-    const routeExtent = transformExtent(selectedRoute.points.flat(),'EPSG:4326','EPSG:3857');
+    const routeBbox = bbox(lineString(selectedRoute.route));
+    const routeExtent = transformExtent(routeBbox,'EPSG:4326','EPSG:3857');
 
     if (mapView.current) {
-      mapView.current.fit(routeExtent);
+      mapView.current.fit(routeExtent, { duration: 1000 });
     }
   }
 
@@ -267,6 +269,7 @@ export default function MapWrapper({
         },
       },
     });
+
     const vectorLayer = new VectorTileLayer({
       source: new VectorTileSource({
         format: new MVT(),
@@ -282,16 +285,15 @@ export default function MapWrapper({
     };
 
     // Set map extent
-    const extent = [-143.23013896362576, 61.59132385849652, -109.97743701256154, 46.18015377362468];
+    const extent = [-143.23013896362576, 65.59132385849652, -109.97743701256154, 46.18015377362468];
     const transformedExtent = transformExtent(extent,'EPSG:4326','EPSG:3857');
 
     mapView.current = new View({
       projection: 'EPSG:3857',
       constrainResolution: true,
       center: camera ? handleCenter() : fromLonLat(pan),
-      zoom: zoom,
+      zoom: isPreview ? 12 : zoom,
       maxZoom: 15,
-      minZoom: 5,
       extent: transformedExtent
     });
 
@@ -338,6 +340,23 @@ export default function MapWrapper({
       dispatch(updateMapState({pan: toLonLat(mapView.current.getCenter()), zoom: mapView.current.getZoom()}))
     });
 
+    // Click states
+    const resetClickedStates = (clickedFeature) => {
+      if (clickedCamera.current && clickedFeature != clickedCamera.current) {
+        clickedCamera.current.setStyle(cameraStyles['static']);
+        clickedCamera.current = null;
+      }
+
+      if (clickedEvent.current && clickedFeature != clickedEvent.current) {
+        clickedEvent.current.setStyle(
+          getEventIcon(clickedEvent.current, 'static'),
+        );
+
+        setRelatedGeometry(clickedEvent.current, 'static');
+        clickedEvent.current = null;
+      }
+    }
+
     mapRef.current.on('click', async (e) => {
       setIconClicked(false);
 
@@ -359,20 +378,13 @@ export default function MapWrapper({
 
         } else {
           setIconClicked(true);
-          // reset previous clicked feature
-          if (clickedCamera.current) {
-            clickedCamera.current.setStyle(cameraStyles['static']);
 
-          } else if (clickedEvent.current) {
-            clickedEvent.current.setStyle(
-              getEventIcon(clickedEvent.current, 'static'),
-            );
-            setRelatedGeometry(clickedEvent.current, 'static');
-            clickedEvent.current = null;
-          }
+          const feature = camFeatures[0];
+
+          resetClickedStates(feature);
 
           // set new clicked camera feature
-          clickedCamera.current = camFeatures[0];
+          clickedCamera.current = feature;
           clickedCamera.current.setStyle(cameraStyles['active']);
           clickedCamera.current.setProperties({ clicked: true }, true);
 
@@ -392,18 +404,10 @@ export default function MapWrapper({
           const feature = eventFeatures[0];
 
           // reset previous clicked feature
-          if (clickedCamera.current) {
-            clickedCamera.current.setStyle(cameraStyles['static']);
-            clickedCamera.current = null;
-          } else if (clickedEvent.current) {
-            clickedEvent.current.setStyle(
-              getEventIcon(clickedEvent.current, 'static'),
-            );
-            setRelatedGeometry(clickedEvent.current, 'static');
-          }
+          resetClickedStates(feature);
 
           // set new clicked event feature
-          clickedEvent.current = eventFeatures[0];
+          clickedEvent.current = feature;
           clickedEvent.current.setStyle(
             getEventIcon(clickedEvent.current, 'active'),
           );
@@ -427,50 +431,69 @@ export default function MapWrapper({
       }
     });
 
-    mapRef.current.on('pointermove', e => {
-      if (layers.current && 'webcamsLayer' in layers.current) {
-        // check if it was a camera icon that was hovered on
-        layers.current['webcamsLayer']
-          .getFeatures(e.pixel)
-          .then(hoveredFeatures => {
-            if (hoveredFeatures[0]) {
-              hoveredCamera.current = hoveredFeatures[0];
-              if (!hoveredCamera.current.getProperties().clicked) {
-                hoveredCamera.current.setStyle(cameraStyles['hover']);
-              }
-            } else if (hoveredCamera.current) {
-              if (!hoveredCamera.current.getProperties().clicked) {
-                hoveredCamera.current.setStyle(cameraStyles['static']);
-              }
+    // Hover states
+    const resetHoveredStates = (hoveredFeature) => {
+      if (hoveredCamera.current && hoveredFeature != hoveredCamera.current) {
+        if (!hoveredCamera.current.getProperties().clicked) {
+          hoveredCamera.current.setStyle(cameraStyles['static']);
+        }
 
-              hoveredCamera.current = null;
-            }
-          });
+        hoveredCamera.current = null;
       }
 
-      if (layers.current && 'eventsLayer' in layers.current) {
-        // if it wasn't a camera icon, check if it was an event
-        layers.current['eventsLayer']
-          .getFeatures(e.pixel)
-          .then(hoveredFeatures => {
-            if (hoveredFeatures[0]) {
-              hoveredEvent.current = hoveredFeatures[0];
-              if (!hoveredEvent.current.getProperties().clicked) {
-                hoveredEvent.current.setStyle(
-                  getEventIcon(hoveredEvent.current, 'hover'),
-                );
-                setRelatedGeometry(hoveredEvent.current, 'hover');
-              }
-            } else if (hoveredEvent.current) {
-              if (!hoveredEvent.current.getProperties().clicked) {
-                hoveredEvent.current.setStyle(
-                  getEventIcon(hoveredEvent.current, 'static'),
-                );
-                setRelatedGeometry(hoveredEvent.current, 'static');
-              }
-              hoveredEvent.current = null;
-            }
-          });
+      if (hoveredEvent.current && hoveredFeature != hoveredEvent.current) {
+        if (!hoveredEvent.current.getProperties().clicked) {
+          hoveredEvent.current.setStyle(
+            getEventIcon(hoveredEvent.current, 'static'),
+          );
+          setRelatedGeometry(hoveredEvent.current, 'static');
+        }
+        hoveredEvent.current = null;
+      }
+    }
+
+    mapRef.current.on('pointermove', async (e) => {
+      let camHit = false;
+      if (layers.current && 'webcamsLayer' in layers.current) {
+        // check if it was a camera icon that was hovered on
+        const hoveredCameras = await layers.current['webcamsLayer'].getFeatures(e.pixel);
+        if (hoveredCameras.length) {
+          camHit = true;
+
+          const feature = hoveredCameras[0];
+
+          resetHoveredStates(feature);
+
+          hoveredCamera.current = feature;
+          if (!hoveredCamera.current.getProperties().clicked) {
+            hoveredCamera.current.setStyle(cameraStyles['hover']);
+          }
+        }
+      }
+
+      // if it wasn't a camera icon, check if it was an event
+      let eventHit = false;
+      if (layers.current && 'eventsLayer' in layers.current && !camHit) {
+        const hoveredEvents = await layers.current['eventsLayer'].getFeatures(e.pixel);
+        if (hoveredEvents.length) {
+          eventHit = true;
+
+          const feature = hoveredEvents[0];
+
+          resetHoveredStates(feature);
+
+          hoveredEvent.current = feature;
+          if (!hoveredEvent.current.getProperties().clicked) {
+            hoveredEvent.current.setStyle(
+              getEventIcon(hoveredEvent.current, 'hover'),
+            );
+            setRelatedGeometry(hoveredEvent.current, 'hover');
+          }
+        }
+      }
+
+      if (!camHit && !eventHit) {
+        resetHoveredStates(null);
       }
     });
   }, []);
@@ -667,14 +690,15 @@ export default function MapWrapper({
     <div className="map-container">
       <div ref={mapElement} className="map">
         <div className="zoom-btn">
-          <Button className="zoom-in" variant="primary" onClick={zoomIn}>
+          <Button className="zoom-in" variant="primary" onClick={zoomIn} aria-label="zoom in">
             <FontAwesomeIcon icon={faPlus} />
           </Button>
           <div className="zoom-divider" />
           <Button
             className="zoom-out"
             variant="primary"
-            onClick={zoomOut}>
+            onClick={zoomOut}
+            aria-label="zoom out">
             <FontAwesomeIcon icon={faMinus} />
           </Button>
         </div>
@@ -683,7 +707,8 @@ export default function MapWrapper({
           <Button
             className="map-btn my-location"
             variant="primary"
-            onClick={toggleMyLocation}>
+            onClick={toggleMyLocation}
+            aria-label="my location">
             <FontAwesomeIcon icon={faLocationCrosshairs} />
             My location
           </Button>

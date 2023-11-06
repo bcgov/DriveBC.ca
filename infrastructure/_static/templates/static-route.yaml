@@ -3,6 +3,10 @@ kind: Route
 metadata:
   name: {{ template "app.fullname" . }}-frontend
   labels: {{ include "app.labels" . | nindent 4 }}
+{{ if .Values.route.iprestricted }}
+  annotations:
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.route.ipallowlist  }}
+{{ end }}
 spec:
   host: {{ .Values.route.host  }} 
   to:

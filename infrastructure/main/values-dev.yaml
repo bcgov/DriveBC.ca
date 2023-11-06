@@ -24,7 +24,11 @@ django:
       djangoConfigMap: dev-drivebc-django #By default this should be correct for Dev
       djangoSecret: dev-drivebc-django #By default this should be correct for dev
   route:
-    host: dev-drivebc-backend.apps.silver.devops.gov.bc.ca
+    host: dev-drivebc.apps.silver.devops.gov.bc.ca
+    backendpath: /backend/ #must be surrounded by /
+    apipath: /api/ #must be surrounded by /
+    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist below
+    ipallowlist: 
   pvc:
     port: 3000
     storage: 1Gi
@@ -62,7 +66,11 @@ image-caching:
         cpu: 150m
         memory: 128Mi
   route:
-    host: dev-drivebc-image-caching.apps.silver.devops.gov.bc.ca
+    host: dev-drivebc.apps.silver.devops.gov.bc.ca
+    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist below
+    ipallowlist: 
+    webcamPath: /webcam/
+    replayTheDayPath: /ReplayTheDay/
 
 
 redis:
@@ -93,4 +101,6 @@ static:
         memory: 128Mi
 
   route:
-    host: dev-drivebc-frontend.apps.silver.devops.gov.bc.ca
+    host: dev-drivebc.apps.silver.devops.gov.bc.ca
+    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist below
+    ipallowlist: 

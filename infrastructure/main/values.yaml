@@ -24,7 +24,10 @@ django:
       djangoConfigMap: drivebc-django #By default this should be correct for Dev
       djangoSecret: drivebc-django #By default this should be correct for dev
   route:
-    host: drivebc-backend.apps.silver.devops.gov.bc.ca
+    host: drivebc.apps.silver.devops.gov.bc.ca
+    backendpath: /backend/ #must be surrounded by /
+    apipath: /api/ #must be surrounded by /
+    govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
   pvc:
     port: 3000
     storage: 1Gi
@@ -62,8 +65,10 @@ image-caching:
         cpu: 150m
         memory: 128Mi
   route:
-    host: drivebc-image-caching.apps.silver.devops.gov.bc.ca
-
+    host: drivebc.apps.silver.devops.gov.bc.ca
+    govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
+    webcamPath: /webcam/
+    replayTheDayPath: /ReplayTheDay/
 
 redis:
   fullnameOverride: redis
@@ -93,4 +98,5 @@ static:
         memory: 128Mi
 
   route:
-    host: drivebc-frontend.apps.silver.devops.gov.bc.ca
+    host: drivebc.apps.silver.devops.gov.bc.ca
+    govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
