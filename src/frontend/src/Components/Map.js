@@ -137,7 +137,7 @@ export default function MapWrapper({
     // Create an overlay for the marker
     locationPinRef.current = new Overlay({
       position: fromLonLat(coordinates),
-      positioning: 'bottom-center',
+      positioning: 'center-center',
       element: svgImage,
       stopEvent: false, // Allow interactions with the overlay content
     });
@@ -179,7 +179,7 @@ export default function MapWrapper({
     // Create an overlay for the marker
     const markerOverlay = new Overlay({
       position: fromLonLat(coordinates),
-      positioning: 'bottom-center',
+      positioning: 'center-center',
       element: svgImage,
       stopEvent: false, // Allow interactions with the overlay content
     });
