@@ -25,8 +25,6 @@ django:
       djangoSecret: dev-drivebc-django #By default this should be correct for dev
   route:
     host: dev-drivebc.apps.silver.devops.gov.bc.ca
-    backendpath: /backend/ #must be surrounded by /
-    apipath: /api/ #must be surrounded by /
     iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist below
     ipallowlist: 
   pvc:

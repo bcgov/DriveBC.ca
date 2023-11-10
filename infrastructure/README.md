@@ -22,13 +22,15 @@ Follow these steps to setup a brand new environment.
 1. Select the project you would like to deploy to using `oc project NAMESPACE`
 1. `helm install ENV-drivebc-init -f .\init\values-ENV.yaml .\init`
     1. NOTE: Do not install this again as it will overwrite all values. May need to find a better way to handle this in the future.
-1. Set the values in th `dev-drivebc-django` ConfigMap and Secret (In the future `dev-drivebc-static` ConfigMap and Secret too)
+1. Set the values in the `ENV-drivebc-django` ConfigMap and Secret (In the future `ENV-drivebc-static` ConfigMap and Secret too)
 1. `helm install ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres`
 1. `helm install ENV-drivebc -f .\main\values-ENV.yaml .\main`
 1. Now that all components are installed you need to go to GitHub actions and run `Build & Deploy Image Caching Image` & `Deploy main to dev` and then all the pods should start-up. If any issues confirm the configmaps are updated.
 1. If you want to quickly get the cameras and events on a fresh db, run  `python manage.py populate_webcams` and `python manage.py populate_events` in the terminal of the tasks pod
 
 ### Upgrades
+
+If you made changes to any of the values in the helm charts you should update the dependencies and then (see below) and then instead of doing a `helm install` do a `helm upgrade`
 
 ## Other
 
