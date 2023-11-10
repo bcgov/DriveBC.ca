@@ -6,6 +6,25 @@ import ReactDOMServer from 'react-dom/server';
 import FriendlyTime from '../FriendlyTime';
 import EventTypeIcon from '../EventTypeIcon';
 
+function convertDirection(direction) {
+  switch (direction) {
+      case "N":
+          return "Northbound";
+      case "W":
+          return "Westbound";
+      case "E":
+          return "Eastbound";
+      case "S":
+          return "Southbound";
+      case "BOTH":
+          return "Both Directions";
+      case "NONE":
+          return "";
+      default:
+          return "";
+  }
+}
+
 export function getCamPopup(feature) {
   return `
     <div class="popup popup--camera">
@@ -41,7 +60,7 @@ export function getEventPopup(feature) {
     <div class="popup popup--delay ${severity}">
       <div class="popup__title">
         <p class="bold name">${feature.get('route_display')}</p>
-        <p class="bold orientation">${feature.get('direction')}</p>
+        <p class="bold orientation">${convertDirection(feature.get('direction'))}</p>
       </div>
 
       <div class="popup__description">
