@@ -18,10 +18,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Paths and urls
 APPEND_SLASH = True
 ROOT_URLCONF = "config.urls"
-STATIC_URL = "/static/"
+STATIC_URL = "/django-static/"
 STATIC_ROOT = os.path.join(SRC_DIR, 'static')
+MEDIA_URL = '/django-media/'
 MEDIA_ROOT = os.path.join(SRC_DIR, 'media')
-MEDIA_URL = '/media/'
 
 # Security
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
