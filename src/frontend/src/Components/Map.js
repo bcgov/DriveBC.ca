@@ -267,6 +267,7 @@ export default function MapWrapper({
         animation: {
           duration: 250,
         },
+      margin: 90,
       },
     });
 
