@@ -27,7 +27,7 @@ export default function Advisories(props) {
         return (
           <li className="advisory-li unread" key={advisory.id} onClick={() => handleClick(advisory)}>
             <div className="advisory-li-title-container">
-              <h3 className='advisory-li-title'>{advisory.title}</h3>
+              <h4 className='advisory-li-title'>{advisory.title}</h4>
               <div className="timestamp-container">
                 <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
                 <FriendlyTime date={advisory.latest_revision_created_at} />

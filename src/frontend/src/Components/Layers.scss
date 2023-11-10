@@ -2,10 +2,6 @@
   position: absolute;
   top: 2rem;
   right: 2rem;
-
-  @media screen and (max-width: 729px) {
-    right: 1rem;
-  }
 }
 
 button.open-layers {
@@ -24,6 +20,7 @@ button.open-layers {
   text-align: left;
   padding: 1rem;
   border-radius: 4px;
+  z-index: 2;
 
   button.close-layers {
     position: absolute;

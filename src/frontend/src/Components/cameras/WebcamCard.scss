@@ -66,7 +66,7 @@
         top: -12px;
 
         p, svg {
-          font-size: 0.6875em;
+          font-size: 0.6875rem;
         }
 
         svg {
@@ -87,7 +87,7 @@
         transform:translateY(-200%);
 
         p, svg {
-          font-size: 0.625em;
+          font-size: 0.625rem;
         }
 
         svg {
@@ -109,7 +109,7 @@
 
       p {
         color: $White;
-        font-size: 0.625em;
+        font-size: 0.625rem;
         margin-bottom: 0;
       }
       
@@ -132,7 +132,7 @@
     border-color: $Grey10;
     color: $BC-Blue;
     transition: all 0.3s ease;
-    font-size: 0.875em;
+    font-size: 0.875rem;
     padding: 12px;
 
     &:hover {
@@ -187,12 +187,12 @@
       }
 
       svg {
-        font-size: 1em;
+        font-size: 1rem;
       }
 
       p {
         margin-bottom: 0;
-        font-size: 0.875em;
+        font-size: 0.875rem;
       }
     }
   }
