@@ -1,10 +1,10 @@
 // React
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
 
 // Third party packages
-import FriendlyTime from '../FriendlyTime';
+import Button from 'react-bootstrap/Button';
 import EventTypeIcon from '../EventTypeIcon';
+import FriendlyTime from '../FriendlyTime';
 
 function convertDirection(direction) {
   switch (direction) {
@@ -25,73 +25,85 @@ function convertDirection(direction) {
   }
 }
 
-export function getCamPopup(feature) {
-  return `
-    <div class="popup popup--camera">
-      <div class="popup__title">
-        <p class="bold name">${feature.name}
-        <p class="bold orientation">${feature.orientation}</p>
+function renderCamGroup(camFeature, setClickedCamera) {
+  const rootCamData = camFeature.getProperties();
+
+  const clickHandler = (i) => {
+    camFeature.setProperties({ groupIndex: i });
+    setClickedCamera(camFeature);  // Trigger re-render
+  }
+
+  const res = Object.entries(rootCamData.camGroup).map(([index, cam]) => {
+    return (
+      <Button key={cam.id} onClick={() => clickHandler(index)}>{cam.orientation}</Button>
+    );
+  });
+
+  return res;
+}
+
+export function getCamPopup(camFeature, setClickedCamera) {
+  const rootCamData = camFeature.getProperties();
+
+  const camData = !rootCamData.groupIndex ? rootCamData : rootCamData.camGroup[rootCamData.groupIndex];
+  return (
+    <div className="popup popup--camera">
+      <div className="popup__title">
+        <p className="bold name">{camData.name}</p>
+        <p className="bold orientation">{camData.orientation}</p>
       </div>
 
-      <div class="popup__description">
-        <p>${feature.caption}</p>
-        <div class="camera-image">
-          <img src="${feature.links.imageSource}" width='300'>
+      <div className="popup__description">
+        <p>{camData.caption}</p>
+        <div className="camera-image">
+          <img src={camData.links.imageSource} width='300' />
 
-          <div class="timestamp">
-            <p class="driveBC">Drive<span>BC</span></p>
-            ` +
-              ReactDOMServer.renderToString(
-                <FriendlyTime date={feature.last_update_modified} />,
-              ) +
-            `
+          <div className="timestamp">
+            <p className="driveBC">Drive<span>BC</span></p>
+            <FriendlyTime date={camData.last_update_modified} />
           </div>
         </div>
       </div>
+
+      {renderCamGroup(camFeature, setClickedCamera)}
     </div>
-  `;
+  );
 }
 
 export function getEventPopup(feature) {
   const severity = feature.get('severity').toLowerCase();
   const eventType = feature.get('event_type').toLowerCase();
 
-  return `
-    <div class="popup popup--delay ${severity}">
-      <div class="popup__title">
-        <p class="bold name">${feature.get('route_display')}</p>
-        <p class="bold orientation">${convertDirection(feature.get('direction'))}</p>
+  return (
+    <div className="popup popup--delay ${severity}">
+      <div className="popup__title">
+        <p className="bold name">${feature.get('route_display')}</p>
+        <p className="bold orientation">${convertDirection(feature.get('direction'))}</p>
       </div>
 
-      <div class="popup__description">
-        <div class="delay-type">
-          <div class="bold delay-severity">
-            <div class="delay-icon">
-              ` + ReactDOMServer.renderToString(
-                <EventTypeIcon eventType={eventType} />,
-              ) + `
+      <div className="popup__description">
+        <div className="delay-type">
+          <div className="bold delay-severity">
+            <div className="delay-icon">
+              <EventTypeIcon eventType={eventType} />
             </div>
 
-            <p class="bold">${severity} delays</p>
+            <p className="bold">${severity} delays</p>
           </div>
 
-          <p class="bold friendly-time--mobile">
-            ` + ReactDOMServer.renderToString(
-              <FriendlyTime date={feature.get('last_updated')} />,
-            ) + `
+          <p className="bold friendly-time--mobile">
+            <FriendlyTime date={feature.get('last_updated')} />
           </p>
         </div>
 
-        <div class="delay-details">
-          <p class="bold friendly-time-desktop">
-            ` + ReactDOMServer.renderToString(
-              <FriendlyTime date={feature.get('last_updated')} />,
-            ) + `
+        <div className="delay-details">
+          <p className="bold friendly-time-desktop">
+            <FriendlyTime date={feature.get('last_updated')} />
           </p>
 
           <p>${feature.get('description')}</p>
         </div>
       </div>
     </div>
-  `;
+  );
 }
