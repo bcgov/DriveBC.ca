@@ -8,7 +8,7 @@ import Footer from '../Footer.js';
 
 export default function CameraPage() {
   return (
-    <div className="camera-page">
+    <div className="cameras-page">
       <PageHeader
         title="Cameras"
         description="Search by camera name to filter results or scroll to view all cameras sorted by highway.">
