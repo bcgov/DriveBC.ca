@@ -175,6 +175,7 @@ export default function MapWrapper({
     const svgImage = new Image();
     svgImage.src =
       'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgMarkup);
+    svgImage.alt = 'my location pin';
 
     // Create an overlay for the marker
     const markerOverlay = new Overlay({
