@@ -31,10 +31,12 @@
   .map {
     position: absolute;
     width: 100%;
-    height: calc(100vh - 50px);
+    // height: calc(100vh - 50px);
+    top: 0;
+    bottom: 0;
 
     @media (min-width: 992px) {
-      height: calc(100vh - 58px);
+      // height: calc(100vh - 58px);
     }
 
     .ol-overlay-container:not(:has(> img)) {
