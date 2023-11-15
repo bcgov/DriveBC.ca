@@ -92,3 +92,218 @@ body {
     }
   }
 }
+
+// Openlayers Popup styles
+.ol-popup {
+  width: 100vw;
+  height: 100%;
+  background-color: $White;
+  box-shadow: 0px 1.600000023841858px 3.5999999046325684px 0px rgba(0, 0, 0, 0.13), 0px 0.30000001192092896px 0.8999999761581421px 0px rgba(0, 0, 0, 0.10);
+  border-radius: 4px;
+  cursor: pointer;
+
+   @media (min-width: 576px) {
+     width: 560px;
+     height: auto;
+     position: absolute;
+     top: 12px;
+     left: 50%;
+     transform: translate(-50%, 0);
+     margin-bottom: 200px;
+   }
+
+  &-content {
+    p {
+      margin-bottom: 0;
+    }
+
+    .popup {
+      font-size: 0.875rem;
+
+      &__title, &__description {
+        padding: 8px 44px 8px 16px;
+      }
+
+      &__title {
+        background-color: $BC-Blue-Light;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        
+        .name {
+          color: $HwyCrest;
+        }
+
+        .orientation {
+          color: $Type-status-grey;
+        }
+      }
+
+      &__description {
+        background-color: $White;
+        display: flex;
+        gap: 24px;
+        padding: 16px 16px 24px;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+
+        @media (max-width: 575px) {
+          flex-direction: column;
+          gap: 16px;
+        }
+      }
+
+      &--camera {
+        .popup__description {
+          p {
+            @media (max-width: 575px) {
+              order: 2;
+            }
+          }
+          .camera-image {
+            @media (max-width: 575px) {
+              order: 1;
+            }
+
+            img {
+              @media (max-width: 575px) {
+                width: 100%;
+              }
+            }
+
+            .timestamp {
+              background-color: $Black;
+              padding: 0 10px;
+              display: flex;
+              color: $White;
+              font-size: 0.714rem;
+
+              p {
+                color: $White;
+                margin-bottom: 0;
+              }
+
+              .driveBC {
+                font-family: serif;
+                span {
+                  color: $BC-Yellow;
+                }
+                margin-right: 10px;
+              }
+
+              .friendly-time, .formatted-date {
+                margin-left: auto;
+              }
+            }
+          }
+        }
+      }
+
+      &--delay {
+        .popup__description {
+          .delay-type {
+            display: flex;
+            justify-content: space-between;
+            flex-flow: wrap;
+
+            .delay-severity {
+              text-transform: capitalize;
+              white-space: nowrap;
+              display: flex;
+
+              .delay-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 20px;
+                height: 20px;
+                border-radius: 10px;
+                font-size: 0.6875rem;
+                margin-right: 8px;
+              }
+            }
+
+            .friendly-time--mobile {
+                display: none;
+              @media (max-width: 575px) {
+                display: flex;
+              }
+            }
+          }
+          .delay-details {
+            .label + .label {
+              margin-top: 8px;
+            }
+
+            .friendly-time-desktop {
+              display: flex;
+              @media (max-width: 575px) {
+                display: none;
+              }
+            }
+          }
+        }
+
+        &.minor {
+          .popup__title {
+            background-color: $Surface-tint-yellow;
+            .name {
+              color: $Type-status-yellow;
+            }
+          }
+          .popup__description {
+            .delay-severity {
+              color: $Type-status-yellow;
+
+              p {
+                color: $Type-status-yellow;
+              }
+
+              .delay-icon {
+                color: $Type-status-yellow;
+                background-color: $BC-Yellow;
+              }
+            }
+          }
+        }
+
+        &.major {
+          .popup__title {
+            background-color: $Surface-status-red;
+            .name {
+              color: $Type-status-red;
+            }
+          }
+          .popup__description {
+            .delay-severity {
+              color: $Type-status-red;
+
+              p {
+                color: $Type-status-red;
+              }
+
+              .delay-icon {
+                color: $White;
+                background-color: $Type-status-red;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .ol-popup-closer {
+    position: absolute;
+    top: 18px;
+    right: 16px;
+    cursor: pointer;
+    color: $Type-status-grey;
+    padding: 9px 10px;
+    border-radius: 15px;
+    font-size: 0.6875rem;
+
+    &:hover {
+      background-color: rgba(0,0, 0,0.1);
+    }
+  }
+}
