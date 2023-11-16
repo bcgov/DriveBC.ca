@@ -42,29 +42,32 @@ function renderCamGroup(camFeature, setClickedCamera) {
   return res;
 }
 
-export function getCamPopup(camFeature, setClickedCamera) {
+export function getCamPopup(camFeature, setClickedCamera, navigate) {
   const rootCamData = camFeature.getProperties();
 
   const camData = !rootCamData.groupIndex ? rootCamData : rootCamData.camGroup[rootCamData.groupIndex];
   return (
     <div className="popup popup--camera">
-      <div className="popup__title">
-        <p className="bold name">{camData.name}</p>
-        <p className="bold orientation">{camData.orientation}</p>
-      </div>
+      <div onClick={() => navigate(`/cameras/${camData.id}`)}>
+        <div className="popup__title">
+          <p className="bold name">{camData.name}</p>
+          <p className="bold orientation">{camData.orientation}</p>
+        </div>
 
-      <div className="popup__description">
-        <p>{camData.caption}</p>
-        <div className="camera-image">
-          <img src={camData.links.imageSource} width='300' />
+        <div className="popup__description">
+          <p>{camData.caption}</p>
+          <div className="camera-image">
+            <img src={camData.links.imageSource} width='300' />
 
-          <div className="timestamp">
-            <p className="driveBC">Drive<span>BC</span></p>
-            <FriendlyTime date={camData.last_update_modified} />
+            <div className="timestamp">
+              <p className="driveBC">Drive<span>BC</span></p>
+              <FriendlyTime date={camData.last_update_modified} />
+            </div>
           </div>
         </div>
       </div>
 
+      <hr/>
       {renderCamGroup(camFeature, setClickedCamera)}
     </div>
   );
