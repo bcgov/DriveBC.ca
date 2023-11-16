@@ -112,6 +112,15 @@ export default function MapWrapper({
     }
   }
 
+  function centerMapZoomOut(coordinates) {
+    if (mapView.current) {
+      mapView.current.animate({
+        center: fromLonLat(coordinates),
+        zoom: 0,
+      });
+    }
+  }
+
   function fitMap() {
     const routeBbox = bbox(lineString(selectedRoute.route));
     const routeExtent = transformExtent(routeBbox,'EPSG:4326','EPSG:3857');
@@ -498,6 +507,8 @@ export default function MapWrapper({
       if (!camHit && !eventHit) {
         resetHoveredStates(null);
       }
+
+      toggleMyLocation();
     });
   }, []);
 
@@ -648,6 +659,7 @@ export default function MapWrapper({
         },
         error => {
           console.error('Error getting user location:', error);
+          centerMapZoomOut([-126.5, 54.2]);
         },
       );
     }
