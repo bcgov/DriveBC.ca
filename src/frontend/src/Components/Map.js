@@ -24,7 +24,7 @@ import { getCamPopup, getEventPopup } from './map/mapPopup.js'
 import { getEvents } from './data/events.js';
 import { getEventsLayer } from './map/layers/eventsLayer.js';
 import { getEventIcon } from './map/helper.js';
-import { getWebcams } from './data/webcams.js';
+import { getWebcams, groupCameras } from './data/webcams.js';
 import { getRouteLayer } from './map/routeLayer.js';
 import { MapContext } from '../App.js';
 import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
@@ -529,19 +529,6 @@ export default function MapWrapper({
     }
   }, [selectedRoute]);
 
-  const groupCameras = (cameras) => {
-    const cameraMap = {};
-    cameras.forEach((camera) => {
-      if (!(camera.group in cameraMap)) {
-        cameraMap[camera.group] = [];
-      }
-
-      cameraMap[camera.group].push(camera);
-    })
-
-    return cameraMap;
-  }
-
   async function loadCameras(route) {
     const webcamResults = await getWebcams(route);
 
@@ -550,7 +537,7 @@ export default function MapWrapper({
     }
 
     layers.current['webcamsLayer'] = getCamerasLayer(
-      Object.values(groupCameras(webcamResults)),
+      groupCameras(webcamResults),
       mapRef.current.getView().getProjection().getCode(),
       mapContext
     )

@@ -1,5 +1,5 @@
 // React
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {useNavigate} from 'react-router-dom';
 
 // Third party packages
@@ -8,7 +8,6 @@ import {faMapMarkerAlt} from '@fortawesome/free-solid-svg-icons';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
 import {faCircleInfo} from '@fortawesome/free-solid-svg-icons';
 import {faVideoSlash} from '@fortawesome/free-solid-svg-icons';
-import {useEffect, useState} from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import FriendlyTime from '../FriendlyTime';
@@ -16,11 +15,19 @@ import FriendlyTime from '../FriendlyTime';
 // Styling
 import './WebcamCard.scss';
 
-export default function WebcamCard({camera}) {
+export default function WebcamCard(props) {
+  // Props
+  const { cameraData } = props;
+
+  // States
+  const [show, setShow] = useState(false);
+  const [camera, setCamera] = useState(cameraData);
+
   const stale = camera.marked_stale ? 'stale' : '';
   const delayed = camera.marked_delayed ? 'delayed' : '';
   const unavailable = camera.is_on ? '' : 'unavailable';
-  const [show, setShow] = useState(false);
+
+  // Misc
   const navigate = useNavigate();
 
   function handleClick() {
@@ -110,6 +117,12 @@ export default function WebcamCard({camera}) {
         <p className="label">{camera.caption}</p>
       </Card.Body>
       <Button variant="primary" className="viewmap-btn">View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
+
+      <div>
+        {camera.camGroup.map((cam) =>
+          <Button key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
+        )}
+      </div>
     </Card>
   );
 }
