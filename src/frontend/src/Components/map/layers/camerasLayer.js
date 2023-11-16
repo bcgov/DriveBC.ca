@@ -11,7 +11,7 @@ import VectorSource from 'ol/source/Vector';
 // Styling
 import { cameraStyles } from '../../data/eventStyleDefinitions.js';
 
-export function getCamerasLayer(cameraGroups, projectionCode, mapContext) {
+export function getCamerasLayer(cameras, projectionCode, mapContext) {
   return new VectorLayer({
     classname: 'webcams',
     visible: mapContext.visible_layers.webcamsLayer,
@@ -21,15 +21,10 @@ export function getCamerasLayer(cameraGroups, projectionCode, mapContext) {
         const vectorSource = this;
         vectorSource.clear();
 
-        cameraGroups.forEach(group => {
-          const camera = group[0];
-
+        cameras.forEach(camera => {
           // Build a new OpenLayers feature
           const olGeometry = new Point(camera.location.coordinates);
           const olFeature = new ol.Feature({ geometry: olGeometry });
-
-          // set camera group property
-          camera.camGroup = group;
 
           // Transfer properties
           olFeature.setProperties(camera);

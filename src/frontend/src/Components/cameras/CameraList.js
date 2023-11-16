@@ -6,7 +6,7 @@ import Container from 'react-bootstrap/Container';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
-import {getWebcams} from '../data/webcams';
+import { getWebcams, groupCameras } from '../data/webcams';
 import WebcamCard from './WebcamCard.js';
 import highwayShield from '../highwayShield.js';
 import Advisories from '../advisories/Advisories';
@@ -25,7 +25,9 @@ export default function CameraList() {
   // UseEffect hooks and data functions
   const getWebcamsData = async () => {
     const webcamResults = await getWebcams();
-    setWebcams(webcamResults);
+    const cameras = groupCameras(webcamResults);
+
+    setWebcams(cameras);
 
     isInitialMount.current = false;
   };
@@ -88,7 +90,7 @@ export default function CameraList() {
 
           <div className="webcam-group">
             {cameras.map((camera, id) => (
-              <WebcamCard camera={camera} className="webcam" key={id}>
+              <WebcamCard cameraData={camera} className="webcam" key={id}>
               </WebcamCard>
             ))}
           </div>
