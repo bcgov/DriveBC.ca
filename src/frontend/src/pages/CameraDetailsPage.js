@@ -68,7 +68,6 @@ export default function CameraDetailsPage() {
     const group = cameraGroupMap[camera.group];
     camera.camGroup = group;
     camera.camGroup.forEach((cam) => cam.camGroup = group);
-    console.log(camera);
 
     // Camera data
     setCamera(camera);

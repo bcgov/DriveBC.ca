@@ -82,7 +82,7 @@ export function getEventPopup(eventFeature) {
   return (
     <div className={`popup popup--delay ${severity}`}>
       <div className="popup__title">
-        <p className="bold name">{eventData.route_display}</p>
+        <p className="bold name">{`${eventData.route_at} - ${eventData.route_display}`}</p>
         <p style={{'white-space': 'pre-wrap'}} className="bold orientation">{convertDirection(eventData.direction)}</p>
       </div>
 
