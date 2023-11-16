@@ -34,7 +34,7 @@ export function getWebcamReplay(webcam) {
   return fetch(webcam.links.replayTheDay).then(response => response.json());
 }
 
-export function groupCameras(cameras) {
+export function getCameraGroupMap(cameras) {
   // Map cameras by group
   const cameraMap = {};
   cameras.forEach((camera) => {
@@ -44,6 +44,12 @@ export function groupCameras(cameras) {
 
     cameraMap[camera.group].push(camera);
   });
+
+  return cameraMap;
+}
+
+export function groupCameras(cameras) {
+  const cameraMap = getCameraGroupMap(cameras);
 
   // Output list with one camera from each group
   const res = [];

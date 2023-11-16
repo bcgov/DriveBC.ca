@@ -27,7 +27,7 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 
 // Components and functions
-import { getWebcams } from '../Components/data/webcams.js';
+import { getCameraGroupMap, getWebcams } from '../Components/data/webcams.js';
 import {DndProvider} from 'react-dnd-multi-backend';
 import {getWebcamReplay} from '../Components/data/webcams';
 import {HTML5toTouch} from 'rdndmb-html5-to-touch';
@@ -59,7 +59,17 @@ export default function CameraDetailsPage() {
   const nearby = <FontAwesomeIcon icon={faFlag} />;
 
   async function initCamera() {
+    const allCameras = await getWebcams();
+    const cameraGroupMap = getCameraGroupMap(allCameras);
+
     const camera = await getWebcams(null, `${process.env.REACT_APP_API_HOST}/api/webcams/${params.id}/`);
+
+    // Group cameras
+    const group = cameraGroupMap[camera.group];
+    camera.camGroup = group;
+    camera.camGroup.forEach((cam) => cam.camGroup = group);
+    console.log(camera);
+
     // Camera data
     setCamera(camera);
 
@@ -184,6 +194,12 @@ export default function CameraDetailsPage() {
       <div>
         {camera && (
           <div className="container--full-width">
+            <div>
+              {camera.camGroup.map((cam) =>
+                <Button key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
+              )}
+            </div>
+
             <div className="camera-details">
               <div className="camera-details__description">
                 <h2>{camera.name}</h2>
