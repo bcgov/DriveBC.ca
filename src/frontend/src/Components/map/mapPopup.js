@@ -19,9 +19,9 @@ function convertDirection(direction) {
       case "BOTH":
           return "Both Directions";
       case "NONE":
-          return "";
+          return " ";
       default:
-          return "";
+          return " ";
   }
 }
 
@@ -70,15 +70,17 @@ export function getCamPopup(camFeature, setClickedCamera) {
   );
 }
 
-export function getEventPopup(feature) {
-  const severity = feature.get('severity').toLowerCase();
-  const eventType = feature.get('event_type').toLowerCase();
+export function getEventPopup(eventFeature) {
+  const eventData = eventFeature.getProperties();
+
+  const severity = eventData.severity.toLowerCase();
+  const eventType = eventData.event_type.toLowerCase();
 
   return (
-    <div className="popup popup--delay ${severity}">
+    <div className={`popup popup--delay ${severity}`}>
       <div className="popup__title">
-        <p className="bold name">${feature.get('route_display')}</p>
-        <p className="bold orientation">${convertDirection(feature.get('direction'))}</p>
+        <p className="bold name">{eventData.route_display}</p>
+        <p style={{'white-space': 'pre-wrap'}} className="bold orientation">{convertDirection(eventData.direction)}</p>
       </div>
 
       <div className="popup__description">
@@ -88,20 +90,20 @@ export function getEventPopup(feature) {
               <EventTypeIcon eventType={eventType} />
             </div>
 
-            <p className="bold">${severity} delays</p>
+            <p className="bold">{severity} delays</p>
           </div>
 
           <p className="bold friendly-time--mobile">
-            <FriendlyTime date={feature.get('last_updated')} />
+            <FriendlyTime date={eventData.last_updated} />
           </p>
         </div>
 
         <div className="delay-details">
           <p className="bold friendly-time-desktop">
-            <FriendlyTime date={feature.get('last_updated')} />
+            <FriendlyTime date={eventData.last_updated} />
           </p>
 
-          <p>${feature.get('description')}</p>
+          <p>{eventData.description}</p>
         </div>
       </div>
     </div>

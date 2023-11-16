@@ -80,13 +80,25 @@ export default function MapWrapper({
   const geolocation = useRef(null);
   const hoveredCamera = useRef();
   const hoveredEvent = useRef();
-  const clickedEvent = useRef();
   const locationPinRef = useRef(null);
 
   // States
-  const [clickedCamera, setClickedCamera] = useState();
-  const [iconClicked, setIconClicked] = useState(false);
   const [layersOpen, setLayersOpen] = useState(false);
+
+  // Workaround for OL handlers not being able to read states
+  const [clickedCamera, setClickedCamera] = useState();
+  const clickedCameraRef = useRef();
+  const updateClickedCamera = (feature) => {
+    clickedCameraRef.current = feature;
+    setClickedCamera(feature);
+  }
+
+  const [clickedEvent, setClickedEvent] = useState();
+  const clickedEventRef = useRef();
+  const updateClickedEvent = (feature) => {
+    clickedEventRef.current = feature;
+    setClickedEvent(feature);
+  }
 
   function centerMap(coordinates) {
     if (mapView.current) {
@@ -338,24 +350,22 @@ export default function MapWrapper({
 
     // Click states
     const resetClickedStates = (clickedFeature) => {
-      if (clickedCamera && clickedFeature != clickedCamera) {
-        clickedCamera.setStyle(cameraStyles['static']);
-        setClickedCamera(null);
+      if (clickedCameraRef.current && clickedFeature != clickedCameraRef.current) {
+        clickedCameraRef.current.setStyle(cameraStyles['static']);
+        updateClickedCamera(null);
       }
 
-      if (clickedEvent.current && clickedFeature != clickedEvent.current) {
-        clickedEvent.current.setStyle(
-          getEventIcon(clickedEvent.current, 'static'),
+      if (clickedEventRef.current && clickedFeature != clickedEventRef.current) {
+        clickedEventRef.current.setStyle(
+          getEventIcon(clickedEventRef.current, 'static'),
         );
 
-        setRelatedGeometry(clickedEvent.current, 'static');
-        clickedEvent.current = null;
+        setRelatedGeometry(clickedEventRef.current, 'static');
+        updateClickedEvent(null);
       }
     }
 
     mapRef.current.on('click', async (e) => {
-      setIconClicked(false);
-
       // check if it was a webcam icon that was clicked
       const camFeatures = await layers.current['webcamsLayer'].getFeatures(e.pixel);
 
@@ -374,8 +384,6 @@ export default function MapWrapper({
           }
 
         } else {
-          setIconClicked(true);
-
           const feature = camFeatures[0];
 
           resetClickedStates(feature);
@@ -389,11 +397,9 @@ export default function MapWrapper({
           );
           popup.current.getElement().style.top = '40px';
 
-          setClickedCamera(feature);
+          updateClickedCamera(feature);
         }
       } else {
-        setIconClicked(true);
-
         // if it wasn't a webcam icon, check if it was an event
         const eventFeatures = await layers.current['eventsLayer'].getFeatures(e.pixel);
         if (eventFeatures.length) {
@@ -403,24 +409,20 @@ export default function MapWrapper({
           resetClickedStates(feature);
 
           // set new clicked event feature
-          clickedEvent.current = feature;
-          clickedEvent.current.setStyle(
-            getEventIcon(clickedEvent.current, 'active'),
+          feature.setStyle(
+            getEventIcon(feature, 'active'),
           );
-          setRelatedGeometry(clickedEvent.current, 'active');
-
-          clickedEvent.current.setProperties({ clicked: true }, true);
+          setRelatedGeometry(feature, 'active');
+          feature.setProperties({ clicked: true }, true);
+          updateClickedEvent(feature);
 
           popup.current.setPosition(
-            clickedEvent.current.getGeometry().getCoordinates(),
+            feature.getGeometry().getCoordinates(),
           );
           popup.current.getElement().style.top = '40px';
 
         } else {
-          // if neither, hide any existing popup
-          if (iconClicked === false) {
-            closePopup();
-          }
+          closePopup();
         }
       }
     });
@@ -583,22 +585,21 @@ export default function MapWrapper({
   function closePopup() {
     popup.current.setPosition(undefined);
     // check for active camera icons
-    if (clickedCamera) {
-      clickedCamera.setStyle(cameraStyles['static']);
-      clickedCamera.set('clicked', false);
-      setClickedCamera(null);
+    if (clickedCameraRef.current) {
+      clickedCameraRef.current.setStyle(cameraStyles['static']);
+      clickedCameraRef.current.set('clicked', false);
+      updateClickedCamera(null);
     }
 
     // check for active event icons
-    if (clickedEvent.current) {
-      clickedEvent.current.setStyle(
-        getEventIcon(clickedEvent.current, 'static'),
+    if (clickedEventRef.current) {
+      clickedEventRef.current.setStyle(
+        getEventIcon(clickedEventRef.current, 'static'),
       );
-      setRelatedGeometry(clickedEvent.current, 'static');
-      clickedEvent.current.set('clicked', false);
-      clickedEvent.current = null;
+      setRelatedGeometry(clickedEventRef.current, 'static');
+      clickedEventRef.current.set('clicked', false);
+      updateClickedEvent(null);
     }
-    setIconClicked(false);
   }
 
   const setRelatedGeometry = (event, state) => {
@@ -732,11 +733,11 @@ export default function MapWrapper({
         />
         <div id="popup-content" className="ol-popup-content">
           {clickedCamera &&
-            getCamPopup(clickedCamera, setClickedCamera)
+            getCamPopup(clickedCamera, updateClickedCamera)
           }
 
-          {clickedEvent.current &&
-            getEventPopup(clickedEvent.current)
+          {clickedEvent &&
+            getEventPopup(clickedEvent)
           }
         </div>
       </div>
