@@ -11,7 +11,7 @@ import VectorSource from 'ol/source/Vector';
 // Styling
 import { cameraStyles } from '../../data/eventStyleDefinitions.js';
 
-export function getCamerasLayer(cameras, projectionCode, mapContext) {
+export function getCamerasLayer(cameras, projectionCode, mapContext, passedCamera) {
   return new VectorLayer({
     classname: 'webcams',
     visible: mapContext.visible_layers.webcamsLayer,
@@ -40,6 +40,12 @@ export function getCamerasLayer(cameras, projectionCode, mapContext) {
         });
       },
     }),
-    style: cameraStyles['static'],
+
+    style: function (feature, resolution) {
+      if(passedCamera && passedCamera.id === feature.getProperties().id){
+        return cameraStyles['active'];
+      }
+      return cameraStyles['static'];
+    },
   });
 }

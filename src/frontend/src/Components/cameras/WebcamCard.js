@@ -33,6 +33,9 @@ export default function WebcamCard(props) {
   function handleClick() {
     navigate(`/cameras/${camera.id}`);
   }
+  function handleViewOnMap() {
+    navigate('/', {state: camera});
+  }
 
   function handleChildClick(e) {
     e.stopPropagation();
@@ -116,7 +119,7 @@ export default function WebcamCard(props) {
         <p className="label bold">{camera.name}</p>
         <p className="label">{camera.caption}</p>
       </Card.Body>
-      <Button variant="primary" className="viewmap-btn">View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
+      <Button variant="primary" className="viewmap-btn" onClick={handleViewOnMap}>View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
 
       <div>
         {camera.camGroup.map((cam) =>

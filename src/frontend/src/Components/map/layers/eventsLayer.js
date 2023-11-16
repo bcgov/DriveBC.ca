@@ -8,7 +8,7 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
-export function getEventsLayer(eventsData, projectionCode, mapContext) {
+export function getEventsLayer(eventsData, projectionCode, mapContext, passedEvent) {
   return new VectorLayer({
       classname: 'events',
       visible: mapContext.visible_layers.eventsLayer,
@@ -73,6 +73,9 @@ export function getEventsLayer(eventsData, projectionCode, mapContext) {
         },
       }),
       style: function (feature, resolution) {
+        if(passedEvent && passedEvent.id === feature.getProperties().id){
+          return getEventIcon(feature, 'active');
+        }
         return getEventIcon(feature, 'static');
       },
     });

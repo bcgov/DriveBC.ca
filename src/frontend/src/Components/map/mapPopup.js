@@ -27,7 +27,7 @@ function convertDirection(direction) {
 }
 
 function renderCamGroup(camFeature, setClickedCamera) {
-  const rootCamData = camFeature.getProperties();
+  const rootCamData = camFeature.id ? camFeature : camFeature.getProperties();
 
   const clickHandler = (i) => {
     camFeature.setProperties({ groupIndex: i });
@@ -44,7 +44,8 @@ function renderCamGroup(camFeature, setClickedCamera) {
 }
 
 export function getCamPopup(camFeature, setClickedCamera, navigate) {
-  const rootCamData = camFeature.getProperties();
+  console.log("checking cam feature", camFeature);
+  const rootCamData = camFeature.id ? camFeature : camFeature.getProperties();
 
   const camData = !rootCamData.groupIndex ? rootCamData : rootCamData.camGroup[rootCamData.groupIndex];
   return (
