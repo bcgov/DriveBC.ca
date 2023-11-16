@@ -5,6 +5,7 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import EventTypeIcon from '../EventTypeIcon';
 import FriendlyTime from '../FriendlyTime';
+import parse from 'html-react-parser';
 
 function convertDirection(direction) {
   switch (direction) {
@@ -55,7 +56,7 @@ export function getCamPopup(camFeature, setClickedCamera, navigate) {
         </div>
 
         <div className="popup__description">
-          <p>{camData.caption}</p>
+          <p>{parse(camData.caption)}</p>
           <div className="camera-image">
             <img src={camData.links.imageSource} width='300' />
 

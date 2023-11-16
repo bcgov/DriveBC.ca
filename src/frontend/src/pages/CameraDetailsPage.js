@@ -23,6 +23,7 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Button from 'react-bootstrap/Button';
 import ImageGallery from 'react-image-gallery';
+import parse from 'html-react-parser';
 import RangeSlider from 'react-bootstrap-range-slider';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 
@@ -202,7 +203,7 @@ export default function CameraDetailsPage() {
             <div className="camera-details">
               <div className="camera-details__description">
                 <h2>{camera.name}</h2>
-                <p className="body--large">{camera.caption}</p>
+                <p className="body--large">{parse(camera.caption)}</p>
               </div>
               <div className="camera-details__more">
                 <div className="camera-details__more__hwy">
