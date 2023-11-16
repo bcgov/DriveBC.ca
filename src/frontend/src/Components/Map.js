@@ -2,6 +2,7 @@
 import React, { useContext, useRef, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { updateMapState } from '../slices/mapSlice';
+import { useNavigate } from 'react-router-dom';
 
 // Third party packages
 import { lineString, bbox } from "@turf/turf";
@@ -84,6 +85,9 @@ export default function MapWrapper({
 
   // States
   const [layersOpen, setLayersOpen] = useState(false);
+
+  // Misc
+  const navigate = useNavigate();
 
   // Workaround for OL handlers not being able to read states
   const [clickedCamera, setClickedCamera] = useState();
@@ -572,16 +576,6 @@ export default function MapWrapper({
     mapRef.current.addLayer(layers.current['eventsLayer']);
   }
 
-//  function cameraDetailRoute() {
-//    // setting geometry to null so that the object may be passed
-//    if (clickedCamera.current) {
-//      clickedCamera.current.geometry = null;
-//
-//      const camProps = clickedCamera.current.getProperties().features[0].getProperties();
-//      navigate(`/cameras/${camProps.id}`);
-//    }
-//  }
-
   function closePopup() {
     popup.current.setPosition(undefined);
     // check for active camera icons
@@ -733,7 +727,7 @@ export default function MapWrapper({
         />
         <div id="popup-content" className="ol-popup-content">
           {clickedCamera &&
-            getCamPopup(clickedCamera, updateClickedCamera)
+            getCamPopup(clickedCamera, updateClickedCamera, navigate)
           }
 
           {clickedEvent &&
