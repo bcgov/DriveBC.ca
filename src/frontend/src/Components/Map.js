@@ -347,8 +347,6 @@ export default function MapWrapper({
         loadEvents();
       }
       if(camera){
-        console.log("parameter found, load popup");
-        console.log(camera)
         popup.current.setPosition(
           camera.location.coordinates,
         );
@@ -558,15 +556,6 @@ export default function MapWrapper({
     )
 
     mapRef.current.addLayer(layers.current['eventsLayer']);
-
-
-    console.log("loading complete")
-      // highlight event if one is passed as parameter
-      const eventFeatures = layers.current['eventsLayer'].getSource().getFeatures();
-      console.log(eventFeatures);
-    // const eventFeature = eventFeatures.find((feature) => {feature.get("id") === camera.id});
-
-    // console.log("feature found", eventFeature);
   }
 
   function closePopup() {

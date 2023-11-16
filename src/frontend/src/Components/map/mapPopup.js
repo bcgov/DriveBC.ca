@@ -44,7 +44,6 @@ function renderCamGroup(camFeature, setClickedCamera) {
 }
 
 export function getCamPopup(camFeature, setClickedCamera, navigate) {
-  console.log("checking cam feature", camFeature);
   const rootCamData = camFeature.id ? camFeature : camFeature.getProperties();
 
   const camData = !rootCamData.groupIndex ? rootCamData : rootCamData.camGroup[rootCamData.groupIndex];
