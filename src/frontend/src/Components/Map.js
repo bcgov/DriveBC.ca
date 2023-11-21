@@ -371,7 +371,8 @@ export default function MapWrapper({
 
     mapRef.current.on('click', async (e) => {
       // check if it was a webcam icon that was clicked
-      const camFeatures = await layers.current['webcamsLayer'].getFeatures(e.pixel);
+      const camFeatures = layers.current.webcamsLayer.getVisible() ?
+       await layers.current.webcamsLayer.getFeatures(e.pixel) : [];
 
       if (camFeatures.length) {
         const camData = camFeatures[0].getProperties();
@@ -405,7 +406,9 @@ export default function MapWrapper({
         }
       } else {
         // if it wasn't a webcam icon, check if it was an event
-        const eventFeatures = await layers.current['eventsLayer'].getFeatures(e.pixel);
+        const eventFeatures = layers.current.eventsLayer.getVisible() ?
+          await layers.current.eventsLayer.getFeatures(e.pixel) : [];
+
         if (eventFeatures.length) {
           const feature = eventFeatures[0];
 
