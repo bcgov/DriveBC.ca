@@ -1,8 +1,8 @@
 // React
 import React, { useContext, useRef, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'
 import { updateMapState } from '../slices/mapSlice';
+import { useNavigate } from 'react-router-dom';
 
 // Third party packages
 import { lineString, bbox } from "@turf/turf";
@@ -24,7 +24,7 @@ import { getCamPopup, getEventPopup } from './map/mapPopup.js'
 import { getEvents } from './data/events.js';
 import { getEventsLayer } from './map/layers/eventsLayer.js';
 import { getEventIcon } from './map/helper.js';
-import { getWebcams } from './data/webcams.js';
+import { getWebcams, groupCameras } from './data/webcams.js';
 import { getRouteLayer } from './map/routeLayer.js';
 import { MapContext } from '../App.js';
 import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
@@ -78,20 +78,31 @@ export default function MapWrapper({
   const layers = useRef({});
   const mapView = useRef();
   const container = useRef();
-  const content = useRef();
   const geolocation = useRef(null);
   const hoveredCamera = useRef();
   const hoveredEvent = useRef();
-  const clickedCamera = useRef();
-  const clickedEvent = useRef();
   const locationPinRef = useRef(null);
 
   // States
-  const [iconClicked, setIconClicked] = useState(false);
   const [layersOpen, setLayersOpen] = useState(false);
 
   // Misc
   const navigate = useNavigate();
+
+  // Workaround for OL handlers not being able to read states
+  const [clickedCamera, setClickedCamera] = useState();
+  const clickedCameraRef = useRef();
+  const updateClickedCamera = (feature) => {
+    clickedCameraRef.current = feature;
+    setClickedCamera(feature);
+  }
+
+  const [clickedEvent, setClickedEvent] = useState();
+  const clickedEventRef = useRef();
+  const updateClickedEvent = (feature) => {
+    clickedEventRef.current = feature;
+    setClickedEvent(feature);
+  }
 
   function centerMap(coordinates) {
     if (mapView.current) {
@@ -269,7 +280,6 @@ export default function MapWrapper({
     if (mapRef.current) return; // stops map from intializing more than once
 
     container.current = document.getElementById('popup');
-    content.current = document.getElementById('popup-content');
 
     popup.current = new Overlay({
       element: container.current,
@@ -353,62 +363,56 @@ export default function MapWrapper({
 
     // Click states
     const resetClickedStates = (clickedFeature) => {
-      if (clickedCamera.current && clickedFeature != clickedCamera.current) {
-        clickedCamera.current.setStyle(cameraStyles['static']);
-        clickedCamera.current = null;
+      if (clickedCameraRef.current && clickedFeature != clickedCameraRef.current) {
+        clickedCameraRef.current.setStyle(cameraStyles['static']);
+        updateClickedCamera(null);
       }
 
-      if (clickedEvent.current && clickedFeature != clickedEvent.current) {
-        clickedEvent.current.setStyle(
-          getEventIcon(clickedEvent.current, 'static'),
+      if (clickedEventRef.current && clickedFeature != clickedEventRef.current) {
+        clickedEventRef.current.setStyle(
+          getEventIcon(clickedEventRef.current, 'static'),
         );
 
-        setRelatedGeometry(clickedEvent.current, 'static');
-        clickedEvent.current = null;
+        setRelatedGeometry(clickedEventRef.current, 'static');
+        updateClickedEvent(null);
       }
     }
 
     mapRef.current.on('click', async (e) => {
-      setIconClicked(false);
-
       // check if it was a webcam icon that was clicked
       const camFeatures = await layers.current['webcamsLayer'].getFeatures(e.pixel);
+
       if (camFeatures.length) {
-        const featureDetails = camFeatures[0].getProperties().features[0].getProperties();
+        const camData = camFeatures[0].getProperties();
         if (isPreview) {
           // Only switch context on clicking cameras within circle
           if (circle &&
-            circle.intersectsCoordinate(fromLonLat(featureDetails.location.coordinates))
+            circle.intersectsCoordinate(fromLonLat(camData.location.coordinates))
           ) {
             mapView.current.animate({
-              center: fromLonLat(featureDetails.location.coordinates),
+              center: fromLonLat(camData.location.coordinates),
             });
 
-            cameraHandler(featureDetails);
+            cameraHandler(camData);
           }
 
         } else {
-          setIconClicked(true);
-
           const feature = camFeatures[0];
 
           resetClickedStates(feature);
 
           // set new clicked camera feature
-          clickedCamera.current = feature;
-          clickedCamera.current.setStyle(cameraStyles['active']);
-          clickedCamera.current.setProperties({ clicked: true }, true);
-
-          content.current.innerHTML = getCamPopup(featureDetails);
+          feature.setStyle(cameraStyles['active']);
+          feature.setProperties({ clicked: true }, true);
 
           popup.current.setPosition(
-            clickedCamera.current.getGeometry().getCoordinates(),
+            feature.getGeometry().getCoordinates(),
           );
           popup.current.getElement().style.top = '40px';
+
+          updateClickedCamera(feature);
         }
       } else {
-        setIconClicked(true);
-
         // if it wasn't a webcam icon, check if it was an event
         const eventFeatures = await layers.current['eventsLayer'].getFeatures(e.pixel);
         if (eventFeatures.length) {
@@ -418,26 +422,20 @@ export default function MapWrapper({
           resetClickedStates(feature);
 
           // set new clicked event feature
-          clickedEvent.current = feature;
-          clickedEvent.current.setStyle(
-            getEventIcon(clickedEvent.current, 'active'),
+          feature.setStyle(
+            getEventIcon(feature, 'active'),
           );
-          setRelatedGeometry(clickedEvent.current, 'active');
-
-          clickedEvent.current.setProperties({ clicked: true }, true);
-
-          content.current.innerHTML = getEventPopup(feature);
+          setRelatedGeometry(feature, 'active');
+          feature.setProperties({ clicked: true }, true);
+          updateClickedEvent(feature);
 
           popup.current.setPosition(
-            clickedEvent.current.getGeometry().getCoordinates(),
+            feature.getGeometry().getCoordinates(),
           );
           popup.current.getElement().style.top = '40px';
 
         } else {
-          // if neither, hide any existing popup
-          if (iconClicked === false) {
-            closePopup();
-          }
+          closePopup();
         }
       }
     });
@@ -550,7 +548,7 @@ export default function MapWrapper({
     }
 
     layers.current['webcamsLayer'] = getCamerasLayer(
-      webcamResults,
+      groupCameras(webcamResults),
       mapRef.current.getView().getProjection().getCode(),
       mapContext
     )
@@ -576,34 +574,24 @@ export default function MapWrapper({
     mapRef.current.addLayer(layers.current['eventsLayer']);
   }
 
-  function cameraDetailRoute() {
-    // setting geometry to null so that the object may be passed
-    if (clickedCamera.current) {
-      clickedCamera.current.geometry = null;
-
-      const camProps = clickedCamera.current.getProperties().features[0].getProperties();
-      navigate(`/cameras/${camProps.id}`);
-    }
-  }
-
   function closePopup() {
     popup.current.setPosition(undefined);
     // check for active camera icons
-    if (clickedCamera.current) {
-      clickedCamera.current.setStyle(cameraStyles['static']);
-      clickedCamera.current.set('clicked', false);
-      clickedCamera.current = null;
+    if (clickedCameraRef.current) {
+      clickedCameraRef.current.setStyle(cameraStyles['static']);
+      clickedCameraRef.current.set('clicked', false);
+      updateClickedCamera(null);
     }
+
     // check for active event icons
-    if (clickedEvent.current) {
-      clickedEvent.current.setStyle(
-        getEventIcon(clickedEvent.current, 'static'),
+    if (clickedEventRef.current) {
+      clickedEventRef.current.setStyle(
+        getEventIcon(clickedEventRef.current, 'static'),
       );
-      setRelatedGeometry(clickedEvent.current, 'static');
-      clickedEvent.current.set('clicked', false);
-      clickedEvent.current = null;
+      setRelatedGeometry(clickedEventRef.current, 'static');
+      clickedEventRef.current.set('clicked', false);
+      updateClickedEvent(null);
     }
-    setIconClicked(false);
   }
 
   const setRelatedGeometry = (event, state) => {
@@ -729,14 +717,22 @@ export default function MapWrapper({
         )}
       </div>
 
-      <div id="popup" onClick={cameraDetailRoute} className="ol-popup">
+      <div id="popup" className="ol-popup">
         <FontAwesomeIcon
           id="ol-popup-closer"
           className="ol-popup-closer"
           icon={faXmark}
           onClick={closePopup}
         />
-        <div id="popup-content" className="ol-popup-content"></div>
+        <div id="popup-content" className="ol-popup-content">
+          {clickedCamera &&
+            getCamPopup(clickedCamera, updateClickedCamera, navigate)
+          }
+
+          {clickedEvent &&
+            getEventPopup(clickedEvent)
+          }
+        </div>
       </div>
 
       {isPreview && (

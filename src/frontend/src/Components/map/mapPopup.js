@@ -1,10 +1,11 @@
 // React
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
 
 // Third party packages
-import FriendlyTime from '../FriendlyTime';
+import Button from 'react-bootstrap/Button';
 import EventTypeIcon from '../EventTypeIcon';
+import FriendlyTime from '../FriendlyTime';
+import parse from 'html-react-parser';
 
 function convertDirection(direction) {
   switch (direction) {
@@ -19,79 +20,96 @@ function convertDirection(direction) {
       case "BOTH":
           return "Both Directions";
       case "NONE":
-          return "";
+          return " ";
       default:
-          return "";
+          return " ";
   }
 }
 
-export function getCamPopup(feature) {
-  return `
-    <div class="popup popup--camera">
-      <div class="popup__title">
-        <p class="bold name">${feature.name}
-        <p class="bold orientation">${feature.orientation}</p>
-      </div>
+function renderCamGroup(camFeature, setClickedCamera) {
+  const rootCamData = camFeature.getProperties();
 
-      <div class="popup__description">
-        <p>${feature.caption}</p>
-        <div class="camera-image">
-          <img src="${feature.links.imageSource}" width='300'>
+  const clickHandler = (i) => {
+    camFeature.setProperties({ groupIndex: i });
+    setClickedCamera(camFeature);  // Trigger re-render
+  }
 
-          <div class="timestamp">
-            <p class="driveBC">Drive<span>BC</span></p>
-            ` +
-              ReactDOMServer.renderToString(
-                <FriendlyTime date={feature.last_update_modified} />,
-              ) +
-            `
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
+  const res = Object.entries(rootCamData.camGroup).map(([index, cam]) => {
+    return (
+      <Button key={cam.id} onClick={() => clickHandler(index)}>{cam.orientation}</Button>
+    );
+  });
+
+  return res;
 }
 
-export function getEventPopup(feature) {
-  const severity = feature.get('severity').toLowerCase();
-  const eventType = feature.get('event_type').toLowerCase();
+export function getCamPopup(camFeature, setClickedCamera, navigate) {
+  const rootCamData = camFeature.getProperties();
 
-  return `
-    <div class="popup popup--delay ${severity}">
-      <div class="popup__title">
-        <p class="bold name">${feature.get('route_display')}</p>
-        <p class="bold orientation">${convertDirection(feature.get('direction'))}</p>
+  const camData = !rootCamData.groupIndex ? rootCamData : rootCamData.camGroup[rootCamData.groupIndex];
+  return (
+    <div className="popup popup--camera">
+      <div onClick={() => navigate(`/cameras/${camData.id}`)}>
+        <div className="popup__title">
+          <p className="bold name">{camData.name}</p>
+          <p className="bold orientation">{camData.orientation}</p>
+        </div>
+
+        <div className="popup__description">
+          <p>{parse(camData.caption)}</p>
+          <div className="camera-image">
+            <img src={camData.links.imageSource} width='300' />
+
+            <div className="timestamp">
+              <p className="driveBC">Drive<span>BC</span></p>
+              <FriendlyTime date={camData.last_update_modified} />
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="popup__description">
-        <div class="delay-type">
-          <div class="bold delay-severity">
-            <div class="delay-icon">
-              ` + ReactDOMServer.renderToString(
-                <EventTypeIcon eventType={eventType} />,
-              ) + `
+      <hr/>
+      {renderCamGroup(camFeature, setClickedCamera)}
+    </div>
+  );
+}
+
+export function getEventPopup(eventFeature) {
+  const eventData = eventFeature.getProperties();
+
+  const severity = eventData.severity.toLowerCase();
+  const eventType = eventData.event_type.toLowerCase();
+
+  return (
+    <div className={`popup popup--delay ${severity}`}>
+      <div className="popup__title">
+        <p className="bold name">{`${eventData.route_at} - ${eventData.route_display}`}</p>
+        <p style={{'white-space': 'pre-wrap'}} className="bold orientation">{convertDirection(eventData.direction)}</p>
+      </div>
+
+      <div className="popup__description">
+        <div className="delay-type">
+          <div className="bold delay-severity">
+            <div className="delay-icon">
+              <EventTypeIcon eventType={eventType} />
             </div>
 
-            <p class="bold">${severity} delays</p>
+            <p className="bold">{severity} delays</p>
           </div>
 
-          <p class="bold friendly-time--mobile">
-            ` + ReactDOMServer.renderToString(
-              <FriendlyTime date={feature.get('last_updated')} />,
-            ) + `
+          <p className="bold friendly-time--mobile">
+            <FriendlyTime date={eventData.last_updated} />
           </p>
         </div>
 
-        <div class="delay-details">
-          <p class="bold friendly-time-desktop">
-            ` + ReactDOMServer.renderToString(
-              <FriendlyTime date={feature.get('last_updated')} />,
-            ) + `
+        <div className="delay-details">
+          <p className="bold friendly-time-desktop">
+            <FriendlyTime date={eventData.last_updated} />
           </p>
 
-          <p>${feature.get('description')}</p>
+          <p>{eventData.description}</p>
         </div>
       </div>
     </div>
-  `;
+  );
 }
