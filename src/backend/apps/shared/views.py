@@ -1,5 +1,8 @@
 import re
+from pathlib import Path
 
+import environ
+import requests
 from apps.shared.enums import ROUTE_FILTER_TOLERANCE, CacheKey, CacheTimeout
 from django.contrib.gis.geos import LineString, Point
 from django.contrib.gis.measure import D
@@ -9,6 +12,11 @@ from django.urls import re_path
 from django.views.static import serve
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+# Base dir and env
+BASE_DIR = Path(__file__).resolve().parents[4]
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
 
 
 class CachedListModelMixin:
@@ -35,7 +43,7 @@ class CachedListModelMixin:
         )
 
     def list(self, request, *args, **kwargs):
-        route = request.data.get('route')
+        route = request.query_params.get('route')
         if not route:
             return Response(self.get_or_set_list_data())
 
@@ -46,8 +54,22 @@ class CachedListModelMixin:
         )
 
     def get_filtered_queryset(self, geo_filter):
-        points_list = [Point(p) for p in geo_filter]
+        payload = {
+            "points": geo_filter,
+        }
 
+        # DBC22:1201
+        # Fetch route from API again to avoid sending too many coordinates from client
+        # To be removed once we have route saved in backend
+        response = requests.get(
+            env("REACT_APP_ROUTE_PLANNER") + "/directions.json",
+            params=payload,
+            headers={
+                "apiKey": env("REACT_APP_ROUTE_PLANNER_KEY"),
+            }
+        )
+
+        points_list = [Point(p) for p in response.json()['route']]
         res = self.queryset.filter(
             location__distance_lte=(
                 LineString(points_list), D(m=ROUTE_FILTER_TOLERANCE)

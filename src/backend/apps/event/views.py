@@ -13,11 +13,10 @@ class EventAPI(CachedListModelMixin):
     cache_timeout = CacheTimeout.DELAY_LIST
 
 
-class EventViewSet(EventAPI, viewsets.ModelViewSet):
-    def create(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+class EventViewSet(EventAPI, viewsets.ReadOnlyModelViewSet):
+    pass
 
 
-class EventTestViewSet(viewsets.ModelViewSet):
+class EventTestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = EventAPI.queryset
     serializer_class = EventAPI.serializer_class
