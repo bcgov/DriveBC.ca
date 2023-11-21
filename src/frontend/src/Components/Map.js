@@ -518,8 +518,8 @@ export default function MapWrapper({
       layers.current['routeLayer'] = routeLayer;
       mapRef.current.addLayer(routeLayer);
 
-      loadEvents(selectedRoute.route);
-      loadCameras(selectedRoute.route);
+      loadEvents(selectedRoute.points);
+      loadCameras(selectedRoute.points);
 
       fitMap();
 
