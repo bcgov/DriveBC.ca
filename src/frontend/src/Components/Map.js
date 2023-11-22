@@ -116,7 +116,7 @@ export default function MapWrapper({
     if (mapView.current) {
       mapView.current.animate({
         center: fromLonLat(coordinates),
-        zoom: 0,
+        zoom: 7,
       });
     }
   }
