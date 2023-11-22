@@ -60,13 +60,13 @@ export default function WebcamCard(props) {
       <Card.Body onClick={handleClick}>
         {!unavailable && !delayed && !stale &&
           <div className="card-img-box">
-            <img className="card-img" src={ camera.links.imageSource } alt="card_image" />
+            <img className="card-img" src={ camera.links.imageSource } alt={camera.name} />
           </div>
         }
 
         {!unavailable && stale && !delayed &&
           <div className="card-img-box">
-            <img className="card-img" src={ camera.links.imageSource } alt="stale_image"/>
+            <img className="card-img" src={ camera.links.imageSource } alt={camera.name} />
             <div className="card-notification">
               <div className={'card-banner' + (show ? ' hidden' : ' bounce') }>
                 <p>Unable to retrieve latest image. Showing last image received.</p>
@@ -82,7 +82,7 @@ export default function WebcamCard(props) {
 
         {!unavailable && stale && delayed &&
           <div className="card-img-box">
-            <img className="card-img" src={ camera.links.imageSource } alt="delayed_image" />
+            <img className="card-img" src={ camera.links.imageSource } alt={camera.name} />
             <div className="card-notification">
               <div className={'card-banner' + (show ? ' hidden' : ' bounce') }>
                 <p>Longer than expected delay, displaying last image received.</p>
