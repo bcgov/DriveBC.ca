@@ -508,8 +508,9 @@ export default function MapWrapper({
         resetHoveredStates(null);
       }
 
-      toggleMyLocation();
     });
+
+    toggleMyLocation();
   }, []);
 
   useEffect(() => {
