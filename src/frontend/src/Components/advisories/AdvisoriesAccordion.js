@@ -24,13 +24,15 @@ export default function AdvisoriesAccordion() {
   }, []);
 
   return (
-    <Accordion className="advisories-accordion">
-      <Accordion.Item eventKey="0">
-        <Accordion.Header>Advisory in area ({advisories.length})</Accordion.Header>
-        <Accordion.Body>
-          <AdvisoriesList advisories={advisories} showDescription={false} />
-        </Accordion.Body>
-      </Accordion.Item>
-    </Accordion>
+    advisories.length > 0 ? (
+      <Accordion className="advisories-accordion">
+        <Accordion.Item eventKey="0">
+          <Accordion.Header>Advisory in area ({advisories.length})</Accordion.Header>
+          <Accordion.Body>
+            <AdvisoriesList advisories={advisories} showDescription={false} />
+          </Accordion.Body>
+        </Accordion.Item>
+      </Accordion>
+    ) : null
   );
 }
