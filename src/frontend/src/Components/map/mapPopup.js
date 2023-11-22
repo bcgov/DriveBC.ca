@@ -49,9 +49,9 @@ export function getCamPopup(camFeature, setClickedCamera, navigate) {
   const camData = !rootCamData.groupIndex ? rootCamData : rootCamData.camGroup[rootCamData.groupIndex];
   return (
     <div className="popup popup--camera">
-      <div onClick={() => navigate(`/cameras/${camData.id}`)}>
+      <div>
         <div className="popup__title">
-          <p className="bold name">{camData.name}</p>
+          <p className="bold name" onClick={() => navigate(`/cameras/${camData.id}`)}>{camData.name}</p>
           <p className="bold orientation">{camData.orientation}</p>
         </div>
 
