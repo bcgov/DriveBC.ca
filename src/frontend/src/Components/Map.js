@@ -82,6 +82,7 @@ export default function MapWrapper({
   const hoveredCamera = useRef();
   const hoveredEvent = useRef();
   const locationPinRef = useRef(null);
+  const cameraPopupRef = useRef(null);
 
   // States
   const [layersOpen, setLayersOpen] = useState(false);
@@ -412,6 +413,11 @@ export default function MapWrapper({
           popup.current.getElement().style.top = '40px';
 
           updateClickedCamera(feature);
+
+          if (!cameraPopupRef.current) {
+            cameraPopupRef.current = popup;
+          } 
+          
         }
       } else {
         // if it wasn't a webcam icon, check if it was an event
@@ -730,7 +736,7 @@ export default function MapWrapper({
         />
         <div id="popup-content" className="ol-popup-content">
           {clickedCamera &&
-            getCamPopup(clickedCamera, updateClickedCamera, navigate)
+            getCamPopup(clickedCamera, updateClickedCamera, navigate, cameraPopupRef)
           }
 
           {clickedEvent &&
