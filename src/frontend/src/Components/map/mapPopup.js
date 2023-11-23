@@ -43,13 +43,24 @@ function renderCamGroup(camFeature, setClickedCamera) {
   return res;
 }
 
-export function getCamPopup(camFeature, setClickedCamera, navigate) {
+export function getCamPopup(camFeature, setClickedCamera, navigate, cameraPopupRef) {
   const rootCamData = camFeature.getProperties();
 
   const camData = !rootCamData.groupIndex ? rootCamData : rootCamData.camGroup[rootCamData.groupIndex];
+
+  const handlePopupClick = (e) => {
+    if (!cameraPopupRef.current) {
+      navigate(`/cameras/${camData.id}`);
+    }
+    else{
+      cameraPopupRef.current = null;
+      return;      
+    }
+  };
+
   return (
     <div className="popup popup--camera">
-      <div onClick={() => navigate(`/cameras/${camData.id}`)}>
+      <div onClick={handlePopupClick}>
         <div className="popup__title">
           <p className="bold name">{camData.name}</p>
           <p className="bold orientation">{camData.orientation}</p>
