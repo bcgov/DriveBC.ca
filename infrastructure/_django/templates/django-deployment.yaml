@@ -37,12 +37,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.deployment.env.postgresSecret  }}
-                  key: host
+                  key: pgbouncer-host
             - name: DB_PORT
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.deployment.env.postgresSecret  }}
-                  key: port
+                  key: pgbouncer-port
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
