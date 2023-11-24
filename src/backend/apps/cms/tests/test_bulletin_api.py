@@ -1,5 +1,5 @@
 from apps.cms.models import Bulletin
-from apps.event.views import EventAPI
+from apps.cms.views import BulletinAPI
 from apps.shared.enums import CacheKey
 from apps.shared.tests import BaseTest
 from django.contrib.contenttypes.models import ContentType
@@ -32,20 +32,20 @@ class TestBulletinAPI(APITestCase, BaseTest):
 
     def test_bulletin_list_caching(self):
         # Empty cache
-        assert cache.get(CacheKey.DELAY_LIST) is None
+        assert cache.get(CacheKey.BULLETIN_LIST) is None
 
         # Cache miss
         url = "/api/cms/bulletins/"
         response = self.client.get(url, {})
         assert len(response.data) == 2
-        assert cache.get(CacheKey.DELAY_LIST) is None
+        assert cache.get(CacheKey.BULLETIN_LIST) is not None
 
         # Cached result
-        Bulletin.objects.filter(id__gte=2).delete()
+        Bulletin.objects.first().delete()
         response = self.client.get(url, {})
-        assert len(response.data) == 0
+        assert len(response.data) == 2
 
         # Updated cached result
-        EventAPI().set_list_data()
+        BulletinAPI().set_list_data()
         response = self.client.get(url, {})
-        assert len(response.data) == 0
+        assert len(response.data) == 1

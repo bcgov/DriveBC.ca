@@ -1,6 +1,7 @@
 import logging
 
 from apps.cms.models import Ferry
+from apps.cms.views import FerryAPI
 from apps.feed.client import FeedClient
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
@@ -44,4 +45,4 @@ def populate_all_ferry_data():
         populate_ferry_from_data(ferry_data)
 
     # Rebuild cache
-    # FerryAPI().set_list_data()
+    FerryAPI().set_list_data()

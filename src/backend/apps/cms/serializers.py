@@ -16,16 +16,14 @@ CMS_FIELDS = [
 
 
 class CMSSerializer(serializers.ModelSerializer):
-    body = serializers.SerializerMethodField()
-
     def get_host(self):
         request = self.context.get("request")
         prefix = "https://" if request and request.is_secure() else "http://"
         return prefix + request.get_host() if request else 'localhost:8000'
 
-    # get rendered html elements for body and access static media foder
-    def get_body(self, obj):
-        res = wagtailcore_tags.richtext(obj.body)
+    # get rendered html elements and access static media folder
+    def get_richtext(self, text):
+        res = wagtailcore_tags.richtext(text)
         res = res.replace(
             'href="/drivebc-cms',
             'href="' + self.get_host() + '/drivebc-cms'
@@ -38,12 +36,18 @@ class CMSSerializer(serializers.ModelSerializer):
 
 
 class AdvisorySerializer(CMSSerializer):
+    body = serializers.SerializerMethodField()
+
     class Meta:
         model = Advisory
         fields = "__all__"
 
+    def get_body(self, obj):
+        return self.get_richtext(obj.body)
+
 
 class BulletinSerializer(CMSSerializer):
+    body = serializers.SerializerMethodField()
     image_url = serializers.SerializerMethodField('get_image_url')
 
     class Meta:
@@ -54,8 +58,14 @@ class BulletinSerializer(CMSSerializer):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.image.file.url) if obj.image else ''
 
+    def get_body(self, obj):
+        return self.get_richtext(obj.body)
+
 
 class FerrySerializer(CMSSerializer):
+    description = serializers.SerializerMethodField()
+    seasonal_description = serializers.SerializerMethodField()
+    service_hours = serializers.SerializerMethodField()
     image_url = serializers.SerializerMethodField('get_image_url')
 
     class Meta:
@@ -65,3 +75,12 @@ class FerrySerializer(CMSSerializer):
     def get_image_url(self, obj):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.image.file.url) if obj.image else ''
+
+    def get_description(self, obj):
+        return self.get_richtext(obj.description)
+
+    def get_seasonal_description(self, obj):
+        return self.get_richtext(obj.seasonal_description)
+
+    def get_service_hours(self, obj):
+        return self.get_richtext(obj.service_hours)

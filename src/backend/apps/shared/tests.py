@@ -1,6 +1,7 @@
 import logging
 from unittest.mock import MagicMock
 
+from apps.cms.models import Ferry
 from apps.event.models import Event
 from apps.webcam.models import Webcam
 from django.core.cache import cache
@@ -44,3 +45,4 @@ class BaseTest(TestCase):
         cache.clear()
         Webcam.objects.all().delete()
         Event.objects.all().delete()
+        Ferry.objects.all().delete()

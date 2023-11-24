@@ -1,6 +1,8 @@
+from apps.shared.enums import CacheKey
 from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
 from django.contrib.gis.forms import OSMWidget
+from django.core.cache import cache
 from wagtail.admin.panels import FieldPanel
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
@@ -33,6 +35,7 @@ class Advisory(Page, BaseModel):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        cache.delete(CacheKey.ADVISORY_LIST)
 
     # Editor panels configuration
     content_panels = [
@@ -61,6 +64,7 @@ class Bulletin(Page, BaseModel):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        cache.delete(CacheKey.BULLETIN_LIST)
 
     # Editor panels configuration
     content_panels = [
@@ -106,6 +110,7 @@ class Ferry(Page, BaseModel):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        cache.delete(CacheKey.FERRY_LIST)
 
     # Editor panels configuration
     content_panels = [
