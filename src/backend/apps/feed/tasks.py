@@ -1,8 +1,9 @@
+from apps.cms.tasks import populate_all_ferry_data
 from apps.event.tasks import populate_all_event_data
 from apps.webcam.tasks import populate_all_webcam_data, update_all_webcam_data
+from django.core.management import call_command
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task
-from django.core.management import call_command
 
 
 @db_periodic_task(crontab(hour="*/6"))
@@ -20,6 +21,11 @@ def populate_event_task():
     populate_all_event_data()
 
 
+@db_periodic_task(crontab(hour="*/24"))
+def populate_ferry_task():
+    populate_all_ferry_data()
+
+
 @db_periodic_task(crontab(minute="*/1"))
 def publish_scheduled():
-    call_command('publish_scheduled') 
+    call_command('publish_scheduled')

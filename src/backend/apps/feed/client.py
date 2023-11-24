@@ -3,10 +3,11 @@ from typing import Dict
 from urllib.parse import urljoin
 
 import httpx
-from apps.feed.constants import OPEN511, WEBCAM
+from apps.feed.constants import INLAND_FERRY, OPEN511, WEBCAM
 from apps.feed.serializers import (
     EventAPISerializer,
     EventFeedSerializer,
+    FerryAPISerializer,
     WebcamAPISerializer,
     WebcamFeedSerializer,
 )
@@ -26,6 +27,9 @@ class FeedClient:
             },
             OPEN511: {
                 "base_url": settings.DRIVEBC_OPEN_511_API_BASE_URL,
+            },
+            INLAND_FERRY: {
+                "base_url": settings.DRIVEBC_INLAND_FERRY_API_BASE_URL,
             },
         }
 
@@ -119,4 +123,20 @@ class FeedClient:
         return self.get_list_feed(
             OPEN511, 'events', EventAPISerializer,
             {"format": "json", "limit": 500}
+        )
+
+    # Ferries
+    def get_ferries_list(self):
+        return self.get_list_feed(
+            INLAND_FERRY,
+            'geoV05/hwy/ows',
+            FerryAPISerializer,
+            {
+                "service": "WFS",
+                "version": "1.0.0",
+                "request": "GetFeature",
+                "typeName": "hwy:ISS_INLAND_FERRY",
+                "maxFeatures": 500,
+                "outputFormat": "application/json",
+            }
         )

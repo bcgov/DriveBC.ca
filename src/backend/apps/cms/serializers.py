@@ -1,4 +1,4 @@
-from apps.cms.models import Advisory, Bulletin
+from apps.cms.models import Advisory, Bulletin, Ferry
 from rest_framework import serializers
 from wagtail.templatetags import wagtailcore_tags
 
@@ -48,6 +48,18 @@ class BulletinSerializer(CMSSerializer):
 
     class Meta:
         model = Bulletin
+        fields = "__all__"
+
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image.file.url) if obj.image else ''
+
+
+class FerrySerializer(CMSSerializer):
+    image_url = serializers.SerializerMethodField('get_image_url')
+
+    class Meta:
+        model = Ferry
         fields = "__all__"
 
     def get_image_url(self, obj):
