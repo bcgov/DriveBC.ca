@@ -1,5 +1,5 @@
 from apps.cms.models import Advisory
-from apps.event.views import EventAPI
+from apps.cms.views import AdvisoryAPI
 from apps.shared.enums import CacheKey
 from apps.shared.tests import BaseTest
 from django.contrib.contenttypes.models import ContentType
@@ -41,14 +41,14 @@ class TestAdvisoryAPI(APITestCase, BaseTest):
         url = "/api/cms/advisories/"
         response = self.client.get(url, {})
         assert len(response.data) == 2
-        assert cache.get(CacheKey.DELAY_LIST) is None
+        assert cache.get(CacheKey.ADVISORY_LIST) is not None
 
         # Cached result
-        Advisory.objects.filter(id__gte=2).delete()
+        Advisory.objects.first().delete()
         response = self.client.get(url, {})
-        assert len(response.data) == 0
+        assert len(response.data) == 2
 
         # Updated cached result
-        EventAPI().set_list_data()
+        AdvisoryAPI().set_list_data()
         response = self.client.get(url, {})
-        assert len(response.data) == 0
+        assert len(response.data) == 1
