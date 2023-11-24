@@ -73,7 +73,7 @@ spec:
     - name: {{ template "crunchy-postgres.fullname" . }}
       databases:
         - {{ template "crunchy-postgres.fullname" . }}
-      options: "SUPERUSER"
+      options: "LOGIN"
     - name: postgres
       databases:
         - {{ template "crunchy-postgres.fullname" . }}
