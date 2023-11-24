@@ -544,6 +544,10 @@ export default function MapWrapper({
     }
   }, [selectedRoute]);
 
+  useEffect(() => {
+    console.log("Zoom level: " + Math.round(mapRef.current.getView().getZoom()));
+  });
+
   async function loadCameras(route) {
     const webcamResults = await getWebcams(route);
 
