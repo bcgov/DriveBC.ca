@@ -72,3 +72,51 @@ class Bulletin(Page, BaseModel):
     promote_panels = []
 
     template = 'cms/bulletin.html'
+
+
+class Ferry(Page, BaseModel):
+    page_body = "Use this page to create or update ferry entries."
+
+    location = models.GeometryField(blank=True, null=True)
+
+    url = models.URLField(blank=True)
+    image = models.ForeignKey(Image, on_delete=models.CASCADE, blank=True, null=True)
+
+    description = RichTextField(max_length=750, blank=True)
+    seasonal_description = RichTextField(max_length=100, blank=True)
+    service_hours = RichTextField(max_length=750, blank=True)
+
+    feed_created_at = models.DateTimeField(auto_now_add=True)
+    feed_modified_at = models.DateTimeField(auto_now=True)
+
+    def rendered_description(self):
+        return wagtailcore_tags.richtext(self.description)
+
+    def rendered_seasonal_description(self):
+        return wagtailcore_tags.richtext(self.seasonal_description)
+
+    def rendered_service_hours(self):
+        return wagtailcore_tags.richtext(self.service_hours)
+
+    api_fields = [
+        APIField('rendered_description'),
+        APIField('rendered_seasonal_description'),
+        APIField('rendered_service_hours'),
+    ]
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+    # Editor panels configuration
+    content_panels = [
+        FieldPanel("title"),
+        # FieldPanel("url"),
+        FieldPanel("image"),
+        # FieldPanel("location", widget=DriveBCMapWidget),
+        FieldPanel("description"),
+        FieldPanel("seasonal_description"),
+        FieldPanel("service_hours"),
+    ]
+    promote_panels = []
+
+    template = 'cms/ferry.html'

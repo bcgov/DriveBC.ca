@@ -116,3 +116,20 @@ class EventRoadsField(serializers.Field):
 
 class EventGeographyField(DriveBCField, GeometryField):
     pass
+
+
+# Ferry
+class FerryPropertiesField(serializers.Field):
+    def to_internal_value(self, data):
+        res = {
+            "id": data['FERRY_ID'],
+            "title": data['NAME'],
+            "url": data['URL'],
+            "feed_created_at": data['CREATED_TIMESTAMP'],
+            "feed_modified_at": data['UPDATED_TIMESTAMP'],
+        }
+        return res
+
+
+class FerryGeographyField(DriveBCField, GeometryField):
+    pass

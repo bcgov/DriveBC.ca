@@ -1,10 +1,13 @@
 from datetime import datetime
+
 from apps.feed.fields import (
     DriveBCDateField,
     DriveBCField,
     DriveBCSingleListField,
     EventGeographyField,
     EventRoadsField,
+    FerryGeographyField,
+    FerryPropertiesField,
     WebcamHighwayField,
     WebcamImageStatsField,
     WebcamLocationField,
@@ -85,5 +88,16 @@ class EventFeedSerializer(serializers.Serializer):
 
         return internal_data
 
+
 class EventAPISerializer(serializers.Serializer):
     events = EventFeedSerializer(many=True)
+
+
+# Ferry
+class FerryFeedSerializer(serializers.Serializer):
+    geometry = FerryGeographyField('location', source="*")
+    properties = FerryPropertiesField(source="*")
+
+
+class FerryAPISerializer(serializers.Serializer):
+    features = FerryFeedSerializer(many=True)
