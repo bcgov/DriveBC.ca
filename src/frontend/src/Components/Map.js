@@ -24,6 +24,8 @@ import { getCamPopup, getEventPopup } from './map/mapPopup.js'
 import { getEvents } from './data/events.js';
 import { getEventsLayer } from './map/layers/eventsLayer.js';
 import { getEventIcon } from './map/helper.js';
+import { getFerries } from './data/ferries.js';
+import { getFerriesLayer } from './map/layers/ferriesLayer.js';
 import { getWebcams, groupCameras } from './data/webcams.js';
 import { getRouteLayer } from './map/routeLayer.js';
 import { MapContext } from '../App.js';
@@ -50,7 +52,7 @@ import VectorTileSource from 'ol/source/VectorTile.js';
 import View from 'ol/View';
 
 // Styling
-import { cameraStyles } from './data/eventStyleDefinitions.js';
+import { cameraStyles } from './data/featureStyleDefinitions.js';
 import './Map.scss';
 
 export default function MapWrapper({
@@ -535,12 +537,14 @@ export default function MapWrapper({
 
       loadEvents(selectedRoute.points);
       loadCameras(selectedRoute.points);
+      loadFerries();
 
       fitMap();
 
     } else {
       loadEvents();
       loadCameras();
+      loadFerries();
     }
   }, [selectedRoute]);
 
@@ -572,7 +576,6 @@ export default function MapWrapper({
       mapRef.current.removeLayer(layers.current['eventsLayer']);
     }
 
-    // Events iterator
     layers.current['eventsLayer'] = getEventsLayer(
       eventsData,
       mapRef.current.getView().getProjection().getCode(),
@@ -580,6 +583,22 @@ export default function MapWrapper({
     )
 
     mapRef.current.addLayer(layers.current['eventsLayer']);
+  }
+
+  async function loadFerries() {
+    const ferriesData = await getFerries();
+
+    if (layers.current['ferriesLayer']) {
+      mapRef.current.removeLayer(layers.current['ferries']);
+    }
+
+    layers.current['ferriesLayer'] = getFerriesLayer(
+      ferriesData,
+      mapRef.current.getView().getProjection().getCode(),
+      mapContext
+    )
+
+    mapRef.current.addLayer(layers.current['ferriesLayer']);
   }
 
   function closePopup() {

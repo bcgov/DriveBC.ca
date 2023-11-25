@@ -9,25 +9,25 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Styling
-import { cameraStyles } from '../../data/featureStyleDefinitions.js';
+import { ferryStyles } from '../../data/featureStyleDefinitions.js';
 
-export function getCamerasLayer(cameras, projectionCode, mapContext) {
+export function getFerriesLayer(ferriesData, projectionCode, mapContext) {
   return new VectorLayer({
-    classname: 'webcams',
-    visible: mapContext.visible_layers.webcamsLayer,
+    classname: 'ferries',
+    visible: mapContext.visible_layers.ferriesLayer,
     source: new VectorSource({
       format: new GeoJSON(),
       loader: function (extent, resolution, projection) {
         const vectorSource = this;
         vectorSource.clear();
 
-        cameras.forEach(camera => {
+        ferriesData.forEach(ferry => {
           // Build a new OpenLayers feature
-          const olGeometry = new Point(camera.location.coordinates);
+          const olGeometry = new Point(ferry.location.coordinates);
           const olFeature = new ol.Feature({ geometry: olGeometry });
 
           // Transfer properties
-          olFeature.setProperties(camera);
+          olFeature.setProperties(ferry);
 
           // Transform the projection
           const olFeatureForMap = transformFeature(
@@ -40,6 +40,6 @@ export function getCamerasLayer(cameras, projectionCode, mapContext) {
         });
       },
     }),
-    style: cameraStyles['static'],
+    style: ferryStyles['static'],
   });
 }

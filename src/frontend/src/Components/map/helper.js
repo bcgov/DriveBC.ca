@@ -1,5 +1,5 @@
 // Styling
-import { eventStyles } from '../data/eventStyleDefinitions.js';
+import { eventStyles } from '../data/featureStyleDefinitions.js';
 
 export const getEventIcon = (event, state) => {
   const severity = event.get('severity').toLowerCase();
