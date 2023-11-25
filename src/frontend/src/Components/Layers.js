@@ -12,6 +12,7 @@ import { MapContext } from '../App.js';
 // Static files
 import videoIcon from '../assets/video-solid.png';
 import eventIcon from '../assets/exclamation-triangle-solid.png';
+import ferryIcon from '../assets/ferry-solid.png';
 
 // Styling
 import './Layers.scss';
@@ -61,6 +62,18 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
           defaultChecked={mapContext.visible_layers.eventsLayer}
         />
         <label htmlFor="events">Road Events</label>
+      </div>
+
+      <div className="layer-item">
+        <img className="map-icon" src={ferryIcon} role="presentation" />
+        <input
+          type="checkbox"
+          name="ferries"
+          id="ferries"
+          onChange={e => toggleLayer('ferriesLayer', e.target.checked)}
+          defaultChecked={mapContext.visible_layers.ferriesLayer}
+        />
+        <label htmlFor="ferries">Inland Ferries</label>
       </div>
     </div>
   );

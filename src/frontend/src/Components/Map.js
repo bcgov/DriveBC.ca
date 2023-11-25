@@ -573,7 +573,7 @@ export default function MapWrapper({
     const ferriesData = await getFerries();
 
     if (layers.current['ferriesLayer']) {
-      mapRef.current.removeLayer(layers.current['ferries']);
+      mapRef.current.removeLayer(layers.current['ferriesLayer']);
     }
 
     layers.current['ferriesLayer'] = getFerriesLayer(
