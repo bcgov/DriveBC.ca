@@ -27,7 +27,7 @@ class CachedListModelMixin:
     cache_timeout = CacheTimeout.DEFAULT
 
     def fetch_list_data(self, queryset=None):
-        serializer = self.serializer_class(
+        serializer = self.get_serializer(
             queryset.all() if queryset is not None else self.queryset.all(), many=True
         )
         return serializer.data

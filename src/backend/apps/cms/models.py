@@ -81,6 +81,8 @@ class Bulletin(Page, BaseModel):
 class Ferry(Page, BaseModel):
     page_body = "Use this page to create or update ferry entries."
 
+    feed_id = models.PositiveIntegerField(unique=True)
+
     location = models.GeometryField(blank=True, null=True)
 
     url = models.URLField(blank=True)

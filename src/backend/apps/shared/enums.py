@@ -44,14 +44,14 @@ ORIENTATION_CHOICES = (
 class CacheTimeout:
     DEFAULT = 120
     WEBCAM_LIST = 60*7  # 5min buffer + (2*1)min twice of task interval
-    DELAY_LIST = 60*15  # 5min buffer + (2*5)min twice of task interval
+    EVENT_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
     FERRY_LIST = 60*60*24  # 24hr
 
 
 class CacheKey:
     DEFAULT = "default_key"
     WEBCAM_LIST = "webcam_list"
-    DELAY_LIST = "delay_list"
+    EVENT_LIST = "event_list"
     ADVISORY_LIST = "advisory_list"
     BULLETIN_LIST = "bulletin_list"
     FERRY_LIST = "ferry_list"

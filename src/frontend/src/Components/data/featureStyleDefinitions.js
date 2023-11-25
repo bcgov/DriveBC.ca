@@ -2,6 +2,9 @@ import { Icon, Stroke, Style } from 'ol/style.js';
 import cameraIconActive from '../../images/mapIcons/camera-active.png';
 import cameraIconHover from '../../images/mapIcons/camera-hover.png';
 import cameraIconStatic from '../../images/mapIcons/camera-static.png';
+import ferryIconActive from '../../images/mapIcons/ferry-active.png';
+import ferryIconHover from '../../images/mapIcons/ferry-hover.png';
+import ferryIconStatic from '../../images/mapIcons/ferry-static.png';
 import incidentIconActive from '../../images/mapIcons/incident-minor-active.png';
 import incidentIconHover from '../../images/mapIcons/incident-minor-hover.png';
 import incidentIconStatic from '../../images/mapIcons/incident-minor-static.png';
@@ -336,4 +339,35 @@ segments: {
     }),
   })
 }
+};
+
+// Ferry icon styles
+export const ferryStyles = {
+  static: new Style({
+    image: new Icon({
+      anchor: [88, 88],
+      anchorXUnits: 'pixels',
+      anchorYUnits: 'pixels',
+      scale: 0.25,
+      src: ferryIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      anchor: [88, 88],
+      anchorXUnits: 'pixels',
+      anchorYUnits: 'pixels',
+      scale: 0.25,
+      src: ferryIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      anchor: [88, 88],
+      anchorXUnits: 'pixels',
+      anchorYUnits: 'pixels',
+      scale: 0.25,
+      src: ferryIconActive,
+    }),
+  }),
 };

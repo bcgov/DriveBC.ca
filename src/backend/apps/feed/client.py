@@ -138,5 +138,6 @@ class FeedClient:
                 "typeName": "hwy:ISS_INLAND_FERRY",
                 "maxFeatures": 500,
                 "outputFormat": "application/json",
+                "srsName": "EPSG:4326"
             }
         )
