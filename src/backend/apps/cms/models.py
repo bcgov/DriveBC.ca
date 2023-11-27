@@ -117,9 +117,7 @@ class Ferry(Page, BaseModel):
     # Editor panels configuration
     content_panels = [
         FieldPanel("title"),
-        # FieldPanel("url"),
         FieldPanel("image"),
-        # FieldPanel("location", widget=DriveBCMapWidget),
         FieldPanel("description"),
         FieldPanel("seasonal_description"),
         FieldPanel("service_hours"),
