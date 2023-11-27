@@ -216,6 +216,11 @@ export default function MapWrapper({
     });
   }
 
+  // Define the function to be executed after the delay
+  function resetCameraPopupRef() {
+      cameraPopupRef.current = null;
+    }
+
   function getCameraCircle(camera) {
     if (!camera) {
       return {};
@@ -414,10 +419,9 @@ export default function MapWrapper({
 
           updateClickedCamera(feature);
 
-          if (!cameraPopupRef.current) {
-            cameraPopupRef.current = popup;
-          } 
+          cameraPopupRef.current = popup;  
           
+          setTimeout(resetCameraPopupRef, 500);
         }
       } else {
         // if it wasn't a webcam icon, check if it was an event
@@ -602,6 +606,8 @@ export default function MapWrapper({
       clickedEventRef.current.set('clicked', false);
       updateClickedEvent(null);
     }
+
+    cameraPopupRef.current = null;
   }
 
   const setRelatedGeometry = (event, state) => {
