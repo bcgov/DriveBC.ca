@@ -35,7 +35,7 @@ class TestAdvisoryAPI(APITestCase, BaseTest):
 
     def test_advisory_list_caching(self):
         # Empty cache
-        assert cache.get(CacheKey.EVENT_LIST) is None
+        assert cache.get(CacheKey.ADVISORY_LIST) is None
 
         # Cache miss
         url = "/api/cms/advisories/"
