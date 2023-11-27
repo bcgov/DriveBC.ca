@@ -51,10 +51,7 @@ export function getCamPopup(camFeature, setClickedCamera, navigate, cameraPopupR
   const handlePopupClick = (e) => {
     if (!cameraPopupRef.current) {
       navigate(`/cameras/${camData.id}`);
-    }
-    else{
       cameraPopupRef.current = null;
-      return;      
     }
   };
 
