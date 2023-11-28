@@ -19,7 +19,7 @@ import {
 
 // Components and functions
 import { getCamerasLayer } from './map/layers/camerasLayer.js';
-import { getCamPopup, getEventPopup } from './map/mapPopup.js'
+import { getCamPopup, getEventPopup, getFerryPopup } from './map/mapPopup.js'
 import { getEvents } from './data/events.js';
 import { getEventsLayer } from './map/layers/eventsLayer.js';
 import {
@@ -56,7 +56,7 @@ import VectorTileSource from 'ol/source/VectorTile.js';
 import View from 'ol/View';
 
 // Styling
-import { cameraStyles } from './data/featureStyleDefinitions.js';
+import { cameraStyles, ferryStyles } from './data/featureStyleDefinitions.js';
 import './Map.scss';
 
 export default function MapWrapper({
@@ -109,6 +109,13 @@ export default function MapWrapper({
   const updateClickedEvent = (feature) => {
     clickedEventRef.current = feature;
     setClickedEvent(feature);
+  }
+
+  const [clickedFerry, setClickedFerry] = useState();
+  const clickedFerryRef = useRef();
+  const updateClickedFerry = (feature) => {
+    clickedFerryRef.current = feature;
+    setClickedFerry(feature);
   }
 
   function centerMap(coordinates) {
@@ -225,6 +232,82 @@ export default function MapWrapper({
         setRelatedGeometry(clickedEventRef.current, 'static');
         updateClickedEvent(null);
       }
+
+      if (clickedFerryRef.current && clickedFeature != clickedFerryRef.current) {
+        clickedFerryRef.current.setStyle(
+          getEventIcon(clickedFerryRef.current, 'static'),
+        );
+
+        setRelatedGeometry(clickedFerryRef.current, 'static');
+        updateClickedFerry(null);
+      }
+    }
+
+    const camClickHandler = (feature) => {
+      const camData = feature.getProperties();
+      if (isPreview) {
+        // Only switch context on clicking cameras within circle
+        if (circle &&
+          circle.intersectsCoordinate(fromLonLat(camData.location.coordinates))
+        ) {
+          mapView.current.animate({
+            center: fromLonLat(camData.location.coordinates),
+          });
+
+          cameraHandler(camData);
+        }
+
+      } else {
+        resetClickedStates(feature);
+
+        // set new clicked camera feature
+        feature.setStyle(cameraStyles['active']);
+        feature.setProperties({ clicked: true }, true);
+
+        popup.current.setPosition(
+          feature.getGeometry().getCoordinates(),
+        );
+        popup.current.getElement().style.top = '40px';
+
+        updateClickedCamera(feature);
+
+        cameraPopupRef.current = popup;
+
+        setTimeout(resetCameraPopupRef, 500);
+      }
+    }
+
+    const eventClickHandler = (feature) => {
+      // reset previous clicked feature
+      resetClickedStates(feature);
+
+      // set new clicked event feature
+      feature.setStyle(
+        getEventIcon(feature, 'active'),
+      );
+      setRelatedGeometry(feature, 'active');
+      feature.setProperties({ clicked: true }, true);
+      updateClickedEvent(feature);
+
+      popup.current.setPosition(
+        feature.getGeometry().getCoordinates(),
+      );
+      popup.current.getElement().style.top = '40px';
+    }
+
+    const ferryClickHandler = (feature) => {
+      // reset previous clicked feature
+      resetClickedStates(feature);
+
+      // set new clicked ferry feature
+      feature.setStyle(ferryStyles['active']);
+      feature.setProperties({ clicked: true }, true);
+      updateClickedFerry(feature);
+
+      popup.current.setPosition(
+        feature.getGeometry().getCoordinates(),
+      );
+      popup.current.getElement().style.top = '40px';
     }
 
     mapRef.current.on('click', async (e) => {
@@ -233,67 +316,30 @@ export default function MapWrapper({
        await layers.current.webcamsLayer.getFeatures(e.pixel) : [];
 
       if (camFeatures.length) {
-        const camData = camFeatures[0].getProperties();
-        if (isPreview) {
-          // Only switch context on clicking cameras within circle
-          if (circle &&
-            circle.intersectsCoordinate(fromLonLat(camData.location.coordinates))
-          ) {
-            mapView.current.animate({
-              center: fromLonLat(camData.location.coordinates),
-            });
-
-            cameraHandler(camData);
-          }
-
-        } else {
-          const feature = camFeatures[0];
-
-          resetClickedStates(feature);
-
-          // set new clicked camera feature
-          feature.setStyle(cameraStyles['active']);
-          feature.setProperties({ clicked: true }, true);
-
-          popup.current.setPosition(
-            feature.getGeometry().getCoordinates(),
-          );
-          popup.current.getElement().style.top = '40px';
-
-          updateClickedCamera(feature);
-
-          cameraPopupRef.current = popup;
-
-          setTimeout(resetCameraPopupRef, 500);
-        }
-      } else {
-        // if it wasn't a webcam icon, check if it was an event
-        const eventFeatures = layers.current.eventsLayer.getVisible() ?
-          await layers.current.eventsLayer.getFeatures(e.pixel) : [];
-
-        if (eventFeatures.length) {
-          const feature = eventFeatures[0];
-
-          // reset previous clicked feature
-          resetClickedStates(feature);
-
-          // set new clicked event feature
-          feature.setStyle(
-            getEventIcon(feature, 'active'),
-          );
-          setRelatedGeometry(feature, 'active');
-          feature.setProperties({ clicked: true }, true);
-          updateClickedEvent(feature);
-
-          popup.current.setPosition(
-            feature.getGeometry().getCoordinates(),
-          );
-          popup.current.getElement().style.top = '40px';
-
-        } else {
-          closePopup();
-        }
+        camClickHandler(camFeatures[0]);
+        return;
       }
+
+      // if it wasn't a webcam icon, check if it was an event
+      const eventFeatures = layers.current.eventsLayer.getVisible() ?
+        await layers.current.eventsLayer.getFeatures(e.pixel) : [];
+
+      if (eventFeatures.length) {
+        eventClickHandler(eventFeatures[0]);
+        return;
+      }
+
+      // if it wasn't a event icon, check if it was a ferry
+      const ferryFeatures = layers.current.ferriesLayer.getVisible() ?
+        await layers.current.ferriesLayer.getFeatures(e.pixel) : [];
+
+      if (ferryFeatures.length) {
+        ferryClickHandler(ferryFeatures[0]);
+        return;
+      }
+
+      // Close popups if clicked on blank space
+      closePopup();
     });
 
     // Hover states
@@ -476,6 +522,14 @@ export default function MapWrapper({
       updateClickedEvent(null);
     }
 
+    // check for active ferry icons
+    if (clickedFerryRef.current) {
+      clickedFerryRef.current.setStyle(ferryStyles['static']);
+      clickedFerryRef.current.set('clicked', false);
+      updateClickedFerry(null);
+    }
+
+    // Reset cam popup handler lock timer
     cameraPopupRef.current = null;
   }
 
@@ -588,6 +642,10 @@ export default function MapWrapper({
 
           {clickedEvent &&
             getEventPopup(clickedEvent)
+          }
+
+          {clickedFerry &&
+            getFerryPopup(clickedFerry)
           }
         </div>
       </div>

@@ -121,3 +121,21 @@ export function getEventPopup(eventFeature) {
     </div>
   );
 }
+
+export function getFerryPopup(ferryFeature) {
+  const ferryData = ferryFeature.getProperties();
+
+  return (
+    <div className={`popup`}>
+      <div className="popup__title">
+        <p className="bold name">{`${ferryData.title}`}</p>
+      </div>
+
+      <div className="popup__description">
+        <div className="delay-details">
+          <p>testtesttest</p>
+        </div>
+      </div>
+    </div>
+  );
+}
