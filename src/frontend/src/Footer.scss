@@ -1,7 +1,7 @@
 @import "./styles/variables.scss";
 
 .footer-container {
-  margin-top: 100px;
+  margin-top: 3rem;
   background: $Grey10;
 
   .landAcknowledgement {
@@ -56,8 +56,13 @@
 
       .contact {
         flex: 0 0 50%;
+
         .footer-logo {
           height: 56px;
+          margin: 1rem 0;
+        }
+        .footer-text {
+          margin-top: 1rem;
         }
       }
 

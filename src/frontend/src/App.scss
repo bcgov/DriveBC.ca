@@ -314,3 +314,40 @@ body {
     }
   }
 }
+
+// Common styling
+.camera-orientations {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  align-items: center;
+  margin: 0.5rem 0;
+
+  .colocated-camera-icon {
+    margin: 0 auto;
+  }
+
+  .btn.camera-direction-btn {
+    margin: 0 auto;
+    padding: 2px 8px;
+    font-size: 0.875rem;
+    width: 100%;
+    max-width: 48px;
+
+    &:hover {
+      background: $BC-Blue;
+      color: white;
+    }
+
+    &:not(.current) {
+      background: none;
+      border-color: transparent;
+      color: $Type-Primary;
+
+      &:hover {
+        background: $BC-Blue-Alt;
+        color: white;
+      }
+    }
+  }
+}

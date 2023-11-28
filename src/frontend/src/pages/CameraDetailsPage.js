@@ -6,13 +6,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
   faArrowLeft,
-  faArrowRotateRight,
   faExclamationTriangle,
   faVideoSlash,
   faPlay,
   faPause,
   faBackward,
   faForward,
+  faClockRotateLeft
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faFlag
@@ -41,6 +41,8 @@ import CurrentCameraIcon from '../Components/CurrentCameraIcon';
 // Styling
 import './CameraDetailsPage.scss';
 import '../Components/Map.scss';
+
+import colocatedCamIcon from '../images/colocated-camera.svg';
 
 export default function CameraDetailsPage() {
   // Context and router data
@@ -194,12 +196,6 @@ export default function CameraDetailsPage() {
       <div>
         {camera && (
           <div className="container--full-width">
-            <div>
-              {camera.camGroup.map((cam) =>
-                <Button key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
-              )}
-            </div>
-
             <div className="camera-details">
               <div className="camera-details__description">
                 <h2>{camera.name}</h2>
@@ -273,10 +269,13 @@ export default function CameraDetailsPage() {
               </div>
             )}
 
-            <div className="camera-update">
-              <p className="bold">
-                This camera updates its image approximately every{' '}
-                {Math.ceil(camera.update_period_mean / 60)} minutes
+            <div className="camera-update camera-update--desktop">
+              <p className="next-update bold">
+                Next update attempt: {nextUpdate}
+              </p>
+              <p>
+                Camera image updates approximately every{' '}
+                {Math.ceil(camera.update_period_mean / 60)} minutes.
               </p>
             </div>
 
@@ -287,24 +286,43 @@ export default function CameraDetailsPage() {
                 onSelect={ (selectedTab) => setActiveTab(selectedTab) }
               >
                 <Tab eventKey="webcam" title={<span>{cameraTab} Current camera</span>}>
-                  <div className="replay-div">
-                    <div className="next-update">
-                      <FontAwesomeIcon icon={faArrowRotateRight} />
-                      <p>
-                        Next update attempt: {nextUpdate}
-                      </p>
+                  
+                  <div className="camera-update camera-update--mobile">
+                    <p className="next-update bold">
+                      Next update attempt: {nextUpdate}
+                    </p>
+                    <p>
+                      Camera image updates approximately every{' '}
+                      {Math.ceil(camera.update_period_mean / 60)} minutes.
+                    </p>
+                  </div>
+
+                  <div className="camera-functions">
+                    <div className="camera-orientations">
+                      <span className="camera-direction-label">
+                        <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
+                        <span>Direction</span>
+                      </span>
+                      <span className="camera-directions-group">
+                        {camera.camGroup.map((cam) =>
+                          <Button className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
+                        )}
+                      </span>
                     </div>
 
-                    {shouldRenderReplay() &&
-                      <Form className="replay-the-day">
-                        <Form.Check
-                          onChange={toggleReplay}
-                          type="switch"
-                          id="replay-toggle"
-                          label="Replay the day"
-                        />
-                      </Form>
-                    }
+                    <div className="replay-div">
+                      <FontAwesomeIcon icon={faClockRotateLeft} />
+                      {shouldRenderReplay() &&
+                        <Form className="replay-the-day">
+                          <Form.Check
+                            onChange={toggleReplay}
+                            type="switch"
+                            id="replay-toggle"
+                            label="Replay the day"
+                          />
+                        </Form>
+                      }
+                    </div>
                   </div>
                   <div className="image-wrap">
                     {camera.is_on && (
@@ -343,7 +361,6 @@ export default function CameraDetailsPage() {
                   </div>
                 </Tab>
                 <Tab eventKey="nearby" title={<span>{nearby}Nearby</span>}>
-                  <div className="replay-div"></div>
                   <div className="map-wrap map-context-wrap">
                     <DndProvider options={HTML5toTouch}>
                       <Map camera={camera} isPreview={true} cameraHandler={initCamera} mapViewRoute={mapViewRoute}/>

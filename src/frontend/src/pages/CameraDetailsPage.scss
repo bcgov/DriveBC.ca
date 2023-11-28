@@ -151,9 +151,76 @@
   }
 
   .camera-update {
-    margin-bottom: 24px;
+    margin: 1rem 1rem;
+
+    @media (min-width: 576px) {
+      margin: 1rem 0;
+    }
+
+    @media (min-width: 992px) {
+      margin: 0 1rem 1rem;
+    }
+
+    &--desktop {
+      display: none;
+  
+      @media (min-width: 992px) {
+        display: block;
+      }
+    }
+
     p {
       margin-bottom: 0;
+    }
+
+    &--mobile {
+      @media (min-width: 992px) {
+        display: none;
+      }
+    }
+  }
+
+  .camera-functions {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0.5rem;
+    background-color: $BC-Blue-Light;
+    color: $BC-Blue;
+
+    .camera-orientations {
+      display: flex;
+      flex-direction: column;
+
+      @media (min-width: 576px) { 
+        flex-grow: 1;
+        display: block;
+      }
+
+      .btn.camera-direction-btn {
+        width: initial;
+
+        & + .btn.camera-direction-btn {
+          margin-left: 6px;
+        }
+      }
+      
+
+      .camera-direction-label {
+        margin-right: auto;
+
+        @media (min-width: 576px) { 
+          margin-right: 0;
+        }
+      }
+
+      .camera-directions-group {
+        margin-left: 0.5rem;
+
+        .camera-direction-btn {
+          width: 40px;
+          max-width: initial;
+        }
+      }
     }
   }
 
@@ -163,7 +230,6 @@
 
     .tab-content {
       & > .tab-pane {
-        margin-top: 16px;
 
         .card-img-box {
           height: 365px;
@@ -327,66 +393,34 @@
 
     .replay-div {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      @media (min-width: 375px) {
-        flex-direction: row;
-      }
+      flex-direction: row;
+      align-items: flex-start;
+      margin-top: 0.5rem;
 
       @media (min-width: 576px) {
         justify-content: space-between;
       }
 
-      .next-update, .replay-the-day {
+      svg {
+        margin-right: 8px;
+        margin-top: 4px;
+      }
+
+      .replay-the-day {
         margin-bottom: 0.5em;
+        margin-right: 0.5em;
 
         @media (min-width: 576px) {
           margin-bottom: 0;
         }
       }
 
-      .next-update {
-        display: flex;
-        align-items: center;
-        padding: 0 6px;
-        background-color: $BC-Blue-Light;
-        color: $BC-Blue;
-        border: 1px solid $BC-Blue;
-        border-radius: 16px;
-        margin-right: 18px;
-        order: 2;
-
-        @media (min-width: 375px) {
-          order: 1;
-        }
-
-        svg, p {
-          font-size: 0.875rem;
-        }
-
-        svg {
-          margin-right: 8px;
-        }
-
-        p {
-          margin-bottom: 0;
-          font-weight: 700;
-          color: $BC-Blue;
-        }
-      }
-
       .replay-the-day {
-        order: 1;
-
-        @media (min-width: 375px) {
-          order: 2;
-        }
-
         .form-switch {
           display: flex;
           align-items: center;
           margin-bottom: 0;
+          padding-left: 0;
 
           .form-check-input, .form-check-label {
             cursor: pointer;
@@ -394,59 +428,15 @@
 
           .form-check-input {
             height: 20px;
-            margin-right: 8px;
+            margin: 0;
+            margin-left: 8px;
+            order: 2;
           }
 
           .form-check-label {
-            font-size: 0.875rem;
+            font-size: 1rem;
             white-space: nowrap;
-
-            @media (min-width: 576px) {
-              font-size: 1rem;
-            }
-          }
-        }
-      }
-    }
-
-    //Responsive Tabs
-    .tab-content {
-      .tab-pane {
-        .replay-div {
-          height: 64px;
-        }
-        .image-wrap {
-          height: 388px;
-        }
-
-        &:last-of-type {
-          .replay-div {
-            height: 0;
-          }
-          .map-context-wrap {
-            height: 452px;
-          }
-        }
-
-        @media (min-width: 576px) {
-          .replay-div {
-            height: 44px;
-          }
-          &:last-of-type {
-            .map-context-wrap  {
-              height: 432px;
-            }
-          }
-        }
-
-        @media (min-width: 992px) {
-          &, &:last-of-type {
-            .replay-div {
-              height: 44px;
-            }
-            .map-context-wrap  {
-              height: 388px;
-            }
+            order: 1;
           }
         }
       }
@@ -510,7 +500,7 @@
     position: relative;
     top: 0rem;
     bottom: 0;
-    height: 400px;
+    height: 100%;
     width: 100%;
 
     .map {
