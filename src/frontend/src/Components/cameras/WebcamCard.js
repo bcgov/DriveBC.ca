@@ -15,6 +15,8 @@ import FriendlyTime from '../FriendlyTime';
 // Styling
 import './WebcamCard.scss';
 
+import colocatedCamIcon from '../../images/colocated-camera.svg';
+
 export default function WebcamCard(props) {
   // Props
   const { cameraData } = props;
@@ -58,6 +60,16 @@ export default function WebcamCard(props) {
   return (
     <Card className={`webcam-card ${stale} ${delayed} ${unavailable}`}>
       <Card.Body onClick={handleClick}>
+        <p className="camera-name bold">{camera.name}</p>
+        <div className="camera-orientations">
+
+          <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
+          {camera.camGroup.map((cam) =>
+            <Button className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={(event) => {event.stopPropagation(); setCamera(cam)}}>{cam.orientation}</Button>
+          )}
+        </div>
+        <div>
+      </div>
         {!unavailable && !delayed && !stale &&
           <div className="card-img-box">
             <img className="card-img" src={ camera.links.imageSource } alt={camera.name} />
@@ -113,16 +125,9 @@ export default function WebcamCard(props) {
           <p className="driveBC">Drive<span>BC</span></p>
           <FriendlyTime date={camera.last_update_modified} />
         </div>
-        <p className="label bold">{camera.name}</p>
         <p className="label">{camera.caption}</p>
       </Card.Body>
       <Button variant="primary" className="viewmap-btn">View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
-
-      <div>
-        {camera.camGroup.map((cam) =>
-          <Button key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
-        )}
-      </div>
     </Card>
   );
 }

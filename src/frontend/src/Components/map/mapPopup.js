@@ -7,6 +7,8 @@ import EventTypeIcon from '../EventTypeIcon';
 import FriendlyTime from '../FriendlyTime';
 import parse from 'html-react-parser';
 
+import colocatedCamIcon from '../../images/colocated-camera.svg';
+
 function convertDirection(direction) {
   switch (direction) {
       case "N":
@@ -26,7 +28,7 @@ function convertDirection(direction) {
   }
 }
 
-function renderCamGroup(camFeature, setClickedCamera) {
+function renderCamGroup(camFeature, setClickedCamera, currentCamData) {
   const rootCamData = camFeature.getProperties();
 
   const clickHandler = (i) => {
@@ -36,7 +38,10 @@ function renderCamGroup(camFeature, setClickedCamera) {
 
   const res = Object.entries(rootCamData.camGroup).map(([index, cam]) => {
     return (
-      <Button key={cam.id} onClick={() => clickHandler(index)}>{cam.orientation}</Button>
+      <Button className={'camera-direction-btn' + ((currentCamData.orientation == cam.orientation) ? ' current' : '') }
+       key={cam.id} onClick={(event) => {event.stopPropagation(); clickHandler(index)}}>
+        {cam.orientation}
+      </Button>
     );
   });
 
@@ -65,19 +70,22 @@ export function getCamPopup(camFeature, setClickedCamera, navigate, cameraPopupR
 
         <div className="popup__description">
           <p>{parse(camData.caption)}</p>
-          <div className="camera-image">
-            <img src={camData.links.imageSource} width='300' />
+          <div className="popup__camera-info">
+            <div className="camera-orientations">
+              <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
+              {renderCamGroup(camFeature, setClickedCamera, camData)}
+            </div>
+            <div className="camera-image">
+              <img src={camData.links.imageSource} width='300' />
 
-            <div className="timestamp">
-              <p className="driveBC">Drive<span>BC</span></p>
-              <FriendlyTime date={camData.last_update_modified} />
+              <div className="timestamp">
+                <p className="driveBC">Drive<span>BC</span></p>
+                <FriendlyTime date={camData.last_update_modified} />
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      <hr/>
-      {renderCamGroup(camFeature, setClickedCamera)}
     </div>
   );
 }

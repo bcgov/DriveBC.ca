@@ -25,7 +25,7 @@ export default function Footer() {
         <div className="flex-container">
           <div className="contact">
             <img className="footer-logo" src={logo} alt="Government of B.C." />
-            <p>BC Highways Conditions toll-free in North America: <a href="tel:1-800-550-4997">1-800-550-4997</a> including Telephone Device for the Deaf (TDD) support.</p>
+            <p className="footer-text">BC Highways Conditions toll-free in North America: <a href="tel:1-800-550-4997">1-800-550-4997</a> including Telephone Device for the Deaf (TDD) support.</p>
           </div>
           <div className="more-info">
             <h2>More Info</h2>

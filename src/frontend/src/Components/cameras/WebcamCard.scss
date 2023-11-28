@@ -16,6 +16,10 @@
 
   .card-body {
     padding: 12px;
+
+    .camera-name {
+      font-size: 1.125rem;
+    }
     
     .card-img-box {
       position: relative;
@@ -103,7 +107,7 @@
     .timestamp {
       background-color: $Black;
       padding: 0 10px;
-      margin-bottom: 1em;
+      margin-bottom: 0.5rem;
       display: flex;
       justify-content: space-between;
 
