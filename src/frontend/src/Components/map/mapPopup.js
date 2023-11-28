@@ -126,14 +126,20 @@ export function getFerryPopup(ferryFeature) {
   const ferryData = ferryFeature.getProperties();
 
   return (
-    <div className={`popup`}>
+    <div className={`popup popup--ferry`}>
       <div className="popup__title">
-        <p className="bold name">{`${ferryData.title}`}</p>
+        <a href={ferryData.url} target="_blank" rel="noreferrer" className="bold name">{`${ferryData.title}`}</a>
       </div>
 
       <div className="popup__description">
+        {ferryData.image_url &&
+          <img src={ferryData.image_url} alt={ferryData.title} />
+        }
+
         <div className="delay-details">
-          <p>testtesttest</p>
+          <p>{parse(ferryData.description)}</p>
+          <p>{parse(ferryData.seasonal_description)}</p>
+          <p>{parse(ferryData.service_hours)}</p>
         </div>
       </div>
     </div>
