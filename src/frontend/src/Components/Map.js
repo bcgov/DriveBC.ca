@@ -87,6 +87,7 @@ export default function MapWrapper({
   const geolocation = useRef(null);
   const hoveredCamera = useRef();
   const hoveredEvent = useRef();
+  const hoveredFerry = useRef();
   const locationPinRef = useRef(null);
   const cameraPopupRef = useRef(null);
 
@@ -234,11 +235,7 @@ export default function MapWrapper({
       }
 
       if (clickedFerryRef.current && clickedFeature != clickedFerryRef.current) {
-        clickedFerryRef.current.setStyle(
-          getEventIcon(clickedFerryRef.current, 'static'),
-        );
-
-        setRelatedGeometry(clickedFerryRef.current, 'static');
+        clickedFerryRef.current.setStyle(ferryStyles['static']);
         updateClickedFerry(null);
       }
     }
@@ -361,16 +358,21 @@ export default function MapWrapper({
         }
         hoveredEvent.current = null;
       }
+
+      if (hoveredFerry.current && hoveredFeature != hoveredFerry.current) {
+        if (!hoveredFerry.current.getProperties().clicked) {
+          hoveredFerry.current.setStyle(ferryStyles['static']);
+        }
+
+        hoveredFerry.current = null;
+      }
     }
 
     mapRef.current.on('pointermove', async (e) => {
-      let camHit = false;
       if (layers.current && 'webcamsLayer' in layers.current) {
         // check if it was a camera icon that was hovered on
         const hoveredCameras = await layers.current['webcamsLayer'].getFeatures(e.pixel);
         if (hoveredCameras.length) {
-          camHit = true;
-
           const feature = hoveredCameras[0];
 
           resetHoveredStates(feature);
@@ -379,16 +381,15 @@ export default function MapWrapper({
           if (!hoveredCamera.current.getProperties().clicked) {
             hoveredCamera.current.setStyle(cameraStyles['hover']);
           }
+
+          return;
         }
       }
 
       // if it wasn't a camera icon, check if it was an event
-      let eventHit = false;
-      if (layers.current && 'eventsLayer' in layers.current && !camHit) {
+      if (layers.current && 'eventsLayer' in layers.current) {
         const hoveredEvents = await layers.current['eventsLayer'].getFeatures(e.pixel);
         if (hoveredEvents.length) {
-          eventHit = true;
-
           const feature = hoveredEvents[0];
 
           resetHoveredStates(feature);
@@ -400,13 +401,31 @@ export default function MapWrapper({
             );
             setRelatedGeometry(hoveredEvent.current, 'hover');
           }
+
+          return;
         }
       }
 
-      if (!camHit && !eventHit) {
-        resetHoveredStates(null);
+      // if it wasn't a event icon, check if it was a ferry
+      if (layers.current && 'ferriesLayer' in layers.current) {
+        // check if it was a camera icon that was hovered on
+        const hoveredFerries = await layers.current['ferriesLayer'].getFeatures(e.pixel);
+        if (hoveredFerries.length) {
+          const feature = hoveredFerries[0];
+
+          resetHoveredStates(feature);
+
+          hoveredFerry.current = feature;
+          if (!hoveredFerry.current.getProperties().clicked) {
+            hoveredFerry.current.setStyle(ferryStyles['hover']);
+          }
+
+          return;
+        }
       }
 
+      // Reset on blank space
+      resetHoveredStates(null);
     });
 
     toggleMyLocation();
