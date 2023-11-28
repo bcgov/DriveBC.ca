@@ -26,10 +26,10 @@ body {
       font-size: 0.875rem;
       font-weight: 700;
     }
-    
+
     .timestamp-container {
       display: flex;
-      
+
       .friendly-time, .formatted-date {
         margin-left: 1ch;
       }
@@ -85,7 +85,7 @@ body {
 
     ol, ul {
       padding-right: 1.5rem;
-      
+
       li {
         margin-bottom: 0.25rem;
       }
@@ -128,7 +128,7 @@ body {
         background-color: $BC-Blue-Light;
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;
-        
+
         .name {
           color: $HwyCrest;
         }
@@ -195,6 +195,13 @@ body {
               }
             }
           }
+        }
+      }
+
+      &--ferry {
+        img {
+          width: 64px;
+          height: 64px;
         }
       }
 

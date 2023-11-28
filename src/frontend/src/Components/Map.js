@@ -5,7 +5,6 @@ import { updateMapState } from '../slices/mapSlice';
 import { useNavigate } from 'react-router-dom';
 
 // Third party packages
-import { lineString, bbox } from "@turf/turf";
 import Button from 'react-bootstrap/Button';
 
 // FA
@@ -20,10 +19,20 @@ import {
 
 // Components and functions
 import { getCamerasLayer } from './map/layers/camerasLayer.js';
-import { getCamPopup, getEventPopup } from './map/mapPopup.js'
+import { getCamPopup, getEventPopup, getFerryPopup } from './map/mapPopup.js'
 import { getEvents } from './data/events.js';
 import { getEventsLayer } from './map/layers/eventsLayer.js';
-import { getEventIcon } from './map/helper.js';
+import {
+  fitMap,
+  getCameraCircle,
+  blueLocationMarkup,
+  redLocationMarkup,
+  setLocationPin,
+  getEventIcon,
+  setZoomPan,
+  zoomIn,
+  zoomOut
+} from './map/helper.js';
 import { getFerries } from './data/ferries.js';
 import { getFerriesLayer } from './map/layers/ferriesLayer.js';
 import { getWebcams, groupCameras } from './data/webcams.js';
@@ -36,23 +45,18 @@ import RouteSearch from './map/RouteSearch.js';
 
 // OpenLayers
 import { applyStyle } from 'ol-mapbox-style';
-import { Circle } from 'ol/geom.js';
 import { fromLonLat, toLonLat, transformExtent } from 'ol/proj';
 import { ScaleLine } from 'ol/control.js';
-import { Style } from 'ol/style.js';
-import Feature from 'ol/Feature.js';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay.js';
 import Geolocation from 'ol/Geolocation.js';
 import MVT from 'ol/format/MVT.js';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
 import VectorTileLayer from 'ol/layer/VectorTile.js';
 import VectorTileSource from 'ol/source/VectorTile.js';
 import View from 'ol/View';
 
 // Styling
-import { cameraStyles } from './data/featureStyleDefinitions.js';
+import { cameraStyles, ferryStyles } from './data/featureStyleDefinitions.js';
 import './Map.scss';
 
 export default function MapWrapper({
@@ -83,6 +87,7 @@ export default function MapWrapper({
   const geolocation = useRef(null);
   const hoveredCamera = useRef();
   const hoveredEvent = useRef();
+  const hoveredFerry = useRef();
   const locationPinRef = useRef(null);
   const cameraPopupRef = useRef(null);
 
@@ -107,6 +112,13 @@ export default function MapWrapper({
     setClickedEvent(feature);
   }
 
+  const [clickedFerry, setClickedFerry] = useState();
+  const clickedFerryRef = useRef();
+  const updateClickedFerry = (feature) => {
+    clickedFerryRef.current = feature;
+    setClickedFerry(feature);
+  }
+
   function centerMap(coordinates) {
     if (mapView.current) {
       mapView.current.animate({
@@ -115,173 +127,10 @@ export default function MapWrapper({
     }
   }
 
-  function centerMapZoomOut(coordinates) {
-    if (mapView.current) {
-      mapView.current.animate({
-        center: fromLonLat(coordinates),
-        zoom: 7,
-      });
-    }
-  }
-
-  function fitMap() {
-    const routeBbox = bbox(lineString(selectedRoute.route));
-    const routeExtent = transformExtent(routeBbox,'EPSG:4326','EPSG:3857');
-
-    if (mapView.current) {
-      mapView.current.fit(routeExtent, { duration: 1000 });
-    }
-  }
-
-  function setLocationPinPoint(coordinates) {
-    const svgMarkup = `
-      <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
-        <defs>
-          <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="40%" style="stop-color:#f32947;stop-opacity:0.5" />
-            <stop offset="40%" style="stop-color:#ed6f82;stop-opacity:0.5" />
-          </linearGradient>
-        </defs>
-        <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
-        <defs>
-          <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="100%" style="stop-color:#f32947;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#ed6f82;stop-opacity:1" />
-          </linearGradient>
-        </defs>
-        <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
-      </svg>
-    `;
-
-    const svgImage = new Image();
-    svgImage.src =
-      'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgMarkup);
-
-    // Create an overlay for the marker
-    locationPinRef.current = new Overlay({
-      position: fromLonLat(coordinates),
-      positioning: 'center-center',
-      element: svgImage,
-      stopEvent: false, // Allow interactions with the overlay content
-    });
-
-    mapRef.current.addOverlay(locationPinRef.current);
-    mapRef.current.on('moveend', function (event) {
-      const newZoom = mapRef.current.getView().getZoom();
-      // Calculate new marker size based on the zoom level
-      const newSize = 44 * (newZoom / 10);
-      svgImage.style.width = newSize + 'px';
-      svgImage.style.height = newSize + 'px';
-    });
-  }
-
-  function addMyLocationPinPoint(coordinates) {
-    const svgMarkup = `
-      <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
-        <defs>
-          <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="40%" style="stop-color:#2790F3;stop-opacity:0.5" />
-            <stop offset="40%" style="stop-color:#7496EC;stop-opacity:0.5" />
-          </linearGradient>
-        </defs>
-        <circle id="circle1" cx="44" cy="44" r="44" fill="url(#gradient1)"/>
-        <defs>
-          <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="100%" style="stop-color:#2970F3;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#7496EC;stop-opacity:1" />
-          </linearGradient>
-        </defs>
-        <circle cx="44" cy="44" r="16" fill="url(#gradient2)" stroke="white" stroke-width="2" />
-      </svg>
-    `;
-
-    const svgImage = new Image();
-    svgImage.src =
-      'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgMarkup);
-    svgImage.alt = 'my location pin';
-
-    // Create an overlay for the marker
-    const markerOverlay = new Overlay({
-      position: fromLonLat(coordinates),
-      positioning: 'center-center',
-      element: svgImage,
-      stopEvent: false, // Allow interactions with the overlay content
-    });
-
-    mapRef.current.on('moveend', function (event) {
-      const newZoom = mapRef.current.getView().getZoom();
-      // Calculate new marker size based on the zoom level
-      const newSize = 44 * (newZoom / 10);
-      svgImage.style.width = newSize + 'px';
-      svgImage.style.height = newSize + 'px';
-      mapRef.current.addOverlay(markerOverlay);
-    });
-  }
-
   // Define the function to be executed after the delay
   function resetCameraPopupRef() {
       cameraPopupRef.current = null;
     }
-
-  function getCameraCircle(camera) {
-    if (!camera) {
-      return {};
-    }
-
-    if (typeof camera === 'string') {
-      camera = JSON.parse(camera);
-    }
-    const circle = new Circle(fromLonLat(camera.location.coordinates), 5000);
-    const circleFeature = new Feature({
-      geometry: circle,
-    });
-
-    circleFeature.setStyle(
-      new Style({
-        renderer(coordinates, state) {
-          const [[x, y], [x1, y1]] = coordinates;
-          const ctx = state.context;
-          const dx = x1 - x;
-          const dy = y1 - y;
-          const radius = Math.sqrt(dx * dx + dy * dy);
-
-          const innerRadius = 0;
-          const outerRadius = radius * 1.4;
-
-          const gradient = ctx.createRadialGradient(
-            x,
-            y,
-            innerRadius,
-            x,
-            y,
-            outerRadius,
-          );
-          gradient.addColorStop(0, 'rgba(255,0,0,0)');
-          gradient.addColorStop(0.6, 'rgba(255,0,0,0.2)');
-          gradient.addColorStop(1, 'rgba(255,0,0,0.8)');
-          ctx.beginPath();
-          ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
-          ctx.fillStyle = gradient;
-          ctx.fill();
-
-          ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
-          ctx.strokeStyle = 'rgba(255,0,0,1)';
-          ctx.stroke();
-        },
-      }),
-    );
-
-    const radiusLayer = new VectorLayer({
-      source: new VectorSource({
-        features: [circleFeature],
-      }),
-    });
-
-    return {
-      circle: circle,
-      radiusLayer: radiusLayer,
-    };
-  }
 
   useEffect(() => {
     // initialization hook for the OpenLayers map logic
@@ -384,6 +233,78 @@ export default function MapWrapper({
         setRelatedGeometry(clickedEventRef.current, 'static');
         updateClickedEvent(null);
       }
+
+      if (clickedFerryRef.current && clickedFeature != clickedFerryRef.current) {
+        clickedFerryRef.current.setStyle(ferryStyles['static']);
+        updateClickedFerry(null);
+      }
+    }
+
+    const camClickHandler = (feature) => {
+      const camData = feature.getProperties();
+      if (isPreview) {
+        // Only switch context on clicking cameras within circle
+        if (circle &&
+          circle.intersectsCoordinate(fromLonLat(camData.location.coordinates))
+        ) {
+          mapView.current.animate({
+            center: fromLonLat(camData.location.coordinates),
+          });
+
+          cameraHandler(camData);
+        }
+
+      } else {
+        resetClickedStates(feature);
+
+        // set new clicked camera feature
+        feature.setStyle(cameraStyles['active']);
+        feature.setProperties({ clicked: true }, true);
+
+        popup.current.setPosition(
+          feature.getGeometry().getCoordinates(),
+        );
+        popup.current.getElement().style.top = '40px';
+
+        updateClickedCamera(feature);
+
+        cameraPopupRef.current = popup;
+
+        setTimeout(resetCameraPopupRef, 500);
+      }
+    }
+
+    const eventClickHandler = (feature) => {
+      // reset previous clicked feature
+      resetClickedStates(feature);
+
+      // set new clicked event feature
+      feature.setStyle(
+        getEventIcon(feature, 'active'),
+      );
+      setRelatedGeometry(feature, 'active');
+      feature.setProperties({ clicked: true }, true);
+      updateClickedEvent(feature);
+
+      popup.current.setPosition(
+        feature.getGeometry().getCoordinates(),
+      );
+      popup.current.getElement().style.top = '40px';
+    }
+
+    const ferryClickHandler = (feature) => {
+      // reset previous clicked feature
+      resetClickedStates(feature);
+
+      // set new clicked ferry feature
+      feature.setStyle(ferryStyles['active']);
+      feature.setProperties({ clicked: true }, true);
+      updateClickedFerry(feature);
+
+      popup.current.setPosition(
+        feature.getGeometry().getCoordinates(),
+      );
+      popup.current.getElement().style.top = '40px';
     }
 
     mapRef.current.on('click', async (e) => {
@@ -392,67 +313,30 @@ export default function MapWrapper({
        await layers.current.webcamsLayer.getFeatures(e.pixel) : [];
 
       if (camFeatures.length) {
-        const camData = camFeatures[0].getProperties();
-        if (isPreview) {
-          // Only switch context on clicking cameras within circle
-          if (circle &&
-            circle.intersectsCoordinate(fromLonLat(camData.location.coordinates))
-          ) {
-            mapView.current.animate({
-              center: fromLonLat(camData.location.coordinates),
-            });
-
-            cameraHandler(camData);
-          }
-
-        } else {
-          const feature = camFeatures[0];
-
-          resetClickedStates(feature);
-
-          // set new clicked camera feature
-          feature.setStyle(cameraStyles['active']);
-          feature.setProperties({ clicked: true }, true);
-
-          popup.current.setPosition(
-            feature.getGeometry().getCoordinates(),
-          );
-          popup.current.getElement().style.top = '40px';
-
-          updateClickedCamera(feature);
-
-          cameraPopupRef.current = popup;  
-          
-          setTimeout(resetCameraPopupRef, 500);
-        }
-      } else {
-        // if it wasn't a webcam icon, check if it was an event
-        const eventFeatures = layers.current.eventsLayer.getVisible() ?
-          await layers.current.eventsLayer.getFeatures(e.pixel) : [];
-
-        if (eventFeatures.length) {
-          const feature = eventFeatures[0];
-
-          // reset previous clicked feature
-          resetClickedStates(feature);
-
-          // set new clicked event feature
-          feature.setStyle(
-            getEventIcon(feature, 'active'),
-          );
-          setRelatedGeometry(feature, 'active');
-          feature.setProperties({ clicked: true }, true);
-          updateClickedEvent(feature);
-
-          popup.current.setPosition(
-            feature.getGeometry().getCoordinates(),
-          );
-          popup.current.getElement().style.top = '40px';
-
-        } else {
-          closePopup();
-        }
+        camClickHandler(camFeatures[0]);
+        return;
       }
+
+      // if it wasn't a webcam icon, check if it was an event
+      const eventFeatures = layers.current.eventsLayer.getVisible() ?
+        await layers.current.eventsLayer.getFeatures(e.pixel) : [];
+
+      if (eventFeatures.length) {
+        eventClickHandler(eventFeatures[0]);
+        return;
+      }
+
+      // if it wasn't a event icon, check if it was a ferry
+      const ferryFeatures = layers.current.ferriesLayer.getVisible() ?
+        await layers.current.ferriesLayer.getFeatures(e.pixel) : [];
+
+      if (ferryFeatures.length) {
+        ferryClickHandler(ferryFeatures[0]);
+        return;
+      }
+
+      // Close popups if clicked on blank space
+      closePopup();
     });
 
     // Hover states
@@ -474,16 +358,21 @@ export default function MapWrapper({
         }
         hoveredEvent.current = null;
       }
+
+      if (hoveredFerry.current && hoveredFeature != hoveredFerry.current) {
+        if (!hoveredFerry.current.getProperties().clicked) {
+          hoveredFerry.current.setStyle(ferryStyles['static']);
+        }
+
+        hoveredFerry.current = null;
+      }
     }
 
     mapRef.current.on('pointermove', async (e) => {
-      let camHit = false;
       if (layers.current && 'webcamsLayer' in layers.current) {
         // check if it was a camera icon that was hovered on
         const hoveredCameras = await layers.current['webcamsLayer'].getFeatures(e.pixel);
         if (hoveredCameras.length) {
-          camHit = true;
-
           const feature = hoveredCameras[0];
 
           resetHoveredStates(feature);
@@ -492,16 +381,15 @@ export default function MapWrapper({
           if (!hoveredCamera.current.getProperties().clicked) {
             hoveredCamera.current.setStyle(cameraStyles['hover']);
           }
+
+          return;
         }
       }
 
       // if it wasn't a camera icon, check if it was an event
-      let eventHit = false;
-      if (layers.current && 'eventsLayer' in layers.current && !camHit) {
+      if (layers.current && 'eventsLayer' in layers.current) {
         const hoveredEvents = await layers.current['eventsLayer'].getFeatures(e.pixel);
         if (hoveredEvents.length) {
-          eventHit = true;
-
           const feature = hoveredEvents[0];
 
           resetHoveredStates(feature);
@@ -513,13 +401,31 @@ export default function MapWrapper({
             );
             setRelatedGeometry(hoveredEvent.current, 'hover');
           }
+
+          return;
         }
       }
 
-      if (!camHit && !eventHit) {
-        resetHoveredStates(null);
+      // if it wasn't a event icon, check if it was a ferry
+      if (layers.current && 'ferriesLayer' in layers.current) {
+        // check if it was a camera icon that was hovered on
+        const hoveredFerries = await layers.current['ferriesLayer'].getFeatures(e.pixel);
+        if (hoveredFerries.length) {
+          const feature = hoveredFerries[0];
+
+          resetHoveredStates(feature);
+
+          hoveredFerry.current = feature;
+          if (!hoveredFerry.current.getProperties().clicked) {
+            hoveredFerry.current.setStyle(ferryStyles['hover']);
+          }
+
+          return;
+        }
       }
 
+      // Reset on blank space
+      resetHoveredStates(null);
     });
 
     toggleMyLocation();
@@ -531,7 +437,12 @@ export default function MapWrapper({
         mapRef.current.removeOverlay(locationPinRef.current);
       }
       centerMap(searchLocationFrom[0].geometry.coordinates);
-      setLocationPinPoint(searchLocationFrom[0].geometry.coordinates);
+      setLocationPin(
+        searchLocationFrom[0].geometry.coordinates,
+        blueLocationMarkup,
+        mapRef,
+        locationPinRef
+      );
     }
   }, [searchLocationFrom]);
 
@@ -549,7 +460,7 @@ export default function MapWrapper({
       loadCameras(selectedRoute.points);
       loadFerries();
 
-      fitMap();
+      fitMap(selectedRoute.route, mapView);
 
     } else {
       loadEvents();
@@ -630,6 +541,14 @@ export default function MapWrapper({
       updateClickedEvent(null);
     }
 
+    // check for active ferry icons
+    if (clickedFerryRef.current) {
+      clickedFerryRef.current.setStyle(ferryStyles['static']);
+      clickedFerryRef.current.set('clicked', false);
+      updateClickedFerry(null);
+    }
+
+    // Reset cam popup handler lock timer
     cameraPopupRef.current = null;
   }
 
@@ -641,38 +560,6 @@ export default function MapWrapper({
       relatedFeature.setStyle(getEventIcon(relatedFeature, state));
     }
   };
-
-  function zoomIn() {
-    if (!mapRef.current) {
-      return;
-    }
-    const view = mapRef.current.getView();
-    view.animate({
-      zoom: view.getZoom() + 1,
-      duration: 250,
-    });
-  }
-
-  function zoomOut() {
-    if (!mapRef.current) {
-      return;
-    }
-    const view = mapRef.current.getView();
-    view.animate({
-      zoom: view.getZoom() - 1,
-      duration: 250,
-    });
-  }
-
-  function handleRecenter() {
-    // TODO: reimpliment this in OpenLayers
-    if (camera) {
-      mapView.current.animate({
-        center: fromLonLat(camera.location.coordinates),
-      });
-      return;
-    }
-  }
 
   function toggleMyLocation() {
     if ('geolocation' in navigator) {
@@ -686,16 +573,19 @@ export default function MapWrapper({
             position.coords.latitude >= 48.2
           ) {
             centerMap([longitude, latitude]);
-            addMyLocationPinPoint([longitude, latitude]);
+            setLocationPin([longitude, latitude], redLocationMarkup, mapRef);
+
           } else {
             // set my location to the center of BC for users outside of BC
             centerMap([-126.5, 54.2]);
-            addMyLocationPinPoint([-126.5, 54.2]);
+            setLocationPin([-126.5, 54.2], redLocationMarkup, mapRef);
           }
         },
         error => {
           console.error('Error getting user location:', error);
-          centerMapZoomOut([-126.5, 54.2]);
+
+          // Zoom out and center to BC if location not available
+          setZoomPan(mapView, 7, fromLonLat([-126.5, 54.2]));
         },
       );
     }
@@ -731,14 +621,15 @@ export default function MapWrapper({
     <div className="map-container">
       <div ref={mapElement} className="map">
         <div className="zoom-btn">
-          <Button className="zoom-in" variant="primary" onClick={zoomIn} aria-label="zoom in">
+          <Button className="zoom-in" variant="primary" aria-label="zoom in"
+            onClick={() => zoomIn(mapView)}>
             <FontAwesomeIcon icon={faPlus} />
           </Button>
           <div className="zoom-divider" />
           <Button
             className="zoom-out"
             variant="primary"
-            onClick={zoomOut}
+            onClick={() => zoomOut(mapView)}
             aria-label="zoom out">
             <FontAwesomeIcon icon={faMinus} />
           </Button>
@@ -771,6 +662,10 @@ export default function MapWrapper({
           {clickedEvent &&
             getEventPopup(clickedEvent)
           }
+
+          {clickedFerry &&
+            getFerryPopup(clickedFerry)
+          }
         </div>
       </div>
 
@@ -788,7 +683,11 @@ export default function MapWrapper({
         <Button
           className="map-btn cam-location"
           variant="primary"
-          onClick={handleRecenter}>
+          onClick={() => {
+            if (camera) {
+              setZoomPan(mapView, null, fromLonLat(camera.location.coordinates));
+            }
+          }}>
           <CurrentCameraIcon />
           Camera location
         </Button>

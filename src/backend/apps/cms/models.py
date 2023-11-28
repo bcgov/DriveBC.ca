@@ -121,6 +121,10 @@ class Ferry(Page, BaseModel):
         FieldPanel("description"),
         FieldPanel("seasonal_description"),
         FieldPanel("service_hours"),
+        FieldPanel("url", read_only=True),
+        FieldPanel("location", widget=DriveBCMapWidget, read_only=True),
+        FieldPanel("feed_created_at", read_only=True),
+        FieldPanel("feed_modified_at", read_only=True),
     ]
     promote_panels = []
 
