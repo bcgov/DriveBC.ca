@@ -208,7 +208,7 @@ export default function CameraDetailsPage() {
               <div className="camera-details__more">
                 <div className="camera-details__more__hwy">
                   {highwayShield(camera.highway)}
-                  <p className="label--more">Highway {camera.highway}</p>
+                  <p className="label--more">Highway {camera.highway} {camera.highway === '1' && '(Trans Canada)'}</p>
                 </div>
                 <div className="camera-details__more__elevation">
                   <p className="elevation">
