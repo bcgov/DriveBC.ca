@@ -208,6 +208,7 @@ export const setLocationPin = (coordinates, svgMarkup, mapRef, pinRef) => {
   const svgImage = new Image();
   svgImage.src =
     'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgMarkup);
+  svgImage.alt = 'my location pin';
 
   // Create an overlay for the marker
   const pinOverlay = new Overlay({
