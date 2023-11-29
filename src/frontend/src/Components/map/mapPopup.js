@@ -49,8 +49,7 @@ function renderCamGroup(camFeature, setClickedCamera, currentCamData) {
 }
 
 export function getCamPopup(camFeature, setClickedCamera, navigate, cameraPopupRef) {
-  const rootCamData = camFeature.getProperties();
-
+  const rootCamData = camFeature.id ? camFeature : camFeature.getProperties();
   const camData = !rootCamData.groupIndex ? rootCamData : rootCamData.camGroup[rootCamData.groupIndex];
 
   const handlePopupClick = (e) => {
@@ -91,8 +90,8 @@ export function getCamPopup(camFeature, setClickedCamera, navigate, cameraPopupR
 }
 
 export function getEventPopup(eventFeature) {
-  const eventData = eventFeature.getProperties();
-
+  console.log(eventFeature.ol_uid);
+  const eventData = eventFeature.ol_uid ? eventFeature.getProperties() : eventFeature;
   const severity = eventData.severity.toLowerCase();
   const eventType = eventData.event_type.toLowerCase();
 

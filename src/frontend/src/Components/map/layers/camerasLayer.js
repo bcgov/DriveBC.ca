@@ -11,7 +11,13 @@ import VectorSource from 'ol/source/Vector';
 // Styling
 import { cameraStyles } from '../../data/featureStyleDefinitions.js';
 
-export function getCamerasLayer(cameras, projectionCode, mapContext) {
+export function getCamerasLayer(
+  cameras,
+  projectionCode,
+  mapContext,
+  passedCamera,
+  updateClickedCamera,
+) {
   return new VectorLayer({
     classname: 'webcams',
     visible: mapContext.visible_layers.webcamsLayer,
@@ -36,10 +42,23 @@ export function getCamerasLayer(cameras, projectionCode, mapContext) {
             projectionCode,
           );
 
+          if (
+            passedCamera &&
+            passedCamera.id === olFeatureForMap.getProperties().id
+          ) {
+            updateClickedCamera(olFeatureForMap);
+            olFeatureForMap.setProperties({ clicked: true }, true);
+          }
           vectorSource.addFeature(olFeatureForMap);
         });
       },
     }),
-    style: cameraStyles['static'],
+
+    style: function (feature, resolution) {
+      if (passedCamera && passedCamera.id === feature.getProperties().id) {
+        return cameraStyles['active'];
+      }
+      return cameraStyles['static'];
+    },
   });
 }
