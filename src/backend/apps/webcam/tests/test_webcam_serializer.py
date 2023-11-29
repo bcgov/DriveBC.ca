@@ -54,4 +54,4 @@ class TestWebcamSerializer(BaseTest):
         self.serializer = WebcamSerializer(self.webcam)
 
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 23
+        assert len(self.serializer.data) == 24

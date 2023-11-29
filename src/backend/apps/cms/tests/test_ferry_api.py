@@ -11,6 +11,7 @@ class TestFerryAPI(APITestCase, BaseTest):
     def setUp(self):
         super().setUp()
         ferry = Ferry.objects.create(
+            feed_id=1,
             title="Ferry title",
             path="000100010001",
             depth=3,
@@ -23,6 +24,7 @@ class TestFerryAPI(APITestCase, BaseTest):
         ferry.save()
 
         ferry_2 = Ferry.objects.create(
+            feed_id=2,
             title="Ferry title 2",
             path="000100010002",
             depth=3,

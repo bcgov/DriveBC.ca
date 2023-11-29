@@ -27,9 +27,12 @@ class CachedListModelMixin:
     cache_timeout = CacheTimeout.DEFAULT
 
     def fetch_list_data(self, queryset=None):
-        serializer = self.get_serializer(
-            queryset.all() if queryset is not None else self.queryset.all(), many=True
-        )
+        qs = queryset.all() if queryset is not None else self.queryset.all()
+
+        # Use get_serializer for FE api to build URLs from self.request
+        serializer = self.get_serializer(qs, many=True) \
+            if hasattr(self, "request") else self.serializer_class(qs, many=True)
+
         return serializer.data
 
     def set_list_data(self):

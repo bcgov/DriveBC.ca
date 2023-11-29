@@ -1,5 +1,4 @@
 import datetime
-import json
 import zoneinfo
 
 from apps.shared import enums as shared_enums
@@ -31,7 +30,8 @@ class TestCameraAPI(APITestCase, BaseTest):
                 highway_description='Some Highway',
                 highway_group=3,
                 highway_cam_order=23,
-                location=Point(-123.569743, 48.561231),
+                # [-123.1071703, 49.2840563] 123 Water St, Vancouver, BC V6B 1A7
+                location=Point(-123.1071703, 49.2840563),
                 orientation=shared_enums.Orientation.NORTH,
                 elevation=123,
 
@@ -84,21 +84,22 @@ class TestCameraAPI(APITestCase, BaseTest):
 
         # Manually update location of a camera
         cam = Webcam.objects.get(id=1)
-        cam.location = Point(-120.569743, 38.561231)
+        # [-123.077455, 49.19547] middle of Knight bridge
+        cam.location = Point(-123.077455, 49.19547)
         cam.save()
 
-        # Filtered cams - hit
-        response = self.client.post(
-            url,
-            json.dumps({"route": [[-120.569743, 38.561231], [-120.569743, 39.561231]]}),
-            content_type='application/json'
+        # [-123.0803167, 49.2110127] 1306 SE Marine Dr, Vancouver, BC V5X 4K4
+        # [-123.0824109, 49.1926452] 2780 Sweden Way, Richmond, BC V6V 2X1
+        # Filtered cams - hit - point on knight bridge
+        response = self.client.get(
+            url, {'route': '-123.0803167,49.2110127,-123.0824109,49.1926452'}
         )
         assert len(response.data) == 1
 
-        # Filtered cams - miss
-        response = self.client.post(
-            url,
-            json.dumps({"route": [[-110.569743, 40.561231], [-110.569743, 39.561231]]}),
-            content_type='application/json'
+        # [-123.0803167, 49.2110127] 1306 SE Marine Dr, Vancouver, BC V5X 4K4
+        # [-123.0188764, 49.205069] 3864 Marine Wy, Burnaby, BC V5J 3H4
+        # Filtered cams - miss - does not cross knight bridge
+        response = self.client.get(
+            url, {'route': '-123.0803167,49.2110127,-123.0188764,49.205069'}
         )
         assert len(response.data) == 0
