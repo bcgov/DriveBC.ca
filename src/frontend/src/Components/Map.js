@@ -170,7 +170,7 @@ export default function MapWrapper({
       projection: 'EPSG:3857',
       constrainResolution: true,
       center: camera ? handleCenter() : fromLonLat(pan),
-      zoom: isPreview ? 12 : zoom,
+      zoom: handleZoom(),
       maxZoom: 15,
       extent: transformedExtent
     });
@@ -207,10 +207,20 @@ export default function MapWrapper({
       projection: mapView.current.getProjection(),
     });
 
-    mapRef.current.once('loadend', () => {
+    mapRef.current.once('loadstart', async () => {
       if (!selectedRoute) {
-        loadCameras();
-        loadEvents();
+        await loadCameras();
+        await loadEvents();
+      }
+      if(camera){
+        popup.current.setPosition(handleCenter(camera)
+        );
+        popup.current.getElement().style.top = '40px';
+        if(camera.event_type){
+          updateClickedEvent(camera);
+        }else{
+          updateClickedCamera(camera);
+        }
       }
     });
 
@@ -220,6 +230,7 @@ export default function MapWrapper({
 
     // Click states
     const resetClickedStates = (clickedFeature) => {
+      console.log("resetting click state")
       if (clickedCameraRef.current && clickedFeature != clickedCameraRef.current) {
         clickedCameraRef.current.setStyle(cameraStyles['static']);
         updateClickedCamera(null);
@@ -427,8 +438,10 @@ export default function MapWrapper({
       // Reset on blank space
       resetHoveredStates(null);
     });
-
-    toggleMyLocation();
+    if(!camera){
+      // if there is no parameter for shifting the view, pan to my location
+      toggleMyLocation();
+    }
   }, []);
 
   useEffect(() => {
@@ -479,7 +492,9 @@ export default function MapWrapper({
     layers.current['webcamsLayer'] = getCamerasLayer(
       groupCameras(webcamResults),
       mapRef.current.getView().getProjection().getCode(),
-      mapContext
+      mapContext,
+      camera,
+      updateClickedCamera,
     )
 
     mapRef.current.addLayer(layers.current['webcamsLayer']);
@@ -496,7 +511,9 @@ export default function MapWrapper({
     layers.current['eventsLayer'] = getEventsLayer(
       eventsData,
       mapRef.current.getView().getProjection().getCode(),
-      mapContext
+      mapContext,
+      camera,
+      updateClickedEvent,
     )
 
     mapRef.current.addLayer(layers.current['eventsLayer']);
@@ -519,7 +536,9 @@ export default function MapWrapper({
   }
 
   function closePopup() {
+    console.log("closing")
     popup.current.setPosition(undefined);
+
     // check for active camera icons
     if (clickedCameraRef.current) {
       clickedCameraRef.current.setStyle(cameraStyles['static']);
@@ -550,6 +569,7 @@ export default function MapWrapper({
 
   const setRelatedGeometry = (event, state) => {
     if (event.getId()) {
+      console.log("checking related geometry");
       const relatedFeature = layers.current['eventsLayer']
         .getSource()
         .getFeatureById(event.ol_uid);
@@ -598,6 +618,18 @@ export default function MapWrapper({
           ],
         )
       : fromLonLat(camera.location.coordinates);
+  }
+
+  function handleZoom() {
+    if (typeof camera === 'string') {
+      camera = JSON.parse(camera);
+    }
+    if(isPreview || camera){
+      return 12
+    }
+    else{
+      return zoom;
+    }
   }
 
   function toggleLayers(openLayers) {

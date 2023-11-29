@@ -36,6 +36,9 @@ export default function WebcamCard(props) {
     navigate(`/cameras/${camera.id}`);
     sessionStorage.setItem('scrollPosition', window.pageYOffset);
   }
+  function handleViewOnMap() {
+    navigate('/', {state: camera});
+  }
 
   function handleChildClick(e) {
     e.stopPropagation();
@@ -128,7 +131,13 @@ export default function WebcamCard(props) {
         </div>
         <p className="label">{camera.caption}</p>
       </Card.Body>
-      <Button variant="primary" className="viewmap-btn">View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
+      <Button variant="primary" className="viewmap-btn" onClick={handleViewOnMap}>View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
+
+      <div>
+        {camera.camGroup.map((cam) =>
+          <Button key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
+        )}
+      </div>
     </Card>
   );
 }
