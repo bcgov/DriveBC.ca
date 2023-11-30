@@ -34,6 +34,7 @@ export default function WebcamCard(props) {
 
   function handleClick() {
     navigate(`/cameras/${camera.id}`);
+    sessionStorage.setItem('scrollPosition', window.pageYOffset);
   }
 
   function handleChildClick(e) {
