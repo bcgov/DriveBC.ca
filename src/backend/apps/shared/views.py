@@ -81,6 +81,16 @@ class CachedListModelMixin:
         return res
 
 
+class session(APIView):
+
+    def get(self, request, format=None):
+        if request.user.is_authenticated:
+            return Response({"username": request.user.username,
+                             "email": request.user.email, })
+
+        return Response({"username": None})
+
+
 class AppCacheTestViewSet(APIView):
     """
     Endpoint to allow RPS load testing combination of Django and cache

@@ -13,5 +13,9 @@ urlpatterns = [
     # packages
     path('drivebc-cms/', include("apps.cms.urls")),
 
+    # auth system
+    path('accounts/', include('allauth.urls')),
+    path('accounts/', include("apps.authentication.urls")),
+
     # TO BE REMOVED IN PRODUCTION
 ] + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

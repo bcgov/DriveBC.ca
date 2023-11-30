@@ -1,11 +1,11 @@
 Django==4.2.3
-dj-rest-auth[with_social]==4.0.1
-django-allauth==0.54.0
+django-allauth==0.59.0
 django-environ==0.10.0
 djangorestframework==3.14.0
 djangorestframework-gis==1.0
 django-cors-headers==3.13.0
 django-filter==23.2
+django-oauth-toolkit==2.3.0
 whitenoise==6.5.0
 httpx==0.24.1
 huey==2.4.5

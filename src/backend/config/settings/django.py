@@ -11,7 +11,7 @@ env = environ.Env()
 environ.Env.read_env(BASE_DIR / ".env", overwrite=True)
 
 # Meta
-DEBUG = env("DEBUG") == 'True'
+DEBUG = env("DEBUG") == "True"
 SECRET_KEY = env("SECRET_KEY")
 WSGI_APPLICATION = "config.wsgi.application"
 
@@ -19,14 +19,16 @@ WSGI_APPLICATION = "config.wsgi.application"
 APPEND_SLASH = True
 ROOT_URLCONF = "config.urls"
 STATIC_URL = "/django-static/"
-STATIC_ROOT = os.path.join(SRC_DIR, 'static')
-MEDIA_URL = '/django-media/'
-MEDIA_ROOT = os.path.join(SRC_DIR, 'media')
+STATIC_ROOT = os.path.join(SRC_DIR, "static")
+MEDIA_URL = "/django-media/"
+MEDIA_ROOT = os.path.join(SRC_DIR, "media")
+FRONTEND_BASE_URL = env("FRONTEND_BASE_URL", default="http://localhost:3000/")
 
 # Security
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
 CORS_ORIGIN_WHITELIST = env.list("DJANGO_CORS_ORIGIN_WHITELIST")
 CORS_ALLOW_HEADERS = default_headers + ("contenttype",)
+CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE = env.bool("DJANGO_CSRF_COOKIE_SECURE")
 SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT")
 SESSION_COOKIE_SECURE = env.bool("DJANGO_SESSION_COOKIE_SECURE")
@@ -37,9 +39,11 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "allauth.usersessions.middleware.UserSessionsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
@@ -63,6 +67,7 @@ TEMPLATES = [
 
 # Auth
 AUTH_USER_MODEL = "authentication.DriveBCUser"
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": f"django.contrib.auth.password_validation.{name}"}
     for name in [
@@ -71,6 +76,14 @@ AUTH_PASSWORD_VALIDATORS = [
         "CommonPasswordValidator",
         "NumericPasswordValidator",
     ]
+]
+
+AUTHENTICATION_BACKENDS = [
+    # "oauth2_provider.backends.OAuth2Backend",
+    "django.contrib.auth.backends.ModelBackend",
+
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 # Language
@@ -95,15 +108,16 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "dj_rest_auth",
-    "dj_rest_auth.registration",
+    'allauth.socialaccount.providers.openid_connect',
+    # "dj_rest_auth",
+    # "dj_rest_auth.registration",
     "huey.contrib.djhuey",
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_gis",
     "django_filters",
     "corsheaders",
-    'wagtail.api.v2',
+    "wagtail.api.v2",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -174,3 +188,4 @@ LOGGING = {
         "level": "WARNING",
     },
 }
+

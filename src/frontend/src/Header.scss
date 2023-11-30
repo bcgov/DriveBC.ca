@@ -33,24 +33,24 @@
 			transform-origin: 0% 0%;
 			transition: transform 100ms ease-in-out;
 		}
-	
+
 		.line3 {
 			transform-origin: 0% 100%;
 			transition: transform 100ms ease-in-out;
 		}
 
-		
+
 
 		&:not(.collapsed) {
 			.line1 {
 			display: block;
 			transform: rotate(45deg);
 		}
-	
+
 		.line2 {
 			opacity: 0;
 		}
-	
+
 		.line3 {
 			display: block;
 			transform: rotate(-45deg);
@@ -96,6 +96,7 @@
 				color: $Type-Primary;
 				padding: 10px 12px;
 				border: transparent solid 2px;
+				cursor: pointer;
 
 				@media (min-width: 992px) {
 					padding: 15px;

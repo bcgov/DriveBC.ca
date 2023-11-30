@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 // React
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 // Third party packages
-import {LinkContainer} from 'react-router-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+import { AuthContext } from "./App";
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -17,18 +19,31 @@ import './Header.scss';
 // Third party packages
 import {useMediaQuery} from '@uidotdev/usehooks';
 
+
 export default function Header() {
   // State hooks
   const [expanded, setExpanded] = useState(false);
+  const { authContext, setAuthContext } = useContext(AuthContext);
 
   // Component functions
   const getNavLink = (title) => {
     return <Nav.Link active={false} onClick={() => setTimeout(() => setExpanded(false))}>{title}</Nav.Link>
   };
 
+  const getExternalNavLink = (title) => {
+    return <Nav.Link reloadDocument active={false} onClick={() => setTimeout(() => setExpanded(false))}>{title}</Nav.Link>
+  };
+
+  const toggleAuthModal = (action) => {
+    setAuthContext((prior) => {
+      if (!prior.showingModal) { return { ...prior, showingModal: true, action }; }
+      return prior;
+    })
+  };
+
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
 
-  // Rendering
+// Rendering
   return (
     <header className="header--shown">
       <Navbar expand="lg" expanded={expanded}>
@@ -62,6 +77,22 @@ export default function Header() {
               <LinkContainer to="/bulletins">
                 {getNavLink('Bulletins')}
               </LinkContainer>
+              { authContext.loginStateKnown
+                ? ( authContext.username
+                    ? <React.Fragment>
+                        <LinkContainer to="/account">
+                          { getNavLink('My Account') }
+                        </LinkContainer>
+                        <a className='nav-link'
+                          onClick={() => toggleAuthModal('Sign Out')}
+                        >Sign out</a>
+                      </React.Fragment>
+                    : <a className='nav-link'
+                        onClick={() => toggleAuthModal('Sign In')}
+                      >Sign in</a>
+                  )
+                : ''
+              }
             </Nav>
           </Navbar.Collapse>
         </Container>

@@ -32,3 +32,26 @@ HUEY = {
 # Wagtail
 WAGTAIL_SITE_NAME = 'DriveBC'
 WAGTAILEMBEDS_RESPONSIVE_HTML = True
+
+# Allauth
+
+# need our own adapter to override various redirect url methods following
+# login or logout
+ACCOUNT_ADAPTER = 'apps.authentication.adapters.AccountAdapter'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'openid_connect': {
+        'SOCIALACCOUNT_EMAIL_VERIFICATION': 'none',
+        'SOCIALACCOUNT_LOGIN_ON_GET': True,
+        'APP': {
+            'provider_id': 'bceid',
+            'name': 'BCeID via Keycloak',
+            'client_id': env("BCEID_CLIENT_ID"),
+            'secret': env("BCEID_SECRET"),
+            'settings': {
+                'server_url': env("BCEID_URL"),
+            }
+        },
+    }
+}
+
