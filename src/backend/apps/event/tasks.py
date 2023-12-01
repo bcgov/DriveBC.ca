@@ -20,9 +20,11 @@ def populate_event_from_data(event_data):
     except ObjectDoesNotExist:
         event = Event(id=event_id)
 
-    event_serializer = EventSerializer(event, data=event_data)
-    event_serializer.is_valid(raise_exception=True)
-    event_serializer.save()
+    # Only update data if official last updated timestamp is different
+    if event.last_updated != event_data['last_updated']:
+        event_serializer = EventSerializer(event, data=event_data)
+        event_serializer.is_valid(raise_exception=True)
+        event_serializer.save()
 
 
 def populate_all_event_data():

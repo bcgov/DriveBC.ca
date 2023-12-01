@@ -36,9 +36,12 @@ def populate_all_webcam_data():
 
 def update_single_webcam_data(webcam):
     webcam_data = FeedClient().get_webcam(webcam)
-    webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
-    webcam_serializer.is_valid(raise_exception=True)
-    webcam_serializer.save()
+
+    # Only update data if official last updated timestamp is different
+    if webcam.last_update_modified != webcam_data['last_update_modified']:
+        webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
+        webcam_serializer.is_valid(raise_exception=True)
+        webcam_serializer.save()
 
 
 def update_all_webcam_data():
