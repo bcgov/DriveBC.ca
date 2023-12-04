@@ -64,6 +64,7 @@ export default function MapWrapper({
   isPreview,
   cameraHandler,
   mapViewRoute,
+  event,
 }) {
   // Redux
   const dispatch = useDispatch();
@@ -120,10 +121,19 @@ export default function MapWrapper({
   }
 
   function centerMap(coordinates) {
-    if (mapView.current) {
-      mapView.current.animate({
-        center: fromLonLat(coordinates),
-      });
+    if(event === null){
+      if (mapView.current) {
+        mapView.current.animate({
+          center: fromLonLat(coordinates),
+        });
+      }
+    }
+    else {
+      if (mapView.current) {
+        mapView.current.animate({
+          center: fromLonLat((event.location.type === 'Point')? event.location.coordinates : event.location.coordinates[0]),
+        });
+      }
     }
   }
 
@@ -433,17 +443,17 @@ export default function MapWrapper({
 
   useEffect(() => {
     if (searchLocationFrom && searchLocationFrom.length) {
-      if (locationPinRef.current) {
-        mapRef.current.removeOverlay(locationPinRef.current);
+        if (locationPinRef.current) {
+          mapRef.current.removeOverlay(locationPinRef.current);
+        }
+        centerMap(searchLocationFrom[0].geometry.coordinates);
+        setLocationPin(
+          searchLocationFrom[0].geometry.coordinates,
+          blueLocationMarkup,
+          mapRef,
+          locationPinRef
+        );
       }
-      centerMap(searchLocationFrom[0].geometry.coordinates);
-      setLocationPin(
-        searchLocationFrom[0].geometry.coordinates,
-        blueLocationMarkup,
-        mapRef,
-        locationPinRef
-      );
-    }
   }, [searchLocationFrom]);
 
   useEffect(() => {
