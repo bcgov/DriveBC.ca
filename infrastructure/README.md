@@ -6,7 +6,7 @@ Here are the components that are in this folder:
 - Init
   - Sets up the Secrets and ConfigMaps prior to building the other components
 - CrunchDB Postgres
-  - Based off: https://github.com/bcgov/crunchy-postgres/ with a few notable changes to support our environment.
+  - Based off: https://github.com/bcgov/crunchy-postgres/ with a few changes to support our environment.
 - Django
 - Tasks
 - Redis
@@ -25,7 +25,7 @@ Follow these steps to setup a brand new environment.
 1. Set the values in the `ENV-drivebc-django` ConfigMap and Secret (In the future `ENV-drivebc-static` ConfigMap and Secret too)
 1. `helm install ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres`
 1. `helm install ENV-drivebc -f .\main\values-ENV.yaml .\main`
-1. Now that all components are installed you need to go to GitHub actions and run `Build & Deploy Image Caching Image` & `Deploy main to dev` and then all the pods should start-up. If any issues confirm the configmaps are updated.
+1. Now that all components are installed you need to go to GitHub actions and run `Build & Deploy Image Caching Image` & `Deploy main to ENV` and then all the pods should start-up. If any issues confirm the configmaps are updated.
 1. If you want to quickly get the cameras and events on a fresh db, run  `python manage.py populate_webcams` and `python manage.py populate_events` in the terminal of the tasks pod
 
 ### Upgrades
@@ -63,4 +63,3 @@ If you need to uninstall the Helm Charts follow these steps:
 - Once we know what versioning looks like, integrate that change. Will probably need to use another repo such as GitHub, Artifactory, or imagestream on Tools namespace
 - Build a HELM chart for Postgres Monitoring
 - Add liveness checks to the pods
-- Create values files for all environments
