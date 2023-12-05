@@ -82,3 +82,7 @@ EVENT_DIRECTION_DISPLAY = {
     EVENT_DIRECTION.BOTH: "Both Directions",
     EVENT_DIRECTION.NONE: "Not Applicable"
 }
+
+EVENT_DIFF_FIELDS = [
+    'last_updated'
+]

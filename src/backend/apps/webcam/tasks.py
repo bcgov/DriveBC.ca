@@ -3,6 +3,7 @@ import logging
 
 import pytz
 from apps.feed.client import FeedClient
+from apps.webcam.enums import CAMERA_DIFF_FIELDS
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
 from apps.webcam.views import WebcamAPI
@@ -37,15 +38,17 @@ def populate_all_webcam_data():
 def update_single_webcam_data(webcam):
     webcam_data = FeedClient().get_webcam(webcam)
 
-    # Only update data if official last updated timestamp is different
-    if webcam.last_update_modified != webcam_data['last_update_modified']:
-        webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
-        webcam_serializer.is_valid(raise_exception=True)
-        webcam_serializer.save()
+    # Only update if existing data differs for at least one of the fields
+    for field in CAMERA_DIFF_FIELDS:
+        if getattr(webcam, field) != webcam_data[field]:
+            webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
+            webcam_serializer.is_valid(raise_exception=True)
+            webcam_serializer.save()
+            return
 
 
 def update_all_webcam_data():
-    for webcam in Webcam.objects.filter(should_appear=True):
+    for webcam in Webcam.objects.all():
         current_time = datetime.datetime.now(tz=pytz.timezone("America/Vancouver"))
         if webcam.should_update(current_time):
             update_single_webcam_data(webcam)

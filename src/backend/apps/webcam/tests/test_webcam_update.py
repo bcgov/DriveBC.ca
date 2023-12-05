@@ -32,7 +32,7 @@ class TestWebcamSerializer(BaseTest):
             elevation=123,
             # General status
             is_on=True,
-            should_appear=False,
+            should_appear=True,
             is_new=False,
             is_on_demand=False,
             # Update status
@@ -108,19 +108,31 @@ class TestWebcamSerializer(BaseTest):
     def test_update_existing_webcams(self, mock_requests_get):
         mock_requests_get.side_effect = [
             MockResponse(self.mock_webcam_feed_result, status_code=200),
+            MockResponse(self.mock_webcam_feed_result, status_code=200),
         ]
 
         # Current value
         assert self.webcam.name == "TestWebCam"
-        assert self.webcam.should_appear is False
 
-        # Webcam not updated due to should_appear = False
+        # Manually sync last updated time to prevent update
+        self.webcam.last_update_modified = datetime.datetime(
+            2023,
+            6,
+            14,
+            14,
+            30,
+            32,
+            tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver"),
+        )
+        self.webcam.save()
         update_all_webcam_data()
         self.webcam.refresh_from_db()
+
+        # Camera not updated, no diff from diff fields
         assert self.webcam.name == "TestWebCam"
 
-        # Save and update webcam data
-        self.webcam.should_appear = True
+        # Manually desync one of the diff fields to trigger update
+        self.webcam.is_on = False
         self.webcam.save()
         update_all_webcam_data()
         self.webcam.refresh_from_db()

@@ -34,6 +34,13 @@ class TestEventModel(BaseTest):
         self.mock_event_feed_result_with_missing_event = \
             json.load(event_feed_data_with_missing_event)
 
+        # Updated feed with one missing event
+        event_feed_data = open(
+            str(Path(__file__).parent) +
+            "/test_data/event_feed_list_of_four_updated.json"
+        )
+        self.mock_updated_event_feed_result = json.load(event_feed_data)
+
         # Feed with error in data
         event_feed_data_with_errors = open(
             str(Path(__file__).parent)
@@ -85,11 +92,12 @@ class TestEventModel(BaseTest):
         )
 
     @patch("httpx.get")
-    def test_populate_event(self, mock_requests_get):
+    def test_populate_and_update_event(self, mock_requests_get):
         mock_requests_get.side_effect = [
             MockResponse(self.mock_event_feed_result, status_code=200),
             MockResponse(self.mock_event_feed_result_with_missing_event,
                          status_code=200),
+            MockResponse(self.mock_updated_event_feed_result, status_code=200),
         ]
 
         populate_all_event_data()
@@ -116,6 +124,16 @@ class TestEventModel(BaseTest):
         assert Event.objects.filter(status=EVENT_STATUS.INACTIVE).count() == 1
         assert Event.objects.get(id="drivebc.ca/DBC-28386").status \
                == EVENT_STATUS.INACTIVE
+
+        # Third call with updated data
+        populate_all_event_data()
+        # Not updated due to same updated datetime
+        assert Event.objects.get(id="drivebc.ca/DBC-46014").route_from \
+               != "Updated Rd"
+
+        # Updated due to different updated datetime
+        assert Event.objects.get(id="drivebc.ca/DBC-53145").route_from \
+               == "Updated Trail"
 
     @patch("httpx.get")
     def test_populate_event_with_validation_error(self, mock_requests_get):
