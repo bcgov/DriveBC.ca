@@ -75,7 +75,7 @@ redis:
   fullnameOverride: uat-redis
   namespace: c59ecc-test #enter the full namespace here to the deployment has the correct imagestream
   deployment:
-    replicas: 2
+    replicas: 1
     resources:
       requests:
         cpu: 50m
