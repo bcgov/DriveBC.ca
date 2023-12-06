@@ -52,8 +52,15 @@ export default function CameraList() {
   useEffect(() => {
     if (!isInitialMount.current) { // Only run on updates
       getDisplayedWebcams();
-    }
+    }        
   }, [webcams]);
+
+  useEffect(() => {
+    const scrollPosition = sessionStorage.getItem('scrollPosition');
+    if (scrollPosition) {
+      window.scrollTo(0, parseInt(scrollPosition, 10));
+    }
+  });
 
   // Rendering
   const mapDisplayedWebcams = () => {
