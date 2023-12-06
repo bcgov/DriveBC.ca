@@ -33,6 +33,9 @@ export default function CameraList() {
   };
 
   const getDisplayedWebcams = () => {
+    webcams.sort((a, b) => {
+      return parseInt(a.highway, 10) - parseInt(b.highway, 10);
+    });
     const res = webcams.slice(0, displayedWebcams.length + 7);
     setDisplayedWebcams(res);
   };
