@@ -341,7 +341,8 @@ export default function CameraDetailsPage() {
                           renderCustomControls={customControls}
                           renderLeftNav={customLeftNav}
                           renderPlayPauseButton={customPlayPause}
-                          renderRightNav={customRightNav} />
+                          renderRightNav={customRightNav}
+                          infinite={false} />
                       )}
                       </div>
                     )}
