@@ -59,6 +59,6 @@ RUN if [ $DEBUG_BUILD = true ]; then \
   apt update && apt-get install -y jq vim procps less; \
 fi
 
-COPY ./compose/frontend/entrypoint /
-RUN sed -i 's/\r$//g' /entrypoint && chmod +x /entrypoint
-ENTRYPOINT ["/entrypoint"]
+COPY ./compose/frontend/entrypoint /startup.sh
+RUN sed -i 's/\r$//g' /startup.sh && chmod +x /startup.sh
+#ENTRYPOINT ["/entrypoint"]
