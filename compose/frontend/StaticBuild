@@ -60,4 +60,4 @@ RUN if [ $DEBUG_BUILD = true ]; then \
 fi
 
 COPY ./compose/frontend/entrypoint /docker-entrypoint.d/add_client_env.sh
-RUN sed -i 's/\r$//g' /startup.sh && chmod +x /docker-entrypoint.d/add_client_env.sh
+RUN sed -i 's/\r$//g' /docker-entrypoint.d/add_client_env.sh && chmod +x /docker-entrypoint.d/add_client_env.sh
