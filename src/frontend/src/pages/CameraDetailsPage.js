@@ -55,6 +55,7 @@ export default function CameraDetailsPage() {
   const [nextUpdate, setNextUpdate] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
   const [activeTab, setActiveTab] = useState('webcam');
+  const [hasImageEnded, setHasImageEnded] = useState(false);
 
   const navigate = useNavigate();
 
@@ -181,6 +182,26 @@ export default function CameraDetailsPage() {
         navigate('/', { replace: true }); // the current entry in the history stack will be replaced with the new one with { replace: true }
     }
   }
+
+  const handleImageSlide = (index) => {
+    if (index === replayImages.length - 1) {
+      setHasImageEnded(true); // Set state to indicate the last image
+    } else {
+      setHasImageEnded(false); // Reset state if it's not the last image
+    }
+  };
+
+  const play = () => {
+    if(hasImageEnded){
+      setHasImageEnded(true);
+    }
+    else{
+      setHasImageEnded(false);
+    }
+    if(hasImageEnded){
+      refImg.current.slideToIndex(0);
+    }
+  };
 
   // Rendering
   return (
@@ -342,6 +363,8 @@ export default function CameraDetailsPage() {
                           renderLeftNav={customLeftNav}
                           renderPlayPauseButton={customPlayPause}
                           renderRightNav={customRightNav}
+                          onSlide={(index) => handleImageSlide(index)} 
+                          onPlay={play}
                           infinite={false} />
                       )}
                       </div>
