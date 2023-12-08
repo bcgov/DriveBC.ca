@@ -59,6 +59,5 @@ RUN if [ $DEBUG_BUILD = true ]; then \
   apt update && apt-get install -y jq vim procps less; \
 fi
 
-COPY ./compose/frontend/entrypoint /startup.sh
-RUN sed -i 's/\r$//g' /startup.sh && chmod +x /startup.sh
-#ENTRYPOINT ["/entrypoint"]
+COPY ./compose/frontend/entrypoint /docker-entrypoint.d/add_client_env.sh
+RUN sed -i 's/\r$//g' /startup.sh && chmod +x /docker-entrypoint.d/add_client_env.sh
