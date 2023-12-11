@@ -151,7 +151,7 @@ export default function MapWrapper({
     const vectorLayer = new VectorTileLayer({
       source: new VectorTileSource({
         format: new MVT(),
-        url: `${process.env.REACT_APP_BASE_MAP}`,
+        url: window.BASE_MAP,
       }),
     });
 
@@ -176,7 +176,7 @@ export default function MapWrapper({
     });
 
     // Apply the basemap style from the arcgis resource
-    fetch(`${process.env.REACT_APP_MAP_STYLE}`, {
+    fetch(window.MAP_STYLE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     }).then(function (response) {
@@ -468,10 +468,6 @@ export default function MapWrapper({
       loadFerries();
     }
   }, [selectedRoute]);
-
-  useEffect(() => {
-    console.log("Zoom level: " + Math.round(mapRef.current.getView().getZoom()));
-  });
 
   async function loadCameras(route) {
     const webcamResults = await getWebcams(route);

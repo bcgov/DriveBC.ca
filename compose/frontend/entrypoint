@@ -1,4 +1,5 @@
 #!/bin/bash
 
 MAIN=`find /usr/share/nginx/html/static/js/main.*.js`
-echo -e "\nwindow.TERM='${TERM}';" >> $MAIN
+echo -e "\nwindow.BASE_MAP='${REACT_APP_BASE_MAP}';" >> $MAIN
+echo -e "\nwindow.MAP_STYLE='${REACT_APP_MAP_STYLE}';" >> $MAIN

@@ -11,6 +11,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 // Components and functions
 import App from './App';
+import './env.js';
 import { store, persistor } from './store';
 
 TimeAgo.addDefaultLocale(en);
