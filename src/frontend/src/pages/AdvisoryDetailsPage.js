@@ -99,12 +99,12 @@ function getMap(advisoryData) {
   const tileLayer = new VectorTileLayer({
     source: new VectorTileSource({
       format: new MVT(),
-      url: `${process.env.REACT_APP_BASE_MAP}`,
+      url: window.BASE_MAP,
     }),
   });
 
   // Apply the basemap style from the arcgis resource
-  fetch(`${process.env.REACT_APP_MAP_STYLE}`, {
+  fetch(window.MAP_STYLE, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
   }).then(function(response) {

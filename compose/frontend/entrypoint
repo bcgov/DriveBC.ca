@@ -2,4 +2,10 @@
 
 MAIN=`find /usr/share/nginx/html/static/js/main.*.js`
 echo -e "\nwindow.BASE_MAP='${REACT_APP_BASE_MAP}';" >> $MAIN
-echo -e "\nwindow.MAP_STYLE='${REACT_APP_MAP_STYLE}';" >> $MAIN
+echo -e "window.MAP_STYLE='${REACT_APP_MAP_STYLE}';" >> $MAIN
+echo -e "window.API_HOST='${REACT_APP_API_HOST}';" >> $MAIN
+echo -e "window.GEOCODER_HOST='${REACT_APP_GEOCODER_HOST}';" >> $MAIN
+echo -e "window.GEOCODER_API_AUTH_KEY='${REACT_APP_GEOCODER_API_AUTH_KEY}';" >> $MAIN
+echo -e "window.ROUTE_PLANNER='${REACT_APP_ROUTE_PLANNER}';" >> $MAIN
+echo -e "window.ROUTE_PLANNER_KEY='${REACT_APP_ROUTE_PLANNER_KEY}';" >> $MAIN
+echo -e "window.REPLAY_THE_DAY='${REACT_APP_REPLAY_THE_DAY}';" >> $MAIN

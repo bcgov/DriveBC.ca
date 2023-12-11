@@ -11,7 +11,7 @@
  * These are defined here so that they're included in the dev environment that
  * runs locally and has only the node build step.
  */
-window.API_HOST = `${process.env.REACT_APP_API_HOSTS}`;
+window.API_HOST = `${process.env.REACT_APP_API_HOST}`;
 window.BASE_MAP = `${process.env.REACT_APP_BASE_MAP}`;
 window.MAP_STYLE = `${process.env.REACT_APP_MAP_STYLE}`;
 window.HIGHWAY_LAYER = `${process.env.REACT_APP_HIGHWAY_LAYER}`;

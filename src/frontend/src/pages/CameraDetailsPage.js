@@ -65,7 +65,7 @@ export default function CameraDetailsPage() {
     const allCameras = await getWebcams();
     const cameraGroupMap = getCameraGroupMap(allCameras);
 
-    const camera = await getWebcams(null, `${process.env.REACT_APP_API_HOST}/api/webcams/${params.id}/`);
+    const camera = await getWebcams(null, `${window.API_HOST}/api/webcams/${params.id}/`);
 
     // Group cameras
     const group = cameraGroupMap[camera.group];
@@ -91,7 +91,7 @@ export default function CameraDetailsPage() {
     // Replay images
     const replayImageList = await getWebcamReplay(camera);
     const replayImages = replayImageList.map((url) => {
-      return {original: `${process.env.REACT_APP_REPLAY_THE_DAY}${camera.id}/${url}.jpg`};
+      return {original: `${window.REPLAY_THE_DAY}${camera.id}/${url}.jpg`};
     });
     setReplayImages(replayImages);
   }
@@ -286,7 +286,7 @@ export default function CameraDetailsPage() {
                 onSelect={ (selectedTab) => setActiveTab(selectedTab) }
               >
                 <Tab eventKey="webcam" title={<span>{cameraTab} Current camera</span>}>
-                  
+
                   <div className="camera-update camera-update--mobile">
                     <p className="next-update bold">
                       Next update attempt: {nextUpdate}

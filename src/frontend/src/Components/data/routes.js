@@ -1,7 +1,7 @@
 import { get } from "./helper.js";
 
 export function getRoute(points) {
-  const url = `${process.env.REACT_APP_ROUTE_PLANNER}/directions.json`;
+  const url = `${window.ROUTE_PLANNER}/directions.json`;
 
   return get(url, {
     points: points,
@@ -18,7 +18,7 @@ export function getRoute(points) {
 //    roundTrip: false
     }, {
     headers: {
-      'apiKey': `${process.env.REACT_APP_ROUTE_PLANNER_KEY}`
+      'apiKey': `${window.ROUTE_PLANNER_KEY}`
     }
   }).then((data) => data)
   .catch((error) => {

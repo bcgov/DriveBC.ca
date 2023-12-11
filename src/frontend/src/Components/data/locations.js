@@ -1,7 +1,7 @@
 import { get } from "./helper.js";
 
 export function getLocations(addressInput) {
-  return get(`${process.env.REACT_APP_GEOCODER_HOST}/addresses.json`, {
+  return get(`${window.GEOCODER_HOST}/addresses.json`, {
       minScore: 65,
       maxResults: 5,
       echo: 'false',
@@ -10,7 +10,7 @@ export function getLocations(addressInput) {
       addressString: addressInput
     }, {
     headers: {
-      'apiKey': `${process.env.REACT_APP_GEOCODER_API_AUTH_KEY}`
+      'apiKey': `${window.GEOCODER_API_AUTH_KEY}`
     }
   }).then((data) => data)
   .catch((error) => {
