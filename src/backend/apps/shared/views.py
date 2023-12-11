@@ -65,10 +65,10 @@ class CachedListModelMixin:
         # Fetch route from API again to avoid sending too many coordinates from client
         # To be removed once we have route saved in backend
         response = requests.get(
-            env("REACT_APP_ROUTE_PLANNER") + "/directions.json",
+            env("DRIVEBC_ROUTE_PLANNER_API_BASE_URL") + "/directions.json",
             params=payload,
             headers={
-                "apiKey": env("REACT_APP_ROUTE_PLANNER_KEY"),
+                "apiKey": env("DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY"),
             }
         )
 
