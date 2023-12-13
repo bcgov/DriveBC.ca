@@ -81,7 +81,7 @@
     color: $Type-Link;
     position: absolute;
     margin-bottom: 0;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 700;
     height: auto;
     border-radius: 4px;
@@ -98,7 +98,7 @@
         margin-right: 8px;
       }
     }
-    &.map-view, &.my-location {
+    &.map-view, &.my-location, &.open-layers {
       svg {
         margin-right: 8px;
       }
@@ -123,9 +123,30 @@
     }
 
     &.open-layers {
-      height: 32px;
-      width: 32px;
-      border-radius: 4px;
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+
+      // styling for badge
+      // &:after {
+      //   content: '1';
+      //   font-size: 10px;
+      //   font-weight: 700;
+      //   padding: 1px 8px;
+      //   color: white;
+      //   background-color: $Type-Link;
+      //   border-radius: 5px;
+      //   margin-left: 8px;
+      //   vertical-align: middle;
+      //   padding: 0 5px;
+      // }
+
+      // &:hover {
+      //   &:after {
+      //     color: $Type-Link;
+      //     background-color: white;
+      //   }
+      // }
     }
   }
 
