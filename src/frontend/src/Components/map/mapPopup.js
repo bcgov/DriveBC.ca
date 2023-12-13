@@ -29,7 +29,7 @@ function convertDirection(direction) {
 }
 
 function renderCamGroup(camFeature, setClickedCamera, currentCamData) {
-  const rootCamData = camFeature.getProperties();
+  const rootCamData = camFeature.ol_uid ? camFeature.getProperties() : camFeature;
 
   const clickHandler = (i) => {
     camFeature.setProperties({ groupIndex: i });
