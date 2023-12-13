@@ -25,6 +25,7 @@ HUEY = {
     "connection": {
         "host": env("REDIS_HOST"),
         "port": env("REDIS_PORT"),
+        "db": 0,
     },
     "immediate": False,
 }
