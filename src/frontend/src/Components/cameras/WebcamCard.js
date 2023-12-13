@@ -132,12 +132,6 @@ export default function WebcamCard(props) {
         <p className="label">{camera.caption}</p>
       </Card.Body>
       <Button variant="primary" className="viewmap-btn" onClick={handleViewOnMap}>View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
-
-      <div>
-        {camera.camGroup.map((cam) =>
-          <Button key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
-        )}
-      </div>
     </Card>
   );
 }
