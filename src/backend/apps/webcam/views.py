@@ -6,7 +6,7 @@ from rest_framework import viewsets
 
 
 class WebcamAPI(CachedListModelMixin):
-    queryset = Webcam.objects.all().order_by("highway", "highway_cam_order", "id")
+    queryset = Webcam.objects.all()
     serializer_class = WebcamSerializer
     cache_key = CacheKey.WEBCAM_LIST
     cache_timeout = CacheTimeout.WEBCAM_LIST
