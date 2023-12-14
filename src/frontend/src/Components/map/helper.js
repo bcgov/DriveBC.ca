@@ -74,7 +74,7 @@ export const setZoomPan = (mapView, zoom, panCoords) => {
   }
 
   const args = {
-    duration: 250
+    duration: 750
   };
 
   if (zoom) {
@@ -85,7 +85,7 @@ export const setZoomPan = (mapView, zoom, panCoords) => {
     args.center = panCoords;
   }
 
-  mapView.animate(args);
+  mapView.current.animate(args);
 };
 
 export const zoomIn = (mapView) => {
