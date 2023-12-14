@@ -21,7 +21,7 @@ import {
 import { getCamerasLayer } from './map/layers/camerasLayer.js';
 import { getCamPopup, getEventPopup, getFerryPopup } from './map/mapPopup.js'
 import { getEvents } from './data/events.js';
-import { getEventsLayer } from './map/layers/eventsLayer.js';
+import { eventLoader } from './events/eventLoader.js';
 import {
   fitMap,
   getCameraCircle,
@@ -39,6 +39,8 @@ import { getWebcams, groupCameras } from './data/webcams.js';
 import { getRouteLayer } from './map/routeLayer.js';
 import { MapContext } from '../App.js';
 import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
 import CurrentCameraIcon from './CurrentCameraIcon';
 import Layers from './Layers.js';
 import RouteSearch from './map/RouteSearch.js';
@@ -159,6 +161,23 @@ export default function MapWrapper({
 
     // initialize starting optional layers
     layers.current = {
+      eventPointLayer: new VectorLayer({
+        classname: 'events',
+        visible: mapContext.visible_layers.eventPointLayer,
+        source: new VectorSource({}),
+        style: function (feature, resolution) {
+          return getEventIcon(feature, 'static');
+        },
+      }),
+      eventLineLayer: new VectorLayer({
+        classname: 'eventLine',
+        visible: mapContext.visible_layers.eventPointLayer,
+        source: new VectorSource({}),
+        style: function (feature, resolution) {
+          return getEventIcon(feature, 'static');
+        },
+      }),
+
       tid: Date.now(),
     };
 
@@ -202,6 +221,10 @@ export default function MapWrapper({
       view: mapView.current,
       controls: [new ScaleLine({ units: 'metric' })],
     });
+
+    mapRef.current.addLayer(layers.current['eventLineLayer']);
+    mapRef.current.addLayer(layers.current['eventPointLayer']);
+
 
     geolocation.current = new Geolocation({
       projection: mapView.current.getProjection(),
@@ -318,11 +341,20 @@ export default function MapWrapper({
       }
 
       // if it wasn't a webcam icon, check if it was an event
-      const eventFeatures = layers.current.eventsLayer.getVisible() ?
-        await layers.current.eventsLayer.getFeatures(e.pixel) : [];
+      const eventFeatures = layers.current.eventPointLayer.getVisible() ?
+        await layers.current.eventPointLayer.getFeatures(e.pixel) : [];
 
       if (eventFeatures.length) {
         eventClickHandler(eventFeatures[0]);
+        return;
+      }
+
+      // if it wasn't a webcam icon, check if it was an event
+      const segmentFeatures = layers.current.eventLineLayer.getVisible() ?
+        await layers.current.eventLineLayer.getFeatures(e.pixel) : [];
+
+      if (segmentFeatures.length) {
+        eventClickHandler(segmentFeatures[0]);
         return;
       }
 
@@ -387,8 +419,28 @@ export default function MapWrapper({
       }
 
       // if it wasn't a camera icon, check if it was an event
-      if (layers.current && 'eventsLayer' in layers.current) {
-        const hoveredEvents = await layers.current['eventsLayer'].getFeatures(e.pixel);
+      if (layers.current && 'eventPointLayer' in layers.current) {
+        const hoveredEvents = await layers.current['eventPointLayer'].getFeatures(e.pixel);
+        if (hoveredEvents.length) {
+
+          const feature = hoveredEvents[0];
+          resetHoveredStates(feature);
+
+          hoveredEvent.current = feature;
+          if (!hoveredEvent.current.getProperties().clicked) {
+            hoveredEvent.current.setStyle(
+              getEventIcon(hoveredEvent.current, 'hover'),
+            );
+            setRelatedGeometry(hoveredEvent.current, 'hover');
+          }
+
+          return;
+        }
+      }
+
+      // if it wasn't an event point icon, check if it was a line
+      if (layers.current && 'eventLineLayer' in layers.current) {
+        const hoveredEvents = await layers.current['eventLineLayer'].getFeatures(e.pixel);
         if (hoveredEvents.length) {
           const feature = hoveredEvents[0];
 
@@ -427,7 +479,6 @@ export default function MapWrapper({
       // Reset on blank space
       resetHoveredStates(null);
     });
-
     toggleMyLocation();
   }, []);
 
@@ -489,17 +540,22 @@ export default function MapWrapper({
   async function loadEvents(route) {
     const eventsData = await getEvents(route);
 
-    if (layers.current['eventsLayer']) {
-      mapRef.current.removeLayer(layers.current['eventsLayer']);
+    if (layers.current['eventPointLayer']) {
+      layers.current['eventPointLayer'].getSource().clear();
     }
 
-    layers.current['eventsLayer'] = getEventsLayer(
+    if (layers.current['eventLineLayer']) {
+      layers.current['eventLineLayer'].getSource().clear();
+    }
+
+    console.log("running event loader");
+    // Events iterator
+    eventLoader(
       eventsData,
       mapRef.current.getView().getProjection().getCode(),
-      mapContext
-    )
+      layers.current
+    );
 
-    mapRef.current.addLayer(layers.current['eventsLayer']);
   }
 
   async function loadFerries() {
@@ -548,11 +604,18 @@ export default function MapWrapper({
     cameraPopupRef.current = null;
   }
 
-  const setRelatedGeometry = (event, state) => {
-    if (event.getId()) {
-      const relatedFeature = layers.current['eventsLayer']
+  const getFeatureLayer = feature => {
+    return feature.getGeometry().getType() === 'LineString'
+      ? layers.current['eventPointLayer']
+      : layers.current['eventLineLayer'];
+  };
+
+  const setRelatedGeometry = (feature, state) => {
+    if (feature.getId()) {
+      const searchedLayer = getFeatureLayer(feature);
+      const relatedFeature = searchedLayer
         .getSource()
-        .getFeatureById(event.ol_uid);
+        .getFeatureById(feature.ol_uid);
       relatedFeature.setStyle(getEventIcon(relatedFeature, state));
     }
   };
