@@ -111,7 +111,7 @@ export default function CameraDetailsPage() {
   };
 
   const mapViewRoute = () =>{
-    navigate("/", { state: JSON.stringify(camera)})
+    navigate("/", { state: camera })
   }
 
   // ReplayTheDay
@@ -363,7 +363,7 @@ export default function CameraDetailsPage() {
                           renderLeftNav={customLeftNav}
                           renderPlayPauseButton={customPlayPause}
                           renderRightNav={customRightNav}
-                          onSlide={(index) => handleImageSlide(index)} 
+                          onSlide={(index) => handleImageSlide(index)}
                           onPlay={play}
                           infinite={false} />
                       )}
