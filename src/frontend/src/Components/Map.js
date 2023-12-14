@@ -163,6 +163,9 @@ export default function MapWrapper({
         visible: mapContext.visible_layers.eventPointLayer,
         source: new VectorSource({}),
         style: function (feature, resolution) {
+          if (camera && camera.id === feature.getProperties().id) {
+            return getEventIcon(feature, 'active');
+          }
           return getEventIcon(feature, 'static');
         },
       }),
@@ -171,6 +174,9 @@ export default function MapWrapper({
         visible: mapContext.visible_layers.eventPointLayer,
         source: new VectorSource({}),
         style: function (feature, resolution) {
+          if (camera && camera.id === feature.getProperties().id) {
+            return getEventIcon(feature, 'active');
+          }
           return getEventIcon(feature, 'static');
         },
       }),
@@ -545,7 +551,7 @@ export default function MapWrapper({
     eventLoader(
       eventsData,
       mapRef.current.getView().getProjection().getCode(),
-      layers.current
+      layers.current,
       mapContext,
       camera,
       updateClickedEvent,
