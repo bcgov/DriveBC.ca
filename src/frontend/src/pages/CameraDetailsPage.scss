@@ -500,8 +500,12 @@
     position: relative;
     top: 0rem;
     bottom: 0;
-    height: 100%;
     width: 100%;
+    height: 365px;
+
+    @media (min-width: 992px) {
+      height: 100%;
+    }
 
     .map {
       width: 100%;

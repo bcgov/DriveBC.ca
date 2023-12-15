@@ -52,14 +52,15 @@
     .ol-scale-line {
       background: var(--ol-partial-background-color);
       border-radius: 4px;
-      bottom: 1.8rem;
       left: auto;
-      right: 6rem;
+      right: 2rem;
+      bottom: 6rem;
       padding: 2px;
       position: absolute;
 
-      @media (max-width: 575px) {
-        right: 2rem;
+      @media (min-width: 992px) {
+        right: 6rem;
+        bottom: 2rem;
       }
     }
 
@@ -127,6 +128,11 @@
       top: 2rem;
       right: 2rem;
 
+      @media (max-width: 992px) {
+        top: initial;
+        bottom: 2rem;
+      }
+
       // styling for badge
       // &:after {
       //   content: '1';
@@ -167,7 +173,7 @@
     flex-direction: column;
 
     //Hide zoom slider on touch devices
-    @media (max-width: 575px) {
+    @media (max-width: 992px) {
       display: none;
     }
 

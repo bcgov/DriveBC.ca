@@ -6,11 +6,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFilter,
   faXmark,
+  faExclamationCircle,
   faExclamationTriangle,
   faCalendarDays,
-  faCamera,
+  faVideo,
   faSnowflake,
-  faRestroom } from '@fortawesome/free-solid-svg-icons';
+  faFerry,
+  faRestroom,
+  faCloudSun } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -88,7 +91,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
 
             <div className={'filter-item filter-item--minor'}>
               <div className="filter-item__icon">
-                <FontAwesomeIcon icon={faExclamationTriangle} alt="minor delays" />
+                <FontAwesomeIcon icon={faExclamationCircle} alt="minor delays" />
               </div>
               <input
                 type="checkbox"
@@ -126,7 +129,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
           <div className="filter-items filter-items--conditions">
             <div className={'filter-item filter-item--highway-cameras' + (filterCheckedCams ? ' checked' : '')}>
               <div className="filter-item__icon">
-                <FontAwesomeIcon icon={faCamera} alt="highway cameras" />
+                <FontAwesomeIcon icon={faVideo} alt="highway cameras" />
               </div>
               <input
                 type="checkbox"
@@ -141,7 +144,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
               </OverlayTrigger>
             </div>
 
-            <div className={'filter-item filter-road-conditions'}>
+            <div className={'filter-item filter-item--road-conditions'}>
               <div className="filter-item__icon">
                 <FontAwesomeIcon icon={faSnowflake} alt="road conditions" />
               </div>
@@ -158,7 +161,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
 
             <div className={'filter-item filter-item--inland-ferries' + (filterCheckedFerries ? ' checked' : '')}>
               <div className="filter-item__icon">
-                <FontAwesomeIcon icon={faExclamationTriangle} alt="inland ferries" />
+                <FontAwesomeIcon icon={faFerry} alt="inland ferries" />
               </div>
               <input
                 type="checkbox"
@@ -187,9 +190,9 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
               </OverlayTrigger>
             </div>
 
-            <div className={'filter-item filter-item--minor'}>
+            <div className={'filter-item filter-item--weather'}>
               <div className="filter-item__icon">
-                <FontAwesomeIcon icon={faExclamationTriangle} alt="weather" />
+                <FontAwesomeIcon icon={faCloudSun} alt="weather" />
               </div>
               <input
                 type="checkbox"
