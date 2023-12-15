@@ -101,3 +101,11 @@ $danger: $Error;
     }
   }
 }
+
+// Tooltip
+.tooltip-inner {
+  p {
+    color: $White;
+    margin-bottom: 0;
+  }
+}

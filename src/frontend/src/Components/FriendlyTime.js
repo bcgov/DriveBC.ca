@@ -29,7 +29,7 @@ export default function FriendlyTime( {date} ) {
   // if difference is less than 24hrs
   if (timeDiff < 86400000 ) {
     return <div
-            className={"friendly-time" }
+            className="friendly-time"
             title={dateFormatted}
             onClick={(event) => {
               event.stopPropagation();
@@ -44,7 +44,7 @@ export default function FriendlyTime( {date} ) {
 
   // else return formatted date without tooltip
   else {
-    return <p className={"friendly-time-text formatted-date" }>
+    return <p className="friendly-time-text formatted-date">
             {dateFormatted}
           </p>
   }
