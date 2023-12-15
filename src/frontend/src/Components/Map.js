@@ -616,7 +616,7 @@ export default function MapWrapper({
   return (
     <div className="map-container">
       <div ref={mapElement} className="map">
-        <div className="zoom-btn">
+        <div className="map-btn zoom-btn">
           <Button className="zoom-in" variant="primary" aria-label="zoom in"
             onClick={() => zoomIn(mapView)}>
             <FontAwesomeIcon icon={faPlus} />
@@ -689,15 +689,17 @@ export default function MapWrapper({
         </Button>
       )}
 
+      {isPreview && (
+        <Layers
+          open={layersOpen}
+          setLayersOpen={toggleLayers}
+          toggleLayer={toggleLayer}
+        />
+      )}
+
       {!isPreview && (
         <div>
           <RouteSearch />
-
-          <Layers
-            open={layersOpen}
-            setLayersOpen={toggleLayers}
-            toggleLayer={toggleLayer}
-          />
           <AdvisoriesAccordion />
         </div>
       )}

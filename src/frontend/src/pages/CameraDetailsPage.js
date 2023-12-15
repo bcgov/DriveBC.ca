@@ -318,7 +318,7 @@ export default function CameraDetailsPage() {
                     </p>
                   </div>
 
-                  <div className="camera-functions">
+                  <div className="actions-bar actions-bar--webcam">
                     <div className="camera-orientations">
                       <span className="camera-direction-label">
                         <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
@@ -385,6 +385,8 @@ export default function CameraDetailsPage() {
                   </div>
                 </Tab>
                 <Tab eventKey="nearby" title={<span>{nearby}Nearby</span>}>
+                  <div className="actions-bar actions-bar--nearby">
+                  </div>
                   <div className="map-wrap map-context-wrap">
                     <DndProvider options={HTML5toTouch}>
                       <Map camera={camera} isPreview={true} cameraHandler={initCamera} mapViewRoute={mapViewRoute}/>
