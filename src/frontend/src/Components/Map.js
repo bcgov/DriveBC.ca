@@ -665,6 +665,12 @@ export default function MapWrapper({
         </div>
       </div>
 
+      <Layers
+          open={layersOpen}
+          setLayersOpen={toggleLayers}
+          toggleLayer={toggleLayer}
+        />
+
       {isPreview && (
         <Button
           className="map-btn map-view"
@@ -687,14 +693,6 @@ export default function MapWrapper({
           <CurrentCameraIcon />
           Camera location
         </Button>
-      )}
-
-      {isPreview && (
-        <Layers
-          open={layersOpen}
-          setLayersOpen={toggleLayers}
-          toggleLayer={toggleLayer}
-        />
       )}
 
       {!isPreview && (
