@@ -546,13 +546,11 @@ export default function MapWrapper({
       layers.current['eventLineLayer'].getSource().clear();
     }
 
-    console.log("running event loader");
     // Events iterator
     eventLoader(
       eventsData,
       mapRef.current.getView().getProjection().getCode(),
       layers.current,
-      mapContext,
       camera,
       updateClickedEvent,
     )

@@ -5,7 +5,7 @@ import { transformFeature } from '../map/helper.js';
 import { Point, LineString } from 'ol/geom';
 import * as ol from 'ol';
 
-export function eventLoader(eventsData, projectionCode, layersObject) {
+export function eventLoader(eventsData, projectionCode, layersObject, passedEvent, updateClickedEvent) {
   eventsData.forEach(record => {
     let olGeometry = null;
     let centroidFeatureForMap = null;
@@ -54,6 +54,14 @@ export function eventLoader(eventsData, projectionCode, layersObject) {
       olFeatureForMap.setId(centroidFeatureForMap.ol_uid);
     }else{
       layersObject.eventPointLayer.getSource().addFeature(olFeatureForMap);
+    }
+
+    if (
+      passedEvent &&
+      passedEvent.id === olFeatureForMap.getProperties().id
+    ) {
+      olFeatureForMap.setProperties({ clicked: true }, true);
+      updateClickedEvent(olFeatureForMap);
     }
   });
 }
