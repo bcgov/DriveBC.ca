@@ -61,7 +61,7 @@ import { cameraStyles, ferryStyles } from './data/featureStyleDefinitions.js';
 import './Map.scss';
 
 export default function MapWrapper({
-  camera,
+  passedFeature,
   isPreview,
   cameraHandler,
   mapViewRoute,
@@ -163,7 +163,7 @@ export default function MapWrapper({
         visible: mapContext.visible_layers.eventPointLayer,
         source: new VectorSource({}),
         style: function (feature, resolution) {
-          if (camera && camera.id === feature.getProperties().id) {
+          if (passedFeature && passedFeature.id === feature.getProperties().id) {
             return getEventIcon(feature, 'active');
           }
           return getEventIcon(feature, 'static');
@@ -174,7 +174,7 @@ export default function MapWrapper({
         visible: mapContext.visible_layers.eventPointLayer,
         source: new VectorSource({}),
         style: function (feature, resolution) {
-          if (camera && camera.id === feature.getProperties().id) {
+          if (passedFeature && passedFeature.id === feature.getProperties().id) {
             return getEventIcon(feature, 'active');
           }
           return getEventIcon(feature, 'static');
@@ -191,7 +191,7 @@ export default function MapWrapper({
     mapView.current = new View({
       projection: 'EPSG:3857',
       constrainResolution: true,
-      center: camera ? handleCenter() : fromLonLat(pan),
+      center: passedFeature ? handleCenter() : fromLonLat(pan),
       zoom: handleZoom(),
       maxZoom: 15,
       extent: transformedExtent
@@ -219,7 +219,9 @@ export default function MapWrapper({
     });
 
     mapRef.current.addLayer(layers.current['eventLineLayer']);
+    layers.current['eventLineLayer'].setZIndex(50);
     mapRef.current.addLayer(layers.current['eventPointLayer']);
+    layers.current['eventPointLayer'].setZIndex(150);
 
 
     geolocation.current = new Geolocation({
@@ -232,15 +234,15 @@ export default function MapWrapper({
         await loadEvents();
       }
 
-      if (camera && !isPreview) {
-        popup.current.setPosition(handleCenter(camera));
+      if (passedFeature && !isPreview) {
+        popup.current.setPosition(handleCenter(passedFeature));
         popup.current.getElement().style.top = '40px';
 
-        if (camera.event_type) {
-          updateClickedEvent(camera);
+        if (passedFeature.event_type) {
+          updateClickedEvent(passedFeature);
 
         } else {
-          updateClickedCamera(camera);
+          updateClickedCamera(passedFeature);
         }
       }
     });
@@ -342,7 +344,7 @@ export default function MapWrapper({
         return;
       }
 
-      // if it wasn't a webcam icon, check if it was an event
+      // if it wasn't an eventpoint, check if it was an event segment
       const segmentFeatures = layers.current.eventLineLayer.getVisible() ?
         await layers.current.eventLineLayer.getFeatures(e.pixel) : [];
 
@@ -472,7 +474,7 @@ export default function MapWrapper({
       // Reset on blank space
       resetHoveredStates(null);
     });
-    if(!camera){
+    if(!passedFeature){
       // if there is no parameter for shifting the view, pan to my location
       toggleMyLocation();
     }
@@ -527,12 +529,12 @@ export default function MapWrapper({
       groupCameras(webcamResults),
       mapRef.current.getView().getProjection().getCode(),
       mapContext,
-      camera,
+      passedFeature,
       updateClickedCamera,
     )
 
     mapRef.current.addLayer(layers.current['webcamsLayer']);
-    layers.current['webcamsLayer'].setZIndex(1);
+    layers.current['webcamsLayer'].setZIndex(100);
   }
 
   async function loadEvents(route) {
@@ -551,7 +553,7 @@ export default function MapWrapper({
       eventsData,
       mapRef.current.getView().getProjection().getCode(),
       layers.current,
-      camera,
+      passedFeature,
       updateClickedEvent,
     )
 
@@ -652,22 +654,22 @@ export default function MapWrapper({
 
   function handleCenter() {
     if (typeof camera === 'string') {
-      camera = JSON.parse(camera);
+      passedFeature = JSON.parse(passedFeature);
     }
-    return Array.isArray(camera.location.coordinates[0])
+    return Array.isArray(passedFeature.location.coordinates[0])
       ? fromLonLat(
-          camera.location.coordinates[
-            Math.floor(camera.location.coordinates.length / 2)
+          passedFeature.location.coordinates[
+            Math.floor(passedFeature.location.coordinates.length / 2)
           ],
         )
-      : fromLonLat(camera.location.coordinates);
+      : fromLonLat(passedFeature.location.coordinates);
   }
 
   function handleZoom() {
     if (typeof camera === 'string') {
-      camera = JSON.parse(camera);
+      passedFeature = JSON.parse(passedFeature);
     }
-    if(isPreview || camera){
+    if(isPreview || passedFeature){
       return 12
     }
     else{
@@ -755,8 +757,8 @@ export default function MapWrapper({
           className="map-btn cam-location"
           variant="primary"
           onClick={() => {
-            if (camera) {
-              setZoomPan(mapView, 12, fromLonLat(camera.location.coordinates));
+            if (passedFeature) {
+              setZoomPan(mapView, 12, fromLonLat(passedFeature.location.coordinates));
             }
           }}>
           <CurrentCameraIcon />
