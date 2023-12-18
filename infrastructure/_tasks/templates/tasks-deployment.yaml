@@ -5,7 +5,7 @@ metadata:
   labels: {{ include "app.labels" . | nindent 4 }}
   annotations:
     image.openshift.io/triggers: >-
-      [{"from":{"kind":"ImageStreamTag","name":"{{ .Values.deployment.djangoImageName  }}:latest","namespace":"{{ .Values.namespace  }}"},"fieldPath":"spec.template.spec.containers[?(@.name==\"{{ .Values.deployment.djangoImageName  }}\")].image","pause":"false"}]
+      [{"from":{"kind":"ImageStreamTag","name":"{{ .Values.deployment.djangoImageName  }}:latest","namespace":"{{ .Values.namespace  }}"},"fieldPath":"spec.template.spec.containers[?(@.name==\"{{ template "app.fullname" . }}\")].image","pause":"false"}]
 spec:
   replicas: {{ .Values.deployment.replicas  }}
   selector:
@@ -32,12 +32,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.deployment.env.postgresSecret  }}
-                  key: host
+                  key: pgbouncer-host
             - name: DB_PORT
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.deployment.env.postgresSecret  }}
-                  key: port
+                  key: pgbouncer-port
             - name: DB_USER
               valueFrom:
                 secretKeyRef:

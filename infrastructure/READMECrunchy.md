@@ -41,7 +41,7 @@ Now you have a functioning crunchydb instance running in your namespace. To get 
 4. Restart the django deployment to get it to run the migration scripts. 
 5. If you want to quickly get the cameras and events on a fresh db, run  `python manage.py populate_webcams` and `python manage.py populate_events` in the terminal of the tasks pod
 
-If you have a user with adequate permissions on the DB and you want to use something like pgadmin on your PC to view the DB you can run this in cmd or powershell `oc -n c59ecc-dev port-forward service/drivebc-pgbouncer 15436:5432`
+If you have a user with adequate permissions on the DB and you want to use something like pgadmin on your PC to view the DB you can run this in cmd or powershell `oc -n c59ecc-dev port-forward service/dev-drivebc-pgbouncer 15436:5432`
 
 ## Raw YAML files
 

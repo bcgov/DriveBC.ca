@@ -9,7 +9,7 @@ instances:
   name: ha # high availability
   replicas: 2
   dataVolumeClaimSpec:
-    storage: 5.5Gi
+    storage: 6Gi
     storageClassName: netapp-block-standard
   requests:
     cpu: 250m
@@ -37,7 +37,7 @@ pgBackRest:
       incremental: 15,45 * * * * #set this to every 30 min to reduce chance of WAL log issues
     volume:
       accessModes: "ReadWriteOnce"
-      storage: 7Gi
+      storage: 6Gi
       storageClassName: netapp-file-backup
   repoHost:
     requests:

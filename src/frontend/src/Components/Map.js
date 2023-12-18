@@ -24,7 +24,6 @@ import { getEvents } from './data/events.js';
 import { getEventsLayer } from './map/layers/eventsLayer.js';
 import {
   fitMap,
-  getCameraCircle,
   blueLocationMarkup,
   redLocationMarkup,
   setLocationPin,
@@ -161,11 +160,9 @@ export default function MapWrapper({
     const vectorLayer = new VectorTileLayer({
       source: new VectorTileSource({
         format: new MVT(),
-        url: `${process.env.REACT_APP_BASE_MAP}`,
+        url: window.BASE_MAP,
       }),
     });
-
-    const { circle, radiusLayer } = getCameraCircle(camera);
 
     // initialize starting optional layers
     layers.current = {
@@ -180,13 +177,13 @@ export default function MapWrapper({
       projection: 'EPSG:3857',
       constrainResolution: true,
       center: camera ? handleCenter() : fromLonLat(pan),
-      zoom: isPreview ? 12 : zoom,
+      zoom: handleZoom(),
       maxZoom: 15,
       extent: transformedExtent
     });
 
     // Apply the basemap style from the arcgis resource
-    fetch(`${process.env.REACT_APP_MAP_STYLE}`, {
+    fetch(window.MAP_STYLE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     }).then(function (response) {
@@ -200,14 +197,7 @@ export default function MapWrapper({
     // create map
     mapRef.current = new Map({
       target: mapElement.current,
-      layers: radiusLayer
-        ? [
-            vectorLayer,
-            radiusLayer,
-          ]
-        : [
-            vectorLayer,
-          ],
+      layers: [vectorLayer],
       overlays: [popup.current],
       view: mapView.current,
       controls: [new ScaleLine({ units: 'metric' })],
@@ -217,10 +207,22 @@ export default function MapWrapper({
       projection: mapView.current.getProjection(),
     });
 
-    mapRef.current.once('loadend', () => {
+    mapRef.current.once('loadstart', async () => {
       if (!selectedRoute) {
-        loadCameras();
-        loadEvents();
+        await loadCameras();
+        await loadEvents();
+      }
+
+      if (camera && !isPreview) {
+        popup.current.setPosition(handleCenter(camera));
+        popup.current.getElement().style.top = '40px';
+
+        if (camera.event_type) {
+          updateClickedEvent(camera);
+
+        } else {
+          updateClickedCamera(camera);
+        }
       }
     });
 
@@ -251,37 +253,22 @@ export default function MapWrapper({
     }
 
     const camClickHandler = (feature) => {
-      const camData = feature.getProperties();
-      if (isPreview) {
-        // Only switch context on clicking cameras within circle
-        if (circle &&
-          circle.intersectsCoordinate(fromLonLat(camData.location.coordinates))
-        ) {
-          mapView.current.animate({
-            center: fromLonLat(camData.location.coordinates),
-          });
+      resetClickedStates(feature);
 
-          cameraHandler(camData);
-        }
+      // set new clicked camera feature
+      feature.setStyle(cameraStyles['active']);
+      feature.setProperties({ clicked: true }, true);
 
-      } else {
-        resetClickedStates(feature);
+      popup.current.setPosition(
+        feature.getGeometry().getCoordinates(),
+      );
+      popup.current.getElement().style.top = '40px';
 
-        // set new clicked camera feature
-        feature.setStyle(cameraStyles['active']);
-        feature.setProperties({ clicked: true }, true);
+      updateClickedCamera(feature);
 
-        popup.current.setPosition(
-          feature.getGeometry().getCoordinates(),
-        );
-        popup.current.getElement().style.top = '40px';
+      cameraPopupRef.current = popup;
 
-        updateClickedCamera(feature);
-
-        cameraPopupRef.current = popup;
-
-        setTimeout(resetCameraPopupRef, 500);
-      }
+      setTimeout(resetCameraPopupRef, 500);
     }
 
     const eventClickHandler = (feature) => {
@@ -437,8 +424,10 @@ export default function MapWrapper({
       // Reset on blank space
       resetHoveredStates(null);
     });
-
-    toggleMyLocation();
+    if(!camera){
+      // if there is no parameter for shifting the view, pan to my location
+      toggleMyLocation();
+    }
   }, []);
 
   useEffect(() => {
@@ -479,10 +468,6 @@ export default function MapWrapper({
     }
   }, [selectedRoute]);
 
-  useEffect(() => {
-    console.log("Zoom level: " + Math.round(mapRef.current.getView().getZoom()));
-  });
-
   async function loadCameras(route) {
     const webcamResults = await getWebcams(route);
 
@@ -493,7 +478,9 @@ export default function MapWrapper({
     layers.current['webcamsLayer'] = getCamerasLayer(
       groupCameras(webcamResults),
       mapRef.current.getView().getProjection().getCode(),
-      mapContext
+      mapContext,
+      camera,
+      updateClickedCamera,
     )
 
     mapRef.current.addLayer(layers.current['webcamsLayer']);
@@ -510,7 +497,9 @@ export default function MapWrapper({
     layers.current['eventsLayer'] = getEventsLayer(
       eventsData,
       mapRef.current.getView().getProjection().getCode(),
-      mapContext
+      mapContext,
+      camera,
+      updateClickedEvent,
     )
 
     mapRef.current.addLayer(layers.current['eventsLayer']);
@@ -534,6 +523,7 @@ export default function MapWrapper({
 
   function closePopup() {
     popup.current.setPosition(undefined);
+
     // check for active camera icons
     if (clickedCameraRef.current) {
       clickedCameraRef.current.setStyle(cameraStyles['static']);
@@ -614,6 +604,18 @@ export default function MapWrapper({
       : fromLonLat(camera.location.coordinates);
   }
 
+  function handleZoom() {
+    if (typeof camera === 'string') {
+      camera = JSON.parse(camera);
+    }
+    if(isPreview || camera){
+      return 12
+    }
+    else{
+      return zoom;
+    }
+  }
+
   function toggleLayers(openLayers) {
     setLayersOpen(openLayers);
   }
@@ -630,7 +632,7 @@ export default function MapWrapper({
   return (
     <div className="map-container">
       <div ref={mapElement} className="map">
-        <div className="zoom-btn">
+        <div className="map-btn zoom-btn">
           <Button className="zoom-in" variant="primary" aria-label="zoom in"
             onClick={() => zoomIn(mapView)}>
             <FontAwesomeIcon icon={faPlus} />
@@ -666,7 +668,7 @@ export default function MapWrapper({
         />
         <div id="popup-content" className="ol-popup-content">
           {clickedCamera &&
-            getCamPopup(clickedCamera, updateClickedCamera, navigate, cameraPopupRef)
+            getCamPopup(clickedCamera, updateClickedCamera, navigate, cameraPopupRef, isPreview)
           }
 
           {clickedEvent &&
@@ -678,6 +680,12 @@ export default function MapWrapper({
           }
         </div>
       </div>
+
+      <Layers
+          open={layersOpen}
+          setLayersOpen={toggleLayers}
+          toggleLayer={toggleLayer}
+        />
 
       {isPreview && (
         <Button
@@ -695,7 +703,7 @@ export default function MapWrapper({
           variant="primary"
           onClick={() => {
             if (camera) {
-              setZoomPan(mapView, null, fromLonLat(camera.location.coordinates));
+              setZoomPan(mapView, 12, fromLonLat(camera.location.coordinates));
             }
           }}>
           <CurrentCameraIcon />
@@ -706,12 +714,6 @@ export default function MapWrapper({
       {!isPreview && (
         <div>
           <RouteSearch />
-
-          <Layers
-            open={layersOpen}
-            setLayersOpen={toggleLayers}
-            toggleLayer={toggleLayer}
-          />
           <AdvisoriesAccordion />
         </div>
       )}

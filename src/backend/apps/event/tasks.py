@@ -1,6 +1,6 @@
 import logging
 
-from apps.event.enums import EVENT_STATUS
+from apps.event.enums import EVENT_DIFF_FIELDS, EVENT_STATUS
 from apps.event.models import Event
 from apps.event.serializers import EventSerializer
 from apps.feed.client import FeedClient
@@ -20,11 +20,13 @@ def populate_event_from_data(event_data):
     except ObjectDoesNotExist:
         event = Event(id=event_id)
 
-    # Only update data if official last updated timestamp is different
-    if event.last_updated != event_data['last_updated']:
-        event_serializer = EventSerializer(event, data=event_data)
-        event_serializer.is_valid(raise_exception=True)
-        event_serializer.save()
+    # Only update if existing data differs for at least one of the fields
+    for field in EVENT_DIFF_FIELDS:
+        if getattr(event, field) != event_data[field]:
+            event_serializer = EventSerializer(event, data=event_data)
+            event_serializer.is_valid(raise_exception=True)
+            event_serializer.save()
+            return
 
 
 def populate_all_event_data():

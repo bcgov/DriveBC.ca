@@ -26,7 +26,7 @@ export default function Header() {
     return <Nav.Link active={false} onClick={() => setTimeout(() => setExpanded(false))}>{title}</Nav.Link>
   };
 
-  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+  const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
 
   // Rendering
   return (
@@ -39,7 +39,7 @@ export default function Header() {
             <span className="line line3"></span>
           </Navbar.Toggle>
 
-          <Navbar.Brand href="#home" tabIndex={largeScreen ? "0": "-1"}>
+          <Navbar.Brand href="#home" tabIndex={xLargeScreen ? "0": "-1"}>
             <img className="header-logo" src={logo} alt="Government of British Columbia" />
           </Navbar.Brand>
 

@@ -14,6 +14,8 @@ import Advisories from '../advisories/Advisories';
 // Styling
 import './CameraList.scss';
 
+const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+
 export default function CameraList() {
   // UseRef hooks
   const isInitialMount = useRef(true);
@@ -26,6 +28,11 @@ export default function CameraList() {
   const getWebcamsData = async () => {
     const webcamResults = await getWebcams();
     const cameras = groupCameras(webcamResults);
+
+    // Sort cameras by highway number
+    cameras.sort(function(a, b) {
+      return collator.compare(a.highway, b.highway)
+    });
 
     setWebcams(cameras);
 
@@ -52,6 +59,13 @@ export default function CameraList() {
     }
   }, [webcams]);
 
+  useEffect(() => {
+    const scrollPosition = sessionStorage.getItem('scrollPosition');
+    if (scrollPosition) {
+      window.scrollTo(0, parseInt(scrollPosition, 10));
+    }
+  });
+
   // Rendering
   const mapDisplayedWebcams = () => {
     // Webcam data reduced to arrays grouped by highway
@@ -69,35 +83,48 @@ export default function CameraList() {
   };
 
   const renderWebcams = () => {
-    return Object.entries(mapDisplayedWebcams()).map(([highway, cameras]) => (
-      <div className="highway-group" key={highway}>
-        <Container>
-          <div className="highway-title">
-            <div className="highway-shield-box">
-              {highwayShield(highway)}
+    const groupedCams = mapDisplayedWebcams();
+    const highwayKeys = Object.keys(groupedCams);
+
+    // Render camera groups by highway number
+    highwayKeys.sort(collator.compare);
+
+    return highwayKeys.map((highway) => {
+      const cameras = groupedCams[highway];
+
+      // Render cameras by highway_cam_order
+      cameras.sort((a, b) => a.highway_cam_order - b.highway_cam_order);
+
+      return (
+        <div className="highway-group" key={highway}>
+          <Container>
+            <div className="highway-title">
+              <div className="highway-shield-box">
+                {highwayShield(highway)}
+              </div>
+
+              <div className="highway-name">
+                <p className="highway-name__number">Highway {highway}</p>
+                {highway === '1' &&
+                  <h2 className="highway-name__alias highway-name__alias--green">Trans Canada</h2>
+                }
+                {highway !== '1' &&
+                  <h2 className="highway-name__alias">Highway {highway}</h2>
+                }
+              </div>
             </div>
 
-            <div className="highway-name">
-              <p className="highway-name__number">Highway {highway}</p>
-              {highway === '1' &&
-                <h2 className="highway-name__alias highway-name__alias--green">Trans Canada</h2>
-              }
-              {highway !== '1' &&
-                <h2 className="highway-name__alias">Highway {highway}</h2>
-              }
+            <div className="webcam-group">
+              {cameras.map((camera, id) => (
+                <WebcamCard cameraData={camera} className="webcam" key={id}>
+                </WebcamCard>
+              ))}
             </div>
-          </div>
-
-          <div className="webcam-group">
-            {cameras.map((camera, id) => (
-              <WebcamCard cameraData={camera} className="webcam" key={id}>
-              </WebcamCard>
-            ))}
-          </div>
-        </Container>
-      </div>
-    ));
-  };
+          </Container>
+        </div>
+      );
+    });
+  }
 
   return (
     <div className="camera-list">

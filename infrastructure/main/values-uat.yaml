@@ -11,7 +11,7 @@ django:
   fullnameOverride: uat-django
   namespace: c59ecc-test #The namespace you are running the application on. This is used to pull from the ImageStream
   deployment:
-    replicas: 1
+    replicas: 2
     resources:
       requests:
         cpu: 50m
@@ -75,7 +75,7 @@ redis:
   fullnameOverride: uat-redis
   namespace: c59ecc-test #enter the full namespace here to the deployment has the correct imagestream
   deployment:
-    replicas: 1
+    replicas: 2
     resources:
       requests:
         cpu: 50m

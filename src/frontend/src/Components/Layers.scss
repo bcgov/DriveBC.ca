@@ -1,26 +1,30 @@
-.open-layers, .layers {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-}
-
-button.open-layers {
-  height: 54px;
-  width: 54px;
-  text-align: center;
-  margin: auto;
-  padding: initial;
-  background: #fff;
-}
+@import "../styles/variables.scss";
 
 .layers {
-  width: 14rem;
-  background: white;
-  border: solid 1px rgb(118, 118, 118);
-  text-align: left;
-  padding: 1rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-height: calc(100% - 32px);
+  overflow: scroll;
   border-radius: 4px;
-  z-index: 2;
+  background-color: $Surface-tinted;
+  box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
+  padding: 1rem;
+  z-index: 20;
+
+  @media (min-width: 576px) {
+    top: 5rem;
+    bottom: initial;
+    left: initial;
+    right: 2rem;
+    width: 300px;
+    height: auto;
+  }
+
+  .filters-title {
+    margin-bottom: 24px;
+  }
 
   button.close-layers {
     position: absolute;
@@ -35,42 +39,79 @@ button.open-layers {
     font-size: 1.4rem;
   }
 
-  h4 {
-    margin-bottom: 12px;
+  .filter-group {
+    &__title {
+
+      font-weight: 700;
+      padding-bottom: 8px;
+      border-bottom: 1px solid $Divider;
+    }
+
+    & + .filter-group {
+      margin-top: 24px;
+    }
+
+    .filter-item {
+      display: flex;
+      align-items: center;
+
+      & + .filter-item {
+        margin-top: 8px;
+      }
+
+      label {
+        &:hover {
+          cursor: pointer;
+          text-decoration: underline;
+        }
+      }
+
+      &.checked {
+        .filter-item__icon {
+          background-color: $Type-Link;
+          border-color: $Type-Link;
+  
+          svg {
+            color: $White;
+          }
+
+        }
+      }
+
+      &__icon {
+        margin-right: 8px;
+        height: 36px;
+        width: 36px;
+        border-radius: 18px;
+        border: 1px solid;
+        background-color: $White;
+        border-color: $Type-Link;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        svg {
+          color: $Type-Link;
+        }
+      }
+
+      input {
+        display: none;
+      }
+
+      .tooltip-info {
+        margin-left: 8px;
+        color: $White;
+        background-color: $Type-Secondary;
+        padding: 0 6px;
+        border-radius: 18px;
+        font-size: 0.75rem;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
   }
 
-  .layer-item {
-    margin-bottom: 8px;
-  }
-  .layer-item .map-icon {
-    margin-right: 12px;
-  }
-
-  .layer-item label {
-    margin-left: 4px;
-  }
-
-  .layers-select {
-    display: flex;
-  }
-
-  .panel {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .panel + .panel {
-    margin-left: 1rem;
-  }
-
-  .map-image {
-    height: 5rem;
-    width: 5rem;
-    border: solid 1px rgb(118, 118, 118);
-  }
-
-  img.map-icon {
-    width: 1rem;
-  }
 }

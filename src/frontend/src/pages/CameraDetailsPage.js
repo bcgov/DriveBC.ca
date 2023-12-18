@@ -55,6 +55,7 @@ export default function CameraDetailsPage() {
   const [nextUpdate, setNextUpdate] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
   const [activeTab, setActiveTab] = useState('webcam');
+  const [hasImageEnded, setHasImageEnded] = useState(false);
 
   const navigate = useNavigate();
 
@@ -65,7 +66,7 @@ export default function CameraDetailsPage() {
     const allCameras = await getWebcams();
     const cameraGroupMap = getCameraGroupMap(allCameras);
 
-    const camera = await getWebcams(null, `${process.env.REACT_APP_API_HOST}/api/webcams/${params.id}/`);
+    const camera = await getWebcams(null, `${window.API_HOST}/api/webcams/${params.id}/`);
 
     // Group cameras
     const group = cameraGroupMap[camera.group];
@@ -91,7 +92,7 @@ export default function CameraDetailsPage() {
     // Replay images
     const replayImageList = await getWebcamReplay(camera);
     const replayImages = replayImageList.map((url) => {
-      return {original: `${process.env.REACT_APP_REPLAY_THE_DAY}${camera.id}/${url}.jpg`};
+      return {original: `${window.REPLAY_THE_DAY}${camera.id}/${url}.jpg`};
     });
     setReplayImages(replayImages);
   }
@@ -110,7 +111,7 @@ export default function CameraDetailsPage() {
   };
 
   const mapViewRoute = () =>{
-    navigate("/", { state: JSON.stringify(camera)})
+    navigate("/", { state: camera })
   }
 
   // ReplayTheDay
@@ -181,6 +182,26 @@ export default function CameraDetailsPage() {
         navigate('/', { replace: true }); // the current entry in the history stack will be replaced with the new one with { replace: true }
     }
   }
+
+  const handleImageSlide = (index) => {
+    if (index === replayImages.length - 1) {
+      setHasImageEnded(true); // Set state to indicate the last image
+    } else {
+      setHasImageEnded(false); // Reset state if it's not the last image
+    }
+  };
+
+  const play = () => {
+    if(hasImageEnded){
+      setHasImageEnded(true);
+    }
+    else{
+      setHasImageEnded(false);
+    }
+    if(hasImageEnded){
+      refImg.current.slideToIndex(0);
+    }
+  };
 
   // Rendering
   return (
@@ -286,7 +307,7 @@ export default function CameraDetailsPage() {
                 onSelect={ (selectedTab) => setActiveTab(selectedTab) }
               >
                 <Tab eventKey="webcam" title={<span>{cameraTab} Current camera</span>}>
-                  
+
                   <div className="camera-update camera-update--mobile">
                     <p className="next-update bold">
                       Next update attempt: {nextUpdate}
@@ -297,7 +318,7 @@ export default function CameraDetailsPage() {
                     </p>
                   </div>
 
-                  <div className="camera-functions">
+                  <div className="actions-bar actions-bar--webcam">
                     <div className="camera-orientations">
                       <span className="camera-direction-label">
                         <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
@@ -341,7 +362,10 @@ export default function CameraDetailsPage() {
                           renderCustomControls={customControls}
                           renderLeftNav={customLeftNav}
                           renderPlayPauseButton={customPlayPause}
-                          renderRightNav={customRightNav} />
+                          renderRightNav={customRightNav}
+                          onSlide={(index) => handleImageSlide(index)}
+                          onPlay={play}
+                          infinite={false} />
                       )}
                       </div>
                     )}
@@ -361,6 +385,8 @@ export default function CameraDetailsPage() {
                   </div>
                 </Tab>
                 <Tab eventKey="nearby" title={<span>{nearby}Nearby</span>}>
+                  <div className="actions-bar actions-bar--nearby">
+                  </div>
                   <div className="map-wrap map-context-wrap">
                     <DndProvider options={HTML5toTouch}>
                       <Map camera={camera} isPreview={true} cameraHandler={initCamera} mapViewRoute={mapViewRoute}/>

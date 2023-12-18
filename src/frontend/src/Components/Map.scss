@@ -52,14 +52,15 @@
     .ol-scale-line {
       background: var(--ol-partial-background-color);
       border-radius: 4px;
-      bottom: 1.8rem;
       left: auto;
-      right: 6rem;
+      right: 2rem;
+      bottom: 6rem;
       padding: 2px;
       position: absolute;
 
-      @media (max-width: 575px) {
-        right: 2rem;
+      @media (min-width: 992px) {
+        right: 6rem;
+        bottom: 2rem;
       }
     }
 
@@ -81,7 +82,7 @@
     color: $Type-Link;
     position: absolute;
     margin-bottom: 0;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 700;
     height: auto;
     border-radius: 4px;
@@ -98,7 +99,7 @@
         margin-right: 8px;
       }
     }
-    &.map-view, &.my-location {
+    &.map-view, &.my-location, &.open-layers {
       svg {
         margin-right: 8px;
       }
@@ -123,9 +124,35 @@
     }
 
     &.open-layers {
-      height: 32px;
-      width: 32px;
-      border-radius: 4px;
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+
+      @media (max-width: 992px) {
+        top: initial;
+        bottom: 2rem;
+      }
+
+      // styling for badge
+      // &:after {
+      //   content: '1';
+      //   font-size: 10px;
+      //   font-weight: 700;
+      //   padding: 1px 8px;
+      //   color: white;
+      //   background-color: $Type-Link;
+      //   border-radius: 5px;
+      //   margin-left: 8px;
+      //   vertical-align: middle;
+      //   padding: 0 5px;
+      // }
+
+      // &:hover {
+      //   &:after {
+      //     color: $Type-Link;
+      //     background-color: white;
+      //   }
+      // }
     }
   }
 
@@ -146,7 +173,7 @@
     flex-direction: column;
 
     //Hide zoom slider on touch devices
-    @media (max-width: 575px) {
+    @media (max-width: 992px) {
       display: none;
     }
 

@@ -46,11 +46,11 @@ FROM nginx
 EXPOSE 3000
 
 RUN touch /run/nginx.pid
-RUN chmod -R 777 /run /var/log/nginx /var/cache/nginx
 
 COPY ./compose/frontend/default.conf /etc/nginx/conf.d
 # COPY nginx.conf /etc/nginx
 COPY --from=buildnode /app/build /usr/share/nginx/html
+RUN chmod -R 777 /run /var/log/nginx /var/cache/nginx /usr/share/nginx/html/static/js
 
 ARG DEBUG_BUILD=false
 
@@ -58,3 +58,6 @@ ARG DEBUG_BUILD=false
 RUN if [ $DEBUG_BUILD = true ]; then \
   apt update && apt-get install -y jq vim procps less; \
 fi
+
+COPY ./compose/frontend/entrypoint /docker-entrypoint.d/add_client_env.sh
+RUN sed -i 's/\r$//g' /docker-entrypoint.d/add_client_env.sh && chmod +x /docker-entrypoint.d/add_client_env.sh

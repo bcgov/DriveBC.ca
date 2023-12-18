@@ -7,7 +7,7 @@ django:
   fullnameOverride: prod-django
   namespace: c59ecc-prod #The namespace you are running the application on. This is used to pull from the ImageStream
   deployment:
-    replicas: 2
+    replicas: 3
     resources:
       requests:
         cpu: 50m
@@ -51,7 +51,7 @@ image-caching:
   namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
   environment: prod #enter the environment this is being deployed too. Needed to set the configmap reference
   deployment:
-    replicas: 2
+    replicas: 3
     resources:
       requests:
         cpu: 50m
@@ -72,7 +72,7 @@ redis:
   fullnameOverride: prod-redis
   namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
   deployment:
-    replicas: 1
+    replicas: 3
     resources:
       requests:
         cpu: 50m
@@ -86,7 +86,7 @@ static:
   namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
 
   deployment:
-    replicas: 2
+    replicas: 3
     resources:
       requests:
         cpu: 50m
