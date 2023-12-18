@@ -6,6 +6,7 @@ export const routesSlice = createSlice({
     searchLocationFrom: [],
     searchLocationTo: [],
     selectedRoute: {},
+    isEventClicked: false,
   },
   reducers: {
     clearSelectedRoute: (state, action) => {
@@ -16,13 +17,18 @@ export const routesSlice = createSlice({
     },
     updateSearchLocationFrom: (state, action) => {
       state.searchLocationFrom = action.payload;
+      state.isEventClicked = false;
     },
     updateSearchLocationTo: (state, action) => {
       state.searchLocationTo = action.payload;
+      state.isEventClicked = false;
+    },
+    setIsEventClicked: (state, action) => {
+      state.isEventClicked = action.payload;
     },
   },
 });
 
-export const { clearSelectedRoute, updateSelectedRoute, updateSearchLocationFrom, updateSearchLocationTo } = routesSlice.actions;
+export const { clearSelectedRoute, updateSelectedRoute, updateSearchLocationFrom, updateSearchLocationTo, setIsEventClicked } = routesSlice.actions;
 
 export default routesSlice.reducer;

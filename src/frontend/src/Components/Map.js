@@ -2,6 +2,7 @@
 import React, { useContext, useRef, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { updateMapState } from '../slices/mapSlice';
+import { setIsEventClicked } from '../slices/routesSlice.js';
 import { useNavigate } from 'react-router-dom';
 
 // Third party packages
@@ -74,6 +75,7 @@ export default function MapWrapper({
     state.map.pan
   ]);
 
+  const isEventClicked = useSelector(state => state.routes.isEventClicked); 
   // Context
   const { mapContext, setMapContext } = useContext(MapContext);
 
@@ -120,19 +122,10 @@ export default function MapWrapper({
   }
 
   function centerMap(coordinates) {
-    if(event === null){
-      if (mapView.current) {
-        mapView.current.animate({
-          center: fromLonLat(coordinates),
-        });
-      }
-    }
-    else {
-      if (mapView.current) {
-        mapView.current.animate({
-          center: fromLonLat((event.location.type === 'Point')? event.location.coordinates : event.location.coordinates[0]),
-        });
-      }
+    if (mapView.current) {
+      mapView.current.animate({
+        center: fromLonLat(coordinates),
+      });
     }
   }
 
@@ -435,9 +428,17 @@ export default function MapWrapper({
         if (locationPinRef.current) {
           mapRef.current.removeOverlay(locationPinRef.current);
         }
-        centerMap(searchLocationFrom[0].geometry.coordinates);
+        let focusedCoordinates = undefined;
+        if (event === null) {
+          dispatch(setIsEventClicked(false));
+          focusedCoordinates = searchLocationFrom[0].geometry.coordinates;
+        } else {
+          dispatch(setIsEventClicked(true));
+          focusedCoordinates = (event.location.type === 'Point')? event.location.coordinates : event.location.coordinates[0];
+        }
+        centerMap(focusedCoordinates);
         setLocationPin(
-          searchLocationFrom[0].geometry.coordinates,
+          focusedCoordinates,
           blueLocationMarkup,
           mapRef,
           locationPinRef
@@ -446,25 +447,29 @@ export default function MapWrapper({
   }, [searchLocationFrom]);
 
   useEffect(() => {
-    if (layers.current['routeLayer']) {
-      mapRef.current.removeLayer(layers.current['routeLayer']);
+    if (isEventClicked) {
+      return;
     }
-
-    if (selectedRoute && selectedRoute.routeFound) {
-      const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
-      layers.current['routeLayer'] = routeLayer;
-      mapRef.current.addLayer(routeLayer);
-
-      loadEvents(selectedRoute.points);
-      loadCameras(selectedRoute.points);
-      loadFerries();
-
-      fitMap(selectedRoute.route, mapView);
-
-    } else {
-      loadEvents();
-      loadCameras();
-      loadFerries();
+    else {
+      if (layers.current['routeLayer']) {
+        mapRef.current.removeLayer(layers.current['routeLayer']);
+      }
+      if (selectedRoute && selectedRoute.routeFound) {
+        const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
+        layers.current['routeLayer'] = routeLayer;
+        mapRef.current.addLayer(routeLayer);
+  
+        loadEvents(selectedRoute.points);
+        loadCameras(selectedRoute.points);
+        loadFerries();
+  
+        fitMap(selectedRoute.route, mapView);
+  
+      } else {
+        loadEvents();
+        loadCameras();
+        loadFerries();
+      }
     }
   }, [selectedRoute]);
 
