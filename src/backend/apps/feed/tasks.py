@@ -7,13 +7,13 @@ from huey.contrib.djhuey import HUEY as HUEY_INSTANCE
 from huey.contrib.djhuey import db_periodic_task, lock_task
 
 
-@db_periodic_task(crontab(hour="*/6"), retries=6, retry_delay=300, priority=20)
+@db_periodic_task(crontab(hour="*/6"), retries=6, retry_delay=300)
 @lock_task('populate-cameras')
 def populate_webcam_task():
     populate_all_webcam_data()
 
 
-@db_periodic_task(crontab(minute="*/1"), priority=10)
+@db_periodic_task(crontab(minute="*/1"))
 @lock_task('update-cameras')
 def update_camera_task():
     # Do not run when populate task is running
