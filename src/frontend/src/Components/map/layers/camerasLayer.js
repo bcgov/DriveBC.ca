@@ -20,7 +20,7 @@ export function getCamerasLayer(
 ) {
   return new VectorLayer({
     classname: 'webcams',
-    visible: mapContext.visible_layers.webcamsLayer,
+    visible: mapContext.visible_layers.highwayCams,
     source: new VectorSource({
       format: new GeoJSON(),
       loader: function (extent, resolution, projection) {
@@ -34,6 +34,7 @@ export function getCamerasLayer(
 
           // Transfer properties
           olFeature.setProperties(camera);
+          olFeature.set('type', 'camera');
 
           // Transform the projection
           const olFeatureForMap = transformFeature(

@@ -8,89 +8,136 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
-export function getEventsLayer(
+export function loadEventsLayers(
   eventsData,
-  projectionCode,
   mapContext,
-  passedEvent,
-  updateClickedEvent,
+  mapLayers,
+  mapRef
 ) {
-  return new VectorLayer({
-    classname: 'events',
-    visible: mapContext.visible_layers.eventsLayer,
-    source: new VectorSource({
-      format: new GeoJSON(),
-      loader: function (extent, resolution, projection) {
-        const vectorSource = this;
-        vectorSource.clear();
-        if (eventsData) {
-          eventsData.forEach(record => {
-            let olGeometry = null;
-            let centroidFeatureForMap = null;
-            switch (record.location.type) {
-              case 'Point':
-                olGeometry = new Point(record.location.coordinates);
-                break;
-              case 'LineString':
-                olGeometry = new LineString(record.location.coordinates);
-                break;
-              default:
-                console.log(Error);
-            }
-            const olFeature = new ol.Feature({ geometry: olGeometry });
-
-            // Transfer properties
-            olFeature.setProperties(record);
-
-            // Transform the projection
-            const olFeatureForMap = transformFeature(
-              olFeature,
-              'EPSG:4326',
-              projectionCode,
-            );
-
-            if (olFeature.getGeometry().getType() === 'LineString') {
-              const centroidGeometry = new Point(
-                olFeature.getGeometry().getCoordinates()[
-                  Math.floor(
-                    olFeature.getGeometry().getCoordinates().length / 2,
-                  )
-                ],
-              );
-              const centroidFeature = new ol.Feature({
-                geometry: centroidGeometry,
-              });
-              // Transfer properties
-              centroidFeature.setProperties(record);
-              // Transform the projection
-              centroidFeatureForMap = transformFeature(
-                centroidFeature,
-                'EPSG:4326',
-                projectionCode,
-              );
-              centroidFeatureForMap.setId(olFeatureForMap.ol_uid);
-              vectorSource.addFeature(centroidFeatureForMap);
-              olFeatureForMap.setId(centroidFeatureForMap.ol_uid);
-            }
-
-            vectorSource.addFeature(olFeatureForMap);
-
-            if (
-              passedEvent &&
-              passedEvent.id === olFeatureForMap.getProperties().id
-            ) {
-              olFeatureForMap.setProperties({ clicked: true }, true);
-              updateClickedEvent(olFeatureForMap);
-            }
-          });
-        }
-      },
-    }),
-    style: function (feature, resolution) {
-      if (passedEvent && passedEvent.id === feature.getProperties().id) {
-        return getEventIcon(feature, 'active');
-      }
-      return getEventIcon(feature, 'static');
-    },
+  // Helper function for initializing vss
+  const createVS = () => new VectorSource({
+    format: new GeoJSON()
   });
+
+  if (eventsData) {
+    // Initialize vss
+    const majorEventsVS = createVS();
+    const majorEventsLinesVS = createVS();
+    const minorEventsVS = createVS();
+    const minorEventsLinesVS = createVS();
+    const futureEventsVS = createVS();
+    const futureEventsLinesVS = createVS();
+    const roadConditionsVS = createVS();
+    const roadConditionsLinesVS = createVS();
+
+    // Helper function to add features to relative vs
+    const addFeature = (feature, display_category) => {
+      const isLineSegment = feature.getGeometry().getType() === 'LineString';
+
+      const vsMap = {
+        majorEvents: majorEventsVS,
+        minorEvents: minorEventsVS,
+        futureEvents: futureEventsVS,
+        roadConditions: roadConditionsVS
+      }
+
+      const lineVsMap = {
+        majorEvents: majorEventsLinesVS,
+        minorEvents: minorEventsLinesVS,
+        futureEvents: futureEventsLinesVS,
+        roadConditions: roadConditionsLinesVS
+      }
+
+      // Add feature to vs
+      const vs = isLineSegment ? lineVsMap[display_category] : vsMap[display_category];
+      vs.addFeature(feature);
+    }
+
+    // Helper function to call transform with set projections
+    const transform = (feature) => {
+      return transformFeature(
+        feature,
+        'EPSG:4326',
+        mapRef.current.getView().getProjection().getCode(),
+      )
+    }
+
+    // Add features to vss for each event
+    eventsData.forEach(event => {
+      // Create linestring features
+      if (event.location.type == 'LineString') {
+        // Center point display
+        const eventCoords = event.location.coordinates;
+        const eventFeature = new ol.Feature({
+          geometry: new Point(
+            eventCoords[ Math.floor(eventCoords.length / 2) ]
+          )
+        });
+        eventFeature.setProperties(event);
+        eventFeature.set('type', 'event');
+
+        // Line display
+        const eventLineFeature = new ol.Feature({
+          geometry: new LineString(event.location.coordinates)
+        });
+        eventLineFeature.setProperties(event);
+        eventLineFeature.set('type', 'event');
+
+        // Transform event coordinates
+        const eventTransformed = transform(eventFeature);
+        const eventLineTransformed = transform(eventLineFeature);
+
+        // Associate two features together for click handler
+        eventTransformed.set('altFeature', eventLineTransformed);
+        eventLineTransformed.set('altFeature', eventTransformed);
+
+        // Add features to linestring and relative vs
+        addFeature(eventTransformed, event.display_category);
+        addFeature(eventLineTransformed, event.display_category);
+
+      // Create point feature
+      } else {
+        const eventFeature = new ol.Feature({
+          geometry: new Point(event.location.coordinates)
+        });
+        eventFeature.setProperties(event);
+        eventFeature.set('type', 'event');
+
+        // Transform event coordinates
+        const eventTransformed = transform(eventFeature);
+
+        // Add feature to relative vs
+        addFeature(eventTransformed, event.display_category);
+      }
+
+      // Helper function to add layer to map
+      const addLayer = (name, vs, zIndex) => {
+        if (mapLayers.current[name]) {
+          mapRef.current.removeLayer(mapLayers.current[name]);
+        }
+
+        mapLayers.current[name] = new VectorLayer({
+          classname: 'events',
+          visible: mapContext.visible_layers[name],
+          source: vs,
+          style: function (feature, resolution) {
+            return getEventIcon(feature, 'static');
+          },
+        });
+
+        mapRef.current.addLayer(mapLayers.current[name]);
+        mapLayers.current[name].setZIndex(zIndex);
+      }
+
+      // Add layer to map for each vs
+      addLayer('majorEvents', majorEventsVS, 128);
+      addLayer('majorEventsLines', majorEventsLinesVS, 2);
+      addLayer('minorEvents', minorEventsVS, 128);
+      addLayer('minorEventsLines', minorEventsLinesVS, 2);
+      addLayer('futureEvents', futureEventsVS, 128);
+      addLayer('futureEventsLines', futureEventsLinesVS, 2);
+      addLayer('roadConditions', roadConditionsVS, 128);
+      addLayer('roadConditionsLines', roadConditionsLinesVS, 2);
+    });
+  }
 }

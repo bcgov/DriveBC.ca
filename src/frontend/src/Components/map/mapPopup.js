@@ -90,10 +90,8 @@ export function getCamPopup(camFeature, setClickedCamera, navigate, cameraPopupR
 }
 
 export function getEventPopup(eventFeature) {
-  console.log(eventFeature.ol_uid);
   const eventData = eventFeature.ol_uid ? eventFeature.getProperties() : eventFeature;
   const severity = eventData.severity.toLowerCase();
-  const eventType = eventData.event_type.toLowerCase();
 
   return (
     <div className={`popup popup--delay ${severity}`}>
@@ -106,7 +104,7 @@ export function getEventPopup(eventFeature) {
         <div className="delay-type">
           <div className="bold delay-severity">
             <div className="delay-icon">
-              <EventTypeIcon eventType={eventType} />
+              <EventTypeIcon displayCategory={eventData.display_category} />
             </div>
 
             <p className="bold">{severity} delays</p>

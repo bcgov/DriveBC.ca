@@ -1,4 +1,12 @@
-from apps.event.enums import EVENT_DIRECTION_DISPLAY
+import datetime
+
+import pytz
+from apps.event.enums import (
+    EVENT_DIRECTION_DISPLAY,
+    EVENT_DISPLAY_CATEGORY,
+    EVENT_DISPLAY_CATEGORY_MAP,
+    EVENT_SEVERITY,
+)
 from apps.event.models import Event
 from rest_framework import serializers
 
@@ -11,6 +19,7 @@ class ScheduleSerializer(serializers.Serializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
+    display_category = serializers.SerializerMethodField()
     direction_display = serializers.SerializerMethodField()
     route_display = serializers.SerializerMethodField()
     schedule = ScheduleSerializer()
@@ -41,3 +50,14 @@ class EventSerializer(serializers.ModelSerializer):
             res += " to " + obj.route_to
 
         return res
+
+    def get_display_category(self, obj):
+        if obj.event_sub_type in EVENT_DISPLAY_CATEGORY_MAP:
+            return EVENT_DISPLAY_CATEGORY_MAP[obj.event_sub_type]
+
+        if obj.start and datetime.datetime.now(pytz.utc) < obj.start:
+            return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
+
+        return EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS \
+            if obj.severity == EVENT_SEVERITY.MAJOR \
+            else EVENT_DISPLAY_CATEGORY.MINOR_DELAYS

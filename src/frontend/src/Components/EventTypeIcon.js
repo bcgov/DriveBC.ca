@@ -4,23 +4,24 @@ import React from 'react';
 // Third Party packages
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faTriangleExclamation,
+  faExclamationTriangle,
+  faExclamationCircle,
   faPersonDigging,
   faCalendarDays,
   faSnowflake,
 } from "@fortawesome/free-solid-svg-icons";
 
-export default function EventTypeIcon({eventType}) {
-  switch(eventType) {
-    case "incident":
-      return <FontAwesomeIcon icon={faTriangleExclamation} alt="incident" />;
-    case "construction":
-      return <FontAwesomeIcon icon={faPersonDigging} alt="construction" />;
-    case "special_event":
-      return <FontAwesomeIcon icon={faCalendarDays} alt="special event" />;
-    case "weather_condition":
-      return <FontAwesomeIcon icon={faSnowflake} alt="weather condition" />;
+export default function EventTypeIcon({ displayCategory }) {
+  switch (displayCategory) {
+    case "majorEvents":
+      return <FontAwesomeIcon icon={faExclamationTriangle} alt="major delays" />;
+    case "minorEvents":
+      return <FontAwesomeIcon icon={faExclamationCircle} alt="minor delays" />;
+    case "futureEvents":
+      return <FontAwesomeIcon icon={faCalendarDays} alt="future delays" />;
+    case "roadConditions":
+      return <FontAwesomeIcon icon={faSnowflake} alt="road conditions" />;
     default:
-      return <FontAwesomeIcon icon={faTriangleExclamation} alt="incident" />;
+      return <FontAwesomeIcon icon={faPersonDigging} alt="minor delays" />;
   }
 }

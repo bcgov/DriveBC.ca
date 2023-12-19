@@ -1,21 +1,22 @@
 // React
-import React, {useEffect, useRef, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Third party packages
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMapLocationDot,
   faFilter,
 } from '@fortawesome/free-solid-svg-icons';
-import {useMediaQuery} from '@uidotdev/usehooks';
+import { useMediaQuery } from '@uidotdev/usehooks';
 import Container from 'react-bootstrap/Container';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
-import {getEvents} from '../Components/data/events';
+import { getEvents } from '../Components/data/events';
+import { MapContext } from '../App.js';
 import EventCard from '../Components/events/EventCard';
 import EventsTable from '../Components/events/EventsTable';
 import FriendlyTime from '../Components/FriendlyTime';
@@ -28,6 +29,9 @@ import Advisories from '../Components/advisories/Advisories';
 import './EventsPage.scss';
 
 export default function EventsPage() {
+  // Context
+  const { mapContext, setMapContext } = useContext(MapContext);
+
   const isInitialMount = useRef(true);
 
   const navigate = useNavigate();
@@ -35,8 +39,8 @@ export default function EventsPage() {
   const columns = [
     {
       header: 'Type',
-      accessorKey: 'event_type',
-      cell: (props) => <EventTypeIcon eventType={props.getValue().toLowerCase()} />,
+      accessorKey: 'display_category',
+      cell: (props) => <EventTypeIcon displayCategory={props.getValue()} />,
     },
     {
       header: 'Severity',
@@ -72,33 +76,33 @@ export default function EventsPage() {
   const filterProps = [
     {
       id: 'checkbox-filter-incident',
-      label: 'Incidents',
-      value: 'INCIDENT',
+      label: 'Major Delays',
+      value: 'majorEvents',
+    },
+    {
+      id: 'checkbox-filter-construction',
+      label: 'Minor Delays',
+      value: 'minorEvents',
+    },
+    {
+      id: 'checkbox-filter-special',
+      label: 'Future Delays',
+      value: 'futureEvents',
     },
     {
       id: 'checkbox-filter-weather',
       label: 'Road Conditions',
-      value: 'WEATHER_CONDITION',
-    },
-    {
-      id: 'checkbox-filter-construction',
-      label: 'Current Events',
-      value: 'CONSTRUCTION',
-    },
-    {
-      id: 'checkbox-filter-special',
-      label: 'Future Events',
-      value: 'SPECIAL_EVENT',
-    },
+      value: 'roadConditions',
+    }
   ];
 
   const [sortingColumns, setSortingColumns] = useState([]);
 
-  const [eventTypeFilter, setEventTypeFilter] = useState({
-    'CONSTRUCTION': false,
-    'INCIDENT': false,
-    'SPECIAL_EVENT': false,
-    'WEATHER_CONDITION': false,
+  const [eventCategoryFilter, setEventCategoryFilter] = useState({
+    'majorEvents': mapContext.visible_layers.majorEvents,
+    'minorEvents': mapContext.visible_layers.minorEvents,
+    'futureEvents': mapContext.visible_layers.futureEvents,
+    'roadConditions': false,
   });
 
   const [events, setEvents] = useState([]);
@@ -131,13 +135,16 @@ export default function EventsPage() {
 
   const processEvents = () => {
     const hasTrue = (val) => !!val;
-    const hasFilterOn = Object.values(eventTypeFilter).some(hasTrue);
+    const hasFilterOn = Object.values(eventCategoryFilter).some(hasTrue);
 
     let res = [...events];
 
     // Filter
     if (hasFilterOn) {
-      res = res.filter((e) => !!eventTypeFilter[e.event_type]);
+      res = res.filter((e) => !!eventCategoryFilter[e.display_category]);
+
+    } else {
+      res = res.filter((e) => e.display_category != 'roadConditions');
     }
 
     // Sort
@@ -174,15 +181,20 @@ export default function EventsPage() {
     if (!isInitialMount.current) { // Do not run on startup
       processEvents();
     }
-  }, [events, eventTypeFilter, sortingColumns]);
+  }, [events, eventCategoryFilter, sortingColumns]);
 
-  const eventTypeFilterHandler = (e) => {
-    const eventType = e.target.value;
+  const eventCategoryFilterHandler = (e) => {
+    const targetCategory = e.target.value;
 
-    const newFilter = {...eventTypeFilter};
-    newFilter[eventType] = !newFilter[eventType];
+    const newFilter = {...eventCategoryFilter};
+    newFilter[targetCategory] = !newFilter[targetCategory]; // Toggle/invert value
 
-    setEventTypeFilter(newFilter);
+    setEventCategoryFilter(newFilter);
+
+    // Set context and local storage
+    mapContext.visible_layers[targetCategory] = newFilter[targetCategory]; // Set identical to newFilter after change
+    setMapContext(mapContext);
+    localStorage.setItem('mapContext', JSON.stringify(mapContext));
   };
 
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
@@ -211,14 +223,15 @@ export default function EventsPage() {
             <Dropdown.Menu>
               {filterProps.map((fp) => (
                 <Form.Check
+                  disabled={fp.value == 'roadConditions'}
                   id={fp.id}
                   key={fp.id}
                   label={
                     <span>{fp.icon}{fp.label}</span>
                   }
                   value={fp.value}
-                  checked={eventTypeFilter[fp.value]}
-                  onChange={eventTypeFilterHandler} />
+                  checked={eventCategoryFilter[fp.value]}
+                  onChange={eventCategoryFilterHandler} />
               ))}
             </Dropdown.Menu>
           </Dropdown>
@@ -243,7 +256,7 @@ export default function EventsPage() {
                       <EventCard
                         className="event"
                         event={e}
-                        icon= {<EventTypeIcon eventType={e.event_type.toLowerCase()} />}
+                        icon= {<EventTypeIcon eventCategory={e.display_category} />}
                       />
                     </div>
                   ),
