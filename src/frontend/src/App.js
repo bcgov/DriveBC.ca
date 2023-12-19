@@ -27,8 +27,12 @@ function App() {
       ? JSON.parse(context)
       : {
           visible_layers: {
-            eventsLayer: true,
-            webcamsLayer: true,
+            majorEvents: true,
+            minorEvents: true,
+            futureEvents: true,
+            roadConditions: true,
+            highwayCams: true,
+            inlandFerries: true,
           },
         };
   }

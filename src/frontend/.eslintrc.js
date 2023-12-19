@@ -41,6 +41,7 @@ module.exports = {
         'FunctionExpression': false,
       },
     }],
-    "react/prop-types": "off"
+    "react/prop-types": "off",
+    'camelcase': 'off',
   },
 };

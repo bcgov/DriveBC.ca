@@ -14,7 +14,7 @@ import { ferryStyles } from '../../data/featureStyleDefinitions.js';
 export function getFerriesLayer(ferriesData, projectionCode, mapContext) {
   return new VectorLayer({
     classname: 'ferries',
-    visible: mapContext.visible_layers.ferriesLayer,
+    visible: mapContext.visible_layers.inlandFerries,
     source: new VectorSource({
       format: new GeoJSON(),
       loader: function (extent, resolution, projection) {
@@ -28,6 +28,7 @@ export function getFerriesLayer(ferriesData, projectionCode, mapContext) {
 
           // Transfer properties
           olFeature.setProperties(ferry);
+          olFeature.set('type', 'ferry');
 
           // Transform the projection
           const olFeatureForMap = transformFeature(

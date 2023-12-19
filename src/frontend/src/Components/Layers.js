@@ -10,8 +10,9 @@ import {
   faVideo,
   faSnowflake,
   faFerry,
-  faRestroom,
-  faCloudSun } from '@fortawesome/free-solid-svg-icons';
+//  faRestroom,
+//  faCloudSun
+} from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -26,7 +27,7 @@ import './Layers.scss';
 
 export default function Layers({ open, setLayersOpen, toggleLayer }) {
   const { mapContext } = useContext(MapContext);
-  
+
   const tooltipMajor = (
     <Tooltip id="tooltip" className="tooltip-content">
       <p>Indicates a significant delay of more than 20 minutes to travel in at least one direction on this road. A Major Delay may be a traffic incident or a road event (such as road work, construction, or restoration).</p>
@@ -63,36 +64,25 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
     </Tooltip>
   );
 
-  const tooltipReststops = (
-    <Tooltip id="tooltip" className="tooltip-content">
-      <p>Shows the location of Provincial Rest Stops on highways throughout the province.</p>
-    </Tooltip>
-  );
+//  const tooltipReststops = (
+//    <Tooltip id="tooltip" className="tooltip-content">
+//      <p>Shows the location of Provincial Rest Stops on highways throughout the province.</p>
+//    </Tooltip>
+//  );
 
-  const tooltipWeather = (
-    <Tooltip id="tooltip" className="tooltip-content">
-      <p>Regional current and forecasted weather from Environment Canada for this area.</p>
-    </Tooltip>
-  );
+//  const tooltipWeather = (
+//    <Tooltip id="tooltip" className="tooltip-content">
+//      <p>Regional current and forecasted weather from Environment Canada for this area.</p>
+//    </Tooltip>
+//  );
 
-
-  // States for events
-  const [filterChecked, setFilterChecked] = useState(false);
-  const toggleChecked = () => {
-    setFilterChecked(!filterChecked);
-  };
-
-  // States for cameras
-  const [filterCheckedCams, setFilterCheckedCams] = useState(false);
-  const toggleCheckedCams = () => {
-    setFilterCheckedCams(!filterCheckedCams);
-  };
-
-  // States for ferries
-  const [filterCheckedFerries, setFilterCheckedFerries] = useState(false);
-  const toggleCheckedFerries = () => {
-    setFilterCheckedFerries(!filterCheckedFerries);
-  };
+  // States for toggles
+  const [majorEvents, setMajorEvents] = useState(mapContext.visible_layers.majorEvents);
+  const [minorEvents, setMinorEvents] = useState(mapContext.visible_layers.minorEvents);
+  const [futureEvents, setFutureEvents] = useState(mapContext.visible_layers.futureEvents);
+  const [roadConditions, setRoadConditions] = useState(mapContext.visible_layers.roadConditions);
+  const [highwayCams, setHighwayCams] = useState(mapContext.visible_layers.highwayCams);
+  const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
 
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
@@ -108,8 +98,8 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
         <FontAwesomeIcon icon={faFilter} />
         Filters
       </Button>
-      
-      { open &&  
+
+      { open &&
       <div className="layers">
         { !largeScreen &&
           <div>
@@ -128,7 +118,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
           <p className="filter-group__title">Delays</p>
           <div className="filter-items-group">
             <div className="filter-items filter-items--delays">
-              <div className={'filter-item filter-item--major'}>
+              <div className={'filter-item filter-item--major' + (majorEvents ? ' checked' : '')}>
                 <div className="filter-item__icon">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path className="customIcon-bg" d="M7.87872 1.12135C9.05029 -0.0502183 10.9498 -0.0502166 12.1214 1.12136L18.8787 7.87868C20.0503 9.05026 20.0503 10.9498 18.8787 12.1213L12.1213 18.8787C10.9497 20.0503 9.05026 20.0503 7.87868 18.8787L1.12136 12.1214C-0.0502174 10.9498 -0.0502174 9.05029 1.12136 7.87872L7.87872 1.12135Z" fill="#1A5A96"/>
@@ -139,6 +129,12 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   type="checkbox"
                   name="major"
                   id="filter--major"
+                  onChange={e => {
+                    toggleLayer('majorEvents', e.target.checked);
+                    toggleLayer('majorEventsLines', e.target.checked);
+                    setMajorEvents(!majorEvents)
+                  }}
+                  defaultChecked={mapContext.visible_layers.majorEvents}
                 />
                 <label htmlFor="filter--major">Major</label>
                 <OverlayTrigger placement="top" overlay={tooltipMajor}>
@@ -146,7 +142,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                 </OverlayTrigger>
               </div>
 
-              <div className={'filter-item filter-item--minor'}>
+              <div className={'filter-item filter-item--minor' + (minorEvents ? ' checked' : '')}>
                 <div className="filter-item__icon">
                   <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path className="customIcon-bg" d="M11.2552 15.2763C10.3487 16.9079 7.65127 16.9079 6.74483 15.2763L0.247828 3.5816C-0.54594 2.1528 0.663609 0.5 2.50299 0.5L15.497 0.500001C17.3364 0.500001 18.5459 2.1528 17.7522 3.5816L11.2552 15.2763Z" fill="#1A5A96"/>
@@ -157,6 +153,12 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   type="checkbox"
                   name="minor"
                   id="filter--minor"
+                  onChange={e => {
+                    toggleLayer('minorEvents', e.target.checked);
+                    toggleLayer('minorEventsLines', e.target.checked);
+                    setMinorEvents(!minorEvents);
+                  }}
+                  defaultChecked={mapContext.visible_layers.minorEvents}
                 />
                 <label htmlFor="filter--minor">Minor</label>
                 <OverlayTrigger placement="top" overlay={tooltipMinor}>
@@ -164,7 +166,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                 </OverlayTrigger>
               </div>
 
-              <div className={'filter-item filter-item--future-events' + (filterChecked ? ' checked' : '')}>
+              <div className={'filter-item filter-item--future-events' + (futureEvents ? ' checked' : '')}>
                 <div className="filter-item__icon">
                   <FontAwesomeIcon icon={faCalendarDays} alt="future events" />
                 </div>
@@ -172,7 +174,12 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   type="checkbox"
                   name="future events"
                   id="filter--future-events"
-                  onChange={e => {toggleLayer('eventsLayer', e.target.checked); toggleChecked()}}
+                  onChange={e => {
+                    toggleLayer('futureEvents', e.target.checked);
+                    toggleLayer('futureEventsLines', e.target.checked);
+                    setFutureEvents(!futureEvents);
+                  }}
+                  defaultChecked={mapContext.visible_layers.futureEvents}
                 />
                 <label htmlFor="filter--future-events">Future Events</label>
                 <OverlayTrigger placement="top" overlay={tooltipFutureevents}>
@@ -187,7 +194,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
           <p className="filter-group__title">Conditions and features</p>
           <div className="filter-items-group">
             <div className="filter-items filter-items--conditions">
-              <div className={'filter-item filter-item--highway-cameras' + (filterCheckedCams ? ' checked' : '')}>
+              <div className={'filter-item filter-item--highway-cameras' + (highwayCams ? ' checked' : '')}>
                 <div className="filter-item__icon">
                   <FontAwesomeIcon icon={faVideo} alt="highway cameras" />
                 </div>
@@ -195,8 +202,8 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   type="checkbox"
                   name="highway cameras"
                   id="filter--highway-cameras"
-                  onChange={e => {toggleLayer('webcamsLayer', e.target.checked); toggleCheckedCams()}}
-                  defaultChecked={mapContext.visible_layers.webcamsLayer}
+                  onChange={e => {toggleLayer('highwayCams', e.target.checked); setHighwayCams(!highwayCams)}}
+                  defaultChecked={mapContext.visible_layers.highwayCams}
                 />
                 <label htmlFor="filter--highway-cameras">Highway cameras</label>
                 <OverlayTrigger placement="top" overlay={tooltipHighwaycameras}>
@@ -204,7 +211,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                 </OverlayTrigger>
               </div>
 
-              <div className={'filter-item filter-item--road-conditions'}>
+              <div className={'filter-item filter-item--road-conditions' + (roadConditions ? ' checked' : '')}>
                 <div className="filter-item__icon">
                   <FontAwesomeIcon icon={faSnowflake} alt="road conditions" />
                 </div>
@@ -212,6 +219,12 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   type="checkbox"
                   name="road conditions"
                   id="filter--road-conditions"
+                  onChange={e => {
+                    toggleLayer('roadConditions', e.target.checked);
+                    toggleLayer('roadConditionsLines', e.target.checked);
+                    setRoadConditions(!roadConditions);
+                  }}
+                  defaultChecked={mapContext.visible_layers.roadConditions}
                 />
                 <label htmlFor="filter--road-conditions">Road conditions</label>
                 <OverlayTrigger placement="top" overlay={tooltipRoadconditions}>
@@ -219,7 +232,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                 </OverlayTrigger>
               </div>
 
-              <div className={'filter-item filter-item--inland-ferries' + (filterCheckedFerries ? ' checked' : '')}>
+              <div className={'filter-item filter-item--inland-ferries' + (inlandFerries ? ' checked' : '')}>
                 <div className="filter-item__icon">
                   <FontAwesomeIcon icon={faFerry} alt="inland ferries" />
                 </div>
@@ -227,7 +240,8 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   type="checkbox"
                   name="inland ferries"
                   id="filter--inland-ferries"
-                  onChange={e => {toggleLayer('ferriesLayer', e.target.checked); toggleCheckedFerries()}}
+                  onChange={e => {toggleLayer('inlandFerries', e.target.checked); setInlandFerries(!inlandFerries)}}
+                  defaultChecked={mapContext.visible_layers.inlandFerries}
                 />
                 <label htmlFor="filter--inland-ferries">Inland ferries</label>
                 <OverlayTrigger placement="top" overlay={tooltipInlandferries}>
@@ -235,6 +249,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                 </OverlayTrigger>
               </div>
 
+              {/*
               <div className={'filter-item filter-item--rest-stops'}>
                 <div className="filter-item__icon">
                   <FontAwesomeIcon icon={faRestroom} alt="provincial rest stops" />
@@ -264,6 +279,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   <span className="tooltip-info">?</span>
                 </OverlayTrigger>
               </div>
+              */}
             </div>
           </div>
         </div>

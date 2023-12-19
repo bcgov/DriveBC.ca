@@ -11,34 +11,30 @@ import { eventStyles } from '../data/featureStyleDefinitions.js';
 // Static assets
 export const getEventIcon = (event, state) => {
   const severity = event.get('severity').toLowerCase();
-  const type = event.get('event_type').toLowerCase();
+  const display_category = event.get('display_category').toLowerCase();
   const geometry = event.getGeometry().getType();
   if (geometry === 'Point') {
     if (severity === 'major') {
-      switch (type) {
-        case 'incident':
+      switch (display_category) {
+        case 'majorEvents':
           return eventStyles['major_incident'][state];
-        case 'construction':
-          return eventStyles['major_construction'][state];
-        case 'special_event':
+        case 'futureEvents':
           return eventStyles['major_special_event'][state];
-        case 'weather_condition':
+        case 'roadConditions':
           return eventStyles['major_weather_condition'][state];
         default:
           return eventStyles['major_incident'][state];
       }
     } else {
-      switch (type) {
-        case 'incident':
-          return eventStyles['incident'][state];
-        case 'construction':
+      switch (display_category) {
+        case 'minorEvents':
           return eventStyles['construction'][state];
-        case 'special_event':
+        case 'futureEvents':
           return eventStyles['special_event'][state];
-        case 'weather_condition':
+        case 'roadConditions':
           return eventStyles['weather_condition'][state];
         default:
-          return eventStyles['incident'][state];
+          return eventStyles['construction'][state];
       }
     }
   } else {
@@ -88,7 +84,7 @@ export const zoomIn = (mapView) => {
     return;
   }
 
-  setZoomPan(mapView, mapView.getZoom() + 1);
+  setZoomPan(mapView, mapView.current.getZoom() + 1);
 }
 
 export const zoomOut = (mapView) => {
@@ -96,7 +92,7 @@ export const zoomOut = (mapView) => {
     return;
   }
 
-  setZoomPan(mapView, mapView.getZoom() - 1);
+  setZoomPan(mapView, mapView.current.getZoom() - 1);
 }
 
 // Location pins

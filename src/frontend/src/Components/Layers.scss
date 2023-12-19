@@ -7,6 +7,10 @@ button.open-layers {
   }
 }
 
+::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
 .layers {
   position: absolute;
   bottom: 0;
@@ -19,6 +23,7 @@ button.open-layers {
   box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
   padding: 1rem;
   z-index: 20;
+  overflow-y: scroll;
 
   @media (min-width: 576px) {
     top: 5rem;
@@ -77,7 +82,7 @@ button.open-layers {
         .filter-item__icon {
           background-color: $Type-Link;
           border-color: $Type-Link;
-  
+
           svg {
             color: $White;
           }
@@ -85,7 +90,7 @@ button.open-layers {
           .customIcon-bg {
             fill: white;
           }
-          
+
           .customIcon-fg {
             fill: $Type-Link;
           }
@@ -97,7 +102,7 @@ button.open-layers {
         .filter-item__icon {
           background-color: $Divider;
           border-color: $Divider;
-  
+
           svg {
             color: $Type-Disabled;
           }
@@ -105,7 +110,7 @@ button.open-layers {
           .customIcon-bg {
             fill: $Type-Disabled;
           }
-          
+
           .customIcon-fg {
             fill: $Divider;
           }
