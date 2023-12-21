@@ -11,7 +11,7 @@ import { eventStyles } from '../data/featureStyleDefinitions.js';
 // Static assets
 export const getEventIcon = (event, state) => {
   const severity = event.get('severity').toLowerCase();
-  const display_category = event.get('display_category').toLowerCase();
+  const display_category = event.get('display_category');
   const geometry = event.getGeometry().getType();
   if (geometry === 'Point') {
     if (severity === 'major') {

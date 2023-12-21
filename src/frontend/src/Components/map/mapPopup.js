@@ -9,6 +9,13 @@ import parse from 'html-react-parser';
 
 import colocatedCamIcon from '../../images/colocated-camera.svg';
 
+const displayCategoryMap = {
+  majorEvents: 'Major Delay',
+  minorEvents: 'Minor Delay',
+  futureEvents: 'Future Delay',
+  roadConditions: 'Road Condition',
+}
+
 function convertDirection(direction) {
   switch (direction) {
       case "N":
@@ -107,7 +114,7 @@ export function getEventPopup(eventFeature) {
               <EventTypeIcon displayCategory={eventData.display_category} />
             </div>
 
-            <p className="bold">{severity} delays</p>
+            <p className="bold">{displayCategoryMap[eventData.display_category]}</p>
           </div>
 
           <p className="bold friendly-time--mobile">
