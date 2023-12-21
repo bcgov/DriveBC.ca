@@ -103,9 +103,19 @@ $danger: $Error;
 }
 
 // Tooltip
-.tooltip-inner {
-  p {
-    color: $White;
-    margin-bottom: 0;
+.tooltip.show {
+  margin-bottom: 4px;
+  opacity: 1;
+
+  .tooltip-inner {
+    width: 256px;
+    max-width: 256px;
+    background-color: $Grey80;
+  
+    p {
+      font-size: 0.875rem;
+      color: $White;
+      margin-bottom: 0;
+    }
   }
 }

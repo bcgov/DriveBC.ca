@@ -26,11 +26,55 @@ import './Layers.scss';
 
 export default function Layers({ open, setLayersOpen, toggleLayer }) {
   const { mapContext } = useContext(MapContext);
-  const tooltip = (
+  
+  const tooltipMajor = (
     <Tooltip id="tooltip" className="tooltip-content">
-      <p>This is a tooltip.</p>
+      <p>Indicates a significant delay of more than 20 minutes to travel in at least one direction on this road. A Major Delay may be a traffic incident or a road event (such as road work, construction, or restoration).</p>
     </Tooltip>
   );
+
+  const tooltipMinor = (
+    <Tooltip id="tooltip" className="tooltip-content">
+      <p>Indicates a minor delay of less than 20 minutes to travel in at least one direction on this route. A Minor Delay may be a traffic incident or a road event (such as road work, construction, or restoration).</p>
+    </Tooltip>
+  );
+
+  const tooltipFutureevents = (
+    <Tooltip id="tooltip" className="tooltip-content">
+      <p>Shows a planned future road events that may impact travel on routes throughout the province. An Event is typically a road work, constructions, or restoration project.</p>
+    </Tooltip>
+  );
+
+  const tooltipHighwaycameras = (
+    <Tooltip id="tooltip" className="tooltip-content">
+      <p>Shows the location of highway cameras throughout the province. The map icon shows the direction that the camera is facing.</p>
+    </Tooltip>
+  );
+
+  const tooltipRoadconditions = (
+    <Tooltip id="tooltip" className="tooltip-content">
+      <p>Indicates negative road condition that may impact the drivability of a particular stretch of road.</p>
+    </Tooltip>
+  );
+
+  const tooltipInlandferries = (
+    <Tooltip id="tooltip" className="tooltip-content">
+      <p>Shows the location of inland ferries within the interior of BC. This does not include coastal BC Ferries.</p>
+    </Tooltip>
+  );
+
+  const tooltipReststops = (
+    <Tooltip id="tooltip" className="tooltip-content">
+      <p>Shows the location of Provincial Rest Stops on highways throughout the province.</p>
+    </Tooltip>
+  );
+
+  const tooltipWeather = (
+    <Tooltip id="tooltip" className="tooltip-content">
+      <p>Regional current and forecasted weather from Environment Canada for this area.</p>
+    </Tooltip>
+  );
+
 
   // States for events
   const [filterChecked, setFilterChecked] = useState(false);
@@ -97,7 +141,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   id="filter--major"
                 />
                 <label htmlFor="filter--major">Major</label>
-                <OverlayTrigger placement="top" overlay={tooltip}>
+                <OverlayTrigger placement="top" overlay={tooltipMajor}>
                   <span className="tooltip-info">?</span>
                 </OverlayTrigger>
               </div>
@@ -115,7 +159,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   id="filter--minor"
                 />
                 <label htmlFor="filter--minor">Minor</label>
-                <OverlayTrigger placement="top" overlay={tooltip}>
+                <OverlayTrigger placement="top" overlay={tooltipMinor}>
                   <span className="tooltip-info">?</span>
                 </OverlayTrigger>
               </div>
@@ -131,7 +175,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   onChange={e => {toggleLayer('eventsLayer', e.target.checked); toggleChecked()}}
                 />
                 <label htmlFor="filter--future-events">Future Events</label>
-                <OverlayTrigger placement="top" overlay={tooltip}>
+                <OverlayTrigger placement="top" overlay={tooltipFutureevents}>
                   <span className="tooltip-info">?</span>
                 </OverlayTrigger>
               </div>
@@ -155,7 +199,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   defaultChecked={mapContext.visible_layers.webcamsLayer}
                 />
                 <label htmlFor="filter--highway-cameras">Highway cameras</label>
-                <OverlayTrigger placement="top" overlay={tooltip}>
+                <OverlayTrigger placement="top" overlay={tooltipHighwaycameras}>
                   <span className="tooltip-info">?</span>
                 </OverlayTrigger>
               </div>
@@ -170,7 +214,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   id="filter--road-conditions"
                 />
                 <label htmlFor="filter--road-conditions">Road conditions</label>
-                <OverlayTrigger placement="top" overlay={tooltip}>
+                <OverlayTrigger placement="top" overlay={tooltipRoadconditions}>
                   <span className="tooltip-info">?</span>
                 </OverlayTrigger>
               </div>
@@ -186,7 +230,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   onChange={e => {toggleLayer('ferriesLayer', e.target.checked); toggleCheckedFerries()}}
                 />
                 <label htmlFor="filter--inland-ferries">Inland ferries</label>
-                <OverlayTrigger placement="top" overlay={tooltip}>
+                <OverlayTrigger placement="top" overlay={tooltipInlandferries}>
                   <span className="tooltip-info">?</span>
                 </OverlayTrigger>
               </div>
@@ -201,7 +245,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   id="filter--rest-stops"
                 />
                 <label htmlFor="filter--rest-stops">Provincial rest stops</label>
-                <OverlayTrigger placement="top" overlay={tooltip}>
+                <OverlayTrigger placement="top" overlay={tooltipReststops}>
                   <span className="tooltip-info">?</span>
                 </OverlayTrigger>
               </div>
@@ -216,7 +260,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
                   id="filter--weather"
                 />
                 <label htmlFor="filter--weather">Weather</label>
-                <OverlayTrigger placement="top" overlay={tooltip}>
+                <OverlayTrigger placement="top" overlay={tooltipWeather}>
                   <span className="tooltip-info">?</span>
                 </OverlayTrigger>
               </div>
