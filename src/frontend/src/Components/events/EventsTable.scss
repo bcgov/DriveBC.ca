@@ -27,7 +27,7 @@ table {
       &:nth-of-type(even) {
         background-color: $Grey10;
       }
-      &.major {
+      &.major, &.closure {
         background-color: $Surface-status-red;
 
         td.severity {
@@ -50,7 +50,7 @@ table {
           text-transform: capitalize;
         }
 
-        
+
 
         svg {
           color: $BC-Blue;

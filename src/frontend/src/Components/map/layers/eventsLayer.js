@@ -21,6 +21,8 @@ export function loadEventsLayers(
 
   if (eventsData) {
     // Initialize vss
+    const closureVS = createVS();
+    const closureLinesVS = createVS();
     const majorEventsVS = createVS();
     const majorEventsLinesVS = createVS();
     const minorEventsVS = createVS();
@@ -35,6 +37,7 @@ export function loadEventsLayers(
       const isLineSegment = feature.getGeometry().getType() === 'LineString';
 
       const vsMap = {
+        closure: closureVS,
         majorEvents: majorEventsVS,
         minorEvents: minorEventsVS,
         futureEvents: futureEventsVS,
@@ -42,6 +45,7 @@ export function loadEventsLayers(
       }
 
       const lineVsMap = {
+        closure: closureLinesVS,
         majorEvents: majorEventsLinesVS,
         minorEvents: minorEventsLinesVS,
         futureEvents: futureEventsLinesVS,
@@ -130,6 +134,8 @@ export function loadEventsLayers(
       }
 
       // Add layer to map for each vs
+      addLayer('closures', closureVS, 128);
+      addLayer('closuresLines', closureLinesVS, 2);
       addLayer('majorEvents', majorEventsVS, 128);
       addLayer('majorEventsLines', majorEventsLinesVS, 2);
       addLayer('minorEvents', minorEventsVS, 128);

@@ -27,6 +27,7 @@ function App() {
       ? JSON.parse(context)
       : {
           visible_layers: {
+            closures: true,
             majorEvents: true,
             minorEvents: true,
             futureEvents: true,

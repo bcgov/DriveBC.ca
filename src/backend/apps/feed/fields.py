@@ -19,6 +19,9 @@ class DriveBCField(serializers.Field):
         }
         return res
 
+    def to_representation(self, value):
+        return super().to_representation(value[self.custom_field_name])
+
 
 class DriveBCSingleListField(DriveBCField):
     def to_internal_value(self, data):
@@ -46,6 +49,8 @@ class DriveBCDateField(serializers.DateTimeField):
 
         return res
 
+    def to_representation(self, value):
+        return super().to_representation(value[self.custom_field_name])
 
 # Webcam
 class WebcamRegionField(serializers.Field):
@@ -110,8 +115,15 @@ class EventRoadsField(serializers.Field):
             "route_from": route_dict["from"],
             "route_to": route_dict["to"] if "to" in route_dict else "",
             "direction": route_dict["direction"]
+        #     "route_at": data["name"],
+        #     "route_from": data["from"],
+        #     "route_to": data["to"] if "to" in data else "",
+        #     "direction": data["direction"]
         }
         return res
+
+    def to_representation(self, value):
+        return f'{value["route_from"]} to {value["route_to"]}, {value["direction"]}'
 
 
 class EventGeographyField(DriveBCField, GeometryField):

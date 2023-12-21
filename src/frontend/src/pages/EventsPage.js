@@ -75,6 +75,11 @@ export default function EventsPage() {
 
   const filterProps = [
     {
+      id: 'checkbox-filter-closure',
+      label: 'Closures',
+      value: 'closure',
+    },
+    {
       id: 'checkbox-filter-incident',
       label: 'Major Delays',
       value: 'majorEvents',
@@ -99,6 +104,7 @@ export default function EventsPage() {
   const [sortingColumns, setSortingColumns] = useState([]);
 
   const [eventCategoryFilter, setEventCategoryFilter] = useState({
+    'closure': mapContext.visible_layers.closure,
     'majorEvents': mapContext.visible_layers.majorEvents,
     'minorEvents': mapContext.visible_layers.minorEvents,
     'futureEvents': mapContext.visible_layers.futureEvents,

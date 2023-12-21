@@ -285,7 +285,7 @@ body {
           }
         }
 
-        &.major {
+        &.major, &.closure {
           .popup__title {
             background-color: $Surface-status-red;
             .name {

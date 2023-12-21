@@ -6,10 +6,13 @@ import { fromLonLat, transformExtent } from 'ol/proj';
 import Overlay from 'ol/Overlay.js';
 
 // Styling
-import { eventStyles } from '../data/featureStyleDefinitions.js';
+import { closureStyles, eventStyles } from '../data/featureStyleDefinitions.js';
 
 // Static assets
 export const getEventIcon = (event, state) => {
+  if (event.get('roadIsClosed')) {
+    return closureStyles[state];
+  }
   const severity = event.get('severity').toLowerCase();
   const display_category = event.get('display_category');
   const geometry = event.getGeometry().getType();

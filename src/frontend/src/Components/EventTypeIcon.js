@@ -9,10 +9,13 @@ import {
   faPersonDigging,
   faCalendarDays,
   faSnowflake,
+  faMinusCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function EventTypeIcon({ displayCategory }) {
   switch (displayCategory) {
+    case "closure":
+      return <FontAwesomeIcon icon={faMinusCircle} alt="closure" />;
     case "majorEvents":
       return <FontAwesomeIcon icon={faExclamationTriangle} alt="major delays" />;
     case "minorEvents":
