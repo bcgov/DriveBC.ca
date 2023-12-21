@@ -557,9 +557,9 @@
       position: absolute;
       right: 0;
       bottom: 0;
-      bottom: initial;
       left: initial;
-      max-height: 480px;
+      max-height: initial;
+      height: auto;
 
       @media (min-width: 992px) {
         top: 0;
