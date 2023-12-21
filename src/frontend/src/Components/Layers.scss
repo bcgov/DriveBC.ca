@@ -93,6 +93,33 @@ button.open-layers {
         }
       }
 
+      &.disabled {
+        .filter-item__icon {
+          background-color: $Divider;
+          border-color: $Divider;
+  
+          svg {
+            color: $Type-Disabled;
+          }
+
+          .customIcon-bg {
+            fill: $Type-Disabled;
+          }
+          
+          .customIcon-fg {
+            fill: $Divider;
+          }
+        }
+        label {
+          color: $Type-Disabled;
+
+          &:hover {
+            cursor: auto;
+            text-decoration: none;
+          }
+        }
+      }
+
       &__icon {
         margin-right: 8px;
         height: 36px;
