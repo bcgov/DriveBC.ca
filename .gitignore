@@ -18,3 +18,5 @@
 src/media/
 src/static/
 infrastructure/yaml
+
+src/backend/test_script.py

@@ -47,19 +47,19 @@ export default function Header() {
 
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <LinkContainer exact to="/">
+              <LinkContainer to="/">
                 {getNavLink('Map')}
               </LinkContainer>
-              <LinkContainer exact to="/cameras">
+              <LinkContainer to="/cameras">
                 {getNavLink('Cameras')}
               </LinkContainer>
-              <LinkContainer exact to="/events">
+              <LinkContainer to="/events">
                 {getNavLink('Delays')}
               </LinkContainer>
-              <LinkContainer exact to="/advisories">
+              <LinkContainer to="/advisories">
                 {getNavLink('Advisories')}
               </LinkContainer>
-              <LinkContainer exact to="/bulletins">
+              <LinkContainer to="/bulletins">
                 {getNavLink('Bulletins')}
               </LinkContainer>
             </Nav>

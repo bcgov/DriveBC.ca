@@ -1,5 +1,10 @@
 from datetime import datetime
+import pytz
 
+from rest_framework import serializers
+
+from apps.event.enums import EVENT_STATUS
+from apps.feed.constants import DIRECTIONS
 from apps.feed.fields import (
     DriveBCDateField,
     DriveBCField,
@@ -14,7 +19,6 @@ from apps.feed.fields import (
     WebcamRegionField,
     WebcamRegionGroupField,
 )
-from rest_framework import serializers
 
 
 # Webcam
@@ -57,6 +61,7 @@ class EventFeedSerializer(serializers.Serializer):
     event_type = serializers.CharField(max_length=32)
     event_subtypes = DriveBCSingleListField('event_sub_type',
                                             source="*", required=False)
+    # event_sub_type = serializers.CharField(max_length=32, required=False)
 
     # General status
     status = serializers.CharField(max_length=32)
@@ -69,11 +74,30 @@ class EventFeedSerializer(serializers.Serializer):
     # Update status
     created = DriveBCDateField('first_created', source="*")
     updated = DriveBCDateField('last_updated', source="*")
+    # closed = serializers.SerializerMethodField()
 
     # Schedule
     schedule = serializers.JSONField()
 
     def to_internal_value(self, data):
+        # mapping CARS API fields to Open511 fields
+        # data['id'] = data["event-id"]
+        # details = data.get('open511-event-details', {})
+        # data['event_type'] = details['event_type_description']
+        # data['event_sub_type'] = details['event_subtype']
+        # data['severity'] = data['representation']['priority']['name'].upper()
+        # data['updated'] = datetime.fromtimestamp(data['update-time']['time']/1000,
+        #                                          pytz.timezone(data['update-time']['timeZoneId'])).isoformat()
+        # data['created'] = data['updated']  # hack because CARS API doesn't include event creation time
+        # data['status'] = EVENT_STATUS.ACTIVE
+        # data['roads'] = {
+        #     'to': details['event_road_to'],
+        #     'from': details['event_road_from'],
+        #     'name': 'Other roads',
+        #     'direction': DIRECTIONS.get(details['event_road_direction'], 'NONE')
+        # }
+        # data['geography'] = data['geometry']
+
         internal_data = super().to_internal_value(data)
         schedule = internal_data.get('schedule', {})
         if 'intervals' in schedule:
@@ -87,6 +111,16 @@ class EventFeedSerializer(serializers.Serializer):
                 internal_data['end'] = datetime.strptime(end, "%Y-%m-%dT%H:%M")
 
         return internal_data
+
+    def get_closed(self, obj):
+        for detail in self.initial_data.get('details', []):
+            for desc in detail.get('descriptions', []):
+                kind = desc.get('kind', {})
+                if (kind.get('category') == 'traffic_pattern' and
+                    kind.get('code') == 'closed'):
+                    return True
+
+        return False
 
 
 class EventAPISerializer(serializers.Serializer):

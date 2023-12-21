@@ -42,7 +42,7 @@
     }
   }
 
-  &.major {
+  &.major, &.closure {
     .event-card__details {
       .type {
         .header, .content {

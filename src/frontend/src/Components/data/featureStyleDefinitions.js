@@ -2,6 +2,9 @@ import { Icon, Stroke, Style } from 'ol/style.js';
 import cameraIconActive from '../../images/mapIcons/camera-active.png';
 import cameraIconHover from '../../images/mapIcons/camera-hover.png';
 import cameraIconStatic from '../../images/mapIcons/camera-static.png';
+import closedIconActive from '../../images/mapIcons/closure-active.png';
+import closedIconHover from '../../images/mapIcons/closure-hover.png';
+import closedIconStatic from '../../images/mapIcons/closure-static.png';
 import ferryIconActive from '../../images/mapIcons/ferry-active.png';
 import ferryIconHover from '../../images/mapIcons/ferry-hover.png';
 import ferryIconStatic from '../../images/mapIcons/ferry-static.png';
@@ -57,6 +60,37 @@ export const cameraStyles = {
       anchorYUnits: 'pixels',
       scale: 0.25,
       src: cameraIconActive,
+    }),
+  }),
+};
+
+// Road closed icon styles
+export const closureStyles = {
+  static: new Style({
+    image: new Icon({
+      anchor: [88, 88],
+      anchorXUnits: 'pixels',
+      anchorYUnits: 'pixels',
+      scale: 0.25,
+      src: closedIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      anchor: [88, 88],
+      anchorXUnits: 'pixels',
+      anchorYUnits: 'pixels',
+      scale: 0.25,
+      src: closedIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      anchor: [88, 88],
+      anchorXUnits: 'pixels',
+      anchorYUnits: 'pixels',
+      scale: 0.25,
+      src: closedIconActive,
     }),
   }),
 };
