@@ -1,5 +1,12 @@
 @import "../styles/variables.scss";
 
+button.open-layers {
+  &.open {
+    background: $Type-Link;
+    color: #FFFFFF;
+  }
+}
+
 .layers {
   position: absolute;
   bottom: 0;
@@ -73,6 +80,14 @@
   
           svg {
             color: $White;
+          }
+
+          .customIcon-bg {
+            fill: white;
+          }
+          
+          .customIcon-fg {
+            fill: $Type-Link;
           }
 
         }
