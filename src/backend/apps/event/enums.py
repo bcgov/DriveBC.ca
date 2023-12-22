@@ -97,6 +97,23 @@ EVENT_DIFF_FIELDS = [
     'last_updated'
 ]
 
+EVENT_UPDATE_FIELDS = [
+    'description',
+    'event_type',
+    'event_sub_type',
+    'status',
+    'severity',
+    'direction',
+    'last_updated',
+    'location',
+    'route_at',
+    'route_from',
+    'route_to',
+    'schedule',
+    'start',
+    'end',
+]
+
 
 class EVENT_DISPLAY_CATEGORY:
     MAJOR_DELAYS = 'majorEvents'
