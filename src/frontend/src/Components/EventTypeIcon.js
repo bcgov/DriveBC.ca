@@ -14,7 +14,7 @@ import {
 
 export default function EventTypeIcon({ displayCategory }) {
   switch (displayCategory) {
-    case "closure":
+    case "closures":
       return <FontAwesomeIcon icon={faMinusCircle} alt="closure" />;
     case "majorEvents":
       return <FontAwesomeIcon icon={faExclamationTriangle} alt="major delays" />;

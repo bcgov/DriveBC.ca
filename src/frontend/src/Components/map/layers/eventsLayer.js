@@ -37,7 +37,7 @@ export function loadEventsLayers(
       const isLineSegment = feature.getGeometry().getType() === 'LineString';
 
       const vsMap = {
-        closure: closureVS,
+        closures: closureVS,
         majorEvents: majorEventsVS,
         minorEvents: minorEventsVS,
         futureEvents: futureEventsVS,
@@ -45,7 +45,7 @@ export function loadEventsLayers(
       }
 
       const lineVsMap = {
-        closure: closureLinesVS,
+        closures: closureLinesVS,
         majorEvents: majorEventsLinesVS,
         minorEvents: minorEventsLinesVS,
         futureEvents: futureEventsLinesVS,
