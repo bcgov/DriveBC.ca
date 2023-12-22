@@ -9,7 +9,7 @@ export function getEvents(routePoints) {
       datum.roadIsClosed = !! datum.description.match(/Road closed(\.| )/);
       if (datum.roadIsClosed) {
         datum.severity = 'CLOSURE';
-        datum.display_category = 'closure';
+        datum.display_category = 'closures';
       }
     })
     return data;
