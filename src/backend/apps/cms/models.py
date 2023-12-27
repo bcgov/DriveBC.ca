@@ -21,7 +21,7 @@ class DriveBCMapWidget(OSMWidget):
 class Advisory(Page, BaseModel):
     page_body = "Use this page for creating advisories."
     teaser = models.CharField(max_length=250, blank=True)
-    body = RichTextField(blank=True)
+    body = RichTextField()
 
     def rendered_body(self):
         return wagtailcore_tags.richtext(self.body)
@@ -52,8 +52,8 @@ class Advisory(Page, BaseModel):
 class Bulletin(Page, BaseModel):
     page_body = "Use this page for creating bulletins."
     teaser = models.CharField(max_length=250, blank=True)
-    body = RichTextField(blank=True)
-    image = models.ForeignKey(Image, on_delete=models.CASCADE, blank=True, null=True)
+    body = RichTextField()
+    image = models.ForeignKey(Image, on_delete=models.CASCADE)
 
     def rendered_body(self):
         return wagtailcore_tags.richtext(self.body)
