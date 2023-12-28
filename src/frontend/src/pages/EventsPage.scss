@@ -8,13 +8,35 @@
     display: flex;
     justify-content: space-between;
 
+    .filters-component {
+
+      .filters {
+        top: auto !important;
+        bottom: auto;
+      }
+    }
+
     .dropdown {
       //bootstrap override
+      &.show {
+        .dropdown-toggle {
+          background: $Type-Link;
+          color: #FFFFFF;
+        }
+      }
+
       .dropdown-toggle {
+        background-color: $Surface-tinted;
+        color: $Type-Link;
         font-size: 0.875rem;
+        font-weight: 700;
+        height: auto;
+        border-radius: 4px;
+        border: 1px solid $Type-Link;
+        box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
 
         svg {
-          margin-left: 8px;
+          margin-right: 8px;
         }
         &::after {
           border: none;
@@ -23,15 +45,25 @@
       }
 
       .dropdown-menu {
-        box-shadow: 0px 3.200000047683716px 7.199999809265137px 0px rgba(0, 0, 0, 0.13), 0px 0.6000000238418579px 1.7999999523162842px 0px rgba(0, 0, 0, 0.10);
         border-radius: 4px;
-        padding: 20px;
+        background-color: $Surface-tinted;
+        box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
+        padding: 1rem;
+        overflow-y: scroll;
+        //bootstrap override
+        border-color: transparent;
 
         .form-check {
           margin-bottom: 12px;
           color: $Type-Primary;
+
+          input {
+            display: none;
+          }
+          
           label {
             white-space: nowrap;
+            cursor: pointer;
 
             svg {
               margin-right: 8px;

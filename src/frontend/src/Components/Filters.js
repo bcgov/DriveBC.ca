@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFilter,
   faXmark,
+  faMinusCircle,
   faCalendarDays,
   faVideo,
   faSnowflake,
@@ -23,10 +24,13 @@ import {useMediaQuery} from '@uidotdev/usehooks';
 import { MapContext } from '../App.js';
 
 // Styling
-import './Layers.scss';
+import './Filters.scss';
 
-export default function Layers({ open, setLayersOpen, toggleLayer }) {
+export default function Filters({toggleLayer}) {
   const { mapContext } = useContext(MapContext);
+
+  // States
+  const [open, setOpen] = useState(false);
 
   const tooltipClosures = (
     <Tooltip id="tooltip" className="tooltip-content">
@@ -92,29 +96,29 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
   const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
 
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
-
+  
   return (
-    <div>
+    <div className="filters-component">
       <Button
-        variant="primary"
-        className={'map-btn open-layers' + (open ? ' open' : '')}
-        aria-label="open layers options"
+        variant="outline"
+        className={'map-btn open-filters' + (open ? ' open' : '')}
+        aria-label="open filters options"
         onClick={() => {
-          open ? setLayersOpen(false) : setLayersOpen(true) }
+          open ? setOpen(false) : setOpen(true) }
         }>
         <FontAwesomeIcon icon={faFilter} />
         Filters
       </Button>
 
       { open &&
-      <div className="layers">
+      <div className="filters">
         { !largeScreen &&
           <div>
             <h4 className="filters-title">Filters</h4>
             <button
-              className="close-layers"
-              aria-label="close layers options"
-              onClick={() => setLayersOpen(false)
+              className="close-filters"
+              aria-label="close filters options"
+              onClick={() => setOpen(false)
             }>
               <FontAwesomeIcon icon={faXmark} />
             </button>
@@ -127,10 +131,7 @@ export default function Layers({ open, setLayersOpen, toggleLayer }) {
             <div className="filter-items filter-items--delays">
               <div className={'filter-item filter-item--closures' + (closures ? ' checked' : '')}>
                 <div className="filter-item__icon">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path className="customIcon-bg" d="M7.87872 1.12135C9.05029 -0.0502183 10.9498 -0.0502166 12.1214 1.12136L18.8787 7.87868C20.0503 9.05026 20.0503 10.9498 18.8787 12.1213L12.1213 18.8787C10.9497 20.0503 9.05026 20.0503 7.87868 18.8787L1.12136 12.1214C-0.0502174 10.9498 -0.0502174 9.05029 1.12136 7.87872L7.87872 1.12135Z" fill="#1A5A96"/>
-                    <path className="customIcon-fg" d="M10.8176 5.71429V11.4286C10.8176 11.8304 10.4403 12.1429 10.0126 12.1429C9.55976 12.1429 9.20755 11.8304 9.20755 11.4286V5.71429C9.20755 5.33483 9.55976 5.00001 10.0126 5.00001C10.4403 5.00001 10.8176 5.33483 10.8176 5.71429ZM10.0126 15C9.63523 15 9.30818 14.8438 9.13208 14.5536C8.95598 14.2857 8.95598 13.9509 9.13208 13.6607C9.30818 13.3929 9.63523 13.2143 10.0126 13.2143C10.3648 13.2143 10.6918 13.3929 10.8679 13.6607C11.044 13.9509 11.044 14.2857 10.8679 14.5536C10.6918 14.8438 10.3648 15 10.0126 15Z" fill="white"/>
-                  </svg>
+                  <FontAwesomeIcon icon={faMinusCircle} alt="closures" />
                 </div>
                 <input
                   type="checkbox"

@@ -53,10 +53,15 @@
       background: var(--ol-partial-background-color);
       border-radius: 4px;
       left: auto;
-      right: 2rem;
-      bottom: 6rem;
+      right: 9rem;
+      bottom: 2rem;
       padding: 2px;
       position: absolute;
+
+      @media (min-width: 768px) {
+        right: 2rem;
+        bottom: 2rem;
+      }
 
       @media (min-width: 992px) {
         right: 6rem;
@@ -99,7 +104,7 @@
         margin-right: 8px;
       }
     }
-    &.map-view, &.my-location, &.open-layers {
+    &.map-view, &.my-location, &.open-filters {
       svg {
         margin-right: 8px;
       }
@@ -123,7 +128,7 @@
       left: 2rem;
     }
 
-    &.open-layers {
+    &.open-filters {
       position: absolute;
       top: 2rem;
       right: 2rem;
