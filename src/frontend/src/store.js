@@ -15,20 +15,31 @@ import {
   REGISTER,
 } from 'redux-persist';
 
+import expireReducer from 'redux-persist-expire';
 import storage from 'redux-persist/lib/storage';
 
-const getConfig = (key) => {
-  return {
+const getConfig = (key, lifeInSeconds) => {
+  const config = {
     key: key,
     version: 1,
     storage,
+  };
+
+  if (lifeInSeconds) {
+    config.transforms = [
+      expireReducer('preference', {
+       expireSeconds: lifeInSeconds,
+      })
+    ];
   }
+
+  return config;
 }
 
 const store = configureStore({
   reducer: {
-    cameras: persistReducer(getConfig('cameras'), camerasReducer),
-    events: persistReducer(getConfig('events'), eventsReducer),
+    cameras: persistReducer(getConfig('cameras', 60), camerasReducer),
+    events: persistReducer(getConfig('events', 60), eventsReducer),
     routes: persistReducer(getConfig('routes'), routesReducer),
     map: persistReducer(getConfig('map'), mapReducer),
   },

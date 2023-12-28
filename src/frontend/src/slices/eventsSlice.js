@@ -3,11 +3,14 @@ import { createSlice } from '@reduxjs/toolkit';
 export const eventsSlice = createSlice({
   name: 'events',
   initialState: {
-    events: {},
+    list: null,
+    routeTimeStamp: null
   },
   reducers: {
     updateEvents: (state, action) => {
-      state.events = action.payload;
+      const { list, routeTimeStamp } = action.payload;
+      state.list = list;
+      state.routeTimeStamp = routeTimeStamp;
     },
   },
 });

@@ -1,23 +1,23 @@
 // React
 import React, { useEffect, useState } from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // Third party packages
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faMapMarkerAlt} from '@fortawesome/free-solid-svg-icons';
-import {faXmark} from '@fortawesome/free-solid-svg-icons';
-import {faCircleInfo} from '@fortawesome/free-solid-svg-icons';
-import {faVideoSlash} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import FriendlyTime from '../FriendlyTime';
 
 // Styling
-import './WebcamCard.scss';
+import './CameraCard.scss';
 
 import colocatedCamIcon from '../../images/colocated-camera.svg';
 
-export default function WebcamCard(props) {
+export default function CameraCard(props) {
   // Props
   const { cameraData } = props;
 
@@ -25,17 +25,20 @@ export default function WebcamCard(props) {
   const [show, setShow] = useState(false);
   const [camera, setCamera] = useState(cameraData);
 
-  const stale = camera.marked_stale ? 'stale' : '';
-  const delayed = camera.marked_delayed ? 'delayed' : '';
-  const unavailable = camera.is_on ? '' : 'unavailable';
+  // useEffect hooks
+  useEffect(() => {
+    setCamera(cameraData);
+  }, [cameraData]);
 
   // Misc
   const navigate = useNavigate();
 
+  // Handlers
   function handleClick() {
     navigate(`/cameras/${camera.id}`);
     sessionStorage.setItem('scrollPosition', window.pageYOffset);
   }
+
   function handleViewOnMap() {
     navigate('/', {state: camera});
   }
@@ -45,22 +48,11 @@ export default function WebcamCard(props) {
     setShow(!show);
   }
 
-  const lastUpdatedTime = new Date(camera.last_update_modified);
-
-  function getLastUpdateDiff() {
-    return Math.trunc((new Date() - lastUpdatedTime) / (1000 * 60));
-  }
-
-  const [, setLastUpdateMin] = useState(getLastUpdateDiff());
-
-  useEffect(() => {
-    const timer = setInterval(() => setLastUpdateMin(getLastUpdateDiff()), 60000);
-    return function cleanup() {
-      clearInterval(timer);
-    };
-  });
-
   // Rendering
+  const stale = camera.marked_stale ? 'stale' : '';
+  const delayed = camera.marked_delayed ? 'delayed' : '';
+  const unavailable = camera.is_on ? '' : 'unavailable';
+
   return (
     <Card className={`webcam-card ${stale} ${delayed} ${unavailable}`}>
       <Card.Body onClick={handleClick}>
