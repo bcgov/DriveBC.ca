@@ -23,6 +23,7 @@ class EventSerializer(serializers.ModelSerializer):
     direction_display = serializers.SerializerMethodField()
     route_display = serializers.SerializerMethodField()
     schedule = ScheduleSerializer()
+    severity = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -52,6 +53,9 @@ class EventSerializer(serializers.ModelSerializer):
         return res
 
     def get_display_category(self, obj):
+        if obj.closed:
+            return EVENT_DISPLAY_CATEGORY.CLOSURE
+
         if obj.event_sub_type in EVENT_DISPLAY_CATEGORY_MAP:
             return EVENT_DISPLAY_CATEGORY_MAP[obj.event_sub_type]
 
@@ -61,3 +65,9 @@ class EventSerializer(serializers.ModelSerializer):
         return EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS \
             if obj.severity == EVENT_SEVERITY.MAJOR \
             else EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
+
+    def get_severity(self, obj):
+        if obj.closed:
+            return 'CLOSURE'
+
+        return obj.severity

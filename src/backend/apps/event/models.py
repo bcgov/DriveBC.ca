@@ -13,6 +13,7 @@ class Event(BaseModel):
     # General status
     status = models.CharField(max_length=32)
     severity = models.CharField(max_length=32)
+    closed = models.BooleanField(default=False)
 
     # Location
     direction = models.CharField(max_length=32)
@@ -26,7 +27,7 @@ class Event(BaseModel):
     last_updated = models.DateTimeField()
 
     # Schedule
-    schedule = models.JSONField(default={}) 
+    schedule = models.JSONField(default={})
 
     # Scheduled start and end
     start = models.DateTimeField(null=True)

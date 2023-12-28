@@ -10,7 +10,7 @@ import { closureStyles, eventStyles } from '../data/featureStyleDefinitions.js';
 
 // Static assets
 export const getEventIcon = (event, state) => {
-  if (event.get('roadIsClosed')) {
+  if (event.get('closed')) {
     return closureStyles[state];
   }
   const severity = event.get('severity').toLowerCase();
