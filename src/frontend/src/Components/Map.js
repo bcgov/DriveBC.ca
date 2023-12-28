@@ -39,7 +39,7 @@ import { getRouteLayer } from './map/routeLayer.js';
 import { MapContext } from '../App.js';
 import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
 import CurrentCameraIcon from './CurrentCameraIcon';
-import Layers from './Layers.js';
+import Filters from './Filters.js';
 import RouteSearch from './map/RouteSearch.js';
 
 // OpenLayers
@@ -87,9 +87,6 @@ export default function MapWrapper({
   const hoveredFeature = useRef();
   const locationPinRef = useRef(null);
   const cameraPopupRef = useRef(null);
-
-  // States
-  const [layersOpen, setLayersOpen] = useState(false);
 
   // Misc
   const navigate = useNavigate();
@@ -573,10 +570,6 @@ export default function MapWrapper({
     }
   }
 
-  function toggleLayers(openLayers) {
-    setLayersOpen(openLayers);
-  }
-
   function toggleLayer(layer, checked) {
     mapLayers.current[layer].setVisible(checked);
 
@@ -638,11 +631,9 @@ export default function MapWrapper({
         </div>
       </div>
 
-      <Layers
-          open={layersOpen}
-          setLayersOpen={toggleLayers}
-          toggleLayer={toggleLayer}
-        />
+      <Filters
+        toggleLayer={toggleLayer}
+      />
 
       {isPreview && (
         <Button

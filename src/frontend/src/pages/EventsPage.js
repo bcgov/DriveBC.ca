@@ -5,13 +5,10 @@ import { useNavigate } from 'react-router-dom';
 // Third party packages
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faMapLocationDot,
-  faFilter,
+  faMapLocationDot
 } from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Container from 'react-bootstrap/Container';
-import Dropdown from 'react-bootstrap/Dropdown';
-import Form from 'react-bootstrap/Form';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
@@ -24,9 +21,11 @@ import PageHeader from '../PageHeader';
 import Footer from '../Footer.js';
 import EventTypeIcon from '../Components/EventTypeIcon';
 import Advisories from '../Components/advisories/Advisories';
+import Filters from '../Components/Filters.js';
 
 // Styling
 import './EventsPage.scss';
+import '../Components/Filters.scss';
 
 export default function EventsPage() {
   // Context
@@ -73,33 +72,33 @@ export default function EventsPage() {
     },
   ];
 
-  const filterProps = [
-    {
-      id: 'checkbox-filter-closure',
-      label: 'Closures',
-      value: 'closures',
-    },
-    {
-      id: 'checkbox-filter-incident',
-      label: 'Major Delays',
-      value: 'majorEvents',
-    },
-    {
-      id: 'checkbox-filter-construction',
-      label: 'Minor Delays',
-      value: 'minorEvents',
-    },
-    {
-      id: 'checkbox-filter-special',
-      label: 'Future Delays',
-      value: 'futureEvents',
-    },
-    {
-      id: 'checkbox-filter-weather',
-      label: 'Road Conditions',
-      value: 'roadConditions',
-    }
-  ];
+  // const filterProps = [
+  //   {
+  //     id: 'checkbox-filter-closure',
+  //     label: 'Closures',
+  //     value: 'closures',
+  //   },
+  //   {
+  //     id: 'checkbox-filter-incident',
+  //     label: 'Major Delays',
+  //     value: 'majorEvents',
+  //   },
+  //   {
+  //     id: 'checkbox-filter-construction',
+  //     label: 'Minor Delays',
+  //     value: 'minorEvents',
+  //   },
+  //   {
+  //     id: 'checkbox-filter-special',
+  //     label: 'Future Delays',
+  //     value: 'futureEvents',
+  //   },
+  //   {
+  //     id: 'checkbox-filter-weather',
+  //     label: 'Road Conditions',
+  //     value: 'roadConditions',
+  //   }
+  // ];
 
   const [sortingColumns, setSortingColumns] = useState([]);
 
@@ -222,11 +221,11 @@ export default function EventsPage() {
       <Advisories />
         <div className="sort-and-filter">
           <div className="sort"></div>
-          <Dropdown align="end">
+          {/* <Dropdown align="end">
             <Dropdown.Toggle variant="outline-primary" id="filter-dropdown">
-              Filters<FontAwesomeIcon icon={faFilter} />
+              <FontAwesomeIcon icon={faFilter} />Filters
             </Dropdown.Toggle>
-            <Dropdown.Menu>
+            <Dropdown.Menu className="filters-dropdown">
               {filterProps.map((fp) => (
                 <Form.Check
                   disabled={fp.value == 'roadConditions'}
@@ -237,10 +236,13 @@ export default function EventsPage() {
                   }
                   value={fp.value}
                   checked={eventCategoryFilter[fp.value]}
-                  onChange={eventCategoryFilterHandler} />
+                  onChange={eventCategoryFilterHandler}/>
               ))}
             </Dropdown.Menu>
-          </Dropdown>
+          </Dropdown> */}
+          <Filters 
+            toggleLayer={eventCategoryFilterHandler}
+          />
         </div>
 
         { events && !!events.length && (
