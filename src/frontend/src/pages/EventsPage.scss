@@ -9,70 +9,76 @@
     justify-content: space-between;
 
     .filters-component {
+      @media (min-width: 768px) {
+        position: relative;
+      }
 
       .filters {
-        top: auto !important;
-        bottom: auto;
+        @media (min-width: 768px) {
+          max-height: initial;
+          top: 2.4375rem;
+          right: 0;
+        }
       }
     }
 
-    .dropdown {
-      //bootstrap override
-      &.show {
-        .dropdown-toggle {
-          background: $Type-Link;
-          color: #FFFFFF;
-        }
-      }
+    // .dropdown {
+    //   //bootstrap override
+    //   &.show {
+    //     .dropdown-toggle {
+    //       background: $Type-Link;
+    //       color: #FFFFFF;
+    //     }
+    //   }
 
-      .dropdown-toggle {
-        background-color: $Surface-tinted;
-        color: $Type-Link;
-        font-size: 0.875rem;
-        font-weight: 700;
-        height: auto;
-        border-radius: 4px;
-        border: 1px solid $Type-Link;
-        box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
+    //   .dropdown-toggle {
+    //     background-color: $Surface-tinted;
+    //     color: $Type-Link;
+    //     font-size: 0.875rem;
+    //     font-weight: 700;
+    //     height: auto;
+    //     border-radius: 4px;
+    //     border: 1px solid $Type-Link;
+    //     box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
 
-        svg {
-          margin-right: 8px;
-        }
-        &::after {
-          border: none;
-          content: none;
-        }
-      }
+    //     svg {
+    //       margin-right: 8px;
+    //     }
+    //     &::after {
+    //       border: none;
+    //       content: none;
+    //     }
+    //   }
 
-      .dropdown-menu {
-        border-radius: 4px;
-        background-color: $Surface-tinted;
-        box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
-        padding: 1rem;
-        overflow-y: scroll;
-        //bootstrap override
-        border-color: transparent;
+    //   .dropdown-menu {
+    //     border-radius: 4px;
+    //     background-color: $Surface-tinted;
+    //     box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
+    //     padding: 1rem;
+    //     overflow-y: scroll;
+    //     //bootstrap override
+    //     border-color: transparent;
 
-        .form-check {
-          margin-bottom: 12px;
-          color: $Type-Primary;
+    //     .form-check {
+    //       margin-bottom: 12px;
+    //       color: $Type-Primary;
 
-          input {
-            display: none;
-          }
+    //       input {
+    //         display: none;
+    //       }
           
-          label {
-            white-space: nowrap;
-            cursor: pointer;
+    //       label {
+    //         white-space: nowrap;
+    //         cursor: pointer;
 
-            svg {
-              margin-right: 8px;
-              margin-left: 8px;
-              color: $BC-Blue;
-            }
-          }
-        }
-      }
-    }
+    //         svg {
+    //           margin-right: 8px;
+    //           margin-left: 8px;
+    //           color: $BC-Blue;
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
