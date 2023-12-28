@@ -53,6 +53,55 @@ class WebcamAPISerializer(serializers.Serializer):
 
 
 # Event
+class CarsClosureEventSerializer(serializers.Serializer):
+    """
+    Serializer to take CARS API events and retrieve ID and closed flag.
+
+    As of January 2024, the CARS API events have the following structure
+    that we need:
+
+        {
+            'event-id': <id>,
+            ...,
+            'details': [
+                {
+                    'category': <category>,
+                    'code': <subcategory>,
+                },
+                ...
+            ],
+            ...
+        }
+
+    An event is consider to be marking a road closed if the category is
+    'traffic_pattern' and the code is one that starts with 'closed'
+    (e.g., 'closed', 'closed ahead', 'closed for repairs').  Other subcategories
+    include the word 'closed' not at the beginning ('right lane closed') and
+    do no indicate a complete closure.
+
+    TODO: Get list of closed subcategories for explicit enumeration.
+    """
+
+    id = serializers.CharField()
+    closed = serializers.BooleanField(default=False)
+
+    def to_internal_value(self, data):
+        data["id"] = data["event-id"]
+
+        data["closed"] = False
+        for detail in data.get("details", []):
+            if data["closed"]: break
+
+            for description in detail.get("descriptions", []):
+                if data["closed"]: break
+
+                kind = description.get("kind", {})
+                data["closed"] = (kind.get("category") == "traffic_pattern" and
+                                  kind.get("code").startswith("closed"))
+
+        return super().to_internal_value(data)
+
+
 class EventFeedSerializer(serializers.Serializer):
     id = serializers.CharField(max_length=32)
 
@@ -66,6 +115,7 @@ class EventFeedSerializer(serializers.Serializer):
     # General status
     status = serializers.CharField(max_length=32)
     severity = serializers.CharField(max_length=32)
+    closed = serializers.BooleanField(default=False)
 
     # Location
     roads = EventRoadsField(source="*")
@@ -80,23 +130,6 @@ class EventFeedSerializer(serializers.Serializer):
     schedule = serializers.JSONField()
 
     def to_internal_value(self, data):
-        # mapping CARS API fields to Open511 fields
-        # data['id'] = data["event-id"]
-        # details = data.get('open511-event-details', {})
-        # data['event_type'] = details['event_type_description']
-        # data['event_sub_type'] = details['event_subtype']
-        # data['severity'] = data['representation']['priority']['name'].upper()
-        # data['updated'] = datetime.fromtimestamp(data['update-time']['time']/1000,
-        #                                          pytz.timezone(data['update-time']['timeZoneId'])).isoformat()
-        # data['created'] = data['updated']  # hack because CARS API doesn't include event creation time
-        # data['status'] = EVENT_STATUS.ACTIVE
-        # data['roads'] = {
-        #     'to': details['event_road_to'],
-        #     'from': details['event_road_from'],
-        #     'name': 'Other roads',
-        #     'direction': DIRECTIONS.get(details['event_road_direction'], 'NONE')
-        # }
-        # data['geography'] = data['geometry']
 
         internal_data = super().to_internal_value(data)
         schedule = internal_data.get('schedule', {})
@@ -111,16 +144,6 @@ class EventFeedSerializer(serializers.Serializer):
                 internal_data['end'] = datetime.strptime(end, "%Y-%m-%dT%H:%M")
 
         return internal_data
-
-    def get_closed(self, obj):
-        for detail in self.initial_data.get('details', []):
-            for desc in detail.get('descriptions', []):
-                kind = desc.get('kind', {})
-                if (kind.get('category') == 'traffic_pattern' and
-                    kind.get('code') == 'closed'):
-                    return True
-
-        return False
 
 
 class EventAPISerializer(serializers.Serializer):

@@ -58,10 +58,15 @@ def populate_event_from_data(new_event_data):
 
 
 def populate_all_event_data():
-    feed_data = FeedClient().get_event_list()['events']
+    client = FeedClient()
+    closures = client.get_closures_dict()
+    feed_data = client.get_event_list()['events']
 
     active_event_ids = []
     for event_data in feed_data:
+        id = event_data.get("id", "").split("/")[-1]
+        event_data["closed"] = closures.get(id, False)
+
         populate_event_from_data(event_data)
 
         # Event is active

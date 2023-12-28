@@ -3,8 +3,9 @@ from typing import Dict
 from urllib.parse import urljoin
 
 import httpx
-from apps.feed.constants import INLAND_FERRY, OPEN511, WEBCAM
+from apps.feed.constants import DIT, INLAND_FERRY, OPEN511, WEBCAM
 from apps.feed.serializers import (
+    CarsClosureEventSerializer,
     EventAPISerializer,
     EventFeedSerializer,
     FerryAPISerializer,
@@ -27,6 +28,9 @@ class FeedClient:
             },
             OPEN511: {
                 "base_url": settings.DRIVEBC_OPEN_511_API_BASE_URL,
+            },
+            DIT: {
+                "base_url": settings.DRIVEBC_DIT_API_BASE_URL,
             },
             INLAND_FERRY: {
                 "base_url": settings.DRIVEBC_INLAND_FERRY_API_BASE_URL,
@@ -84,7 +88,7 @@ class FeedClient:
             params = {}
         endpoint = self._get_endpoint(resource_type, resource_name)
         response_data = self._process_get_request(endpoint, params, resource_type)
-        serializer = serializer_cls(data=response_data)
+        serializer = serializer_cls(data=response_data, many=isinstance(response_data, list))
 
         try:
             serializer.is_valid(raise_exception=True)
@@ -124,6 +128,16 @@ class FeedClient:
             OPEN511, 'events', EventAPISerializer,
             {"format": "json", "limit": 500}
         )
+
+    def get_closures_dict(self):
+        """ Return a dict of <id>:True for fast lookup of closed events by <id>. """
+
+        events = self.get_list_feed(
+            DIT, 'dbcevents', CarsClosureEventSerializer,
+            {"format": "json", "limit": 500}
+        )
+
+        return {event["id"]:True for event in events if event["closed"]}
 
     # Ferries
     def get_ferries_list(self):

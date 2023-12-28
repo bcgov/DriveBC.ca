@@ -10,7 +10,7 @@ import parse from 'html-react-parser';
 import colocatedCamIcon from '../../images/colocated-camera.svg';
 
 const displayCategoryMap = {
-  closure: 'Closure',
+  closures: 'Closure',
   majorEvents: 'Major Delay',
   minorEvents: 'Minor Delay',
   futureEvents: 'Future Delay',
@@ -112,10 +112,10 @@ export function getEventPopup(eventFeature) {
         <div className="delay-type">
           <div className="bold delay-severity">
             <div className="delay-icon">
-              <EventTypeIcon displayCategory={ eventData.roadIsClosed ? 'closure' : eventData.display_category} />
+              <EventTypeIcon displayCategory={ eventData.display_category} />
             </div>
 
-            <p className="bold">{ eventData.roadIsClosed ? 'Closure' : displayCategoryMap[eventData.display_category]}</p>
+            <p className="bold">{ displayCategoryMap[eventData.display_category]}</p>
           </div>
 
           <p className="bold friendly-time--mobile">

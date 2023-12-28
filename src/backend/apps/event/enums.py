@@ -103,6 +103,7 @@ EVENT_UPDATE_FIELDS = [
     'event_sub_type',
     'status',
     'severity',
+    'closed',
     'direction',
     'last_updated',
     'location',
@@ -116,6 +117,7 @@ EVENT_UPDATE_FIELDS = [
 
 
 class EVENT_DISPLAY_CATEGORY:
+    CLOSURE = 'closures'
     MAJOR_DELAYS = 'majorEvents'
     MINOR_DELAYS = 'minorEvents'
     FUTURE_DELAYS = 'futureEvents'
