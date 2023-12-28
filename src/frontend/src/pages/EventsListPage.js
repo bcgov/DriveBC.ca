@@ -24,10 +24,10 @@ import Advisories from '../Components/advisories/Advisories';
 import Filters from '../Components/Filters.js';
 
 // Styling
-import './EventsPage.scss';
+import './EventsListPage.scss';
 import '../Components/Filters.scss';
 
-export default function EventsPage() {
+export default function EventsListPage() {
   // Context
   const { mapContext, setMapContext } = useContext(MapContext);
 

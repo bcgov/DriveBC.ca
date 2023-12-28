@@ -9,7 +9,7 @@ import './App.scss';
 // Components and functions
 import Header from './Header.js';
 import MapPage from './pages/MapPage';
-import CamerasPage from './pages/CamerasPage';
+import CamerasListPage from './pages/CamerasListPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
 import EventsPage from './pages/EventsPage';
 import AdvisoriesListPage from './pages/AdvisoriesListPage';
@@ -23,19 +23,17 @@ export const MapContext = createContext(null);
 function App() {
   function getInitialMapContext() {
     const context = localStorage.getItem('mapContext');
-    return context
-      ? JSON.parse(context)
-      : {
-          visible_layers: {
-            closures: true,
-            majorEvents: true,
-            minorEvents: true,
-            futureEvents: true,
-            roadConditions: true,
-            highwayCams: true,
-            inlandFerries: true,
-          },
-        };
+    return context ? JSON.parse(context) : {
+      visible_layers: {
+        closures: true,
+        majorEvents: true,
+        minorEvents: true,
+        futureEvents: true,
+        roadConditions: true,
+        highwayCams: true,
+        inlandFerries: true,
+      },
+    };
   }
 
   const [mapContext, setMapContext] = useState(getInitialMapContext());
@@ -47,7 +45,7 @@ function App() {
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<MapPage />} />
-          <Route path="/cameras" element={<CamerasPage />} />
+          <Route path="/cameras" element={<CamerasListPage />} />
           <Route path="/cameras/:id" element={<CameraDetailsPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/advisories" element={<AdvisoriesListPage />} />

@@ -1,144 +1,74 @@
 // React
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 // Third party packages
 import Container from 'react-bootstrap/Container';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
-import { getWebcams, groupCameras } from '../data/webcams';
-import WebcamCard from './WebcamCard.js';
-import highwayShield from '../highwayShield.js';
+import { collator } from '../data/webcams';
+import HighwayGroup from './HighwayGroup.js';
 import Advisories from '../advisories/Advisories';
 
 // Styling
 import './CameraList.scss';
 
-const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-
-export default function CameraList() {
-  // UseRef hooks
-  const isInitialMount = useRef(true);
+export default function CameraList(props) {
+  // Props
+  const { cameras } = props;
 
   // UseState hooks
-  const [webcams, setWebcams] = useState([]);
-  const [displayedWebcams, setDisplayedWebcams] = useState([]);
+  const [displayedCameras, setDisplayedCameras] = useState([]);
 
   // UseEffect hooks and data functions
-  const getWebcamsData = async () => {
-    const webcamResults = await getWebcams();
-    const cameras = groupCameras(webcamResults);
-
-    // Sort cameras by highway number
-    cameras.sort(function(a, b) {
-      return collator.compare(a.highway, b.highway)
-    });
-
-    setWebcams(cameras);
-
-    isInitialMount.current = false;
-  };
-
-  const getDisplayedWebcams = () => {
-    const res = webcams.slice(0, displayedWebcams.length + 7);
-    setDisplayedWebcams(res);
+  const getDisplayedCameras = (length) => {
+    const res = cameras.slice(0, length ? length : displayedCameras.length + 7);
+    setDisplayedCameras(res);
   };
 
   useEffect(() => {
-    getWebcamsData();
-
-    return () =>{
-      // unmounting, so empty list object
-      setWebcams({});
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isInitialMount.current) { // Only run on updates
-      getDisplayedWebcams();
-    }
-  }, [webcams]);
-
-  useEffect(() => {
-    const scrollPosition = sessionStorage.getItem('scrollPosition');
-    if (scrollPosition) {
-      window.scrollTo(0, parseInt(scrollPosition, 10));
-    }
-  });
+    getDisplayedCameras(displayedCameras.length);
+  }, [cameras]);
 
   // Rendering
-  const mapDisplayedWebcams = () => {
+  const mapDisplayedCameras = () => {
     // Webcam data reduced to arrays grouped by highway
     const res = {};
-    displayedWebcams.forEach((cameraData) => {
-      const {highway} = cameraData;
+    displayedCameras.forEach((cam) => {
+      const {highway} = cam;
       if (!(highway in res)) {
         res[highway] = [];
       }
 
-      res[highway].push(cameraData);
+      res[highway].push(cam);
     });
 
     return res;
   };
 
-  const renderWebcams = () => {
-    const groupedCams = mapDisplayedWebcams();
-    const highwayKeys = Object.keys(groupedCams);
+  const renderHighways = () => {
+    const mappedCams = mapDisplayedCameras();
+    const highwayKeys = Object.keys(mappedCams);
 
     // Render camera groups by highway number
     highwayKeys.sort(collator.compare);
 
-    return highwayKeys.map((highway) => {
-      const cameras = groupedCams[highway];
-
-      // Render cameras by highway_cam_order
-      cameras.sort((a, b) => a.highway_cam_order - b.highway_cam_order);
-
-      return (
-        <div className="highway-group" key={highway}>
-          <Container>
-            <div className="highway-title">
-              <div className="highway-shield-box">
-                {highwayShield(highway)}
-              </div>
-
-              <div className="highway-name">
-                <p className="highway-name__number">Highway {highway}</p>
-                {highway === '1' &&
-                  <h2 className="highway-name__alias highway-name__alias--green">Trans Canada</h2>
-                }
-                {highway !== '1' &&
-                  <h2 className="highway-name__alias">Highway {highway}</h2>
-                }
-              </div>
-            </div>
-
-            <div className="webcam-group">
-              {cameras.map((camera, id) => (
-                <WebcamCard cameraData={camera} className="webcam" key={id}>
-                </WebcamCard>
-              ))}
-            </div>
-          </Container>
-        </div>
-      );
-    });
+    return highwayKeys.map((highway) => <HighwayGroup key={highway} highway={highway} cams={mappedCams[highway]} />);
   }
 
   return (
     <div className="camera-list">
       <InfiniteScroll
-        dataLength={displayedWebcams.length}
-        next={getDisplayedWebcams}
-        hasMore={displayedWebcams.length < webcams.length}
+        dataLength={displayedCameras.length}
+        next={getDisplayedCameras}
+        hasMore={displayedCameras.length < cameras.length}
         loader={<h4>Loading...</h4>}>
 
         <Container>
           <Advisories />
         </Container>
 
-        {renderWebcams()}
+        {renderHighways()}
       </InfiniteScroll>
     </div>
   );

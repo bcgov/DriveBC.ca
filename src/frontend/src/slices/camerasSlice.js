@@ -3,11 +3,14 @@ import { createSlice } from '@reduxjs/toolkit';
 export const camerasSlice = createSlice({
   name: 'cameras',
   initialState: {
-    cameras: {},
+    list: null,
+    routeTimeStamp: null
   },
   reducers: {
     updateCameras: (state, action) => {
-      state.cameras = action.payload;
+      const { list, routeTimeStamp } = action.payload;
+      state.list = list;
+      state.routeTimeStamp = routeTimeStamp;
     },
   },
 });
