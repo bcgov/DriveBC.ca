@@ -11,7 +11,7 @@ import Header from './Header.js';
 import MapPage from './pages/MapPage';
 import CamerasListPage from './pages/CamerasListPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
-import EventsPage from './pages/EventsPage';
+import EventsListPage from './pages/EventsListPage';
 import AdvisoriesListPage from './pages/AdvisoriesListPage';
 import AdvisoryDetailsPage from './pages/AdvisoryDetailsPage';
 import BulletinsListPage from './pages/BulletinsListPage';
@@ -47,7 +47,7 @@ function App() {
           <Route path="/" element={<MapPage />} />
           <Route path="/cameras" element={<CamerasListPage />} />
           <Route path="/cameras/:id" element={<CameraDetailsPage />} />
-          <Route path="/events" element={<EventsPage />} />
+          <Route path="/events" element={<EventsListPage />} />
           <Route path="/advisories" element={<AdvisoriesListPage />} />
           <Route path="/advisories/:id" element={<AdvisoryDetailsPage />} />
           <Route path="/bulletins" element={<BulletinsListPage />} />

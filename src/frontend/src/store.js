@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+
 import camerasReducer from './slices/camerasSlice';
 import eventsReducer from './slices/eventsSlice';
 import routesReducer from './slices/routesSlice';
@@ -15,14 +16,13 @@ import {
   REGISTER,
 } from 'redux-persist';
 
+import localforage from 'localforage';
 import expireReducer from 'redux-persist-expire';
-import storage from 'redux-persist/lib/storage';
 
 const getConfig = (key, lifeInSeconds) => {
   const config = {
     key: key,
-    version: 1,
-    storage,
+    storage: localforage,
   };
 
   if (lifeInSeconds) {
