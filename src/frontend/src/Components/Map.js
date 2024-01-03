@@ -632,7 +632,7 @@ export default function MapWrapper({
       </div>
 
       <Filters
-        toggleLayer={toggleLayer}
+        toggleHandler={toggleLayer}
       />
 
       {isPreview && (
