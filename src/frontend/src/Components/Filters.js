@@ -26,8 +26,12 @@ import { MapContext } from '../App.js';
 // Styling
 import './Filters.scss';
 
-export default function Filters({toggleLayer}) {
+export default function Filters(props) {
+  // Context
   const { mapContext } = useContext(MapContext);
+
+  // Props
+  const { toggleHandler, disableFeatures } = props;
 
   // States
   const [open, setOpen] = useState(false);
@@ -96,7 +100,7 @@ export default function Filters({toggleLayer}) {
   const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
 
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
-  
+
   return (
     <div className="filters-component">
       <Button
@@ -138,8 +142,8 @@ export default function Filters({toggleLayer}) {
                   name="closures"
                   id="filter--closures"
                   onChange={e => {
-                    toggleLayer('closures', e.target.checked);
-                    toggleLayer('closuresLines', e.target.checked);
+                    toggleHandler('closures', e.target.checked);
+                    toggleHandler('closuresLines', e.target.checked, true);
                     setClosures(!closures)
                   }}
                   defaultChecked={mapContext.visible_layers.closures}
@@ -162,8 +166,8 @@ export default function Filters({toggleLayer}) {
                   name="major"
                   id="filter--major"
                   onChange={e => {
-                    toggleLayer('majorEvents', e.target.checked);
-                    toggleLayer('majorEventsLines', e.target.checked);
+                    toggleHandler('majorEvents', e.target.checked);
+                    toggleHandler('majorEventsLines', e.target.checked, true);
                     setMajorEvents(!majorEvents)
                   }}
                   defaultChecked={mapContext.visible_layers.majorEvents}
@@ -186,8 +190,8 @@ export default function Filters({toggleLayer}) {
                   name="minor"
                   id="filter--minor"
                   onChange={e => {
-                    toggleLayer('minorEvents', e.target.checked);
-                    toggleLayer('minorEventsLines', e.target.checked);
+                    toggleHandler('minorEvents', e.target.checked);
+                    toggleHandler('minorEventsLines', e.target.checked, true);
                     setMinorEvents(!minorEvents);
                   }}
                   defaultChecked={mapContext.visible_layers.minorEvents}
@@ -207,8 +211,8 @@ export default function Filters({toggleLayer}) {
                   name="future events"
                   id="filter--future-events"
                   onChange={e => {
-                    toggleLayer('futureEvents', e.target.checked);
-                    toggleLayer('futureEventsLines', e.target.checked);
+                    toggleHandler('futureEvents', e.target.checked);
+                    toggleHandler('futureEventsLines', e.target.checked, true);
                     setFutureEvents(!futureEvents);
                   }}
                   defaultChecked={mapContext.visible_layers.futureEvents}
@@ -226,7 +230,7 @@ export default function Filters({toggleLayer}) {
           <p className="filter-group__title">Conditions and features</p>
           <div className="filter-items-group">
             <div className="filter-items filter-items--conditions">
-              <div className={'filter-item filter-item--highway-cameras' + (highwayCams ? ' checked' : '')}>
+              <div className={'filter-item filter-item--highway-cameras' + (highwayCams ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
                 <div className="filter-item__icon">
                   <FontAwesomeIcon icon={faVideo} alt="highway cameras" />
                 </div>
@@ -234,8 +238,9 @@ export default function Filters({toggleLayer}) {
                   type="checkbox"
                   name="highway cameras"
                   id="filter--highway-cameras"
-                  onChange={e => {toggleLayer('highwayCams', e.target.checked); setHighwayCams(!highwayCams)}}
+                  onChange={e => {toggleHandler('highwayCams', e.target.checked); setHighwayCams(!highwayCams)}}
                   defaultChecked={mapContext.visible_layers.highwayCams}
+                  disabled={disableFeatures}
                 />
                 <label htmlFor="filter--highway-cameras">Highway cameras</label>
                 <OverlayTrigger placement="top" overlay={tooltipHighwaycameras}>
@@ -243,7 +248,7 @@ export default function Filters({toggleLayer}) {
                 </OverlayTrigger>
               </div>
 
-              <div className={'filter-item filter-item--road-conditions' + (roadConditions ? ' checked' : '')}>
+              <div className={'filter-item filter-item--road-conditions' + (roadConditions ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
                 <div className="filter-item__icon">
                   <FontAwesomeIcon icon={faSnowflake} alt="road conditions" />
                 </div>
@@ -252,11 +257,12 @@ export default function Filters({toggleLayer}) {
                   name="road conditions"
                   id="filter--road-conditions"
                   onChange={e => {
-                    toggleLayer('roadConditions', e.target.checked);
-                    toggleLayer('roadConditionsLines', e.target.checked);
+                    toggleHandler('roadConditions', e.target.checked);
+                    toggleHandler('roadConditionsLines', e.target.checked);
                     setRoadConditions(!roadConditions);
                   }}
                   defaultChecked={mapContext.visible_layers.roadConditions}
+                  disabled={disableFeatures}
                 />
                 <label htmlFor="filter--road-conditions">Road conditions</label>
                 <OverlayTrigger placement="top" overlay={tooltipRoadconditions}>
@@ -264,7 +270,7 @@ export default function Filters({toggleLayer}) {
                 </OverlayTrigger>
               </div>
 
-              <div className={'filter-item filter-item--inland-ferries' + (inlandFerries ? ' checked' : '')}>
+              <div className={'filter-item filter-item--inland-ferries' + (inlandFerries ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
                 <div className="filter-item__icon">
                   <FontAwesomeIcon icon={faFerry} alt="inland ferries" />
                 </div>
@@ -272,8 +278,9 @@ export default function Filters({toggleLayer}) {
                   type="checkbox"
                   name="inland ferries"
                   id="filter--inland-ferries"
-                  onChange={e => {toggleLayer('inlandFerries', e.target.checked); setInlandFerries(!inlandFerries)}}
+                  onChange={e => {toggleHandler('inlandFerries', e.target.checked); setInlandFerries(!inlandFerries)}}
                   defaultChecked={mapContext.visible_layers.inlandFerries}
+                  disabled={disableFeatures}
                 />
                 <label htmlFor="filter--inland-ferries">Inland ferries</label>
                 <OverlayTrigger placement="top" overlay={tooltipInlandferries}>

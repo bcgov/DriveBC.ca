@@ -188,18 +188,18 @@ export default function EventsPage() {
     }
   }, [events, eventCategoryFilter, sortingColumns]);
 
-  const eventCategoryFilterHandler = (e) => {
-    const targetCategory = e.target.value;
+  const eventCategoryFilterHandler = (targetCategory, check, lineToggle) => {
+    if (!lineToggle) {
+      const newFilter = {...eventCategoryFilter};
+      newFilter[targetCategory] = !newFilter[targetCategory]; // Toggle/invert value
 
-    const newFilter = {...eventCategoryFilter};
-    newFilter[targetCategory] = !newFilter[targetCategory]; // Toggle/invert value
+      setEventCategoryFilter(newFilter);
 
-    setEventCategoryFilter(newFilter);
-
-    // Set context and local storage
-    mapContext.visible_layers[targetCategory] = newFilter[targetCategory]; // Set identical to newFilter after change
-    setMapContext(mapContext);
-    localStorage.setItem('mapContext', JSON.stringify(mapContext));
+      // Set context and local storage
+      mapContext.visible_layers[targetCategory] = newFilter[targetCategory]; // Set identical to newFilter after change
+      setMapContext(mapContext);
+      localStorage.setItem('mapContext', JSON.stringify(mapContext));
+    }
   };
 
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
@@ -240,8 +240,9 @@ export default function EventsPage() {
               ))}
             </Dropdown.Menu>
           </Dropdown> */}
-          <Filters 
-            toggleLayer={eventCategoryFilterHandler}
+          <Filters
+            toggleHandler={eventCategoryFilterHandler}
+            disableFeatures={true}
           />
         </div>
 
