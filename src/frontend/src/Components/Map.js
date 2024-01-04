@@ -463,7 +463,7 @@ export default function MapWrapper({
     }
   }, [cameras]);
 
-  async function loadCameras(route) {
+  const loadCameras = async (route) => {
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
@@ -479,7 +479,7 @@ export default function MapWrapper({
     loadEventsLayers(events, mapContext, mapLayers, mapRef);
   }, [events]);
 
-  async function loadEvents(route) {
+  const loadEvents = async (route) => {
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
@@ -491,7 +491,7 @@ export default function MapWrapper({
     }
   }
 
-  async function loadFerries() {
+  const loadFerries = async () => {
     const ferriesData = await getFerries();
 
     if (mapLayers.current['inlandFerries']) {

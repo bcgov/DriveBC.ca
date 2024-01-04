@@ -1,6 +1,8 @@
 // React
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux'
+import { updateEvents } from '../slices/eventsSlice';
 
 // Third party packages
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -28,6 +30,26 @@ import './EventsListPage.scss';
 import '../Components/Filters.scss';
 
 export default function EventsListPage() {
+  // Redux
+  const dispatch = useDispatch();
+  const [ events, eventTimeStamp, selectedRoute ] = useSelector((state) => [
+    state.events.list,
+    state.events.routeTimeStamp,
+    state.routes.selectedRoute
+  ]);
+
+  const loadEvents = async (route) => {
+    const newRouteTimestamp = route ? route.searchTimestamp : null;
+
+    // Fetch data if it doesn't already exist or route was updated
+    if (!events || (eventTimeStamp != newRouteTimestamp)) {
+      dispatch(updateEvents({
+        list: await getEvents(route ? route.points : null),
+        routeTimeStamp: route ? route.searchTimestamp : null,
+      }));
+    }
+  }
+
   // Context
   const { mapContext, setMapContext } = useContext(MapContext);
 
@@ -72,34 +94,6 @@ export default function EventsListPage() {
     },
   ];
 
-  // const filterProps = [
-  //   {
-  //     id: 'checkbox-filter-closure',
-  //     label: 'Closures',
-  //     value: 'closures',
-  //   },
-  //   {
-  //     id: 'checkbox-filter-incident',
-  //     label: 'Major Delays',
-  //     value: 'majorEvents',
-  //   },
-  //   {
-  //     id: 'checkbox-filter-construction',
-  //     label: 'Minor Delays',
-  //     value: 'minorEvents',
-  //   },
-  //   {
-  //     id: 'checkbox-filter-special',
-  //     label: 'Future Delays',
-  //     value: 'futureEvents',
-  //   },
-  //   {
-  //     id: 'checkbox-filter-weather',
-  //     label: 'Road Conditions',
-  //     value: 'roadConditions',
-  //   }
-  // ];
-
   const [sortingColumns, setSortingColumns] = useState([]);
 
   const [eventCategoryFilter, setEventCategoryFilter] = useState({
@@ -110,16 +104,8 @@ export default function EventsListPage() {
     'roadConditions': false,
   });
 
-  const [events, setEvents] = useState([]);
   const [processedEvents, setProcessedEvents] = useState([]);
   const [displayedEvents, setDisplayedEvents] = useState([]);
-
-  const getData = async () => {
-    const eventsData = await getEvents();
-    setEvents(eventsData);
-
-    isInitialMount.current = false;
-  };
 
   const sortEvents = (unsortedEvents) => {
     // Sort by severity by default
@@ -168,13 +154,12 @@ export default function EventsListPage() {
   };
 
   useEffect(() => {
-    getData();
+    if (isInitialMount.current) { // Run only on startup
+      loadEvents(selectedRoute);
 
-    return () => {
-      // Unmounting, set to empty list
-      setEvents([]);
-    };
-  }, []);
+      isInitialMount.current = false;
+    }
+  });
 
   useEffect(() => {
     if (!isInitialMount.current) { // Do not run on startup
@@ -221,25 +206,7 @@ export default function EventsListPage() {
       <Advisories />
         <div className="sort-and-filter">
           <div className="sort"></div>
-          {/* <Dropdown align="end">
-            <Dropdown.Toggle variant="outline-primary" id="filter-dropdown">
-              <FontAwesomeIcon icon={faFilter} />Filters
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="filters-dropdown">
-              {filterProps.map((fp) => (
-                <Form.Check
-                  disabled={fp.value == 'roadConditions'}
-                  id={fp.id}
-                  key={fp.id}
-                  label={
-                    <span>{fp.icon}{fp.label}</span>
-                  }
-                  value={fp.value}
-                  checked={eventCategoryFilter[fp.value]}
-                  onChange={eventCategoryFilterHandler}/>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown> */}
+
           <Filters
             toggleHandler={eventCategoryFilterHandler}
             disableFeatures={true}
