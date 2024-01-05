@@ -53,7 +53,7 @@ class Bulletin(Page, BaseModel):
     page_body = "Use this page for creating bulletins."
     teaser = models.CharField(max_length=250, blank=True)
     body = RichTextField()
-    image = models.ForeignKey(Image, on_delete=models.CASCADE)
+    image = models.ForeignKey(Image, on_delete=models.CASCADE, null=True, blank=False)
 
     def rendered_body(self):
         return wagtailcore_tags.richtext(self.body)

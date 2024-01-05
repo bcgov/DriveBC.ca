@@ -27,10 +27,9 @@ class Migration(migrations.Migration):
             model_name='bulletin',
             name='image',
             field=models.ForeignKey(
-                default=None,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 to='wagtailimages.image'
             ),
-            preserve_default=False,
         ),
     ]
