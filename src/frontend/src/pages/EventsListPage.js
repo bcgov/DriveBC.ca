@@ -1,8 +1,9 @@
 // React
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'
 import { updateEvents } from '../slices/eventsSlice';
+import { memoize } from 'proxy-memoize'
 
 // Third party packages
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,11 +33,11 @@ import '../Components/Filters.scss';
 export default function EventsListPage() {
   // Redux
   const dispatch = useDispatch();
-  const [ events, eventTimeStamp, selectedRoute ] = useSelector((state) => [
-    state.events.list,
-    state.events.routeTimeStamp,
-    state.routes.selectedRoute
-  ]);
+  const { events, eventTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({
+    events: state.events.list,
+    eventTimeStamp: state.events.routeTimeStamp,
+    selectedRoute: state.routes.selectedRoute
+  }))));
 
   const loadEvents = async (route) => {
     const newRouteTimestamp = route ? route.searchTimestamp : null;
@@ -156,21 +157,16 @@ export default function EventsListPage() {
   useEffect(() => {
     if (isInitialMount.current) { // Run only on startup
       loadEvents(selectedRoute);
-
       isInitialMount.current = false;
     }
   });
 
   useEffect(() => {
-    if (!isInitialMount.current) { // Do not run on startup
-      getDisplayedEvents(true);
-    }
+    getDisplayedEvents(true);
   }, [processedEvents]);
 
   useEffect(() => {
-    if (!isInitialMount.current) { // Do not run on startup
-      processEvents();
-    }
+    processEvents();
   }, [events, eventCategoryFilter, sortingColumns]);
 
   const eventCategoryFilterHandler = (targetCategory, check, lineToggle) => {

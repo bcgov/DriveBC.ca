@@ -1,6 +1,7 @@
 // React
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
+import { memoize } from 'proxy-memoize'
 
 // Components and functions
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
@@ -12,11 +13,11 @@ import Footer from '../Footer.js';
 export default function CamerasListPage() {
   // Redux
   const dispatch = useDispatch();
-  const [ cameras, camTimeStamp, selectedRoute ] = useSelector((state) => [
-    state.cameras.list,
-    state.cameras.routeTimeStamp,
-    state.routes.selectedRoute
-  ]);
+  const { cameras, camTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({
+    cameras: state.cameras.list,
+    camTimeStamp: state.cameras.routeTimeStamp,
+    selectedRoute: state.routes.selectedRoute
+  }))));
 
   // UseRef hooks
   const isInitialMount = useRef(true);
@@ -55,7 +56,7 @@ export default function CamerasListPage() {
   };
 
   useEffect(() => {
-    if (isInitialMount.current) { // Only run once
+    if (isInitialMount.current) { // Run only on startup
       getCamerasData();
 
       const scrollPosition = sessionStorage.getItem('scrollPosition');
