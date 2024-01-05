@@ -1,6 +1,8 @@
 // React
-import React, { useContext, useRef, useEffect, useState } from 'react';
+import React, { useContext, useRef, useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
+import { memoize } from 'proxy-memoize'
+
 import { updateMapState } from '../slices/mapSlice';
 import { updateCameras } from '../slices/camerasSlice';
 import { updateEvents } from '../slices/eventsSlice';
@@ -68,21 +70,22 @@ export default function MapWrapper({
 }) {
   // Redux
   const dispatch = useDispatch();
-  const [ cameras, camTimeStamp, events, eventTimeStamp, searchLocationFrom, selectedRoute, zoom, pan ] = useSelector((state) => [
-    state.cameras.list,
-    state.cameras.routeTimeStamp,
-    state.events.list,
-    state.events.routeTimeStamp,
-    state.routes.searchLocationFrom,
-    state.routes.selectedRoute,
-    state.map.zoom,
-    state.map.pan
-  ]);
+  const { cameras, camTimeStamp, events, eventTimeStamp, searchLocationFrom, selectedRoute, zoom, pan } = useSelector(useCallback(memoize(state => ({
+    cameras: state.cameras.list,
+    camTimeStamp: state.cameras.routeTimeStamp,
+    events: state.events.list,
+    eventTimeStamp: state.events.routeTimeStamp,
+    searchLocationFrom: state.routes.searchLocationFrom,
+    selectedRoute: state.routes.selectedRoute,
+    zoom: state.map.zoom,
+    pan: state.map.pan
+  }))));
 
   // Context
   const { mapContext, setMapContext } = useContext(MapContext);
 
   // Refs
+  const isInitialMount = useRef(true);
   const mapElement = useRef();
   const mapRef = useRef();
   const popup = useRef();
@@ -394,7 +397,9 @@ export default function MapWrapper({
       // if there is no parameter for shifting the view, pan to my location
       toggleMyLocation();
     }
-  }, []);
+
+    loadData();
+  });
 
   useEffect(() => {
     if (searchLocationFrom && searchLocationFrom.length) {
@@ -412,29 +417,17 @@ export default function MapWrapper({
   }, [searchLocationFrom]);
 
   useEffect(() => {
+    if (isInitialMount.current) { // Do nothing on first load
+      isInitialMount.current = false;
+      return;
+    }
+
+    // Remove existing layer and reload data on route change
     if (mapLayers.current['routeLayer']) {
       mapRef.current.removeLayer(mapLayers.current['routeLayer']);
     }
 
-    if (selectedRoute && selectedRoute.routeFound) {
-      const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
-      mapLayers.current['routeLayer'] = routeLayer;
-      mapRef.current.addLayer(routeLayer);
-
-      // Clear and update data
-      loadCameras(selectedRoute);
-      loadEvents(selectedRoute);
-      loadFerries();
-
-      // Zoom/pan to route
-      fitMap(selectedRoute.route, mapView);
-
-    } else {
-      // Clear and update data
-      loadCameras();
-      loadEvents(null);
-      loadFerries();
-    }
+    loadData();
   }, [selectedRoute]);
 
   useEffect(() => {
@@ -506,6 +499,28 @@ export default function MapWrapper({
 
     mapRef.current.addLayer(mapLayers.current['inlandFerries']);
     mapLayers.current['inlandFerries'].setZIndex(8);
+  }
+
+  const loadData = () => {
+    if (selectedRoute && selectedRoute.routeFound) {
+      const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
+      mapLayers.current['routeLayer'] = routeLayer;
+      mapRef.current.addLayer(routeLayer);
+
+      // Clear and update data
+      loadCameras(selectedRoute);
+      loadEvents(selectedRoute);
+      loadFerries();
+
+      // Zoom/pan to route
+      fitMap(selectedRoute.route, mapView);
+
+    } else {
+      // Clear and update data
+      loadCameras();
+      loadEvents(null);
+      loadFerries();
+    }
   }
 
   function closePopup() {

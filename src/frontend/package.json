@@ -24,6 +24,7 @@
     "maplibre-gl": "^2.4.0",
     "ol": "^7.3.0",
     "ol-mapbox-style": "^10.5.0",
+    "proxy-memoize": "^2.0.4",
     "rdndmb-html5-to-touch": "^7.1.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
