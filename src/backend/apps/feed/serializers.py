@@ -1,10 +1,5 @@
 from datetime import datetime
-import pytz
 
-from rest_framework import serializers
-
-from apps.event.enums import EVENT_STATUS
-from apps.feed.constants import DIRECTIONS
 from apps.feed.fields import (
     DriveBCDateField,
     DriveBCField,
@@ -19,6 +14,7 @@ from apps.feed.fields import (
     WebcamRegionField,
     WebcamRegionGroupField,
 )
+from rest_framework import serializers
 
 
 # Webcam
@@ -90,10 +86,12 @@ class CarsClosureEventSerializer(serializers.Serializer):
 
         data["closed"] = False
         for detail in data.get("details", []):
-            if data["closed"]: break
+            if data["closed"]:
+                break
 
             for description in detail.get("descriptions", []):
-                if data["closed"]: break
+                if data["closed"]:
+                    break
 
                 kind = description.get("kind", {})
                 data["closed"] = (kind.get("category") == "traffic_pattern" and
@@ -108,8 +106,11 @@ class EventFeedSerializer(serializers.Serializer):
     # Description
     description = serializers.CharField(max_length=1024)
     event_type = serializers.CharField(max_length=32)
-    event_subtypes = DriveBCSingleListField('event_sub_type',
-                                            source="*", required=False)
+    event_subtypes = DriveBCSingleListField(
+        'event_sub_type',
+        source="*",
+        required=False
+    )
     # event_sub_type = serializers.CharField(max_length=32, required=False)
 
     # General status
@@ -130,7 +131,6 @@ class EventFeedSerializer(serializers.Serializer):
     schedule = serializers.JSONField()
 
     def to_internal_value(self, data):
-
         internal_data = super().to_internal_value(data)
         schedule = internal_data.get('schedule', {})
         if 'intervals' in schedule:

@@ -1,5 +1,10 @@
 // React
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
+
+// Redux
+import { useSelector, useDispatch } from 'react-redux'
+import { memoize } from 'proxy-memoize'
+import { updateAdvisories } from '../slices/cmsSlice';
 
 // Third party packages
 import Container from 'react-bootstrap/Container';
@@ -14,16 +19,28 @@ import PageHeader from '../PageHeader';
 import './AdvisoriesListPage.scss';
 
 export default function AdvisoriesListPage() {
-  const [advisories, setAdvisories] = useState(false);
+  // Redux
+  const dispatch = useDispatch();
+  const { advisories } = useSelector(useCallback(memoize(state => ({
+    advisories: state.cms.advisories,
+  }))));
 
-  async function loadAdvisories() {
-    const advisoriesData = await getAdvisories();
-    setAdvisories(advisoriesData);
+  // Refs
+  const isInitialMount = useRef(true);
+
+  // Data loading
+  const loadAdvisories = async () => {
+    if (!advisories) {
+      dispatch(updateAdvisories(await getAdvisories()));
+    }
   }
 
   useEffect(() => {
-    loadAdvisories();
-  }, []);
+    if (isInitialMount.current) { // Only run on initial load
+      loadAdvisories();
+      isInitialMount.current = false;
+    }
+  });
 
   return (
     <div className='advisories-page'>

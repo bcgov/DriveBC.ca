@@ -1,17 +1,19 @@
 // React
 import React, { useContext, useRef, useEffect, useState, useCallback } from 'react';
+
+// Navigation
+import { useNavigate } from 'react-router-dom';
+
+// Redux
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
-
 import { updateMapState } from '../slices/mapSlice';
 import { updateCameras } from '../slices/camerasSlice';
 import { updateEvents } from '../slices/eventsSlice';
-import { useNavigate } from 'react-router-dom';
+import { updateFerries } from '../slices/cmsSlice';
 
-// Third party packages
+// External Components
 import Button from 'react-bootstrap/Button';
-
-// FA
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlus,
@@ -70,13 +72,27 @@ export default function MapWrapper({
 }) {
   // Redux
   const dispatch = useDispatch();
-  const { cameras, camTimeStamp, events, eventTimeStamp, searchLocationFrom, selectedRoute, zoom, pan } = useSelector(useCallback(memoize(state => ({
+  const {
+    cameras, camTimeStamp, // Cameras
+    events, eventTimeStamp, // Events
+    ferries, ferriesTimeStamp, // CMS
+    searchLocationFrom, selectedRoute, // Routing
+    zoom, pan, // Map
+
+  } = useSelector(useCallback(memoize(state => ({
+    // Cameras
     cameras: state.cameras.list,
     camTimeStamp: state.cameras.routeTimeStamp,
+    // Events
     events: state.events.list,
     eventTimeStamp: state.events.routeTimeStamp,
+    // CMS
+    ferries: state.cms.ferries.list,
+    ferriesTimeStamp: state.cms.ferries.routeTimeStamp,
+    // Routing
     searchLocationFrom: state.routes.searchLocationFrom,
     selectedRoute: state.routes.selectedRoute,
+    // Map
     zoom: state.map.zoom,
     pan: state.map.pan
   }))));
@@ -484,21 +500,36 @@ export default function MapWrapper({
     }
   }
 
-  const loadFerries = async () => {
-    const ferriesData = await getFerries();
-
+  useEffect(() => {
+    // Remove layer if it already exists
     if (mapLayers.current['inlandFerries']) {
       mapRef.current.removeLayer(mapLayers.current['inlandFerries']);
     }
 
-    mapLayers.current['inlandFerries'] = getFerriesLayer(
-      ferriesData,
-      mapRef.current.getView().getProjection().getCode(),
-      mapContext
-    )
+    // Add layer if array exists
+    if (ferries) {
+      // Generate and add layer
+      mapLayers.current['inlandFerries'] = getFerriesLayer(
+        ferries,
+        mapRef.current.getView().getProjection().getCode(),
+        mapContext
+      )
 
-    mapRef.current.addLayer(mapLayers.current['inlandFerries']);
-    mapLayers.current['inlandFerries'].setZIndex(8);
+      mapRef.current.addLayer(mapLayers.current['inlandFerries']);
+      mapLayers.current['inlandFerries'].setZIndex(8);
+    }
+  }, [ferries]);
+
+  const loadFerries = async (route) => {
+    const newRouteTimestamp = route ? route.searchTimestamp : null;
+
+    // Fetch data if it doesn't already exist or route was updated
+    if (!ferries || (ferriesTimeStamp != newRouteTimestamp)) {
+      dispatch(updateFerries({
+        list: await getFerries(route ? route.points : null),
+        routeTimeStamp: route ? route.searchTimestamp : null,
+      }));
+    }
   }
 
   const loadData = () => {
