@@ -1,6 +1,8 @@
 // React
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
+
+// Navigation
+import { useNavigate } from 'react-router-dom';
 
 // Components and functions
 import { stripRichText } from '../data/helper';
@@ -45,7 +47,7 @@ export default function Advisories(props) {
                 }
               </div>
             }
-            
+
             <div className="timestamp-container timestamp-container--mobile">
               <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
               <FriendlyTime date={advisory.latest_revision_created_at} />

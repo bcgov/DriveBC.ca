@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import camerasReducer from './slices/camerasSlice';
+import cmsReducer from './slices/cmsSlice';
 import eventsReducer from './slices/eventsSlice';
 import routesReducer from './slices/routesSlice';
 import mapReducer from './slices/mapSlice';
@@ -39,6 +40,7 @@ const getConfig = (key, lifeInSeconds) => {
 const store = configureStore({
   reducer: {
     cameras: persistReducer(getConfig('cameras', 60), camerasReducer),
+    cms: persistReducer(getConfig('cms', 60), cmsReducer),
     events: persistReducer(getConfig('events', 60), eventsReducer),
     routes: persistReducer(getConfig('routes'), routesReducer),
     map: persistReducer(getConfig('map'), mapReducer),
