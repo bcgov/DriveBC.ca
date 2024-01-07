@@ -41,6 +41,7 @@ import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
 import CurrentCameraIcon from './CurrentCameraIcon';
 import Filters from './Filters.js';
 import RouteSearch from './map/RouteSearch.js';
+import { setIsEventClicked } from '../slices/routesSlice.js';
 
 // OpenLayers
 import { applyStyle } from 'ol-mapbox-style';
@@ -63,6 +64,7 @@ export default function MapWrapper({
   isPreview,
   cameraHandler,
   mapViewRoute,
+  event,
 }) {
   // Redux
   const dispatch = useDispatch();
@@ -73,6 +75,7 @@ export default function MapWrapper({
     state.map.pan
   ]);
 
+  const isEventClicked = useSelector(state => state.routes.isEventClicked); 
   // Context
   const { mapContext, setMapContext } = useContext(MapContext);
 
@@ -400,9 +403,24 @@ export default function MapWrapper({
       if (locationPinRef.current) {
         mapRef.current.removeOverlay(locationPinRef.current);
       }
-      centerMap(searchLocationFrom[0].geometry.coordinates);
+      // centerMap(searchLocationFrom[0].geometry.coordinates);
+      let focusedCoordinates = undefined;
+      if (event === null) {
+        dispatch(setIsEventClicked(false));
+        focusedCoordinates = searchLocationFrom[0].geometry.coordinates;
+      } else {
+        dispatch(setIsEventClicked(true));
+        if(event.location !== undefined){
+          focusedCoordinates = (event.location.type === 'Point')? event.location.coordinates : event.location.coordinates[0];
+        }
+        else{
+          dispatch(setIsEventClicked(false));
+          focusedCoordinates = searchLocationFrom[0].geometry.coordinates;
+        }
+      }
+      centerMap(focusedCoordinates);
       setLocationPin(
-        searchLocationFrom[0].geometry.coordinates,
+        focusedCoordinates,
         blueLocationMarkup,
         mapRef,
         locationPinRef
@@ -411,25 +429,32 @@ export default function MapWrapper({
   }, [searchLocationFrom]);
 
   useEffect(() => {
-    if (mapLayers.current['routeLayer']) {
-      mapRef.current.removeLayer(mapLayers.current['routeLayer']);
+    if(isEventClicked){
+      let focusedCoordinates = undefined;
+      focusedCoordinates = (event.location.type === 'Point')? event.location.coordinates : event.location.coordinates[0];
+      centerMap(focusedCoordinates);
     }
-
-    if (selectedRoute && selectedRoute.routeFound) {
-      const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
-      mapLayers.current['routeLayer'] = routeLayer;
-      mapRef.current.addLayer(routeLayer);
-
-      loadEvents(selectedRoute.points);
-      loadCameras(selectedRoute.points);
-      loadFerries();
-
-      fitMap(selectedRoute.route, mapView);
-
-    } else {
-      loadEvents();
-      loadCameras();
-      loadFerries();
+    else {
+      if (mapLayers.current['routeLayer']) {
+        mapRef.current.removeLayer(mapLayers.current['routeLayer']);
+      }
+  
+      if (selectedRoute && selectedRoute.routeFound) {
+        const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
+        mapLayers.current['routeLayer'] = routeLayer;
+        mapRef.current.addLayer(routeLayer);
+  
+        loadEvents(selectedRoute.points);
+        loadCameras(selectedRoute.points);
+        loadFerries();
+  
+        fitMap(selectedRoute.route, mapView);
+  
+      } else {
+        loadEvents();
+        loadCameras();
+        loadFerries();
+      }
     }
   }, [selectedRoute]);
 
@@ -476,6 +501,7 @@ export default function MapWrapper({
 
   function closePopup() {
     popup.current.setPosition(undefined);
+    if (event !== null) return;
 
     // check for active camera icons
     if (clickedCameraRef.current) {

@@ -18,7 +18,7 @@ export default function MapPage() {
   return (
     <DndProvider options={HTML5toTouch}>
       <div className="map-wrap">
-        <Map camera={state} />
+      <Map camera={state} event={state}/>
       </div>
     </DndProvider>
   );
