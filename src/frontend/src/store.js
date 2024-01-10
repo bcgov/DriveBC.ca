@@ -18,30 +18,20 @@ import {
 } from 'redux-persist';
 
 import localforage from 'localforage';
-import expireReducer from 'redux-persist-expire';
+import storage from 'redux-persist/lib/storage';
 
-const getConfig = (key, lifeInSeconds) => {
-  const config = {
+const getConfig = (key) => {
+  return {
     key: key,
     storage: localforage,
-  };
-
-  if (lifeInSeconds) {
-    config.transforms = [
-      expireReducer('preference', {
-       expireSeconds: lifeInSeconds,
-      })
-    ];
   }
-
-  return config;
 }
 
 const store = configureStore({
   reducer: {
-    cameras: persistReducer(getConfig('cameras', 60), camerasReducer),
-    cms: persistReducer(getConfig('cms', 60), cmsReducer),
-    events: persistReducer(getConfig('events', 60), eventsReducer),
+    cameras: persistReducer(getConfig('cameras'), camerasReducer),
+    cms: persistReducer(getConfig('cms'), cmsReducer),
+    events: persistReducer(getConfig('events'), eventsReducer),
     routes: persistReducer(getConfig('routes'), routesReducer),
     map: persistReducer(getConfig('map'), mapReducer),
   },
