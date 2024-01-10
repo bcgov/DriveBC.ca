@@ -30,9 +30,9 @@ export default function BulletinsListPage() {
 
   // Data loading
   const loadBulletins = async () => {
-    if (!bulletins) {
+//    if (!bulletins) {
       dispatch(updateBulletins(await getBulletins()));
-    }
+//    }
   }
 
   useEffect(() => {

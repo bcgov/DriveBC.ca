@@ -43,12 +43,12 @@ export default function EventsListPage() {
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
-    if (!events || (eventTimeStamp != newRouteTimestamp)) {
+//    if (!events || (eventTimeStamp != newRouteTimestamp)) {
       dispatch(updateEvents({
         list: await getEvents(route ? route.points : null),
         routeTimeStamp: route ? route.searchTimestamp : null,
       }));
-    }
+//    }
   }
 
   // Context

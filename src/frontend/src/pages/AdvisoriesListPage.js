@@ -30,9 +30,9 @@ export default function AdvisoriesListPage() {
 
   // Data loading
   const loadAdvisories = async () => {
-    if (!advisories) {
+//    if (!advisories) {
       dispatch(updateAdvisories(await getAdvisories()));
-    }
+//    }
   }
 
   useEffect(() => {

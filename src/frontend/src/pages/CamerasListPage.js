@@ -31,12 +31,12 @@ export default function CamerasListPage() {
 
     const newRouteTimestamp = selectedRoute ? selectedRoute.searchTimestamp : null;
 
-    if (!cameras || (camTimeStamp != newRouteTimestamp)) {
+//    if (!cameras || (camTimeStamp != newRouteTimestamp)) {
       dispatch(updateCameras({
         list: await getCameras(selectedRoute ? selectedRoute.points : null),
         routeTimeStamp: selectedRoute ? selectedRoute.searchTimestamp : null,
       }));
-    }
+//    }
 
     // Deep clone and add group reference to each cam
     const clonedCameras = JSON.parse(JSON.stringify(cameras));

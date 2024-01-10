@@ -476,12 +476,12 @@ export default function MapWrapper({
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
-    if (!cameras || (camTimeStamp != newRouteTimestamp)) {
+//    if (!cameras || (camTimeStamp != newRouteTimestamp)) {
       dispatch(updateCameras({
         list: await getCameras(route ? route.points : null),
         routeTimeStamp: route ? route.searchTimestamp : null,
       }));
-    }
+//    }
   }
 
   useEffect(() => {
@@ -492,12 +492,12 @@ export default function MapWrapper({
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
-    if (!events || (eventTimeStamp != newRouteTimestamp)) {
+//    if (!events || (eventTimeStamp != newRouteTimestamp)) {
       dispatch(updateEvents({
         list: await getEvents(route ? route.points : null),
         routeTimeStamp: route ? route.searchTimestamp : null,
       }));
-    }
+//    }
   }
 
   useEffect(() => {
@@ -524,12 +524,12 @@ export default function MapWrapper({
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
-    if (!ferries || (ferriesTimeStamp != newRouteTimestamp)) {
+//    if (!ferries || (ferriesTimeStamp != newRouteTimestamp)) {
       dispatch(updateFerries({
         list: await getFerries(route ? route.points : null),
         routeTimeStamp: route ? route.searchTimestamp : null,
       }));
-    }
+//    }
   }
 
   const loadData = () => {
