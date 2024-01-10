@@ -6,6 +6,9 @@
   left: 2rem;
   width: calc(100% - 32px - 6rem);
 
+  @media (max-width: 768px) {
+    width: calc(100% - 32px - 2rem);
+  }
 
   @media (min-width: 992px) {
     top: 2rem;

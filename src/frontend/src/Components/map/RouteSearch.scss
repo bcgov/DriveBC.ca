@@ -2,6 +2,10 @@
   background: white;
   padding: 2rem 2rem 0;
 
+  @media (max-width: 768px) {
+    padding: 5rem 2rem 0;
+  }
+
   .typeahead-container {
     width: 100%;
 
