@@ -77,7 +77,7 @@ button.btn.open-filters {
       & + .filter-item {
         margin-top: 8px;
       }
-
+      
       &--closures {
         svg {
           font-size: 1.25rem;
@@ -85,6 +85,9 @@ button.btn.open-filters {
       }
 
       label {
+        display: flex;
+        align-items: center;
+
         &:hover {
           cursor: pointer;
           text-decoration: underline;
@@ -156,7 +159,9 @@ button.btn.open-filters {
       }
 
       input {
-        display: none;
+        position: absolute;
+        z-index: -1;
+        margin-left: 10px;
       }
 
       .tooltip-info {
