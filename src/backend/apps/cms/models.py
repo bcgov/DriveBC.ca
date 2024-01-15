@@ -1,3 +1,4 @@
+import apps.cms.helptext as HelpText
 from apps.shared.enums import CacheKey
 from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
@@ -39,10 +40,14 @@ class Advisory(Page, BaseModel):
 
     # Editor panels configuration
     content_panels = [
-        FieldPanel("title"),
-        FieldPanel("teaser"),
-        FieldPanel("geometry", widget=DriveBCMapWidget),
-        FieldPanel("body"),
+        FieldPanel("title", help_text=HelpText.GENERIC_TITLE),
+        FieldPanel("teaser", help_text=HelpText.GENERIC_TEASER),
+        FieldPanel(
+            "geometry",
+            widget=DriveBCMapWidget,
+            help_text=HelpText.ADVISORY_AREA
+        ),
+        FieldPanel("body", help_text=HelpText.GENERIC_BODY),
     ]
     promote_panels = []
 
@@ -54,6 +59,7 @@ class Bulletin(Page, BaseModel):
     teaser = models.CharField(max_length=250, blank=True)
     body = RichTextField()
     image = models.ForeignKey(Image, on_delete=models.CASCADE, null=True, blank=False)
+    image_alt_text = models.CharField(max_length=125, default='', blank=False)
 
     def rendered_body(self):
         return wagtailcore_tags.richtext(self.body)
@@ -68,10 +74,11 @@ class Bulletin(Page, BaseModel):
 
     # Editor panels configuration
     content_panels = [
-        FieldPanel("title"),
-        FieldPanel("teaser"),
-        FieldPanel("image"),
-        FieldPanel("body"),
+        FieldPanel("title", help_text=HelpText.GENERIC_TITLE),
+        FieldPanel("teaser", help_text=HelpText.GENERIC_TEASER),
+        FieldPanel("image", help_text=HelpText.BULLETIN_IMAGE),
+        FieldPanel("image_alt_text", help_text=HelpText.BULLETIN_IMAGE_ALT_TEXT),
+        FieldPanel("body", help_text=HelpText.GENERIC_BODY),
     ]
     promote_panels = []
 

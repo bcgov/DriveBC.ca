@@ -48,7 +48,7 @@ export default function Bulletins(props) {
             </div>
             <div className='bulletin-li-thumbnail-container'>
               <div className={bulletin.image_url ? 'bulletin-li-thumbnail' : 'bulletin-li-thumbnail-default'}>
-                <img className='thumbnail-logo' src={bulletin.image_url ? bulletin.image_url : logo} alt={bulletin.title} />
+                <img className='thumbnail-logo' src={bulletin.image_url ? bulletin.image_url : logo} alt={bulletin.image_alt_text} />
               </div>
             </div>
           </li>
