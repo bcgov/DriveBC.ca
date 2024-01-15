@@ -24,8 +24,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 // Components and functions
+import CamPopup from './map/camPopup.js'
 import { getCamerasLayer } from './map/layers/camerasLayer.js';
-import { getCamPopup, getEventPopup, getFerryPopup } from './map/mapPopup.js'
+import { getEventPopup, getFerryPopup } from './map/mapPopup.js'
 import { getEvents } from './data/events.js';
 import { loadEventsLayers } from './map/layers/eventsLayer.js';
 import {
@@ -698,7 +699,12 @@ export default function MapWrapper({
         />
         <div id="popup-content" className="ol-popup-content">
           {clickedCamera &&
-            getCamPopup(clickedCamera, updateClickedCamera, navigate, cameraPopupRef, isPreview)
+            <CamPopup
+              camFeature={clickedCamera}
+              setClickedCamera={updateClickedCamera}
+              navigate={navigate}
+              cameraPopupRef={cameraPopupRef}
+              isPreview={isPreview} />
           }
 
           {clickedEvent &&
