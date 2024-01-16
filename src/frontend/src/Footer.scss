@@ -4,6 +4,10 @@
   margin-top: 3rem;
   background: $Grey10;
 
+  &.replayActive {
+    margin-top: 9rem;
+  }
+
   .landAcknowledgement {
     background-color: rgb(41, 41, 41);
     line-height: 21px;
@@ -129,7 +133,7 @@
         @media (min-width: 992px) {
           margin-bottom: 0;
         }
-        
+
         .footer-link {
           background: rgb(250, 249, 248);
           border: 1px solid rgb(59, 58, 57);

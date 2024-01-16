@@ -48,9 +48,12 @@ export default function CameraDetailsPage() {
   // Context and router data
   const params = useParams();
 
+  // Refs
+  const isInitialMount = useRef(true);
+
   // State hooks
   const [camera, setCamera] = useState(null);
-  const [replay, setReplay] = useState(true);
+  const [replay, setReplay] = useState(false);
   const [replayImages, setReplayImages] = useState([]);
   const [nextUpdate, setNextUpdate] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
@@ -58,9 +61,6 @@ export default function CameraDetailsPage() {
   const [hasImageEnded, setHasImageEnded] = useState(false);
 
   const navigate = useNavigate();
-
-  const cameraTab = <CurrentCameraIcon variant="outline" />;
-  const nearby = <FontAwesomeIcon icon={faFlag} />;
 
   async function initCamera() {
     const allCameras = await getCameras();
@@ -88,9 +88,10 @@ export default function CameraDetailsPage() {
 
     // Last update time
     setLastUpdate(camera.last_update_modified);
+  }
 
-    // Replay images
-    const replayImageList = await getWebcamReplay(camera);
+  const loadReplay = async (cam) => {
+    const replayImageList = await getWebcamReplay(cam);
     const replayImages = replayImageList.map((url) => {
       return {original: `${window.REPLAY_THE_DAY}${camera.id}/${url}.jpg`};
     });
@@ -98,13 +99,14 @@ export default function CameraDetailsPage() {
   }
 
   useEffect(() => {
-    initCamera();
+    if (isInitialMount.current) {
+      initCamera();
+      isInitialMount.current = false;
 
-    return () => {
-      // unmounting, so revert camera to null
-      setCamera(null);
-    };
-  }, []);
+    } else {
+      loadReplay(camera);
+    }
+  }, [camera]);
 
   const toggleReplay = () => {
     setReplay(!replay);
@@ -304,14 +306,18 @@ export default function CameraDetailsPage() {
               <Tabs
                 id="camera-details"
                 activeKey={activeTab}
-                onSelect={ (selectedTab) => setActiveTab(selectedTab) }
-              >
-                <Tab eventKey="webcam" title={<span>{cameraTab} Current camera</span>}>
+                onSelect={ (selectedTab) => setActiveTab(selectedTab) }>
 
+                <Tab eventKey="webcam" title={
+                  <span>
+                    <CurrentCameraIcon variant="outline" /> Current camera
+                  </span>
+                }>
                   <div className="camera-update camera-update--mobile">
                     <p className="next-update bold">
                       Next update attempt: {nextUpdate}
                     </p>
+
                     <p>
                       Camera image updates approximately every{' '}
                       {Math.ceil(camera.update_period_mean / 60)} minutes.
@@ -332,7 +338,10 @@ export default function CameraDetailsPage() {
                     </div>
 
                     <div className="replay-div">
-                      <FontAwesomeIcon icon={faClockRotateLeft} />
+                      {shouldRenderReplay() &&
+                        <FontAwesomeIcon icon={faClockRotateLeft} />
+                      }
+
                       {shouldRenderReplay() &&
                         <Form className="replay-the-day">
                           <Form.Check
@@ -348,25 +357,25 @@ export default function CameraDetailsPage() {
                   <div className="image-wrap">
                     {camera.is_on && (
                       <div className="card-img-box">
-                        {replay ? (
-                        <img src={camera.links.imageSource} alt="camera"/>
-                      ) : (
-                        <ImageGallery
-                          ref={refImg}
-                          slideInterval={300}
-                          items={replayImages}
-                          slideDuration={0}
-                          showFullscreenButton={false}
-                          alt="replay"
-                          disableKeyDown={true}
-                          renderCustomControls={customControls}
-                          renderLeftNav={customLeftNav}
-                          renderPlayPauseButton={customPlayPause}
-                          renderRightNav={customRightNav}
-                          onSlide={(index) => handleImageSlide(index)}
-                          onPlay={play}
-                          infinite={false} />
-                      )}
+                        {!replay ?
+                          <img src={camera.links.imageSource} alt="camera"/> :
+
+                          <ImageGallery
+                            ref={refImg}
+                            slideInterval={300}
+                            items={replayImages}
+                            slideDuration={0}
+                            showFullscreenButton={false}
+                            alt="replay"
+                            disableKeyDown={true}
+                            renderCustomControls={customControls}
+                            renderLeftNav={customLeftNav}
+                            renderPlayPauseButton={customPlayPause}
+                            renderRightNav={customRightNav}
+                            onSlide={(index) => handleImageSlide(index)}
+                            onPlay={play}
+                            infinite={false} />
+                        }
                       </div>
                     )}
 
@@ -376,7 +385,7 @@ export default function CameraDetailsPage() {
                       </div>
                     )}
 
-                    {replay && (
+                    {!replay && (
                       <div className="timestamp">
                         <p className="driveBC">Drive<span>BC</span></p>
                         <FriendlyTime date={lastUpdate} />
@@ -384,7 +393,12 @@ export default function CameraDetailsPage() {
                     )}
                   </div>
                 </Tab>
-                <Tab eventKey="nearby" title={<span>{nearby}Nearby</span>}>
+
+                <Tab eventKey="nearby" title={
+                  <span>
+                    <FontAwesomeIcon icon={faFlag} />Nearby
+                  </span>
+                }>
                   <div className="actions-bar actions-bar--nearby">
                   </div>
                   <div className="map-wrap map-context-wrap">
@@ -399,7 +413,7 @@ export default function CameraDetailsPage() {
         )}
       </div>
       { (activeTab === 'webcam') &&
-        <Footer />
+        <Footer replay={replay} />
       }
     </div>
   );
