@@ -701,9 +701,6 @@ export default function MapWrapper({
           {clickedCamera &&
             <CamPopup
               camFeature={clickedCamera}
-              setClickedCamera={updateClickedCamera}
-              navigate={navigate}
-              cameraPopupRef={cameraPopupRef}
               isPreview={isPreview} />
           }
 
