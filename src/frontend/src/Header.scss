@@ -42,19 +42,23 @@
 		
 
 		&:not(.collapsed) {
+			.line {
+				margin-left: 6px;
+			}
+
 			.line1 {
 			display: block;
 			transform: rotate(45deg);
-		}
-	
-		.line2 {
-			opacity: 0;
-		}
-	
-		.line3 {
-			display: block;
-			transform: rotate(-45deg);
-		}
+			}
+		
+			.line2 {
+				opacity: 0;
+			}
+		
+			.line3 {
+				display: block;
+				transform: rotate(-45deg);
+			}
 		}
 
 		&:focus {
