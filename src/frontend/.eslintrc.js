@@ -43,5 +43,6 @@ module.exports = {
     }],
     "react/prop-types": "off",
     'camelcase': 'off',
+    'no-unused-vars': 'off',
   },
 };

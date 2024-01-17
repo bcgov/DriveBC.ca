@@ -1,7 +1,12 @@
 // React
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
-// Third party packages
+// Redux
+import { useSelector, useDispatch } from 'react-redux'
+import { memoize } from 'proxy-memoize'
+import { updateBulletins } from '../slices/cmsSlice';
+
+// External Components
 import Container from 'react-bootstrap/Container';
 
 // Styling
@@ -13,18 +18,29 @@ import BulletinsList from '../Components/bulletins/BulletinsList';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 
-
 export default function BulletinsListPage() {
-  const [bulletins, setBulletins] = useState(false);
+  // Redux
+  const dispatch = useDispatch();
+  const { bulletins } = useSelector(useCallback(memoize(state => ({
+    bulletins: state.cms.bulletins,
+  }))));
 
-  async function loadBulletins() {
-    const bulletinsData = await getBulletins();
-    setBulletins(bulletinsData);
+  // Refs
+  const isInitialMount = useRef(true);
+
+  // Data loading
+  const loadBulletins = async () => {
+//    if (!bulletins) {
+      dispatch(updateBulletins(await getBulletins()));
+//    }
   }
 
   useEffect(() => {
-    loadBulletins();
-  }, []);
+    if (isInitialMount.current) { // Only run on initial load
+      loadBulletins();
+      isInitialMount.current = false;
+    }
+  });
 
   return (
     <div className='bulletins-page'>
@@ -32,9 +48,11 @@ export default function BulletinsListPage() {
         title='Bulletins'
         description='Find information regarding seasonal safety campaigns, and DriveBC related updates.'>
       </PageHeader>
+
       <Container>
         <BulletinsList bulletins={bulletins} />
       </Container>
+
       <Footer />
     </div>
   );

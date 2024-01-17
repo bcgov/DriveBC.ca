@@ -1,6 +1,6 @@
 import { get } from './helper.js';
 
-export function getWebcams(routePoints, url = null) {
+export function getCameras(routePoints, url = null) {
   const payload = routePoints ? { route: routePoints } : {};
 
   return get(url ? url : `${window.API_HOST}/api/webcams/`, payload)
@@ -29,7 +29,7 @@ export function getCameraGroupMap(cameras) {
   return cameraMap;
 }
 
-export function groupCameras(cameras) {
+export function addCameraGroups(cameras) {
   const cameraMap = getCameraGroupMap(cameras);
 
   // Output list with one camera from each group
@@ -41,3 +41,5 @@ export function groupCameras(cameras) {
 
   return res;
 }
+
+export const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});

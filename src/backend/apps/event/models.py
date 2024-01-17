@@ -8,7 +8,7 @@ class Event(BaseModel):
     # Description
     description = models.CharField(max_length=1024)
     event_type = models.CharField(max_length=32)
-    event_sub_type = models.CharField(max_length=32, blank=True)
+    event_sub_type = models.CharField(max_length=32, blank=True, default='')
 
     # General status
     status = models.CharField(max_length=32)

@@ -1,7 +1,12 @@
 // React
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
-// Third Party packages
+// Redux
+import { useSelector, useDispatch } from 'react-redux'
+import { memoize } from 'proxy-memoize'
+import { updateAdvisories } from '../../slices/cmsSlice';
+
+// External Components
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTriangleExclamation
@@ -14,18 +19,29 @@ import AdvisoriesList from './AdvisoriesList';
 // Styling
 import './Advisories.scss';
 
-
 export default function Advisories() {
-  const [advisories, setAdvisories] = useState(false);
+  // Redux
+  const dispatch = useDispatch();
+  const { advisories } = useSelector(useCallback(memoize(state => ({
+    advisories: state.cms.advisories,
+  }))));
 
-  async function loadAdvisories() {
-    const advisoriesData = await getAdvisories();
-    setAdvisories(advisoriesData);
+  // Refs
+  const isInitialMount = useRef(true);
+
+  // Data loading
+  const loadAdvisories = async () => {
+    if (!advisories) {
+      dispatch(updateAdvisories(await getAdvisories()));
+    }
   }
 
   useEffect(() => {
-    loadAdvisories();
-  }, []);
+    if (isInitialMount.current) { // Only run on initial load
+      loadAdvisories();
+      isInitialMount.current = false;
+    }
+  });
 
   return (
     <div className="advisories">

@@ -20,7 +20,7 @@
     .camera-name {
       font-size: 1.125rem;
     }
-    
+
     .card-img-box {
       position: relative;
       overflow: hidden;
@@ -52,7 +52,7 @@
           animation: bounce 0.7s ease;
           animation-fill-mode:forwards;
         }
-        
+
         @keyframes bounce {
             0% { transform:translateY(-200%); }
             40% { transform:translateY(20%); }
@@ -99,7 +99,7 @@
         }
       }
     }
-    
+
     .label {
       margin-bottom: 0.5em;
     }
@@ -116,7 +116,7 @@
         font-size: 0.625rem;
         margin-bottom: 0;
       }
-      
+
       .driveBC {
         font-family: serif;
         span {
@@ -148,7 +148,7 @@
           left: 100%;
           transform: translate(0, 25%);
           margin-left: 0;
-    
+
           @media (min-width: 576px) {
             border-right: 7px solid transparent;
             border-left: 7px solid transparent;
@@ -189,13 +189,13 @@
       margin-left: 8px;
     }
   }
-  
+
   &:hover {
     cursor: pointer; //need to change component to proper link later
     outline: 2px solid $Type-Link;
 
     .card-body {
-      
+
       .card-img {
         transform: scale(1.25);
       }
@@ -212,7 +212,7 @@
         top: 10px;
         background-color: $Error;
         transform:translateY(0%);
-  
+
         p {
           color: $White;
         }

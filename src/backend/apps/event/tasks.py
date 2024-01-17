@@ -31,7 +31,13 @@ def build_data_diff(current_obj, new_obj_data):
         current_field_data = getattr(current_obj, field)
         new_field_data = new_obj_data[field] if field in new_obj_data else None
         if not compare_data(current_field_data, new_field_data):
-            data_diff[field] = new_field_data
+            if field == 'location':
+                # {'coordinates': [-122.601346, 49.143921], 'type': 'Point'}
+                locationCls = Point if new_field_data['type'] == 'Point' else LineString
+                data_diff[field] = locationCls(new_field_data['coordinates'])
+
+            else:
+                data_diff[field] = new_field_data
 
     return data_diff
 

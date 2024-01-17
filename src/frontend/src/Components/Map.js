@@ -1,13 +1,19 @@
 // React
-import React, { useContext, useRef, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux'
-import { updateMapState } from '../slices/mapSlice';
+import React, { useContext, useRef, useEffect, useState, useCallback } from 'react';
+
+// Navigation
 import { useNavigate } from 'react-router-dom';
 
-// Third party packages
-import Button from 'react-bootstrap/Button';
+// Redux
+import { useSelector, useDispatch } from 'react-redux'
+import { memoize } from 'proxy-memoize'
+import { updateMapState } from '../slices/mapSlice';
+import { updateCameras } from '../slices/camerasSlice';
+import { updateEvents } from '../slices/eventsSlice';
+import { updateFerries } from '../slices/cmsSlice';
 
-// FA
+// External Components
+import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlus,
@@ -18,8 +24,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 // Components and functions
+import CamPopup from './map/camPopup.js'
 import { getCamerasLayer } from './map/layers/camerasLayer.js';
-import { getCamPopup, getEventPopup, getFerryPopup } from './map/mapPopup.js'
+import { getEventPopup, getFerryPopup } from './map/mapPopup.js'
 import { getEvents } from './data/events.js';
 import { loadEventsLayers } from './map/layers/eventsLayer.js';
 import {
@@ -34,7 +41,7 @@ import {
 } from './map/helper.js';
 import { getFerries } from './data/ferries.js';
 import { getFerriesLayer } from './map/layers/ferriesLayer.js';
-import { getWebcams, groupCameras } from './data/webcams.js';
+import { getCameras, addCameraGroups } from './data/webcams.js';
 import { getRouteLayer } from './map/routeLayer.js';
 import { MapContext } from '../App.js';
 import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
@@ -68,18 +75,37 @@ export default function MapWrapper({
 }) {
   // Redux
   const dispatch = useDispatch();
-  const [ searchLocationFrom, selectedRoute, zoom, pan ] = useSelector((state) => [
-    state.routes.searchLocationFrom,
-    state.routes.selectedRoute,
-    state.map.zoom,
-    state.map.pan
-  ]);
+  const {
+    cameras, camTimeStamp, // Cameras
+    events, eventTimeStamp, // Events
+    ferries, ferriesTimeStamp, // CMS
+    searchLocationFrom, selectedRoute, // Routing
+    zoom, pan, // Map
+
+  } = useSelector(useCallback(memoize(state => ({
+    // Cameras
+    cameras: state.cameras.list,
+    camTimeStamp: state.cameras.routeTimeStamp,
+    // Events
+    events: state.events.list,
+    eventTimeStamp: state.events.routeTimeStamp,
+    // CMS
+    ferries: state.cms.ferries.list,
+    ferriesTimeStamp: state.cms.ferries.routeTimeStamp,
+    // Routing
+    searchLocationFrom: state.routes.searchLocationFrom,
+    selectedRoute: state.routes.selectedRoute,
+    // Map
+    zoom: state.map.zoom,
+    pan: state.map.pan
+  }))));
 
   const isEventClicked = useSelector(state => state.routes.isEventClicked); 
   // Context
   const { mapContext, setMapContext } = useContext(MapContext);
 
   // Refs
+  const isInitialMount = useRef(true);
   const mapElement = useRef();
   const mapRef = useRef();
   const popup = useRef();
@@ -196,11 +222,6 @@ export default function MapWrapper({
     });
 
     mapRef.current.once('loadstart', async () => {
-      if (!selectedRoute) {
-        await loadCameras();
-        await loadEvents();
-      }
-
       if (camera && !isPreview) {
         popup.current.setPosition(handleCenter(camera));
         popup.current.getElement().style.top = '40px';
@@ -396,7 +417,9 @@ export default function MapWrapper({
       // if there is no parameter for shifting the view, pan to my location
       toggleMyLocation();
     }
-  }, []);
+
+    loadData();
+  });
 
   useEffect(() => {
     if (searchLocationFrom && searchLocationFrom.length) {
@@ -429,74 +452,125 @@ export default function MapWrapper({
   }, [searchLocationFrom]);
 
   useEffect(() => {
-    if(isEventClicked){
-      let focusedCoordinates = undefined;
-      focusedCoordinates = (event.location.type === 'Point')? event.location.coordinates : event.location.coordinates[0];
-      centerMap(focusedCoordinates);
+    if (isInitialMount.current) { // Do nothing on first load
+      isInitialMount.current = false;
+      return;
     }
-    else {
-      if (mapLayers.current['routeLayer']) {
-        mapRef.current.removeLayer(mapLayers.current['routeLayer']);
-      }
-  
-      if (selectedRoute && selectedRoute.routeFound) {
-        const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
-        mapLayers.current['routeLayer'] = routeLayer;
-        mapRef.current.addLayer(routeLayer);
-  
-        loadEvents(selectedRoute.points);
-        loadCameras(selectedRoute.points);
-        loadFerries();
-  
-        fitMap(selectedRoute.route, mapView);
-  
-      } else {
-        loadEvents();
-        loadCameras();
-        loadFerries();
-      }
+
+    // Remove existing layer and reload data on route change
+    if (mapLayers.current['routeLayer']) {
+      mapRef.current.removeLayer(mapLayers.current['routeLayer']);
     }
+
+    loadData();
   }, [selectedRoute]);
 
-  async function loadCameras(route) {
-    const webcamResults = await getWebcams(route);
-
+  useEffect(() => {
+    // Remove layer if it already exists
     if (mapLayers.current['highwayCams']) {
       mapRef.current.removeLayer(mapLayers.current['highwayCams']);
     }
 
-    mapLayers.current['highwayCams'] = getCamerasLayer(
-      groupCameras(webcamResults),
-      mapRef.current.getView().getProjection().getCode(),
-      mapContext,
-      camera,
-      updateClickedCamera,
-    )
+    // Add layer if array exists
+    if (cameras) {
+      // Deep clone and add group reference to each cam
+      const clonedCameras = JSON.parse(JSON.stringify(cameras));
+      const finalCameras = addCameraGroups(clonedCameras);
 
-    mapRef.current.addLayer(mapLayers.current['highwayCams']);
-    mapLayers.current['highwayCams'].setZIndex(4);
+      // Generate and add layer
+      mapLayers.current['highwayCams'] = getCamerasLayer(
+        finalCameras,
+        mapRef.current.getView().getProjection().getCode(),
+        mapContext,
+        camera,
+        updateClickedCamera,
+      )
+
+      mapRef.current.addLayer(mapLayers.current['highwayCams']);
+      mapLayers.current['highwayCams'].setZIndex(4);
+    }
+  }, [cameras]);
+
+  const loadCameras = async (route) => {
+    const newRouteTimestamp = route ? route.searchTimestamp : null;
+
+    // Fetch data if it doesn't already exist or route was updated
+//    if (!cameras || (camTimeStamp != newRouteTimestamp)) {
+      dispatch(updateCameras({
+        list: await getCameras(route ? route.points : null),
+        routeTimeStamp: route ? route.searchTimestamp : null,
+      }));
+//    }
   }
 
-  async function loadEvents(route) {
-    const eventsData = await getEvents(route);
-    loadEventsLayers(eventsData, mapContext, mapLayers, mapRef);
+  useEffect(() => {
+    loadEventsLayers(events, mapContext, mapLayers, mapRef);
+  }, [events]);
+
+  const loadEvents = async (route) => {
+    const newRouteTimestamp = route ? route.searchTimestamp : null;
+
+    // Fetch data if it doesn't already exist or route was updated
+//    if (!events || (eventTimeStamp != newRouteTimestamp)) {
+      dispatch(updateEvents({
+        list: await getEvents(route ? route.points : null),
+        routeTimeStamp: route ? route.searchTimestamp : null,
+      }));
+//    }
   }
 
-  async function loadFerries() {
-    const ferriesData = await getFerries();
-
+  useEffect(() => {
+    // Remove layer if it already exists
     if (mapLayers.current['inlandFerries']) {
       mapRef.current.removeLayer(mapLayers.current['inlandFerries']);
     }
 
-    mapLayers.current['inlandFerries'] = getFerriesLayer(
-      ferriesData,
-      mapRef.current.getView().getProjection().getCode(),
-      mapContext
-    )
+    // Add layer if array exists
+    if (ferries) {
+      // Generate and add layer
+      mapLayers.current['inlandFerries'] = getFerriesLayer(
+        ferries,
+        mapRef.current.getView().getProjection().getCode(),
+        mapContext
+      )
 
-    mapRef.current.addLayer(mapLayers.current['inlandFerries']);
-    mapLayers.current['inlandFerries'].setZIndex(8);
+      mapRef.current.addLayer(mapLayers.current['inlandFerries']);
+      mapLayers.current['inlandFerries'].setZIndex(8);
+    }
+  }, [ferries]);
+
+  const loadFerries = async (route) => {
+    const newRouteTimestamp = route ? route.searchTimestamp : null;
+
+    // Fetch data if it doesn't already exist or route was updated
+//    if (!ferries || (ferriesTimeStamp != newRouteTimestamp)) {
+      dispatch(updateFerries({
+        list: await getFerries(route ? route.points : null),
+        routeTimeStamp: route ? route.searchTimestamp : null,
+      }));
+//    }
+  }
+
+  const loadData = () => {
+    if (selectedRoute && selectedRoute.routeFound) {
+      const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
+      mapLayers.current['routeLayer'] = routeLayer;
+      mapRef.current.addLayer(routeLayer);
+
+      // Clear and update data
+      loadCameras(selectedRoute);
+      loadEvents(selectedRoute);
+      loadFerries();
+
+      // Zoom/pan to route
+      fitMap(selectedRoute.route, mapView);
+
+    } else {
+      // Clear and update data
+      loadCameras();
+      loadEvents(null);
+      loadFerries();
+    }
   }
 
   function closePopup() {
@@ -644,7 +718,9 @@ export default function MapWrapper({
         />
         <div id="popup-content" className="ol-popup-content">
           {clickedCamera &&
-            getCamPopup(clickedCamera, updateClickedCamera, navigate, cameraPopupRef, isPreview)
+            <CamPopup
+              camFeature={clickedCamera}
+              isPreview={isPreview} />
           }
 
           {clickedEvent &&
