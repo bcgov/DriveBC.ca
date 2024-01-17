@@ -104,7 +104,7 @@ export default function Filters(props) {
   return (
     <div className="filters-component">
       <Button
-        variant="outline"
+        variant="primary"
         className={'map-btn open-filters' + (open ? ' open' : '')}
         aria-label="open filters options"
         onClick={() => {

@@ -40,7 +40,9 @@ $danger: $Error;
   }
 
   &:active, &:focus {
-    outline: 2px solid $Focus;
+    outline: 1px solid $Focus;
+    border: rgb(46, 93, 215) solid 2px;
+    background-color: hsla(0, 0%, 60%, 0.15);
   }
 }
 
@@ -56,8 +58,9 @@ $danger: $Error;
 
   &:active, &:focus, &.active, &.focus, &.show {
     color: $Grey110;
-    border-color: $Focus;
-    background: none;
+    outline: 1px solid $Focus;
+    border: rgb(46, 93, 215) solid 2px;
+    background-color: hsla(0, 0%, 60%, 0.15);
   }
 }
 
@@ -72,6 +75,15 @@ $danger: $Error;
 
   @media (min-width: 1200px) {
     padding: 44px 0;
+  }
+}
+
+//Hamburger menu
+.navbar-toggler {
+  &:focus {
+    outline: 1px solid $Focus;
+    border: rgb(46, 93, 215) solid 2px;
+    background-color: hsla(0, 0%, 60%, 0.15);
   }
 }
 
