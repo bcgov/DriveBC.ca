@@ -22,8 +22,9 @@ export default function CamPopup(props) {
   const isInitialMount = useRef(true);
 
   // useState hooks
-  const [rootCam, setRootCam] = useState();
-  const [camera, setCamera] = useState();
+  const newCam = camFeature.id ? camFeature : camFeature.getProperties();
+  const [rootCam, setRootCam] = useState(newCam);
+  const [camera, setCamera] = useState(newCam);
   const [camIndex, setCamIndex] = useState(0);
 
   // useEffect hooks
