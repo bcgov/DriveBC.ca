@@ -3,7 +3,7 @@ from typing import Dict
 from urllib.parse import urljoin
 
 import httpx
-from apps.feed.constants import DIT, INLAND_FERRY, OPEN511, WEBCAM
+from apps.feed.constants import DIT, INLAND_FERRY, OPEN511, WEBCAM, WEATHER
 from apps.feed.serializers import (
     CarsClosureEventSerializer,
     EventAPISerializer,
@@ -34,6 +34,9 @@ class FeedClient:
             },
             INLAND_FERRY: {
                 "base_url": settings.DRIVEBC_INLAND_FERRY_API_BASE_URL,
+            },
+            WEATHER: {
+                "base_url": settings.DRIVEBC_WEATHER_API_BASE_URL,
             },
         }
 

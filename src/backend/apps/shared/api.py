@@ -12,4 +12,7 @@ urlpatterns = [
     # CMS
     path("wagtail/", wagtail_api_router.urls),
     path("cms/", include(cms_api_router.urls)),
+
+    # Weather
+    path("weather/", include("apps.weather.urls")),
 ]

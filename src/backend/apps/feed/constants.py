@@ -3,6 +3,7 @@ WEBCAM = "webcam"
 OPEN511 = "open511"
 DIT = "dit"
 INLAND_FERRY = "inland_ferry"
+WEATHER = "weather"
 
 DIRECTIONS = {
   'in both directions': 'BOTH',
