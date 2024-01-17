@@ -70,7 +70,7 @@ export default function CamerasListPage() {
     <div className="cameras-page">
       <PageHeader
         title="Cameras"
-        description="Search by camera name to filter results or scroll to view all cameras sorted by highway.">
+        description="Scroll to view all cameras sorted by highway.">
       </PageHeader>
       <CameraList cameras={processedCameras}></CameraList>
       <Footer />
