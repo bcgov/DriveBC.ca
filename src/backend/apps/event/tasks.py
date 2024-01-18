@@ -70,14 +70,18 @@ def populate_all_event_data():
 
     active_event_ids = []
     for event_data in feed_data:
-        id = event_data.get("id", "").split("/")[-1]
-        event_data["closed"] = closures.get(id, False)
+        try:
+            id = event_data.get("id", "").split("/")[-1]
+            event_data["closed"] = closures.get(id, False)
 
-        populate_event_from_data(event_data)
+            populate_event_from_data(event_data)
 
-        # Event is active
-        if "id" in event_data:
-            active_event_ids.append(event_data["id"])
+            # Event is active
+            if "id" in event_data:
+                active_event_ids.append(event_data["id"])
+
+        except Exception as e:
+            logger.warning(e)
 
     # Mark events absent in the feed as inactive
     Event.objects.filter(status=EVENT_STATUS.ACTIVE)\
