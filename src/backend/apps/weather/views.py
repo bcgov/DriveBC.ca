@@ -1,7 +1,6 @@
 import requests
 from apps.weather.models import RegionalCurrent
 from apps.weather.serializers import WeatherSerializer
-from apps.shared.enums import CacheKey, CacheTimeout
 from apps.shared.views import CachedListModelMixin
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -12,8 +11,6 @@ from django.forms.models import model_to_dict
 class WeatherAPI(CachedListModelMixin):
     queryset = RegionalCurrent.objects.all()
     serializer_class = WeatherSerializer
-    cache_key = CacheKey.EVENT_LIST
-    cache_timeout = CacheTimeout.EVENT_LIST
 
 class WeatherViewSet(viewsets.ViewSet):
     queryset = RegionalCurrent.objects.all()
@@ -46,20 +43,62 @@ class WeatherViewSet(viewsets.ViewSet):
             response = requests.get(external_api_url_with_id, headers=headers)
             response.raise_for_status()
             data = response.json()
+
+            location_name_data = data.get("Location", {}).get("Name", {})
+            location_code = location_name_data.get("Code") if location_name_data else None
+            location_latitude = location_name_data.get("Latitude") if location_name_data else None
+            location_longitude = location_name_data.get("Longitude") if location_name_data else None
+            location_name = location_name_data.get("Value") if location_name_data else None
+
+            observation_data = data.get("CurrentConditions", {}).get("ObservationDateTimeUTC", {})
+            observation_name = observation_data.get("Name") if observation_data else None
+            observation_zone = observation_data.get("Zone") if observation_data else None
+            observation_utc_offset = observation_data.get("UTCOffset") if observation_data else None
+            observation_text_summary = observation_data.get("TextSummary") if observation_data else None
+
+            condition_data = data.get("CurrentConditions", {})
+            condition = condition_data.get("Condition") if condition_data else None
+
+            temperature_data = data.get("CurrentConditions", {}).get("Temperature", {})
+            temperature_units = temperature_data.get("Units") if temperature_data else None
+            temperature_value = temperature_data.get("Value") if temperature_data else None
+
+            visibility_data = data.get("CurrentConditions", {}).get("Visibility", {})
+            visibility_units = visibility_data.get("Units") if temperature_data else None
+            visibility_value = visibility_data.get("Value") if temperature_data else None
+
+            wind_data = data.get("CurrentConditions", {}).get("Wind", {})
+            wind_speed = wind_data.get("Speed") if wind_data else None
+            wind_gust = wind_data.get("Gust") if wind_data else None
+            wind_direction = wind_data.get("Direction") if wind_data else None
+
+            wind_speed_units = wind_speed.get("Units") if temperature_data else None
+            wind_speed_value = wind_speed.get("Value") if temperature_data else None
+
+            wind_gust_units = wind_gust.get("Units") if temperature_data else None
+            wind_gust_value = wind_gust.get("Value") if temperature_data else None
+
             # Save Data to Database
             regional_current_data = {
-                'station_code': f"{pk}",
-                'station_name': data.get("Location", {}).get("Name", {}).get("Value"),
-                'condition': data.get("CurrentConditions", {}).get("Condition"),
-                'temperature_units': data.get("CurrentConditions", {}).get("Temperature", {}).get("Units"),
-                'temperature_value': data.get("CurrentConditions", {}).get("Temperature", {}).get("Value"),
-                'visibility_units' : data.get("CurrentConditions", {}).get("Visibility", {}).get("Units"),
-                'visibility_value' : data.get("CurrentConditions", {}).get("Visibility", {}).get("Value"),
-                'wind_speed_units' : data.get("CurrentConditions", {}).get("Wind", {}).get("Speed", {}).get("Units"),
-                'wind_speed_value': data.get("CurrentConditions", {}).get("Wind", {}).get("Speed", {}).get("Value"),
-                'wind_gust_units' : data.get("CurrentConditions", {}).get("Wind", {}).get("Gust", {}).get("Units"),
-                'wind_gust_value' : data.get("CurrentConditions", {}).get("Wind", {}).get("Gust", {}).get("Value"),
-                'wind_direction' : data.get("CurrentConditions", {}).get("Wind", {}).get("Direction"),
+                'location_code': location_code,
+                'location_latitude': location_latitude,
+                'location_longitude': location_longitude,
+                'location_name': location_name,
+                'region': data.get("Location", {}).get("Region"),
+                'observation_name': observation_name,
+                'observation_zone': observation_zone,
+                'observation_utc_offset': observation_utc_offset,
+                'observation_text_summary': observation_text_summary,
+                'condition': condition,
+                'temperature_units': temperature_units,
+                'temperature_value': temperature_value,
+                'visibility_units' : visibility_units,
+                'visibility_value' : visibility_value,
+                'wind_speed_units' : wind_speed_units,
+                'wind_speed_value': wind_speed_value,
+                'wind_gust_units' : wind_gust_units,
+                'wind_gust_value' : wind_gust_value,
+                'wind_direction' : wind_direction,
             }
 
             regional_current_instance, created = RegionalCurrent.objects.update_or_create(defaults=regional_current_data)
@@ -73,3 +112,6 @@ class WeatherViewSet(viewsets.ViewSet):
 class WeatherTestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = WeatherAPI.queryset
     serializer_class = WeatherAPI.serializer_class
+
+
+

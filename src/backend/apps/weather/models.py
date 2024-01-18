@@ -2,17 +2,18 @@ from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
     
 class RegionalCurrent(BaseModel):
-    station_code = models.CharField(max_length=10)
-    station_latitude = models.CharField(max_length=10, null=True)
-    station_longitude = models.CharField(max_length=10, null=True)
-    station_name = models.CharField(max_length=255)
+    location_code = models.CharField(max_length=10)
+    location_latitude = models.CharField(max_length=10, null=True)
+    location_longitude = models.CharField(max_length=10, null=True)
+    location_name = models.CharField(max_length=100, null=True)
+    region = models.CharField(max_length=255)
     
     observation_name = models.CharField(max_length=50, null=True)
     observation_zone = models.CharField(max_length=10, null=True)
     observation_utc_offset = models.IntegerField(null=True)
     observation_text_summary = models.CharField(max_length=255, null=True)
     
-    condition = models.CharField(max_length=255)
+    condition = models.CharField(max_length=255, null=True)
     
     temperature_units = models.CharField(max_length=5, null=True)
     temperature_value = models.FloatField(null=True)
@@ -27,6 +28,6 @@ class RegionalCurrent(BaseModel):
     wind_direction = models.CharField(max_length=5, null=True)
 
     def __str__(self):
-        return f"{self.station_name} - {self.observation_text_summary}"
+        return f"{self.location_name} - {self.observation_text_summary}"
 
 
