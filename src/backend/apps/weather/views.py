@@ -1,21 +1,21 @@
 import requests
-from apps.weather.models import RegionalCurrent
-from apps.weather.serializers import WeatherSerializer
+from apps.weather.models import RegionalCurrent, RegionalForecast
+from apps.weather.serializers import RegionalCurrentSerializer, RegionalForecastSerializer
 from apps.shared.views import CachedListModelMixin
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.conf import settings
-from django.forms.models import model_to_dict
 
-class WeatherAPI(CachedListModelMixin):
+class RegionalCurrentAPI(CachedListModelMixin):
     queryset = RegionalCurrent.objects.all()
-    serializer_class = WeatherSerializer
+    serializer_class = RegionalCurrentSerializer
+
+class RegionalForecastAPI(CachedListModelMixin):
+    queryset = RegionalForecast.objects.all()
+    serializer_class = RegionalForecastSerializer
 
 class WeatherViewSet(viewsets.ViewSet):
-    queryset = RegionalCurrent.objects.all()
-    serializer_class = WeatherSerializer
-
     @action(detail=True, methods=['get'])
     def regionalcurrent(self, request, pk=None):
         # Obtain Access Token
@@ -102,16 +102,64 @@ class WeatherViewSet(viewsets.ViewSet):
             }
 
             regional_current_instance, created = RegionalCurrent.objects.update_or_create(defaults=regional_current_data)
-            # Convert the model instance to a dictionary
-            data_dict = model_to_dict(regional_current_instance)
-            return Response(data_dict)
+            serializer = RegionalCurrentSerializer(regional_current_instance)
+            return Response(serializer.data)
         
         except requests.RequestException as e:
             return Response({"error": f"Error fetching data from weather API: {str(e)}"}, status=500)
 
-class WeatherTestViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = WeatherAPI.queryset
-    serializer_class = WeatherAPI.serializer_class
+
+    @action(detail=True, methods=['get'])
+    def regionalforecast(self, request, pk=None):
+        # Obtain Access Token
+        token_url = settings.DRIVEBC_WEATHER_API_TOKEN_URL
+        client_id = settings.WEATHER_CLIENT_ID
+        client_secret = settings.WEATHER_CLIENT_SECRET
+
+        token_params = {
+            "grant_type": "client_credentials",
+            "client_id": client_id,
+            "client_secret": client_secret,
+        }
+
+        try:
+            response = requests.post(token_url, data=token_params)
+            response.raise_for_status()
+            token_data = response.json()
+            access_token = token_data.get("access_token")
+        except requests.RequestException as e:
+            return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
+        external_api_url = settings.DRIVEBC_WEATHER_API_BASE_URL
+        headers = {"Authorization": f"Bearer {access_token}"}
+        external_api_url_with_id = f"{external_api_url}{pk}"
+        try:
+            response = requests.get(external_api_url_with_id, headers=headers)
+            response.raise_for_status()
+            data = response.json()
+
+            forecast_group = data.get("ForecastGroup", {}).get("Forecasts", [])
+            hourly_forecast_group = data.get("HourlyForecastGroup", {}).get("HourlyForecasts", [])
+
+            # Save Data to Database
+            regional_forecast_data = {
+                'forecast_group': forecast_group,
+                'hourly_forecast_group': hourly_forecast_group,
+            }
+
+            regional_forecast_instance, created = RegionalForecast.objects.update_or_create(defaults=regional_forecast_data)
+            serializer = RegionalForecastSerializer(regional_forecast_instance)
+            return Response(serializer.data)
+            
+        except requests.RequestException as e:
+            return Response({"error": f"Error fetching data from weather API: {str(e)}"}, status=500)
+
+class RegionalCurrentTestViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = RegionalCurrentAPI.queryset
+    serializer_class = RegionalCurrentAPI.serializer_class
+
+class RegionalForecastTestViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = RegionalForecastAPI.queryset
+    serializer_class = RegionalForecastAPI.serializer_class
 
 
 

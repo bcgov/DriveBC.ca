@@ -7,5 +7,6 @@ weather_router.register(r"", weather_views.WeatherViewSet, basename="weather")
 
 urlpatterns = [
     path('regionalcurrent/<str:pk>', weather_views.WeatherViewSet.as_view({'get': 'regionalcurrent'}), name='regionalcurrent'),
+    path('regionalforecast/<str:pk>', weather_views.WeatherViewSet.as_view({'get': 'regionalforecast'}), name='regionalforecast'),
     path('', include(weather_router.urls)),
 ]

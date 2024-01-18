@@ -29,5 +29,15 @@ class RegionalCurrent(BaseModel):
 
     def __str__(self):
         return f"{self.location_name} - {self.observation_text_summary}"
+    
+class RegionalForecast(BaseModel):
+    forecast_group = models.JSONField(null=True)
+    hourly_forecast_group = models.JSONField(null=True)
+
+    def get_forecasts(self):
+        return self.forecast_group.get('Forecasts', [])
+
+    def __str__(self):
+        return f"Regional Forecast for {self.pk}"
 
 
