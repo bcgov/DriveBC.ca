@@ -9,7 +9,9 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+
+// External assets
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowUpLong,
   faArrowDownLong,
@@ -19,7 +21,7 @@ import {
 import './EventsTable.scss';
 
 export default function EventsTable({columns, data, sortingHandler, routeHandler}) {
-  const [sorting, setSorting] = useState([]);
+  const [sorting, setSorting] = useState([{ desc: false, id: 'severity' }]);
 
   const table = useReactTable({
     data: data,
@@ -41,7 +43,6 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
   useEffect(() => {
     sortingHandler(sorting);
   }, [sorting]);
-
 
   const ascIcon = <FontAwesomeIcon icon={faArrowUpLong} alt="ascending order" />;
   const descIcon = <FontAwesomeIcon icon={faArrowDownLong} alt="descending order" />;
@@ -89,7 +90,7 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
                 key={cell.id}
                 title={
                   cell.column.id === "event_type"
-                    ? cell.row.original.event_type.charAt(0) + cell.row.original.event_type.slice(1).toLowerCase() + " - " 
+                    ? cell.row.original.event_type.charAt(0) + cell.row.original.event_type.slice(1).toLowerCase() + " - "
                     + cell.row.original.severity.charAt(0) + cell.row.original.severity.slice(1).toLowerCase() + " delay"
                     : cell.column.id === "map"
                     ? "View on map"
