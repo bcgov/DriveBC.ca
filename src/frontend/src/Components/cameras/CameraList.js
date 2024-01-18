@@ -1,5 +1,5 @@
 // React
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Third party packages
 import Container from 'react-bootstrap/Container';
@@ -27,7 +27,9 @@ export default function CameraList(props) {
   };
 
   useEffect(() => {
-    getDisplayedCameras(displayedCameras.length);
+    if (cameras) { // Do nothing until cameras are processed
+      getDisplayedCameras(21); // Load up to 21 cameras at the start
+    }
   }, [cameras]);
 
   // Rendering
@@ -56,12 +58,16 @@ export default function CameraList(props) {
     return highwayKeys.map((highway) => <HighwayGroup key={highway} highway={highway} cams={mappedCams[highway]} />);
   }
 
+  const getHasMore = () => {
+    return displayedCameras.length < (cameras ? cameras.length : 0);
+  }
+
   return (
     <div className="camera-list">
       <InfiniteScroll
         dataLength={displayedCameras.length}
         next={getDisplayedCameras}
-        hasMore={displayedCameras.length < cameras.length}
+        hasMore={getHasMore}
         loader={<h4>Loading...</h4>}>
 
         <Container>
