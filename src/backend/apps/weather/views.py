@@ -137,11 +137,32 @@ class WeatherViewSet(viewsets.ViewSet):
             response.raise_for_status()
             data = response.json()
 
+            location_name_data = data.get("Location", {}).get("Name", {})
+            location_code = location_name_data.get("Code") if location_name_data else None
+            location_latitude = location_name_data.get("Latitude") if location_name_data else None
+            location_longitude = location_name_data.get("Longitude") if location_name_data else None
+            location_name = location_name_data.get("Value") if location_name_data else None
+
+            observation_data = data.get("CurrentConditions", {}).get("ObservationDateTimeUTC", {})
+            observation_name = observation_data.get("Name") if observation_data else None
+            observation_zone = observation_data.get("Zone") if observation_data else None
+            observation_utc_offset = observation_data.get("UTCOffset") if observation_data else None
+            observation_text_summary = observation_data.get("TextSummary") if observation_data else None
+
             forecast_group = data.get("ForecastGroup", {}).get("Forecasts", [])
             hourly_forecast_group = data.get("HourlyForecastGroup", {}).get("HourlyForecasts", [])
 
             # Save Data to Database
             regional_forecast_data = {
+                'location_code': location_code,
+                'location_latitude': location_latitude,
+                'location_longitude': location_longitude,
+                'location_name': location_name,
+                'region': data.get("Location", {}).get("Region"),
+                'observation_name': observation_name,
+                'observation_zone': observation_zone,
+                'observation_utc_offset': observation_utc_offset,
+                'observation_text_summary': observation_text_summary,
                 'forecast_group': forecast_group,
                 'hourly_forecast_group': hourly_forecast_group,
             }
