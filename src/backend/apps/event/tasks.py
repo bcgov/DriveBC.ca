@@ -2,7 +2,7 @@ import logging
 
 from apps.event.enums import EVENT_DIFF_FIELDS, EVENT_STATUS, EVENT_UPDATE_FIELDS
 from apps.event.models import Event
-from apps.event.serializers import EventSerializer
+from apps.event.serializers import EventInternalSerializer
 from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
 from django.contrib.gis.geos import LineString, Point
@@ -58,7 +58,7 @@ def populate_event_from_data(new_event_data):
 
     except ObjectDoesNotExist:
         event = Event(id=event_id)
-        event_serializer = EventSerializer(event, data=new_event_data)
+        event_serializer = EventInternalSerializer(event, data=new_event_data)
         event_serializer.is_valid(raise_exception=True)
         event_serializer.save()
 
