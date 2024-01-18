@@ -23,7 +23,7 @@ export default function CamerasListPage() {
   const isInitialMount = useRef(true);
 
   // UseState hooks
-  const [processedCameras, setProcessedCameras] = useState([]);
+  const [processedCameras, setProcessedCameras] = useState(null);
 
   // UseEffect hooks and data functions
   const getCamerasData = async () => {
