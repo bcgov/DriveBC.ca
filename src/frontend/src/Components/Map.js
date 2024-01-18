@@ -102,7 +102,8 @@ export default function MapWrapper({
   const { mapContext, setMapContext } = useContext(MapContext);
 
   // Refs
-  const isInitialMount = useRef(true);
+  const isInitialMountLocation = useRef(true);
+  const isInitialMountRoute = useRef(true);
   const mapElement = useRef();
   const mapRef = useRef();
   const popup = useRef();
@@ -410,20 +411,23 @@ export default function MapWrapper({
       resetHoveredStates(null);
     });
 
-    if (!camera) {
-      // if there is no parameter for shifting the view, pan to my location
-      toggleMyLocation();
-    }
-
-    loadData();
+    loadData(true);
   });
 
   useEffect(() => {
     if (searchLocationFrom && searchLocationFrom.length) {
-      if (locationPinRef.current) {
-        mapRef.current.removeOverlay(locationPinRef.current);
+      if (isInitialMountLocation.current) {
+        isInitialMountLocation.current = false;
+
+      } else {
+        // Don't center/remove existing overlay on first load
+        if (locationPinRef.current) {
+          mapRef.current.removeOverlay(locationPinRef.current);
+        }
+
+        centerMap(searchLocationFrom[0].geometry.coordinates);
       }
-      centerMap(searchLocationFrom[0].geometry.coordinates);
+
       setLocationPin(
         searchLocationFrom[0].geometry.coordinates,
         blueLocationMarkup,
@@ -434,8 +438,8 @@ export default function MapWrapper({
   }, [searchLocationFrom]);
 
   useEffect(() => {
-    if (isInitialMount.current) { // Do nothing on first load
-      isInitialMount.current = false;
+    if (isInitialMountRoute.current) { // Do nothing on first load
+      isInitialMountRoute.current = false;
       return;
     }
 
@@ -444,7 +448,7 @@ export default function MapWrapper({
       mapRef.current.removeLayer(mapLayers.current['routeLayer']);
     }
 
-    loadData();
+    loadData(false);
   }, [selectedRoute]);
 
   useEffect(() => {
@@ -533,7 +537,7 @@ export default function MapWrapper({
 //    }
   }
 
-  const loadData = () => {
+  const loadData = (isInitialMount) => {
     if (selectedRoute && selectedRoute.routeFound) {
       const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
       mapLayers.current['routeLayer'] = routeLayer;
@@ -544,8 +548,10 @@ export default function MapWrapper({
       loadEvents(selectedRoute);
       loadFerries();
 
-      // Zoom/pan to route
-      fitMap(selectedRoute.route, mapView);
+      // Zoom/pan to route on route updates
+      if (!isInitialMount) {
+        fitMap(selectedRoute.route, mapView);
+      }
 
     } else {
       // Clear and update data
