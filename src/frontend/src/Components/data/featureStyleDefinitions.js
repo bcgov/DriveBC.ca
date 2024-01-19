@@ -55,7 +55,7 @@ export const cameraStyles = {
   }),
   active: new Style({
     image: new Icon({
-      anchor: [88, 88],
+      anchor: [102, 102],
       anchorXUnits: 'pixels',
       anchorYUnits: 'pixels',
       scale: 0.25,
@@ -86,7 +86,7 @@ export const closureStyles = {
   }),
   active: new Style({
     image: new Icon({
-      anchor: [88, 88],
+      anchor: [102, 102],
       anchorXUnits: 'pixels',
       anchorYUnits: 'pixels',
       scale: 0.25,
@@ -120,7 +120,7 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [88, 88],
+        anchor: [102, 102],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
         scale: 0.25,
@@ -152,7 +152,7 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [88, 88],
+        anchor: [102, 102],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
         scale: 0.25,
@@ -216,7 +216,7 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [88, 88],
+        anchor: [102, 102],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
         scale: 0.25,
@@ -280,7 +280,7 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [88, 88],
+        anchor: [102, 102],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
         scale: 0.25,
@@ -312,7 +312,7 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [88, 88],
+        anchor: [102, 102],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
         scale: 0.25,
@@ -344,7 +344,7 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [88, 88],
+        anchor: [102, 102],
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels',
         scale: 0.25,
@@ -356,19 +356,19 @@ export const eventStyles = {
 segments: {
   static: new Style({
     stroke: new Stroke({
-      color: 'rgba(216 ,41 ,47, 0.5)',
+      color: 'rgba(144 ,164 ,190, 0.5)',
       width: 8,
     }),
   }),
   hover: new Style({
     stroke: new Stroke({
-      color: 'rgba(216 ,41 ,47, 0.5)',
+      color: 'rgba(232 ,192 ,97, 0.75)',
       width: 10,
     }),
   }),
   active: new Style({
     stroke: new Stroke({
-      color: 'rgba(216 ,41 ,47, 0.9)',
+      color: 'rgba(252 ,186 ,25, 0.9)',
       width: 10,
     }),
   })
