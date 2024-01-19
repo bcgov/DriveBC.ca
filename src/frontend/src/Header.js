@@ -39,7 +39,7 @@ export default function Header() {
             <span className="line line3"></span>
           </Navbar.Toggle>
 
-          <Navbar.Brand href="#home" tabIndex={xLargeScreen ? "0": "-1"}>
+          <Navbar.Brand href="/" tabIndex={xLargeScreen ? "0": "-1"}>
             <img className="header-logo" src={logo} alt="Government of British Columbia" />
           </Navbar.Brand>
 
