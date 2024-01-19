@@ -5,12 +5,10 @@ import React, { useContext, useRef, useEffect, useState, useCallback } from 'rea
 import { useNavigate } from 'react-router-dom';
 
 // Redux
-import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
+import { useSelector, useDispatch } from 'react-redux'
+import { updateCameras, updateEvents, updateFerries } from '../slices/feedsSlice';
 import { updateMapState } from '../slices/mapSlice';
-import { updateCameras } from '../slices/camerasSlice';
-import { updateEvents } from '../slices/eventsSlice';
-import { updateFerries } from '../slices/cmsSlice';
 
 // External Components
 import Button from 'react-bootstrap/Button';
@@ -82,14 +80,14 @@ export default function MapWrapper({
 
   } = useSelector(useCallback(memoize(state => ({
     // Cameras
-    cameras: state.cameras.data.list,
-    camTimeStamp: state.cameras.data.routeTimeStamp,
+    cameras: state.feeds.cameras.list,
+    camTimeStamp: state.feeds.cameras.routeTimeStamp,
     // Events
-    events: state.events.list,
-    eventTimeStamp: state.events.routeTimeStamp,
+    events: state.feeds.events.list,
+    eventTimeStamp: state.feeds.events.routeTimeStamp,
     // CMS
-    ferries: state.cms.ferries.list,
-    ferriesTimeStamp: state.cms.ferries.routeTimeStamp,
+    ferries: state.feeds.ferries.list,
+    ferriesTimeStamp: state.feeds.ferries.routeTimeStamp,
     // Routing
     searchLocationFrom: state.routes.searchLocationFrom,
     selectedRoute: state.routes.selectedRoute,
@@ -498,12 +496,13 @@ export default function MapWrapper({
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
-//    if (!events || (eventTimeStamp != newRouteTimestamp)) {
+    if (!events || (eventTimeStamp != newRouteTimestamp)) {
       dispatch(updateEvents({
         list: await getEvents(route ? route.points : null),
         routeTimeStamp: route ? route.searchTimestamp : null,
+        timeStamp: new Date().getTime()
       }));
-//    }
+    }
   }
 
   useEffect(() => {
@@ -530,12 +529,13 @@ export default function MapWrapper({
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
-//    if (!ferries || (ferriesTimeStamp != newRouteTimestamp)) {
+    if (!ferries || (ferriesTimeStamp != newRouteTimestamp)) {
       dispatch(updateFerries({
         list: await getFerries(route ? route.points : null),
         routeTimeStamp: route ? route.searchTimestamp : null,
+        timeStamp: new Date().getTime()
       }));
-//    }
+    }
   }
 
   const loadData = (isInitialMount) => {

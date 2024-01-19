@@ -5,10 +5,6 @@ export const cmsSlice = createSlice({
   initialState: {
     advisories: null,
     bulletins: null,
-    ferries: {
-      list: null,
-      routeTimeStamp: null,
-    },
   },
   reducers: {
     updateAdvisories: (state, action) => {
@@ -16,13 +12,10 @@ export const cmsSlice = createSlice({
     },
     updateBulletins: (state, action) => {
       state.bulletins = action.payload;
-    },
-    updateFerries: (state, action) => {
-      state.ferries = action.payload;
-    },
+    }
   },
 });
 
-export const { updateAdvisories, updateBulletins, updateFerries } = cmsSlice.actions;
+export const { updateAdvisories, updateBulletins } = cmsSlice.actions;
 
 export default cmsSlice.reducer;

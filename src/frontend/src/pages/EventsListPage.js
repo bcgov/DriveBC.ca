@@ -2,7 +2,7 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'
-import { updateEvents } from '../slices/eventsSlice';
+import { updateEvents } from '../slices/feedsSlice';
 import { memoize } from 'proxy-memoize'
 
 // Third party packages
@@ -34,8 +34,8 @@ export default function EventsListPage() {
   // Redux
   const dispatch = useDispatch();
   const { events, eventTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({
-    events: state.events.list,
-    eventTimeStamp: state.events.routeTimeStamp,
+    events: state.feeds.events.list,
+    eventTimeStamp: state.feeds.events.routeTimeStamp,
     selectedRoute: state.routes.selectedRoute
   }))));
 
@@ -43,12 +43,13 @@ export default function EventsListPage() {
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
-//    if (!events || (eventTimeStamp != newRouteTimestamp)) {
+    if (!events || (eventTimeStamp != newRouteTimestamp)) {
       dispatch(updateEvents({
         list: await getEvents(route ? route.points : null),
         routeTimeStamp: route ? route.searchTimestamp : null,
+        timeStamp: new Date().getTime()
       }));
-//    }
+    }
   }
 
   // Context
@@ -166,7 +167,9 @@ export default function EventsListPage() {
   }, [processedEvents]);
 
   useEffect(() => {
-    processEvents();
+    if (events) {
+      processEvents();
+    }
   }, [events, eventCategoryFilter, sortingColumns]);
 
   const eventCategoryFilterHandler = (targetCategory, check, lineToggle) => {

@@ -5,7 +5,7 @@ import { memoize } from 'proxy-memoize'
 
 // Components and functions
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
-import { updateCameras } from '../slices/camerasSlice';
+import { updateCameras } from '../slices/feedsSlice';
 import CameraList from '../Components/cameras/CameraList';
 import PageHeader from '../PageHeader';
 import Footer from '../Footer.js';
@@ -14,8 +14,8 @@ export default function CamerasListPage() {
   // Redux
   const dispatch = useDispatch();
   const { cameras, camTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({
-    cameras: state.cameras.data.list,
-    camTimeStamp: state.cameras.data.routeTimeStamp,
+    cameras: state.feeds.cameras.list,
+    camTimeStamp: state.feeds.cameras.routeTimeStamp,
     selectedRoute: state.routes.selectedRoute
   }))));
 
