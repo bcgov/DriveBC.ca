@@ -50,7 +50,6 @@ export default function LocationSearch(props) {
       id="location-search-typeahead"
       isLoading={isSearching}
       labelKey="label"
-      maxResults="20"
       minLength={3}
       onChange={setSelectedLocation}
       onSearch={loadLocationOptions}
