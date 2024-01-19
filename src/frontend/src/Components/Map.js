@@ -82,8 +82,8 @@ export default function MapWrapper({
 
   } = useSelector(useCallback(memoize(state => ({
     // Cameras
-    cameras: state.cameras.list,
-    camTimeStamp: state.cameras.routeTimeStamp,
+    cameras: state.cameras.data.list,
+    camTimeStamp: state.cameras.data.routeTimeStamp,
     // Events
     events: state.events.list,
     eventTimeStamp: state.events.routeTimeStamp,
@@ -481,12 +481,13 @@ export default function MapWrapper({
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
-//    if (!cameras || (camTimeStamp != newRouteTimestamp)) {
+    if (!cameras || (camTimeStamp != newRouteTimestamp)) {
       dispatch(updateCameras({
         list: await getCameras(route ? route.points : null),
         routeTimeStamp: route ? route.searchTimestamp : null,
+        timeStamp: new Date().getTime()
       }));
-//    }
+    }
   }
 
   useEffect(() => {

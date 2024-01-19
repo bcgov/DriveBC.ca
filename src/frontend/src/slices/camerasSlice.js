@@ -1,16 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+export const camerasInitialState = {
+  data: {
+    list: null,
+    routeTimeStamp: null,
+    camerasExpires: null,
+  }
+}
+
 export const camerasSlice = createSlice({
   name: 'cameras',
-  initialState: {
-    list: null,
-    routeTimeStamp: null
-  },
+  initialState: camerasInitialState,
   reducers: {
     updateCameras: (state, action) => {
-      const { list, routeTimeStamp } = action.payload;
-      state.list = list;
-      state.routeTimeStamp = routeTimeStamp;
+      state.data = action.payload;
     },
   },
 });
