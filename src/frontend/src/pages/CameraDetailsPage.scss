@@ -303,6 +303,10 @@
                   &:hover {
                     background-color: $Grey30;
                   }
+
+                  &:focus {
+                    border: rgb(46, 93, 215) solid 2px;
+                  }
                 }
               }
 
