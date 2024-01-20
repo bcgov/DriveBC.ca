@@ -1,10 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+export const cmsInitialState = {
+  list: null,
+  timeStamp: null,
+}
+
 export const cmsSlice = createSlice({
   name: 'cms',
   initialState: {
-    advisories: null,
-    bulletins: null,
+    advisories: cmsInitialState,
+    bulletins: cmsInitialState,
   },
   reducers: {
     updateAdvisories: (state, action) => {

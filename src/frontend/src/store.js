@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import { cmsInitialState } from './slices/cmsSlice';
 import { feedsInitialState } from './slices/feedsSlice';
 import feedsReducer from './slices/feedsSlice';
 import cmsReducer from './slices/cmsSlice';
@@ -31,7 +32,6 @@ const getConfig = (key, lifeInSeconds, initialState) => {
   if (lifeInSeconds && initialState) {
     config.transforms = [
       expireReducer(key, {
-        persistedAtKey: key + "Expires",
         expireSeconds: lifeInSeconds,
         expiredState: initialState
       })
@@ -44,7 +44,7 @@ const getConfig = (key, lifeInSeconds, initialState) => {
 const store = configureStore({
   reducer: {
     feeds: persistReducer(getConfig('feeds', 60, feedsInitialState), feedsReducer),
-    cms: persistReducer(getConfig('cms'), cmsReducer),
+    cms: persistReducer(getConfig('cms', 60, cmsInitialState), cmsReducer),
     routes: persistReducer(getConfig('routes'), routesReducer),
     map: persistReducer(getConfig('map'), mapReducer),
   },
