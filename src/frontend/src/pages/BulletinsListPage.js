@@ -22,7 +22,7 @@ export default function BulletinsListPage() {
   // Redux
   const dispatch = useDispatch();
   const { bulletins } = useSelector(useCallback(memoize(state => ({
-    bulletins: state.cms.bulletins,
+    bulletins: state.cms.bulletins.list,
   }))));
 
   // Refs
@@ -30,9 +30,12 @@ export default function BulletinsListPage() {
 
   // Data loading
   const loadBulletins = async () => {
-//    if (!bulletins) {
-      dispatch(updateBulletins(await getBulletins()));
-//    }
+    if (!bulletins) {
+      dispatch(updateBulletins({
+        list: await getBulletins(),
+        timeStamp: new Date().getTime()
+      }));
+    }
   }
 
   useEffect(() => {

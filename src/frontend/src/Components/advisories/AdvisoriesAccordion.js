@@ -20,7 +20,7 @@ export default function AdvisoriesAccordion() {
   // Redux
   const dispatch = useDispatch();
   const { advisories } = useSelector(useCallback(memoize(state => ({
-    advisories: state.cms.advisories,
+    advisories: state.cms.advisories.list,
   }))));
 
   // Refs
@@ -29,7 +29,10 @@ export default function AdvisoriesAccordion() {
   // Data loading
   const loadAdvisories = async () => {
     if (!advisories) {
-      dispatch(updateAdvisories(await getAdvisories()));
+      dispatch(updateAdvisories({
+        list: await getAdvisories(),
+        timeStamp: new Date().getTime()
+      }));
     }
   }
 

@@ -1,14 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+export const cmsInitialState = {
+  list: null,
+  timeStamp: null,
+}
+
 export const cmsSlice = createSlice({
   name: 'cms',
   initialState: {
-    advisories: null,
-    bulletins: null,
-    ferries: {
-      list: null,
-      routeTimeStamp: null,
-    },
+    advisories: cmsInitialState,
+    bulletins: cmsInitialState,
   },
   reducers: {
     updateAdvisories: (state, action) => {
@@ -16,13 +17,10 @@ export const cmsSlice = createSlice({
     },
     updateBulletins: (state, action) => {
       state.bulletins = action.payload;
-    },
-    updateFerries: (state, action) => {
-      state.ferries = action.payload;
-    },
+    }
   },
 });
 
-export const { updateAdvisories, updateBulletins, updateFerries } = cmsSlice.actions;
+export const { updateAdvisories, updateBulletins } = cmsSlice.actions;
 
 export default cmsSlice.reducer;

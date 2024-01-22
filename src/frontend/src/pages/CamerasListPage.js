@@ -5,7 +5,7 @@ import { memoize } from 'proxy-memoize'
 
 // Components and functions
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
-import { updateCameras } from '../slices/camerasSlice';
+import { updateCameras } from '../slices/feedsSlice';
 import CameraList from '../Components/cameras/CameraList';
 import PageHeader from '../PageHeader';
 import Footer from '../Footer.js';
@@ -14,8 +14,8 @@ export default function CamerasListPage() {
   // Redux
   const dispatch = useDispatch();
   const { cameras, camTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({
-    cameras: state.cameras.list,
-    camTimeStamp: state.cameras.routeTimeStamp,
+    cameras: state.feeds.cameras.list,
+    camTimeStamp: state.feeds.cameras.routeTimeStamp,
     selectedRoute: state.routes.selectedRoute
   }))));
 
@@ -31,15 +31,19 @@ export default function CamerasListPage() {
 
     const newRouteTimestamp = selectedRoute ? selectedRoute.searchTimestamp : null;
 
-//    if (!cameras || (camTimeStamp != newRouteTimestamp)) {
+    let tempCams = cameras;
+    if (!tempCams || (camTimeStamp != newRouteTimestamp)) {
+      tempCams = await getCameras(selectedRoute ? selectedRoute.points : null);
+
       dispatch(updateCameras({
-        list: await getCameras(selectedRoute ? selectedRoute.points : null),
+        list: tempCams,
         routeTimeStamp: selectedRoute ? selectedRoute.searchTimestamp : null,
+        timeStamp: new Date().getTime()
       }));
-//    }
+    }
 
     // Deep clone and add group reference to each cam
-    const clonedCameras = JSON.parse(JSON.stringify(cameras));
+    const clonedCameras = JSON.parse(JSON.stringify(tempCams));
     const finalCameras = addCameraGroups(clonedCameras);
 
     // Sort cameras by highway number and highway_cam_order
