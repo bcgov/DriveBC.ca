@@ -47,7 +47,7 @@ function App() {
           <Route path="/" element={<MapPage />} />
           <Route path="/cameras" element={<CamerasListPage />} />
           <Route path="/cameras/:id" element={<CameraDetailsPage />} />
-          <Route path="/events" element={<EventsListPage />} />
+          <Route path="/delays" element={<EventsListPage />} />
           <Route path="/advisories" element={<AdvisoriesListPage />} />
           <Route path="/advisories/:id" element={<AdvisoryDetailsPage />} />
           <Route path="/bulletins" element={<BulletinsListPage />} />

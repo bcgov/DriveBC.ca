@@ -53,7 +53,7 @@ export default function Header() {
               <LinkContainer to="/cameras">
                 {getNavLink('Cameras')}
               </LinkContainer>
-              <LinkContainer to="/events">
+              <LinkContainer to="/delays">
                 {getNavLink('Delays')}
               </LinkContainer>
               <LinkContainer to="/advisories">
