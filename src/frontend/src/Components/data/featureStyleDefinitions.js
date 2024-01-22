@@ -37,27 +37,18 @@ import weatherConditionIconStaticMajor from '../../images/mapIcons/road-major-st
 export const cameraStyles = {
   static: new Style({
     image: new Icon({
-      anchor: [88, 88],
-      anchorXUnits: 'pixels',
-      anchorYUnits: 'pixels',
       scale: 0.25,
       src: cameraIconStatic,
     }),
   }),
   hover: new Style({
     image: new Icon({
-      anchor: [88, 88],
-      anchorXUnits: 'pixels',
-      anchorYUnits: 'pixels',
       scale: 0.25,
       src: cameraIconHover,
     }),
   }),
   active: new Style({
     image: new Icon({
-      anchor: [102, 102],
-      anchorXUnits: 'pixels',
-      anchorYUnits: 'pixels',
       scale: 0.25,
       src: cameraIconActive,
     }),
@@ -68,27 +59,18 @@ export const cameraStyles = {
 export const closureStyles = {
   static: new Style({
     image: new Icon({
-      anchor: [88, 88],
-      anchorXUnits: 'pixels',
-      anchorYUnits: 'pixels',
       scale: 0.25,
       src: closedIconStatic,
     }),
   }),
   hover: new Style({
     image: new Icon({
-      anchor: [88, 88],
-      anchorXUnits: 'pixels',
-      anchorYUnits: 'pixels',
       scale: 0.25,
       src: closedIconHover,
     }),
   }),
   active: new Style({
     image: new Icon({
-      anchor: [102, 102],
-      anchorXUnits: 'pixels',
-      anchorYUnits: 'pixels',
       scale: 0.25,
       src: closedIconActive,
     }),
@@ -100,9 +82,6 @@ export const eventStyles = {
   incident: {
     static: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: incidentIconStatic,
       }),
@@ -110,9 +89,6 @@ export const eventStyles = {
 
     hover: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: incidentIconHover,
       }),
@@ -120,9 +96,6 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [102, 102],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: incidentIconActive,
       }),
@@ -132,9 +105,6 @@ export const eventStyles = {
   major_incident: {
     static: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: incidentIconStaticMajor,
       }),
@@ -142,9 +112,6 @@ export const eventStyles = {
 
     hover: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: incidentIconHoverMajor,
       }),
@@ -152,9 +119,6 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [102, 102],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: incidentIconActiveMajor,
       }),
@@ -164,9 +128,6 @@ export const eventStyles = {
   construction: {
     static: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: constructionIconStatic,
       }),
@@ -174,9 +135,6 @@ export const eventStyles = {
 
     hover: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: constructionIconHover,
       }),
@@ -184,9 +142,6 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: constructionIconActive,
       }),
@@ -196,9 +151,6 @@ export const eventStyles = {
   major_construction: {
     static: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: constructionIconStaticMajor,
       }),
@@ -206,9 +158,6 @@ export const eventStyles = {
 
     hover: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: constructionIconHoverMajor,
       }),
@@ -216,9 +165,6 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [102, 102],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: constructionIconActiveMajor,
       }),
@@ -228,9 +174,6 @@ export const eventStyles = {
   special_event: {
     static: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: specialEventIconStatic,
       }),
@@ -238,9 +181,6 @@ export const eventStyles = {
 
     hover: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: specialEventIconHover,
       }),
@@ -248,9 +188,6 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: specialEventIconActive,
       }),
@@ -260,9 +197,6 @@ export const eventStyles = {
   major_special_event: {
     static: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: specialEventIconStaticMajor,
       }),
@@ -270,9 +204,6 @@ export const eventStyles = {
 
     hover: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: specialEventIconHoverMajor,
       }),
@@ -280,9 +211,6 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [102, 102],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: specialEventIconActiveMajor,
       }),
@@ -292,9 +220,6 @@ export const eventStyles = {
   weather_condition: {
     static: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: weatherConditionIconStatic,
       }),
@@ -302,9 +227,6 @@ export const eventStyles = {
 
     hover: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: weatherConditionIconHover,
       }),
@@ -312,9 +234,6 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [102, 102],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: weatherConditionIconActive,
       }),
@@ -324,9 +243,6 @@ export const eventStyles = {
   major_weather_condition: {
     static: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: weatherConditionIconStaticMajor,
       }),
@@ -334,9 +250,6 @@ export const eventStyles = {
 
     hover: new Style({
       image: new Icon({
-        anchor: [88, 88],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: weatherConditionIconHoverMajor,
       }),
@@ -344,9 +257,6 @@ export const eventStyles = {
 
     active: new Style({
       image: new Icon({
-        anchor: [102, 102],
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels',
         scale: 0.25,
         src: weatherConditionIconActiveMajor,
       }),
@@ -379,27 +289,21 @@ segments: {
 export const ferryStyles = {
   static: new Style({
     image: new Icon({
-      anchor: [88, 88],
-      anchorXUnits: 'pixels',
-      anchorYUnits: 'pixels',
+
+
+
       scale: 0.25,
       src: ferryIconStatic,
     }),
   }),
   hover: new Style({
     image: new Icon({
-      anchor: [88, 88],
-      anchorXUnits: 'pixels',
-      anchorYUnits: 'pixels',
       scale: 0.25,
       src: ferryIconHover,
     }),
   }),
   active: new Style({
     image: new Icon({
-      anchor: [88, 88],
-      anchorXUnits: 'pixels',
-      anchorYUnits: 'pixels',
       scale: 0.25,
       src: ferryIconActive,
     }),
