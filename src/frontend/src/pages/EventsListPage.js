@@ -77,10 +77,12 @@ export default function EventsListPage() {
       header: 'Direction',
       accessorKey: 'direction',
       cell: (props) => <span>{props.getValue().toLowerCase()}</span>,
+      enableSorting: false,
     },
     {
       header: 'Description',
       accessorKey: 'description',
+      enableSorting: false,
     },
     {
       header: 'Last Update',
