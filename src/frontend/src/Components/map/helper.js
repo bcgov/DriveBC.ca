@@ -10,38 +10,39 @@ import { closureStyles, eventStyles } from '../data/featureStyleDefinitions.js';
 
 // Static assets
 export const getEventIcon = (event, state) => {
-  if (event.get('closed')) {
-    return closureStyles[state];
+  // Line segments
+  const geometry = event.getGeometry().getType();
+  if (geometry !== 'Point') {
+    return eventStyles['segments'][state];
   }
+
+  // Points
+  // Closures
+  if (event.get('closed')) {
+    return eventStyles['closures'][state];
+  }
+
   const severity = event.get('severity').toLowerCase();
   const display_category = event.get('display_category');
-  const geometry = event.getGeometry().getType();
-  if (geometry === 'Point') {
-    if (severity === 'major') {
-      switch (display_category) {
-        case 'majorEvents':
-          return eventStyles['major_incident'][state];
-        case 'futureEvents':
-          return eventStyles['major_special_event'][state];
-        case 'roadConditions':
-          return eventStyles['major_weather_condition'][state];
-        default:
-          return eventStyles['major_incident'][state];
+  switch (display_category) {
+    // Future Events
+    case 'futureEvents':
+      return eventStyles[severity === 'major' ? 'major_future_events' : 'future_events'][state];
+
+    // Road Conditions
+    case 'roadConditions':
+      return eventStyles[severity === 'major' ? 'major_road_conditions' : 'road_conditions'][state];
+
+    default: {
+      // Constructions
+      const type = event.get('event_type').toLowerCase();
+      if (type === 'construction') {
+        return eventStyles[severity === 'major' ? 'major_constructions' : 'constructions'][state];
       }
-    } else {
-      switch (display_category) {
-        case 'minorEvents':
-          return eventStyles['construction'][state];
-        case 'futureEvents':
-          return eventStyles['special_event'][state];
-        case 'roadConditions':
-          return eventStyles['weather_condition'][state];
-        default:
-          return eventStyles['construction'][state];
-      }
+
+      // Other major/minor delays
+      return eventStyles[severity === 'major' ? 'major_generic_delays' : 'generic_delays'][state];
     }
-  } else {
-    return eventStyles['segments'][state];
   }
 };
 
