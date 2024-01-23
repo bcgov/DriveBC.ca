@@ -614,12 +614,12 @@ export default function MapWrapper({
             position.coords.latitude <= 60.1 &&
             position.coords.latitude >= 48.2
           ) {
-            centerMap([longitude, latitude]);
+            setZoomPan(mapView, 9, fromLonLat([longitude, latitude]));
             setLocationPin([longitude, latitude], redLocationMarkup, mapRef);
 
           } else {
             // set my location to the center of BC for users outside of BC
-            centerMap([-126.5, 54.2]);
+            setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
             setLocationPin([-126.5, 54.2], redLocationMarkup, mapRef);
           }
         },
@@ -627,7 +627,7 @@ export default function MapWrapper({
           console.error('Error getting user location:', error);
 
           // Zoom out and center to BC if location not available
-          setZoomPan(mapView, 7, fromLonLat([-126.5, 54.2]));
+          setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
         },
       );
     }
