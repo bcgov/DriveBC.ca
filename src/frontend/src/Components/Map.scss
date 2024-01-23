@@ -53,19 +53,19 @@
       background: var(--ol-partial-background-color);
       border-radius: 4px;
       left: auto;
-      right: 9rem;
-      bottom: 2rem;
+      right: 8rem;
+      bottom: 1rem;
       padding: 2px;
       position: absolute;
 
       @media (min-width: 768px) {
-        right: 2rem;
-        bottom: 2rem;
+        right: 1rem;
+        bottom: 1rem;
       }
 
       @media (min-width: 992px) {
-        right: 6rem;
-        bottom: 2rem;
+        right: 4rem;
+        bottom: 1rem;
       }
     }
 
@@ -124,18 +124,18 @@
 
     &.my-location {
       position: absolute;
-      bottom: 2rem;
-      left: 2rem;
+      bottom: 1rem;
+      left: 1rem;
     }
 
     &.open-filters {
       position: absolute;
-      top: 2rem;
-      right: 2rem;
+      top: 1rem;
+      right: 1rem;
 
       @media (max-width: 768px) {
         top: initial;
-        bottom: 2rem;
+        bottom: 1rem;
       }
 
       // styling for badge
@@ -172,8 +172,8 @@
     border-radius: 6px;
     border: 1px solid $Type-Link;
     box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
-    bottom: 2rem;
-    right: 2rem;
+    bottom: 1rem;
+    right: 1rem;
     display: flex;
     flex-direction: column;
 
