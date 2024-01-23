@@ -6,6 +6,12 @@ import { useDispatch } from 'react-redux'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
+// Third party packages
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faMagnifyingGlass
+} from '@fortawesome/free-solid-svg-icons';
+
 // Components and functions
 import { getLocations } from '../data/locations.js';
 
@@ -54,7 +60,7 @@ export default function LocationSearch(props) {
       onChange={setSelectedLocation}
       onSearch={loadLocationOptions}
       options={options}
-      placeholder="Search for a location..."
+      placeholder="Find a location"
       highlightOnlyResult={true}
       inputProps={{
         'aria-label': 'input field for location search',

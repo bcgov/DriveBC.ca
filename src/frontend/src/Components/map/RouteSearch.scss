@@ -1,10 +1,8 @@
+@import "../../styles/variables.scss";
+
 .routing-container {
   background: white;
-  padding: 2rem 2rem 0;
-
-  @media (max-width: 768px) {
-    padding: 5rem 2rem 0;
-  }
+  padding: 1rem 1rem 0;
 
   .typeahead-container {
     width: 100%;
@@ -13,14 +11,72 @@
       width: 360px;
     }
 
-    &-two {
-      padding-top: 0.5rem;
-      margin-top: 0.5rem;
+    .location-marker {
+      position: absolute;
+      z-index: 1;
+      margin: 0.25rem;
+
+      &--from {
+        font-size: 0.75rem;
+        margin: 0.5rem;
+        color: $Type-Secondary;
+      }
+
+      &--to {
+        font-size: 1rem;
+        margin: 0.25rem 0.5rem;
+        color: $Error;
+      }
     }
 
     .form-control {
-      padding: 5px 12px;
+      font-size: 0.875rem;
+      padding: 6px 12px;
       line-height: 1;
+
+      &:focus {
+        border-color: #dee2e6;
+      }
+
+      &::placeholder {
+        color: $Type-Disabled;
+      }
+    }
+
+    .rbt-aux {
+      .rbt-close {
+        background: none;
+        margin-top: 0;
+      }
+    }
+
+    #location-search-typeahead {
+      font-size: 0.875rem;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border-color: #dee2e6;
+      transform: translate3d(0px, 28px, 0px) !important;
+    }
+
+    &.stacked {
+
+      .form-control {
+        padding-left: 1.75rem;
+      }
+
+      &.typeahead-container--from {
+        .form-control {
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+      }
+  
+      &.typeahead-container--to {
+        .form-control {
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+        }
+      }
     }
   }
 }

@@ -8,6 +8,13 @@ import { getRoute } from '../data/routes.js';
 import { clearSelectedRoute, updateSearchLocationFrom, updateSearchLocationTo, updateSelectedRoute } from '../../slices/routesSlice'
 import LocationSearch from './LocationSearch.js';
 
+// Third party packages
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faCircleDot,
+  faLocationDot
+} from '@fortawesome/free-solid-svg-icons';
+
 // Styling
 import './RouteSearch.scss';
 
@@ -47,12 +54,20 @@ export default function RouteSearch() {
   // Rendering
   return (
     <div className="routing-container">
-      <div className="typeahead-container">
+      <div className={"typeahead-container typeahead-container--from" + ((!!searchLocationFrom.length || !!searchLocationTo.length) ? ' stacked' : '')}>
+        {(!!searchLocationFrom.length || !!searchLocationTo.length) &&
+          <span className="location-marker location-marker--from">
+            <FontAwesomeIcon icon={faCircleDot} />
+          </span>
+        }
         <LocationSearch location={searchLocationFrom} action={updateSearchLocationFrom} />
       </div>
 
       {(!!searchLocationFrom.length || !!searchLocationTo.length) &&
-        <div className="typeahead-container typeahead-container-two">
+        <div className="typeahead-container typeahead-container--to stacked">
+          <span className="location-marker location-marker--to">
+            <FontAwesomeIcon icon={faLocationDot} />
+          </span>
           <LocationSearch location={searchLocationTo} action={updateSearchLocationTo} />
         </div>
       }
