@@ -135,14 +135,14 @@ export function loadEventsLayers(
 
       // Add layer to map for each vs
       addLayer('closures', closureVS, 128);
-      addLayer('closuresLines', closureLinesVS, 2);
-      addLayer('majorEvents', majorEventsVS, 128);
-      addLayer('majorEventsLines', majorEventsLinesVS, 2);
-      addLayer('minorEvents', minorEventsVS, 128);
-      addLayer('minorEventsLines', minorEventsLinesVS, 2);
-      addLayer('futureEvents', futureEventsVS, 128);
-      addLayer('futureEventsLines', futureEventsLinesVS, 2);
-      addLayer('roadConditions', roadConditionsVS, 128);
+      addLayer('closuresLines', closureLinesVS, 42);
+      addLayer('majorEvents', majorEventsVS, 118);
+      addLayer('majorEventsLines', majorEventsLinesVS, 32);
+      addLayer('minorEvents', minorEventsVS, 108);
+      addLayer('minorEventsLines', minorEventsLinesVS, 22);
+      addLayer('futureEvents', futureEventsVS, 98);
+      addLayer('futureEventsLines', futureEventsLinesVS, 12);
+      addLayer('roadConditions', roadConditionsVS, 88);
       addLayer('roadConditionsLines', roadConditionsLinesVS, 2);
     });
   }

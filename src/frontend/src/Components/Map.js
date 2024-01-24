@@ -471,7 +471,7 @@ export default function MapWrapper({
       )
 
       mapRef.current.addLayer(mapLayers.current['highwayCams']);
-      mapLayers.current['highwayCams'].setZIndex(4);
+      mapLayers.current['highwayCams'].setZIndex(78);
     }
   }, [cameras]);
 
@@ -521,7 +521,7 @@ export default function MapWrapper({
       )
 
       mapRef.current.addLayer(mapLayers.current['inlandFerries']);
-      mapLayers.current['inlandFerries'].setZIndex(8);
+      mapLayers.current['inlandFerries'].setZIndex(68);
     }
   }, [ferries]);
 
