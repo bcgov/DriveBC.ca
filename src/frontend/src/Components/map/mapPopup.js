@@ -49,7 +49,7 @@ export function getEventPopup(eventFeature) {
         <div className="delay-type">
           <div className="bold delay-severity">
             <div className="delay-icon">
-              <EventTypeIcon displayCategory={ eventData.display_category} />
+              <EventTypeIcon event={ eventData } />
             </div>
 
             <p className="bold">{ displayCategoryMap[eventData.display_category]}</p>

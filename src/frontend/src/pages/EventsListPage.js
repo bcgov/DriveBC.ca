@@ -63,7 +63,7 @@ export default function EventsListPage() {
     {
       header: 'Type',
       accessorKey: 'display_category',
-      cell: (props) => <EventTypeIcon displayCategory={props.getValue()} />,
+      cell: (props) => <EventTypeIcon event={props.row.original} />,
     },
     {
       header: 'Severity',
@@ -233,7 +233,7 @@ export default function EventsListPage() {
                       <EventCard
                         className="event"
                         event={e}
-                        icon= {<EventTypeIcon eventCategory={e.display_category} />}
+                        icon= {<EventTypeIcon event={e} />}
                       />
                     </div>
                   ),

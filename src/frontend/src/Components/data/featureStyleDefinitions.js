@@ -34,12 +34,12 @@ import roadConditionsHoverIcon from '../../images/mapIcons/road-minor-hover.png'
 import roadConditionsStaticIcon from '../../images/mapIcons/road-minor-static.png';
 
 // Constructions
-import constructionsMajorActiveIcon from '../../images/mapIcons/currentevent-major-active.png';
-import constructionsMajorHoverIcon from '../../images/mapIcons/currentevent-major-hover.png';
-import constructionsMajorStaticIcon from '../../images/mapIcons/currentevent-major-static.png';
-import constructionsActiveIcon from '../../images/mapIcons/currentevent-minor-active.png';
-import constructionsHoverIcon from '../../images/mapIcons/currentevent-minor-hover.png';
-import constructionsStaticIcon from '../../images/mapIcons/currentevent-minor-static.png';
+import constructionsMajorActiveIcon from '../../images/mapIcons/construction-major-active.png';
+import constructionsMajorHoverIcon from '../../images/mapIcons/construction-major-hover.png';
+import constructionsMajorStaticIcon from '../../images/mapIcons/construction-major-static.png';
+import constructionsActiveIcon from '../../images/mapIcons/construction-minor-active.png';
+import constructionsHoverIcon from '../../images/mapIcons/construction-minor-hover.png';
+import constructionsStaticIcon from '../../images/mapIcons/construction-minor-static.png';
 
 // Generic Events
 import genericDelaysMajorActiveIcon from '../../images/mapIcons/generic-event-major-active.png';
