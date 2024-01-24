@@ -24,7 +24,8 @@ class TestRegionalWeatherAPI(APITestCase, BaseTest):
         url = "/api/weather/regional"
         response = self.client.get(url, {})
         assert len(response.data) == 1
-        # assert cache.get(CacheKey.REGIONAL_WEATHER_LIST) is not None
+        RegionalWeatherAPI().set_list_data()
+        assert cache.get(CacheKey.REGIONAL_WEATHER_LIST) is not None
 
         # Cached result
         RegionalWeather.objects.filter(location_code='s0000341').delete()

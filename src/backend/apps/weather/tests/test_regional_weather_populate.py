@@ -6,8 +6,8 @@ from pathlib import Path
 from unittest.mock import patch
 import pytest
 from apps.weather.models import RegionalWeather
-from apps.weather.tasks import populate_all_regional_weather_data
-from apps.weather.tests.test_data.regional_weather_parsed_feed import parsed_feed
+from apps.weather.tasks import populate_all_regional_weather_data, populate_regional_weather_from_data
+from apps.weather.tests.test_data.regional_weather_parsed_feed import json_feed
 from apps.shared.tests import BaseTest, MockResponse
 
 
@@ -21,16 +21,13 @@ class TestRegionalWeatherModel(BaseTest):
             "/test_data/regional_weather_feed_list_of_one.json"
         )
         self.mock_regional_weather_feed_result = json.load(regional_weather_feed_data)
-
-        # Parsed python dict
-        self.parsed_feed = parsed_feed
+        self.json_feed = json_feed
 
     def test_populate_regional_weather_function(self):
-        pass
-        # populate_regional_weather_from_data(self.parsed_feed)
-        # regional_weather_one = RegionalWeather.objects.get(location_code="s0000341")
-        # assert regional_weather_one.location_latitude == \
-        #        "58.66N"
+        populate_regional_weather_from_data(self.json_feed)
+        regional_weather_one = RegionalWeather.objects.get(location_code="s0000341")
+        assert regional_weather_one.location_latitude == \
+               "58.66N"
         
 
     @patch("httpx.get")
