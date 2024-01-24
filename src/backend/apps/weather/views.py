@@ -1,11 +1,12 @@
 import requests
-from apps.weather.models import RegionalCurrent, RegionalForecast
-from apps.weather.serializers import RegionalCurrentSerializer, RegionalForecastSerializer
+from apps.weather.models import RegionalCurrent, RegionalForecast, RegionalWeather
+from apps.weather.serializers import RegionalCurrentSerializer, RegionalForecastSerializer, RegionalWeatherSerializer
 from apps.shared.views import CachedListModelMixin
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.conf import settings
+from rest_framework import status 
 
 class RegionalCurrentAPI(CachedListModelMixin):
     queryset = RegionalCurrent.objects.all()
@@ -108,7 +109,6 @@ class WeatherViewSet(viewsets.ViewSet):
         except requests.RequestException as e:
             return Response({"error": f"Error fetching data from weather API: {str(e)}"}, status=500)
 
-
     @action(detail=True, methods=['get'])
     def regionalforecast(self, request, pk=None):
         # Obtain Access Token
@@ -173,6 +173,12 @@ class WeatherViewSet(viewsets.ViewSet):
             
         except requests.RequestException as e:
             return Response({"error": f"Error fetching data from weather API: {str(e)}"}, status=500)
+
+    @action(detail=True, methods=['get'])
+    def regional(self, request, pk=None):
+        regional_weather_objects = RegionalWeather.objects.all()
+        serializer = RegionalWeatherSerializer(regional_weather_objects, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class RegionalCurrentTestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = RegionalCurrentAPI.queryset

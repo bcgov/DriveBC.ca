@@ -292,8 +292,6 @@ class RegionalForecastAPITestCase(APITestCase):
             }
 
         }
-   
-    
 
         self.regional_forecast = RegionalForecast.objects.create(**self.regional_forecast_data)
         self.url = 'http://localhost:8000/api/weather/regionalforecast/s0000341'

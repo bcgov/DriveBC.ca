@@ -56,6 +56,7 @@ class CacheKey:
     BULLETIN_LIST = "bulletin_list"
     FERRY_LIST = "ferry_list"
     TEST_APP_CACHE = "test_app_cache"
+    REGIONAL_WEATHER_LIST = "regional_weather_list"
 
 
 ROUTE_FILTER_TOLERANCE = 25

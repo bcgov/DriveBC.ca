@@ -13,8 +13,11 @@ from apps.feed.fields import (
     WebcamLocationField,
     WebcamRegionField,
     WebcamRegionGroupField,
+    RegionalWeatherPropertiesField
 )
 from rest_framework import serializers
+
+from apps.weather.models import RegionalWeather
 
 
 # Webcam
@@ -158,3 +161,28 @@ class FerryFeedSerializer(serializers.Serializer):
 
 class FerryAPISerializer(serializers.Serializer):
     features = FerryFeedSerializer(many=True)
+
+# Regional Weather
+class RegionalWeatherFeedSerializer(serializers.Serializer):
+    properties = RegionalWeatherPropertiesField(source="*")
+class RegionalWeatherAPISerializer(serializers.Serializer):
+    features = RegionalWeatherFeedSerializer(many=True)
+
+class RegionalWeatherSerializer(serializers.Serializer):
+    class Meta:
+        model = RegionalWeather
+        fields = (
+            'id',
+            'location_code',
+            'location_latitude',
+            'location_longitude',
+            'location_name',
+            'region',
+            'observation_name',
+            'observation_zone',
+            'observation_utc_offset',
+            'observation_text_summary',
+            'conditions',
+            'forecast_group',
+            'hourly_forecast_group',
+        )
