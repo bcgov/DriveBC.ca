@@ -1,7 +1,5 @@
 from collections import OrderedDict
 import logging
-
-# from apps.event.enums import EVENT_DIFF_FIELDS, EVENT_STATUS, EVENT_UPDATE_FIELDS
 from apps.weather.models import RegionalWeather
 from apps.weather.serializers import RegionalWeatherSerializer
 from apps.feed.client import FeedClient

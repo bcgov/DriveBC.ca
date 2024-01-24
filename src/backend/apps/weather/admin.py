@@ -1,4 +1,4 @@
-from apps.weather.models import RegionalCurrent, RegionalForecast
+from apps.weather.models import RegionalWeather
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 
@@ -6,7 +6,6 @@ from django.contrib.admin import ModelAdmin
 class WeatherAdmin(ModelAdmin):
     readonly_fields = ('id', )
 
+admin.site.register(RegionalWeather, WeatherAdmin)
 
-admin.site.register(RegionalCurrent, WeatherAdmin)
-admin.site.register(RegionalForecast, WeatherAdmin)
 
