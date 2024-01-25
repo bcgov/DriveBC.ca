@@ -55,20 +55,22 @@ export default function RouteSearch() {
   return (
     <div className="routing-container">
       <div className={"typeahead-container typeahead-container--from" + ((!!searchLocationFrom.length || !!searchLocationTo.length) ? ' stacked' : '')}>
-        {(!!searchLocationFrom.length || !!searchLocationTo.length) &&
+        {!!searchLocationFrom.length &&
           <span className="location-marker location-marker--from">
             <FontAwesomeIcon icon={faCircleDot} />
           </span>
         }
-        <LocationSearch location={searchLocationFrom} action={updateSearchLocationFrom} />
+
+        <LocationSearch placeholder={'Find a location'} location={searchLocationFrom} action={updateSearchLocationFrom} />
       </div>
 
-      {(!!searchLocationFrom.length || !!searchLocationTo.length) &&
+      {!!searchLocationFrom.length &&
         <div className="typeahead-container typeahead-container--to stacked">
           <span className="location-marker location-marker--to">
             <FontAwesomeIcon icon={faLocationDot} />
           </span>
-          <LocationSearch location={searchLocationTo} action={updateSearchLocationTo} />
+
+          <LocationSearch placeholder={'Find a destination'} location={searchLocationTo} action={updateSearchLocationTo} />
         </div>
       }
     </div>
