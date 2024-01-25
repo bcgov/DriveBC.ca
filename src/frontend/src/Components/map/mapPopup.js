@@ -2,7 +2,6 @@
 import React from 'react';
 
 // Third party packages
-import Button from 'react-bootstrap/Button';
 import EventTypeIcon from '../EventTypeIcon';
 import FriendlyTime from '../FriendlyTime';
 import parse from 'html-react-parser';
