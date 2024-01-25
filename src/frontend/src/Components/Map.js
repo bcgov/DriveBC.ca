@@ -39,7 +39,7 @@ import { getFerriesLayer } from './map/layers/ferriesLayer.js';
 import { getCameras, addCameraGroups } from './data/webcams.js';
 import { getRouteLayer } from './map/routeLayer.js';
 import { MapContext } from '../App.js';
-import AdvisoriesAccordion from './advisories/AdvisoriesAccordion';
+import AdvisoriesOnMap from './advisories/AdvisoriesOnMap';
 import CurrentCameraIcon from './CurrentCameraIcon';
 import Filters from './Filters.js';
 import RouteSearch from './map/RouteSearch.js';
@@ -738,7 +738,7 @@ export default function MapWrapper({
       {!isPreview && (
         <div>
           <RouteSearch />
-          <AdvisoriesAccordion />
+          <AdvisoriesOnMap />
         </div>
       )}
     </div>

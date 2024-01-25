@@ -52,7 +52,7 @@ export default function AdvisoriesListPage() {
         description='Get the latest critical travel status information during major events affecting travel on a highway or region.'>
       </PageHeader>
       <Container>
-        <AdvisoriesList advisories={advisories} showDescriptions={true} />
+        <AdvisoriesList advisories={advisories} showDescription={true} showTimestamp={true}/>
       </Container>
       <Footer />
     </div>
