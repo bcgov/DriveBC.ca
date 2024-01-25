@@ -103,7 +103,7 @@ export default function CameraDetailsPage() {
       initCamera();
       isInitialMount.current = false;
 
-    } else {
+    } else if (camera) {
       loadReplay(camera);
     }
   }, [camera]);
