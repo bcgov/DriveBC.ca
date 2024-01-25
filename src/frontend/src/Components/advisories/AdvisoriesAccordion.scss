@@ -2,16 +2,16 @@
 
 .advisories-accordion {
   position: absolute;
-  top: 2rem;
+  top: 1rem;
   left: 2rem;
   width: calc(100% - 32px - 6rem);
 
   @media (max-width: 768px) {
     width: calc(100% - 32px - 2rem);
+    position: relative;
   }
 
   @media (min-width: 992px) {
-    top: 2rem;
     left: calc(4rem + 360px );
     width: calc(100% - 360px - 224px - 8rem);
     min-width: 400px;
