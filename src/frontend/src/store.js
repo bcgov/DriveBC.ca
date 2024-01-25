@@ -1,12 +1,5 @@
+// Redux
 import { configureStore } from '@reduxjs/toolkit';
-
-import { cmsInitialState } from './slices/cmsSlice';
-import { feedsInitialState } from './slices/feedsSlice';
-import feedsReducer from './slices/feedsSlice';
-import cmsReducer from './slices/cmsSlice';
-import routesReducer from './slices/routesSlice';
-import mapReducer from './slices/mapSlice';
-
 import {
   persistStore,
   persistReducer,
@@ -17,11 +10,18 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist';
-
 import localforage from 'localforage';
-import storage from 'redux-persist/lib/storage';
 
+// Components and functions
 import expireReducer from './expireReducer';
+
+// Slices
+import { cmsInitialState } from './slices/cmsSlice';
+import { feedsInitialState } from './slices/feedsSlice';
+import cmsReducer from './slices/cmsSlice';
+import feedsReducer from './slices/feedsSlice';
+import mapReducer from './slices/mapSlice';
+import routesReducer from './slices/routesSlice';
 
 const getConfig = (key, lifeInSeconds, initialState) => {
   const config = {

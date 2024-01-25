@@ -1,9 +1,6 @@
 // React
 import React, { useContext, useRef, useEffect, useState, useCallback } from 'react';
 
-// Navigation
-import { useNavigate } from 'react-router-dom';
-
 // Redux
 import { memoize } from 'proxy-memoize'
 import { useSelector, useDispatch } from 'react-redux'
@@ -113,9 +110,6 @@ export default function MapWrapper({
   const locationPinRef = useRef(null);
   const cameraPopupRef = useRef(null);
 
-  // Misc
-  const navigate = useNavigate();
-
   // Workaround for OL handlers not being able to read states
   const [clickedCamera, setClickedCamera] = useState();
   const clickedCameraRef = useRef();
@@ -136,14 +130,6 @@ export default function MapWrapper({
   const updateClickedFerry = (feature) => {
     clickedFerryRef.current = feature;
     setClickedFerry(feature);
-  }
-
-  function centerMap(coordinates) {
-    if (mapView.current) {
-      mapView.current.animate({
-        center: fromLonLat(coordinates),
-      });
-    }
   }
 
   // Define the function to be executed after the delay

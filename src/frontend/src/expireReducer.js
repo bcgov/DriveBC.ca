@@ -1,11 +1,6 @@
 // https://github.com/kamranahmedse/redux-persist-expire
 // Copied over and fixed issue with expiry
-
 const { createTransform } = require('redux-persist');
-
-const transformPersistence = (inboundState) => {
-  return inboundState;
-};
 
 const transformRehydrate = (outboundState, config) => {
   outboundState = outboundState || null;
