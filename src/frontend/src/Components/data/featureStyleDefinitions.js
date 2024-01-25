@@ -1,37 +1,53 @@
 import { Icon, Stroke, Style } from 'ol/style.js';
+
+// Static assets
+// Cameras
 import cameraIconActive from '../../images/mapIcons/camera-active.png';
 import cameraIconHover from '../../images/mapIcons/camera-hover.png';
 import cameraIconStatic from '../../images/mapIcons/camera-static.png';
-import closedIconActive from '../../images/mapIcons/closure-active.png';
-import closedIconHover from '../../images/mapIcons/closure-hover.png';
-import closedIconStatic from '../../images/mapIcons/closure-static.png';
+
+// Ferries
 import ferryIconActive from '../../images/mapIcons/ferry-active.png';
 import ferryIconHover from '../../images/mapIcons/ferry-hover.png';
 import ferryIconStatic from '../../images/mapIcons/ferry-static.png';
-import incidentIconActive from '../../images/mapIcons/incident-minor-active.png';
-import incidentIconHover from '../../images/mapIcons/incident-minor-hover.png';
-import incidentIconStatic from '../../images/mapIcons/incident-minor-static.png';
-import incidentIconActiveMajor from '../../images/mapIcons/incident-major-active.png';
-import incidentIconHoverMajor from '../../images/mapIcons/incident-major-hover.png';
-import incidentIconStaticMajor from '../../images/mapIcons/incident-major-static.png';
-import constructionIconActive from '../../images/mapIcons/currentevent-minor-active.png';
-import constructionIconHover from '../../images/mapIcons/currentevent-minor-hover.png';
-import constructionIconStatic from '../../images/mapIcons/currentevent-minor-static.png';
-import constructionIconActiveMajor from '../../images/mapIcons/currentevent-major-active.png';
-import constructionIconHoverMajor from '../../images/mapIcons/currentevent-major-hover.png';
-import constructionIconStaticMajor from '../../images/mapIcons/currentevent-major-static.png';
-import specialEventIconActive from '../../images/mapIcons/futureevent-minor-active.png';
-import specialEventIconHover from '../../images/mapIcons/futureevent-minor-hover.png';
-import specialEventIconStatic from '../../images/mapIcons/futureevent-minor-static.png';
-import specialEventIconActiveMajor from '../../images/mapIcons/futureevent-major-active.png';
-import specialEventIconHoverMajor from '../../images/mapIcons/futureevent-major-hover.png';
-import specialEventIconStaticMajor from '../../images/mapIcons/futureevent-major-static.png';
-import weatherConditionIconActive from '../../images/mapIcons/road-minor-active.png';
-import weatherConditionIconHover from '../../images/mapIcons/road-minor-hover.png';
-import weatherConditionIconStatic from '../../images/mapIcons/road-minor-static.png';
-import weatherConditionIconActiveMajor from '../../images/mapIcons/road-major-active.png';
-import weatherConditionIconHoverMajor from '../../images/mapIcons/road-major-hover.png';
-import weatherConditionIconStaticMajor from '../../images/mapIcons/road-major-static.png';
+
+// Events
+// Closures
+import closuresActiveIcon from '../../images/mapIcons/closure-active.png';
+import closuresHoverIcon from '../../images/mapIcons/closure-hover.png';
+import closuresStaticIcon from '../../images/mapIcons/closure-static.png';
+
+// Future Events
+import futureEventsMajorActiveIcon from '../../images/mapIcons/futureevent-major-active.png';
+import futureEventsMajorHoverIcon from '../../images/mapIcons/futureevent-major-hover.png';
+import futureEventsMajorStaticIcon from '../../images/mapIcons/futureevent-major-static.png';
+import futureEventsActiveIcon from '../../images/mapIcons/futureevent-minor-active.png';
+import futureEventsHoverIcon from '../../images/mapIcons/futureevent-minor-hover.png';
+import futureEventsStaticIcon from '../../images/mapIcons/futureevent-minor-static.png';
+
+// Road Conditions
+import roadConditionsMajorActiveIcon from '../../images/mapIcons/road-major-active.png';
+import roadConditionsMajorHoverIcon from '../../images/mapIcons/road-major-hover.png';
+import roadConditionsMajorStaticIcon from '../../images/mapIcons/road-major-static.png';
+import roadConditionsActiveIcon from '../../images/mapIcons/road-minor-active.png';
+import roadConditionsHoverIcon from '../../images/mapIcons/road-minor-hover.png';
+import roadConditionsStaticIcon from '../../images/mapIcons/road-minor-static.png';
+
+// Constructions
+import constructionsMajorActiveIcon from '../../images/mapIcons/construction-major-active.png';
+import constructionsMajorHoverIcon from '../../images/mapIcons/construction-major-hover.png';
+import constructionsMajorStaticIcon from '../../images/mapIcons/construction-major-static.png';
+import constructionsActiveIcon from '../../images/mapIcons/construction-minor-active.png';
+import constructionsHoverIcon from '../../images/mapIcons/construction-minor-hover.png';
+import constructionsStaticIcon from '../../images/mapIcons/construction-minor-static.png';
+
+// Generic Events
+import genericDelaysMajorActiveIcon from '../../images/mapIcons/generic-event-major-active.png';
+import genericDelaysMajorHoverIcon from '../../images/mapIcons/generic-event-major-hover.png';
+import genericDelaysMajorStaticIcon from '../../images/mapIcons/generic-event-major-static.png';
+import genericDelaysActiveIcon from '../../images/mapIcons/generic-event-minor-active.png';
+import genericDelaysHoverIcon from '../../images/mapIcons/generic-event-minor-hover.png';
+import genericDelaysStaticIcon from '../../images/mapIcons/generic-event-minor-static.png';
 
 // Camera icon styles
 export const cameraStyles = {
@@ -55,243 +71,10 @@ export const cameraStyles = {
   }),
 };
 
-// Road closed icon styles
-export const closureStyles = {
-  static: new Style({
-    image: new Icon({
-      scale: 0.25,
-      src: closedIconStatic,
-    }),
-  }),
-  hover: new Style({
-    image: new Icon({
-      scale: 0.25,
-      src: closedIconHover,
-    }),
-  }),
-  active: new Style({
-    image: new Icon({
-      scale: 0.25,
-      src: closedIconActive,
-    }),
-  }),
-};
-
-// Event icon styles
-export const eventStyles = {
-  incident: {
-    static: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: incidentIconStatic,
-      }),
-    }),
-
-    hover: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: incidentIconHover,
-      }),
-    }),
-
-    active: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: incidentIconActive,
-      }),
-    }),
-  },
-
-  major_incident: {
-    static: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: incidentIconStaticMajor,
-      }),
-    }),
-
-    hover: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: incidentIconHoverMajor,
-      }),
-    }),
-
-    active: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: incidentIconActiveMajor,
-      }),
-    }),
-  },
-
-  construction: {
-    static: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: constructionIconStatic,
-      }),
-    }),
-
-    hover: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: constructionIconHover,
-      }),
-    }),
-
-    active: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: constructionIconActive,
-      }),
-    }),
-  },
-
-  major_construction: {
-    static: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: constructionIconStaticMajor,
-      }),
-    }),
-
-    hover: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: constructionIconHoverMajor,
-      }),
-    }),
-
-    active: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: constructionIconActiveMajor,
-      }),
-    }),
-  },
-
-  special_event: {
-    static: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: specialEventIconStatic,
-      }),
-    }),
-
-    hover: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: specialEventIconHover,
-      }),
-    }),
-
-    active: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: specialEventIconActive,
-      }),
-    }),
-  },
-
-  major_special_event: {
-    static: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: specialEventIconStaticMajor,
-      }),
-    }),
-
-    hover: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: specialEventIconHoverMajor,
-      }),
-    }),
-
-    active: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: specialEventIconActiveMajor,
-      }),
-    }),
-  },
-
-  weather_condition: {
-    static: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: weatherConditionIconStatic,
-      }),
-    }),
-
-    hover: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: weatherConditionIconHover,
-      }),
-    }),
-
-    active: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: weatherConditionIconActive,
-      }),
-    }),
-  },
-
-  major_weather_condition: {
-    static: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: weatherConditionIconStaticMajor,
-      }),
-    }),
-
-    hover: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: weatherConditionIconHoverMajor,
-      }),
-    }),
-
-    active: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: weatherConditionIconActiveMajor,
-      }),
-    }),
-  },
-// Event segments styles
-segments: {
-  static: new Style({
-    stroke: new Stroke({
-      color: 'rgba(144 ,164 ,190, 0.5)',
-      width: 8,
-    }),
-  }),
-  hover: new Style({
-    stroke: new Stroke({
-      color: 'rgba(232 ,192 ,97, 0.75)',
-      width: 10,
-    }),
-  }),
-  active: new Style({
-    stroke: new Stroke({
-      color: 'rgba(252 ,186 ,25, 0.9)',
-      width: 10,
-    }),
-  })
-}
-};
-
 // Ferry icon styles
 export const ferryStyles = {
   static: new Style({
     image: new Icon({
-
-
-
       scale: 0.25,
       src: ferryIconStatic,
     }),
@@ -308,4 +91,239 @@ export const ferryStyles = {
       src: ferryIconActive,
     }),
   }),
+};
+
+// Event icon styles
+export const eventStyles = {
+  // Line Segments
+  segments: {
+    static: new Style({
+      stroke: new Stroke({
+        color: 'rgba(144 ,164 ,190, 0.5)',
+        width: 8,
+      }),
+    }),
+    hover: new Style({
+      stroke: new Stroke({
+        color: 'rgba(232 ,192 ,97, 0.75)',
+        width: 10,
+      }),
+    }),
+    active: new Style({
+      stroke: new Stroke({
+        color: 'rgba(252 ,186 ,25, 0.9)',
+        width: 10,
+      }),
+    })
+  },
+
+  // Closures
+  closures: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: closuresStaticIcon,
+      }),
+    }),
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: closuresHoverIcon,
+      }),
+    }),
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: closuresActiveIcon,
+      }),
+    }),
+  },
+
+  // Future events
+  major_future_events: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureEventsMajorStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureEventsMajorHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureEventsMajorActiveIcon,
+      }),
+    }),
+  },
+
+  future_events: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureEventsStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureEventsHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureEventsActiveIcon,
+      }),
+    }),
+  },
+
+  // Road Conditions
+  major_road_conditions: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: roadConditionsMajorStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: roadConditionsMajorHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: roadConditionsMajorActiveIcon,
+      }),
+    }),
+  },
+
+  road_conditions: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: roadConditionsStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: roadConditionsHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: roadConditionsActiveIcon,
+      }),
+    }),
+  },
+
+  // Constructions
+  major_constructions: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: constructionsMajorStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: constructionsMajorHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: constructionsMajorActiveIcon,
+      }),
+    }),
+  },
+
+  constructions: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: constructionsStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: constructionsHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: constructionsActiveIcon,
+      }),
+    }),
+  },
+
+  // Generic delay
+  major_generic_delays: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: genericDelaysMajorStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: genericDelaysMajorHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: genericDelaysMajorActiveIcon,
+      }),
+    }),
+  },
+
+  generic_delays: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: genericDelaysStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: genericDelaysHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: genericDelaysActiveIcon,
+      }),
+    }),
+  }
 };
