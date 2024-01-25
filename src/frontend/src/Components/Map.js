@@ -414,16 +414,8 @@ export default function MapWrapper({
 
   useEffect(() => {
     if (searchLocationFrom && searchLocationFrom.length) {
-      if (isInitialMountLocation.current) {
-        isInitialMountLocation.current = false;
-
-      } else {
-        // Don't center/remove existing overlay on first load
-        if (locationPinRef.current) {
-          mapRef.current.removeOverlay(locationPinRef.current);
-        }
-
-        centerMap(searchLocationFrom[0].geometry.coordinates);
+      if (locationPinRef.current) {
+        mapRef.current.removeOverlay(locationPinRef.current);
       }
 
       setLocationPin(
@@ -432,6 +424,14 @@ export default function MapWrapper({
         mapRef,
         locationPinRef
       );
+
+      if (isInitialMountLocation.current) {
+        isInitialMountLocation.current = false;
+
+      } else {
+        // Don't center/remove existing overlay on first load
+        setZoomPan(mapView, 9, fromLonLat(searchLocationFrom[0].geometry.coordinates));
+      }
     }
   }, [searchLocationFrom]);
 
