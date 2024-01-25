@@ -13,7 +13,7 @@ import './AdvisoriesList.scss';
 
 export default function Advisories(props) {
   // State, props and context
-  const { advisories, showDescriptions } = props;
+  const { advisories, showDescription, showTimestamp } = props;
 
   // Navigation
   const navigate = useNavigate();
@@ -30,13 +30,15 @@ export default function Advisories(props) {
           <li className="advisory-li unread" key={advisory.id} onClick={() => handleClick(advisory)}>
             <div className="advisory-li-title-container">
               <h4 className='advisory-li-title'>{advisory.title}</h4>
+              {showTimestamp &&
               <div className="timestamp-container">
                 <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
                 <FriendlyTime date={advisory.latest_revision_created_at} />
               </div>
+              }
             </div>
 
-            {showDescriptions &&
+            {showDescription &&
               <div className='advisory-li-body-container'>
                 {advisory.teaser &&
                   <div className='advisory-li-body'>{advisory.teaser}</div>
@@ -48,10 +50,12 @@ export default function Advisories(props) {
               </div>
             }
 
+            {showTimestamp &&
             <div className="timestamp-container timestamp-container--mobile">
               <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
               <FriendlyTime date={advisory.latest_revision_created_at} />
             </div>
+            }
           </li>
         );
       })}

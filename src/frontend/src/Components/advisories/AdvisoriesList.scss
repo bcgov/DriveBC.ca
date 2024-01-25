@@ -1,6 +1,9 @@
 @import "../../styles/variables.scss";
 
 .advisories-list {
+  list-style-type: none;
+  padding-left: 0;
+
   li {
     cursor: pointer;
     width: fit-content;
@@ -15,7 +18,6 @@
       @media (min-width: 992px) {
         font-size: 1.25rem;
         font-weight: 700;
-        line-height: 36px;
       }
     }
   }

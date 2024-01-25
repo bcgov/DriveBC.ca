@@ -53,7 +53,7 @@ export default function Advisories() {
       </div>
       <div className="content">
         <h3>Advisory</h3>
-        <AdvisoriesList advisories={advisories} showDescriptions={false} />
+        <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={true} />
       </div>
     </div>
   );
