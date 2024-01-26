@@ -11,7 +11,7 @@ echo -e "window.ROUTE_PLANNER_KEY='${REACT_APP_ROUTE_PLANNER_KEY}';" >> $MAIN
 echo -e "window.REPLAY_THE_DAY='${REACT_APP_REPLAY_THE_DAY}';" >> $MAIN
 
 # Set the environment to be used for caching django content
-sed -i "s~\ENVIRONMENT~$ENVIRONMENT~g" /etc/nginx/conf.d/default.conf
+sed -i "s~{ENVIRONMENT}~$ENVIRONMENT~g" /etc/nginx/conf.d/default.conf
 
 #FOLLOWING SECTION IS TEMPORARY FOR THE PRIVATE BETA
 # Check if $ENVIRONMENT is not set to "prod". If it is prod we want to keep these lines
