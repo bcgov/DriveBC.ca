@@ -19,16 +19,15 @@ http {
 
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
-                      '"$http_user_agent" "$http_x_forwarded_for"';
+                      '"$http_user_agent" "$http_x_forwarded_for" $upstream_cache_status $request_time';
 
     access_log /dev/null;
-    #may want to look at setting up some cache logging to see what % of files are stale etc
     
     sendfile        on;
     #tcp_nopush     on;
 
     keepalive_timeout  65;
-    proxy_cache_path /var/cache/nginx keys_zone=images_cache:10m;
+    proxy_cache_path /var/cache/nginx keys_zone=images_cache:100m;
     #gzip  on;
     server {
         listen       8080 default_server;
@@ -58,7 +57,7 @@ http {
                 proxy_cache_lock_age 10s;
                 proxy_cache_lock_timeout 10s;
                 proxy_cache_revalidate on;
-                proxy_cache_use_stale error timeout updating http_502 http_503 http_504;
+                proxy_cache_use_stale error timeout http_500 http_502 http_503 http_504;
                 proxy_cache_valid 200 1m;
                 add_header X-Proxy-Cache $upstream_cache_status;
         }
@@ -72,7 +71,7 @@ http {
                 proxy_cache_lock_age 10s;
                 proxy_cache_lock_timeout 10s;
                 proxy_cache_revalidate on;
-                proxy_cache_use_stale error timeout updating http_502 http_503 http_504;
+                proxy_cache_use_stale error timeout http_500 http_502 http_503 http_504;
                 proxy_cache_valid any 24h;
                 add_header X-Proxy-Cache $upstream_cache_status;
         }
