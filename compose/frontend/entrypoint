@@ -9,3 +9,13 @@ echo -e "window.GEOCODER_API_AUTH_KEY='${REACT_APP_GEOCODER_API_AUTH_KEY}';" >> 
 echo -e "window.ROUTE_PLANNER='${REACT_APP_ROUTE_PLANNER}';" >> $MAIN
 echo -e "window.ROUTE_PLANNER_KEY='${REACT_APP_ROUTE_PLANNER_KEY}';" >> $MAIN
 echo -e "window.REPLAY_THE_DAY='${REACT_APP_REPLAY_THE_DAY}';" >> $MAIN
+
+#FOLLOWING SECTION IS TEMPORARY FOR THE PRIVATE BETA
+# Check if $ENVIRONMENT is not set to "Prod". If it is prod we want to keep these lines
+if [ "$ENV" != "Prod" ]; then
+    # Remove the specified lines from nginx.conf
+    sed -i '/auth_basic           "Beta Site";/d' /etc/nginx/conf.d
+    sed -i '/auth_basic_user_file \/etc\/apache2\/.htpasswd;/d' /etc/nginx/conf.d
+fi
+#Copy the content of the secret into the .htpasswd file.
+echo "$TEMP_AUTH_SECRET" >> /etc/apache2/.htpasswd
