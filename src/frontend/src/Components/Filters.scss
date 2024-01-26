@@ -35,13 +35,13 @@ button.btn.open-filters {
     top: 4.4375rem;
     bottom: initial;
     left: initial;
-    right: 2rem;
+    right: 1rem;
     width: 300px;
     height: auto;
   }
 
   .filters-title {
-    margin-bottom: 24px;
+    margin-bottom: 8px;
   }
 
   button.close-filters {
@@ -57,122 +57,126 @@ button.btn.open-filters {
     font-size: 1.4rem;
   }
 
-  .filter-group {
-    &__title {
+  .filters-list {
+    padding-top: 16px;
 
-      font-weight: 700;
-      padding-bottom: 8px;
-      border-bottom: 1px solid $Divider;
-    }
+    .filter-group {
+      &__title {
 
-    & + .filter-group {
-      margin-top: 24px;
-    }
-
-    .filter-item {
-      display: flex;
-      align-items: center;
-
-      & + .filter-item {
-        margin-top: 8px;
-      }
-      
-      &--closures {
-        svg {
-          font-size: 1.25rem;
-        }
+        font-weight: 700;
+        padding-bottom: 8px;
+        border-bottom: 1px solid $Divider;
       }
 
-      label {
+      & + .filter-group {
+        margin-top: 24px;
+      }
+
+      .filter-item {
         display: flex;
         align-items: center;
 
-        &:hover {
-          cursor: pointer;
-          text-decoration: underline;
+        & + .filter-item {
+          margin-top: 8px;
         }
-      }
-
-      &.checked {
-        .filter-item__icon {
-          background-color: $Type-Link;
-          border-color: $Type-Link;
-
+        
+        &--closures {
           svg {
-            color: $White;
-          }
-
-          .customIcon-bg {
-            fill: white;
-          }
-
-          .customIcon-fg {
-            fill: $Type-Link;
-          }
-
-        }
-      }
-
-      &.disabled {
-        .filter-item__icon {
-          background-color: $Divider;
-          border-color: $Divider;
-
-          svg {
-            color: $Type-Disabled;
-          }
-
-          .customIcon-bg {
-            fill: $Type-Disabled;
-          }
-
-          .customIcon-fg {
-            fill: $Divider;
+            font-size: 1.25rem;
           }
         }
+
         label {
-          color: $Type-Disabled;
+          display: flex;
+          align-items: center;
 
           &:hover {
-            cursor: auto;
-            text-decoration: none;
+            cursor: pointer;
+            text-decoration: underline;
           }
         }
-      }
 
-      &__icon {
-        margin-right: 8px;
-        height: 36px;
-        width: 36px;
-        border-radius: 18px;
-        border: 1px solid;
-        background-color: $White;
-        border-color: $Type-Link;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        &.checked {
+          .filter-item__icon {
+            background-color: $Type-Link;
+            border-color: $Type-Link;
 
-        svg {
-          color: $Type-Link;
+            svg {
+              color: $White;
+            }
+
+            .customIcon-bg {
+              fill: white;
+            }
+
+            .customIcon-fg {
+              fill: $Type-Link;
+            }
+
+          }
         }
-      }
 
-      input {
-        position: absolute;
-        z-index: -1;
-        margin-left: 10px;
-      }
+        &.disabled {
+          .filter-item__icon {
+            background-color: $Divider;
+            border-color: $Divider;
 
-      .tooltip-info {
-        margin-left: 8px;
-        color: $White;
-        background-color: $Type-Secondary;
-        padding: 0 6px;
-        border-radius: 18px;
-        font-size: 0.75rem;
+            svg {
+              color: $Type-Disabled;
+            }
 
-        &:hover {
-          cursor: pointer;
+            .customIcon-bg {
+              fill: $Type-Disabled;
+            }
+
+            .customIcon-fg {
+              fill: $Divider;
+            }
+          }
+          label {
+            color: $Type-Disabled;
+
+            &:hover {
+              cursor: auto;
+              text-decoration: none;
+            }
+          }
+        }
+
+        &__icon {
+          margin-right: 8px;
+          height: 36px;
+          width: 36px;
+          border-radius: 18px;
+          border: 1px solid;
+          background-color: $White;
+          border-color: $Type-Link;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          svg {
+            color: $Type-Link;
+          }
+        }
+
+        input {
+          position: absolute;
+          z-index: -1;
+          margin-left: 10px;
+        }
+
+        .tooltip-info {
+          margin-left: 8px;
+          color: $White;
+          background-color: $Type-Secondary;
+          padding: 0 6px;
+          border-radius: 18px;
+          font-size: 0.75rem;
+
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
     }

@@ -4,6 +4,7 @@
   position: relative;
   top: 1rem;
   left: 1rem;
+  width: fit-content;
 
   .btn.advisories-on-map__btn {
     background: #FAF9F8;
@@ -57,7 +58,7 @@
     left: 0;
     z-index: 20;
 
-    @media (min-width: 575px) {
+    @media (min-width: 768px) {
       width: 360px;
       position: relative;
     }
@@ -89,6 +90,10 @@
 
         & + .advisory-li {
           border-top: 1px solid $Divider;
+        }
+
+        &:hover {
+          text-decoration: underline;
         }
 
         .advisory-li-title {
