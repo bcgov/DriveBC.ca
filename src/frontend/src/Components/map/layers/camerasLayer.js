@@ -42,6 +42,8 @@ export function getCamerasLayer(
             'EPSG:4326',
             projectionCode,
           );
+          // feature ID to camera ID for retrieval
+          olFeatureForMap.setId(camera.id);
 
           if (
             passedCamera &&

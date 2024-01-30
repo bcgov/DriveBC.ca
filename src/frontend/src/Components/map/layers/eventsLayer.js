@@ -89,6 +89,7 @@ export function loadEventsLayers(
 
         // Transform event coordinates
         const eventTransformed = transform(eventFeature);
+        eventTransformed.setId(event.id);
         const eventLineTransformed = transform(eventLineFeature);
 
         // Associate two features together for click handler
@@ -109,6 +110,7 @@ export function loadEventsLayers(
 
         // Transform event coordinates
         const eventTransformed = transform(eventFeature);
+        eventTransformed.setId(event.id);
 
         // Add feature to relative vs
         addFeature(eventTransformed, event.display_category);

@@ -210,7 +210,6 @@ export default function MapWrapper({
 
         if (camera.event_type) {
           updateClickedEvent(camera);
-
         } else {
           updateClickedCamera(camera);
         }
@@ -540,7 +539,6 @@ export default function MapWrapper({
       if (!isInitialMount) {
         fitMap(selectedRoute.route, mapView);
       }
-
     } else {
       // Clear and update data
       loadCameras();
@@ -552,6 +550,11 @@ export default function MapWrapper({
   function closePopup() {
     popup.current.setPosition(undefined);
 
+    // camera is set to data structure rather than map feature
+    if (clickedCameraRef.current && !clickedCameraRef.current.setStyle) {
+      clickedCameraRef.current = mapLayers.current['highwayCams'].getSource().getFeatureById(clickedCameraRef.current.id);
+    }
+
     // check for active camera icons
     if (clickedCameraRef.current) {
       clickedCameraRef.current.setStyle(cameraStyles['static']);
@@ -560,6 +563,13 @@ export default function MapWrapper({
     }
 
     // check for active event icons
+
+    // event is set to data structure rather than map feature
+    if (clickedEventRef.current && !clickedEventRef.current.ol_uid) {
+      const features = mapLayers.current[clickedEventRef.current.display_category].getSource();
+      clickedEventRef.current = features.getFeatureById(clickedEventRef.current.id);
+    }
+
     if (clickedEventRef.current) {
       clickedEventRef.current.setStyle(
         getEventIcon(clickedEventRef.current, 'static'),
