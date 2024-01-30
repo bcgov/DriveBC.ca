@@ -97,7 +97,7 @@ export default function MapWrapper({
   const { mapContext, setMapContext } = useContext(MapContext);
 
   // Refs
-  const isInitialMountLocation = useRef(true);
+  const isInitialMountLocation = useRef('not set');
   const isInitialMountRoute = useRef(true);
   const mapElement = useRef();
   const mapRef = useRef();
@@ -411,13 +411,19 @@ export default function MapWrapper({
         locationPinRef
       );
 
-      if (isInitialMountLocation.current) {
+      if (isInitialMountLocation.current === 'not set') { // first run of this effector
+        // store the initial searchLocationFrom.[0].label so that subsequent
+        // runs can be evaluated to detect change in the search from
+        isInitialMountLocation.current = searchLocationFrom[0].label;
+      } else if (isInitialMountLocation.current !== searchLocationFrom[0].label) {
+        // only zoomPan on a real change in the search location from; this makes
+        // this effector idempotent wrt state
         isInitialMountLocation.current = false;
-
-      } else {
-        // Don't center/remove existing overlay on first load
         setZoomPan(mapView, 9, fromLonLat(searchLocationFrom[0].geometry.coordinates));
       }
+    } else {
+      // initial location was set, so no need to prevent pan/zoom
+      isInitialMountLocation.current = false;
     }
   }, [searchLocationFrom]);
 
