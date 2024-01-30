@@ -105,6 +105,10 @@ button.btn.open-filters {
               color: $White;
             }
 
+            &__path {
+                fill: white;
+            }
+
             .customIcon-bg {
               fill: white;
             }
@@ -157,6 +161,10 @@ button.btn.open-filters {
 
           svg {
             color: $Type-Link;
+          }
+
+          &__path {
+            fill: $Type-Link;
           }
         }
 
