@@ -395,7 +395,7 @@ export default function MapWrapper({
     });
 
     loadData(true);
-    toggleMyLocation();
+    // toggleMyLocation();
   });
 
   useEffect(() => {
