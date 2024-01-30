@@ -38,55 +38,57 @@ export default function Filters(props) {
 
   const tooltipClosures = (
     <Tooltip id="tooltip" className="tooltip-content">
-      <p>Indicates a complete closure of the road at this point or segment.</p>
+      <p>Travel is not possible in one or both directions on this road. Find an alternate route or a detour where possible.</p>
     </Tooltip>
   );
 
   const tooltipMajor = (
     <Tooltip id="tooltip" className="tooltip-content">
-      <p>Indicates a significant delay of more than 20 minutes to travel in at least one direction on this road. A Major Delay may be a traffic incident or a road event (such as road work, construction, or restoration).</p>
+      <p>Expect delays of at least 30 minutes or more on this road. This could be due to a traffic incident, road work, or construction.</p>
     </Tooltip>
   );
 
   const tooltipMinor = (
     <Tooltip id="tooltip" className="tooltip-content">
-      <p>Indicates a minor delay of less than 20 minutes to travel in at least one direction on this route. A Minor Delay may be a traffic incident or a road event (such as road work, construction, or restoration).</p>
+      <p>Expect delays up to 30 minutes on this road. This could be due to a traffic incident, road work, or construction.</p>
     </Tooltip>
   );
 
   const tooltipFutureevents = (
     <Tooltip id="tooltip" className="tooltip-content">
-      <p>Shows a planned future road events that may impact travel on routes throughout the province. An Event is typically a road work, constructions, or restoration project.</p>
+      <p>There is future road work or construction is planned for this road.</p>
     </Tooltip>
   );
 
   const tooltipHighwaycameras = (
     <Tooltip id="tooltip" className="tooltip-content">
-      <p>Shows the location of highway cameras throughout the province. The map icon shows the direction that the camera is facing.</p>
+      <p>Look at recent pictures from cameras near the highway.</p>
     </Tooltip>
   );
 
   const tooltipRoadconditions = (
     <Tooltip id="tooltip" className="tooltip-content">
-      <p>Indicates negative road condition that may impact the drivability of a particular stretch of road.</p>
+      <p>States of the road that may impact drivability.</p>
     </Tooltip>
   );
 
   const tooltipInlandferries = (
     <Tooltip id="tooltip" className="tooltip-content">
-      <p>Shows the location of inland ferries within the interior of BC. This does not include coastal BC Ferries.</p>
+      <p>Travel requires the use of an inland ferry.</p>
     </Tooltip>
   );
 
 //  const tooltipReststops = (
 //    <Tooltip id="tooltip" className="tooltip-content">
-//      <p>Shows the location of Provincial Rest Stops on highways throughout the province.</p>
+//      <p>Locations of provincial rest stops run by the province.</p>
 //    </Tooltip>
 //  );
 
 //  const tooltipWeather = (
 //    <Tooltip id="tooltip" className="tooltip-content">
-//      <p>Regional current and forecasted weather from Environment Canada for this area.</p>
+//      <p>Current weather and predictions for a region from Environment Canada.
+//         Winter forecasts for high mountain passes, also from Environment Canada.
+//         Find out how the road is at the moment and what nearby weather stations predict for it in this specific location.</p>
 //    </Tooltip>
 //  );
 
