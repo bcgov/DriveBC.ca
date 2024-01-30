@@ -54,15 +54,15 @@ export function getEventPopup(eventFeature) {
             <p className="bold">{ displayCategoryMap[eventData.display_category]}</p>
           </div>
 
-          <p className="bold friendly-time--mobile">
+          <div className="bold friendly-time--mobile">
             <FriendlyTime date={eventData.last_updated} />
-          </p>
+          </div>
         </div>
 
         <div className="delay-details">
-          <p className="bold friendly-time-desktop">
+          <div className="bold friendly-time-desktop">
             <FriendlyTime date={eventData.last_updated} />
-          </p>
+          </div>
 
           <p>{eventData.description}</p>
         </div>
