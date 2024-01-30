@@ -31,7 +31,7 @@ export default function Filters(props) {
   const { mapContext } = useContext(MapContext);
 
   // Props
-  const { toggleHandler, disableFeatures } = props;
+  const { toggleHandler, disableFeatures,enableRoadConditions } = props;
 
   // States
   const [open, setOpen] = useState(false);
@@ -254,7 +254,7 @@ export default function Filters(props) {
                   </OverlayTrigger>
                 </div>
 
-                <div className={'filter-item filter-item--road-conditions' + (roadConditions ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
+                <div className={'filter-item filter-item--road-conditions' + (roadConditions ? ' checked' : '') + ((disableFeatures && !enableRoadConditions) ? ' disabled' : '')}>
                   <input
                     type="checkbox"
                     name="road conditions"
@@ -265,7 +265,7 @@ export default function Filters(props) {
                       setRoadConditions(!roadConditions);
                     }}
                     defaultChecked={mapContext.visible_layers.roadConditions}
-                    disabled={disableFeatures}
+                    disabled={(disableFeatures && !enableRoadConditions)}
                   />
                   <label htmlFor="filter--road-conditions">
                     <span className="filter-item__icon">

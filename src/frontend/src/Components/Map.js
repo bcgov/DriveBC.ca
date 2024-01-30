@@ -64,7 +64,7 @@ export default function MapWrapper({
   camera,
   isPreview,
   cameraHandler,
-  mapViewRoute,
+  mapViewRoute
 }) {
   // Redux
   const dispatch = useDispatch();
@@ -659,6 +659,12 @@ export default function MapWrapper({
     localStorage.setItem('mapContext', JSON.stringify(mapContext));
   }
 
+  // Force camera and inland ferries filters to be checked on preview mode
+  if(isPreview) {
+    mapContext.visible_layers['highwayCams'] = true;
+    mapContext.visible_layers['inlandFerries'] = true;
+  }
+
   return (
     <div className="map-container">
       <div ref={mapElement} className="map">
@@ -715,6 +721,8 @@ export default function MapWrapper({
 
       <Filters
         toggleHandler={toggleLayer}
+        disableFeatures={isPreview}
+        enableRoadConditions={true}
       />
 
       {isPreview && (
