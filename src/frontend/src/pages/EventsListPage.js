@@ -211,6 +211,7 @@ export default function EventsListPage() {
           <Filters
             toggleHandler={eventCategoryFilterHandler}
             disableFeatures={true}
+            enableRoadConditions={false}
           />
         </div>
 
