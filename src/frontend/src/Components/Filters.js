@@ -126,7 +126,7 @@ export default function Filters(props) {
         }>
           <FontAwesomeIcon icon={faXmark} />
         </button>
-        
+
         <div className="filters-list">
           <div className="filter-group">
             <p className="filter-group__title">Delays</p>
@@ -221,7 +221,7 @@ export default function Filters(props) {
                     <span className="filter-item__icon">
                       <FontAwesomeIcon icon={faCalendarDays} alt="future events" />
                     </span>
-                    Future Events
+                    Future events
                   </label>
                   <OverlayTrigger placement="top" overlay={tooltipFutureevents}>
                     <span className="tooltip-info">?</span>
