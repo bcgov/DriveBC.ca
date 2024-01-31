@@ -69,5 +69,13 @@ table {
 }
 
 .delay-icon-img {
+  width: 24px;
+}
+
+tr.closure td.display_category .delay-icon-img {
   width: 20px;
+}
+
+td.last_updated .friendly-time-text {
+  font-size: 0.875rem;
 }
