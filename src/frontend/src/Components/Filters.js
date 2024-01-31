@@ -56,7 +56,7 @@ export default function Filters(props) {
 
   const tooltipFutureevents = (
     <Tooltip id="tooltip" className="tooltip-content">
-      <p>There is future road work or construction is planned for this road.</p>
+      <p>Future road work or construction is planned for this road.</p>
     </Tooltip>
   );
 
