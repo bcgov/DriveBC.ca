@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import FriendlyTime from '../FriendlyTime';
 import parse from 'html-react-parser';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 
 import colocatedCamIcon from '../../images/colocated-camera.svg';
 
@@ -84,14 +86,21 @@ export default function CamPopup(props) {
                 <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
                 {renderCamGroup()}
               </div>
-              <div className="camera-image">
-                <img src={camera.links.imageSource} width='300' />
-
-                <div className="timestamp">
-                  <p className="driveBC">Drive<span>BC</span></p>
-                  <FriendlyTime date={camera.last_update_modified} />
+              {camera.is_on ?
+                <div className="camera-image">
+                  <img src={camera.links.imageSource} width='300' />
+                  <div className="timestamp">
+                    <p className="driveBC">Drive<span>BC</span></p>
+                    <FriendlyTime date={camera.last_update_modified} />
+                  </div>
+                </div> :
+                <div className='camera-image camera-unavailable'>
+                  <div className="card-img-box unavailable">
+                    <FontAwesomeIcon icon={faVideoSlash} />
+                  </div>
+                  <p>This camera image is currently unavailable due to technical difficulties.</p>
                 </div>
-              </div>
+              }
             </div>
           </div>
         </div>

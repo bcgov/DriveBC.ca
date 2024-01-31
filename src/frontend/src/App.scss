@@ -194,6 +194,19 @@ body {
                 margin-left: auto;
               }
             }
+
+            &.camera-unavailable {
+              background-color: $Surface-status-red;
+              border-left: 3px solid;
+              border-color: $Type-status-red;
+              padding: 1rem;
+              min-height: 225px;
+              font-size: 1rem;
+              p, .card-img-box {
+                color: $Type-status-red;
+                font-weight: 700;
+              }
+            }
           }
         }
       }
