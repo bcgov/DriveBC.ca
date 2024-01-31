@@ -222,9 +222,20 @@ export default function MapWrapper({
 
     // Click states
     const resetClickedStates = (targetFeature) => {
+      // camera is set to data structure rather than map feature
+      if (clickedCameraRef.current && !clickedCameraRef.current.setStyle) {
+        clickedCameraRef.current = mapLayers.current['highwayCams'].getSource().getFeatureById(clickedCameraRef.current.id);
+      }
+
       if (clickedCameraRef.current && targetFeature != clickedCameraRef.current) {
         clickedCameraRef.current.setStyle(cameraStyles['static']);
         updateClickedCamera(null);
+      }
+
+      // event is set to data structure rather than map feature
+      if (clickedEventRef.current && !clickedEventRef.current.ol_uid) {
+        const features = mapLayers.current[clickedEventRef.current.display_category].getSource();
+        clickedEventRef.current = features.getFeatureById(clickedEventRef.current.id);
       }
 
       if (clickedEventRef.current && targetFeature != clickedEventRef.current) {
