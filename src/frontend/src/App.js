@@ -27,10 +27,10 @@ function App() {
       visible_layers: {
         closures: true,
         majorEvents: true,
-        minorEvents: true,
-        futureEvents: true,
+        minorEvents: false,
+        futureEvents: false,
         roadConditions: true,
-        highwayCams: true,
+        highwayCams: false,
         inlandFerries: true,
       },
     };
