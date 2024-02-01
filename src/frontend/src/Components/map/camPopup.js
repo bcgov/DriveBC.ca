@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 
 import colocatedCamIcon from '../../images/colocated-camera.svg';
+import './camPopup.scss';
 
 export default function CamPopup(props) {
   // Props
@@ -94,11 +95,20 @@ export default function CamPopup(props) {
                     <FriendlyTime date={camera.last_update_modified} />
                   </div>
                 </div> :
-                <div className='camera-image camera-unavailable'>
-                  <div className="card-img-box unavailable">
-                    <FontAwesomeIcon icon={faVideoSlash} />
+                <div className='camera-image'>
+                  <div className='camera-unavailable'>
+                    <div className="card-pill">
+                      <p>Unavailable</p>
+                    </div>
+                    <div className="card-img-box unavailable">
+                      <FontAwesomeIcon icon={faVideoSlash} />
+                    </div>
+                    <p>This camera image is temporarily unavailable.  Please check again later.</p>
                   </div>
-                  <p>This camera image is currently unavailable due to technical difficulties.</p>
+                  <div className="timestamp">
+                    <p className="driveBC">Drive<span>BC</span></p>
+                    <FriendlyTime date={camera.last_update_modified} />
+                  </div>
                 </div>
               }
             </div>

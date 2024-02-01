@@ -1,0 +1,86 @@
+@import "../../styles/variables";
+
+.popup--camera {
+  .popup__description {
+    p {
+      @media (max-width: 575px) {
+        order: 2;
+      }
+    }
+    .camera-image {
+      @media (max-width: 575px) {
+        order: 1;
+      }
+
+      img {
+        @media (max-width: 575px) {
+          width: 100%;
+        }
+      }
+
+      .timestamp {
+        background-color: $Black;
+        padding: 0 10px;
+        display: flex;
+        color: $White;
+        font-size: 0.714rem;
+        align-items: baseline;
+
+        p {
+          color: $White;
+          margin-bottom: 0;
+        }
+
+        .driveBC {
+          font-family: serif;
+          span {
+            color: $BC-Yellow;
+          }
+          margin-right: 10px;
+        }
+
+        .friendly-time, .formatted-date {
+          margin-left: auto;
+        }
+
+        .formatted-date {
+          font-size: 0.75rem;
+        }
+      }
+
+      .camera-unavailable {
+        background-color: $Surface-status-red;
+        padding: 1rem;
+        min-height: 225px;
+        font-size: 1rem;
+        p, .card-img-box {
+          color: $Type-status-red;
+          clear: right;
+        }
+
+        svg {
+          font-size: 1rem;
+        }
+
+        .card-pill {
+          background-color: $Error;
+          border-radius: 12px;
+          height: 24px;
+          float: right;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 4px 6px;
+
+          p {
+            color: $White;
+            font-weight: 700;
+            margin-bottom: 0;
+            font-size: 0.625rem;
+          }
+        }
+      }
+    }
+  }
+}
+

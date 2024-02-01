@@ -152,65 +152,6 @@ body {
         }
       }
 
-      &--camera {
-        .popup__description {
-          p {
-            @media (max-width: 575px) {
-              order: 2;
-            }
-          }
-          .camera-image {
-            @media (max-width: 575px) {
-              order: 1;
-            }
-
-            img {
-              @media (max-width: 575px) {
-                width: 100%;
-              }
-            }
-
-            .timestamp {
-              background-color: $Black;
-              padding: 0 10px;
-              display: flex;
-              color: $White;
-              font-size: 0.714rem;
-
-              p {
-                color: $White;
-                margin-bottom: 0;
-              }
-
-              .driveBC {
-                font-family: serif;
-                span {
-                  color: $BC-Yellow;
-                }
-                margin-right: 10px;
-              }
-
-              .friendly-time, .formatted-date {
-                margin-left: auto;
-              }
-            }
-
-            &.camera-unavailable {
-              background-color: $Surface-status-red;
-              border-left: 3px solid;
-              border-color: $Type-status-red;
-              padding: 1rem;
-              min-height: 225px;
-              font-size: 1rem;
-              p, .card-img-box {
-                color: $Type-status-red;
-                font-weight: 700;
-              }
-            }
-          }
-        }
-      }
-
       &--ferry {
 
         .popup__title {
