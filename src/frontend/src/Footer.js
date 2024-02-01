@@ -32,7 +32,6 @@ export default function Footer(props) {
           <div className="more-info">
             <h2>More Info</h2>
             <ul className="link-list">
-              <li>Website feedback</li>
               <li>
                 <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" className="footer-link" target="_self"  alt="Disclaimer" >Disclaimer
                   <FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a>
