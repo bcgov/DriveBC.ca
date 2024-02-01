@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 export const mapSlice = createSlice({
   name: 'map',
   initialState: {
-    zoom: 10,
-    pan: [-122.7497299799772, 53.917075225412546],
+    zoom: 6,
+    pan: [-126.40216584353347, 53.24106084212411],
   },
   reducers: {
     updateMapState: (state, action) => {
