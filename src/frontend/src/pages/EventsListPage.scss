@@ -4,13 +4,33 @@
   .card-selector{
     cursor: pointer;
   }
+
   .sort-and-filter {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 15px;
+
+    .route-display-container {
+      display: flex;
+      align-items: center;
+
+      .routing-container {
+        padding: 0;
+      }
+
+      button {
+        margin: 0 0 0 10px;
+      }
+    }
 
     .filters-component {
+      button {
+        margin: 0;
+      }
+
       @media (min-width: 768px) {
-        position: relative;
+        display: flex;
+        align-items: end;
       }
 
       .filters {
@@ -66,7 +86,7 @@
     //       input {
     //         display: none;
     //       }
-          
+
     //       label {
     //         white-space: nowrap;
     //         cursor: pointer;

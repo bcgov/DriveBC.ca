@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 
@@ -14,11 +14,14 @@ import {
   faCircleDot,
   faLocationDot
 } from '@fortawesome/free-solid-svg-icons';
+import Spinner from 'react-bootstrap/Spinner';
 
 // Styling
 import './RouteSearch.scss';
 
-export default function RouteSearch() {
+export default function RouteSearch(props) {
+  const { routeEdit } = props;
+
   // Redux
   const dispatch = useDispatch();
   const { searchLocationFrom, searchLocationTo } = useSelector(useCallback(memoize(state => ({
@@ -26,8 +29,12 @@ export default function RouteSearch() {
     searchLocationTo: state.routes.searchLocationTo,
   }))));
 
+  // useState hooks
+  const [showSpinner, setShowSpinner] = useState(false);
+
   // Refs
   const isInitialMount = useRef(true);
+  const isInitialMountSpinner = useRef(true);
 
   // useEffect hooks
   useEffect(() => {
@@ -37,6 +44,20 @@ export default function RouteSearch() {
     }
 
     if (searchLocationFrom && searchLocationFrom.length && searchLocationTo && searchLocationTo.length) {
+      setShowSpinner(true);
+
+    } else {
+      dispatch(clearSelectedRoute());
+    }
+  }, [searchLocationFrom, searchLocationTo]);
+
+  useEffect(() => {
+    if (isInitialMountSpinner.current) { // Do nothing on first load
+      isInitialMountSpinner.current = false;
+      return;
+    }
+
+    if (showSpinner) {
       const firstPoint = searchLocationFrom[0].geometry.coordinates.toString();
       const secondPoint = searchLocationTo[0].geometry.coordinates.toString();
 
@@ -44,12 +65,10 @@ export default function RouteSearch() {
 
       getRoute(points).then(routeData => {
         dispatch(updateSelectedRoute(routeData));
+        setShowSpinner(false);
       });
-
-    } else {
-      dispatch(clearSelectedRoute());
     }
-  }, [searchLocationFrom, searchLocationTo]);
+  }, [showSpinner]);
 
   // Rendering
   return (
@@ -61,7 +80,7 @@ export default function RouteSearch() {
           </span>
         }
 
-        <LocationSearch placeholder={'Find a location'} location={searchLocationFrom} action={updateSearchLocationFrom} />
+        <LocationSearch routeEdit={routeEdit} placeholder={'Find a location'} location={searchLocationFrom} action={updateSearchLocationFrom} />
       </div>
 
       {!!searchLocationFrom.length &&
@@ -70,7 +89,11 @@ export default function RouteSearch() {
             <FontAwesomeIcon icon={faLocationDot} />
           </span>
 
-          <LocationSearch placeholder={'Find a destination'} location={searchLocationTo} action={updateSearchLocationTo} />
+          <LocationSearch routeEdit={routeEdit} placeholder={'Find a destination'} location={searchLocationTo} action={updateSearchLocationTo} />
+
+          {showSpinner &&
+            <Spinner className="typeahead-spinner" size="sm" animation="border" />
+          }
         </div>
       }
     </div>

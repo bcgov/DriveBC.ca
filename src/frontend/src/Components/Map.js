@@ -778,7 +778,7 @@ export default function MapWrapper({
 
       {!isPreview && (
         <div>
-          <RouteSearch />
+          <RouteSearch routeEdit={true} />
           <AdvisoriesOnMap />
         </div>
       )}
