@@ -63,9 +63,9 @@ def populate_event_from_data(new_event_data):
         event_serializer.save()
 
 
-def populate_all_event_data():
+def populate_all_event_data(include_closures=True):
     client = FeedClient()
-    closures = client.get_closures_dict()
+    closures = client.get_closures_dict() if include_closures else {}
     feed_data = client.get_event_list()['events']
 
     active_event_ids = []
@@ -83,10 +83,10 @@ def populate_all_event_data():
         except Exception as e:
             logger.warning(e)
 
-    # Mark events absent in the feed as inactive
+    # Purge events absent in the feed
     Event.objects.filter(status=EVENT_STATUS.ACTIVE)\
         .exclude(id__in=active_event_ids)\
-        .update(status=EVENT_STATUS.INACTIVE)
+        .delete()
 
     # Rebuild cache
     cache.delete(CacheKey.EVENT_LIST)
