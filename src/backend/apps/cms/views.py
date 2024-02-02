@@ -1,5 +1,10 @@
 from apps.cms.models import Advisory, Bulletin, Ferry
-from apps.cms.serializers import AdvisorySerializer, BulletinSerializer, FerrySerializer
+from apps.cms.serializers import (
+    AdvisorySerializer,
+    BulletinSerializer,
+    BulletinTestSerializer,
+    FerrySerializer,
+)
 from apps.shared.enums import CacheKey, CacheTimeout
 from apps.shared.views import CachedListModelMixin
 from rest_framework import viewsets
@@ -22,11 +27,15 @@ class AdvisoryAPI(CachedListModelMixin, CMSViewSet):
     cache_timeout = CacheTimeout.DEFAULT
 
 
-class BulletinAPI(CachedListModelMixin, CMSViewSet):
+class BulletinTestAPI(CachedListModelMixin, CMSViewSet):
     queryset = Bulletin.objects.filter(live=True)
-    serializer_class = BulletinSerializer
+    serializer_class = BulletinTestSerializer
     cache_key = CacheKey.BULLETIN_LIST
     cache_timeout = CacheTimeout.DEFAULT
+
+
+class BulletinAPI(BulletinTestAPI):
+    serializer_class = BulletinSerializer
 
 
 class FerryAPI(CachedListModelMixin, CMSViewSet):

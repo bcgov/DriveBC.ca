@@ -35,24 +35,30 @@ class CMSSerializer(serializers.ModelSerializer):
         return res
 
 
-class AdvisorySerializer(CMSSerializer):
-    body = serializers.SerializerMethodField()
-
+# Serializer with no method fields for unit tests
+class AdvisoryTestSerializer(CMSSerializer):
     class Meta:
         model = Advisory
         fields = "__all__"
+
+
+class AdvisorySerializer(AdvisoryTestSerializer):
+    body = serializers.SerializerMethodField()
 
     def get_body(self, obj):
         return self.get_richtext(obj.body)
 
 
-class BulletinSerializer(CMSSerializer):
-    body = serializers.SerializerMethodField()
-    image_url = serializers.SerializerMethodField('get_image_url')
-
+# Serializer with no method fields for unit tests
+class BulletinTestSerializer(CMSSerializer):
     class Meta:
         model = Bulletin
         fields = "__all__"
+
+
+class BulletinSerializer(BulletinTestSerializer):
+    body = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField('get_image_url')
 
     def get_image_url(self, obj):
         request = self.context.get("request")

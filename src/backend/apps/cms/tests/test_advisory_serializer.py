@@ -1,5 +1,5 @@
 from apps.cms.models import Advisory
-from apps.cms.serializers import AdvisorySerializer
+from apps.cms.serializers import AdvisorySerializer, AdvisoryTestSerializer
 from apps.shared.tests import BaseTest
 from django.contrib.gis.geos import LineString
 
@@ -49,7 +49,8 @@ class TestAdvisorySerializer(BaseTest):
             'numchild': 0,
             'slug': 'title1',
         }
-        serializer = AdvisorySerializer(data=valid_data)
+        # Use test serializer to avoid overriding fields
+        serializer = AdvisoryTestSerializer(data=valid_data)
         # Check if the serializer is valid
         assert serializer.is_valid() is True
         # Save the serializer data to create a new Advisory instance
