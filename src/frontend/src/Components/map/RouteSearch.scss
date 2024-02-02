@@ -5,7 +5,14 @@
   padding: 1rem 1rem 0;
 
   .typeahead-container {
+    position: relative;
     width: 100%;
+
+    .typeahead-spinner {
+      position: absolute;
+      top: 8px;
+      right: 28px;
+    }
 
     @media (min-width: 768px) {
       width: 360px;
@@ -70,7 +77,7 @@
           border-bottom-right-radius: 0;
         }
       }
-  
+
       &.typeahead-container--to {
         .form-control {
           border-top-left-radius: 0;

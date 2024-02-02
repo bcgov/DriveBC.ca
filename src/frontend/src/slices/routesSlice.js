@@ -5,11 +5,11 @@ export const routesSlice = createSlice({
   initialState: {
     searchLocationFrom: [],
     searchLocationTo: [],
-    selectedRoute: {},
+    selectedRoute: null,
   },
   reducers: {
     clearSelectedRoute: (state, action) => {
-      state.selectedRoute = {};
+      state.selectedRoute = null;
     },
     updateSelectedRoute: (state, action) => {
       state.selectedRoute = action.payload;

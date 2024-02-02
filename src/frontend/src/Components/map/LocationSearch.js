@@ -16,7 +16,7 @@ export default function LocationSearch(props) {
   // Redux
   const dispatch = useDispatch();
 
-  const { placeholder, location, action } = props;
+  const { placeholder, location, action, routeEdit } = props;
 
   const [isSearching, setSearching] = useState(false);
   const [options, setLocationOptions] = useState([]);
@@ -44,6 +44,7 @@ export default function LocationSearch(props) {
   // Rendering
   return (
     <AsyncTypeahead
+      disabled={!routeEdit}
       clearButton={true}
       defaultSelected={location}
       filterBy={() => true}

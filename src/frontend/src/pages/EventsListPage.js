@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'
 import { updateEvents } from '../slices/feedsSlice';
@@ -11,20 +11,22 @@ import {
   faMapLocationDot
 } from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
+import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
 import { getEvents } from '../Components/data/events';
 import { MapContext } from '../App.js';
+import Advisories from '../Components/advisories/Advisories';
 import EventCard from '../Components/events/EventCard';
 import EventsTable from '../Components/events/EventsTable';
+import EventTypeIcon from '../Components/EventTypeIcon';
+import Filters from '../Components/Filters.js';
+import Footer from '../Footer.js';
 import FriendlyTime from '../Components/FriendlyTime';
 import PageHeader from '../PageHeader';
-import Footer from '../Footer.js';
-import EventTypeIcon from '../Components/EventTypeIcon';
-import Advisories from '../Components/advisories/Advisories';
-import Filters from '../Components/Filters.js';
+import RouteSearch from '../Components/map/RouteSearch';
 
 // Styling
 import './EventsListPage.scss';
@@ -54,8 +56,6 @@ export default function EventsListPage() {
 
   // Context
   const { mapContext, setMapContext } = useContext(MapContext);
-
-  const isInitialMount = useRef(true);
 
   const navigate = useNavigate();
 
@@ -108,6 +108,7 @@ export default function EventsListPage() {
     'roadConditions': false,
   });
 
+  const [routeEdit, setRouteEdit] = useState(!(selectedRoute && selectedRoute.routeFound));
   const [processedEvents, setProcessedEvents] = useState([]);
   const [displayedEvents, setDisplayedEvents] = useState([]);
 
@@ -158,11 +159,12 @@ export default function EventsListPage() {
   };
 
   useEffect(() => {
-    if (isInitialMount.current) { // Run only on startup
-      loadEvents(selectedRoute);
-      isInitialMount.current = false;
+    loadEvents(selectedRoute);
+
+    if (selectedRoute && selectedRoute.routeFound) {
+      setRouteEdit(false);
     }
-  });
+  }, [selectedRoute]);
 
   useEffect(() => {
     getDisplayedEvents(true);
@@ -203,10 +205,18 @@ export default function EventsListPage() {
         title="Delays"
         description="Find out if there are any delays that might impact your journey before you go.">
       </PageHeader>
+
       <Container>
-      <Advisories />
+        <Advisories />
+
         <div className="sort-and-filter">
-          <div className="sort"></div>
+          <div className="route-display-container">
+            <RouteSearch routeEdit={routeEdit} />
+
+            {!routeEdit &&
+              <Button onClick={() => setRouteEdit(true)}>Change</Button>
+            }
+          </div>
 
           <Filters
             toggleHandler={eventCategoryFilterHandler}
@@ -244,6 +254,7 @@ export default function EventsListPage() {
           </InfiniteScroll>
         )}
       </Container>
+
       <Footer />
     </div>
   );
