@@ -1,22 +1,42 @@
+import os
+from io import BytesIO
+
 from apps.cms.models import Bulletin
-from apps.cms.views import BulletinAPI
+from apps.cms.views import BulletinTestAPI
 from apps.shared.enums import CacheKey
 from apps.shared.tests import BaseTest
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
+from django.core.files.images import ImageFile
 from rest_framework.test import APITestCase
+from wagtail.images.models import Image
 
 
 class TestBulletinAPI(APITestCase, BaseTest):
     def setUp(self):
         super().setUp()
+
+        # Programatically create wagtail image file
+        img_directory = os.path.dirname(__file__)
+        filename = 'testimg.png'
+        path = f"{img_directory}/{filename}"
+        img_bytes = open(path, "rb").read()
+        img_file = ImageFile(BytesIO(img_bytes), name=filename)
+
+        img_obj = Image(title=filename, file=img_file, width=165, height=51)
+        img_obj.save()
+
         bulletin = Bulletin.objects.create(
             title="Bulletin title",
             body="Bulletin body",
             path="000100010001",
             depth=3,
-            content_type=ContentType.objects.get(app_label='cms',
-                                                 model='bulletin'),
+            image=img_obj,
+            image_alt_text='Some Image Alt text',
+            content_type=ContentType.objects.get(
+                app_label='cms',
+                model='bulletin'
+            ),
         )
         bulletin.save()
 
@@ -25,8 +45,12 @@ class TestBulletinAPI(APITestCase, BaseTest):
             body="Bulletin body 2",
             path="000100010002",
             depth=3,
-            content_type=ContentType.objects.get(app_label='cms',
-                                                 model='bulletin'),
+            image=img_obj,
+            image_alt_text='Some Image Alt text',
+            content_type=ContentType.objects.get(
+                app_label='cms',
+                model='bulletin'
+            ),
         )
         bulletin_2.save()
 
@@ -46,6 +70,6 @@ class TestBulletinAPI(APITestCase, BaseTest):
         assert len(response.data) == 2
 
         # Updated cached result
-        BulletinAPI().set_list_data()
+        BulletinTestAPI().set_list_data()  # Use serializer without method fields
         response = self.client.get(url, {})
         assert len(response.data) == 1
