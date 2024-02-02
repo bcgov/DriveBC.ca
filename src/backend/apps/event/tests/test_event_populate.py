@@ -100,7 +100,7 @@ class TestEventModel(BaseTest):
             MockResponse(self.mock_updated_event_feed_result, status_code=200),
         ]
 
-        populate_all_event_data()
+        populate_all_event_data(include_closures=False)
         assert Event.objects.count() == 5
 
         event_id_list = sorted(Event.objects.all().order_by("id")
@@ -118,15 +118,14 @@ class TestEventModel(BaseTest):
         assert event.direction == EVENT_DIRECTION.NONE
 
         # Second call with one missing event
-        populate_all_event_data()
+        populate_all_event_data(include_closures=False)
 
         assert Event.objects.filter(status=EVENT_STATUS.ACTIVE).count() == 4
-        assert Event.objects.filter(status=EVENT_STATUS.INACTIVE).count() == 1
-        assert Event.objects.get(id="drivebc.ca/DBC-28386").status \
-               == EVENT_STATUS.INACTIVE
+        # Inactive events are deleted
+        assert Event.objects.filter(id="drivebc.ca/DBC-28386").count() == 0
 
         # Third call with updated data
-        populate_all_event_data()
+        populate_all_event_data(include_closures=False)
         # Not updated due to same updated datetime
         assert Event.objects.get(id="drivebc.ca/DBC-46014").route_from \
                != "Updated Rd"
@@ -142,7 +141,7 @@ class TestEventModel(BaseTest):
         ]
 
         # Only cams with validation error(DBC-46014) are omitted
-        populate_all_event_data()
+        populate_all_event_data(include_closures=False)
         assert Event.objects.count() == 4
 
         event_id_list = sorted(Event.objects.all().values_list("id", flat=True))
