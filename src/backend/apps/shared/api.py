@@ -14,6 +14,9 @@ urlpatterns = [
     path("wagtail/", wagtail_api_router.urls),
     path("cms/", include(cms_api_router.urls)),
 
+    # Weather
+    path("weather/", include("apps.weather.urls")),
+
     # Others
     path("feedback/", views.FeedbackView.as_view(), name="feedback"),
 ]
