@@ -46,6 +46,7 @@ class CacheTimeout:
     WEBCAM_LIST = 60*7  # 5min buffer + (2*1)min twice of task interval
     EVENT_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
     FERRY_LIST = 60*60*24  # 24hr
+    REGIONAL_WEATHER_LIST = 60 * 15 # 5min buffer + (2*5)min twice of task interval
 
 
 class CacheKey:
@@ -56,6 +57,7 @@ class CacheKey:
     BULLETIN_LIST = "bulletin_list"
     FERRY_LIST = "ferry_list"
     TEST_APP_CACHE = "test_app_cache"
+    REGIONAL_WEATHER_LIST = "regional_weather_list"
 
 
 ROUTE_FILTER_TOLERANCE = 25
