@@ -2,13 +2,11 @@
 import React, { useEffect, useState } from 'react';
 
 // Third party packages
-import Container from 'react-bootstrap/Container';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
 import { collator } from '../data/webcams';
 import HighwayGroup from './HighwayGroup.js';
-import Advisories from '../advisories/Advisories';
 
 // Styling
 import './CameraList.scss';
@@ -67,12 +65,7 @@ export default function CameraList(props) {
       <InfiniteScroll
         dataLength={displayedCameras.length}
         next={getDisplayedCameras}
-        hasMore={getHasMore}
-        loader={<h4>Loading...</h4>}>
-
-        <Container>
-          <Advisories />
-        </Container>
+        hasMore={getHasMore}>
 
         {renderHighways()}
       </InfiniteScroll>

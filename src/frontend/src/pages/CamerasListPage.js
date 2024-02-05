@@ -3,12 +3,21 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 
+// Third party components
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+
 // Components and functions
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
 import { updateCameras } from '../slices/feedsSlice';
+import Advisories from '../Components/advisories/Advisories';
 import CameraList from '../Components/cameras/CameraList';
-import PageHeader from '../PageHeader';
 import Footer from '../Footer.js';
+import PageHeader from '../PageHeader';
+import RouteSearch from '../Components/map/RouteSearch';
+
+// Styling
+import './CamerasListPage.scss';
 
 export default function CamerasListPage() {
   // Redux
@@ -23,6 +32,7 @@ export default function CamerasListPage() {
   const isInitialMount = useRef(true);
 
   // UseState hooks
+  const [routeEdit, setRouteEdit] = useState(!(selectedRoute && selectedRoute.routeFound));
   const [processedCameras, setProcessedCameras] = useState(null);
 
   // UseEffect hooks and data functions
@@ -60,15 +70,17 @@ export default function CamerasListPage() {
   };
 
   useEffect(() => {
-    if (isInitialMount.current) { // Run only on startup
-      getCamerasData();
+    getCamerasData();
 
-      const scrollPosition = sessionStorage.getItem('scrollPosition');
-      if (scrollPosition) {
-        window.scrollTo(0, parseInt(scrollPosition, 10));
-      }
+    if (selectedRoute && selectedRoute.routeFound) {
+      setRouteEdit(false);
     }
-  });
+
+//    const scrollPosition = sessionStorage.getItem('scrollPosition');
+//    if (scrollPosition) {
+//      window.scrollTo(0, parseInt(scrollPosition, 10));
+//    }
+  }, [selectedRoute]);
 
   return (
     <div className="cameras-page">
@@ -76,7 +88,21 @@ export default function CamerasListPage() {
         title="Cameras"
         description="Scroll to view all cameras sorted by highway.">
       </PageHeader>
+
+      <Container className="outer-container">
+        <Advisories />
+
+        <div className="route-display-container">
+          <RouteSearch routeEdit={routeEdit} />
+
+          {!routeEdit &&
+            <Button onClick={() => setRouteEdit(true)}>Change</Button>
+          }
+        </div>
+      </Container>
+
       <CameraList cameras={processedCameras}></CameraList>
+
       <Footer />
     </div>
   );

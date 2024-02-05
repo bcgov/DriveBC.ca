@@ -1,0 +1,18 @@
+@import "../styles/variables.scss";
+
+.outer-container {
+  padding-bottom: 0;
+
+  .route-display-container {
+    display: flex;
+    align-items: center;
+
+    .routing-container {
+      padding: 0;
+    }
+
+    button {
+      margin: 0 0 0 10px;
+    }
+  }
+}

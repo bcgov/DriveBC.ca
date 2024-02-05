@@ -229,8 +229,7 @@ export default function EventsListPage() {
           <InfiniteScroll
             dataLength={displayedEvents.length}
             next={getDisplayedEvents}
-            hasMore={displayedEvents.length < processedEvents.length}
-            loader={<h4>Loading...</h4>}>
+            hasMore={displayedEvents.length < processedEvents.length}>
 
             { largeScreen && displayedEvents.length > 0 &&
               <EventsTable columns={columns} data={dupeLastRow(displayedEvents)} sortingHandler={setSortingColumns} routeHandler={handleRoute} />
