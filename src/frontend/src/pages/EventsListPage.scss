@@ -10,12 +10,26 @@
     justify-content: space-between;
     margin-bottom: 15px;
 
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
     .route-display-container {
       display: flex;
       align-items: center;
 
+      @media (max-width: 768px) {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
       .routing-container {
         padding: 0;
+
+        @media (max-width: 768px) {
+          width: 100%;
+        }
       }
 
       button {
@@ -28,10 +42,8 @@
         margin: 0;
       }
 
-      @media (min-width: 768px) {
-        display: flex;
-        align-items: end;
-      }
+      display: flex;
+      align-items: end;
 
       .filters {
         @media (min-width: 768px) {
