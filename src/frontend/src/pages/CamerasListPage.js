@@ -36,6 +36,13 @@ export default function CamerasListPage() {
   const [processedCameras, setProcessedCameras] = useState(null);
 
   // UseEffect hooks and data functions
+  useEffect(() => {
+    const scrollPosition = sessionStorage.getItem('scrollPosition');
+    if (scrollPosition) {
+      window.scrollTo(0, parseInt(scrollPosition, 10));
+    }
+  });
+
   const getCamerasData = async () => {
     isInitialMount.current = false;
 
@@ -75,11 +82,6 @@ export default function CamerasListPage() {
     if (selectedRoute && selectedRoute.routeFound) {
       setRouteEdit(false);
     }
-
-//    const scrollPosition = sessionStorage.getItem('scrollPosition');
-//    if (scrollPosition) {
-//      window.scrollTo(0, parseInt(scrollPosition, 10));
-//    }
   }, [selectedRoute]);
 
   return (
