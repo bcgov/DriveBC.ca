@@ -3,20 +3,48 @@
 .outer-container {
   padding-bottom: 0;
 
-  .route-display-container {
+  .controls-container {
     display: flex;
     align-items: center;
 
-    .routing-container {
-      padding: 0;
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+
+    .route-display-container {
+      display: flex;
+      align-items: center;
 
       @media (max-width: 768px) {
         width: 100%;
       }
+
+      .routing-container {
+        padding: 0;
+
+        @media (max-width: 768px) {
+          width: 100%;
+        }
+      }
+
+      button {
+        margin: 0 0 0 10px;
+      }
     }
 
-    button {
-      margin: 0 0 0 10px;
+    .search-container {
+      margin-left: 30px;
+      min-width: 360px;
+
+      @media (max-width: 768px) {
+        width: 100%;
+        margin-top: 15px;
+        margin-right: 30px;
+      }
+
+      .rbt-menu {
+        display: none !important;
+      }
     }
   }
 }

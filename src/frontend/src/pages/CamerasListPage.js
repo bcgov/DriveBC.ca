@@ -4,8 +4,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 
 // Third party components
+import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
 
 // Components and functions
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
@@ -32,8 +34,10 @@ export default function CamerasListPage() {
   const isInitialMount = useRef(true);
 
   // UseState hooks
-  const [routeEdit, setRouteEdit] = useState(!(selectedRoute && selectedRoute.routeFound));
+  const [displayedCameras, setDisplayedCameras] = useState(null);
   const [processedCameras, setProcessedCameras] = useState(null);
+  const [routeEdit, setRouteEdit] = useState(!(selectedRoute && selectedRoute.routeFound));
+  const [searchText, setSearchText] = useState('');
 
   // UseEffect hooks and data functions
   useEffect(() => {
@@ -84,6 +88,14 @@ export default function CamerasListPage() {
     }
   }, [selectedRoute]);
 
+  useEffect(() => {
+    const filteredCams = !searchText ? processedCameras :
+      processedCameras.filter((pc) => pc.name.toLowerCase().includes(searchText));
+
+    setDisplayedCameras(filteredCams);
+
+  }, [searchText, processedCameras]);
+
   return (
     <div className="cameras-page">
       <PageHeader
@@ -94,16 +106,31 @@ export default function CamerasListPage() {
       <Container className="outer-container">
         <Advisories />
 
-        <div className="route-display-container">
-          <RouteSearch routeEdit={routeEdit} />
+        <div className="controls-container">
+          <div className="route-display-container">
+            <RouteSearch routeEdit={routeEdit} />
 
-          {!routeEdit &&
-            <Button onClick={() => setRouteEdit(true)}>Change</Button>
-          }
+            {!routeEdit &&
+              <Button onClick={() => setRouteEdit(true)}>Change</Button>
+            }
+          </div>
+
+          <div className="search-container">
+            <AsyncTypeahead
+              id="camera-name-search"
+              isLoading={false}
+              onSearch={() => {}}
+              onInputChange={(text) => setSearchText(text)}
+              placeholder={"Find by camera name"}
+              inputProps={{
+                'aria-label': 'input field for camera name search',
+              }}
+            />
+          </div>
         </div>
       </Container>
 
-      <CameraList cameras={processedCameras}></CameraList>
+      <CameraList cameras={ displayedCameras ? displayedCameras : [] }></CameraList>
 
       <Footer />
     </div>
