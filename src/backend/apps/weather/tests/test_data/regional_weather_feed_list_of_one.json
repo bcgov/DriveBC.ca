@@ -1,8 +1,8 @@
 {
-    "location_code": "s0000341", 
+    "code": "s0000341", 
     "location_latitude": "58.66N", 
     "location_longitude": "124.64W", 
-    "location_name": "Tetsa River (Provincial Park)", 
+    "name": "Tetsa River (Provincial Park)", 
     "region": "Muncho Lake Park - Stone Mountain Park", 
     "observation_name": "observation", 
     "observation_zone": "UTC", 

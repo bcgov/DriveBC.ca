@@ -172,10 +172,10 @@ class RegionalWeatherSerializer(serializers.Serializer):
         model = RegionalWeather
         fields = (
             'id',
-            'location_code',
+            'code',
             'location_latitude',
             'location_longitude',
-            'location_name',
+            'name',
             'region',
             'observation_name',
             'observation_zone',

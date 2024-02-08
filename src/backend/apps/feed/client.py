@@ -214,11 +214,11 @@ class FeedClient:
                 try:
                     response = requests.get(api_endpoint, headers=headers)
                     data = response.json()
-                    location_name_data = data.get("Location", {}).get("Name", {})
-                    location_code = location_name_data.get("Code") if location_name_data else None
-                    location_latitude = location_name_data.get("Latitude") if location_name_data else None
-                    location_longitude = location_name_data.get("Longitude") if location_name_data else None
-                    location_name = location_name_data.get("Value") if location_name_data else None
+                    name_data = data.get("Location", {}).get("Name", {})
+                    code = name_data.get("Code") if name_data else None
+                    location_latitude = name_data.get("Latitude") if name_data else None
+                    location_longitude = name_data.get("Longitude") if name_data else None
+                    name = name_data.get("Value") if name_data else None
 
                     observation_data = data.get("CurrentConditions", {}).get("ObservationDateTimeUTC", {})
                     observation_name = observation_data.get("Name") if observation_data else None
@@ -261,11 +261,11 @@ class FeedClient:
                         'wind_direction' : wind_direction,
                     }
 
-                    location_name_data = data.get("Location", {}).get("Name", {})
-                    location_code = location_name_data.get("Code") if location_name_data else None
-                    location_latitude = location_name_data.get("Latitude") if location_name_data else None
-                    location_longitude = location_name_data.get("Longitude") if location_name_data else None
-                    location_name = location_name_data.get("Value") if location_name_data else None
+                    name_data = data.get("Location", {}).get("Name", {})
+                    code = name_data.get("Code") if name_data else None
+                    location_latitude = name_data.get("Latitude") if name_data else None
+                    location_longitude = name_data.get("Longitude") if name_data else None
+                    name = name_data.get("Value") if name_data else None
 
                     observation_data = data.get("CurrentConditions", {}).get("ObservationDateTimeUTC", {})
                     observation_name = observation_data.get("Name") if observation_data else None
@@ -282,10 +282,10 @@ class FeedClient:
                     hourly_forecast_group = hourly_forecast_group_data.get("HourlyForecasts") if hourly_forecast_group_data else None
 
                     regional_weather_data = {
-                        'location_code': location_code,
+                        'code': code,
                         'location_latitude': location_latitude,
                         'location_longitude': location_longitude,
-                        'location_name': location_name,
+                        'name': name,
                         'region': data.get("Location", {}).get("Region"),
                         'observation_name': observation_name,
                         'observation_zone': observation_zone,

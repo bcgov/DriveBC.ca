@@ -4,4 +4,4 @@ from rest_framework import serializers
 class RegionalWeatherSerializer(serializers.ModelSerializer):
     class Meta:
         model = RegionalWeather
-        fields = '__all__'
+        exclude = ['location_latitude', 'location_longitude']
