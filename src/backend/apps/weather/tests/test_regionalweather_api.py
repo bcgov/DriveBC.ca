@@ -11,7 +11,7 @@ class TestRegionalWeatherAPI(APITestCase, BaseTest):
         super().setUp()
 
         RegionalWeather.objects.create(
-            location_code = "s0000341",
+            code = "s0000341",
             location_latitude = "58.66N", 
             location_longitude = "124.64W",
         )
@@ -28,7 +28,7 @@ class TestRegionalWeatherAPI(APITestCase, BaseTest):
         assert cache.get(CacheKey.REGIONAL_WEATHER_LIST) is not None
 
         # Cached result
-        RegionalWeather.objects.filter(location_code='s0000341').delete()
+        RegionalWeather.objects.filter(code='s0000341').delete()
         response = self.client.get(url, {})
         assert len(response.data) == 0
 
@@ -45,10 +45,10 @@ class TestRegionalWeatherAPI(APITestCase, BaseTest):
         assert len(response.data) == 1
 
         # Manually update location code
-        regional_weather = RegionalWeather.objects.get(location_code='s0000341')
-        regional_weather.location_code = 's0000846'
+        regional_weather = RegionalWeather.objects.get(code='s0000341')
+        regional_weather.code = 's0000846'
         regional_weather.save()
-        regional_weather = RegionalWeather.objects.get(location_code='s0000846')
+        regional_weather = RegionalWeather.objects.get(code='s0000846')
         assert response.status_code == 200
         assert len(response.data) == 1
 

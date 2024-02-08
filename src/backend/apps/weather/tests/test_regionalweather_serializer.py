@@ -14,13 +14,13 @@ class TestRegionalWeatherSerializer(BaseTest):
         super().setUp()
 
         self.regional_weather = RegionalWeather(
-            location_code = "s0000341",
+            code = "s0000341",
             location_latitude = "58.66N", 
             location_longitude = "124.64W",
         )
         
         self.regional_weather_2 = RegionalWeather(
-            location_code = "s0000846",
+            code = "s0000846",
             location_latitude = "57.06N", 
             location_longitude = "123.94W",
         )
@@ -29,7 +29,7 @@ class TestRegionalWeatherSerializer(BaseTest):
         self.regional_weather.save()
 
         self.regional_weather_2.id = "2"
-        self.regional_weather_2.location_code = 's0000849'
+        self.regional_weather_2.code = 's0000849'
         self.regional_weather_2.save()
 
         self.serializer = RegionalWeatherSerializer(self.regional_weather)
@@ -37,14 +37,14 @@ class TestRegionalWeatherSerializer(BaseTest):
 
     def test_serializer_data(self):
         assert len(self.serializer.data) == 15
-        assert self.serializer.data['location_code'] == \
+        assert self.serializer.data['code'] == \
                "s0000341"
         assert self.serializer.data['location_latitude'] == \
                "58.66N"
         assert self.serializer.data['location_longitude'] == \
                "124.64W"
         
-        assert self.serializer_two.data['location_code'] == \
+        assert self.serializer_two.data['code'] == \
                "s0000849"
         assert self.serializer_two.data['location_latitude'] == \
                "57.06N"

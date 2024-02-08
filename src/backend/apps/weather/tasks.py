@@ -10,13 +10,13 @@ from django.core.exceptions import ObjectDoesNotExist
 
 logger = logging.getLogger(__name__)
 def populate_regional_weather_from_data(new_regional_weather_data):
-    location_code = new_regional_weather_data.get('location_code')
-    existing_record = RegionalWeather.objects.filter(location_code=location_code).first()
+    code = new_regional_weather_data.get('code')
+    existing_record = RegionalWeather.objects.filter(code=code).first()
     data = {
-        'location_code': location_code,
+        'code': code,
         'location_latitude': new_regional_weather_data.get('location_latitude'),
         'location_longitude': new_regional_weather_data.get('location_longitude'),
-        'location_name': new_regional_weather_data.get('location_name'),
+        'name': new_regional_weather_data.get('name'),
         'region': new_regional_weather_data.get('region'),
         'observation_name': new_regional_weather_data.get('observation_name'),
         'observation_zone': new_regional_weather_data.get('observation_zone'),

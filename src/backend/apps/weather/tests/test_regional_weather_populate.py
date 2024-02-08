@@ -25,7 +25,7 @@ class TestRegionalWeatherModel(BaseTest):
 
     def test_populate_regional_weather_function(self):
         populate_regional_weather_from_data(self.json_feed)
-        regional_weather_one = RegionalWeather.objects.get(location_code="s0000341")
+        regional_weather_one = RegionalWeather.objects.get(code="s0000341")
         assert regional_weather_one.location_latitude == \
                "58.66N"
         
@@ -41,6 +41,6 @@ class TestRegionalWeatherModel(BaseTest):
         regional_weather_id_list = sorted(RegionalWeather.objects.all().order_by("id")
                                .values_list("id", flat=True))
         assert len(regional_weather_id_list) == 98
-        regional_weather = RegionalWeather.objects.get(location_code="s0000341")
+        regional_weather = RegionalWeather.objects.get(code="s0000341")
         assert regional_weather.location_latitude == "58.66N"
 
