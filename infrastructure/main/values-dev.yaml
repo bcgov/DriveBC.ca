@@ -1,104 +1,122 @@
-# See https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values
-global:
-  licensePlate: c59ecc
-  namespace: dev
-
 nameOverride: dev-drivebc
 fullnameOverride: dev-drivebc
 
-
 django:
   fullnameOverride: dev-django
-  namespace: c59ecc-dev #The namespace you are running the application on. This is used to pull from the ImageStream
+  nameOverride: dev-django
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest-dev
   deployment:
-    replicas: 1
     resources:
       requests:
-        cpu: 50m
-        memory: 256Mi
+        cpu: 20m
+        memory: 250Mi
       limits:
-        cpu: 150m
-        memory: 512Mi
+        cpu: 500m
+        memory: 350Mi
     env:
-      postgresSecret: dev-drivebc-pguser-dev-drivebc #By default this should be correct for Dev
-      djangoConfigMap: dev-drivebc-django #By default this should be correct for Dev
-      djangoSecret: dev-drivebc-django #By default this should be correct for dev
+      postgresSecret: dev-drivebc-pguser-dev-drivebc
+      djangoConfigMap: dev-drivebc-django
+      djangoSecret: dev-drivebc-django
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 75
   route:
-    host: dev-drivebc.apps.silver.devops.gov.bc.ca
-    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist below
-    ipallowlist: 
+    host: dev-drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist 
   pvc:
     port: 3000
     storage: 1Gi
 
-
 tasks:
   fullnameOverride: dev-tasks
-  namespace: c59ecc-dev #enter the full namespace here to the deployment has the correct imagestream
+  nameOverride: dev-tasks
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest-dev
   deployment:
-    djangoImageName: dev-django #Since it needs to use the django imagestream. 
-    replicas: 1
     resources:
       requests:
-        cpu: 50m
-        memory: 256Mi
+        cpu: 20m
+        memory: 150Mi
       limits:
-        cpu: 150m
-        memory: 512Mi
+        cpu: 250m
+        memory: 200Mi
     env:
-      postgresSecret: dev-drivebc-pguser-dev-drivebc #By default this should be correct for Dev
-      djangoConfigMap: dev-drivebc-django #By default this should be correct for Dev
-      djangoSecret: dev-drivebc-django #By default this should be correct for dev
+      postgresSecret: dev-drivebc-pguser-dev-drivebc
+      djangoConfigMap: dev-drivebc-django
+      djangoSecret: dev-drivebc-django
 
 image-caching:
   fullnameOverride: dev-image-caching
-  namespace: c59ecc-dev #enter the full namespace here to the deployment has the correct imagestream
-  environment: dev #enter the environment this is being deployed too. Needed to set the configmap reference
+  nameOverride: dev-image-caching
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-image-caching
+    tag: latest-dev
   deployment:
-    replicas: 1
     resources:
       requests:
-        cpu: 50m
-        memory: 64Mi
+        cpu: 20m
+        memory: 50Mi
       limits:
-        cpu: 150m
-        memory: 128Mi
+        cpu: 250m
+        memory: 100Mi
+    env:
+      imagecachingConfigMap: dev-drivebc-image-caching
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 75
   route:
-    host: dev-drivebc.apps.silver.devops.gov.bc.ca
-    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist below
-    ipallowlist: 
-    webcamPath: /webcam/
-    replayTheDayPath: /ReplayTheDay/
-
+    host: dev-drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist 
 
 redis:
   fullnameOverride: dev-redis
-  namespace: c59ecc-dev #enter the full namespace here to the deployment has the correct imagestream
+  nameOverride: dev-redis
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-redis
+    tag: latest-dev
   deployment:
-    replicas: 1
     resources:
       requests:
-        cpu: 50m
-        memory: 64Mi
+        cpu: 20m
+        memory: 50Mi
       limits:
-        cpu: 150m
-        memory: 128Mi
+        cpu: 100m
+        memory: 100Mi
 
 static:
   fullnameOverride: dev-static
-  namespace: c59ecc-dev #enter the full namespace here to the deployment has the correct imagestream
-
+  nameOverride: dev-static
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-static
+    tag: latest-dev
   deployment:
-    replicas: 1
     resources:
       requests:
-        cpu: 50m
-        memory: 64Mi
+        cpu: 20m
+        memory: 50Mi
       limits:
         cpu: 150m
-        memory: 128Mi
-
+        memory: 100Mi
+    env:
+      staticConfigMap: dev-drivebc-static
+      staticSecret: dev-drivebc-static
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 75
   route:
-    host: dev-drivebc.apps.silver.devops.gov.bc.ca
-    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist below
-    ipallowlist: 
+    host: dev-drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: false  #Set to true if you want to limit IP's the the addresses in the ipallowlist 

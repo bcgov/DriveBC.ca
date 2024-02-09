@@ -41,7 +41,7 @@ spec:
     insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None
   host: {{ .Values.route.host  }}
-  path: /api/
+  path: /api-old/
 
 ---
 apiVersion: route.openshift.io/v1

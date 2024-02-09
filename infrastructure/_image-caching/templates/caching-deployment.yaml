@@ -1,13 +1,13 @@
+{{- $deploymentTag := .Values.image.tag | default .Chart.AppVersion -}}
+{{- $deploymentTime := now | date "2006-01-02 15:04:05.000000" -}}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "app.fullname" . }}
   labels: {{ include "app.labels" . | nindent 4 }}
-  annotations:
-    image.openshift.io/triggers: >-
-      [{"from":{"kind":"ImageStreamTag","name":"{{ template "app.fullname" . }}:latest","namespace":"{{ .Values.namespace  }}"},"fieldPath":"spec.template.spec.containers[?(@.name==\"{{ template "app.fullname" . }}\")].image","pause":"false"}]
 spec:
-  replicas: {{ .Values.deployment.replicas  }}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{ include "app.selectorLabels" . | nindent 6 }}
@@ -25,22 +25,29 @@ spec:
               cpu: {{ .Values.deployment.resources.requests.cpu  }}
               memory: {{ .Values.deployment.resources.requests.memory  }}
           env:
-            - name: DRIVEBC_IMAGE_API_BASE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Values.environment  }}-drivebc-django
-                  key: DRIVEBC_IMAGE_API_BASE_URL
+            - name: DEPLOYMENT_TAG
+              value: {{ $deploymentTag | quote }}
+            - name: DEPLOYMENT_TIME
+              value: {{ $deploymentTime | quote }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.deployment.env.imagecachingConfigMap  }}
           name: {{ include "app.fullname" . }}
           ports:
             - containerPort: 8080
               protocol: TCP
           imagePullPolicy: IfNotPresent
           image: >-
-            image-registry.openshift-image-registry.svc:5000/{{ .Values.namespace  }}/{{ template "app.fullname" . }}
+            {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
+          - weight: 100
             podAffinityTerm:
               topologyKey: "app.kubernetes.io/instance"
               labelSelector:

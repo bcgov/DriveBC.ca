@@ -1,44 +1,25 @@
-name: 2. Create Tag & Build/Deploy to Test
+#This will build, push to github packages (with the version tag) and then deploy to OpenShift
+#This flow requires you to select a tag when you run it, otherwise it will fail.
+name: 2b. Build & Deploy to Test
 
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        type: string
-        description: Tag Version (incl. prefix; e.g. v1.2.3)
-        required: true
-      message:
-        type: string
-        description: Tag Message (e.g. Story Number)
-        required: true
+  workflow_dispatch: 
 
 env:
-    IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-    REGISTRY_USER: ${{ github.actor }}
-    REGISTRY_PASSWORD: ${{ github.token }}
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  REGISTRY_USER: ${{ github.actor }}
+  REGISTRY_PASSWORD: ${{ github.token }}
 
 jobs:
-  tag:
-    if: startsWith(github.ref, 'refs/heads/') == true
+  branchCheck: #may not be needed if we only have it setup to run automatically
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
-
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Create Tag
-      run: |
-        git config user.name "$GITHUB_ACTOR"
-        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-        git config commit.gpgsign false
-
-        git tag -a ${{ github.event.inputs.tag }} -m "${{ github.event.inputs.message }}"
-        git push origin ${{ github.event.inputs.tag }}
+      - name: Fail on branches
+        run: exit 1
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
   build-pre:
-    needs: [tag]
+    needs: [branchCheck]
     runs-on: ubuntu-latest
     timeout-minutes: 1
     outputs:
@@ -48,7 +29,7 @@ jobs:
     - name: Remove v from version for the docker tag
       id: vars
       run: |
-        vtag=${{ github.event.inputs.tag }}
+        vtag=${{ github.ref_name }}
         echo "tag=${vtag//v}" >> $GITHUB_OUTPUT
 
   build-static:
@@ -162,12 +143,12 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
     
-    - name: Build Redis
+    - name: Build Image Caching
       id: build_image
       uses: redhat-actions/buildah-build@v2.9
       with:
-        image: drivebc-redis
-        tags: latest latest-test ${{ github.sha }} ${{ needs.build-pre.outputs.tag }}
+        image: drivebc-image-caching
+        tags: latest latest-test ${{ github.sha }}
         labels: |
           app=drivebc
         containerfiles: ./compose/redis/Dockerfile
@@ -206,4 +187,4 @@ jobs:
     - name: Helm upgrade on OpenShift Environment
       run: |
         helm dependency update ./infrastructure/main
-        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.build-pre.outputs.tag }}" --set image-caching.image.tag="${{ needs.build-pre.outputs.tag }}" --set redis.image.tag="${{ needs.build-pre.outputs.tag }}" --set static.image.tag="${{ needs.build-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.build-pre.outputs.tag }}" 
+        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.build-pre.outputs.tag }}" --set image-caching.image.tag="${{ needs.build-pre.outputs.tag }}" --set redis.image.tag="${{ needs.build-pre.outputs.tag }}" --set static.image.tag="${{ needs.build-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.build-pre.outputs.tag }}"
