@@ -21,7 +21,7 @@ import {
 import './EventsTable.scss';
 
 export default function EventsTable({columns, data, sortingHandler, routeHandler}) {
-  const [sorting, setSorting] = useState([{ desc: false, id: 'severity' }]);
+  const [sorting, setSorting] = useState([{ desc: true, id: 'severity' }]);
 
   const table = useReactTable({
     data: data,
