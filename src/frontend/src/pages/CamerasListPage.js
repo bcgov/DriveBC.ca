@@ -89,7 +89,10 @@ export default function CamerasListPage() {
 
   useEffect(() => {
     const filteredCams = !searchText ? processedCameras :
-      processedCameras.filter((pc) => pc.name.toLowerCase().includes(searchText));
+      processedCameras.filter(
+        (pc) => pc.name.toLowerCase().includes(searchText.toLowerCase()) ||
+          pc.caption.toLowerCase().includes(searchText.toLowerCase())
+      );
 
     setDisplayedCameras(filteredCams);
 
