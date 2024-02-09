@@ -17,7 +17,7 @@ spec:
   tls:
     termination: edge  
   host: {{ .Values.route.host  }}
-  path: {{ .Values.route.webcamPath  }}
+  path: /webcam/
 
 
 ---
@@ -41,4 +41,4 @@ spec:
   tls:
     termination: edge  
   host: {{ .Values.route.host  }}
-  path: {{ .Values.route.replayTheDayPath  }}
+  path: /ReplayTheDay/

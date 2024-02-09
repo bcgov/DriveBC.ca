@@ -1,100 +1,121 @@
-# See https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values
-global:
-  licensePlate: c59ecc
-  namespace: tools
-
 nameOverride: drivebc
 fullnameOverride: drivebc
 
-
 django:
   fullnameOverride: django
-  namespace: c59ecc-tools #The namespace you are running the application on. This is used to pull from the ImageStream
+  nameOverride: django
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest
   deployment:
-    replicas: 1
     resources:
       requests:
         cpu: 50m
-        memory: 256Mi
+        memory: 250Mi
       limits:
-        cpu: 150m
-        memory: 512Mi
+        cpu: 500m
+        memory: 350Mi
     env:
-      postgresSecret: drivebc-pguser-drivebc #By default this should be correct for Dev
-      djangoConfigMap: drivebc-django #By default this should be correct for Dev
-      djangoSecret: drivebc-django #By default this should be correct for dev
+      postgresSecret: drivebc-pguser-drivebc
+      djangoConfigMap: drivebc-django
+      djangoSecret: drivebc-django
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 75
   route:
-    host: drivebc.apps.silver.devops.gov.bc.ca
-    govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
+    host: drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist 
   pvc:
     port: 3000
     storage: 1Gi
 
-
 tasks:
   fullnameOverride: tasks
-  namespace: c59ecc-tools #enter the full namespace here to the deployment has the correct imagestream
+  nameOverride: tasks
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest
   deployment:
-    djangoImageName: django #Since it needs to use the django imagestream. 
-    replicas: 1
     resources:
       requests:
-        cpu: 50m
-        memory: 256Mi
+        cpu: 75m
+        memory: 150Mi
       limits:
-        cpu: 150m
-        memory: 512Mi
+        cpu: 250m
+        memory: 200Mi
     env:
-      postgresSecret: drivebc-pguser-drivebc #By default this should be correct for Dev
-      djangoConfigMap: drivebc-django #By default this should be correct for Dev
-      djangoSecret: drivebc-django #By default this should be correct for dev
+      postgresSecret: drivebc-pguser-drivebc
+      djangoConfigMap: drivebc-django
+      djangoSecret: drivebc-django
 
 image-caching:
   fullnameOverride: image-caching
-  namespace: c59ecc-tools #enter the full namespace here to the deployment has the correct imagestream
-  environment: dev #enter the environment this is being deployed too. Needed to set the configmap reference
+  nameOverride: image-caching
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-image-caching
+    tag: latest
   deployment:
-    replicas: 1
     resources:
       requests:
         cpu: 50m
-        memory: 64Mi
+        memory: 50Mi
       limits:
-        cpu: 150m
-        memory: 128Mi
+        cpu: 250m
+        memory: 100Mi
+    env:
+      imagecachingConfigMap: drivebc-image-caching
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 75
   route:
-    host: drivebc.apps.silver.devops.gov.bc.ca
-    govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
-    webcamPath: /webcam/
-    replayTheDayPath: /ReplayTheDay/
+    host: drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist 
 
 redis:
   fullnameOverride: redis
-  namespace: c59ecc-tools #enter the full namespace here to the deployment has the correct imagestream
+  nameOverride: redis
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-redis
+    tag: latest
   deployment:
-    replicas: 1
     resources:
       requests:
         cpu: 50m
-        memory: 64Mi
+        memory: 50Mi
       limits:
-        cpu: 150m
-        memory: 128Mi
+        cpu: 100m
+        memory: 100Mi
 
 static:
   fullnameOverride: static
-  namespace: c59ecc-tools #enter the full namespace here to the deployment has the correct imagestream
-
+  nameOverride: static
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-static
+    tag: latest
   deployment:
-    replicas: 2
     resources:
       requests:
         cpu: 50m
-        memory: 64Mi
+        memory: 50Mi
       limits:
         cpu: 150m
-        memory: 128Mi
-
+        memory: 100Mi
+    env:
+      staticConfigMap: drivebc-static
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 75
   route:
-    host: drivebc.apps.silver.devops.gov.bc.ca
-    govonly: true #Set to true so limited access is limited to gov IP's only. False for public access
+    host: drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: false  #Set to true if you want to limit IP's the the addresses in the ipallowlist 

@@ -1,101 +1,123 @@
-# See https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values
 nameOverride: prod-drivebc
 fullnameOverride: prod-drivebc
 
-
 django:
   fullnameOverride: prod-django
-  namespace: c59ecc-prod #The namespace you are running the application on. This is used to pull from the ImageStream
+  nameOverride: prod-django
+  replicaCount: 3
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest-prod
   deployment:
-    replicas: 3
     resources:
       requests:
         cpu: 50m
-        memory: 256Mi
+        memory: 250Mi
       limits:
-        cpu: 150m
-        memory: 512Mi
+        cpu: 1000m
+        memory: 350Mi
     env:
-      postgresSecret: prod-drivebc-pguser-prod-drivebc #By default this should be correct for Prod
-      djangoConfigMap: prod-drivebc-django #By default this should be correct for Prod
-      djangoSecret: prod-drivebc-django #By default this should be correct for Prod
+      postgresSecret: prod-drivebc-pguser-prod-drivebc
+      djangoConfigMap: prod-drivebc-django
+      djangoSecret: prod-drivebc-django
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 75
   route:
-    host: prod-drivebc.apps.silver.devops.gov.bc.ca
-    iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist below
-    ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
+    host: prod-drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: true #Set to true if you want to limit IP's that can access publicly available pages to the the addresses in the ipallowlist 
+    iprestrictedAdminPages: true #Set to true if you want to limit IP's that can access backend admin pages
   pvc:
     port: 3000
     storage: 1Gi
 
-
 tasks:
   fullnameOverride: prod-tasks
-  namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
+  nameOverride: prod-tasks
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest-prod
   deployment:
-    djangoImageName: prod-django #Since it needs to use the django imagestream. 
-    replicas: 1
     resources:
       requests:
-        cpu: 50m
-        memory: 256Mi
+        cpu: 75m
+        memory: 150Mi
       limits:
-        cpu: 150m
-        memory: 512Mi
+        cpu: 250m
+        memory: 200Mi
     env:
-      postgresSecret: prod-drivebc-pguser-prod-drivebc #By default this should be correct for Prod
-      djangoConfigMap: prod-drivebc-django #By default this should be correct for Prod
-      djangoSecret: prod-drivebc-django #By default this should be correct for Prod
+      postgresSecret: prod-drivebc-pguser-prod-drivebc
+      djangoConfigMap: prod-drivebc-django
+      djangoSecret: prod-drivebc-django
 
 image-caching:
   fullnameOverride: prod-image-caching
-  namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
-  environment: prod #enter the environment this is being deployed too. Needed to set the configmap reference
+  nameOverride: prod-image-caching
+  replicaCount: 3
+  image:
+    repository: ghcr.io/bcgov/drivebc-image-caching
+    tag: latest-prod
   deployment:
-    replicas: 3
     resources:
       requests:
         cpu: 50m
-        memory: 64Mi
+        memory: 50Mi
       limits:
-        cpu: 150m
-        memory: 128Mi
+        cpu: 250m
+        memory: 100Mi
+    env:
+      imagecachingConfigMap: prod-drivebc-image-caching
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 75
   route:
-    host: prod-drivebc.apps.silver.devops.gov.bc.ca
-    iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist below
-    ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
-    webcamPath: /webcam/
-    replayTheDayPath: /ReplayTheDay/
-
-
+    host: prod-drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist 
 
 redis:
   fullnameOverride: prod-redis
-  namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
+  nameOverride: prod-redis
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-redis
+    tag: latest-prod
   deployment:
-    replicas: 1
     resources:
       requests:
         cpu: 50m
-        memory: 64Mi
+        memory: 50Mi
       limits:
-        cpu: 150m
-        memory: 128Mi
+        cpu: 100m
+        memory: 100Mi
 
 static:
   fullnameOverride: prod-static
-  namespace: c59ecc-prod #enter the full namespace here to the deployment has the correct imagestream
-
+  nameOverride: prod-static
+  replicaCount: 3
+  image:
+    repository: ghcr.io/bcgov/drivebc-static
+    tag: latest-prod
   deployment:
-    replicas: 3
     resources:
       requests:
         cpu: 50m
-        memory: 64Mi
+        memory: 50Mi
       limits:
         cpu: 150m
-        memory: 128Mi
-
+        memory: 100Mi
+    env:
+      staticConfigMap: prod-drivebc-static
+      staticSecret: prod-drivebc-static
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 75
   route:
-    host: prod-drivebc.apps.silver.devops.gov.bc.ca
-    iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist below
-    ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
+    host: prod-drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: true  #Set to true if you want to limit IP's the the addresses in the ipallowlist 

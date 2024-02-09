@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-echo "Updating the proxy_pass in the nginx config based on the DRIVEBC_IMAGE_API_BASE_URL variable in the django configmap"
+echo "Updating the proxy_pass in the nginx config based on the DRIVEBC_IMAGE_API_BASE_URL variable in the configmap"
 
 # Display the value
 echo "The value of DRIVEBC_IMAGE_API_BASE_URL in the configmap is" ${DRIVEBC_IMAGE_API_BASE_URL}

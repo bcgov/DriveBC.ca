@@ -1,17 +1,29 @@
-fullnameOverride: 
-namespace: c59ecc-tools #enter the full namespace here to the deployment has the correct imagestream
+fullnameOverride: static
+nameOverride: static
 
+replicaCount: 1
+
+image:
+  repository: ghcr.io/bcgov/drivebc-static
+  tag: latest-prod
 
 deployment:
-  image: #by default use the image from the ImageStream
-  replicas: 2
   resources:
     requests:
       cpu: 50m
-      memory: 64Mi
+      memory: 50Mi
     limits:
-      cpu: 150m
-      memory: 128Mi
+      cpu: 250m
+      memory: 100Mi
+  env:
+    staticConfigMap: drivebc-static
+    staticSecret: drivebc-static
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 75
 
 route:
   host: drivebc.apps.silver.devops.gov.bc.ca
