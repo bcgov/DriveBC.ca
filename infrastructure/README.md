@@ -1,11 +1,11 @@
 # DriveBC Infrastructure
 
-The new DriveBC site has a number of components that work together to serve the website. This infrastructure folder contains all the components required to build the infrastructure to support the site. Following the steps in the Deployments Steps section should quickly setup your environment from scratch.
+The new DriveBC site has a number of components that work together to serve the website. This infrastructure folder contains all the components required to build the infrastructure to support the site. Following the steps in the Deployments Steps section should quickly setup your namespace from scratch.
 
 Here are the components that are in this folder:
 - Init
-  - Sets up the Secrets and ConfigMaps prior to building the other components
-- CrunchDB Postgres
+  - Creates the blank Secrets and ConfigMaps prior to building the other components
+- CrunchyDB Postgres
   - Based off: https://github.com/bcgov/crunchy-postgres/ with a few changes to support our environment.
 - Django
 - Tasks
@@ -16,17 +16,17 @@ Here are the components that are in this folder:
 ## Deployment Steps
 ### New Environment
 Follow these steps to setup a brand new environment.
-1. Download the Drivebc.ca repository to your PC
-1. Navigate to the infrastructure folder in command line
+1. Clone the Drivebc.ca repository to your PC
+1. Navigate to the infrastructure folder in the command line
 1. Login to OpenShift using the command line oc utility
 1. Select the project you would like to deploy to using `oc project NAMESPACE`
 1. `helm install ENV-drivebc-init -f .\init\values-ENV.yaml .\init`
-    1. NOTE: Do not install this again as it will overwrite all values. May need to find a better way to handle this in the future.
-1. Set the values in the `ENV-drivebc-django` ConfigMap and Secret (In the future `ENV-drivebc-static` ConfigMap and Secret too)
-1. `helm install ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres`
-1. `helm install ENV-drivebc -f .\main\values-ENV.yaml .\main`
-1. Now that all components are installed you need to go to GitHub actions and run `Build & Deploy Image Caching Image` & `Deploy main to ENV` and then all the pods should start-up. If any issues confirm the configmaps are updated.
-1. If you want to quickly get the cameras and events on a fresh db, run  `python manage.py populate_webcams` and `python manage.py populate_events` in the terminal of the tasks pod
+    1. NOTE: Do not install this again as it will overwrite all values.
+1. Set the values in the `ENV-drivebc-django` & `ENV-drivebc-static` ConfigMap and Secrets (they both have ) as well as the `ENV-drivebc-image-caching` ConfigMap too.
+1. `helm install ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres` to install CrunchyDB. NOTE: Check the values files to confirm the namespace is correct for monitoring.
+1. Once the datbase is running go to the terminal of the primary replica and go to `psql`, then enter `ALTER DATABASE "ENV-drivebc" OWNER TO "ENV-drivebc";`
+1. `helm install ENV-drivebc -f .\main\values-ENV.yaml .\main` to install the entire environment. 
+1. If you want to quickly get the cameras and events on a fresh db, login to the tasks pod and go to terminal where you will run these commands  `python manage.py populate_webcams` and `python manage.py populate_events` and `python manage.py populate_ferries`
 
 ### Upgrades
 
@@ -55,11 +55,3 @@ If you need to uninstall the Helm Charts follow these steps:
 1. `helm uninstall ENV-drivebc`
 1. `helm uninstall ENV-drivebc-crunchy-postgres`
 1. `helm uninstall ENV-drivebc-init`
-
-
-
-# to-do
-- Build a Make file to speed up this process even more
-- Once we know what versioning looks like, integrate that change. Will probably need to use another repo such as GitHub, Artifactory, or imagestream on Tools namespace
-- Build a HELM chart for Postgres Monitoring
-- Add liveness checks to the pods

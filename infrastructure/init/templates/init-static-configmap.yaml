@@ -4,11 +4,12 @@ metadata:
   name: {{ template "app.fullname" . }}-static
   labels: {{ include "app.labels" . | nindent 4 }}  
 data:
-  API_HOST:
-  BASE_MAP: 
-  GEOCODER_HOST: 
-  HIGHWAY_LAYER: 
-  MAP_STYLE: 
-  OPEN511_LAYER: 
-  REPLAY_THE_DAY: 
-  ROUTE_PLANNER: 
+  REACT_APP_HIGHWAY_LAYER: ''
+  REACT_APP_API_HOST: ''
+  REACT_APP_BASE_MAP: ''
+  REACT_APP_MAP_STYLE: ''
+  REACT_APP_REPLAY_THE_DAY: ''
+  REACT_APP_GEOCODER_HOST: ''
+  REACT_APP_ROUTE_PLANNER: ''
+  REACT_APP_OPEN511_LAYER: ''
+  ENVIRONMENT: ''

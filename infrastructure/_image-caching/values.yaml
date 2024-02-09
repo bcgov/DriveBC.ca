@@ -1,23 +1,31 @@
-fullnameOverride: 
-namespace:  #enter the full namespace here to the deployment has the correct imagestream
-environment:  #enter the environment this is being deployed too. Needed to set the configmap reference
+fullnameOverride: image-caching
+nameOverride: image-caching
 
+replicaCount: 1
+
+image:
+  repository: ghcr.io/bcgov/drivebc-image-caching
+  tag: latest
 
 deployment:
-  image: #by default use the image from the ImageStream
-  replicas: 1
   resources:
     requests:
       cpu: 50m
-      memory: 64Mi
+      memory: 50Mi
     limits:
-      cpu: 150m
-      memory: 128Mi
+      cpu: 250m
+      memory: 100Mi
+  env:
+    imagecachingConfigMap: drivebc-image-caching
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 75
 
 route:
-  host: 
-  iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist below
+  host: drivebc.apps.silver.devops.gov.bc.ca
+  iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist below
   ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
-  webcamPath:
-  replayTheDayPath:
 

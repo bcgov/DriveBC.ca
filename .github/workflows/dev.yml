@@ -1,75 +1,159 @@
-name: Deploy main to dev
+name: 1. Build & Deploy to Dev
+#Will automatically run on a push to main, but can also be run manually
 
 on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
 
+env:
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  REGISTRY_USER: ${{ github.actor }}
+  REGISTRY_PASSWORD: ${{ github.token }}
+
+
 jobs:
   build-static:
     runs-on: ubuntu-latest
-    name: Build & Deploy Docker Static images
+    name: Build & Push Docker Static Image
     environment: 
       name: dev
-      url: https://dev-drivebc.apps.silver.devops.gov.bc.ca
 
-    
     steps:
-    - name: checkout code
-      uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-    - name: build static
-      uses: redhat-actions/buildah-build@v2
+    - name: Build Static
+      id: build_image
+      uses: redhat-actions/buildah-build@v2.9
       with:
         context: .
         layers: true
-        image: dev-static
-        tags: latest ${{ github.sha }}
+        image: drivebc-static
+        tags: latest latest-dev ${{ github.sha }}
         labels: |
-          app=dev-drivebc
+          app=drivebc
         containerfiles: ./compose/frontend/StaticBuild
         build-args: |
-          API_HOST=${{ vars.API_HOST }}
-          BASE_MAP=${{ vars.BASE_MAP }}
-          MAP_STYLE=${{ vars.MAP_STYLE }}
-          HIGHWAY_LAYER=${{ vars.HIGHWAY_LAYER }}
-          OPEN511_LAYER=${{ vars.OPEN511_LAYER }}
-          REPLAY_THE_DAY=${{ vars.REPLAY_THE_DAY }}
-          ROUTE_PLANNER=${{ vars.ROUTE_PLANNER }}
-          ROUTE_PLANNER_KEY=${{ vars.ROUTE_PLANNER_KEY }}
-          GEOCODER_HOST=${{ vars.GEOCODER_HOST }}
-          GEOCODER_API_AUTH_KEY=${{ vars.GEOCODER_API_AUTH_KEY }}
           DEBUG_BUILD=true
-    - name: push to registry
+
+    - name: Push to Github Packages
       uses: redhat-actions/push-to-registry@v2.7
       with:
-        image: dev-static
-        registry: ${{ secrets.REGISTRY }}
-        username: ${{ secrets.BUILDER_USERNAME }}
-        password: ${{ secrets.BUILDER_TOKEN }}
+        image: ${{ steps.build_image.outputs.image }}
+        tags: ${{ steps.build_image.outputs.tags }}
+        registry: ${{ env.IMAGE_REGISTRY }}
+        username: ${{ env.REGISTRY_USER }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+
 
   build-backend:
     runs-on: ubuntu-latest
-    name: Build & Deploy Docker Backend images
+    name: Build & Push Docker Backend Image
     environment: dev
     
     steps:
-    - name: checkout code
-      uses: actions/checkout@v3
-    - name: build backend
-      uses: redhat-actions/buildah-build@v2
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    
+    - name: Build Backend
+      id: build_image
+      uses: redhat-actions/buildah-build@v2.9
       with:
-        image: dev-django
-        tags: latest ${{ github.sha }}
+        image: drivebc-django
+        tags: latest latest-dev ${{ github.sha }}
         labels: |
-          app=dev-drivebc
+          app=drivebc
         containerfiles: ./compose/backend/Dockerfile
         build-args:
           DEBUG_BUILD=true
-    - name: push to registry
+  
+    - name: Push to Github Packages
       uses: redhat-actions/push-to-registry@v2.7
       with:
-        image: dev-django
-        registry: ${{ secrets.REGISTRY }}
-        username: ${{ secrets.BUILDER_USERNAME }}
-        password: ${{ secrets.BUILDER_TOKEN }}
+        image: ${{ steps.build_image.outputs.image }}
+        tags: ${{ steps.build_image.outputs.tags }}
+        registry: ${{ env.IMAGE_REGISTRY }}
+        username: ${{ env.REGISTRY_USER }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+
+
+  build-image-caching:
+    runs-on: ubuntu-latest
+    name: Build & Push Docker Image-Caching Image
+    environment: dev
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    
+    - name: Build Image Caching
+      id: build_image
+      uses: redhat-actions/buildah-build@v2.9
+      with:
+        image: drivebc-image-caching
+        tags: latest latest-dev ${{ github.sha }}
+        labels: |
+          app=drivebc
+        containerfiles: ./compose/caching/Dockerfile
+  
+    - name: Push to Github Packages
+      uses: redhat-actions/push-to-registry@v2.7
+      with:
+        image: ${{ steps.build_image.outputs.image }}
+        tags: ${{ steps.build_image.outputs.tags }}
+        registry: ${{ env.IMAGE_REGISTRY }}
+        username: ${{ env.REGISTRY_USER }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+
+  build-redis:
+    runs-on: ubuntu-latest
+    name: Build & Push Docker Redis Image
+    environment: dev
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    
+    - name: Build Redis
+      id: build_image
+      uses: redhat-actions/buildah-build@v2.9
+      with:
+        image: drivebc-redis
+        tags: latest latest-dev ${{ github.sha }}
+        labels: |
+          app=drivebc
+        containerfiles: ./compose/redis/Dockerfile
+  
+    - name: Push to Github Packages
+      uses: redhat-actions/push-to-registry@v2.7
+      with:
+        image: ${{ steps.build_image.outputs.image }}
+        tags: ${{ steps.build_image.outputs.tags }}
+        registry: ${{ env.IMAGE_REGISTRY }}
+        username: ${{ env.REGISTRY_USER }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+
+  versionUpdate:
+    needs: [build-static, build-backend, build-redis, build-image-caching]
+    runs-on: ubuntu-latest
+    name: Deploy Latest Images
+    environment:
+      name: dev
+      url: https://dev-drivebc.apps.gold.devops.gov.bc.ca
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+     
+    - name: Authenticate and set context
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+        openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+        insecure_skip_tls_verify: true
+
+    - name: Helm upgrade on OpenShift Environment
+      run: |
+        helm dependency update ./infrastructure/main
+        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml ./infrastructure/main --set django.image.tag="${{ github.sha }}" --set image-caching.image.tag="${{ github.sha }}" --set redis.image.tag="${{ github.sha }}" --set static.image.tag="${{ github.sha }}" --set tasks.image.tag="${{ github.sha }}"

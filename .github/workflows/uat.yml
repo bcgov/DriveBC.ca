@@ -1,73 +1,94 @@
-name: Deploy main to uat
+name: 3. Promote from Test to UAT
 
-on:
-  workflow_dispatch:
+on: 
+  workflow_dispatch: #Make sure you select a tag and not the branch
 
+env:
+    IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+    REGISTRY_USER: ${{ github.actor }}
+    REGISTRY_PASSWORD: ${{ github.token }}
 
+permissions:
+  packages: write
+    
 jobs:
-
-  build-static:
+  deploy-pre:
     runs-on: ubuntu-latest
-    name: Build & Deploy Docker Static images
-    environment: uat
+    name: Create Tag Variable (remove V)
+    timeout-minutes: 1
+    outputs:
+      tag: ${{ steps.vars.outputs.tag }}
 
     steps:
-    - name: checkout code
-      uses: actions/checkout@v3
-
-    - name: build static
-      uses: redhat-actions/buildah-build@v2
-      with:
-        context: .
-        layers: true
-        image: uat-static
-        tags: latest ${{ github.sha }}
-        labels: |
-          app=uat-drivebc
-        containerfiles: ./compose/frontend/StaticBuild
-        build-args: |
-          API_HOST=${{ vars.API_HOST }}
-          BASE_MAP=${{ vars.BASE_MAP }}
-          MAP_STYLE=${{ vars.MAP_STYLE }}
-          HIGHWAY_LAYER=${{ vars.HIGHWAY_LAYER }}
-          OPEN511_LAYER=${{ vars.OPEN511_LAYER }}
-          REPLAY_THE_DAY=${{ vars.REPLAY_THE_DAY }}
-          ROUTE_PLANNER=${{ vars.ROUTE_PLANNER }}
-          ROUTE_PLANNER_KEY=${{ vars.ROUTE_PLANNER_KEY }}
-          GEOCODER_HOST=${{ vars.GEOCODER_HOST }}
-          GEOCODER_API_AUTH_KEY=${{ vars.GEOCODER_API_AUTH_KEY }}
-          DEBUG_BUILD=false
-    - name: push to registry
-      uses: redhat-actions/push-to-registry@v2.7
-      with:
-        image: uat-static
-        registry: ${{ secrets.REGISTRY }}
-        username: ${{ secrets.BUILDER_USERNAME }}
-        password: ${{ secrets.BUILDER_TOKEN }}
-
-  build-backend:
-    runs-on: ubuntu-latest
-    name: Build & Deploy Docker backend images
-    environment: uat
-
-    steps:
-    - name: checkout code
-      uses: actions/checkout@v3
+      - name: Fail on branches
+        run: exit 1
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
       
-    - name: build backend
-      uses: redhat-actions/buildah-build@v2
+      - name: Remove v from version for the docker tag
+        id: vars
+        run: |
+          vtag=${{ github.ref_name }}
+          echo "tag=${vtag//v}" >> $GITHUB_OUTPUT
+
+#This job adds 'latest-uat' docker tags to the existing image so it's always clear which image is current for a particular environment
+  addDockerTag:
+    needs: [deploy-pre]
+    runs-on: ubuntu-latest
+    name: Add latest-uat Tag
+    steps:
+    - name: Add latest-uat tag to django image
+      uses: shrink/actions-docker-registry-tag@v3
       with:
-        image: uat-django
-        tags: latest ${{ github.sha }}
-        labels: |
-          app=uat-drivebc
-        containerfiles: ./compose/backend/Dockerfile
-        build-args:
-          DEBUG_BUILD=false
-    - name: push to registry
-      uses: redhat-actions/push-to-registry@v2.7
+        registry: ghcr.io
+        repository: bcgov/drivebc-django
+        target: ${{ needs.deploy-pre.outputs.tag }}
+        tags: |
+          latest-uat
+    - name: Add latest-uat tag to static image
+      uses: shrink/actions-docker-registry-tag@v3
       with:
-        image: uat-django
-        registry: ${{ secrets.REGISTRY }}
-        username: ${{ secrets.BUILDER_USERNAME }}
-        password: ${{ secrets.BUILDER_TOKEN }}
+        registry: ghcr.io
+        repository: bcgov/drivebc-static
+        target: ${{ needs.deploy-pre.outputs.tag }}
+        tags: |
+          latest-uat
+    - name: Add latest-uat tag to image-caching image
+      uses: shrink/actions-docker-registry-tag@v3
+      with:
+        registry: ghcr.io
+        repository: bcgov/drivebc-image-caching
+        target: ${{ needs.deploy-pre.outputs.tag }}
+        tags: |
+          latest-uat
+    - name: Add latest-uat tag to redis image
+      uses: shrink/actions-docker-registry-tag@v3
+      with:
+        registry: ghcr.io
+        repository: bcgov/drivebc-redis
+        target: ${{ needs.deploy-pre.outputs.tag }}
+        tags: |
+          latest-uat
+
+  deploy:
+    needs: [deploy-pre]
+    runs-on: ubuntu-latest
+    name: Promote Images to OpenShift
+    environment:
+      name: uat
+      url: https://uat-drivebc.apps.gold.devops.gov.bc.ca/
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Authenticate and set context
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+        openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+        insecure_skip_tls_verify: true
+
+    - name: Helm upgrade on OpenShift Environment
+      run: |
+        helm dependency update ./infrastructure/main
+        helm upgrade uat-drivebc -f ./infrastructure/main/values-uat.yaml ./infrastructure/main --set django.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set image-caching.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set redis.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set static.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.deploy-pre.outputs.tag }}"

@@ -1,28 +1,30 @@
 # Redis chart
 
-A chart to provision a Django instance
+A chart to provision a Redis instance
 
 ## Configuration
 
 ### Redis Options
 
-| Parameter          | Description                        | Default                 |
-| ------------------ | ---------------------------------- | ------------------      |
-| `fullnameOverride `| Instance Name if other than default| `django`                |
-| `CPU Request`      | CPU Request Amount                 | `50`                    |
-| `CPU Limit`        | CPU Limit Amount                   | `150`                   |
-| `Memory Request`   | Memory Requests Amount             | `64`                    |
-| `Memory Limit`     | Memory Limit Amount                | `128`                   |
-| `Replicas`         | Replicas                           | `1`                     |
-| `Namespace`        | To support the image registry      |                         |
+| Parameter           | Description                         | Default |
+| ------------------- | ----------------------------------- | ------- |
+| `fullnameOverride ` | Instance Name if other than default | `redis` |
+| `nameOverride `     | Instance Name if other than default | `redis` |
+| `replicaCount`      | Replicas                            | `1`     |
+| `repository`        | Image Source                        | `redis` |
+| `tag`               | Image Tag                           | `7`     |
+| `CPU Request`       | CPU Request Amount                  | `50`    |
+| `CPU Limit`         | CPU Limit Amount                    | `100`   |
+| `Memory Request`    | Memory Requests Amount              | `50`    |
+| `Memory Limit`      | Memory Limit Amount                 | `100`   |
+
 
 
 
 ## Components
 ### OpenShift
-- ImageStream
 - Service
 - Deployment
 
-### Other
-- Need to make sure we add the correct labels
+### Notes
+- Keep replicas set to 1, as more replicas can cause issues with the huey job queue
