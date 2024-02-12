@@ -102,6 +102,7 @@ export default function MapWrapper({
   const mapElement = useRef();
   const mapRef = useRef();
   const popup = useRef();
+  const panel = useRef();
   const mapLayers = useRef({});
   const mapView = useRef();
   const container = useRef();
@@ -652,6 +653,20 @@ export default function MapWrapper({
     }
   }
 
+  function togglePanel() {
+    panel.current.classList.toggle('open');
+    panel.current.classList.remove('maximized');
+    if (!panel.current.classList.contains('open')) {
+      closePopup();
+    }
+  }
+
+  function maximizePanel() {
+    if (panel.current.classList.contains('open')) {
+      panel.current.classList.add('maximized');
+    }
+  }
+
   function handleCenter() {
     if (typeof camera === 'string') {
       camera = JSON.parse(camera);
@@ -692,9 +707,40 @@ export default function MapWrapper({
     mapContext.visible_layers['inlandFerries'] = true;
   }
 
+  const openPanel = !!(clickedCamera || clickedEvent || clickedFerry);
+
   return (
     <div className="map-container">
+
+      <div
+        ref={panel} className={`side-panel ${openPanel ? 'open' : ''}`}
+        onClick={maximizePanel}
+        onTouchMove={maximizePanel}
+      >
+        <div className="closer-bar">
+          <FontAwesomeIcon
+            className="panel-closer"
+            icon={faXmark}
+            onClick={togglePanel}
+          />
+        </div>
+
+        <div className="panel-content">
+          {clickedCamera &&
+            <CamPopup
+              camFeature={clickedCamera}
+              isPreview={isPreview} />
+          }
+
+          {clickedEvent && getEventPopup(clickedEvent)}
+
+          {clickedFerry && getFerryPopup(clickedFerry)}
+        </div>
+
+      </div>
+
       <div ref={mapElement} className="map">
+
         <div className="map-btn zoom-btn">
           <Button className="zoom-in" variant="primary" aria-label="zoom in"
             onClick={() => zoomIn(mapView)}>
@@ -720,6 +766,19 @@ export default function MapWrapper({
             My location
           </Button>
         )}
+
+        {!isPreview && (
+          <div>
+            <RouteSearch routeEdit={true} />
+            <AdvisoriesOnMap />
+          </div>
+        )}
+
+        <Filters
+          toggleHandler={toggleLayer}
+          disableFeatures={isPreview}
+          enableRoadConditions={true}
+        />
       </div>
 
       <div id="popup" className="ol-popup">
@@ -729,28 +788,10 @@ export default function MapWrapper({
           icon={faXmark}
           onClick={closePopup}
         />
+
         <div id="popup-content" className="ol-popup-content">
-          {clickedCamera &&
-            <CamPopup
-              camFeature={clickedCamera}
-              isPreview={isPreview} />
-          }
-
-          {clickedEvent &&
-            getEventPopup(clickedEvent)
-          }
-
-          {clickedFerry &&
-            getFerryPopup(clickedFerry)
-          }
         </div>
       </div>
-
-      <Filters
-        toggleHandler={toggleLayer}
-        disableFeatures={isPreview}
-        enableRoadConditions={true}
-      />
 
       {isPreview && (
         <Button
@@ -776,12 +817,6 @@ export default function MapWrapper({
         </Button>
       )}
 
-      {!isPreview && (
-        <div>
-          <RouteSearch routeEdit={true} />
-          <AdvisoriesOnMap />
-        </div>
-      )}
     </div>
   );
 }

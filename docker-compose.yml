@@ -50,8 +50,8 @@ services:
       - ./src/frontend:/app
       # One-way volume to use node_modules from inside image
       - /app/node_modules
-    depends_on:
-      - django
+    # depends_on:
+    #   - django
     command: npm run start-frontend
 
   db:
