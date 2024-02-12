@@ -21,10 +21,14 @@ export default function FeedbackPage() {
   const [ email, setEmail ] = useState();
   const [ subject, setSubject ] = useState(0);
   const [ message, setMessage ] = useState();
+  const [ error, setError ] = useState(false);
   const [ success, setSuccess ] = useState(false);
 
   // Recaptcha
   const [ recToken, setRecToken ] = useState();
+  const refreshRecToken = async () => {
+    setRecToken(await executeRecaptcha('feedbackForm'));
+  }
 
   const { executeRecaptcha } = useGoogleReCaptcha();
   const handleReCaptchaVerify = useCallback(async () => {
@@ -32,8 +36,7 @@ export default function FeedbackPage() {
       return;
     }
 
-    setRecToken(await executeRecaptcha('feedbackForm'));
-
+    refreshRecToken();
   }, [executeRecaptcha]);
 
   useEffect(() => {
@@ -62,6 +65,10 @@ export default function FeedbackPage() {
     })
     .catch((error) => {
       console.log(error);
+      setError(true);
+
+      // Refresh captcha token on error
+      refreshRecToken();
     });
   };
 
@@ -96,6 +103,10 @@ export default function FeedbackPage() {
             <Button variant="primary" type="submit">
               Send
             </Button>
+
+            {error &&
+              <span>Error on submission. Please try again.</span>
+            }
           </Form>
         </Container>
       }
