@@ -41,19 +41,26 @@ class FeedbackSerializer(Serializer):
 class FeedbackView(APIView):
     def post(self, request):
         serializer = FeedbackSerializer(data=request.data, context={"request": request})
-        serializer.is_valid()
-        # score = serializer.fields['recToken'].score
-        # serializer.data['subject']
 
-        send_mail(
-            "DriveBC Feedback message",
-            serializer.data['message'],
-            serializer.data['email'],
-            [env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT")],
-            fail_silently=False,
-        )
+        try:
+            serializer.is_valid()
 
-        return Response(data={}, status=status.HTTP_200_OK)
+            # Currently unused but potentially important data
+            # score = serializer.fields['recToken'].score
+            # subject = serializer.data['subject']
+
+            send_mail(
+                "DriveBC Feedback message",
+                serializer.data['message'],
+                serializer.data['email'],
+                [env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT")],
+                fail_silently=False,
+            )
+
+            return Response(data={}, status=status.HTTP_200_OK)
+
+        except Exception:
+            return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CachedListModelMixin:
