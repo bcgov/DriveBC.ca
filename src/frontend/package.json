@@ -34,6 +34,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-multi-backend": "^8.0.0",
     "react-dom": "^18.2.0",
+    "react-google-recaptcha-v3": "^1.10.1",
     "react-image-gallery": "^1.2.12",
     "react-infinite-scroll-component": "^6.1.0",
     "react-redux": "^8.1.2",

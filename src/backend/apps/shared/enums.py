@@ -59,3 +59,12 @@ class CacheKey:
 
 
 ROUTE_FILTER_TOLERANCE = 25
+
+
+class FeedbackSubject:
+    WEBSITE_FEEDBACK = 0
+
+
+SUBJECT_CHOICES = (
+    (FeedbackSubject.WEBSITE_FEEDBACK, 'Website Feedback'),
+)
