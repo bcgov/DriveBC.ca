@@ -85,7 +85,6 @@ export default function FeedbackPage() {
               <Form.Label>Subject</Form.Label>
               <Form.Control as="select" aria-label="Select subject" value={subject} onChange={e => setSubject(e.target.value)}>
                 <option value={0}>Website Feedback</option>
-                <option value={1}>Subject 2</option>
               </Form.Control>
             </Form.Group>
 
