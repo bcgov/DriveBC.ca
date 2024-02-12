@@ -3,20 +3,57 @@ from pathlib import Path
 
 import environ
 import requests
-from apps.shared.enums import ROUTE_FILTER_TOLERANCE, CacheKey, CacheTimeout
+from apps.shared.enums import (
+    ROUTE_FILTER_TOLERANCE,
+    SUBJECT_CHOICES,
+    CacheKey,
+    CacheTimeout,
+)
 from django.contrib.gis.geos import LineString, Point
 from django.contrib.gis.measure import D
 from django.core.cache import cache
+from django.core.mail import send_mail
 from django.db import connection
 from django.urls import re_path
 from django.views.static import serve
+from drf_recaptcha.fields import ReCaptchaV3Field
+from rest_framework import serializers, status
 from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
 # Base dir and env
 BASE_DIR = Path(__file__).resolve().parents[4]
 env = environ.Env()
 environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
+
+
+class FeedbackSerializer(Serializer):
+    email = serializers.EmailField()
+    message = serializers.CharField(min_length=10, max_length=500)
+    subject = serializers.ChoiceField(choices=SUBJECT_CHOICES)
+    recToken = ReCaptchaV3Field(
+        action="feedbackForm",
+        required_score=0.6,
+    )
+
+
+class FeedbackView(APIView):
+    def post(self, request):
+        serializer = FeedbackSerializer(data=request.data, context={"request": request})
+        serializer.is_valid()
+        # score = serializer.fields['recToken'].score
+        # serializer.data['subject']
+
+        send_mail(
+            "DriveBC Feedback message",
+            serializer.data['message'],
+            serializer.data['email'],
+            [env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT")],
+            fail_silently=False,
+        )
+
+        return Response(data={}, status=status.HTTP_200_OK)
 
 
 class CachedListModelMixin:

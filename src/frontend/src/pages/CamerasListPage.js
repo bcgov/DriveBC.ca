@@ -7,7 +7,6 @@ import { memoize } from 'proxy-memoize'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
 
 // Components and functions
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';

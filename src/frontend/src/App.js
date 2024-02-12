@@ -16,6 +16,7 @@ import AdvisoriesListPage from './pages/AdvisoriesListPage';
 import AdvisoryDetailsPage from './pages/AdvisoryDetailsPage';
 import BulletinsListPage from './pages/BulletinsListPage';
 import BulletinDetailsPage from './pages/BulletinDetailsPage';
+import FeedbackPage from './pages/FeedbackPage';
 import ScrollToTop from './Components/ScrollToTop';
 
 export const MapContext = createContext(null);
@@ -52,6 +53,7 @@ function App() {
           <Route path="/advisories/:id" element={<AdvisoryDetailsPage />} />
           <Route path="/bulletins" element={<BulletinsListPage />} />
           <Route path="/bulletins/:id" element={<BulletinDetailsPage />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
         </Routes>
       </div>
     </MapContext.Provider>

@@ -1,6 +1,6 @@
 const request = (url, params = {}, headers = {}, method = "GET") => {
   const options = {
-    ...headers,
+    headers,
     method
   };
 
