@@ -6,6 +6,5 @@ from django.contrib.admin import ModelAdmin
 class WeatherAdmin(ModelAdmin):
     readonly_fields = ('id', )
 
+
 admin.site.register(RegionalWeather, WeatherAdmin)
-
-

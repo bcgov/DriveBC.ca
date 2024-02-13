@@ -1,12 +1,6 @@
-import datetime
-import zoneinfo
-from copy import copy
-
-# from apps.event import enums as event_enums
+from apps.shared.tests import BaseTest
 from apps.weather.models import RegionalWeather
 from apps.weather.serializers import RegionalWeatherSerializer
-from apps.shared.tests import BaseTest
-from django.contrib.gis.geos import LineString
 
 
 class TestRegionalWeatherSerializer(BaseTest):
@@ -14,15 +8,15 @@ class TestRegionalWeatherSerializer(BaseTest):
         super().setUp()
 
         self.regional_weather = RegionalWeather(
-            code = "s0000341",
-            location_latitude = "58.66N", 
-            location_longitude = "124.64W",
+            code="s0000341",
+            location_latitude="58.66N",
+            location_longitude="124.64W",
         )
-        
+
         self.regional_weather_2 = RegionalWeather(
-            code = "s0000846",
-            location_latitude = "57.06N", 
-            location_longitude = "123.94W",
+            code="s0000846",
+            location_latitude="57.06N",
+            location_longitude="123.94W",
         )
 
         self.regional_weather.id = "1"
@@ -36,17 +30,13 @@ class TestRegionalWeatherSerializer(BaseTest):
         self.serializer_two = RegionalWeatherSerializer(self.regional_weather_2)
 
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 15
+        assert len(self.serializer.data) == 14  # literal lat/long are not serialized
         assert self.serializer.data['code'] == \
                "s0000341"
-        assert self.serializer.data['location_latitude'] == \
-               "58.66N"
-        assert self.serializer.data['location_longitude'] == \
-               "124.64W"
-        
+        assert self.serializer.data['location']['coordinates'] == \
+               [-124.64, 58.66]
+
         assert self.serializer_two.data['code'] == \
                "s0000849"
-        assert self.serializer_two.data['location_latitude'] == \
-               "57.06N"
-        assert self.serializer_two.data['location_longitude'] == \
-               "123.94W"
+        assert self.serializer_two.data['location']['coordinates'] == \
+               [-123.94, 57.06]

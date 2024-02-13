@@ -1,7 +1,7 @@
-from apps.weather.models import RegionalWeather
-from apps.weather.views import RegionalWeatherAPI
 from apps.shared.enums import CacheKey
 from apps.shared.tests import BaseTest
+from apps.weather.models import RegionalWeather
+from apps.weather.views import RegionalWeatherAPI
 from django.core.cache import cache
 from rest_framework.test import APITestCase
 
@@ -11,9 +11,9 @@ class TestRegionalWeatherAPI(APITestCase, BaseTest):
         super().setUp()
 
         RegionalWeather.objects.create(
-            code = "s0000341",
-            location_latitude = "58.66N", 
-            location_longitude = "124.64W",
+            code="s0000341",
+            location_latitude="58.66N",
+            location_longitude="124.64W",
         )
 
     def test_regional_weather_list_caching(self):
@@ -56,4 +56,3 @@ class TestRegionalWeatherAPI(APITestCase, BaseTest):
             url
         )
         assert len(response.data) == 1
-

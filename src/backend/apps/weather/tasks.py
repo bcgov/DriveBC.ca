@@ -1,14 +1,13 @@
-from collections import OrderedDict
 import logging
-from apps.weather.models import RegionalWeather
-from apps.weather.serializers import RegionalWeatherSerializer
+
 from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
-from django.contrib.gis.geos import LineString, Point
+from apps.weather.models import RegionalWeather
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
 
 logger = logging.getLogger(__name__)
+
+
 def populate_regional_weather_from_data(new_regional_weather_data):
     code = new_regional_weather_data.get('code')
     existing_record = RegionalWeather.objects.filter(code=code).first()
