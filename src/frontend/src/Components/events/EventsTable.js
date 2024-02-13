@@ -44,6 +44,11 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
     sortingHandler(sorting);
   }, [sorting]);
 
+  const toggleSortingHandler = (column) => {
+    const nextOrder = column.getNextSortingOrder();
+    column.toggleSorting(!nextOrder ? nextOrder : null);
+  }
+
   const ascIcon = <FontAwesomeIcon icon={faArrowUpLong} alt="ascending order" />;
   const descIcon = <FontAwesomeIcon icon={faArrowDownLong} alt="descending order" />;
 
@@ -61,7 +66,7 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
                         className: header.column.getCanSort() ?
                           'cursor-pointer select-none' :
                           '',
-                        onClick: header.column.getToggleSortingHandler(),
+                        onClick: () => toggleSortingHandler(header.column),
                       }}
                     >
                       {flexRender(
