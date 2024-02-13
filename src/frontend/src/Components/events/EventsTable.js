@@ -23,6 +23,9 @@ import './EventsTable.scss';
 export default function EventsTable({columns, data, sortingHandler, routeHandler}) {
   const [sorting, setSorting] = useState([{ desc: false, id: 'severity' }]);
 
+//  const priorityMultiSort = (rowA: any, rowB: any, columnId: any): number =>
+//        rowA.getValue(columnId).value < rowB.getValue(columnId).value ? 1 : -1
+
   const table = useReactTable({
     data: data,
     columns: columns,
@@ -35,6 +38,9 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
       },
     },
     onSortingChange: setSorting,
+//    sortingFns: {
+//      myCustomSorting: ,
+//    },
     getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),

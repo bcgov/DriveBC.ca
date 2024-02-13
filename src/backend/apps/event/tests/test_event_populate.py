@@ -54,7 +54,7 @@ class TestEventModel(BaseTest):
         self.parsed_feed = parsed_feed
 
     def test_populate_event_function(self):
-        populate_event_from_data(self.parsed_feed)
+        populate_event_from_data(self.parsed_feed, 7)
 
         event_one = Event.objects.get(id="drivebc.ca/DBC-52446")
 
@@ -90,6 +90,7 @@ class TestEventModel(BaseTest):
         assert event_one.last_updated == datetime.datetime(
             2023, 6, 29, 10, 14, 55, tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
         )
+        assert event_one.priority == 7
 
     @patch("httpx.get")
     def test_populate_and_update_event(self, mock_requests_get):

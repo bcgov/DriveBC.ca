@@ -42,7 +42,7 @@ def build_data_diff(current_obj, new_obj_data):
     return data_diff
 
 
-def populate_event_from_data(new_event_data):
+def populate_event_from_data(new_event_data, priority):
     event_id = new_event_data.get('id')
 
     try:
@@ -53,11 +53,13 @@ def populate_event_from_data(new_event_data):
             if not compare_data(getattr(event, field), new_event_data[field]):
                 # Found diff, update and stop loop
                 data_diff = build_data_diff(event, new_event_data)
+                data_diff['priority'] = priority
                 Event.objects.filter(id=event_id).update(**data_diff)
                 break
 
     except ObjectDoesNotExist:
         event = Event(id=event_id)
+        event.priority = priority
         event_serializer = EventInternalSerializer(event, data=new_event_data)
         event_serializer.is_valid(raise_exception=True)
         event_serializer.save()
@@ -68,13 +70,15 @@ def populate_all_event_data(include_closures=True):
     closures = client.get_closures_dict() if include_closures else {}
     feed_data = client.get_event_list()['events']
 
+    priority = 0
     active_event_ids = []
     for event_data in feed_data:
         try:
             id = event_data.get("id", "").split("/")[-1]
             event_data["closed"] = closures.get(id, False)
 
-            populate_event_from_data(event_data)
+            populate_event_from_data(event_data, priority)
+            priority += 1
 
             # Event is active
             if "id" in event_data:
