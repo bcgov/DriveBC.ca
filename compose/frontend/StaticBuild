@@ -52,13 +52,6 @@ COPY ./compose/frontend/default.conf /etc/nginx/conf.d
 COPY --from=buildnode /app/build /usr/share/nginx/html
 RUN chmod -R 777 /run /var/log/nginx /var/cache/nginx /usr/share/nginx/html/static/js
 
-#FOUR LINES BELOW ARE TEMPORARY FOR THE PRIVATE BETA
-RUN mkdir -p /etc/apache2 
-RUN touch /etc/apache2/.htpasswd 
-RUN chmod -R 777 /etc/apache2/.htpasswd 
-RUN chmod -R 777 /etc/nginx/conf.d
-
-
 ARG DEBUG_BUILD=false
 
 # Add debugging tools into builds if enabled
