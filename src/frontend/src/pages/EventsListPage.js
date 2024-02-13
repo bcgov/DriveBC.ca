@@ -65,19 +65,19 @@ export default function EventsListPage() {
     {
       header: 'Type',
       accessorKey: 'display_category',
-      enableMultiSort: true,
+      sortingFn: 'prioritySort',
       cell: (props) => <EventTypeIcon event={props.row.original} />,
     },
     {
       header: 'Severity',
       accessorKey: 'severity',
-      enableMultiSort: true,
+      sortingFn: 'prioritySort',
       cell: (props) => <span>{props.getValue().toLowerCase()}</span>,
     },
     {
       header: 'Road',
       accessorKey: 'route_at',
-      enableMultiSort: true,
+      sortingFn: 'prioritySort',
     },
     {
       header: 'Direction',

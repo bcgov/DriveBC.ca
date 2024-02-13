@@ -23,8 +23,21 @@ import './EventsTable.scss';
 export default function EventsTable({columns, data, sortingHandler, routeHandler}) {
   const [sorting, setSorting] = useState([{ desc: false, id: 'severity' }]);
 
-//  const priorityMultiSort = (rowA: any, rowB: any, columnId: any): number =>
-//        rowA.getValue(columnId).value < rowB.getValue(columnId).value ? 1 : -1
+  const prioritySortFn = (rowA, rowB, columnId) => {
+    const aValue = rowA.getValue(columnId).value;
+    const bValue = rowA.getValue(columnId).value;
+
+    if (aValue != bValue) {
+      return aValue < bValue ? 1 : -1;
+
+    // Equal value, order by priority
+    } else {
+      const aPriority = rowA.original.priority;
+      const bPriority = rowB.original.priority;
+
+      return aPriority < bPriority ? 1 : -1;
+    }
+  }
 
   const table = useReactTable({
     data: data,
@@ -38,9 +51,9 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
       },
     },
     onSortingChange: setSorting,
-//    sortingFns: {
-//      myCustomSorting: ,
-//    },
+    sortingFns: {
+      prioritySort: prioritySortFn,
+    },
     getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
