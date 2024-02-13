@@ -1,12 +1,12 @@
 {
-    "code": "s0000341", 
-    "location_latitude": "58.66N", 
-    "location_longitude": "124.64W", 
-    "name": "Tetsa River (Provincial Park)", 
-    "region": "Muncho Lake Park - Stone Mountain Park", 
-    "observation_name": "observation", 
-    "observation_zone": "UTC", 
-    "observation_utc_offset": 0, 
+    "code": "s0000341",
+    "location_latitude": "58.66N",
+    "location_longitude": "124.64W",
+    "name": "Tetsa River (Provincial Park)",
+    "region": "Muncho Lake Park - Stone Mountain Park",
+    "observation_name": "observation",
+    "observation_zone": "UTC",
+    "observation_utc_offset": 0,
     "observation_text_summary": "Friday January 19, 2024 at 15:00 UTC",
     "conditions": {
         "condition": "clear",
@@ -104,7 +104,8 @@
                 },
                 "TextSummary": "A few flurries"
             }
-        }],
+        }
+    ],
     "hourly_forecast_group": [
         {
             "Lop": {
@@ -169,5 +170,6 @@
                 "Period": null
             },
             "HourlyTimeStampUtc": "2024-01-23T23:00:00.000Z"
-        }]
-    }
+        }
+    ]
+}

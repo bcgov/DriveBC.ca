@@ -3,22 +3,26 @@ from typing import Dict
 from urllib.parse import urljoin
 
 import httpx
-from apps.feed.constants import DIT, INLAND_FERRY, OPEN511, WEBCAM
-from apps.feed.constants import DIT, INLAND_FERRY, OPEN511, WEBCAM, REGIONAL_WEATHER, REGIONAL_WEATHER_AREAS
+import requests
+from apps.feed.constants import (
+    DIT,
+    INLAND_FERRY,
+    OPEN511,
+    REGIONAL_WEATHER,
+    REGIONAL_WEATHER_AREAS,
+    WEBCAM,
+)
 from apps.feed.serializers import (
     CarsClosureEventSerializer,
     EventAPISerializer,
     EventFeedSerializer,
     FerryAPISerializer,
-    RegionalWeatherFeedSerializer,
     RegionalWeatherSerializer,
-    RegionalWeatherAPISerializer,
     WebcamAPISerializer,
     WebcamFeedSerializer,
 )
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
-import requests
 from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
@@ -149,7 +153,7 @@ class FeedClient:
             {"format": "json", "limit": 500}
         )
 
-        return {event["id"]:True for event in events if event["closed"]}
+        return {event["id"]: True for event in events if event["closed"]}
 
     # Ferries
     def get_ferries_list(self):
@@ -252,13 +256,13 @@ class FeedClient:
                         'condition': condition,
                         'temperature_units': temperature_units,
                         'temperature_value': temperature_value,
-                        'visibility_units' : visibility_units,
-                        'visibility_value' : visibility_value,
-                        'wind_speed_units' : wind_speed_units,
+                        'visibility_units': visibility_units,
+                        'visibility_value': visibility_value,
+                        'wind_speed_units': wind_speed_units,
                         'wind_speed_value': wind_speed_value,
-                        'wind_gust_units' : wind_gust_units,
-                        'wind_gust_value' : wind_gust_value,
-                        'wind_direction' : wind_direction,
+                        'wind_gust_units': wind_gust_units,
+                        'wind_gust_value': wind_gust_value,
+                        'wind_direction': wind_direction,
                     }
 
                     name_data = data.get("Location", {}).get("Name", {})
@@ -279,7 +283,8 @@ class FeedClient:
                     forecast_group = forecast_group_data.get("Forecasts") if forecast_group_data else None
 
                     hourly_forecast_group_data = data.get("HourlyForecastGroup", {})
-                    hourly_forecast_group = hourly_forecast_group_data.get("HourlyForecasts") if hourly_forecast_group_data else None
+                    hourly_forecast_group = hourly_forecast_group_data.get(
+                        "HourlyForecasts") if hourly_forecast_group_data else None
 
                     regional_weather_data = {
                         'code': code,
@@ -296,7 +301,8 @@ class FeedClient:
                         'hourly_forecast_group': hourly_forecast_group,
                     }
 
-                    serializer = serializer_cls(data=regional_weather_data, many=isinstance(regional_weather_data, list))
+                    serializer = serializer_cls(data=regional_weather_data,
+                                                many=isinstance(regional_weather_data, list))
                     json_objects.append(regional_weather_data)
 
                 except requests.RequestException as e:
@@ -313,7 +319,6 @@ class FeedClient:
             field_errors = serializer.errors
             for field, errors in field_errors.items():
                 print(f"Field: {field}, Errors: {errors}")
-
 
     def get_regional_weather_list(self):
         return self.get_regional_weather_list_feed(

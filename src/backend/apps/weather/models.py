@@ -2,6 +2,7 @@ from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 
+
 class RegionalWeather(BaseModel):
     location = models.PointField(null=True)
     code = models.CharField(max_length=10, null=True)
@@ -24,12 +25,12 @@ class RegionalWeather(BaseModel):
 
     def __str__(self):
         return f"Regional Forecast for {self.pk}"
-    
+
     def save(self, *args, **kwargs):
         latitude, longitude = self.convert_coordinates(str(self.location_latitude), str(self.location_longitude))
         self.location = Point(longitude, latitude)
         super().save(*args, **kwargs)
-    
+
     def convert_coordinates(self, latitude_str, longitude_str):
         latitude = float(latitude_str[:-1])
         longitude = float(longitude_str[:-1])
@@ -40,4 +41,3 @@ class RegionalWeather(BaseModel):
             longitude = -longitude
 
         return latitude, longitude
-
