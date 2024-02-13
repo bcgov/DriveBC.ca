@@ -54,7 +54,7 @@ class TestEventModel(BaseTest):
         self.parsed_feed = parsed_feed
 
     def test_populate_event_function(self):
-        populate_event_from_data(self.parsed_feed, 7)
+        populate_event_from_data(self.parsed_feed)
 
         event_one = Event.objects.get(id="drivebc.ca/DBC-52446")
 

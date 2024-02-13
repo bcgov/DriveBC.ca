@@ -27,11 +27,10 @@ class EVENT_SUB_TYPE:
     PARTLY_SNOW_PACKED = "PARTLY_SNOW_PACKED"
     MUD = "MUD"
     PLANNED_EVENT = "PLANNED_EVENT"
-    POOR_VISIBILITY = "POOR_VISIBILITY"    
+    POOR_VISIBILITY = "POOR_VISIBILITY"
     PARTLY_SNOW_COVERED = "PARTLY_SNOW_COVERED"
     DRIFTING_SNOW = "DRIFTING_SNOW"
     PASSABLE_WITH_CARE = "PASSABLE_WITH_CARE"
-
 
 
 EVENT_SUB_TYPE_CHOICES = (
@@ -98,7 +97,8 @@ EVENT_DIRECTION_DISPLAY = {
 }
 
 EVENT_DIFF_FIELDS = [
-    'last_updated'
+    'last_updated',
+    'priority'
 ]
 
 EVENT_UPDATE_FIELDS = [
@@ -110,6 +110,7 @@ EVENT_UPDATE_FIELDS = [
     'closed',
     'direction',
     'last_updated',
+    'priority',
     'location',
     'route_at',
     'route_from',

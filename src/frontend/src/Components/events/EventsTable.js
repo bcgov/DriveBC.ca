@@ -65,6 +65,7 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
 
   const toggleSortingHandler = (column) => {
     const nextOrder = column.getNextSortingOrder();
+    // desc=false to sort by asc when nextOrder is not 'asc' or 'desc'
     column.toggleSorting(!nextOrder ? nextOrder : null);
   }
 
