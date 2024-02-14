@@ -194,6 +194,15 @@ export default function CameraDetailsPage() {
   };
 
   const play = () => {
+    // Pre load images for preventing strobing
+    // For Firefox, Settings Performance > Use recommended performance settings 
+    // and Performance > Use recommended performance settings > Use hardware acceleration when available in the browser settings
+    // need to be disabled
+    replayImages.forEach((img) => {
+      const cachedImage = new Image();
+      cachedImage.src = img.original;
+    });
+
     if(hasImageEnded){
       setHasImageEnded(true);
     }
