@@ -6,6 +6,7 @@ import requests
 from apps.shared.enums import (
     ROUTE_FILTER_TOLERANCE,
     SUBJECT_CHOICES,
+    SUBJECT_TITLE,
     CacheKey,
     CacheTimeout,
 )
@@ -47,10 +48,9 @@ class FeedbackView(APIView):
 
             # Currently unused but potentially important data
             # score = serializer.fields['recToken'].score
-            # subject = serializer.data['subject']
 
             send_mail(
-                "DriveBC Feedback message",
+                'DriveBC feedback received: ' + SUBJECT_TITLE[serializer.data['subject']],
                 serializer.data['message'],
                 serializer.data['email'],
                 [env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT")],

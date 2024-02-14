@@ -134,6 +134,11 @@
       height: 100%;
       overflow: hidden;
 
+      .routing-outer-container {
+        position: absolute;
+        z-index: 16;
+      }
+
       .ol-overlay-container:not(:has(> img)) {
         //overriding openlayers dynamic styles for mobile layout except for having img as a direct child
         @media (max-width: 575px) {
