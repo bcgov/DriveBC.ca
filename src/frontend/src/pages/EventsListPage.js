@@ -65,19 +65,20 @@ export default function EventsListPage() {
     {
       header: 'Type',
       accessorKey: 'display_category',
-      sortingFn: 'prioritySort',
+//      sortingFn: 'prioritySort',
       cell: (props) => <EventTypeIcon event={props.row.original} />,
     },
     {
       header: 'Severity',
       accessorKey: 'severity',
-      sortingFn: 'prioritySort',
+      sortingFn: 'reversedPrioritySort',
+      sortDescFirst: true,
       cell: (props) => <span>{props.getValue().toLowerCase()}</span>,
     },
     {
       header: 'Road',
       accessorKey: 'route_at',
-      sortingFn: 'prioritySort',
+//      sortingFn: 'prioritySort',
     },
     {
       header: 'Direction',
@@ -94,6 +95,7 @@ export default function EventsListPage() {
       header: 'Last Update',
       accessorKey: 'last_updated',
       cell: (props) => <FriendlyTime date={props.getValue()} />,
+      sortDescFirst: true,
     },
     {
       header: 'Map',

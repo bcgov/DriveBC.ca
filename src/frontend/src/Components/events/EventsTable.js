@@ -21,11 +21,11 @@ import {
 import './EventsTable.scss';
 
 export default function EventsTable({columns, data, sortingHandler, routeHandler}) {
-  const [sorting, setSorting] = useState([{ desc: false, id: 'severity' }]);
+  const [sorting, setSorting] = useState([{ desc: true, id: 'severity' }]);
 
   const prioritySortFn = (rowA, rowB, columnId) => {
-    const aValue = rowA.getValue(columnId).value;
-    const bValue = rowA.getValue(columnId).value;
+    const aValue = rowA.getValue(columnId);
+    const bValue = rowA.getValue(columnId);
 
     if (aValue != bValue) {
       return aValue < bValue ? 1 : -1;
@@ -37,6 +37,13 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
 
       return aPriority < bPriority ? 1 : -1;
     }
+  }
+
+  const reversedPrioritySortFn = (rowA, rowB, columnId) => {
+    console.log('text');
+
+//    return prioritySortFn(rowA, rowB, columnId) * -1;
+    return 10293414;
   }
 
   const table = useReactTable({
@@ -53,6 +60,7 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
     onSortingChange: setSorting,
     sortingFns: {
       prioritySort: prioritySortFn,
+      reversedPrioritySort: reversedPrioritySortFn,
     },
     getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
@@ -64,9 +72,13 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
   }, [sorting]);
 
   const toggleSortingHandler = (column) => {
+    if (!column.getCanSort()) return;
+
     const nextOrder = column.getNextSortingOrder();
-    // desc=false to sort by asc when nextOrder is not 'asc' or 'desc'
-    column.toggleSorting(!nextOrder ? nextOrder : null);
+
+    // sort by asc when nextOrder is not 'asc' or 'desc', or desc on sortDescFirst columns
+    const isDescFirst = column.id == 'severity' || column.id == 'last_updated';
+    column.toggleSorting(!nextOrder ? isDescFirst : null);
   }
 
   const ascIcon = <FontAwesomeIcon icon={faArrowUpLong} alt="ascending order" />;
