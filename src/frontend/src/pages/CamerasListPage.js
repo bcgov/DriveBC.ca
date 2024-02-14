@@ -21,6 +21,8 @@ import RouteSearch from '../Components/map/RouteSearch';
 import './CamerasListPage.scss';
 
 export default function CamerasListPage() {
+  document.title = 'DriveBC - Cameras';
+
   // Redux
   const dispatch = useDispatch();
   const { cameras, camTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({

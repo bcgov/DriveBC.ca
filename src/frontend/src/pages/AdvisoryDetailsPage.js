@@ -162,6 +162,8 @@ export default function AdvisoryDetailsPage() {
     fitMap(advisoryData);
 
     isInitialMount.current = false;
+
+    document.title = `DriveBC - Advisories - ${advisoryData.title}`;
   };
 
   useEffect(() => {

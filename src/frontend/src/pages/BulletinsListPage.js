@@ -19,6 +19,8 @@ import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 
 export default function BulletinsListPage() {
+  document.title = 'DriveBC - Bulletins';
+
   // Redux
   const dispatch = useDispatch();
   const { bulletins } = useSelector(useCallback(memoize(state => ({

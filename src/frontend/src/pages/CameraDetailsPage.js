@@ -88,6 +88,8 @@ export default function CameraDetailsPage() {
 
     // Last update time
     setLastUpdate(camera.last_update_modified);
+
+    document.title = `DriveBC - Cameras - ${camera.name}`;
   }
 
   const loadReplay = async (cam) => {
