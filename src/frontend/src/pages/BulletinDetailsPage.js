@@ -25,6 +25,8 @@ export default function BulletinDetailsPage() {
     const bulletinData = await getBulletins(params.id);
     setBulletin(bulletinData);
     isInitialMount.current = false;
+
+    document.title = `DriveBC - Bulletins - ${bulletinData.title}`;
   };
 
   useEffect(() => {

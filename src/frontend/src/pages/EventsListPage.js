@@ -33,6 +33,8 @@ import './EventsListPage.scss';
 import '../Components/Filters.scss';
 
 export default function EventsListPage() {
+  document.title = 'DriveBC - Delays';
+
   // Redux
   const dispatch = useDispatch();
   const { events, eventTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({

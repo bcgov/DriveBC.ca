@@ -17,6 +17,8 @@ import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 
 export default function FeedbackPage() {
+  document.title = 'DriveBC - Feedback';
+
   // States
   const [ email, setEmail ] = useState();
   const [ subject, setSubject ] = useState(0);

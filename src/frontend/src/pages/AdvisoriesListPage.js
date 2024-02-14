@@ -19,6 +19,8 @@ import PageHeader from '../PageHeader';
 import './AdvisoriesListPage.scss';
 
 export default function AdvisoriesListPage() {
+  document.title = 'DriveBC - Advisories';
+
   // Redux
   const dispatch = useDispatch();
   const { advisories } = useSelector(useCallback(memoize(state => ({
