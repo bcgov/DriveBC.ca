@@ -768,7 +768,7 @@ export default function MapWrapper({
         )}
 
         {!isPreview && (
-          <div>
+          <div className='routing-outer-container'>
             <RouteSearch routeEdit={true} />
             <AdvisoriesOnMap />
           </div>
