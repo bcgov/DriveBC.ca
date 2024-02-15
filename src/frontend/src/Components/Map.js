@@ -714,16 +714,13 @@ export default function MapWrapper({
 
       <div
         ref={panel} className={`side-panel ${openPanel ? 'open' : ''}`}
-        onClick={maximizePanel}
         onTouchMove={maximizePanel}
       >
-        <div className="closer-bar">
-          <FontAwesomeIcon
-            className="panel-closer"
-            icon={faXmark}
-            onClick={togglePanel}
-          />
-        </div>
+        <FontAwesomeIcon
+          className="panel-close-btn"
+          icon={faXmark}
+          onClick={togglePanel}
+        />
 
         <div className="panel-content">
           {clickedCamera &&
