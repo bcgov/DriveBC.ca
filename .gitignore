@@ -1,5 +1,6 @@
 # file based env values
 .env
+.env.backup
 
 # Build files
 *.pyc
