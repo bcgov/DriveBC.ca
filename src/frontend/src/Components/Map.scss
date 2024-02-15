@@ -21,14 +21,14 @@
 @keyframes open-panel {
   from {
     min-width: 0px;
-    @media (max-width: 575px) {
+    @media (max-width: 767px) {
       min-height: 0%;
     }
   }
 
   to {
     min-width: 500px;
-    @media (max-width: 575px) {
+    @media (max-width: 767px) {
       min-height: 50%;
     }
   }
@@ -36,13 +36,13 @@
 
 @keyframes maximize-panel {
   from {
-    @media (max-width: 575px) {
+    @media (max-width: 767px) {
       min-height: 50%;
     }
   }
 
   to {
-    @media (max-width: 575px) {
+    @media (max-width: 767px) {
       min-height: 100%;
     }
   }
@@ -59,12 +59,11 @@
   }
 
   .map-container {
-
     display: flex;
     align-items: stretch;
     height: 100%;
 
-    @media (max-width: 575px) {
+    @media (max-width: 767px) {
       flex-direction: column;
     }
 
@@ -76,22 +75,26 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      position: relative;
+      z-index: 1;
 
-      @media (max-width: 575px) {
+      @media (max-width: 767px) {
         transition: min-height 0.25s ease-in-out;
         order: 2;
       }
 
       &.open {
-        min-width: 500px;
+        min-width: 340px;
         animation-name: open-panel;
+
         .panel-content {
-          min-width: 450px;
+          min-width: 340px;
         }
 
-        @media (max-width: 575px) {
+        @media (max-width: 767px) {
           min-width: 100%;
           min-height: 50%;
+
           .panel-content {
             min-width: 100%;
             overflow-y: hidden;
@@ -100,30 +103,25 @@
       }
 
       &.maximized {
-        @media (max-width: 575px) {
+        @media (max-width: 767px) {
           min-height: 100%;
+
           .panel-content {
             overflow-y: scroll;
           }
         }
       }
 
-      .closer-bar {
-        padding: 0.5rem;
-        text-align: right;
-        // width: 300px;
-        flex: 0;
-
-        .panel-closer {
-          cursor: pointer;
-        }
+      .panel-close-btn {
+        cursor: pointer;
+        position: absolute;
+        right: 1rem;
+        top: 4.5rem;
       }
 
       .panel-content {
         flex: 1;
-        padding: 1rem;
         overflow-y: scroll;
-        // min-width: 450px;
       }
     }
 
@@ -137,11 +135,16 @@
       .routing-outer-container {
         position: absolute;
         z-index: 16;
+        width: 100%;
+
+        @media (min-width: 768px) {
+          width: initial;
+        }
       }
 
       .ol-overlay-container:not(:has(> img)) {
         //overriding openlayers dynamic styles for mobile layout except for having img as a direct child
-        @media (max-width: 575px) {
+        @media (max-width: 767px) {
           position: fixed !important;
           bottom: 0 !important;
           transform: none !important;
@@ -159,11 +162,11 @@
         border-radius: 4px;
         left: auto;
         right: 1rem;
-        bottom: 1rem;
+        bottom: 4rem;
         padding: 2px;
         position: absolute;
 
-        @media (min-width: 768px) {
+        @media (min-width: 769px) {
           right: 1rem;
           bottom: 1rem;
         }
@@ -171,10 +174,6 @@
         @media (min-width: 992px) {
           right: 4rem;
           bottom: 1rem;
-        }
-
-        @media (max-width: 575px) {
-          bottom: 4rem;
         }
       }
 
