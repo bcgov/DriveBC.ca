@@ -16,10 +16,9 @@ export function getRoute(points) {
 //    departure: '2019-02-28T11:36:00-08:00',
 //    enable: 'td,gdf,ldf,tr,xc,tc',
 //    roundTrip: false
+
     }, {
-    headers: {
-      'apiKey': `${window.ROUTE_PLANNER_KEY}`
-    }
+    'apiKey': `${window.ROUTE_PLANNER_KEY}`
   }).then((data) => data)
   .catch((error) => {
     console.log(error);
