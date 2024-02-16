@@ -19,6 +19,10 @@ import BulletinDetailsPage from './pages/BulletinDetailsPage';
 import FeedbackPage from './pages/FeedbackPage';
 import ScrollToTop from './Components/ScrollToTop';
 
+// https://github.com/dai-shi/proxy-memoize?tab=readme-ov-file#usage-with-immer
+import { setAutoFreeze } from 'immer';
+setAutoFreeze(false);
+
 export const MapContext = createContext(null);
 
 function App() {
