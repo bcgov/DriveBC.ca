@@ -205,5 +205,6 @@ jobs:
 
     - name: Helm upgrade on OpenShift Environment
       run: |
+        echo ${{ needs.build-pre.outputs.tag }}
         helm dependency update ./infrastructure/main
-        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.build-pre.outputs.tag }}" --set image-caching.image.tag="${{ needs.build-pre.outputs.tag }}" --set redis.image.tag="${{ needs.build-pre.outputs.tag }}" --set static.image.tag="${{ needs.build-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.build-pre.outputs.tag }}" 
+        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.build-pre.outputs.tag }}" --set image-caching.image.tag="${{ needs.build-pre.outputs.tag }}" --set redis.image.tag="${{ needs.build-pre.outputs.tag }}" --set static.image.tag="${{ needs.build-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.build-pre.outputs.tag }}"

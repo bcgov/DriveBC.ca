@@ -27,7 +27,8 @@ django:
     targetCPUUtilizationPercentage: 75
   route:
     host: test-drivebc.apps.gold.devops.gov.bc.ca
-    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist 
+    iprestricted: false #Set to true if you want to limit IP's that can access publicly available pages to the the addresses in the ipallowlist 
+    iprestrictedAdminPages: false #Set to true if you want to limit IP's that can access backend admin pages
   pvc:
     port: 3000
     storage: 1Gi
