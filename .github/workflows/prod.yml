@@ -16,6 +16,7 @@ permissions:
 jobs:
   deploy-pre:
     runs-on: ubuntu-latest
+    name: Create Tag Variable (remove V)
     timeout-minutes: 1
     outputs:
       tag: ${{ steps.vars.outputs.tag }}
@@ -31,7 +32,7 @@ jobs:
   addDockerTag:
     needs: [deploy-pre]
     runs-on: ubuntu-latest
-    name: addDockerTag
+    name: Add latest-prod Tag
     steps:
     - name: Add latest-prod tag to django image
       uses: shrink/actions-docker-registry-tag@v3
@@ -69,7 +70,7 @@ jobs:
   deploy:
     needs: [deploy-pre]
     runs-on: ubuntu-latest
-    name: deploy
+    name: Promote Images to OpenShift
     environment:
       name: prod
       url: https://beta.drivebc.ca/
@@ -82,7 +83,7 @@ jobs:
       with:
         openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-        namespace: c59ecc-test
+        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
         insecure_skip_tls_verify: true
 
     - name: Helm upgrade on OpenShift Environment

@@ -14,6 +14,7 @@ permissions:
 jobs:
   deploy-pre:
     runs-on: ubuntu-latest
+    name: Create Tag Variable (remove V)
     timeout-minutes: 1
     outputs:
       tag: ${{ steps.vars.outputs.tag }}
@@ -33,7 +34,7 @@ jobs:
   addDockerTag:
     needs: [deploy-pre]
     runs-on: ubuntu-latest
-    name: addDockerTag
+    name: Add latest-uat Tag
     steps:
     - name: Add latest-uat tag to django image
       uses: shrink/actions-docker-registry-tag@v3
@@ -71,10 +72,10 @@ jobs:
   deploy:
     needs: [deploy-pre]
     runs-on: ubuntu-latest
-    name: deploy
+    name: Promote Images to OpenShift
     environment:
       name: uat
-      url: https://uat-drivebc.apps.silver.devops.gov.bc.ca/
+      url: https://uat-drivebc.apps.gold.devops.gov.bc.ca/
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
@@ -84,7 +85,7 @@ jobs:
       with:
         openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-        namespace: c59ecc-test
+        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
         insecure_skip_tls_verify: true
 
     - name: Helm upgrade on OpenShift Environment

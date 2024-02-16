@@ -20,6 +20,7 @@ env:
 jobs:
   tag:
     if: startsWith(github.ref, 'refs/heads/') == true
+    name: Create Tag
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -39,6 +40,7 @@ jobs:
 
   build-pre:
     needs: [tag]
+    name: Create Tag Variable (remove V)
     runs-on: ubuntu-latest
     timeout-minutes: 1
     outputs:
@@ -181,9 +183,9 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
-
+       
   versionUpdate:
-    needs: [build-static, build-backend, build-image-caching, build-redis]
+    needs: [build-pre, build-static, build-backend, build-image-caching, build-redis]
     runs-on: ubuntu-latest
     name: Deploy Latest Images
     environment:
@@ -205,6 +207,5 @@ jobs:
 
     - name: Helm upgrade on OpenShift Environment
       run: |
-        echo ${{ needs.build-pre.outputs.tag }}
         helm dependency update ./infrastructure/main
         helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.build-pre.outputs.tag }}" --set image-caching.image.tag="${{ needs.build-pre.outputs.tag }}" --set redis.image.tag="${{ needs.build-pre.outputs.tag }}" --set static.image.tag="${{ needs.build-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.build-pre.outputs.tag }}"
