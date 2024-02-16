@@ -38,7 +38,7 @@ jobs:
       uses: shrink/actions-docker-registry-tag@v3
       with:
         registry: ghcr.io
-        repository: ${{ github.repository }}/drivebc-django
+        repository: bcgov/drivebc-django
         target: ${{ needs.deploy-pre.outputs.tag }}
         tags: |
           latest-prod
@@ -46,7 +46,7 @@ jobs:
       uses: shrink/actions-docker-registry-tag@v3
       with:
         registry: ghcr.io
-        repository: ${{ github.repository }}/drivebc-static
+        repository: bcgov/drivebc-static
         target: ${{ needs.deploy-pre.outputs.tag }}
         tags: |
           latest-prod
@@ -54,7 +54,7 @@ jobs:
       uses: shrink/actions-docker-registry-tag@v3
       with:
         registry: ghcr.io
-        repository: ${{ github.repository }}/drivebc-image-caching
+        repository: bcgov/drivebc-image-caching
         target: ${{ needs.deploy-pre.outputs.tag }}
         tags: |
           latest-prod
@@ -62,7 +62,7 @@ jobs:
       uses: shrink/actions-docker-registry-tag@v3
       with:
         registry: ghcr.io
-        repository: ${{ github.repository }}/drivebc-redis
+        repository: bcgov/drivebc-redis
         target: ${{ needs.deploy-pre.outputs.tag }}
         tags: |
           latest-prod
