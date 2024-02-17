@@ -1,0 +1,149 @@
+@import "../../styles/variables";
+
+.popup {
+  &__title {
+    background-color: #F1F8FE;
+    border-top: 4px solid #053662;
+    padding: 1rem 1rem 0.5rem;
+    
+    .name {
+      margin-top: 0.5rem;
+      margin-bottom: 0;
+      font-size: 1.25rem;
+      color: #053662;
+    }
+
+    &__icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      background-color: #053662;
+      color: white;
+      display: flex;
+      svg {
+        margin: auto;
+      }
+    }
+  }
+
+  &__content {
+    &__title {
+      padding: 1rem 1rem 0.5rem;
+  
+      p.name {
+        font-size: 1.25rem;
+        color: #053662;
+        cursor: pointer;
+      }
+    }
+
+    &__image {
+      img {
+        width: 100%;
+      }
+  
+      .timestamp {
+        background-color: $Black;
+        padding: 0 10px;
+        display: flex;
+        color: $White;
+        align-items: baseline;
+  
+        p {
+          color: $White;
+          margin-bottom: 0;
+          font-size: 0.625rem;
+        }
+  
+        .driveBC {
+          font-family: serif;
+          span {
+            color: $BC-Yellow;
+          }
+          margin-right: 10px;
+        }
+  
+        .friendly-time, .formatted-date {
+          margin-left: auto;
+        }
+  
+        .formatted-date {
+          font-size: 0.75rem;
+        }
+      }
+  
+      .camera-unavailable {
+        background-color: $Surface-status-red;
+        padding: 1rem;
+        min-height: 225px;
+        font-size: 1rem;
+        p, .card-img-box {
+          color: $Type-status-red;
+          clear: right;
+        }
+  
+        svg {
+          font-size: 1rem;
+        }
+  
+        .card-pill {
+          background-color: $Error;
+          border-radius: 12px;
+          height: 24px;
+          float: right;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 4px 6px;
+  
+          p {
+            color: $White;
+            font-weight: 700;
+            margin-bottom: 0;
+            font-size: 0.625rem;
+          }
+        }
+      }
+    }
+
+    &__description {
+      padding: 1rem 1rem 0.5rem;
+    }
+  }
+
+  // Cameras layer
+  &--camera {
+    .camera-orientations {
+      padding: 0 1rem;
+    }
+  }
+
+  //Ferries layer
+  &--ferry {
+    .popup__title {
+      background-color: #FBFFFC;
+      border-top: 4px solid #2E8540;
+      
+      .name, .name a {
+        color: #2E8540;
+
+        a {
+          text-decoration: none;
+        }
+      }
+  
+      &__icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
+        background-color: #2E8540;
+        color: white;
+        display: flex;
+        svg {
+          margin: auto;
+        }
+      }
+    }
+  }
+}
+

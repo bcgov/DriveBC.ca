@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVideoSlash, faVideo } from '@fortawesome/free-solid-svg-icons';
 
 import colocatedCamIcon from '../../images/colocated-camera.svg';
-import './camPopup.scss';
+import './mapPopup.scss';
 
 export default function CamPopup(props) {
   // Props
@@ -73,27 +73,27 @@ export default function CamPopup(props) {
 
   return (
     <div className="popup popup--camera">
-      <div className="popup-title">
-        <div className="popup-title__icon">
+      <div className="popup__title">
+        <div className="popup__title__icon">
           <FontAwesomeIcon icon={faVideo} />
         </div>
-        <p>Camera</p>
+        <p className="name">Camera</p>
       </div>
       {camera &&
-        <div className="popup--camera__content">
-          <div className="camera-title">
+        <div className="popup__content">
+          <div className="popup__content__title">
             <p className="name" onClick={handlePopupClick}>{camera.name}</p>
           </div>
           {camera.is_on ?
-            <div className="camera-image">
+            <div className="popup__content__image">
               <img src={camera.links.imageSource} width='300' />
               <div className="timestamp">
                 <p className="driveBC">Drive<span>BC</span></p>
                 <FriendlyTime date={camera.last_update_modified} />
               </div>
             </div> :
-            <div className='camera-image'>
-              <div className='camera-unavailable'>
+            <div className="popup__content__image">
+              <div className="camera-unavailable">
                 <div className="card-pill">
                   <p>Unavailable</p>
                 </div>
@@ -112,7 +112,7 @@ export default function CamPopup(props) {
             <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
             {renderCamGroup()}
           </div>
-          <div className="camera-description">
+          <div className="popup__content__description">
             <p>{parse(camera.caption)}</p>
           </div>
         </div>

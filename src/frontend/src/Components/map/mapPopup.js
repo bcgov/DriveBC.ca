@@ -5,6 +5,10 @@ import React from 'react';
 import EventTypeIcon from '../EventTypeIcon';
 import FriendlyTime from '../FriendlyTime';
 import parse from 'html-react-parser';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFerry } from '@fortawesome/free-solid-svg-icons';
+
+import './mapPopup.scss';
 
 const displayCategoryMap = {
   closures: 'Closure',
@@ -75,17 +79,23 @@ export function getFerryPopup(ferryFeature) {
   const ferryData = ferryFeature.getProperties();
 
   return (
-    <div className={`popup popup--ferry`}>
+    <div className="popup popup--ferry">
       <div className="popup__title">
-        <a href={ferryData.url} target="_blank" rel="noreferrer" className="bold name">{`${ferryData.title}`}</a>
+        <div className="popup__title__icon">
+          <FontAwesomeIcon icon={faFerry} />
+        </div>
+        <p className="name">
+          <a href={ferryData.url} target="_blank" rel="noreferrer">{`${ferryData.title}`}</a>
+        </p>
       </div>
-
-      <div className="popup__description">
+      <div className="popup__content">
         {ferryData.image_url &&
-          <img src={ferryData.image_url} alt={ferryData.title} />
+          <div className="popup__content__image">
+            <img src={ferryData.image_url} alt={ferryData.title} />
+          </div>
         }
 
-        <div className="delay-details">
+        <div className="popup__content__description">
           <p>{parse(ferryData.description)}</p>
           <p>{parse(ferryData.seasonal_description)}</p>
           <p>{parse(ferryData.service_hours)}</p>
