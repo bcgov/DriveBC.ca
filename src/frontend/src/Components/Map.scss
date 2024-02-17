@@ -112,11 +112,17 @@
         }
       }
 
-      .panel-close-btn {
-        cursor: pointer;
+      .close-panel {
         position: absolute;
+        top: 1rem;
         right: 1rem;
-        top: 4.5rem;
+        padding: 0;
+        min-width: 0;
+        line-height: 1.25rem;
+        height: auto;
+        background: none;
+        border: none;
+        font-size: 1rem;
       }
 
       .panel-content {

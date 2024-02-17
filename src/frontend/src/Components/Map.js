@@ -663,7 +663,12 @@ export default function MapWrapper({
 
   function maximizePanel() {
     if (panel.current.classList.contains('open')) {
-      panel.current.classList.add('maximized');
+      if (!panel.current.classList.contains('maximized')) {
+        panel.current.classList.add('maximized');
+      }
+      else {
+        panel.current.classList.remove('maximized');
+      }
     }
   }
 
@@ -714,13 +719,17 @@ export default function MapWrapper({
 
       <div
         ref={panel} className={`side-panel ${openPanel ? 'open' : ''}`}
+        onClick={maximizePanel}
         onTouchMove={maximizePanel}
       >
-        <FontAwesomeIcon
-          className="panel-close-btn"
-          icon={faXmark}
+
+        <button
+          className="close-panel"
+          aria-label="close side panel"
           onClick={togglePanel}
-        />
+        >
+          <FontAwesomeIcon icon={faXmark} />
+        </button>
 
         <div className="panel-content">
           {clickedCamera &&
@@ -779,13 +788,6 @@ export default function MapWrapper({
       </div>
 
       <div id="popup" className="ol-popup">
-        <FontAwesomeIcon
-          id="ol-popup-closer"
-          className="ol-popup-closer"
-          icon={faXmark}
-          onClick={closePopup}
-        />
-
         <div id="popup-content" className="ol-popup-content">
         </div>
       </div>
