@@ -28,9 +28,9 @@
 
   &__content {
     &__title {
-      padding: 1rem 1rem 0.5rem;
+      margin: 1rem 1rem 0.5rem;
   
-      p.name {
+      .name {
         font-size: 1.25rem;
         color: #053662;
         cursor: pointer;
@@ -133,14 +133,85 @@
       }
   
       &__icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 6px;
         background-color: #2E8540;
         color: white;
-        display: flex;
-        svg {
-          margin: auto;
+      }
+    }
+  }
+
+  //Delays layers
+  &--event {
+    .popup__title {
+      &__icon {
+        width: initial;
+        height: initial;
+        background: none;
+
+        .delay-icon-img {
+          width: 36px;
+        }
+      }
+    }
+    
+    .popup__content {
+      &__title {
+        border-bottom: 1px solid $Divider;
+        .name {
+          margin-bottom: 0;
+        }
+        .direction {
+          font-size: 0.875rem;
+          color: $Grey70;
+        }
+      }
+      &__description {
+        .friendly-time {
+          margin-bottom: 0.5rem;
+          &-text {
+            font-weight: 700;
+          }
+
+          &__tooltip {
+            left: 100%;
+          }
+        }
+      }
+    }
+    
+    &.major, &.closures {
+      .popup__title {
+        background-color: #F4E1E2;
+        border-top: 4px solid #CE3E39;
+
+        .name {
+          color: #CE3E39;
+        }
+      }
+
+      .popup__content {
+        &__title {
+          .name {
+            color: #CE3E39;
+          }
+        }
+      }
+    }
+
+    &.minor {
+      .popup__title {
+        background-color: #FEEBC2;
+        border-top: 4px solid #584215;
+
+        .name {
+          color: #584215;
+        }
+      }
+
+      .popup__content {
+        &__title {
+          .name {
+            color: #584215;
+          }
         }
       }
     }

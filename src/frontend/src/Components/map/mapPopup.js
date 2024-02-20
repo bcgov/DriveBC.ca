@@ -10,12 +10,19 @@ import { faFerry } from '@fortawesome/free-solid-svg-icons';
 
 import './mapPopup.scss';
 
-const displayCategoryMap = {
-  closures: 'Closure',
-  majorEvents: 'Major Delay',
-  minorEvents: 'Minor Delay',
-  futureEvents: 'Future Delay',
-  roadConditions: 'Road Condition',
+function convertCategory(event) {
+  switch(event.display_category) {
+    case 'closures': 
+      return 'Closure';
+    case 'majorEvents':
+      return event.event_type === 'INCIDENT' ? 'Major incident ' : 'Major delay';
+    case 'minorEvents':
+      return event.event_type === 'INCIDENT' ? 'Minor incident ' : 'Minor delay';
+    case 'futureEvents':
+      return event.severity === 'MAJOR' ? 'Major future event' : 'Minor future event';
+    default:
+      return '';
+  }
 }
 
 function convertDirection(direction) {
@@ -42,32 +49,21 @@ export function getEventPopup(eventFeature) {
   const severity = eventData.severity.toLowerCase();
 
   return (
-    <div className={`popup popup--delay ${severity}`}>
+    <div className={`popup popup--event ${eventData.display_category} ${severity}`}>
       <div className="popup__title">
-        <p className="bold name">{`${eventData.route_at} - ${eventData.route_display}`}</p>
-        <p style={{'whiteSpace': 'pre-wrap'}} className="bold orientation">{convertDirection(eventData.direction)}</p>
-      </div>
-
-      <div className="popup__description">
-        <div className="delay-type">
-          <div className="bold delay-severity">
-            <div className="delay-icon">
-              <EventTypeIcon event={ eventData } />
-            </div>
-
-            <p className="bold">{ displayCategoryMap[eventData.display_category]}</p>
-          </div>
-
-          <div className="bold friendly-time--mobile">
-            <FriendlyTime date={eventData.last_updated} />
-          </div>
+        <div className="popup__title__icon">
+          <EventTypeIcon event={eventData} state='active' />
         </div>
-
-        <div className="delay-details">
-          <div className="bold friendly-time-desktop">
-            <FriendlyTime date={eventData.last_updated} />
-          </div>
-
+        {console.log(eventData)}
+        <p className="name">{convertCategory(eventData)}</p>
+      </div>
+      <div className="popup__content">
+        <div className="popup__content__title">
+          <p className="name">{`${eventData.route_at} - ${eventData.route_display}`}</p>
+          <p className="direction">{convertDirection(eventData.direction)}</p>
+        </div>
+        <div className="popup__content__description">
+          <FriendlyTime date={eventData.last_updated} />
           <p>{eventData.description}</p>
         </div>
       </div>
