@@ -201,6 +201,7 @@ export default function CameraDetailsPage() {
     replayImages.forEach((img) => {
       const cachedImage = new Image();
       cachedImage.src = img.original;
+      cachedImage.decode();
     });
 
     if(hasImageEnded){
