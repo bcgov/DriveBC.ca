@@ -1,10 +1,10 @@
-name: Generate SonarQube report
+name: Generate SonarCloud Report
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+#  push:
+#    branches:
+#      - main
 #   pull_request:
 #     types: [opened, synchronize, reopened]
 

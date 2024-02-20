@@ -1,41 +1,53 @@
-name: Unit tests on dev branch
+name: Unit tests & Sonar Scan
 
 on:
   push:
-    branches: [ "bugfix/ga-unit-tests" ]
-env:
-  POSTGRES_DB: testdb
-  POSTGRES_USER: testuser
-  POSTGRES_PASSWORD: testpw
-
+    branches: [ "main" ]
+#  pull_request:
+#      types: [opened, synchronize, reopened]
+  workflow_dispatch:
+  
 jobs:
   run-tests:
-    runs-on: postgis:15-3.4
-
+    runs-on: ubuntu-latest
+    name: Run Tests
+    timeout-minutes: 10
     services:
       redis:
-        image: redis:6.2
+        image: redis:7
         ports:
           - 6379:6379
-
+      postgres:
+        image: postgis/postgis:15-3.4
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: testpw
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting for SonarCloud
+        fetch-depth: 0
+    - name: Install GDAL
+      run: sudo apt-get install -y gdal-bin
     - name: Set up Python 3.11
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r ./src/backend/requirements/development.txt
+
     - name: Run Tests
       env:
-        DB_NAME: testdb
-        DB_USER: testuser
+        DB_NAME: postgres
+        DB_USER: postgres
         DB_PASSWORD: testpw
         DB_HOST: localhost
         DB_PORT: 5432
-        REDIS_HOST: redis
+        REDIS_HOST: localhost
         REDIS_PORT: 6379
         DEBUG: false
         DJANGO_URL: http://localhost:8000
@@ -67,4 +79,10 @@ jobs:
         DRIVEBC_WEATHER_AREAS_API_BASE_URL: testvar
         SECRET_KEY: testvar
       run: |
-        coverage run ./src/backend/manage.py test --noinput
+        coverage run ./src/backend/manage.py test --noinput && coverage report && coverage xml
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
