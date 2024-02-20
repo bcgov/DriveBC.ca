@@ -18,30 +18,9 @@ RUN chown node:root /app/node_modules
 # home is /, so node can't create a cache dir
 ENV HOME /home/node
 
-ARG API_HOST
-ENV REACT_APP_API_HOST=${API_HOST}
-ARG BASE_MAP
-ENV REACT_APP_BASE_MAP=${BASE_MAP}
-ARG MAP_STYLE
-ENV REACT_APP_MAP_STYLE=${MAP_STYLE}
-ARG HIGHWAY_LAYER
-ENV REACT_APP_HIGHWAY_LAYER=${HIGHWAY_LAYER}
-ARG OPEN511_LAYER
-ENV REACT_APP_OPEN511_LAYER=${OPEN511_LAYER}
-ARG REPLAY_THE_DAY
-ENV REACT_APP_REPLAY_THE_DAY=${REPLAY_THE_DAY}
-ARG ROUTE_PLANNER
-ENV REACT_APP_ROUTE_PLANNER=${ROUTE_PLANNER}
-ARG ROUTE_PLANNER_KEY
-ENV REACT_APP_ROUTE_PLANNER_KEY=${ROUTE_PLANNER_KEY}
-ARG GEOCODER_HOST
-ENV REACT_APP_GEOCODER_HOST=${GEOCODER_HOST}
-ARG GEOCODER_API_AUTH_KEY
-ENV REACT_APP_GEOCODER_API_AUTH_KEY=${GEOCODER_API_AUTH_KEY}
-
 RUN npm run openshift_build
 
-FROM nginx
+FROM nginx:stable-alpine
 
 EXPOSE 3000
 
@@ -55,8 +34,8 @@ RUN chmod -R 777 /run /var/log/nginx /var/cache/nginx /usr/share/nginx/html/stat
 ARG DEBUG_BUILD=false
 
 # Add debugging tools into builds if enabled
-RUN if [ $DEBUG_BUILD = true ]; then \
-  apt update && apt-get install -y jq vim procps less; \
+RUN if [ ${DEBUG_BUILD} = true ]; then \
+  apk update && apk add --no-cache jq vim procps less; \
 fi
 
 COPY ./compose/frontend/entrypoint /docker-entrypoint.d/add_client_env.sh
