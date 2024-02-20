@@ -20,6 +20,8 @@ function convertCategory(event) {
       return event.event_type === 'INCIDENT' ? 'Minor incident ' : 'Minor delay';
     case 'futureEvents':
       return event.severity === 'MAJOR' ? 'Major future event' : 'Minor future event';
+      case 'roadConditions':
+        return 'Road condition'
     default:
       return '';
   }
