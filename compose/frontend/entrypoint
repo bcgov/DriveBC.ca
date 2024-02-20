@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 MAIN=`find /usr/share/nginx/html/static/js/main.*.js`
 echo -e "\nwindow.BASE_MAP='${REACT_APP_BASE_MAP}';" >> $MAIN

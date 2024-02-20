@@ -19,7 +19,7 @@ EXPOSE 3000
 ARG DEBUG_BUILD=false
 
 # Add debugging tools into builds if enabled
-RUN if [ $DEBUG_BUILD = true ]; then \
+RUN if [ ${DEBUG_BUILD} = true ]; then \
   apt update && apt-get install -y jq vim procps less; \
 fi
 
