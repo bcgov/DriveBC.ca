@@ -14,7 +14,7 @@ class TestWebcamFeedSerializer(BaseTest):
 
         data_path = os.path.join(
             os.getcwd(),
-            "apps/feed/tests/test_data/webcam_feed_list_of_one.json"
+            "src/backend/apps/feed/tests/test_data/webcam_feed_list_of_one.json"
         )
         with open(data_path) as f:
             self.webcam_data = json.load(f)
