@@ -145,3 +145,7 @@ class FerryPropertiesField(serializers.Field):
 
 class FerryGeographyField(DriveBCField, GeometryField):
     pass
+
+# Regional Weather
+class RegionalWeatherPropertiesField(serializers.Field):
+    pass

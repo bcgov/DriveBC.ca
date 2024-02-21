@@ -7,7 +7,6 @@ import { memoize } from 'proxy-memoize'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
 
 // Components and functions
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
@@ -22,6 +21,8 @@ import RouteSearch from '../Components/map/RouteSearch';
 import './CamerasListPage.scss';
 
 export default function CamerasListPage() {
+  document.title = 'DriveBC - Cameras';
+
   // Redux
   const dispatch = useDispatch();
   const { cameras, camTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({
@@ -90,7 +91,10 @@ export default function CamerasListPage() {
 
   useEffect(() => {
     const filteredCams = !searchText ? processedCameras :
-      processedCameras.filter((pc) => pc.name.toLowerCase().includes(searchText));
+      processedCameras.filter(
+        (pc) => pc.name.toLowerCase().includes(searchText.toLowerCase()) ||
+          pc.caption.toLowerCase().includes(searchText.toLowerCase())
+      );
 
     setDisplayedCameras(filteredCams);
 

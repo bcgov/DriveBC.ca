@@ -1,0 +1,5 @@
+services:
+   db:
+    image: tobi312/rpi-postgresql-postgis:15-3.4-alpine-arm
+   django:
+    platform: linux/amd64

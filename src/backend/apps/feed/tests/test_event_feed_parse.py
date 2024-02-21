@@ -20,7 +20,7 @@ class TestEventFeedSerializer(BaseTest):
 
         data_path = os.path.join(
             os.getcwd(),
-            "apps/feed/tests/test_data/event_feed_list_of_two.json"
+            "src/backend/apps/feed/tests/test_data/event_feed_list_of_two.json"
         )
         with open(data_path) as f:
             self.event_data = json.load(f)

@@ -28,187 +28,286 @@
     top: 58px;
   }
 
-  .map {
-    position: absolute;
-    width: 100%;
-    top: 0;
-    bottom: 0;
-
-    .ol-overlay-container:not(:has(> img)) {
-      //overriding openlayers dynamic styles for mobile layout except for having img as a direct child
-      @media (max-width: 575px) {
-        position: fixed !important;
-        bottom: 0 !important;
-        transform: none !important;
-      }
-
-      // overlay content styling moved to App.scss
-    }
-
-    .ol-zoom .ol-zoom-out {
-      margin-top: 200px;
-    }
-
-    .ol-scale-line {
-      background: var(--ol-partial-background-color);
-      border-radius: 4px;
-      left: auto;
-      right: 8rem;
-      bottom: 1rem;
-      padding: 2px;
-      position: absolute;
-
-      @media (min-width: 768px) {
-        right: 1rem;
-        bottom: 1rem;
-      }
-
-      @media (min-width: 992px) {
-        right: 4rem;
-        bottom: 1rem;
-      }
-    }
-
-    .ol-scale-line-inner {
-      border: 1px solid var(--ol-subtle-foreground-color);
-      border-top: none;
-      color: var(--ol-foreground-color);
-      font-size: 0.75rem;
-      text-align: center;
-      font-family: 'BCSans', serif;
-      margin: 1px;
-      will-change: contents, width;
-      transition: all 0.25s;
-    }
-  }
-
-  .map-btn {
-    background-color: $Surface-tinted;
-    color: $Type-Link;
-    position: absolute;
-    margin-bottom: 0;
-    font-size: 0.875rem;
-    font-weight: 700;
-    height: auto;
-    border-radius: 4px;
-    border: 1px solid $Type-Link;
-    box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
-
-    &:hover {
-      background: $Type-Link;
-      color: $White;
-    }
-
-    &.map-view, &.cam-location {
-      svg {
-        margin-right: 8px;
-      }
-    }
-    &.map-view, &.my-location, &.open-filters {
-      svg {
-        margin-right: 8px;
-      }
-    }
-
-    &.map-view {
-      position: absolute;
-      top: 2rem;
-      right: 2rem;
-    }
-
-    &.cam-location {
-      position: absolute;
-      bottom: 2rem;
-      left: 2rem;
-    }
-
-    &.my-location {
-      position: absolute;
-      bottom: 1rem;
-      left: 1rem;
-    }
-
-    &.open-filters {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-
-      @media (max-width: 768px) {
-        top: initial;
-        bottom: 1rem;
-      }
-
-      // styling for badge
-      // &:after {
-      //   content: '1';
-      //   font-size: 10px;
-      //   font-weight: 700;
-      //   padding: 1px 8px;
-      //   color: white;
-      //   background-color: $Type-Link;
-      //   border-radius: 5px;
-      //   margin-left: 8px;
-      //   vertical-align: middle;
-      //   padding: 0 5px;
-      // }
-
-      // &:hover {
-      //   &:after {
-      //     color: $Type-Link;
-      //     background-color: white;
-      //   }
-      // }
-    }
-  }
-
-  .zoom-btn {
-    background-color: $Surface-tinted;
-    color: $Type-Link;
-    position: absolute;
-    margin-bottom: 0;
-    font-size: 1rem;
-    font-weight: 700;
-    height: auto;
-    border-radius: 6px;
-    border: 1px solid $Type-Link;
-    box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
-    bottom: 1rem;
-    right: 1rem;
+  .map-container {
     display: flex;
-    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
 
-    //Hide zoom slider on touch devices
-    @media (max-width: 992px) {
-      display: none;
+    @media (max-width: 767px) {
+      flex-direction: column;
     }
 
-    & > .btn {
-      margin-bottom: 0;
+    &.preview {
+      flex-direction: column;
+
+      .side-panel {
+        transition: min-height 0.25s ease-in-out;
+        order: 2;
+
+        &.open {
+          min-width: 100%;
+          min-height: 100%;
+        }
+      }
+    }
+
+    .side-panel {
+      flex: 0;
+      min-width: 0px;
+      min-height: 0%;
+      transition: min-width 0.25s ease-in-out;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 20;
+
+      @media (max-width: 767px) {
+        transition: min-height 0.25s ease-in-out;
+        order: 2;
+      }
+
+      &.open {
+        min-width: 340px;
+
+        .panel-content {
+          min-width: 340px;
+        }
+
+        @media (max-width: 767px) {
+          min-width: 100%;
+          min-height: 50%;
+
+          .panel-content {
+            min-width: 100%;
+            overflow-y: hidden;
+          }
+        }
+      }
+
+      &.maximized {
+        @media (max-width: 767px) {
+          min-height: 100%;
+
+          .panel-content {
+            overflow-y: scroll;
+          }
+        }
+      }
+
+      .close-panel {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0;
+        min-width: 0;
+        line-height: 1.25rem;
+        height: auto;
+        background: none;
+        border: none;
+        font-size: 1rem;
+      }
+
+      .panel-content {
+        flex: 1;
+        overflow-y: scroll;
+      }
+    }
+
+    .map {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+
+      .routing-outer-container {
+        position: absolute;
+        z-index: 16;
+        width: 100%;
+
+        @media (min-width: 768px) {
+          width: initial;
+        }
+      }
+
+      .ol-overlay-container:not(:has(> img)) {
+        //overriding openlayers dynamic styles for mobile layout except for having img as a direct child
+        @media (max-width: 767px) {
+          position: fixed !important;
+          bottom: 0 !important;
+          transform: none !important;
+        }
+
+        // overlay content styling moved to App.scss
+      }
+
+      .ol-zoom .ol-zoom-out {
+        margin-top: 200px;
+      }
+
+      .ol-scale-line {
+        background: var(--ol-partial-background-color);
+        border-radius: 4px;
+        left: auto;
+        right: 1rem;
+        bottom: 4rem;
+        padding: 2px;
+        position: absolute;
+
+        @media (min-width: 769px) {
+          right: 1rem;
+          bottom: 1rem;
+        }
+
+        @media (min-width: 992px) {
+          right: 4rem;
+          bottom: 1rem;
+        }
+      }
+
+      .ol-scale-line-inner {
+        border: 1px solid var(--ol-subtle-foreground-color);
+        border-top: none;
+        color: var(--ol-foreground-color);
+        font-size: 0.75rem;
+        text-align: center;
+        font-family: 'BCSans', serif;
+        margin: 1px;
+        will-change: contents, width;
+        transition: all 0.25s;
+      }
+    }
+
+    .map-btn {
       background-color: $Surface-tinted;
       color: $Type-Link;
-      border: none;
-      border-radius: 0;
-      padding: 4px 8px;
+      position: absolute;
+      margin-bottom: 0;
+      font-size: 0.875rem;
+      font-weight: 700;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid $Type-Link;
+      box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
 
       &:hover {
         background: $Type-Link;
         color: $White;
       }
 
-      &.zoom-in {
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
+      &.map-view, &.cam-location {
+        svg {
+          margin-right: 8px;
+        }
+      }
+      &.map-view, &.my-location, &.open-filters {
+        svg {
+          margin-right: 8px;
+        }
       }
 
-      &.zoom-out {
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
+      &.map-view {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+      }
+
+      &.cam-location {
+        position: absolute;
+        bottom: 2rem;
+        left: 2rem;
+      }
+
+      &.my-location {
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+      }
+
+      &.open-filters {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 5;
+
+        @media (max-width: 768px) {
+          top: initial;
+          bottom: 1rem;
+        }
+
+        // styling for badge
+        // &:after {
+        //   content: '1';
+        //   font-size: 10px;
+        //   font-weight: 700;
+        //   padding: 1px 8px;
+        //   color: white;
+        //   background-color: $Type-Link;
+        //   border-radius: 5px;
+        //   margin-left: 8px;
+        //   vertical-align: middle;
+        //   padding: 0 5px;
+        // }
+
+        // &:hover {
+        //   &:after {
+        //     color: $Type-Link;
+        //     background-color: white;
+        //   }
+        // }
       }
     }
 
-    .zoom-divider {
-      margin: 0 10px;
-      border-bottom: 1px solid $Divider;
+    .zoom-btn {
+      background-color: $Surface-tinted;
+      color: $Type-Link;
+      position: absolute;
+      margin-bottom: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      height: auto;
+      border-radius: 6px;
+      border: 1px solid $Type-Link;
+      box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
+      bottom: 1rem;
+      right: 1rem;
+      display: flex;
+      flex-direction: column;
+
+      //Hide zoom slider on touch devices
+      @media (max-width: 992px) {
+        display: none;
+      }
+
+      & > .btn {
+        margin-bottom: 0;
+        background-color: $Surface-tinted;
+        color: $Type-Link;
+        border: none;
+        border-radius: 0;
+        padding: 4px 8px;
+
+        &:hover {
+          background: $Type-Link;
+          color: $White;
+        }
+
+        &.zoom-in {
+          border-top-left-radius: 5px;
+          border-top-right-radius: 5px;
+        }
+
+        &.zoom-out {
+          border-bottom-left-radius: 5px;
+          border-bottom-right-radius: 5px;
+        }
+      }
+
+      .zoom-divider {
+        margin: 0 10px;
+        border-bottom: 1px solid $Divider;
+      }
     }
   }
 }

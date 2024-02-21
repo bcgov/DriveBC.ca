@@ -102,6 +102,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "rest_framework_gis",
     "django_filters",
+    "drf_recaptcha",
     "corsheaders",
     'wagtail.api.v2',
     "wagtail.contrib.forms",
@@ -125,7 +126,8 @@ LOCAL_APPS = [
     "apps.shared",
     "apps.event",
     "apps.webcam",
-    "apps.cms"
+    "apps.cms",
+    "apps.weather",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -158,7 +160,10 @@ STORAGES = {
 }
 
 # Email
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND')
+EMAIL_HOST = env('DJANGO_EMAIL_HOST')
+EMAIL_PORT = env('DJANGO_EMAIL_PORT')
+DEFAULT_FROM_EMAIL = 'DoNotReply_DriveBC@gov.bc.ca'
 
 # Logging
 LOGGING = {

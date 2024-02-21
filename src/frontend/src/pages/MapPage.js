@@ -15,6 +15,8 @@ import '../Components/Map.scss';
 export default function MapPage() {
   const { state } = useLocation();
 
+  document.title = 'DriveBC';
+
   return (
     <DndProvider options={HTML5toTouch}>
       <div className="map-wrap">

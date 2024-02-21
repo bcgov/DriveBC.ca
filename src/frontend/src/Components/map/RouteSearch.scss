@@ -1,8 +1,9 @@
 @import "../../styles/variables.scss";
 
 .routing-container {
-  background: white;
+  // background: white;
   padding: 1rem 1rem 0;
+  z-index: 5;
 
   .typeahead-container {
     position: relative;
@@ -15,7 +16,7 @@
     }
 
     @media (min-width: 768px) {
-      width: 360px;
+      width: 300px;
     }
 
     .location-marker {

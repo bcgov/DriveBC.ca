@@ -9,10 +9,9 @@ export function getLocations(addressInput) {
       autoComplete: true,
       addressString: addressInput
     }, {
-    headers: {
-      'apiKey': `${window.GEOCODER_API_AUTH_KEY}`
+      'apiKey': `${window.GEOCODER_API_AUTH_KEY}`,
     }
-  }).then((data) => data)
+  ).then((data) => data)
   .catch((error) => {
     console.log(error);
   });

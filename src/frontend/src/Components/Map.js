@@ -102,6 +102,7 @@ export default function MapWrapper({
   const mapElement = useRef();
   const mapRef = useRef();
   const popup = useRef();
+  const panel = useRef();
   const mapLayers = useRef({});
   const mapView = useRef();
   const container = useRef();
@@ -652,6 +653,25 @@ export default function MapWrapper({
     }
   }
 
+  function togglePanel() {
+    panel.current.classList.toggle('open');
+    panel.current.classList.remove('maximized');
+    if (!panel.current.classList.contains('open')) {
+      closePopup();
+    }
+  }
+
+  function maximizePanel() {
+    if (panel.current.classList.contains('open')) {
+      if (!panel.current.classList.contains('maximized')) {
+        panel.current.classList.add('maximized');
+      }
+      else {
+        panel.current.classList.remove('maximized');
+      }
+    }
+  }
+
   function handleCenter() {
     if (typeof camera === 'string') {
       camera = JSON.parse(camera);
@@ -692,9 +712,41 @@ export default function MapWrapper({
     mapContext.visible_layers['inlandFerries'] = true;
   }
 
+  const openPanel = !!(clickedCamera || clickedEvent || clickedFerry);
+
   return (
-    <div className="map-container">
+    <div className={`map-container ${isPreview ? 'preview' : ''}`}>
+
+      <div
+        ref={panel} className={`side-panel ${openPanel ? 'open' : ''}`}
+        onClick={maximizePanel}
+        onTouchMove={maximizePanel}
+      >
+
+        <button
+          className="close-panel"
+          aria-label="close side panel"
+          onClick={togglePanel}
+        >
+          <FontAwesomeIcon icon={faXmark} />
+        </button>
+
+        <div className="panel-content">
+          {clickedCamera &&
+            <CamPopup
+              camFeature={clickedCamera}
+              isPreview={isPreview} />
+          }
+
+          {clickedEvent && getEventPopup(clickedEvent)}
+
+          {clickedFerry && getFerryPopup(clickedFerry)}
+        </div>
+
+      </div>
+
       <div ref={mapElement} className="map">
+
         <div className="map-btn zoom-btn">
           <Button className="zoom-in" variant="primary" aria-label="zoom in"
             onClick={() => zoomIn(mapView)}>
@@ -720,47 +772,27 @@ export default function MapWrapper({
             My location
           </Button>
         )}
+
+        {!isPreview && (
+          <div className='routing-outer-container'>
+            <RouteSearch routeEdit={true} />
+            <AdvisoriesOnMap />
+          </div>
+        )}
+
+        {!isPreview && (
+          <Filters
+            toggleHandler={toggleLayer}
+            disableFeatures={isPreview}
+            enableRoadConditions={true}
+          />
+        )}
       </div>
 
       <div id="popup" className="ol-popup">
-        <FontAwesomeIcon
-          id="ol-popup-closer"
-          className="ol-popup-closer"
-          icon={faXmark}
-          onClick={closePopup}
-        />
         <div id="popup-content" className="ol-popup-content">
-          {clickedCamera &&
-            <CamPopup
-              camFeature={clickedCamera}
-              isPreview={isPreview} />
-          }
-
-          {clickedEvent &&
-            getEventPopup(clickedEvent)
-          }
-
-          {clickedFerry &&
-            getFerryPopup(clickedFerry)
-          }
         </div>
       </div>
-
-      <Filters
-        toggleHandler={toggleLayer}
-        disableFeatures={isPreview}
-        enableRoadConditions={true}
-      />
-
-      {isPreview && (
-        <Button
-          className="map-btn map-view"
-          variant="primary"
-          onClick={mapViewRoute}>
-          <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
-          Map View
-        </Button>
-      )}
 
       {isPreview && (
         <Button
@@ -776,12 +808,24 @@ export default function MapWrapper({
         </Button>
       )}
 
-      {!isPreview && (
-        <div>
-          <RouteSearch routeEdit={true} />
-          <AdvisoriesOnMap />
-        </div>
+      {isPreview && (
+        <Button
+          className="map-btn map-view"
+          variant="primary"
+          onClick={mapViewRoute}>
+          <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+          Map View
+        </Button>
       )}
+
+      {isPreview && (
+        <Filters
+          toggleHandler={toggleLayer}
+          disableFeatures={isPreview}
+          enableRoadConditions={true}
+        />
+      )}
+
     </div>
   );
 }
