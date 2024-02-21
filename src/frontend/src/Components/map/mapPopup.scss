@@ -33,7 +33,6 @@
       .name {
         font-size: 1.25rem;
         color: #053662;
-        cursor: pointer;
       }
     }
 
@@ -113,6 +112,14 @@
 
   // Cameras layer
   &--camera {
+    .popup__content {
+      &__title {
+        .name:hover {
+          cursor:pointer;
+          text-decoration: underline;
+        }
+      }
+    }
     .camera-orientations {
       padding: 0 1rem;
     }
@@ -124,11 +131,15 @@
       background-color: #FBFFFC;
       border-top: 4px solid #2E8540;
       
-      .name, .name a {
+      .name {
         color: #2E8540;
-
         a {
+          color: #2E8540;
           text-decoration: none;
+          &:hover {
+            cursor:pointer;
+            text-decoration: underline;
+          }
         }
       }
   
