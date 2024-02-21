@@ -715,7 +715,7 @@ export default function MapWrapper({
   const openPanel = !!(clickedCamera || clickedEvent || clickedFerry);
 
   return (
-    <div className="map-container">
+    <div className={`map-container ${isPreview ? 'preview' : ''}`}>
 
       <div
         ref={panel} className={`side-panel ${openPanel ? 'open' : ''}`}
@@ -780,27 +780,19 @@ export default function MapWrapper({
           </div>
         )}
 
-        <Filters
-          toggleHandler={toggleLayer}
-          disableFeatures={isPreview}
-          enableRoadConditions={true}
-        />
+        {!isPreview && (
+          <Filters
+            toggleHandler={toggleLayer}
+            disableFeatures={isPreview}
+            enableRoadConditions={true}
+          />
+        )}
       </div>
 
       <div id="popup" className="ol-popup">
         <div id="popup-content" className="ol-popup-content">
         </div>
       </div>
-
-      {isPreview && (
-        <Button
-          className="map-btn map-view"
-          variant="primary"
-          onClick={mapViewRoute}>
-          <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
-          Map View
-        </Button>
-      )}
 
       {isPreview && (
         <Button
@@ -814,6 +806,24 @@ export default function MapWrapper({
           <CurrentCameraIcon />
           Camera location
         </Button>
+      )}
+
+      {isPreview && (
+        <Button
+          className="map-btn map-view"
+          variant="primary"
+          onClick={mapViewRoute}>
+          <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+          Map View
+        </Button>
+      )}
+
+      {isPreview && (
+        <Filters
+          toggleHandler={toggleLayer}
+          disableFeatures={isPreview}
+          enableRoadConditions={true}
+        />
       )}
 
     </div>
