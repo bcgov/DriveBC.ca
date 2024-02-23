@@ -26,12 +26,9 @@ import futureEventsHoverIcon from '../../images/mapIcons/futureevent-minor-hover
 import futureEventsStaticIcon from '../../images/mapIcons/futureevent-minor-static.png';
 
 // Road Conditions
-import roadConditionsMajorActiveIcon from '../../images/mapIcons/road-major-active.png';
-import roadConditionsMajorHoverIcon from '../../images/mapIcons/road-major-hover.png';
-import roadConditionsMajorStaticIcon from '../../images/mapIcons/road-major-static.png';
-import roadConditionsActiveIcon from '../../images/mapIcons/road-minor-active.png';
-import roadConditionsHoverIcon from '../../images/mapIcons/road-minor-hover.png';
-import roadConditionsStaticIcon from '../../images/mapIcons/road-minor-static.png';
+import roadConditionsActiveIcon from '../../images/mapIcons/road-condition-active.png';
+import roadConditionsHoverIcon from '../../images/mapIcons/road-condition-hover.png';
+import roadConditionsStaticIcon from '../../images/mapIcons/road-condition-static.png';
 
 // Constructions
 import constructionsMajorActiveIcon from '../../images/mapIcons/construction-major-active.png';
@@ -187,29 +184,6 @@ export const eventStyles = {
   },
 
   // Road Conditions
-  major_road_conditions: {
-    static: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: roadConditionsMajorStaticIcon,
-      }),
-    }),
-
-    hover: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: roadConditionsMajorHoverIcon,
-      }),
-    }),
-
-    active: new Style({
-      image: new Icon({
-        scale: 0.25,
-        src: roadConditionsMajorActiveIcon,
-      }),
-    }),
-  },
-
   road_conditions: {
     static: new Style({
       image: new Icon({

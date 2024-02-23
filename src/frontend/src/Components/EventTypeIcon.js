@@ -21,10 +21,8 @@ import futureEventsActiveIcon from '../images/mapIcons/futureevent-minor-active.
 import futureEventsStaticIcon from '../images/mapIcons/futureevent-minor-static.png';
 
 // Road Conditions
-import roadConditionsMajorActiveIcon from '../images/mapIcons/road-major-active.png';
-import roadConditionsMajorStaticIcon from '../images/mapIcons/road-major-static.png';
-import roadConditionsActiveIcon from '../images/mapIcons/road-minor-active.png';
-import roadConditionsStaticIcon from '../images/mapIcons/road-minor-static.png';
+import roadConditionsActiveIcon from '../images/mapIcons/road-condition-active.png';
+import roadConditionsStaticIcon from '../images/mapIcons/road-condition-static.png';
 
 // Constructions
 import constructionsMajorActiveIcon from '../images/mapIcons/construction-major-active.png';
@@ -69,9 +67,9 @@ export default function EventTypeIcon(props) {
 
     case "roadConditions": {
       if (state === 'active')
-        return <img className={'delay-icon-img'} src={severity === 'MAJOR' ? roadConditionsMajorActiveIcon : roadConditionsActiveIcon } />
+        return <img className={'delay-icon-img'} src={roadConditionsActiveIcon } />
       else
-        return <img className={'delay-icon-img'} src={severity === 'MAJOR' ? roadConditionsMajorStaticIcon : roadConditionsStaticIcon } />
+        return <img className={'delay-icon-img'} src={roadConditionsStaticIcon } />
     }
   }
 }
