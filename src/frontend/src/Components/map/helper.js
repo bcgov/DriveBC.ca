@@ -31,7 +31,7 @@ export const getEventIcon = (event, state) => {
 
     // Road Conditions
     case 'roadConditions':
-      return eventStyles[severity === 'major' ? 'major_road_conditions' : 'road_conditions'][state];
+      return eventStyles['road_conditions'][state];
 
     default: {
       // Constructions
