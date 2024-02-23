@@ -208,7 +208,7 @@
       }
     }
 
-    &.minor {
+    &.minor, &.roadConditions {
       .popup__title {
         background-color: #FEEBC2;
         border-top: 4px solid #584215;
