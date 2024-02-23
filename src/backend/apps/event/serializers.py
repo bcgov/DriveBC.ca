@@ -4,7 +4,6 @@ import pytz
 from apps.event.enums import (
     EVENT_DIRECTION_DISPLAY,
     EVENT_DISPLAY_CATEGORY,
-    EVENT_DISPLAY_CATEGORY_MAP,
     EVENT_SEVERITY,
 )
 from apps.event.models import Event
@@ -55,8 +54,8 @@ class EventInternalSerializer(serializers.ModelSerializer):
         if obj.closed:
             return EVENT_DISPLAY_CATEGORY.CLOSURE
 
-        if obj.event_sub_type in EVENT_DISPLAY_CATEGORY_MAP:
-            return EVENT_DISPLAY_CATEGORY_MAP[obj.event_sub_type]
+        if obj.id.startswith('drivebc.ca/DBCRCON'):
+            return EVENT_DISPLAY_CATEGORY.ROAD_CONDITION
 
         if obj.start and datetime.datetime.now(pytz.utc) < obj.start:
             return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
