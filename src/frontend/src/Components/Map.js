@@ -206,7 +206,7 @@ export default function MapWrapper({
 
     mapRef.current.once('loadstart', async () => {
       if (camera && !isPreview) {
-        popup.current.setPosition(handleCenter(camera));
+        popup.current.setPosition(handleCenter());
         popup.current.getElement().style.top = '40px';
 
         if (camera.event_type) {
