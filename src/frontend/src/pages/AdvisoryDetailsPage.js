@@ -121,7 +121,7 @@ function getMap(advisoryData) {
     zoom: 14,
   });
 
-  new Map({
+  return new Map({
     target: 'map',
     layers: [
       tileLayer,
@@ -129,15 +129,13 @@ function getMap(advisoryData) {
     ],
     view: mapViewObj,
   });
-
-  return mapViewObj;
 }
 
 export default function AdvisoryDetailsPage() {
   // Context and router data
   const params = useParams();
   const isInitialMount = useRef(true);
-  const mapView = useRef();
+  const mapRef = useRef();
   const [advisory, setAdvisory] = useState(null);
 
   const fitMap = (data) => {
@@ -146,7 +144,7 @@ export default function AdvisoryDetailsPage() {
       featureProjection: 'EPSG:3857'
     });
 
-    mapView.current.fit(geom);
+    mapRef.current.getView().fit(geom);
   }
 
   // Data function and initialization
@@ -156,7 +154,7 @@ export default function AdvisoryDetailsPage() {
 
     // Run once on startup
     if (isInitialMount.current){
-      mapView.current = getMap(advisoryData);
+      mapRef.current = getMap(advisoryData);
     }
 
     fitMap(advisoryData);

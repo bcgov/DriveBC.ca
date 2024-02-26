@@ -277,8 +277,6 @@ class FeedClient:
                     observation_utc_offset = observation_data.get("UTCOffset") if observation_data else None
                     observation_text_summary = observation_data.get("TextSummary") if observation_data else None
 
-                    conditions = conditions
-
                     forecast_group_data = data.get("ForecastGroup", {})
                     forecast_group = forecast_group_data.get("Forecasts") if forecast_group_data else None
 
