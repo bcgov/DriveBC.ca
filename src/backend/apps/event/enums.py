@@ -97,7 +97,8 @@ EVENT_DIRECTION_DISPLAY = {
 }
 
 EVENT_DIFF_FIELDS = [
-    'last_updated'
+    'last_updated',
+    'priority'
 ]
 
 EVENT_UPDATE_FIELDS = [
@@ -109,6 +110,7 @@ EVENT_UPDATE_FIELDS = [
     'closed',
     'direction',
     'last_updated',
+    'priority',
     'location',
     'route_at',
     'route_from',

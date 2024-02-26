@@ -21,8 +21,35 @@ import {
 import './EventsTable.scss';
 
 export default function EventsTable({columns, data, sortingHandler, routeHandler}) {
-  const [sorting, setSorting] = useState([{ desc: false, id: 'severity' }]);
+  // States
+  const [sorting, setSorting] = useState([{ desc: true, id: 'severity' }]);
 
+  // Sort functions for react-table
+  const prioritySortFn = (rowA, rowB) => {
+    const aPriority = rowA.original.priority;
+    const bPriority = rowB.original.priority;
+
+    return aPriority < bPriority ? 1 : -1;
+  }
+
+  const defaultSortFn = (rowA, rowB, columnId) => {
+    const aValue = rowA.getValue(columnId);
+    const bValue = rowB.getValue(columnId);
+
+    if (aValue != bValue) {
+      return aValue > bValue ? 1 : -1;
+
+    // Equal value, order by reverse priority
+    } else {
+      return prioritySortFn(rowA, rowB);
+    }
+  }
+
+  const reverseSortFn = (rowA, rowB, columnId) => {
+    return defaultSortFn(rowA, rowB, columnId) * -1;
+  }
+
+  // react-table
   const table = useReactTable({
     data: data,
     columns: columns,
@@ -31,22 +58,41 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
     },
     initialState: {
       pagination: {
-        pageSize: -1,
+        // Large number to show all rows, do NOT use -1 here
+        // https://github.com/TanStack/table/issues/3740
+        pageSize: 65536,
       },
     },
     onSortingChange: setSorting,
+    sortingFns: {
+      defaultSort: defaultSortFn,
+      reverseSort: reverseSortFn,
+    },
     getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
+  // UseEffect
   useEffect(() => {
     sortingHandler(sorting);
   }, [sorting]);
 
+  // Handlers
+  const toggleSortingHandler = (column) => {
+    if (!column.getCanSort()) return;
+
+    const nextOrder = column.getNextSortingOrder();
+
+    // sort by asc when nextOrder is not 'asc' or 'desc', or desc on sortDescFirst columns
+    const isDescFirst = column.id == 'severity' || column.id == 'last_updated';
+    column.toggleSorting(!nextOrder ? isDescFirst : null);
+  }
+
   const ascIcon = <FontAwesomeIcon icon={faArrowUpLong} alt="ascending order" />;
   const descIcon = <FontAwesomeIcon icon={faArrowDownLong} alt="descending order" />;
 
+  // Rendering
   return (
     <table>
       <thead>
@@ -61,7 +107,7 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
                         className: header.column.getCanSort() ?
                           'cursor-pointer select-none' :
                           '',
-                        onClick: header.column.getToggleSortingHandler(),
+                        onClick: () => toggleSortingHandler(header.column),
                       }}
                     >
                       {flexRender(

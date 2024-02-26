@@ -50,7 +50,7 @@ export default function EventsListPage() {
     if (!events || (eventTimeStamp != newRouteTimestamp)) {
       dispatch(updateEvents({
         list: await getEvents(route ? route.points : null),
-        routeTimeStamp: route ? route.searchTimestamp : null,
+        routeTimeStamp: newRouteTimestamp,
         timeStamp: new Date().getTime()
       }));
     }
@@ -65,16 +65,20 @@ export default function EventsListPage() {
     {
       header: 'Type',
       accessorKey: 'display_category',
+      sortingFn: 'defaultSort',
       cell: (props) => <EventTypeIcon event={props.row.original} />,
     },
     {
       header: 'Severity',
       accessorKey: 'severity',
+      sortingFn: 'reverseSort',
+      sortDescFirst: true,
       cell: (props) => <span>{props.getValue().toLowerCase()}</span>,
     },
     {
       header: 'Road',
       accessorKey: 'route_at',
+      sortingFn: 'defaultSort',
     },
     {
       header: 'Direction',
@@ -91,6 +95,7 @@ export default function EventsListPage() {
       header: 'Last Update',
       accessorKey: 'last_updated',
       cell: (props) => <FriendlyTime date={props.getValue()} />,
+      sortDescFirst: true,
     },
     {
       header: 'Map',
@@ -112,24 +117,6 @@ export default function EventsListPage() {
 
   const [routeEdit, setRouteEdit] = useState(!(selectedRoute && selectedRoute.routeFound));
   const [processedEvents, setProcessedEvents] = useState([]);
-  const [displayedEvents, setDisplayedEvents] = useState([]);
-
-  const sortEvents = (unsortedEvents) => {
-    // Sort by severity by default
-    let sortKey = "severity";
-    let descending = false;
-
-    if (sortingColumns.length) {
-      const {id, desc} = sortingColumns[0];
-
-      sortKey = id;
-      descending = desc;
-    }
-
-    unsortedEvents.sort((firstEvent, secondEvent) => {
-      return firstEvent[sortKey] > secondEvent[sortKey] ? (descending ? -1 : 1) : (descending ? 1 : -1);
-    });
-  };
 
   const processEvents = () => {
     const hasTrue = (val) => !!val;
@@ -146,14 +133,7 @@ export default function EventsListPage() {
     }
 
     // Sort
-    sortEvents(res);
-
     setProcessedEvents(res);
-  };
-
-  const getDisplayedEvents = (reset) => {
-    const res = processedEvents.slice(0, reset? 10 : displayedEvents.length + 10);
-    setDisplayedEvents(res);
   };
 
   const handleRoute = (event) => {
@@ -169,14 +149,10 @@ export default function EventsListPage() {
   }, [selectedRoute]);
 
   useEffect(() => {
-    getDisplayedEvents(true);
-  }, [processedEvents]);
-
-  useEffect(() => {
     if (events) {
       processEvents();
     }
-  }, [events, eventCategoryFilter, sortingColumns]);
+  }, [events, eventCategoryFilter]);
 
   const eventCategoryFilterHandler = (targetCategory, check, lineToggle) => {
     if (!lineToggle) {
@@ -193,13 +169,6 @@ export default function EventsListPage() {
   };
 
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
-
-  // Workaround for DBC22-1090
-  // https://github.com/TanStack/table/issues/3740
-  const dupeLastRow = (arr) => {
-    const cpy = [...arr, arr[arr.length-1]];
-    return cpy;
-  }
 
   return (
     <div className="events-page">
@@ -228,18 +197,14 @@ export default function EventsListPage() {
         </div>
 
         { events && !!events.length && (
-          <InfiniteScroll
-            dataLength={displayedEvents.length}
-            next={getDisplayedEvents}
-            hasMore={displayedEvents.length < processedEvents.length}>
-
-            { largeScreen && displayedEvents.length > 0 &&
-              <EventsTable columns={columns} data={dupeLastRow(displayedEvents)} sortingHandler={setSortingColumns} routeHandler={handleRoute} />
+          <div>
+            { largeScreen && processedEvents.length > 0 &&
+              <EventsTable columns={columns} data={processedEvents} sortingHandler={setSortingColumns} routeHandler={handleRoute} />
             }
 
             { !largeScreen &&
               <div className="events-list">
-                { displayedEvents.map(
+                { processedEvents.map(
                   (e) => (
                     <div className="card-selector" key={e.id} onClick={() => handleRoute(e)}>
                       <EventCard
@@ -252,7 +217,7 @@ export default function EventsListPage() {
                 )}
               </div>
             }
-          </InfiniteScroll>
+          </div>
         )}
       </Container>
 

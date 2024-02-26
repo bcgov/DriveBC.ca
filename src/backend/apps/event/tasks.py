@@ -68,13 +68,16 @@ def populate_all_event_data(include_closures=True):
     closures = client.get_closures_dict() if include_closures else {}
     feed_data = client.get_event_list()['events']
 
+    priority = 0
     active_event_ids = []
     for event_data in feed_data:
         try:
             id = event_data.get("id", "").split("/")[-1]
             event_data["closed"] = closures.get(id, False)
+            event_data['priority'] = priority
 
             populate_event_from_data(event_data)
+            priority += 1
 
             # Event is active
             if "id" in event_data:

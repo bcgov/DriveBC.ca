@@ -90,6 +90,7 @@ class TestEventModel(BaseTest):
         assert event_one.last_updated == datetime.datetime(
             2023, 6, 29, 10, 14, 55, tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
         )
+        assert event_one.priority == 7
 
     @patch("httpx.get")
     def test_populate_and_update_event(self, mock_requests_get):

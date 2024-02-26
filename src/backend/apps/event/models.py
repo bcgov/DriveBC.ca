@@ -14,6 +14,7 @@ class Event(BaseModel):
     status = models.CharField(max_length=32)
     severity = models.CharField(max_length=32)
     closed = models.BooleanField(default=False)
+    priority = models.PositiveIntegerField(default=0)
 
     # Location
     direction = models.CharField(max_length=32)
