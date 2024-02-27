@@ -5,7 +5,8 @@
 
   .controls-container {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
 
     @media (max-width: 768px) {
       flex-direction: column;
@@ -26,20 +27,15 @@
           width: 100%;
         }
       }
-
-      button {
-        margin: 0 0 0 10px;
-      }
     }
 
     .search-container {
-      margin-left: 30px;
       min-width: 360px;
 
       @media (max-width: 768px) {
+        min-width: 100%;
         width: 100%;
-        margin-top: 15px;
-        margin-right: 30px;
+        margin-top: 1rem;
       }
 
       .rbt-menu {

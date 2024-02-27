@@ -12,7 +12,7 @@
     .typeahead-spinner {
       position: absolute;
       top: 8px;
-      right: 28px;
+      right: 8px;
     }
 
     @media (min-width: 768px) {
@@ -34,20 +34,6 @@
         font-size: 1rem;
         margin: 0.25rem 0.5rem;
         color: $Error;
-      }
-    }
-
-    .form-control {
-      font-size: 0.875rem;
-      padding: 6px 12px;
-      line-height: 1;
-
-      &:focus {
-        border-color: #dee2e6;
-      }
-
-      &::placeholder {
-        color: $Type-Disabled;
       }
     }
 
