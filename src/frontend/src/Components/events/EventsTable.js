@@ -149,7 +149,7 @@ export default function EventsTable(props) {
             {headerGroup.headers.map((header) => {
               return (
                 <th className={header.id} key={header.id} colSpan={header.colSpan}>
-                  {header.isPlaceholder ? null : (
+                  {!header.isPlaceholder && !showLoader && (
                     <span
                       {...{
                         className: header.column.getCanSort() ?
@@ -169,6 +169,10 @@ export default function EventsTable(props) {
                       }[header.column.getIsSorted()] ?? null}
                     </span>
                   )}
+
+                  {showLoader &&
+                    <Skeleton />
+                  }
                 </th>
               );
             })}

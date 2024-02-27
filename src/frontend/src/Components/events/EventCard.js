@@ -29,26 +29,26 @@ export default function EventCard(props) {
 
       <div className="event-card__details">
         <div className="type">
-          <div className="header">Type</div>
+          <div className="header">{ showLoader ? <Skeleton /> : 'Type' }</div>
           <div className="content">
             { showLoader ? <Skeleton width={75} /> : <div>{icon} {event.severity.toLowerCase()}</div> }
           </div>
         </div>
 
         <div className="description">
-          <div className="header">Description</div>
+          <div className="header">{ showLoader ? <Skeleton /> : 'Description' }</div>
           <div className="content">{ showLoader ? <Skeleton count={7} /> : event.description }</div>
         </div>
 
         <div className="last-update">
-          <div className="header">Last Update</div>
+          <div className="header">{ showLoader ? <Skeleton /> : 'Last Update' }</div>
           <div className="content">
             { showLoader ? <Skeleton width={'90%'} /> : <FriendlyTime date={event.last_updated} /> }
           </div>
         </div>
 
         <div className="map">
-          <div className="header">Map</div>
+          <div className="header">{ showLoader ? <Skeleton /> : 'Map' }</div>
           <div className="content">
             { showLoader ? <Skeleton width={30} /> : <FontAwesomeIcon icon={faMapLocation} /> }
           </div>
