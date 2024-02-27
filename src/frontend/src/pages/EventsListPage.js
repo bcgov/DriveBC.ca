@@ -180,7 +180,7 @@ export default function EventsListPage() {
       <Container>
         <Advisories />
 
-        <div className="sort-and-filter">
+        <div className="controls-container">
           <div className="route-display-container">
             <RouteSearch routeEdit={routeEdit} />
 
