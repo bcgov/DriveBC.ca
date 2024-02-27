@@ -1,7 +1,8 @@
 // React
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Third party packages
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   flexRender,
   getCoreRowModel,
@@ -13,7 +14,6 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 // External assets
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowUpLong,
   faArrowDownLong,
@@ -24,7 +24,7 @@ import './EventsTable.scss';
 
 export default function EventsTable(props) {
   // Props
-  const { columns, data, sortingHandler, routeHandler, showLoading } = props;
+  const { columns, data, sortingHandler, routeHandler, showLoader } = props;
 
   // States
   const [sorting, setSorting] = useState([{ desc: true, id: 'severity' }]);
@@ -118,9 +118,9 @@ export default function EventsTable(props) {
     return "";
   }
 
-  const renderDesktopLoader = () => {
+  const renderLoader = () => {
     const rows = [];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 20; i++) {
       rows.push(
         <tr>
           {table.getAllColumns().map((column) => {
@@ -176,7 +176,7 @@ export default function EventsTable(props) {
         ))}
       </thead>
 
-      {!showLoading &&
+      {!showLoader &&
         <tbody>
           {table.getRowModel().rows.map((row) => {
             return (
@@ -200,8 +200,8 @@ export default function EventsTable(props) {
         </tbody>
       }
 
-      {showLoading &&
-        renderDesktopLoader()
+      {showLoader &&
+        renderLoader()
       }
     </table>
   );

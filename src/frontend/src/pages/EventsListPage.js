@@ -1,11 +1,11 @@
 // React
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux'
+import { memoize } from 'proxy-memoize';
 import { updateEvents } from '../slices/feedsSlice';
-import { memoize } from 'proxy-memoize'
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
-// Third party packages
+// External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMapLocationDot
@@ -15,7 +15,7 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-// Components and functions
+// Internal imports
 import { getEvents } from '../Components/data/events';
 import { MapContext } from '../App.js';
 import Advisories from '../Components/advisories/Advisories';
@@ -117,8 +117,8 @@ export default function EventsListPage() {
   });
 
   const [routeEdit, setRouteEdit] = useState(!(selectedRoute && selectedRoute.routeFound));
-  const [processedEvents, setProcessedEvents] = useState([]);
-  const [showLoading, setShowLoading] = useState(true);
+  const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
+  const [showLoader, setShowLoader] = useState(false);
 
   // Data loading
   const processEvents = () => {
@@ -153,10 +153,17 @@ export default function EventsListPage() {
 
   useEffect(() => {
     if (events) {
-      processEvents();
-      setTimeout(() => setShowLoading(false), 5000);
+      setShowLoader(true);
     }
   }, [events, eventCategoryFilter]);
+
+  useEffect(() => {
+    if (showLoader) {
+      processEvents();
+      setTimeout(() => setShowLoader(false), 5000);
+//      setShowLoader(false);
+    }
+  }, [showLoader]);
 
   // Handlers
   const eventCategoryFilterHandler = (targetCategory, check, lineToggle) => {
@@ -173,6 +180,7 @@ export default function EventsListPage() {
     }
   };
 
+  // Rendering
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
   return (
@@ -201,29 +209,38 @@ export default function EventsListPage() {
           />
         </div>
 
-        { events && !!events.length && (
-          <div>
-            { largeScreen && processedEvents.length > 0 &&
-              <EventsTable columns={columns} data={processedEvents} sortingHandler={setSortingColumns} routeHandler={handleRoute} showLoading={showLoading} />
-            }
+        <div>
+          { largeScreen &&
+            <EventsTable columns={columns} data={processedEvents} sortingHandler={setSortingColumns} routeHandler={handleRoute} showLoader={showLoader} />
+          }
 
-            { !largeScreen &&
-              <div className="events-list">
-                { processedEvents.map(
-                  (e) => (
-                    <div className="card-selector" key={e.id} onClick={() => handleRoute(e)}>
-                      <EventCard
-                        className="event"
-                        event={e}
-                        icon= {<EventTypeIcon event={e} />}
-                      />
-                    </div>
-                  ),
-                )}
-              </div>
-            }
-          </div>
-        )}
+          { !largeScreen &&
+            <div className="events-list">
+              { !showLoader && processedEvents.map(
+                (e) => (
+                  <div className="card-selector" key={e.id} onClick={() => handleRoute(e)}>
+                    <EventCard
+                      className="event"
+                      event={e}
+                      icon={<EventTypeIcon event={e} />}
+                    />
+                  </div>
+                ),
+              )}
+
+              { showLoader && new Array(5).fill('').map(
+                (_, index) => (
+                  <div className="card-selector" key={`loader-${index}`}>
+                    <EventCard
+                      className="event"
+                      showLoader={true}
+                    />
+                  </div>
+                ),
+              )}
+            </div>
+          }
+        </div>
       </Container>
 
       <Footer />
