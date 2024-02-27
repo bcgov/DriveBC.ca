@@ -9,6 +9,8 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 // External assets
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,7 +22,10 @@ import {
 // Styling
 import './EventsTable.scss';
 
-export default function EventsTable({columns, data, sortingHandler, routeHandler}) {
+export default function EventsTable(props) {
+  // Props
+  const { columns, data, sortingHandler, routeHandler, showLoading } = props;
+
   // States
   const [sorting, setSorting] = useState([{ desc: true, id: 'severity' }]);
 
@@ -93,6 +98,49 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
   const descIcon = <FontAwesomeIcon icon={faArrowDownLong} alt="descending order" />;
 
   // Rendering
+  const getEventTitle = (cell) => {
+    const columnId = cell.column.id;
+    const eventType = cell.row.original.event_type;
+    const severity = cell.row.original.severity;
+
+    if (columnId === "event_type") {
+      return eventType.charAt(0) +
+        eventType.slice(1).toLowerCase() +
+        " - " +
+        severity.charAt(0) +
+        severity.toLowerCase() +
+        " delay";
+
+    } else if (columnId === "map") {
+      return "View on map";
+    }
+
+    return "";
+  }
+
+  const renderDesktopLoader = () => {
+    const rows = [];
+    for (let i = 0; i < 50; i++) {
+      rows.push(
+        <tr>
+          {table.getAllColumns().map((column) => {
+            return (
+              <td className={`${column.id} loading`} key={`loader-{i}`}>
+                <Skeleton />
+              </td>
+            );
+          })}
+        </tr>
+      );
+    }
+
+    return (
+      <tbody>
+        {rows}
+      </tbody>
+    );
+  }
+
   return (
     <table>
       <thead>
@@ -111,9 +159,10 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
                       }}
                     >
                       {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
+                        header.column.columnDef.header,
+                        header.getContext()
                       )}
+
                       {{
                         asc: ascIcon,
                         desc: descIcon,
@@ -126,33 +175,34 @@ export default function EventsTable({columns, data, sortingHandler, routeHandler
           </tr>
         ))}
       </thead>
-      <tbody>
-        {table.getRowModel().rows.map((row) => {
-          return (
-            <tr className={row.original.severity.toLowerCase()} onClick={() => routeHandler(row.original)} key={row.id}>
-              {row.getVisibleCells().map((cell) => {
-                return <td
-                className={cell.column.id}
-                key={cell.id}
-                title={
-                  cell.column.id === "event_type"
-                    ? cell.row.original.event_type.charAt(0) + cell.row.original.event_type.slice(1).toLowerCase() + " - "
-                    + cell.row.original.severity.charAt(0) + cell.row.original.severity.slice(1).toLowerCase() + " delay"
-                    : cell.column.id === "map"
-                    ? "View on map"
-                    : ""
-                }
-                >
-                  {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext(),
-                  )}
-                </td>;
-              })}
-            </tr>
-          );
-        })}
-      </tbody>
+
+      {!showLoading &&
+        <tbody>
+          {table.getRowModel().rows.map((row) => {
+            return (
+              <tr className={row.original.severity.toLowerCase()} onClick={() => routeHandler(row.original)} key={row.id}>
+                {row.getVisibleCells().map((cell) => {
+                  return (
+                    <td className={cell.column.id}
+                      key={cell.id}
+                      title={getEventTitle(cell)}>
+
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      }
+
+      {showLoading &&
+        renderDesktopLoader()
+      }
     </table>
   );
 }

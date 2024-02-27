@@ -105,6 +105,7 @@ export default function EventsListPage() {
     },
   ];
 
+  // States
   const [sortingColumns, setSortingColumns] = useState([]);
 
   const [eventCategoryFilter, setEventCategoryFilter] = useState({
@@ -117,7 +118,9 @@ export default function EventsListPage() {
 
   const [routeEdit, setRouteEdit] = useState(!(selectedRoute && selectedRoute.routeFound));
   const [processedEvents, setProcessedEvents] = useState([]);
+  const [showLoading, setShowLoading] = useState(true);
 
+  // Data loading
   const processEvents = () => {
     const hasTrue = (val) => !!val;
     const hasFilterOn = Object.values(eventCategoryFilter).some(hasTrue);
@@ -151,9 +154,11 @@ export default function EventsListPage() {
   useEffect(() => {
     if (events) {
       processEvents();
+      setTimeout(() => setShowLoading(false), 5000);
     }
   }, [events, eventCategoryFilter]);
 
+  // Handlers
   const eventCategoryFilterHandler = (targetCategory, check, lineToggle) => {
     if (!lineToggle) {
       const newFilter = {...eventCategoryFilter};
@@ -199,7 +204,7 @@ export default function EventsListPage() {
         { events && !!events.length && (
           <div>
             { largeScreen && processedEvents.length > 0 &&
-              <EventsTable columns={columns} data={processedEvents} sortingHandler={setSortingColumns} routeHandler={handleRoute} />
+              <EventsTable columns={columns} data={processedEvents} sortingHandler={setSortingColumns} routeHandler={handleRoute} showLoading={showLoading} />
             }
 
             { !largeScreen &&
