@@ -144,7 +144,7 @@ export default function EventsListPage() {
   };
 
   useEffect(() => {
-    loadEvents(selectedRoute);
+    setShowLoader(true);
 
     if (selectedRoute && selectedRoute.routeFound) {
       setRouteEdit(false);
@@ -153,15 +153,15 @@ export default function EventsListPage() {
 
   useEffect(() => {
     if (events) {
-      setShowLoader(true);
+      processEvents();
+      setTimeout(() => setShowLoader(false), 5000);
+//      setShowLoader(false);
     }
   }, [events, eventCategoryFilter]);
 
   useEffect(() => {
     if (showLoader) {
-      processEvents();
-      setTimeout(() => setShowLoader(false), 5000);
-//      setShowLoader(false);
+      loadEvents(selectedRoute);
     }
   }, [showLoader]);
 

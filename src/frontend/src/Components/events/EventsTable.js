@@ -122,10 +122,10 @@ export default function EventsTable(props) {
     const rows = [];
     for (let i = 0; i < 20; i++) {
       rows.push(
-        <tr>
-          {table.getAllColumns().map((column) => {
+        <tr key={`loader-row-${i}`}>
+          {table.getAllColumns().map((column, j) => {
             return (
-              <td className={`${column.id} loading`} key={`loader-{i}`}>
+              <td className={`${column.id} loading`} key={`loader-column-${i}-${j}`}>
                 <Skeleton />
               </td>
             );
