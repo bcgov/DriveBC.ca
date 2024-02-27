@@ -108,15 +108,6 @@ button.btn.open-filters {
             &__path {
                 fill: white;
             }
-
-            .customIcon-bg {
-              fill: white;
-            }
-
-            .customIcon-fg {
-              fill: $Type-Link;
-            }
-
           }
         }
 
@@ -129,12 +120,8 @@ button.btn.open-filters {
               color: $Type-Disabled;
             }
 
-            .customIcon-bg {
+            &__path {
               fill: $Type-Disabled;
-            }
-
-            .customIcon-fg {
-              fill: $Divider;
             }
           }
           label {
