@@ -1,11 +1,11 @@
 // React
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux'
+import { memoize } from 'proxy-memoize';
 import { updateEvents } from '../slices/feedsSlice';
-import { memoize } from 'proxy-memoize'
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
-// Third party packages
+// External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMapLocationDot
@@ -15,7 +15,7 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-// Components and functions
+// Internal imports
 import { getEvents } from '../Components/data/events';
 import { MapContext } from '../App.js';
 import Advisories from '../Components/advisories/Advisories';
@@ -105,6 +105,7 @@ export default function EventsListPage() {
     },
   ];
 
+  // States
   const [sortingColumns, setSortingColumns] = useState([]);
 
   const [eventCategoryFilter, setEventCategoryFilter] = useState({
@@ -116,8 +117,10 @@ export default function EventsListPage() {
   });
 
   const [routeEdit, setRouteEdit] = useState(!(selectedRoute && selectedRoute.routeFound));
-  const [processedEvents, setProcessedEvents] = useState([]);
+  const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
+  const [showLoader, setShowLoader] = useState(false);
 
+  // Data loading
   const processEvents = () => {
     const hasTrue = (val) => !!val;
     const hasFilterOn = Object.values(eventCategoryFilter).some(hasTrue);
@@ -141,7 +144,7 @@ export default function EventsListPage() {
   };
 
   useEffect(() => {
-    loadEvents(selectedRoute);
+    setShowLoader(true);
 
     if (selectedRoute && selectedRoute.routeFound) {
       setRouteEdit(false);
@@ -151,9 +154,17 @@ export default function EventsListPage() {
   useEffect(() => {
     if (events) {
       processEvents();
+      setShowLoader(false);
     }
   }, [events, eventCategoryFilter]);
 
+  useEffect(() => {
+    if (showLoader) {
+      loadEvents(selectedRoute);
+    }
+  }, [showLoader]);
+
+  // Handlers
   const eventCategoryFilterHandler = (targetCategory, check, lineToggle) => {
     if (!lineToggle) {
       const newFilter = {...eventCategoryFilter};
@@ -168,6 +179,7 @@ export default function EventsListPage() {
     }
   };
 
+  // Rendering
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
   return (
@@ -196,29 +208,38 @@ export default function EventsListPage() {
           />
         </div>
 
-        { events && !!events.length && (
-          <div>
-            { largeScreen && processedEvents.length > 0 &&
-              <EventsTable columns={columns} data={processedEvents} sortingHandler={setSortingColumns} routeHandler={handleRoute} />
-            }
+        <div>
+          { largeScreen &&
+            <EventsTable columns={columns} data={processedEvents} sortingHandler={setSortingColumns} routeHandler={handleRoute} showLoader={showLoader} />
+          }
 
-            { !largeScreen &&
-              <div className="events-list">
-                { processedEvents.map(
-                  (e) => (
-                    <div className="card-selector" key={e.id} onClick={() => handleRoute(e)}>
-                      <EventCard
-                        className="event"
-                        event={e}
-                        icon= {<EventTypeIcon event={e} />}
-                      />
-                    </div>
-                  ),
-                )}
-              </div>
-            }
-          </div>
-        )}
+          { !largeScreen &&
+            <div className="events-list">
+              { !showLoader && processedEvents.map(
+                (e) => (
+                  <div className="card-selector" key={e.id} onClick={() => handleRoute(e)}>
+                    <EventCard
+                      className="event"
+                      event={e}
+                      icon={<EventTypeIcon event={e} />}
+                    />
+                  </div>
+                ),
+              )}
+
+              { showLoader && new Array(5).fill('').map(
+                (_, index) => (
+                  <div className="card-selector" key={`loader-${index}`}>
+                    <EventCard
+                      className="event"
+                      showLoader={true}
+                    />
+                  </div>
+                ),
+              )}
+            </div>
+          }
+        </div>
       </Container>
 
       <Footer />

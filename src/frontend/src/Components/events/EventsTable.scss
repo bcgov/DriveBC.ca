@@ -2,6 +2,7 @@
 
 table {
   font-size: 0.875rem;
+  width: 100%;
 
   thead {
     background-color: $BC-Blue-Light;
@@ -50,8 +51,6 @@ table {
           text-transform: capitalize;
         }
 
-
-
         svg {
           color: $BC-Blue;
         }
@@ -78,4 +77,34 @@ tr.closure td.display_category .delay-icon-img {
 
 td.last_updated .friendly-time-text {
   font-size: 0.875rem;
+}
+
+.loading {
+  &.display_category {
+    width: 5.6192%
+  }
+
+  &.severity {
+    width: 9.1352%
+  }
+
+  &.route_at {
+    width: 8.5614%
+  }
+
+  &.direction {
+    width: 8.1593%
+  }
+
+  &.description {
+    width: 50.1690%
+  }
+
+  &.last_updated {
+    width: 12.9110%
+  }
+
+  &.map {
+    width: 5.4422%
+  }
 }
