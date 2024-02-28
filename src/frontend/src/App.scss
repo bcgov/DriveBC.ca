@@ -140,3 +140,8 @@ body {
     color: $Type-Disabled;
   }
 }
+
+// Hide recaptcha badge
+.grecaptcha-badge {
+    visibility: hidden !important;
+}

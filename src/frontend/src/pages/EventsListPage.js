@@ -82,13 +82,25 @@ export default function EventsListPage() {
     },
     {
       header: 'Direction',
-      accessorKey: 'direction',
-      cell: (props) => <span>{props.getValue().toLowerCase()}</span>,
+      accessorKey: 'direction_display',
+      cell: (props) => <span>{props.getValue()}</span>,
+      enableSorting: false,
+    },
+    {
+      header: 'Location',
+      accessorKey: 'location_description',
+      cell: (props) => <span>{props.getValue()}</span>,
+      enableSorting: false,
+    },
+    {
+      header: 'Closest Landmark',
+      accessorKey: 'closest_landmark',
+      cell: (props) => <span>{props.getValue() ? props.getValue() : '-'}</span>,
       enableSorting: false,
     },
     {
       header: 'Description',
-      accessorKey: 'description',
+      accessorKey: 'optimized_description',
       enableSorting: false,
     },
     {
@@ -96,6 +108,12 @@ export default function EventsListPage() {
       accessorKey: 'last_updated',
       cell: (props) => <FriendlyTime date={props.getValue()} />,
       sortDescFirst: true,
+    },
+    {
+      header: 'Next Update',
+      accessorKey: 'next_update',
+      cell: (props) => props.getValue() ? <FriendlyTime date={props.getValue()} /> : '-',
+      enableSorting: false,
     },
     {
       header: 'Map',
