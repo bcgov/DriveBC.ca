@@ -154,8 +154,7 @@ export default function EventsListPage() {
   useEffect(() => {
     if (events) {
       processEvents();
-      setTimeout(() => setShowLoader(false), 5000);
-//      setShowLoader(false);
+      setShowLoader(false);
     }
   }, [events, eventCategoryFilter]);
 
