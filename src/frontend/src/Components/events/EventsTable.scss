@@ -89,22 +89,34 @@ td.last_updated .friendly-time-text {
   }
 
   &.route_at {
-    width: 8.5614%
+    width: 8.7677%
   }
 
-  &.direction {
-    width: 8.1593%
+  &.direction_display {
+    width: 10.1058%
   }
 
-  &.description {
-    width: 50.1690%
+  &.location_description {
+    width: 11.3612%
+  }
+
+  &.closest_landmark {
+    width: 10.5925%
+  }
+
+  &.optimized_description {
+    width: 19.9172%
   }
 
   &.last_updated {
-    width: 12.9110%
+    width: 10.5293%
+  }
+
+  &.next_update {
+    width: 8.5266%
   }
 
   &.map {
-    width: 5.4422%
+    width: 5.4439%
   }
 }

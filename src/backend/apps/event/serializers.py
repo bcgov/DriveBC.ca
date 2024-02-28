@@ -17,10 +17,38 @@ class ScheduleSerializer(serializers.Serializer):
     )
 
 
+def tail_trim(text, target):
+    target_index = text.find(target)
+    return text[:target_index] if target_index != -1 else text
+
+
+def optimize_description(text):
+    res = text
+
+    # Remove next update from the end
+    res = tail_trim(res, ' Next update')
+
+    # Remove last updated from the end
+    res = tail_trim(res, ' Last updated')
+
+    # Split by periods and remove road+directions
+    res = res.split('. ')[1:]
+
+    # Remove 'at' location phrases from the beginning
+    res[0] = tail_trim(res[0], ' at')
+
+    # Remove 'between' location phrases from the beginning
+    res[0] = tail_trim(res[0], ' between')
+
+    # Join split strings and return
+    return '. '.join(res) if len(res) > 1 else res[0] + '.'
+
+
 class EventInternalSerializer(serializers.ModelSerializer):
     display_category = serializers.SerializerMethodField()
     direction_display = serializers.SerializerMethodField()
     route_display = serializers.SerializerMethodField()
+    optimized_description = serializers.SerializerMethodField()
     schedule = ScheduleSerializer()
 
     class Meta:
@@ -50,11 +78,14 @@ class EventInternalSerializer(serializers.ModelSerializer):
 
         return res
 
+    def get_optimized_description(self, obj):
+        return optimize_description(obj.description)
+
     def get_display_category(self, obj):
         if obj.closed:
             return EVENT_DISPLAY_CATEGORY.CLOSURE
 
-        if obj.id.startswith('drivebc.ca/DBCRCON'):
+        if obj.id.startswith('DBCRCON'):
             return EVENT_DISPLAY_CATEGORY.ROAD_CONDITION
 
         if obj.start and datetime.datetime.now(pytz.utc) < obj.start:
