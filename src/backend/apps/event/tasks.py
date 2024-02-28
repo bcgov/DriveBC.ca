@@ -65,23 +65,37 @@ def populate_event_from_data(new_event_data):
 
 def populate_all_event_data(include_closures=True):
     client = FeedClient()
-    closures = client.get_closures_dict() if include_closures else {}
-    feed_data = client.get_event_list()['events']
+    dit_data_dict = client.get_dit_event_dict() if include_closures else {}
+    open511_data = client.get_event_list()['events']
 
     priority = 0
     active_event_ids = []
-    for event_data in feed_data:
+    for event_data in open511_data:
         try:
             id = event_data.get("id", "").split("/")[-1]
-            event_data["closed"] = closures.get(id, False)
-            event_data['priority'] = priority
+            event_data["id"] = id
 
+            # CARS data
+            cars_data = dit_data_dict[id] if id in dit_data_dict else {}
+            event_data["closed"] = cars_data.get('closed', False)
+            event_data["highway_segment_names"] = cars_data.get('highway_segment_names', '')
+
+            location_description = cars_data.get('location_description', '')
+            location_extent = cars_data.get('location_extent', '')
+            if location_extent:
+                location_description += ' for ' + location_extent
+
+            event_data["location_description"] = location_description
+            event_data["closest_landmark"] = cars_data.get('closest_landmark', '')
+            event_data["next_update"] = cars_data.get('next_update', None)
+
+            # Priority
+            event_data['priority'] = priority
             populate_event_from_data(event_data)
             priority += 1
 
-            # Event is active
-            if "id" in event_data:
-                active_event_ids.append(event_data["id"])
+            if id:  # Mark event as active
+                active_event_ids.append(id)
 
         except Exception as e:
             logger.warning(e)

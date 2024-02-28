@@ -13,7 +13,7 @@ from apps.feed.constants import (
     WEBCAM,
 )
 from apps.feed.serializers import (
-    CarsClosureEventSerializer,
+    CarsEventSerializer,
     EventAPISerializer,
     EventFeedSerializer,
     FerryAPISerializer,
@@ -145,15 +145,19 @@ class FeedClient:
             {"format": "json", "limit": 500}
         )
 
-    def get_closures_dict(self):
+    def get_dit_event_dict(self):
         """ Return a dict of <id>:True for fast lookup of closed events by <id>. """
 
-        events = self.get_list_feed(
-            DIT, 'dbcevents', CarsClosureEventSerializer,
+        res = {}
+        cars_events = self.get_list_feed(
+            DIT, 'dbcevents', CarsEventSerializer,
             {"format": "json", "limit": 500}
         )
 
-        return {event["id"]: True for event in events if event["closed"]}
+        for event in cars_events:
+            res[event['id']] = event
+
+        return res
 
     # Ferries
     def get_ferries_list(self):

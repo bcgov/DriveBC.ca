@@ -23,6 +23,12 @@ class Event(BaseModel):
     route_from = models.CharField(max_length=128)
     route_to = models.CharField(max_length=128, blank=True)
 
+    # CARS API info
+    highway_segment_names = models.CharField(max_length=128, blank=True, default='')
+    location_description = models.CharField(max_length=128, blank=True, default='')
+    closest_landmark = models.CharField(max_length=128, blank=True, default='')
+    next_update = models.DateTimeField(null=True, blank=True)
+
     # Update status
     first_created = models.DateTimeField()
     last_updated = models.DateTimeField()
