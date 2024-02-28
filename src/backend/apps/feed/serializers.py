@@ -1,3 +1,4 @@
+import zoneinfo
 from datetime import datetime
 
 from apps.feed.fields import (
@@ -51,7 +52,7 @@ class WebcamAPISerializer(serializers.Serializer):
 
 
 # Event
-class CarsClosureEventSerializer(serializers.Serializer):
+class CarsEventSerializer(serializers.Serializer):
     """
     Serializer to take CARS API events and retrieve ID and closed flag.
 
@@ -82,22 +83,65 @@ class CarsClosureEventSerializer(serializers.Serializer):
 
     id = serializers.CharField()
     closed = serializers.BooleanField(default=False)
+    highway_segment_names = serializers.CharField(allow_blank=True)
+    location_description = serializers.CharField(allow_blank=True)
+    location_extent = serializers.CharField(allow_blank=True)
+    closest_landmark = serializers.CharField(allow_blank=True)
+    next_update = serializers.DateTimeField(allow_null=True)
 
     def to_internal_value(self, data):
         data["id"] = data["event-id"]
 
+        # Initial state for data we want to capture
         data["closed"] = False
+        data["highway_segment_names"] = ''
+        data["location_description"] = ''
+        data["location_extent"] = ''
+        data["closest_landmark"] = ''
+        data["next_update"] = None
+
+        # Data under "details"
         for detail in data.get("details", []):
-            if data["closed"]:
-                break
+            # Get closed state
+            if not data["closed"]:  # Skip block if already recorded
+                for description in detail.get("descriptions", []):
+                    kind = description.get("kind", {})
+                    data["closed"] = kind.get("category") == "traffic_pattern" and kind.get("code").startswith("closed")
 
-            for description in detail.get("descriptions", []):
-                if data["closed"]:
-                    break
+                    # Stop inner for loop if already marked
+                    if data["closed"]:
+                        break
 
-                kind = description.get("kind", {})
-                data["closed"] = (kind.get("category") == "traffic_pattern" and
-                                  kind.get("code").startswith("closed"))
+            # Get highway nicknames
+            for location in detail.get("locations", []):
+                if not data["highway_segment_names"]:  # Skip block if already recorded
+                    names = location.get("segment-names", [])
+                    if len(names):
+                        data["highway_segment_names"] = names[0]
+                        break  # No other location data, stop for loop
+
+        # Data under "communication-plans"
+        for plan in data.get("communication-plans", []):
+            # Get location descriptions
+            if plan.get('plan-type', '') == 'BRIEF_LOCATION':
+                data["location_description"] = plan.get('description', '')
+                break  # No other communication-plans data, stop for loop
+
+        # Data under "communication-plan-template"
+        template = data.get("communication-plan-template", {})
+        # Get location length
+        data["location_extent"] = template.get('extent-event-length', '')
+        # Get closest landmark
+        data["closest_landmark"] = template.get('nearby-city-reference', '')
+
+        # Data under "next-update-time"
+        # Get next update time
+        if "next-update-time" in data:
+            next_update = data.get("next-update-time")
+            data["next_update"] = datetime.fromtimestamp(
+                next_update['time'] // 1000,
+                tz=zoneinfo.ZoneInfo(key=next_update['timeZoneId'])
+            )
 
         return super().to_internal_value(data)
 

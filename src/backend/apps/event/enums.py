@@ -97,11 +97,16 @@ EVENT_DIRECTION_DISPLAY = {
 }
 
 EVENT_DIFF_FIELDS = [
+    'next_update',
     'last_updated',
     'priority'
 ]
 
 EVENT_UPDATE_FIELDS = [
+    'highway_segment_names',
+    'location_description',
+    'closest_landmark',
+    'next_update',
     'description',
     'event_type',
     'event_sub_type',
