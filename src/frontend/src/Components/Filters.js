@@ -80,15 +80,18 @@ export default function Filters(props) {
 
 //  const tooltipReststops = (
 //    <Tooltip id="tooltip" className="tooltip-content">
-//      <p>Locations of provincial rest stops run by the province.</p>
+//      <p>Locations of rest stops run by the province.</p>
 //    </Tooltip>
 //  );
 
 //  const tooltipWeather = (
 //    <Tooltip id="tooltip" className="tooltip-content">
-//      <p>Current weather and predictions for a region from Environment Canada.
-//         Winter forecasts for high mountain passes, also from Environment Canada.
-//         Find out how the road is at the moment and what nearby weather stations predict for it in this specific location.</p>
+//     <p>Learn about weather conditions that could affect your route including:
+//       <ul>
+//         <li>Current weather for a region from Environment Canada</li>
+//         <li>Find out how the road is at the moment at nearby weather stations in this specific location</li>
+//       </ul>
+//     </p>
 //    </Tooltip>
 //  );
 
@@ -315,7 +318,9 @@ export default function Filters(props) {
                     <span className="tooltip-info">?</span>
                   </OverlayTrigger>
                 </div>
-
+                */}
+                
+                {/* 
                 <div className={'filter-item filter-item--weather'}>
                   <span className="filter-item__icon">
                     <FontAwesomeIcon icon={faCloudSun} alt="weather" />
