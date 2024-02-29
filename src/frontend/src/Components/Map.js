@@ -721,7 +721,11 @@ export default function MapWrapper({
         ref={panel} className={`side-panel ${openPanel ? 'open' : ''}`}
         onClick={maximizePanel}
         onTouchMove={maximizePanel}
-      >
+        onKeyDown={(keyEvent) => {
+          if (keyEvent.keyCode == 13) {
+            maximizePanel();
+          }
+        }}>
 
         <button
           className="close-panel"

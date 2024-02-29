@@ -27,7 +27,13 @@ export default function Advisories(props) {
     <ul className="advisories-list">
       {!!advisories && advisories.map((advisory, index) => {
         return (
-          <li className="advisory-li unread" key={advisory.id} onClick={() => handleClick(advisory)}>
+          <li className="advisory-li unread" key={advisory.id} onClick={() => handleClick(advisory)}
+            onKeyDown={(keyEvent) => {
+              if (keyEvent.keyCode == 13) {
+                handleClick(advisory);
+              }
+            }}>
+
             <div className="advisory-li-title-container">
               <h4 className='advisory-li-title'>{advisory.title}</h4>
               {showTimestamp &&

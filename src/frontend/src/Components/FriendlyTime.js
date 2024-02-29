@@ -33,8 +33,15 @@ export default function FriendlyTime( {date} ) {
             title={dateFormatted}
             onClick={(event) => {
               event.stopPropagation();
-              setShowTooltip(!showTooltip)}
-            }>
+              setShowTooltip(!showTooltip);
+            }}
+            onKeyDown={(keyEvent) => {
+              if (keyEvent.keyCode == 13) {
+                event.stopPropagation();
+                setShowTooltip(!showTooltip)
+              }
+            }}>
+
             <p className="friendly-time-text">
               <ReactTimeAgo date={date} locale="en-US"/>
             </p>

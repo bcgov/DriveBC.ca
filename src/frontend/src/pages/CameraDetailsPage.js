@@ -197,7 +197,7 @@ export default function CameraDetailsPage() {
 
   const play = () => {
     // Pre load images for preventing strobing
-    // For Firefox, Settings Performance > Use recommended performance settings 
+    // For Firefox, Settings Performance > Use recommended performance settings
     // and Performance > Use recommended performance settings > Use hardware acceleration when available in the browser settings
     // need to be disabled
     replayImages.forEach((img) => {
@@ -222,7 +222,14 @@ export default function CameraDetailsPage() {
     <div className="camera-page">
       <div className="page-header">
         <Container>
-          <a onClick={returnHandler} className="back-link">
+          <a className="back-link"
+            onClick={returnHandler}
+            onKeyDown={(keyEvent) => {
+              if (keyEvent.keyCode == 13) {
+                returnHandler();
+              }
+            }}>
+
             <FontAwesomeIcon icon={faArrowLeft} />
             Back to last page
           </a>
