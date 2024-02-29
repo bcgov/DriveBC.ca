@@ -82,7 +82,16 @@ export default function CamPopup(props) {
       {camera &&
         <div className="popup__content">
           <div className="popup__content__title">
-            <p className="name" onClick={handlePopupClick}>{camera.name}</p>
+            <p className="name"
+              onClick={handlePopupClick}
+              onKeyDown={(keyEvent) => {
+                if (keyEvent.keyCode == 13) {
+                  handlePopupClick();
+                }
+              }}>
+
+              {camera.name}
+            </p>
           </div>
           {camera.is_on ?
             <div className="popup__content__image">

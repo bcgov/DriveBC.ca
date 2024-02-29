@@ -150,14 +150,14 @@ export default function EventsTable(props) {
               return (
                 <th className={header.id} key={header.id} colSpan={header.colSpan}>
                   {!header.isPlaceholder && !showLoader && (
-                    <span
-                      {...{
-                        className: header.column.getCanSort() ?
-                          'cursor-pointer select-none' :
-                          '',
-                        onClick: () => toggleSortingHandler(header.column),
-                      }}
-                    >
+                    <span className={ header.column.getCanSort() ? 'cursor-pointer select-none' : '' }
+                      onClick={() => toggleSortingHandler(header.column)}
+                      onKeyDown={(keyEvent) => {
+                        if (keyEvent.keyCode == 13) {
+                          toggleSortingHandler(header.column);
+                        }
+                      }}>
+
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext()

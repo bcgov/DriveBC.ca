@@ -28,7 +28,12 @@ export default function Bulletins(props) {
     <ul className='bulletins-list'>
       {!!bulletins && bulletins.map((bulletin, index) => {
         return (
-          <li className='bulletin-li unread' key={bulletin.id} onClick={() => handleClick(bulletin)}>
+          <li className='bulletin-li unread' key={bulletin.id} onClick={() => handleClick(bulletin)}
+            onKeyDown={(keyEvent) => {
+              if (keyEvent.keyCode == 13) {
+                handleClick(bulletin);
+              }
+            }}>
 
             <div className='bulletin-li-title-container'>
               <h3 className='bulletin-li-title'>{bulletin.title}</h3>

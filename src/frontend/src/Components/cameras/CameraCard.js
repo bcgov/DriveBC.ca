@@ -80,7 +80,13 @@ export default function CameraCard(props) {
                 <p>Unable to retrieve latest image. Showing last image received.</p>
                 <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
               </div>
-              <div className={'card-pill' + (show ? ' bounce' : ' hidden') } onClick={handleChildClick} >
+              <div className={'card-pill' + (show ? ' bounce' : ' hidden') } onClick={handleChildClick}
+                onKeyDown={(keyEvent) => {
+                  if (keyEvent.keyCode == 13) {
+                    handleChildClick();
+                  }
+                }}>
+
                 <p>Stale</p>
                 <FontAwesomeIcon icon={faCircleInfo} />
               </div>
@@ -96,7 +102,13 @@ export default function CameraCard(props) {
                 <p>Longer than expected delay, displaying last image received.</p>
                 <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
               </div>
-              <div className={'card-pill' + (show ? ' bounce' : ' hidden') } onClick={handleChildClick} >
+              <div className={'card-pill' + (show ? ' bounce' : ' hidden') } onClick={handleChildClick}
+                onKeyDown={(keyEvent) => {
+                  if (keyEvent.keyCode == 13) {
+                    handleChildClick();
+                  }
+                }}>
+
                 <p>Delayed</p>
                 <FontAwesomeIcon icon={faCircleInfo} />
               </div>
