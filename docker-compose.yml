@@ -42,6 +42,7 @@ services:
       dockerfile: ./compose/frontend/Dockerfile
       args:
         DEBUG_BUILD: true
+        FONTAWESOME_PACKAGE_TOKEN: ${FONTAWESOME_PACKAGE_TOKEN}
     stdin_open: true
     tty: true
     ports:

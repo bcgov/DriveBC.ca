@@ -7,6 +7,8 @@ RUN chown node:root /app
 # Install dependencies
 COPY ./src/frontend/package.json /app/
 COPY ./src/frontend/package-lock.json /app/
+COPY ./src/frontend/.npmrc /app/
+ARG FONTAWESOME_PACKAGE_TOKEN
 RUN npm install
 
 # Add rest of the client code
