@@ -7,6 +7,7 @@ RUN chown node:root /app
 # Install dependencies
 COPY ./src/frontend/package.json /app/
 COPY ./src/frontend/package-lock.json /app/
+COPY ./src/frontend/.npmrc /app/
 RUN npm install
 
 # Add rest of the client code
@@ -17,6 +18,9 @@ RUN chown node:root /app/node_modules
 # ensure running user can write to its home directory--without setting this,
 # home is /, so node can't create a cache dir
 ENV HOME /home/node
+
+ARG FONTAWESOME_PACKAGE_TOKEN
+ENV FONTAWESOME_PACKAGE_TOKEN=${FONTAWESOME_PACKAGE_TOKEN}
 
 RUN npm run openshift_build
 
