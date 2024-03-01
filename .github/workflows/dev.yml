@@ -35,6 +35,7 @@ jobs:
           app=drivebc
         containerfiles: ./compose/frontend/StaticBuild
         build-args: |
+          FONTAWESOME_PACKAGE_TOKEN=${{ secrets.FONTAWESOME_PACKAGE_TOKEN }}
           DEBUG_BUILD=true
 
     - name: Push to Github Packages

@@ -57,7 +57,8 @@ jobs:
           app=drivebc
         containerfiles: ./compose/frontend/StaticBuild
         build-args: |
-          DEBUG_BUILD=true
+          FONTAWESOME_PACKAGE_TOKEN=${{ secrets.FONTAWESOME_PACKAGE_TOKEN }}
+          DEBUG_BUILD=false
 
     - name: Push to Github Packages
       uses: redhat-actions/push-to-registry@v2.7
