@@ -23,17 +23,23 @@ import {
 import './mapPopup.scss';
 
 function convertCategory(event) {
-  switch(event.display_category) {
+  switch (event.display_category) {
     case 'closures':
       return 'Closure';
     case 'majorEvents':
-      return event.event_type === 'INCIDENT' ? 'Major incident ' : 'Major delay';
+      return event.event_type === 'INCIDENT'
+        ? 'Major incident '
+        : 'Major delay';
     case 'minorEvents':
-      return event.event_type === 'INCIDENT' ? 'Minor incident ' : 'Minor delay';
+      return event.event_type === 'INCIDENT'
+        ? 'Minor incident '
+        : 'Minor delay';
     case 'futureEvents':
-      return event.severity === 'MAJOR' ? 'Major future event' : 'Minor future event';
-      case 'roadConditions':
-        return 'Road condition'
+      return event.severity === 'MAJOR'
+        ? 'Major future event'
+        : 'Minor future event';
+    case 'roadConditions':
+      return 'Road condition';
     default:
       return '';
   }
@@ -41,32 +47,35 @@ function convertCategory(event) {
 
 function convertDirection(direction) {
   switch (direction) {
-      case "N":
-          return "Northbound";
-      case "W":
-          return "Westbound";
-      case "E":
-          return "Eastbound";
-      case "S":
-          return "Southbound";
-      case "BOTH":
-          return "Both Directions";
-      case "NONE":
-          return " ";
-      default:
-          return " ";
+    case 'N':
+      return 'Northbound';
+    case 'W':
+      return 'Westbound';
+    case 'E':
+      return 'Eastbound';
+    case 'S':
+      return 'Southbound';
+    case 'BOTH':
+      return 'Both Directions';
+    case 'NONE':
+      return ' ';
+    default:
+      return ' ';
   }
 }
 
 export function getEventPopup(eventFeature) {
-  const eventData = eventFeature.ol_uid ? eventFeature.getProperties() : eventFeature;
+  const eventData = eventFeature.ol_uid
+    ? eventFeature.getProperties()
+    : eventFeature;
   const severity = eventData.severity.toLowerCase();
 
   return (
-    <div className={`popup popup--event ${eventData.display_category} ${severity}`}>
+    <div
+      className={`popup popup--event ${eventData.display_category} ${severity}`}>
       <div className="popup__title">
         <div className="popup__title__icon">
-          <EventTypeIcon event={eventData} state='active' />
+          <EventTypeIcon event={eventData} state="active" />
         </div>
         <p className="name">{convertCategory(eventData)}</p>
       </div>
@@ -116,15 +125,18 @@ export function getFerryPopup(ferryFeature) {
           <FontAwesomeIcon icon={faFerry} />
         </div>
         <p className="name">
-          <a href={ferryData.url} target="_blank" rel="noreferrer">{`${ferryData.title}`}</a>
+          <a
+            href={ferryData.url}
+            target="_blank"
+            rel="noreferrer">{`${ferryData.title}`}</a>
         </p>
       </div>
       <div className="popup__content">
-        {ferryData.image_url &&
+        {ferryData.image_url && (
           <div className="popup__content__image">
             <img src={ferryData.image_url} alt={ferryData.title} />
           </div>
-        }
+        )}
 
         <div className="popup__content__description">
           <p>{parse(ferryData.description)}</p>
@@ -247,5 +259,100 @@ export function getFerryPopup(ferryFeature) {
     //     <p className="label">Courtesy of <a alt="Environment Canada" target="_self" href="https://weather.gc.ca/canada_e.html">Environment Canada <FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a></p>
     //   </div>
     // </div>
+  );
+}
+export function getWeatherPopup(weatherFeature) {
+  const weatherData = weatherFeature.getProperties();
+
+  return (
+    <div className="popup popup--road-weather">
+      <div className="popup__title">
+        <div className="popup__title__icon">
+          <FontAwesomeIcon icon={faTemperatureHalf} />
+        </div>
+        <p className="name">Local Weather</p>
+        <span className="sub-name">Weather Stations</span>
+      </div>
+      <div className="popup__content">
+        <div className="popup__content__title">
+          <p className="name">{weatherData.weather_station_name}</p>
+          <FriendlyTime date={weatherData.issuedUtc} />
+          <p className="description">{weatherData.location_description}</p>
+        </div>
+        <div className="popup__content__description">
+          <div className="road-condition">
+            <p className="data">{weatherData.road_condition}</p>
+            <p className="label">Road Condition</p>
+          </div>
+          {(weatherData.air_temperature || weatherData.road_temperature) && (
+            <div className="temperatures">
+              {weatherData.air_temperature && (
+                <div className="temperature temperature--air">
+                  <p className="data">{weatherData.air_temperature}</p>
+                  <p className="label">Air</p>
+                </div>
+              )}
+              {weatherData.road_temperature && (
+                <div className="temperature temperature--road">
+                  <p className="data">{weatherData.road_temperature}</p>
+                  <p className="label">Road</p>
+                </div>
+              )}
+            </div>
+          )}
+          <div className="data-card">
+            {weatherData.elevation && (
+              <div className="data-card__row">
+                <div className="data-icon">
+                  <FontAwesomeIcon className="icon" icon={faMountain} />
+                </div>
+                <p className="label">Elevation</p>
+                <p className="data">{weatherData.elevation}</p>
+              </div>
+            )}
+            {weatherData.precipitation && (
+              <div className="data-card__row">
+                <div className="data-icon">
+                  <FontAwesomeIcon className="icon" icon={faDroplet} />
+                </div>
+                <p className="label">Precipitation (last 12 hours)</p>
+                <p className="data">{weatherData.precipitation}</p>
+              </div>
+            )}
+            {weatherData.snow && (
+              <div className="data-card__row">
+                <div className="data-icon">
+                  <FontAwesomeIcon className="icon" icon={faSnowflake} />
+                </div>
+                <p className="label">Snow (last 12 hours)</p>
+                <p className="data">{weatherData.snow}</p>
+              </div>
+            )}
+            {(weatherData.average_wind ||
+              weatherData.maximum_wind) && (
+                <div className="data-card__row data-card__row group">
+                  <div className="data-icon">
+                    <FontAwesomeIcon className="icon" icon={faWind} />
+                  </div>
+                  <div className="data-group">
+                    {weatherData.average_wind && (
+                      <div className="data-group__row">
+                        <p className="label">Average wind</p>
+                        <p className="data">{weatherData.average_wind}</p>
+                      </div>
+                    )}
+                    {weatherData.maximum_wind && (
+                      <div className="data-group__row">
+                        <p className="label">Maximum wind</p>
+                        <p className="data">{weatherData.maximum_wind}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -37,6 +37,7 @@ function App() {
         roadConditions: true,
         highwayCams: false,
         inlandFerries: true,
+        weather: true,
       },
     };
   }
