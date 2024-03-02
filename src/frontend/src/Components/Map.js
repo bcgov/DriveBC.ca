@@ -1,10 +1,21 @@
 // React
-import React, { useContext, useRef, useEffect, useState, useCallback } from 'react';
+import React, {
+  useContext,
+  useRef,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 
 // Redux
-import { memoize } from 'proxy-memoize'
-import { useSelector, useDispatch } from 'react-redux'
-import { updateCameras, updateEvents, updateFerries } from '../slices/feedsSlice';
+import { memoize } from 'proxy-memoize';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  updateCameras,
+  updateEvents,
+  updateFerries,
+  updateWeather,
+} from '../slices/feedsSlice';
 import { updateMapState } from '../slices/mapSlice';
 
 // External Components
@@ -19,11 +30,17 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 // Components and functions
-import CamPopup from './map/camPopup.js'
+import CamPopup from './map/camPopup.js';
 import { getCamerasLayer } from './map/layers/camerasLayer.js';
-import { getEventPopup, getFerryPopup } from './map/mapPopup.js'
+import {
+  getEventPopup,
+  getFerryPopup,
+  getWeatherPopup,
+} from './map/mapPopup.js';
 import { getEvents } from './data/events.js';
+import { getWeather } from './data/weather.js';
 import { loadEventsLayers } from './map/layers/eventsLayer.js';
+import { loadWeatherLayers } from './map/layers/weatherLayer.js';
 import {
   fitMap,
   blueLocationMarkup,
@@ -32,7 +49,7 @@ import {
   getEventIcon,
   setZoomPan,
   zoomIn,
-  zoomOut
+  zoomOut,
 } from './map/helper.js';
 import { getFerries } from './data/ferries.js';
 import { getFerriesLayer } from './map/layers/ferriesLayer.js';
@@ -57,41 +74,58 @@ import VectorTileSource from 'ol/source/VectorTile.js';
 import View from 'ol/View';
 
 // Styling
-import { cameraStyles, ferryStyles } from './data/featureStyleDefinitions.js';
+import {
+  cameraStyles,
+  ferryStyles,
+  roadWeatherStyles,
+} from './data/featureStyleDefinitions.js';
 import './Map.scss';
 
 export default function MapWrapper({
   camera,
   isPreview,
   cameraHandler,
-  mapViewRoute
+  mapViewRoute,
 }) {
   // Redux
   const dispatch = useDispatch();
   const {
-    cameras, camTimeStamp, // Cameras
-    events, eventTimeStamp, // Events
-    ferries, ferriesTimeStamp, // CMS
-    searchLocationFrom, selectedRoute, // Routing
-    zoom, pan, // Map
-
-  } = useSelector(useCallback(memoize(state => ({
-    // Cameras
-    cameras: state.feeds.cameras.list,
-    camTimeStamp: state.feeds.cameras.routeTimeStamp,
-    // Events
-    events: state.feeds.events.list,
-    eventTimeStamp: state.feeds.events.routeTimeStamp,
-    // CMS
-    ferries: state.feeds.ferries.list,
-    ferriesTimeStamp: state.feeds.ferries.routeTimeStamp,
-    // Routing
-    searchLocationFrom: state.routes.searchLocationFrom,
-    selectedRoute: state.routes.selectedRoute,
-    // Map
-    zoom: state.map.zoom,
-    pan: state.map.pan
-  }))));
+    cameras,
+    camTimeStamp, // Cameras
+    events,
+    eventTimeStamp, // Events
+    ferries,
+    ferriesTimeStamp, // CMS
+    weather,
+    weatherTimeStamp, // Weather
+    searchLocationFrom,
+    selectedRoute, // Routing
+    zoom,
+    pan, // Map
+  } = useSelector(
+    useCallback(
+      memoize(state => ({
+        // Cameras
+        cameras: state.feeds.cameras.list,
+        camTimeStamp: state.feeds.cameras.routeTimeStamp,
+        // Events
+        events: state.feeds.events.list,
+        eventTimeStamp: state.feeds.events.routeTimeStamp,
+        // CMS
+        ferries: state.feeds.ferries.list,
+        ferriesTimeStamp: state.feeds.ferries.routeTimeStamp,
+        // Weather
+        weather: state.feeds.weather.list,
+        weatherTimeStamp: state.feeds.weather.routeTimeStamp,
+        // Routing
+        searchLocationFrom: state.routes.searchLocationFrom,
+        selectedRoute: state.routes.selectedRoute,
+        // Map
+        zoom: state.map.zoom,
+        pan: state.map.pan,
+      })),
+    ),
+  );
 
   // Context
   const { mapContext, setMapContext } = useContext(MapContext);
@@ -114,29 +148,36 @@ export default function MapWrapper({
   // Workaround for OL handlers not being able to read states
   const [clickedCamera, setClickedCamera] = useState();
   const clickedCameraRef = useRef();
-  const updateClickedCamera = (feature) => {
+  const updateClickedCamera = feature => {
     clickedCameraRef.current = feature;
     setClickedCamera(feature);
-  }
+  };
 
   const [clickedEvent, setClickedEvent] = useState();
   const clickedEventRef = useRef();
-  const updateClickedEvent = (feature) => {
+  const updateClickedEvent = feature => {
     clickedEventRef.current = feature;
     setClickedEvent(feature);
-  }
+  };
 
   const [clickedFerry, setClickedFerry] = useState();
   const clickedFerryRef = useRef();
-  const updateClickedFerry = (feature) => {
+  const updateClickedFerry = feature => {
     clickedFerryRef.current = feature;
     setClickedFerry(feature);
-  }
+  };
+
+  const [clickedWeather, setClickedWeather] = useState();
+  const clickedWeatherRef = useRef();
+  const updateClickedWeather = feature => {
+    clickedWeatherRef.current = feature;
+    setClickedWeather(feature);
+  };
 
   // Define the function to be executed after the delay
   function resetCameraPopupRef() {
-      cameraPopupRef.current = null;
-    }
+    cameraPopupRef.current = null;
+  }
 
   useEffect(() => {
     // initialization hook for the OpenLayers map logic
@@ -150,7 +191,7 @@ export default function MapWrapper({
         animation: {
           duration: 250,
         },
-      margin: 90,
+        margin: 90,
       },
     });
 
@@ -167,8 +208,11 @@ export default function MapWrapper({
     };
 
     // Set map extent
-    const extent = [-143.23013896362576, 65.59132385849652, -109.97743701256154, 46.18015377362468];
-    const transformedExtent = transformExtent(extent,'EPSG:4326','EPSG:3857');
+    const extent = [
+      -143.23013896362576, 65.59132385849652, -109.97743701256154,
+      46.18015377362468,
+    ];
+    const transformedExtent = transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
 
     mapView.current = new View({
       projection: 'EPSG:3857',
@@ -176,7 +220,7 @@ export default function MapWrapper({
       center: camera ? handleCenter() : fromLonLat(pan),
       zoom: handleZoom(),
       maxZoom: 15,
-      extent: transformedExtent
+      extent: transformedExtent,
     });
 
     // Apply the basemap style from the arcgis resource
@@ -218,25 +262,40 @@ export default function MapWrapper({
     });
 
     mapRef.current.on('moveend', function () {
-      dispatch(updateMapState({pan: toLonLat(mapView.current.getCenter()), zoom: mapView.current.getZoom()}))
+      dispatch(
+        updateMapState({
+          pan: toLonLat(mapView.current.getCenter()),
+          zoom: mapView.current.getZoom(),
+        }),
+      );
     });
 
     // Click states
-    const resetClickedStates = (targetFeature) => {
+    const resetClickedStates = targetFeature => {
       // camera is set to data structure rather than map feature
       if (clickedCameraRef.current && !clickedCameraRef.current.setStyle) {
-        clickedCameraRef.current = mapLayers.current['highwayCams'].getSource().getFeatureById(clickedCameraRef.current.id);
+        clickedCameraRef.current = mapLayers.current['highwayCams']
+          .getSource()
+          .getFeatureById(clickedCameraRef.current.id);
       }
 
-      if (clickedCameraRef.current && targetFeature != clickedCameraRef.current) {
+      if (
+        clickedCameraRef.current &&
+        targetFeature != clickedCameraRef.current
+      ) {
         clickedCameraRef.current.setStyle(cameraStyles['static']);
         updateClickedCamera(null);
       }
 
       // event is set to data structure rather than map feature
       if (clickedEventRef.current && !clickedEventRef.current.ol_uid) {
-        const features = mapLayers.current[clickedEventRef.current.display_category].getSource();
-        clickedEventRef.current = features.getFeatureById(clickedEventRef.current.id);
+        const features =
+          mapLayers.current[
+            clickedEventRef.current.display_category
+          ].getSource();
+        clickedEventRef.current = features.getFeatureById(
+          clickedEventRef.current.id,
+        );
       }
 
       if (clickedEventRef.current && targetFeature != clickedEventRef.current) {
@@ -245,7 +304,8 @@ export default function MapWrapper({
         );
 
         // Set associated line/point feature
-        const altFeature = clickedEventRef.current.getProperties()['altFeature'];
+        const altFeature =
+          clickedEventRef.current.getProperties()['altFeature'];
         if (altFeature) {
           altFeature.setStyle(getEventIcon(altFeature, 'static'));
         }
@@ -257,18 +317,23 @@ export default function MapWrapper({
         clickedFerryRef.current.setStyle(ferryStyles['static']);
         updateClickedFerry(null);
       }
-    }
+      if (
+        clickedWeatherRef.current &&
+        targetFeature != clickedWeatherRef.current
+      ) {
+        clickedWeatherRef.current.setStyle(roadWeatherStyles['static']);
+        updateClickedWeather(null);
+      }
+    };
 
-    const camClickHandler = (feature) => {
+    const camClickHandler = feature => {
       resetClickedStates(feature);
 
       // set new clicked camera feature
       feature.setStyle(cameraStyles['active']);
       feature.setProperties({ clicked: true }, true);
 
-      popup.current.setPosition(
-        feature.getGeometry().getCoordinates(),
-      );
+      popup.current.setPosition(feature.getGeometry().getCoordinates());
       popup.current.getElement().style.top = '40px';
 
       updateClickedCamera(feature);
@@ -276,9 +341,9 @@ export default function MapWrapper({
       cameraPopupRef.current = popup;
 
       setTimeout(resetCameraPopupRef, 500);
-    }
+    };
 
-    const eventClickHandler = (feature) => {
+    const eventClickHandler = feature => {
       // reset previous clicked feature
       resetClickedStates(feature);
 
@@ -295,13 +360,11 @@ export default function MapWrapper({
 
       updateClickedEvent(feature);
 
-      popup.current.setPosition(
-        feature.getGeometry().getCoordinates(),
-      );
+      popup.current.setPosition(feature.getGeometry().getCoordinates());
       popup.current.getElement().style.top = '40px';
-    }
+    };
 
-    const ferryClickHandler = (feature) => {
+    const ferryClickHandler = feature => {
       // reset previous clicked feature
       resetClickedStates(feature);
 
@@ -310,20 +373,31 @@ export default function MapWrapper({
       feature.setProperties({ clicked: true }, true);
       updateClickedFerry(feature);
 
-      popup.current.setPosition(
-        feature.getGeometry().getCoordinates(),
-      );
+      popup.current.setPosition(feature.getGeometry().getCoordinates());
       popup.current.getElement().style.top = '40px';
-    }
+    };
 
-    mapRef.current.on('click', async (e) => {
+    const weatherClickHandler = feature => {
+      // reset previous clicked feature
+      resetClickedStates(feature);
+
+      // set new clicked ferry feature
+      feature.setStyle(roadWeatherStyles['active']);
+      feature.setProperties({ clicked: true }, true);
+      updateClickedWeather(feature);
+
+      popup.current.setPosition(feature.getGeometry().getCoordinates());
+      popup.current.getElement().style.top = '40px';
+    };
+
+    mapRef.current.on('click', async e => {
       const features = mapRef.current.getFeaturesAtPixel(e.pixel, {
         hitTolerance: 20,
       });
 
       if (features.length) {
         const clickedFeature = features[0];
-        switch(clickedFeature.getProperties()['type']) {
+        switch (clickedFeature.getProperties()['type']) {
           case 'camera':
             camClickHandler(clickedFeature);
             return;
@@ -333,6 +407,9 @@ export default function MapWrapper({
           case 'ferry':
             ferryClickHandler(clickedFeature);
             return;
+          case 'weather':
+            weatherClickHandler(clickedFeature);
+            return;
         }
       }
 
@@ -341,7 +418,7 @@ export default function MapWrapper({
     });
 
     // Hover states
-    const resetHoveredStates = (targetFeature) => {
+    const resetHoveredStates = targetFeature => {
       if (hoveredFeature.current && targetFeature != hoveredFeature.current) {
         if (!hoveredFeature.current.getProperties().clicked) {
           switch (hoveredFeature.current.getProperties()['type']) {
@@ -349,10 +426,13 @@ export default function MapWrapper({
               hoveredFeature.current.setStyle(cameraStyles['static']);
               break;
             case 'event': {
-              hoveredFeature.current.setStyle(getEventIcon(hoveredFeature.current, 'static'));
+              hoveredFeature.current.setStyle(
+                getEventIcon(hoveredFeature.current, 'static'),
+              );
 
               // Set associated line/point feature
-              const altFeature = hoveredFeature.current.getProperties()['altFeature'];
+              const altFeature =
+                hoveredFeature.current.getProperties()['altFeature'];
               if (altFeature) {
                 altFeature.setStyle(getEventIcon(altFeature, 'static'));
               }
@@ -361,14 +441,17 @@ export default function MapWrapper({
             case 'ferry':
               hoveredFeature.current.setStyle(ferryStyles['static']);
               break;
+              case 'weather':
+                hoveredFeature.current.setStyle(roadWeatherStyles['static']);
+                break;
           }
         }
 
         hoveredFeature.current = null;
       }
-    }
+    };
 
-    mapRef.current.on('pointermove', async (e) => {
+    mapRef.current.on('pointermove', async e => {
       const features = mapRef.current.getFeaturesAtPixel(e.pixel, {
         hitTolerance: 20,
       });
@@ -399,6 +482,11 @@ export default function MapWrapper({
               targetFeature.setStyle(ferryStyles['hover']);
             }
             return;
+          case 'weather':
+            if (!targetFeature.getProperties().clicked) {
+              targetFeature.setStyle(roadWeatherStyles['hover']);
+            }
+            return;
         }
       }
 
@@ -420,18 +508,25 @@ export default function MapWrapper({
         searchLocationFrom[0].geometry.coordinates,
         blueLocationMarkup,
         mapRef,
-        locationPinRef
+        locationPinRef,
       );
 
-      if (isInitialMountLocation.current === 'not set') { // first run of this effector
+      if (isInitialMountLocation.current === 'not set') {
+        // first run of this effector
         // store the initial searchLocationFrom.[0].label so that subsequent
         // runs can be evaluated to detect change in the search from
         isInitialMountLocation.current = searchLocationFrom[0].label;
-      } else if (isInitialMountLocation.current !== searchLocationFrom[0].label) {
+      } else if (
+        isInitialMountLocation.current !== searchLocationFrom[0].label
+      ) {
         // only zoomPan on a real change in the search location from; this makes
         // this effector idempotent wrt state
         isInitialMountLocation.current = false;
-        setZoomPan(mapView, 9, fromLonLat(searchLocationFrom[0].geometry.coordinates));
+        setZoomPan(
+          mapView,
+          9,
+          fromLonLat(searchLocationFrom[0].geometry.coordinates),
+        );
       }
     } else {
       // initial location was set, so no need to prevent pan/zoom
@@ -440,7 +535,8 @@ export default function MapWrapper({
   }, [searchLocationFrom]);
 
   useEffect(() => {
-    if (isInitialMountRoute.current) { // Do nothing on first load
+    if (isInitialMountRoute.current) {
+      // Do nothing on first load
       isInitialMountRoute.current = false;
       return;
     }
@@ -472,42 +568,46 @@ export default function MapWrapper({
         mapContext,
         camera,
         updateClickedCamera,
-      )
+      );
 
       mapRef.current.addLayer(mapLayers.current['highwayCams']);
       mapLayers.current['highwayCams'].setZIndex(78);
     }
   }, [cameras]);
 
-  const loadCameras = async (route) => {
+  const loadCameras = async route => {
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
-    if (!cameras || (camTimeStamp != newRouteTimestamp)) {
-      dispatch(updateCameras({
-        list: await getCameras(route ? route.points : null),
-        routeTimeStamp: route ? route.searchTimestamp : null,
-        timeStamp: new Date().getTime()
-      }));
+    if (!cameras || camTimeStamp != newRouteTimestamp) {
+      dispatch(
+        updateCameras({
+          list: await getCameras(route ? route.points : null),
+          routeTimeStamp: route ? route.searchTimestamp : null,
+          timeStamp: new Date().getTime(),
+        }),
+      );
     }
-  }
+  };
 
   useEffect(() => {
     loadEventsLayers(events, mapContext, mapLayers, mapRef);
   }, [events]);
 
-  const loadEvents = async (route) => {
+  const loadEvents = async route => {
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
-    if (!events || (eventTimeStamp != newRouteTimestamp)) {
-      dispatch(updateEvents({
-        list: await getEvents(route ? route.points : null),
-        routeTimeStamp: route ? route.searchTimestamp : null,
-        timeStamp: new Date().getTime()
-      }));
+    if (!events || eventTimeStamp != newRouteTimestamp) {
+      dispatch(
+        updateEvents({
+          list: await getEvents(route ? route.points : null),
+          routeTimeStamp: route ? route.searchTimestamp : null,
+          timeStamp: new Date().getTime(),
+        }),
+      );
     }
-  }
+  };
 
   useEffect(() => {
     // Remove layer if it already exists
@@ -521,30 +621,65 @@ export default function MapWrapper({
       mapLayers.current['inlandFerries'] = getFerriesLayer(
         ferries,
         mapRef.current.getView().getProjection().getCode(),
-        mapContext
-      )
+        mapContext,
+      );
 
       mapRef.current.addLayer(mapLayers.current['inlandFerries']);
       mapLayers.current['inlandFerries'].setZIndex(68);
     }
   }, [ferries]);
 
-  const loadFerries = async (route) => {
+  const loadFerries = async route => {
     const newRouteTimestamp = route ? route.searchTimestamp : null;
 
     // Fetch data if it doesn't already exist or route was updated
-    if (!ferries || (ferriesTimeStamp != newRouteTimestamp)) {
-      dispatch(updateFerries({
-        list: await getFerries(route ? route.points : null),
-        routeTimeStamp: route ? route.searchTimestamp : null,
-        timeStamp: new Date().getTime()
-      }));
+    if (!ferries || ferriesTimeStamp != newRouteTimestamp) {
+      dispatch(
+        updateFerries({
+          list: await getFerries(route ? route.points : null),
+          routeTimeStamp: route ? route.searchTimestamp : null,
+          timeStamp: new Date().getTime(),
+        }),
+      );
     }
-  }
+  };
 
-  const loadData = (isInitialMount) => {
+  useEffect(() => {
+    if (mapLayers.current['weather']) {
+      mapRef.current.removeLayer(mapLayers.current['weather']);
+    }
+    if (weather) {
+      mapLayers.current['weather'] = loadWeatherLayers(
+        weather,
+        mapContext,
+        mapRef.current.getView().getProjection().getCode(),
+      );
+      mapRef.current.addLayer(mapLayers.current['weather']);
+      mapLayers.current['weather'].setZIndex(66);
+    }
+  }, [weather]);
+
+  const loadWeather = async route => {
+    const newRouteTimestamp = route ? route.searchTimestamp : null;
+
+    // Fetch data if it doesn't already exist or route was updated
+    if (!weather || weatherTimeStamp != newRouteTimestamp) {
+      dispatch(
+        updateWeather({
+          list: await getWeather(route ? route.points : null),
+          routeTimeStamp: route ? route.searchTimestamp : null,
+          timeStamp: new Date().getTime(),
+        }),
+      );
+    }
+  };
+
+  const loadData = isInitialMount => {
     if (selectedRoute && selectedRoute.routeFound) {
-      const routeLayer = getRouteLayer(selectedRoute, mapRef.current.getView().getProjection().getCode());
+      const routeLayer = getRouteLayer(
+        selectedRoute,
+        mapRef.current.getView().getProjection().getCode(),
+      );
       mapLayers.current['routeLayer'] = routeLayer;
       mapRef.current.addLayer(routeLayer);
 
@@ -552,6 +687,7 @@ export default function MapWrapper({
       loadCameras(selectedRoute);
       loadEvents(selectedRoute);
       loadFerries();
+      loadWeather();
 
       // Zoom/pan to route on route updates
       if (!isInitialMount) {
@@ -562,15 +698,18 @@ export default function MapWrapper({
       loadCameras();
       loadEvents(null);
       loadFerries();
+      loadWeather();
     }
-  }
+  };
 
   function closePopup() {
     popup.current.setPosition(undefined);
 
     // camera is set to data structure rather than map feature
     if (clickedCameraRef.current && !clickedCameraRef.current.setStyle) {
-      clickedCameraRef.current = mapLayers.current['highwayCams'].getSource().getFeatureById(clickedCameraRef.current.id);
+      clickedCameraRef.current = mapLayers.current['highwayCams']
+        .getSource()
+        .getFeatureById(clickedCameraRef.current.id);
     }
 
     // check for active camera icons
@@ -584,8 +723,11 @@ export default function MapWrapper({
 
     // event is set to data structure rather than map feature
     if (clickedEventRef.current && !clickedEventRef.current.ol_uid) {
-      const features = mapLayers.current[clickedEventRef.current.display_category].getSource();
-      clickedEventRef.current = features.getFeatureById(clickedEventRef.current.id);
+      const features =
+        mapLayers.current[clickedEventRef.current.display_category].getSource();
+      clickedEventRef.current = features.getFeatureById(
+        clickedEventRef.current.id,
+      );
     }
 
     if (clickedEventRef.current) {
@@ -597,9 +739,7 @@ export default function MapWrapper({
       // Set associated line/point feature
       const altFeature = clickedEventRef.current.getProperties()['altFeature'];
       if (altFeature) {
-        altFeature.setStyle(
-          getEventIcon(altFeature, 'static'),
-        );
+        altFeature.setStyle(getEventIcon(altFeature, 'static'));
 
         altFeature.set('clicked', false);
       }
@@ -612,6 +752,13 @@ export default function MapWrapper({
       clickedFerryRef.current.setStyle(ferryStyles['static']);
       clickedFerryRef.current.set('clicked', false);
       updateClickedFerry(null);
+    }
+
+    // check for active weather icons
+    if (clickedWeatherRef.current) {
+      clickedWeatherRef.current.setStyle(roadWeatherStyles['static']);
+      clickedWeatherRef.current.set('clicked', false);
+      updateClickedWeather(null);
     }
 
     // Reset cam popup handler lock timer
@@ -631,7 +778,6 @@ export default function MapWrapper({
           ) {
             setZoomPan(mapView, 9, fromLonLat([longitude, latitude]));
             setLocationPin([longitude, latitude], redLocationMarkup, mapRef);
-
           } else {
             // set my location to the center of BC for users outside of BC
             setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
@@ -641,13 +787,11 @@ export default function MapWrapper({
         error => {
           if (error.code === error.PERMISSION_DENIED) {
             // The user has blocked location access
-            console.error("Location access denied by user.", error);
-          }
-          else {
+            console.error('Location access denied by user.', error);
+          } else {
             // Zoom out and center to BC if location not available
             setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
           }
-
         },
       );
     }
@@ -665,8 +809,7 @@ export default function MapWrapper({
     if (panel.current.classList.contains('open')) {
       if (!panel.current.classList.contains('maximized')) {
         panel.current.classList.add('maximized');
-      }
-      else {
+      } else {
         panel.current.classList.remove('maximized');
       }
     }
@@ -689,10 +832,9 @@ export default function MapWrapper({
     if (typeof camera === 'string') {
       camera = JSON.parse(camera);
     }
-    if(isPreview || camera){
-      return 12
-    }
-    else{
+    if (isPreview || camera) {
+      return 12;
+    } else {
       return zoom;
     }
   }
@@ -707,18 +849,23 @@ export default function MapWrapper({
   }
 
   // Force camera and inland ferries filters to be checked on preview mode
-  if(isPreview) {
+  if (isPreview) {
     mapContext.visible_layers['highwayCams'] = true;
     mapContext.visible_layers['inlandFerries'] = true;
   }
 
-  const openPanel = !!(clickedCamera || clickedEvent || clickedFerry);
+  const openPanel = !!(
+    clickedCamera ||
+    clickedEvent ||
+    clickedFerry ||
+    clickedWeather
+  );
 
   return (
     <div className={`map-container ${isPreview ? 'preview' : ''}`}>
-
       <div
-        ref={panel} className={`side-panel ${openPanel ? 'open' : ''}`}
+        ref={panel}
+        className={`side-panel ${openPanel ? 'open' : ''}`}
         onClick={maximizePanel}
         onTouchMove={maximizePanel}
         onKeyDown={(keyEvent) => {
@@ -730,29 +877,29 @@ export default function MapWrapper({
         <button
           className="close-panel"
           aria-label="close side panel"
-          onClick={togglePanel}
-        >
+          onClick={togglePanel}>
           <FontAwesomeIcon icon={faXmark} />
         </button>
 
         <div className="panel-content">
-          {clickedCamera &&
-            <CamPopup
-              camFeature={clickedCamera}
-              isPreview={isPreview} />
-          }
+          {clickedCamera && (
+            <CamPopup camFeature={clickedCamera} isPreview={isPreview} />
+          )}
 
           {clickedEvent && getEventPopup(clickedEvent)}
 
           {clickedFerry && getFerryPopup(clickedFerry)}
-        </div>
 
+          {clickedWeather && getWeatherPopup(clickedWeather)}
+        </div>
       </div>
 
       <div ref={mapElement} className="map">
-
         <div className="map-btn zoom-btn">
-          <Button className="zoom-in" variant="primary" aria-label="zoom in"
+          <Button
+            className="zoom-in"
+            variant="primary"
+            aria-label="zoom in"
             onClick={() => zoomIn(mapView)}>
             <FontAwesomeIcon icon={faPlus} />
           </Button>
@@ -778,7 +925,7 @@ export default function MapWrapper({
         )}
 
         {!isPreview && (
-          <div className='routing-outer-container'>
+          <div className="routing-outer-container">
             <RouteSearch routeEdit={true} />
             <AdvisoriesOnMap />
           </div>
@@ -794,8 +941,7 @@ export default function MapWrapper({
       </div>
 
       <div id="popup" className="ol-popup">
-        <div id="popup-content" className="ol-popup-content">
-        </div>
+        <div id="popup-content" className="ol-popup-content"></div>
       </div>
 
       {isPreview && (
@@ -829,7 +975,6 @@ export default function MapWrapper({
           enableRoadConditions={true}
         />
       )}
-
     </div>
   );
 }

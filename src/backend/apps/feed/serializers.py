@@ -16,7 +16,7 @@ from apps.feed.fields import (
     WebcamRegionField,
     WebcamRegionGroupField,
 )
-from apps.weather.models import RegionalWeather
+from apps.weather.models import CurrentWeather, RegionalWeather
 from rest_framework import serializers
 
 
@@ -238,4 +238,20 @@ class RegionalWeatherSerializer(serializers.Serializer):
             'conditions',
             'forecast_group',
             'hourly_forecast_group',
+        )
+
+
+# Current Weather serializer
+class CurrentWeatherSerializer(serializers.Serializer):
+    class Meta:
+        model = CurrentWeather
+        fields = (
+            'id',
+            'location_latitude',
+            'location_longitude',
+            'weather_station_name',
+            'elevation',
+            'location_description',
+            'datasets',
+            'issuedUtc',
         )

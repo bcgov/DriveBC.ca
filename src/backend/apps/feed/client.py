@@ -5,6 +5,8 @@ from urllib.parse import urljoin
 import httpx
 import requests
 from apps.feed.constants import (
+    CURRENT_WEATHER,
+    CURRENT_WEATHER_STATIONS,
     DIT,
     INLAND_FERRY,
     OPEN511,
@@ -14,6 +16,7 @@ from apps.feed.constants import (
 )
 from apps.feed.serializers import (
     CarsEventSerializer,
+    CurrentWeatherSerializer,
     EventAPISerializer,
     EventFeedSerializer,
     FerryAPISerializer,
@@ -24,6 +27,33 @@ from apps.feed.serializers import (
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+
+# Maps the key for our client API's serializer fields to the matching pair of
+# the source API's DataSetName and DisplayName fields
+SERIALIZER_TO_DATASET_MAPPING = {
+    "air_temperature": ("air_temp", "Air Temp"),
+    "road_temperature": ("sfc_temp", "Pavement Temp"),
+    "road_surface": ("sfc_stat_derived_state", "Pavement Status (State)", "MeaningfulValue"),
+    "precipitation": ("pcpn_amt_pst1hr", "Precip Hourly"),
+    "snow": ("snwfl_amt_pst1hr", "Snowfall (hourly)"),
+    "wind_direction": ("wnd_dir", "Wind Direction (current)"),
+    "average_wind": ("wnd_spd", "Wind Speed (current)"),
+    "maximum_wind": ("max_wnd_spd_pst1hr", "Wind Speed (max)")
+    }
+
+# Generated list of DataSetName values for filtering excluded dataset entries
+DATASETNAMES = [value[0] for value in SERIALIZER_TO_DATASET_MAPPING.values()]
+
+# Generated mapping of DataSetName to DisplayName
+DISPLAYNAME_MAPPING = {value[0]: value[1] for value in SERIALIZER_TO_DATASET_MAPPING.values()}
+
+# Generated mapping of DataSetName to Serializer field
+SERIALIZER_MAPPING = {value[0]: key for key, value in SERIALIZER_TO_DATASET_MAPPING.items()}
+
+# Generated mapping of DataSetName to the name of the value field in the tuple;
+# defaults to "Value"
+VALUE_FIELD_MAPPING = {value[0]: (value[2] if len(value) > 2 else "Value")
+                       for value in SERIALIZER_TO_DATASET_MAPPING.values()}
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +81,12 @@ class FeedClient:
             REGIONAL_WEATHER_AREAS: {
                 "base_url": settings.DRIVEBC_WEATHER_AREAS_API_BASE_URL,
             },
+            CURRENT_WEATHER: {
+                "base_url": settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL,
+            },
+            CURRENT_WEATHER_STATIONS: {
+                "base_url": settings.DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL
+            }
         }
 
     def _get_auth_headers(self, resource_type):
@@ -310,8 +346,8 @@ class FeedClient:
                 except requests.RequestException as e:
                     print(f"Error making API call for Area Code {area_code}: {e}")
 
-        except requests.RequestException as e:
-            return Response({"error": f"Error fetching data from weather API: {str(e)}"}, status=500)
+        except requests.RequestException:
+            return Response("Error fetching data from weather API", status=500)
 
         try:
             serializer.is_valid(raise_exception=True)
@@ -325,5 +361,110 @@ class FeedClient:
     def get_regional_weather_list(self):
         return self.get_regional_weather_list_feed(
             REGIONAL_WEATHER, 'regionalweather', RegionalWeatherSerializer,
+            {"format": "json", "limit": 500}
+        )
+
+    # Current Weather
+    def get_current_weather_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
+        """Get data feed for list of objects."""
+        area_code_endpoint = settings.DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL
+        # Obtain Access Token
+        token_url = settings.DRIVEBC_WEATHER_API_TOKEN_URL
+        client_id = settings.WEATHER_CLIENT_ID
+        client_secret = settings.WEATHER_CLIENT_SECRET
+
+        token_params = {
+            "grant_type": "client_credentials",
+            "client_id": client_id,
+            "client_secret": client_secret,
+        }
+
+        try:
+            response = requests.post(token_url, data=token_params)
+            response.raise_for_status()
+            token_data = response.json()
+            access_token = token_data.get("access_token")
+        except requests.RequestException as e:
+            return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
+        external_api_url = area_code_endpoint
+        headers = {"Authorization": f"Bearer {access_token}"}
+        try:
+            response = requests.get(external_api_url, headers=headers)
+            response.raise_for_status()
+            data = response.json()
+            json_response = data
+            json_objects = []
+
+            for station in json_response:
+                station_number = station["WeatherStationNumber"]
+                api_endpoint = settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL + f"{station_number}"
+                # Reget access token in case the previous token expired
+                try:
+                    response = requests.post(token_url, data=token_params)
+                    response.raise_for_status()
+                    token_data = response.json()
+                    access_token = token_data.get("access_token")
+                except requests.RequestException as e:
+                    return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
+                headers = {"Authorization": f"Bearer {access_token}"}
+
+                try:
+                    response = requests.get(api_endpoint, headers=headers)
+                    data = response.json()
+                    datasets = data.get("Datasets") if data else None
+                    issuedUtc = data.get("IssuedUtc")
+                    elevation = data.get('WeatherStation').get("Elevation")
+                    Longitude = data.get('WeatherStation').get("Longitude")
+                    Latitude = data.get('WeatherStation').get("Latitude")
+                    weather_station_name = data.get('WeatherStation').get("WeatherStationName")
+                    location_description = data.get('WeatherStation').get("LocationDescription")
+                    # filtering down dataset to just SensorTypeName and DataSetName
+                    filtered_dataset = {}
+
+                    if datasets is None:
+                        continue
+
+                    for dataset in datasets:
+                        dataset_name = dataset["DataSetName"]
+                        if dataset_name not in DATASETNAMES:
+                            continue
+                        display_name = DISPLAYNAME_MAPPING[dataset_name]
+                        serializer_name = SERIALIZER_MAPPING[dataset_name]
+                        value_field = VALUE_FIELD_MAPPING[dataset_name]
+
+                        if display_name == dataset["DisplayName"]:
+                            filtered_dataset[serializer_name] = {
+                                "value": dataset[value_field], "unit": dataset["Unit"],
+                            }
+
+                    current_weather_data = {
+                        'weather_station_name': weather_station_name,
+                        'elevation': elevation,
+                        'location_description': location_description,
+                        'datasets': filtered_dataset,
+                        'location_longitude': Longitude,
+                        'location_latitude': Latitude,
+                        'issuedUtc': issuedUtc,
+                    }
+                    serializer = serializer_cls(data=current_weather_data,
+                                                many=isinstance(current_weather_data, list))
+                    json_objects.append(current_weather_data)
+
+                except requests.RequestException as e:
+                    print(f"Error making API call for Area Code {station_number}: {e}")
+            try:
+                serializer.is_valid(raise_exception=True)
+                return json_objects
+
+            except (KeyError, ValidationError):
+                field_errors = serializer.errors
+                for field, errors in field_errors.items():
+                    print(f"Field: {field}, Errors: {errors}")
+        except requests.RequestException:
+            return Response("Error fetching data from weather API", status=500)
+
+    def get_current_weather_list(self):
+        return self.get_current_weather_list_feed(
+            CURRENT_WEATHER, 'currentweather', CurrentWeatherSerializer,
             {"format": "json", "limit": 500}
         )

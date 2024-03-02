@@ -11,6 +11,7 @@ import {
   faVideo,
   faSnowflake,
   faFerry,
+  faTemperatureHalf,
 //  faRestroom,
 //  faCloudSun
 } from '@fortawesome/free-solid-svg-icons';
@@ -77,6 +78,11 @@ export default function Filters(props) {
       <p>Travel requires the use of an inland ferry.</p>
     </Tooltip>
   );
+  const tooltipWeather  = (
+    <Tooltip id="tooltip" className="tooltip-content">
+      <p>Weather updates for roads.</p>
+    </Tooltip>
+  );
 
 //  const tooltipReststops = (
 //    <Tooltip id="tooltip" className="tooltip-content">
@@ -103,6 +109,8 @@ export default function Filters(props) {
   const [roadConditions, setRoadConditions] = useState(mapContext.visible_layers.roadConditions);
   const [highwayCams, setHighwayCams] = useState(mapContext.visible_layers.highwayCams);
   const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
+  const [weather, setWeather] = useState(mapContext.visible_layers.weather);
+
 
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
@@ -296,9 +304,28 @@ export default function Filters(props) {
                     <span className="filter-item__icon">
                       <FontAwesomeIcon icon={faFerry} alt="inland ferries" />
                     </span>
-                    Inland ferries
+                    Inland Ferries
                   </label>
                   <OverlayTrigger placement="top" overlay={tooltipInlandferries}>
+                    <span className="tooltip-info">?</span>
+                  </OverlayTrigger>
+                </div>
+                <div className={'filter-item filter-item--weather' + (weather ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
+                  <input
+                    type="checkbox"
+                    name="weather"
+                    id="filter--weather"
+                    onChange={e => {toggleHandler('weather', e.target.checked); setWeather(!weather)}}
+                    defaultChecked={mapContext.visible_layers.weather}
+                    disabled={disableFeatures}
+                  />
+                  <label htmlFor="filter--weather">
+                    <span className="filter-item__icon">
+                      <FontAwesomeIcon icon={faTemperatureHalf} alt="weather" />
+                    </span>
+                    Weather
+                  </label>
+                  <OverlayTrigger placement="top" overlay={tooltipWeather}>
                     <span className="tooltip-info">?</span>
                   </OverlayTrigger>
                 </div>

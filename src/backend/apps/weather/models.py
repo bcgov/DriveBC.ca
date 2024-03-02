@@ -41,3 +41,21 @@ class RegionalWeather(BaseModel):
             longitude = -longitude
 
         return latitude, longitude
+
+
+class CurrentWeather(BaseModel):
+    location = models.PointField(null=True)
+    weather_station_name = models.CharField(max_length=100)
+    elevation = models.IntegerField(null=True)
+    location_latitude = models.CharField(max_length=20, null=True)
+    location_longitude = models.CharField(max_length=20, null=True)
+    location_description = models.TextField(null=True)
+    datasets = models.JSONField(default=[], null=True)
+    issuedUtc = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return f"Current weather for {self.pk}"
+
+    def save(self, *args, **kwargs):
+        self.location = Point(self.location_latitude, self.location_longitude)
+        super().save(*args, **kwargs)
