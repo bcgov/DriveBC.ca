@@ -68,7 +68,6 @@ def populate_all_event_data(include_closures=True):
     dit_data_dict = client.get_dit_event_dict() if include_closures else {}
     open511_data = client.get_event_list()['events']
 
-    priority = 0
     active_event_ids = []
     for event_data in open511_data:
         try:
@@ -88,11 +87,10 @@ def populate_all_event_data(include_closures=True):
             event_data["location_description"] = location_description
             event_data["closest_landmark"] = cars_data.get('closest_landmark', '')
             event_data["next_update"] = cars_data.get('next_update', None)
+            event_data["start_point_linear_reference"] = cars_data.get('start_point_linear_reference', None)
 
-            # Priority
-            event_data['priority'] = priority
+            # Populate db obj
             populate_event_from_data(event_data)
-            priority += 1
 
             if id:  # Mark event as active
                 active_event_ids.append(id)

@@ -65,20 +65,20 @@ export default function EventsListPage() {
     {
       header: 'Type',
       accessorKey: 'display_category',
-      sortingFn: 'defaultSort',
+      sortingFn: 'typeSort',
       cell: (props) => <EventTypeIcon event={props.row.original} />,
     },
     {
       header: 'Severity',
       accessorKey: 'severity',
-      sortingFn: 'reverseSort',
+      sortingFn: 'severitySort',
       sortDescFirst: true,
       cell: (props) => <span>{props.getValue().toLowerCase()}</span>,
     },
     {
       header: 'Road',
       accessorKey: 'route_at',
-      sortingFn: 'defaultSort',
+      sortingFn: 'routeSort',
     },
     {
       header: 'Direction',

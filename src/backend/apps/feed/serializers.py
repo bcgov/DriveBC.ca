@@ -88,6 +88,7 @@ class CarsEventSerializer(serializers.Serializer):
     location_extent = serializers.CharField(allow_blank=True)
     closest_landmark = serializers.CharField(allow_blank=True)
     next_update = serializers.DateTimeField(allow_null=True)
+    start_point_linear_reference = serializers.FloatField(allow_null=True)
 
     def to_internal_value(self, data):
         data["id"] = data["event-id"]
@@ -99,6 +100,7 @@ class CarsEventSerializer(serializers.Serializer):
         data["location_extent"] = ''
         data["closest_landmark"] = ''
         data["next_update"] = None
+        data["start_point_linear_reference"] = None
 
         # Data under "details"
         for detail in data.get("details", []):
@@ -134,6 +136,12 @@ class CarsEventSerializer(serializers.Serializer):
         # Get closest landmark
         data["closest_landmark"] = template.get('nearby-city-reference', '')
 
+        # Data under "open511-event-details"
+        open511_details = data.get("open511-event-details", {})
+        # Get linear ref for ordering
+        data["start_point_linear_reference"] = float(open511_details.get('start_point_linear_reference')) \
+            if 'start_point_linear_reference' in open511_details else None
+
         # Data under "next-update-time"
         # Get next update time
         if "next-update-time" in data:
@@ -157,7 +165,6 @@ class EventFeedSerializer(serializers.Serializer):
         source="*",
         required=False
     )
-    # event_sub_type = serializers.CharField(max_length=32, required=False)
 
     # General status
     status = serializers.CharField(max_length=32)
@@ -171,7 +178,6 @@ class EventFeedSerializer(serializers.Serializer):
     # Update status
     created = DriveBCDateField('first_created', source="*")
     updated = DriveBCDateField('last_updated', source="*")
-    # closed = serializers.SerializerMethodField()
 
     # Schedule
     schedule = serializers.JSONField()

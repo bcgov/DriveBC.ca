@@ -98,8 +98,7 @@ EVENT_DIRECTION_DISPLAY = {
 
 EVENT_DIFF_FIELDS = [
     'next_update',
-    'last_updated',
-    'priority'
+    'last_updated'
 ]
 
 EVENT_UPDATE_FIELDS = [
@@ -107,6 +106,7 @@ EVENT_UPDATE_FIELDS = [
     'location_description',
     'closest_landmark',
     'next_update',
+    'start_point_linear_reference',
     'description',
     'event_type',
     'event_sub_type',
@@ -115,7 +115,6 @@ EVENT_UPDATE_FIELDS = [
     'closed',
     'direction',
     'last_updated',
-    'priority',
     'location',
     'route_at',
     'route_from',
