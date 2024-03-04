@@ -30,28 +30,34 @@ export default function EventsTable(props) {
   const [sorting, setSorting] = useState([{ desc: true, id: 'severity' }]);
 
   // Sort functions for react-table
-  const prioritySortFn = (rowA, rowB) => {
-    const aPriority = rowA.original.priority;
-    const bPriority = rowB.original.priority;
+  const defaultSortFn = (rowA, rowB, columnId) => {
+    const aValue = rowA.original[columnId];
+    const bValue = rowB.original[columnId];
 
-    return aPriority < bPriority ? 1 : -1;
+    return aValue > bValue ? 1 : -1;
   }
 
-  const defaultSortFn = (rowA, rowB, columnId) => {
-    const aValue = rowA.getValue(columnId);
-    const bValue = rowB.getValue(columnId);
+  // Use highway ref as secondary sort
+  const routeSortFn = (rowA, rowB, columnId) => {
+    return defaultSortFn(rowA, rowB,
+      rowA.getValue(columnId) != rowB.getValue(columnId) ? columnId : 'start_point_linear_reference'
+    );
+  }
 
-    if (aValue != bValue) {
-      return aValue > bValue ? 1 : -1;
+  const typeSortFn = (rowA, rowB, columnId) => {
+    // Alphabetical primary sort
+    if (rowA.getValue(columnId) != rowB.getValue(columnId)) {
+      return defaultSortFn(rowA, rowB, columnId);
 
-    // Equal value, order by reverse priority
+    // Route secondary sort
     } else {
-      return prioritySortFn(rowA, rowB);
+      return routeSortFn(rowA, rowB, 'route_at');
     }
   }
 
-  const reverseSortFn = (rowA, rowB, columnId) => {
-    return defaultSortFn(rowA, rowB, columnId) * -1;
+  const severitySortFn = (rowA, rowB, columnId) => {
+    // Reversed due to desc priority logic
+    return typeSortFn(rowA, rowB, columnId) * -1;
   }
 
   // react-table
@@ -70,8 +76,9 @@ export default function EventsTable(props) {
     },
     onSortingChange: setSorting,
     sortingFns: {
-      defaultSort: defaultSortFn,
-      reverseSort: reverseSortFn,
+      routeSort: routeSortFn,
+      severitySort: severitySortFn,
+      typeSort: typeSortFn,
     },
     getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),

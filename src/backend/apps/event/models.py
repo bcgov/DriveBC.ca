@@ -14,7 +14,6 @@ class Event(BaseModel):
     status = models.CharField(max_length=32)
     severity = models.CharField(max_length=32)
     closed = models.BooleanField(default=False)
-    priority = models.PositiveIntegerField(default=0)
 
     # Location
     direction = models.CharField(max_length=32)
@@ -28,6 +27,7 @@ class Event(BaseModel):
     location_description = models.CharField(max_length=256, blank=True, default='')
     closest_landmark = models.CharField(max_length=256, blank=True, default='')
     next_update = models.DateTimeField(null=True, blank=True)
+    start_point_linear_reference = models.FloatField(null=True)
 
     # Update status
     first_created = models.DateTimeField()
