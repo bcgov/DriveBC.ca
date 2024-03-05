@@ -41,16 +41,7 @@ export default function CamerasListPage() {
   const [searchText, setSearchText] = useState('');
 
   // UseEffect hooks and data functions
-  useEffect(() => {
-    const scrollPosition = sessionStorage.getItem('scrollPosition');
-    if (scrollPosition) {
-      window.scrollTo(0, parseInt(scrollPosition, 10));
-    }
-  });
-
   const getCamerasData = async () => {
-    isInitialMount.current = false;
-
     const newRouteTimestamp = selectedRoute ? selectedRoute.searchTimestamp : null;
 
     let tempCams = cameras;
@@ -99,6 +90,23 @@ export default function CamerasListPage() {
     setDisplayedCameras(filteredCams);
 
   }, [searchText, processedCameras]);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      const scrollPosition = sessionStorage.getItem('scrollPosition');
+      if (scrollPosition) {
+        setTimeout(function() {
+          window.scrollTo({
+            top: parseInt(scrollPosition, 10),
+            left: 0,
+            behavior: "smooth"
+          });
+        }, 300);
+      }
+
+      isInitialMount.current = false;
+    }
+  }, [displayedCameras]);
 
   return (
     <div className="cameras-page">
