@@ -1,0 +1,53 @@
+{
+    "ferries": [
+        {
+            "id": 3,
+            "description": "",
+            "seasonal_description": "",
+            "service_hours": "",
+            "image_url": "",
+            "path": "00010002",
+            "depth": 2,
+            "numchild": 0,
+            "translation_key": "82d4d77f-e599-43bf-acea-9d0b1eed4a8a",
+            "live": true,
+            "has_unpublished_changes": true,
+            "first_published_at": null,
+            "last_published_at": null,
+            "go_live_at": null,
+            "expire_at": null,
+            "expired": false,
+            "locked": false,
+            "locked_at": null,
+            "title": "Barnston Island Ferry",
+            "draft_title": "Barnston Island Ferry",
+            "slug": "barnston-island-ferry",
+            "url_path": "/barnston-island-ferry/",
+            "seo_title": "",
+            "show_in_menus": false,
+            "search_description": "",
+            "latest_revision_created_at": "2023-11-28T08:18:59.869526-08:00",
+            "created_at": "2023-11-28T08:18:59.713774-08:00",
+            "modified_at": "2024-02-29T16:01:45.589086-08:00",
+            "feed_id": 15,
+            "location": {
+                "type": "Point",
+                "coordinates": [
+                    -122.72476444,
+                    49.19217851
+                ]
+            },
+            "url": "https://www2.gov.bc.ca/gov/content?id=3BE3BD9E3A6348E4971F4AE91E92B6C1",
+            "feed_created_at": "2023-11-06T13:48:00-08:00",
+            "feed_modified_at": "2024-02-29T16:01:45.589102-08:00",
+            "locale": 1,
+            "latest_revision": 1,
+            "live_revision": null,
+            "locked_by": null,
+            "content_type": 56,
+            "owner": null,
+            "alias_of": null,
+            "image": null
+        }
+    ]
+}

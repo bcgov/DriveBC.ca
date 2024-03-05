@@ -1,0 +1,160 @@
+{
+  "links": {
+    "self": "https://images.drivebc.ca/webcam/api/v1/webcams"
+  },
+  "webcams": [
+    {
+      "links": {
+        "self": "https://images.drivebc.ca/webcam/api/v1/webcams/2",
+        "imageSource": "https://images.drivebc.ca/webcam/api/v1/webcams/2/imageSource",
+        "imageDisplayAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/2/imageDisplay",
+        "imageThumbnailAPI": "https://images.drivebc.ca/webcam/api/v1/webcams/2/imageThumbnail",
+        "imageDisplay": "https://images.drivebc.ca/bchighwaycam/pub/cameras/2.jpg",
+        "imageThumbnail": "https://images.drivebc.ca/bchighwaycam/pub/cameras/tn/2.jpg",
+        "currentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=2",
+        "updateCurrentImage": "https://images.drivebc.ca/webcam/imageUpdate.php?cam=2&update",
+        "replayTheDay": "https://images.drivebc.ca/ReplayTheDay/player.html?cam=2"
+      },
+      "id": 2,
+      "isOn": true,
+      "shouldAppear": true,
+      "region": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/regions/Southern+Interior"
+        },
+        "name": "Southern Interior",
+        "group": 1
+      },
+      "regionGroup": {
+        "highwayGroup": 6,
+        "highwayCamOrder": 20
+      },
+      "highway": {
+        "links": {
+          "self": "https://images.drivebc.ca/webcam/api/v1/highways/5"
+        },
+        "number": 5,
+        "locationDescription": "Coquihalla"
+      },
+      "camName": "Coquihalla Great Bear Snowshed - N",
+      "caption": "Hwy 5, Great Bear Snowshed looking north.",
+      "credit": "",
+      "dbcMark": "DriveBC.ca",
+      "orientation": "N",
+      "location": {
+        "links": {
+          "googleMap": "http://maps.google.com/maps?q=49.596374,-121.159832+(Coquihalla Great Bear Snowshed - N)",
+          "googleStaticMap": "http://maps.google.com/maps/api/staticmap?center=49.596374,-121.159832&markers=color:blue%7C49.596374,-121.159832&zoom=11&size=240x240&sensor=false"
+        },
+        "latitude": 49.596374,
+        "longitude": -121.159832,
+        "elevation": 980
+      },
+      "weather": {
+        "observation": null,
+        "forecast": {
+          "links": {
+            "self": "https://weather.drivebc.ca/EnvCanada/YHE-YKA5full.html"
+          },
+          "id": "YHE-YKA5full"
+        }
+      },
+      "message": {
+        "short": "",
+        "long": ""
+      },
+      "map": {
+        "image": "https://images.drivebc.ca/bchighwaycam/pub/maps/2.jpg",
+        "isDisplayedHorizontal": false,
+        "map": {
+          "boundingbox": {
+            "min": {
+              "latitude": 49.378052,
+              "longitude": -121.341169
+            },
+            "max": {
+              "latitude": 49.596374,
+              "longitude": -121.159832
+            }
+          },
+          "imageMap": {
+            "2": {
+              "cam": 2,
+              "shape": "poly",
+              "coordinates": "105,6,126,30,143,20,120,0",
+              "latitude": 49.596374,
+              "longitude": -121.159832
+            },
+            "281": {
+              "cam": 281,
+              "shape": "poly",
+              "coordinates": "65,245,76,260,99,250,76,223",
+              "latitude": 49.378052,
+              "longitude": -121.341169
+            },
+            "282": {
+              "cam": 282,
+              "shape": "poly",
+              "coordinates": "40,250,62,277,75,260,64,245",
+              "latitude": 49.378052,
+              "longitude": -121.341169
+            },
+            "666": {
+              "cam": 666,
+              "shape": "poly",
+              "coordinates": "98,115,117,116,131,95,87,95",
+              "latitude": 49.5084162,
+              "longitude": -121.1989411
+            },
+            "667": {
+              "cam": 667,
+              "shape": "poly",
+              "coordinates": "82,137,127,136,116,117,98,116",
+              "latitude": 49.5084162,
+              "longitude": -121.1989411
+            },
+            "674": {
+              "cam": 674,
+              "shape": "poly",
+              "coordinates": "79,60,118,60,124,42,79,42",
+              "latitude": 49.575593,
+              "longitude": -121.179854
+            },
+            "675": {
+              "cam": 675,
+              "shape": "poly",
+              "coordinates": "79,84,125,84,117,60,79,59",
+              "latitude": 49.575593,
+              "longitude": -121.179854
+            },
+            "734": {
+              "cam": 734,
+              "shape": "poly",
+              "coordinates": "87,19,111,41,124,31,104,7",
+              "latitude": 49.596374,
+              "longitude": -121.159832
+            }
+          }
+        }
+      },
+      "isNew": false,
+      "isOnDemand": false,
+      "imageStats": {
+        "md5": "cd1bea24b48ec0f134b1c65a89d542af",
+        "lastAttempt": {
+          "time": "2023-06-09 16:58:04",
+          "seconds": 360
+        },
+        "lastModified": {
+          "time": "2023-06-09 16:58:04",
+          "seconds": 360
+        },
+        "markedStale": false,
+        "markedDelayed": false,
+        "updatePeriodMean": 899,
+        "updatePeriodStdDev": 12,
+        "fetchMean": 0
+      }
+    }
+  ]
+}

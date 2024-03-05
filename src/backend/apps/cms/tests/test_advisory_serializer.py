@@ -2,7 +2,8 @@ from apps.cms.models import Advisory
 from apps.cms.serializers import AdvisorySerializer, AdvisoryTestSerializer
 from apps.shared.tests import BaseTest
 from django.contrib.gis.geos import Polygon
-
+from django.utils.html import format_html
+from django.templatetags.static import static
 
 class TestAdvisorySerializer(BaseTest):
     def setUp(self):
@@ -21,6 +22,7 @@ class TestAdvisorySerializer(BaseTest):
             path="000100010001",
             depth=3,
         )
+        self.advisory.rendered_body()
         self.advisory.save()
         self.serializer = AdvisorySerializer(self.advisory)
 
@@ -31,6 +33,8 @@ class TestAdvisorySerializer(BaseTest):
         assert self.serializer.data["body"] == \
             'Advisory body 1'
         assert self.serializer.data["geometry"] is not None
+
+       
 
     def test_serializer_invalid_data(self):
         # Create a serializer with invalid data

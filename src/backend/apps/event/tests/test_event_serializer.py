@@ -4,9 +4,11 @@ from copy import copy
 
 from apps.event import enums as event_enums
 from apps.event.models import Event
-from apps.event.serializers import EventSerializer
+from apps.event.serializers import EventInternalSerializer, EventSerializer
 from apps.shared.tests import BaseTest
 from django.contrib.gis.geos import LineString
+
+
 
 
 class TestEventSerializer(BaseTest):
@@ -66,6 +68,36 @@ class TestEventSerializer(BaseTest):
         self.serializer = EventSerializer(self.event)
         self.serializer_two = EventSerializer(self.event_two)
 
+        self.event_three = copy(self.event)
+        self.event_three.closed = True
+        self.event_three.save()
+        self.serializer_three = EventSerializer(self.event_three)
+
+        self.event_four = copy(self.event_three)
+        self.event_four.id = 'drivebc.ca/DBCRCON-1234'
+        self.event_four.closed = False
+        self.event_four.save()
+        self.serializer_four = EventSerializer(self.event_four)
+
+        self.event_five = copy(self.event_four)
+        self.event_five.id = 'drivebc.ca/DBC-1234'
+        self.event_five.schedule = {
+            "intervals": [
+              "2025-05-23T14:00/2025-07-22T14:00"
+            ]
+        }
+       
+        self.event_five.start = datetime.datetime(
+                2026, 6, 2, 16, 42, 16,
+                tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
+            )
+        self.event_five.severity = event_enums.EVENT_SEVERITY.MINOR
+        self.event_five.route_to = 'Test Ave'
+        self.event_five.save()
+        self.serializer_five = EventSerializer(self.event_five)
+
+        
+
     def test_serializer_data(self):
         assert len(self.serializer.data) == 21
         # route_from beings with 'at '
@@ -84,3 +116,25 @@ class TestEventSerializer(BaseTest):
         # Eastern time auto adjusted to Pacific time
         assert self.serializer_two.data['last_updated'] == \
                '2023-06-02T13:42:16-07:00'
+        
+        assert self.serializer.data['schedule']['intervals'][0] == \
+               "2023-05-23T14:00/2023-07-22T14:00"
+        
+        assert self.serializer.data['route_from'] == \
+               "at Test Road"
+        assert self.serializer.data['route_to'] == \
+           "Test Avenue"
+        assert self.event.route_to is not None
+
+
+        assert self.serializer_three.data['closed'] == \
+            True
+        assert self.serializer_four.data['display_category'] == \
+            'roadConditions'
+        assert self.serializer_five.data['display_category'] == \
+            'futureEvents'
+        assert self.serializer_five.data['route_display'] == \
+            'Test Road to Test Ave'
+        assert self.event_five.route_to is not None
+        
+       

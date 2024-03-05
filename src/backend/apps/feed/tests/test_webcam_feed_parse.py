@@ -7,6 +7,8 @@ from apps.feed.serializers import WebcamAPISerializer
 from apps.shared.tests import BaseTest
 from django.contrib.gis.geos import Point
 
+from src.backend.apps.feed.fields import DriveBCDateField, DriveBCField, EventRoadsField
+
 
 class TestWebcamFeedSerializer(BaseTest):
     def setUp(self):
@@ -14,7 +16,7 @@ class TestWebcamFeedSerializer(BaseTest):
 
         data_path = os.path.join(
             os.getcwd(),
-            "src/backend/apps/feed/tests/test_data/webcam_feed_list_of_one.json"
+            "apps/feed/tests/test_data/webcam_feed_list_of_one.json"
         )
         with open(data_path) as f:
             self.webcam_data = json.load(f)

@@ -1,0 +1,320 @@
+{
+  "events": [
+    {
+      "id": "drivebc.ca/DBC-20066",
+      "display_category": "roadConditions",
+      "direction_display": "Not Applicable",
+      "route_display": "Exit 109: Yale Rd to Exit 120: Young Rd",
+      "schedule": {
+          "intervals": [
+              "2024-01-30T01:00/2025-01-30T01:00"
+          ]
+      },
+      "severity": "MAJOR",
+      "description": "Highway 1 (TransCanada Highway). Watch for slippery sections between Exit 109: Yale Rd and Exit 120: Young Rd for 7.7 km (Chilliwack). Until Wed Jan 29, 2025 at 5:00 PM PST. Next update time Wed Jan 29, 2025 at 4:45 PM PST. Last updated Tue Jan 30 at 8:31 AM PST. (DBC-20066)",
+      "event_type": "ROAD_CONDITION",
+      "event_sub_type": "PARTLY_ICY",
+      "status": "ACTIVE",
+      "closed": false,
+      "direction": "NONE",
+      "location": {
+          "type": "LineString",
+          "coordinates": [
+              [
+                  -122.063019,
+                  49.137886
+              ],
+              [
+                  -122.060004,
+                  49.138325
+              ],
+              [
+                  -122.05868,
+                  49.138518
+              ],
+              [
+                  -122.039974,
+                  49.140932
+              ],
+              [
+                  -122.02876,
+                  49.142377
+              ],
+              [
+                  -122.027027,
+                  49.142632
+              ],
+              [
+                  -122.025373,
+                  49.142998
+              ],
+              [
+                  -122.022035,
+                  49.143963
+              ],
+              [
+                  -122.020949,
+                  49.144189
+              ],
+              [
+                  -122.020039,
+                  49.144322
+              ],
+              [
+                  -122.0189,
+                  49.144415
+              ],
+              [
+                  -122.01753,
+                  49.144438
+              ],
+              [
+                  -122.0117,
+                  49.144303
+              ],
+              [
+                  -122.006977,
+                  49.144219
+              ],
+              [
+                  -122.006907,
+                  49.144219
+              ],
+              [
+                  -122.003081,
+                  49.144157
+              ],
+              [
+                  -121.999997,
+                  49.144107
+              ],
+              [
+                  -121.999873,
+                  49.144105
+              ],
+              [
+                  -121.99975,
+                  49.144103
+              ],
+              [
+                  -121.999572,
+                  49.1441
+              ],
+              [
+                  -121.999088,
+                  49.144092
+              ],
+              [
+                  -121.983239,
+                  49.143787
+              ],
+              [
+                  -121.977708,
+                  49.143681
+              ],
+              [
+                  -121.977602,
+                  49.14368
+              ],
+              [
+                  -121.969274,
+                  49.14352
+              ],
+              [
+                  -121.967859,
+                  49.143585
+              ],
+              [
+                  -121.967236,
+                  49.143653
+              ],
+              [
+                  -121.965676,
+                  49.143902
+              ],
+              [
+                  -121.964755,
+                  49.144076
+              ],
+              [
+                  -121.964486,
+                  49.144142
+              ],
+              [
+                  -121.962445,
+                  49.144643
+              ],
+              [
+                  -121.962149,
+                  49.144716
+              ],
+              [
+                  -121.961942,
+                  49.144767
+              ],
+              [
+                  -121.961366,
+                  49.144906
+              ],
+              [
+                  -121.961083,
+                  49.144974
+              ]
+          ]
+      },
+      "route_at": "Highway 1",
+      "route_from": "Exit 109: Yale Rd",
+      "route_to": "Exit 120: Young Rd",
+      "first_created": "2024-01-29T16:55:13-08:00",
+      "last_updated": "2024-01-30T08:31:32-08:00",
+      "start": "2024-01-30T01:00",
+      "end": "2025-01-30T01:00"
+    },
+    {
+        "id": "drivebc.ca/DBC-20073",
+        "display_category": "minorEvents",
+        "direction_display": "Both Directions",
+        "route_display": "Highlands Blvd to Sutherland Rd",
+        "schedule": {
+            "intervals": [
+                "2024-02-26T18:54/"
+            ]
+        },
+        "severity": "MINOR",
+        "description": "Highway 7 (Lougheed Highway), in both directions. Bridge maintenance between Highlands Blvd and Sutherland Rd for 2.2 km (Kent). Road closed. Lane Closure. Last updated Mon Feb 26 at 11:59 AM PST. (DBC-20073)",
+        "event_type": "CONSTRUCTION",
+        "event_sub_type": "ROAD_MAINTENANCE",
+        "status": "ACTIVE",
+        "closed": false,
+        "direction": "BOTH",
+        "location": {
+            "type": "LineString",
+            "coordinates": [
+                [
+                    -121.857677,
+                    49.234721
+                ],
+                [
+                    -121.857661,
+                    49.234746
+                ],
+                [
+                    -121.857405,
+                    49.235408
+                ],
+                [
+                    -121.857348,
+                    49.235554
+                ],
+                [
+                    -121.857061,
+                    49.236659
+                ],
+                [
+                    -121.857051,
+                    49.236695
+                ],
+                [
+                    -121.857009,
+                    49.236857
+                ],
+                [
+                    -121.856937,
+                    49.237135
+                ],
+                [
+                    -121.85679,
+                    49.237697
+                ],
+                [
+                    -121.855964,
+                    49.239289
+                ],
+                [
+                    -121.855881,
+                    49.239424
+                ],
+                [
+                    -121.855244,
+                    49.240469
+                ],
+                [
+                    -121.855126,
+                    49.240661
+                ],
+                [
+                    -121.85497,
+                    49.240848
+                ],
+                [
+                    -121.854584,
+                    49.241307
+                ],
+                [
+                    -121.854522,
+                    49.241382
+                ],
+                [
+                    -121.853879,
+                    49.242011
+                ],
+                [
+                    -121.851755,
+                    49.243658
+                ],
+                [
+                    -121.850672,
+                    49.244445
+                ],
+                [
+                    -121.849925,
+                    49.244878
+                ],
+                [
+                    -121.848606,
+                    49.245493
+                ],
+                [
+                    -121.84716,
+                    49.245985
+                ],
+                [
+                    -121.845412,
+                    49.246316
+                ],
+                [
+                    -121.844009,
+                    49.246446
+                ],
+                [
+                    -121.843713,
+                    49.246448
+                ],
+                [
+                    -121.842488,
+                    49.246458
+                ],
+                [
+                    -121.838506,
+                    49.246077
+                ]
+            ]
+        },
+        "route_at": "Highway 7",
+        "route_from": "Highlands Blvd",
+        "route_to": "Sutherland Rd",
+        "first_created": "2024-02-26T10:54:53-08:00",
+        "last_updated": "2024-02-26T11:59:57-08:00",
+        "start": "2024-02-26T18:54",
+        "end": ""
+    }
+  ],
+  "pagination": {
+    "offset": "0"
+  },
+  "meta": {
+    "url": "/events",
+    "up_url": "",
+    "version": "v1"
+  }
+}
