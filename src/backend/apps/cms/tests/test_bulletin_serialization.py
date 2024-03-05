@@ -31,6 +31,8 @@ class TestBulletinSerialization(BaseTest):
             image=img_obj,
             image_alt_text='Some Image Alt text',
         )
+
+        self.bulletin.rendered_body()
         self.bulletin.save()
         self.serializer = BulletinTestSerializer(self.bulletin)
 

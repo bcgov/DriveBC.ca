@@ -10,7 +10,7 @@ from apps.event.enums import (
     EVENT_SUB_TYPE,
     EVENT_TYPE,
 )
-from apps.feed.serializers import EventAPISerializer
+from apps.feed.serializers import CarsClosureEventSerializer, EventAPISerializer
 from apps.shared.tests import BaseTest
 
 
@@ -20,7 +20,8 @@ class TestEventFeedSerializer(BaseTest):
 
         data_path = os.path.join(
             os.getcwd(),
-            "src/backend/apps/feed/tests/test_data/event_feed_list_of_two.json"
+            # "src/backend/apps/feed/tests/test_data/event_feed_list_of_two.json"
+            "apps/feed/tests/test_data/event_feed_list_of_two.json"
         )
         with open(data_path) as f:
             self.event_data = json.load(f)
@@ -68,3 +69,42 @@ class TestEventFeedSerializer(BaseTest):
 
         second_event_data = events_list["events"][1]
         assert ("event_sub_type" not in second_event_data) is True
+
+        # assert first_event_data["start"] == datetime.strptime("2021-04-26T15:19", "%Y-%m-%dT%H:%M")
+
+        
+
+    def test_cars_closure_event_to_internal_value(self):
+        cars_closure_event_1 = {
+            'event-id': 111,
+            'details': [
+                {
+                    'category': 'test-category',
+                    'code': 'test-code',
+                }
+            ],
+            'closed': True
+        }
+        cars_closure_event_serializer_1 = CarsClosureEventSerializer(data=cars_closure_event_1)
+        cars_closure_event_serializer_1.is_valid(raise_exception=True)
+
+        cars_closure_event_2 = {
+            'event-id': 222,
+            'details': [
+                {
+                    'category': 'traffic_pattern',
+                    'code': 'closed test-code',
+                    'descriptions': [{"kind": {'category': 'traffic_pattern', 'code': 'closed'}} ]
+                },
+                {
+                    'category': 'traffic_pattern',
+                    'code': 'test-code',
+                    'descriptions': [{"kind": {'category': 'traffic_pattern', 'code': 'closed'}} ]
+                }
+            ],
+            'closed': False
+        }
+        cars_closure_event_serializer_2 = CarsClosureEventSerializer(data=cars_closure_event_2)
+        cars_closure_event_serializer_2.is_valid(raise_exception=True)
+        assert cars_closure_event_1["id"] == 111
+        assert cars_closure_event_2["id"] == 222

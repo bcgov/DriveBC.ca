@@ -1,0 +1,45 @@
+{
+  "events": [
+    {
+      "id": "drivebc.ca/DBC-3175",
+      "display_category": "minorEvents",
+      "direction_display": "Not Applicable",
+      "route_display": "Pritchard Rd",
+      "schedule": {
+          "intervals": [
+              "2023-09-20T18:13/"
+          ]
+      },
+      "severity": "MINOR",
+      "description": "Highway 3. Collision between Pritchard Rd and Abbey Pit Rd (17 km east of Cranbrook). Last updated Wed Sep 20 at 11:13 AM MDT. (DBC-3175)",
+      "event_type": "INCIDENT",
+      "event_sub_type": "HAZARD",
+      "status": "ACTIVE",
+      "closed": false,
+      "direction": "NONE",
+      "location": {
+          "type": "Point",
+          "coordinates": [
+              -115.583567,
+              49.50658
+          ]
+      },
+      "route_at": "Highway 3",
+      "route_from": "Pritchard Rd",
+      "route_to": "",
+      "first_created": "2018-11-14T09:06:41-08:00",
+      "last_updated": "2023-09-20T11:13:56-07:00",
+      "start": "2023-09-20T18:13",
+      "end": "2023-10-20T18:13",
+      "priority": 7
+  }
+  ],
+  "pagination": {
+    "offset": "0"
+  },
+  "meta": {
+    "url": "/events",
+    "up_url": "",
+    "version": "v1"
+  }
+}

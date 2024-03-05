@@ -1,0 +1,2118 @@
+{
+    "XmlCreationUtc": "Tuesday March 05, 2024 at 05:01 UTC",
+    "ForecastIssuedUtc": "2024-03-05T00:00:00",
+    "Location": {
+        "Continent": "North America",
+        "Country": {
+            "Code": "ca",
+            "Value": "Canada"
+        },
+        "Province": {
+            "Code": "bc",
+            "Value": "British Columbia"
+        },
+        "Name": {
+            "Code": "s0000216",
+            "Latitude": "50.26N",
+            "Longitude": "119.27W",
+            "Value": "Vernon"
+        },
+        "Region": "North Okanagan - including Vernon"
+    },
+    "Warnings": {
+        "Url": null,
+        "Events": []
+    },
+    "CurrentConditions": {
+        "Station": {
+            "Code": "wjv",
+            "Latitude": "50.22N",
+            "Longitude": "119.19W",
+            "Name": "Vernon"
+        },
+        "ObservationDateTimeUTC": {
+            "Name": "observation",
+            "Zone": "UTC",
+            "UTCOffset": 0,
+            "TextSummary": "Tuesday March 05, 2024 at 05:00 UTC"
+        },
+        "Condition": "",
+        "IconCode": {
+            "Format": "gif",
+            "Code": null
+        },
+        "Temperature": {
+            "Units": "°C",
+            "Value": "-4.6"
+        },
+        "Dewpoint": {
+            "Units": "°C",
+            "Value": "-10.3"
+        },
+        "Pressure": {
+            "Units": "kPa",
+            "Value": "101.7"
+        },
+        "Visibility": null,
+        "RelativeHumidity": {
+            "Units": "%",
+            "Value": "64"
+        },
+        "Wind": {
+            "Speed": {
+                "Units": "km/h",
+                "Value": "calm"
+            },
+            "Gust": {
+                "Units": "km/h",
+                "Value": null
+            },
+            "Direction": "",
+            "WindDirFull": null,
+            "Bearing": {
+                "Units": "degrees",
+                "Value": null
+            },
+            "Index": null,
+            "Rank": null
+        }
+    },
+    "ForecastGroup": {
+        "ForecastIssueUtc": null,
+        "RegionalNormals": null,
+        "Forecasts": [
+            {
+                "Period": {
+                    "TextForecastName": "Tonight",
+                    "Value": "Monday night"
+                },
+                "TextSummary": "Partly cloudy. 30 percent chance of flurries early this evening. Wind north 20 km/h becoming light this evening. Low minus 7. Wind chill near minus 9.",
+                "CloudPrecip": {
+                    "TextSummary": "Partly cloudy. 30 percent chance of flurries early this evening."
+                },
+                "AbbreviatedForecast": {
+                    "IconCode": {
+                        "Format": "gif",
+                        "Code": "38"
+                    },
+                    "Pop": {
+                        "Units": "%",
+                        "Value": "30"
+                    },
+                    "TextSummary": "Chance of flurries"
+                },
+                "Temperatures": {
+                    "TextSummary": "Low minus 7.",
+                    "Temperature": {
+                        "Class": "low",
+                        "Period": null,
+                        "Units": "°C",
+                        "Year": null,
+                        "Value": "-7"
+                    }
+                },
+                "Winds": {
+                    "TextSummary": "Wind north 20 km/h becoming light this evening.",
+                    "WindList": [
+                        {
+                            "Speed": {
+                                "Units": "km/h",
+                                "Value": "20"
+                            },
+                            "Gust": {
+                                "Units": "km/h",
+                                "Value": "00"
+                            },
+                            "Direction": {
+                                "WindDirFull": null,
+                                "Value": "N"
+                            },
+                            "Bearing": {
+                                "Units": "degrees",
+                                "Value": "36"
+                            },
+                            "Index": "1",
+                            "Rank": "major"
+                        },
+                        {
+                            "Speed": {
+                                "Units": "km/h",
+                                "Value": "10"
+                            },
+                            "Gust": {
+                                "Units": "km/h",
+                                "Value": "00"
+                            },
+                            "Direction": {
+                                "WindDirFull": null,
+                                "Value": "N"
+                            },
+                            "Bearing": {
+                                "Units": "degrees",
+                                "Value": "36"
+                            },
+                            "Index": "2",
+                            "Rank": "major"
+                        },
+                        {
+                            "Speed": {
+                                "Units": "km/h",
+                                "Value": "05"
+                            },
+                            "Gust": {
+                                "Units": "km/h",
+                                "Value": "00"
+                            },
+                            "Direction": {
+                                "WindDirFull": null,
+                                "Value": "VR"
+                            },
+                            "Bearing": {
+                                "Units": "degrees",
+                                "Value": "99"
+                            },
+                            "Index": "3",
+                            "Rank": "minor"
+                        }
+                    ]
+                },
+                "Precipitation": {
+                    "TextSummary": null,
+                    "PrecipType": {
+                        "Start": "0",
+                        "End": "4",
+                        "Value": "snow"
+                    },
+                    "Accumulations": null
+                },
+                "WindChill": {
+                    "TextSummary": "Wind chill near minus 9.",
+                    "Calculated": {
+                        "Class": "near",
+                        "Value": "-9"
+                    },
+                    "Value": null,
+                    "Units": null
+                },
+                "RelativeHumidity": {
+                    "Units": "%",
+                    "Value": "60"
+                },
+                "UV": {
+                    "Category": null,
+                    "Index": null,
+                    "TextSummary": null
+                },
+                "Frost": null,
+                "SnowLevel": null,
+                "Comfort": null,
+                "Visibility": {
+                    "OtherVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    },
+                    "WindVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    }
+                }
+            },
+            {
+                "Period": {
+                    "TextForecastName": "Tuesday",
+                    "Value": "Tuesday"
+                },
+                "TextSummary": "Mainly sunny. Wind becoming north 20 km/h in the afternoon. High plus 2. Wind chill minus 10 in the morning. UV index 1 or low.",
+                "CloudPrecip": {
+                    "TextSummary": "Mainly sunny."
+                },
+                "AbbreviatedForecast": {
+                    "IconCode": {
+                        "Format": "gif",
+                        "Code": "01"
+                    },
+                    "Pop": null,
+                    "TextSummary": "Mainly sunny"
+                },
+                "Temperatures": {
+                    "TextSummary": "High plus 2.",
+                    "Temperature": {
+                        "Class": "high",
+                        "Period": null,
+                        "Units": "°C",
+                        "Year": null,
+                        "Value": "2"
+                    }
+                },
+                "Winds": {
+                    "TextSummary": "Wind becoming north 20 km/h in the afternoon.",
+                    "WindList": [
+                        {
+                            "Speed": {
+                                "Units": "km/h",
+                                "Value": "05"
+                            },
+                            "Gust": {
+                                "Units": "km/h",
+                                "Value": "00"
+                            },
+                            "Direction": {
+                                "WindDirFull": null,
+                                "Value": "VR"
+                            },
+                            "Bearing": {
+                                "Units": "degrees",
+                                "Value": "99"
+                            },
+                            "Index": "1",
+                            "Rank": "major"
+                        },
+                        {
+                            "Speed": {
+                                "Units": "km/h",
+                                "Value": "20"
+                            },
+                            "Gust": {
+                                "Units": "km/h",
+                                "Value": "00"
+                            },
+                            "Direction": {
+                                "WindDirFull": null,
+                                "Value": "N"
+                            },
+                            "Bearing": {
+                                "Units": "degrees",
+                                "Value": "36"
+                            },
+                            "Index": "2",
+                            "Rank": "major"
+                        }
+                    ]
+                },
+                "Precipitation": {
+                    "TextSummary": null,
+                    "PrecipType": {
+                        "Start": null,
+                        "End": null,
+                        "Value": null
+                    },
+                    "Accumulations": null
+                },
+                "WindChill": {
+                    "TextSummary": "Wind chill minus 10 in the morning.",
+                    "Calculated": {
+                        "Class": "morning",
+                        "Value": "-10"
+                    },
+                    "Value": null,
+                    "Units": null
+                },
+                "RelativeHumidity": {
+                    "Units": "%",
+                    "Value": "45"
+                },
+                "UV": {
+                    "Category": "low",
+                    "Index": "1",
+                    "TextSummary": "UV index 1 or low."
+                },
+                "Frost": null,
+                "SnowLevel": null,
+                "Comfort": null,
+                "Visibility": {
+                    "OtherVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    },
+                    "WindVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    }
+                }
+            },
+            {
+                "Period": {
+                    "TextForecastName": "Tuesday night",
+                    "Value": "Tuesday night"
+                },
+                "TextSummary": "Clear. Wind north 20 km/h becoming light in the evening. Low minus 8. Wind chill near minus 10.",
+                "CloudPrecip": {
+                    "TextSummary": "Clear."
+                },
+                "AbbreviatedForecast": {
+                    "IconCode": {
+                        "Format": "gif",
+                        "Code": "30"
+                    },
+                    "Pop": null,
+                    "TextSummary": "Clear"
+                },
+                "Temperatures": {
+                    "TextSummary": "Low minus 8.",
+                    "Temperature": {
+                        "Class": "low",
+                        "Period": null,
+                        "Units": "°C",
+                        "Year": null,
+                        "Value": "-8"
+                    }
+                },
+                "Winds": {
+                    "TextSummary": "Wind north 20 km/h becoming light in the evening.",
+                    "WindList": [
+                        {
+                            "Speed": {
+                                "Units": "km/h",
+                                "Value": "20"
+                            },
+                            "Gust": {
+                                "Units": "km/h",
+                                "Value": "00"
+                            },
+                            "Direction": {
+                                "WindDirFull": null,
+                                "Value": "N"
+                            },
+                            "Bearing": {
+                                "Units": "degrees",
+                                "Value": "36"
+                            },
+                            "Index": "1",
+                            "Rank": "major"
+                        },
+                        {
+                            "Speed": {
+                                "Units": "km/h",
+                                "Value": "05"
+                            },
+                            "Gust": {
+                                "Units": "km/h",
+                                "Value": "00"
+                            },
+                            "Direction": {
+                                "WindDirFull": null,
+                                "Value": "VR"
+                            },
+                            "Bearing": {
+                                "Units": "degrees",
+                                "Value": "99"
+                            },
+                            "Index": "2",
+                            "Rank": "major"
+                        }
+                    ]
+                },
+                "Precipitation": {
+                    "TextSummary": null,
+                    "PrecipType": {
+                        "Start": null,
+                        "End": null,
+                        "Value": null
+                    },
+                    "Accumulations": null
+                },
+                "WindChill": {
+                    "TextSummary": "Wind chill near minus 10.",
+                    "Calculated": {
+                        "Class": "near",
+                        "Value": "-10"
+                    },
+                    "Value": null,
+                    "Units": null
+                },
+                "RelativeHumidity": {
+                    "Units": "%",
+                    "Value": "50"
+                },
+                "UV": {
+                    "Category": null,
+                    "Index": null,
+                    "TextSummary": null
+                },
+                "Frost": null,
+                "SnowLevel": null,
+                "Comfort": null,
+                "Visibility": {
+                    "OtherVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    },
+                    "WindVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    }
+                }
+            },
+            {
+                "Period": {
+                    "TextForecastName": "Wednesday",
+                    "Value": "Wednesday"
+                },
+                "TextSummary": "Sunny. High plus 3.",
+                "CloudPrecip": {
+                    "TextSummary": "Sunny."
+                },
+                "AbbreviatedForecast": {
+                    "IconCode": {
+                        "Format": "gif",
+                        "Code": "00"
+                    },
+                    "Pop": null,
+                    "TextSummary": "Sunny"
+                },
+                "Temperatures": {
+                    "TextSummary": "High plus 3.",
+                    "Temperature": {
+                        "Class": "high",
+                        "Period": null,
+                        "Units": "°C",
+                        "Year": null,
+                        "Value": "3"
+                    }
+                },
+                "Winds": {
+                    "TextSummary": null,
+                    "WindList": null
+                },
+                "Precipitation": {
+                    "TextSummary": null,
+                    "PrecipType": {
+                        "Start": null,
+                        "End": null,
+                        "Value": null
+                    },
+                    "Accumulations": null
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": {
+                        "Class": null,
+                        "Value": null
+                    },
+                    "Value": null,
+                    "Units": null
+                },
+                "RelativeHumidity": {
+                    "Units": "%",
+                    "Value": "50"
+                },
+                "UV": {
+                    "Category": null,
+                    "Index": null,
+                    "TextSummary": null
+                },
+                "Frost": null,
+                "SnowLevel": null,
+                "Comfort": null,
+                "Visibility": {
+                    "OtherVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    },
+                    "WindVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    }
+                }
+            },
+            {
+                "Period": {
+                    "TextForecastName": "Wednesday night",
+                    "Value": "Wednesday night"
+                },
+                "TextSummary": "Clear. Low minus 7.",
+                "CloudPrecip": {
+                    "TextSummary": "Clear."
+                },
+                "AbbreviatedForecast": {
+                    "IconCode": {
+                        "Format": "gif",
+                        "Code": "30"
+                    },
+                    "Pop": null,
+                    "TextSummary": "Clear"
+                },
+                "Temperatures": {
+                    "TextSummary": "Low minus 7.",
+                    "Temperature": {
+                        "Class": "low",
+                        "Period": null,
+                        "Units": "°C",
+                        "Year": null,
+                        "Value": "-7"
+                    }
+                },
+                "Winds": {
+                    "TextSummary": null,
+                    "WindList": null
+                },
+                "Precipitation": {
+                    "TextSummary": null,
+                    "PrecipType": {
+                        "Start": null,
+                        "End": null,
+                        "Value": null
+                    },
+                    "Accumulations": null
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": {
+                        "Class": null,
+                        "Value": null
+                    },
+                    "Value": null,
+                    "Units": null
+                },
+                "RelativeHumidity": {
+                    "Units": "%",
+                    "Value": "55"
+                },
+                "UV": {
+                    "Category": null,
+                    "Index": null,
+                    "TextSummary": null
+                },
+                "Frost": null,
+                "SnowLevel": null,
+                "Comfort": null,
+                "Visibility": {
+                    "OtherVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    },
+                    "WindVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    }
+                }
+            },
+            {
+                "Period": {
+                    "TextForecastName": "Thursday",
+                    "Value": "Thursday"
+                },
+                "TextSummary": "Sunny. High plus 5.",
+                "CloudPrecip": {
+                    "TextSummary": "Sunny."
+                },
+                "AbbreviatedForecast": {
+                    "IconCode": {
+                        "Format": "gif",
+                        "Code": "00"
+                    },
+                    "Pop": null,
+                    "TextSummary": "Sunny"
+                },
+                "Temperatures": {
+                    "TextSummary": "High plus 5.",
+                    "Temperature": {
+                        "Class": "high",
+                        "Period": null,
+                        "Units": "°C",
+                        "Year": null,
+                        "Value": "5"
+                    }
+                },
+                "Winds": {
+                    "TextSummary": null,
+                    "WindList": null
+                },
+                "Precipitation": {
+                    "TextSummary": null,
+                    "PrecipType": {
+                        "Start": null,
+                        "End": null,
+                        "Value": null
+                    },
+                    "Accumulations": null
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": {
+                        "Class": null,
+                        "Value": null
+                    },
+                    "Value": null,
+                    "Units": null
+                },
+                "RelativeHumidity": {
+                    "Units": "%",
+                    "Value": "45"
+                },
+                "UV": {
+                    "Category": null,
+                    "Index": null,
+                    "TextSummary": null
+                },
+                "Frost": null,
+                "SnowLevel": null,
+                "Comfort": null,
+                "Visibility": {
+                    "OtherVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    },
+                    "WindVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    }
+                }
+            },
+            {
+                "Period": {
+                    "TextForecastName": "Thursday night",
+                    "Value": "Thursday night"
+                },
+                "TextSummary": "Clear. Low minus 6.",
+                "CloudPrecip": {
+                    "TextSummary": "Clear."
+                },
+                "AbbreviatedForecast": {
+                    "IconCode": {
+                        "Format": "gif",
+                        "Code": "30"
+                    },
+                    "Pop": null,
+                    "TextSummary": "Clear"
+                },
+                "Temperatures": {
+                    "TextSummary": "Low minus 6.",
+                    "Temperature": {
+                        "Class": "low",
+                        "Period": null,
+                        "Units": "°C",
+                        "Year": null,
+                        "Value": "-6"
+                    }
+                },
+                "Winds": {
+                    "TextSummary": null,
+                    "WindList": null
+                },
+                "Precipitation": {
+                    "TextSummary": null,
+                    "PrecipType": {
+                        "Start": null,
+                        "End": null,
+                        "Value": null
+                    },
+                    "Accumulations": null
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": {
+                        "Class": null,
+                        "Value": null
+                    },
+                    "Value": null,
+                    "Units": null
+                },
+                "RelativeHumidity": {
+                    "Units": "%",
+                    "Value": "55"
+                },
+                "UV": {
+                    "Category": null,
+                    "Index": null,
+                    "TextSummary": null
+                },
+                "Frost": null,
+                "SnowLevel": null,
+                "Comfort": null,
+                "Visibility": {
+                    "OtherVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    },
+                    "WindVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    }
+                }
+            },
+            {
+                "Period": {
+                    "TextForecastName": "Friday",
+                    "Value": "Friday"
+                },
+                "TextSummary": "A mix of sun and cloud. High plus 4.",
+                "CloudPrecip": {
+                    "TextSummary": "A mix of sun and cloud."
+                },
+                "AbbreviatedForecast": {
+                    "IconCode": {
+                        "Format": "gif",
+                        "Code": "02"
+                    },
+                    "Pop": null,
+                    "TextSummary": "A mix of sun and cloud"
+                },
+                "Temperatures": {
+                    "TextSummary": "High plus 4.",
+                    "Temperature": {
+                        "Class": "high",
+                        "Period": null,
+                        "Units": "°C",
+                        "Year": null,
+                        "Value": "4"
+                    }
+                },
+                "Winds": {
+                    "TextSummary": null,
+                    "WindList": null
+                },
+                "Precipitation": {
+                    "TextSummary": null,
+                    "PrecipType": {
+                        "Start": null,
+                        "End": null,
+                        "Value": null
+                    },
+                    "Accumulations": null
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": {
+                        "Class": null,
+                        "Value": null
+                    },
+                    "Value": null,
+                    "Units": null
+                },
+                "RelativeHumidity": {
+                    "Units": "%",
+                    "Value": "40"
+                },
+                "UV": {
+                    "Category": null,
+                    "Index": null,
+                    "TextSummary": null
+                },
+                "Frost": null,
+                "SnowLevel": null,
+                "Comfort": null,
+                "Visibility": {
+                    "OtherVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    },
+                    "WindVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    }
+                }
+            },
+            {
+                "Period": {
+                    "TextForecastName": "Friday night",
+                    "Value": "Friday night"
+                },
+                "TextSummary": "Cloudy periods. Low zero.",
+                "CloudPrecip": {
+                    "TextSummary": "Cloudy periods."
+                },
+                "AbbreviatedForecast": {
+                    "IconCode": {
+                        "Format": "gif",
+                        "Code": "32"
+                    },
+                    "Pop": null,
+                    "TextSummary": "Cloudy periods"
+                },
+                "Temperatures": {
+                    "TextSummary": "Low zero.",
+                    "Temperature": {
+                        "Class": "low",
+                        "Period": null,
+                        "Units": "°C",
+                        "Year": null,
+                        "Value": "0"
+                    }
+                },
+                "Winds": {
+                    "TextSummary": null,
+                    "WindList": null
+                },
+                "Precipitation": {
+                    "TextSummary": null,
+                    "PrecipType": {
+                        "Start": null,
+                        "End": null,
+                        "Value": null
+                    },
+                    "Accumulations": null
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": {
+                        "Class": null,
+                        "Value": null
+                    },
+                    "Value": null,
+                    "Units": null
+                },
+                "RelativeHumidity": {
+                    "Units": "%",
+                    "Value": "60"
+                },
+                "UV": {
+                    "Category": null,
+                    "Index": null,
+                    "TextSummary": null
+                },
+                "Frost": null,
+                "SnowLevel": null,
+                "Comfort": null,
+                "Visibility": {
+                    "OtherVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    },
+                    "WindVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    }
+                }
+            },
+            {
+                "Period": {
+                    "TextForecastName": "Saturday",
+                    "Value": "Saturday"
+                },
+                "TextSummary": "Cloudy with 40 percent chance of showers. High 8.",
+                "CloudPrecip": {
+                    "TextSummary": "Cloudy with 40 percent chance of showers."
+                },
+                "AbbreviatedForecast": {
+                    "IconCode": {
+                        "Format": "gif",
+                        "Code": "12"
+                    },
+                    "Pop": {
+                        "Units": "%",
+                        "Value": "40"
+                    },
+                    "TextSummary": "Chance of showers"
+                },
+                "Temperatures": {
+                    "TextSummary": "High 8.",
+                    "Temperature": {
+                        "Class": "high",
+                        "Period": null,
+                        "Units": "°C",
+                        "Year": null,
+                        "Value": "8"
+                    }
+                },
+                "Winds": {
+                    "TextSummary": null,
+                    "WindList": null
+                },
+                "Precipitation": {
+                    "TextSummary": null,
+                    "PrecipType": {
+                        "Start": "114",
+                        "End": "122",
+                        "Value": "rain"
+                    },
+                    "Accumulations": null
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": {
+                        "Class": null,
+                        "Value": null
+                    },
+                    "Value": null,
+                    "Units": null
+                },
+                "RelativeHumidity": {
+                    "Units": "%",
+                    "Value": "50"
+                },
+                "UV": {
+                    "Category": null,
+                    "Index": null,
+                    "TextSummary": null
+                },
+                "Frost": null,
+                "SnowLevel": null,
+                "Comfort": null,
+                "Visibility": {
+                    "OtherVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    },
+                    "WindVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    }
+                }
+            },
+            {
+                "Period": {
+                    "TextForecastName": "Saturday night",
+                    "Value": "Saturday night"
+                },
+                "TextSummary": "Cloudy with 30 percent chance of showers. Low plus 1.",
+                "CloudPrecip": {
+                    "TextSummary": "Cloudy with 30 percent chance of showers."
+                },
+                "AbbreviatedForecast": {
+                    "IconCode": {
+                        "Format": "gif",
+                        "Code": "12"
+                    },
+                    "Pop": {
+                        "Units": "%",
+                        "Value": "30"
+                    },
+                    "TextSummary": "Chance of showers"
+                },
+                "Temperatures": {
+                    "TextSummary": "Low plus 1.",
+                    "Temperature": {
+                        "Class": "low",
+                        "Period": null,
+                        "Units": "°C",
+                        "Year": null,
+                        "Value": "1"
+                    }
+                },
+                "Winds": {
+                    "TextSummary": null,
+                    "WindList": null
+                },
+                "Precipitation": {
+                    "TextSummary": null,
+                    "PrecipType": {
+                        "Start": "122",
+                        "End": "126",
+                        "Value": "rain"
+                    },
+                    "Accumulations": null
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": {
+                        "Class": null,
+                        "Value": null
+                    },
+                    "Value": null,
+                    "Units": null
+                },
+                "RelativeHumidity": {
+                    "Units": "%",
+                    "Value": "55"
+                },
+                "UV": {
+                    "Category": null,
+                    "Index": null,
+                    "TextSummary": null
+                },
+                "Frost": null,
+                "SnowLevel": null,
+                "Comfort": null,
+                "Visibility": {
+                    "OtherVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    },
+                    "WindVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    }
+                }
+            },
+            {
+                "Period": {
+                    "TextForecastName": "Sunday",
+                    "Value": "Sunday"
+                },
+                "TextSummary": "Cloudy with 30 percent chance of showers. High 8.",
+                "CloudPrecip": {
+                    "TextSummary": "Cloudy with 30 percent chance of showers."
+                },
+                "AbbreviatedForecast": {
+                    "IconCode": {
+                        "Format": "gif",
+                        "Code": "12"
+                    },
+                    "Pop": {
+                        "Units": "%",
+                        "Value": "30"
+                    },
+                    "TextSummary": "Chance of showers"
+                },
+                "Temperatures": {
+                    "TextSummary": "High 8.",
+                    "Temperature": {
+                        "Class": "high",
+                        "Period": null,
+                        "Units": "°C",
+                        "Year": null,
+                        "Value": "8"
+                    }
+                },
+                "Winds": {
+                    "TextSummary": null,
+                    "WindList": null
+                },
+                "Precipitation": {
+                    "TextSummary": null,
+                    "PrecipType": {
+                        "Start": "138",
+                        "End": "146",
+                        "Value": "rain"
+                    },
+                    "Accumulations": null
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": {
+                        "Class": null,
+                        "Value": null
+                    },
+                    "Value": null,
+                    "Units": null
+                },
+                "RelativeHumidity": {
+                    "Units": "%",
+                    "Value": "50"
+                },
+                "UV": {
+                    "Category": null,
+                    "Index": null,
+                    "TextSummary": null
+                },
+                "Frost": null,
+                "SnowLevel": null,
+                "Comfort": null,
+                "Visibility": {
+                    "OtherVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    },
+                    "WindVisibility": {
+                        "Cause": null,
+                        "TextSummary": null
+                    }
+                }
+            }
+        ]
+    },
+    "HourlyForecastGroup": {
+        "ForecastIssueUtc": null,
+        "HourlyForecasts": [
+            {
+                "HourlyTimeStampUtc": "2024-03-05T06:00:00.000Z",
+                "Condition": "Mainly cloudy",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "33"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-4"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-8",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "10"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "N"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T07:00:00.000Z",
+                "Condition": "Mainly cloudy",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "33"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-4"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-8",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "10"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "N"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T08:00:00.000Z",
+                "Condition": "Partly cloudy",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "32"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-5"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-9",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "10"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "N"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T09:00:00.000Z",
+                "Condition": "Partly cloudy",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "32"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-5"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-9",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "10"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "N"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T10:00:00.000Z",
+                "Condition": "Partly cloudy",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "32"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-5"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-8",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T11:00:00.000Z",
+                "Condition": "Partly cloudy",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "32"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-6"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-8",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T12:00:00.000Z",
+                "Condition": "A few clouds",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "31"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-6"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-8",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T13:00:00.000Z",
+                "Condition": "A few clouds",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "31"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-6"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-9",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T14:00:00.000Z",
+                "Condition": "Mainly sunny",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "01"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-7"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-9",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T15:00:00.000Z",
+                "Condition": "Mainly sunny",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "01"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-7"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-10",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T16:00:00.000Z",
+                "Condition": "Mainly sunny",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "01"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-6"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-8",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T17:00:00.000Z",
+                "Condition": "Mainly sunny",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "01"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-4"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-7",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T18:00:00.000Z",
+                "Condition": "Mainly sunny",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "01"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-3"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-5",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T19:00:00.000Z",
+                "Condition": "Mainly sunny",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "01"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-2"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-3",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T20:00:00.000Z",
+                "Condition": "Mainly sunny",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "01"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "0"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": null,
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T21:00:00.000Z",
+                "Condition": "Mainly sunny",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "01"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "1"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": null,
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T22:00:00.000Z",
+                "Condition": "Mainly sunny",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "01"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "1"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": null,
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "20"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "N"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-05T23:00:00.000Z",
+                "Condition": "Mainly sunny",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "01"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "2"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": null,
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "20"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "N"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-06T00:00:00.000Z",
+                "Condition": "Mainly sunny",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "01"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "2"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": null,
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "20"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "N"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-06T01:00:00.000Z",
+                "Condition": "Mainly sunny",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "01"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "0"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": null,
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "20"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "N"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-06T02:00:00.000Z",
+                "Condition": "Clear",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "30"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-1"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-7",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "20"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "N"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-06T03:00:00.000Z",
+                "Condition": "Clear",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "30"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-3"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-9",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "20"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "N"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-06T04:00:00.000Z",
+                "Condition": "Clear",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "30"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-4"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-6",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            },
+            {
+                "HourlyTimeStampUtc": "2024-03-06T05:00:00.000Z",
+                "Condition": "Clear",
+                "Icon": {
+                    "Format": "png",
+                    "Code": "30"
+                },
+                "Temperature": {
+                    "Class": null,
+                    "Period": null,
+                    "Units": "°C",
+                    "Year": null,
+                    "Value": "-4"
+                },
+                "Lop": {
+                    "Value": "0",
+                    "Category": "Nil",
+                    "Units": "%"
+                },
+                "WindChill": {
+                    "TextSummary": null,
+                    "Calculated": null,
+                    "Value": "-7",
+                    "Units": "°C"
+                },
+                "Wind": {
+                    "Speed": {
+                        "Units": "km/h",
+                        "Value": "5"
+                    },
+                    "Gust": null,
+                    "Direction": {
+                        "WindDirFull": null,
+                        "Value": "VR"
+                    },
+                    "Bearing": null,
+                    "Index": null,
+                    "Rank": null
+                }
+            }
+        ]
+    },
+    "RiseSet": {
+        "SunriseUtc": "Tuesday March 05, 2024 at 14:31 UTC",
+        "SunsetUtc": "Wednesday March 06, 2024 at 01:47 UTC"
+    },
+    "Almanac": {
+        "Temperatures": [
+            {
+                "Class": "extremeMax",
+                "Period": "1992-2008",
+                "Units": "°C",
+                "Year": "2005",
+                "Value": "13.7"
+            },
+            {
+                "Class": "extremeMin",
+                "Period": "1992-2008",
+                "Units": "°C",
+                "Year": "1995",
+                "Value": "-10.4"
+            },
+            {
+                "Class": "normalMax",
+                "Period": null,
+                "Units": "°C",
+                "Year": null,
+                "Value": null
+            },
+            {
+                "Class": "normalMin",
+                "Period": null,
+                "Units": "°C",
+                "Year": null,
+                "Value": null
+            },
+            {
+                "Class": "normalMean",
+                "Period": null,
+                "Units": "°C",
+                "Year": null,
+                "Value": null
+            }
+        ],
+        "Precipitations": [
+            {
+                "Class": "extremeRainfall",
+                "Period": "-",
+                "Units": "mm",
+                "Year": "",
+                "Value": null
+            },
+            {
+                "Class": "extremeSnowfall",
+                "Period": "-",
+                "Units": "cm",
+                "Year": "",
+                "Value": null
+            },
+            {
+                "Class": "extremePrecipitation",
+                "Period": "1993-2008",
+                "Units": "mm",
+                "Year": "1998",
+                "Value": "0.4"
+            },
+            {
+                "Class": "extremeSnowOnGround",
+                "Period": "-",
+                "Units": "cm",
+                "Year": "",
+                "Value": null
+            }
+        ],
+        "Pop": {
+            "Units": "%",
+            "Value": null
+        }
+    },
+    "ForecastId": 272467435
+}

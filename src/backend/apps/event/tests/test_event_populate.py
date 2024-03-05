@@ -9,10 +9,12 @@ import pytest
 from apps.event.enums import EVENT_DIRECTION, EVENT_STATUS
 from apps.event.models import Event
 from apps.event.tasks import populate_all_event_data, populate_event_from_data
-from apps.event.tests.test_data.event_parsed_feed import parsed_feed
+from apps.event.tests.test_data.event_parsed_feed import parsed_feed, parsed_feed_2
 from apps.shared.tests import BaseTest, MockResponse
-from django.contrib.gis.geos import LineString
+from django.contrib.gis.geos import LineString, Point
 from httpx import HTTPStatusError
+
+from apps.event import enums as event_enums
 
 
 class TestEventModel(BaseTest):
@@ -52,6 +54,7 @@ class TestEventModel(BaseTest):
 
         # Parsed python dict
         self.parsed_feed = parsed_feed
+        self.parsed_feed_2 = parsed_feed_2
 
     def test_populate_event_function(self):
         populate_event_from_data(self.parsed_feed)
@@ -90,6 +93,59 @@ class TestEventModel(BaseTest):
         assert event_one.last_updated == datetime.datetime(
             2023, 6, 29, 10, 14, 55, tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
         )
+        assert event_one.priority == 7
+
+    def test_populate_event_function_2(self):
+        Event.objects.create(
+            id="drivebc.ca/DBC-3175",
+
+            description="Test description for test construction event",
+            event_type=event_enums.EVENT_TYPE.CONSTRUCTION,
+            event_sub_type=event_enums.EVENT_SUB_TYPE.ROAD_CONSTRUCTION,
+
+            # General status
+            status=event_enums.EVENT_STATUS.ACTIVE,
+            severity=event_enums.EVENT_SEVERITY.MAJOR,
+
+            # Location
+            direction=event_enums.EVENT_DIRECTION.NORTH,
+            location=Point(-120.526427, 49.451752),
+            # location={"coordinates": Point([-120.526427, 49.451752])},
+            route_at="Test Highway",
+
+            # Update status
+            first_created=datetime.datetime(
+                2023, 6, 2, 16, 42, 16,
+                tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
+            ),
+            last_updated=datetime.datetime(
+                2023, 6, 2, 16, 42, 16,
+                tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
+            ),
+        
+            schedule = {
+                "intervals": [
+                "2023-05-23T14:00/2023-07-22T14:00"
+                ]
+            },
+        
+
+        
+            route_from = "at Test Road",
+            route_to = "Test Avenue",
+        )
+
+        # Normal feed
+        event_feed_data = open(
+            str(Path(__file__).parent) +
+            "/test_data/event_feed_list_of_one.json"
+        )
+        self.mock_event_feed_result = json.load(event_feed_data)
+        populate_event_from_data(self.mock_event_feed_result['events'][0])
+
+        event_one = Event.objects.get(id="drivebc.ca/DBC-3175")
+
+
         assert event_one.priority == 7
 
     @patch("httpx.get")

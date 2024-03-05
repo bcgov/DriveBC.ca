@@ -10,11 +10,17 @@ class TestRegionalWeatherAPI(APITestCase, BaseTest):
     def setUp(self):
         super().setUp()
 
-        RegionalWeather.objects.create(
+        self.weather = RegionalWeather.objects.create(
             code="s0000341",
-            location_latitude="58.66N",
+            location_latitude="58.66S",
             location_longitude="124.64W",
+            forecast_group={}
         )
+        self.weather.save()
+
+       
+
+      
 
     def test_regional_weather_list_caching(self):
         # Empty cache
@@ -56,3 +62,9 @@ class TestRegionalWeatherAPI(APITestCase, BaseTest):
             url
         )
         assert len(response.data) == 1
+
+    def test_get_forecasts(self):
+        forecasts = self.weather.get_forecasts()
+        test_str = self.weather.__str__()
+        assert len(forecasts) == 0
+        assert test_str == 'Regional Forecast for 6'

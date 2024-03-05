@@ -34,6 +34,10 @@ class TestFerryAPI(APITestCase, BaseTest):
             ),
             live=True,
         )
+
+        ferry_2.rendered_description()
+        ferry_2.rendered_seasonal_description()
+        ferry_2.rendered_service_hours()
         ferry_2.save()
 
     def test_ferry_list_caching(self):
