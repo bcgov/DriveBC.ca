@@ -81,11 +81,21 @@ export default function CamerasListPage() {
   }, [selectedRoute]);
 
   useEffect(() => {
+    // Search name and caption of all cams in group
+    const searchFn = (pc, targetText) => {
+      for (let i = 0; i < pc.camGroup.length; i++) {
+        if (pc.camGroup[i].name.toLowerCase().includes(targetText.toLowerCase()) ||
+          pc.camGroup[i].caption.toLowerCase().includes(targetText.toLowerCase())) {
+
+          return true;
+        }
+      }
+
+      return false;
+    }
+
     const filteredCams = !searchText ? processedCameras :
-      processedCameras.filter(
-        (pc) => pc.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          pc.caption.toLowerCase().includes(searchText.toLowerCase())
-      );
+      processedCameras.filter((pc) => searchFn(pc, searchText));
 
     setDisplayedCameras(filteredCams);
 
