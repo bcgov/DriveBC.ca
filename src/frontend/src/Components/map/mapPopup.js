@@ -6,7 +6,7 @@ import EventTypeIcon from '../EventTypeIcon';
 import FriendlyTime from '../FriendlyTime';
 import parse from 'html-react-parser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
+import {
   faFerry,
   faTemperatureHalf,
   faMountain,
@@ -24,7 +24,7 @@ import './mapPopup.scss';
 
 function convertCategory(event) {
   switch(event.display_category) {
-    case 'closures': 
+    case 'closures':
       return 'Closure';
     case 'majorEvents':
       return event.event_type === 'INCIDENT' ? 'Major incident ' : 'Major delay';
@@ -70,15 +70,37 @@ export function getEventPopup(eventFeature) {
         </div>
         <p className="name">{convertCategory(eventData)}</p>
       </div>
+
       <div className="popup__content">
         <div className="popup__content__title">
-          <p className="name">{`${eventData.route_at} - ${eventData.route_display}`}</p>
           <p className="direction">{convertDirection(eventData.direction)}</p>
+          <p className="name">{eventData.highway_segment_names ? eventData.highway_segment_names : eventData.route_at}</p>
+          <p className="location">{eventData.location_description}</p>
         </div>
+
+        {eventData.closest_landmark &&
+          <div className="popup__content__description">
+            <p>Closest Landmark</p>
+            <p>{eventData.closest_landmark}</p>
+          </div>
+        }
+
         <div className="popup__content__description">
-          <FriendlyTime date={eventData.last_updated} />
-          <p>{eventData.description}</p>
+          <p>Description</p>
+          <p>{eventData.optimized_description}</p>
         </div>
+
+        <div className="popup__content__description">
+          <p>Last update</p>
+          <FriendlyTime date={eventData.last_updated} />
+        </div>
+
+        {eventData.next_update &&
+          <div className="popup__content__description">
+            <p>Next update</p>
+            <FriendlyTime date={eventData.next_update} />
+          </div>
+        }
       </div>
     </div>
   );
