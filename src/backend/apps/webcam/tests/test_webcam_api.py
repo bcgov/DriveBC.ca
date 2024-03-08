@@ -1,6 +1,9 @@
 import datetime
+import json
 import zoneinfo
-from unittest import skip
+from pathlib import Path
+from unittest.mock import patch
+
 from apps.shared import enums as shared_enums
 from apps.shared.enums import CacheKey
 from apps.shared.tests import BaseTest, MockResponse
@@ -9,10 +12,6 @@ from apps.webcam.views import WebcamAPI
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
 from rest_framework.test import APITestCase
-import json
-from pathlib import Path
-from httpx import Response
-from unittest.mock import patch
 
 
 class TestCameraAPI(APITestCase, BaseTest):
@@ -31,7 +30,7 @@ class TestCameraAPI(APITestCase, BaseTest):
         )
         self.mock_webcam_feed_result_filtered = json.load(self.webcam_feed_result_filtered)
 
-        for i in range(10):
+        for i in range(11):
             Webcam.objects.create(
                 id=i,
 
@@ -53,7 +52,7 @@ class TestCameraAPI(APITestCase, BaseTest):
 
                 # General status
                 is_on=True,
-                should_appear=False,
+                should_appear=i != 10,  # last camera should not be in the list
                 is_new=False,
                 is_on_demand=False,
 

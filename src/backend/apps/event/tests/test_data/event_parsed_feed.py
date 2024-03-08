@@ -5,7 +5,7 @@ from collections import OrderedDict
 from django.contrib.gis.geos import LineString, Point
 
 parsed_feed = OrderedDict([
-    ("id", "drivebc.ca/DBC-52446"),
+    ("id", "DBC-52446"),
     ("description", "Highway 3. Road maintenance work between Bromley Pl "
                     "and Frontage Rd for 0.6 km (Princeton). Until Sat "
                     "Jul 22 at 7:00 AM PDT. Single lane alternating traffic. "
@@ -39,7 +39,7 @@ parsed_feed = OrderedDict([
 ])
 
 parsed_feed_2 = OrderedDict([
-    ("id", "drivebc.ca/DBC-52446"),
+    ("id", "DBC-52446"),
     ("description", "Highway 3. Road maintenance work between Bromley Pl "
                     "and Frontage Rd for 0.6 km (Princeton). Until Sat "
                     "Jul 22 at 7:00 AM PDT. Single lane alternating traffic. "

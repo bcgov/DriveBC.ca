@@ -4,11 +4,9 @@ from copy import copy
 
 from apps.event import enums as event_enums
 from apps.event.models import Event
-from apps.event.serializers import EventInternalSerializer, EventSerializer
+from apps.event.serializers import EventSerializer
 from apps.shared.tests import BaseTest
 from django.contrib.gis.geos import LineString
-
-
 
 
 class TestEventSerializer(BaseTest):
@@ -17,7 +15,11 @@ class TestEventSerializer(BaseTest):
 
         self.event = Event(
             # Description
-            description="Test description for test construction event",
+            description="Quesnel-Hixon Road, in both directions. "
+                        "Landslide at Cottonwood bridge. "
+                        "Road closed. "
+                        "Next update time Wed Jul 12 at 2:00 PM PDT. "
+                        "Last updated Thu Apr 13 at 10:30 AM PDT. (DBC-28386)",
             event_type=event_enums.EVENT_TYPE.CONSTRUCTION,
             event_sub_type=event_enums.EVENT_SUB_TYPE.ROAD_CONSTRUCTION,
 
@@ -74,19 +76,19 @@ class TestEventSerializer(BaseTest):
         self.serializer_three = EventSerializer(self.event_three)
 
         self.event_four = copy(self.event_three)
-        self.event_four.id = 'drivebc.ca/DBCRCON-1234'
+        self.event_four.id = 'DBCRCON-1234'
         self.event_four.closed = False
         self.event_four.save()
         self.serializer_four = EventSerializer(self.event_four)
 
         self.event_five = copy(self.event_four)
-        self.event_five.id = 'drivebc.ca/DBC-1234'
+        self.event_five.id = 'DBC-1234'
         self.event_five.schedule = {
             "intervals": [
               "2025-05-23T14:00/2025-07-22T14:00"
             ]
         }
-       
+
         self.event_five.start = datetime.datetime(
                 2026, 6, 2, 16, 42, 16,
                 tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
@@ -96,39 +98,33 @@ class TestEventSerializer(BaseTest):
         self.event_five.save()
         self.serializer_five = EventSerializer(self.event_five)
 
-        
-
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 21
+        assert len(self.serializer.data) == 26
         # route_from beings with 'at '
         assert self.serializer.data['route_display'] == \
                "Test Road to Test Avenue"
         assert self.serializer.data['direction_display'] == \
                "Northbound"
 
-        assert len(self.serializer_two.data) == 21
+        assert len(self.serializer_two.data) == 26
         # route_from doesn't being with 'at '
         assert self.serializer_two.data['route_display'] == \
                "Test Road Two to Test Avenue Two"
         assert self.serializer_two.data['direction_display'] == \
-               "Both Directions"
+               "Both"
 
         # Eastern time auto adjusted to Pacific time
         assert self.serializer_two.data['last_updated'] == \
                '2023-06-02T13:42:16-07:00'
-        
+
         assert self.serializer.data['schedule']['intervals'][0] == \
                "2023-05-23T14:00/2023-07-22T14:00"
-        
+
         assert self.serializer.data['route_from'] == \
                "at Test Road"
-        assert self.serializer.data['route_to'] == \
-           "Test Avenue"
+        assert self.serializer.data['route_to'] == "Test Avenue"
         assert self.event.route_to is not None
-
-
-        assert self.serializer_three.data['closed'] == \
-            True
+        assert self.serializer_three.data['closed'] is True
         assert self.serializer_four.data['display_category'] == \
             'roadConditions'
         assert self.serializer_five.data['display_category'] == \
@@ -136,5 +132,3 @@ class TestEventSerializer(BaseTest):
         assert self.serializer_five.data['route_display'] == \
             'Test Road to Test Ave'
         assert self.event_five.route_to is not None
-        
-       

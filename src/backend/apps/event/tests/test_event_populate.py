@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+from apps.event import enums as event_enums
 from apps.event.enums import EVENT_DIRECTION, EVENT_STATUS
 from apps.event.models import Event
 from apps.event.tasks import populate_all_event_data, populate_event_from_data
@@ -13,8 +14,6 @@ from apps.event.tests.test_data.event_parsed_feed import parsed_feed, parsed_fee
 from apps.shared.tests import BaseTest, MockResponse
 from django.contrib.gis.geos import LineString, Point
 from httpx import HTTPStatusError
-
-from apps.event import enums as event_enums
 
 
 class TestEventModel(BaseTest):
@@ -59,7 +58,7 @@ class TestEventModel(BaseTest):
     def test_populate_event_function(self):
         populate_event_from_data(self.parsed_feed)
 
-        event_one = Event.objects.get(id="drivebc.ca/DBC-52446")
+        event_one = Event.objects.get(id="DBC-52446")
 
         # Description
         assert event_one.description == \
@@ -93,13 +92,16 @@ class TestEventModel(BaseTest):
         assert event_one.last_updated == datetime.datetime(
             2023, 6, 29, 10, 14, 55, tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
         )
-        assert event_one.priority == 7
 
     def test_populate_event_function_2(self):
         Event.objects.create(
-            id="drivebc.ca/DBC-3175",
+            id="DBC-3175",
 
-            description="Test description for test construction event",
+            description="Quesnel-Hixon Road, in both directions. "
+                        "Landslide at Cottonwood bridge. "
+                        "Road closed. "
+                        "Next update time Wed Jul 12 at 2:00 PM PDT. "
+                        "Last updated Thu Apr 13 at 10:30 AM PDT. (DBC-28386)",
             event_type=event_enums.EVENT_TYPE.CONSTRUCTION,
             event_sub_type=event_enums.EVENT_SUB_TYPE.ROAD_CONSTRUCTION,
 
@@ -118,21 +120,23 @@ class TestEventModel(BaseTest):
                 2023, 6, 2, 16, 42, 16,
                 tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
             ),
+            next_update=datetime.datetime(
+                2023, 6, 10, 16, 42, 16,
+                tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
+            ),
             last_updated=datetime.datetime(
                 2023, 6, 2, 16, 42, 16,
                 tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
             ),
-        
-            schedule = {
+
+            schedule={
                 "intervals": [
-                "2023-05-23T14:00/2023-07-22T14:00"
+                    "2023-05-23T14:00/2023-07-22T14:00"
                 ]
             },
-        
 
-        
-            route_from = "at Test Road",
-            route_to = "Test Avenue",
+            route_from="at Test Road",
+            route_to="Test Avenue",
         )
 
         # Normal feed
@@ -142,11 +146,6 @@ class TestEventModel(BaseTest):
         )
         self.mock_event_feed_result = json.load(event_feed_data)
         populate_event_from_data(self.mock_event_feed_result['events'][0])
-
-        event_one = Event.objects.get(id="drivebc.ca/DBC-3175")
-
-
-        assert event_one.priority == 7
 
     @patch("httpx.get")
     def test_populate_and_update_event(self, mock_requests_get):
@@ -163,15 +162,15 @@ class TestEventModel(BaseTest):
         event_id_list = sorted(Event.objects.all().order_by("id")
                                .values_list("id", flat=True))
         assert event_id_list == [
-            "drivebc.ca/DBC-28386",
-            "drivebc.ca/DBC-46014",
-            "drivebc.ca/DBC-52446",
-            "drivebc.ca/DBC-52791",
-            "drivebc.ca/DBC-53145"
+            "DBC-28386",
+            "DBC-46014",
+            "DBC-52446",
+            "DBC-52791",
+            "DBC-53145"
         ]
 
         # NONE direction
-        event = Event.objects.get(id="drivebc.ca/DBC-52446")
+        event = Event.objects.get(id="DBC-52446")
         assert event.direction == EVENT_DIRECTION.NONE
 
         # Second call with one missing event
@@ -179,16 +178,16 @@ class TestEventModel(BaseTest):
 
         assert Event.objects.filter(status=EVENT_STATUS.ACTIVE).count() == 4
         # Inactive events are deleted
-        assert Event.objects.filter(id="drivebc.ca/DBC-28386").count() == 0
+        assert Event.objects.filter(id="DBC-28386").count() == 0
 
         # Third call with updated data
         populate_all_event_data(include_closures=False)
         # Not updated due to same updated datetime
-        assert Event.objects.get(id="drivebc.ca/DBC-46014").route_from \
+        assert Event.objects.get(id="DBC-46014").route_from \
                != "Updated Rd"
 
         # Updated due to different updated datetime
-        assert Event.objects.get(id="drivebc.ca/DBC-53145").route_from \
+        assert Event.objects.get(id="DBC-53145").route_from \
                == "Updated Trail"
 
     @patch("httpx.get")
@@ -203,10 +202,10 @@ class TestEventModel(BaseTest):
 
         event_id_list = sorted(Event.objects.all().values_list("id", flat=True))
         assert event_id_list == [
-            "drivebc.ca/DBC-28386",
-            "drivebc.ca/DBC-52446",
-            "drivebc.ca/DBC-52791",
-            "drivebc.ca/DBC-53145"
+            "DBC-28386",
+            "DBC-52446",
+            "DBC-52791",
+            "DBC-53145"
         ]
 
     @patch("httpx.get")

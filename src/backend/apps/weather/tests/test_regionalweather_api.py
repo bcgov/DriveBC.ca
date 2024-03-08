@@ -18,10 +18,6 @@ class TestRegionalWeatherAPI(APITestCase, BaseTest):
         )
         self.weather.save()
 
-       
-
-      
-
     def test_regional_weather_list_caching(self):
         # Empty cache
         assert cache.get(CacheKey.REGIONAL_WEATHER_LIST) is None
@@ -67,4 +63,4 @@ class TestRegionalWeatherAPI(APITestCase, BaseTest):
         forecasts = self.weather.get_forecasts()
         test_str = self.weather.__str__()
         assert len(forecasts) == 0
-        assert test_str == 'Regional Forecast for 6'
+        assert test_str == 'Regional Forecast for ' + str(self.weather.id)

@@ -1,23 +1,18 @@
 import datetime
 import json
-import os
 import zoneinfo
+from pathlib import Path
 
 from apps.feed.serializers import WebcamAPISerializer
 from apps.shared.tests import BaseTest
 from django.contrib.gis.geos import Point
-
-from src.backend.apps.feed.fields import DriveBCDateField, DriveBCField, EventRoadsField
 
 
 class TestWebcamFeedSerializer(BaseTest):
     def setUp(self):
         super().setUp()
 
-        data_path = os.path.join(
-            os.getcwd(),
-            "apps/feed/tests/test_data/webcam_feed_list_of_one.json"
-        )
+        data_path = str(Path(__file__).parent) + "/test_data/webcam_feed_list_of_one.json"
         with open(data_path) as f:
             self.webcam_data = json.load(f)
 

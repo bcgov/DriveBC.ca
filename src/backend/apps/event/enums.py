@@ -97,7 +97,6 @@ EVENT_DIRECTION_DISPLAY = {
 }
 
 EVENT_DIFF_FIELDS = [
-    'next_update',
     'last_updated'
 ]
 

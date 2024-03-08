@@ -1,8 +1,8 @@
 import datetime
+import json
 import zoneinfo
-from unittest import skip
-
-from django.test import override_settings
+from pathlib import Path
+from unittest.mock import patch
 
 from apps.event import enums as event_enums
 from apps.event.models import Event
@@ -12,14 +12,12 @@ from apps.shared.tests import BaseTest, MockResponse
 from django.contrib.gis.geos import LineString, Point
 from django.core.cache import cache
 from rest_framework.test import APITestCase
-import json
-from pathlib import Path
-from unittest.mock import patch
+
 
 class TestEventAPI(APITestCase, BaseTest):
     def setUp(self):
         super().setUp()
-         # Normal feed
+        # Normal feed
         self.event_feed_result = open(
             str(Path(__file__).parent) +
             "/test_data/event_feed_list_of_two.json"
@@ -37,7 +35,10 @@ class TestEventAPI(APITestCase, BaseTest):
                 id=str(i),
 
                 # Description
-                description="Test description for test construction event",
+                description="Quesnel-Hixon Road, in both directions. "
+                            "Landslide at Cottonwood bridge. "
+                            "Road closed. Next update time Wed Jul 12 at 2:00 PM PDT. "
+                            "Last updated Thu Apr 13 at 10:30 AM PDT. (DBC-28386)",
                 event_type=event_enums.EVENT_TYPE.CONSTRUCTION,
                 event_sub_type=event_enums.EVENT_SUB_TYPE.ROAD_CONSTRUCTION,
 
@@ -92,11 +93,8 @@ class TestEventAPI(APITestCase, BaseTest):
     # @skip('to be mocked')
     # @patch("httpx.get")
     # @override_settings(EXTERNAL_API_URL='/api/events/')
-    
     @patch('rest_framework.test.APIClient.get')
     def test_events_list_filtering(self, mock_requests_get):
-        
-
         # # No filtering
         # url = "/api/events/"
         # # mock_requests_get.side_effect = [
@@ -121,7 +119,7 @@ class TestEventAPI(APITestCase, BaseTest):
 
         url = "/api/events/"
         response = self.client.get(url, {})
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         events_list = response.json().get('events', [])
         events_list_length = len(events_list)
         assert events_list_length == 2
@@ -151,8 +149,6 @@ class TestEventAPI(APITestCase, BaseTest):
         events_list_length = len(events_list)
         assert events_list_length == 1
 
-
-
         mock_requests_get.side_effect = [
             MockResponse({"events": []}, status_code=200),
         ]
@@ -167,4 +163,3 @@ class TestEventAPI(APITestCase, BaseTest):
         events_list = response.json().get('events', [])
         events_list_length = len(events_list)
         assert events_list_length == 0
-
