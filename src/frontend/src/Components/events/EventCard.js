@@ -59,12 +59,14 @@ export default function EventCard(props) {
           </div>
         </div>
 
-        <div className="next-update">
-          <div className="header">{ showLoader ? <Skeleton /> : 'Next Update' }</div>
-          <div className="content">
-            { showLoader ? <Skeleton width={'90%'} /> : <FriendlyTime date={event.next_update} /> }
+        {event && event.next_update &&
+          <div className="next-update">
+            <div className="header">{ showLoader ? <Skeleton /> : 'Next Update' }</div>
+            <div className="content">
+              { showLoader ? <Skeleton width={'90%'} /> : <FriendlyTime date={event.next_update} /> }
+            </div>
           </div>
-        </div>
+        }
 
         <div className="map">
           <div className="header">{ showLoader ? <Skeleton /> : 'Map' }</div>
