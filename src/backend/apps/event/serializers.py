@@ -59,11 +59,14 @@ class EventInternalSerializer(serializers.ModelSerializer):
         )
 
     def to_representation(self, instance):
-        representation = super().to_representation(instance)       
+        representation = super().to_representation(instance)
+
         schedule = instance.schedule.get('intervals', [])
-        start, end = schedule[0].split('/')
-        representation['start'] = start
-        representation['end'] = end
+        if len(schedule):
+            start, end = schedule[0].split('/')
+            representation['start'] = start
+            representation['end'] = end
+
         return representation
 
     def get_direction_display(self, obj):
