@@ -92,8 +92,8 @@ EVENT_DIRECTION_DISPLAY = {
     EVENT_DIRECTION.EAST: "Eastbound",
     EVENT_DIRECTION.SOUTH: "Southbound",
     EVENT_DIRECTION.WEST: "Westbound",
-    EVENT_DIRECTION.BOTH: "Both",
-    EVENT_DIRECTION.NONE: "Both"
+    EVENT_DIRECTION.BOTH: "Both directions",
+    EVENT_DIRECTION.NONE: "Both directions"
 }
 
 EVENT_DIFF_FIELDS = [

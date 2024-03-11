@@ -8,11 +8,14 @@ import { useSelector, useDispatch } from 'react-redux';
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faAngleDown,
   faMapLocationDot
 } from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Internal imports
@@ -33,6 +36,7 @@ import './EventsListPage.scss';
 import '../Components/Filters.scss';
 
 export default function EventsListPage() {
+  const navigate = useNavigate();
   document.title = 'DriveBC - Delays';
 
   // Redux
@@ -59,73 +63,8 @@ export default function EventsListPage() {
   // Context
   const { mapContext, setMapContext } = useContext(MapContext);
 
-  const navigate = useNavigate();
-
-  const columns = [
-    {
-      header: 'Type',
-      accessorKey: 'display_category',
-      sortingFn: 'typeSort',
-      cell: (props) => <EventTypeIcon event={props.row.original} />,
-    },
-    {
-      header: 'Severity',
-      accessorKey: 'severity',
-      sortingFn: 'severitySort',
-      sortDescFirst: true,
-      cell: (props) => <span>{props.getValue().toLowerCase()}</span>,
-    },
-    {
-      header: 'Road',
-      accessorKey: 'route_at',
-      sortingFn: 'routeSort',
-    },
-    {
-      header: 'Direction',
-      accessorKey: 'direction_display',
-      cell: (props) => <span>{props.getValue()}</span>,
-      enableSorting: false,
-    },
-    {
-      header: 'Location',
-      accessorKey: 'location_description',
-      cell: (props) => <span>{props.getValue()}</span>,
-      enableSorting: false,
-    },
-    {
-      header: 'Closest Landmark',
-      accessorKey: 'closest_landmark',
-      cell: (props) => <span>{props.getValue() ? props.getValue() : '-'}</span>,
-      enableSorting: false,
-    },
-    {
-      header: 'Description',
-      accessorKey: 'optimized_description',
-      enableSorting: false,
-    },
-    {
-      header: 'Last Update',
-      accessorKey: 'last_updated',
-      cell: (props) => <FriendlyTime date={props.getValue()} />,
-      sortDescFirst: true,
-    },
-    {
-      header: 'Next Update',
-      accessorKey: 'next_update',
-      cell: (props) => props.getValue() ? <FriendlyTime date={props.getValue()} /> : '-',
-      enableSorting: false,
-    },
-    {
-      header: 'Map',
-      accessorKey: 'map',
-      cell: (props) => <FontAwesomeIcon icon={faMapLocationDot} />,
-      enableSorting: false,
-    },
-  ];
-
   // States
-  const [sortingColumns, setSortingColumns] = useState([]);
-
+  const [sortingKey, setSortingKey] = useState('severity_desc');
   const [eventCategoryFilter, setEventCategoryFilter] = useState({
     'closures': mapContext.visible_layers.closures,
     'majorEvents': mapContext.visible_layers.majorEvents,
@@ -197,7 +136,42 @@ export default function EventsListPage() {
     }
   };
 
-  // Rendering
+  const sortHandler = (e, key) => {
+    e.preventDefault();
+    if (sortingKey != key) {
+      setSortingKey(key);
+    }
+  }
+
+  // Rendering - Sorting
+  const getSortingDisplay = (key) => {
+    const sortingDisplayMap = {
+      'severity_desc': 'Severity, Closure to Minor',
+      'severity_asc': 'Severity, Minor to Closure',
+      'road_name_asc': 'Road name, A-Z',
+      'road_name_desc': 'Road name, Z-A',
+      'last_updated_desc': 'Last updated, New to Old',
+      'last_updated_asc': 'Last updated, Old to New',
+    }
+
+    return sortingDisplayMap[key];
+  }
+
+  const allSortingKeys = ['severity_desc', 'severity_asc', 'road_name_asc', 'road_name_desc',  'last_updated_desc', 'last_updated_asc'];
+  const getSortingList = () => {
+    const res = [];
+    for (let i = 0; i < allSortingKeys.length; i++) {
+      res.push(
+        <Dropdown.Item className={allSortingKeys[i] == sortingKey ? 'selected' : ''} onClick={(e) => sortHandler(e, allSortingKeys[i])}>
+          {getSortingDisplay(allSortingKeys[i])}
+        </Dropdown.Item>
+      );
+    }
+
+    return res;
+  }
+
+  // Rendering - Main component
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
   return (
@@ -219,16 +193,29 @@ export default function EventsListPage() {
             }
           </div>
 
-          <Filters
-            toggleHandler={eventCategoryFilterHandler}
-            disableFeatures={true}
-            enableRoadConditions={false}
-          />
+          <div className="right-container">
+            <Dropdown>
+              <Dropdown.Toggle>
+                Sort: {getSortingDisplay(sortingKey)}
+                <FontAwesomeIcon icon={faAngleDown} size="md" />
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu align={'end'} flip={false}>
+                {getSortingList()}
+              </Dropdown.Menu>
+            </Dropdown>
+
+            <Filters
+              toggleHandler={eventCategoryFilterHandler}
+              disableFeatures={true}
+              enableRoadConditions={false}
+            />
+          </div>
         </div>
 
         <div>
           { largeScreen &&
-            <EventsTable columns={columns} data={processedEvents} sortingHandler={setSortingColumns} routeHandler={handleRoute} showLoader={showLoader} />
+            <EventsTable data={processedEvents} routeHandler={handleRoute} showLoader={showLoader} sortingKey={sortingKey} />
           }
 
           { !largeScreen &&

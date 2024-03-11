@@ -31,16 +31,68 @@
       }
     }
 
-    .filters-component {
-      button {
-        margin: 0;
+    .right-container {
+      display: flex;
+
+      .dropdown {
+        margin-right: 45px;
+
+        button {
+          border: none;
+
+          &::after {
+            display: none;
+          }
+
+          .fa-angle-down {
+            padding-top: 5px;
+            margin-left: 5px;
+          }
+        }
+
+        .dropdown-menu {
+          width: 305px;
+          border: none;
+          border-radius: 5px;
+          box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
+
+          .dropdown-item {
+            padding: 15px;
+
+            &.selected {
+              font-weight: 700;
+              color: #053662;
+            }
+          }
+        }
       }
 
-      .filters {
-        @media (min-width: 768px) {
-          max-height: initial;
-          top: 2.4375rem;
-          right: 0;
+      .btn-primary {
+//         background: none;
+        --bs-btn-color: #000;
+        --bs-btn-bg: #fff;
+        --bs-btn-border-color: #013366;
+        --bs-btn-hover-color: #fff;
+        --bs-btn-hover-bg: #fff;
+        --bs-btn-hover-border-color: #012952;
+        --bs-btn-focus-shadow-rgb: 39, 82, 125;
+        --bs-btn-active-color: #fff;
+        --bs-btn-active-bg: #012952;
+        --bs-btn-active-border-color: #01264d;
+        --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+      }
+
+      .filters-component {
+        button {
+          margin: 0;
+        }
+
+        .filters {
+          @media (min-width: 768px) {
+            max-height: initial;
+            top: 2.4375rem;
+            right: 0;
+          }
         }
       }
     }

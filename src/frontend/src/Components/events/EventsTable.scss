@@ -25,13 +25,10 @@ table {
 
   tbody {
     tr {
-      &:nth-of-type(even) {
-        background-color: $Grey10;
-      }
       &.major, &.closure {
         background-color: $Surface-status-red;
 
-        td.severity {
+        .typeDisplay {
           color: $Type-status-red;
           font-weight: 700;
         }
@@ -40,6 +37,7 @@ table {
         background-color: $BC-Blue-Light;
         cursor: pointer;
       }
+
       td {
         color: $Type-Primary;
 
@@ -56,10 +54,42 @@ table {
         }
       }
     }
-  }
 
-  tr {
-    border-bottom: 1px solid $Divider;
+    .headerRow {
+      &:hover + tr {
+        background-color: $BC-Blue-Light;
+      }
+
+      &:has(+ tr:hover) {
+        background-color: $BC-Blue-Light;
+      }
+
+      td {
+        padding-bottom: 0;
+
+        .roadName {
+          color: #053662;
+          size: 18pt;
+          font-weight: bold;
+        }
+
+        .directionDisplay {
+          size: 14pt;
+        }
+
+        p {
+          margin-bottom: 5px;
+        }
+      }
+    }
+
+    .dataRow {
+      border-bottom: 1px solid $Divider;
+
+      td {
+        padding-top: 0;
+      }
+    }
   }
 
   th, td {

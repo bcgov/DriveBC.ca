@@ -123,8 +123,9 @@ export default function Filters(props) {
         onClick={() => {
           open ? setOpen(false) : setOpen(true) }
         }>
-        <FontAwesomeIcon icon={faFilter} />
         Filters
+
+        <FontAwesomeIcon icon={faFilter} />
       </Button>
 
       { open &&
@@ -161,6 +162,7 @@ export default function Filters(props) {
                     </span>
                     Closures
                   </label>
+
                   <OverlayTrigger placement="top" overlay={tooltipClosures}>
                     <span className="tooltip-info">?</span>
                   </OverlayTrigger>
@@ -346,8 +348,8 @@ export default function Filters(props) {
                   </OverlayTrigger>
                 </div>
                 */}
-                
-                {/* 
+
+                {/*
                 <div className={'filter-item filter-item--weather'}>
                   <span className="filter-item__icon">
                     <FontAwesomeIcon icon={faCloudSun} alt="weather" />

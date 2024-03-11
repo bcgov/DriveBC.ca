@@ -1,7 +1,7 @@
 // React
 import React, { useEffect, useState } from 'react';
 
-// Third party packages
+// External Imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   flexRender,
@@ -13,23 +13,90 @@ import {
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+// Internal imports
+import EventTypeIcon from '../EventTypeIcon';
+import FriendlyTime from '../FriendlyTime';
+
 // External assets
 import {
   faArrowUpLong,
   faArrowDownLong,
 } from '@fortawesome/free-solid-svg-icons';
+import Button from 'react-bootstrap/Button';
 
 // Styling
 import './EventsTable.scss';
 
 export default function EventsTable(props) {
   // Props
-  const { columns, data, sortingHandler, routeHandler, showLoader } = props;
+  const { data, routeHandler, showLoader, sortingKey } = props;
 
   // States
   const [sorting, setSorting] = useState([{ desc: true, id: 'severity' }]);
 
-  // Sort functions for react-table
+  // react-table columns
+  const getEventTypeCell = (data) => {
+    const getTypeDisplay = () => {
+      const severityText = data.severity == 'MAJOR' ? 'Major' : 'Minor';
+
+      switch (data.display_category) {
+        case 'closures':
+          return 'Closure';
+
+        case 'futureEvents':
+          return severityText + ' future event'
+
+        default:
+          return severityText + (data.event_type == 'INCIDENT' ? ' incident' : ' current event');
+      }
+    }
+
+    return (
+      <div className={'typeDisplayContainer'}>
+        <EventTypeIcon event={data} />
+        <p className={'typeDisplay'}>{getTypeDisplay()}</p>
+      </div>
+    );
+  }
+
+  const columns = [
+    {
+      header: 'Type',
+      accessorKey: 'display_category',
+      sortingFn: 'typeSort',
+      cell: (props) => getEventTypeCell(props.row.original),
+    },
+    {
+      header: 'Location',
+      accessorKey: 'location_description',
+      sortingFn: 'severitySort', // override to sort by severity instead
+      cell: (props) => <span>{props.getValue()}</span>,
+    },
+    {
+      header: 'Closest Landmark',
+      accessorKey: 'closest_landmark',
+      sortingFn: 'routeSort', // override to sort by severity instead
+      cell: (props) => <span>{props.getValue() ? props.getValue() : '-'}</span>,
+    },
+    {
+      header: 'Description',
+      accessorKey: 'optimized_description',
+      enableSorting: false,
+    },
+    {
+      header: 'Last Update',
+      accessorKey: 'last_updated',
+      cell: (props) => <FriendlyTime date={props.getValue()} />,
+    },
+    {
+      header: 'Next Update',
+      accessorKey: 'next_update',
+      cell: (props) => props.getValue() ? <FriendlyTime date={props.getValue()} /> : '-',
+      enableSorting: false,
+    },
+  ];
+
+  // react-table sorting functions
   const defaultSortFn = (rowA, rowB, columnId) => {
     const aValue = rowA.original[columnId];
     const bValue = rowB.original[columnId];
@@ -37,30 +104,36 @@ export default function EventsTable(props) {
     return aValue > bValue ? 1 : -1;
   }
 
-  // Use highway ref as secondary sort
-  const routeSortFn = (rowA, rowB, columnId) => {
+  const routeSortFn = (rowA, rowB) => {
     return defaultSortFn(rowA, rowB,
-      rowA.getValue(columnId) != rowB.getValue(columnId) ? columnId : 'start_point_linear_reference'
+      // Use highway ref as secondary sort
+      rowA.original.route_at != rowB.original.route_at ? 'route_at' : 'start_point_linear_reference'
     );
   }
 
   const typeSortFn = (rowA, rowB, columnId) => {
     // Alphabetical primary sort
-    if (rowA.getValue(columnId) != rowB.getValue(columnId)) {
-      return defaultSortFn(rowA, rowB, columnId);
+    if (rowA.original.display_category != rowB.original.display_category) {
+      return defaultSortFn(rowA, rowB, 'display_category');
 
     // Route secondary sort
     } else {
-      return routeSortFn(rowA, rowB, 'route_at');
+      return routeSortFn(rowA, rowB);
     }
   }
 
   const severitySortFn = (rowA, rowB, columnId) => {
     // Reversed due to desc priority logic
-    return typeSortFn(rowA, rowB, columnId) * -1;
+    if (rowA.original.display_category != rowB.original.display_category) {
+      return defaultSortFn(rowA, rowB, 'severity') * -1;
+
+    // Reversed route secondary sort
+    } else {
+      return routeSortFn(rowA, rowB) * -1;
+    }
   }
 
-  // react-table
+  // react-table initiation
   const table = useReactTable({
     data: data,
     columns: columns,
@@ -85,46 +158,31 @@ export default function EventsTable(props) {
     getSortedRowModel: getSortedRowModel(),
   });
 
-  // UseEffect
-  useEffect(() => {
-    sortingHandler(sorting);
-  }, [sorting]);
-
-  // Handlers
-  const toggleSortingHandler = (column) => {
-    if (!column.getCanSort()) return;
-
-    const nextOrder = column.getNextSortingOrder();
-
-    // sort by asc when nextOrder is not 'asc' or 'desc', or desc on sortDescFirst columns
-    const isDescFirst = column.id == 'severity' || column.id == 'last_updated';
-    column.toggleSorting(!nextOrder ? isDescFirst : null);
-  }
-
-  const ascIcon = <FontAwesomeIcon icon={faArrowUpLong} alt="ascending order" />;
-  const descIcon = <FontAwesomeIcon icon={faArrowDownLong} alt="descending order" />;
-
-  // Rendering
-  const getEventTitle = (cell) => {
-    const columnId = cell.column.id;
-    const eventType = cell.row.original.event_type;
-    const severity = cell.row.original.severity;
-
-    if (columnId === "event_type") {
-      return eventType.charAt(0) +
-        eventType.slice(1).toLowerCase() +
-        " - " +
-        severity.charAt(0) +
-        severity.toLowerCase() +
-        " delay";
-
-    } else if (columnId === "map") {
-      return "View on map";
+  // react-table sorting handler and hook
+  const getSortColumnIndex = (key) => {
+    switch (key) {
+      case 'severity_desc':
+      case 'severity_asc':
+        return 1;
+      case 'road_name_desc':
+      case 'road_name_asc':
+        return 2;
+      case 'last_updated_desc':
+      case 'last_updated_asc':
+        return 4;
     }
-
-    return "";
   }
 
+  const sortingHandler = () => {
+    const k = getSortColumnIndex(sortingKey);
+    table.getAllColumns()[k].toggleSorting(sortingKey.endsWith('_desc'));
+  }
+
+  useEffect(() => {
+    sortingHandler(sortingKey);
+  }, [sortingKey]);
+
+  // Rendering - loader
   const renderLoader = () => {
     const rows = [];
     for (let i = 0; i < 20; i++) {
@@ -148,6 +206,69 @@ export default function EventsTable(props) {
     );
   }
 
+  // Rendering - table
+  const getEventTitle = (cell) => {
+    const columnId = cell.column.id;
+    const eventType = cell.row.original.event_type;
+    const severity = cell.row.original.severity;
+
+    if (columnId === "event_type") {
+      return eventType.charAt(0) +
+        eventType.slice(1).toLowerCase() +
+        " - " +
+        severity.charAt(0) +
+        severity.toLowerCase() +
+        " delay";
+
+    } else if (columnId === "map") {
+      return "View on map";
+    }
+
+    return "";
+  }
+
+  const renderTable = (rows) => {
+    const res = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+
+      res.push(
+        <tr className={`${row.original.severity.toLowerCase()} headerRow`} onClick={() => routeHandler(row.original)}>
+          <td colSpan={10}>
+            <p className={'roadName'}>{row.original.route_at}</p>
+            <p className={'directionDisplay'}>{row.original.direction_display}</p>
+          </td>
+        </tr>
+      );
+
+      res.push(
+        <tr className={`${row.original.severity.toLowerCase()} dataRow`} onClick={() => routeHandler(row.original)} key={row.id}>
+          {row.getVisibleCells().map((cell) => {
+            return (
+              <td className={cell.column.id}
+                key={cell.id}
+                title={getEventTitle(cell)}>
+
+                {flexRender(
+                  cell.column.columnDef.cell,
+                  cell.getContext()
+                )}
+              </td>
+            );
+          })}
+        </tr>
+      );
+    }
+
+    return (
+      <tbody>
+        {res}
+      </tbody>
+    );
+  }
+
+  // Rendering - main component
   return (
     <table>
       <thead>
@@ -157,23 +278,11 @@ export default function EventsTable(props) {
               return (
                 <th className={header.id} key={header.id} colSpan={header.colSpan}>
                   {!header.isPlaceholder && !showLoader && (
-                    <span className={ header.column.getCanSort() ? 'cursor-pointer select-none' : '' }
-                      onClick={() => toggleSortingHandler(header.column)}
-                      onKeyDown={(keyEvent) => {
-                        if (keyEvent.keyCode == 13) {
-                          toggleSortingHandler(header.column);
-                        }
-                      }}>
-
+                    <span>
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-
-                      {{
-                        asc: ascIcon,
-                        desc: descIcon,
-                      }[header.column.getIsSorted()] ?? null}
                     </span>
                   )}
 
@@ -188,27 +297,7 @@ export default function EventsTable(props) {
       </thead>
 
       {!showLoader &&
-        <tbody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <tr className={row.original.severity.toLowerCase()} onClick={() => routeHandler(row.original)} key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <td className={cell.column.id}
-                      key={cell.id}
-                      title={getEventTitle(cell)}>
-
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
+        renderTable(table.getRowModel().rows)
       }
 
       {showLoader &&
