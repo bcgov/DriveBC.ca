@@ -12,6 +12,7 @@
 
     @media (max-width: 768px) {
       flex-direction: column;
+      margin-bottom: 1rem;
     }
 
     .route-display-container {
@@ -33,6 +34,11 @@
 
     .right-container {
       display: flex;
+
+      @media (max-width: 768px) {
+        margin-bottom: 1rem;
+        justify-content: space-between;
+      }
 
       .dropdown {
         margin-right: 45px;
@@ -156,4 +162,9 @@
     //   }
     // }
   }
+}
+
+// Searchbox size
+.rbt {
+  height: 40px;
 }
