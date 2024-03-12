@@ -7,6 +7,7 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 // Internal imports
+import { getTypeDisplay } from './functions';
 import FriendlyTime from '../FriendlyTime';
 
 // External assets
@@ -23,21 +24,21 @@ export default function EventCard(props) {
   return (
     <div className={'event-card ' + (event ? event.severity.toLowerCase() : '')}>
       <div className="event-card__title">
-        <div className="route">{ showLoader ? <Skeleton width={200} /> : event.route_display }</div>
-        <div className="direction">{ showLoader ? <Skeleton width={30} /> : event.direction }</div>
+        <div className="route">{ showLoader ? <Skeleton width={150} /> : event.route_at }</div>
+        <div className="direction">{ showLoader ? <Skeleton width={100} /> : event.direction_display }</div>
       </div>
 
       <div className="event-card__details">
         <div className="type">
           <div className="header">{ showLoader ? <Skeleton /> : 'Type' }</div>
           <div className="content">
-            { showLoader ? <Skeleton width={75} /> : <div>{icon} {event.severity.toLowerCase()}</div> }
+            { showLoader ? <Skeleton width={75} /> : <div>{icon} {getTypeDisplay(event)}</div> }
           </div>
         </div>
 
         <div className="location">
           <div className="header">{ showLoader ? <Skeleton /> : 'Location' }</div>
-          <div className="content">{ showLoader ? <Skeleton width={200} /> : event.location_description }</div>
+          <div className="content">{ showLoader ? <Skeleton count={2} width={200} /> : event.location_description }</div>
         </div>
 
         <div className="closest-landmark">
@@ -49,7 +50,7 @@ export default function EventCard(props) {
 
         <div className="description">
           <div className="header">{ showLoader ? <Skeleton /> : 'Description' }</div>
-          <div className="content">{ showLoader ? <Skeleton count={7} /> : event.description }</div>
+          <div className="content">{ showLoader ? <Skeleton count={5} /> : event.optimized_description }</div>
         </div>
 
         <div className="last-update">

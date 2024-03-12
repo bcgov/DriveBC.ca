@@ -14,6 +14,7 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 // Internal imports
+import { getTypeDisplay, routeSortFn, severitySortFn } from './functions';
 import EventTypeIcon from '../EventTypeIcon';
 import FriendlyTime from '../FriendlyTime';
 
@@ -27,6 +28,8 @@ import Button from 'react-bootstrap/Button';
 // Styling
 import './EventsTable.scss';
 
+
+
 export default function EventsTable(props) {
   // Props
   const { data, routeHandler, showLoader, sortingKey } = props;
@@ -36,25 +39,10 @@ export default function EventsTable(props) {
 
   // react-table columns
   const getEventTypeCell = (data) => {
-    const getTypeDisplay = () => {
-      const severityText = data.severity == 'MAJOR' ? 'Major' : 'Minor';
-
-      switch (data.display_category) {
-        case 'closures':
-          return 'Closure';
-
-        case 'futureEvents':
-          return severityText + ' future event'
-
-        default:
-          return severityText + (data.event_type == 'INCIDENT' ? ' incident' : ' current event');
-      }
-    }
-
     return (
       <div className={'typeDisplayContainer'}>
         <EventTypeIcon event={data} />
-        <p className={'typeDisplay'}>{getTypeDisplay()}</p>
+        <p className={'typeDisplay'}>{getTypeDisplay(data)}</p>
       </div>
     );
   }
@@ -63,8 +51,8 @@ export default function EventsTable(props) {
     {
       header: 'Type',
       accessorKey: 'display_category',
-      sortingFn: 'typeSort',
       cell: (props) => getEventTypeCell(props.row.original),
+      enableSorting: false,
     },
     {
       header: 'Location',
@@ -96,42 +84,7 @@ export default function EventsTable(props) {
     },
   ];
 
-  // react-table sorting functions
-  const defaultSortFn = (rowA, rowB, columnId) => {
-    const aValue = rowA.original[columnId];
-    const bValue = rowB.original[columnId];
 
-    return aValue > bValue ? 1 : -1;
-  }
-
-  const routeSortFn = (rowA, rowB) => {
-    return defaultSortFn(rowA, rowB,
-      // Use highway ref as secondary sort
-      rowA.original.route_at != rowB.original.route_at ? 'route_at' : 'start_point_linear_reference'
-    );
-  }
-
-  const typeSortFn = (rowA, rowB, columnId) => {
-    // Alphabetical primary sort
-    if (rowA.original.display_category != rowB.original.display_category) {
-      return defaultSortFn(rowA, rowB, 'display_category');
-
-    // Route secondary sort
-    } else {
-      return routeSortFn(rowA, rowB);
-    }
-  }
-
-  const severitySortFn = (rowA, rowB, columnId) => {
-    // Reversed due to desc priority logic
-    if (rowA.original.display_category != rowB.original.display_category) {
-      return defaultSortFn(rowA, rowB, 'severity') * -1;
-
-    // Reversed route secondary sort
-    } else {
-      return routeSortFn(rowA, rowB) * -1;
-    }
-  }
 
   // react-table initiation
   const table = useReactTable({
@@ -151,7 +104,6 @@ export default function EventsTable(props) {
     sortingFns: {
       routeSort: routeSortFn,
       severitySort: severitySortFn,
-      typeSort: typeSortFn,
     },
     getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
@@ -187,7 +139,18 @@ export default function EventsTable(props) {
     const rows = [];
     for (let i = 0; i < 20; i++) {
       rows.push(
-        <tr key={`loader-row-${i}`}>
+        <tr key={`loader-row-${i}-header`} className={'headerRow'}>
+          <td colSpan={10}>
+            <p>
+              <Skeleton width={200} />
+              <Skeleton width={100} />
+            </p>
+          </td>
+        </tr>
+      );
+
+      rows.push(
+        <tr key={`loader-row-${i}-data`} className={'dataRow'}>
           {table.getAllColumns().map((column, j) => {
             return (
               <td className={`${column.id} loading`} key={`loader-column-${i}-${j}`}>

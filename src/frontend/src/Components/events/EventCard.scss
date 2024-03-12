@@ -2,10 +2,11 @@
 
 .event-card {
   margin-bottom: 40px;
+
   &__title {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    gap: 40px;
     background-color: $BC-Blue;
     color: $White;
     padding: 8px;

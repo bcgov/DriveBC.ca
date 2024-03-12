@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
 import { memoize } from 'proxy-memoize';
 import { updateEvents } from '../slices/feedsSlice';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +21,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 // Internal imports
 import { getEvents } from '../Components/data/events';
 import { MapContext } from '../App.js';
+import { defaultSortFn, routeSortFn, severitySortFn } from '../Components/events/functions';
+
 import Advisories from '../Components/advisories/Advisories';
 import EventCard from '../Components/events/EventCard';
 import EventsTable from '../Components/events/EventsTable';
@@ -34,6 +36,30 @@ import RouteSearch from '../Components/map/RouteSearch';
 // Styling
 import './EventsListPage.scss';
 import '../Components/Filters.scss';
+
+// Helpers
+const sortEvents = (events, key) => {
+  switch (key) {
+    case 'severity_desc':
+    case 'severity_asc':
+        events.sort((a, b) =>
+          key.endsWith('_asc') ? severitySortFn(a, b) : severitySortFn(a, b) * -1
+        );
+        break;
+    case 'road_name_desc':
+    case 'road_name_asc':
+        events.sort((a, b) =>
+          key.endsWith('_asc') ? routeSortFn(a, b) : routeSortFn(a, b) * -1
+        );
+        break;
+    case 'last_updated_desc':
+    case 'last_updated_asc':
+        events.sort((a, b) =>
+          key.endsWith('_asc') ? defaultSortFn(a, b, 'last_updated') : defaultSortFn(a, b, 'last_updated') * -1
+        );
+        break;
+  }
+}
 
 export default function EventsListPage() {
   const navigate = useNavigate();
@@ -77,6 +103,9 @@ export default function EventsListPage() {
   const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
   const [showLoader, setShowLoader] = useState(false);
 
+  // Refs
+  const isInitialMount = useRef(true);
+
   // Data loading
   const processEvents = () => {
     const hasTrue = (val) => !!val;
@@ -93,13 +122,11 @@ export default function EventsListPage() {
     }
 
     // Sort
+    sortEvents(res, sortingKey);
     setProcessedEvents(res);
   };
 
-  const handleRoute = (event) => {
-    navigate('/', {state: event});
-  };
-
+  // useEffect hooks
   useEffect(() => {
     setShowLoader(true);
 
@@ -121,6 +148,18 @@ export default function EventsListPage() {
     }
   }, [showLoader]);
 
+  useEffect(() => {
+    // Do nothing on initial run
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    sortEvents(processedEvents, sortingKey);
+    setProcessedEvents(processedEvents);
+
+  }, [sortingKey]);
+
   // Handlers
   const eventCategoryFilterHandler = (targetCategory, check, lineToggle) => {
     if (!lineToggle) {
@@ -134,6 +173,10 @@ export default function EventsListPage() {
       setMapContext(mapContext);
       localStorage.setItem('mapContext', JSON.stringify(mapContext));
     }
+  };
+
+  const handleRoute = (event) => {
+    navigate('/', {state: event});
   };
 
   const sortHandler = (e, key) => {
@@ -185,13 +228,15 @@ export default function EventsListPage() {
         <Advisories />
 
         <div className="controls-container">
-          <div className="route-display-container">
-            <RouteSearch routeEdit={routeEdit} />
+          { largeScreen &&
+            <div className="route-display-container">
+              <RouteSearch routeEdit={routeEdit} />
 
-            {!routeEdit &&
-              <Button onClick={() => setRouteEdit(true)}>Change</Button>
-            }
-          </div>
+              {!routeEdit &&
+                <Button onClick={() => setRouteEdit(true)}>Change</Button>
+              }
+            </div>
+          }
 
           <div className="right-container">
             <Dropdown>
@@ -200,7 +245,7 @@ export default function EventsListPage() {
                 <FontAwesomeIcon icon={faAngleDown} size="md" />
               </Dropdown.Toggle>
 
-              <Dropdown.Menu align={'end'} flip={false}>
+              <Dropdown.Menu align={largeScreen ? 'end' : 'start'} flip={false}>
                 {getSortingList()}
               </Dropdown.Menu>
             </Dropdown>
@@ -211,6 +256,16 @@ export default function EventsListPage() {
               enableRoadConditions={false}
             />
           </div>
+
+          { !largeScreen &&
+            <div className="route-display-container">
+              <RouteSearch routeEdit={routeEdit} />
+
+              {!routeEdit &&
+                <Button onClick={() => setRouteEdit(true)}>Change</Button>
+              }
+            </div>
+          }
         </div>
 
         <div>
