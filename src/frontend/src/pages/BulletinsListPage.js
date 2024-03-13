@@ -15,6 +15,7 @@ import './BulletinsListPage.scss';
 // Components and functions
 import { getBulletins } from '../Components/data/bulletins.js';
 import BulletinsList from '../Components/bulletins/BulletinsList';
+import EmptyBulletin from '../Components/bulletins/EmptyBulletin';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 
@@ -47,6 +48,9 @@ export default function BulletinsListPage() {
     }
   });
 
+  const filteredBulletins = bulletins?.filter(bulletin => !bulletin.title.includes('No bulletins'));
+  const isFilteredBulletinsEmpty = filteredBulletins?.length === 0;
+
   return (
     <div className='bulletins-page'>
       <PageHeader
@@ -54,8 +58,12 @@ export default function BulletinsListPage() {
         description='Find information regarding seasonal safety campaigns, and DriveBC related updates.'>
       </PageHeader>
 
-      <Container>
-        <BulletinsList bulletins={bulletins} />
+      <Container>        
+          {isFilteredBulletinsEmpty ? (
+          <EmptyBulletin bulletin={bulletins[0]}/>
+        ) : (
+          <BulletinsList bulletins={filteredBulletins} />
+        )}
       </Container>
 
       <Footer />
