@@ -90,17 +90,22 @@ export function getEventPopup(eventFeature) {
           <p>{eventData.optimized_description}</p>
         </div>
 
-        <div className="popup__content__description">
-          <p>Last update</p>
-          <FriendlyTime date={eventData.last_updated} />
+        <div className="popup__content__block">
+          <div className="popup__content__description">
+            <p>Last update</p>
+            <FriendlyTime date={eventData.last_updated} />
+          </div>
+
+          {eventData.next_update &&
+            <div className="popup__content__description">
+              <p>Next update</p>
+              <FriendlyTime date={eventData.next_update} />
+            </div>
+          }
+
         </div>
 
-        {eventData.next_update &&
-          <div className="popup__content__description">
-            <p>Next update</p>
-            <FriendlyTime date={eventData.next_update} />
-          </div>
-        }
+        
       </div>
     </div>
   );

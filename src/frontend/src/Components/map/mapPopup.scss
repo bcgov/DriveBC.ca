@@ -176,16 +176,25 @@
         }
       }
       &__description {
+        > p:first-child {
+          font-weight: bold;
+        }
         .friendly-time {
           margin-bottom: 0.5rem;
-          &-text {
-            font-weight: 700;
-          }
-
           &__tooltip {
             left: 100%;
           }
         }
+      }
+      
+      &__block {
+        display: flex;
+        justify-content: space-between;
+
+      > div {
+        flex: 1;
+      }
+
       }
     }
     
@@ -197,12 +206,17 @@
         .name {
           color: #CE3E39;
         }
+
       }
 
       .popup__content {
         &__title {
           .name {
             color: #CE3E39;
+          }
+
+          .location {
+            color: #9C2024;
           }
         }
       }
@@ -222,6 +236,10 @@
         &__title {
           .name {
             color: #584215;
+          }
+
+          .location {
+            color: #474543;
           }
         }
       }
