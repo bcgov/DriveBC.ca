@@ -12,6 +12,7 @@ import Container from 'react-bootstrap/Container';
 // Components and functions
 import { getAdvisories } from '../Components/data/advisories.js';
 import AdvisoriesList from '../Components/advisories/AdvisoriesList';
+import EmptyAdvisory from '../Components/advisories/EmptyAdvisory';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 
@@ -47,6 +48,9 @@ export default function AdvisoriesListPage() {
     }
   });
 
+  const filteredAdvisories = advisories?.filter(advisory => !advisory.title.includes('No advisories'));
+  const isFilteredAdvisoriesEmpty = filteredAdvisories?.length === 0;
+
   return (
     <div className='advisories-page'>
       <PageHeader
@@ -54,7 +58,11 @@ export default function AdvisoriesListPage() {
         description='Get the latest critical travel status information during major events affecting travel on a highway or region.'>
       </PageHeader>
       <Container>
-        <AdvisoriesList advisories={advisories} showDescription={true} showTimestamp={true}/>
+          {isFilteredAdvisoriesEmpty ? (
+          <EmptyAdvisory advisory={advisories[0]}/>
+        ) : (
+          <AdvisoriesList advisories={filteredAdvisories} showDescription={true} showTimestamp={true} />
+      )}
       </Container>
       <Footer />
     </div>
