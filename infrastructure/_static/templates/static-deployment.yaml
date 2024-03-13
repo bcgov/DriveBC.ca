@@ -16,6 +16,10 @@ spec:
       labels:
         {{ include "app.selectorLabels" . | nindent 8 }}
     spec:
+      volumes:
+        - name: django-app-images-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.deployment.volumes.claimName  }}
       containers:
         - resources:
             limits:
@@ -29,6 +33,10 @@ spec:
             - containerPort: 8080
               protocol: TCP
           imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: django-app-images-volume
+              mountPath: /app/images/webcams
+              readOnly: true
           image: >-
             {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
           env:

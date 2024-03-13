@@ -21,6 +21,9 @@ spec:
         - name: django-media-volume
           persistentVolumeClaim:
             claimName: {{ include "app.fullname" . }}
+        - name: django-app-images-volume
+          persistentVolumeClaim:
+            claimName: {{ include "app.fullname" . }}-app-images
       containers:
         - resources:
             limits:
@@ -94,6 +97,8 @@ spec:
           volumeMounts:
             - name: django-media-volume
               mountPath: /app/media
+            - name: django-app-images-volume
+              mountPath: /app/images/webcams
           terminationMessagePolicy: File
           image: >-
             {{ .Values.image.repository  }}:{{ .Values.image.tag  }}

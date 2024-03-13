@@ -19,4 +19,5 @@ deployment:
     postgresSecret: drivebc-pguser-drivebc
     djangoConfigMap: drivebc-django
     djangoSecret: drivebc-django
-
+    volumes:
+      claimName: django-app-images

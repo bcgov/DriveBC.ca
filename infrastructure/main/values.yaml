@@ -28,8 +28,9 @@ django:
   route:
     host: drivebc.apps.gold.devops.gov.bc.ca
     iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist 
-  pvc:
-    port: 3000
+  mediapvc:
+    storage: 1Gi
+  apppvc:
     storage: 1Gi
 
 tasks:
@@ -47,6 +48,8 @@ tasks:
       limits:
         cpu: 250m
         memory: 200Mi
+    volumes:
+      claimName: django-app-images
     env:
       postgresSecret: drivebc-pguser-drivebc
       djangoConfigMap: drivebc-django
@@ -111,6 +114,8 @@ static:
         memory: 100Mi
     env:
       staticConfigMap: drivebc-static
+    volumes:
+      claimName: django-app-images
   autoscaling:
     enabled: true
     minReplicas: 1

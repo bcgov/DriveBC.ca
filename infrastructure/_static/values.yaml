@@ -18,6 +18,8 @@ deployment:
   env:
     staticConfigMap: drivebc-static
     staticSecret: drivebc-static
+  volumes:
+    claimName: django-app-images
 
 autoscaling:
   enabled: true
