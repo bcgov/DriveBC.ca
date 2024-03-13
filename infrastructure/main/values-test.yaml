@@ -29,8 +29,9 @@ django:
     host: test-drivebc.apps.gold.devops.gov.bc.ca
     iprestricted: false #Set to true if you want to limit IP's that can access publicly available pages to the the addresses in the ipallowlist 
     iprestrictedAdminPages: false #Set to true if you want to limit IP's that can access backend admin pages
-  pvc:
-    port: 3000
+  mediapvc:
+    storage: 1Gi
+  apppvc:
     storage: 1Gi
 
 tasks:
@@ -48,6 +49,8 @@ tasks:
       limits:
         cpu: 250m
         memory: 200Mi
+    volumes:
+      claimName: test-django-app-images
     env:
       postgresSecret: test-drivebc-pguser-test-drivebc
       djangoConfigMap: test-drivebc-django
@@ -113,6 +116,8 @@ static:
     env:
       staticConfigMap: test-drivebc-static
       staticSecret: test-drivebc-static
+    volumes:
+      claimName: test-django-app-images
   autoscaling:
     enabled: true
     minReplicas: 1

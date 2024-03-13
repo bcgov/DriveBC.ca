@@ -27,9 +27,11 @@ django:
     targetCPUUtilizationPercentage: 75
   route:
     host: dev-drivebc.apps.gold.devops.gov.bc.ca
-    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist 
-  pvc:
-    port: 3000
+    iprestricted: false #Set to true if you want to limit IP's that can access publicly available pages to the the addresses in the ipallowlist 
+    iprestrictedAdminPages: false #Set to true if you want to limit IP's that can access backend admin pages
+  mediapvc:
+    storage: 1Gi
+  apppvc:
     storage: 1Gi
 
 tasks:
@@ -47,6 +49,8 @@ tasks:
       limits:
         cpu: 250m
         memory: 200Mi
+    volumes:
+      claimName: dev-django-app-images
     env:
       postgresSecret: dev-drivebc-pguser-dev-drivebc
       djangoConfigMap: dev-drivebc-django
@@ -112,6 +116,9 @@ static:
     env:
       staticConfigMap: dev-drivebc-static
       staticSecret: dev-drivebc-static
+    volumes:
+      claimName: dev-django-app-images
+
   autoscaling:
     enabled: true
     minReplicas: 1
