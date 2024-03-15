@@ -90,7 +90,7 @@
 
       .filters-component {
         position: relative;
-        
+
         button {
           margin: 0;
         }
@@ -166,7 +166,16 @@
   }
 }
 
-// Searchbox size
-.rbt {
-  height: 40px;
+.empty-display {
+  h2, h6 {
+    color: #053662;
+  }
+
+  h6 {
+    margin: 15px 0;
+  }
+
+  h2 {
+    margin: 60px 0 30px 0;
+  }
 }

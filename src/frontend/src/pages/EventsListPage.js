@@ -269,7 +269,7 @@ export default function EventsListPage() {
         </div>
 
         <div>
-          { largeScreen &&
+          { largeScreen && !!processedEvents.length &&
             <EventsTable data={processedEvents} routeHandler={handleRoute} showLoader={showLoader} sortingKey={sortingKey} />
           }
 
@@ -304,6 +304,18 @@ export default function EventsListPage() {
                   </div>
                 ),
               )}
+            </div>
+          }
+
+          {!processedEvents.length &&
+            <div className="empty-display">
+              <h2>No delays to display</h2>
+
+              <h6><b>Do you have a starting location and a destination entered?</b></h6>
+              <p>Adding a route will narrow down the information for the whole site, including the delays list. There might not be any delays between those two locations.</p>
+
+              <h6><b>Have you hidden any of the layers using the filters?</b></h6>
+              <p>Try toggling the filters on and off so that more information can be displayed.</p>
             </div>
           }
         </div>
