@@ -308,7 +308,7 @@ export default function EventsListPage() {
           }
 
           {!processedEvents.length &&
-            <div className="empty-display">
+            <div className="empty-event-display">
               <h2>No delays to display</h2>
 
               <h6><b>Do you have a starting location and a destination entered?</b></h6>
