@@ -154,6 +154,18 @@ export default function CamerasListPage() {
 
       <CameraList cameras={ displayedCameras ? displayedCameras : [] }></CameraList>
 
+      {!(displayedCameras && displayedCameras.length) &&
+        <Container className="empty-cam-display">
+          <h2>No cameras to display</h2>
+
+          <h6><b>Do you have a starting location and a destination entered?</b></h6>
+          <p>Adding a route will narrow down the information for the whole site, including the camera list. There might not be any cameras between those two locations.</p>
+
+          <h6><b>Have you entered search terms to narrow down the list?</b></h6>
+          <p>Try checking your spelling, changing, or removing your search terms.</p>
+        </Container>
+      }
+
       <Footer />
     </div>
   );
