@@ -5,6 +5,7 @@ DIT = "dit"
 INLAND_FERRY = "inland_ferry"
 REGIONAL_WEATHER = "regional_weather"
 REGIONAL_WEATHER_AREAS = "regional_weather_areas"
+REST_STOP = "rest_stop"
 
 DIRECTIONS = {
   'in both directions': 'BOTH',

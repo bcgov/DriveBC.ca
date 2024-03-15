@@ -17,6 +17,9 @@ urlpatterns = [
     # Weather
     path("weather/", include("apps.weather.urls")),
 
+    # Rest Stop
+    path("reststop/", include("apps.rest.urls")),
+
     # Others
     path("feedback/", views.FeedbackView.as_view(), name="feedback"),
 ]
