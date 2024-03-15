@@ -14,6 +14,7 @@ import {
   faCircleDot,
   faLocationDot
 } from '@fortawesome/free-solid-svg-icons';
+import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
 // Styling
@@ -70,6 +71,12 @@ export default function RouteSearch(props) {
     }
   }, [showSpinner]);
 
+  // Handlers
+  const swapHandler = () => {
+    dispatch(updateSearchLocationFrom(searchLocationTo));
+    dispatch(updateSearchLocationTo(searchLocationFrom));
+  }
+
   // Rendering
   return (
     <div className="routing-container">
@@ -95,6 +102,10 @@ export default function RouteSearch(props) {
             <Spinner className="typeahead-spinner" size="sm" animation="border" />
           }
         </div>
+      }
+
+      {!!searchLocationFrom.length && !!searchLocationTo.length &&
+        <Button onClick={() => swapHandler()}>Swap</Button>
       }
     </div>
   );

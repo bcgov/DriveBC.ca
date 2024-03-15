@@ -46,7 +46,7 @@ export default function LocationSearch(props) {
     <AsyncTypeahead
       disabled={!routeEdit}
       clearButton={true}
-      defaultSelected={location}
+      selected={location}
       filterBy={() => true}
       id="location-search-typeahead"
       isLoading={isSearching}
