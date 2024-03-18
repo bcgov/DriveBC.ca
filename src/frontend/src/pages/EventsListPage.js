@@ -308,7 +308,7 @@ export default function EventsListPage() {
           }
 
           {!processedEvents.length &&
-            <div className="empty-event-display">
+            <Container className="empty-event-display">
               <h2>No delays to display</h2>
 
               <h6><b>Do you have a starting location and a destination entered?</b></h6>
@@ -316,7 +316,7 @@ export default function EventsListPage() {
 
               <h6><b>Have you hidden any of the layers using the filters?</b></h6>
               <p>Try toggling the filters on and off so that more information can be displayed.</p>
-            </div>
+            </Container>
           }
         </div>
       </Container>
