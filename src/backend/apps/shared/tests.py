@@ -11,7 +11,8 @@ from httpx import HTTPStatusError
 
 from rest_framework.test import APIRequestFactory
 
-from src.backend.apps.shared.views import FeedbackView
+# bruce test
+# from src.backend.apps.shared.views import FeedbackView
 
 logger = logging.getLogger(__name__)
 
