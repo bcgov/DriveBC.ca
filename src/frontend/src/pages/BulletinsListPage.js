@@ -48,8 +48,7 @@ export default function BulletinsListPage() {
     }
   });
 
-  const filteredBulletins = bulletins?.filter(bulletin => !bulletin.title.includes('No bulletins'));
-  const isFilteredBulletinsEmpty = filteredBulletins?.length === 0;
+  const isBulletinsEmpty = bulletins?.length === 0;
 
   return (
     <div className='bulletins-page'>
@@ -59,10 +58,10 @@ export default function BulletinsListPage() {
       </PageHeader>
 
       <Container>        
-          {isFilteredBulletinsEmpty ? (
-          <EmptyBulletin bulletin={bulletins[0]}/>
+          {isBulletinsEmpty ? (
+          <EmptyBulletin/>
         ) : (
-          <BulletinsList bulletins={filteredBulletins} />
+          <BulletinsList bulletins={bulletins} />
         )}
       </Container>
 

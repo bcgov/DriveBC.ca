@@ -48,8 +48,7 @@ export default function AdvisoriesListPage() {
     }
   });
 
-  const filteredAdvisories = advisories?.filter(advisory => !advisory.title.includes('No advisories'));
-  const isFilteredAdvisoriesEmpty = filteredAdvisories?.length === 0;
+  const isAdvisoriesEmpty = advisories?.length === 0;
 
   return (
     <div className='advisories-page'>
@@ -58,10 +57,10 @@ export default function AdvisoriesListPage() {
         description='Get the latest critical travel status information during major events affecting travel on a highway or region.'>
       </PageHeader>
       <Container>
-          {isFilteredAdvisoriesEmpty ? (
-          <EmptyAdvisory advisory={advisories[0]}/>
+          {isAdvisoriesEmpty ? (
+          <EmptyAdvisory/>
         ) : (
-          <AdvisoriesList advisories={filteredAdvisories} showDescription={true} showTimestamp={true} />
+          <AdvisoriesList advisories={advisories} showDescription={true} showTimestamp={true} />
       )}
       </Container>
       <Footer />
