@@ -1,22 +1,21 @@
 // React
 import React from 'react';
-// Styling
-import './BulletinsList.scss';
 import Container from 'react-bootstrap/Container';
-import parse from 'html-react-parser';
 
-export default function EmptyBulletin(props) {
-  const { bulletin } = props;
-
+export default function EmptyBulletin() {
   // Rendering
   return (
     <div>
-      <h4 className='bulletin-li-title'>{props.bulletin.title}</h4>
-      {bulletin && (
-            <Container className="bulletin-body-container cms-body">
-              <p>{parse(bulletin.body)}</p>
-            </Container>
-          )}
+      <h4 className='bulletin-li-title'>No bulletins at the moment</h4>
+      <Container className="bulletin-body-container cms-body">
+        <div className="bulletin-body-container cms-body container">
+          <p>
+            There are currently no bulletins to display. 
+            As we continue to evolve DriveBC to better meet the needs of British Columbians, 
+            watch this space for updates as they come!
+          </p>
+        </div>
+      </Container>
     </div>
   );
 }
