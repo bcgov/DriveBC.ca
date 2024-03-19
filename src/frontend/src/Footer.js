@@ -4,9 +4,6 @@ import Container from 'react-bootstrap/Container';
 import logo from './images/dbc-logo.svg';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
-  faArrowUpRightFromSquare,
-} from '@fortawesome/free-solid-svg-icons';
-import {
   faXTwitter,
   faInstagram,
   faLinkedin,
@@ -36,16 +33,13 @@ export default function Footer(props) {
                 <a href="/feedback" className="footer-link" target="_self"  alt="Website Feedback" >Website Feedback</a>
               </li>
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" className="footer-link" target="_self"  alt="Disclaimer" >Disclaimer
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a>
+                <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" className="footer-link" target="_blank" rel="noreferrer"  alt="Disclaimer" >Disclaimer</a>
               </li>
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/home/privacy" className="footer-link" target="_self"  alt="Privacy" >Privacy
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a>
+                <a href="https://www2.gov.bc.ca/gov/content/home/privacy" className="footer-link" target="_blank" rel="noreferrer"  alt="Privacy" >Privacy</a>
               </li>
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/governments/about-the-bc-government/accessibility" className="footer-link" target="_self"  alt="Acccessibility" >Accessibility
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></a>
+                <a href="https://www2.gov.bc.ca/gov/content/governments/about-the-bc-government/accessibility" className="footer-link" target="_blank" rel="noreferrer"  alt="Acccessibility" >Accessibility</a>
               </li>
             </ul>
           </div>

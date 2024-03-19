@@ -145,3 +145,21 @@ body {
 .grecaptcha-badge {
     visibility: hidden !important;
 }
+
+// Icon for links opening in new tabs
+a[target="_blank"] {
+  position: relative;
+  margin-right: 18px;
+
+  &:after {
+    position: absolute;
+    top: 2px;
+    right: -18px;
+    font: var(--fa-font-regular);
+    content: '\f08e';
+    display: inline-block;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    color: $Type-Secondary;
+  }
+}
