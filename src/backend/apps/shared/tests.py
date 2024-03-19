@@ -11,7 +11,7 @@ from httpx import HTTPStatusError
 
 from rest_framework.test import APIRequestFactory
 
-from src.backend.apps.shared.views import FeedbackView
+from apps.shared.views import FeedbackView
 
 logger = logging.getLogger(__name__)
 
@@ -52,4 +52,4 @@ class BaseTest(TestCase):
         Event.objects.all().delete()
         Ferry.objects.all().delete()
         RegionalWeather.objects.all().delete()
-    
+

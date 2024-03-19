@@ -58,7 +58,7 @@ class Bulletin(Page, BaseModel):
     page_body = "Use this page for creating bulletins."
     teaser = models.CharField(max_length=250, blank=True)
     body = RichTextField()
-    image = models.ForeignKey(Image, on_delete=models.CASCADE, null=True, blank=False)
+    image = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=False)
     image_alt_text = models.CharField(max_length=125, default='', blank=False)
 
     def rendered_body(self):
@@ -93,7 +93,7 @@ class Ferry(Page, BaseModel):
     location = models.GeometryField(blank=True, null=True)
 
     url = models.URLField(blank=True)
-    image = models.ForeignKey(Image, on_delete=models.CASCADE, blank=True, null=True)
+    image = models.ForeignKey(Image, on_delete=models.SET_NULL, blank=True, null=True)
 
     description = RichTextField(max_length=750, blank=True)
     seasonal_description = RichTextField(max_length=100, blank=True)

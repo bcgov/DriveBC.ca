@@ -10,7 +10,7 @@ from apps.weather.tasks import (
     populate_all_regional_weather_data,
 )
 from apps.weather.tests.test_data.regional_weather_parsed_feed import json_feed
-from src.backend.apps.feed.client import FeedClient
+from apps.feed.client import FeedClient
 from unittest import mock
 
 class TestRegionalWeatherModel(BaseTest):
@@ -36,7 +36,7 @@ class TestRegionalWeatherModel(BaseTest):
         regional_weather_one = RegionalWeather.objects.get(code="s0000341")
         assert regional_weather_one.location_latitude == \
                "58.66N"
-        
+
     def test_populate_regional_weather_function_with_existing_data(self):
         RegionalWeather.objects.create(
             code="s0000341",
@@ -48,7 +48,7 @@ class TestRegionalWeatherModel(BaseTest):
         assert regional_weather_one.location_latitude == \
                "58.66N"
 
-    @patch('src.backend.apps.feed.client.FeedClient.get_regional_weather_list')
+    @patch('apps.feed.client.FeedClient.get_regional_weather_list')
     def test_populate_and_update_regional_weather(self, mock_requests_get):
         mock_requests_get.side_effect = [
             MockResponse(self.mock_regional_weather_feed_result, status_code=200),
@@ -62,7 +62,7 @@ class TestRegionalWeatherModel(BaseTest):
             populate_regional_weather_from_data(regional_weather_data)
         weather_list_length = len(response)
         assert weather_list_length == 2
-        
+
     def test_populate_all_regional_weather_data(self):
         with mock.patch('requests.post') as mock_post, mock.patch('requests.get') as mock_get:
             # Mock the response for requests.post
@@ -80,6 +80,6 @@ class TestRegionalWeatherModel(BaseTest):
                 # Mock the response for the second requests.get (weather data for a specific area codes)
                 mock.Mock(json=lambda: self.mock_regional_weather_feed_result_weather_one),
             ]
-            
+
             populate_all_regional_weather_data()
             assert len(RegionalWeather.objects.all()) == 1

@@ -179,3 +179,5 @@ LOGGING = {
         "level": "WARNING",
     },
 }
+
+TEST_RUNNER = env("TEST_RUNNER", default="django.test.runner.DiscoverRunner")

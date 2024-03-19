@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import environ
@@ -32,6 +33,12 @@ HUEY = {
 # Wagtail
 WAGTAIL_SITE_NAME = 'DriveBC'
 WAGTAILEMBEDS_RESPONSIVE_HTML = True
+WAGTAILADMIN_BASE_URL = "\\cms-admin"
 
 # reCAPTCHA
 DRF_RECAPTCHA_SECRET_KEY = env("DJANGO_RECAPTCHA_SECRET_KEY")
+
+# On windows, GDAL and GEOS require explicit paths to the dlls
+if os.name == "nt":
+    GEOS_LIBRARY_PATH = env("GEOS_LIBRARY_PATH")
+    GDAL_LIBRARY_PATH = env("GDAL_LIBRARY_PATH")

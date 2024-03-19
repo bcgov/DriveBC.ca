@@ -31,6 +31,7 @@ def populate_ferry_task():
 def publish_scheduled():
     call_command('publish_scheduled')
 
+
 @db_periodic_task(crontab(minute="*/5"))
 def populate_regional_weather_task():
     populate_all_regional_weather_data()

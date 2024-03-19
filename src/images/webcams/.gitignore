@@ -1,0 +1,6 @@
+# this file ensures that the images/webcams folder is present, avoiding
+# breaking errors in dev environments, while ignoring actual cam images
+*.jpg
+*.jpeg
+*.gif
+*.png

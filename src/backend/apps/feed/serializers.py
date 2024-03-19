@@ -27,6 +27,8 @@ class WebcamFeedSerializer(serializers.Serializer):
     # Description
     camName = DriveBCField('name', source="*")
     caption = serializers.CharField(max_length=256, allow_blank=True, allow_null=True)
+    dbcMark = DriveBCField('dbc_mark', source="*")
+    credit = DriveBCField('credit', source="*")
 
     # Location
     region = WebcamRegionField(source="*")

@@ -34,7 +34,7 @@ class Event(BaseModel):
     last_updated = models.DateTimeField()
 
     # Schedule
-    schedule = models.JSONField(default={})
+    schedule = models.JSONField(default=dict)
 
     # Scheduled start and end
     start = models.DateTimeField(null=True)
