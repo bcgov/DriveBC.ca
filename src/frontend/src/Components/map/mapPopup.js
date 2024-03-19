@@ -14,7 +14,7 @@ import {
   faSnowflake,
   faWind,
   faEye,
-  faArrowUpRightFromSquare
+  faTriangleExclamation
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faSunCloud
@@ -150,120 +150,6 @@ export function getFerryPopup(ferryFeature) {
         </div>
       </div>
     </div>
-
-    // Road weather conditions html structure
-    // <div className="popup popup--road-weather">
-    //   <div className="popup__title">
-    //     <div className="popup__title__icon">
-    //       <FontAwesomeIcon icon={faTemperatureHalf} />
-    //     </div>
-    //     <p className="name">Local Weather</p>
-    //     <span className="sub-name">Weather Stations</span>
-    //   </div>
-    //   <div className="popup__content">
-    //     <div className="popup__content__title">
-    //       <p className="name">Trout Creek</p>
-    //       <FriendlyTime date='2024-03-01T00:00:00-08:00' />
-    //       <p className="description">Southside of Highway 15, 22km northwest of Smithers.</p>
-    //     </div>
-    //     <div className="popup__content__description">
-    //       <div className="road-condition">
-    //         <p className="data">Packed snow of 5cm</p>
-    //         <p className="label">Road Condition</p>
-    //       </div>
-    //       <div className="temperatures">
-    //         <div className="temperature temperature--air">
-    //           <p className="data">17&#x2103;</p>
-    //           <p className="label">Air</p>
-    //         </div>
-    //         <div className="temperature temperature--road">
-    //           <p className="data">22&#x2103;</p>
-    //           <p className="label">Road</p>
-    //         </div>
-    //       </div>
-    //       <div className="data-card">
-    //         <div className="data-card__row">
-    //           <div className="data-icon">
-    //             <FontAwesomeIcon className="icon" icon={faMountain} />
-    //           </div>
-    //           <p className="label">Elevation</p>
-    //           <p className="data">410m</p>
-    //         </div>
-    //         <div className="data-card__row">
-    //           <div className="data-icon">
-    //             <FontAwesomeIcon className="icon" icon={faDroplet} />
-    //           </div>
-    //           <p className="label">Precipitation (last 12 hours)</p>
-    //           <p className="data">240mm</p>
-    //         </div>
-    //         <div className="data-card__row">
-    //           <div className="data-icon">
-    //             <FontAwesomeIcon className="icon" icon={faSnowflake} />
-    //           </div>
-    //           <p className="label">Snow (last 12 hours)</p>
-    //           <p className="data">240cm</p>
-    //         </div>
-    //         <div className="data-card__row data-card__row group">
-    //           <div className="data-icon">
-    //             <FontAwesomeIcon className="icon" icon={faWind} />
-    //           </div>
-    //           <div className="data-group">
-    //             <div className="data-group__row">
-    //               <p className="label">Average wind</p>
-    //               <p className="data">SE 15 km/h</p>
-    //             </div>
-    //             <div className="data-group__row">
-    //               <p className="label">Maximum wind</p>
-    //               <p className="data">20 km/h</p>
-    //             </div>
-    //           </div>
-    //         </div>
-
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
-
-    // Regional weather html structure
-    // <div className="popup popup--regional-weather">
-    //   <div className="popup__title">
-    //     <div className="popup__title__icon">
-    //       <FontAwesomeIcon icon={faSunCloud} />
-    //     </div>
-    //     <p className="name">Regional Weather</p>
-    //   </div>
-    //   <div className="popup__content">
-    //     <div className="popup__content__title">
-    //       <p className="name">Cummins Lakes Park</p>
-    //       <FriendlyTime date='2024-03-01T00:00:00-08:00' />
-    //     </div>
-    //     <div className="popup__content__description">
-    //       <FontAwesomeIcon className="weather-icon" icon={faSunCloud} />
-    //       <p className="weather">Partly cloudy</p>
-    //       <p className="temperature">24&#x2103;</p>
-    //       <div className="data-card">
-    //         <div className="data-card__row">
-    //           <div className="data-icon">
-    //             <FontAwesomeIcon className="icon" icon={faEye} />
-    //           </div>
-    //           <p className="label">Visibility</p>
-    //          <p className="data">42km</p>
-    //        </div>
-    //        <div className="data-card__row">
-    //           <div className="data-icon">
-    //             <FontAwesomeIcon className="icon" icon={faWind} />
-    //           </div>
-    //           <p className="label">Wind</p>
-    //          <p className="data">SW 27 gusts 44 km/h</p>
-    //        </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    //   <div className="popup__additional">
-    //     <p className="label"><a alt="Past 24 Hours" target="_self" href="https://weather.gc.ca/past_conditions/index_e.html?station=yyj">Past 24 hours <FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a></p>
-    //     <p className="label">Courtesy of <a alt="Environment Canada" target="_self" href="https://weather.gc.ca/canada_e.html">Environment Canada <FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a></p>
-    //   </div>
-    // </div>
   );
 }
 export function getWeatherPopup(weatherFeature) {
@@ -285,10 +171,13 @@ export function getWeatherPopup(weatherFeature) {
           <p className="description">{weatherData.location_description}</p>
         </div>
         <div className="popup__content__description">
-          <div className="road-condition">
-            <p className="data">{weatherData.road_condition}</p>
-            <p className="label">Road Condition</p>
-          </div>
+          { weatherData.road_condition && (
+            <div className="road-condition">
+              <p className="data">{weatherData.road_condition}</p>
+              <p className="label">Road Condition</p>
+            </div>
+          )}
+
           {(weatherData.air_temperature || weatherData.road_temperature) && (
             <div className="temperatures">
               {weatherData.air_temperature && (
@@ -359,5 +248,51 @@ export function getWeatherPopup(weatherFeature) {
         </div>
       </div>
     </div>
+
+    // Regional weather html structure
+    // <div className="popup popup--regional-weather">
+    //   <div className="popup__title">
+    //     <div className="popup__title__icon">
+    //       <FontAwesomeIcon icon={faSunCloud} />
+    //     </div>
+    //     <p className="name">Regional Weather</p>
+    //   </div>
+    //   <div className="popup__advisory">
+    //     <FontAwesomeIcon icon={faTriangleExclamation} />
+    //     <p className="advisory-title">Arctic outflow warning</p>
+    //     <p className="label link"><a alt="Past 24 Hours" target="_blank" rel="noreferrer" href="https://weather.gc.ca/past_conditions/index_e.html?station=yyj">Details</a></p>
+    //   </div>
+    //   <div className="popup__content">
+    //     <div className="popup__content__title">
+    //       <p className="name">Cummins Lakes Park</p>
+    //       <FriendlyTime date='2024-03-01T00:00:00-08:00' />
+    //     </div>
+    //     <div className="popup__content__description">
+    //       <FontAwesomeIcon className="weather-icon" icon={faSunCloud} />
+    //       <p className="weather">Partly cloudy</p>
+    //       <p className="temperature">24&#x2103;</p>
+    //       <div className="data-card">
+    //         <div className="data-card__row">
+    //           <div className="data-icon">
+    //             <FontAwesomeIcon className="icon" icon={faEye} />
+    //           </div>
+    //           <p className="label">Visibility</p>
+    //          <p className="data">42km</p>
+    //        </div>
+    //        <div className="data-card__row">
+    //           <div className="data-icon">
+    //             <FontAwesomeIcon className="icon" icon={faWind} />
+    //           </div>
+    //           <p className="label">Wind</p>
+    //          <p className="data">SW 27 gusts 44 km/h</p>
+    //        </div>
+    //       </div>
+    //     </div>
+    //   </div>
+    //   <div className="popup__additional">
+    //     <p className="label"><a alt="Past 24 Hours" target="_blank" rel="noreferrer" href="https://weather.gc.ca/past_conditions/index_e.html?station=yyj">Past 24 hours</a></p>
+    //     <p className="label">Courtesy of <a alt="Environment Canada" target="_blank" rel="noreferrer" href="https://weather.gc.ca/canada_e.html">Environment Canada</a></p>
+    //   </div>
+    // </div>
   );
 }
