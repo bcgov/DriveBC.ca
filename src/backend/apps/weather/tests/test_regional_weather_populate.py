@@ -1,17 +1,16 @@
 import json
 from pathlib import Path
-from unittest import skip
+from unittest import mock, skip
 from unittest.mock import patch
+
+from apps.feed.client import FeedClient
 from apps.shared.tests import BaseTest, MockResponse
 from apps.weather.models import RegionalWeather
 from apps.weather.tasks import (
     populate_all_regional_weather_data,
     populate_regional_weather_from_data,
-    populate_all_regional_weather_data,
 )
 from apps.weather.tests.test_data.regional_weather_parsed_feed import json_feed
-from apps.feed.client import FeedClient
-from unittest import mock
 
 class TestRegionalWeatherModel(BaseTest):
     def setUp(self):
