@@ -5,7 +5,7 @@
     background-color: #F1F8FE;
     border-top: 4px solid #053662;
     padding: 1rem 1rem 0.5rem;
-    
+
     .name {
       margin-top: 0.5rem;
       margin-bottom: 0;
@@ -29,31 +29,36 @@
   &__content {
     &__title {
       margin: 1rem 1rem 0.5rem;
-  
+
       .name {
         font-size: 1.25rem;
         color: #053662;
       }
     }
 
+    .clip {
+      margin-bottom: -18px;  /* for allowing overlap at bottom of cam image */
+    }
+
     &__image {
       img {
         width: 100%;
       }
-  
+
       .timestamp {
         background-color: $Black;
+        position: relative;
         padding: 0 10px;
         display: flex;
         color: $White;
         align-items: baseline;
-  
+
         p {
           color: $White;
           margin-bottom: 0;
           font-size: 0.625rem;
         }
-  
+
         .driveBC {
           font-family: serif;
           span {
@@ -61,16 +66,16 @@
           }
           margin-right: 10px;
         }
-  
+
         .friendly-time, .formatted-date {
           margin-left: auto;
         }
-  
+
         .formatted-date {
           font-size: 0.75rem;
         }
       }
-  
+
       .camera-unavailable {
         background-color: $Surface-status-red;
         padding: 1rem;
@@ -80,11 +85,11 @@
           color: $Type-status-red;
           clear: right;
         }
-  
+
         svg {
           font-size: 1rem;
         }
-  
+
         .card-pill {
           background-color: $Error;
           border-radius: 12px;
@@ -94,7 +99,7 @@
           justify-content: center;
           align-items: center;
           padding: 4px 6px;
-  
+
           p {
             color: $White;
             font-weight: 700;
@@ -130,7 +135,7 @@
     .popup__title {
       background-color: #FBFFFC;
       border-top: 4px solid #2E8540;
-      
+
       .name {
         color: #2E8540;
         a {
@@ -142,7 +147,7 @@
           }
         }
       }
-  
+
       &__icon {
         background-color: #2E8540;
         color: white;
@@ -163,7 +168,7 @@
         }
       }
     }
-    
+
     .popup__content {
       &__title {
         border-bottom: 1px solid $Divider;
@@ -197,7 +202,7 @@
           }
         }
       }
-      
+
       &__block {
         display: flex;
         justify-content: space-between;
@@ -208,14 +213,14 @@
 
       }
     }
-    
+
     &.major, &.closures {
       .popup__title {
         background-color: #F4E1E2;
         border-top: 4px solid #CE3E39;
 
         .name {
-          color: #CE3E39; 
+          color: #CE3E39;
         }
 
       }
@@ -265,7 +270,7 @@
     .popup__title {
       background-color: #ECEAE8;
       border-top: 4px solid $Type-Primary;
-      
+
       .name {
         color: $Type-Primary;
       }
@@ -274,7 +279,7 @@
         font-size: 0.875rem;
         color: $Grey70;
       }
-  
+
       &__icon {
         background-color: $Type-Primary;
         color: white;
@@ -349,11 +354,11 @@
     .popup__title {
       background-color: #ECEAE8;
       border-top: 4px solid $Type-Primary;
-      
+
       .name {
         color: $Type-Primary;
       }
-  
+
       &__icon {
         background-color: $Type-Primary;
         color: white;
@@ -427,7 +432,7 @@
       flex-direction: column;
       flex-grow: 1;
       justify-content: space-between;
-      
+
       p {
         text-align: center;
         color: $Type-Secondary;
@@ -474,7 +479,7 @@
       font-size: 0.875rem;
       margin-bottom: 0;
     }
-    
+
     .label {
       text-align: left;
       font-weight: 700;

@@ -163,7 +163,7 @@
 
     &--desktop {
       display: none;
-  
+
       @media (min-width: 992px) {
         display: block;
       }
@@ -200,29 +200,29 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-  
-        @media (min-width: 576px) { 
+
+        @media (min-width: 576px) {
           flex-grow: 1;
           display: block;
         }
-  
+
         .btn.camera-direction-btn {
           width: initial;
-  
+
           & + .btn.camera-direction-btn {
             margin-left: 6px;
           }
         }
-        
-  
+
+
         .camera-direction-label {
           margin-right: 0.5rem;
         }
-  
+
         .camera-directions-group {
           margin-left: 8px;
 
-          @media (min-width: 576px) { 
+          @media (min-width: 576px) {
             margin-left: 0;
           }
           .camera-direction-btn {
@@ -243,9 +243,10 @@
 
         .card-img-box {
           height: 365px;
+          margin-bottom: -18px;
 
           @media (min-width: 576px) {
-            margin: 0;
+            margin: 0 0 inherit 0;
           }
 
           &.unavailable {
@@ -383,6 +384,7 @@
           padding: 0 10px;
           display: flex;
           justify-content: space-between;
+          position: relative;
 
           p {
             color: $White;

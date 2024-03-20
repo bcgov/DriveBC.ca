@@ -95,7 +95,9 @@ export default function CamPopup(props) {
           </div>
           {camera.is_on ?
             <div className="popup__content__image">
-              <img src={camera.links.imageSource} width='300' />
+              <div className="clip">
+                <img src={camera.links.imageDisplay} width='300' />
+              </div>
               <div className="timestamp">
                 <p className="driveBC">Drive<span>BC</span></p>
                 <FriendlyTime date={camera.last_update_modified} />

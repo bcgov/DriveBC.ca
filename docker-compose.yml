@@ -52,6 +52,7 @@ services:
       - ./src/frontend:/app
       # One-way volume to use node_modules from inside image
       - /app/node_modules
+      - ./src/images/webcams:/app/images/webcams
     # depends_on:
     #   - django
     command: npm run start-frontend

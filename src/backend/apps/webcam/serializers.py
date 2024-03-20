@@ -1,13 +1,9 @@
 from pathlib import Path
 
-import environ
-from apps.webcam.models import Webcam
+from django.conf import settings
 from rest_framework import serializers
 
-# Base dir and env
-BASE_DIR = Path(__file__).resolve().parents[4]
-env = environ.Env()
-environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
+from apps.webcam.models import Webcam
 
 
 class WebcamSerializer(serializers.ModelSerializer):
@@ -22,12 +18,13 @@ class WebcamSerializer(serializers.ModelSerializer):
         )
 
     def get_links(self, obj):
-        proxy_root = env("DRIVEBC_IMAGE_PROXY_URL")
+        local_root = settings.DRIVEBC_IMAGE_BASE_URL
+        proxy_root = settings.DRIVEBC_IMAGE_PROXY_URL
         webcam_id = obj.id
 
         links = {
             "imageSource": f"{proxy_root}webcam/api/v1/webcams/{webcam_id}/imageSource",
-            "imageDisplay": f"{proxy_root}bchighwaycam/pub/cameras/{webcam_id}.jpg",
+            "imageDisplay": f"{local_root}images/{webcam_id}.jpg",
             "imageThumbnail":
                 f"{proxy_root}bchighwaycam/pub/cameras/tn/{webcam_id}.jpg",
             "currentImage": f"{proxy_root}webcam/imageUpdate.php?cam={webcam_id}",
