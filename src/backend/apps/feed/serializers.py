@@ -110,7 +110,10 @@ class CarsEventSerializer(serializers.Serializer):
             if not data["closed"]:  # Skip block if already recorded
                 for description in detail.get("descriptions", []):
                     kind = description.get("kind", {})
-                    data["closed"] = kind.get("category") == "traffic_pattern" and kind.get("code").startswith("closed")
+                    if isinstance(kind, str):
+                        data["closed"] = False
+                    else:
+                        data["closed"] = kind.get("category") == "traffic_pattern" and kind.get("code").startswith("closed")
 
                     # Stop inner for loop if already marked
                     if data["closed"]:
