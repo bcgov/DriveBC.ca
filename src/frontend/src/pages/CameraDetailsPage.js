@@ -427,6 +427,7 @@ export default function CameraDetailsPage() {
                   </div>
                 </Tab>
               </Tabs>
+              <p className="credit" dangerouslySetInnerHTML={{__html: camera.credit}}></p>
             </div>
           </div>
         )}

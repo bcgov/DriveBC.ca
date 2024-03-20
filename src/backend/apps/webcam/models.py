@@ -6,6 +6,8 @@ class Webcam(BaseModel):
     # Description
     name = models.CharField(max_length=128)
     caption = models.CharField(blank=True, max_length=256)
+    dbc_mark = models.CharField(blank=True, max_length=256)
+    credit = models.CharField(blank=True, max_length=256)
 
     # Location
     region = models.PositiveSmallIntegerField()
