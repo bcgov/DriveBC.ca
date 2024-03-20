@@ -239,7 +239,7 @@ export default function EventsTable(props) {
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => {
               return (
-                <th className={header.id} key={header.id} colSpan={header.colSpan}>
+                <th className={'event-table-header ' + header.id} key={header.id} colSpan={header.colSpan}>
                   {!header.isPlaceholder && !showLoader && (
                     <span>
                       {flexRender(

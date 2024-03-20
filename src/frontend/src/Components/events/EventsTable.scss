@@ -101,8 +101,8 @@ table {
     padding: 0 1rem;
   }
   th {
-    padding: 1rem;
-    vertical-align: middle;;
+    padding: 1rem 0 1rem 1rem;
+    vertical-align: middle;
   }
 }
 
@@ -122,23 +122,28 @@ tr.closure td.display_category .delay-icon-img {
   }
 }
 
-
+.display_category {
+  max-width: 160px;
+}
 .location_description {
  max-width: 167px;
 }
-
 .closest_landmark {
-  max-width: 165px;
+  max-width: 155px;
 }
-
 .optimized_description {
-  max-width: 284px;
+  max-width: 274px;
 }
 .last_updated {
-  max-width: 138px;
+  max-width: 128px;
 }
 .next_update {
-  max-width: 138px;
+  max-width: 128px;
+  time {
+    &:hover {
+      color: $Type-Link;
+    }
+  }
 }
 
 
@@ -170,6 +175,19 @@ td.next_update .friendly-time-text {
 
   &.next_update {
     width: 9.8318%
+  }
+}
+
+.event-table-header {
+  span {
+    display: inline-block;
+    width: 100%;
+    border-right: 1px solid $Divider;
+  }
+  &:last-child {
+    span {
+      border: 0;
+    }
   }
 }
 
