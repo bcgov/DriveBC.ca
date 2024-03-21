@@ -30,6 +30,7 @@ table {
 
         .typeDisplay {
           color: $Type-status-red;
+          font-size: 0.875rem;
           font-weight: 700;
         }
       }
@@ -65,20 +66,22 @@ table {
       }
 
       td {
-        padding-bottom: 0;
+        padding-top: 1rem;
+        padding-bottom: 1.5rem;
+        vertical-align: top;
 
         .roadName {
           color: #053662;
-          size: 18pt;
+          font-size: 1.125rem;
           font-weight: bold;
         }
 
         .directionDisplay {
-          size: 14pt;
+          font-size: 0.875rem;
         }
 
         p {
-          margin-bottom: 5px;
+          margin-bottom: 0;
         }
       }
     }
@@ -88,24 +91,64 @@ table {
 
       td {
         padding-top: 0;
+        padding-bottom: 1rem;
+        vertical-align: top;
       }
     }
   }
 
-  th, td {
-    padding: 16px;
+  td {
+    padding: 0 1rem;
+  }
+  th {
+    padding: 1rem 0 1rem 1rem;
+    vertical-align: middle;
   }
 }
 
 .delay-icon-img {
-  width: 24px;
+  width: 1.7rem;
+  margin-bottom: 6px;
 }
 
 tr.closure td.display_category .delay-icon-img {
   width: 20px;
 }
 
-td.last_updated .friendly-time-text {
+.display_category {
+  .typeDisplay {
+    // width: 154px;
+    font-size: 0.875rem;
+  }
+}
+
+.display_category {
+  max-width: 160px;
+}
+.location_description {
+ max-width: 167px;
+}
+.closest_landmark {
+  max-width: 155px;
+}
+.optimized_description {
+  max-width: 274px;
+}
+.last_updated {
+  max-width: 128px;
+}
+.next_update {
+  max-width: 128px;
+  time {
+    &:hover {
+      color: $Type-Link;
+    }
+  }
+}
+
+
+td.last_updated .friendly-time-text,
+td.next_update .friendly-time-text {
   font-size: 0.875rem;
 }
 
@@ -132,5 +175,25 @@ td.last_updated .friendly-time-text {
 
   &.next_update {
     width: 9.8318%
+  }
+}
+
+.event-table-header {
+  span {
+    display: inline-block;
+    width: 100%;
+    border-right: 1px solid $Divider;
+  }
+  &:last-child {
+    span {
+      border: 0;
+    }
+  }
+}
+
+.empty-event-display {
+  strong {
+    margin-top: 12px;
+    display: inline-block;
   }
 }
