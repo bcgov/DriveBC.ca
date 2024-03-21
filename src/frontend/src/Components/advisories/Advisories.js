@@ -46,15 +46,16 @@ export default function Advisories() {
     }
   });
 
-  return (
+  return (advisories && !!advisories.length) ? (
     <div className="advisories">
       <div className="imagery">
         <FontAwesomeIcon icon={faTriangleExclamation} />
       </div>
+
       <div className="content">
         <h3>Advisory</h3>
         <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={true} />
       </div>
     </div>
-  );
+  ) : null;
 }
