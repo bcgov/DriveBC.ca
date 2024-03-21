@@ -132,9 +132,9 @@ export default function CamerasListPage() {
           <div className="route-display-container">
             <RouteSearch routeEdit={routeEdit} />
 
-            {!routeEdit &&
+            {/* {!routeEdit &&
               <Button onClick={() => setRouteEdit(true)}>Change</Button>
-            }
+            } */}
           </div>
 
           <div className="search-container">

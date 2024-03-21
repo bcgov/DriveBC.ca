@@ -14,6 +14,7 @@ import {
   faCircleDot,
   faLocationDot
 } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUpArrowDown } from '@fortawesome/pro-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
@@ -105,7 +106,7 @@ export default function RouteSearch(props) {
       }
 
       {!!searchLocationFrom.length && !!searchLocationTo.length &&
-        <Button onClick={() => swapHandler()}>Swap</Button>
+        <Button className="swap-button" onClick={() => swapHandler()}><FontAwesomeIcon icon={faArrowUpArrowDown} /></Button>
       }
     </div>
   );

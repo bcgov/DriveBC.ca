@@ -232,9 +232,9 @@ export default function EventsListPage() {
             <div className="route-display-container">
               <RouteSearch routeEdit={routeEdit} />
 
-              {!routeEdit &&
+              {/* {!routeEdit &&
                 <Button onClick={() => setRouteEdit(true)}>Change</Button>
-              }
+              } */}
             </div>
           }
 
