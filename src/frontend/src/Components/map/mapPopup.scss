@@ -234,17 +234,26 @@
 
           .location {
             color: #9C2024;
-            font-size: 1rem;
+            font-size: 0.875rem;
             margin-top: 0;
           }
         }
+        &__description {
+          time {
+            font-size: 0.875rem;
+            &:hover {
+              color: $Type-Link;
+            }
+          }  
+        }
+
       }
     }
 
     &.minor, &.roadConditions {
       .popup__title {
         background-color: #FEEBC2;
-        border-top: 4px solid #584215;
+        border-top: 4px solid $BC-Yellow;
 
         .name {
           color: #584215;
@@ -259,7 +268,16 @@
 
           .location {
             color: #474543;
+            font-size: 0.875rem;
           }
+        }
+        &__description {
+          time {
+            font-size: 0.875rem;
+            &:hover {
+              color: $Type-Link;
+            }
+          }  
         }
       }
     }
