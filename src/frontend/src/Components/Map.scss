@@ -71,10 +71,10 @@
       }
 
       &.open {
-        min-width: 340px;
+        min-width: 390px;
 
         .panel-content {
-          min-width: 340px;
+          min-width: 390px;
         }
 
         @media (max-width: 767px) {
@@ -95,15 +95,51 @@
 
       .close-panel {
         position: absolute;
-        top: 1rem;
+        top: 2rem;
         right: 1rem;
         padding: 0;
         min-width: 0;
         line-height: 1.25rem;
-        height: auto;
+        height: 2rem;
+        width: 2rem;
+        border-radius: 50%;
         background: none;
         border: none;
         font-size: 1rem;
+      }
+
+      .close-panel:has(+ .panel-content .popup.closure),
+      .close-panel:has(+ .panel-content .popup.major) {
+        color: #CE3E39;
+        &:hover {
+          background: lighten(#CE3E39, 38%);
+        }
+        
+      }
+      
+      .close-panel:has(+ .panel-content .popup.minor),
+      .close-panel:has(+ .panel-content .popup.roadConditions)
+       {
+        color: #584215;
+        &:hover {
+          background: lighten(#584215, 60%);
+        }
+      }
+
+      .close-panel:has(+ .panel-content .popup.popup--camera),
+      {
+       color: $BC-Blue;
+       &:hover {
+        background: lighten($BC-Blue, 70%);
+      }
+     }
+
+      .close-panel:has(+ .panel-content .popup.popup--ferry),
+       {
+        color: #2E8540;
+        &:hover {
+          background: lighten(#2E8540, 60%);
+        }
       }
 
       .panel-content {
