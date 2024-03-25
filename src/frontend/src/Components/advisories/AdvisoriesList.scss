@@ -1,13 +1,19 @@
 @import "../../styles/variables.scss";
 
-.advisories-list {
+ul.advisories-list {
   list-style-type: none;
   padding-left: 0;
 
-  li {
+  li.advisory-li {
     cursor: pointer;
     width: fit-content;
     margin-bottom: 1rem;
+
+    &:hover {
+      .advisory-li-title {
+        text-decoration: underline;
+      }
+    }
 
     .advisory-li-title {
       color: $Type-Link;
