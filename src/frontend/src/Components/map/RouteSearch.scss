@@ -6,21 +6,19 @@
   z-index: 5;
 
   .swap-button{
-    position: relative;
-    display: row;
-    top: -53px;
-    left: 292px;
+    position: absolute;
+    top: 30px;
+    right: 0px;
     padding: 8px 4px 8px 4px;
     gap: 6px;
-    color: black;
+    color: $Type-Link;
     border-radius: 32px 32px 32px 32px;
-    border: 1px 0px 0px 0px;
-    opacity: 0px;
     border: 1px solid #D9D9D9;
-    background: #FFFFFF;
+    background: $White;
 
     &:hover {
-      background-color: grey;
+      background: $Type-Link;
+      color: $White;
     }
   }
 
