@@ -124,10 +124,21 @@
           text-decoration: underline;
         }
       }
+      .friendly-time__tooltip {
+        transform: none;
+        left: inherit;
+        right: 0;
+
+        &:before {
+          left: inherit;
+          right: 0;
+        }
+      }
     }
     .camera-orientations {
       padding: 0 1rem;
     }
+    
   }
 
   //Ferries layer
@@ -197,9 +208,6 @@
 
         .friendly-time {
           margin-bottom: 0.5rem;
-          &__tooltip {
-            left: 100%;
-          }
         }
       }
 
