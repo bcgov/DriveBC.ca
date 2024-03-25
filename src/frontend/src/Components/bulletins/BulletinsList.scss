@@ -1,9 +1,14 @@
 @import "../../styles/variables.scss";
 
-.bulletins-list {
-  li {
+ul.bulletins-list {
+  li.bulletin-li {
     cursor: pointer;
     width: fit-content;
+    &:hover {
+      .bulletin-li-title {
+        text-decoration: underline;
+      }
+    }
   }
 }
 .empty-bulletin-display {
