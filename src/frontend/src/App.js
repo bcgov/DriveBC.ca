@@ -38,6 +38,7 @@ function App() {
         highwayCams: false,
         inlandFerries: true,
         weather: true,
+        restStops: false,
       },
     };
   }

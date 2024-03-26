@@ -12,8 +12,9 @@ import {
   faSnowflake,
   faFerry,
   faTemperatureHalf,
-//  faRestroom,
-//  faCloudSun
+  //  faRestroom,
+  //  faCloudSun
+  faToilet,
 } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -83,6 +84,11 @@ export default function Filters(props) {
       <p>Weather updates for roads.</p>
     </Tooltip>
   );
+  const tooltipRestStops = (
+    <Tooltip id="tooltip" className="tooltip-content">
+      <p>Travel requires the use of a rest stop.</p>
+    </Tooltip>
+  );
 
 //  const tooltipReststops = (
 //    <Tooltip id="tooltip" className="tooltip-content">
@@ -110,6 +116,7 @@ export default function Filters(props) {
   const [highwayCams, setHighwayCams] = useState(mapContext.visible_layers.highwayCams);
   const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
   const [weather, setWeather] = useState(mapContext.visible_layers.weather);
+  const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
 
 
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
@@ -328,6 +335,25 @@ export default function Filters(props) {
                     Weather
                   </label>
                   <OverlayTrigger placement="top" overlay={tooltipWeather}>
+                    <span className="tooltip-info">?</span>
+                  </OverlayTrigger>
+                </div>
+                <div className={'filter-item filter-item--rest-stops' + (restStops ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
+                  <input
+                    type="checkbox"
+                    name="rest stops"
+                    id="filter--rest-stops"
+                    onChange={e => {toggleHandler('restStops', e.target.checked); setRestStops(!restStops)}}
+                    defaultChecked={mapContext.visible_layers.restStops}
+                    disabled={disableFeatures}
+                  />
+                  <label htmlFor="filter--rest-stops">
+                    <span className="filter-item__icon">
+                      <FontAwesomeIcon icon={faToilet} alt="rest stops" />
+                    </span>
+                    Rest stops
+                  </label>
+                  <OverlayTrigger placement="top" overlay={tooltipRestStops}>
                     <span className="tooltip-info">?</span>
                   </OverlayTrigger>
                 </div>
