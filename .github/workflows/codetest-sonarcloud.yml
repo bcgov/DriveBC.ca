@@ -68,7 +68,7 @@ jobs:
         DRIVEBC_IMAGE_API_BASE_URL: testvar
         DRIVEBC_IMAGE_PROXY_URL: testvar
         DRIVEBC_OPEN_511_API_BASE_URL: testvar
-        DRIVEBC_WEBCAM_API_BASE_URL: testvar
+        DRIVEBC_WEBCAM_API_BASE_URL: https://images.drivebc.ca/webcam/api/v1/
         DRIVEBC_ROUTE_PLANNER_API_BASE_URL: testvar
         DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY: testvar
         DRIVEBC_DIT_API_BASE_URL: testvar
@@ -77,6 +77,9 @@ jobs:
         WEATHER_CLIENT_ID: testvar
         WEATHER_CLIENT_SECRET: testvar
         DRIVEBC_WEATHER_AREAS_API_BASE_URL: testvar
+        DRIVEBC_IMAGE_BASE_URL: http://localhost:8000
+        DRIVEBC_WEATHER_CURRENT_API_BASE_URL: testvar
+        DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL: testvar
         SECRET_KEY: testvar
       run: |
         coverage run ./src/backend/manage.py test --noinput && coverage report && coverage xml
