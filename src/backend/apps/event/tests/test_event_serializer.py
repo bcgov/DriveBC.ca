@@ -111,7 +111,7 @@ class TestEventSerializer(BaseTest):
         assert self.serializer_two.data['route_display'] == \
                "Test Road Two to Test Avenue Two"
         assert self.serializer_two.data['direction_display'] == \
-               "Both"
+               "Both directions"
 
         # Eastern time auto adjusted to Pacific time
         assert self.serializer_two.data['last_updated'] == \

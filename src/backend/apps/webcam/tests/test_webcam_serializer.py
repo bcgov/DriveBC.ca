@@ -53,5 +53,6 @@ class TestWebcamSerializer(BaseTest):
 
         self.serializer = WebcamSerializer(self.webcam)
 
+    # 2024/03/26 added 'dbc_mark' and 'credit'
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 24
+        assert len(self.serializer.data) == 26
