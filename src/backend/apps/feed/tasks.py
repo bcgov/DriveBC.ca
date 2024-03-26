@@ -2,6 +2,7 @@ from apps.cms.tasks import populate_all_ferry_data
 from apps.event.tasks import populate_all_event_data
 from apps.webcam.tasks import populate_all_webcam_data, update_all_webcam_data
 from apps.weather.tasks import populate_all_regional_weather_data
+from apps.rest.tasks import populate_all_rest_stop_data
 from django.core.management import call_command
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task
@@ -35,3 +36,7 @@ def publish_scheduled():
 @db_periodic_task(crontab(minute="*/5"))
 def populate_regional_weather_task():
     populate_all_regional_weather_data()
+
+@db_periodic_task(crontab(minute="*/5"))
+def populate_rest_stop_task():
+    populate_all_rest_stop_data()
