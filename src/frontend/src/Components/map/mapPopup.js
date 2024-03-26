@@ -14,7 +14,8 @@ import {
   faSnowflake,
   faWind,
   faEye,
-  faTriangleExclamation
+  faTriangleExclamation,
+  faToilet
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faSunCloud
@@ -294,5 +295,32 @@ export function getWeatherPopup(weatherFeature) {
     //     <p className="label">Courtesy of <a alt="Environment Canada" target="_blank" rel="noreferrer" href="https://weather.gc.ca/canada_e.html">Environment Canada</a></p>
     //   </div>
     // </div>
+  );
+}
+
+export function getRestStopPopup(restStopFeature) {
+  const restStopData = restStopFeature.getProperties();
+
+  return (
+    <div className="popup popup--ferry">
+      <div className="popup__title">
+        <div className="popup__title__icon">
+          <FontAwesomeIcon icon={faToilet} />
+        </div>
+        <p className="name">
+          <a href={restStopData.url} target="_blank" rel="noreferrer">{`${restStopData.properties.REST_AREA_NAME}`}</a>
+        </p>
+      </div>
+      <div className="popup__content">
+        <div className="popup__content__description">
+          <p>Open Date: {`${restStopData.properties.OPEN_DATE}`}</p>
+          <p>Close Date: {`${restStopData.properties.CLOSE_DATE}`}</p>
+          <p>Power Type: {`${restStopData.properties.POWER_TYPE}`}</p>
+          <p>Toilet Type: {`${restStopData.properties.TOILET_TYPE}`}</p>
+          <p>Admin Unit Name: {`${restStopData.properties.ADMIN_UNIT_NAME}`}</p>
+          <p>Distance from Municipality: {`${restStopData.properties.DISTANCE_FROM_MUNICIPALITY}`}</p>
+        </div>
+      </div>
+    </div>
   );
 }
