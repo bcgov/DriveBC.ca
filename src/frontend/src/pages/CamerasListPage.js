@@ -37,7 +37,6 @@ export default function CamerasListPage() {
   // UseState hooks
   const [displayedCameras, setDisplayedCameras] = useState(null);
   const [processedCameras, setProcessedCameras] = useState(null);
-  const [routeEdit, setRouteEdit] = useState(!(selectedRoute && selectedRoute.routeFound));
   const [searchText, setSearchText] = useState('');
 
   // UseEffect hooks and data functions
@@ -75,9 +74,6 @@ export default function CamerasListPage() {
   useEffect(() => {
     getCamerasData();
 
-    if (selectedRoute && selectedRoute.routeFound) {
-      setRouteEdit(false);
-    }
   }, [selectedRoute]);
 
   useEffect(() => {
@@ -130,11 +126,7 @@ export default function CamerasListPage() {
 
         <div className="controls-container">
           <div className="route-display-container">
-            <RouteSearch routeEdit={routeEdit} />
-
-            {/* {!routeEdit &&
-              <Button onClick={() => setRouteEdit(true)}>Change</Button>
-            } */}
+            <RouteSearch />
           </div>
 
           <div className="search-container">
