@@ -22,8 +22,6 @@ import Spinner from 'react-bootstrap/Spinner';
 import './RouteSearch.scss';
 
 export default function RouteSearch(props) {
-  const { routeEdit } = props;
-
   // Redux
   const dispatch = useDispatch();
   const { searchLocationFrom, searchLocationTo } = useSelector(useCallback(memoize(state => ({
@@ -88,7 +86,7 @@ export default function RouteSearch(props) {
           </span>
         }
 
-        <LocationSearch routeEdit={routeEdit} placeholder={'Find a location'} location={searchLocationFrom} action={updateSearchLocationFrom} />
+        <LocationSearch placeholder={'Find a location'} location={searchLocationFrom} action={updateSearchLocationFrom} />
       </div>
 
       {!!searchLocationFrom.length &&
@@ -97,7 +95,7 @@ export default function RouteSearch(props) {
             <FontAwesomeIcon icon={faLocationDot} />
           </span>
 
-          <LocationSearch routeEdit={routeEdit} placeholder={'Find a destination'} location={searchLocationTo} action={updateSearchLocationTo} />
+          <LocationSearch placeholder={'Find a destination'} location={searchLocationTo} action={updateSearchLocationTo} />
 
           {showSpinner &&
             <Spinner className="typeahead-spinner" size="sm" animation="border" />

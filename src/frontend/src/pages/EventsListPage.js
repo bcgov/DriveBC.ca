@@ -99,7 +99,6 @@ export default function EventsListPage() {
     'roadConditions': false,
   });
 
-  const [routeEdit, setRouteEdit] = useState(!(selectedRoute && selectedRoute.routeFound));
   const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
   const [showLoader, setShowLoader] = useState(false);
 
@@ -130,9 +129,6 @@ export default function EventsListPage() {
   useEffect(() => {
     setShowLoader(true);
 
-    if (selectedRoute && selectedRoute.routeFound) {
-      setRouteEdit(false);
-    }
   }, [selectedRoute]);
 
   useEffect(() => {
@@ -230,11 +226,7 @@ export default function EventsListPage() {
         <div className="controls-container">
           { largeScreen &&
             <div className="route-display-container">
-              <RouteSearch routeEdit={routeEdit} />
-
-              {/* {!routeEdit &&
-                <Button onClick={() => setRouteEdit(true)}>Change</Button>
-              } */}
+              <RouteSearch />
             </div>
           }
 
@@ -259,11 +251,7 @@ export default function EventsListPage() {
 
           { !largeScreen &&
             <div className="route-display-container">
-              <RouteSearch routeEdit={routeEdit} />
-
-              {!routeEdit &&
-                <Button onClick={() => setRouteEdit(true)}>Change</Button>
-              }
+              <RouteSearch />
             </div>
           }
         </div>
