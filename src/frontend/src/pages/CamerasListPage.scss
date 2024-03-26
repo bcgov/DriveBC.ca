@@ -1,5 +1,6 @@
 @import "../styles/variables.scss";
 
+.cameras-page {
 .outer-container {
   padding-bottom: 0;
 
@@ -21,10 +22,16 @@
       }
 
       .routing-container {
+        position:relative;
         padding: 0;
 
         @media (max-width: 768px) {
           width: 100%;
+        }
+        .swap-button{
+          position: absolute;
+          top: 14px;
+          right: -10px;
         }
       }
     }
@@ -53,4 +60,5 @@
   h6 {
     margin-top: 2rem;
   }
+}
 }
