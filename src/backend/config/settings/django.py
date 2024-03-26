@@ -128,6 +128,7 @@ LOCAL_APPS = [
     "apps.webcam",
     "apps.cms",
     "apps.weather",
+    "apps.rest",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
