@@ -131,7 +131,7 @@ export default function EventsTable(props) {
   }
 
   useEffect(() => {
-    sortingHandler(sortingKey);
+    sortingHandler();
   }, [sortingKey]);
 
   // Rendering - loader
