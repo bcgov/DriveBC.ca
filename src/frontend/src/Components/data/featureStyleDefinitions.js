@@ -16,6 +16,10 @@ import roadWeatherIconActive from '../../images/mapIcons/road-weather-active.png
 import roadWeatherIconHover from '../../images/mapIcons/road-weather-hover.png';
 import roadWeatherIconStatic from '../../images/mapIcons/road-weather-static.png';
 
+// Regional Weather
+import regionalWeatherIconActive from '../../images/mapIcons/regional-weather-active.png';
+import regionalWeatherIconHover from '../../images/mapIcons/regional-weather-hover.png';
+import regionalWeatherIconStatic from '../../images/mapIcons/regional-weather-static.png';
 
 // Events
 // Closures
@@ -114,6 +118,28 @@ export const roadWeatherStyles = {
     image: new Icon({
       scale: 0.25,
       src: roadWeatherIconActive,
+    }),
+  }),
+};
+
+// Regional weather icon styles
+export const regionalStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: regionalWeatherIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: regionalWeatherIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: regionalWeatherIconActive,
     }),
   }),
 };

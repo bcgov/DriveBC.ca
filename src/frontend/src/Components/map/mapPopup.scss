@@ -72,7 +72,7 @@
         }
 
         .formatted-date {
-          font-size: 0.75rem;
+          font-size: 0.625rem;
         }
       }
 
@@ -405,15 +405,31 @@
 
     .popup__advisory {
       display: flex;
+      flex-direction: column;
       align-items: center;
       background-color: #FDD47B;
       color: #584215;
       padding: 0.75rem 1rem;
 
+      .event {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        p {
+          line-height: 1.3;
+        }
+
+        svg {
+          margin-right: 0.75rem;
+        }
+      }
+
       svg {
         margin-right: 4px;
       }
-      
+
       p {
         margin: 0;
       }
@@ -425,7 +441,7 @@
       }
 
       .link {
-        margin-left: auto;
+        min-width: max-content;
       }
     }
 
