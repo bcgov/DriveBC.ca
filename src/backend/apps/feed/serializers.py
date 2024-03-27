@@ -17,6 +17,7 @@ from apps.feed.fields import (
     WebcamRegionGroupField,
 )
 from apps.weather.models import CurrentWeather, RegionalWeather
+from apps.rest.models import RestStop
 from rest_framework import serializers
 
 
@@ -259,4 +260,15 @@ class CurrentWeatherSerializer(serializers.Serializer):
             'location_description',
             'datasets',
             'issuedUtc',
+        )
+
+# Rest Stop serializer
+class RestStopSerializer(serializers.Serializer):
+    class Meta:
+        model = RestStop
+        fields = (
+            'id',
+            'geometry',
+            'properties',
+            'bbox',
         )

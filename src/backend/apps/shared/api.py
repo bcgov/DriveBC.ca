@@ -19,4 +19,7 @@ urlpatterns = [
 
     # Others
     path("feedback/", views.FeedbackView.as_view(), name="feedback"),
+
+    # Rest Stop
+    path("reststops/", include("apps.rest.urls")),
 ]

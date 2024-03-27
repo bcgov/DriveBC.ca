@@ -47,6 +47,7 @@ class CacheTimeout:
     EVENT_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
     FERRY_LIST = 60*60*24  # 24hr
     REGIONAL_WEATHER_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
+    REST_STOP_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
 
 
 class CacheKey:
@@ -58,6 +59,7 @@ class CacheKey:
     FERRY_LIST = "ferry_list"
     TEST_APP_CACHE = "test_app_cache"
     REGIONAL_WEATHER_LIST = "regional_weather_list"
+    REST_STOP_LIST = "rest_stop_list"
 
 
 ROUTE_FILTER_TOLERANCE = 25

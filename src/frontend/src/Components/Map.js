@@ -15,6 +15,7 @@ import {
   updateEvents,
   updateFerries,
   updateWeather,
+  updateRestStops,
 } from '../slices/feedsSlice';
 import { updateMapState } from '../slices/mapSlice';
 
@@ -36,9 +37,12 @@ import {
   getEventPopup,
   getFerryPopup,
   getWeatherPopup,
+  getRestStopPopup,
 } from './map/mapPopup.js';
 import { getEvents } from './data/events.js';
 import { getWeather } from './data/weather.js';
+import { getRestStops } from './data/restStops.js';
+import { getRestStopsLayer } from './map/layers/restStopsLayer.js';
 import { loadEventsLayers } from './map/layers/eventsLayer.js';
 import { loadWeatherLayers } from './map/layers/weatherLayer.js';
 import {
@@ -78,6 +82,7 @@ import {
   cameraStyles,
   ferryStyles,
   roadWeatherStyles,
+  restStopStyles,
 } from './data/featureStyleDefinitions.js';
 import './Map.scss';
 
@@ -98,6 +103,8 @@ export default function MapWrapper({
     ferriesTimeStamp, // CMS
     weather,
     weatherTimeStamp, // Weather
+    restStops, 
+    restStopsTimeStamp, // Rest Stops
     searchLocationFrom,
     selectedRoute, // Routing
     zoom,
@@ -117,6 +124,9 @@ export default function MapWrapper({
         // Weather
         weather: state.feeds.weather.list,
         weatherTimeStamp: state.feeds.weather.routeTimeStamp,
+        // Rest Stops
+        restStops: state.feeds.restStops.list,
+        restStopsTimeStamp: state.feeds.restStops.routeTimeStamp,
         // Routing
         searchLocationFrom: state.routes.searchLocationFrom,
         selectedRoute: state.routes.selectedRoute,
@@ -173,6 +183,13 @@ export default function MapWrapper({
     clickedWeatherRef.current = feature;
     setClickedWeather(feature);
   };
+
+  const [clickedRestStop, setClickedRestStop] = useState();
+  const clickedRestStopRef = useRef();
+  const updateClickedRestStop = (feature) => {
+    clickedRestStopRef.current = feature;
+    setClickedRestStop(feature);
+  }
 
   // Define the function to be executed after the delay
   function resetCameraPopupRef() {
@@ -324,6 +341,10 @@ export default function MapWrapper({
         clickedWeatherRef.current.setStyle(roadWeatherStyles['static']);
         updateClickedWeather(null);
       }
+      if (clickedRestStopRef.current && targetFeature != clickedRestStopRef.current) {
+        clickedRestStopRef.current.setStyle(restStopStyles['static']);
+        updateClickedRestStop(null);
+      }
     };
 
     const camClickHandler = feature => {
@@ -390,6 +411,21 @@ export default function MapWrapper({
       popup.current.getElement().style.top = '40px';
     };
 
+    const restStopClickHandler = (feature) => {
+      // reset previous clicked feature
+      resetClickedStates(feature);
+
+      // set new clicked rest stop feature
+      feature.setStyle(restStopStyles['active']);
+      feature.setProperties({ clicked: true }, true);
+      updateClickedRestStop(feature);
+
+      popup.current.setPosition(
+        feature.getGeometry().getCoordinates(),
+      );
+      popup.current.getElement().style.top = '40px';
+    }
+
     mapRef.current.on('click', async e => {
       const features = mapRef.current.getFeaturesAtPixel(e.pixel, {
         hitTolerance: 20,
@@ -409,6 +445,9 @@ export default function MapWrapper({
             return;
           case 'weather':
             weatherClickHandler(clickedFeature);
+            return;
+          case 'rest':
+            restStopClickHandler(clickedFeature);
             return;
         }
       }
@@ -441,9 +480,12 @@ export default function MapWrapper({
             case 'ferry':
               hoveredFeature.current.setStyle(ferryStyles['static']);
               break;
-              case 'weather':
-                hoveredFeature.current.setStyle(roadWeatherStyles['static']);
-                break;
+            case 'weather':
+              hoveredFeature.current.setStyle(roadWeatherStyles['static']);
+              break;
+            case 'rest':
+              hoveredFeature.current.setStyle(restStopStyles['static']);
+              break;
           }
         }
 
@@ -485,6 +527,11 @@ export default function MapWrapper({
           case 'weather':
             if (!targetFeature.getProperties().clicked) {
               targetFeature.setStyle(roadWeatherStyles['hover']);
+            }
+            return;
+          case 'rest':
+            if (!targetFeature.getProperties().clicked) {
+              targetFeature.setStyle(ferryStyles['hover']);
             }
             return;
         }
@@ -627,7 +674,20 @@ export default function MapWrapper({
       mapRef.current.addLayer(mapLayers.current['inlandFerries']);
       mapLayers.current['inlandFerries'].setZIndex(68);
     }
-  }, [ferries]);
+
+    // Add layer if array exists
+    if (restStops) {
+      // Generate and add layer
+      mapLayers.current['restStops'] = getRestStopsLayer(
+        restStops,
+        mapRef.current.getView().getProjection().getCode(),
+        mapContext
+      )
+    
+      mapRef.current.addLayer(mapLayers.current['restStops']);
+      mapLayers.current['restStops'].setZIndex(68);
+    }
+  }, [ferries, restStops]);
 
   const loadFerries = async route => {
     const newRouteTimestamp = route ? route.searchTimestamp : null;
@@ -641,6 +701,19 @@ export default function MapWrapper({
           timeStamp: new Date().getTime(),
         }),
       );
+    }
+  };
+
+  const loadRestStops = async (route) => {
+    const newRouteTimestamp = route ? route.searchTimestamp : null;
+
+    // Fetch data if it doesn't already exist or route was updated
+    if (!restStops || (restStopsTimeStamp != newRouteTimestamp)) {
+      dispatch(updateRestStops({
+        list: await getRestStops(route ? route.points : null),
+        routeTimeStamp: route ? route.searchTimestamp : null,
+        timeStamp: new Date().getTime()
+      }));
     }
   };
 
@@ -688,6 +761,7 @@ export default function MapWrapper({
       loadEvents(selectedRoute);
       loadFerries();
       loadWeather();
+      loadRestStops();
 
       // Zoom/pan to route on route updates
       if (!isInitialMount) {
@@ -699,6 +773,7 @@ export default function MapWrapper({
       loadEvents(null);
       loadFerries();
       loadWeather();
+      loadRestStops();
     }
   };
 
@@ -759,6 +834,13 @@ export default function MapWrapper({
       clickedWeatherRef.current.setStyle(roadWeatherStyles['static']);
       clickedWeatherRef.current.set('clicked', false);
       updateClickedWeather(null);
+    }
+
+    // check for active rest stop icons
+    if (clickedRestStopRef.current) {
+      clickedRestStopRef.current.setStyle(restStopStyles['static']);
+      clickedRestStopRef.current.set('clicked', false);
+      updateClickedRestStop(null);
     }
 
     // Reset cam popup handler lock timer
@@ -858,7 +940,8 @@ export default function MapWrapper({
     clickedCamera ||
     clickedEvent ||
     clickedFerry ||
-    clickedWeather
+    clickedWeather ||
+    clickedRestStop
   );
 
   return (
@@ -891,6 +974,8 @@ export default function MapWrapper({
           {clickedFerry && getFerryPopup(clickedFerry)}
 
           {clickedWeather && getWeatherPopup(clickedWeather)}
+
+          {clickedRestStop && getRestStopPopup(clickedRestStop)}
         </div>
       </div>
 

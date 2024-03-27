@@ -13,6 +13,7 @@ from apps.feed.constants import (
     REGIONAL_WEATHER,
     REGIONAL_WEATHER_AREAS,
     WEBCAM,
+    REST_STOP,
 )
 from apps.feed.serializers import (
     CarsEventSerializer,
@@ -23,6 +24,7 @@ from apps.feed.serializers import (
     RegionalWeatherSerializer,
     WebcamAPISerializer,
     WebcamFeedSerializer,
+    RestStopSerializer,
 )
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
@@ -86,7 +88,10 @@ class FeedClient:
             },
             CURRENT_WEATHER_STATIONS: {
                 "base_url": settings.DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL
-            }
+            },
+            REST_STOP: {
+                "base_url": settings.DRIVEBC_REST_STOP_API_BASE_URL,
+            },
         }
 
     def _get_auth_headers(self, resource_type):
@@ -468,3 +473,42 @@ class FeedClient:
             CURRENT_WEATHER, 'currentweather', CurrentWeatherSerializer,
             {"format": "json", "limit": 500}
         )
+    
+     # Rest Stop
+    def get_rest_stop_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
+        """Get data feed for list of objects."""
+        rest_stop_api_url = settings.DRIVEBC_REST_STOP_API_BASE_URL
+
+        try:
+            response = requests.get(rest_stop_api_url)
+            response.raise_for_status()
+            data = response.json()
+            json_response = data
+            json_objects = []
+            for entry in json_response["features"]:
+                rest_stop_id = entry['id']
+                geometry = entry["geometry"]
+                properties = entry["properties"]
+                bbox = entry["bbox"]
+                rest_stop_data = {
+                        'rest_stop_id': rest_stop_id,
+                        'geometry': geometry,
+                        'properties': properties,
+                        'bbox': bbox,
+                    }
+
+                serializer = serializer_cls(data=rest_stop_data,
+                                                many=isinstance(rest_stop_data, list))
+                json_objects.append(rest_stop_data)
+
+        except requests.RequestException as e:
+            return Response({"error": f"Error fetching data from rest stop API: {str(e)}"}, status=500)
+        
+        try:
+            serializer.is_valid(raise_exception=True)
+            return json_objects
+
+        except (KeyError, ValidationError):
+            field_errors = serializer.errors
+            for field, errors in field_errors.items():
+                print(f"Field: {field}, Errors: {errors}")

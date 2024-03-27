@@ -16,6 +16,10 @@ import roadWeatherIconActive from '../../images/mapIcons/road-weather-active.png
 import roadWeatherIconHover from '../../images/mapIcons/road-weather-hover.png';
 import roadWeatherIconStatic from '../../images/mapIcons/road-weather-static.png';
 
+// Rest Stops
+import restStopIconActive from '../../images/mapIcons/ferry-active.png';
+import restStopIconHover from '../../images/mapIcons/ferry-hover.png';
+import restStopIconStatic from '../../images/mapIcons/ferry-static.png';
 
 // Events
 // Closures
@@ -114,6 +118,28 @@ export const roadWeatherStyles = {
     image: new Icon({
       scale: 0.25,
       src: roadWeatherIconActive,
+    }),
+  }),
+};
+
+// Rest Stop icon styles
+export const restStopStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: restStopIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: restStopIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: restStopIconActive,
     }),
   }),
 };

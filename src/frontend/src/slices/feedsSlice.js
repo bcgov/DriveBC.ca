@@ -12,7 +12,8 @@ export const feedsSlice = createSlice({
     cameras: feedsInitialState,
     events: feedsInitialState,
     ferries: feedsInitialState,
-    weather: feedsInitialState
+    weather: feedsInitialState,
+    restStops: feedsInitialState,
   },
   reducers: {
     updateCameras: (state, action) => {
@@ -27,9 +28,12 @@ export const feedsSlice = createSlice({
     updateWeather: (state, action) => {
       state.weather = action.payload;
     },
+    updateRestStops: (state, action) => {
+      state.restStops = action.payload;
+    },
   },
 });
 
-export const { updateCameras, updateEvents, updateFerries, updateWeather } = feedsSlice.actions;
+export const { updateCameras, updateEvents, updateFerries, updateWeather, updateRestStops } = feedsSlice.actions;
 
 export default feedsSlice.reducer;
