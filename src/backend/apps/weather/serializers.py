@@ -1,11 +1,27 @@
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 from apps.weather.models import CurrentWeather, RegionalWeather
 from rest_framework import serializers
 
 
+tz = ZoneInfo("America/Vancouver")
+
+
 class RegionalWeatherSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = RegionalWeather
-        exclude = ['location_latitude', 'location_longitude']
+        fields = ['location',
+                  'conditions',
+                  'name',
+                  'station',
+                  'observed',
+                  'forecast_issued',
+                  'sunrise',
+                  'sunset',
+                  'warnings',
+                  ]
 
 
 # Current Weather serializer

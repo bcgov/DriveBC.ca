@@ -320,12 +320,17 @@ export default function Filters(props) {
                     <span className="tooltip-info">?</span>
                   </OverlayTrigger>
                 </div>
+
                 <div className={'filter-item filter-item--weather' + (weather ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
                   <input
                     type="checkbox"
                     name="weather"
                     id="filter--weather"
-                    onChange={e => {toggleHandler('weather', e.target.checked); setWeather(!weather)}}
+                    onChange={e => {
+                      toggleHandler('weather', e.target.checked);
+                      toggleHandler('regional', e.target.checked);
+                      setWeather(!weather)}
+                    }
                     defaultChecked={mapContext.visible_layers.weather}
                     disabled={disableFeatures}
                   />
