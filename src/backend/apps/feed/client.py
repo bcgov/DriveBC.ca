@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import logging
 from typing import Dict
 from urllib.parse import urljoin
@@ -32,28 +33,33 @@ from rest_framework.response import Response
 
 # Maps the key for our client API's serializer fields to the matching pair of
 # the source API's DataSetName and DisplayName fields
+#   serializer           DataSetName               DisplayName                value field
 SERIALIZER_TO_DATASET_MAPPING = {
-    "air_temperature": ("air_temp", "Air Temp"),
-    "road_temperature": ("sfc_temp", "Pavement Temp"),
-    "road_surface": ("sfc_stat_derived_state", "Pavement Status (State)", "MeaningfulValue"),
-    "precipitation": ("pcpn_amt_pst1hr", "Precip Hourly"),
-    "snow": ("snwfl_amt_pst1hr", "Snowfall (hourly)"),
-    "wind_direction": ("wnd_dir", "Wind Direction (current)"),
-    "average_wind": ("wnd_spd", "Wind Speed (current)"),
-    "maximum_wind": ("max_wnd_spd_pst1hr", "Wind Speed (max)")
+    "air_temperature":  ("air_temp",               "Air Temp"),
+    "road_temperature": ("sfc_temp",               "Pavement Temp"),
+    "road_surface":     ("sfc_stat_derived_state", "Pavement Status (State)", "MeaningfulValue"),
+    "precipitation":    ("pcpn_amt_pst1hr",        "Precip Hourly"),
+    "snow":             ("snwfl_amt_pst1hr",       "Snowfall (hourly)"),
+    "wind_direction":   ("wnd_dir",                "Wind Direction (current)"),
+    "average_wind":     ("wnd_spd",                "Wind Speed (current)"),
+    "maximum_wind":     ("max_wnd_spd_pst1hr",     "Wind Speed (max)")
     }
 
 # Generated list of DataSetName values for filtering excluded dataset entries
+#     ['air_temp', 'sfc_temp', ...]
 DATASETNAMES = [value[0] for value in SERIALIZER_TO_DATASET_MAPPING.values()]
 
 # Generated mapping of DataSetName to DisplayName
+#    { "air_temp": "Air Temp", ... }
 DISPLAYNAME_MAPPING = {value[0]: value[1] for value in SERIALIZER_TO_DATASET_MAPPING.values()}
 
 # Generated mapping of DataSetName to Serializer field
+#    { "air_temp": "air_temperature", ... }
 SERIALIZER_MAPPING = {value[0]: key for key, value in SERIALIZER_TO_DATASET_MAPPING.items()}
 
 # Generated mapping of DataSetName to the name of the value field in the tuple;
 # defaults to "Value"
+#    { "air_temp": "Value", "road_surface": "MeanginfulValue", ...}
 VALUE_FIELD_MAPPING = {value[0]: (value[2] if len(value) > 2 else "Value")
                        for value in SERIALIZER_TO_DATASET_MAPPING.values()}
 
@@ -61,7 +67,7 @@ logger = logging.getLogger(__name__)
 
 
 class FeedClient:
-    """Feed client for external DriveBC APIs."""
+    """ Feed client for external DriveBC APIs. """
 
     def __init__(self):
         self.resource_map: Dict[str, dict] = {
@@ -106,7 +112,9 @@ class FeedClient:
 
     @staticmethod
     def _get_response_data_or_raise(response):
-        """Checks and returns the response if it has usable content.
+        """
+        Checks and returns the response if it has usable content.
+
         All responses with status 401 and up will be raised as an HTTP error.
         """
         if response and response.status_code <= httpx.codes.BAD_REQUEST:
@@ -125,6 +133,30 @@ class FeedClient:
             verify=False,
         )
         return self._get_response_data_or_raise(response)
+
+    # TODO: make client manage token by expiry so that repeated calls to this
+    # method either return a currently valid token or fetch a fresh one
+    def get_access_token(self):
+        """
+        Return a bearer token
+
+        The URL and credentials aren't weather specific; they're for the shared
+        services API gateway.
+        """
+
+        token_url = settings.DRIVEBC_WEATHER_API_TOKEN_URL
+        client_id = settings.WEATHER_CLIENT_ID
+        client_secret = settings.WEATHER_CLIENT_SECRET
+
+        token_params = {
+            "grant_type": "client_credentials",
+            "client_id": client_id,
+            "client_secret": client_secret,
+        }
+
+        response = requests.post(token_url, data=token_params)
+        response.raise_for_status()
+        return response.json().get("access_token")
 
     def get_single_feed(self, dbo, resource_type, resource_name, serializer_cls):
         """Get data feed for a single object."""
@@ -220,128 +252,114 @@ class FeedClient:
     # Regional Weather
     def get_regional_weather_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
         """Get data feed for list of objects."""
-        area_code_endpoint = settings.DRIVEBC_WEATHER_AREAS_API_BASE_URL
-        # Obtain Access Token
-        token_url = settings.DRIVEBC_WEATHER_API_TOKEN_URL
-        client_id = settings.WEATHER_CLIENT_ID
-        client_secret = settings.WEATHER_CLIENT_SECRET
 
-        token_params = {
-            "grant_type": "client_credentials",
-            "client_id": client_id,
-            "client_secret": client_secret,
-        }
+        area_code_endpoint = settings.DRIVEBC_WEATHER_AREAS_API_BASE_URL
 
         try:
-            response = requests.post(token_url, data=token_params)
-            response.raise_for_status()
-            token_data = response.json()
-            access_token = token_data.get("access_token")
+            access_token = self.get_access_token()
+            headers = {"Authorization": f"Bearer {access_token}"}
         except requests.RequestException as e:
             return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
+
         external_api_url = area_code_endpoint
-        headers = {"Authorization": f"Bearer {access_token}"}
+
         try:
             response = requests.get(external_api_url, headers=headers)
             response.raise_for_status()
-            data = response.json()
-            json_response = data
+            json_response = response.json()
             json_objects = []
+
             for entry in json_response:
-                area_code = entry["AreaCode"]
+                area_code = entry.get("AreaCode")
                 api_endpoint = settings.DRIVEBC_WEATHER_API_BASE_URL + f"/{area_code}"
-                # Reget access token in case the previous token expired
+
+                # Get fresh token in case earlier token has expired
                 try:
-                    response = requests.post(token_url, data=token_params)
-                    response.raise_for_status()
-                    token_data = response.json()
-                    access_token = token_data.get("access_token")
+                    access_token = self.get_access_token()
+                    headers = {"Authorization": f"Bearer {access_token}"}
                 except requests.RequestException as e:
                     return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
-                headers = {"Authorization": f"Bearer {access_token}"}
 
                 try:
                     response = requests.get(api_endpoint, headers=headers)
+                    if response.status_code == 204:
+                        continue  # empty response, continue with next entry
                     data = response.json()
-                    name_data = data.get("Location", {}).get("Name", {})
-                    code = name_data.get("Code") if name_data else None
-                    location_latitude = name_data.get("Latitude") if name_data else None
-                    location_longitude = name_data.get("Longitude") if name_data else None
-                    name = name_data.get("Value") if name_data else None
 
-                    observation_data = data.get("CurrentConditions", {}).get("ObservationDateTimeUTC", {})
-                    observation_name = observation_data.get("Name") if observation_data else None
-                    observation_zone = observation_data.get("Zone") if observation_data else None
-                    observation_utc_offset = observation_data.get("UTCOffset") if observation_data else None
-                    observation_text_summary = observation_data.get("TextSummary") if observation_data else None
-
-                    condition_data = data.get("CurrentConditions", {})
-                    condition = condition_data.get("Condition") if condition_data else None
-
-                    temperature_data = data.get("CurrentConditions", {}).get("Temperature", {})
-                    temperature_units = temperature_data.get("Units") if temperature_data else None
-                    temperature_value = temperature_data.get("Value") if temperature_data else None
-
-                    visibility_data = data.get("CurrentConditions", {}).get("Visibility", {})
-                    visibility_units = visibility_data.get("Units") if visibility_data else None
-                    visibility_value = visibility_data.get("Value") if visibility_data else None
-
-                    wind_data = data.get("CurrentConditions", {}).get("Wind", {})
-                    wind_speed = wind_data.get("Speed") if wind_data else None
-                    wind_gust = wind_data.get("Gust") if wind_data else None
-                    wind_direction = wind_data.get("Direction") if wind_data else None
-
-                    wind_speed_units = wind_speed.get("Units") if wind_speed else None
-                    wind_speed_value = wind_speed.get("Value") if wind_speed else None
-
-                    wind_gust_units = wind_gust.get("Units") if wind_gust else None
-                    wind_gust_value = wind_gust.get("Value") if wind_gust else None
+                    location_data = data.get("Location") or {}
+                    name_data = location_data.get("Name") or {}
+                    condition_data = data.get("CurrentConditions") or {}
+                    temperature_data = condition_data.get("Temperature") or {}
+                    visibility_data = condition_data.get("Visibility") or {}
+                    wind_data = condition_data.get("Wind") or {}
+                    wind_speed = wind_data.get("Speed") or {}
+                    wind_gust = wind_data.get("Gust") or {}
+                    icon = condition_data.get("IconCode") or {}
 
                     conditions = {
-                        'condition': condition,
-                        'temperature_units': temperature_units,
-                        'temperature_value': temperature_value,
-                        'visibility_units': visibility_units,
-                        'visibility_value': visibility_value,
-                        'wind_speed_units': wind_speed_units,
-                        'wind_speed_value': wind_speed_value,
-                        'wind_gust_units': wind_gust_units,
-                        'wind_gust_value': wind_gust_value,
-                        'wind_direction': wind_direction,
+                        'condition': condition_data.get("Condition"),
+                        'temperature_units': temperature_data.get("Units"),
+                        'temperature_value': temperature_data.get("Value"),
+                        'visibility_units': visibility_data.get("Units"),
+                        'visibility_value': visibility_data.get("Value"),
+                        'wind_speed_units': wind_speed.get("Units"),
+                        'wind_speed_value': wind_speed.get("Value"),
+                        'wind_gust_units': wind_gust.get("Units"),
+                        'wind_gust_value': wind_gust.get("Value"),
+                        'wind_direction': wind_data.get("Direction"),
+                        'icon_code': icon.get("Code")
                     }
 
-                    name_data = data.get("Location", {}).get("Name", {})
-                    code = name_data.get("Code") if name_data else None
-                    location_latitude = name_data.get("Latitude") if name_data else None
-                    location_longitude = name_data.get("Longitude") if name_data else None
-                    name = name_data.get("Value") if name_data else None
+                    code = name_data.get("Code")
+                    station_data = condition_data.get('Station') or {}
 
-                    observation_data = data.get("CurrentConditions", {}).get("ObservationDateTimeUTC", {})
-                    observation_name = observation_data.get("Name") if observation_data else None
-                    observation_zone = observation_data.get("Zone") if observation_data else None
-                    observation_utc_offset = observation_data.get("UTCOffset") if observation_data else None
-                    observation_text_summary = observation_data.get("TextSummary") if observation_data else None
+                    observed_data = condition_data.get("ObservationDateTimeUTC") or {}
+                    observed = observed_data.get("TextSummary")
+                    if observed is not None:
+                        observed = datetime.strptime(observed, '%A %B %d, %Y at %H:%M %Z')
+                        observed = observed.replace(tzinfo=timezone.utc)
 
-                    forecast_group_data = data.get("ForecastGroup", {})
-                    forecast_group = forecast_group_data.get("Forecasts") if forecast_group_data else None
+                    forecast_issued = data.get("ForecastIssuedUtc")
+                    if forecast_issued is not None:
+                        try:
+                            # Env Canada sends this field as ISO time without
+                            # offset, needed for python to parse correctly
+                            forecast_issued = datetime.fromisoformat(f"{forecast_issued}+00:00")
+                        except:  # date parsing error
+                            logger.error(f"Issued UTC sent by {code} as {forecast_issued}")
 
-                    hourly_forecast_group_data = data.get("HourlyForecastGroup", {})
-                    hourly_forecast_group = hourly_forecast_group_data.get(
-                        "HourlyForecasts") if hourly_forecast_group_data else None
+                    riseset_data = data.get("RiseSet") or {}
+                    sunrise = riseset_data.get('SunriseUtc')
+                    if sunrise is not None:
+                        sunrise = datetime.strptime(sunrise, '%A %B %d, %Y at %H:%M %Z')
+                        sunrise = sunrise.replace(tzinfo=timezone.utc)
+                    sunset = riseset_data.get('SunsetUtc')
+                    if sunset is not None:
+                        sunset = datetime.strptime(sunset, '%A %B %d, %Y at %H:%M %Z')
+                        sunset = sunset.replace(tzinfo=timezone.utc)
+
+                    forecast_data = data.get("ForecastGroup") or {}
+                    hourly_data = data.get("HourlyForecastGroup") or {}
+
+                    warnings = data.get("Warnings") or {}
+                    if warnings.get("Url") is None:
+                        warnings = None
 
                     regional_weather_data = {
                         'code': code,
-                        'location_latitude': location_latitude,
-                        'location_longitude': location_longitude,
-                        'name': name,
-                        'region': data.get("Location", {}).get("Region"),
-                        'observation_name': observation_name,
-                        'observation_zone': observation_zone,
-                        'observation_utc_offset': observation_utc_offset,
-                        'observation_text_summary': observation_text_summary,
+                        'station': station_data.get("Code"),
+                        'location_latitude': name_data.get("Latitude"),
+                        'location_longitude': name_data.get("Longitude"),
+                        'name': name_data.get("Value"),
+                        'region': location_data.get("Region"),
                         'conditions': conditions,
-                        'forecast_group': forecast_group,
-                        'hourly_forecast_group': hourly_forecast_group,
+                        'forecast_group': forecast_data.get("Forecasts"),
+                        'hourly_forecast_group': hourly_data.get("HourlyForecasts"),
+                        'observed': observed,
+                        'forecast_issued': forecast_issued,
+                        'sunrise': sunrise,
+                        'sunset': sunset,
+                        'warnings': warnings,
                     }
 
                     serializer = serializer_cls(data=regional_weather_data,
@@ -349,7 +367,7 @@ class FeedClient:
                     json_objects.append(regional_weather_data)
 
                 except requests.RequestException as e:
-                    print(f"Error making API call for Area Code {area_code}: {e}")
+                    logger.error(f"Error making API call for Area Code {area_code}: {e}")
 
         except requests.RequestException:
             return Response("Error fetching data from weather API", status=500)
@@ -361,7 +379,7 @@ class FeedClient:
         except (KeyError, ValidationError):
             field_errors = serializer.errors
             for field, errors in field_errors.items():
-                print(f"Field: {field}, Errors: {errors}")
+                logger.error(f"Field: {field}, Errors: {errors}")
 
     def get_regional_weather_list(self):
         return self.get_regional_weather_list_feed(
@@ -373,45 +391,32 @@ class FeedClient:
     def get_current_weather_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
         """Get data feed for list of objects."""
         area_code_endpoint = settings.DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL
-        # Obtain Access Token
-        token_url = settings.DRIVEBC_WEATHER_API_TOKEN_URL
-        client_id = settings.WEATHER_CLIENT_ID
-        client_secret = settings.WEATHER_CLIENT_SECRET
-
-        token_params = {
-            "grant_type": "client_credentials",
-            "client_id": client_id,
-            "client_secret": client_secret,
-        }
 
         try:
-            response = requests.post(token_url, data=token_params)
-            response.raise_for_status()
-            token_data = response.json()
-            access_token = token_data.get("access_token")
+            access_token = self.get_access_token()
+            headers = {"Authorization": f"Bearer {access_token}"}
         except requests.RequestException as e:
             return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
+
         external_api_url = area_code_endpoint
         headers = {"Authorization": f"Bearer {access_token}"}
+
         try:
             response = requests.get(external_api_url, headers=headers)
             response.raise_for_status()
-            data = response.json()
-            json_response = data
+            json_response = response.json()
             json_objects = []
 
             for station in json_response:
-                station_number = station["WeatherStationNumber"]
+                station_number = station.get("WeatherStationNumber")
                 api_endpoint = settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL + f"{station_number}"
-                # Reget access token in case the previous token expired
+
+                # get fresh token to avoid previous token expiring
                 try:
-                    response = requests.post(token_url, data=token_params)
-                    response.raise_for_status()
-                    token_data = response.json()
-                    access_token = token_data.get("access_token")
+                    access_token = self.get_access_token()
+                    headers = {"Authorization": f"Bearer {access_token}"}
                 except requests.RequestException as e:
                     return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
-                headers = {"Authorization": f"Bearer {access_token}"}
 
                 try:
                     response = requests.get(api_endpoint, headers=headers)
@@ -456,7 +461,7 @@ class FeedClient:
                     json_objects.append(current_weather_data)
 
                 except requests.RequestException as e:
-                    print(f"Error making API call for Area Code {station_number}: {e}")
+                    logger.error(f"Error making API call for Area Code {station_number}: {e}")
             try:
                 serializer.is_valid(raise_exception=True)
                 return json_objects
@@ -464,7 +469,7 @@ class FeedClient:
             except (KeyError, ValidationError):
                 field_errors = serializer.errors
                 for field, errors in field_errors.items():
-                    print(f"Field: {field}, Errors: {errors}")
+                    logger.error(f"Field: {field}, Errors: {errors}")
         except requests.RequestException:
             return Response("Error fetching data from weather API", status=500)
 

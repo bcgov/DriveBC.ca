@@ -20,4 +20,4 @@ echo 'creating superuser done; starting service'
 # python manage.py runserver 0.0.0.0:8000
 #trap : TERM INT; sleep 9999999999d & wait
 export DJANGO_SETTINGS_MODULE=config.settings
-gunicorn -b 0.0.0.0 config.wsgi 2> /tmp/gunicorn.log
+gunicorn -b 0.0.0.0 --reload config.wsgi 2> /tmp/gunicorn.log

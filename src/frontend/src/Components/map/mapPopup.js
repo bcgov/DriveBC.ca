@@ -36,6 +36,8 @@ import {
 
 import './mapPopup.scss';
 
+import WeatherIcon from '../WeatherIcon';
+
 function convertCategory(event) {
   switch (event.display_category) {
     case 'closures':
@@ -127,8 +129,6 @@ export function getEventPopup(eventFeature) {
           }
 
         </div>
-
-        
       </div>
     </div>
   );
@@ -166,6 +166,8 @@ export function getFerryPopup(ferryFeature) {
     </div>
   );
 }
+
+
 export function getWeatherPopup(weatherFeature) {
   const weatherData = weatherFeature.getProperties();
 
@@ -262,52 +264,120 @@ export function getWeatherPopup(weatherFeature) {
         </div>
       </div>
     </div>
+  );
+}
 
-    // Regional weather html structure
-    // <div className="popup popup--regional-weather">
-    //   <div className="popup__title">
-    //     <div className="popup__title__icon">
-    //       <FontAwesomeIcon icon={faSunCloud} />
-    //     </div>
-    //     <p className="name">Regional Weather</p>
-    //   </div>
-    //   <div className="popup__advisory">
-    //     <FontAwesomeIcon icon={faTriangleExclamation} />
-    //     <p className="advisory-title">Arctic outflow warning</p>
-    //     <p className="label link"><a alt="Past 24 Hours" target="_blank" rel="noreferrer" href="https://weather.gc.ca/past_conditions/index_e.html?station=yyj">Details</a></p>
-    //   </div>
-    //   <div className="popup__content">
-    //     <div className="popup__content__title">
-    //       <p className="name">Cummins Lakes Park</p>
-    //       <FriendlyTime date='2024-03-01T00:00:00-08:00' />
-    //     </div>
-    //     <div className="popup__content__description">
-    //       <FontAwesomeIcon className="weather-icon" icon={faSunCloud} />
-    //       <p className="weather">Partly cloudy</p>
-    //       <p className="temperature">24&#x2103;</p>
-    //       <div className="data-card">
-    //         <div className="data-card__row">
-    //           <div className="data-icon">
-    //             <FontAwesomeIcon className="icon" icon={faEye} />
-    //           </div>
-    //           <p className="label">Visibility</p>
-    //          <p className="data">42km</p>
-    //        </div>
-    //        <div className="data-card__row">
-    //           <div className="data-icon">
-    //             <FontAwesomeIcon className="icon" icon={faWind} />
-    //           </div>
-    //           <p className="label">Wind</p>
-    //          <p className="data">SW 27 gusts 44 km/h</p>
-    //        </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    //   <div className="popup__additional">
-    //     <p className="label"><a alt="Past 24 Hours" target="_blank" rel="noreferrer" href="https://weather.gc.ca/past_conditions/index_e.html?station=yyj">Past 24 hours</a></p>
-    //     <p className="label">Courtesy of <a alt="Environment Canada" target="_blank" rel="noreferrer" href="https://weather.gc.ca/canada_e.html">Environment Canada</a></p>
-    //   </div>
-    // </div>
+
+export function getRegionalPopup(weatherFeature) {
+  const weather = weatherFeature.getProperties();
+  const conditions = weather.conditions;
+
+  return (
+    <div className="popup popup--regional-weather">
+      <div className="popup__title">
+        <div className="popup__title__icon">
+          <FontAwesomeIcon icon={faSunCloud} />
+        </div>
+        <p className="name">Regional Weather</p>
+      </div>
+      { weather.warnings &&
+        <div className="popup__advisory">
+          { weather.warnings.Events.map(event => {
+            return <div key={ event.expirytime } className="event">
+              <FontAwesomeIcon icon={faTriangleExclamation} />
+              <p className="advisory-title">{ event.Description }</p>
+            </div>;
+          })}
+
+          <p className="label link">
+            <a
+              alt="Past 24 Hours"
+              target="_blank"
+              rel="noreferrer"
+              href={ weather.warnings.Url }
+            >Details</a></p>
+        </div>
+      }
+      <div className="popup__content">
+        <div className="popup__content__title">
+          <p className="name">{weather.name}</p>
+          { weather.observed && <FriendlyTime date={weather.observed} asDate={true} /> }
+        </div>
+        <div className="popup__content__description">
+          <WeatherIcon className="weather-icon" code={conditions.icon_code} />
+          <p className="weather">{ conditions.condition }</p>
+
+          { conditions.temperature_units &&
+            <p className="temperature">
+              { Math.round(conditions.temperature_value) }
+              { conditions.temperature_units }
+            </p>
+          }
+
+          { (conditions.visibility_value || conditions.wind_speed_value) && (
+            <div className="data-card">
+              { conditions.visibility_value && (
+                <div className="data-card__row">
+                  <div className="data-icon">
+                    <FontAwesomeIcon className="icon" icon={faEye} />
+                  </div>
+                  <p className="label">Visibility</p>
+                  <p className="data">
+                    {Math.round(conditions.visibility_value)}
+                    {conditions.visibility_units}
+                  </p>
+                </div>
+              )}
+
+              { conditions.wind_speed_value &&
+                <div className="data-card__row">
+                  <div className="data-icon">
+                    <FontAwesomeIcon className="icon" icon={faWind} />
+                  </div>
+                  <p className="label">Wind</p>
+                  <p className="data">&nbsp;
+                    { conditions.wind_speed_value === "calm" ?
+                      <span>calm</span> :
+                      <span>
+                        { Math.round(conditions.wind_speed_value) }
+                        { conditions.wind_speed_units }
+                        { conditions.wind_gust_value && (
+                          <span>&nbsp;gusts
+                            {Math.round(conditions.wind_gust_value)}
+                            &nbsp;{conditions.wind_gust_units}
+                          </span>
+                        )}
+                      </span>
+                    }
+                  </p>
+                </div>
+              }
+            </div>
+          )}
+
+        </div>
+      </div>
+      <div className="popup__additional">
+        { weather.station &&
+          <p className="label">
+            <a
+              alt="Past 24 Hours"
+              target="_blank"
+              rel="noreferrer"
+              href={`https://weather.gc.ca/past_conditions/index_e.html?station=${weather.station}`}
+            >Past 24 hours</a>
+          </p>
+        }
+        <p className="label">
+          Courtesy of &nbsp;
+          <a
+            alt="Environment Canada"
+            target="_blank"
+            rel="noreferrer"
+            href="https://weather.gc.ca/canada_e.html"
+          >Environment Canada</a></p>
+      </div>
+    </div>
   );
 }
 

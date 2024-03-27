@@ -233,17 +233,19 @@ class RegionalWeatherSerializer(serializers.Serializer):
         fields = (
             'id',
             'code',
+            'station',
             'location_latitude',
             'location_longitude',
             'name',
             'region',
-            'observation_name',
-            'observation_zone',
-            'observation_utc_offset',
-            'observation_text_summary',
             'conditions',
             'forecast_group',
             'hourly_forecast_group',
+            'observed',
+            'forecast_issued',
+            'sunrise',
+            'sunset',
+            'warnings',
         )
 
 
