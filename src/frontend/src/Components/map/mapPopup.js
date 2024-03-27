@@ -100,13 +100,13 @@ export function getEventPopup(eventFeature) {
         </div>
 
         <div className="popup__content__block">
-          <div className="popup__content__description">
+          <div className="popup__content__description last-update">
             <p>Last update</p>
             <FriendlyTime date={eventData.last_updated} />
           </div>
 
           {eventData.next_update &&
-            <div className="popup__content__description">
+            <div className="popup__content__description next-update">
               <p>Next update</p>
               <FriendlyTime date={eventData.next_update} />
             </div>
