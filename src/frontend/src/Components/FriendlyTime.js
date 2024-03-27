@@ -4,6 +4,7 @@ import  {useState} from 'react';
 
 // Third Party packages
 import ReactTimeAgo from 'react-time-ago';
+import OutsideClickHandler from 'react-outside-click-handler';
 
 // Styling
 import './FriendlyTime.scss';
@@ -50,12 +51,20 @@ export default function FriendlyTime({ date, asDate=false, includeFullIfHumanize
             }
           }}>
 
-          <p className="friendly-time-text">
-            <ReactTimeAgo date={date} locale="en-US"/>
-          </p>
-          <span className={"friendly-time__tooltip" + (showTooltip ? " showTooltip" : "")}>
-            {dateFormatted}
-          </span>
+          <OutsideClickHandler
+            onOutsideClick={() => {
+              if (showTooltip) {
+                setShowTooltip(!showTooltip);
+              }
+            }}
+          >
+            <p className="friendly-time-text">
+              <ReactTimeAgo date={date} locale="en-US"/>
+            </p>
+            <span className={"friendly-time__tooltip" + (showTooltip ? " showTooltip" : "")}>
+              {dateFormatted}
+            </span>
+          </OutsideClickHandler>
         </div>
       </React.Fragment>
     )
