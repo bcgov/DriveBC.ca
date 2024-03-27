@@ -16,17 +16,19 @@ export default function HighwayGroup(props) {
     <div className="highway-group">
       <Container>
         <div className="highway-title">
-          <div className="highway-shield-box">
-            {highwayShield(highway)}
-          </div>
+          {!isNaN(highway.charAt(0)) &&
+            <div className="highway-shield-box">
+              {highwayShield(highway)}
+            </div>
+          }
 
           <div className="highway-name">
-            <p className="highway-name__number">Highway {highway}</p>
+            <p className="highway-name__number">{!isNaN(highway.charAt(0)) ? 'Highway' : ''} {highway}</p>
             {highway === '1' &&
               <h2 className="highway-name__alias highway-name__alias--green">Trans Canada</h2>
             }
             {highway !== '1' &&
-              <h2 className="highway-name__alias">Highway {highway}</h2>
+              <h2 className="highway-name__alias">{!isNaN(highway.charAt(0)) ? 'Highway' : ''} {highway}</h2>
             }
           </div>
         </div>
