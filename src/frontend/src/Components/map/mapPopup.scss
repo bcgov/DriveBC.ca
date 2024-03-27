@@ -466,6 +466,71 @@
     }
   }
 
+  //Rest Stops layers
+  &--reststop {
+    .popup__title {
+      &__icon {
+        width: 50px;
+        height: 50px;
+        background: #273F94;
+      }
+    }
+  
+    .popup__content {
+      &__title {
+        border-bottom: 1px solid $Divider;
+        .name {
+          margin-bottom: 0;
+        }
+        .direction {
+          font-size: 0.875rem;
+          color: $Grey70;
+          margin-bottom: 0;
+        }
+      }
+      &__description {       
+        > p:first-child {
+          font-weight: bold;
+          font-size: 0.875rem;
+          height: 1.3125rem;
+          margin-bottom: 0;
+        }
+  
+        > p:nth-child(2) {
+          font-size: 0.875rem;
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+
+        &__block {
+          display: flex;
+          justify-content: space-between;
+    
+          > div {
+            flex: 1;
+          }
+        }
+
+        &__container{
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+
+          &__text {
+            margin-left: 10px; /* Adjust the margin as needed */
+          }
+        }
+
+        &__categary{
+          font-weight: bold;
+          font-size: 0.875rem;
+          height: 1.3125rem;
+          margin-bottom: 20px;
+        }
+      }
+    }
+  }
+
   //common styles for Road weather and Regional weather
   .data-card {
     margin: 0.75rem 0;

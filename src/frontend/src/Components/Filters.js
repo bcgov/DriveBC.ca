@@ -12,9 +12,7 @@ import {
   faSnowflake,
   faFerry,
   faTemperatureHalf,
-  //  faRestroom,
-  //  faCloudSun
-  faToilet,
+  faRestroom,
 } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -349,7 +347,7 @@ export default function Filters(props) {
                   />
                   <label htmlFor="filter--rest-stops">
                     <span className="filter-item__icon">
-                      <FontAwesomeIcon icon={faToilet} alt="rest stops" />
+                      <FontAwesomeIcon icon={faRestroom} alt="rest stops" />
                     </span>
                     Rest stops
                   </label>
