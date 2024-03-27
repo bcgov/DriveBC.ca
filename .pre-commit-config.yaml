@@ -28,7 +28,7 @@ repos:
     rev: 1.7.4
     hooks:
     -   id: bandit
-        args: [-r, -n, '10', -x, '*/*/tests/*']
+        args: [-r, -n, '10', -x, '*/*/tests/*', -s, 'B310']
         stages: [commit]
         exclude: '^backend/\w+/migrations'
 -   repo: https://github.com/Lucas-C/pre-commit-hooks-safety

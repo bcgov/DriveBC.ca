@@ -1,26 +1,20 @@
 import datetime
 import io
 import logging
-from math import floor
 import os
-from pprint import pprint
-import re
 import urllib.request
-from zoneinfo import ZoneInfo
-
-from django.conf import settings
-from PIL import Image, ImageDraw, ImageFont
-from PIL.ExifTags import TAGS
+from math import floor
 from pathlib import Path
 
 import pytz
-
 from apps.feed.client import FeedClient
 from apps.webcam.enums import CAMERA_DIFF_FIELDS
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
 from apps.webcam.views import WebcamAPI
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from PIL import Image, ImageDraw, ImageFont
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +35,7 @@ def populate_webcam_from_data(webcam_data):
     webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
     webcam_serializer.is_valid(raise_exception=True)
     webcam_serializer.save()
+    update_webcam_image(webcam_data)
 
 
 def populate_all_webcam_data():
@@ -132,11 +127,15 @@ def update_webcam_image(webcam):
             mean = webcam.get('update_period_mean')
             stddev = webcam.get('update_period_stddev', 0)
             delta = (1.1 * mean) - stddev
-        except:
+
+        except Exception as e:
+            logger.info(e)
             pass  # update period times not available
+
         delta = datetime.timedelta(seconds=delta)
         if lastmod is not None:
             lastmod = floor((lastmod + delta).timestamp())  # POSIX timestamp
             os.utime(filename, times=(lastmod, lastmod))
+
     except Exception as e:
         logger.error(e)
