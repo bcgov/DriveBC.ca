@@ -79,7 +79,7 @@ export default function CamPopup(props) {
         </div>
         <p className="name">Camera</p>
       </div>
-      {camera &&
+      { camera &&
         <div className="popup__content">
           <div className="popup__content__title">
             <p className="name"
@@ -88,26 +88,21 @@ export default function CamPopup(props) {
                 if (keyEvent.keyCode == 13) {
                   handlePopupClick();
                 }
-              }}>
-
-              {camera.name}
-            </p>
+              }}>{camera.name}</p>
           </div>
-          {camera.is_on ?
+          { camera.is_on ?
             <div className="popup__content__image">
               <div className="clip">
                 <img src={camera.links.imageDisplay} width='300' />
               </div>
               <div className="timestamp">
                 <p className="driveBC">Drive<span>BC</span></p>
-                <FriendlyTime date={camera.last_update_modified} />
+                <FriendlyTime date={camera.last_update_modified} includeFullIfHumanized />
               </div>
             </div> :
             <div className="popup__content__image">
               <div className="camera-unavailable">
-                <div className="card-pill">
-                  <p>Unavailable</p>
-                </div>
+                <div className="card-pill"><p>Unavailable</p></div>
                 <div className="card-img-box unavailable">
                   <FontAwesomeIcon icon={faVideoSlash} />
                 </div>
@@ -115,7 +110,7 @@ export default function CamPopup(props) {
               </div>
               <div className="timestamp">
                 <p className="driveBC">Drive<span>BC</span></p>
-                <FriendlyTime date={camera.last_update_modified} />
+                <FriendlyTime date={camera.last_update_modified} asDate={true}/>
               </div>
             </div>
           }

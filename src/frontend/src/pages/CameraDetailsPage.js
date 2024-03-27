@@ -407,7 +407,7 @@ export default function CameraDetailsPage() {
                     {!replay && (
                       <div className="timestamp">
                         <p className="driveBC">Drive<span>BC</span></p>
-                        <FriendlyTime date={lastUpdate} />
+                        <FriendlyTime date={lastUpdate} includeFullIfHumanized />
                       </div>
                     )}
                   </div>
@@ -418,8 +418,7 @@ export default function CameraDetailsPage() {
                     <FontAwesomeIcon icon={faFlag} />Nearby
                   </span>
                 }>
-                  <div className="actions-bar actions-bar--nearby">
-                  </div>
+                  <div className="actions-bar actions-bar--nearby"></div>
                   <div className="map-wrap map-context-wrap">
                     <DndProvider options={HTML5toTouch}>
                       <Map camera={camera} isPreview={true} cameraHandler={initCamera} mapViewRoute={mapViewRoute}/>

@@ -18,41 +18,48 @@ const datetimeFormat = {
   timeZoneName: 'short',
 };
 const formatter = new Intl.DateTimeFormat('en-US', datetimeFormat);
+const ONE_DAY = 1000 * 60 * 60 * 24; // 24 hours in milliseconds
 
-export default function FriendlyTime( {date} ) {
+export default function FriendlyTime({ date, asDate=false, includeFullIfHumanized=false }) {
   const [showTooltip, setShowTooltip] = useState(false);
 
-  // get time difference in seconds
+  // get time difference in milliseconds
   const timeDiff = (new Date() - new Date(date));
   const dateFormatted = formatter.format(new Date(date));
-
   // if difference is less than 24hrs
-  if (timeDiff < 86400000 ) {
-    return <div
-            className="friendly-time"
-            title={dateFormatted}
-            onClick={(event) => {
+  const humanize = timeDiff < ONE_DAY;
+
+  if (humanize && !asDate) {
+    return (
+      <React.Fragment>
+        { includeFullIfHumanized &&
+          <p className="friendly-time-text formatted-date">{dateFormatted}</p>
+        }
+
+        <div
+          className="friendly-time"
+          title={dateFormatted}
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowTooltip(!showTooltip);
+          }}
+          onKeyDown={(keyEvent) => {
+            if (keyEvent.keyCode == 13) {
               event.stopPropagation();
-              setShowTooltip(!showTooltip);
-            }}
-            onKeyDown={(keyEvent) => {
-              if (keyEvent.keyCode == 13) {
-                event.stopPropagation();
-                setShowTooltip(!showTooltip)
-              }
-            }}>
+              setShowTooltip(!showTooltip)
+            }
+          }}>
 
-            <p className="friendly-time-text">
-              <ReactTimeAgo date={date} locale="en-US"/>
-            </p>
-            <span className={"friendly-time__tooltip" + (showTooltip ? " showTooltip" : "")}>{dateFormatted}</span>
-          </div>
-  }
-
-  // else return formatted date without tooltip
-  else {
-    return <p className="friendly-time-text formatted-date">
-            {dateFormatted}
+          <p className="friendly-time-text">
+            <ReactTimeAgo date={date} locale="en-US"/>
           </p>
+          <span className={"friendly-time__tooltip" + (showTooltip ? " showTooltip" : "")}>
+            {dateFormatted}
+          </span>
+        </div>
+      </React.Fragment>
+    )
   }
+
+  return <p className="friendly-time-text formatted-date">{dateFormatted}</p>;
 }
