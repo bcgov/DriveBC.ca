@@ -5,7 +5,6 @@ export function getRestStops(routePoints) {
 
   return get(`${window.API_HOST}/api/reststops/`, payload)
   .then((data) => {
-    console.log(data); 
     return data})
   .catch((error) => {
     console.log(error);

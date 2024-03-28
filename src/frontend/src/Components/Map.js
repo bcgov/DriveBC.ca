@@ -531,7 +531,7 @@ export default function MapWrapper({
             return;
           case 'rest':
             if (!targetFeature.getProperties().clicked) {
-              targetFeature.setStyle(ferryStyles['hover']);
+              targetFeature.setStyle(restStopStyles['hover']);
             }
             return;
         }
