@@ -86,7 +86,7 @@ export default function RouteSearch(props) {
       }
 
       <div className="routing-container">
-        <div className={"typeahead-container typeahead-container--from" + ((!!searchLocationFrom.length || !!searchLocationTo.length) ? ' stacked' : '')}>
+        <div className={"typeahead-container typeahead-container--from stacked"}>
           <span className="location-marker location-marker--from">
             <FontAwesomeIcon icon={faCircleDot} />
           </span>
