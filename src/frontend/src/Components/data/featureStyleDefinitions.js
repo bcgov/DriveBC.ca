@@ -17,9 +17,9 @@ import roadWeatherIconHover from '../../images/mapIcons/road-weather-hover.png';
 import roadWeatherIconStatic from '../../images/mapIcons/road-weather-static.png';
 
 // Rest Stops
-import restStopIconActive from '../../images/mapIcons/ferry-active.png';
-import restStopIconHover from '../../images/mapIcons/ferry-hover.png';
-import restStopIconStatic from '../../images/mapIcons/ferry-static.png';
+import restStopIconActive from '../../images/mapIcons/rest-active.png';
+import restStopIconHover from '../../images/mapIcons/rest-hover.png';
+import restStopIconStatic from '../../images/mapIcons/rest-static.png';
 
 // Events
 // Closures

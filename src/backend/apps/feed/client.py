@@ -512,3 +512,9 @@ class FeedClient:
             field_errors = serializer.errors
             for field, errors in field_errors.items():
                 print(f"Field: {field}, Errors: {errors}")
+
+    def get_rest_stop_list(self):
+            return self.get_rest_stop_list_feed(
+                REST_STOP, 'reststop', RestStopSerializer,
+                {"format": "json", "limit": 500}
+            )
