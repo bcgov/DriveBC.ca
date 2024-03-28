@@ -22,6 +22,8 @@ import Spinner from 'react-bootstrap/Spinner';
 import './RouteSearch.scss';
 
 export default function RouteSearch(props) {
+  const { showFilterText } = props;
+
   // Redux
   const dispatch = useDispatch();
   const { searchLocationFrom, searchLocationTo } = useSelector(useCallback(memoize(state => ({
@@ -78,30 +80,36 @@ export default function RouteSearch(props) {
 
   // Rendering
   return (
-    <div className="routing-container">
-      <div className={"typeahead-container typeahead-container--from stacked" + ((!!searchLocationFrom.length || !!searchLocationTo.length) ? ' stacked' : '')}>
-        <span className="location-marker location-marker--from">
-          <FontAwesomeIcon icon={faCircleDot} />
-        </span>
+    <div className={'routing-outer-container'}>
+      {showFilterText && !!searchLocationFrom.length && !!searchLocationTo.length &&
+        <p className={'routing-caption'}>Results below are filtered by this route:</p>
+      }
 
-        <LocationSearch placeholder={'Search starting location'} location={searchLocationFrom} action={updateSearchLocationFrom} />
-      </div>
+      <div className="routing-container">
+        <div className={"typeahead-container typeahead-container--from" + ((!!searchLocationFrom.length || !!searchLocationTo.length) ? ' stacked' : '')}>
+          <span className="location-marker location-marker--from">
+            <FontAwesomeIcon icon={faCircleDot} />
+          </span>
 
-      <div className="typeahead-container typeahead-container--to stacked">
-        <span className="location-marker location-marker--to">
-          <FontAwesomeIcon icon={faLocationDot} />
-        </span>
+          <LocationSearch placeholder={'Search starting location'} location={searchLocationFrom} action={updateSearchLocationFrom} />
+        </div>
 
-        <LocationSearch placeholder={'Search destination location'} location={searchLocationTo} action={updateSearchLocationTo} />
+        <div className="typeahead-container typeahead-container--to stacked">
+          <span className="location-marker location-marker--to">
+            <FontAwesomeIcon icon={faLocationDot} />
+          </span>
 
-        {showSpinner &&
-          <Spinner className="typeahead-spinner" size="sm" animation="border" />
+          <LocationSearch placeholder={'Search destination location'} location={searchLocationTo} action={updateSearchLocationTo} />
+
+          {showSpinner &&
+            <Spinner className="typeahead-spinner" size="sm" animation="border" />
+          }
+        </div>
+
+        {!!searchLocationFrom.length && !!searchLocationTo.length &&
+          <Button className="swap-button" onClick={() => swapHandler()}><FontAwesomeIcon icon={faArrowUpArrowDown} /></Button>
         }
       </div>
-
-      {!!searchLocationFrom.length && !!searchLocationTo.length &&
-        <Button className="swap-button" onClick={() => swapHandler()}><FontAwesomeIcon icon={faArrowUpArrowDown} /></Button>
-      }
     </div>
   );
 }

@@ -35,7 +35,7 @@ export default function EventsTable(props) {
   const { data, routeHandler, showLoader, sortingKey } = props;
 
   // States
-  const [sorting, setSorting] = useState([{ desc: true, id: 'severity' }]);
+  const [sorting, setSorting] = useState([{ desc: true, id: 'location_description' }]);
 
   // react-table columns
   const getEventTypeCell = (data) => {
@@ -197,7 +197,7 @@ export default function EventsTable(props) {
       const row = rows[i];
 
       res.push(
-        <tr className={`${row.original.severity.toLowerCase()} headerRow`} onClick={() => routeHandler(row.original)}>
+        <tr className={`${row.original.severity.toLowerCase()} headerRow`} onClick={() => routeHandler(row.original)} key={`${row.id}-header-row`}>
           <td colSpan={10}>
             <p className={'roadName'}>{row.original.route_at}</p>
             <p className={'directionDisplay'}>{row.original.direction_display}</p>
@@ -206,7 +206,7 @@ export default function EventsTable(props) {
       );
 
       res.push(
-        <tr className={`${row.original.severity.toLowerCase()} dataRow`} onClick={() => routeHandler(row.original)} key={row.id}>
+        <tr className={`${row.original.severity.toLowerCase()} dataRow`} onClick={() => routeHandler(row.original)} key={`${row.id}-data-row`}>
           {row.getVisibleCells().map((cell) => {
             return (
               <td className={cell.column.id}
