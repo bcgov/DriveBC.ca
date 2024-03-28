@@ -103,7 +103,7 @@ export default function MapWrapper({
     ferriesTimeStamp, // CMS
     weather,
     weatherTimeStamp, // Weather
-    restStops, 
+    restStops,
     restStopsTimeStamp, // Rest Stops
     searchLocationFrom,
     selectedRoute, // Routing
@@ -683,7 +683,7 @@ export default function MapWrapper({
         mapRef.current.getView().getProjection().getCode(),
         mapContext
       )
-    
+
       mapRef.current.addLayer(mapLayers.current['restStops']);
       mapLayers.current['restStops'].setZIndex(68);
     }
@@ -1058,6 +1058,7 @@ export default function MapWrapper({
           toggleHandler={toggleLayer}
           disableFeatures={isPreview}
           enableRoadConditions={true}
+          textOverride={'Layer Filters'}
         />
       )}
     </div>

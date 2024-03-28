@@ -27,14 +27,18 @@ import { MapContext } from '../App.js';
 import './Filters.scss';
 
 export default function Filters(props) {
+  // Misc
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+
   // Context
   const { mapContext } = useContext(MapContext);
 
   // Props
-  const { toggleHandler, disableFeatures,enableRoadConditions } = props;
+  const { toggleHandler, disableFeatures, enableRoadConditions, textOverride } = props;
 
   // States
-  const [open, setOpen] = useState(false);
+  // Show layer menu by default on main page, desktop only
+  const [open, setOpen] = useState(largeScreen && !textOverride);
 
   const tooltipClosures = (
     <Tooltip id="tooltip" className="tooltip-content">
@@ -117,7 +121,6 @@ export default function Filters(props) {
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
 
 
-  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
   return (
     <div className="filters-component">
@@ -128,7 +131,7 @@ export default function Filters(props) {
         onClick={() => {
           open ? setOpen(false) : setOpen(true) }
         }>
-        Filters
+        {textOverride ? textOverride : 'Layer Filters'}
 
         <FontAwesomeIcon icon={faFilter} />
       </Button>
