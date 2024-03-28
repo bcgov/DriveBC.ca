@@ -1,8 +1,8 @@
 import logging
 
 from apps.feed.client import FeedClient
-from apps.shared.enums import CacheKey
 from apps.rest.models import RestStop
+from apps.shared.enums import CacheKey
 from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def populate_rest_stop_from_data(new_rest_stop_data):
     rest_stop_id = new_rest_stop_data.get('rest_stop_id')
     geometry = new_rest_stop_data.get('geometry')
-    
+
     existing_record = RestStop.objects.filter(rest_stop_id=rest_stop_id).first()
     data = {
         'rest_stop_id': rest_stop_id,
