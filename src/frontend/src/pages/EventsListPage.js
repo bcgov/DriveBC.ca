@@ -201,7 +201,7 @@ export default function EventsListPage() {
     const res = [];
     for (let i = 0; i < allSortingKeys.length; i++) {
       res.push(
-        <Dropdown.Item className={allSortingKeys[i] == sortingKey ? 'selected' : ''} onClick={(e) => sortHandler(e, allSortingKeys[i])}>
+        <Dropdown.Item key={allSortingKeys[i]} className={allSortingKeys[i] == sortingKey ? 'selected' : ''} onClick={(e) => sortHandler(e, allSortingKeys[i])}>
           {getSortingDisplay(allSortingKeys[i])}
         </Dropdown.Item>
       );
@@ -226,7 +226,7 @@ export default function EventsListPage() {
         <div className="controls-container">
           { largeScreen &&
             <div className="route-display-container">
-              <RouteSearch />
+              <RouteSearch showFilterText={true} />
             </div>
           }
 
@@ -234,7 +234,7 @@ export default function EventsListPage() {
             <Dropdown>
               <Dropdown.Toggle>
                 Sort: {getSortingDisplay(sortingKey)}
-                <FontAwesomeIcon icon={faAngleDown} size="md" />
+                <FontAwesomeIcon icon={faAngleDown} />
               </Dropdown.Toggle>
 
               <Dropdown.Menu align={largeScreen ? 'end' : 'start'} flip={false}>
@@ -251,7 +251,7 @@ export default function EventsListPage() {
 
           { !largeScreen &&
             <div className="route-display-container">
-              <RouteSearch />
+              <RouteSearch showFilterText={true} />
             </div>
           }
         </div>

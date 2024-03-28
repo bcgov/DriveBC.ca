@@ -126,7 +126,7 @@ export default function CamerasListPage() {
 
         <div className="controls-container">
           <div className="route-display-container">
-            <RouteSearch />
+            <RouteSearch showFilterText={true} />
           </div>
 
           <div className="search-container">
