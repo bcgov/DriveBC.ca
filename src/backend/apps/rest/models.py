@@ -14,6 +14,6 @@ class RestStop(BaseModel):
         return f"Rest Stop for {self.pk}"
 
     def save(self, *args, **kwargs):
-        latitude, longitude = self.geometry.get("coordinates")[0], self.geometry.get("coordinates")[1]
+        latitude, longitude = self.geometry.get("coordinates")[1], self.geometry.get("coordinates")[0]
         self.location = Point(longitude, latitude)
         super().save(*args, **kwargs)
