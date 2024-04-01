@@ -21,3 +21,5 @@ src/static/
 infrastructure/yaml
 
 src/backend/test_script.py
+
+lines.json
