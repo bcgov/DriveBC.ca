@@ -11,42 +11,54 @@ import Overlay from 'ol/Overlay.js';
 import { closureStyles, eventStyles } from '../data/featureStyleDefinitions.js';
 
 // Static assets
-export const getEventIcon = (event, state) => {
-  // Line segments
-  const geometry = event.getGeometry().getType();
-  if (geometry !== 'Point') {
-    return eventStyles['segments'][state];
-  }
+export const setEventStyle = (events, state) => {
+  if (!Array.isArray(events)) { events = [events]; }
 
-  // Points
-  // Closures
-  if (event.get('closed')) {
-    return eventStyles['closures'][state];
-  }
+  events.forEach((event) => {
+    const display_category = event.get('display_category');
+    const is_closure = event.get('closed');
+    const geometry = event.getGeometry().getType();
 
-  const severity = event.get('severity').toLowerCase();
-  const display_category = event.get('display_category');
-  switch (display_category) {
-    // Future Events
-    case 'futureEvents':
-      return eventStyles[severity === 'major' ? 'major_future_events' : 'future_events'][state];
+    if (geometry !== 'Point') { // Line segments
+      const category = is_closure ? 'closure' : display_category;
 
-    // Road Conditions
-    case 'roadConditions':
-      return eventStyles['road_conditions'][state];
-
-    default: {
-      // Constructions
-      const type = event.get('event_type').toLowerCase();
-      if (type === 'construction') {
-        return eventStyles[severity === 'major' ? 'major_constructions' : 'constructions'][state];
+      if (event.get('layerType') === 'webgl') {
+        event.setProperties(eventStyles['segments'][category][state]);
+      } else {
+        event.setStyle(eventStyles['segments'][category][state]);
       }
+    } else { // Points
+      if (is_closure) {
+        return event.setStyle(eventStyles['closures'][state]);
+      }
+      const severity = event.get('severity').toLowerCase();
 
-      // Other major/minor delays
-      return eventStyles[severity === 'major' ? 'major_generic_delays' : 'generic_delays'][state];
+      switch (display_category) {
+        case 'futureEvents':
+          return event.setStyle(eventStyles[
+            severity === 'major' ? 'major_future_events' : 'future_events'
+          ][state]);
+
+        case 'roadConditions':
+          return event.setStyle(eventStyles['road_conditions'][state]);
+
+        default: {
+          const type = event.get('event_type').toLowerCase();
+          if (type === 'construction') {
+            event.setStyle(eventStyles[
+              severity === 'major' ? 'major_constructions' : 'constructions'
+            ][state]);
+          } else { // Other major/minor delays
+            event.setStyle(eventStyles[
+              severity === 'major' ? 'major_generic_delays' : 'generic_delays'
+            ][state]);
+          }
+        }
+      }
     }
-  }
+  })
 };
+
 
 // Map transformation
 export const transformFeature = (feature, sourceCRS, targetCRS) => {
@@ -58,7 +70,7 @@ export const transformFeature = (feature, sourceCRS, targetCRS) => {
 // Zoom and pan
 export const fitMap = (route, mapView) => {
   const routeBbox = bbox(lineString(route));
-  const routeExtent = transformExtent(routeBbox,'EPSG:4326','EPSG:3857');
+  const routeExtent = transformExtent(routeBbox, 'EPSG:4326', 'EPSG:3857');
 
   if (mapView.current) {
     mapView.current.fit(routeExtent, { duration: 1000 });

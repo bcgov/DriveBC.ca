@@ -135,7 +135,10 @@ export function getEventPopup(eventFeature) {
               <FriendlyTime date={eventData.next_update} />
             </div>
           }
+        </div>
 
+        <div className="popup__content__description debug-data">
+          {eventData.id}
         </div>
       </div>
     </div>
@@ -403,7 +406,7 @@ export function getRestStopPopup(restStopFeature) {
       <div className="popup__content">
         <div className="popup__content__title">
           <p className="name">{restStopData.properties.REST_AREA_NAME}</p>
-          <p className="location">{restStopData.properties.DISTANCE_FROM_MUNICIPALITY}</p>  
+          <p className="location">{restStopData.properties.DISTANCE_FROM_MUNICIPALITY}</p>
         </div>
         <hr/>
         <div className='popup__content__description'>
@@ -452,7 +455,7 @@ export function getRestStopPopup(restStopFeature) {
             </div>
           </div>
         </div>
-          
+
         <hr/>
         <div className='popup__content__description'>
           <p className="description-label label">Features</p>
@@ -517,21 +520,21 @@ export function getRestStopPopup(restStopFeature) {
             </div>
           </div>
         </div>
-          
+
         <hr/>
         <div className='popup__content__description'>
           <p className="description-label label">Electric Vehicles</p>
 
           <div className='popup__content__description__container'>
-            {restStopData.properties.EV_STATION_25_KW_DCFC === 0 
-              && restStopData.properties.EV_STATION_50_KW_DCFC === 0 
+            {restStopData.properties.EV_STATION_25_KW_DCFC === 0
+              && restStopData.properties.EV_STATION_50_KW_DCFC === 0
               && restStopData.properties.EV_STATION_LEVEL_2_J1772 === 0 && (
             <div className='popup__content__description__container__row'>
               <FontAwesomeIcon icon={faChargingStation} />
               <p>No charging stations</p>
             </div>
             )}
-            
+
             {restStopData.properties.EV_STATION_25_KW_DCFC !== 0 && (
               <div className='popup__content__description__container__row'>
                 <FontAwesomeIcon icon={faChargingStation} />
@@ -557,8 +560,8 @@ export function getRestStopPopup(restStopFeature) {
             )}
           </div>
         </div>
-         
-        
+
+
       </div>
     </div>
   );

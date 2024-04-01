@@ -264,25 +264,172 @@ export const restStopTruckClosedStyles = {
 export const eventStyles = {
   // Line Segments
   segments: {
-    static: new Style({
-      stroke: new Stroke({
-        color: 'rgba(144 ,164 ,190, 0.5)',
-        width: 8,
+    closure: {
+      static: [
+        new Style({
+          stroke: new Stroke({
+            color: 'rgba(204, 0, 0, 0.7)',
+            width: 8,
+          }),
+        }),
+        new Style({
+          stroke: new Stroke({
+            color: 'rgba(255, 255, 255, 0.8)',
+            width: 4,
+          }),
+        }),
+      ],
+      hover: [
+        new Style({
+          stroke: new Stroke({
+            color: 'rgba(204, 0, 0, 1)',
+            width: 10,
+          }),
+        }),
+        new Style({
+          stroke: new Stroke({
+            color: 'rgba(255, 255, 255, 1)',
+            width: 6,
+          }),
+        }),
+      ],
+      active: [
+        new Style({
+          stroke: new Stroke({
+            color: 'rgba(204, 0, 0, 0.85)',
+            width: 10,
+          }),
+        }),
+        new Style({
+          stroke: new Stroke({
+            color: 'rgba(255, 255, 255, 0.85)',
+            width: 6,
+          }),
+        }),
+      ]
+    },
+
+    majorEvents: {
+      static: new Style({
+        stroke: new Stroke({
+          color: 'rgba(204, 0, 0, 0.5)',
+          width: 8,
+        }),
       }),
-    }),
-    hover: new Style({
-      stroke: new Stroke({
-        color: 'rgba(232 ,192 ,97, 0.75)',
-        width: 10,
+      hover: new Style({
+        stroke: new Stroke({
+          color: 'rgba(204, 0, 0, 0.8)',
+          width: 10,
+          zIndex: 900,
+        }),
       }),
-    }),
-    active: new Style({
-      stroke: new Stroke({
-        color: 'rgba(252 ,186 ,25, 0.9)',
-        width: 10,
+      active: new Style({
+        stroke: new Stroke({
+          color: 'rgba(204, 0, 0, 0.65)',
+          width: 10,
+        }),
+      })
+    },
+
+    conditions: {
+      static: new Style({
+        stroke: new Stroke({
+          color: 'rgba(204, 0, 0, 1)',
+          width: 8,
+        }),
       }),
-    })
+      hover: new Style({
+        stroke: new Stroke({
+          color: 'rgba(255, 0, 0, 1)',
+          width: 10,
+          zIndex: 300,
+        }),
+      }),
+      active: new Style({
+        stroke: new Stroke({
+          color: 'rgba(255, 0, 0, 0.9)',
+          width: 10,
+        }),
+      })
+    },
+
+    roadConditions: {
+      static: {
+        fillColor: 'rgba(255,181,0,0.1)',
+        strokeColor: 'rgba(100,74,10,0.6)',
+        strokeWidth: 2,
+        strokeOffset: 0,
+        strokeLineDash: [6, 3],
+      },
+      hover: {
+        fillColor: 'rgba(255,181,0,0.35)',
+        strokeColor: 'rgba(100,74,10,0.6)',
+      },
+      active: {
+        fillColor: 'rgba(255,181,0,0.25)',
+        strokeColor: 'rgba(100,74,10,0.6)',
+      },
+    },
+
+    minorEvents: {
+      static: new Style({
+        stroke: new Stroke({
+          color: 'rgba(144 ,164 ,190, 0)',
+          width: 8,
+        }),
+      }),
+      hover: new Style({
+        stroke: new Stroke({
+          color: 'rgba(232 ,192 ,97, 0.75)',
+          width: 10,
+          zIndex: 300,
+        }),
+      }),
+      active: new Style({
+        stroke: new Stroke({
+          color: 'rgba(252 ,186 ,25, 0.9)',
+          width: 10,
+        }),
+      })
+    },
+
+    futureEvents: {
+      static: new Style({
+        stroke: new Stroke({
+          color: 'rgba(144 ,164 ,190, 0)',
+          width: 8,
+        }),
+      }),
+      hover: new Style({
+        stroke: new Stroke({
+          color: 'rgba(232 ,192 ,97, 0.75)',
+          width: 10,
+          zIndex: 300,
+        }),
+      }),
+      active: new Style({
+        stroke: new Stroke({
+          color: 'rgba(252 ,186 ,25, 0.9)',
+          width: 10,
+        }),
+      })
+    },
   },
+
+  polygon: [
+    {
+      'stroke-color': ['get', 'strokeColor'],
+      'stroke-width': ['get', 'strokeWidth'],
+      'stroke-line-dash': [ 6, 3 ],
+      'stroke-offset': ['get', 'strokeOffset'],
+      'stroke-miter-limit': 10,
+      'stroke-line-cap': 'butt',
+      'stroke-line-join': 'miter',
+      'stroke-line-dash-offset': 0,
+    }, {
+      'fill-color': ['get', 'fillColor'],
+    }
+  ],
 
   // Closures
   closures: {

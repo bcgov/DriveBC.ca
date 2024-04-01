@@ -59,7 +59,7 @@ import {
   blueLocationMarkup,
   redLocationMarkup,
   setLocationPin,
-  getEventIcon,
+  setEventStyle,
   setZoomPan,
   zoomIn,
   zoomOut,
@@ -85,7 +85,6 @@ import { fromLonLat, toLonLat, transformExtent } from 'ol/proj';
 import { ScaleLine } from 'ol/control.js';
 import { getBottomLeft, getTopRight } from 'ol/extent';
 import * as turf from '@turf/turf';
-import Flatbush from 'flatbush';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay.js';
 import Geolocation from 'ol/Geolocation.js';
@@ -106,6 +105,7 @@ import {
   restStopTruckClosedStyles,
 } from './data/featureStyleDefinitions.js';
 import './Map.scss';
+
 
 export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
   // Redux
@@ -246,8 +246,8 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     cameraPopupRef.current = null;
   }
 
+  // initialization hook for the OpenLayers map logic
   useEffect(() => {
-    // initialization hook for the OpenLayers map logic
     if (mapRef.current) return; // stops map from intializing more than once
 
     container.current = document.getElementById('popup');
@@ -262,6 +262,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
       },
     });
 
+    // base tile map layer
     const vectorLayer = new VectorTileLayer({
       declutter: true,
       source: new VectorTileSource({
@@ -275,11 +276,8 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
       tid: Date.now(),
     };
 
-    // Set map extent
-    const extent = [
-      -143.23013896362576, 65.59132385849652, -109.97743701256154,
-      46.18015377362468,
-    ];
+    // Set map extent (W, S, E, N)
+    const extent = [-143.230138, 46.180153, -109.977437, 65.591323];
     const transformedExtent = transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
 
     mapView.current = new View({
@@ -297,8 +295,6 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
       headers: { 'Content-Type': 'application/json' },
     }).then(function (response) {
       response.json().then(function (glStyle) {
-        // overriding default font value so it doesn't return errors.
-        glStyle.metadata['ol:webfonts'] = '';
         applyStyle(vectorLayer, glStyle, 'esri');
       });
     });
@@ -309,8 +305,10 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
       layers: [vectorLayer],
       overlays: [popup.current],
       view: mapView.current,
+      pixelRatio: 1.875,
       controls: [new ScaleLine({ units: 'metric' })],
     });
+    window.mapRef = mapRef;
 
     geolocation.current = new Geolocation({
       projection: mapView.current.getProjection(),
@@ -336,7 +334,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     });
 
     // Click states
-    const resetClickedStates = targetFeature => {
+    const resetClickedStates = (targetFeature) => {
       // camera is set to data structure rather than map feature
       if (clickedCameraRef.current && !clickedCameraRef.current.setStyle) {
         clickedCameraRef.current = mapLayers.current['highwayCams']
@@ -364,17 +362,9 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
       }
 
       if (clickedEventRef.current && targetFeature != clickedEventRef.current) {
-        clickedEventRef.current.setStyle(
-          getEventIcon(clickedEventRef.current, 'static'),
-        );
-
-        // Set associated line/point feature
-        const altFeature =
-          clickedEventRef.current.getProperties()['altFeature'];
-        if (altFeature) {
-          altFeature.setStyle(getEventIcon(altFeature, 'static'));
-        }
-
+        setEventStyle(clickedEventRef.current, 'static');
+        setEventStyle(clickedEventRef.current.get('altFeature') || [], 'static')
+        clickedEventRef.current.set('clicked', false);
         updateClickedEvent(null);
       }
 
@@ -385,7 +375,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
 
       if (
         clickedWeatherRef.current &&
-        targetFeature != clickedWeatherRef.current
+        targetFeature !== clickedWeatherRef.current
       ) {
         clickedWeatherRef.current.setStyle(roadWeatherStyles['static']);
         updateClickedWeather(null);
@@ -393,7 +383,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
 
       if (
         clickedRegionalRef.current &&
-        targetFeature != clickedRegionalRef.current
+        targetFeature !== clickedRegionalRef.current
       ) {
         clickedRegionalRef.current.setStyle(regionalStyles['static']);
         updateClickedRegional(null);
@@ -455,15 +445,9 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
       resetClickedStates(feature);
 
       // set new clicked event feature
-      feature.setStyle(getEventIcon(feature, 'active'));
+      setEventStyle(feature, 'active');
+      setEventStyle(feature.get('altFeature') || [], 'active');
       feature.setProperties({ clicked: true }, true);
-
-      // Set associated line/point feature
-      const altFeature = feature.getProperties()['altFeature'];
-      if (altFeature) {
-        altFeature.setStyle(getEventIcon(altFeature, 'active'));
-        altFeature.setProperties({ clicked: true }, true);
-      }
 
       updateClickedEvent(feature);
     };
@@ -591,26 +575,17 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     });
 
     // Hover states
-    const resetHoveredStates = targetFeature => {
+    const resetHoveredStates = (targetFeature) => {
       if (hoveredFeature.current && targetFeature != hoveredFeature.current) {
         if (!hoveredFeature.current.getProperties().clicked) {
           switch (hoveredFeature.current.getProperties()['type']) {
             case 'camera':
               hoveredFeature.current.setStyle(cameraStyles['static']);
               break;
-            case 'event': {
-              hoveredFeature.current.setStyle(
-                getEventIcon(hoveredFeature.current, 'static'),
-              );
-
-              // Set associated line/point feature
-              const altFeature =
-                hoveredFeature.current.getProperties()['altFeature'];
-              if (altFeature) {
-                altFeature.setStyle(getEventIcon(altFeature, 'static'));
-              }
+            case 'event':
+              setEventStyle(hoveredFeature.current, 'static');
+              setEventStyle(hoveredFeature.current.get('altFeature') || [], 'static');
               break;
-            }
             case 'ferry':
               hoveredFeature.current.setStyle(ferryStyles['static']);
               break;
@@ -675,13 +650,8 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
             return;
           case 'event':
             if (!targetFeature.getProperties().clicked) {
-              targetFeature.setStyle(getEventIcon(targetFeature, 'hover'));
-
-              // Set associated line/point feature
-              const altFeature = targetFeature.getProperties()['altFeature'];
-              if (altFeature) {
-                altFeature.setStyle(getEventIcon(altFeature, 'hover'));
-              }
+              setEventStyle(targetFeature, 'hover');
+              setEventStyle(targetFeature.get('altFeature') || [], 'hover');
             }
             return;
           case 'ferry':
@@ -849,7 +819,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
   const loadEvents = async route => {
     const routePoints = route ? route.points : null;
 
-    // Load if filtered cams don't exist or route doesn't match
+    // Load if filtered events don't exist or route doesn't match
     if (!filteredEvents || !compareRoutePoints(routePoints, eventFilterPoints)) {
       // Fetch data if it doesn't already exist
       const eventData = events ? events : await getEvents().catch((error) => displayError(error));
@@ -1125,7 +1095,6 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
       if (!isInitialMount) {
         fitMap(selectedRoute.route, mapView);
       }
-
     } else {
       // Clear and update data
       loadCameras();
@@ -1165,19 +1134,9 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     }
 
     if (clickedEventRef.current) {
-      clickedEventRef.current.setStyle(
-        getEventIcon(clickedEventRef.current, 'static'),
-      );
+      setEventStyle(clickedEventRef.current, 'static');
+      setEventStyle(clickedEventRef.current.get('altFeature') || [], 'static');
       clickedEventRef.current.set('clicked', false);
-
-      // Set associated line/point feature
-      const altFeature = clickedEventRef.current.getProperties()['altFeature'];
-      if (altFeature) {
-        altFeature.setStyle(getEventIcon(altFeature, 'static'));
-
-        altFeature.set('clicked', false);
-      }
-
       updateClickedEvent(null);
     }
 
