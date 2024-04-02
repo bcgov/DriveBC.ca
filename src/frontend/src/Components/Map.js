@@ -33,7 +33,6 @@ import {
 
 // Components and functions
 import CamPopup from './map/camPopup.js';
-import { getCamerasLayer } from './map/layers/camerasLayer.js';
 import {
   getEventPopup,
   getFerryPopup,
@@ -44,6 +43,8 @@ import {
 import { getEvents } from './data/events.js';
 import { getWeather, getRegional } from './data/weather.js';
 import { getRestStops } from './data/restStops.js';
+import { getAdvisoriesLayer } from './map/layers/advisoriesLayer.js';
+import { getCamerasLayer } from './map/layers/camerasLayer.js';
 import { getRestStopsLayer } from './map/layers/restStopsLayer.js';
 import { loadEventsLayers } from './map/layers/eventsLayer.js';
 import { loadWeatherLayers } from './map/layers/weatherLayer.js';
@@ -103,8 +104,9 @@ export default function MapWrapper({
     camTimeStamp, // Cameras
     events,
     eventTimeStamp, // Events
+    advisories, // CMS
     ferries,
-    ferriesTimeStamp, // CMS
+    ferriesTimeStamp, // Ferries
     weather,
     weatherTimeStamp, // Current Weather
     regional,
@@ -125,6 +127,8 @@ export default function MapWrapper({
         events: state.feeds.events.list,
         eventTimeStamp: state.feeds.events.routeTimeStamp,
         // CMS
+        advisories: state.cms.advisories.list,
+        // Ferries
         ferries: state.feeds.ferries.list,
         ferriesTimeStamp: state.feeds.ferries.routeTimeStamp,
         // Current Weather
@@ -631,6 +635,7 @@ export default function MapWrapper({
     }
   }, [searchLocationFrom]);
 
+  // Route layer
   useEffect(() => {
     if (isInitialMountRoute.current) {
       // Do nothing on first load
@@ -646,6 +651,7 @@ export default function MapWrapper({
     loadData(false);
   }, [selectedRoute]);
 
+  // Camera layer
   useEffect(() => {
     // Remove layer if it already exists
     if (mapLayers.current['highwayCams']) {
@@ -687,6 +693,7 @@ export default function MapWrapper({
     }
   };
 
+  // Event layers
   useEffect(() => {
     loadEventsLayers(events, mapContext, mapLayers, mapRef);
   }, [events]);
@@ -706,6 +713,7 @@ export default function MapWrapper({
     }
   };
 
+  // Ferries and rest stops layers
   useEffect(() => {
     // Remove layer if it already exists
     if (mapLayers.current['inlandFerries']) {
@@ -767,6 +775,7 @@ export default function MapWrapper({
     }
   };
 
+  // Weather layers
   useEffect(() => {
     if (mapLayers.current['weather']) {
       mapRef.current.removeLayer(mapLayers.current['weather']);
@@ -796,6 +805,27 @@ export default function MapWrapper({
       );
     }
   };
+
+  // Advisories layer
+  useEffect(() => {
+    // Remove layer if it already exists
+    if (mapLayers.current['advisoriesLayer']) {
+      mapRef.current.removeLayer(mapLayers.current['advisoriesLayer']);
+    }
+
+    // Add layer if array exists
+    if (advisories) {
+      // Generate and add layer
+      mapLayers.current['advisoriesLayer'] = getAdvisoriesLayer(
+        advisories,
+        mapRef.current.getView().getProjection().getCode(),
+        mapContext,
+      );
+
+      mapRef.current.addLayer(mapLayers.current['advisoriesLayer']);
+      mapLayers.current['advisoriesLayer'].setZIndex(55);
+    }
+  }, [advisories]);
 
   useEffect(() => {
     if (mapLayers.current['regional']) {
