@@ -1,11 +1,15 @@
 // React
 import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
-import { memoize } from 'proxy-memoize';
-import { updateEvents } from '../slices/feedsSlice';
 import { useNavigate } from 'react-router-dom';
+
+// Redux
 import { useSelector, useDispatch } from 'react-redux';
+import { memoize } from 'proxy-memoize';
+import { updateAdvisories } from '../slices/cmsSlice';
+import { updateEvents } from '../slices/feedsSlice';
 
 // External imports
+import { booleanIntersects, point, lineString, polygon } from '@turf/turf';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAngleDown,
@@ -19,10 +23,10 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Internal imports
+import { getAdvisories } from '../Components/data/advisories';
 import { getEvents } from '../Components/data/events';
 import { MapContext } from '../App.js';
 import { defaultSortFn, routeSortFn, severitySortFn } from '../Components/events/functions';
-
 import Advisories from '../Components/advisories/Advisories';
 import EventCard from '../Components/events/EventCard';
 import EventsTable from '../Components/events/EventsTable';
@@ -67,11 +71,67 @@ export default function EventsListPage() {
 
   // Redux
   const dispatch = useDispatch();
-  const { events, eventTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({
+  const { advisories, events, eventTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({
+    advisories: state.cms.advisories.list,
     events: state.feeds.events.list,
     eventTimeStamp: state.feeds.events.routeTimeStamp,
     selectedRoute: state.routes.selectedRoute
   }))));
+
+  // Context
+  const { mapContext, setMapContext } = useContext(MapContext);
+
+  // States
+  const [sortingKey, setSortingKey] = useState('severity_desc');
+  const [eventCategoryFilter, setEventCategoryFilter] = useState({
+    'closures': mapContext.visible_layers.closures,
+    'majorEvents': mapContext.visible_layers.majorEvents,
+    'minorEvents': mapContext.visible_layers.minorEvents,
+    'futureEvents': mapContext.visible_layers.futureEvents,
+    'roadConditions': false,
+  });
+  const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
+  const [showLoader, setShowLoader] = useState(false);
+  const [advisoriesInRoute, setAdvisoriesInRoute] = useState([]);
+
+  // Refs
+  const isInitialMount = useRef(true);
+
+  // Data functions
+  const getAdvisoriesData = async (eventsData) => {
+    let advData = advisories;
+
+    if (!advisories) {
+      advData = await getAdvisories();
+
+      dispatch(updateAdvisories({
+        list: advData,
+        timeStamp: new Date().getTime()
+      }));
+    }
+
+    // load all advisories if no route selected
+    const resAdvisories = !selectedRoute ? advData : [];
+
+    // Route selected, load advisories that intersect  with at least one event on route
+    if (selectedRoute && advData && advData.length > 0 && eventsData && eventsData.length > 0) {
+      for (const adv of advData) {
+        const advPoly = polygon(adv.geometry.coordinates);
+
+        for (const event of eventsData) {
+          // Event geometry, point or line based on type
+          const eventGeom = event.location.type == 'Point' ? point(event.location.coordinates) : lineString(event.location.coordinates);
+          if (booleanIntersects(advPoly, eventGeom)) {
+            // advisory intersects with an event, add to list and break loop
+            resAdvisories.push(adv);
+            break;
+          }
+        }
+      }
+    }
+
+    setAdvisoriesInRoute(resAdvisories);
+  };
 
   const loadEvents = async (route) => {
     const newRouteTimestamp = route ? route.searchTimestamp : null;
@@ -86,26 +146,6 @@ export default function EventsListPage() {
     }
   }
 
-  // Context
-  const { mapContext, setMapContext } = useContext(MapContext);
-
-  // States
-  const [sortingKey, setSortingKey] = useState('severity_desc');
-  const [eventCategoryFilter, setEventCategoryFilter] = useState({
-    'closures': mapContext.visible_layers.closures,
-    'majorEvents': mapContext.visible_layers.majorEvents,
-    'minorEvents': mapContext.visible_layers.minorEvents,
-    'futureEvents': mapContext.visible_layers.futureEvents,
-    'roadConditions': false,
-  });
-
-  const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
-  const [showLoader, setShowLoader] = useState(false);
-
-  // Refs
-  const isInitialMount = useRef(true);
-
-  // Data loading
   const processEvents = () => {
     const hasTrue = (val) => !!val;
     const hasFilterOn = Object.values(eventCategoryFilter).some(hasTrue);
@@ -123,6 +163,7 @@ export default function EventsListPage() {
     // Sort
     sortEvents(res, sortingKey);
     setProcessedEvents(res);
+    getAdvisoriesData(res);
   };
 
   // useEffect hooks
@@ -221,7 +262,7 @@ export default function EventsListPage() {
       </PageHeader>
 
       <Container>
-        <Advisories />
+        <Advisories advisories={advisoriesInRoute} />
 
         <div className="controls-container">
           { largeScreen &&
