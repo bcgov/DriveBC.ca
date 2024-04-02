@@ -25,6 +25,7 @@ import {
   faWifi,
   faRoad,
   faChargingStation,
+  faCircleInfo
 } from '@fortawesome/free-solid-svg-icons';
 import { 
   faTablePicnic,
@@ -37,6 +38,9 @@ import {
 import './mapPopup.scss';
 
 import WeatherIcon from '../WeatherIcon';
+import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import MonthDayFormat from '../MonthDayFormat';
 
 function convertCategory(event) {
   switch (event.display_category) {
@@ -79,6 +83,12 @@ function convertDirection(direction) {
       return ' ';
   }
 }
+
+const tooltipLargeVehicles = (
+  <Tooltip id="tooltip" className="tooltip-content">
+    <p>A large vehicle is defined as one larger than 10 metres &#40;32 feet&#41; in length.</p>
+  </Tooltip>
+);
 
 export function getEventPopup(eventFeature) {
   const eventData = eventFeature.ol_uid
@@ -388,178 +398,167 @@ export function getRestStopPopup(restStopFeature) {
     <div className="popup popup--reststop">
       <div className="popup__title">
         <div className="popup__title__icon">
-          <FontAwesomeIcon icon={faRestroom} />
+          <svg width="30" height="24" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path className="filter-item__icon__path" d="M19 3C19 3.1875 18.9688 3.34375 18.9375 3.5C19.5625 3.9375 20 4.6875 20 5.5C20 6.90625 18.875 8 17.5 8H17L17 15C17 15.5625 16.5312 16 16 16C15.4375 16 15 15.5625 15 15V8H14.5C13.0937 8 12 6.90625 12 5.5C12 4.6875 12.4062 3.9375 13.0312 3.5C13 3.34375 13 3.1875 13 3C13 1.34375 14.3438 0 16 0C17.6562 0 19 1.34375 19 3ZM1 7C1 6.46875 1.4375 6 2 6L10 6C10.5312 6 11 6.46875 11 7V9C11 9.5625 10.5312 10 10 10L2 10C1.4375 10 1 9.5625 1 9L1 7ZM1 11L11 11C11.5312 11 12 11.4688 12 12C12 12.5625 11.5312 13 11 13V15C11 15.5625 10.5312 16 10 16C9.4375 16 9 15.5625 9 15V13L3 13L3 15C3 15.5625 2.53125 16 2 16C1.4375 16 1 15.5625 1 15L1 13C0.4375 13 0 12.5625 0 12C0 11.4688 0.4375 11 1 11Z" fill="white"/>
+          </svg>
         </div>
-        <p className="name">
-          Rest area
-        </p>
+        <p className="name">Rest area</p>
       </div>
       <div className="popup__content">
-        <div className="popup__content__description">
-          <p>{`${restStopData.properties.REST_AREA_NAME}`}</p>
-          <p>{`${restStopData.properties.DISTANCE_FROM_MUNICIPALITY}`}</p>  
-          <hr/>
-          <div className='popup__content_block'>
-            <div className='popup__content__description'>
-              <div className='popup__content__description__categary'>Access</div>
-              <div className='popup__content__description__container'>
-                <div><FontAwesomeIcon icon={faClock} /></div>
-                <div className='popup__content__description__container__text'>
-                  <div>
-                    {restStopData.properties.OPEN_YEAR_ROUND !== "No" ? (
-                      "Open year around"
-                    ) : (
-                      `Open: ${restStopData.properties.OPEN_DATE} - ${restStopData.properties.CLOSE_DATE}`
-                    )}
-                  </div>
+        <div className="popup__content__title">
+          <p className="name">{restStopData.properties.REST_AREA_NAME}</p>
+          <p className="location">{restStopData.properties.DISTANCE_FROM_MUNICIPALITY}</p>  
+        </div>
+        <hr/>
+        <div className='popup__content__description'>
+          <p className="description-label label">Access</p>
+          <div className='popup__content__description__container'>
+            <div className='popup__content__description__container__row'>
+              <FontAwesomeIcon icon={faClock} />
+              {restStopData.properties.OPEN_YEAR_ROUND === "Yes" && (
+                <p className="green-text">Open year around</p>
+              )}
+              {restStopData.properties.OPEN_YEAR_ROUND === "No" && restStopData.properties.OPEN_DATE && restStopData.properties.CLOSE_DATE && (
+                <div>
+                  <p className="green-text">Open seasonally</p>
+                  <p><MonthDayFormat date={restStopData.properties.OPEN_DATE} ></MonthDayFormat> – <MonthDayFormat date={restStopData.properties.CLOSE_DATE} ></MonthDayFormat></p>
                 </div>
-              </div>
-              <div className='popup__content__description__container'>
-                <div><FontAwesomeIcon icon={faDoorOpen} /></div>
-                <div className='popup__content__description__container__text'>
-                  <div>
-                    {`${restStopData.properties.DIRECTION_OF_TRAFFIC} entrance, ${restStopData.properties.ACCESS_RESTRICTION}`}
-                  </div>
-                </div>
-              </div>
-              <div className='popup__content__description__container'>
-                <div><FontAwesomeIcon icon={faTruckContainer} /></div>
-                <div className='popup__content__description__container__text'>
-                  <div>
-                    {restStopData.properties.ACCOM_COMMERCIAL_TRUCKS === "Yes" ? (
-                      "Large vehicles accommodated"
-                    ) : (
-                      `Large vehicles not accommodated`
-                    )}
-                  </div>
-                </div>
+              )}
+              {restStopData.properties.OPEN_YEAR_ROUND === "No" && !restStopData.properties.OPEN_DATE && !restStopData.properties.CLOSE_DATE && (
+                <p className="red-text">Closed</p>
+              )}
+            </div>
+            <div className='popup__content__description__container__row'>
+              <FontAwesomeIcon icon={faDoorOpen} />
+              <div>
+                <p>{restStopData.properties.DIRECTION_OF_TRAFFIC} entrance</p>
+                {restStopData.properties.ACCESS_RESTRICTION === "No Restriction" ? (
+                  <p>Accessible from both directions</p>
+                ) : (
+                  <p>No <span className="lowercase">{restStopData.properties.ACCESS_RESTRICTION}</span> access</p>
+                )}
               </div>
             </div>
-          </div>
-
-          <hr/>
-          <div className='popup__content_block'>
-            <div className='popup__content__description'>
-              <div className='popup__content__description__categary'>Features</div>
-              <div className='popup__content__description__container'>
-                <div><FontAwesomeIcon icon={faToilet} /></div>
-                <div className='popup__content__description__container__text'>
-                  <div>
-                    {restStopData.properties.WHEELCHAIR_ACCESS_TOILET === "Yes" ? (
-                      `${restStopData.properties.NUMBER_OF_TOILETS} wheelchair accessible toilets`
-                    ) : (
-                      `${restStopData.properties.NUMBER_OF_TOILETS} toilets (not wheelchair accessible)`
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className='popup__content__description__container'>
-                <div><FontAwesomeIcon icon={faTablePicnic} /></div>
-                <div className='popup__content__description__container__text'>
-                  <div>
-                    {restStopData.properties.NUMBER_OF_TABLES !== 0 && restStopData.properties.NUMBER_OF_TABLES !== null ? (
-                      `${restStopData.properties.NUMBER_OF_TABLES} tables`
-                    ) : (
-                      `No tables`
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className='popup__content__description__container'>
-                <div><FontAwesomeIcon icon={faWifi} /></div>
-                <div className='popup__content__description__container__text'>
-                  <div>
-                    {restStopData.properties.WI_FI === "No" ? (
-                      `Wi-Fi unavailable`
-                    ) : (
-                      `Wi-Fi available`
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className='popup__content__description__container'>
-                <div><FontAwesomeIcon icon={faRoad} /></div>
-                <div className='popup__content__description__container__text'>
-                  <div>
-                    {restStopData.properties.ACCELERATION_LANE === "No" ? (
-                      `No acceleration lane, `
-                    ) : (
-                      `Acceleration lane, `
-                    )}
-                    {restStopData.properties.DECELERATION_LANE === "No" ? (
-                      `no deceleration lane`
-                    ) : (
-                      `deceleration lane`
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <hr/>
-          <div className='popup__content_block'>
-            <div className='popup__content__description'>
-              <div className='popup__content__description__categary'>Electiric Vehicles</div>
-              <div className='popup__content__description__container'>
-                <div><FontAwesomeIcon icon={faChargingStation} /></div>
-                <div className='popup__content__description__container__text'>
-                  <div>
-                  {restStopData.properties.EV_STATION_25_KW_DCFC === 0 
-                  && restStopData.properties.EV_STATION_50_KW_DCFC === 0 
-                  && restStopData.properties.EV_STATION_LEVEL_2_J1772 === 0? (
-                      `No charging stations `
-                    ) : (
-                      ``
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className='popup__content__description__container'>
-                <div>
-                  {restStopData.properties.EV_STATION_25_KW_DCFC !== 0 && (
-                        <FontAwesomeIcon icon={faChargingStation} />
-                      )}       
-                </div>
-                <div className='popup__content__description__container__text'>
-                  <div>
-                    {restStopData.properties.EV_STATION_25_KW_DCFC !== 0 && (
-                      `J1772 6.48KW: ${restStopData.properties.EV_STATION_25_KW_DCFC} `
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className='popup__content__description__container'>
-                <div>
-                  {restStopData.properties.EV_STATION_25_KW_DCFC !== 0 && (
-                        <FontAwesomeIcon icon={faChargingStation} />
-                      )}       
-                </div>
-                <div className='popup__content__description__container__text'>
-                  <div>
-                    {restStopData.properties.EV_STATION_25_KW_DCFC !== 0 && (
-                      `CHAdeMO 25KW: ${restStopData.properties.EV_STATION_25_KW_DCFC} `
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className='popup__content__description__container'>
-                <div>
-                  {restStopData.properties.EV_STATION_50_KW_DCFC !== 0 && (
-                        <FontAwesomeIcon icon={faChargingStation} />
-                      )}       
-                </div>
-                <div className='popup__content__description__container__text'>
-                  <div>
-                    {restStopData.properties.EV_STATION_50_KW_DCFC !== 0 && (
-                      `CHAdeMO 50KW: ${restStopData.properties.EV_STATION_50_KW_DCFC} `
-                    )}
-                  </div>
-                </div>
-              </div>
+            <div className='popup__content__description__container__row'>
+              <FontAwesomeIcon icon={faTruckContainer} />
+              {restStopData.properties.ACCOM_COMMERCIAL_TRUCKS === "Yes" ? (
+                  <p>Large vehicles accommodated</p>
+                ) : (
+                  <p className="red-text">Large vehicles not accommodated</p>
+              )}
+              <OverlayTrigger placement="top" overlay={tooltipLargeVehicles}>
+              <FontAwesomeIcon className="tooltip-vehicles" icon={faCircleInfo} />
+              </OverlayTrigger>
             </div>
           </div>
         </div>
+          
+        <hr/>
+        <div className='popup__content__description'>
+          <p className="description-label label">Features</p>
+          <div className='popup__content__description__container'>
+            <div className='popup__content__description__container__row'>
+              <FontAwesomeIcon icon={faToilet} />
+              <div>
+                <p className="toilets">{restStopData.properties.NUMBER_OF_TOILETS} {restStopData.properties.TOILET_TYPE} toilet{restStopData.properties.NUMBER_OF_TOILETS > 1 ? 's' : ''}</p>
+                <p>
+                  {restStopData.properties.WHEELCHAIR_ACCESS_TOILET === "No" ? (
+                  'Wheelchair accessible'
+                  ) : (
+                    'Not wheelchair accessible'
+                  )}
+                </p>
+              </div>
+            </div>
+            <div className='popup__content__description__container__row'>
+              <FontAwesomeIcon icon={faTablePicnic} />
+              <p>
+                {restStopData.properties.NUMBER_OF_TABLES !== 0 && restStopData.properties.NUMBER_OF_TABLES !== null ? (
+                  `${restStopData.properties.NUMBER_OF_TABLES} tables`
+                ) : (
+                  `No tables`
+                )}
+              </p>
+            </div>
+            <div className='popup__content__description__container__row'>
+              <FontAwesomeIcon icon={faWifi} />
+              <p>
+                {restStopData.properties.WI_FI === "No" ? (
+                  `Wi-Fi unavailable`
+                ) : (
+                  `Wi-Fi available`
+                )}
+              </p>
+            </div>
+            <div className='popup__content__description__container__row'>
+              <FontAwesomeIcon icon={faRoad} />
+              {(restStopData.properties.ACCELERATION_LANE === "No" &&
+                restStopData.properties.DECELERATION_LANE === "No") && (
+                <p>No acceleration and deceleration lanes</p>
+              )}
+              {(restStopData.properties.ACCELERATION_LANE === "Yes" &&
+                restStopData.properties.DECELERATION_LANE === "Yes") && (
+                <p>Has acceleration and deceleration lanes</p>
+              )}
+              {(restStopData.properties.ACCELERATION_LANE === "Yes" &&
+                restStopData.properties.DECELERATION_LANE === "No") && (
+                <div>
+                  <p>Has acceleration lane</p>
+                  <p>No deceleration lane</p>
+                </div>
+              )}
+              {(restStopData.properties.ACCELERATION_LANE === "No" &&
+                restStopData.properties.DECELERATION_LANE === "Yes") && (
+                <div>
+                  <p>No acceleration lane</p>
+                  <p>Has deceleration lane</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+          
+        <hr/>
+        <div className='popup__content__description'>
+          <p className="description-label label">Electric Vehicles</p>
+
+          <div className='popup__content__description__container'>
+            {restStopData.properties.EV_STATION_25_KW_DCFC === 0 
+              && restStopData.properties.EV_STATION_50_KW_DCFC === 0 
+              && restStopData.properties.EV_STATION_LEVEL_2_J1772 === 0 && (
+            <div className='popup__content__description__container__row'>
+              <FontAwesomeIcon icon={faChargingStation} />
+              <p>No charging stations</p>
+            </div>
+            )}
+            
+            {restStopData.properties.EV_STATION_25_KW_DCFC !== 0 && (
+              <div className='popup__content__description__container__row'>
+                <FontAwesomeIcon icon={faChargingStation} />
+                <p>25KW</p>
+                <p className="count">{restStopData.properties.EV_STATION_25_KW_DCFC}</p>
+              </div>
+            )}
+
+            {restStopData.properties.EV_STATION_50_KW_DCFC !== 0 && (
+              <div className='popup__content__description__container__row'>
+                <FontAwesomeIcon icon={faChargingStation} />
+                <p>50KW</p>
+                <p className="count">{restStopData.properties.EV_STATION_50_KW_DCFC}</p>
+              </div>
+            )}
+
+            {restStopData.properties.EV_STATION_LEVEL_2_J1772 !== 0 && (
+              <div className='popup__content__description__container__row'>
+                <FontAwesomeIcon icon={faChargingStation} />
+                <p>Level 2 &#40;J1772&#41;</p>
+                <p className="count">{restStopData.properties.EV_STATION_LEVEL_2_J1772}</p>
+              </div>
+            )}
+          </div>
+        </div>
+         
+        
       </div>
     </div>
   );
