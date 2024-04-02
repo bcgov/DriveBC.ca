@@ -22,9 +22,23 @@ import regionalWeatherIconHover from '../../images/mapIcons/regional-weather-hov
 import regionalWeatherIconStatic from '../../images/mapIcons/regional-weather-static.png';
 
 // Rest Stops
-import restStopIconActive from '../../images/mapIcons/rest-active.png';
-import restStopIconHover from '../../images/mapIcons/rest-hover.png';
-import restStopIconStatic from '../../images/mapIcons/rest-static.png';
+import restStopIconActive from '../../images/mapIcons/restarea-open-active.png';
+import restStopIconHover from '../../images/mapIcons/restarea-open-hover.png';
+import restStopIconStatic from '../../images/mapIcons/restarea-open-static.png';
+
+// import restStopIconActiveClosed from '../../images/mapIcons/restarea-closed-active.png';
+// import restStopIconHoverClosed from '../../images/mapIcons/restarea-closed-hover.png';
+// import restStopIconStaticClosed from '../../images/mapIcons/restarea-closed-static.png';
+
+// import restStopIconActiveTruck from '../../images/mapIcons/restarea-truck-open-active.png';
+// import restStopIconHoverTruck from '../../images/mapIcons/restarea-truck-open-hover.png';
+// import restStopIconStaticTruck from '../../images/mapIcons/restarea-truck-open-static.png';
+
+// import restStopIconActiveTruckClosed from '../../images/mapIcons/restarea-truck-closed-active.png';
+// import restStopIconHoverTruckClosed from '../../images/mapIcons/restarea-truck-closed-hover.png';
+// import restStopIconStaticTruckClosed from '../../images/mapIcons/restarea-truck-closed-static.png';
+
+
 
 // Events
 // Closures

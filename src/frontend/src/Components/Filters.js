@@ -92,23 +92,6 @@ export default function Filters(props) {
     </Tooltip>
   );
 
-//  const tooltipReststops = (
-//    <Tooltip id="tooltip" className="tooltip-content">
-//      <p>Locations of rest stops run by the province.</p>
-//    </Tooltip>
-//  );
-
-//  const tooltipWeather = (
-//    <Tooltip id="tooltip" className="tooltip-content">
-//     <p>Learn about weather conditions that could affect your route including:
-//       <ul>
-//         <li>Current weather for a region from Environment Canada</li>
-//         <li>Find out how the road is at the moment at nearby weather stations in this specific location</li>
-//       </ul>
-//     </p>
-//    </Tooltip>
-//  );
-
   // States for toggles
   const [closures, setClosures] = useState(mapContext.visible_layers.closures);
   const [majorEvents, setMajorEvents] = useState(mapContext.visible_layers.majorEvents);
@@ -119,8 +102,6 @@ export default function Filters(props) {
   const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
   const [weather, setWeather] = useState(mapContext.visible_layers.weather);
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
-
-
 
   return (
     <div className="filters-component">
@@ -355,7 +336,9 @@ export default function Filters(props) {
                   />
                   <label htmlFor="filter--rest-stops">
                     <span className="filter-item__icon">
-                      <FontAwesomeIcon icon={faRestroom} alt="rest stops" />
+                      <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path className="filter-item__icon__path" d="M19 3C19 3.1875 18.9688 3.34375 18.9375 3.5C19.5625 3.9375 20 4.6875 20 5.5C20 6.90625 18.875 8 17.5 8H17L17 15C17 15.5625 16.5312 16 16 16C15.4375 16 15 15.5625 15 15V8H14.5C13.0937 8 12 6.90625 12 5.5C12 4.6875 12.4062 3.9375 13.0312 3.5C13 3.34375 13 3.1875 13 3C13 1.34375 14.3438 0 16 0C17.6562 0 19 1.34375 19 3ZM1 7C1 6.46875 1.4375 6 2 6L10 6C10.5312 6 11 6.46875 11 7V9C11 9.5625 10.5312 10 10 10L2 10C1.4375 10 1 9.5625 1 9L1 7ZM1 11L11 11C11.5312 11 12 11.4688 12 12C12 12.5625 11.5312 13 11 13V15C11 15.5625 10.5312 16 10 16C9.4375 16 9 15.5625 9 15V13L3 13L3 15C3 15.5625 2.53125 16 2 16C1.4375 16 1 15.5625 1 15L1 13C0.4375 13 0 12.5625 0 12C0 11.4688 0.4375 11 1 11Z"/>
+                      </svg>                    
                     </span>
                     Rest stops
                   </label>

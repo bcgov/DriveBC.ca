@@ -90,3 +90,15 @@ ul {
 .hero {
   color: $BC-Blue;
 }
+
+.green-text {
+  color: $Success;
+}
+
+.red-text {
+  color: $Error;
+}
+
+.lowercase {
+  text-transform: lowercase;
+}
