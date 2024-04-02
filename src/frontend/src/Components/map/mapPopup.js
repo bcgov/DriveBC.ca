@@ -40,7 +40,7 @@ import './mapPopup.scss';
 import WeatherIcon from '../WeatherIcon';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import MonthDayFormat from '../MonthDayFormat';
+import OpenSeason from '../OpenSeason';
 
 function convertCategory(event) {
   switch (event.display_category) {
@@ -420,8 +420,12 @@ export function getRestStopPopup(restStopFeature) {
               )}
               {restStopData.properties.OPEN_YEAR_ROUND === "No" && restStopData.properties.OPEN_DATE && restStopData.properties.CLOSE_DATE && (
                 <div>
-                  <p className="green-text">Open seasonally</p>
-                  <p><MonthDayFormat date={restStopData.properties.OPEN_DATE} ></MonthDayFormat> – <MonthDayFormat date={restStopData.properties.CLOSE_DATE} ></MonthDayFormat></p>
+                    {<OpenSeason returnState={true} openDate={restStopData.properties.OPEN_DATE} closeDate={restStopData.properties.CLOSE_DATE} /> === "open" ? (
+                      <p className="green-text">Open seasonally</p>
+                    ) : (
+                    <p className="red-text">Closed &#40;open seasonally&#41;</p>
+                    )}
+                    <OpenSeason openDate={restStopData.properties.OPEN_DATE} closeDate={restStopData.properties.CLOSE_DATE} />
                 </div>
               )}
               {restStopData.properties.OPEN_YEAR_ROUND === "No" && !restStopData.properties.OPEN_DATE && !restStopData.properties.CLOSE_DATE && (
