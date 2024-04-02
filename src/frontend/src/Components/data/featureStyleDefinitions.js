@@ -1,4 +1,4 @@
-import { Icon, Stroke, Style } from 'ol/style.js';
+import { Fill, Icon, Stroke, Style } from 'ol/style.js';
 
 // Static assets
 // Cameras
@@ -60,6 +60,19 @@ import genericDelaysMajorStaticIcon from '../../images/mapIcons/incident-major-s
 import genericDelaysActiveIcon from '../../images/mapIcons/incident-minor-active.png';
 import genericDelaysHoverIcon from '../../images/mapIcons/incident-minor-hover.png';
 import genericDelaysStaticIcon from '../../images/mapIcons/incident-minor-static.png';
+
+// Map advisory styles
+export const advisoryStyles = {
+  polygon: new Style({
+    stroke: new Stroke({
+      color: 'rgb(255, 90, 0)',
+      width: 2,
+    }),
+    fill: new Fill({
+      color: 'rgba(255, 217, 105, 0.4)',
+    }),
+  })
+};
 
 // Camera icon styles
 export const cameraStyles = {

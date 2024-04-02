@@ -54,12 +54,11 @@ function getMap(advisoryData) {
     }),
     'Polygon': new Style({
       stroke: new Stroke({
-        color: 'blue',
-        lineDash: [4],
-        width: 3,
+        color: 'rgb(255, 90, 0)',
+        width: 2,
       }),
       fill: new Fill({
-        color: 'rgba(0, 0, 255, 0.1)',
+        color: 'rgba(255, 217, 105, 0.4)',
       }),
     })
   };
