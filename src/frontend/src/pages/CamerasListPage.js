@@ -1,16 +1,21 @@
 // React
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+// Redux
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
+import { updateAdvisories } from '../slices/cmsSlice';
+import { updateCameras } from '../slices/feedsSlice';
 
 // Third party components
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+import { booleanIntersects, point, polygon } from '@turf/turf';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
 // Components and functions
+import { getAdvisories } from '../Components/data/advisories';
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
-import { updateCameras } from '../slices/feedsSlice';
 import Advisories from '../Components/advisories/Advisories';
 import CameraList from '../Components/cameras/CameraList';
 import Footer from '../Footer.js';
@@ -25,7 +30,8 @@ export default function CamerasListPage() {
 
   // Redux
   const dispatch = useDispatch();
-  const { cameras, camTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({
+  const { advisories, cameras, camTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({
+    advisories: state.cms.advisories.list,
     cameras: state.feeds.cameras.list,
     camTimeStamp: state.feeds.cameras.routeTimeStamp,
     selectedRoute: state.routes.selectedRoute
@@ -35,11 +41,12 @@ export default function CamerasListPage() {
   const isInitialMount = useRef(true);
 
   // UseState hooks
+  const [advisoriesInRoute, setAdvisoriesInRoute] = useState([]);
   const [displayedCameras, setDisplayedCameras] = useState(null);
   const [processedCameras, setProcessedCameras] = useState(null);
   const [searchText, setSearchText] = useState('');
 
-  // UseEffect hooks and data functions
+  // Data functions
   const getCamerasData = async () => {
     const newRouteTimestamp = selectedRoute ? selectedRoute.searchTimestamp : null;
 
@@ -69,8 +76,44 @@ export default function CamerasListPage() {
     });
 
     setProcessedCameras(finalCameras);
+    getAdvisoriesData(finalCameras);
   };
 
+  const getAdvisoriesData = async (camsData) => {
+    let advData = advisories;
+
+    if (!advisories) {
+      advData = await getAdvisories();
+
+      dispatch(updateAdvisories({
+        list: advData,
+        timeStamp: new Date().getTime()
+      }));
+    }
+
+    // load all advisories if no route selected
+    const resAdvisories = !selectedRoute ? advData : [];
+
+    // Route selected, load advisories that intersect with at least one cam on route
+    if (selectedRoute && advData && advData.length > 0 && camsData && camsData.length > 0) {
+      for (const adv of advData) {
+        const advPoly = polygon(adv.geometry.coordinates);
+
+        for (const cam of camsData) {
+          const camPoint = point(cam.location.coordinates);
+          if (booleanIntersects(advPoly, camPoint)) {
+            // advisory intersects with a camera, add to list and break loop
+            resAdvisories.push(adv);
+            break;
+          }
+        }
+      }
+    }
+
+    setAdvisoriesInRoute(resAdvisories);
+  };
+
+  // useEffect hooks
   useEffect(() => {
     getCamerasData();
 
@@ -114,6 +157,7 @@ export default function CamerasListPage() {
     }
   }, [displayedCameras]);
 
+  // Rendering
   return (
     <div className="cameras-page">
       <PageHeader
@@ -122,7 +166,7 @@ export default function CamerasListPage() {
       </PageHeader>
 
       <Container className="outer-container">
-        <Advisories />
+        <Advisories advisories={advisoriesInRoute} />
 
         <div className="controls-container">
           <div className="route-display-container">
