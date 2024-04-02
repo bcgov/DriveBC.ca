@@ -19,6 +19,7 @@ import {
   updateRestStops,
 } from '../slices/feedsSlice';
 import { updateMapState } from '../slices/mapSlice';
+import { updateAdvisories } from '../slices/cmsSlice';
 
 // External Components
 import Button from 'react-bootstrap/Button';
@@ -40,6 +41,7 @@ import {
   getRegionalPopup,
   getRestStopPopup,
 } from './map/mapPopup.js';
+import { getAdvisories } from './data/advisories.js';
 import { getEvents } from './data/events.js';
 import { getWeather, getRegional } from './data/weather.js';
 import { getRestStops } from './data/restStops.js';
@@ -69,10 +71,11 @@ import CurrentCameraIcon from './CurrentCameraIcon';
 import Filters from './Filters.js';
 import RouteSearch from './map/RouteSearch.js';
 
-// OpenLayers
+// OpenLayers & turf
 import { applyStyle } from 'ol-mapbox-style';
 import { fromLonLat, toLonLat, transformExtent } from 'ol/proj';
 import { ScaleLine } from 'ol/control.js';
+import { getBottomLeft, getTopRight } from 'ol/extent';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay.js';
 import Geolocation from 'ol/Geolocation.js';
@@ -80,6 +83,7 @@ import MVT from 'ol/format/MVT.js';
 import VectorTileLayer from 'ol/layer/VectorTile.js';
 import VectorTileSource from 'ol/source/VectorTile.js';
 import View from 'ol/View';
+import { booleanIntersects, polygon } from '@turf/turf';
 
 // Styling
 import {
@@ -210,6 +214,8 @@ export default function MapWrapper({
     clickedRestStopRef.current = feature;
     setClickedRestStop(feature);
   }
+
+  const [advisoriesInView, setAdvisoriesInView] = useState([]);
 
   // Define the function to be executed after the delay
   function resetCameraPopupRef() {
@@ -806,7 +812,51 @@ export default function MapWrapper({
     }
   };
 
+  // Advisories helper functions
+  function wrapLon(value) {
+    const worlds = Math.floor((value + 180) / 360);
+    return value - worlds * 360;
+  }
+
+  function onMoveEnd(evt) {
+    // calculate polygon based on map extent
+    const map = evt.map;
+    const extent = map.getView().calculateExtent(map.getSize());
+    const bottomLeft = toLonLat(getBottomLeft(extent));
+    const topRight = toLonLat(getTopRight(extent));
+
+    const mapPoly = polygon([[
+      [wrapLon(bottomLeft[0]), topRight[1]], // Top left
+      [wrapLon(bottomLeft[0]), bottomLeft[1]], // Bottom left
+      [wrapLon(topRight[0]), bottomLeft[1]], // Bottom right
+      [wrapLon(topRight[0]), topRight[1]], // Top right
+      [wrapLon(bottomLeft[0]), topRight[1]], // Top left
+    ]]);
+
+    // Update state with advisories that intersect with map extent
+    const resAdvisories = [];
+    if (advisories && advisories.length > 0) {
+      advisories.forEach(advisory => {
+        const advPoly = polygon(advisory.geometry.coordinates);
+        if (booleanIntersects(mapPoly, advPoly)) {
+          resAdvisories.push(advisory);
+        }
+      });
+    }
+    setAdvisoriesInView(resAdvisories);
+  }
+
   // Advisories layer
+  const loadAdvisories = async () => {
+    // Fetch data if it doesn't already exist
+    if (!advisories) {
+      dispatch(updateAdvisories({
+        list: await getAdvisories(),
+        timeStamp: new Date().getTime()
+      }));
+    }
+  };
+
   useEffect(() => {
     // Remove layer if it already exists
     if (mapLayers.current['advisoriesLayer']) {
@@ -824,6 +874,10 @@ export default function MapWrapper({
 
       mapRef.current.addLayer(mapLayers.current['advisoriesLayer']);
       mapLayers.current['advisoriesLayer'].setZIndex(55);
+
+      if (mapRef.current) {
+        mapRef.current.on('moveend', onMoveEnd);
+      }
     }
   }, [advisories]);
 
@@ -874,6 +928,7 @@ export default function MapWrapper({
       loadWeather();
       loadRegional();
       loadRestStops();
+      loadAdvisories();
 
       // Zoom/pan to route on route updates
       if (!isInitialMount) {
@@ -887,6 +942,7 @@ export default function MapWrapper({
       loadWeather();
       loadRegional();
       loadRestStops();
+      loadAdvisories();
     }
   };
 
@@ -1135,7 +1191,7 @@ export default function MapWrapper({
         {!isPreview && (
           <div className="routing-outer-container">
             <RouteSearch routeEdit={true} />
-            <AdvisoriesOnMap />
+            <AdvisoriesOnMap advisories={advisoriesInView} />
           </div>
         )}
 
