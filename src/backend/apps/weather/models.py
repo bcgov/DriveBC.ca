@@ -65,5 +65,5 @@ class CurrentWeather(BaseModel):
         return f"Current weather for {self.pk}"
 
     def save(self, *args, **kwargs):
-        self.location = Point(self.location_latitude, self.location_longitude)
+        self.location = Point((self.location_latitude, self.location_longitude))
         super().save(*args, **kwargs)
