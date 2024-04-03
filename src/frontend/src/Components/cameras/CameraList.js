@@ -35,8 +35,7 @@ export default function CameraList(props) {
     // Webcam data reduced to arrays grouped by highway
     const res = {};
     displayedCameras.forEach((cam) => {
-      // Use highway description if highway doesn't exist
-      const highway = cam.highway != '9999' ? cam.highway : cam.highway_description;
+      const highway = cam.highway_display;
       if (!(highway in res)) {
         res[highway] = [];
       }

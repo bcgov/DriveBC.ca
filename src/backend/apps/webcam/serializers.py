@@ -6,7 +6,7 @@ from rest_framework import serializers
 class WebcamSerializer(serializers.ModelSerializer):
     links = serializers.SerializerMethodField()
     group = serializers.SerializerMethodField()
-    highway = serializers.SerializerMethodField()
+    highway_display = serializers.SerializerMethodField()
 
     class Meta:
         model = Webcam
@@ -34,6 +34,6 @@ class WebcamSerializer(serializers.ModelSerializer):
     def get_group(self, obj):
         return Webcam.objects.filter(location=obj.location).order_by('id').first().id
 
-    # default highway to 9999 if it doesn't exist
-    def get_highway(self, obj):
-        return obj.highway if obj.highway != '0' else '9999'
+    # use road name if highway doesn't exist
+    def get_highway_display(self, obj):
+        return obj.highway if obj.highway != '0' else obj.highway_description

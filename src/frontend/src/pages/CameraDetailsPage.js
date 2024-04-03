@@ -244,10 +244,13 @@ export default function CameraDetailsPage() {
                 <p className="body--large">{parse(camera.caption)}</p>
               </div>
               <div className="camera-details__more">
-                <div className="camera-details__more__hwy">
-                  {highwayShield(camera.highway)}
-                  <p className="label--more">Highway {camera.highway}</p>
-                </div>
+                {camera.highway != '0' &&
+                  <div className="camera-details__more__hwy">
+                    {highwayShield(camera.highway)}
+                    <p className="label--more">Highway {camera.highway}</p>
+                  </div>
+                }
+
                 <div className="camera-details__more__elevation">
                   <p className="elevation">
                     <span className="number">{camera.elevation}</span>m
