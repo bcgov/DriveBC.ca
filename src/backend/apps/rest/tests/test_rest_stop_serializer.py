@@ -1,6 +1,6 @@
-from apps.shared.tests import BaseTest
 from apps.rest.models import RestStop
 from apps.rest.serializers import RestStopSerializer
+from apps.shared.tests import BaseTest
 
 
 class TestRestStopSerializer(BaseTest):
@@ -9,14 +9,14 @@ class TestRestStopSerializer(BaseTest):
 
         self.rest_stop = RestStop(
             rest_stop_id="DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e433c4f15_-52d9",
-            geometry = {
+            geometry={
                 "type": "Point",
                 "coordinates": [
                     54.66828166,
                     -126.99686259
-            ]
+                ]
             },
-            properties = {
+            properties={
                 "WI_FI": "No",
                 "OBJECTID": 4381,
                 "OPEN_DATE": None,
@@ -52,7 +52,7 @@ class TestRestStopSerializer(BaseTest):
                 "NUMBER_OF_STANDARD_BARRELS": 0,
                 "NUMBER_OF_BEAR_PROOF_BARRELS": 6
             },
-            bbox = [
+            bbox=[
                         -126.99686259,
                         54.66828166,
                         -126.99686259,
@@ -62,14 +62,14 @@ class TestRestStopSerializer(BaseTest):
 
         self.rest_stop_2 = RestStop(
             rest_stop_id="DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e433c4f15_-52d8",
-            geometry = {
+            geometry={
                 "type": "Point",
                 "coordinates": [
                                 54.84919263,
                                 -127.22078727
                             ]
             },
-            properties = {
+            properties={
                 "WI_FI": "Yes",
                 "OBJECTID": 30,
                 "OPEN_DATE": None,
@@ -105,15 +105,15 @@ class TestRestStopSerializer(BaseTest):
                 "NUMBER_OF_STANDARD_BARRELS": 0,
                 "NUMBER_OF_BEAR_PROOF_BARRELS": 4
             },
-            bbox = [
+            bbox=[
                         -127.22078727,
                         54.84919263,
                         -127.22078727,
                         54.84919263
 
             ]
-                        
-            
+
+
         )
 
         self.rest_stop.rest_stop_id = "DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e433c4f15_-52d7"
@@ -129,10 +129,10 @@ class TestRestStopSerializer(BaseTest):
         assert len(self.serializer.data) == 7
         assert self.serializer.data['rest_stop_id'] == \
             "DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e433c4f15_-52d7"
-        assert self.serializer.data['location']['coordinates'][0] == -126.99686259
-        assert self.serializer.data['location']['coordinates'][1] == 54.66828166
+        assert self.serializer.data['location']['coordinates'][1] == -126.99686259
+        assert self.serializer.data['location']['coordinates'][0] == 54.66828166
 
         assert self.serializer_two.data['rest_stop_id'] == \
             "DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e433c4f15_-52d6"
-        assert self.serializer_two.data['location']['coordinates'][0] == -127.22078727
-        assert self.serializer_two.data['location']['coordinates'][1] == 54.84919263
+        assert self.serializer_two.data['location']['coordinates'][1] == -127.22078727
+        assert self.serializer_two.data['location']['coordinates'][0] == 54.84919263

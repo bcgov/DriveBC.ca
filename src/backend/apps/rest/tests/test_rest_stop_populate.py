@@ -1,18 +1,13 @@
 import json
 from pathlib import Path
-from unittest import skip
 from unittest.mock import patch
-from apps.shared.tests import BaseTest, MockResponse
-from apps.rest.models import RestStop
-from apps.rest.tasks import (
-    populate_all_rest_stop_data,
-    populate_rest_stop_from_data,
-)
-from apps.rest.tests.test_data.rest_stop_parsed_feed import json_feed
-from unittest import mock
-from django.contrib.gis.db import models
 
 from apps.feed.client import FeedClient
+from apps.rest.models import RestStop
+from apps.rest.tasks import populate_rest_stop_from_data
+from apps.rest.tests.test_data.rest_stop_parsed_feed import json_feed
+from apps.shared.tests import BaseTest, MockResponse
+
 
 class TestRestStopModel(BaseTest):
     def setUp(self):
@@ -35,21 +30,20 @@ class TestRestStopModel(BaseTest):
     def test_populate_rest_stop_function(self):
         populate_rest_stop_from_data(self.json_feed)
         rest_stop_one = RestStop.objects.get(rest_stop_id="DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e433c4f15_-52d9")
-        assert rest_stop_one.location.x == -126.99686259
-        assert rest_stop_one.location.y == 54.66828166
-            
-        
+        assert rest_stop_one.location.y == -126.99686259
+        assert rest_stop_one.location.x == 54.66828166
+
     def test_populate_rest_stop_function_with_existing_data(self):
         RestStop.objects.create(
             rest_stop_id="DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e42d1d997_1823",
-            geometry = {
+            geometry={
                 "type": "Point",
                 "coordinates": [
                     52.98061363,
                     -119.31978552
                 ]
             },
-            properties = {
+            properties={
                 "WI_FI": "Yes",
                 "OBJECTID": 10,
                 "OPEN_DATE": None,
@@ -85,18 +79,18 @@ class TestRestStopModel(BaseTest):
                 "NUMBER_OF_STANDARD_BARRELS": 0,
                 "NUMBER_OF_BEAR_PROOF_BARRELS": 6
             },
-            bbox = [
+            bbox=[
                 -119.31978552,
                 52.98061363,
                 -119.31978552,
                 52.98061363
             ]
-            
+
         )
         populate_rest_stop_from_data(self.json_feed)
         rest_stop_one = RestStop.objects.get(rest_stop_id="DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e42d1d997_1823")
-        assert rest_stop_one.location.x == -119.31978552
-        assert rest_stop_one.location.y == 52.98061363
+        assert rest_stop_one.location.y == -119.31978552
+        assert rest_stop_one.location.x == 52.98061363
 
     @patch('apps.feed.client.FeedClient.get_rest_stop_list')
     def test_populate_and_update_rest_stop(self, mock_requests_get):
@@ -112,4 +106,3 @@ class TestRestStopModel(BaseTest):
             populate_rest_stop_from_data(rest_stop_data)
         rest_stop_list_length = len(response)
         assert rest_stop_list_length == 2
-        
