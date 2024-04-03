@@ -9,14 +9,15 @@ logger = logging.getLogger(__name__)
 
 
 def populate_rest_stop_from_data(new_rest_stop_data):
-    rest_stop_id = new_rest_stop_data.get('rest_stop_id')
     geometry = new_rest_stop_data.get('geometry')
+    properties = new_rest_stop_data.get('properties')
+    rest_stop_id = properties.get('CHRIS_REST_AREA_ID')
 
     existing_record = RestStop.objects.filter(rest_stop_id=rest_stop_id).first()
     data = {
         'rest_stop_id': rest_stop_id,
         'geometry': geometry,
-        'properties': new_rest_stop_data.get('properties'),
+        'properties': properties,
         'bbox': new_rest_stop_data.get('bbox'),
     }
 
