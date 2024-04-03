@@ -69,7 +69,7 @@ export const setZoomPan = (mapView, zoom, panCoords) => {
   }
 
   const args = {
-    duration: 750
+    duration: 1000
   };
 
   if (zoom) {

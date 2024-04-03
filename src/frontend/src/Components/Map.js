@@ -118,6 +118,7 @@ export default function MapWrapper({
     restStops,
     restStopsTimeStamp, // Rest Stops
     searchLocationFrom,
+    searchLocationTo,
     selectedRoute, // Routing
     zoom,
     pan, // Map
@@ -146,6 +147,7 @@ export default function MapWrapper({
         restStopsTimeStamp: state.feeds.restStops.routeTimeStamp,
         // Routing
         searchLocationFrom: state.routes.searchLocationFrom,
+        searchLocationTo: state.routes.searchLocationTo,
         selectedRoute: state.routes.selectedRoute,
         // Map
         zoom: state.map.zoom,
@@ -623,17 +625,11 @@ export default function MapWrapper({
         // store the initial searchLocationFrom.[0].label so that subsequent
         // runs can be evaluated to detect change in the search from
         isInitialMountLocation.current = searchLocationFrom[0].label;
-      } else if (
-        isInitialMountLocation.current !== searchLocationFrom[0].label
-      ) {
-        // only zoomPan on a real change in the search location from; this makes
-        // this effector idempotent wrt state
+
+        // only zoomPan on from location change when to location is NOT set
+      } else if (isInitialMountLocation.current !== searchLocationFrom[0].label && searchLocationTo.length == 0) {
         isInitialMountLocation.current = false;
-        setZoomPan(
-          mapView,
-          9,
-          fromLonLat(searchLocationFrom[0].geometry.coordinates),
-        );
+        setZoomPan(mapView, 9, fromLonLat(searchLocationFrom[0].geometry.coordinates));
       }
     } else {
       // initial location was set, so no need to prevent pan/zoom
