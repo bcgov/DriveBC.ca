@@ -30,13 +30,8 @@ class TestRegionalWeatherSerializer(BaseTest):
         self.serializer_two = RegionalWeatherSerializer(self.regional_weather_2)
 
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 14  # literal lat/long are not serialized
-        assert self.serializer.data['code'] == \
-               "s0000341"
+        assert len(self.serializer.data) == 9  # 2024/04/03 now 9 static fields with no code
         assert self.serializer.data['location']['coordinates'] == \
                [-124.64, 58.66]
-
-        assert self.serializer_two.data['code'] == \
-               "s0000849"
         assert self.serializer_two.data['location']['coordinates'] == \
                [-123.94, 57.06]

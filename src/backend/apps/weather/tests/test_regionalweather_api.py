@@ -63,4 +63,4 @@ class TestRegionalWeatherAPI(APITestCase, BaseTest):
         forecasts = self.weather.get_forecasts()
         test_str = self.weather.__str__()
         assert len(forecasts) == 0
-        assert test_str == 'Regional Forecast for ' + str(self.weather.id)
+        assert test_str == 'Regional Forecast for ' + str(self.weather.code) + ' (' + str(self.weather.station) + ')'
