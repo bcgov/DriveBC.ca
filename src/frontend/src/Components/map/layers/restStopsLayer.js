@@ -7,9 +7,11 @@ import * as ol from 'ol';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
+import OpenSeason from '../../OpenSeason.js';
 
 // Styling
-import { restStopStyles } from '../../data/featureStyleDefinitions.js';
+import { restStopStyles, restStopClosedStyles, restStopTruckStyles, restStopTruckClosedStyles } from '../../data/featureStyleDefinitions.js';
+import { isRestStopClosed } from '../../data/restStops.js';
 
 export function getRestStopsLayer(restStopsData, projectionCode, mapContext) {
   return new VectorLayer({
@@ -37,10 +39,32 @@ export function getRestStopsLayer(restStopsData, projectionCode, mapContext) {
             projectionCode,
           );
 
+          let style = undefined;
+          const isClosed = isRestStopClosed(restStop.properties);
+          const isLargeVehiclesAccommodated = restStop.properties.ACCOM_COMMERCIAL_TRUCKS === 'Yes'? true: false;
+          if(isClosed){
+            if(isLargeVehiclesAccommodated){
+              style = restStopTruckClosedStyles['static'];
+
+            }
+            else{
+              style = restStopClosedStyles['static'];
+            }
+          }
+          else{
+            if(isLargeVehiclesAccommodated){
+              style = restStopTruckStyles['static'];
+            }
+            else{
+              style = restStopStyles['static'];
+            }
+          } 
+
+          olFeatureForMap.setStyle(style);
+
           vectorSource.addFeature(olFeatureForMap);
         });
       },
     }),
-    style: restStopStyles['static'],
   });
 }
