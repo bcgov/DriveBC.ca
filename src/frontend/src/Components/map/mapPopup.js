@@ -3,6 +3,7 @@ import React from 'react';
 
 // Third party packages
 import EventTypeIcon from '../EventTypeIcon';
+import RestStopTypeIcon from '../RestStopTypeIcon';
 import FriendlyTime from '../FriendlyTime';
 import parse from 'html-react-parser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -41,6 +42,7 @@ import WeatherIcon from '../WeatherIcon';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import OpenSeason from '../OpenSeason';
+import { isRestStopClosed } from '../data/restStops';
 
 function convertCategory(event) {
   switch (event.display_category) {
@@ -398,9 +400,7 @@ export function getRestStopPopup(restStopFeature) {
     <div className="popup popup--reststop">
       <div className="popup__title">
         <div className="popup__title__icon">
-          <svg width="30" height="24" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path className="filter-item__icon__path" d="M19 3C19 3.1875 18.9688 3.34375 18.9375 3.5C19.5625 3.9375 20 4.6875 20 5.5C20 6.90625 18.875 8 17.5 8H17L17 15C17 15.5625 16.5312 16 16 16C15.4375 16 15 15.5625 15 15V8H14.5C13.0937 8 12 6.90625 12 5.5C12 4.6875 12.4062 3.9375 13.0312 3.5C13 3.34375 13 3.1875 13 3C13 1.34375 14.3438 0 16 0C17.6562 0 19 1.34375 19 3ZM1 7C1 6.46875 1.4375 6 2 6L10 6C10.5312 6 11 6.46875 11 7V9C11 9.5625 10.5312 10 10 10L2 10C1.4375 10 1 9.5625 1 9L1 7ZM1 11L11 11C11.5312 11 12 11.4688 12 12C12 12.5625 11.5312 13 11 13V15C11 15.5625 10.5312 16 10 16C9.4375 16 9 15.5625 9 15V13L3 13L3 15C3 15.5625 2.53125 16 2 16C1.4375 16 1 15.5625 1 15L1 13C0.4375 13 0 12.5625 0 12C0 11.4688 0.4375 11 1 11Z" fill="white"/>
-          </svg>
+          <RestStopTypeIcon reststop={restStopData} state="active" />
         </div>
         <p className="name">Rest area</p>
       </div>
@@ -422,8 +422,8 @@ export function getRestStopPopup(restStopFeature) {
                 <div>
                     {<OpenSeason returnState={true} openDate={restStopData.properties.OPEN_DATE} closeDate={restStopData.properties.CLOSE_DATE} /> === "open" ? (
                       <p className="green-text">Open seasonally</p>
-                    ) : (
-                    <p className="red-text">Closed &#40;open seasonally&#41;</p>
+                      ) : ( isRestStopClosed(restStopData.properties)? (<p className="red-text">Closed &#40;open seasonally&#41;</p>)
+                      : (<p className="green-text">Open seasonally</p>)
                     )}
                     <OpenSeason openDate={restStopData.properties.OPEN_DATE} closeDate={restStopData.properties.CLOSE_DATE} />
                 </div>
