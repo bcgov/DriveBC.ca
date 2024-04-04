@@ -26,19 +26,17 @@ import restStopIconActive from '../../images/mapIcons/restarea-open-active.png';
 import restStopIconHover from '../../images/mapIcons/restarea-open-hover.png';
 import restStopIconStatic from '../../images/mapIcons/restarea-open-static.png';
 
-// import restStopIconActiveClosed from '../../images/mapIcons/restarea-closed-active.png';
-// import restStopIconHoverClosed from '../../images/mapIcons/restarea-closed-hover.png';
-// import restStopIconStaticClosed from '../../images/mapIcons/restarea-closed-static.png';
+import restStopIconActiveClosed from '../../images/mapIcons/restarea-closed-active.png';
+import restStopIconHoverClosed from '../../images/mapIcons/restarea-closed-hover.png';
+import restStopIconStaticClosed from '../../images/mapIcons/restarea-closed-static.png';
 
-// import restStopIconActiveTruck from '../../images/mapIcons/restarea-truck-open-active.png';
-// import restStopIconHoverTruck from '../../images/mapIcons/restarea-truck-open-hover.png';
-// import restStopIconStaticTruck from '../../images/mapIcons/restarea-truck-open-static.png';
+import restStopIconActiveTruck from '../../images/mapIcons/restarea-truck-open-active.png';
+import restStopIconHoverTruck from '../../images/mapIcons/restarea-truck-open-hover.png';
+import restStopIconStaticTruck from '../../images/mapIcons/restarea-truck-open-static.png';
 
-// import restStopIconActiveTruckClosed from '../../images/mapIcons/restarea-truck-closed-active.png';
-// import restStopIconHoverTruckClosed from '../../images/mapIcons/restarea-truck-closed-hover.png';
-// import restStopIconStaticTruckClosed from '../../images/mapIcons/restarea-truck-closed-static.png';
-
-
+import restStopIconActiveTruckClosed from '../../images/mapIcons/restarea-truck-closed-active.png';
+import restStopIconHoverTruckClosed from '../../images/mapIcons/restarea-truck-closed-hover.png';
+import restStopIconStaticTruckClosed from '../../images/mapIcons/restarea-truck-closed-static.png';
 
 // Events
 // Closures
@@ -194,6 +192,69 @@ export const restStopStyles = {
     image: new Icon({
       scale: 0.25,
       src: restStopIconActive,
+    }),
+  }),
+};
+
+export const restStopTruckStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: restStopIconStaticTruck,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: restStopIconHoverTruck,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: restStopIconActiveTruck,
+    }),
+  }),
+};
+
+export const restStopClosedStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: restStopIconStaticClosed,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: restStopIconHoverClosed,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: restStopIconActiveClosed,
+    }),
+  }),
+};
+
+export const restStopTruckClosedStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: restStopIconStaticTruckClosed,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: restStopIconHoverTruckClosed,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: restStopIconActiveTruckClosed,
     }),
   }),
 };

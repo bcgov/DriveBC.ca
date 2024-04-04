@@ -44,7 +44,7 @@ import {
 import { getAdvisories } from './data/advisories.js';
 import { getEvents } from './data/events.js';
 import { getWeather, getRegional } from './data/weather.js';
-import { getRestStops } from './data/restStops.js';
+import { getRestStops, isRestStopClosed } from './data/restStops.js';
 import { getAdvisoriesLayer } from './map/layers/advisoriesLayer.js';
 import { getCamerasLayer } from './map/layers/camerasLayer.js';
 import { getRestStopsLayer } from './map/layers/restStopsLayer.js';
@@ -92,6 +92,9 @@ import {
   roadWeatherStyles,
   regionalStyles,
   restStopStyles,
+  restStopClosedStyles,
+  restStopTruckStyles,
+  restStopTruckClosedStyles,
 } from './data/featureStyleDefinitions.js';
 import './Map.scss';
 
@@ -380,7 +383,27 @@ export default function MapWrapper({
       }
 
       if (clickedRestStopRef.current && targetFeature != clickedRestStopRef.current) {
-        clickedRestStopRef.current.setStyle(restStopStyles['static']);
+        if(clickedRestStopRef.current !== undefined){
+          const isClosed = isRestStopClosed(clickedRestStopRef.current.values_.properties);
+          const isLargeVehiclesAccommodated = clickedRestStopRef.current.values_.properties.ACCOM_COMMERCIAL_TRUCKS === "Yes"? true: false;
+          if(isClosed){
+            if(isLargeVehiclesAccommodated){
+              clickedRestStopRef.current.setStyle(restStopTruckClosedStyles['static']);
+            }
+            else{
+              clickedRestStopRef.current.setStyle(restStopClosedStyles['static']);
+            }
+          }
+          else{
+            if(isLargeVehiclesAccommodated){
+              clickedRestStopRef.current.setStyle(restStopTruckStyles['static']);
+            }
+            else{
+              clickedRestStopRef.current.setStyle(restStopStyles['static']);
+            }
+          }
+
+        }
         updateClickedRestStop(null);
       }
     };
@@ -467,7 +490,24 @@ export default function MapWrapper({
       resetClickedStates(feature);
 
       // set new clicked rest stop feature
-      feature.setStyle(restStopStyles['active']);
+      const isClosed = isRestStopClosed(feature.values_.properties);
+      const isLargeVehiclesAccommodated = feature.values_.properties.ACCOM_COMMERCIAL_TRUCKS === 'Yes'? true: false;
+      if(isClosed){
+        if(isLargeVehiclesAccommodated){
+          feature.setStyle(restStopTruckClosedStyles['active']);
+        }
+        else{
+          feature.setStyle(restStopClosedStyles['active']);
+        }
+      }
+      else{
+        if(isLargeVehiclesAccommodated){
+          feature.setStyle(restStopTruckStyles['active']);
+        }
+        else{
+          feature.setStyle(restStopStyles['active']);
+        }
+      }
       feature.setProperties({ clicked: true }, true);
       updateClickedRestStop(feature);
 
@@ -541,7 +581,26 @@ export default function MapWrapper({
               hoveredFeature.current.setStyle(regionalStyles['static']);
               break;
             case 'rest':
-              hoveredFeature.current.setStyle(restStopStyles['static']);
+              {
+                const isClosed = isRestStopClosed(hoveredFeature.current.values_.properties);
+                const isLargeVehiclesAccommodated = hoveredFeature.current.values_.properties.ACCOM_COMMERCIAL_TRUCKS === 'Yes'? true: false;
+                if(isClosed){
+                  if(isLargeVehiclesAccommodated){
+                    hoveredFeature.current.setStyle(restStopTruckClosedStyles['static']);
+                  }
+                  else{
+                    hoveredFeature.current.setStyle(restStopClosedStyles['static']);
+                  }
+                }
+                else{
+                  if(isLargeVehiclesAccommodated){
+                    hoveredFeature.current.setStyle(restStopTruckStyles['static']);
+                  }
+                  else{
+                    hoveredFeature.current.setStyle(restStopStyles['static']);
+                  }
+                }
+              }
               break;
           }
         }
@@ -588,7 +647,24 @@ export default function MapWrapper({
             return;
           case 'rest':
             if (!targetFeature.getProperties().clicked) {
-              targetFeature.setStyle(restStopStyles['hover']);
+              const isClosed = isRestStopClosed(targetFeature.values_.properties);
+              const isLargeVehiclesAccommodated = targetFeature.values_.properties.ACCOM_COMMERCIAL_TRUCKS === 'Yes'? true: false;
+              if(isClosed){
+                if(isLargeVehiclesAccommodated){
+                  targetFeature.setStyle(restStopTruckClosedStyles['hover']);
+                }
+                else{
+                  targetFeature.setStyle(restStopClosedStyles['hover']);
+                }
+              }
+              else{
+                if(isLargeVehiclesAccommodated){
+                  targetFeature.setStyle(restStopTruckStyles['hover']);
+                }
+                else{
+                  targetFeature.setStyle(restStopStyles['hover']);
+                }
+              }
             }
             return;
           case 'regional':
@@ -1010,9 +1086,27 @@ export default function MapWrapper({
 
     // check for active rest stop icons
     if (clickedRestStopRef.current) {
-      clickedRestStopRef.current.setStyle(restStopStyles['static']);
-      clickedRestStopRef.current.set('clicked', false);
-      updateClickedRestStop(null);
+      const isClosed = isRestStopClosed(clickedRestStopRef.current.properties);
+        const isLargeVehiclesAccommodated = clickedRestStopRef.current.properties? clickedRestStopRef.current.properties.ACCOM_COMMERCIAL_TRUCKS === 'Yes': false;
+        if(isClosed){
+          if(isLargeVehiclesAccommodated){
+            clickedRestStopRef.current.setStyle(restStopTruckClosedStyles['static']);
+
+          }
+          else{
+            clickedRestStopRef.current.setStyle(restStopClosedStyles['static']);
+          }
+        }
+        else{
+          if(isLargeVehiclesAccommodated){
+            clickedRestStopRef.current.setStyle(restStopTruckStyles['static']);
+          }
+          else{
+            clickedRestStopRef.current.setStyle(restStopStyles['static']);
+          }
+        }
+        clickedRestStopRef.current.set('clicked', false);
+        updateClickedRestStop(null);
     }
 
     // Reset cam popup handler lock timer
