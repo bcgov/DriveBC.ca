@@ -42,6 +42,7 @@ import WeatherIcon from '../WeatherIcon';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import OpenSeason from '../OpenSeason';
+import { isRestStopClosed } from '../data/restStops';
 
 function convertCategory(event) {
   switch (event.display_category) {
@@ -421,8 +422,8 @@ export function getRestStopPopup(restStopFeature) {
                 <div>
                     {<OpenSeason returnState={true} openDate={restStopData.properties.OPEN_DATE} closeDate={restStopData.properties.CLOSE_DATE} /> === "open" ? (
                       <p className="green-text">Open seasonally</p>
-                    ) : (
-                    <p className="red-text">Closed &#40;open seasonally&#41;</p>
+                    ) : ( isRestStopClosed(restStopData.properties)? (<p className="red-text">Closed &#40;open seasonally&#41;</p>)
+                    : (<p className="green-text">Open seasonally</p>)
                     )}
                     <OpenSeason openDate={restStopData.properties.OPEN_DATE} closeDate={restStopData.properties.CLOSE_DATE} />
                 </div>

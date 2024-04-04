@@ -371,24 +371,28 @@ export default function MapWrapper({
       }
 
       if (clickedRestStopRef.current && targetFeature != clickedRestStopRef.current) {
-        const isClosed = isRestStopClosed(targetFeature.values_.properties);
-        const isLargeVehiclesAccommodated = targetFeature.values_.properties.ACCOM_COMMERCIAL_TRUCKS === "Yes"? true: false;
-        if(isClosed){
-          if(isLargeVehiclesAccommodated){
-            clickedRestStopRef.current.setStyle(restStopTruckClosedStyles['static']);
+        if(clickedRestStopRef.current !== undefined){
+          const isClosed = isRestStopClosed(clickedRestStopRef.current.values_.properties);
+          const isLargeVehiclesAccommodated = clickedRestStopRef.current.values_.properties.ACCOM_COMMERCIAL_TRUCKS === "Yes"? true: false;
+          if(isClosed){
+            if(isLargeVehiclesAccommodated){
+              clickedRestStopRef.current.setStyle(restStopTruckClosedStyles['static']);
+            }
+            else{
+              clickedRestStopRef.current.setStyle(restStopClosedStyles['static']);
+            }
           }
           else{
-            clickedRestStopRef.current.setStyle(restStopClosedStyles['static']);
+            if(isLargeVehiclesAccommodated){
+              clickedRestStopRef.current.setStyle(restStopTruckStyles['static']);
+            }
+            else{
+              clickedRestStopRef.current.setStyle(restStopStyles['static']);
+            }
           }
+
         }
-        else{
-          if(isLargeVehiclesAccommodated){
-            clickedRestStopRef.current.setStyle(restStopTruckStyles['static']);
-          }
-          else{
-            clickedRestStopRef.current.setStyle(restStopStyles['static']);
-          }
-        }
+
         updateClickedRestStop(null);
       }
     };

@@ -4,6 +4,7 @@ import restStopIconActive from '../images/mapIcons/restarea-open-active.png';
 import restStopIconActiveClosed from '../images/mapIcons/restarea-closed-active.png';
 import restStopIconActiveTruck from '../images/mapIcons/restarea-truck-open-active.png';
 import restStopIconActiveTruckClosed from '../images/mapIcons/restarea-truck-closed-active.png';
+import { isRestStopClosed } from './data/restStops';
 
 export default function RestStopTypeIcon(props) {
   const { reststop } = props;
@@ -17,12 +18,26 @@ export default function RestStopTypeIcon(props) {
       return <img className={'rest_stop_-icon-img'} src={restStopIconActive } />
     }   
   } else {
-    if(isLargeVehiclesAccommodated){
-      return <img className={'rest_stop_-icon-img'} src={restStopIconActiveTruckClosed } />
+    const isClosed = isRestStopClosed(reststop.properties);
 
-    } else {
-      return <img className={'rest_stop_-icon-img'} src={restStopIconActiveClosed } />
+    if(isClosed){
+      if(isLargeVehiclesAccommodated){
+        return <img className={'rest_stop_-icon-img'} src={restStopIconActiveTruckClosed } />
+  
+      } else {
+        return <img className={'rest_stop_-icon-img'} src={restStopIconActiveClosed } />
+      }
+
     }
+    else{
+      if(isLargeVehiclesAccommodated){
+        return <img className={'rest_stop_-icon-img'} src={restStopIconActiveTruck } />
+  
+      } else {
+        return <img className={'rest_stop_-icon-img'} src={restStopIconActive } />
+      }
+    }
+    
   }        
 }
 
