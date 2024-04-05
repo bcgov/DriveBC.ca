@@ -101,7 +101,6 @@ import './Map.scss';
 export default function MapWrapper({
   camera,
   isPreview,
-  cameraHandler,
   mapViewRoute,
 }) {
   // Redux

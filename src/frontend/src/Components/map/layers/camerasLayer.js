@@ -45,13 +45,6 @@ export function getCamerasLayer(
           // feature ID to camera ID for retrieval
           olFeatureForMap.setId(camera.id);
 
-          if (
-            passedCamera &&
-            passedCamera.id === olFeatureForMap.getProperties().id
-          ) {
-            updateClickedCamera(olFeatureForMap);
-            olFeatureForMap.setProperties({ clicked: true }, true);
-          }
           vectorSource.addFeature(olFeatureForMap);
         });
       },

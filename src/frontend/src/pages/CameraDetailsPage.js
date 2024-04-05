@@ -424,7 +424,7 @@ export default function CameraDetailsPage() {
                   <div className="actions-bar actions-bar--nearby"></div>
                   <div className="map-wrap map-context-wrap">
                     <DndProvider options={HTML5toTouch}>
-                      <Map camera={camera} isPreview={true} cameraHandler={initCamera} mapViewRoute={mapViewRoute}/>
+                      <Map camera={camera} isPreview={true} mapViewRoute={mapViewRoute}/>
                     </DndProvider>
                   </div>
                 </Tab>
