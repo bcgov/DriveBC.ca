@@ -298,9 +298,6 @@ export default function MapWrapper({
 
     mapRef.current.once('loadstart', async () => {
       if (camera && !isPreview) {
-        popup.current.setPosition(handleCenter());
-        popup.current.getElement().style.top = '40px';
-
         if (camera.event_type) {
           updateClickedEvent(camera);
         } else {
@@ -415,9 +412,6 @@ export default function MapWrapper({
       feature.setStyle(cameraStyles['active']);
       feature.setProperties({ clicked: true }, true);
 
-      popup.current.setPosition(feature.getGeometry().getCoordinates());
-      popup.current.getElement().style.top = '40px';
-
       updateClickedCamera(feature);
 
       cameraPopupRef.current = popup;
@@ -441,9 +435,6 @@ export default function MapWrapper({
       }
 
       updateClickedEvent(feature);
-
-      popup.current.setPosition(feature.getGeometry().getCoordinates());
-      popup.current.getElement().style.top = '40px';
     };
 
     const ferryClickHandler = feature => {
@@ -454,9 +445,6 @@ export default function MapWrapper({
       feature.setStyle(ferryStyles['active']);
       feature.setProperties({ clicked: true }, true);
       updateClickedFerry(feature);
-
-      popup.current.setPosition(feature.getGeometry().getCoordinates());
-      popup.current.getElement().style.top = '40px';
     };
 
     const weatherClickHandler = feature => {
@@ -467,9 +455,6 @@ export default function MapWrapper({
       feature.setStyle(roadWeatherStyles['active']);
       feature.setProperties({ clicked: true }, true);
       updateClickedWeather(feature);
-
-      popup.current.setPosition(feature.getGeometry().getCoordinates());
-      popup.current.getElement().style.top = '40px';
     };
 
     const regionalClickHandler = feature => {
@@ -480,9 +465,6 @@ export default function MapWrapper({
       feature.setStyle(regionalStyles['active']);
       feature.setProperties({ clicked: true }, true);
       updateClickedRegional(feature);
-
-      popup.current.setPosition(feature.getGeometry().getCoordinates());
-      popup.current.getElement().style.top = '40px';
     };
 
     const restStopClickHandler = (feature) => {
@@ -510,11 +492,6 @@ export default function MapWrapper({
       }
       feature.setProperties({ clicked: true }, true);
       updateClickedRestStop(feature);
-
-      popup.current.setPosition(
-        feature.getGeometry().getCoordinates(),
-      );
-      popup.current.getElement().style.top = '40px';
     }
 
     mapRef.current.on('click', async e => {
@@ -1019,8 +996,6 @@ export default function MapWrapper({
   };
 
   function closePopup() {
-    popup.current.setPosition(undefined);
-
     // camera is set to data structure rather than map feature
     if (clickedCameraRef.current && !clickedCameraRef.current.setStyle) {
       clickedCameraRef.current = mapLayers.current['highwayCams']
