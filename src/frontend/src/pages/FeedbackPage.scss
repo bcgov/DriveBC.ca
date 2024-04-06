@@ -1,1 +1,33 @@
 @import "../styles/variables.scss";
+
+.feedback-page {
+  .text-max-width {
+    max-width: 550px;
+  }
+
+  .description {
+    margin-bottom: 3rem;
+  }
+
+  .feedback-form {
+    & > div {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+      font-size: 1rem;
+    }
+  }
+
+  .feedback-sent {
+    margin-bottom: 2rem;
+  }
+
+  .feedback-wait {
+    margin-bottom: 0.5rem;
+  }
+
+  li::marker {
+    color: $Type-Link;
+  }
+}

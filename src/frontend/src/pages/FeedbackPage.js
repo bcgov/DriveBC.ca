@@ -76,62 +76,72 @@ export default function FeedbackPage() {
 
   // Rendering
   return (
-    <div className='feedback-page'>
-      <PageHeader
-        title='Web feedback, problems, or suggestion'
-        description='We welcome your input on DriveBC. Please let us know if you have feedback, see a problem, or have a suggestion on how we can improve the site.'>
-      </PageHeader>
-
+      <div className='feedback-page'>
       {!success &&
-        <Container>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group>
-              <Form.Label>Email address</Form.Label>
-              <Form.Control type="email" placeholder="Enter your email address here" required value={email} onChange={e => setEmail(e.target.value)} />
-            </Form.Group>
+        <React.Fragment>
+          <PageHeader
+            title='Web feedback, problems, or suggestion'
+          >
+          </PageHeader>
+          <Container>
+            <p className="description text-max-width">
+              We welcome your input on DriveBC. Please let us know if you have feedback, see a problem, or have a suggestion on how we can improve the site.
+            </p>
+            <Form onSubmit={handleSubmit}  className="feedback-form text-max-width">
+              <Form.Group>
+                <Form.Label>Email</Form.Label>
+                <Form.Control type="email" placeholder="Enter your email address here" required value={email} onChange={e => setEmail(e.target.value)} />
+              </Form.Group>
 
-            <Form.Group>
-              <Form.Label>Subject</Form.Label>
-              <Form.Control as="select" aria-label="Select subject" value={subject} onChange={e => setSubject(e.target.value)}>
-                <option value={0}>Website Feedback</option>
-              </Form.Control>
-            </Form.Group>
+              <Form.Group>
+                <Form.Label>Subject</Form.Label>
+                <Form.Control as="select" aria-label="Select subject" value={subject} onChange={e => setSubject(e.target.value)}>
+                  <option value={0}>Website Feedback</option>
+                </Form.Control>
+              </Form.Group>
 
-            <Form.Group>
-              <Form.Label>Message</Form.Label>
-              <Form.Control as="textarea" rows={5} placeholder="Enter your message here" required value={message} onChange={e => setMessage(e.target.value)} />
-            </Form.Group>
+              <Form.Group>
+                <Form.Label>Message</Form.Label>
+                <Form.Control as="textarea" rows={5} placeholder="Enter your message here" required value={message} onChange={e => setMessage(e.target.value)} />
+              </Form.Group>
 
-            <Button variant="primary" type="submit">
-              Send
-            </Button>
+              <Button variant="primary" type="submit">
+                Send
+              </Button>
 
-            {error &&
-              <span>Error on submission. Please try again.</span>
-            }
-          </Form>
-        </Container>
+              {error &&
+                <span>Error on submission. Please try again.</span>
+              }
+            </Form>
+          </Container>
+        </React.Fragment>
       }
 
       {success &&
-        <Container>
-          <div>
-            <p>
-              Your feedback has been successfully sent to our team.
-              We’ll get back to you as soon as possible usually within 2 business days.
-            </p>
+        <React.Fragment>
+          <PageHeader
+            title='Thank you for your feedback'
+          >
+          </PageHeader>
+          <Container>
+            <div>
+              <p className="feedback-sent">
+                Your feedback has been successfully sent to our team.
+                We’ll get back to you as soon as possible usually within 2 business days.
+              </p>
 
-            <p>
-              While you wait, please feel free to explore DriveBC:
-            </p>
+              <p className="feedback-wait">
+                While you wait, please feel free to explore DriveBC:
+              </p>
 
-            <ul>
-              <li><a href='/'>Map view</a></li>
-              <li><a href='/delays'>Delay listings</a></li>
-              <li><a href='/cameras'>Cameras</a></li>
-            </ul>
-          </div>
-        </Container>
+              <ul>
+                <li><a href='/'>Map view</a></li>
+                <li><a href='/delays'>Delay listings</a></li>
+                <li><a href='/cameras'>Cameras</a></li>
+              </ul>
+            </div>
+          </Container>
+        </React.Fragment>
       }
 
       <Footer />
