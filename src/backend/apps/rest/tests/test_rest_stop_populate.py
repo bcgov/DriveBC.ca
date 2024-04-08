@@ -29,13 +29,13 @@ class TestRestStopModel(BaseTest):
 
     def test_populate_rest_stop_function(self):
         populate_rest_stop_from_data(self.json_feed)
-        rest_stop_one = RestStop.objects.get(rest_stop_id="DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e433c4f15_-52d9")
+        rest_stop_one = RestStop.objects.get(rest_stop_id="1532673")
         assert rest_stop_one.location.y == -126.99686259
         assert rest_stop_one.location.x == 54.66828166
 
     def test_populate_rest_stop_function_with_existing_data(self):
         RestStop.objects.create(
-            rest_stop_id="DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e42d1d997_1823",
+            rest_stop_id="1464192",
             geometry={
                 "type": "Point",
                 "coordinates": [
@@ -88,7 +88,7 @@ class TestRestStopModel(BaseTest):
 
         )
         populate_rest_stop_from_data(self.json_feed)
-        rest_stop_one = RestStop.objects.get(rest_stop_id="DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e42d1d997_1823")
+        rest_stop_one = RestStop.objects.get(rest_stop_id="1464192")
         assert rest_stop_one.location.y == -119.31978552
         assert rest_stop_one.location.x == 52.98061363
 

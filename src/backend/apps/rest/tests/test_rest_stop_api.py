@@ -1,7 +1,7 @@
-from apps.shared.enums import CacheKey
-from apps.shared.tests import BaseTest
 from apps.rest.models import RestStop
 from apps.rest.views import RestStopAPI
+from apps.shared.enums import CacheKey
+from apps.shared.tests import BaseTest
 from django.core.cache import cache
 from rest_framework.test import APITestCase
 
@@ -11,15 +11,15 @@ class TestRestStopAPI(APITestCase, BaseTest):
         super().setUp()
 
         self.rest_stop = RestStop.objects.create(
-            rest_stop_id="DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e42d1d997_1823",
-            geometry = {
+            rest_stop_id="1464192",
+            geometry={
                 "type": "Point",
                 "coordinates": [
                     52.98061363,
                     -119.31978552
                 ]
             },
-            properties = {
+            properties={
                 "WI_FI": "Yes",
                 "OBJECTID": 10,
                 "OPEN_DATE": None,
@@ -55,7 +55,7 @@ class TestRestStopAPI(APITestCase, BaseTest):
                 "NUMBER_OF_STANDARD_BARRELS": 0,
                 "NUMBER_OF_BEAR_PROOF_BARRELS": 6
             },
-            bbox = [
+            bbox=[
                 -119.31978552,
                 52.98061363,
                 -119.31978552,
@@ -73,12 +73,12 @@ class TestRestStopAPI(APITestCase, BaseTest):
         response = self.client.get(url, follow=True)
         assert len(response.data) == 1
         assert response.status_code == 200
-        
+
         RestStopAPI().set_list_data()
         assert cache.get(CacheKey.REST_STOP_LIST) is not None
 
         # Cached result
-        RestStop.objects.filter(rest_stop_id='DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e42d1d997_1823').delete()
+        RestStop.objects.filter(rest_stop_id='1464192').delete()
         response = self.client.get(url, follow=True)
         assert len(response.data) == 1
         assert response.status_code == 200
@@ -98,10 +98,10 @@ class TestRestStopAPI(APITestCase, BaseTest):
         assert len(response.data) == 1
 
         # Manually update location code
-        rest_stop = RestStop.objects.get(rest_stop_id='DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e42d1d997_1823')
-        rest_stop.rest_stop_id = 'DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e42d1d997_1824'
+        rest_stop = RestStop.objects.get(rest_stop_id='1464192')
+        rest_stop.rest_stop_id = '1464193'  # TODO: what are we testing here?
         rest_stop.save()
-        rest_stop = RestStop.objects.get(rest_stop_id='DBC_RIM_REST_AREA_V.fid-59dfb4f6_18e42d1d997_1824')
+        rest_stop = RestStop.objects.get(rest_stop_id='1464193')
         assert response.status_code == 200
         assert len(response.data) == 1
 
