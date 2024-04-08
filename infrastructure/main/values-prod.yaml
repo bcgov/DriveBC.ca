@@ -24,7 +24,7 @@ django:
     enabled: true
     minReplicas: 3
     maxReplicas: 10
-    targetCPUUtilizationPercentage: 75
+    targetCPUUtilizationPercentage: 200
   route:
     host: prod-drivebc.apps.gold.devops.gov.bc.ca
     iprestricted: true #Set to true if you want to limit IP's that can access publicly available pages to the the addresses in the ipallowlist 
@@ -44,11 +44,11 @@ tasks:
   deployment:
     resources:
       requests:
-        cpu: 75m
-        memory: 150Mi
-      limits:
-        cpu: 250m
+        cpu: 200m
         memory: 200Mi
+      limits:
+        cpu: 750m
+        memory: 250Mi
     volumes:
       claimName: prod-django-app-images
     env:
@@ -77,7 +77,7 @@ image-caching:
     enabled: true
     minReplicas: 3
     maxReplicas: 10
-    targetCPUUtilizationPercentage: 75
+    targetCPUUtilizationPercentage: 200
   route:
     host: prod-drivebc.apps.gold.devops.gov.bc.ca
     iprestricted: true #Set to true if you want to limit IP's the the addresses in the ipallowlist 
@@ -122,7 +122,7 @@ static:
     enabled: true
     minReplicas: 3
     maxReplicas: 10
-    targetCPUUtilizationPercentage: 75
+    targetCPUUtilizationPercentage: 200
   route:
     host: prod-drivebc.apps.gold.devops.gov.bc.ca
     iprestricted: true  #Set to true if you want to limit IP's the the addresses in the ipallowlist 

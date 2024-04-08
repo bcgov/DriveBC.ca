@@ -21,7 +21,7 @@ django:
       djangoConfigMap: dev-drivebc-django
       djangoSecret: dev-drivebc-django
   autoscaling:
-    enabled: true
+    enabled: false
     minReplicas: 1
     maxReplicas: 2
     targetCPUUtilizationPercentage: 75
@@ -44,11 +44,11 @@ tasks:
   deployment:
     resources:
       requests:
-        cpu: 20m
-        memory: 150Mi
-      limits:
-        cpu: 250m
+        cpu: 100m
         memory: 200Mi
+      limits:
+        cpu: 500m
+        memory: 250Mi
     volumes:
       claimName: dev-django-app-images
     env:
@@ -74,7 +74,7 @@ image-caching:
     env:
       imagecachingConfigMap: dev-drivebc-image-caching
   autoscaling:
-    enabled: true
+    enabled: false
     minReplicas: 1
     maxReplicas: 2
     targetCPUUtilizationPercentage: 75
@@ -120,7 +120,7 @@ static:
       claimName: dev-django-app-images
 
   autoscaling:
-    enabled: true
+    enabled: false
     minReplicas: 1
     maxReplicas: 2
     targetCPUUtilizationPercentage: 75
