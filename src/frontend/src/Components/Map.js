@@ -1200,7 +1200,8 @@ export default function MapWrapper({
 
         <button
           className="close-panel"
-          aria-label="close side panel"
+          aria-label={`${openPanel ? 'close side panel' : ''}`}
+          aria-hidden={`${openPanel ? false : true}`}
           onClick={togglePanel}>
           <FontAwesomeIcon icon={faXmark} />
         </button>
