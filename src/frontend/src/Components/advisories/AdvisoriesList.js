@@ -34,7 +34,7 @@ export default function Advisories(props) {
               }
             }}>
 
-            <div className="advisory-li-title-container">
+            <div className="advisory-li-title-container" tabIndex={0}>
               <h4 className='advisory-li-title'>{advisory.title}</h4>
               {showTimestamp &&
               <div className="timestamp-container">
