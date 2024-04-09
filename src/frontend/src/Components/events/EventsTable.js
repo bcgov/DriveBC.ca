@@ -21,8 +21,8 @@ import FriendlyTime from '../FriendlyTime';
 // External assets
 import {
   faArrowUpLong,
-  faArrowDownLong,
-} from '@fortawesome/free-solid-svg-icons';
+  faArrowDownLong
+} from '@fortawesome/pro-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 
 // Styling

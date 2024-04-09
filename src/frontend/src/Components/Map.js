@@ -30,7 +30,7 @@ import {
   faUpRightAndDownLeftFromCenter,
   faLocationCrosshairs,
   faXmark,
-} from '@fortawesome/free-solid-svg-icons';
+} from '@fortawesome/pro-solid-svg-icons';
 
 // Components and functions
 import CamPopup from './map/camPopup.js';

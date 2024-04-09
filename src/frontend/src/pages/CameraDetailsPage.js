@@ -12,11 +12,9 @@ import {
   faPause,
   faBackward,
   faForward,
-  faClockRotateLeft
-} from '@fortawesome/free-solid-svg-icons';
-import {
+  faClockRotateLeft,
   faFlag
-} from '@fortawesome/free-regular-svg-icons';
+} from '@fortawesome/pro-solid-svg-icons';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Tab from 'react-bootstrap/Tab';
