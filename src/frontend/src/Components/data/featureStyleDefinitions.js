@@ -77,11 +77,12 @@ import genericDelaysStaticIcon from '../../images/mapIcons/incident-minor-static
 export const advisoryStyles = {
   polygon: new Style({
     stroke: new Stroke({
-      color: 'rgb(255, 90, 0)',
+      color: 'rgb(88, 66, 21)',
       width: 2,
+      lineDash: [10,10]
     }),
     fill: new Fill({
-      color: 'rgba(255, 217, 105, 0.4)',
+      color: 'rgba(252, 186, 25, 0.25)',
     }),
   })
 };
