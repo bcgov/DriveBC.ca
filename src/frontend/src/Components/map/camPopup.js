@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import FriendlyTime from '../FriendlyTime';
 import parse from 'html-react-parser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVideoSlash, faVideo } from '@fortawesome/free-solid-svg-icons';
+import { faVideoSlash, faVideo } from '@fortawesome/pro-solid-svg-icons';
 
 import colocatedCamIcon from '../../images/colocated-camera.svg';
 import './mapPopup.scss';

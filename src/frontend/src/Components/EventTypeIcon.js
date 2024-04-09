@@ -7,7 +7,7 @@ import {
   faCalendarDays,
   faSnowflake,
   faMinusCircle,
-} from "@fortawesome/free-solid-svg-icons";
+} from "@fortawesome/pro-solid-svg-icons";
 
 // Events
 // Closures

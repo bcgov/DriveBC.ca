@@ -11,7 +11,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
   faMap,
   faFileLines
-} from '@fortawesome/free-regular-svg-icons';
+} from '@fortawesome/pro-solid-svg-icons';
 
 // Components and functions
 import { getAdvisories } from '../Components/data/advisories.js';

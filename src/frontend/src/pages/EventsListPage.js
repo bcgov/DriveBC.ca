@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAngleDown,
   faMapLocationDot
-} from '@fortawesome/free-solid-svg-icons';
+} from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';

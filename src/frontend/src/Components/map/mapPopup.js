@@ -26,13 +26,9 @@ import {
   faWifi,
   faRoad,
   faChargingStation,
-  faCircleInfo
-} from '@fortawesome/free-solid-svg-icons';
-import { 
+  faCircleInfo,
   faTablePicnic,
   faTruckContainer,
-} from '@fortawesome/pro-solid-svg-icons';
-import {
   faSunCloud
 } from '@fortawesome/pro-solid-svg-icons';
 

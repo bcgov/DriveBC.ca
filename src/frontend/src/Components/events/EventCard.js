@@ -11,7 +11,7 @@ import { getTypeDisplay } from './functions';
 import FriendlyTime from '../FriendlyTime';
 
 // External assets
-import { faMapLocation } from '@fortawesome/free-solid-svg-icons';
+import { faMapLocation } from '@fortawesome/pro-solid-svg-icons';
 
 // Styling
 import './EventCard.scss';

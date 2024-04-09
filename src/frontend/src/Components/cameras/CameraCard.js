@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 
 // Third party packages
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-import { faVideoSlash } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt,
+         faXmark,
+         faCircleInfo,
+         faVideoSlash } from '@fortawesome/pro-solid-svg-icons';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import FriendlyTime from '../FriendlyTime';

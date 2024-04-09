@@ -8,7 +8,7 @@ import { updateAdvisories } from '../../slices/cmsSlice';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTriangleExclamation
-} from "@fortawesome/free-solid-svg-icons";
+} from "@fortawesome/pro-solid-svg-icons";
 
 // Components and functions
 import AdvisoriesList from './AdvisoriesList';
