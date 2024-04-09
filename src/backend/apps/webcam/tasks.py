@@ -116,17 +116,17 @@ def update_webcam_image(webcam):
         # save image in shared volume
         filename = f'{CAMS_DIR}/{webcam["id"]}.jpg'
         with open(filename, 'wb') as saved:
-            stamped.save(saved, 'jpeg', quality=95, exif=raw.getexif())
+            stamped.save(saved, 'jpeg', quality=75, exif=raw.getexif())
 
         # Set the last modified time to the last modified time plus a timedelta
-        # calculated as 110% of the mean time between updates, minus the standard
+        # calculated mean time between updates, minus the standard
         # deviation.  If that can't be calculated, default to 5 minutes.  This is
         # then used to set the expires header in nginx.
         delta = 300  # 5 minutes
         try:
             mean = webcam.get('update_period_mean')
             stddev = webcam.get('update_period_stddev', 0)
-            delta = (1.1 * mean) - stddev
+            delta = mean - stddev
 
         except Exception as e:
             logger.info(e)
