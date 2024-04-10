@@ -52,6 +52,8 @@ import { loadEventsLayers } from './map/layers/eventsLayer.js';
 import { loadWeatherLayers } from './map/layers/weatherLayer.js';
 import { loadRegionalLayers } from './map/layers/regionalLayer.js';
 import {
+  compareRoutePoints,
+  filterByRoute,
   fitMap,
   blueLocationMarkup,
   redLocationMarkup,
@@ -71,11 +73,13 @@ import CurrentCameraIcon from './CurrentCameraIcon';
 import Filters from './Filters.js';
 import RouteSearch from './map/RouteSearch.js';
 
-// OpenLayers & turf
+// Map & geospatial imports
 import { applyStyle } from 'ol-mapbox-style';
 import { fromLonLat, toLonLat, transformExtent } from 'ol/proj';
 import { ScaleLine } from 'ol/control.js';
 import { getBottomLeft, getTopRight } from 'ol/extent';
+import * as turf from '@turf/turf';
+import Flatbush from 'flatbush';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay.js';
 import Geolocation from 'ol/Geolocation.js';
@@ -83,7 +87,6 @@ import MVT from 'ol/format/MVT.js';
 import VectorTileLayer from 'ol/layer/VectorTile.js';
 import VectorTileSource from 'ol/source/VectorTile.js';
 import View from 'ol/View';
-import { booleanIntersects, polygon } from '@turf/turf';
 
 // Styling
 import {
@@ -107,18 +110,25 @@ export default function MapWrapper({
   const dispatch = useDispatch();
   const {
     cameras,
-    camTimeStamp, // Cameras
+    filteredCameras,
+    camFilterPoints, // Cameras
     events,
-    eventTimeStamp, // Events
+    filteredEvents,
+    eventFilterPoints, // Events
     advisories, // CMS
     ferries,
-    ferriesTimeStamp, // Ferries
-    weather,
-    weatherTimeStamp, // Current Weather
-    regional,
+    filteredFerries,
+    ferryFilterPoints, // Ferries
+    currentWeather,
+    filteredCurrentWeathers,
+    currentWeatherFilterPoints, // Current Weather
+    regionalWeather,
+    filteredRegionalWeathers,
+    regionalWeatherFilterPoints,
     regionalTimeStamp, // Regional Weather
     restStops,
-    restStopsTimeStamp, // Rest Stops
+    filteredRestStops,
+    restStopFilterPoints, // Rest Stops
     searchLocationFrom,
     searchLocationTo,
     selectedRoute, // Routing
@@ -129,24 +139,30 @@ export default function MapWrapper({
       memoize(state => ({
         // Cameras
         cameras: state.feeds.cameras.list,
-        camTimeStamp: state.feeds.cameras.routeTimeStamp,
+        filteredCameras: state.feeds.cameras.filteredList,
+        camFilterPoints: state.feeds.cameras.filterPoints,
         // Events
         events: state.feeds.events.list,
-        eventTimeStamp: state.feeds.events.routeTimeStamp,
+        filteredEvents: state.feeds.events.filteredList,
+        eventFilterPoints: state.feeds.events.filterPoints,
         // CMS
         advisories: state.cms.advisories.list,
         // Ferries
         ferries: state.feeds.ferries.list,
-        ferriesTimeStamp: state.feeds.ferries.routeTimeStamp,
+        filteredFerries: state.feeds.ferries.filteredList,
+        ferryFilterPoints: state.feeds.ferries.filterPoints,
         // Current Weather
-        weather: state.feeds.weather.list,
-        weatherTimeStamp: state.feeds.weather.routeTimeStamp,
+        currentWeather: state.feeds.weather.list,
+        filteredCurrentWeathers: state.feeds.weather.filteredList,
+        currentWeatherFilterPoints: state.feeds.weather.filterPoints,
         // Regional Weather
-        regional: state.feeds.regional.list,
-        regionalTimeStamp: state.feeds.regional.routeTimeStamp,
+        regionalWeather: state.feeds.regional.list,
+        filteredRegionalWeathers: state.feeds.regional.filteredList,
+        regionalWeatherFilterPoints: state.feeds.regional.filterPoints,
         // Rest Stops
         restStops: state.feeds.restStops.list,
-        restStopsTimeStamp: state.feeds.restStops.routeTimeStamp,
+        filteredRestStops: state.feeds.restStops.filteredList,
+        restStopFilterPoints: state.feeds.restStops.filterPoints,
         // Routing
         searchLocationFrom: state.routes.searchLocationFrom,
         searchLocationTo: state.routes.searchLocationTo,
@@ -705,7 +721,27 @@ export default function MapWrapper({
     loadData(false);
   }, [selectedRoute]);
 
-  // Camera layer
+  const loadCameras = async route => {
+    const routePoints = route ? route.points : null;
+
+    // Load if filtered cams don't exist or route doesn't match
+    if (!filteredCameras || !compareRoutePoints(routePoints, camFilterPoints)) {
+      // Fetch data if it doesn't already exist
+      const camData = cameras ? cameras : await getCameras();
+
+      // Filter data by route
+      const filteredCamData = route ? filterByRoute(camData, route) : camData;
+
+      dispatch(
+        updateCameras({
+          list: camData,
+          filteredList: filteredCamData,
+          filterPoints: route ? route.points : null
+        })
+      );
+    }
+  };
+
   useEffect(() => {
     // Remove layer if it already exists
     if (mapLayers.current['highwayCams']) {
@@ -713,9 +749,9 @@ export default function MapWrapper({
     }
 
     // Add layer if array exists
-    if (cameras) {
+    if (filteredCameras) {
       // Deep clone and add group reference to each cam
-      const clonedCameras = JSON.parse(JSON.stringify(cameras));
+      const clonedCameras = JSON.parse(JSON.stringify(filteredCameras));
       const finalCameras = addCameraGroups(clonedCameras);
 
       // Generate and add layer
@@ -730,44 +766,56 @@ export default function MapWrapper({
       mapRef.current.addLayer(mapLayers.current['highwayCams']);
       mapLayers.current['highwayCams'].setZIndex(78);
     }
-  }, [cameras]);
-
-  const loadCameras = async route => {
-    const newRouteTimestamp = route ? route.searchTimestamp : null;
-
-    // Fetch data if it doesn't already exist or route was updated
-    if (!cameras || camTimeStamp != newRouteTimestamp) {
-      dispatch(
-        updateCameras({
-          list: await getCameras(route ? route.points : null),
-          routeTimeStamp: route ? route.searchTimestamp : null,
-          timeStamp: new Date().getTime(),
-        }),
-      );
-    }
-  };
+  }, [filteredCameras]);
 
   // Event layers
-  useEffect(() => {
-    loadEventsLayers(events, mapContext, mapLayers, mapRef);
-  }, [events]);
-
   const loadEvents = async route => {
-    const newRouteTimestamp = route ? route.searchTimestamp : null;
+    const routePoints = route ? route.points : null;
 
-    // Fetch data if it doesn't already exist or route was updated
-    if (!events || eventTimeStamp != newRouteTimestamp) {
+    // Load if filtered cams don't exist or route doesn't match
+    if (!filteredEvents || !compareRoutePoints(routePoints, eventFilterPoints)) {
+      // Fetch data if it doesn't already exist
+      const eventData = events ? events : await getEvents();
+
+      // Filter data by route
+      const filteredEventData = route ? filterByRoute(eventData, route) : eventData;
+
       dispatch(
         updateEvents({
-          list: await getEvents(route ? route.points : null),
-          routeTimeStamp: route ? route.searchTimestamp : null,
-          timeStamp: new Date().getTime(),
-        }),
+          list: eventData,
+          filteredList: filteredEventData,
+          filterPoints: route ? route.points : null
+        })
       );
     }
   };
 
-  // Ferries and rest stops layers
+  useEffect(() => {
+    loadEventsLayers(filteredEvents, mapContext, mapLayers, mapRef);
+  }, [filteredEvents]);
+
+  // Ferries layer
+  const loadFerries = async route => {
+    const routePoints = route ? route.points : null;
+
+    // Load if filtered cams don't exist or route doesn't match
+    if (!filteredFerries || !compareRoutePoints(routePoints, ferryFilterPoints)) {
+      // Fetch data if it doesn't already exist
+      const ferryData = ferries ? ferries : await getFerries();
+
+      // Filter data by route
+      const filteredFerryData = route ? filterByRoute(ferryData, route) : ferryData;
+
+      dispatch(
+        updateFerries({
+          list: ferryData,
+          filteredList: filteredFerryData,
+          filterPoints: route ? route.points : null
+        })
+      );
+    }
+  };
+
   useEffect(() => {
     // Remove layer if it already exists
     if (mapLayers.current['inlandFerries']) {
@@ -775,10 +823,10 @@ export default function MapWrapper({
     }
 
     // Add layer if array exists
-    if (ferries) {
+    if (filteredFerries) {
       // Generate and add layer
       mapLayers.current['inlandFerries'] = getFerriesLayer(
-        ferries,
+        filteredFerries,
         mapRef.current.getView().getProjection().getCode(),
         mapContext,
       );
@@ -786,12 +834,41 @@ export default function MapWrapper({
       mapRef.current.addLayer(mapLayers.current['inlandFerries']);
       mapLayers.current['inlandFerries'].setZIndex(68);
     }
+  }, [filteredFerries]);
+
+  // Rest stops layer
+  const loadRestStops = async route => {
+    const routePoints = route ? route.points : null;
+
+    // Load if filtered cams don't exist or route doesn't match
+    if (!filteredRestStops || !compareRoutePoints(routePoints, restStopFilterPoints)) {
+      // Fetch data if it doesn't already exist
+      const restStopsData = restStops ? restStops : await getRestStops();
+
+      // Filter data by route
+      const filteredRestStopsData = route ? filterByRoute(restStopsData, route) : restStopsData;
+
+      dispatch(
+        updateRestStops({
+          list: restStopsData,
+          filteredList: filteredRestStopsData,
+          filterPoints: route ? route.points : null
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    // Remove layer if it already exists
+    if (mapLayers.current['restStops']) {
+      mapRef.current.removeLayer(mapLayers.current['restStops']);
+    }
 
     // Add layer if array exists
-    if (restStops) {
+    if (filteredRestStops) {
       // Generate and add layer
       mapLayers.current['restStops'] = getRestStopsLayer(
-        restStops,
+        filteredRestStops,
         mapRef.current.getView().getProjection().getCode(),
         mapContext
       )
@@ -799,66 +876,45 @@ export default function MapWrapper({
       mapRef.current.addLayer(mapLayers.current['restStops']);
       mapLayers.current['restStops'].setZIndex(68);
     }
-  }, [ferries, restStops]);
+  }, [filteredRestStops]);
 
-  const loadFerries = async route => {
-    const newRouteTimestamp = route ? route.searchTimestamp : null;
+  // Current weather layer
+  const loadWeather = async route => {
+    const routePoints = route ? route.points : null;
 
-    // Fetch data if it doesn't already exist or route was updated
-    if (!ferries || ferriesTimeStamp != newRouteTimestamp) {
+    // Load if filtered cams don't exist or route doesn't match
+    if (!filteredCurrentWeathers || !compareRoutePoints(routePoints, currentWeatherFilterPoints)) {
+      // Fetch data if it doesn't already exist
+      const currentWeathersData = currentWeather ? currentWeather : await getWeather();
+
+      // Filter data by route
+      const filteredCurrentWeathersData = route ? filterByRoute(currentWeathersData, route, 15000) : currentWeathersData;
+
       dispatch(
-        updateFerries({
-          list: await getFerries(route ? route.points : null),
-          routeTimeStamp: route ? route.searchTimestamp : null,
-          timeStamp: new Date().getTime(),
-        }),
+        updateWeather({
+          list: currentWeathersData,
+          filteredList: filteredCurrentWeathersData,
+          filterPoints: route ? route.points : null
+        })
       );
     }
   };
 
-  const loadRestStops = async (route) => {
-    const newRouteTimestamp = route ? route.searchTimestamp : null;
-
-    // Fetch data if it doesn't already exist or route was updated
-    if (!restStops || (restStopsTimeStamp != newRouteTimestamp)) {
-      dispatch(updateRestStops({
-        list: await getRestStops(route ? route.points : null),
-        routeTimeStamp: route ? route.searchTimestamp : null,
-        timeStamp: new Date().getTime()
-      }));
-    }
-  };
-
-  // Weather layers
   useEffect(() => {
     if (mapLayers.current['weather']) {
       mapRef.current.removeLayer(mapLayers.current['weather']);
     }
-    if (weather) {
+
+    if (filteredCurrentWeathers) {
       mapLayers.current['weather'] = loadWeatherLayers(
-        weather,
+        filteredCurrentWeathers,
         mapContext,
         mapRef.current.getView().getProjection().getCode(),
       );
       mapRef.current.addLayer(mapLayers.current['weather']);
       mapLayers.current['weather'].setZIndex(66);
     }
-  }, [weather]);
-
-  const loadWeather = async route => {
-    const newRouteTimestamp = route ? route.searchTimestamp : null;
-
-    // Fetch data if it doesn't already exist or route was updated
-    if (!weather || weatherTimeStamp != newRouteTimestamp) {
-      dispatch(
-        updateWeather({
-          list: await getWeather(route ? route.points : null),
-          routeTimeStamp: route ? route.searchTimestamp : null,
-          timeStamp: new Date().getTime(),
-        }),
-      );
-    }
-  };
+  }, [filteredCurrentWeathers]);
 
   // Advisories helper functions
   function wrapLon(value) {
@@ -873,7 +929,7 @@ export default function MapWrapper({
     const bottomLeft = toLonLat(getBottomLeft(extent));
     const topRight = toLonLat(getTopRight(extent));
 
-    const mapPoly = polygon([[
+    const mapPoly = turf.polygon([[
       [wrapLon(bottomLeft[0]), topRight[1]], // Top left
       [wrapLon(bottomLeft[0]), bottomLeft[1]], // Bottom left
       [wrapLon(topRight[0]), bottomLeft[1]], // Bottom right
@@ -885,8 +941,8 @@ export default function MapWrapper({
     const resAdvisories = [];
     if (advisories && advisories.length > 0) {
       advisories.forEach(advisory => {
-        const advPoly = polygon(advisory.geometry.coordinates);
-        if (booleanIntersects(mapPoly, advPoly)) {
+        const advPoly = turf.polygon(advisory.geometry.coordinates);
+        if (turf.booleanIntersects(mapPoly, advPoly)) {
           resAdvisories.push(advisory);
         }
       });
@@ -929,37 +985,45 @@ export default function MapWrapper({
     }
   }, [advisories]);
 
+  // Regional weather layer
+  const loadRegional = async route => {
+    const routePoints = route ? route.points : null;
+
+    // Load if filtered cams don't exist or route doesn't match
+    if (!filteredRegionalWeathers || !compareRoutePoints(routePoints, regionalWeatherFilterPoints)) {
+      // Fetch data if it doesn't already exist
+      const regionalWeathersData = regionalWeather ? regionalWeather : await getRegional();
+
+      // Filter with 20km extra tolerance
+      const filteredRegionalWeathersData = filterByRoute(regionalWeathersData, route, 15000);
+
+      dispatch(
+        updateRegional({
+          list: regionalWeathersData,
+          filteredList: filteredRegionalWeathersData,
+          filterPoints: route ? route.points : null
+        })
+      );
+    }
+  };
+
   useEffect(() => {
     if (mapLayers.current['regional']) {
       mapRef.current.removeLayer(mapLayers.current['regional']);
     }
-    if (regional) {
+
+    if (filteredRegionalWeathers) {
       mapLayers.current['regional'] = loadRegionalLayers(
-        regional,
+        filteredRegionalWeathers,
         mapContext,
         mapRef.current.getView().getProjection().getCode(),
       );
       mapRef.current.addLayer(mapLayers.current['regional']);
       mapLayers.current['regional'].setZIndex(67);
     }
-  }, [regional]);
-  window.mapLayers = mapLayers;  // TOFO: remove debugging
+  }, [filteredRegionalWeathers]);
 
-  const loadRegional = async route => {
-    const newRouteTimestamp = route ? route.searchTimestamp : null;
-
-    // Fetch data if it doesn't already exist or route was updated
-    if (!regional || regionalTimeStamp != newRouteTimestamp) {
-      dispatch(
-        updateRegional({
-          list: await getRegional(route ? route.points : null),
-          routeTimeStamp: route ? route.searchTimestamp : null,
-          timeStamp: new Date().getTime(),
-        }),
-      );
-    }
-  };
-
+  // Function to load all data
   const loadData = isInitialMount => {
     if (selectedRoute && selectedRoute.routeFound) {
       const routeLayer = getRouteLayer(
@@ -972,20 +1036,21 @@ export default function MapWrapper({
       // Clear and update data
       loadCameras(selectedRoute);
       loadEvents(selectedRoute);
-      loadFerries();
-      loadWeather();
-      loadRegional();
-      loadRestStops();
+      loadFerries(selectedRoute);
+      loadWeather(selectedRoute);
+      loadRegional(selectedRoute);
+      loadRestStops(selectedRoute);
       loadAdvisories();
 
       // Zoom/pan to route on route updates
       if (!isInitialMount) {
         fitMap(selectedRoute.route, mapView);
       }
+
     } else {
       // Clear and update data
       loadCameras();
-      loadEvents(null);
+      loadEvents();
       loadFerries();
       loadWeather();
       loadRegional();

@@ -2,16 +2,7 @@ import re
 from pathlib import Path
 
 import environ
-import requests
-from apps.shared.enums import (
-    ROUTE_FILTER_TOLERANCE,
-    SUBJECT_CHOICES,
-    SUBJECT_TITLE,
-    CacheKey,
-    CacheTimeout,
-)
-from django.contrib.gis.geos import LineString, Point
-from django.contrib.gis.measure import D
+from apps.shared.enums import SUBJECT_CHOICES, SUBJECT_TITLE, CacheKey, CacheTimeout
 from django.core.cache import cache
 from django.core.mail import send_mail
 from django.db import connection
@@ -90,39 +81,7 @@ class CachedListModelMixin:
         )
 
     def list(self, request, *args, **kwargs):
-        route = request.query_params.get('route')
-        if not route:
-            return Response(self.get_or_set_list_data())
-
-        return Response(
-            self.fetch_list_data(
-                self.get_filtered_queryset(route)
-            )
-        )
-
-    def get_filtered_queryset(self, geo_filter):
-        payload = {
-            "points": geo_filter,
-        }
-
-        # DBC22:1201
-        # Fetch route from API again to avoid sending too many coordinates from client
-        # To be removed once we have route saved in backend
-        response = requests.get(
-            env("DRIVEBC_ROUTE_PLANNER_API_BASE_URL") + "/directions.json",
-            params=payload,
-            headers={
-                "apiKey": env("DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY"),
-            }
-        )
-
-        points_list = [Point(p) for p in response.json()['route']]
-        res = self.queryset.filter(
-            location__distance_lte=(
-                LineString(points_list), D(m=ROUTE_FILTER_TOLERANCE)
-            )
-        )
-        return res
+        return Response(self.get_or_set_list_data())
 
 
 class AppCacheTestViewSet(APIView):

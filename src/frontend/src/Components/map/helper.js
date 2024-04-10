@@ -1,8 +1,10 @@
 // Third party packages
 import { lineString, bbox } from "@turf/turf";
 
-// Openlayers
+// Map & geospatial imports
 import { fromLonLat, transformExtent } from 'ol/proj';
+import * as turf from '@turf/turf';
+import Flatbush from 'flatbush';
 import Overlay from 'ol/Overlay.js';
 
 // Styling
@@ -164,4 +166,84 @@ export const setLocationPin = (coordinates, svgMarkup, mapRef, pinRef) => {
     svgImage.style.width = newSize + 'px';
     svgImage.style.height = newSize + 'px';
   });
+}
+
+export const filterByRoute = (data, route, extraToleranceMeters) => {
+  if (!route) {
+    return data;
+  }
+
+  const lineCoords = route.route;
+  const routeLineString = turf.lineString(lineCoords);
+  const bufferedRouteLineString = turf.buffer(routeLineString, 150, {units: 'meters'});
+  const routeBBox = turf.bbox(routeLineString);
+
+  const spatialIndex = new Flatbush(data.length);
+
+  data.forEach((entry) => {
+    // Add points to the index with slight tolerance
+    if (entry.location.type == "Point") {
+      const coords = entry.location.coordinates;
+      const pointRadius = extraToleranceMeters ? 0.0001 * (extraToleranceMeters / 10) : 0.0001; // ~11m default tolerance
+      spatialIndex.add(coords[0] - pointRadius, coords[1] - pointRadius, coords[0] + pointRadius, coords[1] + pointRadius);
+
+    // Add linestrings to the index
+    } else {
+      const coords = entry.location.coordinates;
+      const ls = turf.lineString(coords);
+      const bbox = turf.bbox(routeLineString);
+      spatialIndex.add(bbox[0], bbox[1], bbox[2], bbox[3]);
+    }
+  });
+
+  // Finish building the index
+  spatialIndex.finish();
+
+  // Query the index for features intersecting with the linestring
+  const dataInBBox = [];
+  spatialIndex.search(routeBBox[0], routeBBox[1], routeBBox[2], routeBBox[3], (idx) => {
+    dataInBBox.push(data[idx]);
+  });
+
+  // Narrow down the results to only include intersections along the linestring
+  const intersectingData = dataInBBox.filter(entry => {
+    if (entry.location.type == "Point") {
+      const coords = entry.location.coordinates;
+      let dataPoint = turf.point(coords);
+      if (extraToleranceMeters) {
+        dataPoint = turf.buffer(dataPoint, extraToleranceMeters, {units: 'meters'});
+      }
+
+      return turf.booleanIntersects(dataPoint, bufferedRouteLineString);
+
+    } else {
+      const coords = entry.location.coordinates;
+      const dataLs = turf.lineString(coords);
+
+      return turf.booleanIntersects(dataLs, routeLineString);
+    }
+  });
+
+  return intersectingData;
+}
+
+export const compareRoutePoints = (routePoints, savedPoints) => {
+  // Both are arrays of points, compare each point
+  if (!!routePoints && !!savedPoints) {
+    for (let i=0; i < routePoints.length; i++) {
+      const rPoint = turf.point(routePoints[i]);
+      const sPoint = turf.point(savedPoints[i]);
+
+      // Return false if one of the points aren't equal
+      if (!turf.booleanEqual(rPoint, sPoint)) {
+        return false;
+      }
+    }
+
+    // Return true if all points are equal
+    return true;
+  }
+
+  // Direct comparison if not both of them are arrays of points
+  return routePoints == savedPoints;
 }
