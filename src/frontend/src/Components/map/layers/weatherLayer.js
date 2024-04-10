@@ -28,7 +28,7 @@ export function loadWeatherLayers(weatherData, mapContext, projectionCode) {
           }
           const lat = weather.location.coordinates[0];
           const lng = weather.location.coordinates[1]
-          const olGeometry = new Point([lng, lat]);
+          const olGeometry = new Point([lat, lng]);
           const olFeature = new ol.Feature({ geometry: olGeometry });
 
           // Transfer properties

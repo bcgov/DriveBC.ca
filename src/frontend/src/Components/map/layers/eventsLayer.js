@@ -115,37 +115,37 @@ export function loadEventsLayers(
         // Add feature to relative vs
         addFeature(eventTransformed, event.display_category);
       }
+    });
 
-      // Helper function to add layer to map
-      const addLayer = (name, vs, zIndex) => {
-        if (mapLayers.current[name]) {
-          mapRef.current.removeLayer(mapLayers.current[name]);
-        }
-
-        mapLayers.current[name] = new VectorLayer({
-          classname: 'events',
-          visible: mapContext.visible_layers[name],
-          source: vs,
-          style: function (feature, resolution) {
-            return getEventIcon(feature, 'static');
-          },
-        });
-
-        mapRef.current.addLayer(mapLayers.current[name]);
-        mapLayers.current[name].setZIndex(zIndex);
+    // Helper function to add layer to map
+    const addLayer = (name, vs, zIndex) => {
+      if (mapLayers.current[name]) {
+        mapRef.current.removeLayer(mapLayers.current[name]);
       }
 
-      // Add layer to map for each vs
-      addLayer('closures', closureVS, 128);
-      addLayer('closuresLines', closureLinesVS, 42);
-      addLayer('majorEvents', majorEventsVS, 118);
-      addLayer('majorEventsLines', majorEventsLinesVS, 32);
-      addLayer('minorEvents', minorEventsVS, 108);
-      addLayer('minorEventsLines', minorEventsLinesVS, 22);
-      addLayer('futureEvents', futureEventsVS, 98);
-      addLayer('futureEventsLines', futureEventsLinesVS, 12);
-      addLayer('roadConditions', roadConditionsVS, 88);
-      addLayer('roadConditionsLines', roadConditionsLinesVS, 2);
-    });
+      mapLayers.current[name] = new VectorLayer({
+        classname: 'events',
+        visible: mapContext.visible_layers[name],
+        source: vs,
+        style: function (feature, resolution) {
+          return getEventIcon(feature, 'static');
+        },
+      });
+
+      mapRef.current.addLayer(mapLayers.current[name]);
+      mapLayers.current[name].setZIndex(zIndex);
+    }
+
+    // Add layer to map for each vs
+    addLayer('closures', closureVS, 128);
+    addLayer('closuresLines', closureLinesVS, 42);
+    addLayer('majorEvents', majorEventsVS, 118);
+    addLayer('majorEventsLines', majorEventsLinesVS, 32);
+    addLayer('minorEvents', minorEventsVS, 108);
+    addLayer('minorEventsLines', minorEventsLinesVS, 22);
+    addLayer('futureEvents', futureEventsVS, 98);
+    addLayer('futureEventsLines', futureEventsLinesVS, 12);
+    addLayer('roadConditions', roadConditionsVS, 88);
+    addLayer('roadConditionsLines', roadConditionsLinesVS, 2);
   }
 }
