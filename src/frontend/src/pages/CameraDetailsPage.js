@@ -138,7 +138,7 @@ export default function CameraDetailsPage() {
   const customLeftNav = (onClick, disabled) => {
     return (
       <div className="replay-control replay-control--backward">
-        <Button className="replay-btn replay-backward" onClick={onClick} disabled={disabled} >
+        <Button className="replay-btn replay-backward" onClick={onClick} disabled={disabled} aria-label='rewind' >
           <FontAwesomeIcon icon={faBackward} />
         </Button>
       </div>
@@ -148,7 +148,7 @@ export default function CameraDetailsPage() {
   const customPlayPause = (onClick, isPlaying) => {
     return (
       <div className="replay-control replay-control--play">
-        <Button className="replay-btn replay-play" onClick={onClick} isPlaying={isPlaying} >
+        <Button className="replay-btn replay-play" onClick={onClick} isPlaying={isPlaying} aria-label={isPlaying ? "pause" : "play"} >
           {isPlaying ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
         </Button>
       </div>
@@ -158,7 +158,7 @@ export default function CameraDetailsPage() {
   const customRightNav = (onClick, disabled) => {
     return (
       <div className="replay-control replay-control--forward">
-        <Button className="replay-btn replay-forward" onClick={onClick} disabled={disabled} >
+        <Button className="replay-btn replay-forward" onClick={onClick} disabled={disabled} aria-label='fastforward' >
           <FontAwesomeIcon icon={faForward} />
         </Button>
       </div>
