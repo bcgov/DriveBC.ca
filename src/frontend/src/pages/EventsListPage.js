@@ -23,6 +23,10 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Internal imports
+import {
+  compareRoutePoints,
+  filterByRoute,
+} from '../Components/map/helper';
 import { getAdvisories } from '../Components/data/advisories';
 import { getEvents } from '../Components/data/events';
 import { MapContext } from '../App.js';
@@ -71,9 +75,11 @@ export default function EventsListPage() {
 
   // Redux
   const dispatch = useDispatch();
-  const { advisories, events, eventTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({
+  const { advisories, events, filteredEvents, eventFilterPoints, selectedRoute } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
     events: state.feeds.events.list,
+    filteredEvents: state.feeds.events.filteredList,
+    eventFilterPoints: state.feeds.events.filterPoints,
     eventTimeStamp: state.feeds.events.routeTimeStamp,
     selectedRoute: state.routes.selectedRoute
   }))));
@@ -133,16 +139,24 @@ export default function EventsListPage() {
     setAdvisoriesInRoute(resAdvisories);
   };
 
-  const loadEvents = async (route) => {
-    const newRouteTimestamp = route ? route.searchTimestamp : null;
+  const loadEvents = async route => {
+    const routePoints = route ? route.points : null;
 
-    // Fetch data if it doesn't already exist or route was updated
-    if (!events || (eventTimeStamp != newRouteTimestamp)) {
-      dispatch(updateEvents({
-        list: await getEvents(route ? route.points : null),
-        routeTimeStamp: newRouteTimestamp,
-        timeStamp: new Date().getTime()
-      }));
+    // Load if filtered cams don't exist or route doesn't match
+    if (!filteredEvents || !compareRoutePoints(routePoints, eventFilterPoints)) {
+      // Fetch data if it doesn't already exist
+      const eventData = events ? events : await getEvents();
+
+      // Filter data by route
+      const filteredEventData = route ? filterByRoute(eventData, route) : eventData;
+
+      dispatch(
+        updateEvents({
+          list: eventData,
+          filteredList: filteredEventData,
+          filterPoints: route ? route.points : null
+        })
+      );
     }
   }
 
@@ -150,7 +164,7 @@ export default function EventsListPage() {
     const hasTrue = (val) => !!val;
     const hasFilterOn = Object.values(eventCategoryFilter).some(hasTrue);
 
-    let res = [...events];
+    let res = [...filteredEvents];
 
     // Filter
     if (hasFilterOn) {
@@ -177,7 +191,7 @@ export default function EventsListPage() {
       processEvents();
       setShowLoader(false);
     }
-  }, [events, eventCategoryFilter]);
+  }, [filteredEvents, eventCategoryFilter]);
 
   useEffect(() => {
     if (showLoader) {
