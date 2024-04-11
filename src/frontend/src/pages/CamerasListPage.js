@@ -14,11 +14,15 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
 // Components and functions
+import {
+  compareRoutePoints,
+  filterByRoute,
+} from '../Components/map/helper';
 import { getAdvisories } from '../Components/data/advisories';
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
 import Advisories from '../Components/advisories/Advisories';
 import CameraList from '../Components/cameras/CameraList';
-import Footer from '../Footer.js';
+import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import RouteSearch from '../Components/map/RouteSearch';
 
@@ -30,9 +34,11 @@ export default function CamerasListPage() {
 
   // Redux
   const dispatch = useDispatch();
-  const { advisories, cameras, camTimeStamp, selectedRoute } = useSelector(useCallback(memoize(state => ({
+  const { advisories, cameras, filteredCameras, camFilterPoints, selectedRoute } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
     cameras: state.feeds.cameras.list,
+    filteredCameras: state.feeds.cameras.filteredList,
+    camFilterPoints: state.feeds.cameras.filterPoints,
     camTimeStamp: state.feeds.cameras.routeTimeStamp,
     selectedRoute: state.routes.selectedRoute
   }))));
@@ -47,36 +53,25 @@ export default function CamerasListPage() {
   const [searchText, setSearchText] = useState('');
 
   // Data functions
-  const getCamerasData = async () => {
-    const newRouteTimestamp = selectedRoute ? selectedRoute.searchTimestamp : null;
+  const getCamerasData = async route => {
+    const routePoints = route ? route.points : null;
 
-    let tempCams = cameras;
-    if (!tempCams || (camTimeStamp != newRouteTimestamp)) {
-      tempCams = await getCameras(selectedRoute ? selectedRoute.points : null);
+    // Load if filtered cams don't exist or route doesn't match
+    if (!filteredCameras || !compareRoutePoints(routePoints, camFilterPoints)) {
+      // Fetch data if it doesn't already exist
+      const camData = cameras ? cameras : await getCameras();
 
-      dispatch(updateCameras({
-        list: tempCams,
-        routeTimeStamp: selectedRoute ? selectedRoute.searchTimestamp : null,
-        timeStamp: new Date().getTime()
-      }));
+      // Filter data by route
+      const filteredCamData = route ? filterByRoute(camData, route) : camData;
+
+      dispatch(
+        updateCameras({
+          list: camData,
+          filteredList: filteredCamData,
+          filterPoints: route ? route.points : null
+        })
+      );
     }
-
-    // Deep clone and add group reference to each cam
-    const clonedCameras = JSON.parse(JSON.stringify(tempCams));
-    const finalCameras = addCameraGroups(clonedCameras);
-
-    // Sort cameras by highway number and highway_cam_order
-    finalCameras.sort(function(a, b) {
-      const highwayCompare = collator.compare(a.highway_display, b.highway_display);
-      if (highwayCompare == 0) {
-        return collator.compare(a.highway_cam_order, b.highway_cam_order);
-      }
-
-      return highwayCompare;
-    });
-
-    setProcessedCameras(finalCameras);
-    getAdvisoriesData(finalCameras);
   };
 
   const getAdvisoriesData = async (camsData) => {
@@ -115,9 +110,30 @@ export default function CamerasListPage() {
 
   // useEffect hooks
   useEffect(() => {
-    getCamerasData();
+    getCamerasData(selectedRoute);
 
   }, [selectedRoute]);
+
+  useEffect(() => {
+    if (filteredCameras) {
+      // Deep clone and add group reference to each cam
+      const clonedCameras = JSON.parse(JSON.stringify(filteredCameras));
+      const finalCameras = addCameraGroups(clonedCameras);
+
+      // Sort cameras by highway number and highway_cam_order
+      finalCameras.sort(function(a, b) {
+        const highwayCompare = collator.compare(a.highway_display, b.highway_display);
+        if (highwayCompare == 0) {
+          return collator.compare(a.highway_cam_order, b.highway_cam_order);
+        }
+
+        return highwayCompare;
+      });
+
+      setProcessedCameras(finalCameras);
+      getAdvisoriesData(finalCameras);
+    }
+  }, [filteredCameras]);
 
   useEffect(() => {
     // Search name and caption of all cams in group
