@@ -20,7 +20,7 @@ export default function Pin({role}) {
 
   return (
     <div ref={dragRef} className="pin" style={{opacity, transform: 'translate(0, 0)'}}>
-      <svg display="block" height="41px" width="27px" viewBox="0 0 27 41">
+      <svg display="block" height="41px" width="27px" viewBox="0 0 27 41" aria-hidden="true" focusable="false" role="img">
         <g fillRule="nonzero">
           <g transform="translate(3.0, 29.0)" fill="#000000">
             <ellipse opacity="0.04" cx="10.5" cy="5.80029008" rx="10.5" ry="5.25002273"></ellipse>

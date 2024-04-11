@@ -11,7 +11,7 @@ import {
   faVideo,
   faSnowflake,
   faFerry,
-  faTemperatureHalf,
+  faSunCloud,
   faRestroom,
 } from '@fortawesome/pro-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
@@ -171,7 +171,7 @@ export default function Filters(props) {
                   />
                   <label htmlFor="filter--major">
                     <span className="filter-item__icon">
-                    <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg" alt="major delays" aria-hidden="true" focusable="false" role="img">
                       <path className="filter-item__icon__path" d="M1.22269 6.84836L6.45493 1.61612C7.89977 0.171277 10.2423 0.171276 11.6872 1.61612L16.9194 6.84836C18.3642 8.2932 18.3642 10.6358 16.9194 12.0806L11.6872 17.3128C10.2423 18.7577 7.89977 18.7577 6.45493 17.3128L1.22269 12.0806C-0.222156 10.6358 -0.222157 8.2932 1.22269 6.84836ZM3.18478 8.81045C2.82357 9.17166 2.82357 9.7573 3.18478 10.1185L8.41702 15.3507C8.77823 15.712 9.36386 15.712 9.72507 15.3507L14.9573 10.1185C15.3185 9.7573 15.3185 9.17166 14.9573 8.81045L9.72507 3.57821C9.36386 3.217 8.77823 3.217 8.41702 3.57821L3.18478 8.81045Z"/>
                     </svg>
                     </span>
@@ -196,7 +196,7 @@ export default function Filters(props) {
                   />
                   <label htmlFor="filter--minor">
                     <span className="filter-item__icon">
-                    <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg" alt="minor delays" aria-hidden="true" focusable="false" role="img">
                       <path className="filter-item__icon__path" d="M15.501 0H2.50098C0.660978 0 -0.549022 1.65 0.250978 3.08L6.75098 14.77C7.66098 16.4 10.351 16.4 11.261 14.77L17.761 3.08C18.551 1.65 17.341 0 15.501 0ZM15.441 3.03L9.45098 13.81C9.45098 13.81 9.29098 14.01 8.94098 14.01C8.59098 14.01 8.46098 13.85 8.43098 13.81L2.59098 3.26C2.23098 2.61 2.48098 2 3.23098 2H14.961C15.551 2 15.741 2.51 15.451 3.03H15.441Z"/>
                     </svg>
                     </span>
@@ -271,7 +271,7 @@ export default function Filters(props) {
                   />
                   <label htmlFor="filter--road-conditions">
                     <span className="filter-item__icon">
-                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" alt="road conditions" aria-hidden="true" focusable="false" role="img">
                         <path className="filter-item__icon__path" d="M19.5625 8.8925L11.1125 0.4425C10.4825 -0.1475 9.5125 -0.1475 8.8825 0.4425L0.4425 8.8925C-0.1475 9.5225 -0.1475 10.4925 0.4425 11.1225L8.8925 19.5725C9.5225 20.1625 10.4925 20.1625 11.1225 19.5725L19.5725 11.1225C20.1625 10.4925 20.1625 9.5225 19.5725 8.8925H19.5625ZM8.9425 10.4525L5.5625 13.8325C5.3125 14.0625 4.9225 14.0625 4.6725 13.8325L1.2925 10.4525C1.0625 10.2025 1.0625 9.8125 1.2925 9.5625L4.6725 6.1825C4.9225 5.9525 5.3125 5.9525 5.5625 6.1825L8.9425 9.5625C9.1725 9.8125 9.1725 10.2025 8.9425 10.4525ZM18.7225 10.4525L15.3425 13.8325C15.0925 14.0625 14.7025 14.0625 14.4525 13.8325L11.0725 10.4525C10.8425 10.2025 10.8425 9.8125 11.0725 9.5625L14.4525 6.1825C14.7025 5.9525 15.0925 5.9525 15.3425 6.1825L18.7225 9.5625C18.9525 9.8125 18.9525 10.2025 18.7225 10.4525Z" fill="#195A97"/>
                       </svg>
                     </span>
@@ -317,7 +317,7 @@ export default function Filters(props) {
                   />
                   <label htmlFor="filter--weather">
                     <span className="filter-item__icon">
-                      <FontAwesomeIcon icon={faTemperatureHalf} alt="weather" />
+                      <FontAwesomeIcon icon={faSunCloud} alt="weather" />
                     </span>
                     Weather
                   </label>
@@ -336,7 +336,7 @@ export default function Filters(props) {
                   />
                   <label htmlFor="filter--rest-stops">
                     <span className="filter-item__icon">
-                      <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg" alt="rest stops" aria-hidden="true" focusable="false" role="img">
                         <path className="filter-item__icon__path" d="M19 3C19 3.1875 18.9688 3.34375 18.9375 3.5C19.5625 3.9375 20 4.6875 20 5.5C20 6.90625 18.875 8 17.5 8H17L17 15C17 15.5625 16.5312 16 16 16C15.4375 16 15 15.5625 15 15V8H14.5C13.0937 8 12 6.90625 12 5.5C12 4.6875 12.4062 3.9375 13.0312 3.5C13 3.34375 13 3.1875 13 3C13 1.34375 14.3438 0 16 0C17.6562 0 19 1.34375 19 3ZM1 7C1 6.46875 1.4375 6 2 6L10 6C10.5312 6 11 6.46875 11 7V9C11 9.5625 10.5312 10 10 10L2 10C1.4375 10 1 9.5625 1 9L1 7ZM1 11L11 11C11.5312 11 12 11.4688 12 12C12 12.5625 11.5312 13 11 13V15C11 15.5625 10.5312 16 10 16C9.4375 16 9 15.5625 9 15V13L3 13L3 15C3 15.5625 2.53125 16 2 16C1.4375 16 1 15.5625 1 15L1 13C0.4375 13 0 12.5625 0 12C0 11.4688 0.4375 11 1 11Z"/>
                       </svg>                    
                     </span>
