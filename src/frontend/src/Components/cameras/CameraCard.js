@@ -39,6 +39,12 @@ export default function CameraCard(props) {
     sessionStorage.setItem('scrollPosition', window.pageYOffset);
   }
 
+  function handleKeyDown(event) {
+    if (event.key === 'Enter') {
+      handleClick();
+    }
+  }
+
   function handleViewOnMap() {
     navigate('/', {state: camera});
   }
@@ -55,7 +61,7 @@ export default function CameraCard(props) {
 
   return (
     <Card className={`webcam-card ${stale} ${delayed} ${unavailable}`}>
-      <Card.Body onClick={handleClick}>
+      <Card.Body onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
         <p className="camera-name bold">{camera.name}</p>
         <div className="camera-orientations">
 
