@@ -1,14 +1,30 @@
 @import "../../styles/variables.scss";
 
 .advisories {
-  display: flex;
   background-color: $Surface-tint-yellow;
-  padding: 32px;
+  padding: 1.5rem 2rem 1rem;
   margin-bottom: 2em;
+  border-left: 3px solid $BC-Yellow-Dark;
 
   .imagery {
-    margin-right: 20px;
     font-size: 2rem;
     color: $BC-Yellow-Dark;
+  }
+  
+  .content {
+    h3, .description{
+      color: $BC-Yellow-Dark;
+    }
+
+    .advisories-list {
+      list-style-type: disc;
+      .advisory-li {
+        margin-left: 1.5rem;
+
+        &::marker {
+          color: $Type-Link;
+        }
+      }
+    }
   }
 }

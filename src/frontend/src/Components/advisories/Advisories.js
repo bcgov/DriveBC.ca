@@ -26,8 +26,14 @@ export default function Advisories(props) {
       </div>
 
       <div className="content">
-        <h3>Advisory</h3>
-        <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={true} />
+        <h3>
+          {advisories.length > 1 ? 'Advisories ' : 'Advisory'}
+          in effect
+        </h3>
+
+        <p className="description">The following advisory affects a portion of the route you’ve chosen:</p>
+
+        <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={false} />
       </div>
     </div>
   ) : null;
