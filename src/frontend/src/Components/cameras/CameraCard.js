@@ -137,7 +137,7 @@ export default function CameraCard(props) {
         }
         <div className="timestamp">
           <p className="driveBC">Drive<span>BC</span></p>
-          <FriendlyTime date={camera.last_update_modified} />
+          <FriendlyTime date={camera.last_update_modified} asDate={true} />
         </div>
         <p className="label">{camera.caption}</p>
       </Card.Body>
