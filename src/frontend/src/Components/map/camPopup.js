@@ -97,7 +97,7 @@ export default function CamPopup(props) {
               </div>
               <div className="timestamp">
                 <p className="driveBC">Drive<span>BC</span></p>
-                <FriendlyTime date={camera.last_update_modified} includeFullIfHumanized />
+                <FriendlyTime date={camera.last_update_modified} asDate={true} />
               </div>
             </div> :
             <div className="popup__content__image">
