@@ -252,10 +252,10 @@
 
   &.delayed {
     .card-banner, .card-pill {
-      background-color: #FDDC8C;
+      background-color: $Surface-status-yellow;
 
       p, svg {
-        color: #866619;
+        color: $BC-Yellow-Dark;
       }
     }
   }
