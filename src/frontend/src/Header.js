@@ -8,7 +8,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 
 // Static files
-import logo from './images/dbc-logo.svg';
+import logo from './images/dbc-logo-beta.svg';
 
 // Styling
 import './Header.scss';
