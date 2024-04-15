@@ -33,8 +33,13 @@ def build_data_diff(current_obj, new_obj_data):
         if not compare_data(current_field_data, new_field_data):
             if field == 'location':
                 # {'coordinates': [-122.601346, 49.143921], 'type': 'Point'}
-                locationCls = Point if new_field_data['type'] == 'Point' else LineString
-                data_diff[field] = locationCls(new_field_data['coordinates'])
+                if new_field_data['type'] == 'Point':
+                    data_diff[field] = Point(new_field_data['coordinates'])
+
+                else:
+                    ls = LineString(new_field_data['coordinates'])
+                    data_diff[field] = ls
+                    data_diff['polygon'] = ls.buffer_with_style(distance=0.0182, end_cap_style=2)  # ~2km buffer in degrees
 
             else:
                 data_diff[field] = new_field_data
