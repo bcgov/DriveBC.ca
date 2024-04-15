@@ -18,6 +18,7 @@ class Event(BaseModel):
     # Location
     direction = models.CharField(max_length=32)
     location = models.GeometryField()
+    polygon = models.GeometryField(null=True)
     route_at = models.CharField(max_length=128)
     route_from = models.CharField(max_length=128)
     route_to = models.CharField(max_length=128, blank=True)
@@ -39,3 +40,10 @@ class Event(BaseModel):
     # Scheduled start and end
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
+
+    def save(self, *args, **kwargs):
+        # Put buffer on LineStrings on creation only
+        if self._state.adding and self.location and self.location.geom_type == 'LineString':
+            self.polygon = self.location.buffer_with_style(0.0182, end_cap_style=2)  # ~2km buffer in degrees
+
+        super().save(*args, **kwargs)
