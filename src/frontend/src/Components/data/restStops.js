@@ -25,8 +25,8 @@ export function isRestStopClosed(restStopProperties) {
     const openDate = restStopProperties.OPEN_DATE;
     const closeDate = restStopProperties.CLOSE_DATE;
     if(openDate && closeDate){
-      const openDateY = new Date(openDate.toString() + "-" + year.toString());
-      const closeDateY =  new Date(closeDate.toString() + "-" + year.toString());
+      const openDateY = new Date(year.toString() + "-"  + openDate.toString());
+      const closeDateY =  new Date(year.toString() + "-" + closeDate.toString());
       const isInSeason = (today.getTime() > openDateY.getTime()) && (today.getTime() < closeDateY.getTime());
       const isClosed = isInSeason? false: true;
       return isClosed;
