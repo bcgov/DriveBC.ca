@@ -42,8 +42,13 @@ class Event(BaseModel):
     end = models.DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
-        # Put buffer on LineStrings on creation only
-        if self._state.adding and self.location and self.location.geom_type == 'LineString':
-            self.polygon = self.location.buffer_with_style(0.0182, end_cap_style=2)  # ~2km buffer in degrees
+        # Put buffer on road condition LineStrings on creation only
+        if self._state.adding and self.location and self.location.geom_type == 'LineString' and self.pk.startswith('DBCRCON'):
+            self.location.transform(3857)  # Transform to 3857 before adding buffer
+            self.polygon = self.location.buffer_with_style(2000, end_cap_style=2)  # 2km buffer
+
+            # Transform back to 4326 before updating
+            self.location.transform(4326)
+            self.polygon.transform(4326)
 
         super().save(*args, **kwargs)

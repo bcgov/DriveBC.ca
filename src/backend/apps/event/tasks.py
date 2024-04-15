@@ -35,11 +35,23 @@ def build_data_diff(current_obj, new_obj_data):
                 # {'coordinates': [-122.601346, 49.143921], 'type': 'Point'}
                 if new_field_data['type'] == 'Point':
                     data_diff[field] = Point(new_field_data['coordinates'])
+                    data_diff['polygon'] = None
 
                 else:
                     ls = LineString(new_field_data['coordinates'])
                     data_diff[field] = ls
-                    data_diff['polygon'] = ls.buffer_with_style(distance=0.0182, end_cap_style=2)  # ~2km buffer in degrees
+
+                    # Add buffer to road condition linestrings
+                    if new_obj_data['id'].startswith('DBCRCON'):
+                        ls.transform(3857)  # Transform to 3857 before adding buffer
+                        data_diff['polygon'] = ls.buffer_with_style(2000, end_cap_style=2)  # Add 2km buffer
+
+                        # transform back to 4326 before updating
+                        ls.transform(4326)
+                        data_diff['polygon'].transform(4326)
+
+                    else:
+                        data_diff['polygon'] = None
 
             else:
                 data_diff[field] = new_field_data
