@@ -99,14 +99,14 @@ class TestEventSerializer(BaseTest):
         self.serializer_five = EventSerializer(self.event_five)
 
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 26
+        assert len(self.serializer.data) == 27
         # route_from beings with 'at '
         assert self.serializer.data['route_display'] == \
                "Test Road to Test Avenue"
         assert self.serializer.data['direction_display'] == \
                "Northbound"
 
-        assert len(self.serializer_two.data) == 26
+        assert len(self.serializer_two.data) == 27
         # route_from doesn't being with 'at '
         assert self.serializer_two.data['route_display'] == \
                "Test Road Two to Test Avenue Two"
