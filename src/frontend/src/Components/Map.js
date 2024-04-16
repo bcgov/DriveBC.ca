@@ -259,6 +259,7 @@ export default function MapWrapper({
     });
 
     const vectorLayer = new VectorTileLayer({
+      declutter: true,
       source: new VectorTileSource({
         format: new MVT(),
         url: window.BASE_MAP,
