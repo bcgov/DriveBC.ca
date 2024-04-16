@@ -25,7 +25,7 @@ import CameraList from '../Components/cameras/CameraList';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import RouteSearch from '../Components/map/RouteSearch';
-
+import trackEvent from '../Components/TrackEvent.js';
 // Styling
 import './CamerasListPage.scss';
 
@@ -194,6 +194,8 @@ export default function CamerasListPage() {
               id="camera-name-search"
               isLoading={false}
               onSearch={() => {}}
+              onBlur={() => {
+                trackEvent('cameras', 'camera-list', 'search', searchText)}}
               onInputChange={(text) => setSearchText(text)}
               placeholder={"Find by camera name"}
               inputProps={{

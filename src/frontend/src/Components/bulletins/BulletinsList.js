@@ -5,7 +5,7 @@ import {useNavigate} from 'react-router-dom';
 // Components and functions
 import { stripRichText } from '../data/helper';
 import FriendlyTime from '../FriendlyTime';
-
+import trackEvent from '../TrackEvent';
 // Styling
 import './BulletinsList.scss';
 
@@ -20,6 +20,7 @@ export default function Bulletins(props) {
   const navigate = useNavigate();
 
   function handleClick(bulletin) {
+    trackEvent('click', 'bulletins-list', 'Bulletin', bulletin.title, bulletin.teaser);
      navigate(`/bulletins/${bulletin.id}`);
   }
 

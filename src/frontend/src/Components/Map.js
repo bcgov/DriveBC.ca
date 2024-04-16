@@ -74,6 +74,7 @@ import CurrentCameraIcon from './CurrentCameraIcon';
 import Filters from './Filters.js';
 import RouteSearch from './map/RouteSearch.js';
 import ExitSurvey from './advisories/ExitSurvey.js';
+import trackEvent from './TrackEvent.js';
 
 // Map & geospatial imports
 import { applyStyle } from 'ol-mapbox-style';
@@ -103,11 +104,7 @@ import {
 } from './data/featureStyleDefinitions.js';
 import './Map.scss';
 
-export default function MapWrapper({
-  camera,
-  isPreview,
-  mapViewRoute,
-}) {
+export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
   // Redux
   const dispatch = useDispatch();
   const {
@@ -232,10 +229,10 @@ export default function MapWrapper({
 
   const [clickedRestStop, setClickedRestStop] = useState();
   const clickedRestStopRef = useRef();
-  const updateClickedRestStop = (feature) => {
+  const updateClickedRestStop = feature => {
     clickedRestStopRef.current = feature;
     setClickedRestStop(feature);
-  }
+  };
 
   const [advisoriesInView, setAdvisoriesInView] = useState([]);
 
@@ -397,27 +394,38 @@ export default function MapWrapper({
         updateClickedRegional(null);
       }
 
-      if (clickedRestStopRef.current && targetFeature != clickedRestStopRef.current) {
-        if(clickedRestStopRef.current !== undefined){
-          const isClosed = isRestStopClosed(clickedRestStopRef.current.values_.properties);
-          const isLargeVehiclesAccommodated = clickedRestStopRef.current.values_.properties.ACCOM_COMMERCIAL_TRUCKS === "Yes"? true: false;
-          if(isClosed){
-            if(isLargeVehiclesAccommodated){
-              clickedRestStopRef.current.setStyle(restStopTruckClosedStyles['static']);
+      if (
+        clickedRestStopRef.current &&
+        targetFeature != clickedRestStopRef.current
+      ) {
+        if (clickedRestStopRef.current !== undefined) {
+          const isClosed = isRestStopClosed(
+            clickedRestStopRef.current.values_.properties,
+          );
+          const isLargeVehiclesAccommodated =
+            clickedRestStopRef.current.values_.properties
+              .ACCOM_COMMERCIAL_TRUCKS === 'Yes'
+              ? true
+              : false;
+          if (isClosed) {
+            if (isLargeVehiclesAccommodated) {
+              clickedRestStopRef.current.setStyle(
+                restStopTruckClosedStyles['static'],
+              );
+            } else {
+              clickedRestStopRef.current.setStyle(
+                restStopClosedStyles['static'],
+              );
             }
-            else{
-              clickedRestStopRef.current.setStyle(restStopClosedStyles['static']);
-            }
-          }
-          else{
-            if(isLargeVehiclesAccommodated){
-              clickedRestStopRef.current.setStyle(restStopTruckStyles['static']);
-            }
-            else{
+          } else {
+            if (isLargeVehiclesAccommodated) {
+              clickedRestStopRef.current.setStyle(
+                restStopTruckStyles['static'],
+              );
+            } else {
               clickedRestStopRef.current.setStyle(restStopStyles['static']);
             }
           }
-
         }
         updateClickedRestStop(null);
       }
@@ -485,32 +493,32 @@ export default function MapWrapper({
       updateClickedRegional(feature);
     };
 
-    const restStopClickHandler = (feature) => {
+    const restStopClickHandler = feature => {
       // reset previous clicked feature
       resetClickedStates(feature);
 
       // set new clicked rest stop feature
       const isClosed = isRestStopClosed(feature.values_.properties);
-      const isLargeVehiclesAccommodated = feature.values_.properties.ACCOM_COMMERCIAL_TRUCKS === 'Yes'? true: false;
-      if(isClosed){
-        if(isLargeVehiclesAccommodated){
+      const isLargeVehiclesAccommodated =
+        feature.values_.properties.ACCOM_COMMERCIAL_TRUCKS === 'Yes'
+          ? true
+          : false;
+      if (isClosed) {
+        if (isLargeVehiclesAccommodated) {
           feature.setStyle(restStopTruckClosedStyles['active']);
-        }
-        else{
+        } else {
           feature.setStyle(restStopClosedStyles['active']);
         }
-      }
-      else{
-        if(isLargeVehiclesAccommodated){
+      } else {
+        if (isLargeVehiclesAccommodated) {
           feature.setStyle(restStopTruckStyles['active']);
-        }
-        else{
+        } else {
           feature.setStyle(restStopStyles['active']);
         }
       }
       feature.setProperties({ clicked: true }, true);
       updateClickedRestStop(feature);
-    }
+    };
 
     mapRef.current.on('click', async e => {
       const features = mapRef.current.getFeaturesAtPixel(e.pixel, {
@@ -521,21 +529,53 @@ export default function MapWrapper({
         const clickedFeature = features[0];
         switch (clickedFeature.getProperties()['type']) {
           case 'camera':
+            trackEvent(
+              'click',
+              'map',
+              'camera',
+              clickedFeature.getProperties().name,
+            );
             camClickHandler(clickedFeature);
             return;
           case 'event':
+            console.log(clickedFeature.getProperties());
             eventClickHandler(clickedFeature);
             return;
           case 'ferry':
+            trackEvent(
+              'click',
+              'map',
+              'ferry',
+              clickedFeature.getProperties().name,
+            );
             ferryClickHandler(clickedFeature);
             return;
           case 'weather':
+            trackEvent(
+              'click',
+              'map',
+              'weather',
+              clickedFeature.getProperties().weather_station_name,
+            );
             weatherClickHandler(clickedFeature);
             return;
           case 'regional':
+            trackEvent(
+              'click',
+              'map',
+              'regional weather',
+              clickedFeature.getProperties().name,
+            );
             regionalClickHandler(clickedFeature);
             return;
           case 'rest':
+            console.log(clickedFeature.getProperties())
+            trackEvent(
+              'click',
+              'map',
+              'rest stop',
+              clickedFeature.getProperties().properties.REST_AREA_NAME
+            );
             restStopClickHandler(clickedFeature);
             return;
         }
@@ -577,21 +617,30 @@ export default function MapWrapper({
               break;
             case 'rest':
               {
-                const isClosed = isRestStopClosed(hoveredFeature.current.values_.properties);
-                const isLargeVehiclesAccommodated = hoveredFeature.current.values_.properties.ACCOM_COMMERCIAL_TRUCKS === 'Yes'? true: false;
-                if(isClosed){
-                  if(isLargeVehiclesAccommodated){
-                    hoveredFeature.current.setStyle(restStopTruckClosedStyles['static']);
+                const isClosed = isRestStopClosed(
+                  hoveredFeature.current.values_.properties,
+                );
+                const isLargeVehiclesAccommodated =
+                  hoveredFeature.current.values_.properties
+                    .ACCOM_COMMERCIAL_TRUCKS === 'Yes'
+                    ? true
+                    : false;
+                if (isClosed) {
+                  if (isLargeVehiclesAccommodated) {
+                    hoveredFeature.current.setStyle(
+                      restStopTruckClosedStyles['static'],
+                    );
+                  } else {
+                    hoveredFeature.current.setStyle(
+                      restStopClosedStyles['static'],
+                    );
                   }
-                  else{
-                    hoveredFeature.current.setStyle(restStopClosedStyles['static']);
-                  }
-                }
-                else{
-                  if(isLargeVehiclesAccommodated){
-                    hoveredFeature.current.setStyle(restStopTruckStyles['static']);
-                  }
-                  else{
+                } else {
+                  if (isLargeVehiclesAccommodated) {
+                    hoveredFeature.current.setStyle(
+                      restStopTruckStyles['static'],
+                    );
+                  } else {
                     hoveredFeature.current.setStyle(restStopStyles['static']);
                   }
                 }
@@ -642,21 +691,24 @@ export default function MapWrapper({
             return;
           case 'rest':
             if (!targetFeature.getProperties().clicked) {
-              const isClosed = isRestStopClosed(targetFeature.values_.properties);
-              const isLargeVehiclesAccommodated = targetFeature.values_.properties.ACCOM_COMMERCIAL_TRUCKS === 'Yes'? true: false;
-              if(isClosed){
-                if(isLargeVehiclesAccommodated){
+              const isClosed = isRestStopClosed(
+                targetFeature.values_.properties,
+              );
+              const isLargeVehiclesAccommodated =
+                targetFeature.values_.properties.ACCOM_COMMERCIAL_TRUCKS ===
+                'Yes'
+                  ? true
+                  : false;
+              if (isClosed) {
+                if (isLargeVehiclesAccommodated) {
                   targetFeature.setStyle(restStopTruckClosedStyles['hover']);
-                }
-                else{
+                } else {
                   targetFeature.setStyle(restStopClosedStyles['hover']);
                 }
-              }
-              else{
-                if(isLargeVehiclesAccommodated){
+              } else {
+                if (isLargeVehiclesAccommodated) {
                   targetFeature.setStyle(restStopTruckStyles['hover']);
-                }
-                else{
+                } else {
                   targetFeature.setStyle(restStopStyles['hover']);
                 }
               }
@@ -698,9 +750,16 @@ export default function MapWrapper({
         isInitialMountLocation.current = searchLocationFrom[0].label;
 
         // only zoomPan on from location change when to location is NOT set
-      } else if (isInitialMountLocation.current !== searchLocationFrom[0].label && searchLocationTo.length == 0) {
+      } else if (
+        isInitialMountLocation.current !== searchLocationFrom[0].label &&
+        searchLocationTo.length == 0
+      ) {
         isInitialMountLocation.current = false;
-        setZoomPan(mapView, 9, fromLonLat(searchLocationFrom[0].geometry.coordinates));
+        setZoomPan(
+          mapView,
+          9,
+          fromLonLat(searchLocationFrom[0].geometry.coordinates),
+        );
       }
     } else {
       // initial location was set, so no need to prevent pan/zoom
@@ -873,8 +932,8 @@ export default function MapWrapper({
       mapLayers.current['restStops'] = getRestStopsLayer(
         filteredRestStops,
         mapRef.current.getView().getProjection().getCode(),
-        mapContext
-      )
+        mapContext,
+      );
 
       mapRef.current.addLayer(mapLayers.current['restStops']);
       mapLayers.current['restStops'].setZIndex(68);
@@ -957,10 +1016,12 @@ export default function MapWrapper({
   const loadAdvisories = async () => {
     // Fetch data if it doesn't already exist
     if (!advisories) {
-      dispatch(updateAdvisories({
-        list: await getAdvisories(),
-        timeStamp: new Date().getTime()
-      }));
+      dispatch(
+        updateAdvisories({
+          list: await getAdvisories(),
+          timeStamp: new Date().getTime(),
+        }),
+      );
     }
   };
 
@@ -1129,26 +1190,27 @@ export default function MapWrapper({
     // check for active rest stop icons
     if (clickedRestStopRef.current) {
       const isClosed = isRestStopClosed(clickedRestStopRef.current.properties);
-        const isLargeVehiclesAccommodated = clickedRestStopRef.current.properties? clickedRestStopRef.current.properties.ACCOM_COMMERCIAL_TRUCKS === 'Yes': false;
-        if(isClosed){
-          if(isLargeVehiclesAccommodated){
-            clickedRestStopRef.current.setStyle(restStopTruckClosedStyles['static']);
-
-          }
-          else{
-            clickedRestStopRef.current.setStyle(restStopClosedStyles['static']);
-          }
+      const isLargeVehiclesAccommodated = clickedRestStopRef.current.properties
+        ? clickedRestStopRef.current.properties.ACCOM_COMMERCIAL_TRUCKS ===
+          'Yes'
+        : false;
+      if (isClosed) {
+        if (isLargeVehiclesAccommodated) {
+          clickedRestStopRef.current.setStyle(
+            restStopTruckClosedStyles['static'],
+          );
+        } else {
+          clickedRestStopRef.current.setStyle(restStopClosedStyles['static']);
         }
-        else{
-          if(isLargeVehiclesAccommodated){
-            clickedRestStopRef.current.setStyle(restStopTruckStyles['static']);
-          }
-          else{
-            clickedRestStopRef.current.setStyle(restStopStyles['static']);
-          }
+      } else {
+        if (isLargeVehiclesAccommodated) {
+          clickedRestStopRef.current.setStyle(restStopTruckStyles['static']);
+        } else {
+          clickedRestStopRef.current.setStyle(restStopStyles['static']);
         }
-        clickedRestStopRef.current.set('clicked', false);
-        updateClickedRestStop(null);
+      }
+      clickedRestStopRef.current.set('clicked', false);
+      updateClickedRestStop(null);
     }
 
     // Reset cam popup handler lock timer
@@ -1262,12 +1324,11 @@ export default function MapWrapper({
         className={`side-panel ${openPanel ? 'open' : ''}`}
         onClick={maximizePanel}
         onTouchMove={maximizePanel}
-        onKeyDown={(keyEvent) => {
+        onKeyDown={keyEvent => {
           if (keyEvent.keyCode == 13) {
             maximizePanel();
           }
         }}>
-
         <button
           className="close-panel"
           aria-label={`${openPanel ? 'close side panel' : ''}`}

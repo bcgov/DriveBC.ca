@@ -36,6 +36,17 @@ export default function CameraCard(props) {
   // Handlers
   function handleClick() {
     navigate(`/cameras/${camera.id}`);
+    window.snowplow('trackSelfDescribingEvent', {
+      schema: 'iglu:ca.bc.gov.drivebc/action/jsonschema/1-0-0',
+      data: {
+        action: 'click',
+        section: 'camera-list',
+        category: 'camera',
+        label: camera.name,
+        sub_label: '',
+      },
+    });
+
     sessionStorage.setItem('scrollPosition', window.pageYOffset);
   }
 
@@ -47,6 +58,16 @@ export default function CameraCard(props) {
 
   function handleViewOnMap() {
     navigate('/', {state: camera});
+    window.snowplow('trackSelfDescribingEvent', {
+      schema: 'iglu:ca.bc.gov.drivebc/action/jsonschema/1-0-0',
+      data: {
+        action: 'click',
+        section: 'camera-list',
+        category: 'Camera',
+        label: camera.name,
+        sub_label: 'View on Map Select',
+      },
+    });
   }
 
   function handleChildClick(e) {
