@@ -1,64 +1,72 @@
 @import "../styles/variables.scss";
 
 .cameras-page {
-.outer-container {
-  padding-bottom: 0;
+  position: relative;
 
-  .controls-container {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-
+  .network-error, .server-error {
     @media (max-width: 767px) {
-      flex-direction: column;
+      position: relative;
     }
+  }
 
-    .route-display-container {
+  .outer-container {
+    padding-bottom: 0;
+
+    .controls-container {
       display: flex;
-      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
 
       @media (max-width: 767px) {
-        width: 100%;
+        flex-direction: column;
       }
 
-      .routing-container {
-        position:relative;
-        padding: 0;
+      .route-display-container {
+        display: flex;
+        align-items: center;
 
         @media (max-width: 767px) {
           width: 100%;
         }
-        .swap-button{
-          position: absolute;
-          top: 14px;
-          right: -10px;
+
+        .routing-container {
+          position:relative;
+          padding: 0;
+
+          @media (max-width: 767px) {
+            width: 100%;
+          }
+          .swap-button{
+            position: absolute;
+            top: 14px;
+            right: -10px;
+          }
+        }
+      }
+
+      .search-container {
+        min-width: 360px;
+
+        @media (max-width: 767px) {
+          min-width: 100%;
+          width: 100%;
+          margin-top: 1rem;
+        }
+
+        .rbt-menu {
+          display: none !important;
         }
       }
     }
+  }
 
-    .search-container {
-      min-width: 360px;
+  .empty-cam-display {
+    h2, h6 {
+      color: #053662;
+    }
 
-      @media (max-width: 767px) {
-        min-width: 100%;
-        width: 100%;
-        margin-top: 1rem;
-      }
-
-      .rbt-menu {
-        display: none !important;
-      }
+    h6 {
+      margin-top: 2rem;
     }
   }
-}
-
-.empty-cam-display {
-  h2, h6 {
-    color: #053662;
-  }
-
-  h6 {
-    margin-top: 2rem;
-  }
-}
 }

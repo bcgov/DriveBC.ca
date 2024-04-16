@@ -1,14 +1,6 @@
 // React
 import React from 'react';
 
-// Third Party packages
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCalendarDays,
-  faSnowflake,
-  faMinusCircle,
-} from "@fortawesome/pro-solid-svg-icons";
-
 // Events
 // Closures
 import closuresActiveIcon from '../images/mapIcons/closure-active.png';

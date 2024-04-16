@@ -19,8 +19,5 @@ export function getRoute(points) {
 
     }, {
     'apiKey': `${window.ROUTE_PLANNER_KEY}`
-  }).then((data) => data)
-  .catch((error) => {
-    console.log(error);
-  });
+  }).then((data) => data);
 }

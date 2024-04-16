@@ -2,8 +2,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-// Third party packages
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+// External imports
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowLeft,
   faExclamationTriangle,
@@ -15,6 +15,8 @@ import {
   faClockRotateLeft,
   faFlag
 } from '@fortawesome/pro-solid-svg-icons';
+import { DndProvider } from 'react-dnd-multi-backend';
+import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Tab from 'react-bootstrap/Tab';
@@ -25,11 +27,12 @@ import parse from 'html-react-parser';
 import RangeSlider from 'react-bootstrap-range-slider';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 
-// Components and functions
+// Internal imports
 import { getCameraGroupMap, getCameras } from '../Components/data/webcams.js';
-import {DndProvider} from 'react-dnd-multi-backend';
-import {getWebcamReplay} from '../Components/data/webcams';
-import {HTML5toTouch} from 'rdndmb-html5-to-touch';
+import { getWebcamReplay } from '../Components/data/webcams';
+import { NetworkError, ServerError } from '../Components/data/helper';
+import NetworkErrorPopup from '../Components//map/errors/NetworkError';
+import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Map from '../Components/Map.js';
 import Footer from '../Footer.js';
 import FriendlyTime from '../Components/FriendlyTime';
@@ -43,6 +46,8 @@ import '../Components/Map.scss';
 import colocatedCamIcon from '../images/colocated-camera.svg';
 
 export default function CameraDetailsPage() {
+  const navigate = useNavigate();
+
   // Context and router data
   const params = useParams();
 
@@ -57,14 +62,25 @@ export default function CameraDetailsPage() {
   const [lastUpdate, setLastUpdate] = useState(null);
   const [activeTab, setActiveTab] = useState('webcam');
   const [hasImageEnded, setHasImageEnded] = useState(false);
+  const [showNetworkError, setShowNetworkError] = useState(false);
+  const [showServerError, setShowServerError] = useState(false);
 
-  const navigate = useNavigate();
+  // Error handling
+  const displayError = (error) => {
+    if (error instanceof ServerError) {
+      setShowServerError(true);
 
+    } else if (error instanceof NetworkError) {
+      setShowNetworkError(true);
+    }
+  }
+
+  // Data functions
   async function initCamera() {
-    const allCameras = await getCameras();
+    const allCameras = await getCameras().catch((error) => displayError(error));
     const cameraGroupMap = getCameraGroupMap(allCameras);
 
-    const camera = await getCameras(null, `${window.API_HOST}/api/webcams/${params.id}/`);
+    const camera = await getCameras(null, `${window.API_HOST}/api/webcams/${params.id}/`).catch((error) => displayError(error));
 
     // Group cameras
     const group = cameraGroupMap[camera.group];
@@ -218,6 +234,14 @@ export default function CameraDetailsPage() {
   // Rendering
   return (
     <div className="camera-page">
+      {showNetworkError &&
+        <NetworkErrorPopup />
+      }
+
+      {!showNetworkError && showServerError &&
+        <ServerErrorPopup setShowServerError={setShowServerError} />
+      }
+
       <div className="page-header">
         <Container>
           <a className="back-link"

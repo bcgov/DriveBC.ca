@@ -1,0 +1,32 @@
+.network-error {
+  position: absolute;
+  z-index: 2000;
+  background: #FDD47B;
+  border: 1px solid #F8BB47;
+  border-radius: 5px;
+  right: 20%;
+  top: 15px;
+  display: flex;
+  width: 375px;
+  height: 95px;
+  padding: 8px 12px;
+  align-items: center;
+  font-size: 0.875rem;
+  box-shadow: 0px 3.2px 7.2px 0px #00000021;
+
+  @media (max-width: 768px) {
+    right: unset;
+    top: unset;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+  }
+
+  img {
+    width: 48px;
+  }
+
+  .message-container {
+    margin-left: 15px;
+  }
+}

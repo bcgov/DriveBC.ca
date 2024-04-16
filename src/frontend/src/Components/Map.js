@@ -69,6 +69,9 @@ import { getFerriesLayer } from './map/layers/ferriesLayer.js';
 import { getCameras, addCameraGroups } from './data/webcams.js';
 import { getRouteLayer } from './map/routeLayer.js';
 import { MapContext } from '../App.js';
+import { NetworkError, ServerError } from './data/helper';
+import NetworkErrorPopup from './map/errors/NetworkError';
+import ServerErrorPopup from './map/errors/ServerError';
 import AdvisoriesOnMap from './advisories/AdvisoriesOnMap';
 import CurrentCameraIcon from './CurrentCameraIcon';
 import Filters from './Filters.js';
@@ -235,6 +238,8 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
   };
 
   const [advisoriesInView, setAdvisoriesInView] = useState([]);
+  const [showNetworkError, setShowNetworkError] = useState(false);
+  const [showServerError, setShowServerError] = useState(false);
 
   // Define the function to be executed after the delay
   function resetCameraPopupRef() {
@@ -727,9 +732,19 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     });
 
     loadData(true);
-    // toggleMyLocation();
   });
 
+  // Error handling
+  const displayError = (error) => {
+    if (error instanceof ServerError) {
+      setShowServerError(true);
+
+    } else if (error instanceof NetworkError) {
+      setShowNetworkError(true);
+    }
+  }
+
+  // Location search
   useEffect(() => {
     if (searchLocationFrom && searchLocationFrom.length) {
       if (locationPinRef.current) {
@@ -789,7 +804,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     // Load if filtered cams don't exist or route doesn't match
     if (!filteredCameras || !compareRoutePoints(routePoints, camFilterPoints)) {
       // Fetch data if it doesn't already exist
-      const camData = cameras ? cameras : await getCameras();
+      const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
 
       // Filter data by route
       const filteredCamData = route ? filterByRoute(camData, route) : camData;
@@ -837,7 +852,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     // Load if filtered cams don't exist or route doesn't match
     if (!filteredEvents || !compareRoutePoints(routePoints, eventFilterPoints)) {
       // Fetch data if it doesn't already exist
-      const eventData = events ? events : await getEvents();
+      const eventData = events ? events : await getEvents().catch((error) => displayError(error));
 
       // Filter data by route
       const filteredEventData = route ? filterByRoute(eventData, route) : eventData;
@@ -863,7 +878,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     // Load if filtered cams don't exist or route doesn't match
     if (!filteredFerries || !compareRoutePoints(routePoints, ferryFilterPoints)) {
       // Fetch data if it doesn't already exist
-      const ferryData = ferries ? ferries : await getFerries();
+      const ferryData = ferries ? ferries : await getFerries().catch((error) => displayError(error));
 
       // Filter data by route
       const filteredFerryData = route ? filterByRoute(ferryData, route) : ferryData;
@@ -905,7 +920,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     // Load if filtered cams don't exist or route doesn't match
     if (!filteredRestStops || !compareRoutePoints(routePoints, restStopFilterPoints)) {
       // Fetch data if it doesn't already exist
-      const restStopsData = restStops ? restStops : await getRestStops();
+      const restStopsData = restStops ? restStops : await getRestStops().catch((error) => displayError(error));
 
       // Filter data by route
       const filteredRestStopsData = route ? filterByRoute(restStopsData, route) : restStopsData;
@@ -947,7 +962,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     // Load if filtered cams don't exist or route doesn't match
     if (!filteredCurrentWeathers || !compareRoutePoints(routePoints, currentWeatherFilterPoints)) {
       // Fetch data if it doesn't already exist
-      const currentWeathersData = currentWeather ? currentWeather : await getWeather();
+      const currentWeathersData = currentWeather ? currentWeather : await getWeather().catch((error) => displayError(error));
 
       // Filter data by route
       const filteredCurrentWeathersData = route ? filterByRoute(currentWeathersData, route, 15000) : currentWeathersData;
@@ -1018,7 +1033,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     if (!advisories) {
       dispatch(
         updateAdvisories({
-          list: await getAdvisories(),
+          list: await getAdvisories().catch((error) => displayError(error)),
           timeStamp: new Date().getTime(),
         }),
       );
@@ -1056,7 +1071,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     // Load if filtered cams don't exist or route doesn't match
     if (!filteredRegionalWeathers || !compareRoutePoints(routePoints, regionalWeatherFilterPoints)) {
       // Fetch data if it doesn't already exist
-      const regionalWeathersData = regionalWeather ? regionalWeather : await getRegional();
+      const regionalWeathersData = regionalWeather ? regionalWeather : await getRegional().catch((error) => displayError(error));
 
       // Filter with 20km extra tolerance
       const filteredRegionalWeathersData = filterByRoute(regionalWeathersData, route, 15000);
@@ -1386,10 +1401,11 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
         )}
 
         {!isPreview && (
-          <div className="map-left-container">
+          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''}`}>
             {smallScreen && (
               <ExitSurvey mobile={true} />
             )}
+
             <RouteSearch routeEdit={true} />
             <AdvisoriesOnMap advisories={advisoriesInView} />
           </div>
@@ -1445,6 +1461,14 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
           textOverride={'Layer filters'}
         />
       )}
+
+      {showNetworkError &&
+        <NetworkErrorPopup />
+      }
+
+      {!showNetworkError && showServerError &&
+        <ServerErrorPopup setShowServerError={setShowServerError} />
+      }
     </div>
   );
 }

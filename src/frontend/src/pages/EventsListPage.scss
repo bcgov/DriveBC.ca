@@ -1,6 +1,14 @@
 @import "../styles/variables.scss";
 
 .events-page {
+  position: relative;
+
+  .network-error, .server-error {
+    @media (max-width: 768px) {
+      position: relative;
+    }
+  }
+
   .card-selector{
     cursor: pointer;
   }

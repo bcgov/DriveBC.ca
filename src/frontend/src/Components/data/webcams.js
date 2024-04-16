@@ -4,10 +4,7 @@ export function getCameras(routePoints, url = null) {
   const payload = routePoints ? { route: routePoints } : {};
 
   return get(url ? url : `${window.API_HOST}/api/webcams/`, payload)
-  .then((data) => data)
-  .catch((error) => {
-    console.log(error);
-  });
+  .then((data) => data);
 }
 
 export function getWebcamReplay(webcam) {

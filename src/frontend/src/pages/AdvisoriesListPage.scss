@@ -1,6 +1,14 @@
 @import "../styles/variables.scss";
 
 .advisories-page {
+  position: relative;
+
+  .network-error, .server-error {
+    @media (max-width: 768px) {
+      position: relative;
+    }
+  }
+
   ul.advisories-list {
 
     li.advisory-li {
@@ -51,7 +59,7 @@
             display: none;
           }
         }
-        
+
         .friendly-time, .formatted-date {
           margin-left: 1ch;
         }

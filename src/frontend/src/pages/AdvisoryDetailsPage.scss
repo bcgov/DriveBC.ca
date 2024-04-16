@@ -1,6 +1,14 @@
 @import "../styles/variables.scss";
 
-.advisory-page {  
+.advisory-page {
+  position: relative;
+
+  .network-error, .server-error {
+    @media (max-width: 768px) {
+      position: relative;
+    }
+  }
+
   .page-header {
     .page-description {
       max-width: initial;
@@ -10,7 +18,7 @@
       h4, .friendly-time {
         display: inline-block;
       }
-    
+
       .friendly-time {
         margin-left: 15px;
       }
@@ -100,7 +108,7 @@
         @media (min-width: 992px) {
           margin-bottom: 0;
         }
-        
+
         .footer-link {
           border: 1px solid $Type-Link;
           border-radius: 25px;
