@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 // Components and functions
 import AdvisoriesList from './AdvisoriesList';
-
+import trackEvent from '../TrackEvent';
 // Third party packages
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
@@ -29,6 +29,7 @@ export default function AdvisoriesOnMap(props) {
           className={'advisories-on-map__btn' + (open ? ' open' : '')}
           aria-label="open advisories list"
           onClick={() => {
+            trackEvent('click', 'advisories-on-map', 'Advisories button');
             open ? setOpen(false) : setOpen(true) }
           }>
           <FontAwesomeIcon icon={faFlag} />

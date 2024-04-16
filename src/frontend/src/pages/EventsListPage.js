@@ -40,7 +40,7 @@ import Footer from '../Footer.js';
 import FriendlyTime from '../Components/FriendlyTime';
 import PageHeader from '../PageHeader';
 import RouteSearch from '../Components/map/RouteSearch';
-
+import trackEvent from '../Components/TrackEvent.js';
 // Styling
 import './EventsListPage.scss';
 import '../Components/Filters.scss';
@@ -227,6 +227,7 @@ export default function EventsListPage() {
   };
 
   const handleRoute = (event) => {
+    trackEvent('click', 'event', 'events list page', event.event_type, event.event_sub_type);
     navigate('/', {state: event});
   };
 

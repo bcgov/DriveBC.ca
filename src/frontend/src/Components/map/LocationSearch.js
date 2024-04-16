@@ -8,7 +8,7 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 // Components and functions
 import { getLocations } from '../data/locations.js';
-
+import trackEvent from '../TrackEvent.js';
 // Styling
 import './LocationSearch.scss';
 
@@ -53,6 +53,8 @@ export default function LocationSearch(props) {
       minLength={3}
       onChange={setSelectedLocation}
       onSearch={loadLocationOptions}
+      onBlur={()=>{
+        trackEvent('blur', 'route search', 'location search', location[0].properties.fullAddress)}}
       options={options}
       placeholder={placeholder}
       highlightOnlyResult={true}
