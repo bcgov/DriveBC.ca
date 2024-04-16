@@ -31,6 +31,9 @@ import { getAdvisories } from '../Components/data/advisories';
 import { getEvents } from '../Components/data/events';
 import { MapContext } from '../App.js';
 import { defaultSortFn, routeSortFn, severitySortFn } from '../Components/events/functions';
+import { NetworkError, ServerError } from '../Components/data/helper';
+import NetworkErrorPopup from '../Components//map/errors/NetworkError';
+import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Advisories from '../Components/advisories/Advisories';
 import EventCard from '../Components/events/EventCard';
 import EventsTable from '../Components/events/EventsTable';
@@ -99,6 +102,18 @@ export default function EventsListPage() {
   const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
   const [showLoader, setShowLoader] = useState(false);
   const [advisoriesInRoute, setAdvisoriesInRoute] = useState([]);
+  const [showNetworkError, setShowNetworkError] = useState(false);
+  const [showServerError, setShowServerError] = useState(false);
+
+  // Error handling
+  const displayError = (error) => {
+    if (error instanceof ServerError) {
+      setShowServerError(true);
+
+    } else if (error instanceof NetworkError) {
+      setShowNetworkError(true);
+    }
+  }
 
   // Refs
   const isInitialMount = useRef(true);
@@ -108,7 +123,7 @@ export default function EventsListPage() {
     let advData = advisories;
 
     if (!advisories) {
-      advData = await getAdvisories();
+      advData = await getAdvisories().catch((error) => displayError(error));
 
       dispatch(updateAdvisories({
         list: advData,
@@ -145,7 +160,7 @@ export default function EventsListPage() {
     // Load if filtered cams don't exist or route doesn't match
     if (!filteredEvents || !compareRoutePoints(routePoints, eventFilterPoints)) {
       // Fetch data if it doesn't already exist
-      const eventData = events ? events : await getEvents();
+      const eventData = events ? events : await getEvents().catch((error) => displayError(error));
 
       // Filter data by route
       const filteredEventData = route ? filterByRoute(eventData, route) : eventData;
@@ -271,6 +286,14 @@ export default function EventsListPage() {
 
   return (
     <div className="events-page">
+      {showNetworkError &&
+        <NetworkErrorPopup />
+      }
+
+      {!showNetworkError && showServerError &&
+        <ServerErrorPopup setShowServerError={setShowServerError} />
+      }
+
       <PageHeader
         title="Delays"
         description="Find out if there are any delays that might impact your journey before you go.">

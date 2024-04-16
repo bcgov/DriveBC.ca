@@ -30,7 +30,7 @@
 
   .map-container {
     display: flex;
-    align-items: stretch;
+    align-items: center;
     height: 100%;
 
     @media (max-width: 767px) {
@@ -114,9 +114,9 @@
         &:hover {
           background: lighten(#CE3E39, 38%);
         }
-        
+
       }
-      
+
       .close-panel:has(+ .panel-content .popup.minor),
       .close-panel:has(+ .panel-content .popup.roadConditions)
        {
@@ -166,6 +166,12 @@
         position: absolute;
         z-index: 16;
         width: 100%;
+
+        @media (max-width: 768px) {
+          &.error-showing {
+            top: 100px;
+          }
+        }
 
         @media (min-width: 768px) {
           width: initial;

@@ -1,6 +1,13 @@
 @import "../styles/variables.scss";
 
 .camera-page {
+  position: relative;
+
+  .network-error, .server-error {
+    @media (max-width: 768px) {
+      position: relative;
+    }
+  }
 
   .back-link {
     font-weight: 700;

@@ -1,16 +1,19 @@
 // React
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 import { updateAdvisories } from '../slices/cmsSlice';
 
-// Third party packages
+// External imports
 import Container from 'react-bootstrap/Container';
 
-// Components and functions
+// Internal imports
 import { getAdvisories } from '../Components/data/advisories.js';
+import { NetworkError, ServerError } from '../Components/data/helper';
+import NetworkErrorPopup from '../Components//map/errors/NetworkError';
+import ServerErrorPopup from '../Components//map/errors/ServerError';
 import AdvisoriesList from '../Components/advisories/AdvisoriesList';
 import EmptyAdvisory from '../Components/advisories/EmptyAdvisory';
 import Footer from '../Footer';
@@ -28,6 +31,20 @@ export default function AdvisoriesListPage() {
     advisories: state.cms.advisories.list,
   }))));
 
+  // UseState hooks
+  const [showNetworkError, setShowNetworkError] = useState(false);
+  const [showServerError, setShowServerError] = useState(false);
+
+  // Error handling
+  const displayError = (error) => {
+    if (error instanceof ServerError) {
+      setShowServerError(true);
+
+    } else if (error instanceof NetworkError) {
+      setShowNetworkError(true);
+    }
+  }
+
   // Refs
   const isInitialMount = useRef(true);
 
@@ -35,7 +52,7 @@ export default function AdvisoriesListPage() {
   const loadAdvisories = async () => {
     if (!advisories) {
       dispatch(updateAdvisories({
-        list: await getAdvisories(),
+        list: await getAdvisories().catch((error) => displayError(error)),
         timeStamp: new Date().getTime()
       }));
     }
@@ -52,10 +69,19 @@ export default function AdvisoriesListPage() {
 
   return (
     <div className='advisories-page'>
+      {showNetworkError &&
+        <NetworkErrorPopup />
+      }
+
+      {!showNetworkError && showServerError &&
+        <ServerErrorPopup setShowServerError={setShowServerError} />
+      }
+
       <PageHeader
         title='Advisories'
         description='Get the latest critical travel status information during major events affecting travel on a highway or region.'>
       </PageHeader>
+
       <Container>
           {isAdvisoriesEmpty ? (
           <EmptyAdvisory/>
@@ -63,6 +89,7 @@ export default function AdvisoriesListPage() {
           <AdvisoriesList advisories={advisories} showDescription={true} showTimestamp={true} />
       )}
       </Container>
+
       <Footer />
     </div>
   );

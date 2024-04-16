@@ -1,6 +1,14 @@
 @import "../styles/variables.scss";
 
 .bulletin-page {
+  position: relative;
+
+  .network-error, .server-error {
+    @media (max-width: 768px) {
+      position: relative;
+    }
+  }
+
   .page-header {
     .timestamp-container, .friendly-time-text {
       color: $Type-Secondary;
@@ -8,7 +16,7 @@
 
     & + .container {
       padding-top: 24px;
-  
+
       @media (min-width: 992px) {
         padding-top: 48px;
       }

@@ -1,0 +1,61 @@
+.server-error {
+  position: absolute;
+  z-index: 2000;
+  background: #E0DEDC;
+  border: 1px solid #898785;
+  border-radius: 5px;
+  right: 20%;
+  top: 15px;
+  display: flex;
+  width: 375px;
+  height: 95px;
+  padding: 8px 12px;
+  align-items: center;
+  font-size: 0.875rem;
+  box-shadow: 0px 3.2px 7.2px 0px #00000021;
+  justify-content: space-around;
+
+  @media (max-width: 768px) {
+    right: unset;
+    top: unset;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+  }
+
+  img {
+    width: 48px;
+  }
+
+  .message-container {
+    margin-left: 15px;
+
+    @media (max-width: 768px) {
+      max-width: 72%;
+      margin-left: unset;
+    }
+  }
+
+  .close-btn {
+    position: absolute;
+    top: -11px;
+    right: -11px;
+    background: #2D2D2D;
+    border-radius: 10px;
+    color: white;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    cursor: pointer;
+
+    @media (max-width: 768px) {
+      position: relative;
+      top: 10px;
+      right: 0;
+      align-self: flex-start;
+    }
+  }
+}

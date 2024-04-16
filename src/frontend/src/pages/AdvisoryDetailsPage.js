@@ -2,19 +2,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-// Third party packages
-import Container from 'react-bootstrap/Container';
-import parse from 'html-react-parser';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+// External imports
 import {
   faMap,
   faFileLines
 } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Container from 'react-bootstrap/Container';
+import parse from 'html-react-parser';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
-// Components and functions
+// Internal imports
 import { getAdvisories } from '../Components/data/advisories.js';
+import { NetworkError, ServerError } from '../Components/data/helper';
+import NetworkErrorPopup from '../Components//map/errors/NetworkError';
+import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Footer from '../Footer';
 import FriendlyTime from '../Components/FriendlyTime';
 
@@ -133,10 +136,27 @@ function getMap(advisoryData) {
 export default function AdvisoryDetailsPage() {
   // Context and router data
   const params = useParams();
+
+  // Refs
   const isInitialMount = useRef(true);
   const mapRef = useRef();
-  const [advisory, setAdvisory] = useState(null);
 
+  // UseState hooks
+  const [advisory, setAdvisory] = useState(null);
+  const [showNetworkError, setShowNetworkError] = useState(false);
+  const [showServerError, setShowServerError] = useState(false);
+
+  // Error handling
+  const displayError = (error) => {
+    if (error instanceof ServerError) {
+      setShowServerError(true);
+
+    } else if (error instanceof NetworkError) {
+      setShowNetworkError(true);
+    }
+  }
+
+  // Map functions
   const fitMap = (data) => {
     const geom = new GeoJSON().readGeometry(data.geometry, {
       dataProjection: 'EPSG:4326',
@@ -148,7 +168,7 @@ export default function AdvisoryDetailsPage() {
 
   // Data function and initialization
   const loadAdvisory = async () => {
-    const advisoryData = await getAdvisories(params.id);
+    const advisoryData = await getAdvisories(params.id).catch((error) => displayError(error));
     setAdvisory(advisoryData);
 
     // Run once on startup
@@ -175,6 +195,14 @@ export default function AdvisoryDetailsPage() {
   // Rendering
   return (
     <div className='advisory-page cms-page'>
+      {showNetworkError &&
+        <NetworkErrorPopup />
+      }
+
+      {!showNetworkError && showServerError &&
+        <ServerErrorPopup setShowServerError={setShowServerError} />
+      }
+
       {advisory && (
         <div className="page-header">
           <Container>

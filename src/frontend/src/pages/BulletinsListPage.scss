@@ -1,6 +1,14 @@
 @import "../styles/variables.scss";
 
 .bulletins-page {
+  position: relative;
+
+  .network-error, .server-error {
+    @media (max-width: 768px) {
+      position: relative;
+    }
+  }
+
   ul.bulletins-list {
     list-style-type: none;
     padding-left: 0;

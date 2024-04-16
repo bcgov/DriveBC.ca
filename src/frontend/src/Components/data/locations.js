@@ -11,8 +11,5 @@ export function getLocations(addressInput) {
     }, {
       'apiKey': `${window.GEOCODER_API_AUTH_KEY}`,
     }
-  ).then((data) => data)
-  .catch((error) => {
-    console.log(error);
-  });
+  ).then((data) => data);
 }

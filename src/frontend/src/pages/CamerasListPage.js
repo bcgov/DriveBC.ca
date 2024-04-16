@@ -20,6 +20,9 @@ import {
 } from '../Components/map/helper';
 import { getAdvisories } from '../Components/data/advisories';
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
+import { NetworkError, ServerError } from '../Components/data/helper';
+import NetworkErrorPopup from '../Components//map/errors/NetworkError';
+import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Advisories from '../Components/advisories/Advisories';
 import CameraList from '../Components/cameras/CameraList';
 import Footer from '../Footer';
@@ -51,6 +54,18 @@ export default function CamerasListPage() {
   const [displayedCameras, setDisplayedCameras] = useState(null);
   const [processedCameras, setProcessedCameras] = useState(null);
   const [searchText, setSearchText] = useState('');
+  const [showNetworkError, setShowNetworkError] = useState(false);
+  const [showServerError, setShowServerError] = useState(false);
+
+  // Error handling
+  const displayError = (error) => {
+    if (error instanceof ServerError) {
+      setShowServerError(true);
+
+    } else if (error instanceof NetworkError) {
+      setShowNetworkError(true);
+    }
+  }
 
   // Data functions
   const getCamerasData = async route => {
@@ -59,7 +74,7 @@ export default function CamerasListPage() {
     // Load if filtered cams don't exist or route doesn't match
     if (!filteredCameras || !compareRoutePoints(routePoints, camFilterPoints)) {
       // Fetch data if it doesn't already exist
-      const camData = cameras ? cameras : await getCameras();
+      const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
 
       // Filter data by route
       const filteredCamData = route ? filterByRoute(camData, route) : camData;
@@ -78,7 +93,7 @@ export default function CamerasListPage() {
     let advData = advisories;
 
     if (!advisories) {
-      advData = await getAdvisories();
+      advData = await getAdvisories().catch((error) => displayError(error));
 
       dispatch(updateAdvisories({
         list: advData,
@@ -176,6 +191,14 @@ export default function CamerasListPage() {
   // Rendering
   return (
     <div className="cameras-page">
+      {showNetworkError &&
+        <NetworkErrorPopup />
+      }
+
+      {!showNetworkError && showServerError &&
+        <ServerErrorPopup setShowServerError={setShowServerError} />
+      }
+
       <PageHeader
         title="Cameras"
         description="Scroll to view all cameras sorted by highway.">
