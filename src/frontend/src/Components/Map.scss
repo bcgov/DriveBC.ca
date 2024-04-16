@@ -162,7 +162,7 @@
       height: 100%;
       overflow: hidden;
 
-      .routing-outer-container {
+      .map-left-container, .routing-outer-container {
         position: absolute;
         z-index: 16;
         width: 100%;
@@ -272,7 +272,7 @@
         right: 1rem;
         z-index: 5;
 
-        @media (max-width: 768px) {
+        @media (max-width: 767px) {
           top: initial;
           bottom: 1rem;
         }

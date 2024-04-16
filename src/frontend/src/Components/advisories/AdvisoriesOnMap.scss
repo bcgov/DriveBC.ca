@@ -3,8 +3,11 @@
 .advisories-on-map {
   position: relative;
   top: 6rem;
-  left: 1rem;
-  width: fit-content;
+  padding: 0 1rem;
+
+  @media (min-width: 768px) {
+    width: fit-content;
+  }
 
   .btn.advisories-on-map__btn {
     background: #FAF9F8;
@@ -53,14 +56,10 @@
     border-radius: 4px;
     box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
     padding: 1rem;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    z-index: 20;
+    position: relative;
 
     @media (min-width: 768px) {
       width: 360px;
-      position: relative;
     }
 
     h4 {

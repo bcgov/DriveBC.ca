@@ -10,7 +10,7 @@
     justify-content: space-between;
     margin-bottom: 1.5rem;
 
-    @media (max-width: 768px) {
+    @media (max-width: 767px) {
       flex-direction: column;
       margin-bottom: 1rem;
     }
@@ -18,7 +18,7 @@
     .route-display-container {
       display: flex;
 
-      @media (max-width: 768px) {
+      @media (max-width: 767px) {
         width: 100%;
         margin-bottom: 20px;
       }
@@ -27,7 +27,7 @@
         padding: 0;
         position:relative;
 
-        @media (max-width: 768px) {
+        @media (max-width: 767px) {
           width: 100%;
         }
         .swap-button{
@@ -41,7 +41,7 @@
     .right-container {
       display: flex;
 
-      @media (max-width: 768px) {
+      @media (max-width: 767px) {
         margin-bottom: 1rem;
         justify-content: space-between;
       }
