@@ -31,6 +31,7 @@ import {
   faLocationCrosshairs,
   faXmark,
 } from '@fortawesome/pro-solid-svg-icons';
+import {useMediaQuery} from '@uidotdev/usehooks';
 
 // Components and functions
 import CamPopup from './map/camPopup.js';
@@ -72,6 +73,7 @@ import AdvisoriesOnMap from './advisories/AdvisoriesOnMap';
 import CurrentCameraIcon from './CurrentCameraIcon';
 import Filters from './Filters.js';
 import RouteSearch from './map/RouteSearch.js';
+import ExitSurvey from './advisories/ExitSurvey.js';
 
 // Map & geospatial imports
 import { applyStyle } from 'ol-mapbox-style';
@@ -1251,6 +1253,8 @@ export default function MapWrapper({
     clickedRestStop
   );
 
+  const smallScreen = useMediaQuery('only screen and (max-width: 767px)');
+
   return (
     <div className={`map-container ${isPreview ? 'preview' : ''}`}>
       <div
@@ -1321,10 +1325,17 @@ export default function MapWrapper({
         )}
 
         {!isPreview && (
-          <div className="routing-outer-container">
+          <div className="map-left-container">
+            {smallScreen && (
+              <ExitSurvey mobile={true} />
+            )}
             <RouteSearch routeEdit={true} />
             <AdvisoriesOnMap advisories={advisoriesInView} />
           </div>
+        )}
+
+        {(!isPreview && !smallScreen) && (
+          <ExitSurvey />
         )}
 
         {!isPreview && (
@@ -1334,6 +1345,7 @@ export default function MapWrapper({
             enableRoadConditions={true}
           />
         )}
+
       </div>
 
       <div id="popup" className="ol-popup">
