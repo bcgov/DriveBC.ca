@@ -15,16 +15,17 @@ import './ExitSurvey.scss';
 export default function ExitSurvey({ mobile=false }) {
 
   // States
-  const [open, setOpen] = useState(true);
+  const [show, setShow] = useState(true);
 
   // Rendering
-  return (open) ? (
+  return (show && (sessionStorage.getItem('exit-survey') === null)) ? (
     <div className={'exit-survey' + (mobile ? ' mobile' : '')}>
       <Button
-        className={'exit-survey-close-btn' + (open ? ' open' : '')}
+        className={'exit-survey-close-btn' + (show ? ' show' : '')}
         aria-label="close exit survey banner"
         onClick={() => {
-          open ? setOpen(false) : setOpen(true) }
+          sessionStorage.setItem('exit-survey', true);
+          show ? setShow(false) : setShow(true) }
         }>
         <FontAwesomeIcon icon={faXmark} />
       </Button>
