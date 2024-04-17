@@ -301,7 +301,7 @@ export default function EventsListPage() {
               toggleHandler={eventCategoryFilterHandler}
               disableFeatures={true}
               enableRoadConditions={false}
-              textOverride={'List Filters'}
+              textOverride={'List filters'}
             />
           </div>
 

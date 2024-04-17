@@ -1372,7 +1372,7 @@ export default function MapWrapper({
           variant="primary"
           onClick={mapViewRoute}>
           <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
-          Map View
+          Map view
         </Button>
       )}
 
@@ -1381,7 +1381,7 @@ export default function MapWrapper({
           toggleHandler={toggleLayer}
           disableFeatures={isPreview}
           enableRoadConditions={true}
-          textOverride={'Layer Filters'}
+          textOverride={'Layer filters'}
         />
       )}
     </div>

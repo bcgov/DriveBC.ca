@@ -112,7 +112,7 @@ export default function Filters(props) {
         onClick={() => {
           open ? setOpen(false) : setOpen(true) }
         }>
-        {textOverride ? textOverride : 'Layer Filters'}
+        {textOverride ? textOverride : 'Layer filters'}
 
         <FontAwesomeIcon icon={faFilter} />
       </Button>
