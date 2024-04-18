@@ -117,7 +117,7 @@ static:
       staticConfigMap: test-drivebc-static
       staticSecret: test-drivebc-static
     volumes:
-      claimName: test-django-app-images
+      imagesClaimName: test-django-app-images
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -126,3 +126,24 @@ static:
   route:
     host: test-drivebc.apps.gold.devops.gov.bc.ca
     iprestricted: false  #Set to true if you want to limit IP's the the addresses in the ipallowlist 
+  logpvc:
+    storage: 1Gi
+
+logprocessing:
+  fullnameOverride: test-logprocessing
+  nameOverride: test-logprocessing
+  image:
+    repository: ghcr.io/bcgov/drivebc-logprocessing
+    tag: latest-test
+  deployment:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 500Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    env:
+      s3Secret: test-drivebc-logprocessing
+    volumes:
+      logPVC: test-static-log-storage

@@ -1,0 +1,21 @@
+
+
+fullnameOverride: logprocessing
+nameOverride: logprocessing
+
+image:
+  repository: ghcr.io/bcgov/drivebc-logprocessing
+  tag: latest
+
+deployment:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  env:
+    s3Secret: drivebc-logprocessing
+  volumes:
+    logs: static-log-storage
