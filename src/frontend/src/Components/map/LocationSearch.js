@@ -54,7 +54,7 @@ export default function LocationSearch(props) {
       onChange={setSelectedLocation}
       onSearch={loadLocationOptions}
       onBlur={() => {
-        if (location[0]) {
+        if (location && location.length) {
           trackEvent(
             'blur',
             'route search',
