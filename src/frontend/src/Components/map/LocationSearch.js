@@ -1,6 +1,6 @@
 // React
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux';
 
 // react-bootstrap-typeahead
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
@@ -21,12 +21,12 @@ export default function LocationSearch(props) {
   const [isSearching, setSearching] = useState(false);
   const [options, setLocationOptions] = useState([]);
 
-  const setSelectedLocation = (payload) => {
-    window.document.activeElement.blur();  // De-focus textbox
+  const setSelectedLocation = payload => {
+    window.document.activeElement.blur(); // De-focus textbox
     dispatch(action(payload));
-  }
+  };
 
-  const loadLocationOptions = (locationInput) => {
+  const loadLocationOptions = locationInput => {
     setSearching(true);
     getLocations(locationInput).then(locationsData => {
       setLocationOptions(
@@ -39,7 +39,7 @@ export default function LocationSearch(props) {
       );
       setSearching(false);
     });
-  }
+  };
 
   // Rendering
   return (
@@ -53,8 +53,16 @@ export default function LocationSearch(props) {
       minLength={3}
       onChange={setSelectedLocation}
       onSearch={loadLocationOptions}
-      onBlur={()=>{
-        trackEvent('blur', 'route search', 'location search', location[0].properties.fullAddress)}}
+      onBlur={() => {
+        if (location[0]) {
+          trackEvent(
+            'blur',
+            'route search',
+            'location search',
+            location[0].properties.fullAddress,
+          );
+        }
+      }}
       options={options}
       placeholder={placeholder}
       highlightOnlyResult={true}
