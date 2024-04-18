@@ -43,34 +43,34 @@ export default function EventTypeIcon(props) {
 
   switch (display_category) {
     case "closures":
-      return <img className={'delay-icon-img'} src={state === 'active' ? closuresActiveIcon : closuresStaticIcon} alt={getTypeDisplay(event)}/>
+      return <img className={'delay-icon-img'} src={state === 'active' ? closuresActiveIcon : closuresStaticIcon} alt={getTypeDisplay(event)} aria-hidden={true}/>
 
     case "majorEvents": {
       if (state === 'active')
-        return <img className={'delay-icon-img'} src={event_type === 'CONSTRUCTION' ? constructionsMajorActiveIcon : genericDelaysMajorActiveIcon } alt={getTypeDisplay(event)}/>
+        return <img className={'delay-icon-img'} src={event_type === 'CONSTRUCTION' ? constructionsMajorActiveIcon : genericDelaysMajorActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
       else
-        return <img className={'delay-icon-img'} src={event_type === 'CONSTRUCTION' ? constructionsMajorStaticIcon : genericDelaysMajorStaticIcon } alt={getTypeDisplay(event)}/>
+        return <img className={'delay-icon-img'} src={event_type === 'CONSTRUCTION' ? constructionsMajorStaticIcon : genericDelaysMajorStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
     }
 
     case "minorEvents": {
       if (state === 'active')
-        return <img className={'delay-icon-img'} src={event_type === 'CONSTRUCTION' ? constructionsActiveIcon : genericDelaysActiveIcon } alt={getTypeDisplay(event)}/>
+        return <img className={'delay-icon-img'} src={event_type === 'CONSTRUCTION' ? constructionsActiveIcon : genericDelaysActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
       else
-        return <img className={'delay-icon-img'} src={event_type === 'CONSTRUCTION' ? constructionsStaticIcon : genericDelaysStaticIcon } alt={getTypeDisplay(event)}/>
+        return <img className={'delay-icon-img'} src={event_type === 'CONSTRUCTION' ? constructionsStaticIcon : genericDelaysStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
     }
 
     case "futureEvents": {
       if (state === 'active')
-        return <img className={'delay-icon-img'} src={severity === 'MAJOR' ? futureEventsMajorActiveIcon : futureEventsActiveIcon } alt={getTypeDisplay(event)}/>
+        return <img className={'delay-icon-img'} src={severity === 'MAJOR' ? futureEventsMajorActiveIcon : futureEventsActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
       else
-        return <img className={'delay-icon-img'} src={severity === 'MAJOR' ? futureEventsMajorStaticIcon : futureEventsStaticIcon } alt={getTypeDisplay(event)}/>
+        return <img className={'delay-icon-img'} src={severity === 'MAJOR' ? futureEventsMajorStaticIcon : futureEventsStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
     }
 
     case "roadConditions": {
       if (state === 'active')
-        return <img className={'delay-icon-img'} src={roadConditionsActiveIcon } alt={getTypeDisplay(event)}/>
+        return <img className={'delay-icon-img'} src={roadConditionsActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
       else
-        return <img className={'delay-icon-img'} src={roadConditionsStaticIcon } alt={getTypeDisplay(event)}/>
+        return <img className={'delay-icon-img'} src={roadConditionsStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
     }
   }
 }
