@@ -22,14 +22,19 @@
     border: none;
 
     .content__text {
-      margin: 0 0 0 1rem;
+      margin: 0 2rem 0 1rem;
+    }
+
+    .exit-survey-close-btn {
+      top: 0.75rem;
+      right: 0.75rem;
     }
   }
 
   .exit-survey-close-btn {
     position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
+    top: -0.5rem;
+    right: -0.5rem;
     padding: 0;
     margin-bottom: 0;
     font-size: 0.75rem;
@@ -59,7 +64,7 @@
     }
 
     &__text {
-      margin: 0 2rem 0 1rem;
+      margin: 0 0 0 1rem;
 
       p {
         font-size: 0.875rem;
