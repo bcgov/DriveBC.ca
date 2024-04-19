@@ -462,7 +462,7 @@ export function getRestStopPopup(restStopFeature) {
               <div>
                 <p className="toilets">{restStopData.properties.NUMBER_OF_TOILETS} {restStopData.properties.TOILET_TYPE} toilet{restStopData.properties.NUMBER_OF_TOILETS > 1 ? 's' : ''}</p>
                 <p>
-                  {restStopData.properties.WHEELCHAIR_ACCESS_TOILET === "No" ? (
+                  {restStopData.properties.WHEELCHAIR_ACCESS_TOILET === "Yes" ? (
                   'Wheelchair accessible'
                   ) : (
                     'Not wheelchair accessible'
