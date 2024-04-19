@@ -25,3 +25,7 @@ dependencies:
     version: '0.1.0'
     repository: 'file://../_static'
     condition: static.enabled
+  - name: logprocessing
+    version: '0.1.0'
+    repository: 'file://../_logprocessing'
+    condition: static.enabled

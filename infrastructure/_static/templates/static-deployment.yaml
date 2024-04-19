@@ -19,7 +19,10 @@ spec:
       volumes:
         - name: django-app-images-volume
           persistentVolumeClaim:
-            claimName: {{ .Values.deployment.volumes.claimName  }}
+            claimName: {{ .Values.deployment.volumes.imagesClaimName  }}
+        - name: log-storage
+          persistentVolumeClaim:
+            claimName: {{ template "app.fullname" . }}-log-storage
       containers:
         - resources:
             limits:
@@ -37,6 +40,8 @@ spec:
             - name: django-app-images-volume
               mountPath: /app/images/webcams
               readOnly: true
+            - name: log-storage
+              mountPath: /logs
           image: >-
             {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
           env:

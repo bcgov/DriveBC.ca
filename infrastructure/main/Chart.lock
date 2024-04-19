@@ -14,5 +14,8 @@ dependencies:
 - name: static
   repository: file://../_static
   version: 0.1.0
-digest: sha256:a486b030e4d1581446465b5bb3dc45fe35979b1778bc97f8d0b01b7a199d26bc
-generated: "2023-10-17T15:22:00.6235255-07:00"
+- name: logprocessing
+  repository: file://../_logprocessing
+  version: 0.1.0
+digest: sha256:7119b12cf4342208b9790047d66e132026e46aab4f66aeb16ff36fea82aa27b5
+generated: "2024-04-18T08:44:17.8500796-07:00"

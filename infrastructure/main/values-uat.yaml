@@ -117,7 +117,7 @@ static:
       staticConfigMap: uat-drivebc-static
       staticSecret: uat-drivebc-static
     volumes:
-      claimName: uat-django-app-images
+      imagesClaimName: uat-django-app-images
   autoscaling:
     enabled: true
     minReplicas: 3
@@ -126,3 +126,24 @@ static:
   route:
     host: uat-drivebc.apps.gold.devops.gov.bc.ca
     iprestricted: true  #Set to true if you want to limit IP's the the addresses in the ipallowlist 
+  logpvc:
+    storage: 5Gi
+
+logprocessing:
+  fullnameOverride: uat-logprocessing
+  nameOverride: uat-logprocessing
+  image:
+    repository: ghcr.io/bcgov/drivebc-logprocessing
+    tag: latest-uat
+  deployment:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 1Gi
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+    env:
+      s3Secret: uat-drivebc-logprocessing
+    volumes:
+      logPVC: uat-static-log-storage

@@ -69,6 +69,15 @@ jobs:
         tags: |
           latest-uat
 
+    - name: Add latest-uat tag to logprocessing image
+      uses: shrink/actions-docker-registry-tag@v3
+      with:
+        registry: ghcr.io
+        repository: bcgov/drivebc-logprocessing
+        target: ${{ needs.deploy-pre.outputs.tag }}
+        tags: |
+          latest-uat
+
   deploy:
     needs: [deploy-pre]
     runs-on: ubuntu-latest
@@ -91,4 +100,4 @@ jobs:
     - name: Helm upgrade on OpenShift Environment
       run: |
         helm dependency update ./infrastructure/main
-        helm upgrade uat-drivebc -f ./infrastructure/main/values-uat.yaml ./infrastructure/main --set django.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set image-caching.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set redis.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set static.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.deploy-pre.outputs.tag }}"
+        helm upgrade uat-drivebc -f ./infrastructure/main/values-uat.yaml ./infrastructure/main --set django.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set image-caching.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set redis.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set static.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set logprocessing.image.tag="${{ needs.deploy-pre.outputs.tag }}"
