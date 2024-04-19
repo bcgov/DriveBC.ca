@@ -3,7 +3,9 @@ from pathlib import Path
 
 import environ
 from apps.shared.enums import SUBJECT_CHOICES, SUBJECT_TITLE, CacheKey, CacheTimeout
+from apps.shared.models import SiteSettings
 from django.core.cache import cache
+from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
 from django.db import connection
 from django.urls import re_path
@@ -81,6 +83,11 @@ class CachedListModelMixin:
         )
 
     def list(self, request, *args, **kwargs):
+        site_settings = SiteSettings.objects.first()
+        if site_settings:
+            if site_settings.disable_apis:
+                raise ImproperlyConfigured("API endpoints disabled for testing")
+
         return Response(self.get_or_set_list_data())
 
 
