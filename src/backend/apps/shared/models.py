@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 
 
 class BaseModel(models.Model):
@@ -7,3 +8,13 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class SiteSettings(models.Model):
+    disable_apis = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if self.__class__.objects.exists() and not self.pk:
+            raise ValidationError(f"Only one instance of {self.__class__.__name__} allowed")
+
+        super().save(*args, **kwargs)
