@@ -88,7 +88,7 @@ export default function CamPopup(props) {
                 if (keyEvent.keyCode == 13) {
                   handlePopupClick();
                 }
-              }}>{camera.name}</p>
+              }} tabIndex={0}>{camera.name}</p>
           </div>
           { camera.is_on ?
             <div className="popup__content__image">
