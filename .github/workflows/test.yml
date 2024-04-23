@@ -57,7 +57,7 @@ jobs:
     needs: [build-pre]
     runs-on: ubuntu-latest
     name: Build & Push Docker Static Image
-    environment: 
+    environment:
       name: test
 
     steps:
@@ -96,13 +96,13 @@ jobs:
     runs-on: ubuntu-latest
     name: Build & Push Docker Backend Image
     environment: test
-    
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
       with:
         ref: ${{ github.ref_name }}
-    
+
     - name: Build Backend
       id: build_image
       uses: redhat-actions/buildah-build@v2.9
@@ -114,7 +114,7 @@ jobs:
         containerfiles: ./compose/backend/Dockerfile
         build-args:
           DEBUG_BUILD=true
-  
+
     - name: Push to Github Packages
       uses: redhat-actions/push-to-registry@v2.7
       with:
@@ -130,13 +130,13 @@ jobs:
     runs-on: ubuntu-latest
     name: Build & Push Docker Image-Caching Image
     environment: test
-    
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
       with:
         ref: ${{ github.ref_name }}
-    
+
     - name: Build Image Caching
       id: build_image
       uses: redhat-actions/buildah-build@v2.9
@@ -146,7 +146,7 @@ jobs:
         labels: |
           app=drivebc
         containerfiles: ./compose/caching/Dockerfile
-  
+
     - name: Push to Github Packages
       uses: redhat-actions/push-to-registry@v2.7
       with:
@@ -164,7 +164,7 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
-    
+
     - name: Build Redis
       id: build_image
       uses: redhat-actions/buildah-build@v2.9
@@ -174,7 +174,7 @@ jobs:
         labels: |
           app=drivebc
         containerfiles: ./compose/redis/Dockerfile
-  
+
     - name: Push to Github Packages
       uses: redhat-actions/push-to-registry@v2.7
       with:
@@ -187,22 +187,22 @@ jobs:
   build-logprocessing:
     runs-on: ubuntu-latest
     name: Build & Push Docker Log-Processing Image
-    environment: dev
-    
+    environment: test
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
-    
+
     - name: Build Log-Processing
       id: build_image
       uses: redhat-actions/buildah-build@v2.9
       with:
         image: drivebc-logprocessing
-        tags: latest latest-dev ${{ github.sha }}
+        tags: latest latest-test ${{ github.sha }}
         labels: |
           app=drivebc
         containerfiles: ./compose/logprocessing/Dockerfile
-  
+
     - name: Push to Github Packages
       uses: redhat-actions/push-to-registry@v2.7
       with:
@@ -211,7 +211,7 @@ jobs:
         registry: ${{ env.IMAGE_REGISTRY }}
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
-       
+
   versionUpdate:
     needs: [build-pre, build-static, build-backend, build-image-caching, build-redis, build-logprocessing]
     runs-on: ubuntu-latest
@@ -224,7 +224,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         ref: ${{ github.ref_name }}
-     
+
     - name: Authenticate and set context
       uses: redhat-actions/oc-login@v1
       with:
