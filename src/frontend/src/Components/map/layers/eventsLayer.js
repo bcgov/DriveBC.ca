@@ -80,11 +80,11 @@ export function loadEventsLayers(
     eventsData.forEach((event) => {
       // location may have an object or an array of objects, so handle all
       // event locations as an array of objects
-      if (!Array.isArray(event.location)) { event.location = [event.location]; }
+      const locationData = !Array.isArray(event.location) ? [event.location] : event.location;
 
       // all events have a point coordinate for an icon; for line or zone
       // events, the point is the median lat/long in the lineString
-      const full = event.location.reduce(
+      const full = locationData.reduce(
         (full, location) => full.concat(location.coordinates),
         []
       );
@@ -113,7 +113,7 @@ export function loadEventsLayers(
         addFeature(feature, event.display_category);
         pointFeature.set('altFeature', feature);
       } else {
-        const features = event.location.reduce((all, location, ii) => {
+        const features = locationData.reduce((all, location, ii) => {
           const geometry = location.type === 'LineString'
             ? new LineString(location.coordinates)
             : new Point(location.coordinates);
