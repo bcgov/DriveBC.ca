@@ -248,124 +248,96 @@
     .tab-content {
       & > .tab-pane {
 
-        .card-img-box {
-          height: 365px;
-          margin-bottom: -18px;
+        .image-wrap {
+          padding-bottom: 1rem;
 
-          &.unavailable {
-            background-color: $Surface-status-red;
-            color: $Error;
-            font-size: 6.875rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
+          .card-img-box {
+            margin-bottom: -16px;
 
-          img {
-            width: 100%;
-            height: 365px;
-            object-fit: cover;
-
-            &.image-gallery-image {
-              height: 388px;
-              cursor: auto;
-            }
-          }
-
-          .image-gallery {
-            box-shadow: 0px 1.600000023841858px 3.5999999046325684px 0px rgba(0, 0, 0, 0.13), 0px 0.30000001192092896px 0.8999999761581421px 0px rgba(0, 0, 0, 0.10);
-
-            &-slide-wrapper {
+            &.unavailable {
+              background-color: $Surface-status-red;
+              color: $Error;
+              font-size: 6.875rem;
               display: flex;
-              flex-wrap: wrap;
+              align-items: center;
+              justify-content: center;
+            }
 
-              .replay-control {
+            img {
+              width: 100%;
+              height: 381px;
+              object-fit: cover;
+
+              &.image-gallery-image {
+                height: 388px;
+                cursor: auto;
+              }
+            }
+
+            .image-gallery {
+              box-shadow: 0px 1.600000023841858px 3.5999999046325684px 0px rgba(0, 0, 0, 0.13), 0px 0.30000001192092896px 0.8999999761581421px 0px rgba(0, 0, 0, 0.10);
+              margin-bottom: 1rem;
+
+              &-slide-wrapper {
                 display: flex;
-                justify-content: center;
-                margin: 0 0 12px 0;
+                flex-wrap: wrap;
 
-                @media (min-width: 992px) {
-                  margin: auto 0;
-                }
+                .replay-control {
+                  display: flex;
+                  justify-content: center;
+                  margin: 0 0 12px 0;
 
-                .replay-btn {
-                  color: $Type-Primary;
-                  background-color: $White;
-                  border: none;
-                  width: 60px;
-                  height: 60px;
-                  border-radius: 30px;
-                  padding: initial;
-                  margin-bottom: 0;
-
-                  @media(min-width: 992px) {
-                    width: 36px;
-                    height: 36px;
-                    border-radius: 18px;
+                  @media (min-width: 992px) {
+                    margin: auto 0;
                   }
 
-                  &:hover {
-                    background-color: $Grey30;
+                  .replay-btn {
+                    color: $Type-Primary;
+                    background-color: $White;
+                    border: none;
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 30px;
+                    padding: initial;
+                    margin-bottom: 0;
+
+                    @media(min-width: 992px) {
+                      width: 36px;
+                      height: 36px;
+                      border-radius: 18px;
+                    }
+
+                    &:hover {
+                      background-color: $Grey30;
+                    }
+
+                    &:focus {
+                      border: rgb(46, 93, 215) solid 2px;
+                    }
                   }
-
-                  &:focus {
-                    border: rgb(46, 93, 215) solid 2px;
-                  }
                 }
-              }
 
-              //Replay the day on mobile
-              .range-slider-container {
-                order: 2;
-                margin: 0 15px;
-                width: calc(100% - 30px);
-              }
-
-              .replay-control--backward {
-                order: 3;
-                width: 33.33%;
-                svg {
-                  font-size: 1.25rem;
-                }
-              }
-
-              .replay-control--forward {
-                order: 5;
-                width: 33.33%;
-                svg {
-                  font-size: 1.25rem;
-                }
-              }
-
-              .image-gallery-swipe {
-                order: 1;
-                width: 100%;
-              }
-
-              .replay-control--play {
-                order: 4;
-                width: 33.33%;
-                svg {
-                  font-size: 1.5rem;
-                }
-              }
-
-              //Replay the day on desktop
-              @media (min-width: 992px) {
+                //Replay the day on mobile
                 .range-slider-container {
-                  order: 5;
-                  margin: 5px 15px;
-                  width: calc(70% - 30px);
+                  order: 2;
+                  margin: 0 15px;
+                  width: calc(100% - 30px);
                 }
 
                 .replay-control--backward {
-                  order: 2;
-                  width: 10%;
+                  order: 3;
+                  width: 33.33%;
+                  svg {
+                    font-size: 1.25rem;
+                  }
                 }
 
                 .replay-control--forward {
-                  order: 4;
-                  width: 10%;
+                  order: 5;
+                  width: 33.33%;
+                  svg {
+                    font-size: 1.25rem;
+                  }
                 }
 
                 .image-gallery-swipe {
@@ -374,33 +346,65 @@
                 }
 
                 .replay-control--play {
-                  order: 3;
-                  width: 10%;
+                  order: 4;
+                  width: 33.33%;
+                  svg {
+                    font-size: 1.5rem;
+                  }
+                }
+
+                //Replay the day on desktop
+                @media (min-width: 992px) {
+                  .range-slider-container {
+                    order: 5;
+                    margin: 5px 15px;
+                    width: calc(70% - 30px);
+                  }
+
+                  .replay-control--backward {
+                    order: 2;
+                    width: 10%;
+                  }
+
+                  .replay-control--forward {
+                    order: 4;
+                    width: 10%;
+                  }
+
+                  .image-gallery-swipe {
+                    order: 1;
+                    width: 100%;
+                  }
+
+                  .replay-control--play {
+                    order: 3;
+                    width: 10%;
+                  }
                 }
               }
             }
           }
-        }
 
-        .timestamp {
-          background-color: $Black;
-          padding: 0 10px;
-          display: flex;
-          justify-content: space-between;
-          position: relative;
+          .timestamp {
+            background-color: $Black;
+            padding: 0 10px;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
 
-          p {
-            color: $White;
-            font-size: 0.875rem;
-            margin-bottom: 0;
-          }
-
-          .driveBC {
-            font-family: serif;
-            span {
-              color: $BC-Yellow;
+            p {
+              color: $White;
+              font-size: 0.875rem;
+              margin-bottom: 0;
             }
-            margin-right: 10px;
+
+            .driveBC {
+              font-family: serif;
+              span {
+                color: $BC-Yellow;
+              }
+              margin-right: 10px;
+            }
           }
         }
       }
@@ -491,9 +495,8 @@
     }
 
     .credit {
-      margin-top: 0.25rem;
-      font-size: 0.75rem;
-      font-style: italic;
+      font-size: 0.875rem;
+      line-height: 1.5;
     }
   }
 
@@ -526,7 +529,7 @@
     top: 0rem;
     bottom: 0;
     width: 100%;
-    height: 370px;
+    height: 388px;
 
     .map {
       width: 100%;

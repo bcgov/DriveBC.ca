@@ -27,7 +27,7 @@ export default function Advisories(props) {
 
       <div className="content">
         <h3>
-          {advisories.length > 1 ? 'Advisories ' : 'Advisory'}
+          {advisories.length > 1 ? 'Advisories ' : 'Advisory '}
           in effect
         </h3>
 
