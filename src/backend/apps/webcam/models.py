@@ -25,6 +25,7 @@ class Webcam(BaseModel):
     should_appear = models.BooleanField(default=True)
     is_new = models.BooleanField(default=False)
     is_on_demand = models.BooleanField(default=False)
+    route_order = models.PositiveSmallIntegerField(null=True)
 
     # Update status
     marked_stale = models.BooleanField(default=False)

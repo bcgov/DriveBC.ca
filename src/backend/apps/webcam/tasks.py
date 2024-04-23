@@ -3,19 +3,29 @@ import io
 import logging
 import os
 import urllib.request
+from itertools import groupby
 from math import floor
 from pathlib import Path
 
+import environ
 import pytz
+import requests
 from apps.feed.client import FeedClient
+from apps.shared.models import RouteGeometry
 from apps.webcam.enums import CAMERA_DIFF_FIELDS
+from apps.webcam.hwy_coords import hwy_coords
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
 from apps.webcam.views import WebcamAPI
 from django.conf import settings
+from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core.exceptions import ObjectDoesNotExist
 from PIL import Image, ImageDraw, ImageFont
 
+# Base dir and env
+BASE_DIR = Path(__file__).resolve().parents[4]
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
 logger = logging.getLogger(__name__)
 
 APP_DIR = Path(__file__).resolve().parent
@@ -40,6 +50,7 @@ def populate_webcam_from_data(webcam_data):
 
 def populate_all_webcam_data():
     feed_data = FeedClient().get_webcam_list()["webcams"]
+
     for webcam_data in feed_data:
         populate_webcam_from_data(webcam_data)
 
@@ -139,3 +150,85 @@ def update_webcam_image(webcam):
 
     except Exception as e:
         logger.error(e)
+
+
+# Helper function for add_order_to_cameras that updates order of each cam in a highway/route group
+def add_order_to_camera_group(key, cams):
+    # Only process if reference linestring exists
+    route_geometry = RouteGeometry.objects.filter(id=key).first()
+    if route_geometry:
+        # Combine all coordinates into a single linestring for sorting
+        all_coords = ()
+        for route in route_geometry.routes:
+            all_coords += route.coords
+
+        # Save distance along route to cams
+        route_ls = LineString(all_coords)
+        for cam in cams:
+            cam.route_distance = route_ls.project(cam.location)
+
+        # Sort cams by distance along route and update
+        last_point = None
+        current_order = 0
+        for sorted_cam in sorted(cams, key=lambda c: (c.route_distance, c.name)):
+            # Increase order unless same location as last cam
+            if last_point and not sorted_cam.location.equals(last_point):
+                current_order += 1
+
+            # Use update here to avoid saving the entire object
+            Webcam.objects.filter(id=sorted_cam.id).update(route_order=current_order)
+
+            # Update last cam
+            last_point = sorted_cam.location
+
+
+def add_order_to_cameras():
+    """
+    DBC22-1183
+
+    Update the order of each camera based on linestrings built by build_route_geometries
+
+    """
+    # Sort before grouping by route name
+    query = Webcam.objects.all().order_by('highway', 'highway_description')
+
+    # Group by route name and add order to cams in each group
+    for route_name, cam_group in groupby(query, lambda x: x.highway if x.highway != '0' else x.highway_description):
+        add_order_to_camera_group(route_name, list(cam_group))
+
+    # Rebuild cache
+    WebcamAPI().set_list_data()
+
+
+def build_route_geometries():
+    """
+    DBC22-1183
+
+    Using hwy_coords for each route as payload to feed into the routing API,
+    build linestrings to be used for calculating the distance/order of cameras
+    along their route
+
+    """
+    for key, routes in hwy_coords.items():
+        # Do not build for existing entries
+        if not RouteGeometry.objects.filter(id=key).first():
+            ls_routes = []
+
+            # Go through each route and create a geometry
+            for route in routes:
+                payload = {
+                    "points": route,
+                }
+
+                response = requests.get(
+                    env("DRIVEBC_ROUTE_PLANNER_API_BASE_URL") + "/directions.json",
+                    params=payload,
+                    headers={
+                        "apiKey": env("DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY"),
+                    }
+                )
+
+                points_list = [Point(p) for p in response.json()['route']]
+                ls_routes.append(LineString(points_list))
+
+            RouteGeometry.objects.create(id=key, routes=MultiLineString(ls_routes))

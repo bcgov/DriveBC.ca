@@ -18,3 +18,15 @@ class SiteSettings(models.Model):
             raise ValidationError(f"Only one instance of {self.__class__.__name__} allowed")
 
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.pk
+
+
+class RouteGeometry(models.Model):
+    id = models.CharField(max_length=128, primary_key=True)
+
+    routes = models.MultiLineStringField()
+
+    def __str__(self):
+        return self.id
