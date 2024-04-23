@@ -135,11 +135,11 @@ export default function CamerasListPage() {
       const clonedCameras = JSON.parse(JSON.stringify(filteredCameras));
       const finalCameras = addCameraGroups(clonedCameras);
 
-      // Sort cameras by highway number and highway_cam_order
+      // Sort cameras by highway number and route_order
       finalCameras.sort(function(a, b) {
         const highwayCompare = collator.compare(a.highway_display, b.highway_display);
         if (highwayCompare == 0) {
-          return collator.compare(a.highway_cam_order, b.highway_cam_order);
+          return collator.compare(a.route_order, b.route_order);
         }
 
         return highwayCompare;
