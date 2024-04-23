@@ -436,6 +436,7 @@ export default function CameraDetailsPage() {
                       </div>
                     )}
                   </div>
+                  <p className="credit" dangerouslySetInnerHTML={{__html: camera.credit}}></p>
                 </Tab>
 
                 <Tab eventKey="nearby" title={
@@ -451,7 +452,6 @@ export default function CameraDetailsPage() {
                   </div>
                 </Tab>
               </Tabs>
-              <p className="credit" dangerouslySetInnerHTML={{__html: camera.credit}}></p>
             </div>
           </div>
         )}
