@@ -185,6 +185,7 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
 
   build-logprocessing:
+    needs: [build-pre]
     runs-on: ubuntu-latest
     name: Build & Push Docker Log-Processing Image
     environment: test
@@ -201,7 +202,7 @@ jobs:
         tags: latest latest-test ${{ github.sha }}
         labels: |
           app=drivebc
-        containerfiles: ./compose/logprocessing/Dockerfile
+        containerfiles: ./compose/logprocessing/DockerFile
 
     - name: Push to Github Packages
       uses: redhat-actions/push-to-registry@v2.7
@@ -236,4 +237,4 @@ jobs:
     - name: Helm upgrade on OpenShift Environment
       run: |
         helm dependency update ./infrastructure/main
-        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.build-pre.outputs.tag }}" --set image-caching.image.tag="${{ needs.build-pre.outputs.tag }}" --set redis.image.tag="${{ needs.build-pre.outputs.tag }}" --set static.image.tag="${{ needs.build-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.build-pre.outputs.tag }} --set logprocessing.image.tag="${{ needs.build-pre.outputs.tag }}"
+        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.build-pre.outputs.tag }}" --set image-caching.image.tag="${{ needs.build-pre.outputs.tag }}" --set redis.image.tag="${{ needs.build-pre.outputs.tag }}" --set static.image.tag="${{ needs.build-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.build-pre.outputs.tag }}" --set logprocessing.image.tag="${{ needs.build-pre.outputs.tag }}"
