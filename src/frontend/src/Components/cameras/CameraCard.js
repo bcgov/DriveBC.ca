@@ -12,6 +12,8 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import FriendlyTime from '../FriendlyTime';
 
+import { getCameraOrientation } from './helper.js';
+
 // Styling
 import './CameraCard.scss';
 
@@ -89,7 +91,11 @@ export default function CameraCard(props) {
 
           <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
           {camera.camGroup.map((cam) =>
-            <Button className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={(event) => {event.stopPropagation(); setCamera(cam)}}>{cam.orientation}</Button>
+            <Button 
+            aria-label={getCameraOrientation(cam.orientation)}
+            className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={(event) => {event.stopPropagation(); setCamera(cam)}}>
+              {cam.orientation}
+            </Button>
           )}
         </div>
         <div>
