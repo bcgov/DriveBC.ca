@@ -46,13 +46,13 @@ export default function Footer(props) {
         </div>
         <div className='bottom'>
           <div className="connect">
-            <a href="https://twitter.com/DriveBC" className="footer-link social-icon" target="_blank" rel="noreferrer"  alt="Twitter" aria-hidden="true" aria-label="Twitter">
+            <a href="https://twitter.com/DriveBC" className="footer-link social-icon" target="_blank" rel="noreferrer"  alt="Twitter" aria-label="X Twitter">
               <FontAwesomeIcon icon={faXTwitter} />
             </a>
-            <a href="https://www.instagram.com/ministryoftranbc/" className="footer-link  social-icon" target="_blank" rel="noreferrer"  alt="Instagram" aria-hidden="true" aria-label="Instagram">
+            <a href="https://www.instagram.com/ministryoftranbc/" className="footer-link  social-icon" target="_blank" rel="noreferrer"  alt="Instagram" aria-label="Instagram">
               <FontAwesomeIcon icon={faInstagram}/>
             </a>
-            <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-infrastructure/" className="footer-link  social-icon" target="_blank" rel="noreferrer" alt="Linkedin" aria-hidden="true" aria-label="Linkedin">
+            <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-infrastructure/" className="footer-link  social-icon" target="_blank" rel="noreferrer" alt="Linkedin" aria-label="Linkedin">
               <FontAwesomeIcon icon={faLinkedin}/>
             </a>
           </div>
