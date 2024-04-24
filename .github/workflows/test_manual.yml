@@ -178,7 +178,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2.9
       with:
         image: drivebc-logprocessing
-        tags: latest latest-test ${{ github.sha }}
+        tags: latest latest-test ${{ github.sha }} ${{ needs.build-pre.outputs.tag }}
         labels: |
           app=drivebc
         containerfiles: ./compose/logprocessing/DockerFile
