@@ -185,6 +185,7 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
 
   build-logprocessing:
+    needs: [build-pre]
     runs-on: ubuntu-latest
     name: Build & Push Docker Log-Processing Image
     environment: dev
@@ -201,7 +202,7 @@ jobs:
         tags: latest latest-dev ${{ github.sha }}
         labels: |
           app=drivebc
-        containerfiles: ./compose/logprocessing/Dockerfile
+        containerfiles: ./compose/logprocessing/DockerFile
   
     - name: Push to Github Packages
       uses: redhat-actions/push-to-registry@v2.7
