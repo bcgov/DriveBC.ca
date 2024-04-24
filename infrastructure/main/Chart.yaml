@@ -13,10 +13,6 @@ dependencies:
     version: '0.1.0'
     repository: 'file://../_tasks'
     condition: tasks.enabled
-  - name: image-caching
-    version: '0.1.0'
-    repository: 'file://../_image-caching'
-    condition: image-caching.enabled
   - name: redis
     version: '0.1.0'
     repository: 'file://../_redis'

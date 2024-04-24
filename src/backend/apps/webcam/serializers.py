@@ -21,11 +21,7 @@ class WebcamSerializer(serializers.ModelSerializer):
         webcam_id = obj.id
 
         links = {
-            "imageSource": f"{proxy_root}webcam/api/v1/webcams/{webcam_id}/imageSource",
             "imageDisplay": f"{local_root}images/{webcam_id}.jpg",
-            "imageThumbnail":
-                f"{proxy_root}bchighwaycam/pub/cameras/tn/{webcam_id}.jpg",
-            "currentImage": f"{proxy_root}webcam/imageUpdate.php?cam={webcam_id}",
             "replayTheDay": f"{proxy_root}ReplayTheDay/json/{webcam_id}.json",
         }
 

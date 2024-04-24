@@ -124,38 +124,6 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
-
-  build-image-caching:
-    needs: [build-pre]
-    runs-on: ubuntu-latest
-    name: Build & Push Docker Image-Caching Image
-    environment: test
-
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.ref_name }}
-
-    - name: Build Image Caching
-      id: build_image
-      uses: redhat-actions/buildah-build@v2.9
-      with:
-        image: drivebc-image-caching
-        tags: latest latest-test ${{ github.sha }} ${{ needs.build-pre.outputs.tag }}
-        labels: |
-          app=drivebc
-        containerfiles: ./compose/caching/Dockerfile
-
-    - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2.7
-      with:
-        image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
-
   build-redis:
     needs: [build-pre]
     runs-on: ubuntu-latest
@@ -214,7 +182,7 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
 
   versionUpdate:
-    needs: [build-pre, build-static, build-backend, build-image-caching, build-redis, build-logprocessing]
+    needs: [build-pre, build-static, build-backend, build-redis, build-logprocessing]
     runs-on: ubuntu-latest
     name: Deploy Latest Images
     environment:
@@ -237,4 +205,4 @@ jobs:
     - name: Helm upgrade on OpenShift Environment
       run: |
         helm dependency update ./infrastructure/main
-        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.build-pre.outputs.tag }}" --set image-caching.image.tag="${{ needs.build-pre.outputs.tag }}" --set redis.image.tag="${{ needs.build-pre.outputs.tag }}" --set static.image.tag="${{ needs.build-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.build-pre.outputs.tag }}" --set logprocessing.image.tag="${{ needs.build-pre.outputs.tag }}"
+        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.build-pre.outputs.tag }}" --set redis.image.tag="${{ needs.build-pre.outputs.tag }}" --set static.image.tag="${{ needs.build-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.build-pre.outputs.tag }}" --set logprocessing.image.tag="${{ needs.build-pre.outputs.tag }}"
