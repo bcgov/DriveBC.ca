@@ -11,6 +11,8 @@ import parse from 'html-react-parser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVideoSlash, faVideo } from '@fortawesome/pro-solid-svg-icons';
 
+import { getCameraOrientation } from '../cameras/helper.js';
+
 import colocatedCamIcon from '../../images/colocated-camera.svg';
 import './mapPopup.scss';
 
@@ -61,7 +63,7 @@ export default function CamPopup(props) {
 
     const res = Object.entries(rootCam.camGroup).map(([index, cam]) => {
       return (
-        <Button className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') }
+        <Button aria-label={getCameraOrientation(cam.orientation)} className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') }
          key={cam.id} onClick={(event) => {event.stopPropagation(); clickHandler(index)}}>
           {cam.orientation}
         </Button>

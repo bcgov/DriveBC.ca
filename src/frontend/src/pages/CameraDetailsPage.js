@@ -38,6 +38,7 @@ import Footer from '../Footer.js';
 import FriendlyTime from '../Components/FriendlyTime';
 import highwayShield from '../Components/highwayShield';
 import CurrentCameraIcon from '../Components/CurrentCameraIcon';
+import { getCameraOrientation } from '../Components/cameras/helper.js';
 
 // Styling
 import './CameraDetailsPage.scss';
@@ -376,7 +377,7 @@ export default function CameraDetailsPage() {
                       </span>
                       <span className="camera-directions-group">
                         {camera.camGroup.map((cam) =>
-                          <Button className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
+                          <Button aria-label={getCameraOrientation(cam.orientation)} className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
                         )}
                       </span>
                     </div>
