@@ -50,14 +50,6 @@ jobs:
         target: ${{ needs.deploy-pre.outputs.tag }}
         tags: |
           latest-prod
-    - name: Add latest-prod tag to image-caching image
-      uses: shrink/actions-docker-registry-tag@v3
-      with:
-        registry: ghcr.io
-        repository: bcgov/drivebc-image-caching
-        target: ${{ needs.deploy-pre.outputs.tag }}
-        tags: |
-          latest-prod
     - name: Add latest-uat tag to redis image
       uses: shrink/actions-docker-registry-tag@v3
       with:
@@ -98,4 +90,4 @@ jobs:
     - name: Helm upgrade on OpenShift Environment
       run: |
         helm dependency update ./infrastructure/main
-        helm upgrade prod-drivebc -f ./infrastructure/main/values-prod.yaml ./infrastructure/main --set django.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set image-caching.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set redis.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set static.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.deploy-pre.outputs.tag }}"
+        helm upgrade prod-drivebc -f ./infrastructure/main/values-prod.yaml ./infrastructure/main --set django.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set redis.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set static.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.deploy-pre.outputs.tag }}"

@@ -45,23 +45,6 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
-  imagescan-image-caching:
-    name: Scan latest-prod image-caching Image
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'ghcr.io/bcgov/drivebc-image-caching:latest-prod'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results.sarif'
-
   imagescan-redis:
     name: Scan Redis Image from dockerhub
     runs-on: ubuntu-latest

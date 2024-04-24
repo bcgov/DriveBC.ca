@@ -78,35 +78,6 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
-
-  build-image-caching:
-    runs-on: ubuntu-latest
-    name: Build & Push Docker Image-Caching Image
-    environment: dev
-    
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
-    
-    - name: Build Image Caching
-      id: build_image
-      uses: redhat-actions/buildah-build@v2.9
-      with:
-        image: drivebc-image-caching
-        tags: latest latest-dev ${{ github.sha }}
-        labels: |
-          app=drivebc
-        containerfiles: ./compose/caching/Dockerfile
-  
-    - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2.7
-      with:
-        image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
-
   build-redis:
     runs-on: ubuntu-latest
     name: Build & Push Docker Redis Image
@@ -167,7 +138,7 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
 
   versionUpdate:
-    needs: [build-static, build-backend, build-redis, build-image-caching, build-logprocessing]
+    needs: [build-static, build-backend, build-redis, build-logprocessing]
     runs-on: ubuntu-latest
     name: Deploy Latest Images
     environment:
@@ -188,4 +159,4 @@ jobs:
     - name: Helm upgrade on OpenShift Environment
       run: |
         helm dependency update ./infrastructure/main
-        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml ./infrastructure/main --set django.image.tag="${{ github.sha }}" --set image-caching.image.tag="${{ github.sha }}" --set redis.image.tag="${{ github.sha }}" --set static.image.tag="${{ github.sha }}" --set tasks.image.tag="${{ github.sha }}" --set logprocessing.image.tag="${{ github.sha }}"
+        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml ./infrastructure/main --set django.image.tag="${{ github.sha }}" --set redis.image.tag="${{ github.sha }}" --set static.image.tag="${{ github.sha }}" --set tasks.image.tag="${{ github.sha }}" --set logprocessing.image.tag="${{ github.sha }}"

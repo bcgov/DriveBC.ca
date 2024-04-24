@@ -56,32 +56,6 @@ tasks:
       djangoConfigMap: test-drivebc-django
       djangoSecret: test-drivebc-django
 
-image-caching:
-  fullnameOverride: test-image-caching
-  nameOverride: test-image-caching
-  replicaCount: 1
-  image:
-    repository: ghcr.io/bcgov/drivebc-image-caching
-    tag: latest-test
-  deployment:
-    resources:
-      requests:
-        cpu: 20m
-        memory: 50Mi
-      limits:
-        cpu: 250m
-        memory: 100Mi
-    env:
-      imagecachingConfigMap: test-drivebc-image-caching
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 2
-    targetCPUUtilizationPercentage: 75
-  route:
-    host: test-drivebc.apps.gold.devops.gov.bc.ca
-    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist 
-
 redis:
   fullnameOverride: test-redis
   nameOverride: test-redis

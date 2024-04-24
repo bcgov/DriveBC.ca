@@ -11,7 +11,6 @@ Here are the components that are in this folder:
 - Tasks
 - Redis
 - Static
-- Image Caching
 
 ## Deployment Steps
 ### New Environment
@@ -22,7 +21,7 @@ Follow these steps to setup a brand new environment.
 1. Select the project you would like to deploy to using `oc project NAMESPACE`
 1. `helm install ENV-drivebc-init -f .\init\values-ENV.yaml .\init`
     1. NOTE: Do not install this again as it will overwrite all values.
-1. Set the values in the `ENV-drivebc-django` & `ENV-drivebc-static` ConfigMap and Secrets (they both have ) as well as the `ENV-drivebc-image-caching` ConfigMap too.
+1. Set the values in the `ENV-drivebc-django` & `ENV-drivebc-static` ConfigMap and Secrets (they both have )
 1. `helm install ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres` to install CrunchyDB. NOTE: Check the values files to confirm the namespace is correct for monitoring.
 1. Once the datbase is running go to the terminal of the primary replica and go to `psql`, then enter `ALTER DATABASE "ENV-drivebc" OWNER TO "ENV-drivebc";`
 1. `helm install ENV-drivebc -f .\main\values-ENV.yaml .\main` to install the entire environment. 

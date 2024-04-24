@@ -55,32 +55,6 @@ tasks:
       djangoConfigMap: drivebc-django
       djangoSecret: drivebc-django
 
-image-caching:
-  fullnameOverride: image-caching
-  nameOverride: image-caching
-  replicaCount: 1
-  image:
-    repository: ghcr.io/bcgov/drivebc-image-caching
-    tag: latest
-  deployment:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 50Mi
-      limits:
-        cpu: 250m
-        memory: 100Mi
-    env:
-      imagecachingConfigMap: drivebc-image-caching
-  autoscaling:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 2
-    targetCPUUtilizationPercentage: 75
-  route:
-    host: drivebc.apps.gold.devops.gov.bc.ca
-    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist 
-
 redis:
   fullnameOverride: redis
   nameOverride: redis
