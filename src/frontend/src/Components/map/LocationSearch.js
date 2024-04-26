@@ -22,7 +22,9 @@ export default function LocationSearch(props) {
   const [options, setLocationOptions] = useState([]);
 
   const setSelectedLocation = payload => {
-    window.document.activeElement.blur(); // De-focus textbox
+    if (payload.length > 0) {
+      window.document.activeElement.blur(); // De-focus textbox
+    }
     dispatch(action(payload));
   };
 
