@@ -106,9 +106,9 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
-  build-logprocessing:
+  build-openshiftjobs:
     runs-on: ubuntu-latest
-    name: Build & Push Docker Log Processing Image
+    name: Build & Push Docker OpenShift Jobs Image
     environment: 
       name: dev
 
@@ -116,17 +116,17 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Build Log Processing
+    - name: Build OpenShift Jobs
       id: build_image
       uses: redhat-actions/buildah-build@v2
       with:
         context: .
         layers: true
-        image: drivebc-logprocessing
+        image: drivebc-openshiftjobs
         tags: latest latest-dev ${{ github.sha }}
         labels: |
           app=drivebc
-        containerfiles: ./compose/logprocessing/DockerFile
+        containerfiles: ./compose/openshiftjobs/DockerFile
 
     - name: Push to Github Packages
       uses: redhat-actions/push-to-registry@v2
@@ -138,7 +138,7 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
 
   versionUpdate:
-    needs: [build-static, build-backend, build-redis, build-logprocessing]
+    needs: [build-static, build-backend, build-redis, build-openshiftjobs]
     runs-on: ubuntu-latest
     name: Deploy Latest Images
     environment:
@@ -159,4 +159,4 @@ jobs:
     - name: Helm upgrade on OpenShift Environment
       run: |
         helm dependency update ./infrastructure/main
-        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml ./infrastructure/main --set django.image.tag="${{ github.sha }}" --set redis.image.tag="${{ github.sha }}" --set static.image.tag="${{ github.sha }}" --set tasks.image.tag="${{ github.sha }}" --set logprocessing.image.tag="${{ github.sha }}"
+        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml ./infrastructure/main --set django.image.tag="${{ github.sha }}" --set redis.image.tag="${{ github.sha }}" --set static.image.tag="${{ github.sha }}" --set tasks.image.tag="${{ github.sha }}" --set openshiftjobs.image.tag="${{ github.sha }}"

@@ -11,8 +11,8 @@ dependencies:
 - name: static
   repository: file://../_static
   version: 0.1.0
-- name: logprocessing
-  repository: file://../_logprocessing
+- name: openshiftjobs
+  repository: file://../_openshiftjobs
   version: 0.1.0
-digest: sha256:6e52f8f5347093915401e544f039ae4e052a9459389d5c8b5930b1a59d8673f1
-generated: "2024-04-24T13:42:00.94538-07:00"
+digest: sha256:c30da475ca6c16b2b174c7fe49023067ca89b52afefefe2c1cab809e66762ac8
+generated: "2024-04-26T10:10:49.6997356-07:00"

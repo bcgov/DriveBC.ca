@@ -103,21 +103,56 @@ static:
   logpvc:
     storage: 5Gi
 
-logprocessing:
-  fullnameOverride: logprocessing
-  nameOverride: logprocessing
+openshiftjobs:
+  fullnameOverride: prod-openshiftjobs
+  nameOverride: prod-openshiftjobs
+
   image:
-    repository: ghcr.io/bcgov/drivebc-logprocessing
-    tag: latest
-  deployment:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 1Gi
-      limits:
-        cpu: 2000m
-        memory: 2Gi
-    env:
-      s3Secret: prod-drivebc-logprocessing
-    volumes:
-      logPVC: prod-static-log-storage
+    repository: ghcr.io/bcgov/drivebc-openshiftjobs
+    tag: latest-prod
+
+  cronjobs:
+    analyzeuploadlogs:
+      name: analyzeuploadlogs
+      schedule: '0 9 * * *'  #NOTE: This is in UTC
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+        env:
+          s3Secret: prod-drivebc-cronjob-s3bucket
+        volumes:
+          logs: prod-static-log-storage
+    ziplogs:
+      name: ziplogs
+      schedule: '30 * * * *'
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+          limits:
+            cpu: 150m
+            memory: 200Mi
+        volumes:
+          logs: prod-static-log-storage
+    
+    backupmediapvc:
+      name: backupmediapvc
+      schedule: '0 8 * * *'
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 250Mi
+        env:
+          s3Secret: prod-drivebc-cronjob-s3bucket
+        volumes:
+          media: prod-django

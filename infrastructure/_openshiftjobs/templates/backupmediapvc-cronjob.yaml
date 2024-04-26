@@ -4,11 +4,11 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ template "app.fullname" . }}
+  name: {{ template "app.fullname" . }}-{{ .Values.cronjobs.backupmediapvc.name }}
   labels: {{ include "app.labels" . | nindent 4 }}
 
 spec:
-  schedule: '0 9 * * *'
+  schedule: {{ .Values.cronjobs.backupmediapvc.schedule }}
   concurrencyPolicy: Replace
   suspend: false
   jobTemplate:
@@ -18,21 +18,23 @@ spec:
           creationTimestamp: null
         spec:
           volumes:
-            - name: log-storage
+            - name: django-media
               persistentVolumeClaim:
-                claimName: {{ .Values.deployment.volumes.logPVC  }}
+                claimName: {{ .Values.cronjobs.backupmediapvc.deployment.volumes.media  }}
           containers:
             - resources:
                 limits:
-                  cpu: {{ .Values.deployment.resources.limits.cpu  }}
-                  memory: {{ .Values.deployment.resources.limits.memory  }}
+                  cpu: {{ .Values.cronjobs.backupmediapvc.deployment.resources.limits.cpu  }}
+                  memory: {{ .Values.cronjobs.backupmediapvc.deployment.resources.limits.memory  }}
                 requests:
-                  cpu: {{ .Values.deployment.resources.requests.cpu  }}
-                  memory: {{ .Values.deployment.resources.requests.memory  }}
-              name: {{ include "app.fullname" . }}
+                  cpu: {{ .Values.cronjobs.backupmediapvc.deployment.resources.requests.cpu  }}
+                  memory: {{ .Values.cronjobs.backupmediapvc.deployment.resources.requests.memory  }}
+              name: {{ include "app.fullname" . }}-{{ .Values.cronjobs.backupmediapvc.name }}
+              args:
+                - "backupmediapvc"
               volumeMounts:
-                - name: log-storage
-                  mountPath: /logs
+                - name: django-media
+                  mountPath: /app/media
               env:
                 - name: DEPLOYMENT_TAG
                   value: {{ $deploymentTag | quote }}
@@ -40,7 +42,7 @@ spec:
                   value: {{ $deploymentTime | quote }}
               envFrom:
                 - secretRef:
-                    name: {{ .Values.deployment.env.s3Secret  }}
+                    name: {{ .Values.cronjobs.backupmediapvc.deployment.env.s3Secret  }}
               imagePullPolicy: IfNotPresent
               image: {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
               securityContext:
