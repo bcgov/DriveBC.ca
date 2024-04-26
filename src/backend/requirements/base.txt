@@ -5,7 +5,7 @@ django-environ==0.10.0
 djangorestframework==3.14.0
 djangorestframework-gis==1.0
 django-cors-headers==3.13.0
-django-filter==23.2
+django-filter==23.5
 drf-recaptcha==3.0.0
 whitenoise==6.5.0
 httpx==0.24.1
