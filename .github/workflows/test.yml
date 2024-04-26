@@ -68,7 +68,7 @@ jobs:
 
     - name: Build Static
       id: build_image
-      uses: redhat-actions/buildah-build@v2.9
+      uses: redhat-actions/buildah-build@v2
       with:
         context: .
         layers: true
@@ -82,7 +82,7 @@ jobs:
           DEBUG_BUILD=false
 
     - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2.7
+      uses: redhat-actions/push-to-registry@v2
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: ${{ steps.build_image.outputs.tags }}
@@ -105,7 +105,7 @@ jobs:
 
     - name: Build Backend
       id: build_image
-      uses: redhat-actions/buildah-build@v2.9
+      uses: redhat-actions/buildah-build@v2
       with:
         image: drivebc-django
         tags: latest latest-test ${{ github.sha }} ${{ needs.build-pre.outputs.tag }}
@@ -116,7 +116,7 @@ jobs:
           DEBUG_BUILD=true
 
     - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2.7
+      uses: redhat-actions/push-to-registry@v2
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: ${{ steps.build_image.outputs.tags }}
@@ -135,7 +135,7 @@ jobs:
 
     - name: Build Redis
       id: build_image
-      uses: redhat-actions/buildah-build@v2.9
+      uses: redhat-actions/buildah-build@v2
       with:
         image: drivebc-redis
         tags: latest latest-test ${{ github.sha }} ${{ needs.build-pre.outputs.tag }}
@@ -144,7 +144,7 @@ jobs:
         containerfiles: ./compose/redis/Dockerfile
 
     - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2.7
+      uses: redhat-actions/push-to-registry@v2
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: ${{ steps.build_image.outputs.tags }}
@@ -164,7 +164,7 @@ jobs:
 
     - name: Build Log-Processing
       id: build_image
-      uses: redhat-actions/buildah-build@v2.9
+      uses: redhat-actions/buildah-build@v2
       with:
         image: drivebc-logprocessing
         tags: latest latest-test ${{ github.sha }} ${{ needs.build-pre.outputs.tag }}
@@ -173,7 +173,7 @@ jobs:
         containerfiles: ./compose/logprocessing/DockerFile
 
     - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2.7
+      uses: redhat-actions/push-to-registry@v2
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: ${{ steps.build_image.outputs.tags }}

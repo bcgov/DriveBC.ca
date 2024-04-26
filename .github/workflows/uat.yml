@@ -37,7 +37,7 @@ jobs:
     name: Add latest-uat Tag
     steps:
     - name: Add latest-uat tag to django image
-      uses: shrink/actions-docker-registry-tag@v3
+      uses: shrink/actions-docker-registry-tag@v4
       with:
         registry: ghcr.io
         repository: bcgov/drivebc-django
@@ -45,7 +45,7 @@ jobs:
         tags: |
           latest-uat
     - name: Add latest-uat tag to static image
-      uses: shrink/actions-docker-registry-tag@v3
+      uses: shrink/actions-docker-registry-tag@v4
       with:
         registry: ghcr.io
         repository: bcgov/drivebc-static
@@ -53,7 +53,7 @@ jobs:
         tags: |
           latest-uat
     - name: Add latest-uat tag to redis image
-      uses: shrink/actions-docker-registry-tag@v3
+      uses: shrink/actions-docker-registry-tag@v4
       with:
         registry: ghcr.io
         repository: bcgov/drivebc-redis
@@ -62,7 +62,7 @@ jobs:
           latest-uat
 
     - name: Add latest-uat tag to logprocessing image
-      uses: shrink/actions-docker-registry-tag@v3
+      uses: shrink/actions-docker-registry-tag@v4
       with:
         registry: ghcr.io
         repository: bcgov/drivebc-logprocessing
