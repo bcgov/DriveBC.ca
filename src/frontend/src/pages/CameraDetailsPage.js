@@ -403,7 +403,7 @@ export default function CameraDetailsPage() {
                     {camera.is_on && (
                       <div className="card-img-box">
                         {!replay ?
-                          <img src={camera.links.imageDisplay} alt="camera"/> :
+                          <img src={camera.links.imageDisplay} alt={camera.name} /> :
 
                           <ImageGallery
                             ref={refImg}
