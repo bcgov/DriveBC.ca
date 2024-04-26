@@ -16,7 +16,7 @@ import Container from 'react-bootstrap/Container';
 // Components and functions
 import {
   compareRoutePoints,
-  filterByRoute,
+  filterByRoute
 } from '../Components/map/helper';
 import { getAdvisories } from '../Components/data/advisories';
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
@@ -77,7 +77,7 @@ export default function CamerasListPage() {
       const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
 
       // Filter data by route
-      const filteredCamData = route ? filterByRoute(camData, route) : camData;
+      const filteredCamData = route ? filterByRoute(camData, route, null, true) : camData;
 
       dispatch(
         updateCameras({
@@ -137,12 +137,19 @@ export default function CamerasListPage() {
 
       // Sort cameras by highway number and route_order
       finalCameras.sort(function(a, b) {
-        const highwayCompare = collator.compare(a.highway_display, b.highway_display);
-        if (highwayCompare == 0) {
-          return collator.compare(a.route_order, b.route_order);
-        }
+        // Route exists, sort by route projection distance only
+        if (selectedRoute) {
+          return collator.compare(a.route_projection, b.route_projection);
 
-        return highwayCompare;
+        // No route, sort by highway first, then default highway/route order
+        } else {
+          const highwayCompare = collator.compare(a.highway_display, b.highway_display);
+          if (highwayCompare == 0) {
+            return collator.compare(a.route_order, b.route_order);
+          }
+
+          return highwayCompare;
+        }
       });
 
       setProcessedCameras(finalCameras);
@@ -229,7 +236,7 @@ export default function CamerasListPage() {
         </div>
       </Container>
 
-      <CameraList cameras={ displayedCameras ? displayedCameras : [] }></CameraList>
+      <CameraList cameras={ displayedCameras ? displayedCameras : [] } selectedRoute={selectedRoute}></CameraList>
 
       {!(displayedCameras && displayedCameras.length) &&
         <Container className="empty-cam-display">
