@@ -15,7 +15,7 @@ jobs:
     name: Scan ZAP Test Site
     steps:
       - name: ZAP Scan
-        uses: zaproxy/action-full-scan@v0.9.0
+        uses: zaproxy/action-full-scan@v0.10.0
         with:
           target: "https://test-drivebc.apps.gold.devops.gov.bc.ca/"
 #          rules_file_name: ".zap/rules.tsv"
