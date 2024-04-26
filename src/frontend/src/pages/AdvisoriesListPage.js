@@ -79,7 +79,7 @@ export default function AdvisoriesListPage() {
 
       <PageHeader
         title='Advisories'
-        description='Get the latest critical travel status information during major events affecting travel on a highway or region.'>
+        description='Get the latest critical info impacting travel on a highway or region.'>
       </PageHeader>
 
       <Container>
