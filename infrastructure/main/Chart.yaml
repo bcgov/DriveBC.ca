@@ -21,7 +21,7 @@ dependencies:
     version: '0.1.0'
     repository: 'file://../_static'
     condition: static.enabled
-  - name: logprocessing
+  - name: openshiftjobs
     version: '0.1.0'
-    repository: 'file://../_logprocessing'
-    condition: static.enabled
+    repository: 'file://../_openshiftjobs'
+    condition: openshiftjobs.enabled

@@ -131,25 +131,25 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
-  build-logprocessing:
+  build-openshiftjobs:
     needs: [build-pre]
     runs-on: ubuntu-latest
-    name: Build & Push Docker Log-Processing Image
+    name: Build & Push Docker OpenShift Jobs Image
     environment: test
     
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
     
-    - name: Build Log-Processing
+    - name: Build OpenShift Jobs
       id: build_image
       uses: redhat-actions/buildah-build@v2
       with:
-        image: drivebc-logprocessing
+        image: drivebc-openshiftjobs
         tags: latest latest-test ${{ github.sha }} ${{ needs.build-pre.outputs.tag }}
         labels: |
           app=drivebc
-        containerfiles: ./compose/logprocessing/DockerFile
+        containerfiles: ./compose/openshiftjobs/DockerFile
   
     - name: Push to Github Packages
       uses: redhat-actions/push-to-registry@v2
@@ -161,7 +161,7 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
        
   versionUpdate:
-    needs: [build-pre, build-static, build-backend, build-redis, build-logprocessing]
+    needs: [build-pre, build-static, build-backend, build-redis, build-openshiftjobs]
     runs-on: ubuntu-latest
     name: Deploy Latest Images
     environment:
@@ -184,4 +184,4 @@ jobs:
     - name: Helm upgrade on OpenShift Environment
       run: |
         helm dependency update ./infrastructure/main
-        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.build-pre.outputs.tag }}" --set redis.image.tag="${{ needs.build-pre.outputs.tag }}" --set static.image.tag="${{ needs.build-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.build-pre.outputs.tag }}" --set logprocessing.image.tag="${{ needs.build-pre.outputs.tag }}"
+        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.build-pre.outputs.tag }}" --set redis.image.tag="${{ needs.build-pre.outputs.tag }}" --set static.image.tag="${{ needs.build-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.build-pre.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.build-pre.outputs.tag }}"

@@ -103,21 +103,57 @@ static:
   logpvc:
     storage: 1Gi
 
-logprocessing:
-  fullnameOverride: test-logprocessing
-  nameOverride: test-logprocessing
+openshiftjobs:
+  fullnameOverride: test-openshiftjobs
+  nameOverride: test-openshiftjobs
+
   image:
-    repository: ghcr.io/bcgov/drivebc-logprocessing
+    repository: ghcr.io/bcgov/drivebc-openshiftjobs
     tag: latest-test
-  deployment:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 500Mi
-      limits:
-        cpu: 500m
-        memory: 1Gi
-    env:
-      s3Secret: test-drivebc-logprocessing
-    volumes:
-      logPVC: test-static-log-storage
+
+  cronjobs:
+    analyzeuploadlogs:
+      name: analyzeuploadlogs
+      schedule: '0 9 * * *'  #NOTE: This is in UTC
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 150Mi
+          limits:
+            cpu: 150m
+            memory: 300Mi
+        env:
+          s3Secret: test-drivebc-cronjob-s3bucket
+        volumes:
+          logs: test-static-log-storage
+
+    ziplogs:
+      name: ziplogs
+      schedule: '30 * * * *'
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+          limits:
+            cpu: 150m
+            memory: 200Mi
+        volumes:
+          logs: test-static-log-storage
+
+    backupmediapvc:
+      name: backupmediapvc
+      schedule: '0 8 * * *'
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 250Mi
+        env:
+          s3Secret: test-drivebc-cronjob-s3bucket
+        volumes:
+          media: test-django

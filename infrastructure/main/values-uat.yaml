@@ -103,21 +103,57 @@ static:
   logpvc:
     storage: 5Gi
 
-logprocessing:
-  fullnameOverride: uat-logprocessing
-  nameOverride: uat-logprocessing
+openshiftjobs:
+  fullnameOverride: uat-openshiftjobs
+  nameOverride: uat-openshiftjobs
+
   image:
-    repository: ghcr.io/bcgov/drivebc-logprocessing
+    repository: ghcr.io/bcgov/drivebc-openshiftjobs
     tag: latest-uat
-  deployment:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 1Gi
-      limits:
-        cpu: 2000m
-        memory: 2Gi
-    env:
-      s3Secret: uat-drivebc-logprocessing
-    volumes:
-      logPVC: uat-static-log-storage
+
+  cronjobs:
+    analyzeuploadlogs:
+      name: analyzeuploadlogs
+      schedule: '0 9 * * *'  #NOTE: This is in UTC
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 500Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        env:
+          s3Secret: uat-drivebc-cronjob-s3bucket
+        volumes:
+          logs: uat-static-log-storage
+
+    ziplogs:
+      name: ziplogs
+      schedule: '30 * * * *'
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+          limits:
+            cpu: 150m
+            memory: 200Mi
+        volumes:
+          logs: uat-static-log-storage
+
+    backupmediapvc:
+      name: backupmediapvc
+      schedule: '0 8 * * *'
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 250Mi
+        env:
+          s3Secret: uat-drivebc-cronjob-s3bucket
+        volumes:
+          media: uat-django

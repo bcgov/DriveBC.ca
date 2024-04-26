@@ -1,0 +1,23 @@
+FROM alpine:3
+RUN apk update && apk upgrade
+#Need goaccess 1.92 for a timezone fix. Once that version is in the regular branch, we can pull it from there.
+RUN apk add goaccess --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main
+
+RUN apk add --no-cache \
+    aws-cli \
+    bash \
+    coreutils \
+    tzdata
+
+COPY ./compose/openshiftjobs/entrypoint.sh /
+COPY ./compose/openshiftjobs/scripts/analyzeexportlogs.sh /scripts/
+COPY ./compose/openshiftjobs/scripts/backupmediapvc.sh /scripts/
+COPY ./compose/openshiftjobs/scripts/ziplogs.sh /scripts/
+
+RUN sed -i 's/\r$//g' /entrypoint.sh && chmod +x /entrypoint.sh
+RUN sed -i 's/\r$//g' /scripts/analyzeexportlogs.sh && chmod +x /scripts/analyzeexportlogs.sh
+RUN sed -i 's/\r$//g' /scripts/backupmediapvc.sh && chmod +x /scripts/backupmediapvc.sh
+RUN sed -i 's/\r$//g' /scripts/ziplogs.sh && chmod +x /scripts/ziplogs.sh
+
+
+ENTRYPOINT ["/entrypoint.sh"]
