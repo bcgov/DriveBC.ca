@@ -13,7 +13,7 @@ import './CameraList.scss';
 
 export default function CameraList(props) {
   // Props
-  const { cameras } = props;
+  const { cameras, selectedRoute } = props;
 
   // UseState hooks
   const [displayedCameras, setDisplayedCameras] = useState([]);
@@ -31,29 +31,34 @@ export default function CameraList(props) {
   }, [cameras]);
 
   // Rendering
-  const mapDisplayedCameras = () => {
-    // Webcam data reduced to arrays grouped by highway
-    const res = {};
+  const groupDisplayedCameras = () => {
+    // Group adjacent cams on the same road into  arrays
+    const res = [];
     displayedCameras.forEach((cam) => {
       const highway = cam.highway_display;
-      if (!(highway in res)) {
-        res[highway] = [];
+
+      if (res.length == 0 || res[res.length-1]['highway'] !== highway) {
+        res.push({
+          'highway': highway,
+          'cams': []
+        })
       }
 
-      res[highway].push(cam);
+      res[res.length-1]['cams'].push(cam);
     });
 
     return res;
   };
 
   const renderHighways = () => {
-    const mappedCams = mapDisplayedCameras();
-    const highwayKeys = Object.keys(mappedCams);
+    const groupedCams = groupDisplayedCameras();
 
-    // Render camera groups by highway number
-    highwayKeys.sort(collator.compare);
+    const res = [];
+    for (const {highway, cams} of groupedCams) {
+      res.push(<HighwayGroup key={highway} highway={highway} cams={cams} />);
+    }
 
-    return highwayKeys.map((highway) => <HighwayGroup key={highway} highway={highway} cams={mappedCams[highway]} />);
+    return res;
   }
 
   const getHasMore = () => {

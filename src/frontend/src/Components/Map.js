@@ -777,7 +777,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
       const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
 
       // Filter data by route
-      const filteredCamData = route ? filterByRoute(camData, route) : camData;
+      const filteredCamData = route ? filterByRoute(camData, route, null, true) : camData;
 
       dispatch(
         updateCameras({

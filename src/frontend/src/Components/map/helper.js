@@ -1,6 +1,3 @@
-// Third party packages
-import { lineString, bbox } from "@turf/turf";
-
 // Map & geospatial imports
 import { fromLonLat, transformExtent } from 'ol/proj';
 import * as turf from '@turf/turf';
@@ -69,7 +66,7 @@ export const transformFeature = (feature, sourceCRS, targetCRS) => {
 
 // Zoom and pan
 export const fitMap = (route, mapView) => {
-  const routeBbox = bbox(lineString(route));
+  const routeBbox = turf.bbox(turf.lineString(route));
   const routeExtent = transformExtent(routeBbox, 'EPSG:4326', 'EPSG:3857');
 
   if (mapView.current) {
@@ -180,7 +177,28 @@ export const setLocationPin = (coordinates, svgMarkup, mapRef, pinRef) => {
   });
 }
 
-export const filterByRoute = (data, route, extraToleranceMeters) => {
+// Route filtering and ordering
+export const populateRouteProjection = (data, route) => {
+  // Deep copy to avoid direct state mutation
+  const res = JSON.parse(JSON.stringify(data));
+
+  // Reference route start point/ls
+  const routeLs = turf.lineString(route.route);
+  const startPoint = turf.point(route.route[0]);
+
+  // Calculate and store distance alone reference line
+  for (let i=0; i < res.length; i++) {
+    const camPt = turf.point(res[i].location.coordinates);
+    const closestPoint = turf.nearestPointOnLine(routeLs, camPt, { units: 'meters' });
+
+    const distanceAlongLine = turf.lineDistance(turf.lineSlice(startPoint, closestPoint, routeLs), { units: 'meters' });
+    res[i].route_projection = distanceAlongLine;
+  }
+
+  return res;
+}
+
+export const filterByRoute = (data, route, extraToleranceMeters, populateProjection) => {
   if (!route) {
     return data;
   }
@@ -204,7 +222,7 @@ export const filterByRoute = (data, route, extraToleranceMeters) => {
       const coords = entry.location.coordinates;
       const ls = turf.lineString(coords);
       const bbox = turf.bbox(routeLineString);
-      spatialIndex.add(bbox[0], bbox[1], bbox[2], bbox[3]);
+      spatialIndex.add(turf.bbox[0], turf.bbox[1], turf.bbox[2], turf.bbox[3]);
     }
   });
 
@@ -235,6 +253,11 @@ export const filterByRoute = (data, route, extraToleranceMeters) => {
       return turf.booleanIntersects(dataLs, routeLineString);
     }
   });
+
+  // Populate route projection for camera ordering
+  if (populateProjection) {
+    return populateRouteProjection(intersectingData, route);
+  }
 
   return intersectingData;
 }
