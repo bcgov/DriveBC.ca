@@ -20,7 +20,7 @@ class SiteSettings(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.pk
+        return str(self.pk)
 
 
 class RouteGeometry(models.Model):
