@@ -18,12 +18,12 @@ ul.advisories-list {
     .advisory-li-title {
       color: $Type-Link;
       font-size: 1rem;
+      font-weight: 700;
       line-height: 1.5;
       margin-bottom: 0.25rem;
 
       @media (min-width: 992px) {
         font-size: 1.25rem;
-        font-weight: 700;
       }
     }
   }

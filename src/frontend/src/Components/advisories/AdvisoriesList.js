@@ -36,7 +36,7 @@ export default function Advisories(props) {
             }}>
 
             <div className="advisory-li-title-container" tabIndex={0}>
-              <h4 className='advisory-li-title'>{advisory.title}</h4>
+              <h2 className='advisory-li-title'>{advisory.title}</h2>
               {showTimestamp &&
               <div className="timestamp-container">
                 <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>

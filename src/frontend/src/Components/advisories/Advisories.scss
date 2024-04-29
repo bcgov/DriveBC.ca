@@ -12,7 +12,11 @@
   }
   
   .content {
-    h3, .description{
+    h2 {
+      font-size: 1.5rem;
+    }
+    
+    h2, .description{
       color: $BC-Yellow-Dark;
     }
 

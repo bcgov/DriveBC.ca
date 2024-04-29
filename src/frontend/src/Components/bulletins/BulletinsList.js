@@ -37,7 +37,7 @@ export default function Bulletins(props) {
             }}>
 
             <div className='bulletin-li-title-container' tabIndex={0}>
-              <h3 className='bulletin-li-title'>{bulletin.title}</h3>
+              <h2 className='bulletin-li-title'>{bulletin.title}</h2>
 
               {bulletin.teaser &&
                 <div className='bulletin-li-body'>{bulletin.teaser}</div>
