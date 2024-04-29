@@ -26,10 +26,10 @@ export default function Advisories(props) {
       </div>
 
       <div className="content">
-        <h3>
+        <h2>
           {advisories.length > 1 ? 'Advisories ' : 'Advisory '}
           in effect
-        </h3>
+        </h2>
 
         <p className="description">The following advisory affects a portion of the route you’ve chosen:</p>
 
