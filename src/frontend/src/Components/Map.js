@@ -107,7 +107,9 @@ import {
 import './Map.scss';
 
 
-export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
+export default function MapWrapper(props) {
+  let { camera, isCamDetail, mapViewRoute, loadCamDetails } = props;
+
   // Redux
   const dispatch = useDispatch();
   const {
@@ -316,7 +318,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     });
 
     mapRef.current.once('loadstart', async () => {
-      if (camera && !isPreview) {
+      if (camera && !isCamDetail) {
         if (camera.event_type) {
           updateClickedEvent(camera);
         } else {
@@ -431,17 +433,23 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     };
 
     const camClickHandler = feature => {
-      resetClickedStates(feature);
+      if (!isCamDetail) {
+        resetClickedStates(feature);
 
-      // set new clicked camera feature
-      feature.setStyle(cameraStyles['active']);
-      feature.setProperties({ clicked: true }, true);
+        // set new clicked camera feature
+        feature.setStyle(cameraStyles['active']);
+        feature.setProperties({ clicked: true }, true);
 
-      updateClickedCamera(feature);
+        updateClickedCamera(feature);
 
-      cameraPopupRef.current = popup;
+        cameraPopupRef.current = popup;
 
-      setTimeout(resetCameraPopupRef, 500);
+        setTimeout(resetCameraPopupRef, 500);
+
+      } else {
+        setZoomPan(mapView, null, feature.getGeometry().getCoordinates());
+        loadCamDetails(feature.getProperties());
+      }
     };
 
     const eventClickHandler = feature => {
@@ -531,7 +539,6 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
             camClickHandler(clickedFeature);
             return;
           case 'event':
-            console.log(clickedFeature.getProperties());
             eventClickHandler(clickedFeature);
             return;
           case 'ferry':
@@ -562,7 +569,6 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
             regionalClickHandler(clickedFeature);
             return;
           case 'rest':
-            console.log(clickedFeature.getProperties())
             trackEvent(
               'click',
               'map',
@@ -809,9 +815,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
       mapLayers.current['highwayCams'] = getCamerasLayer(
         finalCameras,
         mapRef.current.getView().getProjection().getCode(),
-        mapContext,
-        camera,
-        updateClickedCamera,
+        mapContext
       );
 
       mapRef.current.addLayer(mapLayers.current['highwayCams']);
@@ -1262,7 +1266,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     if (typeof camera === 'string') {
       camera = JSON.parse(camera);
     }
-    if (isPreview || camera) {
+    if (isCamDetail || camera) {
       return 12;
     } else {
       return zoom;
@@ -1279,7 +1283,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
   }
 
   // Force camera and inland ferries filters to be checked on preview mode
-  if (isPreview) {
+  if (isCamDetail) {
     mapContext.visible_layers['highwayCams'] = true;
     mapContext.visible_layers['inlandFerries'] = true;
   }
@@ -1296,7 +1300,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
   const smallScreen = useMediaQuery('only screen and (max-width: 767px)');
 
   return (
-    <div className={`map-container ${isPreview ? 'preview' : ''}`}>
+    <div className={`map-container ${isCamDetail ? 'preview' : ''}`}>
       <div
         ref={panel}
         className={`side-panel ${openPanel ? 'open' : ''}`}
@@ -1318,7 +1322,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
 
         <div className="panel-content">
           {clickedCamera && (
-            <CamPopup camFeature={clickedCamera} isPreview={isPreview} />
+            <CamPopup camFeature={clickedCamera} isCamDetail={isCamDetail} />
           )}
 
           {clickedEvent && getEventPopup(clickedEvent)}
@@ -1352,7 +1356,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
           </Button>
         </div>
 
-        {!isPreview && (
+        {!isCamDetail && (
           <Button
             className="map-btn my-location"
             variant="primary"
@@ -1363,7 +1367,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
           </Button>
         )}
 
-        {!isPreview && (
+        {!isCamDetail && (
           <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''}`}>
             {smallScreen && (
               <ExitSurvey mobile={true} />
@@ -1374,14 +1378,14 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
           </div>
         )}
 
-        {(!isPreview && !smallScreen) && (
+        {(!isCamDetail && !smallScreen) && (
           <ExitSurvey />
         )}
 
-        {!isPreview && (
+        {!isCamDetail && (
           <Filters
             toggleHandler={toggleLayer}
-            disableFeatures={isPreview}
+            disableFeatures={isCamDetail}
             enableRoadConditions={true}
           />
         )}
@@ -1392,7 +1396,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
         <div id="popup-content" className="ol-popup-content"></div>
       </div>
 
-      {isPreview && (
+      {isCamDetail && (
         <Button
           className="map-btn cam-location"
           variant="primary"
@@ -1406,7 +1410,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
         </Button>
       )}
 
-      {isPreview && (
+      {isCamDetail && (
         <Button
           className="map-btn map-view"
           variant="primary"
@@ -1416,10 +1420,10 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
         </Button>
       )}
 
-      {isPreview && (
+      {isCamDetail && (
         <Filters
           toggleHandler={toggleLayer}
-          disableFeatures={isPreview}
+          disableFeatures={isCamDetail}
           enableRoadConditions={true}
           textOverride={'Layer filters'}
         />

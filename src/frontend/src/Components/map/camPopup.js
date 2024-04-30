@@ -18,7 +18,7 @@ import './mapPopup.scss';
 
 export default function CamPopup(props) {
   // Props
-  const { camFeature, isPreview } = props;
+  const { camFeature, isCamDetail } = props;
 
   // Misc
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ export default function CamPopup(props) {
 
   // Handlers
   const handlePopupClick = (e) => {
-    if (!isPreview) {
+    if (!isCamDetail) {
       navigate(`/cameras/${camera.id}`);
     }
   };

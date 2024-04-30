@@ -66,7 +66,6 @@ export default function FeedbackPage() {
       setSuccess(true);
     })
     .catch((error) => {
-      console.log(error);
       setError(true);
 
       // Refresh captcha token on error
@@ -76,7 +75,7 @@ export default function FeedbackPage() {
 
   // Rendering
   return (
-      <div className='feedback-page'>
+    <div className='feedback-page'>
       {!success &&
         <React.Fragment>
           <PageHeader

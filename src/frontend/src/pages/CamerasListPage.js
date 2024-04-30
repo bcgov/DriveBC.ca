@@ -42,7 +42,6 @@ export default function CamerasListPage() {
     cameras: state.feeds.cameras.list,
     filteredCameras: state.feeds.cameras.filteredList,
     camFilterPoints: state.feeds.cameras.filterPoints,
-    camTimeStamp: state.feeds.cameras.routeTimeStamp,
     selectedRoute: state.routes.selectedRoute
   }))));
 

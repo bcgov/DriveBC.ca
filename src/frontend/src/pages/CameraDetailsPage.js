@@ -78,23 +78,13 @@ export default function CameraDetailsPage() {
   }
 
   // Data functions
-  async function initCamera() {
-    const allCameras = await getCameras().catch((error) => displayError(error));
-    const cameraGroupMap = getCameraGroupMap(allCameras);
-
-    const camera = await getCameras(null, `${window.API_HOST}/api/webcams/${params.id}/`).catch((error) => displayError(error));
-
-    // Group cameras
-    const group = cameraGroupMap[camera.group];
-    camera.camGroup = group;
-    camera.camGroup.forEach((cam) => cam.camGroup = group);
-
+  const loadCamDetails = (camData) => {
     // Camera data
-    setCamera(camera);
+    setCamera(camData);
 
     // Next update time
     const currentTime = new Date();
-    const nextUpdateTime = currentTime.setSeconds(currentTime.getSeconds() + camera.update_period_mean);
+    const nextUpdateTime = currentTime.setSeconds(currentTime.getSeconds() + camData.update_period_mean);
     const nextUpdateTimeFormatted = new Intl.DateTimeFormat('en-US',
         {hour: 'numeric',
           minute: 'numeric',
@@ -103,9 +93,25 @@ export default function CameraDetailsPage() {
     setNextUpdate(nextUpdateTimeFormatted);
 
     // Last update time
-    setLastUpdate(camera.last_update_modified);
+    setLastUpdate(camData.last_update_modified);
 
-    document.title = `DriveBC - Cameras - ${camera.name}`;
+    // Replace window title and URL
+    document.title = `DriveBC - Cameras - ${camData.name}`;
+    window.history.replaceState(history.state, null, `/cameras/${camData.id}`)
+  }
+
+  async function initCamera(id) {
+    const allCameras = await getCameras().catch((error) => displayError(error));
+    const cameraGroupMap = getCameraGroupMap(allCameras);
+
+    const camData = await getCameras(null, `${window.API_HOST}/api/webcams/${id}/`).catch((error) => displayError(error));
+
+    // Group cameras
+    const group = cameraGroupMap[camData.group];
+    camData.camGroup = group;
+    camData.camGroup.forEach((cam) => cam.camGroup = group);
+
+    loadCamDetails(camData);
   }
 
   const loadReplay = async (cam) => {
@@ -118,7 +124,7 @@ export default function CameraDetailsPage() {
 
   useEffect(() => {
     if (isInitialMount.current) {
-      initCamera();
+      initCamera(params.id);
       isInitialMount.current = false;
 
     } else if (camera) {
@@ -449,7 +455,7 @@ export default function CameraDetailsPage() {
                   <div className="actions-bar actions-bar--nearby"></div>
                   <div className="map-wrap map-context-wrap">
                     <DndProvider options={HTML5toTouch}>
-                      <Map camera={camera} isPreview={true} mapViewRoute={mapViewRoute}/>
+                      <Map camera={camera} isCamDetail={true} mapViewRoute={mapViewRoute} loadCamDetails={loadCamDetails} />
                     </DndProvider>
                   </div>
                 </Tab>
