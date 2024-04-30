@@ -8,6 +8,7 @@ from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
 from django.db import connection
+from django.http import HttpResponse
 from django.urls import re_path
 from django.views.static import serve
 from drf_recaptcha.fields import ReCaptchaV3Field
@@ -54,6 +55,10 @@ class FeedbackView(APIView):
 
         except Exception:
             return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def health_check(response):
+    return HttpResponse('Ok')
 
 
 class CachedListModelMixin:
