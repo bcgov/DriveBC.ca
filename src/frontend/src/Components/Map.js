@@ -306,6 +306,7 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
       overlays: [popup.current],
       view: mapView.current,
       pixelRatio: 1.875,
+      moveTolerance: 7,
       controls: [new ScaleLine({ units: 'metric' })],
     });
     window.mapRef = mapRef;
@@ -325,6 +326,9 @@ export default function MapWrapper({ camera, isPreview, mapViewRoute }) {
     });
 
     mapRef.current.on('moveend', function () {
+      if(smallScreen){
+        resetHoveredStates();
+      }
       dispatch(
         updateMapState({
           pan: toLonLat(mapView.current.getCenter()),
