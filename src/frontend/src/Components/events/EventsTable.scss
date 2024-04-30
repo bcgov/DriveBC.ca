@@ -56,6 +56,10 @@ table {
       }
     }
 
+    tr:focus {
+      background-color: $BC-Blue-Light;
+    }
+
     .headerRow {
       &:hover + tr {
         background-color: $BC-Blue-Light;

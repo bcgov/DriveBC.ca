@@ -197,7 +197,11 @@ export default function EventsTable(props) {
       const row = rows[i];
 
       res.push(
-        <tr className={`${row.original.severity.toLowerCase()} headerRow`} onClick={() => routeHandler(row.original)} key={`${row.id}-header-row`}>
+        <tr className={`${row.original.severity.toLowerCase()} headerRow`} tabIndex={0} onKeyUp={(event)=>{
+          if (event.key === 'Enter') {
+            routeHandler(row.original);
+          }
+        }} onClick={() => routeHandler(row.original)} key={`${row.id}-header-row`}>
           <td colSpan={10}>
             <p className={'roadName'}>{row.original.route_at}</p>
             <p className={'directionDisplay'}>{row.original.direction_display}</p>
