@@ -1,3 +1,4 @@
+from apps.shared import views as shared_views
 from apps.shared.views import static_override
 from django.conf import settings
 from django.contrib import admin
@@ -12,6 +13,9 @@ urlpatterns = [
 
     # packages
     path('drivebc-cms/', include("apps.cms.urls")),
+
+    # misc
+    path("healthcheck/", shared_views.health_check, name="health_check"),
 
     # TO BE REMOVED IN PRODUCTION
 ] + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
