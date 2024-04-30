@@ -26,6 +26,7 @@ import ImageGallery from 'react-image-gallery';
 import parse from 'html-react-parser';
 import RangeSlider from 'react-bootstrap-range-slider';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
+import {useMediaQuery} from '@uidotdev/usehooks';
 
 // Internal imports
 import { getCameraGroupMap, getCameras } from '../Components/data/webcams.js';
@@ -232,6 +233,8 @@ export default function CameraDetailsPage() {
     }
   };
 
+  const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
+
   // Rendering
   return (
     <div className="camera-page">
@@ -353,7 +356,7 @@ export default function CameraDetailsPage() {
                 activeKey={activeTab}
                 onSelect={ (selectedTab) => setActiveTab(selectedTab) }>
 
-                <Tab eventKey="webcam" title={
+                <Tab eventKey="webcam" title={!xLargeScreen &&
                   <span>
                     <CurrentCameraIcon variant="outline" /> Current camera
                   </span>
@@ -375,11 +378,9 @@ export default function CameraDetailsPage() {
                         <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
                         <span>Direction</span>
                       </span>
-                      <span className="camera-directions-group">
-                        {camera.camGroup.map((cam) =>
-                          <Button aria-label={getCameraOrientation(cam.orientation)} className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
-                        )}
-                      </span>
+                      {camera.camGroup.map((cam) =>
+                        <Button aria-label={getCameraOrientation(cam.orientation)} className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
+                      )}
                     </div>
 
                     <div className="replay-div">
@@ -440,7 +441,7 @@ export default function CameraDetailsPage() {
                   <p className="credit" dangerouslySetInnerHTML={{__html: camera.credit}}></p>
                 </Tab>
 
-                <Tab eventKey="nearby" title={
+                <Tab eventKey="nearby" title={!xLargeScreen &&
                   <span>
                     <FontAwesomeIcon icon={faFlag} />Nearby
                   </span>
