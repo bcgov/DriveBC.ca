@@ -37,6 +37,7 @@ export default function CamPopup(props) {
     const newCam = camFeature.id ? camFeature : camFeature.getProperties();
     setRootCam(newCam);
     setCamera(newCam);
+    setCamIndex(0);
   }, [camFeature]);
 
   useEffect(() => {
@@ -44,7 +45,6 @@ export default function CamPopup(props) {
       isInitialMount.current = false;
       return;
     }
-
     setCamera(rootCam.camGroup[camIndex]);
   }, [camIndex]);
 
