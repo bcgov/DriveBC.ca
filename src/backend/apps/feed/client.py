@@ -130,7 +130,7 @@ class FeedClient:
             headers=self._get_auth_headers(resource_type),
             params=params if params else {},
             timeout=timeout,
-            verify=False,
+            verify=True,
         )
         return self._get_response_data_or_raise(response)
 
@@ -478,7 +478,7 @@ class FeedClient:
             CURRENT_WEATHER, 'currentweather', CurrentWeatherSerializer,
             {"format": "json", "limit": 500}
         )
-    
+
      # Rest Stop
     def get_rest_stop_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
         """Get data feed for list of objects."""
@@ -508,7 +508,7 @@ class FeedClient:
 
         except requests.RequestException as e:
             return Response({"error": f"Error fetching data from rest stop API: {str(e)}"}, status=500)
-        
+
         try:
             serializer.is_valid(raise_exception=True)
             return json_objects
