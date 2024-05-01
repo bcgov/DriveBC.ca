@@ -57,8 +57,8 @@ jobs:
         config: |
           query-filters:
             - exclude:
-              # excessive false positives
-              id: py/stack-trace-exposure
+                # excessive false positives
+                id: py/stack-trace-exposure
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
