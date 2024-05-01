@@ -1,4 +1,4 @@
-Django==4.2.3
+Django==4.2.11
 dj-rest-auth[with_social]==4.0.1
 django-allauth==0.54.0
 django-environ==0.10.0
@@ -12,4 +12,4 @@ httpx==0.24.1
 huey==2.4.5
 psycopg==3.1.9
 redis==4.5.5
-wagtail==6.0.2
+wagtail==6.0.3
