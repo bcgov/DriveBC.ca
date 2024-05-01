@@ -1338,6 +1338,54 @@ export default function MapWrapper(props) {
       </div>
 
       <div ref={mapElement} className="map">
+
+        {!isCamDetail && (
+          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''}`}>
+            {smallScreen && (
+              <ExitSurvey mobile={true} />
+            )}
+            <RouteSearch routeEdit={true} />
+            <AdvisoriesOnMap advisories={advisoriesInView} />
+          </div>
+        )}
+
+        {(!isCamDetail && smallScreen) && (
+          <React.Fragment>
+            <Button
+              className="map-btn my-location"
+              variant="primary"
+              onClick={toggleMyLocation}
+              aria-label="my location">
+              <FontAwesomeIcon icon={faLocationCrosshairs} />
+              My location
+            </Button>
+            <Filters
+              toggleHandler={toggleLayer}
+              disableFeatures={isCamDetail}
+              enableRoadConditions={true}
+            />
+          </React.Fragment>
+        )}
+
+        {(!isCamDetail && !smallScreen) && (
+          <React.Fragment>
+            <Filters
+              toggleHandler={toggleLayer}
+              disableFeatures={isCamDetail}
+              enableRoadConditions={true}
+            />
+            <Button
+              className="map-btn my-location"
+              variant="primary"
+              onClick={toggleMyLocation}
+              aria-label="my location">
+              <FontAwesomeIcon icon={faLocationCrosshairs} />
+              My location
+            </Button>
+            <ExitSurvey />
+          </React.Fragment>
+        )}
+
         <div className="map-btn zoom-btn">
           <Button
             className="zoom-in"
@@ -1355,40 +1403,6 @@ export default function MapWrapper(props) {
             <FontAwesomeIcon icon={faMinus} />
           </Button>
         </div>
-
-        {!isCamDetail && (
-          <Button
-            className="map-btn my-location"
-            variant="primary"
-            onClick={toggleMyLocation}
-            aria-label="my location">
-            <FontAwesomeIcon icon={faLocationCrosshairs} />
-            My location
-          </Button>
-        )}
-
-        {!isCamDetail && (
-          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''}`}>
-            {smallScreen && (
-              <ExitSurvey mobile={true} />
-            )}
-
-            <RouteSearch routeEdit={true} />
-            <AdvisoriesOnMap advisories={advisoriesInView} />
-          </div>
-        )}
-
-        {(!isCamDetail && !smallScreen) && (
-          <ExitSurvey />
-        )}
-
-        {!isCamDetail && (
-          <Filters
-            toggleHandler={toggleLayer}
-            disableFeatures={isCamDetail}
-            enableRoadConditions={true}
-          />
-        )}
 
       </div>
 
