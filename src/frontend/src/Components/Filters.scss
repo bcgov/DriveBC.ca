@@ -159,6 +159,11 @@ button.btn.open-filters {
           position: absolute;
           z-index: -1;
           margin-left: 10px;
+
+          &:focus + label {
+            text-decoration: underline;
+            outline: 2px solid #2E5DD7; 
+          }
         }
 
         .tooltip-info {
