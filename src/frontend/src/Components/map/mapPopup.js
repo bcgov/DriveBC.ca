@@ -96,7 +96,7 @@ export function getEventPopup(eventFeature) {
 
   return (
     <div
-      className={`popup popup--event ${eventData.display_category} ${severity}`}>
+      className={`popup popup--event ${eventData.display_category} ${severity}`} tabIndex={0}>
       <div className="popup__title">
         <div className="popup__title__icon">
           <EventTypeIcon event={eventData} state="active" />
@@ -149,7 +149,7 @@ export function getFerryPopup(ferryFeature) {
   const ferryData = ferryFeature.getProperties();
 
   return (
-    <div className="popup popup--ferry">
+    <div className="popup popup--ferry" tabIndex={0}>
       <div className="popup__title">
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faFerry} />
@@ -183,7 +183,7 @@ export function getWeatherPopup(weatherFeature) {
   const weatherData = weatherFeature.getProperties();
 
   return (
-    <div className="popup popup--road-weather">
+    <div className="popup popup--road-weather" tabIndex={0}>
       <div className="popup__title">
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faTemperatureHalf} />
@@ -284,7 +284,7 @@ export function getRegionalPopup(weatherFeature) {
   const conditions = weather.conditions;
 
   return (
-    <div className="popup popup--regional-weather">
+    <div className="popup popup--regional-weather" tabIndex={0}>
       <div className="popup__title">
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faSunCloud} />
@@ -396,7 +396,7 @@ export function getRestStopPopup(restStopFeature) {
   const restStopData = restStopFeature.getProperties();
 
   return (
-    <div className="popup popup--reststop">
+    <div className="popup popup--reststop" tabIndex={0}>
       <div className="popup__title">
         <div className="popup__title__icon">
           <RestStopTypeIcon reststop={restStopData} state="active" />
