@@ -16,20 +16,22 @@ Here are the components that are in this folder:
 ### New Environment
 Follow these steps to setup a brand new environment.
 1. Clone the Drivebc.ca repository to your PC
-1. Navigate to the infrastructure folder in the command line
-1. Login to OpenShift using the command line oc utility
-1. Select the project you would like to deploy to using `oc project NAMESPACE`
+1. Navigate to the infrastructure folder in your CLI
+1. Login to OpenShift using oc CLI
+1. Select the namespace you would like to deploy to using `oc project NAMESPACE`
 1. `helm install ENV-drivebc-init -f .\init\values-ENV.yaml .\init`
     1. NOTE: Do not install this again as it will overwrite all values.
 1. Set the values in the `ENV-drivebc-django` & `ENV-drivebc-static` ConfigMap and Secrets (they both have )
-1. `helm install ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres` to install CrunchyDB. NOTE: Check the values files to confirm the namespace is correct for monitoring.
-1. Once the datbase is running go to the terminal of the primary replica and go to `psql`, then enter `ALTER DATABASE "ENV-drivebc" OWNER TO "ENV-drivebc";`
-1. `helm install ENV-drivebc -f .\main\values-ENV.yaml .\main` to install the entire environment. 
+1. Run `helm install ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres --set pgBackRest.s3.key=<KEY> --set pgBackRest.s3.bucket=<BUCKET> --set pgBackRest.s3.endpoint=<ENDPOINT> --set pgBackRest.s3.keySecret=<SECRET-KEY>` to install CrunchyDB. 
+1. Once the database is running go to the terminal of the primary replica and enter `psql`, then enter `ALTER DATABASE "ENV-drivebc" OWNER TO "ENV-drivebc";`
+1. Run `helm install ENV-drivebc -f .\main\values-ENV.yaml .\main` to install the entire environment. 
 1. If you want to quickly get the cameras and events on a fresh db, login to the tasks pod and go to terminal where you will run these commands  `python manage.py populate_webcams` and `python manage.py populate_events` and `python manage.py populate_ferries`
 
 ### Upgrades
 
-If you made changes to any of the values in the helm charts you should update the dependencies and then (see below) and then instead of doing a `helm install` do a `helm upgrade`
+If you made changes to any of the values for the DriveBC helm charts you should update the dependencies and then (see below) and then instead of doing a `helm install` do a `helm upgrade`
+
+If you need to upgrade the database (ie updating resources, etc) you will need to run the following command from within the infrastructure folder `helm upgrade ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres --set pgBackRest.s3.bucket=<BUCKET> --set pgBackRest.s3.endpoint=<ENDPOINT>`
 
 ## Other
 
