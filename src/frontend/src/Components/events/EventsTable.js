@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 
 // External Imports
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   flexRender,
   getCoreRowModel,
@@ -15,20 +14,11 @@ import 'react-loading-skeleton/dist/skeleton.css'
 
 // Internal imports
 import { getTypeDisplay, routeSortFn, severitySortFn } from './functions';
-import EventTypeIcon from '../EventTypeIcon';
-import FriendlyTime from '../FriendlyTime';
-
-// External assets
-import {
-  faArrowUpLong,
-  faArrowDownLong
-} from '@fortawesome/pro-solid-svg-icons';
-import Button from 'react-bootstrap/Button';
+import EventTypeIcon from './EventTypeIcon';
+import FriendlyTime from '../shared/FriendlyTime';
 
 // Styling
 import './EventsTable.scss';
-
-
 
 export default function EventsTable(props) {
   // Props

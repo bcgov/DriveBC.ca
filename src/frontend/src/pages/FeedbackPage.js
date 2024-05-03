@@ -2,11 +2,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 // External Components
-import { GoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 
 // Styling
 import './FeedbackPage.scss';

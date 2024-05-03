@@ -34,16 +34,16 @@ import { getWebcamReplay } from '../Components/data/webcams';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
-import Map from '../Components/Map.js';
+import MapWrapper from '../Components/map/MapWrapper';
 import Footer from '../Footer.js';
-import FriendlyTime from '../Components/FriendlyTime';
-import highwayShield from '../Components/highwayShield';
-import CurrentCameraIcon from '../Components/CurrentCameraIcon';
+import FriendlyTime from '../Components/shared/FriendlyTime';
+import highwayShield from '../Components/cameras/highwayShield';
+import CurrentCameraIcon from '../Components/cameras/CurrentCameraIcon';
 import { getCameraOrientation } from '../Components/cameras/helper.js';
 
 // Styling
 import './CameraDetailsPage.scss';
-import '../Components/Map.scss';
+import '../Components/map/Map.scss';
 
 import colocatedCamIcon from '../images/colocated-camera.svg';
 
@@ -140,8 +140,14 @@ export default function CameraDetailsPage() {
   };
 
   const mapViewRoute = () => {
-    navigate('/', { state: camera });
-  };
+    const refCamData = { ...camera };
+    refCamData.type = 'camera';
+
+    // Remove geometry from reference data since it can't be serialized
+    refCamData.geometry = null;
+
+    navigate("/", { state: refCamData });
+  }
 
   // ReplayTheDay
   const refImg = useRef(null);
@@ -510,12 +516,7 @@ export default function CameraDetailsPage() {
                   <div className="actions-bar actions-bar--nearby"></div>
                   <div className="map-wrap map-context-wrap">
                     <DndProvider options={HTML5toTouch}>
-                      <Map
-                        camera={camera}
-                        isCamDetail={true}
-                        mapViewRoute={mapViewRoute}
-                        loadCamDetails={loadCamDetails}
-                      />
+                      <MapWrapper referenceData={{...camera, type: 'camera'}} isCamDetail={true} mapViewRoute={mapViewRoute} loadCamDetails={loadCamDetails} />
                     </DndProvider>
                   </div>
                 </Tab>

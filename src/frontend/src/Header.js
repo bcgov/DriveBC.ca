@@ -2,13 +2,12 @@
 import React, { useState } from "react";
 
 // Third party packages
-import {LinkContainer} from 'react-router-bootstrap';
+import { faComment } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { LinkContainer } from 'react-router-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import Button from 'react-bootstrap/Button';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faComment} from '@fortawesome/pro-solid-svg-icons';
 
 // Static files
 import logo from './images/dbc-logo-beta.svg';

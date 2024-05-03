@@ -6,7 +6,7 @@ import Container from 'react-bootstrap/Container';
 
 // Components and functions
 import CameraCard from './CameraCard.js';
-import highwayShield from '../highwayShield.js';
+import highwayShield from './highwayShield';
 
 export default function HighwayGroup(props) {
   // Props

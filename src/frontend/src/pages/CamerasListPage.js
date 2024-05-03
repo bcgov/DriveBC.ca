@@ -10,14 +10,13 @@ import { updateCameras } from '../slices/feedsSlice';
 // Third party components
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import { booleanIntersects, point, polygon } from '@turf/turf';
-import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
 // Components and functions
 import {
   compareRoutePoints,
   filterByRoute
-} from '../Components/map/helper';
+} from '../Components/map/helpers';
 import { getAdvisories } from '../Components/data/advisories';
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
 import { NetworkError, ServerError } from '../Components/data/helper';
@@ -27,8 +26,9 @@ import Advisories from '../Components/advisories/Advisories';
 import CameraList from '../Components/cameras/CameraList';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
-import RouteSearch from '../Components/map/RouteSearch';
-import trackEvent from '../Components/TrackEvent.js';
+import RouteSearch from '../Components/routing/RouteSearch';
+import trackEvent from '../Components/shared/TrackEvent.js';
+
 // Styling
 import './CamerasListPage.scss';
 
@@ -235,7 +235,7 @@ export default function CamerasListPage() {
         </div>
       </Container>
 
-      <CameraList cameras={ displayedCameras ? displayedCameras : [] } selectedRoute={selectedRoute}></CameraList>
+      <CameraList cameras={ displayedCameras ? displayedCameras : [] }></CameraList>
 
       {!(displayedCameras && displayedCameras.length) &&
         <Container className="empty-cam-display">

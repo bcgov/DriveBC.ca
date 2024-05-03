@@ -8,7 +8,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 
 // Internal imports
 import { getTypeDisplay } from './functions';
-import FriendlyTime from '../FriendlyTime';
+import FriendlyTime from '../shared/FriendlyTime';
 
 // External assets
 import { faMapLocation } from '@fortawesome/pro-solid-svg-icons';

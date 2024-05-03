@@ -10,7 +10,7 @@ import { faMapMarkerAlt,
          faVideoSlash } from '@fortawesome/pro-solid-svg-icons';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import FriendlyTime from '../FriendlyTime';
+import FriendlyTime from '../shared/FriendlyTime';
 
 import { getCameraOrientation } from './helper.js';
 
@@ -59,7 +59,10 @@ export default function CameraCard(props) {
   }
 
   function handleViewOnMap() {
-    navigate('/', {state: camera});
+    const refCamData = { ...camera };
+    refCamData.type = 'camera';
+
+    navigate('/', { state: refCamData });
     window.snowplow('trackSelfDescribingEvent', {
       schema: 'iglu:ca.bc.gov.drivebc/action/jsonschema/1-0-0',
       data: {
@@ -90,7 +93,7 @@ export default function CameraCard(props) {
 
           <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
           {camera.camGroup.map((cam) =>
-            <Button 
+            <Button
             aria-label={getCameraOrientation(cam.orientation)}
             className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={(event) => {event.stopPropagation(); setCamera(cam)}}>
               {cam.orientation}

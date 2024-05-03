@@ -1,5 +1,5 @@
 // Components and functions
-import { transformFeature } from '../helper.js';
+import { transformFeature } from '../helpers';
 
 // OpenLayers
 import { Polygon } from 'ol/geom';
@@ -28,7 +28,7 @@ export function getAdvisoriesLayer(
         advisories.forEach(advisory => {
           // Build a new OpenLayers feature
           const olGeometry = new Polygon(advisory.geometry.coordinates);
-          const olFeature = new ol.Feature({ geometry: olGeometry });
+          const olFeature = new ol.Feature({ geometry: olGeometry, type: 'advisory' });
 
           // Transform the projection
           const olFeatureForMap = transformFeature(

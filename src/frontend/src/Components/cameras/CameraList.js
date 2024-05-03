@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
-import { collator } from '../data/webcams';
 import HighwayGroup from './HighwayGroup.js';
 
 // Styling
@@ -13,7 +12,7 @@ import './CameraList.scss';
 
 export default function CameraList(props) {
   // Props
-  const { cameras, selectedRoute } = props;
+  const { cameras } = props;
 
   // UseState hooks
   const [displayedCameras, setDisplayedCameras] = useState([]);
