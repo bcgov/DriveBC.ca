@@ -29,7 +29,6 @@ import Button from 'react-bootstrap/Button';
 import './EventsTable.scss';
 
 
-
 export default function EventsTable(props) {
   // Props
   const { data, routeHandler, showLoader, sortingKey } = props;

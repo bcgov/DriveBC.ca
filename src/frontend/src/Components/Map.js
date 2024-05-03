@@ -108,7 +108,7 @@ import './Map.scss';
 
 
 export default function MapWrapper(props) {
-  let { camera, isCamDetail, mapViewRoute, loadCamDetails } = props;
+  let { referenceFeature, isCamDetail, mapViewRoute, loadCamDetails } = props;
 
   // Redux
   const dispatch = useDispatch();
@@ -285,7 +285,7 @@ export default function MapWrapper(props) {
     mapView.current = new View({
       projection: 'EPSG:3857',
       constrainResolution: true,
-      center: camera ? handleCenter() : fromLonLat(pan),
+      center: referenceFeature ? handleCenter() : fromLonLat(pan),
       zoom: handleZoom(),
       maxZoom: 15,
       extent: transformedExtent,
@@ -318,11 +318,12 @@ export default function MapWrapper(props) {
     });
 
     mapRef.current.once('loadstart', async () => {
-      if (camera && !isCamDetail) {
-        if (camera.event_type) {
-          updateClickedEvent(camera);
+      if (referenceFeature && !isCamDetail) {
+        if (referenceFeature.event_type) {
+          updateClickedEvent(referenceFeature);
+
         } else {
-          updateClickedCamera(camera);
+          updateClickedCamera(referenceFeature);
         }
       }
     });
@@ -1250,24 +1251,27 @@ export default function MapWrapper(props) {
   }
 
   function handleCenter() {
-    if (typeof camera === 'string') {
-      camera = JSON.parse(camera);
+    if (typeof referenceFeature === 'string') {
+      referenceFeature = JSON.parse(referenceFeature);
     }
-    return Array.isArray(camera.location.coordinates[0])
+
+    return Array.isArray(referenceFeature.location.coordinates[0])
       ? fromLonLat(
-          camera.location.coordinates[
-            Math.floor(camera.location.coordinates.length / 2)
+          referenceFeature.location.coordinates[
+            Math.floor(referenceFeature.location.coordinates.length / 2)
           ],
         )
-      : fromLonLat(camera.location.coordinates);
+      : fromLonLat(referenceFeature.location.coordinates);
   }
 
   function handleZoom() {
-    if (typeof camera === 'string') {
-      camera = JSON.parse(camera);
+    if (typeof referenceFeature === 'string') {
+      referenceFeature = JSON.parse(referenceFeature);
     }
-    if (isCamDetail || camera) {
+
+    if (isCamDetail || referenceFeature) {
       return 12;
+
     } else {
       return zoom;
     }
@@ -1282,10 +1286,33 @@ export default function MapWrapper(props) {
     localStorage.setItem('mapContext', JSON.stringify(mapContext));
   }
 
-  // Force camera and inland ferries filters to be checked on preview mode
+  // Mark cam and ferry layers as visible in details page
   if (isCamDetail) {
     mapContext.visible_layers['highwayCams'] = true;
     mapContext.visible_layers['inlandFerries'] = true;
+  }
+
+  // Mark layer that ref event belongs to as visible
+  if (referenceFeature) {
+    const eventCategory = referenceFeature.display_category;
+    switch (eventCategory) {
+      case 'closures':
+        mapContext.visible_layers['closures'] = true;
+        mapContext.visible_layers['closuresLines'] = true;
+        break;
+      case 'majorEvents':
+        mapContext.visible_layers['majorEvents'] = true;
+        mapContext.visible_layers['majorEventsLines'] = true;
+        break;
+      case 'minorEvents':
+        mapContext.visible_layers['minorEvents'] = true;
+        mapContext.visible_layers['minorEventsLines'] = true;
+        break;
+      case 'futureEVents':
+        mapContext.visible_layers['futureEvents'] = true;
+        mapContext.visible_layers['futureEventsLines'] = true;
+        break;
+    }
   }
 
   const openPanel = !!(
@@ -1365,6 +1392,7 @@ export default function MapWrapper(props) {
               disableFeatures={isCamDetail}
               enableRoadConditions={true}
               isCamDetail={isCamDetail}
+              referenceFeature={referenceFeature}
             />
           </React.Fragment>
         )}
@@ -1375,6 +1403,8 @@ export default function MapWrapper(props) {
               toggleHandler={toggleLayer}
               disableFeatures={isCamDetail}
               enableRoadConditions={true}
+              isCamDetail={isCamDetail}
+              referenceFeature={referenceFeature}
             />
             <Button
               className="map-btn my-location"
@@ -1417,8 +1447,8 @@ export default function MapWrapper(props) {
           className="map-btn cam-location"
           variant="primary"
           onClick={() => {
-            if (camera) {
-              setZoomPan(mapView, 12, fromLonLat(camera.location.coordinates));
+            if (referenceFeature) {
+              setZoomPan(mapView, 12, fromLonLat(referenceFeature.location.coordinates));
             }
           }}>
           <CurrentCameraIcon />
@@ -1442,6 +1472,8 @@ export default function MapWrapper(props) {
           disableFeatures={isCamDetail}
           enableRoadConditions={true}
           textOverride={'Layer filters'}
+          isCamDetail={isCamDetail}
+          referenceFeature={referenceFeature}
         />
       )}
 

@@ -34,7 +34,17 @@ export default function Filters(props) {
   const { mapContext } = useContext(MapContext);
 
   // Props
-  const { toggleHandler, disableFeatures, enableRoadConditions, textOverride, isCamDetail } = props;
+  const {
+    toggleHandler,
+    disableFeatures,
+    enableRoadConditions,
+    textOverride,
+    isCamDetail,
+    referenceFeature
+  } = props;
+
+  // Const for enabling layer that the reference event belongs to
+  const eventCategory = referenceFeature ? referenceFeature.display_category : false;
 
   // States
   // Show layer menu by default on main page, desktop only
@@ -93,12 +103,12 @@ export default function Filters(props) {
   );
 
   // States for toggles
-  const [closures, setClosures] = useState(mapContext.visible_layers.closures);
-  const [majorEvents, setMajorEvents] = useState(mapContext.visible_layers.majorEvents);
-  const [minorEvents, setMinorEvents] = useState(mapContext.visible_layers.minorEvents);
-  const [futureEvents, setFutureEvents] = useState(mapContext.visible_layers.futureEvents);
+  const [closures, setClosures] = useState(eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures);
+  const [majorEvents, setMajorEvents] = useState(eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents);
+  const [minorEvents, setMinorEvents] = useState(eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents);
+  const [futureEvents, setFutureEvents] = useState(eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents);
   const [roadConditions, setRoadConditions] = useState(mapContext.visible_layers.roadConditions);
-  const [highwayCams, setHighwayCams] = isCamDetail ? isCamDetail : useState(mapContext.visible_layers.highwayCams);
+  const [highwayCams, setHighwayCams] = useState(isCamDetail ? isCamDetail : mapContext.visible_layers.highwayCams);
   const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
   const [weather, setWeather] = useState(mapContext.visible_layers.weather);
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
@@ -144,7 +154,7 @@ export default function Filters(props) {
                         toggleHandler('closuresLines', e.target.checked, true);
                         setClosures(!closures)
                       }}
-                      defaultChecked={mapContext.visible_layers.closures}
+                      defaultChecked={eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures}
                     />
                     <label htmlFor="filter--closures">
                       <span className="filter-item__icon">
@@ -164,12 +174,12 @@ export default function Filters(props) {
                       name="major"
                       id="filter--major"
                       onChange={e => {
-                        trackEvent('click', 'map', 'Toggle major events layer')
+                        trackEvent('click', 'map', 'Toggle major events layer');
                         toggleHandler('majorEvents', e.target.checked);
                         toggleHandler('majorEventsLines', e.target.checked, true);
-                        setMajorEvents(!majorEvents)
+                        setMajorEvents(!majorEvents);
                       }}
-                      defaultChecked={mapContext.visible_layers.majorEvents}
+                      defaultChecked={eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents}
                     />
                     <label htmlFor="filter--major">
                       <span className="filter-item__icon">
@@ -195,7 +205,7 @@ export default function Filters(props) {
                         toggleHandler('minorEventsLines', e.target.checked, true);
                         setMinorEvents(!minorEvents);
                       }}
-                      defaultChecked={mapContext.visible_layers.minorEvents}
+                      defaultChecked={eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents}
                     />
                     <label htmlFor="filter--minor">
                       <span className="filter-item__icon">
@@ -221,7 +231,7 @@ export default function Filters(props) {
                         toggleHandler('futureEventsLines', e.target.checked, true);
                         setFutureEvents(!futureEvents);
                       }}
-                      defaultChecked={mapContext.visible_layers.futureEvents}
+                      defaultChecked={eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents}
                     />
                     <label htmlFor="filter--future-events">
                       <span className="filter-item__icon">
