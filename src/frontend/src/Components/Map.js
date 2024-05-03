@@ -1359,10 +1359,12 @@ export default function MapWrapper(props) {
               <FontAwesomeIcon icon={faLocationCrosshairs} />
               My location
             </Button>
+
             <Filters
               toggleHandler={toggleLayer}
               disableFeatures={isCamDetail}
               enableRoadConditions={true}
+              isCamDetail={isCamDetail}
             />
           </React.Fragment>
         )}
