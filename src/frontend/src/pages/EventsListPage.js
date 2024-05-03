@@ -12,21 +12,17 @@ import { updateEvents } from '../slices/feedsSlice';
 import { booleanIntersects, point, lineString, polygon } from '@turf/turf';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faAngleDown,
-  faMapLocationDot
+  faAngleDown
 } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
-import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Internal imports
 import {
   compareRoutePoints,
   filterByRoute,
-} from '../Components/map/helper';
+} from '../Components/map/helpers';
 import { getAdvisories } from '../Components/data/advisories';
 import { getEvents } from '../Components/data/events';
 import { MapContext } from '../App.js';
@@ -37,16 +33,16 @@ import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Advisories from '../Components/advisories/Advisories';
 import EventCard from '../Components/events/EventCard';
 import EventsTable from '../Components/events/EventsTable';
-import EventTypeIcon from '../Components/EventTypeIcon';
-import Filters from '../Components/Filters.js';
+import EventTypeIcon from '../Components/events/EventTypeIcon';
+import Filters from '../Components/shared/Filters.js';
 import Footer from '../Footer.js';
-import FriendlyTime from '../Components/FriendlyTime';
 import PageHeader from '../PageHeader';
-import RouteSearch from '../Components/map/RouteSearch';
-import trackEvent from '../Components/TrackEvent.js';
+import RouteSearch from '../Components/routing/RouteSearch';
+import trackEvent from '../Components/shared/TrackEvent.js';
+
 // Styling
 import './EventsListPage.scss';
-import '../Components/Filters.scss';
+import '../Components/shared/Filters.scss';
 
 // Helpers
 const sortEvents = (events, key) => {
@@ -243,7 +239,11 @@ export default function EventsListPage() {
 
   const handleRoute = (event) => {
     trackEvent('click', 'event', 'events list page', event.event_type, event.event_sub_type);
-    navigate('/', {state: event});
+
+    const refEventData = { ...event };
+    refEventData.type = 'event';
+
+    navigate('/', { state: refEventData });
   };
 
   const sortHandler = (e, key) => {

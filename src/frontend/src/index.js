@@ -69,8 +69,6 @@ if (!window.location.hash) {
 }
 
 // <!-- Snowplow stops plowing -->
-
-
 root.render(
   <React.StrictMode>
     <BrowserRouter>

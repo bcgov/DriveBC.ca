@@ -1,9 +1,6 @@
 // React
 import React from 'react';
 
-// Redux
-import { updateAdvisories } from '../../slices/cmsSlice';
-
 // External Components
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {

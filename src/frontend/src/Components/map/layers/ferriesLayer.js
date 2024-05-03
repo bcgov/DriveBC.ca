@@ -1,5 +1,5 @@
 // Components and functions
-import { transformFeature } from '../helper.js';
+import { transformFeature } from '../helpers';
 
 // OpenLayers
 import { Point } from 'ol/geom';
@@ -24,11 +24,10 @@ export function getFerriesLayer(ferriesData, projectionCode, mapContext) {
         ferriesData.forEach(ferry => {
           // Build a new OpenLayers feature
           const olGeometry = new Point(ferry.location.coordinates);
-          const olFeature = new ol.Feature({ geometry: olGeometry });
+          const olFeature = new ol.Feature({ geometry: olGeometry, type: 'ferry'});
 
           // Transfer properties
           olFeature.setProperties(ferry);
-          olFeature.set('type', 'ferry');
 
           // Transform the projection
           const olFeatureForMap = transformFeature(

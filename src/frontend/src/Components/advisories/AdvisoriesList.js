@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 // Components and functions
 import { stripRichText } from '../data/helper';
-import FriendlyTime from '../FriendlyTime';
-import trackEvent from '../TrackEvent.js';
+import FriendlyTime from '../shared/FriendlyTime';
+import trackEvent from '../shared/TrackEvent.js';
 // Styling
 import './AdvisoriesList.scss';
 

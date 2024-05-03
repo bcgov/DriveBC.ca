@@ -4,8 +4,8 @@ import {useNavigate} from 'react-router-dom';
 
 // Components and functions
 import { stripRichText } from '../data/helper';
-import FriendlyTime from '../FriendlyTime';
-import trackEvent from '../TrackEvent';
+import FriendlyTime from '../shared/FriendlyTime';
+import trackEvent from '../shared/TrackEvent';
 // Styling
 import './BulletinsList.scss';
 

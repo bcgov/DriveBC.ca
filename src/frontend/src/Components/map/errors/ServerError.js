@@ -1,5 +1,5 @@
 // React
-import React from 'react';
+import React, { useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,11 +13,11 @@ import staleLogo from '../../../images/status-stale.svg';
 // Styling
 import './ServerError.scss';
 
-export default function ServerErrorPopup(props) {
-  const { setShowServerError } = props;
+export default function ServerErrorPopup() {
+  const [visible, setVisible] = useState(true);
 
   // Rendering
-  return (
+  return visible ? (
     <div className="server-error">
       <img src={staleLogo} alt="Server error" />
       <div className="message-container">
@@ -27,10 +27,10 @@ export default function ServerErrorPopup(props) {
 
       <div className="close-btn" aria-label="Close" onClick={(event) => {
         event.stopPropagation();
-        setShowServerError(false);
+        setVisible(false);
       }}>
         <FontAwesomeIcon icon={faXmark} />
       </div>
     </div>
-  );
+  ) : null;
 }

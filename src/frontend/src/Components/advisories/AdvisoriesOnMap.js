@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 // Components and functions
 import AdvisoriesList from './AdvisoriesList';
-import trackEvent from '../TrackEvent';
+import trackEvent from '../shared/TrackEvent';
 // Third party packages
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {

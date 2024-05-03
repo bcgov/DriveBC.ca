@@ -1,24 +1,14 @@
 // Components and functions
-import { setEventStyle, transformFeature } from '../helper.js';
+import { setEventStyle } from '../helpers';
 
 // OpenLayers
 import { Point, LineString, Polygon } from 'ol/geom';
 import * as ol from 'ol';
 import GeoJSON from 'ol/format/GeoJSON.js';
-import { Fill, Icon, Stroke, Style } from 'ol/style.js';
-import Layer from 'ol/layer/Layer.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
-import { eventStyles } from '../../data/featureStyleDefinitions.js';
-
-
-export function loadEventsLayers(
-  eventsData,
-  mapContext,
-  mapLayers,
-  mapRef
-) {
+export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature) {
   // Helper function for initializing vss
   const createVS = () => new VectorSource({
     format: new GeoJSON()
@@ -88,6 +78,10 @@ export function loadEventsLayers(
       pointFeature.getGeometry().transform('EPSG:4326', currentProjection);
       addFeature(pointFeature, event.display_category);
 
+      if (referenceData?.type === 'event' && event.id == referenceData?.id) {
+        updateReferenceFeature(pointFeature);
+      }
+
       // polygons are generated backend and used if available
       if (event.polygon) {
         const feature = new ol.Feature({
@@ -100,6 +94,7 @@ export function loadEventsLayers(
         feature.getGeometry().transform('EPSG:4326', currentProjection);
         addFeature(feature, event.display_category);
         pointFeature.set('altFeature', feature);
+
       } else {
         const features = locationData.reduce((all, location, ii) => {
           const geometry = location.type === 'LineString'
@@ -119,6 +114,7 @@ export function loadEventsLayers(
           all.push(feature);
           return all;
         }, []);
+
         pointFeature.set('altFeature', features);
       }
     });

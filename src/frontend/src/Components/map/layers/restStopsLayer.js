@@ -1,5 +1,5 @@
 // Components and functions
-import { transformFeature } from '../helper.js';
+import { transformFeature } from '../helpers';
 
 // OpenLayers
 import { Point } from 'ol/geom';
@@ -25,11 +25,10 @@ export function getRestStopsLayer(restStopsData, projectionCode, mapContext) {
         restStopsData.forEach(restStop => {
           // Build a new OpenLayers feature
           const olGeometry = new Point(restStop.location.coordinates);
-          const olFeature = new ol.Feature({ geometry: olGeometry });
+          const olFeature = new ol.Feature({ geometry: olGeometry, type: 'restStop' });
 
           // Transfer properties
           olFeature.setProperties(restStop);
-          olFeature.set('type', 'rest');
 
           // Transform the projection
           const olFeatureForMap = transformFeature(
@@ -56,7 +55,7 @@ export function getRestStopsLayer(restStopsData, projectionCode, mapContext) {
             else{
               style = restStopStyles['static'];
             }
-          } 
+          }
           olFeatureForMap.setStyle(style);
           vectorSource.addFeature(olFeatureForMap);
         });

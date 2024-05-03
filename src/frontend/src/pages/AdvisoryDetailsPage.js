@@ -19,7 +19,7 @@ import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Footer from '../Footer';
-import FriendlyTime from '../Components/FriendlyTime';
+import FriendlyTime from '../Components/shared/FriendlyTime';
 
 // Styling
 import './AdvisoryDetailsPage.scss';

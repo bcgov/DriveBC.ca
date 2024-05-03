@@ -1,5 +1,5 @@
 // Components and functions
-import { transformFeature } from '../helper.js';
+import { transformFeature } from '../helpers';
 
 // OpenLayers
 import { Point } from 'ol/geom';
@@ -11,7 +11,7 @@ import VectorSource from 'ol/source/Vector';
 // Styling
 import { cameraStyles } from '../../data/featureStyleDefinitions.js';
 
-export function getCamerasLayer(cameras, projectionCode, mapContext) {
+export function getCamerasLayer(cameras, projectionCode, mapContext, referenceData, updateReferenceFeature) {
   return new VectorLayer({
     classname: 'webcams',
     visible: mapContext.visible_layers.highwayCams,
@@ -24,11 +24,10 @@ export function getCamerasLayer(cameras, projectionCode, mapContext) {
         cameras.forEach(camera => {
           // Build a new OpenLayers feature
           const olGeometry = new Point(camera.location.coordinates);
-          const olFeature = new ol.Feature({ geometry: olGeometry });
+          const olFeature = new ol.Feature({ geometry: olGeometry, type: 'camera' });
 
           // Transfer properties
           olFeature.setProperties(camera);
-          olFeature.set('type', 'camera');
 
           // Transform the projection
           const olFeatureForMap = transformFeature(
@@ -40,6 +39,15 @@ export function getCamerasLayer(cameras, projectionCode, mapContext) {
           olFeatureForMap.setId(camera.id);
 
           vectorSource.addFeature(olFeatureForMap);
+
+          if (referenceData?.type === 'camera') {
+            // Update the reference feature if one of the cameras is the reference
+            olFeatureForMap.getProperties().camGroup.forEach((cam) => {
+              if (cam.id == referenceData.id) {
+                updateReferenceFeature(olFeatureForMap);
+              }
+            });
+          }
         });
       },
     }),

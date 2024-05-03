@@ -1,6 +1,3 @@
-// React
-import React from 'react';
-
 export const getCameraOrientation = (orientation) => {
   switch (orientation) {
     case 'N':

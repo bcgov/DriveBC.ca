@@ -2,13 +2,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import {
   persistStore,
-  persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
+  persistReducer
 } from 'redux-persist';
 import localforage from 'localforage';
 
@@ -50,9 +44,9 @@ const store = configureStore({
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
+      // Disable checks to prevent rendering lag in dev mode
+      serializableCheck: false,
+      immutableCheck: false,
     }),
 });
 
