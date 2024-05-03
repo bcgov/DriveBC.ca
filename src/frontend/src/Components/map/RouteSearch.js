@@ -107,7 +107,7 @@ export default function RouteSearch(props) {
         </div>
 
         {!!searchLocationFrom.length && !!searchLocationTo.length &&
-          <Button className="swap-button" onClick={() => swapHandler()}><FontAwesomeIcon icon={faArrowUpArrowDown} /></Button>
+          <Button className="swap-button" aria-label="Swap start and destination" onClick={() => swapHandler()}><FontAwesomeIcon icon={faArrowUpArrowDown} /></Button>
         }
       </div>
     </div>
