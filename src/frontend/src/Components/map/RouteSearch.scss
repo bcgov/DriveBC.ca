@@ -38,7 +38,7 @@
     }
 
     @media (min-width: 768px) {
-      width: 300px;
+      width: 340px;
     }
 
     .location-marker {
@@ -48,19 +48,19 @@
 
       &--from {
         font-size: 0.75rem;
-        margin: 0.5rem;
+        margin: 0.6875rem 0.75rem;
         color: $Type-Secondary;
       }
 
       &--to {
         font-size: 1rem;
-        margin: 0.25rem 0.5rem;
+        margin: 0.5rem 0.75rem;
         color: $Error;
       }
     }
 
     .rbt-aux {
-      margin-right: 4px;
+      margin-right: 10px;
 
       .rbt-close {
         background: none;
@@ -73,13 +73,13 @@
       border-top-left-radius: 0;
       border-top-right-radius: 0;
       border-color: #dee2e6;
-      transform: translate3d(0px, 28px, 0px) !important;
+      transform: translate3d(0px, 36px, 0px) !important;
     }
 
     &.stacked {
 
       .form-control {
-        padding-left: 1.75rem;
+        padding: 0.625rem 2.5rem 0.625rem 2.25rem;
       }
 
       &.typeahead-container--from {
