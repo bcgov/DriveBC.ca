@@ -164,6 +164,6 @@ export function loadEventsLayers(
     addLayer('futureEvents', futureEventsVS, 98, VectorLayer);
     addLayer('futureEventsLines', futureEventsLinesVS, 12, VectorLayer);
     addLayer('roadConditions', roadConditionsVS, 88, VectorLayer);
-    addLayer('roadConditionsLines', roadConditionsLinesVS, 2, WebGLLayer);
+    addLayer('roadConditionsLines', roadConditionsLinesVS, 8, WebGLLayer);
   }
 }
