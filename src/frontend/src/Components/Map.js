@@ -1034,7 +1034,7 @@ export default function MapWrapper(props) {
       );
 
       mapRef.current.addLayer(mapLayers.current['advisoriesLayer']);
-      mapLayers.current['advisoriesLayer'].setZIndex(55);
+      mapLayers.current['advisoriesLayer'].setZIndex(5);
 
       if (mapRef.current) {
         mapRef.current.on('moveend', onMoveEnd);
