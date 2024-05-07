@@ -354,21 +354,30 @@ export const eventStyles = {
     },
 
     roadConditions: {
-      static: {
-        fillColor: 'rgba(255,181,0,0.1)',
-        strokeColor: 'rgba(100,74,10,0.6)',
-        strokeWidth: 2,
-        strokeOffset: 0,
-        strokeLineDash: [6, 3],
-      },
-      hover: {
-        fillColor: 'rgba(255,181,0,0.35)',
-        strokeColor: 'rgba(100,74,10,0.6)',
-      },
-      active: {
-        fillColor: 'rgba(255,181,0,0.25)',
-        strokeColor: 'rgba(100,74,10,0.6)',
-      },
+      static: new Style({
+        stroke: new Stroke({
+          color: 'rgba(100,74,10,0.5)',
+          width: 2,
+          lineDash: [6, 5],
+        }),
+        fill: new Fill({ color: 'rgba(255,181,0,0.1)' }),
+      }),
+      hover: new Style({
+        stroke: new Stroke({
+          color: 'rgba(100,74,10,0.5)',
+          width: 3,
+          lineDash: [6, 5],
+        }),
+        fill: new Fill({ color: 'rgba(255,181,0,0.35)' }),
+      }),
+      active: new Style({
+        stroke: new Stroke({
+          color: 'rgba(100,74,10,0.5)',
+          width: 3,
+          lineDash: [6, 5],
+        }),
+        fill: new Fill({ color: 'rgba(255,181,0,0.25)' }),
+      }),
     },
 
     minorEvents: {

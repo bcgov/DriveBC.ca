@@ -1,3 +1,4 @@
+/* eslint-disable guard-for-in */
 // Map & geospatial imports
 import { fromLonLat, transformExtent } from 'ol/proj';
 import * as turf from '@turf/turf';
@@ -16,14 +17,9 @@ export const setEventStyle = (events, state) => {
     const is_closure = event.get('closed');
     const geometry = event.getGeometry().getType();
 
-    if (geometry !== 'Point') { // Line segments
+    if (geometry !== 'Point') { // Line/polygon segments
       const category = is_closure ? 'closure' : display_category;
-
-      if (event.get('layerType') === 'webgl') {
-        event.setProperties(eventStyles['segments'][category][state]);
-      } else {
-        event.setStyle(eventStyles['segments'][category][state]);
-      }
+      event.setStyle(eventStyles['segments'][category][state]);
     } else { // Points
       if (is_closure) {
         return event.setStyle(eventStyles['closures'][state]);
