@@ -33,6 +33,7 @@ SESSION_COOKIE_SECURE = env.bool("DJANGO_SESSION_COOKIE_SECURE")
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 MIDDLEWARE = [
+    "django.middleware.gzip.GZipMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
