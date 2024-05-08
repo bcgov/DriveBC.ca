@@ -85,8 +85,11 @@ class EventInternalSerializer(serializers.ModelSerializer):
 
     def get_display_category(self, obj):
         if obj.closed:
-            return EVENT_DISPLAY_CATEGORY.CLOSURE
-
+            if obj.start and datetime.datetime.now(pytz.utc) < obj.start:
+                return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
+            else:
+                return EVENT_DISPLAY_CATEGORY.CLOSURE
+            
         if obj.id.startswith('DBCRCON'):
             return EVENT_DISPLAY_CATEGORY.ROAD_CONDITION
 
