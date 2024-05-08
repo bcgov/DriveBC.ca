@@ -13,13 +13,14 @@
 
   .swap-button{
     position: absolute;
-    top: 30px;
+    top: 38px;
     right: 4px;
     padding: 8px 4px 8px 4px;
     color: $Type-Link;
     border-radius: 32px 32px 32px 32px;
     border: 1px solid #D9D9D9;
     background: $White;
+    margin-bottom: 0;
 
     &:hover {
       background: $Type-Link;
@@ -31,14 +32,14 @@
     position: relative;
     width: 100%;
 
-    .typeahead-spinner {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-    }
-
     @media (min-width: 768px) {
       width: 340px;
+    }
+
+    .typeahead-spinner {
+      position: absolute;
+      top: -0.5rem;
+      right: 1.25rem;
     }
 
     .location-marker {
@@ -59,13 +60,14 @@
       }
     }
 
-    .rbt-aux {
-      margin-right: 10px;
-
-      .rbt-close {
-        background: none;
-        margin-top: 0;
-      }
+    .clear-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: none;
+      border: none;
+      font-size: 0.75rem;
+      padding: 0.75rem 1.5rem 0.75rem 0.5rem;
     }
 
     #location-search-typeahead {

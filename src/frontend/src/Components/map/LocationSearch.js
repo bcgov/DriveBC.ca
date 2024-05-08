@@ -12,6 +12,9 @@ import trackEvent from '../TrackEvent.js';
 // Styling
 import './LocationSearch.scss';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark } from '@fortawesome/pro-solid-svg-icons';
+
 export default function LocationSearch(props) {
   // Redux
   const dispatch = useDispatch();
@@ -46,7 +49,6 @@ export default function LocationSearch(props) {
   // Rendering
   return (
     <AsyncTypeahead
-      clearButton={true}
       selected={location}
       filterBy={() => true}
       id="location-search-typeahead"
@@ -80,6 +82,19 @@ export default function LocationSearch(props) {
           <span>{location.properties.fullAddress}</span>
         </div>
       )}
-    />
+    >
+    {({ onClear, selected }) => (
+      <>
+        {!!selected.length && 
+          <button
+            className='clear-btn'
+            aria-label={'Clear ' + placeholder}
+            onClick={onClear}>
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
+        }
+      </>
+    )}
+    </AsyncTypeahead>
   );
 }
