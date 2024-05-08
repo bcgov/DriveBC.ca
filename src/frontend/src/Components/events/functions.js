@@ -1,3 +1,5 @@
+import { collator } from '../data/webcams';
+
 export const getTypeDisplay = (data) => {
   const severityText = data.severity == 'MAJOR' ? 'Major' : 'Minor';
 
@@ -18,7 +20,7 @@ export const defaultSortFn = (rowA, rowB, columnId) => {
   const aValue = rowA.original ? rowA.original[columnId] : rowA[columnId];
   const bValue = rowB.original ? rowB.original[columnId] : rowB[columnId];
 
-  return aValue > bValue ? 1 : -1;
+  return collator.compare(aValue, bValue);
 }
 
 export const routeSortFn = (rowA, rowB) => {
