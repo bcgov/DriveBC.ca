@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'Aboriginal Serif';
+    src: url('AboriginalSerif-Bold.woff2') format('woff2'),
+        url('AboriginalSerif-Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
