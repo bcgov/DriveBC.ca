@@ -79,7 +79,7 @@ export default function BulletinsListPage() {
 
       <PageHeader
         title='Bulletins'
-        description='Find information regarding seasonal safety campaigns, and DriveBC related updates.'>
+        description='Stay safe and informed with seasonal travel updates.'>
       </PageHeader>
 
       <Container>
