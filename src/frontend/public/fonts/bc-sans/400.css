@@ -1,0 +1,7 @@
+@font-face {
+    font-family: "BC Sans";
+    font-style: normal;
+    font-weight: 400;
+    src: url("../fonts/BCSans-Regular.woff2") format("woff2"),
+         url("../fonts/BCSans-Regular.woff") format("woff");
+}

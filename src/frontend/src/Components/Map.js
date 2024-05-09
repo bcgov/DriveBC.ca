@@ -297,6 +297,8 @@ export default function MapWrapper(props) {
       headers: { 'Content-Type': 'application/json' },
     }).then(function (response) {
       response.json().then(function (glStyle) {
+        // DBC22-2153
+        glStyle.metadata['ol:webfonts'] = '/fonts/{font-family}/{fontweight}{-fontstyle}.css';
         applyStyle(vectorLayer, glStyle, 'esri');
       });
     });
