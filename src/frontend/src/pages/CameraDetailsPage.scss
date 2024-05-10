@@ -2,6 +2,7 @@
 
 .camera-page {
   position: relative;
+  overflow-x: hidden;
 
   .network-error, .server-error {
     @media (max-width: 768px) {
@@ -209,8 +210,7 @@
         align-items: flex-start;
 
         @media (min-width: 576px) {
-          flex-grow: 1;
-          display: block;
+          flex-direction: row;
         }
 
         .btn.camera-direction-btn {
@@ -419,6 +419,7 @@
       flex-direction: row;
       align-items: flex-start;
       margin-top: 0.5rem;
+      position: relative;
 
       @media (min-width: 576px) {
         justify-content: space-between;
@@ -441,9 +442,14 @@
       .replay-the-day {
         .form-switch {
           display: flex;
+          flex-direction: column;
           align-items: center;
           margin-bottom: 0;
           padding-left: 0;
+
+          @media (min-width: 576px) {
+            flex-direction: row;
+          }
 
           .form-check-input, .form-check-label {
             cursor: pointer;
@@ -451,9 +457,18 @@
 
           .form-check-input {
             height: 20px;
-            margin: 0;
-            margin-left: 8px;
+            margin-top: 10px;
+            margin-left: 0;
             order: 2;
+            position: absolute;
+            top: 30px;
+            left: 0;
+
+            @media (min-width: 576px) {
+              margin-top: 0;
+              margin-left: 8px;
+              position: static;
+            }
           }
 
           .form-check-label {
