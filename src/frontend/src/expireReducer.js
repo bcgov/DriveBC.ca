@@ -7,8 +7,8 @@ const transformRehydrate = (outboundState, config) => {
 
   // Check for the possible expiry if state has the persisted date
   if (config.expireSeconds && outboundState.timeStamp) {
-    const startTime = (new Date(outboundState.timeStamp)).getTime();
-    const endTime = (new Date()).getTime();
+    const startTime = new Date(outboundState.timeStamp).getTime();
+    const endTime = new Date().getTime();
 
     const duration = endTime - startTime;
     const seconds = duration / 1000;

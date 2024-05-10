@@ -43,8 +43,8 @@ const getConfig = (key, lifeInSeconds, initialState) => {
 
 const store = configureStore({
   reducer: {
-    feeds: persistReducer(getConfig('feeds'), feedsReducer),
-    cms: persistReducer(getConfig('cms'), cmsReducer),
+    feeds: persistReducer(getConfig('feeds', 60, feedsInitialState), feedsReducer),
+    cms: persistReducer(getConfig('cms', 60, cmsInitialState), cmsReducer),
     routes: persistReducer(getConfig('routes'), routesReducer),
     map: persistReducer(getConfig('map'), mapReducer),
   },
