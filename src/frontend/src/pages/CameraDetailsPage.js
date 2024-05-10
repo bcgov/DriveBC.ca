@@ -1,5 +1,5 @@
 // React
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 // External imports
@@ -13,7 +13,7 @@ import {
   faBackward,
   faForward,
   faClockRotateLeft,
-  faFlag
+  faFlag,
 } from '@fortawesome/pro-solid-svg-icons';
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
@@ -26,7 +26,7 @@ import ImageGallery from 'react-image-gallery';
 import parse from 'html-react-parser';
 import RangeSlider from 'react-bootstrap-range-slider';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
-import {useMediaQuery} from '@uidotdev/usehooks';
+import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
 import { getCameraGroupMap, getCameras } from '../Components/data/webcams.js';
@@ -68,28 +68,29 @@ export default function CameraDetailsPage() {
   const [showServerError, setShowServerError] = useState(false);
 
   // Error handling
-  const displayError = (error) => {
+  const displayError = error => {
     if (error instanceof ServerError) {
       setShowServerError(true);
-
     } else if (error instanceof NetworkError) {
       setShowNetworkError(true);
     }
-  }
+  };
 
   // Data functions
-  const loadCamDetails = (camData) => {
+  const loadCamDetails = camData => {
     // Camera data
     setCamera(camData);
 
     // Next update time
     const currentTime = new Date();
-    const nextUpdateTime = currentTime.setSeconds(currentTime.getSeconds() + camData.update_period_mean);
-    const nextUpdateTimeFormatted = new Intl.DateTimeFormat('en-US',
-        {hour: 'numeric',
-          minute: 'numeric',
-          timeZoneName: 'short'},
-    ).format(nextUpdateTime);
+    const nextUpdateTime = currentTime.setSeconds(
+      currentTime.getSeconds() + camData.update_period_mean,
+    );
+    const nextUpdateTimeFormatted = new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      timeZoneName: 'short',
+    }).format(nextUpdateTime);
     setNextUpdate(nextUpdateTimeFormatted);
 
     // Last update time
@@ -97,36 +98,38 @@ export default function CameraDetailsPage() {
 
     // Replace window title and URL
     document.title = `DriveBC - Cameras - ${camData.name}`;
-    window.history.replaceState(history.state, null, `/cameras/${camData.id}`)
-  }
+    window.history.replaceState(history.state, null, `/cameras/${camData.id}`);
+  };
 
   async function initCamera(id) {
-    const allCameras = await getCameras().catch((error) => displayError(error));
+    const allCameras = await getCameras().catch(error => displayError(error));
     const cameraGroupMap = getCameraGroupMap(allCameras);
 
-    const camData = await getCameras(null, `${window.API_HOST}/api/webcams/${id}/`).catch((error) => displayError(error));
+    const camData = await getCameras(
+      null,
+      `${window.API_HOST}/api/webcams/${id}/`,
+    ).catch(error => displayError(error));
 
     // Group cameras
     const group = cameraGroupMap[camData.group];
     camData.camGroup = group;
-    camData.camGroup.forEach((cam) => cam.camGroup = group);
+    camData.camGroup.forEach(cam => (cam.camGroup = group));
 
     loadCamDetails(camData);
   }
 
-  const loadReplay = async (cam) => {
+  const loadReplay = async cam => {
     const replayImageList = await getWebcamReplay(cam);
-    const replayImages = replayImageList.map((url) => {
-      return {original: `${window.REPLAY_THE_DAY}${camera.id}/${url}.jpg`};
+    const replayImages = replayImageList.map(url => {
+      return { original: `${window.REPLAY_THE_DAY}${camera.id}/${url}.jpg` };
     });
     setReplayImages(replayImages);
-  }
+  };
 
   useEffect(() => {
     if (isInitialMount.current) {
       initCamera(params.id);
       isInitialMount.current = false;
-
     } else if (camera) {
       loadReplay(camera);
     }
@@ -136,25 +139,27 @@ export default function CameraDetailsPage() {
     setReplay(!replay);
   };
 
-  const mapViewRoute = () =>{
-    navigate("/", { state: camera })
-  }
+  const mapViewRoute = () => {
+    navigate('/', { state: camera });
+  };
 
   // ReplayTheDay
   const refImg = useRef(null);
 
   const customControls = () => {
-    return refImg.current && (
-      <div className="range-slider-container">
-        <RangeSlider
-          value={refImg.current.getCurrentIndex()}
-          max={replayImages.length}
-          tooltip='off'
-          onChange={(e) =>
-            refImg.current.slideToIndex(parseInt(e.target.value))
-          }
-        />
-      </div>
+    return (
+      refImg.current && (
+        <div className="range-slider-container">
+          <RangeSlider
+            value={refImg.current.getCurrentIndex()}
+            max={replayImages.length}
+            tooltip="off"
+            onChange={e =>
+              refImg.current.slideToIndex(parseInt(e.target.value))
+            }
+          />
+        </div>
+      )
     );
   };
 
@@ -162,7 +167,11 @@ export default function CameraDetailsPage() {
   const customLeftNav = (onClick, disabled) => {
     return (
       <div className="replay-control replay-control--backward">
-        <Button className="replay-btn replay-backward" onClick={onClick} disabled={disabled} aria-label='rewind' >
+        <Button
+          className="replay-btn replay-backward"
+          onClick={onClick}
+          disabled={disabled}
+          aria-label="rewind">
           <FontAwesomeIcon icon={faBackward} />
         </Button>
       </div>
@@ -172,8 +181,16 @@ export default function CameraDetailsPage() {
   const customPlayPause = (onClick, isPlaying) => {
     return (
       <div className="replay-control replay-control--play">
-        <Button className="replay-btn replay-play" onClick={onClick} isPlaying={isPlaying} aria-label={isPlaying ? "pause" : "play"} >
-          {isPlaying ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
+        <Button
+          className="replay-btn replay-play"
+          onClick={onClick}
+          isPlaying={isPlaying}
+          aria-label={isPlaying ? 'pause' : 'play'}>
+          {isPlaying ? (
+            <FontAwesomeIcon icon={faPause} />
+          ) : (
+            <FontAwesomeIcon icon={faPlay} />
+          )}
         </Button>
       </div>
     );
@@ -182,7 +199,11 @@ export default function CameraDetailsPage() {
   const customRightNav = (onClick, disabled) => {
     return (
       <div className="replay-control replay-control--forward">
-        <Button className="replay-btn replay-forward" onClick={onClick} disabled={disabled} aria-label='fastforward' >
+        <Button
+          className="replay-btn replay-forward"
+          onClick={onClick}
+          disabled={disabled}
+          aria-label="fastforward">
           <FontAwesomeIcon icon={faForward} />
         </Button>
       </div>
@@ -192,24 +213,24 @@ export default function CameraDetailsPage() {
   // Helper functions
   const shouldRenderReplay = () => {
     if (!lastUpdate) {
-      return false
+      return false;
     }
 
     const lastUpdatedDate = Date.parse(lastUpdate);
-    const oneDayAgo = new Date().getTime() - (1 * 24 * 60 * 60 * 1000);
+    const oneDayAgo = new Date().getTime() - 1 * 24 * 60 * 60 * 1000;
 
     return lastUpdatedDate > oneDayAgo;
   };
 
   const returnHandler = () => {
     if (window.history.state && window.history.state.idx > 0) {
-        navigate(-1);
+      navigate(-1);
     } else {
-        navigate('/', { replace: true }); // the current entry in the history stack will be replaced with the new one with { replace: true }
+      navigate('/', { replace: true }); // the current entry in the history stack will be replaced with the new one with { replace: true }
     }
-  }
+  };
 
-  const handleImageSlide = (index) => {
+  const handleImageSlide = index => {
     if (index === replayImages.length - 1) {
       setHasImageEnded(true); // Set state to indicate the last image
     } else {
@@ -222,19 +243,18 @@ export default function CameraDetailsPage() {
     // For Firefox, Settings Performance > Use recommended performance settings
     // and Performance > Use recommended performance settings > Use hardware acceleration when available in the browser settings
     // need to be disabled
-    replayImages.forEach((img) => {
+    replayImages.forEach(img => {
       const cachedImage = new Image();
       cachedImage.src = img.original;
       cachedImage.decode();
     });
 
-    if(hasImageEnded){
+    if (hasImageEnded) {
       setHasImageEnded(true);
-    }
-    else{
+    } else {
       setHasImageEnded(false);
     }
-    if(hasImageEnded){
+    if (hasImageEnded) {
       refImg.current.slideToIndex(0);
     }
   };
@@ -244,24 +264,22 @@ export default function CameraDetailsPage() {
   // Rendering
   return (
     <div className="camera-page">
-      {showNetworkError &&
-        <NetworkErrorPopup />
-      }
+      {showNetworkError && <NetworkErrorPopup />}
 
-      {!showNetworkError && showServerError &&
+      {!showNetworkError && showServerError && (
         <ServerErrorPopup setShowServerError={setShowServerError} />
-      }
+      )}
 
       <div className="page-header">
         <Container>
-          <a className="back-link"
+          <a
+            className="back-link"
             onClick={returnHandler}
-            onKeyDown={(keyEvent) => {
+            onKeyDown={keyEvent => {
               if (keyEvent.keyCode == 13) {
                 returnHandler();
               }
             }}>
-
             <FontAwesomeIcon icon={faArrowLeft} />
             Back to last page
           </a>
@@ -276,12 +294,12 @@ export default function CameraDetailsPage() {
                 <p className="body--large">{parse(camera.caption)}</p>
               </div>
               <div className="camera-details__more">
-                {camera.highway != '0' &&
+                {camera.highway != '0' && (
                   <div className="camera-details__more__hwy">
                     {highwayShield(camera.highway)}
                     <p className="label--more">Highway {camera.highway}</p>
                   </div>
-                }
+                )}
 
                 <div className="camera-details__more__elevation">
                   <p className="elevation">
@@ -360,13 +378,16 @@ export default function CameraDetailsPage() {
               <Tabs
                 id="camera-details"
                 activeKey={activeTab}
-                onSelect={ (selectedTab) => setActiveTab(selectedTab) }>
-
-                <Tab eventKey="webcam" title={!xLargeScreen &&
-                  <span>
-                    <CurrentCameraIcon variant="outline" /> Current camera
-                  </span>
-                }>
+                onSelect={selectedTab => setActiveTab(selectedTab)}>
+                <Tab
+                  eventKey="webcam"
+                  title={
+                    !xLargeScreen && (
+                      <span>
+                        <CurrentCameraIcon variant="outline" /> Current camera
+                      </span>
+                    )
+                  }>
                   <div className="camera-update camera-update--mobile">
                     <p className="next-update bold">
                       Next update attempt: {nextUpdate}
@@ -381,23 +402,38 @@ export default function CameraDetailsPage() {
                   <div className="actions-bar actions-bar--webcam">
                     <div className="camera-orientations">
                       <span className="camera-direction-label">
-                        <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
+                        <img
+                          className="colocated-camera-icon"
+                          src={colocatedCamIcon}
+                          role="presentation"
+                          alt="colocated cameras icon"
+                        />
                         <span>Direction</span>
                       </span>
-
                       <div className="camera-orientations-group">
-                        {camera.camGroup.map((cam) =>
-                          <Button aria-label={getCameraOrientation(cam.orientation)} className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
-                        )}
+                        {camera.camGroup.map(cam => (
+                          <Button
+                            aria-label={getCameraOrientation(cam.orientation)}
+                            className={
+                              'camera-direction-btn' +
+                              (camera.orientation == cam.orientation
+                                ? ' current'
+                                : '')
+                            }
+                            key={cam.id}
+                            onClick={() => loadCamDetails(cam)}>
+                            {cam.orientation}
+                          </Button>
+                        ))}
                       </div>
                     </div>
 
                     <div className="replay-div">
-                      {shouldRenderReplay() &&
+                      {shouldRenderReplay() && (
                         <FontAwesomeIcon icon={faClockRotateLeft} />
-                      }
+                      )}
 
-                      {shouldRenderReplay() &&
+                      {shouldRenderReplay() && (
                         <Form className="replay-the-day">
                           <Form.Check
                             onChange={toggleReplay}
@@ -406,15 +442,18 @@ export default function CameraDetailsPage() {
                             label="Replay the day"
                           />
                         </Form>
-                      }
+                      )}
                     </div>
                   </div>
                   <div className="image-wrap">
                     {camera.is_on && (
                       <div className="card-img-box">
-                        {!replay ?
-                          <img src={camera.links.imageDisplay} alt={camera.name} /> :
-
+                        {!replay ? (
+                          <img
+                            src={camera.links.imageDisplay}
+                            alt={camera.name}
+                          />
+                        ) : (
                           <ImageGallery
                             ref={refImg}
                             slideInterval={300}
@@ -427,10 +466,11 @@ export default function CameraDetailsPage() {
                             renderLeftNav={customLeftNav}
                             renderPlayPauseButton={customPlayPause}
                             renderRightNav={customRightNav}
-                            onSlide={(index) => handleImageSlide(index)}
+                            onSlide={index => handleImageSlide(index)}
                             onPlay={play}
-                            infinite={false} />
-                        }
+                            infinite={false}
+                          />
+                        )}
                       </div>
                     )}
 
@@ -442,23 +482,40 @@ export default function CameraDetailsPage() {
 
                     {!replay && (
                       <div className="timestamp">
-                        <p className="driveBC">Drive<span>BC</span></p>
-                        <FriendlyTime date={lastUpdate} includeFullIfHumanized />
+                        <p className="driveBC">
+                          Drive<span>BC</span>
+                        </p>
+                        <FriendlyTime
+                          date={lastUpdate}
+                          includeFullIfHumanized
+                        />
                       </div>
                     )}
                   </div>
-                  <p className="credit" dangerouslySetInnerHTML={{__html: camera.credit}}></p>
+                  <p
+                    className="credit"
+                    dangerouslySetInnerHTML={{ __html: camera.credit }}></p>
                 </Tab>
 
-                <Tab eventKey="nearby" title={!xLargeScreen &&
-                  <span>
-                    <FontAwesomeIcon icon={faFlag} />Nearby
-                  </span>
-                }>
+                <Tab
+                  eventKey="nearby"
+                  title={
+                    !xLargeScreen && (
+                      <span>
+                        <FontAwesomeIcon icon={faFlag} />
+                        Nearby
+                      </span>
+                    )
+                  }>
                   <div className="actions-bar actions-bar--nearby"></div>
                   <div className="map-wrap map-context-wrap">
                     <DndProvider options={HTML5toTouch}>
-                      <Map camera={camera} isCamDetail={true} mapViewRoute={mapViewRoute} loadCamDetails={loadCamDetails} />
+                      <Map
+                        camera={camera}
+                        isCamDetail={true}
+                        mapViewRoute={mapViewRoute}
+                        loadCamDetails={loadCamDetails}
+                      />
                     </DndProvider>
                   </div>
                 </Tab>
@@ -467,9 +524,7 @@ export default function CameraDetailsPage() {
           </div>
         )}
       </div>
-      { (activeTab === 'webcam') &&
-        <Footer replay={replay} />
-      }
+      {activeTab === 'webcam' && <Footer replay={replay} />}
     </div>
   );
 }
