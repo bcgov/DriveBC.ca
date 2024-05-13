@@ -2,6 +2,6 @@
     font-family: "BC Sans";
     font-style: italic;
     font-weight: 400;
-    src: url("../fonts/BCSans-Italic.woff2") format("woff2"),
-         url("../fonts/BCSans-Italic.woff") format("woff");
+    src: url("BCSans-Italic.woff2") format("woff2"),
+         url("BCSans-Italic.woff") format("woff");
 }
