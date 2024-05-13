@@ -14,11 +14,11 @@ logger = logging.getLogger(__name__)
 
 def compare_data(current_field_data, new_field_data):
     if isinstance(current_field_data, Point):
-        new_point = Point(new_field_data['coordinates'])
+        new_point = Point(new_field_data.get('coordinates'))
         return current_field_data.equals(new_point)
 
     elif isinstance(current_field_data, LineString):
-        new_ls = LineString(new_field_data['coordinates'])
+        new_ls = LineString(new_field_data.get('coordinates', []))
         return current_field_data.equals(new_ls)
 
     else:
@@ -29,7 +29,7 @@ def build_data_diff(current_obj, new_obj_data):
     data_diff = {}
     for field in EVENT_UPDATE_FIELDS:
         current_field_data = getattr(current_obj, field)
-        new_field_data = new_obj_data[field] if field in new_obj_data else None
+        new_field_data = new_obj_data.get(field)
         if not compare_data(current_field_data, new_field_data):
             if field == 'location':
                 # {'coordinates': [-122.601346, 49.143921], 'type': 'Point'}

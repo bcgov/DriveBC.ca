@@ -8,20 +8,10 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 import { Fill, Icon, Stroke, Style } from 'ol/style.js';
 import Layer from 'ol/layer/Layer.js';
 import VectorLayer from 'ol/layer/Vector';
-import WebGLVectorLayerRenderer from 'ol/renderer/webgl/VectorLayer.js';
 import VectorSource from 'ol/source/Vector';
-import {packColor, parseLiteralStyle} from 'ol/webgl/styleparser.js';
 
 import { eventStyles } from '../../data/featureStyleDefinitions.js';
 
-class WebGLLayer extends Layer {
-  createRenderer() {
-    return new WebGLVectorLayerRenderer(this, {
-      className: this.getClassName(),
-      style: eventStyles.polygon,
-    });
-  }
-}
 
 export function loadEventsLayers(
   eventsData,
@@ -102,9 +92,7 @@ export function loadEventsLayers(
       if (event.polygon) {
         const feature = new ol.Feature({
           ...event,
-          ...eventStyles.segments.roadConditions.static,
           type: 'event',
-          layerType: 'webgl',
           altFeature: pointFeature,
           geometry: new Polygon(event.polygon.coordinates)
         });
@@ -136,12 +124,12 @@ export function loadEventsLayers(
     });
 
     // Helper function to add layer to map
-    const addLayer = (name, vs, zIndex, LayerType) => {
+    const addLayer = (name, vs, zIndex) => {
       if (mapLayers.current[name]) {
         mapRef.current.removeLayer(mapLayers.current[name]);
       }
 
-      mapLayers.current[name] = new LayerType({
+      mapLayers.current[name] = new VectorLayer({
         classname: 'events',
         visible: mapContext.visible_layers[name],
         source: vs,
@@ -155,15 +143,15 @@ export function loadEventsLayers(
     }
 
     // Add layer to map for each vs
-    addLayer('closures', closureVS, 128, VectorLayer);
-    addLayer('closuresLines', closureLinesVS, 42, VectorLayer);
-    addLayer('majorEvents', majorEventsVS, 118, VectorLayer);
-    addLayer('majorEventsLines', majorEventsLinesVS, 32, VectorLayer);
-    addLayer('minorEvents', minorEventsVS, 108, VectorLayer);
-    addLayer('minorEventsLines', minorEventsLinesVS, 22, VectorLayer);
-    addLayer('futureEvents', futureEventsVS, 98, VectorLayer);
-    addLayer('futureEventsLines', futureEventsLinesVS, 12, VectorLayer);
-    addLayer('roadConditions', roadConditionsVS, 88, VectorLayer);
-    addLayer('roadConditionsLines', roadConditionsLinesVS, 2, WebGLLayer);
+    addLayer('closures', closureVS, 128);
+    addLayer('closuresLines', closureLinesVS, 42);
+    addLayer('majorEvents', majorEventsVS, 118);
+    addLayer('majorEventsLines', majorEventsLinesVS, 32);
+    addLayer('minorEvents', minorEventsVS, 108);
+    addLayer('minorEventsLines', minorEventsLinesVS, 22);
+    addLayer('futureEvents', futureEventsVS, 98);
+    addLayer('futureEventsLines', futureEventsLinesVS, 12);
+    addLayer('roadConditions', roadConditionsVS, 88);
+    addLayer('roadConditionsLines', roadConditionsLinesVS, 8);
   }
 }

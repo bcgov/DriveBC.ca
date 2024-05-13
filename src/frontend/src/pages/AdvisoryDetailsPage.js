@@ -111,8 +111,8 @@ function getMap(advisoryData) {
     headers: {'Content-Type': 'application/json'},
   }).then(function(response) {
     response.json().then(function(glStyle) {
-      // overriding default font value so it doesn't return errors.
-      glStyle.metadata['ol:webfonts'] = '';
+      // DBC22-2153
+      glStyle.metadata['ol:webfonts'] = '/fonts/{font-family}/{fontweight}{-fontstyle}.css';
       applyStyle(tileLayer, glStyle, 'esri');
     });
   });

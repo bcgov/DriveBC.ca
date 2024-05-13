@@ -384,9 +384,12 @@ export default function CameraDetailsPage() {
                         <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
                         <span>Direction</span>
                       </span>
-                      {camera.camGroup.map((cam) =>
-                        <Button aria-label={getCameraOrientation(cam.orientation)} className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
-                      )}
+
+                      <div className="camera-orientations-group">
+                        {camera.camGroup.map((cam) =>
+                          <Button aria-label={getCameraOrientation(cam.orientation)} className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={() => setCamera(cam)}>{cam.orientation}</Button>
+                        )}
+                      </div>
                     </div>
 
                     <div className="replay-div">

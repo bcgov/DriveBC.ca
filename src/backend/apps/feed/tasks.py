@@ -1,7 +1,10 @@
 from apps.cms.tasks import populate_all_ferry_data
 from apps.event.tasks import populate_all_event_data
 from apps.rest.tasks import populate_all_rest_stop_data
-from apps.weather.tasks import populate_all_regional_weather_data
+from apps.weather.tasks import (
+    populate_all_current_weather_data,
+    populate_all_regional_weather_data,
+)
 from apps.webcam.tasks import (
     add_order_to_cameras,
     build_route_geometries,
@@ -38,9 +41,14 @@ def publish_scheduled():
     call_command('publish_scheduled')
 
 
-@db_periodic_task(crontab(minute="*/5"))
+@db_periodic_task(crontab(minute="*/20"))
 def populate_regional_weather_task():
     populate_all_regional_weather_data()
+
+
+@db_periodic_task(crontab(minute="*/20"))
+def populate_current_weather_task():
+    populate_all_current_weather_data()
 
 
 @db_periodic_task(crontab(minute="*/5"))

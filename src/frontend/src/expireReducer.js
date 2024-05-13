@@ -5,10 +5,15 @@ const { createTransform } = require('redux-persist');
 const transformRehydrate = (outboundState, config) => {
   outboundState = outboundState || null;
 
+  // Temporary fix for the issue with expiry
+  if (config.expiredState) {
+    return config.expiredState;
+  }
+
   // Check for the possible expiry if state has the persisted date
   if (config.expireSeconds && outboundState.timeStamp) {
-    const startTime = (new Date(outboundState.timeStamp)).getTime();
-    const endTime = (new Date()).getTime();
+    const startTime = new Date(outboundState.timeStamp).getTime();
+    const endTime = new Date().getTime();
 
     const duration = endTime - startTime;
     const seconds = duration / 1000;
