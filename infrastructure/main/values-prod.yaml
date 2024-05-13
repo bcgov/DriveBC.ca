@@ -23,7 +23,7 @@ django:
   autoscaling:
     enabled: true
     minReplicas: 3
-    maxReplicas: 10
+    maxReplicas: 5
     targetCPUUtilizationPercentage: 200
   route:
     host: prod-drivebc.apps.gold.devops.gov.bc.ca
@@ -44,7 +44,7 @@ tasks:
   deployment:
     resources:
       requests:
-        cpu: 200m
+        cpu: 300m
         memory: 200Mi
       limits:
         cpu: 750m
@@ -82,10 +82,10 @@ static:
   deployment:
     resources:
       requests:
-        cpu: 50m
+        cpu: 100m
         memory: 100Mi
       limits:
-        cpu: 250m
+        cpu: 500m
         memory: 150Mi
     env:
       staticConfigMap: prod-drivebc-static
@@ -136,7 +136,7 @@ openshiftjobs:
             cpu: 50m
             memory: 100Mi
           limits:
-            cpu: 150m
+            cpu: 100m
             memory: 200Mi
         volumes:
           logs: prod-static-log-storage
@@ -151,7 +151,7 @@ openshiftjobs:
             memory: 100Mi
           limits:
             cpu: 100m
-            memory: 250Mi
+            memory: 200Mi
         env:
           s3Secret: prod-drivebc-cronjob-s3bucket
         volumes:
