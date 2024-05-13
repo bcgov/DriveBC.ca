@@ -92,6 +92,7 @@ import MVT from 'ol/format/MVT.js';
 import VectorTileLayer from 'ol/layer/VectorTile.js';
 import VectorTileSource from 'ol/source/VectorTile.js';
 import View from 'ol/View';
+import overrides from './map/overrides.js';
 
 // Styling
 import {
@@ -299,6 +300,10 @@ export default function MapWrapper(props) {
       response.json().then(function (glStyle) {
         // DBC22-2153
         glStyle.metadata['ol:webfonts'] = '/fonts/{font-family}/{fontweight}{-fontstyle}.css';
+        console.log(glStyle);
+        for (const layer of glStyle.layers) {
+          Object.assign(layer, overrides[layer.id] || {});
+        }
         applyStyle(vectorLayer, glStyle, 'esri');
       });
     });
