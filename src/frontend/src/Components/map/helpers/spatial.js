@@ -107,3 +107,23 @@ export const compareRoutePoints = (routePoints, savedPoints) => {
   // Direct comparison if not both of them are arrays of points
   return routePoints == savedPoints;
 }
+
+export const getMidPoint = (location) => {
+  // Return point coords if location is a point
+  if (location.type === "Point") {
+    return location.coordinates;
+  }
+
+  // Create turf ls from location coordinates
+  const line = turf.lineString(location.coordinates);
+
+  // Calculate the length of the LineString
+  const length = turf.length(line);
+
+  // Find the midpoint distance
+  const midpointDistance = length / 2;
+
+  // Find and return the point coords at the midpoint distance
+  const midpoint = turf.along(line, midpointDistance);
+  return midpoint.geometry.coordinates;
+}
