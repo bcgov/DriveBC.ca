@@ -34,6 +34,7 @@ export default function Filters(props) {
   // Props
   const {
     mapLayers,
+    callback,
     disableFeatures,
     enableRoadConditions,
     textOverride,
@@ -112,8 +113,14 @@ export default function Filters(props) {
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
 
   // Helpers
-  const toggleLayer = (layer, checked) => {
-    mapLayers.current[layer].setVisible(checked);
+  const toggleLayer = (layer, checked, runCallback=true) => {
+    // Set visible in map only
+    mapLayers?.current[layer].setVisible(checked);
+
+    // Run callback for event list, non-line layers
+    if (callback && runCallback) {
+      callback(layer, checked);
+    }
 
     // Set context and local storage
     mapContext.visible_layers[layer] = checked;
@@ -159,7 +166,7 @@ export default function Filters(props) {
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle closures layer')
                         toggleLayer('closures', e.target.checked);
-                        toggleLayer('closuresLines', e.target.checked);
+                        toggleLayer('closuresLines', e.target.checked, false);
                         setClosures(!closures)
                       }}
                       defaultChecked={eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures}
@@ -184,7 +191,7 @@ export default function Filters(props) {
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle major events layer');
                         toggleLayer('majorEvents', e.target.checked);
-                        toggleLayer('majorEventsLines', e.target.checked);
+                        toggleLayer('majorEventsLines', e.target.checked, false);
                         setMajorEvents(!majorEvents);
                       }}
                       defaultChecked={eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents}
@@ -210,7 +217,7 @@ export default function Filters(props) {
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle minor events layer')
                         toggleLayer('minorEvents', e.target.checked);
-                        toggleLayer('minorEventsLines', e.target.checked);
+                        toggleLayer('minorEventsLines', e.target.checked, false);
                         setMinorEvents(!minorEvents);
                       }}
                       defaultChecked={eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents}
@@ -236,7 +243,7 @@ export default function Filters(props) {
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle future events layer')
                         toggleLayer('futureEvents', e.target.checked);
-                        toggleLayer('futureEventsLines', e.target.checked);
+                        toggleLayer('futureEventsLines', e.target.checked, false);
                         setFutureEvents(!futureEvents);
                       }}
                       defaultChecked={eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents}
@@ -291,7 +298,7 @@ export default function Filters(props) {
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle road conditions layer')
                         toggleLayer('roadConditions', e.target.checked);
-                        toggleLayer('roadConditionsLines', e.target.checked);
+                        toggleLayer('roadConditionsLines', e.target.checked, false);
                         setRoadConditions(!roadConditions);
                       }}
                       defaultChecked={mapContext.visible_layers.roadConditions}

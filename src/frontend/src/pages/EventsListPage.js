@@ -84,7 +84,7 @@ export default function EventsListPage() {
   }))));
 
   // Context
-  const { mapContext, setMapContext } = useContext(MapContext);
+  const { mapContext } = useContext(MapContext);
 
   // States
   const [sortingKey, setSortingKey] = useState('severity_desc');
@@ -223,18 +223,11 @@ export default function EventsListPage() {
   }, [sortingKey]);
 
   // Handlers
-  const eventCategoryFilterHandler = (targetCategory, check, lineToggle) => {
-    if (!lineToggle) {
-      const newFilter = {...eventCategoryFilter};
-      newFilter[targetCategory] = !newFilter[targetCategory]; // Toggle/invert value
+  const toggleEventCategoryFilter = (targetCategory, check) => {
+    const newFilter = {...eventCategoryFilter};
+    newFilter[targetCategory] = check;
 
-      setEventCategoryFilter(newFilter);
-
-      // Set context and local storage
-      mapContext.visible_layers[targetCategory] = newFilter[targetCategory]; // Set identical to newFilter after change
-      setMapContext(mapContext);
-      localStorage.setItem('mapContext', JSON.stringify(mapContext));
-    }
+    setEventCategoryFilter(newFilter);
   };
 
   const handleRoute = (event) => {
@@ -322,7 +315,7 @@ export default function EventsListPage() {
             </Dropdown>
 
             <Filters
-              toggleHandler={eventCategoryFilterHandler}
+              callback={toggleEventCategoryFilter}
               disableFeatures={true}
               enableRoadConditions={false}
               textOverride={'List filters'}
