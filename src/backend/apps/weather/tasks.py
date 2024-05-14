@@ -52,7 +52,7 @@ def populate_current_weather_from_data(new_current_weather_data):
     existing_record = CurrentWeather.objects.filter(weather_station_name=weather_station_name).first()
     issued_utc = new_current_weather_data.get('issuedUtc')
     if issued_utc is not None:
-        issued_utc = datetime.datetime.strptime(issued_utc, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc)
+        issued_utc = datetime.datetime.strptime(issued_utc, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=datetime.timezone.utc)
 
     data = {
         'weather_station_name': weather_station_name,

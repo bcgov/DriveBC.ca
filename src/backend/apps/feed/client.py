@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
 import logging
+from datetime import datetime, timezone
 from typing import Dict
 from urllib.parse import urljoin
 
@@ -13,8 +13,8 @@ from apps.feed.constants import (
     OPEN511,
     REGIONAL_WEATHER,
     REGIONAL_WEATHER_AREAS,
-    WEBCAM,
     REST_STOP,
+    WEBCAM,
 )
 from apps.feed.serializers import (
     CarsEventSerializer,
@@ -23,9 +23,9 @@ from apps.feed.serializers import (
     EventFeedSerializer,
     FerryAPISerializer,
     RegionalWeatherSerializer,
+    RestStopSerializer,
     WebcamAPISerializer,
     WebcamFeedSerializer,
-    RestStopSerializer,
 )
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
@@ -325,7 +325,7 @@ class FeedClient:
                             # Env Canada sends this field as ISO time without
                             # offset, needed for python to parse correctly
                             forecast_issued = datetime.fromisoformat(f"{forecast_issued}+00:00")
-                        except:  # date parsing error
+                        except Exception:  # date parsing error
                             logger.error(f"Issued UTC sent by {code} as {forecast_issued}")
 
                     riseset_data = data.get("RiseSet") or {}
@@ -422,7 +422,10 @@ class FeedClient:
                     response = requests.get(api_endpoint, headers=headers)
                     data = response.json()
                     datasets = data.get("Datasets") if data else None
-                    issuedUtc = data.get("IssuedUtc")
+
+                    # DBC22-2125 - use CollectionUtc of first dataset instead of IssuedUtc, to be improved
+                    issuedUtc = datasets[0].get("CollectionUtc") if datasets and len(datasets) else None
+
                     elevation = data.get('WeatherStation').get("Elevation")
                     Longitude = data.get('WeatherStation').get("Longitude")
                     Latitude = data.get('WeatherStation').get("Latitude")
@@ -462,6 +465,7 @@ class FeedClient:
 
                 except requests.RequestException as e:
                     logger.error(f"Error making API call for Area Code {station_number}: {e}")
+
             try:
                 serializer.is_valid(raise_exception=True)
                 return json_objects
@@ -470,6 +474,7 @@ class FeedClient:
                 field_errors = serializer.errors
                 for field, errors in field_errors.items():
                     logger.error(f"Field: {field}, Errors: {errors}")
+
         except requests.RequestException:
             return Response("Error fetching data from weather API", status=500)
 
@@ -479,7 +484,7 @@ class FeedClient:
             {"format": "json", "limit": 500}
         )
 
-     # Rest Stop
+    # Rest Stop
     def get_rest_stop_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
         """Get data feed for list of objects."""
         rest_stop_api_url = settings.DRIVEBC_REST_STOP_API_BASE_URL
@@ -502,8 +507,7 @@ class FeedClient:
                         'bbox': bbox,
                     }
 
-                serializer = serializer_cls(data=rest_stop_data,
-                                                many=isinstance(rest_stop_data, list))
+                serializer = serializer_cls(data=rest_stop_data, many=isinstance(rest_stop_data, list))
                 json_objects.append(rest_stop_data)
 
         except requests.RequestException as e:
@@ -519,7 +523,7 @@ class FeedClient:
                 print(f"Field: {field}, Errors: {errors}")
 
     def get_rest_stop_list(self):
-            return self.get_rest_stop_list_feed(
-                REST_STOP, 'reststop', RestStopSerializer,
-                {"format": "json", "limit": 500}
-            )
+        return self.get_rest_stop_list_feed(
+            REST_STOP, 'reststop', RestStopSerializer,
+            {"format": "json", "limit": 500}
+        )
