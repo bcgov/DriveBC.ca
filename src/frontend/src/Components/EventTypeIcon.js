@@ -53,9 +53,9 @@ export default function EventTypeIcon(props) {
 
     case "futureEvents": {
       if (state === 'active')
-        return <img className={'delay-icon-img'} src={(severity === 'MAJOR' || severity === 'CLOSURE') ? futureEventsMajorActiveIcon : futureEventsActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
+        return <img className={'delay-icon-img'} src={severity === 'MAJOR' ? futureEventsMajorActiveIcon : futureEventsActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
       else
-        return <img className={'delay-icon-img'} src={(severity === 'MAJOR' || severity === 'CLOSURE')? futureEventsMajorStaticIcon : futureEventsStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
+        return <img className={'delay-icon-img'} src={severity === 'MAJOR' ? futureEventsMajorStaticIcon : futureEventsStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
     }
 
     case "roadConditions": {
