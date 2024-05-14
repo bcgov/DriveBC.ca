@@ -144,4 +144,20 @@
 			padding: 0;
 		}
 	}
+
+	#feedback-btn {
+		margin-left: auto;
+		margin-right: 0;
+		margin-bottom: 0;
+		font-weight: 700;
+
+		svg {
+			margin-right: 8px;
+			color: #D8EAFD;
+		}
+		
+		&::after {
+			content: none;
+		}
+	}
 }
