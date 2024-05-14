@@ -49,35 +49,35 @@ export default function EventsTable(props) {
 
   const columns = [
     {
-      header: 'Type',
+      header: <span tabIndex={0}>{'Type'}</span>,
       accessorKey: 'display_category',
       cell: (props) => getEventTypeCell(props.row.original),
       enableSorting: false,
     },
     {
-      header: 'Location',
+      header: <span tabIndex={0}>{'Location'}</span>,
       accessorKey: 'location_description',
       sortingFn: 'severitySort', // override to sort by severity instead
       cell: (props) => <span>{props.getValue()}</span>,
     },
     {
-      header: 'Closest Landmark',
+      header: <span tabIndex={0}>{'Closest Landmark'}</span>,
       accessorKey: 'closest_landmark',
       sortingFn: 'routeSort', // override to sort by severity instead
       cell: (props) => <span>{props.getValue() ? props.getValue() : '-'}</span>,
     },
     {
-      header: 'Description',
+      header: <span tabIndex={0}>{'Description'}</span>,
       accessorKey: 'optimized_description',
       enableSorting: false,
     },
     {
-      header: 'Last Update',
+      header: <span tabIndex={0}>{'Last Update'}</span>,
       accessorKey: 'last_updated',
       cell: (props) => <FriendlyTime date={props.getValue()} />,
     },
     {
-      header: 'Next Update',
+      header: <span tabIndex={0}>{'Next Update'}</span>,
       accessorKey: 'next_update',
       cell: (props) => props.getValue() ? <FriendlyTime date={props.getValue()} /> : '-',
       enableSorting: false,
