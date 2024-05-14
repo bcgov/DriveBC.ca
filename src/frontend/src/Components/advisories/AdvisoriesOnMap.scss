@@ -9,6 +9,15 @@
     width: fit-content;
   }
 
+  @media (orientation: landscape) and (max-width: 767px) {
+    top: 1rem;
+
+    .btn.advisories-on-map__btn {
+      position: absolute;
+      right: 1rem;
+    }
+  }
+
   .btn.advisories-on-map__btn {
     background: #FAF9F8;
     width: fit-content;
