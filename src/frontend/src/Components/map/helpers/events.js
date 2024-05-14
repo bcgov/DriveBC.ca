@@ -20,9 +20,15 @@ export const setEventStyle = (events, state) => {
       }
     } else { // Points
       if (is_closure) {
-        return event.setStyle(eventStyles['closures'][state]);
+        const severity = event.get('severity').toLowerCase();
+        if (is_closure) {
+          if (display_category === 'futureEvents')
+            return event.setStyle(eventStyles[
+              severity === 'major' ? 'major_future_events' : 'future_events'
+            ][state]);
+          else
+            return event.setStyle(eventStyles['closures'][state]);
       }
-      const severity = event.get('severity').toLowerCase();
 
       switch (display_category) {
         case 'futureEvents':
