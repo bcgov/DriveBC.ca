@@ -1,5 +1,5 @@
-// Components and functions
-import { setEventStyle } from '../helpers';
+// Internal imports
+import { getMidPoint, setEventStyle } from '../helpers';
 
 // OpenLayers
 import { Point, LineString, Polygon } from 'ol/geom';
@@ -58,21 +58,12 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
 
     // Add features to VectorSources for each event
     eventsData.forEach((event) => {
-      // location may have an object or an array of objects, so handle all
-      // event locations as an array of objects
-      const locationData = !Array.isArray(event.location) ? [event.location] : event.location;
-
       // all events have a point coordinate for an icon; for line or zone
       // events, the point is the median lat/long in the lineString
-      const full = locationData.reduce(
-        (full, location) => full.concat(location.coordinates),
-        []
-      );
-      const coordinates = full[Math.floor(full.length / 2)];
       const pointFeature = new ol.Feature({
         ...event,
         type: 'event',
-        geometry: new Point(coordinates),
+        geometry: new Point(getMidPoint(event.location)),
       });
       pointFeature.setId(event.id);
       pointFeature.getGeometry().transform('EPSG:4326', currentProjection);
@@ -96,6 +87,10 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
         pointFeature.set('altFeature', feature);
 
       } else {
+        // location may have an object or an array of objects, so handle all
+        // event locations as an array of objects
+        const locationData = !Array.isArray(event.location) ? [event.location] : event.location;
+
         const features = locationData.reduce((all, location, ii) => {
           const geometry = location.type === 'LineString'
             ? new LineString(location.coordinates)
