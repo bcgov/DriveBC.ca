@@ -71,7 +71,7 @@ export default function LocationSearch(props) {
       placeholder={placeholder}
       highlightOnlyResult={true}
       inputProps={{
-        'aria-label': 'input field for location search',
+        'aria-label': 'input field for location ' + placeholder
       }}
       selectHint={(shouldSelect, e) => {
         // Select the hint if the user hits 'enter'
