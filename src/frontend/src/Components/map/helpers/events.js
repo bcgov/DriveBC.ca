@@ -19,15 +19,14 @@ export const setEventStyle = (events, state) => {
         event.setStyle(eventStyles['segments'][category][state]);
       }
     } else { // Points
+      const severity = event.get('severity').toLowerCase();
       if (is_closure) {
-        const severity = event.get('severity').toLowerCase();
-        if (is_closure) {
-          if (display_category === 'futureEvents')
-            return event.setStyle(eventStyles[
-              severity === 'major' ? 'major_future_events' : 'future_events'
-            ][state]);
-          else
-            return event.setStyle(eventStyles['closures'][state]);
+        if (display_category === 'futureEvents')
+          return event.setStyle(eventStyles[
+            severity === 'major' ? 'major_future_events' : 'future_events'
+          ][state]);
+        else
+          return event.setStyle(eventStyles['closures'][state]);
       }
 
       switch (display_category) {
