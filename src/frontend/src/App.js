@@ -23,6 +23,11 @@ import ScrollToTop from './Components/shared/ScrollToTop';
 import { setAutoFreeze } from 'immer';
 setAutoFreeze(false);
 
+// FontAwesome Stylesheet
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
+
 export const MapContext = createContext(null);
 
 function App() {
