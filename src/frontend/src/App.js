@@ -17,6 +17,7 @@ import AdvisoryDetailsPage from './pages/AdvisoryDetailsPage';
 import BulletinsListPage from './pages/BulletinsListPage';
 import BulletinDetailsPage from './pages/BulletinDetailsPage';
 import ScrollToTop from './Components/shared/ScrollToTop';
+import NotFound from './pages/NotFoundPage';
 
 // https://github.com/dai-shi/proxy-memoize?tab=readme-ov-file#usage-with-immer
 import { setAutoFreeze } from 'immer';
@@ -63,6 +64,8 @@ function App() {
           <Route path="/advisories/:id" element={<AdvisoryDetailsPage />} />
           <Route path="/bulletins" element={<BulletinsListPage />} />
           <Route path="/bulletins/:id" element={<BulletinDetailsPage />} />
+          {/* Catch-all route for 404 errors */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </MapContext.Provider>
