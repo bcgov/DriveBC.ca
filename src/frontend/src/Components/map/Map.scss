@@ -119,7 +119,8 @@
       }
 
       .close-panel:has(+ .panel-content .popup.minor),
-      .close-panel:has(+ .panel-content .popup.roadConditions)
+      .close-panel:has(+ .panel-content .popup.roadConditions),
+      .close-panel:has(+ .panel-content .popup.popup--advisories)
        {
         color: #584215;
         &:hover {
@@ -176,6 +177,12 @@
 
         @media (min-width: 768px) {
           width: initial;
+        }
+      }
+
+      .routing-outer-container {
+        @media (orientation: landscape) and (max-width: 767px) {
+          width: calc(340px + 1rem);
         }
       }
 

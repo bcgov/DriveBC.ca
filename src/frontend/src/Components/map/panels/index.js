@@ -7,11 +7,15 @@ import {
   getWeatherPopup,
   getRegionalPopup,
   getRestStopPopup,
+  showAdvisories
 } from './mapPopup';
 import CamPopup from './camPopup';
 
 export const renderPanel = (clickedFeature, isCamDetail) => {
   if (clickedFeature) {
+    if (!clickedFeature.get)
+      return showAdvisories(clickedFeature);
+
     switch (clickedFeature.get('type')) {
       case 'camera':
         return <CamPopup camFeature={clickedFeature} isCamDetail={isCamDetail} />;

@@ -25,7 +25,8 @@ import {
   faCircleInfo,
   faTablePicnic,
   faTruckContainer,
-  faSunCloud
+  faSunCloud,
+  faFlag
 } from '@fortawesome/pro-solid-svg-icons';
 
 import './mapPopup.scss';
@@ -35,6 +36,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import OpenSeason from '../OpenSeason';
 import { isRestStopClosed } from '../../data/restStops';
+import AdvisoriesList from '../../advisories/AdvisoriesList';
 
 function convertCategory(event) {
   switch (event.display_category) {
@@ -383,6 +385,22 @@ export function getRegionalPopup(weatherFeature) {
             rel="noreferrer"
             href="https://weather.gc.ca/canada_e.html"
           >Environment Canada</a></p>
+      </div>
+    </div>
+  );
+}
+
+export function showAdvisories(advisories) {
+  return (
+    <div className="popup popup--advisories" tabIndex={0}>
+      <div className="popup__title">
+        <div className="popup__title__icon">
+          <FontAwesomeIcon icon={faFlag} />
+        </div>
+        <p className="name">Advisories</p>
+      </div>
+      <div className="popup__content">
+        <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={false} showArrow={true} />
       </div>
     </div>
   );
