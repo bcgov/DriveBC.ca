@@ -25,6 +25,11 @@ export const resetClickedStates = (targetFeature, clickedFeatureRef, updateClick
     return;
   }
 
+  if (!clickedFeatureRef.current.get) {
+    updateClickedFeature(null);
+    return;
+  }
+
   // Reset feature if target feature does not equal to it or its altFeature
   if (!targetFeature || (targetFeature != clickedFeatureRef.current && targetFeature != clickedFeatureRef.current.get('altFeature'))) {
     switch(clickedFeatureRef.current.get('type')) {

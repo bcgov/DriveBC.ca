@@ -8,12 +8,20 @@ import { useNavigate } from 'react-router-dom';
 import { stripRichText } from '../data/helper';
 import FriendlyTime from '../shared/FriendlyTime';
 import trackEvent from '../shared/TrackEvent.js';
+
+// Third party packages
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {
+  faChevronRight
+} from '@fortawesome/pro-solid-svg-icons';
+
 // Styling
 import './AdvisoriesList.scss';
 
+
 export default function Advisories(props) {
   // State, props and context
-  const { advisories, showDescription, showTimestamp } = props;
+  const { advisories, showDescription, showTimestamp, showArrow } = props;
 
   // Navigation
   const navigate = useNavigate();
@@ -62,6 +70,12 @@ export default function Advisories(props) {
               <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
               <FriendlyTime date={advisory.latest_revision_created_at} />
             </div>
+            }
+
+            {showArrow &&
+              <div className="advisory-li__arrow">
+                <FontAwesomeIcon icon={faChevronRight} />
+              </div>
             }
           </li>
         );

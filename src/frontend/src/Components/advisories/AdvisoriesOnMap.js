@@ -1,55 +1,40 @@
 // React
-import React, { useState } from 'react';
+import React from 'react';
 
 // Components and functions
-import AdvisoriesList from './AdvisoriesList';
 import trackEvent from '../shared/TrackEvent';
+
 // Third party packages
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
-  faFlag,
-  faXmark
+  faFlag
 } from '@fortawesome/pro-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 
 // Styling
 import './AdvisoriesOnMap.scss';
 
-export default function AdvisoriesOnMap(props) {
-  const { advisories } = props;
 
-  // States
-  const [open, setOpen] = useState(false);
+
+export default function AdvisoriesOnMap(props) {
+  const { advisories, updateClickedFeature, open, clickedFeature } = props;
 
   // Rendering
   return (
     (advisories && advisories.length > 0) ? (
       <div className="advisories-on-map">
         <Button
-          className={'advisories-on-map__btn' + (open ? ' open' : '')}
+          className={'advisories-on-map__btn' + ((open && !clickedFeature.get) ? ' open' : '')}
           aria-label="open advisories list"
           onClick={() => {
             trackEvent('click', 'advisories-on-map', 'Advisories button');
-            open ? setOpen(false) : setOpen(true) }
+            updateClickedFeature(advisories);
+          }
           }>
           <FontAwesomeIcon icon={faFlag} />
           <span>Advisories in area</span>
           <span className="advisories-count">{advisories.length}</span>
         </Button>
-
-        { open &&
-          <div className="advisories-on-map__content">
-            <h4>Advisories</h4>
-            <button
-              className="close-advisories"
-              aria-label="close advisories list"
-              onClick={() => setOpen(false)
-            }>
-              <FontAwesomeIcon icon={faXmark} />
-            </button>
-            <AdvisoriesList advisories={advisories} showDescription={true} showTimestamp={false} />
-          </div>
-        }
       </div>
     ) : null
   );
