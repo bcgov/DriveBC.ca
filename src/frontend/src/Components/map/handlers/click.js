@@ -25,6 +25,7 @@ export const resetClickedStates = (targetFeature, clickedFeatureRef, updateClick
     return;
   }
 
+  // Workaround for the case where advisories are clicked
   if (!clickedFeatureRef.current.get) {
     updateClickedFeature(null);
     return;

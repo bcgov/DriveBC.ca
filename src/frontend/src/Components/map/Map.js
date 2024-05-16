@@ -400,7 +400,7 @@ export default function DriveBCMap(props) {
               <ExitSurvey mobile={true} />
             )}
             <RouteSearch routeEdit={true} />
-            <AdvisoriesOnMap advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} />
+            <AdvisoriesOnMap advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} />
           </div>
         )}
 
