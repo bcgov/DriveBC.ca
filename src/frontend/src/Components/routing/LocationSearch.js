@@ -71,7 +71,9 @@ export default function LocationSearch(props) {
       placeholder={placeholder}
       highlightOnlyResult={true}
       inputProps={{
-        'aria-label': 'input field for location ' + placeholder
+        'aria-label': 'input field for location ' + placeholder,
+        ...props.inputProps,
+
       }}
       selectHint={(shouldSelect, e) => {
         // Select the hint if the user hits 'enter'
@@ -85,7 +87,7 @@ export default function LocationSearch(props) {
     >
     {({ onClear, selected }) => (
       <>
-        {!!selected.length && 
+        {!!selected.length &&
           <button
             className='clear-btn'
             aria-label={'Clear ' + placeholder}

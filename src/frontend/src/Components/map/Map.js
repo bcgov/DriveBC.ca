@@ -173,12 +173,13 @@ export default function DriveBCMap(props) {
       headers: { 'Content-Type': 'application/json' },
     }).then(function (response) {
       response.json().then(function (glStyle) {
+        window.glStyle = glStyle;
         // DBC22-2153
         glStyle.metadata['ol:webfonts'] = '/fonts/{font-family}/{fontweight}{-fontstyle}.css';
 
         // Overrides
         for (const layer of glStyle.layers) {
-          Object.assign(layer, overrides[layer.id] || {});
+          overrides.merge(layer, overrides[layer.id] || {});
         }
 
         applyStyle(vectorLayer, glStyle, 'esri');

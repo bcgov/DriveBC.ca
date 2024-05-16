@@ -91,7 +91,15 @@ export default function RouteSearch(props) {
             <FontAwesomeIcon icon={faCircleDot} />
           </span>
 
-          <LocationSearch placeholder={'Search starting location'} location={searchLocationFrom} action={updateSearchLocationFrom} />
+          <LocationSearch
+            placeholder={'Search starting location'}
+            location={searchLocationFrom}
+            action={updateSearchLocationFrom}
+            inputProps={{
+              'aria-label': 'input field for starting location search',
+              'id': 'location-search-starting-id',
+            }}
+          />
         </div>
 
         <div className="typeahead-container typeahead-container--to stacked">
@@ -99,7 +107,15 @@ export default function RouteSearch(props) {
             <FontAwesomeIcon icon={faLocationDot} />
           </span>
 
-          <LocationSearch placeholder={'Search destination location'} location={searchLocationTo} action={updateSearchLocationTo} />
+          <LocationSearch
+            placeholder={'Search destination location'}
+            location={searchLocationTo}
+            action={updateSearchLocationTo}
+            inputProps={{
+              'aria-label': 'input field for ending location search',
+              'id': 'location-search-ending-id',
+            }}
+          />
 
           {showSpinner &&
             <Spinner className="typeahead-spinner" size="sm" animation="border" />
