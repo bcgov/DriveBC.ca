@@ -3,6 +3,7 @@ import React from 'react';
 
 // Components and functions
 import trackEvent from '../shared/TrackEvent';
+import { resetClickedStates } from '../map/handlers/click';
 
 // Third party packages
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -17,7 +18,7 @@ import './AdvisoriesOnMap.scss';
 
 
 export default function AdvisoriesOnMap(props) {
-  const { advisories, updateClickedFeature, open, clickedFeature } = props;
+  const { advisories, updateClickedFeature, open, clickedFeature, clickedFeatureRef } = props;
 
   // Rendering
   return (
@@ -28,9 +29,9 @@ export default function AdvisoriesOnMap(props) {
           aria-label="open advisories list"
           onClick={() => {
             trackEvent('click', 'advisories-on-map', 'Advisories button');
+            resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
             updateClickedFeature(advisories);
-          }
-          }>
+          }}>
           <FontAwesomeIcon icon={faFlag} />
           <span>Advisories in area</span>
           <span className="advisories-count">{advisories.length}</span>
