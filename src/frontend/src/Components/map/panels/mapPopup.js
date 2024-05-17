@@ -430,7 +430,7 @@ export function getRestStopPopup(restStopFeature) {
             <div className='popup__content__description__container__row'>
               <FontAwesomeIcon icon={faClock} />
               {restStopData.properties.OPEN_YEAR_ROUND === "Yes" && (
-                <p className="green-text">Open year around</p>
+                <p className="green-text">Open year round</p>
               )}
               {restStopData.properties.OPEN_YEAR_ROUND === "No" && restStopData.properties.OPEN_DATE && restStopData.properties.CLOSE_DATE && (
                 <div>
