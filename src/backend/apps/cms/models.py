@@ -32,7 +32,7 @@ class Advisory(Page, BaseModel):
     ]
 
     # Geo fields
-    geometry = models.PolygonField()
+    geometry = models.MultiPolygonField()
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

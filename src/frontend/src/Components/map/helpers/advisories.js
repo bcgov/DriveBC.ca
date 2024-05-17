@@ -7,9 +7,8 @@ const wrapLon = (value) => {
   return value - worlds * 360;
 }
 
-export const onMoveEnd = (e, advisories, setAdvisoriesInView) => {
+export const onMoveEnd = (map, advisories, setAdvisoriesInView) => {
   // calculate polygon based on map extent
-  const map = e.map;
   const extent = map.getView().calculateExtent(map.getSize());
   const bottomLeft = toLonLat(getBottomLeft(extent));
   const topRight = toLonLat(getTopRight(extent));
@@ -25,12 +24,17 @@ export const onMoveEnd = (e, advisories, setAdvisoriesInView) => {
   // Update state with advisories that intersect with map extent
   const resAdvisories = [];
   if (advisories && advisories.length > 0) {
-    advisories.forEach(advisory => {
-      const advPoly = turf.polygon(advisory.geometry.coordinates);
-      if (turf.booleanIntersects(mapPoly, advPoly)) {
-        resAdvisories.push(advisory);
+    for (const advisory of advisories) {
+      // For each polygon in multipolygon field
+      for (const coords of advisory.geometry.coordinates) {
+        // Build polygon and check if it intersects with map extent
+        const advPoly = turf.polygon(coords);
+        if (turf.booleanIntersects(mapPoly, advPoly)) {
+          resAdvisories.push(advisory);
+          break;
+        }
       }
-    });
+    }
   }
   setAdvisoriesInView(resAdvisories);
 }
