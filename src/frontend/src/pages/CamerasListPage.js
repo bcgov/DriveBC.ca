@@ -9,7 +9,7 @@ import { updateCameras } from '../slices/feedsSlice';
 
 // Third party components
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import { booleanIntersects, point, polygon } from '@turf/turf';
+import { booleanIntersects, point, multiPolygon } from '@turf/turf';
 import Container from 'react-bootstrap/Container';
 
 // Components and functions
@@ -106,7 +106,7 @@ export default function CamerasListPage() {
     // Route selected, load advisories that intersect with at least one cam on route
     if (selectedRoute && advData && advData.length > 0 && camsData && camsData.length > 0) {
       for (const adv of advData) {
-        const advPoly = polygon(adv.geometry.coordinates);
+        const advPoly = multiPolygon(adv.geometry.coordinates);
 
         for (const cam of camsData) {
           const camPoint = point(cam.location.coordinates);
