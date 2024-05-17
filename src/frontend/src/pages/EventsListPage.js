@@ -9,7 +9,7 @@ import { updateAdvisories } from '../slices/cmsSlice';
 import { updateEvents } from '../slices/feedsSlice';
 
 // External imports
-import { booleanIntersects, point, lineString, polygon } from '@turf/turf';
+import { booleanIntersects, point, lineString, multiPolygon } from '@turf/turf';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAngleDown
@@ -133,7 +133,7 @@ export default function EventsListPage() {
     // Route selected, load advisories that intersect  with at least one event on route
     if (selectedRoute && advData && advData.length > 0 && eventsData && eventsData.length > 0) {
       for (const adv of advData) {
-        const advPoly = polygon(adv.geometry.coordinates);
+        const advPoly = multiPolygon(adv.geometry.coordinates);
 
         for (const event of eventsData) {
           // Event geometry, point or line based on type
