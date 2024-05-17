@@ -48,17 +48,27 @@
 
     .right-container {
       display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
 
-      @media (max-width: 767px) {
+      @media (min-width: 768px) {
+        flex-direction: row;
+      }
+
+      & > div {
         margin-bottom: 1rem;
-        justify-content: space-between;
       }
 
       .dropdown {
-        margin-right: 45px;
+
+        @media (min-width: 768px) {
+          margin-right: 16px;
+        }
 
         button {
           border: none;
+          padding-left: 0;
+          margin-bottom: 0;
 
           &::after {
             display: none;
