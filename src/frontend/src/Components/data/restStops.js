@@ -7,26 +7,24 @@ export function getRestStops(routePoints) {
 }
 
 export function isRestStopClosed(restStopProperties) {
-  if(restStopProperties === undefined){
+  if (restStopProperties === undefined) {
     return false;
   }
-  const isOpenYearRound = restStopProperties.OPEN_YEAR_ROUND === "Yes"? true: false;
-  if(isOpenYearRound){
+  const isOpenYearRound = restStopProperties.OPEN_YEAR_ROUND === "Yes";
+  if (isOpenYearRound) {
     return false;
-  }
-  else{
+  } else {
     const today = new Date();
     const year = today.getFullYear();
     const openDate = restStopProperties.OPEN_DATE;
     const closeDate = restStopProperties.CLOSE_DATE;
-    if(openDate && closeDate){
+    if (openDate && closeDate) {
       const openDateY = new Date(year.toString() + "-"  + openDate.toString());
       const closeDateY =  new Date(year.toString() + "-" + closeDate.toString());
       const isInSeason = (today.getTime() > openDateY.getTime()) && (today.getTime() < closeDateY.getTime());
       const isClosed = isInSeason? false: true;
       return isClosed;
-    }
-    else{
+    } else {
       return true;
     }
   }

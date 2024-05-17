@@ -460,6 +460,7 @@
         .friendly-time {
           margin: 0 auto 1rem;
           &-text {
+            text-align: center;
             color: $Type-Secondary;
             font-size: 0.875rem;
           }
@@ -598,7 +599,7 @@
 
       &:not(.group) {
         .data-icon {
-          align-self: center;
+          align-self: top;
         }
       }
 
@@ -646,7 +647,7 @@
       .name {
         color: #584215;
       }
-    }  
+    }
 
     .popup__content {
       ul.advisories-list {

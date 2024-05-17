@@ -332,7 +332,7 @@ export function getRegionalPopup(weatherFeature) {
                   </div>
                   <p className="label">Visibility</p>
                   <p className="data">
-                    {Math.round(conditions.visibility_value)}
+                    {Math.round(conditions.visibility_value)}&nbsp;
                     {conditions.visibility_units}
                   </p>
                 </div>
@@ -348,10 +348,10 @@ export function getRegionalPopup(weatherFeature) {
                     { conditions.wind_speed_value === "calm" ?
                       <span>calm</span> :
                       <span>
-                        { Math.round(conditions.wind_speed_value) }
+                        { Math.round(conditions.wind_speed_value) }&nbsp;
                         { conditions.wind_speed_units }
                         { conditions.wind_gust_value && (
-                          <span>&nbsp;gusts
+                          <span><br />&nbsp;gusts&nbsp;
                             {Math.round(conditions.wind_gust_value)}
                             &nbsp;{conditions.wind_gust_units}
                           </span>
