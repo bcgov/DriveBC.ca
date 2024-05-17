@@ -348,6 +348,7 @@ export function getRegionalPopup(weatherFeature) {
                     { conditions.wind_speed_value === "calm" ?
                       <span>calm</span> :
                       <span>
+                        { conditions.wind_direction }&nbsp;
                         { Math.round(conditions.wind_speed_value) }&nbsp;
                         { conditions.wind_speed_units }
                         { conditions.wind_gust_value && (
