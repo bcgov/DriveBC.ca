@@ -32,7 +32,7 @@ button.btn.open-filters {
 
   @media (min-width: 768px) {
     position: absolute;
-    top: 4.4375rem;
+    top: calc(1rem + 36px);
     bottom: initial;
     left: initial;
     right: 1rem;
