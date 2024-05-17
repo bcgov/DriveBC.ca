@@ -69,6 +69,7 @@
       @media (max-width: 767px) {
         transition: min-height 0.25s ease-in-out;
         order: 2;
+        overflow: hidden;
       }
 
       &.open {
@@ -91,6 +92,7 @@
       &.maximized {
         @media (max-width: 767px) {
           min-height: 100%;
+          overflow: auto;
         }
       }
 

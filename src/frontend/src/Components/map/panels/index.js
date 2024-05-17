@@ -34,13 +34,9 @@ export const renderPanel = (clickedFeature, isCamDetail) => {
 }
 
 export const maximizePanel = (panelRef) => {
-  if (panelRef.current.classList.contains('open')) {
-    if (!panelRef.current.classList.contains('maximized')) {
-      panelRef.current.classList.add('maximized');
-
-    } else {
-      panelRef.current.classList.remove('maximized');
-    }
+  if (panelRef.current.classList.contains('open') &&
+      !panelRef.current.classList.contains('maximized')) {
+    panelRef.current.classList.add('maximized');
   }
 }
 
