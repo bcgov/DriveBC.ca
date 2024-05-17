@@ -2,7 +2,7 @@
 import { transformFeature } from '../helpers';
 
 // OpenLayers
-import { Polygon } from 'ol/geom';
+import { MultiPolygon } from 'ol/geom';
 import * as ol from 'ol';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
@@ -27,7 +27,7 @@ export function getAdvisoriesLayer(
 
         advisories.forEach(advisory => {
           // Build a new OpenLayers feature
-          const olGeometry = new Polygon(advisory.geometry.coordinates);
+          const olGeometry = new MultiPolygon(advisory.geometry.coordinates);
           const olFeature = new ol.Feature({ geometry: olGeometry, type: 'advisory' });
 
           // Transform the projection

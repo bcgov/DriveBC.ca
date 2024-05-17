@@ -355,7 +355,11 @@ export default function DriveBCMap(props) {
 
     if (advisories) {
       if (mapRef.current) {
-        mapRef.current.on('moveend', (e) => onMoveEnd(e, advisories, setAdvisoriesInView));
+        // First filter
+        onMoveEnd(mapRef.current, advisories, setAdvisoriesInView);
+
+        // Set handler for filtering on map move
+        mapRef.current.on('moveend', (e) => onMoveEnd(e.map, advisories, setAdvisoriesInView));
       }
     }
   }, [advisories]);
