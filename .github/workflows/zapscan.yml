@@ -1,4 +1,4 @@
-name: Weekly OWASP ZAP Full Scan on Test
+name: Weekly OWASP ZAP Baseline Scan on Test Site
 on:
   schedule:
     # Runs every week at 01:00 Sunday Morning.
@@ -15,7 +15,7 @@ jobs:
     name: Scan ZAP Test Site
     steps:
       - name: ZAP Scan
-        uses: zaproxy/action-full-scan@v0.10.0
+        uses: zaproxy/action-baseline@v0.12.0
         with:
           target: "https://test-drivebc.apps.gold.devops.gov.bc.ca/"
 #          rules_file_name: ".zap/rules.tsv"
