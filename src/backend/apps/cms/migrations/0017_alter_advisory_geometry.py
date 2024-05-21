@@ -5,7 +5,7 @@ from apps.cms.models import Advisory
 from django.db import migrations
 
 
-def delete_all_advisory_rows():
+def delete_all_advisory_rows(apps, schema_editor):
     Advisory.objects.all().delete()
 
 
