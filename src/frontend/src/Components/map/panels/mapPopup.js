@@ -2,6 +2,7 @@
 import React from 'react';
 
 // Third party packages
+import Linkify from 'linkify-react';
 import EventTypeIcon from '../../events/EventTypeIcon';
 import RestStopTypeIcon from '../RestStopTypeIcon';
 import FriendlyTime from '../../shared/FriendlyTime';
@@ -118,7 +119,7 @@ export function getEventPopup(eventFeature) {
 
         <div className="popup__content__description">
           <p>Description</p>
-          <p>{eventData.optimized_description}</p>
+          <p><Linkify>{eventData.optimized_description}</Linkify></p>
         </div>
 
         <div className="popup__content__block">
