@@ -1,7 +1,7 @@
 from apps.cms.models import Advisory
 from apps.cms.serializers import AdvisorySerializer, AdvisoryTestSerializer
 from apps.shared.tests import BaseTest
-from django.contrib.gis.geos import Polygon
+from django.contrib.gis.geos import MultiPolygon, Polygon
 
 
 class TestAdvisorySerializer(BaseTest):
@@ -11,13 +11,12 @@ class TestAdvisorySerializer(BaseTest):
         self.advisory = Advisory(
             title="Advisory title 1",
             body="Advisory body 1",
-            geometry=Polygon([
+            geometry=MultiPolygon(Polygon([
                 (-123.569743, 48.561231),
                 (-123.569743, 48.561231),
                 (-123.569743, 48.561231),
                 (-123.569743, 48.561231)
-            ]
-            ),
+            ])),
             path="000100010001",
             depth=3,
         )
@@ -47,12 +46,12 @@ class TestAdvisorySerializer(BaseTest):
             'id': 3,
             'title': 'Advisory title 1',
             'body': 'Advisory body 1',
-            'geometry': Polygon([
+            'geometry': MultiPolygon(Polygon([
                 (-123.569743, 48.561231),
                 (-123.569743, 48.561231),
                 (-123.569743, 48.561231),
                 (-123.569743, 48.561231)
-            ]),
+            ])),
             'content_type': 55,
             'depth': 1,
             'path': '000100010005',
