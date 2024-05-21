@@ -3,7 +3,6 @@ import React from 'react';
 
 // Third-party packages
 import { BrowserRouter } from 'react-router-dom';
-import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom/client';
@@ -74,10 +73,7 @@ root.render(
     <BrowserRouter>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <GoogleReCaptchaProvider
-            reCaptchaKey={`${window.RECAPTCHA_SITE_KEY}`}>
-            <App />
-          </GoogleReCaptchaProvider>
+          <App />
         </PersistGate>
       </Provider>
     </BrowserRouter>

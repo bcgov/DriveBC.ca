@@ -30,9 +30,6 @@ export default function Footer(props) {
             <h2>More Info</h2>
             <ul className="link-list">
               <li>
-                <a href="/feedback" className="footer-link" target="_self"  alt="Website Feedback" >Website Feedback</a>
-              </li>
-              <li>
                 <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" className="footer-link" target="_blank" rel="noreferrer"  alt="Disclaimer" >Disclaimer</a>
               </li>
               <li>
