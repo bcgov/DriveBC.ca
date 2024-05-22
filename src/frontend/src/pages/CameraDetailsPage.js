@@ -40,6 +40,7 @@ import FriendlyTime from '../Components/shared/FriendlyTime';
 import highwayShield from '../Components/cameras/highwayShield';
 import CurrentCameraIcon from '../Components/cameras/CurrentCameraIcon';
 import { getCameraOrientation } from '../Components/cameras/helper.js';
+import trackEvent from '../Components/shared/TrackEvent';
 
 // Styling
 import './CameraDetailsPage.scss';
@@ -80,6 +81,8 @@ export default function CameraDetailsPage() {
   const loadCamDetails = camData => {
     // Camera data
     setCamera(camData);
+
+    trackEvent('click', 'camera-details', 'camera', camData.name);
 
     // Next update time
     const currentTime = new Date();
@@ -146,8 +149,8 @@ export default function CameraDetailsPage() {
     // Remove geometry from reference data since it can't be serialized
     refCamData.geometry = null;
 
-    navigate("/", { state: refCamData });
-  }
+    navigate('/', { state: refCamData });
+  };
 
   // ReplayTheDay
   const refImg = useRef(null);
@@ -516,7 +519,12 @@ export default function CameraDetailsPage() {
                   <div className="actions-bar actions-bar--nearby"></div>
                   <div className="map-wrap map-context-wrap">
                     <DndProvider options={HTML5toTouch}>
-                      <MapWrapper referenceData={{...camera, type: 'camera'}} isCamDetail={true} mapViewRoute={mapViewRoute} loadCamDetails={loadCamDetails} />
+                      <MapWrapper
+                        referenceData={{ ...camera, type: 'camera' }}
+                        isCamDetail={true}
+                        mapViewRoute={mapViewRoute}
+                        loadCamDetails={loadCamDetails}
+                      />
                     </DndProvider>
                   </div>
                 </Tab>

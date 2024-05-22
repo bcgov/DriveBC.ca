@@ -15,6 +15,7 @@ import { getCameraOrientation } from '../../cameras/helper';
 
 import colocatedCamIcon from '../../../images/colocated-camera.svg';
 import './mapPopup.scss';
+import trackEvent from '../../shared/TrackEvent';
 
 export default function CamPopup(props) {
   // Props
@@ -49,7 +50,7 @@ export default function CamPopup(props) {
   }, [camIndex]);
 
   // Handlers
-  const handlePopupClick = (e) => {
+  const handlePopupClick = e => {
     if (!isCamDetail) {
       navigate(`/cameras/${camera.id}`);
     }
@@ -57,14 +58,24 @@ export default function CamPopup(props) {
 
   // Rendering
   function renderCamGroup(currentCamData) {
-    const clickHandler = (i) => {
-      setCamIndex(i);  // Trigger re-render
-    }
+    const clickHandler = i => {
+      setCamIndex(i); // Trigger re-render
+    };
 
     const res = Object.entries(rootCam.camGroup).map(([index, cam]) => {
       return (
-        <Button aria-label={getCameraOrientation(cam.orientation)} className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') }
-         key={cam.id} onClick={(event) => {event.stopPropagation(); clickHandler(index)}}>
+        <Button
+          aria-label={getCameraOrientation(cam.orientation)}
+          className={
+            'camera-direction-btn' +
+            (camera.orientation == cam.orientation ? ' current' : '')
+          }
+          key={cam.id}
+          onClick={event => {
+            trackEvent('click', 'map', 'camera', cam.name);
+            event.stopPropagation();
+            clickHandler(index);
+          }}>
           {cam.orientation}
         </Button>
       );
@@ -81,50 +92,75 @@ export default function CamPopup(props) {
         </div>
         <p className="name">Camera</p>
       </div>
-      { camera &&
+      {camera && (
         <div className="popup__content">
           <div className="popup__content__title">
-            <p className="name"
+            <p
+              className="name"
               onClick={handlePopupClick}
-              onKeyDown={(keyEvent) => {
+              onKeyDown={keyEvent => {
                 if (keyEvent.keyCode == 13) {
                   handlePopupClick();
                 }
-              }} tabIndex={0}>{camera.name}</p>
+              }}
+              tabIndex={0}>
+              {camera.name}
+            </p>
           </div>
-          { camera.is_on ?
+          {camera.is_on ? (
             <div className="popup__content__image">
               <div className="clip">
-                <img src={camera.links.imageDisplay} width='300' />
+                <img src={camera.links.imageDisplay} width="300" />
               </div>
               <div className="timestamp">
-                <p className="driveBC">Drive<span>BC</span></p>
-                <FriendlyTime date={camera.last_update_modified} asDate={true} />
+                <p className="driveBC">
+                  Drive<span>BC</span>
+                </p>
+                <FriendlyTime
+                  date={camera.last_update_modified}
+                  asDate={true}
+                />
               </div>
-            </div> :
+            </div>
+          ) : (
             <div className="popup__content__image">
               <div className="camera-unavailable">
-                <div className="card-pill"><p>Unavailable</p></div>
+                <div className="card-pill">
+                  <p>Unavailable</p>
+                </div>
                 <div className="card-img-box unavailable">
                   <FontAwesomeIcon icon={faVideoSlash} />
                 </div>
-                <p>This camera image is temporarily unavailable.  Please check again later.</p>
+                <p>
+                  This camera image is temporarily unavailable. Please check
+                  again later.
+                </p>
               </div>
               <div className="timestamp">
-                <p className="driveBC">Drive<span>BC</span></p>
-                <FriendlyTime date={camera.last_update_modified} asDate={true}/>
+                <p className="driveBC">
+                  Drive<span>BC</span>
+                </p>
+                <FriendlyTime
+                  date={camera.last_update_modified}
+                  asDate={true}
+                />
               </div>
             </div>
-          }
+          )}
           <div className="camera-orientations">
-            <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
+            <img
+              className="colocated-camera-icon"
+              src={colocatedCamIcon}
+              role="presentation"
+              alt="colocated cameras icon"
+            />
             {renderCamGroup()}
           </div>
           <div className="popup__content__description">
             <p>{parse(camera.caption)}</p>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 }
