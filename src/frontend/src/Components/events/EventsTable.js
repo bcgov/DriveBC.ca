@@ -13,7 +13,7 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 // Internal imports
-import { getTypeDisplay, routeSortFn, severitySortFn } from './functions';
+import { getTypeDisplay, routeAtSortFn, routeOrderSortFn, severitySortFn } from './functions';
 import EventTypeIcon from './EventTypeIcon';
 import FriendlyTime from '../shared/FriendlyTime';
 
@@ -53,13 +53,13 @@ export default function EventsTable(props) {
     {
       header: <span tabIndex={0}>{'Closest Landmark'}</span>,
       accessorKey: 'closest_landmark',
-      sortingFn: 'routeSort', // override to sort by severity instead
+      sortingFn: 'routeAtSort', // override to sort by route at instead
       cell: (props) => <span>{props.getValue() ? props.getValue() : '-'}</span>,
     },
     {
       header: <span tabIndex={0}>{'Description'}</span>,
       accessorKey: 'optimized_description',
-      enableSorting: false,
+      sortingFn: 'routeOrderSort', // override to sort by route order instead
     },
     {
       header: <span tabIndex={0}>{'Last Update'}</span>,
@@ -92,8 +92,9 @@ export default function EventsTable(props) {
     },
     onSortingChange: setSorting,
     sortingFns: {
-      routeSort: routeSortFn,
+      routeAtSort: routeAtSortFn,
       severitySort: severitySortFn,
+      routeOrderSort: routeOrderSortFn,
     },
     getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
@@ -109,6 +110,8 @@ export default function EventsTable(props) {
       case 'road_name_desc':
       case 'road_name_asc':
         return 2;
+      case 'route_order':
+        return 3;
       case 'last_updated_desc':
       case 'last_updated_asc':
         return 4;

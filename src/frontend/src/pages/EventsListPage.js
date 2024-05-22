@@ -26,7 +26,7 @@ import {
 import { getAdvisories } from '../Components/data/advisories';
 import { getEvents } from '../Components/data/events';
 import { MapContext } from '../App.js';
-import { defaultSortFn, routeSortFn, severitySortFn } from '../Components/events/functions';
+import { defaultSortFn, routeAtSortFn, routeOrderSortFn, severitySortFn } from '../Components/events/functions';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -46,7 +46,11 @@ import '../Components/shared/Filters.scss';
 
 // Helpers
 const sortEvents = (events, key) => {
+  // Sort by selected option
   switch (key) {
+    case 'route_order':
+        events.sort((a, b) => routeOrderSortFn(a, b));
+        break;
     case 'severity_desc':
     case 'severity_asc':
         events.sort((a, b) =>
@@ -56,7 +60,7 @@ const sortEvents = (events, key) => {
     case 'road_name_desc':
     case 'road_name_asc':
         events.sort((a, b) =>
-          key.endsWith('_asc') ? routeSortFn(a, b) : routeSortFn(a, b) * -1
+          key.endsWith('_asc') ? routeAtSortFn(a, b) : routeAtSortFn(a, b) * -1
         );
         break;
     case 'last_updated_desc':
@@ -87,7 +91,7 @@ export default function EventsListPage() {
   const { mapContext } = useContext(MapContext);
 
   // States
-  const [sortingKey, setSortingKey] = useState('severity_desc');
+  const [sortingKey, setSortingKey] = useState(selectedRoute && selectedRoute.routeFound ? 'route_order' : 'severity_desc');
   const [eventCategoryFilter, setEventCategoryFilter] = useState({
     'closures': mapContext.visible_layers.closures,
     'majorEvents': mapContext.visible_layers.majorEvents,
@@ -159,7 +163,7 @@ export default function EventsListPage() {
       const eventData = events ? events : await getEvents().catch((error) => displayError(error));
 
       // Filter data by route
-      const filteredEventData = route ? filterByRoute(eventData, route) : eventData;
+      const filteredEventData = route ? filterByRoute(eventData, route, null, true) : eventData;
 
       dispatch(
         updateEvents({
@@ -185,8 +189,16 @@ export default function EventsListPage() {
       res = res.filter((e) => e.display_category != 'roadConditions');
     }
 
-    // Sort
-    sortEvents(res, sortingKey);
+    // Reset sorting key and sort
+    if (selectedRoute && selectedRoute.routeFound) {
+      setSortingKey('route_order');
+      sortEvents(res, 'route_order');
+
+    } else {
+      setSortingKey('severity_desc');
+      sortEvents(res, 'severity_desc');
+    }
+
     setProcessedEvents(res);
     getAdvisoriesData(res);
   };
@@ -249,6 +261,7 @@ export default function EventsListPage() {
   // Rendering - Sorting
   const getSortingDisplay = (key) => {
     const sortingDisplayMap = {
+      'route_order': 'In order encountered on route',
       'severity_desc': 'Severity, Closure to Minor',
       'severity_asc': 'Severity, Minor to Closure',
       'road_name_asc': 'Road name, A–Z',
@@ -260,10 +273,12 @@ export default function EventsListPage() {
     return sortingDisplayMap[key];
   }
 
-  const allSortingKeys = ['severity_desc', 'severity_asc', 'road_name_asc', 'road_name_desc',  'last_updated_desc', 'last_updated_asc'];
+  const allSortingKeys = ['route_order', 'severity_desc', 'severity_asc', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc'];
   const getSortingList = () => {
     const res = [];
-    for (let i = 0; i < allSortingKeys.length; i++) {
+
+    // Don't show first label if route is not selected or found
+    for (let i = selectedRoute && selectedRoute.routeFound ? 0 : 1; i < allSortingKeys.length; i++) {
       res.push(
         <Dropdown.Item key={allSortingKeys[i]} className={allSortingKeys[i] == sortingKey ? 'selected' : ''} onClick={(e) => sortHandler(e, allSortingKeys[i])}>
           {getSortingDisplay(allSortingKeys[i])}
@@ -304,7 +319,7 @@ export default function EventsListPage() {
 
           <div className="right-container">
             <Dropdown>
-              <Dropdown.Toggle>
+              <Dropdown.Toggle disabled={selectedRoute && selectedRoute.routeFound}>
                 Sort: {getSortingDisplay(sortingKey)}
                 <FontAwesomeIcon icon={faAngleDown} />
               </Dropdown.Toggle>
