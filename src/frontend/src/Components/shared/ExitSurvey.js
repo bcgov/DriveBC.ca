@@ -17,6 +17,9 @@ export default function ExitSurvey({ mobile=false }) {
   // States
   const [show, setShow] = useState(true);
 
+  const surveyLink = `${window.SURVEY_LINK}` ||
+    'https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u';
+
   // Rendering
   return (show && (sessionStorage.getItem('exit-survey') === null)) ? (
     <div className={'exit-survey' + (mobile ? ' mobile' : '')}>
@@ -39,7 +42,7 @@ export default function ExitSurvey({ mobile=false }) {
         <div className="content__text">
           <p className="bold blue-text">Thank you for checking out the new DriveBC beta!</p>
           <p className="feedback"><span>We&apos;d love to hear your feedback on your experience using the new site. Please take a few minutes to </span>
-          <a className="survey-link" target="_blank" rel="noreferrer" aria-label="complete our anonymous survey and give feedback on the new DriveBC beta" href="https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u" >
+          <a className="survey-link" target="_blank" rel="noreferrer" aria-label="complete our anonymous survey and give feedback on the new DriveBC beta" href={surveyLink} >
           complete our anonymous survey
           </a>
           </p>

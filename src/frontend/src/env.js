@@ -22,3 +22,4 @@ window.GEOCODER_API_AUTH_KEY = `${process.env.REACT_APP_GEOCODER_API_AUTH_KEY}`;
 window.ROUTE_PLANNER = `${process.env.REACT_APP_ROUTE_PLANNER}`;
 window.ROUTE_PLANNER_KEY = `${process.env.REACT_APP_ROUTE_PLANNER_KEY}`;
 window.RECAPTCHA_SITE_KEY = `${process.env.REACT_APP_RECAPTCHA_SITE_KEY}`;
+window.SURVEY_LINK = `${process.env.REACT_APP_SURVEY_LINK}`;
