@@ -167,6 +167,7 @@ export default function DriveBCMap(props) {
       zoom: isCamDetail || referenceData ? 12 : zoom,
       maxZoom: 15,
       extent: transformedExtent,
+      enableRotation: false
     });
 
     // Apply the basemap style from the arcgis resource
