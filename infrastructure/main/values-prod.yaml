@@ -44,7 +44,7 @@ tasks:
   deployment:
     resources:
       requests:
-        cpu: 300m
+        cpu: 350m
         memory: 200Mi
       limits:
         cpu: 750m
@@ -101,7 +101,7 @@ static:
     host: prod-drivebc.apps.gold.devops.gov.bc.ca
     iprestricted: true  #Set to true if you want to limit IP's the the addresses in the ipallowlist 
   logpvc:
-    storage: 5Gi
+    storage: 10Gi
 
 openshiftjobs:
   fullnameOverride: prod-openshiftjobs
