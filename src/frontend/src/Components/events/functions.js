@@ -23,7 +23,7 @@ export const defaultSortFn = (rowA, rowB, columnId) => {
   return collator.compare(aValue, bValue);
 }
 
-export const routeSortFn = (rowA, rowB) => {
+export const routeAtSortFn = (rowA, rowB) => {
   const dataA = rowA.original || rowA;
   const dataB = rowB.original || rowB;
 
@@ -31,6 +31,10 @@ export const routeSortFn = (rowA, rowB) => {
     // Use highway ref as secondary sort
     dataA.route_at != dataB.route_at ? 'route_at' : 'start_point_linear_reference'
   );
+}
+
+export const routeOrderSortFn = (rowA, rowB) => {
+  return defaultSortFn(rowA, rowB, 'route_projection');
 }
 
 export const severitySortFn = (rowA, rowB) => {
@@ -43,6 +47,6 @@ export const severitySortFn = (rowA, rowB) => {
 
   // Reversed route secondary sort
   } else {
-    return routeSortFn(rowA, rowB) * -1;
+    return routeAtSortFn(rowA, rowB) * -1;
   }
 }
