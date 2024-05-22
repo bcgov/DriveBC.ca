@@ -89,7 +89,6 @@ static:
         memory: 100Mi
     env:
       staticConfigMap: uat-drivebc-static
-      staticSecret: uat-drivebc-static
     volumes:
       imagesClaimName: uat-django-app-images
   autoscaling:

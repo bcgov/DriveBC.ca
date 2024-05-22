@@ -89,7 +89,6 @@ static:
         memory: 150Mi
     env:
       staticConfigMap: test-drivebc-static
-      staticSecret: test-drivebc-static
     volumes:
       imagesClaimName: test-django-app-images
   autoscaling:
