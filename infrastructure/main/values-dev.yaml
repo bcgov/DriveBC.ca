@@ -89,7 +89,6 @@ static:
         memory: 100Mi
     env:
       staticConfigMap: dev-drivebc-static
-      staticSecret: dev-drivebc-static
     volumes:
       imagesClaimName: dev-django-app-images
 
