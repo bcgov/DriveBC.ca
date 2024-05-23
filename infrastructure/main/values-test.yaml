@@ -33,6 +33,9 @@ django:
     storage: 1Gi
   apppvc:
     storage: 1Gi
+  podDisruptionBudget: 
+    enabled: false 
+    minAvailable:  
 
 tasks:
   fullnameOverride: test-tasks
@@ -101,6 +104,9 @@ static:
     iprestricted: false  #Set to true if you want to limit IP's the the addresses in the ipallowlist 
   logpvc:
     storage: 1Gi
+  podDisruptionBudget: 
+    enabled: false 
+    minAvailable:  
 
 openshiftjobs:
   fullnameOverride: test-openshiftjobs

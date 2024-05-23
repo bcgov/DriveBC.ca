@@ -1,9 +1,11 @@
+{{- if .Values.podDisruptionBudget.enabled }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ include "app.fullname" . }}
 spec:
-  minAvailable: 1
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
   selector:
     matchLabels:
-      deployment: {{ template "app.fullname" . }}
+      app.kubernetes.io/name: {{ template "app.fullname" . }}
+{{- end }}
