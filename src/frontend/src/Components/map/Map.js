@@ -249,7 +249,7 @@ export default function DriveBCMap(props) {
         locationPinRef,
       );
 
-      if (!isInitialMountLocation.current === null) {
+      if (isInitialMountLocation.current === null) {
         // first run of this effector
         // store the initial searchLocationFrom.[0].label so that subsequent
         // runs can be evaluated to detect change in the search from

@@ -80,5 +80,5 @@ export default function WeatherIcon({code, className}) {
   }
 
   // default to generic sun cloud icon
-  <FontAwesomeIcon className="weather-icon" icon={FA.faSunCloud} />
+  return <FontAwesomeIcon className="weather-icon" icon={FA.faSunCloud} />;
 }
