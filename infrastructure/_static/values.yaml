@@ -33,3 +33,7 @@ route:
 
 logpvc:
   storage: 1Gi
+
+podDisruptionBudget: 
+  enabled: false #If you have more than 1 replica, you can set this to true.
+  minAvailable: 1 
