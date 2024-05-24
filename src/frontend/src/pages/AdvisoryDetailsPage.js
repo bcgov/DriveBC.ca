@@ -55,7 +55,7 @@ function getMap(advisoryData) {
         width: 1,
       }),
     }),
-    'Polygon': new Style({
+    'MultiPolygon': new Style({
       stroke: new Stroke({
         color: 'rgb(255, 90, 0)',
         width: 2,
