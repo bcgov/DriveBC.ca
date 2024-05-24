@@ -42,7 +42,7 @@ function App() {
         roadConditions: true,
         highwayCams: false,
         inlandFerries: true,
-        weather: true,
+        weather: false,
         restStops: false,
       },
     };
