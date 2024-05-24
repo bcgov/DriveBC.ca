@@ -383,9 +383,11 @@ export default function DriveBCMap(props) {
             maximizePanel(panel);
           }
         }}>
+        <span id="button-close-side-panel-label" aria-hidden="false" hidden>close side panel</span>
         <button
           className="close-panel"
           aria-label={`${openPanel ? 'close side panel' : ''}`}
+          aria-labelledby="button-close-side-panel-label" 
           aria-hidden={`${openPanel ? false : true}`}
           tabIndex={`${openPanel ? 0 : -1}`}
           onClick={() => togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature)}>
