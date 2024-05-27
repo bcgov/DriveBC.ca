@@ -314,7 +314,10 @@ export function getRegionalPopup(weatherFeature) {
           { weather.observed && <FriendlyTime date={weather.observed} asDate={true} /> }
         </div>
         <div className="popup__content__description">
-          <WeatherIcon className="weather-icon" code={conditions.icon_code} />
+          { weather.station
+            ? <WeatherIcon className="weather-icon" code={conditions.icon_code} />
+            : <p>Not observed</p>
+          }
           <p className="weather">{ conditions.condition }</p>
 
           { conditions.temperature_units &&

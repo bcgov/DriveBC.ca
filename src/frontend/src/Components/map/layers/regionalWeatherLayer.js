@@ -23,8 +23,8 @@ export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext)
 
         weatherData.forEach(weather => {
           // Build a new OpenLayers feature
-          if(!weather.location){
-            return
+          if (!weather.location || !weather.station) {
+            return;
           }
           const lat = weather.location.coordinates[1];
           const lng = weather.location.coordinates[0]
