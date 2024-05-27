@@ -53,13 +53,13 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
     def get_air_temperature(self, obj):
         if "air_temperature" in obj.datasets:
             data = obj.datasets["air_temperature"]
-            return f'{data["value"]} {data["unit"]}'
+            return f'{round(data["value"])} {data["unit"]}'
         return None
 
     def get_road_temperature(self, obj):
         if "road_temperature" in obj.datasets:
             data = obj.datasets["road_temperature"]
-            return f'{data["value"]} {data["unit"]}'
+            return f'{round(data["value"])} {data["unit"]}'
         return None
 
     def get_precipitation(self, obj):
