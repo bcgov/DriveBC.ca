@@ -3,10 +3,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 
-// Components and functions
+// Internal imports
 import { getRoute } from '../data/routes.js';
 import { clearSelectedRoute, updateSearchLocationFrom, updateSearchLocationTo, updateSelectedRoute } from '../../slices/routesSlice'
 import LocationSearch from './LocationSearch.js';
+import NoRouteFound from './NoRouteFound';
 
 // Third party packages
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -26,9 +27,10 @@ export default function RouteSearch(props) {
 
   // Redux
   const dispatch = useDispatch();
-  const { searchLocationFrom, searchLocationTo } = useSelector(useCallback(memoize(state => ({
+  const { searchLocationFrom, searchLocationTo, selectedRoute } = useSelector(useCallback(memoize(state => ({
     searchLocationFrom: state.routes.searchLocationFrom,
     searchLocationTo: state.routes.searchLocationTo,
+    selectedRoute: state.routes.selectedRoute
   }))));
 
   // useState hooks
@@ -81,7 +83,7 @@ export default function RouteSearch(props) {
   // Rendering
   return (
     <div className={'routing-outer-container'}>
-      {showFilterText && !!searchLocationFrom.length && !!searchLocationTo.length &&
+      {showFilterText && selectedRoute && selectedRoute.routeFound &&
         <p className={'routing-caption'}>Results below are filtered by this route:</p>
       }
 
@@ -121,6 +123,8 @@ export default function RouteSearch(props) {
             <Spinner className="typeahead-spinner" size="sm" animation="border" />
           }
         </div>
+
+        <NoRouteFound selectedRoute={selectedRoute} />
 
         {!!searchLocationFrom.length && !!searchLocationTo.length &&
           <Button className="swap-button" aria-label="Swap start and destination" onClick={() => swapHandler()}><FontAwesomeIcon icon={faArrowUpArrowDown} /></Button>

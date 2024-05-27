@@ -46,7 +46,6 @@ import AdvisoriesOnMap from '../advisories/AdvisoriesOnMap';
 import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
 import ExitSurvey from '../shared/ExitSurvey.js';
 import Filters from '../shared/Filters.js';
-import NoRouteFound from '../routing/NoRouteFound';
 import RouteSearch from '../routing/RouteSearch.js';
 import NetworkErrorPopup from './errors/NetworkError';
 import ServerErrorPopup from './errors/ServerError';
@@ -411,7 +410,6 @@ export default function DriveBCMap(props) {
               <ExitSurvey mobile={true} />
             )}
             <RouteSearch routeEdit={true} />
-            <NoRouteFound selectedRoute={selectedRoute} />
             <AdvisoriesOnMap advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} />
           </div>
         )}

@@ -76,7 +76,7 @@ export default function CamerasListPage() {
       const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
 
       // Filter data by route
-      const filteredCamData = route ? filterByRoute(camData, route, null, true) : camData;
+      const filteredCamData = route && route.routeFound ? filterByRoute(camData, route, null, true) : camData;
 
       dispatch(
         updateCameras({
@@ -101,10 +101,10 @@ export default function CamerasListPage() {
     }
 
     // load all advisories if no route selected
-    const resAdvisories = !selectedRoute ? advData : [];
+    const resAdvisories = !selectedRoute || !selectedRoute.routeFound ? advData : [];
 
     // Route selected, load advisories that intersect with at least one cam on route
-    if (selectedRoute && advData && advData.length > 0 && camsData && camsData.length > 0) {
+    if (selectedRoute && selectedRoute.routeFound && advData && advData.length > 0 && camsData && camsData.length > 0) {
       for (const adv of advData) {
         const advPoly = multiPolygon(adv.geometry.coordinates);
 
@@ -137,7 +137,7 @@ export default function CamerasListPage() {
       // Sort cameras by highway number and route_order
       finalCameras.sort(function(a, b) {
         // Route exists, sort by route projection distance only
-        if (selectedRoute) {
+        if (selectedRoute && selectedRoute.routeFound) {
           return collator.compare(a.route_projection, b.route_projection);
 
         // No route, sort by highway first, then default highway/route order

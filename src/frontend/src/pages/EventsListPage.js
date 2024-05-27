@@ -132,10 +132,10 @@ export default function EventsListPage() {
     }
 
     // load all advisories if no route selected
-    const resAdvisories = !selectedRoute ? advData : [];
+    const resAdvisories = selectedRoute && selectedRoute.routeFound ? [] : advData;
 
     // Route selected, load advisories that intersect  with at least one event on route
-    if (selectedRoute && advData && advData.length > 0 && eventsData && eventsData.length > 0) {
+    if (selectedRoute && selectedRoute.routeFound && advData && advData.length > 0 && eventsData && eventsData.length > 0) {
       for (const adv of advData) {
         const advPoly = multiPolygon(adv.geometry.coordinates);
 
@@ -155,7 +155,7 @@ export default function EventsListPage() {
   };
 
   const loadEvents = async route => {
-    const routePoints = route ? route.points : null;
+    const routePoints = route && route.routeFound ? route.points : null;
 
     // Load if filtered cams don't exist or route doesn't match
     if (!filteredEvents || !compareRoutePoints(routePoints, eventFilterPoints)) {
@@ -163,15 +163,19 @@ export default function EventsListPage() {
       const eventData = events ? events : await getEvents().catch((error) => displayError(error));
 
       // Filter data by route
-      const filteredEventData = route ? filterByRoute(eventData, route, null, true) : eventData;
+      const filteredEventData = route && route.routeFound ? filterByRoute(eventData, route, null, true) : eventData;
 
       dispatch(
         updateEvents({
           list: eventData,
           filteredList: filteredEventData,
-          filterPoints: route ? route.points : null
+          filterPoints: route && route.routeFound ? route.points : null
         })
       );
+
+    // Stop loader if data already exists
+    } else {
+      setShowLoader(false);
     }
   }
 
