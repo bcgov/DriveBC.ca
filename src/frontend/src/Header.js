@@ -30,6 +30,9 @@ export default function Header() {
 
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
 
+  const surveyLink = `${window.SURVEY_LINK}` ||
+    'https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u';
+
   // Rendering
   return (
     <header className="header--shown">
@@ -66,7 +69,8 @@ export default function Header() {
               </LinkContainer>
             </Nav>
           </Navbar.Collapse>
-          <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u" className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
+
+          <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
         </Container>
       </Navbar>
     </header>
