@@ -82,6 +82,17 @@ export default function AdvisoriesListPage() {
         description='Get the latest critical info impacting travel on a highway or region.'>
       </PageHeader>
 
+      <div className="container beta-message">
+        <p>REMINDER: This is a beta version of DriveBC.</p>
+
+        <p>
+          Advisories shared on the beta version are for feedback purposes and
+          possibly not up-to-date.  Please continue to refer to the Ministrys
+          TranBC site under <a href="https://drivebc.ca/#listView">Current Road
+          Advisories and Information</a>.
+        </p>
+      </div>
+
       <Container>
           {isAdvisoriesEmpty ? (
           <EmptyAdvisory/>

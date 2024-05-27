@@ -96,4 +96,14 @@
       }
     }
   }
+
+  .beta-message {
+    padding-top: 1rem;
+    padding-bottom: 0;
+    font-weight: bold;
+
+    p, a {
+      font-weight: bold;
+    }
+  }
 }
