@@ -11,6 +11,7 @@ echo -e "window.GEOCODER_API_AUTH_KEY='${REACT_APP_GEOCODER_API_AUTH_KEY}';" >> 
 echo -e "window.ROUTE_PLANNER='${REACT_APP_ROUTE_PLANNER}';" >> $MAIN
 echo -e "window.ROUTE_PLANNER_KEY='${REACT_APP_ROUTE_PLANNER_KEY}';" >> $MAIN
 echo -e "window.REPLAY_THE_DAY='${REACT_APP_REPLAY_THE_DAY}';" >> $MAIN
+echo -e "window.SURVEY_LINK='${REACT_APP_SURVEY_LINK}';" >> $MAIN
 
 # Set the environment to be used for caching django content
 sed -i "s~{ENVIRONMENT}~$ENVIRONMENT~g" /etc/nginx/conf.d/default.conf
