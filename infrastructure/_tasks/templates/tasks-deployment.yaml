@@ -94,6 +94,12 @@ spec:
           terminationMessagePolicy: File
           image: >-
             {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
+          livenessProbe:
+            exec:
+              command:
+              - python manage.py huey_health_check
+            initialDelaySeconds: 30
+            periodSeconds: 60
           securityContext:
             seccompProfile:
               type: RuntimeDefault
