@@ -1,0 +1,51 @@
+
+#Logging Settings
+map $time_iso8601 $year {
+    default             'year';
+    '~^(?<yyyy>\d{4})-'     $yyyy;
+}
+map $time_iso8601 $month {
+    default             'month';
+    '~^\d{4}-(?<mm>\d{2})-'     $mm;
+}
+map $time_iso8601 $day {
+    default             'day';
+    '~^\d{4}-\d{2}-(?<dd>\d{2})'    $dd;
+}
+map $time_iso8601 $hour {
+    default             'hour';
+    '~^\d{4}-\d{2}-\d{2}T(?<hh>\d{2})'    $hh;
+}
+
+map $time_iso8601 $formatted_date {
+    default                                                                 'date-not-found';
+    '~^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})T(?<hour>\d{2})'         $year$month$day$hour;
+}
+
+log_format drivebc '$http_x_forwarded_for - $remote_user [$time_local] '
+                    '"$request" $status $body_bytes_sent '
+                    '"$http_referer" "$http_user_agent" $upstream_cache_status "$sent_http_content_type" $request_time';
+
+error_log /var/log/nginx/error.log;
+
+server {
+    listen       3000;
+    listen  [::]:3000;
+    server_name  localhost;
+    root         /usr/share/nginx/html;
+    access_log /logs/$hostname-$formatted_date-access.log combined;
+    
+    server_tokens off;
+
+    location / {
+        index  maintenance.html maintenance.htm;
+        try_files $uri $uri/ /maintenance.html;
+    }
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}

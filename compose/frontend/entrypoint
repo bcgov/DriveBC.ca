@@ -1,8 +1,19 @@
 #!/bin/sh
 
+# Check if maintenance mode is enabled
+if [ "$MAINTENANCE_MODE" = "true" ]; then
+    echo "Maintenance mode is enabled. Updating Nginx configuration and skipping the rest of the script..."
+    cp /etc/nginx/default_maintenance.txt /etc/nginx/conf.d/default.conf
+    # Exit script
+    exit 0
+fi
+
+# Find main files
 MAIN=`find /usr/share/nginx/html/static/js/main.*.js`
 MAINCSS=`find /usr/share/nginx/html/static/css/main.*.css`
 MAINSVG=`find /usr/share/nginx/html/static/media/*.svg`
+
+# Append environment variables to main JS file
 echo -e "\nwindow.BASE_MAP='${REACT_APP_BASE_MAP}';" >> $MAIN
 echo -e "window.MAP_STYLE='${REACT_APP_MAP_STYLE}';" >> $MAIN
 echo -e "window.API_HOST='${REACT_APP_API_HOST}';" >> $MAIN
