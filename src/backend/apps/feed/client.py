@@ -437,6 +437,17 @@ class FeedClient:
                     if datasets is None:
                         continue
 
+                    # DBC22-2126 - filtering out dataset that weather info is null
+                    shouldSkip = True
+                    for dataset in datasets:
+                        dataset_name = dataset["DataSetName"]
+                        if dataset_name not in DATASETNAMES:
+                            continue
+                        value_field = VALUE_FIELD_MAPPING[dataset_name]
+                        if value_field is not None:
+                            shouldSkip = False
+
+
                     for dataset in datasets:
                         dataset_name = dataset["DataSetName"]
                         if dataset_name not in DATASETNAMES:
@@ -449,19 +460,20 @@ class FeedClient:
                             filtered_dataset[serializer_name] = {
                                 "value": dataset[value_field], "unit": dataset["Unit"],
                             }
-
-                    current_weather_data = {
-                        'weather_station_name': weather_station_name,
-                        'elevation': elevation,
-                        'location_description': location_description,
-                        'datasets': filtered_dataset,
-                        'location_longitude': Longitude,
-                        'location_latitude': Latitude,
-                        'issuedUtc': issuedUtc,
-                    }
-                    serializer = serializer_cls(data=current_weather_data,
-                                                many=isinstance(current_weather_data, list))
-                    json_objects.append(current_weather_data)
+                            
+                    if shouldSkip is False:
+                        current_weather_data = {
+                            'weather_station_name': weather_station_name,
+                            'elevation': elevation,
+                            'location_description': location_description,
+                            'datasets': filtered_dataset,
+                            'location_longitude': Longitude,
+                            'location_latitude': Latitude,
+                            'issuedUtc': issuedUtc,
+                        }
+                        serializer = serializer_cls(data=current_weather_data,
+                                                    many=isinstance(current_weather_data, list))
+                        json_objects.append(current_weather_data)
 
                 except requests.RequestException as e:
                     logger.error(f"Error making API call for Area Code {station_number}: {e}")
