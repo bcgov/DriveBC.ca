@@ -1,6 +1,7 @@
 import zoneinfo
 from datetime import datetime
 
+import pytz
 from apps.feed.fields import (
     DriveBCDateField,
     DriveBCField,
@@ -16,8 +17,8 @@ from apps.feed.fields import (
     WebcamRegionField,
     WebcamRegionGroupField,
 )
-from apps.weather.models import CurrentWeather, RegionalWeather
 from apps.rest.models import RestStop
+from apps.weather.models import CurrentWeather, RegionalWeather
 from rest_framework import serializers
 
 
@@ -197,9 +198,12 @@ class EventFeedSerializer(serializers.Serializer):
 
             # Parse start and end into datetime objects
             if start != '':
-                internal_data['start'] = datetime.strptime(start, "%Y-%m-%dT%H:%M")
+                start_time = datetime.strptime(start, "%Y-%m-%dT%H:%M").replace(tzinfo=pytz.utc)
+                internal_data['start'] = start_time
+
             if end != '':
-                internal_data['end'] = datetime.strptime(end, "%Y-%m-%dT%H:%M")
+                end_time = datetime.strptime(end, "%Y-%m-%dT%H:%M").replace(tzinfo=pytz.utc)
+                internal_data['end'] = end_time
 
         return internal_data
 
@@ -263,6 +267,7 @@ class CurrentWeatherSerializer(serializers.Serializer):
             'datasets',
             'issuedUtc',
         )
+
 
 # Rest Stop serializer
 class RestStopSerializer(serializers.Serializer):
