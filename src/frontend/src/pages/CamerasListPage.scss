@@ -30,15 +30,16 @@
         }
 
         .routing-container {
-          position:relative;
+          position: relative;
           padding: 0;
 
           @media (max-width: 767px) {
             width: 100%;
           }
-          .swap-button{
+
+          .swap-button {
             position: absolute;
-            top: 14px;
+            top: 22px;
             right: -10px;
           }
         }

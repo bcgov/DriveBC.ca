@@ -1,0 +1,15 @@
+@import "../styles/variables.scss";
+
+.not-found-page {
+  .text-container {
+    h1 {
+      margin-bottom: 15px;
+    }
+
+    // Font
+    color: #013366;
+
+    // Size
+    max-width: 30rem;
+  }
+}

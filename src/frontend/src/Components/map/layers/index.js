@@ -65,7 +65,7 @@ export const enableReferencedLayer = (referenceData, mapContext) => {
         mapContext.visible_layers['minorEvents'] = true;
         mapContext.visible_layers['minorEventsLines'] = true;
         break;
-      case 'futureEVents':
+      case 'futureEvents':
         mapContext.visible_layers['futureEvents'] = true;
         mapContext.visible_layers['futureEventsLines'] = true;
         break;

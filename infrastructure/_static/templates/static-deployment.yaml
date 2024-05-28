@@ -52,8 +52,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Values.deployment.env.staticConfigMap  }}
-            - secretRef:
-                name: {{ .Values.deployment.env.staticSecret  }}
           securityContext:
             seccompProfile:
               type: RuntimeDefault

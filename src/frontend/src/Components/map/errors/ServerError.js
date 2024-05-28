@@ -25,10 +25,17 @@ export default function ServerErrorPopup() {
         <div>Check your network connection, refresh the page, or try again later.</div>
       </div>
 
-      <div className="close-btn" aria-label="Close" onClick={(event) => {
-        event.stopPropagation();
-        setVisible(false);
-      }}>
+      <div className="close-btn" aria-label="Close"
+        onClick={(event) => {
+          event.stopPropagation();
+          setVisible(false);
+        }}
+        onKeyDown={(keyEvent) => {
+          if (keyEvent.keyCode == 13) {
+            event.stopPropagation();
+            setVisible(false);
+          }
+        }}>
         <FontAwesomeIcon icon={faXmark} />
       </div>
     </div>

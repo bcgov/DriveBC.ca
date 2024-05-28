@@ -12,7 +12,7 @@ export const loadEvents = async (route, events, filteredEvents, eventFilterPoint
     const eventData = events ? events : await getEvents().catch((error) => displayError(error));
 
     // Filter data by route
-    const filteredEventData = route ? helpers.filterByRoute(eventData, route) : eventData;
+    const filteredEventData = route ? helpers.filterByRoute(eventData, route, null, true) : eventData;
 
     dispatch(
       slices.updateEvents({

@@ -1,4 +1,4 @@
-FROM alpine:3
+FROM alpine:3.19
 RUN apk update && apk upgrade
 #Need goaccess 1.92 for a timezone fix. Once that version is in the regular branch, we can pull it from there.
 RUN apk add goaccess --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main

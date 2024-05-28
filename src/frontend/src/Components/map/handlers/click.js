@@ -1,7 +1,4 @@
-import {
-  setEventStyle,
-  setZoomPan,
-} from '../helpers';
+import { setEventStyle, setZoomPan } from '../helpers';
 import trackEvent from '../../shared/TrackEvent.js';
 
 import { isRestStopClosed } from '../../data/restStops.js';
@@ -19,7 +16,12 @@ import {
 } from '../../data/featureStyleDefinitions.js';
 
 // Click states
-export const resetClickedStates = (targetFeature, clickedFeatureRef, updateClickedFeature, isCamDetail) => {
+export const resetClickedStates = (
+  targetFeature,
+  clickedFeatureRef,
+  updateClickedFeature,
+  isCamDetail,
+) => {
   // No features were clicked before, do nothing
   if (!clickedFeatureRef.current) {
     return;
@@ -32,8 +34,12 @@ export const resetClickedStates = (targetFeature, clickedFeatureRef, updateClick
   }
 
   // Reset feature if target feature does not equal to it or its altFeature
-  if (!targetFeature || (targetFeature != clickedFeatureRef.current && targetFeature != clickedFeatureRef.current.get('altFeature'))) {
-    switch(clickedFeatureRef.current.get('type')) {
+  if (
+    !targetFeature ||
+    (targetFeature != clickedFeatureRef.current &&
+      targetFeature != clickedFeatureRef.current.get('altFeature'))
+  ) {
+    switch (clickedFeatureRef.current.get('type')) {
       case 'camera':
         clickedFeatureRef.current.setStyle(cameraStyles['static']);
         clickedFeatureRef.current.set('clicked', false);
@@ -41,13 +47,19 @@ export const resetClickedStates = (targetFeature, clickedFeatureRef, updateClick
         break;
       case 'event': {
         setEventStyle(clickedFeatureRef.current, 'static');
-        setEventStyle(clickedFeatureRef.current.get('altFeature') || [], 'static')
+        setEventStyle(
+          clickedFeatureRef.current.get('altFeature') || [],
+          'static',
+        );
         clickedFeatureRef.current.set('clicked', false);
 
         // Set alt feature to not clicked
         const altFeatureList = clickedFeatureRef.current.get('altFeature');
         if (altFeatureList) {
-          const altFeature = altFeatureList instanceof Array ? altFeatureList[0] : altFeatureList;
+          const altFeature =
+            altFeatureList instanceof Array
+              ? altFeatureList[0]
+              : altFeatureList;
           altFeature.set('clicked', false);
         }
 
@@ -84,15 +96,11 @@ export const resetClickedStates = (targetFeature, clickedFeatureRef, updateClick
               restStopTruckClosedStyles['static'],
             );
           } else {
-            clickedFeatureRef.current.setStyle(
-              restStopClosedStyles['static'],
-            );
+            clickedFeatureRef.current.setStyle(restStopClosedStyles['static']);
           }
         } else {
           if (isLargeVehiclesAccommodated) {
-            clickedFeatureRef.current.setStyle(
-              restStopTruckStyles['static'],
-            );
+            clickedFeatureRef.current.setStyle(restStopTruckStyles['static']);
           } else {
             clickedFeatureRef.current.setStyle(restStopStyles['static']);
           }
@@ -105,14 +113,26 @@ export const resetClickedStates = (targetFeature, clickedFeatureRef, updateClick
   }
 };
 
-const camClickHandler = (feature, clickedFeatureRef, updateClickedFeature, mapView, isCamDetail, loadCamDetails) => {
-    resetClickedStates(feature, clickedFeatureRef, updateClickedFeature, isCamDetail);
+const camClickHandler = (
+  feature,
+  clickedFeatureRef,
+  updateClickedFeature,
+  mapView,
+  isCamDetail,
+  loadCamDetails,
+) => {
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+    isCamDetail,
+  );
 
-    // set new clicked camera feature
-    feature.setStyle(cameraStyles['active']);
-    feature.setProperties({ clicked: true }, true);
+  // set new clicked camera feature
+  feature.setStyle(cameraStyles['active']);
+  feature.setProperties({ clicked: true }, true);
 
-    updateClickedFeature(feature);
+  updateClickedFeature(feature);
 
   if (isCamDetail) {
     setZoomPan(mapView, null, feature.getGeometry().getCoordinates());
@@ -120,9 +140,19 @@ const camClickHandler = (feature, clickedFeatureRef, updateClickedFeature, mapVi
   }
 };
 
-const eventClickHandler = (feature, clickedFeatureRef, updateClickedFeature, isCamDetail) => {
+const eventClickHandler = (
+  feature,
+  clickedFeatureRef,
+  updateClickedFeature,
+  isCamDetail,
+) => {
   // reset previous clicked feature
-  resetClickedStates(feature, clickedFeatureRef, updateClickedFeature, isCamDetail);
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+    isCamDetail,
+  );
 
   // set new clicked event feature
   setEventStyle(feature, 'active');
@@ -132,16 +162,27 @@ const eventClickHandler = (feature, clickedFeatureRef, updateClickedFeature, isC
   // Set alt feature to clicked
   const altFeatureList = feature.get('altFeature');
   if (altFeatureList) {
-    const altFeature = altFeatureList instanceof Array ? altFeatureList[0] : altFeatureList;
+    const altFeature =
+      altFeatureList instanceof Array ? altFeatureList[0] : altFeatureList;
     altFeature.set('clicked', true);
   }
 
   updateClickedFeature(feature);
 };
 
-const ferryClickHandler = (feature, clickedFeatureRef, updateClickedFeature, isCamDetail) => {
+const ferryClickHandler = (
+  feature,
+  clickedFeatureRef,
+  updateClickedFeature,
+  isCamDetail,
+) => {
   // reset previous clicked feature
-  resetClickedStates(feature, clickedFeatureRef, updateClickedFeature, isCamDetail);
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+    isCamDetail,
+  );
 
   // set new clicked ferry feature
   feature.setStyle(ferryStyles['active']);
@@ -149,9 +190,19 @@ const ferryClickHandler = (feature, clickedFeatureRef, updateClickedFeature, isC
   updateClickedFeature(feature);
 };
 
-const weatherClickHandler = (feature, clickedFeatureRef, updateClickedFeature, isCamDetail) => {
+const weatherClickHandler = (
+  feature,
+  clickedFeatureRef,
+  updateClickedFeature,
+  isCamDetail,
+) => {
   // reset previous clicked feature
-  resetClickedStates(feature, clickedFeatureRef, updateClickedFeature, isCamDetail);
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+    isCamDetail,
+  );
 
   // set new clicked ferry feature
   feature.setStyle(roadWeatherStyles['active']);
@@ -159,9 +210,19 @@ const weatherClickHandler = (feature, clickedFeatureRef, updateClickedFeature, i
   updateClickedFeature(feature);
 };
 
-const regionalClickHandler = (feature, clickedFeatureRef, updateClickedFeature, isCamDetail) => {
+const regionalClickHandler = (
+  feature,
+  clickedFeatureRef,
+  updateClickedFeature,
+  isCamDetail,
+) => {
   // reset previous clicked feature
-  resetClickedStates(feature, clickedFeatureRef, updateClickedFeature, isCamDetail);
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+    isCamDetail,
+  );
 
   // set new clicked ferry feature
   feature.setStyle(regionalStyles['active']);
@@ -169,16 +230,24 @@ const regionalClickHandler = (feature, clickedFeatureRef, updateClickedFeature, 
   updateClickedFeature(feature);
 };
 
-const restStopClickHandler = (feature, clickedFeatureRef, updateClickedFeature, isCamDetail) => {
+const restStopClickHandler = (
+  feature,
+  clickedFeatureRef,
+  updateClickedFeature,
+  isCamDetail,
+) => {
   // reset previous clicked feature
-  resetClickedStates(feature, clickedFeatureRef, updateClickedFeature, isCamDetail);
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+    isCamDetail,
+  );
 
   // set new clicked rest stop feature
   const isClosed = isRestStopClosed(feature.values_.properties);
   const isLargeVehiclesAccommodated =
-    feature.values_.properties.ACCOM_COMMERCIAL_TRUCKS === 'Yes'
-      ? true
-      : false;
+    feature.values_.properties.ACCOM_COMMERCIAL_TRUCKS === 'Yes' ? true : false;
   if (isClosed) {
     if (isLargeVehiclesAccommodated) {
       feature.setStyle(restStopTruckClosedStyles['active']);
@@ -197,8 +266,12 @@ const restStopClickHandler = (feature, clickedFeatureRef, updateClickedFeature, 
 };
 
 export const pointerClickHandler = (
-  features, clickedFeatureRef, updateClickedFeature,
-  mapView, isCamDetail, loadCamDetails
+  features,
+  clickedFeatureRef,
+  updateClickedFeature,
+  mapView,
+  isCamDetail,
+  loadCamDetails,
 ) => {
   if (features.length) {
     const clickedFeature = features[0];
@@ -210,25 +283,45 @@ export const pointerClickHandler = (
           'camera',
           clickedFeature.getProperties().name,
         );
-        camClickHandler(clickedFeature, clickedFeatureRef, updateClickedFeature, mapView, isCamDetail, loadCamDetails);
+        camClickHandler(
+          clickedFeature,
+          clickedFeatureRef,
+          updateClickedFeature,
+          mapView,
+          isCamDetail,
+          loadCamDetails,
+        );
         return;
       case 'event':
+        console.log(clickedFeature.getProperties());
         trackEvent(
           'click',
           'map',
           'event',
-          clickedFeature.getProperties().name,
+          clickedFeature.getProperties().display_category,
+          clickedFeature.getProperties().id,
         );
-        eventClickHandler(clickedFeature, clickedFeatureRef, updateClickedFeature, isCamDetail);
+        eventClickHandler(
+          clickedFeature,
+          clickedFeatureRef,
+          updateClickedFeature,
+          isCamDetail,
+        );
         return;
       case 'ferry':
+        console.log(clickedFeature.getProperties());
         trackEvent(
           'click',
           'map',
           'ferry',
-          clickedFeature.getProperties().name,
+          clickedFeature.getProperties().title,
         );
-        ferryClickHandler(clickedFeature, clickedFeatureRef, updateClickedFeature, isCamDetail);
+        ferryClickHandler(
+          clickedFeature,
+          clickedFeatureRef,
+          updateClickedFeature,
+          isCamDetail,
+        );
         return;
       case 'currentWeather':
         trackEvent(
@@ -237,7 +330,12 @@ export const pointerClickHandler = (
           'weather',
           clickedFeature.getProperties().weather_station_name,
         );
-        weatherClickHandler(clickedFeature, clickedFeatureRef, updateClickedFeature, isCamDetail);
+        weatherClickHandler(
+          clickedFeature,
+          clickedFeatureRef,
+          updateClickedFeature,
+          isCamDetail,
+        );
         return;
       case 'regionalWeather':
         trackEvent(
@@ -246,20 +344,35 @@ export const pointerClickHandler = (
           'regional weather',
           clickedFeature.getProperties().name,
         );
-        regionalClickHandler(clickedFeature, clickedFeatureRef, updateClickedFeature, isCamDetail);
+        regionalClickHandler(
+          clickedFeature,
+          clickedFeatureRef,
+          updateClickedFeature,
+          isCamDetail,
+        );
         return;
       case 'restStop':
         trackEvent(
           'click',
           'map',
           'rest stop',
-          clickedFeature.getProperties().properties.REST_AREA_NAME
+          clickedFeature.getProperties().properties.REST_AREA_NAME,
         );
-        restStopClickHandler(clickedFeature, clickedFeatureRef, updateClickedFeature, isCamDetail);
+        restStopClickHandler(
+          clickedFeature,
+          clickedFeatureRef,
+          updateClickedFeature,
+          isCamDetail,
+        );
         return;
     }
   }
 
   // Close popups if clicked on blank space
-  resetClickedStates(null, clickedFeatureRef, updateClickedFeature, isCamDetail);
-}
+  resetClickedStates(
+    null,
+    clickedFeatureRef,
+    updateClickedFeature,
+    isCamDetail,
+  );
+};

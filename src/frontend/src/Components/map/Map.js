@@ -29,6 +29,7 @@ import { addCameraGroups } from '../data/webcams.js';
 import {
   calculateCenter,
   blueLocationMarkup,
+  fitMap,
   onMoveEnd,
   setLocationPin,
   setZoomPan,
@@ -45,6 +46,7 @@ import AdvisoriesOnMap from '../advisories/AdvisoriesOnMap';
 import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
 import ExitSurvey from '../shared/ExitSurvey.js';
 import Filters from '../shared/Filters.js';
+import NoRouteFound from '../routing/NoRouteFound';
 import RouteSearch from '../routing/RouteSearch.js';
 import NetworkErrorPopup from './errors/NetworkError';
 import ServerErrorPopup from './errors/ServerError';
@@ -165,6 +167,7 @@ export default function DriveBCMap(props) {
       zoom: isCamDetail || referenceData ? 12 : zoom,
       maxZoom: 15,
       extent: transformedExtent,
+      enableRotation: false
     });
 
     // Apply the basemap style from the arcgis resource
@@ -246,7 +249,7 @@ export default function DriveBCMap(props) {
         locationPinRef,
       );
 
-      if (!isInitialMountLocation.current === null) {
+      if (isInitialMountLocation.current === null) {
         // first run of this effector
         // store the initial searchLocationFrom.[0].label so that subsequent
         // runs can be evaluated to detect change in the search from
@@ -291,6 +294,10 @@ export default function DriveBCMap(props) {
       mapLayers, mapRef, mapContext,
       'routeLayer', dl, 3
     );
+
+    if (selectedRoute && selectedRoute.routeFound) {
+      fitMap(selectedRoute.route, mapView);
+    }
   }, [selectedRoute]);
 
   // Cameras layer
@@ -406,6 +413,7 @@ export default function DriveBCMap(props) {
               <ExitSurvey mobile={true} />
             )}
             <RouteSearch routeEdit={true} />
+            <NoRouteFound selectedRoute={selectedRoute} />
             <AdvisoriesOnMap advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} />
           </div>
         )}

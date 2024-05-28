@@ -5,22 +5,27 @@ import Flatbush from 'flatbush';
 // Route filtering and ordering
 export const populateRouteProjection = (data, route) => {
   // Deep copy to avoid direct state mutation
-  const res = JSON.parse(JSON.stringify(data));
+  const copiedData = JSON.parse(JSON.stringify(data));
 
   // Reference route start point/ls
   const routeLs = turf.lineString(route.route);
   const startPoint = turf.point(route.route[0]);
 
   // Calculate and store distance alone reference line
-  for (let i=0; i < res.length; i++) {
-    const camPt = turf.point(res[i].location.coordinates);
-    const closestPoint = turf.nearestPointOnLine(routeLs, camPt, { units: 'meters' });
+  for (let i=0; i < copiedData.length; i++) {
+    // Get the midpoint of the location if it's a linestring
+    const coords = getMidPoint(copiedData[i].location);
 
+    // Find the closest point on the route to the data point
+    const dataPoint = turf.point(coords);
+    const closestPoint = turf.nearestPointOnLine(routeLs, dataPoint, { units: 'meters' });
+
+    // Find and save the distance along the route
     const distanceAlongLine = turf.lineDistance(turf.lineSlice(startPoint, closestPoint, routeLs), { units: 'meters' });
-    res[i].route_projection = distanceAlongLine;
+    copiedData[i].route_projection = distanceAlongLine;
   }
 
-  return res;
+  return copiedData;
 }
 
 export const filterByRoute = (data, route, extraToleranceMeters, populateProjection) => {

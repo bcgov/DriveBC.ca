@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router-dom';
 
 // Third party packages
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt,
-         faXmark,
-         faCircleInfo,
-         faVideoSlash } from '@fortawesome/pro-solid-svg-icons';
+import {
+  faMapMarkerAlt,
+  faXmark,
+  faCircleInfo,
+  faVideoSlash,
+} from '@fortawesome/pro-solid-svg-icons';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import FriendlyTime from '../shared/FriendlyTime';
@@ -18,6 +20,7 @@ import { getCameraOrientation } from './helper.js';
 import './CameraCard.scss';
 
 import colocatedCamIcon from '../../images/colocated-camera.svg';
+import trackEvent from '../shared/TrackEvent.js';
 
 export default function CameraCard(props) {
   // Props
@@ -90,69 +93,99 @@ export default function CameraCard(props) {
       <Card.Body onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
         <p className="camera-name bold">{camera.name}</p>
         <div className="camera-orientations">
-
-          <img className="colocated-camera-icon" src={colocatedCamIcon} role="presentation" alt="colocated cameras icon" />
-          {camera.camGroup.map((cam) =>
+          <img
+            className="colocated-camera-icon"
+            src={colocatedCamIcon}
+            role="presentation"
+            alt="colocated cameras icon"
+          />
+          {camera.camGroup.map(cam => (
             <Button
-            aria-label={getCameraOrientation(cam.orientation)}
-            className={'camera-direction-btn' + ((camera.orientation == cam.orientation) ? ' current' : '') } key={cam.id} onClick={(event) => {event.stopPropagation(); setCamera(cam)}}>
+              aria-label={getCameraOrientation(cam.orientation)}
+              className={
+                'camera-direction-btn' +
+                (camera.orientation == cam.orientation ? ' current' : '')
+              }
+              key={cam.id}
+              onClick={event => {
+                event.stopPropagation();
+                setCamera(cam);
+                trackEvent('click', 'camera-list', 'camera', cam.name);
+              }}>
               {cam.orientation}
             </Button>
-          )}
+          ))}
         </div>
-        <div>
-      </div>
-        {!unavailable && !delayed && !stale &&
+        <div></div>
+        {!unavailable && !delayed && !stale && (
           <div className="card-img-box">
-            <img className="card-img" src={ camera.links.imageDisplay } alt={camera.name} />
+            <img
+              className="card-img"
+              src={camera.links.imageDisplay}
+              alt={camera.name}
+            />
           </div>
-        }
+        )}
 
-        {!unavailable && stale && !delayed &&
+        {!unavailable && stale && !delayed && (
           <div className="card-img-box">
-            <img className="card-img" src={ camera.links.imageDisplay } alt={camera.name} />
+            <img
+              className="card-img"
+              src={camera.links.imageDisplay}
+              alt={camera.name}
+            />
             <div className="card-notification">
-              <div className={'card-banner' + (show ? ' hidden' : ' bounce') }>
-                <p>Unable to retrieve latest image. Showing last image received.</p>
+              <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
+                <p>
+                  Unable to retrieve latest image. Showing last image received.
+                </p>
                 <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
               </div>
-              <div className={'card-pill' + (show ? ' bounce' : ' hidden') } onClick={handleChildClick}
-                onKeyDown={(keyEvent) => {
+              <div
+                className={'card-pill' + (show ? ' bounce' : ' hidden')}
+                onClick={handleChildClick}
+                onKeyDown={keyEvent => {
                   if (keyEvent.keyCode == 13) {
                     handleChildClick();
                   }
                 }}>
-
                 <p>Stale</p>
                 <FontAwesomeIcon icon={faCircleInfo} />
               </div>
             </div>
           </div>
-        }
+        )}
 
-        {!unavailable && stale && delayed &&
+        {!unavailable && stale && delayed && (
           <div className="card-img-box">
-            <img className="card-img" src={ camera.links.imageDisplay } alt={camera.name} />
+            <img
+              className="card-img"
+              src={camera.links.imageDisplay}
+              alt={camera.name}
+            />
             <div className="card-notification">
-              <div className={'card-banner' + (show ? ' hidden' : ' bounce') }>
-                <p>Longer than expected delay, displaying last image received.</p>
+              <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
+                <p>
+                  Longer than expected delay, displaying last image received.
+                </p>
                 <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
               </div>
-              <div className={'card-pill' + (show ? ' bounce' : ' hidden') } onClick={handleChildClick}
-                onKeyDown={(keyEvent) => {
+              <div
+                className={'card-pill' + (show ? ' bounce' : ' hidden')}
+                onClick={handleChildClick}
+                onKeyDown={keyEvent => {
                   if (keyEvent.keyCode == 13) {
                     handleChildClick();
                   }
                 }}>
-
                 <p>Delayed</p>
                 <FontAwesomeIcon icon={faCircleInfo} />
               </div>
             </div>
           </div>
-        }
+        )}
 
-        {unavailable &&
+        {unavailable && (
           <div className="card-img-box">
             <div className="card-notification">
               <div className="card-pill">
@@ -161,18 +194,29 @@ export default function CameraCard(props) {
             </div>
             <div className="unavailable-message">
               <FontAwesomeIcon icon={faVideoSlash} />
-              <p>This traffic camera image is temporarily unavailable. Please check again later.</p>
+              <p>
+                This traffic camera image is temporarily unavailable. Please
+                check again later.
+              </p>
             </div>
           </div>
-        }
+        )}
         <div className="timestamp">
-          <p className="driveBC">Drive<span>BC</span></p>
+          <p className="driveBC">
+            Drive<span>BC</span>
+          </p>
           <FriendlyTime date={camera.last_update_modified} asDate={true} />
         </div>
         <p className="label">{camera.caption}</p>
       </Card.Body>
 
-      <Button variant="primary" className="viewmap-btn" onClick={handleViewOnMap}>View on map<FontAwesomeIcon icon={faMapMarkerAlt} /></Button>
+      <Button
+        variant="primary"
+        className="viewmap-btn"
+        onClick={handleViewOnMap}>
+        View on map
+        <FontAwesomeIcon icon={faMapMarkerAlt} />
+      </Button>
     </Card>
   );
 }
