@@ -82,7 +82,8 @@ export default function CamerasListPage() {
         updateCameras({
           list: camData,
           filteredList: filteredCamData,
-          filterPoints: route ? route.points : null
+          filterPoints: route ? route.points : null,
+          timeStamp: new Date().getTime()
         })
       );
     }
