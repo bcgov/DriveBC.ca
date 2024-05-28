@@ -6,6 +6,7 @@
 //Global styling
 body {
   margin-top: 58px;
+  touch-action: pan-x pan-y;
 }
 
 .divider {
@@ -161,4 +162,3 @@ a[target="_blank"] {
     width: 0.875rem;
   }
 }
-
