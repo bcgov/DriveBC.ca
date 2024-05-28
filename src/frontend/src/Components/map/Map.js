@@ -322,34 +322,42 @@ export default function DriveBCMap(props) {
 
   // Ferries layer
   useEffect(() => {
-    loadLayer(
-      mapLayers, mapRef, mapContext,
-      'inlandFerries', filteredFerries, 68
-    );
+    if (!isCamDetail) {
+      loadLayer(
+        mapLayers, mapRef, mapContext,
+        'inlandFerries', filteredFerries, 68
+      );
+    }
   }, [filteredFerries]);
 
   // Current weathers layer
   useEffect(() => {
-    loadLayer(
-      mapLayers, mapRef, mapContext,
-      'weather', filteredCurrentWeathers, 66
-    );
+    if (!isCamDetail) {
+      loadLayer(
+        mapLayers, mapRef, mapContext,
+        'weather', filteredCurrentWeathers, 66
+      );
+    }
   }, [filteredCurrentWeathers]);
 
   // Regional weathers layer
   useEffect(() => {
-    loadLayer(
-      mapLayers, mapRef, mapContext,
-      'regional', filteredRegionalWeathers, 67
-    );
+    if (!isCamDetail) {
+      loadLayer(
+        mapLayers, mapRef, mapContext,
+        'regional', filteredRegionalWeathers, 67
+      );
+    }
   }, [filteredRegionalWeathers]);
 
   // Rest stops layer
   useEffect(() => {
-    loadLayer(
-      mapLayers, mapRef, mapContext,
-      'restStops', filteredRestStops, 68
-    );
+    if (!isCamDetail) {
+      loadLayer(
+        mapLayers, mapRef, mapContext,
+        'restStops', filteredRestStops, 68
+      );
+    }
   }, [filteredRestStops]);
 
   // Advisories layer
@@ -393,7 +401,7 @@ export default function DriveBCMap(props) {
         <button
           className="close-panel"
           aria-label={`${openPanel ? 'close side panel' : ''}`}
-          aria-labelledby="button-close-side-panel-label" 
+          aria-labelledby="button-close-side-panel-label"
           aria-hidden={`${openPanel ? false : true}`}
           tabIndex={`${openPanel ? 0 : -1}`}
           onClick={() => togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature)}>
