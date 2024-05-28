@@ -38,7 +38,8 @@ server {
     server_tokens off;
 
     location / {
-        index  maintenance.html maintenance.htm;
+        root /usr/share/nginx/html/maintenance;
+        index  maintenance.html;
         try_files $uri $uri/ /maintenance.html;
     }
 
