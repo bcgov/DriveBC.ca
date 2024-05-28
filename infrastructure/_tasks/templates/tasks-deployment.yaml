@@ -97,9 +97,14 @@ spec:
           livenessProbe:
             exec:
               command:
-              - python manage.py huey_health_check
-            initialDelaySeconds: 30
+                - /bin/bash
+                - '-c'
+                - python manage.py huey_health_check
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
             periodSeconds: 60
+            successThreshold: 1
+            failureThreshold: 3
           securityContext:
             seccompProfile:
               type: RuntimeDefault
