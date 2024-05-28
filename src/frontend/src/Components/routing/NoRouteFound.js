@@ -15,7 +15,7 @@ export default function NoRouteFound(props) {
 
   // Rendering
   return (
-    <div className={`no-route-found-container ${selectedRoute && !selectedRoute.routeFound ? 'open' : ''}`}>
+    <div className={`no-route-found-container ${selectedRoute && !selectedRoute.routeFound && Object.keys(selectedRoute).length !== 0 ? 'open' : ''}`}>
       <FontAwesomeIcon icon={faCircleExclamation} />
       <span>No valid route between these two points.</span>
     </div>
