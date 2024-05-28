@@ -211,7 +211,7 @@ export default function CamerasListPage() {
       </PageHeader>
 
       <Container className="outer-container">
-        <Advisories advisories={advisoriesInRoute} />
+        <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
 
         <div className="controls-container">
           <div className="route-display-container">

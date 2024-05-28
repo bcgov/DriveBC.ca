@@ -312,7 +312,7 @@ export default function EventsListPage() {
       </PageHeader>
 
       <Container>
-        <Advisories advisories={advisoriesInRoute} />
+        <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
 
         <div className="controls-container">
           { largeScreen &&
