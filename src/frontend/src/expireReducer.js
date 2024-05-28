@@ -6,20 +6,28 @@ const transformRehydrate = (outboundState, config) => {
   outboundState = outboundState || null;
 
   // Check for the possible expiry if state has the persisted date
-  if (config.expireSeconds && outboundState.timeStamp) {
-    const startTime = new Date(outboundState.timeStamp).getTime();
-    const endTime = new Date().getTime();
+  if (config.expireSeconds) {
+    // If timestamp exists, check for expiry
+    if (outboundState.timeStamp) {
+      const startTime = new Date(outboundState.timeStamp).getTime();
+      const endTime = new Date().getTime();
 
-    const duration = endTime - startTime;
-    const seconds = duration / 1000;
+      const duration = endTime - startTime;
+      const seconds = duration / 1000;
 
-    // If the state is older than the set expiry time,
-    // reset it to initial state
-    if (seconds > config.expireSeconds) {
+      // If the state is older than the set expiry time,
+      // reset it to initial state
+      if (seconds > config.expireSeconds) {
+        return config.expiredState;
+      }
+
+    // Reset to initial state if the timestamp is missing
+    } else {
       return config.expiredState;
     }
   }
 
+  // Return the cached state in all other cases
   return outboundState;
 };
 
