@@ -14,7 +14,7 @@ import AdvisoriesList from './AdvisoriesList';
 import './Advisories.scss';
 
 export default function Advisories(props) {
-  const { advisories } = props;
+  const { advisories, selectedRoute } = props;
 
   return (advisories && !!advisories.length) ? (
     <div className="advisories">
@@ -28,7 +28,9 @@ export default function Advisories(props) {
           in effect
         </h2>
 
-        <p className="description">The following advisory affects a portion of the route you’ve chosen:</p>
+        {selectedRoute && selectedRoute.routeFound && Object.keys(selectedRoute).length !== 0 &&
+          <p className="description">The following advisory affects a portion of the route you’ve chosen:</p>
+        }
 
         <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={false} />
       </div>
