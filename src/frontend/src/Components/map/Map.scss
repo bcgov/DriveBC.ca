@@ -184,7 +184,7 @@
 
       .routing-outer-container {
         @media (orientation: landscape) and (max-width: 767px) {
-          width: calc(340px + 1rem);
+          width: fit-content;
         }
       }
 
