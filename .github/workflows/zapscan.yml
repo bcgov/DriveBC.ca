@@ -14,8 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Scan ZAP Test Site
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.12.0
         with:
           target: "https://test-drivebc.apps.gold.devops.gov.bc.ca/"
-#          rules_file_name: ".zap/rules.tsv"
+          rules_file_name: "zap-rules.tsv"
