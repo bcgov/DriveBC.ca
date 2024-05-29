@@ -75,7 +75,7 @@ if [ ${#zipped_files[@]} -gt 0 ]; then
 
     #Run goaccess on all the log files from the date entered
     goaccess_report_name=$start_time_formatted-goaccess_report.html
-    zcat "${zipped_files[@]}" | goaccess - -o "$goaccess_report_name" --log-format='%h %e %^[%x] "%r" %s %b "%R" "%u" %C "%M" %T' --datetime-format='%d/%b/%Y:%H:%M:%S %z' --ignore-panel=REMOTE_USER --ignore-panel=ASN --tz=America/Vancouver --jobs=2 --geoip-database=$mmdb_file
+    zcat "${zipped_files[@]}" | goaccess - -o "$goaccess_report_name" --log-format='~h{, } %e %^[%x] "%r" %s %b "%R" "%u" %C "%M" %T' --datetime-format='%d/%b/%Y:%H:%M:%S %z' --ignore-panel=REMOTE_USER --ignore-panel=ASN --tz=America/Vancouver --jobs=2 --geoip-database=$mmdb_file
     echo "GoAccess report generated successfully at $goaccess_report_name"
 
     # Get the start date formated in YYYY/MM/DD format
