@@ -36,22 +36,22 @@
       }
     }
 
-    .clip {
-      margin-bottom: -18px;  /* for allowing overlap at bottom of cam image */
-    }
-
     &__image {
+      position: relative;
+
       img {
         width: 100%;
       }
 
       .timestamp {
         background-color: $Black;
-        position: relative;
+        position: absolute;
+        bottom: 0;
         padding: 0 10px;
         display: flex;
         color: $White;
         align-items: baseline;
+        width: 100%;
 
         p {
           color: $White;

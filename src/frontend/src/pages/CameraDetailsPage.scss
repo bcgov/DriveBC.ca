@@ -249,10 +249,9 @@
       & > .tab-pane {
 
         .image-wrap {
-          padding-bottom: 1rem;
+          position: relative;
 
           .card-img-box {
-            margin-bottom: -16px;
 
             &.unavailable {
               background-color: $Surface-status-red;
@@ -390,7 +389,9 @@
             padding: 0 10px;
             display: flex;
             justify-content: space-between;
-            position: relative;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
 
             p {
               color: $White;
