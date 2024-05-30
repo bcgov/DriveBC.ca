@@ -31,6 +31,8 @@ from django.conf import settings
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+from django.db import transaction
+
 # Maps the key for our client API's serializer fields to the matching pair of
 # the source API's DataSetName and DisplayName fields
 #   serializer           DataSetName               DisplayName                value field
@@ -402,6 +404,7 @@ class FeedClient:
         headers = {"Authorization": f"Bearer {access_token}"}
 
         try:
+            serializer_cls.Meta.model.objects.all().delete()
             response = requests.get(external_api_url, headers=headers)
             response.raise_for_status()
             json_response = response.json()
@@ -486,6 +489,20 @@ class FeedClient:
                 field_errors = serializer.errors
                 for field, errors in field_errors.items():
                     logger.error(f"Field: {field}, Errors: {errors}")
+
+            try:
+                with transaction.atomic():
+                    serializer = serializer_cls(data=json_objects, many=True)
+                    if serializer.is_valid(raise_exception=True):
+                        serializer.save()
+                        return Response({"message": "Data successfully updated"}, status=200)
+                    else:
+                        return Response(serializer.errors, status=400)
+            except (KeyError, ValidationError) as e:
+                field_errors = serializer.errors
+                for field, errors in field_errors.items():
+                    logger.error(f"Field: {field}, Errors: {errors}")
+                return Response({"error": "Validation error occurred"}, status=400)
 
         except requests.RequestException:
             return Response("Error fetching data from weather API", status=500)
