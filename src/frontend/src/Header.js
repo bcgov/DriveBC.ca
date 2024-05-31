@@ -24,8 +24,13 @@ export default function Header() {
   const [expanded, setExpanded] = useState(false);
 
   // Component functions
+  const onClickActions = () => {
+    setTimeout(() => setExpanded(false));
+    sessionStorage.setItem('scrollPosition', 0);
+  }
+
   const getNavLink = (title) => {
-    return <Nav.Link active={false} onClick={() => setTimeout(() => setExpanded(false))}>{title}</Nav.Link>
+    return <Nav.Link active={false} onClick={onClickActions}>{title}</Nav.Link>
   };
 
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');

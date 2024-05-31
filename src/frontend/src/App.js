@@ -30,6 +30,8 @@ import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 
 export const MapContext = createContext(null);
+export const CamsContext = createContext(null);
+
 
 function App() {
   function getInitialMapContext() {
@@ -50,29 +52,32 @@ function App() {
   }
 
   const [mapContext, setMapContext] = useState(getInitialMapContext());
+  const [camsContext] = useState({ displayLength: 21, setDisplayLength: (length) => {} });
 
   return (
     <MapContext.Provider value={{ mapContext, setMapContext }}>
-      <div className="App">
-        <Header />
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<MapPage />} />
-          <Route path="/cameras" element={<CamerasListPage />} />
-          <Route path="/cameras/:id" element={<CameraDetailsPage />} />
-          <Route path="/delays" element={<EventsListPage />} />
-          <Route path="/advisories" element={<AdvisoriesListPage />} />
-          <Route path="/advisories/:id" element={<AdvisoryDetailsPage />} />
-          <Route path="/bulletins" element={<BulletinsListPage />} />
-          <Route path="/bulletins/:id" element={<BulletinDetailsPage />} />
-          {/* Catch-all route for 404 errors */}
-          <Route path="*" element={<NotFoundPage />} />
-          <Route path="/problems" element={<ProblemsPage />} />
-          <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
-          <Route path="/highway-problem" element={<div>Highway or Bridge Problem Page</div>} />
-          <Route path="/road-electrical-problem" element={<div>Road Electrical Problem Page</div>} />
-        </Routes>
-      </div>
+      <CamsContext.Provider value={{ camsContext }}>
+        <div className="App">
+          <Header />
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<MapPage />} />
+            <Route path="/cameras" element={<CamerasListPage />} />
+            <Route path="/cameras/:id" element={<CameraDetailsPage />} />
+            <Route path="/delays" element={<EventsListPage />} />
+            <Route path="/advisories" element={<AdvisoriesListPage />} />
+            <Route path="/advisories/:id" element={<AdvisoryDetailsPage />} />
+            <Route path="/bulletins" element={<BulletinsListPage />} />
+            <Route path="/bulletins/:id" element={<BulletinDetailsPage />} />
+            {/* Catch-all route for 404 errors */}
+            <Route path="*" element={<NotFoundPage />} />
+            <Route path="/problems" element={<ProblemsPage />} />
+            <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
+            <Route path="/highway-problem" element={<div>Highway or Bridge Problem Page</div>} />
+            <Route path="/road-electrical-problem" element={<div>Road Electrical Problem Page</div>} />
+          </Routes>
+        </div>
+      </CamsContext.Provider>
     </MapContext.Provider>
   );
 }
