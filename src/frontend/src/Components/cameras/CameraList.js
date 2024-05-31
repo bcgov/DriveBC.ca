@@ -1,10 +1,10 @@
 // React
-import React, { useEffect, useState } from 'react';
-
+import React, { useContext, useEffect, useState } from 'react';
 // Third party packages
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
+import { CamsContext } from '../../App.js';
 import HighwayGroup from './HighwayGroup.js';
 
 // Styling
@@ -14,50 +14,55 @@ export default function CameraList(props) {
   // Props
   const { cameras } = props;
 
+  // Contexts
+  const { camsContext } = useContext(CamsContext);
+
   // UseState hooks
   const [displayedCameras, setDisplayedCameras] = useState([]);
 
   // UseEffect hooks and data functions
   const getDisplayedCameras = (length) => {
-    const res = cameras.slice(0, length ? length : displayedCameras.length + 7);
-    setDisplayedCameras(res);
+
+    if (!length) { camsContext.displayLength += 4; }
+    const shown = cameras.slice(0, length ? length : camsContext.displayLength);
+    setDisplayedCameras(shown);
   };
 
   useEffect(() => {
     if (cameras) { // Do nothing until cameras are processed
-      getDisplayedCameras(21); // Load up to 21 cameras at the start
+      getDisplayedCameras(camsContext.displayLength);
     }
   }, [cameras]);
 
   // Rendering
   const groupDisplayedCameras = () => {
     // Group adjacent cams on the same road into  arrays
-    const res = [];
+    const groups = [];
     displayedCameras.forEach((cam) => {
       const highway = cam.highway_display;
 
-      if (res.length == 0 || res[res.length-1]['highway'] !== highway) {
-        res.push({
+      if (groups.length == 0 || groups[groups.length - 1]['highway'] !== highway) {
+        groups.push({
           'highway': highway,
           'cams': []
-        })
+        });
       }
 
-      res[res.length-1]['cams'].push(cam);
+      groups[groups.length - 1]['cams'].push(cam);
     });
 
-    return res;
+    return groups;
   };
 
   const renderHighways = () => {
     const groupedCams = groupDisplayedCameras();
 
-    const res = [];
+    const groups = [];
     for (const {highway, cams} of groupedCams) {
-      res.push(<HighwayGroup key={highway} highway={highway} cams={cams} />);
+      groups.push(<HighwayGroup key={highway} highway={highway} cams={cams} />);
     }
 
-    return res;
+    return groups;
   }
 
   const getHasMore = () => {
@@ -67,7 +72,7 @@ export default function CameraList(props) {
   return (
     <div className="camera-list">
       <InfiniteScroll
-        dataLength={displayedCameras.length}
+        dataLength={camsContext.displayLength}
         next={getDisplayedCameras}
         hasMore={getHasMore}>
 
