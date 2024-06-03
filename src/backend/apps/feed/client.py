@@ -32,6 +32,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from django.db import transaction
+from django.db.models import Q
 
 # Maps the key for our client API's serializer fields to the matching pair of
 # the source API's DataSetName and DisplayName fields
@@ -404,7 +405,19 @@ class FeedClient:
         headers = {"Authorization": f"Bearer {access_token}"}
 
         try:
-            serializer_cls.Meta.model.objects.all().delete()
+            # Delete items where specified fields are null
+            serializer_cls.Meta.model.objects.filter(
+                Q(datasets__air_temperature__isnull=True) |
+                Q(datasets__average_wind__isnull=True) |
+                Q(datasets__precipitation__isnull=True) |
+                Q(datasets__snow__isnull=True) |
+                Q(datasets__road_temperature__isnull=True) |
+                Q(datasets__maximum_wind__isnull=True) |
+                Q(datasets__road_condition__isnull=True)
+            ).delete()
+
+
+
             response = requests.get(external_api_url, headers=headers)
             response.raise_for_status()
             json_response = response.json()
