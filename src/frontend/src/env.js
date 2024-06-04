@@ -14,8 +14,6 @@
 window.API_HOST = `${process.env.REACT_APP_API_HOST}`;
 window.BASE_MAP = `${process.env.REACT_APP_BASE_MAP}`;
 window.MAP_STYLE = `${process.env.REACT_APP_MAP_STYLE}`;
-window.HIGHWAY_LAYER = `${process.env.REACT_APP_HIGHWAY_LAYER}`;
-window.OPEN511_LAYER = `${process.env.REACT_APP_OPEN511_LAYER}`;
 window.REPLAY_THE_DAY = `${process.env.REACT_APP_REPLAY_THE_DAY}`;
 window.GEOCODER_HOST = `${process.env.REACT_APP_GEOCODER_HOST}`;
 window.GEOCODER_API_AUTH_KEY = `${process.env.REACT_APP_GEOCODER_API_AUTH_KEY}`;
