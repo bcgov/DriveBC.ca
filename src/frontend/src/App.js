@@ -19,6 +19,7 @@ import BulletinDetailsPage from './pages/BulletinDetailsPage';
 import ScrollToTop from './Components/shared/ScrollToTop';
 import NotFoundPage from './pages/NotFoundPage';
 import ProblemsPage from './pages/ProblemsPage.js';
+import ReportRoadPage from './pages/ReportRoadPage';
 
 // https://github.com/dai-shi/proxy-memoize?tab=readme-ov-file#usage-with-immer
 import { setAutoFreeze } from 'immer';
@@ -73,7 +74,7 @@ function App() {
             <Route path="*" element={<NotFoundPage />} />
             <Route path="/problems" element={<ProblemsPage />} />
             <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
-            <Route path="/highway-problem" element={<div>Highway or Bridge Problem Page</div>} />
+            <Route path="/highway-problem" element={<ReportRoadPage />} />
             <Route path="/road-electrical-problem" element={<div>Road Electrical Problem Page</div>} />
           </Routes>
         </div>

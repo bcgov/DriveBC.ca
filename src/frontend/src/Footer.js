@@ -30,13 +30,16 @@ export default function Footer(props) {
             <h2>More Info</h2>
             <ul className="link-list">
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" className="footer-link" target="_blank" rel="noreferrer"  alt="Disclaimer" >Disclaimer</a>
+                <a href="/problems" alt="Report a problem" >Report a problem</a>
               </li>
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/home/privacy" className="footer-link" target="_blank" rel="noreferrer"  alt="Privacy" >Privacy</a>
+                <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" className="footer-link" target="_blank" rel="noreferrer" alt="Disclaimer" >Disclaimer</a>
               </li>
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/governments/about-the-bc-government/accessibility" className="footer-link" target="_blank" rel="noreferrer"  alt="Acccessibility" >Accessibility</a>
+                <a href="https://www2.gov.bc.ca/gov/content/home/privacy" className="footer-link" target="_blank" rel="noreferrer" alt="Privacy" >Privacy</a>
+              </li>
+              <li>
+                <a href="https://www2.gov.bc.ca/gov/content/governments/about-the-bc-government/accessibility" className="footer-link" target="_blank" rel="noreferrer" alt="Acccessibility" >Accessibility</a>
               </li>
             </ul>
           </div>
@@ -53,7 +56,7 @@ export default function Footer(props) {
               <FontAwesomeIcon icon={faLinkedin}/>
             </a>
           </div>
-          <div className="copyright">© 2023 Government of British Columbia</div>
+          <div className="copyright">© 2024 Government of British Columbia</div>
         </div>
       </footer>
     </div>
