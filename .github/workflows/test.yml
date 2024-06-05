@@ -1,70 +1,70 @@
 name: 2. Create Tag & Build/Deploy to Test
-
-on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        type: string
-        description: Tag Version (incl. prefix; e.g. v1.2.3)
-        required: true
-      message:
-        type: string
-        description: Tag Message (e.g. Story Number)
-        required: true
+# This workflow can be triggered manually or by creating a tag starting with 'v'
 
 env:
-    IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-    REGISTRY_USER: ${{ github.actor }}
-    REGISTRY_PASSWORD: ${{ github.token }}
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  REGISTRY_USER: ${{ github.actor }}
+  REGISTRY_PASSWORD: ${{ github.token }}
+
+permissions:
+  packages: write
+
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger this workflow only for tags starting with "v"
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Create a tag starting with v0.0.0 (Yr, Sprint, Build)'
+        required: true
 
 jobs:
   tag:
-    if: startsWith(github.ref, 'refs/heads/') == true
-    name: Create Tag
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    name: Create Tag and set Variable
     permissions:
-      contents: write
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Create Tag
-      run: |
-        git config user.name "$GITHUB_ACTOR"
-        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-        git config commit.gpgsign false
-
-        git tag -a ${{ github.event.inputs.tag }} -m "${{ github.event.inputs.message }}"
-        git push origin ${{ github.event.inputs.tag }}
-
-  build-pre:
-    needs: [tag]
-    name: Create Tag Variable (remove V)
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
+        contents: write
     outputs:
-      tag: ${{ steps.vars.outputs.tag }}
+      tag: ${{ steps.set_tag_name.outputs.tag }}
 
     steps:
-    - name: Remove v from version for the docker tag
-      id: vars
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create Tag (if manually triggered)
+      if: github.event_name == 'workflow_dispatch'
       run: |
-        vtag=${{ github.event.inputs.tag }}
-        echo "tag=${vtag//v}" >> $GITHUB_OUTPUT
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+        git tag ${{ github.event.inputs.tag_name }}
+        git push origin ${{ github.event.inputs.tag_name }}
+
+    - name: Set Tag Name
+      id: set_tag_name
+      run: |
+        if [ "${{ github.event_name }}" == 'workflow_dispatch' ]; then
+          echo "tag=${{ github.event.inputs.tag_name }}" >> $GITHUB_OUTPUT
+        else
+          echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Display Tag Name
+      run: |
+        echo "Tag Name: ${{ steps.set_tag_name.outputs.tag }}"
+
 
   build-static:
-    needs: [build-pre]
+    needs: [tag]
     runs-on: ubuntu-latest
-    name: Build & Push Docker Static Image
-    environment:
-      name: test
+    name: Build & Push Static Image
+    environment: test
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
       with:
-        ref: ${{ github.ref_name }}
+        ref: ${{ needs.tag.outputs.tag }}
 
     - name: Build Static
       id: build_image
@@ -73,7 +73,7 @@ jobs:
         context: .
         layers: true
         image: drivebc-static
-        tags: latest latest-test ${{ github.sha }} ${{ needs.build-pre.outputs.tag }}
+        tags: latest latest-test ${{ github.sha }} ${{ needs.tag.outputs.tag }}
         labels: |
           app=drivebc
         containerfiles: ./compose/frontend/StaticBuild
@@ -90,30 +90,39 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
+# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
+    - name: Push to OpenShift ImageStream
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build_image.outputs.image }}
+        tags: ${{ steps.build_image.outputs.tags }}
+        registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
+        username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
+        password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
 
   build-backend:
-    needs: [build-pre]
+    needs: [tag]
     runs-on: ubuntu-latest
-    name: Build & Push Docker Backend Image
+    name: Build & Push Backend Image
     environment: test
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
       with:
-        ref: ${{ github.ref_name }}
+        ref: ${{ needs.tag.outputs.tag }}
 
     - name: Build Backend
       id: build_image
       uses: redhat-actions/buildah-build@v2
       with:
         image: drivebc-django
-        tags: latest latest-test ${{ github.sha }} ${{ needs.build-pre.outputs.tag }}
+        tags: latest latest-test ${{ github.sha }} ${{ needs.tag.outputs.tag }}
         labels: |
           app=drivebc
         containerfiles: ./compose/backend/Dockerfile
         build-args:
-          DEBUG_BUILD=true
+          DEBUG_BUILD=false
 
     - name: Push to Github Packages
       uses: redhat-actions/push-to-registry@v2
@@ -124,21 +133,33 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
+# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
+    - name: Push to OpenShift ImageStream
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build_image.outputs.image }}
+        tags: ${{ steps.build_image.outputs.tags }}
+        registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
+        username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
+        password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
+
   build-redis:
-    needs: [build-pre]
+    needs: [tag]
     runs-on: ubuntu-latest
-    name: Build & Push Docker Redis Image
+    name: Build & Push Redis Image
     environment: test
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+      with:
+        ref: ${{ needs.tag.outputs.tag }}
 
     - name: Build Redis
       id: build_image
       uses: redhat-actions/buildah-build@v2
       with:
         image: drivebc-redis
-        tags: latest latest-test ${{ github.sha }} ${{ needs.build-pre.outputs.tag }}
+        tags: latest latest-test ${{ github.sha }} ${{ needs.tag.outputs.tag }}
         labels: |
           app=drivebc
         containerfiles: ./compose/redis/Dockerfile
@@ -152,22 +173,34 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
+# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
+    - name: Push to OpenShift ImageStream
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build_image.outputs.image }}
+        tags: ${{ steps.build_image.outputs.tags }}
+        registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
+        username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
+        password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
+
   build-openshiftjobs:
-    needs: [build-pre]
+    needs: [tag]
     runs-on: ubuntu-latest
-    name: Build & Push Docker OpenShift Jobs Image
+    name: Build & Push OpenShift Jobs Image
     environment: test
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+      with:
+        ref: ${{ needs.tag.outputs.tag }}
 
     - name: Build OpenShift Jobs
       id: build_image
       uses: redhat-actions/buildah-build@v2
       with:
         image: drivebc-openshiftjobs
-        tags: latest latest-test ${{ github.sha }} ${{ needs.build-pre.outputs.tag }}
+        tags: latest latest-test ${{ github.sha }} ${{ needs.tag.outputs.tag }}
         labels: |
           app=drivebc
         containerfiles: ./compose/openshiftjobs/DockerFile
@@ -181,8 +214,18 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
+# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
+    - name: Push to OpenShift ImageStream
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build_image.outputs.image }}
+        tags: ${{ steps.build_image.outputs.tags }}
+        registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
+        username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
+        password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
+
   versionUpdate:
-    needs: [build-pre, build-static, build-backend, build-redis, build-openshiftjobs]
+    needs: [tag, build-static, build-backend, build-redis, build-openshiftjobs]
     runs-on: ubuntu-latest
     name: Deploy Latest Images
     environment:
@@ -191,18 +234,16 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        ref: ${{ github.ref_name }}
 
     - name: Authenticate and set context
       uses: redhat-actions/oc-login@v1
       with:
         openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
         insecure_skip_tls_verify: true
 
     - name: Helm upgrade on OpenShift Environment
       run: |
         helm dependency update ./infrastructure/main
-        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.build-pre.outputs.tag }}" --set redis.image.tag="${{ needs.build-pre.outputs.tag }}" --set static.image.tag="${{ needs.build-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.build-pre.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.build-pre.outputs.tag }}"
+        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}"
