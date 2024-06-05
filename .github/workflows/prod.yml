@@ -14,23 +14,23 @@ permissions:
   packages: write
 
 jobs:
-  deploy-pre:
+  tag:
     runs-on: ubuntu-latest
-    name: Create Tag Variable (remove V)
+    name: Create Tag Variable
     timeout-minutes: 1
     outputs:
       tag: ${{ steps.vars.outputs.tag }}
 
     steps:
-      - name: Remove v from version for the docker tag
+      - name: Set the tag variable
         id: vars
         run: |
           vtag=${{ github.ref_name }}
-          echo "tag=${vtag//v}" >> $GITHUB_OUTPUT
+          echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
 
-#This job adds 'latest-prod' docker tags to the existing image so it's always clear which image is current for a particular environment
+#This job adds 'latest-prod' docker tags to the existing image in Github Packages so it's always clear which image is current for a particular environment
   addDockerTag:
-    needs: [deploy-pre]
+    needs: [tag]
     runs-on: ubuntu-latest
     name: Add latest-prod Tag
     steps:
@@ -39,7 +39,7 @@ jobs:
       with:
         registry: ghcr.io
         repository: bcgov/drivebc-django
-        target: ${{ needs.deploy-pre.outputs.tag }}
+        target: ${{ needs.tag.outputs.tag }}
         tags: |
           latest-prod
     - name: Add latest-prod tag to static image
@@ -47,7 +47,7 @@ jobs:
       with:
         registry: ghcr.io
         repository: bcgov/drivebc-static
-        target: ${{ needs.deploy-pre.outputs.tag }}
+        target: ${{ needs.tag.outputs.tag }}
         tags: |
           latest-prod
     - name: Add latest-uat tag to redis image
@@ -55,7 +55,7 @@ jobs:
       with:
         registry: ghcr.io
         repository: bcgov/drivebc-redis
-        target: ${{ needs.deploy-pre.outputs.tag }}
+        target: ${{ needs.tag.outputs.tag }}
         tags: |
           latest-prod
 
@@ -64,12 +64,12 @@ jobs:
       with:
         registry: ghcr.io
         repository: bcgov/drivebc-openshiftjobs
-        target: ${{ needs.deploy-pre.outputs.tag }}
+        target: ${{ needs.tag.outputs.tag }}
         tags: |
           latest-prod
 
   deploy:
-    needs: [deploy-pre]
+    needs: [tag]
     runs-on: ubuntu-latest
     name: Promote Images to OpenShift
     environment:
@@ -84,10 +84,10 @@ jobs:
       with:
         openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
         insecure_skip_tls_verify: true
 
     - name: Helm upgrade on OpenShift Environment
       run: |
         helm dependency update ./infrastructure/main
-        helm upgrade prod-drivebc -f ./infrastructure/main/values-prod.yaml ./infrastructure/main --set django.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set redis.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set static.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set tasks.image.tag="${{ needs.deploy-pre.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.deploy-pre.outputs.tag }}"
+        helm upgrade prod-drivebc -f ./infrastructure/main/values-prod.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}"
