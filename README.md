@@ -99,20 +99,21 @@ This release pipeline is designed to ensure that
 ### Test
 - When you are ready to release to the Test environment, run the `2. Create Tag & Build/Deploy to Test` workflow.
   - It will force you to give a tag number which should be in the format `project year.sprint.version`. Project inception was 2023 which was 0, so a tag would be `1.26.0` for the first release of Sprint 26 in 2024.
-  - It will also ask for a message you want to give the tag
+  - You can also trigger it by creating a tag using the CLI as long as it starts with `v`
 - This workflow will then create the tag and automatically release it to the Test environment. It is based on the code from Main branch
-- There are also two workflows `2a. Create Tag` and `2b. Build & Deploy to Test` if you want to create a tag and deploy individually.
 
 ### UAT
-- When you are ready to promote from Test to UAT, run the `3. Promote from Test to UAT` workflow. When you run it, you will want to select the Tag that you want to promote to UAT (don't select a branch as it will fail).
-- The images that get pushed to UAT will be the exact same as the ones that were in Test, so the only difference should be environment variables set in the config-maps and secrets.
+- When you are ready to release to the UAT environment, run the `3. Create Tag & Build/Deploy to UAT` workflow.
+  - It will force you to give a tag number which should be in semver format and start with `r` to indicate it's a release
+  - You can also trigger it by creating a tag (make sure you are on the release branch) using the CLI as long as it starts with `r`
+- This workflow will then create the tag and automatically release it to the UAT environment. It is based on the tag you created.
 
 ### Prod
 - When you are ready to promote from UAT to Prod, we need to create a new Release in Github.
   - Go to the main page https://github.com/bcgov/DriveBC.ca
   - Click Releases
   - Click `Create a new Release`
-  - Choose the tag you would like to release
+  - Choose the tag you would like to release (Should start with `r` for release)
   - For Previous Tag, select the tag that is currently in production
   - Click `Generate Release Notes` which will create the release name and add a URL for a changelog
   - Click Publish Release

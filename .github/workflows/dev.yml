@@ -7,17 +7,16 @@ on:
   workflow_dispatch:
 
 env:
+  ENVIRONMENT: dev
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
   REGISTRY_USER: ${{ github.actor }}
   REGISTRY_PASSWORD: ${{ github.token }}
 
-
 jobs:
   build-static:
     runs-on: ubuntu-latest
-    name: Build & Push Docker Static Image
-    environment: 
-      name: dev
+    name: Build & Push Static Image
+    environment: dev
 
     steps:
     - name: Checkout Code
@@ -47,10 +46,19 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
+# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
+    - name: Push to OpenShift ImageStream
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build_image.outputs.image }}
+        tags: ${{ steps.build_image.outputs.tags }}
+        registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
+        username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
+        password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
 
   build-backend:
     runs-on: ubuntu-latest
-    name: Build & Push Docker Backend Image
+    name: Build & Push Backend Image
     environment: dev
     
     steps:
@@ -78,9 +86,19 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
+# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
+    - name: Push to OpenShift ImageStream
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build_image.outputs.image }}
+        tags: ${{ steps.build_image.outputs.tags }}
+        registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
+        username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
+        password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
+
   build-redis:
     runs-on: ubuntu-latest
-    name: Build & Push Docker Redis Image
+    name: Build & Push Redis Image
     environment: dev
     
     steps:
@@ -106,12 +124,21 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
+# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
+    - name: Push to OpenShift ImageStream
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build_image.outputs.image }}
+        tags: ${{ steps.build_image.outputs.tags }}
+        registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
+        username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
+        password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
+
   build-openshiftjobs:
     runs-on: ubuntu-latest
-    name: Build & Push Docker OpenShift Jobs Image
-    environment: 
-      name: dev
-
+    name: Build & Push OpenShift Jobs Image
+    environment: dev
+    
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
@@ -137,6 +164,16 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
+# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
+    - name: Push to OpenShift ImageStream
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build_image.outputs.image }}
+        tags: ${{ steps.build_image.outputs.tags }}
+        registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
+        username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
+        password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
+
   versionUpdate:
     needs: [build-static, build-backend, build-redis, build-openshiftjobs]
     runs-on: ubuntu-latest
@@ -153,7 +190,7 @@ jobs:
       with:
         openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
         insecure_skip_tls_verify: true
 
     - name: Helm upgrade on OpenShift Environment
