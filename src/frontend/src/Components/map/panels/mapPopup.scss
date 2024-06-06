@@ -27,6 +27,8 @@
   }
 
   &__content {
+    padding-bottom: 1.5rem;
+
     &__title {
       margin: 1rem 1rem 0.5rem;
 
@@ -112,6 +114,10 @@
 
     &__description {
       padding: 1rem 1rem 0;
+    }
+
+    &--row {
+      display: flex;
     }
   }
 

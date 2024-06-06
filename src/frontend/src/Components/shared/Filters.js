@@ -97,7 +97,12 @@ export default function Filters(props) {
   );
   const tooltipRestStops = (
     <Tooltip id="tooltip" className="tooltip-content">
-      <p>Travel requires the use of a rest stop.</p>
+      <p>Locations of rest stops run by the province.</p>
+    </Tooltip>
+  );
+  const tooltipRestStopsLargeVehicle = (
+    <Tooltip id="tooltip" className="tooltip-content">
+      <p>Locations of rest stops run by the province 	&#40;greater than 20 metres in length&#41;.</p>
     </Tooltip>
   );
 
@@ -111,9 +116,10 @@ export default function Filters(props) {
   const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
   const [weather, setWeather] = useState(mapContext.visible_layers.weather);
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
+  const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
 
   // Helpers
-  const toggleLayer = (layer, checked, runCallback=true) => {
+  const setLayerVisibility = (layer, checked, runCallback=true) => {
     // Set visible in map only
     mapLayers?.current[layer].setVisible(checked);
 
@@ -165,8 +171,8 @@ export default function Filters(props) {
                       id="filter--closures"
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle closures layer')
-                        toggleLayer('closures', e.target.checked);
-                        toggleLayer('closuresLines', e.target.checked, false);
+                        setLayerVisibility('closures', !closures);
+                        setLayerVisibility('closuresLines', !closures, false);
                         setClosures(!closures)
                       }}
                       defaultChecked={eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures}
@@ -190,8 +196,8 @@ export default function Filters(props) {
                       id="filter--major"
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle major events layer');
-                        toggleLayer('majorEvents', e.target.checked);
-                        toggleLayer('majorEventsLines', e.target.checked, false);
+                        setLayerVisibility('majorEvents', !majorEvents);
+                        setLayerVisibility('majorEventsLines', !majorEvents, false);
                         setMajorEvents(!majorEvents);
                       }}
                       defaultChecked={eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents}
@@ -216,8 +222,8 @@ export default function Filters(props) {
                       id="filter--minor"
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle minor events layer')
-                        toggleLayer('minorEvents', e.target.checked);
-                        toggleLayer('minorEventsLines', e.target.checked, false);
+                        setLayerVisibility('minorEvents', !minorEvents);
+                        setLayerVisibility('minorEventsLines', !minorEvents, false);
                         setMinorEvents(!minorEvents);
                       }}
                       defaultChecked={eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents}
@@ -242,8 +248,8 @@ export default function Filters(props) {
                       id="filter--future-events"
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle future events layer')
-                        toggleLayer('futureEvents', e.target.checked);
-                        toggleLayer('futureEventsLines', e.target.checked, false);
+                        setLayerVisibility('futureEvents', !futureEvents);
+                        setLayerVisibility('futureEventsLines', !futureEvents, false);
                         setFutureEvents(!futureEvents);
                       }}
                       defaultChecked={eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents}
@@ -273,7 +279,7 @@ export default function Filters(props) {
                       id="filter--highway-cameras"
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle highway cameras layer');
-                        toggleLayer('highwayCams', e.target.checked);
+                        setLayerVisibility('highwayCams', !highwayCams);
                         setHighwayCams(!highwayCams);
                       }}
                       defaultChecked={isCamDetail || mapContext.visible_layers.highwayCams}
@@ -297,8 +303,8 @@ export default function Filters(props) {
                       id="filter--road-conditions"
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle road conditions layer')
-                        toggleLayer('roadConditions', e.target.checked);
-                        toggleLayer('roadConditionsLines', e.target.checked, false);
+                        setLayerVisibility('roadConditions', !roadConditions);
+                        setLayerVisibility('roadConditionsLines', !roadConditions, false);
                         setRoadConditions(!roadConditions);
                       }}
                       defaultChecked={mapContext.visible_layers.roadConditions}
@@ -324,7 +330,9 @@ export default function Filters(props) {
                       id="filter--inland-ferries"
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle inland ferries layer')
-                        toggleLayer('inlandFerries', e.target.checked); setInlandFerries(!inlandFerries)}}
+                        setLayerVisibility('inlandFerries', !inlandFerries); 
+                        setInlandFerries(!inlandFerries)
+                      }}
                       defaultChecked={mapContext.visible_layers.inlandFerries}
                       disabled={disableFeatures}
                     />
@@ -346,8 +354,8 @@ export default function Filters(props) {
                       id="filter--weather"
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle weather layer')
-                        toggleLayer('weather', e.target.checked);
-                        toggleLayer('regional', e.target.checked);
+                        setLayerVisibility('weather', !weather);
+                        setLayerVisibility('regional', !weather);
                         setWeather(!weather)}
                       }
                       defaultChecked={mapContext.visible_layers.weather}
@@ -370,7 +378,13 @@ export default function Filters(props) {
                       id="filter--rest-stops"
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle rest stops layer')
-                        toggleLayer('restStops', e.target.checked); setRestStops(!restStops)}}
+                        if (!restStops && largeRestStops) {
+                          setLayerVisibility('largeRestStops', false);
+                          setLargeRestStops(false);
+                        }
+                        setLayerVisibility('restStops', !restStops); 
+                        setRestStops(!restStops);
+                      }}
                       defaultChecked={mapContext.visible_layers.restStops}
                       disabled={disableFeatures}
                     />
@@ -383,6 +397,43 @@ export default function Filters(props) {
                       Rest stops
                     </label>
                     <OverlayTrigger placement="top" overlay={tooltipRestStops}>
+                      <span className="tooltip-info">?</span>
+                    </OverlayTrigger>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="filter-group">
+              <p className="filter-group__title">Commercial vehicles</p>
+              <div className="filter-items-group">
+                <div className="filter-items filter-items--conditions">
+                  <div className={'filter-item filter-item--rest-stops-large-vehicle' + (largeRestStops ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
+                    <input
+                      type="checkbox"
+                      name="large vehicle rest stops"
+                      id="filter--rest-stops-large-vehicle"
+                      onChange={e => {
+                        trackEvent('click', 'map', 'Toggle large vehicle rest stops layer')
+                        if (restStops && !largeRestStops) {
+                          setLayerVisibility('restStops', false);
+                          setRestStops(false);
+                        }
+                        setLayerVisibility('largeRestStops', !largeRestStops); 
+                        setLargeRestStops(!largeRestStops);
+                      }}
+                      defaultChecked={mapContext.visible_layers.largeRestStops}
+                      disabled={disableFeatures}
+                    />
+                    <label htmlFor="filter--rest-stops-large-vehicle">
+                      <span className="filter-item__icon">
+                        <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg" alt="rest stops" aria-hidden="true" focusable="false" role="img">
+                          <path className="filter-item__icon__path" d="M19 3C19 3.1875 18.9688 3.34375 18.9375 3.5C19.5625 3.9375 20 4.6875 20 5.5C20 6.90625 18.875 8 17.5 8H17L17 15C17 15.5625 16.5312 16 16 16C15.4375 16 15 15.5625 15 15V8H14.5C13.0937 8 12 6.90625 12 5.5C12 4.6875 12.4062 3.9375 13.0312 3.5C13 3.34375 13 3.1875 13 3C13 1.34375 14.3438 0 16 0C17.6562 0 19 1.34375 19 3ZM1 7C1 6.46875 1.4375 6 2 6L10 6C10.5312 6 11 6.46875 11 7V9C11 9.5625 10.5312 10 10 10L2 10C1.4375 10 1 9.5625 1 9L1 7ZM1 11L11 11C11.5312 11 12 11.4688 12 12C12 12.5625 11.5312 13 11 13V15C11 15.5625 10.5312 16 10 16C9.4375 16 9 15.5625 9 15V13L3 13L3 15C3 15.5625 2.53125 16 2 16C1.4375 16 1 15.5625 1 15L1 13C0.4375 13 0 12.5625 0 12C0 11.4688 0.4375 11 1 11Z"/>
+                        </svg>
+                      </span>
+                      Large vehicle rest stops
+                    </label>
+                    <OverlayTrigger placement="top" overlay={tooltipRestStopsLargeVehicle}>
                       <span className="tooltip-info">?</span>
                     </OverlayTrigger>
                   </div>

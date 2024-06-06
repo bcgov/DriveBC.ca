@@ -83,7 +83,7 @@ function convertDirection(direction) {
 
 const tooltipLargeVehicles = (
   <Tooltip id="tooltip" className="tooltip-content">
-    <p>A large vehicle is defined as one larger than 10 metres &#40;32 feet&#41; in length.</p>
+    <p>A large vehicle is defined as one larger than 20 metres &#40;65 feet&#41; in length.</p>
   </Tooltip>
 );
 
@@ -461,17 +461,6 @@ export function getRestStopPopup(restStopFeature) {
                 )}
               </div>
             </div>
-            <div className='popup__content__description__container__row'>
-              <FontAwesomeIcon icon={faTruckContainer} />
-              {restStopData.properties.ACCOM_COMMERCIAL_TRUCKS === "Yes" ? (
-                  <p>Large vehicles accommodated</p>
-                ) : (
-                  <p className="red-text">Large vehicles not accommodated</p>
-              )}
-              <OverlayTrigger placement="top" overlay={tooltipLargeVehicles}>
-              <FontAwesomeIcon className="tooltip-vehicles" icon={faCircleInfo} />
-              </OverlayTrigger>
-            </div>
           </div>
         </div>
 
@@ -511,6 +500,26 @@ export function getRestStopPopup(restStopFeature) {
                   `Wi-Fi available`
                 )}
               </p>
+            </div>
+          </div>
+        </div>
+
+        <hr/>
+        <div className='popup__content__description'>
+          <div className='popup__content--row'>
+            <p className="description-label label">Large Vehicles</p>
+            <OverlayTrigger placement="top" overlay={tooltipLargeVehicles}>
+              <FontAwesomeIcon className="tooltip-vehicles" icon={faCircleInfo} />
+            </OverlayTrigger>
+          </div>
+          <div className='popup__content__description__container'>
+            <div className='popup__content__description__container__row'>
+              <FontAwesomeIcon icon={faTruckContainer} />
+              {restStopData.properties.ACCOM_COMMERCIAL_TRUCKS === "Yes" ? (
+                  <p>Vehicles longer than 20 metres allowed</p>
+                ) : (
+                  <p className="red-text">Vehicles longer than 20 metres not allowed</p>
+              )}
             </div>
             <div className='popup__content__description__container__row'>
               <FontAwesomeIcon icon={faRoad} />
