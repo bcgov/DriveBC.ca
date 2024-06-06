@@ -357,6 +357,11 @@ export default function DriveBCMap(props) {
         mapLayers, mapRef, mapContext,
         'restStops', filteredRestStops, 68
       );
+
+      loadLayer(
+        mapLayers, mapRef, mapContext,
+        'largeRestStops', filteredRestStops, 68
+      );
     }
   }, [filteredRestStops]);
 

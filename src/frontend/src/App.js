@@ -48,6 +48,7 @@ function App() {
         inlandFerries: true,
         weather: false,
         restStops: false,
+        largeRestStops: false,
       },
     };
   }

@@ -4,6 +4,7 @@ import { getCurrentWeatherLayer } from './currentWeatherLayer.js';
 import { getFerriesLayer } from './ferriesLayer.js';
 import { getRegionalWeatherLayer } from './regionalWeatherLayer.js';
 import { getRestStopsLayer } from './restStopsLayer.js';
+import { getLargeRestStopsLayer } from './largeRestStopsLayer.js';
 import { getRouteLayer } from './routeLayer.js';
 import { loadEventsLayers } from './eventsLayer.js';
 
@@ -14,6 +15,7 @@ const layerFuncMap = {
   inlandFerries: getFerriesLayer,
   regional: getRegionalWeatherLayer,
   restStops: getRestStopsLayer,
+  largeRestStops: getLargeRestStopsLayer,
   routeLayer: getRouteLayer,
 }
 
