@@ -42,6 +42,13 @@ server {
         index  maintenance.html;
         try_files $uri $uri/ /maintenance.html;
     }
+    location /healthz {
+        access_log off;
+        add_header 'Content-Type' 'text/plain';
+    	allow 127.0.0.1;
+    	deny all;
+        return 200 "healthy\n";
+    }
 
     # redirect server error pages to the static page /50x.html
     #

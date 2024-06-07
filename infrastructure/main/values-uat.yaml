@@ -12,7 +12,7 @@ django:
     resources:
       requests:
         cpu: 50m
-        memory: 250Mi
+        memory: 300Mi
       limits:
         cpu: 1000m
         memory: 350Mi
@@ -47,11 +47,11 @@ tasks:
   deployment:
     resources:
       requests:
-        cpu: 200m
-        memory: 200Mi
+        cpu: 350m
+        memory: 250Mi
       limits:
         cpu: 750m
-        memory: 250Mi
+        memory: 300Mi
     volumes:
       claimName: uat-django-app-images
     env:
