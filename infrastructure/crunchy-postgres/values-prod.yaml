@@ -59,7 +59,7 @@ pgBackRest:
     retentionFullType: time
     createS3Secret: true #Will create the secret if it doesn't already exist. NOTE: Once the secret is set, you must change it in OpenShift.
     # the s3 secret name 
-    s3Secret: uat-drivebc-s3-pgbackrest
+    s3Secret: prod-drivebc-s3-pgbackrest
     # the path start with /, it will be created under bucket if it doesn't exist
     s3Path: "/db/habackup"
     # s3UriStyle is host or path
@@ -106,6 +106,7 @@ proxy:
 # Postgres Cluster resource values:
 pgmonitor:
   enabled: true #Can be true or false
+  namespace: a781ec #The high level namespace of your project without the -tools -dev, etc part. Required for monitoring to work
   exporter:
     image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
     requests:

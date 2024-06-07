@@ -106,6 +106,7 @@ proxy:
 # Postgres Cluster resource values:
 pgmonitor:
   enabled: true #Can be true or false
+  namespace: a781ec #The high level namespace of your project without the -tools -dev, etc part.
   exporter:
     image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
     requests:
