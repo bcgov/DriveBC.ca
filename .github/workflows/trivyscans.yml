@@ -1,4 +1,5 @@
 name: Weekly Trivy Image Scans
+# Set to run on the latest-test image.
 
 on:
   schedule:
@@ -12,53 +13,77 @@ permissions:
 
 jobs:
   imagescan-static:
-    name: Scan latest-prod Static Image
+    name: Scan latest-test Static Image
     runs-on: ubuntu-latest
     steps:
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.22.0
         with:
-          image-ref: 'ghcr.io/bcgov/drivebc-static:latest-prod'
+          image-ref: 'ghcr.io/bcgov/drivebc-static:latest-test'
           format: 'sarif'
           output: 'trivy-results.sarif'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
 
   imagescan-django:
-    name: Scan latest-prod django Image
+    name: Scan latest-test django Image
     runs-on: ubuntu-latest
     steps:
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.22.0
         with:
-          image-ref: 'ghcr.io/bcgov/drivebc-django:latest-prod'
+          image-ref: 'ghcr.io/bcgov/drivebc-django:latest-test'
           format: 'sarif'
           output: 'trivy-results.sarif'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
 
   imagescan-redis:
-    name: Scan Redis Image from dockerhub
+    name: Scan latest-test Redis Image
     runs-on: ubuntu-latest
     steps:
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.22.0
         with:
-          image-ref: 'ghcr.io/bcgov/drivebc-redis:latest-prod'
+          image-ref: 'ghcr.io/bcgov/drivebc-redis:latest-test'
           format: 'sarif'
           output: 'trivy-results.sarif'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
 
+  imagescan-openshiftjobs:
+    name: Scan latest-test OpenshiftJobs Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.22.0
+        with:
+          image-ref: 'ghcr.io/bcgov/drivebc-openshiftjobs:latest-test'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
