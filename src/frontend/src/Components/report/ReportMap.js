@@ -135,10 +135,10 @@ export function ReportMap() {
   const [activeFeature, setActiveFeature] = useState(null);
 
   /* Data function and initialization */
-  const loadMap = async () => {
+  const loadMap = () => {
     // Run once on startup
     if (isInitialMount.current){
-      mapRef.current = await loadReportMap(setActiveFeature);
+      mapRef.current = loadReportMap(setActiveFeature);
       mapView.current = mapRef.current.getView();
       toggleMyLocation(mapRef, mapView);
     }
