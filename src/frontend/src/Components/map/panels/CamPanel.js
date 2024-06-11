@@ -4,20 +4,25 @@ import React, { useEffect, useRef, useState } from 'react';
 // Navigation
 import { useNavigate } from 'react-router-dom';
 
-// Third party packages
-import Button from 'react-bootstrap/Button';
-import FriendlyTime from '../../shared/FriendlyTime';
-import parse from 'html-react-parser';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// External imports
 import { faVideoSlash, faVideo } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Button from 'react-bootstrap/Button';
+import parse from 'html-react-parser';
 
+// Internal imports
 import { getCameraOrientation } from '../../cameras/helper';
-
-import colocatedCamIcon from '../../../images/colocated-camera.svg';
-import './mapPopup.scss';
+import FriendlyTime from '../../shared/FriendlyTime';
 import trackEvent from '../../shared/TrackEvent';
 
-export default function CamPopup(props) {
+// Static assets
+import colocatedCamIcon from '../../../images/colocated-camera.svg';
+
+// Styling
+import './CamPanel.scss';
+
+// Main component
+export default function CamPanel(props) {
   // Props
   const { camFeature, isCamDetail } = props;
 

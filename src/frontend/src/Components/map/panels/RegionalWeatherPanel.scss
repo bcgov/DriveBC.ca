@@ -1,0 +1,168 @@
+@import "../../../styles/variables";
+
+.popup {
+  // Regional Weather popup
+  &--regional-weather {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .popup__title {
+      background-color: #ECEAE8;
+      border-top: 4px solid $Type-Primary;
+
+      .name {
+        color: $Type-Primary;
+      }
+
+      &__icon {
+        background-color: $Type-Primary;
+        color: white;
+      }
+    }
+
+    .popup__advisory {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #FDD47B;
+      color: #584215;
+      padding: 0.75rem 1rem;
+
+      .event {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        p {
+          line-height: 1.3;
+        }
+
+        svg {
+          margin-right: 0.75rem;
+        }
+      }
+
+      svg {
+        margin-right: 4px;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .advisory-title {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #584215;
+      }
+
+      .link {
+        min-width: max-content;
+      }
+    }
+
+    .popup__content {
+      p {
+        margin-bottom: 0;
+      }
+      &__title {
+        .name {
+          color: $Type-Primary;
+          font-size: 2.25rem;
+          text-align: center;
+          margin-bottom: 0;
+        }
+
+        .friendly-time {
+          margin: 0 auto 1rem;
+          &-text {
+            text-align: center;
+            color: $Type-Secondary;
+            font-size: 0.875rem;
+          }
+        }
+      }
+      &__description {
+        text-align: center;
+        .weather-icon {
+          font-size: 4rem;
+        }
+        .weather {
+          font-size: 0.875rem;
+        }
+        .temperature {
+          font-size: 4rem;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .popup__additional {
+      padding: 0.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+
+      p {
+        text-align: center;
+        color: $Type-Secondary;
+      }
+    }
+  }
+
+  // Common styles for local weather and Regional weather
+  .data-card {
+    margin: 0.75rem 0;
+    padding: 0.75rem;
+    border-radius: 8px;
+    box-shadow: 0px 6.4px 14.4px 0px rgba(0, 0, 0, 0.13), 0px 1.2px 3.6px 0px rgba(0, 0, 0, 0.10);
+
+    &__row {
+      display: flex;
+
+      & + .data-card__row {
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid $Divider;
+      }
+
+      &:not(.group) {
+        .data-icon {
+          align-self: top;
+        }
+      }
+
+      .data-icon {
+        margin-right: 0.75rem;
+      }
+
+      .data-group {
+        flex: 1 0;
+
+        &__row {
+          display: flex;
+        }
+      }
+    }
+
+    .label, .data {
+      font-size: 0.875rem;
+      margin-bottom: 0;
+    }
+
+    .label {
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .data {
+      text-align: right;
+      margin-left: auto;
+      min-width: 80px;
+      color: $Type-Secondary;
+    }
+  }
+}

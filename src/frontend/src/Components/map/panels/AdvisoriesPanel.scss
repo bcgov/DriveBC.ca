@@ -1,0 +1,47 @@
+@import "../../../styles/variables";
+
+.popup {
+  // Advisories panel
+  &--advisories {
+    .popup__title {
+      background-color: #FEEBC2;
+      border-top: 4px solid $BC-Yellow;
+
+      &__icon {
+        background-color: $BC-Yellow;
+        color: #584215;
+      }
+
+      .name {
+        color: #584215;
+      }
+    }
+
+    .popup__content {
+      ul.advisories-list {
+        .advisory-li {
+          margin: 0.75rem 0 0;
+          padding: 0.75rem 1rem 1rem;
+          width: 100%;
+          border-bottom: 1px solid $Divider;
+          display: flex;
+          align-items: center;
+
+          .advisory-li-title {
+            font-size: 0.875rem;
+            color: #584215;
+
+            &-container {
+              width: 100%;
+            }
+          }
+
+          &__arrow {
+            margin-left: auto;
+            color: #584215;
+          }
+        }
+      }
+    }
+  }
+}

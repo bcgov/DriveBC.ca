@@ -1,0 +1,28 @@
+@import "../../../styles/variables";
+
+.popup {
+  // Cameras panel
+  &--camera {
+    .popup__content {
+      &__title {
+        .name:hover {
+          cursor:pointer;
+          text-decoration: underline;
+        }
+      }
+      .friendly-time__tooltip {
+        transform: none;
+        left: inherit;
+        right: 0;
+
+        &:before {
+          left: inherit;
+          right: 0;
+        }
+      }
+    }
+    .camera-orientations {
+      padding: 0 1rem;
+    }
+  }
+}
