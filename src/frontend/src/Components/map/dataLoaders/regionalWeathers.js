@@ -9,7 +9,7 @@ export const loadRegionalWeather = async (route, regionalWeather, filteredRegion
   if (!filteredRegionalWeathers || !helpers.compareRoutePoints(routePoints, regionalWeatherFilterPoints)) {
     // Fetch data if it doesn't already exist
     const regionalWeathersData = regionalWeather ? regionalWeather : await getRegional().catch((error) => displayError(error));
-    
+
     // Filter with 20km extra tolerance
     const filteredRegionalWeathersData = helpers.filterByRoute(regionalWeathersData, route, 15000);
 

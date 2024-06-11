@@ -1,0 +1,140 @@
+@import "../../../styles/variables";
+
+.popup {
+  // Events panel
+  &--event {
+    .popup__title {
+      &__icon {
+        width: initial;
+        height: initial;
+        background: none;
+
+        .delay-icon-img {
+          width: 36px;
+        }
+      }
+    }
+
+    .popup__content {
+      &__title {
+        border-bottom: 1px solid $Divider;
+        .name {
+          margin-bottom: 0;
+        }
+        .direction {
+          font-size: 0.875rem;
+          color: $Grey70;
+          margin-bottom: 0;
+        }
+      }
+      &__description {
+        > p:first-child {
+          font-weight: bold;
+          font-size: 0.875rem;
+          height: 1.3125rem;
+          margin-bottom: 0;
+        }
+
+        > p:nth-child(2) {
+          font-size: 0.875rem;
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+
+        .friendly-time {
+          margin-bottom: 0.5rem;
+        }
+
+        &.last-update {
+          .friendly-time__tooltip {
+            left: 0;
+            transform: none;
+
+            &:before {
+              left: 0;
+              transform: none;
+            }
+          }
+        }
+      }
+
+      &__block {
+        display: flex;
+        justify-content: space-between;
+
+      > div {
+        flex: 1;
+      }
+
+      }
+    }
+
+    &.major, &.closures {
+      .popup__title {
+        background-color: #F4E1E2;
+        border-top: 4px solid #CE3E39;
+
+        .name {
+          color: #CE3E39;
+        }
+
+      }
+
+      .popup__content {
+        &__title {
+          .name {
+            color: #CE3E39;
+            font-size: 1.5rem;
+          }
+
+          .location {
+            color: #9C2024;
+            font-size: 0.875rem;
+            margin-top: 0;
+          }
+        }
+        &__description {
+          time {
+            font-size: 0.875rem;
+            &:hover {
+              color: $Type-Link;
+            }
+          }
+        }
+
+      }
+    }
+
+    &.minor, &.roadConditions {
+      .popup__title {
+        background-color: #FEEBC2;
+        border-top: 4px solid $BC-Yellow;
+
+        .name {
+          color: #584215;
+        }
+      }
+
+      .popup__content {
+        &__title {
+          .name {
+            color: #584215;
+          }
+
+          .location {
+            color: $Type-Secondary;
+            font-size: 0.875rem;
+          }
+        }
+        &__description {
+          time {
+            font-size: 0.875rem;
+            &:hover {
+              color: $Type-Link;
+            }
+          }
+        }
+      }
+    }
+  }
+}

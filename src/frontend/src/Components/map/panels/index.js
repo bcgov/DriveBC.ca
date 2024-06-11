@@ -1,34 +1,37 @@
 // React
 import React from 'react';
 
-import {
-  getEventPopup,
-  getFerryPopup,
-  getWeatherPopup,
-  getRegionalPopup,
-  getRestStopPopup,
-  showAdvisories
-} from './mapPopup';
-import CamPopup from './camPopup';
+// Internal imports
+import AdvisoriesPanel from './AdvisoriesPanel';
+import CamPanel from './CamPanel';
+import EventPanel from './EventPanel';
+import FerryPanel from './FerryPanel';
+import LocalWeatherPanel from './LocalWeatherPanel';
+import RegionalWeatherPanel from './RegionalWeatherPanel';
+import RestStopPanel from './RestStopPanel';
+
+// Styling
+import './index.scss';
 
 export const renderPanel = (clickedFeature, isCamDetail) => {
   if (clickedFeature) {
+    // Hack to pass in advisories from clickedFeature
     if (!clickedFeature.get)
-      return showAdvisories(clickedFeature);
+      return <AdvisoriesPanel advisories={clickedFeature} />;
 
     switch (clickedFeature.get('type')) {
       case 'camera':
-        return <CamPopup camFeature={clickedFeature} isCamDetail={isCamDetail} />;
+        return <CamPanel camFeature={clickedFeature} isCamDetail={isCamDetail} />;
       case 'event':
-        return getEventPopup(clickedFeature);
+        return <EventPanel feature={clickedFeature} />;
       case 'ferry':
-        return getFerryPopup(clickedFeature);
+        return <FerryPanel feature={clickedFeature} />;
       case 'currentWeather':
-        return getWeatherPopup(clickedFeature);
+        return <LocalWeatherPanel feature={clickedFeature} />;
       case 'regionalWeather':
-        return getRegionalPopup(clickedFeature);
+        return <RegionalWeatherPanel feature={clickedFeature} />;
       case 'restStop':
-        return getRestStopPopup(clickedFeature);
+        return <RestStopPanel feature={clickedFeature} />;
     }
   }
 }

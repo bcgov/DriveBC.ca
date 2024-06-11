@@ -1,0 +1,28 @@
+@import "../../../styles/variables";
+
+.popup {
+  // Ferries panel
+  &--ferry {
+    .popup__title {
+      background-color: #FBFFFC;
+      border-top: 4px solid #2E8540;
+
+      .name {
+        color: #2E8540;
+        a {
+          color: #2E8540;
+          text-decoration: none;
+          &:hover {
+            cursor:pointer;
+            text-decoration: underline;
+          }
+        }
+      }
+
+      &__icon {
+        background-color: #2E8540;
+        color: white;
+      }
+    }
+  }
+}

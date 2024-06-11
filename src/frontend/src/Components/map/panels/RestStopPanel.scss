@@ -1,0 +1,89 @@
+@import "../../../styles/variables";
+
+.popup {
+  // Rest Stops panel
+  &--reststop {
+    .popup__title {
+      background-color: #E8EAF4;
+      border-top: 4px solid #273F94;
+
+      &__icon {
+        background: #273F94;
+      }
+
+      .name {
+        color: #273F94;
+      }
+    }
+
+    .popup__content {
+      &__title {
+
+        .name {
+          margin-bottom: 0;
+          font-size: 1.5rem;
+          color: $Type-Primary;
+
+          &:first-letter {
+            text-transform: capitalize;
+          }
+        }
+
+        .location {
+          color: $Type-Secondary;
+          font-size: 0.875rem;
+          margin-top: 0;
+          letter-spacing: 0.075em;
+        }
+      }
+
+      &__description {
+        .description-label {
+          font-weight: 700;
+        }
+
+        &__container {
+          padding: 0 1rem;
+
+          &__row {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 0.75rem;
+
+            svg {
+              margin-top: 2px;
+              margin-right: 20px;
+              color: $BC-Blue;
+            }
+
+            p {
+              margin-bottom: 0;
+              font-size: 0.875rem;
+            }
+
+            .toilets {
+              text-transform: lowercase;
+            }
+
+            .count {
+              margin-left: auto;
+              font-weight: 700;
+            }
+          }
+        }
+        .tooltip-vehicles {
+          color: $Type-Primary;
+          margin-left: 8px;
+          margin-right: 0;
+          margin-top: 4px;
+          font-size: 0.875rem;
+        }
+      }
+    }
+
+    hr {
+      margin-bottom: 0;
+      border-top: 1px solid $Divider;
+    }
+  }
+}
