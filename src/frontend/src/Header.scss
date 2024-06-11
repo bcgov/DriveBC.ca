@@ -151,6 +151,10 @@
 		margin-bottom: 0;
 		font-weight: 700;
 
+		@media (min-width: 992px) {
+			margin-right: 16px;
+		}
+
 		svg {
 			margin-right: 8px;
 			color: #D8EAFD;

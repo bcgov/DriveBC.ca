@@ -106,3 +106,8 @@ ul {
 .lowercase {
   text-transform: lowercase;
 }
+
+ol, ul {
+  padding-left: 1.5rem;
+  color: $Type-Primary;
+}

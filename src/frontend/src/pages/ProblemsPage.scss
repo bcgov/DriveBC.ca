@@ -1,94 +1,95 @@
 @import "../styles/variables.scss";
 
-.report-problem {
-  text-align: left;
-  margin: 20px;
-}
+.report-problem-page {
 
-.problem-categories, .emergency-contacts {
-  display: flex;
-  justify-content: space-around;
-  margin: 20px 0;
-  flex-wrap: wrap; // Allow wrapping of items
-}
+  .section {
 
-.category, .contact {
-  border: 1px solid #ddd;
-  padding: 20px;
-  width: 30%;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-  background-color: #f9f9f9;
-  transition: transform 0.2s, box-shadow 0.2s;
-  text-decoration: none;
-  color: inherit;
-  margin-bottom: 20px; // Add spacing between rows
-}
+    &:not(:last-of-type) {
+      margin-bottom: 80px;
+    }
 
-.category:hover, .contact:hover {
-  transform: scale(1.05);
-  box-shadow: 4px 4px 10px rgba(0,0,0,0.2);
-}
+    h2 {
+      color: $BC-Blue;
+      margin-bottom: 20px;
+    }
 
-.category-icon, .contact-icon {
-  width: 100px;
-  height: 100px;
-  background-color: #ddd;
-  margin: 0 auto 20px;
-}
+    &__content {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
 
-.category h2 {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
+      @media (min-width: 992px) {
+        flex-wrap: nowrap;
+      }
+    }
 
-.category p, .contact p {
-  font-size: 14px;
-  color: #666;
-}
+    .content-card {
+      text-decoration: none;
+      flex-basis: 100%;
+      padding: 24px;
+      background-color: $Grey10;
+      border-radius: 4px;
+      border: 1px solid $Divider;
+      outline: 2px solid transparent;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin: 0 auto;
 
-.emergency-contacts .contact {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+      &.disabled {
+        color: $Type-Disabled;
 
-.contact-icon {
-  width: 50px; 
-  height: 50px; 
-  margin: 0 10px 0 0;
-}
+        p {
+          color: $Type-Disabled;
+        }
 
-.underline {
-  text-decoration: underline;
-}
+        .attention {
+          color:$Type-Primary;
+        }
 
-@media (max-width: 1024px) {
-  .category, .contact {
-    width: 45%;
-  }
-}
+        .circle-icon {
+          background: $Type-Disabled;
+        }
+      }
+
+      &:not(.disabled):hover {
+        box-shadow: 0px 1.2px 3.6px rgba(0, 0, 0, 0.1), 0px 6.4px 14.4px rgba(0, 0, 0, 0.13);
+        background-color: $White;
+      }
+    }
 
 
-@media (max-width: 768px) {
-  .problem-categories, .emergency-contacts {
-    flex-direction: column;
-    align-items: center;
-  }
+    .circle-icon {
+      background: $BC-Blue;
+      margin-bottom: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $White;
+    }
 
-  .category, .contact {
-    width: 90%;
-  }
+    &--online {
+      .circle-icon {
+        width: 96px;
+        height: 96px;
+        font-size: 40px;
+      }
+    }
 
-  .category-icon, .contact-icon {
-    width: 80px;
-    height: 80px;
-  }
+    &--phone {
+      .circle-icon {
+        width: 64px;
+        height: 64px;
+        font-size: 32px;
+      }
+      .tel-number {
+        text-decoration: none;
+        color: $Type-Primary;
 
-  .category h2 {
-    font-size: 16px;
-  }
-
-  .category p, .contact p {
-    font-size: 12px;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
   }
 }

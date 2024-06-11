@@ -24,6 +24,7 @@
       list-style-type: disc;
       .advisory-li {
         margin-left: 1.5rem;
+        color: $Type-Link;
 
         &::marker {
           color: $Type-Link;
