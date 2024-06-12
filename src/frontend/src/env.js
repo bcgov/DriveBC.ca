@@ -13,6 +13,7 @@
  */
 window.API_HOST = `${process.env.REACT_APP_API_HOST}`;
 window.BASE_MAP = `${process.env.REACT_APP_BASE_MAP}`;
+window.REPORT_WMS_LAYER = `${process.env.REACT_APP_REPORT_WMS_LAYER}`;
 window.MAP_STYLE = `${process.env.REACT_APP_MAP_STYLE}`;
 window.REPLAY_THE_DAY = `${process.env.REACT_APP_REPLAY_THE_DAY}`;
 window.GEOCODER_HOST = `${process.env.REACT_APP_GEOCODER_HOST}`;

@@ -38,7 +38,7 @@ import View from 'ol/View.js';
 import './ReportMap.scss';
 
 /* Map loading function */
-function loadReportMap(setActiveFeature) {
+function loadReportMap(setActiveFeature, wmsLayer) {
   const tileLayer = new VectorTileLayer({
     declutter: true,
     source: new VectorTileSource({
@@ -53,7 +53,7 @@ function loadReportMap(setActiveFeature) {
     source: new ImageWMS({
       url: "https://maps.th.gov.bc.ca/geoV05/ows",
       params: {
-        LAYERS: "hwy:DSA_CONTRACT_AREA_INFO_V"
+        LAYERS: wmsLayer
       },
       transition: 0
     })
@@ -94,14 +94,14 @@ function loadReportMap(setActiveFeature) {
 
   // Register click listener
   newMap.on('click', async e => {
-    clickListener(newMap, newMap.getPixelFromCoordinate(e.coordinate), setActiveFeature);
+    clickListener(newMap, newMap.getPixelFromCoordinate(e.coordinate), setActiveFeature, wmsLayer);
   });
 
   return newMap;
 }
 
 /* Click listener */
-const clickListener = (map, pixelCoords, setActiveFeature) => {
+const clickListener = (map, pixelCoords, setActiveFeature, wmsLayer) => {
   const payload = {
     request: 'GetFeatureInfo',
     service: 'WMS',
@@ -115,16 +115,18 @@ const clickListener = (map, pixelCoords, setActiveFeature) => {
     height: map.getSize()[1],
     x: Math.floor(pixelCoords[0]),
     y: Math.floor(pixelCoords[1]),
-    layers: 'hwy:DSA_CONTRACT_AREA_INFO_V',
-    query_layers: 'hwy:DSA_CONTRACT_AREA_INFO_V',
+    layers: wmsLayer,
+    query_layers: wmsLayer,
     info_format: 'application/json',
     feature_count: 1
   };
 
-  get('https://maps.th.gov.bc.ca/geoV05/ows', payload).then((data) => setActiveFeature(data.features[0]));
+  get(window.REPORT_WMS_LAYER, payload).then((data) => setActiveFeature(data.features[0]));
 }
 
-export function ReportMap() {
+export function ReportMap(props) {
+  const { wmsLayer } = props;
+
   /* Refs */
   const isInitialMount = useRef(true);
   const mapRef = useRef();
@@ -138,7 +140,7 @@ export function ReportMap() {
   const loadMap = () => {
     // Run once on startup
     if (isInitialMount.current){
-      mapRef.current = loadReportMap(setActiveFeature);
+      mapRef.current = loadReportMap(setActiveFeature, wmsLayer);
       mapView.current = mapRef.current.getView();
       toggleMyLocation(mapRef, mapView);
     }
@@ -192,7 +194,7 @@ export function ReportMap() {
             setTimeout(() => {
               const pixelCoords = mapRef.current.getPixelFromCoordinate(mapCoords);
 
-              clickListener(mapRef.current, pixelCoords, setActiveFeature);
+              clickListener(mapRef.current, pixelCoords, setActiveFeature, wmsLayer);
             }, 1000);
 
           } else {

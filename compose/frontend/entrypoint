@@ -17,6 +17,7 @@ MAINSVG=`find /usr/share/nginx/html/static/media/*.svg`
 echo -e "\nwindow.BASE_MAP='${REACT_APP_BASE_MAP}';" >> $MAIN
 echo -e "window.MAP_STYLE='${REACT_APP_MAP_STYLE}';" >> $MAIN
 echo -e "window.API_HOST='${REACT_APP_API_HOST}';" >> $MAIN
+echo -e "window.REPORT_WMS_LAYER='${REACT_APP_REPORT_WMS_LAYER}';" >> $MAIN
 echo -e "window.GEOCODER_HOST='${REACT_APP_GEOCODER_HOST}';" >> $MAIN
 echo -e "window.GEOCODER_API_AUTH_KEY='${REACT_APP_GEOCODER_API_AUTH_KEY}';" >> $MAIN
 echo -e "window.ROUTE_PLANNER='${REACT_APP_ROUTE_PLANNER}';" >> $MAIN
