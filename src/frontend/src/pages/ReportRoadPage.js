@@ -14,14 +14,14 @@ export default function ReportRoadPage() {
 
   // Rendering
   return (
-    <div className='report-road-page'>
+    <div className='report-page'>
       <PageHeader
         title="Highway or bridge problem"
         description="Report highway or bridge problems. Examples include: pot holes, road damage, bridge damage, signage damage, drainage issues, fallen trees, fallen rocks, or animal carcasses."
         description2="Select the area of the province where you have encountered the highway or bridge problem. If your location is known, it is selected and shown on the map.">
       </PageHeader>
 
-      <ReportMap />
+      <ReportMap wmsLayer='hwy:DSA_CONTRACT_AREA_INFO_V' />
 
       <Footer />
     </div>
