@@ -48,6 +48,9 @@ class Advisory(Page, BaseModel):
             help_text=HelpText.ADVISORY_AREA
         ),
         FieldPanel("body", help_text=HelpText.GENERIC_BODY),
+        FieldPanel('created_at', read_only=True, heading="Created"),
+        FieldPanel('first_published_at', read_only=True, heading="Published"),
+        FieldPanel('last_published_at', read_only=True, heading="Updated"),
     ]
     promote_panels = []
 
@@ -79,6 +82,9 @@ class Bulletin(Page, BaseModel):
         FieldPanel("image", help_text=HelpText.BULLETIN_IMAGE),
         FieldPanel("image_alt_text", help_text=HelpText.BULLETIN_IMAGE_ALT_TEXT),
         FieldPanel("body", help_text=HelpText.GENERIC_BODY),
+        FieldPanel('created_at', read_only=True, heading="Created"),
+        FieldPanel('first_published_at', read_only=True, heading="Published"),
+        FieldPanel('last_published_at', read_only=True, heading="Updated"),
     ]
     promote_panels = []
 
@@ -132,6 +138,9 @@ class Ferry(Page, BaseModel):
         FieldPanel("location", widget=DriveBCMapWidget, read_only=True),
         FieldPanel("feed_created_at", read_only=True),
         FieldPanel("feed_modified_at", read_only=True),
+        FieldPanel('created_at', read_only=True, heading="Created"),
+        FieldPanel('first_published_at', read_only=True, heading="Published"),
+        FieldPanel('last_published_at', read_only=True, heading="Updated"),
     ]
     promote_panels = []
 
