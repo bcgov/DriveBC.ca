@@ -79,6 +79,10 @@
           font-size: 0.875rem;
         }
       }
+
+      &--row {
+        display: flex;
+      }
     }
 
     hr {
