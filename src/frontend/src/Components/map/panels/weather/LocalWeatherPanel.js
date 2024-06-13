@@ -14,7 +14,7 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 // Internal imports
-import FriendlyTime from '../../shared/FriendlyTime';
+import FriendlyTime from '../../../shared/FriendlyTime';
 
 // Styling
 import './LocalWeatherPanel.scss';

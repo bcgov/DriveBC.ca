@@ -6,8 +6,8 @@ import AdvisoriesPanel from './AdvisoriesPanel';
 import CamPanel from './CamPanel';
 import EventPanel from './EventPanel';
 import FerryPanel from './FerryPanel';
-import LocalWeatherPanel from './LocalWeatherPanel';
-import RegionalWeatherPanel from './RegionalWeatherPanel';
+import LocalWeatherPanel from './weather/LocalWeatherPanel';
+import RegionalWeatherPanel from './weather/RegionalWeatherPanel';
 import RestStopPanel from './RestStopPanel';
 
 // Styling
