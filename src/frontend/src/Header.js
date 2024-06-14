@@ -54,7 +54,10 @@ export default function Header() {
           </Navbar.Brand>
 
           <div className="nav-divider"></div>
-
+          
+          {!xLargeScreen &&
+            <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
+          }
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <LinkContainer to="/">
@@ -74,9 +77,11 @@ export default function Header() {
               </LinkContainer>
             </Nav>
           </Navbar.Collapse>
-
-          <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
-        </Container>
+          
+          {xLargeScreen &&
+            <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
+          }
+          </Container>
       </Navbar>
     </header>
   );
