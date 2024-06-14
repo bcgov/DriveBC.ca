@@ -21,6 +21,8 @@ from apps.rest.models import RestStop
 from apps.weather.models import CurrentWeather, RegionalWeather
 from rest_framework import serializers
 
+import html  # Importing html module for unescaping HTML entities
+
 
 # Webcam
 class WebcamFeedSerializer(serializers.Serializer):
@@ -133,7 +135,7 @@ class CarsEventSerializer(serializers.Serializer):
         for plan in data.get("communication-plans", []):
             # Get location descriptions
             if plan.get('plan-type', '') == 'BRIEF_LOCATION':
-                data["location_description"] = plan.get('description', '')
+                data["location_description"] = html.unescape(plan.get('description', ''))
                 break  # No other communication-plans data, stop for loop
 
         # Data under "communication-plan-template"
@@ -141,7 +143,7 @@ class CarsEventSerializer(serializers.Serializer):
         # Get location length
         data["location_extent"] = template.get('extent-event-length', '')
         # Get closest landmark
-        data["closest_landmark"] = template.get('nearby-city-reference', '')
+        data["closest_landmark"] = html.unescape(template.get('nearby-city-reference', ''))
 
         # Data under "open511-event-details"
         open511_details = data.get("open511-event-details", {})
