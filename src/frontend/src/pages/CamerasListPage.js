@@ -160,11 +160,13 @@ export default function CamerasListPage() {
   useEffect(() => {
     // Search name and caption of all cams in group
     const searchFn = (pc, targetText) => {
+      const targetRegex = new RegExp(`\\b${targetText.toLowerCase()}\\b`);
       for (let i = 0; i < pc.camGroup.length; i++) {
         if (pc.camGroup[i].name.toLowerCase().includes(targetText.toLowerCase()) ||
           pc.camGroup[i].caption.toLowerCase().includes(targetText.toLowerCase())) {
-
-          return true;
+            const nameMatches = targetRegex.test(pc.camGroup[i].name.toLowerCase());
+            const captionMatches = targetRegex.test(pc.camGroup[i].caption.toLowerCase());
+            if (nameMatches && captionMatches) return true;
         }
       }
 
