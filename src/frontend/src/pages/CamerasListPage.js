@@ -55,6 +55,7 @@ export default function CamerasListPage() {
   const [searchText, setSearchText] = useState('');
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
+  const [filteredCamerasForSearch, setFilteredCamerasForSearch] = useState(null);
 
   // Error handling
   const displayError = (error) => {
@@ -160,14 +161,36 @@ export default function CamerasListPage() {
   useEffect(() => {
     // Search name and caption of all cams in group
     const searchFn = (pc, targetText) => {
-      for (let i = 0; i < pc.camGroup.length; i++) {
-        if (pc.camGroup[i].name.toLowerCase().includes(targetText.toLowerCase()) ||
-          pc.camGroup[i].caption.toLowerCase().includes(targetText.toLowerCase())) {
-
+      const targetLower = targetText.toLowerCase();
+    
+      // Sort cameras by the presence of the search text in their name
+      const sortedCamerasByName = pc.camGroup.sort((a, b) => {
+        const aNameMatches = a.name.toLowerCase().includes(targetLower);
+        const bNameMatches = b.name.toLowerCase().includes(targetLower);    
+        // Give higher priority to cameras where the name matches the search text
+        return bNameMatches - aNameMatches;
+      });
+    
+      for (let i = 0; i < sortedCamerasByName.length; i++) {
+        if (sortedCamerasByName[i].name.toLowerCase().includes(targetLower)) {
           return true;
         }
       }
 
+      // Sort cameras by the presence of the search text in their description
+      const sortedCamerasByDescription = pc.camGroup.sort((a, b) => {
+        const aCaptionMatches = a.caption.toLowerCase().includes(targetLower);
+        const bCaptionMatches = b.caption.toLowerCase().includes(targetLower);    
+        // Give higher priority to cameras where the description matches the search text
+        return bCaptionMatches - aCaptionMatches;
+      });
+          
+      for (let i = 0; i < sortedCamerasByDescription.length; i++) {
+      if (sortedCamerasByDescription[i].caption.toLowerCase().includes(targetLower)) {
+          return true;
+        }
+      }
+    
       return false;
     }
 
@@ -175,8 +198,35 @@ export default function CamerasListPage() {
       processedCameras.filter((pc) => searchFn(pc, searchText));
 
     setDisplayedCameras(filteredCams);
+    setFilteredCamerasForSearch(filteredCams);
 
   }, [searchText, processedCameras]);
+
+  useEffect(() => {
+    // To display correctly with camera search result, swap the displayed info on screen for the filtered camera list 
+    // between the most matched item and the first item
+    if(filteredCamerasForSearch !== null){
+      if(filteredCamerasForSearch[0] !== undefined && filteredCamerasForSearch[0].camGroup !== undefined){
+        if(filteredCamerasForSearch[0] !== undefined){
+          const tempName = filteredCamerasForSearch[0].name;
+          filteredCamerasForSearch[0].name = filteredCamerasForSearch[0].camGroup[0].name;
+          filteredCamerasForSearch[0].camGroup[0].name = tempName;
+
+          const tempOrientation = filteredCamerasForSearch[0].orientation;
+          filteredCamerasForSearch[0].orientation = filteredCamerasForSearch[0].camGroup[0].orientation;
+          filteredCamerasForSearch[0].camGroup[0].orientation = tempOrientation;
+
+          const tempLinks = filteredCamerasForSearch[0].links;
+          filteredCamerasForSearch[0].links = filteredCamerasForSearch[0].camGroup[0].links;
+          filteredCamerasForSearch[0].camGroup[0].links = tempLinks;
+
+          const tempCaption = filteredCamerasForSearch[0].caption;
+          filteredCamerasForSearch[0].caption = filteredCamerasForSearch[0].camGroup[0].caption;
+          filteredCamerasForSearch[0].camGroup[0].caption = tempCaption;
+        }
+      }
+    }
+  }, [filteredCamerasForSearch]);
 
   useEffect(() => {
     if (isInitialMount.current) {
