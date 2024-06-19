@@ -2,6 +2,8 @@ from apps.cms.urls import cms_api_router, wagtail_api_router
 from apps.shared import views
 from django.urls import include, path
 
+from .views import session
+
 urlpatterns = [
     # App
     path("webcams/", include("apps.webcam.urls")),
@@ -22,4 +24,6 @@ urlpatterns = [
 
     # Rest Stop
     path("reststops/", include("apps.rest.urls")),
+
+    path("session", session.as_view()),
 ]

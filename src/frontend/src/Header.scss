@@ -101,6 +101,7 @@
 				color: $Type-Primary;
 				padding: 10px 12px;
 				border: transparent solid 2px;
+				cursor: pointer;
 
 				@media (min-width: 992px) {
 					padding: 15px;
@@ -159,7 +160,7 @@
 			margin-right: 8px;
 			color: #D8EAFD;
 		}
-		
+
 		&::after {
 			content: none;
 		}
