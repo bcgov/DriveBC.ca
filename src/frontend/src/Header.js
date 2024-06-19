@@ -1,5 +1,5 @@
 // React
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 // Third party packages
 import { faComment } from '@fortawesome/pro-solid-svg-icons';
@@ -8,6 +8,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+
+import { AuthContext } from "./App";
 
 // Static files
 import logo from './images/dbc-logo-beta.svg';
@@ -22,12 +24,20 @@ import {useMediaQuery} from '@uidotdev/usehooks';
 export default function Header() {
   // State hooks
   const [expanded, setExpanded] = useState(false);
+  const { authContext, setAuthContext } = useContext(AuthContext);
 
   // Component functions
   const onClickActions = () => {
     setTimeout(() => setExpanded(false));
     sessionStorage.setItem('scrollPosition', 0);
   }
+
+  const toggleAuthModal = (action) => {
+    setAuthContext((prior) => {
+      if (!prior.showingModal) { return { ...prior, showingModal: true, action }; }
+      return prior;
+    })
+  };
 
   const getNavLink = (title) => {
     return <Nav.Link active={false} onClick={onClickActions}>{title}</Nav.Link>
@@ -75,6 +85,22 @@ export default function Header() {
               <LinkContainer to="/bulletins">
                 {getNavLink('Bulletins')}
               </LinkContainer>
+              { authContext.loginStateKnown
+                ? ( authContext.username
+                    ? <React.Fragment>
+                        <LinkContainer to="/account">
+                          { getNavLink('My Account') }
+                        </LinkContainer>
+                        <a className='nav-link'
+                          onClick={() => toggleAuthModal('Sign Out')}
+                        >Sign out</a>
+                      </React.Fragment>
+                    : <a className='nav-link'
+                        onClick={() => toggleAuthModal('Sign In')}
+                      >Sign in</a>
+                  )
+                : ''
+              }
             </Nav>
           </Navbar.Collapse>
           

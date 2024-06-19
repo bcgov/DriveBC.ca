@@ -135,3 +135,12 @@ def static_override(prefix, view=serve, **kwargs):
             r"^%s(?P<path>.*)$" % re.escape(prefix.lstrip("/")), view, kwargs=kwargs
         ),
     ]
+
+class session(APIView):
+
+    def get(self, request, format=None):
+        if request.user.is_authenticated:
+            return Response({"username": request.user.username,
+                             "email": request.user.email, })
+
+        return Response({"username": None})
