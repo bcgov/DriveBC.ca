@@ -296,7 +296,7 @@ export default function CameraDetailsPage() {
       </div>
       <div>
         {camera && (
-          <div className="container--full-width">
+          <Container className="container--full-width">
             <div className="camera-details">
               <div className="camera-details__description">
                 <h2>{camera.name}</h2>
@@ -530,7 +530,7 @@ export default function CameraDetailsPage() {
                 </Tab>
               </Tabs>
             </div>
-          </div>
+          </Container>
         )}
       </div>
       {activeTab === 'webcam' && <Footer replay={replay} />}

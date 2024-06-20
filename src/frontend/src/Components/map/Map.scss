@@ -69,7 +69,7 @@
       @media (max-width: 767px) {
         transition: min-height 0.25s ease-in-out;
         order: 2;
-        overflow: hidden;
+        overflow: scroll;
       }
 
       &.open {
@@ -151,6 +151,15 @@
       color: #273F94;
       &:hover {
         background: lighten(#273F94, 60%);
+      }
+    }
+
+    .close-panel:has(+ .panel-content .popup--regional-weather),
+    .close-panel:has(+ .panel-content .popup--road-weather)
+      {
+      color: $Type-Primary;
+      &:hover {
+        background: lighten($Type-Primary, 70%);
       }
     }
 
@@ -253,12 +262,7 @@
         color: $White;
       }
 
-      &.map-view, &.cam-location {
-        svg {
-          margin-right: 8px;
-        }
-      }
-      &.map-view, &.my-location {
+      &.map-view, &.my-location,  &.cam-location {
         svg {
           margin-right: 8px;
         }

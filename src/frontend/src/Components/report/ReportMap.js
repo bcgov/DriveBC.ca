@@ -4,13 +4,18 @@ import React, { useRef, useEffect, useState } from 'react';
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faLocationCrosshairs,
   faPlus,
   faMinus,
   faXmark,
-  faFlag,
+  faBridge,
+  faPlug,
+  faPhone,
+  faUpRightAndDownLeftFromCenter,
+  faMinimize
 } from '@fortawesome/pro-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
+import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
 import {
@@ -135,6 +140,7 @@ export function ReportMap(props) {
 
   /* States */
   const [activeFeature, setActiveFeature] = useState(null);
+  const [expanded, setExpanded] = useState(false);
 
   /* Data function and initialization */
   const loadMap = () => {
@@ -142,7 +148,9 @@ export function ReportMap(props) {
     if (isInitialMount.current){
       mapRef.current = loadReportMap(setActiveFeature, wmsLayer);
       mapView.current = mapRef.current.getView();
-      toggleMyLocation(mapRef, mapView);
+      if(xLargeScreen) {
+        toggleMyLocation(mapRef, mapView);
+      }
     }
 
     isInitialMount.current = false;
@@ -223,21 +231,48 @@ export function ReportMap(props) {
     }
   }
 
+  const smallScreen = useMediaQuery('only screen and (max-width: 767px)');
+  const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
+
   const renderPanel = () => {
+    console.log(activeFeature.properties);
     return (
-      <div className="popup popup--advisories" tabIndex={0}>
+      <div className="popup popup--problem" tabIndex={0}>
         <div className="popup__title">
           <div className="popup__title__icon">
-            <FontAwesomeIcon icon={faFlag} />
+            {activeFeature.properties.ELECTRICAL_CA_NAME ? 
+              <FontAwesomeIcon icon={faPlug} /> : <FontAwesomeIcon icon={faBridge} />
+            }
           </div>
-          <p className="name">{activeFeature.properties.CONTRACT_AREA_PUBLIC_NAME}</p>
-          <p className="name">Service Area {activeFeature.properties.CONTRACT_AREA_NUMBER}</p>
+          <p className="name">Contractor details</p>
         </div>
         <div className="popup__content">
+          {activeFeature.properties.CONTRACT_AREA_PUBLIC_NAME &&
+            <p className="service-area">{activeFeature.properties.CONTRACT_AREA_PUBLIC_NAME}</p>   
+          }
+          {activeFeature.properties.ELECTRICAL_CA_NAME &&
+            <p className="service-area">{activeFeature.properties.ELECTRICAL_CA_NAME}</p>   
+          }
+
+          {activeFeature.properties.CONTRACT_AREA_NUMBER &&
+            <p className="service-area-number">Service Area {activeFeature.properties.CONTRACT_AREA_NUMBER}</p>
+          }
+          {activeFeature.properties.ELECTRICAL_CA_NUMBER &&
+            <p className="service-area-number">Service Area {activeFeature.properties.ELECTRICAL_CA_NUMBER}</p>   
+          }
+
           <p>Please be prepared to describe the highway problem and location to our maintenance contractor.</p>
           <p>You will be talking to:</p>
-          <p>{activeFeature.properties.CONTRACTOR1_NAME}</p>
-          <p>{activeFeature.properties.CONTRACTOR1_CONTACT}</p>
+          <div className="contractor-name">
+            {activeFeature.properties.CONTRACTOR1_WEBSITE ?
+              <a href={activeFeature.properties.CONTRACTOR1_WEBSITE} className="website-link" target="_blank" rel="noreferrer" alt="contractor website link" >{activeFeature.properties.CONTRACTOR1_NAME}</a>
+            : <p>{activeFeature.properties.CONTRACTOR1_NAME}</p>
+            }
+          </div>
+          <div className="contractor-phone">
+            <FontAwesomeIcon icon={faPhone} />
+            <a className="tel-number bold" href={ "tel:" + activeFeature.properties.CONTRACTOR1_CONTACT}>{activeFeature.properties.CONTRACTOR1_CONTACT}</a>
+          </div>
           <p>Thank you for bringing this issue to our attention.</p>
         </div>
       </div>
@@ -248,7 +283,7 @@ export function ReportMap(props) {
   const openPanel = !!activeFeature;
 
   return (
-    <Container className="report-map-container">
+    <div className={'report-map-container' + (expanded ? ' expanded' : '')}>
       <div
         ref={panel}
         className={`side-panel ${openPanel ? 'open' : ''}`}
@@ -275,25 +310,47 @@ export function ReportMap(props) {
         </div>
       </div>
 
-      <div id="report-map" className="report-map"></div>
+      <div id="report-map" className="report-map">
+        { smallScreen &&
+          <Button
+            className={'map-btn expand ' + (expanded ? ' expanded' : 'minimized')}
+            variant="primary"
+            onClick={() => {
+              expanded ? setExpanded(false) : setExpanded(true) }
+            }
+            aria-label="my location">
+            <FontAwesomeIcon icon={expanded ? faMinimize: faUpRightAndDownLeftFromCenter} />
+            { expanded ? 'Minimize' : 'Expand' }
+          </Button>
+        }
 
-      <div className="zoom-btn">
         <Button
-          className="zoom-in"
+          className="map-btn my-location"
           variant="primary"
-          aria-label="zoom in"
-          onClick={() => zoomIn(mapView)}>
-          <FontAwesomeIcon icon={faPlus} />
+          onClick={() => toggleMyLocation(mapRef, mapView)}
+          aria-label="my location">
+          <FontAwesomeIcon icon={faLocationCrosshairs} />
+          My location
         </Button>
-        <div className="zoom-divider" />
-        <Button
-          className="zoom-out"
-          variant="primary"
-          onClick={() => zoomOut(mapView)}
-          aria-label="zoom out">
-          <FontAwesomeIcon icon={faMinus} />
-        </Button>
+
+        <div className="map-btn zoom-btn">
+          <Button
+            className="zoom-in"
+            variant="primary"
+            aria-label="zoom in"
+            onClick={() => zoomIn(mapView)}>
+            <FontAwesomeIcon icon={faPlus} />
+          </Button>
+          <div className="zoom-divider" />
+          <Button
+            className="zoom-out"
+            variant="primary"
+            onClick={() => zoomOut(mapView)}
+            aria-label="zoom out">
+            <FontAwesomeIcon icon={faMinus} />
+          </Button>
+        </div>
       </div>
-    </Container>
+    </div>
   );
 }
