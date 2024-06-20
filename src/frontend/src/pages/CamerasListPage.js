@@ -160,16 +160,23 @@ export default function CamerasListPage() {
   useEffect(() => {
     // Search name and caption of all cams in group
     const searchFn = (pc, targetText) => {
-      const targetRegex = new RegExp(`\\b${targetText.toLowerCase()}\\b`);
-      for (let i = 0; i < pc.camGroup.length; i++) {
-        if (pc.camGroup[i].name.toLowerCase().includes(targetText.toLowerCase()) ||
-          pc.camGroup[i].caption.toLowerCase().includes(targetText.toLowerCase())) {
-            const nameMatches = targetRegex.test(pc.camGroup[i].name.toLowerCase());
-            const captionMatches = targetRegex.test(pc.camGroup[i].caption.toLowerCase());
-            if (nameMatches && captionMatches) return true;
+      const targetLower = targetText.toLowerCase();
+    
+      // Sort cameras by the presence of the search text in their name
+      const sortedCameras = pc.camGroup.sort((a, b) => {
+        const aNameMatches = a.name.toLowerCase().includes(targetLower);
+        const bNameMatches = b.name.toLowerCase().includes(targetLower);
+    
+        // Give higher priority to cameras where the name matches the search text
+        return bNameMatches - aNameMatches;
+      });
+    
+      for (let i = 0; i < sortedCameras.length; i++) {
+        if (sortedCameras[i].name.toLowerCase().includes(targetLower)) {
+          return true;
         }
       }
-
+    
       return false;
     }
 
