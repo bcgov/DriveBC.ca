@@ -77,17 +77,24 @@
     }
 
     &--phone {
-      .circle-icon {
-        width: 64px;
-        height: 64px;
-        font-size: 32px;
-      }
-      .tel-number {
-        text-decoration: none;
-        color: $Type-Primary;
+      .section__content {
+        .content-card {
+          &:hover {
+            .tel-number {
+              text-decoration: underline;
+            }
+          }
+          
+          .circle-icon {
+            width: 64px;
+            height: 64px;
+            font-size: 32px;
+          }
 
-        &:hover {
-          text-decoration: underline;
+          .tel-number {
+            text-decoration: none;
+            color: $Type-Primary;
+          }
         }
       }
     }

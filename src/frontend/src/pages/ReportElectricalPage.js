@@ -1,10 +1,18 @@
 // React
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Internal imports
 import { ReportMap } from '../Components/report/ReportMap';
 import Footer from '../Footer';
-import PageHeader from '../PageHeader';
+
+// External imports
+import Container from 'react-bootstrap/Container';
+import { useMediaQuery } from '@uidotdev/usehooks';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faArrowLeft
+} from '@fortawesome/pro-solid-svg-icons';
 
 // Styling
 import './ReportElectricalPage.scss';
@@ -12,18 +20,53 @@ import './ReportElectricalPage.scss';
 export default function ReportElectricalPage() {
   document.title = `DriveBC - Report Electrical Problem`;
 
+  const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
+
+  const navigate = useNavigate();
+
+  const returnHandler = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate('/', { replace: true }); // the current entry in the history stack will be replaced with the new one with { replace: true }
+    }
+  };
+
   // Rendering
   return (
-    <div className='report-page'>
-      <PageHeader
-        title="Road electrical problem"
-        description="Report an electrical issue on a highway or bridge. Examples include: overhead signs, street lights, pedestrian lighting, signals out, or signals damaged."
-        description2="Select the area of the province where you have encountered electrical problem. If your location is known, it is selected and shown on the map.">
-      </PageHeader>
+    // TODO: need to add back button
+    <div className='report-page report-page--electrical'>
+      <div className="page-header">
+        <Container>
+          <div className="back-link-wrap">
+            <a
+              className="back-link"
+              onClick={returnHandler}
+              onKeyDown={keyEvent => {
+                if (keyEvent.keyCode == 13) {
+                  returnHandler();
+                }
+              }}>
+              <FontAwesomeIcon icon={faArrowLeft} />
+              Back
+            </a>
+          </div>
+          <div className="page-header__content">
+          <h1 className="page-title">Road electrical problem</h1>
+            <p className="page-description body--large">Report an electrical issue on a highway or bridge. Examples include: overhead signs, street lights, pedestrian lighting, signals out, or signals damaged.</p>
+            </div>
+        </Container>
+      </div>
 
-      <ReportMap wmsLayer='hwy:DSA_ELECTRICAL_CA_INFO_V' />
-
-      <Footer />
+      <Container className="page-subtitle">
+        <p>Select the area of the province where you have encountered the highway or bridge problem. If your location is known, it is selected and shown on the map.</p>
+      </Container>
+      
+      <Container className="report-map-wrap">
+        <ReportMap wmsLayer='hwy:DSA_ELECTRICAL_CA_INFO_V' />
+      </Container>
+      
+      {xLargeScreen && <Footer />}
     </div>
   );
 }
