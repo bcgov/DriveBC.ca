@@ -55,6 +55,7 @@ export default function CamerasListPage() {
   const [searchText, setSearchText] = useState('');
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
+  const [filteredCamerasForSearch, setFilteredCamerasForSearch] = useState(null);
 
   // Error handling
   const displayError = (error) => {
@@ -184,8 +185,35 @@ export default function CamerasListPage() {
       processedCameras.filter((pc) => searchFn(pc, searchText));
 
     setDisplayedCameras(filteredCams);
+    setFilteredCamerasForSearch(filteredCams);
 
   }, [searchText, processedCameras]);
+
+  useEffect(() => {
+    // To display correctly with camera search result, swap the displayed info on screen for the filtered camera list 
+    // between the most matched item and the first item
+    if(filteredCamerasForSearch !== null){
+      if(filteredCamerasForSearch[0] !== undefined && filteredCamerasForSearch[0].camGroup !== undefined){
+        if(filteredCamerasForSearch[0] !== undefined){
+          const tempName = filteredCamerasForSearch[0].name;
+          filteredCamerasForSearch[0].name = filteredCamerasForSearch[0].camGroup[0].name;
+          filteredCamerasForSearch[0].camGroup[0].name = tempName;
+
+          const tempOrientation = filteredCamerasForSearch[0].orientation;
+          filteredCamerasForSearch[0].orientation = filteredCamerasForSearch[0].camGroup[0].orientation;
+          filteredCamerasForSearch[0].camGroup[0].orientation = tempOrientation;
+
+          const tempLinks = filteredCamerasForSearch[0].links;
+          filteredCamerasForSearch[0].links = filteredCamerasForSearch[0].camGroup[0].links;
+          filteredCamerasForSearch[0].camGroup[0].links = tempLinks;
+
+          const tempCaption = filteredCamerasForSearch[0].caption;
+          filteredCamerasForSearch[0].caption = filteredCamerasForSearch[0].camGroup[0].caption;
+          filteredCamerasForSearch[0].camGroup[0].caption = tempCaption;
+        }
+      }
+    }
+  }, [filteredCamerasForSearch]);
 
   useEffect(() => {
     if (isInitialMount.current) {
