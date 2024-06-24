@@ -9,6 +9,7 @@ from apps.feed.constants import (
     CURRENT_WEATHER,
     CURRENT_WEATHER_STATIONS,
     DIT,
+    FORECAST_WEATHER,
     INLAND_FERRY,
     OPEN511,
     REGIONAL_WEATHER,
@@ -28,11 +29,10 @@ from apps.feed.serializers import (
     WebcamFeedSerializer,
 )
 from django.conf import settings
-from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
-
 from django.db import transaction
 from django.db.models import Q
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 
 # Maps the key for our client API's serializer fields to the matching pair of
 # the source API's DataSetName and DisplayName fields
@@ -91,6 +91,9 @@ class FeedClient:
             },
             REGIONAL_WEATHER_AREAS: {
                 "base_url": settings.DRIVEBC_WEATHER_AREAS_API_BASE_URL,
+            },
+            FORECAST_WEATHER: {
+                "base_url": settings.DRIVEBC_WEATHER_FORECAST_API_BASE_URL,
             },
             CURRENT_WEATHER: {
                 "base_url": settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL,
@@ -422,17 +425,27 @@ class FeedClient:
             response.raise_for_status()
             json_response = response.json()
             json_objects = []
+            data = []
+            hourly_forecast_group = []
 
             for station in json_response:
                 station_number = station.get("WeatherStationNumber")
+                forecast_endpoint = settings.DRIVEBC_WEATHER_FORECAST_API_BASE_URL + f"/{station_number}"
                 api_endpoint = settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL + f"{station_number}"
-
                 # get fresh token to avoid previous token expiring
                 try:
                     access_token = self.get_access_token()
                     headers = {"Authorization": f"Bearer {access_token}"}
                 except requests.RequestException as e:
                     return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
+
+                try:
+                    response = requests.get(forecast_endpoint, headers=headers)
+                    if response.status_code != 204:
+                        hourly_forecast_data = response.json()
+                        hourly_forecast_group = hourly_forecast_data.get("HourlyForecasts") or {}
+                except requests.RequestException as e:
+                    logger.error(f"Error making API call for Area Code {station_number}: {e}")
 
                 try:
                     response = requests.get(api_endpoint, headers=headers)
@@ -476,7 +489,7 @@ class FeedClient:
                             filtered_dataset[serializer_name] = {
                                 "value": dataset[value_field], "unit": dataset["Unit"],
                             }
-                            
+
                     if shouldSkip is False:
                         current_weather_data = {
                             'weather_station_name': weather_station_name,
@@ -490,7 +503,8 @@ class FeedClient:
                         serializer = serializer_cls(data=current_weather_data,
                                                     many=isinstance(current_weather_data, list))
                         json_objects.append(current_weather_data)
-
+                        if hourly_forecast_group:
+                            json_objects.append(hourly_forecast_group)
                 except requests.RequestException as e:
                     logger.error(f"Error making API call for Area Code {station_number}: {e}")
 

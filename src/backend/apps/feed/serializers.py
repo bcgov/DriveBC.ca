@@ -250,7 +250,6 @@ class RegionalWeatherSerializer(serializers.Serializer):
             'name',
             'region',
             'conditions',
-            'forecast_group',
             'hourly_forecast_group',
             'observed',
             'forecast_issued',
