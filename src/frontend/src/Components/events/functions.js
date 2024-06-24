@@ -8,7 +8,7 @@ export const getTypeDisplay = (data) => {
       return 'Closure';
 
     case 'futureEvents':
-      return severityText + ' future event'
+      return 'Future event'
 
     default:
       return severityText + (data.event_type == 'INCIDENT' ? ' incident' : ' current event');
