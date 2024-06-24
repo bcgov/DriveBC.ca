@@ -146,6 +146,22 @@
 		}
 	}
 
+	#signin-btn, #signout-btn {
+		margin-left: auto;
+    margin-right: 0;
+    margin-bottom: 0;
+		order: 2;
+
+		@media (min-width: 992px) {
+			margin-right: 16px;
+		}
+
+		svg {
+			margin-right: 8px;
+			color: $Type-Primary;
+		}
+	}
+
 	#feedback-btn {
 		margin-left: auto;
 		margin-right: 0;

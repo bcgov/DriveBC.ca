@@ -47,17 +47,17 @@ $danger: $Error;
 }
 
 .btn.btn-outline-primary {
-  color: $Grey110;
+  color: $Type-Primary;
   background: none;
-  border-color: $Card-Border;
+  border: 1px solid $Card-Border;
 
   &:hover {
-    color: $Grey110;
+    color: $Type-Primary;
     background-color: $Grey30;
   }
 
   &:active, &:focus, &.active, &.focus, &.show {
-    color: $Grey110;
+    color: $Type-Primary;
     outline: 1px solid $Focus;
     box-shadow: 0 0 0 0.25rem rgba(1, 51, 102, 0.25);
   }
