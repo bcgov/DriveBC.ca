@@ -23,6 +23,8 @@ RUN sed -i 's/\r$//g' /start_tasks.sh && chmod +x /start_tasks.sh
 
 # Add the rest of the code
 COPY ./src/backend /app/backend
+COPY ./compose/backend/.vimrc /
+COPY ./compose/backend/.vimrc /root
 
 # Create static and media folders with rw permissions
 RUN mkdir -p /app/static && chgrp -R 0 /app/static && chmod -R g=u /app/static && chmod 775 /app/static
