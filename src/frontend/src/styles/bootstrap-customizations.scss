@@ -35,8 +35,8 @@ $danger: $Error;
 
 .btn.btn-primary {
   border-color: $BC-Blue;
-  
-  &:hover {
+
+  &:hover, &:focus {
     background-color: $BC-Blue-Alt;
   }
 
@@ -119,7 +119,7 @@ $danger: $Error;
     width: 256px;
     max-width: 256px;
     background-color: $Grey80;
-  
+
     p {
       font-size: 0.875rem;
       color: $White;
