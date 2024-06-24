@@ -4,7 +4,6 @@ from zoneinfo import ZoneInfo
 from apps.weather.models import CurrentWeather, RegionalWeather
 from rest_framework import serializers
 
-
 tz = ZoneInfo("America/Vancouver")
 
 
@@ -49,6 +48,7 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
                   'road_condition',
                   'location',
                   'location_description',
+                  'hourly_forecast_group',
                   'issuedUtc',
                   'elevation']
 
@@ -93,4 +93,3 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
             data = obj.datasets["road_surface"]
             return data["value"]
         return None
-
