@@ -2,7 +2,9 @@
 import React, { useState, useContext } from "react";
 
 // Third party packages
-import { faComment } from '@fortawesome/pro-solid-svg-icons';
+import { faComment,
+         faUser
+ } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 import Container from 'react-bootstrap/Container';
@@ -65,9 +67,23 @@ export default function Header() {
 
           <div className="nav-divider"></div>
           
-          {!xLargeScreen &&
-            <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
+          { authContext.loginStateKnown
+            ? ( authContext.username
+                ? <React.Fragment>
+                    <LinkContainer to="/account">
+                      { getNavLink('My Account') }
+                    </LinkContainer>
+                    <a className="nav-link btn btn-outline-primary" id="signout-btn" alt="Sign out button"
+                      onClick={() => toggleAuthModal('Sign Out')}
+                    ><FontAwesomeIcon icon={faUser} />Sign out</a>
+                  </React.Fragment>
+                : <a className="nav-link btn btn-outline-primary" id="signin-btn" alt="Sign in button"
+                    onClick={() => toggleAuthModal('Sign In')}
+                  ><FontAwesomeIcon icon={faUser} />Sign in</a>
+              )
+            : ''
           }
+
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <LinkContainer to="/">
@@ -85,22 +101,6 @@ export default function Header() {
               <LinkContainer to="/bulletins">
                 {getNavLink('Bulletins')}
               </LinkContainer>
-              { authContext.loginStateKnown
-                ? ( authContext.username
-                    ? <React.Fragment>
-                        <LinkContainer to="/account">
-                          { getNavLink('My Account') }
-                        </LinkContainer>
-                        <a className='nav-link'
-                          onClick={() => toggleAuthModal('Sign Out')}
-                        >Sign out</a>
-                      </React.Fragment>
-                    : <a className='nav-link'
-                        onClick={() => toggleAuthModal('Sign In')}
-                      >Sign in</a>
-                  )
-                : ''
-              }
             </Nav>
           </Navbar.Collapse>
           
