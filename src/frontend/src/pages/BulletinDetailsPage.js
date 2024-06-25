@@ -67,18 +67,16 @@ export default function BulletinDetailsPage() {
             <Container>
               <h1 className="page-title">{bulletin.title}</h1>
 
+              {bulletin.teaser &&
+                <p className="page-description body--large">{bulletin.teaser}</p>
+              }
+
               <div className="timestamp-container">
                 <span>{bulletin.first_published_at != bulletin.last_published_at ? "Last updated" : "Published" }</span>
                 <FriendlyTime date={bulletin.latest_revision_created_at} />
               </div>
             </Container>
           </div>
-
-          {bulletin.teaser &&
-            <Container>
-              <p>{bulletin.teaser}</p>
-            </Container>
-          }
 
           <Container className="bulletin-body-container cms-body">
             <p>{parse(bulletin.body)}</p>
