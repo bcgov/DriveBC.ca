@@ -74,7 +74,7 @@ export default function EventsTable(props) {
     },
   ];
 
-
+  const columnCount = columns.length
 
   // react-table initiation
   const table = useReactTable({
@@ -133,7 +133,7 @@ export default function EventsTable(props) {
     for (let i = 0; i < 20; i++) {
       rows.push(
         <tr key={`loader-row-${i}-header`} className={'headerRow'}>
-          <td colSpan={10}>
+          <td colSpan={columnCount}>
             <p>
               <Skeleton width={200} />
               <Skeleton width={100} />
@@ -195,7 +195,7 @@ export default function EventsTable(props) {
             routeHandler(row.original);
           }
         }} onClick={() => routeHandler(row.original)} key={`${row.id}-header-row`}>
-          <td colSpan={10}>
+          <td colSpan={columnCount}>
             <p className={'roadName'}>{row.original.route_at}</p>
             <p className={'directionDisplay'}>{row.original.direction_display}</p>
           </td>
