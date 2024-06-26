@@ -164,16 +164,29 @@ export default function CamerasListPage() {
       const targetLower = targetText.toLowerCase();
     
       // Sort cameras by the presence of the search text in their name
-      const sortedCameras = pc.camGroup.sort((a, b) => {
+      const sortedCamerasByName = pc.camGroup.sort((a, b) => {
         const aNameMatches = a.name.toLowerCase().includes(targetLower);
-        const bNameMatches = b.name.toLowerCase().includes(targetLower);
-    
+        const bNameMatches = b.name.toLowerCase().includes(targetLower);    
         // Give higher priority to cameras where the name matches the search text
         return bNameMatches - aNameMatches;
       });
     
-      for (let i = 0; i < sortedCameras.length; i++) {
-        if (sortedCameras[i].name.toLowerCase().includes(targetLower)) {
+      for (let i = 0; i < sortedCamerasByName.length; i++) {
+        if (sortedCamerasByName[i].name.toLowerCase().includes(targetLower)) {
+          return true;
+        }
+      }
+
+      // Sort cameras by the presence of the search text in their description
+      const sortedCamerasByDescription = pc.camGroup.sort((a, b) => {
+        const aCaptionMatches = a.caption.toLowerCase().includes(targetLower);
+        const bCaptionMatches = b.caption.toLowerCase().includes(targetLower);    
+        // Give higher priority to cameras where the description matches the search text
+        return bCaptionMatches - aCaptionMatches;
+      });
+          
+      for (let i = 0; i < sortedCamerasByDescription.length; i++) {
+      if (sortedCamerasByDescription[i].caption.toLowerCase().includes(targetLower)) {
           return true;
         }
       }
