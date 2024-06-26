@@ -142,6 +142,7 @@ export default function AdvisoryDetailsPage() {
   const mapRef = useRef();
 
   // UseState hooks
+  const [activeTab, setActiveTab] = useState('details');
   const [advisory, setAdvisory] = useState(null);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
@@ -187,8 +188,15 @@ export default function AdvisoryDetailsPage() {
     loadAdvisory();
   }, []);
 
+  useEffect(() => {
+    if (activeTab === 'map') {
+      setTimeout(() => {
+        fitMap(advisory);
+      }, 100);
+    }
+  }, [activeTab]);
+
   // Tabs view on mobile
-  const [activeTab, setActiveTab] = useState('details');
   const advisoryDetails = <FontAwesomeIcon icon={faFileLines} />;
   const advisoryMap = <FontAwesomeIcon icon={faMap} />;
 

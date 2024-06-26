@@ -65,6 +65,18 @@ class TestEventSerializer(BaseTest):
             2023, 6, 2, 16, 42, 16,
             tzinfo=zoneinfo.ZoneInfo(key="America/Toronto")
         )
+        # Manually set to future schedule to test future display category
+        self.event_two.schedule = {
+            'recurring_schedules': [
+                {
+                    'daily_end_time': '17:00',
+                    'daily_start_time': '07:00',
+                    'days': [2, 3, 4, 5],
+                    'end_date': '2054-07-06',
+                    'start_date': '2054-07-02'
+                }
+            ]
+        }
         self.event_two.save()
 
         self.serializer = EventSerializer(self.event)
@@ -99,36 +111,42 @@ class TestEventSerializer(BaseTest):
         self.serializer_five = EventSerializer(self.event_five)
 
     def test_serializer_data(self):
+        # First serializer
         assert len(self.serializer.data) == 27
         # route_from beings with 'at '
         assert self.serializer.data['route_display'] == \
                "Test Road to Test Avenue"
         assert self.serializer.data['direction_display'] == \
                "Northbound"
+        assert self.serializer.data['schedule']['intervals'][0] == \
+               "2023-05-23T14:00/2023-07-22T14:00"
+        assert self.serializer.data['route_from'] == \
+               "at Test Road"
+        assert self.serializer.data['route_to'] == "Test Avenue"
 
+        # Second serializer
         assert len(self.serializer_two.data) == 27
         # route_from doesn't being with 'at '
         assert self.serializer_two.data['route_display'] == \
                "Test Road Two to Test Avenue Two"
         assert self.serializer_two.data['direction_display'] == \
                "Both directions"
-
         # Eastern time auto adjusted to Pacific time
         assert self.serializer_two.data['last_updated'] == \
                '2023-06-02T13:42:16-07:00'
+        # Manually set as future events via recurring schedule
+        assert self.serializer_five.data['display_category'] == \
+            'futureEvents'
 
-        assert self.serializer.data['schedule']['intervals'][0] == \
-               "2023-05-23T14:00/2023-07-22T14:00"
-
-        assert self.serializer.data['route_from'] == \
-               "at Test Road"
-        assert self.serializer.data['route_to'] == "Test Avenue"
-        assert self.event.route_to is not None
+        # Third serializer
         assert self.serializer_three.data['closed'] is True
+
+        # Fourth serializer
         assert self.serializer_four.data['display_category'] == \
             'roadConditions'
+
+        # Fifth serializer
         assert self.serializer_five.data['display_category'] == \
             'futureEvents'
         assert self.serializer_five.data['route_display'] == \
             'Test Road to Test Ave'
-        assert self.event_five.route_to is not None

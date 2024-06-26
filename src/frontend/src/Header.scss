@@ -101,6 +101,7 @@
 				color: $Type-Primary;
 				padding: 10px 12px;
 				border: transparent solid 2px;
+				cursor: pointer;
 
 				@media (min-width: 992px) {
 					padding: 15px;
@@ -145,6 +146,22 @@
 		}
 	}
 
+	#signin-btn, #signout-btn {
+		margin-left: auto;
+    margin-right: 0;
+    margin-bottom: 0;
+		order: 2;
+
+		@media (min-width: 992px) {
+			margin-right: 16px;
+		}
+
+		svg {
+			margin-right: 8px;
+			color: $Type-Primary;
+		}
+	}
+
 	#feedback-btn {
 		margin-left: auto;
 		margin-right: 0;
@@ -159,7 +176,7 @@
 			margin-right: 8px;
 			color: #D8EAFD;
 		}
-		
+
 		&::after {
 			content: none;
 		}

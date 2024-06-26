@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import * as FA from '@fortawesome/pro-regular-svg-icons';
+import * as FA from '@fortawesome/pro-thin-svg-icons';
 
 // Environment Canada icon code to weather condition icon mapping
 const ICONS = {
@@ -47,7 +47,7 @@ const ICONS = {
   "48": FA.faSun,  // custom
 }
 
-export default function WeatherIcon({code, className}) {
+export default function WeatherIconThin({code, className}) {
   if (['45', '47', '48'].includes(code)) {
     // FIXME: replace with custom SVGs from design
     // return <FontAwesomeIcon className={className} icon={FA.faSun} />;

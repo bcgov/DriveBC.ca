@@ -1,0 +1,87 @@
+@import "styles/variables";
+
+.auth-modal {
+  z-index: 1000;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.75);
+
+  .content{
+    background: white;
+    display: flex;
+    flex-direction: column;
+    padding: 64px 24px;
+    min-height: 200px;
+    min-width: 300px;
+    width: 100%;
+    margin: auto 10px;
+    position: relative;
+
+    @media (min-width: 576px) {
+      width: 500px;
+      padding: 64px 56px;
+    }
+
+    .header {
+      .modal-closer {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .title {
+        font-weight: bold;
+        font-size: 2rem;
+        color: $BC-Blue;
+        text-align: center;
+        flex: 1;
+      }
+
+      .modal-closer {
+        flex: 0;
+      }
+    }
+
+    .body {
+      flex: 1;
+      padding: 24px 0;
+
+      .btn {
+        width: 100%;
+        font-size: 1rem;
+      }
+
+      .BCeID-definition {
+        margin-top: 8px;
+  
+        span {
+          font-size: 0.875rem;
+        }
+      }
+  
+      .tooltip-info {
+        margin-left: 8px;
+        color: $White;
+        background-color: $Type-Secondary;
+        padding: 0 6px;
+        border-radius: 18px;
+        font-size: 0.75rem;
+  
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

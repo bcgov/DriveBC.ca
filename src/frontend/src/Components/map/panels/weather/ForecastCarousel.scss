@@ -1,0 +1,71 @@
+@import "../../../../styles/variables";
+
+.carousel-container {
+  padding: 1rem;
+  position: relative;
+
+  .GoodCarousel {
+    overflow: visible;
+
+    .GoodCarousel-inner {
+      .GoodCarousel-item {
+        border-radius: 8px;
+        padding: 0.75rem;
+        border: 1px solid var(--colors-bc-theme-greys-20, #F3F2F1);
+        box-shadow: 0px 6.4px 14.4px 0px rgba(0, 0, 0, 0.13), 0px 1.2px 3.6px 0px rgba(0, 0, 0, 0.10);
+
+        .carousel-header-container {
+          display: flex;
+          justify-content: space-between;
+          margin: 0.25rem 0 0.5rem 0;
+
+          .forecast-name {
+            font-size: 1rem;
+            font-weight: 700;
+          }
+
+          .forecast-temp-text {
+            font-size: 0.875rem;
+          }
+
+          .weather-icon {
+            margin-right: 1rem;
+          }
+        }
+
+        .forecast-text-summary {
+          font-size: 0.875rem;
+        }
+
+        .inactive {
+          opacity: 0.3;
+        }
+      }
+    }
+  }
+
+  .carousel-button {
+    position: absolute;
+    top: calc(50% - (35px / 2));
+
+    border: 1px solid #8A8886;
+    border-radius: 2rem;
+
+    background: #FFFFFF;
+    color: #292929;
+    box-shadow: 0px 3.2px 7.2px 0px #00000021, 0px 0.6px 1.8px 0px #0000001A;
+
+    &:focus, &:active, &:hover {
+      background-color: #eee;
+      border: 1px solid #8A8886;
+    }
+
+    &.next {
+      right: 2rem;
+    }
+
+    &.prev {
+      left: 2rem;
+    }
+  }
+}

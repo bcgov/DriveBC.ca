@@ -526,6 +526,10 @@
       padding: 32px;
     }
 
+    @media (min-width: 1200px) {
+      padding: 44px 0;
+    }
+
     & > div:not(.camera-imagery),
     .camera-imagery .nav-tabs,
     .replay-div {
@@ -595,6 +599,7 @@
       left: initial;
       max-height: initial;
       height: auto;
+      z-index: 1;
 
       @media (min-width: 992px) {
         top: 0;

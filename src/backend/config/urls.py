@@ -14,6 +14,10 @@ urlpatterns = [
     # packages
     path('drivebc-cms/', include("apps.cms.urls")),
 
+    # auth system
+    path('accounts/', include('allauth.urls')),
+    # path('accounts/', include("apps.authentication.urls")),
+
     # misc
     path("healthcheck/", shared_views.health_check, name="health_check"),
 

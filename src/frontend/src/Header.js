@@ -1,13 +1,17 @@
 // React
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 // Third party packages
-import { faComment } from '@fortawesome/pro-solid-svg-icons';
+import { faComment,
+         faUser
+ } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+
+import { AuthContext } from "./App";
 
 // Static files
 import logo from './images/dbc-logo-beta.svg';
@@ -22,12 +26,20 @@ import {useMediaQuery} from '@uidotdev/usehooks';
 export default function Header() {
   // State hooks
   const [expanded, setExpanded] = useState(false);
+  const { authContext, setAuthContext } = useContext(AuthContext);
 
   // Component functions
   const onClickActions = () => {
     setTimeout(() => setExpanded(false));
     sessionStorage.setItem('scrollPosition', 0);
   }
+
+  const toggleAuthModal = (action) => {
+    setAuthContext((prior) => {
+      if (!prior.showingModal) { return { ...prior, showingModal: true, action }; }
+      return prior;
+    })
+  };
 
   const getNavLink = (title) => {
     return <Nav.Link active={false} onClick={onClickActions}>{title}</Nav.Link>
@@ -54,6 +66,23 @@ export default function Header() {
           </Navbar.Brand>
 
           <div className="nav-divider"></div>
+          
+          { authContext.loginStateKnown
+            ? ( authContext.username
+                ? <React.Fragment>
+                    <LinkContainer to="/account">
+                      { getNavLink('My Account') }
+                    </LinkContainer>
+                    <a className="nav-link btn btn-outline-primary" id="signout-btn" alt="Sign out button"
+                      onClick={() => toggleAuthModal('Sign Out')}
+                    ><FontAwesomeIcon icon={faUser} />Sign out</a>
+                  </React.Fragment>
+                : <a className="nav-link btn btn-outline-primary" id="signin-btn" alt="Sign in button"
+                    onClick={() => toggleAuthModal('Sign In')}
+                  ><FontAwesomeIcon icon={faUser} />Sign in</a>
+              )
+            : ''
+          }
 
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
@@ -74,9 +103,11 @@ export default function Header() {
               </LinkContainer>
             </Nav>
           </Navbar.Collapse>
-
-          <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
-        </Container>
+          
+          {xLargeScreen &&
+            <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
+          }
+          </Container>
       </Navbar>
     </header>
   );

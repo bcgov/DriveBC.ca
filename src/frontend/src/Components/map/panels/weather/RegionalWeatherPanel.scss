@@ -1,4 +1,4 @@
-@import "../../../styles/variables";
+@import "../../../../styles/variables";
 
 .popup {
   // Regional Weather popup
@@ -6,6 +6,12 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: left;
+    }
 
     .popup__title {
       background-color: #ECEAE8;
@@ -67,34 +73,49 @@
       p {
         margin-bottom: 0;
       }
+
       &__title {
         .name {
           color: $Type-Primary;
-          font-size: 2.25rem;
-          text-align: center;
+          font-size: 2rem;
           margin-bottom: 0;
         }
 
         .friendly-time {
           margin: 0 auto 1rem;
           &-text {
-            text-align: center;
             color: $Type-Secondary;
             font-size: 0.875rem;
           }
         }
       }
+
       &__description {
         text-align: center;
+        padding-top: 0;
+
+        .temp-and-icon {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1rem;
+
+          p, .weather-icon {
+            flex: 1;
+          }
+        }
+
         .weather-icon {
           font-size: 4rem;
         }
+
         .weather {
           font-size: 0.875rem;
         }
+
         .temperature {
           font-size: 4rem;
-          font-weight: 700;
         }
       }
     }
@@ -109,6 +130,10 @@
       p {
         text-align: center;
         color: $Type-Secondary;
+      }
+
+      .label {
+        line-height: 2rem;
       }
     }
   }

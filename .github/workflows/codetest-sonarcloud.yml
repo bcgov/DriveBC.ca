@@ -82,6 +82,9 @@ jobs:
         DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL: testvar
         DRIVEBC_REST_STOP_API_BASE_URL: testvar
         SECRET_KEY: testvar
+        BCEID_URL: testvar
+        BCEID_SECRET: testvar
+        BCEID_CLIENT_ID: testvar
       run: |
         coverage run ./src/backend/manage.py test --noinput && coverage report && coverage xml
 
