@@ -62,7 +62,7 @@ export default function ReportRoadPage() {
       </Container>
       
       <Container className="report-map-wrap">
-        <ReportMap wmsLayer='hwy:DSA_CONTRACT_AREA_INFO_V' />
+        <ReportMap wmsLayer='hwy:DSA_CONTRACT_AREA_INFO_V' styles='DSA_CONTRACT_AREA_INFO_V_V2' />
       </Container>
 
       {xLargeScreen && <Footer />}

@@ -63,7 +63,7 @@ export default function ReportElectricalPage() {
       </Container>
       
       <Container className="report-map-wrap">
-        <ReportMap wmsLayer='hwy:DSA_ELECTRICAL_CA_INFO_V' />
+        <ReportMap wmsLayer='hwy:DSA_ELECTRICAL_CA_INFO_V' styles='DSA_ELECTRICAL_CA_INFO_V_V2'/>
       </Container>
       
       {xLargeScreen && <Footer />}
