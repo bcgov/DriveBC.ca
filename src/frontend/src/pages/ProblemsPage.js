@@ -30,7 +30,6 @@ const ProblemsPage = () => {
       <Container>
         <div className="report-problem">
           <div className="section section--online">
-            <h2>Online</h2>
             <div className="section__content">
               <div className="content-card content-card--website disabled">
                 <div className="circle-icon">
@@ -71,7 +70,6 @@ const ProblemsPage = () => {
           </div>
 
           <div className="section section--phone">
-            <h2>Over the phone</h2>
             <div className="section__content">
               <a href="tel:1-888-769-3766" className="content-card content-card--power">
                 <div className="circle-icon">
