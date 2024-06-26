@@ -56,7 +56,7 @@ function loadReportMap(setActiveFeature, wmsLayer, styles) {
     opacity: 0.5,
     visible: true,
     source: new ImageWMS({
-      url: "https://maps.th.gov.bc.ca/geoV05/ows",
+      url: window.REPORT_WMS_LAYER,
       params: {
         LAYERS: wmsLayer,
         STYLES: styles
@@ -235,12 +235,11 @@ export function ReportMap(props) {
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
 
   const renderPanel = () => {
-    console.log(activeFeature.properties);
     return (
       <div className="popup popup--problem" tabIndex={0}>
         <div className="popup__title">
           <div className="popup__title__icon">
-            {activeFeature.properties.ELECTRICAL_CA_NAME ? 
+            {activeFeature.properties.ELECTRICAL_CA_NAME ?
               <FontAwesomeIcon icon={faPlug} /> : <FontAwesomeIcon icon={faBridge} />
             }
           </div>
@@ -248,17 +247,17 @@ export function ReportMap(props) {
         </div>
         <div className="popup__content">
           {activeFeature.properties.CONTRACT_AREA_PUBLIC_NAME &&
-            <p className="service-area">{activeFeature.properties.CONTRACT_AREA_PUBLIC_NAME}</p>   
+            <p className="service-area">{activeFeature.properties.CONTRACT_AREA_PUBLIC_NAME}</p>
           }
           {activeFeature.properties.ELECTRICAL_CA_NAME &&
-            <p className="service-area">{activeFeature.properties.ELECTRICAL_CA_NAME}</p>   
+            <p className="service-area">{activeFeature.properties.ELECTRICAL_CA_NAME}</p>
           }
 
           {activeFeature.properties.CONTRACT_AREA_NUMBER &&
             <p className="service-area-number">Service Area {activeFeature.properties.CONTRACT_AREA_NUMBER}</p>
           }
           {activeFeature.properties.ELECTRICAL_CA_NUMBER &&
-            <p className="service-area-number">Service Area {activeFeature.properties.ELECTRICAL_CA_NUMBER}</p>   
+            <p className="service-area-number">Service Area {activeFeature.properties.ELECTRICAL_CA_NUMBER}</p>
           }
 
           <p>Please be prepared to describe the highway problem and location to our maintenance contractor.</p>
