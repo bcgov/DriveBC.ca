@@ -152,7 +152,7 @@ export default function CameraDetailsPage() {
       if(newCamGroup[0].id !== camera.camGroup[index].id){
         loadCamDetails(camera);
         isInitialMount.current = true;
-      }    
+      }
     }
   }
 
@@ -316,7 +316,7 @@ export default function CameraDetailsPage() {
       </div>
       <div>
         {camera && (
-          <container className="container--full-width">
+          <Container className="container--full-width">
             <div className="camera-details">
               <div className="camera-details__description">
                 <h2>{camera.name}</h2>
@@ -550,7 +550,7 @@ export default function CameraDetailsPage() {
                 </Tab>
               </Tabs>
             </div>
-          </container>
+          </Container>
         )}
       </div>
       {activeTab === 'webcam' && <Footer replay={replay} />}
