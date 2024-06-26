@@ -43,7 +43,7 @@ import View from 'ol/View.js';
 import './ReportMap.scss';
 
 /* Map loading function */
-function loadReportMap(setActiveFeature, wmsLayer) {
+function loadReportMap(setActiveFeature, wmsLayer, styles) {
   const tileLayer = new VectorTileLayer({
     declutter: true,
     source: new VectorTileSource({
@@ -58,7 +58,8 @@ function loadReportMap(setActiveFeature, wmsLayer) {
     source: new ImageWMS({
       url: "https://maps.th.gov.bc.ca/geoV05/ows",
       params: {
-        LAYERS: wmsLayer
+        LAYERS: wmsLayer,
+        STYLES: styles
       },
       transition: 0
     })
@@ -130,7 +131,7 @@ const clickListener = (map, pixelCoords, setActiveFeature, wmsLayer) => {
 }
 
 export function ReportMap(props) {
-  const { wmsLayer } = props;
+  const { wmsLayer, styles } = props;
 
   /* Refs */
   const isInitialMount = useRef(true);
@@ -146,11 +147,9 @@ export function ReportMap(props) {
   const loadMap = () => {
     // Run once on startup
     if (isInitialMount.current){
-      mapRef.current = loadReportMap(setActiveFeature, wmsLayer);
+      mapRef.current = loadReportMap(setActiveFeature, wmsLayer, styles);
       mapView.current = mapRef.current.getView();
-      if(xLargeScreen) {
         toggleMyLocation(mapRef, mapView);
-      }
     }
 
     isInitialMount.current = false;
@@ -200,9 +199,10 @@ export function ReportMap(props) {
 
             // Wait for map to pan before getting pixel coords
             setTimeout(() => {
-              const pixelCoords = mapRef.current.getPixelFromCoordinate(mapCoords);
-
-              clickListener(mapRef.current, pixelCoords, setActiveFeature, wmsLayer);
+              if(xLargeScreen) {
+                const pixelCoords = mapRef.current.getPixelFromCoordinate(mapCoords);
+                clickListener(mapRef.current, pixelCoords, setActiveFeature, wmsLayer);
+              }
             }, 1000);
 
           } else {
