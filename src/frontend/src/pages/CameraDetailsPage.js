@@ -67,6 +67,7 @@ export default function CameraDetailsPage() {
   const [hasImageEnded, setHasImageEnded] = useState(false);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
+  const [cameraGroup, setCameraGroup] = useState(null);
 
   // Error handling
   const displayError = error => {
@@ -78,30 +79,34 @@ export default function CameraDetailsPage() {
   };
 
   // Data functions
-  const loadCamDetails = camData => {
+  const loadCamDetails = (camData, isButtonClicked = false) => {
     // Camera data
-    setCamera(camData);
+    if(isButtonClicked){
+      isInitialMount.current = false;
+    }
 
-    trackEvent('click', 'camera-details', 'camera', camData.name);
+    if(!isInitialMount.current){
+      setCamera(camData);
+      trackEvent('click', 'camera-details', 'camera', camData.name);
+      // Next update time
+      const currentTime = new Date();
+      const nextUpdateTime = currentTime.setSeconds(
+        currentTime.getSeconds() + camData.update_period_mean,
+      );
+      const nextUpdateTimeFormatted = new Intl.DateTimeFormat('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        timeZoneName: 'short',
+      }).format(nextUpdateTime);
+      setNextUpdate(nextUpdateTimeFormatted);
 
-    // Next update time
-    const currentTime = new Date();
-    const nextUpdateTime = currentTime.setSeconds(
-      currentTime.getSeconds() + camData.update_period_mean,
-    );
-    const nextUpdateTimeFormatted = new Intl.DateTimeFormat('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      timeZoneName: 'short',
-    }).format(nextUpdateTime);
-    setNextUpdate(nextUpdateTimeFormatted);
+      // Last update time
+      setLastUpdate(camData.last_update_modified);
 
-    // Last update time
-    setLastUpdate(camData.last_update_modified);
-
-    // Replace window title and URL
-    document.title = `DriveBC - Cameras - ${camData.name}`;
-    window.history.replaceState(history.state, null, `/cameras/${camData.id}`);
+      // Replace window title and URL
+      document.title = `DriveBC - Cameras - ${camData.name}`;
+      window.history.replaceState(history.state, null, `/cameras/${camData.id}`);
+    }
   };
 
   async function initCamera(id) {
@@ -119,6 +124,7 @@ export default function CameraDetailsPage() {
     camData.camGroup.forEach(cam => (cam.camGroup = group));
 
     loadCamDetails(camData);
+    setCameraGroup(camData.camGroup);
   }
 
   const loadReplay = async cam => {
@@ -137,6 +143,20 @@ export default function CameraDetailsPage() {
       loadReplay(camera);
     }
   }, [camera]);
+
+  useEffect(() => {
+    if(camera !== undefined && camera !== null){
+    const index = camera.camGroup.findIndex(cam => cam.id === camera.id);
+    if (index > -1 && index !== 0) {
+      const newCamGroup = camera.camGroup;
+      if(newCamGroup[0].id !== camera.camGroup[index].id){
+        loadCamDetails(camera);
+        isInitialMount.current = true;
+      }    
+    }
+  }
+
+}, [cameraGroup]);
 
   const toggleReplay = () => {
     setReplay(!replay);
@@ -430,7 +450,7 @@ export default function CameraDetailsPage() {
                                 : '')
                             }
                             key={cam.id}
-                            onClick={() => loadCamDetails(cam)}>
+                            onClick={() => loadCamDetails(cam, true)}>
                             {cam.orientation}
                           </Button>
                         ))}
