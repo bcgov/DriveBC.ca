@@ -414,7 +414,7 @@ export default function DriveBCMap(props) {
         </button>
 
         <div className="panel-content">
-          {openPanel && renderPanel(clickedFeature && !clickedFeature.get ? (smallScreen ? advisories : advisoriesInView) : clickedFeature , isCamDetail)}
+          {openPanel && renderPanel(clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature , isCamDetail)}
         </div>
       </div>
 
@@ -425,10 +425,7 @@ export default function DriveBCMap(props) {
               <ExitSurvey mobile={true} />
             )}
             <RouteSearch routeEdit={true} />
-            {smallScreen ?
-              <AdvisoriesOnMap advisories={advisories} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} />
-              : <AdvisoriesOnMap advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} />
-            }
+              <AdvisoriesOnMap advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} />
           </div>
         )}
 

@@ -1,5 +1,5 @@
 // React
-import React from 'react';
+import React, { useState } from 'react';
 
 // Third party packages
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,6 +14,9 @@ import './AdvisoriesPanel.scss';
 export default function AdvisoriesPanel(props) {
   const { advisories } = props;
 
+  // Intentionally using useState to avoid modifying the original array
+  const [advisoriesDisplay] = useState(advisories);
+
   return (
     <div className="popup popup--advisories" tabIndex={0}>
       <div className="popup__title">
@@ -23,7 +26,7 @@ export default function AdvisoriesPanel(props) {
         <p className="name">Advisories</p>
       </div>
       <div className="popup__content">
-        <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={false} showArrow={true} />
+        <AdvisoriesList advisories={advisoriesDisplay} showDescription={false} showTimestamp={false} showArrow={true} />
       </div>
     </div>
   );
