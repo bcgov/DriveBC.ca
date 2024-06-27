@@ -5,16 +5,13 @@ import React from 'react';
 import trackEvent from '../shared/TrackEvent';
 import { resetClickedStates } from '../map/handlers/click';
 
-// Third party packages
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {
-  faFlag
-} from '@fortawesome/pro-solid-svg-icons';
+// External imports
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFlag } from '@fortawesome/pro-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 
 // Styling
 import './AdvisoriesOnMap.scss';
-
 
 
 export default function AdvisoriesOnMap(props) {
