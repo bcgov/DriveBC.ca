@@ -1,5 +1,9 @@
 @import "../../../../styles/variables";
 
+.panel-content {
+  overflow-x: hidden;
+}
+
 .carousel-container {
   padding: 1rem;
   position: relative;

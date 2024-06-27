@@ -1,5 +1,5 @@
 // React
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,7 +20,32 @@ import './ForecastCarousel.scss';
 export default function ForecastCarousel(props) {
   const { forecast_group } = props;
 
+  const carouselRef = useRef(null);
+
   const [currentPane, setCurrentPane] = useState(0);
+  const [touchstartX, setTouchstartX] = useState(0);
+
+  useEffect(() => {
+    // Implements swiping for mobile/tablet devices
+    if (!carouselRef.current) {
+      return;
+    }
+    const carouselRefLocal = carouselRef;
+    const onTouchStart = (e) => {
+      setTouchstartX(e.changedTouches[0].screenX);
+    };
+    const onTouchEnd = (e) => {
+      const touchendX = e.changedTouches[0].screenX;
+      if (touchendX < touchstartX && currentPane !== carouselList.length - 1) {
+        setCurrentPane(currentPane + 1);
+      } else if (touchendX > touchstartX && currentPane !== 0) {
+        setCurrentPane(currentPane - 1);
+      }
+    };
+    carouselRefLocal.current.addEventListener("touchstart", onTouchStart);
+    carouselRefLocal.current.addEventListener("touchend", onTouchEnd);
+
+  }, [carouselRef, touchstartX]);
 
   /* Component helpers */
   const getTemperatureText = (text) => {
@@ -53,7 +78,7 @@ export default function ForecastCarousel(props) {
 
   /* Main component */
   return (
-    <div className="carousel-container">
+    <div className="carousel-container" ref={carouselRef}>
       <GoodCarousel
         className="current-forecast-carousel"
         currentPane={currentPane}
