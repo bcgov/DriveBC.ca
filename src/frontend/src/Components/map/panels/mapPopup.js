@@ -1,5 +1,5 @@
 // React
-import React from 'react';
+import React, { useState } from 'react';
 
 // Third party packages
 import Linkify from 'linkify-react';
@@ -396,6 +396,8 @@ export function getRegionalPopup(weatherFeature) {
 }
 
 export function showAdvisories(advisories) {
+  const [advisoriesDisplay] = useState(advisories);
+
   return (
     <div className="popup popup--advisories" tabIndex={0}>
       <div className="popup__title">
@@ -405,7 +407,7 @@ export function showAdvisories(advisories) {
         <p className="name">Advisories</p>
       </div>
       <div className="popup__content">
-        <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={false} showArrow={true} />
+        <AdvisoriesList advisories={advisoriesDisplay} showDescription={false} showTimestamp={false} showArrow={true} />
       </div>
     </div>
   );
