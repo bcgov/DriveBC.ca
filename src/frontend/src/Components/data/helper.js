@@ -33,7 +33,7 @@ const request = (url, params = {}, headers = {}, method = "GET") => {
 
   const result = fetch(`${url}`, options).then((response) => {
     if (!response.ok) {
-      throw new ServerError();
+      throw response.status == 500 ? new ServerError() : new NetworkError;
     }
 
     return response.json();
