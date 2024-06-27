@@ -24,6 +24,7 @@ import {
 } from '../map/helpers';
 import { get } from '../data/helper';
 import { redLocationMarkup, setLocationPin, setZoomPan } from '../map/helpers';
+import overrides from '../map/overrides.js';
 
 // OpenLayers
 import { applyStyle } from 'ol-mapbox-style';
@@ -69,17 +70,25 @@ function loadReportMap(setActiveFeature, wmsLayer, styles) {
     source: new VectorSource()
   });
 
-  // Apply the basemap style from the arcgis resource
-  fetch(window.MAP_STYLE, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-  }).then(function(response) {
-    response.json().then(function(glStyle) {
-      // DBC22-2153
-      glStyle.metadata['ol:webfonts'] = '/fonts/{font-family}/{fontweight}{-fontstyle}.css';
-      applyStyle(tileLayer, glStyle, 'esri');
+    // Apply the basemap style from the arcgis resource
+    fetch(window.MAP_STYLE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    }).then(function (response) {
+      response.json().then(function (glStyle) {
+        window.glStyle = glStyle;
+
+        // DBC22-2153
+        glStyle.metadata['ol:webfonts'] = '/fonts/{font-family}/{fontweight}{-fontstyle}.css';
+
+        // Overrides
+        for (const layer of glStyle.layers) {
+          overrides.merge(layer, overrides[layer.id] || {});
+        }
+
+        applyStyle(tileLayer, glStyle, 'esri');
+      });
     });
-  });
 
   const mapViewObj = new View({
     // Centered on BC
