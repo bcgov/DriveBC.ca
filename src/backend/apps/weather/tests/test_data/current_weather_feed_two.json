@@ -1,0 +1,42 @@
+[{
+    "id": 283,
+    "weather_station_name": "Trout Lake",
+    "air_temperature": "4.4 °C",
+    "average_wind": "7.268 km/h",
+    "precipitation": "0.27 mm",
+    "snow": "0 cm",
+    "road_temperature": "5.2 °C",
+    "maximum_wind": "21.59 km/h",
+    "road_condition": "WET",
+    "location": {
+        "type": "Point",
+        "coordinates": [
+            49.50725,
+            -123.87978
+        ]
+    },
+    "location_description": "South side of Hwy101, 10 km north of Sechelt",
+    "issuedUtc": "2024-03-08T12:13:07-08:00",
+    "elevation": 164
+},
+{
+    "id": 284,
+    "weather_station_name": "Port Mann Bridge South Tower",
+    "air_temperature": "3.31 °C",
+    "average_wind": "19.4 km/h",
+    "precipitation": null,
+    "snow": null,
+    "road_temperature": null,
+    "maximum_wind": "25.97 km/h",
+    "road_condition": null,
+    "location": {
+        "type": "Point",
+        "coordinates": [
+            49.21564,
+            -122.81158
+        ]
+    },
+    "location_description": "Top of South Tower of Port Mann Bridge",
+    "issuedUtc": "2024-03-08T12:13:08-08:00",
+    "elevation": 130
+}]

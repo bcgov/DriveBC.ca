@@ -61,7 +61,8 @@ def populate_current_weather_from_data(new_current_weather_data):
         'datasets': new_current_weather_data.get('datasets'),
         'location_latitude': new_current_weather_data.get('location_latitude'),
         'location_longitude': new_current_weather_data.get('location_longitude'),
-        'issuedUtc': issued_utc
+        'issuedUtc': issued_utc,
+
      }
     if existing_record:
         existing_record.__dict__.update(data)

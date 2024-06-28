@@ -50,7 +50,7 @@ class RegionalWeather(BaseModel):
 
 
 class CurrentWeather(BaseModel):
-    """ Weather reports from MOTI sites """
+    """ Local Weather reports and forecasts from MOTI sites """
 
     location = models.PointField(null=True)
     weather_station_name = models.CharField(max_length=100)
@@ -60,6 +60,11 @@ class CurrentWeather(BaseModel):
     location_description = models.TextField(null=True)
     datasets = models.JSONField(default=list, null=True)
     issuedUtc = models.DateTimeField(null=True)
+    hourly_forecast_group = models.JSONField(null=True)
+
+
+    def get_forecasts(self):
+        return self.hourly_forecast_group.get('Forecasts', [])
 
     def __str__(self):
         return f"Current weather for {self.pk}"
