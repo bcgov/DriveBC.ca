@@ -25,9 +25,12 @@ function convertCategory(event) {
         ? 'Minor incident '
         : 'Minor delay';
     case 'futureEvents':
-      return event.severity === 'MAJOR'
-        ? 'Major future event'
-        : 'Minor future event';
+      if (event.severity === 'CLOSURE') {
+        return 'Future closure event';
+      } else if (event.severity === 'MAJOR') {
+        return 'Major future event';
+      }
+      return 'Minor future event';
     case 'roadConditions':
       return 'Road condition';
     default:
@@ -105,7 +108,7 @@ export default function EventPanel(props) {
         </div>
 
         <div className="popup__content__description debug-data">
-          {eventData.id}
+          <p onClick={() => console.log(eventData)}>{eventData.id}</p>
         </div>
       </div>
     </div>
