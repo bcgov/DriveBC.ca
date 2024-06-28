@@ -6,8 +6,9 @@ from unittest.mock import patch
 from apps.feed.client import FeedClient
 from apps.shared.tests import BaseTest, MockResponse
 from apps.weather.models import CurrentWeather
-from apps.weather.tasks import populate_current_weather_from_data
-
+from apps.weather.tasks import (
+    populate_current_weather_from_data,
+)
 
 class TestCurrentWeatherPopulate(BaseTest):
     def setUp(self):
@@ -28,3 +29,5 @@ class TestCurrentWeatherPopulate(BaseTest):
         print(current_weather_two.location_latitude)
         assert current_weather_two.location_latitude == \
                49.16609
+
+
