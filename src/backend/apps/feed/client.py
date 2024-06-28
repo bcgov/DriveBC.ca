@@ -14,6 +14,7 @@ from apps.feed.constants import (
     OPEN511,
     REGIONAL_WEATHER,
     REGIONAL_WEATHER_AREAS,
+    FORECAST_WEATHER,
     REST_STOP,
     WEBCAM,
 )
