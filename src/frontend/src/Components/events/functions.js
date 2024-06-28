@@ -1,17 +1,47 @@
 import { collator } from '../data/webcams';
 
-export const getTypeDisplay = (data) => {
-  const severityText = data.severity == 'MAJOR' ? 'Major' : 'Minor';
-
-  switch (data.display_category) {
+export const getTypeDisplay = (event) => {
+  switch (event.display_category) {
     case 'closures':
       return 'Closure';
-
+    case 'majorEvents':
+      return event.event_type === 'INCIDENT'
+        ? 'Major incident '
+        : 'Major delay';
+    case 'minorEvents':
+      return event.event_type === 'INCIDENT'
+        ? 'Minor incident '
+        : 'Minor delay';
     case 'futureEvents':
-      return 'Future event'
-
+      if (event.severity === 'CLOSURE') {
+        return 'Future closure event';
+      } else if (event.severity === 'MAJOR') {
+        return 'Major future event';
+      }
+      return 'Minor future event';
+    case 'roadConditions':
+      return 'Road condition';
     default:
-      return severityText + (data.event_type == 'INCIDENT' ? ' incident' : ' current event');
+      return '';
+  }
+}
+
+export const convertDirection = (direction) => {
+  switch (direction) {
+    case 'N':
+      return 'Northbound';
+    case 'W':
+      return 'Westbound';
+    case 'E':
+      return 'Eastbound';
+    case 'S':
+      return 'Southbound';
+    case 'BOTH':
+      return 'Both Directions';
+    case 'NONE':
+      return ' ';
+    default:
+      return ' ';
   }
 }
 

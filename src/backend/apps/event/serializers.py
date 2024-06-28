@@ -133,7 +133,7 @@ class EventSerializer(EventInternalSerializer):
     severity = serializers.SerializerMethodField()
 
     def get_severity(self, obj):
-        if obj.closed and self.get_display_category(obj) != EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
+        if obj.closed:
             return 'CLOSURE'
 
         return obj.severity
