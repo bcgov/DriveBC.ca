@@ -69,7 +69,7 @@
       }
     }
 
-    &.major, &.closures {
+    &.major, &.closures, &.futureEvents.closure {
       .popup__title {
         background-color: #F4E1E2;
         border-top: 4px solid #CE3E39;
