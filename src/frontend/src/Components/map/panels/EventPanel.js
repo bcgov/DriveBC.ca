@@ -5,57 +5,12 @@ import React from 'react';
 import Linkify from 'linkify-react';
 
 // Internal imports
+import { getTypeDisplay, convertDirection } from '../../events/functions';
 import EventTypeIcon from '../../events/EventTypeIcon';
 import FriendlyTime from '../../shared/FriendlyTime';
 
 // Styling
 import './EventPanel.scss';
-
-// Helper functions
-function convertCategory(event) {
-  switch (event.display_category) {
-    case 'closures':
-      return 'Closure';
-    case 'majorEvents':
-      return event.event_type === 'INCIDENT'
-        ? 'Major incident '
-        : 'Major delay';
-    case 'minorEvents':
-      return event.event_type === 'INCIDENT'
-        ? 'Minor incident '
-        : 'Minor delay';
-    case 'futureEvents':
-      if (event.severity === 'CLOSURE') {
-        return 'Future closure event';
-      } else if (event.severity === 'MAJOR') {
-        return 'Major future event';
-      }
-      return 'Minor future event';
-    case 'roadConditions':
-      return 'Road condition';
-    default:
-      return '';
-  }
-}
-
-function convertDirection(direction) {
-  switch (direction) {
-    case 'N':
-      return 'Northbound';
-    case 'W':
-      return 'Westbound';
-    case 'E':
-      return 'Eastbound';
-    case 'S':
-      return 'Southbound';
-    case 'BOTH':
-      return 'Both Directions';
-    case 'NONE':
-      return ' ';
-    default:
-      return ' ';
-  }
-}
 
 // Main component
 export default function EventPanel(props) {
@@ -71,7 +26,7 @@ export default function EventPanel(props) {
         <div className="popup__title__icon">
           <EventTypeIcon event={eventData} state="active" />
         </div>
-        <p className="name">{convertCategory(eventData)}</p>
+        <p className="name">{getTypeDisplay(eventData)}</p>
       </div>
 
       <div className="popup__content">
