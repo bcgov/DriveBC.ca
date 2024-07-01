@@ -15,14 +15,14 @@ import './AdvisoriesOnMap.scss';
 
 
 export default function AdvisoriesOnMap(props) {
-  const { advisories, updateClickedFeature, open, clickedFeature, clickedFeatureRef } = props;
+  const { advisories, updateClickedFeature, open, clickedFeature, clickedFeatureRef, routeFound } = props;
 
   // Rendering
   return (
     (advisories && advisories.length > 0) ? (
       <div className="advisories-on-map">
         <Button
-          className={'advisories-on-map__btn' + ((open && !clickedFeature.get) ? ' open' : '')}
+          className={'advisories-on-map__btn' + ((open && !clickedFeature.get && !routeFound) ? ' open' : '')}
           aria-label="open advisories list"
           onClick={() => {
             trackEvent('click', 'advisories-on-map', 'Advisories button');

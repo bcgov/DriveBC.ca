@@ -9,15 +9,22 @@ import FerryPanel from './FerryPanel';
 import LocalWeatherPanel from './weather/LocalWeatherPanel';
 import RegionalWeatherPanel from './weather/RegionalWeatherPanel';
 import RestStopPanel from './RestStopPanel';
+import RouteDetailsPanel from './RouteDetailsPanel';
 
 // Styling
 import './index.scss';
 
-export const renderPanel = (clickedFeature, isCamDetail) => {
+export const renderPanel = (clickedFeature, isCamDetail, routeFound) => {
   if (clickedFeature) {
     // Hack to pass in advisories from clickedFeature
-    if (!clickedFeature.get)
-      return <AdvisoriesPanel advisories={clickedFeature} />;
+    if (!clickedFeature.get) {
+      if (routeFound) {
+        console.log('route objects should be: ', clickedFeature);
+        return <RouteDetailsPanel routeObjects={clickedFeature} />;
+      }
+      else
+        return <AdvisoriesPanel advisories={clickedFeature} />;
+    }
 
     switch (clickedFeature.get('type')) {
       case 'camera':

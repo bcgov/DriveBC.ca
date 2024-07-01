@@ -127,6 +127,15 @@ export default function DriveBCMap(props) {
   // States
   const [advisoriesInView, setAdvisoriesInView] = useState([]);
   const [referenceFeature, updateReferenceFeature] = useState();
+  const [routeObjects, setRouteObjects] = useState({
+    distance: null,
+    distanceUnit: null,
+    closures: null,
+    majorDelays: null,
+    minorDelays: null,
+    roadConditions: null,
+    ferries: null
+  });
 
   // Workaround for OL handlers not being able to read states
   const [clickedFeature, setClickedFeature] = useState();
@@ -296,6 +305,13 @@ export default function DriveBCMap(props) {
 
     if (selectedRoute && selectedRoute.routeFound) {
       fitMap(selectedRoute.route, mapView);
+
+      // Count events and ferries and show panel here
+      routeObjects.distance = selectedRoute.distance;
+      routeObjects.distanceUnit = selectedRoute.distanceUnit;
+      setRouteObjects(routeObjects);
+      resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
+      updateClickedFeature(selectedRoute);
     }
   }, [selectedRoute]);
 
@@ -318,6 +334,16 @@ export default function DriveBCMap(props) {
   // Events layer
   useEffect(() => {
     loadEventsLayers(filteredEvents, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature);
+
+    // Count filtered events to store in routeObjects
+    if (filteredEvents) {
+      filteredEvents.forEach(event => {
+        const eventType = event.display_category;
+        if (eventType && Object.hasOwn(routeObjects, eventType)) {
+          routeObjects[eventType] = routeObjects[eventType] + 1;
+        }
+      });
+    }
   }, [filteredEvents]);
 
   // Ferries layer
@@ -328,6 +354,7 @@ export default function DriveBCMap(props) {
         'inlandFerries', filteredFerries, 68
       );
     }
+    routeObjects.ferries = filteredFerries.length;
   }, [filteredFerries]);
 
   // Current weathers layer
@@ -414,7 +441,8 @@ export default function DriveBCMap(props) {
         </button>
 
         <div className="panel-content">
-          {openPanel && renderPanel(clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature , isCamDetail)}
+          {openPanel && (selectedRoute && selectedRoute.routeFound) && renderPanel((clickedFeature && !clickedFeature.get) ? routeObjects : clickedFeature , isCamDetail, selectedRoute.routeFound)}
+          {openPanel && (!selectedRoute || !selectedRoute.routeFound) && renderPanel((clickedFeature && !clickedFeature.get) ? advisoriesInView : clickedFeature , isCamDetail)}
         </div>
       </div>
 
@@ -425,7 +453,7 @@ export default function DriveBCMap(props) {
               <ExitSurvey mobile={true} />
             )}
             <RouteSearch routeEdit={true} />
-              <AdvisoriesOnMap advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} />
+            <AdvisoriesOnMap advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} routeFound={(selectedRoute && selectedRoute.routeFound)} />
           </div>
         )}
 
