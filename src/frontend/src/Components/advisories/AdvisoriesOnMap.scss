@@ -5,10 +5,7 @@
   top: 1rem;
   padding: 0 1rem;
   width: fit-content;
-
-  @media (min-width: 768px) {
-    width: fit-content;
-  }
+  z-index: 16;
 
   .btn.advisories-on-map__btn {
     background: #FAF9F8;
