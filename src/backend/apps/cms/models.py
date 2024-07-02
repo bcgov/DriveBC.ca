@@ -13,10 +13,24 @@ from wagtail.templatetags import wagtailcore_tags
 
 
 class DriveBCMapWidget(OSMWidget):
+    template_name = "gis/ol-drivebc.html"
+
     # Defaults to Kelowna
     default_lon = -119.49662112970556
     default_lat = 49.887338062986295
     default_zoom = 14
+
+    class Media:
+        css = {
+            "all": (
+                "https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css",
+                "gis/css/ol3.css",
+            )
+        }
+        js = (
+            "https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js",
+            "gis/js/OLMapWidget.js",
+        )
 
 
 class Advisory(Page, BaseModel):
