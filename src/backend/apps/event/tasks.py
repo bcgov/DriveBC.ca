@@ -105,6 +105,8 @@ def populate_all_event_data(include_closures=True):
             event_data["closest_landmark"] = cars_data.get('closest_landmark', '')
             event_data["next_update"] = cars_data.get('next_update', None)
             event_data["start_point_linear_reference"] = cars_data.get('start_point_linear_reference', None)
+            if 'route_at' in cars_data and cars_data['route_at'] != '':
+                event_data["route_at"] = cars_data['route_at']
 
             # Populate db obj
             populate_event_from_data(event_data)
