@@ -306,6 +306,7 @@ export default function DriveBCMap(props) {
     if (selectedRoute && selectedRoute.routeFound) {
       fitMap(selectedRoute.route, mapView);
 
+      console.log('route info: ', selectedRoute);
       // Count events and ferries and show panel here
       routeObjects.distance = selectedRoute.distance;
       routeObjects.distanceUnit = selectedRoute.distanceUnit;
@@ -335,6 +336,7 @@ export default function DriveBCMap(props) {
   useEffect(() => {
     loadEventsLayers(filteredEvents, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature);
 
+    // TODO: something wrong here
     // Count filtered events to store in routeObjects
     if (filteredEvents) {
       filteredEvents.forEach(event => {

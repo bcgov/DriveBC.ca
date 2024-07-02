@@ -16,7 +16,7 @@ import './index.scss';
 
 export const renderPanel = (clickedFeature, isCamDetail, routeFound) => {
   if (clickedFeature) {
-    // Hack to pass in advisories from clickedFeature
+
     if (!clickedFeature.get) {
       if (routeFound) {
         console.log('route objects should be: ', clickedFeature);
