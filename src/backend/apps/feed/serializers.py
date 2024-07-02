@@ -95,6 +95,7 @@ class CarsEventSerializer(serializers.Serializer):
     closest_landmark = serializers.CharField(allow_blank=True)
     next_update = serializers.DateTimeField(allow_null=True)
     start_point_linear_reference = serializers.FloatField(allow_null=True)
+    route_at = serializers.CharField(allow_blank=True)
 
     def to_internal_value(self, data):
         data["id"] = data["event-id"]
@@ -107,6 +108,7 @@ class CarsEventSerializer(serializers.Serializer):
         data["closest_landmark"] = ''
         data["next_update"] = None
         data["start_point_linear_reference"] = None
+        data["route_at"] = ''
 
         # Data under "details"
         for detail in data.get("details", []):
@@ -130,6 +132,9 @@ class CarsEventSerializer(serializers.Serializer):
                     if len(names):
                         data["highway_segment_names"] = names[0]
                         break  # No other location data, stop for loop
+                route_at = location.get("route-designator")
+                data["route_at"] = route_at
+                break
 
         # Data under "communication-plans"
         for plan in data.get("communication-plans", []):
