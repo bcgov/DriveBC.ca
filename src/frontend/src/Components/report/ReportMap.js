@@ -351,33 +351,6 @@ export function ReportMap(props) {
             </div>
           )}
 
-          {(activeFeature.properties.CONTRACTOR3_CONTACT && activeFeature.properties.CONTRACTOR3_CONTACT != activeFeature.properties.CONTRACTOR1_CONTACT) && (
-            <div>
-              <div className="contractor-name">
-                {activeFeature.properties.CONTRACTOR3_WEBSITE ? (
-                  <a
-                    href={activeFeature.properties.CONTRACTOR3_WEBSITE}
-                    className="website-link"
-                    target="_blank"
-                    rel="noreferrer"
-                    alt="contractor website link">
-                    {activeFeature.properties.CONTRACTOR3_NAME}
-                  </a>
-                ) : (
-                  <p>{activeFeature.properties.CONTRACTOR2_NAME}</p>
-                )}
-              </div>
-              <div className="contractor-phone">
-                <FontAwesomeIcon icon={faPhone} />
-                <a
-                  className="tel-number bold"
-                  href={'tel:' + activeFeature.properties.CONTRACTOR3_CONTACT}>
-                  {activeFeature.properties.CONTRACTOR3_CONTACT}
-                </a>
-              </div>
-            </div>
-          )}
-
           <p>Thank you for bringing this issue to our attention.</p>
         </div>
       </div>
