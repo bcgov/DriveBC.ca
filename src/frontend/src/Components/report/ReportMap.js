@@ -140,7 +140,6 @@ const clickListener = (map, pixelCoords, setActiveFeature, wmsLayer) => {
   };
 
   get(window.REPORT_WMS_LAYER, payload).then(data => {
-    console.log(data);
     setActiveFeature(data.features[0]);
   });
 };
