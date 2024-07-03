@@ -94,7 +94,7 @@ const ProblemsPage = () => {
                   <FontAwesomeIcon icon={faFlask} />
                 </div>
                 <h4>Report a fuel or chemical spill</h4>
-                <p>Emergency Management in BC</p>
+                <p>Emergency Management BC</p>
                 <p className="tel-number bold">1-800-663-3456</p>
               </a>
             </div>
