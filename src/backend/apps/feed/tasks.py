@@ -4,7 +4,7 @@ from apps.cms.tasks import populate_all_ferry_data
 from apps.event.tasks import populate_all_event_data
 from apps.rest.tasks import populate_all_rest_stop_data
 from apps.weather.tasks import (
-    populate_all_current_weather_data,
+    populate_all_local_weather_data,
     populate_all_regional_weather_data,
 )
 from apps.webcam.tasks import (
@@ -51,7 +51,7 @@ def populate_regional_weather_task():
 
 @db_periodic_task(crontab(minute="*/20"))
 def populate_current_weather_task():
-    populate_all_current_weather_data()
+    populate_all_local_weather_data()
 
 
 @db_periodic_task(crontab(minute="*/5"))
