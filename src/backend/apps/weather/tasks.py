@@ -1,4 +1,3 @@
-import datetime
 import logging
 
 from apps.feed.client import FeedClient
@@ -47,33 +46,22 @@ def populate_all_regional_weather_data():
     cache.delete(CacheKey.REGIONAL_WEATHER_LIST)
 
 
-def populate_current_weather_from_data(new_current_weather_data):
+def populate_local_weather_from_data(new_current_weather_data):
     weather_station_name = new_current_weather_data.get('weather_station_name')
-    existing_record = CurrentWeather.objects.filter(weather_station_name=weather_station_name).first()
-    issued_utc = new_current_weather_data.get('issuedUtc')
-    if issued_utc is not None:
-        issued_utc = datetime.datetime.strptime(issued_utc, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=datetime.timezone.utc)
 
-    data = {
-        'weather_station_name': weather_station_name,
-        'elevation': new_current_weather_data.get('elevation'),
-        'location_description': new_current_weather_data.get('location_description'),
-        'datasets': new_current_weather_data.get('datasets'),
-        'location_latitude': new_current_weather_data.get('location_latitude'),
-        'location_longitude': new_current_weather_data.get('location_longitude'),
-        'issuedUtc': issued_utc,
+    # Update existing record
+    weather_station_qs = CurrentWeather.objects.filter(weather_station_name=weather_station_name)
+    if weather_station_qs.first():
+        weather_station_qs.update(**new_current_weather_data)
 
-     }
-    if existing_record:
-        existing_record.__dict__.update(data)
-        existing_record.save()
+    # Create new record
     else:
-        CurrentWeather.objects.create(**data)
+        CurrentWeather.objects.create(**new_current_weather_data)
 
 
-def populate_all_current_weather_data():
+def populate_all_local_weather_data():
     client = FeedClient()
     feed_data = client.get_current_weather_list()
 
     for current_weather_data in feed_data:
-        populate_current_weather_from_data(current_weather_data)
+        populate_local_weather_from_data(current_weather_data)

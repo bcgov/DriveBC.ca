@@ -1,29 +1,22 @@
-import json
-from pathlib import Path
-from unittest import mock, skip
-from unittest.mock import patch
-
-from apps.feed.client import FeedClient
-from apps.shared.tests import BaseTest, MockResponse
+from apps.shared.tests import BaseTest
 from apps.weather.models import CurrentWeather
-from apps.weather.tasks import populate_current_weather_from_data
+from apps.weather.tasks import populate_local_weather_from_data
+from apps.weather.tests.test_data.local_weather_parsed_feed import (
+    parsed_feed,
+    parsed_summer_feed,
+)
 
 
 class TestCurrentWeatherPopulate(BaseTest):
     def setUp(self):
         super().setUp()
 
-        # Normal feed
-        current_weather_feed_data = open(
-            str(Path(__file__).parent) +
-            "/test_data/current_weather_feed_two.json"
-        )
-        local_weather_current_one = open(str(Path(__file__).parent) + "/test_data/local_weather_current_one.json")
-        self.mock_current_weather_feed_result = json.load(local_weather_current_one)
-        # self.json_feed = json_feed
-
     def test_populate_current_weather_function(self):
-        populate_current_weather_from_data(self.mock_current_weather_feed_result)
-        current_weather_two = CurrentWeather.objects.get(id=298)
-        assert current_weather_two.location_latitude == \
-               49.16609
+        populate_local_weather_from_data(parsed_feed)
+        local_weather_winter = CurrentWeather.objects.get(weather_station_name='Brandywine Devar')
+        assert local_weather_winter.location_longitude == '-123.11806'
+        assert len(local_weather_winter.hourly_forecast_group) != 0
+
+        populate_local_weather_from_data(parsed_summer_feed)
+        local_weather_summer = CurrentWeather.objects.get(weather_station_name='Brandywine Devar Summer')
+        assert len(local_weather_summer.hourly_forecast_group) == 0

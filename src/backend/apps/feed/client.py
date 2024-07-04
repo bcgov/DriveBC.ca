@@ -14,7 +14,6 @@ from apps.feed.constants import (
     OPEN511,
     REGIONAL_WEATHER,
     REGIONAL_WEATHER_AREAS,
-    FORECAST_WEATHER,
     REST_STOP,
     WEBCAM,
 )
@@ -420,13 +419,10 @@ class FeedClient:
                 Q(datasets__road_condition__isnull=True)
             ).delete()
 
-
-
             response = requests.get(external_api_url, headers=headers)
             response.raise_for_status()
             json_response = response.json()
             json_objects = []
-            data = []
             hourly_forecast_group = []
 
             for station in json_response:
@@ -444,7 +440,7 @@ class FeedClient:
                     response = requests.get(forecast_endpoint, headers=headers)
                     if response.status_code != 204:
                         hourly_forecast_data = response.json()
-                        hourly_forecast_group = hourly_forecast_data.get("HourlyForecasts") or {}
+                        hourly_forecast_group = hourly_forecast_data.get("HourlyForecasts") or []
                 except requests.RequestException as e:
                     logger.error(f"Error making API call for Area Code {station_number}: {e}")
 
@@ -477,7 +473,6 @@ class FeedClient:
                         if value_field is not None:
                             shouldSkip = False
 
-
                     for dataset in datasets:
                         dataset_name = dataset["DataSetName"]
                         if dataset_name not in DATASETNAMES:
@@ -500,12 +495,12 @@ class FeedClient:
                             'location_longitude': Longitude,
                             'location_latitude': Latitude,
                             'issuedUtc': issuedUtc,
+                            'hourly_forecast_group': hourly_forecast_group
                         }
                         serializer = serializer_cls(data=current_weather_data,
                                                     many=isinstance(current_weather_data, list))
                         json_objects.append(current_weather_data)
-                        if hourly_forecast_group:
-                            json_objects.append(hourly_forecast_group)
+
                 except requests.RequestException as e:
                     logger.error(f"Error making API call for Area Code {station_number}: {e}")
 
@@ -526,7 +521,7 @@ class FeedClient:
                         return Response({"message": "Data successfully updated"}, status=200)
                     else:
                         return Response(serializer.errors, status=400)
-            except (KeyError, ValidationError) as e:
+            except (KeyError, ValidationError):
                 field_errors = serializer.errors
                 for field, errors in field_errors.items():
                     logger.error(f"Field: {field}, Errors: {errors}")
