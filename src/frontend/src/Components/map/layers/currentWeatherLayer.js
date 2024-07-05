@@ -11,7 +11,7 @@ import VectorSource from 'ol/source/Vector';
 // Styling
 import { roadWeatherStyles } from '../../data/featureStyleDefinitions.js';
 
-export function getCurrentWeatherLayer(weatherData, projectionCode, mapContext) {
+export function getCurrentWeatherLayer(weatherData, projectionCode, mapContext, referenceData, updateReferenceFeature) {
   return new VectorLayer({
     classname: 'weather',
     visible: mapContext.visible_layers.weather,
@@ -42,6 +42,13 @@ export function getCurrentWeatherLayer(weatherData, projectionCode, mapContext) 
           );
 
           vectorSource.addFeature(olFeatureForMap);
+
+          if (referenceData?.type === 'localWeather') {
+            // Update the reference feature if id is the reference
+            if (weather.id == referenceData.id) {
+              updateReferenceFeature(olFeatureForMap);
+            }
+          }
         });
       },
     }),

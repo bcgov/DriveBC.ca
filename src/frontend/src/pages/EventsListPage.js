@@ -1,6 +1,6 @@
 // React
 import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -249,10 +249,14 @@ export default function EventsListPage() {
   const handleRoute = (event) => {
     trackEvent('click', 'event', 'events list page', event.event_type, event.event_sub_type);
 
-    const refEventData = { ...event };
-    refEventData.type = 'event';
-
-    navigate('/', { state: refEventData });
+    navigate({
+      pathname: '/',
+      search: `?${createSearchParams({
+        type: "event",
+        id: event.id,
+        display_category: event.display_category
+      })}`
+    });
   };
 
   const sortHandler = (e, key) => {

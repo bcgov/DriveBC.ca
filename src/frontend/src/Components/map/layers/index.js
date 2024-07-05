@@ -51,7 +51,24 @@ export const enableReferencedLayer = (referenceData, mapContext) => {
   if (featureType === 'camera') {
     mapContext.visible_layers['highwayCams'] = true;
 
-  // reference features can only be cams or events
+  } else if (featureType === 'ferry') {
+    mapContext.visible_layers['inlandFerries'] = true;
+
+  } else if (featureType === 'regionalWeather' || featureType === 'localWeather') {
+    mapContext.visible_layers['weather'] = true;
+    mapContext.visible_layers['regional'] = true;
+
+  } else if (featureType === 'restStop') {
+    mapContext.visible_layers['restStops'] = true;
+    mapContext.visible_layers['largeRestStops'] = false;
+
+  } else if (featureType === 'largeRestStop') {
+    // Only show large rest stops if both rest stops layers are not visible
+    if (!mapContext.visible_layers['restStops'] && !mapContext.visible_layers['largeRestStops']) {
+      mapContext.visible_layers['restStops'] = false;
+      mapContext.visible_layers['largeRestStops'] = true;
+    }
+
   } else {
     const featureDisplayCategory = referenceData.display_category;
     switch (featureDisplayCategory) {

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 // Navigation
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // External imports
 import { faVideoSlash, faVideo } from '@fortawesome/pro-solid-svg-icons';
@@ -14,6 +14,7 @@ import parse from 'html-react-parser';
 import { getCameraOrientation } from '../../cameras/helper';
 import FriendlyTime from '../../shared/FriendlyTime';
 import trackEvent from '../../shared/TrackEvent';
+import ShareURLButton from '../../shared/ShareURLButton';
 
 // Static assets
 import colocatedCamIcon from '../../../images/colocated-camera.svg';
@@ -25,6 +26,8 @@ import './CamPanel.scss';
 export default function CamPanel(props) {
   // Props
   const { camFeature, isCamDetail } = props;
+
+  const [_searchParams, setSearchParams] = useSearchParams();
 
   // Misc
   const navigate = useNavigate();
@@ -44,6 +47,8 @@ export default function CamPanel(props) {
     setRootCam(newCam);
     setCamera(newCam);
     setCamIndex(0);
+
+    setSearchParams(new URLSearchParams({ type: 'camera', id: newCam.id }));
   }, [camFeature]);
 
   useEffect(() => {
@@ -166,6 +171,8 @@ export default function CamPanel(props) {
           </div>
         </div>
       )}
+
+      <ShareURLButton />
     </div>
   );
 }

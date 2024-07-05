@@ -11,7 +11,7 @@ import VectorSource from 'ol/source/Vector';
 // Styling
 import { regionalStyles } from '../../data/featureStyleDefinitions.js';
 
-export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext) {
+export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext, referenceData, updateReferenceFeature) {
   return new VectorLayer({
     classname: 'regional',
     visible: mapContext.visible_layers.weather,
@@ -42,6 +42,13 @@ export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext)
           );
 
           vectorSource.addFeature(olFeatureForMap);
+
+          if (referenceData?.type === 'regionalWeather') {
+            // Update the reference feature if id is the reference
+            if (weather.id == referenceData.id) {
+              updateReferenceFeature(olFeatureForMap);
+            }
+          }
         });
       },
     }),

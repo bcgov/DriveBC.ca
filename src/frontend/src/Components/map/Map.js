@@ -7,6 +7,9 @@ import React, {
   useCallback,
 } from 'react';
 
+// Navigation
+import { useSearchParams } from 'react-router-dom';
+
 // Redux
 import { memoize } from 'proxy-memoize';
 import { useSelector, useDispatch } from 'react-redux';
@@ -27,7 +30,6 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 // Internal imports
 import { addCameraGroups } from '../data/webcams.js';
 import {
-  calculateCenter,
   blueLocationMarkup,
   fitMap,
   onMoveEnd,
@@ -74,6 +76,9 @@ export default function DriveBCMap(props) {
     showNetworkError, showServerError
   } = props;
 
+  // Navigation
+  const [_searchParams, setSearchParams] = useSearchParams();
+
   // Context
   const { mapContext } = useContext(MapContext);
 
@@ -118,6 +123,7 @@ export default function DriveBCMap(props) {
   const geolocation = useRef();
   const hoveredFeature = useRef();
   const isInitialMountLocation = useRef();
+  const searchParamInitialized = useRef();
   const locationPinRef = useRef();
   const mapElement = useRef();
   const mapRef = useRef();
@@ -162,7 +168,7 @@ export default function DriveBCMap(props) {
     mapView.current = new View({
       projection: 'EPSG:3857',
       constrainResolution: true,
-      center: referenceData ? calculateCenter(referenceData) : fromLonLat(pan),
+      center: fromLonLat(pan),
       zoom: isCamDetail || referenceData ? 12 : zoom,
       maxZoom: 15,
       extent: transformedExtent,
@@ -276,6 +282,8 @@ export default function DriveBCMap(props) {
   /* Triggering handlers based on navigation data */
   useEffect(() => {
     if (referenceFeature) {
+      setZoomPan(mapView, 9, referenceFeature.getGeometry().flatCoordinates);
+
       pointerClickHandler(
         [referenceFeature], clickedFeatureRef, updateClickedFeature,
         mapView, isCamDetail, loadCamDetails
@@ -325,7 +333,8 @@ export default function DriveBCMap(props) {
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'inlandFerries', filteredFerries, 68
+        'inlandFerries', filteredFerries, 68,
+        referenceData, updateReferenceFeature
       );
     }
   }, [filteredFerries]);
@@ -335,7 +344,8 @@ export default function DriveBCMap(props) {
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'weather', filteredCurrentWeathers, 66
+        'weather', filteredCurrentWeathers, 66,
+        referenceData, updateReferenceFeature
       );
     }
   }, [filteredCurrentWeathers]);
@@ -345,7 +355,8 @@ export default function DriveBCMap(props) {
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'regional', filteredRegionalWeathers, 67
+        'regional', filteredRegionalWeathers, 67,
+        referenceData, updateReferenceFeature
       );
     }
   }, [filteredRegionalWeathers]);
@@ -355,12 +366,14 @@ export default function DriveBCMap(props) {
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'restStops', filteredRestStops, 68
+        'restStops', filteredRestStops, 68,
+        referenceData, updateReferenceFeature
       );
 
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'largeRestStops', filteredRestStops, 68
+        'largeRestStops', filteredRestStops, 68,
+        referenceData, updateReferenceFeature
       );
     }
   }, [filteredRestStops]);
@@ -388,6 +401,18 @@ export default function DriveBCMap(props) {
   const disablePanel = isCamDetail && clickedFeature && clickedFeature.get('type') === 'camera';
   const openPanel = !!clickedFeature && !disablePanel;
   const smallScreen = useMediaQuery('only screen and (max-width: 767px)');
+
+  // Reset search params when panel is closed
+  useEffect(() => {
+    if (searchParamInitialized.current) {
+      if (!openPanel) {
+        setSearchParams(new URLSearchParams({}));
+      }
+
+    } else {
+      searchParamInitialized.current = true;
+    }
+  }, [openPanel]);
 
   /* Rendering */
   return (

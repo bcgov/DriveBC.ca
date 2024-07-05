@@ -1,6 +1,6 @@
 // React
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 
 // Third party packages
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -65,7 +65,14 @@ export default function CameraCard(props) {
     const refCamData = { ...camera };
     refCamData.type = 'camera';
 
-    navigate('/', { state: refCamData });
+    navigate({
+      pathname: '/',
+      search: `?${createSearchParams({
+        type: "camera",
+        id: camera.id,
+      })}`
+    });
+
     window.snowplow('trackSelfDescribingEvent', {
       schema: 'iglu:ca.bc.gov.drivebc/action/jsonschema/1-0-0',
       data: {

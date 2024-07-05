@@ -1,5 +1,8 @@
 // React
-import React from 'react';
+import React, { useEffect } from 'react';
+
+// Navigation
+import { useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,6 +17,7 @@ import {
 import ForecastCarousel from './ForecastCarousel';
 import ForecastTabs from './ForecastTabs';
 import FriendlyTime from '../../../shared/FriendlyTime';
+import ShareURLButton from '../../../shared/ShareURLButton';
 import WeatherIconThin from '../../WeatherIconThin';
 
 // Styling
@@ -40,6 +44,13 @@ export default function RegionalWeatherPanel(props) {
     weather.current_day_forecasts = current_day_forecasts;
     weather.future_forecasts = future_forecasts;
   }
+
+  const [_searchParams, setSearchParams] = useSearchParams();
+
+  // useEffect hooks
+  useEffect(() => {
+    setSearchParams(new URLSearchParams({ type: 'regionalWeather', id: weather.id }));
+  }, [feature]);
 
   /* Main component */
   return (
@@ -169,6 +180,8 @@ export default function RegionalWeatherPanel(props) {
           </a>
         </p>
       </div>
+
+      <ShareURLButton />
     </div>
   );
 }

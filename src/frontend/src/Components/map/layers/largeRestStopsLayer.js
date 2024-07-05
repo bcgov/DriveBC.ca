@@ -12,7 +12,7 @@ import VectorSource from 'ol/source/Vector';
 import { restStopTruckStyles, restStopTruckClosedStyles } from '../../data/featureStyleDefinitions.js';
 import { isRestStopClosed } from '../../data/restStops.js';
 
-export function getLargeRestStopsLayer(restStopsData, projectionCode, mapContext) {
+export function getLargeRestStopsLayer(restStopsData, projectionCode, mapContext, referenceData, updateReferenceFeature) {
   return new VectorLayer({
     classname: 'largeRestStops',
     visible: mapContext.visible_layers.largeRestStops,
@@ -31,7 +31,7 @@ export function getLargeRestStopsLayer(restStopsData, projectionCode, mapContext
 
           // Build a new OpenLayers feature
           const olGeometry = new Point(restStop.location.coordinates);
-          const olFeature = new ol.Feature({ geometry: olGeometry, type: 'restStop' });
+          const olFeature = new ol.Feature({ geometry: olGeometry, type: 'largeRestStop' });
 
           // Transfer properties
           olFeature.setProperties(restStop);
@@ -52,6 +52,13 @@ export function getLargeRestStopsLayer(restStopsData, projectionCode, mapContext
           }
           olFeatureForMap.setStyle(style);
           vectorSource.addFeature(olFeatureForMap);
+
+          if (referenceData?.type === 'largeRestStop') {
+            // Update the reference feature if id is the reference
+            if (restStop.id == referenceData.id) {
+              updateReferenceFeature(olFeatureForMap);
+            }
+          }
         }
       },
     }),

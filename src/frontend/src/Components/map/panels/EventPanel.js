@@ -1,5 +1,8 @@
 // React
-import React from 'react';
+import React, { useEffect } from 'react';
+
+// Navigation
+import { useSearchParams } from 'react-router-dom';
 
 // External imports
 import Linkify from 'linkify-react';
@@ -8,6 +11,7 @@ import Linkify from 'linkify-react';
 import { getTypeDisplay, convertDirection } from '../../events/functions';
 import EventTypeIcon from '../../events/EventTypeIcon';
 import FriendlyTime from '../../shared/FriendlyTime';
+import ShareURLButton from '../../shared/ShareURLButton';
 
 // Styling
 import './EventPanel.scss';
@@ -16,8 +20,16 @@ import './EventPanel.scss';
 export default function EventPanel(props) {
   const { feature } = props;
 
+  const [_searchParams, setSearchParams] = useSearchParams();
+
   const eventData = feature.ol_uid ? feature.getProperties() : feature;
   const severity = eventData.severity.toLowerCase();
+
+  // useEffect hooks
+  useEffect(() => {
+    const event = feature.getProperties();
+    setSearchParams(new URLSearchParams({ type: 'event', display_category: event.display_category, id: event.id }));
+  }, [feature]);
 
   return (
     <div
@@ -66,6 +78,8 @@ export default function EventPanel(props) {
           <p onClick={() => console.log(eventData)}>{eventData.id}</p>
         </div>
       </div>
+
+      <ShareURLButton />
     </div>
   );
 }

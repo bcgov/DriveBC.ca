@@ -1,6 +1,6 @@
 // React
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { createSearchParams, useParams, useNavigate } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -163,13 +163,13 @@ export default function CameraDetailsPage() {
   };
 
   const mapViewRoute = () => {
-    const refCamData = { ...camera };
-    refCamData.type = 'camera';
-
-    // Remove geometry from reference data since it can't be serialized
-    refCamData.geometry = null;
-
-    navigate('/', { state: refCamData });
+    navigate({
+      pathname: '/',
+      search: `?${createSearchParams({
+        type: "camera",
+        id: camera.id,
+      })}`
+    });
   };
 
   // ReplayTheDay
