@@ -1,10 +1,12 @@
 from django.urls import include, path
+from rest_framework import routers
 
-from .views import login, logout, status, profile
+from .views import FavouritedCamerasViewset
+
+
+router = routers.DefaultRouter()
+router.register("webcams", FavouritedCamerasViewset)
 
 urlpatterns = [
-    # path('login', login),
-    # path('logout', logout),
-    # path('status', status),
-    # path('profile/', profile)
+    path("", include(router.urls))
 ]

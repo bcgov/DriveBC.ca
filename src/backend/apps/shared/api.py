@@ -19,6 +19,9 @@ urlpatterns = [
     # Weather
     path("weather/", include("apps.weather.urls")),
 
+    # Users
+    path("users/", include("apps.authentication.urls")),
+
     # Others
     path("feedback/", views.FeedbackView.as_view(), name="feedback"),
 

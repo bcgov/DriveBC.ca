@@ -1,8 +1,9 @@
+from rest_framework import viewsets
+
 from apps.shared.enums import CacheKey, CacheTimeout
 from apps.shared.views import CachedListModelMixin
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
-from rest_framework import viewsets
 
 
 class WebcamAPI(CachedListModelMixin):
