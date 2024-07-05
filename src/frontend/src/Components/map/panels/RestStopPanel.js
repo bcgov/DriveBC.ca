@@ -1,5 +1,8 @@
 // React
-import React from 'react';
+import React, { useEffect } from 'react';
+
+// Navigation
+import { useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,8 +22,9 @@ import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
 import { isRestStopClosed } from '../../data/restStops';
-import RestStopTypeIcon from '../RestStopTypeIcon';
 import OpenSeason from '../OpenSeason';
+import RestStopTypeIcon from '../RestStopTypeIcon';
+import ShareURLButton from '../../shared/ShareURLButton';
 
 // Styling
 import './RestStopPanel.scss';
@@ -37,6 +41,14 @@ export default function RestStopPanel(props) {
   const { feature } = props;
 
   const restStopData = feature.getProperties();
+
+  const [_searchParams, setSearchParams] = useSearchParams();
+
+  // useEffect hooks
+  useEffect(() => {
+    const featureType = feature.getProperties().properties.ACCOM_COMMERCIAL_TRUCKS == 'Yes' ? 'largeRestStop' : 'restStop';
+    setSearchParams(new URLSearchParams({ type: featureType, id: restStopData.id }));
+  }, [feature]);
 
   return (
     <div className="popup popup--reststop" tabIndex={0}>
@@ -213,6 +225,8 @@ export default function RestStopPanel(props) {
           </div>
         </div>
       </div>
+
+      <ShareURLButton />
     </div>
   );
 }

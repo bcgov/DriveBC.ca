@@ -81,6 +81,7 @@ export const resetClickedStates = (
         clickedFeatureRef.current.set('clicked', false);
         updateClickedFeature(null);
         break;
+      case 'largeRestStop':
       case 'restStop': {
         const isClosed = isRestStopClosed(
           clickedFeatureRef.current.values_.properties,
@@ -349,6 +350,7 @@ export const pointerClickHandler = (
           isCamDetail,
         );
         return;
+      case 'largeRestStop':
       case 'restStop':
         trackEvent(
           'click',

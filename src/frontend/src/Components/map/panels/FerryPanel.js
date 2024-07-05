@@ -1,14 +1,17 @@
 // React
-import React from 'react';
+import React, { useEffect } from 'react';
 
-// Third party packages
-import parse from 'html-react-parser';
+// Navigation
+import { useSearchParams } from 'react-router-dom';
+
+// External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faFerry,
-  faFlag
-} from '@fortawesome/pro-solid-svg-icons';
+import { faFerry, faFlag } from '@fortawesome/pro-solid-svg-icons';
+import parse from 'html-react-parser';
+
+// Internal imports
 import AdvisoriesList from '../../advisories/AdvisoriesList';
+import ShareURLButton from '../../shared/ShareURLButton';
 
 // Styling
 import './FerryPanel.scss';
@@ -17,6 +20,13 @@ export default function FerryPanel(props) {
   const { feature } = props;
 
   const ferryData = feature.getProperties();
+
+  const [_searchParams, setSearchParams] = useSearchParams();
+
+  // useEffect hooks
+  useEffect(() => {
+    setSearchParams(new URLSearchParams({ type: 'ferry', id: ferryData.id }));
+  }, [feature]);
 
   return (
     <div className="popup popup--ferry" tabIndex={0}>
@@ -44,6 +54,8 @@ export default function FerryPanel(props) {
           <p>{parse(ferryData.service_hours)}</p>
         </div>
       </div>
+
+      <ShareURLButton />
     </div>
   );
 }

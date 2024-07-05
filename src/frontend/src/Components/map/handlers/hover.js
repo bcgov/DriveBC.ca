@@ -44,6 +44,7 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
         case 'regionalWeather':
           hoveredFeature.setStyle(regionalStyles['static']);
           break;
+        case 'largeRestStop':
         case 'restStop':
           {
             const isClosed = isRestStopClosed(
@@ -128,6 +129,7 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
           targetFeature.setStyle(regionalStyles['hover']);
         }
         return;
+      case 'largeRestStop':
       case 'restStop':
         if (!targetFeature.getProperties().clicked) {
           const isClosed = isRestStopClosed(

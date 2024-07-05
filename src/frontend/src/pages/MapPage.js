@@ -1,6 +1,6 @@
 // React
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 // Third party packages
 import { DndProvider } from 'react-dnd-multi-backend';
@@ -13,14 +13,14 @@ import MapWrapper from '../Components/map/MapWrapper.js';
 import '../Components/map/Map.scss';
 
 export default function MapPage() {
-  const { state } = useLocation();
+  const [searchParams] = useSearchParams();
 
   document.title = 'DriveBC';
 
   return (
     <DndProvider options={HTML5toTouch}>
       <div className="map-wrap">
-        <MapWrapper referenceData={state} />
+        <MapWrapper referenceData={{ type: searchParams.get('type'), id: searchParams.get('id'), display_category: searchParams.get('display_category') }} />
       </div>
     </DndProvider>
   );

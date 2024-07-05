@@ -1,5 +1,8 @@
 // React
-import React from 'react';
+import React, { useEffect } from 'react';
+
+// Navigation
+import { useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,6 +18,7 @@ import Tabs from 'react-bootstrap/Tabs';
 
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
+import ShareURLButton from '../../../shared/ShareURLButton';
 
 // Styling
 import './LocalWeatherPanel.scss';
@@ -24,6 +28,13 @@ export default function LocalWeatherPanel(props) {
   const { feature } = props;
 
   const weatherData = feature.getProperties();
+
+  const [_searchParams, setSearchParams] = useSearchParams();
+
+  // useEffect hooks
+  useEffect(() => {
+    setSearchParams(new URLSearchParams({ type: 'localWeather', id: weatherData.id }));
+  }, [feature]);
 
   return (
     <div className="popup popup--road-weather" tabIndex={0}>
@@ -140,6 +151,8 @@ export default function LocalWeatherPanel(props) {
           }
         </Tabs>
       </div>
+
+      <ShareURLButton />
     </div>
   );
 }

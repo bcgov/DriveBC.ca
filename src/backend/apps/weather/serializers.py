@@ -1,4 +1,3 @@
-from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from apps.weather.models import CurrentWeather, RegionalWeather
@@ -8,21 +7,22 @@ tz = ZoneInfo("America/Vancouver")
 
 
 class RegionalWeatherSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = RegionalWeather
-        fields = ['location',
-                  'conditions',
-                  'name',
-                  'station',
-                  'observed',
-                  'forecast_group',
-                  'hourly_forecast_group',
-                  'forecast_issued',
-                  'sunrise',
-                  'sunset',
-                  'warnings',
-                  ]
+        fields = [
+            'id',
+            'location',
+            'conditions',
+            'name',
+            'station',
+            'observed',
+            'forecast_group',
+            'hourly_forecast_group',
+            'forecast_issued',
+            'sunrise',
+            'sunset',
+            'warnings',
+        ]
 
 
 # Current Weather serializer

@@ -1,0 +1,113 @@
+@import "../../styles/variables.scss";
+
+.share-url {
+  margin-bottom: 1rem;
+
+  .copy-btn {
+    margin-left: 1rem;
+    padding: .4rem .75rem;
+    border-radius: 4px;
+    background: #EDEBE9;
+    border: none;
+    color: #292929;
+    transition: 0.3s;
+
+    &:hover {
+      background: #F2F2F2;
+    }
+
+    svg {
+      margin-right: 0.4rem;
+    }
+  }
+
+  .alert {
+    position: fixed;
+    top: 4.5rem;
+    right: 1rem;
+    width: 365px;
+    background-color: #F1F8FE;
+    padding: 0.75rem;
+    border: 1px solid #053662;
+    border-radius: 4px;
+    box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
+    z-index: 22;
+
+    animation: fade-in 0.3s;
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 100;
+      }
+    }
+
+    @media (max-width: 767px) {
+      width: 100%;
+      right: 0;
+      top: 3.65rem;
+      border: none;
+    }
+
+    .alert-close-btn {
+      position: absolute;
+      top: -0.5rem;
+      right: -0.5rem;
+      padding: 0;
+      margin-bottom: 0;
+      font-size: 0.75rem;
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+
+
+      @media (max-width: 767px) {
+        top: 0.75rem;
+        right: 0.75rem;
+      }
+    }
+
+    .content {
+      display: flex;
+
+      &__icon {
+        display: flex;
+        align-items: center;
+
+        .square-icon {
+          width: 48px;
+          height: 48px;
+          background-color: $BC-Blue;
+          color: #D8EAFD;
+          border-radius: 8px;
+          font-size: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      &__text {
+        margin: 0 0 0 1rem;
+
+        p {
+          font-size: 0.875rem;
+
+          &:first-of-type {
+            margin-bottom: 0;
+          }
+
+          &:last-of-type {
+            margin-bottom: 0.5rem;
+          }
+
+          &.feedback {
+            color: #053662;
+          }
+        }
+      }
+    }
+  }
+
+}

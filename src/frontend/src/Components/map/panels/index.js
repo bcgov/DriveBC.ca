@@ -30,6 +30,7 @@ export const renderPanel = (clickedFeature, isCamDetail) => {
         return <LocalWeatherPanel feature={clickedFeature} />;
       case 'regionalWeather':
         return <RegionalWeatherPanel feature={clickedFeature} />;
+      case 'largeRestStop':
       case 'restStop':
         return <RestStopPanel feature={clickedFeature} />;
     }
