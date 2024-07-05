@@ -10,6 +10,7 @@ import './App.scss';
 import Header from './Header.js';
 import MapPage from './pages/MapPage';
 import CamerasListPage from './pages/CamerasListPage';
+// import MyCamerasListPage from './pages/MyCamerasListPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
 import EventsListPage from './pages/EventsListPage';
 import AdvisoriesListPage from './pages/AdvisoriesListPage';
@@ -31,6 +32,7 @@ setAutoFreeze(false);
 // FontAwesome Stylesheet
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
+// import CamerasListPageTest from './pages/CamerasListPageTest.js';
 config.autoAddCss = false
 
 export const MapContext = createContext(null);
@@ -100,7 +102,8 @@ function App() {
             <ScrollToTop />
             <Routes>
               <Route path="/" element={<MapPage />} />
-              <Route path="/cameras" element={<CamerasListPage />} />
+              <Route path="/my-cameras" element={<CamerasListPage favorite={true} />} />
+              <Route path="/cameras" element={<CamerasListPage favorite={false} />} />
               <Route path="/cameras/:id" element={<CameraDetailsPage />} />
               <Route path="/delays" element={<EventsListPage />} />
               <Route path="/advisories" element={<AdvisoriesListPage />} />

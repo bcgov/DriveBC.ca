@@ -181,4 +181,32 @@
 			content: none;
 		}
 	}
+
+	#dropdown-favorites-btn{
+		margin-top: 15px;
+	}
+	
+	.dropdown {
+		margin-left: auto;
+		margin-right: 0;
+		margin-bottom: 0;
+		font-weight: 700;
+		height: 35px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		@media (min-width: 992px) {
+			margin-right: 16px;
+		}
+
+		svg {
+			margin-right: 8px;
+			color: #D8EAFD;
+		}
+
+		&::after {
+			content: none;
+		}
+	}
 }

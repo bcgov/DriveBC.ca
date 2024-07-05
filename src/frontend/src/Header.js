@@ -3,6 +3,7 @@ import React, { useState, useContext } from "react";
 
 // Third party packages
 import { faComment,
+         faStar,
          faUser
  } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,6 +11,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 import { AuthContext } from "./App";
 
@@ -50,6 +52,16 @@ export default function Header() {
   const surveyLink = `${window.SURVEY_LINK}` ||
     'https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u';
 
+  
+    const handleSelect = (eventKey) => {
+      if (eventKey === 'cameras') {
+        window.location.href = '/my-cameras';
+      } else if (eventKey === 'routes') {
+        window.location.href = '/my-routes';
+      }
+    };
+  
+  
   // Rendering
   return (
     <header className="header--shown">
@@ -106,6 +118,17 @@ export default function Header() {
           
           {xLargeScreen &&
             <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
+          }
+          {xLargeScreen &&
+            <DropdownButton
+              id="dropdown-favorites-btn"
+              title={<><FontAwesomeIcon icon={faStar} /> Favorites</>}
+              onSelect={handleSelect}
+              className="btn btn-primary"
+            >
+              <Dropdown.Item eventKey="cameras">My cameras</Dropdown.Item>
+              <Dropdown.Item eventKey="routes">My routes</Dropdown.Item>
+            </DropdownButton>
           }
           </Container>
       </Navbar>

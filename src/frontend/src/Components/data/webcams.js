@@ -7,6 +7,18 @@ export function getCameras(routePoints, url = null) {
   .then((data) => data);
 }
 
+export function getMyCameras(routePoints, url = null) {
+  const payload = routePoints ? { route: routePoints } : {};
+  const idsToInclude = [16, 32];
+
+  return get(url ? url : `${window.API_HOST}/api/webcams/`, payload)
+    .then((data) => {
+      const filteredData = data.filter(item => idsToInclude.includes(item.id));
+      return filteredData;
+    });
+}
+
+
 export function getWebcamReplay(webcam) {
   // TODO: error handling
   return fetch(webcam.links.replayTheDay).then(response => response.json());
