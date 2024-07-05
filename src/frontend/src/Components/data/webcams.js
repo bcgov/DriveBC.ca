@@ -7,16 +7,29 @@ export function getCameras(routePoints, url = null) {
   .then((data) => data);
 }
 
-export function getMyCameras(routePoints, url = null) {
+export async function getMyCameras(routePoints, url = null) {
   const payload = routePoints ? { route: routePoints } : {};
-  const idsToInclude = [16, 32];
 
-  return get(url ? url : `${window.API_HOST}/api/webcams/`, payload)
-    .then((data) => {
-      const filteredData = data.filter(item => idsToInclude.includes(item.id));
-      return filteredData;
-    });
+  try {
+    // get the webcam IDs
+    const userWebcamsUrl = url ? url : `${window.API_HOST}/api/user/webcams/`;
+    const webcamsResponse = await get(userWebcamsUrl, payload);
+    const myWebcamIds = webcamsResponse.map(webcam => webcam.webcam);
+
+    // get the webcam data
+    const webcamsUrl = `${window.API_HOST}/api/webcams/`;
+    const data = await get(webcamsUrl, payload);
+    
+    // Filter the data based on the obtained webcam IDs
+    const filteredData = data.filter(item => myWebcamIds.includes(item.id));
+    return filteredData;
+
+  } catch (error) {
+    console.error('Error fetching my webcam data:', error);
+    throw error;
+  }
 }
+
 
 
 export function getWebcamReplay(webcam) {
