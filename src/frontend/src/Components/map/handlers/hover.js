@@ -7,6 +7,7 @@ import {
   restStopClosedStyles,
   restStopTruckStyles,
   restStopTruckClosedStyles,
+  routeStyles
 } from '../../data/featureStyleDefinitions.js';
 import {
   setEventStyle
@@ -75,6 +76,9 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
               }
             }
           }
+          break;
+          case 'route':
+          hoveredFeature.setStyle(routeStyles['static']);
           break;
       }
     }
@@ -153,6 +157,11 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
               targetFeature.setStyle(restStopStyles['hover']);
             }
           }
+        }
+        return;
+      case 'route':
+        if (!targetFeature.getProperties().clicked) {
+          targetFeature.setStyle(routeStyles['hover']);
         }
         return;
     }

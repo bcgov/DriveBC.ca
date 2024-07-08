@@ -627,3 +627,49 @@ export const eventStyles = {
     }),
   }
 };
+
+// Route styles
+export const routeStyles = {
+  static: [
+    new Style({
+      stroke: new Stroke({
+        color: 'rgba(85, 149, 217, 1)',
+        width: 6,
+      }),
+    }),
+    new Style({
+      stroke: new Stroke({
+        color: 'rgba(216, 234, 253, 1)',
+        width: 4,
+      }),
+    }),
+  ],
+  hover: [
+    new Style({
+      stroke: new Stroke({
+        color: 'rgba(168, 208, 251, 1)',
+        width: 6,
+      }),
+    }),
+    new Style({
+      stroke: new Stroke({
+        color: 'rgba(83, 134, 237, 1)',
+        width: 4,
+      }),
+    }),
+  ],
+  active: [
+    new Style({
+      stroke: new Stroke({
+        color: 'rgba(85, 149, 217, 1)',
+        width: 6,
+      }),
+    }),
+    new Style({
+      stroke: new Stroke({
+        color: 'rgba(30, 83, 167, 1)',
+        width: 4,
+      }),
+    }),
+  ],
+};

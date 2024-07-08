@@ -9,15 +9,17 @@ import FerryPanel from './FerryPanel';
 import LocalWeatherPanel from './weather/LocalWeatherPanel';
 import RegionalWeatherPanel from './weather/RegionalWeatherPanel';
 import RestStopPanel from './RestStopPanel';
+import RouteDetailsPanel from './RouteDetailsPanel';
 
 // Styling
 import './index.scss';
 
-export const renderPanel = (clickedFeature, isCamDetail) => {
+export const renderPanel = (clickedFeature, isCamDetail, routeDetails) => {
   if (clickedFeature) {
-    // Hack to pass in advisories from clickedFeature
-    if (!clickedFeature.get)
+
+    if (!clickedFeature.get) {
       return <AdvisoriesPanel advisories={clickedFeature} />;
+    }
 
     switch (clickedFeature.get('type')) {
       case 'camera':
@@ -33,6 +35,8 @@ export const renderPanel = (clickedFeature, isCamDetail) => {
       case 'largeRestStop':
       case 'restStop':
         return <RestStopPanel feature={clickedFeature} />;
+      case 'route':
+        return <RouteDetailsPanel routeObjects={routeDetails} />;
     }
   }
 }

@@ -98,7 +98,7 @@
 
       .close-panel {
         position: absolute;
-        top: 2rem;
+        top: 1.125rem;
         right: 1rem;
         padding: 0;
         min-width: 0;
@@ -160,6 +160,14 @@
       color: $Type-Primary;
       &:hover {
         background: lighten($Type-Primary, 70%);
+      }
+    }
+
+    .close-panel:has(+ .panel-content .popup.popup--route)
+      {
+      color: $White;
+      &:hover {
+        background: lighten(#053662, 5%);
       }
     }
 
