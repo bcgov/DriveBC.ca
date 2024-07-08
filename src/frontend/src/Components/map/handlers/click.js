@@ -13,6 +13,7 @@ import {
   restStopClosedStyles,
   restStopTruckStyles,
   restStopTruckClosedStyles,
+  routeStyles
 } from '../../data/featureStyleDefinitions.js';
 
 // Click states
@@ -110,6 +111,11 @@ export const resetClickedStates = (
         updateClickedFeature(null);
         break;
       }
+      case 'route':
+        clickedFeatureRef.current.setStyle(routeStyles['static']);
+        clickedFeatureRef.current.set('clicked', false);
+        updateClickedFeature(null);
+        break;
     }
   }
 };
@@ -266,6 +272,25 @@ const restStopClickHandler = (
   updateClickedFeature(feature);
 };
 
+const routeClickHandler = (
+  feature,
+  clickedFeatureRef,
+  updateClickedFeature,
+) => {
+  // reset previous clicked feature
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+    false,
+  );
+
+  // set new clicked route feature
+  feature.set('clicked', true);
+  feature.setStyle(routeStyles['active']);
+  updateClickedFeature(feature);
+};
+
 export const pointerClickHandler = (
   features,
   clickedFeatureRef,
@@ -363,6 +388,20 @@ export const pointerClickHandler = (
           clickedFeatureRef,
           updateClickedFeature,
           isCamDetail,
+        );
+        return;
+
+      case 'route':
+        trackEvent(
+          'click',
+          'map',
+          'route',
+          'selected route',
+        );
+        routeClickHandler(
+          clickedFeature,
+          clickedFeatureRef,
+          updateClickedFeature,
         );
         return;
     }

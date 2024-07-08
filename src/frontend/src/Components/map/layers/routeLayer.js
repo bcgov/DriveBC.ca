@@ -9,7 +9,7 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
-export function getRouteLayer(routeData, projectionCode) {
+export function getRouteLayer(routeData, projectionCode, mapContext, referenceData, updateReferenceFeature) {
   return new VectorLayer({
     classname: 'route',
     visible: true,
@@ -34,6 +34,8 @@ export function getRouteLayer(routeData, projectionCode) {
           'EPSG:4326',
           projectionCode,
         );
+
+        updateReferenceFeature(olFeatureForMap);
 
         const centroidGeometry = new Point(
           olFeature.getGeometry().getCoordinates()[
