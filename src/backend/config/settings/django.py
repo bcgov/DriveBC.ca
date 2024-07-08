@@ -27,6 +27,7 @@ FRONTEND_BASE_URL = env("FRONTEND_BASE_URL", default="http://localhost:3000/")
 # Security
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
 CORS_ORIGIN_WHITELIST = env.list("DJANGO_CORS_ORIGIN_WHITELIST")
+CSRF_TRUSTED_ORIGINS = env.list("DJANGO_CORS_ORIGIN_WHITELIST")
 CORS_ALLOW_HEADERS = default_headers + ("contenttype",)
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE = env.bool("DJANGO_CSRF_COOKIE_SECURE")
@@ -42,7 +43,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "allauth.usersessions.middleware.UserSessionsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",

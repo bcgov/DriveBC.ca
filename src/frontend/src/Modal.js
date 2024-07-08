@@ -3,6 +3,7 @@
 import React, { useState, useContext } from "react";
 
 import { AuthContext } from "./App";
+import { getCookie } from "./util";
 
 // Third party packages
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -54,6 +55,7 @@ export default function Modal() {
         <div className='body'>
           { authContext.action === 'Sign In' &&
             <form method='post' action={`${window.API_HOST}/accounts/oidc/bceid/login/`}>
+              <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
               <p>Access your saved cameras and routes</p>
               <button type='submit' className="btn btn-outline-primary">Sign in with BCeID</button>
               <div className="BCeID-definition">
@@ -67,6 +69,7 @@ export default function Modal() {
 
           { authContext.action === 'Sign Out' &&
             <form method='post' action={`${window.API_HOST}/accounts/logout/`}>
+              <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
               <button type='submit' className="btn btn-outline-primary">Sign out of DriveBC</button>
             </form>
           }

@@ -8,7 +8,8 @@ from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
 from django.db import connection
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.middleware.csrf import get_token
 from django.urls import re_path
 from django.views.static import serve
 from drf_recaptcha.fields import ReCaptchaV3Field
@@ -139,8 +140,11 @@ def static_override(prefix, view=serve, **kwargs):
 class session(APIView):
 
     def get(self, request, format=None):
-        if request.user.is_authenticated:
-            return Response({"username": request.user.username,
-                             "email": request.user.email, })
 
-        return Response({"username": None})
+        if request.user.is_authenticated:
+            response = JsonResponse({"username": request.user.username,
+                                     "email": request.user.email, })
+            response.set_cookie('csrftoken', get_token(request, ))
+            return response
+
+        return JsonResponse({"username": None})
