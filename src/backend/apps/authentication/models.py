@@ -31,3 +31,32 @@ class FavouritedCameras(BaseModel):
         constraints = [
             UniqueConstraint(fields=['user', 'webcam'], name='user_webcam')
         ]
+
+
+# TODO: Discuss hard cap on number of routes a user can have so that a user
+# can't save an absurd number of routes, potentially DOSsing the backend with
+# GIS queries on event ingestion
+class SavedRoutes(BaseModel):
+    '''
+    Routes saved by the user.
+
+    Routes generated from DataBC's router.  We store the time the route was
+    last validated against the route returned from the router API; on creation,
+    the route is considered validated because it came from the router recently.
+    Over time, a route saved here may no longer match what the router returns
+    due to changes in the road network (roads added or closed, for example).
+    Saved routes should be validated periodically (e.g., on user login).
+    '''
+
+    user = models.ForeignKey(DriveBCUser, on_delete=models.CASCADE,
+                             related_name='routes')
+    route = gis_models.MultiLineStringField()
+
+    # store search term for display, and point field for validation
+    start = models.TextField(blank=True, null=False)
+    start_point = gis_models.PointField()
+    end = models.TextField(blank=True, null=False)
+    end_point = gis_models.PointField()
+
+    # last time the route was verified against the router API
+    validated = models.DateTimeField(auto_now_add=True)

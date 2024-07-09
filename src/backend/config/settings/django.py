@@ -87,6 +87,8 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+LOGIN_REDIRECT_URL = FRONTEND_BASE_URL
+
 # Language
 USE_I18N = False
 
