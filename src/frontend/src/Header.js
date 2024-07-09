@@ -70,7 +70,7 @@ export default function Header() {
           { authContext.loginStateKnown
             ? ( authContext.username
                 ? <React.Fragment>
-                    <LinkContainer to="/account">
+                    <LinkContainer to="/account" className="my-account">
                       { getNavLink('My Account') }
                     </LinkContainer>
                     <a className="nav-link btn btn-outline-primary" id="signout-btn" alt="Sign out button"
