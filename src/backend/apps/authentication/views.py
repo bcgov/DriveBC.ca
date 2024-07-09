@@ -5,8 +5,8 @@ from rest_framework.response import Response
 
 from apps.webcam.models import Webcam
 
-from .models import FavouritedCameras
-from .serializers import FavouritedCamerasSerializer
+from .models import FavouritedCameras, SavedRoutes
+from .serializers import FavouritedCamerasSerializer, SavedRoutesSerializer
 
 
 class FavouritedCamerasViewset(viewsets.ModelViewSet):
@@ -38,3 +38,13 @@ class FavouritedCamerasViewset(viewsets.ModelViewSet):
         # if cam not found, success by idempotency, don't signal error
         self.get_queryset().filter(webcam=pk).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class SavedRoutesViewset(viewsets.ModelViewSet):
+    queryset = SavedRoutes.objects.all()
+    serializer_class = SavedRoutesSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+
+    def get_queryset(self):
+        return self.request.user.routes.all()
