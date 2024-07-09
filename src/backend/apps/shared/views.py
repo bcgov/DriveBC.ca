@@ -144,7 +144,8 @@ class session(APIView):
         if request.user.is_authenticated:
             response = JsonResponse({"username": request.user.username,
                                      "email": request.user.email, })
-            response.set_cookie('csrftoken', get_token(request, ))
-            return response
+        else:
+            JsonResponse({"username": None})
 
-        return JsonResponse({"username": None})
+        response.set_cookie('csrftoken', get_token(request, ))
+        return response
