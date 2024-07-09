@@ -10,6 +10,7 @@ import './App.scss';
 import Header from './Header.js';
 import MapPage from './pages/MapPage';
 import CamerasListPage from './pages/CamerasListPage';
+// import MyCamerasListPage from './pages/MyCamerasListPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
 import EventsListPage from './pages/EventsListPage';
 import AdvisoriesListPage from './pages/AdvisoriesListPage';

@@ -274,7 +274,7 @@ export default function CamerasListPage({favorite = false}) {
       </PageHeader>
 
       <Container className="outer-container">
-        <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
+      {!favorite && <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />}
 
         <div className="controls-container">
           <div className="route-display-container">
