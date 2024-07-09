@@ -18,7 +18,7 @@ import {
   filterByRoute
 } from '../Components/map/helpers';
 import { getAdvisories } from '../Components/data/advisories';
-import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
+import { collator, getCameras, getFavoriteCameras, addCameraGroups } from '../Components/data/webcams';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -32,7 +32,7 @@ import trackEvent from '../Components/shared/TrackEvent.js';
 // Styling
 import './CamerasListPage.scss';
 
-export default function CamerasListPage() {
+export default function CamerasListPage({favorite = false}) {
   document.title = 'DriveBC - Cameras';
 
   // Redux
@@ -67,28 +67,40 @@ export default function CamerasListPage() {
     }
   }
 
-  // Data functions
-  const getCamerasData = async route => {
-    const routePoints = route ? route.points : null;
+      // Data functions
+      const getCamerasData = async route => {
+        const routePoints = route ? route.points : null;
 
-    // Load if filtered cams don't exist or route doesn't match
-    if (!filteredCameras || !compareRoutePoints(routePoints, camFilterPoints)) {
-      // Fetch data if it doesn't already exist
-      const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
+        // Load if filtered cams don't exist or route doesn't match
+        if(!favorite){
+          if (!favorite || !filteredCameras || !compareRoutePoints(routePoints, camFilterPoints)) {
+            // Fetch data if it doesn't already exist
+            const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
 
-      // Filter data by route
-      const filteredCamData = route && route.routeFound ? filterByRoute(camData, route, null, true) : camData;
+            // Filter data by route
+            const filteredCamData = route && route.routeFound ? filterByRoute(camData, route, null, true) : camData;
 
-      dispatch(
-        updateCameras({
-          list: camData,
-          filteredList: filteredCamData,
-          filterPoints: route ? route.points : null,
-          timeStamp: new Date().getTime()
-        })
-      );
-    }
-  };
+            dispatch(
+              updateCameras({
+                list: camData,
+                filteredList: filteredCamData,
+                filterPoints: route ? route.points : null,
+                timeStamp: new Date().getTime()
+              })
+            );
+          }
+        }
+        else {
+          const camData = await getFavoriteCameras().catch((error) => displayError(error));
+
+          dispatch(
+            updateCameras({
+              filteredList: camData,
+              timeStamp: new Date().getTime()
+            })
+          );
+        }
+      };
 
   const getAdvisoriesData = async (camsData) => {
     let advData = advisories;
@@ -128,7 +140,7 @@ export default function CamerasListPage() {
   useEffect(() => {
     getCamerasData(selectedRoute);
 
-  }, [selectedRoute]);
+  }, [selectedRoute, favorite]);
 
   useEffect(() => {
     if (filteredCameras) {
@@ -162,15 +174,15 @@ export default function CamerasListPage() {
     // Search name and caption of all cams in group
     const searchFn = (pc, targetText) => {
       const targetLower = targetText.toLowerCase();
-    
+
       // Sort cameras by the presence of the search text in their name
       const sortedCamerasByName = pc.camGroup.sort((a, b) => {
         const aNameMatches = a.name.toLowerCase().includes(targetLower);
-        const bNameMatches = b.name.toLowerCase().includes(targetLower);    
+        const bNameMatches = b.name.toLowerCase().includes(targetLower);
         // Give higher priority to cameras where the name matches the search text
         return bNameMatches - aNameMatches;
       });
-    
+
       for (let i = 0; i < sortedCamerasByName.length; i++) {
         if (sortedCamerasByName[i].name.toLowerCase().includes(targetLower)) {
           return true;
@@ -180,17 +192,17 @@ export default function CamerasListPage() {
       // Sort cameras by the presence of the search text in their description
       const sortedCamerasByDescription = pc.camGroup.sort((a, b) => {
         const aCaptionMatches = a.caption.toLowerCase().includes(targetLower);
-        const bCaptionMatches = b.caption.toLowerCase().includes(targetLower);    
+        const bCaptionMatches = b.caption.toLowerCase().includes(targetLower);
         // Give higher priority to cameras where the description matches the search text
         return bCaptionMatches - aCaptionMatches;
       });
-          
+
       for (let i = 0; i < sortedCamerasByDescription.length; i++) {
       if (sortedCamerasByDescription[i].caption.toLowerCase().includes(targetLower)) {
           return true;
         }
       }
-    
+
       return false;
     }
 
@@ -203,7 +215,7 @@ export default function CamerasListPage() {
   }, [searchText, processedCameras]);
 
   useEffect(() => {
-    // To display correctly with camera search result, swap the displayed info on screen for the filtered camera list 
+    // To display correctly with camera search result, swap the displayed info on screen for the filtered camera list
     // between the most matched item and the first item
     if(filteredCamerasForSearch !== null){
       if(filteredCamerasForSearch[0] !== undefined && filteredCamerasForSearch[0].camGroup !== undefined){
@@ -257,16 +269,16 @@ export default function CamerasListPage() {
       }
 
       <PageHeader
-        title="Cameras"
-        description="Scroll to view all cameras sorted by highway.">
+        title={!favorite? "Cameras": "My cameras"}
+        description={!favorite? "Scroll to view all cameras sorted by highway.": "Manage and view your saved cameras here"}>
       </PageHeader>
 
       <Container className="outer-container">
-        <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
+      {!favorite && <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />}
 
         <div className="controls-container">
           <div className="route-display-container">
-            <RouteSearch showFilterText={true} />
+          {!favorite && <RouteSearch showFilterText={true} />}
           </div>
 
           <div className="search-container">
@@ -286,7 +298,7 @@ export default function CamerasListPage() {
         </div>
       </Container>
 
-      <CameraList cameras={ displayedCameras ? displayedCameras : [] }></CameraList>
+      <CameraList cameras={ displayedCameras ? displayedCameras : [] } favorite={favorite}></CameraList>
 
       {!(displayedCameras && displayedCameras.length) &&
         <Container className="empty-cam-display">
