@@ -1,15 +1,20 @@
 // React
 import React, { useState, useContext } from "react";
+import { Link } from 'react-router-dom';
 
 // Third party packages
 import { faComment,
-         faUser
+         faStar,
+         faUser,
+         faVideoCamera,
+         faRoute,
  } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 import { AuthContext } from "./App";
 
@@ -36,7 +41,9 @@ export default function Header() {
 
   const toggleAuthModal = (action) => {
     setAuthContext((prior) => {
-      if (!prior.showingModal) { return { ...prior, showingModal: true, action }; }
+      if (!prior.showingModal) { 
+        return { ...prior, showingModal: true, action }; 
+      }
       return prior;
     })
   };
@@ -49,7 +56,7 @@ export default function Header() {
 
   const surveyLink = `${window.SURVEY_LINK}` ||
     'https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u';
-
+  
   // Rendering
   return (
     <header className="header--shown">
@@ -78,7 +85,7 @@ export default function Header() {
                     ><FontAwesomeIcon icon={faUser} />Sign out</a>
                   </React.Fragment>
                 : <a className="nav-link btn btn-outline-primary" id="signin-btn" alt="Sign in button"
-                    onClick={() => toggleAuthModal('Sign In')}
+                    onClick={() => {toggleAuthModal('Sign In')}}
                   ><FontAwesomeIcon icon={faUser} />Sign in</a>
               )
             : ''
@@ -106,6 +113,27 @@ export default function Header() {
           
           {xLargeScreen &&
             <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
+          }
+
+          { authContext.loginStateKnown
+            ? ( authContext.username
+                ?<DropdownButton
+                    id="dropdown-favorites-btn"
+                    title={<><FontAwesomeIcon icon={faStar} /> Favorites</>}
+                    className="btn btn-primary"
+                  >
+                    <Dropdown.Item eventKey="my-cameras" as={Link} to="/my-cameras">
+                      <FontAwesomeIcon icon={faVideoCamera} /> My cameras
+                      <span className="camera-count-circle">{sessionStorage.getItem('myWebcamNum')}</span>
+                    </Dropdown.Item>
+                    <Dropdown.Item eventKey="routes">
+                      <FontAwesomeIcon icon={faRoute} /> My routes
+                    </Dropdown.Item>
+                  
+                  </DropdownButton>
+                : ''
+              )
+            : ''
           }
           </Container>
       </Navbar>

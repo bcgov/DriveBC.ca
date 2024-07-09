@@ -9,6 +9,7 @@ import {
   faXmark,
   faCircleInfo,
   faVideoSlash,
+  faStar,
 } from '@fortawesome/pro-solid-svg-icons';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
@@ -83,6 +84,42 @@ export default function CameraCard(props) {
         sub_label: 'View on Map Select',
       },
     });
+  }
+
+  function handleRemoveCamera() {
+    console.log("to be implemented");
+    const webCamId = `${createSearchParams({
+      id: camera.id,
+    })}`;
+    const value = webCamId.split('=')[1];
+
+    // alert(value);
+    deleteCamera(value);
+
+  }
+
+  async function deleteCamera(cameraId) {
+    // const url = `${window.API_HOST}/api/users/webcams/${cameraId}`;
+    // try {
+    //   const response = await fetch(url, {
+    //     method: 'DELETE',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     credentials: 'include'
+    //   });
+  
+    //   if (!response.ok) {
+    //     throw new Error(`Error: ${response.statusText}`);
+    //   }
+  
+    //   const result = await response.json();
+    //   console.log('Camera deleted successfully:', result);
+    //   return result;
+    // } catch (error) {
+    //   console.error('Error deleting the camera:', error);
+    //   throw error;
+    // }
   }
 
   function handleChildClick(e) {
@@ -223,6 +260,13 @@ export default function CameraCard(props) {
         onClick={handleViewOnMap}>
         View on map
         <FontAwesomeIcon icon={faMapMarkerAlt} />
+      </Button>
+      <Button
+        variant="primary"
+        className="viewmap-btn"
+        onClick={handleRemoveCamera}>
+        Remove
+        <FontAwesomeIcon icon={faStar} />
       </Button>
     </Card>
   );

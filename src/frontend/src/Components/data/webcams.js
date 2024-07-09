@@ -7,6 +7,45 @@ export function getCameras(routePoints, url = null) {
   .then((data) => data);
 }
 
+async function getFavoriteCameraIds(url, headers = {}) {
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers
+    },
+    credentials: 'include'
+  });
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+}
+
+export async function getFavoriteCameras(url = null) {
+  try {
+    // get webcam IDs
+    const userWebcamsUrl = url ? url : `${window.API_HOST}/api/users/webcams/`;
+    const webcamsResponse = await getFavoriteCameraIds(userWebcamsUrl);
+    const myWebcamIds = webcamsResponse.map(webcam => webcam.webcam);
+
+    // Save a variable to session storage
+    sessionStorage.setItem('myWebcamNum', myWebcamIds.length);
+
+    // get the webcam data
+    const webcamsUrl = `${window.API_HOST}/api/webcams/`;
+    const data = await get(webcamsUrl);
+    
+    // Filter the data based on the obtained webcam IDs
+    const filteredData = data.filter(item => myWebcamIds.includes(item.id));
+    return filteredData;
+
+  } catch (error) {
+    console.error('Error fetching my webcam data:', error);
+    throw error;
+  }
+}
+
 export function getWebcamReplay(webcam) {
   // TODO: error handling
   return fetch(webcam.links.replayTheDay).then(response => response.json());
