@@ -146,11 +146,21 @@
 		}
 	}
 
-	#signin-btn, #signout-btn {
+	.my-account {
+		order: 2;
 		margin-left: auto;
+		margin-right: 8px;
+	}
+
+	#signin-btn, #signout-btn {
+		margin-left: 0;
     margin-right: 0;
     margin-bottom: 0;
 		order: 2;
+
+		@media (min-width: 992px) {
+			margin-left: auto;
+		}
 
 		@media (min-width: 992px) {
 			margin-right: 16px;
