@@ -35,7 +35,7 @@ class Advisory(Page, BaseModel):
     geometry = models.MultiPolygonField()
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        super().save(log_action=None, *args, **kwargs)
         cache.delete(CacheKey.ADVISORY_LIST)
 
     # Editor panels configuration
@@ -72,7 +72,7 @@ class Bulletin(Page, BaseModel):
     ]
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        super().save(log_action=None, *args, **kwargs)
         cache.delete(CacheKey.BULLETIN_LIST)
 
     # Editor panels configuration

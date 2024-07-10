@@ -17,7 +17,6 @@ class RegionalWeatherSerializer(serializers.ModelSerializer):
             'station',
             'observed',
             'forecast_group',
-            'hourly_forecast_group',
             'forecast_issued',
             'sunrise',
             'sunset',
