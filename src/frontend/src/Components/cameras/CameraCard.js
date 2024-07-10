@@ -96,27 +96,27 @@ export default function CameraCard(props) {
   }
 
   async function deleteCamera(cameraId) {
-    const url = `${window.API_HOST}/api/users/webcams/${cameraId}`;
-    try {
-      const response = await fetch(url, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      });
+    // const url = `${window.API_HOST}/api/users/webcams/${cameraId}`;
+    // try {
+    //   const response = await fetch(url, {
+    //     method: 'DELETE',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     credentials: 'include'
+    //   });
   
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
+    //   if (!response.ok) {
+    //     throw new Error(`Error: ${response.statusText}`);
+    //   }
   
-      const result = await response.json();
-      console.log('Camera deleted successfully:', result);
-      return result;
-    } catch (error) {
-      console.error('Error deleting the camera:', error);
-      throw error;
-    }
+    //   const result = await response.json();
+    //   console.log('Camera deleted successfully:', result);
+    //   return result;
+    // } catch (error) {
+    //   console.error('Error deleting the camera:', error);
+    //   throw error;
+    // }
   }
 
   function handleChildClick(e) {
