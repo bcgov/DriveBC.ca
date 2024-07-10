@@ -10,7 +10,7 @@ log_dir="./logs"
 # Iterate over log files
 find "$log_dir" -type f -name '*.log' | while read -r file; do
     # Extract timestamp from filename
-    timestamp=$(echo "$file" | grep -oE '[0-9]{10}')
+    timestamp=$(echo "$file" | sed -n 's/.*\([0-9]\{10\}\)-access\.log/\1/p')
 
     # Check if timestamp is less than or equal to previous hour
     if [[ $timestamp -le $previous_hour ]]; then

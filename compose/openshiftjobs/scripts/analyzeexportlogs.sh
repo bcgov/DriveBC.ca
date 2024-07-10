@@ -30,7 +30,7 @@ for file in *.gz; do
     # Check if the file exists and is a regular file
     if [[ -f $file ]]; then
         # Extract the date and time part from the filename (assuming UTC timezone)
-        file_datetime_utc=$(echo "$file" | grep -oE '[0-9]{10}')
+        file_datetime_utc=$(echo "$file" | sed -n 's/.*\([0-9]\{10\}\)-access\.log\.gz/\1/p')
         # Check if the file date and time in UTC falls within days_ago's start and end time in UTC
         if [[ $file_datetime_utc -ge $start_time_utc && $file_datetime_utc -le $end_time_utc ]]; then
             zipped_files+=("$file")
