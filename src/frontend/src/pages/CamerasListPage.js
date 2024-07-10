@@ -298,7 +298,7 @@ export default function CamerasListPage({favorite = false}) {
         </div>
       </Container>
 
-      <CameraList cameras={ displayedCameras ? displayedCameras : [] }></CameraList>
+      <CameraList cameras={ displayedCameras ? displayedCameras : [] } favorite={favorite}></CameraList>
 
       {!(displayedCameras && displayedCameras.length) &&
         <Container className="empty-cam-display">
