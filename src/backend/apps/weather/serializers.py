@@ -37,31 +37,33 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CurrentWeather
-        fields = ['id',
-                  'weather_station_name',
-                  'air_temperature',
-                  'average_wind',
-                  'precipitation',
-                  'snow',
-                  'road_temperature',
-                  'maximum_wind',
-                  'road_condition',
-                  'location',
-                  'location_description',
-                  'hourly_forecast_group',
-                  'issuedUtc',
-                  'elevation']
+        fields = [
+            'id',
+            'weather_station_name',
+            'air_temperature',
+            'average_wind',
+            'precipitation',
+            'snow',
+            'road_temperature',
+            'maximum_wind',
+            'road_condition',
+            'location',
+            'location_description',
+            'hourly_forecast_group',
+            'issuedUtc',
+            'elevation'
+        ]
 
     def get_air_temperature(self, obj):
         if "air_temperature" in obj.datasets:
             data = obj.datasets["air_temperature"]
-            return f'{round(float(data["value"]))} {data["unit"]}'
+            return f'{round(float(data["value"]))}'
         return None
 
     def get_road_temperature(self, obj):
         if "road_temperature" in obj.datasets:
             data = obj.datasets["road_temperature"]
-            return f'{round(float(data["value"]))} {data["unit"]}'
+            return f'{round(float(data["value"]))}'
         return None
 
     def get_precipitation(self, obj):

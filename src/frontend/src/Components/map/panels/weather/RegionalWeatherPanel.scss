@@ -162,6 +162,7 @@
 
       .data-icon {
         margin-right: 0.75rem;
+        color: $Grey70;
       }
 
       .data-group {
@@ -180,14 +181,15 @@
 
     .label {
       text-align: left;
-      font-weight: 700;
+      color: $Grey70;
     }
 
     .data {
       text-align: right;
       margin-left: auto;
       min-width: 80px;
-      color: $Type-Secondary;
+      color: #2D2D2D;
+      font-weight: 700;
     }
   }
 }

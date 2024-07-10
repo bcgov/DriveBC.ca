@@ -23,114 +23,95 @@
     }
 
     .popup__content {
-      text-align: center;
       p {
-        margin-bottom: 0;
+        margin-bottom: 0.4rem;
       }
+
       &__title {
         margin: 1rem 1rem 0;
         padding-bottom: 1rem;
-        border-bottom: 1px solid $Divider;
 
         .name {
           color: $Type-Primary;
-          font-size: 2.25rem;
-        }
-
-        .friendly-time {
-          margin: 0 auto 1rem;
-          &-text {
-            color: $Type-Secondary;
-            font-size: 0.875rem;
-          }
+          font-size: 2rem;
         }
 
         .description {
-          margin-top: 1rem;
           font-size: 0.875rem;
         }
+
+        .friendly-time {
+          margin-top: 0.5rem;
+
+          &-text {
+            color: $Grey70;
+            font-size: 0.875rem;
+          }
+        }
       }
+
       &__description {
         & > div {
           padding-bottom: 1rem;
         }
-        .road-condition {
-          .data {
-            font-size: 1.25rem;
-            font-weight: 700;
-            text-transform: lowercase;
-
-            &:first-letter {
-              text-transform: capitalize;
-            }
-
-          }
-        }
         .temperatures {
           display: flex;
           justify-content: space-around;
+          text-align: center;
 
           .temperature {
+            .label {
+              color: $Grey70;
+            }
+
             .data {
-              font-size: 2.25rem;
-              font-weight: 700;
+              font-size: 4rem;
+              font-weight: 400;
             }
           }
         }
+      }
+    }
+
+    .popup__footer {
+      padding: 1rem;
+
+      p {
+        font-size: 0.875rem;
+        color: $Grey70;
+        text-align: center;
+        margin-bottom: 0.4rem;
       }
     }
   }
 
-  // Common styles for local weather and Regional weather
-  .data-card {
-    margin: 0.75rem 0;
-    padding: 0.75rem;
-    border-radius: 8px;
-    box-shadow: 0px 6.4px 14.4px 0px rgba(0, 0, 0, 0.13), 0px 1.2px 3.6px 0px rgba(0, 0, 0, 0.10);
-
-    &__row {
-      display: flex;
-
-      & + .data-card__row {
-        margin-top: 0.75rem;
-        padding-top: 0.75rem;
-        border-top: 1px solid $Divider;
-      }
-
-      &:not(.group) {
-        .data-icon {
-          align-self: top;
-        }
-      }
-
-      .data-icon {
-        margin-right: 0.75rem;
-      }
-
-      .data-group {
-        flex: 1 0;
-
-        &__row {
-          display: flex;
-        }
-      }
-    }
-
-    .label, .data {
-      font-size: 0.875rem;
-      margin-bottom: 0;
-    }
-
-    .label {
-      text-align: left;
+  .data-card-container {
+    .container-label {
+      font-size: 1rem;
       font-weight: 700;
     }
 
-    .data {
-      text-align: right;
-      margin-left: auto;
-      min-width: 80px;
-      color: $Type-Secondary;
+    .hourly-forecast {
+      .data-card__row:not(:first-child) {
+        padding-top: 0.4rem;
+      }
+
+      .data-card__row {
+        margin-top: 0;
+        display: flex;
+        justify-content: space-between;
+
+        .friendly-time-text {
+          font-size: 0.875rem;
+          color: $Grey70;
+        }
+
+        .temperature {
+          font-size: 0.875rem;
+          font-weight: 700;
+          color: #2D2D2D;
+        }
+      }
     }
   }
 }
