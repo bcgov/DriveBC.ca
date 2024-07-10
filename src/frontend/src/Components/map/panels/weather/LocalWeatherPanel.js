@@ -7,14 +7,13 @@ import { useSearchParams } from 'react-router-dom';
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTemperatureHalf,
-  faMountain,
   faDroplet,
+  faMountain,
+  faRoad,
   faSnowflake,
+  faTemperatureHalf,
   faWind,
-} from '@fortawesome/pro-solid-svg-icons';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
+} from '@fortawesome/pro-light-svg-icons';
 
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
@@ -45,41 +44,39 @@ export default function LocalWeatherPanel(props) {
         <p className="name">Local Weather</p>
         <span className="sub-name">Weather Stations</span>
       </div>
+
       <div className="popup__content">
         <div className="popup__content__title">
           <p className="name">{weatherData.weather_station_name}</p>
-          <FriendlyTime date={weatherData.issuedUtc} />
           <p className="description">{weatherData.location_description}</p>
+          <FriendlyTime date={weatherData.issuedUtc} asDate />
         </div>
-        <Tabs
-          defaultActiveKey="current"
-          id="local-weather-tabs"
-        >
-          <Tab eventKey="current" title="Current">
-            <div className="popup__content__description">
-              { weatherData.road_condition && (
-                <div className="road-condition">
-                  <p className="data">{weatherData.road_condition}</p>
-                  <p className="label">Road Condition</p>
+
+        <div className="popup__content__description">
+          {(weatherData.air_temperature || weatherData.road_temperature) && (
+            <div className="temperatures">
+              {weatherData.air_temperature && (
+                <div className="temperature temperature--air">
+                  <p className="label"><FontAwesomeIcon icon={faTemperatureHalf} /> Air</p>
+                  <p className="data">{weatherData.air_temperature}&deg;</p>
                 </div>
               )}
 
-              {(weatherData.air_temperature || weatherData.road_temperature) && (
-                <div className="temperatures">
-                  {weatherData.air_temperature && (
-                    <div className="temperature temperature--air">
-                      <p className="data">{weatherData.air_temperature}</p>
-                      <p className="label">Air</p>
-                    </div>
-                  )}
-                  {weatherData.road_temperature && (
-                    <div className="temperature temperature--road">
-                      <p className="data">{weatherData.road_temperature}</p>
-                      <p className="label">Road</p>
-                    </div>
-                  )}
+              {weatherData.road_temperature && (
+                <div className="temperature temperature--road">
+                  <p className="label"><FontAwesomeIcon icon={faRoad} /> Road</p>
+                  <p className="data">{weatherData.road_temperature}&deg;</p>
                 </div>
               )}
+            </div>
+          )}
+
+          {(weatherData.elevation || weatherData.precipitation ||
+            weatherData.snow || weatherData.average_wind || weatherData.maximum_wind) && (
+
+            <div className="data-card-container">
+              <p className="container-label">Conditions</p>
+
               <div className="data-card">
                 {weatherData.elevation && (
                   <div className="data-card__row">
@@ -90,6 +87,7 @@ export default function LocalWeatherPanel(props) {
                     <p className="data">{weatherData.elevation}</p>
                   </div>
                 )}
+
                 {weatherData.precipitation && (
                   <div className="data-card__row">
                     <div className="data-icon">
@@ -99,6 +97,7 @@ export default function LocalWeatherPanel(props) {
                     <p className="data">{weatherData.precipitation}</p>
                   </div>
                 )}
+
                 {weatherData.snow && (
                   <div className="data-card__row">
                     <div className="data-icon">
@@ -108,51 +107,60 @@ export default function LocalWeatherPanel(props) {
                     <p className="data">{weatherData.snow}</p>
                   </div>
                 )}
-                {(weatherData.average_wind ||
-                  weatherData.maximum_wind) && (
-                    <div className="data-card__row data-card__row group">
-                      <div className="data-icon">
-                        <FontAwesomeIcon className="icon" icon={faWind} />
-                      </div>
-                      <div className="data-group">
-                        {weatherData.average_wind && (
-                          <div className="data-group__row">
-                            <p className="label">Average wind</p>
-                            <p className="data">{weatherData.average_wind}</p>
-                          </div>
-                        )}
-                        {weatherData.maximum_wind && (
-                          <div className="data-group__row">
-                            <p className="label">Maximum wind</p>
-                            <p className="data">{weatherData.maximum_wind}</p>
-                          </div>
-                        )}
-                      </div>
+
+                {(weatherData.average_wind || weatherData.maximum_wind) && (
+                  <div className="data-card__row data-card__row group">
+                    <div className="data-icon">
+                      <FontAwesomeIcon className="icon" icon={faWind} />
                     </div>
-                  )}
+                    <div className="data-group">
+                      {weatherData.average_wind && (
+                        <div className="data-group__row">
+                          <p className="label">Average wind</p>
+                          <p className="data">{weatherData.average_wind}</p>
+                        </div>
+                      )}
+                      {weatherData.maximum_wind && (
+                        <div className="data-group__row">
+                          <p className="label">Maximum wind</p>
+                          <p className="data">{weatherData.maximum_wind}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          </Tab>
-          {weatherData.hourly_forecast &&
-            <Tab eventKey="forecast" title="Forecast">
-              <div>
-                <p>Road surface forecast</p>
-                {weatherData.hourly_forecast.map((forecast, index) => {
-                  return (
-                    <div key={index} className="forecast">
-                      <FriendlyTime date={forecast.time} asDate />
-                      <p className="condition">{forecast.condition}</p>
-                      <p className="temperature">{forecast.temp}&deg;C</p>
+          )}
+
+          {weatherData.hourly_forecast_group && weatherData.hourly_forecast_group.length > 0 &&
+            <div className="data-card-container">
+              <p className="container-label">Road surface forecast</p>
+
+              <div className="data-card hourly-forecast">
+                {weatherData.hourly_forecast_group.map((forecast, index) => {
+                  return forecast.ObservationTypeName == 'surfaceTemp' ? (
+                    <div key={index} className="data-card__row data-card__row group">
+                      <FriendlyTime date={forecast.TimestampUtc} timeOnly />
+                      <p className="temperature">{forecast.Value}&deg;</p>
                     </div>
-                  );
+                  ) : null;
                 })}
               </div>
-            </Tab>
+            </div>
           }
-        </Tabs>
+        </div>
       </div>
 
       <ShareURLButton />
+
+      <div className="popup__footer">
+        <p>Temperatures displayed in Celcius (&deg;C) <br /></p>
+        <p>
+          Local weather is provided by local Ministry of Transportation and Infrastructure weather stations. <br />
+          Forecasts courtesy of Weathernet.
+        </p>
+      </div>
     </div>
   );
 }
