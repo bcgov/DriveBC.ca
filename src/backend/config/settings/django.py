@@ -113,8 +113,6 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.openid_connect",
     "allauth.usersessions",
-    # "dj_rest_auth",
-    # "dj_rest_auth.registration",
     "huey.contrib.djhuey",
     "rest_framework",
     "rest_framework.authtoken",
@@ -195,7 +193,7 @@ LOGGING = {
     },
     "root": {
         "handlers": ["console"],
-        "level": "WARNING",
+        "level": "DEBUG",
     },
 }
 
