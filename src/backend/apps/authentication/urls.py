@@ -1,4 +1,3 @@
-from django.views.decorators.csrf import csrf_exempt
 from django.urls import include, path
 from rest_framework import routers
 

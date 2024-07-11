@@ -25,7 +25,7 @@ class FavouritedCameras(BaseModel):
     user = models.ForeignKey(DriveBCUser, on_delete=models.CASCADE,
                              related_name="webcams")
     webcam = models.ForeignKey(Webcam, on_delete=models.CASCADE,
-                             related_name="users")
+                               related_name="users")
 
     class Meta:
         constraints = [
