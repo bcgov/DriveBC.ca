@@ -1,0 +1,124 @@
+@import "../../../styles/variables";
+
+#user-navigation {
+  display: flex;
+  flex-direction: row;
+
+  @media (max-width: 767px) {
+    position: absolute;
+    right: 1rem;
+  }
+
+  #signin-btn {
+    margin: 0 1rem;
+  }
+
+  // Generic dropdown styling
+  .dropdown {
+    padding: 0;
+    margin: 0 0.4rem;
+
+    button {
+      margin: 0;
+
+      // Background color in different states
+      --bs-btn-color: #323130;
+      --bs-btn-bg: white;
+      --bs-btn-border-color: #013366;
+      --bs-btn-hover-color: #323130;
+      --bs-btn-hover-bg: #012b57;
+      --bs-btn-active-color: #b3b3b3;
+      --bs-btn-active-bg: #2D2D2D;
+
+      outline: none !important;
+      box-shadow: none !important;
+
+      &:hover, &:active, &:focus {
+        background: #F3F2F1;
+      }
+
+      &:active.show, &:focus.show {
+        background: #2D2D2D;
+        color: white;
+      }
+    }
+
+    .dropdown-menu {
+      margin-top: 0.5rem;
+      min-width: 268px;
+      padding: 0;
+      box-shadow: 0px 6.4px 14.4px 0px rgba(0, 0, 0, 0.13), 0px 1.2px 3.6px 0px rgba(0, 0, 0, 0.10);
+
+      .dropdown-item {
+        &:hover {
+          background-color: #FFF;
+        }
+      }
+
+      .menu-items {
+        padding: 0.25rem;
+
+        .menu-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          color: #2D2D2D;
+          text-decoration: none;
+          padding: 0.75rem 1rem 0.75rem 0.25rem;
+
+          svg {
+            font-size: 0.825rem;
+          }
+
+          .menu-item-header {
+            svg {
+              width: 2.5rem;
+              text-align: right;
+            }
+
+            .item-count {
+              display: inline-block;
+              margin-left: 0.75rem;
+              padding: 0.25rem 0.4rem;
+              border-radius: 0.8rem;
+              background: #013366;
+              color: white;
+              font-size: 12px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // User menu
+  #user-menu-header {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+    background: $Grey10;
+
+    padding: 0.5rem;
+    cursor: default;
+
+    #user-icon {
+      font-size: 2.25rem;
+      padding: 0.5rem;
+    }
+
+    #user-email {
+      font-size: 14px;
+      font-weight: 700;
+      color: #2D2D2D;
+      text-align: center;
+    }
+
+    #signout-link {
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: #255A90;
+      cursor: pointer;
+    }
+  }
+}

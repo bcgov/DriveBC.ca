@@ -7,7 +7,7 @@ import '@bcgov/bc-sans/css/BCSans.css';
 import './App.scss';
 
 // Components and functions
-import Header from './Header.js';
+import Header from './Components/shared/header/Header.js';
 import MapPage from './pages/MapPage';
 import DemoPage from './pages/DemoPage.js';
 import CamerasListPage from './pages/CamerasListPage';

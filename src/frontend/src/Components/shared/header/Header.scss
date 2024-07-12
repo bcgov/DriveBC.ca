@@ -1,4 +1,4 @@
-@import "styles/variables";
+@import "../../../styles/variables";
 
 .navbar {
 	position: fixed;
@@ -38,8 +38,6 @@
 			transform-origin: 0% 100%;
 			transition: transform 100ms ease-in-out;
 		}
-
-
 
 		&:not(.collapsed) {
 			.line {
@@ -94,9 +92,7 @@
 	}
 
 	&-collapse {
-
 		.navbar-nav {
-
 			.nav-link {
 				color: $Type-Primary;
 				padding: 10px 12px;
@@ -146,22 +142,6 @@
 		}
 	}
 
-	#signin-btn, #signout-btn {
-		margin-left: auto;
-    margin-right: 0;
-    margin-bottom: 0;
-		order: 2;
-
-		@media (min-width: 992px) {
-			margin-right: 16px;
-		}
-
-		svg {
-			margin-right: 8px;
-			color: $Type-Primary;
-		}
-	}
-
 	#feedback-btn {
 		margin-left: auto;
 		margin-right: 0;
@@ -181,47 +161,4 @@
 			content: none;
 		}
 	}
-
-	#dropdown-favorites-btn{
-		margin-top: 16px;
-		// height: auto;
-		width: 120px;
-	}
-
-	.dropdown {
-		margin-left: auto;
-		margin-right: 0;
-		margin-bottom: 0;
-		font-weight: 700;
-		height: 35px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-		width: 120px;
-
-		@media (min-width: 992px) {
-			margin-right: 16px;
-		}
-
-		svg {
-			margin-right: 8px;
-			color: #D8EAFD;
-		}
-
-		&::after {
-			content: none;
-		}
-	}
-
-	.camera-count-circle {
-		display: inline-block;
-		margin-left: 10px;
-		padding: 5px 10px;
-		border-radius: 50%;
-		background-color: #013366; /* Bootstrap primary color */
-		color: white;
-		font-size: 12px;
-		font-weight: bold;
-	  }
 }
