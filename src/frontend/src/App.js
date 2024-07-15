@@ -9,6 +9,7 @@ import './App.scss';
 // Components and functions
 import Header from './Header.js';
 import MapPage from './pages/MapPage';
+import DemoPage from './pages/DemoPage.js';
 import CamerasListPage from './pages/CamerasListPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
 import EventsListPage from './pages/EventsListPage';
@@ -111,6 +112,7 @@ function App() {
               {/* Catch-all route for 404 errors */}
               <Route path="*" element={<NotFoundPage />} />
               <Route path="/problems" element={<ProblemsPage />} />
+              <Route path="/demo" element={<DemoPage />} />
               <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
               <Route path="/highway-problem" element={<ReportRoadPage />} />
               <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />

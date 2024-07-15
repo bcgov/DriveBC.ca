@@ -210,7 +210,6 @@ export default function DriveBCMap(props) {
       target: mapElement.current,
       layers: [vectorLayer],
       view: mapView.current,
-      pixelRatio: 1.875,
       moveTolerance: 7,
       controls: [new ScaleLine({ units: 'metric' })],
     });
@@ -311,7 +310,7 @@ export default function DriveBCMap(props) {
     loadLayer(
       mapLayers, mapRef, mapContext,
       'routeLayer', dl, 3, null, updateReferenceFeature
-    ); 
+    );
 
       // Adding route data to routeDetails
       if (selectedRoute && selectedRoute.routeFound) {
@@ -377,7 +376,7 @@ export default function DriveBCMap(props) {
     if (Array.isArray(filteredFerries)) {
       setSelectedFerries(filteredFerries.length);
     }
-    
+
   }, [filteredFerries]);
 
   // Current weathers layer
@@ -482,11 +481,11 @@ export default function DriveBCMap(props) {
         <div className="panel-content">
           {openPanel && (
             (selectedRoute && selectedRoute.routeFound) && renderPanel(clickedFeature, null, {...routeDetails, ferries: selectedFerries, distance: routeDistance, distanceUnit: routeDistanceUnit})
-          )} 
+          )}
 
           {openPanel && (
-            (!selectedRoute || !selectedRoute.routeFound) && renderPanel((clickedFeature && !clickedFeature.get) 
-            ? advisoriesInView 
+            (!selectedRoute || !selectedRoute.routeFound) && renderPanel((clickedFeature && !clickedFeature.get)
+            ? advisoriesInView
             : clickedFeature , isCamDetail )
           )}
         </div>

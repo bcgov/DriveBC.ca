@@ -61,17 +61,30 @@ class SavedRoutesViewset(viewsets.ModelViewSet):
     record.
 
         {
+            "label": <user provided string naming the route>,
+            "distance": <float value of route length, returned by the router API>,
+            "distance_unit": <string value of unit; should be 'km', returned by the router API>
             "start": <the search term used to start the route>,
             "end": <the search term for the destination>,
             "start_point": <the GeoJSON point for the start, returned by the router API>,
             "end_point": <the GeoJSON point for the destination, returned by the router API>,
+            "thumbnail": <image data in data URI form, may be blank>,
             "route": <The GeoJSON MultiLineString for the route, returned by the router API>
         }
 
-    **DELETE /api/users/routes/*<id\>***
+    **DELETE /api/users/routes/*<id\>*/**
 
     Removes the route from the user's list, deleting it from the database.
     *<id\>* is the ID of the route record, returned in the list.
+
+    **PUT /api/users/routes/*<id\>*/**
+
+    Updates the route identified by *<id\>*.  Requires entire object to be sent.
+
+    **PATCH /api/users/routes/*<id\>*/**
+
+    Updates the route identified by *<id\>*.  Partial update is allowed, sending
+    only those fields with changing values.
     '''
 
     queryset = SavedRoutes.objects.all()
