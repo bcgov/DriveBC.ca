@@ -9,14 +9,13 @@ import PageHeader from '../PageHeader';
 import './AccountPage.scss';
 
 export default function AccountPage() {
-
   const { authContext } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!authContext.loginStateKnown || !authContext.username) {
-      navigate('/login');
+    if (authContext.loginStateKnown && !authContext.username) {
+      navigate('/');
     }
   }, [authContext]);
 
