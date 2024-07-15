@@ -33,9 +33,12 @@ class FavouritedCameras(BaseModel):
         ]
 
 
-# TODO: Discuss hard cap on number of routes a user can have so that a user
-# can't save an absurd number of routes, potentially DOSsing the backend with
-# GIS queries on event ingestion
+# TODO: Add a clean_label method to provide a default value for label when a
+# user doesn't have one.
+
+# TODO: Add a clean_distance method that saves the value in km; distance_unit
+# can be a preferred unit, but the standard value should be in km to allow for
+# sorting/filtering
 class SavedRoutes(BaseModel):
     '''
     Routes saved by the user.
@@ -51,6 +54,12 @@ class SavedRoutes(BaseModel):
     user = models.ForeignKey(DriveBCUser, on_delete=models.CASCADE,
                              related_name='routes')
     route = gis_models.MultiLineStringField()
+
+    # User friendly presentation
+    label = models.CharField(max_length=100, null=False, blank=True)
+    thumbnail = models.TextField(null=True)
+    distance = models.FloatField(null=True)
+    distance_unit = models.CharField(max_length=10, null=False, blank=True)
 
     # store search term for display, and point field for validation
     start = models.TextField(blank=True, null=False)

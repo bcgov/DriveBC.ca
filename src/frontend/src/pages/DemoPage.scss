@@ -1,0 +1,19 @@
+.demo {
+  .demo-map {
+    opacity: 1;
+    float: right;
+    width: 400px;
+    height: 200px;
+  }
+
+  .container {
+    padding-top: 1rem;
+    padding-bottom: 0rem;
+  }
+
+  .maps {
+    .thumbnail img {
+      border: solid 1px black;
+    }
+  }
+}
