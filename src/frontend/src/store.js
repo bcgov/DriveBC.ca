@@ -16,6 +16,7 @@ import cmsReducer from './slices/cmsSlice';
 import feedsReducer from './slices/feedsSlice';
 import mapReducer from './slices/mapSlice';
 import routesReducer from './slices/routesSlice';
+import userReducer from './slices/userSlice';
 
 const getConfig = (key, lifeInSeconds, initialState) => {
   const config = {
@@ -41,6 +42,7 @@ const store = configureStore({
     cms: persistReducer(getConfig('cms', 60, cmsInitialState), cmsReducer),
     routes: persistReducer(getConfig('routes'), routesReducer),
     map: persistReducer(getConfig('map'), mapReducer),
+    user: persistReducer(getConfig('user'), userReducer),
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

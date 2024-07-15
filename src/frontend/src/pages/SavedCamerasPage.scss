@@ -1,0 +1,73 @@
+@import "../styles/variables.scss";
+
+.my-cameras-page {
+  position: relative;
+
+  .network-error, .server-error {
+    @media (max-width: 767px) {
+      position: relative;
+    }
+  }
+
+  .outer-container {
+    padding-bottom: 0;
+
+    .controls-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+
+      @media (max-width: 767px) {
+        flex-direction: column;
+      }
+
+      .route-display-container {
+        display: flex;
+        align-items: center;
+
+        @media (max-width: 767px) {
+          width: 100%;
+        }
+
+        .routing-container {
+          position: relative;
+          padding: 0;
+
+          @media (max-width: 767px) {
+            width: 100%;
+          }
+
+          .swap-button {
+            position: absolute;
+            top: 22px;
+            right: -10px;
+          }
+        }
+      }
+
+      .search-container {
+        min-width: 360px;
+
+        @media (max-width: 767px) {
+          min-width: 100%;
+          width: 100%;
+          margin-top: 1rem;
+        }
+
+        .rbt-menu {
+          display: none !important;
+        }
+      }
+    }
+  }
+
+  .empty-cam-display {
+    h2, h6 {
+      color: #053662;
+    }
+
+    h6 {
+      margin-top: 2rem;
+    }
+  }
+}

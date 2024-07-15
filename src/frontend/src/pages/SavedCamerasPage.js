@@ -1,55 +1,47 @@
 // React
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Redux
-import { useSelector, useDispatch } from 'react-redux'
-import { memoize } from 'proxy-memoize'
-import { updateAdvisories } from '../slices/cmsSlice';
-import { updateCameras } from '../slices/feedsSlice';
+import { useSelector } from 'react-redux';
+import { memoize } from 'proxy-memoize';
 
-// Third party components
+// External imports
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import { booleanIntersects, point, multiPolygon } from '@turf/turf';
 import Container from 'react-bootstrap/Container';
 
-// Components and functions
-import {
-  compareRoutePoints,
-  filterByRoute
-} from '../Components/map/helpers';
-import { getAdvisories } from '../Components/data/advisories';
+// Internal imports
+import { AuthContext } from '../App';
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
-import Advisories from '../Components/advisories/Advisories';
 import CameraList from '../Components/cameras/CameraList';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
-import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent.js';
 
 // Styling
-import './CamerasListPage.scss';
+import './SavedCamerasPage.scss';
 
-export default function CamerasListPage() {
-  document.title = 'DriveBC - Cameras';
+export default function SavedCamerasPage() {
+  document.title = 'DriveBC - My Cameras';
+
+  const { authContext } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   // Redux
-  const dispatch = useDispatch();
-  const { advisories, cameras, filteredCameras, camFilterPoints, selectedRoute } = useSelector(useCallback(memoize(state => ({
-    advisories: state.cms.advisories.list,
+  const { cameras, favCams } = useSelector(useCallback(memoize(state => ({
     cameras: state.feeds.cameras.list,
-    filteredCameras: state.feeds.cameras.filteredList,
-    camFilterPoints: state.feeds.cameras.filterPoints,
-    selectedRoute: state.routes.selectedRoute
+    favCams: state.user.favCams
   }))));
 
   // UseRef hooks
   const isInitialMount = useRef(true);
+  const isInitialMountFav = useRef(true);
 
   // UseState hooks
-  const [advisoriesInRoute, setAdvisoriesInRoute] = useState([]);
   const [displayedCameras, setDisplayedCameras] = useState(null);
   const [processedCameras, setProcessedCameras] = useState(null);
   const [searchText, setSearchText] = useState('');
@@ -67,95 +59,62 @@ export default function CamerasListPage() {
   }
 
   // Data functions
-  const getCamerasData = async route => {
-    const routePoints = route ? route.points : null;
+  const getSavedCameras = async () => {
+    // Fetch data if it doesn't already exist
+    const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
 
-    // Load if filtered cams don't exist or route doesn't match
-    if (!filteredCameras || !compareRoutePoints(routePoints, camFilterPoints)) {
-      // Fetch data if it doesn't already exist
-      const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
+    // Get fav group IDs from saved cams
+    const filteredFavCams = camData.filter(item => favCams.includes(item.id));
+    const favCamGroupIds = filteredFavCams.map(cam => cam.group);
 
-      // Filter data by route
-      const filteredCamData = route && route.routeFound ? filterByRoute(camData, route, null, true) : camData;
+    // Filter cameras by fav group IDs
+    const filteredCameras = camData.filter(cam => favCamGroupIds.includes(cam.group));
 
-      dispatch(
-        updateCameras({
-          list: camData,
-          filteredList: filteredCamData,
-          filterPoints: route ? route.points : null,
-          timeStamp: new Date().getTime()
-        })
-      );
-    }
-  };
-
-  const getAdvisoriesData = async (camsData) => {
-    let advData = advisories;
-
-    if (!advisories) {
-      advData = await getAdvisories().catch((error) => displayError(error));
-
-      dispatch(updateAdvisories({
-        list: advData,
-        timeStamp: new Date().getTime()
-      }));
-    }
-
-    // load all advisories if no route selected
-    const resAdvisories = !selectedRoute || !selectedRoute.routeFound ? advData : [];
-
-    // Route selected, load advisories that intersect with at least one cam on route
-    if (selectedRoute && selectedRoute.routeFound && advData && advData.length > 0 && camsData && camsData.length > 0) {
-      for (const adv of advData) {
-        const advPoly = multiPolygon(adv.geometry.coordinates);
-
-        for (const cam of camsData) {
-          const camPoint = point(cam.location.coordinates);
-          if (booleanIntersects(advPoly, camPoint)) {
-            // advisory intersects with a camera, add to list and break loop
-            resAdvisories.push(adv);
-            break;
-          }
-        }
-      }
-    }
-
-    setAdvisoriesInRoute(resAdvisories);
-  };
-
-  // useEffect hooks
-  useEffect(() => {
-    getCamerasData(selectedRoute);
-
-  }, [selectedRoute]);
-
-  useEffect(() => {
+    // Filter cameras by user's saved cameras
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
       const clonedCameras = JSON.parse(JSON.stringify(filteredCameras));
-      const finalCameras = addCameraGroups(clonedCameras);
+      const finalCameras = addCameraGroups(clonedCameras, favCams);
 
       // Sort cameras by highway number and route_order
       finalCameras.sort(function(a, b) {
-        // Route exists, sort by route projection distance only
-        if (selectedRoute && selectedRoute.routeFound) {
-          return collator.compare(a.route_projection, b.route_projection);
-
-        // No route, sort by highway first, then default highway/route order
-        } else {
-          const highwayCompare = collator.compare(a.highway_display, b.highway_display);
-          if (highwayCompare == 0) {
-            return collator.compare(a.route_order, b.route_order);
-          }
-
-          return highwayCompare;
+        // Sort by highway first, then default highway/route order
+        const highwayCompare = collator.compare(a.highway_display, b.highway_display);
+        if (highwayCompare == 0) {
+          return collator.compare(a.route_order, b.route_order);
         }
+
+        return highwayCompare;
       });
 
       setProcessedCameras(finalCameras);
-      getAdvisoriesData(finalCameras);
     }
-  }, [filteredCameras]);
+  };
+
+  // useEffect hooks
+  // Redirect to login page if user is not logged in
+  useEffect(() => {
+    if (!authContext.loginStateKnown) {
+      return;
+    }
+
+    if (!authContext.username) {
+      navigate('/');
+      return;
+    }
+
+    getSavedCameras();
+  }, [authContext]);
+
+  useEffect(() => {
+    // Do not run on initial mount, it will run on authContext update
+    if (isInitialMountFav.current) {
+      isInitialMountFav.current = false;
+      return;
+    }
+
+    getSavedCameras();
+  }, [favCams]);
 
   useEffect(() => {
     // Search name and caption of all cams in group
@@ -219,7 +178,7 @@ export default function CamerasListPage() {
 
   // Rendering
   return (
-    <div className="cameras-page">
+    <div className="saved-cameras-page">
       {showNetworkError &&
         <NetworkErrorPopup />
       }
@@ -229,18 +188,12 @@ export default function CamerasListPage() {
       }
 
       <PageHeader
-        title="Cameras"
-        description="Scroll to view all cameras sorted by highway.">
+        title="My cameras"
+        description="Manage and view your saved cameras here.">
       </PageHeader>
 
       <Container className="outer-container">
-        <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
-
         <div className="controls-container">
-          <div className="route-display-container">
-            <RouteSearch showFilterText={true} />
-          </div>
-
           <div className="search-container">
             <AsyncTypeahead
               id="camera-name-search"
@@ -263,9 +216,6 @@ export default function CamerasListPage() {
       {!(displayedCameras && displayedCameras.length) &&
         <Container className="empty-cam-display">
           <h2>No cameras to display</h2>
-
-          <h6><b>Do you have a starting location and a destination entered?</b></h6>
-          <p>Adding a route will narrow down the information for the whole site, including the camera list. There might not be any cameras between those two locations.</p>
 
           <h6><b>Have you entered search terms to narrow down the list?</b></h6>
           <p>Try checking your spelling, changing, or removing your search terms.</p>

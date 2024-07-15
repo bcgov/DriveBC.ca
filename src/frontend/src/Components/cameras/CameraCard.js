@@ -1,8 +1,14 @@
 // React
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createSearchParams, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
-// Third party packages
+// Redux
+import { useSelector, useDispatch } from 'react-redux';
+import { memoize } from 'proxy-memoize';
+import { pushFavCam, removeFavCam } from '../../slices/userSlice';
+
+// External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMapMarkerAlt,
@@ -15,7 +21,9 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import FriendlyTime from '../shared/FriendlyTime';
 
+// Internal imports
 import { getCameraOrientation } from './helper.js';
+import { addFavoriteCamera, deleteFavoriteCamera } from "../data/webcams";
 
 // Styling
 import './CameraCard.scss';
@@ -24,12 +32,21 @@ import colocatedCamIcon from '../../images/colocated-camera.svg';
 import trackEvent from '../shared/TrackEvent.js';
 
 export default function CameraCard(props) {
-  // Props
-  const { cameraData, favorite } = props;
+  /* Setup */
+  const { cameraData } = props;
+  const location = useLocation();
+
+  // Redux
+  const dispatch = useDispatch();
+  const { favCams } = useSelector(useCallback(memoize(state => ({
+    favCams: state.user.favCams
+  }))));
 
   // States
   const [show, setShow] = useState(false);
   const [camera, setCamera] = useState(cameraData);
+  // to be used for deletion, does not update
+  const [camId] = useState(cameraData.id);
 
   // useEffect hooks
   useEffect(() => {
@@ -86,37 +103,14 @@ export default function CameraCard(props) {
     });
   }
 
-  function handleRemoveCamera() {
-    console.log("to be implemented");
-    const webCamId = `${createSearchParams({
-      id: camera.id,
-    })}`.split('=')[1];
-
-    deleteCamera(webCamId);
+  const addCamera = async () => {
+    addFavoriteCamera(camera.id, dispatch, pushFavCam);
   }
 
-  async function deleteCamera(cameraId) {
-    // const url = `${window.API_HOST}/api/users/webcams/${cameraId}`;
-    // try {
-    //   const response = await fetch(url, {
-    //     method: 'DELETE',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     credentials: 'include'
-    //   });
-
-    //   if (!response.ok) {
-    //     throw new Error(`Error: ${response.statusText}`);
-    //   }
-
-    //   const result = await response.json();
-    //   console.log('Camera deleted successfully:', result);
-    //   return result;
-    // } catch (error) {
-    //   console.error('Error deleting the camera:', error);
-    //   throw error;
-    // }
+  const deleteCamera = async () => {
+    // use un-updated id for deletion in my cameras page
+    const id = location.pathname == '/my-cameras' ? camId : camera.id;
+    deleteFavoriteCamera(id, dispatch, removeFavCam);
   }
 
   function handleChildClick(e) {
@@ -259,17 +253,16 @@ export default function CameraCard(props) {
         <FontAwesomeIcon icon={faMapMarkerAlt} />
       </Button>
 
-      { favorite
-            ? <Button
-            variant="primary"
-            className="viewmap-btn"
-            onClick={handleRemoveCamera}>
-            Remove
-            <FontAwesomeIcon icon={faStar} />
-          </Button>
-          :
-          ''
-        }
+      {favCams != null &&
+        <Button
+          variant="primary"
+          className="viewmap-btn"
+          onClick={favCams && favCams.includes(camera.id) ? deleteCamera : addCamera}>
+
+          {favCams && favCams.includes(camera.id) ? 'Remove' : 'Add'}
+          <FontAwesomeIcon icon={faStar} />
+        </Button>
+      }
     </Card>
   );
 }

@@ -11,7 +11,7 @@ import Header from './Components/shared/header/Header.js';
 import MapPage from './pages/MapPage';
 import DemoPage from './pages/DemoPage.js';
 import CamerasListPage from './pages/CamerasListPage';
-// import MyCamerasListPage from './pages/MyCamerasListPage';
+import SavedCamerasPage from './pages/SavedCamerasPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
 import EventsListPage from './pages/EventsListPage';
 import AdvisoriesListPage from './pages/AdvisoriesListPage';
@@ -33,7 +33,6 @@ setAutoFreeze(false);
 // FontAwesome Stylesheet
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
-import { getFavoriteCameras } from './Components/data/webcams.js';
 config.autoAddCss = false
 
 export const MapContext = createContext(null);
@@ -76,7 +75,6 @@ function App() {
           if (data.username) {
             ret.username = data.username;
             ret.email = data.email;
-            getFavoriteCameras();
           }
           setAuthContext((prior) => {
             if (ret.loginStateKnown != prior.loginStateKnown) { return ret; }
@@ -104,8 +102,8 @@ function App() {
             <ScrollToTop />
             <Routes>
               <Route path="/" element={<MapPage />} />
-              <Route path="/my-cameras" element={<CamerasListPage favorite={true} />} />
-              <Route path="/cameras" element={<CamerasListPage favorite={false} />} />
+              <Route path="/my-cameras" element={<SavedCamerasPage />} />
+              <Route path="/cameras" element={<CamerasListPage />} />
               <Route path="/cameras/:id" element={<CameraDetailsPage />} />
               <Route path="/delays" element={<EventsListPage />} />
               <Route path="/advisories" element={<AdvisoriesListPage />} />

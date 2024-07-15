@@ -137,13 +137,15 @@ def static_override(prefix, view=serve, **kwargs):
         ),
     ]
 
+
 class session(APIView):
-
     def get(self, request, format=None):
-
         if request.user.is_authenticated:
-            response = JsonResponse({"username": request.user.username,
-                                     "email": request.user.email, })
+            response = JsonResponse({
+                "username": request.user.username,
+                "email": request.user.email
+            })
+
         else:
             response = JsonResponse({"username": None})
 

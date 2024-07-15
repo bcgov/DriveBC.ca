@@ -1,5 +1,10 @@
 // React
-import React, {useContext } from "react";
+import React, { useCallback, useContext, useEffect } from 'react';
+
+// Redux
+import { useSelector, useDispatch } from 'react-redux';
+import { memoize } from 'proxy-memoize';
+import { updateFavCams } from '../../../slices/userSlice';
 
 // External imports
 import { DropdownButton } from 'react-bootstrap';
@@ -16,6 +21,7 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
 import { AuthContext } from "../../../App";
+import { getFavoriteCameraIds } from '../../data/webcams';
 
 // Styling
 import './UserNavigation.scss';
@@ -23,6 +29,29 @@ import './UserNavigation.scss';
 export default function UserNavigation(props) {
   /* Setup */
   const { authContext, setAuthContext } = useContext(AuthContext);
+
+  // Redux
+  const dispatch = useDispatch();
+  const { favCams, favRoutes } = useSelector(useCallback(memoize(state => ({
+    favCams: state.user.favCams,
+    favRoutes: state.user.favRoutes
+  }))));
+
+  /* data hooks and functions */
+  const initData = async () => {
+    // Get saved cam ids and map into a list of integers
+    const favCamsData = favCams ? favCams : await getFavoriteCameraIds();
+    if (favCams === null) {
+      const favCamIds = favCamsData.map(webcam => webcam.webcam);
+      dispatch(updateFavCams(favCamIds));
+    }
+  }
+
+  useEffect(() => {
+    if (authContext.loginStateKnown && authContext.username) {
+      initData();
+    }
+  }, [authContext]);
 
   /* Helpers */
   const toggleAuthModal = (action) => {
@@ -101,7 +130,7 @@ export default function UserNavigation(props) {
             <div className="menu-item-header">
               <FontAwesomeIcon icon={faVideoCamera} />
               My cameras
-              <span className="item-count">{sessionStorage.getItem('myWebcamNum')}</span>
+              <span className="item-count">{favCams ? favCams.length : 0}</span>
             </div>
 
             <FontAwesomeIcon icon={faChevronRight} />
@@ -111,7 +140,7 @@ export default function UserNavigation(props) {
             <div className="menu-item-header">
               <FontAwesomeIcon icon={faRoute} />
               My routes
-              <span className="item-count">0</span>
+              <span className="item-count">{favRoutes ? favRoutes.length : 0}</span>
             </div>
 
             <FontAwesomeIcon icon={faChevronRight} />

@@ -1,16 +1,22 @@
 // React
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+// Redux
+import { useSelector, useDispatch } from 'react-redux';
+import { memoize } from 'proxy-memoize';
+import { pushFavCam, removeFavCam } from '../../../slices/userSlice';
 
 // Navigation
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // External imports
-import { faVideoSlash, faVideo } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faVideoSlash, faVideo, faStar } from '@fortawesome/pro-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import parse from 'html-react-parser';
 
 // Internal imports
+import { addFavoriteCamera, deleteFavoriteCamera } from "../../data/webcams";
 import { getCameraOrientation } from '../../cameras/helper';
 import FriendlyTime from '../../shared/FriendlyTime';
 import trackEvent from '../../shared/TrackEvent';
@@ -24,10 +30,16 @@ import './CamPanel.scss';
 
 // Main component
 export default function CamPanel(props) {
-  // Props
+  /* Setup */
   const { camFeature, isCamDetail } = props;
 
   const [_searchParams, setSearchParams] = useSearchParams();
+
+  // Redux
+  const dispatch = useDispatch();
+  const { favCams } = useSelector(useCallback(memoize(state => ({
+    favCams: state.user.favCams
+  }))));
 
   // Misc
   const navigate = useNavigate();
@@ -65,6 +77,15 @@ export default function CamPanel(props) {
       navigate(`/cameras/${camera.id}`);
     }
   };
+
+  const favoriteHandler = () => {
+    if (favCams.includes(camera.id)) {
+      deleteFavoriteCamera(camera.id, dispatch, removeFavCam);
+
+    } else {
+      addFavoriteCamera(camera.id, dispatch, pushFavCam);
+    }
+  }
 
   // Rendering
   function renderCamGroup(currentCamData) {
@@ -173,6 +194,17 @@ export default function CamPanel(props) {
       )}
 
       <ShareURLButton />
+
+      {favCams != null &&
+        <Button
+          variant="primary"
+          className="viewmap-btn"
+          onClick={favoriteHandler}>
+
+          {favCams && favCams.includes(camera.id) ? 'Remove' : 'Add'}
+          <FontAwesomeIcon icon={faStar} />
+        </Button>
+      }
     </div>
   );
 }

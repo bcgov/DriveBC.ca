@@ -1,6 +1,11 @@
 // React
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createSearchParams, useParams, useNavigate } from 'react-router-dom';
+
+// Redux
+import { useSelector, useDispatch } from 'react-redux';
+import { memoize } from 'proxy-memoize';
+import { pushFavCam, removeFavCam } from '../slices/userSlice';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,6 +19,7 @@ import {
   faForward,
   faClockRotateLeft,
   faFlag,
+  faStar
 } from '@fortawesome/pro-solid-svg-icons';
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
@@ -29,7 +35,8 @@ import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
-import { getCameraGroupMap, getCameras } from '../Components/data/webcams.js';
+import { addFavoriteCamera, deleteFavoriteCamera, getCameraGroupMap, getCameras } from '../Components/data/webcams.js';
+import { getCameraOrientation } from '../Components/cameras/helper.js';
 import { getWebcamReplay } from '../Components/data/webcams';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
@@ -39,7 +46,6 @@ import Footer from '../Footer.js';
 import FriendlyTime from '../Components/shared/FriendlyTime';
 import highwayShield from '../Components/cameras/highwayShield';
 import CurrentCameraIcon from '../Components/cameras/CurrentCameraIcon';
-import { getCameraOrientation } from '../Components/cameras/helper.js';
 import trackEvent from '../Components/shared/TrackEvent';
 
 // Styling
@@ -49,7 +55,14 @@ import '../Components/map/Map.scss';
 import colocatedCamIcon from '../images/colocated-camera.svg';
 
 export default function CameraDetailsPage() {
+  /* Setup */
   const navigate = useNavigate();
+
+  // Redux
+  const dispatch = useDispatch();
+  const { favCams } = useSelector(useCallback(memoize(state => ({
+    favCams: state.user.favCams
+  }))));
 
   // Context and router data
   const params = useParams();
@@ -239,6 +252,16 @@ export default function CameraDetailsPage() {
     );
   };
 
+  // Handlers
+  const favoriteHandler = () => {
+    if (favCams.includes(camera.id)) {
+      deleteFavoriteCamera(camera.id, dispatch, removeFavCam);
+
+    } else {
+      addFavoriteCamera(camera.id, dispatch, pushFavCam);
+    }
+  }
+
   // Helper functions
   const shouldRenderReplay = () => {
     if (!lastUpdate) {
@@ -320,6 +343,16 @@ export default function CameraDetailsPage() {
             <div className="camera-details">
               <div className="camera-details__description">
                 <h2>{camera.name}</h2>
+                {favCams != null &&
+                  <Button
+                    variant="primary"
+                    className="viewmap-btn"
+                    onClick={favoriteHandler}>
+
+                    {favCams.includes(camera.id) ? 'Remove' : 'Add'}
+                    <FontAwesomeIcon icon={faStar} />
+                  </Button>
+                }
                 <p className="body--large">{parse(camera.caption)}</p>
               </div>
               <div className="camera-details__more">

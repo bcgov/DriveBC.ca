@@ -1,4 +1,5 @@
 import { get } from './helper.js';
+import { getCookie } from "../../util";
 
 export function getCameras(routePoints, url = null) {
   const payload = routePoints ? { route: routePoints } : {};
@@ -7,8 +8,8 @@ export function getCameras(routePoints, url = null) {
   .then((data) => data);
 }
 
-async function getFavoriteCameraIds(url, headers = {}) {
-  const response = await fetch(url, {
+export async function getFavoriteCameraIds(url, headers = {}) {
+  const response = await fetch(url ? url : `${window.API_HOST}/api/users/webcams/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -16,33 +17,62 @@ async function getFavoriteCameraIds(url, headers = {}) {
     },
     credentials: 'include'
   });
+
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
+
   return response.json();
 }
 
-export async function getFavoriteCameras(url = null) {
+export const addFavoriteCamera = async (id, dispatch, action) => {
+  const url = `${window.API_HOST}/api/users/webcams/`;
+
   try {
-    // get webcam IDs
-    const userWebcamsUrl = url ? url : `${window.API_HOST}/api/users/webcams/`;
-    const webcamsResponse = await getFavoriteCameraIds(userWebcamsUrl);
-    const myWebcamIds = webcamsResponse.map(webcam => webcam.webcam);
+   const response = await fetch(url, {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json',
+       'X-CSRFToken': getCookie('csrftoken')
+     },
+     body: JSON.stringify({ webcam: id }),
+     credentials: 'include'
+   });
 
-    // Save a variable to session storage
-    sessionStorage.setItem('myWebcamNum', myWebcamIds.length);
+   if (!response.ok) {
+     throw new Error(`Error: ${response.statusText}`);
+   }
 
-    // get the webcam data
-    const webcamsUrl = `${window.API_HOST}/api/webcams/`;
-    const data = await get(webcamsUrl);
-
-    // Filter the data based on the obtained webcam IDs
-    const filteredData = data.filter(item => myWebcamIds.includes(item.id));
-    return filteredData;
+   dispatch(action(id));
 
   } catch (error) {
-    console.error('Error fetching my webcam data:', error);
-    throw error;
+   console.error('Error saving the camera:', error);
+   throw error;
+  }
+}
+
+export const deleteFavoriteCamera = async (id, dispatch, action) => {
+  const url = `${window.API_HOST}/api/users/webcams/${id}/`;
+
+  try {
+   const response = await fetch(url, {
+     method: 'DELETE',
+     headers: {
+       'Content-Type': 'application/json',
+       'X-CSRFToken': getCookie('csrftoken')
+     },
+     credentials: 'include'
+   });
+
+   if (!response.ok) {
+     throw new Error(`Error: ${response.statusText}`);
+   }
+
+   dispatch(action(id));
+
+  } catch (error) {
+   console.error('Error deleting the camera:', error);
+   throw error;
   }
 }
 
@@ -65,14 +95,26 @@ export function getCameraGroupMap(cameras) {
   return cameraMap;
 }
 
-export function addCameraGroups(cameras) {
+export function addCameraGroups(cameras, favCams) {
   const cameraMap = getCameraGroupMap(cameras);
 
   // Output list with one camera from each group
   const res = [];
   Object.values(cameraMap).forEach((group) => {
-    group.forEach((cam) => cam.camGroup = group);
-    res.push(group[0]);
+    group.forEach((cam) => {
+      cam.camGroup = group
+
+      // Push favorite cameras if they exist
+      if (favCams && favCams.includes(cam.id)) {
+        res.push(cam);
+        console.log(group);
+      }
+    });
+
+    // Push first camera in group if no favCams
+    if (!favCams) {
+      res.push(group[0]);
+    }
   })
 
   return res;
