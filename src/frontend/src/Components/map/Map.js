@@ -82,6 +82,8 @@ export default function DriveBCMap(props) {
   // Context
   const { mapContext } = useContext(MapContext);
 
+  let mousePointXClicked = undefined;
+  
   // Enable referenced layer
   enableReferencedLayer(referenceData, mapContext);
 
@@ -148,9 +150,54 @@ export default function DriveBCMap(props) {
   // Workaround for OL handlers not being able to read states
   const [clickedFeature, setClickedFeature] = useState();
   const clickedFeatureRef = useRef();
+
+  const adjustMap = feature => {
+    if(!openPanel){
+      if(feature != null){
+        if(mousePointXClicked < 390){
+          const lon = feature.values_.location.coordinates[0];
+          const lat = feature.values_.location.coordinates[1];
+          const zoomLevel = mapView.current.getZoom();
+          setZoomPan(mapView, zoomLevel, fromLonLat([lon, lat]));
+          mousePointXClicked = 1000.0;        
+          mapElement.current.classList.toggle('map-not-pushed');        
+          if (mapElement.current.classList.contains('map-not-pushed')){
+            mapElement.current.classList.remove('map-not-pushed');
+            mapElement.current.classList.add('map-pushed');
+          }
+          return;
+        }
+        else{
+          if (mapElement.current.classList.contains('map-not-pushed')){
+            return;
+          }
+          mapElement.current.classList.toggle('map-pushed');
+          return;
+        }       
+      }
+      
+      if(mousePointXClicked < 390){
+        if (!mapElement.current.classList.contains('map-not-pushed')){
+          mapElement.current.classList.toggle('map-not-pushed');    
+        }
+        else{
+          mapElement.current.classList.toggle('map-not-pushed');
+        }   
+      }
+      else{
+        if (mapElement.current.classList.contains('map-not-pushed')){
+          mapElement.current.classList.remove('map-not-pushed');
+        } 
+        mapElement.current.classList.toggle('map-pushed');
+      }
+    }
+    
+  }
+
   const updateClickedFeature = feature => {
     clickedFeatureRef.current = feature;
     setClickedFeature(feature);
+    adjustMap(feature);
   };
 
   /* useEffect hooks */
@@ -238,6 +285,9 @@ export default function DriveBCMap(props) {
       const features = mapRef.current.getFeaturesAtPixel(e.pixel, {
         hitTolerance: 20,
       });
+
+      const mousePointX = e.pixel[0];
+      mousePointXClicked = mousePointX;
 
       pointerClickHandler(
         features, clickedFeatureRef, updateClickedFeature,
@@ -475,7 +525,12 @@ export default function DriveBCMap(props) {
           aria-labelledby="button-close-side-panel-label"
           aria-hidden={`${openPanel ? false : true}`}
           tabIndex={`${openPanel ? 0 : -1}`}
-          onClick={() => togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature)}>
+          onClick={() => {
+            if (panel.current.classList.contains('open')){
+              mapElement.current.classList.remove('map-pushed');
+            }
+            togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature);
+            }}>
           <FontAwesomeIcon icon={faXmark} />
         </button>
 
@@ -492,7 +547,7 @@ export default function DriveBCMap(props) {
         </div>
       </div>
 
-      <div ref={mapElement} className="map">
+      <div ref={mapElement} className="map"> 
         {!isCamDetail && (
           <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''}`}>
             {smallScreen && (

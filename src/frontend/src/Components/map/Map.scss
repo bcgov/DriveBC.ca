@@ -33,6 +33,8 @@
     align-items: center;
     height: 100%;
 
+    
+
     @media (max-width: 767px) {
       flex-direction: column;
     }
@@ -58,7 +60,6 @@
       flex: 0;
       min-width: 0px;
       min-height: 0%;
-      transition: min-width 0.25s ease-in-out;
       overflow-y: auto;
       overflow-x: hidden;
       display: flex;
@@ -183,6 +184,8 @@
       height: 100%;
       overflow: hidden;
 
+      
+
       .map-left-container {
         position: absolute;
         width: 100%;
@@ -250,6 +253,13 @@
         will-change: contents, width;
         transition: all 0.25s;
       }
+    }
+
+    .map-pushed {
+      margin-left: -390px;
+    }
+    .map-not-pushed {
+      margin-left: 0px;
     }
 
     .map-btn {
