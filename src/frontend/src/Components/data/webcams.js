@@ -46,8 +46,8 @@ export const addFavoriteCamera = async (id, dispatch, action) => {
    dispatch(action(id));
 
   } catch (error) {
-   console.error('Error saving the camera:', error);
-   throw error;
+    console.error('Error saving the camera:', error);
+    throw error;
   }
 }
 
@@ -71,8 +71,8 @@ export const deleteFavoriteCamera = async (id, dispatch, action) => {
    dispatch(action(id));
 
   } catch (error) {
-   console.error('Error deleting the camera:', error);
-   throw error;
+    console.error('Error deleting the camera:', error);
+    throw error;
   }
 }
 
@@ -107,7 +107,6 @@ export function addCameraGroups(cameras, favCams) {
       // Push favorite cameras if they exist
       if (favCams && favCams.includes(cam.id)) {
         res.push(cam);
-        console.log(group);
       }
     });
 

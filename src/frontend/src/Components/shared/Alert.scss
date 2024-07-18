@@ -1,0 +1,59 @@
+@import "../../styles/variables.scss";
+
+.alert {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, -50%);
+  background-color: #053662;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
+  z-index: 22;
+  text-wrap: nowrap;
+
+  animation: fade-in 0.3s;
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 100;
+    }
+  }
+
+
+
+  .alert-close-btn {
+    padding: 0;
+    font-size: 0.75rem;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    margin: 0 0 0 1rem;
+
+    @media (max-width: 767px) {
+      top: 0.75rem;
+      right: 0.75rem;
+    }
+  }
+
+  .content {
+    display: flex;
+    align-items: center;
+
+    &__text {
+      margin: 0;
+
+      p {
+        font-size: 0.875rem;
+        color: white;
+        margin: 0;
+
+        &.feedback {
+          color: #053662;
+        }
+      }
+    }
+  }
+}

@@ -12,6 +12,7 @@ import MapPage from './pages/MapPage';
 import DemoPage from './pages/DemoPage.js';
 import CamerasListPage from './pages/CamerasListPage';
 import SavedCamerasPage from './pages/SavedCamerasPage';
+import SavedRoutesPage from './pages/SavedRoutesPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
 import EventsListPage from './pages/EventsListPage';
 import AdvisoriesListPage from './pages/AdvisoriesListPage';
@@ -103,6 +104,7 @@ function App() {
             <Routes>
               <Route path="/" element={<MapPage />} />
               <Route path="/my-cameras" element={<SavedCamerasPage />} />
+              <Route path="/my-routes" element={<SavedRoutesPage />} />
               <Route path="/cameras" element={<CamerasListPage />} />
               <Route path="/cameras/:id" element={<CameraDetailsPage />} />
               <Route path="/delays" element={<EventsListPage />} />

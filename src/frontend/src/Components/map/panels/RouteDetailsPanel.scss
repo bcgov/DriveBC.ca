@@ -30,20 +30,28 @@
             align-items: center;
             font-size: 0.75rem;
             margin-bottom: 4px;
-  
+
             svg {
               color: $White;
             }
           }
-  
+
           .route-distance {
             font-size: 1.125rem;
             font-weight: 700;
             color: #053662;
-  
+
+          }
+
+          .favorite-star {
+            cursor: pointer;
+
+            &.saved {
+              color: #F8BB47;
+            }
           }
         }
-              
+
         .route-items {
           .route-item {
             padding: 4px 0;

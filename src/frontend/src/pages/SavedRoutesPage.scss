@@ -1,0 +1,11 @@
+@import "../styles/variables.scss";
+
+.saved-routes-page {
+  position: relative;
+
+  .route-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}

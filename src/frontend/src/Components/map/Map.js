@@ -77,7 +77,7 @@ export default function DriveBCMap(props) {
   } = props;
 
   // Navigation
-  const [_searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Context
   const { mapContext } = useContext(MapContext);
@@ -291,7 +291,8 @@ export default function DriveBCMap(props) {
 
   /* Triggering handlers based on navigation data */
   useEffect(() => {
-    if (referenceFeature) {
+    // Do not trigger on routes
+    if (referenceFeature && referenceFeature.get('type') !== 'route') {
       setZoomPan(mapView, 9, referenceFeature.getGeometry().flatCoordinates);
 
       pointerClickHandler(
@@ -312,15 +313,19 @@ export default function DriveBCMap(props) {
       'routeLayer', dl, 3, null, updateReferenceFeature
     );
 
-      // Adding route data to routeDetails
-      if (selectedRoute && selectedRoute.routeFound) {
+    if (selectedRoute && selectedRoute.routeFound) {
+      // Fit map to route if route found and not saved/unsaved
+      if (!selectedRoute.id || searchParams.get('type') == 'route') {
         fitMap(selectedRoute.route, mapView);
-        setRouteDistance(selectedRoute.distance);
-        setRouteDistanceUnit(selectedRoute.distanceUnit);
       }
-      else {
-        resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
-      }
+
+      // Add route data to routeDetails
+      setRouteDistance(selectedRoute.distance);
+      setRouteDistanceUnit(selectedRoute.distanceUnit);
+
+    } else {
+      resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
+    }
 
   }, [selectedRoute]);
 

@@ -85,7 +85,6 @@ export default function EventsListPage() {
     events: state.feeds.events.list,
     filteredEvents: state.feeds.events.filteredList,
     eventFilterPoints: state.feeds.events.filterPoints,
-    eventTimeStamp: state.feeds.events.routeTimeStamp,
     selectedRoute: state.routes.selectedRoute
   }))));
 
@@ -171,7 +170,8 @@ export default function EventsListPage() {
         updateEvents({
           list: eventData,
           filteredList: filteredEventData,
-          filterPoints: route && route.routeFound ? route.points : null
+          filterPoints: route && route.routeFound ? route.points : null,
+          timeStamp: new Date().getTime()
         })
       );
 

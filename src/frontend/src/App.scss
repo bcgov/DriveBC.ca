@@ -166,3 +166,9 @@ a[target="_blank"] {
     }
   }
 }
+
+.space-between-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

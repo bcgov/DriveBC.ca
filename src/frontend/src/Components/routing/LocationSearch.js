@@ -63,7 +63,7 @@ export default function LocationSearch(props) {
             'blur',
             'route search',
             'location search',
-            location[0].properties.fullAddress,
+            location[0].label,
           );
         }
       }}

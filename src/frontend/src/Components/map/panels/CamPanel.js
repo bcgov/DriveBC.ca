@@ -19,6 +19,7 @@ import parse from 'html-react-parser';
 // Internal imports
 import { addFavoriteCamera, deleteFavoriteCamera } from "../../data/webcams";
 import { getCameraOrientation } from '../../cameras/helper';
+import Alert from '../../shared/Alert';
 import FriendlyTime from '../../shared/FriendlyTime';
 import trackEvent from '../../shared/TrackEvent';
 import ShareURLButton from '../../shared/ShareURLButton';
@@ -32,8 +33,11 @@ import './CamPanel.scss';
 // Main component
 export default function CamPanel(props) {
   /* Setup */
+  // Props
   const { camFeature, isCamDetail } = props;
 
+  // Navigation
+  const navigate = useNavigate();
   const [_searchParams, setSearchParams] = useSearchParams();
 
   // Redux
@@ -42,19 +46,20 @@ export default function CamPanel(props) {
     favCams: state.user.favCams
   }))));
 
-  // Misc
-  const navigate = useNavigate();
-
   // Refs
   const isInitialMount = useRef(true);
+  const isInitialAlertMount = useRef(true);
+  const timeout = useRef();
 
-  // useState hooks
+  // States
   const newCam = camFeature.id ? camFeature : camFeature.getProperties();
   const [rootCam, setRootCam] = useState(newCam);
   const [camera, setCamera] = useState(newCam);
   const [camIndex, setCamIndex] = useState(0);
+  const [showRemove, setShowRemove] = useState();
+  const [showAlert, setShowAlert] = useState(false);
 
-  // useEffect hooks
+  // Effects
   useEffect(() => {
     const newCam = camFeature.id ? camFeature : camFeature.getProperties();
     setRootCam(newCam);
@@ -72,6 +77,25 @@ export default function CamPanel(props) {
     setCamera(rootCam.camGroup[camIndex]);
   }, [camIndex]);
 
+  useEffect(() => {
+    if (isInitialAlertMount.current) {
+      isInitialAlertMount.current = false;
+      return;
+    }
+
+    setShowAlert(true);
+
+    // Clear existing close alert timers
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+    }
+
+    // Set new close alert timer to reference
+    timeout.current = setTimeout(() => {
+      setShowAlert(false);
+    }, 5000);
+  }, [showRemove]);
+
   // Handlers
   const handlePopupClick = e => {
     if (!isCamDetail) {
@@ -82,13 +106,20 @@ export default function CamPanel(props) {
   const favoriteHandler = () => {
     if (favCams.includes(camera.id)) {
       deleteFavoriteCamera(camera.id, dispatch, removeFavCam);
+      setShowRemove(true);
 
     } else {
       addFavoriteCamera(camera.id, dispatch, pushFavCam);
+      setShowRemove(false);
     }
   }
 
-  // Rendering
+  /* Rendering */
+  // Subcomponents
+  const getAlertMessage = () => {
+    return <p>{showRemove ? 'Removed from ' : 'Saved to '} <a href="/my-cameras">My cameras</a></p>;
+  };
+
   function renderCamGroup(currentCamData) {
     const clickHandler = i => {
       setCamIndex(i); // Trigger re-render
@@ -116,6 +147,7 @@ export default function CamPanel(props) {
     return res;
   }
 
+  // Main component
   return (
     <div className="popup popup--camera">
       <div className="popup__title">
@@ -202,11 +234,13 @@ export default function CamPanel(props) {
                 onClick={favoriteHandler}
                 >
 
-                {(favCams && favCams.includes(camera.id)) ? 
+                {(favCams && favCams.includes(camera.id)) ?
                 (<React.Fragment><FontAwesomeIcon icon={faStar} /><span>Remove</span></React.Fragment>) :
                 (<React.Fragment><FontAwesomeIcon icon={faStarOutline} /><span>Save</span></React.Fragment>) }
               </button>
             }
+
+            <Alert showAlert={showAlert} setShowAlert={setShowAlert} message={getAlertMessage()} />
           </div>
         </div>
       )}
