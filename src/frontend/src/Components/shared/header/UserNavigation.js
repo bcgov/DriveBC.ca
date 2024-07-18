@@ -4,7 +4,7 @@ import React, { useCallback, useContext, useEffect } from 'react';
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { memoize } from 'proxy-memoize';
-import { updateFavCams } from '../../../slices/userSlice';
+import { updateFavCams, updateFavRoutes } from '../../../slices/userSlice';
 
 // External imports
 import { DropdownButton } from 'react-bootstrap';
@@ -22,6 +22,7 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 // Internal imports
 import { AuthContext } from "../../../App";
 import { getFavoriteCameraIds } from '../../data/webcams';
+import { getFavoriteRoutes } from '../../data/routes';
 
 // Styling
 import './UserNavigation.scss';
@@ -38,7 +39,7 @@ export default function UserNavigation(props) {
   }))));
 
   /* data hooks and functions */
-  const initData = async () => {
+  const initCams = async () => {
     // Get saved cam ids and map into a list of integers
     const favCamsData = favCams ? favCams : await getFavoriteCameraIds();
     if (favCams === null) {
@@ -47,9 +48,17 @@ export default function UserNavigation(props) {
     }
   }
 
+  const initRoutes = async () => {
+    const favRoutesData = favRoutes ? favRoutes : await getFavoriteRoutes();
+    if (favRoutes === null) {
+      dispatch(updateFavRoutes(favRoutesData));
+    }
+  }
+
   useEffect(() => {
     if (authContext.loginStateKnown && authContext.username) {
-      initData();
+      initCams();
+      initRoutes();
     }
   }, [authContext]);
 
@@ -95,7 +104,7 @@ export default function UserNavigation(props) {
           }
 
           { !largeScreen &&
-            <a className="menu-item" href="/my-cameras">
+            <a className="menu-item" href="/my-routes">
               <div className="menu-item-header">
                 <FontAwesomeIcon icon={faRoute} />
                 My routes
@@ -136,7 +145,7 @@ export default function UserNavigation(props) {
             <FontAwesomeIcon icon={faChevronRight} />
           </a>
 
-          <a href="/my-cameras" className="menu-item">
+          <a href="/my-routes" className="menu-item">
             <div className="menu-item-header">
               <FontAwesomeIcon icon={faRoute} />
               My routes

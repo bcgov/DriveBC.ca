@@ -8,8 +8,9 @@ export const populateRouteProjection = (data, route) => {
   const copiedData = JSON.parse(JSON.stringify(data));
 
   // Reference route start point/ls
-  const routeLs = turf.lineString(route.route);
-  const startPoint = turf.point(route.route[0]);
+  const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];
+  const routeLs = turf.lineString(lineCoords);
+  const startPoint = turf.point(lineCoords[0]);
 
   // Calculate and store distance alone reference line
   for (let i=0; i < copiedData.length; i++) {
@@ -33,7 +34,7 @@ export const filterByRoute = (data, route, extraToleranceMeters, populateProject
     return data;
   }
 
-  const lineCoords = route.route;
+  const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];
   const routeLineString = turf.lineString(lineCoords);
   const bufferedRouteLineString = turf.buffer(routeLineString, 150, {units: 'meters'});
   const routeBBox = turf.bbox(routeLineString);

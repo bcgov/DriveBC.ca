@@ -36,7 +36,7 @@ export const renderPanel = (clickedFeature, isCamDetail, routeDetails) => {
       case 'restStop':
         return <RestStopPanel feature={clickedFeature} />;
       case 'route':
-        return <RouteDetailsPanel routeObjects={routeDetails} />;
+        return <RouteDetailsPanel routeDetails={routeDetails} />;
     }
   }
 }

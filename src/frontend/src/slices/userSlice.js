@@ -7,10 +7,13 @@ export const userSlice = createSlice({
     favRoutes: null
   },
   reducers: {
+    // General
     resetFavLists: (state, action) => {
       state.favCams = null;
       state.favRoutes = null;
     },
+
+    // Cams
     updateFavCams: (state, action) => {
       state.favCams = action.payload;
     },
@@ -24,12 +27,28 @@ export const userSlice = createSlice({
       const resFavCams = !state.favCams ? [] : [...state.favCams];
       state.favCams = resFavCams.filter(camID => camID != action.payload);
     },
-    clearFavCams: (state, action) => {
-      state.favCams = [];
-    }
+
+    // Routes
+    updateFavRoutes: (state, action) => {
+      state.favRoutes = action.payload;
+    },
+    pushFavRoute: (state, action) => {
+      const resFavRoutes = !state.favRoutes ? [] : [...state.favRoutes];
+      resFavRoutes.push(action.payload);
+
+      state.favRoutes = resFavRoutes;
+    },
+    removeFavRoute: (state, action) => {
+      const resFavRoutes = !state.favRoutes ? [] : [...state.favRoutes];
+      state.favRoutes = resFavRoutes.filter(route => route.id != action.payload);
+    },
   },
 });
 
-export const { resetFavLists, updateFavCams, pushFavCam, removeFavCam, clearFavCams } = userSlice.actions;
+export const {
+  resetFavLists, // General
+  updateFavCams, pushFavCam, removeFavCam, // Cams
+  updateFavRoutes, pushFavRoute, removeFavRoute // Routes
+} = userSlice.actions;
 
 export default userSlice.reducer;
