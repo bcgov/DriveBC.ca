@@ -26,7 +26,7 @@ export default function AdvisoriesPanel(props) {
         <p className="name">Advisories</p>
       </div>
       <div className="popup__content">
-        <AdvisoriesList advisories={advisoriesDisplay} showDescription={false} showTimestamp={false} showArrow={true} />
+        <AdvisoriesList advisories={advisoriesDisplay} showDescription={false} showTimestamp={true} showArrow={true} />
       </div>
     </div>
   );

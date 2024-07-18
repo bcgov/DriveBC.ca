@@ -1,13 +1,23 @@
 @import "../../styles/variables.scss";
-
-ul.advisories-list {
+.advisories-list {
   list-style-type: none;
   padding-left: 0;
 
-  li.advisory-li {
+  .advisory-li {
     cursor: pointer;
     width: fit-content;
     margin-bottom: 1rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 4px;
+    background: white;
+    box-shadow: 0px 0.6px 1.8px 0px rgba(0, 0, 0, 0.10), 0px 3.2px 7.2px 0px rgba(0, 0, 0, 0.13);
+
+    &::marker {
+      color: $Type-Link;
+    }
 
     &:hover {
       .advisory-li-title {
@@ -15,16 +25,29 @@ ul.advisories-list {
       }
     }
 
-    .advisory-li-title {
-      color: $Type-Link;
-      font-size: 1rem;
-      font-weight: 700;
-      line-height: 1.5;
-      margin-bottom: 0.25rem;
+    &__content {
+      .advisory-li-title-container {
+        .advisory-li-title {
+          color: $Type-Link;
+          font-size: 1rem;
+          font-weight: 700;
+          line-height: 1.5;
+          margin-bottom: 0.25rem;
 
-      @media (min-width: 992px) {
-        font-size: 1.25rem;
+          @media (min-width: 992px) {
+            font-size: 1.25rem;
+          }
+
+          &-container {
+            width: 100%;
+          }
+        }
       }
+    }
+
+    &__arrow {
+      margin-left: auto;
+      color: #584215;
     }
   }
 
@@ -33,12 +56,16 @@ ul.advisories-list {
 
     .advisory-li-state, .friendly-time, .formatted-date {
       margin-left: 0.5ch;
-      font-size: 1rem;
-      line-height: 1.5;
     }
 
     .friendly-time, .formatted-date {
       margin-left: 0.5ch;
+    }
+
+    .friendly-time-text, .formatted-date {
+      color: $Grey70;
+      font-size: 0.875rem;
+      line-height: 1.5;
     }
   }
 
