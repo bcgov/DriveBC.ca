@@ -39,9 +39,11 @@ import Footer from '../Footer.js';
 import PageHeader from '../PageHeader';
 import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent.js';
+import AdvisoriesWidget from '../Components/advisories/AdvisoriesWidget';
 
 // Styling
 import './EventsListPage.scss';
+import './ContainerSidePanel.scss';
 import '../Components/shared/Filters.scss';
 
 // Helpers
@@ -299,6 +301,7 @@ export default function EventsListPage() {
 
   // Rendering - Main component
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+  const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   return (
     <div className="events-page">
@@ -315,17 +318,22 @@ export default function EventsListPage() {
         description="Find out if there are any delays that might impact your journey before you go.">
       </PageHeader>
 
-      <Container>
-        <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
+      <Container className="container--sidepanel">
+        { xXlargeScreen &&
+          <div className="container--sidepanel__left">
+            <RouteSearch showFilterText={true} />
+            <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
+          </div>
+        }
 
-        <div className="controls-container">
-          { largeScreen &&
-            <div className="route-display-container">
-              <RouteSearch showFilterText={true} />
-            </div>
-          }
-
-          <div className="right-container">
+        <div className="container--sidepanel__right">
+          <div className="controls-container">
+            { !xXlargeScreen &&
+              <React.Fragment>
+                <AdvisoriesWidget advisories={advisoriesInRoute} onMap={false} />
+                <RouteSearch showFilterText={true} />
+              </React.Fragment>
+            }
             <Dropdown>
               <Dropdown.Toggle disabled={selectedRoute && selectedRoute.routeFound}>
                 Sort: {getSortingDisplay(sortingKey)}
@@ -345,63 +353,57 @@ export default function EventsListPage() {
             />
           </div>
 
-          { !largeScreen &&
-            <div className="route-display-container">
-              <RouteSearch showFilterText={true} />
-            </div>
-          }
-        </div>
+          <div className="events-list-table">
+            { largeScreen && !!processedEvents.length &&
+              <EventsTable data={processedEvents} routeHandler={handleRoute} showLoader={showLoader} sortingKey={sortingKey} />
+            }
 
-        <div>
-          { largeScreen && !!processedEvents.length &&
-            <EventsTable data={processedEvents} routeHandler={handleRoute} showLoader={showLoader} sortingKey={sortingKey} />
-          }
+            { !largeScreen &&
+              <div className="events-list">
+                { !showLoader && processedEvents.map(
+                  (e) => (
+                    <div className="card-selector" key={e.id}
+                      onClick={() => handleRoute(e)}
+                      onKeyDown={(keyEvent) => {
+                        if (keyEvent.keyCode == 13) {
+                          handleRoute(e);
+                        }
+                      }}>
 
-          { !largeScreen &&
-            <div className="events-list">
-              { !showLoader && processedEvents.map(
-                (e) => (
-                  <div className="card-selector" key={e.id}
-                    onClick={() => handleRoute(e)}
-                    onKeyDown={(keyEvent) => {
-                      if (keyEvent.keyCode == 13) {
-                        handleRoute(e);
-                      }
-                    }}>
+                      <EventCard
+                        className="event"
+                        event={e}
+                        icon={<EventTypeIcon event={e} />}
+                      />
+                    </div>
+                  ),
+                )}
 
-                    <EventCard
-                      className="event"
-                      event={e}
-                      icon={<EventTypeIcon event={e} />}
-                    />
-                  </div>
-                ),
-              )}
+                { showLoader && new Array(5).fill('').map(
+                  (_, index) => (
+                    <div className="card-selector" key={`loader-${index}`}>
+                      <EventCard
+                        className="event"
+                        showLoader={true}
+                      />
+                    </div>
+                  ),
+                )}
+              </div>
+            }
 
-              { showLoader && new Array(5).fill('').map(
-                (_, index) => (
-                  <div className="card-selector" key={`loader-${index}`}>
-                    <EventCard
-                      className="event"
-                      showLoader={true}
-                    />
-                  </div>
-                ),
-              )}
-            </div>
-          }
+            {!processedEvents.length &&
+              <div className="empty-event-display">
+                <h2>No delays to display</h2>
 
-          {!processedEvents.length &&
-            <Container className="empty-event-display">
-              <h2>No delays to display</h2>
+                <strong>Do you have a starting location and a destination entered?</strong>
+                <p>Adding a route will narrow down the information for the whole site, including the delays list. There might not be any delays between those two locations.</p>
 
-              <strong>Do you have a starting location and a destination entered?</strong>
-              <p>Adding a route will narrow down the information for the whole site, including the delays list. There might not be any delays between those two locations.</p>
-
-              <strong>Have you hidden any of the layers using the filters?</strong>
-              <p>Try toggling the filters on and off so that more information can be displayed.</p>
-            </Container>
-          }
+                <strong>Have you hidden any of the layers using the filters?</strong>
+                <p>Try toggling the filters on and off so that more information can be displayed.</p>
+              </div>
+            }
+          </div>
         </div>
       </Container>
 

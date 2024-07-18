@@ -1,0 +1,101 @@
+@import "../styles/variables.scss";
+
+.container--sidepanel {
+  display: flex;
+  flex-direction: column;
+  
+  &.container {
+    padding-top: 24px;
+  }
+
+  @media (min-width: 576px) {
+    flex-direction: row;
+  }
+
+  &__left {
+    margin-right: 28px;
+    padding-bottom: 24px;
+    min-width: 400px;
+    flex: 0 1 auto;
+
+    .routing-outer-container {
+      margin-bottom: 20px;
+      padding: 0 10px 0 0;
+
+      @media (min-width: 1200px) {
+        width: 100%;
+      }
+
+      .routing-container {
+        position: relative;
+        padding: 0;
+
+        .typeahead-container {
+          width: 100%;
+        }
+
+        .swap-button{
+          position: absolute;
+          top: 22px;
+          right: -10px;
+        }
+      }
+    }
+
+    .advisories {
+      margin-top: 64px;
+    
+      .title {
+        background: #FEEBC2;
+        padding: 12px 16px;
+    
+        h4 {
+          margin-bottom: 0;
+          font-weight: 400;
+          line-height: 2.125rem;
+          color: #584215;
+        }
+      }
+    
+      .content {
+        background: $Grey10;
+        padding: 16px 16px 32px;
+    
+        .advisories-list {
+          list-style: none;
+
+          .advisory-li {
+            margin-left: 0;
+            color: $Type-Link;
+            display: flex;
+    
+            &::marker {
+              color: $Type-Link;
+            }
+            
+            .advisory-li-title-container {
+              .advisory-li-title {
+                font-size: 1rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &__right {
+    flex: 1 1 auto;
+
+    .controls-container {
+
+      & > div {
+        margin: 10px 0;
+      }
+
+      .routing-outer-container {
+        padding: 0;
+      }
+    }
+  }
+}

@@ -11,6 +11,7 @@ import { updateCameras } from '../slices/feedsSlice';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import { booleanIntersects, point, multiPolygon } from '@turf/turf';
 import Container from 'react-bootstrap/Container';
+import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Components and functions
 import {
@@ -28,6 +29,7 @@ import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent.js';
+import AdvisoriesWidget from '../Components/advisories/AdvisoriesWidget';
 
 // Styling
 import './CamerasListPage.scss';
@@ -245,7 +247,8 @@ export default function CamerasListPage() {
     }
   }, [displayedCameras]);
 
-  // Rendering
+  const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
+
   return (
     <div className="cameras-page">
       {showNetworkError &&
@@ -261,45 +264,54 @@ export default function CamerasListPage() {
         description="Scroll to view all cameras sorted by highway.">
       </PageHeader>
 
-      <Container className="outer-container">
-        <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
-
-        <div className="controls-container">
-          <div className="route-display-container">
+      <Container className="container--sidepanel">
+        { xXlargeScreen &&
+          <div className="container--sidepanel__left">
             <RouteSearch showFilterText={true} />
+            <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
+          </div>
+        }
+
+
+        <div className="container--sidepanel__right">
+          <div className="controls-container">
+            { !xXlargeScreen &&
+              <React.Fragment>
+                <AdvisoriesWidget advisories={advisoriesInRoute} onMap={false} />
+                <RouteSearch showFilterText={true} />
+              </React.Fragment>
+            }
+            <div className="search-container">
+              <AsyncTypeahead
+                id="camera-name-search"
+                isLoading={false}
+                onSearch={() => {}}
+                onBlur={() => {
+                  trackEvent('cameras', 'camera-list', 'search', searchText)}}
+                onInputChange={(text) => setSearchText(text)}
+                placeholder={"Find by camera name"}
+                inputProps={{
+                  'aria-label': 'input field for camera name search',
+                }}
+              />
+            </div>
           </div>
 
-          <div className="search-container">
-            <AsyncTypeahead
-              id="camera-name-search"
-              isLoading={false}
-              onSearch={() => {}}
-              onBlur={() => {
-                trackEvent('cameras', 'camera-list', 'search', searchText)}}
-              onInputChange={(text) => setSearchText(text)}
-              placeholder={"Find by camera name"}
-              inputProps={{
-                'aria-label': 'input field for camera name search',
-              }}
-            />
-          </div>
+          <CameraList cameras={ displayedCameras ? displayedCameras : [] }></CameraList>
+
+          {!(displayedCameras && displayedCameras.length) &&
+            <div className="empty-cam-display">
+              <h2>No cameras to display</h2>
+
+              <h6><b>Do you have a starting location and a destination entered?</b></h6>
+              <p>Adding a route will narrow down the information for the whole site, including the camera list. There might not be any cameras between those two locations.</p>
+
+              <h6><b>Have you entered search terms to narrow down the list?</b></h6>
+              <p>Try checking your spelling, changing, or removing your search terms.</p>
+            </div>
+          }
         </div>
-      </Container>
-
-      <CameraList cameras={ displayedCameras ? displayedCameras : [] }></CameraList>
-
-      {!(displayedCameras && displayedCameras.length) &&
-        <Container className="empty-cam-display">
-          <h2>No cameras to display</h2>
-
-          <h6><b>Do you have a starting location and a destination entered?</b></h6>
-          <p>Adding a route will narrow down the information for the whole site, including the camera list. There might not be any cameras between those two locations.</p>
-
-          <h6><b>Have you entered search terms to narrow down the list?</b></h6>
-          <p>Try checking your spelling, changing, or removing your search terms.</p>
         </Container>
-      }
-
       <Footer />
     </div>
   );

@@ -19,6 +19,7 @@
       background-color: #053662;
       color: white;
       display: flex;
+
       svg {
         margin: auto;
       }
@@ -62,13 +63,16 @@
 
         .driveBC {
           font-family: serif;
+
           span {
             color: $BC-Yellow;
           }
+
           margin-right: 10px;
         }
 
-        .friendly-time, .formatted-date {
+        .friendly-time,
+        .formatted-date {
           margin-left: auto;
         }
 
@@ -82,7 +86,9 @@
         padding: 1rem;
         min-height: 225px;
         font-size: 1rem;
-        p, .card-img-box {
+
+        p,
+        .card-img-box {
           color: $Type-status-red;
           clear: right;
         }
@@ -114,5 +120,81 @@
     &__description {
       padding: 1rem 1rem 0;
     }
+  }
+}
+
+.close-panel {
+  position: absolute;
+  top: 1.125rem;
+  right: 1rem;
+  padding: 0;
+  min-width: 0;
+  line-height: 1.25rem;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  font-size: 1rem;
+}
+
+.close-panel:has(+ .panel-content .popup.closure),
+.close-panel:has(+ .panel-content .popup.major) {
+  color: #CE3E39;
+
+  &:hover {
+    background: lighten(#CE3E39, 38%);
+  }
+}
+
+.close-panel:has(+ .panel-content .popup.minor),
+.close-panel:has(+ .panel-content .popup.roadConditions),
+.close-panel:has(+ .panel-content .popup.popup--advisories),
+.close-panel:has(+ .popup.popup--advisories) {
+  color: #584215;
+
+  &:hover {
+    background: lighten(#584215, 60%);
+  }
+}
+
+.close-panel:has(+ .panel-content .popup.popup--camera) {
+  color: $BC-Blue;
+
+  &:hover {
+    background: lighten($BC-Blue, 70%);
+  }
+}
+
+.close-panel:has(+ .panel-content .popup.popup--ferry) {
+  color: #2E8540;
+
+  &:hover {
+    background: lighten(#2E8540, 60%);
+  }
+}
+
+.close-panel:has(+ .panel-content .popup.popup--reststop) {
+  color: #273F94;
+
+  &:hover {
+    background: lighten(#273F94, 60%);
+  }
+}
+
+.close-panel:has(+ .panel-content .popup--regional-weather),
+.close-panel:has(+ .panel-content .popup--road-weather) {
+  color: $Type-Primary;
+
+  &:hover {
+    background: lighten($Type-Primary, 70%);
+  }
+}
+
+.close-panel:has(+ .panel-content .popup.popup--route) {
+  color: $White;
+
+  &:hover {
+    background: lighten(#053662, 5%);
   }
 }

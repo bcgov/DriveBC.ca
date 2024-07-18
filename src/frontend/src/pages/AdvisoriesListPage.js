@@ -97,7 +97,7 @@ export default function AdvisoriesListPage() {
           {isAdvisoriesEmpty ? (
           <EmptyAdvisory/>
         ) : (
-          <AdvisoriesList advisories={advisories} showDescription={true} showTimestamp={true} />
+          <AdvisoriesList advisories={advisories} showDescription={true} showPublished={true} showTimestamp={true} />
       )}
       </Container>
 

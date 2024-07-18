@@ -6,96 +6,98 @@
   line-height: 0.75rem;
 }
 
-.routing-container {
-  // background: white;
-  position: relative;
+.routing-outer-container {
   padding: 1rem 1rem 0;
-  z-index: 5;
 
-  .swap-button{
-    position: absolute;
-    top: 38px;
-    right: 4px;
-    padding: 8px 4px 8px 4px;
-    color: $Type-Link;
-    border-radius: 32px 32px 32px 32px;
-    border: 1px solid #D9D9D9;
-    background: $White;
-    margin-bottom: 0;
-
-    &:hover {
-      background: $Type-Link;
-      color: $White;
-    }
-  }
-
-  .typeahead-container {
+  .routing-container {
     position: relative;
-    width: 100%;
+    z-index: 5;
 
-    @media (min-width: 768px), (orientation: landscape) {
-      width: 340px;
-    }
-
-    .typeahead-spinner {
+    .swap-button{
       position: absolute;
-      top: -0.5rem;
-      right: 1.25rem;
-    }
+      top: calc(50% - 20px);
+      right: -13px;
+      padding: 8px 4px 8px 4px;
+      color: $Type-Link;
+      border-radius: 32px 32px 32px 32px;
+      border: 1px solid #D9D9D9;
+      background: $White;
+      margin-bottom: 0;
 
-    .location-marker {
-      position: absolute;
-      z-index: 1;
-      margin: 0.25rem;
-
-      &--from {
-        font-size: 0.75rem;
-        margin: 0.6875rem 0.75rem;
-        color: $Type-Secondary;
-      }
-
-      &--to {
-        font-size: 1rem;
-        margin: 0.5rem 0.75rem;
-        color: $Error;
+      &:hover {
+        background: $Type-Link;
+        color: $White;
       }
     }
 
-    .clear-btn {
-      position: absolute;
-      top: 0;
-      right: 0;
-      background: none;
-      border: none;
-      font-size: 0.75rem;
-      padding: 0.75rem 1.5rem 0.75rem 0.5rem;
-    }
+    .typeahead-container {
+      position: relative;
+      width: 100%;
 
-    #location-search-typeahead {
-      font-size: 0.875rem;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      border-color: #dee2e6;
-      transform: translate3d(0px, 36px, 0px) !important;
-    }
-
-    &.stacked {
-
-      .form-control {
-        padding: 0.625rem 2.5rem 0.625rem 2.25rem;
+      @media (min-width: 768px), (orientation: landscape) {
+        width: 340px;
       }
 
-      &.typeahead-container--from {
-        .form-control {
-          border-bottom-left-radius: 0;
-          border-bottom-right-radius: 0;
+      .typeahead-spinner {
+        position: absolute;
+        top: -0.5rem;
+        right: 1.25rem;
+      }
+
+      .location-marker {
+        position: absolute;
+        z-index: 1;
+        margin: 0.25rem;
+
+        &--from {
+          font-size: 0.75rem;
+          margin: 0.6875rem 0.75rem;
+          color: $Type-Secondary;
+        }
+
+        &--to {
+          font-size: 1rem;
+          margin: 0.5rem 0.75rem;
+          color: $Error;
         }
       }
 
-      &.typeahead-container--to {
+      .clear-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: none;
+        border: none;
+        font-size: 0.75rem;
+        padding: 0.75rem 1.5rem 0.75rem 0.5rem;
+      }
+
+      #location-search-typeahead {
+        font-size: 0.875rem;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        border-color: #dee2e6;
+        transform: translate3d(0px, 36px, 0px) !important;
+      }
+
+      &.stacked {
+
         .form-control {
-          border-top-left-radius: 0;
-          border-top-right-radius: 0;
+          padding: 0.625rem 2.5rem 0.625rem 2.25rem;
+        }
+
+        &.typeahead-container--from {
+          .form-control {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+          }
+        }
+
+        &.typeahead-container--to {
+          .form-control {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+          }
         }
       }
     }

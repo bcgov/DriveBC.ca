@@ -3,6 +3,17 @@
 .events-page {
   position: relative;
 
+  .container {
+    @media (min-width: 576px) {
+      max-width: unset;
+      padding: 32px 48px;
+    }
+
+    @media (min-width: 992px) {
+      padding: 44px 64px;
+    }
+  }
+
   .network-error, .server-error {
     @media (max-width: 768px) {
       position: relative;
@@ -15,179 +26,78 @@
 
   .controls-container {
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 
-    @media (max-width: 767px) {
-      flex-direction: column;
-      margin-bottom: 1rem;
-    }
-
-    .route-display-container {
-      display: flex;
-
-      @media (max-width: 767px) {
-        width: 100%;
-        margin-bottom: 20px;
-      }
-
-      .routing-container {
-        position: relative;
-        padding: 0;
-
-        @media (max-width: 767px) {
-          width: 100%;
-        }
-
-        .swap-button{
-          position: absolute;
-          top: 22px;
-          right: -10px;
-        }
-      }
-    }
-
-    .right-container {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 1rem;
-
+    .dropdown {
       @media (min-width: 768px) {
-        flex-direction: row;
+        margin-right: 16px;
       }
 
-      & > div {
-        margin-bottom: 1rem;
-      }
+      button {
+        border: none;
+        margin-bottom: 0;
+        --bs-btn-disabled-color: grey;
+        --bs-btn-disabled-bg: lightgrey;
 
-      .dropdown {
-        @media (min-width: 768px) {
-          margin-right: 16px;
+        &::after {
+          display: none;
         }
 
-        button {
-          border: none;
-          margin-bottom: 0;
-          --bs-btn-disabled-color: grey;
-          --bs-btn-disabled-bg: lightgrey;
-
-          &::after {
-            display: none;
-          }
-
-          .fa-angle-down {
-            padding-top: 5px;
-            margin-left: 5px;
-          }
-        }
-
-        .dropdown-menu {
-          width: 305px;
-          border: none;
-          border-radius: 5px;
-          box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
-
-          .dropdown-item {
-            padding: 15px;
-
-            &.selected {
-              font-weight: 700;
-              color: #053662;
-            }
-          }
+        .fa-angle-down {
+          padding-top: 5px;
+          margin-left: 5px;
         }
       }
 
-      .btn-primary {
-//         background: none;
-        --bs-btn-color: #000;
-        --bs-btn-bg: #fff;
-        --bs-btn-border-color: #013366;
-        --bs-btn-hover-color: #fff;
-        --bs-btn-hover-bg: #fff;
-        --bs-btn-hover-border-color: #012952;
-        --bs-btn-focus-shadow-rgb: 39, 82, 125;
-        --bs-btn-active-color: #fff;
-        --bs-btn-active-bg: #012952;
-        --bs-btn-active-border-color: #01264d;
-        --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-      }
+      .dropdown-menu {
+        width: 305px;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
 
-      .filters-component {
-        position: relative;
+        .dropdown-item {
+          padding: 15px;
 
-        button {
-          margin: 0;
-        }
-
-        .filters {
-          @media (min-width: 768px) {
-            max-height: initial;
-            top: 2.4375rem;
-            right: 0;
+          &.selected {
+            font-weight: 700;
+            color: #053662;
           }
         }
       }
     }
 
-    // .dropdown {
-    //   //bootstrap override
-    //   &.show {
-    //     .dropdown-toggle {
-    //       background: $Type-Link;
-    //       color: #FFFFFF;
-    //     }
-    //   }
+    .btn-primary {
+      --bs-btn-color: #000;
+      --bs-btn-bg: #fff;
+      --bs-btn-border-color: #013366;
+      --bs-btn-hover-color: #fff;
+      --bs-btn-hover-bg: #fff;
+      --bs-btn-hover-border-color: #012952;
+      --bs-btn-focus-shadow-rgb: 39, 82, 125;
+      --bs-btn-active-color: #fff;
+      --bs-btn-active-bg: #012952;
+      --bs-btn-active-border-color: #01264d;
+      --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    }
 
-    //   .dropdown-toggle {
-    //     background-color: $Surface-tinted;
-    //     color: $Type-Link;
-    //     font-size: 0.875rem;
-    //     font-weight: 700;
-    //     height: auto;
-    //     border-radius: 4px;
-    //     border: 1px solid $Type-Link;
-    //     box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
+    .filters-component {
+      position: relative;
 
-    //     svg {
-    //       margin-right: 8px;
-    //     }
-    //     &::after {
-    //       border: none;
-    //       content: none;
-    //     }
-    //   }
+      button {
+        margin: 0;
+      }
 
-    //   .dropdown-menu {
-    //     border-radius: 4px;
-    //     background-color: $Surface-tinted;
-    //     box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
-    //     padding: 1rem;
-    //     overflow-y: scroll;
-    //     //bootstrap override
-    //     border-color: transparent;
-
-    //     .form-check {
-    //       margin-bottom: 12px;
-    //       color: $Type-Primary;
-
-    //       input {
-    //         display: none;
-    //       }
-
-    //       label {
-    //         white-space: nowrap;
-    //         cursor: pointer;
-
-    //         svg {
-    //           margin-right: 8px;
-    //           margin-left: 8px;
-    //           color: $BC-Blue;
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+      .filters {
+        @media (min-width: 768px) {
+          max-height: initial;
+          top: 2.4375rem;
+          right: 0;
+        }
+      }
+    }
   }
 }
 

@@ -21,7 +21,7 @@ import './AdvisoriesList.scss';
 
 export default function Advisories(props) {
   // State, props and context
-  const { advisories, showDescription, showTimestamp, showArrow } = props;
+  const { advisories, showDescription, showTimestamp, showPublished, showArrow } = props;
 
   // Navigation
   const navigate = useNavigate();
@@ -43,34 +43,41 @@ export default function Advisories(props) {
               }
             }}>
 
-            <div className="advisory-li-title-container" tabIndex={0}>
-              <p className='advisory-li-title'>{advisory.title}</p>
+            <div className="advisory-li__content" tabIndex={0}>
+              <div className="advisory-li-title-container">
+                <p className='advisory-li-title'>{advisory.title}</p>
+                {(showTimestamp && showPublished) &&
+                <div className="timestamp-container">
+                  <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
+                  <FriendlyTime date={advisory.latest_revision_created_at} />
+                </div>
+                }
+                {(showTimestamp && !showPublished) &&
+                <div className="timestamp-container">
+                  <FriendlyTime date={advisory.latest_revision_created_at} />
+                </div>
+                }
+              </div>
+
+              {showDescription &&
+                <div className='advisory-li-body-container'>
+                  {advisory.teaser &&
+                    <div className='advisory-li-body'>{advisory.teaser}</div>
+                  }
+
+                  {!advisory.teaser &&
+                    <div className='advisory-li-body'>{stripRichText(advisory.body)}</div>
+                  }
+                </div>
+              }
+
               {showTimestamp &&
-              <div className="timestamp-container">
+              <div className="timestamp-container timestamp-container--mobile">
                 <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
                 <FriendlyTime date={advisory.latest_revision_created_at} />
               </div>
               }
             </div>
-
-            {showDescription &&
-              <div className='advisory-li-body-container'>
-                {advisory.teaser &&
-                  <div className='advisory-li-body'>{advisory.teaser}</div>
-                }
-
-                {!advisory.teaser &&
-                  <div className='advisory-li-body'>{stripRichText(advisory.body)}</div>
-                }
-              </div>
-            }
-
-            {showTimestamp &&
-            <div className="timestamp-container timestamp-container--mobile">
-              <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
-              <FriendlyTime date={advisory.latest_revision_created_at} />
-            </div>
-            }
 
             {showArrow &&
               <div className="advisory-li__arrow">
