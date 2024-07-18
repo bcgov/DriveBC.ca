@@ -187,8 +187,10 @@ export default function RestStopPanel(props) {
 
         <hr/>
         <div className='popup__content__description'>
-          <p className="description-label label">Electric Vehicles</p>
-
+          <div className='popup__content__description__row'>
+          <p className='description-label label'>Electric Vehicles</p>
+          <a href="https://www.plugshare.com/"  className="footer-link label" target="_blank" rel="noreferrer" alt="Disclaimer" >View on Plugshare</a>
+          </div>
           <div className='popup__content__description__container'>
             {restStopData.properties.EV_STATION_25_KW_DCFC === 0
               && restStopData.properties.EV_STATION_50_KW_DCFC === 0
