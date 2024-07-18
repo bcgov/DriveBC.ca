@@ -42,6 +42,12 @@
           font-weight: 700;
         }
 
+        &__row {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+        }
+
         &__container {
           padding: 0 1rem;
 
