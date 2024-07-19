@@ -44,12 +44,12 @@ def publish_scheduled():
     call_command('publish_scheduled')
 
 
-@db_periodic_task(crontab(minute="*/20"))
+@db_periodic_task(crontab(minute="*/10"))
 def populate_regional_weather_task():
     populate_all_regional_weather_data()
 
 
-@db_periodic_task(crontab(minute="*/20"))
+@db_periodic_task(crontab(minute="*/10"))
 def populate_current_weather_task():
     populate_all_local_weather_data()
 
