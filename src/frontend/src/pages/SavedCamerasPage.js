@@ -39,7 +39,6 @@ export default function SavedCamerasPage() {
 
   // UseRef hooks
   const isInitialMount = useRef(true);
-  const isInitialMountFav = useRef(true);
 
   // UseState hooks
   const [displayedCameras, setDisplayedCameras] = useState(null);
@@ -108,8 +107,8 @@ export default function SavedCamerasPage() {
 
   useEffect(() => {
     // Do not run on initial mount, it will run on authContext update
-    if (isInitialMountFav.current) {
-      isInitialMountFav.current = false;
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
       return;
     }
 
@@ -158,23 +157,6 @@ export default function SavedCamerasPage() {
     setDisplayedCameras(filteredCams);
 
   }, [searchText, processedCameras]);
-
-  useEffect(() => {
-    if (isInitialMount.current) {
-      const scrollPosition = sessionStorage.getItem('scrollPosition');
-      if (scrollPosition) {
-        setTimeout(function() {
-          window.scrollTo({
-            top: parseInt(scrollPosition, 10),
-            left: 0,
-            behavior: "smooth"
-          });
-        }, 300);
-      }
-
-      isInitialMount.current = false;
-    }
-  }, [displayedCameras]);
 
   // Rendering
   return (
