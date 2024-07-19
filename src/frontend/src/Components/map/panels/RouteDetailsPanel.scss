@@ -62,6 +62,12 @@
               }
             }
 
+            &--advisories {
+              border-left: 2px solid #584215;
+              color: #584215;
+              font-weight: 700;
+            }
+
             &--closures {
               border-left: 2px solid $Type-status-red;
               color: $Type-status-red;

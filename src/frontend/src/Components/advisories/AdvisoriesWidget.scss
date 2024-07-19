@@ -14,7 +14,7 @@
     border: 1px solid #584215;
     margin-bottom: 0;
 
-    &:active, &.active, &.open {
+    &:hover, &:active, &.active, &.open {
       color: white;
       background: #584215;
 
