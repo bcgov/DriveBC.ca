@@ -12,6 +12,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVideoSlash, faVideo, faStar } from '@fortawesome/pro-solid-svg-icons';
+import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 import parse from 'html-react-parser';
 
@@ -121,7 +122,10 @@ export default function CamPanel(props) {
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faVideo} />
         </div>
-        <p className="name">Camera</p>
+        <div className="popup__title__name">
+          <p className="name">Camera</p>
+          <ShareURLButton />
+        </div>
       </div>
       {camera && (
         <div className="popup__content">
@@ -190,21 +194,22 @@ export default function CamPanel(props) {
           <div className="popup__content__description">
             <p>{parse(camera.caption)}</p>
           </div>
+          <div className="popup__content__tools">
+            {favCams != null &&
+              <button
+                className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
+                aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
+                onClick={favoriteHandler}
+                >
+
+                {(favCams && favCams.includes(camera.id)) ? 
+                (<React.Fragment><FontAwesomeIcon icon={faStar} /><span>Remove</span></React.Fragment>) :
+                (<React.Fragment><FontAwesomeIcon icon={faStarOutline} /><span>Save</span></React.Fragment>) }
+              </button>
+            }
+          </div>
         </div>
       )}
-
-      <ShareURLButton />
-
-      {favCams != null &&
-        <Button
-          variant="primary"
-          className="viewmap-btn"
-          onClick={favoriteHandler}>
-
-          {favCams && favCams.includes(camera.id) ? 'Remove' : 'Add'}
-          <FontAwesomeIcon icon={faStar} />
-        </Button>
-      }
     </div>
   );
 }

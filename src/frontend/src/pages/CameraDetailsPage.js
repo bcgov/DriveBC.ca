@@ -21,6 +21,7 @@ import {
   faFlag,
   faStar
 } from '@fortawesome/pro-solid-svg-icons';
+import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 import Container from 'react-bootstrap/Container';
@@ -342,17 +343,21 @@ export default function CameraDetailsPage() {
           <Container className="container--full-width">
             <div className="camera-details">
               <div className="camera-details__description">
-                <h2>{camera.name}</h2>
-                {favCams != null &&
-                  <Button
-                    variant="primary"
-                    className="viewmap-btn"
-                    onClick={favoriteHandler}>
+                <div className="camera-details__description__title">
+                  <h2>{camera.name}</h2>
+                  {favCams != null &&
+                    <button
+                      className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
+                      aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
+                      onClick={favoriteHandler}
+                      >
 
-                    {favCams.includes(camera.id) ? 'Remove' : 'Add'}
-                    <FontAwesomeIcon icon={faStar} />
-                  </Button>
-                }
+                      {(favCams && favCams.includes(camera.id)) ? 
+                      (<React.Fragment><FontAwesomeIcon icon={faStar} /></React.Fragment>) :
+                      (<React.Fragment><FontAwesomeIcon icon={faStarOutline} /></React.Fragment>) }
+                    </button>
+                  }
+                </div>
                 <p className="body--large">{parse(camera.caption)}</p>
               </div>
               <div className="camera-details__more">

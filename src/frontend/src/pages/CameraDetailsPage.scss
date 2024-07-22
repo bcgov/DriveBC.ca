@@ -34,8 +34,19 @@
     }
 
     &__description {
-      h2 {
-        margin-bottom: 1em;
+      &__title {
+        display: flex;
+        h2 {
+          margin-bottom: 0;
+        }
+        .favourite-btn {
+          font-size: 20px;
+          
+          svg {
+            margin-left: 18px;
+            margin-right: 0;
+          }
+        }
       }
 
       .body--large {
