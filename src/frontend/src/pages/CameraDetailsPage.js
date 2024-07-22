@@ -353,8 +353,8 @@ export default function CameraDetailsPage() {
                       >
 
                       {(favCams && favCams.includes(camera.id)) ? 
-                      (<React.Fragment><FontAwesomeIcon icon={faStar} /></React.Fragment>) :
-                      (<React.Fragment><FontAwesomeIcon icon={faStarOutline} /></React.Fragment>) }
+                      (<FontAwesomeIcon icon={faStar} />) :
+                      (<FontAwesomeIcon icon={faStarOutline} />) }
                     </button>
                   }
                 </div>

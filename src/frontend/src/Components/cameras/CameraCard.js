@@ -17,7 +17,7 @@ import {
   faVideoSlash,
   faStar,
 } from '@fortawesome/pro-solid-svg-icons';
-import Card from 'react-bootstrap/Card';
+import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 import FriendlyTime from '../shared/FriendlyTime';
 
@@ -124,34 +124,8 @@ export default function CameraCard(props) {
   const unavailable = camera.is_on ? '' : 'unavailable';
 
   return (
-    <Card className={`webcam-card ${stale} ${delayed} ${unavailable}`}>
-      <Card.Body onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
-        <p className="camera-name bold">{camera.name}</p>
-        <div className="camera-orientations">
-          <img
-            className="colocated-camera-icon"
-            src={colocatedCamIcon}
-            role="presentation"
-            alt="colocated cameras icon"
-          />
-          {camera.camGroup.map(cam => (
-            <Button
-              aria-label={getCameraOrientation(cam.orientation)}
-              className={
-                'camera-direction-btn' +
-                (camera.orientation == cam.orientation ? ' current' : '')
-              }
-              key={cam.id}
-              onClick={event => {
-                event.stopPropagation();
-                setCamera(cam);
-                trackEvent('click', 'camera-list', 'camera', cam.name);
-              }}>
-              {cam.orientation}
-            </Button>
-          ))}
-        </div>
-        <div></div>
+    <div className={`camera-card ${stale} ${delayed} ${unavailable}`}>
+      <div className="camera-card__body" onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
         {!unavailable && !delayed && !stale && (
           <div className="card-img-box">
             <img
@@ -236,33 +210,62 @@ export default function CameraCard(props) {
             </div>
           </div>
         )}
-        <div className="timestamp">
+        <div className="card-img-timestamp">
           <p className="driveBC">
             Drive<span>BC</span>
           </p>
           <FriendlyTime date={camera.last_update_modified} asDate={true} />
         </div>
+        
+        <div className="camera-orientations">
+          <img
+            className="colocated-camera-icon"
+            src={colocatedCamIcon}
+            role="presentation"
+            alt="colocated cameras icon"
+          />
+          {camera.camGroup.map(cam => (
+            <Button
+              aria-label={getCameraOrientation(cam.orientation)}
+              className={
+                'camera-direction-btn' +
+                (camera.orientation == cam.orientation ? ' current' : '')
+              }
+              key={cam.id}
+              onClick={event => {
+                event.stopPropagation();
+                setCamera(cam);
+                trackEvent('click', 'camera-list', 'camera', cam.name);
+              }}>
+              {cam.orientation}
+            </Button>
+          ))}
+        </div>
+        <p className="camera-name bold">{camera.name}</p>
         <p className="label">{camera.caption}</p>
-      </Card.Body>
-
-      <Button
-        variant="primary"
-        className="viewmap-btn"
-        onClick={handleViewOnMap}>
-        View on map
-        <FontAwesomeIcon icon={faMapMarkerAlt} />
-      </Button>
-
-      {favCams != null &&
-        <Button
-          variant="primary"
+      </div>
+      
+      <div className="camera-card__tools">
+        <button
           className="viewmap-btn"
-          onClick={favCams && favCams.includes(camera.id) ? deleteCamera : addCamera}>
+          aria-label="View on map"
+          onClick={handleViewOnMap}>
+          <FontAwesomeIcon icon={faMapMarkerAlt} />
+          <span>View on map</span>
+        </button>
 
-          {favCams && favCams.includes(camera.id) ? 'Remove' : 'Add'}
-          <FontAwesomeIcon icon={faStar} />
-        </Button>
-      }
-    </Card>
+        {favCams != null &&
+          <button
+            className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
+            aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
+            onClick={favCams && favCams.includes(camera.id) ? deleteCamera : addCamera}>
+
+            {(favCams && favCams.includes(camera.id)) ? 
+            (<React.Fragment><FontAwesomeIcon icon={faStar} /><span>Remove</span></React.Fragment>) :
+            (<React.Fragment><FontAwesomeIcon icon={faStarOutline} /><span>Save</span></React.Fragment>) }
+          </button>
+        }
+      </div>
+    </div>
   );
 }

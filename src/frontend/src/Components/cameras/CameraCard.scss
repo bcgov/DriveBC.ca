@@ -1,22 +1,85 @@
 @import "../../styles/variables";
 
-.card.webcam-card {
-  box-shadow: 0px 1.2px 3.6px rgba(0, 0, 0, 0.1), 0px 6.4px 14.4px rgba(0, 0, 0, 0.13);
+.camera-card {
   border-radius: 4px;
   border: none;
   outline: 2px solid transparent;
   transition: all 0.3s ease;
   width: 100%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
   @media (min-width: 576px) {
     width: unset;
     margin: unset;
   }
 
-  .card-body {
-    padding: 12px;
+  &:hover {
+    cursor: pointer;
+    .card-img {
+      transform: scale(1.25);
+    }
+  }
 
+  &.unavailable {
+    .card-img-box {
+      background-color: $Surface-status-red;
+      padding: 12px;
+    }
+    .card-notification {
+      .card-pill {
+        top: 10px;
+        background-color: $Error;
+        transform:translateY(0%);
+
+        p {
+          color: $White;
+        }
+
+      }
+    }
+
+    .unavailable-message {
+      margin-top: 48px;
+
+      svg, p {
+        color: $Error;
+      }
+
+      svg {
+        font-size: 1rem;
+      }
+
+      p {
+        margin-bottom: 0;
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  &.stale {
+    .card-banner, .card-pill {
+      background-color: $Grey50;
+
+      p, svg {
+        color: $Grey100;
+      }
+    }
+  }
+
+  &.delayed {
+    .card-banner, .card-pill {
+      background-color: $Surface-status-yellow;
+
+      p, svg {
+        color: $BC-Yellow-Dark;
+      }
+    }
+  }
+
+  &__body {
     .camera-name {
       font-size: 1.125rem;
     }
@@ -26,9 +89,11 @@
       overflow: hidden;
       height: 180px;
       margin-bottom: -10px;  /* to allow overlap of image timestamp bar */
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
 
       @media (min-width: 992px) {
-        height: 180px;
+        height: 200px;
       }
 
       .card-img{
@@ -105,13 +170,15 @@
       margin-bottom: 0.5em;
     }
 
-    .timestamp {
+    .card-img-timestamp {
       background-color: $Black;
       padding: 0 10px;
       margin-bottom: 0.5rem;
       display: flex;
       justify-content: space-between;
       position: relative;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
 
       p {
         color: $White;
@@ -164,98 +231,28 @@
         }
       }
     }
-  }
 
-  button.btn.viewmap-btn {
-    margin-bottom: 0;
-    border-radius: 4px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    background-color: $Grey10;
-    border-color: $Grey10;
-    color: $BC-Blue;
-    transition: all 0.3s ease;
-    font-size: 0.875rem;
-    padding: 12px;
-
-    &:hover {
-      border-radius: 2px;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      background-color: $Type-Link;
-      border-color: $Type-Link;
-      color: $White;
-    }
-
-    svg {
-      margin-left: 8px;
+    .camera-orientations {
+      background-color: #F1F8FE;
+      border-radius: 4px;
     }
   }
 
-  &:hover {
-    cursor: pointer; //need to change component to proper link later
-    outline: 2px solid $Type-Link;
+  &__tools {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
 
-    .card-body {
-
-      .card-img {
-        transform: scale(1.25);
-      }
-    }
-  }
-
-  &.unavailable {
-    .card-img-box {
-      background-color: $Surface-status-red;
-      padding: 12px;
-    }
-    .card-notification {
-      .card-pill {
-        top: 10px;
-        background-color: $Error;
-        transform:translateY(0%);
-
-        p {
-          color: $White;
-        }
-
-      }
-    }
-
-    .unavailable-message {
-      margin-top: 48px;
-
-      svg, p {
-        color: $Error;
-      }
+    button {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #255A90;
+      border: none;
+      background: none;
+      padding: 0;
 
       svg {
-        font-size: 1rem;
-      }
-
-      p {
-        margin-bottom: 0;
-        font-size: 0.875rem;
-      }
-    }
-  }
-
-  &.stale {
-    .card-banner, .card-pill {
-      background-color: $Grey50;
-
-      p, svg {
-        color: $Grey100;
-      }
-    }
-  }
-
-  &.delayed {
-    .card-banner, .card-pill {
-      background-color: $Surface-status-yellow;
-
-      p, svg {
-        color: $BC-Yellow-Dark;
+        margin-right: 8px;
       }
     }
   }
