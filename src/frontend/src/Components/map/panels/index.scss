@@ -6,6 +6,12 @@
     border-top: 4px solid #053662;
     padding: 1rem;
 
+    &__name {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
     .name {
       margin-bottom: 0;
       font-size: 1.25rem;
@@ -120,6 +126,10 @@
     &__description {
       padding: 1rem 1rem 0;
     }
+
+    &__tools {
+      padding: 1rem;
+    }
   }
 }
 
@@ -196,5 +206,23 @@
 
   &:hover {
     background: lighten(#053662, 5%);
+  }
+}
+
+.favourite-btn {
+  border: none;
+  background: none;
+
+  svg {
+    margin-right: 8px;
+  }
+
+  span {
+    font-weight: 700;
+    color: #255A90;
+  }
+
+  &.favourited {
+    color: #F8BB47;
   }
 }
