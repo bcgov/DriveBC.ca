@@ -151,53 +151,21 @@ export default function DriveBCMap(props) {
   const [clickedFeature, setClickedFeature] = useState();
   const clickedFeatureRef = useRef();
 
-  const adjustMap = feature => {
-    if(!openPanel){
-      if(feature != null){
-        if(mousePointXClicked < 390){
-          const lon = feature.values_.location.coordinates[0];
-          const lat = feature.values_.location.coordinates[1];
-          const zoomLevel = mapView.current.getZoom();
-          setZoomPan(mapView, zoomLevel, fromLonLat([lon, lat]));
-          mousePointXClicked = 1000.0;        
-          mapElement.current.classList.toggle('map-not-pushed');        
-          if (mapElement.current.classList.contains('map-not-pushed')){
-            mapElement.current.classList.remove('map-not-pushed');
-            mapElement.current.classList.add('map-pushed');
-          }
-          return;
-        }
-        else{
-          if (mapElement.current.classList.contains('map-not-pushed')){
-            return;
-          }
-          mapElement.current.classList.toggle('map-pushed');
-          return;
-        }       
-      }
-      
+  const updatePosition = feature => {
+    if(feature != null){
       if(mousePointXClicked < 390){
-        if (!mapElement.current.classList.contains('map-not-pushed')){
-          mapElement.current.classList.toggle('map-not-pushed');    
-        }
-        else{
-          mapElement.current.classList.toggle('map-not-pushed');
-        }   
+        const lon = feature.values_.location.coordinates[0];
+        const lat = feature.values_.location.coordinates[1];
+        const zoomLevel = mapView.current.getZoom();
+        setZoomPan(mapView, zoomLevel, fromLonLat([lon, lat]));
       }
-      else{
-        if (mapElement.current.classList.contains('map-not-pushed')){
-          mapElement.current.classList.remove('map-not-pushed');
-        } 
-        mapElement.current.classList.toggle('map-pushed');
-      }
-    }
-    
-  }
+    }  
+  };
 
   const updateClickedFeature = feature => {
     clickedFeatureRef.current = feature;
     setClickedFeature(feature);
-    adjustMap(feature);
+    updatePosition(feature);
   };
 
   /* useEffect hooks */
