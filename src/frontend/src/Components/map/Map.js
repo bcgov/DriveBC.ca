@@ -174,7 +174,18 @@ export default function DriveBCMap(props) {
 
     // Set map extent (W, S, E, N)
     const extent = [-143.230138, 46.180153, -109.977437, 65.591323];
-    const transformedExtent = transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
+
+    // Adjust the extent to be slightly larger to cover all of BC
+    const longBuffer = 20.0;
+    const latBuffer = 20.0;
+    const adjustedExtent = [
+      extent[0] - longBuffer, // Left longitude
+      extent[1] - latBuffer, // Bottom latitude
+      extent[2] + longBuffer, // Right longitude
+      extent[3] + latBuffer  // Top latitude
+    ];
+
+    const transformedExtent = transformExtent(adjustedExtent, 'EPSG:4326', 'EPSG:3857');
 
     mapView.current = new View({
       projection: 'EPSG:3857',
@@ -182,6 +193,7 @@ export default function DriveBCMap(props) {
       center: fromLonLat(pan),
       zoom: isCamDetail || referenceData ? 12 : zoom,
       maxZoom: 15,
+      minZoom: 5,
       extent: transformedExtent,
       enableRotation: false
     });
