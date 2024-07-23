@@ -3,10 +3,6 @@
 .popup {
   // Regional Weather popup
   &--regional-weather {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-
     .section-title {
       font-size: 1rem;
       font-weight: 700;
@@ -118,22 +114,22 @@
           font-size: 4rem;
         }
       }
-    }
 
-    .popup__additional {
-      padding: 0.5rem 1rem;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      justify-content: space-between;
-
-      p {
-        text-align: center;
-        color: $Type-Secondary;
-      }
-
-      .label {
-        line-height: 2rem;
+      &__additional {
+        padding: 0.5rem 1rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: space-between;
+  
+        p {
+          text-align: center;
+          color: $Type-Secondary;
+        }
+  
+        .label {
+          line-height: 2rem;
+        }
       }
     }
   }

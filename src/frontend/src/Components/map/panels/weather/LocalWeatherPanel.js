@@ -150,16 +150,16 @@ export default function LocalWeatherPanel(props) {
             </div>
           }
         </div>
-      </div>
 
-      <ShareURLButton />
+        <ShareURLButton />
 
-      <div className="popup__footer">
-        <p>Temperatures displayed in Celcius (&deg;C) <br /></p>
-        <p>
-          Local weather is provided by local Ministry of Transportation and Infrastructure weather stations. <br />
-          Forecasts courtesy of Weathernet.
-        </p>
+        <div className="popup__content__footer">
+          <p>Temperatures displayed in Celcius (&deg;C) <br /></p>
+          <p>
+            Local weather is provided by local Ministry of Transportation and Infrastructure weather stations. <br />
+            Forecasts courtesy of Weathernet.
+          </p>
+        </div>
       </div>
     </div>
   );

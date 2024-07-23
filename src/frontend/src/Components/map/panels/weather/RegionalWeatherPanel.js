@@ -153,35 +153,34 @@ export default function RegionalWeatherPanel(props) {
 
         <ForecastTabs forecasts={weather.future_forecasts} sunset={weather.sunset} />
 
-      </div>
+        <div className="popup__content__additional">
+          { weather.station &&
+            <p className="label">
+              <a
+                alt="Past 24 Hours"
+                target="_blank"
+                rel="noreferrer"
+                href={`https://weather.gc.ca/past_conditions/index_e.html?station=${weather.station}`}
+              >Past 24 hours</a>
+            </p>
+          }
 
-      <div className="popup__additional">
-        { weather.station &&
           <p className="label">
-            <a
-              alt="Past 24 Hours"
+            Temperatures displayed in Celcius (&deg;C) <br />
+
+            Courtesy of&nbsp;
+
+            <a alt="Environment Canada"
               target="_blank"
               rel="noreferrer"
-              href={`https://weather.gc.ca/past_conditions/index_e.html?station=${weather.station}`}
-            >Past 24 hours</a>
+              href="https://weather.gc.ca/canada_e.html">
+              Environment Canada
+            </a>
           </p>
-        }
+        </div>
 
-        <p className="label">
-          Temperatures displayed in Celcius (&deg;C) <br />
-
-          Courtesy of&nbsp;
-
-          <a alt="Environment Canada"
-            target="_blank"
-            rel="noreferrer"
-            href="https://weather.gc.ca/canada_e.html">
-            Environment Canada
-          </a>
-        </p>
+        <ShareURLButton />
       </div>
-
-      <ShareURLButton />
     </div>
   );
 }

@@ -226,9 +226,8 @@ export default function RestStopPanel(props) {
             )}
           </div>
         </div>
+        <ShareURLButton />
       </div>
-
-      <ShareURLButton />
     </div>
   );
 }
