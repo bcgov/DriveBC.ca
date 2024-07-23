@@ -53,40 +53,41 @@ export default function Header() {
           <Navbar.Brand href="/" tabIndex={xLargeScreen ? "0": "-1"}>
             <img className="header-logo" src={logo} alt="Government of British Columbia" />
           </Navbar.Brand>
-
+          
           <div className="nav-divider"></div>
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">
-                <LinkContainer to="/">
-                  {getNavLink('Map')}
-                </LinkContainer>
 
-                <LinkContainer to="/cameras">
-                  {getNavLink('Cameras')}
-                </LinkContainer>
+          <UserNavigation />
 
-                <LinkContainer to="/delays">
-                  {getNavLink('Delays')}
-                </LinkContainer>
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              <LinkContainer to="/">
+                {getNavLink('Map')}
+              </LinkContainer>
 
-                <LinkContainer to="/advisories">
-                  {getNavLink('Advisories')}
-                </LinkContainer>
+              <LinkContainer to="/cameras">
+                {getNavLink('Cameras')}
+              </LinkContainer>
 
-                <LinkContainer to="/bulletins">
-                  {getNavLink('Bulletins')}
-                </LinkContainer>
-              </Nav>
-            </Navbar.Collapse>
+              <LinkContainer to="/delays">
+                {getNavLink('Delays')}
+              </LinkContainer>
 
-            { largeScreen &&
-              <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
-            }
+              <LinkContainer to="/advisories">
+                {getNavLink('Advisories')}
+              </LinkContainer>
 
-            <div className="nav-divider" />
+              <LinkContainer to="/bulletins">
+                {getNavLink('Bulletins')}
+              </LinkContainer>
+            </Nav>
+          </Navbar.Collapse>
 
-            <UserNavigation />
-          </Container>
+          { largeScreen &&
+            <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
+          }
+
+          <div className="nav-divider" />
+        </Container>
       </Navbar>
     </header>
   );

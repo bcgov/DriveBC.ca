@@ -70,7 +70,7 @@
 
 	&-brand {
 		padding: 0;
-		margin: 0 0 0 1rem;
+		margin: 0 0 0 12px;
 
 		.header-logo {
 			width: 126px;
@@ -82,7 +82,7 @@
 
 	.nav-divider {
 		border: 1px solid $Divider;
-		margin: 0.5rem;
+		margin: 0 12px;
 		height: 38px;
 		display: none;
 
@@ -148,10 +148,6 @@
 		margin-bottom: 0;
 		font-weight: 700;
 
-		@media (min-width: 992px) {
-			margin-right: 16px;
-		}
-
 		svg {
 			margin-right: 8px;
 			color: #D8EAFD;
@@ -159,6 +155,14 @@
 
 		&::after {
 			content: none;
+		}
+
+		& + .nav-divider {
+			display: none;
+
+			@media (min-width: 768px) {
+				display: block;
+			}
 		}
 	}
 }

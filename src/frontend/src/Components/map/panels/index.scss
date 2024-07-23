@@ -1,6 +1,10 @@
 @import "../../../styles/variables";
 
 .popup {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   &__title {
     background-color: #F1F8FE;
     border-top: 4px solid #053662;

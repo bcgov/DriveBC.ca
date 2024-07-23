@@ -3,10 +3,12 @@
 #user-navigation {
   display: flex;
   flex-direction: row;
+  position: absolute;
+  right: 1rem;
 
-  @media (max-width: 767px) {
-    position: absolute;
-    right: 1rem;
+  @media (min-width: 576px) {
+    position: static;
+    order: 2;
   }
 
   #signin-btn {
@@ -16,7 +18,10 @@
   // Generic dropdown styling
   .dropdown {
     padding: 0;
-    margin: 0 0.4rem;
+
+    &:last-of-type {
+      margin: 0 12px 0 12px;
+    }
 
     button {
       margin: 0;

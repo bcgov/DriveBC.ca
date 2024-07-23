@@ -77,9 +77,9 @@ export default function EventPanel(props) {
         <div className="popup__content__description debug-data">
           <p onClick={() => console.log(eventData)}>{eventData.id}</p>
         </div>
-      </div>
 
-      <ShareURLButton />
+        <ShareURLButton />
+      </div>
     </div>
   );
 }

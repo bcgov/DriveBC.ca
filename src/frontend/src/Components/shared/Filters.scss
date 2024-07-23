@@ -19,6 +19,7 @@ button.btn.open-filters {
 
 .filters {
   position: fixed;
+  z-index: 7;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -27,7 +28,6 @@ button.btn.open-filters {
   background-color: $Surface-tinted;
   box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
   padding: 1rem;
-  z-index: 21;
   overflow-y: auto;
 
   @media (min-width: 768px) {
@@ -37,7 +37,7 @@ button.btn.open-filters {
     left: initial;
     right: 1rem;
     width: 300px;
-    height: auto;
+    height: calc(100vh - 200px);
   }
 
   .filters-title {
