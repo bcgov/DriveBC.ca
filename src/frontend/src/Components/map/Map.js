@@ -142,7 +142,8 @@ export default function DriveBCMap(props) {
     closures: null,
     majorEvents: null,
     minorEvents: null,
-    roadConditions: null
+    roadConditions: null,
+    advisories: null
   });
 
   // Workaround for OL handlers not being able to read states

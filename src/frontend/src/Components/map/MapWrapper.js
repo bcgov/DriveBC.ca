@@ -22,7 +22,7 @@ export default function MapWrapper(props) {
       regional: { list: regionalWeather, filteredList: filteredRegionalWeathers, filterPoints: regionalWeatherFilterPoints },
       restStops: { list: restStops, filteredList: filteredRestStops, filterPoints: restStopFilterPoints },
     },
-    advisories: { list: advisories },
+    advisories: { list: advisories, filteredList: filteredAdvisories, filterPoints: advisoryFilterPoints },
     routes: { selectedRoute },
 
   } = useSelector(
@@ -70,7 +70,7 @@ export default function MapWrapper(props) {
       dataLoaders.loadCurrentWeather(selectedRoute, currentWeather, filteredCurrentWeathers, currentWeatherFilterPoints, dispatch, displayError);
       dataLoaders.loadRegionalWeather(selectedRoute, regionalWeather, filteredRegionalWeathers, regionalWeatherFilterPoints, dispatch, displayError);
       dataLoaders.loadRestStops(selectedRoute, restStops, filteredRestStops, restStopFilterPoints, dispatch, displayError);
-      dataLoaders.loadAdvisories(advisories, dispatch, displayError);
+      dataLoaders.loadAdvisories(selectedRoute, advisories, filteredAdvisories, advisoryFilterPoints, dispatch, displayError);
 
     } else {
       // Clear and update data
