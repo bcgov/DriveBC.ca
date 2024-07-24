@@ -60,7 +60,7 @@ export default function ForecastCarousel(props) {
   for (const [index, forecast] of forecast_group.entries()) {
     carouselList.push(
       <div key={forecast.Period.TextForecastName} className={currentPane !== index ? 'inactive' : ''}>
-        <div className="carousel-header-container">
+        <header className="carousel-header-container">
           <p className="forecast-name">
             <WeatherIcon className="weather-icon" code={forecast.AbbreviatedForecast.IconCode.Code} />
             {forecast.Period.TextForecastName}
@@ -69,7 +69,7 @@ export default function ForecastCarousel(props) {
           <p className="forecast-temp-text">
             {index == 0 ? "High of " : "Low of "}{getTemperatureText(forecast.Temperatures.Temperature.Value)}&deg;
           </p>
-        </div>
+        </header>
 
         <p className="forecast-text-summary">{forecast.TextSummary}</p>
       </div>
