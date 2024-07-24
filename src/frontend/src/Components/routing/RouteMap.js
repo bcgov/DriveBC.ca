@@ -1,35 +1,34 @@
-/* eslint-disable no-unused-vars, prefer-const */
-import React, {
-  useContext,
-  useRef,
-  useEffect,
-  useState,
-  useCallback,
-} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+// React
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+
+// Redux
+import { useSelector } from 'react-redux';
 import { memoize } from 'proxy-memoize';
+
+// Geo
 import { applyStyle } from 'ol-mapbox-style';
+import { fromLonLat, transformExtent } from 'ol/proj';
+import * as turf from '@turf/turf';
 import Map from 'ol/Map';
-import Geolocation from 'ol/Geolocation.js';
 import MVT from 'ol/format/MVT.js';
 import VectorTileLayer from 'ol/layer/VectorTile.js';
 import VectorTileSource from 'ol/source/VectorTile.js';
 import View from 'ol/View';
-import { fromLonLat, toLonLat, transformExtent } from 'ol/proj';
-import * as turf from '@turf/turf';
 
-import RouteSearch from '../Components/routing/RouteSearch.js';
-import { getRouteLayer } from '../Components/map/layers/routeLayer.js';
+// Internal imports
+import { getRouteLayer } from '../map/layers/routeLayer.js';
 
-import { fitMap } from '../Components/map/helpers';
+// Styling
+import './RouteMap.scss';
 
-import './DemoPage.scss';
+export default function RouteMap(props) {
+  /* Setup */
+  // Props
+  const { setRouteMapImg, showSavePopup } = props;
 
-
-export default function DemoPage() {
-
+  // Redux
   const {
-    routes: { searchLocationFrom, searchLocationTo, selectedRoute },
+    routes: { selectedRoute },
   } = useSelector(
     useCallback(
       memoize(state => ({
@@ -44,8 +43,10 @@ export default function DemoPage() {
   const mapView = useRef();
   const thumbnail = useRef();
 
-  const [referenceFeature, updateReferenceFeature] = useState();
+  // State
+  const [_referenceFeature, updateReferenceFeature] = useState();
 
+  // Effect
   useEffect(() => {
     if (mapRef.current) return; // stops map from initializing more than once
 
@@ -102,12 +103,15 @@ export default function DemoPage() {
       moveTolerance: 7,
       controls: [],
     });
+
     window.mapRef = mapRef;
     window.el = mapElement;
-
   });
 
   useEffect(() => {
+    // Only run when save popup is showing
+    if (!showSavePopup) return;
+
     // Remove layer if no route found
     const dl = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
     if (mapLayers.current['route']) {
@@ -163,20 +167,15 @@ export default function DemoPage() {
       context.drawImage(canvas, 0, 0);
       context.setTransform(1, 0, 0, 1, 0, 0);
 
-      thumbnail.current.src = image.toDataURL();
+      setRouteMapImg(image.toDataURL());
     });
-  }, [selectedRoute]);
+  }, [showSavePopup]);
 
+  /* Rendering */
+  // Main component
   return (
-    <div className="demo">
-      <h2 className='container'>Demo Route Saving</h2>
-      <div className='container'>
-        <RouteSearch routeEdit={true} />
-      </div>
-      <div className='container maps'>
-        <div ref={mapElement} className='demo-map'></div>
-        <div className="thumbnail"><img ref={thumbnail} height="200" width="400" /></div>
-      </div>
+    <div className='route-map'>
+      <div ref={mapElement} className='map-elem'></div>
     </div>
   )
 }
