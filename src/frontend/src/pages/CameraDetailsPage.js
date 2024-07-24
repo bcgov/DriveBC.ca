@@ -40,8 +40,9 @@ import { addFavoriteCamera, deleteFavoriteCamera, getCameraGroupMap, getCameras 
 import { getCameraOrientation } from '../Components/cameras/helper.js';
 import { getWebcamReplay } from '../Components/data/webcams';
 import { NetworkError, ServerError } from '../Components/data/helper';
-import NetworkErrorPopup from '../Components//map/errors/NetworkError';
-import ServerErrorPopup from '../Components//map/errors/ServerError';
+import Alert from '../Components/shared/Alert';
+import NetworkErrorPopup from '../Components/map/errors/NetworkError';
+import ServerErrorPopup from '../Components/map/errors/ServerError';
 import MapWrapper from '../Components/map/MapWrapper';
 import Footer from '../Footer.js';
 import FriendlyTime from '../Components/shared/FriendlyTime';
@@ -70,6 +71,8 @@ export default function CameraDetailsPage() {
 
   // Refs
   const isInitialMount = useRef(true);
+  const isInitialAlertMount = useRef(true);
+  const timeout = useRef();
 
   // State hooks
   const [camera, setCamera] = useState(null);
@@ -82,6 +85,8 @@ export default function CameraDetailsPage() {
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
   const [cameraGroup, setCameraGroup] = useState(null);
+  const [isRemoving, setIsRemoving] = useState();
+  const [showAlert, setShowAlert] = useState(false);
 
   // Error handling
   const displayError = error => {
@@ -159,18 +164,37 @@ export default function CameraDetailsPage() {
   }, [camera]);
 
   useEffect(() => {
-    if(camera !== undefined && camera !== null){
-    const index = camera.camGroup.findIndex(cam => cam.id === camera.id);
-    if (index > -1 && index !== 0) {
-      const newCamGroup = camera.camGroup;
-      if(newCamGroup[0].id !== camera.camGroup[index].id){
-        loadCamDetails(camera);
-        isInitialMount.current = true;
+    if(camera !== undefined && camera !== null) {
+      const index = camera.camGroup.findIndex(cam => cam.id === camera.id);
+
+      if (index > -1 && index !== 0) {
+        const newCamGroup = camera.camGroup;
+        if(newCamGroup[0].id !== camera.camGroup[index].id){
+          loadCamDetails(camera);
+          isInitialMount.current = true;
+        }
       }
     }
-  }
+  }, [cameraGroup]);
 
-}, [cameraGroup]);
+  useEffect(() => {
+    if (isInitialAlertMount.current) {
+      isInitialAlertMount.current = false;
+      return;
+    }
+
+    setShowAlert(true);
+
+    // Clear existing close alert timers
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+    }
+
+    // Set new close alert timer to reference
+    timeout.current = setTimeout(() => {
+      setShowAlert(false);
+    }, 5000);
+  }, [isRemoving]);
 
   const toggleReplay = () => {
     setReplay(!replay);
@@ -257,9 +281,11 @@ export default function CameraDetailsPage() {
   const favoriteHandler = () => {
     if (favCams.includes(camera.id)) {
       deleteFavoriteCamera(camera.id, dispatch, removeFavCam);
+      setIsRemoving(true);
 
     } else {
       addFavoriteCamera(camera.id, dispatch, pushFavCam);
+      setIsRemoving(false);
     }
   }
 
@@ -314,7 +340,13 @@ export default function CameraDetailsPage() {
 
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
 
-  // Rendering
+  /* Rendering */
+  // Sub components
+  const getAlertMessage = () => {
+    return <p>{isRemoving ? 'Removed from ' : 'Saved to '} <a href="/my-cameras">My cameras</a></p>;
+  };
+
+  // Main component
   return (
     <div className="camera-page">
       {showNetworkError && <NetworkErrorPopup />}
@@ -349,8 +381,8 @@ export default function CameraDetailsPage() {
                     <button
                       className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
                       aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
-                      onClick={favoriteHandler}
-                      >
+                      onClick={favoriteHandler}>
+
                       <FontAwesomeIcon icon={(favCams && favCams.includes(camera.id)) ? faStar : faStarOutline} />
                     </button>
                   }
@@ -588,7 +620,10 @@ export default function CameraDetailsPage() {
           </Container>
         )}
       </div>
+
       {activeTab === 'webcam' && <Footer replay={replay} />}
+
+      <Alert showAlert={showAlert} setShowAlert={setShowAlert} message={getAlertMessage()} />
     </div>
   );
 }

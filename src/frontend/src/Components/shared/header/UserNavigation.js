@@ -132,7 +132,7 @@ export default function UserNavigation(props) {
       <DropdownButton
         align="end"
         id="favorites-menu"
-        title={<><FontAwesomeIcon icon={faStar} /> Favorites</>}>
+        title={<><FontAwesomeIcon icon={faStar} /> Favourites</>}>
 
         <div className="menu-items">
           <a href="/my-cameras" className="menu-item">

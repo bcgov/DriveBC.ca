@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createSearchParams, useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
@@ -19,11 +19,12 @@ import {
 } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
-import FriendlyTime from '../shared/FriendlyTime';
 
 // Internal imports
 import { getCameraOrientation } from './helper.js';
 import { addFavoriteCamera, deleteFavoriteCamera } from "../data/webcams";
+import Alert from '../shared/Alert';
+import FriendlyTime from '../shared/FriendlyTime';
 
 // Styling
 import './CameraCard.scss';
@@ -42,16 +43,40 @@ export default function CameraCard(props) {
     favCams: state.user.favCams
   }))));
 
+  // Refs
+  const isInitialAlertMount = useRef(true);
+  const timeout = useRef();
+
   // States
   const [show, setShow] = useState(false);
   const [camera, setCamera] = useState(cameraData);
-  // to be used for deletion, does not update
-  const [camId] = useState(cameraData.id);
+  const [camId] = useState(cameraData.id); // to be used for deletion, does not update
+  const [isRemoving, setIsRemoving] = useState();
+  const [showAlert, setShowAlert] = useState(false);
 
   // useEffect hooks
   useEffect(() => {
     setCamera(cameraData);
   }, [cameraData]);
+
+  useEffect(() => {
+    if (isInitialAlertMount.current) {
+      isInitialAlertMount.current = false;
+      return;
+    }
+
+    setShowAlert(true);
+
+    // Clear existing close alert timers
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+    }
+
+    // Set new close alert timer to reference
+    timeout.current = setTimeout(() => {
+      setShowAlert(false);
+    }, 5000);
+  }, [isRemoving]);
 
   // Misc
   const navigate = useNavigate();
@@ -105,12 +130,14 @@ export default function CameraCard(props) {
 
   const addCamera = async () => {
     addFavoriteCamera(camera.id, dispatch, pushFavCam);
+    setIsRemoving(false);
   }
 
   const deleteCamera = async () => {
     // use un-updated id for deletion in my cameras page
     const id = location.pathname == '/my-cameras' ? camId : camera.id;
     deleteFavoriteCamera(id, dispatch, removeFavCam);
+    setIsRemoving(true);
   }
 
   function handleChildClick(e) {
@@ -118,7 +145,13 @@ export default function CameraCard(props) {
     setShow(!show);
   }
 
-  // Rendering
+  /* Rendering */
+  // Subcomponents
+  const getAlertMessage = () => {
+    return <p>{isRemoving ? 'Removed from ' : 'Saved to '} <a href="/my-cameras">My cameras</a></p>;
+  };
+
+  // Main component
   const stale = camera.marked_stale ? 'stale' : '';
   const delayed = camera.marked_delayed ? 'delayed' : '';
   const unavailable = camera.is_on ? '' : 'unavailable';
@@ -216,7 +249,7 @@ export default function CameraCard(props) {
           </p>
           <FriendlyTime date={camera.last_update_modified} asDate={true} />
         </div>
-        
+
         <div className="camera-orientations">
           <img
             className="colocated-camera-icon"
@@ -244,7 +277,7 @@ export default function CameraCard(props) {
         <p className="camera-name bold">{camera.name}</p>
         <p className="label">{camera.caption}</p>
       </div>
-      
+
       <div className="camera-card__tools">
         <button
           className="viewMap-btn"
@@ -260,12 +293,14 @@ export default function CameraCard(props) {
             aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
             onClick={favCams && favCams.includes(camera.id) ? deleteCamera : addCamera}>
 
-            {(favCams && favCams.includes(camera.id)) ? 
+            {(favCams && favCams.includes(camera.id)) ?
             (<React.Fragment><FontAwesomeIcon icon={faStar} /><span>Remove</span></React.Fragment>) :
             (<React.Fragment><FontAwesomeIcon icon={faStarOutline} /><span>Save</span></React.Fragment>) }
           </button>
         }
       </div>
+
+      <Alert showAlert={showAlert} setShowAlert={setShowAlert} message={getAlertMessage()} />
     </div>
   );
 }

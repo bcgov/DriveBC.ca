@@ -1,9 +1,9 @@
 .route-map {
   .map-elem {
     opacity: 0;
-    float: right;
     width: 400px;
     height: 200px;
+    position: absolute;
   }
 
   .maps {
