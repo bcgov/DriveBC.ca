@@ -1,6 +1,6 @@
 // React
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 // Redux
 import { useSelector } from 'react-redux';
@@ -8,6 +8,8 @@ import { memoize } from 'proxy-memoize';
 
 // External imports
 import Container from 'react-bootstrap/Container';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 
 // Internal imports
 import { AuthContext } from '../App';
@@ -132,10 +134,11 @@ export default function SavedCamerasPage() {
 
         {!(processedCameras && processedCameras.length) &&
           <div className="empty-cam-display">
-            <h2>No cameras to display</h2>
+            <h3>No saved cameras</h3>
 
-            <h6><b>Have you entered search terms to narrow down the list?</b></h6>
-            <p>Try checking your spelling, changing, or removing your search terms.</p>
+            <p>
+              You don&apos;t have any saved cameras yet. You can add a saved camera from the <Link to="/" className="link-in-text">map</Link>, the <Link className="link-in-text" to="/cameras">camera list</Link>, or each camera&apos;s detail page by clicking the save camera button &#40;<FontAwesomeIcon icon={faStarOutline} />&#41;.
+            </p>
           </div>
         }
       </Container>

@@ -44,7 +44,7 @@
 
     &__text {
       margin: 0;
-
+      
       p {
         font-size: 0.875rem;
         color: white;
@@ -53,6 +53,10 @@
         &.feedback {
           color: #053662;
         }
+      }
+
+      a {
+        color: white;
       }
     }
   }

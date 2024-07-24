@@ -9,6 +9,9 @@ import { memoize } from 'proxy-memoize';
 // Internal imports
 import { AuthContext } from '../App';
 import RouteDetails from '../Components/routing/RouteDetails';
+import Container from 'react-bootstrap/Container';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
@@ -49,6 +52,7 @@ export default function SavedRoutesPage() {
         description="Manage and view your saved routes here.">
       </PageHeader>
 
+      <Container>
       <div className="route-list">
         {favRoutes && favRoutes.length > 0 &&
           favRoutes.map(route => (
@@ -58,6 +62,17 @@ export default function SavedRoutesPage() {
           ))
         }
       </div>
+
+        {!(favRoutes && favRoutes.length) &&
+          <div className="empty-routes-display">
+            <h3>No saved routes</h3>
+
+            <p>
+            You don&apos;t have any saved routes yet. You can add a saved route by searching for a &apos;From&apos; and &apos;To&apos; location on the map and clicking the save route button &#40;<FontAwesomeIcon icon={faStarOutline} />&#41;.
+            </p>
+          </div>
+        }
+      </Container>
 
       <Footer />
     </div>

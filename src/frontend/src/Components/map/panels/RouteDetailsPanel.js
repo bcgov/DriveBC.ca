@@ -27,7 +27,9 @@ export default function RouteDetailsPanel() {
         <p className="name">Your route</p>
       </div>
 
-      <RouteDetails route={selectedRoute} isPanel={true} />
+      <div className="popup__content">
+        <RouteDetails route={selectedRoute} isPanel={true} />
+      </div>
     </div>
   );
 }

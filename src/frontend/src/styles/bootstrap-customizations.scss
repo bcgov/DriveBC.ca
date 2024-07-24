@@ -132,3 +132,51 @@ $danger: $Error;
     opacity: 1;
   }
 }
+
+// Modal
+.modal-dialog {
+  margin-top: 25vh;
+
+  .modal-content {
+    border-radius: 0;
+
+    .modal-header {
+      background-color: #053662;
+      border-radius: 0;
+      padding: 16px;
+
+      .modal-title {
+        font-weight: 400;
+        color: white;
+      }
+
+      .btn-close {
+        background: transparent var(--bs-btn-close-bg) center/10px auto no-repeat;
+        filter: brightness(0) invert(1);
+        opacity: 1;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    .modal-body {
+      padding: 30px 24px;
+    }
+
+    .modal-buttons {
+      margin-top: 30px;
+      button {
+        margin-bottom: 0;
+
+        & + button {
+          margin-left: 30px;
+        }
+      }
+      svg {
+        margin-left: 4px;
+      }
+    }
+  }
+}
