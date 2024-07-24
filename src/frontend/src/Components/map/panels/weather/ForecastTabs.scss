@@ -2,13 +2,16 @@
 
 .forecast-container {
   padding: 1rem 1rem 0 1rem;
+}
 
+.forecast-tab-list {
   .nav-tabs {
     flex-wrap: nowrap;
     justify-content: space-between;
     border-bottom: 1px solid #D9D9D9;
     margin-top: 1rem;
     margin-bottom: 0.5rem;
+    padding: 0 0.5rem;
 
     li, button, div {
       display: flex;
@@ -20,6 +23,10 @@
 
       button {
         padding: 0;
+        &:hover {
+          background: none;
+          color: #605E5C;
+        }
 
         .tab-title {
           flex-direction: column;
@@ -44,6 +51,18 @@
           }
         }
       }
+    .nav-link {
+      border-bottom: 1px solid #d9d9d9;
+      transition: 0.2s border ease-in-out;
+      &.active {
+        border-bottom: 2px solid $BC-Blue;
+        transition: 0.2s border ease-in-out;
+      }
+      &:hover {
+        border-bottom: 2px solid #605E5C;
+        transition: 0.2s border ease-in-out;
+      }
+    }
     }
   }
 }

@@ -73,12 +73,12 @@ export default function ForecastTabs(props) {
     <div>
       <div className="forecast-container">
         <p className="section-title">5-day forecast</p>
-
+      </div>
+      <div className="forecast-tab-list">
         <Tabs activeKey={activeKey} onSelect={(key) => setActiveKey(key)} id="regional-weather-tabs">
           {forecast_tabs}
         </Tabs>
       </div>
-
       <ForecastCarousel forecast_group={all_forecast_groups[activeKey]} />
     </div>
   );

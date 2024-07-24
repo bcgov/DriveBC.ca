@@ -407,5 +407,14 @@ export default {
       "line-color": "#d9dfe4"
     },      
   },      
+
+  "TRANSPORTATION/DRA/Hwy Symbols/label/(R1) Hwy 5": {
+    "paint": {
+        "text-color": "rgba(0,0,0,0.02)"
+    },
+} ,
+
+  
   merge,
 };
+
