@@ -49,13 +49,6 @@
         width: unset;
         margin: unset;
       }
-
-      &:hover {
-        cursor: pointer;
-        .card-img {
-          transform: scale(1.25);
-        }
-      }
     }
   }
 }
