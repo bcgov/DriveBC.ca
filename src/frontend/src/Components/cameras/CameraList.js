@@ -12,7 +12,7 @@ import './CameraList.scss';
 
 export default function CameraList(props) {
   // Props
-  const { cameras } = props;
+  const { cameras, getCheckedHighway } = props;
 
   // Contexts
   const { camsContext } = useContext(CamsContext);
@@ -22,9 +22,14 @@ export default function CameraList(props) {
 
   // UseEffect hooks and data functions
   const getDisplayedCameras = (length) => {
-
+    // check for currently selected Highway from highway filter and process
+    const checkedHighway = getCheckedHighway();
+    let filteredCameras = cameras;
+    if(checkedHighway){
+      filteredCameras = cameras.filter((camera) => camera.highway === checkedHighway)
+    }
     if (!length) { camsContext.displayLength += 4; }
-    const shown = cameras.slice(0, length ? length : camsContext.displayLength);
+    const shown = filteredCameras.slice(0, length ? length : camsContext.displayLength);
     setDisplayedCameras(shown);
   };
 
@@ -32,7 +37,7 @@ export default function CameraList(props) {
     if (cameras) { // Do nothing until cameras are processed
       getDisplayedCameras(camsContext.displayLength);
     }
-  }, [cameras]);
+  }, [cameras, getCheckedHighway]);
 
   // Rendering
   const groupDisplayedCameras = () => {
@@ -40,7 +45,6 @@ export default function CameraList(props) {
     const groups = [];
     displayedCameras.forEach((cam) => {
       const highway = cam.highway_display;
-
       if (groups.length == 0 || groups[groups.length - 1]['highway'] !== highway) {
         groups.push({
           'highway': highway,
@@ -56,8 +60,8 @@ export default function CameraList(props) {
 
   const renderHighways = () => {
     const groupedCams = groupDisplayedCameras();
-
     const groups = [];
+
     for (const {highway, cams} of groupedCams) {
       groups.push(<HighwayGroup key={highway} highway={highway} cams={cams} />);
     }

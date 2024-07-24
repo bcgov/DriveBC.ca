@@ -9,7 +9,7 @@ import {
 } from './feedsSlice';
 import { updateMapState } from './mapSlice';
 import { updateSelectedRoute, updateSearchLocationFrom, updateSearchLocationTo } from './routesSlice';
-
+import { updateHighwayFilter } from './highwayFilterSlice';
 export {
   updateAdvisories,
   updateBulletins,
@@ -22,5 +22,6 @@ export {
   updateSearchLocationFrom,
   updateSearchLocationTo,
   updateSelectedRoute,
-  updateWeather
+  updateWeather,
+  updateHighwayFilter
 };

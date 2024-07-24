@@ -1,0 +1,15 @@
+.search-container {
+    width: 100%;
+    order: 2;
+    margin-top: 10px;
+
+    @media (min-width: 768px) {
+      width: 400px;
+      order: unset;
+      margin-top: 0;
+    }
+
+    .rbt-menu {
+      display: none !important;
+    }
+  }

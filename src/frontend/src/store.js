@@ -17,6 +17,7 @@ import feedsReducer from './slices/feedsSlice';
 import mapReducer from './slices/mapSlice';
 import routesReducer from './slices/routesSlice';
 import userReducer from './slices/userSlice';
+import highwayFilterReducer from './slices/highwayFilterSlice';
 
 const getConfig = (key, lifeInSeconds, initialState) => {
   const config = {
@@ -40,6 +41,7 @@ const store = configureStore({
   reducer: {
     feeds: persistReducer(getConfig('feeds', 60, feedsInitialState), feedsReducer),
     cms: persistReducer(getConfig('cms', 60, cmsInitialState), cmsReducer),
+    highwayFilter: persistReducer(getConfig('highwayFilter'), highwayFilterReducer),
     routes: persistReducer(getConfig('routes'), routesReducer),
     map: persistReducer(getConfig('map'), mapReducer),
     user: persistReducer(getConfig('user'), userReducer),
