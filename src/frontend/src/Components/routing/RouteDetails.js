@@ -32,6 +32,7 @@ import { removeRoute, saveRoute } from "../data/routes";
 import { getEvents, getEventCounts } from "../data/events";
 import { compareRoutePoints, filterByRoute } from '../map/helpers';
 import Alert from '../shared/Alert';
+import RouteMap from './RouteMap';
 
 // Styling
 import './RouteDetails.scss';
@@ -65,6 +66,7 @@ export default function RouteDetails(props) {
   const [nickName, setNickName] = useState('');
   const [showRemove, setShowRemove] = useState();
   const [showSavePopup, setShowSavePopup] = useState(false);
+  const [routeMapImg, setRouteMapImg] = useState(); // for map snapshot
 
   // Data
   // Copied from EventsListPage.js, to be cleaned up
@@ -129,7 +131,7 @@ export default function RouteDetails(props) {
   }
 
   const saveRouteHandler = () => {
-    saveRoute(selectedRoute, nickName, searchLocationFrom[0].label, searchLocationTo[0].label, dispatch);
+    saveRoute(selectedRoute, nickName, routeMapImg, searchLocationFrom[0].label, searchLocationTo[0].label, dispatch);
     setSearchParams(createSearchParams({}));
     resetPopup();
     setShowRemove(false);
@@ -223,7 +225,7 @@ export default function RouteDetails(props) {
         </div>
 
         {!isPanel &&
-          <div className="route-image" onClick={() => showOnMap()}/>
+          <img className="route-image" src={route.thumbnail} onClick={() => showOnMap()}/>
         }
 
         <div className="route-name-and-distance">
@@ -346,6 +348,10 @@ export default function RouteDetails(props) {
       )}
 
       <Alert showAlert={showAlert} setShowAlert={setShowAlert} message={getAlertMessage()} />
+
+      {isPanel &&
+        <RouteMap showSavePopup={showSavePopup} setRouteMapImg={setRouteMapImg} />
+      }
     </div>
   );
 }

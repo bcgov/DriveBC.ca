@@ -49,7 +49,7 @@ export const getFavoriteRoutes = async (headers = {}) => {
 }
 
 
-export const saveRoute = async (route, nickname, startLabel, endLabel, dispatch) => {
+export const saveRoute = async (route, nickname, routeMapImg, startLabel, endLabel, dispatch) => {
   const url = `${window.API_HOST}/api/users/routes/`;
 
   const body = {
@@ -60,7 +60,7 @@ export const saveRoute = async (route, nickname, startLabel, endLabel, dispatch)
     end: endLabel,
     start_point: point(route.points[0]).geometry,
     end_point: point(route.points[1]).geometry,
-    //       thumbnail: null,
+    thumbnail: routeMapImg,
     route: multiLineString([route.route]).geometry,
   };
 
