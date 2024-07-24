@@ -1,5 +1,5 @@
 // React
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,22 +13,25 @@ import './ShareURLButton.scss';
 
 export default function ShareURLButton() {
   /* Setup */
-  // State
+  // Refs
+  const timeout = useRef();
+
+  // States
   const [showAlert, setShowAlert] = useState(false);
 
   // Handler
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(window.location.href)
-      .then(() => {
-        console.log('URL copied to clipboard');
-      })
-      .catch(err => {
-        console.error('Could not copy text: ', err);
-      });
+    navigator.clipboard.writeText(window.location.href);
 
     setShowAlert(true);
 
-    setTimeout(() => {
+    // Clear existing close alert timers
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+    }
+
+    // Set new close alert timer to reference
+    timeout.current = setTimeout(() => {
       setShowAlert(false);
     }, 5000);
   };

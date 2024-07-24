@@ -64,7 +64,7 @@ export default function RouteDetails(props) {
   const [showAlert, setShowAlert] = useState(false);
   const [eventCount, setEventCount] = useState();
   const [nickName, setNickName] = useState('');
-  const [showRemove, setShowRemove] = useState();
+  const [isRemoving, setIsRemoving] = useState();
   const [showSavePopup, setShowSavePopup] = useState(false);
   const [routeMapImg, setRouteMapImg] = useState(); // for map snapshot
 
@@ -122,7 +122,7 @@ export default function RouteDetails(props) {
     timeout.current = setTimeout(() => {
       setShowAlert(false);
     }, 5000);
-  }, [showRemove]);
+  }, [isRemoving]);
 
   /* Handlers */
   const resetPopup = () => {
@@ -134,14 +134,14 @@ export default function RouteDetails(props) {
     saveRoute(selectedRoute, nickName, routeMapImg, searchLocationFrom[0].label, searchLocationTo[0].label, dispatch);
     setSearchParams(createSearchParams({}));
     resetPopup();
-    setShowRemove(false);
+    setIsRemoving(false);
   }
 
   const starHandler = () => {
     if (route.saved || !isPanel) {
       removeRoute(route, selectedRoute, dispatch);
       setSearchParams(createSearchParams({}));
-      setShowRemove(true);
+      setIsRemoving(true);
 
     } else {
       setShowSavePopup(true);
@@ -184,7 +184,7 @@ export default function RouteDetails(props) {
   /* Rendering */
   // Subcomponents
   const getAlertMessage = () => {
-    return <p>{showRemove ? 'Removed from ' : 'Saved to '} <a href="/my-routes">My routes</a></p>;
+    return <p>{isRemoving ? 'Removed from ' : 'Saved to '} <a href="/my-routes">My routes</a></p>;
   };
 
   const getDefaultLabel = () => {

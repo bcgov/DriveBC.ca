@@ -56,7 +56,7 @@ export default function CamPanel(props) {
   const [rootCam, setRootCam] = useState(newCam);
   const [camera, setCamera] = useState(newCam);
   const [camIndex, setCamIndex] = useState(0);
-  const [showRemove, setShowRemove] = useState();
+  const [isRemoving, setIsRemoving] = useState();
   const [showAlert, setShowAlert] = useState(false);
 
   // Effects
@@ -94,7 +94,7 @@ export default function CamPanel(props) {
     timeout.current = setTimeout(() => {
       setShowAlert(false);
     }, 5000);
-  }, [showRemove]);
+  }, [isRemoving]);
 
   // Handlers
   const handlePopupClick = e => {
@@ -106,18 +106,18 @@ export default function CamPanel(props) {
   const favoriteHandler = () => {
     if (favCams.includes(camera.id)) {
       deleteFavoriteCamera(camera.id, dispatch, removeFavCam);
-      setShowRemove(true);
+      setIsRemoving(true);
 
     } else {
       addFavoriteCamera(camera.id, dispatch, pushFavCam);
-      setShowRemove(false);
+      setIsRemoving(false);
     }
   }
 
   /* Rendering */
   // Subcomponents
   const getAlertMessage = () => {
-    return <p>{showRemove ? 'Removed from ' : 'Saved to '} <a href="/my-cameras">My cameras</a></p>;
+    return <p>{isRemoving ? 'Removed from ' : 'Saved to '} <a href="/my-cameras">My cameras</a></p>;
   };
 
   function renderCamGroup(currentCamData) {
