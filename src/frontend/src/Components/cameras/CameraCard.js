@@ -247,7 +247,7 @@ export default function CameraCard(props) {
       
       <div className="camera-card__tools">
         <button
-          className="viewmap-btn"
+          className="viewMap-btn"
           aria-label="View on map"
           onClick={handleViewOnMap}>
           <FontAwesomeIcon icon={faMapMarkerAlt} />

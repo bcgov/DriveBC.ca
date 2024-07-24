@@ -351,10 +351,7 @@ export default function CameraDetailsPage() {
                       aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
                       onClick={favoriteHandler}
                       >
-
-                      {(favCams && favCams.includes(camera.id)) ? 
-                      (<FontAwesomeIcon icon={faStar} />) :
-                      (<FontAwesomeIcon icon={faStarOutline} />) }
+                      <FontAwesomeIcon icon={(favCams && favCams.includes(camera.id)) ? faStar : faStarOutline} />
                     </button>
                   }
                 </div>

@@ -212,21 +212,3 @@
     background: lighten(#053662, 5%);
   }
 }
-
-.favourite-btn {
-  border: none;
-  background: none;
-
-  svg {
-    margin-right: 8px;
-  }
-
-  span {
-    font-weight: 700;
-    color: #255A90;
-  }
-
-  &.favourited {
-    color: #F8BB47;
-  }
-}

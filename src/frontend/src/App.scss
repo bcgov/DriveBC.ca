@@ -167,6 +167,29 @@ a[target="_blank"] {
   }
 }
 
+// Favourite star button
+.favourite-btn {
+  border: none;
+  background: none;
+
+  svg {
+    margin-right: 8px;
+  }
+
+  span {
+    font-weight: 700;
+    color: #255A90;
+  }
+
+  &.favourited {
+    color: #F8BB47;
+  }
+}
+
+.link-in-text {
+  color: $Type-Primary;
+}
+
 .space-between-row {
   display: flex;
   justify-content: space-between;
