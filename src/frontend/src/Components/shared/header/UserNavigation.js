@@ -97,6 +97,7 @@ export default function UserNavigation(props) {
               <div className="menu-item-header">
                 <FontAwesomeIcon icon={faVideoCamera} />
                 My cameras
+                <span className="item-count">{favCams ? favCams.length : 0}</span>
               </div>
 
               <FontAwesomeIcon icon={faChevronRight} />
@@ -108,6 +109,7 @@ export default function UserNavigation(props) {
               <div className="menu-item-header">
                 <FontAwesomeIcon icon={faRoute} />
                 My routes
+                <span className="item-count">{favRoutes ? favRoutes.length : 0}</span>
               </div>
 
               <FontAwesomeIcon icon={faChevronRight} />
