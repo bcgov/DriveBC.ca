@@ -51,4 +51,21 @@
       }
     }
   }
+
+  .fav-cams-on-route {
+    .header-row {
+      margin-bottom: 1rem;
+
+      .close-btn {
+        cursor: pointer;
+        font-size: 30px;
+      }
+
+      .caption {
+        font-size: 1.125rem;
+        color: $Grey80;
+        margin-bottom: 0rem;
+      }
+    }
+  }
 }

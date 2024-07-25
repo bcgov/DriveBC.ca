@@ -1,25 +1,28 @@
 // React
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Redux
 import { useSelector } from 'react-redux';
 import { memoize } from 'proxy-memoize';
 
+// External imports
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar as faStarOutline, faXmark } from '@fortawesome/pro-regular-svg-icons';
+
 // Internal imports
 import { AuthContext } from '../App';
-import RouteDetails from '../Components/routing/RouteDetails';
+import CameraList from '../Components/cameras/CameraList';
 import Container from 'react-bootstrap/Container';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
-
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
+import RouteDetails from '../Components/routing/RouteDetails';
 
 // Styling
 import './SavedRoutesPage.scss';
 
 export default function SavedRoutesPage() {
+  /* Setup */
   document.title = 'DriveBC - My Routes';
 
   const { authContext } = useContext(AuthContext);
@@ -31,7 +34,11 @@ export default function SavedRoutesPage() {
     favRoutes: state.user.favRoutes
   }))));
 
-  // useEffect hooks
+  // States
+  const [routeLabel, setRouteLabel] = useState();
+  const [routeFavCams, setRouteFavCams] = useState();
+
+  // Effects
   // Redirect to login page if user is not logged in
   useEffect(() => {
     if (!authContext.loginStateKnown) {
@@ -53,16 +60,6 @@ export default function SavedRoutesPage() {
       </PageHeader>
 
       <Container>
-      <div className="route-list">
-        {favRoutes && favRoutes.length > 0 &&
-          favRoutes.map(route => (
-            <div key={route.id} className='route-card'>
-              <RouteDetails route={route} />
-            </div>
-          ))
-        }
-      </div>
-
         {!(favRoutes && favRoutes.length) &&
           <div className="empty-routes-display">
             <h3>No saved routes</h3>
@@ -70,6 +67,29 @@ export default function SavedRoutesPage() {
             <p>
             You don&apos;t have any saved routes yet. You can add a saved route by searching for a &apos;From&apos; and &apos;To&apos; location on the map and clicking the save route button &#40;<FontAwesomeIcon icon={faStarOutline} />&#41;.
             </p>
+          </div>
+        }
+
+        {!routeFavCams &&
+          <div className="route-list">
+            {favRoutes && favRoutes.length > 0 &&
+              favRoutes.map(route => (
+                <div key={route.id} className='route-card'>
+                  <RouteDetails route={route} setRouteFavCams={setRouteFavCams} setRouteLabel={setRouteLabel} />
+                </div>
+              ))
+            }
+          </div>
+        }
+
+        {routeFavCams &&
+          <div className="fav-cams-on-route">
+            <div className="space-between-row header-row">
+              <p className="caption">Showing your favourite cameras along {routeLabel}</p>
+              <FontAwesomeIcon className="close-btn" icon={faXmark} onClick={() => setRouteFavCams(null)} />
+            </div>
+
+            <CameraList cameras={routeFavCams} />
           </div>
         }
       </Container>

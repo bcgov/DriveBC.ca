@@ -29,6 +29,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
 import { removeRoute, saveRoute } from "../data/routes";
+import { getCameras, addCameraGroups } from "../data/webcams";
 import { getEvents, getEventCounts } from "../data/events";
 import { compareRoutePoints, filterByRoute } from '../map/helpers';
 import Alert from '../shared/Alert';
@@ -39,7 +40,7 @@ import './RouteDetails.scss';
 
 export default function RouteDetails(props) {
   /* Setup */
-  const { route, isPanel } = props;
+  const { route, isPanel, setRouteFavCams, setRouteLabel } = props;
 
   // Navigation
   const navigate = useNavigate();
@@ -47,13 +48,15 @@ export default function RouteDetails(props) {
 
   // Redux
   const dispatch = useDispatch();
-  const { events, searchLocationFrom, searchLocationTo, selectedRoute, eventFilterPoints, filteredEvents } = useSelector(useCallback(memoize(state => ({
+  const { cameras, events, searchLocationFrom, searchLocationTo, selectedRoute, eventFilterPoints, filteredEvents, favCams } = useSelector(useCallback(memoize(state => ({
+    cameras: state.feeds.cameras.list,
     events: state.feeds.events.list,
     searchLocationFrom: state.routes.searchLocationFrom,
     searchLocationTo: state.routes.searchLocationTo,
     selectedRoute: state.routes.selectedRoute,
     eventFilterPoints: state.feeds.events.filterPoints,
-    filteredEvents: state.feeds.events.filteredList
+    filteredEvents: state.feeds.events.filteredList,
+    favCams: state.user.favCams
   }))));
 
   // Refs
@@ -125,6 +128,19 @@ export default function RouteDetails(props) {
   }, [isRemoving]);
 
   /* Handlers */
+  const viewFavouriteCamHandler = async () => {
+    // Copied data functions, to be cleaned up
+    const camData = cameras ? cameras : await getCameras();
+    const filteredFavCams = camData.filter(item => favCams.includes(item.id));
+    const favCamGroupIds = filteredFavCams.map(cam => cam.group);
+    const filteredCameras = camData.filter(cam => favCamGroupIds.includes(cam.group));
+    const clonedCameras = JSON.parse(JSON.stringify(filteredCameras));
+    const finalCameras = addCameraGroups(clonedCameras, favCams);
+
+    setRouteFavCams(filterByRoute(finalCameras, route));
+    setRouteLabel(route.label ? route.label : route.start + ' to ' + route.end);
+  }
+
   const resetPopup = () => {
     setShowSavePopup(false);
     setNickName('');
@@ -306,14 +322,14 @@ export default function RouteDetails(props) {
       </div>
 
       {!isPanel &&
-          <button
-            className="viewCams-btn"
-            aria-label="View favourite cameras"
-            onClick={console.log('clicked')}>
-            <FontAwesomeIcon icon={faVideo} />
-            <span>View favourite cameras</span>
-          </button>
-        }
+        <button
+          className="viewCams-btn"
+          aria-label="View favourite cameras"
+          onClick={viewFavouriteCamHandler}>
+          <FontAwesomeIcon icon={faVideo} />
+          <span>View favourite cameras</span>
+        </button>
+      }
 
       {showSavePopup && (
         <Modal
