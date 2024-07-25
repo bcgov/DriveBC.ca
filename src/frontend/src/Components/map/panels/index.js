@@ -48,10 +48,17 @@ export const maximizePanel = (panelRef) => {
   }
 }
 
-export const togglePanel = (panelRef, resetClickedStates, clickedFeatureRef, updateClickedFeature) => {
+export const togglePanel = (panelRef, resetClickedStates, clickedFeatureRef, updateClickedFeature, pushMargins) => {
   panelRef.current.classList.toggle('open');
   panelRef.current.classList.remove('maximized');
   if (!panelRef.current.classList.contains('open')) {
+    pushMargins.forEach((ref) => {
+      if (ref.current) { ref.current.classList.remove('margin-pushed'); }
+    })
     resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
+  } else {
+    pushMargins.forEach((ref) => {
+      if (ref.current) { ref.current.classList.add('margin-pushed'); }
+    })
   }
 }

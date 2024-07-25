@@ -79,6 +79,8 @@ export default function DriveBCMap(props) {
   // Navigation
   const [searchParams, setSearchParams] = useSearchParams();
 
+  let mousePointXClicked = undefined;
+
   // Context
   const { mapContext } = useContext(MapContext);
 
@@ -129,6 +131,8 @@ export default function DriveBCMap(props) {
   const mapRef = useRef();
   const mapView = useRef();
   const panel = useRef();
+  const myLocationRef = useRef();
+  const routingContainerRef = useRef();
 
   // States
   const [advisoriesInView, setAdvisoriesInView] = useState([]);
@@ -161,6 +165,19 @@ export default function DriveBCMap(props) {
   const updateClickedFeature = feature => {
     clickedFeatureRef.current = feature;
     setClickedFeature(feature);
+    updatePosition(feature);
+  };
+
+  const updatePosition = (feature) => {
+    if (feature != null) {
+      let geometry = feature.getGeometry();
+      if (geometry.getType() !== 'Point') { // feature is a line or polygon
+        geometry = feature.values_.altFeature.getGeometry(); // use the point feature's geometry
+      }
+      if (mousePointXClicked < 390) {
+        setZoomPan(mapView, mapView.current.getZoom(), geometry.flatCoordinates);
+      }
+    }
   };
 
   /* useEffect hooks */
@@ -249,6 +266,9 @@ export default function DriveBCMap(props) {
       const features = mapRef.current.getFeaturesAtPixel(e.pixel, {
         hitTolerance: 20,
       });
+
+      const mousePointX = e.pixel[0];
+      mousePointXClicked = mousePointX;
 
       pointerClickHandler(
         features, clickedFeatureRef, updateClickedFeature,
@@ -491,7 +511,11 @@ export default function DriveBCMap(props) {
           aria-label={`${openPanel ? 'close side panel' : ''}`}
           aria-hidden={`${openPanel ? false : true}`}
           tabIndex={`${openPanel ? 0 : -1}`}
-          onClick={() => togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature)}>
+          onClick={() => {
+            togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
+              myLocationRef, routingContainerRef
+            ]);
+          }}>
           <FontAwesomeIcon icon={faXmark} />
         </button>
 
@@ -510,11 +534,11 @@ export default function DriveBCMap(props) {
 
       <div ref={mapElement} className="map">
         {!isCamDetail && (
-          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''}`}>
+          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
             {smallScreen && (
               <ExitSurvey mobile={true} />
             )}
-            <RouteSearch routeEdit={true} />
+            <RouteSearch ref={routingContainerRef} routeEdit={true} />
             <AdvisoriesWidget advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} onMap={true} />
           </div>
         )}
@@ -522,6 +546,7 @@ export default function DriveBCMap(props) {
         {(!isCamDetail && smallScreen) && (
           <React.Fragment>
             <Button
+              ref={myLocationRef}
               className="map-btn my-location"
               variant="primary"
               onClick={() => toggleMyLocation(mapRef, mapView)}
@@ -551,7 +576,8 @@ export default function DriveBCMap(props) {
               loadingLayers={loadingLayers} />
 
             <Button
-              className="map-btn my-location"
+              ref={myLocationRef}
+              className={`map-btn my-location ${openPanel && 'margin-pushed'}`}
               variant="primary"
               onClick={() => toggleMyLocation(mapRef, mapView)}
               aria-label="my location">

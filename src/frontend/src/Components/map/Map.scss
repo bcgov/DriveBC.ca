@@ -64,6 +64,7 @@
       display: flex;
       flex-direction: column;
       position: relative;
+      z-index: 10;
 
       @media (max-width: 767px) {
         transition: min-height 0.25s ease-in-out;
@@ -105,7 +106,7 @@
 
     .map {
       flex: 1;
-      position: relative;
+      position: absolute;
       width: 100%;
       height: 100%;
       overflow: hidden;
@@ -113,6 +114,13 @@
       .map-left-container {
         position: absolute;
         width: 100%;
+        margin-left: 0;
+        transition: margin-left 0.25s ease-in-out;
+
+        &.margin-pushed{
+          margin-left: 390px;
+        }
+
 
         @media (max-width: 768px) {
           &.error-showing {
@@ -217,6 +225,12 @@
         position: absolute;
         bottom: 1rem;
         left: 1rem;
+        margin-left: 0;
+        transition: margin-left 0.25s ease-in-out;
+
+        &.margin-pushed {
+          margin-left: 390px;
+        }
       }
 
       &.open-filters {
