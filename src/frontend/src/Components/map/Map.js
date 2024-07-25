@@ -197,7 +197,6 @@ export default function DriveBCMap(props) {
       enableRotation: false
     });
 
-    console.log(transformedExtent);
 
     // Apply the basemap style from the arcgis resource
     fetch(window.MAP_STYLE, {
