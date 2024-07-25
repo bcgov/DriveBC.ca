@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -28,6 +28,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
+import { AuthContext } from '../../App';
 import { removeRoute, saveRoute } from "../data/routes";
 import { getCameras, addCameraGroups } from "../data/webcams";
 import { getEvents, getEventCounts } from "../data/events";
@@ -41,6 +42,9 @@ import './RouteDetails.scss';
 export default function RouteDetails(props) {
   /* Setup */
   const { route, isPanel, setRouteFavCams, setRouteLabel } = props;
+
+  // Context
+  const { authContext } = useContext(AuthContext);
 
   // Navigation
   const navigate = useNavigate();
@@ -230,14 +234,16 @@ export default function RouteDetails(props) {
             </span> : <div />
           }
 
-          <button
-            className={`favourite-btn ${(route.saved || !isPanel) ? 'favourited' : ''}`}
-            aria-label={`${(route.saved || !isPanel) ? 'Remove favourite' : 'Add favourite'}`}
-            onClick={starHandler}
-            >
-            <FontAwesomeIcon icon={(route.saved || !isPanel) ? faStar : faStarOutline} />
-            {(!isPanel) && <span>Remove</span>}
-          </button>
+          {authContext.loginStateKnown && authContext.username &&
+            <button
+              className={`favourite-btn ${(route.saved || !isPanel) ? 'favourited' : ''}`}
+              aria-label={`${(route.saved || !isPanel) ? 'Remove favourite' : 'Add favourite'}`}
+              onClick={starHandler}>
+
+              <FontAwesomeIcon icon={(route.saved || !isPanel) ? faStar : faStarOutline} />
+              {(!isPanel) && <span>Remove</span>}
+            </button>
+          }
         </div>
 
         {!isPanel &&

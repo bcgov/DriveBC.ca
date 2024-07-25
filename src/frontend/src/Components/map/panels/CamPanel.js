@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,6 +17,7 @@ import Button from 'react-bootstrap/Button';
 import parse from 'html-react-parser';
 
 // Internal imports
+import { AuthContext } from '../../../App';
 import { addFavoriteCamera, deleteFavoriteCamera } from "../../data/webcams";
 import { getCameraOrientation } from '../../cameras/helper';
 import Alert from '../../shared/Alert';
@@ -35,6 +36,9 @@ export default function CamPanel(props) {
   /* Setup */
   // Props
   const { camFeature, isCamDetail } = props;
+
+  // Context
+  const { authContext } = useContext(AuthContext);
 
   // Navigation
   const navigate = useNavigate();
@@ -227,7 +231,7 @@ export default function CamPanel(props) {
             <p>{parse(camera.caption)}</p>
           </div>
           <div className="popup__content__tools">
-            {favCams != null &&
+            {favCams != null && authContext.loginStateKnown && authContext.username &&
               <button
                 className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
                 aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}

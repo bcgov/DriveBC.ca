@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { createSearchParams, useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
@@ -21,6 +21,7 @@ import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
+import { AuthContext } from '../../App';
 import { getCameraOrientation } from './helper.js';
 import { addFavoriteCamera, deleteFavoriteCamera } from "../data/webcams";
 import Alert from '../shared/Alert';
@@ -36,6 +37,8 @@ export default function CameraCard(props) {
   /* Setup */
   const { cameraData } = props;
   const location = useLocation();
+
+  const { authContext } = useContext(AuthContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -287,7 +290,7 @@ export default function CameraCard(props) {
           <span>View on map</span>
         </button>
 
-        {favCams != null &&
+        {favCams != null && authContext.loginStateKnown && authContext.username &&
           <button
             className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
             aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}

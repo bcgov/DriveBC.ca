@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { createSearchParams, useParams, useNavigate } from 'react-router-dom';
 
 // Redux
@@ -36,6 +36,7 @@ import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
+import { AuthContext } from '../App';
 import { addFavoriteCamera, deleteFavoriteCamera, getCameraGroupMap, getCameras } from '../Components/data/webcams.js';
 import { getCameraOrientation } from '../Components/cameras/helper.js';
 import { getWebcamReplay } from '../Components/data/webcams';
@@ -67,6 +68,7 @@ export default function CameraDetailsPage() {
   }))));
 
   // Context and router data
+  const { authContext } = useContext(AuthContext);
   const params = useParams();
 
   // Refs
@@ -377,7 +379,7 @@ export default function CameraDetailsPage() {
               <div className="camera-details__description">
                 <div className="camera-details__description__title">
                   <h2>{camera.name}</h2>
-                  {favCams != null &&
+                  {favCams != null && authContext.loginStateKnown && authContext.username &&
                     <button
                       className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
                       aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
