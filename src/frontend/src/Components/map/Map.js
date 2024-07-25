@@ -173,7 +173,7 @@ export default function DriveBCMap(props) {
     };
 
     // Set map extent (W, S, E, N)
-    const extent = [-143.230138, 46.180153, -109.977437, 65.591323];
+    const extent = [-163.230138, 26.180153, -89.977437, 85.591323];
     const transformedExtent = transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
 
     mapView.current = new View({
@@ -182,9 +182,12 @@ export default function DriveBCMap(props) {
       center: fromLonLat(pan),
       zoom: isCamDetail || referenceData ? 12 : zoom,
       maxZoom: 15,
+      minZoom: 5,
       extent: transformedExtent,
       enableRotation: false
     });
+
+    console.log(transformedExtent);
 
     // Apply the basemap style from the arcgis resource
     fetch(window.MAP_STYLE, {
