@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState, forwardRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 
@@ -22,7 +22,8 @@ import Spinner from 'react-bootstrap/Spinner';
 // Styling
 import './RouteSearch.scss';
 
-export default function RouteSearch(props) {
+
+const RouteSearch = forwardRef((props, ref) => {
   const { showFilterText } = props;
 
   // Redux
@@ -82,7 +83,7 @@ export default function RouteSearch(props) {
 
   // Rendering
   return (
-    <div className={'routing'}>
+    <div ref={ref} className='routing routing-outer-container'>
       {showFilterText && selectedRoute && selectedRoute.routeFound &&
         <p className={'routing-caption'}>Results below are filtered by this route:</p>
       }
@@ -132,4 +133,7 @@ export default function RouteSearch(props) {
       </div>
     </div>
   );
-}
+});
+
+RouteSearch.displayName = 'RouteSearch';
+export default RouteSearch;
