@@ -210,25 +210,28 @@ def build_route_geometries():
 
     """
     for key, routes in hwy_coords.items():
-        # Do not build for existing entries
-        if not RouteGeometry.objects.filter(id=key).first():
-            ls_routes = []
+        ls_routes = []
 
-            # Go through each route and create a geometry
-            for route in routes:
-                payload = {
-                    "points": route,
+        # Go through each route and create a geometry
+        for route in routes:
+            payload = {
+                "points": route,
+            }
+
+            response = requests.get(
+                env("DRIVEBC_ROUTE_PLANNER_API_BASE_URL") + "/directions.json",
+                params=payload,
+                headers={
+                    "apiKey": env("DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY"),
                 }
+            )
 
-                response = requests.get(
-                    env("DRIVEBC_ROUTE_PLANNER_API_BASE_URL") + "/directions.json",
-                    params=payload,
-                    headers={
-                        "apiKey": env("DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY"),
-                    }
-                )
+            points_list = [Point(p) for p in response.json()['route']]
+            ls_routes.append(LineString(points_list))
 
-                points_list = [Point(p) for p in response.json()['route']]
-                ls_routes.append(LineString(points_list))
-
+        # Save or update
+        if not RouteGeometry.objects.filter(id=key).first():
             RouteGeometry.objects.create(id=key, routes=MultiLineString(ls_routes))
+
+        else:
+            RouteGeometry.objects.filter(id=key).update(routes=MultiLineString(ls_routes))
