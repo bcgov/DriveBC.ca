@@ -292,9 +292,11 @@ export default function DriveBCMap(props) {
 
   /* Triggering handlers based on navigation data */
   useEffect(() => {
-    // Do not trigger on routes
-    if (referenceFeature && referenceFeature.get('type') !== 'route') {
-      setZoomPan(mapView, 9, referenceFeature.getGeometry().flatCoordinates);
+    if (referenceFeature) {
+      // Do not trigger, routes will be handled by fitmap
+      if (referenceFeature.get('type') !== 'route') {
+        setZoomPan(mapView, 9, referenceFeature.getGeometry().flatCoordinates);
+      }
 
       pointerClickHandler(
         [referenceFeature], clickedFeatureRef, updateClickedFeature,
