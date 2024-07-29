@@ -263,7 +263,7 @@ export default function RouteDetails(props) {
   );
 
   // Main components
-  return (eventCount || advisoryCount) && (
+  return route && (
     <div className="route-details">
       <div className="route-title">
         <div className="space-between-row">
@@ -299,19 +299,21 @@ export default function RouteDetails(props) {
       </div>
 
       <div className="route-items">
-      {(advisoryCount > 0) &&
-            <div className="route-item route-item--advisories">
-              <span className="route-item__count">
-                {advisoryCount}
-              </span>
-              <span className="route-item__icon">
-                <FontAwesomeIcon icon={faFlag} alt="inland ferries" />
-              </span>
-              <span className="route-item__name">Advisories</span>
-            </div>
-          }
+        {(!!advisoryCount && advisoryCount > 0) &&
+          <div className="route-item route-item--advisories">
+            <span className="route-item__count">
+              {advisoryCount}
+            </span>
 
-        {(eventCount.closures > 0) &&
+            <span className="route-item__icon">
+              <FontAwesomeIcon icon={faFlag} alt="inland ferries" />
+            </span>
+
+            <span className="route-item__name">Advisories</span>
+          </div>
+        }
+
+        {(eventCount && eventCount.closures > 0) &&
           <div className="route-item route-item--closures">
             <span className="route-item__count">
               {eventCount.closures}
@@ -323,7 +325,7 @@ export default function RouteDetails(props) {
           </div>
         }
 
-        {(eventCount.majorEvents > 0) &&
+        {(eventCount && eventCount.majorEvents > 0) &&
           <div className="route-item route-item--major">
             <span className="route-item__count">
               {eventCount.majorEvents}
@@ -337,7 +339,7 @@ export default function RouteDetails(props) {
           </div>
         }
 
-        {(eventCount.minorEvents > 0) &&
+        {(eventCount && eventCount.minorEvents > 0) &&
           <div className="route-item route-item--minor">
             <span className="route-item__count">
               {eventCount.minorEvents}
@@ -351,7 +353,7 @@ export default function RouteDetails(props) {
           </div>
         }
 
-        {(eventCount.roadConditions > 0) &&
+        {(eventCount && eventCount.roadConditions > 0) &&
           <div className="route-item route-item--roadConditions">
             <span className="route-item__count">
               {eventCount.roadConditions}
@@ -365,7 +367,7 @@ export default function RouteDetails(props) {
           </div>
         }
 
-        {(eventCount.ferries > 0) &&
+        {(eventCount && eventCount.ferries > 0) &&
           <div className="route-item route-item--ferries">
             <span className="route-item__count">
               {eventCount.ferries}
