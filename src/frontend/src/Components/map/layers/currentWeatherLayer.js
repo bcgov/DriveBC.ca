@@ -11,7 +11,7 @@ import VectorSource from 'ol/source/Vector';
 // Styling
 import { roadWeatherStyles } from '../../data/featureStyleDefinitions.js';
 
-export function getCurrentWeatherLayer(weatherData, projectionCode, mapContext, referenceData, updateReferenceFeature) {
+export function getCurrentWeatherLayer(weatherData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   return new VectorLayer({
     classname: 'weather',
     visible: mapContext.visible_layers.weather,
@@ -50,6 +50,11 @@ export function getCurrentWeatherLayer(weatherData, projectionCode, mapContext, 
             }
           }
         });
+
+        setLoadingLayers(prevState => ({
+          ...prevState,
+          weathers: false
+        }));
       },
     }),
     style: roadWeatherStyles['static'],

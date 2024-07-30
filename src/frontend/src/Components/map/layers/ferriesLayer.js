@@ -11,7 +11,7 @@ import VectorSource from 'ol/source/Vector';
 // Styling
 import { ferryStyles } from '../../data/featureStyleDefinitions.js';
 
-export function getFerriesLayer(ferriesData, projectionCode, mapContext, referenceData, updateReferenceFeature) {
+export function getFerriesLayer(ferriesData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   return new VectorLayer({
     classname: 'ferries',
     visible: mapContext.visible_layers.inlandFerries,
@@ -45,6 +45,11 @@ export function getFerriesLayer(ferriesData, projectionCode, mapContext, referen
             }
           }
         });
+
+        setLoadingLayers(prevState => ({
+          ...prevState,
+          ferries: false
+        }));
       },
     }),
     style: ferryStyles['static'],

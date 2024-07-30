@@ -11,7 +11,7 @@ import VectorSource from 'ol/source/Vector';
 // Styling
 import { cameraStyles } from '../../data/featureStyleDefinitions.js';
 
-export function getCamerasLayer(cameras, projectionCode, mapContext, referenceData, updateReferenceFeature) {
+export function getCamerasLayer(cameras, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   return new VectorLayer({
     classname: 'webcams',
     visible: mapContext.visible_layers.highwayCams,
@@ -49,6 +49,11 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
             });
           }
         });
+
+        setLoadingLayers(prevState => ({
+          ...prevState,
+          cameras: false
+        }));
       },
     }),
 
