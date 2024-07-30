@@ -1,7 +1,7 @@
 // React
 import React, { useState, useContext } from 'react';
 
-// Third party packages
+// External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFilter,
@@ -12,10 +12,13 @@ import {
   faFerry,
   faSunCloud,
 } from '@fortawesome/pro-solid-svg-icons';
+import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
-import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import {useMediaQuery} from '@uidotdev/usehooks';
+import Spinner from 'react-bootstrap/Spinner';
+import Tooltip from 'react-bootstrap/Tooltip';
+
+// Internal imports
 import trackEvent from './TrackEvent';
 
 // Components and functions
@@ -40,6 +43,7 @@ export default function Filters(props) {
     textOverride,
     isCamDetail,
     referenceData,
+    loadingLayers,
     isDelaysPage
   } = props;
 
@@ -188,6 +192,10 @@ export default function Filters(props) {
                     <OverlayTrigger placement="top" overlay={tooltipClosures}>
                       <span className="tooltip-info">?</span>
                     </OverlayTrigger>
+
+                    {loadingLayers && loadingLayers.events &&
+                      <Spinner animation="border" role="status" />
+                    }
                   </div>
 
                   <div className={'filter-item filter-item--major' + (majorEvents ? ' checked' : '')}>
@@ -214,6 +222,10 @@ export default function Filters(props) {
                     <OverlayTrigger placement="top" overlay={tooltipMajor}>
                       <span className="tooltip-info">?</span>
                     </OverlayTrigger>
+
+                    {loadingLayers && loadingLayers.events &&
+                      <Spinner animation="border" role="status" />
+                    }
                   </div>
 
                   <div className={'filter-item filter-item--minor' + (minorEvents ? ' checked' : '')}>
@@ -240,6 +252,10 @@ export default function Filters(props) {
                     <OverlayTrigger placement="top" overlay={tooltipMinor}>
                       <span className="tooltip-info">?</span>
                     </OverlayTrigger>
+
+                    {loadingLayers && loadingLayers.events &&
+                      <Spinner animation="border" role="status" />
+                    }
                   </div>
 
                   <div className={'filter-item filter-item--future-events' + (futureEvents ? ' checked' : '')}>
@@ -253,17 +269,22 @@ export default function Filters(props) {
                         setLayerVisibility('futureEventsLines', !futureEvents, false);
                         setFutureEvents(!futureEvents);
                       }}
-                      defaultChecked={eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents}
-                    />
+                      defaultChecked={eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents} />
+
                     <label htmlFor="filter--future-events">
                       <span className="filter-item__icon">
                         <FontAwesomeIcon icon={faCalendarDays} alt="future events" />
                       </span>
                       Future events
                     </label>
+
                     <OverlayTrigger placement="top" overlay={tooltipFutureevents}>
                       <span className="tooltip-info">?</span>
                     </OverlayTrigger>
+
+                    {loadingLayers && loadingLayers.events &&
+                      <Spinner animation="border" role="status" />
+                    }
                   </div>
                 </div>
               </div>
@@ -284,17 +305,22 @@ export default function Filters(props) {
                         setHighwayCams(!highwayCams);
                       }}
                       defaultChecked={isCamDetail || mapContext.visible_layers.highwayCams}
-                      disabled={isCamDetail || disableFeatures}
-                    />
+                      disabled={isCamDetail || disableFeatures} />
+
                     <label htmlFor="filter--highway-cameras">
                       <span className="filter-item__icon">
                         <FontAwesomeIcon icon={faVideo} alt="highway cameras" />
                       </span>
                       Highway cameras
                     </label>
+
                     <OverlayTrigger placement="top" overlay={tooltipHighwaycameras}>
                       <span className="tooltip-info">?</span>
                     </OverlayTrigger>
+
+                    {loadingLayers && loadingLayers.cameras &&
+                      <Spinner animation="border" role="status" />
+                    }
                   </div>
 
                   <div className={'filter-item filter-item--road-conditions' + (roadConditions ? ' checked' : '') + ((disableFeatures && !enableRoadConditions) ? ' disabled' : '')}>
@@ -319,9 +345,14 @@ export default function Filters(props) {
                       </span>
                       Road conditions
                     </label>
+
                     <OverlayTrigger placement="top" overlay={tooltipRoadconditions}>
                       <span className="tooltip-info">?</span>
                     </OverlayTrigger>
+
+                    {loadingLayers && loadingLayers.events &&
+                      <Spinner animation="border" role="status" />
+                    }
                   </div>
 
                   <div className={'filter-item filter-item--inland-ferries' + (inlandFerries ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
@@ -331,21 +362,27 @@ export default function Filters(props) {
                       id="filter--inland-ferries"
                       onChange={e => {
                         trackEvent('click', 'map', 'Toggle inland ferries layer')
-                        setLayerVisibility('inlandFerries', !inlandFerries); 
+                        setLayerVisibility('inlandFerries', !inlandFerries);
                         setInlandFerries(!inlandFerries)
                       }}
                       defaultChecked={mapContext.visible_layers.inlandFerries}
                       disabled={disableFeatures}
                     />
+
                     <label htmlFor="filter--inland-ferries">
                       <span className="filter-item__icon">
                         <FontAwesomeIcon icon={faFerry} alt="inland ferries" />
                       </span>
                       Inland Ferries
                     </label>
+
                     <OverlayTrigger placement="top" overlay={tooltipInlandferries}>
                       <span className="tooltip-info">?</span>
                     </OverlayTrigger>
+
+                    {loadingLayers && loadingLayers.ferries &&
+                      <Spinner animation="border" role="status" />
+                    }
                   </div>
 
                   <div className={'filter-item filter-item--weather' + (weather ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
@@ -360,18 +397,24 @@ export default function Filters(props) {
                         setWeather(!weather)}
                       }
                       defaultChecked={mapContext.visible_layers.weather}
-                      disabled={disableFeatures}
-                    />
+                      disabled={disableFeatures} />
+
                     <label htmlFor="filter--weather">
                       <span className="filter-item__icon">
                         <FontAwesomeIcon icon={faSunCloud} alt="weather" />
                       </span>
                       Weather
                     </label>
+
                     <OverlayTrigger placement="top" overlay={tooltipWeather}>
                       <span className="tooltip-info">?</span>
                     </OverlayTrigger>
+
+                    {loadingLayers && loadingLayers.weathers &&
+                      <Spinner animation="border" role="status" />
+                    }
                   </div>
+
                   <div className={'filter-item filter-item--rest-stops' + (restStops ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
                     <input
                       type="checkbox"
@@ -383,7 +426,7 @@ export default function Filters(props) {
                           setLayerVisibility('largeRestStops', false);
                           setLargeRestStops(false);
                         }
-                        setLayerVisibility('restStops', !restStops); 
+                        setLayerVisibility('restStops', !restStops);
                         setRestStops(!restStops);
                       }}
                       defaultChecked={mapContext.visible_layers.restStops}
@@ -397,9 +440,14 @@ export default function Filters(props) {
                       </span>
                       Rest stops
                     </label>
+
                     <OverlayTrigger placement="top" overlay={tooltipRestStops}>
                       <span className="tooltip-info">?</span>
                     </OverlayTrigger>
+
+                    {loadingLayers && loadingLayers.restStops &&
+                      <Spinner animation="border" role="status" />
+                    }
                   </div>
                 </div>
               </div>
@@ -420,12 +468,12 @@ export default function Filters(props) {
                           setLayerVisibility('restStops', false);
                           setRestStops(false);
                         }
-                        setLayerVisibility('largeRestStops', !largeRestStops); 
+                        setLayerVisibility('largeRestStops', !largeRestStops);
                         setLargeRestStops(!largeRestStops);
                       }}
                       defaultChecked={mapContext.visible_layers.largeRestStops}
-                      disabled={disableFeatures}
-                    />
+                      disabled={disableFeatures} />
+
                     <label htmlFor="filter--rest-stops-large-vehicle">
                       <span className="filter-item__icon">
                         <svg width="30" height="14" viewBox="0 0 30 14" fill="none" xmlns="http://www.w3.org/2000/svg" alt="large vehicle rest stops" aria-hidden="true" focusable="false" role="img">
@@ -435,9 +483,14 @@ export default function Filters(props) {
                       </span>
                       Large vehicle rest stops
                     </label>
+
                     <OverlayTrigger placement="top" overlay={tooltipRestStopsLargeVehicle}>
                       <span className="tooltip-info">?</span>
                     </OverlayTrigger>
+
+                    {loadingLayers && loadingLayers.restStops &&
+                      <Spinner animation="border" role="status" />
+                    }
                   </div>
                 </div>
               </div>

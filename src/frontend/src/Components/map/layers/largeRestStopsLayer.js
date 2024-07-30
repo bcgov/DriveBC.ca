@@ -12,7 +12,7 @@ import VectorSource from 'ol/source/Vector';
 import { restStopTruckStyles, restStopTruckClosedStyles } from '../../data/featureStyleDefinitions.js';
 import { isRestStopClosed } from '../../data/restStops.js';
 
-export function getLargeRestStopsLayer(restStopsData, projectionCode, mapContext, referenceData, updateReferenceFeature) {
+export function getLargeRestStopsLayer(restStopsData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   return new VectorLayer({
     classname: 'largeRestStops',
     visible: mapContext.visible_layers.largeRestStops,
@@ -60,6 +60,11 @@ export function getLargeRestStopsLayer(restStopsData, projectionCode, mapContext
             }
           }
         }
+
+        setLoadingLayers(prevState => ({
+          ...prevState,
+          restStops: false
+        }));
       },
     }),
   });

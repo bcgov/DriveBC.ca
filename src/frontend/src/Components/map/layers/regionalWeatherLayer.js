@@ -11,7 +11,7 @@ import VectorSource from 'ol/source/Vector';
 // Styling
 import { regionalStyles } from '../../data/featureStyleDefinitions.js';
 
-export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext, referenceData, updateReferenceFeature) {
+export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   return new VectorLayer({
     classname: 'regional',
     visible: mapContext.visible_layers.weather,
@@ -50,6 +50,11 @@ export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext,
             }
           }
         });
+
+        setLoadingLayers(prevState => ({
+          ...prevState,
+          weathers: false
+        }));
       },
     }),
     style: regionalStyles['static'],
