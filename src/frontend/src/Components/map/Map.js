@@ -190,7 +190,7 @@ export default function DriveBCMap(props) {
       projection: 'EPSG:3857',
       constrainResolution: true,
       center: fromLonLat(pan),
-      zoom: isCamDetail || referenceData ? 12 : zoom,
+      zoom: isCamDetail || referenceData ? 5 : zoom,
       maxZoom: 15,
       minZoom: 5,
       extent: transformedExtent,
