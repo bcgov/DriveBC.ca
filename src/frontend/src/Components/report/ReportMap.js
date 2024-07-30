@@ -309,9 +309,16 @@ export function ReportMap(props) {
                     {activeFeature.properties.CONTRACTOR1_NAME}
                   </a>
                 ) : (
-                  <p>{activeFeature.properties.CONTRACTOR1_NAME}</p>
+                  <p className="without-link">
+                    {activeFeature.properties.CONTRACTOR1_NAME}
+                  </p>
                 )}
               </div>
+              {activeFeature.properties.CONTRACTOR1_DESCRIPTION && (
+                <p className="contractor-description">
+                  {activeFeature.properties.CONTRACTOR1_DESCRIPTION}
+                </p>
+              )}
               <div className="contractor-phone">
                 <FontAwesomeIcon icon={faPhone} />
                 <a
@@ -336,9 +343,16 @@ export function ReportMap(props) {
                     {activeFeature.properties.CONTRACTOR2_NAME}
                   </a>
                 ) : (
-                  <p>{activeFeature.properties.CONTRACTOR2_NAME}</p>
+                  <p className="without-link">
+                    {activeFeature.properties.CONTRACTOR2_NAME}
+                  </p>
                 )}
               </div>
+              {activeFeature.properties.CONTRACTOR2_DESCRIPTION && (
+                <p className="contractor-description">
+                  {activeFeature.properties.CONTRACTOR2_DESCRIPTION}
+                </p>
+              )}
               <div className="contractor-phone">
                 <FontAwesomeIcon icon={faPhone} />
                 <a
