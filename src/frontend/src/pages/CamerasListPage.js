@@ -281,7 +281,8 @@ export default function CamerasListPage() {
                     {(selectedRoute && selectedRoute.routeFound)? 'Edit route' : 'Find route'}
                 </Button>
               }
-              <div className="search-container">
+              
+              <div className="camSearch-container">
                 <AsyncTypeahead
                   id="camera-name-search"
                   isLoading={false}
@@ -289,7 +290,7 @@ export default function CamerasListPage() {
                   onBlur={() => {
                     trackEvent('cameras', 'camera-list', 'search', searchText)}}
                   onInputChange={(text) => setSearchText(text)}
-                  placeholder={"Find by camera name"}
+                  placeholder={"Search by camera name"}
                   inputProps={{
                     'aria-label': 'input field for camera name search',
                   }}
