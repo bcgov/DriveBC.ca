@@ -78,6 +78,7 @@ export default function UserNavigation(props) {
   const getUserMenu = () => {
     return (
       <DropdownButton
+        variant="outline-primary"
         align="end"
         id="user-menu"
         title={<FontAwesomeIcon icon={faCircleUser} />}>
@@ -132,6 +133,7 @@ export default function UserNavigation(props) {
   const getFavoritesMenu = () => {
     return (
       <DropdownButton
+        variant="outline-primary"
         align="end"
         id="favorites-menu"
         title={<><FontAwesomeIcon icon={faStar} /> Favourites</>}>

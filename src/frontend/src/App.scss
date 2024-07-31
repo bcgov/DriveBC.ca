@@ -167,6 +167,46 @@ a[target="_blank"] {
   }
 }
 
+// Advisories button
+.btn.advisories-btn {
+  background: #FEF0D8;
+  width: fit-content;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #584215;
+  border-radius: 5px;
+  border: 1px solid $BC-Yellow;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+
+  &:hover, &:active, &.active, &.open {
+    color: #584215;
+    background: darken(#FEF0D8, 10%);
+  }
+
+  &:focus, &.focus {
+    outline: $BC-Yellow;
+  }
+
+  svg {
+    margin-right: 8px;
+  }
+
+  .advisories-count {
+    margin-left: 12px;
+    font-size: 0.625rem;
+    color: white;
+    background: #CE3E39;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
 // Favourite star button
 .favourite-btn {
   border: none;
@@ -194,4 +234,76 @@ a[target="_blank"] {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.App {
+  &:has(.auth-modal), &:has(.overlay.open) {
+    div[class*='-page'] {
+      position: fixed;
+    }
+  }
+}
+
+// advisories and search overlay
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  min-height: 0;
+  z-index: 6;
+  background: white;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+
+  &.open {
+    min-height: 100%;
+  }
+
+  @media (min-width: 768px) {
+    width: 0;
+    min-height: 100%;
+    box-shadow: 0px 1.2px 3.6px rgba(0, 0, 0, 0.1), 0px 6.4px 14.4px rgba(0, 0, 0, 0.13);
+
+    &.open {
+      width: 400px;
+    }
+  }
+
+  &.advisories-overlay {
+    &.open {
+      padding: 3.625rem 0 1rem;
+    }
+  }
+
+  &.search-overlay {
+
+    &.open {
+      padding: 5rem 1rem 1rem;
+    }
+
+    .routing {
+      padding: 0 15px 0 0;
+  
+      .routing-container .typeahead-container {
+        width: 100%;
+      }
+    }
+  }
+
+  .close-overlay {
+    position: absolute;
+    top: 4.75rem;
+    right: 1rem;
+    padding: 0;
+    min-width: 0;
+    line-height: 1.25rem;
+    height: 2rem;
+    width: 2rem;
+    border-radius: 50%;
+    background: none;
+    border: none;
+    font-size: 1rem;
+  }
 }

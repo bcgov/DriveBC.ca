@@ -39,7 +39,8 @@ export default function Filters(props) {
     enableRoadConditions,
     textOverride,
     isCamDetail,
-    referenceData
+    referenceData,
+    isDelaysPage
   } = props;
 
   // Const for enabling layer that the reference event belongs to
@@ -137,7 +138,7 @@ export default function Filters(props) {
   return (
     <div className="filters-component">
       <Button
-        variant="primary"
+        variant={isDelaysPage ? 'outline-primary' : 'primary'}
         className={'map-btn open-filters' + (open ? ' open' : '')}
         aria-label="open filters options"
         onClick={() => {

@@ -27,6 +27,12 @@ $danger: $Error;
   padding: 6px 12px;
   border-radius: 4px;
   font-size: 0.875rem;
+
+  // glow ring around buttons
+  &:focus {
+    outline: 1px solid $Focus;
+    box-shadow: 0 0 0 0.25rem rgba(1, 51, 102, 0.25);
+  }
 }
 
 .btn.btn-link {
@@ -35,14 +41,10 @@ $danger: $Error;
 
 .btn.btn-primary {
   border-color: $BC-Blue;
-
-  &:hover, &:focus {
+  
+  &:hover, &:active, &:focus {
     background-color: $BC-Blue-Alt;
-  }
-
-  &:active, &:focus {
-    outline: 1px solid $Focus;
-    box-shadow: 0 0 0 0.25rem rgba(1, 51, 102, 0.25);
+    color: white;
   }
 }
 
@@ -60,6 +62,11 @@ $danger: $Error;
     color: $Type-Primary;
     outline: 1px solid $Focus;
     box-shadow: 0 0 0 0.25rem rgba(1, 51, 102, 0.25);
+  }
+
+  &:active {
+    color: white;
+    background-color: $Type-Link;
   }
 }
 

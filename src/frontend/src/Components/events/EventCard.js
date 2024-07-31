@@ -3,22 +3,21 @@ import React from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLocationDot } from '@fortawesome/pro-solid-svg-icons';
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 // Internal imports
 import { getTypeDisplay } from './functions';
 import FriendlyTime from '../shared/FriendlyTime';
-
-// External assets
-import { faMapLocation } from '@fortawesome/pro-solid-svg-icons';
+import EventTypeIcon from '../events/EventTypeIcon';
 
 // Styling
 import './EventCard.scss';
 
 export default function EventCard(props) {
   // Props
-  const { event, icon, showLoader } = props;
+  const { event, showLoader } = props;
 
   // Rendering
   return (
@@ -30,9 +29,8 @@ export default function EventCard(props) {
 
       <div className="event-card__details">
         <div className="type">
-          <div className="header">{ showLoader ? <Skeleton /> : 'Type' }</div>
           <div className="content">
-            { showLoader ? <Skeleton width={75} /> : <div>{icon} {getTypeDisplay(event)}</div> }
+            { showLoader ? <Skeleton width={75} /> : <div className="eventType"><EventTypeIcon event={event} state={event.display_category === 'majorEvents' ? 'static' : 'active'} /><span>{getTypeDisplay(event)}</span></div> }
           </div>
         </div>
 
@@ -54,7 +52,7 @@ export default function EventCard(props) {
         </div>
 
         <div className="last-update">
-          <div className="header">{ showLoader ? <Skeleton /> : 'Last Updated' }</div>
+          <div className="header">{ showLoader ? <Skeleton /> : 'Last Update' }</div>
           <div className="content">
             { showLoader ? <Skeleton width={'90%'} /> : <FriendlyTime date={event.last_updated} /> }
           </div>
@@ -70,9 +68,15 @@ export default function EventCard(props) {
         }
 
         <div className="map">
-          <div className="header">{ showLoader ? <Skeleton /> : 'Map' }</div>
           <div className="content">
-            { showLoader ? <Skeleton width={30} /> : <FontAwesomeIcon icon={faMapLocation} /> }
+            { showLoader ? <Skeleton width={30} /> : 
+            <button
+              className="viewMap-btn"
+              aria-label="View on map"
+              onClick={() => console.log('click')}>
+              <FontAwesomeIcon icon={faLocationDot} />
+              <span>View on map</span>
+            </button> }
           </div>
         </div>
       </div>

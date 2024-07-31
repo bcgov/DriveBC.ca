@@ -34,14 +34,13 @@ export default function Header() {
   };
 
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
-  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
   const surveyLink = `${window.SURVEY_LINK}` ||
     'https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u';
 
   /* Main rendering function */
   return (
-    <header className="header--shown">
+    <header>
       <Navbar expand="lg" expanded={expanded}>
         <Container>
           <Navbar.Toggle onClick={() => setExpanded(expanded ? false : "expanded")}>
@@ -82,7 +81,7 @@ export default function Header() {
             </Nav>
           </Navbar.Collapse>
 
-          { largeScreen &&
+          { xLargeScreen &&
             <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
           }
 
