@@ -18,7 +18,7 @@
     min-width: 400px;
     flex: 0 1 auto;
 
-    .routing-outer-container {
+    .routing {
       margin-bottom: 20px;
       padding: 0 10px 0 0;
 
@@ -44,6 +44,7 @@
 
     .advisories {
       margin-top: 64px;
+      padding-right: 10px;
     
       .title {
         background: #FEEBC2;
@@ -88,12 +89,44 @@
     flex: 1 1 auto;
 
     .controls-container {
-
-      & > div {
-        margin: 10px 0;
+      .advisories-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        order: 2;
+        flex: 0 0 100%;
+        margin-top: 10px;
+  
+        @media (min-width: 768px) {
+          width: fit-content;
+          justify-content: center;
+          order: unset;
+          flex: 0 0 auto;
+          margin-top: 0;
+        }
       }
-
-      .routing-outer-container {
+  
+      .findRoute-btn {
+        font-size: 0.875rem;
+        height: 100%;
+        margin: auto 0;
+        border: 1px solid transparent;
+  
+        @media (min-width: 768px) {
+          margin: auto 16px;
+        }
+  
+        &:hover {
+          border: 1px solid $Type-status-grey;
+        }
+  
+        svg {
+          margin-right: 4px;
+        }
+      }
+      
+      .routing {
         padding: 0;
       }
     }

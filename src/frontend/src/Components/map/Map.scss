@@ -125,7 +125,7 @@
         }
       }
 
-      .routing-outer-container {
+      .routing {
         @media (orientation: landscape) and (max-width: 767px) {
           width: fit-content;
         }
@@ -189,7 +189,6 @@
       height: auto;
       border-radius: 4px;
       border: 1px solid $Type-Link;
-      box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
 
       &:hover {
         background: $Type-Link;
@@ -230,35 +229,23 @@
           top: initial;
           bottom: 1rem;
         }
-
-        // styling for badge
-        // &:after {
-        //   content: '1';
-        //   font-size: 10px;
-        //   font-weight: 700;
-        //   padding: 1px 8px;
-        //   color: white;
-        //   background-color: $Type-Link;
-        //   border-radius: 5px;
-        //   margin-left: 8px;
-        //   vertical-align: middle;
-        //   padding: 0 5px;
-        // }
-
-        // &:hover {
-        //   &:after {
-        //     color: $Type-Link;
-        //     background-color: white;
-        //   }
-        // }
       }
     }
 
-    .advisories-widget {
+    .advisories-btn {
       position: relative;
       top: 1rem;
       width: fit-content;
       z-index: 4;
+      margin: 0 1rem;
+    }
+
+    .filters-component {
+      .filters {
+        @media (min-width: 768px) {
+          height: calc(100vh - 200px);
+        }
+      }
     }
 
     .zoom-btn {

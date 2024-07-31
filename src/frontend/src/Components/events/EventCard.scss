@@ -20,25 +20,35 @@
     & > div {
       display: flex;
 
-      & > div {
+      .content {
+        border-top: 1px solid $Divider;
         padding: 8px;
+        flex-grow: 1;
+      }
+
+      &.map, &.location {
+        .content {
+          border-top: none;
+        }
       }
     }
 
     .header {
       color: $BC-Blue;
       background-color: $BC-Blue-Light;
-      width: 110px;
+      width: fit-content;
       flex: 0 0 110px;
     }
 
-    .content {
-      border-bottom: 1px solid $Divider;
-      flex-grow: 1;
-
-      svg {
-        color: $BC-Blue;
-        margin-right: 8px;
+    .map {
+      .content {
+        border-bottom: none;
+        display: flex;
+        justify-content: center;
+        
+        .viewMap-btn {
+          font-size: 1rem;
+        }
       }
     }
   }
@@ -47,12 +57,7 @@
     .event-card__details {
       .type {
         .header, .content {
-          background-color: $Surface-status-red;
           color: $Type-status-red;
-        }
-
-        .header {
-          border-right: 1px solid $Type-status-red-darker;
         }
 
         .content {
@@ -63,6 +68,10 @@
             color: $Type-status-red;
           }
         }
+      }
+
+      .next-update, .last-update {
+        white-space: nowrap;
       }
     }
   }

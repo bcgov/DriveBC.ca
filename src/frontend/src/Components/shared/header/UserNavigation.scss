@@ -3,12 +3,12 @@
 #user-navigation {
   display: flex;
   flex-direction: row;
-  position: absolute;
   right: 1rem;
+  margin-left: auto;
 
-  @media (min-width: 576px) {
-    position: static;
+  @media (min-width: 768px) {
     order: 2;
+    margin-right: 12px;
   }
 
   #signin-btn {
@@ -20,32 +20,11 @@
     padding: 0;
 
     &:last-of-type {
-      margin: 0 12px 0 12px;
+      margin-left: 12px;
     }
 
     button {
       margin: 0;
-
-      // Background color in different states
-      --bs-btn-color: #323130;
-      --bs-btn-bg: white;
-      --bs-btn-border-color: #013366;
-      --bs-btn-hover-color: #323130;
-      --bs-btn-hover-bg: #012b57;
-      --bs-btn-active-color: #b3b3b3;
-      --bs-btn-active-bg: #2D2D2D;
-
-      outline: none !important;
-      box-shadow: none !important;
-
-      &:hover, &:active, &:focus {
-        background: #F3F2F1;
-      }
-
-      &:active.show, &:focus.show {
-        background: #2D2D2D;
-        color: white;
-      }
     }
 
     .dropdown-menu {

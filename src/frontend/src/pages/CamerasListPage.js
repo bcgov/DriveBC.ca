@@ -12,6 +12,14 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import { booleanIntersects, point, multiPolygon } from '@turf/turf';
 import Container from 'react-bootstrap/Container';
 import { useMediaQuery } from '@uidotdev/usehooks';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faRoute,
+  faXmark,
+  faFlag
+} from '@fortawesome/pro-solid-svg-icons';
+import { faRoute as faRouteEmpty } from '@fortawesome/pro-regular-svg-icons';
+import Button from 'react-bootstrap/Button';
 
 // Components and functions
 import {
@@ -29,7 +37,7 @@ import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent.js';
-import AdvisoriesWidget from '../Components/advisories/AdvisoriesWidget';
+import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
 
 // Styling
 import './CamerasListPage.scss';
@@ -57,6 +65,8 @@ export default function CamerasListPage() {
   const [searchText, setSearchText] = useState('');
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
+  const [openAdvisoriesOverlay, setOpenAdvisoriesOverlay] = useState(false);
+  const [openSearchOverlay, setOpenSearchOverlay] = useState(false);
 
   // Error handling
   const displayError = (error) => {
@@ -222,69 +232,121 @@ export default function CamerasListPage() {
   const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   return (
-    <div className="cameras-page">
-      {showNetworkError &&
-        <NetworkErrorPopup />
-      }
-
-      {!showNetworkError && showServerError &&
-        <ServerErrorPopup setShowServerError={setShowServerError} />
-      }
-
-      <PageHeader
-        title="Cameras"
-        description="Scroll to view all cameras sorted by highway.">
-      </PageHeader>
-
-      <Container className="container--sidepanel">
-        { xXlargeScreen &&
-          <div className="container--sidepanel__left">
-            <RouteSearch showFilterText={true} />
-            <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
-          </div>
+    <React.Fragment>
+      <div className="cameras-page">
+        {showNetworkError &&
+          <NetworkErrorPopup />
         }
 
+        {!showNetworkError && showServerError &&
+          <ServerErrorPopup setShowServerError={setShowServerError} />
+        }
 
-        <div className="container--sidepanel__right">
-          <div className="controls-container">
-            { !xXlargeScreen &&
-              <React.Fragment>
-                <AdvisoriesWidget advisories={advisoriesInRoute} onMap={false} />
-                <RouteSearch showFilterText={true} />
-              </React.Fragment>
-            }
-            <div className="search-container">
-              <AsyncTypeahead
-                id="camera-name-search"
-                isLoading={false}
-                onSearch={() => {}}
-                onBlur={() => {
-                  trackEvent('cameras', 'camera-list', 'search', searchText)}}
-                onInputChange={(text) => setSearchText(text)}
-                placeholder={"Find by camera name"}
-                inputProps={{
-                  'aria-label': 'input field for camera name search',
-                }}
-              />
-            </div>
-          </div>
+        <PageHeader
+          title="Cameras"
+          description="Scroll to view all cameras sorted by highway.">
+        </PageHeader>
 
-          <CameraList cameras={ displayedCameras ? displayedCameras : [] }></CameraList>
-
-          {!(displayedCameras && displayedCameras.length) &&
-            <div className="empty-cam-display">
-              <h2>No cameras to display</h2>
-
-              <h6><b>Do you have a starting location and a destination entered?</b></h6>
-              <p>Adding a route will narrow down the information for the whole site, including the camera list. There might not be any cameras between those two locations.</p>
-
-              <h6><b>Have you entered search terms to narrow down the list?</b></h6>
-              <p>Try checking your spelling, changing, or removing your search terms.</p>
+        <Container className="container--sidepanel">
+          { xXlargeScreen &&
+            <div className="container--sidepanel__left">
+              <RouteSearch showFilterText={true} />
+              <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
             </div>
           }
+
+
+          <div className="container--sidepanel__right">
+            <div className="controls-container">
+            {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
+                <Button
+                  className={'advisories-btn'}
+                  aria-label="open advisories list"
+                  onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
+                  <span className="advisories-title">
+                    <FontAwesomeIcon icon={faFlag} />
+                    Advisories
+                  </span>
+                  <span className="advisories-count">{advisoriesInRoute.length}</span>
+                </Button>
+              }
+
+              { !xXlargeScreen &&
+                <Button
+                  className={`findRoute-btn ${(selectedRoute && selectedRoute.routeFound) ? 'routeFound' : ''}`}
+                  variant="outline-primary"
+                  aria-label={(selectedRoute && selectedRoute.routeFound)? 'Edit route' : 'Find route'}
+                  onClick={() => setOpenSearchOverlay(!openSearchOverlay)}>
+                    <FontAwesomeIcon icon={(selectedRoute && selectedRoute.routeFound) ? faRoute : faRouteEmpty } />
+                    {(selectedRoute && selectedRoute.routeFound)? 'Edit route' : 'Find route'}
+                </Button>
+              }
+              <div className="search-container">
+                <AsyncTypeahead
+                  id="camera-name-search"
+                  isLoading={false}
+                  onSearch={() => {}}
+                  onBlur={() => {
+                    trackEvent('cameras', 'camera-list', 'search', searchText)}}
+                  onInputChange={(text) => setSearchText(text)}
+                  placeholder={"Find by camera name"}
+                  inputProps={{
+                    'aria-label': 'input field for camera name search',
+                  }}
+                />
+              </div>
+            </div>
+
+            <CameraList cameras={ displayedCameras ? displayedCameras : [] }></CameraList>
+
+            {!(displayedCameras && displayedCameras.length) &&
+              <div className="empty-cam-display">
+                <h2>No cameras to display</h2>
+
+                <h6><b>Do you have a starting location and a destination entered?</b></h6>
+                <p>Adding a route will narrow down the information for the whole site, including the camera list. There might not be any cameras between those two locations.</p>
+
+                <h6><b>Have you entered search terms to narrow down the list?</b></h6>
+                <p>Try checking your spelling, changing, or removing your search terms.</p>
+              </div>
+            }
+          </div>
+          </Container>
+        <Footer />
+      </div>
+
+      {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
+        <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}>
+          <span id="button-close-overlay" aria-hidden="false" hidden>close overlay</span>
+          <button
+            className="close-panel close-overlay"
+            aria-label={`${openAdvisoriesOverlay ? 'close overlay' : ''}`}
+            aria-labelledby="button-close-overlay"
+            aria-hidden={`${openAdvisoriesOverlay ? false : true}`}
+            tabIndex={`${openAdvisoriesOverlay ? 0 : -1}`}
+            onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
+          <AdvisoriesPanel advisories={advisories} />
         </div>
-        </Container>
-      <Footer />
-    </div>
+      }
+
+      {!xXlargeScreen &&
+        <div className={`overlay search-overlay ${openSearchOverlay ? 'open' : ''}`}>
+          <span id="button-close-overlay" aria-hidden="false" hidden>close overlay</span>
+          <button
+            className="close-overlay"
+            aria-label={`${openSearchOverlay ? 'close overlay' : ''}`}
+            aria-labelledby="button-close-overlay"
+            aria-hidden={`${openSearchOverlay ? false : true}`}
+            tabIndex={`${openSearchOverlay ? 0 : -1}`}
+            onClick={() => setOpenSearchOverlay(!openSearchOverlay)}>
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
+          <p className="overlay__header bold">Find route</p>
+          <RouteSearch showFilterText={true} />
+        </div>
+      }
+    </React.Fragment>
   );
 }

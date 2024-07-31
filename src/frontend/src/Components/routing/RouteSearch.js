@@ -82,7 +82,7 @@ export default function RouteSearch(props) {
 
   // Rendering
   return (
-    <div className={'routing-outer-container'}>
+    <div className={'routing'}>
       {showFilterText && selectedRoute && selectedRoute.routeFound &&
         <p className={'routing-caption'}>Results below are filtered by this route:</p>
       }

@@ -157,6 +157,10 @@
 			content: none;
 		}
 
+		&:hover {
+			text-decoration: none;
+		}
+
 		& + .nav-divider {
 			display: none;
 
