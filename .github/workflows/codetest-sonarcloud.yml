@@ -30,7 +30,9 @@ jobs:
         # Disabling shallow clone is recommended for improving relevancy of reporting for SonarCloud
         fetch-depth: 0
     - name: Install GDAL
-      run: sudo apt-get install -y gdal-bin
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gdal-bin
     - name: Set up Python 3.11
       uses: actions/setup-python@v5
       with:
