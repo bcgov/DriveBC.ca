@@ -22,11 +22,13 @@
 
   .controls-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
     margin-bottom: 1.5rem;
 
-    @media (max-width: 767px) {
-      flex-direction: column;
+    @media (min-width: 768px) {
+      justify-content: flex-start;
     }
 
     .route-display-container {
@@ -53,13 +55,15 @@
       }
     }
 
-    .search-container {
-      min-width: 400px;
+    .camSearch-container {
+      width: 100%;
+      order: 2;
+      margin-top: 10px;
 
-      @media (max-width: 767px) {
-        min-width: 100%;
-        width: 100%;
-        margin-top: 1rem;
+      @media (min-width: 768px) {
+        width: 400px;
+        order: unset;
+        margin-top: 0;
       }
 
       .rbt-menu {
