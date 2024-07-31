@@ -200,6 +200,15 @@ def add_order_to_cameras():
     WebcamAPI().set_list_data()
 
 
+def reverse_ls_routes(ls_routes):
+    """
+    Reverse a list of linestrings and all their points
+
+    """
+    res = ls_routes[::-1]
+    return [LineString(ls[::-1]) for ls in res]
+
+
 def build_route_geometries():
     """
     DBC22-1183
@@ -228,6 +237,15 @@ def build_route_geometries():
 
             points_list = [Point(p) for p in response.json()['route']]
             ls_routes.append(LineString(points_list))
+
+        highways_to_reverse = [
+            '2', '3B', '9', '11', '13', '15', '17A', '23',
+            '27', '29', '31', '33', '35', '37', '43', '91A',
+            '93', '95', '97', '97C'
+        ]
+
+        if key in highways_to_reverse:
+            ls_routes = reverse_ls_routes(ls_routes)
 
         # Save or update
         if not RouteGeometry.objects.filter(id=key).first():
