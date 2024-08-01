@@ -293,7 +293,6 @@ export const pointerClickHandler = (
         );
         return;
       case 'event':
-        console.log(clickedFeature.getProperties());
         trackEvent(
           'click',
           'map',
@@ -309,7 +308,6 @@ export const pointerClickHandler = (
         );
         return;
       case 'ferry':
-        console.log(clickedFeature.getProperties());
         trackEvent(
           'click',
           'map',
