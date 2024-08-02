@@ -56,7 +56,13 @@ export default function RestStopPanel(props) {
         <div className="popup__title__icon">
           <RestStopTypeIcon reststop={restStopData} state="active" />
         </div>
-        <p className="name">Rest area</p>
+        
+        <div className='share-url-button-container'>
+          <p className="name share-url-button-p">Rest area</p>
+          <div className='share-url-button-div'>
+            <ShareURLButton type={`reststop`}/>
+          </div>
+        </div>
       </div>
       <div className="popup__content">
         <div className="popup__content__title">
@@ -226,7 +232,6 @@ export default function RestStopPanel(props) {
             )}
           </div>
         </div>
-        <ShareURLButton />
       </div>
     </div>
   );

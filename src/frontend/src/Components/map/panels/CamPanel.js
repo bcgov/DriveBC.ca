@@ -159,15 +159,20 @@ export default function CamPanel(props) {
           <FontAwesomeIcon icon={faVideo} />
         </div>
         <div className="popup__title__name">
-          <p className="name">Camera</p>
-          <ShareURLButton />
+          
+          <div className='share-url-button-container'>
+            <p className="name share-url-button-p">Camera</p>
+            <div className='share-url-button-div'>
+              <ShareURLButton type={`camera`}/>
+            </div>
+          </div>
         </div>
       </div>
       {camera && (
         <div className="popup__content">
           <div className="popup__content__title">
-            <p
-              className="name"
+          <p
+              className="name share-url-button-p"
               onClick={handlePopupClick}
               onKeyDown={keyEvent => {
                 if (keyEvent.keyCode == 13) {

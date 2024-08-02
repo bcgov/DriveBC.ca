@@ -20,3 +20,48 @@
     }
   }
 }
+
+.share-url-minor {
+  .copy-btn {
+    background: #FDE1B0;
+    &:hover {
+      background: #FDE1B0;
+    }
+  }
+}
+
+.share-url-major, .share-url-closure {
+  .copy-btn {
+    background: #E9C3C5;
+    &:hover {
+      background: #E9C3C5;
+    }
+  }
+}
+
+.share-url-ferry {
+  .copy-btn {
+    background: #D2FFDD;
+    &:hover {
+      background: #D2FFDD;
+    }
+  }
+}
+
+.share-url-weather {
+  .copy-btn {
+    background: #DAD6D2;
+    &:hover {
+      background: #DAD6D2;
+    }
+  }
+}
+
+.share-url-camera, .share-url-reststop {
+  .copy-btn {
+    background: #CBE5FB;
+    &:hover {
+      background: #CBE5FB;
+    }
+  }
+}
