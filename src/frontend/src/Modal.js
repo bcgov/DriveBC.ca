@@ -1,30 +1,43 @@
-/* eslint-disable no-unused-vars */
 // React
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 
-import { AuthContext } from "./App";
-import { getCookie } from "./util";
+// Redux
+import { useDispatch } from 'react-redux';
+import { resetPendingAction } from './slices/userSlice';
 
-// Third party packages
+//  External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/pro-solid-svg-icons';
-import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+
+// Internal imports
+import { AuthContext } from "./App";
+import { getCookie } from "./util";
 
 // Styling
 import './Modal.scss';
 
-
 export default function Modal() {
-
+  /* Setup */
+  // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
 
-  const toggleAuthModal = () => {
+  // Redux
+  const dispatch = useDispatch();
+
+  /* Handlers */
+  const resetAuthModal = () => {
     setAuthContext((prior) => {
       return { ...prior, showingModal: !prior.showingModal, action: null }
-    })
+    });
+
+    // Modal closed, reset pending action
+    dispatch(resetPendingAction());
   };
 
+  /* Rendering */
+  // Subcomponents
   if (!authContext.showingModal) {
     return <div />;
   }
@@ -35,20 +48,21 @@ export default function Modal() {
     </Tooltip>
   );
 
+  // Main component
   return (
     <div className="auth-modal"
-      onClick={toggleAuthModal}
-    >
+      onClick={resetAuthModal}>
+
       <div className="content"
-        onClick={(e) => { e.stopPropagation(); }}
-      >
+        onClick={(e) => { e.stopPropagation(); }}>
+
         <div className='header'>
           <FontAwesomeIcon
             id="modal-closer"
             className="modal-closer"
             icon={faXmark}
-            onClick={toggleAuthModal}
-          />
+            onClick={resetAuthModal} />
+
           <div className='title'>{authContext.action}</div>
         </div>
 
@@ -56,10 +70,14 @@ export default function Modal() {
           { authContext.action === 'Sign In' &&
             <form method='post' action={`${window.API_HOST}/accounts/oidc/bceid/login/`}>
               <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
+
               <p>Access your saved cameras and routes</p>
+
               <button type='submit' className="btn btn-outline-primary">Sign in with BCeID</button>
+
               <div className="BCeID-definition">
                 <span>What is a BCeID?</span>
+
                 <OverlayTrigger placement="top" overlay={tooltipBCeID}>
                   <span className="tooltip-info">?</span>
                 </OverlayTrigger>
@@ -70,6 +88,7 @@ export default function Modal() {
           { authContext.action === 'Sign Out' &&
             <form method='post' action={`${window.API_HOST}/accounts/logout/`}>
               <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
+
               <button type='submit' className="btn btn-outline-primary">Sign out of DriveBC</button>
             </form>
           }

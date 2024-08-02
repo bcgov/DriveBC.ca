@@ -1,12 +1,13 @@
 // React
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
 
 // Navigation
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 // Redux
-import { useDispatch } from 'react-redux';
-import { updateFavCams, updateFavRoutes } from './slices/userSlice';
+import { memoize } from 'proxy-memoize';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateFavCams, updateFavRoutes, updatePendingAction } from './slices/userSlice';
 
 // External imports
 // https://github.com/dai-shi/proxy-memoize?tab=readme-ov-file#usage-with-immer
@@ -55,6 +56,12 @@ function App() {
   /* Setup */
   // Redux
   const dispatch = useDispatch();
+  const { pendingAction } = useSelector(useCallback(memoize(state => ({
+    pendingAction: state.user.pendingAction
+  }))));
+
+  // Navigation
+  const navigate = useNavigate();
 
   // States
   const [mapContext, setMapContext] = useState(getInitialMapContext());
@@ -64,6 +71,16 @@ function App() {
   // Effects
   useEffect(() => {
     if (authContext.loginStateKnown && authContext.username) {
+      // Redirect if saved url exists
+      if (pendingAction && pendingAction.url) {
+        navigate(pendingAction.url);
+        dispatch(updatePendingAction({
+          url: null,
+        }));
+
+        return;
+      }
+
       initCams();
       initRoutes();
     }

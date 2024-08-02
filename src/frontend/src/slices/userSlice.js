@@ -4,7 +4,8 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: {
     favCams: null,
-    favRoutes: null
+    favRoutes: null,
+    pendingAction: null
   },
   reducers: {
     // General
@@ -42,13 +43,22 @@ export const userSlice = createSlice({
       const resFavRoutes = !state.favRoutes ? [] : [...state.favRoutes];
       state.favRoutes = resFavRoutes.filter(route => route.id != action.payload);
     },
+
+    // Pending action
+    updatePendingAction: (state, action) => {
+      state.pendingAction = action.payload;
+    },
+    resetPendingAction: (state, action) => {
+      state.pendingAction = null;
+    },
   },
 });
 
 export const {
   resetFavLists, // General
   updateFavCams, pushFavCam, removeFavCam, // Cams
-  updateFavRoutes, pushFavRoute, removeFavRoute // Routes
+  updateFavRoutes, pushFavRoute, removeFavRoute, // Routes
+  updatePendingAction, resetPendingAction // Pending action
 } = userSlice.actions;
 
 export default userSlice.reducer;
