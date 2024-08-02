@@ -183,7 +183,7 @@ export default function DriveBCMap(props) {
     };
 
     // Set map extent (W, S, E, N)
-    const extent = [-163.230138, 26.180153, -89.977437, 85.591323];
+    const extent = [-163.230138, 26.180153, -89.977437, 85.591324];
     const transformedExtent = transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
 
     mapView.current = new View({

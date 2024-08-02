@@ -4,7 +4,7 @@ export const mapSlice = createSlice({
   name: 'map',
   initialState: {
     zoom: 5,
-    pan: [-122.9172256, 53.9269878],
+    pan: [-122.917225601, 53.926987801],
   },
   reducers: {
     updateMapState: (state, action) => {
