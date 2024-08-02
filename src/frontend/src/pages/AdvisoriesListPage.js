@@ -87,8 +87,8 @@ export default function AdvisoriesListPage() {
 
         <p>
           Advisories shared on the beta version are for feedback purposes and
-          possibly not up-to-date.  Please continue to refer to the Ministrys
-          TranBC site under <a href="https://drivebc.ca/#listView">Current Road
+          possibly not up-to-date.  Please continue to refer to the Ministry&apos;s
+          TranBC site under <a href="https://www.tranbc.ca/current-travel-advisories/">Current Road
           Advisories and Information</a>.
         </p>
       </div>
