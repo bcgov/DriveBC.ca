@@ -240,6 +240,7 @@ a[target="_blank"] {
   &:has(.auth-modal), &:has(.overlay.open) {
     div[class*='-page'] {
       position: fixed;
+      width: 100%;
     }
   }
 }
@@ -285,7 +286,7 @@ a[target="_blank"] {
 
     .routing {
       padding: 0 15px 0 0;
-  
+
       .routing-container .typeahead-container {
         width: 100%;
       }
