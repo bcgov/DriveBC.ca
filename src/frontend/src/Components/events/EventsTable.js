@@ -65,7 +65,7 @@ export default function EventsTable(props) {
     {
       header: <span tabIndex={0}>{'Next Update'}</span>,
       accessorKey: 'next_update',
-      cell: (props) => props.getValue() ? <FriendlyTime date={props.getValue()} /> : '-',
+      cell: (props) => props.getValue() ? <FriendlyTime date={props.getValue()} isNextUpdate={true} /> : '-',
       enableSorting: false,
     },
   ];

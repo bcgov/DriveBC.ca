@@ -21,12 +21,12 @@ const datetimeFormat = {
 const formatter = new Intl.DateTimeFormat('en-US', datetimeFormat);
 const ONE_DAY = 1000 * 60 * 60 * 24; // 24 hours in milliseconds
 
-export default function FriendlyTime({ date, asDate=false, includeFullIfHumanized=false, timeOnly=false }) {
+export default function FriendlyTime({ date, asDate=false, includeFullIfHumanized=false, timeOnly=false, isNextUpdate=false }) {
   const [showTooltip, setShowTooltip] = useState(false);
 
   // get time difference in milliseconds
   const timeDiff = (new Date() - new Date(date));
-  const dateFormatted = formatter.format(new Date(date));
+  const dateFormatted = (isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." : formatter.format(new Date(date));
   // if difference is less than 24hrs
   const humanize = timeDiff < ONE_DAY;
 
@@ -72,11 +72,15 @@ export default function FriendlyTime({ date, asDate=false, includeFullIfHumanize
             }}
           >
             <p className="friendly-time-text">
-              <ReactTimeAgo date={date} locale="en-US"/>
+              {(isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." :
+                <ReactTimeAgo date={date} locale="en-US"/>
+              }
             </p>
-            <span className={"friendly-time__tooltip" + (showTooltip ? " showTooltip" : "")}>
-              {dateFormatted}
-            </span>
+            { !(isNextUpdate && timeDiff > 0) &&
+              <span className={"friendly-time__tooltip" + (showTooltip ? " showTooltip" : "")}>
+                {dateFormatted}
+              </span>
+            }
           </OutsideClickHandler>
         </div>
       </React.Fragment>

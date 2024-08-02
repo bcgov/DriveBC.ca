@@ -69,7 +69,7 @@ export default function EventPanel(props) {
           {eventData.next_update &&
             <div className="popup__content__description next-update">
               <p>Next update</p>
-              <FriendlyTime date={eventData.next_update} />
+              <FriendlyTime date={eventData.next_update} isNextUpdate={true} />
             </div>
           }
         </div>

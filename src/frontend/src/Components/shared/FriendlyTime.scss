@@ -1,10 +1,17 @@
 @import "../../styles/variables.scss";
 
 .friendly-time {
-  text-decoration: underline;
-  cursor: pointer;
   position: relative;
   width: fit-content;
+
+  &:has(.friendly-time__tooltip) {
+    text-decoration: underline;
+    cursor: pointer;
+
+    time:hover {
+      color: $Type-Link;
+    }
+  }
 
   &__tooltip {
     font-size: 0.75rem;
