@@ -300,3 +300,26 @@
     }
   }
 }
+
+.share-url-button-container {
+  display: flex;
+  flex-direction: row; 
+  align-items: center; 
+  gap: 10px; 
+  width: 100%;
+}
+
+.share-url-button-div {
+  color: transparent; 
+  background-color: transparent; 
+  border: 1px solid transparent; 
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.share-url-button-p {
+  color: transparent; 
+  background-color: transparent; 
+  display: flex;
+  white-space: nowrap;
+}
