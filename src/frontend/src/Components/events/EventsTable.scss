@@ -13,7 +13,6 @@ table {
 
         .cursor-pointer {
           white-space: nowrap;
-          cursor: pointer;
 
           svg {
             margin-left: 8px;
@@ -26,17 +25,22 @@ table {
   tbody {
     tr {
       &.major, &.closure {
-        background-color: $Surface-status-red;
 
         .typeDisplay {
           color: $Type-status-red;
           font-size: 0.875rem;
           font-weight: 700;
         }
+
+        td {
+          .roadName {
+            color: $Type-status-red;
+          }
+        }
       }
+
       &:hover {
         background-color: $BC-Blue-Light;
-        cursor: pointer;
       }
 
       td {
@@ -70,8 +74,8 @@ table {
       }
 
       td {
-        padding-top: 1rem;
-        padding-bottom: 1.5rem;
+        padding-top: 12px;
+        padding-bottom: 16px;
         vertical-align: top;
 
         .roadName {
@@ -82,6 +86,8 @@ table {
 
         .directionDisplay {
           font-size: 0.875rem;
+          font-weight: 700;
+          color: $Grey70;
         }
 
         p {
@@ -95,14 +101,14 @@ table {
 
       td {
         padding-top: 0;
-        padding-bottom: 1rem;
+        padding-bottom: 16px;
         vertical-align: top;
       }
     }
   }
 
   td {
-    padding: 0 1rem;
+    padding: 0 16px;
   }
   th {
     padding: 1rem 0 1rem 1rem;
@@ -110,25 +116,24 @@ table {
   }
 }
 
-.delay-icon-img {
-  width: 1.7rem;
-  margin-bottom: 6px;
-}
+.viewMap-btn {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: $Type-Link;
+  border: none;
+  background: none;
+  padding: 0;
 
-tr.closure td.display_category .delay-icon-img {
-  width: 20px;
-}
+  &:hover {
+    text-decoration: underline;
+  }
 
-.display_category {
-  .typeDisplay {
-    // width: 154px;
-    font-size: 0.875rem;
+  svg {
+    margin-right: 8px;
+    color: $Type-Link;
   }
 }
 
-.display_category {
-  max-width: 160px;
-}
 .location_description {
  max-width: 167px;
 }
@@ -192,12 +197,5 @@ td.next_update .friendly-time-text {
     span {
       border: 0;
     }
-  }
-}
-
-.empty-event-display {
-  strong {
-    margin-top: 12px;
-    display: inline-block;
   }
 }

@@ -11,6 +11,8 @@ import {
 } from '@tanstack/react-table';
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLocationDot } from '@fortawesome/pro-solid-svg-icons';
 
 // Internal imports
 import { getTypeDisplay, routeAtSortFn, routeOrderSortFn, severitySortFn } from './functions';
@@ -30,20 +32,14 @@ export default function EventsTable(props) {
   // react-table columns
   const getEventTypeCell = (data) => {
     return (
-      <div className={'typeDisplayContainer'}>
-        <EventTypeIcon event={data} />
-        <p className={'typeDisplay'}>{getTypeDisplay(data)}</p>
+      <div className="eventType">
+        <EventTypeIcon event={data} state={data.display_category === 'majorEvents' ? 'static' : 'active'} />
+        <span>{getTypeDisplay(data)}</span>
       </div>
     );
   }
 
   const columns = [
-    {
-      header: <span tabIndex={0}>{'Type'}</span>,
-      accessorKey: 'display_category',
-      cell: (props) => getEventTypeCell(props.row.original),
-      enableSorting: false,
-    },
     {
       header: <span tabIndex={0}>{'Location'}</span>,
       accessorKey: 'location_description',
@@ -106,15 +102,15 @@ export default function EventsTable(props) {
     switch (key) {
       case 'severity_desc':
       case 'severity_asc':
-        return 1;
+        return 0;
       case 'road_name_desc':
       case 'road_name_asc':
-        return 2;
+        return 1;
       case 'route_order':
-        return 3;
+        return 2;
       case 'last_updated_desc':
       case 'last_updated_asc':
-        return 4;
+        return 3;
     }
   }
 
@@ -190,20 +186,28 @@ export default function EventsTable(props) {
       const row = rows[i];
 
       res.push(
-        <tr className={`${row.original.severity.toLowerCase()} headerRow`} tabIndex={0} onKeyUp={(event)=>{
-          if (event.key === 'Enter') {
-            routeHandler(row.original);
-          }
-        }} onClick={() => routeHandler(row.original)} key={`${row.id}-header-row`}>
-          <td colSpan={columnCount}>
+        <tr className={`${row.original.severity.toLowerCase()} headerRow`} tabIndex={0} key={`${row.id}-header-row`}>
+          <td colSpan={2}>
             <p className={'roadName'}>{row.original.route_at}</p>
             <p className={'directionDisplay'}>{row.original.direction_display}</p>
+          </td>
+          <td colSpan={3}>
+            <div className="space-between-row">
+              {getEventTypeCell(row.original)}
+              <button
+                className="viewMap-btn"
+                aria-label="View on map"
+                onClick={() => routeHandler(row.original)}>
+                <FontAwesomeIcon icon={faLocationDot} />
+                <span>View on map</span>
+              </button>
+            </div>
           </td>
         </tr>
       );
 
       res.push(
-        <tr className={`${row.original.severity.toLowerCase()} dataRow`} onClick={() => routeHandler(row.original)} key={`${row.id}-data-row`}>
+        <tr className={`${row.original.severity.toLowerCase()} dataRow`} key={`${row.id}-data-row`}>
           {row.getVisibleCells().map((cell) => {
             return (
               <td className={cell.column.id}

@@ -29,6 +29,24 @@ export const populateRouteProjection = (data, route) => {
   return copiedData;
 }
 
+export const filterAdvisoryByRoute = (data, route) => {
+  if (!route) {
+    return data;
+  }
+
+  const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];
+  const routeLineString = turf.lineString(lineCoords);
+  const bufferedRouteLineString = turf.buffer(routeLineString, 150, {units: 'meters'});
+  const filteredAdvisoryList = [];
+  data.forEach(advisory =>{
+    if (turf.booleanIntersects(bufferedRouteLineString, turf.multiPolygon(advisory.geometry.coordinates))) {
+      filteredAdvisoryList.push(advisory);
+    }
+  });
+
+  return filteredAdvisoryList;
+}
+
 export const filterByRoute = (data, route, extraToleranceMeters, populateProjection) => {
   if (!route) {
     return data;

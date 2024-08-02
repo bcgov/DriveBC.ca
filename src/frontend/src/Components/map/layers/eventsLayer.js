@@ -8,7 +8,7 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
-export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature) {
+export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers) {
   // Helper function for initializing vss
   const createVS = () => new VectorSource({
     format: new GeoJSON()
@@ -144,5 +144,10 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
     addLayer('futureEventsLines', futureEventsLinesVS, 12);
     addLayer('roadConditions', roadConditionsVS, 88);
     addLayer('roadConditionsLines', roadConditionsLinesVS, 8);
+
+    setLoadingLayers(prevState => ({
+      ...prevState,
+      events: false
+    }))
   }
 }

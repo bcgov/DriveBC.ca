@@ -4,7 +4,8 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { memoize } from 'proxy-memoize';
-import { updateEvents } from '../../slices/feedsSlice';
+import { updateAdvisories } from '../../slices/cmsSlice';
+import { updateEvents} from '../../slices/feedsSlice';
 import { updateSearchLocationFrom, updateSearchLocationTo, updateSelectedRoute } from '../../slices/routesSlice'
 
 // Navigation
@@ -18,7 +19,8 @@ import {
   faMinusCircle,
   faRoad,
   faStar,
-  faVideo
+  faVideo,
+  faFlag,
 } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline, faCheck } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
@@ -32,7 +34,8 @@ import { AuthContext } from '../../App';
 import { removeRoute, saveRoute } from "../data/routes";
 import { getCameras, addCameraGroups } from "../data/webcams";
 import { getEvents, getEventCounts } from "../data/events";
-import { compareRoutePoints, filterByRoute } from '../map/helpers';
+import { getAdvisories, getAdvisoryCounts } from "../data/advisories";
+import { compareRoutePoints, filterByRoute, filterAdvisoryByRoute } from '../map/helpers';
 import Alert from '../shared/Alert';
 import RouteMap from './RouteMap';
 
@@ -52,17 +55,19 @@ export default function RouteDetails(props) {
 
   // Redux
   const dispatch = useDispatch();
-  const { cameras, events, searchLocationFrom, searchLocationTo, selectedRoute, eventFilterPoints, filteredEvents, favCams } = useSelector(useCallback(memoize(state => ({
+  const { cameras, events, searchLocationFrom, searchLocationTo, selectedRoute, advisories, filteredAdvisories, advisoryFilterPoints, eventFilterPoints, filteredEvents, favCams } = useSelector(useCallback(memoize(state => ({
     cameras: state.feeds.cameras.list,
     events: state.feeds.events.list,
+    advisories: state.cms.advisories.list,
     searchLocationFrom: state.routes.searchLocationFrom,
     searchLocationTo: state.routes.searchLocationTo,
     selectedRoute: state.routes.selectedRoute,
     eventFilterPoints: state.feeds.events.filterPoints,
     filteredEvents: state.feeds.events.filteredList,
+    advisoryFilterPoints: state.cms.advisories.filterPoints,
+    filteredAdvisories: state.cms.advisories.filteredList,
     favCams: state.user.favCams
   }))));
-
   // Refs
   const isInitialAlertMount = useRef(true);
   const timeout = useRef();
@@ -70,6 +75,7 @@ export default function RouteDetails(props) {
   // States
   const [showAlert, setShowAlert] = useState(false);
   const [eventCount, setEventCount] = useState();
+  const [advisoryCount, setAdvisoryCount] = useState();
   const [nickName, setNickName] = useState('');
   const [isRemoving, setIsRemoving] = useState();
   const [showSavePopup, setShowSavePopup] = useState(false);
@@ -99,9 +105,34 @@ export default function RouteDetails(props) {
     }
   }
 
+   // Data
+  // To be cleaned up
+  const loadAdvisories = async () => {
+    const routePoints = selectedRoute && selectedRoute.routeFound ? selectedRoute.points : null;
+
+    // Load if filtered cams don't exist or route doesn't match
+    if (!filteredAdvisories|| !compareRoutePoints(routePoints, advisoryFilterPoints)) {
+      // Fetch data if it doesn't already exist
+      const advisoryData = advisories ? advisories : await getAdvisories();
+
+      // Filter data by route
+      const filteredAdvisoryData = selectedRoute && selectedRoute.routeFound ? filterAdvisoryByRoute(advisoryData, selectedRoute, null, true) : advisoryData;
+
+      dispatch(
+        updateAdvisories({
+          list: advisoryData,
+          filteredList: filteredAdvisoryData,
+          filterPoints: selectedRoute && selectedRoute.routeFound ? selectedRoute.points : null,
+          timeStamp: new Date().getTime()
+        })
+      );
+    }
+  }
+
   // Effects
   useEffect(() => {
     loadEvents();
+    loadAdvisories();
   }, []);
 
   useEffect(() => {
@@ -111,6 +142,14 @@ export default function RouteDetails(props) {
       setEventCount(eventCount);
     }
   }, [events]);
+
+  useEffect(() => {
+    if (advisories) {
+      const advisoryData = filterAdvisoryByRoute(advisories, route, null, true);
+      const advisoryCount = getAdvisoryCounts(advisoryData);
+      setAdvisoryCount(advisoryCount);
+    }
+  }, [advisories]);
 
   useEffect(() => {
     if (isInitialAlertMount.current) {
@@ -224,7 +263,7 @@ export default function RouteDetails(props) {
   );
 
   // Main components
-  return eventCount && (
+  return route && (
     <div className="route-details">
       <div className="route-title">
         <div className="space-between-row">
@@ -260,7 +299,21 @@ export default function RouteDetails(props) {
       </div>
 
       <div className="route-items">
-        {(eventCount.closures > 0) &&
+        {(!!advisoryCount && advisoryCount > 0) &&
+          <div className="route-item route-item--advisories">
+            <span className="route-item__count">
+              {advisoryCount}
+            </span>
+
+            <span className="route-item__icon">
+              <FontAwesomeIcon icon={faFlag} alt="inland ferries" />
+            </span>
+
+            <span className="route-item__name">Advisories</span>
+          </div>
+        }
+
+        {(eventCount && eventCount.closures > 0) &&
           <div className="route-item route-item--closures">
             <span className="route-item__count">
               {eventCount.closures}
@@ -272,7 +325,7 @@ export default function RouteDetails(props) {
           </div>
         }
 
-        {(eventCount.majorEvents > 0) &&
+        {(eventCount && eventCount.majorEvents > 0) &&
           <div className="route-item route-item--major">
             <span className="route-item__count">
               {eventCount.majorEvents}
@@ -286,7 +339,7 @@ export default function RouteDetails(props) {
           </div>
         }
 
-        {(eventCount.minorEvents > 0) &&
+        {(eventCount && eventCount.minorEvents > 0) &&
           <div className="route-item route-item--minor">
             <span className="route-item__count">
               {eventCount.minorEvents}
@@ -300,7 +353,7 @@ export default function RouteDetails(props) {
           </div>
         }
 
-        {(eventCount.roadConditions > 0) &&
+        {(eventCount && eventCount.roadConditions > 0) &&
           <div className="route-item route-item--roadConditions">
             <span className="route-item__count">
               {eventCount.roadConditions}
@@ -314,7 +367,7 @@ export default function RouteDetails(props) {
           </div>
         }
 
-        {(eventCount.ferries > 0) &&
+        {(eventCount && eventCount.ferries > 0) &&
           <div className="route-item route-item--ferries">
             <span className="route-item__count">
               {eventCount.ferries}

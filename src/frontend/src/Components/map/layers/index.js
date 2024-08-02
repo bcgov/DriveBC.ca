@@ -19,7 +19,7 @@ const layerFuncMap = {
   routeLayer: getRouteLayer,
 }
 
-export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, zIndex, referenceData, updateReferenceFeature) => {
+export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, zIndex, referenceData, updateReferenceFeature, setLoadingLayers) => {
   // Remove layer if it already exists
   if (mapLayers.current[key]) {
     mapRef.current.removeLayer(mapLayers.current[key]);
@@ -33,7 +33,8 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, zIndex, 
       mapRef.current.getView().getProjection().getCode(),
       mapContext,
       referenceData,
-      updateReferenceFeature
+      updateReferenceFeature,
+      setLoadingLayers
     );
 
     mapRef.current.addLayer(mapLayers.current[key]);

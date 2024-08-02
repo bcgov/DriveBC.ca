@@ -200,6 +200,15 @@ def add_order_to_cameras():
     WebcamAPI().set_list_data()
 
 
+def reverse_ls_routes(ls_routes):
+    """
+    Reverse a list of linestrings and all their points
+
+    """
+    res = ls_routes[::-1]
+    return [LineString(ls[::-1]) for ls in res]
+
+
 def build_route_geometries():
     """
     DBC22-1183
@@ -210,25 +219,37 @@ def build_route_geometries():
 
     """
     for key, routes in hwy_coords.items():
-        # Do not build for existing entries
-        if not RouteGeometry.objects.filter(id=key).first():
-            ls_routes = []
+        ls_routes = []
 
-            # Go through each route and create a geometry
-            for route in routes:
-                payload = {
-                    "points": route,
+        # Go through each route and create a geometry
+        for route in routes:
+            payload = {
+                "points": route,
+            }
+
+            response = requests.get(
+                env("DRIVEBC_ROUTE_PLANNER_API_BASE_URL") + "/directions.json",
+                params=payload,
+                headers={
+                    "apiKey": env("DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY"),
                 }
+            )
 
-                response = requests.get(
-                    env("DRIVEBC_ROUTE_PLANNER_API_BASE_URL") + "/directions.json",
-                    params=payload,
-                    headers={
-                        "apiKey": env("DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY"),
-                    }
-                )
+            points_list = [Point(p) for p in response.json()['route']]
+            ls_routes.append(LineString(points_list))
 
-                points_list = [Point(p) for p in response.json()['route']]
-                ls_routes.append(LineString(points_list))
+        highways_to_reverse = [
+            '2', '3B', '9', '11', '13', '15', '17A', '23',
+            '27', '29', '31', '33', '35', '37', '43', '91A',
+            '93', '95', '97', '97C'
+        ]
 
+        if key in highways_to_reverse:
+            ls_routes = reverse_ls_routes(ls_routes)
+
+        # Save or update
+        if not RouteGeometry.objects.filter(id=key).first():
             RouteGeometry.objects.create(id=key, routes=MultiLineString(ls_routes))
+
+        else:
+            RouteGeometry.objects.filter(id=key).update(routes=MultiLineString(ls_routes))

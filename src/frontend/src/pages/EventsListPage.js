@@ -12,11 +12,17 @@ import { updateEvents } from '../slices/feedsSlice';
 import { booleanIntersects, point, lineString, multiPolygon } from '@turf/turf';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faAngleDown
+  faAngleDown,
+  faBarsSort,
+  faRoute,
+  faXmark,
+  faFlag
 } from '@fortawesome/pro-solid-svg-icons';
+import { faRoute as faRouteEmpty } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Container from 'react-bootstrap/Container';
 import Dropdown from 'react-bootstrap/Dropdown';
+import Button from 'react-bootstrap/Button';
 
 // Internal imports
 import {
@@ -33,13 +39,12 @@ import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Advisories from '../Components/advisories/Advisories';
 import EventCard from '../Components/events/EventCard';
 import EventsTable from '../Components/events/EventsTable';
-import EventTypeIcon from '../Components/events/EventTypeIcon';
 import Filters from '../Components/shared/Filters.js';
 import Footer from '../Footer.js';
 import PageHeader from '../PageHeader';
 import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent.js';
-import AdvisoriesWidget from '../Components/advisories/AdvisoriesWidget';
+import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
 
 // Styling
 import './EventsListPage.scss';
@@ -105,6 +110,8 @@ export default function EventsListPage() {
   const [advisoriesInRoute, setAdvisoriesInRoute] = useState([]);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
+  const [openAdvisoriesOverlay, setOpenAdvisoriesOverlay] = useState(false);
+  const [openSearchOverlay, setOpenSearchOverlay] = useState(false);
 
   // Error handling
   const displayError = (error) => {
@@ -304,110 +311,166 @@ export default function EventsListPage() {
   const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   return (
-    <div className="events-page">
-      {showNetworkError &&
-        <NetworkErrorPopup />
-      }
-
-      {!showNetworkError && showServerError &&
-        <ServerErrorPopup setShowServerError={setShowServerError} />
-      }
-
-      <PageHeader
-        title="Delays"
-        description="Find out if there are any delays that might impact your journey before you go.">
-      </PageHeader>
-
-      <Container className="container--sidepanel">
-        { xXlargeScreen &&
-          <div className="container--sidepanel__left">
-            <RouteSearch showFilterText={true} />
-            <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
-          </div>
+    <React.Fragment>
+      <div className="events-page">
+        {showNetworkError &&
+          <NetworkErrorPopup />
         }
 
-        <div className="container--sidepanel__right">
-          <div className="controls-container">
-            { !xXlargeScreen &&
-              <React.Fragment>
-                <AdvisoriesWidget advisories={advisoriesInRoute} onMap={false} />
-                <RouteSearch showFilterText={true} />
-              </React.Fragment>
-            }
-            <Dropdown>
-              <Dropdown.Toggle disabled={selectedRoute && selectedRoute.routeFound}>
-                Sort: {getSortingDisplay(sortingKey)}
-                <FontAwesomeIcon icon={faAngleDown} />
-              </Dropdown.Toggle>
+        {!showNetworkError && showServerError &&
+          <ServerErrorPopup setShowServerError={setShowServerError} />
+        }
 
-              <Dropdown.Menu align={largeScreen ? 'end' : 'start'} flip={false}>
-                {getSortingList()}
-              </Dropdown.Menu>
-            </Dropdown>
+        <PageHeader
+          title="Delays"
+          description="Find out if there are any delays that might impact your journey before you go.">
+        </PageHeader>
 
-            <Filters
-              callback={toggleEventCategoryFilter}
-              disableFeatures={true}
-              enableRoadConditions={false}
-              textOverride={'List filters'}
-            />
+        <Container className="container--sidepanel">
+          { xXlargeScreen &&
+            <div className="container--sidepanel__left">
+              <RouteSearch showFilterText={true} />
+              <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
+            </div>
+          }
+
+          <div className="container--sidepanel__right">
+            <div className="controls-container">
+              {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
+                <Button
+                  className={'advisories-btn'}
+                  aria-label="open advisories list"
+                  onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
+                  <span className="advisories-title">
+                    <FontAwesomeIcon icon={faFlag} />
+                    Advisories
+                  </span>
+                  <span className="advisories-count">{advisoriesInRoute.length}</span>
+                </Button>
+              }
+
+              { !xXlargeScreen &&
+                <Button
+                  className={`findRoute-btn ${(selectedRoute && selectedRoute.routeFound) ? 'routeFound' : ''}`}
+                  variant="outline-primary"
+                  aria-label={(selectedRoute && selectedRoute.routeFound)? 'Edit route' : 'Find route'}
+                  onClick={() => setOpenSearchOverlay(!openSearchOverlay)}>
+                    <FontAwesomeIcon icon={(selectedRoute && selectedRoute.routeFound) ? faRoute : faRouteEmpty } />
+                    {(selectedRoute && selectedRoute.routeFound)? 'Edit route' : 'Find route'}
+                </Button>
+              }
+
+              <Dropdown className="sorting">
+                <Dropdown.Toggle variant="outline-primary" disabled={selectedRoute && selectedRoute.routeFound}>
+                  {xXlargeScreen ?
+                    <React.Fragment>
+                      Sort: {getSortingDisplay(sortingKey)}
+                      <FontAwesomeIcon icon={faAngleDown} />
+                    </React.Fragment>
+                    : <FontAwesomeIcon icon={faBarsSort} />}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu align={largeScreen ? 'end' : 'start'} flip={false}>
+                  {getSortingList()}
+                </Dropdown.Menu>
+              </Dropdown>
+
+              <Filters
+                callback={toggleEventCategoryFilter}
+                disableFeatures={true}
+                enableRoadConditions={false}
+                textOverride={xXlargeScreen ? 'List filters': ' '}
+                isDelaysPage={true}
+              />
+            </div>
+
+            <div className="events-list-table">
+              { largeScreen && !!processedEvents.length &&
+                <EventsTable data={processedEvents} routeHandler={handleRoute} showLoader={showLoader} sortingKey={sortingKey} />
+              }
+
+              { !largeScreen &&
+                <div className="events-list">
+                  { !showLoader && processedEvents.map(
+                    (e) => (
+                      <div className="card-selector" key={e.id}
+                        onClick={() => handleRoute(e)}
+                        onKeyDown={(keyEvent) => {
+                          if (keyEvent.keyCode == 13) {
+                            handleRoute(e);
+                          }
+                        }}>
+
+                        <EventCard
+                          className="event"
+                          event={e}
+                        />
+                      </div>
+                    ),
+                  )}
+
+                  { showLoader && new Array(5).fill('').map(
+                    (_, index) => (
+                      <div className="card-selector" key={`loader-${index}`}>
+                        <EventCard
+                          className="event"
+                          showLoader={true}
+                        />
+                      </div>
+                    ),
+                  )}
+                </div>
+              }
+
+              {!processedEvents.length &&
+                <div className="empty-event-display">
+                  <h2>No delays to display</h2>
+
+                  <strong>Do you have a starting location and a destination entered?</strong>
+                  <p>Adding a route will narrow down the information for the whole site, including the delays list. There might not be any delays between those two locations.</p>
+
+                  <strong>Have you hidden any of the layers using the filters?</strong>
+                  <p>Try toggling the filters on and off so that more information can be displayed.</p>
+                </div>
+              }
+            </div>
           </div>
+        </Container>
+        <Footer />
+      </div>
 
-          <div className="events-list-table">
-            { largeScreen && !!processedEvents.length &&
-              <EventsTable data={processedEvents} routeHandler={handleRoute} showLoader={showLoader} sortingKey={sortingKey} />
-            }
-
-            { !largeScreen &&
-              <div className="events-list">
-                { !showLoader && processedEvents.map(
-                  (e) => (
-                    <div className="card-selector" key={e.id}
-                      onClick={() => handleRoute(e)}
-                      onKeyDown={(keyEvent) => {
-                        if (keyEvent.keyCode == 13) {
-                          handleRoute(e);
-                        }
-                      }}>
-
-                      <EventCard
-                        className="event"
-                        event={e}
-                        icon={<EventTypeIcon event={e} />}
-                      />
-                    </div>
-                  ),
-                )}
-
-                { showLoader && new Array(5).fill('').map(
-                  (_, index) => (
-                    <div className="card-selector" key={`loader-${index}`}>
-                      <EventCard
-                        className="event"
-                        showLoader={true}
-                      />
-                    </div>
-                  ),
-                )}
-              </div>
-            }
-
-            {!processedEvents.length &&
-              <div className="empty-event-display">
-                <h2>No delays to display</h2>
-
-                <strong>Do you have a starting location and a destination entered?</strong>
-                <p>Adding a route will narrow down the information for the whole site, including the delays list. There might not be any delays between those two locations.</p>
-
-                <strong>Have you hidden any of the layers using the filters?</strong>
-                <p>Try toggling the filters on and off so that more information can be displayed.</p>
-              </div>
-            }
-          </div>
+      {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
+        <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}>
+          <span id="button-close-overlay" aria-hidden="false" hidden>close overlay</span>
+          <button
+            className="close-panel close-overlay"
+            aria-label={`${openAdvisoriesOverlay ? 'close overlay' : ''}`}
+            aria-labelledby="button-close-overlay"
+            aria-hidden={`${openAdvisoriesOverlay ? false : true}`}
+            tabIndex={`${openAdvisoriesOverlay ? 0 : -1}`}
+            onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
+          <AdvisoriesPanel advisories={advisories} />
         </div>
-      </Container>
+      }
 
-      <Footer />
-    </div>
+      {!xXlargeScreen &&
+        <div className={`overlay search-overlay ${openSearchOverlay ? 'open' : ''}`}>
+          <span id="button-close-overlay" aria-hidden="false" hidden>close overlay</span>
+          <button
+            className="close-overlay"
+            aria-label={`${openSearchOverlay ? 'close overlay' : ''}`}
+            aria-labelledby="button-close-overlay"
+            aria-hidden={`${openSearchOverlay ? false : true}`}
+            tabIndex={`${openSearchOverlay ? 0 : -1}`}
+            onClick={() => setOpenSearchOverlay(!openSearchOverlay)}>
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
+          <p className="overlay__header bold">Find route</p>
+          <RouteSearch showFilterText={true} />
+        </div>
+      }
+    </React.Fragment>
   );
 }
