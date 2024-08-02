@@ -56,6 +56,9 @@ export const get = (url, params, headers) => request(url, params, headers, "GET"
 export const post = (url, params, headers) => request(url, params, headers, "POST");
 
 export const stripRichText = (richText) => {
-  const strippedText = richText.replace(/(<([^>]+)>)/gi, "");
+  // Strip all link tags and replace all other tags with a space
+  const strippedText = richText.replace(/<a\b[^>]*>(.*?)<\/a>/gi, "$1").replace(/(<([^>]+)>)/gi, " ");
+
+  // Return the first 250 characters
   return strippedText.substring(0, 250);
 }
