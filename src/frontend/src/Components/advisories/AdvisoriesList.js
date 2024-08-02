@@ -1,9 +1,6 @@
 // React
 import React from 'react';
 
-// Navigation
-import { useNavigate } from 'react-router-dom';
-
 // Components and functions
 import { stripRichText } from '../data/helper';
 import FriendlyTime from '../shared/FriendlyTime';
@@ -23,12 +20,8 @@ export default function Advisories(props) {
   // State, props and context
   const { advisories, showDescription, showTimestamp, showPublished, showArrow } = props;
 
-  // Navigation
-  const navigate = useNavigate();
-
   function handleClick(advisory) {
-     navigate(`/advisories/${advisory.id}`);
-     trackEvent('click', 'advisories-list', 'Advisory', advisory.title, advisory.teaser);
+    trackEvent('click', 'advisories-list', 'Advisory', advisory.title, advisory.teaser);
   }
 
   // Rendering
@@ -36,7 +29,7 @@ export default function Advisories(props) {
     <ul className="advisories-list">
       {!!advisories && advisories.map((advisory, index) => {
         return (
-          <li className="advisory-li unread" key={advisory.id} onClick={() => handleClick(advisory)}
+          <a className="advisory-li unread" key={advisory.id} href={`/advisories/${advisory.id}`} onClick={() => handleClick(advisory)}
             onKeyDown={(keyEvent) => {
               if (keyEvent.keyCode == 13) {
                 handleClick(advisory);
@@ -84,7 +77,7 @@ export default function Advisories(props) {
                 <FontAwesomeIcon icon={faChevronRight} />
               </div>
             }
-          </li>
+          </a>
         );
       })}
     </ul>
