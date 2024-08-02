@@ -1,6 +1,6 @@
 // React
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // Redux
 import { useSelector } from 'react-redux';
@@ -25,11 +25,11 @@ import PageHeader from '../PageHeader';
 import './SavedCamerasPage.scss';
 
 export default function SavedCamerasPage() {
+  /* Setup */
   document.title = 'DriveBC - My Cameras';
 
-  const { authContext } = useContext(AuthContext);
-
-  const navigate = useNavigate();
+  // Context
+  const { authContext, setAuthContext } = useContext(AuthContext);
 
   // Redux
   const { cameras, favCams } = useSelector(useCallback(memoize(state => ({
@@ -37,13 +37,42 @@ export default function SavedCamerasPage() {
     favCams: state.user.favCams
   }))));
 
-  // UseRef hooks
+  // Refs
   const isInitialMount = useRef(true);
+  const showedModal = useRef(false);
 
-  // UseState hooks
+  // States
   const [processedCameras, setProcessedCameras] = useState(null);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
+
+  // Effects
+  useEffect(() => {
+    if (!authContext.loginStateKnown) {
+      return;
+    }
+
+    // Show login modal once if user is not logged in
+    if (!authContext.username && !showedModal.current) {
+      toggleAuthModal("Sign In");
+      showedModal.current = true;
+    }
+
+    // Load data if user is logged in
+    if (authContext.username) {
+      getSavedCameras();
+    }
+  }, [authContext]);
+
+  useEffect(() => {
+    // Do not run on initial mount, it will run on authContext update
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    getSavedCameras();
+  }, [favCams]);
 
   // Error handling
   const displayError = (error) => {
@@ -55,8 +84,12 @@ export default function SavedCamerasPage() {
     }
   }
 
+  /* Helpers */
   // Data functions
   const getSavedCameras = async () => {
+    // Fav cams not ready, return
+    if (!favCams) return;
+
     // Fetch data if it doesn't already exist
     const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
 
@@ -88,32 +121,18 @@ export default function SavedCamerasPage() {
     }
   };
 
-  // useEffect hooks
-  // Redirect to login page if user is not logged in
-  useEffect(() => {
-    if (!authContext.loginStateKnown) {
-      return;
-    }
+  /* Handlers */
+  const toggleAuthModal = (action) => {
+    setAuthContext((prior) => {
+      if (!prior.showingModal) {
+        return { ...prior, showingModal: true, action };
+      }
+      return prior;
+    })
+  };
 
-    if (!authContext.username) {
-      navigate('/');
-      return;
-    }
-
-    getSavedCameras();
-  }, [authContext]);
-
-  useEffect(() => {
-    // Do not run on initial mount, it will run on authContext update
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-
-    getSavedCameras();
-  }, [favCams]);
-
-  // Rendering
+  /* Rendering */
+  // Main component
   return (
     <div className="saved-cameras-page">
       {showNetworkError &&
@@ -129,22 +148,35 @@ export default function SavedCamerasPage() {
         description="Manage and view your saved cameras here.">
       </PageHeader>
 
-      <Container>
-        <CameraList
-          cameras={ processedCameras ? processedCameras : [] }
-          getCheckedHighway={()=>{}}
-        />
+      {authContext.loginStateKnown && authContext.username &&
+        <Container>
+          <CameraList
+            cameras={ processedCameras ? processedCameras : [] }
+            getCheckedHighway={()=>{}} />
 
-        {!(processedCameras && processedCameras.length) &&
-          <div className="empty-cam-display">
-            <h3>No saved cameras</h3>
+          {!(processedCameras && processedCameras.length) &&
+            <div className="empty-cam-display">
+              <h3>No saved cameras</h3>
+
+              <p>
+                You don&apos;t have any saved cameras yet. You can add a saved camera from the <Link to="/" className="link-in-text">map</Link>, the <Link className="link-in-text" to="/cameras">camera list</Link>, or each camera&apos;s detail page by clicking the save camera button &#40;<FontAwesomeIcon icon={faStarOutline} />&#41;.
+              </p>
+            </div>
+          }
+        </Container>
+      }
+
+      {authContext.loginStateKnown && !authContext.username &&
+        <Container>
+          <div className="login-prompt">
+            <h3>Login required</h3>
 
             <p>
-              You don&apos;t have any saved cameras yet. You can add a saved camera from the <Link to="/" className="link-in-text">map</Link>, the <Link className="link-in-text" to="/cameras">camera list</Link>, or each camera&apos;s detail page by clicking the save camera button &#40;<FontAwesomeIcon icon={faStarOutline} />&#41;.
+              You must be <a href="#" onClick={() => toggleAuthModal("Sign In")}>logged in</a> to view this page.
             </p>
           </div>
-        }
-      </Container>
+        </Container>
+      }
 
       <Footer />
     </div>
