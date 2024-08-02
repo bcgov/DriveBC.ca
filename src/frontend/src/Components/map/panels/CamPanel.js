@@ -4,7 +4,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { memoize } from 'proxy-memoize';
-import { pushFavCam, removeFavCam } from '../../../slices/userSlice';
+import { pushFavCam, removeFavCam, updatePendingAction } from '../../../slices/userSlice';
 
 // Navigation
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -38,7 +38,7 @@ export default function CamPanel(props) {
   const { camFeature, isCamDetail } = props;
 
   // Context
-  const { authContext } = useContext(AuthContext);
+  const { authContext, setAuthContext } = useContext(AuthContext);
 
   // Navigation
   const navigate = useNavigate();
@@ -100,7 +100,17 @@ export default function CamPanel(props) {
     }, 5000);
   }, [isRemoving]);
 
-  // Handlers
+  /* Helpers */
+  const toggleAuthModal = (action) => {
+    setAuthContext((prior) => {
+      if (!prior.showingModal) {
+        return { ...prior, showingModal: true, action };
+      }
+      return prior;
+    })
+  };
+
+  /* Handlers */
   const handlePopupClick = e => {
     if (!isCamDetail) {
       navigate(`/cameras/${camera.id}`);
@@ -108,13 +118,24 @@ export default function CamPanel(props) {
   };
 
   const favoriteHandler = () => {
-    if (favCams.includes(camera.id)) {
-      deleteFavoriteCamera(camera.id, dispatch, removeFavCam);
-      setIsRemoving(true);
+    // User logged in, default handler
+    if (favCams && authContext.loginStateKnown && authContext.username) {
+      if (favCams.includes(camera.id)) {
+        deleteFavoriteCamera(camera.id, dispatch, removeFavCam);
+        setIsRemoving(true);
 
+      } else {
+        addFavoriteCamera(camera.id, dispatch, pushFavCam);
+        setIsRemoving(false);
+      }
+
+    // User not logged in, save pending action and open login modal
     } else {
-      addFavoriteCamera(camera.id, dispatch, pushFavCam);
-      setIsRemoving(false);
+      toggleAuthModal('Sign In');
+      dispatch(updatePendingAction({
+        action: 'pushFavCam',
+        payload: camera.id,
+      }));
     }
   }
 
@@ -143,6 +164,7 @@ export default function CamPanel(props) {
             event.stopPropagation();
             clickHandler(index);
           }}>
+
           {cam.orientation}
         </Button>
       );
@@ -158,11 +180,13 @@ export default function CamPanel(props) {
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faVideo} />
         </div>
+
         <div className="popup__title__name">
           <p className="name">Camera</p>
           <ShareURLButton />
         </div>
       </div>
+
       {camera && (
         <div className="popup__content">
           <div className="popup__content__title">
@@ -178,19 +202,21 @@ export default function CamPanel(props) {
               {camera.name}
             </p>
           </div>
+
           {camera.is_on ? (
             <div className="popup__content__image">
               <div className="clip">
                 <img src={camera.links.imageDisplay} width="300" />
               </div>
+
               <div className="timestamp">
                 <p className="driveBC">
                   Drive<span>BC</span>
                 </p>
+
                 <FriendlyTime
                   date={camera.last_update_modified}
-                  asDate={true}
-                />
+                  asDate={true} />
               </div>
             </div>
           ) : (
@@ -199,48 +225,54 @@ export default function CamPanel(props) {
                 <div className="card-pill">
                   <p>Unavailable</p>
                 </div>
+
                 <div className="card-img-box unavailable">
                   <FontAwesomeIcon icon={faVideoSlash} />
                 </div>
+
                 <p>
                   This camera image is temporarily unavailable. Please check
                   again later.
                 </p>
               </div>
+
               <div className="timestamp">
                 <p className="driveBC">
                   Drive<span>BC</span>
                 </p>
+
                 <FriendlyTime
                   date={camera.last_update_modified}
-                  asDate={true}
-                />
+                  asDate={true} />
               </div>
             </div>
           )}
+
           <div className="camera-orientations">
             <img
               className="colocated-camera-icon"
               src={colocatedCamIcon}
               role="presentation"
-              alt="colocated cameras icon"
-            />
+              alt="colocated cameras icon" />
+
             {renderCamGroup()}
           </div>
+
           <div className="popup__content__description">
             <p>{parse(camera.caption)}</p>
           </div>
+
           <div className="popup__content__tools">
-            {favCams != null && authContext.loginStateKnown && authContext.username &&
+            {authContext.loginStateKnown &&
               <button
                 className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
                 aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
-                onClick={favoriteHandler}
-                >
+                onClick={favoriteHandler}>
 
                 {(favCams && favCams.includes(camera.id)) ?
-                (<React.Fragment><FontAwesomeIcon icon={faStar} /><span>Remove</span></React.Fragment>) :
-                (<React.Fragment><FontAwesomeIcon icon={faStarOutline} /><span>Save</span></React.Fragment>) }
+                  (<React.Fragment><FontAwesomeIcon icon={faStar} /><span>Remove</span></React.Fragment>) :
+                  (<React.Fragment><FontAwesomeIcon icon={faStarOutline} /><span>Save</span></React.Fragment>)
+                }
               </button>
             }
 

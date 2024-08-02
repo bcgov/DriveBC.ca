@@ -4,7 +4,8 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: {
     favCams: null,
-    favRoutes: null
+    favRoutes: null,
+    pendingAction: null
   },
   reducers: {
     // General
@@ -19,9 +20,12 @@ export const userSlice = createSlice({
     },
     pushFavCam: (state, action) => {
       const resFavCams = !state.favCams ? [] : [...state.favCams];
-      resFavCams.push(action.payload);
 
-      state.favCams = resFavCams;
+      // Push if not already in the list
+      if (!resFavCams.some(camId => camId === action.payload)) { // payload is ID only due to cam group references
+        resFavCams.push(action.payload);
+        state.favCams = resFavCams;
+      }
     },
     removeFavCam: (state, action) => {
       const resFavCams = !state.favCams ? [] : [...state.favCams];
@@ -42,13 +46,23 @@ export const userSlice = createSlice({
       const resFavRoutes = !state.favRoutes ? [] : [...state.favRoutes];
       state.favRoutes = resFavRoutes.filter(route => route.id != action.payload);
     },
+
+    // Pending action
+    updatePendingAction: (state, action) => {
+      const originalState = !state.pendingAction ? {} : state.pendingAction;
+      state.pendingAction = {...originalState, ...action.payload};
+    },
+    resetPendingAction: (state, action) => {
+      state.pendingAction = null;
+    },
   },
 });
 
 export const {
   resetFavLists, // General
   updateFavCams, pushFavCam, removeFavCam, // Cams
-  updateFavRoutes, pushFavRoute, removeFavRoute // Routes
+  updateFavRoutes, pushFavRoute, removeFavRoute, // Routes
+  updatePendingAction, resetPendingAction // Pending action
 } = userSlice.actions;
 
 export default userSlice.reducer;

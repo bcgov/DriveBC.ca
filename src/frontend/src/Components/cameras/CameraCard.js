@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { memoize } from 'proxy-memoize';
-import { pushFavCam, removeFavCam } from '../../slices/userSlice';
+import { pushFavCam, removeFavCam, updatePendingAction } from '../../slices/userSlice';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -38,7 +38,7 @@ export default function CameraCard(props) {
   const { cameraData } = props;
   const location = useLocation();
 
-  const { authContext } = useContext(AuthContext);
+  const { authContext, setAuthContext } = useContext(AuthContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -83,7 +83,17 @@ export default function CameraCard(props) {
   // Misc
   const navigate = useNavigate();
 
-  // Handlers
+  /* Helpers */
+  const toggleAuthModal = (action) => {
+    setAuthContext((prior) => {
+      if (!prior.showingModal) {
+        return { ...prior, showingModal: true, action };
+      }
+      return prior;
+    })
+  };
+
+  /* Handlers */
   function handleClick() {
     navigate(`/cameras/${camera.id}`);
     window.snowplow('trackSelfDescribingEvent', {
@@ -140,6 +150,26 @@ export default function CameraCard(props) {
     const id = location.pathname == '/my-cameras' ? cameraData.id : camera.id;
     deleteFavoriteCamera(id, dispatch, removeFavCam);
     setIsRemoving(true);
+  }
+
+  const favoriteHandler = () => {
+    // User logged in, default handler
+    if (favCams && authContext.loginStateKnown && authContext.username) {
+      if (favCams.includes(camera.id)) {
+        deleteCamera();
+
+      } else {
+        addCamera();
+      }
+
+    // User not logged in, save pending action and open login modal
+    } else {
+      toggleAuthModal('Sign In');
+      dispatch(updatePendingAction({
+        action: 'pushFavCam',
+        payload: camera.id,
+      }));
+    }
   }
 
   function handleChildClick(e) {
@@ -289,11 +319,11 @@ export default function CameraCard(props) {
           <span>View on map</span>
         </button>
 
-        {favCams != null && authContext.loginStateKnown && authContext.username &&
+        {authContext.loginStateKnown &&
           <button
             className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
             aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
-            onClick={favCams && favCams.includes(camera.id) ? deleteCamera : addCamera}>
+            onClick={favoriteHandler}>
 
             {(favCams && favCams.includes(camera.id)) ?
             (<React.Fragment><FontAwesomeIcon icon={faStar} /><span>Remove</span></React.Fragment>) :
