@@ -36,7 +36,7 @@ export default function LocalWeatherPanel(props) {
   }, [feature]);
 
   return (
-    <div className="popup popup--road-weather" tabIndex={0}>
+    <div className="popup popup--weather popup--weather--local" tabIndex={0}>
       <div className="popup__title">
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faTemperatureHalf} />
