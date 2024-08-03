@@ -54,7 +54,7 @@ export default function RegionalWeatherPanel(props) {
 
   /* Main component */
   return (
-    <div className="popup popup--regional-weather" tabIndex={0}>
+    <div className="popup popup--weather popup--weather--regional" tabIndex={0}>
       <div className="popup__title">
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faSunCloud} />

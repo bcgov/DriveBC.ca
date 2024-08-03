@@ -2,8 +2,6 @@
 
 .share-url {
   .copy-btn {
-    margin-left: 1rem;
-    margin-top: 1rem;
     padding: .4rem .75rem;
     border-radius: 4px;
     background: #EDEBE9;
@@ -18,5 +16,34 @@
     svg {
       margin-right: 0.4rem;
     }
+  }
+}
+
+.popup {
+  &--camera {
+    .copy-btn {
+      background: darken($Surface-camera, 8%);
+
+      &:hover {
+        background: darken($Surface-camera, 15%);
+      }
+    }
+  }
+  &--event {
+    &.major, &.closures {
+
+    }
+    &.minor {
+
+    }
+  }
+  &--ferry {
+
+  }
+  &--weather {
+
+  }
+  &--reststop {
+
   }
 }

@@ -196,8 +196,7 @@
   }
 }
 
-.close-panel:has(+ .panel-content .popup--regional-weather),
-.close-panel:has(+ .panel-content .popup--road-weather) {
+.close-panel:has(+ .panel-content .popup--weather){
   color: $Type-Primary;
 
   &:hover {
