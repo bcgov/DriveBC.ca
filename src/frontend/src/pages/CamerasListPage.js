@@ -318,11 +318,9 @@ export default function CamerasListPage() {
 
       {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
         <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}>
-          <span id="button-close-overlay" aria-hidden="false" hidden>close overlay</span>
           <button
             className="close-panel close-overlay"
             aria-label={`${openAdvisoriesOverlay ? 'close overlay' : ''}`}
-            aria-labelledby="button-close-overlay"
             aria-hidden={`${openAdvisoriesOverlay ? false : true}`}
             tabIndex={`${openAdvisoriesOverlay ? 0 : -1}`}
             onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
@@ -334,7 +332,6 @@ export default function CamerasListPage() {
 
       {!xXlargeScreen &&
         <div className={`overlay search-overlay ${openSearchOverlay ? 'open' : ''}`}>
-          <span id="button-close-overlay" aria-hidden="false" hidden>close overlay</span>
           <button
             className="close-overlay"
             aria-label={`${openSearchOverlay ? 'close overlay' : ''}`}

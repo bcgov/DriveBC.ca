@@ -367,7 +367,11 @@ export default function EventsListPage() {
                       Sort: {getSortingDisplay(sortingKey)}
                       <FontAwesomeIcon icon={faAngleDown} />
                     </React.Fragment>
-                    : <FontAwesomeIcon icon={faBarsSort} />}
+                    : 
+                    <React.Fragment>
+                      <span className="sr-only" aria-hidden="false">Sorting options</span>
+                      <FontAwesomeIcon icon={faBarsSort} />
+                    </React.Fragment>}
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu align={largeScreen ? 'end' : 'start'} flip={false}>
@@ -441,11 +445,9 @@ export default function EventsListPage() {
 
       {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
         <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}>
-          <span id="button-close-overlay" aria-hidden="false" hidden>close overlay</span>
           <button
             className="close-panel close-overlay"
             aria-label={`${openAdvisoriesOverlay ? 'close overlay' : ''}`}
-            aria-labelledby="button-close-overlay"
             aria-hidden={`${openAdvisoriesOverlay ? false : true}`}
             tabIndex={`${openAdvisoriesOverlay ? 0 : -1}`}
             onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
@@ -457,11 +459,9 @@ export default function EventsListPage() {
 
       {!xXlargeScreen &&
         <div className={`overlay search-overlay ${openSearchOverlay ? 'open' : ''}`}>
-          <span id="button-close-overlay" aria-hidden="false" hidden>close overlay</span>
           <button
             className="close-overlay"
             aria-label={`${openSearchOverlay ? 'close overlay' : ''}`}
-            aria-labelledby="button-close-overlay"
             aria-hidden={`${openSearchOverlay ? false : true}`}
             tabIndex={`${openSearchOverlay ? 0 : -1}`}
             onClick={() => setOpenSearchOverlay(!openSearchOverlay)}>
