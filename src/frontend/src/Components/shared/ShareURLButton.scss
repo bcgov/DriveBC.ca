@@ -31,19 +31,54 @@
   }
   &--event {
     &.major, &.closures {
+      .copy-btn {
+        background: darken($Surface-major, 8%);
+  
+        &:hover {
+          background: darken($Surface-major, 15%);
+        }
+      }
 
     }
     &.minor {
+      .copy-btn {
+        background: darken($Surface-minor, 8%);
+  
+        &:hover {
+          background: darken($Surface-minor, 15%);
+        }
+      }
 
     }
   }
   &--ferry {
+    .copy-btn {
+      background: darken($Surface-ferry, 8%);
+
+      &:hover {
+        background: darken($Surface-ferry, 15%);
+      }
+    }
 
   }
   &--weather {
+    .copy-btn {
+      background: darken($Surface-weather, 8%);
+
+      &:hover {
+        background: darken($Surface-weather, 15%);
+      }
+    }
 
   }
   &--reststop {
+    .copy-btn {
+      background: darken($Surface-reststop, 8%);
+
+      &:hover {
+        background: darken($Surface-reststop, 15%);
+      }
+    }
 
   }
 }

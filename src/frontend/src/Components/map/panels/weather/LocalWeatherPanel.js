@@ -41,7 +41,10 @@ export default function LocalWeatherPanel(props) {
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faTemperatureHalf} />
         </div>
-        <p className="name">Local Weather</p>
+        <p className="popup__title__name">
+          Local Weather
+          <ShareURLButton />
+        </p>
         <span className="sub-name">Weather Stations</span>
       </div>
 
@@ -150,8 +153,6 @@ export default function LocalWeatherPanel(props) {
             </div>
           }
         </div>
-
-        <ShareURLButton />
 
         <div className="popup__content__footer">
           <p>Temperatures displayed in Celcius (&deg;C) <br /></p>

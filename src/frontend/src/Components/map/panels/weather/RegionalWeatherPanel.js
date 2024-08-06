@@ -59,7 +59,10 @@ export default function RegionalWeatherPanel(props) {
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faSunCloud} />
         </div>
-        <p className="name">Regional Weather</p>
+        <p className="popup__title__name">
+          Regional Weather
+          <ShareURLButton />
+        </p>
       </div>
 
       { weather.warnings &&
@@ -178,8 +181,6 @@ export default function RegionalWeatherPanel(props) {
             </a>
           </p>
         </div>
-
-        <ShareURLButton />
       </div>
     </div>
   );
