@@ -57,11 +57,20 @@
   }
 }
 
-.share-url-camera, .share-url-reststop {
+.share-url-camera {
   .copy-btn {
     background: #CBE5FB;
     &:hover {
       background: #AAD4F9;
+    }
+  }
+}
+
+.share-url-reststop {
+  .copy-btn {
+    background: #D5D7E0;
+    &:hover {
+      background: #C5C7CF;
     }
   }
 }

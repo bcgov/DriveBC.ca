@@ -34,7 +34,7 @@ export default function FerryPanel(props) {
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faFerry} />
         </div>
-        <p className="name popup__title__name">
+        <p className="popup__title__name">
           <a
             href={ferryData.url}
             target="_blank"
