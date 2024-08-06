@@ -6,7 +6,7 @@
     margin-top: 1rem;
     padding: .4rem .75rem;
     border-radius: 4px;
-    background: #EDEBE9;
+    // background: #EDEBE9;
     border: none;
     color: #292929;
     transition: 0.3s;
@@ -17,6 +17,51 @@
 
     svg {
       margin-right: 0.4rem;
+    }
+  }
+}
+
+.share-url-minor {
+  .copy-btn {
+    background: #FDE1B0;
+    &:hover {
+      background: #FCD38D;
+    }
+  }
+}
+
+.share-url-major, .share-url-closure {
+  .copy-btn {
+    background: #E9C3C5;
+    &:hover {
+      background: #DFA9AC;
+    }
+  }
+}
+
+.share-url-ferry {
+  .copy-btn {
+    background: #D2FFDD;
+    &:hover {
+      background: #AEFFC3;
+    }
+  }
+}
+
+.share-url-weather {
+  .copy-btn {
+    background: #DAD6D2;
+    &:hover {
+      background: #C9C4BE;
+    }
+  }
+}
+
+.share-url-camera, .share-url-reststop {
+  .copy-btn {
+    background: #CBE5FB;
+    &:hover {
+      background: #AAD4F9;
     }
   }
 }

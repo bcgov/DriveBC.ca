@@ -160,7 +160,7 @@ export default function CamPanel(props) {
         </div>
         <div className="popup__title__name">
           <p className="name">Camera</p>
-          <ShareURLButton />
+          <ShareURLButton type={`camera`}/>
         </div>
       </div>
       {camera && (

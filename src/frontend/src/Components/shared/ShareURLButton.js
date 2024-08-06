@@ -11,7 +11,7 @@ import Alert from './Alert';
 // Styling
 import './ShareURLButton.scss';
 
-export default function ShareURLButton() {
+export default function ShareURLButton({type}) {
   /* Setup */
   // Refs
   const timeout = useRef();
@@ -44,7 +44,7 @@ export default function ShareURLButton() {
 
   // Main component
   return (
-    <div className="share-url">
+    <div className={`share-url share-url-${type}`}>
       <button className="copy-btn" onClick={copyToClipboard}>
         <FontAwesomeIcon icon={faShareFromSquare} />
         <span>Share</span>
