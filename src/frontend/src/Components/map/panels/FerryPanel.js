@@ -55,7 +55,6 @@ export default function FerryPanel(props) {
           <p>{parse(ferryData.service_hours)}</p>
         </div>
         
-        <ShareURLButton />
       </div>
     </div>
   );

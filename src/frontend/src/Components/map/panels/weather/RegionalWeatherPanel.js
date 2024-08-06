@@ -181,8 +181,6 @@ export default function RegionalWeatherPanel(props) {
             </a>
           </p>
         </div>
-
-        <ShareURLButton />
       </div>
     </div>
   );

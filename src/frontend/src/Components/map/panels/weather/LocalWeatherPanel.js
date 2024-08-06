@@ -155,8 +155,6 @@ export default function LocalWeatherPanel(props) {
           }
         </div>
 
-        <ShareURLButton />
-
         <div className="popup__content__footer">
           <p>Temperatures displayed in Celcius (&deg;C) <br /></p>
           <p>

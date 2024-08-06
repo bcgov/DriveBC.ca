@@ -81,7 +81,6 @@ export default function EventPanel(props) {
           <p onClick={() => console.log(eventData)}>{eventData.id}</p>
         </div>
 
-        <ShareURLButton />
       </div>
     </div>
   );
