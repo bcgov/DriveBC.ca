@@ -411,7 +411,7 @@ export default function RouteDetails(props) {
                     <FontAwesomeIcon icon={faInfoCircle} />
                   </OverlayTrigger>
                 </Form.Label>
-                <Form.Control type="text" placeholder="Enter a name for this route" onChange={(e) => setNickName(e.target.value)}/>
+                <Form.Control defaultValue={getDefaultLabel()} type="text" placeholder="Enter a name for this route" onChange={(e) => setNickName(e.target.value)}/>
               </Form.Group>
             </Form>
             <div className="modal-buttons">
