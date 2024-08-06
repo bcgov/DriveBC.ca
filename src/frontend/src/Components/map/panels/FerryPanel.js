@@ -34,12 +34,14 @@ export default function FerryPanel(props) {
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faFerry} />
         </div>
-        <p className="name">
+        <p className="popup__title__name">
           <a
             href={ferryData.url}
             target="_blank"
             rel="noreferrer">{`${ferryData.title}`}</a>
+            <ShareURLButton />
         </p>
+        
       </div>
       <div className="popup__content">
         {ferryData.image_url && (
@@ -53,8 +55,6 @@ export default function FerryPanel(props) {
           <p>{parse(ferryData.seasonal_description)}</p>
           <p>{parse(ferryData.service_hours)}</p>
         </div>
-        
-        <ShareURLButton />
       </div>
     </div>
   );
