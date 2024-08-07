@@ -20,6 +20,16 @@
     & > div {
       display: flex;
 
+      .header {
+        color: $BC-Blue;
+        background-color: $BC-Blue-Light;
+        width: fit-content;
+        flex: 0 0 100px;
+        display: flex;
+        align-items: center;
+        padding: 8px 4px;
+      }
+
       .content {
         border-top: 1px solid $Divider;
         padding: 8px;
@@ -31,13 +41,6 @@
           border-top: none;
         }
       }
-    }
-
-    .header {
-      color: $BC-Blue;
-      background-color: $BC-Blue-Light;
-      width: fit-content;
-      flex: 0 0 100px;
     }
 
     .map {
@@ -68,10 +71,6 @@
             color: $Type-status-red;
           }
         }
-      }
-
-      .next-update, .last-update {
-        white-space: nowrap;
       }
     }
   }
