@@ -38,9 +38,11 @@ export default function EventPanel(props) {
         <div className="popup__title__icon">
           <EventTypeIcon event={eventData} state="active" />
         </div>
-        <p className="popup__title__name">{getTypeDisplay(eventData)}
+        <div className="popup__title__name">
+          <p className="name">{getTypeDisplay(eventData)}</p>
           <ShareURLButton />
-        </p>
+        </div>
+        
       </div>
 
       <div className="popup__content">
