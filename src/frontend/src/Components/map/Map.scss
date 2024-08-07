@@ -122,6 +122,9 @@
 
         &.margin-pushed{
           margin-left: 390px;
+          @media (max-width: 767px) {
+            margin-left: 0px;
+          }
         }
 
 
