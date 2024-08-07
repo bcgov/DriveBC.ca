@@ -187,3 +187,14 @@ $danger: $Error;
     }
   }
 }
+
+// Spinner
+.spinner-border {
+  --bs-spinner-width: 0.875rem;
+  --bs-spinner-height: 0.875rem;
+  --bs-spinner-border-width: 0.125em;
+  --bs-spinner-animation-speed: 0.5s;
+  color: $Type-Disabled;
+  position: absolute;
+  margin-left: calc(3px + 0.25rem);
+}

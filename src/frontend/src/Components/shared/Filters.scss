@@ -9,12 +9,6 @@ button.btn.open-filters {
     background: $Type-Link;
     color: #FFFFFF;
   }
-
-  // &:focus {
-  //   border-color: #8099b3;
-  //   outline: 0;
-  //   box-shadow: 0 0 0 0.25rem rgba(1, 51, 102, 0.25);
-  // }
 }
 
 .filters {
@@ -27,8 +21,13 @@ button.btn.open-filters {
   border-radius: 4px;
   background-color: $Surface-tinted;
   box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
-  padding: 1rem;
-  overflow-y: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  @media (orientation: landscape) and (max-width: 767px) {
+    max-height: calc(100% - 60px);
+  }
 
   @media (min-width: 768px) {
     position: absolute;
@@ -40,7 +39,8 @@ button.btn.open-filters {
   }
 
   .filters-title {
-    margin-bottom: 8px;
+    margin: 1rem 1rem 0;
+    font-size: 1.125rem;
   }
 
   button.close-filters {
@@ -57,18 +57,19 @@ button.btn.open-filters {
   }
 
   .filters-list {
-    padding-top: 16px;
+    padding: 1rem;
+    overflow-y: auto;
+    background: white;
 
     .filter-group {
       &__title {
-
+        font-size: 0.875rem;
         font-weight: 700;
-        padding-bottom: 8px;
-        border-bottom: 1px solid $Divider;
+        margin-bottom: 0.25rem;
       }
 
       & + .filter-group {
-        margin-top: 24px;
+        margin-top: 12px;
       }
 
       .filter-item {
@@ -79,78 +80,131 @@ button.btn.open-filters {
           margin-top: 8px;
         }
 
-        &--closures {
-          svg {
-            font-size: 1.25rem;
-          }
-        }
-
-        label {
+        &__button {
           display: flex;
           align-items: center;
+          background-color: $Grey20;
+          padding: 2px 8px 2px 2px;
+          border-radius: 1.75rem;
+          font-size: 0.875rem;
+          transition: all 0.2s ease-in-out;
 
           &:hover {
             cursor: pointer;
-            text-decoration: underline;
+            background-color: #1E5189;
+            color: white;
+          }
+          
+          &__icon {
+            margin-right: 8px;
+            height: 24px;
+            width: 24px;
+            font-size: 0.75rem;
+            border-radius: 12px;
+            background-color: $White;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+
+            svg {
+              opacity: 1;
+              position: absolute;
+              top: 0;
+              transition: all 0.3s ease-in-out;
+            }
+          }
+        }
+
+        &--closures {
+          .filter-item__button .filter-item__button__icon {
+            font-size: 1.125rem;
+          }
+        }
+
+        &--closures, &--major {
+          .filter-item__button .filter-item__button__icon svg {
+            color: #CE3E39;
+            fill: #CE3E39;
+          }
+        }
+
+        &--minor, &--future-events, &--road-conditions {
+          .filter-item__button .filter-item__button__icon svg {
+            color: #584215;
+            fill: #584215;
+          }
+        }
+
+        &--highway-cameras {
+          .filter-item__button .filter-item__button__icon svg {
+            color: #053662;
+            fill: #053662;
+          }
+        }
+
+        &--inland-ferries {
+          .filter-item__button .filter-item__button__icon svg {
+            color: $Success;
+            fill: $Success;
+          }
+        }
+
+        &--weather {
+          .filter-item__button .filter-item__button__icon svg {
+            color: #474543;
+            fill: #474543;
+          }
+        }
+
+        &--rest-stops, &--rest-stops-large-vehicle {
+          .filter-item__button .filter-item__button__icon svg {
+            color: #273F94;
+            fill: #273F94;
           }
         }
 
         &.checked {
-          .filter-item__icon {
-            background-color: $Type-Link;
-            border-color: $Type-Link;
-
-            svg {
-              color: $White;
-            }
-
-            &__path {
-                fill: white;
-            }
+          .filter-item__button {
+            background-color: $BC-Blue;
+            color: white;
           }
         }
 
         &.disabled {
-          .filter-item__icon {
-            background-color: $Divider;
-            border-color: $Divider;
-
-            svg {
-              color: $Type-Disabled;
-            }
-
-            &__path {
-              fill: $Type-Disabled;
-            }
-          }
-          label {
+          .filter-item__button {
             color: $Type-Disabled;
+            background-color: $Grey20;
+
+            &__icon {
+              background-color: $Divider;
+
+              svg {
+                color: $Type-Disabled;
+                fill: $Type-Disabled;
+              }
+            }
 
             &:hover {
               cursor: auto;
               text-decoration: none;
+              background-color: $Grey20;
             }
           }
         }
 
-        &__icon {
-          margin-right: 8px;
-          height: 36px;
-          width: 36px;
-          border-radius: 18px;
-          border: 1px solid;
-          background-color: $White;
-          border-color: $Type-Link;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+        &.loading {
+          .filter-item__button {
+            color: $Type-Disabled;
+            background-color: $Grey20;
 
-          svg {
-            color: $Type-Link;
-          }
-
-          &__path {
-            fill: $Type-Link;
+            &__icon {
+              svg {
+                opacity:0;
+                top: -24px;
+              }
+            }
           }
         }
 
@@ -159,9 +213,9 @@ button.btn.open-filters {
           z-index: -1;
           margin-left: 10px;
 
-          &:focus + label {
-            text-decoration: underline;
-            outline: 2px solid #2E5DD7;
+          &:focus + label.filter-item__button {
+            outline: 2px solid $Focus;
+            box-shadow: 0 0 0 0.25rem rgba(1, 51, 102, 0.25);
           }
         }
 
@@ -169,9 +223,9 @@ button.btn.open-filters {
           margin-left: 8px;
           color: $White;
           background-color: $Type-Secondary;
-          padding: 0 6px;
-          border-radius: 18px;
-          font-size: 0.75rem;
+          padding: 0 5px;
+          border-radius: 0.5rem;
+          font-size: 0.625rem;
 
           &:hover {
             cursor: pointer;

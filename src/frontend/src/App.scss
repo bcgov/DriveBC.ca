@@ -133,7 +133,7 @@ body {
 
 // Forms
 .form-control {
-  font-size: 1rem;
+  font-size: 0.875rem;
   padding: 0.385rem 0.75rem;
   line-height: 1;
 
@@ -307,4 +307,9 @@ a[target="_blank"] {
     border: none;
     font-size: 1rem;
   }
+}
+
+:focus, :focus-visible {
+  outline: 2px solid $Focus;
+  box-shadow: 0 0 0 0.25rem rgba(1, 51, 102, 0.25);
 }
