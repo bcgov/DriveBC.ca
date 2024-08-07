@@ -243,7 +243,7 @@
     .filters-component {
       .filters {
         @media (min-width: 768px) {
-          height: calc(100vh - 200px);
+          max-height: calc(100vh - 200px);
         }
       }
     }
