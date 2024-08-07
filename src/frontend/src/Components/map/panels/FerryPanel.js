@@ -34,14 +34,14 @@ export default function FerryPanel(props) {
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faFerry} />
         </div>
-        <p className="popup__title__name">
+        <div className="popup__title__name">
           <p className='name'><a
             href={ferryData.url}
             target="_blank"
             rel="noreferrer">{`${ferryData.title}`}</a>
           </p>
           <ShareURLButton />
-        </p>   
+        </div>   
       </div>
       <div className="popup__content">
         {ferryData.image_url && (
