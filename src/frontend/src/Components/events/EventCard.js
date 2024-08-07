@@ -62,7 +62,7 @@ export default function EventCard(props) {
           <div className="next-update">
             <div className="header">{ showLoader ? <Skeleton /> : 'Next Update' }</div>
             <div className="content">
-              { showLoader ? <Skeleton width={'90%'} /> : <FriendlyTime date={event.next_update} /> }
+              { showLoader ? <Skeleton width={'90%'} /> : <FriendlyTime date={event.next_update} isNextUpdate={true} /> }
             </div>
           </div>
         }
