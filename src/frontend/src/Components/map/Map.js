@@ -169,11 +169,14 @@ export default function DriveBCMap(props) {
   };
 
   const updatePosition = (feature) => {
-    if (feature != null) {
+    // Do not process empty features and routes
+    if (feature != null && feature.getProperties().type !== 'route') {
       let geometry = feature.getGeometry();
+
       if (geometry.getType() !== 'Point') { // feature is a line or polygon
-        geometry = feature.values_.altFeature.getGeometry(); // use the point feature's geometry
+        geometry = feature.getProperties().altFeature.getGeometry(); // use the point feature's geometry
       }
+
       if (mousePointXClicked < 390) {
         setZoomPan(mapView, mapView.current.getZoom(), geometry.flatCoordinates);
       }
