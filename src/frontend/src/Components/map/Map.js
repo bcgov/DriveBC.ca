@@ -52,6 +52,8 @@ import RouteSearch from '../routing/RouteSearch.js';
 import NetworkErrorPopup from './errors/NetworkError';
 import ServerErrorPopup from './errors/ServerError';
 import overrides from '../map/overrides.js';
+import { getAdvisories } from '../data/advisories.js';
+import { updateAdvisories } from '../../slices';
 
 // Map & geospatial imports
 import { applyStyle } from 'ol-mapbox-style';
@@ -462,6 +464,22 @@ export default function DriveBCMap(props) {
 
   // Advisories layer
   useEffect(() => {
+    const fetchAdvisories = async () => {
+      try {
+        const response = await getAdvisories();
+        dispatch(updateAdvisories({
+          list: response,
+          timeStamp: new Date().getTime()
+        }));
+      } catch (error) {
+        console.error('Error fetching advisories:', error);
+      }
+    };
+
+    if(!advisories){
+      fetchAdvisories();
+    }
+
     loadLayer(
       mapLayers, mapRef, mapContext,
       'advisoriesLayer', advisories, 5
