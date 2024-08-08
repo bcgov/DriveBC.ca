@@ -1,15 +1,146 @@
-.search-container {
-    width: 100%;
-    order: 2;
-    margin-top: 10px;
+.filters-component {
+  position: relative;
 
-    @media (min-width: 768px) {
-      width: 400px;
-      order: unset;
-      margin-top: 0;
+  .highway-filter-btn {
+    display: flex;
+    align-items: center;
+    padding: .54rem .66rem;
+    border-radius: .25rem;
+
+    background: white;
+    border: 1px solid #353433;
+    color: #252423;
+
+    font-size: 11pt;
+
+    .active-count {
+      margin-left: .4rem;
+      border-radius: 50%;
+      padding: 0 6px;
+
+      background: #2D2D2D;
+      color: white;
+
+      font-size: 10pt;
+      font-weight: bold;
     }
 
-    .rbt-menu {
-      display: none !important;
+    &:hover {
+      background: #F3F2F1;
+      color: #252423;
+    }
+
+    &:active, &.open {
+      background: #353433;
+      color: white;
+
+      .active-count {
+        background: white;
+        color: #2D2D2D;
+      }
+    }
+
+    .caption {
+      margin-right: .4rem;
     }
   }
+
+  .highway-filters {
+    position: absolute;
+    top: 3.5rem;
+
+    width: 294px;
+    height: 356px;
+    right: 0;
+    z-index: 12;
+    background: white;
+    overflow-y: hidden;
+    box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
+
+    display: flex;
+    flex-direction: column;
+
+    @media (max-width: 768px) {
+      width: 253px;
+    }
+
+    .search-container {
+      padding: 1rem;
+      background: #FAF9F8;
+
+      @media (min-width: 768px) {
+        order: unset;
+        margin-top: 0;
+      }
+
+      .rbt-menu {
+        display: none !important;
+      }
+
+      .search-icon {
+        position: absolute;
+        z-index: 1;
+        left: 1.7rem;
+        top: 1.7rem;
+        color: #a5a5a5;
+      }
+
+      .form-control {
+        border-radius: 4px;
+      }
+
+      input {
+        padding: .5rem .5rem .5rem 2.2rem;
+      }
+    }
+
+    .selected-filter-container {
+      border: 1px solid #e5e5e5;
+      padding: 8px;
+
+      .selected-filter {
+        background: #053662;
+        border-radius: 4px;
+        padding: 4px 8px;
+        color: white;
+      }
+
+      .remove-btn {
+        cursor: pointer;
+        font-weight: bold;
+
+        &:hover {
+          color: #053662;
+          text-decoration: underline;
+        }
+      }
+
+      &.no-selection {
+        color: #a5a5a5;
+        padding: .5rem 1rem;
+      }
+    }
+
+    .highway-options {
+      position: relative;
+      overflow-y: auto;
+
+      .highway-row {
+        padding: .5rem 1rem;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #f5f5f5;
+        }
+      }
+
+      .highway-row:first-of-type {
+        padding-top: 1rem;
+      }
+
+      .highway-row:last-of-type {
+        padding-bottom: 1rem;
+      }
+    }
+  }
+}
