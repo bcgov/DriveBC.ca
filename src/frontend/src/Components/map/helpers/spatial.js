@@ -99,7 +99,7 @@ export const filterByRoute = (data, route, extraToleranceMeters, populateProject
       const coords = entry.location.coordinates;
       const dataLs = turf.lineString(coords);
 
-      return turf.booleanIntersects(dataLs, routeLineString);
+      return turf.booleanIntersects(dataLs, bufferedRouteLineString);
     }
   });
 
