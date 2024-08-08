@@ -102,35 +102,35 @@ export default function CamerasListPage() {
           timeStamp: new Date().getTime()
         })
       );
+
+      getHighways(camData);
+
+    } else {
+      getHighways(cameras);
     }
   };
 
-  const getHighways = () => {
-      if(!cameras){
-      return;
-    }
+  const getHighways = (cams) => {
     const highwayNameList = {};
     const highwayNumberList = {};
 
-    cameras.forEach(camera =>{
+    cams.forEach(camera =>{
       const highwayName = camera.highway_display
       if(!isNaN(highwayName.charAt(0))){
         if(!highwayNumberList[highwayName]){
           highwayNumberList[highwayName] = {"id": highwayName, "highwayName": "Highway " + highwayName, "alias": camera.highway_description, "checked": false}
         }
-      }
-      else{
+
+      } else{
         if(!highwayNameList[highwayName]){
           highwayNameList[highwayName] = {"id": highwayName, "highwayName": highwayName, "alias": camera.highway_description, "checked": false}
         }
       }
+    });
 
-      });
     const highways = {...highwayNumberList, ...highwayNameList}
     setDisplayedHighways(highways);
-    dispatch(
-      updateHighwayFilter(highways)
-    );
+    dispatch(updateHighwayFilter(highways));
   }
 
   const getCheckedHighway = () => {
@@ -178,7 +178,6 @@ export default function CamerasListPage() {
   // useEffect hooks
   useEffect(() => {
     getCamerasData(selectedRoute);
-    getHighways();
   }, [selectedRoute]);
 
   useEffect(() => {
@@ -298,7 +297,7 @@ export default function CamerasListPage() {
 
           <div className="container--sidepanel__right">
             <div className="controls-container">
-            {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
+              {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
                 <Button
                   className={'advisories-btn'}
                   aria-label="open advisories list"
@@ -311,7 +310,7 @@ export default function CamerasListPage() {
                 </Button>
               }
 
-              { !xXlargeScreen &&
+              {!xXlargeScreen &&
                 <Button
                   className={`findRoute-btn ${(selectedRoute && selectedRoute.routeFound) ? 'routeFound' : ''}`}
                   variant="outline-primary"
@@ -336,13 +335,12 @@ export default function CamerasListPage() {
                   }}
                 />
               </div>
+
               {highwayFilter && (
-              <HighwayFilter
-              highways={displayedHighways}
-              getCheckedHighway={getCheckedHighway}
-            />
-                )
-              }
+                <HighwayFilter
+                  highways={displayedHighways}
+                  getCheckedHighway={getCheckedHighway} />
+              )}
             </div>
 
             <CameraList cameras={ displayedCameras ? displayedCameras : [] } getCheckedHighway={getCheckedHighway}></CameraList>
