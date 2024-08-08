@@ -114,7 +114,7 @@ export default function HighwayFilters(props) {
 
   // Main component
   return (
-    <div className="filters-component">
+    <div className="highway-filters">
       <button
         className={'highway-filter-btn' + (open ? ' open' : '')}
         aria-label="open filters options"
@@ -130,7 +130,7 @@ export default function HighwayFilters(props) {
       </button>
 
       {open && (
-        <div className="highway-filters">
+        <div className="highway-filters-popup">
           <div className="search-container">
             <FontAwesomeIcon className="search-icon" icon={faMagnifyingGlass} />
 
