@@ -376,7 +376,7 @@ export default function DriveBCMap(props) {
 
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'highwayCams', finalCameras, 78,
+        'highwayCams', finalCameras, 63,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
     }
@@ -410,7 +410,7 @@ export default function DriveBCMap(props) {
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'inlandFerries', filteredFerries, 68,
+        'inlandFerries', filteredFerries, 66,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
     }
@@ -426,7 +426,7 @@ export default function DriveBCMap(props) {
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'weather', filteredCurrentWeathers, 66,
+        'weather', filteredCurrentWeathers, 68,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
     }
@@ -437,7 +437,7 @@ export default function DriveBCMap(props) {
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'regional', filteredRegionalWeathers, 67,
+        'regional', filteredRegionalWeathers, 69,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
     }
@@ -448,13 +448,13 @@ export default function DriveBCMap(props) {
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'restStops', filteredRestStops, 68,
+        'restStops', filteredRestStops, 60,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
 
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'largeRestStops', filteredRestStops, 68,
+        'largeRestStops', filteredRestStops, 60,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
     }
