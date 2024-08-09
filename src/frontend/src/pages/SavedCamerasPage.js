@@ -130,7 +130,10 @@ export default function SavedCamerasPage() {
       </PageHeader>
 
       <Container>
-        <CameraList cameras={ processedCameras ? processedCameras : [] }></CameraList>
+        <CameraList
+          cameras={ processedCameras ? processedCameras : [] }
+          getCheckedHighway={()=>{}}
+        />
 
         {!(processedCameras && processedCameras.length) &&
           <div className="empty-cam-display">
