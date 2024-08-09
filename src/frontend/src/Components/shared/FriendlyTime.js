@@ -71,11 +71,11 @@ export default function FriendlyTime({ date, asDate=false, includeFullIfHumanize
               }
             }}
           >
-            <p className="friendly-time-text">
+            <div className="friendly-time-text">
               {(isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." :
                 <ReactTimeAgo date={date} locale="en-US"/>
               }
-            </p>
+            </div>
             { !(isNextUpdate && timeDiff > 0) &&
               <span className={"friendly-time__tooltip" + (showTooltip ? " showTooltip" : "")}>
                 {dateFormatted}

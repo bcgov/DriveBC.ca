@@ -133,6 +133,19 @@ function getMap(advisoryData) {
   });
 }
 
+/* DBC22-2095
+ * Solution to flickr gallery not embedding properly.  See
+ * https://github.com/remarkablemark/html-react-parser/issues/98
+ * https://jsfiddle.net/remarkablemark/3h8ejw9n/
+ */
+function replace(domNode) {
+  if (domNode.type === 'script') {
+    const script = document.createElement('script');
+    script.src = domNode.attribs.src;
+    document.head.appendChild(script);
+  }
+}
+
 export default function AdvisoryDetailsPage() {
   // Context and router data
   const params = useParams();
@@ -236,7 +249,7 @@ export default function AdvisoryDetailsPage() {
         <Tab eventKey="details" title={<span>{advisoryDetails}Details</span>}>
           {advisory && (
             <Container className="advisory-body-container cms-body">
-              <p>{parse(advisory.body)}</p>
+              <p>{parse(advisory.body, { replace })}</p>
             </Container>
           )}
         </Tab>
