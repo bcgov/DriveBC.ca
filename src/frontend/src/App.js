@@ -1,40 +1,50 @@
 // React
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
+
+// Navigation
 import { Route, Routes } from 'react-router-dom';
+
+// Redux
+import { useDispatch } from 'react-redux';
+import { updateFavCams, updateFavRoutes } from './slices/userSlice';
+
+// External imports
+// https://github.com/dai-shi/proxy-memoize?tab=readme-ov-file#usage-with-immer
+import { setAutoFreeze } from 'immer';
+setAutoFreeze(false);
 
 // Styling
 import '@bcgov/bc-sans/css/BCSans.css';
 import './App.scss';
 
-// Components and functions
-import Header from './Components/shared/header/Header.js';
-import MapPage from './pages/MapPage';
-import CamerasListPage from './pages/CamerasListPage';
-import SavedCamerasPage from './pages/SavedCamerasPage';
-import SavedRoutesPage from './pages/SavedRoutesPage';
-import CameraDetailsPage from './pages/CameraDetailsPage';
-import EventsListPage from './pages/EventsListPage';
+// Internal imports
+import { getFavoriteCameraIds } from './Components/data/webcams';
+import { getFavoriteRoutes } from './Components/data/routes';
+import AccountPage from './pages/AccountPage';
 import AdvisoriesListPage from './pages/AdvisoriesListPage';
 import AdvisoryDetailsPage from './pages/AdvisoryDetailsPage';
-import BulletinsListPage from './pages/BulletinsListPage';
 import BulletinDetailsPage from './pages/BulletinDetailsPage';
-import ScrollToTop from './Components/shared/ScrollToTop';
+import BulletinsListPage from './pages/BulletinsListPage';
+import CameraDetailsPage from './pages/CameraDetailsPage';
+import CamerasListPage from './pages/CamerasListPage';
+import EventsListPage from './pages/EventsListPage';
+import Header from './Components/shared/header/Header.js';
+import MapPage from './pages/MapPage';
+import Modal from './Modal.js';
 import NotFoundPage from './pages/NotFoundPage';
 import ProblemsPage from './pages/ProblemsPage.js';
-import ReportRoadPage from './pages/ReportRoadPage';
 import ReportElectricalPage from './pages/ReportElectricalPage';
-import Modal from './Modal.js';
-import AccountPage from './pages/AccountPage';
-
-// https://github.com/dai-shi/proxy-memoize?tab=readme-ov-file#usage-with-immer
-import { setAutoFreeze } from 'immer';
-setAutoFreeze(false);
+import ReportRoadPage from './pages/ReportRoadPage';
+import SavedCamerasPage from './pages/SavedCamerasPage';
+import SavedRoutesPage from './pages/SavedRoutesPage';
+import ScrollToTop from './Components/shared/ScrollToTop';
 
 // FontAwesome Stylesheet
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 
+// Variables
 export const MapContext = createContext(null);
 export const CamsContext = createContext(null);
 export const AuthContext = createContext(null);
@@ -42,6 +52,25 @@ export const AuthContext = createContext(null);
 let callingSession = false;
 
 function App() {
+  /* Setup */
+  // Redux
+  const dispatch = useDispatch();
+
+  // States
+  const [mapContext, setMapContext] = useState(getInitialMapContext());
+  const [camsContext] = useState({ displayLength: 21, setDisplayLength: (length) => {} });
+  const [authContext, setAuthContext] = useState(getInitialAuthContext());
+
+  // Effects
+  useEffect(() => {
+    if (authContext.loginStateKnown && authContext.username) {
+      initCams();
+      initRoutes();
+    }
+  }, [authContext]);
+
+  /* Helpers */
+  // Data functions
   function getInitialMapContext() {
     const context = localStorage.getItem('mapContext');
     return context ? JSON.parse(context) : {
@@ -89,10 +118,20 @@ function App() {
     return { loginStateKnown: false }
   }
 
-  const [mapContext, setMapContext] = useState(getInitialMapContext());
-  const [camsContext] = useState({ displayLength: 21, setDisplayLength: (length) => {} });
-  const [authContext, setAuthContext] = useState(getInitialAuthContext());
+  const initCams = async () => {
+    // Get saved cam ids and map into a list of integers
+    const favCamsData = await getFavoriteCameraIds();
+    const favCamIds = favCamsData.map(webcam => webcam.webcam);
+    dispatch(updateFavCams(favCamIds));
+  }
 
+  const initRoutes = async () => {
+    const favRoutesData = await getFavoriteRoutes();
+    dispatch(updateFavRoutes(favRoutesData));
+  }
+
+  /* Rendering */
+  // Main component
   return (
     <AuthContext.Provider value={{ authContext, setAuthContext }}>
       <MapContext.Provider value={{ mapContext, setMapContext }}>
