@@ -90,7 +90,7 @@ export const saveRoute = async (route, nickname, routeMapImg, startLabel, endLab
   }
 }
 
-export const removeRoute = async (route, savedRoute, dispatch) => {
+export const removeRoute = async (route, selectedRoute, dispatch) => {
   const url = `${window.API_HOST}/api/users/routes/${route.id}/`;
 
   try {
@@ -107,8 +107,8 @@ export const removeRoute = async (route, savedRoute, dispatch) => {
       throw new Error(`Error: ${response.statusText}`);
     }
 
-    if (savedRoute.id == route.id) {
-      const payload = {...savedRoute, saved: false, label: null};
+    if (selectedRoute && selectedRoute.id == route.id) {
+      const payload = {...selectedRoute, saved: false, label: null};
       dispatch(updateSelectedRoute(payload));
     }
 
