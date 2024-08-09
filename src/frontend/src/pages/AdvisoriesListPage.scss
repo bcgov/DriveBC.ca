@@ -80,11 +80,16 @@
 
         .timestamp-container:before {
           content: '\2022';
+          color:$Error;
           font-size: 1.75rem;
           line-height: 1rem;
           margin-right: 0.5rem;
           margin-top: 0.125rem;
         }
+
+        .hide-before:before {
+          display: none !important;
+      }
       }
 
       .advisory-li-title-container {

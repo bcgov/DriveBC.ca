@@ -5,6 +5,7 @@ import * as helpers from '../helpers';
 export const loadAdvisories = async (route, advisories, filteredAdvisories, advisoryFilterPoints, dispatch, displayError) => {
   const routePoints = route ? route.points : null;
 
+  console.log(advisories);
   // Load if filtered advisories don't exist or route doesn't match
   if (!filteredAdvisories || !helpers.compareRoutePoints(routePoints, advisoryFilterPoints)) {
     // Fetch data if it doesn't already exist

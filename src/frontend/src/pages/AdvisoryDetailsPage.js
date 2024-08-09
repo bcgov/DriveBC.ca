@@ -1,7 +1,10 @@
 // React
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback} from 'react';
 import { useParams } from 'react-router-dom';
-
+// Redux
+import { useSelector, useDispatch } from 'react-redux';
+import * as slices from '../slices';
+import { memoize } from 'proxy-memoize';
 // External imports
 import {
   faMap,
@@ -137,6 +140,10 @@ export default function AdvisoryDetailsPage() {
   // Context and router data
   const params = useParams();
 
+  const dispatch = useDispatch();
+  const { advisories } = useSelector(useCallback(memoize(state => ({
+    advisories: state.cms.advisories.list,
+  }))));
   // Refs
   const isInitialMount = useRef(true);
   const mapRef = useRef();
@@ -171,7 +178,19 @@ export default function AdvisoryDetailsPage() {
   const loadAdvisory = async () => {
     const advisoryData = await getAdvisories(params.id).catch((error) => displayError(error));
     setAdvisory(advisoryData);
-
+    if(!advisories){
+      const advisoryList = await getAdvisories().catch((error) => displayError(error));
+      dispatch(slices.updateAdvisories(advisoryList.map((advisory) => {
+        if(advisoryData.id === advisory.id){
+          console.log("found")
+          return {...advisory, read: true}
+        }
+        else{
+          return advisory;
+        }
+      })
+    ));
+    }
     // Run once on startup
     if (isInitialMount.current){
       mapRef.current = getMap(advisoryData);
@@ -187,6 +206,10 @@ export default function AdvisoryDetailsPage() {
   useEffect(() => {
     loadAdvisory();
   }, []);
+
+  useEffect(() => {
+    console.log(advisories)
+  }, [advisories]);
 
   useEffect(() => {
     if (activeTab === 'map') {

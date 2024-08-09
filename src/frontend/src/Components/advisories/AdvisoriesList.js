@@ -65,7 +65,7 @@ export default function Advisories(props) {
               }
 
               {showTimestamp &&
-              <div className="timestamp-container timestamp-container--mobile">
+              <div className={`timestamp-container timestamp-container--mobile ${advisory.read ? 'hide-before' : ''}`}>
                 <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
                 <FriendlyTime date={advisory.latest_revision_created_at} />
               </div>
