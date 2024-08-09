@@ -63,7 +63,7 @@ export const filterByRoute = (data, route, extraToleranceMeters, populateProject
     // Add points to the index with slight tolerance
     if (entry.location.type == "Point") {
       const coords = entry.location.coordinates;
-      const pointRadius = extraToleranceMeters ? 0.0001 * (extraToleranceMeters / 10) : 0.0001; // ~11m default tolerance
+      const pointRadius = 0.0001 * ((extraToleranceMeters ? extraToleranceMeters : 10) / 10); // 10m default tolerance
       spatialIndex.add(coords[0] - pointRadius, coords[1] - pointRadius, coords[0] + pointRadius, coords[1] + pointRadius);
 
     // Add linestrings to the index
@@ -88,10 +88,12 @@ export const filterByRoute = (data, route, extraToleranceMeters, populateProject
   const intersectingData = dataInBBox.filter(entry => {
     if (entry.location.type == "Point") {
       const coords = entry.location.coordinates;
-      let dataPoint = turf.point(coords);
-      if (extraToleranceMeters) {
-        dataPoint = turf.buffer(dataPoint, extraToleranceMeters, {units: 'meters'});
-      }
+
+      // 10m default tolerance
+      const dataPoint = turf.buffer(
+        turf.point(coords),
+        (extraToleranceMeters ? extraToleranceMeters : 10), {units: 'meters'}
+      );
 
       return turf.booleanIntersects(dataPoint, bufferedRouteLineString);
 
