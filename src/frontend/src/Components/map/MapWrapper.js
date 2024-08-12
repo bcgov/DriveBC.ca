@@ -80,7 +80,7 @@ export default function MapWrapper(props) {
       dataLoaders.loadCurrentWeather(null, currentWeather, filteredCurrentWeathers, currentWeatherFilterPoints, dispatch, displayError);
       dataLoaders.loadRegionalWeather(null, regionalWeather, filteredRegionalWeathers, regionalWeatherFilterPoints, dispatch, displayError);
       dataLoaders.loadRestStops(null, restStops, filteredRestStops, restStopFilterPoints, dispatch, displayError);
-      dataLoaders.loadAdvisories(advisories, dispatch, displayError);
+      dataLoaders.loadAdvisories(null, advisories, filteredAdvisories, advisoryFilterPoints, dispatch, displayError);
     }
   };
 
