@@ -53,7 +53,6 @@ export default function CameraCard(props) {
   // States
   const [show, setShow] = useState(false);
   const [camera, setCamera] = useState(cameraData);
-  const [camId] = useState(cameraData.id); // to be used for deletion, does not update
   const [isRemoving, setIsRemoving] = useState();
   const [showAlert, setShowAlert] = useState(false);
 
@@ -137,8 +136,8 @@ export default function CameraCard(props) {
   }
 
   const deleteCamera = async () => {
-    // use un-updated id for deletion in my cameras page
-    const id = location.pathname == '/my-cameras' ? camId : camera.id;
+    // use id from prop for deletion in saved cameras page
+    const id = location.pathname == '/my-cameras' ? cameraData.id : camera.id;
     deleteFavoriteCamera(id, dispatch, removeFavCam);
     setIsRemoving(true);
   }
