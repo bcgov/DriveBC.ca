@@ -89,7 +89,7 @@ export default function SavedRoutesPage() {
               <FontAwesomeIcon className="close-btn" icon={faXmark} onClick={() => setRouteFavCams(null)} />
             </div>
 
-            <CameraList cameras={routeFavCams} />
+            <CameraList cameras={routeFavCams} getCheckedHighway={()=>{}} />
           </div>
         }
       </Container>
