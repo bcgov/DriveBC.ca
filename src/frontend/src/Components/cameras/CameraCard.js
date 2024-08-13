@@ -35,7 +35,8 @@ import trackEvent from '../shared/TrackEvent.js';
 
 export default function CameraCard(props) {
   /* Setup */
-  const { cameraData } = props;
+  const { cameraData, onShowAlertChange } = props;
+  // const { cameraData } = props;
   const location = useLocation();
 
   const { authContext } = useContext(AuthContext);
@@ -78,6 +79,7 @@ export default function CameraCard(props) {
     // Set new close alert timer to reference
     timeout.current = setTimeout(() => {
       setShowAlert(false);
+      // onShowAlertChange(false);
     }, 5000);
   }, [isRemoving]);
 
@@ -141,6 +143,7 @@ export default function CameraCard(props) {
     const id = location.pathname == '/my-cameras' ? camId : camera.id;
     deleteFavoriteCamera(id, dispatch, removeFavCam);
     setIsRemoving(true);
+    onShowAlertChange(true);
   }
 
   function handleChildClick(e) {

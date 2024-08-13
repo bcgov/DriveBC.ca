@@ -7,7 +7,7 @@ import highwayShield from './highwayShield';
 
 export default function HighwayGroup(props) {
   // Props
-  const { highway, cams } = props;
+  const { highway, cams, onShowAlertChange } = props;
 
   return (
     <div className="highway-group">
@@ -31,7 +31,7 @@ export default function HighwayGroup(props) {
 
       <div className="webcam-group">
         {cams.map((cam, id) => (
-          <CameraCard cameraData={cam} className="webcam" key={id} />
+          <CameraCard cameraData={cam} className="webcam" key={id} onShowAlertChange={onShowAlertChange}/>
         ))}
       </div>
     </div>

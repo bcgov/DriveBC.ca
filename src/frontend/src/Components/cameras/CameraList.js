@@ -12,7 +12,7 @@ import './CameraList.scss';
 
 export default function CameraList(props) {
   // Props
-  const { cameras, getCheckedHighway } = props;
+  const { cameras, getCheckedHighway, onShowAlertChange } = props;
 
   // Contexts
   const { camsContext } = useContext(CamsContext);
@@ -63,7 +63,7 @@ export default function CameraList(props) {
     const groups = [];
 
     for (const {highway, cams} of groupedCams) {
-      groups.push(<HighwayGroup key={highway} highway={highway} cams={cams} />);
+      groups.push(<HighwayGroup key={highway} highway={highway} cams={cams} onShowAlertChange={onShowAlertChange}/>);
     }
 
     return groups;

@@ -20,6 +20,7 @@ import ServerErrorPopup from '../Components//map/errors/ServerError';
 import CameraList from '../Components/cameras/CameraList';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
+import Alert from '../Components/shared/Alert';
 
 // Styling
 import './SavedCamerasPage.scss';
@@ -39,11 +40,13 @@ export default function SavedCamerasPage() {
 
   // UseRef hooks
   const isInitialMount = useRef(true);
+  const timeout = useRef();
 
   // UseState hooks
   const [processedCameras, setProcessedCameras] = useState(null);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
+  const [alertStatus, setAlertStatus] = useState(false);
 
   // Error handling
   const displayError = (error) => {
@@ -88,6 +91,18 @@ export default function SavedCamerasPage() {
     }
   };
 
+  const handleShowAlertChange = (value) => {
+    setAlertStatus(value);
+    console.log('Alert status updated:', value);
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+    }
+    timeout.current = setTimeout(() => {
+      setAlertStatus(false);
+    }, 5000);
+
+  };
+
   // useEffect hooks
   // Redirect to login page if user is not logged in
   useEffect(() => {
@@ -113,6 +128,10 @@ export default function SavedCamerasPage() {
     getSavedCameras();
   }, [favCams]);
 
+  const getAlertMessage = () => {
+    return <p>{'Removed from '} <a href="/my-cameras">My cameras</a></p>;
+  };
+
   // Rendering
   return (
     <div className="saved-cameras-page">
@@ -133,6 +152,7 @@ export default function SavedCamerasPage() {
         <CameraList
           cameras={ processedCameras ? processedCameras : [] }
           getCheckedHighway={()=>{}}
+          onShowAlertChange={handleShowAlertChange}
         />
 
         {!(processedCameras && processedCameras.length) &&
@@ -144,6 +164,7 @@ export default function SavedCamerasPage() {
             </p>
           </div>
         }
+        <Alert showAlert={alertStatus} setShowAlert={setAlertStatus} message={getAlertMessage()} />
       </Container>
 
       <Footer />

@@ -343,7 +343,7 @@ export default function CamerasListPage() {
               )}
             </div>
 
-            <CameraList cameras={ displayedCameras ? displayedCameras : [] } getCheckedHighway={getCheckedHighway}></CameraList>
+            <CameraList cameras={ displayedCameras ? displayedCameras : [] } getCheckedHighway={getCheckedHighway} onShowAlertChange={(()=>{})}></CameraList>
 
             {!(displayedCameras && displayedCameras.length) &&
               <div className="empty-cam-display">
