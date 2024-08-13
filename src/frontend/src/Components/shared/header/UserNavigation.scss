@@ -50,6 +50,10 @@
           text-decoration: none;
           padding: 0.75rem 1rem 0.75rem 0.25rem;
 
+          &:hover {
+            text-decoration: underline;
+          }
+
           svg {
             font-size: 0.825rem;
           }

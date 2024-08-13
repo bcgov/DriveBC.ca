@@ -16,19 +16,17 @@ import { createSearchParams, useNavigate, useSearchParams } from 'react-router-d
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFerry,
-  faInfoCircle,
   faMinusCircle,
   faRoad,
   faStar,
   faVideo,
   faFlag,
+  faLocationDot
 } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline, faCheck } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
 import { AuthContext } from '../../App';
@@ -288,17 +286,11 @@ export default function RouteDetails(props) {
     }
   }
 
-  const renderTooltip = (props) => (
-    <Tooltip id="button-tooltip" {...props}>
-      If no route nickname is entered, the start and destination locations will be used.
-    </Tooltip>
-  );
-
   // Main components
   return route && (
     <div className="route-details">
       <div className="route-title">
-        <div className="space-between-row">
+        <div className="space-between-row route-tools">
           {isPanel ?
             <span className="route-icon">
               <FontAwesomeIcon icon={faRoad} />
@@ -307,7 +299,8 @@ export default function RouteDetails(props) {
 
           {authContext.loginStateKnown &&
             <button
-              className={`favourite-btn ${(route.saved || !isPanel) ? 'favourited' : ''}`}
+              className={`favourite-btn text-only-btn
+                 ${(route.saved || !isPanel) ? 'favourited' : ''}`}
               aria-label={`${(route.saved || !isPanel) ? 'Remove favourite' : 'Add favourite'}`}
               onClick={favoriteHandler}>
 
@@ -318,7 +311,14 @@ export default function RouteDetails(props) {
         </div>
 
         {!isPanel &&
-          <img className="route-image" src={route.thumbnail} onClick={() => showOnMap()}/>
+          <div className="card-img-box" onClick={() => showOnMap()}>
+            <div className="overlay-screen centered-content">
+              <p className="overlay-screen__text">
+                <FontAwesomeIcon icon={faLocationDot} alt="view on map" />View on map
+              </p>
+            </div>
+            <img className="card-img" src={route.thumbnail} />
+          </div>
         }
 
         <div className="route-name-and-distance">
@@ -414,7 +414,7 @@ export default function RouteDetails(props) {
 
       {!isPanel &&
         <button
-          className="viewCams-btn"
+          className="viewCams-btn text-only-btn"
           aria-label="View favourite cameras"
           onClick={viewFavouriteCamHandler}>
           <FontAwesomeIcon icon={faVideo} />
@@ -435,13 +435,6 @@ export default function RouteDetails(props) {
               <Form.Group className="mb-3">
                 <Form.Label className="route-nickname">
                   <p className="bold">Route nickname</p>
-
-                  <OverlayTrigger
-                    delay={{ show: 250, hide: 400 }}
-                    overlay={renderTooltip}>
-
-                    <FontAwesomeIcon icon={faInfoCircle} />
-                  </OverlayTrigger>
                 </Form.Label>
                 <Form.Control defaultValue={getDefaultLabel()} type="text" placeholder="Enter a name for this route" onChange={(e) => setNickName(e.target.value)}/>
               </Form.Group>

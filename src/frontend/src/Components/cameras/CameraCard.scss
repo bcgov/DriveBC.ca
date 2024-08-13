@@ -134,6 +134,8 @@
       .card-banner {
         padding: 24px 6px 12px 12px;
         top: -12px;
+        width: 100%;
+        justify-content: space-between;
 
         p, svg {
           font-size: 0.6875rem;

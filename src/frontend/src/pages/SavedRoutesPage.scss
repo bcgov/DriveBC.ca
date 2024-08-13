@@ -14,57 +14,86 @@
     }
   }
 
-  .route-list {
+  .content-container {
     display: grid;
-    column-gap: 1.5em;
-    row-gap: 2em;
-    margin-bottom: 4em;
-    grid-template-columns: repeat(1, 1fr );
-    grid-template-rows: auto;
+    grid-template-rows: 1fr auto;
+    transition: all 0.3s ease;
 
-    @media (min-width: 576px) {
-      grid-template-columns: repeat(2, 1fr );
+    &:has(.route-list.collapsed) {
+      grid-template-rows: 0fr auto;
     }
 
-    @media (min-width: 1240px) {
-      grid-template-columns: repeat(3, 1fr );
-    }
-
-    @media (min-width: 1480px) {
-      grid-template-columns: repeat(4, 1fr );
-    }
-
-    .route-card {
-      border-radius: 4px;
-      border: none;
-      outline: 2px solid transparent;
+    .route-list {
+      display: grid;
+      column-gap: 1.5em;
+      row-gap: 2em;
+      grid-template-columns: repeat(1, 1fr );
+      grid-template-rows: auto;
+      opacity: 1;
+      overflow: auto;
       transition: all 0.3s ease;
-      width: 100%;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-
+  
       @media (min-width: 576px) {
-        width: unset;
-        margin: unset;
+        grid-template-columns: repeat(2, 1fr );
+      }
+  
+      @media (min-width: 1240px) {
+        grid-template-columns: repeat(3, 1fr );
+      }
+  
+      @media (min-width: 1480px) {
+        grid-template-columns: repeat(4, 1fr );
+      }
+
+      &.collapsed {
+        opacity: 0;
+        overflow: hidden;
+      }
+  
+      .route-card {
+        border-radius: 4px;
+        border: none;
+        outline: 2px solid transparent;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+  
+        @media (min-width: 576px) {
+          width: unset;
+          margin: unset;
+        }
       }
     }
-  }
+  
+    .fav-cams-on-route {
+      background: white;
+      transition: all 0.3s ease;
+      z-index: 1;
+      overflow: hidden;
 
-  .fav-cams-on-route {
-    .header-row {
-      margin-bottom: 1rem;
-
-      .close-btn {
-        cursor: pointer;
-        font-size: 30px;
+      &.expanded {
+        overflow: auto;
       }
 
-      .caption {
-        font-size: 1.125rem;
-        color: $Grey80;
-        margin-bottom: 0rem;
+      .header-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+  
+        .close-btn {
+          cursor: pointer;
+          font-size: 20px;
+          margin-top: 4px;
+        }
+  
+        .caption {
+          font-size: 1.125rem;
+          color: $Grey80;
+          margin-bottom: 0rem;
+        }
       }
     }
   }
