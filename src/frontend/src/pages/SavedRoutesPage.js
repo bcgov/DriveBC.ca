@@ -37,7 +37,7 @@ export default function SavedRoutesPage() {
 
   // States
   const [routeLabel, setRouteLabel] = useState();
-  const [routeFavCams, setRouteFavCams] = useState();
+  const [routeFavCams, setRouteFavCams] = useState(false);
 
   // Effects
   useEffect(() => {
@@ -72,7 +72,7 @@ export default function SavedRoutesPage() {
       </PageHeader>
 
       {authContext.loginStateKnown && authContext.username &&
-        <Container>
+        <Container className="content-container">
           {!(favRoutes && favRoutes.length) &&
             <div className="empty-routes-display">
               <h3>No saved routes</h3>
@@ -84,7 +84,7 @@ export default function SavedRoutesPage() {
           }
 
           {!routeFavCams &&
-            <div className="route-list">
+            <div className={`route-list ${routeFavCams ? 'collapsed' : ''}`}>
               {favRoutes && favRoutes.length > 0 &&
                 favRoutes.map(route => (
                   <div key={route.id} className='route-card'>
@@ -99,7 +99,7 @@ export default function SavedRoutesPage() {
             <div className="fav-cams-on-route">
               <div className="space-between-row header-row">
                 <p className="caption">Showing your favourite cameras along {routeLabel}</p>
-                <FontAwesomeIcon className="close-btn" icon={faXmark} onClick={() => setRouteFavCams(null)} />
+                <FontAwesomeIcon className="close-btn" icon={faXmark} onClick={() => setRouteFavCams(!routeFavCams)} />
               </div>
 
               <CameraList cameras={routeFavCams} getCheckedHighway={()=>{}} />

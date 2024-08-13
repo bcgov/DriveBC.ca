@@ -195,7 +195,7 @@ export default function EventsTable(props) {
             <div className="space-between-row">
               {getEventTypeCell(row.original)}
               <button
-                className="viewMap-btn"
+                className="viewMap-btn text-only-btn"
                 aria-label="View on map"
                 onClick={() => routeHandler(row.original)}>
                 <FontAwesomeIcon icon={faLocationDot} />

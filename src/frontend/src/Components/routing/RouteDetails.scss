@@ -2,6 +2,9 @@
 
 .route-details {
   .route-title {
+    .route-tools {
+      margin-bottom: 1rem;
+    }
     .route-icon {
       height: 24px;
       width: 24px;
@@ -18,28 +21,66 @@
       }
     }
 
+    .card-img-box {
+      overflow: hidden;
+      border-radius: 4px;
+      position: relative;
+      cursor: pointer;
+
+      .overlay-screen {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        z-index: 1;
+        background: rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+
+        &__text {
+          font-weight: 700;
+          color: white;
+
+          svg {
+            margin-right: 8px;
+          }
+        }
+      }
+      
+      &:hover {
+        .overlay-screen {
+          opacity: 1;
+        }
+        .card-img {
+          transform: scale(1.25);
+          background: rgba(0,0,0,.5);
+          background-blend-mode: overlay;
+        }
+      }
+      .card-img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 0;
+        transition: all 0.3s ease;
+      }
+    }
+
     .route-name-and-distance {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
       gap: 10px;
+      margin-top: 1rem;
 
       h4, p {
         margin-bottom: 0;
       }
-    }
 
     .route-distance {
       font-size: 1.125rem;
       color: $Grey80;
       white-space: nowrap;
     }
-
-    .route-image {
-      cursor: pointer;
-      width: 100%;
-      margin: 1rem 0;
-      border-radius: 4px;
     }
   }
 

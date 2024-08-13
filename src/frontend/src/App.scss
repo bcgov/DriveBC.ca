@@ -213,18 +213,18 @@ a[target="_blank"] {
 .favourite-btn {
   border: none;
   background: none;
+  font-weight: 700;
+  color: #255A90;
 
   svg {
     margin-right: 8px;
   }
 
-  span {
-    font-weight: 700;
-    color: #255A90;
-  }
-
   &.favourited {
-    color: #F8BB47;
+    svg {
+      color: #F8BB47;
+      fill: #F8BB47;
+    }
   }
 }
 
@@ -235,6 +235,12 @@ a[target="_blank"] {
 .space-between-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.centered-content {
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
@@ -314,4 +320,12 @@ a[target="_blank"] {
 :focus, :focus-visible {
   outline: 2px solid $Focus;
   box-shadow: 0 0 0 0.25rem rgba(1, 51, 102, 0.25);
+}
+
+button.text-only-btn {
+  margin: 4px;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
