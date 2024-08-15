@@ -397,19 +397,11 @@ export default function EventsListPage() {
                 <div className="events-list">
                   { !showLoader && processedEvents.map(
                     (e) => (
-                      <div className="card-selector" key={e.id}
-                        onClick={() => handleRoute(e)}
-                        onKeyDown={(keyEvent) => {
-                          if (keyEvent.keyCode == 13) {
-                            handleRoute(e);
-                          }
-                        }}>
-
-                        <EventCard
-                          className="event"
-                          event={e}
-                        />
-                      </div>
+                      <EventCard
+                        key={e.id}
+                        event={e}
+                        handleRoute={handleRoute}
+                      />
                     ),
                   )}
 

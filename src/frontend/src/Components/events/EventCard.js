@@ -17,7 +17,7 @@ import './EventCard.scss';
 
 export default function EventCard(props) {
   // Props
-  const { event, showLoader } = props;
+  const { event, showLoader, handleRoute } = props;
 
   // Rendering
   return (
@@ -73,7 +73,12 @@ export default function EventCard(props) {
             <button
               className="viewMap-btn"
               aria-label="View on map"
-              onClick={() => console.log('click')}>
+              onClick={() => handleRoute(event)}
+              onKeyDown={(keyEvent) => {
+                if (keyEvent.keyCode == 13) {
+                  handleRoute(event);
+                }
+              }}>
               <FontAwesomeIcon icon={faLocationDot} />
               <span>View on map</span>
             </button> }

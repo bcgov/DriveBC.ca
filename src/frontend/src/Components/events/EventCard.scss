@@ -34,6 +34,8 @@
         border-top: 1px solid $Divider;
         padding: 8px;
         flex-grow: 1;
+        display: flex;
+        align-items: center;
       }
 
       &.map, &.location {
