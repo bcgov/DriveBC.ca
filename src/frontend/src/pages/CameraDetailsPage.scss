@@ -619,3 +619,27 @@
     }
   }
 }
+
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.custom-spinner {
+  width: 40px;
+  height: 40px; 
+  margin-left: 1200px;
+  margin-bottom: 300px;
+}
+
+@media (max-width: 767px) {
+  .custom-spinner {
+    width: 30px;
+    height: 30px; 
+    margin-left: 48px;
+    margin-bottom: 140px;
+  }
+}

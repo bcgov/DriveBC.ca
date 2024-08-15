@@ -56,6 +56,9 @@ import './CameraDetailsPage.scss';
 import '../Components/map/Map.scss';
 
 import colocatedCamIcon from '../images/colocated-camera.svg';
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+import Spinner from 'react-bootstrap/Spinner';
 
 export default function CameraDetailsPage() {
   /* Setup */
@@ -89,6 +92,20 @@ export default function CameraDetailsPage() {
   const [cameraGroup, setCameraGroup] = useState(null);
   const [isRemoving, setIsRemoving] = useState();
   const [showAlert, setShowAlert] = useState(false);
+
+  const [showLoader, setShowLoader] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const handleLoading = () => {
+    setShowLoader(true);
+  };
+
+  useEffect(() => {
+    if (loading) {
+      handleLoading();
+      setLoading(false);
+    }
+  }, [loading]);
 
   // Error handling
   const displayError = error => {
@@ -128,6 +145,7 @@ export default function CameraDetailsPage() {
       document.title = `DriveBC - Cameras - ${camData.name}`;
       window.history.replaceState(history.state, null, `/cameras/${camData.id}`);
     }
+    setShowLoader(false);
   };
 
   async function initCamera(id) {
@@ -372,6 +390,21 @@ export default function CameraDetailsPage() {
           </a>
         </Container>
       </div>
+
+    {
+      showLoader?
+      (<div>
+        <Container className="container--full-width">
+          <div className="camera-details">
+            <div className='loader-container'>
+              <Spinner animation="border" className="custom-spinner"/>
+              <Skeleton height={400} />
+            </div>  
+          </div>            
+        </Container>
+      </div>)
+      :
+      (
       <div>
         {camera && (
           <Container className="container--full-width">
@@ -622,6 +655,8 @@ export default function CameraDetailsPage() {
           </Container>
         )}
       </div>
+      )
+    }
 
       {activeTab === 'webcam' && <Footer replay={replay} />}
 
