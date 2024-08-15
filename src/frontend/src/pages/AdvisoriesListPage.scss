@@ -3,30 +3,99 @@
 .advisories-page {
   position: relative;
 
+
   .network-error, .server-error {
     @media (max-width: 768px) {
       position: relative;
     }
   }
 
+  .page-header {
+    background-color: $Surface-minor;
+    
+    .page-title, .page-description {
+      color: #584215;
+    }
+  }
+
   .advisories-list {
 
     .advisory-li {
-      border-bottom: 1px solid $Divider;
-      padding-bottom: 20px;
+      margin-bottom: 54px;
       width: 100%;
-      border-radius: none;
       box-shadow: none;
 
       & + li.advisory-li {
         margin-top: 24px;
       }
 
+      &:hover {
+        .advisory-li-title {
+          text-decoration: none;
+        }
+      }
+
       &__content {
         @media (min-width: 992px) {
           display: flex;
-          justify-content: space-between;
+          width: 100%;
           gap: 40px;
+
+          .advisory-li__content__partition {
+            &:nth-of-type(1) {
+              width: 40%;
+            }
+            &:nth-of-type(2) {
+              width: 40%;
+            }
+            &:nth-of-type(3) {
+              width: 20%;
+            }
+          }
+        }
+
+        .advisory-li-title-container {
+          .advisory-li-title {
+            text-decoration: none;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+
+          .timestamp-container {
+            margin-top: 1rem;
+          }
+        }
+
+        .advisory-li-body-container {
+          .advisory-li-body {
+            font-size: 1.125rem;
+          }
+        }
+
+        .button-container {
+          display: flex;
+          align-items: center;
+          margin-top: 1rem;
+
+          @media (min-width: 992px) {
+            margin-top: 0;
+          }
+          
+          .viewDetails-link {
+            text-decoration: none;
+            font-weight: 700;
+            white-space: nowrap;
+
+            &:hover {
+              text-decoration: underline;
+            }
+
+            svg {
+              margin-left: 8px;
+            }
+          }
         }
       }
 
@@ -75,7 +144,7 @@
         }
 
         .timestamp-container, .friendly-time-text {
-          color: $Type-Link;
+          color: $Type-Secondary;
         }
 
         .timestamp-container:before {
@@ -84,6 +153,7 @@
           line-height: 1rem;
           margin-right: 0.5rem;
           margin-top: 0.125rem;
+          color: $Type-status-red;
         }
       }
 
@@ -102,7 +172,7 @@
   }
 
   .beta-message {
-    padding-top: 1rem;
+    padding-top: 2rem;
     padding-bottom: 0;
     font-weight: bold;
 
