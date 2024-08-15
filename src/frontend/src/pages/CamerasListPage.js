@@ -72,6 +72,18 @@ export default function CamerasListPage() {
   const [openAdvisoriesOverlay, setOpenAdvisoriesOverlay] = useState(false);
   const [openSearchOverlay, setOpenSearchOverlay] = useState(false);
   const [displayedHighways, setDisplayedHighways] = useState();
+  const [showLoader, setShowLoader] = useState(true);
+  const [showSpinner, setShowSpinner] = useState(false);
+    // Function to handle the state update from child
+  const handleShowSpinnerChange = (value) => {
+    setShowSpinner(value);
+    if (value) {
+      setShowLoader(true);
+    } else {
+      setShowLoader(false);
+    }
+  };
+
   // Error handling
   const displayError = (error) => {
     if (error instanceof ServerError) {
@@ -108,6 +120,10 @@ export default function CamerasListPage() {
     } else {
       getHighways(cameras);
     }
+
+    setTimeout(function() {
+      setShowLoader(false);
+    }, 300);
   };
 
   const getHighways = (cams) => {
@@ -208,6 +224,7 @@ export default function CamerasListPage() {
     }
   }, [filteredCameras]);
 
+
   useEffect(() => {
     // Search name and caption of all cams in group
     const searchFn = (pc, targetText) => {
@@ -289,7 +306,7 @@ export default function CamerasListPage() {
         <Container className="container--sidepanel">
           { xXlargeScreen &&
             <div className="container--sidepanel__left">
-              <RouteSearch showFilterText={true} />
+              <RouteSearch showFilterText={true} showSpinner={showSpinner} onShowSpinnerChange={handleShowSpinnerChange}/>
               <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
             </div>
           }
@@ -343,7 +360,7 @@ export default function CamerasListPage() {
               )}
             </div>
 
-            <CameraList cameras={ displayedCameras ? displayedCameras : [] } getCheckedHighway={getCheckedHighway}></CameraList>
+            <CameraList cameras={ displayedCameras ? displayedCameras : [] } getCheckedHighway={getCheckedHighway} showLoader={showLoader}></CameraList>
 
             {!(displayedCameras && displayedCameras.length) &&
               <div className="empty-cam-display">
@@ -387,7 +404,7 @@ export default function CamerasListPage() {
             <FontAwesomeIcon icon={faXmark} />
           </button>
           <p className="overlay__header bold">Find route</p>
-          <RouteSearch showFilterText={true} />
+          <RouteSearch showFilterText={true} showSpinner={showSpinner} onShowSpinnerChange={handleShowSpinnerChange}/>
         </div>
       }
     </React.Fragment>

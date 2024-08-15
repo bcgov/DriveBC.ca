@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useRef, useState, forwardRef } from 'react';
+import React, { useCallback, useEffect, useRef, forwardRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 
@@ -24,7 +24,7 @@ import './RouteSearch.scss';
 
 
 const RouteSearch = forwardRef((props, ref) => {
-  const { showFilterText } = props;
+  const { showFilterText, showSpinner, onShowSpinnerChange} = props;
 
   // Redux
   const dispatch = useDispatch();
@@ -33,9 +33,6 @@ const RouteSearch = forwardRef((props, ref) => {
     searchLocationTo: state.routes.searchLocationTo,
     selectedRoute: state.routes.selectedRoute
   }))));
-
-  // useState hooks
-  const [showSpinner, setShowSpinner] = useState(false);
 
   // Refs
   const isInitialMount = useRef(true);
@@ -49,7 +46,7 @@ const RouteSearch = forwardRef((props, ref) => {
     }
 
     if (searchLocationFrom && searchLocationFrom.length && searchLocationTo && searchLocationTo.length) {
-      setShowSpinner(true);
+      onShowSpinnerChange(true);
 
     } else {
       dispatch(clearSelectedRoute());
@@ -70,7 +67,7 @@ const RouteSearch = forwardRef((props, ref) => {
 
       getRoute(points).then(routeData => {
         dispatch(updateSelectedRoute(routeData));
-        setShowSpinner(false);
+        onShowSpinnerChange(false);
       });
     }
   }, [showSpinner]);
