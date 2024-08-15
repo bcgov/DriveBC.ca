@@ -329,7 +329,7 @@ export default function EventsListPage() {
         <Container className="container--sidepanel">
           { xXlargeScreen &&
             <div className="container--sidepanel__left">
-              <RouteSearch showFilterText={true} />
+              <RouteSearch showFilterText={true} showSpinner={false} onShowSpinnerChange={()=>{}}/>
               <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
             </div>
           }
@@ -367,7 +367,7 @@ export default function EventsListPage() {
                       Sort: {getSortingDisplay(sortingKey)}
                       <FontAwesomeIcon icon={faAngleDown} />
                     </React.Fragment>
-                    : 
+                    :
                     <React.Fragment>
                       <span className="sr-only" aria-hidden="false">Sorting options</span>
                       <FontAwesomeIcon icon={faBarsSort} />
@@ -459,8 +459,10 @@ export default function EventsListPage() {
             onClick={() => setOpenSearchOverlay(!openSearchOverlay)}>
             <FontAwesomeIcon icon={faXmark} />
           </button>
+
           <p className="overlay__header bold">Find route</p>
-          <RouteSearch showFilterText={true} />
+
+          <RouteSearch showFilterText={true} showSpinner={false} onShowSpinnerChange={()=>{}}/>
         </div>
       }
     </React.Fragment>

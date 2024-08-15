@@ -33,9 +33,12 @@ import './CameraCard.scss';
 import colocatedCamIcon from '../../images/colocated-camera.svg';
 import trackEvent from '../shared/TrackEvent.js';
 
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
 export default function CameraCard(props) {
   /* Setup */
-  const { cameraData } = props;
+  const { cameraData, showLoader } = props;
   const location = useLocation();
 
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -193,28 +196,33 @@ export default function CameraCard(props) {
       <div className="camera-card__body" onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
         {!unavailable && !delayed && !stale && (
           <div className="card-img-box">
-            <img
-              className="card-img"
-              src={camera.links.imageDisplay}
-              alt={camera.name}
-            />
+            { showLoader ? <Skeleton height={180} /> :
+              <img
+                className="card-img"
+                src={camera.links.imageDisplay}
+                alt={camera.name} />
+            }
           </div>
         )}
 
         {!unavailable && stale && !delayed && (
           <div className="card-img-box">
+            { showLoader ? <Skeleton height={180} /> :
             <img
               className="card-img"
               src={camera.links.imageDisplay}
               alt={camera.name}
             />
+        }
             <div className="card-notification">
+              { showLoader ? <Skeleton />:
               <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
                 <p>
                   Unable to retrieve latest image. Showing last image received.
                 </p>
                 <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
               </div>
+              }
               <div
                 className={'card-pill' + (show ? ' bounce' : ' hidden')}
                 onClick={handleChildClick}
@@ -232,18 +240,23 @@ export default function CameraCard(props) {
 
         {!unavailable && stale && delayed && (
           <div className="card-img-box">
+            { showLoader ? <Skeleton height={180} /> :
             <img
               className="card-img"
               src={camera.links.imageDisplay}
               alt={camera.name}
             />
+        }
             <div className="card-notification">
-              <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
-                <p>
-                  Longer than expected delay, displaying last image received.
-                </p>
-                <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
-              </div>
+              { showLoader ? <Skeleton height={180} /> :
+                <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
+                  <p>
+                    Longer than expected delay, displaying last image received.
+                  </p>
+                  <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                </div>
+              }
+
               <div
                 className={'card-pill' + (show ? ' bounce' : ' hidden')}
                 onClick={handleChildClick}
@@ -259,30 +272,38 @@ export default function CameraCard(props) {
           </div>
         )}
 
+
         {unavailable && (
+          showLoader ? <Skeleton height={312}/> :
           <div className="card-img-box">
             <div className="card-notification">
               <div className="card-pill">
                 <p>Unavailable</p>
               </div>
             </div>
-            <div className="unavailable-message">
-              <FontAwesomeIcon icon={faVideoSlash} />
-              <p>
-                This traffic camera image is temporarily unavailable. Please
-                check again later.
-              </p>
-            </div>
+
+              <div className="unavailable-message">
+                <FontAwesomeIcon icon={faVideoSlash} />
+                <p>
+                  This traffic camera image is temporarily unavailable. Please
+                  check again later.
+                </p>
+              </div>
+
           </div>
         )}
-        <div className="card-img-timestamp">
-          <p className="driveBC">
-            Drive<span>BC</span>
-          </p>
-          <FriendlyTime date={camera.last_update_modified} asDate={true} />
-        </div>
+        { showLoader? <Skeleton height={34} /> :
+            <div className="card-img-timestamp">
+            <p className="driveBC">
+              Drive<span>BC</span>
+            </p>
+            <FriendlyTime date={camera.last_update_modified} asDate={true} />
+          </div>
+        }
 
-        <div className="camera-orientations">
+
+        { showLoader? <Skeleton  width={149} height={20}/>:
+          <div className="camera-orientations">
           <img
             className="colocated-camera-icon"
             src={colocatedCamIcon}
@@ -306,18 +327,25 @@ export default function CameraCard(props) {
             </Button>
           ))}
         </div>
-        <p className="camera-name bold">{camera.name}</p>
-        <p className="label">{camera.caption}</p>
+
+        }
+
+        { showLoader? (<div><Skeleton height={20}/><Skeleton width={210} height={8} /><Skeleton width={246} height={8} /><Skeleton width={261} height={8} /></div>) : <p className="camera-name bold">{camera.name}</p>}
+        { showLoader? (<Skeleton />) : <p className="label">{camera.caption}</p>}
+
       </div>
 
       <div className="camera-card__tools">
-        <button
-          className="viewMap-btn"
-          aria-label="View on map"
-          onClick={handleViewOnMap}>
-          <FontAwesomeIcon icon={faMapMarkerAlt} />
-          <span>View on map</span>
-        </button>
+        {showLoader ?
+          <Skeleton width={97} height={23}/> : (
+          <button
+            className="viewMap-btn"
+            aria-label="View on map"
+            onClick={handleViewOnMap}>
+            <FontAwesomeIcon icon={faMapMarkerAlt} />
+            <span>View on map</span>
+          </button>
+        )}
 
         {authContext.loginStateKnown &&
           <button
@@ -326,8 +354,8 @@ export default function CameraCard(props) {
             onClick={favoriteHandler}>
 
             {(favCams && favCams.includes(camera.id)) ?
-            (<React.Fragment><FontAwesomeIcon icon={faStar} /><span>Remove</span></React.Fragment>) :
-            (<React.Fragment><FontAwesomeIcon icon={faStarOutline} /><span>Save</span></React.Fragment>) }
+            (showLoader? <Skeleton width={97} height={23}/>: <React.Fragment><FontAwesomeIcon icon={faStar} /><span>Remove</span></React.Fragment>) :
+            (showLoader? <Skeleton width={97} height={23}/>: <React.Fragment><FontAwesomeIcon icon={faStarOutline} /><span>Save</span></React.Fragment>) }
           </button>
         }
       </div>

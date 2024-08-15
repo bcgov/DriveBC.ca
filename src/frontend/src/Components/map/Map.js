@@ -541,7 +541,7 @@ export default function DriveBCMap(props) {
             {smallScreen && (
               <ExitSurvey mobile={true} />
             )}
-            <RouteSearch ref={routingContainerRef} routeEdit={true} />
+            <RouteSearch ref={routingContainerRef} routeEdit={true}  showSpinner={false} onShowSpinnerChange={()=>{}}/>
             <AdvisoriesWidget advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} onMap={true} />
           </div>
         )}
