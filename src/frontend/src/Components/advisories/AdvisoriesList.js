@@ -31,7 +31,7 @@ export default function AdvisoriesList(props) {
         if (isAdvisoriesListPage) {
           return (
             <div className="advisory-li unread" key={advisory.id}>
-              <div className="advisory-li__content" tabIndex={0}>
+              <div className="advisory-li__content">
                 <div className="advisory-li__content__partition advisory-li-title-container">
                   <a className="advisory-li-title" href={`/advisories/${advisory.id}`}>{advisory.title}</a>
                   <div className="timestamp-container">

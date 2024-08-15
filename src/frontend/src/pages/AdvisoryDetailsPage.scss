@@ -10,6 +10,12 @@
   }
 
   .page-header {
+    background-color: $Surface-minor;
+
+    .page-title, .page-description {
+      color: #584215;
+    }
+
     .page-description {
       max-width: initial;
     }
@@ -25,7 +31,7 @@
     }
 
     .timestamp-container, .friendly-time-text {
-      color: $Type-Link;
+      color: $Type-Secondary;
     }
 
     .timestamp-container {
