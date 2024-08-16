@@ -452,6 +452,14 @@ class FeedClient:
                     # DBC22-2125 - use CollectionUtc of first dataset instead of IssuedUtc, to be improved
                     issuedUtc = datasets[0].get("CollectionUtc") if datasets and len(datasets) else None
 
+                    if issuedUtc is not None:
+                        try:
+                            # SAWSx sends this field as ISO time without
+                            # offset, needed for python to parse correctly
+                            issuedUtc = datetime.fromisoformat(f"{issuedUtc}+00:00")
+                        except Exception:  # date parsing error
+                            logger.error(f"Issued UTC sent by {station_number} as {issuedUtc}")
+
                     elevation = data.get('WeatherStation').get("Elevation")
                     Longitude = data.get('WeatherStation').get("Longitude")
                     Latitude = data.get('WeatherStation').get("Latitude")
