@@ -31,6 +31,7 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
     precipitation = serializers.SerializerMethodField()
     snow = serializers.SerializerMethodField()
     average_wind = serializers.SerializerMethodField()
+    wind_direction = serializers.SerializerMethodField()
     maximum_wind = serializers.SerializerMethodField()
     road_condition = serializers.SerializerMethodField()
 
@@ -41,6 +42,7 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
             'weather_station_name',
             'air_temperature',
             'average_wind',
+            'wind_direction',
             'precipitation',
             'snow',
             'road_temperature',
@@ -80,13 +82,22 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
     def get_average_wind(self, obj):
         if "average_wind" in obj.datasets:
             data = obj.datasets["average_wind"]
-            return f'{data["value"]} {data["unit"]}'
+            return f'{round(float(data["value"]))} {data["unit"]}'
         return
+    
+    def get_wind_direction(self, obj):
+        if "wind_direction" in obj.datasets:
+            data = obj.datasets["wind_direction"]
+            degree = float(data["value"])
+            directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+            index = round(degree / 45) % 8
+            return directions[index]
+        return None
 
     def get_maximum_wind(self, obj):
         if "maximum_wind" in obj.datasets:
             data = obj.datasets["maximum_wind"]
-            return f'{data["value"]} {data["unit"]}'
+            return f'{round(float(data["value"]))} {data["unit"]}'
         return None
 
     def get_road_condition(self, obj):
