@@ -87,7 +87,7 @@ export default function LocalWeatherPanel(props) {
                       <FontAwesomeIcon className="icon" icon={faMountain} />
                     </div>
                     <p className="label">Elevation</p>
-                    <p className="data">{weatherData.elevation}</p>
+                    <p className="data">{weatherData.elevation} m</p>
                   </div>
                 )}
 
