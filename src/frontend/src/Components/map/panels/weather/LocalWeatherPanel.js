@@ -120,7 +120,7 @@ export default function LocalWeatherPanel(props) {
                       {weatherData.average_wind && (
                         <div className="data-group__row">
                           <p className="label">Average wind</p>
-                          <p className="data">{weatherData.average_wind}</p>
+                          <p className="data">{weatherData.wind_direction} {weatherData.average_wind}</p>
                         </div>
                       )}
                       {weatherData.maximum_wind && (
