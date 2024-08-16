@@ -7,6 +7,7 @@ import { memoize } from 'proxy-memoize';
 import { updateAdvisories } from '../../slices/cmsSlice';
 import { updateEvents} from '../../slices/feedsSlice';
 import { updateSearchLocationFrom, updateSearchLocationTo, updateSelectedRoute } from '../../slices/routesSlice'
+import { resetPendingAction, updatePendingAction } from '../../slices/userSlice';
 
 // Navigation
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
@@ -47,7 +48,7 @@ export default function RouteDetails(props) {
   const { route, isPanel, setRouteFavCams, setRouteLabel } = props;
 
   // Context
-  const { authContext } = useContext(AuthContext);
+  const { authContext, setAuthContext } = useContext(AuthContext);
 
   // Navigation
   const navigate = useNavigate();
@@ -55,7 +56,12 @@ export default function RouteDetails(props) {
 
   // Redux
   const dispatch = useDispatch();
-  const { cameras, events, searchLocationFrom, searchLocationTo, selectedRoute, advisories, filteredAdvisories, advisoryFilterPoints, eventFilterPoints, filteredEvents, favCams } = useSelector(useCallback(memoize(state => ({
+  const {
+    cameras, events, searchLocationFrom, searchLocationTo, selectedRoute,
+    advisories, filteredAdvisories, advisoryFilterPoints, eventFilterPoints,
+    filteredEvents, favCams, pendingAction
+
+  } = useSelector(useCallback(memoize(state => ({
     cameras: state.feeds.cameras.list,
     events: state.feeds.events.list,
     advisories: state.cms.advisories.list,
@@ -66,8 +72,10 @@ export default function RouteDetails(props) {
     filteredEvents: state.feeds.events.filteredList,
     advisoryFilterPoints: state.cms.advisories.filterPoints,
     filteredAdvisories: state.cms.advisories.filteredList,
-    favCams: state.user.favCams
+    favCams: state.user.favCams,
+    pendingAction: state.user.pendingAction,
   }))));
+
   // Refs
   const isInitialAlertMount = useRef(true);
   const timeout = useRef();
@@ -105,7 +113,6 @@ export default function RouteDetails(props) {
     }
   }
 
-   // Data
   // To be cleaned up
   const loadAdvisories = async () => {
     const routePoints = selectedRoute && selectedRoute.routeFound ? selectedRoute.points : null;
@@ -133,6 +140,11 @@ export default function RouteDetails(props) {
   useEffect(() => {
     loadEvents();
     loadAdvisories();
+
+    if (pendingAction && pendingAction.action === 'showSavePopup') {
+      setShowSavePopup(true);
+      dispatch(resetPendingAction());
+    }
   }, []);
 
   useEffect(() => {
@@ -170,6 +182,16 @@ export default function RouteDetails(props) {
     }, 5000);
   }, [isRemoving]);
 
+  /* Helpers */
+  const toggleAuthModal = (action) => {
+    setAuthContext((prior) => {
+      if (!prior.showingModal) {
+        return { ...prior, showingModal: true, action };
+      }
+      return prior;
+    })
+  };
+
   /* Handlers */
   const viewFavouriteCamHandler = async () => {
     // Copied data functions, to be cleaned up
@@ -196,14 +218,24 @@ export default function RouteDetails(props) {
     setIsRemoving(false);
   }
 
-  const starHandler = () => {
-    if (route.saved || !isPanel) {
-      removeRoute(route, selectedRoute, dispatch);
-      setSearchParams(createSearchParams({}));
-      setIsRemoving(true);
+  const favoriteHandler = () => {
+    // User logged in, default handler
+    if (authContext.loginStateKnown && authContext.username) {
+      if (route.saved || !isPanel) {
+        removeRoute(route, selectedRoute, dispatch);
+        setSearchParams(createSearchParams({}));
+        setIsRemoving(true);
 
+      } else {
+        setShowSavePopup(true);
+      }
+
+    // User not logged in, save pending action and open login modal
     } else {
-      setShowSavePopup(true);
+      toggleAuthModal('Sign In');
+      dispatch(updatePendingAction({
+        action: 'showSavePopup'
+      }));
     }
   }
 
@@ -273,11 +305,11 @@ export default function RouteDetails(props) {
             </span> : <div />
           }
 
-          {authContext.loginStateKnown && authContext.username &&
+          {authContext.loginStateKnown &&
             <button
               className={`favourite-btn ${(route.saved || !isPanel) ? 'favourited' : ''}`}
               aria-label={`${(route.saved || !isPanel) ? 'Remove favourite' : 'Add favourite'}`}
-              onClick={starHandler}>
+              onClick={favoriteHandler}>
 
               <FontAwesomeIcon icon={(route.saved || !isPanel) ? faStar : faStarOutline} />
               {(!isPanel) && <span>Remove</span>}

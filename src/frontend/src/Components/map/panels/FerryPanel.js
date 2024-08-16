@@ -6,11 +6,10 @@ import { useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFerry, faFlag } from '@fortawesome/pro-solid-svg-icons';
+import { faFerry } from '@fortawesome/pro-solid-svg-icons';
 import parse from 'html-react-parser';
 
 // Internal imports
-import AdvisoriesList from '../../advisories/AdvisoriesList';
 import ShareURLButton from '../../shared/ShareURLButton';
 
 // Styling
@@ -55,22 +54,6 @@ export default function FerryPanel(props) {
           <p>{parse(ferryData.seasonal_description)}</p>
           <p>{parse(ferryData.service_hours)}</p>
         </div>
-      </div>
-    </div>
-  );
-}
-
-export function showAdvisories(advisories) {
-  return (
-    <div className="popup popup--advisories" tabIndex={0}>
-      <div className="popup__title">
-        <div className="popup__title__icon">
-          <FontAwesomeIcon icon={faFlag} />
-        </div>
-        <p className="name">Advisories</p>
-      </div>
-      <div className="popup__content">
-        <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={false} showArrow={true} />
       </div>
     </div>
   );

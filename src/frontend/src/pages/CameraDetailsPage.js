@@ -5,7 +5,7 @@ import { createSearchParams, useParams, useNavigate } from 'react-router-dom';
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { memoize } from 'proxy-memoize';
-import { pushFavCam, removeFavCam } from '../slices/userSlice';
+import { pushFavCam, removeFavCam, updatePendingAction } from '../slices/userSlice';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -71,7 +71,7 @@ export default function CameraDetailsPage() {
   }))));
 
   // Context and router data
-  const { authContext } = useContext(AuthContext);
+  const { authContext, setAuthContext } = useContext(AuthContext);
   const params = useParams();
 
   // Refs
@@ -299,17 +299,37 @@ export default function CameraDetailsPage() {
 
   // Handlers
   const favoriteHandler = () => {
-    if (favCams.includes(camera.id)) {
-      deleteFavoriteCamera(camera.id, dispatch, removeFavCam);
-      setIsRemoving(true);
+    // User logged in, default handler
+    if (favCams != null && authContext.loginStateKnown && authContext.username) {
+      if (favCams.includes(camera.id)) {
+        deleteFavoriteCamera(camera.id, dispatch, removeFavCam);
+        setIsRemoving(true);
 
+      } else {
+        addFavoriteCamera(camera.id, dispatch, pushFavCam);
+        setIsRemoving(false);
+      }
+
+    // User not logged in, save pending action and open login modal
     } else {
-      addFavoriteCamera(camera.id, dispatch, pushFavCam);
-      setIsRemoving(false);
+      toggleAuthModal('Sign In');
+      dispatch(updatePendingAction({
+        action: 'pushFavCam',
+        payload: camera.id,
+      }));
     }
   }
 
-  // Helper functions
+  /* Helpers */
+  const toggleAuthModal = (action) => {
+    setAuthContext((prior) => {
+      if (!prior.showingModal) {
+        return { ...prior, showingModal: true, action };
+      }
+      return prior;
+    })
+  };
+
   const shouldRenderReplay = () => {
     if (!lastUpdate) {
       return false;
@@ -412,15 +432,14 @@ export default function CameraDetailsPage() {
               <div className="camera-details__description">
                 <div className="camera-details__description__title">
                   <h2>{camera.name}</h2>
-                  {favCams != null && authContext.loginStateKnown && authContext.username &&
-                    <button
-                      className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
-                      aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
-                      onClick={favoriteHandler}>
 
-                      <FontAwesomeIcon icon={(favCams && favCams.includes(camera.id)) ? faStar : faStarOutline} />
-                    </button>
-                  }
+                  <button
+                    className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
+                    aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
+                    onClick={favoriteHandler}>
+
+                    <FontAwesomeIcon icon={(favCams && favCams.includes(camera.id)) ? faStar : faStarOutline} />
+                  </button>
                 </div>
                 <p className="body--large">{parse(camera.caption)}</p>
               </div>

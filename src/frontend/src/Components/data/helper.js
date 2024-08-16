@@ -22,7 +22,8 @@ export class ServerError extends CustomError {
 const request = (url, params = {}, headers = {}, method = "GET") => {
   const options = {
     headers,
-    method
+    method,
+    credentials: "include"
   };
 
   if ("GET" === method) {
@@ -32,11 +33,22 @@ const request = (url, params = {}, headers = {}, method = "GET") => {
   }
 
   const result = fetch(`${url}`, options).then((response) => {
-    if (!response.ok) {
+    const statusCode = response.status.toString();
+
+    // Raise error for 4xx-5xx status codes
+    if (statusCode.startsWith('4') || statusCode.startsWith('5')) {
       throw response.status == 500 ? new ServerError() : new NetworkError;
     }
 
-    return response.json();
+    // Read the response body as text
+    return response.text().then((text) => {
+      // Check if the response body is empty
+      if (!text) {
+        return {}; // Return an empty object or suitable default value
+      }
+
+      return JSON.parse(text);
+    });
 
   }).catch((error) => {
     // throw network error on failed fetches

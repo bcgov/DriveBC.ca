@@ -63,7 +63,13 @@ function App() {
 
   // Effects
   useEffect(() => {
-    if (authContext.loginStateKnown && authContext.username) {
+    // Do nothing if login state is not known
+    if (!authContext.loginStateKnown) {
+      return
+    }
+
+    // Authenticated user
+    if (authContext.username) {
       initCams();
       initRoutes();
     }
@@ -138,7 +144,9 @@ function App() {
         <CamsContext.Provider value={{ camsContext }}>
           <div className="App">
             <Header />
+
             <ScrollToTop />
+
             <Routes>
               <Route path="/" element={<MapPage />} />
               <Route path="/my-cameras" element={<SavedCamerasPage />} />
@@ -158,6 +166,7 @@ function App() {
               <Route path="/highway-problem" element={<ReportRoadPage />} />
               <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />
             </Routes>
+
             <Modal />
           </div>
         </CamsContext.Provider>

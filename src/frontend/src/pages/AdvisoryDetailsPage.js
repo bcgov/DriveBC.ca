@@ -3,11 +3,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 // External imports
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMap,
-  faFileLines
-} from '@fortawesome/pro-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+  faMemoCircleInfo
+} from '@fortawesome/pro-regular-svg-icons';
 import Container from 'react-bootstrap/Container';
 import parse from 'html-react-parser';
 import Tab from 'react-bootstrap/Tab';
@@ -210,7 +210,7 @@ export default function AdvisoryDetailsPage() {
   }, [activeTab]);
 
   // Tabs view on mobile
-  const advisoryDetails = <FontAwesomeIcon icon={faFileLines} />;
+  const advisoryDetails = <FontAwesomeIcon icon={faMemoCircleInfo} />;
   const advisoryMap = <FontAwesomeIcon icon={faMap} />;
 
   // Rendering

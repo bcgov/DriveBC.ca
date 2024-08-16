@@ -1,9 +1,10 @@
 // React
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 
 // Redux
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { memoize } from 'proxy-memoize';
+import { pushFavCam, resetPendingAction } from '../../../slices/userSlice';
 
 // External imports
 import { DropdownButton } from 'react-bootstrap';
@@ -20,19 +21,38 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
 import { AuthContext } from "../../../App";
+import { addFavoriteCamera } from '../../data/webcams';
 
 // Styling
 import './UserNavigation.scss';
 
 export default function UserNavigation(props) {
   /* Setup */
+  // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
 
   // Redux
-  const { favCams, favRoutes } = useSelector(useCallback(memoize(state => ({
+  const dispatch = useDispatch();
+  const { favCams, favRoutes, pendingAction } = useSelector(useCallback(memoize(state => ({
     favCams: state.user.favCams,
-    favRoutes: state.user.favRoutes
+    favRoutes: state.user.favRoutes,
+    pendingAction: state.user.pendingAction,
   }))));
+
+  // Effects
+  useEffect(() => {
+    // Handle actions pending login
+    if (pendingAction && favCams) { // don't run when favCams haven't loaded
+      if (pendingAction.action == 'pushFavCam') {
+        addFavoriteCamera(pendingAction.payload, dispatch, pushFavCam);
+      }
+
+      // Reset pending action
+      if (pendingAction.action != 'showSavePopup') { // showSavePopup will be handled in RouteDetails
+        dispatch(resetPendingAction());
+      }
+    }
+  }, [favCams]);
 
   /* Helpers */
   const toggleAuthModal = (action) => {
