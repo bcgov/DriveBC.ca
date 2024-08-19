@@ -92,20 +92,17 @@ export default function CameraDetailsPage() {
   const [cameraGroup, setCameraGroup] = useState(null);
   const [isRemoving, setIsRemoving] = useState();
   const [showAlert, setShowAlert] = useState(false);
-
-  const [showLoader, setShowLoader] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [showLoader, setShowLoader] = useState(true);
 
   const handleLoading = () => {
     setShowLoader(true);
   };
 
   useEffect(() => {
-    if (loading) {
+    if (showLoader) {
       handleLoading();
-      setLoading(false);
     }
-  }, [loading]);
+  }, [showLoader]);
 
   // Error handling
   const displayError = error => {
