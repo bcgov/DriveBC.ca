@@ -94,13 +94,9 @@ export default function CameraDetailsPage() {
   const [showAlert, setShowAlert] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
 
-  const handleLoading = () => {
-    setShowLoader(true);
-  };
-
   useEffect(() => {
     if (showLoader) {
-      handleLoading();
+      setShowLoader(true);
     }
   }, [showLoader]);
 
@@ -123,6 +119,7 @@ export default function CameraDetailsPage() {
     if(!isInitialMount.current){
       setCamera(camData);
       trackEvent('click', 'camera-details', 'camera', camData.name);
+
       // Next update time
       const currentTime = new Date();
       const nextUpdateTime = currentTime.setSeconds(
@@ -142,7 +139,8 @@ export default function CameraDetailsPage() {
       document.title = `DriveBC - Cameras - ${camData.name}`;
       window.history.replaceState(history.state, null, `/cameras/${camData.id}`);
     }
-    setShowLoader(false);
+
+//    setShowLoader(false);
   };
 
   async function initCamera(id) {
@@ -416,8 +414,8 @@ export default function CameraDetailsPage() {
             <div className='loader-container'>
               <Spinner animation="border" className="custom-spinner"/>
               <Skeleton height={400} />
-            </div>  
-          </div>            
+            </div>
+          </div>
         </Container>
       </div>)
       :
