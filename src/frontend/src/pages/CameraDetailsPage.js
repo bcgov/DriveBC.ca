@@ -140,7 +140,7 @@ export default function CameraDetailsPage() {
       window.history.replaceState(history.state, null, `/cameras/${camData.id}`);
     }
 
-//    setShowLoader(false);
+    setShowLoader(false);
   };
 
   async function initCamera(id) {
