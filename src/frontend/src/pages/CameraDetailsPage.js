@@ -423,18 +423,19 @@ export default function CameraDetailsPage() {
       <div>
         {camera && (
           <Container className="container--full-width">
+            <div className="favourite-row">
+              <button
+                className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
+                aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
+                onClick={favoriteHandler}>
+                <FontAwesomeIcon icon={(favCams && favCams.includes(camera.id)) ? faStar : faStarOutline} />
+                <span>{(favCams && favCams.includes(camera.id)) ? 'Remove' : 'Save'}</span>
+              </button>
+            </div>
             <div className="camera-details">
               <div className="camera-details__description">
                 <div className="camera-details__description__title">
                   <h2>{camera.name}</h2>
-
-                  <button
-                    className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
-                    aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
-                    onClick={favoriteHandler}>
-
-                    <FontAwesomeIcon icon={(favCams && favCams.includes(camera.id)) ? faStar : faStarOutline} />
-                  </button>
                 </div>
                 <p className="body--large">{parse(camera.caption)}</p>
               </div>
