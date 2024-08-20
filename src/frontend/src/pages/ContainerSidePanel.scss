@@ -3,7 +3,7 @@
 .container--sidepanel {
   display: flex;
   flex-direction: column;
-  
+
   &.container {
     padding-top: 24px;
   }
@@ -16,6 +16,7 @@
     margin-right: 28px;
     padding-bottom: 24px;
     width: 360px;
+    min-width: 360px;
 
     .routing {
       margin-bottom: 20px;
@@ -44,11 +45,11 @@
     .advisories {
       margin-top: 64px;
       padding-right: 10px;
-    
+
       .title {
         background: #FEEBC2;
         padding: 12px 16px;
-    
+
         h4 {
           margin-bottom: 0;
           font-weight: 400;
@@ -56,11 +57,11 @@
           color: #584215;
         }
       }
-    
+
       .content {
         background: $Grey10;
         padding: 16px 16px 32px;
-    
+
         .advisories-list {
           list-style: none;
 
@@ -68,11 +69,11 @@
             margin-left: 0;
             color: $Type-Link;
             display: flex;
-    
+
             &::marker {
               color: $Type-Link;
             }
-            
+
             .advisory-li-title-container {
               .advisory-li-title {
                 font-size: 1rem;
@@ -96,7 +97,7 @@
         order: 2;
         flex: 0 0 100%;
         margin-top: 10px;
-  
+
         @media (min-width: 768px) {
           width: fit-content;
           justify-content: center;
@@ -105,26 +106,26 @@
           margin-top: 0;
         }
       }
-  
+
       .findRoute-btn {
         font-size: 0.875rem;
         height: 100%;
         margin: auto 0;
         border: 1px solid transparent;
-  
+
         @media (min-width: 768px) {
           margin: auto 16px;
         }
-  
+
         &:hover {
           border: 1px solid $Type-status-grey;
         }
-  
+
         svg {
           margin-right: 4px;
         }
       }
-      
+
       .routing {
         padding: 0;
       }
