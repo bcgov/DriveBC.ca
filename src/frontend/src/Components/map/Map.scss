@@ -237,6 +237,12 @@
         &.margin-pushed {
           margin-left: 390px;
         }
+
+        .spinner-border {
+          position: relative;
+          margin-right: 8px;
+          margin-left: -2px;
+        }
       }
 
       &.open-filters {

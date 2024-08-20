@@ -58,7 +58,7 @@ export const zoomOut = (mapView) => {
   setZoomPan(mapView, mapView.current.getZoom() - 1);
 }
 
-export const toggleMyLocation = (mapRef, mapView) => {
+export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading) => {
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(
       position => {
@@ -71,10 +71,12 @@ export const toggleMyLocation = (mapRef, mapView) => {
         ) {
           setZoomPan(mapView, 9, fromLonLat([longitude, latitude]));
           setLocationPin([longitude, latitude], redLocationMarkup, mapRef);
+          setMyLocationLoading(false);
         } else {
           // set my location to the center of BC for users outside of BC
           setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
           setLocationPin([-126.5, 54.2], redLocationMarkup, mapRef);
+          setMyLocationLoading(false);
         }
       },
       error => {
@@ -84,6 +86,7 @@ export const toggleMyLocation = (mapRef, mapView) => {
         } else {
           // Zoom out and center to BC if location not available
           setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
+          setMyLocationLoading(false);
         }
       },
     );
