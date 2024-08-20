@@ -36,16 +36,18 @@ from rest_framework.response import Response
 
 # Maps the key for our client API's serializer fields to the matching pair of
 # the source API's DataSetName and DisplayName fields
-#   serializer           DataSetName               DisplayName                value field
+#   serializer              DataSetName               DisplayName                value field
 SERIALIZER_TO_DATASET_MAPPING = {
-    "air_temperature":  ("air_temp",               "Air Temp"),
-    "road_temperature": ("sfc_temp",               "Pavement Temp"),
-    "road_surface":     ("sfc_stat_derived_state", "Pavement Status (State)", "MeaningfulValue"),
-    "precipitation":    ("pcpn_amt_pst1hr",        "Precip Hourly"),
-    "snow":             ("snwfl_amt_pst1hr",       "Snowfall (hourly)"),
-    "wind_direction":   ("wnd_dir",                "Wind Direction (current)"),
-    "average_wind":     ("wnd_spd",                "Wind Speed (current)"),
-    "maximum_wind":     ("max_wnd_spd_pst1hr",     "Wind Speed (max)")
+    "air_temperature":     ("air_temp",               "Air Temp"),
+    "road_temperature":    ("sfc_temp",               "Pavement Temp"),
+    "road_surface":        ("sfc_stat_derived_state", "Pavement Status (State)", "MeaningfulValue"),
+    "precipitation":       ("pcpn_amt_pst1hr",        "Precip Hourly"),
+    "precipitation_stdobs":("pcpn_amt_snc_std_obs",   "Precip New"),
+    "snow":                ("snwfl_amt_pst1hr",       "Snowfall (hourly)"),
+    "snow_stdobs":         ("snwfl_amt_snc_std_obs",  "Snowfall (new)"),
+    "wind_direction":      ("mean_wnd_dir_pst1hr",    "Wind Direction (mean)"),
+    "average_wind":        ("mean_wnd_spd_pst1hr",    "Wind Speed (mean)"),
+    "maximum_wind":        ("max_wnd_spd_pst1hr",     "Wind Speed (max)")
     }
 
 # Generated list of DataSetName values for filtering excluded dataset entries

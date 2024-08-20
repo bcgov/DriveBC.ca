@@ -29,7 +29,9 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
     air_temperature = serializers.SerializerMethodField()
     road_temperature = serializers.SerializerMethodField()
     precipitation = serializers.SerializerMethodField()
+    precipitation_stdobs = serializers.SerializerMethodField()
     snow = serializers.SerializerMethodField()
+    snow_stdobs = serializers.SerializerMethodField()
     average_wind = serializers.SerializerMethodField()
     wind_direction = serializers.SerializerMethodField()
     maximum_wind = serializers.SerializerMethodField()
@@ -44,7 +46,9 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
             'average_wind',
             'wind_direction',
             'precipitation',
+            'precipitation_stdobs',
             'snow',
+            'snow_stdobs',
             'road_temperature',
             'maximum_wind',
             'road_condition',
@@ -70,13 +74,29 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
     def get_precipitation(self, obj):
         if "precipitation" in obj.datasets:
             data = obj.datasets["precipitation"]
-            return f'{data["value"]} {data["unit"]}'
+            value = round(float(data["value"]),1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
+            return f'{value} {data["unit"]}'
         return None
-
+    
+    def get_precipitation_stdobs(self, obj):
+        if "precipitation_stdobs" in obj.datasets:
+            data = obj.datasets["precipitation_stdobs"]
+            value = round(float(data["value"]),1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
+            return f'{value} {data["unit"]}'
+        return None
+    
     def get_snow(self, obj):
         if "snow" in obj.datasets:
             data = obj.datasets["snow"]
-            return f'{data["value"]} {data["unit"]}'
+            value = round(float(data["value"]),1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
+            return f'{value} {data["unit"]}'
+        return
+    
+    def get_snow_stdobs(self, obj):
+        if "snow_stdobs" in obj.datasets:
+            data = obj.datasets["snow_stdobs"]
+            value = round(float(data["value"]),1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
+            return f'{value} {data["unit"]}'
         return
 
     def get_average_wind(self, obj):

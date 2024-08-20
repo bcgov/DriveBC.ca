@@ -74,8 +74,8 @@ export default function LocalWeatherPanel(props) {
             </div>
           )}
 
-          {(weatherData.elevation || weatherData.precipitation ||
-            weatherData.snow || weatherData.average_wind || weatherData.maximum_wind) && (
+          {(weatherData.elevation || weatherData.precipitation || weatherData.precipitation_stdobs ||
+            weatherData.snow || weatherData.snow_stdobs || weatherData.average_wind || weatherData.maximum_wind) && (
 
             <div className="data-card-container">
               <p className="container-label">Conditions</p>
@@ -91,23 +91,47 @@ export default function LocalWeatherPanel(props) {
                   </div>
                 )}
 
-                {weatherData.precipitation && (
-                  <div className="data-card__row">
+                {(weatherData.precipitation || weatherData.precipitation_stdobs) && (
+                  <div className="data-card__row data-card__row group">
                     <div className="data-icon">
                       <FontAwesomeIcon className="icon" icon={faDroplet} />
                     </div>
-                    <p className="label">Precipitation (last 12 hours)</p>
-                    <p className="data">{weatherData.precipitation}</p>
+                    <div className="data-group">
+                      {weatherData.precipitation && (
+                        <div className="data-group__row">
+                          <p className="label">Precipitation (last hour)</p>
+                          <p className="data">{weatherData.precipitation}</p>
+                        </div>
+                      )}
+                      {weatherData.precipitation_stdobs && (
+                        <div className="data-group__row">
+                          <p className="label">Precipitation (since 6am/6pm)</p>
+                          <p className="data">{weatherData.precipitation_stdobs}</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
 
-                {weatherData.snow && (
-                  <div className="data-card__row">
+                {(weatherData.snow || weatherData.snow_stdobs) && (
+                  <div className="data-card__row data-card__row group">
                     <div className="data-icon">
                       <FontAwesomeIcon className="icon" icon={faSnowflake} />
                     </div>
-                    <p className="label">Snow (last 12 hours)</p>
-                    <p className="data">{weatherData.snow}</p>
+                    <div className="data-group">
+                      {weatherData.snow && (
+                        <div className="data-group__row">
+                          <p className="label">Snow (last hour)</p>
+                          <p className="data">{weatherData.snow}</p>
+                        </div>
+                      )}
+                      {weatherData.snow_stdobs && (
+                        <div className="data-group__row">
+                          <p className="label">Snow (since 6am/6pm)</p>
+                          <p className="data">{weatherData.snow_stdobs}</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
 
