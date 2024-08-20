@@ -18,6 +18,7 @@ import * as slices from '../../slices';
 // External imports
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Spinner from 'react-bootstrap/Spinner';
 import {
   faPlus,
   faMinus,
@@ -132,9 +133,11 @@ export default function DriveBCMap(props) {
   const mapView = useRef();
   const panel = useRef();
   const myLocationRef = useRef();
+  const locationSet = useRef();
   const routingContainerRef = useRef();
 
   // States
+  const [myLocationLoading, setMyLocationLoading] = useState(false);
   const [advisoriesInView, setAdvisoriesInView] = useState([]);
   const [referenceFeature, updateReferenceFeature] = useState();
   const [selectedFerries, setSelectedFerries] = useState();
@@ -183,6 +186,18 @@ export default function DriveBCMap(props) {
     }
   };
 
+  const loadMyLocation = () => {
+    if(!locationSet.current){
+    setMyLocationLoading(true)
+    }
+  }
+
+  useEffect(()=>{
+    if(myLocationLoading){
+      toggleMyLocation(mapRef, mapView, setMyLocationLoading);
+      locationSet.current = true;
+    }
+  },[myLocationLoading])
   /* useEffect hooks */
   /* initialization for OpenLayers map */
   useEffect(() => {
@@ -552,7 +567,7 @@ export default function DriveBCMap(props) {
               ref={myLocationRef}
               className="map-btn my-location"
               variant="primary"
-              onClick={() => toggleMyLocation(mapRef, mapView)}
+              onClick={() => loadMyLocation(mapRef, mapView)}
               aria-label="my location">
               <FontAwesomeIcon icon={faLocationCrosshairs} />
               My location
@@ -582,10 +597,9 @@ export default function DriveBCMap(props) {
               ref={myLocationRef}
               className={`map-btn my-location ${openPanel && 'margin-pushed'}`}
               variant="primary"
-              onClick={() => toggleMyLocation(mapRef, mapView)}
+              onClick={() => loadMyLocation(mapRef, mapView)}
               aria-label="my location">
-
-              <FontAwesomeIcon icon={faLocationCrosshairs} />
+                {(!myLocationLoading) ? <Spinner animation="border" role="status" /> : <FontAwesomeIcon icon={faLocationCrosshairs} />}
               My location
             </Button>
             <ExitSurvey />
