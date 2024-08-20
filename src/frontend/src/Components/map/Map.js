@@ -569,7 +569,7 @@ export default function DriveBCMap(props) {
               variant="primary"
               onClick={() => loadMyLocation(mapRef, mapView)}
               aria-label="my location">
-              <FontAwesomeIcon icon={faLocationCrosshairs} />
+              {(myLocationLoading) ? <Spinner animation="border" role="status" /> : <FontAwesomeIcon icon={faLocationCrosshairs} />}
               My location
             </Button>
 
@@ -599,7 +599,7 @@ export default function DriveBCMap(props) {
               variant="primary"
               onClick={() => loadMyLocation(mapRef, mapView)}
               aria-label="my location">
-                {(!myLocationLoading) ? <Spinner animation="border" role="status" /> : <FontAwesomeIcon icon={faLocationCrosshairs} />}
+                {(myLocationLoading) ? <Spinner animation="border" role="status" /> : <FontAwesomeIcon icon={faLocationCrosshairs} />}
               My location
             </Button>
             <ExitSurvey />
