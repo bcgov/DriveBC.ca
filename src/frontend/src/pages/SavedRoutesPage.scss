@@ -26,7 +26,7 @@
     .route-list {
       display: grid;
       column-gap: 1.5em;
-      row-gap: 2em;
+      row-gap: 36px;
       grid-template-columns: repeat(1, 1fr );
       grid-template-rows: auto;
       opacity: 1;
@@ -64,6 +64,37 @@
         @media (min-width: 576px) {
           width: unset;
           margin: unset;
+        }
+
+        .route-details {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          
+          .route-alt-name {
+            margin-bottom: 0;
+          }
+
+          .myRoute-actions {
+            display: flex;
+            justify-content: space-between;
+            flex-grow: 1;
+            align-items: flex-end;
+            margin-top: 16px;
+          }
+
+          .viewCams-btn, .favourite-btn {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #255A90;
+            border: none;
+            background: none;
+            padding: 0;
+        
+            svg {
+              margin-right: 8px;
+            }
+          }
         }
       }
     }
