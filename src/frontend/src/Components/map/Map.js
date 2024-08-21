@@ -161,6 +161,7 @@ export default function DriveBCMap(props) {
     weathers: mapContext.visible_layers.weather,
     restStops: mapContext.visible_layers.restStops
   });
+  const [showSpinner, setShowSpinner] = useState(false);
 
   // Workaround for OL handlers not being able to read states
   const [clickedFeature, setClickedFeature] = useState();
@@ -556,7 +557,7 @@ export default function DriveBCMap(props) {
             {smallScreen && (
               <ExitSurvey mobile={true} />
             )}
-            <RouteSearch ref={routingContainerRef} routeEdit={true}  showSpinner={false} onShowSpinnerChange={()=>{}}/>
+            <RouteSearch ref={routingContainerRef} routeEdit={true}  showSpinner={showSpinner} onShowSpinnerChange={setShowSpinner}/>
             <AdvisoriesWidget advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} onMap={true} />
           </div>
         )}

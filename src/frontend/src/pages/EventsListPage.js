@@ -112,6 +112,7 @@ export default function EventsListPage() {
   const [showServerError, setShowServerError] = useState(false);
   const [openAdvisoriesOverlay, setOpenAdvisoriesOverlay] = useState(false);
   const [openSearchOverlay, setOpenSearchOverlay] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
 
   // Error handling
   const displayError = (error) => {
@@ -462,7 +463,7 @@ export default function EventsListPage() {
 
           <p className="overlay__header bold">Find route</p>
 
-          <RouteSearch showFilterText={true} showSpinner={false} onShowSpinnerChange={()=>{}}/>
+          <RouteSearch showFilterText={true} showSpinner={showSpinner} onShowSpinnerChange={setShowSpinner}/>
         </div>
       }
     </React.Fragment>
