@@ -56,6 +56,10 @@
       width: 100%;
       order: 2;
       margin-top: 10px;
+      
+      .rbt-input {
+        height: 41px;
+      }
 
       @media (min-width: 768px) {
         width: 400px;

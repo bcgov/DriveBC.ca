@@ -33,6 +33,9 @@
           svg {
             margin-right: 8px;
           }
+          &:hover {
+            text-decoration: underline;
+          }
         }
       }
     } 
