@@ -297,15 +297,13 @@ export default function RouteDetails(props) {
             </span> : <div />
           }
 
-          {authContext.loginStateKnown &&
+          {isPanel && authContext.loginStateKnown &&
             <button
               className={`favourite-btn text-only-btn
                  ${(route.saved || !isPanel) ? 'favourited' : ''}`}
               aria-label={`${(route.saved || !isPanel) ? 'Remove favourite' : 'Add favourite'}`}
               onClick={favoriteHandler}>
-
               <FontAwesomeIcon icon={(route.saved || !isPanel) ? faStar : faStarOutline} />
-              {(!isPanel) && <span>Remove</span>}
             </button>
           }
         </div>
@@ -326,7 +324,7 @@ export default function RouteDetails(props) {
           <p className="route-distance">{Math.round(route.distance)} km</p>
         </div>
         {route.label &&
-          <p>{getDefaultLabel()}</p>
+          <p className="route-alt-name">{getDefaultLabel()}</p>
         }
       </div>
 
@@ -413,13 +411,23 @@ export default function RouteDetails(props) {
       </div>
 
       {!isPanel &&
-        <button
-          className="viewCams-btn text-only-btn"
-          aria-label="View favourite cameras"
-          onClick={viewFavouriteCamHandler}>
-          <FontAwesomeIcon icon={faVideo} />
-          <span>View favourite cameras</span>
-        </button>
+        <div className="myRoute-actions">
+          <button
+            className="viewCams-btn text-only-btn"
+            aria-label="View favourite cameras"
+            onClick={viewFavouriteCamHandler}>
+            <FontAwesomeIcon icon={faVideo} />
+            <span>View favourite cameras</span>
+          </button>
+          <button
+            className={`favourite-btn text-only-btn
+                ${(route.saved) ? 'favourited' : ''}`}
+            aria-label="Remove favourite"
+            onClick={favoriteHandler}>
+            <FontAwesomeIcon icon={faStar} />
+            <span>Remove</span>
+          </button>
+        </div>
       }
 
       {showSavePopup && (
