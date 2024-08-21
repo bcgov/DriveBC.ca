@@ -8,6 +8,7 @@ from math import floor
 from pathlib import Path
 
 import environ
+import httpx
 import pytz
 import requests
 from apps.feed.client import FeedClient
@@ -59,7 +60,16 @@ def populate_all_webcam_data():
 
 
 def update_single_webcam_data(webcam):
-    webcam_data = FeedClient().get_webcam(webcam)
+    try:
+        webcam_data = FeedClient().get_webcam(webcam)
+
+    except httpx.HTTPStatusError as e:
+        # Cam removed/not found, delete it
+        if e.response.status_code == 404:
+            Webcam.objects.filter(id=webcam.id).delete()
+
+        # Skip updating otherwise
+        return
 
     # Only update if existing data differs for at least one of the fields
     for field in CAMERA_DIFF_FIELDS:
