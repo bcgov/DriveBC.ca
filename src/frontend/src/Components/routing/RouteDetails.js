@@ -421,7 +421,7 @@ export default function RouteDetails(props) {
           </button>
           <button
             className={`favourite-btn text-only-btn
-                ${(route.saved) ? 'favourited' : ''}`}
+                ${(route.saved || !isPanel) ? 'favourited' : ''}`}
             aria-label="Remove favourite"
             onClick={favoriteHandler}>
             <FontAwesomeIcon icon={faStar} />
