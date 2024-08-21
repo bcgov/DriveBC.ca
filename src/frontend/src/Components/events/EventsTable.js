@@ -13,6 +13,8 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/pro-solid-svg-icons';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
 import { getTypeDisplay, routeAtSortFn, routeOrderSortFn, severitySortFn } from './functions';
@@ -32,11 +34,36 @@ export default function EventsTable(props) {
   // react-table columns
   const getEventTypeCell = (data) => {
     return (
+    <OverlayTrigger placement="top" overlay={getDelayTooltip(data)}>
       <div className="eventType">
         <EventTypeIcon event={data} state={data.display_category === 'majorEvents' ? 'static' : 'active'} />
         <span>{getTypeDisplay(data)}</span>
       </div>
+      </OverlayTrigger>
     );
+  }
+
+
+  const getDelayTooltip = (data) =>{
+    const eventType = data.display_category;
+    switch(eventType){
+      case "closures":
+        return <Tooltip id="tooltip" className="tooltip-content">
+          <p>Travel is not possible in one or both directions on this road. Find an alternate route or a detour where possible.</p>
+        </Tooltip>
+      case "majorEvents":
+        return <Tooltip id="tooltip" className="tooltip-content">
+        <p>Expect delays of at least 30 minutes or more on this road. This could be due to a traffic incident, road work, or construction.</p>
+          </Tooltip>
+      case "minorEvents":
+        return <Tooltip id="tooltip" className="tooltip-content">
+         <p>Expect delays up to 30 minutes on this road. This could be due to a traffic incident, road work, or construction.</p>
+        </Tooltip>
+      case "futureEvents":
+        return <Tooltip id="tooltip" className="tooltip-content">
+          <p>Future road work or construction is planned for this road.</p>
+        </Tooltip>
+    }
   }
 
   const columns = [
