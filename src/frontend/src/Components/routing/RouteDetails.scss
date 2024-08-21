@@ -51,7 +51,7 @@
           }
         }
       }
-      
+
       &:hover {
         .overlay-screen {
           opacity: 1;
@@ -171,6 +171,11 @@
 
     svg {
       margin-right: 8px;
+    }
+
+    &.disabled {
+      text-decoration: unset;
+      color: #8C8C8C;
     }
   }
 }

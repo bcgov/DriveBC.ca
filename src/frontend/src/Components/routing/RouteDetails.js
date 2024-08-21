@@ -86,6 +86,7 @@ export default function RouteDetails(props) {
   const [isRemoving, setIsRemoving] = useState();
   const [showSavePopup, setShowSavePopup] = useState(false);
   const [routeMapImg, setRouteMapImg] = useState(); // for map snapshot
+  const [filteredFavCams, setFilteredFavCams] = useState();
 
   // Data
   // Copied from EventsListPage.js, to be cleaned up
@@ -134,10 +135,22 @@ export default function RouteDetails(props) {
     }
   }
 
+  const loadRouteCameras = async () => {
+    // Copied data functions, to be cleaned up
+    const camData = cameras ? cameras : await getCameras();
+    const filteredFavCams = camData.filter(item => favCams.includes(item.id));
+    const favCamGroupIds = filteredFavCams.map(cam => cam.group);
+    const filteredCameras = camData.filter(cam => favCamGroupIds.includes(cam.group));
+    const clonedCameras = JSON.parse(JSON.stringify(filteredCameras));
+    const finalCameras = addCameraGroups(clonedCameras, favCams);
+    setFilteredFavCams(filterByRoute(finalCameras, route));
+  }
+
   // Effects
   useEffect(() => {
     loadEvents();
     loadAdvisories();
+    loadRouteCameras();
 
     if (pendingAction && pendingAction.action === 'showSavePopup') {
       setShowSavePopup(true);
@@ -192,15 +205,7 @@ export default function RouteDetails(props) {
 
   /* Handlers */
   const viewFavouriteCamHandler = async () => {
-    // Copied data functions, to be cleaned up
-    const camData = cameras ? cameras : await getCameras();
-    const filteredFavCams = camData.filter(item => favCams.includes(item.id));
-    const favCamGroupIds = filteredFavCams.map(cam => cam.group);
-    const filteredCameras = camData.filter(cam => favCamGroupIds.includes(cam.group));
-    const clonedCameras = JSON.parse(JSON.stringify(filteredCameras));
-    const finalCameras = addCameraGroups(clonedCameras, favCams);
-
-    setRouteFavCams(filterByRoute(finalCameras, route));
+    setRouteFavCams(filteredFavCams);
     setRouteLabel(route.label ? route.label : route.start + ' to ' + route.end);
   }
 
@@ -412,13 +417,17 @@ export default function RouteDetails(props) {
 
       {!isPanel &&
         <div className="myRoute-actions">
-          <button
-            className="viewCams-btn text-only-btn"
-            aria-label="View favourite cameras"
-            onClick={viewFavouriteCamHandler}>
-            <FontAwesomeIcon icon={faVideo} />
-            <span>View favourite cameras</span>
-          </button>
+          {filteredFavCams &&
+            <button
+              className={`viewCams-btn text-only-btn ${filteredFavCams.length === 0 ? 'disabled' : ''}`}
+              aria-label="View favourite cameras"
+              onClick={viewFavouriteCamHandler}
+              disabled={filteredFavCams.length === 0}>
+              <FontAwesomeIcon icon={faVideo} />
+              <span>{filteredFavCams.length === 0 ? 'No favourite cameras on this route' : 'View favourite cameras'}</span>
+            </button>
+          }
+
           <button
             className={`favourite-btn text-only-btn
                 ${(route.saved || !isPanel) ? 'favourited' : ''}`}
