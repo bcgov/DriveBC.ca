@@ -252,6 +252,10 @@
       border: none;
       background: none;
       padding: 0;
+      &:hover {
+        text-decoration: underline;
+        color: #1E5189;
+      }
 
       svg {
         margin-right: 8px;

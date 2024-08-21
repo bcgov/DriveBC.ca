@@ -24,6 +24,10 @@ table {
 
   tbody {
     tr {
+      &:focus {
+        outline: 0;
+        box-shadow: none; 
+      }
       &.major, &.closure {
 
         .typeDisplay {
@@ -182,7 +186,6 @@ td.next_update .friendly-time-text {
   span {
     display: inline-block;
     width: 100%;
-    border-right: 1px solid $Divider;
   }
   &:last-child {
     span {
