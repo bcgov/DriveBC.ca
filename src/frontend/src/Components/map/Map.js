@@ -173,8 +173,8 @@ export default function DriveBCMap(props) {
   };
 
   const updatePosition = (feature) => {
-    // Do not process empty features and routes
-    if (feature != null && feature.getProperties().type !== 'route') {
+    // Do not process empty features, routes and advisories
+    if (feature != null && !Array.isArray(feature) && feature.getProperties().type !== 'route') {
       let geometry = feature.getGeometry();
 
       if (geometry.getType() !== 'Point') { // feature is a line or polygon
