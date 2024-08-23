@@ -420,11 +420,11 @@ export default function RouteDetails(props) {
           {filteredFavCams &&
             <button
               className={`viewCams-btn text-only-btn ${filteredFavCams.length === 0 ? 'disabled' : ''}`}
-              aria-label="View favourite cameras"
+              aria-label={filteredFavCams.length === 0 ? 'No favourite cameras on this route' : 'View favourite cameras on this route'}
               onClick={viewFavouriteCamHandler}
               disabled={filteredFavCams.length === 0}>
               <FontAwesomeIcon icon={faVideo} />
-              <span>{filteredFavCams.length === 0 ? 'No favourite cameras on this route' : 'View favourite cameras'}</span>
+              <span>{filteredFavCams.length === 0 ? 'No favourites on this route' : 'Favourites on this route'}</span>
             </button>
           }
 

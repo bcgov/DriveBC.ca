@@ -95,6 +95,12 @@
               margin-right: 8px;
             }
           }
+
+          .viewCams-btn {
+            &.disabled {
+              color: #9F9D9C;
+            }
+          }
         }
       }
     }
