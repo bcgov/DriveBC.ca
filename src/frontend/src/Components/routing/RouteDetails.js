@@ -29,13 +29,12 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 
 // Internal imports
-import { AuthContext } from '../../App';
+import { AlertContext, AuthContext } from '../../App';
 import { removeRoute, saveRoute } from "../data/routes";
 import { getCameras, addCameraGroups } from "../data/webcams";
 import { getEvents, getEventCounts } from "../data/events";
 import { getAdvisories, getAdvisoryCounts } from "../data/advisories";
 import { compareRoutePoints, filterByRoute, filterAdvisoryByRoute } from '../map/helpers';
-import Alert from '../shared/Alert';
 import RouteMap from './RouteMap';
 
 // Styling
@@ -47,6 +46,7 @@ export default function RouteDetails(props) {
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
+  const { setAlertMessage } = useContext(AlertContext);
 
   // Navigation
   const navigate = useNavigate();
@@ -76,10 +76,8 @@ export default function RouteDetails(props) {
 
   // Refs
   const isInitialAlertMount = useRef(true);
-  const timeout = useRef();
 
   // States
-  const [showAlert, setShowAlert] = useState(false);
   const [eventCount, setEventCount] = useState();
   const [advisoryCount, setAdvisoryCount] = useState();
   const [nickName, setNickName] = useState('');
@@ -143,7 +141,7 @@ export default function RouteDetails(props) {
     const filteredCameras = camData.filter(cam => favCamGroupIds.includes(cam.group));
     const clonedCameras = JSON.parse(JSON.stringify(filteredCameras));
     const finalCameras = addCameraGroups(clonedCameras, favCams);
-    setFilteredFavCams(filterByRoute(finalCameras, route));
+    setFilteredFavCams(finalCameras.length ? filterByRoute(finalCameras, route) : []);
   }
 
   // Effects
@@ -180,17 +178,7 @@ export default function RouteDetails(props) {
       return;
     }
 
-    setShowAlert(true);
-
-    // Clear existing close alert timers
-    if (timeout.current) {
-      clearTimeout(timeout.current);
-    }
-
-    // Set new close alert timer to reference
-    timeout.current = setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
+    setAlertMessage(getAlertMessage());
   }, [isRemoving]);
 
   /* Helpers */
@@ -463,8 +451,6 @@ export default function RouteDetails(props) {
           </Modal.Body>
         </Modal>
       )}
-
-      <Alert showAlert={showAlert} setShowAlert={setShowAlert} message={getAlertMessage()} />
 
       {isPanel &&
         <RouteMap showSavePopup={showSavePopup} setRouteMapImg={setRouteMapImg} />
