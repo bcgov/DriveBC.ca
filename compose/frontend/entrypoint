@@ -28,6 +28,14 @@ echo -e "window.SURVEY_LINK='${REACT_APP_SURVEY_LINK}';" >> $MAIN
 # Set the environment to be used for caching django content
 sed -i "s~{ENVIRONMENT}~$ENVIRONMENT~g" /etc/nginx/conf.d/default.conf
 
+# Check if the environment is 'prod' so that we remove the noindex header
+if [ "$ENVIRONMENT" = "prod" ]; then
+    echo "Environment is 'prod' removing X-Robots-Tag noindex header."
+    sed -i '/add_header X-Robots-Tag "noindex";/d' /etc/nginx/conf.d/default.conf
+else
+    echo "Environment is not 'prod', keeping X-Robots-Tag noindex header."
+fi
+
 #precompress the main js and css files to improve performance
 gzip -k $MAIN
 gzip -k $MAINCSS
