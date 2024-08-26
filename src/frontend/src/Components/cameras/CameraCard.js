@@ -21,10 +21,9 @@ import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
-import { AuthContext } from '../../App';
+import { AlertContext, AuthContext } from '../../App';
 import { getCameraOrientation } from './helper.js';
 import { addFavoriteCamera, deleteFavoriteCamera } from "../data/webcams";
-import Alert from '../shared/Alert';
 import FriendlyTime from '../shared/FriendlyTime';
 
 // Styling
@@ -38,10 +37,15 @@ import 'react-loading-skeleton/dist/skeleton.css'
 
 export default function CameraCard(props) {
   /* Setup */
+  // Props
   const { cameraData, showLoader } = props;
+
+  // Navigation
   const location = useLocation();
 
+  // Contexts
   const { authContext, setAuthContext } = useContext(AuthContext);
+  const { setAlertMessage } = useContext(AlertContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -51,13 +55,11 @@ export default function CameraCard(props) {
 
   // Refs
   const isInitialAlertMount = useRef(true);
-  const timeout = useRef();
 
   // States
   const [show, setShow] = useState(false);
   const [camera, setCamera] = useState(cameraData);
   const [isRemoving, setIsRemoving] = useState();
-  const [showAlert, setShowAlert] = useState(false);
 
   // useEffect hooks
   useEffect(() => {
@@ -70,17 +72,7 @@ export default function CameraCard(props) {
       return;
     }
 
-    setShowAlert(true);
-
-    // Clear existing close alert timers
-    if (timeout.current) {
-      clearTimeout(timeout.current);
-    }
-
-    // Set new close alert timer to reference
-    timeout.current = setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
+    setAlertMessage(getAlertMessage());
   }, [isRemoving]);
 
   // Misc
@@ -359,8 +351,6 @@ export default function CameraCard(props) {
           </button>
         }
       </div>
-
-      <Alert showAlert={showAlert} setShowAlert={setShowAlert} message={getAlertMessage()} />
     </div>
   );
 }

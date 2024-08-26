@@ -36,12 +36,11 @@ import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
-import { AuthContext } from '../App';
+import { AlertContext, AuthContext } from '../App';
 import { addFavoriteCamera, deleteFavoriteCamera, getCameraGroupMap, getCameras } from '../Components/data/webcams.js';
 import { getCameraOrientation } from '../Components/cameras/helper.js';
 import { getWebcamReplay } from '../Components/data/webcams';
 import { NetworkError, ServerError } from '../Components/data/helper';
-import Alert from '../Components/shared/Alert';
 import NetworkErrorPopup from '../Components/map/errors/NetworkError';
 import ServerErrorPopup from '../Components/map/errors/ServerError';
 import MapWrapper from '../Components/map/MapWrapper';
@@ -62,7 +61,9 @@ import Spinner from 'react-bootstrap/Spinner';
 
 export default function CameraDetailsPage() {
   /* Setup */
+  // Navigation
   const navigate = useNavigate();
+  const params = useParams();
 
   // Redux
   const dispatch = useDispatch();
@@ -70,14 +71,13 @@ export default function CameraDetailsPage() {
     favCams: state.user.favCams
   }))));
 
-  // Context and router data
+  // Contexts
   const { authContext, setAuthContext } = useContext(AuthContext);
-  const params = useParams();
+  const { setAlertMessage } = useContext(AlertContext);
 
   // Refs
   const isInitialMount = useRef(true);
   const isInitialAlertMount = useRef(true);
-  const timeout = useRef();
 
   // State hooks
   const [camera, setCamera] = useState(null);
@@ -91,7 +91,6 @@ export default function CameraDetailsPage() {
   const [showServerError, setShowServerError] = useState(false);
   const [cameraGroup, setCameraGroup] = useState(null);
   const [isRemoving, setIsRemoving] = useState();
-  const [showAlert, setShowAlert] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
@@ -198,17 +197,7 @@ export default function CameraDetailsPage() {
       return;
     }
 
-    setShowAlert(true);
-
-    // Clear existing close alert timers
-    if (timeout.current) {
-      clearTimeout(timeout.current);
-    }
-
-    // Set new close alert timer to reference
-    timeout.current = setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
+    setAlertMessage(getAlertMessage());
   }, [isRemoving]);
 
   const toggleReplay = () => {
@@ -674,8 +663,6 @@ export default function CameraDetailsPage() {
     }
 
       {activeTab === 'webcam' && <Footer replay={replay} />}
-
-      <Alert showAlert={showAlert} setShowAlert={setShowAlert} message={getAlertMessage()} />
     </div>
   );
 }

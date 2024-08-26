@@ -17,10 +17,9 @@ import Button from 'react-bootstrap/Button';
 import parse from 'html-react-parser';
 
 // Internal imports
-import { AuthContext } from '../../../App';
+import { AlertContext, AuthContext } from '../../../App';
 import { addFavoriteCamera, deleteFavoriteCamera } from "../../data/webcams";
 import { getCameraOrientation } from '../../cameras/helper';
-import Alert from '../../shared/Alert';
 import FriendlyTime from '../../shared/FriendlyTime';
 import trackEvent from '../../shared/TrackEvent';
 import ShareURLButton from '../../shared/ShareURLButton';
@@ -39,6 +38,7 @@ export default function CamPanel(props) {
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
+  const { setAlertMessage } = useContext(AlertContext);
 
   // Navigation
   const navigate = useNavigate();
@@ -53,7 +53,6 @@ export default function CamPanel(props) {
   // Refs
   const isInitialMount = useRef(true);
   const isInitialAlertMount = useRef(true);
-  const timeout = useRef();
 
   // States
   const newCam = camFeature.id ? camFeature : camFeature.getProperties();
@@ -61,7 +60,6 @@ export default function CamPanel(props) {
   const [camera, setCamera] = useState(newCam);
   const [camIndex, setCamIndex] = useState(0);
   const [isRemoving, setIsRemoving] = useState();
-  const [showAlert, setShowAlert] = useState(false);
 
   // Effects
   useEffect(() => {
@@ -87,17 +85,7 @@ export default function CamPanel(props) {
       return;
     }
 
-    setShowAlert(true);
-
-    // Clear existing close alert timers
-    if (timeout.current) {
-      clearTimeout(timeout.current);
-    }
-
-    // Set new close alert timer to reference
-    timeout.current = setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
+    setAlertMessage(getAlertMessage());
   }, [isRemoving]);
 
   /* Helpers */
@@ -275,8 +263,6 @@ export default function CamPanel(props) {
                 }
               </button>
             }
-
-            <Alert showAlert={showAlert} setShowAlert={setShowAlert} message={getAlertMessage()} />
           </div>
         </div>
       )}

@@ -10,20 +10,22 @@ import Button from 'react-bootstrap/Button';
 import './Alert.scss';
 
 export default function Alert(props) {
-  const { showAlert, setShowAlert, message } = props;
+  const { alertMessage, closeAlert } = props;
+
+  console.log(alertMessage);
 
   /* Main rendering function */
-  return showAlert && (
+  return (
     <div className="alert">
       <div className="content">
         <div className="content__text">
-          {message}
+          {alertMessage}
         </div>
 
         <Button
           className={'alert-close-btn'}
           aria-label="close alert banner for copied link"
-          onClick={() => setShowAlert(false)}>
+          onClick={closeAlert}>
 
           <FontAwesomeIcon icon={faXmark} />
         </Button>

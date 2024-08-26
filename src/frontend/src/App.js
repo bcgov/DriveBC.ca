@@ -1,5 +1,5 @@
 // React
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 
 // Navigation
 import { Route, Routes } from 'react-router-dom';
@@ -23,6 +23,7 @@ import { getFavoriteRoutes } from './Components/data/routes';
 import AccountPage from './pages/AccountPage';
 import AdvisoriesListPage from './pages/AdvisoriesListPage';
 import AdvisoryDetailsPage from './pages/AdvisoryDetailsPage';
+import Alert from './Components/shared/Alert';
 import BulletinDetailsPage from './pages/BulletinDetailsPage';
 import BulletinsListPage from './pages/BulletinsListPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
@@ -45,9 +46,10 @@ import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 
 // Variables
-export const MapContext = createContext(null);
-export const CamsContext = createContext(null);
+export const AlertContext = createContext();
 export const AuthContext = createContext(null);
+export const CamsContext = createContext(null);
+export const MapContext = createContext(null);
 
 let callingSession = false;
 
@@ -56,12 +58,39 @@ function App() {
   // Redux
   const dispatch = useDispatch();
 
+  // Refs
+  const isInitialAlertMount = useRef(true);
+  const timeout = useRef();
+
   // States
-  const [mapContext, setMapContext] = useState(getInitialMapContext());
-  const [camsContext] = useState({ displayLength: 21, setDisplayLength: (length) => {} });
+  const [alertMessage, setAlertMessage] = useState();
   const [authContext, setAuthContext] = useState(getInitialAuthContext());
+  const [camsContext] = useState({ displayLength: 21, setDisplayLength: (length) => {} });
+  const [mapContext, setMapContext] = useState(getInitialMapContext());
 
   // Effects
+  useEffect(() => {
+    if (isInitialAlertMount.current) {
+      isInitialAlertMount.current = false;
+      return;
+    }
+
+    console.log(alertMessage);
+
+    if (alertMessage) {
+      // Clear existing close alert timers
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+
+      // Set new close alert timer to reference
+      timeout.current = setTimeout(() => {
+        setAlertMessage(null);
+      }, 5000);
+    }
+
+  }, [alertMessage]);
+
   useEffect(() => {
     // Do nothing if login state is not known
     if (!authContext.loginStateKnown) {
@@ -142,33 +171,39 @@ function App() {
     <AuthContext.Provider value={{ authContext, setAuthContext }}>
       <MapContext.Provider value={{ mapContext, setMapContext }}>
         <CamsContext.Provider value={{ camsContext }}>
-          <div className="App">
-            <Header />
+          <AlertContext.Provider value={{ alertMessage, setAlertMessage }}>
+            <div className="App">
+              <Header />
 
-            <ScrollToTop />
+              <ScrollToTop />
 
-            <Routes>
-              <Route path="/" element={<MapPage />} />
-              <Route path="/my-cameras" element={<SavedCamerasPage />} />
-              <Route path="/my-routes" element={<SavedRoutesPage />} />
-              <Route path="/cameras" element={<CamerasListPage />} />
-              <Route path="/cameras/:id" element={<CameraDetailsPage />} />
-              <Route path="/delays" element={<EventsListPage />} />
-              <Route path="/advisories" element={<AdvisoriesListPage />} />
-              <Route path="/advisories/:id" element={<AdvisoryDetailsPage />} />
-              <Route path="/bulletins" element={<BulletinsListPage />} />
-              <Route path="/bulletins/:id" element={<BulletinDetailsPage />} />
-              <Route path="/account" element={<AccountPage />} />
-              {/* Catch-all route for 404 errors */}
-              <Route path="*" element={<NotFoundPage />} />
-              <Route path="/problems" element={<ProblemsPage />} />
-              <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
-              <Route path="/highway-problem" element={<ReportRoadPage />} />
-              <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />
-            </Routes>
+              <Routes>
+                <Route path="/" element={<MapPage />} />
+                <Route path="/my-cameras" element={<SavedCamerasPage />} />
+                <Route path="/my-routes" element={<SavedRoutesPage />} />
+                <Route path="/cameras" element={<CamerasListPage />} />
+                <Route path="/cameras/:id" element={<CameraDetailsPage />} />
+                <Route path="/delays" element={<EventsListPage />} />
+                <Route path="/advisories" element={<AdvisoriesListPage />} />
+                <Route path="/advisories/:id" element={<AdvisoryDetailsPage />} />
+                <Route path="/bulletins" element={<BulletinsListPage />} />
+                <Route path="/bulletins/:id" element={<BulletinDetailsPage />} />
+                <Route path="/account" element={<AccountPage />} />
+                {/* Catch-all route for 404 errors */}
+                <Route path="*" element={<NotFoundPage />} />
+                <Route path="/problems" element={<ProblemsPage />} />
+                <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
+                <Route path="/highway-problem" element={<ReportRoadPage />} />
+                <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />
+              </Routes>
 
-            <Modal />
-          </div>
+              <Modal />
+
+              {alertMessage &&
+                <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
+              }
+            </div>
+          </AlertContext.Provider>
         </CamsContext.Provider>
       </MapContext.Provider>
     </AuthContext.Provider>
