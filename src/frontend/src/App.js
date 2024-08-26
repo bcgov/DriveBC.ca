@@ -75,8 +75,6 @@ function App() {
       return;
     }
 
-    console.log(alertMessage);
-
     if (alertMessage) {
       // Clear existing close alert timers
       if (timeout.current) {
@@ -199,9 +197,7 @@ function App() {
 
               <Modal />
 
-              {alertMessage &&
-                <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
-              }
+              <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
             </div>
           </AlertContext.Provider>
         </CamsContext.Provider>

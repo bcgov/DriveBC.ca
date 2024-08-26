@@ -1,5 +1,14 @@
 @import "../../styles/variables.scss";
 
+.fade-out {
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.fade-out.hidden {
+  opacity: 0;
+}
+
 .alert {
   position: fixed;
   left: 50%;
@@ -42,7 +51,7 @@
 
     &__text {
       margin: 0;
-      
+
       p {
         font-size: 0.875rem;
         color: white;
