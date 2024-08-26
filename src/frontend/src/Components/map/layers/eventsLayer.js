@@ -143,7 +143,7 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
     addLayer('futureEvents', futureEventsVS, 98);
     addLayer('futureEventsLines', futureEventsLinesVS, 12);
     addLayer('roadConditions', roadConditionsVS, 88);
-    addLayer('roadConditionsLines', roadConditionsLinesVS, 8);
+    addLayer('roadConditionsLines', roadConditionsLinesVS, 1);
 
     setLoadingLayers(prevState => ({
       ...prevState,
