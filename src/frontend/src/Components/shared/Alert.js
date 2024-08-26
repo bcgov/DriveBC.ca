@@ -1,5 +1,5 @@
 // React
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,16 +10,32 @@ import Button from 'react-bootstrap/Button';
 import './Alert.scss';
 
 export default function Alert(props) {
+  /* Setup */
+  // Props
   const { alertMessage, closeAlert } = props;
 
-  console.log(alertMessage);
+  // States
+  const [visible, setVisible] = useState(false);
+  const [renderedAlertMessage, setRenderedAlertMessage] = useState(alertMessage);
+
+  // Effects
+  useEffect(() => {
+    // Do not update on closing
+    if (alertMessage) {
+      setVisible(true);
+      setRenderedAlertMessage(alertMessage);
+
+    } else {
+      setVisible(false);
+    }
+  }, [alertMessage]);
 
   /* Main rendering function */
-  return (
-    <div className="alert">
+  return renderedAlertMessage && (
+    <div className={`alert fade-out ${!visible ? 'hidden' : ''}`}>
       <div className="content">
         <div className="content__text">
-          {alertMessage}
+          {renderedAlertMessage}
         </div>
 
         <Button
