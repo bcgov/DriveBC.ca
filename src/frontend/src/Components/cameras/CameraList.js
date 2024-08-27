@@ -26,7 +26,7 @@ export default function CameraList(props) {
     const checkedHighway = getCheckedHighway();
     let filteredCameras = cameras;
     if(checkedHighway){
-      filteredCameras = cameras.filter((camera) => camera.highway === checkedHighway)
+      filteredCameras = cameras.filter((camera) => (camera.highway === checkedHighway || camera.highway_display === checkedHighway))
     }
     if (!length) { camsContext.displayLength += 4; }
     const shown = filteredCameras.slice(0, length ? length : camsContext.displayLength);
