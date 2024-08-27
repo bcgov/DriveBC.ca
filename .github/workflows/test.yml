@@ -95,7 +95,7 @@ jobs:
       uses: redhat-actions/push-to-registry@v2
       with:
         image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
+        tags: latest latest-test
         registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
         username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
         password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
@@ -138,7 +138,7 @@ jobs:
       uses: redhat-actions/push-to-registry@v2
       with:
         image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
+        tags: latest latest-test
         registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
         username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
         password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
@@ -178,7 +178,7 @@ jobs:
       uses: redhat-actions/push-to-registry@v2
       with:
         image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
+        tags: latest latest-test
         registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
         username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
         password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
@@ -219,7 +219,7 @@ jobs:
       uses: redhat-actions/push-to-registry@v2
       with:
         image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
+        tags: latest latest-test
         registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
         username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
         password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
