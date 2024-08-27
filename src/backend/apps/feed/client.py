@@ -30,7 +30,6 @@ from apps.feed.serializers import (
 )
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Q
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
@@ -38,17 +37,17 @@ from rest_framework.response import Response
 # the source API's DataSetName and DisplayName fields
 #   serializer              DataSetName               DisplayName                value field
 SERIALIZER_TO_DATASET_MAPPING = {
-    "air_temperature":     ("air_temp",               "Air Temp"),
-    "road_temperature":    ("sfc_temp",               "Pavement Temp"),
-    "road_surface":        ("sfc_stat_derived_state", "Pavement Status (State)", "MeaningfulValue"),
-    "precipitation":       ("pcpn_amt_pst1hr",        "Precip Hourly"),
-    "precipitation_stdobs":("pcpn_amt_snc_std_obs",   "Precip New"),
-    "snow":                ("snwfl_amt_pst1hr",       "Snowfall (hourly)"),
-    "snow_stdobs":         ("snwfl_amt_snc_std_obs",  "Snowfall (new)"),
-    "wind_direction":      ("mean_wnd_dir_pst1hr",    "Wind Direction (mean)"),
-    "average_wind":        ("mean_wnd_spd_pst1hr",    "Wind Speed (mean)"),
-    "maximum_wind":        ("max_wnd_spd_pst1hr",     "Wind Speed (max)")
-    }
+    "air_temperature":      ("air_temp",               "Air Temp"),
+    "road_temperature":     ("sfc_temp",               "Pavement Temp"),
+    "road_surface":         ("sfc_stat_derived_state", "Pavement Status (State)", "MeaningfulValue"),
+    "precipitation":        ("pcpn_amt_pst1hr",        "Precip Hourly"),
+    "precipitation_stdobs": ("pcpn_amt_snc_std_obs",   "Precip New"),
+    "snow":                 ("snwfl_amt_pst1hr",       "Snowfall (hourly)"),
+    "snow_stdobs":          ("snwfl_amt_snc_std_obs",  "Snowfall (new)"),
+    "wind_direction":       ("mean_wnd_dir_pst1hr",    "Wind Direction (mean)"),
+    "average_wind":         ("mean_wnd_spd_pst1hr",    "Wind Speed (mean)"),
+    "maximum_wind":         ("max_wnd_spd_pst1hr",     "Wind Speed (max)")
+}
 
 # Generated list of DataSetName values for filtering excluded dataset entries
 #     ['air_temp', 'sfc_temp', ...]
@@ -410,16 +409,8 @@ class FeedClient:
         headers = {"Authorization": f"Bearer {access_token}"}
 
         try:
-            # Delete items where specified fields are null
-            serializer_cls.Meta.model.objects.filter(
-                Q(datasets__air_temperature__isnull=True) |
-                Q(datasets__average_wind__isnull=True) |
-                Q(datasets__precipitation__isnull=True) |
-                Q(datasets__snow__isnull=True) |
-                Q(datasets__road_temperature__isnull=True) |
-                Q(datasets__maximum_wind__isnull=True) |
-                Q(datasets__road_condition__isnull=True)
-            ).delete()
+            # Delete existing VMS signs
+            serializer_cls.Meta.model.objects.filter(name__contains='VMS').delete()
 
             response = requests.get(external_api_url, headers=headers)
             response.raise_for_status()
@@ -462,10 +453,14 @@ class FeedClient:
                         except Exception:  # date parsing error
                             logger.error(f"Issued UTC sent by {station_number} as {issuedUtc}")
 
+                    weather_station_name = data.get('WeatherStation').get("WeatherStationName")
+                    # Do not process VMS stations
+                    if weather_station_name and 'VMS' in weather_station_name:
+                        continue
+
                     elevation = data.get('WeatherStation').get("Elevation")
                     Longitude = data.get('WeatherStation').get("Longitude")
                     Latitude = data.get('WeatherStation').get("Latitude")
-                    weather_station_name = data.get('WeatherStation').get("WeatherStationName")
                     location_description = data.get('WeatherStation').get("LocationDescription")
                     # filtering down dataset to just SensorTypeName and DataSetName
                     filtered_dataset = {}
