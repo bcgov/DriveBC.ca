@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { createSearchParams, useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
@@ -53,27 +53,14 @@ export default function CameraCard(props) {
     favCams: state.user.favCams
   }))));
 
-  // Refs
-  const isInitialAlertMount = useRef(true);
-
   // States
   const [show, setShow] = useState(false);
   const [camera, setCamera] = useState(cameraData);
-  const [isRemoving, setIsRemoving] = useState();
 
   // useEffect hooks
   useEffect(() => {
     setCamera(cameraData);
   }, [cameraData]);
-
-  useEffect(() => {
-    if (isInitialAlertMount.current) {
-      isInitialAlertMount.current = false;
-      return;
-    }
-
-    setAlertMessage(getAlertMessage());
-  }, [isRemoving]);
 
   // Misc
   const navigate = useNavigate();
@@ -137,14 +124,14 @@ export default function CameraCard(props) {
 
   const addCamera = async () => {
     addFavoriteCamera(camera.id, dispatch, pushFavCam);
-    setIsRemoving(false);
+    setAlertMessage(<p>Saved to <a href="/my-cameras">My cameras</a></p>);
   }
 
   const deleteCamera = async () => {
     // use id from prop for deletion in saved cameras page
     const id = location.pathname == '/my-cameras' ? cameraData.id : camera.id;
     deleteFavoriteCamera(id, dispatch, removeFavCam);
-    setIsRemoving(true);
+    setAlertMessage(<p>Removed from <a href="/my-cameras">My cameras</a></p>);
   }
 
   const favoriteHandler = () => {
@@ -173,11 +160,6 @@ export default function CameraCard(props) {
   }
 
   /* Rendering */
-  // Subcomponents
-  const getAlertMessage = () => {
-    return <p>{isRemoving ? 'Removed from ' : 'Saved to '} <a href="/my-cameras">My cameras</a></p>;
-  };
-
   // Main component
   const stale = camera.marked_stale ? 'stale' : '';
   const delayed = camera.marked_delayed ? 'delayed' : '';

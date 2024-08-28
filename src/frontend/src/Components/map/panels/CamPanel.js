@@ -52,14 +52,12 @@ export default function CamPanel(props) {
 
   // Refs
   const isInitialMount = useRef(true);
-  const isInitialAlertMount = useRef(true);
 
   // States
   const newCam = camFeature.id ? camFeature : camFeature.getProperties();
   const [rootCam, setRootCam] = useState(newCam);
   const [camera, setCamera] = useState(newCam);
   const [camIndex, setCamIndex] = useState(0);
-  const [isRemoving, setIsRemoving] = useState();
 
   // Effects
   useEffect(() => {
@@ -78,15 +76,6 @@ export default function CamPanel(props) {
     }
     setCamera(rootCam.camGroup[camIndex]);
   }, [camIndex]);
-
-  useEffect(() => {
-    if (isInitialAlertMount.current) {
-      isInitialAlertMount.current = false;
-      return;
-    }
-
-    setAlertMessage(getAlertMessage());
-  }, [isRemoving]);
 
   /* Helpers */
   const toggleAuthModal = (action) => {
@@ -110,11 +99,11 @@ export default function CamPanel(props) {
     if (favCams && authContext.loginStateKnown && authContext.username) {
       if (favCams.includes(camera.id)) {
         deleteFavoriteCamera(camera.id, dispatch, removeFavCam);
-        setIsRemoving(true);
+        setAlertMessage(<p>Removed from <a href="/my-cameras">My cameras</a></p>);
 
       } else {
         addFavoriteCamera(camera.id, dispatch, pushFavCam);
-        setIsRemoving(false);
+        setAlertMessage(<p>Saved to <a href="/my-cameras">My cameras</a></p>);
       }
 
     // User not logged in, save pending action and open login modal
@@ -129,10 +118,6 @@ export default function CamPanel(props) {
 
   /* Rendering */
   // Subcomponents
-  const getAlertMessage = () => {
-    return <p>{isRemoving ? 'Removed from ' : 'Saved to '} <a href="/my-cameras">My cameras</a></p>;
-  };
-
   function renderCamGroup(currentCamData) {
     const clickHandler = i => {
       setCamIndex(i); // Trigger re-render

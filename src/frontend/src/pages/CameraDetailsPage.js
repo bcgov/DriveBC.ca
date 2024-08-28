@@ -77,7 +77,6 @@ export default function CameraDetailsPage() {
 
   // Refs
   const isInitialMount = useRef(true);
-  const isInitialAlertMount = useRef(true);
 
   // State hooks
   const [camera, setCamera] = useState(null);
@@ -90,7 +89,6 @@ export default function CameraDetailsPage() {
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
   const [cameraGroup, setCameraGroup] = useState(null);
-  const [isRemoving, setIsRemoving] = useState();
   const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
@@ -191,15 +189,6 @@ export default function CameraDetailsPage() {
     }
   }, [cameraGroup]);
 
-  useEffect(() => {
-    if (isInitialAlertMount.current) {
-      isInitialAlertMount.current = false;
-      return;
-    }
-
-    setAlertMessage(getAlertMessage());
-  }, [isRemoving]);
-
   const toggleReplay = () => {
     setReplay(!replay);
   };
@@ -287,11 +276,11 @@ export default function CameraDetailsPage() {
     if (favCams != null && authContext.loginStateKnown && authContext.username) {
       if (favCams.includes(camera.id)) {
         deleteFavoriteCamera(camera.id, dispatch, removeFavCam);
-        setIsRemoving(true);
+        setAlertMessage(<p>Removed from <a href="/my-cameras">My cameras</a></p>);
 
       } else {
         addFavoriteCamera(camera.id, dispatch, pushFavCam);
-        setIsRemoving(false);
+        setAlertMessage(<p>Saved to <a href="/my-cameras">My cameras</a></p>);
       }
 
     // User not logged in, save pending action and open login modal
@@ -365,11 +354,6 @@ export default function CameraDetailsPage() {
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
 
   /* Rendering */
-  // Sub components
-  const getAlertMessage = () => {
-    return <p>{isRemoving ? 'Removed from ' : 'Saved to '} <a href="/my-cameras">My cameras</a></p>;
-  };
-
   // Main component
   return (
     <div className="camera-page">
