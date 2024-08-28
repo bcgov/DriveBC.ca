@@ -78,10 +78,13 @@ export default function UserNavigation(props) {
         <div id="user-menu-header">
           <FontAwesomeIcon id="user-icon" icon={faCircleUser} />
           <p id="user-email">{authContext.email}</p>
-          <a id="signout-link" className="nav-link" alt="Sign Out"
-            onClick={() => toggleAuthModal('Sign Out')}>
-            Sign out
-          </a>
+          <a
+            id="signout-link"
+            className="nav-link"
+            alt="Sign Out"
+            onClick={() => toggleAuthModal('Sign Out')}
+            onKeyPress={() => toggleAuthModal('Sign Out')}
+          >Sign out</a>
         </div>
 
         <div className="menu-items">
@@ -157,10 +160,13 @@ export default function UserNavigation(props) {
 
   const getSigninBtn = () => {
     return (
-      <a className="btn btn-primary" id="signin-btn" alt="Sign in button"
-        onClick={() => {toggleAuthModal('Sign In')}}>
-        Sign in
-      </a>
+      <a
+        className="btn btn-primary"
+        id="signin-btn"
+        alt="Sign in button"
+        onClick={() => {toggleAuthModal('Sign In')}}
+        onKeyPress={() => {toggleAuthModal('Sign In')}}
+      >Sign in</a>
     );
   }
 

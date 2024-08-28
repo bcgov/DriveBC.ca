@@ -285,7 +285,12 @@ export default function RouteDetails(props) {
         </div>
 
         {!isPanel &&
-          <div className="card-img-box" onClick={() => showOnMap()}>
+          <div
+            className="card-img-box"
+            tabIndex={0}
+            onClick={showOnMap}
+            onKeyPress={showOnMap}
+          >
             <div className="overlay-screen centered-content">
               <p className="overlay-screen__text">
                 <FontAwesomeIcon icon={faLocationDot} alt="view on map" />View on map
