@@ -177,6 +177,35 @@ export default function CamPanel(props) {
           </div>
 
           {camera.is_on ? (
+             camera.marked_delayed && camera.marked_stale ?
+             (
+               <>
+               <div className="popup__content__image">
+                 <div className="camera-delayed">
+                   <div className="card-pill">
+                     <p>Delayed</p>
+                   </div>
+                   <div className="card-img-box delayed">
+                     <FontAwesomeIcon icon={faVideoSlash} />
+                   </div>
+                 <p>
+                   Longer than expected delay, displaying last image received.
+                 </p>
+               </div>
+                 <div className="clip">
+                   <img src={camera.links.imageDisplay} width="300" />
+                 </div>
+                 <div className="timestamp">
+                   <p className="driveBC">
+                     Drive<span>BC</span>
+                   </p>
+                   <FriendlyTime
+                     date={camera.last_update_modified}
+                     asDate={true} />
+                 </div>
+               </div>
+               </>
+             ):  
             <div className="popup__content__image">
               <div className="clip">
                 <img src={camera.links.imageDisplay} width="300" />

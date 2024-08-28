@@ -125,6 +125,36 @@
           }
         }
       }
+
+      .camera-delayed {
+        background-color: $Surface-status-yellow;
+        padding: 1rem;
+        font-size: 1rem;
+
+        p,
+        .card-img-box {
+          color: $BC-Yellow-Dark;
+          clear: right;
+        }
+
+        .card-pill {
+          background-color: $BC-Yellow-Dark;
+          border-radius: 12px;
+          height: 24px;
+          float: right;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 4px 6px;
+
+          p {
+            color: $White;
+            font-weight: 700;
+            margin-bottom: 0;
+            font-size: 0.625rem;
+          }
+        }
+      }
     }
 
     &__description {
