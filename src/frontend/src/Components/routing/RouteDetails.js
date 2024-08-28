@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -74,14 +74,10 @@ export default function RouteDetails(props) {
     pendingAction: state.user.pendingAction,
   }))));
 
-  // Refs
-  const isInitialAlertMount = useRef(true);
-
   // States
   const [eventCount, setEventCount] = useState();
   const [advisoryCount, setAdvisoryCount] = useState();
   const [nickName, setNickName] = useState('');
-  const [isRemoving, setIsRemoving] = useState();
   const [showSavePopup, setShowSavePopup] = useState(false);
   const [routeMapImg, setRouteMapImg] = useState(); // for map snapshot
   const [filteredFavCams, setFilteredFavCams] = useState();
@@ -172,15 +168,6 @@ export default function RouteDetails(props) {
     }
   }, [advisories]);
 
-  useEffect(() => {
-    if (isInitialAlertMount.current) {
-      isInitialAlertMount.current = false;
-      return;
-    }
-
-    setAlertMessage(getAlertMessage());
-  }, [isRemoving]);
-
   /* Helpers */
   const toggleAuthModal = (action) => {
     setAuthContext((prior) => {
@@ -206,7 +193,7 @@ export default function RouteDetails(props) {
     saveRoute(selectedRoute, nickName, routeMapImg, searchLocationFrom[0].label, searchLocationTo[0].label, dispatch);
     setSearchParams(createSearchParams({}));
     resetPopup();
-    setIsRemoving(false);
+    setAlertMessage(<p>Saved to <a href="/my-routes">My routes</a></p>);
   }
 
   const favoriteHandler = () => {
@@ -215,7 +202,7 @@ export default function RouteDetails(props) {
       if (route.saved || !isPanel) {
         removeRoute(route, selectedRoute, dispatch);
         setSearchParams(createSearchParams({}));
-        setIsRemoving(true);
+        setAlertMessage(<p>Removed from <a href="/my-routes">My routes</a></p>);
 
       } else {
         setShowSavePopup(true);
@@ -265,10 +252,6 @@ export default function RouteDetails(props) {
 
   /* Rendering */
   // Subcomponents
-  const getAlertMessage = () => {
-    return <p>{isRemoving ? 'Removed from ' : 'Saved to '} <a href="/my-routes">My routes</a></p>;
-  };
-
   const getDefaultLabel = () => {
     if (route.start && route.end) {
       return route.start + ' to ' + route.end;
