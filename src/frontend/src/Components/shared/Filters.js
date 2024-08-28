@@ -466,10 +466,10 @@ export default function Filters(props) {
                   <div className={'filter-item filter-item--rest-stops-large-vehicle' + (largeRestStops ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.restStops) ? ' loading' : '')}>
                     <input
                       type="checkbox"
-                      name="large vehicle rest stops"
+                      name="commercial vehicle rest stops"
                       id="filter--rest-stops-large-vehicle"
                       onChange={e => {
-                        trackEvent('click', 'map', 'Toggle large vehicle rest stops layer')
+                        trackEvent('click', 'map', 'Toggle commercial vehicle rest stops layer')
                         if (restStops && !largeRestStops) {
                           setLayerVisibility('restStops', false);
                           setRestStops(false);
@@ -487,7 +487,7 @@ export default function Filters(props) {
                           <path d="M13.7896 9.60511C13.7896 8.95379 14.2501 8.4209 14.8422 8.4209H19.4737C20.0527 8.4209 20.5264 8.95379 20.5264 9.60511V13.8683C20.5264 14.2679 20.3553 14.6084 20.1053 14.8156V15.5261C20.1053 15.7926 19.908 15.9998 19.6843 15.9998H19.2632C19.0264 15.9998 18.8422 15.7926 18.8422 15.5261V15.0525H15.4738V15.5261C15.4738 15.7926 15.2764 15.9998 15.0527 15.9998H14.6317C14.3948 15.9998 14.2106 15.7926 14.2106 15.5261V14.8156C13.9474 14.6084 13.7896 14.2679 13.7896 13.8683V9.60511ZM15.4869 10.6857L15.2632 11.7367H19.0527L18.8159 10.6857C18.7632 10.4637 18.5922 10.3156 18.408 10.3156H15.908C15.7106 10.3156 15.5395 10.4637 15.5001 10.6857H15.4869ZM15.4738 13.1577C15.4738 12.9061 15.2764 12.684 15.0527 12.684C14.8159 12.684 14.6317 12.9061 14.6317 13.1577C14.6317 13.4242 14.8159 13.6314 15.0527 13.6314C15.2764 13.6314 15.4738 13.4242 15.4738 13.1577ZM19.2632 13.6314C19.4869 13.6314 19.6843 13.4242 19.6843 13.1577C19.6843 12.9061 19.4869 12.684 19.2632 12.684C19.0264 12.684 18.8422 12.9061 18.8422 13.1577C18.8422 13.4242 19.0264 13.6314 19.2632 13.6314Z" fill="#273F94"/>
                         </svg>
                       </span>
-                      Large vehicle rest stops
+                      Commercial vehicle rest stops
                     </label>
 
                     <OverlayTrigger placement="top" overlay={tooltipRestStopsLargeVehicle}>

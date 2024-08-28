@@ -32,7 +32,7 @@ import './RestStopPanel.scss';
 // Helper components
 const tooltipLargeVehicles = (
   <Tooltip id="tooltip" className="tooltip-content">
-    <p>A large vehicle is defined as one larger than 10 metres &#40;32 feet&#41; in length.</p>
+    <p>A commercial vehicle is defined as an articulated one that is larger than 10 metres &#40;32 feet&#41; in length.</p>
   </Tooltip>
 );
 
@@ -146,7 +146,7 @@ export default function RestStopPanel(props) {
         <hr/>
         <div className='popup__content__description'>
           <div className='popup__content--row'>
-            <p className="description-label label">Large Vehicles</p>
+            <p className="description-label label">Commercial Vehicles</p>
             <OverlayTrigger placement="top" overlay={tooltipLargeVehicles}>
               <FontAwesomeIcon className="tooltip-vehicles" icon={faCircleInfo} />
             </OverlayTrigger>
