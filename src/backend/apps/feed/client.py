@@ -410,7 +410,7 @@ class FeedClient:
 
         try:
             # Delete existing VMS signs
-            serializer_cls.Meta.model.objects.filter(name__contains='VMS').delete()
+            serializer_cls.Meta.model.objects.filter(weather_station_name__contains='VMS').delete()
 
             response = requests.get(external_api_url, headers=headers)
             response.raise_for_status()
