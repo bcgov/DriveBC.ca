@@ -188,8 +188,8 @@ export default function DriveBCMap(props) {
   };
 
   const loadMyLocation = () => {
-    if(!locationSet.current){
-    setMyLocationLoading(true)
+    if (!locationSet.current) {
+      setMyLocationLoading(true)
     }
   }
 
@@ -568,7 +568,7 @@ export default function DriveBCMap(props) {
               ref={myLocationRef}
               className="map-btn my-location"
               variant="primary"
-              onClick={() => loadMyLocation(mapRef, mapView)}
+              onClick={loadMyLocation}
               aria-label="my location">
               {(myLocationLoading) ? <Spinner animation="border" role="status" /> : <FontAwesomeIcon icon={faLocationCrosshairs} />}
               My location
@@ -598,7 +598,7 @@ export default function DriveBCMap(props) {
               ref={myLocationRef}
               className={`map-btn my-location ${openPanel && 'margin-pushed'}`}
               variant="primary"
-              onClick={() => loadMyLocation(mapRef, mapView)}
+              onClick={loadMyLocation}
               aria-label="my location">
                 {(myLocationLoading) ? <Spinner animation="border" role="status" /> : <FontAwesomeIcon icon={faLocationCrosshairs} />}
               My location

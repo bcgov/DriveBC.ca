@@ -66,11 +66,19 @@ export default function Modal() {
 
   // Main component
   return (
-    <div className="auth-modal"
-      onClick={resetAuthModal}>
+    <div
+      className="auth-modal"
+      tabIndex={0}
+      onClick={resetAuthModal}
+      onKeyPress={resetAuthModal}
+    >
 
-      <div className="content"
-        onClick={(e) => { e.stopPropagation(); }}>
+      <div
+        tabIndex={0}
+        className="content"
+        onClick={(e) => { e.stopPropagation(); }}
+        onKeyPress={(e) => { e.stopPropagation(); }}
+      >
 
         <div className='header'>
           <FontAwesomeIcon

@@ -153,16 +153,25 @@ export default function HighwayFilters(props) {
                 {getCheckedHighway() && highwayFilter[getCheckedHighway()].highwayName}
               </div>
 
-              <div className="remove-btn" onClick={() => handleRemoveFilter()}>
-                Remove Filter
-              </div>
+              <div
+                className="remove-btn"
+                tabIndex={0}
+                onClick={handleRemoveFilter}
+                onKeyPress={handleRemoveFilter}
+              >Remove Filter</div>
             </div>
           )}
 
           {orderedHighways &&
             <div className="highway-options">
               {orderedHighways.map(highway =>
-                <div key={highway} className="highway-row" onClick={() => filterHandler(highway)}>
+                <div
+                  key={highway}
+                  className="highway-row"
+                  tabIndex={0}
+                  onClick={() => filterHandler(highway)}
+                  onKeyPress={() => filterHandler(highway)}
+                >
                   <span>{highwayFilter[highway].highwayName}</span>
                 </div>
               )}
