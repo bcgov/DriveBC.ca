@@ -12,7 +12,7 @@ import './CameraList.scss';
 
 export default function CameraList(props) {
   // Props
-  const { cameras, getCheckedHighway, showLoader } = props;
+  const { cameras, showLoader, enableHighwayFilter } = props;
 
   // Contexts
   const { camsContext } = useContext(CamsContext);
@@ -23,11 +23,11 @@ export default function CameraList(props) {
   // UseEffect hooks and data functions
   const getDisplayedCameras = (length) => {
     // check for currently selected Highway from highway filter and process
-    const checkedHighway = getCheckedHighway();
     let filteredCameras = cameras;
-    if(checkedHighway){
-      filteredCameras = cameras.filter((camera) => (camera.highway === checkedHighway || camera.highway_display === checkedHighway))
+    if (enableHighwayFilter && camsContext.highwayFilterKey) {
+      filteredCameras = cameras.filter((camera) => (camera.highway_display === camsContext.highwayFilterKey));
     }
+
     if (!length) { camsContext.displayLength += 4; }
     const shown = filteredCameras.slice(0, length ? length : camsContext.displayLength);
     setDisplayedCameras(shown);
@@ -37,7 +37,7 @@ export default function CameraList(props) {
     if (cameras) { // Do nothing until cameras are processed
       getDisplayedCameras(camsContext.displayLength);
     }
-  }, [cameras, getCheckedHighway]);
+  }, [cameras, camsContext.highwayFilterKey]);
 
   // Rendering
   const groupDisplayedCameras = () => {

@@ -2,25 +2,24 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 // Redux
-import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
+import { useSelector, useDispatch } from 'react-redux'
 import { updateAdvisories } from '../slices/cmsSlice';
-import { updateHighwayFilter } from '../slices/highwayFilterSlice';
 import { updateCameras } from '../slices/feedsSlice';
 
-// Third party components
+// External imports
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import { booleanIntersects, point, multiPolygon } from '@turf/turf';
-import Container from 'react-bootstrap/Container';
-import { useMediaQuery } from '@uidotdev/usehooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faFlag,
   faRoute,
-  faXmark,
-  faFlag
+  faXmark
 } from '@fortawesome/pro-solid-svg-icons';
 import { faRoute as faRouteEmpty } from '@fortawesome/pro-regular-svg-icons';
+import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
 
 // Components and functions
 import {
@@ -46,23 +45,23 @@ import './CamerasListPage.scss';
 import '../Components/shared/Filters.scss';
 
 export default function CamerasListPage() {
+  /* Setup */
   document.title = 'DriveBC - Cameras';
 
   // Redux
   const dispatch = useDispatch();
-  const { advisories, cameras, filteredCameras, camFilterPoints, selectedRoute, highwayFilter } = useSelector(useCallback(memoize(state => ({
+  const { advisories, cameras, filteredCameras, camFilterPoints, selectedRoute } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
     cameras: state.feeds.cameras.list,
     filteredCameras: state.feeds.cameras.filteredList,
     camFilterPoints: state.feeds.cameras.filterPoints,
-    selectedRoute: state.routes.selectedRoute,
-    highwayFilter: state.highwayFilter.highways
+    selectedRoute: state.routes.selectedRoute
   }))));
 
-  // UseRef hooks
+  // Refs
   const isInitialMount = useRef(true);
 
-  // UseState hooks
+  // States
   const [advisoriesInRoute, setAdvisoriesInRoute] = useState([]);
   const [displayedCameras, setDisplayedCameras] = useState(null);
   const [processedCameras, setProcessedCameras] = useState(null);
@@ -71,10 +70,10 @@ export default function CamerasListPage() {
   const [showServerError, setShowServerError] = useState(false);
   const [openAdvisoriesOverlay, setOpenAdvisoriesOverlay] = useState(false);
   const [openSearchOverlay, setOpenSearchOverlay] = useState(false);
-  const [displayedHighways, setDisplayedHighways] = useState();
   const [showLoader, setShowLoader] = useState(true);
   const [showSpinner, setShowSpinner] = useState(false);
-    // Function to handle the state update from child
+
+  // Function to handle the state update from child
   const handleShowSpinnerChange = (value) => {
     setShowSpinner(value);
     if (value) {
@@ -114,48 +113,12 @@ export default function CamerasListPage() {
           timeStamp: new Date().getTime()
         })
       );
-
-      getHighways(camData);
-
-    } else {
-      getHighways(cameras);
     }
 
     setTimeout(function() {
       setShowLoader(false);
     }, 300);
   };
-
-  const getHighways = (cams) => {
-    const highwayNameList = {};
-    const highwayNumberList = {};
-
-    cams.forEach(camera =>{
-      const highwayName = camera.highway_display
-      if(!isNaN(highwayName.charAt(0))){
-        if(!highwayNumberList[highwayName]){
-          highwayNumberList[highwayName] = {"id": highwayName, "highwayName": "Highway " + highwayName, "alias": camera.highway_description, "checked": false}
-        }
-
-      } else{
-        if(!highwayNameList[highwayName]){
-          highwayNameList[highwayName] = {"id": highwayName, "highwayName": highwayName, "alias": camera.highway_description, "checked": false}
-        }
-      }
-    });
-
-    const highways = {...highwayNumberList, ...highwayNameList}
-    setDisplayedHighways(highways);
-    dispatch(updateHighwayFilter(highways));
-  }
-
-  const getCheckedHighway = () => {
-    if (!highwayFilter){
-      return;
-    }
-    const checkedHighway = Object.keys(highwayFilter).find((highway) => highwayFilter[highway].checked == true);
-    return checkedHighway;
-  }
 
   const getAdvisoriesData = async (camsData) => {
     let advData = advisories;
@@ -191,7 +154,7 @@ export default function CamerasListPage() {
     setAdvisoriesInRoute(resAdvisories);
   };
 
-  // useEffect hooks
+  // Effects
   useEffect(() => {
     getCamerasData(selectedRoute);
   }, [selectedRoute]);
@@ -223,7 +186,6 @@ export default function CamerasListPage() {
       getAdvisoriesData(finalCameras);
     }
   }, [filteredCameras]);
-
 
   useEffect(() => {
     // Search name and caption of all cams in group
@@ -311,7 +273,6 @@ export default function CamerasListPage() {
             </div>
           }
 
-
           <div className="container--sidepanel__right">
             <div className="controls-container">
               {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
@@ -353,14 +314,10 @@ export default function CamerasListPage() {
                 />
               </div>
 
-              {highwayFilter && (
-                <HighwayFilter
-                  highways={displayedHighways}
-                  getCheckedHighway={getCheckedHighway} />
-              )}
+              <HighwayFilter cameras={filteredCameras} />
             </div>
 
-            <CameraList cameras={ displayedCameras ? displayedCameras : [] } getCheckedHighway={getCheckedHighway} showLoader={showLoader}></CameraList>
+            <CameraList cameras={ displayedCameras ? displayedCameras : [] } showLoader={showLoader} enableHighwayFilter={true}></CameraList>
 
             {!(displayedCameras && displayedCameras.length) &&
               <div className="empty-cam-display">
