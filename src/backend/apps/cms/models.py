@@ -4,13 +4,24 @@ from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
 from django.contrib.gis.forms import OSMWidget
 from django.core.cache import cache
+from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
 from wagtail.api import APIField
-from wagtail.fields import RichTextField
+from wagtail.contrib.table_block.blocks import TableBlock
+from wagtail.fields import RichTextField, StreamField
 from wagtail.images.models import Image
 from wagtail.models import Page
 from wagtail.templatetags import wagtailcore_tags
 
+
+TABLE_OPTIONS = {'rowHeaders': True,
+                 'colHeaders': True, }
+
+CALLOUT_HELP_TEXT = '''
+This block is for information that needs to be presented as especially important,
+styled according to the BC gov't's style guide (light grey background, blue
+border on the left).
+'''
 
 class DriveBCMapWidget(OSMWidget):
     # Defaults to Kelowna
@@ -19,10 +30,20 @@ class DriveBCMapWidget(OSMWidget):
     default_zoom = 14
 
 
+class RichContent(blocks.StreamBlock):
+    ''' Common set of rich content controls for all page types. '''
+
+    subheading = blocks.CharBlock(template='cms/subheading.html')
+    rich_text = blocks.RichTextBlock()
+    table = TableBlock(table_options=TABLE_OPTIONS)
+    callout = blocks.RichTextBlock(help_text=CALLOUT_HELP_TEXT,
+                                   template='cms/callout.html')
+
+
 class Advisory(Page, BaseModel):
     page_body = "Use this page for creating advisories."
     teaser = models.CharField(max_length=250, blank=True)
-    body = RichTextField()
+    body = StreamField(RichContent())
 
     def rendered_body(self):
         return wagtailcore_tags.richtext(self.body)
@@ -56,11 +77,14 @@ class Advisory(Page, BaseModel):
 
     template = 'cms/advisory.html'
 
+    class Meta:
+        verbose_name_plural = 'advisories'
+
 
 class Bulletin(Page, BaseModel):
     page_body = "Use this page for creating bulletins."
     teaser = models.CharField(max_length=250, blank=True)
-    body = RichTextField()
+    body = StreamField(RichContent())
     image = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=False)
     image_alt_text = models.CharField(max_length=125, default='', blank=False)
 
@@ -145,3 +169,6 @@ class Ferry(Page, BaseModel):
     promote_panels = []
 
     template = 'cms/ferry.html'
+
+    class Meta:
+        verbose_name_plural = 'ferries'

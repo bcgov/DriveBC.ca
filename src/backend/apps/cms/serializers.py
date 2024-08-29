@@ -3,7 +3,7 @@ from pathlib import Path
 import environ
 from apps.cms.models import Advisory, Bulletin, Ferry
 from rest_framework import serializers
-from wagtail.templatetags import wagtailcore_tags
+from wagtail.templatetags.wagtailcore_tags import richtext
 
 # Base dir and env
 BASE_DIR = Path(__file__).resolve().parents[4]
@@ -31,8 +31,10 @@ class CMSSerializer(serializers.ModelSerializer):
         return prefix + request.get_host() if request else 'localhost:8000'
 
     # get rendered html elements and access static media folder
-    def get_richtext(self, text):
-        res = wagtailcore_tags.richtext(text)
+    def get_richtext(self, body):
+        blocks = [richtext(block.render()) for block in body]
+
+        res = "\n".join(blocks)
         res = res.replace(
             'href="/drivebc-cms',
             'href="' + self.get_host() + '/drivebc-cms'

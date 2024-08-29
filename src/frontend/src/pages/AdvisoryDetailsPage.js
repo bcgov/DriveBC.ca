@@ -249,7 +249,7 @@ export default function AdvisoryDetailsPage() {
         <Tab eventKey="details" title={<span>{advisoryDetails}Details</span>}>
           {advisory && (
             <Container className="advisory-body-container cms-body">
-              <p>{parse(advisory.body, { replace })}</p>
+              <div>{parse(advisory.body, { replace })}</div>
             </Container>
           )}
         </Tab>

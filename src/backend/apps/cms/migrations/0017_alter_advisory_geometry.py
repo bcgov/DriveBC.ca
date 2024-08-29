@@ -12,6 +12,7 @@ def delete_all_advisory_rows(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('wagtailcore', '0091_remove_revision_submitted_for_moderation'),
         ('cms', '0016_alter_bulletin_image_alter_ferry_image'),
     ]
 

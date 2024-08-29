@@ -93,6 +93,22 @@ body {
         margin-bottom: 0.25rem;
       }
     }
+
+    .callout {
+      background-color: rgb(250, 249, 248);
+      padding: 16px 24px;
+      margin: 16px 0px;
+      border-width: 1px 1px 1px 8px;
+      border-top-style: initial;
+      border-right-style: initial;
+      border-bottom-style: initial;
+      border-color: rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.5) rgb(1, 51, 102);
+      border-image: initial;
+      border-left-style: solid;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 27px;
+    }
   }
 }
 
