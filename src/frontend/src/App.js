@@ -65,7 +65,7 @@ function App() {
   // States
   const [alertMessage, setAlertMessage] = useState();
   const [authContext, setAuthContext] = useState(getInitialAuthContext());
-  const [camsContext] = useState({ displayLength: 21, setDisplayLength: (length) => {} });
+  const [camsContext, setCamsContext] = useState({ displayLength: 21, setDisplayLength: (length) => {} });
   const [mapContext, setMapContext] = useState(getInitialMapContext());
 
   // Effects
@@ -168,7 +168,7 @@ function App() {
   return (
     <AuthContext.Provider value={{ authContext, setAuthContext }}>
       <MapContext.Provider value={{ mapContext, setMapContext }}>
-        <CamsContext.Provider value={{ camsContext }}>
+        <CamsContext.Provider value={{ camsContext, setCamsContext }}>
           <AlertContext.Provider value={{ alertMessage, setAlertMessage }}>
             <div className="App">
               <Header />

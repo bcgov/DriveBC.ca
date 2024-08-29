@@ -132,6 +132,12 @@ export default function RouteDetails(props) {
   const loadRouteCameras = async () => {
     // Copied data functions, to be cleaned up
     const camData = cameras ? cameras : await getCameras();
+
+    // Don't load when user isn't logged in
+    if (!favCams) {
+      return [];
+    }
+
     const filteredFavCams = camData.filter(item => favCams.includes(item.id));
     const favCamGroupIds = filteredFavCams.map(cam => cam.group);
     const filteredCameras = camData.filter(cam => favCamGroupIds.includes(cam.group));

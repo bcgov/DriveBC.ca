@@ -150,9 +150,7 @@ export default function SavedCamerasPage() {
 
       {authContext.loginStateKnown && authContext.username &&
         <Container>
-          <CameraList
-            cameras={ processedCameras ? processedCameras : [] }
-            getCheckedHighway={()=>{}} />
+          <CameraList cameras={ processedCameras ? processedCameras : [] } />
 
           {!(processedCameras && processedCameras.length) &&
             <div className="empty-cam-display">

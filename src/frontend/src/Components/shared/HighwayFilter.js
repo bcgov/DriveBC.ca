@@ -1,19 +1,15 @@
 // React
-import React, { useCallback, useRef, useState, useEffect } from 'react';
-
-// Redux
-import { useSelector, useDispatch } from 'react-redux';
-import { memoize } from 'proxy-memoize';
+import React, { useContext, useState, useEffect } from 'react';
 
 // External imports
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faMagnifyingGlass } from '@fortawesome/pro-solid-svg-icons';
 import { faFilter as faFilterOutline } from '@fortawesome/pro-regular-svg-icons';
-import { updateHighwayFilter } from '../../slices/highwayFilterSlice';
 import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
+import { CamsContext } from '../../App.js';
 import { collator } from '../data/webcams';
 
 // Styling
@@ -21,115 +17,91 @@ import './HighwayFilter.scss';
 
 export default function HighwayFilters(props) {
   /* Setup */
-  const { getCheckedHighway } = props;
+  // Props
+  const { cameras } = props;
 
-  // Redux
-  const dispatch = useDispatch();
-  const { highwayFilter } = useSelector(
-    useCallback(
-      memoize(state => ({
-        highwayFilter: state.highwayFilter.highways,
-      })),
-    ),
-  );
+  // Contexts
+  const { camsContext, setCamsContext } = useContext(CamsContext);
 
   // States
-  const [open, setOpen] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
   const [orderedHighways, setOrderedHighways] = useState();
   const [searchedHighways, setSearchedHighways] = useState();
-  const [selectedHighway, setSelectedHighway] = useState();
   const [searchText, setSearchText] = useState('');
-
-  // Refs
-  const initialMount = useRef(true);
 
   // Effects
   useEffect(() => {
-    // run the collator compare on object.keys, sort the list then set state for orderedHighways
-    const highwayList = searchedHighways ? searchedHighways : Object.keys(highwayFilter);
+    if (cameras) {
+      const highways = Array.from(new Set(cameras.map(camera => camera.highway_display)));
+      const highwayObjs = highways.map(highway => ({ key: highway, display: getHighwayDisplay(highway) }));
 
-    const orderedList = highwayList.sort(function (a, b) {
-      return collator.compare(a, b);
-    });
+      const orderedHighways = highwayObjs.sort(function (a, b) {
+        return collator.compare(a.key, b.key);
+      });
 
-    setOrderedHighways(orderedList);
-  }, [highwayFilter, searchedHighways]);
+      setOrderedHighways(orderedHighways);
+    }
+  }, [cameras]);
 
   useEffect(() => {
-    if (initialMount.current) {
-      initialMount.current = false;
-      return;
+    // Reset selected highway filter if it's filtered out by new route search
+    if (camsContext.highwayFilterKey) {
+      const selectedHighway = orderedHighways.find(highwayObj => highwayObj.key === camsContext.highwayFilterKey);
+      if (!selectedHighway) {
+        setCamsContext({...camsContext, highwayFilterKey: null});
+      }
     }
 
-    // reset the searched highways when the search text is empty
-    if (!searchText) {
-      setSearchedHighways(null);
+    if (searchText === '') {
+      setSearchedHighways(orderedHighways);
       return;
     }
 
     // search for highway name from text input
-    const searchFn = (highway, targetText) => {
+    const searchFn = (highwayObj, targetText) => {
       const targetLower = targetText.toLowerCase();
-      return highway['highwayName'].toLowerCase().includes(targetLower);
+      return highwayObj.display.toLowerCase().includes(targetLower);
     };
 
-    const searchableList = Object.values({ ...highwayFilter });
-    const filteredHighways = !searchText ? null : searchableList.filter(highway => searchFn(highway, searchText));
+    const filteredHighways = orderedHighways.filter(highwayObj => searchFn(highwayObj, searchText));
 
-    if (filteredHighways) {
-      setSearchedHighways(filteredHighways.map(highway => highway.id));
-    }
-  }, [searchText]);
+    setSearchedHighways(filteredHighways);
+  }, [searchText, orderedHighways]);
 
   // Reset search text when the filter is closed
   useEffect(() => {
-    if (!open) {
+    if (!showFilter) {
       setSearchText('');
     }
-  }, [open]);
-
-  // Handlers
-  const filterHandler = highwayKey => {
-    const highways = { ...highwayFilter };
-    highways[highwayKey].checked = !highways[highwayKey].checked;
-    if (selectedHighway) {
-      highways[selectedHighway].checked = false;
-    }
-
-    dispatch(updateHighwayFilter(highways));
-    setSelectedHighway(highways[highwayKey].checked ? highwayKey : null);
-  };
-
-  const handleRemoveFilter = () => {
-    const highways = { ...highwayFilter };
-    highways[selectedHighway].checked = false;
-
-    dispatch(updateHighwayFilter(highways));
-    setSelectedHighway(null);
-  };
+  }, [showFilter]);
 
   /* Rendering */
   // Constants
   const largeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
+  // Sub components
+  const getHighwayDisplay = (highway) => {
+    return !isNaN(highway.charAt(0)) ? 'Highway ' + highway : highway;
+  }
+
   // Main component
-  return (
+  return camsContext && (
     <div className="highway-filters">
       <button
-        className={'highway-filter-btn' + (open ? ' open' : '')}
-        aria-label="open filters options"
-        onClick={() => {open ? setOpen(false) : setOpen(true)}}>
+        className={'highway-filter-btn' + (showFilter ? ' showFilter' : '')}
+        aria-label="showFilter filters options"
+        onClick={() => setShowFilter(!showFilter)}>
 
         {largeScreen && <div className="caption">Filter by Highway</div>}
 
-        <FontAwesomeIcon icon={selectedHighway ? faFilter : faFilterOutline} />
+        <FontAwesomeIcon icon={camsContext.highwayFilterKey ? faFilter : faFilterOutline} />
 
-        {selectedHighway &&
+        {camsContext.highwayFilterKey &&
           <div className="active-count">1</div>
         }
       </button>
 
-      {open && (
+      {showFilter && (
         <div className="highway-filters-popup">
           <div className="search-container">
             <FontAwesomeIcon className="search-icon" icon={faMagnifyingGlass} />
@@ -145,34 +117,36 @@ export default function HighwayFilters(props) {
               }} />
           </div>
 
-          {!selectedHighway && <div className="selected-filter-container no-selection">No Filters selected</div>}
+          {!camsContext.highwayFilterKey && <div className="selected-filter-container no-selection">No Filters selected</div>}
 
-          {selectedHighway && (
+          {camsContext.highwayFilterKey && (
             <div className="selected-filter-container space-between-row">
               <div className="selected-filter">
-                {getCheckedHighway() && highwayFilter[getCheckedHighway()].highwayName}
+                {getHighwayDisplay(camsContext.highwayFilterKey)}
               </div>
 
               <div
                 className="remove-btn"
                 tabIndex={0}
-                onClick={handleRemoveFilter}
-                onKeyPress={handleRemoveFilter}
-              >Remove Filter</div>
+                onClick={() => setCamsContext({...camsContext, highwayFilterKey: null})}
+                onKeyPress={() => setCamsContext({...camsContext, highwayFilterKey: null})}>
+
+                Remove Filter
+              </div>
             </div>
           )}
 
-          {orderedHighways &&
+          {searchedHighways &&
             <div className="highway-options">
-              {orderedHighways.map(highway =>
+              {searchedHighways.map(highwayObj =>
                 <div
-                  key={highway}
+                  key={highwayObj.key}
                   className="highway-row"
                   tabIndex={0}
-                  onClick={() => filterHandler(highway)}
-                  onKeyPress={() => filterHandler(highway)}
-                >
-                  <span>{highwayFilter[highway].highwayName}</span>
+                  onClick={() => setCamsContext({...camsContext, highwayFilterKey: highwayObj.key})}
+                  onKeyPress={() => setCamsContext({...camsContext, highwayFilterKey: highwayObj.key})}>
+
+                  <span>{highwayObj.display}</span>
                 </div>
               )}
             </div>
