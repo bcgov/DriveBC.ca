@@ -46,7 +46,8 @@ class Advisory(Page, BaseModel):
     body = StreamField(RichContent())
 
     def rendered_body(self):
-        return wagtailcore_tags.richtext(self.body)
+        blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
+        return '\n'.join(blocks)
 
     api_fields = [
         APIField('rendered_body'),
@@ -89,7 +90,8 @@ class Bulletin(Page, BaseModel):
     image_alt_text = models.CharField(max_length=125, default='', blank=False)
 
     def rendered_body(self):
-        return wagtailcore_tags.richtext(self.body)
+        blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
+        return '\n'.join(blocks)
 
     api_fields = [
         APIField('rendered_body'),

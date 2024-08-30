@@ -28,7 +28,7 @@ class TestBulletinAPI(APITestCase, BaseTest):
 
         bulletin = Bulletin.objects.create(
             title="Bulletin title",
-            body="Bulletin body",
+            body='[{"id": "1", "type": "rich_text", "value": "Bulletin body 1"}]',
             path="000100010001",
             depth=3,
             image=img_obj,
@@ -42,7 +42,7 @@ class TestBulletinAPI(APITestCase, BaseTest):
 
         bulletin_2 = Bulletin.objects.create(
             title="Bulletin title 2",
-            body="Bulletin body 2",
+            body='[{"id": "1", "type": "rich_text", "value": "Bulletin body 1"}]',
             path="000100010002",
             depth=3,
             image=img_obj,

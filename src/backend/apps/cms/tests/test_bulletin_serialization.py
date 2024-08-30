@@ -25,7 +25,7 @@ class TestBulletinSerialization(BaseTest):
 
         self.bulletin = Bulletin(
             title="Bulletin title 1",
-            body="Bulletin body 1",
+            body='[{"id": "1", "type": "rich_text", "value": "Bulletin body 1"}]',
             path="000100010001",
             depth=3,
             image=img_obj,
@@ -41,13 +41,13 @@ class TestBulletinSerialization(BaseTest):
         assert self.serializer.data["title"] == \
             'Bulletin title 1'
         assert self.serializer.data["body"] == \
-            'Bulletin body 1'
+            '[{"type": "rich_text", "value": "Bulletin body 1", "id": "1"}]'
 
     def test_serializer_invalid_data(self):
         # Create a serializer with invalid data
         invalid_data = {
             'title': '',  # bulletin title is required, invalid data
-            'body': 'Bulletin body 1',
+            'body': '[{"id": "1", "type": "rich_text", "value": "Bulletin body 1"}]',
         }
         self.serializer = BulletinSerializer(data=invalid_data)
 
@@ -56,7 +56,7 @@ class TestBulletinSerialization(BaseTest):
         valid_data = {
             'id': 3,
             'title': 'Bulletin title 1',
-            'body': 'Bulletin body 1',
+            'body': '[{"id": "1", "type": "rich_text", "value": "Bulletin body 1"}]',
             'content_type': 55,
             'image': self.img_obj.id,
             'image_alt_text': 'Some Image Alt text',
