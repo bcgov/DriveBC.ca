@@ -185,7 +185,7 @@ EMAIL_PORT = env('DJANGO_EMAIL_PORT')
 DEFAULT_FROM_EMAIL = 'DoNotReply_DriveBC@gov.bc.ca'
 
 # Logging
-ROOT_LOG_LEVEL = env('ROOT_LOG_LEVEL', default='DEBUG')
+ROOT_LOG_LEVEL = env('ROOT_LOG_LEVEL', default='WARNING')
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

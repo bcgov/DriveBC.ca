@@ -32,7 +32,10 @@ class CMSSerializer(serializers.ModelSerializer):
 
     # get rendered html elements and access static media folder
     def get_richtext(self, body):
-        blocks = [richtext(block.render()) for block in body]
+        if isinstance(body, str):
+            blocks = [richtext(body)]
+        else:
+            blocks = [richtext(block.render()) for block in body]
 
         res = "\n".join(blocks)
         res = res.replace(
