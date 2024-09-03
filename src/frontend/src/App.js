@@ -49,6 +49,7 @@ config.autoAddCss = false
 export const AlertContext = createContext();
 export const AuthContext = createContext(null);
 export const CamsContext = createContext(null);
+export const CMSContext = createContext();
 export const MapContext = createContext(null);
 
 let callingSession = false;
@@ -66,6 +67,7 @@ function App() {
   const [alertMessage, setAlertMessage] = useState();
   const [authContext, setAuthContext] = useState(getInitialAuthContext());
   const [camsContext, setCamsContext] = useState({ displayLength: 21, setDisplayLength: (length) => {} });
+  const [cmsContext, setCMSContext] = useState(getInitialCMSContext());
   const [mapContext, setMapContext] = useState(getInitialMapContext());
 
   // Effects
@@ -104,6 +106,14 @@ function App() {
 
   /* Helpers */
   // Data functions
+  function getInitialCMSContext() {
+    const context = localStorage.getItem('cmsContext');
+    return context ? JSON.parse(context) : {
+      readAdvisories: [],
+      readBulletins: []
+    };
+  }
+
   function getInitialMapContext() {
     const context = localStorage.getItem('mapContext');
     return context ? JSON.parse(context) : {
@@ -170,35 +180,37 @@ function App() {
       <MapContext.Provider value={{ mapContext, setMapContext }}>
         <CamsContext.Provider value={{ camsContext, setCamsContext }}>
           <AlertContext.Provider value={{ alertMessage, setAlertMessage }}>
-            <div className="App">
-              <Header />
+            <CMSContext.Provider value={{ cmsContext, setCMSContext }}>
+              <div className="App">
+                <Header />
 
-              <ScrollToTop />
+                <ScrollToTop />
 
-              <Routes>
-                <Route path="/" element={<MapPage />} />
-                <Route path="/my-cameras" element={<SavedCamerasPage />} />
-                <Route path="/my-routes" element={<SavedRoutesPage />} />
-                <Route path="/cameras" element={<CamerasListPage />} />
-                <Route path="/cameras/:id" element={<CameraDetailsPage />} />
-                <Route path="/delays" element={<EventsListPage />} />
-                <Route path="/advisories" element={<AdvisoriesListPage />} />
-                <Route path="/advisories/:id" element={<AdvisoryDetailsPage />} />
-                <Route path="/bulletins" element={<BulletinsListPage />} />
-                <Route path="/bulletins/:id" element={<BulletinDetailsPage />} />
-                <Route path="/account" element={<AccountPage />} />
-                {/* Catch-all route for 404 errors */}
-                <Route path="*" element={<NotFoundPage />} />
-                <Route path="/problems" element={<ProblemsPage />} />
-                <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
-                <Route path="/highway-problem" element={<ReportRoadPage />} />
-                <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />
-              </Routes>
+                <Routes>
+                  <Route path="/" element={<MapPage />} />
+                  <Route path="/my-cameras" element={<SavedCamerasPage />} />
+                  <Route path="/my-routes" element={<SavedRoutesPage />} />
+                  <Route path="/cameras" element={<CamerasListPage />} />
+                  <Route path="/cameras/:id" element={<CameraDetailsPage />} />
+                  <Route path="/delays" element={<EventsListPage />} />
+                  <Route path="/advisories" element={<AdvisoriesListPage />} />
+                  <Route path="/advisories/:id" element={<AdvisoryDetailsPage />} />
+                  <Route path="/bulletins" element={<BulletinsListPage />} />
+                  <Route path="/bulletins/:id" element={<BulletinDetailsPage />} />
+                  <Route path="/account" element={<AccountPage />} />
+                  {/* Catch-all route for 404 errors */}
+                  <Route path="*" element={<NotFoundPage />} />
+                  <Route path="/problems" element={<ProblemsPage />} />
+                  <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
+                  <Route path="/highway-problem" element={<ReportRoadPage />} />
+                  <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />
+                </Routes>
 
-              <Modal />
+                <Modal />
 
-              <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
-            </div>
+                <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
+              </div>
+            </CMSContext.Provider>
           </AlertContext.Provider>
         </CamsContext.Provider>
       </MapContext.Provider>

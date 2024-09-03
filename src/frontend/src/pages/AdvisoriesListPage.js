@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -10,6 +10,7 @@ import { updateAdvisories } from '../slices/cmsSlice';
 import Container from 'react-bootstrap/Container';
 
 // Internal imports
+import { CMSContext } from '../App';
 import { getAdvisories } from '../Components/data/advisories.js';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
@@ -24,6 +25,9 @@ import './AdvisoriesListPage.scss';
 
 export default function AdvisoriesListPage() {
   document.title = 'DriveBC - Advisories';
+
+  // Context
+  const { cmsContext, setCMSContext } = useContext(CMSContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -45,25 +49,32 @@ export default function AdvisoriesListPage() {
     }
   }
 
-  // Refs
-  const isInitialMount = useRef(true);
-
   // Data loading
   const loadAdvisories = async () => {
-    if (!advisories) {
+    let advisoriesData = advisories;
+
+    if (!advisoriesData) {
+      advisoriesData = await getAdvisories().catch((error) => displayError(error));
+
       dispatch(updateAdvisories({
-        list: await getAdvisories().catch((error) => displayError(error)),
+        list: advisoriesData,
         timeStamp: new Date().getTime()
       }));
     }
+
+    const advisoriesIds = advisoriesData.map(advisory => advisory.id);
+
+    // Combine and remove duplicates
+    const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));
+    const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
+
+    setCMSContext(updatedContext);
+    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
   }
 
   useEffect(() => {
-    if (isInitialMount.current) { // Only run on initial load
-      loadAdvisories();
-      isInitialMount.current = false;
-    }
-  });
+    loadAdvisories();
+  }, []);
 
   const isAdvisoriesEmpty = advisories?.length === 0;
 

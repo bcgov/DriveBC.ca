@@ -1,5 +1,5 @@
 // React
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 // External imports
@@ -14,6 +14,7 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 // Internal imports
+import { CMSContext } from '../App';
 import { getAdvisories } from '../Components/data/advisories.js';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
@@ -150,8 +151,10 @@ export default function AdvisoryDetailsPage() {
   // Context and router data
   const params = useParams();
 
+  // Context
+  const { cmsContext, setCMSContext } = useContext(CMSContext);
+
   // Refs
-  const isInitialMount = useRef(true);
   const mapRef = useRef();
 
   // UseState hooks
@@ -185,16 +188,18 @@ export default function AdvisoryDetailsPage() {
     const advisoryData = await getAdvisories(params.id).catch((error) => displayError(error));
     setAdvisory(advisoryData);
 
-    // Run once on startup
-    if (isInitialMount.current){
-      mapRef.current = getMap(advisoryData);
-    }
+    mapRef.current = getMap(advisoryData);
 
     fitMap(advisoryData);
 
-    isInitialMount.current = false;
-
     document.title = `DriveBC - Advisories - ${advisoryData.title}`;
+
+    // Combine and remove duplicates
+    const readAdvisories = Array.from(new Set([...cmsContext.readAdvisories, advisoryData.id]));
+    const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
+
+    setCMSContext(updatedContext);
+    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
   };
 
   useEffect(() => {
