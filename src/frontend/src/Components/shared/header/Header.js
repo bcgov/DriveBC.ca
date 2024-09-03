@@ -52,10 +52,8 @@ export default function Header() {
           <Navbar.Brand href="/" tabIndex={xLargeScreen ? "0": "-1"}>
             <img className="header-logo" src={logo} alt="Government of British Columbia" />
           </Navbar.Brand>
-          
-          <div className="nav-divider"></div>
 
-          <UserNavigation />
+          <div className="nav-divider"></div>
 
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
@@ -86,6 +84,8 @@ export default function Header() {
           }
 
           <div className="nav-divider" />
+
+          <UserNavigation />
         </Container>
       </Navbar>
     </header>

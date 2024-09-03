@@ -172,7 +172,7 @@ export default function UserNavigation(props) {
 
   /* Main component */
   return authContext.loginStateKnown && (
-    <div id="user-navigation">
+    <div id="user-navigation" tabIndex={0}>
       { authContext.username && largeScreen &&
         getFavoritesMenu()
       }
