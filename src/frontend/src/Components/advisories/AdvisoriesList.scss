@@ -48,6 +48,7 @@
 
   .timestamp-container {
     display: flex;
+    align-items: center;
 
     .advisory-li-state, .friendly-time, .formatted-date {
       margin-left: 0.5ch;
@@ -61,6 +62,15 @@
       color: $Grey70;
       font-size: 0.875rem;
       line-height: 1.5;
+    }
+
+    .unread-display {
+      height: 8px;
+      width: 8px;
+      background-color: #CE3E39;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
     }
   }
 

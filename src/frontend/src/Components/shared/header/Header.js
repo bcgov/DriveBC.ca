@@ -1,5 +1,10 @@
 // React
-import React, { useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+
+// Redux
+import { useSelector, useDispatch } from 'react-redux'
+import { memoize } from 'proxy-memoize'
+import { updateAdvisories } from '../../../slices/cmsSlice';
 
 // External imports
 import { faComment } from '@fortawesome/pro-solid-svg-icons';
@@ -11,6 +16,8 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 
 // Internal imports
+import { CMSContext } from '../../../App';
+import { getAdvisories } from '../../data/advisories.js';
 import UserNavigation from "./UserNavigation";
 
 // Static files
@@ -20,25 +27,68 @@ import logo from '../../..//images/dbc-logo-beta.svg';
 import './Header.scss';
 
 export default function Header() {
-  /* State variables */
+  /* Setup */
+  // Redux
+  const dispatch = useDispatch();
+  const { advisories } = useSelector(useCallback(memoize(state => ({
+    advisories: state.cms.advisories.list,
+  }))));
+
+  // Context
+  const { cmsContext } = useContext(CMSContext);
+
+  // States
+  const [advisoriesCount, setAdvisoriesCount] = useState();
   const [expanded, setExpanded] = useState(false);
 
-  /* Component functions */
+  // Effects
+  const loadAdvisories = async () => {
+    let advisoriesData = advisories;
+
+    if (!advisoriesData) {
+      advisoriesData = await getAdvisories();
+
+      dispatch(updateAdvisories({
+        list: advisoriesData,
+        timeStamp: new Date().getTime()
+      }));
+    }
+
+    setAdvisoriesCount(getUnreadAdvisoriesCount(advisoriesData));
+  }
+
+  useEffect(() => {
+    loadAdvisories();
+  }, [cmsContext]);
+
+  /* Helpers */
+  const getUnreadAdvisoriesCount = (advisoriesData) => {
+    const readAdvisories = advisoriesData.filter(advisory => cmsContext.readAdvisories.includes(advisory.id));
+    return advisoriesData.length - readAdvisories.length;
+  }
+
+  /* Handlers */
   const onClickActions = () => {
     setTimeout(() => setExpanded(false));
     sessionStorage.setItem('scrollPosition', 0);
   }
 
-  const getNavLink = (title) => {
-    return <Nav.Link active={false} onClick={onClickActions}>{title}</Nav.Link>
-  };
-
+  /* Rendering */
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
+
+  // Sub components
+  const getNavLink = (title, count) => {
+    return (
+      <Nav.Link active={false} onClick={onClickActions}>
+        {title} {!!count && <div className="unread-count">{count}</div>}
+      </Nav.Link>
+    );
+  };
 
   const surveyLink = `${window.SURVEY_LINK}` ||
     'https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u';
 
-  /* Main rendering function */
+  // Main component
   return (
     <header>
       <Navbar expand="lg" expanded={expanded}>
@@ -70,7 +120,7 @@ export default function Header() {
               </LinkContainer>
 
               <LinkContainer to="/advisories">
-                {getNavLink('Advisories')}
+                {getNavLink('Advisories', advisoriesCount)}
               </LinkContainer>
 
               <LinkContainer to="/bulletins">
