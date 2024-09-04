@@ -29,7 +29,7 @@ def update_camera_task():
     update_all_webcam_data()
 
 
-@db_periodic_task(crontab(minute="*/5"))
+@db_periodic_task(crontab(minute="*/2"))
 def populate_event_task():
     populate_all_event_data()
 
