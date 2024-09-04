@@ -42,10 +42,25 @@ export default function Modal() {
 
   const resetAuthModal = () => {
     // Reset focus and screen reader content
-    const allFocuses = document.querySelectorAll("a, button, input");
-    allFocuses.forEach((element) => {
+    const allHidden = document.querySelectorAll(".hidden-by-modal");
+    allHidden.forEach((element) => {
       element.removeAttribute("aria-hidden");
-      element.removeAttribute("tabindex");
+
+      if (element.classList.contains("already-hidden")) {
+        element.classList.remove("already-hidden");
+      }
+
+      else if (element.classList.contains("restore-tabindex")) {
+        element.setAttribute("tabindex", "0");
+        element.classList.remove("restore-tabindex");
+      }
+      
+      else {
+        element.removeAttribute("tabindex");
+      }
+
+      element.removeAttribute("aria-hidden");
+      element.classList.remove("hidden-by-modal");
     });
 
     setAuthContext((prior) => {
