@@ -19,12 +19,15 @@ export class ServerError extends CustomError {
   }
 }
 
-const request = (url, params = {}, headers = {}, method = "GET") => {
+const request = (url, params = {}, headers = {}, include_credentials = true, method = "GET") => {
   const options = {
     headers,
     method,
-    credentials: "include"
   };
+
+  if (include_credentials) {
+    options.credentials = 'include';
+  }
 
   if ("GET" === method) {
     url += "?" + new URLSearchParams(params).toString();
@@ -64,8 +67,8 @@ const request = (url, params = {}, headers = {}, method = "GET") => {
   return result;
 };
 
-export const get = (url, params, headers) => request(url, params, headers, "GET");
-export const post = (url, params, headers) => request(url, params, headers, "POST");
+export const get = (url, params, headers, include_credentials=true) => request(url, params, headers, include_credentials, "GET");
+export const post = (url, params, headers, include_credentials=true) => request(url, params, headers, include_credentials, "POST");
 
 export const stripRichText = (richText) => {
   // Strip all link tags and replace all other tags with a space

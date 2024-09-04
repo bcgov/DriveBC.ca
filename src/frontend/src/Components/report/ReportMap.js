@@ -139,7 +139,7 @@ const clickListener = (map, pixelCoords, setActiveFeature, wmsLayer) => {
     feature_count: 1,
   };
 
-  get(window.REPORT_WMS_LAYER, payload).then(data => {
+  get(window.REPORT_WMS_LAYER, payload, {}, false).then(data => {
     setActiveFeature(data.features[0]);
   });
 };
