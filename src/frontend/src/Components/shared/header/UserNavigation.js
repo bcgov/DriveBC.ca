@@ -56,6 +56,18 @@ export default function UserNavigation(props) {
 
   /* Helpers */
   const toggleAuthModal = (action) => {
+    // Hide screen reader content behind the lightbox
+    const allFocuses = document.querySelectorAll("a, button, input");
+    allFocuses.forEach((element) => {
+      element.setAttribute("aria-hidden", "true");
+      element.setAttribute("tabindex", "-1");
+    });
+    
+    const modalContent = document.getElementById("modal-content");
+    if (modalContent) {
+      modalContent.focus();
+    }
+
     setAuthContext((prior) => {
       if (!prior.showingModal) {
         return { ...prior, showingModal: true, action };
