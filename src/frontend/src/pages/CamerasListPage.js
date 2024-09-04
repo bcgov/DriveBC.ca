@@ -345,7 +345,7 @@ export default function CamerasListPage() {
             onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
             <FontAwesomeIcon icon={faXmark} />
           </button>
-          <AdvisoriesPanel advisories={advisories} />
+          <AdvisoriesPanel advisories={advisories} openAdvisoriesOverlay={openAdvisoriesOverlay} />
         </div>
       }
 

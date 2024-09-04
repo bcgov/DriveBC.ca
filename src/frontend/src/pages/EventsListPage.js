@@ -446,7 +446,7 @@ export default function EventsListPage() {
             onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
             <FontAwesomeIcon icon={faXmark} />
           </button>
-          <AdvisoriesPanel advisories={advisories} />
+          <AdvisoriesPanel advisories={advisories} openAdvisoriesOverlay={openAdvisoriesOverlay} />
         </div>
       }
 
