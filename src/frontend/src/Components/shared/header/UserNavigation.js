@@ -59,6 +59,19 @@ export default function UserNavigation(props) {
     // Hide screen reader content behind the lightbox
     const allFocuses = document.querySelectorAll("a, button, input");
     allFocuses.forEach((element) => {
+      element.classList.add("hidden-by-modal");
+
+      if (element.hasAttribute("tabindex") ) {
+        
+        if (element.getAttribute("tabindex") === "0") {
+          element.classList.add("restore-tabindex");
+        }
+
+        if (element.getAttribute("tabindex") === "-1") {
+          element.classList.add("already-hidden");
+        }
+      }
+        
       element.setAttribute("aria-hidden", "true");
       element.setAttribute("tabindex", "-1");
     });
