@@ -69,6 +69,7 @@ import View from 'ol/View';
 // Styling
 import './Map.scss';
 
+
 export default function DriveBCMap(props) {
   /* initialization */
   // Props
@@ -204,14 +205,24 @@ export default function DriveBCMap(props) {
   useEffect(() => {
     if (mapRef.current) return; // stops map from initializing more than once
 
+    const tileSource = new VectorTileSource({
+      format: new MVT(),
+      url: window.BASE_MAP,
+    });
+
     // base tile map layer
     const vectorLayer = new VectorTileLayer({
       declutter: true,
-      source: new VectorTileSource({
-        format: new MVT(),
-        url: window.BASE_MAP,
-      }),
+      source: tileSource,
     });
+
+    // highway symbol layer
+    const symbolLayer = new VectorTileLayer({
+      declutter: true,
+      source: tileSource,
+    });
+    // should be highest z-index so that highway symbols are always visible
+    symbolLayer.setZIndex(200);
 
     // initialize starting optional mapLayers
     mapLayers.current = {
@@ -233,14 +244,12 @@ export default function DriveBCMap(props) {
       enableRotation: false
     });
 
-
     // Apply the basemap style from the arcgis resource
     fetch(window.MAP_STYLE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     }).then(function (response) {
       response.json().then(function (glStyle) {
-        window.glStyle = glStyle;
         // DBC22-2153
         glStyle.metadata['ol:webfonts'] = '/fonts/{font-family}/{fontweight}{-fontstyle}.css';
 
@@ -249,19 +258,28 @@ export default function DriveBCMap(props) {
           overrides.merge(layer, overrides[layer.id] || {});
         }
 
+        // clone the basemap style so we can override the style layers,
+        // filtering out everything that isn't a highway symbol.
+        const symbolsStyle = {
+          ...glStyle,
+          layers: glStyle.layers.filter((layer) => (
+            layer.id.startsWith('TRANSPORTATION/DRA/Hwy Symbols')
+          )),
+        };
+
         applyStyle(vectorLayer, glStyle, 'esri');
+        applyStyle(symbolLayer, symbolsStyle, 'esri');
       });
     });
 
     // create map
     mapRef.current = new Map({
       target: mapElement.current,
-      layers: [vectorLayer],
+      layers: [vectorLayer, symbolLayer],
       view: mapView.current,
       moveTolerance: 7,
       controls: [new ScaleLine({ units: 'metric' })],
     });
-    window.mapRef = mapRef;
 
     geolocation.current = new Geolocation({
       projection: mapView.current.getProjection(),
