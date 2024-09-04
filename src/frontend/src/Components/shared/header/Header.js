@@ -4,7 +4,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
-import { updateAdvisories } from '../../../slices/cmsSlice';
+import { updateAdvisories, updateBulletins } from '../../../slices/cmsSlice';
 
 // External imports
 import { faComment } from '@fortawesome/pro-solid-svg-icons';
@@ -18,6 +18,7 @@ import Navbar from 'react-bootstrap/Navbar';
 // Internal imports
 import { CMSContext } from '../../../App';
 import { getAdvisories } from '../../data/advisories.js';
+import { getBulletins } from '../../data/bulletins.js';
 import UserNavigation from "./UserNavigation";
 
 // Static files
@@ -30,8 +31,9 @@ export default function Header() {
   /* Setup */
   // Redux
   const dispatch = useDispatch();
-  const { advisories } = useSelector(useCallback(memoize(state => ({
+  const { advisories, bulletins } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
+    bulletins: state.cms.bulletins.list,
   }))));
 
   // Context
@@ -39,6 +41,7 @@ export default function Header() {
 
   // States
   const [advisoriesCount, setAdvisoriesCount] = useState();
+  const [bulletinsCount, setBulletinsCount] = useState();
   const [expanded, setExpanded] = useState(false);
 
   // Effects
@@ -57,14 +60,35 @@ export default function Header() {
     setAdvisoriesCount(getUnreadAdvisoriesCount(advisoriesData));
   }
 
+  const loadBulletins = async () => {
+    let bulletinsData = bulletins;
+
+    if (!bulletinsData) {
+      bulletinsData = await getBulletins();
+
+      dispatch(updateBulletins({
+        list: bulletinsData,
+        timeStamp: new Date().getTime()
+      }));
+    }
+
+    setBulletinsCount(getUnreadBulletinsCount(bulletinsData));
+  }
+
   useEffect(() => {
     loadAdvisories();
+    loadBulletins();
   }, [cmsContext]);
 
   /* Helpers */
   const getUnreadAdvisoriesCount = (advisoriesData) => {
     const readAdvisories = advisoriesData.filter(advisory => cmsContext.readAdvisories.includes(advisory.id));
     return advisoriesData.length - readAdvisories.length;
+  }
+
+  const getUnreadBulletinsCount = (bulletinsData) => {
+    const readBulletins = bulletinsData.filter(bulletin => cmsContext.readBulletins.includes(bulletin.id));
+    return bulletinsData.length - readBulletins.length;
   }
 
   /* Handlers */
@@ -124,7 +148,7 @@ export default function Header() {
               </LinkContainer>
 
               <LinkContainer to="/bulletins">
-                {getNavLink('Bulletins')}
+                {getNavLink('Bulletins', bulletinsCount)}
               </LinkContainer>
             </Nav>
           </Navbar.Collapse>

@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -13,6 +13,7 @@ import Container from 'react-bootstrap/Container';
 import './BulletinsListPage.scss';
 
 // Internal imports
+import { CMSContext } from '../App';
 import { getBulletins } from '../Components/data/bulletins.js';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
@@ -24,6 +25,9 @@ import PageHeader from '../PageHeader';
 
 export default function BulletinsListPage() {
   document.title = 'DriveBC - Bulletins';
+
+  // Context
+  const { cmsContext, setCMSContext } = useContext(CMSContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -50,12 +54,25 @@ export default function BulletinsListPage() {
 
   // Data loading
   const loadBulletins = async () => {
-    if (!bulletins) {
+    let bulletinsData = bulletins;
+
+    if (!bulletinsData) {
+      bulletinsData = await getBulletins().catch((error) => displayError(error));
+
       dispatch(updateBulletins({
-        list: await getBulletins().catch((error) => displayError(error)),
+        list: bulletinsData,
         timeStamp: new Date().getTime()
       }));
     }
+
+    const bulletinsIds = bulletinsData.map(advisory => advisory.id);
+
+    // Combine and remove duplicates
+    const readBulletins = Array.from(new Set([...bulletinsIds, ...cmsContext.readBulletins]));
+    const updatedContext = {...cmsContext, readBulletins: readBulletins};
+
+    setCMSContext(updatedContext);
+    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
   }
 
   useEffect(() => {
