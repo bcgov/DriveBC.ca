@@ -15,12 +15,17 @@ import AdvisoriesList from '../../advisories/AdvisoriesList';
 import './AdvisoriesPanel.scss';
 
 export default function AdvisoriesPanel(props) {
-  const { advisories } = props;
+  const { advisories, openAdvisoriesOverlay } = props;
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
 
   useEffect(() => {
+    // Do not update context if the overlay is not open
+    if (openAdvisoriesOverlay === false) {
+      return;
+    }
+
     const advisoriesIds = advisories.map(advisory => advisory.id);
 
     // Combine and remove duplicates
@@ -29,7 +34,7 @@ export default function AdvisoriesPanel(props) {
 
     setCMSContext(updatedContext);
     localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
-  }, [advisories]);
+  }, [advisories, openAdvisoriesOverlay]);
 
   return (
     <div className="popup popup--advisories" tabIndex={0}>
