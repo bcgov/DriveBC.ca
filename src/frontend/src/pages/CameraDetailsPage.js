@@ -535,9 +535,7 @@ export default function CameraDetailsPage() {
                             aria-label={getCameraOrientation(cam.orientation)}
                             className={
                               'camera-direction-btn' +
-                              (camera.orientation == cam.orientation
-                                ? ' current'
-                                : '')
+                              (camera.id === cam.id ? ' current' : '')
                             }
                             key={cam.id}
                             onClick={() => loadCamDetails(cam, true)}>

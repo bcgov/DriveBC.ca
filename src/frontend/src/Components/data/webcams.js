@@ -81,16 +81,57 @@ export function getWebcamReplay(webcam) {
   return fetch(webcam.links.replayTheDay).then(response => response.json());
 }
 
+const CARDINAL_ORDER = {
+  'N': 0,
+  'NE': 1,
+  'E': 2,
+  'SE': 3,
+  'S': 4,
+  'SW': 5,
+  'W': 6,
+  'NW': 7,
+}
+
+function sortGroup(a, b) {
+  if (a.groupSort < b.groupSort) { return -1; }
+  if (a.groupSort > b.groupSort) { return 1; }
+  // groupSort is the same, indicating the views have the same orientation, so
+  // sort on subscript
+  return a.subscript < b.subscript ? -1 : 1;
+}
+
 export function getCameraGroupMap(cameras) {
   // Map cameras by group
   const cameraMap = {};
+  // find multiple cameras with the same orientation per camera group
+  const orientationMap = {}
+
   cameras.forEach((camera) => {
     if (!(camera.group in cameraMap)) {
       cameraMap[camera.group] = [];
     }
-
     cameraMap[camera.group].push(camera);
+    camera.groupSort = CARDINAL_ORDER[camera.orientation];
+
+    const groupOrientationId = `${camera.group}-${camera.orientation}`;
+    if (!(groupOrientationId in orientationMap)) {
+      orientationMap[groupOrientationId] = []
+    }
+    orientationMap[groupOrientationId].push(camera);
   });
+
+  // Where there are multiple camera views with the same orientation in a group,
+  // add a subscript value for sorting/display to differentiate.
+  Object.values(orientationMap).forEach((orientation) => {
+    if (orientation.length > 1) {
+      orientation.forEach((camera, ii) => {
+        camera.subscript = ii + 1;
+      })
+    }
+  })
+
+  // Sort cameras in group by orientation and subscript
+  Object.values(cameraMap).forEach((group) => { group.sort(sortGroup); });
 
   return cameraMap;
 }
