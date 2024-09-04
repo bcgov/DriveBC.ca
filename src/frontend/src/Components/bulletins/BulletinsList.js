@@ -1,11 +1,14 @@
 // React
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
 
-// Components and functions
+// Navigation
+import { useNavigate } from 'react-router-dom';
+
+// Internal imports
 import { stripRichText } from '../data/helper';
 import FriendlyTime from '../shared/FriendlyTime';
 import trackEvent from '../shared/TrackEvent';
+
 // Styling
 import './BulletinsList.scss';
 
@@ -29,7 +32,7 @@ export default function Bulletins(props) {
     <ul className='bulletins-list'>
       {!!bulletins && bulletins.map((bulletin, index) => {
         return (
-          <li className='bulletin-li unread' key={bulletin.id} onClick={() => handleClick(bulletin)}
+          <li className='bulletin-li' key={bulletin.id} onClick={() => handleClick(bulletin)}
             onKeyDown={(keyEvent) => {
               if (keyEvent.keyCode == 13) {
                 handleClick(bulletin);
@@ -52,6 +55,7 @@ export default function Bulletins(props) {
                 <FriendlyTime date={bulletin.latest_revision_created_at} />
               </div>
             </div>
+
             <div className='bulletin-li-thumbnail-container'>
               <div className={bulletin.image_url ? 'bulletin-li-thumbnail' : 'bulletin-li-thumbnail-default'}>
                 <img className='thumbnail-logo' src={bulletin.image_url ? bulletin.image_url : logo} alt={bulletin.image_alt_text} />
