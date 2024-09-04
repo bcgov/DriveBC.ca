@@ -85,7 +85,9 @@ export default function Modal() {
             id="modal-closer"
             className="modal-closer"
             icon={faXmark}
-            onClick={resetAuthModal} />
+            onClick={resetAuthModal}
+            onKeyPress={resetAuthModal}
+            tabIndex={0} />
 
           <div className='title'>{authContext.action}</div>
         </div>

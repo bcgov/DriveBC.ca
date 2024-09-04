@@ -78,12 +78,12 @@ export default function UserNavigation(props) {
         <div id="user-menu-header">
           <FontAwesomeIcon id="user-icon" icon={faCircleUser} />
           <p id="user-email">{authContext.email}</p>
-          <a
-            id="signout-link"
+          <a id="signout-link"
             className="nav-link"
             alt="Sign Out"
             onClick={() => toggleAuthModal('Sign Out')}
             onKeyPress={() => toggleAuthModal('Sign Out')}
+            tabIndex={0}
           >Sign out</a>
         </div>
 
@@ -166,13 +166,16 @@ export default function UserNavigation(props) {
         alt="Sign in button"
         onClick={() => {toggleAuthModal('Sign In')}}
         onKeyPress={() => {toggleAuthModal('Sign In')}}
-      >Sign in</a>
+        tabIndex={0}>
+
+        Sign in
+      </a>
     );
   }
 
   /* Main component */
   return authContext.loginStateKnown && (
-    <div id="user-navigation" tabIndex={0}>
+    <div id="user-navigation">
       { authContext.username && largeScreen &&
         getFavoritesMenu()
       }
