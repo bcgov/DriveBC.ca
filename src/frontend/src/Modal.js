@@ -41,6 +41,13 @@ export default function Modal() {
   };
 
   const resetAuthModal = () => {
+    // Reset focus and screen reader content
+    const allFocuses = document.querySelectorAll("a, button, input");
+    allFocuses.forEach((element) => {
+      element.removeAttribute("aria-hidden");
+      element.removeAttribute("tabindex");
+    });
+
     setAuthContext((prior) => {
       return { ...prior, showingModal: !prior.showingModal, action: null }
     });
@@ -75,21 +82,26 @@ export default function Modal() {
 
       <div
         tabIndex={0}
+        id="modal-content"
         className="content"
         onClick={(e) => { e.stopPropagation(); }}
         onKeyPress={(e) => { e.stopPropagation(); }}
+        role="alertdialog"
+        aria-modal="true"
       >
 
         <div className='header'>
-          <FontAwesomeIcon
+          <button
             id="modal-closer"
-            className="modal-closer"
-            icon={faXmark}
+            className="modal-closer close-panel"
+            aria-label="close modal"
             onClick={resetAuthModal}
-            onKeyPress={resetAuthModal}
-            tabIndex={0} />
+            onKeyPress={resetAuthModal}>
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
 
           <div className='title'>{authContext.action}</div>
+          
         </div>
 
         <div className='body'>
