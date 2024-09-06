@@ -27,7 +27,7 @@ instances:
 
 pgBackRest:
   image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
-  retention: "7" # Set to 7 days for PVC backups
+  retention: "2" # Set to 2 days for PVC backups
   # If retention-full-type set to 'count' then the oldest backups will expire when the number of backups reach the number defined in retention
   # If retention-full-type set to 'time' then the number defined in retention will take that many days worth of full backups before expiration
   retentionFullType: time
@@ -55,7 +55,7 @@ pgBackRest:
       memory: 128Mi
   s3:
     enabled: true
-    retention: "30" # Set to 30 days for S3 storage.
+    retention: "14" # Set to 14 days for S3 storage.
     retentionFullType: time
     createS3Secret: true #Will create the secret if it doesn't already exist. NOTE: Once the secret is set, you must change it in OpenShift.
     # the s3 secret name 
