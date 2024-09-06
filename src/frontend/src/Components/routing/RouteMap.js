@@ -17,6 +17,7 @@ import View from 'ol/View';
 
 // Internal imports
 import { getRouteLayer } from '../map/layers/routeLayer.js';
+import overrides from '../map/overrides.js';
 
 // Styling
 import './RouteMap.scss';
@@ -89,6 +90,10 @@ export default function RouteMap(props) {
       response.json().then(function (glStyle) {
         // DBC22-2153
         glStyle.metadata['ol:webfonts'] = '/fonts/{font-family}/{fontweight}{-fontstyle}.css';
+
+        for (const layer of glStyle.layers) {
+          overrides.merge(layer, overrides[layer.id] || {});
+        }
 
         applyStyle(vectorLayer, glStyle, 'esri');
       });
