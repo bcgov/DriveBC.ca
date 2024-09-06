@@ -9,7 +9,6 @@ import {
   faMemoCircleInfo
 } from '@fortawesome/pro-regular-svg-icons';
 import Container from 'react-bootstrap/Container';
-import parse from 'html-react-parser';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
@@ -21,6 +20,7 @@ import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Footer from '../Footer';
 import FriendlyTime from '../Components/shared/FriendlyTime';
+import renderWagtailBody from '../Components/shared/renderWagtailBody.js';
 import overrides from '../Components/map/overrides.js';
 
 // Styling
@@ -140,19 +140,6 @@ function getMap(advisoryData) {
   });
 }
 
-/* DBC22-2095
- * Solution to flickr gallery not embedding properly.  See
- * https://github.com/remarkablemark/html-react-parser/issues/98
- * https://jsfiddle.net/remarkablemark/3h8ejw9n/
- */
-function replace(domNode) {
-  if (domNode.type === 'script') {
-    const script = document.createElement('script');
-    script.src = domNode.attribs.src;
-    document.head.appendChild(script);
-  }
-}
-
 export default function AdvisoryDetailsPage() {
   // Context and router data
   const params = useParams();
@@ -194,7 +181,9 @@ export default function AdvisoryDetailsPage() {
     const advisoryData = await getAdvisories(params.id).catch((error) => displayError(error));
     setAdvisory(advisoryData);
 
-    mapRef.current = getMap(advisoryData);
+    if (!mapRef.current) {
+      mapRef.current = getMap(advisoryData);
+    }
 
     fitMap(advisoryData);
 
@@ -260,7 +249,7 @@ export default function AdvisoryDetailsPage() {
         <Tab eventKey="details" title={<span>{advisoryDetails}Details</span>}>
           {advisory && (
             <Container className="advisory-body-container cms-body">
-              <div>{parse(advisory.body, { replace })}</div>
+              <div>{renderWagtailBody(advisory.body)}</div>
             </Container>
           )}
         </Tab>
