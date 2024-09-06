@@ -21,6 +21,7 @@ import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Footer from '../Footer';
 import FriendlyTime from '../Components/shared/FriendlyTime';
+import overrides from '../Components/map/overrides.js';
 
 // Styling
 import './AdvisoryDetailsPage.scss';
@@ -114,6 +115,11 @@ function getMap(advisoryData) {
     response.json().then(function(glStyle) {
       // DBC22-2153
       glStyle.metadata['ol:webfonts'] = '/fonts/{font-family}/{fontweight}{-fontstyle}.css';
+
+      for (const layer of glStyle.layers) {
+        overrides.merge(layer, overrides[layer.id] || {});
+      }
+
       applyStyle(tileLayer, glStyle, 'esri');
     });
   });
