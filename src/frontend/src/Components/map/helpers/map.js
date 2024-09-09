@@ -83,6 +83,7 @@ export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading) => {
         if (error.code === error.PERMISSION_DENIED) {
           // The user has blocked location access
           console.error('Location access denied by user.', error);
+          setMyLocationLoading(false);
         } else {
           // Zoom out and center to BC if location not available
           setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
