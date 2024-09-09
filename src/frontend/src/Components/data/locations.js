@@ -11,7 +11,7 @@ export function getLocations(addressInput) {
       exactSpelling: true,
       locationDescriptor: 'routingPoint',
     }, {
-      'apiKey': `${window.GEOCODER_API_AUTH_KEY}`,
+      'apiKey': `${window.GEOCODER_API_CLIENT_ID}`,
     }
   ).then((data) => data);
 }
