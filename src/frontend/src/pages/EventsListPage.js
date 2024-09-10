@@ -97,7 +97,7 @@ export default function EventsListPage() {
   const { mapContext } = useContext(MapContext);
 
   // States
-  const [sortingKey, setSortingKey] = useState(selectedRoute && selectedRoute.routeFound ? 'route_order' : 'severity_desc');
+  const [sortingKey, setSortingKey] = useState(selectedRoute && selectedRoute.routeFound ? 'route_order' : (localStorage.getItem('sorting-key')? localStorage.getItem('sorting-key') : 'severity_desc'));
   const [eventCategoryFilter, setEventCategoryFilter] = useState({
     'closures': mapContext.visible_layers.closures,
     'majorEvents': mapContext.visible_layers.majorEvents,
@@ -209,8 +209,14 @@ export default function EventsListPage() {
       sortEvents(res, 'route_order');
 
     } else {
-      setSortingKey('severity_desc');
-      sortEvents(res, 'severity_desc');
+      if (localStorage.getItem('sorting-key')){
+        setSortingKey(localStorage.getItem('sorting-key'));
+        sortEvents(res, localStorage.getItem('sorting-key'));  
+      }
+      else {
+        setSortingKey('severity_desc');
+        sortEvents(res, 'severity_desc');
+      }
     }
 
     setProcessedEvents(res);
@@ -273,6 +279,7 @@ export default function EventsListPage() {
     e.preventDefault();
     if (sortingKey != key) {
       setSortingKey(key);
+      localStorage.setItem('sorting-key', key);
     }
   }
 
