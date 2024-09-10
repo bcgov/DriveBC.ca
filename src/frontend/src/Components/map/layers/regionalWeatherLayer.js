@@ -23,7 +23,7 @@ export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext,
 
         weatherData.forEach(weather => {
           // Build a new OpenLayers feature
-          if (!weather.location || !weather.station) {
+          if (!weather.location) {
             return;
           }
           const lat = weather.location.coordinates[1];
@@ -49,6 +49,8 @@ export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext,
               updateReferenceFeature(olFeatureForMap);
             }
           }
+
+          console.log('Weather data:', weather.forecast_group);
         });
 
         setLoadingLayers(prevState => ({
