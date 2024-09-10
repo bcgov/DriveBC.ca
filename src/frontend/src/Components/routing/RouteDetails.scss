@@ -93,14 +93,57 @@
         font-size: 1.125rem;
       }
 
-    .route-distance {
-      font-size: 1rem;
-      color: $Grey80;
-      white-space: nowrap;
-    }
+      .route-distance {
+        font-size: 1rem;
+        color: $Grey80;
+        white-space: nowrap;
+      }
     }
   }
+  .route-disclosures {
+    display: flex;
+    margin-top: 16px;
 
+    .route-pill {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 12px;
+      padding: 8px 16px;
+      font-weight: 700;
+      font-size: 0.875rem;
+      width: 100%;
+    
+      @media (min-width: 768px) {
+        border-radius: 24px;
+        padding: 4px 12px;
+        width: auto;
+      }
+    
+      .route-item__icon {
+        margin-right: 8px;
+      }
+
+      .route-item__count {
+        margin-right: 0.5ch;
+      }
+
+      &--closures {
+        background: #CE3E39;
+        color: white;
+      }
+      
+      &--advisories {
+        background: #FEF0D8;
+        color: #584215;
+      }
+
+      &:first-of-type {
+        margin-right: 12px;
+      }
+    }
+  }
+  
   .route-items {
     margin-top: 16px;
 
@@ -109,16 +152,14 @@
 
       &__count {
         display: inline-block;
-        width: 3ch;
+        width: 2ch;
         font-weight: 700;
         margin-left: 12px;
       }
 
       &__icon {
-        svg {
-          margin-left: 8px;
-          margin-right: 8px;
-        }
+        margin-left: 8px;
+        margin-right: 8px;
       }
 
       &--closures {
@@ -148,26 +189,6 @@
       &--ferries {
         border-left: 2px solid #00674E;
       }
-    }
-  }
-
-  &:has(.route-item--closures) {
-    .route-icon {
-      background-color: $Type-status-red;
-    }
-
-    .route-name {
-      color: $Type-status-red;
-    }
-  }
-
-  &:has(.route-item--advisories) {
-    .route-icon {
-      background-color: #584215;
-    }
-
-    .route-name {
-      color: #584215;
     }
   }
 
