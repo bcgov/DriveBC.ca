@@ -25,7 +25,7 @@ export function getRoute(points) {
 //    roundTrip: false
 
     }, {
-    'apiKey': `${window.ROUTE_PLANNER_KEY}`
+    'apiKey': window.ROUTE_PLANNER_CLIENT_ID
   }).then((data) => data);
 }
 

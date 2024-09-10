@@ -54,7 +54,7 @@ export default function Modal() {
         element.setAttribute("tabindex", "0");
         element.classList.remove("restore-tabindex");
       }
-      
+
       else {
         element.removeAttribute("tabindex");
       }
@@ -116,7 +116,7 @@ export default function Modal() {
           </button>
 
           <div className='title'>{authContext.action}</div>
-          
+
         </div>
 
         <div className='body'>
@@ -127,7 +127,12 @@ export default function Modal() {
 
               <p>Access your saved cameras and routes</p>
 
-              <button type='submit' className="btn btn-outline-primary">Sign in with BCeID</button>
+              <button type='submit' className="btn btn-outline-primary">Sign in with Basic BCeID</button>
+
+              <div>
+                Don&apos;t have a Basic BCeID Account?<br />
+                <a href="https://www.bceid.ca/os/?10289&SkipTo=Basic">Click here to create one</a>
+              </div>
 
               <div className="BCeID-definition">
                 <span>What is a BCeID?</span>

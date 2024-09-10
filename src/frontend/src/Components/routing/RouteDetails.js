@@ -16,14 +16,13 @@ import { createSearchParams, useNavigate, useSearchParams } from 'react-router-d
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFerry,
-  faMinusCircle,
   faRoad,
   faStar,
   faVideo,
   faFlag,
   faLocationDot
 } from '@fortawesome/pro-solid-svg-icons';
-import { faStar as faStarOutline, faCheck } from '@fortawesome/pro-regular-svg-icons';
+import { faStar as faStarOutline, faCheck, faMinusCircle } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -314,34 +313,40 @@ export default function RouteDetails(props) {
           <p className="route-alt-name">{getDefaultLabel()}</p>
         }
       </div>
+      {((!!advisoryCount && advisoryCount > 0) && (eventCount && eventCount.closures > 0)) &&
+        <div className="route-disclosures">
+          {(eventCount && eventCount.closures > 0) &&
+            <div className="route-pill route-pill--closures">
+              <span className="route-item__icon">
+                <FontAwesomeIcon icon={faMinusCircle} alt="closures" />
+              </span>
+              <span className="route-item__count">
+                {eventCount.closures}
+              </span>
+              <span className="route-item__name">
+                {eventCount.closures > 1 ? ' Closures' : ' Closure'}
+              </span>
+            </div>
+          }
+
+          {(!!advisoryCount && advisoryCount > 0) &&
+            <div className="route-pill route-pill--advisories">
+              <span className="route-item__icon">
+                <FontAwesomeIcon icon={faFlag} alt="inland ferries" />
+              </span>
+              <span className="route-item__count">
+                {advisoryCount}
+              </span>
+              <span className="route-item__name">
+                {advisoryCount > 1 ? ' Advisories' : ' Advisory'}
+              </span>
+            </div>
+          }
+
+        </div>
+      }
 
       <div className="route-items">
-        {(!!advisoryCount && advisoryCount > 0) &&
-          <div className="route-item route-item--advisories">
-            <span className="route-item__count">
-              {advisoryCount}
-            </span>
-
-            <span className="route-item__icon">
-              <FontAwesomeIcon icon={faFlag} alt="inland ferries" />
-            </span>
-
-            <span className="route-item__name">Advisories</span>
-          </div>
-        }
-
-        {(eventCount && eventCount.closures > 0) &&
-          <div className="route-item route-item--closures">
-            <span className="route-item__count">
-              {eventCount.closures}
-            </span>
-            <span className="route-item__icon">
-              <FontAwesomeIcon icon={faMinusCircle} alt="closures" />
-            </span>
-            <span className="route-item__name">Closures</span>
-          </div>
-        }
-
         {(eventCount && eventCount.majorEvents > 0) &&
           <div className="route-item route-item--major">
             <span className="route-item__count">
