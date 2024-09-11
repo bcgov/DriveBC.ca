@@ -30,6 +30,9 @@ export default function Footer(props) {
             <h2>More Info</h2>
             <ul className="link-list">
               <li>
+                <a href="/feedback" className="footer-link" target="_self"  alt="Website Feedback" >Website Feedback</a>
+              </li>
+              <li>
                 <a href="/problems" alt="Report a problem" >Report a problem</a>
               </li>
               <li>
