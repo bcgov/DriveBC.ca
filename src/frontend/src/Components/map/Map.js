@@ -355,6 +355,9 @@ export default function DriveBCMap(props) {
     } else {
       // initial location was set, so no need to prevent pan/zoom
       isInitialMountLocation.current = false;
+      if (locationPinRef.current) {
+        mapRef.current.removeOverlay(locationPinRef.current);
+      }
     }
   }, [searchLocationFrom]);
 
