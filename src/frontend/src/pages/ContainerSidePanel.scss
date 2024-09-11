@@ -97,6 +97,7 @@
         order: 2;
         flex: 0 0 100%;
         margin-top: 10px;
+        margin-right: 20px;
 
         @media (min-width: 768px) {
           width: fit-content;
@@ -112,6 +113,7 @@
         height: 100%;
         margin: auto 0;
         border: 1px solid transparent;
+        white-space: nowrap;
 
         @media (min-width: 768px) {
           margin: auto 0;
