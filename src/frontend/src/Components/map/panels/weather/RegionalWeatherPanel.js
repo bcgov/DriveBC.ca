@@ -64,10 +64,6 @@ export default function RegionalWeatherPanel(props) {
     setSearchParams(new URLSearchParams({ type: 'regionalWeather', id: weather.id }));
   }, [feature]);
 
-  useEffect(() => {
-    console.log('expanded', expanded);
-  }, [expanded]);
-
   /* Rendering */
   // Main component
   return (

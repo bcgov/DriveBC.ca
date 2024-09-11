@@ -49,8 +49,6 @@ export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext,
               updateReferenceFeature(olFeatureForMap);
             }
           }
-
-          console.log('Weather data:', weather.forecast_group);
         });
 
         setLoadingLayers(prevState => ({
