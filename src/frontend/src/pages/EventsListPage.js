@@ -426,7 +426,7 @@ export default function EventsListPage() {
                 </div>
               }
 
-              {!processedEvents.length &&
+              {(!showLoader && !processedEvents.length) &&
                 <div className="empty-event-display">
                   <h2>No delays to display</h2>
 
