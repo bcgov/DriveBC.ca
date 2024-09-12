@@ -82,12 +82,16 @@ export default function Header() {
 
   /* Helpers */
   const getUnreadAdvisoriesCount = (advisoriesData) => {
-    const readAdvisories = advisoriesData.filter(advisory => cmsContext.readAdvisories.includes(advisory.id));
+    const readAdvisories = advisoriesData.filter(advisory => cmsContext.readAdvisories.includes(
+      advisory.id.toString() + '-' + advisory.live_revision.toString()
+    ));
     return advisoriesData.length - readAdvisories.length;
   }
 
   const getUnreadBulletinsCount = (bulletinsData) => {
-    const readBulletins = bulletinsData.filter(bulletin => cmsContext.readBulletins.includes(bulletin.id));
+    const readBulletins = bulletinsData.filter(bulletin => cmsContext.readBulletins.includes(
+      bulletin.id.toString() + '-' + bulletin.live_revision.toString()
+    ));
     return bulletinsData.length - readBulletins.length;
   }
 

@@ -62,7 +62,7 @@ export default function AdvisoriesListPage() {
       }));
     }
 
-    const advisoriesIds = advisoriesData.map(advisory => advisory.id);
+    const advisoriesIds = advisoriesData.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
 
     // Combine and remove duplicates
     const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));

@@ -190,7 +190,10 @@ export default function AdvisoryDetailsPage() {
     document.title = `DriveBC - Advisories - ${advisoryData.title}`;
 
     // Combine and remove duplicates
-    const readAdvisories = Array.from(new Set([...cmsContext.readAdvisories, advisoryData.id]));
+    const readAdvisories = Array.from(new Set([
+      ...cmsContext.readAdvisories,
+      advisoryData.id.toString() + '-' + advisoryData.live_revision.toString()
+    ]));
     const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
 
     setCMSContext(updatedContext);

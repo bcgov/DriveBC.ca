@@ -94,7 +94,7 @@ export default function AdvisoriesList(props) {
 
         } else {
           return (
-            <a className={`advisory-li ${!cmsContext.readAdvisories.includes(advisory.id) ? 'unread' : ''}`}
+            <a className={`advisory-li ${!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.live_revision.toString()) ? 'unread' : ''}`}
               key={advisory.id}
               href="#"
               onClick={() => handleClick(advisory)}
@@ -106,7 +106,7 @@ export default function AdvisoriesList(props) {
 
                   {(showTimestamp && showPublished) &&
                     <div className="timestamp-container">
-                      {!cmsContext.readAdvisories.includes(advisory.id) && <div className="unread-display"></div>}
+                      {!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.live_revision.toString()) && <div className="unread-display"></div>}
                       <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
                       <FriendlyTime date={advisory.latest_revision_created_at} />
                     </div>
@@ -114,7 +114,7 @@ export default function AdvisoriesList(props) {
 
                   {(showTimestamp && !showPublished) &&
                     <div className="timestamp-container">
-                      {!cmsContext.readAdvisories.includes(advisory.id) && <div className="unread-display"></div>}
+                      {!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.live_revision.toString()) && <div className="unread-display"></div>}
                       <FriendlyTime date={advisory.latest_revision_created_at} />
                     </div>
                   }

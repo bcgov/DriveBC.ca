@@ -51,7 +51,10 @@ export default function BulletinDetailsPage() {
     document.title = `DriveBC - Bulletins - ${bulletinData.title}`;
 
     // Combine and remove duplicates
-    const readBulletins = Array.from(new Set([...cmsContext.readBulletins, bulletinData.id]));
+    const readBulletins = Array.from(new Set([
+      ...cmsContext.readBulletins,
+      bulletinData.id.toString() + '-' + bulletinData.live_revision.toString()
+    ]));
     const updatedContext = {...cmsContext, readBulletins: readBulletins};
 
     setCMSContext(updatedContext);
