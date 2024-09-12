@@ -1,5 +1,7 @@
 // React
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -92,7 +94,9 @@ export default function RouteDetails(props) {
       const eventData = events ? events : await getEvents();
 
       // Filter data by route
-      const filteredEventData = selectedRoute && selectedRoute.routeFound ? filterByRoute(eventData, selectedRoute, null, true) : eventData;
+      const filteredEventData = selectedRoute && selectedRoute.routeFound
+        ? filterByRoute(eventData, selectedRoute, null, true)
+        : eventData;
 
       dispatch(
         updateEvents({
@@ -110,12 +114,14 @@ export default function RouteDetails(props) {
     const routePoints = selectedRoute && selectedRoute.routeFound ? selectedRoute.points : null;
 
     // Load if filtered cams don't exist or route doesn't match
-    if (!filteredAdvisories|| !compareRoutePoints(routePoints, advisoryFilterPoints)) {
+    if (!filteredAdvisories || !compareRoutePoints(routePoints, advisoryFilterPoints)) {
       // Fetch data if it doesn't already exist
       const advisoryData = advisories ? advisories : await getAdvisories();
 
       // Filter data by route
-      const filteredAdvisoryData = selectedRoute && selectedRoute.routeFound ? filterAdvisoryByRoute(advisoryData, selectedRoute, null, true) : advisoryData;
+      const filteredAdvisoryData = selectedRoute && selectedRoute.routeFound
+        ? filterAdvisoryByRoute(advisoryData, selectedRoute, null, true)
+        : advisoryData;
 
       dispatch(
         updateAdvisories({
@@ -313,38 +319,42 @@ export default function RouteDetails(props) {
           <p className="route-alt-name">{getDefaultLabel()}</p>
         }
       </div>
-      {((!!advisoryCount && advisoryCount > 0) && (eventCount && eventCount.closures > 0)) &&
-        <div className="route-disclosures">
-          {(eventCount && eventCount.closures > 0) &&
-            <div className="route-pill route-pill--closures">
-              <span className="route-item__icon">
-                <FontAwesomeIcon icon={faMinusCircle} alt="closures" />
-              </span>
-              <span className="route-item__count">
-                {eventCount.closures}
-              </span>
-              <span className="route-item__name">
-                {eventCount.closures > 1 ? ' Closures' : ' Closure'}
-              </span>
-            </div>
-          }
 
-          {(!!advisoryCount && advisoryCount > 0) &&
-            <div className="route-pill route-pill--advisories">
-              <span className="route-item__icon">
-                <FontAwesomeIcon icon={faFlag} alt="inland ferries" />
-              </span>
-              <span className="route-item__count">
-                {advisoryCount}
-              </span>
-              <span className="route-item__name">
-                {advisoryCount > 1 ? ' Advisories' : ' Advisory'}
-              </span>
-            </div>
-          }
+      <div className="route-disclosures">
+        { eventCount
+          ? ( eventCount.closures > 0 &&
+              <div className="route-pill route-pill--closures">
+                <span className="route-item__icon">
+                  <FontAwesomeIcon icon={faMinusCircle} alt="closures" />
+                </span>
+                <span className="route-item__count">
+                  {eventCount.closures}
+                </span>
+                <span className="route-item__name">
+                  {eventCount.closures > 1 ? ' Closures' : ' Closure'}
+                </span>
+              </div>
+              )
+          : <Skeleton width={120} />
+        }
 
-        </div>
-      }
+        { !isNaN(advisoryCount)
+          ? ( advisoryCount > 0 &&
+              <div className="route-pill route-pill--advisories">
+                <span className="route-item__icon">
+                  <FontAwesomeIcon icon={faFlag} alt="inland ferries" />
+                </span>
+                <span className="route-item__count">
+                  {advisoryCount}
+                </span>
+                <span className="route-item__name">
+                  {advisoryCount > 1 ? ' Advisories' : ' Advisory'}
+                </span>
+              </div>
+            )
+          : <Skeleton width={120} />
+        }
+      </div>
 
       <div className="route-items">
         {(eventCount && eventCount.majorEvents > 0) &&
@@ -400,19 +410,21 @@ export default function RouteDetails(props) {
             <span className="route-item__name">Inland Ferry</span>
           </div>
         }
+        {!eventCount && <Skeleton height={64} />}
       </div>
 
       {!isPanel &&
         <div className="myRoute-actions">
-          {filteredFavCams &&
-            <button
-              className={`viewCams-btn text-only-btn ${filteredFavCams.length === 0 ? 'disabled' : ''}`}
-              aria-label={filteredFavCams.length === 0 ? 'No favourite cameras on this route' : 'View favourite cameras on this route'}
-              onClick={viewFavouriteCamHandler}
-              disabled={filteredFavCams.length === 0}>
-              <FontAwesomeIcon icon={faVideo} />
-              <span>{filteredFavCams.length === 0 ? 'No favourites on this route' : 'Favourites on this route'}</span>
-            </button>
+          { filteredFavCams
+            ? <button
+                className={`viewCams-btn text-only-btn ${filteredFavCams.length === 0 ? 'disabled' : ''}`}
+                aria-label={filteredFavCams.length === 0 ? 'No favourite cameras on this route' : 'View favourite cameras on this route'}
+                onClick={viewFavouriteCamHandler}
+                disabled={filteredFavCams.length === 0}>
+                <FontAwesomeIcon icon={faVideo} />
+                <span>{filteredFavCams.length === 0 ? 'No favourites on this route' : 'Favourites on this route'}</span>
+              </button>
+            : <Skeleton width={200} />
           }
 
           <button
