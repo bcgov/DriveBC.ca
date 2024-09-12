@@ -127,6 +127,8 @@ export default function Header() {
             <img className="header-logo" src={logo} alt="Government of British Columbia" />
           </Navbar.Brand>
 
+          <UserNavigation />
+
           <div className="nav-divider"></div>
 
           <Navbar.Collapse id="basic-navbar-nav">
@@ -158,8 +160,6 @@ export default function Header() {
           }
 
           <div className="nav-divider" />
-
-          <UserNavigation />
         </Container>
       </Navbar>
     </header>
