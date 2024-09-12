@@ -319,7 +319,7 @@ export default function CamerasListPage() {
 
             <CameraList cameras={ displayedCameras ? displayedCameras : [] } showLoader={showLoader} enableHighwayFilter={true}></CameraList>
 
-            {!(displayedCameras && displayedCameras.length) &&
+            {(!showLoader && !(displayedCameras && displayedCameras.length)) &&
               <div className="empty-cam-display">
                 <h2>No cameras to display</h2>
 
