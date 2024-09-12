@@ -29,7 +29,6 @@ import BulletinsListPage from './pages/BulletinsListPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
 import CamerasListPage from './pages/CamerasListPage';
 import EventsListPage from './pages/EventsListPage';
-import FeedbackPage from './pages/FeedbackPage';
 import Header from './Components/shared/header/Header.js';
 import MapPage from './pages/MapPage';
 import Modal from './Modal.js';
@@ -198,7 +197,6 @@ function App() {
                   <Route path="/advisories/:id" element={<AdvisoryDetailsPage />} />
                   <Route path="/bulletins" element={<BulletinsListPage />} />
                   <Route path="/bulletins/:id" element={<BulletinDetailsPage />} />
-                  <Route path="/feedback" element={<FeedbackPage />} />
                   <Route path="/account" element={<AccountPage />} />
                   {/* Catch-all route for 404 errors */}
                   <Route path="*" element={<NotFoundPage />} />
