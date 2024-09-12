@@ -214,12 +214,14 @@ export default function DriveBCMap(props) {
     const vectorLayer = new VectorTileLayer({
       declutter: true,
       source: tileSource,
+      style: function(feature, resolution) { return null; }, // avoids displaying blueline default style before style loads
     });
 
     // highway symbol layer
     const symbolLayer = new VectorTileLayer({
       declutter: true,
       source: tileSource,
+      style: function(feature, resolution) { return null; }, // avoids displaying blueline default style before style loads
     });
     // should be highest z-index so that highway symbols are always visible
     symbolLayer.setZIndex(200);
