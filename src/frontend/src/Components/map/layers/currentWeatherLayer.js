@@ -22,11 +22,12 @@ export function getCurrentWeatherLayer(weatherData, projectionCode, mapContext, 
         vectorSource.clear();
 
         weatherData.forEach(weather => {
-          // Build a new OpenLayers feature
-          if(!weather.location){
+          if (!weather.location) {
             return
           }
-          const lat = weather.location.coordinates[0];
+
+          // Offset ~500m East to prevent overlapping with other features
+          const lat = weather.location.coordinates[0] + 0.0044;
           const lng = weather.location.coordinates[1]
           const olGeometry = new Point([lat, lng]);
           const olFeature = new ol.Feature({ geometry: olGeometry, type: 'currentWeather' });
