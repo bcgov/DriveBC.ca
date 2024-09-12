@@ -65,7 +65,7 @@ export default function BulletinsListPage() {
       }));
     }
 
-    const bulletinsIds = bulletinsData.map(advisory => advisory.id);
+    const bulletinsIds = bulletinsData.map(bulletin => bulletin.id.toString() + '-' + bulletin.live_revision.toString());
 
     // Combine and remove duplicates
     const readBulletins = Array.from(new Set([...bulletinsIds, ...cmsContext.readBulletins]));

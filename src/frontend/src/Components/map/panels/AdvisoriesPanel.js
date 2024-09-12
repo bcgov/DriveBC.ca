@@ -26,7 +26,7 @@ export default function AdvisoriesPanel(props) {
       return;
     }
 
-    const advisoriesIds = advisories.map(advisory => advisory.id);
+    const advisoriesIds = advisories.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
 
     // Combine and remove duplicates
     const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));
