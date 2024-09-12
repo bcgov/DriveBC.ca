@@ -22,8 +22,10 @@ export function getFerriesLayer(ferriesData, projectionCode, mapContext, referen
         vectorSource.clear();
 
         ferriesData.forEach(ferry => {
-          // Build a new OpenLayers feature
-          const olGeometry = new Point(ferry.location.coordinates);
+          // Offset ~500m East to prevent overlapping with other features
+          const lat = ferry.location.coordinates[0] + 0.0044;
+          const lng = ferry.location.coordinates[1]
+          const olGeometry = new Point([lat, lng]);
           const olFeature = new ol.Feature({ geometry: olGeometry, type: 'ferry'});
 
           // Transfer properties

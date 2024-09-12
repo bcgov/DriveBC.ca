@@ -23,8 +23,24 @@ export function getRestStopsLayer(restStopsData, projectionCode, mapContext, ref
         vectorSource.clear();
 
         restStopsData.forEach(restStop => {
-          // Build a new OpenLayers feature
-          const olGeometry = new Point(restStop.location.coordinates);
+          // Offset rest stops ~250m to prevent overlapping with others
+          let lat = restStop.location.coordinates[0];
+          if (restStop.properties.DIRECTION_OF_TRAFFIC == 'Eastbound') {
+            lat += 0.0022;
+          }
+          if (restStop.properties.DIRECTION_OF_TRAFFIC == 'Westbound') {
+            lat -= 0.0022;
+          }
+
+          let lng = restStop.location.coordinates[1];
+          if (restStop.properties.DIRECTION_OF_TRAFFIC == 'Northbound') {
+            lng += 0.0022;
+          }
+          if (restStop.properties.DIRECTION_OF_TRAFFIC == 'Southbound') {
+            lng -= 0.0022;
+          }
+
+          const olGeometry = new Point([lat, lng]);
           const olFeature = new ol.Feature({ geometry: olGeometry, type: 'restStop' });
 
           // Transfer properties
