@@ -47,7 +47,6 @@ import { pointerMoveHandler, resetHoveredStates } from './handlers/hover';
 import { pointerClickHandler, resetClickedStates } from './handlers/click';
 import AdvisoriesWidget from '../advisories/AdvisoriesWidget';
 import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
-import ExitSurvey from '../shared/ExitSurvey.js';
 import Filters from '../shared/Filters.js';
 import RouteSearch from '../routing/RouteSearch.js';
 import NetworkErrorPopup from './errors/NetworkError';
@@ -577,9 +576,6 @@ export default function DriveBCMap(props) {
       <div ref={mapElement} className="map">
         {!isCamDetail && (
           <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
-            {smallScreen && (
-              <ExitSurvey mobile={true} />
-            )}
             <RouteSearch ref={routingContainerRef} routeEdit={true}  showSpinner={showSpinner} onShowSpinnerChange={setShowSpinner}/>
             <AdvisoriesWidget advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} onMap={true} />
           </div>
@@ -626,7 +622,6 @@ export default function DriveBCMap(props) {
                 {(myLocationLoading) ? <Spinner animation="border" role="status" /> : <FontAwesomeIcon icon={faLocationCrosshairs} />}
               My location
             </Button>
-            <ExitSurvey />
           </React.Fragment>
         )}
 

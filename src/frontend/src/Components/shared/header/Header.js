@@ -1,13 +1,16 @@
 // React
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
+// Navigation
+import { useNavigate } from 'react-router-dom';
+
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 import { updateAdvisories, updateBulletins } from '../../../slices/cmsSlice';
 
 // External imports
-import { faComment } from '@fortawesome/pro-solid-svg-icons';
+import { faSparkles } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useMediaQuery } from '@uidotdev/usehooks';
@@ -35,6 +38,9 @@ export default function Header() {
     advisories: state.cms.advisories.list,
     bulletins: state.cms.bulletins.list,
   }))));
+
+  // Navigation
+  const navigate = useNavigate();
 
   // Context
   const { cmsContext } = useContext(CMSContext);
@@ -109,8 +115,18 @@ export default function Header() {
     );
   };
 
-  const surveyLink = `${window.SURVEY_LINK}` ||
-    'https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u';
+//  const surveyLink = `${window.SURVEY_LINK}` ||
+//    'https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u';
+
+  const whatsNewHandler = () => {
+    const latestImprovementBulletin = bulletins.find(bulletin => bulletin.slug === 'latest-beta-improvements');
+    if (latestImprovementBulletin) {
+      navigate(`/bulletins/${latestImprovementBulletin.id}`);
+      return;
+    }
+
+    navigate('/bulletins');
+  }
 
   // Main component
   return (
@@ -154,12 +170,21 @@ export default function Header() {
           </Navbar.Collapse>
 
           { xLargeScreen &&
-            <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
+            <button className="btn btn-primary" id="feedback-btn" alt="What's new" tabIndex={0}
+              onClick={whatsNewHandler}
+              onKeyPress={(keyEvent) => {
+                if (keyEvent.charCode == 13 || keyEvent.charCode == 32) {
+                  whatsNewHandler();
+                }
+              }}>
+              <FontAwesomeIcon icon={faSparkles} />
+              What&apos;s new
+            </button>
           }
+
           <div className="nav-divider" />
 
           <UserNavigation />
-
         </Container>
       </Navbar>
     </header>
