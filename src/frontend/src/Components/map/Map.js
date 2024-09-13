@@ -677,7 +677,8 @@ export default function DriveBCMap(props) {
           enableRoadConditions={true}
           textOverride={'Layer filters'}
           isCamDetail={isCamDetail}
-          referenceData={referenceData} />
+          referenceData={referenceData}
+          loadingLayers={loadingLayers} />
       )}
 
       {showNetworkError &&
