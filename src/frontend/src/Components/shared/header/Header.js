@@ -127,8 +127,6 @@ export default function Header() {
             <img className="header-logo" src={logo} alt="Government of British Columbia" />
           </Navbar.Brand>
 
-          <UserNavigation />
-
           <div className="nav-divider"></div>
 
           <Navbar.Collapse id="basic-navbar-nav">
@@ -158,8 +156,10 @@ export default function Header() {
           { xLargeScreen &&
             <a href={surveyLink} className="btn btn-primary" id="feedback-btn" target="_blank" rel="noreferrer" alt="Feedback survey"><FontAwesomeIcon icon={faComment} />Give Feedback</a>
           }
-
           <div className="nav-divider" />
+
+          <UserNavigation />
+
         </Container>
       </Navbar>
     </header>
