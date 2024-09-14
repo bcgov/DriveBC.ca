@@ -1,13 +1,11 @@
 // React
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { memoize } from 'proxy-memoize';
-import { updateAdvisories } from '../../slices/cmsSlice';
-import { updateEvents} from '../../slices/feedsSlice';
 import { updateSearchLocationFrom, updateSearchLocationTo, updateSelectedRoute } from '../../slices/routesSlice'
 import { resetPendingAction, updatePendingAction } from '../../slices/userSlice';
 
@@ -32,10 +30,12 @@ import Modal from 'react-bootstrap/Modal';
 // Internal imports
 import { AlertContext, AuthContext } from '../../App';
 import { removeRoute, saveRoute } from "../data/routes";
-import { getCameras, addCameraGroups } from "../data/webcams";
-import { getEvents, getEventCounts } from "../data/events";
-import { getAdvisories, getAdvisoryCounts } from "../data/advisories";
-import { compareRoutePoints, filterByRoute, filterAdvisoryByRoute } from '../map/helpers';
+import { addCameraGroups } from "../data/webcams";
+import { getEventCounts } from "../data/events";
+import { getAdvisoryCounts } from "../data/advisories";
+import { filterAdvisoryByRoute } from '../map/helpers';
+import * as dataLoaders from '../map/dataLoaders'
+import * as slices from '../../slices';
 import RouteMap from './RouteMap';
 
 // Styling
@@ -43,11 +43,15 @@ import './RouteDetails.scss';
 
 export default function RouteDetails(props) {
   /* Setup */
+  // Props
   const { route, isPanel, setRouteFavCams, setRouteLabel } = props;
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
   const { setAlertMessage } = useContext(AlertContext);
+
+  // Ref
+  const workerRef = useRef();
 
   // Navigation
   const navigate = useNavigate();
@@ -56,24 +60,27 @@ export default function RouteDetails(props) {
   // Redux
   const dispatch = useDispatch();
   const {
-    cameras, events, searchLocationFrom, searchLocationTo, selectedRoute,
-    advisories, filteredAdvisories, advisoryFilterPoints, eventFilterPoints,
-    filteredEvents, favCams, pendingAction
+    feeds: {
+      cameras: { list: cameras, filteredList: filteredCameras, filterPoints: camFilterPoints },
+      events: { list: events, filteredList: filteredEvents, filterPoints: eventFilterPoints },
+    },
+    advisories: { list: advisories, filteredList: filteredAdvisories, filterPoints: advisoryFilterPoints },
+    routes: { searchLocationFrom, searchLocationTo, selectedRoute },
+    user: { favCams, pendingAction }
 
-  } = useSelector(useCallback(memoize(state => ({
-    cameras: state.feeds.cameras.list,
-    events: state.feeds.events.list,
-    advisories: state.cms.advisories.list,
-    searchLocationFrom: state.routes.searchLocationFrom,
-    searchLocationTo: state.routes.searchLocationTo,
-    selectedRoute: state.routes.selectedRoute,
-    eventFilterPoints: state.feeds.events.filterPoints,
-    filteredEvents: state.feeds.events.filteredList,
-    advisoryFilterPoints: state.cms.advisories.filterPoints,
-    filteredAdvisories: state.cms.advisories.filteredList,
-    favCams: state.user.favCams,
-    pendingAction: state.user.pendingAction,
-  }))));
+  } = useSelector(
+    useCallback(
+      memoize(state => ({
+        feeds: {
+          cameras: state.feeds.cameras,
+          events: state.feeds.events,
+        },
+        advisories: state.cms.advisories,
+        routes: state.routes,
+        user: state.user
+      })),
+    ),
+  );
 
   // States
   const [eventCount, setEventCount] = useState();
@@ -84,92 +91,79 @@ export default function RouteDetails(props) {
   const [filteredFavCams, setFilteredFavCams] = useState();
 
   // Data
-  // Copied from EventsListPage.js, to be cleaned up
-  const loadEvents = async () => {
-    const routePoints = selectedRoute && selectedRoute.routeFound ? selectedRoute.points : null;
-
-    // Load if filtered cams don't exist or route doesn't match
-    if (!filteredEvents || !compareRoutePoints(routePoints, eventFilterPoints)) {
-      // Fetch data if it doesn't already exist
-      const eventData = events ? events : await getEvents();
-
-      // Filter data by route
-      const filteredEventData = selectedRoute && selectedRoute.routeFound
-        ? filterByRoute(eventData, selectedRoute, null, true)
-        : eventData;
-
-      dispatch(
-        updateEvents({
-          list: eventData,
-          filteredList: filteredEventData,
-          filterPoints: selectedRoute && selectedRoute.routeFound ? selectedRoute.points : null,
-          timeStamp: new Date().getTime()
-        })
-      );
-    }
-  }
-
-  // To be cleaned up
-  const loadAdvisories = async () => {
-    const routePoints = selectedRoute && selectedRoute.routeFound ? selectedRoute.points : null;
-
-    // Load if filtered cams don't exist or route doesn't match
-    if (!filteredAdvisories || !compareRoutePoints(routePoints, advisoryFilterPoints)) {
-      // Fetch data if it doesn't already exist
-      const advisoryData = advisories ? advisories : await getAdvisories();
-
-      // Filter data by route
-      const filteredAdvisoryData = selectedRoute && selectedRoute.routeFound
-        ? filterAdvisoryByRoute(advisoryData, selectedRoute, null, true)
-        : advisoryData;
-
-      dispatch(
-        updateAdvisories({
-          list: advisoryData,
-          filteredList: filteredAdvisoryData,
-          filterPoints: selectedRoute && selectedRoute.routeFound ? selectedRoute.points : null,
-          timeStamp: new Date().getTime()
-        })
-      );
-    }
-  }
-
   const loadRouteCameras = async () => {
-    // Copied data functions, to be cleaned up
-    const camData = cameras ? cameras : await getCameras();
-
-    // Don't load when user isn't logged in
-    if (!favCams) {
+    // Don't load when user isn't logged in or if there are no cameras
+    if (!favCams || !cameras) {
       return [];
     }
 
-    const filteredFavCams = camData.filter(item => favCams.includes(item.id));
-    const favCamGroupIds = filteredFavCams.map(cam => cam.group);
-    const filteredCameras = camData.filter(cam => favCamGroupIds.includes(cam.group));
-    const clonedCameras = JSON.parse(JSON.stringify(filteredCameras));
-    const finalCameras = addCameraGroups(clonedCameras, favCams);
-    setFilteredFavCams(finalCameras.length ? filterByRoute(finalCameras, route) : []);
+    const favCamData = cameras.filter(item => favCams.includes(item.id));
+    const favCamGroupIds = favCamData.map(cam => cam.group);
+    const favCamGroups = cameras.filter(cam => favCamGroupIds.includes(cam.group));
+    const clonedFavCamGroups = JSON.parse(JSON.stringify(favCamGroups));
+
+    const groupedFavCamData = addCameraGroups(clonedFavCamGroups, favCams);
+
+    if (groupedFavCamData.length) {
+      workerRef.current.postMessage(
+        JSON.stringify({data: groupedFavCamData, route: route, action: 'setFilteredFavCams'})
+      );
+
+    } else {
+      setFilteredFavCams([]);
+    }
   }
 
   // Effects
   useEffect(() => {
-    loadEvents();
-    loadAdvisories();
-    loadRouteCameras();
+    // Create a new worker if it doesn't exist
+    if (!workerRef.current) {
+      workerRef.current = new Worker(new URL('../map/filterRouteWorker.js', import.meta.url));
+
+      // Set up event listener for messages from the worker
+      workerRef.current.onmessage = function (event) {
+        const { data, filteredData, action } = JSON.parse(event.data);
+
+        // Data specific to the RouteDetails component
+        if (action === 'setEventCount') {
+          setEventCount(getEventCounts(filteredData));
+
+        } else if (action === 'setFilteredFavCams') {
+          setFilteredFavCams(filteredData);
+
+        // Data to be updated via dispatch
+        } else {
+          dispatch(
+            slices[action]({
+              list: data,
+              filteredList: filteredData,
+              filterPoints: selectedRoute ? selectedRoute.points : null,
+              timeStamp: new Date().getTime()
+            })
+          );
+        }
+      };
+    }
+
+    const routeData = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
+    const displayError = () => {};
+
+    dataLoaders.loadAdvisories(routeData, advisories, filteredAdvisories, advisoryFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadCameras(routeData, cameras, filteredCameras, camFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadEvents(routeData, events, filteredEvents, eventFilterPoints, dispatch, displayError, workerRef.current);
 
     if (pendingAction && pendingAction.action === 'showSavePopup') {
       setShowSavePopup(true);
       dispatch(resetPendingAction());
     }
-  }, []);
 
-  useEffect(() => {
-    if (events) {
-      const eventData = filterByRoute(events, route, null, true);
-      const eventCount = getEventCounts(eventData);
-      setEventCount(eventCount);
-    }
-  }, [events]);
+    // Cleanup function to terminate the worker when the component unmounts
+    return () => {
+      if (workerRef.current) {
+        workerRef.current.terminate();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (advisories) {
@@ -178,6 +172,20 @@ export default function RouteDetails(props) {
       setAdvisoryCount(advisoryCount);
     }
   }, [advisories]);
+
+  useEffect(() => {
+    if (cameras) {
+      loadRouteCameras();
+    }
+  }, [cameras]);
+
+  useEffect(() => {
+    if (events) {
+      workerRef.current.postMessage(
+        JSON.stringify({data: events, route: route, action: 'setEventCount'})
+      );
+    }
+  }, [events]);
 
   /* Helpers */
   const toggleAuthModal = (action) => {

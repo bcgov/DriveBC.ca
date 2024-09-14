@@ -40,7 +40,7 @@ import {
   zoomIn,
   zoomOut,
 } from './helpers';
-import { loadLayer, loadEventsLayers, enableReferencedLayer } from './layers';
+import { loadLayer, loadEventsLayers, updateEventsLayers, enableReferencedLayer } from './layers';
 import { MapContext } from '../../App.js';
 import { maximizePanel, renderPanel, togglePanel } from './panels';
 import { pointerMoveHandler, resetHoveredStates } from './handlers/hover';
@@ -92,12 +92,12 @@ export default function DriveBCMap(props) {
   const dispatch = useDispatch();
   const {
     feeds: {
-      cameras: { filteredList: filteredCameras },
-      events: { filteredList: filteredEvents },
-      ferries: { filteredList: filteredFerries },
-      weather: { filteredList: filteredCurrentWeathers },
-      regional: { filteredList: filteredRegionalWeathers },
-      restStops: { filteredList: filteredRestStops },
+      cameras: { list: cameras, filteredList: filteredCameras },
+      events: { list: events, filteredList: filteredEvents },
+      ferries: { list: ferries, filteredList: filteredFerries },
+      weather: { list: currentWeather, filteredList: filteredCurrentWeathers },
+      regional: { list: regionalWeather, filteredList: filteredRegionalWeathers },
+      restStops: { list: restStops, filteredList: filteredRestStops },
     },
     advisories: { list: advisories },
     routes: { searchLocationFrom, searchLocationTo, selectedRoute },
@@ -152,15 +152,19 @@ export default function DriveBCMap(props) {
     roadConditions: null,
     advisories: null
   });
-  const [loadingLayers, setLoadingLayers] = useState({
-    cameras: mapContext.visible_layers.highwayCams,
-    events: mapContext.visible_layers.closures || mapContext.visible_layers.majorEvents ||
-      mapContext.visible_layers.minorEvents || mapContext.visible_layers.roadConditions ||
-      mapContext.visible_layers.futureEvents,
-    ferries: mapContext.visible_layers.inlandFerries,
-    weathers: mapContext.visible_layers.weather,
-    restStops: mapContext.visible_layers.restStops
-  });
+
+  const getInitialLoadingLayers = () => {
+    return {
+      cameras: mapContext.visible_layers.highwayCams,
+      events: mapContext.visible_layers.closures || mapContext.visible_layers.majorEvents ||
+        mapContext.visible_layers.minorEvents || mapContext.visible_layers.roadConditions ||
+        mapContext.visible_layers.futureEvents,
+      ferries: mapContext.visible_layers.inlandFerries,
+      weathers: mapContext.visible_layers.weather,
+      restStops: mapContext.visible_layers.restStops
+    };
+  };
+  const [loadingLayers, setLoadingLayers] = useState(getInitialLoadingLayers());
   const [showSpinner, setShowSpinner] = useState(false);
 
   // Workaround for OL handlers not being able to read states
@@ -381,12 +385,14 @@ export default function DriveBCMap(props) {
   /* Loading map layers */
   // Route layer
   useEffect(() => {
+    setLoadingLayers(getInitialLoadingLayers());
+
     // Remove layer if no route found
     const dl = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
 
     loadLayer(
       mapLayers, mapRef, mapContext,
-      'routeLayer', dl, 3, null, updateReferenceFeature
+      'routeLayer', dl, dl, 3, null, updateReferenceFeature
     );
 
     if (selectedRoute && selectedRoute.routeFound) {
@@ -410,12 +416,14 @@ export default function DriveBCMap(props) {
     // Do nothing if list empty
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
-      const clonedCameras = JSON.parse(JSON.stringify(filteredCameras));
-      const finalCameras = addCameraGroups(clonedCameras);
+      const clonedCameras = JSON.parse(JSON.stringify(cameras));
+      const groupedCameras = addCameraGroups(clonedCameras);
+      const clonedFilteredCameras = JSON.parse(JSON.stringify(filteredCameras));
+      const groupedFilteredCameras = addCameraGroups(clonedFilteredCameras);
 
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'highwayCams', finalCameras, 63,
+        'highwayCams', groupedCameras, groupedFilteredCameras, 63,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
     }
@@ -423,10 +431,16 @@ export default function DriveBCMap(props) {
 
   // Events layer
   useEffect(() => {
-    loadEventsLayers(filteredEvents, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers);
+    // Add layers if not loaded
+    if (!mapLayers.current['majorEvents']) {
+      loadEventsLayers(events, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers);
+    }
 
     // Count filtered events to store in routeDetails
     if (filteredEvents) {
+      // Toggle features visibility
+      updateEventsLayers(filteredEvents, mapLayers, setLoadingLayers);
+
       const eventCounts = {
         closures: 0,
         majorEvents: 0,
@@ -449,7 +463,7 @@ export default function DriveBCMap(props) {
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'inlandFerries', filteredFerries, 66,
+        'inlandFerries', ferries, filteredFerries, 66,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
     }
@@ -465,7 +479,7 @@ export default function DriveBCMap(props) {
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'weather', filteredCurrentWeathers, 68,
+        'weather', currentWeather, filteredCurrentWeathers, 68,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
     }
@@ -476,7 +490,7 @@ export default function DriveBCMap(props) {
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'regional', filteredRegionalWeathers, 69,
+        'regional', regionalWeather, filteredRegionalWeathers, 69,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
     }
@@ -487,13 +501,13 @@ export default function DriveBCMap(props) {
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'restStops', filteredRestStops, 60,
+        'restStops', restStops, filteredRestStops, 60,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
 
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'largeRestStops', filteredRestStops, 60,
+        'largeRestStops', restStops, filteredRestStops, 60,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
     }
@@ -503,7 +517,7 @@ export default function DriveBCMap(props) {
   useEffect(() => {
     loadLayer(
       mapLayers, mapRef, mapContext,
-      'advisoriesLayer', advisories, 5
+      'advisoriesLayer', advisories, advisories, 5
     );
 
     if (advisories) {
