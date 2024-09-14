@@ -1,12 +1,12 @@
 import { getAdvisoriesLayer } from './advisoriesLayer.js';
-import { getCamerasLayer } from './camerasLayer.js';
-import { getCurrentWeatherLayer } from './currentWeatherLayer.js';
-import { getFerriesLayer } from './ferriesLayer.js';
-import { getRegionalWeatherLayer } from './regionalWeatherLayer.js';
-import { getRestStopsLayer } from './restStopsLayer.js';
-import { getLargeRestStopsLayer } from './largeRestStopsLayer.js';
+import { getCamerasLayer, updateCamerasLayer } from './camerasLayer.js';
+import { getCurrentWeatherLayer, updateCurrentWeatherLayer } from './currentWeatherLayer.js';
+import { loadEventsLayers, updateEventsLayers } from './eventsLayer.js';
+import { getFerriesLayer, updateFerriesLayer } from './ferriesLayer.js';
+import { getRegionalWeatherLayer, updateRegionalWeatherLayer } from './regionalWeatherLayer.js';
+import { getRestStopsLayer, updateRestStopsLayer } from './restStopsLayer.js';
+import { getLargeRestStopsLayer, updateLargeRestStopsLayer } from './largeRestStopsLayer.js';
 import { getRouteLayer } from './routeLayer.js';
-import { loadEventsLayers } from './eventsLayer.js';
 
 const layerFuncMap = {
   advisoriesLayer: getAdvisoriesLayer,
@@ -19,26 +19,42 @@ const layerFuncMap = {
   routeLayer: getRouteLayer,
 }
 
-export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, zIndex, referenceData, updateReferenceFeature, setLoadingLayers) => {
-  // Remove layer if it already exists
-  if (mapLayers.current[key]) {
+const layerUpdateFuncMap = {
+  highwayCams: updateCamerasLayer,
+  inlandFerries: updateFerriesLayer,
+  weather: updateCurrentWeatherLayer,
+  regional: updateRegionalWeatherLayer,
+  restStops: updateRestStopsLayer,
+  largeRestStops: updateLargeRestStopsLayer,
+}
+
+export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filteredDataList, zIndex, referenceData, updateReferenceFeature, setLoadingLayers) => {
+  // Always remove and regenerate route and advisory layer
+  if (key == 'routeLayer' || key == 'advisoriesLayer') {
     mapRef.current.removeLayer(mapLayers.current[key]);
   }
 
-  // Add layer if array exists
   if (dataList) {
-    // Generate and add layer
-    mapLayers.current[key] = layerFuncMap[key](
-      dataList,
-      mapRef.current.getView().getProjection().getCode(),
-      mapContext,
-      referenceData,
-      updateReferenceFeature,
-      setLoadingLayers
-    );
+    if (!mapLayers.current[key] || key == 'routeLayer' || key == 'advisoriesLayer') {
+      // Generate and add layer if it doesn't exist
+      mapLayers.current[key] = layerFuncMap[key](
+        dataList,
+        mapRef.current.getView().getProjection().getCode(),
+        mapContext,
+        referenceData,
+        updateReferenceFeature,
+        setLoadingLayers
+      );
 
-    mapRef.current.addLayer(mapLayers.current[key]);
-    mapLayers.current[key].setZIndex(zIndex);
+      mapRef.current.addLayer(mapLayers.current[key]);
+      mapLayers.current[key].setZIndex(zIndex);
+
+    }
+
+    // Toggle features' styles based on dataList
+    if (key != 'routeLayer' && key != 'advisoriesLayer') {
+      layerUpdateFuncMap[key](filteredDataList, mapLayers.current[key], setLoadingLayers);
+    }
   }
 }
 
@@ -93,4 +109,4 @@ export const enableReferencedLayer = (referenceData, mapContext) => {
   }
 }
 
-export { loadEventsLayers };
+export { loadEventsLayers, updateEventsLayers };

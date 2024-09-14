@@ -3,6 +3,7 @@ import { getMidPoint, setEventStyle } from '../helpers';
 
 // OpenLayers
 import { Point, LineString, Polygon } from 'ol/geom';
+import { Style } from 'ol/style';
 import * as ol from 'ol';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
@@ -123,10 +124,7 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
       mapLayers.current[name] = new VectorLayer({
         classname: 'events',
         visible: mapContext.visible_layers[name],
-        source: vs,
-        style: function (feature, resolution) {
-          return setEventStyle(feature, 'static');
-        },
+        source: vs
       });
 
       mapRef.current.addLayer(mapLayers.current[name]);
@@ -148,6 +146,40 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
     setLoadingLayers(prevState => ({
       ...prevState,
       events: false
-    }))
+    }));
   }
+}
+
+function updateSingleEventLayer(eventsDict, layer) {
+  for (const eventFeature of layer.getSource().getFeatures()) {
+    if (eventsDict[eventFeature.getId()]) {
+      setEventStyle(eventFeature, 'static');
+
+    } else {
+      eventFeature.setStyle(new Style(null));
+    }
+  }
+}
+
+export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
+  const eventsDict  = events.reduce((dict, obj) => {
+    dict[obj.id] = obj;
+    return dict;
+  }, {});
+
+  updateSingleEventLayer(eventsDict, mapLayers.current['closures']);
+  updateSingleEventLayer(eventsDict, mapLayers.current['closuresLines']);
+  updateSingleEventLayer(eventsDict, mapLayers.current['majorEvents']);
+  updateSingleEventLayer(eventsDict, mapLayers.current['majorEventsLines']);
+  updateSingleEventLayer(eventsDict, mapLayers.current['minorEvents']);
+  updateSingleEventLayer(eventsDict, mapLayers.current['minorEventsLines']);
+  updateSingleEventLayer(eventsDict, mapLayers.current['futureEvents']);
+  updateSingleEventLayer(eventsDict, mapLayers.current['futureEventsLines']);
+  updateSingleEventLayer(eventsDict, mapLayers.current['roadConditions']);
+  updateSingleEventLayer(eventsDict, mapLayers.current['roadConditionsLines']);
+
+  setLoadingLayers(prevState => ({
+    ...prevState,
+    events: false
+  }));
 }
