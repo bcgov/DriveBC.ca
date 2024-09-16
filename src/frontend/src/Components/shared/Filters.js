@@ -50,58 +50,58 @@ export default function Filters(props) {
   const [open, setOpen] = useState(largeScreen && !textOverride);
 
   const tooltipClosures = (
-    <Tooltip id="tooltip" className="tooltip-content">
+    <Tooltip id="tooltipClosures" className="tooltip-content">
       <p>Travel is not possible in one or both directions on this road. Find an alternate route or a detour where possible.</p>
     </Tooltip>
   );
 
   const tooltipMajor = (
-    <Tooltip id="tooltip" className="tooltip-content">
+    <Tooltip id="tooltipMajor" className="tooltip-content">
       <p>Expect delays of at least 30 minutes or more on this road. This could be due to a traffic incident, road work, or construction.</p>
     </Tooltip>
   );
 
   const tooltipMinor = (
-    <Tooltip id="tooltip" className="tooltip-content">
+    <Tooltip id="tooltipMinor" className="tooltip-content">
       <p>Expect delays up to 30 minutes on this road. This could be due to a traffic incident, road work, or construction.</p>
     </Tooltip>
   );
 
-  const tooltipFutureevents = (
-    <Tooltip id="tooltip" className="tooltip-content">
+  const tooltipFutureEvents = (
+    <Tooltip id="tooltipFutureEvents" className="tooltip-content">
       <p>Future road work or construction is planned for this road.</p>
     </Tooltip>
   );
 
-  const tooltipHighwaycameras = (
-    <Tooltip id="tooltip" className="tooltip-content">
+  const tooltipHighwayCameras = (
+    <Tooltip id="tooltipHighwayCameras" className="tooltip-content">
       <p>Look at recent pictures from cameras near the highway.</p>
     </Tooltip>
   );
 
-  const tooltipRoadconditions = (
-    <Tooltip id="tooltip" className="tooltip-content">
+  const tooltipRoadConditions = (
+    <Tooltip id="tooltipRoadConditions" className="tooltip-content">
       <p>States of the road that may impact drivability.</p>
     </Tooltip>
   );
 
-  const tooltipInlandferries = (
-    <Tooltip id="tooltip" className="tooltip-content">
+  const tooltipInlandFerries = (
+    <Tooltip id="tooltipInlandFerries" className="tooltip-content">
       <p>Travel requires the use of an inland ferry.</p>
     </Tooltip>
   );
   const tooltipWeather  = (
-    <Tooltip id="tooltip" className="tooltip-content">
+    <Tooltip id="tooltipWeather" className="tooltip-content">
       <p>Weather updates for roads.</p>
     </Tooltip>
   );
   const tooltipRestStops = (
-    <Tooltip id="tooltip" className="tooltip-content">
+    <Tooltip id="tooltipRestStops" className="tooltip-content">
       <p>Locations of rest stops run by the province.</p>
     </Tooltip>
   );
-  const tooltipRestStopsLargeVehicle = (
-    <Tooltip id="tooltip" className="tooltip-content">
+  const tooltipRestStopsCommercialVehicles = (
+    <Tooltip id="tooltipRestStopsCommercialVehicles" className="tooltip-content">
       <p>Locations of rest stops run by the province 	&#40;greater than 20 metres in length&#41;.</p>
     </Tooltip>
   );
@@ -188,7 +188,7 @@ export default function Filters(props) {
                     </label>
 
                     <OverlayTrigger placement="top" overlay={tooltipClosures}>
-                      <span className="tooltip-info">?</span>
+                      <button className="tooltip-info" aria-label="closures tooltip" aria-describedby="tooltipClosures">?</button>
                     </OverlayTrigger>
 
                     {loadingLayers && loadingLayers.events &&
@@ -218,7 +218,7 @@ export default function Filters(props) {
                       Major
                     </label>
                     <OverlayTrigger placement="top" overlay={tooltipMajor}>
-                      <span className="tooltip-info">?</span>
+                      <button className="tooltip-info" aria-label="major events tooltip" aria-describedby="tooltipMajor">?</button>
                     </OverlayTrigger>
 
                     {loadingLayers && loadingLayers.events &&
@@ -248,7 +248,7 @@ export default function Filters(props) {
                       Minor
                     </label>
                     <OverlayTrigger placement="top" overlay={tooltipMinor}>
-                      <span className="tooltip-info">?</span>
+                      <button className="tooltip-info" aria-label="minor events tooltip" aria-describedby="tooltipMinor">?</button>
                     </OverlayTrigger>
 
                     {loadingLayers && loadingLayers.events &&
@@ -278,8 +278,8 @@ export default function Filters(props) {
                       Future events
                     </label>
 
-                    <OverlayTrigger placement="top" overlay={tooltipFutureevents}>
-                      <span className="tooltip-info">?</span>
+                    <OverlayTrigger placement="top" overlay={tooltipFutureEvents}>
+                      <button className="tooltip-info" aria-label="future events tooltip" aria-describedby="tooltipFutureEvents">?</button>
                     </OverlayTrigger>
 
                     {loadingLayers && loadingLayers.events &&
@@ -316,8 +316,8 @@ export default function Filters(props) {
                       Highway cameras
                     </label>
 
-                    <OverlayTrigger placement="top" overlay={tooltipHighwaycameras}>
-                      <span className="tooltip-info">?</span>
+                    <OverlayTrigger placement="top" overlay={tooltipHighwayCameras}>
+                      <button className="tooltip-info" aria-label="highway cameras tooltip" aria-describedby="tooltipHighwayCameras">?</button>
                     </OverlayTrigger>
 
                     {loadingLayers && loadingLayers.cameras &&
@@ -348,8 +348,8 @@ export default function Filters(props) {
                       Road conditions
                     </label>
 
-                    <OverlayTrigger placement="top" overlay={tooltipRoadconditions}>
-                      <span className="tooltip-info">?</span>
+                    <OverlayTrigger placement="top" overlay={tooltipRoadConditions}>
+                      <button className="tooltip-info" aria-label="road conditions tooltip" aria-describedby="tooltipRoadConditions">?</button>
                     </OverlayTrigger>
 
                     {loadingLayers && loadingLayers.events &&
@@ -380,8 +380,8 @@ export default function Filters(props) {
                       Inland Ferries
                     </label>
 
-                    <OverlayTrigger placement="top" overlay={tooltipInlandferries}>
-                      <span className="tooltip-info">?</span>
+                    <OverlayTrigger placement="top" overlay={tooltipInlandFerries}>
+                      <button className="tooltip-info" aria-label="inland ferries tooltip" aria-describedby="tooltipInlandFerries">?</button>
                     </OverlayTrigger>
 
                     {loadingLayers && loadingLayers.ferries &&
@@ -413,7 +413,7 @@ export default function Filters(props) {
                     </label>
 
                     <OverlayTrigger placement="top" overlay={tooltipWeather}>
-                      <span className="tooltip-info">?</span>
+                      <button className="tooltip-info" aria-label="weather tooltip" aria-describedby="tooltipWeather">?</button>
                     </OverlayTrigger>
 
                     {loadingLayers && loadingLayers.weathers &&
@@ -448,7 +448,7 @@ export default function Filters(props) {
                     </label>
 
                     <OverlayTrigger placement="top" overlay={tooltipRestStops}>
-                      <span className="tooltip-info">?</span>
+                      <button className="tooltip-info" aria-label="rest stops tooltip" aria-describedby="tooltipRestStops">?</button>
                     </OverlayTrigger>
 
                     {loadingLayers && loadingLayers.restStops &&
@@ -490,8 +490,8 @@ export default function Filters(props) {
                       Commercial vehicle rest stops
                     </label>
 
-                    <OverlayTrigger placement="top" overlay={tooltipRestStopsLargeVehicle}>
-                      <span className="tooltip-info">?</span>
+                    <OverlayTrigger placement="top" overlay={tooltipRestStopsCommercialVehicles}>
+                      <button className="tooltip-info" aria-label="commercial vehicle rest stops" aria-describedby="tooltipRestStopsCommercialVehicles">?</button>
                     </OverlayTrigger>
 
                     {loadingLayers && loadingLayers.restStops &&
