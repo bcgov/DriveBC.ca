@@ -148,7 +148,7 @@ export default function RestStopPanel(props) {
           <div className='popup__content--row'>
             <p className="description-label label">Commercial Vehicles</p>
             <OverlayTrigger placement="top" overlay={tooltipLargeVehicles}>
-              <FontAwesomeIcon className="tooltip-vehicles" icon={faCircleInfo} />
+              <button className="tooltip-vehicles" aria-label="commercial vehicles info" aria-describedby="tooltipLargeVehicles"><FontAwesomeIcon icon={faCircleInfo} /></button>
             </OverlayTrigger>
           </div>
           <div className='popup__content__description__container'>
