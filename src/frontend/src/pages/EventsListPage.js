@@ -211,7 +211,7 @@ export default function EventsListPage() {
     } else {
       if (localStorage.getItem('sorting-key')){
         setSortingKey(localStorage.getItem('sorting-key'));
-        sortEvents(res, localStorage.getItem('sorting-key'));  
+        sortEvents(res, localStorage.getItem('sorting-key'));
       }
       else {
         setSortingKey('severity_desc');
@@ -337,7 +337,7 @@ export default function EventsListPage() {
         <Container className="container--sidepanel">
           { xXlargeScreen &&
             <div className="container--sidepanel__left">
-              <RouteSearch showFilterText={true} showSpinner={false} onShowSpinnerChange={()=>{}}/>
+              <RouteSearch showFilterText={true} showSpinner={showSpinner} onShowSpinnerChange={setShowSpinner}/>
               <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
             </div>
           }
