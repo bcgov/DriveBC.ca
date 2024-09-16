@@ -229,6 +229,7 @@ export default function DriveBCMap(props) {
     mapLayers.current = {
       tid: Date.now(),
     };
+    window.layers = mapLayers;
 
     // Set map extent (W, S, E, N)
     const extent = [-155.230138, 36.180153, -102.977437, 66.591323];
@@ -472,6 +473,7 @@ export default function DriveBCMap(props) {
 
   // Regional weathers layer
   useEffect(() => {
+    console.log(filteredRegionalWeathers);
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,

@@ -27,9 +27,9 @@ export function getCurrentWeatherLayer(weatherData, projectionCode, mapContext, 
           }
 
           // Offset ~500m East to prevent overlapping with other features
-          const lat = weather.location.coordinates[0] + 0.0044;
-          const lng = weather.location.coordinates[1]
-          const olGeometry = new Point([lat, lng]);
+          const lng = weather.location.coordinates[0] + 0.0044;
+          const lat = weather.location.coordinates[1]
+          const olGeometry = new Point([lng, lat]);
           const olFeature = new ol.Feature({ geometry: olGeometry, type: 'currentWeather' });
 
           // Transfer properties
