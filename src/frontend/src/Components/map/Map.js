@@ -473,7 +473,6 @@ export default function DriveBCMap(props) {
 
   // Regional weathers layer
   useEffect(() => {
-    console.log(filteredRegionalWeathers);
     if (!isCamDetail) {
       loadLayer(
         mapLayers, mapRef, mapContext,
