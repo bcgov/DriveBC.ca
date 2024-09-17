@@ -31,7 +31,7 @@ import './RestStopPanel.scss';
 
 // Helper components
 const tooltipLargeVehicles = (
-  <Tooltip id="tooltip" className="tooltip-content">
+  <Tooltip id="tooltipLargeVehicles" className="tooltip-content">
     <p>A commercial vehicle is defined as an articulated one that is larger than 10 metres &#40;32 feet&#41; in length.</p>
   </Tooltip>
 );
