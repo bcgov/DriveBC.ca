@@ -60,6 +60,9 @@ SOCIALACCOUNT_PROVIDERS = {
                 'server_url': env("BCEID_URL"),
             }
         },
+        'AUTH_PARAMS': {
+            'kc_idp_hint': 'bceidbasic',
+        },        
     }
 }
 
