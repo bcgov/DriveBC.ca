@@ -138,7 +138,7 @@ export default function Modal() {
                 <span>What is a BCeID?</span>
 
                 <OverlayTrigger placement="top" overlay={tooltipBCeID}>
-                  <span className="tooltip-info">?</span>
+                <button className="tooltip-info" aria-label="BCeID tooltip" aria-describedby="tooltipBCeID">?</button>
                 </OverlayTrigger>
               </div>
             </form>
