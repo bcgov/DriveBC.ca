@@ -21,11 +21,16 @@ jobs:
         uses: aquasecurity/trivy-action@0.24.0
         with:
           image-ref: 'ghcr.io/bcgov/drivebc-static:latest-test'
-          format: 'table'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
 
   imagescan-django:
     name: Scan latest-test django Image
@@ -35,10 +40,16 @@ jobs:
         uses: aquasecurity/trivy-action@0.24.0
         with:
           image-ref: 'ghcr.io/bcgov/drivebc-django:latest-test'
-          format: 'table'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
 
   imagescan-redis:
     name: Scan latest-test Redis Image
@@ -48,11 +59,17 @@ jobs:
         uses: aquasecurity/trivy-action@0.24.0
         with:
           image-ref: 'ghcr.io/bcgov/drivebc-redis:latest-test'
-          format: 'table'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+          skip-dirs: /usr/local/bin/
 
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
 
   imagescan-openshiftjobs:
     name: Scan latest-test OpenshiftJobs Image
@@ -62,9 +79,14 @@ jobs:
         uses: aquasecurity/trivy-action@0.24.0
         with:
           image-ref: 'ghcr.io/bcgov/drivebc-openshiftjobs:latest-test'
-          format: 'table'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
 
