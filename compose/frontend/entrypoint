@@ -24,6 +24,7 @@ echo -e "window.ROUTE_PLANNER='${REACT_APP_ROUTE_PLANNER}';" >> $MAIN
 echo -e "window.ROUTE_PLANNER_CLIENT_ID='${REACT_APP_ROUTE_PLANNER_CLIENT_ID}';" >> $MAIN
 echo -e "window.REPLAY_THE_DAY='${REACT_APP_REPLAY_THE_DAY}';" >> $MAIN
 echo -e "window.SURVEY_LINK='${REACT_APP_SURVEY_LINK}';" >> $MAIN
+echo -e "window.BCEID_REGISTER_URL='${REACT_APP_BCEID_REGISTER_URL}';" >> $MAIN
 echo -e "window.DEPLOYMENT_TAG='${DEPLOYMENT_TAG}';" >> $MAIN
 
 # Set the environment to be used for caching django content

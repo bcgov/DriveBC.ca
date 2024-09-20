@@ -135,7 +135,7 @@ export default function Modal() {
 
               <div>
                 Don&apos;t have a Basic BCeID Account?<br />
-                <a href="https://www.bceid.ca/os/?10289&SkipTo=Basic">Click here to create one</a>
+                <a href={window.BCEID_REGISTER_URL}>Click here to create one</a>
               </div>
 
               <div className="BCeID-definition">
