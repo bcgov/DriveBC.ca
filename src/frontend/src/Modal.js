@@ -80,9 +80,13 @@ export default function Modal() {
     return <div />;
   }
 
+  const whatIsBCeID = (
+    "BCeID is a secure login service that allows you to access various government services online."
+  );
+
   const tooltipBCeID = (
-    <Tooltip id="tooltip" className="tooltip-content">
-      <p>BCeID is a secure login service that allows you to access various government services online.</p>
+    <Tooltip id="tooltipID" className="tooltip-content">
+      <p>{whatIsBCeID}</p>
     </Tooltip>
   );
 
@@ -138,7 +142,7 @@ export default function Modal() {
                 <span>What is a BCeID?</span>
 
                 <OverlayTrigger placement="top" overlay={tooltipBCeID}>
-                  <span className="tooltip-info">?</span>
+                <button className="tooltip-info" aria-label={'What is a BCeID? ' + whatIsBCeID}>?</button>
                 </OverlayTrigger>
               </div>
             </form>

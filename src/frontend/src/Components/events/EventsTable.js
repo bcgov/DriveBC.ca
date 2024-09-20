@@ -35,10 +35,10 @@ export default function EventsTable(props) {
   const getEventTypeCell = (data) => {
     return (
     <OverlayTrigger placement="top" overlay={getDelayTooltip(data)}>
-      <div className="eventType">
+      <button className="eventType" aria-label={getTypeDisplay(data)} aria-describedby={getDelayTooltip(data)}>
         <EventTypeIcon event={data} state={data.display_category === 'majorEvents' ? 'static' : 'active'} />
         <span>{getTypeDisplay(data)}</span>
-      </div>
+      </button>
       </OverlayTrigger>
     );
   }
