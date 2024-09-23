@@ -17,6 +17,9 @@
     padding-bottom: 24px;
     width: 360px;
     min-width: 360px;
+    position: sticky;
+    top: 82px;
+    align-self: flex-start;
 
     .routing {
       margin-bottom: 20px;
