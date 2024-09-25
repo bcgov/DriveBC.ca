@@ -47,7 +47,8 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
   return new VectorLayer({
     classname: 'webcams',
     visible: mapContext.visible_layers.highwayCams,
-    source: vectorSource
+    source: vectorSource,
+    style: () => null
   });
 }
 

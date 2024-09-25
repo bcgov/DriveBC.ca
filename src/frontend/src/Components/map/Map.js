@@ -385,6 +385,13 @@ export default function DriveBCMap(props) {
   useEffect(() => {
     setLoadingLayers(getInitialLoadingLayers());
 
+    // Mark all features as invisible
+    Object.values(mapLayers.current).forEach(layer => {
+      layer.getSource().getFeatures().forEach(feature => {
+        feature.setStyle(null);
+      });
+    });
+
     // Remove layer if no route found
     const dl = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
 

@@ -59,7 +59,8 @@ export function getLargeRestStopsLayer(restStopsData, projectionCode, mapContext
   return new VectorLayer({
     classname: 'largeRestStops',
     visible: mapContext.visible_layers.largeRestStops,
-    source: vectorSource
+    source: vectorSource,
+    style: () => null
   });
 }
 
