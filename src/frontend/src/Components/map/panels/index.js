@@ -14,11 +14,11 @@ import RouteDetailsPanel from './RouteDetailsPanel';
 // Styling
 import './index.scss';
 
-export const renderPanel = (clickedFeature, isCamDetail, routeDetails) => {
+export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScreen, mapView) => {
   if (clickedFeature) {
 
     if (!clickedFeature.get) {
-      return <AdvisoriesPanel advisories={clickedFeature} />;
+      return <AdvisoriesPanel advisories={clickedFeature} smallScreen={smallScreen} mapView={mapView}/>;
     }
 
     switch (clickedFeature.get('type')) {
