@@ -51,7 +51,8 @@ export function getCurrentWeatherLayer(weatherData, projectionCode, mapContext, 
   return new VectorLayer({
     classname: 'weather',
     visible: mapContext.visible_layers.weather,
-    source: vectorSource
+    source: vectorSource,
+    style: () => null
   });
 }
 

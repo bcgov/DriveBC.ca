@@ -85,7 +85,8 @@ export function getRestStopsLayer(restStopsData, projectionCode, mapContext, ref
   return new VectorLayer({
     classname: 'restStops',
     visible: mapContext.visible_layers.restStops,
-    source: vectorSource
+    source: vectorSource,
+    style: () => null
   });
 }
 

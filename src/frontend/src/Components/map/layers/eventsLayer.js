@@ -124,7 +124,8 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
       mapLayers.current[name] = new VectorLayer({
         classname: 'events',
         visible: mapContext.visible_layers[name],
-        source: vs
+        source: vs,
+        style: () => null
       });
 
       mapRef.current.addLayer(mapLayers.current[name]);
@@ -155,8 +156,6 @@ export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
     dict[obj.id] = obj;
     return dict;
   }, {});
-
-  console.log(mapLayers.current);
 
   // iterate through all map layers
   Object.values(mapLayers.current).forEach((layer) => {

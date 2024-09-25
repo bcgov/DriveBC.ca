@@ -47,7 +47,8 @@ export function getFerriesLayer(ferriesData, projectionCode, mapContext, referen
   return new VectorLayer({
     classname: 'ferries',
     visible: mapContext.visible_layers.inlandFerries,
-    source: vectorSource
+    source: vectorSource,
+    style: () => null
   });
 }
 

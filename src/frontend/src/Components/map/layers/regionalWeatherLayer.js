@@ -51,7 +51,8 @@ export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext,
   return new VectorLayer({
     classname: 'regional',
     visible: mapContext.visible_layers.weather,
-    source: vectorSource
+    source: vectorSource,
+    style: () => null
   });
 }
 
