@@ -203,6 +203,7 @@ export default function DriveBCMap(props) {
       locationSet.current = true;
     }
   },[myLocationLoading])
+
   /* useEffect hooks */
   /* initialization for OpenLayers map */
   useEffect(() => {
@@ -230,9 +231,6 @@ export default function DriveBCMap(props) {
     symbolLayer.setZIndex(200);
 
     // initialize starting optional mapLayers
-    mapLayers.current = {
-      tid: Date.now(),
-    };
     window.layers = mapLayers;
 
     // Set map extent (W, S, E, N)
@@ -416,9 +414,9 @@ export default function DriveBCMap(props) {
     // Do nothing if list empty
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
-      const clonedCameras = JSON.parse(JSON.stringify(cameras));
+      const clonedCameras = structuredClone(cameras);
       const groupedCameras = addCameraGroups(clonedCameras);
-      const clonedFilteredCameras = JSON.parse(JSON.stringify(filteredCameras));
+      const clonedFilteredCameras = structuredClone(filteredCameras);
       const groupedFilteredCameras = addCameraGroups(clonedFilteredCameras);
 
       loadLayer(

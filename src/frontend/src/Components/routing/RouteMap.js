@@ -62,7 +62,6 @@ export default function RouteMap(props) {
 
     // initialize starting optional mapLayers
     mapLayers.current = {
-      tid: Date.now(),
       route: null,
     };
 

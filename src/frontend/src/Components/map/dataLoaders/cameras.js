@@ -10,6 +10,6 @@ export const loadCameras = async (route, cameras, filteredCameras, camFilterPoin
     const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
 
     // Trigger filter worker
-    worker.postMessage(JSON.stringify({data: camData, route: (route && route.routeFound ? route : null), action: 'updateCameras'}));
+    worker.postMessage({data: camData, route: (route && route.routeFound ? route : null), action: 'updateCameras'});
   }
 };

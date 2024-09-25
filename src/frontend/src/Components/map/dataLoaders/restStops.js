@@ -10,6 +10,6 @@ export const loadRestStops = async (route, restStops, filteredRestStops, restSto
     const restStopsData = restStops ? restStops : await getRestStops().catch((error) => displayError(error));
 
     // Trigger filter worker
-    worker.postMessage(JSON.stringify({data: restStopsData, route: (route && route.routeFound ? route : null), action: 'updateRestStops'}));
+    worker.postMessage({data: restStopsData, route: (route && route.routeFound ? route : null), action: 'updateRestStops'});
   }
 };

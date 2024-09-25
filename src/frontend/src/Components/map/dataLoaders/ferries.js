@@ -10,6 +10,6 @@ export const loadFerries = async (route, ferries, filteredFerries, ferryFilterPo
     const ferryData = ferries ? ferries : await getFerries().catch((error) => displayError(error));
 
     // Trigger filter worker
-    worker.postMessage(JSON.stringify({data: ferryData, route: (route && route.routeFound ? route : null), action: 'updateFerries'}));
+    worker.postMessage({data: ferryData, route: (route && route.routeFound ? route : null), action: 'updateFerries'});
   }
 };

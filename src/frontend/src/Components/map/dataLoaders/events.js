@@ -11,6 +11,6 @@ export const loadEvents = async (route, events, filteredEvents, eventFilterPoint
     const eventData = events ? events : await getEvents().catch((error) => displayError(error));
 
     // Trigger filter worker
-    worker.postMessage(JSON.stringify({data: eventData, route: (route && route.routeFound ? route : null), action: 'updateEvents'}));
+    worker.postMessage({data: eventData, route: (route && route.routeFound ? route : null), action: 'updateEvents'});
   }
 };
