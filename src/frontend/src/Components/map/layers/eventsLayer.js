@@ -150,33 +150,29 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
   }
 }
 
-function updateSingleEventLayer(eventsDict, layer) {
-  for (const eventFeature of layer.getSource().getFeatures()) {
-    if (eventsDict[eventFeature.getId()]) {
-      setEventStyle(eventFeature, 'static');
-
-    } else {
-      eventFeature.setStyle(new Style(null));
-    }
-  }
-}
-
 export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
   const eventsDict  = events.reduce((dict, obj) => {
     dict[obj.id] = obj;
     return dict;
   }, {});
 
-  updateSingleEventLayer(eventsDict, mapLayers.current['closures']);
-  updateSingleEventLayer(eventsDict, mapLayers.current['closuresLines']);
-  updateSingleEventLayer(eventsDict, mapLayers.current['majorEvents']);
-  updateSingleEventLayer(eventsDict, mapLayers.current['majorEventsLines']);
-  updateSingleEventLayer(eventsDict, mapLayers.current['minorEvents']);
-  updateSingleEventLayer(eventsDict, mapLayers.current['minorEventsLines']);
-  updateSingleEventLayer(eventsDict, mapLayers.current['futureEvents']);
-  updateSingleEventLayer(eventsDict, mapLayers.current['futureEventsLines']);
-  updateSingleEventLayer(eventsDict, mapLayers.current['roadConditions']);
-  updateSingleEventLayer(eventsDict, mapLayers.current['roadConditionsLines']);
+  console.log(mapLayers.current);
+
+  // iterate through all map layers
+  Object.values(mapLayers.current).forEach((layer) => {
+    if (layer.get('classname') !== 'events') { return; }  // skip non-event layers
+
+    // for each feature in a layer, set the style or hide the
+    // feature, depending on whether the event is current
+    for (const feature of layer.getSource().getFeatures()) {
+      if (feature.getId() in eventsDict) {
+        setEventStyle(feature, 'static');
+
+      } else {
+        feature.setStyle(new Style(null));
+      }
+    }
+  });
 
   setLoadingLayers(prevState => ({
     ...prevState,

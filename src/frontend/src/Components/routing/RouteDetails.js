@@ -100,14 +100,16 @@ export default function RouteDetails(props) {
     const favCamData = cameras.filter(item => favCams.includes(item.id));
     const favCamGroupIds = favCamData.map(cam => cam.group);
     const favCamGroups = cameras.filter(cam => favCamGroupIds.includes(cam.group));
-    const clonedFavCamGroups = JSON.parse(JSON.stringify(favCamGroups));
+    const clonedFavCamGroups = structuredClone(favCamGroups);
 
     const groupedFavCamData = addCameraGroups(clonedFavCamGroups, favCams);
 
     if (groupedFavCamData.length) {
-      workerRef.current.postMessage(
-        JSON.stringify({data: groupedFavCamData, route: route, action: 'setFilteredFavCams'})
-      );
+      workerRef.current.postMessage({
+        data: groupedFavCamData,
+        route: route,
+        action: 'setFilteredFavCams'
+      });
 
     } else {
       setFilteredFavCams([]);
@@ -122,7 +124,7 @@ export default function RouteDetails(props) {
 
       // Set up event listener for messages from the worker
       workerRef.current.onmessage = function (event) {
-        const { data, filteredData, action } = JSON.parse(event.data);
+        const { data, filteredData, route, action } = event.data;
 
         // Data specific to the RouteDetails component
         if (action === 'setEventCount') {
@@ -137,7 +139,7 @@ export default function RouteDetails(props) {
             slices[action]({
               list: data,
               filteredList: filteredData,
-              filterPoints: selectedRoute ? selectedRoute.points : null,
+              filterPoints: route ? route.points : null,
               timeStamp: new Date().getTime()
             })
           );
@@ -181,9 +183,11 @@ export default function RouteDetails(props) {
 
   useEffect(() => {
     if (events) {
-      workerRef.current.postMessage(
-        JSON.stringify({data: events, route: route, action: 'setEventCount'})
-      );
+      workerRef.current.postMessage({
+        data: events,
+        route: route,
+        action: 'setEventCount'
+      });
     }
   }, [events]);
 

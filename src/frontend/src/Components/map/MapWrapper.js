@@ -83,7 +83,7 @@ export default function MapWrapper(props) {
 
       // Set up event listener for messages from the worker
       workerRef.current.onmessage = function (event) {
-        const { data, filteredData, route, action } = JSON.parse(event.data);
+        const { data, filteredData, route, action } = event.data;
 
         dispatch(
           slices[action]({

@@ -10,6 +10,6 @@ export const loadAdvisories = async (route, advisories, filteredAdvisories, advi
     const advisoryData = advisories ? advisories : await getAdvisories().catch((error) => displayError(error));
 
     // Trigger filter worker
-    worker.postMessage(JSON.stringify({data: advisoryData, route: (route && route.routeFound ? route : null), action: 'updateAdvisories'}));
+    worker.postMessage({data: advisoryData, route: (route && route.routeFound ? route : null), action: 'updateAdvisories'});
   }
 };

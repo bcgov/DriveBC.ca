@@ -10,6 +10,6 @@ export const loadRegionalWeather = async (route, regionalWeather, filteredRegion
     const regionalWeathersData = regionalWeather ? regionalWeather : await getRegional().catch((error) => displayError(error));
 
     // Trigger filter worker
-    worker.postMessage(JSON.stringify({data: regionalWeathersData, route: (route && route.routeFound ? route : null), action: 'updateRegional'}));
+    worker.postMessage({data: regionalWeathersData, route: (route && route.routeFound ? route : null), action: 'updateRegional'});
   }
 };

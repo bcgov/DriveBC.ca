@@ -10,6 +10,6 @@ export const loadCurrentWeather = async (route, currentWeather, filteredCurrentW
     const currentWeathersData = currentWeather ? currentWeather : await getWeather().catch((error) => displayError(error));
 
     // Trigger filter worker
-    worker.postMessage(JSON.stringify({data: currentWeathersData, route: (route && route.routeFound ? route : null), action: 'updateWeather'}));
+    worker.postMessage({data: currentWeathersData, route: (route && route.routeFound ? route : null), action: 'updateWeather'});
   }
 };
