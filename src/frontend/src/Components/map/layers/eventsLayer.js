@@ -15,6 +15,8 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
     format: new GeoJSON()
   });
 
+  let eventFound = false;
+
   if (eventsData) {
     // Initialize vss
     const closureVS = createVS();
@@ -72,6 +74,7 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
 
       if (referenceData?.type === 'event' && event.id == referenceData?.id) {
         updateReferenceFeature(pointFeature);
+        eventFound = true;
       }
 
       // polygons are generated backend and used if available
@@ -149,6 +152,7 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
       events: false
     }));
   }
+  return eventFound;
 }
 
 export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
