@@ -175,7 +175,6 @@
     .card-img-timestamp {
       background-color: $Black;
       padding: 0 10px;
-      margin-bottom: 0.5rem;
       display: flex;
       justify-content: space-between;
       position: relative;
@@ -237,6 +236,7 @@
     .camera-orientations {
       background-color: #F1F8FE;
       border-radius: 4px;
+      margin-top: 0;
     }
   }
 

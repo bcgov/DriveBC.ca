@@ -92,6 +92,12 @@
 	}
 
 	&-collapse {
+		order: 1;
+
+		@media (min-width: 992px) {
+			order: unset;
+		}
+		
 		.navbar-nav {
 			.nav-link {
 				color: $Type-Primary;

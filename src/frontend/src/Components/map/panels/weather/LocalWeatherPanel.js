@@ -27,6 +27,12 @@ export default function LocalWeatherPanel(props) {
   const { feature } = props;
 
   const weatherData = feature.getProperties();
+  const now = new Date();
+  const forecastData = (weatherData.hourly_forecast_group || [])
+    .filter((forecast) => (
+      forecast.ObservationTypeName === 'surfaceTemp' &&
+      new Date(forecast.TimestampUtc) > now
+    ));
 
   const [_searchParams, setSearchParams] = useSearchParams();
 
@@ -160,19 +166,17 @@ export default function LocalWeatherPanel(props) {
             </div>
           )}
 
-          {weatherData.hourly_forecast_group && weatherData.hourly_forecast_group.length > 0 &&
+          {forecastData.length > 0 &&
             <div className="data-card-container">
               <p className="container-label">Road surface forecast</p>
 
               <div className="data-card hourly-forecast">
-                {weatherData.hourly_forecast_group.map((forecast, index) => {
-                  return forecast.ObservationTypeName == 'surfaceTemp' ? (
-                    <div key={index} className="data-card__row data-card__row group">
-                      <FriendlyTime date={forecast.TimestampUtc} timeOnly />
-                      <p className="temperature">{forecast.Value}&deg;</p>
-                    </div>
-                  ) : null;
-                })}
+                {forecastData.map((forecast, index) => (
+                  <div key={index} className="data-card__row data-card__row group">
+                    <FriendlyTime date={forecast.TimestampUtc} timeOnly />
+                    <p className="temperature">{Math.round(forecast.Value)}&deg;</p>
+                  </div>
+                ))}
               </div>
             </div>
           }

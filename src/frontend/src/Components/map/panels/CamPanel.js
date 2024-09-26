@@ -11,7 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVideoSlash, faVideo, faStar } from '@fortawesome/pro-solid-svg-icons';
+import { faVideoSlash, faVideo, faStar, faCircleInfo, faXmark } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 import parse from 'html-react-parser';
@@ -58,6 +58,7 @@ export default function CamPanel(props) {
   const [rootCam, setRootCam] = useState(newCam);
   const [camera, setCamera] = useState(newCam);
   const [camIndex, setCamIndex] = useState(0);
+  const [show, setShow] = useState(false);
 
   // Effects
   useEffect(() => {
@@ -94,6 +95,11 @@ export default function CamPanel(props) {
     }
   };
 
+  function handleChildClick(e) {
+    e.stopPropagation();
+    setShow(!show);
+  }
+
   const favoriteHandler = () => {
     // User logged in, default handler
     if (favCams && authContext.loginStateKnown && authContext.username) {
@@ -129,7 +135,7 @@ export default function CamPanel(props) {
           aria-label={getCameraOrientation(cam.orientation)}
           className={
             'camera-direction-btn' +
-            (camera.orientation == cam.orientation ? ' current' : '')
+            (camera.id === cam.id ? ' current' : '')
           }
           key={cam.id}
           onClick={event => {
@@ -180,6 +186,34 @@ export default function CamPanel(props) {
             <div className="popup__content__image">
               <div className="clip">
                 <img src={camera.links.imageDisplay} width="300" />
+
+                {camera.marked_delayed && camera.marked_stale && (
+                  <>
+                    <div className="card-notification">
+                      <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
+                        <p>
+                          Longer than expected delay, displaying last image received.
+                        </p>
+                        <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                      </div>
+                    </div>
+
+                    <div
+                      className={'card-pill' + (show ? ' bounce' : ' hidden')}
+                      onClick={handleChildClick}
+                      onKeyDown={keyEvent => {
+                        if (keyEvent.keyCode === 13) {
+                          handleChildClick();
+                        }
+                      }}
+                      tabIndex="0"
+                    >
+                      <p>Delayed</p>
+                      <FontAwesomeIcon icon={faCircleInfo} />
+                    </div>
+                  </>
+                )}
+
               </div>
 
               <div className="timestamp">

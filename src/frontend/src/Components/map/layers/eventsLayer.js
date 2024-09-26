@@ -3,6 +3,7 @@ import { getMidPoint, setEventStyle } from '../helpers';
 
 // OpenLayers
 import { Point, LineString, Polygon } from 'ol/geom';
+import { Style } from 'ol/style';
 import * as ol from 'ol';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
@@ -124,9 +125,7 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
         classname: 'events',
         visible: mapContext.visible_layers[name],
         source: vs,
-        style: function (feature, resolution) {
-          return setEventStyle(feature, 'static');
-        },
+        style: () => null
       });
 
       mapRef.current.addLayer(mapLayers.current[name]);
@@ -148,6 +147,34 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
     setLoadingLayers(prevState => ({
       ...prevState,
       events: false
-    }))
+    }));
   }
+}
+
+export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
+  const eventsDict  = events.reduce((dict, obj) => {
+    dict[obj.id] = obj;
+    return dict;
+  }, {});
+
+  // iterate through all map layers
+  Object.values(mapLayers.current).forEach((layer) => {
+    if (layer.get('classname') !== 'events') { return; }  // skip non-event layers
+
+    // for each feature in a layer, set the style or hide the
+    // feature, depending on whether the event is current
+    for (const feature of layer.getSource().getFeatures()) {
+      if (feature.getId() in eventsDict) {
+        setEventStyle(feature, 'static');
+
+      } else {
+        feature.setStyle(new Style(null));
+      }
+    }
+  });
+
+  setLoadingLayers(prevState => ({
+    ...prevState,
+    events: false
+  }));
 }

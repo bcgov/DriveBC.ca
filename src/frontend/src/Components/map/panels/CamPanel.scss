@@ -41,3 +41,88 @@
     } 
   }
 }
+
+.clip {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: -10px;  /* to allow overlap of image timestamp bar */
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+
+  .card-img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 0;
+    transition: all 0.3s ease;
+  }
+
+  .card-banner, .card-pill {
+    position: absolute;
+    display: flex;
+    align-items: center;
+
+    &.hidden {
+      transform:translateY(-200%);
+      transition: transform 0.7s;
+    }
+
+    &.bounce {
+      animation: bounce 0.7s ease;
+      animation-fill-mode:forwards;
+    }
+
+    @keyframes bounce {
+        0% { transform:translateY(-200%); }
+        40% { transform:translateY(20%); }
+        100% { transform:translateY(0%); }
+    }
+
+    p {
+      font-weight: 700;
+      margin-bottom: 0;
+    }
+  }
+
+  .card-banner {
+    padding: 24px 6px 12px 12px;
+    top: -12px;
+    width: 100%;
+    justify-content: space-between;
+    background-color: #FDDC8C;
+    color: #644A0A;
+
+    p, svg {
+      font-size: 0.6875rem;
+      color: #644A0A;
+    }
+
+    svg {
+      padding: 6px 7px;
+      border-radius: 12px;
+
+      &:hover {
+        background-color: rgba(0,0, 0,0.1);
+      }
+    }
+  }
+
+  .card-pill {
+    top: 18px;
+    right: 10px;
+    padding: 4px 6px;
+    border-radius: 12px;
+    transform:translateY(-200%);
+    background-color: #FDDC8C;
+    color: #644A0A;
+
+    p, svg {
+      font-size: 0.625rem;
+      color: #644A0A;
+    }
+
+    svg {
+      margin-left: 4px;
+    }
+  }
+}

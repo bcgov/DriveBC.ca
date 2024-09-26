@@ -95,6 +95,7 @@ body {
     }
 
     .callout {
+      max-width: 740px;
       background-color: rgb(250, 249, 248);
       padding: 16px 24px;
       margin: 16px 0px;
@@ -180,7 +181,7 @@ a[target="_blank"] {
       text-rendering: auto;
       -webkit-font-smoothing: antialiased;
       color: $Type-Secondary;
-      width: 0.875rem;
+      width: 0.625rem;
     }
   }
 }
@@ -274,7 +275,7 @@ a[target="_blank"] {
         max-width: unset;
         padding: 32px 48px;
       }
-  
+
       @media (min-width: 992px) {
         padding: 44px 64px;
         max-width: 1828px;

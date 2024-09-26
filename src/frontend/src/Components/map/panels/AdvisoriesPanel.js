@@ -36,7 +36,7 @@ export default function AdvisoriesPanel(props) {
       fitMap(allCoordinates, mapView);
     }
 
-    const advisoriesIds = advisories.map(advisory => advisory.id);
+    const advisoriesIds = advisories.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
 
     // Combine and remove duplicates
     const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));

@@ -98,7 +98,7 @@ export default function UserNavigation(props) {
         variant="outline-primary"
         align="end"
         id="user-menu"
-        title={<FontAwesomeIcon icon={faCircleUser} />}>
+        title={<><FontAwesomeIcon icon={faCircleUser} /> <span className="sr-only">Account</span></>}>
 
         <div id="user-menu-header">
           <FontAwesomeIcon id="user-icon" icon={faCircleUser} />

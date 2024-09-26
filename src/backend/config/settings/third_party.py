@@ -8,9 +8,6 @@ BASE_DIR = Path(__file__).resolve().parents[4]
 env = environ.Env()
 environ.Env.read_env(BASE_DIR / ".env", overwrite=True)
 
-
-
-
 # Django REST
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
@@ -54,8 +51,6 @@ ACCOUNT_ADAPTER = 'apps.authentication.adapters.AccountAdapter'
 
 SOCIALACCOUNT_PROVIDERS = {
     'openid_connect': {
-        'SOCIALACCOUNT_EMAIL_VERIFICATION': 'none',
-        'SOCIALACCOUNT_LOGIN_ON_GET': True,
         'APP': {
             'provider_id': 'bceid',
             'name': 'BCeID via Keycloak',
@@ -65,5 +60,11 @@ SOCIALACCOUNT_PROVIDERS = {
                 'server_url': env("BCEID_URL"),
             }
         },
+        'AUTH_PARAMS': {
+            'kc_idp_hint': 'bceidbasic',
+        },        
     }
 }
+
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_LOGIN_ON_GET = True

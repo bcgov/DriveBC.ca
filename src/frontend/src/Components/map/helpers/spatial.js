@@ -5,7 +5,7 @@ import Flatbush from 'flatbush';
 // Route filtering and ordering
 export const populateRouteProjection = (data, route) => {
   // Deep copy to avoid direct state mutation
-  const copiedData = JSON.parse(JSON.stringify(data));
+  const copiedData = structuredClone(data);
 
   // Reference route start point/ls
   const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];

@@ -1,8 +1,10 @@
 // React
 import React from 'react';
 
-// Third-party packages
+// Navigation
 import { BrowserRouter } from 'react-router-dom';
+
+// External imports
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom/client';
@@ -69,13 +71,11 @@ if (!window.location.hash) {
 
 // <!-- Snowplow stops plowing -->
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <App />
-        </PersistGate>
-      </Provider>
-    </BrowserRouter>
-  </React.StrictMode>,
+  <BrowserRouter>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
+  </BrowserRouter>
 );

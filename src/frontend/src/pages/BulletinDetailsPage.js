@@ -6,7 +6,6 @@ import { useParams } from 'react-router-dom';
 
 // External imports
 import Container from 'react-bootstrap/Container';
-import parse from 'html-react-parser';
 
 // Internal imports
 import { CMSContext } from '../App';
@@ -16,6 +15,7 @@ import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Footer from '../Footer.js';
 import FriendlyTime from '../Components/shared/FriendlyTime';
+import renderWagtailBody from '../Components/shared/renderWagtailBody.js';
 
 // Styling
 import './BulletinDetailsPage.scss';
@@ -51,7 +51,10 @@ export default function BulletinDetailsPage() {
     document.title = `DriveBC - Bulletins - ${bulletinData.title}`;
 
     // Combine and remove duplicates
-    const readBulletins = Array.from(new Set([...cmsContext.readBulletins, bulletinData.id]));
+    const readBulletins = Array.from(new Set([
+      ...cmsContext.readBulletins,
+      bulletinData.id.toString() + '-' + bulletinData.live_revision.toString()
+    ]));
     const updatedContext = {...cmsContext, readBulletins: readBulletins};
 
     setCMSContext(updatedContext);
@@ -91,7 +94,7 @@ export default function BulletinDetailsPage() {
           </div>
 
           <Container className="bulletin-body-container cms-body">
-            <p>{parse(bulletin.body)}</p>
+            <div>{renderWagtailBody(bulletin.body)}</div>
           </Container>
         </div>
       )}
