@@ -6,7 +6,7 @@ import { createSearchParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { memoize } from 'proxy-memoize';
 import { updateAdvisories } from '../slices/cmsSlice';
-import { updateEvents } from '../slices/feedsSlice';
+import * as slices from '../slices';
 
 // External imports
 import { booleanIntersects, point, lineString, multiPolygon } from '@turf/turf';
@@ -25,10 +25,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
-import {
-  compareRoutePoints,
-  filterByRoute,
-} from '../Components/map/helpers';
+import { compareRoutePoints } from '../Components/map/helpers';
 import { getAdvisories } from '../Components/data/advisories';
 import { getEvents } from '../Components/data/events';
 import { MapContext } from '../App.js';
@@ -42,6 +39,7 @@ import EventsTable from '../Components/events/EventsTable';
 import Filters from '../Components/shared/Filters.js';
 import Footer from '../Footer.js';
 import PageHeader from '../PageHeader';
+import PollingComponent from '../Components/shared/PollingCountdown';
 import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent.js';
 import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
@@ -80,8 +78,11 @@ const sortEvents = (events, key) => {
 }
 
 export default function EventsListPage() {
-  const navigate = useNavigate();
+  /* Setup */
   document.title = 'DriveBC - Delays';
+
+  // Navigation
+  const navigate = useNavigate();
 
   // Redux
   const dispatch = useDispatch();
@@ -126,6 +127,7 @@ export default function EventsListPage() {
 
   // Refs
   const isInitialMount = useRef(true);
+  const workerRef = useRef();
 
   // Data functions
   const getAdvisoriesData = async (eventsData) => {
@@ -143,7 +145,7 @@ export default function EventsListPage() {
     // load all advisories if no route selected
     const resAdvisories = selectedRoute && selectedRoute.routeFound ? [] : advData;
 
-    // Route selected, load advisories that intersect  with at least one event on route
+    // Route selected, load advisories that intersect with at least one event on route
     if (selectedRoute && selectedRoute.routeFound && advData && advData.length > 0 && eventsData && eventsData.length > 0) {
       for (const adv of advData) {
         const advPoly = multiPolygon(adv.geometry.coordinates);
@@ -171,17 +173,7 @@ export default function EventsListPage() {
       // Fetch data if it doesn't already exist
       const eventData = events ? events : await getEvents().catch((error) => displayError(error));
 
-      // Filter data by route
-      const filteredEventData = route && route.routeFound ? filterByRoute(eventData, route, null, true) : eventData;
-
-      dispatch(
-        updateEvents({
-          list: eventData,
-          filteredList: filteredEventData,
-          filterPoints: route && route.routeFound ? route.points : null,
-          timeStamp: new Date().getTime()
-        })
-      );
+      workerRef.current.postMessage({data: eventData, route: (route && route.routeFound ? route : null), action: 'updateEvents'});
 
     // Stop loader if data already exists
     } else {
@@ -224,6 +216,36 @@ export default function EventsListPage() {
   };
 
   // useEffect hooks
+  useEffect(() => {
+    // Create a new worker if it doesn't exist
+    if (!workerRef.current) {
+      workerRef.current = new Worker(new URL('../Components/map/filterRouteWorker.js', import.meta.url));
+
+      // Set up event listener for messages from the worker
+      workerRef.current.onmessage = function (event) {
+        const { data, filteredData, route, action } = event.data;
+
+        dispatch(
+          slices[action]({
+            list: data,
+            filteredList: filteredData,
+            filterPoints: route ? route.points : null,
+            timeStamp: new Date().getTime()
+          })
+        );
+
+        setShowLoader(false);
+      };
+    }
+
+    // Cleanup function to terminate the worker when the component unmounts
+    return () => {
+      if (workerRef.current) {
+        workerRef.current.terminate();
+      }
+    };
+  }, []);
+
   useEffect(() => {
     setShowLoader(true);
 
@@ -395,6 +417,8 @@ export default function EventsListPage() {
                 isDelaysPage={true}
               />
             </div>
+
+            <PollingComponent runnable={() => setShowLoader(true)} interval={30000} />
 
             <div className="events-list-table">
               { largeScreen && !!processedEvents.length &&
