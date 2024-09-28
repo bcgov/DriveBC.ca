@@ -25,7 +25,7 @@
 
   &.unavailable {
     .card-img-box {
-      background-color: $Surface-status-red;
+      background-color: $Error;
       padding: 12px;
     }
     .card-notification {
@@ -71,7 +71,7 @@
 
   &.delayed {
     .card-banner, .card-pill {
-      background-color: $Surface-status-yellow;
+      background-color: $BC-Yellow-Alt;
 
       p, svg {
         color: $BC-Yellow-Dark;
@@ -234,7 +234,7 @@
     }
 
     .camera-orientations {
-      background-color: #F1F8FE;
+      background-color: $Blue10;
       border-radius: 4px;
       margin-top: 0;
     }
@@ -248,13 +248,13 @@
     button {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #255A90;
+      color: $Type-Link;
       border: none;
       background: none;
       padding: 0;
       &:hover {
         text-decoration: underline;
-        color: #1E5189;
+        color: $Blue90;
       }
 
       svg {
@@ -265,8 +265,8 @@
 }
 
 .react-loading-skeleton {
-  --base-color: #CED8DC !important;
-  --highlight-color: #ECF2F5 !important;
+  --base-color: $Blue20 !important;
+  --highlight-color: $Blue10 !important;
   --animation-duration: 1s !important;
   background: linear-gradient(
     90deg, 

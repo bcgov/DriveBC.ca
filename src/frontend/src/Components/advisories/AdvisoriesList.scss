@@ -42,7 +42,7 @@
 
     &__arrow {
       margin-left: auto;
-      color: #584215;
+      color: $Gold110;
     }
   }
 
@@ -67,7 +67,7 @@
     .unread-display {
       height: 8px;
       width: 8px;
-      background-color: #CE3E39;
+      background-color: $Error;
       border-radius: 50%;
       display: inline-block;
       margin-right: 5px;

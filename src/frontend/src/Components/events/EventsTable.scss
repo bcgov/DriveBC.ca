@@ -31,14 +31,14 @@ table {
       &.major, &.closure {
 
         .typeDisplay {
-          color: $Type-status-red;
+          color: $Error;
           font-size: 0.875rem;
           font-weight: 700;
         }
 
         td {
           .roadName {
-            color: $Type-status-red;
+            color: $Error;
           }
         }
       }
@@ -83,7 +83,7 @@ table {
         vertical-align: top;
 
         .roadName {
-          color: #053662;
+          color: $Info;
           font-size: 1.125rem;
           font-weight: bold;
         }

@@ -14,7 +14,7 @@
     background-color: $Surface-minor;
     
     .page-title, .page-description {
-      color: #584215;
+      color: $Gold110;
     }
   }
 
@@ -153,7 +153,7 @@
           line-height: 1rem;
           margin-right: 0.5rem;
           margin-top: 0.125rem;
-          color: $Type-status-red;
+          color: $Error;
         }
       }
 

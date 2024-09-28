@@ -35,7 +35,7 @@
         }
 
         &:hover {
-          border: 1px solid $Type-status-grey;
+          border: 1px solid $Grey100;
         }
 
         &::after {
@@ -59,7 +59,7 @@
 
           &.selected {
             font-weight: 700;
-            color: #053662;
+            color: $Info;
           }
         }
       }
@@ -130,16 +130,16 @@
 }
 
 .closure .eventType {
-  background: #CE3E39;
+  background: $Error;
   color: white;
 }
 
 .major .eventType {
   background: #FFE4E5;
-  color: #CE3E39;
+  color: $Error;
 }
 
 .minor .eventType {
   background: #FEF0D8;
-  color: #584215;
+  color: $Gold110;
 }

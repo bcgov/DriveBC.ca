@@ -7,7 +7,7 @@ button.btn.open-filters {
 
   &.open {
     background: $Type-Link;
-    color: #FFFFFF;
+    color: $White;
   }
 }
 
@@ -91,7 +91,7 @@ button.btn.open-filters {
 
           &:hover {
             cursor: pointer;
-            background-color: #1E5189;
+            background-color: $Blue90;
             color: white;
           }
           
@@ -125,22 +125,22 @@ button.btn.open-filters {
 
         &--closures, &--major {
           .filter-item__button .filter-item__button__icon svg {
-            color: #CE3E39;
-            fill: #CE3E39;
+            color: $Error;
+            fill: $Error;
           }
         }
 
         &--minor, &--future-events, &--road-conditions {
           .filter-item__button .filter-item__button__icon svg {
-            color: #584215;
-            fill: #584215;
+            color: $Gold110;
+            fill: $Gold110;
           }
         }
 
         &--highway-cameras {
           .filter-item__button .filter-item__button__icon svg {
-            color: #053662;
-            fill: #053662;
+            color: $Info;
+            fill: $Info;
           }
         }
 
@@ -153,15 +153,15 @@ button.btn.open-filters {
 
         &--weather {
           .filter-item__button .filter-item__button__icon svg {
-            color: #474543;
-            fill: #474543;
+            color: $Type-Secondary;
+            fill: $Type-Secondary;
           }
         }
 
         &--rest-stops, &--rest-stops-large-vehicle {
           .filter-item__button .filter-item__button__icon svg {
-            color: #273F94;
-            fill: #273F94;
+            color: $Type-reststop;
+            fill: $Type-reststop;
           }
         }
 

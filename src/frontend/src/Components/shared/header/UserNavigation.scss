@@ -35,7 +35,7 @@
 
       .dropdown-item {
         &:hover {
-          background-color: #FFF;
+          background-color: $White;
         }
       }
 
@@ -46,7 +46,7 @@
           display: flex;
           align-items: center;
           justify-content: space-between;
-          color: #2D2D2D;
+          color: $Type-Primary;
           text-decoration: none;
           padding: 0.75rem 1rem 0.75rem 0.25rem;
 
@@ -69,7 +69,7 @@
               margin-left: 0.75rem;
               padding: 0.25rem 0.4rem;
               border-radius: 0.8rem;
-              background: #013366;
+              background: $BC-Blue;
               color: white;
               font-size: 12px;
             }
@@ -102,14 +102,14 @@
     #user-email {
       font-size: 14px;
       font-weight: 700;
-      color: #2D2D2D;
+      color: $Type-Primary;
       text-align: center;
     }
 
     #signout-link {
       text-align: center;
       margin-bottom: 0.5rem;
-      color: #255A90;
+      color: $Type-Link;
       cursor: pointer;
     }
   }

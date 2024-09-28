@@ -1,8 +1,10 @@
+@import "../../../styles/variables";
+
 .stale-link-error {
   position: absolute;
   z-index: 2000;
   background: #E0DEDC;
-  border: 1px solid #898785;
+  border: 1px solid $Grey70;
   border-radius: 5px;
   right: 20%;
   top: 15px;
@@ -39,7 +41,7 @@
     position: absolute;
     top: -11px;
     right: -11px;
-    background: #2D2D2D;
+    background: $Grey100;
     border-radius: 10px;
     color: white;
     width: 20px;
