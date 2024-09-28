@@ -4,13 +4,13 @@
   // Ferries panel
   &--ferry {
     .popup__title {
-      background-color: #FBFFFC;
-      border-top: 4px solid #2E8540;
+      background-color: $Surface-ferry;
+      border-top: 4px solid $Success;
 
       .name {
-        color: #2E8540;
+        color: $Success;
         a {
-          color: #2E8540;
+          color: $Success;
           text-decoration: none;
           &:hover {
             cursor:pointer;
@@ -20,7 +20,7 @@
       }
 
       &__icon {
-        background-color: #2E8540;
+        background-color: $Success;
         color: white;
       }
     }

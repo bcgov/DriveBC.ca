@@ -17,7 +17,7 @@
       height: 24px;
       width: 24px;
       border-radius: 12px;
-      background-color: #053662;
+      background-color: $Info;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -129,13 +129,13 @@
       }
 
       &--closures {
-        background: #CE3E39;
+        background: $Error;
         color: white;
       }
       
       &--advisories {
         background: #FEF0D8;
-        color: #584215;
+        color: $Gold110;
       }
 
       &:first-of-type {
@@ -163,19 +163,19 @@
       }
 
       &--closures {
-        border-left: 2px solid $Type-status-red;
-        color: $Type-status-red;
+        border-left: 2px solid $Error;
+        color: $Error;
         font-weight: 700;
       }
 
       &--advisories {
-        border-left: 2px solid #584215;
-        color: #584215;
+        border-left: 2px solid $Gold110;
+        color: $Gold110;
         font-weight: 700;
       }
 
       &--major {
-        border-left: 2px solid $Type-status-red;
+        border-left: 2px solid $Error;
       }
 
       &--minor {
@@ -187,7 +187,7 @@
       }
 
       &--ferries {
-        border-left: 2px solid #00674E;
+        border-left: 2px solid $HwyCrest-green;
       }
     }
   }
@@ -195,7 +195,7 @@
   .viewCams-btn {
     font-size: 0.875rem;
     font-weight: 700;
-    color: #255A90;
+    color: $Type-Link;
     border: none;
     background: none;
     padding: 0;
@@ -207,7 +207,7 @@
 
     &.disabled {
       text-decoration: unset;
-      color: #8C8C8C;
+      color: $Grey70;
     }
   }
 }

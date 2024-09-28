@@ -4,7 +4,7 @@
   // Local weather popup
   &--weather--local {
     .popup__title {
-      background-color: #ECEAE8;
+      background-color: $Grey30;
       border-top: 4px solid $Type-Primary;
 
       .name {
@@ -109,7 +109,7 @@
         .temperature {
           font-size: 0.875rem;
           font-weight: 700;
-          color: #2D2D2D;
+          color: $Type-Primary;
         }
       }
     }

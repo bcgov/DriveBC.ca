@@ -10,7 +10,7 @@
     }
 
     .popup__title {
-      background-color: #ECEAE8;
+      background-color: $Grey30;
       border-top: 4px solid $Type-Primary;
 
       .name {
@@ -27,8 +27,8 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      background-color: #FDD47B;
-      color: #584215;
+      background-color: $Gold60;
+      color: $Gold110;
       padding: 0.875rem;
       font-size: 0.875rem;
 
@@ -57,7 +57,7 @@
       .advisory-title {
         font-size: 0.875rem;
         font-weight: 700;
-        color: #584215;
+        color: $Gold110;
       }
 
       .link {
@@ -67,9 +67,9 @@
     }
 
     .popup__info {
-      background-color: #D8EAFD;
+      background-color: $Blue20;
       flex-direction: column;
-      color: #255A90;
+      color: $Type-Link;
 
       .event {
         justify-content: space-between;
@@ -80,13 +80,13 @@
           align-items: center;
 
           svg, p {
-            color: #013366;
+            color: $BC-Blue;
           }
         }
 
         .expand-toggle {
           cursor: pointer;
-          color: #584215;
+          color: $Gold110;
         }
       }
     }
@@ -210,7 +210,7 @@
       text-align: right;
       margin-left: auto;
       min-width: 80px;
-      color: #2D2D2D;
+      color: $Type-Primary;
       font-weight: 700;
     }
   }

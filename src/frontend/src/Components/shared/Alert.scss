@@ -14,7 +14,7 @@
   left: 50%;
   bottom: 0;
   transform: translate(-50%, -50%);
-  background-color: #053662;
+  background-color: $Info;
   padding: 0.5rem 0.75rem;
   border-radius: 4px;
   box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
@@ -58,7 +58,7 @@
         margin: 0;
 
         &.feedback {
-          color: #053662;
+          color: $Info;
         }
       }
 
