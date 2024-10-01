@@ -589,13 +589,13 @@ export default function DriveBCMap(props) {
 
         <div className="panel-content">
           {openPanel && (
-            (selectedRoute && selectedRoute.routeFound) && renderPanel(clickedFeature, null, {...routeDetails, ferries: selectedFerries, distance: routeDistance, distanceUnit: routeDistanceUnit})
+            (selectedRoute && selectedRoute.routeFound) && renderPanel(clickedFeature, null, {...routeDetails, ferries: selectedFerries, distance: routeDistance, distanceUnit: routeDistanceUnit}, smallScreen, mapView)
           )}
 
           {openPanel && (
             (!selectedRoute || !selectedRoute.routeFound) && renderPanel((clickedFeature && !clickedFeature.get)
             ? advisoriesInView
-            : clickedFeature , isCamDetail )
+            : clickedFeature , isCamDetail, null, smallScreen, mapView )
           )}
         </div>
       </div>

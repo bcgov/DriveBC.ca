@@ -11,11 +11,13 @@ import {
 import { CMSContext } from '../../../App';
 import AdvisoriesList from '../../advisories/AdvisoriesList';
 
+import { fitMap } from '../helpers';
+
 // Styling
 import './AdvisoriesPanel.scss';
 
 export default function AdvisoriesPanel(props) {
-  const { advisories, openAdvisoriesOverlay } = props;
+  const { advisories, openAdvisoriesOverlay, smallScreen, mapView } = props;
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
@@ -26,6 +28,14 @@ export default function AdvisoriesPanel(props) {
       return;
     }
 
+    // Center to the geometric center of all advisories' boundaries for mobile view
+    if(smallScreen){
+      const allCoordinates = advisories
+        .map(advisory => advisory.geometry.coordinates)
+        .flat(3);
+      fitMap(allCoordinates, mapView);
+    }
+
     const advisoriesIds = advisories.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
 
     // Combine and remove duplicates
@@ -34,7 +44,7 @@ export default function AdvisoriesPanel(props) {
 
     setCMSContext(updatedContext);
     localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
-  }, [advisories, openAdvisoriesOverlay]);
+  }, [advisories, openAdvisoriesOverlay, smallScreen]);
 
   return (
     <div className="popup popup--advisories" tabIndex={0}>
@@ -46,6 +56,7 @@ export default function AdvisoriesPanel(props) {
       </div>
       <div className="popup__content">
         <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={true} showArrow={true} />
+        {advisories.length === 0 && <div className="popup__content">No advisory in view</div>}
       </div>
     </div>
   );
