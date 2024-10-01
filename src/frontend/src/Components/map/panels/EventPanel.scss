@@ -71,11 +71,11 @@
 
     &.major, &.closures, &.futureEvents.closure {
       .popup__title {
-        background-color: #F4E1E2;
-        border-top: 4px solid #CE3E39;
+        background-color: $Surface-major;
+        border-top: 4px solid $Error;
 
         .name {
-          color: #CE3E39;
+          color: $Error;
         }
 
       }
@@ -83,12 +83,12 @@
       .popup__content {
         &__title {
           .name {
-            color: #CE3E39;
+            color: $Error;
             font-size: 1.5rem;
           }
 
           .location {
-            color: #9C2024;
+            color: $Red-dark;
             font-size: 0.875rem;
             margin-top: 0;
           }
@@ -104,18 +104,18 @@
 
     &.minor, &.roadConditions {
       .popup__title {
-        background-color: #FEEBC2;
+        background-color: $Gold30;
         border-top: 4px solid $BC-Yellow;
 
         .name {
-          color: #584215;
+          color: $Gold110;
         }
       }
 
       .popup__content {
         &__title {
           .name {
-            color: #584215;
+            color: $Gold110;
           }
 
           .location {

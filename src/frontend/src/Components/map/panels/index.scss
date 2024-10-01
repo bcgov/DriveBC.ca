@@ -6,8 +6,8 @@
   height: 100%;
 
   &__title {
-    background-color: #F1F8FE;
-    border-top: 4px solid #053662;
+    background-color: $Blue10;
+    border-top: 4px solid $Info;
     padding: 1rem;
 
     &__name {
@@ -19,14 +19,14 @@
     .name {
       margin-bottom: 0;
       font-size: 1.25rem;
-      color: #053662;
+      color: $Info;
     }
 
     &__icon {
       width: 36px;
       height: 36px;
       border-radius: 6px;
-      background-color: #053662;
+      background-color: $Info;
       color: white;
       display: flex;
 
@@ -44,7 +44,7 @@
 
       .name {
         font-size: 1.25rem;
-        color: #053662;
+        color: $Info;
       }
     }
 
@@ -92,14 +92,14 @@
       }
 
       .camera-unavailable {
-        background-color: $Surface-status-red;
+        background-color: $Error;
         padding: 1rem;
         min-height: 225px;
         font-size: 1rem;
 
         p,
         .card-img-box {
-          color: $Type-status-red;
+          color: $Error;
           clear: right;
         }
 
@@ -127,7 +127,7 @@
       }
 
       .camera-delayed {
-        background-color: $Surface-status-yellow;
+        background-color: $BC-Yellow-Alt;
         padding: 1rem;
         font-size: 1rem;
 
@@ -184,10 +184,10 @@
 
 .close-panel:has(+ .panel-content .popup.closure),
 .close-panel:has(+ .panel-content .popup.major) {
-  color: #CE3E39;
+  color: $Error;
 
   &:hover {
-    background: lighten(#CE3E39, 38%);
+    background: lighten($Error, 38%);
   }
 }
 
@@ -195,10 +195,10 @@
 .close-panel:has(+ .panel-content .popup.roadConditions),
 .close-panel:has(+ .panel-content .popup.popup--advisories),
 .close-panel:has(+ .popup.popup--advisories) {
-  color: #584215;
+  color: $Gold110;
 
   &:hover {
-    background: lighten(#584215, 60%);
+    background: lighten($Gold110, 60%);
   }
 }
 
@@ -211,18 +211,18 @@
 }
 
 .close-panel:has(+ .panel-content .popup.popup--ferry) {
-  color: #2E8540;
+  color: $Success;
 
   &:hover {
-    background: lighten(#2E8540, 60%);
+    background: lighten($Success, 60%);
   }
 }
 
 .close-panel:has(+ .panel-content .popup.popup--reststop) {
-  color: #273F94;
+  color: $Type-reststop;
 
   &:hover {
-    background: lighten(#273F94, 60%);
+    background: lighten($Type-reststop, 60%);
   }
 }
 
@@ -238,6 +238,6 @@
   color: $White;
 
   &:hover {
-    background: lighten(#053662, 5%);
+    background: lighten($Info, 5%);
   }
 }

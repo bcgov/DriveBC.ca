@@ -1,6 +1,6 @@
 @import "../../../styles/variables";
 
-.server-error {
+.stale-link-error {
   position: absolute;
   z-index: 2000;
   background: #E0DEDC;
@@ -10,7 +10,6 @@
   top: 15px;
   display: flex;
   width: 375px;
-  height: 95px;
   padding: 8px 12px;
   align-items: center;
   font-size: 0.875rem;
@@ -42,7 +41,7 @@
     position: absolute;
     top: -11px;
     right: -11px;
-    background: $Type-Primary;
+    background: $Grey100;
     border-radius: 10px;
     color: white;
     width: 20px;

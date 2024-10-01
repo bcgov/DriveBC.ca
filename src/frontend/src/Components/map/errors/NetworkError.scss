@@ -1,8 +1,10 @@
+@import "../../../styles/variables";
+
 .network-error {
   position: absolute;
   z-index: 2000;
-  background: #FDD47B;
-  border: 1px solid #F8BB47;
+  background: $Gold60;
+  border: 1px solid $Warning;
   border-radius: 5px;
   right: 20%;
   top: 15px;

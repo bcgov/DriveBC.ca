@@ -21,6 +21,15 @@ $danger: $Error;
 
 /* import bootstrap to set changes */
 @import "~bootstrap/scss/bootstrap";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/variables-dark";
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/helpers";
+@import "~bootstrap/scss/utilities/api";
+
 button:focus:not(:focus-visible) {
   outline: 2px solid $Focus;
   box-shadow: 0 0 0 0.25rem rgba(1, 51, 102, 0.25);
@@ -55,7 +64,7 @@ button:focus:not(:focus-visible) {
 .btn.btn-outline-primary {
   color: $Type-Primary;
   background: none;
-  border: 1px solid $Card-Border;
+  border: 1px solid $Grey100;
 
   &:hover {
     color: $Type-Primary;
@@ -152,7 +161,7 @@ button:focus:not(:focus-visible) {
     border-radius: 0;
 
     .modal-header {
-      background-color: #053662;
+      background-color: $Info;
       border-radius: 0;
       padding: 16px;
 

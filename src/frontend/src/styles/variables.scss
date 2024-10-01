@@ -1,13 +1,12 @@
 //Type
 $Type-Primary: #292929;
 $Type-Secondary: #474543;
-$Type-Disabled: #A19F9D;
-$Type-Link: #1A5A96;
+$Type-Disabled: #9F9D9C;
+$Type-Link: #255A90;
 
 //Dividers & Border
-$Divider: #D9D9D9;
-$Input-Border: #8A8886;
-$Card-Border: #323130;
+$Divider: #FAF9F8;
+$Input-border: #8A8886;
 
 //BC Theme
 $BC-Blue: #013366;
@@ -19,41 +18,51 @@ $BC-Yellow-Hover: #E8C061;
 $BC-Yellow-Dark: #644A0A;
 
 //Error & Status
+$Info: #053662;
 $Success: #2E8540;
 $Error: #CE3E39;
 $Warning: #F8BB47;
 $Focus: #2E5DD7;
 
-// Greys
+//Greys
 $White: #FFFFFF;
 $Grey10: #FAF9F8;
 $Grey20: #F3F2F1;
-$Grey30: #EDEBE9;
-$Grey40: #E1DFDD;
-$Grey50: #D2D0CE;
-$Grey60: #C8C6C4;
-$Grey70: #605E5C;
-$Grey80: #3B3A39; //same
-$Grey90: #3B3A39; //same
-$Grey100: #323130;
-$Grey110: #201F1E;
+$Grey30: #ECEAE8;
+$Grey40: #E0DEDC;
+$Grey50: #D1CFCD;
+$Grey60: #C6C5C3;
+$Grey70: #9F9D9C;
+$Grey80: #605E5C;
+$Grey90: #3D3C3B;
+$Grey100: #353433;
+$Grey110: #252423;
 $Black: #000000;
+
+//Blue
+$Blue10: #F1F8FE;
+$Blue20: #D8EAFD;
+$Blue90: #1E5189;
+
+//Yellow
+$Gold30: #FDE9C4;
+$Gold60: #FBD389;
+$Gold110: #584215;
 
 //custom colours for DriveBC
 $HwyCrest: #1E53A7;
-$Surface-status-grey: #D2D0CE; //same as $Grey50
-$Surface-status-red: #FEF2F7;
-$Surface-status-yellow: #FDDC8C;
-$Surface-tinted: #FBFDFF;
-$Surface-tint-yellow: #FEF2D6;
-$Type-status-grey: #323130;
-$Type-status-red: #CE3E39; //same as $Error
-$Type-status-red-darker: #EFB4BA;
-$Type-status-yellow: #644A0A;
+$HwyCrest-green: #00674E;
 
-$Surface-camera: #F1F8FE;
+$Red-dark: #9C2024;
+
+$Surface-tinted: #FBFDFF;
+
+$Surface-camera: #F1F8FE; //same as $Blue10
 $Surface-major: #F4E1E2;
 $Surface-minor: #FEF0D8;
 $Surface-ferry: #FBFFFC;
-$Surface-weather: #ECEAE8;
+$Surface-weather: #ECEAE8; //same as $Grey30
 $Surface-reststop: #E8EAF4;
+
+
+$Type-reststop: #273F94;

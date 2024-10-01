@@ -142,30 +142,30 @@
 
     &.stale {
       padding: 20px;
-      background-color: $Surface-status-grey;
-      border-color: $Type-status-grey;
+      background-color: $Grey50;
+      border-color: $Grey100;
 
       p {
-        color: $Type-status-grey;
+        color: $Grey100;
         margin: 0;
       }
     }
 
     &.delayed {
-      background-color: $Surface-status-yellow;
-      border-color: $Type-status-yellow;
+      background-color: $BC-Yellow-Alt;
+      border-color: $BC-Yellow-Dark;
 
       p, ul, svg {
-        color: $Type-status-yellow;
+        color: $BC-Yellow-Dark;
       }
     }
 
     &.unavailable {
-      background-color: $Surface-status-red;
-      border-color: $Type-status-red;
+      background-color: $Error;
+      border-color: $Error;
 
       p, ul, svg {
-        color: $Type-status-red;
+        color: $Error;
       }
     }
   }
@@ -267,7 +267,7 @@
             height: 388px;
 
             &.unavailable {
-              background-color: $Surface-status-red;
+              background-color: $Error;
               color: $Error;
               font-size: 6.875rem;
               display: flex;

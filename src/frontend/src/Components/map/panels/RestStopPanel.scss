@@ -4,15 +4,15 @@
   // Rest Stops panel
   &--reststop {
     .popup__title {
-      background-color: #E8EAF4;
-      border-top: 4px solid #273F94;
+      background-color: $Surface-reststop;
+      border-top: 4px solid $Type-reststop;
 
       &__icon {
-        background: #273F94;
+        background: $Type-reststop;
       }
 
       .name {
-        color: #273F94;
+        color: $Type-reststop;
       }
     }
 

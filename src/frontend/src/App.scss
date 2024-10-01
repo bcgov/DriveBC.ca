@@ -192,7 +192,7 @@ a[target="_blank"] {
   width: fit-content;
   font-size: 0.875rem;
   font-weight: 700;
-  color: #584215;
+  color: $Gold110;
   border-radius: 5px;
   border: 1px solid $BC-Yellow;
   margin-bottom: 0;
@@ -200,7 +200,7 @@ a[target="_blank"] {
   align-items: center;
 
   &:hover, &:active, &.active, &.open {
-    color: #584215;
+    color: $Gold110;
     background: darken(#FEF0D8, 10%);
   }
 
@@ -216,7 +216,7 @@ a[target="_blank"] {
     margin-left: 12px;
     font-size: 0.625rem;
     color: white;
-    background: #CE3E39;
+    background: $Error;
     width: 1rem;
     height: 1rem;
     border-radius: 0.5rem;
@@ -231,7 +231,7 @@ a[target="_blank"] {
   border: none;
   background: none;
   font-weight: 700;
-  color: #255A90;
+  color: $Type-Link;
 
   svg {
     margin-right: 8px;
@@ -240,8 +240,8 @@ a[target="_blank"] {
 
   &.favourited {
     svg {
-      color: #F8BB47;
-      fill: #F8BB47;
+      color: $Warning;
+      fill: $Warning;
     }
   }
 }

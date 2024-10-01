@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // React
 import React, {
   useContext,
@@ -51,6 +52,7 @@ import Filters from '../shared/Filters.js';
 import RouteSearch from '../routing/RouteSearch.js';
 import NetworkErrorPopup from './errors/NetworkError';
 import ServerErrorPopup from './errors/ServerError';
+import StaleLinkErrorPopup from './errors/StaleLinkError';
 import overrides from '../map/overrides.js';
 
 // Map & geospatial imports
@@ -169,6 +171,7 @@ export default function DriveBCMap(props) {
 
   // Workaround for OL handlers not being able to read states
   const [clickedFeature, setClickedFeature] = useState();
+  const [staleLinkMessage, setStaleLinkMessage] = useState();
   const clickedFeatureRef = useRef();
   const updateClickedFeature = feature => {
     clickedFeatureRef.current = feature;
@@ -438,7 +441,11 @@ export default function DriveBCMap(props) {
   useEffect(() => {
     // Add layers if not loaded
     if (!mapLayers.current['majorEvents']) {
-      loadEventsLayers(events, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers);
+      const eventFound = loadEventsLayers(events, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers);
+
+      if (referenceData?.type === 'event' && !eventFound) {
+        setStaleLinkMessage(true);
+      }
     }
 
     // Count filtered events to store in routeDetails
@@ -596,8 +603,20 @@ export default function DriveBCMap(props) {
       <div ref={mapElement} className="map">
         {!isCamDetail && (
           <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
-            <RouteSearch ref={routingContainerRef} routeEdit={true}  showSpinner={showSpinner} onShowSpinnerChange={setShowSpinner}/>
-            <AdvisoriesWidget advisories={advisoriesInView} updateClickedFeature={updateClickedFeature} open={openPanel} clickedFeature={clickedFeature} clickedFeatureRef={clickedFeatureRef} onMap={true} />
+            <RouteSearch
+              ref={routingContainerRef}
+              routeEdit={true}
+              showSpinner={showSpinner}
+              onShowSpinnerChange={setShowSpinner}
+            />
+            <AdvisoriesWidget
+              advisories={advisoriesInView}
+              updateClickedFeature={updateClickedFeature}
+              open={openPanel}
+              clickedFeature={clickedFeature}
+              clickedFeatureRef={clickedFeatureRef}
+              onMap={true}
+            />
           </div>
         )}
 
@@ -609,7 +628,10 @@ export default function DriveBCMap(props) {
               variant="primary"
               onClick={loadMyLocation}
               aria-label="my location">
-              {(myLocationLoading) ? <Spinner animation="border" role="status" /> : <FontAwesomeIcon icon={faLocationCrosshairs} />}
+              { myLocationLoading
+                ? <Spinner animation="border" role="status" />
+                : <FontAwesomeIcon icon={faLocationCrosshairs} />
+              }
               My location
             </Button>
 
@@ -707,6 +729,8 @@ export default function DriveBCMap(props) {
       {!showNetworkError && showServerError &&
         <ServerErrorPopup />
       }
+
+      { staleLinkMessage && <StaleLinkErrorPopup message={staleLinkMessage}/> }
     </div>
   );
 }

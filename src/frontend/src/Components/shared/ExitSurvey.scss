@@ -6,9 +6,9 @@
   left: 50%;
   transform: translateX(-50%);
   width: 365px;
-  background-color: #F1F8FE;
+  background-color: $Blue10;
   padding: 0.75rem;
-  border: 1px solid #053662;
+  border: 1px solid $Info;
   border-radius: 4px;
   box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
   z-index: 1;
@@ -55,7 +55,7 @@
         width: 48px;
         height: 48px;
         background-color: $BC-Blue;
-        color: #D8EAFD;
+        color: $Blue20;
         border-radius: 8px;
         font-size: 28px;
         display: flex;
@@ -75,7 +75,7 @@
         }
 
         &.feedback {
-          color: #053662;
+          color: $Info;
         }
       }
     }

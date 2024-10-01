@@ -192,7 +192,7 @@
           color: $White;
 
           &:hover {
-            background: #255A90;
+            background: $Type-Link;
           }
         }
 
@@ -201,12 +201,12 @@
 
           .popup {
             &__title {
-              background-color: #053662;
-              border-top: 4px solid #053662;
+              background-color: $Info;
+              border-top: 4px solid $Info;
               padding: 1rem 1rem 0.5rem;
 
               &__icon {
-                background-color: #255A90;
+                background-color: $Type-Link;
               }
 
               .name {
@@ -220,12 +220,12 @@
               .service-area {
                 font-size: 1.5rem;
                 font-weight: 700;
-                color: #053662;
+                color: $Info;
                 margin-bottom: 0;
               }
 
               .service-area-number {
-                color: #053662;
+                color: $Info;
               }
 
               .contractor-name {
@@ -250,7 +250,7 @@
                 display: flex;
                 align-items: center;
                 margin-bottom: 1rem;
-                color: #255A90;
+                color: $Type-Link;
                 font-weight: 700;
 
                 svg {

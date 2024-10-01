@@ -50,14 +50,14 @@
       padding-right: 10px;
 
       .title {
-        background: #FEEBC2;
+        background: $Gold30;
         padding: 12px 16px;
 
         h4 {
           margin-bottom: 0;
           font-weight: 400;
           line-height: 2.125rem;
-          color: #584215;
+          color: $Gold110;
         }
       }
 
@@ -123,7 +123,7 @@
         }
 
         &:hover {
-          border: 1px solid $Type-status-grey;
+          border: 1px solid $Grey100;
         }
 
         svg {

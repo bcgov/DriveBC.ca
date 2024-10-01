@@ -62,7 +62,7 @@
     .event-card__details {
       .type {
         .header, .content {
-          color: $Type-status-red;
+          color: $Error;
         }
 
         .content {
@@ -70,7 +70,7 @@
           text-transform: capitalize;
 
           svg {
-            color: $Type-status-red;
+            color: $Error;
           }
         }
       }

@@ -86,7 +86,7 @@
           .viewCams-btn, .favourite-btn {
             font-size: 0.875rem;
             font-weight: 700;
-            color: #255A90;
+            color: $Type-Link;
             border: none;
             background: none;
             padding: 0;
@@ -98,7 +98,7 @@
 
           .viewCams-btn {
             &.disabled {
-              color: #9F9D9C;
+              color: $Type-Disabled;
             }
           }
         }
