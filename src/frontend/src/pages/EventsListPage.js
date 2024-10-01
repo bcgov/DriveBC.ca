@@ -39,7 +39,7 @@ import EventsTable from '../Components/events/EventsTable';
 import Filters from '../Components/shared/Filters.js';
 import Footer from '../Footer.js';
 import PageHeader from '../PageHeader';
-import PollingComponent from '../Components/shared/PollingCountdown';
+import PollingComponent from '../Components/shared/PollingComponent';
 import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent.js';
 import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
