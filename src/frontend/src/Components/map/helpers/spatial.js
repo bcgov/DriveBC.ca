@@ -12,22 +12,28 @@ export const populateRouteProjection = (data, route) => {
   const routeLs = turf.lineString(lineCoords);
   const startPoint = turf.point(lineCoords[0]);
 
-  // Calculate and store distance alone reference line
-  for (let i=0; i < copiedData.length; i++) {
-    // Get the midpoint of the location if it's a linestring
-    const coords = getMidPoint(copiedData[i].location);
+  // Create a spatial index for the route line
+  const spatialIndex = new Flatbush(lineCoords.length);
+  lineCoords.forEach(([lng, lat]) => {
+    spatialIndex.add(lng, lat, lng, lat);
+  });
+  spatialIndex.finish();
 
-    // Find the closest point on the route to the data point
-    const dataPoint = turf.point(coords);
-    const closestPoint = turf.nearestPointOnLine(routeLs, dataPoint, { units: 'meters' });
+  // Calculate and store distance along reference line
+  copiedData.forEach((item, i) => {
+    const coords = getMidPoint(item.location);
+
+    // Find the closest point on the route using the spatial index
+    const closestCoords = spatialIndex.neighbors(coords[0], coords[1], 1).map(idx => lineCoords[idx])[0];
+    const closestPoint = turf.point(closestCoords);
 
     // Find and save the distance along the route
     const distanceAlongLine = turf.lineDistance(turf.lineSlice(startPoint, closestPoint, routeLs), { units: 'meters' });
     copiedData[i].route_projection = distanceAlongLine;
-  }
+  });
 
   return copiedData;
-}
+};
 
 export const filterAdvisoryByRoute = (data, route) => {
   if (!route) {

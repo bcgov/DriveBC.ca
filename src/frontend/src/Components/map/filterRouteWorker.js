@@ -5,7 +5,18 @@ self.onmessage = (event) => {
 
   let filteredData = data;
   if (route) {
-    filteredData = action === 'updateAdvisories' ? filterAdvisoryByRoute(data, route, null, true) : filterByRoute(data, route, null, false);
+    switch(action) {
+      case 'updateAdvisories':
+        filteredData = filterAdvisoryByRoute(data, route);
+        break;
+      case 'updateCameras':
+      case 'updateEvents':
+        filteredData = filterByRoute(data, route, null, true);
+        break;
+      default:
+        filteredData = filterByRoute(data, route, null, false);
+        break;
+    }
   }
 
   postMessage({ data, filteredData, route, action });
