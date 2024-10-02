@@ -161,7 +161,7 @@
     }
 
     &.unavailable {
-      background-color: $Error;
+      background-color: $Surface-major;
       border-color: $Error;
 
       p, ul, svg {
@@ -267,7 +267,7 @@
             height: 388px;
 
             &.unavailable {
-              background-color: $Error;
+              background-color: $Surface-major;
               color: $Error;
               font-size: 6.875rem;
               display: flex;
