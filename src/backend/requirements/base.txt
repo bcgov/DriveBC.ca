@@ -13,5 +13,5 @@ huey==2.4.5
 markdown==3.6
 psycopg==3.1.9
 redis==4.5.5
-wagtail==6.2
+wagtail==6.2.2
 wagtail-modeladmin==2.0.0
