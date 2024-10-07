@@ -1,9 +1,11 @@
-from apps.cms.models import Advisory, Bulletin, Ferry
 from django.contrib.auth.models import Permission
 from django.templatetags.static import static
 from django.utils.html import format_html
 from wagtail import hooks
+from wagtail.admin.rich_text.editors.draftail.features import ControlFeature
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
+
+from apps.cms.models import Advisory, Bulletin, Ferry
 
 
 @hooks.register("insert_global_admin_css")
@@ -75,3 +77,16 @@ class FerryAdmin(BaseCMSAdmin):
 modeladmin_register(AdvisoryAdmin)
 modeladmin_register(BulletinAdmin)
 modeladmin_register(FerryAdmin)
+
+
+@hooks.register('register_rich_text_features')
+def register_readinglevel_feature(features):
+    print('lodaing')
+    feature_name = 'readinglevel'
+    features.default_features.append(feature_name)
+
+    features.register_editor_plugin(
+        'draftail',
+        feature_name,
+        ControlFeature({ 'type': feature_name }, js=['readinglevel.js']),
+    )
