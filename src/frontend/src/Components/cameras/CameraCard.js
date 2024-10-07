@@ -1,7 +1,6 @@
 // React
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { createSearchParams, useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -39,9 +38,6 @@ export default function CameraCard(props) {
   /* Setup */
   // Props
   const { cameraData, showLoader } = props;
-
-  // Navigation
-  const location = useLocation();
 
   // Contexts
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -129,8 +125,7 @@ export default function CameraCard(props) {
 
   const deleteCamera = async () => {
     // use id from prop for deletion in saved cameras page
-    const id = location.pathname == '/my-cameras' ? cameraData.id : camera.id;
-    deleteFavoriteCamera(id, dispatch, removeFavCam);
+    deleteFavoriteCamera(camera.id, dispatch, removeFavCam);
     setAlertMessage(<p>Removed from <a href="/my-cameras">My cameras</a></p>);
   }
 
