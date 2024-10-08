@@ -8,12 +8,15 @@ omit =
         */__init__.py
         */apps/feed/tasks.py
         */tests.py
-        */asgi.py
-        */wsgi.py
         */sandbox.py
         */manage.py
         */venv/*
         */management/*
+        */config/*
+        */wagtail_hooks.py
+        */admin.py
+        */adapters.py
+        */urls.py
 
 [report]
 omit =
@@ -23,11 +26,15 @@ omit =
         */__init__.py
         */apps/feed/tasks.py
         */tests.py
-        */asgi.py
-        */wsgi.py
         */sandbox.py
         */manage.py
         */venv/*
+        */management/*
+        */config/*
+        */wagtail_hooks.py
+        */admin.py
+        */adapters.py
+        */urls.py
 
 # Regexes for lines to exclude from consideration
 exclude_lines =

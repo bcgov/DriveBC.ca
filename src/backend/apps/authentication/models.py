@@ -1,10 +1,9 @@
+from apps.shared.models import BaseModel
+from apps.webcam.models import Webcam
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.db import models as gis_models
 from django.db import models
 from django.db.models.constraints import UniqueConstraint
-
-from apps.shared.models import BaseModel
-from apps.webcam.models import Webcam
 
 
 class DriveBCUser(AbstractUser, BaseModel):
@@ -57,8 +56,8 @@ class SavedRoutes(BaseModel):
 
     # User friendly presentation
     label = models.CharField(max_length=100, null=False, blank=True)
-    thumbnail = models.TextField(null=True)
-    distance = models.FloatField(null=True)
+    thumbnail = models.TextField(null=True, blank=True)
+    distance = models.FloatField(null=True, blank=True)
     distance_unit = models.CharField(max_length=10, null=False, blank=True)
 
     # store search term for display, and point field for validation
