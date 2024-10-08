@@ -10,7 +10,6 @@ from pathlib import Path
 import environ
 import httpx
 import pytz
-import requests
 from apps.feed.client import FeedClient
 from apps.shared.models import RouteGeometry
 from apps.webcam.enums import CAMERA_DIFF_FIELDS
@@ -219,7 +218,7 @@ def reverse_ls_routes(ls_routes):
     return [LineString(ls[::-1]) for ls in res]
 
 
-def build_route_geometries():
+def build_route_geometries(coords=hwy_coords):
     """
     DBC22-1183
 
@@ -228,7 +227,7 @@ def build_route_geometries():
     along their route
 
     """
-    for key, routes in hwy_coords.items():
+    for key, routes in coords.items():
         ls_routes = []
 
         # Go through each route and create a geometry
@@ -237,7 +236,7 @@ def build_route_geometries():
                 "points": route,
             }
 
-            response = requests.get(
+            response = httpx.get(
                 env("DRIVEBC_ROUTE_PLANNER_API_BASE_URL") + "/directions.json",
                 params=payload,
                 headers={
@@ -248,6 +247,7 @@ def build_route_geometries():
             points_list = [Point(p) for p in response.json()['route']]
             ls_routes.append(LineString(points_list))
 
+        # DBC22-2456
         highways_to_reverse = [
             '2', '3B', '9', '11', '13', '15', '17A', '23',
             '27', '29', '31', '33', '35', '37', '43', '91A',
