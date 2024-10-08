@@ -63,48 +63,41 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
         if "air_temperature" in obj.datasets:
             data = obj.datasets["air_temperature"]
             return f'{round(float(data["value"]))}'
-        return None
 
     def get_road_temperature(self, obj):
         if "road_temperature" in obj.datasets:
             data = obj.datasets["road_temperature"]
             return f'{round(float(data["value"]))}'
-        return None
 
     def get_precipitation(self, obj):
         if "precipitation" in obj.datasets:
             data = obj.datasets["precipitation"]
-            value = round(float(data["value"]),1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
+            value = round(float(data["value"]), 1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
             return f'{value} {data["unit"]}'
-        return None
-    
+
     def get_precipitation_stdobs(self, obj):
         if "precipitation_stdobs" in obj.datasets:
             data = obj.datasets["precipitation_stdobs"]
-            value = round(float(data["value"]),1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
+            value = round(float(data["value"]), 1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
             return f'{value} {data["unit"]}'
-        return None
-    
+
     def get_snow(self, obj):
         if "snow" in obj.datasets:
             data = obj.datasets["snow"]
-            value = round(float(data["value"]),1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
+            value = round(float(data["value"]), 1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
             return f'{value} {data["unit"]}'
-        return
-    
+
     def get_snow_stdobs(self, obj):
         if "snow_stdobs" in obj.datasets:
             data = obj.datasets["snow_stdobs"]
-            value = round(float(data["value"]),1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
+            value = round(float(data["value"]), 1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
             return f'{value} {data["unit"]}'
-        return
 
     def get_average_wind(self, obj):
         if "average_wind" in obj.datasets:
             data = obj.datasets["average_wind"]
             return f'{round(float(data["value"]))} {data["unit"]}'
-        return
-    
+
     def get_wind_direction(self, obj):
         if "wind_direction" in obj.datasets:
             data = obj.datasets["wind_direction"]
@@ -112,16 +105,13 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
             directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
             index = round(degree / 45) % 8
             return directions[index]
-        return None
 
     def get_maximum_wind(self, obj):
         if "maximum_wind" in obj.datasets:
             data = obj.datasets["maximum_wind"]
             return f'{round(float(data["value"]))} {data["unit"]}'
-        return None
 
     def get_road_condition(self, obj):
         if "road_surface" in obj.datasets:
             data = obj.datasets["road_surface"]
             return data["value"]
-        return None
