@@ -48,4 +48,4 @@ class Webcam(BaseModel):
             return True
 
         time_delta = time - self.last_update_modified
-        return time_delta.seconds >= self.minimum_update_window
+        return time_delta.total_seconds() >= self.minimum_update_window

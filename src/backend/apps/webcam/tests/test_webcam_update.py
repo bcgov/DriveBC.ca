@@ -108,15 +108,23 @@ class TestWebcamSerializer(BaseTest):
     def test_update_existing_webcams(self, mock_requests_get):
         mock_requests_get.side_effect = [
             MockResponse(self.mock_webcam_feed_result, status_code=200),
-            MockResponse(self.mock_webcam_feed_result, status_code=200),
+            MockResponse(None, status_code=500),
+            MockResponse(None, status_code=404),
         ]
 
         # Current value
         assert self.webcam.name == "TestWebCam"
 
         # Manually sync last updated time to prevent update
+        self.webcam.last_update_modified = datetime.datetime.now(tz=pytz.timezone("America/Vancouver"))
+        self.webcam.save()
+        update_all_webcam_data()
+        self.webcam.refresh_from_db()
+        assert self.webcam.name == "TestWebCam"  # Camera not updated, no diff from diff fields
+
+        # Manually desync one of the diff fields to trigger update
         self.webcam.last_update_modified = datetime.datetime(
-            2023,
+            2020,
             6,
             14,
             14,
@@ -124,14 +132,6 @@ class TestWebcamSerializer(BaseTest):
             32,
             tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver"),
         )
-        self.webcam.save()
-        update_all_webcam_data()
-        self.webcam.refresh_from_db()
-
-        # Camera not updated, no diff from diff fields
-        assert self.webcam.name == "TestWebCam"
-
-        # Manually desync one of the diff fields to trigger update
         self.webcam.is_on = False
         self.webcam.save()
         update_all_webcam_data()
@@ -174,3 +174,14 @@ class TestWebcamSerializer(BaseTest):
         )
         assert self.webcam.update_period_mean == 675
         assert self.webcam.update_period_stddev == 55
+
+        # Manually change webcam id to delete it in the update task
+        Webcam.objects.filter(id=self.webcam.id).update(id=923402940)
+
+        # Server error, did not delete
+        update_all_webcam_data()
+        assert Webcam.objects.all().count() == 1
+
+        # Not found, cam deleted
+        update_all_webcam_data()
+        assert Webcam.objects.all().count() == 0
