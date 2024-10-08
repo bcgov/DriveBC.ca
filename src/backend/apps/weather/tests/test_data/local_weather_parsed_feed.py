@@ -3,11 +3,16 @@ parsed_feed = {
     "elevation": 496,
     "location_description": "W side of Hwy99, 11 km S of Whistler Creek",
     "datasets": {
-        "air_temperature": {"value": "26.17", "unit": "°C"},
-        "precipitation": {"value": "0", "unit": "mm"},
-        "wind_direction": {"value": "227.4", "unit": "°"},
-        "average_wind": {"value": "9.17", "unit": "km/h"},
-        "maximum_wind": {"value": "22.86", "unit": "km/h"}
+        "air_temperature": {"unit": "°C", "value": "9"},
+        "precipitation": {"unit": "mm", "value": "0.2"},
+        "wind_direction": {"unit": "°", "value": "160.4"},
+        "average_wind": {"unit": "km/h", "value": "2.183"},
+        "maximum_wind": {"unit": "km/h", "value": "9.24"},
+        "precipitation_stdobs": {"unit": "mm", "value": "1.3"},
+        "road_surface": {"unit": "", "value": "DRY"},
+        "road_temperature": {"unit": "°C", "value": "10.1"},
+        "snow": {"unit": "°C", "value": "10.1"},
+        "snow_stdobs": {"unit": "°C", "value": "10.1"}
     },
     "location_longitude": -123.11806,
     "location_latitude": 50.05417,
@@ -308,13 +313,7 @@ parsed_summer_feed = {
     "weather_station_name": "Brandywine Devar Summer",
     "elevation": 496,
     "location_description": "W side of Hwy99, 11 km S of Whistler Creek",
-    "datasets": {
-        "air_temperature": {"value": "26.17", "unit": "°C"},
-        "precipitation": {"value": "0", "unit": "mm"},
-        "wind_direction": {"value": "227.4", "unit": "°"},
-        "average_wind": {"value": "9.17", "unit": "km/h"},
-        "maximum_wind": {"value": "22.86", "unit": "km/h"}
-    },
+    "datasets": {},
     "location_longitude": -123.11806,
     "location_latitude": 50.05417,
     "issuedUtc": "2024-07-04T21:00:00",
