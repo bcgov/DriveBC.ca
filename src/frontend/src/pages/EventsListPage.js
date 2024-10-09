@@ -25,6 +25,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
+import { CMSContext } from '../App';
 import { compareRoutePoints } from '../Components/map/helpers';
 import { getAdvisories } from '../Components/data/advisories';
 import { getEvents } from '../Components/data/events';
@@ -95,6 +96,7 @@ export default function EventsListPage() {
   }))));
 
   // Context
+  const { cmsContext, setCMSContext } = useContext(CMSContext);
   const { mapContext } = useContext(MapContext);
 
   // States
@@ -129,7 +131,22 @@ export default function EventsListPage() {
   const isInitialMount = useRef(true);
   const workerRef = useRef();
 
+  // Media queries
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+  const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
+
   // Data functions
+  const markAdvisoriesAsRead = (advisoriesData) => {
+    const advisoriesIds = advisoriesData.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
+
+    // Combine and remove duplicates
+    const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));
+    const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
+
+    setCMSContext(updatedContext);
+    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+  }
+
   const getAdvisoriesData = async (eventsData) => {
     let advData = advisories;
 
@@ -163,6 +180,9 @@ export default function EventsListPage() {
     }
 
     setAdvisoriesInRoute(resAdvisories);
+    if (largeScreen) {
+      markAdvisoriesAsRead(resAdvisories);
+    }
   };
 
   const loadEvents = async route => {
@@ -337,9 +357,6 @@ export default function EventsListPage() {
   }
 
   // Rendering - Main component
-  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
-  const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
-
   return (
     <React.Fragment>
       <div className="events-page">

@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 // Redux
 import { memoize } from 'proxy-memoize'
@@ -21,7 +21,8 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
-// Components and functions
+// Internal Imports
+import { CMSContext } from '../App';
 import {
   compareRoutePoints,
   filterByRoute
@@ -47,6 +48,9 @@ import '../Components/shared/Filters.scss';
 export default function CamerasListPage() {
   /* Setup */
   document.title = 'DriveBC - Cameras';
+
+  // Context
+  const { cmsContext, setCMSContext } = useContext(CMSContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -93,6 +97,10 @@ export default function CamerasListPage() {
     }
   }
 
+  // Media queries
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+  const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
+
   // Data functions
   const getCamerasData = async route => {
     const routePoints = route ? route.points : null;
@@ -119,6 +127,17 @@ export default function CamerasListPage() {
       setShowLoader(false);
     }, 300);
   };
+
+  const markAdvisoriesAsRead = (advisoriesData) => {
+    const advisoriesIds = advisoriesData.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
+
+    // Combine and remove duplicates
+    const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));
+    const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
+
+    setCMSContext(updatedContext);
+    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+  }
 
   const getAdvisoriesData = async (camsData) => {
     let advData = advisories;
@@ -152,6 +171,9 @@ export default function CamerasListPage() {
     }
 
     setAdvisoriesInRoute(resAdvisories);
+    if (largeScreen) {
+      markAdvisoriesAsRead(resAdvisories);
+    }
   };
 
   // Effects
@@ -246,8 +268,6 @@ export default function CamerasListPage() {
       isInitialMount.current = false;
     }
   }, [displayedCameras]);
-
-  const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   return (
     <React.Fragment>
