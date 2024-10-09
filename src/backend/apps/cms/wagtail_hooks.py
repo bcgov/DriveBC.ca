@@ -81,7 +81,6 @@ modeladmin_register(FerryAdmin)
 
 @hooks.register('register_rich_text_features')
 def register_readinglevel_feature(features):
-    print('lodaing')
     feature_name = 'readinglevel'
     features.default_features.append(feature_name)
 
