@@ -28,14 +28,6 @@ export default function AdvisoriesPanel(props) {
       return;
     }
 
-    // Center to the geometric center of all advisories' boundaries for mobile view
-    if(smallScreen){
-      const allCoordinates = advisories
-        .map(advisory => advisory.geometry.coordinates)
-        .flat(3);
-      fitMap(allCoordinates, mapView);
-    }
-
     const advisoriesIds = advisories.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
 
     // Combine and remove duplicates
@@ -44,7 +36,17 @@ export default function AdvisoriesPanel(props) {
 
     setCMSContext(updatedContext);
     localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
-  }, [advisories, openAdvisoriesOverlay, smallScreen]);
+  }, [advisories, openAdvisoriesOverlay]);
+
+  useEffect(() => {
+    // Center to the geometric center of all advisories' boundaries for mobile view
+    if(smallScreen){
+      const allCoordinates = advisories
+        .map(advisory => advisory.geometry.coordinates)
+        .flat(3);
+      fitMap(allCoordinates, mapView);
+    }
+  }, []);
 
   return (
     <div className="popup popup--advisories" tabIndex={0}>
