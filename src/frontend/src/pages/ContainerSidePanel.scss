@@ -21,6 +21,15 @@
     top: 82px;
     align-self: flex-start;
 
+    @media (min-width: 1200px) {
+      max-height: calc(100vh - 8vh);
+      overflow-y: scroll;
+
+      &::-webkit-scrollbar {
+       display: none;
+      }
+    }
+
     .routing {
       margin-bottom: 20px;
       padding: 0 10px 0 0;
@@ -46,12 +55,14 @@
     }
 
     .advisories {
-      margin-top: 64px;
+      margin-top: 36px;
       padding-right: 10px;
 
       .title {
         background: $Gold30;
         padding: 12px 16px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
 
         h4 {
           margin-bottom: 0;
