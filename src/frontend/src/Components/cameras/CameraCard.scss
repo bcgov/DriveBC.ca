@@ -265,13 +265,13 @@
 }
 
 .react-loading-skeleton {
-  --base-color: $Blue20 !important;
-  --highlight-color: $Blue10 !important;
+  --base-color: #{$Blue20};
+  --highlight-color: #{$Blue10};
   --animation-duration: 1s !important;
   background: linear-gradient(
-    90deg, 
-    var(--base-color) 10%, 
-    var(--highlight-color) 50%, 
+    90deg,
+    var(--base-color) 10%,
+    var(--highlight-color) 50%,
     var(--highlight-color) 75%
   ) !important;
   background-size: 200% 100%;
