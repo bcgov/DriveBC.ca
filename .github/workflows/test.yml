@@ -247,3 +247,11 @@ jobs:
       run: |
         helm dependency update ./infrastructure/main
         helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}"
+
+
+  automatedTests:
+    needs: [versionUpdate]
+    name: Automated Smoke Test
+    uses: bcgov/DriveBC.ca-automated-tests/.github/workflows/playwright.yml@main
+    with:
+      environment: 'test'
