@@ -217,7 +217,7 @@ export default function RegionalWeatherPanel(props) {
           }
 
           <p className="label">
-            Temperatures displayed in Celcius (&deg;C) <br />
+            Temperatures displayed in Celsius (&deg;C) <br />
 
             Courtesy of&nbsp;
 
