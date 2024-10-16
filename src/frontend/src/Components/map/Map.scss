@@ -325,4 +325,14 @@
       }
     }
   }
+
+  .ol-overlay-container {
+    background-image: url('../map/location-marker.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    img {
+      opacity: 0;
+    }
+  }
 }
