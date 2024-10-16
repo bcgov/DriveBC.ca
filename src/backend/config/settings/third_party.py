@@ -28,6 +28,12 @@ HUEY = {
         "port": env("REDIS_PORT"),
     },
     "immediate": False,
+    "consumer": {
+        "flush_locks": True,
+        "workers": 4,
+        "worker_type": "thread",
+
+    }
 }
 
 # Wagtail
@@ -62,7 +68,7 @@ SOCIALACCOUNT_PROVIDERS = {
         },
         'AUTH_PARAMS': {
             'kc_idp_hint': 'bceidbasic',
-        },        
+        },
     }
 }
 
