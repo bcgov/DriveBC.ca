@@ -44,7 +44,7 @@ import './RouteDetails.scss';
 export default function RouteDetails(props) {
   /* Setup */
   // Props
-  const { route, isPanel, setRouteFavCams, setRouteLabel } = props;
+  const { route, isPanel, setRouteFavCams, setRouteLabel, isActive, onClick } = props;
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -287,7 +287,7 @@ export default function RouteDetails(props) {
 
   // Main components
   return route && (
-    <div className="route-details">
+    <div className={`route-details ${isActive ? 'active' : ''}`} onClick={onClick}>
       <div className="route-title">
         <div className="space-between-row route-tools">
           {isPanel ?

@@ -26,7 +26,7 @@ export default function MapWrapper(props) {
       restStops: { list: restStops, filteredList: filteredRestStops, filterPoints: restStopFilterPoints },
     },
     advisories: { list: advisories, filteredList: filteredAdvisories, filterPoints: advisoryFilterPoints },
-    routes: { selectedRoute },
+    routes: { selectedRoute, alternateRoute },
 
   } = useSelector(
     useCallback(
@@ -64,7 +64,7 @@ export default function MapWrapper(props) {
 
   useEffect(() => {
     loadData();
-  }, [selectedRoute]);
+  }, [selectedRoute, alternateRoute]);
 
   useEffect(() => {
     // Cleanup function to terminate the worker when the component unmounts
@@ -105,6 +105,16 @@ export default function MapWrapper(props) {
     dataLoaders.loadRegionalWeather(routeData, regionalWeather, filteredRegionalWeathers, regionalWeatherFilterPoints, dispatch, displayError, workerRef.current);
     dataLoaders.loadRestStops(routeData, restStops, filteredRestStops, restStopFilterPoints, dispatch, displayError, workerRef.current);
     dataLoaders.loadAdvisories(routeData, advisories, filteredAdvisories, advisoryFilterPoints, dispatch, displayError, workerRef.current);
+
+    const alternateRouteData = alternateRoute && alternateRoute.routeFound ? alternateRoute : null;
+
+    dataLoaders.loadCameras(alternateRouteData, cameras, filteredCameras, camFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadEvents(alternateRouteData, events, filteredEvents, eventFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadFerries(alternateRouteData, ferries, filteredFerries, ferryFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadCurrentWeather(alternateRouteData, currentWeather, filteredCurrentWeathers, currentWeatherFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadRegionalWeather(alternateRouteData, regionalWeather, filteredRegionalWeathers, regionalWeatherFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadRestStops(alternateRouteData, restStops, filteredRestStops, restStopFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadAdvisories(alternateRouteData, advisories, filteredAdvisories, advisoryFilterPoints, dispatch, displayError, workerRef.current);
   };
 
   return (

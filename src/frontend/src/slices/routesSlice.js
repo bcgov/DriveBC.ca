@@ -6,13 +6,28 @@ export const routesSlice = createSlice({
     searchLocationFrom: [],
     searchLocationTo: [],
     selectedRoute: null,
+    alternateRoute: null,
+    fastestRoute: null,
+    shortestRoute: null,
   },
   reducers: {
     clearSelectedRoute: (state, action) => {
       state.selectedRoute = null;
     },
+    clearAlternateRoute: (state, action) => {
+      state.alternateRoute = null;
+    },
     updateSelectedRoute: (state, action) => {
       state.selectedRoute = action.payload;
+    },
+    updateAlternateRoute: (state, action) => {
+      state.alternateRoute = action.payload;
+    },
+    updateFastestRoute: (state, action) => {
+      state.fastestRoute = action.payload;
+    },
+    updateShortestRoute: (state, action) => {
+      state.shortestRoute = action.payload;
     },
     updateSearchLocationFrom: (state, action) => {
       state.searchLocationFrom = action.payload;
@@ -20,9 +35,18 @@ export const routesSlice = createSlice({
     updateSearchLocationTo: (state, action) => {
       state.searchLocationTo = action.payload;
     },
+    // New swapRoutes reducer to swap selectedRoute and alternateRoute
+    swapRoutesToFastest: (state) => {
+      
+      state.selectedRoute = state.fastestRoute;
+      
+    },
+    swapRoutesToShortest: (state) => {
+      state.selectedRoute = state.shortestRoute;
+    },
   },
 });
 
-export const { clearSelectedRoute, updateSelectedRoute, updateSearchLocationFrom, updateSearchLocationTo } = routesSlice.actions;
+export const { clearSelectedRoute, clearAlternateRoute, updateSelectedRoute, updateAlternateRoute, updateFastestRoute, updateShortestRoute, updateSearchLocationFrom, updateSearchLocationTo, swapRoutesToFastest, swapRoutesToShortest } = routesSlice.actions;
 
 export default routesSlice.reducer;

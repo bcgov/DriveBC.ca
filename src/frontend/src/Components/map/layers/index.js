@@ -6,7 +6,7 @@ import { getFerriesLayer, updateFerriesLayer } from './ferriesLayer.js';
 import { getRegionalWeatherLayer, updateRegionalWeatherLayer } from './regionalWeatherLayer.js';
 import { getRestStopsLayer, updateRestStopsLayer } from './restStopsLayer.js';
 import { getLargeRestStopsLayer, updateLargeRestStopsLayer } from './largeRestStopsLayer.js';
-import { getRouteLayer } from './routeLayer.js';
+import { getRouteLayer, getAlternateRouteLayer } from './routeLayer.js';
 
 const layerFuncMap = {
   advisoriesLayer: getAdvisoriesLayer,
@@ -17,6 +17,7 @@ const layerFuncMap = {
   restStops: getRestStopsLayer,
   largeRestStops: getLargeRestStopsLayer,
   routeLayer: getRouteLayer,
+  alternateRouteLayer: getAlternateRouteLayer,
 }
 
 const layerUpdateFuncMap = {
@@ -30,12 +31,12 @@ const layerUpdateFuncMap = {
 
 export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filteredDataList, zIndex, referenceData, updateReferenceFeature, setLoadingLayers) => {
   // Always remove and regenerate route and advisory layer
-  if (key == 'routeLayer' || key == 'advisoriesLayer') {
+  if (key == 'routeLayer' || key == 'alternateRouteLayer' || key == 'advisoriesLayer') {
     mapRef.current.removeLayer(mapLayers.current[key]);
   }
 
   if (dataList) {
-    if (!mapLayers.current[key] || key == 'routeLayer' || key == 'advisoriesLayer') {
+    if (!mapLayers.current[key] || key == 'routeLayer' || key == 'alternateRouteLayer' || key == 'advisoriesLayer') {
       // Generate and add layer if it doesn't exist
       mapLayers.current[key] = layerFuncMap[key](
         dataList,
@@ -52,7 +53,7 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filtered
     }
 
     // Toggle features' styles based on dataList
-    if (key != 'routeLayer' && key != 'advisoriesLayer') {
+    if (key != 'routeLayer' && key != 'alternateRouteLayer' && key != 'advisoriesLayer') {
       layerUpdateFuncMap[key](filteredDataList, mapLayers.current[key], setLoadingLayers);
     }
   }

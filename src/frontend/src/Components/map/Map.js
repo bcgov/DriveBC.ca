@@ -102,7 +102,7 @@ export default function DriveBCMap(props) {
       restStops: { list: restStops, filteredList: filteredRestStops },
     },
     advisories: { list: advisories },
-    routes: { searchLocationFrom, searchLocationTo, selectedRoute },
+    routes: { searchLocationFrom, searchLocationTo, selectedRoute, alternateRoute },
     map: { zoom, pan }
 
   } = useSelector(
@@ -395,6 +395,12 @@ export default function DriveBCMap(props) {
       });
     });
 
+    const alternateDl = alternateRoute && alternateRoute.routeFound ? alternateRoute : null;
+    loadLayer(
+      mapLayers, mapRef, mapContext,
+      'alternateRouteLayer', alternateDl, alternateDl, 3, null, updateReferenceFeature
+    );
+
     // Remove layer if no route found
     const dl = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
 
@@ -416,8 +422,7 @@ export default function DriveBCMap(props) {
     } else {
       resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
     }
-
-  }, [selectedRoute]);
+  }, [selectedRoute, alternateRoute]);
 
   // Cameras layer
   useEffect(() => {

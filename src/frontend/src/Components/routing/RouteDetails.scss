@@ -226,3 +226,18 @@
     }
   }
 }
+
+.route-details {
+  border: 1px solid lightgray;
+  padding: 16px;
+  transition: border 0.3s ease; /* Smooth transition */
+}
+
+.route-details:hover {
+  border-color: #7993AF; 
+}
+
+.route-details.active {
+  border: 3px solid #053662; /* Make the border bold when clicked */
+}
+
