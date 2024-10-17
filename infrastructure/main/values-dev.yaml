@@ -48,10 +48,10 @@ tasks:
   deployment:
     resources:
       requests:
-        cpu: 300m
+        cpu: 500m
         memory: 250Mi
       limits:
-        cpu: 500m
+        cpu: 750m
         memory: 300Mi
     volumes:
       claimName: dev-django-app-images
