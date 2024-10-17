@@ -22,3 +22,63 @@
     }
   }
 }
+
+
+.distance-overlay-selected {
+  display: flex;
+  align-items: center;
+  background-color: #0B3C75; /* Dark blue background */
+  color: white;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
+}
+
+.distance-icon-selected {
+  display: inline-block;
+  background-color: white;
+  color: #0B3C75; /* Matching the background color of the box */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
+.distance-text-selected {
+  font-weight: bold;
+}
+
+
+.distance-overlay-alternate {
+  display: flex;
+  align-items: center;
+  background-color: #E1EEFB; /* Light blue background */
+  color: #0B3C75; /* Dark blue text */
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+.distance-icon-alternate {
+  display: inline-block;
+  background-color: #0B3C75; /* Dark blue background for the icon */
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
+.distance-text-alternate {
+  font-weight: bold;
+}

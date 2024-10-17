@@ -15,7 +15,7 @@ import RouteDetailsPanel from './RouteDetailsPanel';
 // Styling
 import './index.scss';
 
-export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScreen, mapView) => {
+export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScreen, mapView, mapRef) => {
   if (clickedFeature) {
     if (!clickedFeature.get) {
       return <AdvisoriesPanel advisories={clickedFeature} smallScreen={smallScreen} mapView={mapView}/>;
@@ -38,7 +38,7 @@ export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScre
       case 'restStop':
         return <RestStopPanel feature={clickedFeature} />;
       case 'route':
-        return <RouteDetailsPanel routeDetails={routeDetails} />;
+        return <RouteDetailsPanel routeDetails={routeDetails} mapRef={mapRef}/>;
     }
   }
 }
@@ -50,7 +50,7 @@ export const maximizePanel = (panelRef) => {
         if (!panelRef.current.innerText.includes("Advisories\n")){
           panelRef.current.classList.add('maximized');
         }
-  } 
+  }
 }
 
 export const togglePanel = (panelRef, resetClickedStates, clickedFeatureRef, updateClickedFeature, pushMargins) => {

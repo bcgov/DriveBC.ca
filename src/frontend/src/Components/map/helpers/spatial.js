@@ -58,6 +58,7 @@ export const filterByRoute = (data, route, extraToleranceMeters, populateProject
     return data;
   }
 
+  if (data !== undefined && data.length === 0) return;
   const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];
   const routeLineString = turf.lineString(lineCoords);
   const bufferedRouteLineString = turf.buffer(routeLineString, 150, {units: 'meters'});

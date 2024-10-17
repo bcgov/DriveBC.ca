@@ -103,7 +103,7 @@ export default function DriveBCMap(props) {
       restStops: { list: restStops, filteredList: filteredRestStops },
     },
     advisories: { list: advisories },
-    routes: { searchLocationFrom, searchLocationTo, selectedRoute },
+    routes: { searchLocationFrom, searchLocationTo, selectedRoute, alternateRoute },
     map: { zoom, pan }
 
   } = useSelector(
@@ -397,6 +397,12 @@ export default function DriveBCMap(props) {
       });
     });
 
+    const alternateDl = alternateRoute && alternateRoute.routeFound ? alternateRoute : null;
+    loadLayer(
+      mapLayers, mapRef, mapContext,
+      'alternateRouteLayer', alternateDl, alternateDl, 3, null, updateReferenceFeature
+    );
+
     // Remove layer if no route found
     const dl = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
 
@@ -418,8 +424,7 @@ export default function DriveBCMap(props) {
     } else {
       resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
     }
-
-  }, [selectedRoute]);
+  }, [selectedRoute, alternateRoute]);
 
   // Cameras layer
   useEffect(() => {
@@ -603,13 +608,13 @@ export default function DriveBCMap(props) {
         <div className="panel-content">
           {openPanel && (
             (selectedRoute && selectedRoute.routeFound)
-            && renderPanel(clickedFeature, null, {...routeDetails, ferries: selectedFerries, distance: routeDistance, distanceUnit: routeDistanceUnit}, smallScreen, mapView)
+            && renderPanel(clickedFeature, null, {...routeDetails, ferries: selectedFerries, distance: routeDistance, distanceUnit: routeDistanceUnit}, smallScreen, mapView, mapRef)
           )}
 
           {openPanel && (
             (!selectedRoute || !selectedRoute.routeFound) && renderPanel((clickedFeature && !clickedFeature.get)
             ? advisoriesInView
-            : clickedFeature , isCamDetail, null, smallScreen, mapView )
+            : clickedFeature , isCamDetail, null, smallScreen, mapView, mapRef )
           )}
         </div>
       </div>
@@ -622,6 +627,7 @@ export default function DriveBCMap(props) {
               routeEdit={true}
               showSpinner={showSpinner}
               onShowSpinnerChange={setShowSpinner}
+              mapRef={mapRef}
             />
             <AdvisoriesWidget
               advisories={advisoriesInView}

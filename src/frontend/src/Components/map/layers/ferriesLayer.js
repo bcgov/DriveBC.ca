@@ -53,6 +53,9 @@ export function getFerriesLayer(ferriesData, projectionCode, mapContext, referen
 }
 
 export function updateFerriesLayer(ferries, layer, setLoadingLayers) {
+  if(ferries === undefined){
+    return;
+  }
   const ferriesDict = ferries.reduce((dict, obj) => {
     dict[obj.id] = obj;
     return dict;
