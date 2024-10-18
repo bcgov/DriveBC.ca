@@ -349,7 +349,7 @@ class FeedClient:
                     hourly_data = data.get("HourlyForecastGroup") or {}
 
                     warnings = data.get("Warnings") or {}
-                    if warnings.get("Url") is None:
+                    if not warnings.get("Events"):
                         warnings = None
 
                     regional_weather_data = {
