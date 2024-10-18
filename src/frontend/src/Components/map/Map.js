@@ -400,7 +400,7 @@ export default function DriveBCMap(props) {
 
     loadLayer(
       mapLayers, mapRef, mapContext,
-      'routeLayer', dl, dl, 3, null, updateReferenceFeature
+      'routeLayer', dl, dl, 3, referenceData, updateReferenceFeature
     );
 
     if (selectedRoute && selectedRoute.routeFound) {
@@ -589,7 +589,8 @@ export default function DriveBCMap(props) {
 
         <div className="panel-content">
           {openPanel && (
-            (selectedRoute && selectedRoute.routeFound) && renderPanel(clickedFeature, null, {...routeDetails, ferries: selectedFerries, distance: routeDistance, distanceUnit: routeDistanceUnit}, smallScreen, mapView)
+            (selectedRoute && selectedRoute.routeFound)
+            && renderPanel(clickedFeature, null, {...routeDetails, ferries: selectedFerries, distance: routeDistance, distanceUnit: routeDistanceUnit}, smallScreen, mapView)
           )}
 
           {openPanel && (
