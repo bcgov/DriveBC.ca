@@ -350,7 +350,7 @@ class FeedClient:
                     hourly_data = data.get("HourlyForecastGroup") or {}
 
                     warnings = data.get("Warnings") or {}
-                    if warnings.get("Url") is None:
+                    if not warnings.get("Events"):
                         warnings = None
 
                     regional_weather_data = {
@@ -427,6 +427,15 @@ class FeedClient:
                         continue  # empty response, continue with next entry
                     data = response.json()
 
+                    warnings = data.get("Warnings") or {}
+                    if warnings.get("Events"):
+                        # Filter out any events with Type "ended"
+                        warnings["Events"] = [event for event in warnings["Events"] if event.get("Type") != "ended"]
+
+                    if not warnings["Events"]:
+                        warnings = None
+
+
                     # special handling for HEF locations not using 4326 coords
                     latitude = longitude = None
                     try:
@@ -465,7 +474,7 @@ class FeedClient:
                         'issued_utc': issued,
                         'forecasts': forecasts,
                         'source': source,
-                        'warnings': entry.get("Warnings", {}).get("Events", []),
+                        'warnings': warnings,
                     })
 
                 except requests.RequestException as e:

@@ -79,27 +79,27 @@ export default function RegionalWeatherPanel(props) {
         </div>
       </div>
 
-      { weather.warnings &&
+      { weather.warnings && (
         <div className="popup__advisory">
           { weather.warnings.Events.map(event => {
             return <div key={ event.expirytime } className="event">
               <FontAwesomeIcon icon={faTriangleExclamation} />
               <p className="advisory-title">{ event.Description }</p>
+              {event.Url && (
+                <p className="label link">
+                <a
+                  alt="Environment Canada Details Link"
+                  target="_blank"
+                  rel="noreferrer"
+                  href={ event.Url }>
+                  Details
+                </a>
+              </p>
+              )}
             </div>;
           })}
-
-          <p className="label link">
-            <a
-              alt="Past 24 Hours"
-              target="_blank"
-              rel="noreferrer"
-              href={ weather.warnings.Url }>
-
-              Details
-            </a>
-          </p>
         </div>
-      }
+      )}
 
       {(!conditions.temperature_value || !weather.future_forecasts.length || !weather.current_day_forecasts.length) &&
         <div className="popup__info">

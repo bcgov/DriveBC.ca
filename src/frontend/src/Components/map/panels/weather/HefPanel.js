@@ -6,7 +6,10 @@ import { useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMountain } from '@fortawesome/pro-solid-svg-icons';
+import {
+  faMountain,
+  faTriangleExclamation,
+} from '@fortawesome/pro-solid-svg-icons';
 
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
@@ -44,6 +47,28 @@ export default function HefPanel(props) {
         </div>
       </div>
 
+      { data.warnings && (
+        <div className="popup__advisory">
+          { data.warnings.Events.map(event => {
+            return <div key={ event.expirytime } className="event">
+              <FontAwesomeIcon icon={faTriangleExclamation} />
+              <p className="advisory-title">{ event.Description }</p>
+              {event.Url && (
+                <p className="label link">
+                <a
+                  alt="Environment Canada Details Link"
+                  target="_blank"
+                  rel="noreferrer"
+                  href={ event.Url }>
+                  Details
+                </a>
+              </p>
+              )}
+            </div>;
+          })}
+        </div>
+      )}
+
       <div className="popup__content">
         <div className="popup__content__title">
           <p className="name">{data.name}</p>
@@ -64,7 +89,18 @@ export default function HefPanel(props) {
             </div>
           ))}
         </div>
+        <div className="popup__content__additional">
+          <p className="label">
+            Courtesy of&nbsp;
 
+            <a alt="Environment Canada"
+              target="_blank"
+              rel="noreferrer"
+              href="https://weather.gc.ca/canada_e.html">
+              Environment Canada
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
