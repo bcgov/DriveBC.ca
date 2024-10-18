@@ -24,10 +24,6 @@
         }
       }
 
-      .camera-orientations {
-        padding: 0 1rem;
-      }
-
       &__tools {
         .favourite-btn {
           svg {
@@ -45,7 +41,6 @@
 .clip {
   position: relative;
   overflow: hidden;
-  margin-bottom: -10px;  /* to allow overlap of image timestamp bar */
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 

@@ -10,20 +10,25 @@
     }
   }
 
-  .back-link {
-    font-weight: 700;
-    text-decoration: none;
-    cursor: pointer;
+  #back-container {
+    padding-top: 16px;
+    padding-bottom: 16px;
 
-    &:hover {
-      text-decoration: underline;
+    .back-link {
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+  
+      &:hover {
+        text-decoration: underline;
+      }
+  
+      svg {
+        margin-right: 8px;
+      }
     }
-
-    svg {
-      margin-right: 8px;
-    }
+  
   }
-
   .camera-details {
     display: flex;
     flex-direction: column;

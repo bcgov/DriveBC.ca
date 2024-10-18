@@ -364,7 +364,7 @@ export default function CameraDetailsPage() {
       )}
 
       <div className="page-header">
-        <Container>
+        <Container id="back-container">
           <a
             className="back-link"
             onClick={returnHandler}
