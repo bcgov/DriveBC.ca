@@ -35,7 +35,9 @@ export function getRouteLayer(routeData, projectionCode, mapContext, referenceDa
           projectionCode,
         );
 
-        updateReferenceFeature(olFeatureForMap);
+        if (!referenceData.type) { // if there's no feature specified in the URL
+          updateReferenceFeature(olFeatureForMap);
+        }
 
         const centroidGeometry = new Point(
           olFeature.getGeometry().getCoordinates()[
