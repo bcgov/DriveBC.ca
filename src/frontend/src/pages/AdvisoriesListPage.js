@@ -8,6 +8,10 @@ import { updateAdvisories } from '../slices/cmsSlice';
 
 // External imports
 import Container from 'react-bootstrap/Container';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faCircleExclamation,
+} from '@fortawesome/pro-regular-svg-icons';
 
 // Internal imports
 import { CMSContext } from '../App';
@@ -93,8 +97,8 @@ export default function AdvisoriesListPage() {
         description='Get the latest critical info impacting travel on a highway or region.'>
       </PageHeader>
 
-      <div className="container beta-message">
-        <p>REMINDER: This is a beta version of DriveBC.</p>
+      <div className="beta-message">
+        <p className="beta-message__title"><FontAwesomeIcon icon={faCircleExclamation} />This is a beta version of DriveBC.</p>
 
         <p>
           Advisories shared on the beta version are for feedback purposes and
