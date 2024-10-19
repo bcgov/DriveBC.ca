@@ -3,7 +3,6 @@
 .advisories-page {
   position: relative;
 
-
   .network-error, .server-error {
     @media (max-width: 768px) {
       position: relative;
@@ -43,13 +42,14 @@
 
           .advisory-li__content__partition {
             &:nth-of-type(1) {
-              width: 40%;
+              width: fit-content;
+              min-width: 300px;
             }
             &:nth-of-type(2) {
-              width: 40%;
+              width: auto;
             }
             &:nth-of-type(3) {
-              width: 20%;
+              width: fit-content;
             }
           }
         }
@@ -172,12 +172,23 @@
   }
 
   .beta-message {
-    padding-top: 2rem;
-    padding-bottom: 0;
-    font-weight: bold;
+    background-color: $Surface-minor;
+    border-radius: 8px;
+    width: fit-content;
+    margin: auto;
+    margin-top: 24px;
+    padding: 24px;
 
-    p, a {
-      font-weight: bold;
+    &__title {
+      font-size: 1.5rem;
+
+      svg {
+        margin-right: 12px;
+      }
+    }
+
+    p {
+      color: $Gold110;
     }
   }
 }

@@ -286,6 +286,12 @@ a[target="_blank"] {
         max-width: 1828px;
       }
     }
+
+    &.cms-page {
+      .container {
+        max-width: 980px;
+      }
+    }
   }
 }
 
