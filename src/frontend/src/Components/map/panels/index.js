@@ -14,7 +14,7 @@ import RouteDetailsPanel from './RouteDetailsPanel';
 // Styling
 import './index.scss';
 
-export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScreen, mapView) => {
+export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScreen, mapView, mapRef) => {
   if (clickedFeature) {
 
     if (!clickedFeature.get) {
@@ -36,7 +36,7 @@ export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScre
       case 'restStop':
         return <RestStopPanel feature={clickedFeature} />;
       case 'route':
-        return <RouteDetailsPanel routeDetails={routeDetails} />;
+        return <RouteDetailsPanel routeDetails={routeDetails} mapRef={mapRef}/>;
     }
   }
 }

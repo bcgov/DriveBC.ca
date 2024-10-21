@@ -39,10 +39,12 @@ export const routesSlice = createSlice({
     swapRoutesToFastest: (state) => {
       
       state.selectedRoute = state.fastestRoute;
+      state.alternateRoute = state.shortestRoute;
       
     },
     swapRoutesToShortest: (state) => {
       state.selectedRoute = state.shortestRoute;
+      state.alternateRoute = state.fastestRoute;
     },
   },
 });
