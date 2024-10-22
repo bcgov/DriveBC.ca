@@ -142,7 +142,7 @@ body {
     }
 
     &:not(.current) {
-      background: none;
+      background: $Blue30;
       border-color: transparent;
       color: $Type-Primary;
       font-weight: 400;

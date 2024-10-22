@@ -79,6 +79,10 @@
 
           .popup__content {
             overflow-y: auto;
+
+            .camera-orientations {
+              background: none;
+            }
           }
         }
 

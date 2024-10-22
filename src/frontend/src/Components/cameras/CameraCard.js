@@ -162,9 +162,9 @@ export default function CameraCard(props) {
 
   return (
     <div className={`camera-card ${stale} ${delayed} ${unavailable}`}>
-      <div className="camera-card__body" onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
+      <div className="camera-card__body">
         {!unavailable && !delayed && !stale && (
-          <div className="card-img-box">
+          <div className="card-img-box" onClick={handleClick} onKeyDown={handleKeyDown}>
             { showLoader ? <Skeleton height={180} /> :
               <img
                 className="card-img"
@@ -175,7 +175,7 @@ export default function CameraCard(props) {
         )}
 
         {!unavailable && stale && !delayed && (
-          <div className="card-img-box">
+          <div className="card-img-box" onClick={handleClick} onKeyDown={handleKeyDown}>
             { showLoader ? <Skeleton height={180} /> :
             <img
               className="card-img"
@@ -299,7 +299,7 @@ export default function CameraCard(props) {
 
         }
 
-        { showLoader? (<div><Skeleton height={20}/><Skeleton width={210} height={8} /><Skeleton width={246} height={8} /><Skeleton width={261} height={8} /></div>) : <p className="camera-name bold">{camera.name}</p>}
+        { showLoader? (<div><Skeleton height={20}/><Skeleton width={210} height={8} /><Skeleton width={246} height={8} /><Skeleton width={261} height={8} /></div>) : <a className="camera-name bold" onClick={handleClick} onKeyDown={handleKeyDown}>{camera.name}</a>}
         { showLoader? (<Skeleton />) : <p className="label">{camera.caption}</p>}
 
       </div>
