@@ -92,7 +92,7 @@ export default function HighwayFilters(props) {
         aria-label="showFilter filters options"
         onClick={() => setShowFilter(!showFilter)}>
 
-        {largeScreen && <div className="caption">Filter by Highway</div>}
+        {largeScreen && <p className="btn-text">Filter by Highway</p>}
 
         <FontAwesomeIcon icon={camsContext.highwayFilterKey ? faFilter : faFilterOutline} />
 

@@ -406,7 +406,7 @@ export default function DriveBCMap(props) {
 
     loadLayer(
       mapLayers, mapRef, mapContext,
-      'routeLayer', dl, dl, 3, null, updateReferenceFeature
+      'routeLayer', dl, dl, 3, referenceData, updateReferenceFeature
     );
 
     if (selectedRoute && selectedRoute.routeFound) {
