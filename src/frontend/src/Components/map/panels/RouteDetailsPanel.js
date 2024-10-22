@@ -31,7 +31,7 @@ export default function RouteDetailsPanel(props) {
   }))));
 
   const [activeIndex, setActiveIndex] = useState(null);
-
+  
   const handleRouteClick = (index) => {
     setActiveIndex(index);
     if(index === 0){
@@ -45,7 +45,13 @@ export default function RouteDetailsPanel(props) {
   };
 
   useEffect(() => {
-    removeDistanceOverlay(mapRef);
+    const isDistanceLayerAdded = sessionStorage.getItem('isDistanceLayerAdded');
+    if(isDistanceLayerAdded === "true"){
+      removeDistanceOverlay(mapRef);
+    }
+    else{
+      addDistanceOverlay(mapRef, 0);
+    }
   }, []);
 
   const removeDistanceOverlay = (mapRef) => {
@@ -55,6 +61,7 @@ export default function RouteDetailsPanel(props) {
     overlaysArray.forEach((overlay) => {
       mapRef.current.removeOverlay(overlay);
     });
+    sessionStorage.setItem('isDistanceLayerAdded', "false");
   };
 
   const addDistanceOverlay = (mapRef, selectedIndex) => {
@@ -112,6 +119,7 @@ export default function RouteDetailsPanel(props) {
     });
 
     mapRef.current.addOverlay(distanceOverlaySecond);
+    sessionStorage.setItem('isDistanceLayerAdded', 'true');
 
   }
 
@@ -125,10 +133,15 @@ export default function RouteDetailsPanel(props) {
 
       <div className="popup__content">
         <RouteDetails route={fastestRoute} isPanel={true} isActive={activeIndex === 0} // Pass active state for the first RouteDetails
-        onClick={() => handleRouteClick(0)} />
+        onClick={() => handleRouteClick(0)} 
+        mapRef={mapRef}
+        />
       <br/>
       <RouteDetails route={shortestRoute} isPanel={true} isActive={activeIndex === 1} // Pass active state for the first RouteDetails
-        onClick={() => handleRouteClick(1)} />
+        onClick={() => handleRouteClick(1)} 
+        mapRef={mapRef}
+        />
+        
       </div>
      
     </div>

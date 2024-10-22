@@ -613,6 +613,7 @@ export default function DriveBCMap(props) {
               routeEdit={true}
               showSpinner={showSpinner}
               onShowSpinnerChange={setShowSpinner}
+              mapRef={mapRef}
             />
             <AdvisoriesWidget
               advisories={advisoriesInView}
