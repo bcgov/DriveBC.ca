@@ -1,7 +1,11 @@
-import zoneinfo
 from datetime import datetime
+import html  # Importing html module for unescaping HTML entities
+import zoneinfo
 
 import pytz
+from rest_framework import serializers
+from rest_framework_gis.fields import GeometryField
+
 from apps.feed.fields import (
     DriveBCDateField,
     DriveBCField,
@@ -18,10 +22,9 @@ from apps.feed.fields import (
     WebcamRegionGroupField,
 )
 from apps.rest.models import RestStop
-from apps.weather.models import CurrentWeather, RegionalWeather
-from rest_framework import serializers
-
-import html  # Importing html module for unescaping HTML entities
+from apps.weather.models import (
+    CurrentWeather, RegionalWeather, HighElevationForecast
+)
 
 
 # Webcam
@@ -273,6 +276,16 @@ class CurrentWeatherSerializer(serializers.Serializer):
             'datasets',
             'issuedUtc',
         )
+
+
+class HighElevationForecastSerializer(serializers.ModelSerializer):
+    """ The inbound serializer, converting our feed to our model """
+
+    location = GeometryField()
+
+    class Meta:
+        model = HighElevationForecast
+        fields = '__all__'
 
 
 # Rest Stop serializer

@@ -1,7 +1,11 @@
 from zoneinfo import ZoneInfo
 
-from apps.weather.models import CurrentWeather, RegionalWeather
 from rest_framework import serializers
+from rest_framework_gis.fields import GeometryField
+
+from apps.weather.models import (
+    CurrentWeather, HighElevationForecast, RegionalWeather
+)
 
 tz = ZoneInfo("America/Vancouver")
 
@@ -115,3 +119,21 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
         if "road_surface" in obj.datasets:
             data = obj.datasets["road_surface"]
             return data["value"]
+
+
+class HighElevationForecastSerializer(serializers.ModelSerializer):
+    """ The outbound serializer, consumed by the frontend """
+
+    id = serializers.SerializerMethodField()
+    location = GeometryField()
+
+    class Meta:
+        model = HighElevationForecast
+        exclude = (
+            'created_at',
+            'modified_at',
+            'source',
+        )
+
+    def get_id(self, obj):
+        return obj.code
