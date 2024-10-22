@@ -21,6 +21,11 @@ import regionalWeatherIconActive from '../../images/mapIcons/regional-weather-ac
 import regionalWeatherIconHover from '../../images/mapIcons/regional-weather-hover.png';
 import regionalWeatherIconStatic from '../../images/mapIcons/regional-weather-static.png';
 
+// High Elevation Forecast
+import hefIconActive from '../../images/mapIcons/elevation-active.png';
+import hefIconHover from '../../images/mapIcons/elevation-hover.png';
+import hefIconStatic from '../../images/mapIcons/elevation-static.png';
+
 // Rest Stops
 import restStopIconActive from '../../images/mapIcons/restarea-open-active.png';
 import restStopIconHover from '../../images/mapIcons/restarea-open-hover.png';
@@ -171,6 +176,28 @@ export const regionalStyles = {
     image: new Icon({
       scale: 0.25,
       src: regionalWeatherIconActive,
+    }),
+  }),
+};
+
+// High elevation forecase styles
+export const hefStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: hefIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: hefIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: hefIconActive,
     }),
   }),
 };

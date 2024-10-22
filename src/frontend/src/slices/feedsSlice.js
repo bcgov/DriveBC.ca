@@ -14,6 +14,7 @@ export const feedsSlice = createSlice({
     ferries: feedsInitialState,
     weather: feedsInitialState,
     regional: feedsInitialState,
+    hef: feedsInitialState,
     restStops: feedsInitialState,
   },
   reducers: {
@@ -32,6 +33,9 @@ export const feedsSlice = createSlice({
     updateRegional: (state, action) => {
       state.regional = action.payload;
     },
+    updateHef: (state, action) => {
+      state.hef = action.payload;
+    },
     updateRestStops: (state, action) => {
       state.restStops = action.payload;
     },
@@ -44,6 +48,7 @@ export const {
   updateFerries,
   updateWeather,
   updateRegional,
+  updateHef,
   updateRestStops,
 } = feedsSlice.actions;
 
