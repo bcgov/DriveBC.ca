@@ -31,7 +31,7 @@ def update_camera_task():
     update_all_webcam_data()
 
 
-@db_periodic_task(crontab(minute="*/2"))
+@db_periodic_task(crontab(minute="*/1"))
 @lock_task('events-lock')
 def populate_event_task():
     populate_all_event_data()
@@ -61,7 +61,7 @@ def populate_current_weather_task():
     populate_all_local_weather_data()
 
 
-@db_periodic_task(crontab(minute="*/5"))
+@db_periodic_task(crontab(hour="*/24", minute="0"))
 @lock_task('popoulate-rest-stop-lock')
 def populate_rest_stop_task():
     populate_all_rest_stop_data()

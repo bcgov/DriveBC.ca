@@ -75,6 +75,8 @@
       .content {
         background: $Grey10;
         padding: 16px 16px 32px;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
 
         .advisories-list {
           list-style: none;
@@ -126,7 +128,6 @@
         font-size: 0.875rem;
         height: 100%;
         margin: auto 0;
-        border: 1px solid transparent;
         white-space: nowrap;
 
         @media (min-width: 768px) {
