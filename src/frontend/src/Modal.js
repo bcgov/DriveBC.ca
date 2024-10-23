@@ -5,7 +5,7 @@ import React, { useCallback, useContext } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { memoize } from 'proxy-memoize';
 import { resetFavLists, updatePendingAction } from './slices/userSlice';
-import { updateSelectedRoute } from './slices/routesSlice'
+import { updateSelectedRoute, updateAlternateRoute } from './slices/routesSlice'
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -27,16 +27,18 @@ export default function Modal() {
 
   // Redux
   const dispatch = useDispatch();
-  const { selectedRoute } = useSelector(useCallback(memoize(state => ({
-    selectedRoute: state.routes.selectedRoute
+  const { selectedRoute, alternateRoute } = useSelector(useCallback(memoize(state => ({
+    selectedRoute: state.routes.selectedRoute,
+    alternateRoute: state.routes.alternateRoute
   }))));
 
   /* Handlers */
   const handleSubmit = (e) => {
     dispatch(resetFavLists());
     if (selectedRoute && selectedRoute.id) {
-      const payload = {...selectedRoute, id: null, saved: false, label: null};
+      const payload = {...selectedRoute, alternateRoute, id: null, saved: false, label: null};
       dispatch(updateSelectedRoute(payload));
+      dispatch(updateAlternateRoute(payload));
     }
   };
 
