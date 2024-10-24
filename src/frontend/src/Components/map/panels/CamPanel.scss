@@ -4,6 +4,8 @@
   // Cameras panel
   &--camera {
     .popup__content {
+      padding: 1rem;
+      
       &__title {
         .name:hover {
           cursor:pointer;

@@ -71,14 +71,26 @@
         color: $Grey100;
       }
     }
+
+    .card-pill {
+      &:hover {
+        background-color: $Grey70;
+      }
+    }
   }
 
   &.delayed {
     .card-banner, .card-pill {
-      background-color: $BC-Yellow-Alt;
+      background-color: $Gold20;
 
       p, svg {
         color: $BC-Yellow-Dark;
+      }
+    }
+
+    .card-pill {
+      &:hover {
+        background-color: $Gold60;
       }
     }
   }
@@ -148,8 +160,8 @@
       }
 
       .card-banner {
-        padding: 24px 6px 12px 12px;
-        top: -12px;
+        padding: 36px 6px 12px 12px;
+        top: -24px;
         width: 100%;
         justify-content: space-between;
 
@@ -173,6 +185,11 @@
         padding: 4px 6px;
         border-radius: 12px;
         transform:translateY(-200%);
+        transition: background-color 0.1s ease-in-out;
+
+        &:hover {
+          transition: background-color 0.1s ease-in-out;
+        }
 
         p, svg {
           font-size: 0.625rem;
