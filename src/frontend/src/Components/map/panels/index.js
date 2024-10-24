@@ -46,8 +46,10 @@ export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScre
 export const maximizePanel = (panelRef) => {
   if (panelRef.current.classList.contains('open') &&
       !panelRef.current.classList.contains('maximized')) {
-    // Prevent maximizing advisory panel on mobile view
-    // panelRef.current.classList.add('maximized');
+        // Prevent maximizing advisory panel on mobile view
+        if (!panelRef.current.innerText.includes("Advisories\n")){
+          panelRef.current.classList.add('maximized');
+        }
   } 
 }
 
