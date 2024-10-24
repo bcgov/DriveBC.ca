@@ -29,6 +29,7 @@ from apps.feed.serializers import (
     WebcamFeedSerializer,
 )
 from django.conf import settings
+from django.contrib.gis.geos import Point
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -257,7 +258,7 @@ class FeedClient:
         )
 
     # Regional Weather
-    def get_regional_weather_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
+    def get_regional_weather_list(self):
         """Get data feed for list of objects."""
 
         area_code_endpoint = settings.DRIVEBC_WEATHER_AREAS_API_BASE_URL
@@ -369,8 +370,7 @@ class FeedClient:
                         'warnings': warnings,
                     }
 
-                    serializer = serializer_cls(data=regional_weather_data,
-                                                many=isinstance(regional_weather_data, list))
+                    serializer = RegionalWeatherSerializer(data=regional_weather_data)
                     json_objects.append(regional_weather_data)
 
                 except requests.RequestException as e:
@@ -388,11 +388,94 @@ class FeedClient:
             for field, errors in field_errors.items():
                 logger.error(f"Field: {field}, Errors: {errors}")
 
-    def get_regional_weather_list(self):
-        return self.get_regional_weather_list_feed(
-            REGIONAL_WEATHER, 'regionalweather', RegionalWeatherSerializer,
-            {"format": "json", "limit": 500}
-        )
+    # High Elevation Forecasts
+    def get_high_elevation_forecast_list(self):
+        """Get data feed for list of objects."""
+
+        area_code_endpoint = settings.DRIVEBC_SAWSX_API_BASE_URL + '/ec/list/fcstareas'
+
+        try:
+            access_token = self.get_access_token()
+            headers = {"Authorization": f"Bearer {access_token}"}
+        except requests.RequestException as e:
+            return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
+
+        try:
+            response = requests.get(area_code_endpoint, headers=headers)
+            response.raise_for_status()
+            json_response = response.json()
+            json_objects = []
+
+            for entry in json_response:
+                # only high elevation ares will return anything; skip others
+                if entry.get('AreaType') != 'ECHIGHELEVN':
+                    continue
+
+                # Get fresh token in case earlier token has expired
+                try:
+                    access_token = self.get_access_token()
+                    headers = {"Authorization": f"Bearer {access_token}"}
+                except requests.RequestException as e:
+                    return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
+
+                area_code = entry.get("AreaCode")
+                api_endpoint = settings.DRIVEBC_SAWSX_API_BASE_URL + f'/ec/hefforecast/{area_code}'
+
+                try:
+                    response = requests.get(api_endpoint, headers=headers)
+                    if response.status_code == 204:
+                        continue  # empty response, continue with next entry
+                    data = response.json()
+
+                    # special handling for HEF locations not using 4326 coords
+                    latitude = longitude = None
+                    try:
+                        location = data.get('Location', {}).get('Name', {})
+                        latitude = float(location.get('Latitude').replace('N', ''))
+                        longitude = float('-' + location.get('Longitude').replace('W', ''))
+                    except ValueError:
+                        logger.error(f"coudn't covert coords for {area_code}: {location}")
+                        latitude = longitude = None
+
+                    issued = data.get("ForecastIssuedUtc")
+                    if issued is not None:
+                        try:
+                            # Env Canada sends this field as ISO time without
+                            # offset, needed for python to parse correctly
+                            issued = datetime.fromisoformat(f"{issued}+00:00")
+                        except Exception:  # date parsing error
+                            logger.error(f"Issued UTC sent by {area_code} as {issued}")
+                            issued = None
+
+                    source = data.get('ForecastGroup', {}).get('Forecasts', [])
+                    forecasts = []
+                    for forecast in source:
+                        period = forecast.get('Period', {})
+                        icon = forecast.get('AbbreviatedForecast', {}).get('IconCode', {})
+                        forecasts.append({
+                            'label': period.get('TextForecastName'),
+                            'summary': forecast.get('TextSummary'),
+                            'icon': icon.get('Code'),
+                        })
+
+                    json_objects.append({
+                        'code': area_code,
+                        'name': entry.get('AreaName'),
+                        'location': Point([longitude, latitude]),
+                        'issued_utc': issued,
+                        'forecasts': forecasts,
+                        'source': source,
+                        'warnings': entry.get("Warnings", {}).get("Events", []),
+                    })
+
+                except requests.RequestException as e:
+                    logger.error(f"Error making API call for Area Code {area_code}: {e}")
+
+            return json_objects
+
+        except requests.RequestException:
+            return Response("Error fetching data from weather API", status=500)
+
 
     # Current Weather
     def get_current_weather_list_feed(self, resource_type, resource_name, serializer_cls, params=None):

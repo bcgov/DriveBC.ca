@@ -4,6 +4,7 @@ import { getCurrentWeatherLayer, updateCurrentWeatherLayer } from './currentWeat
 import { loadEventsLayers, updateEventsLayers } from './eventsLayer.js';
 import { getFerriesLayer, updateFerriesLayer } from './ferriesLayer.js';
 import { getRegionalWeatherLayer, updateRegionalWeatherLayer } from './regionalWeatherLayer.js';
+import { getHefLayer, updateHefLayer } from './hefLayer.js';
 import { getRestStopsLayer, updateRestStopsLayer } from './restStopsLayer.js';
 import { getLargeRestStopsLayer, updateLargeRestStopsLayer } from './largeRestStopsLayer.js';
 import { getRouteLayer } from './routeLayer.js';
@@ -14,6 +15,7 @@ const layerFuncMap = {
   weather: getCurrentWeatherLayer,
   inlandFerries: getFerriesLayer,
   regional: getRegionalWeatherLayer,
+  hef: getHefLayer,
   restStops: getRestStopsLayer,
   largeRestStops: getLargeRestStopsLayer,
   routeLayer: getRouteLayer,
@@ -24,6 +26,7 @@ const layerUpdateFuncMap = {
   inlandFerries: updateFerriesLayer,
   weather: updateCurrentWeatherLayer,
   regional: updateRegionalWeatherLayer,
+  hef: updateHefLayer,
   restStops: updateRestStopsLayer,
   largeRestStops: updateLargeRestStopsLayer,
 }
@@ -71,7 +74,7 @@ export const enableReferencedLayer = (referenceData, mapContext) => {
   } else if (featureType === 'ferry') {
     mapContext.visible_layers['inlandFerries'] = true;
 
-  } else if (featureType === 'regionalWeather' || featureType === 'localWeather') {
+  } else if (featureType === 'regionalWeather' || featureType === 'localWeather' || featureType === 'hef') {
     mapContext.visible_layers['weather'] = true;
     mapContext.visible_layers['regional'] = true;
 

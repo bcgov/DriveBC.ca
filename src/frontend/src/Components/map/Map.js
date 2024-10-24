@@ -99,6 +99,7 @@ export default function DriveBCMap(props) {
       ferries: { list: ferries, filteredList: filteredFerries },
       weather: { list: currentWeather, filteredList: filteredCurrentWeathers },
       regional: { list: regionalWeather, filteredList: filteredRegionalWeathers },
+      hef: { list: hef, filteredList: filteredHef },
       restStops: { list: restStops, filteredList: filteredRestStops },
     },
     advisories: { list: advisories },
@@ -114,6 +115,7 @@ export default function DriveBCMap(props) {
           ferries: state.feeds.ferries,
           weather: state.feeds.weather,
           regional: state.feeds.regional,
+          hef: state.feeds.hef,
           restStops: state.feeds.restStops,
         },
         advisories: state.cms.advisories,
@@ -507,6 +509,17 @@ export default function DriveBCMap(props) {
       );
     }
   }, [filteredRegionalWeathers]);
+
+  // High elevation forecasts layer
+  useEffect(() => {
+    if (!isCamDetail) {
+      loadLayer(
+        mapLayers, mapRef, mapContext,
+        'hef', hef, filteredHef, 70,
+        referenceData, updateReferenceFeature, setLoadingLayers
+      );
+    }
+  }, [filteredHef]);
 
   // Rest stops layer
   useEffect(() => {

@@ -1,9 +1,14 @@
 import logging
+from pprint import pprint
 
 from apps.feed.client import FeedClient
+from apps.feed.serializers import HighElevationForecastSerializer
 from apps.shared.enums import CacheKey
-from apps.weather.models import CurrentWeather, RegionalWeather
+from apps.weather.models import (
+    CurrentWeather, RegionalWeather, HighElevationForecast
+)
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +49,36 @@ def populate_all_regional_weather_data():
 
     # Rebuild cache
     cache.delete(CacheKey.REGIONAL_WEATHER_LIST)
+
+
+def populate_high_elevation_forecast_from_data(data):
+    code = data.get('code')
+
+    try:
+        event = HighElevationForecast.objects.get(code=code)
+
+    except ObjectDoesNotExist:
+        event = HighElevationForecast(code=code)
+
+    serializer = HighElevationForecastSerializer(event, data=data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+
+
+def populate_all_high_elevation_forecast_data():
+    client = FeedClient()
+    feed_data = client.get_high_elevation_forecast_list()
+    codes = []
+
+    for forecast in feed_data:
+        codes.append(forecast['code'])
+        populate_high_elevation_forecast_from_data(forecast)
+
+    # Remove forecasts not included in this batch
+    HighElevationForecast.objects.exclude(code__in=codes).delete()
+
+    # Rebuild cache
+    cache.delete(CacheKey.HIGH_ELEVATION_FORECAST_LIST)
 
 
 def populate_local_weather_from_data(new_current_weather_data):

@@ -4,6 +4,7 @@ import {
   updateEvents,
   updateFerries,
   updateRegional,
+  updateHef,
   updateRestStops,
   updateWeather
 } from './feedsSlice';
@@ -17,6 +18,7 @@ export {
   updateFerries,
   updateMapState,
   updateRegional,
+  updateHef,
   updateRestStops,
   updateSearchLocationFrom,
   updateSearchLocationTo,

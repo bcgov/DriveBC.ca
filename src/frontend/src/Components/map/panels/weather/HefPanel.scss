@@ -1,0 +1,80 @@
+@import "../../../../styles/variables";
+
+.popup {
+  // Regional Weather popup
+  &--weather--hef {
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    .popup__title {
+      background-color: $Grey30;
+      border-top: 4px solid $Type-Primary;
+
+      .name {
+        color: $Type-Primary;
+      }
+
+      &__icon {
+        background-color: $Type-Primary;
+        color: white;
+      }
+    }
+
+    .popup__content {
+      p {
+        margin-bottom: 0;
+      }
+
+      &__title {
+        .name {
+          color: $Type-Primary;
+          font-size: 1.75rem;
+          margin-bottom: 0;
+        }
+
+        .friendly-time {
+          margin: 0 auto 1rem;
+          &-text {
+            color: $Type-Secondary;
+            font-size: 0.875rem;
+          }
+        }
+      }
+
+      &__forecasts {
+        padding-top: 0;
+        margin: 0 1rem;
+
+        .forecast {
+          margin-top: 1rem;
+          padding: 1rem;
+          border-radius: 10px;
+          box-shadow: rgb(0 0 0 / 20%) 0px 3px 6px;
+
+          .title {
+            display: flex;
+            margin-bottom: 0.5rem;
+
+            .icon {
+              width: 2rem;
+              font-size: 1rem;
+              flex: none;
+            }
+
+            .label {
+              font-size: 1rem;
+              font-weight: 700;
+            }
+          }
+
+          .summary {
+            font-size: 0.925rem;
+          }
+        }
+      }
+    }
+  }
+}

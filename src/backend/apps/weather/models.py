@@ -67,3 +67,22 @@ class CurrentWeather(BaseModel):
     def save(self, *args, **kwargs):
         self.location = Point(self.location_longitude, self.location_latitude)
         super().save(*args, **kwargs)
+
+
+class HighElevationForecast(BaseModel):
+    """ Forecasts available through the winter for select areas """
+
+    code = models.CharField(max_length=10, primary_key=True)
+    name = models.CharField(max_length=100, null=True)
+
+    issued_utc = models.DateTimeField(null=True)
+
+    location = models.GeometryField()
+
+    # HEF are delivered as triplets of forecasts, divided into night and day
+    # periods: today, tonight, tomorrow; or tonight, tomorrow and tomorrow
+    # night.  They contain all the labelling we need, so we just need to store
+    # them in order
+    forecasts = models.JSONField(null=True, default=list) # minimal, for API
+    source = models.JSONField(null=True) # original
+    warnings = models.JSONField(null=True, default=list)

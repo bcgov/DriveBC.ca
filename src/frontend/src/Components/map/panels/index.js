@@ -8,6 +8,7 @@ import EventPanel from './EventPanel';
 import FerryPanel from './FerryPanel';
 import LocalWeatherPanel from './weather/LocalWeatherPanel';
 import RegionalWeatherPanel from './weather/RegionalWeatherPanel';
+import HefPanel from './weather/HefPanel';
 import RestStopPanel from './RestStopPanel';
 import RouteDetailsPanel from './RouteDetailsPanel';
 
@@ -16,7 +17,6 @@ import './index.scss';
 
 export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScreen, mapView) => {
   if (clickedFeature) {
-
     if (!clickedFeature.get) {
       return <AdvisoriesPanel advisories={clickedFeature} smallScreen={smallScreen} mapView={mapView}/>;
     }
@@ -32,6 +32,8 @@ export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScre
         return <LocalWeatherPanel feature={clickedFeature} />;
       case 'regionalWeather':
         return <RegionalWeatherPanel feature={clickedFeature} />;
+      case 'hef':
+        return <HefPanel feature={clickedFeature} />;
       case 'largeRestStop':
       case 'restStop':
         return <RestStopPanel feature={clickedFeature} />;

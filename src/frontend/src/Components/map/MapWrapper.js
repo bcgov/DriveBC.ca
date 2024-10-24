@@ -23,6 +23,7 @@ export default function MapWrapper(props) {
       ferries: { list: ferries, filteredList: filteredFerries, filterPoints: ferryFilterPoints },
       weather: { list: currentWeather, filteredList: filteredCurrentWeathers, filterPoints: currentWeatherFilterPoints },
       regional: { list: regionalWeather, filteredList: filteredRegionalWeathers, filterPoints: regionalWeatherFilterPoints },
+      hef: { list: hef, filteredList: filteredHef, filterPoints: hefFilterPoints },
       restStops: { list: restStops, filteredList: filteredRestStops, filterPoints: restStopFilterPoints },
     },
     advisories: { list: advisories, filteredList: filteredAdvisories, filterPoints: advisoryFilterPoints },
@@ -37,6 +38,7 @@ export default function MapWrapper(props) {
           ferries: state.feeds.ferries,
           weather: state.feeds.weather,
           regional: state.feeds.regional,
+          hef: state.feeds.hef,
           restStops: state.feeds.restStops,
         },
         advisories: state.cms.advisories,
@@ -103,6 +105,7 @@ export default function MapWrapper(props) {
     dataLoaders.loadFerries(routeData, ferries, filteredFerries, ferryFilterPoints, dispatch, displayError, workerRef.current);
     dataLoaders.loadCurrentWeather(routeData, currentWeather, filteredCurrentWeathers, currentWeatherFilterPoints, dispatch, displayError, workerRef.current);
     dataLoaders.loadRegionalWeather(routeData, regionalWeather, filteredRegionalWeathers, regionalWeatherFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadHef(routeData, hef, filteredHef, hefFilterPoints, dispatch, displayError, workerRef.current);
     dataLoaders.loadRestStops(routeData, restStops, filteredRestStops, restStopFilterPoints, dispatch, displayError, workerRef.current);
     dataLoaders.loadAdvisories(routeData, advisories, filteredAdvisories, advisoryFilterPoints, dispatch, displayError, workerRef.current);
   };
