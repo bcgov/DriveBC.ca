@@ -137,7 +137,7 @@ class FeedClient:
             headers=self._get_auth_headers(resource_type),
             params=params if params else {},
             timeout=timeout,
-            verify=True,
+            verify=False,
         )
         return self._get_response_data_or_raise(response)
 
