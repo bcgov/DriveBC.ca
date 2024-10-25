@@ -33,6 +33,7 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 import { addCameraGroups } from '../data/webcams.js';
 import {
   blueLocationMarkup,
+  redLocationToMarkup,
   fitMap,
   onMoveEnd,
   setLocationPin,
@@ -132,6 +133,7 @@ export default function DriveBCMap(props) {
   const isInitialMountLocation = useRef();
   const searchParamInitialized = useRef();
   const locationPinRef = useRef();
+  const locationToPinRef = useRef();
   const mapElement = useRef();
   const mapRef = useRef();
   const mapView = useRef();
@@ -369,6 +371,31 @@ export default function DriveBCMap(props) {
       }
     }
   }, [searchLocationFrom]);
+
+  useEffect(() => {
+    if (searchLocationTo && searchLocationTo.length) {
+      if (locationToPinRef.current) {
+        mapRef.current.removeOverlay(locationToPinRef.current);
+      }
+
+      setLocationPin(
+        searchLocationTo[0].geometry.coordinates,
+        redLocationToMarkup,
+        mapRef,
+        locationToPinRef,
+      );
+
+      const locationToPin = document.querySelectorAll(".ol-selectable")[0];
+      if(locationToPin !== undefined){
+        locationToPin.classList.remove("ol-overlay-container");
+      }
+    } else {
+      isInitialMountLocation.current = false;
+      if (locationToPinRef.current) {
+        mapRef.current.removeOverlay(locationToPinRef.current);
+      }
+    }
+  }, [searchLocationTo]);
 
   /* Triggering handlers based on navigation data */
   useEffect(() => {

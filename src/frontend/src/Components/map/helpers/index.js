@@ -1,7 +1,7 @@
 // Import all helper functions for map component
 import { onMoveEnd } from './advisories';
 import { setEventStyle } from './events';
-import { blueLocationMarkup, redLocationMarkup, setLocationPin } from './location';
+import { blueLocationMarkup, redLocationMarkup, redLocationToMarkup, setLocationPin } from './location';
 import { calculateCenter, fitMap, setZoomPan, toggleMyLocation, transformFeature, zoomIn, zoomOut } from './map';
 import { compareRoutePoints, filterByRoute, filterAdvisoryByRoute, getMidPoint, populateRouteProjection } from './spatial';
 
@@ -11,7 +11,7 @@ export {
   // events
   setEventStyle,
   // location
-  blueLocationMarkup, redLocationMarkup, setLocationPin,
+  blueLocationMarkup, redLocationMarkup, redLocationToMarkup, setLocationPin,
   // map
   calculateCenter, fitMap, setZoomPan, toggleMyLocation, transformFeature, zoomIn, zoomOut,
   // spatial
