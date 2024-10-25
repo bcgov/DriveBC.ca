@@ -1,14 +1,10 @@
 import datetime
 
-from django.core.cache import cache
-from django.core.management import call_command
-from huey import crontab
-from huey.contrib.djhuey import db_periodic_task, on_startup, post_execute, lock_task
-
 from apps.cms.tasks import populate_all_ferry_data
 from apps.event.tasks import populate_all_event_data
 from apps.rest.tasks import populate_all_rest_stop_data
 from apps.weather.tasks import (
+    populate_all_high_elevation_forecast_data,
     populate_all_local_weather_data,
     populate_all_regional_weather_data,
 )
@@ -18,6 +14,11 @@ from apps.webcam.tasks import (
     populate_all_webcam_data,
     update_all_webcam_data,
 )
+from django.core.cache import cache
+from django.core.management import call_command
+from huey import crontab
+from huey.contrib.djhuey import db_periodic_task, lock_task, on_startup, post_execute
+
 
 @db_periodic_task(crontab(hour="*/6", minute="0"))
 @lock_task('populate-camera-lock')
@@ -59,6 +60,12 @@ def populate_regional_weather_task():
 @lock_task('current-weather-lock')
 def populate_current_weather_task():
     populate_all_local_weather_data()
+
+
+@db_periodic_task(crontab(minute="*/10"))
+@lock_task('he-weather-lock')
+def populate_he_weather_task():
+    populate_all_high_elevation_forecast_data()
 
 
 @db_periodic_task(crontab(hour="*/24", minute="0"))
