@@ -79,6 +79,7 @@ jobs:
         WEATHER_CLIENT_ID: testvar
         WEATHER_CLIENT_SECRET: testvar
         DRIVEBC_WEATHER_AREAS_API_BASE_URL: testvar
+        DRIVEBC_SAWSX_API_BASE_URL: testvar
         DRIVEBC_IMAGE_BASE_URL: http://localhost:8000
         DRIVEBC_WEATHER_CURRENT_API_BASE_URL: testvar
         DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL: testvar

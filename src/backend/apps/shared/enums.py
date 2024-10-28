@@ -59,6 +59,7 @@ class CacheKey:
     FERRY_LIST = "ferry_list"
     TEST_APP_CACHE = "test_app_cache"
     REGIONAL_WEATHER_LIST = "regional_weather_list"
+    HIGH_ELEVATION_FORECAST_LIST = "high_elevation_forecast_list"
     REST_STOP_LIST = "rest_stop_list"
 
 

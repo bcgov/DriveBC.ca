@@ -9,6 +9,7 @@ import {
   ferryStyles,
   roadWeatherStyles,
   regionalStyles,
+  hefStyles,
   restStopStyles,
   restStopClosedStyles,
   restStopTruckStyles,
@@ -79,6 +80,11 @@ export const resetClickedStates = (
         break;
       case 'regionalWeather':
         clickedFeatureRef.current.setStyle(regionalStyles['static']);
+        clickedFeatureRef.current.set('clicked', false);
+        updateClickedFeature(null);
+        break;
+      case 'hef':
+        clickedFeatureRef.current.setStyle(hefStyles['static']);
         clickedFeatureRef.current.set('clicked', false);
         updateClickedFeature(null);
         break;
@@ -237,6 +243,26 @@ const regionalClickHandler = (
   updateClickedFeature(feature);
 };
 
+const hefClickHandler = (
+  feature,
+  clickedFeatureRef,
+  updateClickedFeature,
+  isCamDetail,
+) => {
+  // reset previous clicked feature
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+    isCamDetail,
+  );
+
+  // set new clicked ferry feature
+  feature.setStyle(hefStyles['active']);
+  feature.setProperties({ clicked: true }, true);
+  updateClickedFeature(feature);
+};
+
 const restStopClickHandler = (
   feature,
   clickedFeatureRef,
@@ -318,6 +344,7 @@ export const pointerClickHandler = (
           loadCamDetails,
         );
         return;
+
       case 'event':
         trackEvent(
           'click',
@@ -333,6 +360,7 @@ export const pointerClickHandler = (
           isCamDetail,
         );
         return;
+
       case 'ferry':
         trackEvent(
           'click',
@@ -347,6 +375,7 @@ export const pointerClickHandler = (
           isCamDetail,
         );
         return;
+
       case 'currentWeather':
         trackEvent(
           'click',
@@ -361,6 +390,7 @@ export const pointerClickHandler = (
           isCamDetail,
         );
         return;
+
       case 'regionalWeather':
         trackEvent(
           'click',
@@ -375,6 +405,22 @@ export const pointerClickHandler = (
           isCamDetail,
         );
         return;
+
+      case 'hef':
+        trackEvent(
+          'click',
+          'map',
+          'high elevation forecast',
+          clickedFeature.getProperties().name,
+        );
+        hefClickHandler(
+          clickedFeature,
+          clickedFeatureRef,
+          updateClickedFeature,
+          isCamDetail,
+        );
+        return;
+
       case 'largeRestStop':
       case 'restStop':
         trackEvent(

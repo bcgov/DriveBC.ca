@@ -3,6 +3,7 @@ import {
   ferryStyles,
   roadWeatherStyles,
   regionalStyles,
+  hefStyles,
   restStopStyles,
   restStopClosedStyles,
   restStopTruckStyles,
@@ -44,6 +45,9 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
           break;
         case 'regionalWeather':
           hoveredFeature.setStyle(regionalStyles['static']);
+          break;
+        case 'hef':
+          hoveredFeature.setStyle(hefStyles['static']);
           break;
         case 'largeRestStop':
         case 'restStop':
@@ -131,6 +135,11 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
       case 'regionalWeather':
         if (!targetFeature.getProperties().clicked) {
           targetFeature.setStyle(regionalStyles['hover']);
+        }
+        return;
+      case 'hef':
+        if (!targetFeature.getProperties().clicked) {
+          targetFeature.setStyle(hefStyles['hover']);
         }
         return;
       case 'largeRestStop':
