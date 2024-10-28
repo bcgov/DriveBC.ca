@@ -65,7 +65,8 @@ export default function CamPanel(props) {
     const newCam = camFeature.id ? camFeature : camFeature.getProperties();
     setRootCam(newCam);
     setCamera(newCam);
-    setCamIndex(0);
+    const savedCamIndex = localStorage.getItem("camIndex") === 'null'? 0: localStorage.getItem("camIndex");
+    setCamIndex(savedCamIndex);
 
     setSearchParams(new URLSearchParams({ type: 'camera', id: newCam.id }));
   }, [camFeature]);
@@ -76,6 +77,7 @@ export default function CamPanel(props) {
       return;
     }
     setCamera(rootCam.camGroup[camIndex]);
+    localStorage.setItem("camIndex", camIndex);
   }, [camIndex]);
 
   /* Helpers */
