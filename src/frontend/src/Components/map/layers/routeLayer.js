@@ -35,7 +35,7 @@ export function getRouteLayer(routeData, projectionCode, mapContext, referenceDa
           projectionCode,
         );
 
-        if (!referenceData.type) { // if there's no feature specified in the URL
+        if (referenceData && !referenceData.type) { // if there's no feature specified in the URL
           updateReferenceFeature(olFeatureForMap);
         }
 

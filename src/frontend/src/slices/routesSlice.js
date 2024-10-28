@@ -37,10 +37,8 @@ export const routesSlice = createSlice({
     },
     // New swapRoutes reducer to swap selectedRoute and alternateRoute
     swapRoutesToFastest: (state) => {
-
       state.selectedRoute = state.fastestRoute;
       state.alternateRoute = state.shortestRoute;
-
     },
     swapRoutesToShortest: (state) => {
       state.selectedRoute = state.shortestRoute;
