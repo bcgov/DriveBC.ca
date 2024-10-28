@@ -7,12 +7,12 @@ import { getCookie } from "../../util";
 import { updateSelectedRoute } from '../../slices/routesSlice';
 import { removeFavRoute, pushFavRoute } from '../../slices/userSlice';
 
-export function getRoute(points) {
+export function getRoute(points, alternate=false) {
   const url = `${window.ROUTE_PLANNER}/directions.json`;
 
   return get(url, {
     points: points,
-//    criteria: 'fastest',
+    criteria: alternate ? 'fastest' : 'shortest',
 //    outputSRS: 4036,
 //    distanceUnit: 'km',
 //    correctSide: true,

@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 
 // Internal imports
-import { getRoute, getAlternateRoute } from '../data/routes.js';
+import { getRoute } from '../data/routes.js';
 import { clearSelectedRoute, clearAlternateRoute, updateSearchLocationFrom, updateSearchLocationTo, updateSelectedRoute, updateAlternateRoute, updateFastestRoute, updateShortestRoute } from '../../slices/routesSlice'
 import LocationSearch from './LocationSearch.js';
 import NoRouteFound from './NoRouteFound';
@@ -70,18 +70,13 @@ const RouteSearch = forwardRef((props, ref) => {
         dispatch(updateSelectedRoute(routeData));
         dispatch(updateFastestRoute(routeData));
         onShowSpinnerChange(false);
-        
       });
-      
-      getAlternateRoute(points, "shortest").then(routeData => {
+
+      getRoute(points, true).then(routeData => {
         dispatch(updateAlternateRoute(routeData));
         dispatch(updateShortestRoute(routeData));
         onShowSpinnerChange(false);
-        
       });
-
-
-
     }
   }, [showSpinner]);
 
