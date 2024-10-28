@@ -6,7 +6,7 @@
   @media (max-width: 767px) {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 58px);
+    height: calc(var(--vh, 1vh) * 100 - 58px);
   }
 
   .page-header__content, .page-subtitle, .report-map-wrap {
@@ -36,7 +36,7 @@
       }
 
       .report-map-wrap {
-        height: calc(100vh - 58px);
+        height: calc(var(--vh, 1vh) * 100 - 58px);
       }
     }
 
@@ -47,7 +47,7 @@
         padding-bottom: 0;
         overflow: hidden;
         transition: all 0.20s ease-in-out;
-        
+
         .back-link-wrap {
           overflow: hidden;
         }
@@ -68,7 +68,7 @@
         text-decoration: none;
         cursor: pointer;
         margin-bottom: 10px;
-  
+
         svg {
           margin-right: 8px;
         }
@@ -88,7 +88,7 @@
   .page-subtitle {
     padding-top: 16px;
     padding-bottom: 16px;
-    
+
     p {
       margin-bottom: 0;
     }
