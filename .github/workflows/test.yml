@@ -255,3 +255,4 @@ jobs:
     uses: bcgov/DriveBC.ca-automated-tests/.github/workflows/playwright.yml@main
     with:
       environment: 'test'
+    secrets: inherit
