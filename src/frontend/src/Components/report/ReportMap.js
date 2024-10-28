@@ -169,6 +169,21 @@ export function ReportMap(props) {
     isInitialMount.current = false;
   };
 
+  // DBC22-2831: mobile Safari vh too large
+  useEffect(() => {
+    const setVh = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    setVh();
+    window.addEventListener('resize', setVh);
+
+    return () => {
+      window.removeEventListener('resize', setVh);
+    };
+  }, []);
+
   useEffect(() => {
     loadMap();
   });
