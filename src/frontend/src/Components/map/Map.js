@@ -469,7 +469,7 @@ export default function DriveBCMap(props) {
   // Events layer
   useEffect(() => {
     // Add layers if not loaded
-    if (!mapLayers.current['majorEvents']) {
+    if (mapLayers.current && Object.keys(mapLayers.current).length > 0 && !mapLayers.current['majorEvents']) {
       const eventFound = loadEventsLayers(events, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers);
 
       if (referenceData?.type === 'event' && !eventFound) {
