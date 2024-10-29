@@ -11,14 +11,22 @@ import { AlertContext } from '../../App';
 // Styling
 import './ShareURLButton.scss';
 
-export default function ShareURLButton() {
+export default function ShareURLButton(props) {
   /* Setup */
   // Contexts
   const { setAlertMessage } = useContext(AlertContext);
 
+  // props
+  const { camIndex } = props;
+
   // Handler
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(window.location.href);
+    if (camIndex !== undefined){
+      navigator.clipboard.writeText(window.location.href + '&camIndex=' + camIndex);  
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+    }
+    
 
     setAlertMessage(<p>URL copied to clipboard</p>);
   };
