@@ -115,7 +115,6 @@ export default function Filters(props) {
   const [highwayCams, setHighwayCams] = useState(isCamDetail ? isCamDetail : mapContext.visible_layers.highwayCams);
   const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
   const [weather, setWeather] = useState(mapContext.visible_layers.weather);
-  const [hef, setHef] = useState(mapContext.visible_layers.hef);
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
   const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
 
@@ -399,8 +398,7 @@ export default function Filters(props) {
                         trackEvent('click', 'map', 'Toggle weather layer')
                         setLayerVisibility('weather', !weather);
                         setLayerVisibility('regional', !weather);
-                        setLayerVisibility('hef', !hef);
-                        setHef(!hef);
+                        setLayerVisibility('hef', !weather);
                         setWeather(!weather)}
                       }
                       defaultChecked={mapContext.visible_layers.weather}
