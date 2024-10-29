@@ -245,6 +245,7 @@ export default function EventsListPage() {
       workerRef.current.onmessage = function (event) {
         const { data, filteredData, route, action } = event.data;
 
+        // compare new and existing data here and tag them
         dispatch(
           slices[action]({
             list: data,

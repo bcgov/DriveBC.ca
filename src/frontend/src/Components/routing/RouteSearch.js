@@ -5,7 +5,15 @@ import { memoize } from 'proxy-memoize'
 
 // Internal imports
 import { getRoute } from '../data/routes.js';
-import { clearSelectedRoute, updateSearchLocationFrom, updateSearchLocationTo, updateSelectedRoute } from '../../slices/routesSlice'
+import {
+  clearSearchedRoutes,
+  clearSelectedRoute,
+  updateSelectedRoute,
+  updateSearchedRoutes,
+  updateSearchLocationFrom,
+  updateSearchLocationTo
+} from '../../slices/routesSlice'
+import { removeOverlays } from "../map/helpers";
 import LocationSearch from './LocationSearch.js';
 import NoRouteFound from './NoRouteFound';
 
@@ -22,17 +30,19 @@ import Spinner from 'react-bootstrap/Spinner';
 // Styling
 import './RouteSearch.scss';
 
-
 const RouteSearch = forwardRef((props, ref) => {
-  const { showFilterText, showSpinner, onShowSpinnerChange} = props;
+  const { showFilterText, showSpinner, onShowSpinnerChange, mapRef } = props;
 
   // Redux
   const dispatch = useDispatch();
-  const { searchLocationFrom, searchLocationTo, selectedRoute } = useSelector(useCallback(memoize(state => ({
+  const { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes } = useSelector(useCallback(memoize(state => ({
     searchLocationFrom: state.routes.searchLocationFrom,
     searchLocationTo: state.routes.searchLocationTo,
-    selectedRoute: state.routes.selectedRoute
+    selectedRoute: state.routes.selectedRoute,
+    searchedRoutes: state.routes.searchedRoutes
   }))));
+
+  const validSearch = searchLocationFrom && !!searchLocationFrom.length && searchLocationTo && !!searchLocationTo.length;
 
   // Refs
   const isInitialMount = useRef(true);
@@ -45,13 +55,35 @@ const RouteSearch = forwardRef((props, ref) => {
       return;
     }
 
-    if (searchLocationFrom && searchLocationFrom.length && searchLocationTo && searchLocationTo.length) {
+    if (validSearch) {
       onShowSpinnerChange(true);
 
     } else {
+      dispatch(clearSearchedRoutes());
       dispatch(clearSelectedRoute());
+      removeOverlays(mapRef);
     }
   }, [searchLocationFrom, searchLocationTo]);
+
+  const getRoutes = async () => {
+    const firstPoint = searchLocationFrom[0].geometry.coordinates.toString();
+    const secondPoint = searchLocationTo[0].geometry.coordinates.toString();
+
+    const points = firstPoint + ',' + secondPoint;
+
+    const routes = [];
+    const fastestRoute = await getRoute(points);
+    if (fastestRoute && fastestRoute.routeFound) {
+      routes.push(fastestRoute);
+    }
+
+    const shortestRoute = await getRoute(points, true);
+    if (shortestRoute && shortestRoute.routeFound) {
+      routes.push(shortestRoute);
+    }
+
+    return routes;
+  }
 
   useEffect(() => {
     if (isInitialMountSpinner.current) { // Do nothing on first load
@@ -60,13 +92,12 @@ const RouteSearch = forwardRef((props, ref) => {
     }
 
     if (showSpinner) {
-      const firstPoint = searchLocationFrom[0].geometry.coordinates.toString();
-      const secondPoint = searchLocationTo[0].geometry.coordinates.toString();
+      getRoutes().then((routes) => {
+        if (routes.length) {
+          dispatch(updateSelectedRoute(routes[0]));
+        }
 
-      const points = firstPoint + ',' + secondPoint;
-
-      getRoute(points).then(routeData => {
-        dispatch(updateSelectedRoute(routeData));
+        dispatch(updateSearchedRoutes(routes));
         onShowSpinnerChange(false);
       });
     }
@@ -81,7 +112,7 @@ const RouteSearch = forwardRef((props, ref) => {
   // Rendering
   return (
     <div ref={ref} className='routing routing-outer-container'>
-      {showFilterText && selectedRoute && selectedRoute.routeFound &&
+      {showFilterText && selectedRoute &&
         <p className={'routing-caption'}>Results below are filtered by this route:</p>
       }
 
@@ -122,9 +153,11 @@ const RouteSearch = forwardRef((props, ref) => {
           }
         </div>
 
-        <NoRouteFound selectedRoute={selectedRoute} />
+        {searchedRoutes &&
+          <NoRouteFound searchedRoutes={searchedRoutes} />
+        }
 
-        {!!searchLocationFrom.length && !!searchLocationTo.length &&
+        {validSearch &&
           <Button className="swap-button" aria-label="Swap start and destination" onClick={() => swapHandler()}><FontAwesomeIcon icon={faArrowUpArrowDown} /></Button>
         }
       </div>

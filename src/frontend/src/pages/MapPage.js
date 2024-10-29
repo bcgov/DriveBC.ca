@@ -20,7 +20,7 @@ export default function MapPage() {
   return (
     <DndProvider options={HTML5toTouch}>
       <div className="map-wrap">
-        <MapWrapper referenceData={{ type: searchParams.get('type'), id: searchParams.get('id'), display_category: searchParams.get('display_category') }} />
+        <MapWrapper referenceData={{ type: searchParams.get('type'), id: searchParams.get('id'), display_category: searchParams.get('display_category'), searchTimestamp: searchParams.get('searchTimestamp') }} />
       </div>
     </DndProvider>
   );

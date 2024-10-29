@@ -13,9 +13,25 @@ export const transformFeature = (feature, sourceCRS, targetCRS) => {
 };
 
 // Zoom and pan
-export const fitMap = (route, mapView) => {
-  const routeBbox = turf.bbox(turf.lineString(route));
-  const routeExtent = transformExtent(routeBbox, 'EPSG:4326', 'EPSG:3857');
+export const fitMap = (routes, mapView) => {
+  if (!Array.isArray(routes) || routes.length === 0) {
+    return;
+  }
+
+  // Initialize the combined bounding box with the first route's bounding box
+  const combinedBbox = turf.bbox(turf.lineString(routes[0].route));
+
+  // Iterate over the remaining routes and extend the combined bounding box
+  for (let i = 1; i < routes.length; i++) {
+    const routeBbox = turf.bbox(turf.lineString(routes[i].route));
+    combinedBbox[0] = Math.min(combinedBbox[0], routeBbox[0]);
+    combinedBbox[1] = Math.min(combinedBbox[1], routeBbox[1]);
+    combinedBbox[2] = Math.max(combinedBbox[2], routeBbox[2]);
+    combinedBbox[3] = Math.max(combinedBbox[3], routeBbox[3]);
+  }
+
+  // Transform the combined bounding box to the map's projection
+  const routeExtent = transformExtent(combinedBbox, 'EPSG:4326', 'EPSG:3857');
 
   if (mapView.current) {
     mapView.current.fit(routeExtent, { duration: 1000 });
@@ -103,3 +119,12 @@ export const calculateCenter = (referenceData) => {
       )
     : fromLonLat(referenceData.location.coordinates);
 }
+
+export const removeOverlays = (mapRef) => {
+  // Clone the overlays array to avoid issues when modifying the array during iteration
+  const overlaysArray = [...mapRef.current.getOverlays().getArray()];
+
+  overlaysArray.forEach((overlay) => {
+    mapRef.current.removeOverlay(overlay);
+  });
+};

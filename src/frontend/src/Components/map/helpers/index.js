@@ -2,7 +2,7 @@
 import { onMoveEnd } from './advisories';
 import { setEventStyle } from './events';
 import { blueLocationMarkup, redLocationMarkup, redLocationToMarkup, setLocationPin } from './location';
-import { calculateCenter, fitMap, setZoomPan, toggleMyLocation, transformFeature, zoomIn, zoomOut } from './map';
+import { calculateCenter, fitMap, removeOverlays, setZoomPan, toggleMyLocation, transformFeature, zoomIn, zoomOut } from './map';
 import { compareRoutePoints, filterByRoute, filterAdvisoryByRoute, getMidPoint, populateRouteProjection } from './spatial';
 
 export {
@@ -13,7 +13,7 @@ export {
   // location
   blueLocationMarkup, redLocationMarkup, redLocationToMarkup, setLocationPin,
   // map
-  calculateCenter, fitMap, setZoomPan, toggleMyLocation, transformFeature, zoomIn, zoomOut,
+  calculateCenter, fitMap, setZoomPan, toggleMyLocation, transformFeature, zoomIn, zoomOut, removeOverlays,
   // spatial
   compareRoutePoints, filterByRoute, filterAdvisoryByRoute, getMidPoint, populateRouteProjection
 };

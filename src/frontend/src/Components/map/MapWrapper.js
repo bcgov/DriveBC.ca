@@ -5,6 +5,9 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { memoize } from 'proxy-memoize';
 import { useSelector, useDispatch } from 'react-redux';
 
+// Navigation
+import { useSearchParams } from 'react-router-dom';
+
 // Components and functions
 import { NetworkError, ServerError } from '../data/helper';
 import * as dataLoaders from './dataLoaders'
@@ -14,6 +17,10 @@ import DriveBCMap from './Map';
 
 export default function MapWrapper(props) {
   /* Setup */
+
+  // Navigation
+  const [searchParams, setSearchParams] = useSearchParams();
+
   // Redux
   const dispatch = useDispatch();
   const {
@@ -66,6 +73,10 @@ export default function MapWrapper(props) {
 
   useEffect(() => {
     loadData();
+
+    if (selectedRoute) {
+      setSearchParams(new URLSearchParams({ type: 'route', searchTimestamp: selectedRoute.searchTimestamp }));
+    }
   }, [selectedRoute]);
 
   useEffect(() => {
@@ -100,14 +111,14 @@ export default function MapWrapper(props) {
 
     const routeData = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
 
-    dataLoaders.loadCameras(routeData, cameras, filteredCameras, camFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadEvents(routeData, events, filteredEvents, eventFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadFerries(routeData, ferries, filteredFerries, ferryFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadCurrentWeather(routeData, currentWeather, filteredCurrentWeathers, currentWeatherFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadRegionalWeather(routeData, regionalWeather, filteredRegionalWeathers, regionalWeatherFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadHef(routeData, hef, filteredHef, hefFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadRestStops(routeData, restStops, filteredRestStops, restStopFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadAdvisories(routeData, advisories, filteredAdvisories, advisoryFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadCameras(routeData, cameras, null, camFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadEvents(routeData, events, null, eventFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadFerries(routeData, ferries, null, ferryFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadCurrentWeather(routeData, null, filteredCurrentWeathers, currentWeatherFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadRegionalWeather(routeData, null, filteredRegionalWeathers, regionalWeatherFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadHef(routeData, hef, filteredHef, null, dispatch, displayError, workerRef.current);
+    dataLoaders.loadRestStops(routeData, restStops, null, restStopFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadAdvisories(routeData, advisories, null, advisoryFilterPoints, dispatch, displayError, workerRef.current);
   };
 
   return (

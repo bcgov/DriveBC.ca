@@ -1,0 +1,41 @@
+@import "../../styles/variables.scss";
+
+.distance-overlay {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+
+  background-color: $Blue20; /* Light blue background */
+  color: $BC-Blue; /* Dark blue text */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Light shadow */
+
+  &.selected {
+    background-color: $BC-Blue; /* Dark blue background */
+    color: $White;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
+  }
+
+  .distance-text {
+    font-weight: bold;
+  }
+
+  .index-label {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    margin-right: 8px;
+    background-color: $White;
+    color: $BC-Blue; /* Matching the background color of the box */
+
+    &.selected {
+      background-color: $BC-Blue; /* Dark blue background for the icon */
+      color: $White;
+    }
+  }
+}

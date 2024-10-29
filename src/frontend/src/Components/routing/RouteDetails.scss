@@ -1,6 +1,12 @@
 @import "../../styles/variables";
 
 .route-details {
+  margin-bottom: 1rem;
+
+  &.selected {
+    border: 2px solid $Info;
+  }
+
   .route-title {
     .route-tools {
       margin-bottom: 1rem;
@@ -13,18 +19,23 @@
         }
       }
     }
-    .route-icon {
+
+    .route-index {
       height: 24px;
       width: 24px;
       border-radius: 12px;
-      background-color: $Info;
+      border: 1px solid $Info;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 700;
       margin-bottom: 4px;
+      background-color: $White;
+      color: $Info;
 
-      svg {
+      &.selected {
+        background-color: $Info;
         color: $White;
       }
     }
@@ -113,13 +124,13 @@
       font-weight: 700;
       font-size: 0.875rem;
       width: 100%;
-    
+
       @media (min-width: 768px) {
         border-radius: 24px;
         padding: 4px 12px;
         width: auto;
       }
-    
+
       .route-item__icon {
         margin-right: 8px;
       }
@@ -132,7 +143,7 @@
         background: $Error;
         color: white;
       }
-      
+
       &--advisories {
         background: #FEF0D8;
         color: $Gold110;
@@ -143,7 +154,7 @@
       }
     }
   }
-  
+
   .route-items {
     margin-top: 16px;
 
