@@ -6,7 +6,7 @@ import { useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMountain } from '@fortawesome/pro-regular-svg-icons';
+import { faMountain } from '@fortawesome/pro-solid-svg-icons';
 
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
