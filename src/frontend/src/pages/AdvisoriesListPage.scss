@@ -35,6 +35,9 @@
       }
 
       &__content {
+        display: flex;
+        justify-content: space-between;
+
         @media (min-width: 992px) {
           display: flex;
           width: 100%;
@@ -55,6 +58,8 @@
         }
 
         .advisory-li-title-container {
+          width: 35%;
+          
           .advisory-li-title {
             text-decoration: none;
 
@@ -69,6 +74,8 @@
         }
 
         .advisory-li-body-container {
+          width: 50%;
+
           .advisory-li-body {
             font-size: 1.125rem;
           }
@@ -78,6 +85,7 @@
           display: flex;
           align-items: center;
           margin-top: 1rem;
+          width: 15%;
 
           @media (min-width: 992px) {
             margin-top: 0;
@@ -171,24 +179,28 @@
     }
   }
 
-  .beta-message {
-    background-color: $Surface-minor;
-    border-radius: 8px;
-    width: fit-content;
-    margin: auto;
-    margin-top: 24px;
-    padding: 24px;
+  .beta-message-container {
+    display: flex;
+    justify-content: center;
+    
+    .beta-message {
+      background-color: $Surface-minor;
+      border-radius: 8px;
+      width: fit-content;
+      margin: 24px 16px 0;
+      padding: 24px;
 
-    &__title {
-      font-size: 1.5rem;
+      &__title {
+        font-size: 1.5rem;
 
-      svg {
-        margin-right: 12px;
+        svg {
+          margin-right: 12px;
+        }
       }
-    }
 
-    p {
-      color: $Gold110;
+      p {
+        color: $Gold110;
+      }
     }
   }
 }
