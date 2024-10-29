@@ -68,3 +68,6 @@ class SavedRoutes(BaseModel):
 
     # last time the route was verified against the router API
     validated = models.DateTimeField(auto_now_add=True)
+
+    criteria = models.CharField(max_length=100, default='fastest')
+    searchTimestamp = models.CharField(max_length=100, default='fastest')

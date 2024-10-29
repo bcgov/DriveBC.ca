@@ -6,6 +6,7 @@ export const routesSlice = createSlice({
     searchLocationFrom: [],
     searchLocationTo: [],
     selectedRoute: null,
+    searchedRoutes: null,
   },
   reducers: {
     clearSelectedRoute: (state, action) => {
@@ -13,6 +14,18 @@ export const routesSlice = createSlice({
     },
     updateSelectedRoute: (state, action) => {
       state.selectedRoute = action.payload;
+    },
+    clearSearchedRoutes: (state, action) => {
+      state.searchedRoutes = null;
+    },
+    updateSearchedRoutes: (state, action) => {
+      state.searchedRoutes = action.payload;
+    },
+    updateSingleSearchedRoute: (state, action) => {
+      const index = state.searchedRoutes.findIndex(route => route.searchTimestamp === action.payload.searchTimestamp);
+      if (index !== -1) {
+        state.searchedRoutes[index] = action.payload;
+      }
     },
     updateSearchLocationFrom: (state, action) => {
       state.searchLocationFrom = action.payload;
@@ -23,6 +36,10 @@ export const routesSlice = createSlice({
   },
 });
 
-export const { clearSelectedRoute, updateSelectedRoute, updateSearchLocationFrom, updateSearchLocationTo } = routesSlice.actions;
+export const {
+  clearSelectedRoute, updateSelectedRoute, // selected route
+  updateSearchLocationFrom, updateSearchLocationTo, // search locations
+  updateSearchedRoutes, updateSingleSearchedRoute, clearSearchedRoutes // searched routes
+} = routesSlice.actions;
 
 export default routesSlice.reducer;

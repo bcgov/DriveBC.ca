@@ -2,14 +2,14 @@
 import { transformFeature } from '../helpers';
 
 // OpenLayers
-import { Point, LineString } from 'ol/geom';
-import { Stroke, Style } from 'ol/style.js';
+import { LineString } from 'ol/geom';
 import * as ol from 'ol';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
+import { routeStyles } from "../../data/featureStyleDefinitions";
 
-export function getRouteLayer(routeData, projectionCode, mapContext, referenceData, updateReferenceFeature) {
+export function getRouteLayer(routeData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers, preview=false) {
   return new VectorLayer({
     classname: 'route',
     visible: true,
@@ -19,60 +19,38 @@ export function getRouteLayer(routeData, projectionCode, mapContext, referenceDa
         const vectorSource = this;
         vectorSource.clear();
 
-        let olGeometry = null;
-        let centroidFeatureForMap = null;
+        const getRouteFeature = (routeData) => {
+          const olGeometry = new LineString(routeData.route);
+          const olFeature = new ol.Feature({ geometry: olGeometry, type: 'route' });
 
-        olGeometry = new LineString(routeData.route);
-        const olFeature = new ol.Feature({ geometry: olGeometry, type: 'route' });
+          // Transfer properties
+          olFeature.setProperties(routeData);
 
-        // Transfer properties
-        olFeature.setProperties(routeData);
+          // Transform the projection
+          const olFeatureForMap = transformFeature(
+            olFeature,
+            'EPSG:4326',
+            projectionCode,
+          );
 
-        // Transform the projection
-        const olFeatureForMap = transformFeature(
-          olFeature,
-          'EPSG:4326',
-          projectionCode,
-        );
-
-        if (!referenceData.type) { // if there's no feature specified in the URL
-          updateReferenceFeature(olFeatureForMap);
+          return olFeatureForMap;
         }
 
-        const centroidGeometry = new Point(
-          olFeature.getGeometry().getCoordinates()[
-            Math.floor(
-              olFeature.getGeometry().getCoordinates().length / 2,
-            )
-          ],
-        );
+        routeData.forEach(function (route, i) {
+          const feature = getRouteFeature(route);
 
-        const centroidFeature = new ol.Feature({
-          geometry: centroidGeometry,
+          if (!preview &&  // set first route if there's no feature specified in the URL
+            ((!referenceData.type && i === 0) ||
+            // set target route if specified in URL
+            (referenceData.type === 'route' && referenceData.searchTimestamp === feature.getProperties().searchTimestamp))
+          ) {
+            updateReferenceFeature(feature);
+          }
+
+          vectorSource.addFeature(feature);
         });
-
-        // Transfer properties
-        centroidFeature.setProperties(routeData);
-
-        // Transform the projection
-        centroidFeatureForMap = transformFeature(
-          centroidFeature,
-          'EPSG:4326',
-          projectionCode,
-        );
-
-        centroidFeatureForMap.setId(olFeatureForMap.ol_uid);
-        vectorSource.addFeature(centroidFeatureForMap);
-        olFeatureForMap.setId(centroidFeatureForMap.ol_uid);
-
-        vectorSource.addFeature(olFeatureForMap);
       },
     }),
-    style: new Style({
-      stroke: new Stroke({
-        color: 'rgba(66, 135, 245, 1)',
-        width: 8,
-      })
-    })
+    style: preview ? routeStyles['active'] : routeStyles['static']
   });
 }

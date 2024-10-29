@@ -17,6 +17,7 @@ import './index.scss';
 
 export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScreen, mapView) => {
   if (clickedFeature) {
+    // Hack for rendering advisories panel since it's not a feature
     if (!clickedFeature.get) {
       return <AdvisoriesPanel advisories={clickedFeature} smallScreen={smallScreen} mapView={mapView}/>;
     }
@@ -50,7 +51,7 @@ export const maximizePanel = (panelRef) => {
         if (!panelRef.current.innerText.includes("Advisories\n")){
           panelRef.current.classList.add('maximized');
         }
-  } 
+  }
 }
 
 export const togglePanel = (panelRef, resetClickedStates, clickedFeatureRef, updateClickedFeature, pushMargins) => {

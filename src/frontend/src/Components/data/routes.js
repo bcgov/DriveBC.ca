@@ -4,15 +4,15 @@ import { point, multiLineString } from '@turf/turf';
 // Internal imports
 import { get } from "./helper.js";
 import { getCookie } from "../../util";
-import { updateSelectedRoute } from '../../slices/routesSlice';
 import { removeFavRoute, pushFavRoute } from '../../slices/userSlice';
+import { updateSingleSearchedRoute, updateSelectedRoute } from "../../slices/routesSlice";
 
-export function getRoute(points) {
+export function getRoute(points, alternate=false) {
   const url = `${window.ROUTE_PLANNER}/directions.json`;
 
   return get(url, {
     points: points,
-//    criteria: 'fastest',
+    criteria: alternate ? 'shortest': 'fastest',
 //    outputSRS: 4036,
 //    distanceUnit: 'km',
 //    correctSide: true,
@@ -49,7 +49,7 @@ export const getFavoriteRoutes = async (headers = {}) => {
 }
 
 
-export const saveRoute = async (route, nickname, routeMapImg, startLabel, endLabel, dispatch) => {
+export const saveRoute = async (route, selectedRoute, nickname, routeMapImg, startLabel, endLabel, dispatch) => {
   const url = `${window.API_HOST}/api/users/routes/`;
 
   const body = {
@@ -62,6 +62,8 @@ export const saveRoute = async (route, nickname, routeMapImg, startLabel, endLab
     end_point: point(route.points[1]).geometry,
     thumbnail: routeMapImg,
     route: multiLineString([route.route]).geometry,
+    criteria: route.criteria,
+    searchTimestamp: route.searchTimestamp
   };
 
   try {
@@ -81,7 +83,11 @@ export const saveRoute = async (route, nickname, routeMapImg, startLabel, endLab
 
     const savedRoute = await response.json();
     const payload = {...route, saved: true, id: savedRoute.id, label: nickname};
-    dispatch(updateSelectedRoute(payload));
+    if (selectedRoute && selectedRoute.id === route.id) {
+      dispatch(updateSelectedRoute(payload));
+    }
+
+    dispatch(updateSingleSearchedRoute(payload));
     dispatch(pushFavRoute(savedRoute));
 
   } catch (error) {
@@ -107,11 +113,13 @@ export const removeRoute = async (route, selectedRoute, dispatch) => {
       throw new Error(`Error: ${response.statusText}`);
     }
 
-    if (selectedRoute && selectedRoute.id == route.id) {
-      const payload = {...selectedRoute, saved: false, label: null};
+    const routeCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];
+    const payload = {...route, id: null, saved: false, label: null, route: routeCoords};
+    if (selectedRoute && selectedRoute.id === route.id) {
       dispatch(updateSelectedRoute(payload));
     }
 
+    dispatch(updateSingleSearchedRoute(payload));
     dispatch(removeFavRoute(route.id));
 
   } catch (error) {

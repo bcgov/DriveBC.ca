@@ -1,9 +1,5 @@
 // React
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-
-// Redux
-import { useSelector } from 'react-redux';
-import { memoize } from 'proxy-memoize';
+import React, { useRef, useEffect, useState } from 'react';
 
 // Geo
 import { applyStyle } from 'ol-mapbox-style';
@@ -25,18 +21,7 @@ import './RouteMap.scss';
 export default function RouteMap(props) {
   /* Setup */
   // Props
-  const { setRouteMapImg, showSavePopup } = props;
-
-  // Redux
-  const {
-    routes: { selectedRoute },
-  } = useSelector(
-    useCallback(
-      memoize(state => ({
-        routes: state.routes,
-      })),
-    ),
-  );
+  const { route, setRouteMapImg, showSavePopup } = props;
 
   const mapElement = useRef();
   const mapLayers = useRef({});
@@ -117,22 +102,22 @@ export default function RouteMap(props) {
     if (!showSavePopup) return;
 
     // Remove layer if no route found
-    const dl = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
     if (mapLayers.current['route']) {
       mapRef.current.removeLayer(mapLayers.current['route']);
     }
-    if (!dl) {
+
+    if (!route) {
       thumbnail.current.removeAttribute('src');
       return;
     }
 
     mapLayers.current['route'] = getRouteLayer(
-      dl, mapRef.current.getView().getProjection().getCode(), 3, null, updateReferenceFeature
+      [route], mapRef.current.getView().getProjection().getCode(), 3, {}, updateReferenceFeature, null, true
     );
     mapRef.current.addLayer(mapLayers.current['route']);
 
     // fit map to route
-    const routeBbox = turf.bbox(turf.lineString(selectedRoute.route));
+    const routeBbox = turf.bbox(turf.lineString(route.route));
     const routeExtent = transformExtent(routeBbox, 'EPSG:4326', 'EPSG:3857');
     if (mapView.current) {
       mapView.current.fit(routeExtent);

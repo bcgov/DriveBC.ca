@@ -12,9 +12,10 @@ import React, {
 import { useSearchParams } from 'react-router-dom';
 
 // Redux
+import * as slices from '../../slices';
+import { updateSelectedRoute } from "../../slices";
 import { memoize } from 'proxy-memoize';
 import { useSelector, useDispatch } from 'react-redux';
-import * as slices from '../../slices';
 
 // External imports
 import Button from 'react-bootstrap/Button';
@@ -40,7 +41,7 @@ import {
   setZoomPan,
   toggleMyLocation,
   zoomIn,
-  zoomOut,
+  zoomOut
 } from './helpers';
 import { loadLayer, loadEventsLayers, updateEventsLayers, enableReferencedLayer } from './layers';
 import { MapContext } from '../../App.js';
@@ -49,6 +50,7 @@ import { pointerMoveHandler, resetHoveredStates } from './handlers/hover';
 import { pointerClickHandler, resetClickedStates } from './handlers/click';
 import AdvisoriesWidget from '../advisories/AdvisoriesWidget';
 import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
+import DistanceLabels from "../routing/DistanceLabels";
 import Filters from '../shared/Filters.js';
 import RouteSearch from '../routing/RouteSearch.js';
 import NetworkErrorPopup from './errors/NetworkError';
@@ -70,7 +72,6 @@ import View from 'ol/View';
 
 // Styling
 import './Map.scss';
-
 
 export default function DriveBCMap(props) {
   /* initialization */
@@ -104,7 +105,7 @@ export default function DriveBCMap(props) {
       restStops: { list: restStops, filteredList: filteredRestStops },
     },
     advisories: { list: advisories },
-    routes: { searchLocationFrom, searchLocationTo, selectedRoute },
+    routes: { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes },
     map: { zoom, pan }
 
   } = useSelector(
@@ -131,6 +132,7 @@ export default function DriveBCMap(props) {
   const geolocation = useRef();
   const hoveredFeature = useRef();
   const isInitialMountLocation = useRef();
+  const isInitialClickedFeature = useRef();
   const searchParamInitialized = useRef();
   const locationPinRef = useRef();
   const locationToPinRef = useRef();
@@ -147,8 +149,6 @@ export default function DriveBCMap(props) {
   const [advisoriesInView, setAdvisoriesInView] = useState([]);
   const [referenceFeature, updateReferenceFeature] = useState();
   const [selectedFerries, setSelectedFerries] = useState();
-  const [routeDistance, setRouteDistance] = useState();
-  const [routeDistanceUnit, setRouteDistanceUnit] = useState();
   const [routeDetails, setRouteDetails] = useState({
     distance: null,
     distanceUnit: null,
@@ -183,6 +183,23 @@ export default function DriveBCMap(props) {
     updatePosition(feature);
   };
 
+  useEffect(() => {
+    if (!isInitialClickedFeature.current) {
+      isInitialClickedFeature.current = true;
+      return;
+    }
+
+    const featureData = clickedFeature ? clickedFeature.getProperties() : null;
+
+    if (featureData && featureData.type === 'route' && featureData.searchTimestamp !== selectedRoute.searchTimestamp) {
+      for (const route of searchedRoutes) {
+        if (route.searchTimestamp === featureData.searchTimestamp) {
+          dispatch(updateSelectedRoute(route));
+        }
+      }
+    }
+  }, [clickedFeature])
+
   const updatePosition = (feature) => {
     // Do not process empty features, routes and advisories
     if (feature != null && !Array.isArray(feature) && feature.getProperties().type !== 'route') {
@@ -204,12 +221,12 @@ export default function DriveBCMap(props) {
     }
   }
 
-  useEffect(()=>{
-    if(myLocationLoading){
+  useEffect(() => {
+    if(myLocationLoading) {
       toggleMyLocation(mapRef, mapView, setMyLocationLoading);
       locationSet.current = true;
     }
-  },[myLocationLoading])
+  }, [myLocationLoading])
 
   /* useEffect hooks */
   /* initialization for OpenLayers map */
@@ -425,28 +442,23 @@ export default function DriveBCMap(props) {
     });
 
     // Remove layer if no route found
-    const dl = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
-
+    const routesData = searchedRoutes ? searchedRoutes : null;
     loadLayer(
       mapLayers, mapRef, mapContext,
-      'routeLayer', dl, dl, 3, referenceData, updateReferenceFeature
+      'routeLayer', routesData, routesData, 3, referenceData, updateReferenceFeature
     );
 
-    if (selectedRoute && selectedRoute.routeFound) {
+    if (routesData) {
       // Fit map to route if route found and not saved/unsaved
-      if (!selectedRoute.id || searchParams.get('type') == 'route') {
-        fitMap(selectedRoute.route, mapView);
+      if (!!routesData.length && (!routesData[0].id || searchParams.get('type') == 'route')) {
+        fitMap(routesData, mapView);
       }
-
-      // Add route data to routeDetails
-      setRouteDistance(selectedRoute.distance);
-      setRouteDistanceUnit(selectedRoute.distanceUnit);
 
     } else {
       resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
     }
 
-  }, [selectedRoute]);
+  }, [searchedRoutes]);
 
   // Cameras layer
   useEffect(() => {
@@ -614,6 +626,7 @@ export default function DriveBCMap(props) {
             maximizePanel(panel);
           }
         }}>
+
         <button
           className="close-panel"
           aria-label={`${openPanel ? 'close side panel' : ''}`}
@@ -628,16 +641,20 @@ export default function DriveBCMap(props) {
         </button>
 
         <div className="panel-content">
-          {openPanel && (
-            (selectedRoute && selectedRoute.routeFound)
-            && renderPanel(clickedFeature, null, {...routeDetails, ferries: selectedFerries, distance: routeDistance, distanceUnit: routeDistanceUnit}, smallScreen, mapView)
-          )}
+          {openPanel && searchedRoutes &&
+            renderPanel(clickedFeature, null, {...routeDetails, ferries: selectedFerries}, smallScreen, mapView)
+          }
 
-          {openPanel && (
-            (!selectedRoute || !selectedRoute.routeFound) && renderPanel((clickedFeature && !clickedFeature.get)
-            ? advisoriesInView
-            : clickedFeature , isCamDetail, null, smallScreen, mapView )
-          )}
+          {openPanel && searchedRoutes &&
+            <DistanceLabels mapLayers={mapLayers} mapRef={mapRef} updateClickedFeature={updateClickedFeature} />
+          }
+
+          {openPanel && !searchedRoutes &&
+            renderPanel(
+              clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature,
+              isCamDetail, null, smallScreen, mapView
+            )
+          }
         </div>
       </div>
 
@@ -649,7 +666,8 @@ export default function DriveBCMap(props) {
               routeEdit={true}
               showSpinner={showSpinner}
               onShowSpinnerChange={setShowSpinner}
-            />
+              mapRef={mapRef} />
+
             <AdvisoriesWidget
               advisories={advisoriesInView}
               updateClickedFeature={updateClickedFeature}

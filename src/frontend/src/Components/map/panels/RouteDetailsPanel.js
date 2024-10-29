@@ -14,21 +14,23 @@ import './RouteDetailsPanel.scss';
 export default function RouteDetailsPanel() {
   /* Setup */
   // Redux
-  const { selectedRoute } = useSelector(useCallback(memoize(state => ({
-    selectedRoute: state.routes.selectedRoute
+  const { searchedRoutes } = useSelector(useCallback(memoize(state => ({
+    searchedRoutes: state.routes.searchedRoutes
   }))));
 
 
   /* Rendering */
   // Main component
-  return (
+  return searchedRoutes && (
     <div className="popup popup--route" tabIndex={0}>
       <div className="popup__title">
         <p className="name">Your route</p>
       </div>
 
       <div className="popup__content">
-        <RouteDetails route={selectedRoute} isPanel={true} />
+        {searchedRoutes.map((route, index) => (
+          <RouteDetails route={route} isPanel={true} index={index} key={index} />
+        ))}
       </div>
     </div>
   );

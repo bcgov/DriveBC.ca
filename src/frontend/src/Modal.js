@@ -5,7 +5,7 @@ import React, { useCallback, useContext } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { memoize } from 'proxy-memoize';
 import { resetFavLists, updatePendingAction } from './slices/userSlice';
-import { updateSelectedRoute } from './slices/routesSlice'
+import {updateSelectedRoute, updateSingleSearchedRoute} from './slices/routesSlice'
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -37,6 +37,7 @@ export default function Modal() {
     if (selectedRoute && selectedRoute.id) {
       const payload = {...selectedRoute, id: null, saved: false, label: null};
       dispatch(updateSelectedRoute(payload));
+      dispatch(updateSingleSearchedRoute(payload));
     }
   };
 

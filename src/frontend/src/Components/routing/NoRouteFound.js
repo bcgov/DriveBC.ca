@@ -11,11 +11,11 @@ import {
 import './NoRouteFound.scss';
 
 export default function NoRouteFound(props) {
-  const { selectedRoute } = props;
+  const { searchedRoutes } = props;
 
   // Rendering
   return (
-    <div className={`no-route-found-container ${selectedRoute && !selectedRoute.routeFound && Object.keys(selectedRoute).length !== 0 ? 'open' : ''}`}>
+    <div className={`no-route-found-container ${!searchedRoutes.length ? 'open' : ''}`}>
       <FontAwesomeIcon icon={faCircleExclamation} />
       <span>No valid route between these two points.</span>
     </div>

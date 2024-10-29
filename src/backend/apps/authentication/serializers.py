@@ -1,8 +1,5 @@
-from rest_framework import serializers
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from rest_framework_gis.fields import GeometryField
-
 from apps.authentication.models import FavouritedCameras, SavedRoutes
+from rest_framework import serializers
 
 
 class FavouritedCamerasSerializer(serializers.ModelSerializer):
@@ -13,12 +10,11 @@ class FavouritedCamerasSerializer(serializers.ModelSerializer):
 
 
 class SavedRoutesSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = SavedRoutes
         fields = ('id', 'label', 'distance', 'distance_unit',
                   'start', 'start_point', 'end', 'end_point',
-                  'validated', 'thumbnail', 'route')
+                  'validated', 'thumbnail', 'route', 'criteria', 'searchTimestamp')
 
     def save(self):
         ''' Save the route with the requesting user. '''
