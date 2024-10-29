@@ -164,7 +164,7 @@ export default function CameraCard(props) {
     <div className={`camera-card ${stale} ${delayed} ${unavailable}`}>
       <div className="camera-card__body">
         {!unavailable && !delayed && !stale && (
-          <div className="card-img-box" onClick={handleClick} onKeyDown={handleKeyDown}>
+          <div className="card-img-box" onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
             { showLoader ? <Skeleton height={180} /> :
               <img
                 className="card-img"
@@ -175,7 +175,7 @@ export default function CameraCard(props) {
         )}
 
         {!unavailable && stale && !delayed && (
-          <div className="card-img-box" onClick={handleClick} onKeyDown={handleKeyDown}>
+          <div className="card-img-box" onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
             { showLoader ? <Skeleton height={180} /> :
             <img
               className="card-img"
