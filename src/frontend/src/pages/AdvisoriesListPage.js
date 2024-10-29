@@ -97,15 +97,17 @@ export default function AdvisoriesListPage() {
         description='Get the latest critical info impacting travel on a highway or region.'>
       </PageHeader>
 
-      <div className="beta-message">
-        <p className="beta-message__title"><FontAwesomeIcon icon={faCircleExclamation} />This is a beta version of DriveBC.</p>
+      <div className="beta-message-container">
+        <div className="beta-message">
+          <p className="beta-message__title"><FontAwesomeIcon icon={faCircleExclamation} />This is a beta version of DriveBC.</p>
 
-        <p>
-          Advisories shared on the beta version are for feedback purposes and
-          possibly not up-to-date.  Please continue to refer to the Ministry&apos;s
-          TranBC site under <a href="https://www.tranbc.ca/current-travel-advisories/">Current Road
-          Advisories and Information</a>.
-        </p>
+          <p className="beta-message__content">
+            Advisories shared on the beta version are for feedback purposes and
+            possibly not up-to-date.  Please continue to refer to the Ministry&apos;s
+            TranBC site under <a href="https://www.tranbc.ca/current-travel-advisories/">Current Road
+            Advisories and Information</a>.
+          </p>
+        </div>
       </div>
 
       <Container>
