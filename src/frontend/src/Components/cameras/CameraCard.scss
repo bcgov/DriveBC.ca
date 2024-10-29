@@ -16,12 +16,16 @@
     margin: unset;
   }
 
-  &:hover {
-    cursor: pointer;
-    .card-img {
-      transform: scale(1.25);
+  .card-img-box {
+    &:has(~ .camera-name:hover), &:hover {
+      .card-img {
+        cursor: pointer;
+        transform: scale(1.25);
+      }
     }
   }
+
+  
 
   &.unavailable {
     .card-img-box {
@@ -67,21 +71,44 @@
         color: $Grey100;
       }
     }
+
+    .card-pill {
+      &:hover {
+        background-color: $Grey70;
+      }
+    }
   }
 
   &.delayed {
     .card-banner, .card-pill {
-      background-color: $BC-Yellow-Alt;
+      background-color: $Gold20;
 
       p, svg {
         color: $BC-Yellow-Dark;
       }
     }
+
+    .card-pill {
+      &:hover {
+        background-color: $Gold60;
+      }
+    }
   }
 
   &__body {
+    .camera-orientations {
+      margin-bottom: 8px;
+    }
+
     .camera-name {
       font-size: 1.125rem;
+      color: $Type-Link;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+        cursor: pointer;
+      }
     }
 
     .card-img-box {
@@ -108,6 +135,7 @@
         position: absolute;
         display: flex;
         align-items: center;
+        cursor: pointer;
 
         &.hidden {
           transform:translateY(-200%);
@@ -132,8 +160,8 @@
       }
 
       .card-banner {
-        padding: 24px 6px 12px 12px;
-        top: -12px;
+        padding: 36px 6px 12px 12px;
+        top: -24px;
         width: 100%;
         justify-content: space-between;
 
@@ -152,11 +180,16 @@
       }
 
       .card-pill {
-        top: 18px;
-        right: 10px;
+        top: 8px;
+        right: 8px;
         padding: 4px 6px;
         border-radius: 12px;
         transform:translateY(-200%);
+        transition: background-color 0.1s ease-in-out;
+
+        &:hover {
+          transition: background-color 0.1s ease-in-out;
+        }
 
         p, svg {
           font-size: 0.625rem;
