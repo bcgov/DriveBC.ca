@@ -77,7 +77,6 @@ export const enableReferencedLayer = (referenceData, mapContext) => {
   } else if (featureType === 'regionalWeather' || featureType === 'localWeather' || featureType === 'hef') {
     mapContext.visible_layers['weather'] = true;
     mapContext.visible_layers['regional'] = true;
-    mapContext.visible_layers['hef'] = true;
 
   } else if (featureType === 'restStop') {
     mapContext.visible_layers['restStops'] = true;
