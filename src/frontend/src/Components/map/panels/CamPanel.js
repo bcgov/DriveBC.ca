@@ -78,6 +78,9 @@ export default function CamPanel(props) {
       return;
     }
     setCamera(rootCam.camGroup[camIndex]);
+    const url = new URL(window.location);
+    url.searchParams.set("camIndex", camIndex);
+    window.history.replaceState({}, "", url);
   }, [camIndex]);
 
   /* Helpers */
