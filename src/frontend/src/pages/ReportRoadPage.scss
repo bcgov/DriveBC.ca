@@ -3,3 +3,14 @@
 .report-page--road {
 
 }
+
+
+.report-page {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Ensures smooth scrolling on iOS */
+    min-height: 120vh;
+}
+  
+.report-map-wrap {
+    margin-bottom: 20px;
+}
