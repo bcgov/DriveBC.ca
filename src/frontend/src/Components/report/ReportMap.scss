@@ -348,9 +348,16 @@
       }
 
       .expand {
-        top: 13rem;
         right: 1rem;
       }
+
+      .expand.minimized {
+        top: 1rem;
+    }
+
+      .expand.expanded {
+        top: 13rem;
+    }
 
       .zoom-btn {
         background-color: $Surface-tinted;
