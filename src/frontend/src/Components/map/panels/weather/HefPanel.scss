@@ -109,6 +109,12 @@
       }
 
       &__title {
+        .highway {
+          color: $Type-Primary;
+          font-size: 0.875rem;
+          margin-bottom: 0;
+        }
+        
         .name {
           color: $Type-Primary;
           font-size: 1.75rem;

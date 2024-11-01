@@ -126,6 +126,8 @@ class HighElevationForecastSerializer(serializers.ModelSerializer):
 
     id = serializers.SerializerMethodField()
     location = GeometryField()
+    hwyName = serializers.SerializerMethodField()
+    hwyDescription = serializers.SerializerMethodField()
 
     class Meta:
         model = HighElevationForecast
@@ -137,3 +139,11 @@ class HighElevationForecastSerializer(serializers.ModelSerializer):
 
     def get_id(self, obj):
         return obj.code
+    
+    def get_hwyName(self, obj):
+        parts = obj.name.split('-')
+        return parts[0].strip() if parts else ""
+
+    def get_hwyDescription(self, obj):
+        parts = obj.name.split('-')
+        return parts[1].strip() if len(parts) > 1 else ""

@@ -42,7 +42,7 @@ export default function HefPanel(props) {
         </div>
 
         <div className="popup__title__name">
-          <p className='name'>High Elevation Forecast</p>
+          <p className='name'>High Elevation Weather</p>
           <ShareURLButton />
         </div>
       </div>
@@ -71,7 +71,8 @@ export default function HefPanel(props) {
 
       <div className="popup__content">
         <div className="popup__content__title">
-          <p className="name">{data.name}</p>
+          <p className="highway">{data.hwyName}</p>
+          <p className="name">{data.hwyDescription}</p>
           { data.issued_utc && <FriendlyTime date={data.issued_utc} asDate={true} /> }
         </div>
 
