@@ -431,8 +431,9 @@ class FeedClient:
                     if warnings.get("Events"):
                         # Filter out any events with Type "ended"
                         warnings["Events"] = [event for event in warnings["Events"] if event.get("Type") != "ended"]
-
-                    if not warnings["Events"]:
+                        if len(warnings["Events"]) == 0: 
+                            warnings = None
+                    else:
                         warnings = None
 
 
