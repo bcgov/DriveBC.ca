@@ -23,6 +23,10 @@
     }
 
     .popup__content {
+      display: flex;
+      flex-direction: column;
+      height: 100%; 
+
       p {
         margin-bottom: 0.4rem;
       }
@@ -50,6 +54,7 @@
       }
 
       &__description {
+        flex-grow: 1;
         & > div {
           padding-bottom: 1rem;
         }
@@ -73,6 +78,7 @@
       
       &__footer {
         padding: 1rem;
+        margin-top: auto;
   
         p {
           font-size: 0.875rem;

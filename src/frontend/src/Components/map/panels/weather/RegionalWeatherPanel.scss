@@ -99,6 +99,10 @@
     }
 
     .popup__content {
+      display: flex;
+      flex-direction: column;
+      height: 100%; 
+
       p {
         margin-bottom: 0;
       }
@@ -148,12 +152,16 @@
         }
       }
 
+      &__forecasts {
+        flex-grow: 1;
+      }
+
       &__additional {
         padding: 0.5rem 1rem;
         display: flex;
         flex-direction: column;
-        flex-grow: 1;
         justify-content: space-between;
+        margin-top: auto;
 
         p {
           text-align: center;
