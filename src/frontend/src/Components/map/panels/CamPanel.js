@@ -78,9 +78,8 @@ export default function CamPanel(props) {
       return;
     }
     setCamera(rootCam.camGroup[camIndex]);
-    const url = new URL(window.location);
-    url.searchParams.set("camIndex", camIndex);
-    window.history.replaceState({}, "", url);
+    _searchParams.set("camIndex", camIndex);
+    setSearchParams(_searchParams);
   }, [camIndex]);
 
   /* Helpers */
@@ -167,7 +166,7 @@ export default function CamPanel(props) {
 
         <div className="popup__title__name">
           <p className="name">Camera</p>
-          <ShareURLButton camIndex={camIndex}/>
+          <ShareURLButton />
         </div>
       </div>
 
