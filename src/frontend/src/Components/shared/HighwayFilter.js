@@ -29,16 +29,19 @@ export default function HighwayFilters(props) {
   const [searchedHighways, setSearchedHighways] = useState();
   const [searchText, setSearchText] = useState('');
 
+  const getOrderedHighways = (cameras) => {
+    const highways = Array.from(new Set(cameras.map(camera => camera.highway_display)));
+    const highwayObjs = highways.map(highway => ({
+        key: highway,
+        display: getHighwayDisplay(highway),
+    }));
+    return highwayObjs.sort((a, b) => collator.compare(a.key, b.key));
+}
+
   // Effects
   useEffect(() => {
     if (cameras) {
-      const highways = Array.from(new Set(cameras.map(camera => camera.highway_display)));
-      const highwayObjs = highways.map(highway => ({ key: highway, display: getHighwayDisplay(highway) }));
-
-      const orderedHighways = highwayObjs.sort(function (a, b) {
-        return collator.compare(a.key, b.key);
-      });
-
+      const orderedHighways = getOrderedHighways(cameras);
       setOrderedHighways(orderedHighways);
     }
   }, [cameras]);
@@ -46,11 +49,7 @@ export default function HighwayFilters(props) {
   useEffect(() => {
     // Reset selected highway filter if it's filtered out by new route search
     if (camsContext.highwayFilterKey) {
-      const highways = Array.from(new Set(cameras.map(camera => camera.highway_display)));
-      const highwayObjs = highways.map(highway => ({ key: highway, display: getHighwayDisplay(highway) }));
-      const orderedHighways = highwayObjs.sort(function (a, b) {
-        return collator.compare(a.key, b.key);
-      });
+      const orderedHighways = getOrderedHighways(cameras);
       const selectedHighway = orderedHighways.find(highwayObj => highwayObj.key === camsContext.highwayFilterKey);
       if (!selectedHighway) {
         setCamsContext({...camsContext, highwayFilterKey: null});
