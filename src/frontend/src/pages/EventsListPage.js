@@ -109,7 +109,7 @@ export default function EventsListPage() {
     'roadConditions': false,
   });
   const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
-  const [showLoader, setShowLoader] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
   const [advisoriesInRoute, setAdvisoriesInRoute] = useState([]);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
