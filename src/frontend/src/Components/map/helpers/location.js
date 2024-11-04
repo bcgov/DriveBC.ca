@@ -3,7 +3,7 @@ import Overlay from 'ol/Overlay.js';
 
 // Location pins
 export const blueLocationMarkup = `
-  <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
+  <svg width="44" height="44" xmlns="http://www.w3.org/2000/svg" id="svg-container">
     <defs>
       <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="40%" style="stop-color:#f32947;stop-opacity:0.5" />
@@ -22,7 +22,7 @@ export const blueLocationMarkup = `
 `;
 
 export const redLocationMarkup = `
-  <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" id="svg-container">
+  <svg width="44" height="44" xmlns="http://www.w3.org/2000/svg" id="svg-container">
     <defs>
       <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="40%" style="stop-color:#2790F3;stop-opacity:0.5" />
@@ -50,6 +50,8 @@ export const redLocationToMarkup = `
     class="svg-inline--fa fa-location-dot" 
     role="img" 
     xmlns="http://www.w3.org/2000/svg" 
+    width="32" 
+    height="32"
     viewBox="0 0 384 512">
     
     <path 
