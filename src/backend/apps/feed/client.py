@@ -138,7 +138,7 @@ class FeedClient:
             headers=self._get_auth_headers(resource_type),
             params=params if params else {},
             timeout=timeout,
-            verify=True,
+            verify=False,
         )
         return self._get_response_data_or_raise(response)
 
@@ -431,11 +431,10 @@ class FeedClient:
                     if warnings.get("Events"):
                         # Filter out any events with Type "ended"
                         warnings["Events"] = [event for event in warnings["Events"] if event.get("Type") != "ended"]
-                        if len(warnings["Events"]) == 0: 
+                        if len(warnings["Events"]) == 0:
                             warnings = None
                     else:
                         warnings = None
-
 
                     # special handling for HEF locations not using 4326 coords
                     latitude = longitude = None
@@ -486,7 +485,6 @@ class FeedClient:
         except requests.RequestException:
             return Response("Error fetching data from weather API", status=500)
 
-
     # Current Weather
     def get_current_weather_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
         """Get data feed for list of objects."""
@@ -495,6 +493,7 @@ class FeedClient:
         try:
             access_token = self.get_access_token()
             headers = {"Authorization": f"Bearer {access_token}"}
+
         except requests.RequestException as e:
             return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
 

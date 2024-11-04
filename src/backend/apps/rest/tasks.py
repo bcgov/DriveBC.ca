@@ -36,4 +36,4 @@ def populate_all_rest_stop_data():
         populate_rest_stop_from_data(rest_stop_data)
 
     # Rebuild cache
-    cache.delete(CacheKey.REGIONAL_WEATHER_LIST)
+    cache.delete(CacheKey.REST_STOP_LIST)
