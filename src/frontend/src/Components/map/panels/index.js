@@ -14,6 +14,7 @@ import RouteDetailsPanel from './RouteDetailsPanel';
 
 // Styling
 import './index.scss';
+import Feature from "ol/Feature";
 
 export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScreen, mapView) => {
   if (clickedFeature) {
@@ -39,16 +40,16 @@ export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScre
       case 'restStop':
         return <RestStopPanel feature={clickedFeature} />;
       case 'route':
-        return <RouteDetailsPanel routeDetails={routeDetails} />;
+        return <RouteDetailsPanel />;
     }
   }
 }
 
-export const maximizePanel = (panelRef) => {
+export const maximizePanel = (panelRef, clickedFeature) => {
   if (panelRef.current.classList.contains('open') &&
       !panelRef.current.classList.contains('maximized')) {
-        // Prevent maximizing advisory panel on mobile view
-        if (!panelRef.current.innerText.includes("Advisories\n")){
+        // Prevent maximizing advisory and route panels on mobile view
+        if (clickedFeature instanceof Feature && clickedFeature.get('type') !== 'route'){
           panelRef.current.classList.add('maximized');
         }
   }

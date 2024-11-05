@@ -62,7 +62,7 @@ import overrides from '../map/overrides.js';
 import { applyStyle } from 'ol-mapbox-style';
 import { fromLonLat, toLonLat, transformExtent } from 'ol/proj';
 import { ScaleLine } from 'ol/control.js';
-
+import Feature from 'ol/Feature';
 import Map from 'ol/Map';
 import Geolocation from 'ol/Geolocation.js';
 import MVT from 'ol/format/MVT.js';
@@ -189,7 +189,7 @@ export default function DriveBCMap(props) {
       return;
     }
 
-    const featureData = clickedFeature ? clickedFeature.getProperties() : null;
+    const featureData = clickedFeature instanceof Feature ? clickedFeature.getProperties() : null;
 
     if (featureData && featureData.type === 'route' && featureData.searchTimestamp !== selectedRoute.searchTimestamp) {
       for (const route of searchedRoutes) {
@@ -619,11 +619,11 @@ export default function DriveBCMap(props) {
       <div
         ref={panel}
         className={`side-panel ${openPanel ? 'open' : ''}`}
-        onClick={() => maximizePanel(panel)}
-        onTouchMove={() => maximizePanel(panel)}
+        onClick={() => maximizePanel(panel, clickedFeature)}
+        onTouchMove={() => maximizePanel(panel, clickedFeature)}
         onKeyDown={keyEvent => {
           if (keyEvent.keyCode == 13) {
-            maximizePanel(panel);
+            maximizePanel(panel, clickedFeature);
           }
         }}>
 

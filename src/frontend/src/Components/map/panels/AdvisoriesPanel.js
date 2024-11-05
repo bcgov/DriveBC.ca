@@ -41,10 +41,9 @@ export default function AdvisoriesPanel(props) {
   useEffect(() => {
     // Center to the geometric center of all advisories' boundaries for mobile view
     if(smallScreen){
-      const allCoordinates = advisories
-        .map(advisory => advisory.geometry.coordinates)
-        .flat(3);
-      fitMap(allCoordinates, mapView);
+      const allCoordinates = advisories.map(advisory => advisory.geometry.coordinates).flat(3);
+      const simulatedRoute = [{route: allCoordinates}];
+      fitMap(simulatedRoute, mapView);
     }
   }, []);
 
