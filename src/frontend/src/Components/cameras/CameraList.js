@@ -62,8 +62,8 @@ export default function CameraList(props) {
     const groupedCams = groupDisplayedCameras();
     const groups = [];
 
-    for (const {highway, cams} of groupedCams) {
-      groups.push(<HighwayGroup key={highway} highway={highway} cams={cams} showLoader={showLoader}/>);
+    for (const [index, { highway, cams }] of groupedCams.entries()) {
+      groups.push(<HighwayGroup key={`${highway}-${index}`} highway={highway} cams={cams} showLoader={showLoader}/>);
     }
 
     return groups;
