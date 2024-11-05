@@ -8,16 +8,22 @@ import { memoize } from 'proxy-memoize';
 // Internal imports
 import RouteDetails from '../../routing/RouteDetails';
 
+// External imports
+import { useMediaQuery } from "@uidotdev/usehooks";
+
 // Styling
 import './RouteDetailsPanel.scss';
 
 export default function RouteDetailsPanel() {
   /* Setup */
-  // Redux
-  const { searchedRoutes } = useSelector(useCallback(memoize(state => ({
-    searchedRoutes: state.routes.searchedRoutes
-  }))));
+  // Misc
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
+  // Redux
+  const { searchedRoutes, selectedRoute } = useSelector(useCallback(memoize(state => ({
+    searchedRoutes: state.routes.searchedRoutes,
+    selectedRoute: state.routes.selectedRoute
+  }))));
 
   /* Rendering */
   // Main component
@@ -28,9 +34,13 @@ export default function RouteDetailsPanel() {
       </div>
 
       <div className="popup__content">
-        {searchedRoutes.map((route, index) => (
+        {largeScreen && searchedRoutes.map((route, index) => (
           <RouteDetails route={route} isPanel={true} index={index} key={index} />
         ))}
+
+        {(!largeScreen && selectedRoute) &&
+          <RouteDetails route={selectedRoute} isPanel={true} index={selectedRoute.criteria === 'fastest' ? 0 : 1} />
+        }
       </div>
     </div>
   );
