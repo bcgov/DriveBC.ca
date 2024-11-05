@@ -1,3 +1,4 @@
+from apps.authentication.enums import ROUTE_CRITERIA, ROUTE_CRITERIA_CHOICES
 from apps.shared.models import BaseModel
 from apps.webcam.models import Webcam
 from django.contrib.auth.models import AbstractUser
@@ -69,5 +70,5 @@ class SavedRoutes(BaseModel):
     # last time the route was verified against the router API
     validated = models.DateTimeField(auto_now_add=True)
 
-    criteria = models.CharField(max_length=100, default='fastest')
+    criteria = models.CharField(choices=ROUTE_CRITERIA_CHOICES, max_length=100, default=ROUTE_CRITERIA.FASTEST)
     searchTimestamp = models.CharField(max_length=100, default='fastest')
