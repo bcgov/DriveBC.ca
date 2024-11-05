@@ -22,21 +22,21 @@ export const blueLocationMarkup = `
 `;
 
 export const redLocationMarkup = `
-  <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg" id="svg-container">
+  <svg width="28" height="28" xmlns="http://www.w3.org/2000/svg" id="svg-container">
     <defs>
       <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="40%" style="stop-color:#2790F3;stop-opacity:0.5" />
         <stop offset="40%" style="stop-color:#7496EC;stop-opacity:0.5" />
       </linearGradient>
     </defs>
-    <circle id="circle1" cx="16" cy="16" r="16" fill="url(#gradient1)"/>
+    <circle id="circle1" cx="14" cy="14" r="14" fill="url(#gradient1)"/>
     <defs>
       <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="100%" style="stop-color:#2970F3;stop-opacity:1" />
         <stop offset="100%" style="stop-color:#7496EC;stop-opacity:1" />
       </linearGradient>
     </defs>
-    <circle cx="16" cy="16" r="8" fill="url(#gradient2)" stroke="white" stroke-width="2" />
+    <circle cx="14" cy="14" r="7" fill="url(#gradient2)" stroke="white" stroke-width="2" />
   </svg>
 `;
 
@@ -50,8 +50,8 @@ export const redLocationToMarkup = `
     class="svg-inline--fa fa-location-dot" 
     role="img" 
     xmlns="http://www.w3.org/2000/svg" 
-    width="32" 
-    height="32"
+    width="28" 
+    height="28"
     viewBox="0 0 384 512">
     
     <path 
