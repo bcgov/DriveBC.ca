@@ -145,17 +145,6 @@
         }
       }
 
-      .ol-overlay-container:not(:has(> img)) {
-        //overriding openlayers dynamic styles for mobile layout except for having img as a direct child
-        @media (max-width: 767px) {
-          position: fixed !important;
-          bottom: 0 !important;
-          transform: none !important;
-        }
-
-        // overlay content styling moved to App.scss
-      }
-
       .ol-zoom .ol-zoom-out {
         margin-top: 200px;
       }
