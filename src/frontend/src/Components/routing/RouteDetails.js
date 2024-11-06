@@ -45,7 +45,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 export default function RouteDetails(props) {
   /* Setup */
   // Props
-  const { route, isPanel, setRouteFavCams, setRouteLabel, index } = props;
+  const { route, isPanel, setRouteFavCams, setRouteLabel, index, onMobile } = props;
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -305,7 +305,7 @@ export default function RouteDetails(props) {
   // Main components
   return route && (
     <div
-      className={`route-details ${isPanel && route.searchTimestamp === selectedRoute.searchTimestamp ? 'selected' : ''}`}
+      className={`route-details ${isPanel && route.searchTimestamp === selectedRoute.searchTimestamp ? 'selected' : ''} ${onMobile ? 'mobile' : ''}`}
       tabIndex={isPanel ? 0 : null}
       onClick={isPanel ? switchRouteHandler : null}
       onKeyPress={isPanel ? switchRouteHandler : null}>

@@ -6,10 +6,21 @@
   padding: 5px 10px;
   border-radius: 8px;
   font-size: 14px;
+  cursor: default;
 
   background-color: $Blue20; /* Light blue background */
   color: $BC-Blue; /* Dark blue text */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Light shadow */
+
+  &:not(.selected):hover {
+    background-color: $Distance-label-hover;
+    color: $White;
+    cursor: pointer;
+
+    .index-label {
+      background-color: $Distance-label-index;
+    }
+  }
 
   &.selected {
     background-color: $BC-Blue; /* Dark blue background */
@@ -29,6 +40,7 @@
     align-items: center;
     justify-content: center;
     font-size: 12px;
+    font-weight: 700;
     margin-right: 8px;
     background-color: $White;
     color: $BC-Blue; /* Matching the background color of the box */
