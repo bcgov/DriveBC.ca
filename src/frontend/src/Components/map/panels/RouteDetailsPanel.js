@@ -39,7 +39,7 @@ export default function RouteDetailsPanel() {
         ))}
 
         {(!largeScreen && selectedRoute) &&
-          <RouteDetails route={selectedRoute} isPanel={true} index={selectedRoute.criteria === 'fastest' ? 0 : 1} />
+          <RouteDetails route={selectedRoute} isPanel={true} index={selectedRoute.criteria === 'fastest' ? 0 : 1} onMobile={true} />
         }
       </div>
     </div>
