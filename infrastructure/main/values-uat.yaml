@@ -79,6 +79,7 @@ static:
   fullnameOverride: uat-static
   nameOverride: uat-static
   replicaCount: 3
+  release:   
   image:
     repository: ghcr.io/bcgov/drivebc-static
     tag: latest-uat

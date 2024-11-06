@@ -90,4 +90,4 @@ jobs:
     - name: Helm upgrade on OpenShift Environment
       run: |
         helm dependency update ./infrastructure/main
-        helm upgrade prod-drivebc -f ./infrastructure/main/values-prod.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}"
+        helm upgrade prod-drivebc -f ./infrastructure/main/values-prod.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}" --set static.release="${{ github.event.release.name }}"

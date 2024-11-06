@@ -79,6 +79,7 @@ static:
   fullnameOverride: test-static
   nameOverride: test-static
   replicaCount: 1
+  release: 
   image:
     repository: ghcr.io/bcgov/drivebc-static
     tag: latest-test

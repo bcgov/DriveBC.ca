@@ -79,6 +79,7 @@ static:
   fullnameOverride: prod-static
   nameOverride: prod-static
   replicaCount: 3
+  release: 
   image:
     repository: ghcr.io/bcgov/drivebc-static
     tag: latest-prod

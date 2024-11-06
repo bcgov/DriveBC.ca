@@ -80,6 +80,7 @@ static:
   fullnameOverride: dev-static
   nameOverride: dev-static
   replicaCount: 1
+  release: 
   image:
     repository: ghcr.io/bcgov/drivebc-static
     tag: latest-dev
