@@ -3,14 +3,13 @@
 
 // Z-index
 .ol-overlaycontainer-stopevent {
-  z-index: 6 !important;
 
   .ol-overlay-container {
     z-index: 10;
   }
 
   .ol-scale-line {
-    z-index: 5;
+    z-index: 10;
   }
 }
 
