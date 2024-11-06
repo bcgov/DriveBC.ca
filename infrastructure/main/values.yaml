@@ -78,6 +78,7 @@ static:
   fullnameOverride: static
   nameOverride: static
   replicaCount: 1
+  release: 
   image:
     repository: ghcr.io/bcgov/drivebc-static
     tag: latest

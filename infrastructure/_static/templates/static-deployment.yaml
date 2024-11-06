@@ -49,6 +49,8 @@ spec:
               value: {{ $deploymentTag | quote }}
             - name: DEPLOYMENT_TIME
               value: {{ $deploymentTime | quote }}
+            - name: RELEASE
+              value: {{ .Values.release }}
           envFrom:
             - configMapRef:
                 name: {{ .Values.deployment.env.staticConfigMap  }}
