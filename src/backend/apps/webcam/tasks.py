@@ -30,8 +30,18 @@ logger = logging.getLogger(__name__)
 
 APP_DIR = Path(__file__).resolve().parent
 FONT = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=14)
+FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
 CAMS_DIR = f'{settings.SRC_DIR}/images/webcams'
 
+CAM_OFF='''
+This highway cam image is
+currently unavailable due to
+technical difficulties.
+
+Our  technicians have been
+alerted and service will resume
+as soon as possible.
+'''
 
 def populate_webcam_from_data(webcam_data):
     webcam_id = webcam_data.get("id")
@@ -61,7 +71,6 @@ def populate_all_webcam_data():
 def update_single_webcam_data(webcam):
     try:
         webcam_data = FeedClient().get_webcam(webcam)
-
     except httpx.HTTPStatusError as e:
         # Cam removed/not found, delete it
         if e.response.status_code == 404:
@@ -117,21 +126,34 @@ def update_webcam_image(webcam):
             raw = raw.resize((width, height))
 
         stamped = Image.new('RGB', (width, height + 18))
-        stamped.paste(raw)  # leaves 18 pixel black bar left at bottom
+        pen = ImageDraw.Draw(stamped)
+        lastmod = webcam.get('last_update_modified')
+
+        if webcam.get('is_on'):
+            stamped.paste(raw)  # leaves 18 pixel black bar left at bottom
+
+            timestamp = 'Last modification time unavailable'
+            if lastmod is not None:
+                month = lastmod.strftime('%b')
+                day = lastmod.strftime('%d')
+                day = day[1:] if day[:1] == '0' else day  # strip leading zero
+                timestamp = f'{month} {day}, {lastmod.strftime("%Y %H:%M:%S %p %Z")}'
+
+            pen.text((width - 3,  height + 14), timestamp, fill="white",
+                     anchor='rs', font=FONT)
+
+        else:  # camera is unavailable, replace image with message
+            bbox = pen.multiline_textbbox((0, 0), CAM_OFF, font=FONT_LARGE)
+            x = (width - bbox[2]) / 2
+            pen.multiline_text((x, 20), CAM_OFF, fill="white", align='center',
+                               font=FONT_LARGE)
+            pen.polygon(((0, height), (width, height),
+                         (width, height + 18), (0, height + 18)),
+                        fill="red")
 
         # add mark and timestamp to black bar
-        pen = ImageDraw.Draw(stamped)
         mark = webcam.get('dbc_mark', '')
         pen.text((3,  height + 14), mark, fill="white", anchor='ls', font=FONT)
-
-        lastmod = webcam.get('last_update_modified')
-        timestamp = 'Last modification time unavailable'
-        if lastmod is not None:
-            month = lastmod.strftime('%b')
-            day = lastmod.strftime('%d')
-            day = day[1:] if day[:1] == '0' else day  # strip leading zero
-            timestamp = f'{month} {day}, {lastmod.strftime("%Y %H:%M:%S %p %Z")}'
-        pen.text((width - 3,  height + 14), timestamp, fill="white", anchor='rs', font=FONT)
 
         # save image in shared volume
         filename = f'{CAMS_DIR}/{webcam["id"]}.jpg'
@@ -150,15 +172,14 @@ def update_webcam_image(webcam):
 
         except Exception as e:
             logger.info(e)
-            pass  # update period times not available
 
-        delta = datetime.timedelta(seconds=delta)
         if lastmod is not None:
+            delta = datetime.timedelta(seconds=delta)
             lastmod = floor((lastmod + delta).timestamp())  # POSIX timestamp
             os.utime(filename, times=(lastmod, lastmod))
 
     except Exception as e:
-        logger.error(e)
+        logger.exception(e)
 
 
 # Helper function for add_order_to_cameras that updates order of each cam in a highway/route group
