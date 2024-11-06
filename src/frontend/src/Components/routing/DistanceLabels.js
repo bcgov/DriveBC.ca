@@ -62,7 +62,6 @@ export default function DistanceLabels(props) {
   }
 
   const addDistanceOverlay = (closing=false) => {
-    removeOverlays(mapRef);
 
     searchedRoutes.forEach((route, index) => {
       const elem = document.createElement('div');

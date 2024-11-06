@@ -387,7 +387,7 @@ export default function DriveBCMap(props) {
         mapRef.current.removeOverlay(locationPinRef.current);
       }
     }
-  }, [searchLocationFrom]);
+  }, [searchLocationFrom, searchLocationTo]);
 
   useEffect(() => {
     if (searchLocationTo && searchLocationTo.length) {
@@ -412,7 +412,7 @@ export default function DriveBCMap(props) {
         mapRef.current.removeOverlay(locationToPinRef.current);
       }
     }
-  }, [searchLocationTo]);
+  }, [searchLocationTo, searchLocationFrom]);
 
   /* Triggering handlers based on navigation data */
   useEffect(() => {
