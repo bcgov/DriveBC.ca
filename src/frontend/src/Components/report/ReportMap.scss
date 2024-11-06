@@ -190,6 +190,7 @@
           border: none;
           font-size: 1rem;
           color: $White;
+          z-index: 1000;
 
           &:hover {
             background: $Type-Link;
