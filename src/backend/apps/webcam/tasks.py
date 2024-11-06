@@ -33,15 +33,8 @@ FONT = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=14)
 FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
 CAMS_DIR = f'{settings.SRC_DIR}/images/webcams'
 
-CAM_OFF='''
-This highway cam image is
-currently unavailable due to
-technical difficulties.
+CAM_OFF = 'This highway cam image is currently unavailable due to technical difficulties. Our technicians have been alerted and service will resume as soon as possible.'
 
-Our  technicians have been
-alerted and service will resume
-as soon as possible.
-'''
 
 def populate_webcam_from_data(webcam_data):
     webcam_id = webcam_data.get("id")
@@ -99,6 +92,45 @@ def update_all_webcam_data():
     WebcamAPI().set_list_data()
 
 
+def wrap_text(text, pen, font, width):
+    '''
+    Return text wrapped to width with newlines
+
+    `pen` is the drawing context on the image; `font` is the font used for
+    drawing the text at a specific size. `width` is specified in pixels.
+
+    The text is split on whitespace into tokens.  The length of the token is
+    calculated with a space at the end, and if the cumulative length of the line
+    exceeds width, a newline is inserted and the linelength reset to 0 for the
+    next line.  The token (with a space at the end) is then added to the end of
+    the returning list.
+
+    When a newline condition is detected, the space is removed from the prior
+    token in the returning list so that centering the text doesn't include a
+    trailing space on each line.  The last token also has a space stripped.
+    '''
+
+    line_length = 0;
+    out = []
+
+    for token in text.split():
+        token_width = pen.textlength(token + ' ', font=font)
+
+        if line_length + token_width > width:
+            if len(out) > 0:  # remove added space from end of prior token
+                out[-1] = out[-1][:-1]
+            out.append('\n')
+            line_length = 0
+
+        out.append(token + ' ')
+        line_length += token_width
+
+    if len(out) > 0:  # remove added space from end of last token
+        out[-1] = out[-1][:-1]
+
+    return ''.join(out)
+
+
 def update_webcam_image(webcam):
     '''
     Retrieve the current cam image, stamp it and save it
@@ -143,9 +175,11 @@ def update_webcam_image(webcam):
                      anchor='rs', font=FONT)
 
         else:  # camera is unavailable, replace image with message
-            bbox = pen.multiline_textbbox((0, 0), CAM_OFF, font=FONT_LARGE)
+            message = webcam.get('message', {}).get('long')
+            wrapped = wrap_text(message, pen, FONT_LARGE, min(width - 40, 500))
+            bbox = pen.multiline_textbbox((0, 0), wrapped, font=FONT_LARGE)
             x = (width - bbox[2]) / 2
-            pen.multiline_text((x, 20), CAM_OFF, fill="white", align='center',
+            pen.multiline_text((x, 20), wrapped, fill="white", align='center',
                                font=FONT_LARGE)
             pen.polygon(((0, height), (width, height),
                          (width, height + 18), (0, height + 18)),

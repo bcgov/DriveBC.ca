@@ -51,6 +51,7 @@ class WebcamFeedSerializer(serializers.Serializer):
     shouldAppear = DriveBCField('should_appear', source="*")
     isNew = DriveBCField('is_new', source="*")
     isOnDemand = DriveBCField('is_on_demand', source="*")
+    message = DriveBCField('message', source='*')
 
     # Update status
     imageStats = WebcamImageStatsField(source="*")
