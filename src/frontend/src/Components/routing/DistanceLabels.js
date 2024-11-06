@@ -5,9 +5,6 @@ import React, { useCallback, useEffect } from 'react';
 import { useSelector } from "react-redux";
 import { memoize } from "proxy-memoize";
 
-// Internal imports
-import { removeOverlays } from "../map/helpers";
-
 // External imports
 import { Overlay } from "ol";
 import { fromLonLat } from "ol/proj";
