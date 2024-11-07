@@ -30,7 +30,9 @@ export default function EventCard(props) {
       <div className="event-card__details">
         <div className="type">
           <div className="content">
-            { showLoader ? <Skeleton width={75} /> : <div className="eventType"><EventTypeIcon event={event} state={event.display_category === 'majorEvents' ? 'static' : 'active'} /><span>{getTypeDisplay(event)}</span></div> }
+            { showLoader ? <Skeleton width={75} /> : <div className="eventType"><EventTypeIcon event={event} state={event.display_category === 'majorEvents' ? 'static' : 'active'} /><span>{getTypeDisplay(event)} {event.highlight &&
+                  <div>Updated</div>
+                }</span></div> }
           </div>
         </div>
 
@@ -69,7 +71,7 @@ export default function EventCard(props) {
 
         <div className="map">
           <div className="content">
-            { showLoader ? <Skeleton width={30} /> : 
+            { showLoader ? <Skeleton width={30} /> :
             <button
               className="viewMap-btn"
               aria-label="View on map"
