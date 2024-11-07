@@ -110,6 +110,7 @@ export default function EventsListPage() {
   });
   const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
   const [showLoader, setShowLoader] = useState(true);
+  const [loadData, setLoadData] = useState(true);
   const [advisoriesInRoute, setAdvisoriesInRoute] = useState([]);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
@@ -186,19 +187,10 @@ export default function EventsListPage() {
   };
 
   const loadEvents = async route => {
-    const routePoints = route && route.routeFound ? route.points : null;
+    // Fetch data
+    const eventData = await getEvents().catch((error) => displayError(error));
 
-    // Load if filtered cams don't exist or route doesn't match
-    if (!filteredEvents || !compareRoutePoints(routePoints, eventFilterPoints)) {
-      // Fetch data if it doesn't already exist
-      const eventData = events ? events : await getEvents().catch((error) => displayError(error));
-
-      workerRef.current.postMessage({data: eventData, route: (route && route.routeFound ? route : null), action: 'updateEvents'});
-
-    // Stop loader if data already exists
-    } else {
-      setShowLoader(false);
-    }
+    workerRef.current.postMessage({data: eventData, existingData: processedEvents, route: (route && route.routeFound ? route : null), action: 'updateEvents'});
   }
 
   const processEvents = () => {
@@ -255,7 +247,7 @@ export default function EventsListPage() {
           })
         );
 
-        setShowLoader(false);
+        setLoadData(false);
       };
     }
 
@@ -269,21 +261,24 @@ export default function EventsListPage() {
 
   useEffect(() => {
     setShowLoader(true);
+    setLoadData(true);
 
   }, [selectedRoute]);
 
   useEffect(() => {
     if (events) {
       processEvents();
-      setShowLoader(false);
+      setLoadData(false);
     }
   }, [filteredEvents, eventCategoryFilter]);
 
   useEffect(() => {
-    if (showLoader) {
+    if (loadData) {
       loadEvents(selectedRoute);
+    } else {
+      setShowLoader(false);
     }
-  }, [showLoader]);
+  }, [loadData]);
 
   useEffect(() => {
     // Do nothing on initial run
@@ -436,7 +431,7 @@ export default function EventsListPage() {
               />
             </div>
 
-            <PollingComponent runnable={() => setShowLoader(true)} interval={30000} />
+            <PollingComponent runnable={() => setLoadData(true)} interval={30000} />
 
             <div className="events-list-table">
               { largeScreen && !!processedEvents.length &&

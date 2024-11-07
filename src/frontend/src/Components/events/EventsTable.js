@@ -221,13 +221,20 @@ export default function EventsTable(props) {
           <td colSpan={3}>
             <div className="space-between-row">
               {getEventTypeCell(row.original)}
-              <button
-                className="viewMap-btn text-only-btn"
-                aria-label="View on map"
-                onClick={() => routeHandler(row.original)}>
-                <FontAwesomeIcon icon={faLocationDot} />
-                <span>View on map</span>
-              </button>
+
+              <div>
+                {row.original.highlight &&
+                  <div>Updated</div>
+                }
+
+                <button
+                  className="viewMap-btn text-only-btn"
+                  aria-label="View on map"
+                  onClick={() => routeHandler(row.original)}>
+                  <FontAwesomeIcon icon={faLocationDot} />
+                  <span>View on map</span>
+                </button>
+              </div>
             </div>
           </td>
         </tr>
