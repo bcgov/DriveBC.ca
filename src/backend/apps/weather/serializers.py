@@ -141,9 +141,9 @@ class HighElevationForecastSerializer(serializers.ModelSerializer):
         return obj.code
     
     def get_hwyName(self, obj):
-        parts = obj.name.split('-')
+        parts = obj.name.rsplit('-', 1) 
         return parts[0].strip() if parts else ""
 
     def get_hwyDescription(self, obj):
-        parts = obj.name.split('-')
+        parts = obj.name.rsplit('-', 1)
         return parts[1].strip() if len(parts) > 1 else ""
