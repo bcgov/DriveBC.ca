@@ -157,7 +157,12 @@ export default function Modal() {
             </form>
           }
         </div>
+
+        <div className='release-tag'>
+            { window.DEPLOYMENT_TAG || '' }
+            { window.RELEASE ? ` (${window.RELEASE})` : '' }
+          </div>
+        </div>
       </div>
-    </div>
   )
 }

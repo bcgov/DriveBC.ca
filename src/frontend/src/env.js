@@ -23,3 +23,5 @@ window.ROUTE_PLANNER_CLIENT_ID = `${process.env.REACT_APP_ROUTE_PLANNER_CLIENT_I
 window.RECAPTCHA_CLIENT_ID = `${process.env.REACT_APP_RECAPTCHA_CLIENT_ID}`;
 window.SURVEY_LINK = `${process.env.REACT_APP_SURVEY_LINK}`;
 window.BCEID_REGISTER_URL = `${process.env.REACT_APP_BCEID_REGISTER_URL}`;
+window.DEPLOYMENT_TAG = `${process.env.REACT_APP_DEPLOYMENT_TAG || ''}`
+window.RELEASE = `${process.env.REACT_APP_RELEASE || ''}`
