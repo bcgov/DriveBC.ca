@@ -26,6 +26,7 @@ echo -e "window.REPLAY_THE_DAY='${REACT_APP_REPLAY_THE_DAY}';" >> $MAIN
 echo -e "window.SURVEY_LINK='${REACT_APP_SURVEY_LINK}';" >> $MAIN
 echo -e "window.BCEID_REGISTER_URL='${REACT_APP_BCEID_REGISTER_URL}';" >> $MAIN
 echo -e "window.DEPLOYMENT_TAG='${DEPLOYMENT_TAG}';" >> $MAIN
+echo -e "window.RELEASE='${RELEASE || ''}';" >> $MAIN
 
 # Set the environment to be used for caching django content
 sed -i "s~{ENVIRONMENT}~$ENVIRONMENT~g" /etc/nginx/conf.d/default.conf

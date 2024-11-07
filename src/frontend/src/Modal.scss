@@ -64,12 +64,12 @@
 
       .BCeID-definition {
         margin-top: 8px;
-  
+
         span {
           font-size: 0.875rem;
         }
       }
-  
+
       .tooltip-info {
         margin-left: 8px;
         color: $White;
@@ -78,11 +78,19 @@
         border-radius: 18px;
         border: none;
         font-size: 0.75rem;
-  
+
         &:hover {
           cursor: pointer;
         }
       }
+    }
+
+    .release-tag {
+      font-size: 75%;
+      color: $Grey60;
+      margin-right: -20px;
+      margin-bottom: -50px;
+      text-align: right;
     }
   }
 }
