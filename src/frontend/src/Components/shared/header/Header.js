@@ -10,7 +10,7 @@ import { memoize } from 'proxy-memoize'
 import { updateAdvisories, updateBulletins } from '../../../slices/cmsSlice';
 
 // External imports
-import { faSparkles } from '@fortawesome/pro-solid-svg-icons';
+import { faChevronRight, faCommentExclamation, faSparkles } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useMediaQuery } from '@uidotdev/usehooks';
@@ -114,22 +114,25 @@ export default function Header() {
   const getNavLink = (title, count) => {
     return (
       <Nav.Link active={false} onClick={onClickActions}>
-        {title} {!!count && <div className="unread-count">{count}</div>}
+        <div className='title'>{title} {!!count && <div className="unread-count">{count}</div>}</div>
+
+        {!xLargeScreen &&
+          <FontAwesomeIcon icon={faChevronRight} />
+        }
       </Nav.Link>
     );
   };
 
-//  const surveyLink = `${window.SURVEY_LINK}` ||
-//    'https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u';
+  const surveyLink = `${window.SURVEY_LINK}` ||
+   'https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u';
+
+  const getWhatsNewLink = () => {
+    const latestImprovementBulletin = bulletins.find(bulletin => bulletin.slug === 'latest-beta-improvements');
+    return latestImprovementBulletin ? `/bulletins/${latestImprovementBulletin.id}` : '/bulletins';
+  }
 
   const whatsNewHandler = () => {
-    const latestImprovementBulletin = bulletins.find(bulletin => bulletin.slug === 'latest-beta-improvements');
-    if (latestImprovementBulletin) {
-      navigate(`/bulletins/${latestImprovementBulletin.id}`);
-      return;
-    }
-
-    navigate('/bulletins');
+    navigate(getWhatsNewLink());
   }
 
   // Main component
@@ -137,17 +140,23 @@ export default function Header() {
     <header>
       <Navbar expand="lg" expanded={expanded}>
         <Container>
-          <Navbar.Toggle onClick={() => setExpanded(expanded ? false : "expanded")}>
-            <span className="line line1"></span>
-            <span className="line line2"></span>
-            <span className="line line3"></span>
-          </Navbar.Toggle>
+          <div className='header-left'>
+            <Navbar.Toggle onClick={() => setExpanded(expanded ? false : "expanded")}>
+              <span className="line line1"></span>
+              <span className="line line2"></span>
+              <span className="line line3"></span>
+            </Navbar.Toggle>
 
-          <Navbar.Brand href="/" tabIndex={xLargeScreen ? "0": "-1"}>
-            <img className="header-logo" src={logo} alt="Government of British Columbia" />
-          </Navbar.Brand>
+            <Navbar.Brand href="/" tabIndex={xLargeScreen ? "0": "-1"}>
+              <img className="header-logo" src={logo} alt="Government of British Columbia" />
+            </Navbar.Brand>
 
-          <div className="nav-divider"></div>
+            <div className="nav-divider"></div>
+
+            {!xLargeScreen &&
+              <UserNavigation/>
+            }
+          </div>
 
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
@@ -170,25 +179,48 @@ export default function Header() {
               <LinkContainer to="/bulletins">
                 {getNavLink('Bulletins', bulletinsCount)}
               </LinkContainer>
+
+              {!xLargeScreen &&
+                <Nav.Link active={false} onClick={onClickActions} className='footer-nav-link first-link' href={surveyLink} target="_blank" rel="noreferrer" alt="Beta feedback">
+                  <div className='title'>Beta feedback</div>
+                </Nav.Link>
+              }
+
+              {!xLargeScreen &&
+                <LinkContainer to={bulletins ? getWhatsNewLink() : ''}>
+                  <Nav.Link active={false} onClick={onClickActions} className='footer-nav-link'>
+                    <div className='title'>What&apos;s new</div>
+                  </Nav.Link>
+                </LinkContainer>
+              }
+
+              {!xLargeScreen &&
+                <div className='filler' />
+              }
             </Nav>
           </Navbar.Collapse>
 
-          { xLargeScreen &&
-            <button className="btn btn-primary" id="feedback-btn" alt="What's new" tabIndex={0}
-              onClick={whatsNewHandler}
-              onKeyPress={(keyEvent) => {
-                if (keyEvent.charCode == 13 || keyEvent.charCode == 32) {
-                  whatsNewHandler();
-                }
-              }}>
-              <FontAwesomeIcon icon={faSparkles} />
-              What&apos;s new
-            </button>
+          {xLargeScreen &&
+            <div className='header-right'>
+              <a href={surveyLink} className="btn btn-outline-primary" id="feedback-btn" target="_blank"
+                 rel="noreferrer" alt="Beta feedback"><FontAwesomeIcon icon={faCommentExclamation}/>Beta feedback</a>
+
+              <button className="btn btn-outline-primary" id="whatsnew-btn" alt="What's new" tabIndex={0}
+                      onClick={whatsNewHandler}
+                      onKeyPress={(keyEvent) => {
+                        if (keyEvent.charCode == 13 || keyEvent.charCode == 32) {
+                          whatsNewHandler();
+                        }
+                      }}>
+                <FontAwesomeIcon icon={faSparkles}/>
+                What&apos;s new
+              </button>
+
+              <div className="nav-divider"/>
+
+              <UserNavigation/>
+            </div>
           }
-
-          <div className="nav-divider" />
-
-          <UserNavigation />
         </Container>
       </Navbar>
     </header>
