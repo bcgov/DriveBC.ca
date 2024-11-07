@@ -10,7 +10,9 @@ class SafeStringField(serializers.CharField):
     '''
 
     def to_internal_value(self, data):
+        data = super().to_internal_value(data)
         return strip_tags(data)
 
     def to_representation(self, value):
+        value = super().to_representation(value)
         return strip_tags(value)
