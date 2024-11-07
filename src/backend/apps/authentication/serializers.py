@@ -1,5 +1,7 @@
-from apps.authentication.models import FavouritedCameras, SavedRoutes
 from rest_framework import serializers
+
+from apps.authentication.models import FavouritedCameras, SavedRoutes
+from apps.shared.serializers import SafeStringMixin
 
 
 class FavouritedCamerasSerializer(serializers.ModelSerializer):
@@ -9,7 +11,8 @@ class FavouritedCamerasSerializer(serializers.ModelSerializer):
         fields = ('webcam',)
 
 
-class SavedRoutesSerializer(serializers.ModelSerializer):
+class SavedRoutesSerializer(SafeStringMixin, serializers.ModelSerializer):
+
     class Meta:
         model = SavedRoutes
         fields = ('id', 'label', 'distance', 'distance_unit',
