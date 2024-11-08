@@ -22,6 +22,10 @@
         cursor: pointer;
         transform: scale(1.25);
       }
+
+      & ~ .camera-name {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -91,6 +95,14 @@
     .card-pill {
       &:hover {
         background-color: $Gold60;
+      }
+    }
+  }
+
+  &.unavailable {
+    .card-pill {
+      &:hover {
+        background-color: $Error;
       }
     }
   }
@@ -182,7 +194,7 @@
       .card-pill {
         top: 8px;
         right: 8px;
-        padding: 4px 6px;
+        padding: 2px 6px;
         border-radius: 12px;
         transform:translateY(-200%);
         transition: background-color 0.1s ease-in-out;
