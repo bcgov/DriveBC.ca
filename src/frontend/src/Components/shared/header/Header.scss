@@ -119,6 +119,7 @@
 
 		@media (min-width: 992px) {
 			order: unset;
+			background: unset;
 		}
 
 		.navbar-nav {
@@ -134,6 +135,7 @@
 				@media (min-width: 992px) {
 					padding: 15px;
 					margin: 0 0.4rem;
+					border: 2px solid transparent;
 				}
 
 				&:hover {
