@@ -72,6 +72,7 @@ import View from 'ol/View';
 
 // Styling
 import './Map.scss';
+import { cameraStyles } from '../data/featureStyleDefinitions.js';
 
 export default function DriveBCMap(props) {
   /* initialization */
@@ -158,6 +159,34 @@ export default function DriveBCMap(props) {
     roadConditions: null,
     advisories: null
   });
+
+  const highlighClickedCamera = () => {
+    // Retrieve the camera feature currently displayed in the URL             
+    const feature = mapLayers.current.highwayCams
+      .getSource()
+      .getFeatures()
+      .filter(feature => feature.id_ === referenceData.id)[0];
+    let selectedFeature = clickedFeature? clickedFeature: feature;
+    // Retrieve the first camera feature within the same camera group if the camera orientation is non-default
+    if(selectedFeature === undefined) {
+      selectedFeature = mapLayers.current.highwayCams
+      .getSource()
+      .getFeatures()
+      .filter(feature => feature.values_.group === referenceData.group)[0];
+    }
+    setClickedFeature(selectedFeature);
+    for (const camFeature of mapLayers.current.highwayCams.getSource().getFeatures()) {
+      if(camFeature.id_ === selectedFeature.id_){
+        camFeature.setStyle(cameraStyles['active']);
+      }else{
+        camFeature.setStyle(cameraStyles['static']);
+      } 
+    }
+    if(selectedFeature){
+      selectedFeature.setProperties({ clicked: true }, true);
+    }
+    updateClickedFeature(selectedFeature);
+  }
 
   const getInitialLoadingLayers = () => {
     return {
@@ -753,6 +782,7 @@ export default function DriveBCMap(props) {
           onClick={() => {
             if (referenceData) {
               setZoomPan(mapView, 12, fromLonLat(referenceData.location.coordinates));
+              highlighClickedCamera();
             }
           }}>
           <CurrentCameraIcon />
