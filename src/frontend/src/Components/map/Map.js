@@ -359,6 +359,7 @@ export default function DriveBCMap(props) {
         blueLocationMarkup,
         mapRef,
         locationPinRef,
+        'Location From',
       );
 
       if (isInitialMountLocation.current === null) {
@@ -400,6 +401,7 @@ export default function DriveBCMap(props) {
         redLocationToMarkup,
         mapRef,
         locationToPinRef,
+        'Location To',
       );
 
       const locationToPin = document.querySelectorAll(".ol-selectable")[0];

@@ -70,7 +70,7 @@ export const redLocationToMarkup = `
   </svg>
 `;
 
-export const setLocationPin = (coordinates, svgMarkup, mapRef, pinRef) => {
+export const setLocationPin = (coordinates, svgMarkup, mapRef, pinRef, pinName) => {
   const svgImage = new Image();
   svgImage.src =
     'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgMarkup);
@@ -84,6 +84,8 @@ export const setLocationPin = (coordinates, svgMarkup, mapRef, pinRef) => {
     stopEvent: false, // Allow interactions with the overlay content
   });
 
+  pinOverlay.pinName = pinName;
+  
   if (pinRef) {
     pinRef.current = pinOverlay;
   }
