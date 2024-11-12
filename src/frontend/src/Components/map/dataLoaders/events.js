@@ -3,7 +3,7 @@ import { getEvents } from '../../data/events';
 // Event layers
 export const loadEvents = async (route, events, filteredEvents, eventFilterPoints, dispatch, displayError, worker, isInitialLoad = true, trackedEventsRef) => {
   // Fetch data
-  const eventData = await getEvents().catch((error) => displayError(error));
+  const eventData = await getEvents(null, !isInitialLoad).catch((error) => displayError(error));
 
   // Track unfiltered events' highlight status and last_updated timestamp
   const trackedEventsDict = eventData.reduce((acc, event) => {

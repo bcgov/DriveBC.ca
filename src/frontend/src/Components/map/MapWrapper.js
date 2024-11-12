@@ -137,7 +137,7 @@ export default function MapWrapper(props) {
 
   return (
     <React.Fragment>
-      <PollingComponent runnable={() => loadData()} interval={30000} />
+      <PollingComponent runnable={() => loadData()} interval={5000} />
 
       <DriveBCMap
         mapProps={props}

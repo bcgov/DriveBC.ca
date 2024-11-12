@@ -7,7 +7,8 @@ from rest_framework import viewsets
 
 
 class EventAPI(CachedListModelMixin):
-    queryset = Event.objects.all().exclude(status=EVENT_STATUS.INACTIVE)
+    queryset = (Event.objects.all().exclude(status=EVENT_STATUS.INACTIVE)
+                .exclude(id='DBC-3151').exclude(id='DBC-20041').exclude(id='DBC-2905'))
     serializer_class = EventSerializer
     cache_key = CacheKey.EVENT_LIST
     cache_timeout = CacheTimeout.EVENT_LIST
@@ -18,5 +19,5 @@ class EventViewSet(EventAPI, viewsets.ReadOnlyModelViewSet):
 
 
 class EventTestViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = EventAPI.queryset
+    queryset = Event.objects.all().exclude(status=EVENT_STATUS.INACTIVE)
     serializer_class = EventAPI.serializer_class

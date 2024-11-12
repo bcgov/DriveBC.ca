@@ -140,6 +140,7 @@ export default function EventsListPage() {
   const eventRefs = useRef({});
   const viewedHighlightedEvents = useRef(new Set());
   const eventsInViewport = useRef({});
+  const isPolling = useRef(false);
 
   // Media queries
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
@@ -195,9 +196,9 @@ export default function EventsListPage() {
     }
   };
 
-  const loadEvents = async route => {
+  const loadEvents = async (route, isPolling) => {
     // Fetch data
-    const eventData = await getEvents().catch((error) => displayError(error));
+    const eventData = await getEvents(null, isPolling).catch((error) => displayError(error));
 
     // Track unfiltered events' highlight status and last_updated timestamp
     const trackedEventsDict = eventData.reduce((acc, event) => {
@@ -342,7 +343,8 @@ export default function EventsListPage() {
 
   useEffect(() => {
     if (loadData) {
-      loadEvents(selectedRoute);
+      loadEvents(selectedRoute, isPolling.current);
+      isPolling.current = true;
     } else {
       setShowLoader(false);
     }
@@ -606,7 +608,7 @@ export default function EventsListPage() {
               />
             </div>
 
-            <PollingComponent runnable={() => setLoadData(true)} interval={30000} />
+            <PollingComponent runnable={() => setLoadData(true)} interval={5000} />
 
             <div className="events-list-table">
               { largeScreen && !!processedEvents.length &&

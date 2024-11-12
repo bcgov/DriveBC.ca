@@ -1,7 +1,11 @@
 import { get } from "./helper.js";
 
-export function getEvents(routePoints) {
+export function getEvents(routePoints, alternateEndpoint=false) {
   const payload = routePoints ? { route: routePoints } : {};
+
+  if (alternateEndpoint) {
+    return get(`${window.API_HOST}/api/test/delays/`, payload).then((data) => data);
+  }
 
   return get(`${window.API_HOST}/api/events/`, payload).then((data) => data);
 }
