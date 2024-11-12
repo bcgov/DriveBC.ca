@@ -121,12 +121,14 @@ export const calculateCenter = (referenceData) => {
 }
 
 export const removeOverlays = (mapRef) => {
-  // Clone the overlays array to avoid issues when modifying the array during iteration
-  const overlaysArray = [...mapRef.current.getOverlays().getArray()];
+  if(mapRef !== undefined) {
+    // Clone the overlays array to avoid issues when modifying the array during iteration
+    const overlaysArray = [...mapRef.current.getOverlays().getArray()];
 
-  overlaysArray.forEach((overlay) => {
-    if(overlay.pinName === undefined){
-      mapRef.current.removeOverlay(overlay);
-    }
-  });
+    overlaysArray.forEach((overlay) => {
+      if(overlay.pinName === undefined){
+        mapRef.current.removeOverlay(overlay);
+      }
+    });
+  }
 };
