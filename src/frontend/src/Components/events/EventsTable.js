@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/pro-solid-svg-icons';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import Button from 'react-bootstrap/Button';
 
 // Internal imports
 import { getTypeDisplay, routeAtSortFn, routeOrderSortFn, severitySortFn } from './functions';
@@ -213,28 +214,24 @@ export default function EventsTable(props) {
       const row = rows[i];
 
       res.push(
-        <tr className={`${row.original.severity.toLowerCase()} headerRow`} tabIndex={0} key={`${row.id}-header-row`}>
+        <tr className={`${row.original.severity.toLowerCase()} headerRow ${row.original.highlight ? 'highlighted' : ''}`} tabIndex={0} key={`${row.id}-header-row`}>
           <td colSpan={2}>
             <p className={'roadName'}>{row.original.route_at}</p>
             <p className={'directionDisplay'}>{row.original.direction_display}</p>
+            <Button
+              className="viewOnMap-btn"
+              aria-label="View on map"
+              onClick={() => routeHandler(row.original)}>
+              <FontAwesomeIcon icon={faLocationDot} />
+              <span>View on map</span>
+            </Button>
           </td>
           <td colSpan={3}>
             <div className="space-between-row">
               {getEventTypeCell(row.original)}
-
-              <div>
-                {row.original.highlight &&
-                  <div>Updated</div>
-                }
-
-                <button
-                  className="viewMap-btn text-only-btn"
-                  aria-label="View on map"
-                  onClick={() => routeHandler(row.original)}>
-                  <FontAwesomeIcon icon={faLocationDot} />
-                  <span>View on map</span>
-                </button>
-              </div>
+              {row.original.highlight &&
+                <div className="updated-pill">Updated</div>
+              }
             </div>
           </td>
         </tr>

@@ -43,10 +43,6 @@ table {
         }
       }
 
-      &:hover {
-        background-color: $BC-Blue-Light;
-      }
-
       td {
         color: $Type-Primary;
 
@@ -57,10 +53,6 @@ table {
         &.severity, &.direction {
           text-transform: capitalize;
         }
-
-        svg {
-          color: $BC-Blue;
-        }
       }
     }
 
@@ -69,12 +61,16 @@ table {
     }
 
     .headerRow {
-      &:hover + tr {
-        background-color: $BC-Blue-Light;
-      }
+      &.highlighted {
+        background-color: $Blue20;
 
-      &:has(+ tr:hover) {
-        background-color: $BC-Blue-Light;
+        & + .dataRow, & + .dataRow:hover {
+          background-color: $Blue20;
+        }
+
+        &:hover {
+          background-color: $Blue20;
+        }  
       }
 
       td {
@@ -91,7 +87,7 @@ table {
         .directionDisplay {
           font-size: 0.875rem;
           font-weight: 700;
-          color: $Grey70;
+          color: $Grey80;
         }
 
         p {
@@ -120,17 +116,18 @@ table {
   }
 }
 
-.viewMap-btn {
+.viewOnMap-btn {
   font-size: 0.875rem;
   font-weight: 700;
   color: $Type-Link;
   border: none;
-  background: none;
-  padding: 0;
+  border-radius: 8px;
+  background: $Grey10;
+  padding: 8px 16px;
+  margin-top: 1rem;
 
   svg {
     margin-right: 8px;
-    color: $Type-Link;
   }
 }
 

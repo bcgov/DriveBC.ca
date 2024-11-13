@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/pro-solid-svg-icons';
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import Button from 'react-bootstrap/Button';
 
 // Internal imports
 import { getTypeDisplay } from './functions';
@@ -21,18 +22,23 @@ export default function EventCard(props) {
 
   // Rendering
   return (
-    <div className={'event-card ' + (event ? event.severity.toLowerCase() : '')}>
+    <div className={'event-card ' + (event ? event.severity.toLowerCase() : '') + ((event && event.highlight) ? ' highlighted' : '')}>
       <div className="event-card__title">
-        <div className="route">{ showLoader ? <Skeleton width={150} /> : event.route_at }</div>
-        <div className="direction">{ showLoader ? <Skeleton width={100} /> : event.direction_display }</div>
+        { showLoader ? <Skeleton width={75} /> : <div className="event-header"><div className="eventType"><EventTypeIcon event={event} state={event.display_category === 'majorEvents' ? 'static' : 'active'} />
+            <span className="eventType__text">{getTypeDisplay(event)}
+            </span>
+          </div>
+          {event && event.highlight &&
+            <div className="updated-pill">Updated</div>
+          }
+        </div> }
       </div>
 
       <div className="event-card__details">
-        <div className="type">
+        <div className="name">
           <div className="content">
-            { showLoader ? <Skeleton width={75} /> : <div className="eventType"><EventTypeIcon event={event} state={event.display_category === 'majorEvents' ? 'static' : 'active'} /><span>{getTypeDisplay(event)} {event.highlight &&
-                  <div>Updated</div>
-                }</span></div> }
+            <div className="route">{ showLoader ? <Skeleton width={150} /> : event.route_at }</div>
+            <div className="direction">{ showLoader ? <Skeleton width={100} /> : event.direction_display }</div>
           </div>
         </div>
 
@@ -72,8 +78,8 @@ export default function EventCard(props) {
         <div className="map">
           <div className="content">
             { showLoader ? <Skeleton width={30} /> :
-            <button
-              className="viewMap-btn"
+            <Button
+              className="viewOnMap-btn"
               aria-label="View on map"
               onClick={() => handleRoute(event)}
               onKeyDown={(keyEvent) => {
@@ -83,7 +89,7 @@ export default function EventCard(props) {
               }}>
               <FontAwesomeIcon icon={faLocationDot} />
               <span>View on map</span>
-            </button> }
+            </Button> }
           </div>
         </div>
       </div>

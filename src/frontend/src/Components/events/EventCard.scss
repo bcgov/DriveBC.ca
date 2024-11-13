@@ -2,19 +2,26 @@
 
 .event-card {
   margin-bottom: 40px;
+  box-shadow: 0px 0.6px 1.8px 0px rgba(0, 0, 0, 0.10), 0px 3.2px 7.2px 0px rgba(0, 0, 0, 0.13);  border-radius: 4px;
 
   &__title {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-color: $BC-Blue;
-    color: $White;
-    padding: 8px;
+
+    .event-header {
+      padding: 8px 12px;
+
+      .eventType {
+        padding: 0;
+      }
+    }
 
     .route {
       font-weight: 700;
     }
   }
+  
   &__details {
 
     & > div {
@@ -22,25 +29,34 @@
 
       .header {
         color: $BC-Blue;
-        background-color: $BC-Blue-Light;
         width: fit-content;
-        flex: 0 0 100px;
+        flex: 0 0 116px;
         display: flex;
-        align-items: center;
-        padding: 8px 4px;
+        padding: 8px 8px 8px 12px;
       }
 
       .content {
-        border-top: 1px solid $Divider;
-        padding: 8px;
+        color: $BC-Blue;
+        padding: 12px;
         flex-grow: 1;
         display: flex;
         align-items: center;
       }
+    }
 
-      &.map, &.location {
-        .content {
-          border-top: none;
+    .name {
+      .content {
+        display: block;
+        
+        .route {
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: $BC-Blue;
+        }
+        .direction {
+          font-size: 0.875rem;
+          font-weight: 700;
+          color: $Type-Secondary;
         }
       }
     }
@@ -56,24 +72,39 @@
         }
       }
     }
+
+    .viewOnMap-btn {
+      width: 100%;
+      padding: 12px;
+    }
   }
 
   &.major, &.closure {
-    .event-card__details {
-      .type {
-        .header, .content {
-          color: $Error;
-        }
-
-        .content {
-          font-weight: 700;
-          text-transform: capitalize;
-
-          svg {
-            color: $Error;
-          }
-        }
+    .name {
+      .route {
+        color: $Error;
       }
     }
+  }
+
+  &.highlighted {
+    .event-card__details {
+      background-color: $Blue20;
+    }
+  }
+
+  &.closure .event-header {
+    background: $Error;
+    color: white;
+  }
+  
+  &.major .event-header {
+    background: #FFE4E5;
+    color: $Error;
+  }
+  
+  &.minor .event-header {
+    background: #FEF0D8;
+    color: $Gold110;
   }
 }
