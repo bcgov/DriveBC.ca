@@ -447,7 +447,7 @@ export default function DriveBCMap(props) {
     const routesData = searchedRoutes ? searchedRoutes : null;
     loadLayer(
       mapLayers, mapRef, mapContext,
-      'routeLayer', routesData, routesData, 3, referenceData, updateReferenceFeature
+      'routeLayer', routesData, routesData, 6, referenceData, updateReferenceFeature
     );
 
     if (routesData) {
