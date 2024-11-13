@@ -21,8 +21,8 @@ import {
 import {
   faArrowUp,
   faArrowDown,
-} from '@fortawesome/pro-light-svg-icons';
-import { faRoute as faRouteEmpty } from '@fortawesome/pro-regular-svg-icons';
+  faRoute as faRouteEmpty
+} from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Container from 'react-bootstrap/Container';
 import Dropdown from 'react-bootstrap/Dropdown';
