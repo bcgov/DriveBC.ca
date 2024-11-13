@@ -54,7 +54,7 @@ export const filterAdvisoryByRoute = (data, route) => {
 }
 
 export const filterByRoute = (data, route, extraToleranceMeters, populateProjection) => {
-  if (!route) {
+  if (!route || !data || data.length === 0) {
     return data;
   }
 

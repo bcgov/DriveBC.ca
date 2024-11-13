@@ -663,12 +663,14 @@ export const routeStyles = {
         color: 'rgba(85, 149, 217, 1)',
         width: 6,
       }),
+      zIndex: 6
     }),
     new Style({
       stroke: new Stroke({
         color: 'rgba(216, 234, 253, 1)',
         width: 4,
       }),
+      zIndex: 6
     }),
   ],
   hover: [
@@ -677,12 +679,14 @@ export const routeStyles = {
         color: 'rgba(168, 208, 251, 1)',
         width: 6,
       }),
+      zIndex: 8
     }),
     new Style({
       stroke: new Stroke({
         color: 'rgba(83, 134, 237, 1)',
         width: 4,
       }),
+      zIndex: 8
     }),
   ],
   active: [
@@ -691,12 +695,14 @@ export const routeStyles = {
         color: 'rgba(85, 149, 217, 1)',
         width: 6,
       }),
+      zIndex: 7
     }),
     new Style({
       stroke: new Stroke({
         color: 'rgba(30, 83, 167, 1)',
         width: 4,
       }),
+      zIndex: 7
     }),
   ],
 };
