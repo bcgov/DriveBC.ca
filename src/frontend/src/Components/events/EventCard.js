@@ -1,5 +1,5 @@
 // React
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,11 +18,15 @@ import './EventCard.scss';
 
 export default function EventCard(props) {
   // Props
-  const { event, showLoader, handleRoute } = props;
+  const { event, showLoader, handleRoute, childRef } = props;
 
   // Rendering
   return (
-    <div className={'event-card ' + (event ? event.severity.toLowerCase() : '') + ((event && event.highlight) ? ' highlighted' : '')}>
+    <div
+      ref={childRef}
+      className={'event-card ' + (event ? event.severity.toLowerCase() : '') + ((event && event.highlight) ? ' highlighted' : '')}
+      data-key={event ? event.id : ''}
+    >
       <div className="event-card__title">
         { showLoader ? <Skeleton width={75} /> : <div className="event-header"><div className="eventType"><EventTypeIcon event={event} state={event.display_category === 'majorEvents' ? 'static' : 'active'} />
             <span className="eventType__text">{getTypeDisplay(event)}

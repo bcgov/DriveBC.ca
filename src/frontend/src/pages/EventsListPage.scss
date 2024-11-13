@@ -171,3 +171,28 @@
   padding: 4px 12px;
   width: auto;
 }
+
+.update-count-pill {
+  background-color: $Blue80;
+  color: $White;
+  font-weight: 700;
+  font-size: 0.875rem;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 24px;
+  padding: 4px 12px;
+  z-index: 1000;
+
+  &.top {
+    top: calc(58px + 9px);
+  }
+
+  &.bottom {
+    bottom: 9px;
+  }
+
+  svg {
+    margin-right: 4px;
+  }
+}
