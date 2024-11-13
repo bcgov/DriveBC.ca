@@ -27,7 +27,7 @@ import './EventsTable.scss';
 
 export default function EventsTable(props) {
   // Props
-  const { data, routeHandler, showLoader, sortingKey } = props;
+  const { data, routeHandler, showLoader, sortingKey, eventRefs } = props;
 
   // States
   const [sorting, setSorting] = useState([{ desc: true, id: 'location_description' }]);
@@ -214,7 +214,13 @@ export default function EventsTable(props) {
       const row = rows[i];
 
       res.push(
-        <tr className={`${row.original.severity.toLowerCase()} headerRow ${row.original.highlight ? 'highlighted' : ''}`} tabIndex={0} key={`${row.id}-header-row`}>
+        <tr
+          ref={(el) => (eventRefs.current[row.original.id] = { element: el, highlight: row.original.highlight })}
+          className={`${row.original.severity.toLowerCase()} headerRow ${row.original.highlight ? 'highlighted' : ''}`}
+          tabIndex={0}
+          key={`${row.id}-header-row`}
+          data-key={row.original.id}
+        >
           <td colSpan={2}>
             <p className={'roadName'}>{row.original.route_at}</p>
             <p className={'directionDisplay'}>{row.original.direction_display}</p>

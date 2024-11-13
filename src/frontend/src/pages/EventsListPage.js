@@ -18,6 +18,10 @@ import {
   faXmark,
   faFlag
 } from '@fortawesome/pro-solid-svg-icons';
+import {
+  faArrowUp,
+  faArrowDown,
+} from '@fortawesome/pro-light-svg-icons';
 import { faRoute as faRouteEmpty } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Container from 'react-bootstrap/Container';
@@ -26,7 +30,6 @@ import Button from 'react-bootstrap/Button';
 
 // Internal imports
 import { CMSContext } from '../App';
-import { compareRoutePoints } from '../Components/map/helpers';
 import { getAdvisories } from '../Components/data/advisories';
 import { getEvents } from '../Components/data/events';
 import { MapContext } from '../App.js';
@@ -117,6 +120,7 @@ export default function EventsListPage() {
   const [openAdvisoriesOverlay, setOpenAdvisoriesOverlay] = useState(false);
   const [openSearchOverlay, setOpenSearchOverlay] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
+  const [updateCounts, setUpdateCounts] = useState({above: 0, below: 0});
 
   // Error handling
   const displayError = (error) => {
@@ -131,6 +135,8 @@ export default function EventsListPage() {
   // Refs
   const isInitialMount = useRef(true);
   const workerRef = useRef();
+  const eventRefs = useRef({});
+  const eventBeenInViewPort = useRef({});
 
   // Media queries
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
@@ -292,6 +298,63 @@ export default function EventsListPage() {
 
   }, [sortingKey]);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const eventId = entry.target.getAttribute('data-key');
+          const ref = eventRefs.current[eventId];
+
+          if (entry.isIntersecting) {
+            // Set eventBeenInViewPort to true when the highlighted event is scrolled into the viewport
+            if (ref.highlight && !eventBeenInViewPort[eventId]) {
+              eventBeenInViewPort[eventId] = true;
+            }
+          } else {
+            // Set highlight to false when the event has been in the viewport and is scrolled out of the viewport
+            if (ref.highlight && eventBeenInViewPort[eventId] || false) {
+              ref.highlight = false;
+              eventBeenInViewPort[eventId] = false;
+              updateHighlightHandler({ id: eventId, highlight: false }); // Update the data in the parent so it can be used by the webworker
+            }
+          }
+        });
+
+        // Count items with highlight outside current viewport
+        const counts = { above: 0, below: 0 }
+
+        Object.values(eventRefs.current).forEach(ref => {
+          if (!ref.highlight || eventBeenInViewPort[ref.element.getAttribute('data-key')]) return;
+
+          const elementTop = ref.element.getBoundingClientRect().top;
+
+          if (elementTop < window.innerHeight) {
+            counts.above++;
+          } else  {
+            counts.below++;
+          }
+        });
+
+        setUpdateCounts(counts);
+      },
+      { threshold: 0 }
+    );
+
+    Object.values(eventRefs.current).forEach((ref) => {
+      if (ref.element && ref.highlight) {
+        observer.observe(ref.element);
+      }
+    });
+
+    return () => {
+      Object.values(eventRefs.current).forEach((ref) => {
+        if (ref.element) {
+          observer.unobserve(ref.element);
+        }
+      });
+    };
+  }, [processedEvents]);
+
   // Handlers
   const toggleEventCategoryFilter = (targetCategory, check) => {
     const newFilter = {...eventCategoryFilter};
@@ -320,6 +383,14 @@ export default function EventsListPage() {
       localStorage.setItem('sorting-key', key);
     }
   }
+
+  const updateHighlightHandler = (updatedEvent) => {
+    setProcessedEvents((processedEvents) =>
+      processedEvents.map((event) =>
+        event.id === updatedEvent.id ? { ...event, ...updatedEvent } : event
+      )
+    );
+  };
 
   // Rendering - Sorting
   const getSortingDisplay = (key) => {
@@ -435,7 +506,14 @@ export default function EventsListPage() {
 
             <div className="events-list-table">
               { largeScreen && !!processedEvents.length &&
-                <EventsTable data={processedEvents} routeHandler={handleRoute} showLoader={showLoader} sortingKey={sortingKey} />
+                <EventsTable
+                  data={processedEvents}
+                  routeHandler={handleRoute}
+                  showLoader={showLoader}
+                  sortingKey={sortingKey}
+                  updateCountHandler={setUpdateCounts}
+                  eventRefs={eventRefs}
+                />
               }
 
               { !largeScreen &&
@@ -443,6 +521,7 @@ export default function EventsListPage() {
                   { !showLoader && processedEvents.map(
                     (e) => (
                       <EventCard
+                        childRef={(el) => (eventRefs.current[e.id] = { element: el, highlight: e.highlight })}
                         key={e.id}
                         event={e}
                         handleRoute={handleRoute}
@@ -475,6 +554,10 @@ export default function EventsListPage() {
                 </div>
               }
             </div>
+
+          {updateCounts.above > 0 && <div className="update-count-pill top"><FontAwesomeIcon icon={faArrowUp} /> {updateCounts.above} update{updateCounts.above !== 1 ? 's' : ''} available</div>}
+          {updateCounts.below > 0 && <div className="update-count-pill bottom"><FontAwesomeIcon icon={faArrowDown} /> {updateCounts.below} update{updateCounts.below !== 1 ? 's' : ''} available</div>}
+
           </div>
         </Container>
         <Footer />

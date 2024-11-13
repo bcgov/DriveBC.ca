@@ -33,7 +33,7 @@ self.onmessage = (event) => {
     filteredData = data.map(event => {
       const loadedEvent = loadedEvents[event.id];
       const highlight = loadedEvent // If the event has been loaded before, mark as highlighted if last_updated is different or was previously highlighted
-        ? event.last_updated !== loadedEvent.last_updated || loadedEvent.highlight //
+        ? event.last_updated !== loadedEvent.last_updated || loadedEvent.highlight
         : existingData.length !== 0; // If existing data, mark the event as highlighted
       return { ...event, highlight };
     });
