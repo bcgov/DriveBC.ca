@@ -181,6 +181,12 @@ export default function Header() {
               </LinkContainer>
 
               {!xLargeScreen &&
+                <LinkContainer to="/problems">
+                  {getNavLink('Report a problem')}
+                </LinkContainer>
+              }
+
+              {!xLargeScreen &&
                 <Nav.Link active={false} onClick={onClickActions} className='footer-nav-link first-link' href={surveyLink} target="_blank" rel="noreferrer" alt="Beta feedback">
                   <div className='title'>Beta feedback</div>
                 </Nav.Link>
