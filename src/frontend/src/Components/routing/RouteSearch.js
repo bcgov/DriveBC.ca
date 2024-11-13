@@ -3,6 +3,9 @@ import React, { useCallback, useEffect, useRef, forwardRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 
+// Routing
+import { useSearchParams } from "react-router-dom";
+
 // Internal imports
 import { getRoute } from '../data/routes.js';
 import {
@@ -32,6 +35,8 @@ import './RouteSearch.scss';
 
 const RouteSearch = forwardRef((props, ref) => {
   const { showFilterText, showSpinner, onShowSpinnerChange, mapRef } = props;
+
+  const [_searchParams, setSearchParams] = useSearchParams();
 
   // Redux
   const dispatch = useDispatch();
@@ -105,6 +110,7 @@ const RouteSearch = forwardRef((props, ref) => {
 
   // Handlers
   const swapHandler = () => {
+    setSearchParams({});
     dispatch(updateSearchLocationFrom(searchLocationTo));
     dispatch(updateSearchLocationTo(searchLocationFrom));
   }
