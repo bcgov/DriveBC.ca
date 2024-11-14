@@ -29,6 +29,12 @@
 				padding: 5px 10px;
 			}
 		}
+
+		.header-right {
+			.btn {
+				white-space: nowrap;
+			}
+		}
 	}
 
 	h2 {
@@ -89,18 +95,6 @@
 		}
 	}
 
-	&-brand {
-		padding: 0;
-		margin: 0 0 0 12px;
-
-		.header-logo {
-			width: 126px;
-			height: 32px;
-			top: 6px;
-			left: 32px;
-		}
-	}
-
 	.nav-divider {
 		border: 1px solid $Divider;
 		margin: 0 12px;
@@ -112,10 +106,27 @@
 		}
 	}
 
+	&-brand {
+		padding: 0;
+		margin: 0 0 0 12px;
+
+		.header-logo {
+			width: 126px;
+			height: 32px;
+			top: 6px;
+			left: 32px;
+		}
+
+		& + .nav-divider {
+			margin: 0 8px 0 0;
+		}
+	}
+
 	&-collapse {
 		order: 1;
 		padding: 0 16px;
 		background: $Grey10;
+		padding: 0;
 
 		@media (min-width: 992px) {
 			order: unset;
@@ -133,8 +144,7 @@
 				justify-content: space-between;
 
 				@media (min-width: 992px) {
-					padding: 15px;
-					margin: 0 0.4rem;
+					padding: 16px 8px;
 					border: 2px solid transparent;
 				}
 
