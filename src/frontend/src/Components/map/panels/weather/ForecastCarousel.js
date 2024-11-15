@@ -84,7 +84,7 @@ export default function ForecastCarousel(props) {
         currentPane={currentPane}
         itemsPerPane={1}
         gap={16}
-        itemPeek={32}
+        itemPeek={12}
         animationDuration={0.4}>
 
         {carouselList}
