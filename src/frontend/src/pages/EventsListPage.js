@@ -337,7 +337,10 @@ export default function EventsListPage() {
 
         setUpdateCounts(counts);
       },
-      { threshold: 0 }
+      {
+        rootMargin: "-58px 0px 0px 0px", // Factor in the height of the header
+        threshold: 1 // Trigger when the entire header element is in the viewport
+      }
     );
 
     Object.values(eventRefs.current).forEach((ref) => {
