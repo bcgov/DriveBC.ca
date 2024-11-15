@@ -23,11 +23,10 @@ export default function EventCard(props) {
   // Rendering
   return (
     <div
-      ref={childRef}
       className={'event-card ' + (event ? event.severity.toLowerCase() : '') + ((event && event.highlight) ? ' highlighted' : '')}
       data-key={event ? event.id : ''}
     >
-      <div className="event-card__title">
+      <div ref={childRef} className="event-card__title" data-key={event ? event.id : ''}>
         { showLoader ? <Skeleton width={75} /> : <div className="event-header"><div className="eventType"><EventTypeIcon event={event} state={event.display_category === 'majorEvents' ? 'static' : 'active'} />
             <span className="eventType__text">{getTypeDisplay(event)}
             </span>
