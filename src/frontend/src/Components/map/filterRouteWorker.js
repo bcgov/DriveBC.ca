@@ -30,7 +30,7 @@ self.onmessage = (event) => {
     }, {});
 
     // Add the highlight status to the event data
-    filteredData = data.map(event => {
+    filteredData = filteredData.map(event => {
       const loadedEvent = loadedEvents[event.id];
       const highlight = loadedEvent // If the event has been loaded before, mark as highlighted if last_updated is different or was previously highlighted
         ? event.last_updated !== loadedEvent.last_updated || loadedEvent.highlight
