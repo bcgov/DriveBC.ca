@@ -254,7 +254,7 @@ export default function EventsTable(props) {
 
       res.push(
         <tr className={`${row.original.severity.toLowerCase()} mapLinkRow`} key={`${row.id}-map-link-row`}>
-          <td colSpan={5} className={'map'} title={'View on map'}>
+          <td colSpan={5} className={'map'} title="">
               <Button
                 className="viewOnMap-btn"
                 aria-label="View on map"
