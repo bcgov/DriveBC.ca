@@ -395,6 +395,32 @@ export default function EventsListPage() {
     );
   };
 
+  const scrollToNextHighlightedEventHandler = (direction) => {
+    const offset = 58 + 48; // Offset Y position by 58px to account for the header + 48px of padding
+
+    // Get all highlighted events that are not in the viewport and sort them by their position
+    const sortedRefs = Object.entries(eventRefs.current)
+      .filter(([key, ref]) => ref.highlight && !eventBeenInViewPort.current[key])
+      .map(([key, ref]) => ({
+        key,
+        top: Math.floor(ref.element.getBoundingClientRect().top + window.scrollY - offset)
+      }))
+      .sort((a, b) => a.top - b.top);
+
+    const currentScrollPosition = Math.floor(window.scrollY);
+    let nextElementTopPosition;
+
+    if (direction === 'above') {
+      nextElementTopPosition = sortedRefs.reverse().find(ref => ref.top < currentScrollPosition)?.top;
+    } else if (direction === 'below') {
+      nextElementTopPosition = sortedRefs.find(ref => ref.top > currentScrollPosition)?.top;
+    }
+
+    if (nextElementTopPosition !== undefined) {
+      window.scrollTo({ top: nextElementTopPosition, behavior: 'smooth' });
+    }
+  };
+
   // Rendering - Sorting
   const getSortingDisplay = (key) => {
     const sortingDisplayMap = {
@@ -558,8 +584,8 @@ export default function EventsListPage() {
               }
             </div>
 
-          {updateCounts.above > 0 && <div className="update-count-pill top"><FontAwesomeIcon icon={faArrowUp} /> {updateCounts.above} update{updateCounts.above !== 1 ? 's' : ''} available</div>}
-          {updateCounts.below > 0 && <div className="update-count-pill bottom"><FontAwesomeIcon icon={faArrowDown} /> {updateCounts.below} update{updateCounts.below !== 1 ? 's' : ''} available</div>}
+          {updateCounts.above > 0 && <button className="update-count-pill top" onClick={() => scrollToNextHighlightedEventHandler('above')}><FontAwesomeIcon icon={faArrowUp} /> {updateCounts.above} update{updateCounts.above !== 1 ? 's' : ''} available</button>}
+          {updateCounts.below > 0 && <button className="update-count-pill bottom" onClick={() => scrollToNextHighlightedEventHandler('below')}><FontAwesomeIcon icon={faArrowDown} /> {updateCounts.below} update{updateCounts.below !== 1 ? 's' : ''} available</button>}
 
           </div>
         </Container>
