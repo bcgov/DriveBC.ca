@@ -200,7 +200,7 @@ export default function RegionalWeatherPanel(props) {
         
         <div className="popup__content__forecasts">
           {weather.current_day_forecasts.length &&
-            <ForecastCarousel forecast_group={weather.current_day_forecasts} currentPane />
+            <ForecastCarousel forecast_group={weather.current_day_forecasts} className={'test'} currentPane />
           }
 
           <ForecastTabs forecasts={weather.future_forecasts} sunset={weather.sunset} />

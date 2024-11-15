@@ -1,7 +1,7 @@
 @import "../../../../styles/variables";
 
 .forecast-container {
-  padding: 1rem 1rem 0 1rem;
+  padding: 1rem 0 0;
 }
 
 .forecast-tab-list {
@@ -11,7 +11,7 @@
     border-bottom: 1px solid #D9D9D9;
     margin-top: 1rem;
     margin-bottom: 0.5rem;
-    padding: 0 0.5rem;
+    padding: 0;
 
     li, button, div {
       display: flex;
@@ -20,6 +20,9 @@
 
     .nav-item {
       padding: 0 0.5rem;
+      &:first-child, &:last-child {
+        padding: 0;
+      }
 
       button {
         padding: 0;
