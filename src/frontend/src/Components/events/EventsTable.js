@@ -200,8 +200,6 @@ export default function EventsTable(props) {
         severity.toLowerCase() +
         " delay";
 
-    } else if (columnId === "map") {
-      return "View on map";
     }
 
     return "";
@@ -224,13 +222,6 @@ export default function EventsTable(props) {
           <td colSpan={2}>
             <p className={'roadName'}>{row.original.route_at}</p>
             <p className={'directionDisplay'}>{row.original.direction_display}</p>
-            <Button
-              className="viewOnMap-btn"
-              aria-label="View on map"
-              onClick={() => routeHandler(row.original)}>
-              <FontAwesomeIcon icon={faLocationDot} />
-              <span>View on map</span>
-            </Button>
           </td>
           <td colSpan={3}>
             <div className="space-between-row">
@@ -258,6 +249,20 @@ export default function EventsTable(props) {
               </td>
             );
           })}
+        </tr>
+      );
+
+      res.push(
+        <tr className={`${row.original.severity.toLowerCase()} mapLinkRow`} key={`${row.id}-map-link-row`}>
+          <td colSpan={5} className={'map'} title={'View on map'}>
+              <Button
+                className="viewOnMap-btn"
+                aria-label="View on map"
+                onClick={() => routeHandler(row.original)}>
+                <FontAwesomeIcon icon={faLocationDot} />
+                <span>View on map</span>
+              </Button>
+          </td>
         </tr>
       );
     }

@@ -62,6 +62,10 @@ table {
 
         & + .dataRow, & + .dataRow:hover {
           background-color: $Blue20;
+
+          & + .mapLinkRow, & + .mapLinkRow:hover {
+            background-color: $Blue20;
+          }
         }
 
         &:hover {
@@ -93,24 +97,25 @@ table {
     }
 
     .dataRow {
+      td {
+        padding-top: 0;
+        padding-bottom: 0;
+        vertical-align: top;
+
+        &.location_description span {
+          display: inline-block;
+          padding-bottom: 16px;
+        }
+      }
+    }
+
+    .mapLinkRow {
       border-bottom: 1px solid $Table-row;
 
       td {
         padding-top: 0;
         padding-bottom: 16px;
         vertical-align: top;
-      }
-    }
-  }
-
-  td {
-    padding: 0 16px;
-  }
-  th {
-    padding: 1rem 0 1rem 1rem;
-    vertical-align: middle;
-  }
-}
 
 .viewOnMap-btn {
   font-weight: 700;
@@ -121,9 +126,17 @@ table {
   padding: 8px 16px;
   margin-top: 1rem;
   margin-bottom: 0;
-  font-size: 0.875rem;  
+  font-size: 0.875rem;
   svg {
     margin-right: 8px;
+  }
+
+  td {
+    padding: 0 16px;
+  }
+  th {
+    padding: 1rem 0 1rem 1rem;
+    vertical-align: middle;
   }
 }
 
