@@ -180,10 +180,15 @@
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
+  border: none;
   border-radius: 24px;
   padding: 4px 12px;
   z-index: 1000;
   white-space: nowrap;
+
+  &:hover {
+    background-color: $Blue70;
+  }
 
   &.top {
     top: calc(58px + 9px);
