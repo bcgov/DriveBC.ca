@@ -17,10 +17,13 @@
       display: flex;
       flex: 1;
     }
+    li {
+      flex: 0 auto;
+    }
 
     .nav-item {
-      padding: 0 0.5rem;
-      &:first-child, &:last-child {
+      padding-right: 1rem;
+      &:last-child {
         padding: 0;
       }
 
