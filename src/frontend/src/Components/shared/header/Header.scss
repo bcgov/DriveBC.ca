@@ -47,13 +47,14 @@
 		padding: 0.5rem;
 		display: flex;
 		flex-direction: column;
-		justify-content: space-around;
+		justify-content: space-evenly;
+		align-items: center;
 		border: none;
 
 		.line {
 			background-color: $Type-Primary;
-			width: 2rem;
-			height: 0.25rem;
+			width: 1.6rem;
+			height: 0.125em;
 		}
 
 		.line1 {
@@ -68,7 +69,7 @@
 
 		&:not(.collapsed) {
 			.line {
-				margin-left: 6px;
+				margin-left: 8px;
 			}
 
 			.line1 {
@@ -136,7 +137,7 @@
 		.navbar-nav {
 			.nav-link {
 				color: $Type-Primary;
-				padding: 16px 0;
+				padding: 16px;
 				border-bottom: 1px solid $Nav-link-border;
 				cursor: pointer;
 				display: flex;
@@ -151,15 +152,26 @@
 				&:hover {
 					text-decoration: none;
 					background-color: hsla(0,0%,7%,.15);
+					svg {
+						transition: 0.2s ease-in-out all;
+						left: 0;
+						position: relative;
+					}
 				}
 
 				&:focus {
 					border: rgb(46, 93, 215) solid 2px;
-					background-color: hsla(0,0%,60%,.15);
+					background-color: hsla(0, 32%, 83%, 0.15);
 				}
 
 				&:active, &.active {
-					border-bottom: rgb(46, 93, 215) solid 2px;
+					font-weight: bold;
+					color: rgb(46, 93, 215);
+					@media (min-width: 992px) {
+						color: $Type-Primary;
+						font-weight: normal;
+						border-bottom: rgb(46, 93, 215) solid 2px;
+					}
 				}
 
 				.title {
@@ -182,13 +194,23 @@
 
 				svg {
 					font-size: 1.25rem;
+					position: relative;
+					left: -4px;
+					transition: 0.2s ease-in-out left;
 				}
 			}
 
 			.footer-nav-link {
 				font-size: 0.875rem;
 				border: none;
+				display: inline-block;
 				padding: 12px 0;
+				margin: 0 16px;
+				width: max-content;
+				&:hover {
+					background: transparent;
+					text-decoration: underline;
+				}
 
 				&:active, &.active {
 					border-bottom: none;
@@ -197,9 +219,8 @@
 				&:after {
 					content: none;
 				}
-
 				&.first-link {
-					margin-top: 12px;
+					margin-top: 8px;
 				}
 			}
 
