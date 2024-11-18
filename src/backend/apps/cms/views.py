@@ -1,9 +1,8 @@
-from apps.cms.models import Advisory, Bulletin, Ferry
+from apps.cms.models import Advisory, Bulletin
 from apps.cms.serializers import (
     AdvisorySerializer,
     BulletinSerializer,
     BulletinTestSerializer,
-    FerrySerializer,
 )
 from apps.shared.enums import CacheKey, CacheTimeout
 from apps.shared.views import CachedListModelMixin
@@ -36,10 +35,3 @@ class BulletinTestAPI(CachedListModelMixin, CMSViewSet):
 
 class BulletinAPI(BulletinTestAPI):
     serializer_class = BulletinSerializer
-
-
-class FerryAPI(CachedListModelMixin, CMSViewSet):
-    queryset = Ferry.objects.filter(live=True)
-    serializer_class = FerrySerializer
-    cache_key = CacheKey.FERRY_LIST
-    cache_timeout = CacheTimeout.FERRY_LIST

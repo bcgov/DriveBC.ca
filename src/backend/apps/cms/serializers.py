@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import environ
-from apps.cms.models import Advisory, Bulletin, Ferry
+from apps.cms.models import Advisory, Bulletin
 from rest_framework import serializers
 from wagtail.templatetags.wagtailcore_tags import richtext
 
@@ -80,27 +80,3 @@ class BulletinSerializer(BulletinTestSerializer):
 
     def get_body(self, obj):
         return self.get_richtext(obj.body)
-
-
-class FerrySerializer(CMSSerializer):
-    description = serializers.SerializerMethodField()
-    seasonal_description = serializers.SerializerMethodField()
-    service_hours = serializers.SerializerMethodField()
-    image_url = serializers.SerializerMethodField('get_image_url')
-
-    class Meta:
-        model = Ferry
-        fields = "__all__"
-
-    def get_image_url(self, obj):
-        host = env('DJANGO_URL') if 'DJANGO_URL' in env else ''
-        return host + obj.image.file.url if obj.image else ''
-
-    def get_description(self, obj):
-        return self.get_richtext(obj.description)
-
-    def get_seasonal_description(self, obj):
-        return self.get_richtext(obj.seasonal_description)
-
-    def get_service_hours(self, obj):
-        return self.get_richtext(obj.service_hours)

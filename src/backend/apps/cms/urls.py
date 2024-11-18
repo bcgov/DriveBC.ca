@@ -8,7 +8,7 @@ from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.documents.api.v2.views import DocumentsAPIViewSet
 from wagtail.images.api.v2.views import ImagesAPIViewSet
 
-from .views import AdvisoryAPI, BulletinAPI, FerryAPI
+from .views import AdvisoryAPI, BulletinAPI
 
 wagtail_api_router = WagtailAPIRouter('wagtailapi')
 wagtail_api_router.register_endpoint('pages', PagesAPIViewSet)
@@ -18,7 +18,6 @@ wagtail_api_router.register_endpoint('documents', DocumentsAPIViewSet)
 cms_api_router = routers.DefaultRouter()
 cms_api_router.register('advisories', AdvisoryAPI)
 cms_api_router.register('bulletins', BulletinAPI)
-cms_api_router.register('ferries', FerryAPI)
 
 urlpatterns = [
     path('', include(wagtailadmin_urls)),

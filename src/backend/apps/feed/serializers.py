@@ -1,11 +1,8 @@
-from datetime import datetime
 import html  # Importing html module for unescaping HTML entities
 import zoneinfo
+from datetime import datetime
 
 import pytz
-from rest_framework import serializers
-from rest_framework_gis.fields import GeometryField
-
 from apps.feed.fields import (
     DriveBCDateField,
     DriveBCField,
@@ -22,9 +19,9 @@ from apps.feed.fields import (
     WebcamRegionGroupField,
 )
 from apps.rest.models import RestStop
-from apps.weather.models import (
-    CurrentWeather, RegionalWeather, HighElevationForecast
-)
+from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
+from rest_framework import serializers
+from rest_framework_gis.fields import GeometryField
 
 
 # Webcam

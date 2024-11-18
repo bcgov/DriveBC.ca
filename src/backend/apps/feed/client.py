@@ -250,7 +250,7 @@ class FeedClient:
                 "service": "WFS",
                 "version": "1.0.0",
                 "request": "GetFeature",
-                "typeName": "hwy:ISS_INLAND_FERRY",
+                "typeName": "hwy:IFR_INLAND_FERRY_ROUTE",
                 "maxFeatures": 500,
                 "outputFormat": "application/json",
                 "srsName": "EPSG:4326"
