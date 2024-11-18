@@ -106,6 +106,12 @@ export default function Filters(props) {
     </Tooltip>
   );
 
+  const tooltipCurrentRoutes = (
+    <Tooltip id="tooltipCurrentRoutes" className="tooltip-content">
+      <p>Layer filters are updated to show relevant layers for your routes. To revert to your previous settings, cancel the route search.</p>
+    </Tooltip>
+  );
+
   // States for toggles
   const [closures, setClosures] = useState(eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures);
   const [majorEvents, setMajorEvents] = useState(eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents);
@@ -150,7 +156,20 @@ export default function Filters(props) {
 
       {open &&
         <div className="filters">
+          <div className="filters-title__container">
           <h4 className="filters-title">{textOverride ? textOverride : 'Layer filters'}</h4>
+          {
+            (mapLayers.current.routeLayer && mapLayers.current.routeLayer.rendered) 
+            &&
+            <div>
+              <label className="filters-title__notification">
+                Current routes
+                <OverlayTrigger placement="top" overlay={tooltipCurrentRoutes}>
+                  <button className="filters-title__tooltip-info" aria-label="current routes tooltip" aria-describedby="tooltipCurrentRoutes">?</button>
+                </OverlayTrigger>                
+                </label>
+            </div>  
+          }
           <button
             className="close-filters"
             aria-label="close filters options"
@@ -158,6 +177,8 @@ export default function Filters(props) {
           }>
             <FontAwesomeIcon icon={faXmark} />
           </button>
+
+          </div>
 
           <div className="filters-list">
             <div className="filter-group">

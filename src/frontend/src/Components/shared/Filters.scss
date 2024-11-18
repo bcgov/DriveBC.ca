@@ -41,6 +41,42 @@ button.btn.open-filters {
   .filters-title {
     margin: 1rem 1rem 0;
     font-size: 1.125rem;
+    margin-right: 0rem;
+    &__container {
+      display: flex;
+      align-items: center; 
+      justify-content: space-between; 
+      gap: 0.1rem; 
+    }
+
+    &__notification {
+      font-size:0.875rem;
+      color:$White; 
+      background-color: $Blue100; 
+      padding: 0.2rem; 
+      border-radius: 4px; 
+      display: inline-block; 
+      flex-shrink: 1; 
+      margin-right: 3rem;
+      margin-top: 0.875rem;
+    }
+
+    &__tooltip-info {
+      margin-left: 8px;
+      margin-bottom: 3px;
+      color: $Blue100;
+      background-color: $White;
+      padding: 0 5px;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 0.625rem;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+
   }
 
   button.close-filters {
