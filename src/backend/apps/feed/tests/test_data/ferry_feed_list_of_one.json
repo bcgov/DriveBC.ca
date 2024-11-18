@@ -1,53 +1,60 @@
 {
-    "ferries": [
-        {
-            "id": 3,
-            "description": "",
-            "seasonal_description": "",
-            "service_hours": "",
-            "image_url": "",
-            "path": "00010002",
-            "depth": 2,
-            "numchild": 0,
-            "translation_key": "82d4d77f-e599-43bf-acea-9d0b1eed4a8a",
-            "live": true,
-            "has_unpublished_changes": true,
-            "first_published_at": null,
-            "last_published_at": null,
-            "go_live_at": null,
-            "expire_at": null,
-            "expired": false,
-            "locked": false,
-            "locked_at": null,
-            "title": "Barnston Island Ferry",
-            "draft_title": "Barnston Island Ferry",
-            "slug": "barnston-island-ferry",
-            "url_path": "/barnston-island-ferry/",
-            "seo_title": "",
-            "show_in_menus": false,
-            "search_description": "",
-            "latest_revision_created_at": "2023-11-28T08:18:59.869526-08:00",
-            "created_at": "2023-11-28T08:18:59.713774-08:00",
-            "modified_at": "2024-02-29T16:01:45.589086-08:00",
-            "feed_id": 15,
-            "location": {
-                "type": "Point",
-                "coordinates": [
-                    -122.72476444,
-                    49.19217851
-                ]
-            },
-            "url": "https://www2.gov.bc.ca/gov/content?id=3BE3BD9E3A6348E4971F4AE91E92B6C1",
-            "feed_created_at": "2023-11-06T13:48:00-08:00",
-            "feed_modified_at": "2024-02-29T16:01:45.589102-08:00",
-            "locale": 1,
-            "latest_revision": 1,
-            "live_revision": null,
-            "locked_by": null,
-            "content_type": 56,
-            "owner": null,
-            "alias_of": null,
-            "image": null
-        }
-    ]
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "IFR_INLAND_FERRY_ROUTE.9.10",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [1402385.00000194, 728572.00000207]
+      },
+      "geometry_name": "GEOMETRY",
+      "properties": {
+        "FERRY_ROUTE_ID": 9,
+        "VESSEL_ID": 10,
+        "FERRY_ROUTE_NAME": "Little Fort Reaction Ferry",
+        "VESSEL_NAME": null,
+        "ROUTE_LOCATION_DESCRIPTION": "The Little Fort ferry runs across the North Thompson River, 93 kilometres north of Kamloops on Highway 5.",
+        "FERRY_ROUTE_TYPE": "Reaction Ferry",
+        "ROUTE_OVERVIEW_URL": "https://www2.gov.bc.ca/gov/content/transportation/passenger-travel/water-travel/inland-ferries/little-fort-reaction-ferry",
+        "VESSEL_IMAGE_URL": "https://www2.gov.bc.ca/assets/gov/driving-and-transportation/passenger/inland-ferries/photos/littlefort.jpg",
+        "ROUTE_MAP_IMAGE_URL": "https://www2.gov.bc.ca/assets/gov/driving-and-transportation/passenger/inland-ferries/maps/littlefortferry_map.jpg",
+        "SCHEDULE_TYPE": "On Demand Morning to Evening With Gaps",
+        "SCHEDULE_DETAIL": "\u003Cp\u003E\u003Cstrong\u003EService hours:\u003C/strong\u003E\u003C/p\u003E \u003Cp\u003EOn demand\u003C/p\u003E \u003Cul\u003E \u003Cli\u003E6:45 am &ndash; 10 am\u003C/li\u003E \u003Cli\u003E11 am &ndash; 2:45 pm\u003C/li\u003E \u003Cli\u003E3:15 pm &ndash; 7 pm\u003C/li\u003E \u003Cli\u003E8 pm &ndash; 11:15 pm\u003C/li\u003E \u003C/ul\u003E",
+        "SPECIAL_RESTRICTION": "Maximum carrying capacity 9 tonnes, approximately 2 passenger vehicles. Vehicle combination cannot exceed 12m.",
+        "CROSSING_TIME_MIN": 5,
+        "VESSEL_VEHICLE_CAPACITY": 2,
+        "VESSEL_PASSENGER_CAPACITY": 12,
+        "VESSEL_WEIGHT_CAPACITY_KG": null,
+        "ROUTE_CONTACT_ORGANIZATION": "Argo Road Maintenance Inc.",
+        "ROUTE_CONTACT_OFFICE_PHONE": 2503746690,
+        "ROUTE_CONTACT_ALTERNATE_PHONE": 18006612025,
+        "ROUTE_CONTACT_FAX": 2503746613,
+        "ROUTE_CONTACT_EMAIL": null,
+        "ROUTE_CONTACT_URL_1": null,
+        "ROUTE_CONTACT_URL_2": null,
+        "WEBCAM_URL_1": "https://images.drivebc.ca/bchighwaycam/pub/cameras/304.jpg",
+        "WEBCAM_URL_2": "https://images.drivebc.ca/bchighwaycam/pub/cameras/1031.jpg",
+        "WEBCAM_URL_3": "https://images.drivebc.ca/bchighwaycam/pub/cameras/303.jpg",
+        "WEBCAM_URL_4": "https://images.drivebc.ca/bchighwaycam/pub/cameras/1030.jpg",
+        "WEBCAM_URL_5": null,
+        "DB_CREATE_USERID": "VCSCHUNI",
+        "DB_CREATE_TIMESTAMP": "2024-11-14T18:26:16Z",
+        "DB_LAST_UPDATE_USERID": "VCSCHUNI",
+        "DB_LAST_UPDATE_TIMESTAMP": "2024-11-14T18:26:16Z"
+      },
+      "bbox": [1402385.00000194, 728572.00000207, 1402385.00000194, 728572.00000207]
+    }
+  ],
+  "totalFeatures": 15,
+  "numberMatched": 15,
+  "numberReturned": 15,
+  "timeStamp": "2024-11-21T22:29:25.323Z",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:EPSG::3005"
+    }
+  },
+  "bbox": [844843.00000041, 469509.00000305, 1654569.00000288, 1073174.00000099]
 }

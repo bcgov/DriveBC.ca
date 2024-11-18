@@ -52,6 +52,7 @@ class DriveBCDateField(serializers.DateTimeField):
     def to_representation(self, value):
         return super().to_representation(value[self.custom_field_name])
 
+
 # Webcam
 class WebcamRegionField(serializers.Field):
     def to_internal_value(self, data):
@@ -115,10 +116,10 @@ class EventRoadsField(serializers.Field):
             "route_from": route_dict["from"],
             "route_to": route_dict["to"] if "to" in route_dict else "",
             "direction": route_dict["direction"]
-        #     "route_at": data["name"],
-        #     "route_from": data["from"],
-        #     "route_to": data["to"] if "to" in data else "",
-        #     "direction": data["direction"]
+            # "route_at": data["name"],
+            # "route_from": data["from"],
+            # "route_to": data["to"] if "to" in data else "",
+            # "direction": data["direction"]
         }
         return res
 
@@ -134,17 +135,56 @@ class EventGeographyField(DriveBCField, GeometryField):
 class FerryPropertiesField(serializers.Field):
     def to_internal_value(self, data):
         res = {
-            "id": data['FERRY_ID'],
-            "title": data['NAME'],
-            "url": data['URL'],
-            "feed_created_at": data['CREATED_TIMESTAMP'],
-            "feed_modified_at": data['UPDATED_TIMESTAMP'],
+            # General
+            "id": data['VESSEL_ID'],
+            "name": data['VESSEL_NAME'] or '',
+            "route_id": data['FERRY_ROUTE_ID'],
+            "route_name": data['FERRY_ROUTE_NAME'] or '',
+            "route_description": data['ROUTE_LOCATION_DESCRIPTION'] or '',
+
+            # Urls
+            "url": data['ROUTE_OVERVIEW_URL'] or '',
+            "image_url": data['VESSEL_IMAGE_URL'] or '',
+            "route_image_url": data['ROUTE_MAP_IMAGE_URL'] or '',
+
+            # Capacity
+            "vehicle_capacity": data['VESSEL_VEHICLE_CAPACITY'],
+            "passenger_capacity": data['VESSEL_PASSENGER_CAPACITY'],
+            "crossing_time_min": data['CROSSING_TIME_MIN'],
+            "weight_capacity_kg": data['VESSEL_WEIGHT_CAPACITY_KG'],
+
+            # Schedule
+            "schedule_type": data['SCHEDULE_TYPE'] or '',
+            "schedule_detail": data['SCHEDULE_DETAIL'] or '',
+            "special_restriction": data['SPECIAL_RESTRICTION'] if (
+                    data['SPECIAL_RESTRICTION'] and
+                    data['SPECIAL_RESTRICTION'] != 'None'
+            ) else '',
+
+            # Contacts
+            "contact_org": data['ROUTE_CONTACT_ORGANIZATION'] or '',
+            "contact_phone": str(data['ROUTE_CONTACT_OFFICE_PHONE']) if data['ROUTE_CONTACT_OFFICE_PHONE'] else '',
+            "contact_alt_phone": str(data['ROUTE_CONTACT_ALTERNATE_PHONE']) if data['ROUTE_CONTACT_ALTERNATE_PHONE'] else '',
+            "contact_fax": str(data['ROUTE_CONTACT_FAX']) if data['ROUTE_CONTACT_FAX'] else '',
+
+            # Webcams
+            "webcam_url_1": data['WEBCAM_URL_1'] or '',
+            "webcam_url_2": data['WEBCAM_URL_2'] or '',
+            "webcam_url_3": data['WEBCAM_URL_3'] or '',
+            "webcam_url_4": data['WEBCAM_URL_4'] or '',
+            "webcam_url_5": data['WEBCAM_URL_5'] or '',
+
+            # Meta
+            "feed_created_at": data['DB_CREATE_TIMESTAMP'],
+            "feed_modified_at": data['DB_LAST_UPDATE_TIMESTAMP'],
         }
+
         return res
 
 
 class FerryGeographyField(DriveBCField, GeometryField):
     pass
+
 
 # Regional Weather
 class RegionalWeatherPropertiesField(serializers.Field):

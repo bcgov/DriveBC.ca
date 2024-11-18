@@ -1,11 +1,10 @@
+from apps.cms.models import Advisory, Bulletin
 from django.contrib.auth.models import Permission
 from django.templatetags.static import static
 from django.utils.html import format_html
 from wagtail import hooks
 from wagtail.admin.rich_text.editors.draftail.features import ControlFeature
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
-
-from apps.cms.models import Advisory, Bulletin, Ferry
 
 
 @hooks.register("insert_global_admin_css")
@@ -36,16 +35,6 @@ def register_bulletin_permissions():
     ])
 
 
-@hooks.register('register_permissions')
-def register_ferry_permissions():
-    app = 'cms'
-    model = 'ferry'
-
-    return Permission.objects.filter(content_type__app_label=app, codename__in=[
-        f"view_{model}", f"add_{model}", f"change_{model}", f"delete_{model}"
-    ])
-
-
 class BaseCMSAdmin(ModelAdmin):
     menu_order = 200  # will put in 3rd place (000 being 1st, 100 2nd)
     add_to_settings_menu = False  # or True to add your model to the Settings sub-menu
@@ -68,15 +57,9 @@ class BulletinAdmin(BaseCMSAdmin):
     menu_icon = "thumbtack"
 
 
-class FerryAdmin(BaseCMSAdmin):
-    model = Ferry
-    menu_icon = "snippet"
-
-
 # Now you just need to register your customised ModelAdmin class with Wagtail
 modeladmin_register(AdvisoryAdmin)
 modeladmin_register(BulletinAdmin)
-modeladmin_register(FerryAdmin)
 
 
 @hooks.register('register_rich_text_features')
@@ -87,5 +70,5 @@ def register_readinglevel_feature(features):
     features.register_editor_plugin(
         'draftail',
         feature_name,
-        ControlFeature({ 'type': feature_name }, js=['readinglevel.js']),
+        ControlFeature({'type': feature_name}, js=['readinglevel.js']),
     )

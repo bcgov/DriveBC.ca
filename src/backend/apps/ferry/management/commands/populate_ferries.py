@@ -1,4 +1,4 @@
-from apps.cms.tasks import populate_all_ferry_data
+from apps.ferry.tasks import populate_all_ferry_data
 from django.core.management.base import BaseCommand
 
 

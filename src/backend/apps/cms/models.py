@@ -8,11 +8,10 @@ from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
 from wagtail.api import APIField
 from wagtail.contrib.table_block.blocks import TableBlock
-from wagtail.fields import RichTextField, StreamField
+from wagtail.fields import StreamField
 from wagtail.images.models import Image
 from wagtail.models import Page
 from wagtail.templatetags import wagtailcore_tags
-
 
 TABLE_OPTIONS = {'rowHeaders': True,
                  'colHeaders': True, }
@@ -22,6 +21,7 @@ This block is for information that needs to be presented as especially important
 styled according to the BC gov't's style guide (light grey background, blue
 border on the left).
 '''
+
 
 class DriveBCMapWidget(OSMWidget):
     # Defaults to Kelowna
@@ -115,62 +115,3 @@ class Bulletin(Page, BaseModel):
     promote_panels = []
 
     template = 'cms/bulletin.html'
-
-
-class Ferry(Page, BaseModel):
-    page_body = "Use this page to create or update ferry entries."
-
-    feed_id = models.PositiveIntegerField(unique=True)
-
-    location = models.GeometryField(blank=True, null=True)
-
-    url = models.URLField(blank=True)
-    image = models.ForeignKey(Image, on_delete=models.SET_NULL, blank=True, null=True)
-
-    description = RichTextField(max_length=750, blank=True)
-    seasonal_description = RichTextField(max_length=100, blank=True)
-    service_hours = RichTextField(max_length=750, blank=True)
-
-    feed_created_at = models.DateTimeField(auto_now_add=True)
-    feed_modified_at = models.DateTimeField(auto_now=True)
-
-    def rendered_description(self):
-        return wagtailcore_tags.richtext(self.description)
-
-    def rendered_seasonal_description(self):
-        return wagtailcore_tags.richtext(self.seasonal_description)
-
-    def rendered_service_hours(self):
-        return wagtailcore_tags.richtext(self.service_hours)
-
-    api_fields = [
-        APIField('rendered_description'),
-        APIField('rendered_seasonal_description'),
-        APIField('rendered_service_hours'),
-    ]
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        cache.delete(CacheKey.FERRY_LIST)
-
-    # Editor panels configuration
-    content_panels = [
-        FieldPanel("title"),
-        FieldPanel("image"),
-        FieldPanel("description"),
-        FieldPanel("seasonal_description"),
-        FieldPanel("service_hours"),
-        FieldPanel("url", read_only=True),
-        FieldPanel("location", widget=DriveBCMapWidget, read_only=True),
-        FieldPanel("feed_created_at", read_only=True),
-        FieldPanel("feed_modified_at", read_only=True),
-        FieldPanel('created_at', read_only=True, heading="Created"),
-        FieldPanel('first_published_at', read_only=True, heading="Published"),
-        FieldPanel('last_published_at', read_only=True, heading="Updated"),
-    ]
-    promote_panels = []
-
-    template = 'cms/ferry.html'
-
-    class Meta:
-        verbose_name_plural = 'ferries'

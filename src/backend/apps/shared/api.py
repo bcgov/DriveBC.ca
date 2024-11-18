@@ -5,28 +5,22 @@ from django.urls import include, path
 from .views import session
 
 urlpatterns = [
-    # App
+    # Feed
     path("webcams/", include("apps.webcam.urls")),
     path("events/", include("apps.event.urls")),
-
-    # Test
-    path("test/", include("apps.shared.test_urls")),
+    path("weather/", include("apps.weather.urls")),
+    path("ferries/", include("apps.ferry.urls")),
+    path("reststops/", include("apps.rest.urls")),
 
     # CMS
     path("wagtail/", wagtail_api_router.urls),
     path("cms/", include(cms_api_router.urls)),
 
-    # Weather
-    path("weather/", include("apps.weather.urls")),
-
     # Users
     path("users/", include("apps.authentication.urls")),
 
-    # Others
+    # Misc
     path("feedback/", views.FeedbackView.as_view(), name="feedback"),
-
-    # Rest Stop
-    path("reststops/", include("apps.rest.urls")),
-
     path("session", session.as_view()),
+    path("test/", include("apps.shared.test_urls")),
 ]

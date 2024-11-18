@@ -1,8 +1,8 @@
 import logging
 from unittest.mock import MagicMock
 
-from apps.cms.models import Ferry
 from apps.event.models import Event
+from apps.ferry.models import Ferry
 from apps.weather.models import CurrentWeather, RegionalWeather
 from apps.webcam.models import Webcam
 from django.core.cache import cache

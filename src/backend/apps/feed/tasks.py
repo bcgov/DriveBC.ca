@@ -1,7 +1,7 @@
 import datetime
 
-from apps.cms.tasks import populate_all_ferry_data
 from apps.event.tasks import populate_all_event_data
+from apps.ferry.tasks import populate_all_ferry_data
 from apps.rest.tasks import populate_all_rest_stop_data
 from apps.weather.tasks import (
     populate_all_high_elevation_forecast_data,
