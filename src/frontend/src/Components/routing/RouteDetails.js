@@ -33,7 +33,7 @@ import {getRoute, removeRoute, saveRoute} from "../data/routes";
 import { addCameraGroups } from "../data/webcams";
 import { getEventCounts } from "../data/events";
 import { getAdvisoryCounts } from "../data/advisories";
-import { filterAdvisoryByRoute } from '../map/helpers';
+import { compareRouteDistance, filterAdvisoryByRoute } from '../map/helpers';
 import * as dataLoaders from '../map/dataLoaders'
 import * as slices from '../../slices';
 import RouteMap from './RouteMap';
@@ -265,8 +265,15 @@ export default function RouteDetails(props) {
       [route.start_point.coordinates, route.end_point.coordinates],
       route.criteria === 'fastest'
     );
-    const searchedRoutesPayload = route.criteria === 'fastest' ? // Fastest before shortest
+    let searchedRoutesPayload = route.criteria === 'fastest' ? // Fastest before shortest
       [routePayload, alternateRoute] : [alternateRoute, routePayload];
+
+    const isSameRoute = compareRouteDistance(routePayload, alternateRoute);
+    if(isSameRoute){
+      searchedRoutesPayload = searchedRoutesPayload?.filter(route =>
+        Object.prototype.hasOwnProperty.call(route, 'id')
+      );
+    }
     dispatch(updateSearchedRoutes(searchedRoutesPayload));
 
     const startPayload = [{

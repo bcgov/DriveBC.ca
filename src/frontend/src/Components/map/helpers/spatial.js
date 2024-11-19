@@ -140,6 +140,13 @@ export const compareRoutePoints = (routePoints, savedPoints) => {
   return routePoints == savedPoints;
 }
 
+export const compareRouteDistance = (route1, route2) => {
+  if (!!route1 && !!route2) {
+    return Math.abs(route1.distance - route2.distance) < 1;
+  }
+  return true;
+}
+
 export const getMidPoint = (location) => {
   // Return point coords if location is a point
   if (location.type === "Point") {
