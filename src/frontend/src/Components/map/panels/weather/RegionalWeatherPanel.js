@@ -125,7 +125,7 @@ export default function RegionalWeatherPanel(props) {
 
           <Collapse in={expanded}>
             <div id="collapse-text">
-              <br/>We haven’t received complete data from Environment Canada. It could be because it hasn’t been observed or wasn’t transmitted.<br/><br/>
+              We haven’t received complete data from Environment Canada. It could be because it hasn’t been observed or wasn’t transmitted.<br/><br/>
               For more information on why this might happen, read more on <a href="https://climate.weather.gc.ca/FAQ_e.html#Q4" target="_blank" rel="noreferrer">Environment Canada’s help page</a>
             </div>
           </Collapse>
@@ -200,7 +200,7 @@ export default function RegionalWeatherPanel(props) {
         
         <div className="popup__content__forecasts">
           {weather.current_day_forecasts.length &&
-            <ForecastCarousel forecast_group={weather.current_day_forecasts} className={'test'} currentPane />
+            <ForecastCarousel forecast_group={weather.current_day_forecasts} currentPane />
           }
 
           <ForecastTabs forecasts={weather.future_forecasts} sunset={weather.sunset} />
