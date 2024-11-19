@@ -8,6 +8,7 @@ import { useSearchParams } from "react-router-dom";
 
 // Internal imports
 import { getRoute } from '../data/routes.js';
+import { compareRouteDistance } from '../map/helpers';
 import {
   clearSearchedRoutes,
   clearSelectedRoute,
@@ -84,7 +85,10 @@ const RouteSearch = forwardRef((props, ref) => {
 
     const shortestRoute = await getRoute(points, true);
     if (shortestRoute && shortestRoute.routeFound) {
-      routes.push(shortestRoute);
+      const isFastestIsShortest = compareRouteDistance(fastestRoute, shortestRoute);
+      if(! isFastestIsShortest){
+        routes.push(shortestRoute);
+      }
     }
 
     return routes;
