@@ -29,9 +29,9 @@ export default function FriendlyTime({ date, asDate=false, includeFullIfHumanize
   const dateFormatted = (isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." : formatter.format(new Date(date));
   // if difference is less than 24hrs
   const humanize = timeDiff < ONE_DAY;
+  const dt = new Date(date);
 
   if (timeOnly) {
-    const dt = new Date(date);
     let hour = dt.getHours();
     const period = hour >= 12 ? 'pm' : 'am';
 
@@ -73,7 +73,7 @@ export default function FriendlyTime({ date, asDate=false, includeFullIfHumanize
           >
             <div className="friendly-time-text">
               {(isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." :
-                <ReactTimeAgo date={date} locale="en-US"/>
+                <ReactTimeAgo date={dt} locale="en-US"/>
               }
             </div>
             { !(isNextUpdate && timeDiff > 0) &&
