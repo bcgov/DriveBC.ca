@@ -36,7 +36,7 @@ export default function EventsTable(props) {
   const getEventTypeCell = (data) => {
     return (
     <OverlayTrigger placement="top" overlay={getDelayTooltip(data)}>
-      <button className="eventType" aria-label={getTypeDisplay(data)} aria-describedby={getDelayTooltip(data)}>
+      <button className="eventType" aria-label={getTypeDisplay(data)} aria-describedby={getDelayTooltipID(data)}>
         <EventTypeIcon event={data} state={data.display_category === 'majorEvents' ? 'static' : 'active'} />
         <span>{getTypeDisplay(data)}</span>
       </button>
@@ -49,21 +49,35 @@ export default function EventsTable(props) {
     const eventType = data.display_category;
     switch(eventType){
       case "closures":
-        return <Tooltip id="tooltip" className="tooltip-content">
+        return <Tooltip id="tooltip--closures" className="tooltip-content">
           <p>Travel is not possible in one or both directions on this road. Find an alternate route or a detour where possible.</p>
         </Tooltip>
       case "majorEvents":
-        return <Tooltip id="tooltip" className="tooltip-content">
+        return <Tooltip id="tooltip--majorEvents" className="tooltip-content">
         <p>Expect delays of at least 30 minutes or more on this road. This could be due to a traffic incident, road work, or construction.</p>
           </Tooltip>
       case "minorEvents":
-        return <Tooltip id="tooltip" className="tooltip-content">
+        return <Tooltip id="tooltip--minorEvents" className="tooltip-content">
          <p>Expect delays up to 30 minutes on this road. This could be due to a traffic incident, road work, or construction.</p>
         </Tooltip>
       case "futureEvents":
-        return <Tooltip id="tooltip" className="tooltip-content">
+        return <Tooltip id="tooltip--futureEvents" className="tooltip-content">
           <p>Future road work or construction is planned for this road.</p>
         </Tooltip>
+    }
+  }
+
+  const getDelayTooltipID = (data) =>{
+    const eventType = data.display_category;
+    switch(eventType){
+      case "closures":
+        return "tooltip--closures";
+      case "majorEvents":
+        return "tooltip--majorEvents";
+      case "minorEvents":
+        return "tooltip--minorEvents";
+      case "futureEvents":
+        return "tooltip--futureEvents";
     }
   }
 
