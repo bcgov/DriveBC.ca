@@ -133,6 +133,17 @@ export default function Filters(props) {
     setMapContext(mapContext);
     localStorage.setItem('mapContext', JSON.stringify(mapContext));
   }
+  
+  // Set focus on filters with a blur out after 1 second
+  function focusInput(filter) {
+
+    filter.focus();
+  
+    // The input will lose focus after 1 second
+    setTimeout(() => {
+      filter.blur();
+    }, 1000);
+  }
 
   return (
     <div className="filters-component">
@@ -173,7 +184,8 @@ export default function Filters(props) {
                         trackEvent('click', 'map', 'Toggle closures layer')
                         setLayerVisibility('closures', !closures);
                         setLayerVisibility('closuresLines', !closures, false);
-                        setClosures(!closures)
+                        setClosures(!closures);
+                        focusInput(e.target);
                       }}
                       defaultChecked={eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures}
                     />
@@ -206,6 +218,7 @@ export default function Filters(props) {
                         setLayerVisibility('majorEvents', !majorEvents);
                         setLayerVisibility('majorEventsLines', !majorEvents, false);
                         setMajorEvents(!majorEvents);
+                        focusInput(e.target);
                       }}
                       defaultChecked={eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents}
                     />
@@ -232,10 +245,11 @@ export default function Filters(props) {
                       name="minor"
                       id="filter--minor"
                       onChange={e => {
-                        trackEvent('click', 'map', 'Toggle minor events layer')
+                        trackEvent('click', 'map', 'Toggle minor events layer');
                         setLayerVisibility('minorEvents', !minorEvents);
                         setLayerVisibility('minorEventsLines', !minorEvents, false);
                         setMinorEvents(!minorEvents);
+                        focusInput(e.target);
                       }}
                       defaultChecked={eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents}
                     />
@@ -266,6 +280,7 @@ export default function Filters(props) {
                         setLayerVisibility('futureEvents', !futureEvents);
                         setLayerVisibility('futureEventsLines', !futureEvents, false);
                         setFutureEvents(!futureEvents);
+                        focusInput(e.target);
                       }}
                       defaultChecked={eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents} />
 
@@ -303,6 +318,7 @@ export default function Filters(props) {
                         trackEvent('click', 'map', 'Toggle highway cameras layer');
                         setLayerVisibility('highwayCams', !highwayCams);
                         setHighwayCams(!highwayCams);
+                        focusInput(e.target);
                       }}
                       defaultChecked={isCamDetail || mapContext.visible_layers.highwayCams}
                       disabled={isCamDetail || disableFeatures} />
@@ -335,6 +351,7 @@ export default function Filters(props) {
                         setLayerVisibility('roadConditions', !roadConditions);
                         setLayerVisibility('roadConditionsLines', !roadConditions, false);
                         setRoadConditions(!roadConditions);
+                        focusInput(e.target);
                       }}
                       defaultChecked={mapContext.visible_layers.roadConditions}
                       disabled={(disableFeatures && !enableRoadConditions)}
@@ -363,9 +380,10 @@ export default function Filters(props) {
                       name="inland ferries"
                       id="filter--inland-ferries"
                       onChange={e => {
-                        trackEvent('click', 'map', 'Toggle inland ferries layer')
+                        trackEvent('click', 'map', 'Toggle inland ferries layer');
                         setLayerVisibility('inlandFerries', !inlandFerries);
-                        setInlandFerries(!inlandFerries)
+                        setInlandFerries(!inlandFerries);
+                        focusInput(e.target);
                       }}
                       defaultChecked={mapContext.visible_layers.inlandFerries}
                       disabled={disableFeatures}
@@ -399,8 +417,9 @@ export default function Filters(props) {
                         setLayerVisibility('weather', !weather);
                         setLayerVisibility('regional', !weather);
                         setLayerVisibility('hef', !weather);
-                        setWeather(!weather)}
-                      }
+                        setWeather(!weather);
+                        focusInput(e.target);
+                      }}
                       defaultChecked={mapContext.visible_layers.weather}
                       disabled={disableFeatures} />
 
@@ -435,6 +454,7 @@ export default function Filters(props) {
                         }
                         setLayerVisibility('restStops', !restStops);
                         setRestStops(!restStops);
+                        focusInput(e.target);
                       }}
                       defaultChecked={mapContext.visible_layers.restStops}
                       disabled={disableFeatures}
@@ -477,6 +497,7 @@ export default function Filters(props) {
                         }
                         setLayerVisibility('largeRestStops', !largeRestStops);
                         setLargeRestStops(!largeRestStops);
+                        focusInput(e.target);
                       }}
                       defaultChecked={mapContext.visible_layers.largeRestStops}
                       disabled={disableFeatures} />
