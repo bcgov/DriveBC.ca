@@ -37,7 +37,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 export default function CameraCard(props) {
   /* Setup */
   // Props
-  const { cameraData, showLoader } = props;
+  const { cameraData, showLoader, setFocusedButtonRef } = props;
 
   // Contexts
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -318,6 +318,7 @@ export default function CameraCard(props) {
 
         {authContext.loginStateKnown &&
           <button
+            ref={setFocusedButtonRef}
             className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
             aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
             onClick={favoriteHandler}>

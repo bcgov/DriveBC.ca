@@ -1,5 +1,6 @@
 // React
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 // Components and functions
 import CameraCard from './CameraCard.js';
@@ -8,6 +9,13 @@ import highwayShield from './highwayShield';
 export default function HighwayGroup(props) {
   // Props
   const { highway, cams, showLoader} = props;
+  const focusedButtonRef = useRef(null);
+  const location = useLocation();
+  useEffect(() => {
+    if (location.pathname.includes("my-camera") && focusedButtonRef.current) {
+      focusedButtonRef.current.focus();
+    }
+  }, [cams, location.pathname]);
 
   return (
     <div className="highway-group">
@@ -31,7 +39,13 @@ export default function HighwayGroup(props) {
 
       <div className="webcam-group">
         {cams.map((cam, id) => (
-          <CameraCard cameraData={cam} className="webcam" key={id} showLoader={showLoader}/>
+          <CameraCard cameraData={cam} className="webcam" key={id} showLoader={showLoader} 
+            setFocusedButtonRef={(el) => {
+              if (id === cams.length - 1) {
+                focusedButtonRef.current = el;
+              }
+            }}
+          />
         ))}
       </div>
     </div>
