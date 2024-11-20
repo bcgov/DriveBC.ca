@@ -350,7 +350,12 @@ class FeedClient:
                     hourly_data = data.get("HourlyForecastGroup") or {}
 
                     warnings = data.get("Warnings") or {}
-                    if not warnings.get("Events"):
+                    if warnings.get("Events"):
+                        # Filter out any events with Type "ended"
+                        warnings["Events"] = [event for event in warnings["Events"] if event.get("Type") != "ended"]
+                        if len(warnings["Events"]) == 0:
+                            warnings = None
+                    else:
                         warnings = None
 
                     regional_weather_data = {
