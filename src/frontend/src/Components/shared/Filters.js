@@ -170,7 +170,7 @@ export default function Filters(props) {
           <div className="filters-title__container">
           <h4 className="filters-title">{textOverride ? textOverride : 'Layer filters'}</h4>
           {
-            (mapLayers.current.routeLayer && mapLayers.current.routeLayer.rendered) 
+            (mapLayers && mapLayers.current.routeLayer && mapLayers.current.routeLayer.rendered) 
             &&
             <div>
               <label className="filters-title__notification">
