@@ -61,8 +61,37 @@ export default function DistanceLabels(props) {
     }
   }
 
+  function haversineDistance(lat1, lon1, lat2, lon2) {
+    const toRadians = (degrees) => degrees * (Math.PI / 180);
+    const radiusOfEarth = 6371000; // Radius of Earth in meters
+    const radians1 = toRadians(lat1);
+    const radians2 = toRadians(lat2);
+    const deltaLatitude = toRadians(lat2 - lat1);
+    const deltaLongitude = toRadians(lon2 - lon1);
+
+    const a = Math.sin(deltaLatitude / 2) * Math.sin(deltaLatitude / 2) +
+              Math.cos(radians1) * Math.cos(radians2) *
+              Math.sin(deltaLongitude / 2) * Math.sin(deltaLongitude / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return radiusOfEarth * c; // Distance in meters
+}
+
+// Threshold of 500 meters in distance by default
+const arePointsClose = (lat1, lon1, lat2, lon2, threshold = 500) => {
+    const distance = haversineDistance(lat1, lon1, lat2, lon2);
+    return distance < threshold;
+}
   const addDistanceOverlay = (closing=false) => {
     removeOverlays(mapRef);
+    const latlngs = [];
+    searchedRoutes.forEach((route, index) => {
+      const routeLs = new LineString(route.route);
+      const midPointLatLng = routeLs.getCoordinateAt(0.5);
+      latlngs.push(midPointLatLng[0]);
+      latlngs.push(midPointLatLng[1]);
+    });
 
     searchedRoutes.forEach((route, index) => {
       const elem = document.createElement('div');
@@ -84,7 +113,15 @@ export default function DistanceLabels(props) {
       `;
 
       const routeLs = new LineString(route.route);
-      const midPointLatLng = routeLs.getCoordinateAt(0.5);
+      let midPointLatLng = routeLs.getCoordinateAt(0.5);
+      const isTooClose = arePointsClose(latlngs[0], latlngs[1], latlngs[2], latlngs[3]);
+      if(isTooClose){
+        if(index === 0){
+          midPointLatLng = routeLs.getCoordinateAt(0.46);
+        } else {
+          midPointLatLng = routeLs.getCoordinateAt(0.54);
+        }
+      }
 
       // Offset the coordinates in meters
       const offsetY = 300;
