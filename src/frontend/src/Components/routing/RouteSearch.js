@@ -85,8 +85,8 @@ const RouteSearch = forwardRef((props, ref) => {
 
     const shortestRoute = await getRoute(points, true);
     if (shortestRoute && shortestRoute.routeFound) {
-      const isFastestIsShortest = compareRouteDistance(fastestRoute, shortestRoute);
-      if(! isFastestIsShortest){
+      const hasEqualDistance = compareRouteDistance(fastestRoute, shortestRoute);
+      if(! hasEqualDistance){
         routes.push(shortestRoute);
       }
     }
