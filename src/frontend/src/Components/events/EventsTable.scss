@@ -116,6 +116,19 @@ table {
         padding-top: 0;
         padding-bottom: 16px;
         vertical-align: top;
+      }
+    }
+  }
+
+  td {
+    padding: 0 16px;
+  }
+
+  th {
+    padding: 1rem 0 1rem 1rem;
+    vertical-align: middle;
+  }
+}
 
 .viewOnMap-btn {
   font-weight: 700;
