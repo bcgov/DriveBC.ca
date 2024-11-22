@@ -12,7 +12,7 @@ import { removeOverlays } from "../map/helpers";
 import { Overlay } from "ol";
 import { fromLonLat } from "ol/proj";
 import { LineString } from "ol/geom";
-import { destination, point } from "@turf/turf";
+import { destination, point, distance } from "@turf/turf";
 
 // Styling
 import './DistanceLabels.scss';
@@ -61,28 +61,14 @@ export default function DistanceLabels(props) {
     }
   }
 
-  function haversineDistance(lat1, lon1, lat2, lon2) {
-    const toRadians = (degrees) => degrees * (Math.PI / 180);
-    const radiusOfEarth = 6371000; // Radius of Earth in meters
-    const radians1 = toRadians(lat1);
-    const radians2 = toRadians(lat2);
-    const deltaLatitude = toRadians(lat2 - lat1);
-    const deltaLongitude = toRadians(lon2 - lon1);
-
-    const a = Math.sin(deltaLatitude / 2) * Math.sin(deltaLatitude / 2) +
-              Math.cos(radians1) * Math.cos(radians2) *
-              Math.sin(deltaLongitude / 2) * Math.sin(deltaLongitude / 2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return radiusOfEarth * c; // Distance in meters
-}
-
 // Threshold of 500 meters in distance by default
 const arePointsClose = (lat1, lon1, lat2, lon2, threshold = 500) => {
-    const distance = haversineDistance(lat1, lon1, lat2, lon2);
-    return distance < threshold;
+    const point1 = point([lon1, lat1]);
+    const point2 = point([lon2, lat2]);
+    const dis = distance(point1, point2, { units: 'kilometers' });
+    return dis < threshold/1000;
 }
+
   const addDistanceOverlay = (closing=false) => {
     removeOverlays(mapRef);
     const latlngs = [];
