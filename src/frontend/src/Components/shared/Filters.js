@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFilter,
   faXmark,
+  faCircleQuestion,
 } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
@@ -176,7 +177,9 @@ export default function Filters(props) {
               <label className="filters-title__notification">
                 Current routes
                 <OverlayTrigger placement="top" overlay={tooltipCurrentRoutes}>
-                  <button className="filters-title__tooltip-info" aria-label="current routes tooltip" aria-describedby="tooltipCurrentRoutes">?</button>
+                  <button className="filters-title__tooltip-info" aria-label="current routes tooltip" aria-describedby="tooltipCurrentRoutes">
+                    <FontAwesomeIcon icon={faCircleQuestion} />
+                  </button>
                 </OverlayTrigger>                
                 </label>
             </div>  
