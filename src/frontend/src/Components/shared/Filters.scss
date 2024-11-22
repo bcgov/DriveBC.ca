@@ -39,10 +39,8 @@ button.btn.open-filters {
   }
 
   .filters-title {
-    margin: 1rem 1rem 0;
+    margin: 0;
     font-size: 1.125rem;
-    margin-right: 0;
-    flex-shrink: 0;
 
     &__container {
       display: flex;
@@ -57,29 +55,18 @@ button.btn.open-filters {
       padding: 0.25rem 0.375rem;
       border-radius: 4px; 
       margin-left: 8px;
-      margin-right: 3rem;
-      margin-top: 1rem;
-      white-space: nowrap;
     }
 
     &__tooltip-info {
       margin-left: 4px;
       color: $White;
-      background-color: $Focus;
+      background-color: transparent;
       padding: 0;
       border: none;
       font-size: 0.75rem;
 
       &:hover {
         cursor: pointer;
-      }
-
-      .fa-circle-question {
-        font-size: 0.875rem;
-        path {
-          color: $White;
-          background-color: $Focus;
-        }
       }
     }
   }
