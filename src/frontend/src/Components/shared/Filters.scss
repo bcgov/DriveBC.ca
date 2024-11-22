@@ -42,6 +42,8 @@ button.btn.open-filters {
     margin: 1rem 1rem 0;
     font-size: 1.125rem;
     margin-right: 0rem;
+    flex-shrink: 0;
+
     &__container {
       display: flex;
       align-items: center; 
@@ -52,31 +54,33 @@ button.btn.open-filters {
     &__notification {
       font-size:0.875rem;
       color:$White; 
-      background-color: $Blue100; 
-      padding: 0.2rem; 
+      background-color: $Focus; 
       border-radius: 4px; 
-      display: inline-block; 
-      flex-shrink: 1; 
+      margin-left: 0.3rem;
       margin-right: 3rem;
-      margin-top: 0.875rem;
+      margin-top: 1rem;
+      white-space: nowrap;
     }
 
     &__tooltip-info {
       margin-left: 8px;
-      margin-bottom: 3px;
-      color: $Blue100;
-      background-color: $White;
-      padding: 0 5px;
-      border-radius: 0.5rem;
+      background-color: $Focus;
+      border-radius: 1rem;
       border: none;
       font-size: 0.625rem;
 
       &:hover {
         cursor: pointer;
       }
+
+      .fa-circle-question {
+        font-size: 0.875rem;
+        path {
+          color: $White;
+          background-color: $Focus;
+        }
+      }
     }
-
-
   }
 
   button.close-filters {
