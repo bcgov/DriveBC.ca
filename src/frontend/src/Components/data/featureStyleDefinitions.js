@@ -62,6 +62,11 @@ import roadConditionsActiveIcon from '../../images/mapIcons/road-condition-activ
 import roadConditionsHoverIcon from '../../images/mapIcons/road-condition-hover.png';
 import roadConditionsStaticIcon from '../../images/mapIcons/road-condition-static.png';
 
+// Chain Ups
+import chainUpsActiveIcon from '../../images/mapIcons/chain-ups-active.png';
+import chainUpsHoverIcon from '../../images/mapIcons/chain-ups-hover.png';
+import chainUpsStaticIcon from '../../images/mapIcons/chain-ups-static.png';
+
 // Constructions
 import constructionsMajorActiveIcon from '../../images/mapIcons/delay-major-active.png';
 import constructionsMajorHoverIcon from '../../images/mapIcons/delay-major-hover.png';
@@ -383,27 +388,51 @@ export const eventStyles = {
     roadConditions: {
       static: new Style({
         stroke: new Stroke({
-          color: 'rgba(100,74,10,0.5)',
+          color: 'rgba(100, 74, 10, 0.5)',
           width: 2,
-          lineDash: [6, 5],
         }),
         fill: new Fill({ color: 'rgba(255,181,0,0.1)' }),
       }),
       hover: new Style({
         stroke: new Stroke({
-          color: 'rgba(100,74,10,0.5)',
+          color: 'rgba(100, 74, 10, 0.75)',
           width: 3,
-          lineDash: [6, 5],
         }),
-        fill: new Fill({ color: 'rgba(255,181,0,0.35)' }),
+        fill: new Fill({ color: 'rgba(255, 181, 0, 0.35)' }),
       }),
       active: new Style({
         stroke: new Stroke({
-          color: 'rgba(100,74,10,0.5)',
+          color: 'rgba(100, 74, 10, 1)',
+          width: 3,
+        }),
+        fill: new Fill({ color: 'rgba(255, 181, 0, 0.25)' }),
+      }),
+    },
+
+    chainUps: {
+      static: new Style({
+        stroke: new Stroke({
+          color: 'rgba(45, 45, 45, 0.75)',
+          width: 2,
+          lineDash: [6, 5],
+        }),
+        fill: new Fill({ color: 'rgba(246, 226, 75, 0.15)' }),
+      }),
+      hover: new Style({
+        stroke: new Stroke({
+          color: 'rgba(45, 45, 45, 0.75)',
           width: 3,
           lineDash: [6, 5],
         }),
-        fill: new Fill({ color: 'rgba(255,181,0,0.25)' }),
+        fill: new Fill({ color: 'rgba(255, 241, 133, 0.35)' }),
+      }),
+      active: new Style({
+        stroke: new Stroke({
+          color: 'rgba(45, 45, 45, 1)',
+          width: 3,
+          lineDash: [6, 5],
+        }),
+        fill: new Fill({ color: 'rgba(246, 226, 75, 0.25)' }),
       }),
     },
 
@@ -556,6 +585,30 @@ export const eventStyles = {
       image: new Icon({
         scale: 0.25,
         src: roadConditionsActiveIcon,
+      }),
+    }),
+  },
+
+  // Chain Ups
+  chain_ups: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsActiveIcon,
       }),
     }),
   },

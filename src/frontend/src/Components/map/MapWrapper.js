@@ -19,21 +19,21 @@ export default function MapWrapper(props) {
   /* Setup */
 
   // Navigation
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [_searchParams, setSearchParams] = useSearchParams();
 
   // Redux
   const dispatch = useDispatch();
   const {
     feeds: {
-      cameras: { list: cameras, filteredList: filteredCameras, filterPoints: camFilterPoints },
-      events: { list: events, filteredList: filteredEvents, filterPoints: eventFilterPoints },
-      ferries: { list: ferries, filteredList: filteredFerries, filterPoints: ferryFilterPoints },
-      weather: { list: currentWeather, filteredList: filteredCurrentWeathers, filterPoints: currentWeatherFilterPoints },
-      regional: { list: regionalWeather, filteredList: filteredRegionalWeathers, filterPoints: regionalWeatherFilterPoints },
-      hef: { list: hef, filteredList: filteredHef, filterPoints: hefFilterPoints },
-      restStops: { list: restStops, filteredList: filteredRestStops, filterPoints: restStopFilterPoints },
+      cameras: { list: cameras, filterPoints: camFilterPoints },
+      events: { list: events, filterPoints: eventFilterPoints },
+      ferries: { list: ferries, filterPoints: ferryFilterPoints },
+      weather: { filteredList: filteredCurrentWeathers, filterPoints: currentWeatherFilterPoints },
+      regional: { filteredList: filteredRegionalWeathers, filterPoints: regionalWeatherFilterPoints },
+      hef: { list: hef, filteredList: filteredHef },
+      restStops: { list: restStops, filterPoints: restStopFilterPoints },
     },
-    advisories: { list: advisories, filteredList: filteredAdvisories, filterPoints: advisoryFilterPoints },
+    advisories: { list: advisories, filterPoints: advisoryFilterPoints },
     routes: { selectedRoute },
 
   } = useSelector(

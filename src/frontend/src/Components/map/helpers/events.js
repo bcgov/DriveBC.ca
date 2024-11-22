@@ -38,6 +38,9 @@ export const setEventStyle = (events, state) => {
         case 'roadConditions':
           return event.setStyle(eventStyles['road_conditions'][state]);
 
+        case 'chainUps':
+            return event.setStyle(eventStyles['chain_ups'][state]);
+
         default: {
           const type = event.get('event_type').toLowerCase();
           if (type === 'construction') {

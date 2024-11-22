@@ -42,12 +42,18 @@ class Event(BaseModel):
     end = models.DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
-        # Put buffer on road condition LineStrings on creation only
-        if self._state.adding and self.location and self.location.geom_type == 'LineString' and self.pk.startswith('DBCRCON'):
-            self.location.transform(3857)  # Transform to 3857 before adding buffer
-            self.polygon = self.location.buffer_with_style(2000, end_cap_style=2)  # 2km buffer
+        uses_polygon = self.event_type in ['ROAD_CONDITION']  # chain up not used for now
+        width = 1500 if self.event_type == 'CHAIN_UP' else 2000
 
-            # Transform back to 4326 before updating
+        # For road conditions or chain up events with linestring geometry
+        # generate a polygon based on the linestring
+        if uses_polygon and self.location and self.location.geom_type == 'LineString':
+            # Transform to SRID 3857 before generating buffer for better
+            # looking polygon; under 4326, the shape looks skewed
+            self.location.transform(3857)
+            self.polygon = self.location.buffer_with_style(width, end_cap_style=2)
+
+            # Transform back to 4326 before saving because we emit lng/lat
             self.location.transform(4326)
             self.polygon.transform(4326)
 

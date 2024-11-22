@@ -131,3 +131,4 @@ class EVENT_DISPLAY_CATEGORY:
     FUTURE_DELAYS = 'futureEvents'
     ROAD_CONDITION = 'roadConditions'
     HIGHWAY_CAMERAS = 'highwayCams'
+    CHAIN_UP = 'chainUps'

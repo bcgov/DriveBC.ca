@@ -34,7 +34,7 @@
     &.major, &.closures {
       .copy-btn {
         background: darken($Surface-major, 8%);
-  
+
         &:hover {
           background: darken($Surface-major, 15%);
         }
@@ -44,9 +44,19 @@
     &.minor {
       .copy-btn {
         background: darken($Surface-minor, 8%);
-  
+
         &:hover {
           background: darken($Surface-minor, 15%);
+        }
+      }
+
+    }
+    &.chainUps {
+      .copy-btn {
+        background: darken($Gold40, 8%);
+
+        &:hover {
+          background: darken($Gold40, 15%);
         }
       }
 

@@ -16,6 +16,10 @@ import futureEventsStaticIcon from '../../images/mapIcons/future-event-minor-sta
 import roadConditionsActiveIcon from '../../images/mapIcons/road-condition-active.png';
 import roadConditionsStaticIcon from '../../images/mapIcons/road-condition-static.png';
 
+// Chain Ups
+import chainUpsActiveIcon from '../../images/mapIcons/chain-ups-active.png';
+import chainUpsStaticIcon from '../../images/mapIcons/chain-ups-static.png';
+
 // Constructions
 import constructionsMajorActiveIcon from '../../images/mapIcons/delay-major-active.png';
 import constructionsMajorStaticIcon from '../../images/mapIcons/delay-major-static.png';
@@ -63,6 +67,13 @@ export default function EventTypeIcon(props) {
         return <img className={'delay-icon-img'} src={roadConditionsActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
       else
         return <img className={'delay-icon-img'} src={roadConditionsStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
+    }
+
+    case "chainUps": {
+      if (state === 'active')
+        return <img className={'delay-icon-img'} src={chainUpsActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
+      else
+        return <img className={'delay-icon-img'} src={chainUpsStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
     }
   }
 }

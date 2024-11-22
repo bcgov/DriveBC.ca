@@ -129,7 +129,7 @@ export default function DriveBCMap(props) {
   );
 
   // Refs
-  const mapLayers = useRef({});
+  const mapLayers = useRef({}); window.mapLayers = mapLayers;
   const geolocation = useRef();
   const hoveredFeature = useRef();
   const isInitialMountLocation = useRef();
@@ -157,6 +157,7 @@ export default function DriveBCMap(props) {
     majorEvents: null,
     minorEvents: null,
     roadConditions: null,
+    chainUps: null,
     advisories: null
   });
 
@@ -165,7 +166,7 @@ export default function DriveBCMap(props) {
       cameras: mapContext.visible_layers.highwayCams,
       events: mapContext.visible_layers.closures || mapContext.visible_layers.majorEvents ||
         mapContext.visible_layers.minorEvents || mapContext.visible_layers.roadConditions ||
-        mapContext.visible_layers.futureEvents,
+        mapContext.visible_layers.futureEvents || mapContext.visible_layers.chainUps,
       ferries: mapContext.visible_layers.inlandFerries,
       weathers: mapContext.visible_layers.weather,
       restStops: mapContext.visible_layers.restStops
@@ -501,7 +502,8 @@ export default function DriveBCMap(props) {
         closures: 0,
         majorEvents: 0,
         minorEvents: 0,
-        roadConditions: 0
+        roadConditions: 0,
+        chainUps: 0,
       }
       filteredEvents.forEach(event => {
         const eventType = event.display_category;
@@ -701,6 +703,7 @@ export default function DriveBCMap(props) {
               mapLayers={mapLayers}
               disableFeatures={isCamDetail}
               enableRoadConditions={true}
+              enableChainUps={true}
               isCamDetail={isCamDetail}
               referenceData={referenceData}
               loadingLayers={loadingLayers} />
@@ -713,6 +716,7 @@ export default function DriveBCMap(props) {
               mapLayers={mapLayers}
               disableFeatures={isCamDetail}
               enableRoadConditions={true}
+              enableChainUps={true}
               isCamDetail={isCamDetail}
               referenceData={referenceData}
               loadingLayers={loadingLayers} />
@@ -784,6 +788,7 @@ export default function DriveBCMap(props) {
           mapLayers={mapLayers}
           disableFeatures={isCamDetail}
           enableRoadConditions={true}
+          enableChainUps={true}
           textOverride={'Layer filters'}
           isCamDetail={isCamDetail}
           referenceData={referenceData}

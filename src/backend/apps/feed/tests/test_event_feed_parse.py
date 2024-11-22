@@ -10,7 +10,7 @@ from apps.event.enums import (
     EVENT_SUB_TYPE,
     EVENT_TYPE,
 )
-from apps.feed.serializers import CarsEventSerializer, EventAPISerializer
+from apps.feed.serializers import CarsClosureSerializer, EventAPISerializer
 from apps.shared.tests import BaseTest
 
 
@@ -79,7 +79,7 @@ class TestEventFeedSerializer(BaseTest):
             ],
             'closed': True
         }
-        cars_closure_event_serializer_1 = CarsEventSerializer(data=cars_closure_event_1)
+        cars_closure_event_serializer_1 = CarsClosureSerializer(data=cars_closure_event_1)
         cars_closure_event_serializer_1.is_valid(raise_exception=True)
 
         cars_closure_event_2 = {
@@ -98,7 +98,7 @@ class TestEventFeedSerializer(BaseTest):
             ],
             'closed': False
         }
-        cars_closure_event_serializer_2 = CarsEventSerializer(data=cars_closure_event_2)
+        cars_closure_event_serializer_2 = CarsClosureSerializer(data=cars_closure_event_2)
         cars_closure_event_serializer_2.is_valid(raise_exception=True)
         assert cars_closure_event_1["id"] == 111
         assert cars_closure_event_2["id"] == 222

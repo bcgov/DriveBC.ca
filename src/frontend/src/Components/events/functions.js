@@ -21,6 +21,8 @@ export const getTypeDisplay = (event) => {
       return 'Minor future event';
     case 'roadConditions':
       return 'Road condition';
+    case 'chainUps':
+      return 'Commercial chain up';
     default:
       return '';
   }
