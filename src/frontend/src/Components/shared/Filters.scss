@@ -41,33 +41,34 @@ button.btn.open-filters {
   .filters-title {
     margin: 1rem 1rem 0;
     font-size: 1.125rem;
-    margin-right: 0rem;
+    margin-right: 0;
     flex-shrink: 0;
 
     &__container {
       display: flex;
       align-items: center; 
-      justify-content: space-between; 
-      gap: 0.1rem; 
+      margin: 12px 12px 0;
     }
 
     &__notification {
-      font-size:0.875rem;
+      font-size:0.75rem;
       color:$White; 
       background-color: $Focus; 
+      padding: 0.25rem 0.375rem;
       border-radius: 4px; 
-      margin-left: 0.3rem;
+      margin-left: 8px;
       margin-right: 3rem;
       margin-top: 1rem;
       white-space: nowrap;
     }
 
     &__tooltip-info {
-      margin-left: 8px;
+      margin-left: 4px;
+      color: $White;
       background-color: $Focus;
-      border-radius: 1rem;
+      padding: 0;
       border: none;
-      font-size: 0.625rem;
+      font-size: 0.75rem;
 
       &:hover {
         cursor: pointer;

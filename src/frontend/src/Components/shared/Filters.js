@@ -162,16 +162,14 @@ export default function Filters(props) {
           {
             (mapLayers && mapLayers.current.routeLayer && mapLayers.current.routeLayer.rendered) 
             &&
-            <div>
-              <label className="filters-title__notification">
-                Current routes
-                <OverlayTrigger placement="top" overlay={tooltipCurrentRoutes}>
-                  <button className="filters-title__tooltip-info" aria-label="current routes tooltip" aria-describedby="tooltipCurrentRoutes">
-                    <FontAwesomeIcon icon={faCircleQuestion} />
-                  </button>
-                </OverlayTrigger>                
-                </label>
-            </div>  
+            <label className="filters-title__notification">
+              Current routes
+              <OverlayTrigger placement="top" overlay={tooltipCurrentRoutes}>
+                <button className="filters-title__tooltip-info" aria-label="current routes tooltip" aria-describedby="tooltipCurrentRoutes">
+                  <FontAwesomeIcon icon={faCircleQuestion} />
+                </button>
+              </OverlayTrigger>                
+            </label>  
           }
           <button
             className="close-filters"
