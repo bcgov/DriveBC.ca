@@ -82,7 +82,7 @@ def populate_event_from_data(new_event_data):
 
 def populate_all_event_data(include_closures=True):
     client = FeedClient()
-    dit_data_dict = client.get_dit_event_dict() if include_closures else {}
+    closures, chain_ups = client.get_dit_event_dict()
     open511_data = client.get_event_list()['events']
 
     active_event_ids = []
@@ -92,7 +92,7 @@ def populate_all_event_data(include_closures=True):
             event_data["id"] = id
 
             # CARS data
-            cars_data = dit_data_dict[id] if id in dit_data_dict else {}
+            cars_data = closures[id] if id in closures else {}
             event_data["closed"] = cars_data.get('closed', False)
             event_data["highway_segment_names"] = cars_data.get('highway_segment_names', '')
 
@@ -116,6 +116,10 @@ def populate_all_event_data(include_closures=True):
 
         except Exception as e:
             logger.warning(e)
+
+    for chain_up in chain_ups:
+        active_event_ids.append(chain_up.validated_data['id'])
+        chain_up.save()
 
     # Purge events absent in the feed
     Event.objects.filter(status=EVENT_STATUS.ACTIVE)\

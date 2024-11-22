@@ -1,10 +1,13 @@
 import logging
 from datetime import datetime, timezone
+from pprint import pprint
 from typing import Dict
 from urllib.parse import urljoin
 
 import httpx
 import requests
+
+from apps.event.serializers import CarsEventSerializer
 from apps.feed.constants import (
     CURRENT_WEATHER,
     CURRENT_WEATHER_STATIONS,
@@ -18,7 +21,7 @@ from apps.feed.constants import (
     WEBCAM,
 )
 from apps.feed.serializers import (
-    CarsEventSerializer,
+    CarsClosureSerializer,
     CurrentWeatherSerializer,
     EventAPISerializer,
     EventFeedSerializer,
@@ -166,18 +169,24 @@ class FeedClient:
         response.raise_for_status()
         return response.json().get("access_token")
 
-    def get_single_feed(self, dbo, resource_type, resource_name, serializer_cls):
+    def get_single_feed(self, dbo, resource_type, resource_name, serializer_cls, as_serializer=False):
         """Get data feed for a single object."""
+
+        id = dbo if isinstance(dbo, str) else str(dbo.id)
         endpoint = self._get_endpoint(
-            resource_type=resource_type, resource_name=resource_name + str(dbo.id)
+            resource_type=resource_type, resource_name=resource_name + id
         )
         response_data = self._process_get_request(
             endpoint, resource_type=resource_type, params={}
         )
 
-        serializer = serializer_cls(data=response_data)
+        # CARS API returns single objects wrapped in list
+        if isinstance(response_data, list):
+            response_data = response_data[0]
+
+        serializer = serializer_cls(data=response_data, many=False)
         serializer.is_valid(raise_exception=True)
-        return serializer.validated_data
+        return serializer if as_serializer else serializer.validated_data
 
     def get_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
         """Get data feed for list of objects."""
@@ -229,16 +238,19 @@ class FeedClient:
     def get_dit_event_dict(self):
         """ Return a dict of <id>:True for fast lookup of closed events by <id>. """
 
-        res = {}
+        closures = {}
         cars_events = self.get_list_feed(
-            DIT, 'dbcevents', CarsEventSerializer,
+            DIT, 'dbcevents', CarsClosureSerializer,
             {"format": "json", "limit": 500}
         )
 
+        chain_ups = []
         for event in cars_events:
-            res[event['id']] = event
+            closures[event['id']] = event
+            if event['id'].startswith('DBCCNUP'):
+                chain_ups.append(self.get_single_feed(event['id'], DIT, 'dbcevents/', CarsEventSerializer, True))
 
-        return res
+        return closures, chain_ups
 
     # Ferries
     def get_ferries_list(self):

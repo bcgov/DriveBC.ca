@@ -1,4 +1,5 @@
 import html  # Importing html module for unescaping HTML entities
+from pprint import pprint
 import zoneinfo
 from datetime import datetime
 
@@ -59,7 +60,7 @@ class WebcamAPISerializer(serializers.Serializer):
 
 
 # Event
-class CarsEventSerializer(serializers.Serializer):
+class CarsClosureSerializer(serializers.Serializer):
     """
     Serializer to take CARS API events and retrieve ID and closed flag.
 

@@ -78,6 +78,20 @@ export default function EventPanel(props) {
           }
         </div>
 
+        { eventData.display_category === 'chainUps' &&
+          <div className="popup__content__description">
+            <p>Who does this impact?</p>
+            <p>
+              <a
+                href="https://www2.gov.bc.ca//gov/content/transportation/driving-and-cycling/traveller-information/seasonal/winter-driving/commercial"
+                target="_blank"
+                rel="noreferrer"
+                alt="BC chain up requirements"
+              >Chain up requirements</a> apply to a commercial
+            vehicle with a weight of 11,794 Kg or greater.</p>
+          </div>
+        }
+
         <div className="popup__content__description debug-data">
           <p
             tabIndex={0}

@@ -13,7 +13,8 @@ export const getEventCounts = (events) => {
       closures: 0,
       majorEvents: 0,
       minorEvents: 0,
-      roadConditions: 0
+      roadConditions: 0,
+      chainUps: 0,
     }
 
     events.forEach(e => {

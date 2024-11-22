@@ -36,6 +36,7 @@ export default function Filters(props) {
     callback,
     disableFeatures,
     enableRoadConditions,
+    enableChainUps,
     textOverride,
     isCamDetail,
     referenceData,
@@ -86,6 +87,12 @@ export default function Filters(props) {
     </Tooltip>
   );
 
+  const tooltipChainUps = (
+    <Tooltip id="tooltipChainUps" className="tooltip-content">
+      <p>Chain Up requiremnts.</p>
+    </Tooltip>
+  );
+
   const tooltipInlandFerries = (
     <Tooltip id="tooltipInlandFerries" className="tooltip-content">
       <p>Travel requires the use of an inland ferry.</p>
@@ -119,6 +126,7 @@ export default function Filters(props) {
   const [minorEvents, setMinorEvents] = useState(eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents);
   const [futureEvents, setFutureEvents] = useState(eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents);
   const [roadConditions, setRoadConditions] = useState(mapContext.visible_layers.roadConditions);
+  const [chainUps, setChainUps] = useState(mapContext.visible_layers.chainUps);
   const [highwayCams, setHighwayCams] = useState(isCamDetail ? isCamDetail : mapContext.visible_layers.highwayCams);
   const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
   const [weather, setWeather] = useState(mapContext.visible_layers.weather);
@@ -505,6 +513,7 @@ export default function Filters(props) {
             <div className="filter-group">
               <p className="filter-group__title">Commercial vehicles</p>
               <div className="filter-items-group">
+
                 <div className="filter-items filter-items--conditions">
                   <div className={'filter-item filter-item--rest-stops-large-vehicle' + (largeRestStops ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.restStops) ? ' loading' : '')}>
                     <input
@@ -542,7 +551,41 @@ export default function Filters(props) {
                       <Spinner animation="border" role="status" />
                     }
                   </div>
-                </div>
+
+                  <div className={'filter-item filter-item--chain-ups' + (chainUps ? ' checked' : '') + ((disableFeatures && !enableChainUps) ? ' disabled' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}>
+                      <input
+                        type="checkbox"
+                        name="chain ups"
+                        id="filter--chain-ups"
+                        onChange={e => {
+                          trackEvent('click', 'map', 'Toggle chain ups layer')
+                          setLayerVisibility('chainUps', !chainUps);
+                          setLayerVisibility('chainUpsLines', !chainUps, false);
+                          setChainUps(!chainUps);
+                        }}
+                        defaultChecked={mapContext.visible_layers.chainUps}
+                        disabled={(disableFeatures && !enableChainUps)}
+                      />
+                      <label className="filter-item__button" htmlFor="filter--chain-ups">
+                        <span className="filter-item__button__icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7.6 7H11.575C13.575 7 15.2 8.69271 15.175 10.776C15.175 12.625 13.9 14.1875 12.175 14.5H12.125C11.675 14.5781 11.275 14.2656 11.2 13.8229C11.125 13.3542 11.425 12.9375 11.85 12.8594H11.9C12.875 12.6771 13.6 11.7917 13.6 10.776C13.6 9.63021 12.675 8.66667 11.575 8.66667H7.6C6.5 8.66667 5.6 9.63021 5.6 10.776C5.6 11.7917 6.3 12.6771 7.275 12.8594H7.325C7.75 12.9375 8.05 13.3542 7.975 13.8229C7.9 14.2656 7.5 14.5781 7.05 14.5H7C5.275 14.1875 4 12.625 4 10.776C4 8.69271 5.6 7 7.6 7ZM16.375 17H12.4C10.4 17 8.8 15.3333 8.8 13.25C8.8 11.401 10.075 9.83854 11.825 9.52604H11.85C12.3 9.44792 12.7 9.76042 12.775 10.2031C12.85 10.6719 12.55 11.0885 12.125 11.1667H12.075C11.1 11.349 10.4 12.2083 10.4 13.25C10.4 14.3958 11.3 15.3333 12.4 15.3333H16.375C17.5 15.3333 18.4 14.3958 18.4 13.25C18.4 12.2083 17.675 11.349 16.7 11.1667H16.65C16.225 11.0885 15.925 10.6719 16 10.2031C16.075 9.76042 16.475 9.44792 16.925 9.52604H16.975C18.7 9.83854 20 11.401 20 13.25C20 15.3333 18.375 17 16.375 17Z" fill="#474543"/>
+</svg>
+
+
+                        </span>
+                        Chain ups in effect
+                      </label>
+
+                      <OverlayTrigger placement="top" overlay={tooltipChainUps}>
+                        <button className="tooltip-info" aria-label="chain ups tooltip" aria-describedby="tooltipChainUps">?</button>
+                      </OverlayTrigger>
+
+                      {loadingLayers && loadingLayers.events &&
+                        <Spinner animation="border" role="status" />
+                      }
+                    </div>
+                  </div>
               </div>
             </div>
           </div>

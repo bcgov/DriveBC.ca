@@ -90,7 +90,7 @@ export default function EventsListPage() {
 
   // Redux
   const dispatch = useDispatch();
-  const { advisories, events, filteredEvents, eventFilterPoints, selectedRoute } = useSelector(useCallback(memoize(state => ({
+  const { advisories, events, filteredEvents, selectedRoute } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
     events: state.feeds.events.list,
     filteredEvents: state.feeds.events.filteredList,

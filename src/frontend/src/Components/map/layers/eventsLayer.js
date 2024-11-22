@@ -29,18 +29,24 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
     const futureEventsLinesVS = createVS();
     const roadConditionsVS = createVS();
     const roadConditionsLinesVS = createVS();
+    const chainUpsVS = createVS();
+    const chainUpsLinesVS = createVS();
 
     // Helper function to add features to relative VectorSource
     const addFeature = (feature, display_category) => {
       const geoType = feature.getGeometry().getType();
       const isLineSegment = geoType === 'LineString' || geoType === 'Polygon';
+      if (isLineSegment && display_category === 'chainUps') {
+        return; // DBC22-2936: currently not displaying chain up lines/polygons
+      }
 
       const vsMap = {
         closures: closureVS,
         majorEvents: majorEventsVS,
         minorEvents: minorEventsVS,
         futureEvents: futureEventsVS,
-        roadConditions: roadConditionsVS
+        roadConditions: roadConditionsVS,
+        chainUps: chainUpsVS,
       }
 
       const lineVsMap = {
@@ -48,7 +54,8 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
         majorEvents: majorEventsLinesVS,
         minorEvents: minorEventsLinesVS,
         futureEvents: futureEventsLinesVS,
-        roadConditions: roadConditionsLinesVS
+        roadConditions: roadConditionsLinesVS,
+        chainUps: chainUpsLinesVS,
       }
 
       // Add feature to vs
@@ -85,6 +92,7 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
           altFeature: pointFeature,
           geometry: new Polygon(event.polygon.coordinates)
         });
+        feature.setId(event.id);
 
         feature.getGeometry().transform('EPSG:4326', currentProjection);
         addFeature(feature, event.display_category);
@@ -133,6 +141,7 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
 
       mapRef.current.addLayer(mapLayers.current[name]);
       mapLayers.current[name].setZIndex(zIndex);
+      mapLayers.current[name].name = name;
     }
 
     // Add layer to map for each vs
@@ -146,6 +155,8 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
     addLayer('futureEventsLines', futureEventsLinesVS, 12);
     addLayer('roadConditions', roadConditionsVS, 88);
     addLayer('roadConditionsLines', roadConditionsLinesVS, 1);
+    addLayer('chainUps', chainUpsVS, 88);
+    addLayer('chainUpsLines', chainUpsLinesVS, 2);
 
     setLoadingLayers(prevState => ({
       ...prevState,

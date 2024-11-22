@@ -1,5 +1,5 @@
 // React
-import React, { forwardRef } from 'react';
+import React from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

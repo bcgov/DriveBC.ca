@@ -133,5 +133,38 @@
         }
       }
     }
+
+    &.chainUps {
+      .popup__title {
+        background-color: $Gold10;
+        border-top: 4px solid $Gold80;
+
+        .name {
+          color: $Gold110;
+        }
+      }
+
+      .popup__content {
+        &__title {
+          .name {
+            color: $Gold110;
+          }
+
+          .location {
+            color: $Type-Secondary;
+            font-size: 0.875rem;
+          }
+        }
+        &__description {
+          time {
+            font-size: 0.875rem;
+            &:hover {
+              color: $Type-Link;
+            }
+          }
+        }
+      }
+    }
+
   }
 }
