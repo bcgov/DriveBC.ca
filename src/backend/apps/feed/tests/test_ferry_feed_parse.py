@@ -68,6 +68,9 @@ class TestFerryFeedSerializer(BaseTest):
         assert ferry_data["contact_phone"] == '2503746690'
         assert ferry_data["contact_alt_phone"] == '18006612025'
         assert ferry_data["contact_fax"] == '2503746613'
+        assert ferry_data["contact_email"] == 'drivebc@drivebc.ca'
+        assert ferry_data["contact_url_1"] == 'https://drivebc.ca/'
+        assert ferry_data["contact_url_2"] == ''
 
         # Webcams
         assert ferry_data["webcam_url_1"] == 'https://images.drivebc.ca/bchighwaycam/pub/cameras/304.jpg'

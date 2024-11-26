@@ -3,6 +3,14 @@
 .popup {
   // Ferries panel
   &--ferry {
+    hr {
+      margin: 0;
+    }
+
+    p {
+      margin-bottom: 0.875rem;
+    }
+
     .popup__title {
       background-color: $Surface-ferry;
       border-top: 4px solid $Success;
@@ -22,6 +30,42 @@
       &__icon {
         background-color: $Success;
         color: white;
+      }
+    }
+
+    .popup__content {
+      padding: 0;
+      margin-bottom: 1rem;
+
+      .info {
+        &__container {
+          margin: 1.125rem;
+        }
+
+        &__header {
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+        }
+
+        &__row {
+          display: flex;
+          flex-direction: row;
+
+          p {
+            margin: 0.25rem 0;
+            width: 100%;
+
+            svg {
+              margin-right: 0.75rem;
+              width: 18px;
+              height: 16px;
+            }
+          }
+        }
+
+        &__map {
+          margin-bottom: 0.5rem;
+        }
       }
     }
   }

@@ -166,6 +166,9 @@ class FerryPropertiesField(serializers.Field):
             "contact_phone": str(data['ROUTE_CONTACT_OFFICE_PHONE']) if data['ROUTE_CONTACT_OFFICE_PHONE'] else '',
             "contact_alt_phone": str(data['ROUTE_CONTACT_ALTERNATE_PHONE']) if data['ROUTE_CONTACT_ALTERNATE_PHONE'] else '',
             "contact_fax": str(data['ROUTE_CONTACT_FAX']) if data['ROUTE_CONTACT_FAX'] else '',
+            "contact_email": str(data['ROUTE_CONTACT_EMAIL']) if data['ROUTE_CONTACT_EMAIL'] else '',
+            "contact_url_1": str(data['ROUTE_CONTACT_URL_1']) if data['ROUTE_CONTACT_URL_1'] else '',
+            "contact_url_2": str(data['ROUTE_CONTACT_URL_2']) if data['ROUTE_CONTACT_URL_2'] else '',
 
             # Webcams
             "webcam_url_1": data['WEBCAM_URL_1'] or '',

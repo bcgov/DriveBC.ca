@@ -36,6 +36,9 @@ class Ferry(BaseModel):
     contact_phone = models.CharField(max_length=32, blank=True, default='')
     contact_alt_phone = models.CharField(max_length=32, blank=True, default='')
     contact_fax = models.CharField(max_length=32, blank=True, default='')
+    contact_email = models.EmailField(blank=True)
+    contact_url_1 = models.URLField(blank=True)
+    contact_url_2 = models.URLField(blank=True)
 
     # Webcams
     webcam_url_1 = models.URLField(blank=True)

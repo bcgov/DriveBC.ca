@@ -6,7 +6,20 @@ import { useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFerry } from '@fortawesome/pro-solid-svg-icons';
+import {
+  faXTwitter,
+  faFacebookF,
+} from '@fortawesome/free-brands-svg-icons';
+import {
+  faFerry,
+  faCar,
+  faClock,
+  faEnvelope,
+  faFax,
+  faPersonWalkingLuggage,
+  faPhone,
+  faWeightScale,
+} from '@fortawesome/pro-solid-svg-icons';
 import parse from 'html-react-parser';
 
 // Internal imports
@@ -27,13 +40,59 @@ export default function FerryPanel(props) {
     setSearchParams(new URLSearchParams({ type: 'ferry', id: ferryData.id }));
   }, [feature]);
 
-  console.log(ferryData);
+  // Helpers
+  const formatPhoneNumber = (phoneNumber) => {
+    // Remove any non-digit characters
+    const digits = phoneNumber.replace(/\D/g, '');
 
+    // Check if the number has 10 or 11 digits
+    if (digits.length === 10) {
+      return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
+
+    } else if (digits.length === 11 && digits[0] === '1') {
+      return `${digits[0]} ${digits.slice(1, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
+    }
+
+    // Return the original number if it doesn't match the expected format
+    return phoneNumber;
+  }
+
+  // Rendering
+  // Sub components
+  const SocialURL = ({ url }) => {
+    if (!url) return;
+
+    // Facebook
+    const fbRegex = /facebook\.com\/(?:profile\.php\?id=|(?:\w+\/)*)([\w.]+)/;
+    const fbMatch = url.match(fbRegex);
+    if (fbMatch) {
+      return (
+        <div className='info__row'>
+          <p><FontAwesomeIcon icon={faFacebookF}/> Facebook</p>
+          <p>/{fbMatch[1]}</p>
+        </div>
+      );
+    }
+
+    // Twitter
+    const twitterRegex = /(?:twitter\.com|x\.com)\/([\w.]+)/;
+    const twitterMatch = url.match(twitterRegex);
+    if (twitterMatch) {
+      return (
+        <div className='info__row'>
+          <p><FontAwesomeIcon icon={faXTwitter}/> X</p>
+          <p>@{twitterMatch[1]}</p>
+        </div>
+      );
+    }
+  }
+
+  // Main component
   return (
     <div className="popup popup--ferry" tabIndex={0}>
       <div className="popup__title">
         <div className="popup__title__icon">
-          <FontAwesomeIcon icon={faFerry} />
+        <FontAwesomeIcon icon={faFerry} />
         </div>
 
         <div className="popup__title__name">
@@ -50,71 +109,106 @@ export default function FerryPanel(props) {
       <div className="popup__content">
         {ferryData.image_url && (
           <div className="popup__content__image">
-            <img src={ferryData.image_url} alt={ferryData.route_name} />
+            <img src={ferryData.image_url} alt={`${ferryData.route_name} vessel`} />
           </div>
         )}
 
-        <div className="popup__content__description">
+        <div className="info">
           {ferryData.vessels && ferryData.vessels.map((vessel, index) => (
             <div key={index}>
-              {vessel.schedule_detail &&
-                <p>{parse(vessel.schedule_detail)}</p>
-              }
+              <div className='info__container'>
+                {vessel.schedule_detail &&
+                  <p>{parse(vessel.schedule_detail)}</p>
+                }
 
-              {vessel.vehicle_capacity &&
-                <p><b>Vehicle capacity:</b> {vessel.vehicle_capacity} vehicles</p>
-              }
-
-              {vessel.passenger_capacity &&
-                <p><b>Passenger capacity:</b> {vessel.passenger_capacity} passengers</p>
-              }
-
-              {vessel.crossing_time_min &&
-                <p><b>Crossing time:</b> {vessel.crossing_time_min} minutes</p>
-              }
-
-              {vessel.weight_capacity_kg &&
-                <p><b>Weight capacity:</b> {vessel.weight_capacity_kg}kg</p>
-              }
-
-              {vessel.schedule_type &&
-                <p><b>Schedule type:</b> {vessel.schedule_type}</p>
-              }
-
-              {vessel.special_restriction &&
-                <p><b>Special restriction:</b> {vessel.special_restriction}</p>
-              }
+                {vessel.special_restriction &&
+                  <p>{vessel.special_restriction}</p>
+                }
+              </div>
 
               <hr/>
+
+              <div className='info__container'>
+                <p className='info__header'>Ferry details</p>
+
+                <div className='info__row'>
+                  <p>
+                    <FontAwesomeIcon icon={faCar}/>
+                    {vessel.vehicle_capacity ? `${vessel.vehicle_capacity} vehicles` : 'N/A'}
+                  </p>
+
+                  <p>
+                    <FontAwesomeIcon icon={faPersonWalkingLuggage}/>
+                    {vessel.passenger_capacity ? `${vessel.passenger_capacity} passengers` : 'N/A'}
+                  </p>
+                </div>
+
+                <div className='info__row'>
+                  <p>
+                    <FontAwesomeIcon icon={faClock}/>
+                    {vessel.crossing_time_min ? `${vessel.crossing_time_min} minutes` : 'N/A'}
+                  </p>
+
+                  <p>
+                    <FontAwesomeIcon icon={faWeightScale}/>
+                    {vessel.weight_capacity_kg ? `${vessel.weight_capacity_kg}kg` : 'N/A'}
+                  </p>
+                </div>
+              </div>
             </div>
           ))}
 
-          <p><b>Description</b></p>
-
-          {ferryData.route_image_url && (
-            <div className="popup__content__image">
-              <img src={ferryData.route_image_url} alt={ferryData.route_name}/>
-            </div>
-          )}
-
-          <p>{ferryData.route_description}</p>
-          <a href={ferryData.url}>View ferry details</a>
-
           <hr/>
 
-          {ferryData.contact_org &&
-            <div>
-              {ferryData.contact_phone &&
-                <p><b>Contact phone:</b> {ferryData.contact_phone}</p>
-              }
-              {ferryData.contact_alt_phone &&
-                <p><b>Contact alt phone:</b> {ferryData.contact_alt_phone}</p>
-              }
-              {ferryData.contact_fax &&
-                <p><b>Contact fax:</b> {ferryData.contact_fax}</p>
-              }
-            </div>
-          }
+          <div className='info__container'>
+            <p className='info__header'>Description</p>
+
+            {ferryData.route_image_url && (
+              <div className="popup__content__image info__map">
+                <img src={ferryData.route_image_url} alt={`${ferryData.route_name} map`}/>
+              </div>
+            )}
+
+            <p>{ferryData.route_description}</p>
+          </div>
+
+          <div className='info__container'>
+            <p className='info__header'>Contact information</p>
+
+            <p>Phone {ferryData.contact_org}</p>
+
+            {ferryData.contact_phone &&
+              <div className='info__row'>
+                <p><FontAwesomeIcon icon={faPhone}/> Phone</p>
+                <p>{formatPhoneNumber(ferryData.contact_phone)}</p>
+              </div>
+            }
+
+            {ferryData.contact_alt_phone &&
+              <div className='info__row'>
+                <p><FontAwesomeIcon icon={faPhone}/> {ferryData.contact_phone ? 'Alt phone' : 'Phone'}</p>
+                <p>{formatPhoneNumber(ferryData.contact_alt_phone)}</p>
+              </div>
+            }
+
+            {ferryData.contact_fax &&
+              <div className='info__row'>
+                <p><FontAwesomeIcon icon={faFax}/> Fax</p>
+                <p>{formatPhoneNumber(ferryData.contact_fax)}</p>
+              </div>
+            }
+
+            {ferryData.contact_email &&
+              <div className='info__row'>
+                <p><FontAwesomeIcon icon={faEnvelope}/> Email</p>
+                <p>{ferryData.contact_email}</p>
+              </div>
+            }
+
+            <SocialURL url={ferryData.contact_url_1} />
+
+            <SocialURL url={ferryData.contact_url_2} />
+          </div>
         </div>
       </div>
     </div>
