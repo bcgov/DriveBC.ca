@@ -72,6 +72,7 @@ import View from 'ol/View';
 
 // Styling
 import './Map.scss';
+import { cameraStyles } from "../data/featureStyleDefinitions";
 
 export default function DriveBCMap(props) {
   /* initialization */
@@ -337,7 +338,7 @@ export default function DriveBCMap(props) {
 
       pointerClickHandler(
         features, clickedFeatureRef, updateClickedFeature,
-        mapView, isCamDetail, loadCamDetails
+        mapView, isCamDetail, loadCamDetails, updateReferenceFeature
       );
     });
 
@@ -426,7 +427,7 @@ export default function DriveBCMap(props) {
 
       pointerClickHandler(
         [referenceFeature], clickedFeatureRef, updateClickedFeature,
-        mapView, isCamDetail, loadCamDetails
+        mapView, isCamDetail, loadCamDetails, updateReferenceFeature
       );
     }
   }, [referenceFeature]);
@@ -755,6 +756,12 @@ export default function DriveBCMap(props) {
           onClick={() => {
             if (referenceData) {
               setZoomPan(mapView, 12, fromLonLat(referenceData.location.coordinates));
+            }
+
+            if (referenceFeature) {
+              referenceFeature.set('clicked', true);
+              referenceFeature.setStyle(cameraStyles.active);
+              updateClickedFeature(referenceFeature);
             }
           }}>
           <CurrentCameraIcon />

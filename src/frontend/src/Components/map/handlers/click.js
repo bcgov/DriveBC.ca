@@ -133,6 +133,7 @@ const camClickHandler = (
   mapView,
   isCamDetail,
   loadCamDetails,
+  updateReferenceFeature
 ) => {
   resetClickedStates(
     feature,
@@ -150,6 +151,7 @@ const camClickHandler = (
   if (isCamDetail) {
     setZoomPan(mapView, null, feature.getGeometry().getCoordinates());
     loadCamDetails(feature.getProperties());
+    updateReferenceFeature(feature);
   }
 };
 
@@ -324,6 +326,7 @@ export const pointerClickHandler = (
   mapView,
   isCamDetail,
   loadCamDetails,
+  updateReferenceFeature
 ) => {
   if (features.length) {
     const clickedFeature = features[0];
@@ -342,6 +345,7 @@ export const pointerClickHandler = (
           mapView,
           isCamDetail,
           loadCamDetails,
+          updateReferenceFeature
         );
         return;
 
