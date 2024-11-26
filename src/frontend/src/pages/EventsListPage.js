@@ -136,7 +136,8 @@ export default function EventsListPage() {
   const isInitialMount = useRef(true);
   const workerRef = useRef();
   const eventRefs = useRef({});
-  const eventBeenInViewPort = useRef({});
+  const viewedHighlightedEvents = useRef({});
+  const eventsInViewport = useRef({});
 
   // Media queries
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
@@ -233,6 +234,41 @@ export default function EventsListPage() {
     getAdvisoriesData(res);
   };
 
+  // Scroll/Context functions
+  const getScrollPosition = () => {
+
+    // Do nothing if the page is at the top
+    if (window.scrollY === 0) return
+
+    // Get the current positions of all elements previously in the viewport, using the top position as the key
+    Object.keys(eventsInViewport.current).forEach((eventId) => {
+      const element = document.querySelector(`[data-key="${eventId}"]`);
+
+      if (element) {
+        eventsInViewport.current[eventId] = Math.floor(element.getBoundingClientRect().top);
+      }
+    });
+  };
+
+  const scrollToMaintainContext = () => {
+    // Get the elements and sort them by offsetFromTop
+    const sortedElements = Object.entries(eventsInViewport.current)
+      .sort(([, a], [, b]) => a - b)
+      .map(([key]) => key);
+
+    // Loop through the sorted keys and scroll to the first item that exists
+    for (const key of sortedElements) {
+      const element = document.querySelector(`[data-key="${key}"]`);
+      const offsetFromTop = eventsInViewport.current[key];
+
+      if (element && offsetFromTop) {
+        const newTop = document.querySelector(`[data-key="${key}"]`).getBoundingClientRect().top + window.scrollY - offsetFromTop;
+        window.scrollTo({ top: newTop, behavior: 'instant' });
+        break;
+      }
+    }
+  }
+
   // useEffect hooks
   useEffect(() => {
     // Create a new worker if it doesn't exist
@@ -273,6 +309,7 @@ export default function EventsListPage() {
 
   useEffect(() => {
     if (events) {
+      getScrollPosition(); // Get the current scroll position before updating the data
       processEvents();
       setLoadData(false);
     }
@@ -306,31 +343,37 @@ export default function EventsListPage() {
           const ref = eventRefs.current[eventId];
 
           if (entry.isIntersecting) {
-            // Set eventBeenInViewPort to true when the highlighted event is scrolled into the viewport
-            if (ref.highlight && !eventBeenInViewPort[eventId]) {
-              eventBeenInViewPort[eventId] = true;
+            // Add element to the set when it intersects
+            eventsInViewport.current[eventId] = null;
+
+            // Set viewedHighlightedEvents to true when the highlighted event is scrolled into the viewport
+            if (ref.highlight && !viewedHighlightedEvents.current[eventId]) {
+              viewedHighlightedEvents.current[eventId] = true;
             }
           } else {
+            // Remove element from the set when it no longer intersects
+            delete eventsInViewport.current[eventId]
+
             // Set highlight to false when the event has been in the viewport and is scrolled out of the viewport
-            if (ref.highlight && eventBeenInViewPort[eventId] || false) {
+            if (ref.highlight && viewedHighlightedEvents.current[eventId] || false) {
               ref.highlight = false;
-              eventBeenInViewPort[eventId] = false;
+              viewedHighlightedEvents.current[eventId] = false;
               updateHighlightHandler({ id: eventId, highlight: false }); // Update the data in the parent so it can be used by the webworker
             }
           }
-        });
+        })
 
         // Count items with highlight outside current viewport
         const counts = { above: 0, below: 0 }
 
         Object.values(eventRefs.current).forEach(ref => {
-          if (!ref.highlight || eventBeenInViewPort[ref.element.getAttribute('data-key')]) return;
+          if (!ref.element || !ref.highlight || viewedHighlightedEvents.current[ref.element.getAttribute('data-key')]) return;
 
           const elementTop = ref.element.getBoundingClientRect().top;
 
           if (elementTop < window.innerHeight) {
             counts.above++;
-          } else  {
+          } else {
             counts.below++;
           }
         });
@@ -343,18 +386,19 @@ export default function EventsListPage() {
       }
     );
 
-    Object.values(eventRefs.current).forEach((ref) => {
-      if (ref.element && ref.highlight) {
-        observer.observe(ref.element);
-      }
-    });
+    setTimeout(() => {
+      scrollToMaintainContext() // Scroll to maintain context after the page has rendered
 
-    return () => {
+      // Observe all elements
       Object.values(eventRefs.current).forEach((ref) => {
         if (ref.element) {
-          observer.unobserve(ref.element);
+          observer.observe(ref.element);
         }
       });
+    }, 0);
+
+    return () => {
+      observer.disconnect();
     };
   }, [processedEvents]);
 
@@ -400,7 +444,7 @@ export default function EventsListPage() {
 
     // Get all highlighted events that are not in the viewport and sort them by their position
     const sortedRefs = Object.entries(eventRefs.current)
-      .filter(([key, ref]) => ref.highlight && !eventBeenInViewPort.current[key])
+      .filter(([key, ref]) => ref.highlight && !viewedHighlightedEvents.current[key])
       .map(([key, ref]) => ({
         key,
         top: Math.floor(ref.element.getBoundingClientRect().top + window.scrollY - offset)
