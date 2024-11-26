@@ -61,23 +61,23 @@ export default function DistanceLabels(props) {
     }
   }
 
-// Threshold of 500 meters in distance by default
-const arePointsClose = (lat1, lon1, lat2, lon2, threshold = 500) => {
-    const point1 = point([lon1, lat1]);
-    const point2 = point([lon2, lat2]);
-    const dis = distance(point1, point2, { units: 'kilometers' });
+  // Threshold of 500 meters in distance by default
+  const arePointsClose = (coords, threshold = 5000) => {
+    if (!coords || coords.length < 2) {
+      return false;
+    }
+
+    const dis = distance(point(coords[0]), point(coords[1]), { units: 'kilometers' });
     return dis < threshold/1000;
-}
+  }
 
   const addDistanceOverlay = (closing=false) => {
     removeOverlays(mapRef);
-    const latlngs = [];
-    searchedRoutes.forEach((route, index) => {
-      const routeLs = new LineString(route.route);
-      const midPointLatLng = routeLs.getCoordinateAt(0.5);
-      latlngs.push(midPointLatLng[0]);
-      latlngs.push(midPointLatLng[1]);
+
+    const latlngs = searchedRoutes.map((route) => {
+      return new LineString(route.route).getCoordinateAt(0.5);
     });
+    const isTooClose = arePointsClose(latlngs);
 
     searchedRoutes.forEach((route, index) => {
       const elem = document.createElement('div');
@@ -100,13 +100,8 @@ const arePointsClose = (lat1, lon1, lat2, lon2, threshold = 500) => {
 
       const routeLs = new LineString(route.route);
       let midPointLatLng = routeLs.getCoordinateAt(0.5);
-      const isTooClose = arePointsClose(latlngs[0], latlngs[1], latlngs[2], latlngs[3]);
-      if(isTooClose){
-        if(index === 0){
-          midPointLatLng = routeLs.getCoordinateAt(0.46);
-        } else {
-          midPointLatLng = routeLs.getCoordinateAt(0.54);
-        }
+      if (isTooClose) {
+        midPointLatLng = routeLs.getCoordinateAt(index === 0 ? 0.46 : 0.54);
       }
 
       // Offset the coordinates in meters
