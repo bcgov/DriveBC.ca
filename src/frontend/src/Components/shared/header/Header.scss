@@ -10,11 +10,23 @@
 	padding: 0;
 	box-shadow: rgb(0,0,0,0.2) 0px 2px 10px 0px;
 
+	&:has(.navbar-collapse.show) {
+		@media (max-height: 600px) {
+			height: calc(100%);
+		}
+	}
+
 	.container {
 		display: flex;
 		justify-content: space-between;
 		max-width: unset;
 		padding: 0;
+
+		&:has(.navbar-collapse.show) {
+			@media (max-height: 600px) {
+				height: 100%;
+			}
+		}
 
 		@media (min-width: 992px) {
 			margin: 0 4rem;
@@ -33,6 +45,19 @@
 		.header-right {
 			.btn {
 				white-space: nowrap;
+			}
+		}
+
+		.navbar-collapse.show {
+			@media (max-height: 600px) {
+				height: calc(100% - 58px);
+			}
+			
+			.navbar-nav {
+				@media (max-height: 600px) {
+					height: 100%;
+					overflow: auto;
+				}
 			}
 		}
 	}
