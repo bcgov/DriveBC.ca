@@ -17,7 +17,7 @@ export default function NoRouteFound(props) {
   return (
     <div className={`no-route-found-container ${!searchedRoutes.length ? 'open' : ''}`}>
       <FontAwesomeIcon icon={faCircleExclamation} />
-      <span>No valid route between these two points.</span>
+      <span>Routes outside of BC are not possible at the moment.</span>
     </div>
   );
 }
