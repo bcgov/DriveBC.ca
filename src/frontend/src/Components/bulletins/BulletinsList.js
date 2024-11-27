@@ -27,10 +27,14 @@ export default function Bulletins(props) {
     navigate(`/bulletins/${bulletin.id}`);
   }
 
+  const sortedBulletins = bulletins && bulletins.sort((a, b) => {
+    return new Date(b.last_published_at) - new Date(a.last_published_at);
+  });
+
   // Rendering
   return (
     <ul className='bulletins-list'>
-      {!!bulletins && bulletins.map((bulletin, index) => {
+      {!!sortedBulletins && sortedBulletins.map((bulletin, index) => {
         return (
           <li className='bulletin-li' key={bulletin.id} onClick={() => handleClick(bulletin)}
             onKeyDown={(keyEvent) => {
