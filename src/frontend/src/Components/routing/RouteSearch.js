@@ -164,7 +164,7 @@ const RouteSearch = forwardRef((props, ref) => {
         </div>
 
         {searchedRoutes &&
-          <NoRouteFound searchedRoutes={searchedRoutes} />
+          <NoRouteFound searchedRoutes={searchedRoutes} searchLocationFrom={searchLocationFrom} searchLocationTo={searchLocationTo}/>
         }
 
         {validSearch &&
