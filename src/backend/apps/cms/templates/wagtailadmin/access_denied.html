@@ -1,0 +1,24 @@
+{% extends "admin/login.html" %}
+
+{% block branding %}<h1 id="site-name">DriveBC CMS</h1>{% endblock %}
+
+{% block content %}
+
+  {% if is_non_idir_login %}
+    <p>
+      You do not have permission to view this page because you're logged in with
+      an account that is not an IDIR MFA account.
+    </p>
+    <p>
+      You can sign out of your current account by clicking the button below.
+      You'll be redirected to the login page for IDIR.
+    </p>
+
+    <form method="POST" action="/drivebc-cms/logout/">
+      {% csrf_token %}
+      <button type="submit" class="button" style="padding: 4px 5px;">Log out</button>
+    </form>
+  {% else %}
+    <p>You do not have permission to view this page.</p>
+  {% endif %}
+{% endblock %}

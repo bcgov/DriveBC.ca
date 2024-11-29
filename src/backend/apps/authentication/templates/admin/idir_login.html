@@ -1,0 +1,14 @@
+{% extends "admin/login.html" %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">DriveBC Administration</a></h1>
+{% endblock %}
+
+{% block content %}
+
+<p>This part of the DriveBC website requires you to be authenticated with your
+IDIR, using MFA</p>
+
+<p style="text-align: center"><a class="button" href="/accounts/oidc/idir/login/?process=login&next=%2Fdrivebc-admin%2F&auth_params=kc_idp_hint=azureidir">Log in with IDIR</a></p>
+
+{% endblock %}

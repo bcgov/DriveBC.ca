@@ -62,6 +62,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.csrf",
             ],
         },
     },
@@ -80,7 +81,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    # "oauth2_provider.backends.OAuth2Backend",
     "django.contrib.auth.backends.ModelBackend",
 
     # `allauth` specific authentication methods, such as login by email
@@ -88,6 +88,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_REDIRECT_URL = FRONTEND_BASE_URL
+LOGIN_URL = 'http://localhost:8000/accounts/oidc/idir/login/?process=login&next=%2Fdrivebc-admin%2F&auth_params=kc_idp_hint=azureidir'
 
 # Language
 USE_I18N = False
@@ -98,7 +99,6 @@ USE_TZ = True
 
 # Apps
 DJANGO_APPS = [
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.gis",
@@ -131,8 +131,6 @@ THIRD_PARTY_APPS = [
     "wagtail.documents",
     "wagtail.images",
     "wagtail.search",
-    "wagtail.admin",
-    "wagtail_modeladmin",
     "wagtail",
     "modelcluster",
     "taggit",
@@ -150,7 +148,14 @@ LOCAL_APPS = [
     "apps.ferry",
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+# apps with features overridden in local apps (e.g., admin templates) go here
+OVERRIDDEN_APPS = [
+    "config.admin.DriveBCAdminConfig",
+    "wagtail.admin",
+    "wagtail_modeladmin",
+]
+
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS + OVERRIDDEN_APPS
 
 # Storage
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

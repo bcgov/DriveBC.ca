@@ -1,0 +1,7 @@
+IDIR user {{ name }} ({{ email }}) is requesting access to the DriveBC admin
+interface.  You can access their user record at the following link to toggle the
+staff flag on their account:
+
+{{ url }}
+
+The system will NOT notify them of the change; you need to tell them yourself.

@@ -1,10 +1,16 @@
-from apps.cms.models import Advisory, Bulletin
 from django.contrib.auth.models import Permission
 from django.templatetags.static import static
+from django.urls import path
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+
 from wagtail import hooks
 from wagtail.admin.rich_text.editors.draftail.features import ControlFeature
+from wagtail.admin.ui.components import Component
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
+
+from .models import Advisory, Bulletin
+from .views import access_requested
 
 
 @hooks.register("insert_global_admin_css")
@@ -72,3 +78,35 @@ def register_readinglevel_feature(features):
         feature_name,
         ControlFeature({'type': feature_name}, js=['readinglevel.js']),
     )
+
+
+@hooks.register('construct_main_menu')
+def hide_explorer_menu_items_without_right_groups(request, menu_items):
+    '''
+    For a user who is not in the required groups, empty the menu.
+
+    Currently the groups are Editors (i.e., authors) and Moderators (i.e.,
+    approvers).  A user who is merely in the IdirUser group should see nothing
+    at all in the admin interface, but model_admin entries still show up.
+    '''
+
+    if not request.user.groups.filter(name__in=['Moderators', 'Editors']):
+        menu_items[:] = []
+
+
+class RequestAccessPanel(Component):
+    order = 50
+    template_name = 'wagtailadmin/request_access.html'
+
+
+@hooks.register('construct_homepage_panels')
+def add_access_request_panel(request, panels):
+    if not request.user.groups.filter(name__in=['Moderators', 'Editors']):
+        panels.append(RequestAccessPanel())
+
+
+@hooks.register('register_admin_urls')
+def add_access_requested_url():
+    return [
+        path('access-requested', access_requested, name='cms-access-requested'),
+    ]

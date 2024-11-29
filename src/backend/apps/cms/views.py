@@ -1,3 +1,11 @@
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, reverse
+from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import viewsets
+
 from apps.cms.models import Advisory, Bulletin
 from apps.cms.serializers import (
     AdvisorySerializer,
@@ -6,7 +14,6 @@ from apps.cms.serializers import (
 )
 from apps.shared.enums import CacheKey, CacheTimeout
 from apps.shared.views import CachedListModelMixin
-from rest_framework import viewsets
 
 
 class CMSViewSet(viewsets.ReadOnlyModelViewSet):
@@ -36,3 +43,40 @@ class BulletinTestAPI(CachedListModelMixin, CMSViewSet):
 
 class BulletinAPI(BulletinTestAPI):
     serializer_class = BulletinSerializer
+
+
+@csrf_exempt
+def access_requested(request):
+
+    if request.method == 'POST':
+        app = request.user._meta.app_label
+        model = request.user._meta.model_name
+        path = reverse('admin:%s_%s_change' % (app, model),  args=[request.user.id])
+        url = settings.FRONTEND_BASE_URL + path[1:]
+        first = request.user.first_name
+        last = request.user.last_name
+        name = f'{first} {last}'
+        context = {'name': name,
+                'email': request.user.email,
+                'url': url, }
+
+        text = render_to_string('email/request_wagtail_access.txt', context)
+        html = render_to_string('email/request_wagtail_access.html', context)
+
+        msg = EmailMultiAlternatives(
+            f'{name} requests access to Wagtail admin',
+            text,
+            'do_not_reply@gov.bc.ca',
+            settings.ACCESS_REQUEST_RECEIVERS,
+        )
+        msg.attach_alternative(html, 'text/html')
+        msg.send()
+        return HttpResponseRedirect(request.path)
+
+    return render(request, 'wagtailadmin/access_requested.html')
+
+
+def access_denied_idir(request):
+    return render(request, 'wagtailadmin/access_denied.html', context={
+        "is_non_idir_login": True,
+    })
