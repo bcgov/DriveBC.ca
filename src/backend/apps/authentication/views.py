@@ -4,12 +4,13 @@ from pathlib import Path
 
 import environ
 from apps.webcam.models import Webcam
+from django.conf import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMultiAlternatives
 from django.db.utils import IntegrityError
 from django.http import HttpResponseRedirect
-from django.shortcuts import reverse
+from django.shortcuts import render, reverse
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -19,12 +20,46 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.webcam.models import Webcam
+
 from .models import DriveBCUser, FavouritedCameras, SavedRoutes
 from .serializers import FavouritedCamerasSerializer, SavedRoutesSerializer
 
 # Backend dir and env
 BACKEND_DIR = Path(__file__).resolve().parents[2]
 env = environ.Env()
+
+
+def request_access(request):
+    return render(request, "admin/request_access.html")
+
+
+def access_requested(request):
+
+    if request.method == 'POST':
+        app = request.user._meta.app_label
+        model = request.user._meta.model_name
+        path = reverse('admin:%s_%s_change' % (app, model),  args=[request.user.id])
+        url = settings.FRONTEND_BASE_URL + path[1:]
+        first = request.user.first_name
+        last = request.user.last_name
+        name = f'{first} {last}'
+        context = {'name': name, 'email': request.user.email, 'url': url, }
+
+        text = render_to_string('email/request_admin_access.txt', context)
+        html = render_to_string('email/request_admin_access.html', context)
+
+        msg = EmailMultiAlternatives(
+            f'{name} requests access to DriveBC admin',
+            text,
+            'do_not_reply@gov.bc.ca',
+            settings.ACCESS_REQUEST_RECEIVERS,
+        )
+        msg.attach_alternative(html, 'text/html')
+        msg.send()
+        return HttpResponseRedirect(request.path)
+
+    return render(request, "admin/access_requested.html")
 
 
 class FavouritedCamerasViewset(viewsets.ModelViewSet):

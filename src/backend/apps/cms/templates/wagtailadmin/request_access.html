@@ -1,0 +1,15 @@
+{% load i18n wagtailadmin_tags %}
+
+{% block request_access %}
+    <h2 class="w-panel_header">Need to be granted access</h2>
+
+    <p>You can see this page because you're logged in with an IDIR, but you do
+    not have access to any functionality yet because you need to be added to the
+    <em>editors</em> group.</p>
+
+    <p>Click the button below to send a message to CMS admins requesting access for your IDIR.</p>
+
+    <form method="POST" action="access-requested">
+        <div><button class="button" type="submit">Request Access</button></div>
+    </form>
+{% endblock %}

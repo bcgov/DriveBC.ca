@@ -1,0 +1,7 @@
+IDIR user {{ name }} ({{ email }}) is requesting access to the Wagtail admin
+interface.  You can access their user record at the following link to add them
+to the editors group:
+
+{{ url }}
+
+The system will NOT notify them of the change; you need to tell them yourself.

@@ -1,0 +1,19 @@
+{% extends "admin/login.html" %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">DriveBC Administration</a></h1>
+{% endblock %}
+
+{% block content %}
+<p>To access the DriveBC Admin site, you need to be granted access.</p>
+
+<p>Click the button below to trigger an access request to be sent to the admins
+for your IDIR.</p>
+
+<div style="text-align: center">
+  <form method="post" action="{% url 'admin-access-requested' %}">
+    {% csrf_token %}
+    <button class="button" type="submit" style="padding: 4px 5px;">Request Access</button></p>
+  </form>
+</div>
+{% endblock %}
