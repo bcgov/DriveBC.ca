@@ -27,7 +27,7 @@ import './EventsTable.scss';
 
 export default function EventsTable(props) {
   // Props
-  const { data, routeHandler, showLoader, sortingKey, eventRefs } = props;
+  const { data, routeHandler, showLoader, sortingKey, eventRefs, trackedEvents } = props;
 
   // States
   const [sorting, setSorting] = useState([{ desc: true, id: 'location_description' }]);
@@ -224,11 +224,12 @@ export default function EventsTable(props) {
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
+      const isHighlighted = trackedEvents[row.original.id]?.highlight;
 
       res.push(
         <tr
-          ref={(el) => (eventRefs.current[row.original.id] = { element: el, highlight: row.original.highlight })}
-          className={`${row.original.severity.toLowerCase()} headerRow ${row.original.highlight ? 'highlighted' : ''}`}
+          ref={(el) => (eventRefs.current[row.original.id] = el )}
+          className={`${row.original.severity.toLowerCase()} headerRow ${isHighlighted ? 'highlighted' : ''}`}
           tabIndex={0}
           key={`${row.id}-header-row`}
           data-key={row.original.id}
@@ -240,7 +241,7 @@ export default function EventsTable(props) {
           <td colSpan={3}>
             <div className="space-between-row">
               {getEventTypeCell(row.original)}
-              {row.original.highlight &&
+              {isHighlighted &&
                 <div className="updated-pill">Updated</div>
               }
             </div>

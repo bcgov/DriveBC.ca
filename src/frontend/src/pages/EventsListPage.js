@@ -112,6 +112,7 @@ export default function EventsListPage() {
     'roadConditions': false,
   });
   const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
+  const [trackedEvents, setTrackedEvents] = useState({}); // Track event updates between refreshes
   const [showLoader, setShowLoader] = useState(true);
   const [loadData, setLoadData] = useState(true);
   const [advisoriesInRoute, setAdvisoriesInRoute] = useState([]);
@@ -134,9 +135,10 @@ export default function EventsListPage() {
 
   // Refs
   const isInitialMount = useRef(true);
+  const isInitialLoad = useRef(true);
   const workerRef = useRef();
   const eventRefs = useRef({});
-  const viewedHighlightedEvents = useRef({});
+  const viewedHighlightedEvents = useRef(new Set());
   const eventsInViewport = useRef({});
 
   // Media queries
@@ -197,7 +199,30 @@ export default function EventsListPage() {
     // Fetch data
     const eventData = await getEvents().catch((error) => displayError(error));
 
-    workerRef.current.postMessage({data: eventData, existingData: processedEvents, route: (route && route.routeFound ? route : null), action: 'updateEvents'});
+    // Track unfiltered events' highlight status and last_updated timestamp
+    const trackedEventsDict = eventData.reduce((acc, event) => {
+      const trackedEvent = trackedEvents[event.id] ?? null;
+
+      acc[event.id] = {
+        highlight: trackedEvent ? event.last_updated !== trackedEvent.last_updated || trackedEvent.highlight : !isInitialLoad.current,
+        last_updated: event.last_updated
+      };
+      return acc;
+    }, {});
+
+    // Remove items that no longer exist
+    Object.keys(trackedEvents).forEach((key) => {
+      if (!trackedEventsDict[key]) {
+        delete trackedEvents[key];
+      }
+    });
+
+    setTrackedEvents(trackedEventsDict);
+
+    if (isInitialLoad.current)
+      isInitialLoad.current = false;
+
+    workerRef.current.postMessage({ data: eventData, route: (route && route.routeFound ? route : null), action: 'updateEvents' });
   }
 
   const processEvents = () => {
@@ -340,24 +365,23 @@ export default function EventsListPage() {
       (entries) => {
         entries.forEach((entry) => {
           const eventId = entry.target.getAttribute('data-key');
-          const ref = eventRefs.current[eventId];
+          const isHighlighted = trackedEvents[eventId]?.highlight;
 
           if (entry.isIntersecting) {
             // Add element to the set when it intersects
             eventsInViewport.current[eventId] = null;
 
             // Set viewedHighlightedEvents to true when the highlighted event is scrolled into the viewport
-            if (ref.highlight && !viewedHighlightedEvents.current[eventId]) {
-              viewedHighlightedEvents.current[eventId] = true;
+            if (isHighlighted && !viewedHighlightedEvents.current.has(eventId)) {
+              viewedHighlightedEvents.current.add(eventId);
             }
           } else {
             // Remove element from the set when it no longer intersects
-            delete eventsInViewport.current[eventId]
+            delete eventsInViewport.current[eventId];
 
             // Set highlight to false when the event has been in the viewport and is scrolled out of the viewport
-            if (ref.highlight && viewedHighlightedEvents.current[eventId] || false) {
-              ref.highlight = false;
-              viewedHighlightedEvents.current[eventId] = false;
+            if (isHighlighted && viewedHighlightedEvents.current.has(eventId)) {
+              viewedHighlightedEvents.current.delete(eventId);
               updateHighlightHandler({ id: eventId, highlight: false }); // Update the data in the parent so it can be used by the webworker
             }
           }
@@ -366,10 +390,11 @@ export default function EventsListPage() {
         // Count items with highlight outside current viewport
         const counts = { above: 0, below: 0 }
 
-        Object.values(eventRefs.current).forEach(ref => {
-          if (!ref.element || !ref.highlight || viewedHighlightedEvents.current[ref.element.getAttribute('data-key')]) return;
+        Object.entries(eventRefs.current).forEach(([eventId, ref]) => {
+          const isHighlighted = trackedEvents[eventId]?.highlight;
+          if (!ref || !isHighlighted || viewedHighlightedEvents.current.has(eventId)) return;
 
-          const elementTop = ref.element.getBoundingClientRect().top;
+          const elementTop = ref.getBoundingClientRect().top;
 
           if (elementTop < window.innerHeight) {
             counts.above++;
@@ -391,8 +416,8 @@ export default function EventsListPage() {
 
       // Observe all elements
       Object.values(eventRefs.current).forEach((ref) => {
-        if (ref.element) {
-          observer.observe(ref.element);
+        if (ref) {
+          observer.observe(ref);
         }
       });
     }, 0);
@@ -400,7 +425,7 @@ export default function EventsListPage() {
     return () => {
       observer.disconnect();
     };
-  }, [processedEvents]);
+  }, [processedEvents, trackedEvents]);
 
   // Handlers
   const toggleEventCategoryFilter = (targetCategory, check) => {
@@ -432,22 +457,28 @@ export default function EventsListPage() {
   }
 
   const updateHighlightHandler = (updatedEvent) => {
-    setProcessedEvents((processedEvents) =>
-      processedEvents.map((event) =>
-        event.id === updatedEvent.id ? { ...event, ...updatedEvent } : event
-      )
-    );
-  };
+    setTrackedEvents((trackedEvents) => {
+      const newTrackedEvents = {
+        ...trackedEvents,
+        [updatedEvent.id]: {
+          ...trackedEvents[updatedEvent.id],
+          highlight: updatedEvent.highlight
+        }
+      };
+
+      return newTrackedEvents;
+    });
+  }
 
   const scrollToNextHighlightedEventHandler = (direction) => {
     const offset = 58 + 48; // Offset Y position by 58px to account for the header + 48px of padding
 
     // Get all highlighted events that are not in the viewport and sort them by their position
     const sortedRefs = Object.entries(eventRefs.current)
-      .filter(([key, ref]) => ref.highlight && !viewedHighlightedEvents.current[key])
+      .filter(([key, ref]) => trackedEvents[key]?.highlight && !viewedHighlightedEvents.current.has(key))
       .map(([key, ref]) => ({
         key,
-        top: Math.floor(ref.element.getBoundingClientRect().top + window.scrollY - offset)
+        top: Math.floor(ref.getBoundingClientRect().top + window.scrollY - offset)
       }))
       .sort((a, b) => a.top - b.top);
 
@@ -584,8 +615,8 @@ export default function EventsListPage() {
                   routeHandler={handleRoute}
                   showLoader={showLoader}
                   sortingKey={sortingKey}
-                  updateCountHandler={setUpdateCounts}
                   eventRefs={eventRefs}
+                  trackedEvents={trackedEvents}
                 />
               }
 
@@ -594,10 +625,11 @@ export default function EventsListPage() {
                   { !showLoader && processedEvents.map(
                     (e) => (
                       <EventCard
-                        childRef={(el) => (eventRefs.current[e.id] = { element: el, highlight: e.highlight })}
+                        childRef={(el) => (eventRefs.current[e.id] = el)}
                         key={e.id}
                         event={e}
                         handleRoute={handleRoute}
+                        trackedEvents={trackedEvents}
                       />
                     ),
                   )}

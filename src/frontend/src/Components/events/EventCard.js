@@ -18,12 +18,14 @@ import './EventCard.scss';
 
 export default function EventCard(props) {
   // Props
-  const { event, showLoader, handleRoute, childRef } = props;
+  const { event, showLoader, handleRoute, childRef, trackedEvents } = props;
 
   // Rendering
+  const isHighlighted = event ? trackedEvents[event.id]?.highlight : null;
+
   return (
     <div
-      className={'event-card ' + (event ? event.severity.toLowerCase() : '') + ((event && event.highlight) ? ' highlighted' : '')}
+      className={'event-card ' + (event ? event.severity.toLowerCase() : '') + ((event && isHighlighted) ? ' highlighted' : '')}
       data-key={event ? event.id : ''}
     >
       <div ref={childRef} className="event-card__title" data-key={event ? event.id : ''}>
@@ -31,7 +33,7 @@ export default function EventCard(props) {
             <span className="eventType__text">{getTypeDisplay(event)}
             </span>
           </div>
-          {event && event.highlight &&
+          {event && isHighlighted &&
             <div className="updated-pill">Updated</div>
           }
         </div> }
