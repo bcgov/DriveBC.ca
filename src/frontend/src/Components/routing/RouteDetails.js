@@ -63,6 +63,7 @@ export default function RouteDetails(props) {
     feeds: {
       cameras: { list: cameras, filteredList: filteredCameras, filterPoints: camFilterPoints },
       events: { list: events, filteredList: filteredEvents, filterPoints: eventFilterPoints },
+      ferries: { list: ferries, filteredList: filteredFerries, filterPoints: ferryFilterPoints },
     },
     advisories: { list: advisories, filteredList: filteredAdvisories, filterPoints: advisoryFilterPoints },
     routes: { searchLocationFrom, searchLocationTo, selectedRoute },
@@ -74,6 +75,7 @@ export default function RouteDetails(props) {
         feeds: {
           cameras: state.feeds.cameras,
           events: state.feeds.events,
+          ferries: state.feeds.ferries,
         },
         advisories: state.cms.advisories,
         routes: state.routes,
@@ -84,6 +86,7 @@ export default function RouteDetails(props) {
 
   // States
   const [eventCount, setEventCount] = useState();
+  const [ferryCount, setFerryCount] = useState();
   const [advisoryCount, setAdvisoryCount] = useState();
   const [nickName, setNickName] = useState('');
   const [showSavePopup, setShowSavePopup] = useState(false);
@@ -130,6 +133,10 @@ export default function RouteDetails(props) {
         if (action === 'setEventCount') {
           setEventCount(getEventCounts(filteredData));
 
+        } else if (action === 'setFerryCount') {
+          setFerryCount(filteredData.length);
+
+        // Data to be updated via dispatch
         } else if (action === 'setFilteredFavCams') {
           setFilteredFavCams(filteredData);
 
@@ -153,6 +160,7 @@ export default function RouteDetails(props) {
     dataLoaders.loadAdvisories(routeData, advisories, filteredAdvisories, advisoryFilterPoints, dispatch, displayError, workerRef.current);
     dataLoaders.loadCameras(routeData, cameras, filteredCameras, camFilterPoints, dispatch, displayError, workerRef.current);
     dataLoaders.loadEvents(routeData, events, filteredEvents, eventFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadFerries(routeData, ferries, filteredFerries, ferryFilterPoints, dispatch, displayError, workerRef.current);
 
     if (pendingAction && pendingAction.action === 'showSavePopup') {
       setShowSavePopup(true);
@@ -190,6 +198,16 @@ export default function RouteDetails(props) {
       });
     }
   }, [events]);
+
+  useEffect(() => {
+    if (ferries) {
+      workerRef.current.postMessage({
+        data: ferries,
+        route: route,
+        action: 'setFerryCount'
+      });
+    }
+  }, [ferries]);
 
   /* Helpers */
   const toggleAuthModal = (action) => {
@@ -381,7 +399,7 @@ export default function RouteDetails(props) {
           ? (advisoryCount > 0 &&
             <div className="route-pill route-pill--advisories">
                 <span className="route-item__icon">
-                  <FontAwesomeIcon icon={faFlag} alt="inland ferries"/>
+                  <FontAwesomeIcon icon={faFlag} alt="advisories"/>
                 </span>
               <span className="route-item__count">
                   {advisoryCount}
@@ -458,10 +476,10 @@ export default function RouteDetails(props) {
           </div>
         }
 
-        {(eventCount && eventCount.ferries > 0) &&
+        {!!ferryCount &&
           <div className="route-item route-item--ferries">
             <span className="route-item__count">
-              {eventCount.ferries}
+              {ferryCount}
             </span>
             <span className="route-item__icon">
               <FontAwesomeIcon icon={faFerry} alt="inland ferries"/>
@@ -469,7 +487,7 @@ export default function RouteDetails(props) {
             <span className="route-item__name">Inland Ferry</span>
           </div>
         }
-        {!eventCount && <Skeleton height={64}/>}
+        {(!eventCount || ferryCount === null) && <Skeleton height={64}/>}
       </div>
 
       {!isPanel &&

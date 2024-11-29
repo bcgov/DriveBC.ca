@@ -43,7 +43,7 @@ export default function DistanceLabels(props) {
 
   /* Rendering */
   const updateMapDisplay = (route) => {
-    if (!route) {
+    if (!route || !mapLayers.current.routeLayer) {
       return;
     }
 
