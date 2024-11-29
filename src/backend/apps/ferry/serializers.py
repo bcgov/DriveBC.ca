@@ -2,6 +2,11 @@ from apps.ferry.models import Ferry
 from rest_framework import serializers
 
 
+class HTMLField(serializers.CharField):
+    def to_representation(self, value):
+        return value
+
+
 class FerrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Ferry
@@ -12,6 +17,8 @@ class FerrySerializer(serializers.ModelSerializer):
 
 
 class FerryVesselSerializer(serializers.ModelSerializer):
+    schedule_detail = HTMLField()
+
     class Meta:
         model = Ferry
         fields = (
