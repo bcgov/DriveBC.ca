@@ -330,6 +330,7 @@ export default function RouteDetails(props) {
               aria-label={`${(route.saved || !isPanel) ? 'Remove favourite' : 'Add favourite'}`}
               onClick={favoriteHandler}>
               <FontAwesomeIcon icon={(route.saved || !isPanel) ? faStar : faStarOutline}/>
+              {(route.saved || !isPanel) ? "Remove" : "Save"}
             </button>
           }
         </div>
