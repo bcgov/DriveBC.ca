@@ -1,0 +1,12 @@
+{% extends "wagtailadmin/base.html" %}
+
+{% block titletag %}Access Requested{% endblock %}
+
+{% block content %}
+    {% include "wagtailadmin/shared/header.html" with title="Access Requested" %}
+
+    <div class="nice-padding">
+        <p>A message has been sent to the CMS admins.  Please wait for them to
+        contact you.</p>
+    </div>
+{% endblock %}

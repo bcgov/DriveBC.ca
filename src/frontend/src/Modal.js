@@ -126,8 +126,9 @@ export default function Modal() {
 
         <div className='body'>
           { authContext.action === 'Sign In' &&
+            // <form method='post' action={`${window.API_HOST}/accounts/oidc/bceid/login/?auth_params=kc_idp_hint=bceidbasic`}>
             <form method='post' action={`${window.API_HOST}/accounts/oidc/bceid/login/`}>
-              <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
+            <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
               <input type='hidden' name='next' value={window.location.href} />
 
               <p>Access your saved cameras and routes</p>

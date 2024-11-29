@@ -1,11 +1,19 @@
-from apps.webcam.models import Webcam
 from django.db.utils import IntegrityError
+from django.http import HttpResponse
 from rest_framework import permissions, status, viewsets
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.response import Response
 
+from apps.webcam.models import Webcam
+
 from .models import FavouritedCameras, SavedRoutes
 from .serializers import FavouritedCamerasSerializer, SavedRoutesSerializer
+
+
+
+def request_access(request):
+
+    return HttpResponse('hi')
 
 
 class FavouritedCamerasViewset(viewsets.ModelViewSet):
