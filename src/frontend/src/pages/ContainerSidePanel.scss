@@ -23,7 +23,7 @@
 
     @media (min-width: 1200px) {
       max-height: calc(100vh - 8vh);
-      overflow-y: scroll;
+      overflow-y: auto;
 
       &::-webkit-scrollbar {
        display: none;
@@ -32,7 +32,7 @@
 
     .routing {
       margin-bottom: 20px;
-      padding: 0 10px 0 0;
+      padding: 0 14px 0 0;
 
       @media (min-width: 1200px) {
         width: 100%;
