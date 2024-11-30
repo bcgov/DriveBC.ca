@@ -80,7 +80,7 @@ def populate_event_from_data(new_event_data):
         event_serializer.save()
 
 
-def populate_all_event_data(include_closures=True):
+def populate_all_event_data():
     client = FeedClient()
     closures, chain_ups = client.get_dit_event_dict()
     open511_data = client.get_event_list()['events']
