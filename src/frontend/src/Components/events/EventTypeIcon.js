@@ -4,6 +4,7 @@ import React from 'react';
 // Events
 // Closures
 import closuresActiveIcon from '../../images/mapIcons/closure-active.png';
+import closuresActiveAltIcon from '../../images/mapIcons/closure-alt-active.png';
 import closuresStaticIcon from '../../images/mapIcons/closure-static.png';
 
 // Future Events
@@ -34,12 +35,12 @@ import genericDelaysStaticIcon from '../../images/mapIcons/incident-minor-static
 import { getTypeDisplay } from './functions';
 
 export default function EventTypeIcon(props) {
-  const { event, state } = props;
+  const { event, state, alt = false } = props;
   const { display_category, event_type, severity } = event;
 
   switch (display_category) {
     case "closures":
-      return <img className={'delay-icon-img'} src={state === 'active' ? closuresActiveIcon : closuresStaticIcon} alt={getTypeDisplay(event)} aria-hidden={true}/>
+      return <img className={'delay-icon-img'} src={state === 'active' ? alt ? closuresActiveAltIcon : closuresActiveIcon : closuresStaticIcon} alt={getTypeDisplay(event)} aria-hidden={true} />
 
     case "majorEvents": {
       if (state === 'active')

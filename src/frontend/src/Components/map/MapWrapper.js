@@ -14,6 +14,7 @@ import * as dataLoaders from './dataLoaders'
 import * as slices from '../../slices';
 
 import DriveBCMap from './Map';
+import PollingComponent from '../shared/PollingComponent';
 
 export default function MapWrapper(props) {
   /* Setup */
@@ -60,6 +61,9 @@ export default function MapWrapper(props) {
 
   // Refs
   const workerRef = useRef(null);
+  const isInitialLoad = useRef(true);
+  const trackedEventsRef = useRef({}); // Track event updates between refreshes
+  const selectedRouteRef = useRef();
 
   // Error handling
   const displayError = (error) => {
@@ -72,11 +76,14 @@ export default function MapWrapper(props) {
   }
 
   useEffect(() => {
+    selectedRouteRef.current = selectedRoute;
+
     loadData();
 
     if (selectedRoute) {
       setSearchParams(new URLSearchParams({ type: 'route', searchTimestamp: selectedRoute.searchTimestamp }));
     }
+
   }, [selectedRoute]);
 
   useEffect(() => {
@@ -87,6 +94,7 @@ export default function MapWrapper(props) {
       }
     };
   }, []);
+
 
   // Function to load all data
   const loadData = () => {
@@ -109,22 +117,33 @@ export default function MapWrapper(props) {
       };
     }
 
-    const routeData = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
+    const routeData = selectedRouteRef.current && selectedRouteRef.current.routeFound ? selectedRouteRef.current : null;
 
-    dataLoaders.loadCameras(routeData, cameras, null, camFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadEvents(routeData, events, null, eventFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadFerries(routeData, ferries, null, ferryFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadCurrentWeather(routeData, null, filteredCurrentWeathers, currentWeatherFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadRegionalWeather(routeData, null, filteredRegionalWeathers, regionalWeatherFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadHef(routeData, hef, filteredHef, null, dispatch, displayError, workerRef.current);
-    dataLoaders.loadRestStops(routeData, restStops, null, restStopFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadAdvisories(routeData, advisories, null, advisoryFilterPoints, dispatch, displayError, workerRef.current);
+    if (isInitialLoad.current) {
+      dataLoaders.loadCameras(routeData, cameras, null, camFilterPoints, dispatch, displayError, workerRef.current);
+      dataLoaders.loadEvents(routeData, events, null, eventFilterPoints, dispatch, displayError, workerRef.current, isInitialLoad.current, trackedEventsRef);
+      dataLoaders.loadFerries(routeData, ferries, null, ferryFilterPoints, dispatch, displayError, workerRef.current);
+      dataLoaders.loadCurrentWeather(routeData, null, filteredCurrentWeathers, currentWeatherFilterPoints, dispatch, displayError, workerRef.current);
+      dataLoaders.loadRegionalWeather(routeData, null, filteredRegionalWeathers, regionalWeatherFilterPoints, dispatch, displayError, workerRef.current);
+      dataLoaders.loadHef(routeData, hef, filteredHef, null, dispatch, displayError, workerRef.current);
+      dataLoaders.loadRestStops(routeData, restStops, null, restStopFilterPoints, dispatch, displayError, workerRef.current);
+      dataLoaders.loadAdvisories(routeData, advisories, null, advisoryFilterPoints, dispatch, displayError, workerRef.current);
+
+      isInitialLoad.current = false;
+    } else {
+      dataLoaders.loadEvents(routeData, events, null, eventFilterPoints, dispatch, displayError, workerRef.current, isInitialLoad.current, trackedEventsRef);
+    }
   };
 
   return (
-    <DriveBCMap
-      mapProps={props}
-      showNetworkError={showNetworkError}
-      showServerError={showServerError} />
+    <React.Fragment>
+      <PollingComponent runnable={() => loadData()} interval={30000} />
+
+      <DriveBCMap
+        mapProps={props}
+        showNetworkError={showNetworkError}
+        showServerError={showServerError}
+        trackedEventsRef={trackedEventsRef} />
+    </React.Fragment>
   );
 }

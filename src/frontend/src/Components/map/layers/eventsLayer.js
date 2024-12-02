@@ -180,6 +180,8 @@ export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
     // feature, depending on whether the event is current
     for (const feature of layer.getSource().getFeatures()) {
       if (feature.getId() in eventsDict) {
+        // Update the feature with the new event data
+        feature.setProperties(eventsDict[feature.id_]);
         setEventStyle(feature, 'static');
 
       } else {

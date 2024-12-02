@@ -79,7 +79,7 @@ export default function DriveBCMap(props) {
   // Props
   const {
     mapProps: {referenceData, isCamDetail, mapViewRoute, loadCamDetails},
-    showNetworkError, showServerError
+    showNetworkError, showServerError, trackedEventsRef
   } = props;
 
   // Navigation
@@ -180,6 +180,19 @@ export default function DriveBCMap(props) {
   const [staleLinkMessage, setStaleLinkMessage] = useState();
   const clickedFeatureRef = useRef();
   const updateClickedFeature = feature => {
+
+    // Remove highlight from feature on click
+    if (feature && feature.get('highlight')) {
+
+      // Remove highlight from feature
+      feature.set("highlight", false)
+
+      // Remove highlight from tracked event
+      const trackedEvent = trackedEventsRef.current[feature.get('id')];
+      if (trackedEvent)
+        trackedEvent.highlight = false;
+    }
+
     clickedFeatureRef.current = feature;
     setClickedFeature(feature);
     updatePosition(feature);
