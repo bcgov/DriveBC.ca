@@ -219,8 +219,9 @@
 
     .card-img-timestamp {
       background-color: $Black;
-      padding: 0 10px;
+      padding: 0 4px;
       display: flex;
+      align-items: center;
       justify-content: space-between;
       position: relative;
       border-bottom-left-radius: 4px;
