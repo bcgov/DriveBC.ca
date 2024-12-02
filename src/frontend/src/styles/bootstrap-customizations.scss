@@ -78,7 +78,6 @@ button:focus:not(:focus-visible) {
   }
 
   &:active {
-    // color: white;
     background-color: $BtnActive-Secondary;
   }
 }
