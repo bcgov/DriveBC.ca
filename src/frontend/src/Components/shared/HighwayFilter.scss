@@ -7,12 +7,14 @@
     display: flex;
     align-items: center;
     border-radius: .25rem;
-    padding: 6px 12px;
+    padding: 10px 12px;
     background: white;
     border: 1px solid $Grey100;
     color: $Grey110;
-
-    font-size: 11pt;
+    font-size: 0.875rem;
+    @media (min-width: 768px) {
+      height: 41px;
+    }
 
     .active-count {
       margin-left: .4rem;
@@ -22,7 +24,7 @@
       background: $Type-Primary;
       color: white;
 
-      font-size: 10pt;
+      font-size: 0.75rem;
       font-weight: bold;
     }
 
@@ -71,7 +73,7 @@
     }
 
     .search-container {
-      padding: 1rem;
+      padding: 0.75rem;
       background: $Grey10;
 
       @media (min-width: 768px) {
@@ -86,13 +88,14 @@
       .search-icon {
         position: absolute;
         z-index: 1;
-        left: 1.7rem;
-        top: 1.7rem;
+        left: 22px;
+        top: 23px;
         color: $Type-Disabled;
       }
 
       .form-control {
         border-radius: 4px;
+        font-size: 0.875rem;
       }
 
       input {
@@ -102,18 +105,21 @@
 
     .selected-filter-container {
       border: 1px solid #e5e5e5;
-      padding: 8px;
+      padding: 8px 12px;
 
       .selected-filter {
         background: $Info;
         border-radius: 4px;
         padding: 4px 8px;
         color: white;
+        font-size: 0.875rem;
       }
 
       .remove-btn {
         cursor: pointer;
         font-weight: bold;
+        font-size: 0.875rem;
+        color: $Type-Link;
 
         &:hover {
           color: $Info;
@@ -123,6 +129,7 @@
 
       &.no-selection {
         color: $Type-Disabled;
+        font-size: 0.875rem;
         padding: .5rem 1rem;
       }
     }
@@ -130,22 +137,17 @@
     .highway-options {
       position: relative;
       overflow-y: auto;
+      padding: 0.25rem;
 
       .highway-row {
-        padding: .5rem 1rem;
+        padding: .5rem 0.8rem;
+        border-radius: 4px;
+        font-size: 0.875rem;
         cursor: pointer;
 
         &:hover {
           background-color: $Grey10;
         }
-      }
-
-      .highway-row:first-of-type {
-        padding-top: 1rem;
-      }
-
-      .highway-row:last-of-type {
-        padding-bottom: 1rem;
       }
     }
   }

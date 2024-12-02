@@ -38,6 +38,7 @@ $Grey90: #3D3C3B;
 $Grey100: #353433;
 $Grey110: #252423;
 $Black: #000000;
+$Grey-invert: #EDEBE9;
 
 //Blue
 $Blue10: #F1F8FE;
@@ -81,3 +82,17 @@ $Distance-label-hover: #5386ED;
 
 $Nav-bar-btn-text: #292929;
 $Nav-link-border: #D9D9D9;
+
+// Button states
+$BtnHover-Primary: $Blue90;
+$BtnActive-Primary: $BC-Blue;
+
+$BtnHover-Secondary: $Grey-invert;
+$BtnActive-Secondary: $White;
+
+$BtnHover-Tertiary: $Grey30;
+$BtnActive-Secondary: $White;
+
+
+//Animations 
+$Anim-gentle: cubic-bezier(0.175, 0.885, 0.32, 1.275);

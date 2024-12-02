@@ -27,12 +27,10 @@
       }
 
       &__tools {
+        padding: 0;
         .favourite-btn {
           svg {
             margin-right: 8px;
-          }
-          &:hover {
-            text-decoration: underline;
           }
         }
       }

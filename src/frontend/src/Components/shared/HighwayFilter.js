@@ -121,7 +121,7 @@ export default function HighwayFilters(props) {
               }} />
           </div>
 
-          {!camsContext.highwayFilterKey && <div className="selected-filter-container no-selection">No Filters selected</div>}
+          {!camsContext.highwayFilterKey && <div className="selected-filter-container no-selection">No filters selected</div>}
 
           {camsContext.highwayFilterKey && (
             <div className="selected-filter-container space-between-row">

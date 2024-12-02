@@ -84,12 +84,12 @@
 
 		.line1 {
 			transform-origin: 0% 0%;
-			transition: transform 100ms ease-in-out;
+			transition: transform 0.4s $Anim-gentle;
 		}
 
 		.line3 {
 			transform-origin: 0% 100%;
-			transition: transform 100ms ease-in-out;
+			transition: transform 0.4s $Anim-gentle;
 		}
 
 		&:not(.collapsed) {
@@ -134,7 +134,7 @@
 
 	&-brand {
 		padding: 0;
-		margin: 0 0 0 12px;
+		margin: 0;
 
 		.header-logo {
 			width: 126px;

@@ -276,7 +276,7 @@ export default function CamPanel(props) {
           <div className="popup__content__tools">
             {authContext.loginStateKnown &&
               <button
-                className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
+                className={`favourite-btn btn-tertiary ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
                 aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
                 onClick={favoriteHandler}>
 
