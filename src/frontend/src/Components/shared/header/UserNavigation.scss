@@ -51,11 +51,16 @@
           padding: 0.75rem 1rem 0.75rem 0.25rem;
 
           &:hover {
-            text-decoration: underline;
+            background: $BtnHover-Secondary;
+            .fa-chevron-right {
+              transform: translateX(2px);
+              transition: 0.4s transform $Anim-gentle;
+            }
           }
 
           svg {
             font-size: 0.825rem;
+            transition: 0.4s transform $Anim-gentle;  
           }
 
           .menu-item-header {
@@ -67,7 +72,7 @@
             .item-count {
               display: inline-block;
               margin-left: 0.75rem;
-              padding: 0.25rem 0.4rem;
+              padding: 0rem 0.4rem;
               border-radius: 0.8rem;
               background: $BC-Blue;
               color: white;
@@ -81,6 +86,11 @@
 
   #user-menu {
     border: 1px solid #323130;
+    background: $BC-Blue;
+    color: $White;
+    &:hover {
+      background: $BtnHover-Primary;
+    }
   }
 
   // User menu

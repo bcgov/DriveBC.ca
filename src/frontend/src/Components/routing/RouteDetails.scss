@@ -10,6 +10,11 @@
       .favourite-btn.text-only-btn {
         margin: 0;
         padding: 0;
+        background: none;
+        svg {
+          margin-right: 0;
+          font-size: 16px;
+        }
       }
     }
 

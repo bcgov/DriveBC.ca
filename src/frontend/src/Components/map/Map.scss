@@ -77,7 +77,7 @@
           min-width: 390px;
 
           .popup__content {
-            overflow-y: auto;
+            // overflow-y: auto;
           }
         }
 
@@ -294,22 +294,28 @@
         &:hover {
           background: $Type-Link;
           color: $White;
+          + .zoom-divider, ~ .zoom-divider {
+            border-color: transparent;
+          }
         }
 
         &.zoom-in {
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
+          order: 1;
         }
 
         &.zoom-out {
           border-bottom-left-radius: 5px;
           border-bottom-right-radius: 5px;
+          order: 3;
         }
       }
 
       .zoom-divider {
         margin: 0 10px;
         border-bottom: 1px solid $Divider;
+        order: 2;
       }
     }
   }

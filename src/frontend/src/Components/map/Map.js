@@ -741,7 +741,6 @@ export default function DriveBCMap(props) {
             onClick={() => zoomIn(mapView)}>
             <FontAwesomeIcon icon={faPlus} />
           </Button>
-          <div className="zoom-divider" />
           <Button
             className="zoom-out"
             variant="primary"
@@ -749,6 +748,7 @@ export default function DriveBCMap(props) {
             aria-label="zoom out">
             <FontAwesomeIcon icon={faMinus} />
           </Button>
+          <div className="zoom-divider" />
         </div>
 
       </div>

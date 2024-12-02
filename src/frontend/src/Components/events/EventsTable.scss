@@ -130,7 +130,7 @@ table {
   }
 }
 
-.viewOnMap-btn {
+.viewOnMap-btn.btn.btn-primary {
   font-weight: 700;
   color: $Type-Link;
   border: none;
@@ -140,6 +140,9 @@ table {
   margin-top: 1rem;
   margin-bottom: 0;
   font-size: 0.875rem;
+  &:hover {
+    background-color: $BtnHover-Secondary;
+  }
   svg {
     margin-right: 8px;
   }

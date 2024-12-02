@@ -78,8 +78,8 @@ button:focus:not(:focus-visible) {
   }
 
   &:active {
-    color: white;
-    background-color: $Type-Link;
+    // color: white;
+    background-color: $BtnActive-Secondary;
   }
 }
 
@@ -89,7 +89,7 @@ button:focus:not(:focus-visible) {
   padding: 32px 16px;
 
   @media (min-width: 576px) {
-    padding: 32px;
+    padding: 32px 16px;
   }
 
   @media (min-width: 1200px) {

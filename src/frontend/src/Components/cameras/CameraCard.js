@@ -308,7 +308,7 @@ export default function CameraCard(props) {
         {showLoader ?
           <Skeleton width={97} height={23}/> : (
           <button
-            className="viewMap-btn"
+            className="viewMap-btn btn-tertiary"
             aria-label="View on map"
             onClick={handleViewOnMap}>
             <FontAwesomeIcon icon={faMapMarkerAlt} />
@@ -318,7 +318,7 @@ export default function CameraCard(props) {
 
         {authContext.loginStateKnown &&
           <button
-            className={`favourite-btn ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
+            className={`favourite-btn btn-tertiary ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}
             aria-label={`${(favCams && favCams.includes(camera.id)) ? 'Remove favourite' : 'Add favourite'}`}
             onClick={favoriteHandler}>
 
