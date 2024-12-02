@@ -29,7 +29,7 @@ export default function EventCard(props) {
       data-key={event ? event.id : ''}
     >
       <div ref={childRef} className="event-card__title" data-key={event ? event.id : ''}>
-        { showLoader ? <Skeleton width={75} /> : <div className="event-header"><div className="eventType"><EventTypeIcon event={event} state={event.display_category === 'majorEvents' ? 'static' : 'active'} />
+        { showLoader ? <Skeleton width={75} /> : <div className="event-header"><div className="eventType"><EventTypeIcon event={event} state={event.display_category === 'majorEvents' ? 'static' : 'active'} alt={true} />
             <span className="eventType__text">{getTypeDisplay(event)}
             </span>
           </div>

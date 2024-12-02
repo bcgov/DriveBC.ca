@@ -47,20 +47,33 @@ import restStopIconStaticTruckClosed from '../../images/mapIcons/restarea-truck-
 // Closures
 import closuresActiveIcon from '../../images/mapIcons/closure-active.png';
 import closuresHoverIcon from '../../images/mapIcons/closure-hover.png';
+import closuresHoverUnreadIcon from '../../images/mapIcons/closure-hover-unread.png';
 import closuresStaticIcon from '../../images/mapIcons/closure-static.png';
+import closuresStaticUnreadIcon from '../../images/mapIcons/closure-static-unread.png';
+import futureClosureActiveIcon from '../../images/mapIcons/future-closure-active.png';
+import futureClosureHoverIcon from '../../images/mapIcons/future-closure-hover.png';
+import futureClosureHoverUnreadIcon from '../../images/mapIcons/future-closure-hover-unread.png';
+import futureClosureStaticIcon from '../../images/mapIcons/future-closure-static.png';
+import futureClosureStaticUnreadIcon from '../../images/mapIcons/future-closure-static-unread.png';
 
 // Future Events
 import futureEventsMajorActiveIcon from '../../images/mapIcons/future-event-major-active.png';
 import futureEventsMajorHoverIcon from '../../images/mapIcons/future-event-major-hover.png';
+import futureEventsMajorHoverUnreadIcon from '../../images/mapIcons/future-event-major-hover-unread.png';
 import futureEventsMajorStaticIcon from '../../images/mapIcons/future-event-major-static.png';
+import futureEventsMajorStaticUnreadIcon from '../../images/mapIcons/future-event-major-static-unread.png';
 import futureEventsActiveIcon from '../../images/mapIcons/future-event-minor-active.png';
 import futureEventsHoverIcon from '../../images/mapIcons/future-event-minor-hover.png';
+import futureEventsHoverUnreadIcon from '../../images/mapIcons/future-event-minor-hover-unread.png';
 import futureEventsStaticIcon from '../../images/mapIcons/future-event-minor-static.png';
+import futureEventsStaticUnreadIcon from '../../images/mapIcons/future-event-minor-static-unread.png';
 
 // Road Conditions
 import roadConditionsActiveIcon from '../../images/mapIcons/road-condition-active.png';
 import roadConditionsHoverIcon from '../../images/mapIcons/road-condition-hover.png';
+import roadConditionsHoverUnreadIcon from '../../images/mapIcons/road-condition-hover-unread.png';
 import roadConditionsStaticIcon from '../../images/mapIcons/road-condition-static.png';
+import roadConditionsStaticUnreadIcon from '../../images/mapIcons/road-condition-static-unread.png';
 
 // Chain Ups
 import chainUpsActiveIcon from '../../images/mapIcons/chain-ups-active.png';
@@ -70,18 +83,26 @@ import chainUpsStaticIcon from '../../images/mapIcons/chain-ups-static.png';
 // Constructions
 import constructionsMajorActiveIcon from '../../images/mapIcons/delay-major-active.png';
 import constructionsMajorHoverIcon from '../../images/mapIcons/delay-major-hover.png';
+import constructionsMajorHoverUnreadIcon from '../../images/mapIcons/delay-major-hover-unread.png';
 import constructionsMajorStaticIcon from '../../images/mapIcons/delay-major-static.png';
+import constructionsMajorStaticUnreadIcon from '../../images/mapIcons/delay-major-static-unread.png';
 import constructionsActiveIcon from '../../images/mapIcons/delay-minor-active.png';
 import constructionsHoverIcon from '../../images/mapIcons/delay-minor-hover.png';
+import constructionsHoverUnreadIcon from '../../images/mapIcons/delay-minor-hover-unread.png';
 import constructionsStaticIcon from '../../images/mapIcons/delay-minor-static.png';
+import constructionsStaticUnreadIcon from '../../images/mapIcons/delay-minor-static-unread.png';
 
 // Generic Events
 import genericDelaysMajorActiveIcon from '../../images/mapIcons/incident-major-active.png';
 import genericDelaysMajorHoverIcon from '../../images/mapIcons/incident-major-hover.png';
+import genericDelaysMajorHoverUnreadIcon from '../../images/mapIcons/incident-major-hover-unread.png';
 import genericDelaysMajorStaticIcon from '../../images/mapIcons/incident-major-static.png';
+import genericDelaysMajorStaticUnreadIcon from '../../images/mapIcons/incident-major-static-unread.png';
 import genericDelaysActiveIcon from '../../images/mapIcons/incident-minor-active.png';
 import genericDelaysHoverIcon from '../../images/mapIcons/incident-minor-hover.png';
+import genericDelaysHoverUnreadIcon from '../../images/mapIcons/incident-minor-hover-unread.png';
 import genericDelaysStaticIcon from '../../images/mapIcons/incident-minor-static.png';
+import genericDelaysStaticUnreadIcon from '../../images/mapIcons/incident-minor-static-unread.png';
 
 // Map advisory styles
 export const advisoryStyles = {
@@ -504,12 +525,36 @@ export const eventStyles = {
         src: closuresStaticIcon,
       }),
     }),
+
     hover: new Style({
       image: new Icon({
         scale: 0.25,
         src: closuresHoverIcon,
       }),
     }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: closuresActiveIcon,
+      }),
+    }),
+  },
+  closures_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: closuresStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: closuresHoverUnreadIcon,
+      }),
+    }),
+
     active: new Style({
       image: new Icon({
         scale: 0.25,
@@ -531,6 +576,29 @@ export const eventStyles = {
       image: new Icon({
         scale: 0.25,
         src: futureEventsMajorHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureEventsMajorActiveIcon,
+      }),
+    }),
+  },
+
+  major_future_events_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureEventsMajorStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureEventsMajorHoverUnreadIcon,
       }),
     }),
 
@@ -565,6 +633,29 @@ export const eventStyles = {
     }),
   },
 
+  future_events_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureEventsStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureEventsHoverUnreadIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureEventsActiveIcon,
+      }),
+    }),
+  },
+
   // Road Conditions
   road_conditions: {
     static: new Style({
@@ -578,6 +669,29 @@ export const eventStyles = {
       image: new Icon({
         scale: 0.25,
         src: roadConditionsHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: roadConditionsActiveIcon,
+      }),
+    }),
+  },
+
+  road_conditions_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: roadConditionsStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: roadConditionsHoverUnreadIcon,
       }),
     }),
 
@@ -637,6 +751,29 @@ export const eventStyles = {
     }),
   },
 
+  major_constructions_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: constructionsMajorStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: constructionsMajorHoverUnreadIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: constructionsMajorActiveIcon,
+      }),
+    }),
+  },
+
   constructions: {
     static: new Style({
       image: new Icon({
@@ -649,6 +786,29 @@ export const eventStyles = {
       image: new Icon({
         scale: 0.25,
         src: constructionsHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: constructionsActiveIcon,
+      }),
+    }),
+  },
+
+  constructions_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: constructionsStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: constructionsHoverUnreadIcon,
       }),
     }),
 
@@ -684,6 +844,29 @@ export const eventStyles = {
     }),
   },
 
+  major_generic_delays_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: genericDelaysMajorStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: genericDelaysMajorHoverUnreadIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: genericDelaysMajorActiveIcon,
+      }),
+    }),
+  },
+
   generic_delays: {
     static: new Style({
       image: new Icon({
@@ -696,6 +879,29 @@ export const eventStyles = {
       image: new Icon({
         scale: 0.25,
         src: genericDelaysHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: genericDelaysActiveIcon,
+      }),
+    }),
+  },
+
+  generic_delays_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: genericDelaysStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: genericDelaysHoverUnreadIcon,
       }),
     }),
 
