@@ -39,10 +39,14 @@ export default function AdvisoriesList(props) {
     navigate(`/advisories/${advisory.id}`);
   }
 
+  const sortedAdvisories = advisories && advisories.sort((a, b) => {
+    return new Date(b.last_published_at) - new Date(a.last_published_at);
+  });
+
   // Rendering
   return (
     <ul className="advisories-list">
-      {!!advisories && advisories.map((advisory, index) => {
+      {!!sortedAdvisories && sortedAdvisories.map((advisory, index) => {
         if (isAdvisoriesListPage) {
           return (
             <div className="advisory-li" key={advisory.id}>
