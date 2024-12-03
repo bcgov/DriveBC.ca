@@ -10,9 +10,9 @@ import { updateSingleSearchedRoute, updateSelectedRoute } from "../../slices/rou
 export function getRoute(points, alternate=false) {
   const url = `${window.ROUTE_PLANNER}/directions.json`;
 
-  return get(url, {
+  const payload = {
     points: points,
-    criteria: alternate ? 'shortest': 'fastest',
+    criteria: 'fastest',
 //    outputSRS: 4036,
 //    distanceUnit: 'km',
 //    correctSide: true,
@@ -23,8 +23,22 @@ export function getRoute(points, alternate=false) {
 //    departure: '2019-02-28T11:36:00-08:00',
 //    enable: 'td,gdf,ldf,tr,xc,tc',
 //    roundTrip: false
+  }
 
-    }, {
+  if (alternate) {
+    payload.criteria = 'shortest';
+
+    const defaultGdf = '0.5,local:2,yield_lane:1,collector_major:2,collector_minor:2,ferry:2,arterial_minor:1,lane:1,arterial_major:0.7,resource:1.3,ramp:1,recreation:1.2,highway_major:0.5,strata:1,highway_minor:0.7,driveway:1,restricted:1.2,service:1.2,alleyway:1,';
+    payload.gdf = (window.ALTERNATE_ROUTE_GDF && window.ALTERNATE_ROUTE_GDF !== 'undefined') ? window.ALTERNATE_ROUTE_GDF : defaultGdf;
+
+    const defaultXingCost = '3.0,10.0,7.0,1.2';
+    payload.xingCost = (window.ALTERNATE_ROUTE_XINGCOST && window.ALTERNATE_ROUTE_XINGCOST !== 'undefined') ? window.ALTERNATE_ROUTE_XINGCOST : defaultXingCost;
+
+    const defaultTurnCost = '3.0,1.0,10.0,5.0';
+    payload.turnCost = (window.ALTERNATE_ROUTE_TURNCOST && window.ALTERNATE_ROUTE_TURNCOST !== 'undefined') ? window.ALTERNATE_ROUTE_TURNCOST : defaultTurnCost;
+  }
+
+  return get(url, payload, {
     'apiKey': window.ROUTE_PLANNER_CLIENT_ID
   }).then((data) => data);
 }
