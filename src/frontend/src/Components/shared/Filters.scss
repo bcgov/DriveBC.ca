@@ -120,8 +120,10 @@ button.btn.open-filters {
 
           &:hover {
             cursor: pointer;
-            background-color: $Grey80;
-            color: white;
+            @media (hover: hover) {
+              background-color: $Grey80;
+              color: white;
+            }
           }
           
           &__icon {
