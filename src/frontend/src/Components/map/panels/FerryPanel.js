@@ -23,6 +23,7 @@ import {
 import parse from 'html-react-parser';
 
 // Internal imports
+import { formatDate } from "../../shared/FriendlyTime";
 import ShareURLButton from '../../shared/ShareURLButton';
 
 // Styling
@@ -92,7 +93,7 @@ export default function FerryPanel(props) {
     <div className="popup popup--ferry" tabIndex={0}>
       <div className="popup__title">
         <div className="popup__title__icon">
-        <FontAwesomeIcon icon={faFerry} />
+          <FontAwesomeIcon icon={faFerry}/>
         </div>
 
         <div className="popup__title__name">
@@ -101,8 +102,11 @@ export default function FerryPanel(props) {
             target="_blank"
             rel="noreferrer">{`${ferryData.route_name}`}</a>
           </p>
+          <ShareURLButton/>
+        </div>
 
-          <ShareURLButton />
+        <div className="popup__title__updated">
+          Updated {formatDate(ferryData.feed_modified_at)}
         </div>
       </div>
 
@@ -175,7 +179,7 @@ export default function FerryPanel(props) {
           <div className='info__container'>
             <p className='info__header'>Contact information</p>
 
-            <p>Phone {ferryData.contact_org}</p>
+            <p>{ferryData.contact_org}</p>
 
             {ferryData.contact_phone &&
               <div className='info__row'>
