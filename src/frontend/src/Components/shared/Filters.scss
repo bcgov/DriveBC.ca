@@ -112,8 +112,10 @@ button.btn.open-filters {
         &__button {
           display: flex;
           align-items: center;
-          background-color: $Grey20;
+          background: white;
+          color: $Type-Primary;
           padding: 2px 8px 2px 2px;
+          border: 1px solid $Border-dark;
           border-radius: 1.75rem;
           font-size: 0.875rem;
           transition: all 0.2s ease-in-out;
@@ -121,8 +123,7 @@ button.btn.open-filters {
           &:hover {
             cursor: pointer;
             @media (hover: hover) {
-              background-color: $Grey80;
-              color: white;
+              background: $BtnHover-Secondary;
             }
           }
           
