@@ -65,7 +65,6 @@ class FerryRouteSerializer(serializers.ModelSerializer):
             "created_at",
             "modified_at",
             "feed_created_at",
-            "feed_modified_at",
         )
 
     def get_vessels(self, obj):

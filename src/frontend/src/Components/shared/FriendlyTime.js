@@ -21,12 +21,19 @@ const datetimeFormat = {
 const formatter = new Intl.DateTimeFormat('en-US', datetimeFormat);
 const ONE_DAY = 1000 * 60 * 60 * 24; // 24 hours in milliseconds
 
+export const formatDate = (date, isNextUpdate=false) => {
+  // get time difference in milliseconds
+  const timeDiff = (new Date() - new Date(date));
+  return (isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." : formatter.format(new Date(date));
+}
+
 export default function FriendlyTime({ date, asDate=false, includeFullIfHumanized=false, timeOnly=false, isNextUpdate=false }) {
   const [showTooltip, setShowTooltip] = useState(false);
 
   // get time difference in milliseconds
   const timeDiff = (new Date() - new Date(date));
-  const dateFormatted = (isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." : formatter.format(new Date(date));
+  const dateFormatted = formatDate(date, isNextUpdate);
+
   // if difference is less than 24hrs
   const humanize = timeDiff < ONE_DAY;
   const dt = new Date(date);
