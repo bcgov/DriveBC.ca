@@ -1,43 +1,36 @@
-import { compareRoutePoints } from '../helpers/spatial';
 import { getEvents } from '../../data/events';
 
 // Event layers
 export const loadEvents = async (route, events, filteredEvents, eventFilterPoints, dispatch, displayError, worker, isInitialLoad = true, trackedEventsRef) => {
-  const routePoints = route ? route.points : null;
+  // Fetch data
+  const eventData = await getEvents().catch((error) => displayError(error));
 
-  // Load if filtered objs don't exist or route doesn't match
-  if (!filteredEvents || !compareRoutePoints(routePoints, eventFilterPoints)) {
+  // Track unfiltered events' highlight status and last_updated timestamp
+  const trackedEventsDict = eventData.reduce((acc, event) => {
+    const trackedEvent = (trackedEventsRef && trackedEventsRef.current[event.id]) ?? { highlight: !isInitialLoad, last_updated: event.last_updated };
 
-    // Fetch data
-    const eventData = await getEvents().catch((error) => displayError(error));
+    acc[event.id] = {
+      highlight: trackedEvent ? event.last_updated !== trackedEvent.last_updated || trackedEvent.highlight : !isInitialLoad,
+      last_updated: event.last_updated
+    };
 
-    // Track unfiltered events' highlight status and last_updated timestamp
-    const trackedEventsDict = eventData.reduce((acc, event) => {
-      const trackedEvent = (trackedEventsRef && trackedEventsRef.current[event.id]) ?? { highlight: !isInitialLoad, last_updated: event.last_updated };
+    // Set the updated flag if the event has been updated since the initial load
+    event.highlight = acc[event.id].highlight;
 
-      acc[event.id] = {
-        highlight: trackedEvent ? event.last_updated !== trackedEvent.last_updated || trackedEvent.highlight : !isInitialLoad,
-        last_updated: event.last_updated
-      };
+    return acc;
+  }, {});
 
-      // Set the updated flag if the event has been updated since the initial load
-      event.highlight = acc[event.id].highlight;
+  if (trackedEventsRef) {
+    // Remove items that no longer exist
+    Object.keys(trackedEventsRef.current).forEach((key) => {
+      if (!trackedEventsDict[key]) {
+        delete trackedEventsRef.current[key];
+      }
+    });
 
-      return acc;
-    }, {});
-
-    if (trackedEventsRef) {
-      // Remove items that no longer exist
-      Object.keys(trackedEventsRef.current).forEach((key) => {
-        if (!trackedEventsDict[key]) {
-          delete trackedEventsRef.current[key];
-        }
-      });
-
-      trackedEventsRef.current = trackedEventsDict;
-    }
-
-    // Trigger filter worker
-    worker.postMessage({ data: eventData, route: (route && route.routeFound ? route : null), action: 'updateEvents' });
+    trackedEventsRef.current = trackedEventsDict;
   }
+
+  // Trigger filter worker
+  worker.postMessage({ data: eventData, route: route, action: 'updateEvents' });
 };

@@ -9,6 +9,84 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
+// Helper function to add features to relative VectorSource
+const addFeature = (feature, display_category, vsMap, lineVsMap) => {
+  const geoType = feature.getGeometry().getType();
+  const isLineSegment = geoType === 'LineString' || geoType === 'Polygon';
+  if (isLineSegment && display_category === 'chainUps') {
+    return; // DBC22-2936: currently not displaying chain up lines/polygons
+  }
+
+  // Add feature to vs
+  const vs = isLineSegment ? lineVsMap[display_category] : vsMap[display_category];
+
+  vs.addFeature(feature);
+}
+
+// Helper function that creates a feature and updates its properties for each event
+const processEvent = (event, currentProjection, vsMap, lineVsMap, referenceData, updateReferenceFeature) => {
+  let eventFound = false;
+
+  // all events have a point coordinate for an icon; for line or zone
+  // events, the point is the median lat/long in the lineString
+  const pointFeature = new ol.Feature({
+    ...event,
+    type: 'event',
+    geometry: new Point(getMidPoint(event.location)),
+  });
+  pointFeature.setId(event.id);
+  pointFeature.getGeometry().transform('EPSG:4326', currentProjection);
+  addFeature(pointFeature, event.display_category, vsMap, lineVsMap);
+
+  if (referenceData?.type === 'event' && event.id === referenceData?.id) {
+    updateReferenceFeature(pointFeature);
+    eventFound = true;
+  }
+
+  // polygons are generated backend and used if available
+  if (event.polygon) {
+    const feature = new ol.Feature({
+      ...event,
+      type: 'event',
+      altFeature: pointFeature,
+      geometry: new Polygon(event.polygon.coordinates)
+    });
+    feature.setId(event.id);
+
+    feature.getGeometry().transform('EPSG:4326', currentProjection);
+    addFeature(feature, event.display_category, vsMap, lineVsMap);
+    pointFeature.set('altFeature', feature);
+
+  } else {
+    // location may have an object or an array of objects, so handle all
+    // event locations as an array of objects
+    const locationData = !Array.isArray(event.location) ? [event.location] : event.location;
+
+    const features = locationData.reduce((all, location, ii) => {
+      const geometry = location.type === 'LineString'
+        ? new LineString(location.coordinates)
+        : new Point(location.coordinates);
+
+      const feature = new ol.Feature({
+        ...event,
+        type: 'event',
+        altFeature: pointFeature,
+        geometry,
+      });
+      feature.setId(event.id);
+
+      feature.getGeometry().transform('EPSG:4326', currentProjection);
+      addFeature(feature, event.display_category, vsMap, lineVsMap);
+      all.push(feature);
+      return all;
+    }, []);
+
+    pointFeature.set('altFeature', features);
+  }
+
+  return eventFound;
+}
+
 export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers) {
   // Helper function for initializing vss
   const createVS = () => new VectorSource({
@@ -32,98 +110,29 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
     const chainUpsVS = createVS();
     const chainUpsLinesVS = createVS();
 
-    // Helper function to add features to relative VectorSource
-    const addFeature = (feature, display_category) => {
-      const geoType = feature.getGeometry().getType();
-      const isLineSegment = geoType === 'LineString' || geoType === 'Polygon';
-      if (isLineSegment && display_category === 'chainUps') {
-        return; // DBC22-2936: currently not displaying chain up lines/polygons
-      }
+    const vsMap = {
+      closures: closureVS,
+      majorEvents: majorEventsVS,
+      minorEvents: minorEventsVS,
+      futureEvents: futureEventsVS,
+      roadConditions: roadConditionsVS,
+      chainUps: chainUpsVS,
+    }
 
-      const vsMap = {
-        closures: closureVS,
-        majorEvents: majorEventsVS,
-        minorEvents: minorEventsVS,
-        futureEvents: futureEventsVS,
-        roadConditions: roadConditionsVS,
-        chainUps: chainUpsVS,
-      }
-
-      const lineVsMap = {
-        closures: closureLinesVS,
-        majorEvents: majorEventsLinesVS,
-        minorEvents: minorEventsLinesVS,
-        futureEvents: futureEventsLinesVS,
-        roadConditions: roadConditionsLinesVS,
-        chainUps: chainUpsLinesVS,
-      }
-
-      // Add feature to vs
-      const vs = isLineSegment ? lineVsMap[display_category] : vsMap[display_category];
-
-      vs.addFeature(feature);
+    const lineVsMap = {
+      closures: closureLinesVS,
+      majorEvents: majorEventsLinesVS,
+      minorEvents: minorEventsLinesVS,
+      futureEvents: futureEventsLinesVS,
+      roadConditions: roadConditionsLinesVS,
+      chainUps: chainUpsLinesVS,
     }
 
     const currentProjection = mapRef.current.getView().getProjection().getCode();
 
     // Add features to VectorSources for each event
     eventsData.forEach((event) => {
-      // all events have a point coordinate for an icon; for line or zone
-      // events, the point is the median lat/long in the lineString
-      const pointFeature = new ol.Feature({
-        ...event,
-        type: 'event',
-        geometry: new Point(getMidPoint(event.location)),
-      });
-      pointFeature.setId(event.id);
-      pointFeature.getGeometry().transform('EPSG:4326', currentProjection);
-      addFeature(pointFeature, event.display_category);
-
-      if (referenceData?.type === 'event' && event.id == referenceData?.id) {
-        updateReferenceFeature(pointFeature);
-        eventFound = true;
-      }
-
-      // polygons are generated backend and used if available
-      if (event.polygon) {
-        const feature = new ol.Feature({
-          ...event,
-          type: 'event',
-          altFeature: pointFeature,
-          geometry: new Polygon(event.polygon.coordinates)
-        });
-        feature.setId(event.id);
-
-        feature.getGeometry().transform('EPSG:4326', currentProjection);
-        addFeature(feature, event.display_category);
-        pointFeature.set('altFeature', feature);
-
-      } else {
-        // location may have an object or an array of objects, so handle all
-        // event locations as an array of objects
-        const locationData = !Array.isArray(event.location) ? [event.location] : event.location;
-
-        const features = locationData.reduce((all, location, ii) => {
-          const geometry = location.type === 'LineString'
-            ? new LineString(location.coordinates)
-            : new Point(location.coordinates);
-
-          const feature = new ol.Feature({
-            ...event,
-            type: 'event',
-            altFeature: pointFeature,
-            geometry,
-          });
-          feature.setId(event.id);
-
-          feature.getGeometry().transform('EPSG:4326', currentProjection);
-          addFeature(feature, event.display_category);
-          all.push(feature);
-          return all;
-        }, []);
-
-        pointFeature.set('altFeature', features);
-      }
+      eventFound = processEvent(event, currentProjection, vsMap, lineVsMap, referenceData, updateReferenceFeature);
     });
 
     // Helper function to add layer to map
@@ -163,11 +172,12 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
       events: false
     }));
   }
+
   return eventFound;
 }
 
 export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
-  const eventsDict  = events.reduce((dict, obj) => {
+  const eventsDict = events.reduce((dict, obj) => {
     dict[obj.id] = obj;
     return dict;
   }, {});
@@ -179,15 +189,32 @@ export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
     // for each feature in a layer, set the style or hide the
     // feature, depending on whether the event is current
     for (const feature of layer.getSource().getFeatures()) {
-      if (feature.getId() in eventsDict) {
+      const featureId = feature.getId();
+      if (featureId in eventsDict) {
         // Update the feature with the new event data
-        feature.setProperties(eventsDict[feature.id_]);
+        feature.setProperties(eventsDict[featureId]);
         setEventStyle(feature, 'static');
+        delete eventsDict[featureId]; // remove updated events from dict
 
+      // Hide the feature if not in filtered data list
       } else {
         feature.setStyle(new Style(null));
       }
     }
+  });
+
+  // Iterate through new events and create features for them
+  Object.values(eventsDict).forEach((event) => {
+    const vsMap = {};
+    const lineVsMap = {};
+
+    const layerKeys = ['closures', 'majorEvents', 'minorEvents', 'futureEvents', 'roadConditions', 'chainUps'];
+    for (const key of layerKeys) {
+      vsMap[key] = mapLayers.current[key].getSource();
+      lineVsMap[key] = mapLayers.current[key + 'Lines'].getSource();
+    }
+
+    processEvent(event, 'EPSG:3857', vsMap, lineVsMap);
   });
 
   setLoadingLayers(prevState => ({
