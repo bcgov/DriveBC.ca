@@ -29,9 +29,9 @@
     }
   }
 
-  
 
-  &.unavailable {
+
+  &.unavailable:not(.loading) {
     .card-img-box {
       background-color: $Surface-major;
       padding: 12px;
@@ -107,9 +107,29 @@
     }
   }
 
+  &.updated {
+    .card-banner, .card-pill {
+      background-color: $Blue80;
+
+      p, svg {
+        color: $White;
+      }
+    }
+
+    .card-pill {
+      &:hover {
+        background-color: $Blue70;
+      }
+    }
+  }
+
   &__body {
     .camera-orientations {
       margin-bottom: 8px;
+
+      &.no-margin-top {
+        margin-top: 0;
+      }
     }
 
     .camera-name {
