@@ -170,7 +170,14 @@ class FeedClient:
         return response.json().get("access_token")
 
     def get_single_feed(self, dbo, resource_type, resource_name, serializer_cls, as_serializer=False):
-        """Get data feed for a single object."""
+        """
+        Get data feed for a single object.
+
+        For objects to be returned as the serializer, rather than the data,
+        fetch the current instance if it exists so that calling the serializer's
+        .save() method works as expected: create for new intances, update
+        existing instances.
+        """
 
         id = dbo if isinstance(dbo, str) else str(dbo.id)
         endpoint = self._get_endpoint(
@@ -184,9 +191,13 @@ class FeedClient:
         if isinstance(response_data, list):
             response_data = response_data[0]
 
-        serializer = serializer_cls(data=response_data, many=False)
-        serializer.is_valid(raise_exception=True)
-        return serializer if as_serializer else serializer.validated_data
+        if as_serializer:
+            instance = serializer_cls.Meta.model.objects.filter(id=id).first()
+            serializer = serializer_cls(instance, data=response_data, many=False)
+            serializer.is_valid(raise_exception=True)
+            return serializer
+
+        return serializer.validated_data
 
     def get_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
         """Get data feed for list of objects."""
