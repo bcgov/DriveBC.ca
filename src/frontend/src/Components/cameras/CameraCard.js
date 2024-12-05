@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { createSearchParams, useNavigate } from 'react-router-dom';
 
 // Redux
@@ -49,9 +49,14 @@ export default function CameraCard(props) {
     favCams: state.user.favCams
   }))));
 
+  // Refs
+  const imageRef = useRef(null);
+
   // States
   const [show, setShow] = useState(false);
   const [camera, setCamera] = useState(cameraData);
+  const [isUpdated, setIsUpdated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleCameraImageClick = (event) => {
@@ -73,7 +78,24 @@ export default function CameraCard(props) {
 
   // useEffect hooks
   useEffect(() => {
-    setCamera(cameraData);
+
+    // Get the currently viewed camera data from the camera group
+    const viewedCameraData = cameraData.camGroup.reduce((acc, cam) => {
+      acc[cam.id] = cam;
+      return acc;
+    }, {})[camera.id];
+
+    // If the camera data is not in the camera group (eg an edgecase when switching routes), use cameraData and exit
+    if (!viewedCameraData) {
+      setCamera(cameraData);
+      return
+    }
+
+    if (viewedCameraData && camera && viewedCameraData.last_update_modified !== camera.last_update_modified)
+      updateCameraImage(viewedCameraData);
+
+    setCamera(viewedCameraData);
+
   }, [cameraData]);
 
   // Misc
@@ -88,6 +110,17 @@ export default function CameraCard(props) {
       return prior;
     })
   };
+
+  const updateCameraImage = (cam) => {
+    setIsLoading(true);
+    setIsUpdated(true);
+    setShow(true)
+
+    // Update the image src
+    if (imageRef.current) {
+      imageRef.current.src = `${cam.links.imageDisplay}?ts=${new Date(cam.last_update_modified).getTime()}`;
+    }
+  }
 
   /* Handlers */
   function handleClick() {
@@ -172,103 +205,120 @@ export default function CameraCard(props) {
     setShow(!show);
   }
 
+  const changeCamera = (cam) => {
+    setIsUpdated(false);
+    setCamera(cam);
+  }
+
   /* Rendering */
   // Main component
+  const loading = (showLoader || isLoading)  ? 'loading' : '';
   const stale = camera.marked_stale ? 'stale' : '';
   const delayed = camera.marked_delayed ? 'delayed' : '';
   const unavailable = camera.is_on ? '' : 'unavailable';
+  const updated = isUpdated ? 'updated' : '';
 
   return (
-    <div className={`camera-card ${stale} ${delayed} ${unavailable}`}>
+    <div className={`camera-card ${stale} ${delayed} ${unavailable} ${updated} ${loading}`}>
       <div className="camera-card__body">
-        {!unavailable && !delayed && !stale && (
-          <div className="card-img-box" onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
-            { showLoader ? <Skeleton height={180} /> :
-              <img
-                className="card-img"
-                src={camera.links.imageDisplay}
-                alt={camera.name} />
-            }
-          </div>
-        )}
 
-        {!unavailable && stale && !delayed && (
-          <div className="card-img-box" onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
-            { showLoader ? <Skeleton height={180} /> :
-            <img
-              className="card-img"
-              src={camera.links.imageDisplay}
-              alt={camera.name}
-            />
-        }
+        <div className="card-img-box" onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
+          <img
+            ref={imageRef}
+            className="card-img"
+            src={`${camera.links.imageDisplay}`}
+            alt={camera.name}
+            onLoad={() => setIsLoading(false)}
+            style={{ display: showLoader || isLoading || unavailable ? 'none' : 'block' }}
+          />
+
+          {(showLoader || isLoading) ? <Skeleton height={180} /> : null}
+
+          {!unavailable && !stale && !delayed && isUpdated && (
             <div className="card-notification">
-              { showLoader ? <Skeleton />:
-              <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
-                <p>
-                  Unable to retrieve latest image. Showing last image received.
-                </p>
-                <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
-              </div>
-              }
-              <div
-                className={'card-pill' + (show ? ' bounce' : ' hidden')}
-                onClick={handleChildClick}
-                onKeyDown={keyEvent => {
-                  if (keyEvent.keyCode == 13) {
-                    handleChildClick();
-                  }
-                }}>
-                <p>Stale</p>
-                <FontAwesomeIcon icon={faCircleInfo} />
-              </div>
+              {showLoader ? <Skeleton /> : !isLoading && (
+                <>
+                  <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
+                    <p>
+                      Camera image automatically updated to show the latest image received.
+                    </p>
+                    <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                  </div>
+                  <div
+                    className={'card-pill' + (show ? ' bounce' : ' hidden')}
+                    onClick={handleChildClick}
+                    onKeyDown={keyEvent => {
+                      if (keyEvent.keyCode === 13) {
+                        handleChildClick();
+                      }
+                    }}>
+                    <p>Updated</p>
+                    <FontAwesomeIcon icon={faCircleInfo} />
+                  </div>
+                </>
+              )}
             </div>
-          </div>
-        )}
+          )}
 
-        {!unavailable && stale && delayed && (
-          <div className="card-img-box">
-            { showLoader ? <Skeleton height={180} /> :
-            <img
-              className="card-img"
-              src={camera.links.imageDisplay}
-              alt={camera.name}
-            />
-        }
+          {!unavailable && stale && !delayed && (
             <div className="card-notification">
-              { showLoader ? <Skeleton height={180} /> :
-                <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
-                  <p>
-                    Longer than expected delay, displaying last image received.
-                  </p>
-                  <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+              {showLoader ? <Skeleton /> : !isLoading && (
+                <>
+                  <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
+                    <p>
+                      Unable to retrieve latest image. Showing last image received.
+                    </p>
+                    <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                  </div>
+                  <div
+                    className={'card-pill' + (show ? ' bounce' : ' hidden')}
+                    onClick={handleChildClick}
+                    onKeyDown={keyEvent => {
+                      if (keyEvent.keyCode === 13) {
+                        handleChildClick();
+                      }
+                    }}>
+                    <p>Stale</p>
+                    <FontAwesomeIcon icon={faCircleInfo} />
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {!unavailable && stale && delayed && (
+            <div className="card-notification">
+              {showLoader ? <Skeleton /> : !isLoading && (
+                <>
+                  <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
+                    <p>
+                      Longer than expected delay, displaying last image received.
+                    </p>
+                    <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                  </div>
+                  <div
+                    className={'card-pill' + (show ? ' bounce' : ' hidden')}
+                    onClick={handleChildClick}
+                    onKeyDown={keyEvent => {
+                      if (keyEvent.keyCode === 13) {
+                        handleChildClick();
+                      }
+                    }}>
+                    <p>Delayed</p>
+                    <FontAwesomeIcon icon={faCircleInfo} />
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {unavailable && !showLoader && !isLoading && (
+            <>
+              <div className="card-notification">
+                <div className="card-pill">
+                  <p>Unavailable</p>
                 </div>
-              }
-
-              <div
-                className={'card-pill' + (show ? ' bounce' : ' hidden')}
-                onClick={handleChildClick}
-                onKeyDown={keyEvent => {
-                  if (keyEvent.keyCode == 13) {
-                    handleChildClick();
-                  }
-                }}>
-                <p>Delayed</p>
-                <FontAwesomeIcon icon={faCircleInfo} />
               </div>
-            </div>
-          </div>
-        )}
-
-
-        {unavailable && (
-          showLoader ? <Skeleton height={312}/> :
-          <div className="card-img-box">
-            <div className="card-notification">
-              <div className="card-pill">
-                <p>Unavailable</p>
-              </div>
-            </div>
-
               <div className="unavailable-message">
                 <FontAwesomeIcon icon={faVideoSlash} />
                 <p>
@@ -276,10 +326,12 @@ export default function CameraCard(props) {
                   check again later.
                 </p>
               </div>
+            </>
+          )}
 
-          </div>
-        )}
-        { showLoader? <Skeleton height={34} /> :
+        </div>
+
+        { showLoader || isLoading ? <Skeleton height={14} /> :
             <div className="card-img-timestamp">
               <svg width="38" height="14" viewBox="0 0 32 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M1.75791 3.38603C1.75791 2.81155 1.71273 2.63885 1.34757 2.58951L1.15558 2.56484C1.08406 2.52255 1.07653 2.39214 1.16311 2.36042C1.90849 2.31813 2.61999 2.29346 3.36537 2.29346C4.11075 2.29346 4.72437 2.3428 5.29658 2.54017C6.48241 2.94195 7.07721 3.87945 7.07721 4.96498C7.07721 6.05051 6.54264 6.90342 5.54128 7.41446C4.96906 7.70347 4.25004 7.8092 3.57619 7.8092C3.01527 7.8092 2.45435 7.74224 2.14566 7.74224C1.77673 7.74224 1.46051 7.74928 1.05017 7.76691C0.997469 7.74224 0.978648 7.61183 1.03135 7.56249L1.23464 7.53782C1.74285 7.47085 1.76167 7.37569 1.76167 6.51221V3.38956L1.75791 3.38603ZM2.47694 6.31836C2.47694 6.75539 2.50329 7.0162 2.65387 7.21357C2.84586 7.46733 3.18091 7.54839 3.7343 7.54839C5.43587 7.54839 6.20007 6.50516 6.20007 4.97908C6.20007 4.07682 5.73703 2.54722 3.4369 2.54722C2.91739 2.54722 2.63881 2.61418 2.56729 2.66352C2.49576 2.71287 2.4807 2.91728 2.4807 3.28735V6.31836H2.47694Z" fill="white"/>
@@ -296,7 +348,7 @@ export default function CameraCard(props) {
 
 
         { showLoader? <Skeleton  width={149} height={20}/>:
-          <div className="camera-orientations">
+          <div className={`camera-orientations ${isLoading ? 'no-margin-top' : ''}`}>
           <img
             className="colocated-camera-icon"
             src={colocatedCamIcon}
@@ -315,7 +367,7 @@ export default function CameraCard(props) {
               key={cam.id}
               onClick={event => {
                 event.stopPropagation();
-                setCamera(cam);
+                changeCamera(cam);
                 trackEvent('click', 'camera-list', 'camera', cam.name);
               }}>
               {cam.orientation}

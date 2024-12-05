@@ -40,6 +40,8 @@ import PageHeader from '../PageHeader';
 import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent.js';
 import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
+import PollingComponent from '../Components/shared/PollingComponent';
+
 
 // Styling
 import './CamerasListPage.scss';
@@ -64,6 +66,7 @@ export default function CamerasListPage() {
 
   // Refs
   const isInitialMount = useRef(true);
+  const selectedRouteRef = useRef();
 
   // States
   const [advisoriesInRoute, setAdvisoriesInRoute] = useState([]);
@@ -82,8 +85,6 @@ export default function CamerasListPage() {
     setShowSpinner(value);
     if (value) {
       setShowLoader(true);
-    } else {
-      setShowLoader(false);
     }
   };
 
@@ -107,8 +108,8 @@ export default function CamerasListPage() {
 
     // Load if filtered cams don't exist or route doesn't match
     if (!filteredCameras || !compareRoutePoints(routePoints, camFilterPoints)) {
-      // Fetch data if it doesn't already exist
-      const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
+      // Fetch data
+      const camData = await getCameras().catch((error) => displayError(error));
 
       // Filter data by route
       const filteredCamData = route && route.routeFound ? filterByRoute(camData, route, null, true) : camData;
@@ -178,6 +179,7 @@ export default function CamerasListPage() {
 
   // Effects
   useEffect(() => {
+    selectedRouteRef.current = selectedRoute;
     getCamerasData(selectedRoute);
   }, [selectedRoute]);
 
@@ -384,6 +386,9 @@ export default function CamerasListPage() {
           <RouteSearch showFilterText={true} showSpinner={showSpinner} onShowSpinnerChange={handleShowSpinnerChange}/>
         </div>
       }
+
+      <PollingComponent runnable={() => getCamerasData(selectedRouteRef.current)} interval={30000} />
+
     </React.Fragment>
   );
 }
