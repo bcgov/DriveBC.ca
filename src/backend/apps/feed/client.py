@@ -197,6 +197,7 @@ class FeedClient:
             serializer.is_valid(raise_exception=True)
             return serializer
 
+        serializer = serializer_cls(data=response_data, many=False)
         return serializer.validated_data
 
     def get_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
