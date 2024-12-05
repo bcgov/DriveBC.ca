@@ -128,6 +128,7 @@ function App() {
         weather: false,
         restStops: false,
         largeRestStops: false,
+        chainUps: false,
       },
     };
   }
