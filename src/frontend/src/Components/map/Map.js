@@ -293,7 +293,9 @@ export default function DriveBCMap(props) {
         const symbolsStyle = {
           ...glStyle,
           layers: glStyle.layers.filter((layer) => (
-            layer.id.startsWith('TRANSPORTATION/DRA/Hwy Symbols')
+            layer.id.startsWith('TRANSPORTATION/DRA/Hwy Symbols') ||
+            layer.id.startsWith('TRANSPORTATION/DRA/Road Names')
+
           )),
         };
 
