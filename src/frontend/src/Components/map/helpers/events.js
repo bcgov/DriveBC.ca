@@ -46,7 +46,7 @@ export const setEventStyle = (events, state) => {
           return event.setStyle(eventStyles[getStyleKey('road_conditions', is_highlighted)][state]);
 
         case 'chainUps':
-            return event.setStyle(eventStyles['chain_ups'][state]);
+            return event.setStyle(eventStyles[getStyleKey('chain_ups', is_highlighted)][state]);
 
         default: {
           const type = event.get('event_type').toLowerCase();
