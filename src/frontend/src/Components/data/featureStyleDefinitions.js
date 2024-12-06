@@ -78,7 +78,9 @@ import roadConditionsStaticUnreadIcon from '../../images/mapIcons/road-condition
 // Chain Ups
 import chainUpsActiveIcon from '../../images/mapIcons/chain-ups-active.png';
 import chainUpsHoverIcon from '../../images/mapIcons/chain-ups-hover.png';
+import chainUpsHoverUnreadIcon from '../../images/mapIcons/chain-ups-hover-unread.png';
 import chainUpsStaticIcon from '../../images/mapIcons/chain-ups-static.png';
+import chainUpsStaticUnreadIcon from '../../images/mapIcons/chain-ups-static-unread.png';
 
 // Constructions
 import constructionsMajorActiveIcon from '../../images/mapIcons/delay-major-active.png';
@@ -716,6 +718,29 @@ export const eventStyles = {
       image: new Icon({
         scale: 0.25,
         src: chainUpsHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsActiveIcon,
+      }),
+    }),
+  },
+
+  chain_ups_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsHoverUnreadIcon,
       }),
     }),
 
