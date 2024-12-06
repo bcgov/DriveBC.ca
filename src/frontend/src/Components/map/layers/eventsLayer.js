@@ -183,6 +183,7 @@ export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
   }, {});
 
   // iterate through all map layers
+  const processedEvents = new Set();
   Object.values(mapLayers.current).forEach((layer) => {
     if (layer.get('classname') !== 'events') { return; }  // skip non-event layers
 
@@ -194,7 +195,7 @@ export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
         // Update the feature with the new event data
         feature.setProperties(eventsDict[featureId]);
         setEventStyle(feature, 'static');
-        delete eventsDict[featureId]; // remove updated events from dict
+        processedEvents.add(featureId);  // Track processed events
 
       // Hide the feature if not in filtered data list
       } else {
@@ -203,16 +204,18 @@ export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
     }
   });
 
-  // Iterate through new events and create features for them
-  Object.values(eventsDict).forEach((event) => {
-    const vsMap = {};
-    const lineVsMap = {};
+  const vsMap = {};
+  const lineVsMap = {};
 
-    const layerKeys = ['closures', 'majorEvents', 'minorEvents', 'futureEvents', 'roadConditions', 'chainUps'];
-    for (const key of layerKeys) {
-      vsMap[key] = mapLayers.current[key].getSource();
-      lineVsMap[key] = mapLayers.current[key + 'Lines'].getSource();
-    }
+  const layerKeys = ['closures', 'majorEvents', 'minorEvents', 'futureEvents', 'roadConditions', 'chainUps'];
+  for (const key of layerKeys) {
+    vsMap[key] = mapLayers.current[key].getSource();
+    lineVsMap[key] = mapLayers.current[key + 'Lines'].getSource();
+  }
+
+  // Iterate through unprocessed new events and create features for them
+  Object.values(eventsDict).forEach((event) => {
+    if (processedEvents.has(event.id)) { return; }
 
     processEvent(event, 'EPSG:3857', vsMap, lineVsMap);
   });
