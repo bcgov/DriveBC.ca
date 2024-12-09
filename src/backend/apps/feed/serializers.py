@@ -1,5 +1,4 @@
 import html  # Importing html module for unescaping HTML entities
-from pprint import pprint
 import zoneinfo
 from datetime import datetime
 
@@ -98,6 +97,7 @@ class CarsClosureSerializer(serializers.Serializer):
     next_update = serializers.DateTimeField(allow_null=True)
     start_point_linear_reference = serializers.FloatField(allow_null=True)
     route_at = serializers.CharField(allow_blank=True)
+    timezone = serializers.CharField(allow_blank=True)
 
     def to_internal_value(self, data):
         data["id"] = data["event-id"]
@@ -166,6 +166,9 @@ class CarsClosureSerializer(serializers.Serializer):
                 next_update['time'] // 1000,
                 tz=zoneinfo.ZoneInfo(key=next_update['timeZoneId'])
             )
+
+        if "update-time" in data:
+            data["timezone"] = data.get("update-time")['timeZoneId']
 
         return super().to_internal_value(data)
 

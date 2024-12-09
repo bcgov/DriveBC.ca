@@ -1,4 +1,5 @@
 import logging
+from zoneinfo import ZoneInfo
 
 from apps.event.enums import EVENT_DIFF_FIELDS, EVENT_STATUS, EVENT_UPDATE_FIELDS
 from apps.event.models import Event
@@ -107,6 +108,12 @@ def populate_all_event_data():
             event_data["start_point_linear_reference"] = cars_data.get('start_point_linear_reference', None)
             if 'route_at' in cars_data and cars_data['route_at'] != '':
                 event_data["route_at"] = cars_data['route_at']
+
+            # DBC22-3081 replace timezone with DIT API data
+            if cars_data['timezone']:
+                new_tz = ZoneInfo(cars_data['timezone'])
+                event_data["first_created"] = event_data["first_created"].replace(tzinfo=new_tz)
+                event_data["last_updated"] = event_data["last_updated"].replace(tzinfo=new_tz)
 
             # Populate db obj
             populate_event_from_data(event_data)
