@@ -538,9 +538,9 @@ class FeedClient:
             response.raise_for_status()
             json_response = response.json()
             json_objects = []
-            hourly_forecast_group = []
-
+            
             for station in json_response:
+                hourly_forecast_group = []
                 station_number = station.get("WeatherStationNumber")
                 forecast_endpoint = settings.DRIVEBC_WEATHER_FORECAST_API_BASE_URL + f"/{station_number}"
                 api_endpoint = settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL + f"{station_number}"
