@@ -11,7 +11,8 @@
         margin: 0;
         padding: 0;
         background: none;
-        
+        z-index: 10;
+
         svg {
           font-size: 16px;
         }
@@ -189,7 +190,7 @@
         border-left: 2px solid $Warning;
       }
 
-      &--chainUps { 
+      &--chainUps {
         border-left: 2px solid $Chainups;
       }
 
