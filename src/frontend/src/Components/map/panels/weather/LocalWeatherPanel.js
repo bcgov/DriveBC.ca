@@ -185,7 +185,7 @@ export default function LocalWeatherPanel(props) {
         <div className="popup__content__footer">
           <p>Temperatures displayed in Celsius (&deg;C) <br /></p>
           <p>
-            Local weather is provided by local Ministry of Transportation and Infrastructure weather stations. <br />
+            Local weather is provided by local Ministry of Transportation and Transit weather stations. <br />
             {forecastData.length > 0 && <span>Forecasts courtesy of Weathernet.</span>}
           </p>
         </div>

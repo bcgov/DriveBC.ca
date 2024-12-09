@@ -50,7 +50,7 @@ class RegionalWeather(BaseModel):
 
 
 class CurrentWeather(BaseModel):
-    """ Local Weather reports and forecasts from MOTI sites """
+    """ Local Weather reports and forecasts from MOTT sites """
     location = models.PointField(null=True)
     weather_station_name = models.CharField(max_length=100)
     elevation = models.IntegerField(null=True)
@@ -83,6 +83,6 @@ class HighElevationForecast(BaseModel):
     # periods: today, tonight, tomorrow; or tonight, tomorrow and tomorrow
     # night.  They contain all the labelling we need, so we just need to store
     # them in order
-    forecasts = models.JSONField(null=True, default=list) # minimal, for API
-    source = models.JSONField(null=True) # original
+    forecasts = models.JSONField(null=True, default=list)  # minimal, for API
+    source = models.JSONField(null=True)  # original
     warnings = models.JSONField(null=True, default=list)
