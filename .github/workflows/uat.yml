@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Create a tag starting with r0.0.0 (Using Semver)'
+        description: 'Create a tag starting with rc'
         required: true
 
 jobs:
