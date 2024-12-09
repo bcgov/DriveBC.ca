@@ -73,6 +73,12 @@
       .open-filters {
         margin: 0;
 
+        .filters-btn__text {
+          @media (max-width: 1199px) {
+            display: none;
+          }
+        }
+
         svg {
           margin-left: 0;
 

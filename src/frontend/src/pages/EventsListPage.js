@@ -601,7 +601,7 @@ export default function EventsListPage() {
                 callback={toggleEventCategoryFilter}
                 disableFeatures={true}
                 enableRoadConditions={false}
-                textOverride={xXlargeScreen ? 'List filters': ' '}
+                textOverride={'List filters'}
                 isDelaysPage={true}
               />
             </div>
