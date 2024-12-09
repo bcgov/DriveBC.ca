@@ -1,6 +1,8 @@
+import datetime
 import logging
 from zoneinfo import ZoneInfo
 
+import pytz
 from apps.event.enums import EVENT_DIFF_FIELDS, EVENT_STATUS, EVENT_UPDATE_FIELDS
 from apps.event.models import Event
 from apps.event.serializers import EventInternalSerializer
@@ -81,6 +83,14 @@ def populate_event_from_data(new_event_data):
         event_serializer.save()
 
 
+def cap_time_to_now(datetime_value):
+    # Use current time instead of future time
+    if datetime_value and datetime_value > datetime.datetime.now(pytz.utc):
+        return datetime.datetime.now(pytz.timezone('America/Vancouver'))
+
+    return datetime_value
+
+
 def populate_all_event_data():
     client = FeedClient()
     closures, chain_ups = client.get_dit_event_dict()
@@ -112,8 +122,12 @@ def populate_all_event_data():
             # DBC22-3081 replace timezone with DIT API data
             if cars_data['timezone']:
                 new_tz = ZoneInfo(cars_data['timezone'])
-                event_data["first_created"] = event_data["first_created"].replace(tzinfo=new_tz)
-                event_data["last_updated"] = event_data["last_updated"].replace(tzinfo=new_tz)
+
+                first_created_time = event_data["first_created"].replace(tzinfo=new_tz)
+                event_data["first_created"] = cap_time_to_now(first_created_time)
+
+                last_updated_time = event_data["last_updated"].replace(tzinfo=new_tz)
+                event_data["last_updated"] = cap_time_to_now(last_updated_time)
 
             # Populate db obj
             populate_event_from_data(event_data)

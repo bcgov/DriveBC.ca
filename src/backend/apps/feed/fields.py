@@ -1,6 +1,3 @@
-import datetime
-
-import pytz
 from apps.shared.helpers import parse_and_localize_time_str
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
@@ -38,10 +35,6 @@ class DriveBCDateField(serializers.DateTimeField):
 
     def to_internal_value(self, value):
         datetime_value = super().to_internal_value(value)
-
-        # Use current time instead of future time
-        if datetime_value and datetime_value > datetime.datetime.now(pytz.utc):
-            datetime_value = datetime.datetime.now(pytz.timezone('America/Vancouver'))
 
         res = {
             self.custom_field_name: datetime_value,
