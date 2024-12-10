@@ -180,10 +180,8 @@ export default function DriveBCMap(props) {
   const [staleLinkMessage, setStaleLinkMessage] = useState();
   const clickedFeatureRef = useRef();
   const updateClickedFeature = feature => {
-
     // Remove highlight from feature on click
-    if (feature && feature.get('highlight')) {
-
+    if (feature && feature instanceof Feature && feature.get('highlight')) {
       // Remove highlight from feature
       feature.set("highlight", false)
 
