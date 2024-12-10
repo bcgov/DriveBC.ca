@@ -130,8 +130,6 @@ export default function FerryPanel(props) {
                 }
               </div>
 
-              {/* <hr/> */}
-
               <div className='info__container'>
                 <p className='info__header'>Ferry details</p>
 
