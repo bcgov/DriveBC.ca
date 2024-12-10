@@ -59,6 +59,15 @@ export default function CamPanel(props) {
   const [camera, setCamera] = useState(newCam);
   const [camIndex, setCamIndex] = useState(0);
   const [show, setShow] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleCameraImageClick = () => {
+    const nextIndex = (activeIndex + 1) % camera.camGroup.length;
+    setActiveIndex(nextIndex);
+    const nextCamera = camera.camGroup[nextIndex];
+    setCamera(nextCamera);
+    trackEvent('click', 'camera-list', 'camera', nextCamera.name);
+  };
 
   // Effects
   useEffect(() => {
@@ -264,7 +273,9 @@ export default function CamPanel(props) {
               className="colocated-camera-icon"
               src={colocatedCamIcon}
               role="presentation"
-              alt="colocated cameras icon" />
+              alt="colocated cameras icon" 
+              onClick={handleCameraImageClick}
+              />
 
             {renderCamGroup()}
           </div>
