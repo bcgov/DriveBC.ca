@@ -52,6 +52,15 @@ export default function CameraCard(props) {
   // States
   const [show, setShow] = useState(false);
   const [camera, setCamera] = useState(cameraData);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleCameraImageClick = () => {
+    const nextIndex = (activeIndex + 1) % camera.camGroup.length;
+    setActiveIndex(nextIndex);
+    const nextCamera = camera.camGroup[nextIndex];
+    setCamera(nextCamera);
+    trackEvent('click', 'camera-list', 'camera', nextCamera.name);
+  };
 
   // useEffect hooks
   useEffect(() => {
@@ -284,6 +293,7 @@ export default function CameraCard(props) {
             src={colocatedCamIcon}
             role="presentation"
             alt="colocated cameras icon"
+            onClick={handleCameraImageClick}
           />
           {camera.camGroup.map(cam => (
             <Button

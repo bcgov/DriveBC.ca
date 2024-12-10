@@ -90,6 +90,15 @@ export default function CameraDetailsPage() {
   const [showServerError, setShowServerError] = useState(false);
   const [cameraGroup, setCameraGroup] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleCameraImageClick = () => {
+    const nextIndex = (activeIndex + 1) % camera.camGroup.length;
+    setActiveIndex(nextIndex);
+    const nextCamera = camera.camGroup[nextIndex];
+    setCamera(nextCamera);
+    trackEvent('click', 'camera-list', 'camera', nextCamera.name);
+  };
 
   useEffect(() => {
     if (showLoader) {
@@ -525,6 +534,7 @@ export default function CameraDetailsPage() {
                           src={colocatedCamIcon}
                           role="presentation"
                           alt="colocated cameras icon"
+                          onClick={handleCameraImageClick}
                         />
                         <span>Direction</span>
                       </span>
