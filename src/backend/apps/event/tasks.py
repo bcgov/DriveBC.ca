@@ -1,6 +1,5 @@
 import datetime
 import logging
-from zoneinfo import ZoneInfo
 
 import pytz
 from apps.event.enums import EVENT_DIFF_FIELDS, EVENT_STATUS, EVENT_UPDATE_FIELDS
@@ -119,15 +118,23 @@ def populate_all_event_data():
             if 'route_at' in cars_data and cars_data['route_at'] != '':
                 event_data["route_at"] = cars_data['route_at']
 
-            # DBC22-3081 replace timezone with DIT API data
+            # DBC22-3081 replace timezone with DIT API data, to be removed if source is corrected
             if cars_data['timezone']:
-                new_tz = ZoneInfo(cars_data['timezone'])
+                new_tz = pytz.timezone(cars_data['timezone'])
 
                 first_created_time = event_data["first_created"].replace(tzinfo=new_tz)
                 event_data["first_created"] = cap_time_to_now(first_created_time)
 
                 last_updated_time = event_data["last_updated"].replace(tzinfo=new_tz)
                 event_data["last_updated"] = cap_time_to_now(last_updated_time)
+
+                if "start" in event_data:
+                    pacific_start_time = event_data["start"].astimezone(pytz.timezone('America/Vancouver'))
+                    event_data["start"] = pacific_start_time.replace(tzinfo=new_tz)
+
+                if "end" in event_data:
+                    pacific_end_time = event_data["end"].astimezone(pytz.timezone('America/Vancouver'))
+                    event_data["end"] = pacific_end_time.replace(tzinfo=new_tz)
 
             # Populate db obj
             populate_event_from_data(event_data)
