@@ -119,7 +119,7 @@ export default function FerryPanel(props) {
 
         <div className="info">
           {ferryData.vessels && ferryData.vessels.map((vessel, index) => (
-            <div key={index}>
+            <div className='info__block' key={index}>
               <div className='info__container'>
                 {vessel.schedule_detail &&
                   <p>{parse(vessel.schedule_detail)}</p>
@@ -129,8 +129,6 @@ export default function FerryPanel(props) {
                   <p>{vessel.special_restriction}</p>
                 }
               </div>
-
-              <hr/>
 
               <div className='info__container'>
                 <p className='info__header'>Ferry details</p>
@@ -159,10 +157,10 @@ export default function FerryPanel(props) {
                   </p>
                 </div>
               </div>
+              <hr />
             </div>
+            
           ))}
-
-          <hr/>
 
           <div className='info__container'>
             <p className='info__header'>Description</p>
