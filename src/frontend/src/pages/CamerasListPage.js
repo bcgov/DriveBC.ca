@@ -331,7 +331,20 @@ export default function CamerasListPage() {
                   inputProps={{
                     'aria-label': 'input field for camera name search',
                   }}
-                />
+                >
+                {({ onClear, text }) => (
+                  <>
+                    {text &&
+                      <button
+                        className='clear-btn'
+                        aria-label={'Clear camera name search'}
+                        onClick={onClear}>
+                        <FontAwesomeIcon icon={faXmark} />
+                      </button>
+                    }
+                  </>
+                )}
+                </AsyncTypeahead>
               </div>
 
               <HighwayFilter cameras={filteredCameras} />

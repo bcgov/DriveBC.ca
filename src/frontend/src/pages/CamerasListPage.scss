@@ -52,10 +52,22 @@
       width: 100%;
       order: 2;
       margin-top: 10px;
-      
-      .rbt-input {
-        height: 41px;
-        font-size: 0.875rem;
+
+      .rbt {
+        .rbt-input {
+          height: 41px;
+          font-size: 0.875rem;
+        }
+
+        .clear-btn {
+          position: absolute;
+          top: 0;
+          right: 0;
+          background: none;
+          border: none;
+          font-size: 0.75rem;
+          padding: 0.75rem;
+        }
       }
 
       @media (min-width: 768px) {
