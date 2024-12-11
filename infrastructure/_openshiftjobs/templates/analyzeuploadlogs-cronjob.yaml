@@ -21,9 +21,6 @@ spec:
                 claimName: {{ .Values.cronjobs.analyzeuploadlogs.deployment.volumes.logs  }}
           containers:
             - resources:
-                limits:
-                  cpu: {{ .Values.cronjobs.analyzeuploadlogs.deployment.resources.limits.cpu  }}
-                  memory: {{ .Values.cronjobs.analyzeuploadlogs.deployment.resources.limits.memory  }}
                 requests:
                   cpu: {{ .Values.cronjobs.analyzeuploadlogs.deployment.resources.requests.cpu  }}
                   memory: {{ .Values.cronjobs.analyzeuploadlogs.deployment.resources.requests.memory  }}

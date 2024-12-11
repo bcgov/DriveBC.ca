@@ -13,9 +13,6 @@ django:
       requests:
         cpu: 50m
         memory: 300Mi
-      limits:
-        cpu: 1000m
-        memory: 350Mi
     env:
       postgresSecret: uat-drivebc-pguser-uat-drivebc
       djangoConfigMap: uat-drivebc-django
@@ -47,11 +44,8 @@ tasks:
   deployment:
     resources:
       requests:
-        cpu: 500m
+        cpu: 200m
         memory: 250Mi
-      limits:
-        cpu: 750m
-        memory: 300Mi
     volumes:
       claimName: uat-django-app-images
     env:
@@ -71,9 +65,6 @@ redis:
       requests:
         cpu: 50m
         memory: 50Mi
-      limits:
-        cpu: 200m
-        memory: 100Mi
 
 static:
   fullnameOverride: uat-static
@@ -88,9 +79,6 @@ static:
       requests:
         cpu: 50m
         memory: 50Mi
-      limits:
-        cpu: 150m
-        memory: 100Mi
     env:
       staticConfigMap: uat-drivebc-static
     volumes:
@@ -125,10 +113,7 @@ openshiftjobs:
         resources:
           requests:
             cpu: 50m
-            memory: 500Mi
-          limits:
-            cpu: 500m
-            memory: 1Gi
+            memory: 150Mi
         env:
           s3Secret: uat-drivebc-cronjob-s3bucket
         volumes:
@@ -142,9 +127,6 @@ openshiftjobs:
           requests:
             cpu: 50m
             memory: 100Mi
-          limits:
-            cpu: 150m
-            memory: 200Mi
         volumes:
           logs: uat-static-log-storage
 
@@ -156,9 +138,6 @@ openshiftjobs:
           requests:
             cpu: 50m
             memory: 100Mi
-          limits:
-            cpu: 100m
-            memory: 250Mi
         env:
           s3Secret: uat-drivebc-cronjob-s3bucket
         volumes:

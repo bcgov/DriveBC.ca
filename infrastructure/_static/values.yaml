@@ -14,9 +14,6 @@ deployment:
     requests:
       cpu: 50m
       memory: 50Mi
-    limits:
-      cpu: 250m
-      memory: 100Mi
   env:
     staticConfigMap: drivebc-static
   volumes:

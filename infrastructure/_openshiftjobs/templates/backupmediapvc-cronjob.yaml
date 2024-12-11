@@ -23,9 +23,6 @@ spec:
                 claimName: {{ .Values.cronjobs.backupmediapvc.deployment.volumes.media  }}
           containers:
             - resources:
-                limits:
-                  cpu: {{ .Values.cronjobs.backupmediapvc.deployment.resources.limits.cpu  }}
-                  memory: {{ .Values.cronjobs.backupmediapvc.deployment.resources.limits.memory  }}
                 requests:
                   cpu: {{ .Values.cronjobs.backupmediapvc.deployment.resources.requests.cpu  }}
                   memory: {{ .Values.cronjobs.backupmediapvc.deployment.resources.requests.memory  }}

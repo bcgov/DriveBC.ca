@@ -24,9 +24,6 @@ spec:
             claimName: {{ .Values.deployment.volumes.claimName  }}
       containers:
         - resources:
-            limits:
-              cpu: {{ .Values.deployment.resources.limits.cpu  }}
-              memory: {{ .Values.deployment.resources.limits.memory  }}
             requests:
               cpu: {{ .Values.deployment.resources.requests.cpu  }}
               memory: {{ .Values.deployment.resources.requests.memory  }}
