@@ -2,10 +2,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 // Navigation
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 // External imports
 import Container from 'react-bootstrap/Container';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faArrowLeft
+} from '@fortawesome/pro-solid-svg-icons';
 
 // Internal imports
 import { CMSContext } from '../App';
@@ -24,6 +28,7 @@ export default function BulletinDetailsPage() {
   /* Setup */
   // Navigation
   const params = useParams();
+  const navigate = useNavigate();
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
@@ -43,6 +48,11 @@ export default function BulletinDetailsPage() {
     }
   }
 
+   // Navigating to 
+   const returnHandler = () => {
+    navigate(-1);
+  };
+  
   // Data function and initialization
   const loadBulletin = async () => {
     const bulletinData = await getBulletins(params.id).catch((error) => displayError(error));
@@ -80,6 +90,18 @@ export default function BulletinDetailsPage() {
         <div>
           <div className="page-header">
             <Container>
+              <a
+                className="back-link"
+                onClick={returnHandler}
+                onKeyDown={keyEvent => {
+                  if (keyEvent.keyCode == 13) {
+                    returnHandler();
+                  }
+                }}>
+                <FontAwesomeIcon icon={faArrowLeft} />
+                Back to last page
+              </a>
+
               <h1 className="page-title">{bulletin.title}</h1>
 
               {bulletin.teaser &&

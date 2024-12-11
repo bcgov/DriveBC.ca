@@ -1,6 +1,6 @@
 // React
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,6 +8,9 @@ import {
   faMap,
   faMemoCircleInfo
 } from '@fortawesome/pro-regular-svg-icons';
+import {
+  faArrowLeft
+} from '@fortawesome/pro-solid-svg-icons';
 import Container from 'react-bootstrap/Container';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
@@ -143,6 +146,7 @@ function getMap(advisoryData) {
 export default function AdvisoryDetailsPage() {
   // Context and router data
   const params = useParams();
+  const navigate = useNavigate();
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
@@ -155,6 +159,11 @@ export default function AdvisoryDetailsPage() {
   const [advisory, setAdvisory] = useState(null);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
+
+  // Navigating to 
+  const returnHandler = () => {
+    navigate(-1);
+  };
 
   // Error handling
   const displayError = (error) => {
@@ -230,6 +239,17 @@ export default function AdvisoryDetailsPage() {
       {advisory && (
         <div className="page-header">
           <Container>
+            <a
+              className="back-link"
+              onClick={returnHandler}
+              onKeyDown={keyEvent => {
+                if (keyEvent.keyCode == 13) {
+                  returnHandler();
+                }
+              }}>
+              <FontAwesomeIcon icon={faArrowLeft} />
+              Back to last page
+            </a>
             <h1 className="page-title">{advisory.title}</h1>
 
             {advisory.teaser &&

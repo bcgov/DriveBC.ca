@@ -22,6 +22,11 @@ body {
   }
 
   .page-header {
+    .back-link {
+      display: block;
+      margin-bottom: 1rem;
+    }
+
     .timestamp-container, .friendly-time-text{
       color: $Type-Link;
       font-size: 0.875rem;
@@ -395,4 +400,28 @@ button.text-only-btn {
   &:hover {
     text-decoration: underline;
   }
+}
+
+.back-link {
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.875rem;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+    svg {
+      transform: translateX(-2px);
+      transition: 0.4s transform $Anim-gentle;
+    }
+  }
+
+  svg {
+    margin-right: 8px;
+    transition: 0.4s transform $Anim-gentle;
+  }
+}
+
+.link-div {
+  cursor: pointer;
 }

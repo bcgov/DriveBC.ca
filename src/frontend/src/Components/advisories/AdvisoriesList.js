@@ -52,13 +52,13 @@ export default function AdvisoriesList(props) {
             <div className="advisory-li" key={advisory.id}>
               <div className="advisory-li__content">
                 <div className="advisory-li__content__partition advisory-li-title-container">
-                  <a className="advisory-li-title"
-                    href="#"
+                  <div className="advisory-li-title link-div"
+                    tabIndex={0}
                     onClick={() => handleClick(advisory)}
                     onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}>
 
                     {advisory.title}
-                  </a>
+                  </div>
 
                   <div className="timestamp-container">
                     <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
@@ -82,7 +82,8 @@ export default function AdvisoriesList(props) {
                 </div>
 
                 <div className="button-container">
-                  <a className="viewDetails-link"
+                  <div className="viewDetails-link link-div"
+                    tabIndex={0}
                     href="#"
                     onClick={() => handleClick(advisory)}
                     onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}
@@ -90,7 +91,7 @@ export default function AdvisoriesList(props) {
 
                     View details
                     <FontAwesomeIcon icon={faChevronRight} />
-                  </a>
+                  </div>
                 </div>
               </div>
             </div>
