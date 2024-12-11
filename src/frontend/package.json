@@ -51,6 +51,7 @@
     "react-scripts": "5.0.1",
     "react-time-ago": "^7.2.1",
     "redux-persist": "^6.0.0",
+    "tz-lookup": "^6.1.25",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

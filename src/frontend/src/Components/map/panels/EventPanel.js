@@ -67,13 +67,21 @@ export default function EventPanel(props) {
         <div className="popup__content__block">
           <div className="popup__content__description last-update">
             <p>Last update</p>
-            <FriendlyTime date={eventData.last_updated} />
+            <FriendlyTime date={eventData.last_updated} 
+              coordinates={
+                eventData.location.type === "LineString" ?
+                eventData.location.coordinates[0]: eventData.location.coordinates
+                }/>
           </div>
 
           {eventData.next_update &&
             <div className="popup__content__description next-update">
               <p>Next update</p>
-              <FriendlyTime date={eventData.next_update} isNextUpdate={true} />
+              <FriendlyTime date={eventData.next_update} isNextUpdate={true} 
+                coordinates={
+                  eventData.location.type === "LineString" ?
+                eventData.location.coordinates[0]: eventData.location.coordinates
+                }/>
             </div>
           }
         </div>
