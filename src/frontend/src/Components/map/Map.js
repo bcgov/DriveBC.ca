@@ -782,7 +782,7 @@ export default function DriveBCMap(props) {
             }
           }}>
           <CurrentCameraIcon />
-          Camera location
+          Re-center camera
         </Button>
       )}
 
