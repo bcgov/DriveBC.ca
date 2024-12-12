@@ -60,13 +60,21 @@ export default function CamPanel(props) {
   const [camIndex, setCamIndex] = useState(0);
   const [show, setShow] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-
-  const handleCameraImageClick = () => {
-    const nextIndex = (activeIndex + 1) % camera.camGroup.length;
+  const handleCameraImageClick = (event) => {
+    const container = event.currentTarget.closest(".camera-orientations");
+    const buttons = container.querySelectorAll(".camera-direction-btn");
+    let currentIndex = Array.from(buttons).findIndex(
+      (button) => button.classList.contains("current")
+    );
+    if (currentIndex === -1) {
+      currentIndex = activeIndex;
+    }
+    const nextIndex = (currentIndex + 1) % buttons.length;
+    buttons[nextIndex].focus();
     setActiveIndex(nextIndex);
     const nextCamera = camera.camGroup[nextIndex];
     setCamera(nextCamera);
-    trackEvent('click', 'camera-list', 'camera', nextCamera.name);
+    trackEvent("click", "camera-list", "camera", nextCamera.name);
   };
 
   // Effects
@@ -275,6 +283,7 @@ export default function CamPanel(props) {
               role="presentation"
               alt="colocated cameras icon" 
               onClick={handleCameraImageClick}
+              style={{ cursor: "pointer" }}
               />
 
             {renderCamGroup()}
