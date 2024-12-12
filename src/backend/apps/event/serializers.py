@@ -125,7 +125,7 @@ class EventInternalSerializer(serializers.ModelSerializer):
         if obj.closed:
             return EVENT_DISPLAY_CATEGORY.CLOSURE
 
-        if obj.event_type == 'ROAD_CONDITION':
+        if obj.event_type == 'ROAD_CONDITION' or obj.event_type == 'WEATHER_CONDITION':
             return EVENT_DISPLAY_CATEGORY.ROAD_CONDITION
         elif obj.event_type == 'CHAIN_UP':
             return EVENT_DISPLAY_CATEGORY.CHAIN_UP
