@@ -1,0 +1,29 @@
+@import "../../../styles/variables";
+
+.location-access {
+  position: absolute;
+  z-index: 2000;
+  background: $Gold60;
+  border: 1px solid $Warning;
+  border-radius: 5px;
+  right: 20%;
+  top: 15px;
+  display: flex;
+  width: 375px;
+  padding: 8px 12px;
+  align-items: center;
+  font-size: 0.875rem;
+  box-shadow: 0px 3.2px 7.2px 0px #00000021;
+
+  @media (max-width: 768px) {
+    right: unset;
+    top: unset;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .message-container {
+    margin-left: 15px;
+  }
+}

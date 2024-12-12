@@ -56,6 +56,7 @@ import RouteSearch from '../routing/RouteSearch.js';
 import NetworkErrorPopup from './errors/NetworkError';
 import ServerErrorPopup from './errors/ServerError';
 import StaleLinkErrorPopup from './errors/StaleLinkError';
+import LocationAccessPopup from './errors/LocationAccessError';
 import overrides from '../map/overrides.js';
 
 // Map & geospatial imports
@@ -227,6 +228,22 @@ export default function DriveBCMap(props) {
       }
     }
   };
+
+  const [showLocationAccessError, setShowLocationAccessError] = useState(false);
+
+  // check if geolocation permission is granted
+  navigator.permissions
+  .query({ name: "geolocation" })
+  .then((permissionStatus) => {
+    permissionStatus.onchange = () => {
+      if(permissionStatus.state === 'denied') {
+        setShowLocationAccessError(true);
+      }
+      else {
+        setShowLocationAccessError(false);
+      }
+    };
+  });
 
   const loadMyLocation = () => {
     if (!locationSet.current) {
@@ -807,6 +824,10 @@ export default function DriveBCMap(props) {
           referenceData={referenceData}
           loadingLayers={loadingLayers} />
       )}
+
+      {showLocationAccessError &&
+        <LocationAccessPopup />
+      }
 
       {showNetworkError &&
         <NetworkErrorPopup />
