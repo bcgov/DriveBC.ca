@@ -208,6 +208,7 @@ button.btn.open-filters {
           .filter-item__button {
             color: $Type-Disabled;
             background-color: $Grey20;
+            border: 1px solid $Grey20;
 
             &__icon {
               background-color: $Divider;
@@ -229,6 +230,7 @@ button.btn.open-filters {
           .filter-item__button {
             color: $Type-Disabled;
             background-color: $Grey20;
+            border: 1px solid $Grey20;
 
             &__icon {
               svg {
