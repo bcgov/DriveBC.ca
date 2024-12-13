@@ -1,12 +1,10 @@
 import logging
-from pprint import pprint
 
 from apps.feed.client import FeedClient
 from apps.feed.serializers import HighElevationForecastSerializer
 from apps.shared.enums import CacheKey
-from apps.weather.models import (
-    CurrentWeather, RegionalWeather, HighElevationForecast
-)
+from apps.weather.client import get_regional_weather_list
+from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -41,8 +39,7 @@ def populate_regional_weather_from_data(new_data):
 
 
 def populate_all_regional_weather_data():
-    client = FeedClient()
-    feed_data = client.get_regional_weather_list()
+    feed_data = get_regional_weather_list()
 
     for regional_weather_data in feed_data:
         populate_regional_weather_from_data(regional_weather_data)
