@@ -28,6 +28,15 @@ export const getTypeDisplay = (event) => {
   }
 }
 
+export const getSeverityClass = (event) => {
+  switch (event.display_category) {
+    case 'chainUps':
+      return 'chain-up';
+    default:
+      return event.severity;
+  }
+}
+
 export const convertDirection = (direction) => {
   switch (direction) {
     case 'N':

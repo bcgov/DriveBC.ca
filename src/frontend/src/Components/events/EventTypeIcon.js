@@ -1,6 +1,13 @@
 // React
 import React from 'react';
 
+// External imports
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faChainHorizontal
+} from '@fortawesome/pro-solid-svg-icons';
+
+
 // Events
 // Closures
 import closuresActiveIcon from '../../images/mapIcons/closure-active.png';
@@ -74,7 +81,7 @@ export default function EventTypeIcon(props) {
       if (state === 'active')
         return <img className={'delay-icon-img'} src={chainUpsActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
       else
-        return <img className={'delay-icon-img'} src={chainUpsStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
+        return <div className="delay-icon-img"><FontAwesomeIcon icon={faChainHorizontal} alt={getTypeDisplay(event)} aria-hidden={true} /></div>
     }
   }
 }
