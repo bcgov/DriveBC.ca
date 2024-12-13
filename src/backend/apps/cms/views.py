@@ -24,6 +24,7 @@ class AdvisoryAPI(CachedListModelMixin, CMSViewSet):
     serializer_class = AdvisorySerializer
     cache_key = CacheKey.ADVISORY_LIST
     cache_timeout = CacheTimeout.DEFAULT
+    lookup_field = 'slug'
 
 
 class BulletinTestAPI(CachedListModelMixin, CMSViewSet):

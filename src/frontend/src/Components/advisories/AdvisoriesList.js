@@ -36,7 +36,7 @@ export default function AdvisoriesList(props) {
     }
 
     trackEvent('click', 'advisories-list', 'Advisory', advisory.title, advisory.teaser);
-    navigate(`/advisories/${advisory.id}`);
+    navigate(`/advisories/${advisory.slug}`);
   }
 
   const sortedAdvisories = advisories && advisories.sort((a, b) => {
@@ -99,13 +99,13 @@ export default function AdvisoriesList(props) {
 
         } else {
           return (
-            <a className={`advisory-li ${!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.live_revision.toString()) ? 'unread' : ''}`}
+            <div className={`advisory-li link-div ${!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.live_revision.toString()) ? 'unread' : ''}`}
               key={advisory.id}
-              href="#"
               onClick={() => handleClick(advisory)}
-              onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}>
+              onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}
+              tabIndex={0}>
 
-              <div className="advisory-li__content" tabIndex={0}>
+              <div className="advisory-li__content">
                 <div className="advisory-li-title-container">
                   <p className='advisory-li-title'>{advisory.title}</p>
 
@@ -150,7 +150,7 @@ export default function AdvisoriesList(props) {
                   <FontAwesomeIcon icon={faChevronRight} />
                 </div>
               }
-            </a>
+            </div>
           );
         }
       })}
