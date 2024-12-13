@@ -23,12 +23,9 @@ A chart to provision a [Crunchy Postgres](https://www.crunchydata.com/) cluster.
 | `instances.dataVolumeClaimSpec.storage`     | Amount of storage for each PVC | `480Mi`                  |
 | `instances.requests.cpu`                    | CPU requests                   | `1m`                     |
 | `instances.requests.memory`                 | Memory requests                | `256Mi`                  |
-| `instances.limits.cpu`                      | CPU limits                     | `100m`                   |
-| `instances.limits.memory`                   | Memory limits                  | `512Mi`                  |
 | `instances.replicaCertCopy.requests.cpu`    | replicaCertCopy CPU requests   | `1m`                     |
 | `instances.replicaCertCopy.requests.memory` | replicaCertCopyMemory requests | `32Mi`                   |
-| `instances.replicaCertCopy.limits.cpu`      | replicaCertCopyCPU limits      | `50m`                    |
-| `instances.replicaCertCopy.limits.memory`   | replicaCertCopy Memory limits  | `64Mi`                   |
+
 
 ---
 
@@ -49,12 +46,8 @@ A chart to provision a [Crunchy Postgres](https://www.crunchydata.com/) cluster.
 | `pgBackRest.repos.schedules.volume.storageClassName` | Storage class name modes                                      | `netapp-file-backup`   |
 | `instances.requests.cpu`                             | CPU requests                                                  | `1m`                   |
 | `pgBackRest.repoHost.requests.memory`                | Memory requests                                               | `256Mi`                |
-| `pgBackRest.repoHost.limits.cpu`                     | CPU limits                                                    | `100m`                 |
-| `pgBackRest.repoHost.limits.memory`                  | Memory limits                                                 | `512Mi`                |
 | `pgBackRest.sidecars.requests.cpu`                   | sidecars CPU requests                                         | `1m`                   |
 | `pgBackRest.sidecars.requests.memory`                | sidecars Memory requests                                      | `32Mi`                 |
-| `pgBackRest.sidecars.limits.cpu`                     | sidecars CPU limits                                           | `50m`                  |
-| `pgBackRest.sidecars.limits.memory`                  | sidecars Memory limits                                        | `64Mi`                 |
 
 ---
 
@@ -88,8 +81,6 @@ A lightweight connection pooler for PostgreSQL
 | `proxy.pgBouncer.replicas`        | Number of replicas      | `2`     |
 | `proxy.pgBouncer.requests.cpu`    | CPU requests            | `1m`    |
 | `proxy.pgBouncer.requests.memory` | Memory requests         | `64Mi`  |
-| `proxy.pgBouncer.limits.cpu`      | CPU limits              | `50m`   |
-| `proxy.pgBouncer.limits.memory`   | Memory limits           | `128Mi` |
 
 ---
 
@@ -113,7 +104,5 @@ A [Prometheus](https://prometheus.io/) exporter for PostgreSQL
 | `pgmonitor.exporter.image`           | Crunchy PG Exporter image |         |
 | `pgmonitor.exporter.requests.cpu`    | CPU requests              | `1m`    |
 | `pgmonitor.exporter.requests.memory` | Memory requests           | `64Mi`  |
-| `pgmonitor.exporter.limits.cpu`      | CPU limits                | `50m`   |
-| `pgmonitor.exporterr.limits.memory`  | Memory limits             | `128Mi` |
 
 ---

@@ -14,9 +14,7 @@ A chart to provision a tasks which is an instance of django that runs Huey to ru
 | `repository`        | Image Source                        | `ghcr.io/bcgov/drivebc-django` |
 | `tag`               | Image Tag                           | `latest`                       |
 | `CPU Request`       | CPU Request Amount                  | `75`                           |
-| `CPU Limit`         | CPU Limit Amount                    | `250`                          |
 | `Memory Request`    | Memory Requests Amount              | `150`                          |
-| `Memory Limit`      | Memory Limit Amount                 | `200`                          |
 | `postgresSecret`    | The pguser secret name              | `drivebc-pguser-drivebc`       |
 | `djangoConfigMap`   | The name of the Django Config Map   | `drivebc-django`               |
 | `djangoSecret`      | The name of the Django Secret       | `drivebc-django`               |

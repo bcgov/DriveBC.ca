@@ -14,9 +14,7 @@ A chart to provision a Django instance
 | `repository`          | Image Source                        | `ghcr.io/bcgov/drivebc-django`         |
 | `tag`                 | Image Tag                           | `latest`                               |
 | `CPU Request`         | CPU Request Amount                  | `50`                                   |
-| `CPU Limit`           | CPU Limit Amount                    | `1000`                                 |
 | `Memory Request`      | Memory Requests Amount              | `250`                                  |
-| `Memory Limit`        | Memory Limit Amount                 | `350`                                  |
 | `postgresSecret`      | The pguser secret name              | `drivebc-pguser-drivebc`               |
 | `djangoConfigMap`     | The name of the Django Config Map   | `drivebc-django`                       |
 | `djangoSecret`        | The name of the Django Secret       | `drivebc-django`                       |

@@ -12,18 +12,12 @@ instances:
     storage: 5Gi
     storageClassName: netapp-block-standard
   requests:
-    cpu: 100m
-    memory: 256Mi
-  limits:
-    cpu: 500m
-    memory: 512Mi
+    cpu: 50m
+    memory: 300Mi
   replicaCertCopy:
     requests:
       cpu: 1m
-      memory: 32Mi
-    limits:
-      cpu: 50m
-      memory: 64Mi
+      memory: 16Mi
 
 pgBackRest:
   image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
@@ -41,18 +35,17 @@ pgBackRest:
       storageClassName: netapp-file-backup
   repoHost:
     requests:
-      cpu: 1m
-      memory: 64Mi
-    limits:
-      cpu: 50m
-      memory: 128Mi
+      cpu: 5m
+      memory: 16Mi
   sidecars:
-    requests:
-      cpu: 1m
-      memory: 64Mi
-    limits:
-      cpu: 50m
-      memory: 128Mi
+    pgbackrest:
+      requests:
+        cpu: 5m
+        memory: 90Mi
+    pgbackrestConfig:
+      requests:
+        cpu: 1m
+        memory: 16Mi
   s3:
     enabled: true
     retention: "7" # Set to 7 days for S3 storage.
@@ -97,11 +90,13 @@ proxy:
     image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
     replicas: 1
     requests:
-      cpu: 1m
-      memory: 64Mi
-    limits:
-      cpu: 50m
-      memory: 128Mi
+      cpu: 2m
+      memory: 16Mi
+    pgbouncerConfig:
+      requests:
+        cpu: 1m
+        memory: 16Mi
+
 
 # Postgres Cluster resource values:
 pgmonitor:
@@ -110,8 +105,5 @@ pgmonitor:
   exporter:
     image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
     requests:
-      cpu: 1m
+      cpu: 10m
       memory: 64Mi
-    limits:
-      cpu: 50m
-      memory: 128Mi

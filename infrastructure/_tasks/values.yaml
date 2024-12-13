@@ -12,9 +12,7 @@ deployment:
     requests:
       cpu: 75m
       memory: 150Mi
-    limits:
-      cpu: 250m
-      memory: 200Mi
+      
   env:
     postgresSecret: drivebc-pguser-drivebc
     djangoConfigMap: drivebc-django

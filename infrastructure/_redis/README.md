@@ -14,9 +14,7 @@ A chart to provision a Redis instance
 | `repository`        | Image Source                        | `redis` |
 | `tag`               | Image Tag                           | `7`     |
 | `CPU Request`       | CPU Request Amount                  | `50`    |
-| `CPU Limit`         | CPU Limit Amount                    | `100`   |
 | `Memory Request`    | Memory Requests Amount              | `50`    |
-| `Memory Limit`      | Memory Limit Amount                 | `100`   |
 
 
 

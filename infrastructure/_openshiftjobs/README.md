@@ -15,9 +15,7 @@ This chart to provision a OpenShift CronJob to process logs from NGINX and backu
 | `cronjobs`         |                                             |                                       |
 | `name`             | Specific name for the cronjob               |                                       |
 | `CPU Request`      | CPU Request Amount                          |                                       |
-| `CPU Limit`        | CPU Limit Amount                            |                                       |
 | `Memory Request`   | Memory Requests Amount                      |                                       |
-| `Memory Limit`     | Memory Limit Amount                         |                                       |
 | `s3Secret`         | Secret used to store S3 details for the job |                                       |
 | `volumes`          | Used to store the name of the shared volume |                                       |
 

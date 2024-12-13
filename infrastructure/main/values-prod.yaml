@@ -13,9 +13,6 @@ django:
       requests:
         cpu: 50m
         memory: 300Mi
-      limits:
-        cpu: 1000m
-        memory: 350Mi
     env:
       postgresSecret: prod-drivebc-pguser-prod-drivebc
       djangoConfigMap: prod-drivebc-django
@@ -47,11 +44,8 @@ tasks:
   deployment:
     resources:
       requests:
-        cpu: 500m
+        cpu: 200m
         memory: 250Mi
-      limits:
-        cpu: 750m
-        memory: 300Mi
     volumes:
       claimName: prod-django-app-images
     env:
@@ -71,9 +65,6 @@ redis:
       requests:
         cpu: 50m
         memory: 50Mi
-      limits:
-        cpu: 200m
-        memory: 100Mi
 
 static:
   fullnameOverride: prod-static
@@ -88,9 +79,6 @@ static:
       requests:
         cpu: 100m
         memory: 100Mi
-      limits:
-        cpu: 500m
-        memory: 150Mi
     env:
       staticConfigMap: prod-drivebc-static
     volumes:
@@ -125,10 +113,7 @@ openshiftjobs:
         resources:
           requests:
             cpu: 50m
-            memory: 1Gi
-          limits:
-            cpu: 2000m
-            memory: 2Gi
+            memory: 150Mi
         env:
           s3Secret: prod-drivebc-cronjob-s3bucket
         volumes:
@@ -141,9 +126,6 @@ openshiftjobs:
           requests:
             cpu: 50m
             memory: 100Mi
-          limits:
-            cpu: 100m
-            memory: 200Mi
         volumes:
           logs: prod-static-log-storage
     
@@ -155,9 +137,6 @@ openshiftjobs:
           requests:
             cpu: 50m
             memory: 100Mi
-          limits:
-            cpu: 100m
-            memory: 200Mi
         env:
           s3Secret: prod-drivebc-cronjob-s3bucket
         volumes:
