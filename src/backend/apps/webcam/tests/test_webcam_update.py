@@ -3,8 +3,8 @@ import json
 import zoneinfo
 from pathlib import Path
 from unittest.mock import patch
+from zoneinfo import ZoneInfo
 
-import pytz
 from apps.shared.tests import BaseTest, MockResponse
 from apps.webcam.models import Webcam
 from apps.webcam.tasks import update_all_webcam_data
@@ -66,7 +66,7 @@ class TestWebcamSerializer(BaseTest):
         self.mock_webcam_feed_result = json.load(webcam_data)
 
     def test_webcam_should_update(self):
-        current_time = datetime.datetime.now(tz=pytz.timezone("America/Vancouver"))
+        current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
         assert self.webcam.should_update(current_time) is True
 
         last_updated_time = datetime.datetime(
@@ -116,7 +116,7 @@ class TestWebcamSerializer(BaseTest):
         assert self.webcam.name == "TestWebCam"
 
         # Manually sync last updated time to prevent update
-        self.webcam.last_update_modified = datetime.datetime.now(tz=pytz.timezone("America/Vancouver"))
+        self.webcam.last_update_modified = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
         self.webcam.save()
         update_all_webcam_data()
         self.webcam.refresh_from_db()

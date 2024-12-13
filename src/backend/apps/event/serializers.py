@@ -1,8 +1,7 @@
 import datetime
 import html
-import zoneinfo
+from zoneinfo import ZoneInfo
 
-import pytz
 from apps.event.enums import (
     EVENT_DIRECTION_DISPLAY,
     EVENT_DISPLAY_CATEGORY,
@@ -60,13 +59,8 @@ def parse_recurring_datetime(date_string, time_string):
     # Combine the date and time into a single datetime object
     dt = datetime.datetime.combine(date, time)
 
-    # Create a timezone object for Pacific Time
-    pacific = pytz.timezone('US/Pacific')
-
-    # Convert the datetime object to Pacific Time
-    dt_pacific = pacific.localize(dt)
-
-    return dt_pacific
+    # Convert the datetime object to Pacific Time and return
+    return dt.replace(tzinfo=ZoneInfo('America/Vancouver'))
 
 
 class EventInternalSerializer(serializers.ModelSerializer):
@@ -109,7 +103,7 @@ class EventInternalSerializer(serializers.ModelSerializer):
         return optimize_description(obj.description)
 
     def get_display_category(self, obj):
-        if obj.start and datetime.datetime.now(pytz.utc) < obj.start:
+        if obj.start and datetime.datetime.now(ZoneInfo('UTC')) < obj.start:
             return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
 
         if 'recurring_schedules' in obj.schedule and len(obj.schedule['recurring_schedules']):
@@ -119,7 +113,7 @@ class EventInternalSerializer(serializers.ModelSerializer):
                 recurring_schedules['daily_start_time']
             )
 
-            if datetime.datetime.now(pytz.utc) < start_datetime:
+            if datetime.datetime.now(ZoneInfo('UTC')) < start_datetime:
                 return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
 
         if obj.closed:
@@ -208,7 +202,7 @@ class CarsEventSerializer(EventInternalSerializer):
             update = data.get('update-time')
             data['last_updated'] = datetime.datetime.fromtimestamp(
                 update['time'] // 1000,
-                tz=zoneinfo.ZoneInfo(key=update['timeZoneId'])
+                tz=ZoneInfo(key=update['timeZoneId'])
             )
 
         # CARS API does not offer any time of creation, or start/end times
@@ -219,7 +213,7 @@ class CarsEventSerializer(EventInternalSerializer):
             next_update = data.get('next-update-time')
             data['next_update'] = datetime.fromtimestamp(
                 next_update['time'] // 1000,
-                tz=zoneinfo.ZoneInfo(key=next_update['timeZoneId'])
+                tz=ZoneInfo(key=next_update['timeZoneId'])
             )
 
         return super().to_internal_value(data)
