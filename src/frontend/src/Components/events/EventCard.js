@@ -9,7 +9,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
-import { getTypeDisplay } from './functions';
+import { getTypeDisplay, getSeverityClass } from './functions';
 import FriendlyTime from '../shared/FriendlyTime';
 import EventTypeIcon from '../events/EventTypeIcon';
 
@@ -25,11 +25,11 @@ export default function EventCard(props) {
 
   return (
     <div
-      className={'event-card ' + (event ? event.severity.toLowerCase() : '') + ((event && isHighlighted) ? ' highlighted' : '')}
+      className={'event-card ' + (event ? getSeverityClass(event).toLowerCase() : '') + ((event && isHighlighted) ? ' highlighted' : '')}
       data-key={event ? event.id : ''}
     >
       <div ref={childRef} className="event-card__title" data-key={event ? event.id : ''}>
-        { showLoader ? <Skeleton width={75} /> : <div className="event-header"><div className="eventType"><EventTypeIcon event={event} state={event.display_category === 'majorEvents' ? 'static' : 'active'} alt={true} />
+        { showLoader ? <Skeleton width={75} /> : <div className="event-header"><div className="eventType"><EventTypeIcon event={event} state={event.display_category === 'majorEvents' || event.display_category === 'chainUps' ? 'static' : 'active'} alt={true} />
             <span className="eventType__text">{getTypeDisplay(event)}
             </span>
           </div>

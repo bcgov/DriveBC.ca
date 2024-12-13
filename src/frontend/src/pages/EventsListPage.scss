@@ -145,7 +145,15 @@
 
   .delay-icon-img {
     width: 1.5rem;
+    height: 1.5rem;
     margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 100%;
+    }
   }
 }
 
@@ -162,6 +170,12 @@
 .minor .eventType {
   background: #FEF0D8;
   color: $Gold110;
+}
+
+.chain-up .eventType {
+  background: #FFEF76;
+  color: #292929;
+  border: 1px solid #292929
 }
 
 .updated-pill {

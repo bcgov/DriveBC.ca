@@ -110,6 +110,7 @@ export default function EventsListPage() {
     'minorEvents': mapContext.visible_layers.minorEvents,
     'futureEvents': mapContext.visible_layers.futureEvents,
     'roadConditions': false,
+    'chainUps': mapContext.visible_layers.chainUps,
   });
   const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
   const [trackedEvents, setTrackedEvents] = useState({}); // Track event updates between refreshes
@@ -601,6 +602,7 @@ export default function EventsListPage() {
                 callback={toggleEventCategoryFilter}
                 disableFeatures={true}
                 enableRoadConditions={false}
+                enableChainUps={true}
                 textOverride={'List filters'}
                 isDelaysPage={true}
               />

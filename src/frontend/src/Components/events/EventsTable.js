@@ -18,7 +18,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
-import { getTypeDisplay, routeAtSortFn, routeOrderSortFn, severitySortFn } from './functions';
+import { getTypeDisplay, getSeverityClass, routeAtSortFn, routeOrderSortFn, severitySortFn } from './functions';
 import EventTypeIcon from './EventTypeIcon';
 import FriendlyTime from '../shared/FriendlyTime';
 
@@ -37,7 +37,7 @@ export default function EventsTable(props) {
     return (
     <OverlayTrigger placement="top" overlay={getDelayTooltip(data)}>
       <button className="eventType" aria-label={getTypeDisplay(data)} aria-describedby={getDelayTooltipID(data)}>
-        <EventTypeIcon event={data} state={data.display_category === 'majorEvents' ? 'static' : 'active'} alt={true} />
+        <EventTypeIcon event={data} state={data.display_category === 'majorEvents' || data.display_category === 'chainUps' ? 'static' : 'active'} alt={true} />
         <span>{getTypeDisplay(data)}</span>
       </button>
       </OverlayTrigger>
@@ -64,6 +64,10 @@ export default function EventsTable(props) {
         return <Tooltip id="tooltip--futureEvents" className="tooltip-content">
           <p>Future road work or construction is planned for this road.</p>
         </Tooltip>
+      case "chainUps":
+        return <Tooltip id="tooltip--chainUps" className="tooltip-content">
+          <p>Segments of the highway that require Commercial Vehicles over 11,794kg to have chains on in order to use the highway.</p>
+        </Tooltip>
     }
   }
 
@@ -78,6 +82,8 @@ export default function EventsTable(props) {
         return "tooltip--minorEvents";
       case "futureEvents":
         return "tooltip--futureEvents";
+      case "chainUps":
+        return "tooltip--chainUps";
     }
   }
 
@@ -229,7 +235,7 @@ export default function EventsTable(props) {
       res.push(
         <tr
           ref={(el) => (eventRefs.current[row.original.id] = el )}
-          className={`${row.original.severity.toLowerCase()} headerRow ${isHighlighted ? 'highlighted' : ''}`}
+          className={`${getSeverityClass(row.original).toLowerCase()} headerRow ${isHighlighted ? 'highlighted' : ''}`}
           tabIndex={0}
           key={`${row.id}-header-row`}
           data-key={row.original.id}
@@ -250,7 +256,7 @@ export default function EventsTable(props) {
       );
 
       res.push(
-        <tr className={`${row.original.severity.toLowerCase()} dataRow`} key={`${row.id}-data-row`}>
+        <tr className={`${getSeverityClass(row.original).toLowerCase()} dataRow`} key={`${row.id}-data-row`}>
           {row.getVisibleCells().map((cell) => {
             return (
               <td className={cell.column.id}
@@ -268,7 +274,7 @@ export default function EventsTable(props) {
       );
 
       res.push(
-        <tr className={`${row.original.severity.toLowerCase()} mapLinkRow`} key={`${row.id}-map-link-row`}>
+        <tr className={`${getSeverityClass(row.original).toLowerCase()} mapLinkRow`} key={`${row.id}-map-link-row`}>
           <td colSpan={5} className={'map'} title="">
               <Button
                 className="viewOnMap-btn"

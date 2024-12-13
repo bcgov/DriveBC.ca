@@ -16,6 +16,7 @@
 
       .eventType {
         padding: 0;
+        border: none;
       }
     }
 
@@ -23,7 +24,7 @@
       font-weight: 700;
     }
   }
-  
+
   &__details {
 
     & > div {
@@ -52,7 +53,7 @@
       .content {
         display: block;
         padding: 8px 12px;
-        
+
         .route {
           font-size: 1.25rem;
           font-weight: 700;
@@ -71,7 +72,7 @@
         border-bottom: none;
         display: flex;
         justify-content: center;
-        
+
         .viewMap-btn {
           font-size: 1rem;
         }
@@ -105,14 +106,19 @@
     background: $Error;
     color: white;
   }
-  
+
   &.major .event-header {
     background: #FFE4E5;
     color: $Error;
   }
-  
+
   &.minor .event-header {
     background: #FEF0D8;
     color: $Gold110;
+  }
+
+  &.chain-up .event-header {
+    background: #FFEF76;
+    color: #292929;
   }
 }
