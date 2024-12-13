@@ -1,12 +1,10 @@
 from apps.shared.enums import CacheKey, CacheTimeout
 from apps.shared.views import CachedListModelMixin
-from apps.weather.models import (
-    CurrentWeather, HighElevationForecast, RegionalWeather
-)
+from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
 from apps.weather.serializers import (
     CurrentWeatherSerializer,
     HighElevationForecastSerializer,
-    RegionalWeatherSerializer
+    RegionalWeatherSerializer,
 )
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -23,13 +21,13 @@ class RegionalWeatherAPI(CachedListModelMixin):
 class WeatherViewSet(viewsets.ViewSet):
     @action(detail=True, methods=['get'])
     def regional(self, request, pk=None):
-        regional_weather_objects = RegionalWeather.objects.all()
+        regional_weather_objects = RegionalWeather.objects.all().exclude(code=None)
         serializer = RegionalWeatherSerializer(regional_weather_objects, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['get'])
     def current(self, request, pk=None):
-        current_weather_objects = CurrentWeather.objects.all()
+        current_weather_objects = CurrentWeather.objects.all().exclude(code=None)
         serializer = CurrentWeatherSerializer(current_weather_objects, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

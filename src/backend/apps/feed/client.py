@@ -476,6 +476,7 @@ class FeedClient:
 
                     if shouldSkip is False:
                         current_weather_data = {
+                            'code': station_number,
                             'weather_station_name': weather_station_name,
                             'elevation': elevation,
                             'location_description': location_description,
