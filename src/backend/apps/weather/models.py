@@ -51,6 +51,8 @@ class RegionalWeather(BaseModel):
 
 class CurrentWeather(BaseModel):
     """ Local Weather reports and forecasts from MOTT sites """
+    code = models.CharField(max_length=10, null=True)
+
     location = models.PointField(null=True)
     weather_station_name = models.CharField(max_length=100)
     elevation = models.IntegerField(null=True)

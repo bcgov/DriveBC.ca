@@ -1,16 +1,15 @@
 from zoneinfo import ZoneInfo
 
+from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
-
-from apps.weather.models import (
-    CurrentWeather, HighElevationForecast, RegionalWeather
-)
 
 tz = ZoneInfo("America/Vancouver")
 
 
 class RegionalWeatherSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+
     class Meta:
         model = RegionalWeather
         fields = [
@@ -27,9 +26,13 @@ class RegionalWeatherSerializer(serializers.ModelSerializer):
             'warnings',
         ]
 
+    def get_id(self, obj):
+        return obj.code
+
 
 # Current Weather serializer
 class CurrentWeatherSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
     air_temperature = serializers.SerializerMethodField()
     road_temperature = serializers.SerializerMethodField()
     precipitation = serializers.SerializerMethodField()
@@ -62,6 +65,9 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
             'issuedUtc',
             'elevation'
         ]
+
+    def get_id(self, obj):
+        return obj.code
 
     def get_air_temperature(self, obj):
         if "air_temperature" in obj.datasets:
@@ -139,9 +145,9 @@ class HighElevationForecastSerializer(serializers.ModelSerializer):
 
     def get_id(self, obj):
         return obj.code
-    
+
     def get_hwyName(self, obj):
-        parts = obj.name.rsplit('-', 1) 
+        parts = obj.name.rsplit('-', 1)
         return parts[0].strip() if parts else ""
 
     def get_hwyDescription(self, obj):
