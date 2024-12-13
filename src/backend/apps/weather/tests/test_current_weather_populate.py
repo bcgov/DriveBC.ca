@@ -1,4 +1,5 @@
 import copy
+import logging
 
 from apps.shared.tests import BaseTest
 from apps.weather.models import CurrentWeather
@@ -10,6 +11,9 @@ from apps.weather.tests.test_data.local_weather_parsed_feed import (
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
+
+# suppress logged error messages to reduce noise
+logging.getLogger().setLevel(logging.CRITICAL)
 
 
 class TestCurrentWeatherPopulate(BaseTest):

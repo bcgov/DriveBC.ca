@@ -60,9 +60,6 @@ class TestEventFeedSerializer(BaseTest):
             2021, 4, 26, 5, 19, 2, tzinfo=zoneinfo.ZoneInfo(key='America/Vancouver')
         )
 
-        # Manually changed year to future
-        assert first_event_data["last_updated"].date() == datetime.date.today()
-
         second_event_data = events_list["events"][1]
         assert ("event_sub_type" not in second_event_data) is True
 

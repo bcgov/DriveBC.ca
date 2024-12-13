@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import zoneinfo
 from http.client import INTERNAL_SERVER_ERROR
 from pathlib import Path
@@ -12,6 +13,9 @@ from apps.webcam.tasks import populate_all_webcam_data, populate_webcam_from_dat
 from apps.webcam.tests.test_data.webcam_parsed_feed import parsed_feed
 from django.contrib.gis.geos import Point
 from httpx import HTTPStatusError
+
+# suppress logged error messages to reduce noise
+logging.getLogger().setLevel(logging.CRITICAL)
 
 
 class TestWebcamModel(BaseTest):

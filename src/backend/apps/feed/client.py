@@ -538,7 +538,7 @@ class FeedClient:
             response.raise_for_status()
             json_response = response.json()
             json_objects = []
-            
+
             for station in json_response:
                 hourly_forecast_group = []
                 station_number = station.get("WeatherStationNumber")
@@ -699,7 +699,7 @@ class FeedClient:
         except (KeyError, ValidationError):
             field_errors = serializer.errors
             for field, errors in field_errors.items():
-                print(f"Field: {field}, Errors: {errors}")
+                logger.warning(f"Field: {field}, Errors: {errors}")
 
     def get_rest_stop_list(self):
         return self.get_rest_stop_list_feed(

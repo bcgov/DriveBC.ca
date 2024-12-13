@@ -1,4 +1,5 @@
 import json
+import logging
 from http.client import INTERNAL_SERVER_ERROR
 from pathlib import Path
 from unittest.mock import patch
@@ -10,6 +11,9 @@ from apps.ferry.tests.test_data.ferry_parsed_feed import parsed_feed
 from apps.shared.tests import BaseTest, MockResponse
 from django.contrib.gis.geos import Point
 from httpx import HTTPStatusError
+
+# suppress logged error messages to reduce noise
+logging.getLogger().setLevel(logging.CRITICAL)
 
 
 class TestFerryModel(BaseTest):

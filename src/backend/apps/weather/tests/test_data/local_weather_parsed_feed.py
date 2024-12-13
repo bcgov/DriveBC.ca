@@ -16,7 +16,7 @@ parsed_feed = {
     },
     "location_longitude": -123.11806,
     "location_latitude": 50.05417,
-    "issuedUtc": "2024-07-04T21:00:00",
+    "issuedUtc": "2024-07-04T21:00:00Z",
     "hourly_forecast_group": [
         {
             "TimestampUtc": "2024-01-15T13:00:00.000Z",
@@ -316,6 +316,6 @@ parsed_summer_feed = {
     "datasets": {},
     "location_longitude": -123.11806,
     "location_latitude": 50.05417,
-    "issuedUtc": "2024-07-04T21:00:00",
+    "issuedUtc": "2024-07-04T21:00:00Z",
     "hourly_forecast_group": []
 }

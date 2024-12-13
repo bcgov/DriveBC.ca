@@ -1,0 +1,1722 @@
+[
+  {
+    "event-id": "DBC-28386",
+    "is-draft": false,
+    "headline": {
+      "category": "CONSTRUCTION",
+      "code": "Maintenance",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Maintenance",
+      "variant_cause_text": "due to maintenance work"
+    },
+    "editor": {
+      "editor-identifier": "IDIR__LCELLE",
+      "description": "IDIR__LCELLE"
+    },
+    "message-number": 71050,
+    "message-type-version": 0,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBC",
+      "center-id": "agency",
+      "contact": {
+        "contact-id": "IDIR__LCELLE",
+        "email-address": "Lucas.Celle@gov.bc.ca",
+        "organization-name": "DriveBC Input Tool",
+        "person-name": "Lucas Celle"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1733958347706,
+      "nanos": 706019800,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1734053400000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CONSTRUCTION",
+      "event_subtype": "ROAD_MAINTENANCE",
+      "event_area_area_id": "Lower Mainland District",
+      "event_service_area": "04 - Howe Sound",
+      "midpoint_lng": -123.134758139773,
+      "midpoint_lat": 49.7350125183174,
+      "event_road_direction": "southbound",
+      "event_road_from": "at Mamquam Rd",
+      "start_point_linear_reference": 117.242
+    },
+    "operator-comments": {
+      "notes-and-comments": "As per Chris Jones Miller Cap"
+    },
+    "status": "UPDATED",
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": false,
+        "element-id": 1,
+        "end-time": {
+          "time": 1734053400000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "update-time": {
+          "time": 1733958347706,
+          "nanos": 706019800,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "start-time": {
+          "time": 1734017400000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "source": {
+          "organization-id": "DBC",
+          "center-id": "agency",
+          "contact": {
+            "contact-id": "IDIR__LCELLE",
+            "email-address": "Lucas.Celle@gov.bc.ca",
+            "organization-name": "DriveBC Input Tool",
+            "person-name": "Lucas Celle"
+          }
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 215,
+              "category": "construction",
+              "code": "maintenance"
+            }
+          },
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 43,
+              "category": "traffic_pattern",
+              "code": "right lane closed"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NEGATIVE_DIRECTION",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 49.7350125183174,
+                "longitude": -123.134758139773
+              },
+              "linear-reference": 117.242
+            },
+            "route-designator": "Highway 99",
+            "linear-reference-version": 1
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "Point",
+      "coordinates": [-123.134758, 49.735013]
+    },
+    "bounds": {
+      "minLat": 49.7350125183174,
+      "minLon": -123.134758139773,
+      "maxLat": 49.7350125183174,
+      "maxLon": -123.134758139773
+    },
+    "communication-plan-template": {
+      "nearby-city-reference": "Squamish"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Maintenance"
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Maintenance"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 99, southbound. Maintenance at Mamquam Rd (Squamish). Until Thursday, December 12 at 5:30 PM. Right lane closed. Last updated Wednesday, December 11 at 3:05 PM."
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": "DriveBC Input Tool"
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy99 SB: Maintenance at Mamquam Rd (Squamish). Right lane closed."
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 99, southbound. Maintenance at Mamquam Rd (Squamish). Until Thu Dec 12 at 5:30 PM PST. Right lane closed. Last updated Wed Dec 11 at 3:05 PM PST. (DBC-71050)"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 99, southbound. Maintenance at Mamquam Rd (Squamish). Until Thu Dec 12 at 5:30 PM PST. Right lane closed. \u003Cbr /\u003E\u003Cbr /\u003E\u003Ci\u003EOperator Comment\u003C/i\u003E: As per Chris Jones Miller Cap"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 99, southbound. Maintenance at Mamquam Rd (Squamish). Until Thu Dec 12 at 5:30 PM PST. Right lane closed. \u003Cbr /\u003E\u003Cbr /\u003E\u003Ci\u003EOperator Comment\u003C/i\u003E: As per Chris Jones Miller Cap \u003Cbr /\u003E\u003Cbr /\u003E Last updated Wed Dec 11 at 3:05 PM PST"
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "At Mamquam Rd"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 99, southbound. Maintenance at Mamquam Rd (Squamish). Until Thu Dec 12 at 5:30 PM PST. Right lane closed. \u003Cbr /\u003E\u003Cbr /\u003E\u003Ci\u003EOperator Comment\u003C/i\u003E: As per Chris Jones Miller Cap \u003Cbr /\u003E\u003Cbr /\u003E Last updated Wed Dec 11 at 3:05 PM PST"
+      }
+    ],
+    "representation": {
+      "id": 633,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Maintenance",
+      "cause": "due to maintenance work",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 10,
+        "name": "PlannedEvent_28x28.png.1507064774778",
+        "fileName": "PlannedEvent_28x28.png",
+        "absolutePath": "https://dit.th.gov.bc.ca/phrases_v1/icons/PlannedEvent_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBC-46014",
+    "is-draft": false,
+    "headline": {
+      "category": "INCIDENT",
+      "code": "Required maintenance (Ferries)",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "there will be required maintenance",
+      "variant_cause_text": "due to required maintenance"
+    },
+    "editor": {
+      "editor-identifier": "IDIR__STHEAKER",
+      "description": "IDIR__STHEAKER"
+    },
+    "message-number": 71059,
+    "message-type-version": 0,
+    "priority": 1,
+    "sender": {
+      "organization-id": "DBC",
+      "center-id": "agency",
+      "contact": {
+        "contact-id": "IDIR__STHEAKER",
+        "email-address": "Shelly.Theaker@gov.bc.ca",
+        "organization-name": "DriveBC Input Tool",
+        "person-name": "Shelly Theaker"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1733966380991,
+      "nanos": 991474200,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1734562800000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "INCIDENT",
+      "event_subtype": "ALMOST_IMPASSABLE",
+      "event_area_area_id": "West Kootenay District",
+      "event_service_area": "10 - Central Kootenay",
+      "midpoint_lng": -117.901682737415,
+      "midpoint_lat": 50.1073344898771,
+      "event_road_from": "at Arrow Park",
+      "start_point_linear_reference": -1
+    },
+    "next-update-time": {
+      "time": 1734562800000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "status": "UPDATED",
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": false,
+        "element-id": 1,
+        "end-time": {
+          "time": 1734562800000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "update-time": {
+          "time": 1733966380991,
+          "nanos": 991474200,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "start-time": {
+          "time": 1734552000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "source": {
+          "organization-id": "DBC",
+          "center-id": "agency",
+          "contact": {
+            "contact-id": "IDIR__STHEAKER",
+            "email-address": "Shelly.Theaker@gov.bc.ca",
+            "organization-name": "DriveBC Input Tool",
+            "person-name": "Shelly Theaker"
+          }
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 239,
+              "category": "incident",
+              "code": "required maintenance (ferries)"
+            }
+          },
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 18,
+              "category": "traffic_pattern",
+              "code": "closed"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "local road",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.1073344898771,
+                "longitude": -117.901682737415
+              },
+              "cross-street-designator": [
+                "Arrow Park"
+              ],
+              "cross-street-name": [
+                "Arrow Park"
+              ]
+            },
+            "route-designator": "Arrow Park Ferry",
+            "link-alignment": "NORTHBOUND"
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "Point",
+      "coordinates": [-117.901683, 50.107334]
+    },
+    "bounds": {
+      "minLat": 50.1073344898771,
+      "minLon": -117.901682737415,
+      "maxLat": 50.1073344898771,
+      "maxLon": -117.901682737415
+    },
+    "communication-plan-template": {
+
+    },
+    "communication-plans": [
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": "DriveBC Input Tool"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Arrow Park Ferry. There will be required maintenance at Arrow Park. Starting Wed Dec 18 at 12:00 PM PST until Wed Dec 18 at 3:00 PM PST. Road closure planned. Next update time Wed Dec 18 at 3:00 PM PST. \u003Cbr /\u003E\u003Cbr /\u003E Last updated Wed Dec 11 at 5:19 PM PST"
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "At Arrow Park"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Arrow Park Ferry. There will be required maintenance at Arrow Park. Starting Wednesday, December 18 at 12:00 PM until Wednesday, December 18 at 3:00 PM. Road closure planned. Next update time Wednesday, December 18 at 3:00 PM. Last updated Wednesday, December 11 at 5:19 PM."
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Arrow Park Ferry. There will be required maintenance at Arrow Park. Starting Wed Dec 18 at 12:00 PM PST until Wed Dec 18 at 3:00 PM PST. Road closure planned. Next update time Wed Dec 18 at 3:00 PM PST. Last updated Wed Dec 11 at 5:19 PM PST. (DBC-71059)"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Arrow Park Ferry. There will be required maintenance at Arrow Park. Starting Wed Dec 18 at 12:00 PM PST until Wed Dec 18 at 3:00 PM PST. Road closure planned. Next update time Wed Dec 18 at 3:00 PM PST."
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#ArrowParkFerry: There will be required maintenance at Arrow Park. Road closure planned."
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Required maintenance (Ferries)"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Arrow Park Ferry. There will be required maintenance at Arrow Park. Starting Wed Dec 18 at 12:00 PM PST until Wed Dec 18 at 3:00 PM PST. Road closure planned. Next update time Wed Dec 18 at 3:00 PM PST. \u003Cbr /\u003E\u003Cbr /\u003E Last updated Wed Dec 11 at 5:19 PM PST"
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Required maintenance (Ferries)"
+      }
+    ],
+    "representation": {
+      "id": 696,
+      "priority": {
+        "id": 1,
+        "name": "Major",
+        "sortOrder": 1,
+        "feuPriorities": [1, 2, 3]
+      },
+      "variant": {
+        "id": 3,
+        "variant": "PLANNED"
+      },
+      "action": "there will be required maintenance",
+      "cause": "due to required maintenance",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 1,
+        "name": "Incident_Major_28x28.png.1507062259419",
+        "fileName": "Incident_Major_28x28.png",
+        "absolutePath": "https://dit.th.gov.bc.ca/phrases_v1/icons/Incident_Major_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBC-52446",
+    "is-draft": false,
+    "headline": {
+      "category": "ROAD_CONDITION",
+      "code": "Compact snow",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Compact snow",
+      "variant_cause_text": "because of compact snow"
+    },
+    "editor": {
+      "editor-identifier": "BCeID__gwhitmore1",
+      "description": "BCeID__gwhitmore1"
+    },
+    "message-number": 71062,
+    "message-type-version": 0,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBC",
+      "center-id": "agency",
+      "contact": {
+        "contact-id": "BCeID__gwhitmore1",
+        "email-address": "gloria@fourstarcommunications.com",
+        "organization-name": "DriveBC Input Tool",
+        "person-name": "Gloria Whitmore"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1734013512737,
+      "nanos": 737553800,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1854013512737,
+      "nanos": 737553800,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -25200000
+    },
+    "open511-event-details": {
+      "event_type_description": "ROAD_CONDITION",
+      "event_subtype": "SNOW_PACKED",
+      "event_area_area_id": "Cariboo District",
+      "event_service_area": "16 - South Cariboo",
+      "midpoint_lng": -122.265171991144,
+      "midpoint_lat": 50.7726131021792,
+      "event_road_to": "Shalath Cut off Road near Lillooet",
+      "event_road_direction": "in both directions",
+      "event_road_from": "Mission Dam near Lillooet",
+      "start_point_linear_reference": -1
+    },
+    "status": "UPDATED",
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1854013512737,
+          "nanos": 737553800,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1734013512737,
+          "nanos": 737553800,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "source": {
+          "organization-id": "DBC",
+          "center-id": "agency",
+          "contact": {
+            "contact-id": "BCeID__gwhitmore1",
+            "email-address": "gloria@fourstarcommunications.com",
+            "organization-name": "DriveBC Input Tool",
+            "person-name": "Gloria Whitmore"
+          }
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 64,
+              "category": "road_condition",
+              "code": "compact snow"
+            }
+          },
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 62,
+              "category": "road_condition",
+              "code": "slippery sections"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "BOTH_DIRECTIONS",
+            "link-ownership": "local road",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.7726131021792,
+                "longitude": -122.265171991144
+              },
+              "cross-street-designator": [
+                "Mission Dam"
+              ],
+              "cross-street-name": [
+                "Mission Dam"
+              ],
+              "signed-destination": [
+                "near Lillooet"
+              ]
+            },
+            "route-designator": "Mission MtRoad",
+            "link-alignment": "EASTBOUND",
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.7726131021792,
+                "longitude": -122.265171991144
+              },
+              "cross-street-designator": [
+                "Shalath Cut off Road"
+              ],
+              "cross-street-name": [
+                "Shalath Cut off Road"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "Point",
+      "coordinates": [-122.265172, 50.772613]
+    },
+    "bounds": {
+      "minLat": 50.7726131021792,
+      "minLon": -122.265171991144,
+      "maxLat": 50.7726131021792,
+      "maxLon": -122.265171991144
+    },
+    "communication-plan-template": {
+
+    },
+    "communication-plans": [
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Mission MtRoad, in both directions. Compact snow between Mission Dam and Shalath Cut off Road near Lillooet. Watch for slippery sections. \u003Cbr /\u003E\u003Cbr /\u003E Last updated Thu Dec 12 at 6:25 AM PST"
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Compact snow"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": "DriveBC Input Tool"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Mission MtRoad, in both directions. Compact snow between Mission Dam and Shalath Cut off Road near Lillooet. Watch for slippery sections. \u003Cbr /\u003E\u003Cbr /\u003E Last updated Thu Dec 12 at 6:25 AM PST"
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Compact snow"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Mission MtRoad, in both directions. Compact snow between Mission Dam and Shalath Cut off Road near Lillooet. Watch for slippery sections. Last updated Thursday, December 12 at 6:25 AM."
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between Mission Dam and Shalath Cut off Road near Lillooet"
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Mission MtRoad, in both directions. Compact snow between Mission Dam and Shalath Cut off Road near Lillooet. Watch for slippery sections. Last updated Thu Dec 12 at 6:25 AM PST. (DBC-71062)"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Mission MtRoad, in both directions. Compact snow between Mission Dam and Shalath Cut off Road near Lillooet. Watch for slippery sections."
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#MissionMtRoad: Compact snow between Mission Dam and Shalath Cut off Road near Lillooet. Watch for slippery sections."
+      }
+    ],
+    "representation": {
+      "id": 190,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Compact snow",
+      "cause": "because of compact snow",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 20,
+        "name": "RoadCondition_28x28.png.1507065104326",
+        "fileName": "RoadCondition_28x28.png",
+        "absolutePath": "https://dit.th.gov.bc.ca/phrases_v1/icons/RoadCondition_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBC-52791",
+    "is-draft": false,
+    "headline": {
+      "category": "WEATHER_CONDITION",
+      "code": "Limited visibility with fog",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Limited visibility with fog",
+      "variant_cause_text": "due to limited visibility with fog"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 202178,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCRCON",
+      "center-id": "DBCRCON",
+      "contact": {
+        "contact-id": "BCeID__FFourStar1"
+      }
+    },
+    "update-number": 2,
+    "update-time": {
+      "time": 1734013361429,
+      "nanos": 429000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1765549361429,
+      "nanos": 429000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "WEATHER_CONDITION",
+      "event_subtype": "POOR_VISIBILITY",
+      "event_area_area_id": "Okanagan-Shuswap District",
+      "event_service_area": "13 - Okanagan-Shuswap",
+      "midpoint_lng": -118.513520039995,
+      "midpoint_lat": 50.1004586050492,
+      "event_road_to": "Monashee Summit",
+      "event_road_from": "North Fork Rd",
+      "start_point_linear_reference": 52.366,
+      "end_point_linear_reference": 94.477
+    },
+    "status": "UPDATED",
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1854013361429,
+          "nanos": 429000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1734013361429,
+          "nanos": 429000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 208,
+              "category": "weather_condition",
+              "code": "limited visibility with fog"
+            }
+          },
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 62,
+              "category": "road_condition",
+              "code": "slippery sections"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.2468556702284,
+                "longitude": -118.629422737307
+              },
+              "linear-reference": 52.366
+            },
+            "route-designator": "Highway 6 EW",
+            "segment-names": [
+              "Hwy 6 EW - Cherryville to Monashee Summit"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.0546165189738,
+                "longitude": -118.400095314194
+              },
+              "linear-reference": 94.477
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-118.629423, 50.246856],
+        [-118.628453, 50.246057],
+        [-118.62804, 50.245795],
+        [-118.627615, 50.245592],
+        [-118.627118, 50.245355],
+        [-118.624751, 50.244336],
+        [-118.624076, 50.243994],
+        [-118.623657, 50.243736],
+        [-118.623089, 50.243289],
+        [-118.622602, 50.242787],
+        [-118.622563, 50.242736],
+        [-118.622334, 50.24244],
+        [-118.622117, 50.242161],
+        [-118.621618, 50.241516],
+        [-118.621313, 50.24117],
+        [-118.620941, 50.240856],
+        [-118.620723, 50.240724],
+        [-118.620232, 50.240511],
+        [-118.620119, 50.240481],
+        [-118.619418, 50.240298],
+        [-118.619282, 50.240277],
+        [-118.61829, 50.240127],
+        [-118.616352, 50.239835],
+        [-118.611948, 50.238896],
+        [-118.611127, 50.238721],
+        [-118.607041, 50.237849],
+        [-118.605516, 50.237525],
+        [-118.604929, 50.23738],
+        [-118.604079, 50.237071],
+        [-118.603561, 50.236884],
+        [-118.60316, 50.236678],
+        [-118.60266, 50.23632],
+        [-118.602472, 50.236218],
+        [-118.601605, 50.235875],
+        [-118.60138, 50.235738],
+        [-118.600951, 50.235479],
+        [-118.600776, 50.235396],
+        [-118.600562, 50.235294],
+        [-118.600346, 50.235221],
+        [-118.600011, 50.235145],
+        [-118.599896, 50.235119],
+        [-118.599765, 50.235101],
+        [-118.599432, 50.235054],
+        [-118.598718, 50.234994],
+        [-118.59825, 50.234909],
+        [-118.597819, 50.234758],
+        [-118.596264, 50.234127],
+        [-118.595483, 50.233835],
+        [-118.595265, 50.233753],
+        [-118.593082, 50.233128],
+        [-118.592679, 50.232991],
+        [-118.592285, 50.232858],
+        [-118.591625, 50.232585],
+        [-118.591523, 50.232543],
+        [-118.590824, 50.232199],
+        [-118.589955, 50.231629],
+        [-118.589277, 50.231185],
+        [-118.58775, 50.230357],
+        [-118.587645, 50.230293],
+        [-118.587109, 50.229965],
+        [-118.586297, 50.229396],
+        [-118.586252, 50.229359],
+        [-118.585731, 50.22894],
+        [-118.58505, 50.22832],
+        [-118.584733, 50.227993],
+        [-118.583714, 50.226775],
+        [-118.583687, 50.226737],
+        [-118.583199, 50.226045],
+        [-118.583018, 50.225694],
+        [-118.582899, 50.225348],
+        [-118.58289, 50.225175],
+        [-118.582857, 50.224573],
+        [-118.582852, 50.222986],
+        [-118.582825, 50.222698],
+        [-118.582739, 50.222413],
+        [-118.582573, 50.222134],
+        [-118.582233, 50.221734],
+        [-118.580984, 50.220696],
+        [-118.580935, 50.220617],
+        [-118.580747, 50.220312],
+        [-118.580396, 50.219531],
+        [-118.580205, 50.219279],
+        [-118.579921, 50.219052],
+        [-118.579042, 50.218525],
+        [-118.578228, 50.217928],
+        [-118.578034, 50.217796],
+        [-118.577277, 50.217281],
+        [-118.575158, 50.215123],
+        [-118.57445, 50.214457],
+        [-118.574, 50.214084],
+        [-118.573653, 50.213866],
+        [-118.573063, 50.213554],
+        [-118.570164, 50.212284],
+        [-118.569731, 50.212064],
+        [-118.569318, 50.211815],
+        [-118.568767, 50.211394],
+        [-118.567364, 50.210178],
+        [-118.566205, 50.209343],
+        [-118.565689, 50.208906],
+        [-118.563353, 50.20655],
+        [-118.562996, 50.206086],
+        [-118.562507, 50.205301],
+        [-118.562179, 50.204776],
+        [-118.561732, 50.203946],
+        [-118.561481, 50.20348],
+        [-118.561225, 50.20289],
+        [-118.56117, 50.202602],
+        [-118.561152, 50.201728],
+        [-118.561037, 50.201309],
+        [-118.560863, 50.20104],
+        [-118.560592, 50.200803],
+        [-118.559891, 50.2004],
+        [-118.559295, 50.200152],
+        [-118.559279, 50.200145],
+        [-118.558924, 50.200041],
+        [-118.558645, 50.199958],
+        [-118.558133, 50.199807],
+        [-118.557912, 50.199719],
+        [-118.557538, 50.199484],
+        [-118.557044, 50.198906],
+        [-118.556768, 50.198702],
+        [-118.55571, 50.19812],
+        [-118.555223, 50.197671],
+        [-118.554385, 50.196715],
+        [-118.553834, 50.195756],
+        [-118.553819, 50.195722],
+        [-118.553554, 50.195118],
+        [-118.553503, 50.194787],
+        [-118.553438, 50.193477],
+        [-118.553161, 50.192312],
+        [-118.553192, 50.191929],
+        [-118.55321, 50.191894],
+        [-118.553312, 50.191693],
+        [-118.55378, 50.191119],
+        [-118.554456, 50.190577],
+        [-118.554753, 50.190404],
+        [-118.5551, 50.190202],
+        [-118.555339, 50.190031],
+        [-118.555469, 50.189882],
+        [-118.55556, 50.189776],
+        [-118.555385, 50.189664],
+        [-118.55515, 50.189512],
+        [-118.554829, 50.189424],
+        [-118.554457, 50.18942],
+        [-118.553677, 50.189539],
+        [-118.553281, 50.189572],
+        [-118.552848, 50.18955],
+        [-118.552791, 50.189538],
+        [-118.552426, 50.189458],
+        [-118.552413, 50.189455],
+        [-118.552202, 50.189385],
+        [-118.55111, 50.188836],
+        [-118.550469, 50.188514],
+        [-118.549908, 50.188178],
+        [-118.549439, 50.187738],
+        [-118.54891, 50.187098],
+        [-118.548649, 50.186888],
+        [-118.548559, 50.186815],
+        [-118.547493, 50.186193],
+        [-118.547087, 50.185921],
+        [-118.546919, 50.185765],
+        [-118.546534, 50.185274],
+        [-118.546211, 50.185012],
+        [-118.54601, 50.184917],
+        [-118.545407, 50.184697],
+        [-118.545209, 50.184624],
+        [-118.545023, 50.184557],
+        [-118.544531, 50.184279],
+        [-118.54394, 50.183867],
+        [-118.54313, 50.183116],
+        [-118.54252, 50.182498],
+        [-118.54154, 50.181505],
+        [-118.540545, 50.180582],
+        [-118.539206, 50.17918],
+        [-118.539024, 50.179019],
+        [-118.538866, 50.178877],
+        [-118.538452, 50.178655],
+        [-118.538219, 50.178572],
+        [-118.537229, 50.178333],
+        [-118.536779, 50.178156],
+        [-118.536373, 50.177932],
+        [-118.534371, 50.176625],
+        [-118.533843, 50.176367],
+        [-118.533118, 50.176091],
+        [-118.530773, 50.175328],
+        [-118.529978, 50.175046],
+        [-118.52948, 50.174805],
+        [-118.529112, 50.174589],
+        [-118.529017, 50.174534],
+        [-118.527991, 50.173774],
+        [-118.527224, 50.173159],
+        [-118.527065, 50.173031],
+        [-118.526476, 50.172617],
+        [-118.526297, 50.172491],
+        [-118.526049, 50.172176],
+        [-118.525955, 50.171916],
+        [-118.525631, 50.171014],
+        [-118.525548, 50.170729],
+        [-118.525513, 50.170489],
+        [-118.52549, 50.170339],
+        [-118.525348, 50.170064],
+        [-118.525301, 50.170059],
+        [-118.525015, 50.170026],
+        [-118.524966, 50.17002],
+        [-118.524704, 50.170129],
+        [-118.524132, 50.170713],
+        [-118.523864, 50.170885],
+        [-118.523443, 50.17101],
+        [-118.523013, 50.17102],
+        [-118.522484, 50.170959],
+        [-118.521931, 50.170826],
+        [-118.521482, 50.170646],
+        [-118.521359, 50.170572],
+        [-118.520638, 50.170137],
+        [-118.519995, 50.169852],
+        [-118.519705, 50.169724],
+        [-118.518921, 50.169299],
+        [-118.517861, 50.168592],
+        [-118.517694, 50.16848],
+        [-118.517473, 50.168367],
+        [-118.517308, 50.168202],
+        [-118.516904, 50.167935],
+        [-118.51635, 50.167502],
+        [-118.515679, 50.166901],
+        [-118.515476, 50.166719],
+        [-118.515267, 50.166512],
+        [-118.514648, 50.165896],
+        [-118.514088, 50.165237],
+        [-118.513752, 50.164945],
+        [-118.512247, 50.163901],
+        [-118.512034, 50.163593],
+        [-118.511839, 50.162792],
+        [-118.511834, 50.161943],
+        [-118.51134, 50.160631],
+        [-118.511283, 50.160171],
+        [-118.511178, 50.159848],
+        [-118.51096, 50.159525],
+        [-118.5109, 50.159336],
+        [-118.510687, 50.159008],
+        [-118.51051, 50.158883],
+        [-118.50954, 50.157173],
+        [-118.50951, 50.157042],
+        [-118.509492, 50.156966],
+        [-118.509245, 50.156625],
+        [-118.509076, 50.156477],
+        [-118.50873, 50.155973],
+        [-118.508595, 50.155616],
+        [-118.508577, 50.155426],
+        [-118.50858, 50.155389],
+        [-118.508652, 50.154671],
+        [-118.50859, 50.154309],
+        [-118.508553, 50.154099],
+        [-118.508285, 50.15255],
+        [-118.507891, 50.151149],
+        [-118.507582, 50.150267],
+        [-118.507521, 50.150093],
+        [-118.5072, 50.148544],
+        [-118.507193, 50.148347],
+        [-118.507318, 50.147702],
+        [-118.507443, 50.147515],
+        [-118.507899, 50.146973],
+        [-118.50814, 50.146746],
+        [-118.508299, 50.146382],
+        [-118.508366, 50.146006],
+        [-118.508358, 50.145626],
+        [-118.50817, 50.144681],
+        [-118.508023, 50.144293],
+        [-118.50771, 50.143639],
+        [-118.507647, 50.143507],
+        [-118.507348, 50.142882],
+        [-118.50716, 50.142489],
+        [-118.506843, 50.141681],
+        [-118.506713, 50.140457],
+        [-118.506775, 50.140081],
+        [-118.506866, 50.139902],
+        [-118.507371, 50.139254],
+        [-118.507477, 50.138916],
+        [-118.507458, 50.138745],
+        [-118.507313, 50.138413],
+        [-118.506872, 50.137609],
+        [-118.506012, 50.13616],
+        [-118.505811, 50.13582],
+        [-118.505368, 50.134797],
+        [-118.504861, 50.133994],
+        [-118.504698, 50.133583],
+        [-118.504653, 50.133166],
+        [-118.504722, 50.132758],
+        [-118.504963, 50.13217],
+        [-118.505624, 50.130756],
+        [-118.505871, 50.130227],
+        [-118.505908, 50.130148],
+        [-118.506741, 50.128367],
+        [-118.50677, 50.128298],
+        [-118.506858, 50.128093],
+        [-118.507129, 50.127464],
+        [-118.507332, 50.127093],
+        [-118.507641, 50.126774],
+        [-118.50766, 50.126761],
+        [-118.507754, 50.126696],
+        [-118.50875, 50.126006],
+        [-118.508999, 50.125707],
+        [-118.509099, 50.125397],
+        [-118.508995, 50.124482],
+        [-118.508846, 50.123911],
+        [-118.508699, 50.123539],
+        [-118.508194, 50.122636],
+        [-118.508007, 50.122338],
+        [-118.506724, 50.1203],
+        [-118.50646, 50.119694],
+        [-118.50635, 50.119298],
+        [-118.506336, 50.1191],
+        [-118.506393, 50.118753],
+        [-118.5064, 50.118713],
+        [-118.506769, 50.117838],
+        [-118.506819, 50.117693],
+        [-118.507048, 50.11702],
+        [-118.50723, 50.116728],
+        [-118.507293, 50.116626],
+        [-118.507794, 50.116083],
+        [-118.507976, 50.115729],
+        [-118.508005, 50.115465],
+        [-118.507918, 50.114419],
+        [-118.507852, 50.114097],
+        [-118.507689, 50.113607],
+        [-118.507218, 50.11264],
+        [-118.507139, 50.11231],
+        [-118.507191, 50.111988],
+        [-118.507288, 50.111796],
+        [-118.507343, 50.111691],
+        [-118.508055, 50.110784],
+        [-118.508429, 50.11045],
+        [-118.508476, 50.110421],
+        [-118.508968, 50.110116],
+        [-118.509311, 50.109903],
+        [-118.509358, 50.109874],
+        [-118.509557, 50.109717],
+        [-118.509935, 50.109418],
+        [-118.511429, 50.107959],
+        [-118.511821, 50.107576],
+        [-118.512007, 50.107304],
+        [-118.512114, 50.106868],
+        [-118.51201, 50.106268],
+        [-118.512015, 50.106221],
+        [-118.512053, 50.105798],
+        [-118.512188, 50.105481],
+        [-118.51263, 50.104662],
+        [-118.512729, 50.104302],
+        [-118.512683, 50.103642],
+        [-118.512661, 50.103325],
+        [-118.512744, 50.102721],
+        [-118.513113, 50.101605],
+        [-118.513389, 50.10077],
+        [-118.513533, 50.100429],
+        [-118.513722, 50.100089],
+        [-118.513776, 50.100026],
+        [-118.514368, 50.099329],
+        [-118.514429, 50.099257],
+        [-118.515689, 50.097896],
+        [-118.516248, 50.09741],
+        [-118.516419, 50.097294],
+        [-118.516588, 50.097179],
+        [-118.5175, 50.096559],
+        [-118.518057, 50.096141],
+        [-118.518349, 50.095835],
+        [-118.518536, 50.095491],
+        [-118.51859, 50.095308],
+        [-118.518625, 50.094927],
+        [-118.518416, 50.09372],
+        [-118.518359, 50.093387],
+        [-118.518305, 50.0928],
+        [-118.518473, 50.091844],
+        [-118.518659, 50.09131],
+        [-118.51876, 50.09115],
+        [-118.519062, 50.090877],
+        [-118.519473, 50.090661],
+        [-118.519826, 50.090515],
+        [-118.520386, 50.090284],
+        [-118.521174, 50.089791],
+        [-118.521508, 50.089506],
+        [-118.521639, 50.089347],
+        [-118.521729, 50.089104],
+        [-118.521766, 50.089003],
+        [-118.521805, 50.087699],
+        [-118.521758, 50.087526],
+        [-118.521588, 50.08721],
+        [-118.520821, 50.08624],
+        [-118.5207, 50.085925],
+        [-118.520719, 50.085593],
+        [-118.520963, 50.085117],
+        [-118.521912, 50.083666],
+        [-118.522047, 50.083508],
+        [-118.522893, 50.082745],
+        [-118.523889, 50.081777],
+        [-118.524134, 50.08141],
+        [-118.52436, 50.081073],
+        [-118.525421, 50.079915],
+        [-118.526049, 50.079044],
+        [-118.526374, 50.07848],
+        [-118.526675, 50.07813],
+        [-118.526834, 50.077946],
+        [-118.528173, 50.076935],
+        [-118.528993, 50.076435],
+        [-118.530546, 50.075691],
+        [-118.532004, 50.07488],
+        [-118.533566, 50.074138],
+        [-118.536948, 50.072533],
+        [-118.537869, 50.072185],
+        [-118.539096, 50.07178],
+        [-118.540793, 50.071128],
+        [-118.543744, 50.07007],
+        [-118.544462, 50.069849],
+        [-118.545696, 50.069585],
+        [-118.546825, 50.069274],
+        [-118.547232, 50.069111],
+        [-118.547413, 50.069011],
+        [-118.54772, 50.068768],
+        [-118.547841, 50.068631],
+        [-118.548027, 50.068332],
+        [-118.54905, 50.065992],
+        [-118.549361, 50.065505],
+        [-118.549668, 50.065216],
+        [-118.549855, 50.065086],
+        [-118.550274, 50.064862],
+        [-118.551348, 50.064374],
+        [-118.551695, 50.064145],
+        [-118.551966, 50.063865],
+        [-118.552431, 50.063254],
+        [-118.552702, 50.062948],
+        [-118.553801, 50.061864],
+        [-118.554823, 50.060936],
+        [-118.5554, 50.060283],
+        [-118.555652, 50.059888],
+        [-118.556175, 50.058325],
+        [-118.557014, 50.056351],
+        [-118.557295, 50.055834],
+        [-118.55774, 50.055177],
+        [-118.558706, 50.054108],
+        [-118.559029, 50.053614],
+        [-118.559238, 50.053127],
+        [-118.559251, 50.052821],
+        [-118.559158, 50.052532],
+        [-118.558678, 50.051512],
+        [-118.558198, 50.050796],
+        [-118.558024, 50.050473],
+        [-118.557793, 50.049811],
+        [-118.557721, 50.049602],
+        [-118.557547, 50.049146],
+        [-118.557457, 50.048964],
+        [-118.557017, 50.048072],
+        [-118.55605, 50.04698],
+        [-118.555742, 50.046702],
+        [-118.555396, 50.046442],
+        [-118.555097, 50.04616],
+        [-118.554596, 50.04539],
+        [-118.553792, 50.044769],
+        [-118.553401, 50.044355],
+        [-118.553273, 50.044039],
+        [-118.553079, 50.043226],
+        [-118.552766, 50.042592],
+        [-118.552631, 50.042105],
+        [-118.552488, 50.041802],
+        [-118.552415, 50.041726],
+        [-118.552239, 50.041545],
+        [-118.5519, 50.041342],
+        [-118.551498, 50.041206],
+        [-118.55128, 50.041167],
+        [-118.551259, 50.041166],
+        [-118.550835, 50.041143],
+        [-118.550402, 50.041191],
+        [-118.549999, 50.041299],
+        [-118.54982, 50.041389],
+        [-118.549117, 50.041745],
+        [-118.54848, 50.041959],
+        [-118.54752, 50.042177],
+        [-118.546193, 50.04244],
+        [-118.545322, 50.042571],
+        [-118.543169, 50.042818],
+        [-118.541984, 50.042998],
+        [-118.541438, 50.043139],
+        [-118.540361, 50.043476],
+        [-118.5398, 50.043582],
+        [-118.539225, 50.043624],
+        [-118.538111, 50.043626],
+        [-118.537639, 50.043658],
+        [-118.53758, 50.043663],
+        [-118.536498, 50.043815],
+        [-118.534519, 50.044051],
+        [-118.534021, 50.044152],
+        [-118.533784, 50.044226],
+        [-118.533108, 50.04451],
+        [-118.531966, 50.045038],
+        [-118.531551, 50.045279],
+        [-118.531179, 50.04555],
+        [-118.530531, 50.046138],
+        [-118.529659, 50.046829],
+        [-118.528335, 50.048268],
+        [-118.528117, 50.048505],
+        [-118.527669, 50.048949],
+        [-118.527114, 50.049349],
+        [-118.526854, 50.049475],
+        [-118.526436, 50.049677],
+        [-118.525016, 50.050117],
+        [-118.52355, 50.050571],
+        [-118.523037, 50.050762],
+        [-118.522279, 50.051085],
+        [-118.521557, 50.051461],
+        [-118.519961, 50.052414],
+        [-118.519376, 50.052871],
+        [-118.517584, 50.054537],
+        [-118.515541, 50.056435],
+        [-118.514965, 50.056971],
+        [-118.514576, 50.057267],
+        [-118.513889, 50.057644],
+        [-118.513084, 50.057943],
+        [-118.512178, 50.058143],
+        [-118.511937, 50.058174],
+        [-118.511539, 50.058226],
+        [-118.50926, 50.058445],
+        [-118.508609, 50.058508],
+        [-118.507565, 50.058608],
+        [-118.507519, 50.058616],
+        [-118.507165, 50.05867],
+        [-118.506693, 50.058743],
+        [-118.506117, 50.058872],
+        [-118.505305, 50.059128],
+        [-118.504743, 50.059367],
+        [-118.504645, 50.059409],
+        [-118.503263, 50.060094],
+        [-118.501653, 50.060789],
+        [-118.500839, 50.061022],
+        [-118.500245, 50.061109],
+        [-118.496844, 50.061442],
+        [-118.495923, 50.061551],
+        [-118.495347, 50.061661],
+        [-118.494826, 50.061841],
+        [-118.494368, 50.062085],
+        [-118.493214, 50.062947],
+        [-118.492791, 50.063208],
+        [-118.492552, 50.063317],
+        [-118.492053, 50.06349],
+        [-118.491541, 50.063614],
+        [-118.491007, 50.063658],
+        [-118.490491, 50.063613],
+        [-118.489751, 50.063436],
+        [-118.489359, 50.063314],
+        [-118.488545, 50.063061],
+        [-118.488006, 50.062844],
+        [-118.487753, 50.062718],
+        [-118.487436, 50.062511],
+        [-118.487209, 50.062304],
+        [-118.486063, 50.061167],
+        [-118.485851, 50.060877],
+        [-118.485786, 50.060719],
+        [-118.485765, 50.060555],
+        [-118.485776, 50.060499],
+        [-118.485826, 50.060222],
+        [-118.486034, 50.059738],
+        [-118.486117, 50.059401],
+        [-118.486118, 50.059168],
+        [-118.486118, 50.059053],
+        [-118.486107, 50.058983],
+        [-118.486064, 50.0587],
+        [-118.485932, 50.058351],
+        [-118.485923, 50.058337],
+        [-118.485708, 50.058015],
+        [-118.485514, 50.057834],
+        [-118.485386, 50.057714],
+        [-118.484987, 50.057452],
+        [-118.483737, 50.056728],
+        [-118.483515, 50.056648],
+        [-118.48304, 50.056571],
+        [-118.482566, 50.056594],
+        [-118.481144, 50.056899],
+        [-118.48105, 50.056919],
+        [-118.480633, 50.056985],
+        [-118.480204, 50.056992],
+        [-118.47978, 50.056957],
+        [-118.479355, 50.05696],
+        [-118.479146, 50.056992],
+        [-118.478529, 50.057158],
+        [-118.478078, 50.057212],
+        [-118.477408, 50.057143],
+        [-118.475626, 50.057135],
+        [-118.475114, 50.057085],
+        [-118.474616, 50.056998],
+        [-118.474233, 50.056849],
+        [-118.473545, 50.056721],
+        [-118.473108, 50.056672],
+        [-118.472392, 50.0568],
+        [-118.472005, 50.056949],
+        [-118.471632, 50.057144],
+        [-118.47109, 50.057486],
+        [-118.470398, 50.058019],
+        [-118.468423, 50.059379],
+        [-118.468006, 50.059577],
+        [-118.467503, 50.059659],
+        [-118.46618, 50.059695],
+        [-118.465175, 50.059852],
+        [-118.464661, 50.059844],
+        [-118.464647, 50.059842],
+        [-118.463879, 50.059721],
+        [-118.463662, 50.059617],
+        [-118.463503, 50.05947],
+        [-118.462772, 50.059054],
+        [-118.462349, 50.058921],
+        [-118.461899, 50.058875],
+        [-118.461665, 50.058885],
+        [-118.461208, 50.058973],
+        [-118.460498, 50.059214],
+        [-118.459608, 50.059514],
+        [-118.459368, 50.059575],
+        [-118.458857, 50.059647],
+        [-118.458842, 50.059646],
+        [-118.458591, 50.059634],
+        [-118.458134, 50.059535],
+        [-118.457452, 50.059265],
+        [-118.457223, 50.059205],
+        [-118.456737, 50.059154],
+        [-118.456255, 50.059207],
+        [-118.453856, 50.059796],
+        [-118.453039, 50.060045],
+        [-118.452912, 50.060084],
+        [-118.452464, 50.060273],
+        [-118.452041, 50.060494],
+        [-118.450387, 50.061527],
+        [-118.449881, 50.061745],
+        [-118.449453, 50.06193],
+        [-118.447767, 50.062448],
+        [-118.443413, 50.063787],
+        [-118.443256, 50.063835],
+        [-118.442724, 50.063952],
+        [-118.442445, 50.063982],
+        [-118.441892, 50.063984],
+        [-118.441876, 50.063984],
+        [-118.438669, 50.06364],
+        [-118.435845, 50.063337],
+        [-118.435287, 50.063277],
+        [-118.43484, 50.063229],
+        [-118.431954, 50.062919],
+        [-118.430227, 50.062734],
+        [-118.428415, 50.062539],
+        [-118.424423, 50.062097],
+        [-118.420907, 50.061708],
+        [-118.418682, 50.061462],
+        [-118.416579, 50.061229],
+        [-118.413044, 50.060837],
+        [-118.412791, 50.060809],
+        [-118.412583, 50.060786],
+        [-118.412318, 50.060756],
+        [-118.411684, 50.060581],
+        [-118.410675, 50.060022],
+        [-118.410412, 50.059931],
+        [-118.410157, 50.059842],
+        [-118.409618, 50.059733],
+        [-118.408687, 50.05959],
+        [-118.407735, 50.059444],
+        [-118.40708, 50.059343],
+        [-118.406247, 50.05916],
+        [-118.405972, 50.059035],
+        [-118.405568, 50.058851],
+        [-118.405083, 50.058548],
+        [-118.405058, 50.058532],
+        [-118.404337, 50.058081],
+        [-118.403381, 50.057294],
+        [-118.402579, 50.056836],
+        [-118.401375, 50.056002],
+        [-118.401085, 50.055452],
+        [-118.400578, 50.05518],
+        [-118.400095, 50.054617]
+      ]
+    },
+    "bounds": {
+      "minLat": 50.0411431200138,
+      "minLon": -118.629422737307,
+      "maxLat": 50.2468556702284,
+      "maxLon": -118.400095314194
+    },
+    "communication-plan-template": {
+      "nearby-city-reference": "Monashee Summit to Cherryville",
+      "extent-event-length": "42.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "WEB",
+        "description": "Highway 6 EW. Limited visibility with fog between North Fork Rd and Monashee Summit for 42.1 km (Cherryville to Monashee Summit). Watch for slippery sections. Last updated Thu Dec 12 at 6:22 AM PST. (DBCRCON-202178)"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 6 EW. Limited visibility with fog between North Fork Rd and Monashee Summit for 42.1 km (Cherryville to Monashee Summit). Watch for slippery sections. \u003Cbr /\u003E\u003Cbr /\u003E Last updated Thu Dec 12 at 6:22 AM PST"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 6 EW. Limited visibility with fog between North Fork Rd and Monashee Summit for 42.1 km (Cherryville to Monashee Summit). Watch for slippery sections. Last updated Thursday, December 12 at 6:22 AM."
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Limited visibility with fog"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 6 EW. Limited visibility with fog between North Fork Rd and Monashee Summit for 42.1 km (Cherryville to Monashee Summit). Watch for slippery sections. \u003Cbr /\u003E\u003Cbr /\u003E Last updated Thu Dec 12 at 6:22 AM PST"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 6 EW. Limited visibility with fog between North Fork Rd and Monashee Summit for 42.1 km (Cherryville to Monashee Summit). Watch for slippery sections."
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy6EW: Limited visibility with fog between North Fork Rd and Monashee Summit for 42.1 km (Cherryville to Monashee Summit). Watch for slippery sections."
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Limited visibility with fog"
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between North Fork Rd and Monashee Summit"
+      }
+    ],
+    "representation": {
+      "id": 612,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Limited visibility with fog",
+      "cause": "due to limited visibility with fog",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 20,
+        "name": "RoadCondition_28x28.png.1507065104326",
+        "fileName": "RoadCondition_28x28.png",
+        "absolutePath": "https://dit.th.gov.bc.ca/phrases_v1/icons/RoadCondition_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBC-53145",
+    "is-draft": false,
+    "headline": {
+      "phrase-id": 2,
+      "category": "chain_up",
+      "code": "commercial chain up in effect"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12743,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1729109848080,
+      "nanos": 80000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -25200000
+    },
+    "update-expiry-time": {
+      "time": 1760645848080,
+      "nanos": 80000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -25200000
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1849109848080,
+          "nanos": 80000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1729109848080,
+          "nanos": 80000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 52.53672828875,
+                "longitude": -125.768088505
+              },
+              "linear-reference": 100.82
+            },
+            "route-designator": "Highway 20",
+            "segment-names": [
+              "Hwy 20, Westbound, Heckman Pass 97km west of Bella Coola"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 52.5371216915278,
+                "longitude": -125.766759116111
+              },
+              "linear-reference": 100.92
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-125.768089, 52.536728],
+        [-125.766759, 52.537122]
+      ]
+    },
+    "bounds": {
+      "minLat": 52.53672828875,
+      "minLon": -125.768088505,
+      "maxLat": 52.5371216915278,
+      "maxLon": -125.766759116111
+    },
+    "communication-plans": [
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy20: Commercial chain up in effect between Rainbow Range Trailhead and Elsey Rd for 0.1 km (35 km west of Anahim Lake)."
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 20. Commercial chain up in effect between Rainbow Range Trailhead and Elsey Rd for 0.1 km (35 km west of Anahim Lake). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Wed Oct 16 at 1:17 PM PST"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 20. Commercial chain up in effect between Rainbow Range Trailhead and Elsey Rd for 0.1 km (35 km west of Anahim Lake). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Wed Oct 16 at 1:17 PM PST"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 20. Commercial chain up in effect between Rainbow Range Trailhead and Elsey Rd for 0.1 km (35 km west of Anahim Lake)."
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 20. Commercial chain up in effect between Rainbow Range Trailhead and Elsey Rd for 0.1 km (35 km west of Anahim Lake). Last updated Wed Oct 16 at 1:17 PM PST. (DBCCNUP-12743)"
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between Rainbow Range Trailhead and Elsey Rd"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 20. Commercial chain up in effect between Rainbow Range Trailhead and Elsey Rd for 0.1 km (35 km west of Anahim Lake). Last updated Wednesday, October 16 at 1:17 PM."
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  }
+]

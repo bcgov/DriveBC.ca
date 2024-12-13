@@ -1,0 +1,3619 @@
+[
+  {
+    "event-id": "DBCCNUP-127431",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12743,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1729109848080,
+      "nanos": 80000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -25200000
+    },
+    "update-expiry-time": {
+      "time": 1760645848080,
+      "nanos": 80000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -25200000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Cariboo District",
+      "event_service_area": "17 - Central Cariboo",
+      "midpoint_lng": -125.767423810556,
+      "midpoint_lat": 52.5369249901389,
+      "event_road_to": "Elsey Rd",
+      "event_road_from": "Rainbow Range Trailhead",
+      "start_point_linear_reference": 100.82,
+      "end_point_linear_reference": 100.92
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1849109848080,
+          "nanos": 80000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1729109848080,
+          "nanos": 80000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 52.53672828875,
+                "longitude": -125.768088505
+              },
+              "linear-reference": 100.82
+            },
+            "route-designator": "Highway 20",
+            "segment-names": [
+              "Hwy 20, Westbound, Heckman Pass 97km west of Bella Coola"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 52.5371216915278,
+                "longitude": -125.766759116111
+              },
+              "linear-reference": 100.92
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-125.768089, 52.536728],
+        [-125.766759, 52.537122]
+      ]
+    },
+    "bounds": {
+      "minLat": 52.53672828875,
+      "minLon": -125.768088505,
+      "maxLat": 52.5371216915278,
+      "maxLon": -125.766759116111
+    },
+    "communication-plan-template": {
+      "nearby-city-reference": "35 km west of Anahim Lake",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy20: Commercial chain up in effect between Rainbow Range Trailhead and Elsey Rd for 0.1 km (35 km west of Anahim Lake)."
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 20. Commercial chain up in effect between Rainbow Range Trailhead and Elsey Rd for 0.1 km (35 km west of Anahim Lake). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Wed Oct 16 at 1:17 PM PST"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 20. Commercial chain up in effect between Rainbow Range Trailhead and Elsey Rd for 0.1 km (35 km west of Anahim Lake). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Wed Oct 16 at 1:17 PM PST"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 20. Commercial chain up in effect between Rainbow Range Trailhead and Elsey Rd for 0.1 km (35 km west of Anahim Lake)."
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 20. Commercial chain up in effect between Rainbow Range Trailhead and Elsey Rd for 0.1 km (35 km west of Anahim Lake). Last updated Wed Oct 16 at 1:17 PM PST. (DBCCNUP-12743)"
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between Rainbow Range Trailhead and Elsey Rd"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 20. Commercial chain up in effect between Rainbow Range Trailhead and Elsey Rd for 0.1 km (35 km west of Anahim Lake). Last updated Wednesday, October 16 at 1:17 PM."
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127471",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12747,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732835153519,
+      "nanos": 519000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1764371153519,
+      "nanos": 519000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "West Kootenay District",
+      "event_service_area": "10 - Central Kootenay",
+      "midpoint_lng": -117.000658122222,
+      "midpoint_lat": 49.0957756927778,
+      "event_road_to": "East Avalanche Gate",
+      "event_road_from": "West Avalanche Gate",
+      "start_point_linear_reference": 546.97,
+      "end_point_linear_reference": 547.07
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852835153519,
+          "nanos": 519000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1732835153519,
+          "nanos": 519000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 49.0956860423256,
+                "longitude": -117.001326038372
+              },
+              "linear-reference": 546.97
+            },
+            "route-designator": "Highway 3",
+            "segment-names": [
+              "Hwy 3, Westbound,  5km east of Kootenay Pass Summit"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 49.0958664385385,
+                "longitude": -116.99999340869
+              },
+              "linear-reference": 547.07
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-117.001326, 49.095686],
+        [-117.000804, 49.095756],
+        [-117.000087, 49.095852],
+        [-116.999993, 49.095866]
+      ]
+    },
+    "bounds": {
+      "minLat": 49.0956860423256,
+      "minLon": -117.001326038372,
+      "maxLat": 49.0958664385385,
+      "maxLon": -116.99999340869
+    },
+    "communication-plan-template": {
+      "route-section-alias": "Crowsnest Highway",
+      "nearby-city-reference": "6 to 5 km east of Kootenay Pass",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between West Avalanche Gate and East Avalanche Gate for 0.1 km (5 to 6 km east of Kootenay Pass)."
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between West Avalanche Gate and East Avalanche Gate"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between West Avalanche Gate and East Avalanche Gate for 0.1 km (5 to 6 km east of Kootenay Pass). Last updated Thursday, November 28 at 3:05 PM."
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between West Avalanche Gate and East Avalanche Gate for 0.1 km (5 to 6 km east of Kootenay Pass). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Thu Nov 28 at 3:05 PM PST"
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy3: Commercial chain up in effect between West Avalanche Gate and East Avalanche Gate for 0.1 km (5 to 6 km east of Kootenay Pass)."
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between West Avalanche Gate and East Avalanche Gate for 0.1 km (5 to 6 km east of Kootenay Pass). Last updated Thu Nov 28 at 3:05 PM PST. (DBCCNUP-12747)"
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between West Avalanche Gate and East Avalanche Gate for 0.1 km (5 to 6 km east of Kootenay Pass). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Thu Nov 28 at 3:05 PM PST"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127461",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12746,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732835153519,
+      "nanos": 519000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1764371153519,
+      "nanos": 519000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "West Kootenay District",
+      "event_service_area": "10 - Central Kootenay",
+      "midpoint_lng": -117.141257149057,
+      "midpoint_lat": 49.0382349687925,
+      "event_road_to": "East Avalanche Gate",
+      "event_road_from": "West Avalanche Gate",
+      "start_point_linear_reference": 532.82,
+      "end_point_linear_reference": 532.92
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852835153519,
+          "nanos": 519000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1732835153519,
+          "nanos": 519000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 49.0377908763396,
+                "longitude": -117.141373092453
+              },
+              "linear-reference": 532.82
+            },
+            "route-designator": "Highway 3",
+            "segment-names": [
+              "Hwy 3, Eastbound,  9km west of Kootenay Pass Summit"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 49.0386790612453,
+                "longitude": -117.14114120566
+              },
+              "linear-reference": 532.92
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-117.141373, 49.037791],
+        [-117.141141, 49.038679]
+      ]
+    },
+    "bounds": {
+      "minLat": 49.0377908763396,
+      "minLon": -117.141373092453,
+      "maxLat": 49.0386790612453,
+      "maxLon": -117.14114120566
+    },
+    "communication-plan-template": {
+      "route-section-alias": "Crowsnest Highway",
+      "nearby-city-reference": "9 km west of Kootenay Pass",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between West Avalanche Gate and East Avalanche Gate"
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between West Avalanche Gate and East Avalanche Gate for 0.1 km (9 km west of Kootenay Pass). Last updated Thu Nov 28 at 3:05 PM PST. (DBCCNUP-12746)"
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy3: Commercial chain up in effect between West Avalanche Gate and East Avalanche Gate for 0.1 km (9 km west of Kootenay Pass)."
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between West Avalanche Gate and East Avalanche Gate for 0.1 km (9 km west of Kootenay Pass)."
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between West Avalanche Gate and East Avalanche Gate for 0.1 km (9 km west of Kootenay Pass). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Thu Nov 28 at 3:05 PM PST"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between West Avalanche Gate and East Avalanche Gate for 0.1 km (9 km west of Kootenay Pass). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Thu Nov 28 at 3:05 PM PST"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between West Avalanche Gate and East Avalanche Gate for 0.1 km (9 km west of Kootenay Pass). Last updated Thursday, November 28 at 3:05 PM."
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127451",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12745,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732297673443,
+      "nanos": 443000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1763833673443,
+      "nanos": 443000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "West Kootenay District",
+      "event_service_area": "09 - Kootenay",
+      "midpoint_lng": -118.180738211051,
+      "midpoint_lat": 49.1353993827899,
+      "event_road_to": "Paulson Bridge",
+      "event_road_from": "East Lake Dr",
+      "start_point_linear_reference": 406.93,
+      "end_point_linear_reference": 407.03
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852297673443,
+          "nanos": 443000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1732297673443,
+          "nanos": 443000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 49.1351627432971,
+                "longitude": -118.181320158515
+              },
+              "linear-reference": 406.93
+            },
+            "route-designator": "Highway 3",
+            "segment-names": [
+              "Hwy 3, Eastbound,  at Lafferty Pit"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 49.1356360222826,
+                "longitude": -118.180156263587
+              },
+              "linear-reference": 407.03
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-118.18132, 49.135163],
+        [-118.180156, 49.135636]
+      ]
+    },
+    "bounds": {
+      "minLat": 49.1351627432971,
+      "minLon": -118.181320158515,
+      "maxLat": 49.1356360222826,
+      "maxLon": -118.180156263587
+    },
+    "communication-plan-template": {
+      "route-section-alias": "Crowsnest Highway",
+      "nearby-city-reference": "4 km east of Christina Lake",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between East Lake Dr and Paulson Bridge for 0.1 km (4 km east of Christina Lake). Last updated Friday, November 22 at 9:47 AM."
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between East Lake Dr and Paulson Bridge"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between East Lake Dr and Paulson Bridge for 0.1 km (4 km east of Christina Lake). Last updated Fri Nov 22 at 9:47 AM PST. (DBCCNUP-12745)"
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between East Lake Dr and Paulson Bridge for 0.1 km (4 km east of Christina Lake). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:47 AM PST"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between East Lake Dr and Paulson Bridge for 0.1 km (4 km east of Christina Lake)."
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy3: Commercial chain up in effect between East Lake Dr and Paulson Bridge for 0.1 km (4 km east of Christina Lake)."
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 3 (Crowsnest Highway). Commercial chain up in effect between East Lake Dr and Paulson Bridge for 0.1 km (4 km east of Christina Lake). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:47 AM PST"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127441",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12744,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732297679183,
+      "nanos": 183000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1763833679183,
+      "nanos": 183000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "West Kootenay District",
+      "event_service_area": "09 - Kootenay",
+      "midpoint_lng": -117.744930836,
+      "midpoint_lat": 49.0953006392,
+      "event_road_to": "Montcalm Rd",
+      "event_road_from": "Lytton St",
+      "start_point_linear_reference": 17.5,
+      "end_point_linear_reference": 17.6
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852297679183,
+          "nanos": 183000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1732297679183,
+          "nanos": 183000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 49.0953063771429,
+                "longitude": -117.745602371429
+              },
+              "linear-reference": 17.5
+            },
+            "route-designator": "Highway 22",
+            "segment-names": [
+              "Hwy 22/3B, Westbound, at Warfield"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 49.0950631683529,
+                "longitude": -117.744362287059
+              },
+              "linear-reference": 17.6
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-117.745602, 49.095306],
+        [-117.745525, 49.095326],
+        [-117.745145, 49.095333],
+        [-117.74481, 49.095282],
+        [-117.744362, 49.095063]
+      ]
+    },
+    "bounds": {
+      "minLat": 49.0950631683529,
+      "minLon": -117.745602371429,
+      "maxLat": 49.09533342,
+      "maxLon": -117.744362287059
+    },
+    "communication-plan-template": {
+      "nearby-city-reference": "Warfield",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy22: Commercial chain up in effect between Lytton St and Montcalm Rd for 0.1 km (Warfield)."
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 22. Commercial chain up in effect between Lytton St and Montcalm Rd for 0.1 km (Warfield)."
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 22. Commercial chain up in effect between Lytton St and Montcalm Rd for 0.1 km (Warfield). Last updated Fri Nov 22 at 9:47 AM PST. (DBCCNUP-12744)"
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 22. Commercial chain up in effect between Lytton St and Montcalm Rd for 0.1 km (Warfield). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:47 AM PST"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 22. Commercial chain up in effect between Lytton St and Montcalm Rd for 0.1 km (Warfield). Last updated Friday, November 22 at 9:47 AM."
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 22. Commercial chain up in effect between Lytton St and Montcalm Rd for 0.1 km (Warfield). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:47 AM PST"
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between Lytton St and Montcalm Rd"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127491",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12749,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732297627530,
+      "nanos": 530000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1763833627530,
+      "nanos": 530000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Skeena District",
+      "event_service_area": "26 - Skeena",
+      "event_road_to": "KM 52.4",
+      "event_road_from": "between KM 52.4 and KM 52.3",
+      "start_point_linear_reference": 52.33,
+      "end_point_linear_reference": 52.43
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852297627530,
+          "nanos": 530000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1732297627530,
+          "nanos": 530000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 54.4721196555204,
+                "longitude": -128.560662658824
+              },
+              "linear-reference": 52.33
+            },
+            "route-designator": "Highway 37",
+            "segment-names": [
+              "Hwy 37S, Southbound,  at Northwest Regional Airport"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 54.4728485469231,
+                "longitude": -128.5615556
+              },
+              "linear-reference": 52.43
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-128.560663, 54.47212],
+        [-128.561556, 54.472849]
+      ]
+    },
+    "bounds": {
+      "minLat": 54.4721196555204,
+      "minLon": -128.5615556,
+      "maxLat": 54.4728485469231,
+      "maxLon": -128.560662658824
+    },
+    "communication-plan-template": {
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "WEB",
+        "description": "Highway 37. Commercial chain up in effect between KM 52.3 and KM 52.4. Last updated Fri Nov 22 at 9:47 AM PST. (DBCCNUP-12749)"
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between KM 52.3 and KM 52.4"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 37. Commercial chain up in effect between KM 52.3 and KM 52.4. Last updated Friday, November 22 at 9:47 AM."
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 37. Commercial chain up in effect between KM 52.3 and KM 52.4. \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:47 AM PST"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 37. Commercial chain up in effect between KM 52.3 and KM 52.4. \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:47 AM PST"
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 37. Commercial chain up in effect between KM 52.3 and KM 52.4."
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy37: Commercial chain up in effect between KM 52.3 and KM 52.4."
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127481",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12748,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732297627530,
+      "nanos": 530000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1763833627530,
+      "nanos": 530000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Skeena District",
+      "event_service_area": "26 - Skeena",
+      "event_road_to": "KM 50.4",
+      "event_road_from": "between KM 50.4 and KM 50.3",
+      "start_point_linear_reference": 50.34,
+      "end_point_linear_reference": 50.44
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852297627530,
+          "nanos": 530000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1732297627530,
+          "nanos": 530000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 54.4622327781132,
+                "longitude": -128.536031226415
+              },
+              "linear-reference": 50.34
+            },
+            "route-designator": "Highway 37",
+            "segment-names": [
+              "Hwy 37S, Northbound,  2.5km south of Northwest Regional Airport"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 54.4625574244444,
+                "longitude": -128.537475072222
+              },
+              "linear-reference": 50.44
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-128.536031, 54.462233],
+        [-128.537475, 54.462557]
+      ]
+    },
+    "bounds": {
+      "minLat": 54.4622327781132,
+      "minLon": -128.537475072222,
+      "maxLat": 54.4625574244444,
+      "maxLon": -128.536031226415
+    },
+    "communication-plan-template": {
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 37. Commercial chain up in effect between KM 50.3 and KM 50.4. \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:47 AM PST"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 37. Commercial chain up in effect between KM 50.3 and KM 50.4. \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:47 AM PST"
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy37: Commercial chain up in effect between KM 50.3 and KM 50.4."
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 37. Commercial chain up in effect between KM 50.3 and KM 50.4. Last updated Friday, November 22 at 9:47 AM."
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between KM 50.3 and KM 50.4"
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 37. Commercial chain up in effect between KM 50.3 and KM 50.4. Last updated Fri Nov 22 at 9:47 AM PST. (DBCCNUP-12748)"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 37. Commercial chain up in effect between KM 50.3 and KM 50.4."
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127631",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12763,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__JASSTEWA"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1733528371359,
+      "nanos": 359000000,
+      "timeZoneId": "America/Edmonton",
+      "utcOffset": -25200000
+    },
+    "update-expiry-time": {
+      "time": 1765064371359,
+      "nanos": 359000000,
+      "timeZoneId": "America/Edmonton",
+      "utcOffset": -25200000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Rocky Mountain District",
+      "event_service_area": "12 - Selkirk",
+      "midpoint_lng": -116.760105400781,
+      "midpoint_lat": 51.2733122066406,
+      "event_road_to": "Ten Mile Hill Truck Stop Rd",
+      "event_road_from": "Glenogle Rd",
+      "start_point_linear_reference": 996.2,
+      "end_point_linear_reference": 996.3
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1853528371359,
+          "nanos": 359000000,
+          "timeZoneId": "America/Edmonton",
+          "utcOffset": -21600000
+        },
+        "update-time": {
+          "time": 1733528371359,
+          "nanos": 359000000,
+          "timeZoneId": "America/Edmonton",
+          "utcOffset": -25200000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 51.2734547027344,
+                "longitude": -116.760785517969
+              },
+              "linear-reference": 996.2
+            },
+            "route-designator": "Highway 1",
+            "segment-names": [
+              "Hwy 1, Eastbound, 10 Mile Hill 16km east of Golden"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 51.2731702266667,
+                "longitude": -116.759426516667
+              },
+              "linear-reference": 996.3
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-116.760786, 51.273455],
+        [-116.75952, 51.27319],
+        [-116.759427, 51.27317]
+      ]
+    },
+    "bounds": {
+      "minLat": 51.2731702266667,
+      "minLon": -116.760785517969,
+      "maxLat": 51.2734547027344,
+      "maxLon": -116.759426516667
+    },
+    "communication-plan-template": {
+      "route-section-alias": "Kicking Horse Pass",
+      "nearby-city-reference": "9 km west of West Boundary of Yoho National Park",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 1 (Kicking Horse Pass). Commercial chain up in effect between Glenogle Rd and Ten Mile Hill Truck Stop Rd for 0.1 km (9 km west of West Boundary of Yoho National Park)."
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 1 (Kicking Horse Pass). Commercial chain up in effect between Glenogle Rd and Ten Mile Hill Truck Stop Rd for 0.1 km (9 km west of West Boundary of Yoho National Park). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Dec 6 at 4:39 PM MST"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy1: Commercial chain up in effect between Glenogle Rd and Ten Mile Hill Truck Stop Rd for 0.1 km (9 km west of West Boundary of Yoho National Park)."
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 1 (Kicking Horse Pass). Commercial chain up in effect between Glenogle Rd and Ten Mile Hill Truck Stop Rd for 0.1 km (9 km west of West Boundary of Yoho National Park). Last updated Fri Dec 6 at 4:39 PM MST. (DBCCNUP-12763)"
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between Glenogle Rd and Ten Mile Hill Truck Stop Rd"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 1 (Kicking Horse Pass). Commercial chain up in effect between Glenogle Rd and Ten Mile Hill Truck Stop Rd for 0.1 km (9 km west of West Boundary of Yoho National Park). Last updated Friday, December 6 at 4:39 PM."
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 1 (Kicking Horse Pass). Commercial chain up in effect between Glenogle Rd and Ten Mile Hill Truck Stop Rd for 0.1 km (9 km west of West Boundary of Yoho National Park). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Dec 6 at 4:39 PM MST"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127621",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12762,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__JASSTEWA"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1733528371359,
+      "nanos": 359000000,
+      "timeZoneId": "America/Edmonton",
+      "utcOffset": -25200000
+    },
+    "update-expiry-time": {
+      "time": 1765064371359,
+      "nanos": 359000000,
+      "timeZoneId": "America/Edmonton",
+      "utcOffset": -25200000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Rocky Mountain District",
+      "event_service_area": "12 - Selkirk",
+      "midpoint_lng": -116.961206895082,
+      "midpoint_lat": 51.3002408488525,
+      "event_road_to": "Golden Donald Upper Rd",
+      "event_road_from": "11th St N",
+      "start_point_linear_reference": 980.29,
+      "end_point_linear_reference": 980.39
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1853528371359,
+          "nanos": 359000000,
+          "timeZoneId": "America/Edmonton",
+          "utcOffset": -21600000
+        },
+        "update-time": {
+          "time": 1733528371359,
+          "nanos": 359000000,
+          "timeZoneId": "America/Edmonton",
+          "utcOffset": -25200000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 51.3003491138462,
+                "longitude": -116.9618968
+              },
+              "linear-reference": 980.29
+            },
+            "route-designator": "Highway 1",
+            "segment-names": [
+              "Hwy 1, Eastbound, Golden Hill in Golden"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 51.3001849756522,
+                "longitude": -116.960495956522
+              },
+              "linear-reference": 980.39
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-116.961897, 51.300349],
+        [-116.961475, 51.300265],
+        [-116.960614, 51.300187],
+        [-116.960496, 51.300185]
+      ]
+    },
+    "bounds": {
+      "minLat": 51.3001849756522,
+      "minLon": -116.9618968,
+      "maxLat": 51.3003491138462,
+      "maxLon": -116.960495956522
+    },
+    "communication-plan-template": {
+      "route-section-alias": "Kicking Horse Pass",
+      "nearby-city-reference": "Golden",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 1 (Kicking Horse Pass). Commercial chain up in effect between 11th St N and Golden Donald Upper Rd for 0.1 km (Golden). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Dec 6 at 4:39 PM MST"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy1: Commercial chain up in effect between 11th St N and Golden Donald Upper Rd for 0.1 km (Golden)."
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 1 (Kicking Horse Pass). Commercial chain up in effect between 11th St N and Golden Donald Upper Rd for 0.1 km (Golden). Last updated Friday, December 6 at 4:39 PM."
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 1 (Kicking Horse Pass). Commercial chain up in effect between 11th St N and Golden Donald Upper Rd for 0.1 km (Golden). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Dec 6 at 4:39 PM MST"
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 1 (Kicking Horse Pass). Commercial chain up in effect between 11th St N and Golden Donald Upper Rd for 0.1 km (Golden). Last updated Fri Dec 6 at 4:39 PM MST. (DBCCNUP-12762)"
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between 11th St N and Golden Donald Upper Rd"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 1 (Kicking Horse Pass). Commercial chain up in effect between 11th St N and Golden Donald Upper Rd for 0.1 km (Golden)."
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127611",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12761,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__JASSTEWA"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1733528371359,
+      "nanos": 359000000,
+      "timeZoneId": "America/Edmonton",
+      "utcOffset": -25200000
+    },
+    "update-expiry-time": {
+      "time": 1765064371359,
+      "nanos": 359000000,
+      "timeZoneId": "America/Edmonton",
+      "utcOffset": -25200000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Rocky Mountain District",
+      "event_service_area": "12 - Selkirk",
+      "midpoint_lng": -117.133034518182,
+      "midpoint_lat": 51.4705270218182,
+      "event_road_to": "Forde Station Rd",
+      "event_road_from": "Golden Weigh Scale (JUVIS - Joint Use Vehicle Inspection Station)",
+      "start_point_linear_reference": 957.25,
+      "end_point_linear_reference": 957.35
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1853528371359,
+          "nanos": 359000000,
+          "timeZoneId": "America/Edmonton",
+          "utcOffset": -21600000
+        },
+        "update-time": {
+          "time": 1733528371359,
+          "nanos": 359000000,
+          "timeZoneId": "America/Edmonton",
+          "utcOffset": -25200000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 51.4707895621277,
+                "longitude": -117.133623055319
+              },
+              "linear-reference": 957.25
+            },
+            "route-designator": "Highway 1",
+            "segment-names": [
+              "Hwy 1, Westbound, Donald Hill 20 km west of Golden"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 51.4702728222222,
+                "longitude": -117.132440641667
+              },
+              "linear-reference": 957.35
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-117.133623, 51.47079],
+        [-117.133289, 51.470633],
+        [-117.133022, 51.470522],
+        [-117.132441, 51.470273]
+      ]
+    },
+    "bounds": {
+      "minLat": 51.4702728222222,
+      "minLon": -117.133623055319,
+      "maxLat": 51.4707895621277,
+      "maxLon": -117.132440641667
+    },
+    "communication-plan-template": {
+      "route-section-alias": "TransCanada Highway",
+      "nearby-city-reference": "20 km west of Golden",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 1 (TransCanada Highway). Commercial chain up in effect between Golden Weigh Scale (JUVIS - Joint Use Vehicle Inspection Station) and Forde Station Rd for 0.1 km (20 km west of Golden)."
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 1 (TransCanada Highway). Commercial chain up in effect between Golden Weigh Scale (JUVIS - Joint Use Vehicle Inspection Station) and Forde Station Rd for 0.1 km (20 km west of Golden). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Dec 6 at 4:39 PM MST"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 1 (TransCanada Highway). Commercial chain up in effect between Golden Weigh Scale (JUVIS - Joint Use Vehicle Inspection Station) and Forde Station Rd for 0.1 km (20 km west of Golden). Last updated Friday, December 6 at 4:39 PM."
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between Golden Weigh Scale (JUVIS - Joint Use Vehicle Inspection Station) and Forde Station Rd"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 1 (TransCanada Highway). Commercial chain up in effect between Golden Weigh Scale (JUVIS - Joint Use Vehicle Inspection Station) and Forde Station Rd for 0.1 km (20 km west of Golden). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Dec 6 at 4:39 PM MST"
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 1 (TransCanada Highway). Commercial chain up in effect between Golden Weigh Scale (JUVIS - Joint Use Vehicle Inspection Station) and Forde Station Rd for 0.1 km (20 km west of Golden). Last updated Fri Dec 6 at 4:39 PM MST. (DBCCNUP-12761)"
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy1: Commercial chain up in effect between Golden Weigh Scale (JUVIS - Joint Use Vehicle Inspection Station) and Forde Station Rd for 0.1 km (20 km west of Golden)."
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127541",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12754,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732297585830,
+      "nanos": 830000000,
+      "timeZoneId": "America/Edmonton",
+      "utcOffset": -25200000
+    },
+    "update-expiry-time": {
+      "time": 1763833585830,
+      "nanos": 830000000,
+      "timeZoneId": "America/Edmonton",
+      "utcOffset": -25200000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Rocky Mountain District",
+      "event_service_area": "12 - Selkirk",
+      "midpoint_lng": -116.053662313204,
+      "midpoint_lat": 51.2260141398331,
+      "event_road_to": "the end of Highway 93",
+      "event_road_from": "Marble Canyon Campground",
+      "start_point_linear_reference": 264.57,
+      "end_point_linear_reference": 264.67
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852297585830,
+          "nanos": 830000000,
+          "timeZoneId": "America/Edmonton",
+          "utcOffset": -21600000
+        },
+        "update-time": {
+          "time": 1732297585830,
+          "nanos": 830000000,
+          "timeZoneId": "America/Edmonton",
+          "utcOffset": -25200000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 51.2256891319081,
+                "longitude": -116.054153564343
+              },
+              "linear-reference": 264.57
+            },
+            "route-designator": "Highway 93",
+            "segment-names": [
+              "Hwy 93S, Westbound,  at Castle Junction"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 51.2263416607588,
+                "longitude": -116.053173867726
+              },
+              "linear-reference": 264.67
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-116.054154, 51.225689],
+        [-116.053809, 51.225916],
+        [-116.053213, 51.226315],
+        [-116.053174, 51.226342]
+      ]
+    },
+    "bounds": {
+      "minLat": 51.2256891319081,
+      "minLon": -116.054153564343,
+      "maxLat": 51.2263416607588,
+      "maxLon": -116.053173867726
+    },
+    "communication-plan-template": {
+      "nearby-city-reference": "British Columbia and Alberta Border",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "WEB",
+        "description": "Highway 93. Commercial chain up in effect between Marble Canyon Campground and the end of Highway 93 for 0.1 km (British Columbia and Alberta Border). Last updated Fri Nov 22 at 10:46 AM MST. (DBCCNUP-12754)"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 93. Commercial chain up in effect between Marble Canyon Campground and the end of Highway 93 for 0.1 km (British Columbia and Alberta Border)."
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 93. Commercial chain up in effect between Marble Canyon Campground and the end of Highway 93 for 0.1 km (British Columbia and Alberta Border). Last updated Friday, November 22 at 10:46 AM."
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 93. Commercial chain up in effect between Marble Canyon Campground and the end of Highway 93 for 0.1 km (British Columbia and Alberta Border). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 10:46 AM MST"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 93. Commercial chain up in effect between Marble Canyon Campground and the end of Highway 93 for 0.1 km (British Columbia and Alberta Border). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 10:46 AM MST"
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy93: Commercial chain up in effect between Marble Canyon Campground and the end of Highway 93 for 0.1 km (British Columbia and Alberta Border)."
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between Marble Canyon Campground and the end of Highway 93"
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127531",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12753,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732297585830,
+      "nanos": 830000000,
+      "timeZoneId": "America/Edmonton",
+      "utcOffset": -25200000
+    },
+    "update-expiry-time": {
+      "time": 1763833585830,
+      "nanos": 830000000,
+      "timeZoneId": "America/Edmonton",
+      "utcOffset": -25200000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Rocky Mountain District",
+      "event_service_area": "12 - Selkirk",
+      "midpoint_lng": -116.052303031524,
+      "midpoint_lat": 50.6332562123763,
+      "event_road_to": "McKay Creek Maint",
+      "event_road_from": "West Boundary of Kootenay National Park",
+      "start_point_linear_reference": 172.88,
+      "end_point_linear_reference": 172.98
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852297585830,
+          "nanos": 830000000,
+          "timeZoneId": "America/Edmonton",
+          "utcOffset": -21600000
+        },
+        "update-time": {
+          "time": 1732297585830,
+          "nanos": 830000000,
+          "timeZoneId": "America/Edmonton",
+          "utcOffset": -25200000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.6332872754208,
+                "longitude": -116.05300547633
+              },
+              "linear-reference": 172.88
+            },
+            "route-designator": "Highway 93",
+            "segment-names": [
+              "Hwy 93S, Eastbound,  at Radium Hot Springs"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.633257628249,
+                "longitude": -116.051594496409
+              },
+              "linear-reference": 172.98
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-116.053005, 50.633287],
+        [-116.052459, 50.633256],
+        [-116.051594, 50.633258]
+      ]
+    },
+    "bounds": {
+      "minLat": 50.6332559008843,
+      "minLon": -116.05300547633,
+      "maxLat": 50.6332872754208,
+      "maxLon": -116.051594496409
+    },
+    "communication-plan-template": {
+      "nearby-city-reference": "1 km north of Radium Hot Springs",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 93. Commercial chain up in effect between West Boundary of Kootenay National Park and McKay Creek Maint for 0.1 km (1 km north of Radium Hot Springs). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 10:46 AM MST"
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy93: Commercial chain up in effect between West Boundary of Kootenay National Park and McKay Creek Maint for 0.1 km (1 km north of Radium Hot Springs)."
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 93. Commercial chain up in effect between West Boundary of Kootenay National Park and McKay Creek Maint for 0.1 km (1 km north of Radium Hot Springs). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 10:46 AM MST"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 93. Commercial chain up in effect between West Boundary of Kootenay National Park and McKay Creek Maint for 0.1 km (1 km north of Radium Hot Springs). Last updated Fri Nov 22 at 10:46 AM MST. (DBCCNUP-12753)"
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 93. Commercial chain up in effect between West Boundary of Kootenay National Park and McKay Creek Maint for 0.1 km (1 km north of Radium Hot Springs). Last updated Friday, November 22 at 10:46 AM."
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between West Boundary of Kootenay National Park and McKay Creek Maint"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 93. Commercial chain up in effect between West Boundary of Kootenay National Park and McKay Creek Maint for 0.1 km (1 km north of Radium Hot Springs)."
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127521",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12752,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732297715663,
+      "nanos": 663000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1763833715663,
+      "nanos": 663000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Thompson-Nicola District",
+      "event_service_area": "14 - Nicola",
+      "midpoint_lng": -120.629078306073,
+      "midpoint_lat": 50.2742899221845,
+      "event_road_to": "Exit 315: Helmer Rd",
+      "event_road_from": "Exit 290: Merritt",
+      "start_point_linear_reference": 133.88,
+      "end_point_linear_reference": 133.98
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852297715663,
+          "nanos": 663000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1732297715663,
+          "nanos": 663000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.2739289390519,
+                "longitude": -120.628658449266
+              },
+              "linear-reference": 133.88
+            },
+            "route-designator": "Highway 5",
+            "segment-names": [
+              "Hwy 5, Westbound, Helmer  5km south of Exit 315"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.2746509053171,
+                "longitude": -120.62949816288
+              },
+              "linear-reference": 133.98
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-120.628658, 50.273929],
+        [-120.629498, 50.274651]
+      ]
+    },
+    "bounds": {
+      "minLat": 50.2739289390519,
+      "minLon": -120.62949816288,
+      "maxLat": 50.2746509053171,
+      "maxLon": -120.628658449266
+    },
+    "communication-plan-template": {
+      "route-section-alias": "Coquihalla North",
+      "nearby-city-reference": "12 km south of Surrey Lake Summit",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 5 (Coquihalla North). Commercial chain up in effect between Exit 290: Merritt and Exit 315: Helmer Rd for 0.1 km (12 km south of Surrey Lake Summit)."
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy5: Commercial chain up in effect between Exit 290: Merritt and Exit 315: Helmer Rd for 0.1 km (12 km south of Surrey Lake Summit)."
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 5 (Coquihalla North). Commercial chain up in effect between Exit 290: Merritt and Exit 315: Helmer Rd for 0.1 km (12 km south of Surrey Lake Summit). Last updated Friday, November 22 at 9:48 AM."
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 5 (Coquihalla North). Commercial chain up in effect between Exit 290: Merritt and Exit 315: Helmer Rd for 0.1 km (12 km south of Surrey Lake Summit). Last updated Fri Nov 22 at 9:48 AM PST. (DBCCNUP-12752)"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between Exit 290: Merritt and Exit 315: Helmer Rd"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 5 (Coquihalla North). Commercial chain up in effect between Exit 290: Merritt and Exit 315: Helmer Rd for 0.1 km (12 km south of Surrey Lake Summit). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:48 AM PST"
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 5 (Coquihalla North). Commercial chain up in effect between Exit 290: Merritt and Exit 315: Helmer Rd for 0.1 km (12 km south of Surrey Lake Summit). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:48 AM PST"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127511",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12751,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732297715663,
+      "nanos": 663000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1763833715663,
+      "nanos": 663000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Thompson-Nicola District",
+      "event_service_area": "14 - Nicola",
+      "midpoint_lng": -120.71329728913,
+      "midpoint_lat": 50.1589524142754,
+      "event_road_to": "Exit 290: Merritt",
+      "event_road_from": "Exit 286: Merritt - 97C",
+      "start_point_linear_reference": 118.45,
+      "end_point_linear_reference": 118.55
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852297715663,
+          "nanos": 663000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1732297715663,
+          "nanos": 663000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.1585274323913,
+                "longitude": -120.71352631087
+              },
+              "linear-reference": 118.45
+            },
+            "route-designator": "Highway 5",
+            "segment-names": [
+              "Hwy 5, Eastbound, Clapperton 6km north of Merritt"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.1593773961594,
+                "longitude": -120.713068267391
+              },
+              "linear-reference": 118.55
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-120.713526, 50.158527],
+        [-120.713068, 50.159377]
+      ]
+    },
+    "bounds": {
+      "minLat": 50.1585274323913,
+      "minLon": -120.71352631087,
+      "maxLat": 50.1593773961594,
+      "maxLon": -120.713068267391
+    },
+    "communication-plan-template": {
+      "route-section-alias": "Coquihalla North",
+      "nearby-city-reference": "3 km north of Merritt",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 5 (Coquihalla North). Commercial chain up in effect between Exit 286: Merritt - 97C and Exit 290: Merritt for 0.1 km (3 km north of Merritt). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:48 AM PST"
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 5 (Coquihalla North). Commercial chain up in effect between Exit 286: Merritt - 97C and Exit 290: Merritt for 0.1 km (3 km north of Merritt). Last updated Fri Nov 22 at 9:48 AM PST. (DBCCNUP-12751)"
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy5: Commercial chain up in effect between Exit 286: Merritt - 97C and Exit 290: Merritt for 0.1 km (3 km north of Merritt)."
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 5 (Coquihalla North). Commercial chain up in effect between Exit 286: Merritt - 97C and Exit 290: Merritt for 0.1 km (3 km north of Merritt). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:48 AM PST"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 5 (Coquihalla North). Commercial chain up in effect between Exit 286: Merritt - 97C and Exit 290: Merritt for 0.1 km (3 km north of Merritt). Last updated Friday, November 22 at 9:48 AM."
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between Exit 286: Merritt - 97C and Exit 290: Merritt"
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 5 (Coquihalla North). Commercial chain up in effect between Exit 286: Merritt - 97C and Exit 290: Merritt for 0.1 km (3 km north of Merritt)."
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127571",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12757,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732297599433,
+      "nanos": 433000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1763833599433,
+      "nanos": 433000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Cariboo District",
+      "event_service_area": "16 - South Cariboo",
+      "midpoint_lng": -121.271744923244,
+      "midpoint_lat": 50.6693900432103,
+      "event_road_to": "Kirkland Ranch Rd",
+      "event_road_from": "Snapaa Trail",
+      "start_point_linear_reference": 197.95,
+      "end_point_linear_reference": 198.05
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852297599433,
+          "nanos": 433000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1732297599433,
+          "nanos": 433000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.6689680680246,
+                "longitude": -121.271496454152
+              },
+              "linear-reference": 197.95
+            },
+            "route-designator": "Highway 97C",
+            "segment-names": [
+              "Hwy 97C, Southbound, Okanagan Connector 25km north of West Kelowna"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.6698070043986,
+                "longitude": -121.272015090934
+              },
+              "linear-reference": 198.05
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-121.271496, 50.668968],
+        [-121.271594, 50.669157],
+        [-121.272015, 50.669807]
+      ]
+    },
+    "bounds": {
+      "minLat": 50.6689680680246,
+      "minLon": -121.272015090934,
+      "maxLat": 50.6698070043986,
+      "maxLon": -121.271496454152
+    },
+    "communication-plan-template": {
+      "nearby-city-reference": "4 km south of Ashcroft",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "WEB",
+        "description": "Highway 97C. Commercial chain up in effect between Snapaa Trail and Kirkland Ranch Rd for 0.1 km (4 km south of Ashcroft). Last updated Fri Nov 22 at 9:46 AM PST. (DBCCNUP-12757)"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 97C. Commercial chain up in effect between Snapaa Trail and Kirkland Ranch Rd for 0.1 km (4 km south of Ashcroft). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:46 AM PST"
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy97C: Commercial chain up in effect between Snapaa Trail and Kirkland Ranch Rd for 0.1 km (4 km south of Ashcroft)."
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 97C. Commercial chain up in effect between Snapaa Trail and Kirkland Ranch Rd for 0.1 km (4 km south of Ashcroft). Last updated Friday, November 22 at 9:46 AM."
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 97C. Commercial chain up in effect between Snapaa Trail and Kirkland Ranch Rd for 0.1 km (4 km south of Ashcroft)."
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between Snapaa Trail and Kirkland Ranch Rd"
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 97C. Commercial chain up in effect between Snapaa Trail and Kirkland Ranch Rd for 0.1 km (4 km south of Ashcroft). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:46 AM PST"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127561",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12756,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732297599433,
+      "nanos": 433000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1763833599433,
+      "nanos": 433000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Cariboo District",
+      "event_service_area": "16 - South Cariboo",
+      "midpoint_lng": -121.259443874955,
+      "midpoint_lat": 50.6772310142998,
+      "event_road_to": "Snapaa Trail",
+      "event_road_from": "Barnes Lake Rd",
+      "start_point_linear_reference": 196.14,
+      "end_point_linear_reference": 196.24
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852297599433,
+          "nanos": 433000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1732297599433,
+          "nanos": 433000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.6775424659668,
+                "longitude": -121.258942183447
+              },
+              "linear-reference": 196.14
+            },
+            "route-designator": "Highway 97C",
+            "segment-names": [
+              "Hwy 97C, Westbound, Brenda Mines 14km west of Peachland"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.6768598042936,
+                "longitude": -121.259848044654
+              },
+              "linear-reference": 196.24
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-121.258942, 50.677542],
+        [-121.259122, 50.677451],
+        [-121.259463, 50.677218],
+        [-121.25966, 50.677035],
+        [-121.259848, 50.67686]
+      ]
+    },
+    "bounds": {
+      "minLat": 50.6768598042936,
+      "minLon": -121.259848044654,
+      "maxLat": 50.6775424659668,
+      "maxLon": -121.258942183447
+    },
+    "communication-plan-template": {
+      "nearby-city-reference": "6 km south of Ashcroft",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 97C. Commercial chain up in effect between Barnes Lake Rd and Snapaa Trail for 0.1 km (6 km south of Ashcroft). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:46 AM PST"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 97C. Commercial chain up in effect between Barnes Lake Rd and Snapaa Trail for 0.1 km (6 km south of Ashcroft). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:46 AM PST"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between Barnes Lake Rd and Snapaa Trail"
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 97C. Commercial chain up in effect between Barnes Lake Rd and Snapaa Trail for 0.1 km (6 km south of Ashcroft)."
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy97C: Commercial chain up in effect between Barnes Lake Rd and Snapaa Trail for 0.1 km (6 km south of Ashcroft)."
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 97C. Commercial chain up in effect between Barnes Lake Rd and Snapaa Trail for 0.1 km (6 km south of Ashcroft). Last updated Friday, November 22 at 9:46 AM."
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 97C. Commercial chain up in effect between Barnes Lake Rd and Snapaa Trail for 0.1 km (6 km south of Ashcroft). Last updated Fri Nov 22 at 9:46 AM PST. (DBCCNUP-12756)"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127551",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12755,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732297715663,
+      "nanos": 663000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1763833715663,
+      "nanos": 663000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Thompson-Nicola District",
+      "event_service_area": "14 - Nicola",
+      "midpoint_lng": -120.806678999878,
+      "midpoint_lat": 50.4445386504517,
+      "event_road_to": "Junction Hwy 97D",
+      "event_road_from": "Eight Mile Rd",
+      "start_point_linear_reference": 142.26,
+      "end_point_linear_reference": 142.36
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852297715663,
+          "nanos": 663000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1732297715663,
+          "nanos": 663000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.4440898069044,
+                "longitude": -120.806736940754
+              },
+              "linear-reference": 142.26
+            },
+            "route-designator": "Highway 97C",
+            "segment-names": [
+              "Hwy 97C, Eastbound, Loon Lake 36km east of Merritt"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 50.4449854808181,
+                "longitude": -120.806620393501
+              },
+              "linear-reference": 142.36
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-120.806737, 50.44409],
+        [-120.806705, 50.444342],
+        [-120.80662, 50.444985]
+      ]
+    },
+    "bounds": {
+      "minLat": 50.4440898069044,
+      "minLon": -120.806736940754,
+      "maxLat": 50.4449854808181,
+      "maxLon": -120.806620393501
+    },
+    "communication-plan-template": {
+      "nearby-city-reference": "60 km south of Ashcroft",
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 97C. Commercial chain up in effect between Eight Mile Rd and Junction Hwy 97D for 0.1 km (60 km south of Ashcroft). Last updated Friday, November 22 at 9:48 AM."
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy97C: Commercial chain up in effect between Eight Mile Rd and Junction Hwy 97D for 0.1 km (60 km south of Ashcroft)."
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between Eight Mile Rd and Junction Hwy 97D"
+      },
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 97C. Commercial chain up in effect between Eight Mile Rd and Junction Hwy 97D for 0.1 km (60 km south of Ashcroft)."
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 97C. Commercial chain up in effect between Eight Mile Rd and Junction Hwy 97D for 0.1 km (60 km south of Ashcroft). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:48 AM PST"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 97C. Commercial chain up in effect between Eight Mile Rd and Junction Hwy 97D for 0.1 km (60 km south of Ashcroft). \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:48 AM PST"
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 97C. Commercial chain up in effect between Eight Mile Rd and Junction Hwy 97D for 0.1 km (60 km south of Ashcroft). Last updated Fri Nov 22 at 9:48 AM PST. (DBCCNUP-12755)"
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  },
+  {
+    "event-id": "DBCCNUP-127501",
+    "is-draft": false,
+    "headline": {
+      "category": "CHAIN_UP",
+      "code": "Commercial chain up in effect",
+      "phrase_type": "PHRASE",
+      "variant_action_text": "Commercial chain up in effect",
+      "variant_cause_text": "because of commercial chain up"
+    },
+    "editor": {
+      "editor-identifier": "SituationAggregator",
+      "description": "SituationAggregator"
+    },
+    "message-number": 12750,
+    "message-type-version": 1,
+    "priority": 4,
+    "sender": {
+      "organization-id": "DBCCNUP",
+      "center-id": "DBCCNUP",
+      "contact": {
+        "contact-id": "IDIR__WMULDER"
+      }
+    },
+    "update-number": 1,
+    "update-time": {
+      "time": 1732297627530,
+      "nanos": 530000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "update-expiry-time": {
+      "time": 1763833627530,
+      "nanos": 530000000,
+      "timeZoneId": "America/Vancouver",
+      "utcOffset": -28800000
+    },
+    "open511-event-details": {
+      "event_type_description": "CHAIN_UP",
+      "event_subtype": "HAZARD",
+      "event_area_area_id": "Skeena District",
+      "event_service_area": "26 - Skeena",
+      "event_road_to": "KM 56.9",
+      "event_road_from": "between KM 56.9 and KM 56.8",
+      "start_point_linear_reference": 56.82,
+      "end_point_linear_reference": 56.92
+    },
+    "details": [
+      {
+        "access": "PUBLIC_DOMAIN",
+        "duration-was-specified": true,
+        "element-id": 1,
+        "end-time": {
+          "time": 1852297627530,
+          "nanos": 530000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -25200000
+        },
+        "update-time": {
+          "time": 1732297627530,
+          "nanos": 530000000,
+          "timeZoneId": "America/Vancouver",
+          "utcOffset": -28800000
+        },
+        "descriptions": [
+          {
+            "description-type": "PhraseDescription",
+            "is-cause": false,
+            "kind": {
+              "phrase-id": 2,
+              "category": "chain_up",
+              "code": "commercial chain up in effect"
+            }
+          }
+        ],
+        "locations": [
+          {
+            "location-type": "LinkLocation",
+            "link-direction": "NOT_DIRECTIONAL",
+            "link-ownership": "BC",
+            "primary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 54.504087152069,
+                "longitude": -128.552257234483
+              },
+              "linear-reference": 56.82
+            },
+            "route-designator": "Highway 37",
+            "segment-names": [
+              "Hwy 37S, Southbound,  1km south of Terrace"
+            ],
+            "linear-reference-version": 0,
+            "secondary-location": {
+              "geo-location": {
+                "location-type": "GeoLocation",
+                "latitude": 54.5049716997143,
+                "longitude": -128.552421108571
+              },
+              "linear-reference": 56.92
+            }
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-128.552257, 54.504087],
+        [-128.552421, 54.504972]
+      ]
+    },
+    "bounds": {
+      "minLat": 54.504087152069,
+      "minLon": -128.552421108571,
+      "maxLat": 54.5049716997143,
+      "maxLon": -128.552257234483
+    },
+    "communication-plan-template": {
+      "extent-event-length": "0.1 km"
+    },
+    "communication-plans": [
+      {
+        "plan-type": "ATTRIBUTION",
+        "description": ""
+      },
+      {
+        "plan-type": "TWITTER",
+        "description": "#BCHwy37: Commercial chain up in effect between KM 56.8 and KM 56.9."
+      },
+      {
+        "plan-type": "HEADLINE_PHRASE",
+        "description": "Commercial chain up in effect"
+      },
+      {
+        "plan-type": "BRIEF_DESCRIPTION",
+        "description": "Highway 37. Commercial chain up in effect between KM 56.8 and KM 56.9. \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:47 AM PST"
+      },
+      {
+        "plan-type": "BRIEF_LOCATION",
+        "description": "Between KM 56.8 and KM 56.9"
+      },
+      {
+        "plan-type": "AUDIO",
+        "description": "Highway 37. Commercial chain up in effect between KM 56.8 and KM 56.9. Last updated Friday, November 22 at 9:47 AM."
+      },
+      {
+        "plan-type": "TOOLTIP",
+        "description": "Chain Up: Commercial Chain Up In Effect"
+      },
+      {
+        "plan-type": "OPERATOR",
+        "description": "Highway 37. Commercial chain up in effect between KM 56.8 and KM 56.9."
+      },
+      {
+        "plan-type": "WEB",
+        "description": "Highway 37. Commercial chain up in effect between KM 56.8 and KM 56.9. Last updated Fri Nov 22 at 9:47 AM PST. (DBCCNUP-12750)"
+      },
+      {
+        "plan-type": "FULL_PREVIEW",
+        "description": "Highway 37. Commercial chain up in effect between KM 56.8 and KM 56.9. \u003Cbr /\u003E\u003Cbr /\u003E Last updated Fri Nov 22 at 9:47 AM PST"
+      }
+    ],
+    "representation": {
+      "id": 4,
+      "priority": {
+        "id": 2,
+        "name": "Minor",
+        "sortOrder": 2,
+        "feuPriorities": [4, 5, 6, 7, 8, 9, 10]
+      },
+      "variant": {
+        "id": 1,
+        "variant": "CURRENT"
+      },
+      "action": "Commercial chain up in effect",
+      "cause": "because of commercial chain up",
+      "modifier": {
+        "id": 2,
+        "modifier": "NONE"
+      },
+      "icon": {
+        "id": 7,
+        "name": "ChainUp_icon_28x28.png.1507063810675",
+        "fileName": "ChainUp_icon_28x28.png",
+        "absolutePath": "https://tst-dit.th.gov.bc.ca/phrases_v1/icons/ChainUp_icon_28x28.png",
+        "width": 28,
+        "height": 28
+      },
+      "lineColorHex": "ff0000",
+      "lineOpacityPercent": 30,
+      "lineWidthPixels": 10,
+      "fillColorHex": "996699",
+      "fillOpacityPercent": 20,
+      "showExtent": false
+    }
+  }
+]
