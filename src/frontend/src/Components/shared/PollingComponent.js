@@ -8,14 +8,30 @@ export default function PollingComponent(props) {
 
   // Effects
   useEffect(() => {
-    // Set up reoccuring calls with interval
-    const intervalId = setInterval(() => {
+    let intervalId;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        clearInterval(intervalId);
+      } else {
+        intervalId = setInterval(() => {
+          runnable();
+        }, interval);
+      }
+    };
+
+    // Set up initial interval
+    intervalId = setInterval(() => {
       runnable();
     }, interval);
 
-    // Clean up intervals on component unmount
+    // Add visibility change event listener
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Clean up intervals and event listener on component unmount
     return () => {
       clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
