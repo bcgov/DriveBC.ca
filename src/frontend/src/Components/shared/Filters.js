@@ -89,7 +89,7 @@ export default function Filters(props) {
 
   const tooltipChainUps = (
     <Tooltip id="tooltipChainUps" className="tooltip-content">
-      <p>Chain Up requiremnts.</p>
+      <p>Segments of the highway that require Commercial Vehicles over 11,794kg to have chains on in order to use the highway.</p>
     </Tooltip>
   );
 
