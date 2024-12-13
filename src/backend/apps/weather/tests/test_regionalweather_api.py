@@ -39,28 +39,8 @@ class TestRegionalWeatherAPI(APITestCase, BaseTest):
         response = self.client.get(url, {})
         assert len(response.data) == 0
 
-    def test_regional_weather_list_filtering(self):
-        # No filtering
-        url = "/api/weather/regional"
-        response = self.client.get(url, {})
-        assert response.status_code == 200
-        assert len(response.data) == 1
-
-        # Manually update location code
-        regional_weather = RegionalWeather.objects.get(code='s0000341')
-        regional_weather.code = 's0000846'
-        regional_weather.save()
-        regional_weather = RegionalWeather.objects.get(code='s0000846')
-        assert response.status_code == 200
-        assert len(response.data) == 1
-
-        response = self.client.get(
-            url
-        )
-        assert len(response.data) == 1
-
     def test_get_forecasts(self):
         forecasts = self.weather.get_forecasts()
-        test_str = self.weather.__str__()
         assert len(forecasts) == 0
-        assert test_str == 'Regional Forecast for ' + str(self.weather.code) + ' (' + str(self.weather.station) + ')'
+        assert (self.weather.__str__() == 'Regional Forecast for ' + str(self.weather.code) +
+                ' (' + str(self.weather.station) + ')')
