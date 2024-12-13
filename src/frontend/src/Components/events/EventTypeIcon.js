@@ -14,6 +14,10 @@ import closuresActiveIcon from '../../images/mapIcons/closure-active.png';
 import closuresActiveAltIcon from '../../images/mapIcons/closure-alt-active.png';
 import closuresStaticIcon from '../../images/mapIcons/closure-static.png';
 
+// Future Closures
+import futureClosureActiveIcon from '../../images/mapIcons/future-closure-active.png';
+import futureClosureStaticIcon from '../../images/mapIcons/future-closure-static.png';
+
 // Future Events
 import futureEventsMajorActiveIcon from '../../images/mapIcons/future-event-major-active.png';
 import futureEventsMajorStaticIcon from '../../images/mapIcons/future-event-major-static.png';
@@ -62,12 +66,27 @@ export default function EventTypeIcon(props) {
       else
         return <img className={'delay-icon-img'} src={event_type === 'CONSTRUCTION' ? constructionsStaticIcon : genericDelaysStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
     }
-
     case "futureEvents": {
-      if (state === 'active')
-        return <img className={'delay-icon-img'} src={severity === 'MAJOR' ? futureEventsMajorActiveIcon : futureEventsActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
-      else
-        return <img className={'delay-icon-img'} src={severity === 'MAJOR' ? futureEventsMajorStaticIcon : futureEventsStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
+      switch (severity) {
+        case "CLOSURE": {
+          if (state === 'active')
+            return <img className={'delay-icon-img'} src={futureClosureActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
+          else
+            return <img className={'delay-icon-img'} src={futureClosureStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
+        }
+        case "MAJOR": {
+          if (state === 'active')
+            return <img className={'delay-icon-img'} src={futureEventsMajorActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
+          else
+            return <img className={'delay-icon-img'} src={futureEventsMajorStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
+        }
+        default: {
+          if (state === 'active')
+            return <img className={'delay-icon-img'} src={futureEventsActiveIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
+          else
+            return <img className={'delay-icon-img'} src={futureEventsStaticIcon } alt={getTypeDisplay(event)} aria-hidden={true}/>
+        }
+      }
     }
 
     case "roadConditions": {
