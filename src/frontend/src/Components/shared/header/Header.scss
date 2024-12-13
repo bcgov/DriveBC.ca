@@ -52,7 +52,7 @@
 			@media (max-height: 600px) {
 				height: calc(100% - 58px);
 			}
-			
+
 			.navbar-nav {
 				@media (max-height: 600px) {
 					height: 100%;
@@ -150,7 +150,6 @@
 
 	&-collapse {
 		order: 1;
-		padding: 0 16px;
 		background: $Grey10;
 		padding: 0;
 

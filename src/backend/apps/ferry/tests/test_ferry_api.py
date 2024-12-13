@@ -21,8 +21,8 @@ class TestFerryAPI(APITestCase, BaseTest):
                 route_description=f"Description {i}",
 
                 # Urls
-                url=f"http://example.com/route_{i}",
-                image_url=f"http://example.com/image_{i}.jpg",
+                url=f"https://example.com/route_{i}",
+                image_url=f"https://example.com/image_{i}.jpg",
 
                 # Location
                 location=Point(-123.1071703, 49.2840563),
@@ -45,10 +45,10 @@ class TestFerryAPI(APITestCase, BaseTest):
                 contact_fax=f"555-555-555{i}",
 
                 # Webcams
-                webcam_url_1=f"http://example.com/webcam1_{i}.jpg",
-                webcam_url_2=f"http://example.com/webcam2_{i}.jpg",
-                webcam_url_3=f"http://example.com/webcam3_{i}.jpg",
-                webcam_url_4=f"http://example.com/webcam4_{i}.jpg",
+                webcam_url_1=f"https://example.com/webcam1_{i}.jpg",
+                webcam_url_2=f"https://example.com/webcam2_{i}.jpg",
+                webcam_url_3=f"https://example.com/webcam3_{i}.jpg",
+                webcam_url_4=f"https://example.com/webcam4_{i}.jpg",
                 webcam_url_5='',
             )
 
