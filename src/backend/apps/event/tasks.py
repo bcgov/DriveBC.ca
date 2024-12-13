@@ -2,7 +2,6 @@ import datetime
 import logging
 from zoneinfo import ZoneInfo
 
-import pytz
 from apps.event.enums import EVENT_DIFF_FIELDS, EVENT_STATUS, EVENT_UPDATE_FIELDS
 from apps.event.models import Event
 from apps.event.serializers import EventInternalSerializer
@@ -84,8 +83,8 @@ def populate_event_from_data(new_event_data):
 
 def cap_time_to_now(datetime_value):
     # Use current time instead of future time
-    if datetime_value and datetime_value > datetime.datetime.now(pytz.utc):
-        return datetime.datetime.now(pytz.timezone('America/Vancouver'))
+    if datetime_value and datetime_value > datetime.datetime.now(ZoneInfo('UTC')):
+        return datetime.datetime.now(ZoneInfo('America/Vancouver'))
 
     return datetime_value
 

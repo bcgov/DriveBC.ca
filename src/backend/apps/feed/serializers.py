@@ -1,8 +1,8 @@
 import html  # Importing html module for unescaping HTML entities
 import zoneinfo
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-import pytz
 from apps.feed.fields import (
     DriveBCDateField,
     DriveBCField,
@@ -211,11 +211,11 @@ class EventFeedSerializer(serializers.Serializer):
 
             # Parse start and end into datetime objects
             if start != '':
-                start_time = datetime.strptime(start, "%Y-%m-%dT%H:%M").replace(tzinfo=pytz.utc)
+                start_time = datetime.strptime(start, "%Y-%m-%dT%H:%M").replace(tzinfo=ZoneInfo('UTC'))
                 internal_data['start'] = start_time
 
             if end != '':
-                end_time = datetime.strptime(end, "%Y-%m-%dT%H:%M").replace(tzinfo=pytz.utc)
+                end_time = datetime.strptime(end, "%Y-%m-%dT%H:%M").replace(tzinfo=ZoneInfo('UTC'))
                 internal_data['end'] = end_time
 
         return internal_data

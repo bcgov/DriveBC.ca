@@ -6,10 +6,10 @@ import urllib.request
 from itertools import groupby
 from math import floor
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import environ
 import httpx
-import pytz
 from apps.feed.client import FeedClient
 from apps.shared.models import RouteGeometry
 from apps.webcam.enums import CAMERA_DIFF_FIELDS
@@ -33,7 +33,8 @@ FONT = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=14)
 FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
 CAMS_DIR = f'{settings.SRC_DIR}/images/webcams'
 
-CAM_OFF = 'This highway cam image is currently unavailable due to technical difficulties. Our technicians have been alerted and service will resume as soon as possible.'
+CAM_OFF = ('This highway cam image is currently unavailable due to technical difficulties. '
+           'Our technicians have been alerted and service will resume as soon as possible.')
 
 
 def populate_webcam_from_data(webcam_data):
@@ -84,7 +85,7 @@ def update_single_webcam_data(webcam):
 
 def update_all_webcam_data():
     for webcam in Webcam.objects.all():
-        current_time = datetime.datetime.now(tz=pytz.timezone("America/Vancouver"))
+        current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
         if webcam.should_update(current_time):
             update_single_webcam_data(webcam)
 
@@ -110,7 +111,7 @@ def wrap_text(text, pen, font, width):
     trailing space on each line.  The last token also has a space stripped.
     '''
 
-    line_length = 0;
+    line_length = 0
     out = []
 
     for token in text.split():
