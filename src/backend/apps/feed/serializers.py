@@ -167,6 +167,7 @@ class CarsClosureSerializer(serializers.Serializer):
                 tz=zoneinfo.ZoneInfo(key=next_update['timeZoneId'])
             )
 
+        data["timezone"] = ''
         if "update-time" in data:
             data["timezone"] = data.get("update-time")['timeZoneId']
 

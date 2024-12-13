@@ -1,4 +1,5 @@
 import datetime
+import logging
 import zoneinfo
 
 from apps.authentication.models import DriveBCUser, FavouritedCameras
@@ -7,6 +8,9 @@ from django.contrib.gis.geos import Point
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient, APITransactionTestCase
+
+# suppress logged error messages to reduce noise
+logging.getLogger("django.test").setLevel(logging.CRITICAL)
 
 
 class FavouritedCamerasViewsetTests(APITransactionTestCase):

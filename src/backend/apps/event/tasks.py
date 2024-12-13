@@ -64,7 +64,6 @@ def build_data_diff(current_obj, new_obj_data):
 
 def populate_event_from_data(new_event_data):
     event_id = new_event_data.get('id')
-
     try:
         event = Event.objects.get(id=event_id)
 
@@ -120,7 +119,7 @@ def populate_all_event_data():
                 event_data["route_at"] = cars_data['route_at']
 
             # DBC22-3081 replace timezone with DIT API data, to be removed if source is corrected
-            if cars_data['timezone']:
+            if 'timezone' in cars_data:
                 new_tz = ZoneInfo(cars_data['timezone'])
 
                 first_created_time = event_data["first_created"].replace(tzinfo=new_tz)
