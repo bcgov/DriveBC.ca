@@ -1,4 +1,5 @@
 parsed_feed = {
+    "code": "wincode",
     "weather_station_name": "Brandywine Devar",
     "elevation": 496,
     "location_description": "W side of Hwy99, 11 km S of Whistler Creek",
@@ -310,6 +311,7 @@ parsed_feed = {
 }
 
 parsed_summer_feed = {
+    "code": "sumcode",
     "weather_station_name": "Brandywine Devar Summer",
     "elevation": 496,
     "location_description": "W side of Hwy99, 11 km S of Whistler Creek",
