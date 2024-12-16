@@ -41,6 +41,9 @@ class Event(BaseModel):
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
 
+    # Timezone
+    timezone = models.CharField(max_length=32, null=True, blank=True)
+
     def save(self, *args, **kwargs):
         uses_polygon = self.event_type in ['ROAD_CONDITION']  # chain up not used for now
         width = 1500 if self.event_type == 'CHAIN_UP' else 2000

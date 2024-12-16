@@ -131,7 +131,8 @@ def populate_all_event_data():
                 event_data["route_at"] = cars_data['route_at']
 
             # DBC22-3081 replace timezone with DIT API data, to be removed if source is corrected
-            if 'timezone' in cars_data:
+            if 'timezone' in cars_data and cars_data['timezone']:
+                event_data['timezone'] = cars_data['timezone']
                 new_tz = ZoneInfo(cars_data['timezone'])
 
                 first_created_time = event_data["first_created"].replace(tzinfo=new_tz)
