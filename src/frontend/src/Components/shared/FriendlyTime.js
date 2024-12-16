@@ -9,30 +9,32 @@ import OutsideClickHandler from 'react-outside-click-handler';
 // Styling
 import './FriendlyTime.scss';
 
-const datetimeFormat = {
-  weekday: 'short',
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  year: 'numeric',
-  timeZoneName: 'short',
-};
-const formatter = new Intl.DateTimeFormat('en-US', datetimeFormat);
 const ONE_DAY = 1000 * 60 * 60 * 24; // 24 hours in milliseconds
 
-export const formatDate = (date, isNextUpdate=false) => {
+export const formatDate = (date, tz='America/Vancouver', isNextUpdate=false) => {
+  const datetimeFormat = {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    year: 'numeric',
+    timeZoneName: 'short',
+    timeZone: tz,
+  };
+  const formatter = new Intl.DateTimeFormat('en-US', datetimeFormat);
+
   // get time difference in milliseconds
   const timeDiff = (new Date() - new Date(date));
   return (isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." : formatter.format(new Date(date));
 }
 
-export default function FriendlyTime({ date, asDate=false, includeFullIfHumanized=false, timeOnly=false, isNextUpdate=false }) {
+export default function FriendlyTime({ date, timezone, asDate=false, includeFullIfHumanized=false, timeOnly=false, isNextUpdate=false }) {
   const [showTooltip, setShowTooltip] = useState(false);
 
   // get time difference in milliseconds
   const timeDiff = (new Date() - new Date(date));
-  const dateFormatted = formatDate(date, isNextUpdate);
+  const dateFormatted = formatDate(date, timezone, isNextUpdate);
 
   // if difference is less than 24hrs
   const humanize = timeDiff < ONE_DAY;
@@ -80,7 +82,7 @@ export default function FriendlyTime({ date, asDate=false, includeFullIfHumanize
           >
             <div className="friendly-time-text">
               {(isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." :
-                <ReactTimeAgo date={dt} locale="en-US"/>
+                <ReactTimeAgo date={dt} verboseDate={dateFormatted} locale="en-US"/>
               }
             </div>
             { !(isNextUpdate && timeDiff > 0) &&
