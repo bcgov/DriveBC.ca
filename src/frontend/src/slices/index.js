@@ -11,7 +11,7 @@ import {
 import { updateMapState } from './mapSlice';
 import {
   clearSelectedRoute, updateSelectedRoute, // selected route
-  updateSearchLocationFrom, updateSearchLocationTo, // search locations
+  updateSearchLocationFrom, updateSearchLocationTo, updateSearchLocationFromWithMyLocation, // search locations
   updateSearchedRoutes, updateSingleSearchedRoute, clearSearchedRoutes // searched routes
 } from './routesSlice';
 import {
@@ -40,7 +40,7 @@ export {
 
   // routesSlice
   clearSelectedRoute, updateSelectedRoute, // selected route
-  updateSearchLocationFrom, updateSearchLocationTo, // search locations
+  updateSearchLocationFrom, updateSearchLocationTo, updateSearchLocationFromWithMyLocation, // search locations
   updateSearchedRoutes, updateSingleSearchedRoute, clearSearchedRoutes, // searched routes
 
   // userSlice
