@@ -235,6 +235,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Install CLI tools from OpenShift Mirror
+      uses: redhat-actions/openshift-tools-installer@v1
+      with:
+        oc: "4"
+
     - name: Authenticate and set context
       uses: redhat-actions/oc-login@v1
       with:
