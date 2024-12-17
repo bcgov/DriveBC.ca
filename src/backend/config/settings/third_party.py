@@ -50,26 +50,35 @@ if os.name == "nt":
     GDAL_LIBRARY_PATH = env("GDAL_LIBRARY_PATH")
 
 # Allauth
+ACCOUNT_ADAPTER = 'apps.authentication.adapters.AccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'apps.authentication.adapters.SocialAccountAdapter'
 
 # need our own adapter to override various redirect url methods following
 # login or logout
-ACCOUNT_ADAPTER = 'apps.authentication.adapters.AccountAdapter'
 
 SOCIALACCOUNT_PROVIDERS = {
     'openid_connect': {
-        'APP': {
-            'provider_id': 'bceid',
-            'name': 'BCeID via Keycloak',
-            'client_id': env("BCEID_CLIENT_ID"),
-            'secret': env("BCEID_SECRET"),
-            'settings': {
-                'server_url': env("BCEID_URL"),
-            }
-        },
-        'AUTH_PARAMS': {
-            'kc_idp_hint': 'bceidbasic',
-        },
-    }
+        'APPS': [
+            {
+                'provider_id': 'bceid',
+                'name': 'BCeID via Keycloak',
+                'client_id': env("BCEID_CLIENT_ID"),
+                'secret': env("BCEID_SECRET"),
+                'settings': {
+                    'server_url': env("BCEID_URL"),
+                },
+            },
+            {
+                'provider_id': 'idir',
+                'name': 'Azure IDIR via Keycloak',
+                'client_id': env("BCEID_CLIENT_ID"),
+                'secret': env("BCEID_SECRET"),
+                'settings': {
+                    'server_url': env("BCEID_URL"),
+                },
+            },
+        ],
+    },
 }
 
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'

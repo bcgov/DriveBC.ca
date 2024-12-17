@@ -1,11 +1,10 @@
 Django==4.2.16
-django-allauth==0.63
+django-allauth==65.2.0
 django-environ==0.10.0
 djangorestframework==3.15.2
 djangorestframework-gis==1.0
 django-cors-headers==3.13.0
 django-filter==23.5
-django-oauth-toolkit==2.4
 drf-recaptcha==3.0.0
 whitenoise==6.5.0
 httpx==0.24.1
