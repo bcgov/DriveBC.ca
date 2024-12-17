@@ -19,8 +19,10 @@ export default function LocationSearch(props) {
   // Redux
   const dispatch = useDispatch();
 
-  const { placeholder, location, action } = props;
+  const { placeholder, location, action, myLocation } = props;
 
+  const [minLength, setMinLength] = useState(3);
+  const [cacheOptions, setCacheOptions] = useState(true);
   const [isSearching, setSearching] = useState(false);
   const [options, setLocationOptions] = useState([]);
 
@@ -46,6 +48,14 @@ export default function LocationSearch(props) {
     });
   };
 
+  const populateMylocation = locationInput => {
+    if (myLocation) {
+      setCacheOptions(false);
+      setMinLength(0);
+      setLocationOptions([{ ...myLocation, label: "Current location"}]);
+    }
+  }
+
   // Rendering
   return (
     <AsyncTypeahead
@@ -54,9 +64,10 @@ export default function LocationSearch(props) {
       id="location-search-typeahead"
       isLoading={isSearching}
       labelKey="label"
-      minLength={3}
+      minLength={minLength}
       onChange={setSelectedLocation}
       onSearch={loadLocationOptions}
+      onFocus={populateMylocation}
       onBlur={() => {
         if (location && location.length > 0) {
           trackEvent(
@@ -70,6 +81,7 @@ export default function LocationSearch(props) {
       options={options}
       placeholder={placeholder}
       highlightOnlyResult={true}
+      useCache={cacheOptions}
       inputProps={{
         'aria-label': 'input field for location ' + placeholder,
         ...props.inputProps,
@@ -81,7 +93,7 @@ export default function LocationSearch(props) {
       }}
       renderMenuItemChildren={location => (
         <div>
-          <span>{location.properties.fullAddress}</span>
+          <span>{location.label}</span>
         </div>
       )}
     >

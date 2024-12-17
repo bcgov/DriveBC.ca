@@ -33,12 +33,17 @@ export const routesSlice = createSlice({
     updateSearchLocationTo: (state, action) => {
       state.searchLocationTo = action.payload;
     },
+    updateSearchLocationFromWithMyLocation: (state, action) => {
+      // Only update if no location is set or if the location is "Current location"
+      if (!state.searchLocationFrom.length || state.searchLocationFrom[0].label === "Current location")
+        state.searchLocationFrom = action.payload;
+    },
   },
 });
 
 export const {
   clearSelectedRoute, updateSelectedRoute, // selected route
-  updateSearchLocationFrom, updateSearchLocationTo, // search locations
+  updateSearchLocationFrom, updateSearchLocationTo, updateSearchLocationFromWithMyLocation, // search locations
   updateSearchedRoutes, updateSingleSearchedRoute, clearSearchedRoutes // searched routes
 } = routesSlice.actions;
 
