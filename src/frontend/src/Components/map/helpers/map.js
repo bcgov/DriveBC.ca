@@ -74,7 +74,7 @@ export const zoomOut = (mapView) => {
   setZoomPan(mapView, mapView.current.getZoom() - 1);
 }
 
-export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading) => {
+export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading, setMyLocation) => {
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(
       position => {
@@ -85,6 +85,27 @@ export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading) => {
           position.coords.latitude <= 60.1 &&
           position.coords.latitude >= 48.2
         ) {
+
+          // Fake feature for current location
+          const myLocation = {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "crs": {
+                "type": "EPSG",
+                "properties": {
+                  "code": 4326
+                }
+              },
+              "coordinates": [
+                position.coords.longitude,
+                position.coords.latitude
+              ]
+            },
+            "label": "Current location"
+          };
+
+          setMyLocation(myLocation);
           setZoomPan(mapView, 9, fromLonLat([longitude, latitude]));
           setLocationPin([longitude, latitude], redLocationMarkup, mapRef);
           setMyLocationLoading(false);

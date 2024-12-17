@@ -13,7 +13,7 @@ import { useSearchParams } from 'react-router-dom';
 
 // Redux
 import * as slices from '../../slices';
-import { updateSelectedRoute } from "../../slices";
+import { updateSearchLocationFromWithMyLocation, updateSelectedRoute } from "../../slices";
 import { memoize } from 'proxy-memoize';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -148,6 +148,7 @@ export default function DriveBCMap(props) {
 
   // States
   const [myLocationLoading, setMyLocationLoading] = useState(false);
+  const [myLocation, setMyLocation] = useState();
   const [advisoriesInView, setAdvisoriesInView] = useState([]);
   const [referenceFeature, updateReferenceFeature] = useState();
   const [selectedFerries, setSelectedFerries] = useState();
@@ -248,15 +249,23 @@ export default function DriveBCMap(props) {
   const loadMyLocation = () => {
     if (!locationSet.current) {
       setMyLocationLoading(true)
+    } else {
+      dispatch(updateSearchLocationFromWithMyLocation([locationSet.current]));
     }
   }
 
   useEffect(() => {
     if(myLocationLoading) {
-      toggleMyLocation(mapRef, mapView, setMyLocationLoading);
-      locationSet.current = true;
+      toggleMyLocation(mapRef, mapView, setMyLocationLoading, setMyLocation);
     }
   }, [myLocationLoading])
+
+  useEffect(() => {
+    if(myLocation) {
+      locationSet.current = myLocation;
+      dispatch(updateSearchLocationFromWithMyLocation([myLocation]));
+    }
+  }, [myLocation])
 
   /* useEffect hooks */
   /* initialization for OpenLayers map */
@@ -701,6 +710,7 @@ export default function DriveBCMap(props) {
               routeEdit={true}
               showSpinner={showSpinner}
               onShowSpinnerChange={setShowSpinner}
+              myLocation={myLocation}
               mapRef={mapRef} />
 
             <AdvisoriesWidget

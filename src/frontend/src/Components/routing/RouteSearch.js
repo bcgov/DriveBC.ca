@@ -35,7 +35,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import './RouteSearch.scss';
 
 const RouteSearch = forwardRef((props, ref) => {
-  const { showFilterText, showSpinner, onShowSpinnerChange, mapRef } = props;
+  const { showFilterText, showSpinner, onShowSpinnerChange, mapRef, myLocation } = props;
 
   const [_searchParams, setSearchParams] = useSearchParams();
 
@@ -135,6 +135,7 @@ const RouteSearch = forwardRef((props, ref) => {
           <LocationSearch
             placeholder={'Search starting location'}
             location={searchLocationFrom}
+            myLocation={myLocation}
             action={updateSearchLocationFrom}
             inputProps={{
               'aria-label': 'input field for starting location search',
