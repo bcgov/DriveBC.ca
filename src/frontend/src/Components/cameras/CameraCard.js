@@ -53,7 +53,7 @@ export default function CameraCard(props) {
   const imageRef = useRef(null);
 
   // States
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const [camera, setCamera] = useState(cameraData);
   const [isUpdated, setIsUpdated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -219,7 +219,7 @@ export default function CameraCard(props) {
   const updated = isUpdated ? 'updated' : '';
 
   return (
-    <div className={`camera-card ${stale} ${delayed} ${unavailable} ${updated} ${loading}`}>
+    <div className={`camera-card ${updated} ${stale} ${delayed} ${unavailable} ${loading}`}>
       <div className="camera-card__body">
 
         <div className="card-img-box" onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
