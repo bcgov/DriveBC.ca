@@ -155,3 +155,4 @@ def populate_all_event_data():
 
     # Rebuild cache
     cache.delete(CacheKey.EVENT_LIST)
+    cache.delete(CacheKey.EVENT_LIST_POLLING)

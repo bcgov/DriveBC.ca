@@ -8,6 +8,7 @@ urlpatterns = [
     # Feed
     path("webcams/", include("apps.webcam.urls")),
     path("events/", include("apps.event.urls")),
+    path("eventspolling/", include("apps.event.urls_polling")),
     path("weather/", include("apps.weather.urls")),
     path("ferries/", include("apps.ferry.urls")),
     path("reststops/", include("apps.rest.urls")),

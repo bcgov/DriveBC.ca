@@ -31,7 +31,7 @@ import Button from 'react-bootstrap/Button';
 // Internal imports
 import { CMSContext } from '../App';
 import { getAdvisories } from '../Components/data/advisories';
-import { getEvents } from '../Components/data/events';
+import { getEvents, getEventDetails } from '../Components/data/events';
 import { MapContext } from '../App.js';
 import { defaultSortFn, routeAtSortFn, routeOrderSortFn, severitySortFn } from '../Components/events/functions';
 import { NetworkError, ServerError } from '../Components/data/helper';
@@ -196,15 +196,24 @@ export default function EventsListPage() {
     }
   };
 
+  const loadEventDetail = async (event_id) => {
+    return await getEventDetails(event_id).catch((error) => displayError(error));
+  }
+
   const loadEvents = async route => {
     // Fetch data
-    const eventData = await getEvents().catch((error) => displayError(error));
+    const eventData = await getEvents(!isInitialLoad.current).catch((error) => displayError(error));
 
     // Track unfiltered events' highlight status and last_updated timestamp
     const trackedEventsDict = eventData.reduce((acc, event) => {
       const trackedEvent = trackedEvents[event.id] ?? null;
 
+      if (trackedEvent) {
+        event.location = trackedEvent.location;
+      }
+
       acc[event.id] = {
+        location: event.location,
         highlight: trackedEvent ? event.last_updated !== trackedEvent.last_updated || trackedEvent.highlight : !isInitialLoad.current,
         last_updated: event.last_updated
       };
@@ -217,6 +226,15 @@ export default function EventsListPage() {
         delete trackedEvents[key];
       }
     });
+
+    // Fetch locations for events that were newly added from polling calls
+    for (const event of eventData) {
+      if (!event.location) {
+        const eventDetails = await loadEventDetail(event.id);
+        event.location = eventDetails.location;
+        trackedEventsDict[event.id].location = eventDetails.location;
+      }
+    }
 
     setTrackedEvents(trackedEventsDict);
 
