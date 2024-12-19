@@ -10,7 +10,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Helper function to add features to relative VectorSource
-const addFeature = (feature, display_category, vsMap, lineVsMap) => {
+const addFeature = (feature, display_category, vsMap, lineVsMap, setNewFeatureStyle) => {
   const geoType = feature.getGeometry().getType();
   const isLineSegment = geoType === 'LineString' || geoType === 'Polygon';
   if (isLineSegment && display_category === 'chainUps') {
@@ -21,10 +21,14 @@ const addFeature = (feature, display_category, vsMap, lineVsMap) => {
   const vs = isLineSegment ? lineVsMap[display_category] : vsMap[display_category];
 
   vs.addFeature(feature);
+
+  if (setNewFeatureStyle) {
+    setEventStyle(feature, 'static');
+  }
 }
 
 // Helper function that creates a feature and updates its properties for each event
-const processEvent = (event, currentProjection, vsMap, lineVsMap, referenceData, updateReferenceFeature) => {
+const processEvent = (event, currentProjection, vsMap, lineVsMap, referenceData, updateReferenceFeature, setNewFeatureStyle=false) => {
   let eventFound = false;
 
   // all events have a point coordinate for an icon; for line or zone
@@ -36,7 +40,7 @@ const processEvent = (event, currentProjection, vsMap, lineVsMap, referenceData,
   });
   pointFeature.setId(event.id);
   pointFeature.getGeometry().transform('EPSG:4326', currentProjection);
-  addFeature(pointFeature, event.display_category, vsMap, lineVsMap);
+  addFeature(pointFeature, event.display_category, vsMap, lineVsMap, setNewFeatureStyle);
 
   if (referenceData?.type === 'event' && event.id === referenceData?.id) {
     updateReferenceFeature(pointFeature);
@@ -54,7 +58,7 @@ const processEvent = (event, currentProjection, vsMap, lineVsMap, referenceData,
     feature.setId(event.id);
 
     feature.getGeometry().transform('EPSG:4326', currentProjection);
-    addFeature(feature, event.display_category, vsMap, lineVsMap);
+    addFeature(feature, event.display_category, vsMap, lineVsMap, setNewFeatureStyle);
     pointFeature.set('altFeature', feature);
 
   } else {
@@ -76,7 +80,7 @@ const processEvent = (event, currentProjection, vsMap, lineVsMap, referenceData,
       feature.setId(event.id);
 
       feature.getGeometry().transform('EPSG:4326', currentProjection);
-      addFeature(feature, event.display_category, vsMap, lineVsMap);
+      addFeature(feature, event.display_category, vsMap, lineVsMap, setNewFeatureStyle);
       all.push(feature);
       return all;
     }, []);
@@ -217,7 +221,7 @@ export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
   Object.values(eventsDict).forEach((event) => {
     if (processedEvents.has(event.id)) { return; }
 
-    processEvent(event, 'EPSG:3857', vsMap, lineVsMap);
+    processEvent(event, 'EPSG:3857', vsMap, lineVsMap, null, null, true);
   });
 
   setLoadingLayers(prevState => ({

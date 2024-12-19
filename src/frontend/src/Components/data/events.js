@@ -1,9 +1,12 @@
 import { get } from "./helper.js";
 
-export function getEvents(routePoints) {
-  const payload = routePoints ? { route: routePoints } : {};
+export function getEventDetails(id) {
+  return get(`${window.API_HOST}/api/events/${id}/`).then((data) => data);
+}
 
-  return get(`${window.API_HOST}/api/events/`, payload).then((data) => data);
+export function getEvents(polling=false) {
+  const endpoint = polling ? `${window.API_HOST}/api/eventspolling/` : `${window.API_HOST}/api/events/`;
+  return get(endpoint).then((data) => data);
 }
 
 export const getEventCounts = (events) => {

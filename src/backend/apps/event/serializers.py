@@ -8,6 +8,7 @@ from apps.event.enums import (
     EVENT_SEVERITY,
 )
 from apps.event.models import Event
+from django.contrib.gis.geos import Point
 from rest_framework import serializers
 
 
@@ -137,6 +138,28 @@ class EventSerializer(EventInternalSerializer):
             return 'CLOSURE'
 
         return obj.severity
+
+
+class LocationField(serializers.Field):
+    def to_representation(self, value):
+        if isinstance(value, Point):
+            return {
+                'type': 'Point',
+                'coordinates': [value.x, value.y]
+            }
+        return None
+
+
+class EventPollingSerializer(EventSerializer):
+    location = LocationField()
+
+    class Meta:
+        model = Event
+        exclude = (
+            "created_at",
+            "modified_at",
+            "polygon"
+        )
 
 
 def first_item(value, default=None):
