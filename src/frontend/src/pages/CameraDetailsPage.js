@@ -719,7 +719,6 @@ export default function CameraDetailsPage() {
                                               <p>This is sometimes due to:</p>
                                               <ul>
                                                 <li>Power disruptions to the camera</li>
-                                                <li>Vandalism</li>
                                                 <li>Signal transmission issues</li>
                                               </ul>
                                               <p>Our technicians have been alerted and service will resume as soon as possible. Repairs are subject to the availability of repair parts and staff’s ability to access the location. Camera functions will return once repairs are complete.</p>
