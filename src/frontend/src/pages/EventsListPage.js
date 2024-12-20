@@ -210,10 +210,12 @@ export default function EventsListPage() {
 
       if (trackedEvent) {
         event.location = trackedEvent.location;
+        event.polygon = trackedEvent.polygon;
       }
 
       acc[event.id] = {
         location: event.location,
+        polygon: event.polygon,
         highlight: trackedEvent ? event.last_updated !== trackedEvent.last_updated || trackedEvent.highlight : !isInitialLoad.current,
         last_updated: event.last_updated
       };
@@ -233,6 +235,9 @@ export default function EventsListPage() {
         const eventDetails = await loadEventDetail(event.id);
         event.location = eventDetails.location;
         trackedEventsDict[event.id].location = eventDetails.location;
+
+        event.polygon = eventDetails.polygon;
+        trackedEventsDict[event.id].polygon = eventDetails.polygon;
       }
     }
 

@@ -16,10 +16,12 @@ export const loadEvents = async (route, events, filteredEvents, eventFilterPoint
 
     if (trackedEvent) {
       event.location = trackedEvent.location;
+      event.polygon = trackedEvent.polygon;
     }
 
     acc[event.id] = {
       location: event.location,
+      polygon: event.polygon,
       highlight: trackedEvent ? event.last_updated !== trackedEvent.last_updated || trackedEvent.highlight : !isInitialLoad,
       last_updated: event.last_updated
     };
@@ -36,6 +38,9 @@ export const loadEvents = async (route, events, filteredEvents, eventFilterPoint
       const eventDetails = await loadEventDetail(event.id);
       event.location = eventDetails.location;
       trackedEventsDict[event.id].location = eventDetails.location;
+
+      event.polygon = eventDetails.polygon;
+      trackedEventsDict[event.id].polygon = eventDetails.polygon;
     }
   }
 
