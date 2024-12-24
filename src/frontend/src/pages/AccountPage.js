@@ -1,7 +1,13 @@
 import React, { useContext, useEffect } from 'react';
-import {useNavigate} from 'react-router-dom';
 
+import { useNavigate } from 'react-router-dom';
+
+// External imports
+import Container from 'react-bootstrap/Container';
+
+// Internal imports
 import { AuthContext } from '../App';
+import { sendVerificationEmail } from "../Components/data/user";
 import Footer from '../Footer.js';
 import PageHeader from '../PageHeader';
 
@@ -25,7 +31,12 @@ export default function AccountPage() {
         title="My Account"
         description="">
       </PageHeader>
-      <Footer />
+
+      <Container>
+        <button onClick={sendVerificationEmail}>Send Verification Email</button>
+      </Container>
+
+      <Footer/>
     </div>
   );
 }

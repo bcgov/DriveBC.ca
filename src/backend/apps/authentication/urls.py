@@ -1,13 +1,19 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from .views import FavouritedCamerasViewset, SavedRoutesViewset
-
+from .views import (
+    FavouritedCamerasViewset,
+    SavedRoutesViewset,
+    SendVerificationEmailView,
+    VerifyEmailView,
+)
 
 router = routers.DefaultRouter()
 router.register("webcams", FavouritedCamerasViewset)
 router.register("routes", SavedRoutesViewset)
 
 urlpatterns = [
-    path("", include(router.urls))
+    path("", include(router.urls)),
+    path('verify-email/<uidb64>/<token>/', VerifyEmailView.as_view(), name='verify-email'),
+    path('send-verification-email/', SendVerificationEmailView.as_view(), name='send-verification-email'),
 ]
