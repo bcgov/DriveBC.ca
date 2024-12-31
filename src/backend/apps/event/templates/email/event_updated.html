@@ -1,0 +1,14 @@
+<p>
+    Hello,\n
+    This notification is sent based on your route notification settings on DriveBC for the following route:\n
+
+    <b>{{ route.label }}</b>\n
+    from: {{ route.start }}\n
+    to: {{ route.end }}\n
+
+    {% for event in events %}
+        <b>{{ event.event_type }}</b>\n
+        {{ event.description }}\n
+        Last updated: {{ event.last_updated }}\n
+    {% endfor %}
+</p>
