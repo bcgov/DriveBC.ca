@@ -72,3 +72,5 @@ class SavedRoutes(BaseModel):
 
     criteria = models.CharField(choices=ROUTE_CRITERIA_CHOICES, max_length=100, default=ROUTE_CRITERIA.FASTEST)
     searchTimestamp = models.CharField(max_length=100, default='fastest')
+
+    notification = models.BooleanField(default=False)
