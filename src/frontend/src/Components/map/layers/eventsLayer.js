@@ -135,9 +135,12 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
     const currentProjection = mapRef.current.getView().getProjection().getCode();
 
     // Add features to VectorSources for each event
-    eventsData.forEach((event) => {
+    for (const event of eventsData) {
       eventFound = processEvent(event, currentProjection, vsMap, lineVsMap, referenceData, updateReferenceFeature);
-    });
+      if (eventFound) {
+        break;
+      }
+    }
 
     // Helper function to add layer to map
     const addLayer = (name, vs, zIndex) => {
