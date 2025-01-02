@@ -610,7 +610,6 @@
 
       .replay-the-day {
         margin-bottom: 0.5em;
-        margin-right: 0.5em;
 
         @media (min-width: 576px) {
           margin-bottom: 0;
@@ -623,37 +622,15 @@
           flex-direction: column;
           align-items: center;
           margin-bottom: 0;
-          padding-left: 0;
 
           @media (min-width: 576px) {
             flex-direction: row;
           }
 
-          .form-check-input, .form-check-label {
-            cursor: pointer;
-          }
-
           .form-check-input {
-            height: 20px;
-            margin-left: 0;
-            order: 2;
-            position: absolute;
-            top: 26px;
-            left: 0;
-
             @media (min-width: 576px) {
-              margin-top: 0;
               margin-left: 8px;
               position: static;
-            }
-          }
-
-          .form-check-label {
-            white-space: nowrap;
-            order: 1;
-            font-size: 0.875rem;
-            @media (min-width: 1240px) {
-              font-size: 1rem;
             }
           }
         }

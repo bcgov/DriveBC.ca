@@ -5,7 +5,39 @@
 
   .route-title {
     .route-tools {
-      margin-bottom: 1rem;
+      .route-index {
+        height: 24px;
+        width: 24px;
+        border-radius: 12px;
+        border: 1px solid $Info;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.875rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        background-color: $White;
+        color: $Info;
+  
+        &.selected {
+          background-color: $Info;
+          color: $White;
+        }
+      }
+
+      .notifications-settings {
+        display: flex;
+        align-items: center;
+
+        .notifications-toggle {
+        }
+
+        svg {
+          margin-left: 8px;
+          color: $GreyOnBlue;
+          cursor: pointer;
+        }
+      }
 
       .favourite-btn.text-only-btn {
         margin: 0;
@@ -16,27 +48,7 @@
         svg {
           font-size: 16px;
         }
-      }
-    }
-
-    .route-index {
-      height: 24px;
-      width: 24px;
-      border-radius: 12px;
-      border: 1px solid $Info;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 0.875rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-      background-color: $White;
-      color: $Info;
-
-      &.selected {
-        background-color: $Info;
-        color: $White;
-      }
+      }    
     }
 
     .card-img-box {
@@ -231,6 +243,56 @@
 
     svg {
       margin-left: 4px;
+    }
+  }
+}
+
+
+.modal--notifications-settings {
+
+  .modal-dialog {
+    margin: 0;
+
+    @media (min-width: 576px) {
+      max-width: 650px;
+      margin-top: 25vh;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .modal-content {
+      height: 100vh;
+      
+      @media (min-width: 576px) {
+        height: 100%;
+      }
+    }
+
+    .info-row {
+      margin-top: 32px;
+
+      &__data {
+        display: flex;
+
+        .edit {
+          color: $Type-Link;
+          margin-left: 24px;
+
+          svg {
+            margin-right: 8px;
+          }
+        }
+      }
+    }
+    .modal-footer {
+      justify-content: flex-start;
+      border-top: none;
+
+      .btn {
+        svg {
+          margin-left: 8px;
+        };
+      }
     }
   }
 }
