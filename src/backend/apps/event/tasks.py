@@ -129,10 +129,10 @@ def populate_all_event_data():
             event_data["start_point_linear_reference"] = cars_data.get('start_point_linear_reference', None)
             if 'route_at' in cars_data and cars_data['route_at'] != '':
                 event_data["route_at"] = cars_data['route_at']
-            event_data['timezone'] = cars_data['timezone']
             # DBC22-3081 replace timezone with DIT API data, to be removed if source is corrected
             if 'timezone' in cars_data and cars_data['timezone']:
                 new_tz = ZoneInfo(cars_data['timezone'])
+                event_data['timezone'] = cars_data['timezone']
 
                 first_created_time = event_data["first_created"].replace(tzinfo=new_tz)
                 event_data["first_created"] = cap_time_to_now(first_created_time)
@@ -147,6 +147,8 @@ def populate_all_event_data():
                 if "end" in event_data:
                     pacific_end_time = event_data["end"].astimezone(ZoneInfo('America/Vancouver'))
                     event_data["end"] = pacific_end_time.replace(tzinfo=new_tz)
+            else:
+                event_data['timezone'] = 'America/Vancouver'
 
             # Populate db obj
             updated = populate_event_from_data(event_data)
@@ -162,8 +164,6 @@ def populate_all_event_data():
     for chain_up in chain_ups:
         active_event_ids.append(chain_up.validated_data['id'])
         chain_up.save()
-        tz=chain_up.validated_data['first_created'].tzinfo.key
-        Event.objects.filter(id=chain_up.validated_data['id']).update(timezone=tz)
 
     # Purge events absent in the feed
     Event.objects.filter(status=EVENT_STATUS.ACTIVE)\
