@@ -143,7 +143,8 @@ class session(APIView):
         if request.user.is_authenticated:
             response = JsonResponse({
                 "username": request.user.username,
-                "email": request.user.email
+                "email": request.user.email,
+                "verified": request.user.verified
             })
 
         else:
