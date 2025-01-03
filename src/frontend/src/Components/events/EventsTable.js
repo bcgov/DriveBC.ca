@@ -16,6 +16,7 @@ import { faLocationDot } from '@fortawesome/pro-solid-svg-icons';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import Button from 'react-bootstrap/Button';
+import parse from "html-react-parser";
 
 // Internal imports
 import { getTypeDisplay, getSeverityClass, routeAtSortFn, routeOrderSortFn, severitySortFn } from './functions';
@@ -261,11 +262,11 @@ export default function EventsTable(props) {
               <td className={cell.column.id}
                 key={cell.id}
                 title={getEventTitle(cell)}>
-
-                {flexRender(
-                  cell.column.columnDef.cell,
-                  cell.getContext()
-                )}
+                {typeof cell.getValue() === "string" ? (
+                      parse(cell.getValue())
+                    ) : (
+                      flexRender(cell.column.columnDef.cell, cell.getContext())
+                    )}                
               </td>
             );
           })}
