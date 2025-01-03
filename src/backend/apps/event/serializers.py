@@ -207,6 +207,9 @@ class CarsEventSerializer(EventInternalSerializer):
 
         # CARS API does not offer any time of creation, or start/end times
         data['first_created'] = data['last_updated']
+        first_created = data['first_created']
+        if first_created and first_created.tzinfo:
+            data['timezone'] = first_created.tzinfo.key
         data['start'] = data['last_updated']
 
         if 'next-update-time' in data:
