@@ -7,7 +7,6 @@ import Container from 'react-bootstrap/Container';
 
 // Internal imports
 import { AuthContext } from '../App';
-import { sendVerificationEmail } from "../Components/data/user";
 import Footer from '../Footer.js';
 import PageHeader from '../PageHeader';
 
@@ -33,7 +32,18 @@ export default function AccountPage() {
       </PageHeader>
 
       <Container>
-        <button onClick={sendVerificationEmail}>Send Verification Email</button>
+        <div className='email-address'>
+          <p className='header'>Email Address</p>
+          <p className='email'>{authContext.email}</p>
+
+          {!authContext.verified &&
+            <p className='not-verified'>
+              This email address has not been verified. Email notifications for
+              saved routes will be disabled until verification
+              is complete.
+            </p>
+          }
+        </div>
       </Container>
 
       <Footer/>

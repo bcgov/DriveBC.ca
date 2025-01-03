@@ -6,6 +6,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMultiAlternatives
 from django.db.utils import IntegrityError
+from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
@@ -128,7 +129,7 @@ class VerifyEmailView(APIView):
         if user is not None and EmailVerificationTokenGenerator().check_token(user, token):
             user.verified = True
             user.save()
-            return Response({'message': 'Email verified successfully'}, status=status.HTTP_200_OK)
+            return HttpResponseRedirect(env("FRONTEND_BASE_URL") + 'account')  # Redirect to the account page
 
         else:
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)

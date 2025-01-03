@@ -1,1 +1,22 @@
 @import "../styles/variables.scss";
+
+.account-page {
+  .email-address {
+    .email, .header {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: $MyAccountHeader;
+    }
+
+    .email {
+      font-weight: 400;
+    }
+
+    .not-verified {
+      background-color: $MyAccountWarning;
+      color: $MyAccountWarningText;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+    }
+  }
+}
