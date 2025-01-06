@@ -17,7 +17,7 @@ import {
 import {
   resetFavLists, // General
   updateFavCams, pushFavCam, removeFavCam, // Cams
-  updateFavRoutes, pushFavRoute, removeFavRoute, // Routes
+  updateFavRoutes, pushFavRoute, removeFavRoute, updateSingleFavRoute, // Routes
   updatePendingAction, resetPendingAction // Pending action
 } from './userSlice';
 
@@ -46,6 +46,6 @@ export {
   // userSlice
   resetFavLists, // General
   updateFavCams, pushFavCam, removeFavCam, // Cams
-  updateFavRoutes, pushFavRoute, removeFavRoute, // Routes
+  updateFavRoutes, pushFavRoute, removeFavRoute, updateSingleFavRoute, // Routes
   updatePendingAction, resetPendingAction // Pending action
 };

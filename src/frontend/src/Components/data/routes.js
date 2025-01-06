@@ -4,7 +4,7 @@ import { point, multiLineString } from '@turf/turf';
 // Internal imports
 import { get } from "./helper.js";
 import { getCookie } from "../../util";
-import { removeFavRoute, pushFavRoute } from '../../slices/userSlice';
+import { removeFavRoute, pushFavRoute, updateSingleFavRoute } from '../../slices/userSlice';
 import { updateSingleSearchedRoute, updateSelectedRoute } from "../../slices/routesSlice";
 
 export function getRoute(points, alternate=false) {
@@ -135,6 +135,41 @@ export const removeRoute = async (route, selectedRoute, dispatch) => {
 
     dispatch(updateSingleSearchedRoute(payload));
     dispatch(removeFavRoute(route.id));
+
+  } catch (error) {
+    console.error('Error saving the camera:', error);
+    throw error;
+  }
+}
+
+export const patchRoute = async (route, selectedRoute, dispatch, body) => {
+  const url = `${window.API_HOST}/api/users/routes/${route.id}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify(body),
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const savedRoute = await response.json();
+    const payload = {...route, notification: savedRoute.notification};
+    if (selectedRoute && selectedRoute.id === route.id) {
+      dispatch(updateSelectedRoute(payload));
+    }
+
+    dispatch(updateSingleSearchedRoute(payload));
+    dispatch(updateSingleFavRoute(payload));
+
+    return savedRoute;
 
   } catch (error) {
     console.error('Error saving the camera:', error);

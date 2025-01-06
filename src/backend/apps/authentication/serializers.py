@@ -1,7 +1,6 @@
-from rest_framework import serializers
-
 from apps.authentication.models import FavouritedCameras, SavedRoutes
 from apps.shared.serializers import SafeStringMixin
+from rest_framework import serializers
 
 
 class FavouritedCamerasSerializer(serializers.ModelSerializer):
@@ -17,7 +16,8 @@ class SavedRoutesSerializer(SafeStringMixin, serializers.ModelSerializer):
         model = SavedRoutes
         fields = ('id', 'label', 'distance', 'distance_unit',
                   'start', 'start_point', 'end', 'end_point',
-                  'validated', 'thumbnail', 'route', 'criteria', 'searchTimestamp')
+                  'validated', 'thumbnail', 'route', 'criteria',
+                  'searchTimestamp', 'notification')
 
     def save(self):
         ''' Save the route with the requesting user. '''

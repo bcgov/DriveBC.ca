@@ -42,6 +42,12 @@ export const userSlice = createSlice({
 
       state.favRoutes = resFavRoutes;
     },
+    updateSingleFavRoute: (state, action) => {
+      const index = state.favRoutes.findIndex(savedRoute => savedRoute.id === action.payload.id);
+      if (index !== -1) {
+        state.favRoutes[index] = action.payload;
+      }
+    },
     removeFavRoute: (state, action) => {
       const resFavRoutes = !state.favRoutes ? [] : [...state.favRoutes];
       state.favRoutes = resFavRoutes.filter(route => route.id != action.payload);
@@ -61,7 +67,7 @@ export const userSlice = createSlice({
 export const {
   resetFavLists, // General
   updateFavCams, pushFavCam, removeFavCam, // Cams
-  updateFavRoutes, pushFavRoute, removeFavRoute, // Routes
+  updateFavRoutes, pushFavRoute, removeFavRoute, updateSingleFavRoute, // Routes
   updatePendingAction, resetPendingAction // Pending action
 } = userSlice.actions;
 

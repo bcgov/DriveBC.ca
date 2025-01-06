@@ -34,7 +34,7 @@ import Skeleton from 'react-loading-skeleton';
 
 // Internal imports
 import { AlertContext, AuthContext } from '../../App';
-import {getRoute, removeRoute, saveRoute} from "../data/routes";
+import { getRoute, removeRoute, saveRoute, patchRoute } from "../data/routes";
 import { addCameraGroups } from "../data/webcams";
 import { getEventCounts } from "../data/events";
 import { getAdvisoryCounts } from "../data/advisories";
@@ -97,7 +97,8 @@ export default function RouteDetails(props) {
   const [showSavePopup, setShowSavePopup] = useState(false);
   const [routeMapImg, setRouteMapImg] = useState(); // for map snapshot
   const [filteredFavCams, setFilteredFavCams] = useState();
-  const [notifications, setNotifications] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(route.notification);
+  const [showNotificationForm, setShowNotificationForm] = useState(false);
 
   // Data
   const loadRouteCameras = async () => {
@@ -332,42 +333,60 @@ export default function RouteDetails(props) {
     }
   }
 
-  const toggleNotifications = () => {
-    setNotifications(!notifications);
-    if (!notifications) {
-      handleShow();
+  const toggleHandler = async (e) => {
+    if (!authContext.verified) {
+      e.preventDefault();
+      navigate('/verify-email');
+      return;
+    }
+
+    if (notificationsEnabled) {
+      const body = { notification: false };
+      const response = await patchRoute(route, selectedRoute, dispatch, body);
+      setNotificationsEnabled(response.notification);
+
+    } else {
+      e.preventDefault();
+      setShowNotificationForm(true);
     }
   };
 
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const saveHandler = async () => {
+    const body = { notification: true };
+    const response = await patchRoute(route, selectedRoute, dispatch, body);
+    setNotificationsEnabled(response.notification);
+    setShowNotificationForm(false);
+  }
 
   // Main components
   return route && (
     <React.Fragment>
-      <Modal show={show} onHide={handleClose} animation={false} className="modal--notifications-settings">
+      <Modal show={showNotificationForm} onHide={() => setShowNotificationForm(false)} animation={false} className="modal--notifications-settings">
         <Modal.Header closeButton>
           <Modal.Title>Notifications</Modal.Title>
         </Modal.Header>
+
         <Modal.Body>
           <h3>Settings for {route.label ? route.label : getDefaultLabel()}</h3>
+
           <div className="info-row row">
             <div className="info-row__label">
               <p className="bold">Email notifications to</p>
             </div>
+
             <div className="info-row__data">
               <p>{authContext.email}</p>
             </div>
           </div>
         </Modal.Body>
+
         <Modal.Footer>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={saveHandler}>
             Enable notifications
             <FontAwesomeIcon icon={faCheck}/>
           </Button>
-          <Button variant="primary-outline" onClick={handleClose}>
+
+          <Button variant="primary-outline" onClick={() => setShowNotificationForm(false)}>
             Cancel
           </Button>
         </Modal.Footer>
@@ -389,16 +408,17 @@ export default function RouteDetails(props) {
               <div className="notifications-settings">
                 <Form className="notifications-toggle">
                   <Form.Check
-                    onChange={toggleNotifications}
+                    onClick={toggleHandler}
                     type="switch"
                     id={'notifications-switch-' + route.id}
                     label="Notifications"
+                    checked={notificationsEnabled}
                   />
                 </Form>
-                {notifications && 
+                {notificationsEnabled &&
                   <FontAwesomeIcon icon={faPencil}
                     tabIndex={0}
-                    onClick={handleShow}
+                    onClick={() => setShowNotificationForm(true)}
                   />
                 }
               </div>
