@@ -97,7 +97,10 @@ EVENT_DIRECTION_DISPLAY = {
 }
 
 EVENT_DIFF_FIELDS = [
-    'last_updated'
+    'last_updated',
+    'schedule',
+    'start',
+    'end'
 ]
 
 EVENT_UPDATE_FIELDS = [
