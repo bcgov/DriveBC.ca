@@ -180,19 +180,23 @@ def send_event_notifications(updated_event_ids):
         updated_interecting_events = Event.objects.filter(id__in=updated_event_ids, location__intersects=saved_route.route)
 
         if updated_interecting_events.count() > 0:
-            context = {
-                'events': updated_interecting_events,
-                'route': saved_route,
-            }
+            for event in updated_interecting_events:
+                
+                print(f"Event: {event}")
 
-            text = render_to_string('email/event_updated.txt', context)
-            html = render_to_string('email/event_updated.html', context)
+                context = {
+                    'event': event,
+                    'route': saved_route,
+                }
 
-            msg = EmailMultiAlternatives(
-                f'DriveBC route update: {saved_route.label}',
-                text,
-                env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
-                [saved_route.user.email]
-            )
-            msg.attach_alternative(html, 'text/html')
-            msg.send()
+                text = render_to_string('email/event_updated.txt', context)
+                html = render_to_string('email/event_updated.html', context)
+
+                msg = EmailMultiAlternatives(
+                    f'DriveBC route update: {saved_route.label}',
+                    text,
+                    env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
+                    [saved_route.user.email]
+                )
+                msg.attach_alternative(html, 'text/html')
+                msg.send()
