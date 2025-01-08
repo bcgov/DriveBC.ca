@@ -54,6 +54,7 @@ class CacheKey:
     DEFAULT = "default_key"
     WEBCAM_LIST = "webcam_list"
     EVENT_LIST = "event_list"
+    EVENT_LIST_POLLING = "event_list_polling"
     ADVISORY_LIST = "advisory_list"
     BULLETIN_LIST = "bulletin_list"
     FERRY_LIST = "ferry_list"

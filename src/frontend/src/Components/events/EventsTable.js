@@ -16,6 +16,7 @@ import { faLocationDot } from '@fortawesome/pro-solid-svg-icons';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import Button from 'react-bootstrap/Button';
+import parse from "html-react-parser";
 
 // Internal imports
 import { getTypeDisplay, getSeverityClass, routeAtSortFn, routeOrderSortFn, severitySortFn } from './functions';
@@ -35,15 +36,14 @@ export default function EventsTable(props) {
   // react-table columns
   const getEventTypeCell = (data) => {
     return (
-    <OverlayTrigger placement="top" overlay={getDelayTooltip(data)}>
-      <button className="eventType" aria-label={getTypeDisplay(data)} aria-describedby={getDelayTooltipID(data)}>
-        <EventTypeIcon event={data} state={data.display_category === 'majorEvents' || data.display_category === 'chainUps' ? 'static' : 'active'} alt={true} />
-        <span>{getTypeDisplay(data)}</span>
-      </button>
+      <OverlayTrigger placement="top" overlay={getDelayTooltip(data)}>
+        <button className="eventType" aria-label={getTypeDisplay(data)} aria-describedby={getDelayTooltipID(data)}>
+          <EventTypeIcon event={data} state={data.severity === 'MINOR' && data.display_category !== 'chainUps' ? 'active' : 'static'} alt={true} />
+          <span>{getTypeDisplay(data)}</span>
+        </button>
       </OverlayTrigger>
     );
   }
-
 
   const getDelayTooltip = (data) =>{
     const eventType = data.display_category;
@@ -262,11 +262,11 @@ export default function EventsTable(props) {
               <td className={cell.column.id}
                 key={cell.id}
                 title={getEventTitle(cell)}>
-
-                {flexRender(
-                  cell.column.columnDef.cell,
-                  cell.getContext()
-                )}
+                {typeof cell.getValue() === "string" ? (
+                      parse(cell.getValue())
+                    ) : (
+                      flexRender(cell.column.columnDef.cell, cell.getContext())
+                    )}                
               </td>
             );
           })}

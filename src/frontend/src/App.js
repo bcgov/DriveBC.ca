@@ -43,6 +43,7 @@ import ScrollToTop from './Components/shared/ScrollToTop';
 // FontAwesome Stylesheet
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
+import VerifyEmailPage from "./pages/VerifyEmailPage";
 config.autoAddCss = false
 
 // Variables
@@ -148,11 +149,13 @@ function App() {
           if (data.username) {
             ret.username = data.username;
             ret.email = data.email;
+            ret.verified = data.verified;
           }
           setAuthContext((prior) => {
             if (ret.loginStateKnown != prior.loginStateKnown) { return ret; }
             if (ret.username != prior.username) { return ret; }
             if (ret.email != prior.email) { return ret; }
+            if (ret.verified != prior.verified) { return ret; }
             return prior;
           });
         })
@@ -199,6 +202,7 @@ function App() {
                   <Route path="/bulletins" element={<BulletinsListPage />} />
                   <Route path="/bulletins/:id" element={<BulletinDetailsPage />} />
                   <Route path="/account" element={<AccountPage />} />
+                  <Route path="/verify-email" element={<VerifyEmailPage />} />
                   {/* Catch-all route for 404 errors */}
                   <Route path="*" element={<NotFoundPage />} />
                   <Route path="/problems" element={<ProblemsPage />} />

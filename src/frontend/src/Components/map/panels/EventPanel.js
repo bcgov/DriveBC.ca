@@ -6,6 +6,7 @@ import { useSearchParams } from 'react-router-dom';
 
 // External imports
 import Linkify from 'linkify-react';
+import parse from "html-react-parser";
 
 // Internal imports
 import { getTypeDisplay, convertDirection } from '../../events/functions';
@@ -61,7 +62,7 @@ export default function EventPanel(props) {
 
         <div className="popup__content__description">
           <p>Description</p>
-          <p><Linkify>{eventData.optimized_description}</Linkify></p>
+          <p><Linkify>{parse(eventData.optimized_description)}</Linkify></p>
         </div>
 
         <div className="popup__content__block">

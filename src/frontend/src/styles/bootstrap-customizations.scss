@@ -210,3 +210,39 @@ button:focus:not(:focus-visible) {
   position: absolute;
   margin-left: calc(3px + 0.25rem);
 }
+
+// Forms
+
+.form-switch {
+  padding-left: 0;
+
+  .form-check-input, .form-check-label {
+    cursor: pointer;
+  }
+
+  .form-check-input {
+    height: 20px;
+    margin-left: 0;
+    order: 2;
+    position: absolute;
+    top: 26px;
+    left: 0;
+    border-width: 2px;
+
+    @media (min-width: 576px) {
+      margin-left: 8px;
+      position: static;
+    }
+  }
+
+  .form-check-label {
+    white-space: nowrap;
+    order: 1;
+    font-size: 0.875rem;
+    vertical-align: middle;
+
+    @media (min-width: 1240px) {
+      font-size: 1rem;
+    }
+  }
+}

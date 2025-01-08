@@ -1,6 +1,9 @@
 // React
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
+// Navigation
+import { useNavigate } from 'react-router-dom';
+
 // Redux
 import { useSelector } from 'react-redux';
 import { memoize } from 'proxy-memoize';
@@ -23,6 +26,9 @@ import './SavedRoutesPage.scss';
 export default function SavedRoutesPage() {
   /* Setup */
   document.title = 'DriveBC - My Routes';
+
+  // Navigation
+  const navigate = useNavigate();
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -70,6 +76,22 @@ export default function SavedRoutesPage() {
         title="My routes"
         description="Manage and view your saved routes here.">
       </PageHeader>
+
+      {authContext.loginStateKnown && authContext.username && !authContext.verified &&
+        <div className='not-verified'>
+          {authContext.email} has not been verified. Email notifications for saved routes will be disabled until
+          verification is complete.
+
+          <div
+            className='verify-link'
+            tabIndex={0}
+            onClick={() => navigate('/verify-email')}
+            onKeyPress={() => navigate('/verify-email')}>
+
+            <b>Verify email address</b>
+          </div>
+        </div>
+      }
 
       {authContext.loginStateKnown && authContext.username &&
         <Container className="content-container">

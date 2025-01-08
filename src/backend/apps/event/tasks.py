@@ -1,7 +1,10 @@
 import datetime
 import logging
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
+import environ
+from apps.authentication.models import SavedRoutes
 from apps.event.enums import EVENT_DIFF_FIELDS, EVENT_STATUS, EVENT_UPDATE_FIELDS
 from apps.event.models import Event
 from apps.event.serializers import EventInternalSerializer
@@ -10,8 +13,15 @@ from apps.shared.enums import CacheKey
 from django.contrib.gis.geos import LineString, Point
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 
 logger = logging.getLogger(__name__)
+
+# Base dir and env
+BASE_DIR = Path(__file__).resolve().parents[4]
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
 
 
 def compare_data(current_field_data, new_field_data):
@@ -72,13 +82,14 @@ def populate_event_from_data(new_event_data):
                 # Found diff, update and stop loop
                 data_diff = build_data_diff(event, new_event_data)
                 Event.objects.filter(id=event_id).update(**data_diff)
-                break
+                return True
 
     except ObjectDoesNotExist:
         event = Event(id=event_id)
         event_serializer = EventInternalSerializer(event, data=new_event_data)
         event_serializer.is_valid(raise_exception=True)
         event_serializer.save()
+        return True
 
 
 def cap_time_to_now(datetime_value):
@@ -95,6 +106,7 @@ def populate_all_event_data():
     open511_data = client.get_event_list()['events']
 
     active_event_ids = []
+    updated_event_ids = []
     for event_data in open511_data:
         try:
             id = event_data.get("id", "").split("/")[-1]
@@ -138,7 +150,9 @@ def populate_all_event_data():
                 event_data['timezone'] = 'America/Vancouver'
 
             # Populate db obj
-            populate_event_from_data(event_data)
+            updated = populate_event_from_data(event_data)
+            if updated:
+                updated_event_ids.append(event_data['id'])
 
             if id:  # Mark event as active
                 active_event_ids.append(id)
@@ -157,3 +171,30 @@ def populate_all_event_data():
 
     # Rebuild cache
     cache.delete(CacheKey.EVENT_LIST)
+    cache.delete(CacheKey.EVENT_LIST_POLLING)
+
+    # Send notifications
+    send_event_notifications(updated_event_ids)
+
+
+def send_event_notifications(updated_event_ids):
+    for saved_route in SavedRoutes.objects.filter(user__verified=True, notification=True):
+        updated_interecting_events = Event.objects.filter(id__in=updated_event_ids, location__intersects=saved_route.route)
+
+        if updated_interecting_events.count() > 0:
+            context = {
+                'events': updated_interecting_events,
+                'route': saved_route,
+            }
+
+            text = render_to_string('email/event_updated.txt', context)
+            html = render_to_string('email/event_updated.html', context)
+
+            msg = EmailMultiAlternatives(
+                f'DriveBC route update: {saved_route.label}',
+                text,
+                env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
+                [saved_route.user.email]
+            )
+            msg.attach_alternative(html, 'text/html')
+            msg.send()

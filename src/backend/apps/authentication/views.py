@@ -1,11 +1,29 @@
+from pathlib import Path
+
+import environ
 from apps.webcam.models import Webcam
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMultiAlternatives
 from django.db.utils import IntegrityError
+from django.http import HttpResponseRedirect
+from django.shortcuts import reverse
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import permissions, status, viewsets
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .models import FavouritedCameras, SavedRoutes
+from .models import DriveBCUser, FavouritedCameras, SavedRoutes
 from .serializers import FavouritedCamerasSerializer, SavedRoutesSerializer
+
+# Base dir and env
+BASE_DIR = Path(__file__).resolve().parents[4]
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
 
 
 class FavouritedCamerasViewset(viewsets.ModelViewSet):
@@ -41,7 +59,7 @@ class FavouritedCamerasViewset(viewsets.ModelViewSet):
 
 
 class SavedRoutesViewset(viewsets.ModelViewSet):
-    '''
+    r'''
     This viewset provides for listing, adding, and removing saved routes for the
     authenticated user.  Unauthenticated users will receive a 403 response.
 
@@ -93,3 +111,57 @@ class SavedRoutesViewset(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return self.request.user.routes.all()
+
+
+class EmailVerificationTokenGenerator(PasswordResetTokenGenerator):
+    pass
+
+
+class VerifyEmailView(APIView):
+    def get(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = DriveBCUser.objects.get(pk=uid)
+
+        except (TypeError, ValueError, OverflowError, ObjectDoesNotExist):
+            user = None
+
+        if user is not None and EmailVerificationTokenGenerator().check_token(user, token):
+            user.verified = True
+            user.save()
+            return HttpResponseRedirect(env("FRONTEND_BASE_URL") + 'account')  # Redirect to the account page
+
+        else:
+            return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SendVerificationEmailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if user.verified:  # already verified, do nothing
+            return Response({'message': 'Account already verified'}, status=status.HTTP_204_NO_CONTENT)
+
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = EmailVerificationTokenGenerator().make_token(user)
+        verification_url = request.build_absolute_uri(reverse('verify-email', kwargs={'uidb64': uid, 'token': token}))
+
+        context = {
+            'email': request.user.email,
+            'verification_url': verification_url
+        }
+
+        text = render_to_string('email/email_verification.txt', context)
+        html = render_to_string('email/email_verification.html', context)
+
+        msg = EmailMultiAlternatives(
+            'Verify your DriveBC email address',
+            text,
+            env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
+            [request.user.email]
+        )
+        msg.attach_alternative(html, 'text/html')
+        msg.send()
+
+        return Response({'message': 'Verification email sent'}, status=status.HTTP_200_OK)

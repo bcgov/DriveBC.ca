@@ -18,7 +18,7 @@
     display: flex;
     flex-direction: column;
 
-    @media (min-width: 992px) {
+    @media (min-width: 1378px) {
       flex-direction: row;
       justify-content: space-between;
     }
@@ -26,14 +26,20 @@
     &__description {
       &__title {
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        width: 90%;
+        @media (min-width: 1440px) {
+          width: initial;
+        }
         h2 {
           color: $BC-Blue;
           margin-bottom: 0;
         }
         .favourite-btn {
           height: 32px;
-          margin-left: 24px;
+          margin-top: 0.5rem;
           svg {
             margin-right: 8px;
           }
@@ -41,7 +47,7 @@
       }
 
       .body--large {
-        margin-bottom: 2em;
+        margin-bottom: 1em;
 
         @media (min-width: 992px) {
           margin-top: 8px;
@@ -52,141 +58,75 @@
 
     &__more {
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       margin: 0;
 
       @media (min-width: 576px) {
         justify-content: flex-start;
         gap: 60px;
+        margin: 1.5rem 0 0;
       }
 
-      &__hwy, &__elevation {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-end;
-
-        .label--more {
-          margin-top: 1em;
-          white-space: nowrap;
-        }
-      }
-
-      &__hwy {
-        .highway-shield {
-          position: relative;
-
-          &__number {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            margin-top: 4px;
-            color: $HwyCrest;
-            font-weight: 700;
-            font-size: 0.875em;
-            letter-spacing: -0.05em;
-          }
-          img {
-            height: 50px;
-          }
-        }
-      }
-
-      &__elevation {
-        .elevation {
-          font-weight: 700;
-          line-height: 1;
-          color: $BC-Blue;
-          margin-bottom: 0;
-
-          .number {
-            font-size: 4rem;
-          }
-        }
-      }
-
-      .label--more {
-        font-weight: 700;
-        margin-bottom: 0;
-        color: $Grey70;
-      }
-    }
-  }
-
-  .camera-message {
-    border-left: 3px solid;
-    margin-bottom: 2em;
-    padding: 24px 36px 32px;
-
-    p, ul {
-      margin-bottom: 0;
-    }
-
-    p.bold {
-      margin: 0.5rem 0 1rem;
-    }
-
-    svg {
-      font-size: 1.5rem;
-    }
-
-    &.stale {
-      padding: 20px;
-      background-color: $Grey50;
-      border-color: $Grey100;
-
-      p {
-        color: $Grey100;
+      @media (min-width: 1240px) {
+        justify-content: flex-start;
+        gap: 60px;
         margin: 0;
       }
-    }
 
-    &.delayed {
-      background-color: $BC-Yellow-Alt;
-      border-color: $BC-Yellow-Dark;
 
-      p, ul, svg {
-        color: $BC-Yellow-Dark;
+      &__update, &__elevation, &__hwy {
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        justify-content: flex-end;
+
+        &-detail {
+          display: flex;
+          align-items: center;
+          margin-bottom: 1rem;
+          p {
+            margin-bottom: 0;
+          }
+        }
+
+        .tooltip-info {
+          margin-left: 6px;
+          color: #FFFFFF;
+          background-color: $Grey80;
+          padding: 0 5px;
+          border-radius: 0.5rem;
+          border: none;
+          font-size: 0.625rem;
+          height: 14px;
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
+
+        .label {
+          margin-top: 0.2857em;
+          margin-bottom: 0;
+          white-space: nowrap;
+          font-weight: 400;
+          color: $Grey80;
+
+          display: flex;
+          align-items: center
+        }
+
+        .number {
+          font-size: 1rem;
+          font-weight: 700;
+        }
       }
-    }
 
-    &.unavailable {
-      background-color: $Surface-major;
-      border-color: $Error;
+      &__update, &__elevation {
 
-      p, ul, svg {
-        color: $Error;
-      }
-    }
-  }
-
-  .camera-update {
-    margin: 1rem 1rem;
-
-    @media (min-width: 576px) {
-      margin: 1rem 0;
-    }
-
-    @media (min-width: 992px) {
-      margin: 0 1rem 1rem;
-    }
-
-    &--desktop {
-      display: none;
-
-      @media (min-width: 992px) {
-        display: block;
-      }
-    }
-
-    p {
-      margin-bottom: 0;
-    }
-
-    &--mobile {
-      @media (min-width: 992px) {
-        display: none;
+        svg {
+          width: 1rem;
+          color: $Grey80;
+        }
       }
     }
   }
@@ -194,9 +134,10 @@
   .actions-bar {
     display: flex;
     justify-content: space-between;
-    padding: 0 0.5rem;
+    padding: 0.5rem;
     background-color: $BC-Blue-Light;
     color: $BC-Blue;
+    border-radius: 8px;
 
     @media (min-width: 992px) {
       min-height: 48px;
@@ -211,22 +152,46 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+        margin-top: 0;
+        padding: 0;
+        background-color: inherit;
 
         @media (min-width: 576px) {
           flex-direction: row;
+          align-items: center;
+          margin-top: 0;
         }
-
+        .camera-orientations-group {
+          margin-top: 4px;
+          @media (min-width: 576px) {
+            margin-top: 0;
+          }
+        }
         .btn.camera-direction-btn {
-          width: 6ch;
-
+          width: auto;
+          padding: 0 12px;
+          @media (min-width: 992px) {
+            padding: 0 8px;
+          }
+          @media (min-width: 1200px) {
+            padding: 0 12px;
+          }
           & + .btn.camera-direction-btn {
-            margin-left: 6px;
+            margin-left: 4px;
           }
         }
 
 
         .camera-direction-label {
           margin-right: 0.5rem;
+          font-size: 0.875rem;
+          @media (min-width: 1240px) {
+            font-size: 1rem;
+            padding-left: 0;
+          }
+          span {
+            margin-left: 8px;
+          }
         }
 
         .camera-directions-group {
@@ -245,26 +210,150 @@
   }
 
   .camera-imagery {
-    max-width: 518px;
-    margin: 0 auto;
-
+    margin: 0;
+    @media (min-width: 768px) {
+      padding: 0;
+    }
     .tab-content {
+      padding: 0 12px;
+      @media (min-width: 576px) {
+        padding: 0;
+      }
       & > .tab-pane {
 
         .image-wrap {
           position: relative;
+          margin-top: 8px;
+
+          &.unavailable {
+
+            .card-img-box {
+              background-color: $Surface-major;
+              padding: 12px;
+              display: flex; /* Add this line */
+              align-items: center; /* Add this line */
+              justify-content: center; /* Optional: center horizontally as well */
+              height: fit-content;
+              min-height: 388px;
+            }
+
+            .unavailable-message {
+              padding: 12px;
+
+              svg, p, ul {
+                color: $Error;
+              }
+              p:has(+ul) {
+                margin-bottom: 0;
+              }
+
+              svg {
+                font-size: 1.25rem!important;
+
+                &.icon {
+                  padding: 0!important;
+                }
+              }
+
+              p {
+                &.bold {
+                  font-weight: 700!important;
+                  font-size: 1rem;
+                  line-height: 1.5;
+                  margin-top: 0.25rem;
+                  margin-bottom: 0.75rem;
+                }
+              }
+            }
+          }
+
+          &.updated {
+            .card-banner, .card-pill {
+              background-color: $Blue80;
+
+              p, svg {
+                color: $White;
+              }
+            }
+
+            .card-pill {
+              &:hover {
+                background-color: $Blue70;
+              }
+            }
+          }
+
+          &.stale {
+            .card-banner, .card-pill {
+              background-color: $Grey50;
+
+              p, svg {
+                color: $Grey100;
+              }
+            }
+
+            .card-pill {
+              &:hover {
+                background-color: $Grey70;
+              }
+            }
+          }
+
+          &.delayed {
+            .card-banner, .card-pill {
+              background-color: $Gold20;
+
+              p, svg {
+                color: $BC-Yellow-Dark;
+              }
+            }
+
+            .card-pill {
+              &:hover {
+                background-color: $Gold60;
+              }
+            }
+
+            .card-banner {
+              svg {
+                font-size: 1.5rem!important;
+
+                &.icon {
+                  padding: 0!important;
+                }
+              }
+
+              p {
+                font-weight: 400!important;
+
+                &.bold {
+                  font-weight: 700!important;
+                  font-size: 1.25rem;
+                  line-height: 1.875rem;
+                  margin-top: 0.25rem;
+                  margin-bottom: 0.75rem;
+                }
+              }
+
+              ul {
+                color: $BC-Yellow-Dark;
+              }
+            }
+          }
+
+          &.unavailable {
+            .card-pill {
+              &:hover {
+                background-color: $Error;
+              }
+            }
+          }
 
           .card-img-box {
             height: 388px;
-
-            &.unavailable {
-              background-color: $Surface-major;
-              color: $Error;
-              font-size: 6.875rem;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            }
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
 
             img {
               width: 100%;
@@ -275,6 +364,79 @@
                 height: 388px;
                 cursor: auto;
                 object-fit: fill;
+              }
+            }
+
+            .card-banner, .card-pill {
+              position: absolute;
+              display: flex;
+              align-items: center;
+
+              &.hidden {
+                transform:translateY(-200%);
+                transition: transform 0.7s;
+              }
+
+              &.bounce {
+                animation: bounce 0.7s ease;
+                animation-fill-mode:forwards;
+              }
+
+              @keyframes bounce {
+                  0% { transform:translateY(-200%); }
+                  40% { transform:translateY(20%); }
+                  100% { transform:translateY(0%); }
+              }
+
+              p {
+                font-weight: 700;
+                margin-bottom: 0;
+              }
+            }
+
+            .card-banner {
+              padding: 96px 18px 12px 18px;
+              top: -84px;
+              width: 100%;
+              justify-content: space-between;
+              align-items: normal;
+
+              p, svg {
+                font-size: 1rem;
+              }
+
+              p {
+                flex: 1;
+              }
+
+              svg {
+                padding: 5px 8px;
+                border-radius: 16px;
+
+                &:not(.icon):hover {
+                  background-color: rgba(0,0, 0,0.1);
+                }
+              }
+            }
+
+            .card-pill {
+              top: 8px;
+              right: 8px;
+              padding: 6px 12px;
+              border-radius: 16px;
+              transform:translateY(-200%);
+              transition: background-color 0.1s ease-in-out;
+
+              &:hover {
+                transition: background-color 0.1s ease-in-out;
+              }
+
+              p, svg {
+                font-size: 0.875rem;
+              }
+
+              svg {
+                margin-left: 4px;
               }
             }
 
@@ -398,15 +560,25 @@
             position: absolute;
             bottom: 0;
             width: 100%;
+            border-bottom-right-radius: 8px;
+            border-bottom-left-radius: 8px;
 
+            svg {
+              @media (max-width: 767px) {
+                width: 48px;
+              }
+            }
             p, .friendly-time-text {
               color: $White;
               font-size: 0.875rem;
               margin-bottom: 0;
+              @media (max-width: 767px) {
+                font-size: 0.75rem;
+              }
             }
 
             .driveBC {
-              margin-top: 4px;               
+              margin-top: 4px;
               margin-right: 10px;
             }
           }
@@ -422,11 +594,13 @@
       display: flex;
       flex-direction: row;
       align-items: flex-start;
-      margin-top: 0.5rem;
       position: relative;
 
       @media (min-width: 576px) {
         justify-content: space-between;
+      }
+      @media (min-width: 992px) {
+        align-items: center;
       }
 
       svg {
@@ -436,7 +610,6 @@
 
       .replay-the-day {
         margin-bottom: 0.5em;
-        margin-right: 0.5em;
 
         @media (min-width: 576px) {
           margin-bottom: 0;
@@ -449,36 +622,16 @@
           flex-direction: column;
           align-items: center;
           margin-bottom: 0;
-          padding-left: 0;
 
           @media (min-width: 576px) {
             flex-direction: row;
           }
 
-          .form-check-input, .form-check-label {
-            cursor: pointer;
-          }
-
           .form-check-input {
-            height: 20px;
-            margin-top: 10px;
-            margin-left: 0;
-            order: 2;
-            position: absolute;
-            top: 30px;
-            left: 0;
-
             @media (min-width: 576px) {
-              margin-top: 0;
               margin-left: 8px;
               position: static;
             }
-          }
-
-          .form-check-label {
-            font-size: 1rem;
-            white-space: nowrap;
-            order: 1;
           }
         }
       }
@@ -487,7 +640,7 @@
     //Desktop view without tabs
     @media (min-width: 992px) {
       max-width: unset;
-      margin: 0;
+      margin: 0.875rem 0 0;
 
       .nav-tabs {
         display: none;
@@ -542,6 +695,11 @@
       @media (min-width: 576px) {
         margin-left: 0;
         margin-right: 0;
+        margin-top: 0;
+
+      }
+      @media (min-width: 1240px) {
+        flex-direction: row;
       }
     }
   }
@@ -553,10 +711,12 @@
     bottom: 0;
     width: 100%;
     height: 388px;
+    margin-top: 8px;
 
     .map {
       width: 100%;
       height: 100%;
+      border-radius: 8px;
 
       .ol-scale-line {
         bottom: 8px;
@@ -565,9 +725,17 @@
     }
 
     .map-btn {
+      &:not(.cam-location) {
+        background-color: $White;
+
+        &:hover {
+          background: $Type-Link;
+        }
+      }
+
       &.map-view {
         position: absolute;
-        top: -42px;
+        top: -49px;
         left: 8px;
         bottom: initial;
         right: initial;
@@ -575,7 +743,7 @@
 
       &.open-filters {
         position: absolute;
-        top: -42px;
+        top: -49px;
         right: 8px;
         bottom: initial;
         left: initial;
