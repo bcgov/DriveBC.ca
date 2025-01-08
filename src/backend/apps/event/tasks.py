@@ -1,5 +1,7 @@
 import datetime
 import logging
+import os
+from email.mime.image import MIMEImage
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -201,5 +203,15 @@ def send_event_notifications(updated_event_ids):
                     env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
                     [saved_route.user.email]
                 )
+
+                # Attach image with Content-ID
+                image_path = os.path.join(BASE_DIR, 'src', 'backend', 'static', 'images', 'drivebclogo.png')
+                with open(image_path, 'rb') as image_file:
+                    img = MIMEImage(image_file.read(), _subtype="svg+xml")
+                    img.add_header('Content-ID', '<drivebclogo>')
+                    img.add_header('X-Attachment-Id', 'drivebclogo.png')
+                    img.add_header('Content-Disposition', 'inline', filename='drivebclogo.png')
+                    msg.attach(img)
+
                 msg.attach_alternative(html, 'text/html')
                 msg.send()
