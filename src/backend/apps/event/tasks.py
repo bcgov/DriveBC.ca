@@ -177,16 +177,19 @@ def populate_all_event_data():
 
 def send_event_notifications(updated_event_ids):
     for saved_route in SavedRoutes.objects.filter(user__verified=True, notification=True):
-        updated_interecting_events = Event.objects.filter(id__in=updated_event_ids, location__intersects=saved_route.route)
+        # Apply a 150m buffer to the route geometry
+        buffered_route = saved_route.route.buffer(150)
+        updated_interecting_events = Event.objects.filter(id__in=updated_event_ids, location__intersects=buffered_route)
 
         if updated_interecting_events.count() > 0:
             for event in updated_interecting_events:
-                
+
                 print(f"Event: {event}")
 
                 context = {
                     'event': event,
                     'route': saved_route,
+                    'user': saved_route.user
                 }
 
                 text = render_to_string('email/event_updated.txt', context)
