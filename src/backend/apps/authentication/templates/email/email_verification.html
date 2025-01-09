@@ -1,4 +1,83 @@
-<p>
-    Please click the link below to verify your email address: \n
-    {{verification_url}}
-</p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Email Verification</title>
+  </head>
+  <body style="margin:0; padding:0; font-family:Arial, sans-serif; font-size:16px; line-height:1.5rem; color:#2D2D2D;">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#F1F8FE" style="padding:50px">
+      <tr>
+        <td align="center" valign="top">
+          <!-- Email container -->
+          <table width="620" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#FFFFFF" style="padding:24px; border-top: 4px solid #013366">
+            <!-- Logo Header -->
+            <tr>
+              <td>
+                <a href="https://beta.drivebc.ca/" target="_blank" rel="noopener noreferrer" style="display:inline-block">
+                  <img src="cid:drivebclogo" alt="DriveBC Logo" />
+                </a>
+              </td>
+            </tr>
+            <!-- Body -->
+             <tr>
+              <td>
+                <table>
+                  <tr>
+                    <td style="font-size:2rem;font-weight:700;padding-top:30px">
+                      Almost there!
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-top:30px; padding-bottom:24px">
+                      To finish creating your account, we need you to verify your email.
+Once verified, you’ll be able to save cameras and routes that matter to you, and setup personalized notifications for delays that could affect a trip.
+                    </td>
+                  </tr>
+                </table>
+                <table>
+                  <tr>
+                    <td align="center" bgcolor="#255A90" style="border-radius:4px; width: 160px;">
+                      <a href={{ verification_url }} style="color:#ffffff; text-decoration: none; font-size: 0.875rem; font-weight: 700">
+                        <div style="padding: 12px">
+                          Verify email
+                        </div>
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+                <table>
+                  <tr>
+                    <td style="font-weight:700; padding-top: 24px">
+                      If you didn’t initiate this request, please disregard this email.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+             </tr>
+            <!-- Footer -->
+            <tr>
+              <td >
+                <table>
+                  <tr>
+                    <td style="padding-top:30px">
+                      Your DriveBC team.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-top:30px; font-size:0.75rem; color:#605E5C">
+                      Add notifications@drivebc.ca to your address book to ensure that you receive these notifications to your inbox.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

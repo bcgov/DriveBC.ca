@@ -6,7 +6,7 @@
   .not-verified, .verified {
     background-color: $MyAccountWarning;
     color: $MyAccountWarningText;
-    padding: 1rem 4rem;
+    padding: 0.5rem 4rem;
     font-size: 0.875rem;
 
     @media (max-width: 992px) {
@@ -14,11 +14,9 @@
     }
 
     .verify-link {
-      text-decoration: underline;
-      cursor: pointer;
+      margin-bottom: 0;
 
       @media (min-width: 992px) {
-        display: inline;
         margin-left: 1rem;
       }
 

@@ -11,6 +11,7 @@ import { memoize } from 'proxy-memoize';
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarOutline, faXmark } from '@fortawesome/pro-regular-svg-icons';
+import Button from "react-bootstrap/Button";
 
 // Internal imports
 import { AuthContext } from '../App';
@@ -84,14 +85,14 @@ export default function SavedRoutesPage() {
           {authContext.email} has not been verified. Email notifications for saved routes will be disabled until
           verification is complete.
 
-          <div
-            className='verify-link'
+          <Button
+            className='btn btn-outline-primary verify-link'
             tabIndex={0}
             onClick={() => navigate('/verify-email?my_routes=true')}
             onKeyPress={() => navigate('/verify-email?my_routes=true')}>
 
             <b>Verify email address</b>
-          </div>
+          </Button>
         </div>
       }
 
