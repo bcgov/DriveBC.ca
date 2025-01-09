@@ -19,6 +19,21 @@ instances:
       cpu: 1m
       memory: 16Mi
 
+# If we need to restore the cluster from a backup, we need to set the following values
+# assuming restore from repo2 (s3), adjust as needed if your S3 repo is different
+dataSource:
+  enabled: false
+  # should have the same name and contain the same keys as the pgbackrest secret
+  secretName: s3-pgbackrest
+  repo:
+    name: repo2
+    path: "/db/habackup"
+    s3UriStyle: path
+    s3:
+      bucket: ""
+      endpoint: ""
+      region: "ca-central-1" #this can be whatever if using BC Gov object storage
+    stanza: db
 
 pgBackRest:
   image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
