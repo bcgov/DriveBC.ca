@@ -1,6 +1,10 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 
+// Navigation
+import { useNavigate } from 'react-router-dom';
+
 // External imports
+import Button from "react-bootstrap/Button";
 import Container from 'react-bootstrap/Container';
 
 // Internal imports
@@ -12,7 +16,9 @@ import PageHeader from '../PageHeader';
 import './AccountPage.scss';
 
 export default function AccountPage() {
+  /* Setup */
   // Navigation
+  const navigate = useNavigate();
   const params = new URLSearchParams(window.location.search);
 
   // Context
@@ -24,6 +30,7 @@ export default function AccountPage() {
   // States
   const [verified, setVerified] = useState(params.get('verified'));
 
+  // Effects
   useEffect(() => {
     if (!authContext.loginStateKnown) {
       return;
@@ -71,6 +78,17 @@ export default function AccountPage() {
                 This email address has not been verified. Email notifications for
                 saved routes will be disabled until verification
                 is complete.
+
+                <br/>
+
+                <Button
+                  className='btn btn-outline-primary'
+                  tabIndex={0}
+                  onClick={() => navigate('/verify-email')}
+                  onKeyPress={() => navigate('/verify-email')}>
+
+                  <b>Verify email address</b>
+                </Button>
               </p>
             }
           </div>

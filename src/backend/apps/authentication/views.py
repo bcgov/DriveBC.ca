@@ -1,3 +1,5 @@
+import os
+from email.mime.image import MIMEImage
 from pathlib import Path
 
 import environ
@@ -170,6 +172,16 @@ class SendVerificationEmailView(APIView):
             env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
             [request.user.email]
         )
+
+        # Attach image with Content-ID
+        image_path = os.path.join(BASE_DIR, 'src', 'backend', 'static', 'images', 'drivebclogo.png')
+        with open(image_path, 'rb') as image_file:
+            img = MIMEImage(image_file.read(), _subtype="png")
+            img.add_header('Content-ID', '<drivebclogo>')
+            img.add_header('X-Attachment-Id', 'drivebclogo.png')
+            img.add_header('Content-Disposition', 'inline', filename='drivebclogo.png')
+            msg.attach(img)
+
         msg.attach_alternative(html, 'text/html')
         msg.send()
 

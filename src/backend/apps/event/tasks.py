@@ -198,7 +198,7 @@ def send_event_notifications(updated_event_ids):
                 html = render_to_string('email/event_updated.html', context)
 
                 msg = EmailMultiAlternatives(
-                    f'DriveBC route update: {saved_route.label}',
+                    f'DriveBC route update: {saved_route.label}' if saved_route.label else 'DriveBC route update',
                     text,
                     env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
                     [saved_route.user.email]
@@ -207,7 +207,7 @@ def send_event_notifications(updated_event_ids):
                 # Attach image with Content-ID
                 image_path = os.path.join(BASE_DIR, 'src', 'backend', 'static', 'images', 'drivebclogo.png')
                 with open(image_path, 'rb') as image_file:
-                    img = MIMEImage(image_file.read(), _subtype="svg+xml")
+                    img = MIMEImage(image_file.read(), _subtype="png")
                     img.add_header('Content-ID', '<drivebclogo>')
                     img.add_header('X-Attachment-Id', 'drivebclogo.png')
                     img.add_header('Content-Disposition', 'inline', filename='drivebclogo.png')
