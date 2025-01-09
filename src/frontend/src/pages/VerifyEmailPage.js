@@ -18,7 +18,9 @@ export default function VerifyEmailPage() {
 
   useEffect(() => {
     if (authContext.loginStateKnown && !authContext.verified) {
-      sendVerificationEmail();
+      const params = new URLSearchParams(window.location.search);
+      const myRoutes = params.get('my_routes') === 'true';
+      sendVerificationEmail({ my_routes: myRoutes });
     }
   }, [authContext]);
 

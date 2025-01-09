@@ -3,7 +3,7 @@
 .saved-routes-page {
   position: relative;
 
-  .not-verified {
+  .not-verified, .verified {
     background-color: $MyAccountWarning;
     color: $MyAccountWarningText;
     padding: 1rem 4rem;
@@ -26,6 +26,11 @@
         margin-top: 1rem;
       }
     }
+  }
+
+  .verified {
+    background-color: $MyAccountSuccess;
+    color: $MyAccountSuccessText;
   }
 
   .container {

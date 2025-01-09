@@ -29,6 +29,7 @@ export default function SavedRoutesPage() {
 
   // Navigation
   const navigate = useNavigate();
+  const params = new URLSearchParams(window.location.search);
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -44,6 +45,7 @@ export default function SavedRoutesPage() {
   // States
   const [routeLabel, setRouteLabel] = useState();
   const [routeFavCams, setRouteFavCams] = useState(false);
+  const [verified, setVerified] = useState(params.get('verified'));
 
   // Effects
   useEffect(() => {
@@ -85,11 +87,17 @@ export default function SavedRoutesPage() {
           <div
             className='verify-link'
             tabIndex={0}
-            onClick={() => navigate('/verify-email')}
-            onKeyPress={() => navigate('/verify-email')}>
+            onClick={() => navigate('/verify-email?my_routes=true')}
+            onKeyPress={() => navigate('/verify-email?my_routes=true')}>
 
             <b>Verify email address</b>
           </div>
+        </div>
+      }
+
+      {authContext.loginStateKnown && authContext.username && authContext.verified && verified &&
+        <div className='verified'>
+          You have successfully verified your email address.
         </div>
       }
 

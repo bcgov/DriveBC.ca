@@ -1,6 +1,31 @@
 @import "../styles/variables.scss";
 
 .account-page {
+  .verified {
+    background-color: $MyAccountSuccess;
+    color: $MyAccountSuccessText;
+    padding: 1rem 4rem;
+    font-size: 0.875rem;
+
+    @media (max-width: 992px) {
+      padding: 1rem 0.75rem;
+    }
+
+    .verify-link {
+      text-decoration: underline;
+      cursor: pointer;
+
+      @media (min-width: 992px) {
+        display: inline;
+        margin-left: 1rem;
+      }
+
+      @media (max-width: 992px) {
+        margin-top: 1rem;
+      }
+    }
+  }
+
   .email-address {
     .email, .header {
       font-size: 1.1rem;

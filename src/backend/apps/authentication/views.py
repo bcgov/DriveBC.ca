@@ -129,7 +129,12 @@ class VerifyEmailView(APIView):
         if user is not None and EmailVerificationTokenGenerator().check_token(user, token):
             user.verified = True
             user.save()
-            return HttpResponseRedirect(env("FRONTEND_BASE_URL") + 'account')  # Redirect to the account page
+
+            my_routes = request.GET.get('my_routes')
+            redirect_url = env("FRONTEND_BASE_URL") + 'my-routes?verified=true' if my_routes == 'True'\
+                else env("FRONTEND_BASE_URL") + 'account?verified=true'
+
+            return HttpResponseRedirect(redirect_url)  # Redirect to the account page
 
         else:
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
@@ -145,7 +150,11 @@ class SendVerificationEmailView(APIView):
 
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = EmailVerificationTokenGenerator().make_token(user)
-        verification_url = request.build_absolute_uri(reverse('verify-email', kwargs={'uidb64': uid, 'token': token}))
+
+        my_routes = request.data.get('my_routes', 'false')
+        verification_url = request.build_absolute_uri(
+            reverse('verify-email', kwargs={'uidb64': uid, 'token': token}) + f'?my_routes={my_routes}'
+        )
 
         context = {
             'email': request.user.email,
