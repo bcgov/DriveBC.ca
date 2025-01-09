@@ -1,6 +1,6 @@
 import { getCookie } from "../../util";
 
-export const sendVerificationEmail = async () => {
+export const sendVerificationEmail = async ({ my_routes = false } = {}) => {
   const url = `${window.API_HOST}/api/users/send-verification-email/`;
 
   try {
@@ -10,7 +10,7 @@ export const sendVerificationEmail = async () => {
        'Content-Type': 'application/json',
        'X-CSRFToken': getCookie('csrftoken')
      },
-     body: JSON.stringify({ }),
+     body: JSON.stringify({ my_routes }),
      credentials: 'include'
    });
 
