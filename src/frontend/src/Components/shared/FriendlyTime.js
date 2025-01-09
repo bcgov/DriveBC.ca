@@ -11,7 +11,7 @@ import './FriendlyTime.scss';
 
 const ONE_DAY = 1000 * 60 * 60 * 24; // 24 hours in milliseconds
 
-export const formatDate = (date, tz='America/Vancouver', isNextUpdate=false) => {
+export const formatDate = (date, tz, isNextUpdate=false) => {
   const datetimeFormat = {
     weekday: 'short',
     month: 'short',
@@ -20,7 +20,7 @@ export const formatDate = (date, tz='America/Vancouver', isNextUpdate=false) => 
     minute: 'numeric',
     year: 'numeric',
     timeZoneName: 'short',
-    timeZone: tz,
+    timeZone: tz !== null ? tz: 'America/Vancouver',
   };
   const formatter = new Intl.DateTimeFormat('en-US', datetimeFormat);
 

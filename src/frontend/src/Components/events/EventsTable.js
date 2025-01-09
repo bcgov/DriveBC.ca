@@ -262,7 +262,7 @@ export default function EventsTable(props) {
               <td className={cell.column.id}
                 key={cell.id}
                 title={getEventTitle(cell)}>
-                {typeof cell.getValue() === "string" ? (
+                {(typeof cell.getValue() === "string") && cell.id.includes("optimized_description") ? (
                       parse(cell.getValue())
                     ) : (
                       flexRender(cell.column.columnDef.cell, cell.getContext())
