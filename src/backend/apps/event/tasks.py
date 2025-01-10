@@ -204,7 +204,7 @@ def send_event_notifications(updated_event_ids):
                 )
 
                 # Attach image with Content-ID
-                image_path = os.path.join(BACKEND_DIR, 'src', 'backend', 'static', 'images', 'drivebclogo.png')
+                image_path = os.path.join(BACKEND_DIR, 'static', 'images', 'drivebclogo.png')
                 with open(image_path, 'rb') as image_file:
                     img = MIMEImage(image_file.read(), _subtype="png")
                     img.add_header('Content-ID', '<drivebclogo>')
