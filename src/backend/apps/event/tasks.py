@@ -20,10 +20,9 @@ from django.template.loader import render_to_string
 
 logger = logging.getLogger(__name__)
 
-# Base dir and env
-BASE_DIR = Path(__file__).resolve().parents[4]
+# Backend dir and env
+BACKEND_DIR = Path(__file__).resolve().parents[2]
 env = environ.Env()
-environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
 
 
 def compare_data(current_field_data, new_field_data):
@@ -205,7 +204,7 @@ def send_event_notifications(updated_event_ids):
                 )
 
                 # Attach image with Content-ID
-                image_path = os.path.join(BASE_DIR, 'src', 'backend', 'static', 'images', 'drivebclogo.png')
+                image_path = os.path.join(BACKEND_DIR, 'src', 'backend', 'static', 'images', 'drivebclogo.png')
                 with open(image_path, 'rb') as image_file:
                     img = MIMEImage(image_file.read(), _subtype="png")
                     img.add_header('Content-ID', '<drivebclogo>')
