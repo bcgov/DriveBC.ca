@@ -8,8 +8,9 @@ export function getLocations(addressInput) {
       brief: true,
       autoComplete: true,
       addressString: addressInput,
-      exactSpelling: true,
+      exactSpelling: false,
       locationDescriptor: 'routingPoint',
+      fuzzyMatch: true,
     }, {
       'apiKey': `${window.GEOCODER_API_CLIENT_ID}`,
     }
