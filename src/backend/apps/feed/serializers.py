@@ -113,6 +113,37 @@ class CarsClosureSerializer(serializers.Serializer):
         data["route_at"] = ''
 
         # Data under "details"
+        closed_phrase_ids = [
+            18, # Closed
+            43, # Right lane closed
+            320, # Ferry closed (ferries)
+            309, # Bridge closed (Traffic Pattern)
+            17, # Centre lane closed
+            187, # Centre lane closed in both directions
+            20, # Closed ahead
+            22, # Closed for repairs
+            23, # Closed for the season
+            24, # Closed intermittently
+            25, # Closed to all traffic except emergency vehicles
+            30, # Entrance ramp closed
+            32, # Exit ramp closed
+            307, # Ferry Closed (Ferries)
+            288, # HOV Lane Closed
+            302, # Left lane closed
+            186, # Left lane closed in both directions
+            35, # Left shoulder closed
+            247, # Left turn lane closed
+            43, # Right lane closed
+            246, # Right turn lane closed
+            47, # Shoulder closed
+            53, # Two centre lanes closed
+            182, # Highway closure (Ferries)
+            310, # Seasonal Shutdown(Ferries)
+            227, # Lane Closure
+            34, # Lane closures in both directions
+            231, # Southbound lane closure
+            232, # Westbound lane closure
+        ]
         for detail in data.get("details", []):
             # Get closed state
             if not data["closed"]:  # Skip block if already recorded
@@ -121,7 +152,7 @@ class CarsClosureSerializer(serializers.Serializer):
                     if isinstance(kind, str):
                         data["closed"] = False
                     else:
-                        data["closed"] = kind.get("category") == "traffic_pattern" and kind.get("code").startswith("closed")
+                        data["closed"] = kind.get("category") == "traffic_pattern" and kind.get("phrase-id") in closed_phrase_ids
 
                     # Stop inner for loop if already marked
                     if data["closed"]:
