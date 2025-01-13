@@ -28,7 +28,7 @@ class Ferry(BaseModel):
 
     # Schedule
     schedule_type = models.CharField(max_length=64, blank=True, default='')
-    schedule_detail = models.CharField(max_length=750, blank=True, default='')
+    schedule_detail = models.TextField(blank=True, default='')
     special_restriction = models.CharField(max_length=750, blank=True, default='')
 
     # Contacts
