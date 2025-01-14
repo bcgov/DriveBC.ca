@@ -198,6 +198,21 @@ export default function DriveBCMap(props) {
     updatePosition(feature);
   };
 
+  const cameraLoationButtonRef = useRef(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (referenceFeature) {
+        if (cameraLoationButtonRef.current) {
+          cameraLoationButtonRef.current.click();
+        }
+        clearInterval(interval);
+      }
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, [referenceFeature]);
+
   useEffect(() => {
     if (!isInitialClickedFeature.current) {
       isInitialClickedFeature.current = true;
@@ -794,6 +809,7 @@ export default function DriveBCMap(props) {
 
       {isCamDetail && (
         <Button
+          ref={cameraLoationButtonRef}
           className="map-btn cam-location"
           variant="primary"
           onClick={() => {
