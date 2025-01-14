@@ -3,6 +3,10 @@
 .route-details {
   margin-bottom: 1rem;
 
+  .form-check-input {
+    position: static;
+  }
+
   .route-title {
     .route-tools {
       .route-index {
@@ -18,7 +22,7 @@
         margin-bottom: 4px;
         background-color: $White;
         color: $Info;
-  
+
         &.selected {
           background-color: $Info;
           color: $White;
@@ -48,7 +52,7 @@
         svg {
           font-size: 16px;
         }
-      }    
+      }
     }
 
     .card-img-box {
@@ -262,7 +266,7 @@
 
     .modal-content {
       height: 100vh;
-      
+
       @media (min-width: 576px) {
         height: 100%;
       }
