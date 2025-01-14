@@ -159,7 +159,8 @@ class SendVerificationEmailView(APIView):
 
         context = {
             'email': request.user.email,
-            'verification_url': verification_url
+            'verification_url': verification_url,
+            'from_email': env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT")
         }
 
         text = render_to_string('email/email_verification.txt', context)
