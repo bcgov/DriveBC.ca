@@ -85,6 +85,8 @@ export default function SavedRoutesPage() {
           {authContext.email} has not been verified. Email notifications for saved routes will be disabled until
           verification is complete.
 
+          <br className='hidden-desktop' />
+
           <Button
             className='btn btn-outline-primary verify-link'
             tabIndex={0}
