@@ -336,7 +336,7 @@ export default function RouteDetails(props) {
   const toggleHandler = async (e) => {
     if (!authContext.verified) {
       e.preventDefault();
-      navigate('/verify-email?my_route=true');
+      navigate('/verify-email?my_routes=true');
       return;
     }
 
