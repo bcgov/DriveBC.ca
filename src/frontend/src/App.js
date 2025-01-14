@@ -150,12 +150,14 @@ function App() {
             ret.username = data.username;
             ret.email = data.email;
             ret.verified = data.verified;
+            ret.attempted_verification = data.attempted_verification;
           }
           setAuthContext((prior) => {
             if (ret.loginStateKnown != prior.loginStateKnown) { return ret; }
             if (ret.username != prior.username) { return ret; }
             if (ret.email != prior.email) { return ret; }
             if (ret.verified != prior.verified) { return ret; }
+            if (ret.attempted_verification != prior.attempted_verification) { return ret; }
             return prior;
           });
         })
