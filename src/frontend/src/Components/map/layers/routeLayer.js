@@ -20,7 +20,7 @@ export function getRouteLayer(routeData, projectionCode, mapContext, referenceDa
         vectorSource.clear();
 
         const getRouteFeature = (routeData) => {
-          const olGeometry = new LineString(routeData.route);
+          const olGeometry = new LineString(Array.isArray(routeData.route) ? routeData.route : routeData.route.coordinates[0]);
           const olFeature = new ol.Feature({ geometry: olGeometry, type: 'route' });
 
           // Transfer properties

@@ -75,7 +75,7 @@ export default function DistanceLabels(props) {
     removeOverlays(mapRef);
 
     const latlngs = searchedRoutes.map((route) => {
-      return new LineString(route.route).getCoordinateAt(0.5);
+      return new LineString((Array.isArray(route.route) ? route.route : route.route.coordinates[0])).getCoordinateAt(0.5);
     });
     const isTooClose = arePointsClose(latlngs);
 
@@ -98,7 +98,7 @@ export default function DistanceLabels(props) {
         <span class="distance-text">${roundedDistance} km</span>
       `;
 
-      const routeLs = new LineString(route.route);
+      const routeLs = new LineString(Array.isArray(route.route) ? route.route : route.route.coordinates[0]);
       let midPointLatLng = routeLs.getCoordinateAt(0.5);
       if (isTooClose) {
         midPointLatLng = routeLs.getCoordinateAt(index === 0 ? 0.46 : 0.54);
