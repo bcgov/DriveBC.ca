@@ -21,6 +21,7 @@ import {
   faFlag,
   faLocationDot,
   faPencil,
+  faCircleInfo,
 } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline,
   faCheck,
@@ -394,6 +395,77 @@ export default function RouteDetails(props) {
 
             <div className="info-row__data">
               <p>{authContext.email}</p>
+            </div>
+          </div>
+
+          <div className="info-row row">
+            <div className="info-row__label">
+              <p className="bold">Inform me about new and updated</p>
+            </div>
+
+            <div className="info-row__data">
+              <Form className="notifications-section notifications-targets">
+                {['Advisories', 'Closures', 'Major delays', 'Minor delays', 'Road conditions', 'Environment Canada wether alerts'].map((type) => (
+                  <div key={`${type}`}>
+                    <Form.Check
+                      type='checkbox'
+                      id={`${type}`}
+                      label={`${type}`}
+                    />
+                    <FontAwesomeIcon icon={faCircleInfo} />
+                  </div>
+                ))}
+              </Form>
+            </div>
+          </div>
+
+          <div className="info-row row">
+            <div className="info-row__label">
+              <p className="bold">Send me notifications</p>
+            </div>
+
+            <div className="info-row__data">
+              <Form className="notifications-section notifications-time">
+                {['Immediately and all the time', 'At a specific time and dates'].map((type) => (
+                  <div key={`${type}`}>
+                    <Form.Check
+                      type='radio'
+                      id={`${type}`}
+                      label={`${type}`}
+                    />
+                    <FontAwesomeIcon icon={faCircleInfo} />
+                  </div>
+                ))}
+              </Form>
+            </div>
+          </div>
+
+          <div className="info-row row">
+            <div className="info-row__label">
+              <p className="bold">Time</p>
+            </div>
+            <div className="info-row__data">
+              start time - end time
+            </div>
+          </div>
+
+          <div className="info-row row">
+            <div className="info-row__label">
+              <p className="bold">Days of the week</p>
+            </div>
+            <div className="info-row__data">
+              <Form className="notifications-dates">
+                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+                ].map((type) => (
+                  <div key={`${type}`}>
+                    <Form.Check
+                      type='checkbox'
+                      id={`${type}`}
+                      label={`${type}`}
+                    />
+                  </div>
+                ))}
+              </Form>
             </div>
           </div>
         </Modal.Body>
