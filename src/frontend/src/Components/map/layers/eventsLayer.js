@@ -183,7 +183,7 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
   return eventFound;
 }
 
-export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
+export function updateEventsLayers(events, mapLayers, setLoadingLayers, referenceData) {
   const eventsDict = events.reduce((dict, obj) => {
     dict[obj.id] = obj;
     return dict;
@@ -201,7 +201,7 @@ export function updateEventsLayers(events, mapLayers, setLoadingLayers) {
       if (featureId in eventsDict) {
         // Update the feature with the new event data
         feature.setProperties(eventsDict[featureId]);
-        setEventStyle(feature, 'static');
+        setEventStyle(feature, referenceData.id === featureId ? 'active' : 'static');
         processedEvents.add(featureId);  // Track processed events
 
       // Hide the feature if not in filtered data list
