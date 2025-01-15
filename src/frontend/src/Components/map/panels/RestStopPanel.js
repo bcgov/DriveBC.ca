@@ -32,7 +32,7 @@ import './RestStopPanel.scss';
 // Helper components
 const tooltipLargeVehicles = (
   <Tooltip id="tooltipLargeVehicles" className="tooltip-content">
-    <p>A commercial vehicle is defined as an articulated one that is larger than 10 metres &#40;32 feet&#41; in length.</p>
+    <p>A commercial vehicle is defined as one that is larger than 20 metres &#40;66 feet&#41; in length.</p>
   </Tooltip>
 );
 
@@ -155,9 +155,9 @@ export default function RestStopPanel(props) {
             <div className='popup__content__description__container__row'>
               <FontAwesomeIcon icon={faTruckContainer} />
               {restStopData.properties.ACCOM_COMMERCIAL_TRUCKS === "Yes" ? (
-                  <p>Vehicles longer than 20 metres allowed</p>
+                  <p>Vehicles longer than 20 metres (66 feet) allowed</p>
                 ) : (
-                  <p className="red-text">Vehicles longer than 20 metres not allowed</p>
+                  <p className="red-text">Vehicles longer than 20 metres (66 feet) not allowed</p>                  
               )}
             </div>
             <div className='popup__content__description__container__row'>
