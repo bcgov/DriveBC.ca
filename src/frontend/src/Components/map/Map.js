@@ -526,7 +526,6 @@ export default function DriveBCMap(props) {
     // Add layers if not loaded
     if (mapLayers.current && Object.keys(mapLayers.current).length > 0 && !mapLayers.current['majorEvents']) {
       const eventFound = loadEventsLayers(events, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers);
-
       if (referenceData?.type === 'event' && !eventFound) {
         setStaleLinkMessage(true);
       }
@@ -535,7 +534,7 @@ export default function DriveBCMap(props) {
     // Count filtered events to store in routeDetails
     if (filteredEvents) {
       // Toggle features visibility
-      updateEventsLayers(filteredEvents, mapLayers, setLoadingLayers);
+      updateEventsLayers(filteredEvents, mapLayers, setLoadingLayers, referenceData);
 
       const eventCounts = {
         closures: 0,

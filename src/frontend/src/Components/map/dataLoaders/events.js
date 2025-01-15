@@ -5,7 +5,10 @@ const loadEventDetail = async (event_id, displayError) => {
   return await getEventDetails(event_id).catch((error) => displayError(error));
 }
 
-export const loadEvents = async (route, events, filteredEvents, eventFilterPoints, dispatch, displayError, worker, isInitialLoad = true, trackedEventsRef) => {
+export const loadEvents = async (
+  route, events, filteredEvents, eventFilterPoints, dispatch, displayError,
+  worker, isInitialLoad = true, trackedEventsRef
+) => {
   // Fetch data
   const eventData = await getEvents(!isInitialLoad).catch((error) => displayError(error));
 
