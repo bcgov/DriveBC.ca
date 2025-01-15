@@ -288,6 +288,36 @@
         }
       }
     }
+
+    .notifications-section {
+      div:has(.form-check) {
+        display: flex;
+        align-items: baseline;
+
+        svg {
+          margin-left: 8px;
+        }
+      }
+    }
+
+    .notifications-targets {
+      column-count: 2;
+      width: 100%;
+
+      .form-check {
+        margin-bottom: 8px;
+      }
+    }
+
+    .notifications-dates {
+      column-count: 2;
+      width: 100%;
+
+      .form-check {
+        margin-bottom: 8px;
+      }
+    }
+
     .modal-footer {
       justify-content: flex-start;
       border-top: none;
