@@ -102,6 +102,23 @@ export default function CameraDetailsPage() {
   const [show, setShow] = useState(true);
   const [isUpdated, setIsUpdated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const handleCameraImageClick = (event) => {
+    const container = event.currentTarget.closest(".camera-orientations");
+    const buttons = container.querySelectorAll(".camera-direction-btn");
+    let currentIndex = Array.from(buttons).findIndex(
+      (button) => button.classList.contains("current")
+    );
+    if (currentIndex === -1) {
+      currentIndex = activeIndex;
+    }
+    const nextIndex = (currentIndex + 1) % buttons.length;
+    buttons[nextIndex].focus();
+    setActiveIndex(nextIndex);
+    const nextCamera = camera.camGroup[nextIndex];
+    setCamera(nextCamera);
+    trackEvent("click", "camera-list", "camera", nextCamera.name);
+  };
 
   useEffect(() => {
     if (showLoader) {
@@ -575,6 +592,8 @@ export default function CameraDetailsPage() {
                                 src={colocatedCamIcon}
                                 role="presentation"
                                 alt="colocated cameras icon"
+                                onClick={handleCameraImageClick}
+                                style={{ cursor: "pointer" }}
                               />
                               <span>Direction</span>
                             </span>
