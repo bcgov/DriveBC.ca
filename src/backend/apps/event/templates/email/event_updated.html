@@ -13,7 +13,7 @@
               <td>
                 <a href="https://beta.drivebc.ca/" target="_blank" rel="noopener noreferrer" style="display:inline-block">
                   <img src="cid:drivebclogo" alt="DriveBC Logo" />
-                  </a>
+                </a>
               </td>
             </tr>
             <!-- Intro paragraph -->
@@ -27,10 +27,10 @@
                   </tr>
                   <tr>
                     <td>
-                      This notification is sent based on your 
+                      This notification is sent based on your
                       <span>
                         <a href="https://beta.drivebc.ca/my-routes" target="_blank" rel="noopener noreferrer" style="display:inline-block">
-                        route notification settings 
+                        route notification settings
                         </a>
                       </span>
                       on DriveBC for the following route:
@@ -58,21 +58,13 @@
                       <!-- Event card -->
                       <table width="100%">
                         <tr>
-                          {% if event.severity == 'MAJOR' %}
+                          {% if display_category == 'majorEvents' or display_category == 'closures' %}
                           <td bgcolor="#FFE4E5" style="padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#D8292F">
                           {% else %}
-                          <td bgcolor="#FEF0D8" style="padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#584215">                          {% endif %}
-                            {% if event.event_type == 'CONSTRUCTION' %}
-                              Construction
-                            {% elif event.event_type == 'INCIDENT' %}
-                              Incident
-                            {% elif event.event_type == 'SPECIAL_EVENT' %}
-                              Special Event
-                            {% elif event.event_type == 'WEATHER_CONDITION' %}
-                              Weather Condition
-                            {% elif event.event_type == 'ROAD_CONDITION' %}
-                              Road Condition
-                            {% endif %}
+                          <td bgcolor="#FEF0D8" style="padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#584215">
+                          {% endif %}
+                            <img src="cid:dclogo" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px;" alt="{{ display_category_title }}" />
+                            {{ display_category_title }}
                           </td>
                         </tr>
                         {% if event.highway_segment_names %}
@@ -84,7 +76,7 @@
                           {% endif %}
                             {{ event.highway_segment_names }}
                           </td>
-                        </tr> 
+                        </tr>
                         {% endif %}
                         {% if event.direction != 'NONE' %}
                         <tr>
