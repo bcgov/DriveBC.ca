@@ -1,3 +1,8 @@
+import datetime
+from zoneinfo import ZoneInfo
+
+from apps.event.enums import EVENT_DISPLAY_CATEGORY, EVENT_SEVERITY
+from apps.event.helpers import parse_recurring_datetime
 from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
 
@@ -61,3 +66,45 @@ class Event(BaseModel):
             self.polygon.transform(4326)
 
         super().save(*args, **kwargs)
+
+    @property
+    def display_category(self):
+        if self.start and datetime.datetime.now(ZoneInfo('UTC')) < self.start:
+            return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
+
+        if 'recurring_schedules' in self.schedule and len(self.schedule['recurring_schedules']):
+            recurring_schedules = self.schedule['recurring_schedules'][0]
+            start_datetime = parse_recurring_datetime(
+                recurring_schedules['start_date'],
+                recurring_schedules['daily_start_time']
+            )
+
+            if datetime.datetime.now(ZoneInfo('UTC')) < start_datetime:
+                return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
+
+        if self.closed:
+            return EVENT_DISPLAY_CATEGORY.CLOSURE
+
+        if self.event_type == 'ROAD_CONDITION' or self.event_type == 'WEATHER_CONDITION':
+            return EVENT_DISPLAY_CATEGORY.ROAD_CONDITION
+        elif self.event_type == 'CHAIN_UP':
+            return EVENT_DISPLAY_CATEGORY.CHAIN_UP
+
+        return EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS \
+            if self.severity == EVENT_SEVERITY.MAJOR \
+            else EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
+
+    @property
+    def display_category_title(self):
+        if self.display_category == EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
+            return 'Future Delays'
+        elif self.display_category == EVENT_DISPLAY_CATEGORY.CLOSURE:
+            return 'Closure'
+        elif self.display_category == EVENT_DISPLAY_CATEGORY.ROAD_CONDITION:
+            return 'Road Condition'
+        elif self.display_category == EVENT_DISPLAY_CATEGORY.CHAIN_UP:
+            return 'Chain Up'
+        elif self.display_category == EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS:
+            return 'Major Delays'
+        else:
+            return 'Minor Delays'

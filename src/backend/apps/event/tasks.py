@@ -7,7 +7,13 @@ from zoneinfo import ZoneInfo
 
 import environ
 from apps.authentication.models import SavedRoutes
-from apps.event.enums import EVENT_DIFF_FIELDS, EVENT_STATUS, EVENT_UPDATE_FIELDS
+from apps.event.enums import (
+    EVENT_DIFF_FIELDS,
+    EVENT_DISPLAY_CATEGORY,
+    EVENT_STATUS,
+    EVENT_TYPE,
+    EVENT_UPDATE_FIELDS,
+)
 from apps.event.models import Event
 from apps.event.serializers import EventInternalSerializer
 from apps.feed.client import FeedClient
@@ -178,21 +184,50 @@ def populate_all_event_data():
     send_event_notifications(updated_event_ids)
 
 
+def get_image_type_file_name(event):
+    major_delay_icon_map = {
+        EVENT_TYPE.CONSTRUCTION: 'construction-major.png',
+        EVENT_TYPE.INCIDENT: 'incident-major.png',
+    }
+
+    minor_delay_icon_map = {
+        EVENT_TYPE.CONSTRUCTION: 'construction-minor.png',
+        EVENT_TYPE.INCIDENT: 'incident-minor.png'
+    }
+
+    icon_name_map = {
+        EVENT_DISPLAY_CATEGORY.CLOSURE: 'closure.png',
+        EVENT_DISPLAY_CATEGORY.ROAD_CONDITION: 'road.png',
+        EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS: 'future.png'
+    }
+
+    if event.display_category == EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS:
+        return major_delay_icon_map.get(event.event_type, 'incident-minor.png')
+
+    elif event.display_category == EVENT_DISPLAY_CATEGORY.MINOR_DELAYS:
+        return minor_delay_icon_map.get(event.event_type, 'incident-minor.png')
+
+    else:
+        return icon_name_map.get(event.display_category, 'incident-minor.png')
+
+
 def send_event_notifications(updated_event_ids):
     for saved_route in SavedRoutes.objects.filter(user__verified=True, notification=True):
         # Apply a 150m buffer to the route geometry
+        saved_route.route.transform(3857)
         buffered_route = saved_route.route.buffer(150)
+        buffered_route.transform(4326)
+
         updated_interecting_events = Event.objects.filter(id__in=updated_event_ids, location__intersects=buffered_route)
 
         if updated_interecting_events.count() > 0:
             for event in updated_interecting_events:
-
-                print(f"Event: {event}")
-
                 context = {
                     'event': event,
                     'route': saved_route,
-                    'user': saved_route.user
+                    'user': saved_route.user,
+                    'display_category': event.display_category,
+                    'display_category_title': event.display_category_title
                 }
 
                 text = render_to_string('email/event_updated.txt', context)
@@ -205,14 +240,22 @@ def send_event_notifications(updated_event_ids):
                     [saved_route.user.email]
                 )
 
-                # Attach image with Content-ID
-                image_path = os.path.join(BACKEND_DIR, 'static', 'images', 'drivebclogo.png')
-                with open(image_path, 'rb') as image_file:
+                # Attach images with Content-ID
+                logo_path = os.path.join(BACKEND_DIR, 'static', 'images', 'drivebclogo.png')
+                with open(logo_path, 'rb') as image_file:
                     img = MIMEImage(image_file.read(), _subtype="png")
                     img.add_header('Content-ID', '<drivebclogo>')
                     img.add_header('X-Attachment-Id', 'drivebclogo.png')
                     img.add_header('Content-Disposition', 'inline', filename='drivebclogo.png')
                     msg.attach(img)
+
+                icon_path = os.path.join(BACKEND_DIR, 'static', 'images', get_image_type_file_name(event))
+                with open(icon_path, 'rb') as logo_img_file:
+                    logoimg = MIMEImage(logo_img_file.read(), _subtype="png")
+                    logoimg.add_header('Content-ID', '<dclogo>')
+                    logoimg.add_header('X-Attachment-Id', 'dclogo.png')
+                    logoimg.add_header('Content-Disposition', 'inline', filename='dclogo.png')
+                    msg.attach(logoimg)
 
                 msg.attach_alternative(html, 'text/html')
                 msg.send()

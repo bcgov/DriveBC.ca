@@ -12,6 +12,9 @@ def send_route_notifications(modeladmin, request, queryset):
 class EventAdmin(ModelAdmin):
     readonly_fields = ('id', )
     actions = [send_route_notifications]
+    list_display = ('id', 'event_type', 'display_category',
+                    'event_sub_type', 'severity', 'closed',
+                    'first_created', 'last_updated')
 
 
 admin.site.register(Event, EventAdmin)

@@ -2,11 +2,7 @@ import datetime
 import html
 from zoneinfo import ZoneInfo
 
-from apps.event.enums import (
-    EVENT_DIRECTION_DISPLAY,
-    EVENT_DISPLAY_CATEGORY,
-    EVENT_SEVERITY,
-)
+from apps.event.enums import EVENT_DIRECTION_DISPLAY
 from apps.event.models import Event
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
@@ -52,18 +48,6 @@ def optimize_description(text):
     return '. '.join(res) if len(res) > 1 else res[0] + '.'
 
 
-def parse_recurring_datetime(date_string, time_string):
-    # Parse the date and time strings into datetime objects
-    date = datetime.datetime.strptime(date_string, "%Y-%m-%d").date()
-    time = datetime.datetime.strptime(time_string, "%H:%M").time()
-
-    # Combine the date and time into a single datetime object
-    dt = datetime.datetime.combine(date, time)
-
-    # Convert the datetime object to Pacific Time and return
-    return dt.replace(tzinfo=ZoneInfo('America/Vancouver'))
-
-
 class EventInternalSerializer(serializers.ModelSerializer):
     display_category = serializers.SerializerMethodField()
     direction_display = serializers.SerializerMethodField()
@@ -104,30 +88,7 @@ class EventInternalSerializer(serializers.ModelSerializer):
         return optimize_description(obj.description)
 
     def get_display_category(self, obj):
-        if obj.start and datetime.datetime.now(ZoneInfo('UTC')) < obj.start:
-            return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
-
-        if 'recurring_schedules' in obj.schedule and len(obj.schedule['recurring_schedules']):
-            recurring_schedules = obj.schedule['recurring_schedules'][0]
-            start_datetime = parse_recurring_datetime(
-                recurring_schedules['start_date'],
-                recurring_schedules['daily_start_time']
-            )
-
-            if datetime.datetime.now(ZoneInfo('UTC')) < start_datetime:
-                return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
-
-        if obj.closed:
-            return EVENT_DISPLAY_CATEGORY.CLOSURE
-
-        if obj.event_type == 'ROAD_CONDITION' or obj.event_type == 'WEATHER_CONDITION':
-            return EVENT_DISPLAY_CATEGORY.ROAD_CONDITION
-        elif obj.event_type == 'CHAIN_UP':
-            return EVENT_DISPLAY_CATEGORY.CHAIN_UP
-
-        return EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS \
-            if obj.severity == EVENT_SEVERITY.MAJOR \
-            else EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
+        return obj.display_category
 
 
 class EventSerializer(EventInternalSerializer):
