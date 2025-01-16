@@ -799,7 +799,7 @@ export default function DriveBCMap(props) {
           variant="primary"
           onClick={() => {
             if (referenceData) {
-              setZoomPan(mapView, 12, fromLonLat(referenceData.location.coordinates));
+              setZoomPan(mapView, 9, fromLonLat(referenceData.location.coordinates));
             }
 
             if (referenceFeature) {
