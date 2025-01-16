@@ -45,10 +45,6 @@ export default function UserNavigation(props) {
     if (pendingAction && favCams) { // don't run when favCams haven't loaded
       if (pendingAction.action == 'pushFavCam') {
         addFavoriteCamera(pendingAction.payload, dispatch, pushFavCam);
-      }
-
-      // Reset pending action
-      if (pendingAction.action != 'showSavePopup') { // showSavePopup will be handled in RouteDetails
         dispatch(resetPendingAction());
       }
     }
@@ -62,7 +58,7 @@ export default function UserNavigation(props) {
       element.classList.add("hidden-by-modal");
 
       if (element.hasAttribute("tabindex") ) {
-        
+
         if (element.getAttribute("tabindex") === "0") {
           element.classList.add("restore-tabindex");
         }
@@ -71,11 +67,11 @@ export default function UserNavigation(props) {
           element.classList.add("already-hidden");
         }
       }
-        
+
       element.setAttribute("aria-hidden", "true");
       element.setAttribute("tabindex", "-1");
     });
-    
+
     const modalContent = document.getElementById("modal-content");
     if (modalContent) {
       modalContent.focus();

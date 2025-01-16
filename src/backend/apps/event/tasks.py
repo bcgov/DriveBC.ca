@@ -226,6 +226,7 @@ def send_event_notifications(updated_event_ids):
                     'event': event,
                     'route': saved_route,
                     'user': saved_route.user,
+                    'from_email': env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
                     'display_category': event.display_category,
                     'display_category_title': event.display_category_title
                 }

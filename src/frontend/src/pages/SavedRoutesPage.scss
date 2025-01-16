@@ -1,5 +1,11 @@
 @import "../styles/variables.scss";
 
+.hidden-desktop {
+  @media (min-width: 992px) {
+    display: none;
+  }
+}
+
 .saved-routes-page {
   position: relative;
 

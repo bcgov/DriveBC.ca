@@ -80,10 +80,12 @@ export default function SavedRoutesPage() {
         description="Manage and view your saved routes here.">
       </PageHeader>
 
-      {authContext.loginStateKnown && authContext.username && !authContext.verified &&
+      {authContext.loginStateKnown && authContext.username && !authContext.verified && authContext.attempted_verification &&
         <div className='not-verified'>
           {authContext.email} has not been verified. Email notifications for saved routes will be disabled until
           verification is complete.
+
+          <br className='hidden-desktop' />
 
           <Button
             className='btn btn-outline-primary verify-link'

@@ -149,6 +149,11 @@ class SendVerificationEmailView(APIView):
         if user.verified:  # already verified, do nothing
             return Response({'message': 'Account already verified'}, status=status.HTTP_204_NO_CONTENT)
 
+        # Start showing the reminder to verify the email
+        if not user.attempted_verification:
+            user.attempted_verification = True
+            user.save()
+
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = EmailVerificationTokenGenerator().make_token(user)
 
@@ -159,7 +164,8 @@ class SendVerificationEmailView(APIView):
 
         context = {
             'email': request.user.email,
-            'verification_url': verification_url
+            'verification_url': verification_url,
+            'from_email': env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT")
         }
 
         text = render_to_string('email/email_verification.txt', context)

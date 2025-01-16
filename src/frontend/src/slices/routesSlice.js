@@ -22,6 +22,8 @@ export const routesSlice = createSlice({
       state.searchedRoutes = action.payload;
     },
     updateSingleSearchedRoute: (state, action) => {
+      if (!state.searchedRoutes) return;
+
       const index = state.searchedRoutes.findIndex(route => route.searchTimestamp === action.payload.searchTimestamp);
       if (index !== -1) {
         state.searchedRoutes[index] = action.payload;

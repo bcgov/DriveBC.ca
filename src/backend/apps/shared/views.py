@@ -144,7 +144,8 @@ class session(APIView):
             response = JsonResponse({
                 "username": request.user.username,
                 "email": request.user.email,
-                "verified": request.user.verified
+                "verified": request.user.verified,
+                "attempted_verification": request.user.attempted_verification
             })
 
         else:

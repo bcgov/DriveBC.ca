@@ -169,11 +169,6 @@ export default function RouteDetails(props) {
     dataLoaders.loadEvents(routeData, events, filteredEvents, eventFilterPoints, dispatch, displayError, workerRef.current);
     dataLoaders.loadFerries(routeData, ferries, filteredFerries, ferryFilterPoints, dispatch, displayError, workerRef.current);
 
-    if (pendingAction && pendingAction.action === 'showSavePopup') {
-      setShowSavePopup(true);
-      dispatch(resetPendingAction());
-    }
-
     // Cleanup function to terminate the worker when the component unmounts
     return () => {
       if (workerRef.current) {
@@ -181,6 +176,22 @@ export default function RouteDetails(props) {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!authContext.loginStateKnown || !authContext.username || !pendingAction) {
+      return;
+    }
+
+    if (pendingAction.action === 'showSavePopup') {
+      setShowSavePopup(true);
+      dispatch(resetPendingAction());
+    }
+
+    if (pendingAction.action === 'toggleRouteNotification' && pendingAction.payload === route.id && authContext.verified) {
+      setShowNotificationForm(true);
+      dispatch(resetPendingAction());
+    }
+  }, [authContext, pendingAction]);
 
   useEffect(() => {
     if (advisories) {
@@ -336,7 +347,14 @@ export default function RouteDetails(props) {
   const toggleHandler = async (e) => {
     if (!authContext.verified) {
       e.preventDefault();
-      navigate('/verify-email?my_route=true');
+
+      // Set pending action to toggle notifications
+      dispatch(updatePendingAction({
+        action: 'toggleRouteNotification',
+        payload: route.id,
+      }));
+
+      navigate('/verify-email?my_routes=true');
       return;
     }
 

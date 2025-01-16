@@ -9,6 +9,7 @@ from django.db.models.constraints import UniqueConstraint
 
 class DriveBCUser(AbstractUser, BaseModel):
     verified = models.BooleanField(default=False)
+    attempted_verification = models.BooleanField(default=False)
 
 
 class FavouritedCameras(BaseModel):
