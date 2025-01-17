@@ -32,6 +32,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Skeleton from 'react-loading-skeleton';
+import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import '@vaadin/time-picker';
+
 
 // Internal imports
 import { AlertContext, AuthContext } from '../../App';
@@ -100,6 +104,7 @@ export default function RouteDetails(props) {
   const [filteredFavCams, setFilteredFavCams] = useState();
   const [notificationsEnabled, setNotificationsEnabled] = useState(route.notification);
   const [showNotificationForm, setShowNotificationForm] = useState(false);
+  const [showSpecificTimeDate, setShowSpecificTimeDate] = useState(false);
 
   // Data
   const loadRouteCameras = async () => {
@@ -126,6 +131,49 @@ export default function RouteDetails(props) {
       setFilteredFavCams([]);
     }
   }
+  
+  // Tooltips
+  const tooltipAdvisories = (
+    <Tooltip id="tooltipAdvisories" className="tooltip-content">
+      <p>Major events, such as storms, that impact large areas that include locations on your trip</p>
+    </Tooltip>
+  );
+
+  const tooltipCommercial = (
+    <Tooltip id="tooltipCommercial" className="tooltip-content">
+      <p>Segments of the highway that require Commercial Vehicles over 11,794kg to have chains on in order to use the highway</p>
+    </Tooltip>
+  );
+
+  const tooltipClosures = (
+    <Tooltip id="tooltipCommercial" className="tooltip-content">
+      <p>A delay of 30 minutes or more that can not be routed around on your trip</p>
+    </Tooltip>
+  );
+
+  const tooltipMajor = (
+    <Tooltip id="tooltipMajor" className="tooltip-content">
+      <p>A delay of 30 minutes or more on your trip</p>
+    </Tooltip>
+  );
+
+  const tooltipMinor = (
+    <Tooltip id="tooltipMajor" className="tooltip-content">
+      <p>A delay of  less than 30 minutes on your trip</p>
+    </Tooltip>
+  );
+
+  const tooltipRoad = (
+    <Tooltip id="tooltipMajor" className="tooltip-content">
+      <p>Changes in the state of the road that may impact your trip, such as slippery or snow covered</p>
+    </Tooltip>
+  );
+
+  const tooltipWeather = (
+    <Tooltip id="tooltipMajor" className="tooltip-content">
+      <p>Weather alerts from Environment Canada that may impact the roads on your trip</p>
+    </Tooltip>
+  );
 
   // Effects
   useEffect(() => {
@@ -377,10 +425,19 @@ export default function RouteDetails(props) {
     setShowNotificationForm(false);
   }
 
+  const handleRadioChange = (event) => {
+    if (event.target.value === 'specific') {
+      setShowSpecificTimeDate(true);
+    }
+    else {
+      setShowSpecificTimeDate(false);
+    }
+  };
+
   // Main components
   return route && (
     <React.Fragment>
-      <Modal show={showNotificationForm} onHide={() => setShowNotificationForm(false)} animation={false} className="modal--notifications-settings">
+      <Modal show={showNotificationForm} onHide={() => setShowNotificationForm(false)} animation={false} className={'modal--notifications-settings' + (showSpecificTimeDate ? ' long' : '')}>
         <Modal.Header closeButton>
           <Modal.Title>Notifications</Modal.Title>
         </Modal.Header>
@@ -405,16 +462,27 @@ export default function RouteDetails(props) {
 
             <div className="info-row__data">
               <Form className="notifications-section notifications-targets">
-                {['Advisories', 'Closures', 'Major delays', 'Minor delays', 'Road conditions', 'Environment Canada wether alerts'].map((type) => (
-                  <div key={`${type}`}>
-                    <Form.Check
-                      type='checkbox'
-                      id={`${type}`}
-                      label={`${type}`}
-                    />
+              {[
+                { name: 'Advisories', tooltip: tooltipAdvisories },
+                { name: 'Commercial vehicle chain-ups in effect', tooltip: tooltipCommercial },
+                { name: 'Closures', tooltip: tooltipClosures },
+                { name: 'Major delays', tooltip: tooltipMajor },
+                { name: 'Minor delays', tooltip: tooltipMinor },
+                { name: 'Road conditions', tooltip: tooltipRoad },
+                { name: 'Environment Canada weather alerts', tooltip: tooltipWeather }
+              ].map(({ name, tooltip }) => (
+                <div key={name}>
+                  <Form.Check
+                    type='checkbox'
+                    id={name}
+                    label={name}
+                  />
+
+                  <OverlayTrigger placement="top" overlay={tooltip}>
                     <FontAwesomeIcon icon={faCircleInfo} />
-                  </div>
-                ))}
+                  </OverlayTrigger>
+                </div>
+              ))}
               </Form>
             </div>
           </div>
@@ -426,48 +494,71 @@ export default function RouteDetails(props) {
 
             <div className="info-row__data">
               <Form className="notifications-section notifications-time">
-                {['Immediately and all the time', 'At a specific time and dates'].map((type) => (
-                  <div key={`${type}`}>
+                <div key='Immediately and all the time'>
                     <Form.Check
                       type='radio'
-                      id={`${type}`}
-                      label={`${type}`}
+                      id='immediately'
+                      name='notifications-time'
+                      label='Immediately and all the time'
+                      value='immediately'
+                      onChange={handleRadioChange}
                     />
-                    <FontAwesomeIcon icon={faCircleInfo} />
                   </div>
-                ))}
-              </Form>
-            </div>
-          </div>
-
-          <div className="info-row row">
-            <div className="info-row__label">
-              <p className="bold">Time</p>
-            </div>
-            <div className="info-row__data">
-              start time - end time
-            </div>
-          </div>
-
-          <div className="info-row row">
-            <div className="info-row__label">
-              <p className="bold">Days of the week</p>
-            </div>
-            <div className="info-row__data">
-              <Form className="notifications-dates">
-                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
-                ].map((type) => (
-                  <div key={`${type}`}>
+                  <div key='At a specific time and dates'>
                     <Form.Check
-                      type='checkbox'
-                      id={`${type}`}
-                      label={`${type}`}
+                      type='radio'
+                      id='specific'
+                      name='notifications-time'
+                      label='At a specific time and dates'
+                      value='specific'
+                      onChange={handleRadioChange}
                     />
                   </div>
-                ))}
               </Form>
             </div>
           </div>
+          { showSpecificTimeDate &&
+          <div className="specific-time-dates">
+            <div className="info-row row">
+              <div className="info-row__label">
+                <p className="bold">Time</p>
+              </div>
+              <div className="info-row__data specific-time-picker">
+                <vaadin-time-picker
+                  id="startTimePicker"
+                  step={60 * 15}
+                  placeholder="Start time"
+                />
+                <span className="spacer"> — </span>
+                <vaadin-time-picker
+                  id="endTimePicker"
+                  step={60 * 15}
+                  placeholder="End time"
+                />
+              </div>
+            </div>
+
+            <div className="info-row row">
+              <div className="info-row__label">
+                <p className="bold">Days of the week</p>
+              </div>
+              <div className="info-row__data">
+                <Form className="notifications-dates">
+                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+                  ].map((type) => (
+                    <div key={`${type}`}>
+                      <Form.Check
+                        type='checkbox'
+                        id={`${type}`}
+                        label={`${type}`}
+                      />
+                    </div>
+                  ))}
+                </Form>
+              </div>
+            </div>
+          </div>
+          }
         </Modal.Body>
 
         <Modal.Footer>

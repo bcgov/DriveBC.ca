@@ -254,12 +254,20 @@
 
 .modal--notifications-settings {
 
+  &.long {
+    .modal-dialog {
+      @media (min-width: 576px) {
+        margin-top: 0;
+      }
+    }
+  }
+
   .modal-dialog {
     margin: 0;
 
     @media (min-width: 576px) {
       max-width: 650px;
-      margin-top: 25vh;
+      margin-top: 15vh;
       margin-left: auto;
       margin-right: auto;
     }
@@ -270,10 +278,23 @@
       @media (min-width: 576px) {
         height: 100%;
       }
+
+      .modal-body {
+        padding-bottom: 12px;
+        overflow: auto;
+      }
+    }
+
+    h3 {
+      font-size: 1.25rem;
+    }
+
+    p {
+      margin-bottom: 0.375rem;
     }
 
     .info-row {
-      margin-top: 32px;
+      margin-top: 12px;
 
       &__data {
         display: flex;
@@ -303,18 +324,48 @@
     .notifications-targets {
       column-count: 2;
       width: 100%;
-
-      .form-check {
-        margin-bottom: 8px;
-      }
     }
 
     .notifications-dates {
       column-count: 2;
       width: 100%;
+    }
 
-      .form-check {
-        margin-bottom: 8px;
+    .specific-time-dates {
+      padding-left: 24px;
+
+      .info-row {
+        margin-left: 0;
+        margin-right: 0;
+
+        &:first-of-type {
+          margin-top: 8px;
+        }
+
+        &__label {
+          padding: 0;
+
+          .bold {
+            color: $Grey80;
+            margin-bottom: 4px;
+          }
+        }
+        
+
+        &__data {
+          padding: 8px 16px;
+          margin-left: 4px;
+          border-left: 1px solid $Grey80;
+        }
+      }
+
+      .specific-time-picker {
+        align-items: center;
+
+        .spacer {
+          margin-left: 8px;
+          margin-right: 8px;
+        }
       }
     }
 
@@ -329,4 +380,18 @@
       }
     }
   }
+}
+
+// Time picker
+vaadin-time-picker {
+  --vaadin-input-field-background: white;
+  --vaadin-input-field-placeholder-color: #A19F9D;
+
+  &::part(input-field) {
+    border: 1px solid $Input-border;
+  }
+}
+
+vaadin-time-picker-overlay {
+  z-index: 10000;
 }
