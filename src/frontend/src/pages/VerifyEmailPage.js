@@ -47,7 +47,7 @@ export default function VerifyEmailPage() {
           <b>If you can’t find the email</b>, please check the following:
           <ul>
             <li>double check the spelling of your email address</li>
-            <li>check your junk mail folders, and  add</li>
+            <li>check your junk mail folders, and</li>
             <li>add {window.FROM_EMAIL} to your whitelist</li>
           </ul>
         </p>
