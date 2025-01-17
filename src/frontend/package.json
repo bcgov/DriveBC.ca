@@ -18,6 +18,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@turf/turf": "^6.5.0",
     "@uidotdev/usehooks": "^2.0.1",
+    "@vaadin/time-picker": "^24.6.2",
     "bootstrap": "^5.3.0",
     "env-cmd": "^10.1.0",
     "flatbush": "^4.4.0",
