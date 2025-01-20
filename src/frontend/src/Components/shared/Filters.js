@@ -110,7 +110,7 @@ export default function Filters(props) {
   );
   const tooltipRestStopsCommercialVehicles = (
     <Tooltip id="tooltipRestStopsCommercialVehicles" className="tooltip-content">
-      <p>Locations of rest stops run by the province 	&#40;greater than 20 metres &#40;66 feet&#41; in length&#41;.</p>
+      <p>Locations of rest stops run by the province that can accommodate large vehicles	&#40;greater than 20 metres &#40;66 feet&#41; in length&#41;.</p>
     </Tooltip>
   );
 
