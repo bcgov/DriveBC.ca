@@ -1,8 +1,5 @@
-import datetime
-from zoneinfo import ZoneInfo
-
-from apps.event.enums import EVENT_DISPLAY_CATEGORY, EVENT_SEVERITY
-from apps.event.helpers import parse_recurring_datetime
+from apps.event.enums import EVENT_DISPLAY_CATEGORY
+from apps.event.helpers import get_display_category
 from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
 
@@ -49,6 +46,9 @@ class Event(BaseModel):
     # Timezone
     timezone = models.CharField(max_length=32, null=True, blank=True)
 
+    # Display category for emails
+    display_category = models.CharField(max_length=32, blank=True, default='')
+
     def save(self, *args, **kwargs):
         uses_polygon = self.event_type in ['ROAD_CONDITION']  # chain up not used for now
         width = 1500 if self.event_type == 'CHAIN_UP' else 2000
@@ -65,34 +65,9 @@ class Event(BaseModel):
             self.location.transform(4326)
             self.polygon.transform(4326)
 
+        self.display_category = get_display_category(self)
+
         super().save(*args, **kwargs)
-
-    @property
-    def display_category(self):
-        if self.start and datetime.datetime.now(ZoneInfo('UTC')) < self.start:
-            return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
-
-        if 'recurring_schedules' in self.schedule and len(self.schedule['recurring_schedules']):
-            recurring_schedules = self.schedule['recurring_schedules'][0]
-            start_datetime = parse_recurring_datetime(
-                recurring_schedules['start_date'],
-                recurring_schedules['daily_start_time']
-            )
-
-            if datetime.datetime.now(ZoneInfo('UTC')) < start_datetime:
-                return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
-
-        if self.closed:
-            return EVENT_DISPLAY_CATEGORY.CLOSURE
-
-        if self.event_type == 'ROAD_CONDITION' or self.event_type == 'WEATHER_CONDITION':
-            return EVENT_DISPLAY_CATEGORY.ROAD_CONDITION
-        elif self.event_type == 'CHAIN_UP':
-            return EVENT_DISPLAY_CATEGORY.CHAIN_UP
-
-        return EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS \
-            if self.severity == EVENT_SEVERITY.MAJOR \
-            else EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
 
     @property
     def display_category_title(self):

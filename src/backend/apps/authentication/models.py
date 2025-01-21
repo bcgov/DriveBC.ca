@@ -75,3 +75,19 @@ class SavedRoutes(BaseModel):
     searchTimestamp = models.CharField(max_length=100, default='fastest')
 
     notification = models.BooleanField(default=False)
+    notification_types = models.JSONField(default=list)  # list of event display types to notify
+    notification_days = models.JSONField(default=list)  # List of days of the week
+    notification_start_date = models.DateField(null=True, blank=True)  # Date to start notifications
+    notification_end_date = models.DateField(null=True, blank=True)  # Date to end notifications
+    notification_start_time = models.TimeField(null=True, blank=True)  # Time of day for notifications
+    notification_end_time = models.TimeField(null=True, blank=True)  # Time of day for notifications
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', 'notification']),
+            models.Index(fields=['notification_days']),
+            models.Index(fields=['notification_start_date']),
+            models.Index(fields=['notification_end_date']),
+            models.Index(fields=['notification_start_time']),
+            models.Index(fields=['notification_end_time']),
+        ]
