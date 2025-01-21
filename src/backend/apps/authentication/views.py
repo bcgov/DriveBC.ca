@@ -172,7 +172,7 @@ class SendVerificationEmailView(APIView):
         html = render_to_string('email/email_verification.html', context)
 
         msg = EmailMultiAlternatives(
-            'Verify your DriveBC email address',
+            'Please verify your email address to setup email notifications',
             text,
             env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
             [request.user.email]
