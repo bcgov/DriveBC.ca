@@ -22,6 +22,7 @@ from django.contrib.gis.geos import LineString, Point
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMultiAlternatives
+from django.db.models import Q
 from django.template.loader import render_to_string
 
 logger = logging.getLogger(__name__)
@@ -211,52 +212,85 @@ def get_image_type_file_name(event):
         return icon_name_map.get(event.display_category, 'incident-minor.png')
 
 
-def send_event_notifications(updated_event_ids):
-    for saved_route in SavedRoutes.objects.filter(user__verified=True, notification=True):
-        # Apply a 150m buffer to the route geometry
-        saved_route.route.transform(3857)
-        buffered_route = saved_route.route.buffer(150)
-        buffered_route.transform(4326)
+def send_event_notifications(updated_event_ids, dt=None):
+    current_dt = datetime.datetime.now(ZoneInfo('America/Vancouver')) if not dt else dt
 
-        updated_interecting_events = Event.objects.filter(id__in=updated_event_ids, location__intersects=buffered_route)
+    # Get the current day of the week and time
+    current_day = current_dt.strftime('%A')
+    current_date = current_dt.date()
+    current_time = current_dt.time()
 
-        if updated_interecting_events.count() > 0:
-            for event in updated_interecting_events:
-                context = {
-                    'event': event,
-                    'route': saved_route,
-                    'user': saved_route.user,
-                    'from_email': env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
-                    'display_category': event.display_category,
-                    'display_category_title': event.display_category_title
-                }
+    # Get all saved routes that have notifications enabled
+    filtered_routes = SavedRoutes.objects.filter(user__verified=True, notification=True).filter(
+        # Routes that are always active
+        Q(notification_start_time=None) |
 
-                text = render_to_string('email/event_updated.txt', context)
-                html = render_to_string('email/event_updated.html', context)
+        # Routes that match day of week and time frame
+        Q(notification_days__contains=[current_day],
+          notification_start_time__lte=current_time, notification_end_time__gte=current_time) |
 
-                msg = EmailMultiAlternatives(
-                    f'DriveBC route update: {saved_route.label}' if saved_route.label else 'DriveBC route update',
-                    text,
-                    env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
-                    [saved_route.user.email]
-                )
+        # Routes that match date period and time frame
+        Q(notification_start_date__lte=current_date, notification_end_date__gte=current_date,
+          notification_start_time__lte=current_time, notification_end_time__gte=current_time) |
 
-                # Attach images with Content-ID
-                logo_path = os.path.join(BACKEND_DIR, 'static', 'images', 'drivebclogo.png')
-                with open(logo_path, 'rb') as image_file:
-                    img = MIMEImage(image_file.read(), _subtype="png")
-                    img.add_header('Content-ID', '<drivebclogo>')
-                    img.add_header('X-Attachment-Id', 'drivebclogo.png')
-                    img.add_header('Content-Disposition', 'inline', filename='drivebclogo.png')
-                    msg.attach(img)
+        # Routes that match specific date and time frame
+        Q(notification_start_date=current_date, notification_end_date=None,
+          notification_start_time__lte=current_time, notification_end_time__gte=current_time)
+    )
 
-                icon_path = os.path.join(BACKEND_DIR, 'static', 'images', get_image_type_file_name(event))
-                with open(icon_path, 'rb') as logo_img_file:
-                    logoimg = MIMEImage(logo_img_file.read(), _subtype="png")
-                    logoimg.add_header('Content-ID', '<dclogo>')
-                    logoimg.add_header('X-Attachment-Id', 'dclogo.png')
-                    logoimg.add_header('Content-Disposition', 'inline', filename='dclogo.png')
-                    msg.attach(logoimg)
+    for saved_route in filtered_routes:
+        send_route_notifications(saved_route, updated_event_ids)
 
-                msg.attach_alternative(html, 'text/html')
-                msg.send()
+
+def send_route_notifications(saved_route, updated_event_ids):
+    # Apply a 150m buffer to the route geometry
+    saved_route.route.transform(3857)
+    buffered_route = saved_route.route.buffer(150)
+    buffered_route.transform(4326)
+
+    updated_interecting_events = Event.objects.filter(
+        id__in=updated_event_ids,
+        location__intersects=buffered_route,
+        display_category__in=saved_route.notification_types  # Only notify for selected event types
+    )
+
+    if updated_interecting_events.count() > 0:
+        for event in updated_interecting_events:
+            context = {
+                'event': event,
+                'route': saved_route,
+                'user': saved_route.user,
+                'from_email': env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
+                'display_category': event.display_category,
+                'display_category_title': event.display_category_title
+            }
+
+            text = render_to_string('email/event_updated.txt', context)
+            html = render_to_string('email/event_updated.html', context)
+
+            msg = EmailMultiAlternatives(
+                f'DriveBC route update: {saved_route.label}' if saved_route.label else 'DriveBC route update',
+                text,
+                env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
+                [saved_route.user.email]
+            )
+
+            # Attach images with Content-ID
+            logo_path = os.path.join(BACKEND_DIR, 'static', 'images', 'drivebclogo.png')
+            with open(logo_path, 'rb') as image_file:
+                img = MIMEImage(image_file.read(), _subtype="png")
+                img.add_header('Content-ID', '<drivebclogo>')
+                img.add_header('X-Attachment-Id', 'drivebclogo.png')
+                img.add_header('Content-Disposition', 'inline', filename='drivebclogo.png')
+                msg.attach(img)
+
+            icon_path = os.path.join(BACKEND_DIR, 'static', 'images', get_image_type_file_name(event))
+            with open(icon_path, 'rb') as logo_img_file:
+                logoimg = MIMEImage(logo_img_file.read(), _subtype="png")
+                logoimg.add_header('Content-ID', '<dclogo>')
+                logoimg.add_header('X-Attachment-Id', 'dclogo.png')
+                logoimg.add_header('Content-Disposition', 'inline', filename='dclogo.png')
+                msg.attach(logoimg)
+
+            msg.attach_alternative(html, 'text/html')
+            msg.send()
