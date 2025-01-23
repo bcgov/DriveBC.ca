@@ -473,7 +473,6 @@ export default function RouteDetails(props) {
             <div className="info-row__data">
               <Form className="notifications-section notifications-targets">
               {[
-                { name: 'Advisories', tooltip: tooltipAdvisories },
                 { name: 'Commercial vehicle chain-ups in effect', tooltip: tooltipCommercial },
                 { name: 'Closures', tooltip: tooltipClosures },
                 { name: 'Major delays', tooltip: tooltipMajor },
