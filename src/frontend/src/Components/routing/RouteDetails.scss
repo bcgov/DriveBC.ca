@@ -273,10 +273,10 @@
     }
 
     .modal-content {
-      height: 100vh;
+      height: fit-content;
 
-      @media (min-width: 576px) {
-        height: 100%;
+      &:has(.specific-time-dates) {
+        height: 100vh;
       }
 
       .modal-body {
@@ -322,13 +322,19 @@
     }
 
     .notifications-targets {
-      column-count: 2;
       width: 100%;
+
+      @media (min-width: 768px) {
+        column-count: 2;
+      }
     }
 
     .notifications-dates {
-      column-count: 2;
       width: 100%;
+
+      @media (min-width: 768px) {
+        column-count: 2;
+      }
     }
 
     .specific-time-dates {
@@ -349,31 +355,56 @@
             color: $Grey80;
             margin-bottom: 4px;
           }
+          select {
+            margin-bottom: 8px;
+            width: fit-content;
+            border: 1px solid $Input-border;
+            border-radius: 4px;
+            font-weight: 700;
+            color: #605E5C;
+          }
         }
         
 
         &__data {
           padding: 8px 16px;
-          margin-left: 4px;
+          margin-left: 8px;
           border-left: 1px solid $Grey80;
         }
       }
+    }
 
-      .specific-time-picker {
+    .double-picker {
+      flex-direction: column;
+      align-items: flex-start;
+
+      @media (min-width: 768px) {
+        flex-direction: row;
         align-items: center;
+      }
 
-        .spacer {
-          margin-left: 8px;
-          margin-right: 8px;
+      .spacer {
+        margin-left: 8px;
+        margin-right: 8px;
+        display: none;
+
+        @media (min-width: 768px) {
+          display: block;
         }
       }
     }
 
     .modal-footer {
       justify-content: flex-start;
-      border-top: none;
+      border-top: 1px solid #D9D9D9;
 
       .btn {
+        margin: 0;
+
+        &.cancel-btn {
+          margin: auto;
+        }
+
         svg {
           margin-left: 8px;
         };
@@ -382,8 +413,8 @@
   }
 }
 
-// Time picker
-vaadin-time-picker {
+// Time picker and date picker
+vaadin-time-picker, vaadin-date-picker {
   --vaadin-input-field-background: white;
   --vaadin-input-field-placeholder-color: #A19F9D;
 
@@ -392,6 +423,6 @@ vaadin-time-picker {
   }
 }
 
-vaadin-time-picker-overlay {
+vaadin-time-picker-overlay, vaadin-date-picker-overlay  {
   z-index: 10000;
 }
