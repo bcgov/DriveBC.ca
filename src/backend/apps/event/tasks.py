@@ -262,7 +262,8 @@ def send_route_notifications(saved_route, updated_event_ids):
                 'user': saved_route.user,
                 'from_email': env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
                 'display_category': event.display_category,
-                'display_category_title': event.display_category_title
+                'display_category_title': event.display_category_title,
+                'fe_base_url': env("FRONTEND_BASE_URL"),
             }
 
             text = render_to_string('email/event_updated.txt', context)
