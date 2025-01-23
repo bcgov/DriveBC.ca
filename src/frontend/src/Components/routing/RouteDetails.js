@@ -22,6 +22,7 @@ import {
   faLocationDot,
   faPencil,
   faCircleInfo,
+  faAngleDown
 } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline,
   faCheck,
@@ -35,6 +36,7 @@ import Skeleton from 'react-loading-skeleton';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import '@vaadin/time-picker';
+import '@vaadin/date-picker';
 
 
 // Internal imports
@@ -105,6 +107,8 @@ export default function RouteDetails(props) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(route.notification);
   const [showNotificationForm, setShowNotificationForm] = useState(false);
   const [showSpecificTimeDate, setShowSpecificTimeDate] = useState(false);
+  const specificDateOptions = ['Specific date', 'Date range', 'Days of the week'];
+  const [specificDateOption, setSpecificDateOption] = useState(specificDateOptions[0]);
 
   // Data
   const loadRouteCameras = async () => {
@@ -160,18 +164,6 @@ export default function RouteDetails(props) {
   const tooltipMinor = (
     <Tooltip id="tooltipMajor" className="tooltip-content">
       <p>A delay of  less than 30 minutes on your trip</p>
-    </Tooltip>
-  );
-
-  const tooltipRoad = (
-    <Tooltip id="tooltipMajor" className="tooltip-content">
-      <p>Changes in the state of the road that may impact your trip, such as slippery or snow covered</p>
-    </Tooltip>
-  );
-
-  const tooltipWeather = (
-    <Tooltip id="tooltipMajor" className="tooltip-content">
-      <p>Weather alerts from Environment Canada that may impact the roads on your trip</p>
     </Tooltip>
   );
 
@@ -434,6 +426,24 @@ export default function RouteDetails(props) {
     }
   };
 
+  // Specific date range picker
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  // Event handler for start date change
+  const handleStartDateChange = (event) => {
+    console.log(event.target.value);
+    const selectedStartDate = event.target.value;
+    setStartDate(selectedStartDate);
+  };
+
+  // Event handler for end date change
+  const handleEndDateChange = (event) => {
+    console.log(event.target.value);
+    const selectedEndDate = event.target.value;
+    setEndDate(selectedEndDate);
+  };
+
   // Main components
   return route && (
     <React.Fragment>
@@ -467,15 +477,14 @@ export default function RouteDetails(props) {
                 { name: 'Commercial vehicle chain-ups in effect', tooltip: tooltipCommercial },
                 { name: 'Closures', tooltip: tooltipClosures },
                 { name: 'Major delays', tooltip: tooltipMajor },
-                { name: 'Minor delays', tooltip: tooltipMinor },
-                { name: 'Road conditions', tooltip: tooltipRoad },
-                { name: 'Environment Canada weather alerts', tooltip: tooltipWeather }
+                { name: 'Minor delays', tooltip: tooltipMinor }
               ].map(({ name, tooltip }) => (
                 <div key={name}>
                   <Form.Check
                     type='checkbox'
                     id={name}
                     label={name}
+                    defaultChecked
                   />
 
                   <OverlayTrigger placement="top" overlay={tooltip}>
@@ -502,6 +511,7 @@ export default function RouteDetails(props) {
                       label='Immediately and all the time'
                       value='immediately'
                       onChange={handleRadioChange}
+                      defaultChecked
                     />
                   </div>
                   <div key='At a specific time and dates'>
@@ -523,7 +533,7 @@ export default function RouteDetails(props) {
               <div className="info-row__label">
                 <p className="bold">Time</p>
               </div>
-              <div className="info-row__data specific-time-picker">
+              <div className="info-row__data double-picker">
                 <vaadin-time-picker
                   id="startTimePicker"
                   step={60 * 15}
@@ -540,22 +550,59 @@ export default function RouteDetails(props) {
 
             <div className="info-row row">
               <div className="info-row__label">
-                <p className="bold">Days of the week</p>
+                <Form.Select
+                  onChange={(e) => setSpecificDateOption(e.target.value)}
+                  defaultValue={specificDateOption}
+                >
+                  {specificDateOptions.map((option) => (
+                    <option key={option}>{option}</option>
+                  ))}
+                </Form.Select>
               </div>
+              {specificDateOption === 'Specific date' &&
+              <div className="info-row__data">
+                <vaadin-date-picker
+                  id="specificDate"
+                  placeholder="Select date"
+                />
+              </div>
+              }
+              {specificDateOption === 'Date range' &&
+              <div className="info-row__data double-picker">
+                <vaadin-date-picker
+                  id="startDate"
+                  placeholder="Start date"
+                  value={startDate}
+                  onValueChanged={handleStartDateChange}
+                  min={new Date().toISOString().split('T')[0]}
+                  max={endDate ? endDate : null }
+                />
+                <span className="spacer"> — </span>
+                <vaadin-date-picker
+                  id="endDate"
+                  placeholder="End date"
+                  value={endDate}
+                  onValueChanged={handleEndDateChange}
+                  min={startDate ? new Date(startDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0] }
+                />
+              </div>
+              }
+              {specificDateOption === 'Days of the week' &&
               <div className="info-row__data">
                 <Form className="notifications-dates">
                   {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
-                  ].map((type) => (
-                    <div key={`${type}`}>
+                  ].map((day) => (
+                    <div key={`${day}`}>
                       <Form.Check
                         type='checkbox'
-                        id={`${type}`}
-                        label={`${type}`}
+                        id={`${day}`}
+                        label={`${day}`}
                       />
                     </div>
                   ))}
                 </Form>
               </div>
+              }
             </div>
           </div>
           }
@@ -567,7 +614,7 @@ export default function RouteDetails(props) {
             <FontAwesomeIcon icon={faCheck}/>
           </Button>
 
-          <Button variant="primary-outline" onClick={() => setShowNotificationForm(false)}>
+          <Button variant="primary-outline" className="cancel-btn" onClick={() => setShowNotificationForm(false)}>
             Cancel
           </Button>
         </Modal.Footer>
