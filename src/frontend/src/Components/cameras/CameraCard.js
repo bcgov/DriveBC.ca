@@ -98,6 +98,10 @@ export default function CameraCard(props) {
 
   }, [cameraData]);
 
+  useEffect(() => { 
+    setCamera(cameraData);
+  }, [cameraData]);
+
   // Misc
   const navigate = useNavigate();
 

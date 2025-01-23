@@ -79,6 +79,7 @@ export default function CamerasListPage() {
   const [openSearchOverlay, setOpenSearchOverlay] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
   const [showSpinner, setShowSpinner] = useState(false);
+  const [combinedCameras, setCombinedCameras] = useState(null);
 
   // Function to handle the state update from child
   const handleShowSpinnerChange = (value) => {
@@ -177,6 +178,23 @@ export default function CamerasListPage() {
     }
   };
 
+  // To get the updated processed cameras during search when the potential matches not in the original processed cameras
+  const getUpdatedProcessedCameras = (cameras, searchFn) => {
+    const result = [];  
+    const matchedCams = combinedCameras.filter((pc) => searchFn(pc, searchText));      
+    const seenGroups = new Set();
+
+    // Add the matched cameras to the result list and make sure there is only one camera from each group
+    matchedCams.forEach((pc) => {
+      if (!seenGroups.has(pc.group)) {
+        result.push(pc);
+        seenGroups.add(pc.group);
+      }
+    });
+
+    return result;
+  } 
+
   // Effects
   useEffect(() => {
     selectedRouteRef.current = selectedRoute;
@@ -188,6 +206,7 @@ export default function CamerasListPage() {
       // Deep clone and add group reference to each cam
       const clonedCameras = structuredClone(filteredCameras);
       const finalCameras = addCameraGroups(clonedCameras);
+      setCombinedCameras(clonedCameras);
 
       // Sort cameras by highway number and route_order
       finalCameras.sort(function(a, b) {
@@ -214,43 +233,23 @@ export default function CamerasListPage() {
   useEffect(() => {
     // Search name and caption of all cams in group
     const searchFn = (pc, targetText) => {
-      const targetLower = targetText.toLowerCase();
-
-      // Sort cameras by the presence of the search text in their name
-      const sortedCamerasByName = pc.camGroup.sort((a, b) => {
-        const aNameMatches = a.name.toLowerCase().includes(targetLower);
-        const bNameMatches = b.name.toLowerCase().includes(targetLower);
-        // Give higher priority to cameras where the name matches the search text
-        return bNameMatches - aNameMatches;
-      });
-
-      for (let i = 0; i < sortedCamerasByName.length; i++) {
-        if (sortedCamerasByName[i].name.toLowerCase().includes(targetLower)) {
-          return true;
-        }
+      if(pc.name.trim().toLowerCase().includes(targetText.toLowerCase())
+        || pc.caption.trim().toLowerCase().includes(targetText.toLowerCase())) {
+        return true;
+      } else {
+        return false;
       }
-
-      // Sort cameras by the presence of the search text in their description
-      const sortedCamerasByDescription = pc.camGroup.sort((a, b) => {
-        const aCaptionMatches = a.caption.toLowerCase().includes(targetLower);
-        const bCaptionMatches = b.caption.toLowerCase().includes(targetLower);
-        // Give higher priority to cameras where the description matches the search text
-        return bCaptionMatches - aCaptionMatches;
-      });
-
-      for (let i = 0; i < sortedCamerasByDescription.length; i++) {
-      if (sortedCamerasByDescription[i].caption.toLowerCase().includes(targetLower)) {
-          return true;
-        }
-      }
-
-      return false;
     }
 
-    const filteredCams = !searchText ? processedCameras :
+    if(searchText.trim() === '') {
+      const filteredCams = !searchText ? processedCameras :
       processedCameras.filter((pc) => searchFn(pc, searchText));
-
-    setDisplayedCameras(filteredCams);
+      setDisplayedCameras(filteredCams);
+    } else {
+      const updatedProcessedCameras = getUpdatedProcessedCameras(combinedCameras, searchFn);
+      const filteredCams = updatedProcessedCameras.filter((pc) => searchFn(pc, searchText));
+      setDisplayedCameras(filteredCams);
+    }    
 
   }, [searchText, processedCameras]);
 
