@@ -3,7 +3,7 @@ from pathlib import Path
 from rest_framework import serializers
 from wagtail.templatetags.wagtailcore_tags import richtext
 
-from apps.cms.models import Advisory, Bulletin
+from apps.cms.models import Advisory, Bulletin, SubPage
 
 
 CMS_FIELDS = [
@@ -19,7 +19,15 @@ CMS_FIELDS = [
 ]
 
 
+# get the depth of the top level advisories; any advisories of greater depth
+# must be subpages of these
+LOWEST_ADVISORY_DEPTH = Advisory.objects.values_list('depth', flat=True).distinct().order_by('depth').first() or 0
+
+
 class CMSSerializer(serializers.ModelSerializer):
+
+    subpages = serializers.SerializerMethodField()
+
     def get_host(self):
         request = self.context.get("request")
         prefix = "https://" if request and request.is_secure() else "http://"
@@ -43,6 +51,28 @@ class CMSSerializer(serializers.ModelSerializer):
         )
         return res
 
+    def get_subpages(self, obj):
+        # need to retrieve subpages as their specific class for serialization
+        subpages = SubPage.objects.filter(page_ptr__in=obj.get_children())
+        return SubPageSerializer(subpages, many=True).data
+
+    def get_url_path(self, obj):
+        ''' Remove root page's url segment from path '''
+        return '/'.join(obj.url_path.split('/')[1:])
+
+
+class SubPageTestSerializer(CMSSerializer):
+    class Meta:
+        model = SubPage
+        fields = "__all__"
+
+
+class SubPageSerializer(SubPageTestSerializer):
+    body = serializers.SerializerMethodField()
+
+    def get_body(self, obj):
+        return self.get_richtext(obj.body)
+
 
 # Serializer with no method fields for unit tests
 class AdvisoryTestSerializer(CMSSerializer):
@@ -53,6 +83,7 @@ class AdvisoryTestSerializer(CMSSerializer):
 
 class AdvisorySerializer(AdvisoryTestSerializer):
     body = serializers.SerializerMethodField()
+    url_path = serializers.SerializerMethodField()
 
     def get_body(self, obj):
         return self.get_richtext(obj.body)
@@ -74,3 +105,4 @@ class BulletinSerializer(BulletinTestSerializer):
 
     def get_body(self, obj):
         return self.get_richtext(obj.body)
+

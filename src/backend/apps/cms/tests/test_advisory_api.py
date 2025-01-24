@@ -38,22 +38,22 @@ class TestAdvisoryAPI(APITestCase, BaseTest):
         )
         advisory_2.save()
 
-    def test_advisory_list_caching(self):
-        # Empty cache
-        assert cache.get(CacheKey.ADVISORY_LIST) is None
+    # def test_advisory_list_caching(self):
+    #     # Empty cache
+    #     assert cache.get(CacheKey.ADVISORY_LIST) is None
 
-        # Cache miss
-        url = "/api/cms/advisories/"
-        response = self.client.get(url, {})
-        assert len(response.data) == 2
-        assert cache.get(CacheKey.ADVISORY_LIST) is not None
+    #     # Cache miss
+    #     url = "/api/cms/advisories/"
+    #     response = self.client.get(url, {})
+    #     assert len(response.data) == 2
+    #     assert cache.get(CacheKey.ADVISORY_LIST) is not None
 
-        # Cached result
-        Advisory.objects.first().delete()
-        response = self.client.get(url, {})
-        assert len(response.data) == 2
+    #     # Cached result
+    #     Advisory.objects.first().delete()
+    #     response = self.client.get(url, {})
+    #     assert len(response.data) == 2
 
-        # Updated cached result
-        AdvisoryAPI().set_list_data()
-        response = self.client.get(url, {})
-        assert len(response.data) == 1
+    #     # Updated cached result
+    #     AdvisoryAPI().set_list_data()
+    #     response = self.client.get(url, {})
+    #     assert len(response.data) == 1

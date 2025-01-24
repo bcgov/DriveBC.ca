@@ -57,6 +57,6 @@ urlpatterns = [
     path("logout/", logout_view, name="cms_logout"),
     path("denied", access_denied_idir, name="cms_denied_idir"),
     path('', include(wagtailadmin_urls)),
-    path('documents', include(wagtaildocs_urls)),
-    path('pages', include(wagtail_urls)),
+    path('documents/', include(wagtaildocs_urls)),
+    path('pages/', include(wagtail_urls)),
 ]

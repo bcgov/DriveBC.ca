@@ -1,5 +1,6 @@
 // React
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { useParams, useNavigate } from 'react-router-dom';
 
 // External imports
@@ -160,7 +161,7 @@ export default function AdvisoryDetailsPage() {
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
 
-  // Navigating to 
+  // Navigating to
   const returnHandler = () => {
     navigate(-1);
   };
@@ -225,6 +226,11 @@ export default function AdvisoryDetailsPage() {
   const advisoryDetails = <FontAwesomeIcon icon={faMemoCircleInfo} />;
   const advisoryMap = <FontAwesomeIcon icon={faMap} />;
 
+  let content = advisory;
+  if (content && params.subid) {
+    content = advisory.subpages.filter((sub) => sub.slug === params.subid)[0];
+  }
+
   // Rendering
   return (
     <div className='advisory-page cms-page'>
@@ -236,7 +242,7 @@ export default function AdvisoryDetailsPage() {
         <ServerErrorPopup setShowServerError={setShowServerError} />
       }
 
-      {advisory && (
+      { content && (
         <div className="page-header">
           <Container>
             <a
@@ -250,15 +256,15 @@ export default function AdvisoryDetailsPage() {
               <FontAwesomeIcon icon={faArrowLeft} />
               Back to last page
             </a>
-            <h1 className="page-title">{advisory.title}</h1>
+            <h1 className="page-title">{content.title}</h1>
 
-            {advisory.teaser &&
-              <p className="page-description body--large">{advisory.teaser}</p>
+            {content.teaser &&
+              <p className="page-description body--large">{content.teaser}</p>
             }
 
             <div className="timestamp-container">
-              <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
-              <FriendlyTime date={advisory.latest_revision_created_at} />
+              <span className="advisory-li-state">{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span>
+              <FriendlyTime date={content.latest_revision_created_at} />
             </div>
           </Container>
         </div>
@@ -270,13 +276,13 @@ export default function AdvisoryDetailsPage() {
         onSelect={ (selectedTab) => setActiveTab(selectedTab) }
       >
         <Tab eventKey="details" title={<span>{advisoryDetails}Details</span>}>
-          {advisory && (
+          {content && (
             <Container className="advisory-body-container cms-body">
-              <div>{renderWagtailBody(advisory.body)}</div>
+              <div>{renderWagtailBody(content.body)}</div>
             </Container>
           )}
         </Tab>
-        <Tab eventKey="map" title={<span>{advisoryMap}Map View</span>}>
+        <Tab eventKey="map" className={params.subid ? 'hide': ''} title={<span>{advisoryMap}Map View</span>}>
           <Container className="advisory-map-container">
             <div id="map" className="advisory-map"></div>
           </Container>

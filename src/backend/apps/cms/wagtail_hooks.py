@@ -9,7 +9,7 @@ from wagtail.admin.rich_text.editors.draftail.features import ControlFeature
 from wagtail.admin.ui.components import Component
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 
-from .models import Advisory, Bulletin
+from .models import Advisory, Bulletin, SubPage
 from .views import access_requested
 
 
@@ -110,3 +110,10 @@ def add_access_requested_url():
     return [
         path('access-requested', access_requested, name='cms-access-requested'),
     ]
+
+
+@hooks.register('after_publish_page')
+def update_parent_page(request, page):
+    ''' When saving a subpage, create a new revision for the parent page '''
+    if page.specific_class == SubPage:
+        page.get_parent().specific.save_revision().publish()

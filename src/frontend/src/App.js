@@ -200,9 +200,9 @@ function App() {
                   <Route path="/cameras/:id" element={<CameraDetailsPage />} />
                   <Route path="/delays" element={<EventsListPage />} />
                   <Route path="/advisories" element={<AdvisoriesListPage />} />
-                  <Route path="/advisories/:id" element={<AdvisoryDetailsPage />} />
+                  <Route path="/advisories/:id/:subid?" element={<AdvisoryDetailsPage />} />
                   <Route path="/bulletins" element={<BulletinsListPage />} />
-                  <Route path="/bulletins/:id" element={<BulletinDetailsPage />} />
+                  <Route path="/bulletins/:id/:subid?" element={<BulletinDetailsPage />} />
                   <Route path="/account" element={<AccountPage />} />
                   <Route path="/verify-email" element={<VerifyEmailPage />} />
                   {/* Catch-all route for 404 errors */}
