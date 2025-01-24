@@ -51,7 +51,6 @@ if os.name == "nt":
 
 # Allauth
 ACCOUNT_ADAPTER = 'apps.authentication.adapters.AccountAdapter'
-SOCIALACCOUNT_ADAPTER = 'apps.authentication.adapters.SocialAccountAdapter'
 
 # need our own adapter to override various redirect url methods following
 # login or logout
