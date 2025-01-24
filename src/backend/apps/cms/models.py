@@ -53,12 +53,16 @@ class Advisory(Page, BaseModel):
         APIField('rendered_body'),
     ]
 
+    subpage_types = [
+        'cms.SubPage',
+    ]
+
     # Geo fields
     geometry = models.MultiPolygonField()
 
     def save(self, *args, **kwargs):
         super().save(log_action=None, *args, **kwargs)
-        cache.delete(CacheKey.ADVISORY_LIST)
+        # cache.delete(CacheKey.ADVISORY_LIST)
 
     # Editor panels configuration
     content_panels = [
@@ -78,7 +82,13 @@ class Advisory(Page, BaseModel):
 
     template = 'cms/advisory.html'
 
+    def get_url_parts(self, request=None):
+        site_id, root_url, _ = super().get_url_parts(request)
+        plural = self.specific_class._meta.verbose_name_plural
+        return (site_id, root_url, f'/{plural}/{self.slug}')
+
     class Meta:
+        # IMPORTANT: must match first segment of frontend path for advisories
         verbose_name_plural = 'advisories'
 
 
@@ -97,9 +107,13 @@ class Bulletin(Page, BaseModel):
         APIField('rendered_body'),
     ]
 
+    subpage_types = [
+        'cms.SubPage',
+    ]
+
     def save(self, *args, **kwargs):
         super().save(log_action=None, *args, **kwargs)
-        cache.delete(CacheKey.BULLETIN_LIST)
+        # cache.delete(CacheKey.BULLETIN_LIST)
 
     # Editor panels configuration
     content_panels = [
@@ -115,3 +129,67 @@ class Bulletin(Page, BaseModel):
     promote_panels = []
 
     template = 'cms/bulletin.html'
+
+    def get_url_parts(self, request=None):
+        site_id, root_url, _ = super().get_url_parts(request)
+        plural = self.specific_class._meta.verbose_name_plural
+        return (site_id, root_url, f'/{plural}/{self.slug}')
+
+    class Meta:
+        # IMPORTANT: must match first segment of frontend path for bulletins
+        verbose_name_plural = 'bulletins'
+
+
+class SubPage(Page, BaseModel):
+    '''
+    A page specifically for subpages of Advisories/Bulletins.
+
+    We use a specific subpage model so that child pages don't have the same
+    requirements as a parent page (e.g., the geometry field of an advisory).
+    This means that subpages, as children, aren't automatically included in an
+    API call retrieving all Advisories/Bulletins, so they need to be manually
+    requested or included in the serialization of an Advisory/Bulletin.  The
+    frontend benefits from this by not having to distinguish top level pages
+    from subpages in parsing the list of Advisories/Bulletins.
+
+    Subpages are restricted to having a parent page type of Advisory/Bulletin;
+    they cannot be created as standalone pages.  Likewise, Advisory/Bulletin
+    pages are restricted to creating subpages for children.
+    '''
+
+    body = StreamField(RichContent())
+
+    api_fields = [
+        APIField('rendered_body'),
+    ]
+
+    parent_page_types = [
+        'cms.Advisory',
+        'cms.Bulletin',
+    ]
+
+    def rendered_body(self):
+        blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
+        return '\n'.join(blocks)
+
+    def save(self, *args, **kwargs):
+        super().save(log_action=None, *args, **kwargs)
+        # cache.delete(CacheKey.BULLETIN_LIST)
+
+    # Editor panels configuration
+    content_panels = [
+        FieldPanel("title", help_text=HelpText.GENERIC_TITLE),
+        FieldPanel("body", help_text=HelpText.GENERIC_BODY),
+        FieldPanel('created_at', read_only=True, heading="Created"),
+        FieldPanel('first_published_at', read_only=True, heading="Published"),
+        FieldPanel('last_published_at', read_only=True, heading="Updated"),
+    ]
+
+    promote_panels = []
+
+    def get_url_parts(self, request=None):
+        parent = self.get_parent()
+        site_id, root_url, _ = parent.get_url_parts(request)
+        # absolute path is required for links between subpages to function
+        plural = parent.specific_class._meta.verbose_name_plural
+        return (site_id, root_url, f'/{plural}/{parent.slug}/{self.slug}')

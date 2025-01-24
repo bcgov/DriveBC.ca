@@ -26,19 +26,20 @@ class CMSViewSet(viewsets.ReadOnlyModelViewSet):
         return context
 
 
-class AdvisoryAPI(CachedListModelMixin, CMSViewSet):
+class AdvisoryAPI(CMSViewSet):
     queryset = Advisory.objects.filter(live=True)
     serializer_class = AdvisorySerializer
-    cache_key = CacheKey.ADVISORY_LIST
-    cache_timeout = CacheTimeout.DEFAULT
+    # cache_key = CacheKey.ADVISORY_LIST
+    # cache_timeout = CacheTimeout.DEFAULT
     lookup_field = 'slug'
 
 
-class BulletinTestAPI(CachedListModelMixin, CMSViewSet):
+class BulletinTestAPI(CMSViewSet):
     queryset = Bulletin.objects.filter(live=True)
     serializer_class = BulletinTestSerializer
-    cache_key = CacheKey.BULLETIN_LIST
-    cache_timeout = CacheTimeout.DEFAULT
+    # cache_key = CacheKey.BULLETIN_LIST
+    # cache_timeout = CacheTimeout.DEFAULT
+    lookup_field = 'slug'
 
 
 class BulletinAPI(BulletinTestAPI):

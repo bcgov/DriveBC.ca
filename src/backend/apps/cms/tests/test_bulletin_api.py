@@ -54,22 +54,22 @@ class TestBulletinAPI(APITestCase, BaseTest):
         )
         bulletin_2.save()
 
-    def test_bulletin_list_caching(self):
-        # Empty cache
-        assert cache.get(CacheKey.BULLETIN_LIST) is None
+    # def test_bulletin_list_caching(self):
+    #     # Empty cache
+    #     assert cache.get(CacheKey.BULLETIN_LIST) is None
 
-        # Cache miss
-        url = "/api/cms/bulletins/"
-        response = self.client.get(url, {})
-        assert len(response.data) == 2
-        assert cache.get(CacheKey.BULLETIN_LIST) is not None
+    #     # Cache miss
+    #     url = "/api/cms/bulletins/"
+    #     response = self.client.get(url, {})
+    #     assert len(response.data) == 2
+    #     assert cache.get(CacheKey.BULLETIN_LIST) is not None
 
-        # Cached result
-        Bulletin.objects.first().delete()
-        response = self.client.get(url, {})
-        assert len(response.data) == 2
+    #     # Cached result
+    #     Bulletin.objects.first().delete()
+    #     response = self.client.get(url, {})
+    #     assert len(response.data) == 2
 
-        # Updated cached result
-        BulletinTestAPI().set_list_data()  # Use serializer without method fields
-        response = self.client.get(url, {})
-        assert len(response.data) == 1
+    #     # Updated cached result
+    #     BulletinTestAPI().set_list_data()  # Use serializer without method fields
+    #     response = self.client.get(url, {})
+    #     assert len(response.data) == 1

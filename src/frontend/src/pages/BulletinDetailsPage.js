@@ -48,11 +48,11 @@ export default function BulletinDetailsPage() {
     }
   }
 
-   // Navigating to 
+   // Navigating to
    const returnHandler = () => {
     navigate(-1);
   };
-  
+
   // Data function and initialization
   const loadBulletin = async () => {
     const bulletinData = await getBulletins(params.id).catch((error) => displayError(error));
@@ -74,6 +74,11 @@ export default function BulletinDetailsPage() {
   useEffect(() => {
     loadBulletin();
   }, []);
+
+  let content = bulletin;
+  if (content && params.subid) {
+    content = bulletin.subpages.filter((sub) => sub.slug === params.subid)[0] || bulletin;
+  }
 
   // Rendering
   return (
@@ -102,21 +107,21 @@ export default function BulletinDetailsPage() {
                 Back to last page
               </a>
 
-              <h1 className="page-title">{bulletin.title}</h1>
+              <h1 className="page-title">{content.title}</h1>
 
-              {bulletin.teaser &&
-                <p className="page-description body--large">{bulletin.teaser}</p>
+              {content.teaser &&
+                <p className="page-description body--large">{content.teaser}</p>
               }
 
               <div className="timestamp-container">
-                <span>{bulletin.first_published_at != bulletin.last_published_at ? "Last updated" : "Published" }</span>
-                <FriendlyTime date={bulletin.latest_revision_created_at} />
+                <span>{content.first_published_at != content.last_published_at ? "Last updated" : "Published" }</span>
+                <FriendlyTime date={content.latest_revision_created_at} />
               </div>
             </Container>
           </div>
 
           <Container className="bulletin-body-container cms-body">
-            <div>{renderWagtailBody(bulletin.body)}</div>
+            <div>{renderWagtailBody(content.body)}</div>
           </Container>
         </div>
       )}
