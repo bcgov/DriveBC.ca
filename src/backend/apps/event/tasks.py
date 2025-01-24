@@ -292,5 +292,37 @@ def send_route_notifications(saved_route, updated_event_ids):
                 logoimg.add_header('Content-Disposition', 'inline', filename='dclogo.png')
                 msg.attach(logoimg)
 
+            bclogo_path = os.path.join(BACKEND_DIR, 'static', 'images', 'bclogo.png')
+            with open(bclogo_path, 'rb') as image_file:
+                bcimg = MIMEImage(image_file.read(), _subtype="png")
+                bcimg.add_header('Content-ID', '<bclogo>')
+                bcimg.add_header('X-Attachment-Id', 'bclogo.png')
+                bcimg.add_header('Content-Disposition', 'inline', filename='bclogo.png')
+                msg.attach(bcimg)
+
+            twitter_path = os.path.join(BACKEND_DIR, 'static', 'images', 'twitter.png')
+            with open(twitter_path, 'rb') as image_file:
+                twitterimg = MIMEImage(image_file.read(), _subtype="png")
+                twitterimg.add_header('Content-ID', '<twitter>')
+                twitterimg.add_header('X-Attachment-Id', 'twitter.png')
+                twitterimg.add_header('Content-Disposition', 'inline', filename='twitter.png')
+                msg.attach(twitterimg)
+            
+            instagram_path = os.path.join(BACKEND_DIR, 'static', 'images', 'instagram.png')
+            with open(twitter_path, 'rb') as image_file:
+                instagramimg = MIMEImage(image_file.read(), _subtype="png")
+                instagramimg.add_header('Content-ID', '<instagram>')
+                instagramimg.add_header('X-Attachment-Id', 'instagram.png')
+                instagramimg.add_header('Content-Disposition', 'inline', filename='instagram.png')
+                msg.attach(instagramimg)
+
+            linkedin_path = os.path.join(BACKEND_DIR, 'static', 'images', 'linkedin.png')
+            with open(twitter_path, 'rb') as image_file:
+                linkedinimg = MIMEImage(image_file.read(), _subtype="png")
+                linkedinimg.add_header('Content-ID', '<linkedin>')
+                linkedinimg.add_header('X-Attachment-Id', 'linkedin.png')
+                linkedinimg.add_header('Content-Disposition', 'inline', filename='linkedin.png')
+                msg.attach(instagramimg)
+
             msg.attach_alternative(html, 'text/html')
             msg.send()
