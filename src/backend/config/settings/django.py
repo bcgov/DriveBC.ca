@@ -88,7 +88,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_REDIRECT_URL = FRONTEND_BASE_URL
-LOGIN_URL = 'http://localhost:8000/accounts/oidc/idir/login/?process=login&next=%2Fdrivebc-admin%2F&auth_params=kc_idp_hint=azureidir'
+LOGIN_URL = FRONTEND_BASE_URL + 'accounts/oidc/idir/login/?process=login&next=%2Fdrivebc-admin%2F&auth_params=kc_idp_hint=azureidir'
 
 # Language
 USE_I18N = False
