@@ -58,7 +58,7 @@ def build_data_diff(current_obj, new_obj_data):
                     data_diff['polygon'] = None
 
                 else:
-                    ls = LineString(new_field_data['coordinates'])
+                    ls = LineString(new_field_data['coordinates'], srid=4326)
                     data_diff[field] = ls
 
                     # Add buffer to road condition linestrings
