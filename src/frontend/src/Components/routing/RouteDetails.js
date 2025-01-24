@@ -21,23 +21,17 @@ import {
   faFlag,
   faLocationDot,
   faPencil,
-  faCircleInfo,
-  faAngleDown
 } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline,
   faCheck,
   faMinusCircle,
-  faPenToSquare
  } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Skeleton from 'react-loading-skeleton';
-import Tooltip from 'react-bootstrap/Tooltip';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import '@vaadin/time-picker';
 import '@vaadin/date-picker';
-
 
 // Internal imports
 import { AlertContext, AuthContext } from '../../App';
@@ -48,6 +42,7 @@ import { getAdvisoryCounts } from "../data/advisories";
 import { compareRouteDistance, filterAdvisoryByRoute } from '../map/helpers';
 import * as dataLoaders from '../map/dataLoaders'
 import * as slices from '../../slices';
+import NotificationEventType from "./forms/NotificationEventType";
 import RouteMap from './RouteMap';
 
 // Styling
@@ -65,6 +60,7 @@ export default function RouteDetails(props) {
 
   // Ref
   const workerRef = useRef();
+  const EventTypeFormRef = useRef();
 
   // Navigation
   const navigate = useNavigate();
@@ -104,11 +100,17 @@ export default function RouteDetails(props) {
   const [showSavePopup, setShowSavePopup] = useState(false);
   const [routeMapImg, setRouteMapImg] = useState(); // for map snapshot
   const [filteredFavCams, setFilteredFavCams] = useState();
+
+  /* Notification states */
   const [notificationsEnabled, setNotificationsEnabled] = useState(route.notification);
   const [showNotificationForm, setShowNotificationForm] = useState(false);
   const [showSpecificTimeDate, setShowSpecificTimeDate] = useState(false);
   const specificDateOptions = ['Specific date', 'Date range', 'Days of the week'];
   const [specificDateOption, setSpecificDateOption] = useState(specificDateOptions[0]);
+
+  // Specific date range picker
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   // Data
   const loadRouteCameras = async () => {
@@ -135,37 +137,6 @@ export default function RouteDetails(props) {
       setFilteredFavCams([]);
     }
   }
-  
-  // Tooltips
-  const tooltipAdvisories = (
-    <Tooltip id="tooltipAdvisories" className="tooltip-content">
-      <p>Major events, such as storms, that impact large areas that include locations on your trip</p>
-    </Tooltip>
-  );
-
-  const tooltipCommercial = (
-    <Tooltip id="tooltipCommercial" className="tooltip-content">
-      <p>Segments of the highway that require Commercial Vehicles over 11,794kg to have chains on in order to use the highway</p>
-    </Tooltip>
-  );
-
-  const tooltipClosures = (
-    <Tooltip id="tooltipCommercial" className="tooltip-content">
-      <p>A delay of 30 minutes or more that can not be routed around on your trip</p>
-    </Tooltip>
-  );
-
-  const tooltipMajor = (
-    <Tooltip id="tooltipMajor" className="tooltip-content">
-      <p>A delay of 30 minutes or more on your trip</p>
-    </Tooltip>
-  );
-
-  const tooltipMinor = (
-    <Tooltip id="tooltipMajor" className="tooltip-content">
-      <p>A delay of  less than 30 minutes on your trip</p>
-    </Tooltip>
-  );
 
   // Effects
   useEffect(() => {
@@ -410,7 +381,19 @@ export default function RouteDetails(props) {
     }
   };
 
+  const validateSubmission = () => {
+    if (!EventTypeFormRef.current.validateNotificationEventTypes()) {
+      return false;
+    }
+
+    return true;
+  }
+
   const saveHandler = async () => {
+    if (!validateSubmission()) {
+      return;
+    }
+
     const body = { notification: true };
     const response = await patchRoute(route, selectedRoute, dispatch, body);
     setNotificationsEnabled(response.notification);
@@ -426,20 +409,14 @@ export default function RouteDetails(props) {
     }
   };
 
-  // Specific date range picker
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
   // Event handler for start date change
   const handleStartDateChange = (event) => {
-    console.log(event.target.value);
     const selectedStartDate = event.target.value;
     setStartDate(selectedStartDate);
   };
 
   // Event handler for end date change
   const handleEndDateChange = (event) => {
-    console.log(event.target.value);
     const selectedEndDate = event.target.value;
     setEndDate(selectedEndDate);
   };
@@ -471,27 +448,7 @@ export default function RouteDetails(props) {
             </div>
 
             <div className="info-row__data">
-              <Form className="notifications-section notifications-targets">
-              {[
-                { name: 'Commercial vehicle chain-ups in effect', tooltip: tooltipCommercial },
-                { name: 'Closures', tooltip: tooltipClosures },
-                { name: 'Major delays', tooltip: tooltipMajor },
-                { name: 'Minor delays', tooltip: tooltipMinor }
-              ].map(({ name, tooltip }) => (
-                <div key={name}>
-                  <Form.Check
-                    type='checkbox'
-                    id={name}
-                    label={name}
-                    defaultChecked
-                  />
-
-                  <OverlayTrigger placement="top" overlay={tooltip}>
-                    <FontAwesomeIcon icon={faCircleInfo} />
-                  </OverlayTrigger>
-                </div>
-              ))}
-              </Form>
+              <NotificationEventType ref={EventTypeFormRef} />
             </div>
           </div>
 
