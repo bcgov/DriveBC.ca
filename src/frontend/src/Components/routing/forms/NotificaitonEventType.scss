@@ -4,3 +4,11 @@
   display: flex;
   column-span: all;
 }
+
+.notifications-targets {
+  width: 100%;
+
+  @media (min-width: 768px) {
+    column-count: 2;
+  }
+}

@@ -104,8 +104,7 @@ const NotificationEventType = forwardRef((props, ref) => {
             value={value}
             checked={checked}
             onChange={eventTypeHandler}
-            isInvalid={!!errorMessage}
-          />
+            isInvalid={!!errorMessage} />
 
           <OverlayTrigger placement="top" overlay={tooltip}>
             <FontAwesomeIcon icon={faCircleInfo} />

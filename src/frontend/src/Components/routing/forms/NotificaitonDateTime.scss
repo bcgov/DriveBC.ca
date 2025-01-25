@@ -1,0 +1,61 @@
+@import "../../../styles/variables";
+
+.specific-time-dates {
+  padding-left: 24px;
+  flex-direction: column;
+
+  .info-row {
+    margin-left: 0;
+    margin-right: 0;
+
+    &:first-of-type {
+      margin-top: 8px;
+    }
+
+    &__label {
+      padding: 0;
+
+      .bold {
+        color: $Grey80;
+        margin-bottom: 4px;
+      }
+      select {
+        margin-bottom: 8px;
+        width: fit-content;
+        border: 1px solid $Input-border;
+        border-radius: 4px;
+        font-weight: 700;
+        color: #605E5C;
+      }
+    }
+
+
+    &__data {
+      padding: 8px 16px;
+      margin-left: 8px;
+      border-left: 1px solid $Grey80;
+    }
+  }
+}
+
+.notifications-dates {
+  width: 100%;
+
+  @media (min-width: 768px) {
+    column-count: 2;
+  }
+}
+
+// Time picker and date picker
+vaadin-time-picker, vaadin-date-picker {
+  --vaadin-input-field-background: white;
+  --vaadin-input-field-placeholder-color: #A19F9D;
+
+  &::part(input-field) {
+    border: 1px solid $Input-border;
+  }
+}
+
+vaadin-time-picker-overlay, vaadin-date-picker-overlay  {
+  z-index: 10000;
+}

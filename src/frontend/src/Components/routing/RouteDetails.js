@@ -43,6 +43,7 @@ import { compareRouteDistance, filterAdvisoryByRoute } from '../map/helpers';
 import * as dataLoaders from '../map/dataLoaders'
 import * as slices from '../../slices';
 import NotificationEventType from "./forms/NotificationEventType";
+import NotificationDateTime from "./forms/NotificationDateTime";
 import RouteMap from './RouteMap';
 
 // Styling
@@ -61,6 +62,7 @@ export default function RouteDetails(props) {
   // Ref
   const workerRef = useRef();
   const EventTypeFormRef = useRef();
+  const DateTimeFormRef = useRef();
 
   // Navigation
   const navigate = useNavigate();
@@ -105,12 +107,6 @@ export default function RouteDetails(props) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(route.notification);
   const [showNotificationForm, setShowNotificationForm] = useState(false);
   const [showSpecificTimeDate, setShowSpecificTimeDate] = useState(false);
-  const specificDateOptions = ['Specific date', 'Date range', 'Days of the week'];
-  const [specificDateOption, setSpecificDateOption] = useState(specificDateOptions[0]);
-
-  // Specific date range picker
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
 
   // Data
   const loadRouteCameras = async () => {
@@ -382,11 +378,8 @@ export default function RouteDetails(props) {
   };
 
   const validateSubmission = () => {
-    if (!EventTypeFormRef.current.validateNotificationEventTypes()) {
-      return false;
-    }
-
-    return true;
+    return !(!EventTypeFormRef.current.validateNotificationEventTypes() ||
+      !DateTimeFormRef.current.validateNotificationDateTime());
   }
 
   const saveHandler = async () => {
@@ -394,32 +387,11 @@ export default function RouteDetails(props) {
       return;
     }
 
-    const body = { notification: true };
-    const response = await patchRoute(route, selectedRoute, dispatch, body);
-    setNotificationsEnabled(response.notification);
-    setShowNotificationForm(false);
+    // const body = { notification: true };
+    // const response = await patchRoute(route, selectedRoute, dispatch, body);
+    // setNotificationsEnabled(response.notification);
+    // setShowNotificationForm(false);
   }
-
-  const handleRadioChange = (event) => {
-    if (event.target.value === 'specific') {
-      setShowSpecificTimeDate(true);
-    }
-    else {
-      setShowSpecificTimeDate(false);
-    }
-  };
-
-  // Event handler for start date change
-  const handleStartDateChange = (event) => {
-    const selectedStartDate = event.target.value;
-    setStartDate(selectedStartDate);
-  };
-
-  // Event handler for end date change
-  const handleEndDateChange = (event) => {
-    const selectedEndDate = event.target.value;
-    setEndDate(selectedEndDate);
-  };
 
   // Main components
   return route && (
@@ -458,110 +430,12 @@ export default function RouteDetails(props) {
             </div>
 
             <div className="info-row__data">
-              <Form className="notifications-section notifications-time">
-                <div key='Immediately and all the time'>
-                    <Form.Check
-                      type='radio'
-                      id='immediately'
-                      name='notifications-time'
-                      label='Immediately and all the time'
-                      value='immediately'
-                      onChange={handleRadioChange}
-                      defaultChecked
-                    />
-                  </div>
-                  <div key='At a specific time and dates'>
-                    <Form.Check
-                      type='radio'
-                      id='specific'
-                      name='notifications-time'
-                      label='At a specific time and dates'
-                      value='specific'
-                      onChange={handleRadioChange}
-                    />
-                  </div>
-              </Form>
+              <NotificationDateTime
+                ref={DateTimeFormRef}
+                showSpecificTimeDate={showSpecificTimeDate}
+                setShowSpecificTimeDate={setShowSpecificTimeDate} />
             </div>
           </div>
-          { showSpecificTimeDate &&
-          <div className="specific-time-dates">
-            <div className="info-row row">
-              <div className="info-row__label">
-                <p className="bold">Time</p>
-              </div>
-              <div className="info-row__data double-picker">
-                <vaadin-time-picker
-                  id="startTimePicker"
-                  step={60 * 15}
-                  placeholder="Start time"
-                />
-                <span className="spacer"> — </span>
-                <vaadin-time-picker
-                  id="endTimePicker"
-                  step={60 * 15}
-                  placeholder="End time"
-                />
-              </div>
-            </div>
-
-            <div className="info-row row">
-              <div className="info-row__label">
-                <Form.Select
-                  onChange={(e) => setSpecificDateOption(e.target.value)}
-                  defaultValue={specificDateOption}
-                >
-                  {specificDateOptions.map((option) => (
-                    <option key={option}>{option}</option>
-                  ))}
-                </Form.Select>
-              </div>
-              {specificDateOption === 'Specific date' &&
-              <div className="info-row__data">
-                <vaadin-date-picker
-                  id="specificDate"
-                  placeholder="Select date"
-                />
-              </div>
-              }
-              {specificDateOption === 'Date range' &&
-              <div className="info-row__data double-picker">
-                <vaadin-date-picker
-                  id="startDate"
-                  placeholder="Start date"
-                  value={startDate}
-                  onValueChanged={handleStartDateChange}
-                  min={new Date().toISOString().split('T')[0]}
-                  max={endDate ? endDate : null }
-                />
-                <span className="spacer"> — </span>
-                <vaadin-date-picker
-                  id="endDate"
-                  placeholder="End date"
-                  value={endDate}
-                  onValueChanged={handleEndDateChange}
-                  min={startDate ? new Date(startDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0] }
-                />
-              </div>
-              }
-              {specificDateOption === 'Days of the week' &&
-              <div className="info-row__data">
-                <Form className="notifications-dates">
-                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
-                  ].map((day) => (
-                    <div key={`${day}`}>
-                      <Form.Check
-                        type='checkbox'
-                        id={`${day}`}
-                        label={`${day}`}
-                      />
-                    </div>
-                  ))}
-                </Form>
-              </div>
-              }
-            </div>
-          </div>
-          }
         </Modal.Body>
 
         <Modal.Footer>
