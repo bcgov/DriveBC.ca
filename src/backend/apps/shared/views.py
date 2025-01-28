@@ -1,9 +1,7 @@
 import re
 from pathlib import Path
 
-import environ
-from apps.shared.enums import SUBJECT_CHOICES, SUBJECT_TITLE, CacheKey, CacheTimeout
-from apps.shared.models import SiteSettings
+from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
@@ -18,10 +16,8 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
-# Base dir and env
-BASE_DIR = Path(__file__).resolve().parents[4]
-env = environ.Env()
-environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
+from apps.shared.enums import SUBJECT_CHOICES, SUBJECT_TITLE, CacheKey, CacheTimeout
+from apps.shared.models import SiteSettings
 
 
 class FeedbackSerializer(Serializer):
@@ -48,7 +44,7 @@ class FeedbackView(APIView):
                 'DriveBC feedback received: ' + SUBJECT_TITLE[serializer.data['subject']],
                 serializer.data['message'],
                 serializer.data['email'],
-                [env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT")],
+                [settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT],
                 fail_silently=False,
             )
 

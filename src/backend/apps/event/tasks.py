@@ -5,7 +5,14 @@ from email.mime.image import MIMEImage
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-import environ
+from django.contrib.gis.geos import LineString, Point
+from django.conf import settings
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMultiAlternatives
+from django.db.models import Q
+from django.template.loader import render_to_string
+
 from apps.authentication.models import SavedRoutes
 from apps.event.enums import (
     EVENT_DIFF_FIELDS,
@@ -18,18 +25,10 @@ from apps.event.models import Event
 from apps.event.serializers import EventInternalSerializer
 from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
-from django.contrib.gis.geos import LineString, Point
-from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import EmailMultiAlternatives
-from django.db.models import Q
-from django.template.loader import render_to_string
-
 logger = logging.getLogger(__name__)
 
 # Backend dir and env
 BACKEND_DIR = Path(__file__).resolve().parents[2]
-env = environ.Env()
 
 
 def compare_data(current_field_data, new_field_data):
@@ -260,10 +259,10 @@ def send_route_notifications(saved_route, updated_event_ids):
                 'event': event,
                 'route': saved_route,
                 'user': saved_route.user,
-                'from_email': env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
+                'from_email': settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT,
                 'display_category': event.display_category,
                 'display_category_title': event.display_category_title,
-                'fe_base_url': env("FRONTEND_BASE_URL"),
+                'fe_base_url': settings.FRONTEND_BASE_URL,
             }
 
             text = render_to_string('email/event_updated.txt', context)
@@ -272,7 +271,7 @@ def send_route_notifications(saved_route, updated_event_ids):
             msg = EmailMultiAlternatives(
                 f'DriveBC route update: {saved_route.label}' if saved_route.label else 'DriveBC route update',
                 text,
-                env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
+                settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT,
                 [saved_route.user.email]
             )
 

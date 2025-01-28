@@ -2,8 +2,6 @@ import os
 from email.mime.image import MIMEImage
 from pathlib import Path
 
-import environ
-from apps.webcam.models import Webcam
 from django.conf import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ObjectDoesNotExist
@@ -27,7 +25,7 @@ from .serializers import FavouritedCamerasSerializer, SavedRoutesSerializer
 
 # Backend dir and env
 BACKEND_DIR = Path(__file__).resolve().parents[2]
-env = environ.Env()
+
 
 
 def request_access(request):
@@ -167,8 +165,8 @@ class VerifyEmailView(APIView):
             user.save()
 
             my_routes = request.GET.get('my_routes')
-            redirect_url = env("FRONTEND_BASE_URL") + 'my-routes?verified=true' if my_routes == 'True'\
-                else env("FRONTEND_BASE_URL") + 'account?verified=true'
+            redirect_url = settings.FRONTEND_BASE_URL + 'my-routes?verified=true' if my_routes == 'True'\
+                else settings.FRONTEND_BASE_URL + 'account?verified=true'
 
             return HttpResponseRedirect(redirect_url)  # Redirect to the account page
 
@@ -200,7 +198,7 @@ class SendVerificationEmailView(APIView):
         context = {
             'email': request.user.email,
             'verification_url': verification_url,
-            'from_email': env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT")
+            'from_email': settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT
         }
 
         text = render_to_string('email/email_verification.txt', context)
@@ -209,7 +207,7 @@ class SendVerificationEmailView(APIView):
         msg = EmailMultiAlternatives(
             'Please verify your email address to setup email notifications',
             text,
-            env("DRIVEBC_FEEDBACK_EMAIL_DEFAULT"),
+            settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT,
             [request.user.email]
         )
 

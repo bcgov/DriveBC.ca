@@ -1,15 +1,10 @@
 from pathlib import Path
 
-import environ
-from apps.cms.models import Advisory, Bulletin
 from rest_framework import serializers
 from wagtail.templatetags.wagtailcore_tags import richtext
 
-# Base dir and env
-BASE_DIR = Path(__file__).resolve().parents[4]
-SRC_DIR = Path(__file__).resolve().parents[3]
-env = environ.Env()
-environ.Env.read_env(BASE_DIR / ".env", overwrite=True)
+from apps.cms.models import Advisory, Bulletin
+
 
 CMS_FIELDS = [
     "live",
@@ -75,8 +70,7 @@ class BulletinSerializer(BulletinTestSerializer):
     image_url = serializers.SerializerMethodField('get_image_url')
 
     def get_image_url(self, obj):
-        host = env('DJANGO_URL') if 'DJANGO_URL' in env else ''
-        return host + obj.image.file.url if obj.image else ''
+        return obj.image.file.url if obj.image else ''
 
     def get_body(self, obj):
         return self.get_richtext(obj.body)
