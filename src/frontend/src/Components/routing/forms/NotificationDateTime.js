@@ -16,7 +16,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
   const startTimeRef = useRef();
 
   // States
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessages, setErrorMessages] = useState([]);
 
   const specificDateOptions = ['Specific date', 'Date range', 'Days of the week'];
   const [specificDateOption, setSpecificDateOption] = useState(specificDateOptions[0]);
@@ -99,42 +99,45 @@ const NotificationDateTime = forwardRef((props, ref) => {
     }
   }, [specificDateOption]);
 
-  useEffect(() => {
-    if (startTime) {
-      console.log(startTime);
-      console.log(startTimeRef.current);
-      console.log(startTimeRef.current.invalid);
-    }
-  }, [startTime]);
-
   /* Helpers */
   useImperativeHandle(ref, () => ({
     validateNotificationDateTime() {
+      const errors = [];
       if (showSpecificTimeDate) {
+        // Time range cases
+        if (!startTime || !endTime) {
+          errors.push('Please select a start and end time.');
+
+        } else if (startTime > endTime) {
+          errors.push('End time must be after start time.');
+        }
+
         // Specific date cases
-        if (specificDateOption === 'Specific date' && !startDate) {
-          setErrorMessage('Please select a specific date.');
-          return false;
+        if (specificDateOption === 'Specific date') {
+          if (!startDate) {
+            errors.push('Please select a specific date.');
+
+          } else if (new Date(startDate) < new Date().setHours(0, 0, 0, 0)) {
+            errors.push('Specific date must be after today.');
+          }
 
         // Date range cases
         } else if (specificDateOption === 'Date range') {
           if (!startDate || !endDate) {
-            setErrorMessage('Please select a start and end date.');
-            return false;
+            errors.push('Please select a start and end date.');
 
           } else if (new Date(startDate) > new Date(endDate)) {
-            setErrorMessage('End date must be after start date.');
-            return false;
+            errors.push('End date must be after start date.');
           }
 
         // Days of the week cases
         } else if (specificDateOption === 'Days of the week' && !Object.values(dayOfWeek).some(value => value === true)) {
-          setErrorMessage('Please select at least one day of the week.');
-          return false;
+          errors.push('Please select at least one day of the week.');
         }
       }
 
-      return true;
+      setErrorMessages(errors);
+      return errors.length === 0;
     }
   }));
 
@@ -149,7 +152,6 @@ const NotificationDateTime = forwardRef((props, ref) => {
   };
 
   const handleStartDateChange = (event) => {
-    console.log(event);
     setStartDate(event.detail.value);
   };
 
@@ -208,10 +210,14 @@ const NotificationDateTime = forwardRef((props, ref) => {
             <div className="info-row__data double-picker">
               <vaadin-time-picker
                 id="startTimePicker"
+                class={
+                  errorMessages.includes('Please select a start and end time.') ||
+                  errorMessages.includes('End time must be after start time.') ?
+                  'pickerError' : ''
+                }
                 ref={startTimeRef}
                 step={60 * 15}
                 placeholder="Start time"
-                required
                 value={startTime}
                 max={endTime ? endTime : null}
                 error-message={startTimeRef.current ? startTimeRef.current.errorMessage : null} />
@@ -220,9 +226,13 @@ const NotificationDateTime = forwardRef((props, ref) => {
 
               <vaadin-time-picker
                 id="endTimePicker"
+                class={
+                  errorMessages.includes('Please select a start and end time.') ||
+                  errorMessages.includes('End time must be after start time.') ?
+                  'pickerError' : ''
+                }
                 step={60 * 15}
                 placeholder="End time"
-                required
                 value={endTime}
                 min={startTime ? startTime : null} />
             </div>
@@ -244,9 +254,13 @@ const NotificationDateTime = forwardRef((props, ref) => {
               <div className="info-row__data">
                 <vaadin-date-picker
                   id="specificDate"
+                  class={
+                    errorMessages.includes('Please select a specific date.') ||
+                    errorMessages.includes('Specific date must be after today.') ?
+                    'pickerError' : ''
+                  }
                   placeholder="Select date"
                   value={startDate}
-                  required
                   min={new Date().toISOString().split('T')[0]} />
               </div>
             }
@@ -255,9 +269,13 @@ const NotificationDateTime = forwardRef((props, ref) => {
               <div className="info-row__data double-picker">
                 <vaadin-date-picker
                   id="startDate"
+                  class={
+                    errorMessages.includes('Please select a start and end date.') ||
+                    errorMessages.includes('End date must be after start date.') ?
+                    'pickerError' : ''
+                  }
                   placeholder="Start date"
                   value={startDate}
-                  required
                   min={new Date().toISOString().split('T')[0]}
                   max={endDate ? endDate : null } />
 
@@ -265,9 +283,13 @@ const NotificationDateTime = forwardRef((props, ref) => {
 
                 <vaadin-date-picker
                   id="endDate"
+                  class={
+                    errorMessages.includes('Please select a start and end date.') ||
+                    errorMessages.includes('End date must be after start date.') ?
+                    'pickerError' : ''
+                  }
                   placeholder="End date"
                   value={endDate}
-                  required
                   min={startDate ? startDate : new Date().toISOString().split('T')[0] } />
               </div>
             }
@@ -292,21 +314,21 @@ const NotificationDateTime = forwardRef((props, ref) => {
                         value={day}
                         checked={checked}
                         onChange={handleWeekDayChange}
-                        isInvalid={!!errorMessage && showSpecificTimeDate &&
-                          specificDateOption === 'Days of the week'
-                        } />
+                        isInvalid={errorMessages.includes('Please select at least one day of the week.')}/>
                     </div>
                   ))}
-
-                  <Form.Control.Feedback type="invalid">
-                    {errorMessage}
-                  </Form.Control.Feedback>
                 </Form>
               </div>
             }
           </div>
         </div>
       }
+
+      <Form.Control.Feedback type="invalid">
+        {errorMessages.map((message, index) => (
+          <div key={index}>{message}<br/></div>
+        ))}
+      </Form.Control.Feedback>
     </Form>
   );
 });

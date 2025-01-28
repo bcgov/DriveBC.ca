@@ -378,8 +378,9 @@ export default function RouteDetails(props) {
   };
 
   const validateSubmission = () => {
-    return !(!EventTypeFormRef.current.validateNotificationEventTypes() ||
-      !DateTimeFormRef.current.validateNotificationDateTime());
+    const eventTypeValid = EventTypeFormRef.current.validateNotificationEventTypes();
+    const dateTimeValid = DateTimeFormRef.current.validateNotificationDateTime();
+    return eventTypeValid && dateTimeValid;
   }
 
   const saveHandler = async () => {
