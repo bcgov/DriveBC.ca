@@ -8,8 +8,12 @@ from math import floor
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-import environ
 import httpx
+from django.conf import settings
+from django.contrib.gis.geos import LineString, MultiLineString, Point
+from django.core.exceptions import ObjectDoesNotExist
+from PIL import Image, ImageDraw, ImageFont
+
 from apps.feed.client import FeedClient
 from apps.shared.models import RouteGeometry
 from apps.webcam.enums import CAMERA_DIFF_FIELDS
@@ -17,15 +21,7 @@ from apps.webcam.hwy_coords import hwy_coords
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
 from apps.webcam.views import WebcamAPI
-from django.conf import settings
-from django.contrib.gis.geos import LineString, MultiLineString, Point
-from django.core.exceptions import ObjectDoesNotExist
-from PIL import Image, ImageDraw, ImageFont
 
-# Base dir and env
-BASE_DIR = Path(__file__).resolve().parents[4]
-env = environ.Env()
-environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
 logger = logging.getLogger(__name__)
 
 APP_DIR = Path(__file__).resolve().parent
@@ -293,10 +289,10 @@ def build_route_geometries(coords=hwy_coords):
             }
 
             response = httpx.get(
-                env("DRIVEBC_ROUTE_PLANNER_API_BASE_URL") + "/directions.json",
+                settings.DRIVEBC_ROUTE_PLANNER_API_BASE_URL + "/directions.json",
                 params=payload,
                 headers={
-                    "apiKey": env("DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY"),
+                    "apiKey": settings.DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY,
                 }
             )
 
