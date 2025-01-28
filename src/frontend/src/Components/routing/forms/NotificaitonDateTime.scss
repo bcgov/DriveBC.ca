@@ -59,3 +59,7 @@ vaadin-time-picker, vaadin-date-picker {
 vaadin-time-picker-overlay, vaadin-date-picker-overlay  {
   z-index: 10000;
 }
+
+.pickerError {
+  --vaadin-input-field-background: #FFEEEE;
+}

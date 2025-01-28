@@ -1,5 +1,11 @@
 @import "../../styles/variables";
 
+.invalid-feedback {
+  display: flex;
+  column-span: all;
+  flex-direction: column;
+}
+
 .route-details {
   margin-bottom: 1rem;
 
