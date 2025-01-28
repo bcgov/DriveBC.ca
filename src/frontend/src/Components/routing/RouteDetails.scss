@@ -351,11 +351,19 @@
       justify-content: flex-start;
       border-top: 1px solid #D9D9D9;
 
+      @media (min-width: 768px) {
+        display: block;
+      }
+
       .btn {
         margin: 0;
 
         &.cancel-btn {
           margin: auto;
+
+          @media (min-width: 768px) {
+            margin-left: 1rem;
+          }
         }
 
         svg {
