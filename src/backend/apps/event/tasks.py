@@ -276,53 +276,27 @@ def send_route_notifications(saved_route, updated_event_ids):
             )
 
             # Attach images with Content-ID
-            logo_path = os.path.join(BACKEND_DIR, 'static', 'images', 'drivebclogo.png')
-            with open(logo_path, 'rb') as image_file:
-                img = MIMEImage(image_file.read(), _subtype="png")
-                img.add_header('Content-ID', '<drivebclogo>')
-                img.add_header('X-Attachment-Id', 'drivebclogo.png')
-                img.add_header('Content-Disposition', 'inline', filename='drivebclogo.png')
-                msg.attach(img)
+            def attach_images_to_email(msg, event):
+                image_paths = {
+                    'drivebclogo': 'drivebclogo.png',
+                    'dclogo': get_image_type_file_name(event),
+                    'bclogo': 'bclogo.png',
+                    'twitter': 'twitter.png',
+                    'instagram': 'instagram.png',
+                    'linkedin': 'linkedin.png'
+                }
 
-            icon_path = os.path.join(BACKEND_DIR, 'static', 'images', get_image_type_file_name(event))
-            with open(icon_path, 'rb') as logo_img_file:
-                logoimg = MIMEImage(logo_img_file.read(), _subtype="png")
-                logoimg.add_header('Content-ID', '<dclogo>')
-                logoimg.add_header('X-Attachment-Id', 'dclogo.png')
-                logoimg.add_header('Content-Disposition', 'inline', filename='dclogo.png')
-                msg.attach(logoimg)
+                for cid, filename in image_paths.items():
+                    image_path = os.path.join(BACKEND_DIR, 'static', 'images', filename)
+                    with open(image_path, 'rb') as image_file:
+                        img = MIMEImage(image_file.read(), _subtype="png")
+                        img.add_header('Content-ID', f'<{cid}>')
+                        img.add_header('X-Attachment-Id', filename)
+                        img.add_header('Content-Disposition', 'inline', filename=filename)
+                        msg.attach(img)
 
-            bclogo_path = os.path.join(BACKEND_DIR, 'static', 'images', 'bclogo.png')
-            with open(bclogo_path, 'rb') as image_file:
-                bcimg = MIMEImage(image_file.read(), _subtype="png")
-                bcimg.add_header('Content-ID', '<bclogo>')
-                bcimg.add_header('X-Attachment-Id', 'bclogo.png')
-                bcimg.add_header('Content-Disposition', 'inline', filename='bclogo.png')
-                msg.attach(bcimg)
-
-            twitter_path = os.path.join(BACKEND_DIR, 'static', 'images', 'twitter.png')
-            with open(twitter_path, 'rb') as image_file:
-                twitterimg = MIMEImage(image_file.read(), _subtype="png")
-                twitterimg.add_header('Content-ID', '<twitter>')
-                twitterimg.add_header('X-Attachment-Id', 'twitter.png')
-                twitterimg.add_header('Content-Disposition', 'inline', filename='twitter.png')
-                msg.attach(twitterimg)
-            
-            instagram_path = os.path.join(BACKEND_DIR, 'static', 'images', 'instagram.png')
-            with open(twitter_path, 'rb') as image_file:
-                instagramimg = MIMEImage(image_file.read(), _subtype="png")
-                instagramimg.add_header('Content-ID', '<instagram>')
-                instagramimg.add_header('X-Attachment-Id', 'instagram.png')
-                instagramimg.add_header('Content-Disposition', 'inline', filename='instagram.png')
-                msg.attach(instagramimg)
-
-            linkedin_path = os.path.join(BACKEND_DIR, 'static', 'images', 'linkedin.png')
-            with open(twitter_path, 'rb') as image_file:
-                linkedinimg = MIMEImage(image_file.read(), _subtype="png")
-                linkedinimg.add_header('Content-ID', '<linkedin>')
-                linkedinimg.add_header('X-Attachment-Id', 'linkedin.png')
-                linkedinimg.add_header('Content-Disposition', 'inline', filename='linkedin.png')
-                msg.attach(instagramimg)
+            # Usage
+            attach_images_to_email(msg, event)
 
             msg.attach_alternative(html, 'text/html')
             msg.send()
