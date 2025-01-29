@@ -135,8 +135,8 @@ class Bulletin(Page, BaseModel):
 
     def get_url_parts(self, request=None):
         parts = super().get_url_parts(request)
-        # if parts is None:
-        #     return None
+        if parts is None:
+            return None
         site_id, root_url, _ = parts
         plural = self.specific_class._meta.verbose_name_plural
         return (site_id, root_url, f'/{plural}/{self.slug}')
@@ -196,10 +196,9 @@ class SubPage(Page, BaseModel):
     def get_url_parts(self, request=None):
         parent = self.get_parent()
         parts = parent.get_url_parts(request)
-        # if parts is None:
-        #     return None
+        if parts is None:
+            return None
         site_id, root_url, _ = parts
-        print(parts)
         # absolute path is required for links between subpages to function
         plural = parent.specific_class._meta.verbose_name_plural
         return (site_id, root_url, f'/{plural}/{parent.slug}/{self.slug}')
