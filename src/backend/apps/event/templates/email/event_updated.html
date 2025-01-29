@@ -4,164 +4,164 @@
         <td align="center" valign="top">
           <!-- Email container -->
           {% if event.severity == 'MAJOR' %}
-          <table width="620" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#FFFFFF" style="padding:24px; border-top: 4px solid #CE3E39">
+          <table width="620" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#FFFFFF" style="border-top: 4px solid #CE3E39">
           {% else %}
-          <table width="620" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#FFFFFF" style="padding:24px; border-top: 4px solid #F8BB47">
+          <table width="620" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#FFFFFF" style="border-top: 4px solid #F8BB47">
           {% endif %}
-            <!-- Logo Header -->
+            <!-- Body -->
             <tr>
               <td>
-                <a href="{{ fe_base_url }}" target="_blank" rel="noopener noreferrer" style="display:inline-block">
-                  <img src="cid:drivebclogo" alt="DriveBC Logo" />
-                </a>
-              </td>
-            </tr>
-            <!-- Intro paragraph -->
-            <tr>
-              <td>
-                <table style="padding-top:30px">
-                  <tr>
-                    <td style="padding-bottom:8px">
-                      Hello {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.email }}{% endif %},
-                    </td>
-                  </tr>
+                <table style="padding: 24px 24px 30px 24px;">
+                  <!-- Logo Header -->
                   <tr>
                     <td>
-                      This notification is sent based on your
-                      <span>
-                        <a href="{{ fe_base_url }}my-routes" target="_blank" rel="noopener noreferrer" style="display:inline-block">
-                        route notification settings
-                        </a>
-                      </span>
-                      on DriveBC for the following route:
+                      <a href="{{ fe_base_url }}" target="_blank" rel="noopener noreferrer" style="display:inline-block">
+                        <img src="cid:drivebclogo" alt="DriveBC Logo" />
+                      </a>
                     </td>
                   </tr>
-                </table>
-              </td>
-            </tr>
-            <!-- Saved route details -->
-            <tr>
-              <td style="padding-top:30px">
-                <table width="100%">
-                  <tr>
-                    <td style="font-size:1.5rem; font-weight:700; color:#053662">
-                      {% if route.label %}{{ route.label }}{% else %}{{ route.start }} to {{ route.end }}{% endif %}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="color:#605E5C; padding-bottom:12px">
-                      {% if route.label %}{{ route.start }} to {{ route.end }}{% endif %}
-                    </td>
-                  </tr>
+                  <!-- Intro paragraph -->
                   <tr>
                     <td>
-                      <!-- Event card -->
-                      <table width="100%">
+                      <table style="padding-top:30px">
                         <tr>
-                          {% if display_category == 'majorEvents' or display_category == 'closures' %}
-                          <td bgcolor="#FFE4E5" style="padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#D8292F">
-                          {% else %}
-                          <td bgcolor="#FEF0D8" style="padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#584215">
-                          {% endif %}
-                            <img src="cid:dclogo" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px;" alt="{{ display_category_title }}" />
-                            {{ display_category_title }}
+                          <td style="padding-bottom:8px">
+                            Hello {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.email }}{% endif %},
                           </td>
                         </tr>
-                        {% if event.highway_segment_names %}
-                        <tr>
-                          {% if event.severity == 'MAJOR' %}
-                          <td style="font-size: 1.25rem; font-weight:700; color:#D8292F; padding: 8px 12px 0">
-                          {% else %}
-                          <td style="font-size: 1.25rem; font-weight:700; color:#013366; padding: 8px 12px 0">
-                          {% endif %}
-                            {{ event.highway_segment_names }}
-                          </td>
-                        </tr>
-                        {% endif %}
-                        {% if event.direction != 'NONE' %}
-                        <tr>
-                          <td style="font-size: 0.875rem; font-weight:700; color:#464341; padding: 8px 12px 0">
-                            {% if event.direction == 'N' %}
-                              Northbound
-                            {% elif event.direction == 'S' %}
-                              Southbound
-                            {% elif event.direction == 'E' %}
-                              Eastbound
-                            {% elif event.direction == 'W' %}
-                              Westbound
-                            {% elif event.direction == 'BOTH' %}
-                              Both Directions
-                            {% endif %}
-                          </td>
-                        </tr>
-                        {% endif %}
                         <tr>
                           <td>
-                            <table width="100%" style="padding:0 12px 8px">
+                            This notification is sent based on your
+                            <span>
+                              <a href="{{ fe_base_url }}my-routes" target="_blank" rel="noopener noreferrer" style="display:inline-block">
+                              route notification settings
+                              </a>
+                            </span>
+                            on DriveBC for the following route:
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <!-- Saved route details -->
+                  <tr>
+                    <td style="padding-top:30px">
+                      <table width="100%">
+                        <tr>
+                          <td style="font-size:1.5rem; font-weight:700; color:#053662">
+                            {% if route.label %}{{ route.label }}{% else %}{{ route.start }} to {{ route.end }}{% endif %}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="color:#605E5C; padding-bottom:12px">
+                            {% if route.label %}{{ route.start }} to {{ route.end }}{% endif %}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <!-- Event card -->
+                            <table width="100%">
                               <tr>
-                                <td style="color:#013366; vertical-align:top; padding-top:12px; width:130px">
-                                  Location
-                                </td>
-                                <td style="vertical-align:top; padding: 12px 0 0 8px">
-                                  {{ event.location_description }}
+                                {% if display_category == 'majorEvents' or display_category == 'closures' %}
+                                <td bgcolor="#FFE4E5" style="padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#D8292F">
+                                {% else %}
+                                <td bgcolor="#FEF0D8" style="padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#584215">
+                                {% endif %}
+                                  <img src="cid:dclogo" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px;" alt="{{ display_category_title }}" />
+                                  {{ display_category_title }}
                                 </td>
                               </tr>
+                              {% if event.highway_segment_names %}
                               <tr>
-                                <td style="color:#013366; vertical-align:top; padding-top:12px; width: 130px">
-                                  Closest landmark
-                                </td>
-                                <td style="vertical-align:top; padding: 12px 0 0 8px">
-                                  {{ event.closest_landmark }}
+                                {% if event.severity == 'MAJOR' %}
+                                <td style="font-size: 1.25rem; font-weight:700; color:#D8292F; padding: 8px 12px 0">
+                                {% else %}
+                                <td style="font-size: 1.25rem; font-weight:700; color:#013366; padding: 8px 12px 0">
+                                {% endif %}
+                                  {{ event.highway_segment_names }}
                                 </td>
                               </tr>
+                              {% endif %}
+                              {% if event.direction != 'NONE' %}
                               <tr>
-                                <td style="color:#013366; vertical-align:top; padding-top:12px; width: 130px">
-                                  Description
-                                </td>
-                                <td style="vertical-align:top; padding: 12px 0 0 8px">
-                                  {{ event.description }}
+                                <td style="font-size: 0.875rem; font-weight:700; color:#464341; padding: 8px 12px 0">
+                                  {% if event.direction == 'N' %}
+                                    Northbound
+                                  {% elif event.direction == 'S' %}
+                                    Southbound
+                                  {% elif event.direction == 'E' %}
+                                    Eastbound
+                                  {% elif event.direction == 'W' %}
+                                    Westbound
+                                  {% elif event.direction == 'BOTH' %}
+                                    Both Directions
+                                  {% endif %}
                                 </td>
                               </tr>
+                              {% endif %}
                               <tr>
-                                <td style="color:#013366; vertical-align:top; padding-top:12px; width: 130px">
-                                  Last updated
-                                </td>
-                                <td style="vertical-align:top; padding: 12px 0 0 8px">
-                                  {{ event.last_updated }}
+                                <td>
+                                  <table width="100%" style="padding:0 12px 8px">
+                                    <tr>
+                                      <td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width:130px">
+                                        Location
+                                      </td>
+                                      <td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
+                                        {{ event.location_description }}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
+                                        Closest landmark
+                                      </td>
+                                      <td style="font-size: 0.875rem; font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
+                                        {{ event.closest_landmark }}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
+                                        Description
+                                      </td>
+                                      <td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
+                                        {{ event.description }}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
+                                        Last updated
+                                      </td>
+                                      <td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
+                                        {{ event.last_updated }}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
+                                        Next update
+                                      </td>
+                                      <td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
+                                        {{ event.next_update }}
+                                      </td>
+                                    </tr>
+                                  </table>
                                 </td>
                               </tr>
+                              <!-- View on DriveBC button -->
                               <tr>
-                                <td style="color:#013366; vertical-align:top; padding-top:12px; width: 130px">
-                                  Next update
-                                </td>
-                                <td style="vertical-align:top; padding: 12px 0 0 8px">
-                                  {{ event.next_update }}
+                                <td align="center" bgcolor="#255A90" style="border-radius:4px;">
+                                  <a href="{{ fe_base_url }}?type=event&display_category={{ event.display_category }}&id={{ event.id }}" style="color:#ffffff; text-decoration: none; font-size: 0.875rem; font-weight: 700">
+                                    <div style="height:100%;width:100%; padding: 12px">
+                                      View on DriveBC
+                                    </div>
+                                  </a>
                                 </td>
                               </tr>
                             </table>
                           </td>
                         </tr>
-                        <!-- View on DriveBC button -->
-                        <tr>
-                          <td align="center" bgcolor="#255A90" style="border-radius:4px;">
-                            <a href="{{ fe_base_url }}?type=event&display_category={{ event.display_category }}&id={{ event.id }}" style="color:#ffffff; text-decoration: none; font-size: 0.875rem; font-weight: 700">
-                              <div style="height:100%;width:100%; padding: 12px">
-                                View on DriveBC
-                              </div>
-                            </a>
-                          </td>
-                        </tr>
-
                       </table>
                     </td>
                   </tr>
-                </table>
-              </td>
-            </tr>
-            <!-- Footer -->
-            <tr>
-              <td >
-                <table>
+                  <!-- Outro -->
                   <tr>
                     <td style="padding-top:30px">
                       Your DriveBC team.
@@ -172,13 +172,20 @@
                       Based on your settings, you are being notified for new and updated advisories, closures, major delays, and road conditions from 9:00 am to 10:30 am, every Monday, Tuesday, Wednesday, Thursday, Friday.
                     </td>
                   </tr>
+                </table>
+              </td>
+            </tr>
+            <!-- Footer -->
+            <tr>
+              <td >
+                <table style="padding: 24px; border-top: 4px solid #FCBA19" bgcolor="#FAF9F8">
                   <tr>
-                    <td style="padding-top:30px; font-size:0.75rem; color:#605E5C">
+                    <td style="font-size:0.75rem; color:#605E5C; padding-bottom: 32px;">
                       Add {{ from_email }} to your address book to ensure that you receive these notifications to your inbox. If you do not want to receive emails related to this route, you can turn off or modify these notifications at any time.
                     </td>
                   </tr>
                   <tr>
-                    <td>
+                    <td style="padding-top: 16px; border-top: 1px solid #9F9D9C">
                       <table>
                         <tr>
                           <td style="white-space: nowrap;">
