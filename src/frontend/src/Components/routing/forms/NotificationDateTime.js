@@ -10,7 +10,7 @@ import './NotificaitonDateTime.scss';
 const NotificationDateTime = forwardRef((props, ref) => {
   /* Setup */
   // Props
-  const { showSpecificTimeDate, setShowSpecificTimeDate } = props;
+  const { route, showSpecificTimeDate, setShowSpecificTimeDate } = props;
 
   // Ref
   const startTimeRef = useRef();
@@ -19,25 +19,31 @@ const NotificationDateTime = forwardRef((props, ref) => {
   const [errorMessages, setErrorMessages] = useState([]);
 
   const specificDateOptions = ['Specific date', 'Date range', 'Days of the week'];
-  const [specificDateOption, setSpecificDateOption] = useState(specificDateOptions[0]);
-
-  // Date range
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
+  const defaultSpecificDateOption = route.notification_days.length > 0 ? specificDateOptions[2] :
+    (route.notification_end_date ? specificDateOptions[1] : specificDateOptions[0]);
+  const [specificDateOption, setSpecificDateOption] = useState(defaultSpecificDateOption);
 
   // Time range
-  const [startTime, setStartTime] = useState();
-  const [endTime, setEndTime] = useState();
+  const defaultStartTime = route.notification_start_time.split(':').slice(0, 2).join(':');
+  const defaultEndTime = route.notification_end_time.split(':').slice(0, 2).join(':');
+  const [startTime, setStartTime] = useState(defaultStartTime);
+  const [endTime, setEndTime] = useState(defaultEndTime);
+
+  // Date range
+  const defaultStartDate = route.notification_start_date;
+  const defaultEndDate = route.notification_end_date;
+  const [startDate, setStartDate] = useState(defaultStartDate);
+  const [endDate, setEndDate] = useState(defaultEndDate);
 
   // Day of week
   const defaultDayOfWeek = {
-    Monday: false,
-    Tuesday: false,
-    Wednesday: false,
-    Thursday: false,
-    Friday: false,
-    Saturday: false,
-    Sunday: false
+    Monday: route.notification_days.includes('Monday'),
+    Tuesday: route.notification_days.includes('Tuesday'),
+    Wednesday: route.notification_days.includes('Wednesday'),
+    Thursday: route.notification_days.includes('Thursday'),
+    Friday: route.notification_days.includes('Friday'),
+    Saturday: route.notification_days.includes('Saturday'),
+    Sunday: route.notification_days.includes('Sunday')
   }
   const [dayOfWeek, setDayOfWeek] = useState(defaultDayOfWeek);
 
@@ -45,10 +51,10 @@ const NotificationDateTime = forwardRef((props, ref) => {
   useEffect(() => {
     // Reset all date time options
     setDayOfWeek(defaultDayOfWeek);
-    setStartDate(null);
-    setStartTime(null);
-    setEndDate(null);
-    setEndTime(null);
+    setStartTime(defaultStartTime);
+    setEndTime(defaultEndTime);
+    setStartDate(defaultStartDate);
+    setEndDate(defaultEndDate);
 
     // Bind event listeners to time pickers
     if (showSpecificTimeDate) {
@@ -67,8 +73,8 @@ const NotificationDateTime = forwardRef((props, ref) => {
 
   useEffect(() => {
     // Reset date options
-    setStartDate(null);
-    setEndDate(null);
+    setStartDate(defaultStartDate);
+    setEndDate(defaultEndDate);
     setDayOfWeek(defaultDayOfWeek);
 
     // No need to bind event listeners if specific time date is not shown
@@ -178,7 +184,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
 
   /* Handlers */
   const handleRadioChange = (event) => {
-    if (event.target.value === 'specific') {
+    if (event.target.id === 'specific') {
       setShowSpecificTimeDate(true);
     }
     else {
@@ -219,9 +225,8 @@ const NotificationDateTime = forwardRef((props, ref) => {
           id='immediately'
           name='notifications-time'
           label='Immediately and all the time'
-          value='immediately'
           onChange={handleRadioChange}
-          defaultChecked />
+          defaultChecked={!showSpecificTimeDate} />
       </div>
 
       <div key='At a specific time and dates'>
@@ -230,9 +235,8 @@ const NotificationDateTime = forwardRef((props, ref) => {
           id='specific'
           name='notifications-time'
           label='At a specific time and dates'
-          value='specific'
           onChange={handleRadioChange}
-        />
+          defaultChecked={showSpecificTimeDate} />
       </div>
 
       { showSpecificTimeDate &&
@@ -253,7 +257,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                 ref={startTimeRef}
                 step={60 * 15}
                 placeholder="Start time"
-                value={startTime}
+                value={defaultStartTime}
                 max={endTime ? endTime : null}
                 error-message={startTimeRef.current ? startTimeRef.current.errorMessage : null} />
 
@@ -268,7 +272,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                 }
                 step={60 * 15}
                 placeholder="End time"
-                value={endTime}
+                value={defaultEndTime}
                 min={startTime ? startTime : null} />
             </div>
           </div>
@@ -295,7 +299,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                     'pickerError' : ''
                   }
                   placeholder="Select date"
-                  value={startDate}
+                  value={defaultStartDate}
                   min={new Date().toISOString().split('T')[0]} />
               </div>
             }
@@ -310,7 +314,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                     'pickerError' : ''
                   }
                   placeholder="Start date"
-                  value={startDate}
+                  value={defaultStartDate}
                   min={new Date().toISOString().split('T')[0]}
                   max={endDate ? endDate : null } />
 
@@ -324,7 +328,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                     'pickerError' : ''
                   }
                   placeholder="End date"
-                  value={endDate}
+                  value={defaultEndDate}
                   min={startDate ? startDate : new Date().toISOString().split('T')[0] } />
               </div>
             }

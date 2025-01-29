@@ -106,7 +106,7 @@ export default function RouteDetails(props) {
   /* Notification states */
   const [notificationsEnabled, setNotificationsEnabled] = useState(route.notification);
   const [showNotificationForm, setShowNotificationForm] = useState(false);
-  const [showSpecificTimeDate, setShowSpecificTimeDate] = useState(false);
+  const [showSpecificTimeDate, setShowSpecificTimeDate] = useState(!!route.notification && !!route.notification_start_time);
 
   // Data
   const loadRouteCameras = async () => {
@@ -397,8 +397,6 @@ export default function RouteDetails(props) {
       ...dateTimePayload
     };
 
-    console.log('payload', payload);
-
     const response = await patchRoute(route, selectedRoute, dispatch, payload);
     setNotificationsEnabled(response.notification);
     setShowNotificationForm(false);
@@ -431,7 +429,7 @@ export default function RouteDetails(props) {
             </div>
 
             <div className="info-row__data">
-              <NotificationEventType ref={EventTypeFormRef} />
+              <NotificationEventType ref={EventTypeFormRef} route={route} />
             </div>
           </div>
 
@@ -443,6 +441,7 @@ export default function RouteDetails(props) {
             <div className="info-row__data">
               <NotificationDateTime
                 ref={DateTimeFormRef}
+                route={route}
                 showSpecificTimeDate={showSpecificTimeDate}
                 setShowSpecificTimeDate={setShowSpecificTimeDate} />
             </div>
