@@ -161,7 +161,7 @@ export const patchRoute = async (route, selectedRoute, dispatch, body) => {
     }
 
     const savedRoute = await response.json();
-    const payload = {...route, notification: savedRoute.notification};
+    const payload = {...route, ...savedRoute};
     if (selectedRoute && selectedRoute.id === route.id) {
       dispatch(updateSelectedRoute(payload));
     }

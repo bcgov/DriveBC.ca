@@ -138,6 +138,41 @@ const NotificationDateTime = forwardRef((props, ref) => {
 
       setErrorMessages(errors);
       return errors.length === 0;
+    },
+
+    getPayload() {
+      const payload = {
+        notification_days: [],
+        notification_start_date: null,
+        notification_end_date: null,
+        notification_start_time: null,
+        notification_end_time: null
+      }
+
+      // Send immediately and all the time
+      if (!showSpecificTimeDate) {
+        return payload;
+      }
+
+      // Time range for all date/day options
+      payload.notification_start_time = startTime;
+      payload.notification_end_time = endTime;
+
+      // Specific date
+      if (specificDateOption === 'Specific date') {
+        payload.notification_start_date = startDate;
+
+      // Date range
+      } else if (specificDateOption === 'Date range') {
+        payload.notification_start_date = startDate;
+        payload.notification_end_date = endDate;
+
+      // Days of the week
+      } else {
+        payload.notification_days = Object.keys(dayOfWeek).filter(day => dayOfWeek[day]);
+      }
+
+      return payload;
     }
   }));
 

@@ -388,10 +388,20 @@ export default function RouteDetails(props) {
       return;
     }
 
-    // const body = { notification: true };
-    // const response = await patchRoute(route, selectedRoute, dispatch, body);
-    // setNotificationsEnabled(response.notification);
-    // setShowNotificationForm(false);
+    const defaultPayload = { notification: true };
+    const eventTypePayload = EventTypeFormRef.current.getPayload();
+    const dateTimePayload = DateTimeFormRef.current.getPayload();
+    const payload = {
+      ...defaultPayload,
+      ...eventTypePayload,
+      ...dateTimePayload
+    };
+
+    console.log('payload', payload);
+
+    const response = await patchRoute(route, selectedRoute, dispatch, payload);
+    setNotificationsEnabled(response.notification);
+    setShowNotificationForm(false);
   }
 
   // Main components

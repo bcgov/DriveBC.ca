@@ -34,6 +34,12 @@ const NotificationEventType = forwardRef((props, ref) => {
         setErrorMessage('');
       }
       return isValid;
+    },
+
+    getPayload() {
+      return {
+        notification_types: Object.keys(notificationEventTypes).filter(type => notificationEventTypes[type])
+      };
     }
   }));
 
