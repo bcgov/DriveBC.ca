@@ -83,7 +83,10 @@ class Advisory(Page, BaseModel):
     template = 'cms/advisory.html'
 
     def get_url_parts(self, request=None):
-        site_id, root_url, _ = super().get_url_parts(request)
+        parts = self.get_url_parts(request)
+        if parts is None:
+            return None
+        site_id, root_url, _ = parts
         plural = self.specific_class._meta.verbose_name_plural
         return (site_id, root_url, f'/{plural}/{self.slug}')
 
@@ -131,7 +134,10 @@ class Bulletin(Page, BaseModel):
     template = 'cms/bulletin.html'
 
     def get_url_parts(self, request=None):
-        site_id, root_url, _ = super().get_url_parts(request)
+        parts = self.get_url_parts(request)
+        if parts is None:
+            return None
+        site_id, root_url, _ = parts
         plural = self.specific_class._meta.verbose_name_plural
         return (site_id, root_url, f'/{plural}/{self.slug}')
 
@@ -189,7 +195,10 @@ class SubPage(Page, BaseModel):
 
     def get_url_parts(self, request=None):
         parent = self.get_parent()
-        site_id, root_url, _ = parent.get_url_parts(request)
+        parts = parent.get_url_parts(request)
+        if parts is None:
+            return None
+        site_id, root_url, _ = parts
         # absolute path is required for links between subpages to function
         plural = parent.specific_class._meta.verbose_name_plural
         return (site_id, root_url, f'/{plural}/{parent.slug}/{self.slug}')
