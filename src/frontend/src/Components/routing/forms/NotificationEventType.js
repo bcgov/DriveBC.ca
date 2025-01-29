@@ -13,14 +13,17 @@ import './NotificaitonEventType.scss';
 
 const NotificationEventType = forwardRef((props, ref) => {
   /* Setup */
+  // Props
+  const { route } = props;
+
   // States
   const [errorMessage, setErrorMessage] = useState('');
   const [notificationEventTypes, setNotificationEventTypes] = useState({
     // advisories: true,
-    closures: true,
-    majorEvents: true,
-    minorEvents: true,
-    roadConditions: true,
+    closures: route.notification_types && route.notification_types.includes('closures'),
+    majorEvents: route.notification_types && route.notification_types.includes('majorEvents'),
+    minorEvents: route.notification_types && route.notification_types.includes('minorEvents'),
+    roadConditions: route.notification_types && route.notification_types.includes('roadConditions'),
     // chainUps: true
   });
 
