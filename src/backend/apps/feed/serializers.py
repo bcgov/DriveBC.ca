@@ -115,6 +115,7 @@ class CarsClosureSerializer(serializers.Serializer):
 
         # Data under "details"
         closed_phrase_ids = settings.CLOSED_PHRASE_IDS
+        int_closed_ids = list(map(int, closed_phrase_ids.split(",")))
         for detail in data.get("details", []):
             # Get closed state
             if not data["closed"]:  # Skip block if already recorded
@@ -123,7 +124,7 @@ class CarsClosureSerializer(serializers.Serializer):
                     if isinstance(kind, str):
                         data["closed"] = False
                     else:
-                        data["closed"] = kind.get("category") == "traffic_pattern" and kind.get("phrase-id") in closed_phrase_ids
+                        data["closed"] = kind.get("category") == "traffic_pattern" and kind.get("phrase-id") in int_closed_ids
 
                     # Stop inner for loop if already marked
                     if data["closed"]:
