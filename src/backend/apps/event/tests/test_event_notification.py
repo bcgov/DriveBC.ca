@@ -11,7 +11,7 @@ from apps.event.enums import (
     EVENT_TYPE,
 )
 from apps.event.models import Event
-from apps.event.tasks import send_event_notifications
+from apps.event.tasks import generate_settings_message, send_event_notifications
 from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core import mail
 from django.test import TestCase
@@ -22,7 +22,6 @@ all_display_categories = [
     EVENT_DISPLAY_CATEGORY.MINOR_DELAYS,
     EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS,
     EVENT_DISPLAY_CATEGORY.ROAD_CONDITION,
-    EVENT_DISPLAY_CATEGORY.HIGHWAY_CAMERAS,
     EVENT_DISPLAY_CATEGORY.CHAIN_UP
 ]
 
@@ -242,3 +241,81 @@ class SendEventNotificationsTest(TestCase):
         assert 'Always Active Route' in mail.outbox[0].subject
         assert 'Always Active Minor Route' in mail.outbox[1].subject
         assert 'Intersecting Event Minor' in mail.outbox[1].body
+
+    def test_generate_footer_message(self):
+        # All notification types
+        route = SavedRoutes(notification_types=[
+            EVENT_DISPLAY_CATEGORY.CLOSURE,
+            EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS,
+            EVENT_DISPLAY_CATEGORY.MINOR_DELAYS,
+            EVENT_DISPLAY_CATEGORY.ROAD_CONDITION
+        ])
+        msg = generate_settings_message(route)
+        assert 'all new and updated information ' in msg
+
+        # Two notification types
+        route = SavedRoutes(notification_types=[
+            EVENT_DISPLAY_CATEGORY.CLOSURE,
+            EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS
+        ])
+        msg = generate_settings_message(route)
+        assert 'closures and major delays ' in msg
+
+        # Three notification types
+        route = SavedRoutes(notification_types=[
+            EVENT_DISPLAY_CATEGORY.CLOSURE,
+            EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS,
+            EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
+        ])
+        msg = generate_settings_message(route)
+        assert 'closures, major delays, and minor delays ' in msg
+
+        # Any time
+        route = SavedRoutes(
+            notification_types=[EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS],
+        )
+        msg = generate_settings_message(route)
+        assert 'at any time.' in msg
+
+        # Specific date
+        route = SavedRoutes(
+            notification_types=[EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS],
+            notification_start_time=datetime.time(8, 0),
+            notification_end_time=datetime.time(17, 0),
+            notification_start_date=datetime.date(2023, 1, 1)
+        )
+        msg = generate_settings_message(route)
+        assert 'on January 01.' in msg
+
+        # Date range
+        route = SavedRoutes(
+            notification_types=[EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS],
+            notification_start_time=datetime.time(8, 0),
+            notification_end_time=datetime.time(17, 0),
+            notification_start_date=datetime.date(2023, 1, 1),
+            notification_end_date=datetime.date(2023, 1, 7)
+        )
+        msg = generate_settings_message(route)
+        assert 'between 08:00am and 05:00pm ' in msg
+        assert 'from January 01 and January 07.' in msg
+
+        # Days of the week
+        route = SavedRoutes(
+            notification_types=[EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS],
+            notification_start_time=datetime.time(12, 0),
+            notification_end_time=datetime.time(23, 0),
+            notification_days=['Monday', 'Wednesday', 'Friday']
+        )
+        msg = generate_settings_message(route)
+        assert 'between 12:00pm and 11:00pm ' in msg
+        assert 'every Monday, Wednesday, Friday.' in msg
+
+        # Every day
+        route = SavedRoutes(
+            notification_types=[EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS],
+            notification_start_time=datetime.time(8, 0),
+            notification_end_time=datetime.time(17, 0),
+            notification_days=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        )
+        msg = generate_settings_message(route)
+        assert 'every day.' in msg
