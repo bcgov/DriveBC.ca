@@ -7,6 +7,7 @@ from apps.authentication.models import SavedRoutes
 from apps.event.enums import (
     EVENT_DIFF_FIELDS,
     EVENT_DISPLAY_CATEGORY,
+    EVENT_DISPLAY_CATEGORY_TITLE,
     EVENT_STATUS,
     EVENT_TYPE,
     EVENT_UPDATE_FIELDS,
@@ -240,6 +241,52 @@ def send_event_notifications(updated_event_ids, dt=None):
         send_route_notifications(saved_route, updated_event_ids)
 
 
+def generate_settings_message(route):
+    msg = 'Based on your settings, you are being notified for all new and updated '
+
+    # Add event types
+    if route.notification_types and len(route.notification_types) == 4:
+        msg += 'information '
+
+    else:
+        types = [EVENT_DISPLAY_CATEGORY_TITLE[t] for t in route.notification_types]
+        if len(types) > 2:
+            msg += f'{", ".join(types[:-1])}, and {types[-1]} '
+        elif len(types) == 2:
+            msg += f'{types[0]} and {types[1]} '
+        else:
+            msg += f'{types[0]} '
+
+    msg += 'that affects your route '
+
+    # Add date/time
+    # Immediately and all the time
+    if not route.notification_start_time:
+        msg += 'at any time.'
+
+    else:
+        msg += (f'between {route.notification_start_time.strftime("%I:%M%p").lower()} '
+                f'and {route.notification_end_time.strftime("%I:%M%p").lower()} ')
+
+        # Specific date
+        if route.notification_end_date:
+            msg += (f'from {route.notification_start_date.strftime("%B %d")} '
+                    f'and {route.notification_end_date.strftime("%B %d")}.')
+
+        # Date range
+        elif route.notification_start_date:
+            msg += f'on {route.notification_start_date.strftime("%B %d")}.'
+
+        # Days of the week
+        elif len(route.notification_days) == 7:
+            msg += 'every day.'
+
+        else:
+            msg += f'every {", ".join(route.notification_days)}.'
+
+    return msg
+
+
 def send_route_notifications(saved_route, updated_event_ids):
     # Apply a 150m buffer to the route geometry
     saved_route.route.transform(3857)
@@ -262,6 +309,7 @@ def send_route_notifications(saved_route, updated_event_ids):
                 'display_category': event.display_category,
                 'display_category_title': event.display_category_title,
                 'fe_base_url': settings.FRONTEND_BASE_URL,
+                'footer_message': generate_settings_message(saved_route),
             }
 
             text = render_to_string('email/event_updated.txt', context)

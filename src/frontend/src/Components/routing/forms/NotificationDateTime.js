@@ -24,8 +24,8 @@ const NotificationDateTime = forwardRef((props, ref) => {
   const [specificDateOption, setSpecificDateOption] = useState(defaultSpecificDateOption);
 
   // Time range
-  const defaultStartTime = route.notification_start_time.split(':').slice(0, 2).join(':');
-  const defaultEndTime = route.notification_end_time.split(':').slice(0, 2).join(':');
+  const defaultStartTime = route.notification_start_time ? route.notification_start_time.split(':').slice(0, 2).join(':') : null;
+  const defaultEndTime = route.notification_end_time ? route.notification_end_time.split(':').slice(0, 2).join(':') : null;
   const [startTime, setStartTime] = useState(defaultStartTime);
   const [endTime, setEndTime] = useState(defaultEndTime);
 

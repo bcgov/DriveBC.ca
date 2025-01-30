@@ -133,5 +133,14 @@ class EVENT_DISPLAY_CATEGORY:
     MINOR_DELAYS = 'minorEvents'
     FUTURE_DELAYS = 'futureEvents'
     ROAD_CONDITION = 'roadConditions'
-    HIGHWAY_CAMERAS = 'highwayCams'
     CHAIN_UP = 'chainUps'
+
+
+EVENT_DISPLAY_CATEGORY_TITLE = {
+    EVENT_DISPLAY_CATEGORY.CLOSURE: "closures",
+    EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS: "major delays",
+    EVENT_DISPLAY_CATEGORY.MINOR_DELAYS: "minor delays",
+    EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS: "future delays",
+    EVENT_DISPLAY_CATEGORY.ROAD_CONDITION: "road conditions",
+    EVENT_DISPLAY_CATEGORY.CHAIN_UP: "chain ups"
+}
