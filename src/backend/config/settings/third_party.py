@@ -77,6 +77,9 @@ SOCIALACCOUNT_PROVIDERS = {
                 },
             },
         ],
+        'AUTH_PARAMS': {
+            'kc_idp_hint': 'bceidbasic',
+        },
     },
 }
 
