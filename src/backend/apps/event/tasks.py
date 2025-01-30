@@ -1,17 +1,7 @@
 import datetime
 import logging
-import os
-from email.mime.image import MIMEImage
 from pathlib import Path
 from zoneinfo import ZoneInfo
-
-from django.contrib.gis.geos import LineString, Point
-from django.conf import settings
-from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import EmailMultiAlternatives
-from django.db.models import Q
-from django.template.loader import render_to_string
 
 from apps.authentication.models import SavedRoutes
 from apps.event.enums import (
@@ -25,6 +15,15 @@ from apps.event.models import Event
 from apps.event.serializers import EventInternalSerializer
 from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
+from apps.shared.helpers import attach_default_email_images, attach_image_to_email
+from django.conf import settings
+from django.contrib.gis.geos import LineString, Point
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMultiAlternatives
+from django.db.models import Q
+from django.template.loader import render_to_string
+
 logger = logging.getLogger(__name__)
 
 # Backend dir and env
@@ -275,28 +274,9 @@ def send_route_notifications(saved_route, updated_event_ids):
                 [saved_route.user.email]
             )
 
-            # Attach images with Content-ID
-            def attach_images_to_email(msg, event):
-                image_paths = {
-                    'drivebclogo': 'drivebclogo.png',
-                    'dclogo': get_image_type_file_name(event),
-                    'bclogo': 'bclogo.png',
-                    'twitter': 'twitter.png',
-                    'instagram': 'instagram.png',
-                    'linkedin': 'linkedin.png'
-                }
-
-                for cid, filename in image_paths.items():
-                    image_path = os.path.join(BACKEND_DIR, 'static', 'images', filename)
-                    with open(image_path, 'rb') as image_file:
-                        img = MIMEImage(image_file.read(), _subtype="png")
-                        img.add_header('Content-ID', f'<{cid}>')
-                        img.add_header('X-Attachment-Id', filename)
-                        img.add_header('Content-Disposition', 'inline', filename=filename)
-                        msg.attach(img)
-
-            # Usage
-            attach_images_to_email(msg, event)
+            # image attachments
+            attach_default_email_images(msg)
+            attach_image_to_email(msg, 'dclogo', get_image_type_file_name(event))
 
             msg.attach_alternative(html, 'text/html')
             msg.send()
