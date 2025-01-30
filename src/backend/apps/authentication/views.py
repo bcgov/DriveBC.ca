@@ -1,7 +1,6 @@
-import os
-from email.mime.image import MIMEImage
 from pathlib import Path
 
+from apps.webcam.models import Webcam
 from django.conf import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ObjectDoesNotExist
@@ -18,14 +17,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.webcam.models import Webcam
-
+from ..shared.helpers import attach_default_email_images
 from .models import DriveBCUser, FavouritedCameras, SavedRoutes
 from .serializers import FavouritedCamerasSerializer, SavedRoutesSerializer
 
 # Backend dir and env
 BACKEND_DIR = Path(__file__).resolve().parents[2]
-
 
 
 def request_access(request):
@@ -37,7 +34,7 @@ def access_requested(request):
     if request.method == 'POST':
         app = request.user._meta.app_label
         model = request.user._meta.model_name
-        path = reverse('admin:%s_%s_change' % (app, model),  args=[request.user.id])
+        path = reverse(f'admin:{app}_{model}_change',  args=[request.user.id])
         url = settings.FRONTEND_BASE_URL + path[1:]
         first = request.user.first_name
         last = request.user.last_name
@@ -211,14 +208,8 @@ class SendVerificationEmailView(APIView):
             [request.user.email]
         )
 
-        # Attach image with Content-ID
-        image_path = os.path.join(BACKEND_DIR, 'static', 'images', 'drivebclogo.png')
-        with open(image_path, 'rb') as image_file:
-            img = MIMEImage(image_file.read(), _subtype="png")
-            img.add_header('Content-ID', '<drivebclogo>')
-            img.add_header('X-Attachment-Id', 'drivebclogo.png')
-            img.add_header('Content-Disposition', 'inline', filename='drivebclogo.png')
-            msg.attach(img)
+        # image attachments
+        attach_default_email_images(msg)
 
         msg.attach_alternative(html, 'text/html')
         msg.send()
