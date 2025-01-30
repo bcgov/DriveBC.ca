@@ -109,6 +109,10 @@ export default function AdvisoriesList(props) {
                 <div className="advisory-li-title-container">
                   <p className='advisory-li-title'>{advisory.title}</p>
 
+                  {!showDescription && advisory.teaser &&
+                    <p>{advisory.teaser}</p>
+                  }
+
                   {(showTimestamp && showPublished) &&
                     <div className="timestamp-container">
                       {!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.live_revision.toString()) && <div className="unread-display"></div>}
