@@ -19,11 +19,6 @@ CMS_FIELDS = [
 ]
 
 
-# get the depth of the top level advisories; any advisories of greater depth
-# must be subpages of these
-LOWEST_ADVISORY_DEPTH = Advisory.objects.values_list('depth', flat=True).distinct().order_by('depth').first() or 0
-
-
 class CMSSerializer(serializers.ModelSerializer):
 
     subpages = serializers.SerializerMethodField()
