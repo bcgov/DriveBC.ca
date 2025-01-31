@@ -103,6 +103,7 @@ export default function CameraDetailsPage() {
   const [isUpdated, setIsUpdated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isCameraSet, setIsCameraSet] = useState(false);
   const handleCameraImageClick = (event) => {
     const container = event.currentTarget.closest(".camera-orientations");
     const buttons = container.querySelectorAll(".camera-direction-btn");
@@ -117,6 +118,7 @@ export default function CameraDetailsPage() {
     setActiveIndex(nextIndex);
     const nextCamera = camera.camGroup[nextIndex];
     setCamera(nextCamera);
+    setIsCameraSet(true);
     trackEvent("click", "camera-list", "camera", nextCamera.name);
   };
 
@@ -146,7 +148,10 @@ export default function CameraDetailsPage() {
       setIsUpdated(false);
       viewedCamera.current = { id: camData.id, last_update_modified: camData.last_update_modified}
 
-      setCamera(camData);
+      if(!isCameraSet){
+        setCamera(camData);
+      }
+      
       trackEvent('click', 'camera-details', 'camera', camData.name);
 
       // Next update time
@@ -210,7 +215,9 @@ export default function CameraDetailsPage() {
     camData.camGroup.forEach(cam => (cam.camGroup = group));
 
     setCameraGroup(camData.camGroup);
-    setCamera(camData);
+    if(!isCameraSet){
+      setCamera(camData);
+    }
 
     if (camData.last_update_modified !== viewedCamera.current.last_update_modified) {
       setIsUpdated(true);
