@@ -13,6 +13,9 @@ import {
 export default function Footer(props) {
   const { replay } = props;
 
+  /* Rendering */
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className={"footer-container" + (replay ? ' replayActive' : '')}>
       <div className="landAcknowledgement">
@@ -56,7 +59,7 @@ export default function Footer(props) {
               <FontAwesomeIcon icon={faLinkedin}/>
             </a>
           </div>
-          <div className="copyright">© 2024 Government of British Columbia</div>
+          <div className="copyright">© {currentYear} Government of British Columbia</div>
         </div>
       </footer>
     </div>
