@@ -12,53 +12,54 @@
     border: 1px solid $Grey100;
     color: $Grey110;
     font-size: 0.875rem;
+
     @media (min-width: 768px) {
       height: 41px;
     }
 
-    .active-count {
-      margin-left: .4rem;
-      border-radius: 50%;
-      padding: 0 6px;
+    &__icon {
+      @media (min-width: 1200px) {
+        margin-left: 8px;
+        margin-right: 8px;
+      }
+    }
 
-      background: $Type-Primary;
-      color: white;
-
-      font-size: 0.75rem;
-      font-weight: bold;
+    .dropdown-icon {
+      transition: transform .3s;
     }
 
     &:hover {
       background: #F3F2F1;
     }
 
-    &:active, &.open, &.showFilter {
-      background: $Type-Link;
+    &:active, &.open, &.showFilter, &.filtered {
+      background: $Info;
       color: $White;
 
       .btn-text {
         color: $White;
       }
+    }
 
-      .active-count {
-        background: white;
-        color: $Type-Primary;
+    &.showFilter {
+      .dropdown-icon {
+        transition: transform .3s;
+        transform:rotate(180deg);
       }
     }
 
     .btn-text {
       font-size: 0.875rem;
       margin-bottom: 0;
-      margin-right: 8px;
     }
   }
 
   .highway-filters-popup {
     position: absolute;
-    top: 3.5rem;
+    top: 3rem;
 
-    width: 294px;
-    height: 356px;
+    width: 280px;
+    height: 350px;
     right: 0;
     z-index: 12;
     background: white;
@@ -105,25 +106,20 @@
 
     .selected-filter-container {
       border: 1px solid #e5e5e5;
-      padding: 8px 12px;
+      padding: 8px;
 
       .selected-filter {
         background: $Info;
         border-radius: 4px;
-        padding: 4px 8px;
+        padding: 8px;
         color: white;
         font-size: 0.875rem;
-      }
 
-      .remove-btn {
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 0.875rem;
-        color: $Type-Link;
-
-        &:hover {
-          color: $Info;
-          text-decoration: underline;
+        .remove-btn {
+          cursor: pointer;
+          font-weight: bold;
+          font-size: 0.875rem;
+          color: white;
         }
       }
 

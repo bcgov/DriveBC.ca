@@ -97,6 +97,33 @@
     }
   }
 
+  .selected-filters-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 32px;
+    font-size: 0.75rem;
+
+    .filtering-by {
+      margin-right: 10px;
+    }
+
+    .selected-filter {
+      display: flex;
+      background: $Info;
+      border-radius: 8px;
+      padding: 8px 8px 6px;
+      color: white;
+
+      .remove-btn {
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.875rem;
+        color: white;
+        margin-left: 8px;
+        margin-right: 4px;
+      }
+    }
+  }
 
   .empty-cam-display {
     h2, h6 {
