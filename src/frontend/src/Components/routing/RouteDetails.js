@@ -191,6 +191,7 @@ export default function RouteDetails(props) {
     }
 
     if (pendingAction.action === 'showSavePopup') {
+      if(route.criteria !== selectedRoute.criteria) return;
       setShowSavePopup(true);
       dispatch(resetPendingAction());
     }
