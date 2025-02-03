@@ -111,7 +111,6 @@ EVENT_UPDATE_FIELDS = [
     'start_point_linear_reference',
     'description',
     'event_type',
-    'event_sub_type',
     'status',
     'severity',
     'closed',
