@@ -41,6 +41,7 @@ import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent.js';
 import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
 import PollingComponent from '../Components/shared/PollingComponent';
+import { CamsContext } from '../App.js';
 
 
 // Styling
@@ -53,6 +54,7 @@ export default function CamerasListPage() {
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
+  const { camsContext, setCamsContext } = useContext(CamsContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -270,6 +272,11 @@ export default function CamerasListPage() {
     }
   }, [displayedCameras]);
 
+  // Sub components
+  const getHighwayDisplay = (highway) => {
+    return !isNaN(highway.charAt(0)) ? 'Highway ' + highway : highway;
+  }
+
   return (
     <React.Fragment>
       <div className="cameras-page">
@@ -349,7 +356,26 @@ export default function CamerasListPage() {
               </div>
 
               <HighwayFilter cameras={filteredCameras} />
+              
             </div>
+
+            {(!xXlargeScreen && camsContext.highwayFilterKey) &&
+            <div className="selected-filters-container">
+              <span className="filtering-by">Filtering by </span>
+              <div className="selected-filter">
+                <div className="selected-filter-text">
+                  {camsContext.highwayFilterKey ? getHighwayDisplay(camsContext.highwayFilterKey) : 'Highway'}
+                </div>
+                <div
+                  className="remove-btn"
+                  tabIndex={0}
+                  onClick={() => setCamsContext({...camsContext, highwayFilterKey: null})}
+                  onKeyPress={() => setCamsContext({...camsContext, highwayFilterKey: null})}>
+                  <FontAwesomeIcon icon={faXmark} />
+                </div>
+              </div>
+            </div>
+            }
 
             <CameraList cameras={ displayedCameras ? displayedCameras : [] } showLoader={showLoader} enableHighwayFilter={true}></CameraList>
 
