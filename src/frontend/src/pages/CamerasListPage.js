@@ -14,7 +14,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFlag,
   faRoute,
-  faXmark
+  faXmark,
+  faXmarkLarge,
+  faMagnifyingGlass
 } from '@fortawesome/pro-solid-svg-icons';
 import { faRoute as faRouteEmpty } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
@@ -82,6 +84,7 @@ export default function CamerasListPage() {
   const [showLoader, setShowLoader] = useState(true);
   const [showSpinner, setShowSpinner] = useState(false);
   const [combinedCameras, setCombinedCameras] = useState(null);
+  const [openCameraSearch, setOpenCameraSearch] = useState(false);
 
   // Function to handle the state update from child
   const handleShowSpinnerChange = (value) => {
@@ -303,19 +306,6 @@ export default function CamerasListPage() {
 
           <div className="container--sidepanel__right">
             <div className="controls-container">
-              {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
-                <Button
-                  className={'advisories-btn'}
-                  aria-label="open advisories list"
-                  onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
-                  <span className="advisories-title">
-                    <FontAwesomeIcon icon={faFlag} />
-                    Advisories
-                  </span>
-                  <span className="advisories-count">{advisoriesInRoute.length}</span>
-                </Button>
-              }
-
               {!xXlargeScreen &&
                 <Button
                   className={`findRoute-btn ${(selectedRoute && selectedRoute.routeFound) ? 'routeFound' : ''}`}
@@ -327,6 +317,7 @@ export default function CamerasListPage() {
                 </Button>
               }
 
+              {xXlargeScreen && 
               <div className="camSearch-container">
                 <AsyncTypeahead
                   id="camera-name-search"
@@ -354,10 +345,71 @@ export default function CamerasListPage() {
                 )}
                 </AsyncTypeahead>
               </div>
-
-              <HighwayFilter cameras={filteredCameras} />
+              }
               
+              <div className="tools-container">
+                {!xXlargeScreen &&
+                  <Button
+                    variant="outline-primary"
+                    className={'camera-search-btn' + (openCameraSearch ? ' active' : '')}
+                    aria-label="open camera search"
+                    onClick={() => setOpenCameraSearch(!openCameraSearch)}>
+                    <FontAwesomeIcon icon={faMagnifyingGlass} />
+                  </Button>
+                }
+
+                {xXlargeScreen && <span className="filters-text">Filters: </span>}
+                <HighwayFilter cameras={filteredCameras} />
+
+                {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
+                  <Button
+                    className={'advisories-btn'}
+                    aria-label="open advisories list"
+                    onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
+                    <span className="advisories-title">
+                      <FontAwesomeIcon icon={faFlag} />
+                    </span>
+                    <span className="advisories-count">{advisoriesInRoute.length}</span>
+                  </Button>
+                }
+              </div>
             </div>
+            
+            {!xXlargeScreen && 
+            <div className={'camSearch-container camSearch-container--mobile' + (openCameraSearch ? ' open' : '')}>
+              <AsyncTypeahead
+                id="camera-name-search"
+                isLoading={false}
+                onSearch={() => {}}
+                onBlur={() => {
+                  trackEvent('cameras', 'camera-list', 'search', searchText)}}
+                onInputChange={(text) => setSearchText(text)}
+                placeholder={"Search by camera name"}
+                inputProps={{
+                  'aria-label': 'input field for camera name search',
+                }}
+              >
+              {({ onClear, text }) => (
+                <>
+                  {text &&
+                    <button
+                      className='clear-btn'
+                      aria-label={'Clear camera name search'}
+                      onClick={onClear}>
+                      <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                  }
+                </>
+              )}
+              </AsyncTypeahead>
+              <Button
+                className="close-camera-search-btn"
+                aria-label="close camera search"
+                onClick={() => setOpenCameraSearch(!openCameraSearch)}>
+                <FontAwesomeIcon icon={faXmarkLarge} />
+              </Button>
+            </div>
+            }
 
             {(!xXlargeScreen && camsContext.highwayFilterKey) &&
             <div className="selected-filters-container">

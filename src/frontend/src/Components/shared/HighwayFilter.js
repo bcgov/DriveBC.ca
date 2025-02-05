@@ -93,7 +93,7 @@ export default function HighwayFilters(props) {
 
   // Main component
   return camsContext && (
-    <div className="highway-filters">
+    <div className="highway-filters filter-option">
       <button
         className={'highway-filter-btn' + (camsContext.highwayFilterKey ? ' filtered' : '') + (showFilter ? ' showFilter' : '')}
         aria-label="showFilter filters options"
