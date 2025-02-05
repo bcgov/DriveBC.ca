@@ -12,13 +12,11 @@
   .controls-container {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
     align-items: center;
-    margin-bottom: 1.5rem;
-
-    @media (min-width: 768px) {
-      flex-wrap: nowrap;
-    }
+    background-color: $Grey10;
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 8px;
 
     @media (min-width: 1200px) {
       justify-content: space-between;
@@ -85,14 +83,6 @@
 
       .rbt-menu {
         display: none !important;
-      }
-    }
-
-    .highway-filters {
-      margin-left: auto;
-
-      @media (min-width: 1200px) {
-        margin-left: 0;
       }
     }
   }
