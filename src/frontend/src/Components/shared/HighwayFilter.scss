@@ -7,15 +7,11 @@
     display: flex;
     align-items: center;
     border-radius: .25rem;
-    padding: 10px 12px;
-    background: white;
+    padding: 7.5px 12px;
+    background: none;
     border: 1px solid $Grey100;
     color: $Grey110;
     font-size: 0.875rem;
-
-    @media (min-width: 768px) {
-      height: 41px;
-    }
 
     &__icon {
       @media (min-width: 1200px) {

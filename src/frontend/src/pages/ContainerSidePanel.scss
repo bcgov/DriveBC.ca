@@ -105,22 +105,57 @@
     flex: 1 1 auto;
 
     .controls-container {
+      .tools-container {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+  
+        .btn {
+          margin-bottom: 0;
+        }
+  
+        .camera-search-btn {
+          &.active {
+            background: $Info;
+            color: $White;
+          }
+        }
+
+        .filters-text {
+          font-size: 0.875rem;
+        }
+  
+        .highway-filters {
+          margin-left: auto;
+    
+          @media (min-width: 1200px) {
+            margin-left: 0;
+          }
+        }
+  
+        & > .filter-option {
+          margin-left: 16px;
+        }
+      }
+
       .advisories-btn {
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        order: 2;
         flex: 0 0 100%;
         margin-top: 10px;
-        margin-right: 20px;
+        margin-left: 16px;
 
         @media (min-width: 768px) {
           width: fit-content;
           justify-content: center;
-          order: unset;
           flex: 0 0 auto;
           margin-top: 0;
+        }
+
+        .advisories-count {
+          margin: 0;
         }
       }
 
@@ -145,6 +180,36 @@
 
       .routing {
         padding: 0;
+      }
+    }
+
+    .camSearch-container--mobile {
+      display: flex;
+      height: 0;
+      overflow: hidden;
+      transition: height 0.2s ease-in-out;
+
+      &.open {
+        height: 36px;
+        overflow: auto;
+        transition: height 0.2s ease-in-out;
+      }
+
+      .rbt {
+        flex-shrink: 0;
+        flex-grow: 1;
+
+        .rbt-input {
+          height: 36px;
+        }
+      }
+
+      .close-camera-search-btn {
+        color: $Grey110;
+        background: none;
+        border: none;
+        margin: 2px;
+        padding: 4px 10px;
       }
     }
   }
