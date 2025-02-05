@@ -89,6 +89,11 @@ def populate_event_from_data(new_event_data):
                 # Found diff, update and stop loop
                 data_diff = build_data_diff(event, new_event_data)
                 Event.objects.filter(id=event_id).update(**data_diff)
+
+                # Refresh from DB and save to update display category
+                event.refresh_from_db()
+                event.save()
+
                 return True
 
     except ObjectDoesNotExist:
@@ -327,4 +332,4 @@ def send_route_notifications(saved_route, updated_event_ids):
             attach_image_to_email(msg, 'dclogo', get_image_type_file_name(event))
 
             msg.attach_alternative(html, 'text/html')
-            msg.send()
+            # msg.send()
