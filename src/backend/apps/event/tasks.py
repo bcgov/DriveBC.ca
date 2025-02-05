@@ -332,4 +332,4 @@ def send_route_notifications(saved_route, updated_event_ids):
             attach_image_to_email(msg, 'dclogo', get_image_type_file_name(event))
 
             msg.attach_alternative(html, 'text/html')
-            # msg.send()
+            msg.send()
