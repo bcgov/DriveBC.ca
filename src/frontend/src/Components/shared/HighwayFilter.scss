@@ -1,145 +1,95 @@
 @import "../../styles/variables";
 
 .highway-filters {
-  position: relative;
+  position: absolute;
+  top: 40px;
+  width: 250px;
+  height: 350px;
+  right: 0;
+  z-index: 12;
+  background: white;
+  overflow-y: hidden;
+  box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
+  display: flex;
+  flex-direction: column;
 
-  .highway-filter-btn {
-    display: flex;
-    align-items: center;
-    border-radius: .25rem;
-    padding: 7.5px 12px;
-    background: none;
-    border: 1px solid $Grey100;
-    color: $Grey110;
-    font-size: 0.875rem;
+  @media (max-width: 575px) {
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
 
-    &__icon {
-      @media (min-width: 1200px) {
-        margin-left: 8px;
-        margin-right: 8px;
-      }
+  .search-container {
+    padding: 0.75rem;
+    background: $Grey10;
+
+    @media (min-width: 768px) {
+      order: unset;
+      margin-top: 0;
     }
 
-    .dropdown-icon {
-      transition: transform .3s;
+    .rbt-menu {
+      display: none !important;
     }
 
-    &:hover {
-      background: #F3F2F1;
+    .search-icon {
+      position: absolute;
+      z-index: 1;
+      left: 22px;
+      top: 23px;
+      color: $Type-Disabled;
     }
 
-    &:active, &.open, &.showFilter, &.filtered {
-      background: $Info;
-      color: $White;
-
-      .btn-text {
-        color: $White;
-      }
-    }
-
-    &.showFilter {
-      .dropdown-icon {
-        transition: transform .3s;
-        transform:rotate(180deg);
-      }
-    }
-
-    .btn-text {
+    .form-control {
+      border-radius: 4px;
       font-size: 0.875rem;
-      margin-bottom: 0;
+    }
+
+    input {
+      padding: .5rem .5rem .5rem 2.2rem;
     }
   }
 
-  .highway-filters-popup {
-    position: absolute;
-    top: 3rem;
+  .selected-filter-container {
+    border: 1px solid #e5e5e5;
+    padding: 8px;
 
-    width: 280px;
-    height: 350px;
-    right: 0;
-    z-index: 12;
-    background: white;
-    overflow-y: hidden;
-    box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
-
-    display: flex;
-    flex-direction: column;
-
-    @media (max-width: 768px) {
-      width: 253px;
-    }
-
-    .search-container {
-      padding: 0.75rem;
-      background: $Grey10;
-
-      @media (min-width: 768px) {
-        order: unset;
-        margin-top: 0;
-      }
-
-      .rbt-menu {
-        display: none !important;
-      }
-
-      .search-icon {
-        position: absolute;
-        z-index: 1;
-        left: 22px;
-        top: 23px;
-        color: $Type-Disabled;
-      }
-
-      .form-control {
-        border-radius: 4px;
-        font-size: 0.875rem;
-      }
-
-      input {
-        padding: .5rem .5rem .5rem 2.2rem;
-      }
-    }
-
-    .selected-filter-container {
-      border: 1px solid #e5e5e5;
+    .selected-filter {
+      background: $Info;
+      border-radius: 4px;
       padding: 8px;
+      color: white;
+      font-size: 0.875rem;
 
-      .selected-filter {
-        background: $Info;
-        border-radius: 4px;
-        padding: 8px;
+      .remove-btn {
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.875rem;
         color: white;
-        font-size: 0.875rem;
-
-        .remove-btn {
-          cursor: pointer;
-          font-weight: bold;
-          font-size: 0.875rem;
-          color: white;
-        }
-      }
-
-      &.no-selection {
-        color: $Type-Disabled;
-        font-size: 0.875rem;
-        padding: .5rem 1rem;
       }
     }
 
-    .highway-options {
-      position: relative;
-      overflow-y: auto;
-      padding: 0.25rem;
+    &.no-selection {
+      color: $Type-Disabled;
+      font-size: 0.875rem;
+      padding: .5rem 1rem;
+    }
+  }
 
-      .highway-row {
-        padding: .5rem 0.8rem;
-        border-radius: 4px;
-        font-size: 0.875rem;
-        cursor: pointer;
+  .highway-options {
+    position: relative;
+    overflow-y: auto;
+    padding: 0.25rem;
 
-        &:hover {
-          background-color: $Grey10;
-        }
+    .highway-row {
+      padding: .5rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $Grey10;
       }
     }
   }

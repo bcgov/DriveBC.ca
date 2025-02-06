@@ -109,32 +109,68 @@
         display: flex;
         align-items: center;
         margin-left: auto;
+        position: relative;
   
         .btn {
           margin-bottom: 0;
         }
-  
-        .camera-search-btn {
+
+        .filter-option-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-left: 16px;
+          
+          @media (max-width: 1199px) {
+            padding: 0;
+            height: 36px;
+            width: 36px;
+            border: none;
+          }
+
           &.active {
             background: $Info;
             color: $White;
+
+            .btn-text {
+              color: $White;
+            }
           }
         }
 
-        .filters-text {
-          font-size: 0.875rem;
-        }
-  
-        .highway-filters {
-          margin-left: auto;
-    
-          @media (min-width: 1200px) {
-            margin-left: 0;
+        .highway-filter-btn {
+
+          &__icon {
+            @media (min-width: 1200px) {
+              margin-left: 8px;
+              margin-right: 8px;
+            }
           }
-        }
-  
-        & > .filter-option {
-          margin-left: 16px;
+
+          .btn-text {
+            font-size: 0.875rem;
+            margin-bottom: 0;
+          }
+
+          .dropdown-icon {
+            transition: transform .3s;
+          }
+
+          &.active {
+            .dropdown-icon {
+              transition: transform .3s;
+              transform:rotate(180deg);
+            }
+          }
+
+          &.filtered {
+            background: $Info;
+            color: $White;
+
+            .btn-text {
+              color: $White;
+            }
+          }
         }
       }
 
@@ -161,7 +197,7 @@
 
       .findRoute-btn {
         font-size: 0.875rem;
-        height: 100%;
+        height: 36px;
         margin: auto 0;
         white-space: nowrap;
 
