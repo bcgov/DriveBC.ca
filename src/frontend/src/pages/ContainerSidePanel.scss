@@ -224,6 +224,7 @@
       height: 0;
       overflow: hidden;
       transition: height 0.2s ease-in-out;
+      margin-bottom: 16px;
 
       &.open {
         height: 36px;
