@@ -454,6 +454,7 @@
 
                   @media (min-width: 992px) {
                     margin: auto 0;
+                    margin-top: 40px;
                   }
 
                   .replay-btn {
@@ -487,6 +488,23 @@
                   order: 2;
                   margin: 0 15px;
                   width: calc(100% - 30px);
+                  .range-slider {
+                    &__wrap{
+                      margin-top: 40px;
+                      @media (max-width: 288px) {
+                        margin-top: 60px;
+                      }
+                      @media (max-width: 216px) {
+                        margin-top: 80px;
+                      }
+                      @media (max-width: 180px) {
+                        margin-top: 100px;
+                      }
+                      @media (max-width: 156px) {
+                        margin-top: 120px;
+                      }
+                    }
+                  }            
                 }
 
                 .replay-control--backward {
@@ -524,6 +542,11 @@
                     order: 5;
                     margin: 5px 15px;
                     width: calc(70% - 30px);
+                    .range-slider {
+                      &__wrap{
+                        margin-top: 32px;
+                      }
+                    }
                   }
 
                   .replay-control--backward {
