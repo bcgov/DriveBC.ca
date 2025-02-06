@@ -252,14 +252,14 @@ const NotificationDateTime = forwardRef((props, ref) => {
                 class={
                   errorMessages.includes('Please select a start and end time.') ||
                   errorMessages.includes('End time must be after start time.') ?
-                  'pickerError' : ''
+                    'pickerError' : ''
                 }
                 ref={startTimeRef}
                 step={60 * 15}
                 placeholder="Start time"
                 value={defaultStartTime}
                 max={endTime ? endTime : null}
-                error-message={startTimeRef.current ? startTimeRef.current.errorMessage : null} />
+                error-message={startTimeRef.current ? startTimeRef.current.errorMessage : null}/>
 
               <span className="spacer"> — </span>
 
@@ -268,17 +268,20 @@ const NotificationDateTime = forwardRef((props, ref) => {
                 class={
                   errorMessages.includes('Please select a start and end time.') ||
                   errorMessages.includes('End time must be after start time.') ?
-                  'pickerError' : ''
+                    'pickerError' : ''
                 }
                 step={60 * 15}
                 placeholder="End time"
                 value={defaultEndTime}
-                min={startTime ? startTime : null} />
+                min={startTime ? startTime : null}/>
+
             </div>
+
+            <p className='tz-note'>All times are in Pacific time.</p>
           </div>
 
           <div className="info-row row">
-            <div className="info-row__label">
+          <div className="info-row__label">
               <Form.Select
                 onChange={(e) => setSpecificDateOption(e.target.value)}
                 defaultValue={specificDateOption}>
