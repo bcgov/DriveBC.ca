@@ -26,6 +26,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
   // Time range
   const defaultStartTime = route.notification_start_time ? route.notification_start_time.split(':').slice(0, 2).join(':') : null;
   const defaultEndTime = route.notification_end_time ? route.notification_end_time.split(':').slice(0, 2).join(':') : null;
+  const [allDay, setAllDay] = useState(defaultEndTime === '23:59');
   const [startTime, setStartTime] = useState(defaultStartTime);
   const [endTime, setEndTime] = useState(defaultEndTime);
 
@@ -55,9 +56,20 @@ const NotificationDateTime = forwardRef((props, ref) => {
     setEndTime(defaultEndTime);
     setStartDate(defaultStartDate);
     setEndDate(defaultEndDate);
+  }, [showSpecificTimeDate]);
+
+  useEffect(() => {
+    if (!allDay) {
+      setStartTime(defaultStartTime);
+      setEndTime(defaultEndTime);
+
+    } else {
+      setStartTime('00:00');
+      setEndTime('23:59');
+    }
 
     // Bind event listeners to time pickers
-    if (showSpecificTimeDate) {
+    if (showSpecificTimeDate && !allDay) {
       const startTimePicker = document.querySelector('#startTimePicker');
       startTimePicker.addEventListener('value-changed', handleStartTimeChange);
 
@@ -69,7 +81,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
         endTimePicker.removeEventListener('value-changed', handleEndTimeChange);
       }
     }
-  }, [showSpecificTimeDate]);
+  }, [allDay]);
 
   useEffect(() => {
     // Reset date options
@@ -241,47 +253,56 @@ const NotificationDateTime = forwardRef((props, ref) => {
 
       { showSpecificTimeDate &&
         <div className="specific-time-dates">
+          <Form.Check
+            type='checkbox'
+            id='all-day-checkbox'
+            label='All Day'
+            value={allDay}
+            checked={allDay}
+            onChange={() => setAllDay(!allDay)} />
+
+          {!allDay &&
+            <div className="info-row row">
+              <div className="info-row__label">
+                <p className="bold">Time</p>
+              </div>
+
+              <div className="info-row__data double-picker">
+                <vaadin-time-picker
+                  id="startTimePicker"
+                  class={
+                    errorMessages.includes('Please select a start and end time.') ||
+                    errorMessages.includes('End time must be after start time.') ?
+                      'pickerError' : ''
+                  }
+                  ref={startTimeRef}
+                  step={60 * 15}
+                  placeholder="Start time"
+                  value={defaultStartTime}
+                  max={endTime ? endTime : null}
+                  error-message={startTimeRef.current ? startTimeRef.current.errorMessage : null}/>
+
+                <span className="spacer"> — </span>
+
+                <vaadin-time-picker
+                  id="endTimePicker"
+                  class={
+                    errorMessages.includes('Please select a start and end time.') ||
+                    errorMessages.includes('End time must be after start time.') ?
+                      'pickerError' : ''
+                  }
+                  step={60 * 15}
+                  placeholder="End time"
+                  value={defaultEndTime}
+                  min={startTime ? startTime : null} />
+              </div>
+
+              <p className='tz-note'>All times are in Pacific time.</p>
+            </div>
+          }
+
           <div className="info-row row">
             <div className="info-row__label">
-              <p className="bold">Time</p>
-            </div>
-
-            <div className="info-row__data double-picker">
-              <vaadin-time-picker
-                id="startTimePicker"
-                class={
-                  errorMessages.includes('Please select a start and end time.') ||
-                  errorMessages.includes('End time must be after start time.') ?
-                    'pickerError' : ''
-                }
-                ref={startTimeRef}
-                step={60 * 15}
-                placeholder="Start time"
-                value={defaultStartTime}
-                max={endTime ? endTime : null}
-                error-message={startTimeRef.current ? startTimeRef.current.errorMessage : null}/>
-
-              <span className="spacer"> — </span>
-
-              <vaadin-time-picker
-                id="endTimePicker"
-                class={
-                  errorMessages.includes('Please select a start and end time.') ||
-                  errorMessages.includes('End time must be after start time.') ?
-                    'pickerError' : ''
-                }
-                step={60 * 15}
-                placeholder="End time"
-                value={defaultEndTime}
-                min={startTime ? startTime : null}/>
-
-            </div>
-
-            <p className='tz-note'>All times are in Pacific time.</p>
-          </div>
-
-          <div className="info-row row">
-          <div className="info-row__label">
               <Form.Select
                 onChange={(e) => setSpecificDateOption(e.target.value)}
                 defaultValue={specificDateOption}>
