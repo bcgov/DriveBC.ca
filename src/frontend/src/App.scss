@@ -351,6 +351,11 @@ a[target="_blank"] {
     }
   }
 
+  .overlay__header {
+    font-size: 1.125rem;
+    color: $BC-Blue;
+  }
+
   &.advisories-overlay {
     &.open {
       padding: 3.625rem 0 1rem;
@@ -372,6 +377,14 @@ a[target="_blank"] {
     }
   }
 
+  &.filters-overlay {
+    &.open {
+      .overlay__header {
+        padding: 5rem 1rem 0;
+      }
+    }
+  }
+
   .close-overlay {
     position: absolute;
     top: 4.75rem;
@@ -385,6 +398,7 @@ a[target="_blank"] {
     background: none;
     border: none;
     font-size: 1rem;
+    color: $BC-Blue;
   }
 }
 
