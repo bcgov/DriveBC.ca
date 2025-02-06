@@ -128,7 +128,7 @@ export default function Header() {
 
   const getWhatsNewLink = () => {
     const latestImprovementBulletin = bulletins.find(bulletin => bulletin.slug === 'latest-beta-improvements');
-    return latestImprovementBulletin ? `/bulletins/${latestImprovementBulletin.id}` : '/bulletins';
+    return latestImprovementBulletin ? `/bulletins/${latestImprovementBulletin.slug}` : '/bulletins';
   }
 
   const whatsNewHandler = () => {
