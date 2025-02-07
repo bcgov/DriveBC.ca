@@ -27,6 +27,19 @@
       .advisories-list .advisory-li .advisory-li__content .advisory-li-title-container .advisory-li-title {
         font-size: 1rem;
       }
+      .advisory-li {
+        .timestamp-container .friendly-time {
+          margin-left: 0;
+        }
+        &:hover {
+          background-color: $Grey10;
+          transition: 0.1s ease-in-out background-color;    
+        }
+      }
+
+      .advisory-li-teaser {
+        max-width: 95%;
+      }
     }
   }
 }
