@@ -81,13 +81,27 @@
         .advisories-list {
           list-style: none;
 
+          .friendly-time {
+            margin-left: 0;
+          }
+
           .advisory-li {
             margin-left: 0;
             color: $Type-Link;
             display: flex;
-
+            &:hover {
+              background-color: $Grey10;
+              transition: 0.1s ease-in-out background-color;        
+            }
             &::marker {
               color: $Type-Link;
+            }
+            .friendly-time-text {
+              margin-left: 0;
+            }
+            
+            .advisory-li-teaser {
+              max-width: 95%;
             }
 
             .advisory-li-title-container {

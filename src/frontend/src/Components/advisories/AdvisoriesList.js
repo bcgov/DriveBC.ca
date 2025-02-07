@@ -68,7 +68,7 @@ export default function AdvisoriesList(props) {
 
                 <div className='advisory-li__content__partition advisory-li-body-container'>
                   {advisory.teaser &&
-                    <div className='advisory-li-body'>{advisory.teaser}</div>
+                    <div className='advisory-li-body'>{advisory.teaser} LIST PAGE!! </div>
                   }
 
                   {!advisory.teaser &&
@@ -110,7 +110,7 @@ export default function AdvisoriesList(props) {
                   <p className='advisory-li-title'>{advisory.title}</p>
 
                   {!showDescription && advisory.teaser &&
-                    <p>{advisory.teaser}</p>
+                    <p className="advisory-li-teaser">{advisory.teaser} PANEL!! </p>
                   }
 
                   {(showTimestamp && showPublished) &&
