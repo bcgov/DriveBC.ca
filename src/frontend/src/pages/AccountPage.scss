@@ -48,4 +48,33 @@
       }
     }
   }
+
+  #deactivate-btn {
+    margin-top: 4rem;
+  }
+}
+
+#deactivate-modal {
+  .modal-header {
+    background-color: white;
+    border: none;
+    padding: 1.5rem;
+
+    .modal-title {
+      color: $BC-Blue;
+      font-weight: 700;
+    }
+
+    .btn-close {
+      filter: none;
+    }
+  }
+
+  .modal-body {
+    padding-top: 0;
+  }
+
+  .modal-buttons {
+    margin-top: 3rem;
+  }
 }

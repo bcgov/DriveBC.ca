@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 // External imports
 import Button from "react-bootstrap/Button";
 import Container from 'react-bootstrap/Container';
+import Modal from "react-bootstrap/Modal";
 
 // Internal imports
 import { AuthContext } from '../App';
@@ -29,6 +30,7 @@ export default function AccountPage() {
 
   // States
   const [verified, setVerified] = useState(params.get('verified'));
+  const [showDeactivate, setShowDeactivate] = useState(false);
 
   // Effects
   useEffect(() => {
@@ -44,6 +46,10 @@ export default function AccountPage() {
   }, [authContext]);
 
   /* Handlers */
+  const deactivateHandler = (action) => {
+    console.log('deactivate');
+  };
+
   const toggleAuthModal = (action) => {
     setAuthContext((prior) => {
       if (!prior.showingModal) {
@@ -94,6 +100,20 @@ export default function AccountPage() {
           </div>
         }
 
+        {authContext.loginStateKnown && authContext.username &&
+          <Button
+            variant="outline-primary" id="deactivate-btn" alt="Deactivate DriveBC account" tabIndex={0}
+            onClick={() => setShowDeactivate(true)}
+            onKeyPress={(keyEvent) => {
+              if (keyEvent.charCode == 13 || keyEvent.charCode == 32) {
+                deactivateHandler();
+              }
+            }}>
+
+            Deactivate DriveBC account
+          </Button>
+        }
+
         {authContext.loginStateKnown && !authContext.username &&
           <div className="login-prompt">
             <h3>Login required</h3>
@@ -106,6 +126,26 @@ export default function AccountPage() {
       </Container>
 
       <Footer/>
+
+      {showDeactivate && (
+        <Modal show={showDeactivate} onHide={() => setShowDeactivate(false)} id='deactivate-modal'>
+          <Modal.Header closeButton>
+            <Modal.Title>Deactivate DriveBC account</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <p>
+              Deactivating your DriveBC account will <b>remove all saved cameras, saved routes, and all of your account settings. </b>
+              This will not affect your BCeID account. Please confirm.
+            </p>
+
+            <div className="modal-buttons">
+              <Button variant="danger" onClick={deactivateHandler}>Yes, deactivate my account</Button>
+              <Button variant="outline-primary" onClick={() => setShowDeactivate(false)}>Cancel</Button>
+            </div>
+          </Modal.Body>
+        </Modal>
+      )}
     </div>
   );
 }
