@@ -668,6 +668,14 @@
     .credit {
       font-size: 0.875rem;
       line-height: 1.5;
+
+      &.under-replay {
+        margin-top: 112px;
+
+        @media (min-width: 992px) {
+          margin-top: 50px;
+        }
+      }
     }
   }
 

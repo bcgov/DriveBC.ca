@@ -792,7 +792,7 @@ export default function CameraDetailsPage() {
                           )}
                         </div>
                         <p
-                          className="credit"
+                          className={'credit' + (replay ? ' under-replay' : ' ')}
                           dangerouslySetInnerHTML={{ __html: camera.credit }}></p>
                       </Tab>
 
