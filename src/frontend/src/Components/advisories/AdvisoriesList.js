@@ -110,7 +110,7 @@ export default function AdvisoriesList(props) {
                   <p className='advisory-li-title'>{advisory.title}</p>
 
                   {!showDescription && advisory.teaser &&
-                    <p className="advisory-li-teaser">{advisory.teaser} PANEL!! </p>
+                    <p className="advisory-li-teaser">{advisory.teaser}</p>
                   }
 
                   {(showTimestamp && showPublished) &&
