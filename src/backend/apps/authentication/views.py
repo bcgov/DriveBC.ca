@@ -11,7 +11,7 @@ from django.shortcuts import render, reverse
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from rest_framework import permissions, status, viewsets
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -19,7 +19,11 @@ from rest_framework.views import APIView
 
 from ..shared.helpers import attach_default_email_images
 from .models import DriveBCUser, FavouritedCameras, SavedRoutes
-from .serializers import FavouritedCamerasSerializer, SavedRoutesSerializer
+from .serializers import (
+    DriveBCUserSerializer,
+    FavouritedCamerasSerializer,
+    SavedRoutesSerializer,
+)
 
 # Backend dir and env
 BACKEND_DIR = Path(__file__).resolve().parents[2]
@@ -215,3 +219,24 @@ class SendVerificationEmailView(APIView):
         msg.send()
 
         return Response({'message': 'Verification email sent'}, status=status.HTTP_200_OK)
+
+
+class DriveBCUserViewset(mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    queryset = DriveBCUser.objects.all()
+    serializer_class = DriveBCUserSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    lookup_field = 'username'
+
+    def get_object(self):
+        username = self.kwargs.get('username')
+        return DriveBCUser.objects.get(username=username)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance != request.user:
+            return Response({'error': 'You can only delete your own account'}, status=status.HTTP_403_FORBIDDEN)
+
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)

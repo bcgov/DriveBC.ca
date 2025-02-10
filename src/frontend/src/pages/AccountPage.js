@@ -10,6 +10,7 @@ import Modal from "react-bootstrap/Modal";
 
 // Internal imports
 import { AuthContext } from '../App';
+import { getCookie } from "../util";
 import Footer from '../Footer.js';
 import PageHeader from '../PageHeader';
 
@@ -46,8 +47,23 @@ export default function AccountPage() {
   }, [authContext]);
 
   /* Handlers */
-  const deactivateHandler = (action) => {
-    console.log('deactivate');
+  const deactivateHandler = async () => {
+    const url = `${window.API_HOST}/api/users/drivebcuser/${authContext.username}/`;
+
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      credentials: 'include'
+    });
+
+    if (response.status === 204) {
+      // Successfully deleted the user, handle logout or redirect
+      setAuthContext({ ...authContext, username: null });
+      navigate('/');
+    }
   };
 
   const toggleAuthModal = (action) => {

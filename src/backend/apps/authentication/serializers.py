@@ -1,10 +1,14 @@
-from apps.authentication.models import FavouritedCameras, SavedRoutes
+from apps.authentication.models import DriveBCUser, FavouritedCameras, SavedRoutes
 from apps.shared.serializers import SafeStringMixin
 from rest_framework import serializers
 
 
-class FavouritedCamerasSerializer(serializers.ModelSerializer):
+class DriveBCUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DriveBCUser
 
+
+class FavouritedCamerasSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavouritedCameras
         fields = ('webcam',)

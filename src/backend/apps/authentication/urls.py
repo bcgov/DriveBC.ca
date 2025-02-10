@@ -2,6 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 
 from .views import (
+    DriveBCUserViewset,
     FavouritedCamerasViewset,
     SavedRoutesViewset,
     SendVerificationEmailView,
@@ -11,6 +12,7 @@ from .views import (
 router = routers.DefaultRouter()
 router.register("webcams", FavouritedCamerasViewset)
 router.register("routes", SavedRoutesViewset)
+router.register("drivebcuser", DriveBCUserViewset)
 
 urlpatterns = [
     path("", include(router.urls)),
