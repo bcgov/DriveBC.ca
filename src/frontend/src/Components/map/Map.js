@@ -203,9 +203,11 @@ export default function DriveBCMap(props) {
     const interval = setInterval(() => {
       if (referenceFeature) {
         referenceFeature.set('clicked', true);
-        referenceFeature.setStyle(cameraStyles.active);
-        updateClickedFeature(referenceFeature);
-        clearInterval(interval);
+        if (clickedFeature !== undefined) {
+          referenceFeature.setStyle(cameraStyles.active);
+          updateClickedFeature(referenceFeature);
+          clearInterval(interval);
+        }     
       }
     }, 200);
 
