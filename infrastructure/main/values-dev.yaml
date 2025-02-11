@@ -14,7 +14,7 @@ django:
         cpu: 20m
         memory: 200Mi
     env:
-      postgresSecret: dev-drivebc-db-pguser-dev-drivebc
+      postgresSecret: dev-drivebc-db-pguser-dev-drivebc-db
       djangoConfigMap: dev-drivebc-django
       djangoSecret: dev-drivebc-django
   autoscaling:
@@ -50,7 +50,7 @@ tasks:
     volumes:
       claimName: dev-django-app-images
     env:
-      postgresSecret: dev-drivebc-db-pguser-dev-drivebc
+      postgresSecret: dev-drivebc-db-pguser-dev-drivebc-db
       djangoConfigMap: dev-drivebc-django
       djangoSecret: dev-drivebc-django
 
