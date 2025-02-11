@@ -2,7 +2,7 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
 // Navigation
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -10,7 +10,7 @@ import { memoize } from 'proxy-memoize'
 import { updateAdvisories, updateBulletins } from '../../../slices/cmsSlice';
 
 // External imports
-import { faChevronRight, faCommentExclamation, faSparkles } from '@fortawesome/pro-regular-svg-icons';
+import { faChevronRight, faCommentExclamation, faCommentPen, faSparkles } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useMediaQuery } from '@uidotdev/usehooks';
@@ -208,10 +208,14 @@ export default function Header() {
 
           {xLargeScreen &&
             <div className='header-right'>
-              <a href={surveyLink} className="btn btn-outline-primary" id="feedback-btn" target="_blank"
-                 rel="noreferrer" alt="Beta feedback"><FontAwesomeIcon icon={faCommentExclamation}/>Beta feedback</a>
+              <Link to="/problems" className="btn btn-outline-primary header-right__btn" id="report-problem-btn" alt="Report a problem">
+                <FontAwesomeIcon icon={faCommentExclamation}/>
+                Report a problem
+              </Link>
+              <a href={surveyLink} className="btn btn-outline-primary header-right__btn" id="feedback-btn" target="_blank"
+                 rel="noreferrer" alt="Beta feedback"><FontAwesomeIcon icon={faCommentPen}/>Beta feedback</a>
 
-              <button className="btn btn-outline-primary" id="whatsnew-btn" alt="What's new" tabIndex={0}
+              <button className="btn btn-outline-primary header-right__btn" id="whatsnew-btn" alt="What's new" tabIndex={0}
                       onClick={whatsNewHandler}
                       onKeyPress={(keyEvent) => {
                         if (keyEvent.charCode == 13 || keyEvent.charCode == 32) {
