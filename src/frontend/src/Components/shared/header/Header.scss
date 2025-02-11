@@ -254,22 +254,19 @@
 		}
 	}
 
-	#feedback-btn {
-		margin-right: 1rem;
-	}
-
-	#feedback-btn, #whatsnew-btn {
+	.header-right__btn {
 		margin-left: auto;
 		margin-bottom: 0;
 		font-weight: 400;
 
+		&:not(:first-child) {
+			margin-left: 16px;
+			margin-right: 0;
+		}
+
 		svg {
 			margin-right: 8px;
 			color: $Nav-bar-btn-text;
-		}
-
-		&::after {
-			content: none;
 		}
 
 		&:hover {
@@ -282,6 +279,12 @@
 			@media (min-width: 768px) {
 				display: block;
 			}
+		}
+	}
+
+	#feedback-btn {
+		&::after {
+			content: none;
 		}
 	}
 }
