@@ -578,19 +578,6 @@ export default function EventsListPage() {
 
           <div className="container--sidepanel__right">
             <div className="controls-container">
-              {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
-                <Button
-                  className={'advisories-btn'}
-                  aria-label="open advisories list"
-                  onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
-                  <span className="advisories-title">
-                    <FontAwesomeIcon icon={faFlag} />
-                    Advisories
-                  </span>
-                  <span className="advisories-count">{advisoriesInRoute.length}</span>
-                </Button>
-              }
-
               { !xXlargeScreen &&
                 <Button
                   className={`findRoute-btn ${(selectedRoute && selectedRoute.routeFound) ? 'routeFound' : ''}`}
@@ -602,33 +589,48 @@ export default function EventsListPage() {
                 </Button>
               }
 
-              <Dropdown className="sorting">
-                <Dropdown.Toggle variant="outline-primary" disabled={selectedRoute && selectedRoute.routeFound}>
-                  {xXlargeScreen ?
-                    <React.Fragment>
-                      Sort: {getSortingDisplay(sortingKey)}
-                      <FontAwesomeIcon icon={faAngleDown} />
-                    </React.Fragment>
-                    :
-                    <React.Fragment>
-                      <span className="sr-only" aria-hidden="false">Sorting options</span>
-                      <FontAwesomeIcon icon={faBarsSort} />
-                    </React.Fragment>}
-                </Dropdown.Toggle>
+              <div className="tools-container">
+                <Dropdown className="sorting">
+                  {xXlargeScreen && <span className="sort-text">Sort: </span>}
+                  <Dropdown.Toggle variant="outline-primary" disabled={selectedRoute && selectedRoute.routeFound}>
+                    {xXlargeScreen ?
+                      <React.Fragment>
+                        {getSortingDisplay(sortingKey)}
+                        <FontAwesomeIcon icon={faAngleDown} />
+                      </React.Fragment>
+                      :
+                      <React.Fragment>
+                        <span className="sr-only" aria-hidden="false">Sorting options</span>
+                        <FontAwesomeIcon icon={faBarsSort} />
+                      </React.Fragment>}
+                  </Dropdown.Toggle>
 
-                <Dropdown.Menu align={largeScreen ? 'end' : 'start'} flip={false}>
-                  {getSortingList()}
-                </Dropdown.Menu>
-              </Dropdown>
+                  <Dropdown.Menu align={largeScreen ? 'end' : 'start'} flip={false}>
+                    {getSortingList()}
+                  </Dropdown.Menu>
+                </Dropdown>
 
-              <Filters
-                callback={toggleEventCategoryFilter}
-                disableFeatures={true}
-                enableRoadConditions={false}
-                enableChainUps={true}
-                textOverride={'List filters'}
-                isDelaysPage={true}
-              />
+                {xXlargeScreen && <span className="filters-text">Filters: </span>}
+                <Filters
+                  callback={toggleEventCategoryFilter}
+                  disableFeatures={true}
+                  enableRoadConditions={false}
+                  enableChainUps={true}
+                  textOverride={'List'}
+                  isDelaysPage={true}
+                />
+                {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
+                  <Button
+                    className={'advisories-btn'}
+                    aria-label="open advisories list"
+                    onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
+                    <span className="advisories-title">
+                      <FontAwesomeIcon icon={faFlag} />
+                    </span>
+                    <span className="advisories-count">{advisoriesInRoute.length}</span>
+                  </Button>
+                }
+              </div>
             </div>
 
             <PollingComponent runnable={() => setLoadData(true)} interval={30000} />
