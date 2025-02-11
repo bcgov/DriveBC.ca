@@ -11,10 +11,10 @@ django:
   deployment:
     resources:
       requests:
-        cpu: 50m
+        cpu: 100m
         memory: 300Mi
     env:
-      postgresSecret: prod-drivebc-pguser-prod-drivebc
+      postgresSecret: prod-drivebc-db-pguser-prod-drivebc-db
       djangoConfigMap: prod-drivebc-django
       djangoSecret: prod-drivebc-django
   autoscaling:
@@ -49,7 +49,7 @@ tasks:
     volumes:
       claimName: prod-django-app-images
     env:
-      postgresSecret: prod-drivebc-pguser-prod-drivebc
+      postgresSecret: prod-drivebc-db-pguser-prod-drivebc-db
       djangoConfigMap: prod-drivebc-django
       djangoSecret: prod-drivebc-django
 

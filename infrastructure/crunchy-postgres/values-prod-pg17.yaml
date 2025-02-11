@@ -1,23 +1,27 @@
-fullnameOverride: dev-drivebc
+fullnameOverride: prod-drivebc-db
 
 #crunchyImage: artifacts.developer.gov.bc.ca/bcgov-docker-local/crunchy-postgres-gis:ubi8-15.2-3.3-0
 
-postgresVersion: 15
-postGISVersion: '3.3'
+postgresVersion: 17
+postGISVersion: '3.4'
 
 instances:
   name: ha # high availability
-  replicas: 1
+  replicas: 3
   dataVolumeClaimSpec:
     storage: 5Gi
     storageClassName: netapp-block-standard
   requests:
-    cpu: 50m
+    cpu: 100m
     memory: 300Mi
+  limits:
+    memory: 512Mi
   replicaCertCopy:
     requests:
       cpu: 1m
       memory: 16Mi
+    limits:
+      memory: 32Mi
 
 # If we need to restore the cluster from a backup, we need to set the following values
 # assuming restore from repo2 (s3), adjust as needed if your S3 repo is different
@@ -27,7 +31,7 @@ dataSource:
   secretName: s3-pgbackrest
   repo:
     name: repo2
-    path: "/db/habackup"
+    path: "/db/dbbackup"
     s3UriStyle: path
     s3:
       bucket: ""
@@ -44,33 +48,39 @@ pgBackRest:
   repos:
     schedules:
       full: 0 8 * * *
-      incremental: 0 0,4,12,16,20 * * *
+      incremental: 15 * * * *
     volume:
       accessModes: "ReadWriteOnce"
-      storage: 5Gi
+      storage: 10Gi
       storageClassName: netapp-file-backup
   repoHost:
     requests:
       cpu: 5m
       memory: 16Mi
+    limits:
+      memory: 128Mi
   sidecars:
     pgbackrest:
       requests:
         cpu: 5m
-        memory: 90Mi
+        memory: 128Mi
+      limits:
+        memory: 256Mi
     pgbackrestConfig:
       requests:
         cpu: 1m
         memory: 16Mi
+      limits:
+        memory: 32Mi
   s3:
     enabled: true
-    retention: "7" # Set to 7 days for S3 storage.
+    retention: "30" # Set to 30 days for S3 storage.
     retentionFullType: time
     createS3Secret: true #Will create the secret if it doesn't already exist. NOTE: Once the secret is set, you must change it in OpenShift.
     # the s3 secret name 
-    s3Secret: dev-drivebc-s3-pgbackrest
+    s3Secret: prod-drivebc-db-s3-pgbackrest
     # the path start with /, it will be created under bucket if it doesn't exist
-    s3Path: "/db/habackup"
+    s3Path: "/db/dbbackup"
     # s3UriStyle is host or path
     s3UriStyle: path
     # bucket specifies the S3 bucket to use,
@@ -89,7 +99,13 @@ pgBackRest:
     # setting the below to be one plus of the default schedule
     # to avoid conflicts
     fullSchedule: "0 9 * * *"
-    incrementalSchedule: "30 0,4,12,16,20 * * *"
+    incrementalSchedule: "45 * * * *"
+  manual:
+    repoName: repo1
+
+standby:
+  enabled: false
+  repo: repo2
 
 patroni:
   postgresql:
@@ -102,24 +118,31 @@ patroni:
       max_slot_wal_keep_size: 128MB # default is -1, allowing unlimited wal growth when replicas fall behind
 
 proxy:
+  enabled: false
   pgBouncer:
     image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
-    replicas: 1
+    replicas: 3
     requests:
-      cpu: 2m
+      cpu: 5m
       memory: 16Mi
+    limits:
+      memory: 64Mi
     pgbouncerConfig:
       requests:
         cpu: 1m
         memory: 16Mi
+      limits:
+        memory: 32Mi
 
 
 # Postgres Cluster resource values:
 pgmonitor:
   enabled: true #Can be true or false
-  namespace: a781ec #The high level namespace of your project without the -tools -dev, etc part.
+  namespace: a781ec #The high level namespace of your project without the -tools -dev, etc part. Required for monitoring to work
   exporter:
     image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
     requests:
       cpu: 10m
       memory: 64Mi
+    limits:
+      memory: 128Mi
