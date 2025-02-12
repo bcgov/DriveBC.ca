@@ -21,6 +21,7 @@ import './App.scss';
 import { getFavoriteCameraIds } from './Components/data/webcams';
 import { getFavoriteRoutes } from './Components/data/routes';
 import AccountPage from './pages/AccountPage';
+import AccountDeactivatedPage from "./pages/AccountDeactivatedPage";
 import AdvisoriesListPage from './pages/AdvisoriesListPage';
 import AdvisoryDetailsPage from './pages/AdvisoryDetailsPage';
 import Alert from './Components/shared/Alert';
@@ -204,6 +205,7 @@ function App() {
                   <Route path="/bulletins" element={<BulletinsListPage />} />
                   <Route path="/bulletins/:id/:subid?" element={<BulletinDetailsPage />} />
                   <Route path="/account" element={<AccountPage />} />
+                  <Route path="/account-deactivated" element={<AccountDeactivatedPage />} />
                   <Route path="/verify-email" element={<VerifyEmailPage />} />
                   {/* Catch-all route for 404 errors */}
                   <Route path="*" element={<NotFoundPage />} />
