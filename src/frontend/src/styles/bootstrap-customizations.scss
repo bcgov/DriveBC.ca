@@ -54,7 +54,7 @@ button:focus:not(:focus-visible) {
 
 .btn.btn-primary {
   border-color: $BC-Blue;
-  
+
   &:hover, &:active, &:focus {
     background-color: $BC-Blue-Alt;
     color: white;
@@ -212,7 +212,6 @@ button:focus:not(:focus-visible) {
 }
 
 // Forms
-
 .form-switch {
   padding-left: 0;
 
@@ -244,5 +243,15 @@ button:focus:not(:focus-visible) {
     @media (min-width: 1240px) {
       font-size: 1rem;
     }
+  }
+}
+
+.form-check {
+  padding-left: 0;
+
+  .form-check-input {
+    float: unset;
+    margin-left: 0;
+    margin-right: 0.5rem;
   }
 }
