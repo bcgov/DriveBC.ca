@@ -1,6 +1,5 @@
 // React
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { NavLink } from 'react-router-dom';
 import { useParams, useNavigate } from 'react-router-dom';
 
 // External imports
@@ -15,6 +14,7 @@ import {
 import Container from 'react-bootstrap/Container';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import Skeleton from 'react-loading-skeleton';
 
 // Internal imports
 import { CMSContext } from '../App';
@@ -160,6 +160,7 @@ export default function AdvisoryDetailsPage() {
   const [advisory, setAdvisory] = useState(null);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
 
   // Navigating to
   const returnHandler = () => {
@@ -226,6 +227,14 @@ export default function AdvisoryDetailsPage() {
   const advisoryDetails = <FontAwesomeIcon icon={faMemoCircleInfo} />;
   const advisoryMap = <FontAwesomeIcon icon={faMap} />;
 
+  useEffect(() => {
+    if (advisoryDetails) {
+      setShowLoader(false);
+    } else {
+      setShowLoader(true);
+    }
+  }, [advisoryDetails]);
+
   let content = advisory;
   if (content && params.subid) {
     content = advisory.subpages.filter((sub) => sub.slug === params.subid)[0];
@@ -255,12 +264,9 @@ export default function AdvisoryDetailsPage() {
               }}>
               <FontAwesomeIcon icon={faArrowLeft} />
               Back to last page
-            </a>
+            </a>        
             <h1 className="page-title">{content.title}</h1>
-
-            {content.teaser &&
-              <p className="page-description body--large">{content.teaser}</p>
-            }
+            {content.teaser && (<p className="page-description body--large">{content.teaser}</p>)}
 
             <div className="timestamp-container">
               <span className="advisory-li-state">{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span>
@@ -274,17 +280,21 @@ export default function AdvisoryDetailsPage() {
         id="advisory-details"
         activeKey={activeTab}
         onSelect={ (selectedTab) => setActiveTab(selectedTab) }
-      >
+      >   
         <Tab eventKey="details" title={<span>{advisoryDetails}Details</span>}>
           {content && (
             <Container className="advisory-body-container cms-body">
+              {showLoader ? <Skeleton height={40} /> : 
               <div>{renderWagtailBody(content.body)}</div>
+          }
             </Container>
           )}
         </Tab>
         <Tab eventKey="map" className={params.subid ? 'hide': ''} title={<span>{advisoryMap}Map View</span>}>
           <Container className="advisory-map-container">
+          {showLoader ? <Skeleton height={200} /> : 
             <div id="map" className="advisory-map"></div>
+        }
           </Container>
         </Tab>
       </Tabs>
