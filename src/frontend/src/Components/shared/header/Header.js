@@ -108,7 +108,7 @@ export default function Header() {
   }
 
   /* Rendering */
-  const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
+  const xXlargeScreen = useMediaQuery('only screen and (min-width : 1400px)');
 
   // Sub components
   const getNavLink = (title, count) => {
@@ -116,7 +116,7 @@ export default function Header() {
       <Nav.Link active={false} onClick={onClickActions}>
         <div className='title'>{title} {!!count && <div className="unread-count">{count}</div>}</div>
 
-        {!xLargeScreen &&
+        {!xXlargeScreen &&
           <FontAwesomeIcon icon={faChevronRight} />
         }
       </Nav.Link>
@@ -138,7 +138,7 @@ export default function Header() {
   // Main component
   return (
     <header>
-      <Navbar expand="lg" expanded={expanded}>
+      <Navbar expand="xxl" expanded={expanded}>
         <Container>
           <div className='header-left'>
             <Navbar.Toggle onClick={() => setExpanded(expanded ? false : "expanded")}>
@@ -147,13 +147,13 @@ export default function Header() {
               <span className="line line3"></span>
             </Navbar.Toggle>
 
-            <Navbar.Brand href="/" tabIndex={xLargeScreen ? "0": "-1"}>
+            <Navbar.Brand href="/" tabIndex={xXlargeScreen ? "0": "-1"}>
               <img className="header-logo" src={logo} alt="Government of British Columbia" />
             </Navbar.Brand>
 
             <div className="nav-divider"></div>
 
-            {!xLargeScreen &&
+            {!xXlargeScreen &&
               <UserNavigation/>
             }
           </div>
@@ -180,19 +180,19 @@ export default function Header() {
                 {getNavLink('Bulletins', bulletinsCount)}
               </LinkContainer>
 
-              {!xLargeScreen &&
+              {!xXlargeScreen &&
                 <LinkContainer to="/problems">
                   {getNavLink('Report a problem')}
                 </LinkContainer>
               }
 
-              {!xLargeScreen &&
+              {!xXlargeScreen &&
                 <Nav.Link active={false} onClick={onClickActions} className='footer-nav-link first-link' href={surveyLink} target="_blank" rel="noreferrer" alt="Beta feedback">
                   <div className='title'>Beta feedback</div>
                 </Nav.Link>
               }
 
-              {!xLargeScreen &&
+              {!xXlargeScreen &&
                 <LinkContainer to={bulletins ? getWhatsNewLink() : ''}>
                   <Nav.Link active={false} onClick={onClickActions} className='footer-nav-link'>
                     <div className='title'>What&apos;s new</div>
@@ -200,13 +200,13 @@ export default function Header() {
                 </LinkContainer>
               }
 
-              {!xLargeScreen &&
+              {!xXlargeScreen &&
                 <div className='filler' />
               }
             </Nav>
           </Navbar.Collapse>
 
-          {xLargeScreen &&
+          {xXlargeScreen &&
             <div className='header-right'>
               <Link to="/problems" className="btn btn-outline-primary header-right__btn" id="report-problem-btn" alt="Report a problem">
                 <FontAwesomeIcon icon={faCommentExclamation}/>
