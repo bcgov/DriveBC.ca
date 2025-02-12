@@ -589,7 +589,6 @@ export default function EventsListPage() {
                 </Button>
               }
 
-              <div className="tools-container">
                 <Dropdown className="sorting">
                   {xXlargeScreen && <span className="sort-text">Sort: </span>}
                   <Dropdown.Toggle variant="outline-primary" disabled={selectedRoute && selectedRoute.routeFound}>
@@ -610,6 +609,7 @@ export default function EventsListPage() {
                   </Dropdown.Menu>
                 </Dropdown>
 
+              <div className="tools-container">
                 {xXlargeScreen && <span className="filters-text">Filters: </span>}
                 <Filters
                   callback={toggleEventCategoryFilter}

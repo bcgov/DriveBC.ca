@@ -20,10 +20,6 @@
     margin-bottom: 8px;
     border-radius: 8px;
 
-    @media (min-width: 1200px) {
-      justify-content: space-between;
-    }
-
     .polling-filters-container {
       display: flex;
       align-items: flex-end;
