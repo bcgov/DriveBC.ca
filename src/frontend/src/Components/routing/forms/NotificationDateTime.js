@@ -204,6 +204,10 @@ const NotificationDateTime = forwardRef((props, ref) => {
     return now.getTimezoneOffset() < Math.max(startOfYear.getTimezoneOffset(), midYear.getTimezoneOffset());
   }
 
+  const getPacificDateString = () => {
+    return new Date().toLocaleString('en-CA', { timeZone: 'America/Vancouver' }).split(',')[0];
+  }
+
   /* Handlers */
   const handleRadioChange = (event) => {
     if (event.target.id === 'specific') {
@@ -336,7 +340,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                   }
                   placeholder="Select date"
                   value={defaultStartDate}
-                  min={new Date().toISOString().split('T')[0]} />
+                  min={getPacificDateString()} />
               </div>
             }
 
@@ -351,7 +355,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                   }
                   placeholder="Start date"
                   value={defaultStartDate}
-                  min={new Date().toISOString().split('T')[0]}
+                  min={getPacificDateString()}
                   max={endDate ? endDate : null } />
 
                 <span className="spacer"> — </span>
@@ -365,7 +369,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                   }
                   placeholder="End date"
                   value={defaultEndDate}
-                  min={startDate ? startDate : new Date().toISOString().split('T')[0] } />
+                  min={startDate ? startDate : getPacificDateString() } />
               </div>
             }
 
