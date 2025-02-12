@@ -62,7 +62,7 @@ export default function AccountPage() {
     if (response.status === 204) {
       // Successfully deleted the user, handle logout or redirect
       setAuthContext({ ...authContext, username: null });
-      navigate('/');
+      navigate('/account-deactivated');
     }
   };
 
