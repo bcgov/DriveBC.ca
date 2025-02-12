@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowLeft
 } from '@fortawesome/pro-solid-svg-icons';
+import Skeleton from 'react-loading-skeleton';
 
 // Internal imports
 import { CMSContext } from '../App';
@@ -37,6 +38,7 @@ export default function BulletinDetailsPage() {
   const [bulletin, setBulletin] = useState(null);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
 
   // Error handling
   const displayError = (error) => {
@@ -80,6 +82,14 @@ export default function BulletinDetailsPage() {
     content = bulletin.subpages.filter((sub) => sub.slug === params.subid)[0] || bulletin;
   }
 
+  useEffect(() => {
+    if (bulletin) {
+      setShowLoader(false);
+    } else {
+      setShowLoader(true);
+    }
+  }, [bulletin]);
+
   // Rendering
   return (
     <div className='bulletin-page cms-page'>
@@ -121,7 +131,9 @@ export default function BulletinDetailsPage() {
           </div>
 
           <Container className="bulletin-body-container cms-body">
+            {showLoader ? <Skeleton height={400} /> :
             <div>{renderWagtailBody(content.body)}</div>
+            }
           </Container>
         </div>
       )}
