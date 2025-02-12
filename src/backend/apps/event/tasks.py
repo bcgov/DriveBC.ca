@@ -247,6 +247,7 @@ def send_event_notifications(updated_event_ids, dt=None):
 
 
 def generate_settings_message(route):
+    isDst = datetime.datetime.now(ZoneInfo('America/Vancouver')).dst().total_seconds() > 0
     msg = 'Based on your settings, you are being notified for all new and updated '
 
     # Add event types
@@ -271,7 +272,8 @@ def generate_settings_message(route):
 
     else:
         msg += (f'between {route.notification_start_time.strftime("%I:%M%p").lower()} '
-                f'and {route.notification_end_time.strftime("%I:%M%p").lower()} ')
+                f'and {route.notification_end_time.strftime("%I:%M%p").lower()} '
+                f'Pacific Standard Time (PST) ' if not isDst else 'Pacific Daylight Time (PDT) ')
 
         # Specific date
         if route.notification_end_date:

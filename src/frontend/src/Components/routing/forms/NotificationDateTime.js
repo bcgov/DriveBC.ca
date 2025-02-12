@@ -194,6 +194,16 @@ const NotificationDateTime = forwardRef((props, ref) => {
     }
   }));
 
+  function isDaylightSavingTime() {
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const midYear = new Date(now.getFullYear(), 6, 1);
+
+    // If the timezone offset of the current date is less than the offset at the start of the year,
+    // it means the current date is in DST.
+    return now.getTimezoneOffset() < Math.max(startOfYear.getTimezoneOffset(), midYear.getTimezoneOffset());
+  }
+
   /* Handlers */
   const handleRadioChange = (event) => {
     if (event.target.id === 'specific') {
@@ -297,7 +307,9 @@ const NotificationDateTime = forwardRef((props, ref) => {
                   min={startTime ? startTime : null} />
               </div>
 
-              <p className='tz-note'>All times are in Pacific time.</p>
+              <p className='tz-note'>
+                Times above are in {!isDaylightSavingTime() ? 'Pacific Standard Time (PST)' : 'Pacific Daylight Time (PDT)'}
+              </p>
             </div>
           }
 
