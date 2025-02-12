@@ -287,7 +287,7 @@ class SendEventNotificationsTest(TestCase):
         msg = generate_settings_message(route)
         assert 'on January 01.' in msg
 
-        # Date range
+        # Date range - PST
         route = SavedRoutes(
             notification_types=[EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS],
             notification_start_time=datetime.time(8, 0),
@@ -296,8 +296,20 @@ class SendEventNotificationsTest(TestCase):
             notification_end_date=datetime.date(2023, 1, 7)
         )
         msg = generate_settings_message(route)
-        assert 'between 08:00am and 05:00pm ' in msg
+        assert 'between 08:00am and 05:00pm Pacific Standard Time (PST) ' in msg
         assert 'from January 01 and January 07.' in msg
+
+        # Date range - PDT
+        route = SavedRoutes(
+            notification_types=[EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS],
+            notification_start_time=datetime.time(8, 0),
+            notification_end_time=datetime.time(17, 0),
+            notification_start_date=datetime.date(2023, 4, 1),
+            notification_end_date=datetime.date(2023, 4, 7)
+        )
+        msg = generate_settings_message(route)
+        assert 'between 08:00am and 05:00pm Pacific Standard Time (PST) ' in msg
+        assert 'from April 01 and April 07.' in msg
 
         # Days of the week
         route = SavedRoutes(
