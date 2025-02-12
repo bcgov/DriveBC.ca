@@ -5,8 +5,8 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/pro-solid-svg-icons';
 import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
 import Button from 'react-bootstrap/Button';
+import parse from "html-react-parser";
 
 // Internal imports
 import { getTypeDisplay, getSeverityClass } from './functions';
@@ -15,6 +15,7 @@ import EventTypeIcon from '../events/EventTypeIcon';
 
 // Styling
 import './EventCard.scss';
+import 'react-loading-skeleton/dist/skeleton.css'
 
 export default function EventCard(props) {
   // Props
@@ -67,7 +68,7 @@ export default function EventCard(props) {
 
         <div className="description">
           <div className="header">{ showLoader ? <Skeleton /> : 'Description' }</div>
-          <div className="content">{ showLoader ? <Skeleton count={5} /> : event.optimized_description }</div>
+          <div className="content">{ showLoader ? <Skeleton count={5} /> : parse(event.optimized_description) }</div>
         </div>
 
         <div className="last-update">
