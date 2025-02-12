@@ -145,7 +145,7 @@ class SavedRoutesViewset(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     def get_queryset(self):
-        return self.request.user.routes.all()
+        return self.request.user.routes.all().order_by('-created_at')
 
 
 class EmailVerificationTokenGenerator(PasswordResetTokenGenerator):
