@@ -18,8 +18,7 @@ import logo from '../../images/dbc-logo--white.svg';
 
 export default function Bulletins(props) {
   // State, props and context
-  const { bulletins } = props;
-  const [showLoader, setShowLoader] = useState(true);
+  const { bulletins, showLoader } = props;
 
   // Navigation
   const navigate = useNavigate();
@@ -33,13 +32,6 @@ export default function Bulletins(props) {
     return new Date(b.last_published_at) - new Date(a.last_published_at);
   });
 
-  useEffect(() => {
-    if (sortedBulletins) {
-      setShowLoader(false);
-    } else {
-      setShowLoader(true);
-    }
-  }, [sortedBulletins]);
 
   // Rendering
   return (
