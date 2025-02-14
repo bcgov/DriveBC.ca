@@ -735,7 +735,7 @@
       &:not(.cam-location) {
         background-color: $White;
 
-        &:hover {
+        &:hover, &.open {
           background: $Type-Link;
         }
       }
