@@ -143,7 +143,7 @@ export const removeRoute = async (route, selectedRoute, dispatch) => {
 }
 
 export const patchRoute = async (route, selectedRoute, dispatch, body) => {
-  const url = `${window.API_HOST}/api/users/routes/${route.id}`;
+  const url = `${window.API_HOST}/api/users/routes/${route.id}/`;
 
   try {
     const response = await fetch(url, {
