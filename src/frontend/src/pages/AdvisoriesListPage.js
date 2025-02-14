@@ -32,6 +32,7 @@ export default function AdvisoriesListPage() {
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
+  const [showLoader, setShowLoader] = useState(true);
 
   // Redux
   const dispatch = useDispatch();
@@ -80,6 +81,14 @@ export default function AdvisoriesListPage() {
     loadAdvisories();
   }, []);
 
+  useEffect(() => {
+    if (advisories) {
+      setShowLoader(false);
+    } else {
+      setShowLoader(true);
+    }
+  }, [advisories]);
+
   const isAdvisoriesEmpty = advisories?.length === 0;
 
   return (
@@ -114,7 +123,7 @@ export default function AdvisoriesListPage() {
           {isAdvisoriesEmpty ? (
           <EmptyAdvisory/>
         ) : (
-          <AdvisoriesList advisories={advisories} isAdvisoriesListPage={true} />
+          <AdvisoriesList advisories={advisories} isAdvisoriesListPage={true} showLoader={showLoader} />
       )}
       </Container>
 
