@@ -282,13 +282,35 @@
     .modal-content {
       height: fit-content;
 
+      @media (max-width: 575px) {
+        height: 100vh;
+      }
+
       &:has(.specific-time-dates) {
         height: 100vh;
+      }
+
+      .modal-header {
+        @media (max-width: 575px) {
+          position: fixed;
+          top: 0;
+          width: 100%;
+        }
       }
 
       .modal-body {
         padding-bottom: 12px;
         overflow: auto;
+
+        @media (max-width: 575px) {
+          margin: 60px 0;
+        }
+      }
+
+      .modal-footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
       }
     }
 
