@@ -160,7 +160,7 @@ export default function AdvisoryDetailsPage() {
   const [advisory, setAdvisory] = useState(null);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
-  const [showLoader, setShowLoader] = useState(true);
+  const [showLoader, setShowLoader] = useState(false);
 
   // Navigating to
   const returnHandler = () => {
@@ -191,6 +191,13 @@ export default function AdvisoryDetailsPage() {
   const loadAdvisory = async () => {
     const advisoryData = await getAdvisories(params.id).catch((error) => displayError(error));
     setAdvisory(advisoryData);
+
+    if(advisoryData) {
+      setShowLoader(false);
+    }
+    else {
+      setShowLoader(true);
+    }
 
     if (!mapRef.current) {
       mapRef.current = getMap(advisoryData);
@@ -227,13 +234,6 @@ export default function AdvisoryDetailsPage() {
   const advisoryDetails = <FontAwesomeIcon icon={faMemoCircleInfo} />;
   const advisoryMap = <FontAwesomeIcon icon={faMap} />;
 
-  useEffect(() => {
-    if (advisoryDetails) {
-      setShowLoader(false);
-    } else {
-      setShowLoader(true);
-    }
-  }, [advisoryDetails]);
 
   let content = advisory;
   if (content && params.subid) {
@@ -292,7 +292,7 @@ export default function AdvisoryDetailsPage() {
         </Tab>
         <Tab eventKey="map" className={params.subid ? 'hide': ''} title={<span>{advisoryMap}Map View</span>}>
           <Container className="advisory-map-container">
-          {showLoader ? <Skeleton height={200} /> : 
+          {showLoader ? <Skeleton height={300} /> : 
             <div id="map" className="advisory-map"></div>
         }
           </Container>
