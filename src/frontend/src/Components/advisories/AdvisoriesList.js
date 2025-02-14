@@ -29,8 +29,7 @@ export default function AdvisoriesList(props) {
   const navigate = useNavigate();
 
   // Props
-  const { advisories, showDescription, showTimestamp, showPublished, showArrow, isAdvisoriesListPage } = props;
-  const [showLoader, setShowLoader] = useState(true);
+  const { advisories, showDescription, showTimestamp, showPublished, showArrow, isAdvisoriesListPage, showLoader } = props;
 
   function handleClick(advisory, keyEvent) {
     if (keyEvent && keyEvent.keyCode != 13 && keyEvent.keyCode != 32) {
@@ -44,14 +43,6 @@ export default function AdvisoriesList(props) {
   const sortedAdvisories = advisories && advisories.sort((a, b) => {
     return new Date(b.last_published_at) - new Date(a.last_published_at);
   });
-
-  useEffect(() => {
-    if (sortedAdvisories) {
-      setShowLoader(false);
-    } else {
-      setShowLoader(true);
-    }
-  }, [sortedAdvisories]);
 
   // Rendering
   return (
