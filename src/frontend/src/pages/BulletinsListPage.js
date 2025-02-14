@@ -38,6 +38,7 @@ export default function BulletinsListPage() {
   // States
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
 
   // Error handling
   const displayError = (error) => {
@@ -82,6 +83,14 @@ export default function BulletinsListPage() {
     }
   });
 
+  useEffect(() => {
+    if (bulletins) {
+      setShowLoader(false);
+    } else {
+      setShowLoader(true);
+    }
+  }, [bulletins]);
+
   const isBulletinsEmpty = bulletins?.length === 0;
 
   return (
@@ -103,7 +112,7 @@ export default function BulletinsListPage() {
           {isBulletinsEmpty ? (
           <EmptyBulletin/>
         ) : (
-          <BulletinsList bulletins={bulletins} />
+          <BulletinsList bulletins={bulletins} showLoader={showLoader} />
         )}
       </Container>
 

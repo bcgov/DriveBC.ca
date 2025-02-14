@@ -1,5 +1,5 @@
 // React
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 
 // Navigation
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +18,7 @@ import trackEvent from '../shared/TrackEvent.js';
 
 // Styling
 import './AdvisoriesList.scss';
+import Skeleton from 'react-loading-skeleton';
 
 export default function AdvisoriesList(props) {
   /* Setup */
@@ -28,7 +29,7 @@ export default function AdvisoriesList(props) {
   const navigate = useNavigate();
 
   // Props
-  const { advisories, showDescription, showTimestamp, showPublished, showArrow, isAdvisoriesListPage } = props;
+  const { advisories, showDescription, showTimestamp, showPublished, showArrow, isAdvisoriesListPage, showLoader } = props;
 
   function handleClick(advisory, keyEvent) {
     if (keyEvent && keyEvent.keyCode != 13 && keyEvent.keyCode != 32) {
@@ -56,16 +57,18 @@ export default function AdvisoriesList(props) {
                     tabIndex={0}
                     onClick={() => handleClick(advisory)}
                     onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}>
-
-                    {advisory.title}
+                    {showLoader ? <Skeleton width={400} height={40} /> : advisory.title}
                   </div>
 
+                  {showLoader ? <Skeleton  width={300} height={10} /> :
                   <div className="timestamp-container">
                     <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
                     <FriendlyTime date={advisory.latest_revision_created_at} />
                   </div>
+                  }
                 </div>
 
+                {showLoader ? <Skeleton  width={500} height={10} /> :
                 <div className='advisory-li__content__partition advisory-li-body-container'>
                   {advisory.teaser &&
                     <div className='advisory-li-body'>{advisory.teaser} LIST PAGE!! </div>
@@ -75,12 +78,14 @@ export default function AdvisoriesList(props) {
                     <div className='advisory-li-body'>{stripRichText(advisory.body)}</div>
                   }
                 </div>
-
+                }
+              
                 <div className="advisory-li__content__partition timestamp-container timestamp-container--mobile">
                   <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
                   <FriendlyTime date={advisory.latest_revision_created_at} />
                 </div>
 
+                {showLoader ? <Skeleton  width={120} height={10} /> :
                 <div className="button-container">
                   <div className="viewDetails-link link-div"
                     tabIndex={0}
@@ -93,7 +98,8 @@ export default function AdvisoriesList(props) {
                     <FontAwesomeIcon icon={faChevronRight} />
                   </div>
                 </div>
-              </div>
+                }
+              </div>          
             </div>
           );
 
