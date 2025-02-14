@@ -228,12 +228,12 @@ export default function AdvisoryDetailsPage() {
   const advisoryMap = <FontAwesomeIcon icon={faMap} />;
 
   useEffect(() => {
-    if (advisoryDetails) {
+    if (advisory) {
       setShowLoader(false);
     } else {
       setShowLoader(true);
     }
-  }, [advisoryDetails]);
+  }, [advisory]);
 
   let content = advisory;
   if (content && params.subid) {
