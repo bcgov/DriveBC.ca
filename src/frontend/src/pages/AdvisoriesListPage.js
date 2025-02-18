@@ -83,7 +83,11 @@ export default function AdvisoriesListPage() {
 
   useEffect(() => {
     if (advisories) {
-      setShowLoader(false);
+      // setShowLoader(false);
+      // Simulate a delay for the loader, shold be removed once the code review is done
+      setTimeout(() => {
+        setShowLoader(false);
+      }, 1000);
     } else {
       setShowLoader(true);
     }
