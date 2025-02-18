@@ -25,6 +25,7 @@ import {
   faXmark,
 } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline, faMountain, faRefresh } from '@fortawesome/pro-regular-svg-icons';
+import { faArrowsRotate } from '@fortawesome/pro-solid-svg-icons';
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 import Button from 'react-bootstrap/Button';
@@ -575,6 +576,17 @@ export default function CameraDetailsPage() {
                       )}
                     </div>
                   </div>
+                  
+                  {!unavailable && !stale && !delayed && updated && (
+                    <div className="camera-notifications">
+                      {showLoader ? <Skeleton /> : !isLoading && (
+                        <>
+                          <FontAwesomeIcon icon={faArrowsRotate} />
+                          <p>Image automatically updated to show the latest image received.</p>
+                        </>
+                      )}
+                    </div>
+                  )}
 
                   <div className="camera-imagery">
                     <Tabs
@@ -655,19 +667,7 @@ export default function CameraDetailsPage() {
                                     <div className="card-notification">
                                       {showLoader ? <Skeleton /> : !isLoading && (
                                         <>
-                                          <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
-                                            <FontAwesomeIcon icon={faRefresh} />
-                                            <p>Image automatically updated to show the latest image received.</p>
-                                            <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
-                                          </div>
-                                          <div
-                                            className={'card-pill' + (show ? ' bounce' : ' hidden')}
-                                            onClick={handleChildClick}
-                                            onKeyDown={keyEvent => {
-                                              if (keyEvent.keyCode === 13) {
-                                                handleChildClick();
-                                              }
-                                            }}>
+                                          <div className={'card-pill' + (show ? ' bounce' : ' hidden')}>
                                             <p>Updated</p>
                                             <FontAwesomeIcon icon={faCircleInfo} />
                                           </div>

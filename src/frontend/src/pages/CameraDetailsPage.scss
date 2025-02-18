@@ -209,6 +209,30 @@
     }
   }
 
+  .camera-notifications {
+    background-color: $Blue80;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 12px 24px;
+    border-radius: 8px;
+    margin-top: 16px;
+
+    @media (min-width: 992px) {
+      width: calc(50% - 12px);
+    }
+
+    svg {
+      margin-right: 8px;
+    }
+
+    p {
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0;
+    }
+  }
+
   .camera-imagery {
     margin: 0;
     @media (min-width: 768px) {
@@ -273,12 +297,6 @@
 
               p, svg {
                 color: $White;
-              }
-            }
-
-            .card-pill {
-              &:hover {
-                background-color: $Blue70;
               }
             }
           }
@@ -693,7 +711,7 @@
       padding: 44px 0;
     }
 
-    & > div:not(.camera-imagery),
+    & > div:not(.camera-notifications, .camera-imagery),
     .camera-imagery .nav-tabs,
     .replay-div {
       margin-left: 16px;
