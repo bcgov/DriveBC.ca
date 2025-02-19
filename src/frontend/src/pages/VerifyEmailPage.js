@@ -33,7 +33,7 @@ export default function VerifyEmailPage() {
 
       <Container>
         <p className='base-instructions'>
-          To enable notifications your email account needs to be
+          To enable notifications, your email account needs to be
           verified. We’ve sent an email to <b>{authContext.email}</b> with
           a link to verify that the account is yours.
         </p>
