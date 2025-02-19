@@ -84,7 +84,11 @@ export default function BulletinDetailsPage() {
 
   useEffect(() => {
     if (bulletin) {
-      setShowLoader(false);
+      // setShowLoader(false);
+      // Delay of 2 seconds for testing, should be removed after code review
+      setTimeout(() => {
+        setShowLoader(false);
+      }, 2000);
     } else {
       setShowLoader(true);
     }

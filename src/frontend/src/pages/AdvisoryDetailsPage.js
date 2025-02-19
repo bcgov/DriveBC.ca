@@ -160,7 +160,7 @@ export default function AdvisoryDetailsPage() {
   const [advisory, setAdvisory] = useState(null);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
-  const [showLoader, setShowLoader] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
 
   // Navigating to
   const returnHandler = () => {
@@ -191,13 +191,6 @@ export default function AdvisoryDetailsPage() {
   const loadAdvisory = async () => {
     const advisoryData = await getAdvisories(params.id).catch((error) => displayError(error));
     setAdvisory(advisoryData);
-
-    if(advisoryData) {
-      setShowLoader(false);
-    }
-    else {
-      setShowLoader(true);
-    }
 
     if (!mapRef.current) {
       mapRef.current = getMap(advisoryData);
@@ -239,6 +232,23 @@ export default function AdvisoryDetailsPage() {
   if (content && params.subid) {
     content = advisory.subpages.filter((sub) => sub.slug === params.subid)[0];
   }
+
+  useEffect(() => {
+    if(advisory) {
+      // Delay the map rendering to simulate the page to load, should be removed after code review and testing
+      setTimeout(() => {
+        setShowLoader(false);
+        mapRef.current = getMap(advisory);
+        fitMap(advisory);
+      }, 2000);
+      // setShowLoader(false);
+      // mapRef.current = getMap(advisory);
+      // fitMap(advisory);     
+    }
+    else {
+      setShowLoader(true);
+    }
+  });
 
   // Rendering
   return (
