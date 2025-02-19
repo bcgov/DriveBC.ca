@@ -209,6 +209,8 @@ export default function AdvisoryDetailsPage() {
 
     setCMSContext(updatedContext);
     localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+
+    setShowLoader(false);
   };
 
   useEffect(() => {
@@ -232,23 +234,6 @@ export default function AdvisoryDetailsPage() {
   if (content && params.subid) {
     content = advisory.subpages.filter((sub) => sub.slug === params.subid)[0];
   }
-
-  useEffect(() => {
-    if(advisory) {
-      // Delay the map rendering to simulate the page to load, should be removed after code review and testing
-      setTimeout(() => {
-        setShowLoader(false);
-        mapRef.current = getMap(advisory);
-        fitMap(advisory);
-      }, 2000);
-      // setShowLoader(false);
-      // mapRef.current = getMap(advisory);
-      // fitMap(advisory);     
-    }
-    else {
-      setShowLoader(true);
-    }
-  });
 
   // Rendering
   return (
@@ -274,7 +259,7 @@ export default function AdvisoryDetailsPage() {
               }}>
               <FontAwesomeIcon icon={faArrowLeft} />
               Back to last page
-            </a>        
+            </a>
             <h1 className="page-title">{content.title}</h1>
             {content.teaser && (<p className="page-description body--large">{content.teaser}</p>)}
 
@@ -289,27 +274,30 @@ export default function AdvisoryDetailsPage() {
       <Tabs
         id="advisory-details"
         activeKey={activeTab}
-        onSelect={ (selectedTab) => setActiveTab(selectedTab) }
-      >   
+        onSelect={ (selectedTab) => setActiveTab(selectedTab) }>
+
         <Tab eventKey="details" title={<span>{advisoryDetails}Details</span>}>
           {content && (
             <Container className="advisory-body-container cms-body">
-              {showLoader ? <Skeleton height={40} /> : 
-              <div>{renderWagtailBody(content.body)}</div>
-          }
+              {showLoader ?
+                <Skeleton height={40} /> :
+
+                <div>{renderWagtailBody(content.body)}</div>
+              }
             </Container>
           )}
         </Tab>
+
         <Tab eventKey="map" className={params.subid ? 'hide': ''} title={<span>{advisoryMap}Map View</span>}>
           <Container className="advisory-map-container">
-          {showLoader ? <Skeleton height={300} /> : 
-            <div id="map" className="advisory-map"></div>
-        }
+            {showLoader && <Skeleton height={300}/>}
+
+            <div id="map" className={'advisory-map' + (showLoader ? ' hidden' : '')}></div>
           </Container>
         </Tab>
       </Tabs>
 
-      { (activeTab === 'details') &&
+      {(activeTab === 'details') &&
         <Footer />
       }
     </div>

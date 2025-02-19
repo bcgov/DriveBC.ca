@@ -71,6 +71,8 @@ export default function BulletinDetailsPage() {
 
     setCMSContext(updatedContext);
     localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+
+    setShowLoader(false);
   };
 
   useEffect(() => {
@@ -81,18 +83,6 @@ export default function BulletinDetailsPage() {
   if (content && params.subid) {
     content = bulletin.subpages.filter((sub) => sub.slug === params.subid)[0] || bulletin;
   }
-
-  useEffect(() => {
-    if (bulletin) {
-      // setShowLoader(false);
-      // Delay of 2 seconds for testing, should be removed after code review
-      setTimeout(() => {
-        setShowLoader(false);
-      }, 2000);
-    } else {
-      setShowLoader(true);
-    }
-  }, [bulletin]);
 
   // Rendering
   return (
@@ -135,8 +125,10 @@ export default function BulletinDetailsPage() {
           </div>
 
           <Container className="bulletin-body-container cms-body">
-            {showLoader ? <Skeleton height={400} /> :
-            <div>{renderWagtailBody(content.body)}</div>
+            {showLoader ?
+              <Skeleton height={400} /> :
+
+              <div>{renderWagtailBody(content.body)}</div>
             }
           </Container>
         </div>
