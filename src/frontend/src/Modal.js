@@ -4,8 +4,8 @@ import React, { useCallback, useContext } from "react";
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { memoize } from 'proxy-memoize';
-import { resetFavLists, updatePendingAction } from './slices/userSlice';
-import {updateSelectedRoute, updateSingleSearchedRoute} from './slices/routesSlice'
+import { updatePendingAction } from './slices/userSlice';
+import { logoutDispatch } from "./Components/data/account";
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -33,12 +33,7 @@ export default function Modal() {
 
   /* Handlers */
   const handleSubmit = (e) => {
-    dispatch(resetFavLists());
-    if (selectedRoute && selectedRoute.id) {
-      const payload = {...selectedRoute, id: null, saved: false, label: null};
-      dispatch(updateSelectedRoute(payload));
-      dispatch(updateSingleSearchedRoute(payload));
-    }
+    logoutDispatch(dispatch, selectedRoute);
   };
 
   const resetAuthModal = () => {

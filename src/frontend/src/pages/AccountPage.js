@@ -1,4 +1,9 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+import { memoize } from "proxy-memoize";
+import { logoutDispatch } from "../Components/data/account";
 
 // Navigation
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +30,12 @@ export default function AccountPage() {
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
+
+  // Redux
+  const dispatch = useDispatch();
+  const { selectedRoute } = useSelector(useCallback(memoize(state => ({
+    selectedRoute: state.routes.selectedRoute
+  }))));
 
   // Refs
   const showedModal = useRef(false);
@@ -62,6 +73,7 @@ export default function AccountPage() {
     if (response.status === 204) {
       // Successfully deleted the user, handle logout or redirect
       setAuthContext({ ...authContext, username: null });
+      logoutDispatch(dispatch, selectedRoute);
       navigate('/account-deactivated');
     }
   };
