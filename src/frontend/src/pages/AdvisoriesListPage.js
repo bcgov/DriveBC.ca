@@ -75,23 +75,13 @@ export default function AdvisoriesListPage() {
 
     setCMSContext(updatedContext);
     localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+
+    setShowLoader(false);
   }
 
   useEffect(() => {
     loadAdvisories();
   }, []);
-
-  useEffect(() => {
-    if (advisories) {
-      // setShowLoader(false);
-      // Simulate a delay for the loader, shold be removed once the code review is done
-      setTimeout(() => {
-        setShowLoader(false);
-      }, 1000);
-    } else {
-      setShowLoader(true);
-    }
-  }, [advisories]);
 
   const isAdvisoriesEmpty = advisories?.length === 0;
 
