@@ -107,7 +107,7 @@ export default function AccountPage() {
             <p className='header'>Email Address</p>
             <p className='email'>{authContext.email}</p>
 
-            {!authContext.verified && authContext.attempted_verification &&
+            {!authContext.verified &&
               <p className='not-verified'>
                 This email address has not been verified. Email notifications for
                 saved routes will be disabled until verification
