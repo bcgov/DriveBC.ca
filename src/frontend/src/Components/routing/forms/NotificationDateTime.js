@@ -4,6 +4,9 @@ import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} fro
 // External imports
 import Form from "react-bootstrap/Form";
 
+// Internal imports
+import { getPacficMidnight, getCurrentPacificDateString, isDaylightSavingTime } from "../../data/date";
+
 // Styling
 import './NotificaitonDateTime.scss';
 
@@ -135,7 +138,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
           if (!startDate) {
             errors.push('Please select a specific date.');
 
-          } else if (new Date(startDate) < new Date().setHours(0, 0, 0, 0)) {
+          } else if (getPacficMidnight(startDate) < getPacficMidnight()) {
             errors.push('Specific date must be after today.');
           }
 
@@ -144,7 +147,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
           if (!startDate || !endDate) {
             errors.push('Please select a start and end date.');
 
-          } else if (new Date(startDate) > new Date(endDate)) {
+          } else if (getPacficMidnight(startDate) > getPacficMidnight(endDate)) {
             errors.push('End date must be after start date.');
           }
 
@@ -193,20 +196,6 @@ const NotificationDateTime = forwardRef((props, ref) => {
       return payload;
     }
   }));
-
-  function isDaylightSavingTime() {
-    const now = new Date();
-    const startOfYear = new Date(now.getFullYear(), 0, 1);
-    const midYear = new Date(now.getFullYear(), 6, 1);
-
-    // If the timezone offset of the current date is less than the offset at the start of the year,
-    // it means the current date is in DST.
-    return now.getTimezoneOffset() < Math.max(startOfYear.getTimezoneOffset(), midYear.getTimezoneOffset());
-  }
-
-  const getPacificDateString = () => {
-    return new Date().toLocaleString('en-CA', { timeZone: 'America/Vancouver' }).split(',')[0];
-  }
 
   /* Handlers */
   const handleRadioChange = (event) => {
@@ -340,7 +329,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                   }
                   placeholder="Select date"
                   value={defaultStartDate}
-                  min={getPacificDateString()} />
+                  min={getCurrentPacificDateString()} />
               </div>
             }
 
@@ -355,7 +344,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                   }
                   placeholder="Start date"
                   value={defaultStartDate}
-                  min={getPacificDateString()}
+                  min={getCurrentPacificDateString()}
                   max={endDate ? endDate : null } />
 
                 <span className="spacer"> — </span>
@@ -369,7 +358,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                   }
                   placeholder="End date"
                   value={defaultEndDate}
-                  min={startDate ? startDate : getPacificDateString() } />
+                  min={startDate ? startDate : getCurrentPacificDateString() } />
               </div>
             }
 
