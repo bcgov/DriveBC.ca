@@ -95,9 +95,9 @@ export default function BulletinDetailsPage() {
         <ServerErrorPopup setShowServerError={setShowServerError} />
       }
 
-      {bulletin && (
-        <div>
-          <div className="page-header">
+      <div>
+        <div className="page-header">
+          {content &&
             <Container>
               <a
                 className="back-link"
@@ -122,17 +122,19 @@ export default function BulletinDetailsPage() {
                 <FriendlyTime date={content.latest_revision_created_at} />
               </div>
             </Container>
-          </div>
-
-          <Container className="bulletin-body-container cms-body">
-            {showLoader ?
-              <Skeleton height={400} /> :
-
-              <div>{renderWagtailBody(content.body)}</div>
-            }
-          </Container>
+          }
         </div>
-      )}
+
+        <Container className="bulletin-body-container cms-body">
+          {showLoader &&
+            <Skeleton height={400} />
+          }
+
+          {!showLoader && content &&
+            <div>{renderWagtailBody(content.body)}</div>
+          }
+        </Container>
+      </div>
 
       <Footer />
     </div>

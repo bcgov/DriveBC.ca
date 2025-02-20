@@ -277,15 +277,15 @@ export default function AdvisoryDetailsPage() {
         onSelect={ (selectedTab) => setActiveTab(selectedTab) }>
 
         <Tab eventKey="details" title={<span>{advisoryDetails}Details</span>}>
-          {content && (
-            <Container className="advisory-body-container cms-body">
-              {showLoader ?
-                <Skeleton height={40} /> :
+          <Container className="advisory-body-container cms-body">
+            {showLoader &&
+              <Skeleton height={40} />
+            }
 
-                <div>{renderWagtailBody(content.body)}</div>
-              }
-            </Container>
-          )}
+            {content && !showLoader &&
+              <div>{renderWagtailBody(content.body)}</div>
+            }
+          </Container>
         </Tab>
 
         <Tab eventKey="map" className={params.subid ? 'hide': ''} title={<span>{advisoryMap}Map View</span>}>
