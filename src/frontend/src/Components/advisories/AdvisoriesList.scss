@@ -85,3 +85,24 @@
     color: $BC-Blue;
   }
 }
+
+.body-skeleton {
+  @media (min-width: 768px) {
+    width: 600px;
+  }
+  @media (max-width: 768px) {
+    width: 320px;
+  }
+}
+
+.hidden-desktop {
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.hidden-mobile {
+  @media (max-width: 768px) {
+    display: none;
+  }
+}

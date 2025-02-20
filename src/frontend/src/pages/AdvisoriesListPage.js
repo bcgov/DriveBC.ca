@@ -114,11 +114,11 @@ export default function AdvisoriesListPage() {
       </div>
 
       <Container>
-          {isAdvisoriesEmpty ? (
-          <EmptyAdvisory/>
-        ) : (
+        {isAdvisoriesEmpty ?
+          <EmptyAdvisory/> :
+
           <AdvisoriesList advisories={advisories} isAdvisoriesListPage={true} showLoader={showLoader} />
-      )}
+        }
       </Container>
 
       <Footer />

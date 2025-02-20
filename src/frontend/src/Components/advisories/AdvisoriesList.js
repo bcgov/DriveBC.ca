@@ -57,11 +57,12 @@ export default function AdvisoriesList(props) {
                     tabIndex={0}
                     onClick={() => handleClick(advisory)}
                     onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}>
-                    {showLoader ? <Skeleton width={400} height={40} /> : advisory.title}
+
+                    {showLoader ? <Skeleton width={320} height={40} /> : advisory.title}
                   </div>
 
                   {showLoader ?
-                    <Skeleton width={300} height={10} /> :
+                    <Skeleton width={260} height={10} className="hidden-mobile" /> :
 
                     <div className="timestamp-container">
                       <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
@@ -70,32 +71,44 @@ export default function AdvisoriesList(props) {
                   }
                 </div>
 
-                {showLoader ? <Skeleton  width={500} height={10} /> :
-                <div className='advisory-li__content__partition advisory-li-body-container'>
-                  {advisory.teaser &&
-                    <div className='advisory-li-body'>{advisory.teaser}</div>
-                  }
+                {showLoader ?
+                  <p className="body-skeleton">
+                    <Skeleton height={10} />
+                    <Skeleton height={10} />
+                    <Skeleton height={10} />
+                    <Skeleton height={10} />
+                    <Skeleton height={10} />
+                  </p> :
 
-                  {!advisory.teaser &&
-                    <div className='advisory-li-body'>{stripRichText(advisory.body)}</div>
-                  }
-                </div>
+                  <div className='advisory-li__content__partition advisory-li-body-container'>
+                    {advisory.teaser &&
+                      <div className='advisory-li-body'>{advisory.teaser}</div>
+                    }
+
+                    {!advisory.teaser &&
+                      <div className='advisory-li-body'>{stripRichText(advisory.body)}</div>
+                    }
+                  </div>
                 }
 
-                <div className="advisory-li__content__partition timestamp-container timestamp-container--mobile">
-                  <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
-                  <FriendlyTime date={advisory.latest_revision_created_at} />
-                </div>
+                {showLoader ?
+                  <Skeleton width={320} height={10} className='hidden-desktop' /> :
+
+                  <div className="advisory-li__content__partition timestamp-container timestamp-container--mobile">
+                    <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published"}</span>
+                    <FriendlyTime date={advisory.latest_revision_created_at}/>
+                  </div>
+                }
 
                 {showLoader ?
-                  <Skeleton width={120} height={10} /> :
+                  <Skeleton width={120} height={10}/> :
 
                   <div className="button-container">
                     <div className="viewDetails-link link-div"
-                      tabIndex={0}
-                      href="#"
-                      onClick={() => handleClick(advisory)}
-                      onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}
+                         tabIndex={0}
+                         href="#"
+                         onClick={() => handleClick(advisory)}
+                         onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}
                       aria-label={`View advisory details for ${advisory.title}`}>
 
                       View details

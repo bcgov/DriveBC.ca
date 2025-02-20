@@ -103,11 +103,11 @@ export default function BulletinsListPage() {
       </PageHeader>
 
       <Container>
-          {isBulletinsEmpty ? (
-          <EmptyBulletin/>
-        ) : (
+        {isBulletinsEmpty ?
+          <EmptyBulletin/> :
+
           <BulletinsList bulletins={bulletins} showLoader={showLoader} />
-        )}
+        }
       </Container>
 
       <Footer />

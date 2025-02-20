@@ -97,7 +97,6 @@ export default function BulletinDetailsPage() {
 
       <div>
         <div className="page-header">
-          {content &&
             <Container>
               <a
                 className="back-link"
@@ -111,23 +110,34 @@ export default function BulletinDetailsPage() {
                 Back to last page
               </a>
 
-              <h1 className="page-title">{content.title}</h1>
+              {content && !showLoader &&
+                <div>
+                  <h1 className="page-title">{content.title}</h1>
 
-              {content.teaser &&
-                <p className="page-description body--large">{content.teaser}</p>
+                  {content.teaser &&
+                    <p className="page-description body--large">{content.teaser}</p>
+                  }
+
+                  <div className="timestamp-container">
+                    <span>{content.first_published_at != content.last_published_at ? "Last updated" : "Published" }</span>
+                    <FriendlyTime date={content.latest_revision_created_at} />
+                  </div>
+                </div>
               }
 
-              <div className="timestamp-container">
-                <span>{content.first_published_at != content.last_published_at ? "Last updated" : "Published" }</span>
-                <FriendlyTime date={content.latest_revision_created_at} />
-              </div>
+              {showLoader &&
+                <div>
+                  <br/><Skeleton width={280} height={36}/>
+                  <br/><Skeleton width={320} height={24}/>
+                  <br/><Skeleton width={240} height={18}/>
+                </div>
+              }
             </Container>
-          }
         </div>
 
         <Container className="bulletin-body-container cms-body">
           {showLoader &&
-            <Skeleton height={400} />
+            <Skeleton height={320} />
           }
 
           {!showLoader && content &&

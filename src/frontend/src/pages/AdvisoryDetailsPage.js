@@ -246,7 +246,6 @@ export default function AdvisoryDetailsPage() {
         <ServerErrorPopup setShowServerError={setShowServerError} />
       }
 
-      { content && (
         <div className="page-header">
           <Container>
             <a
@@ -260,26 +259,38 @@ export default function AdvisoryDetailsPage() {
               <FontAwesomeIcon icon={faArrowLeft} />
               Back to last page
             </a>
-            <h1 className="page-title">{content.title}</h1>
-            {content.teaser && (<p className="page-description body--large">{content.teaser}</p>)}
 
-            <div className="timestamp-container">
-              <span className="advisory-li-state">{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span>
-              <FriendlyTime date={content.latest_revision_created_at} />
-            </div>
+            {content && !showLoader &&
+              <div>
+                <h1 className="page-title">{content.title}</h1>
+                {content.teaser && (<p className="page-description body--large">{content.teaser}</p>)}
+
+                <div className="timestamp-container">
+                  <span className="advisory-li-state">{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span>
+                  <FriendlyTime date={content.latest_revision_created_at} />
+                </div>
+              </div>
+            }
+
+            {showLoader &&
+              <div>
+                <br/><Skeleton width={280} height={36}/>
+                <br/><Skeleton width={320} height={24}/>
+                <br/><Skeleton width={240} height={18}/>
+              </div>
+            }
           </Container>
         </div>
-      )}
 
       <Tabs
         id="advisory-details"
         activeKey={activeTab}
-        onSelect={ (selectedTab) => setActiveTab(selectedTab) }>
+        onSelect={(selectedTab) => setActiveTab(selectedTab) }>
 
         <Tab eventKey="details" title={<span>{advisoryDetails}Details</span>}>
           <Container className="advisory-body-container cms-body">
             {showLoader &&
-              <Skeleton height={40} />
+              <Skeleton width={320} height={40} />
             }
 
             {content && !showLoader &&

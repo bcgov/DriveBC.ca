@@ -32,7 +32,6 @@ export default function Bulletins(props) {
     return new Date(b.last_published_at) - new Date(a.last_published_at);
   });
 
-
   // Rendering
   return (
     <ul className='bulletins-list'>
@@ -47,13 +46,16 @@ export default function Bulletins(props) {
 
             <div className='bulletin-li-title-container' tabIndex={0}>
               {showLoader ?
-                <Skeleton width="100%" height={20} /> :
+                <p><Skeleton height={30} /></p> :
 
                 <h2 className='bulletin-li-title'>{bulletin.title}</h2>
               }
 
               {showLoader ?
-                <Skeleton height={10} width="100%" /> :
+                <p>
+                  <Skeleton height={10} />
+                  <Skeleton height={10} />
+                </p> :
 
                 (bulletin.teaser &&
                   <div className="bulletin-li-body">{bulletin.teaser}</div>
@@ -61,7 +63,11 @@ export default function Bulletins(props) {
               }
 
               {showLoader ?
-                <Skeleton height={10} width="100%" /> :
+                <p>
+                  <Skeleton height={10} />
+                  <Skeleton height={10} />
+                  <Skeleton height={10} />
+                </p> :
 
                 (bulletin.teaser &&
                   <div className='bulletin-li-body'>{stripRichText(bulletin.body)}</div>
@@ -69,7 +75,7 @@ export default function Bulletins(props) {
               }
 
               {showLoader ?
-                <Skeleton width="100%" height={10} /> :
+                <p><Skeleton width={150} height={10} /></p> :
 
                 <div className='timestamp-container'>
                   <span className='bulletin-li-state'>{bulletin.first_published_at != bulletin.last_published_at ? 'Updated' : 'Published' }</span>
@@ -81,7 +87,7 @@ export default function Bulletins(props) {
             <div className='bulletin-li-thumbnail-container'>
               <div className={bulletin.image_url ? 'bulletin-li-thumbnail' : 'bulletin-li-thumbnail-default'}>
                 {showLoader ?
-                  <Skeleton width={400} height={200} /> :
+                  <Skeleton width={320} height={200} /> :
 
                   <img className='thumbnail-logo' src={bulletin.image_url ? bulletin.image_url : logo} alt={bulletin.image_alt_text} />
                 }
