@@ -70,7 +70,9 @@ const NotificationDateTime = forwardRef((props, ref) => {
       setStartTime('00:00');
       setEndTime('23:59');
     }
+  }, [allDay]);
 
+  useEffect(() => {
     // Bind event listeners to time pickers
     if (showSpecificTimeDate && !allDay) {
       const startTimePicker = document.querySelector('#startTimePicker');
@@ -84,7 +86,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
         endTimePicker.removeEventListener('value-changed', handleEndTimeChange);
       }
     }
-  }, [allDay]);
+  }, [showSpecificTimeDate, allDay]);
 
   useEffect(() => {
     // Reset date options
