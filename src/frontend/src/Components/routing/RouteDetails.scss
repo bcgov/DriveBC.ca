@@ -308,10 +308,13 @@
       }
 
       .modal-footer {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
         padding: 16px;
+
+        @media (max-width: 575px) {
+          position: fixed;
+          bottom: 0;
+          width: 100%;
+        }
       }
     }
 
@@ -375,19 +378,11 @@
       justify-content: flex-start;
       border-top: 1px solid #D9D9D9;
 
-      @media (min-width: 768px) {
-        display: block;
-      }
-
       .btn {
         margin: 0;
 
         &.cancel-btn {
-          margin: auto;
-
-          @media (min-width: 768px) {
-            margin-left: 1rem;
-          }
+          margin-left: 20px;
         }
 
         svg {
