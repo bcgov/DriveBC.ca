@@ -299,7 +299,7 @@
       }
 
       .modal-body {
-        padding-bottom: 12px;
+        padding: 16px 16px 12px;
         overflow: auto;
 
         @media (max-width: 575px) {
@@ -311,6 +311,7 @@
         position: fixed;
         bottom: 0;
         width: 100%;
+        padding: 16px;
       }
     }
 

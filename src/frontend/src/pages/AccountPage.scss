@@ -58,7 +58,6 @@
   .modal-header {
     background-color: white;
     border: none;
-    padding: 1.5rem;
 
     .modal-title {
       color: $BC-Blue;
@@ -71,10 +70,20 @@
   }
 
   .modal-body {
-    padding-top: 0;
+    padding: 16px;
   }
 
   .modal-buttons {
     margin-top: 3rem;
+
+    button {
+      & + button {
+        @media (max-width: 374px) {
+          margin-left: 0;
+          margin-top: 1rem;
+          display: flex;
+        }
+      }
+    }
   }
 }
