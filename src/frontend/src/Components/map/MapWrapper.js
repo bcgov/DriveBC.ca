@@ -132,6 +132,14 @@ export default function MapWrapper(props) {
       isInitialLoad.current = false;
     } else {
       dataLoaders.loadEvents(routeData, events, null, eventFilterPoints, dispatch, displayError, workerRef.current, isInitialLoad.current, trackedEventsRef);
+      if(!routeData) {
+        dataLoaders.loadCameras(routeData, cameras, null, camFilterPoints, dispatch, displayError, workerRef.current);
+        dataLoaders.loadFerries(routeData, ferries, null, ferryFilterPoints, dispatch, displayError, workerRef.current);
+        dataLoaders.loadCurrentWeather(routeData, null, filteredCurrentWeathers, currentWeatherFilterPoints, dispatch, displayError, workerRef.current);
+        dataLoaders.loadRegionalWeather(routeData, null, filteredRegionalWeathers, regionalWeatherFilterPoints, dispatch, displayError, workerRef.current);
+        dataLoaders.loadHef(routeData, hef, filteredHef, null, dispatch, displayError, workerRef.current);
+        dataLoaders.loadRestStops(routeData, restStops, null, restStopFilterPoints, dispatch, displayError, workerRef.current);
+      }    
     }
   };
 
