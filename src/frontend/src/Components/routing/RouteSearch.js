@@ -7,7 +7,7 @@ import { memoize } from 'proxy-memoize'
 import { useSearchParams } from "react-router-dom";
 
 // Internal imports
-import { getRoute } from '../data/routes.js';
+import {getRoute, linkRoute} from '../data/routes.js';
 import { compareRouteDistance } from '../map/helpers';
 import {
   clearSearchedRoutes,
@@ -41,7 +41,8 @@ const RouteSearch = forwardRef((props, ref) => {
 
   // Redux
   const dispatch = useDispatch();
-  const { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes } = useSelector(useCallback(memoize(state => ({
+  const { favRoutes, searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes } = useSelector(useCallback(memoize(state => ({
+    favRoutes: state.user.favRoutes,
     searchLocationFrom: state.routes.searchLocationFrom,
     searchLocationTo: state.routes.searchLocationTo,
     selectedRoute: state.routes.selectedRoute,
@@ -80,6 +81,7 @@ const RouteSearch = forwardRef((props, ref) => {
     const routes = [];
     const fastestRoute = await getRoute(points);
     if (fastestRoute && fastestRoute.routeFound) {
+      linkRoute(fastestRoute, favRoutes);
       routes.push(fastestRoute);
     }
 
@@ -87,6 +89,7 @@ const RouteSearch = forwardRef((props, ref) => {
     if (shortestRoute && shortestRoute.routeFound) {
       const hasEqualDistance = compareRouteDistance(fastestRoute, shortestRoute);
       if(!hasEqualDistance){
+        linkRoute(fastestRoute, favRoutes);
         routes.push(shortestRoute);
       }
     }
