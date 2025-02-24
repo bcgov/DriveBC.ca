@@ -176,3 +176,31 @@ export const patchRoute = async (route, selectedRoute, dispatch, body) => {
     throw error;
   }
 }
+
+const compareCoordinates = (coord1, coord2) => {
+  return coord1[0] === coord2[0] && coord1[1] === coord2[1];
+}
+
+const shortenToOneDecimal = (num) => {
+  const str = num.toFixed(2); // Convert to string with two decimals
+  return str.slice(0, str.indexOf('.') + 2); // Keep only one decimal place
+}
+
+export const linkRoute = (route, favRoutes) => {
+  // route is already saved or favRoutes is not available
+  if (route.saved || !favRoutes) {
+    return;
+  }
+
+  const matchedRoute = favRoutes.find(favRoute => (
+    shortenToOneDecimal(favRoute.distance) === shortenToOneDecimal(route.distance) &&
+    compareCoordinates(route.points[0], favRoute.start_point.coordinates) &&
+    compareCoordinates(route.points[1], favRoute.end_point.coordinates)
+  ));
+
+  if (matchedRoute) {
+    route.id = matchedRoute.id;
+    route.label = matchedRoute.label;
+    route.saved = true;
+  }
+}
