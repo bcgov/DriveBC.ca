@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
+
+// Navigation
+import { useNavigate } from 'react-router-dom';
 
 // External imports
 import Container from 'react-bootstrap/Container';
@@ -6,11 +9,26 @@ import Container from 'react-bootstrap/Container';
 // Internal imports
 import Footer from '../Footer.js';
 import PageHeader from '../PageHeader';
+import { AuthContext } from "../App";
 
 // Styling
 import './AccountPage.scss';
 
 export default function AccountDeactivatedPage() {
+
+  // Context
+  const { authContext } = useContext(AuthContext);
+
+  // Navigation
+  const navigate = useNavigate();
+
+  // Redirect to home page if user is logged in
+  useEffect(() => {
+    if (authContext.username) {
+      navigate('/');
+    }
+  }, [authContext]);
+
   /* Rendering */
   return (
     <div className="account-deactivated-page">
