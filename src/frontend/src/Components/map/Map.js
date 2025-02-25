@@ -74,7 +74,6 @@ import View from 'ol/View';
 // Styling
 import './Map.scss';
 import { cameraStyles, restStopStyles } from "../data/featureStyleDefinitions";
-import trackEvent from '../shared/TrackEvent.js';
 
 export default function DriveBCMap(props) {
   /* initialization */
