@@ -74,6 +74,7 @@ import View from 'ol/View';
 // Styling
 import './Map.scss';
 import { cameraStyles, restStopStyles } from "../data/featureStyleDefinitions";
+import trackEvent from '../shared/TrackEvent.js';
 
 export default function DriveBCMap(props) {
   /* initialization */
@@ -479,16 +480,6 @@ export default function DriveBCMap(props) {
       // Do not trigger, routes will be handled by fitmap
       if (referenceFeature.get('type') !== 'route') {
         setZoomPan(mapView, 9, referenceFeature.getGeometry().flatCoordinates);
-      }
-
-      if (referenceFeature.get('type') !== 'restStop') {
-        if (referenceFeature) {
-          referenceFeature.set('clicked', true);
-          if (clickedFeature !== undefined) {
-            referenceFeature.setStyle(restStopStyles.active);
-            updateClickedFeature(referenceFeature);
-          }     
-        }
       }
 
       pointerClickHandler(
