@@ -148,6 +148,7 @@ export default function DriveBCMap(props) {
   const myLocationRef = useRef();
   const locationSet = useRef();
   const routingContainerRef = useRef();
+  const cameraLocationButtonRef = useRef();
 
   // States
   const [myLocationLoading, setMyLocationLoading] = useState(false);
@@ -524,6 +525,10 @@ export default function DriveBCMap(props) {
         'highwayCams', groupedCameras, groupedFilteredCameras, 63,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
+
+      if (cameraLocationButtonRef.current) {
+        cameraLocationButtonRef.current.click();
+      }
     }
   }, [filteredCameras]);
 
@@ -811,6 +816,7 @@ export default function DriveBCMap(props) {
 
       {isCamDetail && (
         <Button
+          ref={cameraLocationButtonRef}
           className="map-btn cam-location"
           variant="primary"
           onClick={() => {
