@@ -197,6 +197,26 @@ button.btn.open-filters {
           }
         }
 
+        &--seasonal-load {
+          .seasonal-load-link {
+            text-decoration: none;
+            color: $Type-Primary;
+            font-size: 0.875rem;
+
+            &:hover {
+              text-decoration: underline;
+              color: $Type-Primary;
+            }
+          }
+
+          svg {
+            font-size: 13px;
+            margin-left: 8px;
+            margin-right: 8px;
+          }
+  
+        }
+
         &.checked {
           .filter-item__button {
             background-color: $BC-Blue;
