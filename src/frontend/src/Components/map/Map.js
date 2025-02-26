@@ -207,7 +207,7 @@ export default function DriveBCMap(props) {
           referenceFeature.setStyle(cameraStyles.active);
           updateClickedFeature(referenceFeature);
           clearInterval(interval);
-        }     
+        }
       }
     }, 200);
 
@@ -540,7 +540,7 @@ export default function DriveBCMap(props) {
   // Events layer
   useEffect(() => {
     // Add layers if not loaded
-    if (mapLayers.current && Object.keys(mapLayers.current).length > 0 && !mapLayers.current['majorEvents']) {
+    if (events && mapLayers.current && Object.keys(mapLayers.current).length > 0 && !mapLayers.current['majorEvents']) {
       const eventFound = loadEventsLayers(events, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers);
       if (referenceData?.type === 'event' && !eventFound) {
         setStaleLinkMessage(true);

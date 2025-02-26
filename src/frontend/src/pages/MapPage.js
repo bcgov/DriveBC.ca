@@ -17,10 +17,18 @@ export default function MapPage() {
 
   document.title = 'DriveBC';
 
+  const referenceData = {
+    type: searchParams.get('type'),
+    id: searchParams.get('id'),
+    display_category: searchParams.get('display_category'),
+    searchTimestamp: searchParams.get('searchTimestamp'),
+    notification: searchParams.get('notification'),
+  };
+
   return (
     <DndProvider options={HTML5toTouch}>
       <div className="map-wrap">
-        <MapWrapper referenceData={{ type: searchParams.get('type'), id: searchParams.get('id'), display_category: searchParams.get('display_category'), searchTimestamp: searchParams.get('searchTimestamp') }} />
+        <MapWrapper referenceData={referenceData} />
       </div>
     </DndProvider>
   );

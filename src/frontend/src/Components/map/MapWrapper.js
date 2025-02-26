@@ -18,7 +18,6 @@ import PollingComponent from '../shared/PollingComponent';
 
 export default function MapWrapper(props) {
   /* Setup */
-
   // Navigation
   const [_searchParams, setSearchParams] = useSearchParams();
 
@@ -76,14 +75,13 @@ export default function MapWrapper(props) {
   }
 
   useEffect(() => {
-    selectedRouteRef.current = selectedRoute;
-
-    loadData();
-
-    if (selectedRoute) {
+    if (selectedRoute && selectedRouteRef.current) {
       setSearchParams(new URLSearchParams({ type: 'route', searchTimestamp: selectedRoute.searchTimestamp }));
     }
 
+    selectedRouteRef.current = selectedRoute;
+
+    loadData();
   }, [selectedRoute]);
 
   useEffect(() => {
@@ -94,7 +92,6 @@ export default function MapWrapper(props) {
       }
     };
   }, []);
-
 
   // Function to load all data
   const loadData = () => {

@@ -51,8 +51,8 @@ export default function DistanceLabels(props) {
     for (const feature of routeFeatures) {
       if (feature.get('searchTimestamp') === route.searchTimestamp) {
         feature.set('clicked', true);
-        updateClickedFeature(feature);
         feature.setStyle(routeStyles['active']);
+        updateClickedFeature(feature);
 
       } else {
         feature.set('clicked', false);
