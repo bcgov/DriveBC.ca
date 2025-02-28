@@ -6,6 +6,7 @@ import { get } from "./helper.js";
 import { getCookie } from "../../util";
 import { removeFavRoute, pushFavRoute, updateSingleFavRoute } from '../../slices/userSlice';
 import { updateSingleSearchedRoute, updateSelectedRoute } from "../../slices/routesSlice";
+import { compareRouteDistance } from "../map/helpers";
 
 export function getRoute(points, alternate=false) {
   const url = `${window.ROUTE_PLANNER}/directions.json`;
@@ -203,4 +204,26 @@ export const linkRoute = (route, favRoutes) => {
     route.label = matchedRoute.label;
     route.saved = true;
   }
+}
+
+export const getRoutes = async (firstPoint, secondPoint, favRoutes) => {
+  const points = firstPoint + ',' + secondPoint;
+
+  const routes = [];
+  const fastestRoute = await getRoute(points);
+  if (fastestRoute && fastestRoute.routeFound) {
+    linkRoute(fastestRoute, favRoutes);
+    routes.push(fastestRoute);
+  }
+
+  const shortestRoute = await getRoute(points, true);
+  if (shortestRoute && shortestRoute.routeFound) {
+    const hasEqualDistance = compareRouteDistance(fastestRoute, shortestRoute);
+    if(!hasEqualDistance){
+      linkRoute(fastestRoute, favRoutes);
+      routes.push(shortestRoute);
+    }
+  }
+
+  return routes;
 }
