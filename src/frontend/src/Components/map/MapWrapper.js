@@ -5,9 +5,6 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { memoize } from 'proxy-memoize';
 import { useSelector, useDispatch } from 'react-redux';
 
-// Navigation
-import { useSearchParams } from 'react-router-dom';
-
 // Components and functions
 import { NetworkError, ServerError } from '../data/helper';
 import * as dataLoaders from './dataLoaders'
@@ -18,9 +15,6 @@ import PollingComponent from '../shared/PollingComponent';
 
 export default function MapWrapper(props) {
   /* Setup */
-  // Navigation
-  const [_searchParams, setSearchParams] = useSearchParams();
-
   // Redux
   const dispatch = useDispatch();
   const {
@@ -75,10 +69,6 @@ export default function MapWrapper(props) {
   }
 
   useEffect(() => {
-    if (selectedRoute && selectedRouteRef.current) {
-      setSearchParams(new URLSearchParams({ type: 'route', searchTimestamp: selectedRoute.searchTimestamp }));
-    }
-
     selectedRouteRef.current = selectedRoute;
 
     loadData();

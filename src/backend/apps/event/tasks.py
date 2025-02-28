@@ -12,6 +12,7 @@ from apps.event.enums import (
     EVENT_TYPE,
     EVENT_UPDATE_FIELDS,
 )
+from apps.event.helpers import get_site_link
 from apps.event.models import Event
 from apps.event.serializers import EventInternalSerializer
 from apps.feed.client import FeedClient
@@ -315,7 +316,7 @@ def send_route_notifications(saved_route, updated_event_ids):
                 'from_email': settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT,
                 'display_category': event.display_category,
                 'display_category_title': event.display_category_title,
-                'fe_base_url': settings.FRONTEND_BASE_URL,
+                'site_link': get_site_link(event, saved_route),
                 'footer_message': generate_settings_message(saved_route),
             }
 

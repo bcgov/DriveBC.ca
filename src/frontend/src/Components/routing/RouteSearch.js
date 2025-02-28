@@ -7,8 +7,7 @@ import { memoize } from 'proxy-memoize'
 import { useSearchParams } from "react-router-dom";
 
 // Internal imports
-import {getRoute, linkRoute} from '../data/routes.js';
-import { compareRouteDistance } from '../map/helpers';
+import { getRoutes } from '../data/routes.js';
 import {
   clearSearchedRoutes,
   clearSelectedRoute,
@@ -72,31 +71,6 @@ const RouteSearch = forwardRef((props, ref) => {
     }
   }, [searchLocationFrom, searchLocationTo]);
 
-  const getRoutes = async () => {
-    const firstPoint = searchLocationFrom[0].geometry.coordinates.toString();
-    const secondPoint = searchLocationTo[0].geometry.coordinates.toString();
-
-    const points = firstPoint + ',' + secondPoint;
-
-    const routes = [];
-    const fastestRoute = await getRoute(points);
-    if (fastestRoute && fastestRoute.routeFound) {
-      linkRoute(fastestRoute, favRoutes);
-      routes.push(fastestRoute);
-    }
-
-    const shortestRoute = await getRoute(points, true);
-    if (shortestRoute && shortestRoute.routeFound) {
-      const hasEqualDistance = compareRouteDistance(fastestRoute, shortestRoute);
-      if(!hasEqualDistance){
-        linkRoute(fastestRoute, favRoutes);
-        routes.push(shortestRoute);
-      }
-    }
-
-    return routes;
-  }
-
   useEffect(() => {
     if (isInitialMountSpinner.current) { // Do nothing on first load
       isInitialMountSpinner.current = false;
@@ -104,7 +78,10 @@ const RouteSearch = forwardRef((props, ref) => {
     }
 
     if (showSpinner) {
-      getRoutes().then((routes) => {
+      const firstPoint = searchLocationFrom[0].geometry.coordinates.toString();
+      const secondPoint = searchLocationTo[0].geometry.coordinates.toString();
+
+      getRoutes(firstPoint, secondPoint, favRoutes).then((routes) => {
         if (routes.length) {
           dispatch(updateSelectedRoute(routes[0]));
         }

@@ -42,7 +42,7 @@ export default function DistanceLabels(props) {
   }, [selectedRoute]);
 
   /* Rendering */
-  const updateMapDisplay = (route) => {
+  const updateMapDisplay = (route, clicked=false) => {
     if (!route || !mapLayers.current.routeLayer) {
       return;
     }
@@ -52,8 +52,10 @@ export default function DistanceLabels(props) {
       if (feature.get('searchTimestamp') === route.searchTimestamp) {
         feature.set('clicked', true);
         feature.setStyle(routeStyles['active']);
-        updateClickedFeature(feature);
 
+        if (clicked) {
+          updateClickedFeature(feature);
+        }
       } else {
         feature.set('clicked', false);
         feature.setStyle(routeStyles['static']);
@@ -83,7 +85,7 @@ export default function DistanceLabels(props) {
       const elem = document.createElement('div');
 
       elem.addEventListener('click', () => {
-        updateMapDisplay(route);
+        updateMapDisplay(route, true);
       });
 
       const roundedDistance = Math.round(route.distance);
