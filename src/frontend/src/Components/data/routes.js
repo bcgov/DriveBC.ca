@@ -182,7 +182,7 @@ const compareCoordinates = (coord1, coord2) => {
   return coord1[0] === coord2[0] && coord1[1] === coord2[1];
 }
 
-const shortenToOneDecimal = (num) => {
+export const shortenToOneDecimal = (num) => {
   const str = num.toFixed(2); // Convert to string with two decimals
   return str.slice(0, str.indexOf('.') + 2); // Keep only one decimal place
 }

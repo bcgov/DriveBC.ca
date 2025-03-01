@@ -7,14 +7,14 @@ import { memoize } from 'proxy-memoize'
 import { useSearchParams } from "react-router-dom";
 
 // Internal imports
-import { getRoutes } from '../data/routes.js';
+import { getRoutes, shortenToOneDecimal } from '../data/routes.js';
 import {
   clearSearchedRoutes,
   clearSelectedRoute,
   updateSelectedRoute,
   updateSearchedRoutes,
   updateSearchLocationFrom,
-  updateSearchLocationTo
+  updateSearchLocationTo, clearRouteDistance
 } from '../../slices/routesSlice'
 import { removeOverlays } from "../map/helpers";
 import LocationSearch from './LocationSearch.js';
@@ -40,12 +40,13 @@ const RouteSearch = forwardRef((props, ref) => {
 
   // Redux
   const dispatch = useDispatch();
-  const { favRoutes, searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes } = useSelector(useCallback(memoize(state => ({
+  const { favRoutes, searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes, routeDistance } = useSelector(useCallback(memoize(state => ({
     favRoutes: state.user.favRoutes,
     searchLocationFrom: state.routes.searchLocationFrom,
     searchLocationTo: state.routes.searchLocationTo,
     selectedRoute: state.routes.selectedRoute,
-    searchedRoutes: state.routes.searchedRoutes
+    searchedRoutes: state.routes.searchedRoutes,
+    routeDistance: state.routes.routeDistance
   }))));
 
   const validSearch = searchLocationFrom && !!searchLocationFrom.length && searchLocationTo && !!searchLocationTo.length;
@@ -82,10 +83,16 @@ const RouteSearch = forwardRef((props, ref) => {
       const secondPoint = searchLocationTo[0].geometry.coordinates.toString();
 
       getRoutes(firstPoint, secondPoint, favRoutes).then((routes) => {
-        if (routes.length) {
+        // Select shortest route if the distance matches
+        if (routes.length > 1 && shortenToOneDecimal(parseFloat(routeDistance)) === shortenToOneDecimal(routes[1].distance)) {
+          dispatch(updateSelectedRoute(routes[1]));
+
+        // Select fastest route by default
+        } else {
           dispatch(updateSelectedRoute(routes[0]));
         }
 
+        dispatch(clearRouteDistance());
         dispatch(updateSearchedRoutes(routes));
         onShowSpinnerChange(false);
       });
