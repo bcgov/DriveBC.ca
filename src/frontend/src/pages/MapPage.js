@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 
 // Redux
 import { useDispatch } from "react-redux";
-import { updateSearchLocationFrom, updateSearchLocationTo, updateSelectedRoute } from "../slices";
+import { updateRouteDistance, updateSearchLocationFrom, updateSearchLocationTo } from "../slices";
 
 // External Imports
 import { DndProvider } from 'react-dnd-multi-backend';
@@ -31,7 +31,6 @@ export default function MapPage() {
     id: searchParams.get('id'),
     display_category: searchParams.get('display_category'),
     searchTimestamp: searchParams.get('searchTimestamp'),
-    route_distance: searchParams.get('route_distance'),
   };
 
   // Effects
@@ -47,9 +46,12 @@ export default function MapPage() {
       route_start_point: searchParams.get('route_start_point'),
       route_end: searchParams.get('route_end'),
       route_end_point: searchParams.get('route_end_point'),
+      route_distance: searchParams.get('route_distance'),
     }
 
-    if (routeData.route_start) {
+    if (routeData.route_distance) {
+      dispatch(updateRouteDistance(routeData.route_distance));
+
       // Start point
       const route_start_coords = [
         parseFloat(routeData.route_start_point.split(',')[0]),

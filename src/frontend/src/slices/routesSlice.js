@@ -7,6 +7,7 @@ export const routesSlice = createSlice({
     searchLocationTo: [],
     selectedRoute: null,
     searchedRoutes: null,
+    routeDistance: null, // for matching route distance from email notification
   },
   reducers: {
     clearSelectedRoute: (state, action) => {
@@ -40,13 +41,20 @@ export const routesSlice = createSlice({
       if (!state.searchLocationFrom.length || state.searchLocationFrom[0].label === "Current location")
         state.searchLocationFrom = action.payload;
     },
+    clearRouteDistance: (state, action) => {
+      state.routeDistance = null;
+    },
+    updateRouteDistance: (state, action) => {
+      state.routeDistance = action.payload;
+    },
   },
 });
 
 export const {
   clearSelectedRoute, updateSelectedRoute, // selected route
   updateSearchLocationFrom, updateSearchLocationTo, updateSearchLocationFromWithMyLocation, // search locations
-  updateSearchedRoutes, updateSingleSearchedRoute, clearSearchedRoutes // searched routes
+  updateSearchedRoutes, updateSingleSearchedRoute, clearSearchedRoutes, // searched routes
+  updateRouteDistance, clearRouteDistance
 } = routesSlice.actions;
 
 export default routesSlice.reducer;

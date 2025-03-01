@@ -72,6 +72,8 @@ export default function MapWrapper(props) {
     selectedRouteRef.current = selectedRoute;
 
     loadData();
+
+    console.log(selectedRoute);
   }, [selectedRoute]);
 
   useEffect(() => {
@@ -83,26 +85,32 @@ export default function MapWrapper(props) {
     };
   }, []);
 
+  const resetWorker = () => {
+    // Terminate the current worker if it exists
+    if (workerRef.current) {
+      workerRef.current.terminate();
+    }
+
+    workerRef.current = new Worker(new URL('./filterRouteWorker.js', import.meta.url));
+
+    // Set up event listener for messages from the worker
+    workerRef.current.onmessage = function (event) {
+      const { data, filteredData, route, action } = event.data;
+
+      dispatch(
+        slices[action]({
+          list: data,
+          filteredList: filteredData,
+          filterPoints: route ? route.points : null,
+          timeStamp: new Date().getTime()
+        })
+      );
+    };
+  }
+
   // Function to load all data
   const loadData = () => {
-    // Create a new worker if it doesn't exist
-    if (!workerRef.current) {
-      workerRef.current = new Worker(new URL('./filterRouteWorker.js', import.meta.url));
-
-      // Set up event listener for messages from the worker
-      workerRef.current.onmessage = function (event) {
-        const { data, filteredData, route, action } = event.data;
-
-        dispatch(
-          slices[action]({
-            list: data,
-            filteredList: filteredData,
-            filterPoints: route ? route.points : null,
-            timeStamp: new Date().getTime()
-          })
-        );
-      };
-    }
+    resetWorker();
 
     const routeData = selectedRouteRef.current && selectedRouteRef.current.routeFound ? selectedRouteRef.current : null;
 

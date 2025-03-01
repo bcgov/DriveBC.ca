@@ -8,7 +8,7 @@ import { Route, Routes } from 'react-router-dom';
 import { memoize } from "proxy-memoize";
 import { useDispatch, useSelector } from 'react-redux';
 import { updateFavCams, updateFavRoutes } from './slices/userSlice';
-import { updateSearchedRoutes, updateSelectedRoute } from "./slices";
+import { updateSearchedRoutes } from "./slices";
 
 // External imports
 // https://github.com/dai-shi/proxy-memoize?tab=readme-ov-file#usage-with-immer
@@ -188,7 +188,6 @@ function App() {
     // link existing selected route with fav routes
     if (selectedRoute) {
       linkRoute(selectedRoute, favRoutesData);
-      dispatch(updateSelectedRoute(selectedRoute));
     }
 
     // link existing searched routes with fav routes

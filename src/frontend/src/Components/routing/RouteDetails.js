@@ -134,40 +134,46 @@ export default function RouteDetails(props) {
     }
   }
 
+  const resetWorker = () => {
+    // Terminate the current worker if it exists
+    if (workerRef.current) {
+      workerRef.current.terminate();
+    }
+
+    workerRef.current = new Worker(new URL('../map/filterRouteWorker.js', import.meta.url));
+
+    // Set up event listener for messages from the worker
+    workerRef.current.onmessage = function (event) {
+      const { data, filteredData, route, action } = event.data;
+
+      // Data specific to the RouteDetails component
+      if (action === 'setEventCount') {
+        setEventCount(getEventCounts(filteredData));
+
+      } else if (action === 'setFerryCount') {
+        setFerryCount(filteredData.length);
+
+      // Data to be updated via dispatch
+      } else if (action === 'setFilteredFavCams') {
+        setFilteredFavCams(filteredData);
+
+      // Data to be updated via dispatch
+      } else {
+        dispatch(
+          slices[action]({
+            list: data,
+            filteredList: filteredData,
+            filterPoints: route ? route.points : null,
+            timeStamp: new Date().getTime()
+          })
+        );
+      }
+    };
+  }
+
   // Effects
   useEffect(() => {
-    // Create a new worker if it doesn't exist
-    if (!workerRef.current) {
-      workerRef.current = new Worker(new URL('../map/filterRouteWorker.js', import.meta.url));
-
-      // Set up event listener for messages from the worker
-      workerRef.current.onmessage = function (event) {
-        const { data, filteredData, route, action } = event.data;
-
-        // Data specific to the RouteDetails component
-        if (action === 'setEventCount') {
-          setEventCount(getEventCounts(filteredData));
-
-        } else if (action === 'setFerryCount') {
-          setFerryCount(filteredData.length);
-
-        // Data to be updated via dispatch
-        } else if (action === 'setFilteredFavCams') {
-          setFilteredFavCams(filteredData);
-
-        // Data to be updated via dispatch
-        } else {
-          dispatch(
-            slices[action]({
-              list: data,
-              filteredList: filteredData,
-              filterPoints: route ? route.points : null,
-              timeStamp: new Date().getTime()
-            })
-          );
-        }
-      };
-    }
+    resetWorker();
 
     const routeData = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
     const displayError = () => {};
