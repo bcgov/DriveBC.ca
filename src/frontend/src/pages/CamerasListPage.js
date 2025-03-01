@@ -27,7 +27,6 @@ import Container from 'react-bootstrap/Container';
 // Internal Imports
 import { CMSContext } from '../App';
 import {
-  compareRoutePoints,
   filterByRoute
 } from '../Components/map/helpers';
 import { getAdvisories } from '../Components/data/advisories';
@@ -61,11 +60,10 @@ export default function CamerasListPage() {
 
   // Redux
   const dispatch = useDispatch();
-  const { advisories, cameras, filteredCameras, camFilterPoints, selectedRoute } = useSelector(useCallback(memoize(state => ({
+  const { advisories, cameras, filteredCameras, selectedRoute } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
     cameras: state.feeds.cameras.list,
     filteredCameras: state.feeds.cameras.filteredList,
-    camFilterPoints: state.feeds.cameras.filterPoints,
     selectedRoute: state.routes.selectedRoute
   }))));
 
@@ -114,10 +112,8 @@ export default function CamerasListPage() {
 
   // Data functions
   const getCamerasData = async route => {
-    const routePoints = route ? route.points : null;
-
     // Load if filtered cams don't exist or route doesn't match
-    if (!filteredCameras || !compareRoutePoints(routePoints, camFilterPoints)) {
+    if (!filteredCameras) {
       // Fetch data
       const camData = await getCameras().catch((error) => displayError(error));
 
@@ -128,7 +124,6 @@ export default function CamerasListPage() {
         updateCameras({
           list: camData,
           filteredList: filteredCamData,
-          filterPoints: route ? route.points : null,
           timeStamp: new Date().getTime()
         })
       );
@@ -189,8 +184,8 @@ export default function CamerasListPage() {
 
   // To get the updated processed cameras during search when the potential matches not in the original processed cameras
   const getUpdatedProcessedCameras = (cameras, searchFn) => {
-    const result = [];  
-    const matchedCams = combinedCameras.filter((pc) => searchFn(pc, searchText));      
+    const result = [];
+    const matchedCams = combinedCameras.filter((pc) => searchFn(pc, searchText));
     const seenGroups = new Set();
 
     // Add the matched cameras to the result list and make sure there is only one camera from each group
@@ -202,7 +197,7 @@ export default function CamerasListPage() {
     });
 
     return result;
-  } 
+  }
 
   // Effects
   useEffect(() => {
@@ -258,7 +253,7 @@ export default function CamerasListPage() {
       const updatedProcessedCameras = getUpdatedProcessedCameras(combinedCameras, searchFn);
       const filteredCams = updatedProcessedCameras.filter((pc) => searchFn(pc, searchText));
       setDisplayedCameras(filteredCams);
-    }    
+    }
 
   }, [searchText, processedCameras]);
 
@@ -294,7 +289,7 @@ export default function CamerasListPage() {
 
   // Handle close of highway filters overlay
   const handleHwyFiltersClose = () => {
-    setOpenHwyFiltersOverlay(!openHwyFiltersOverlay); 
+    setOpenHwyFiltersOverlay(!openHwyFiltersOverlay);
     setShowHwyFilters(!showHwyFilters);
   }
 
@@ -335,7 +330,7 @@ export default function CamerasListPage() {
                 </Button>
               }
 
-              {xXlargeScreen && 
+              {xXlargeScreen &&
               <div className="camSearch-container">
                 <AsyncTypeahead
                   id="camera-name-search"
@@ -364,7 +359,7 @@ export default function CamerasListPage() {
                 </AsyncTypeahead>
               </div>
               }
-              
+
               <div className="tools-container">
                 {xXlargeScreen && <span className="filters-text">Filters: </span>}
                 {!xXlargeScreen &&
@@ -376,7 +371,7 @@ export default function CamerasListPage() {
                     <FontAwesomeIcon icon={faMagnifyingGlass} />
                   </Button>
                 }
-                
+
                 <Button
                   variant="outline-primary"
                   className={'filter-option-btn highway-filter-btn' + (camsContext.highwayFilterKey ? ' filtered' : '') + (showHwyFilters ? ' active' : '')}
@@ -413,8 +408,8 @@ export default function CamerasListPage() {
                 }
               </div>
             </div>
-            
-            {!xXlargeScreen && 
+
+            {!xXlargeScreen &&
             <div className={'camSearch-container camSearch-container--mobile' + (openCameraSearch ? ' open' : '')}>
               <AsyncTypeahead
                 id="camera-name-search"

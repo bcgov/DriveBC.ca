@@ -1,15 +1,9 @@
-import { compareRoutePoints } from '../helpers/spatial';
 import { getFerries } from '../../data/ferries';
 
-export const loadFerries = async (route, ferries, filteredFerries, ferryFilterPoints, dispatch, displayError, worker) => {
-  const routePoints = route ? route.points : null;
+export const loadFerries = async (route, ferries, dispatch, displayError, worker) => {
+  // Fetch data if it doesn't already exist
+  const ferryData = ferries ? ferries : await getFerries().catch((error) => displayError(error));
 
-  // Load if filtered objs don't exist or route doesn't match
-  if (!filteredFerries || !compareRoutePoints(routePoints, ferryFilterPoints)) {
-    // Fetch data if it doesn't already exist
-    const ferryData = ferries ? ferries : await getFerries().catch((error) => displayError(error));
-
-    // Trigger filter worker
-    worker.postMessage({data: ferryData, route: (route && route.routeFound ? route : null), action: 'updateFerries'});
-  }
+  // Trigger filter worker
+  worker.postMessage({data: ferryData, route: (route && route.routeFound ? route : null), action: 'updateFerries'});
 };
