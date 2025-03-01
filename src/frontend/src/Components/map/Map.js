@@ -80,7 +80,8 @@ export default function DriveBCMap(props) {
   // Props
   const {
     mapProps: {referenceData, isCamDetail, mapViewRoute, loadCamDetails},
-    showNetworkError, showServerError, trackedEventsRef
+    showNetworkError, showServerError, trackedEventsRef,
+    loadingLayers, setLoadingLayers, getInitialLoadingLayers
   } = props;
 
   // Navigation
@@ -163,18 +164,6 @@ export default function DriveBCMap(props) {
     advisories: null
   });
 
-  const getInitialLoadingLayers = () => {
-    return {
-      cameras: mapContext.visible_layers.highwayCams,
-      events: mapContext.visible_layers.closures || mapContext.visible_layers.majorEvents ||
-        mapContext.visible_layers.minorEvents || mapContext.visible_layers.roadConditions ||
-        mapContext.visible_layers.futureEvents || mapContext.visible_layers.chainUps,
-      ferries: mapContext.visible_layers.inlandFerries,
-      weathers: mapContext.visible_layers.weather,
-      restStops: mapContext.visible_layers.restStops
-    };
-  };
-  const [loadingLayers, setLoadingLayers] = useState(getInitialLoadingLayers());
   const [showSpinner, setShowSpinner] = useState(false);
 
   // Workaround for OL handlers not being able to read states

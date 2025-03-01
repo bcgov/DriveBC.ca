@@ -175,6 +175,11 @@ export default function RouteDetails(props) {
   useEffect(() => {
     resetWorker();
 
+    // Do not load in map
+    if (isPanel) {
+      return;
+    }
+
     const routeData = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
     const displayError = () => {};
 
