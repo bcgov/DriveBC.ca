@@ -22,15 +22,15 @@ export default function MapWrapper(props) {
   const dispatch = useDispatch();
   const {
     feeds: {
-      cameras: { list: cameras, filterPoints: camFilterPoints },
-      events: { list: events, filterPoints: eventFilterPoints },
-      ferries: { list: ferries, filterPoints: ferryFilterPoints },
-      weather: { list: currentWeathers, filterPoints: currentWeatherFilterPoints },
-      regional: { list: regionalWeathers, filterPoints: regionalWeatherFilterPoints },
-      hef: { list: hef, filteredList: filteredHef },
-      restStops: { list: restStops, filterPoints: restStopFilterPoints },
+      cameras: { list: cameras },
+      events: { list: events },
+      ferries: { list: ferries },
+      weather: { list: currentWeathers },
+      regional: { list: regionalWeathers },
+      hef: { list: hef },
+      restStops: { list: restStops },
     },
-    advisories: { list: advisories, filterPoints: advisoryFilterPoints },
+    advisories: { list: advisories },
     routes: { selectedRoute },
 
   } = useSelector(
@@ -113,7 +113,6 @@ export default function MapWrapper(props) {
         slices[action]({
           list: data,
           filteredList: filteredData,
-          filterPoints: route ? route.points : null,
           timeStamp: new Date().getTime()
         })
       );
@@ -134,14 +133,14 @@ export default function MapWrapper(props) {
       restStops: true
     });
 
-    dataLoaders.loadCameras(routeData, cameras, null, camFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadEvents(routeData, events, null, eventFilterPoints, dispatch, displayError, workerRef.current, isInitialLoad.current, trackedEventsRef);
-    dataLoaders.loadFerries(routeData, ferries, null, ferryFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadCurrentWeather(routeData, currentWeathers, null, currentWeatherFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadRegionalWeather(routeData, regionalWeathers, null, regionalWeatherFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadHef(routeData, hef, filteredHef, null, dispatch, displayError, workerRef.current);
-    dataLoaders.loadRestStops(routeData, restStops, null, restStopFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadAdvisories(routeData, advisories, null, advisoryFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadCameras(routeData, cameras, dispatch, displayError, workerRef.current);
+    dataLoaders.loadEvents(routeData, events, dispatch, displayError, workerRef.current, isInitialLoad.current, trackedEventsRef);
+    dataLoaders.loadFerries(routeData, ferries, dispatch, displayError, workerRef.current);
+    dataLoaders.loadCurrentWeather(routeData, currentWeathers, dispatch, displayError, workerRef.current);
+    dataLoaders.loadRegionalWeather(routeData, regionalWeathers, dispatch, displayError, workerRef.current);
+    dataLoaders.loadHef(routeData, hef, dispatch, displayError, workerRef.current);
+    dataLoaders.loadRestStops(routeData, restStops, dispatch, displayError, workerRef.current);
+    dataLoaders.loadAdvisories(routeData, advisories, dispatch, displayError, workerRef.current);
 
     isInitialLoad.current = false;
   };

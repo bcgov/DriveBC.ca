@@ -6,7 +6,7 @@ const loadEventDetail = async (event_id, displayError) => {
 }
 
 export const loadEvents = async (
-  route, events, filteredEvents, eventFilterPoints, dispatch, displayError,
+  route, events, dispatch, displayError,
   worker, isInitialLoad = true, trackedEventsRef
 ) => {
   // Fetch data
