@@ -28,6 +28,26 @@
 
       &__tools {
         padding: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .view-details {
+          font-size: 0.875rem;
+          font-weight: 700;
+          color: $Type-Link;
+          margin-bottom: 0;
+          cursor: pointer;
+
+          &:hover {
+            text-decoration: underline;
+          }
+
+          svg {
+            margin-left: 8px;
+          }
+        }
+
         .favourite-btn {
           svg {
             margin-right: 8px;
