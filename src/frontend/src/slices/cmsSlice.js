@@ -4,7 +4,6 @@ export const cmsInitialState = {
   list: null,
   timeStamp: null,
   filteredList: null,
-  filterPoints: null,
 }
 
 export const cmsSlice = createSlice({

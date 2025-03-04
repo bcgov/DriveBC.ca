@@ -3,7 +3,6 @@ import { createSlice } from '@reduxjs/toolkit';
 export const feedsInitialState = {
   list: null,
   filteredList: null,
-  filterPoints: null,
 }
 
 export const feedsSlice = createSlice({

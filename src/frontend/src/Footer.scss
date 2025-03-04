@@ -86,10 +86,6 @@
             width: unset;
             margin-bottom: 16px;
 
-            @media (min-width: 992px) {
-              width: 160px;
-            }
-
             a {
               text-decoration: none;
               color: $Type-Secondary;

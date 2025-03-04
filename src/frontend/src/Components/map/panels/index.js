@@ -11,6 +11,7 @@ import RegionalWeatherPanel from './weather/RegionalWeatherPanel';
 import HefPanel from './weather/HefPanel';
 import RestStopPanel from './RestStopPanel';
 import RouteDetailsPanel from './RouteDetailsPanel';
+import BorderCrossingPanel from './BorderCrossingPanel';
 
 // Styling
 import './index.scss';
@@ -40,7 +41,7 @@ export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScre
       case 'restStop':
         return <RestStopPanel feature={clickedFeature} />;
       case 'route':
-        return <RouteDetailsPanel />;
+        return <BorderCrossingPanel />;
     }
   }
 }

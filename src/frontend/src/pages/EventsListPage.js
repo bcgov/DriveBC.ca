@@ -94,7 +94,6 @@ export default function EventsListPage() {
     advisories: state.cms.advisories.list,
     events: state.feeds.events.list,
     filteredEvents: state.feeds.events.filteredList,
-    eventFilterPoints: state.feeds.events.filterPoints,
     selectedRoute: state.routes.selectedRoute
   }))));
 
@@ -333,7 +332,6 @@ export default function EventsListPage() {
           slices[action]({
             list: data,
             filteredList: filteredData,
-            filterPoints: route ? route.points : null,
             timeStamp: new Date().getTime()
           })
         );

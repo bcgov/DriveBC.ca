@@ -12,7 +12,8 @@ import { updateMapState } from './mapSlice';
 import {
   clearSelectedRoute, updateSelectedRoute, // selected route
   updateSearchLocationFrom, updateSearchLocationTo, updateSearchLocationFromWithMyLocation, // search locations
-  updateSearchedRoutes, updateSingleSearchedRoute, clearSearchedRoutes // searched routes
+  updateSearchedRoutes, updateSingleSearchedRoute, clearSearchedRoutes, // searched routes
+  updateRouteDistance, clearRouteDistance
 } from './routesSlice';
 import {
   resetFavLists, // General
@@ -42,6 +43,7 @@ export {
   clearSelectedRoute, updateSelectedRoute, // selected route
   updateSearchLocationFrom, updateSearchLocationTo, updateSearchLocationFromWithMyLocation, // search locations
   updateSearchedRoutes, updateSingleSearchedRoute, clearSearchedRoutes, // searched routes
+  updateRouteDistance, clearRouteDistance,
 
   // userSlice
   resetFavLists, // General

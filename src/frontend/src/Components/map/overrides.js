@@ -373,6 +373,7 @@ export default {
     },
   },
   "TRANSPORTATION/DRA/Large/Resource Roads/Fill": {
+    "minzoom": "14",
     paint: {
       "line-color": "#d9dfe4"
     },
@@ -414,6 +415,28 @@ export default {
     },
 } ,
 
+// trail demographic
+"TRANSPORTATION/DRA/Large/Trail Demographic/Line": {
+  layout: {
+    "visibility": "none"
+  },
+},
+
+"TRANSPORTATION/DRA/Large/Trail Demographic/Dash": {
+  layout: {
+    "visibility": "none"
+  },
+},
+
+"TRANSPORTATION/DRA/Road Names/label/Trail": {
+  layout: {
+    "visibility": "none"
+  },
+},
+
+"TRANSPORTATION/DRA/Large/Resource Roads/Line": {
+  "minzoom": "14" 
+},
 
   merge,
 };

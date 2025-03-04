@@ -9,7 +9,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { routeStyles } from "../../data/featureStyleDefinitions";
 
-export function getRouteLayer(routeData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers, preview=false) {
+export function getRouteLayer(routeData, projectionCode, mapContext, selectedRoute, updateReferenceFeature, setLoadingLayers, preview=false) {
   return new VectorLayer({
     classname: 'route',
     visible: true,
@@ -40,9 +40,9 @@ export function getRouteLayer(routeData, projectionCode, mapContext, referenceDa
           const feature = getRouteFeature(route);
 
           if (!preview &&  // set first route if there's no feature specified in the URL
-            ((!referenceData.type && i === 0) ||
+            ((!selectedRoute && i === 0) ||
             // set target route if specified in URL
-            (referenceData.type === 'route' && referenceData.searchTimestamp === feature.getProperties().searchTimestamp))
+            (selectedRoute.distance === feature.getProperties().distance))
           ) {
             updateReferenceFeature(feature);
           }

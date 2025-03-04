@@ -7,15 +7,14 @@ import { memoize } from 'proxy-memoize'
 import { useSearchParams } from "react-router-dom";
 
 // Internal imports
-import { getRoute } from '../data/routes.js';
-import { compareRouteDistance } from '../map/helpers';
+import { getRoutes, shortenToOneDecimal } from '../data/routes.js';
 import {
   clearSearchedRoutes,
   clearSelectedRoute,
   updateSelectedRoute,
   updateSearchedRoutes,
   updateSearchLocationFrom,
-  updateSearchLocationTo
+  updateSearchLocationTo, clearRouteDistance
 } from '../../slices/routesSlice'
 import { removeOverlays } from "../map/helpers";
 import LocationSearch from './LocationSearch.js';
@@ -41,11 +40,13 @@ const RouteSearch = forwardRef((props, ref) => {
 
   // Redux
   const dispatch = useDispatch();
-  const { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes } = useSelector(useCallback(memoize(state => ({
+  const { favRoutes, searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes, routeDistance } = useSelector(useCallback(memoize(state => ({
+    favRoutes: state.user.favRoutes,
     searchLocationFrom: state.routes.searchLocationFrom,
     searchLocationTo: state.routes.searchLocationTo,
     selectedRoute: state.routes.selectedRoute,
-    searchedRoutes: state.routes.searchedRoutes
+    searchedRoutes: state.routes.searchedRoutes,
+    routeDistance: state.routes.routeDistance
   }))));
 
   const validSearch = searchLocationFrom && !!searchLocationFrom.length && searchLocationTo && !!searchLocationTo.length;
@@ -71,29 +72,6 @@ const RouteSearch = forwardRef((props, ref) => {
     }
   }, [searchLocationFrom, searchLocationTo]);
 
-  const getRoutes = async () => {
-    const firstPoint = searchLocationFrom[0].geometry.coordinates.toString();
-    const secondPoint = searchLocationTo[0].geometry.coordinates.toString();
-
-    const points = firstPoint + ',' + secondPoint;
-
-    const routes = [];
-    const fastestRoute = await getRoute(points);
-    if (fastestRoute && fastestRoute.routeFound) {
-      routes.push(fastestRoute);
-    }
-
-    const shortestRoute = await getRoute(points, true);
-    if (shortestRoute && shortestRoute.routeFound) {
-      const hasEqualDistance = compareRouteDistance(fastestRoute, shortestRoute);
-      if(!hasEqualDistance){
-        routes.push(shortestRoute);
-      }
-    }
-
-    return routes;
-  }
-
   useEffect(() => {
     if (isInitialMountSpinner.current) { // Do nothing on first load
       isInitialMountSpinner.current = false;
@@ -101,11 +79,20 @@ const RouteSearch = forwardRef((props, ref) => {
     }
 
     if (showSpinner) {
-      getRoutes().then((routes) => {
-        if (routes.length) {
+      const firstPoint = searchLocationFrom[0].geometry.coordinates.toString();
+      const secondPoint = searchLocationTo[0].geometry.coordinates.toString();
+
+      getRoutes(firstPoint, secondPoint, favRoutes).then((routes) => {
+        // Select shortest route if the distance matches
+        if (routes.length > 1 && shortenToOneDecimal(parseFloat(routeDistance)) === shortenToOneDecimal(routes[1].distance)) {
+          dispatch(updateSelectedRoute(routes[1]));
+
+        // Select fastest route by default
+        } else {
           dispatch(updateSelectedRoute(routes[0]));
         }
 
+        dispatch(clearRouteDistance());
         dispatch(updateSearchedRoutes(routes));
         onShowSpinnerChange(false);
       });
