@@ -525,12 +525,22 @@ export default function DriveBCMap(props) {
         'highwayCams', groupedCameras, groupedFilteredCameras, 63,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
-
-      if (cameraLocationButtonRef.current) {
-        cameraLocationButtonRef.current.click();
-      }
     }
   }, [filteredCameras]);
+
+
+  // Simulate camera location clicked on details page
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isCamDetail && cameraLocationButtonRef.current) {
+        cameraLocationButtonRef.current.click();
+        clearInterval(interval);
+      }
+    }, 1000);
+  
+    return () => clearInterval(interval);
+  }, []);
+  
 
   // Events layer
   useEffect(() => {
