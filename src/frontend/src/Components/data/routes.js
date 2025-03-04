@@ -6,6 +6,7 @@ import { get } from "./helper.js";
 import { getCookie } from "../../util";
 import { removeFavRoute, pushFavRoute, updateSingleFavRoute } from '../../slices/userSlice';
 import { updateSingleSearchedRoute, updateSelectedRoute } from "../../slices/routesSlice";
+import { compareRouteDistance } from "../map/helpers";
 
 export function getRoute(points, alternate=false) {
   const url = `${window.ROUTE_PLANNER}/directions.json`;
@@ -175,4 +176,54 @@ export const patchRoute = async (route, selectedRoute, dispatch, body) => {
     console.error('Error saving the camera:', error);
     throw error;
   }
+}
+
+const compareCoordinates = (coord1, coord2) => {
+  return coord1[0] === coord2[0] && coord1[1] === coord2[1];
+}
+
+export const shortenToOneDecimal = (num) => {
+  const str = num.toFixed(2); // Convert to string with two decimals
+  return str.slice(0, str.indexOf('.') + 2); // Keep only one decimal place
+}
+
+export const linkRoute = (route, favRoutes) => {
+  // route is already saved or favRoutes is not available
+  if (route.saved || !favRoutes) {
+    return;
+  }
+
+  const matchedRoute = favRoutes.find(favRoute => (
+    shortenToOneDecimal(favRoute.distance) === shortenToOneDecimal(route.distance) &&
+    compareCoordinates(route.points[0], favRoute.start_point.coordinates) &&
+    compareCoordinates(route.points[1], favRoute.end_point.coordinates)
+  ));
+
+  if (matchedRoute) {
+    route.id = matchedRoute.id;
+    route.label = matchedRoute.label;
+    route.saved = true;
+  }
+}
+
+export const getRoutes = async (firstPoint, secondPoint, favRoutes) => {
+  const points = firstPoint + ',' + secondPoint;
+
+  const routes = [];
+  const fastestRoute = await getRoute(points);
+  if (fastestRoute && fastestRoute.routeFound) {
+    linkRoute(fastestRoute, favRoutes);
+    routes.push(fastestRoute);
+  }
+
+  const shortestRoute = await getRoute(points, true);
+  if (shortestRoute && shortestRoute.routeFound) {
+    const hasEqualDistance = compareRouteDistance(fastestRoute, shortestRoute);
+    if(!hasEqualDistance){
+      linkRoute(fastestRoute, favRoutes);
+      routes.push(shortestRoute);
+    }
+  }
+
+  return routes;
 }

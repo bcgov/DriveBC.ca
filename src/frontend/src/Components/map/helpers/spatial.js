@@ -119,27 +119,6 @@ export const filterByRoute = (data, route, extraToleranceMeters, populateProject
   return intersectingData;
 }
 
-export const compareRoutePoints = (routePoints, savedPoints) => {
-  // Both are arrays of points, compare each point
-  if (!!routePoints && !!savedPoints) {
-    for (let i=0; i < routePoints.length; i++) {
-      const rPoint = turf.point(routePoints[i]);
-      const sPoint = turf.point(savedPoints[i]);
-
-      // Return false if one of the points aren't equal
-      if (!turf.booleanEqual(rPoint, sPoint)) {
-        return false;
-      }
-    }
-
-    // Return true if all points are equal
-    return true;
-  }
-
-  // Direct comparison if not both of them are arrays of points
-  return routePoints == savedPoints;
-}
-
 export const compareRouteDistance = (route1, route2) => {
   if (!!route1 && !!route2) {
     return Math.abs(route1.distance - route2.distance) < 1;

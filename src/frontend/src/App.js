@@ -1,12 +1,14 @@
 // React
-import React, { createContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 
 // Navigation
 import { Route, Routes } from 'react-router-dom';
 
 // Redux
-import { useDispatch } from 'react-redux';
+import { memoize } from "proxy-memoize";
+import { useDispatch, useSelector } from 'react-redux';
 import { updateFavCams, updateFavRoutes } from './slices/userSlice';
+import { updateSearchedRoutes } from "./slices";
 
 // External imports
 // https://github.com/dai-shi/proxy-memoize?tab=readme-ov-file#usage-with-immer
@@ -19,7 +21,7 @@ import './App.scss';
 
 // Internal imports
 import { getFavoriteCameraIds } from './Components/data/webcams';
-import { getFavoriteRoutes } from './Components/data/routes';
+import { getFavoriteRoutes, linkRoute } from './Components/data/routes';
 import AccountPage from './pages/AccountPage';
 import AccountDeactivatedPage from "./pages/AccountDeactivatedPage";
 import AdvisoriesListPage from './pages/AdvisoriesListPage';
@@ -60,6 +62,10 @@ function App() {
   /* Setup */
   // Redux
   const dispatch = useDispatch();
+  const { selectedRoute, searchedRoutes } = useSelector(useCallback(memoize(state => ({
+    selectedRoute: state.routes.selectedRoute,
+    searchedRoutes: state.routes.searchedRoutes
+  }))));
 
   // Refs
   const isInitialAlertMount = useRef(true);
@@ -178,6 +184,20 @@ function App() {
   const initRoutes = async () => {
     const favRoutesData = await getFavoriteRoutes();
     dispatch(updateFavRoutes(favRoutesData));
+
+    // link existing selected route with fav routes
+    if (selectedRoute) {
+      linkRoute(selectedRoute, favRoutesData);
+    }
+
+    // link existing searched routes with fav routes
+    if (searchedRoutes) {
+      searchedRoutes.forEach((route) => {
+        linkRoute(route, favRoutesData);
+      });
+
+      dispatch(updateSearchedRoutes(searchedRoutes));
+    }
   }
 
   /* Rendering */

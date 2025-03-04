@@ -80,7 +80,8 @@ export default function DriveBCMap(props) {
   // Props
   const {
     mapProps: {referenceData, isCamDetail, mapViewRoute, loadCamDetails},
-    showNetworkError, showServerError, trackedEventsRef
+    showNetworkError, showServerError, trackedEventsRef,
+    loadingLayers, setLoadingLayers, getInitialLoadingLayers
   } = props;
 
   // Navigation
@@ -164,18 +165,6 @@ export default function DriveBCMap(props) {
     advisories: null
   });
 
-  const getInitialLoadingLayers = () => {
-    return {
-      cameras: mapContext.visible_layers.highwayCams,
-      events: mapContext.visible_layers.closures || mapContext.visible_layers.majorEvents ||
-        mapContext.visible_layers.minorEvents || mapContext.visible_layers.roadConditions ||
-        mapContext.visible_layers.futureEvents || mapContext.visible_layers.chainUps,
-      ferries: mapContext.visible_layers.inlandFerries,
-      weathers: mapContext.visible_layers.weather,
-      restStops: mapContext.visible_layers.restStops
-    };
-  };
-  const [loadingLayers, setLoadingLayers] = useState(getInitialLoadingLayers());
   const [showSpinner, setShowSpinner] = useState(false);
 
   // Workaround for OL handlers not being able to read states
@@ -202,13 +191,13 @@ export default function DriveBCMap(props) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (referenceFeature) {
+      if (referenceFeature && isCamDetail) {
         referenceFeature.set('clicked', true);
         if (clickedFeature !== undefined) {
           referenceFeature.setStyle(cameraStyles.active);
           updateClickedFeature(referenceFeature);
           clearInterval(interval);
-        }     
+        }
       }
     }, 200);
 
@@ -505,7 +494,7 @@ export default function DriveBCMap(props) {
     const routesData = searchedRoutes ? searchedRoutes : null;
     loadLayer(
       mapLayers, mapRef, mapContext,
-      'routeLayer', routesData, routesData, 6, referenceData, updateReferenceFeature
+      'routeLayer', routesData, routesData, 6, selectedRoute, updateReferenceFeature
     );
 
     if (routesData) {
@@ -517,7 +506,6 @@ export default function DriveBCMap(props) {
     } else {
       resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
     }
-
   }, [searchedRoutes]);
 
   // Cameras layer
@@ -545,7 +533,7 @@ export default function DriveBCMap(props) {
   // Events layer
   useEffect(() => {
     // Add layers if not loaded
-    if (mapLayers.current && Object.keys(mapLayers.current).length > 0 && !mapLayers.current['majorEvents']) {
+    if (events && mapLayers.current && Object.keys(mapLayers.current).length > 0 && !mapLayers.current['majorEvents']) {
       const eventFound = loadEventsLayers(events, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers);
       if (referenceData?.type === 'event' && !eventFound) {
         setStaleLinkMessage(true);

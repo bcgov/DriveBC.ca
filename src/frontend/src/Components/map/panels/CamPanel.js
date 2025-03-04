@@ -11,7 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVideoSlash, faVideo, faStar, faCircleInfo, faXmark } from '@fortawesome/pro-solid-svg-icons';
+import { faVideoSlash, faVideo, faStar, faCircleInfo, faXmark, faChevronRight } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 import parse from 'html-react-parser';
@@ -294,6 +294,19 @@ export default function CamPanel(props) {
           </div>
 
           <div className="popup__content__tools">
+            <p
+              className="view-details"
+              onClick={handlePopupClick}
+              onKeyDown={keyEvent => {
+                if (keyEvent.keyCode == 13) {
+                  handlePopupClick();
+                }
+              }}
+              tabIndex={0}>
+              View details
+              <FontAwesomeIcon icon={faChevronRight} />
+            </p>
+
             {authContext.loginStateKnown &&
               <button
                 className={`favourite-btn btn-tertiary ${(favCams && favCams.includes(camera.id)) ? 'favourited' : ''}`}

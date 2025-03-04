@@ -71,11 +71,11 @@ export default function RouteDetails(props) {
   const dispatch = useDispatch();
   const {
     feeds: {
-      cameras: { list: cameras, filteredList: filteredCameras, filterPoints: camFilterPoints },
-      events: { list: events, filteredList: filteredEvents, filterPoints: eventFilterPoints },
-      ferries: { list: ferries, filteredList: filteredFerries, filterPoints: ferryFilterPoints },
+      cameras: { list: cameras },
+      events: { list: events },
+      ferries: { list: ferries },
     },
-    advisories: { list: advisories, filteredList: filteredAdvisories, filterPoints: advisoryFilterPoints },
+    advisories: { list: advisories },
     routes: { searchLocationFrom, searchLocationTo, selectedRoute },
     user: { favCams, pendingAction }
 
@@ -134,48 +134,58 @@ export default function RouteDetails(props) {
     }
   }
 
+  const resetWorker = () => {
+    // Terminate the current worker if it exists
+    if (workerRef.current) {
+      workerRef.current.terminate();
+    }
+
+    workerRef.current = new Worker(new URL('../map/filterRouteWorker.js', import.meta.url));
+
+    // Set up event listener for messages from the worker
+    workerRef.current.onmessage = function (event) {
+      const { data, filteredData, route, action } = event.data;
+
+      // Data specific to the RouteDetails component
+      if (action === 'setEventCount') {
+        setEventCount(getEventCounts(filteredData));
+
+      } else if (action === 'setFerryCount') {
+        setFerryCount(filteredData.length);
+
+      // Data to be updated via dispatch
+      } else if (action === 'setFilteredFavCams') {
+        setFilteredFavCams(filteredData);
+
+      // Data to be updated via dispatch
+      } else {
+        dispatch(
+          slices[action]({
+            list: data,
+            filteredList: filteredData,
+            timeStamp: new Date().getTime()
+          })
+        );
+      }
+    };
+  }
+
   // Effects
   useEffect(() => {
-    // Create a new worker if it doesn't exist
-    if (!workerRef.current) {
-      workerRef.current = new Worker(new URL('../map/filterRouteWorker.js', import.meta.url));
+    resetWorker();
 
-      // Set up event listener for messages from the worker
-      workerRef.current.onmessage = function (event) {
-        const { data, filteredData, route, action } = event.data;
-
-        // Data specific to the RouteDetails component
-        if (action === 'setEventCount') {
-          setEventCount(getEventCounts(filteredData));
-
-        } else if (action === 'setFerryCount') {
-          setFerryCount(filteredData.length);
-
-        // Data to be updated via dispatch
-        } else if (action === 'setFilteredFavCams') {
-          setFilteredFavCams(filteredData);
-
-        // Data to be updated via dispatch
-        } else {
-          dispatch(
-            slices[action]({
-              list: data,
-              filteredList: filteredData,
-              filterPoints: route ? route.points : null,
-              timeStamp: new Date().getTime()
-            })
-          );
-        }
-      };
+    // Do not load in map
+    if (isPanel) {
+      return;
     }
 
     const routeData = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
     const displayError = () => {};
 
-    dataLoaders.loadAdvisories(routeData, advisories, filteredAdvisories, advisoryFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadCameras(routeData, cameras, filteredCameras, camFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadEvents(routeData, events, filteredEvents, eventFilterPoints, dispatch, displayError, workerRef.current);
-    dataLoaders.loadFerries(routeData, ferries, filteredFerries, ferryFilterPoints, dispatch, displayError, workerRef.current);
+    dataLoaders.loadAdvisories(routeData, advisories, dispatch, displayError, workerRef.current);
+    dataLoaders.loadCameras(routeData, cameras, dispatch, displayError, workerRef.current);
+    dataLoaders.loadEvents(routeData, events, dispatch, displayError, workerRef.current);
+    dataLoaders.loadFerries(routeData, ferries, dispatch, displayError, workerRef.current);
 
     // Cleanup function to terminate the worker when the component unmounts
     return () => {

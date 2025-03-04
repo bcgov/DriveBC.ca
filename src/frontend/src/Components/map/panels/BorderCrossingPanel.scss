@@ -1,0 +1,118 @@
+@import "../../../styles/variables";
+
+.popup {
+  // Border Crossing panel
+  &--border-crossing {
+    .popup__title {
+      background-color: $Blue10;
+      border-top: 4px solid $BC-Blue;
+
+      &__icon {
+        background: $BC-Blue;
+      }
+
+      .name {
+        color: $Type-Primary;
+      }
+    }
+
+    .popup__content {
+      &__title {
+        margin-bottom: 24px;
+
+        .name {
+          color: $BC-Blue;
+          font-size: 2rem;
+        }
+
+        .delays {
+          font-size: 1rem;
+          font-weight: 700;
+          margin-bottom: 0;
+        }
+
+        .update {
+          font-size: 0.875rem;
+          color: $Grey80;
+          margin-bottom: 0;
+        }
+      }
+
+      &__section {
+        border-radius: 8px;
+        box-shadow: 0px 0.6px 1.8px 0px rgba(0, 0, 0, 0.10), 0px 3.2px 7.2px 0px rgba(0, 0, 0, 0.13);
+        padding: 12px;
+        margin-top: 12px;
+
+        &__title {
+          display: flex;
+          align-items: center;
+          
+          .name {
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin: 0;
+          }
+        }
+        &__row {
+          display: flex;
+          align-items: center;
+          margin-top: 8px;
+
+          p {
+            font-size: 0.875rem;
+            margin: 0;
+            width: 50%;
+          }
+
+          .delay-pill {
+            border-radius: 4px;
+            padding: 3px 8px;
+            background-color: $Gold20;
+            color: $Gold110;
+            font-size: 0.875rem;
+            font-weight: 700;
+            width: fit-content;
+
+            &.red {
+              background-color: $Base-red;
+              color: white;
+            }
+
+            &.green {
+              background-color: $Success;
+              color: white;
+            };
+
+            &.grey {
+              background-color: $Grey60;
+              color: $Grey80;
+            }
+          }
+        }
+
+        .vehicles-tooltip-info {
+          margin-left: 8px;
+          color: #FFFFFF;
+          background-color: #474543;
+          padding: 0 5px;
+          border-radius: 0.5rem;
+          border: none;
+          font-size: 0.625rem;
+        }
+      }
+
+      &__footer {
+        margin-top: 32px;
+        margin-bottom: 32px;
+        color: $Grey80;
+        font-size: 0.875rem;
+        text-align: center;
+
+        a {
+          margin-left: 1ch;
+        }
+      }
+    }
+  }
+}
