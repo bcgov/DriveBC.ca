@@ -222,6 +222,25 @@
       width: calc(50% - 12px);
     }
 
+    &.stale, &.delayed {
+      color: $Type-Primary;
+      background-color: $Grey-invert;
+
+      p {
+        color: $Type-Primary;
+      }
+    }
+
+    &.delayed {
+      display: block;
+
+      .main-message {
+        display: flex;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+    }
+
     svg {
       margin-right: 8px;
     }

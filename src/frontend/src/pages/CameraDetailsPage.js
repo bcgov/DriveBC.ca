@@ -588,6 +588,39 @@ export default function CameraDetailsPage() {
                     </div>
                   )}
 
+                  {!unavailable && stale && !delayed && (
+                    <div className="camera-notifications stale">
+                      {showLoader ? <Skeleton /> : !isLoading && (
+                        <>
+                          <FontAwesomeIcon icon={faHourglassClock} />
+                          <p>Unable to retrieve latest image. Displaying last image received.</p>
+                        </>
+                      )}
+                    </div>
+                  )}
+
+                  {!unavailable && stale && delayed && (
+                    <div className="camera-notifications delayed">
+                      {showLoader ? <Skeleton /> : !isLoading && (
+                        <>
+                          <div className="main-message">
+                            <FontAwesomeIcon className="icon" icon={faWarning} />
+                            <p className="bold">Significant delays in receiving new images</p>
+                          </div>
+                          <div className="sub-message">
+                            <p>This is sometimes due to:</p>
+                            <ul>
+                              <li>Intermittent data signals in the areas</li>
+                              <li>Disruptions from weather</li>
+                              <li>Camera malfunction</li>
+                            </ul>
+                            <p>The image will be updated automatically as soon as the camera comes back online.</p>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+
                   <div className="camera-imagery">
                     <Tabs
                       id="camera-details"
@@ -662,80 +695,6 @@ export default function CameraDetailsPage() {
                                   />
 
                                   {(isLoading) ? <Skeleton height={400} /> : null}
-
-                                  {!unavailable && !stale && !delayed && updated && (
-                                    <div className="card-notification">
-                                      {showLoader ? <Skeleton /> : !isLoading && (
-                                        <>
-                                          <div className={'card-pill' + (show ? ' bounce' : ' hidden')}>
-                                            <p>Updated</p>
-                                            <FontAwesomeIcon icon={faCircleInfo} />
-                                          </div>
-                                        </>
-                                      )}
-                                    </div>
-                                  )}
-
-                                  {!unavailable && stale && !delayed && (
-                                    <div className="card-notification">
-                                      {showLoader ? <Skeleton /> : !isLoading && (
-                                        <>
-                                          <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
-                                            <FontAwesomeIcon icon={faHourglassClock} />
-                                            <p>Unable to retrieve latest image. Displaying last image received.</p>
-                                            <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
-                                          </div>
-                                          <div
-                                            className={'card-pill' + (show ? ' bounce' : ' hidden')}
-                                            onClick={handleChildClick}
-                                            onKeyDown={keyEvent => {
-                                              if (keyEvent.keyCode === 13) {
-                                                handleChildClick();
-                                              }
-                                            }}>
-                                            <p>Stale</p>
-                                            <FontAwesomeIcon icon={faCircleInfo} />
-                                          </div>
-                                        </>
-                                      )}
-                                    </div>
-                                  )}
-
-                                  {!unavailable && stale && delayed && (
-                                    <div className="card-notification">
-                                      {showLoader ? <Skeleton /> : !isLoading && (
-                                        <>
-                                          <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
-                                            <div>
-                                              <FontAwesomeIcon className="icon" icon={faWarning} />
-
-                                              <p className="bold">Significant delays in receiving new images</p>
-                                              <p>This is sometimes due to:</p>
-                                              <ul>
-                                                <li>Intermittent data signals in the areas</li>
-                                                <li>Disruptions from weather</li>
-                                                <li>Camera malfunction</li>
-                                              </ul>
-                                              <p>The image will be updated automatically as soon as the camera comes back online.</p>
-                                            </div>
-
-                                            <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
-                                          </div>
-                                          <div
-                                            className={'card-pill' + (show ? ' bounce' : ' hidden')}
-                                            onClick={handleChildClick}
-                                            onKeyDown={keyEvent => {
-                                              if (keyEvent.keyCode === 13) {
-                                                handleChildClick();
-                                              }
-                                            }}>
-                                            <p>Delayed</p>
-                                            <FontAwesomeIcon icon={faCircleInfo} />
-                                          </div>
-                                        </>
-                                      )}
-                                    </div>
-                                  )}
 
                                   {unavailable && !showLoader && !isLoading && (
                                     <>
