@@ -88,7 +88,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_REDIRECT_URL = FRONTEND_BASE_URL
-LOGIN_URL = FRONTEND_BASE_URL + 'accounts/oidc/idir/login/?process=login&next=%2Fdrivebc-admin%2F&auth_params=kc_idp_hint=azureidir'
+LOGIN_URL = (FRONTEND_BASE_URL +
+             'accounts/oidc/idir/login/?process=login&next=%2Fdrivebc-admin%2F&auth_params=kc_idp_hint=azureidir')
 
 # Language
 USE_I18N = False
@@ -146,6 +147,7 @@ LOCAL_APPS = [
     "apps.weather",
     "apps.rest",
     "apps.ferry",
+    "apps.border",
 ]
 
 # apps with features overridden in local apps (e.g., admin templates) go here
