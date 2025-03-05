@@ -1,0 +1,26 @@
+class LANE_DIRECTION:
+    NORTHBOUND = "NORTHBOUND"
+    SOUTHBOUND = "SOUTHBOUND"
+
+
+LANE_DIRECTION_CHOICES = (
+    (LANE_DIRECTION.NORTHBOUND, "Northbound"),
+    (LANE_DIRECTION.SOUTHBOUND, "Southbound"),
+)
+
+
+class LANE_TYPE:
+    CARS = "Cars"
+    BUS = "Bus"
+    FAST = "FAST"
+    NEXUS = "NEXUS"
+    TRUCKS = "Trucks"
+
+
+LANE_TYPE_CHOICES = (
+    (LANE_TYPE.CARS, "Cars"),
+    (LANE_TYPE.BUS, "Bus"),
+    (LANE_TYPE.FAST, "FAST"),
+    (LANE_TYPE.NEXUS, "NEXUS"),
+    (LANE_TYPE.TRUCKS, "Trucks"),
+)

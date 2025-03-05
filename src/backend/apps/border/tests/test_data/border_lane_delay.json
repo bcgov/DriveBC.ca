@@ -1,0 +1,14 @@
+{
+  "DataSources": [
+    {
+      "ID": 3,
+      "Calculation": "Average",
+      "Metric": "DelayMinutes"
+    }
+  ],
+  "GroupStarts": [1741075263],
+  "GroupPollCounts": [0],
+  "Values": [
+    [14]
+  ]
+}
