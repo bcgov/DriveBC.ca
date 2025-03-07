@@ -22,15 +22,16 @@ class BorderPopulateTestCase(TestCase):
         )
         self.mock_border_lane_delay_feed = json.load(border_lane_delay_feed)
 
+    def tearDown(self):
+        super().tearDown()
+
+        BorderCrossingLanes.objects.all().update(delay_minutes=None, last_updated=None)
+
     @patch("requests.get")
     def test_border_populate(self, mock_requests_get):
         mock_requests_get.side_effect = [
             MockResponse(self.mock_border_lane_delay_feed, status_code=200),
         ]
-
-        # Ensure no border crossings exist initially
-        assert BorderCrossing.objects.count() == 0
-        assert BorderCrossingLanes.objects.count() == 0
 
         # Call the populate_border_crossings function
         populate_border_crossings(True)
