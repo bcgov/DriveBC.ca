@@ -12,6 +12,9 @@ class TestBorderSerializer(BaseTest):
     def setUp(self):
         super().setUp()
 
+        # Delete data from fixture
+        BorderCrossing.objects.all().delete()
+
         self.border_crossing = BorderCrossing(
             id=134,
             name="Peace Arch",

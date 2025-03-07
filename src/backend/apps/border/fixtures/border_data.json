@@ -1,0 +1,315 @@
+[
+{
+    "model": "border.bordercrossing",
+    "pk": 134,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.135Z",
+        "modified_at": "2025-03-04T23:26:14.135Z",
+        "name": "Peace Arch",
+        "location": "SRID=4326;POINT (-122.755215373302 49.0004903332751)"
+    }
+},
+{
+    "model": "border.bordercrossing",
+    "pk": 135,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.182Z",
+        "modified_at": "2025-03-04T23:26:14.182Z",
+        "name": "Pacific Highway",
+        "location": "SRID=4326;POINT (-122.735322148821 49.0040969132511)"
+    }
+},
+{
+    "model": "border.bordercrossing",
+    "pk": 136,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.187Z",
+        "modified_at": "2025-03-04T23:26:14.187Z",
+        "name": "Lynden/Aldergrove",
+        "location": "SRID=4326;POINT (-122.485026353147 49.0004223841645)"
+    }
+},
+{
+    "model": "border.bordercrossing",
+    "pk": 137,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.190Z",
+        "modified_at": "2025-03-04T23:26:14.190Z",
+        "name": "Sumas/Huntingdon",
+        "location": "SRID=4326;POINT (-122.265219 49.004678)"
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 3,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.183Z",
+        "modified_at": "2025-03-05T00:25:06.481Z",
+        "border_crossing": 135,
+        "lane_type": "Cars",
+        "lane_direction": "SOUTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 4,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.173Z",
+        "modified_at": "2025-03-05T00:25:06.619Z",
+        "border_crossing": 134,
+        "lane_type": "Cars",
+        "lane_direction": "SOUTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 5,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.179Z",
+        "modified_at": "2025-03-05T00:25:06.772Z",
+        "border_crossing": 134,
+        "lane_type": "Cars",
+        "lane_direction": "NORTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 6,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.180Z",
+        "modified_at": "2025-03-05T00:25:06.921Z",
+        "border_crossing": 134,
+        "lane_type": "NEXUS",
+        "lane_direction": "NORTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 8,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.183Z",
+        "modified_at": "2025-03-05T00:25:07.044Z",
+        "border_crossing": 135,
+        "lane_type": "FAST",
+        "lane_direction": "SOUTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 9,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.184Z",
+        "modified_at": "2025-03-05T00:25:07.179Z",
+        "border_crossing": 135,
+        "lane_type": "NEXUS",
+        "lane_direction": "SOUTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 10,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.184Z",
+        "modified_at": "2025-03-05T00:25:07.340Z",
+        "border_crossing": 135,
+        "lane_type": "Trucks",
+        "lane_direction": "SOUTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 11,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.181Z",
+        "modified_at": "2025-03-05T00:25:07.483Z",
+        "border_crossing": 134,
+        "lane_type": "NEXUS",
+        "lane_direction": "SOUTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 12,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.188Z",
+        "modified_at": "2025-03-05T00:25:07.630Z",
+        "border_crossing": 136,
+        "lane_type": "Cars",
+        "lane_direction": "NORTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 13,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.185Z",
+        "modified_at": "2025-03-05T00:25:07.784Z",
+        "border_crossing": 135,
+        "lane_type": "Cars",
+        "lane_direction": "NORTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 14,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.185Z",
+        "modified_at": "2025-03-05T00:25:07.926Z",
+        "border_crossing": 135,
+        "lane_type": "NEXUS",
+        "lane_direction": "NORTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 15,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.190Z",
+        "modified_at": "2025-03-05T00:25:08.049Z",
+        "border_crossing": 137,
+        "lane_type": "Cars",
+        "lane_direction": "NORTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 16,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.186Z",
+        "modified_at": "2025-03-05T00:25:08.206Z",
+        "border_crossing": 135,
+        "lane_type": "Trucks",
+        "lane_direction": "NORTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 17,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.186Z",
+        "modified_at": "2025-03-05T00:25:08.360Z",
+        "border_crossing": 135,
+        "lane_type": "FAST",
+        "lane_direction": "NORTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 610,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.191Z",
+        "modified_at": "2025-03-05T00:25:08.501Z",
+        "border_crossing": 137,
+        "lane_type": "Cars",
+        "lane_direction": "SOUTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 611,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.188Z",
+        "modified_at": "2025-03-05T00:25:08.651Z",
+        "border_crossing": 136,
+        "lane_type": "Cars",
+        "lane_direction": "SOUTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 749,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.189Z",
+        "modified_at": "2025-03-05T00:25:08.790Z",
+        "border_crossing": 136,
+        "lane_type": "Trucks",
+        "lane_direction": "SOUTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 753,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.189Z",
+        "modified_at": "2025-03-05T00:25:08.932Z",
+        "border_crossing": 136,
+        "lane_type": "Trucks",
+        "lane_direction": "NORTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 754,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.191Z",
+        "modified_at": "2025-03-05T00:25:09.075Z",
+        "border_crossing": 137,
+        "lane_type": "Trucks",
+        "lane_direction": "NORTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 756,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.192Z",
+        "modified_at": "2025-03-05T00:25:09.215Z",
+        "border_crossing": 137,
+        "lane_type": "NEXUS",
+        "lane_direction": "NORTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+},
+{
+    "model": "border.bordercrossinglanes",
+    "pk": 758,
+    "fields": {
+        "created_at": "2025-03-04T23:26:14.189Z",
+        "modified_at": "2025-03-05T00:25:09.347Z",
+        "border_crossing": 136,
+        "lane_type": "NEXUS",
+        "lane_direction": "NORTHBOUND",
+        "delay_minutes": null,
+        "last_updated": null
+    }
+}
+]
