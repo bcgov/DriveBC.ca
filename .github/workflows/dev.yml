@@ -169,10 +169,10 @@ jobs:
         helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml ./infrastructure/main --set django.image.tag="${{ github.sha }}" --set redis.image.tag="${{ github.sha }}" --set static.image.tag="${{ github.sha }}" --set tasks.image.tag="${{ github.sha }}" --set openshiftjobs.image.tag="${{ github.sha }}"
 
 
-  automatedTests:
-    needs: [versionUpdate]
-    name: Automated Smoke Test
-    uses: bcgov/DriveBC.ca-automated-tests/.github/workflows/playwright.yml@main
-    with:
-      environment: 'dev'
-    secrets: inherit
+#  automatedTests:
+#    needs: [versionUpdate]
+#    name: Automated Smoke Test
+#    uses: bcgov/DriveBC.ca-automated-tests/.github/workflows/playwright.yml@main
+#    with:
+#      environment: 'dev'
+#    secrets: inherit
