@@ -291,10 +291,13 @@
       }
 
       .modal-header {
+        background: $Info;
+
         @media (max-width: 575px) {
           position: fixed;
           top: 0;
           width: 100%;
+          z-index: 1;
         }
       }
 
@@ -308,12 +311,27 @@
       }
 
       .modal-footer {
+        justify-content: flex-start;
+        border-top: 1px solid #D9D9D9;
         padding: 16px;
-
+        background: white;
+        
         @media (max-width: 575px) {
           position: fixed;
           bottom: 0;
           width: 100%;
+        }
+  
+        .btn {
+          margin: 0;
+  
+          &.cancel-btn {
+            margin-left: 20px;
+          }
+  
+          svg {
+            margin-left: 8px;
+          };
         }
       }
     }
@@ -371,23 +389,6 @@
         @media (min-width: 768px) {
           display: block;
         }
-      }
-    }
-
-    .modal-footer {
-      justify-content: flex-start;
-      border-top: 1px solid #D9D9D9;
-
-      .btn {
-        margin: 0;
-
-        &.cancel-btn {
-          margin-left: 20px;
-        }
-
-        svg {
-          margin-left: 8px;
-        };
       }
     }
   }
