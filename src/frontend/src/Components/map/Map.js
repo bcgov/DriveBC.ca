@@ -106,6 +106,7 @@ export default function DriveBCMap(props) {
       regional: { list: regionalWeather, filteredList: filteredRegionalWeathers },
       hef: { list: hef, filteredList: filteredHef },
       restStops: { list: restStops, filteredList: filteredRestStops },
+      borderCrossings: { list: borderCrossings, filteredList: filteredBorderCrossings },
     },
     advisories: { list: advisories },
     routes: { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes },
@@ -122,6 +123,7 @@ export default function DriveBCMap(props) {
           regional: state.feeds.regional,
           hef: state.feeds.hef,
           restStops: state.feeds.restStops,
+          borderCrossings: state.feeds.borderCrossings,
         },
         advisories: state.cms.advisories,
         routes: state.routes,
@@ -623,6 +625,17 @@ export default function DriveBCMap(props) {
       );
     }
   }, [filteredRestStops]);
+
+  // Border crossings layer
+  useEffect(() => {
+    if (!isCamDetail) {
+      loadLayer(
+        mapLayers, mapRef, mapContext,
+        'borderCrossings', borderCrossings, filteredBorderCrossings, 71,
+        referenceData, updateReferenceFeature, setLoadingLayers
+      );
+    }
+  }, [borderCrossings]);
 
   // Advisories layer
   useEffect(() => {

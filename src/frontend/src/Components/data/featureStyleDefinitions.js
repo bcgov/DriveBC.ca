@@ -26,6 +26,11 @@ import hefIconActive from '../../images/mapIcons/elevation-active.png';
 import hefIconHover from '../../images/mapIcons/elevation-hover.png';
 import hefIconStatic from '../../images/mapIcons/elevation-static.png';
 
+// Border Crossings
+import borderIconActive from '../../images/mapIcons/border-active.png';
+import borderIconHover from '../../images/mapIcons/border-hover.png';
+import borderIconStatic from '../../images/mapIcons/border-static.png';
+
 // Rest Stops
 import restStopIconActive from '../../images/mapIcons/restarea-open-active.png';
 import restStopIconHover from '../../images/mapIcons/restarea-open-hover.png';
@@ -989,4 +994,26 @@ export const routeStyles = {
       zIndex: 7
     }),
   ],
+};
+
+// Border crossing styles
+export const borderCrossingStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: borderIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: borderIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: borderIconActive,
+    }),
+  }),
 };

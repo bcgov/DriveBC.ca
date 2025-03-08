@@ -41,7 +41,9 @@ export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScre
       case 'restStop':
         return <RestStopPanel feature={clickedFeature} />;
       case 'route':
-        return <BorderCrossingPanel />;
+        return <RouteDetailsPanel />;
+      case 'borderCrossing':
+        return <BorderCrossingPanel borderCrossing={clickedFeature.getProperties()} />;
     }
   }
 }
