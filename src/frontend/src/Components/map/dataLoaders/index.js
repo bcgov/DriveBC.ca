@@ -1,4 +1,5 @@
 import { loadAdvisories } from './advisories';
+import { loadBorderCrossings } from './borderCrossings';
 import { loadCameras } from './cameras';
 import { loadCurrentWeather } from './currentWeathers';
 import { loadEvents } from './events';
@@ -9,6 +10,7 @@ import { loadRestStops } from './restStops';
 
 export {
   loadAdvisories,
+  loadBorderCrossings,
   loadCameras,
   loadEvents,
   loadFerries,

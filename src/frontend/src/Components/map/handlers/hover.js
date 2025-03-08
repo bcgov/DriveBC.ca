@@ -8,7 +8,8 @@ import {
   restStopClosedStyles,
   restStopTruckStyles,
   restStopTruckClosedStyles,
-  routeStyles
+  routeStyles,
+  borderCrossingStyles
 } from '../../data/featureStyleDefinitions.js';
 import {
   setEventStyle
@@ -81,8 +82,11 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
             }
           }
           break;
-          case 'route':
+        case 'route':
           hoveredFeature.setStyle(routeStyles['static']);
+          break;
+        case 'borderCrossing':
+          hoveredFeature.setStyle(borderCrossingStyles['static']);
           break;
       }
     }
@@ -171,6 +175,11 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
       case 'route':
         if (!targetFeature.getProperties().clicked) {
           targetFeature.setStyle(routeStyles['hover']);
+        }
+        return;
+      case 'borderCrossing':
+        if (!targetFeature.getProperties().clicked) {
+          targetFeature.setStyle(borderCrossingStyles['hover']);
         }
         return;
     }
