@@ -6,7 +6,8 @@ import {
   updateRegional,
   updateHef,
   updateRestStops,
-  updateWeather
+  updateWeather,
+  updateBorderCrossings
 } from './feedsSlice';
 import { updateMapState } from './mapSlice';
 import {
@@ -35,6 +36,7 @@ export {
   updateRegional,
   updateHef,
   updateRestStops,
+  updateBorderCrossings,
 
   // mapSlice
   updateMapState,

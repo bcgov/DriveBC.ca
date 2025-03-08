@@ -29,6 +29,7 @@ export default function MapWrapper(props) {
       regional: { list: regionalWeathers },
       hef: { list: hef },
       restStops: { list: restStops },
+      borderCrossings: { list: borderCrossings },
     },
     advisories: { list: advisories },
     routes: { selectedRoute },
@@ -44,6 +45,7 @@ export default function MapWrapper(props) {
           regional: state.feeds.regional,
           hef: state.feeds.hef,
           restStops: state.feeds.restStops,
+          borderCrossings: state.feeds.borderCrossings,
         },
         advisories: state.cms.advisories,
         routes: state.routes,
@@ -63,7 +65,8 @@ export default function MapWrapper(props) {
         mapContext.visible_layers.futureEvents || mapContext.visible_layers.chainUps,
       ferries: mapContext.visible_layers.inlandFerries,
       weathers: mapContext.visible_layers.weather,
-      restStops: mapContext.visible_layers.restStops
+      restStops: mapContext.visible_layers.restStops,
+      borderCrossings: true  // always display
     };
   };
   const [loadingLayers, setLoadingLayers] = useState(getInitialLoadingLayers());
@@ -141,6 +144,7 @@ export default function MapWrapper(props) {
     dataLoaders.loadHef(routeData, hef, dispatch, displayError, workerRef.current);
     dataLoaders.loadRestStops(routeData, restStops, dispatch, displayError, workerRef.current);
     dataLoaders.loadAdvisories(routeData, advisories, dispatch, displayError, workerRef.current);
+    dataLoaders.loadBorderCrossings(routeData, borderCrossings, dispatch, displayError, workerRef.current);
 
     isInitialLoad.current = false;
   };
