@@ -73,7 +73,7 @@ import View from 'ol/View';
 
 // Styling
 import './Map.scss';
-import { cameraStyles } from "../data/featureStyleDefinitions";
+import { cameraStyles, restStopStyles } from "../data/featureStyleDefinitions";
 
 export default function DriveBCMap(props) {
   /* initialization */
