@@ -204,7 +204,15 @@ export default function CamPanel(props) {
           </div>
 
           {camera.is_on ? (
-            <div className="popup__content__image">
+            <div className="popup__content__image"
+              onClick={handlePopupClick}
+              onKeyDown={keyEvent => {
+                if (keyEvent.keyCode == 13) {
+                  handlePopupClick();
+                }
+              }}
+              tabIndex={0}
+            >
               <div className="clip">
                 <img src={camera.links.imageDisplay} width="300" />
 
