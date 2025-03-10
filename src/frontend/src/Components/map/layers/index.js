@@ -89,7 +89,31 @@ export const enableReferencedLayer = (referenceData, mapContext) => {
       mapContext.visible_layers['largeRestStops'] = true;
     }
 
-  } else {
+  } else if (featureType === 'route') {
+    if(!mapContext.visible_layers['minorEvents']) {
+      mapContext.visible_layers['minorEvents'] = true;
+      mapContext.visible_layers['minorEventsLines'] = true;
+    }
+    if(!mapContext.visible_layers['majorEvents']) {
+      mapContext.visible_layers['majorEvents'] = true;
+      mapContext.visible_layers['majorEventsLines'] = true;
+    }
+    if(!mapContext.visible_layers['futureEvents']) {
+      mapContext.visible_layers['futureEvents'] = true;
+      mapContext.visible_layers['futureEventsLines'] = true;
+    }
+    if(!mapContext.visible_layers['closures']) {
+      mapContext.visible_layers['closures'] = true;
+      mapContext.visible_layers['closuresLines'] = true;
+    }
+    if(!mapContext.visible_layers['roadConditions']) {
+      mapContext.visible_layers['roadConditions'] = true;
+    }
+    if(!mapContext.visible_layers['inlandFerries']) {
+      mapContext.visible_layers['inlandFerries'] = true;
+    }
+  }
+  else {
     const featureDisplayCategory = referenceData.display_category;
     switch (featureDisplayCategory) {
       case 'closures':

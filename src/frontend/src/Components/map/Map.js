@@ -188,6 +188,20 @@ export default function DriveBCMap(props) {
   };
 
 
+  const updateLayersVisibility = (layerName) => {
+    if(mapLayers.current[layerName]){
+      if(!mapContext.visible_layers[layerName]){
+        mapLayers?.current[layerName].setVisible(true);
+        mapContext.visible_layers[layerName] = true;
+      }
+      else{
+        mapLayers?.current[layerName].setVisible(false);
+        mapContext.visible_layers[layerName] = false;
+      }
+    }
+  }
+
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (referenceFeature && isCamDetail) {
@@ -505,6 +519,19 @@ export default function DriveBCMap(props) {
     } else {
       resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
     }
+
+    updateLayersVisibility('minorEvents');
+    updateLayersVisibility('majorEvents');
+    updateLayersVisibility('futureEvents');
+    updateLayersVisibility('closures');
+    updateLayersVisibility('roadConditions');
+    updateLayersVisibility('inlandFerries');
+
+    if(searchedRoutes) {
+      const referenceDataTest = { type: "route" };
+      enableReferencedLayer(referenceDataTest, mapContext);
+    }
+
   }, [searchedRoutes]);
 
   // Cameras layer
@@ -749,7 +776,10 @@ export default function DriveBCMap(props) {
               enableChainUps={true}
               isCamDetail={isCamDetail}
               referenceData={referenceData}
-              loadingLayers={loadingLayers} />
+              loadingLayers={loadingLayers} 
+              locationSearchFrom={searchLocationFrom}
+              locationSearchTo={searchLocationTo}
+              />
           </React.Fragment>
         )}
 
