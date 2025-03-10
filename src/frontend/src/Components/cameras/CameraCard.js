@@ -15,6 +15,7 @@ import {
   faCircleInfo,
   faVideoSlash,
   faStar,
+  faChevronRight
 } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
@@ -390,11 +391,12 @@ export default function CameraCard(props) {
         {showLoader ?
           <Skeleton width={97} height={23}/> : (
           <button
-            className="viewMap-btn btn-tertiary"
-            aria-label="View on map"
-            onClick={handleViewOnMap}>
-            <FontAwesomeIcon icon={faMapMarkerAlt} />
-            <span>View on map</span>
+            className="viewMap-btn viewDetails-btn btn-tertiary"
+            aria-label="View details"
+            onClick={handleClick}
+            onKeyDown={handleKeyDown}>
+            <span>View details</span>
+            <FontAwesomeIcon icon={faChevronRight} />
           </button>
         )}
 
