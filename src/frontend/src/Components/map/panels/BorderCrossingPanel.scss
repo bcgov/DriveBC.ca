@@ -37,6 +37,15 @@
           margin-bottom: 0;
           display: flex;
 
+          span, p {
+            font-size: 0.875rem;
+            color: $Grey80;
+          }
+
+          .updated {
+            margin-right: 1ch;
+          }
+
           .friendly-time {
             margin-left: .2rem;
           }

@@ -431,7 +431,7 @@ export default function BorderCrossingPanel(props) {
         <div className="popup__content__title">
           <p className="name">{borderCrossing.name}</p>
           <p className="delays">Current delays</p>
-          <p className="update">Updated <FriendlyTime date={borderCrossing.last_updated}/></p>
+          <p className="update"><span className="updated">Updated </span><FriendlyTime date={borderCrossing.last_updated}/></p>
         </div>
 
         {orderedLaneTypes.map(type => (
