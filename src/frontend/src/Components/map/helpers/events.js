@@ -29,9 +29,8 @@ export const setEventStyle = (events, state) => {
       const severity = event.get('severity').toLowerCase();
       if (is_closure) {
         if (display_category === 'futureEvents')
-          return event.setStyle(eventStyles[
-            severity === 'major' ? getStyleKey('major_future_events', is_highlighted) : getStyleKey('future_events', is_highlighted)
-          ][state]);
+          return event.setStyle(eventStyles[getStyleKey('future_closures', is_highlighted)][state]);
+
         else
           return event.setStyle(eventStyles[getStyleKey('closures', is_highlighted)][state]);
       }

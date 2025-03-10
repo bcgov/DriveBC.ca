@@ -850,6 +850,53 @@ export const eventStyles = {
     }),
   },
 
+  // Future closures
+  future_closures: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureClosureStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureClosureHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureClosureActiveIcon,
+      }),
+    }),
+  },
+
+  future_closures_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureClosureStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureClosureHoverUnreadIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: futureClosureActiveIcon,
+      }),
+    }),
+  },
+
   // Generic delay
   major_generic_delays: {
     static: new Style({
