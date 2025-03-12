@@ -9,7 +9,7 @@ from config import settings
 logger = logging.getLogger(__name__)
 
 
-def populate_border_crossings(testing=False):
+def update_border_crossing_lanes(testing=False):
     for lane in BorderCrossingLanes.objects.all().order_by("id"):
         lane_delay_endpoint = settings.DRIVEBC_BORDER_CROSSING_LANE_DELAY_BASE_URL + f"/{lane.id}?format=json"
 

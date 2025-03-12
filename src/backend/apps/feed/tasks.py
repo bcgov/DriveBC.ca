@@ -1,5 +1,6 @@
 import datetime
 
+from apps.border.tasks import update_border_crossing_lanes
 from apps.event.tasks import populate_all_event_data
 from apps.ferry.tasks import populate_all_ferry_data
 from apps.rest.tasks import populate_all_rest_stop_data
@@ -84,6 +85,12 @@ def build_reference_route_geometries():
 @lock_task('add-camera-lock')
 def add_camera_orders():
     add_order_to_cameras()
+
+
+@db_periodic_task(crontab(minute="*/5"))
+@lock_task('update-border-crossings-lock')
+def update_border_crossings():
+    update_border_crossing_lanes()
 
 
 @on_startup()

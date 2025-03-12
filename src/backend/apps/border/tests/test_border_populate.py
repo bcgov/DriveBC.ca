@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from apps.border.enums import LANE_DIRECTION, LANE_TYPE
 from apps.border.models import BorderCrossing, BorderCrossingLanes
-from apps.border.tasks import populate_border_crossings
+from apps.border.tasks import update_border_crossing_lanes
 from apps.shared.tests import MockResponse
 from django.test import TestCase
 
@@ -34,7 +34,7 @@ class BorderPopulateTestCase(TestCase):
         ]
 
         # Call the populate_border_crossings function
-        populate_border_crossings(True)
+        update_border_crossing_lanes(True)
 
         # Check that border crossings and lanes have been created
         assert BorderCrossing.objects.count() == 4
