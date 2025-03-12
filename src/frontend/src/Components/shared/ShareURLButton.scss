@@ -31,7 +31,7 @@
     }
   }
   &--event {
-    &.major, &.closures {
+    &.major, &.closures, &.closure {
       .copy-btn {
         background: darken($Surface-major, 8%);
 
