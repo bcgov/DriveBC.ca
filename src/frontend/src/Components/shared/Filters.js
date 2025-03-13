@@ -165,6 +165,11 @@ export default function Filters(props) {
     const currentUrl = window.location.href; 
     const newUrl = currentUrl.replace(type1, type2);
     window.history.replaceState(null, "", newUrl);
+    if(type2 === 'largeRestStop') {
+      referenceData.type = "largeRestStop";
+    } else {
+      referenceData.type = "restStop";
+    }
   }
 
   return (
@@ -558,7 +563,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="rest stops"
                       id="filter--rest-stops-large-vehicle"
-                      onChange={e => {
+                      onChange={e => {       
                         trackEvent('click', 'map', 'Toggle rest stops layer')
                         if (restStops && !largeRestStops) {
                           setLayerVisibility('restStops', false);
