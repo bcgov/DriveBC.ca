@@ -84,7 +84,7 @@ export const enableReferencedLayer = (referenceData, mapContext) => {
 
   } else if (featureType === 'largeRestStop') {
     // Only show large rest stops if both rest stops layers are not visible
-    if (!mapContext.visible_layers['largeRestStops']) {
+    if (!mapContext.visible_layers['restStops'] && !mapContext.visible_layers['largeRestStops']) {
       mapContext.visible_layers['restStops'] = false;
       mapContext.visible_layers['largeRestStops'] = true;
     }

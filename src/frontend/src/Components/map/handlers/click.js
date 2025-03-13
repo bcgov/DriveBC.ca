@@ -326,7 +326,8 @@ export const pointerClickHandler = (
   mapView,
   isCamDetail,
   loadCamDetails,
-  updateReferenceFeature
+  updateReferenceFeature,
+  mapContext
 ) => {
   if (features.length) {
     const clickedFeature = features[0];
@@ -439,6 +440,13 @@ export const pointerClickHandler = (
           updateClickedFeature,
           isCamDetail,
         );
+        if (clickedFeature.values_['type'] === 'largeRestStop') {
+          const currentUrl = window.location.href;
+          const newUrl = currentUrl.replace("restStop", "largeRestStop");
+          window.history.replaceState(null, "", newUrl);
+          mapContext.visible_layers.restStops = false;
+          mapContext.visible_layers.largeRestStops = true;
+        }
         return;
 
       case 'route':

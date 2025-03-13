@@ -161,6 +161,12 @@ export default function Filters(props) {
     }, 1000);
   }
 
+  function updateUrl(type1, type2) {
+    const currentUrl = window.location.href; 
+    const newUrl = currentUrl.replace(type1, type2);
+    window.history.replaceState(null, "", newUrl);
+  }
+
   return (
     <div className="filters-component">
       <Button
@@ -486,6 +492,7 @@ export default function Filters(props) {
                         setLayerVisibility('restStops', !restStops);
                         setRestStops(!restStops);
                         focusInput(e.target);
+                        updateUrl("largeRestStop", "restStop");
                       }}
                       defaultChecked={mapContext.visible_layers.restStops}
                       disabled={disableFeatures}
@@ -560,6 +567,7 @@ export default function Filters(props) {
                         setLayerVisibility('largeRestStops', !largeRestStops);
                         setLargeRestStops(!largeRestStops);
                         focusInput(e.target);
+                        updateUrl("restStop", "largeRestStop");
                       }}
                       defaultChecked={mapContext.visible_layers.largeRestStops}
                       disabled={disableFeatures} />
