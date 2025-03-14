@@ -73,7 +73,7 @@ import View from 'ol/View';
 
 // Styling
 import './Map.scss';
-import { cameraStyles } from "../data/featureStyleDefinitions";
+import { cameraStyles, restStopStyles } from "../data/featureStyleDefinitions";
 
 export default function DriveBCMap(props) {
   /* initialization */
@@ -386,7 +386,7 @@ export default function DriveBCMap(props) {
 
       pointerClickHandler(
         features, clickedFeatureRef, updateClickedFeature,
-        mapView, isCamDetail, loadCamDetails, updateReferenceFeature
+        mapView, isCamDetail, loadCamDetails, updateReferenceFeature, mapContext
       );
     });
 
@@ -475,7 +475,7 @@ export default function DriveBCMap(props) {
 
       pointerClickHandler(
         [referenceFeature], clickedFeatureRef, updateClickedFeature,
-        mapView, isCamDetail, loadCamDetails, updateReferenceFeature
+        mapView, isCamDetail, loadCamDetails, updateReferenceFeature, mapContext
       );
     }
   }, [referenceFeature]);
