@@ -310,7 +310,6 @@ export default function DriveBCMap(props) {
 
     mapView.current = new View({
       projection: 'EPSG:3857',
-      constrainResolution: true,
       center: fromLonLat(pan),
       zoom: (isCamDetail || (referenceData && referenceData.type)) ? 5 : zoom,
       maxZoom: 15,
@@ -537,10 +536,10 @@ export default function DriveBCMap(props) {
         clearInterval(interval);
       }
     }, 1000);
-  
+
     return () => clearInterval(interval);
   }, []);
-  
+
 
   // Events layer
   useEffect(() => {
