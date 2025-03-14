@@ -542,7 +542,7 @@ export default function RouteDetails(props) {
 
         <div className="route-disclosures">
           {eventCount
-            ? (eventCount.closures > 0 &&
+            ? (
               <div className="route-pill route-pill--closures">
                   <span className="route-item__icon">
                     <FontAwesomeIcon icon={faMinusCircle} alt="closures"/>
@@ -577,7 +577,7 @@ export default function RouteDetails(props) {
         </div>
 
         <div className="route-items">
-          {(eventCount && eventCount.majorEvents > 0) &&
+          {eventCount &&
             <div className="route-item route-item--major">
               <span className="route-item__count">
                 {eventCount.majorEvents}
@@ -593,7 +593,7 @@ export default function RouteDetails(props) {
             </div>
           }
 
-          {(eventCount && eventCount.minorEvents > 0) &&
+          {eventCount &&
             <div className="route-item route-item--minor">
               <span className="route-item__count">
                 {eventCount.minorEvents}
@@ -609,7 +609,7 @@ export default function RouteDetails(props) {
             </div>
           }
 
-          {(eventCount && eventCount.roadConditions > 0) &&
+          {eventCount &&
             <div className="route-item route-item--roadConditions">
               <span className="route-item__count">
                 {eventCount.roadConditions}
