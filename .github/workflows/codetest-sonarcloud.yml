@@ -91,7 +91,7 @@ jobs:
         BCEID_SECRET: testvar
         BCEID_CLIENT_ID: testvar
         DRIVEBC_FEEDBACK_EMAIL_DEFAULT: testvar@testvar.com
-        CLOSED_PHRASE_IDS: testvar
+        CLOSED_PHRASE_IDS: 18,20,22,23,26,30,32,182,320,325,327
       run: |
         coverage run ./src/backend/manage.py test --noinput && coverage report && coverage xml
 

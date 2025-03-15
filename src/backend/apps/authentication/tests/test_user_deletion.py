@@ -9,7 +9,7 @@ class DriveBCUserViewsetTests(APITestCase):
         self.client = APIClient()
         self.user = DriveBCUser.objects.create_user(username='testuser', password='testpassword')
         self.client.force_authenticate(user=self.user)
-        self.url = reverse('drivebcuser-detail', args=[self.user.id])
+        self.url = reverse('drivebcuser-detail', args=[self.user.username])
 
     def test_delete_own_account(self):
         response = self.client.delete(self.url)
@@ -18,7 +18,7 @@ class DriveBCUserViewsetTests(APITestCase):
 
     def test_delete_other_user_account(self):
         other_user = DriveBCUser.objects.create_user(username='otheruser', password='otherpassword')
-        url = reverse('drivebcuser-detail', args=[other_user.id])
+        url = reverse('drivebcuser-detail', args=[other_user.username])
         response = self.client.delete(url)
         assert response.status_code == status.HTTP_403_FORBIDDEN
         assert DriveBCUser.objects.filter(username='otheruser').exists()
