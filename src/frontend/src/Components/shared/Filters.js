@@ -1,5 +1,5 @@
 // React
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -42,15 +42,42 @@ export default function Filters(props) {
     isCamDetail,
     referenceData,
     loadingLayers,
-    isDelaysPage
+    isDelaysPage,
+    locationSearchFrom,
+    locationSearchTo,
   } = props;
 
   // Const for enabling layer that the reference event belongs to
   const eventCategory = referenceData ? referenceData.display_category : false;
+  const routeSelected = mapLayers.current.routeLayer && (locationSearchFrom && locationSearchFrom.length > 0) && (locationSearchTo && locationSearchTo.length > 0) ? true : false;
 
   // States
   // Show layer menu by default on main page, desktop only
   const [open, setOpen] = useState(largeScreen && !textOverride);
+
+  useEffect(() => {
+    setMinorEvents(routeSelected || (eventCategory === 'minorEvents') || mapContext.visible_layers.minorEvents);
+  }, [mapContext.visible_layers.minorEvents]);
+
+  useEffect(() => {
+    setMajorEvents(routeSelected || (eventCategory === 'majorEvents') || mapContext.visible_layers.majorEvents);
+  }, [mapContext.visible_layers.majorEvents]);
+
+  useEffect(() => {
+    setFutureEvents(routeSelected || (eventCategory === 'majorEvents') || mapContext.visible_layers.majorEvents);
+  }, [mapContext.visible_layers.majorEvents]);
+
+  useEffect(() => {
+    setClosures(routeSelected || (eventCategory === 'closures') || mapContext.visible_layers.closures);
+  }, [mapContext.visible_layers.closures]);
+
+  useEffect(() => {
+    setRoadConditions(routeSelected || (eventCategory === 'roadConditions') || mapContext.visible_layers.roadConditions);
+  }, [mapContext.visible_layers.roadConditions]);
+
+  useEffect(() => {
+    setInlandFerries(routeSelected || (eventCategory === 'inlandFerries') || mapContext.visible_layers.inlandFerries);
+  }, [mapContext.visible_layers.inlandFerries]);
 
   const tooltipClosures = (
     <Tooltip id="tooltipClosures" className="tooltip-content">
@@ -122,14 +149,14 @@ export default function Filters(props) {
   );
 
   // States for toggles
-  const [closures, setClosures] = useState(eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures);
-  const [majorEvents, setMajorEvents] = useState(eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents);
-  const [minorEvents, setMinorEvents] = useState(eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents);
-  const [futureEvents, setFutureEvents] = useState(eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents);
-  const [roadConditions, setRoadConditions] = useState(mapContext.visible_layers.roadConditions);
+  const [closures, setClosures] = useState(((eventCategory && eventCategory == 'closures') || routeSelected) ? true : mapContext.visible_layers.closures);
+  const [majorEvents, setMajorEvents] = useState(((eventCategory && eventCategory == 'majorEvents') || routeSelected) ? true : mapContext.visible_layers.majorEvents);
+  const [minorEvents, setMinorEvents] = useState(((eventCategory && eventCategory == 'minorEvents') || routeSelected) ? true : mapContext.visible_layers.minorEvents);
+  const [futureEvents, setFutureEvents] = useState(((eventCategory && eventCategory == 'futureEvents') || routeSelected) ? true : mapContext.visible_layers.futureEvents);
+  const [roadConditions, setRoadConditions] = useState(routeSelected? true: mapContext.visible_layers.roadConditions);
   const [chainUps, setChainUps] = useState(mapContext.visible_layers.chainUps);
   const [highwayCams, setHighwayCams] = useState(isCamDetail ? isCamDetail : mapContext.visible_layers.highwayCams);
-  const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
+  const [inlandFerries, setInlandFerries] = useState(routeSelected? true: mapContext.visible_layers.inlandFerries);
   const [weather, setWeather] = useState(mapContext.visible_layers.weather);
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
   const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
@@ -206,7 +233,7 @@ export default function Filters(props) {
               <p className="filter-group__title">Delays</p>
               <div className="filter-items-group">
                 <div className="filter-items filter-items--delays">
-                  <div className={'filter-item filter-item--closures' + (closures ? ' checked' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}>
+                  <div className={'filter-item filter-item--closures' + ((closures || routeSelected) ? ' checked' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}>
                     <input
                       type="checkbox"
                       name="closures"
@@ -239,7 +266,8 @@ export default function Filters(props) {
                     }
                   </div>
 
-                  <div className={'filter-item filter-item--major' + (majorEvents ? ' checked' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}>
+                  {/* <div className={'filter-item filter-item--major' + (majorEvents ? ' checked' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}> */}
+                  <div className={'filter-item filter-item--major' + ((majorEvents || routeSelected) ? ' checked' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}>
                     <input
                       type="checkbox"
                       name="major"
@@ -270,7 +298,8 @@ export default function Filters(props) {
                     }
                   </div>
 
-                  <div className={'filter-item filter-item--minor' + (minorEvents ? ' checked' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}>
+                  {/* <div className={'filter-item filter-item--minor' + (minorEvents ? ' checked' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}> */}
+                  <div className={'filter-item filter-item--minor' + ((minorEvents || routeSelected) ? ' checked' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}>
                     <input
                       type="checkbox"
                       name="minor"
@@ -301,7 +330,7 @@ export default function Filters(props) {
                     }
                   </div>
 
-                  <div className={'filter-item filter-item--future-events' + (futureEvents ? ' checked' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}>
+                  <div className={'filter-item filter-item--future-events' + ((futureEvents || routeSelected) ? ' checked' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}>
                     <input
                       type="checkbox"
                       name="future events"
@@ -372,7 +401,7 @@ export default function Filters(props) {
                     }
                   </div>
 
-                  <div className={'filter-item filter-item--road-conditions' + (roadConditions ? ' checked' : '') + ((disableFeatures && !enableRoadConditions) ? ' disabled' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}>
+                  <div className={'filter-item filter-item--road-conditions' + ((roadConditions || routeSelected) ? ' checked' : '') + ((disableFeatures && !enableRoadConditions) ? ' disabled' : '') + ((loadingLayers && loadingLayers.events) ? ' loading' : '')}>
                     <input
                       type="checkbox"
                       name="road conditions"
@@ -405,7 +434,7 @@ export default function Filters(props) {
                     }
                   </div>
 
-                  <div className={'filter-item filter-item--inland-ferries' + (inlandFerries ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.ferries) ? ' loading' : '')}>
+                  <div className={'filter-item filter-item--inland-ferries' + ((inlandFerries || routeSelected) ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.ferries) ? ' loading' : '')}>
                     <input
                       type="checkbox"
                       name="inland ferries"
