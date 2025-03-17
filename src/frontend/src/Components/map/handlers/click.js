@@ -466,7 +466,7 @@ export const pointerClickHandler = (
           updateClickedFeature,
           isCamDetail,
         );
-        if (clickedFeature.values_['type'] === 'largeRestStop') {
+        if (clickedFeature.getProperties().type === 'largeRestStop') {
           const currentUrl = window.location.href;
           const newUrl = currentUrl.replace("restStop", "largeRestStop");
           window.history.replaceState(null, "", newUrl);
