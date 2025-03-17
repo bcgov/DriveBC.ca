@@ -56,7 +56,6 @@ export default function RouteMap(props) {
 
     mapView.current = new View({
       projection: 'EPSG:3857',
-      constrainResolution: true,
       center: fromLonLat([-119, 50]),
       zoom: 7,
       maxZoom: 15,

@@ -106,6 +106,7 @@ export default function DriveBCMap(props) {
       regional: { list: regionalWeather, filteredList: filteredRegionalWeathers },
       hef: { list: hef, filteredList: filteredHef },
       restStops: { list: restStops, filteredList: filteredRestStops },
+      borderCrossings: { list: borderCrossings, filteredList: filteredBorderCrossings },
     },
     advisories: { list: advisories },
     routes: { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes },
@@ -122,6 +123,7 @@ export default function DriveBCMap(props) {
           regional: state.feeds.regional,
           hef: state.feeds.hef,
           restStops: state.feeds.restStops,
+          borderCrossings: state.feeds.borderCrossings,
         },
         advisories: state.cms.advisories,
         routes: state.routes,
@@ -146,6 +148,7 @@ export default function DriveBCMap(props) {
   const myLocationRef = useRef();
   const locationSet = useRef();
   const routingContainerRef = useRef();
+  const cameraLocationButtonRef = useRef();
 
   // States
   const [myLocationLoading, setMyLocationLoading] = useState(false);
@@ -307,7 +310,6 @@ export default function DriveBCMap(props) {
 
     mapView.current = new View({
       projection: 'EPSG:3857',
-      constrainResolution: true,
       center: fromLonLat(pan),
       zoom: (isCamDetail || (referenceData && referenceData.type)) ? 5 : zoom,
       maxZoom: 15,
@@ -525,6 +527,20 @@ export default function DriveBCMap(props) {
     }
   }, [filteredCameras]);
 
+
+  // Simulate camera location clicked on details page
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isCamDetail && cameraLocationButtonRef.current) {
+        cameraLocationButtonRef.current.click();
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+
   // Events layer
   useEffect(() => {
     // Add layers if not loaded
@@ -623,6 +639,17 @@ export default function DriveBCMap(props) {
       );
     }
   }, [filteredRestStops]);
+
+  // Border crossings layer
+  useEffect(() => {
+    if (!isCamDetail) {
+      loadLayer(
+        mapLayers, mapRef, mapContext,
+        'borderCrossings', borderCrossings, filteredBorderCrossings, 71,
+        referenceData, updateReferenceFeature, setLoadingLayers
+      );
+    }
+  }, [borderCrossings]);
 
   // Advisories layer
   useEffect(() => {
@@ -798,6 +825,7 @@ export default function DriveBCMap(props) {
 
       {isCamDetail && (
         <Button
+          ref={cameraLocationButtonRef}
           className="map-btn cam-location"
           variant="primary"
           onClick={() => {

@@ -14,7 +14,8 @@ import {
   restStopClosedStyles,
   restStopTruckStyles,
   restStopTruckClosedStyles,
-  routeStyles
+  routeStyles,
+  borderCrossingStyles
 } from '../../data/featureStyleDefinitions.js';
 
 // Click states
@@ -119,6 +120,11 @@ export const resetClickedStates = (
       }
       case 'route':
         clickedFeatureRef.current.setStyle(routeStyles['static']);
+        clickedFeatureRef.current.set('clicked', false);
+        updateClickedFeature(null);
+        break;
+      case 'borderCrossing':
+        clickedFeatureRef.current.setStyle(borderCrossingStyles['static']);
         clickedFeatureRef.current.set('clicked', false);
         updateClickedFeature(null);
         break;
@@ -319,6 +325,26 @@ const routeClickHandler = (
   updateClickedFeature(feature);
 };
 
+const borderCrossingClickHandler = (
+  feature,
+  clickedFeatureRef,
+  updateClickedFeature,
+  isCamDetail,
+) => {
+  // reset previous clicked feature
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+    isCamDetail,
+  );
+
+  // set new clicked ferry feature
+  feature.setStyle(borderCrossingStyles['active']);
+  feature.setProperties({ clicked: true }, true);
+  updateClickedFeature(feature);
+};
+
 export const pointerClickHandler = (
   features,
   clickedFeatureRef,
@@ -457,6 +483,20 @@ export const pointerClickHandler = (
           'selected route',
         );
         routeClickHandler(
+          clickedFeature,
+          clickedFeatureRef,
+          updateClickedFeature,
+        );
+        return;
+
+      case 'borderCrossing':
+        trackEvent(
+          'click',
+          'map',
+          'border crossing',
+          'selected border crossing',
+        );
+        borderCrossingClickHandler(
           clickedFeature,
           clickedFeatureRef,
           updateClickedFeature,

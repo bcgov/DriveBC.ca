@@ -295,7 +295,10 @@ class SendEventNotificationsTest(TestCase):
             notification_start_date=datetime.date(2023, 1, 1),
             notification_end_date=datetime.date(2023, 1, 7)
         )
-        msg = generate_settings_message(route)
+        msg = generate_settings_message(
+            route,
+            test_time=datetime.datetime(2023, 1, 3, 0, 0, tzinfo=ZoneInfo('America/Vancouver'))
+        )
         assert 'between 08:00am and 05:00pm Pacific Standard Time (PST) ' in msg
         assert 'from January 01 and January 07.' in msg
 
@@ -307,8 +310,11 @@ class SendEventNotificationsTest(TestCase):
             notification_start_date=datetime.date(2023, 4, 1),
             notification_end_date=datetime.date(2023, 4, 7)
         )
-        msg = generate_settings_message(route)
-        assert 'between 08:00am and 05:00pm Pacific Standard Time (PST) ' in msg
+        msg = generate_settings_message(
+            route,
+            test_time=datetime.datetime(2023, 4, 3, 0, 0, tzinfo=ZoneInfo('America/Vancouver'))
+        )
+        assert 'between 08:00am and 05:00pm Pacific Daylight Time (PDT) ' in msg
         assert 'from April 01 and April 07.' in msg
 
         # Days of the week

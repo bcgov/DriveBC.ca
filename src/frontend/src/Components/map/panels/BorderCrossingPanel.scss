@@ -35,6 +35,20 @@
           font-size: 0.875rem;
           color: $Grey80;
           margin-bottom: 0;
+          display: flex;
+
+          span, p {
+            font-size: 0.875rem;
+            color: $Grey80;
+          }
+
+          .updated {
+            margin-right: 1ch;
+          }
+
+          .friendly-time {
+            margin-left: .2rem;
+          }
         }
       }
 
@@ -47,7 +61,7 @@
         &__title {
           display: flex;
           align-items: center;
-          
+
           .name {
             font-size: 0.875rem;
             font-weight: 700;
@@ -74,18 +88,18 @@
             font-weight: 700;
             width: fit-content;
 
-            &.red {
+            &.closed {
               background-color: $Base-red;
               color: white;
             }
 
-            &.green {
+            &.clear {
               background-color: $Success;
               color: white;
             };
 
-            &.grey {
-              background-color: $Grey60;
+            &.waiting {
+              background-color: $Grey40;
               color: $Grey80;
             }
           }
