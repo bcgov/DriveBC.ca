@@ -34,7 +34,7 @@ import '@vaadin/time-picker';
 import '@vaadin/date-picker';
 
 // Internal imports
-import { AlertContext, AuthContext } from '../../App';
+import { AlertContext, AuthContext, MapContext } from '../../App';
 import { getRoute, removeRoute, saveRoute, patchRoute } from "../data/routes";
 import { addCameraGroups } from "../data/webcams";
 import { getEventCounts } from "../data/events";
@@ -58,6 +58,7 @@ export default function RouteDetails(props) {
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
   const { setAlertMessage } = useContext(AlertContext);
+  const { mapContext, setMapContext } = useContext(MapContext);
 
   // Ref
   const workerRef = useRef();
@@ -542,7 +543,7 @@ export default function RouteDetails(props) {
 
         <div className="route-disclosures">
           {eventCount
-            ? (eventCount.closures > 0 &&
+            ? (mapContext.visible_layers.closures &&
               <div className="route-pill route-pill--closures">
                   <span className="route-item__icon">
                     <FontAwesomeIcon icon={faMinusCircle} alt="closures"/>
@@ -577,7 +578,7 @@ export default function RouteDetails(props) {
         </div>
 
         <div className="route-items">
-          {(eventCount && eventCount.majorEvents > 0) &&
+          {(eventCount && mapContext.visible_layers.majorEvents) &&
             <div className="route-item route-item--major">
               <span className="route-item__count">
                 {eventCount.majorEvents}
@@ -593,7 +594,7 @@ export default function RouteDetails(props) {
             </div>
           }
 
-          {(eventCount && eventCount.minorEvents > 0) &&
+          {(eventCount && mapContext.visible_layers.minorEvents) &&
             <div className="route-item route-item--minor">
               <span className="route-item__count">
                 {eventCount.minorEvents}
@@ -609,7 +610,7 @@ export default function RouteDetails(props) {
             </div>
           }
 
-          {(eventCount && eventCount.roadConditions > 0) &&
+          {(eventCount && mapContext.visible_layers.roadConditions) &&
             <div className="route-item route-item--roadConditions">
               <span className="route-item__count">
                 {eventCount.roadConditions}
