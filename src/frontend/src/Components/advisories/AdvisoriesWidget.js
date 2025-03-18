@@ -19,7 +19,7 @@ export default function AdvisoriesWidget(props) {
   return (
     (advisories && advisories.length > 0) ? (
       <Button
-        className={'advisories-btn advisories-btn--onMap' + ((open && !clickedFeature.get) ? ' open' : '')}
+        className={'advisories-btn advisories-btn--onMap' + ((open && clickedFeature && !clickedFeature.get) ? ' open' : '')}
         aria-label="open advisories list"
         onClick={() => {
           trackEvent('click', 'advisories-btn', 'Advisories button');

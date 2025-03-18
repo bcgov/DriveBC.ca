@@ -2,10 +2,11 @@
 import React, { useCallback, useEffect } from 'react';
 
 // Redux
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { memoize } from "proxy-memoize";
 
 // Internal imports
+import { compareRoutes } from "../data/routes";
 import { removeOverlays } from "../map/helpers";
 
 // External imports
@@ -16,14 +17,19 @@ import { destination, point, distance } from "@turf/turf";
 
 // Styling
 import './DistanceLabels.scss';
-import { routeStyles } from "../data/featureStyleDefinitions";
 
 export default function DistanceLabels(props) {
   /* initialization */
   // Props
-  const { mapLayers, mapRef, updateClickedFeature } = props;
+  const { updateRouteDisplay, mapRef } = props;
+
+  // Map not loaded, do nothing
+  if (!mapRef || !mapRef.current) {
+    return;
+  }
 
   // Redux
+  const dispatch = useDispatch();
   const {
     routes: { searchedRoutes, selectedRoute },
 
@@ -38,31 +44,10 @@ export default function DistanceLabels(props) {
   /* useEffect hooks */
   useEffect(() => {
     addDistanceOverlay();
-    updateMapDisplay(selectedRoute);
+    updateRouteDisplay(selectedRoute);
   }, [selectedRoute]);
 
   /* Rendering */
-  const updateMapDisplay = (route, clicked=false) => {
-    if (!route || !mapLayers.current.routeLayer) {
-      return;
-    }
-
-    const routeFeatures = mapLayers.current.routeLayer.getSource().getFeatures();
-    for (const feature of routeFeatures) {
-      if (feature.get('searchTimestamp') === route.searchTimestamp) {
-        feature.set('clicked', true);
-        feature.setStyle(routeStyles['active']);
-
-        if (clicked) {
-          updateClickedFeature(feature);
-        }
-      } else {
-        feature.set('clicked', false);
-        feature.setStyle(routeStyles['static']);
-      }
-    }
-  }
-
   // Threshold of 500 meters in distance by default
   const arePointsClose = (coords, threshold = 5000) => {
     if (!coords || coords.length < 2) {
@@ -85,12 +70,12 @@ export default function DistanceLabels(props) {
       const elem = document.createElement('div');
 
       elem.addEventListener('click', () => {
-        updateMapDisplay(route, true);
+        updateRouteDisplay(route);
       });
 
       const roundedDistance = Math.round(route.distance);
 
-      const showAsSelected = !closing && route.searchTimestamp === selectedRoute.searchTimestamp;
+      const showAsSelected = !closing && compareRoutes(route, selectedRoute);
       elem.className = showAsSelected ? 'distance-overlay selected' : 'distance-overlay';
       elem.innerHTML = showAsSelected ? `
         <span class="index-label">${index + 1}</span>

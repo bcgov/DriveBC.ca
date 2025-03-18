@@ -27,7 +27,7 @@ export default function RouteDetailsPanel() {
 
   /* Rendering */
   // Main component
-  return searchedRoutes && (
+  return !!searchedRoutes && (
     <div className="popup popup--route" tabIndex={0}>
       <div className="popup__title">
         <p className="name">Your route</p>
