@@ -330,7 +330,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                     'pickerError' : ''
                   }
                   placeholder="Select date"
-                  value={defaultStartDate}
+                  value={defaultStartDate ? defaultStartDate : getCurrentPacificDateString()}
                   min={getCurrentPacificDateString()} />
               </div>
             }
