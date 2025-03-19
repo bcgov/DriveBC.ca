@@ -27,17 +27,26 @@ body {
       margin-bottom: 1rem;
     }
 
-    .timestamp-container, .friendly-time-text{
-      color: $Type-Link;
-      font-size: 0.875rem;
-      font-weight: 700;
-    }
+    &__title {
+      .page-title {
+        font-size: 2.25rem;
+        margin-bottom: 1rem;
+      }
+    
+      .page-description {
+        margin-bottom: 1rem;
+      }
 
-    .timestamp-container {
-      display: flex;
+      .timestamp-container, .friendly-time-text{
+        color: $Type-Link;
+        font-size: 0.875rem;
+        font-weight: 700;
+      }
 
-      .friendly-time, .formatted-date {
-        margin-left: 0.5ch;
+      .timestamp-container {
+        .friendly-time, .formatted-date {
+          margin-left: 0.5ch;
+        }
       }
     }
   }
@@ -318,7 +327,7 @@ a[target="_blank"] {
 
     &.cms-page {
       .container {
-        max-width: 980px;
+        max-width: 1260px;
       }
     }
   }
