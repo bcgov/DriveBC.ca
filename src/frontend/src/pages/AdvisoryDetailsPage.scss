@@ -12,32 +12,55 @@
   .page-header {
     background-color: $Surface-minor;
 
-    .page-title, .page-description {
-      color: $Gold110;
+    #back-container {
+      padding-bottom: 16px;
+      padding-top: 16px;
+
+      .back-link {
+        margin-bottom: 0;
+        color: $Gold110;
+      } 
     }
 
-    .page-description {
-      max-width: initial;
-    }
+    &__title {
+      .page-title, .page-description {
+        color: $Gold110;
+      }
+      .page-description {
+        max-width: initial;
+      }
+      
+      &__meta {
+        display: flex;
+        align-items: center;
 
-    .timestamp-container {
-      h4, .friendly-time {
-        display: inline-block;
+        .timestamp-container, .friendly-time-text {
+          color: $Gold110;
+        }
+
+        .timestamp-container {
+          margin-right: 40px;
+        }
+
+        .share-url {
+          margin-left: auto;
+
+          .copy-btn {
+            background: darken($Surface-minor, 8%);
+    
+            &:hover {
+              background: darken($Surface-minor, 15%);
+            }
+          }
+        }
       }
 
-      .friendly-time {
-        margin-left: 15px;
-      }
-    }
+      & + .container {
+        padding-top: 24px;
 
-    .timestamp-container, .friendly-time-text {
-      color: $Type-Secondary;
-    }
-
-    .timestamp-container {
-      display: flex;
-      .friendly-time, .formatted-date {
-        margin-left: 0.5ch;
+        @media (min-width: 992px) {
+          padding-top: 48px;
+        }
       }
     }
   }

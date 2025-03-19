@@ -56,7 +56,7 @@ export default function FriendlyTime({ date, timezone, asDate=false, includeFull
     return (
       <React.Fragment>
         { includeFullIfHumanized &&
-          <p className="friendly-time-text formatted-date">{dateFormatted}</p>
+          <span className="friendly-time-text formatted-date">{dateFormatted}</span>
         }
 
         <div
@@ -96,5 +96,5 @@ export default function FriendlyTime({ date, timezone, asDate=false, includeFull
     )
   }
 
-  return <p className="friendly-time-text formatted-date">{dateFormatted}</p>;
+  return <span className="friendly-time-text formatted-date">{dateFormatted}</span>;
 }

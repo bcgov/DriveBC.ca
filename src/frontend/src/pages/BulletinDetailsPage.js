@@ -21,6 +21,7 @@ import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Footer from '../Footer.js';
 import FriendlyTime from '../Components/shared/FriendlyTime';
 import renderWagtailBody from '../Components/shared/renderWagtailBody.js';
+import ShareURLButton from '../Components/shared/ShareURLButton';
 
 // Styling
 import './BulletinDetailsPage.scss';
@@ -95,56 +96,59 @@ export default function BulletinDetailsPage() {
         <ServerErrorPopup setShowServerError={setShowServerError} />
       }
 
-      <div>
-        <div className="page-header">
-            <Container>
-              <a
-                className="back-link"
-                onClick={returnHandler}
-                onKeyDown={keyEvent => {
-                  if (keyEvent.keyCode == 13) {
-                    returnHandler();
-                  }
-                }}>
-                <FontAwesomeIcon icon={faArrowLeft} />
-                Back to last page
-              </a>
-
-              {content && !showLoader &&
-                <div>
-                  <h1 className="page-title">{content.title}</h1>
-
-                  {content.teaser &&
-                    <p className="page-description body--large">{content.teaser}</p>
-                  }
-
-                  <div className="timestamp-container">
-                    <span>{content.first_published_at != content.last_published_at ? "Last updated" : "Published" }</span>
-                    <FriendlyTime date={content.latest_revision_created_at} />
-                  </div>
-                </div>
+      <div className="page-header">
+        <Container id="back-container">
+          <a
+            className="back-link"
+            onClick={returnHandler}
+            onKeyDown={keyEvent => {
+              if (keyEvent.keyCode == 13) {
+                returnHandler();
               }
-
-              {showLoader &&
-                <div>
-                  <br/><Skeleton width={280} height={36}/>
-                  <br/><Skeleton width={320} height={24}/>
-                  <br/><Skeleton width={240} height={18}/>
-                </div>
-              }
-            </Container>
-        </div>
-
-        <Container className="bulletin-body-container cms-body">
-          {showLoader &&
-            <Skeleton height={320} />
-          }
-
-          {!showLoader && content &&
-            <div>{renderWagtailBody(content.body)}</div>
-          }
+            }}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+            Back to last page
+          </a>
         </Container>
       </div>
+      
+      <Container className="page-header__title">
+        {content && !showLoader &&
+          <React.Fragment>
+            <h1 className="page-title">{content.title}</h1>
+
+            {content.teaser &&
+              <p className="page-description body--large">{content.teaser}</p>
+            }
+
+            <div className="page-header__title__meta">
+              <div className="timestamp-container">
+                <span>{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span>
+                <FriendlyTime date={content.latest_revision_created_at} />
+              </div>
+              <ShareURLButton />
+            </div>
+          </React.Fragment>
+        }
+
+        {showLoader &&
+          <div>
+            <br/><Skeleton width={280} height={36}/>
+            <br/><Skeleton width={320} height={24}/>
+            <br/><Skeleton width={240} height={18}/>
+          </div>
+        }
+      </Container>
+
+      <Container className="bulletin-body-container cms-body">
+        {showLoader &&
+          <Skeleton height={320} />
+        }
+
+        {!showLoader && content &&
+          <div>{renderWagtailBody(content.body)}</div>
+        }
+      </Container>
 
       <Footer />
     </div>
