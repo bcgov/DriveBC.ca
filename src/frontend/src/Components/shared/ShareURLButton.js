@@ -20,7 +20,6 @@ export default function ShareURLButton() {
   const copyToClipboard = () => {
     if (navigator.share) {
       navigator.share({
-        title: "Share location",
         url: window.location.href
 
       }).then(() => {
