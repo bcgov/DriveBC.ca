@@ -4,13 +4,20 @@ import { useSearchParams } from 'react-router-dom';
 
 // Redux
 import { useDispatch } from "react-redux";
-import { updateRouteDistance, updateSearchLocationFrom, updateSearchLocationTo } from "../slices";
+import {
+  clearSearchedRoutes,
+  clearSelectedRoute,
+  updateRouteDistance,
+  updateSearchLocationFrom,
+  updateSearchLocationTo
+} from "../slices";
 
 // External Imports
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 
 // Internal imports
+import { shortenToOneDecimal } from "../Components/data/routes";
 import MapWrapper from '../Components/map/MapWrapper.js';
 
 // Styling
@@ -29,8 +36,7 @@ export default function MapPage() {
   const referenceData = {
     type: searchParams.get('type'),
     id: searchParams.get('id'),
-    display_category: searchParams.get('display_category'),
-    searchTimestamp: searchParams.get('searchTimestamp'),
+    display_category: searchParams.get('display_category')
   };
 
   // Effects
@@ -50,7 +56,9 @@ export default function MapPage() {
     }
 
     if (routeData.route_distance) {
-      dispatch(updateRouteDistance(routeData.route_distance));
+      dispatch(clearSearchedRoutes());
+      dispatch(clearSelectedRoute());
+      dispatch(updateRouteDistance(shortenToOneDecimal(parseFloat(routeData.route_distance))));
 
       // Start point
       const route_start_coords = [

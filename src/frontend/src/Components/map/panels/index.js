@@ -17,7 +17,7 @@ import BorderCrossingPanel from './BorderCrossingPanel';
 import './index.scss';
 import Feature from "ol/Feature";
 
-export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScreen, mapView) => {
+export const renderPanel = (clickedFeature, isCamDetail, smallScreen, mapView) => {
   if (clickedFeature) {
     // Hack for rendering advisories panel since it's not a feature
     if (!clickedFeature.get) {
@@ -40,11 +40,13 @@ export const renderPanel = (clickedFeature, isCamDetail, routeDetails, smallScre
       case 'largeRestStop':
       case 'restStop':
         return <RestStopPanel feature={clickedFeature} />;
-      case 'route':
-        return <RouteDetailsPanel />;
       case 'borderCrossing':
         return <BorderCrossingPanel borderCrossing={clickedFeature.getProperties()} />;
     }
+
+  // Render searched routes panel if no feature is clicked
+  } else {
+    return <RouteDetailsPanel />;
   }
 }
 
@@ -52,13 +54,19 @@ export const maximizePanel = (panelRef, clickedFeature) => {
   if (panelRef.current.classList.contains('open') &&
       !panelRef.current.classList.contains('maximized')) {
         // Prevent maximizing advisory and route panels on mobile view
-        if (clickedFeature instanceof Feature && clickedFeature.get('type') !== 'route'){
+        if (clickedFeature instanceof Feature){
           panelRef.current.classList.add('maximized');
         }
   }
 }
 
-export const togglePanel = (panelRef, resetClickedStates, clickedFeatureRef, updateClickedFeature, pushMargins) => {
+export const togglePanel = (panelRef, resetClickedStates, clickedFeatureRef, updateClickedFeature, pushMargins, searchedRoutes) => {
+  if (searchedRoutes) {
+    panelRef.current.classList.remove('maximized');
+    resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
+    return;
+  }
+
   panelRef.current.classList.toggle('open');
   panelRef.current.classList.remove('maximized');
   if (!panelRef.current.classList.contains('open')) {

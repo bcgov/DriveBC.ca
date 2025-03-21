@@ -16,7 +16,7 @@ import {
   updateSearchLocationFrom,
   updateSearchLocationTo, clearRouteDistance
 } from '../../slices/routesSlice'
-import { removeOverlays } from "../map/helpers";
+import { fitMap, removeOverlays } from "../map/helpers";
 import LocationSearch from './LocationSearch.js';
 import NoRouteFound from './NoRouteFound';
 
@@ -34,7 +34,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import './RouteSearch.scss';
 
 const RouteSearch = forwardRef((props, ref) => {
-  const { showFilterText, showSpinner, onShowSpinnerChange, mapRef, myLocation } = props;
+  const { showFilterText, showSpinner, onShowSpinnerChange, mapRef, myLocation, mapView } = props;
 
   const [_searchParams, setSearchParams] = useSearchParams();
 
@@ -84,12 +84,17 @@ const RouteSearch = forwardRef((props, ref) => {
 
       getRoutes(firstPoint, secondPoint, favRoutes).then((routes) => {
         // Select shortest route if the distance matches
-        if (routes.length > 1 && shortenToOneDecimal(parseFloat(routeDistance)) === shortenToOneDecimal(routes[1].distance)) {
+        if (routes.length > 1 && routeDistance === shortenToOneDecimal(routes[1].distance)) {
           dispatch(updateSelectedRoute(routes[1]));
 
         // Select fastest route by default
         } else {
           dispatch(updateSelectedRoute(routes[0]));
+        }
+
+        // Fit map on routes if not from notification link
+        if (!routeDistance) {
+          fitMap(routes, mapView);
         }
 
         dispatch(clearRouteDistance());

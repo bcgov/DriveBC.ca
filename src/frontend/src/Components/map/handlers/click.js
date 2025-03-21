@@ -118,11 +118,6 @@ export const resetClickedStates = (
         updateClickedFeature(null);
         break;
       }
-      case 'route':
-        clickedFeatureRef.current.setStyle(routeStyles['static']);
-        clickedFeatureRef.current.set('clicked', false);
-        updateClickedFeature(null);
-        break;
       case 'borderCrossing':
         clickedFeatureRef.current.setStyle(borderCrossingStyles['static']);
         clickedFeatureRef.current.set('clicked', false);
@@ -322,7 +317,6 @@ const routeClickHandler = (
   // set new clicked route feature
   feature.set('clicked', true);
   feature.setStyle(routeStyles['active']);
-  updateClickedFeature(feature);
 };
 
 const borderCrossingClickHandler = (
@@ -353,6 +347,7 @@ export const pointerClickHandler = (
   isCamDetail,
   loadCamDetails,
   updateReferenceFeature,
+  updateRouteDisplay,
   mapContext
 ) => {
   if (features.length) {
@@ -487,6 +482,8 @@ export const pointerClickHandler = (
           clickedFeatureRef,
           updateClickedFeature,
         );
+
+        updateRouteDisplay(clickedFeature.get('route'));
         return;
 
       case 'borderCrossing':
