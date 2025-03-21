@@ -151,8 +151,6 @@ export default function MapWrapper(props) {
 
   return (
     <React.Fragment>
-      <PollingComponent runnable={() => loadData()} interval={30000} />
-
       <DriveBCMap
         mapProps={props}
         showNetworkError={showNetworkError}

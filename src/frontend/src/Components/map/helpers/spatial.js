@@ -83,8 +83,75 @@ function turfToOL(turfPolygon) {
   return feature.getGeometry();
 }
 
-// with intersectsExtent and spatial index
 export const filterByRoute = (data, route, extraToleranceMeters, populateProjection) => {
+  if (!route || !data || data.length === 0) {
+    return data;
+  }
+
+  const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];
+  const routeLineString = turf.lineString(lineCoords);
+  const bufferedRouteLineString = turf.buffer(routeLineString, 150, {units: 'meters'});
+
+  // Initialize index and add data
+  const routeBBox = turf.bbox(routeLineString);
+  const spatialIndex = new Flatbush(data.length);
+  data.forEach((entry) => {
+    // Add points to the index with slight tolerance
+    if (entry.location.type == "Point") {
+      const coords = entry.location.coordinates;
+      const pointRadius = 0.0001 * ((extraToleranceMeters ? extraToleranceMeters : 10) / 10); // 10m default tolerance
+      spatialIndex.add(coords[0] - pointRadius, coords[1] - pointRadius, coords[0] + pointRadius, coords[1] + pointRadius);
+
+    // Add linestrings to the index
+    } else {
+      const coords = entry.location.coordinates;
+      const entryLs = turf.lineString(coords);
+      const entryBbox = turf.bbox(entryLs);
+      spatialIndex.add(entryBbox[0], entryBbox[1], entryBbox[2], entryBbox[3]);
+    }
+  });
+
+  // Finish building the index
+  spatialIndex.finish();
+
+  // Query the index for features intersecting with the linestring
+  const dataInBBox = [];
+  spatialIndex.search(routeBBox[0], routeBBox[1], routeBBox[2], routeBBox[3], (idx) => {
+    dataInBBox.push(data[idx]);
+  });
+
+  // Select all events that intersect with the route buffer (quick dirty filter that includes more records than needed)
+  const olBufferedLs = turfToOL(bufferedRouteLineString);
+  const selectedFeatures1 = dataInBBox.filter((feature) => {
+    const olGeom = getOLGeometry(feature.location)
+    const olExtent = olGeom.getExtent()
+    return olBufferedLs.intersectsExtent(olExtent);
+  });
+
+  // Narrow down the results to only include intersections along the linestring
+  const intersectingData = selectedFeatures1.filter(entry => {
+    if (entry.location.type == "Point") {
+      const coords = entry.location.coordinates;
+      return turf.booleanPointInPolygon(turf.point(coords), bufferedRouteLineString);
+
+    } else {
+      const coords = entry.location.coordinates;
+      const dataLs = turf.lineString(coords);
+
+      return turf.booleanIntersects(dataLs, bufferedRouteLineString);
+    }
+  });
+
+  // Populate route projection for camera ordering
+  if (populateProjection) {
+    return populateRouteProjection(intersectingData, route);
+  }
+
+  return intersectingData;
+}
+
+// with intersectsExtent and spatial index
+export const filterByRoute2 = (data, route, extraToleranceMeters, populateProjection) => {
   if (!route || !data || data.length === 0) {
     return data;
   }

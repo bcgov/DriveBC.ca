@@ -1,6 +1,8 @@
 import { filterAdvisoryByRoute, filterByRoute } from './helpers/spatial';
 
 self.onmessage = (event) => {
+  const startTime = performance.now();
+
   const { data, route, action } = event.data;
 
   let filteredData = data;
@@ -19,6 +21,9 @@ self.onmessage = (event) => {
         break;
     }
   }
+
+  const endTime = performance.now();
+  console.log(`${action} took ${endTime - startTime} milliseconds`);
 
   postMessage({ data, filteredData, route, action });
 };
