@@ -187,6 +187,10 @@ export const shortenToOneDecimal = (num) => {
   return str.slice(0, str.indexOf('.') + 2); // Keep only one decimal place
 }
 
+export const compareRoutes = (route1, route2) => {
+  return shortenToOneDecimal(route1.distance) === shortenToOneDecimal(route2.distance)
+}
+
 export const linkRoute = (route, favRoutes) => {
   // route is already saved or favRoutes is not available
   if (route.saved || !favRoutes) {
@@ -194,7 +198,7 @@ export const linkRoute = (route, favRoutes) => {
   }
 
   const matchedRoute = favRoutes.find(favRoute => (
-    shortenToOneDecimal(favRoute.distance) === shortenToOneDecimal(route.distance) &&
+    compareRoutes(route, favRoute) &&
     compareCoordinates(route.points[0], favRoute.start_point.coordinates) &&
     compareCoordinates(route.points[1], favRoute.end_point.coordinates)
   ));

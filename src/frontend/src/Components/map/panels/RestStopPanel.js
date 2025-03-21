@@ -1,5 +1,5 @@
 // React
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 
 // Navigation
 import { useSearchParams } from 'react-router-dom';
@@ -25,6 +25,7 @@ import { isRestStopClosed } from '../../data/restStops';
 import OpenSeason from '../OpenSeason';
 import RestStopTypeIcon from '../RestStopTypeIcon';
 import ShareURLButton from '../../shared/ShareURLButton';
+import { MapContext } from '../../../App';
 
 // Styling
 import './RestStopPanel.scss';
@@ -44,9 +45,13 @@ export default function RestStopPanel(props) {
 
   const [_searchParams, setSearchParams] = useSearchParams();
 
+  // Context
+  const { mapContext } = useContext(MapContext);
+
   // useEffect hooks
   useEffect(() => {
-    const featureType = feature.getProperties().properties.ACCOM_COMMERCIAL_TRUCKS == 'Yes' ? 'largeRestStop' : 'restStop';
+    const isLargeRestStop = mapContext.visible_layers.largeRestStops;
+    const featureType = isLargeRestStop && feature.get("properties").ACCOM_COMMERCIAL_TRUCKS == 'Yes' ? 'largeRestStop' : 'restStop';
     setSearchParams(new URLSearchParams({ type: featureType, id: restStopData.id }));
   }, [feature]);
 

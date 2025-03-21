@@ -24,7 +24,7 @@ export function getRouteLayer(routeData, projectionCode, mapContext, selectedRou
           const olFeature = new ol.Feature({ geometry: olGeometry, type: 'route' });
 
           // Transfer properties
-          olFeature.setProperties(routeData);
+          olFeature.set('route', routeData);
 
           // Transform the projection
           const olFeatureForMap = transformFeature(
@@ -39,18 +39,22 @@ export function getRouteLayer(routeData, projectionCode, mapContext, selectedRou
         routeData.forEach(function (route, i) {
           const feature = getRouteFeature(route);
 
-          if (!preview &&  // set first route if there's no feature specified in the URL
-            ((!selectedRoute && i === 0) ||
-            // set target route if specified in URL
-            (selectedRoute.distance === feature.getProperties().distance))
+          if (!preview && (
+            // set first route if there's no feature specified in the URL
+            (!selectedRoute && i === 0) ||
+            // set the route if it's the same as the selected route
+            (selectedRoute.distance === feature.get('route').distance))
           ) {
-            updateReferenceFeature(feature);
+            feature.set('clicked', true);
+            feature.setStyle(routeStyles['active']);
+
+          } else {
+            feature.setStyle(routeStyles['static']);
           }
 
           vectorSource.addFeature(feature);
         });
       },
-    }),
-    style: preview ? routeStyles['active'] : routeStyles['static']
+    })
   });
 }

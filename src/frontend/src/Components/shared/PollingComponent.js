@@ -1,4 +1,3 @@
-// React
 import React, { useEffect } from 'react';
 
 export default function PollingComponent(props) {
@@ -20,16 +19,19 @@ export default function PollingComponent(props) {
       }
     };
 
-    // Set up initial interval
-    intervalId = setInterval(() => {
-      runnable();
+    // Set up initial timeout to delay the first execution
+    const timeoutId = setTimeout(() => {
+      intervalId = setInterval(() => {
+        runnable();
+      }, interval);
     }, interval);
 
     // Add visibility change event listener
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Clean up intervals and event listener on component unmount
+    // Clean up intervals, timeout, and event listener on component unmount
     return () => {
+      clearTimeout(timeoutId);
       clearInterval(intervalId);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };

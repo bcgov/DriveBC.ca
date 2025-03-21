@@ -14,7 +14,7 @@ export const transformFeature = (feature, sourceCRS, targetCRS) => {
 
 // Zoom and pan
 export const fitMap = (routes, mapView) => {
-  if (!Array.isArray(routes) || routes.length === 0) {
+  if (!Array.isArray(routes) || routes.length === 0 || !mapView.current) {
     return;
   }
 
@@ -33,9 +33,7 @@ export const fitMap = (routes, mapView) => {
   // Transform the combined bounding box to the map's projection
   const routeExtent = transformExtent(combinedBbox, 'EPSG:4326', 'EPSG:3857');
 
-  if (mapView.current) {
-    mapView.current.fit(routeExtent, { duration: 1000 });
-  }
+  mapView.current.fit(routeExtent, { duration: 1000 });
 }
 
 export const setZoomPan = (mapView, zoom, panCoords) => {
@@ -142,14 +140,12 @@ export const calculateCenter = (referenceData) => {
 }
 
 export const removeOverlays = (mapRef) => {
-  if(mapRef !== undefined) {
-    // Clone the overlays array to avoid issues when modifying the array during iteration
-    const overlaysArray = [...mapRef.current.getOverlays().getArray()];
+  // Clone the overlays array to avoid issues when modifying the array during iteration
+  const overlaysArray = [...mapRef.current.getOverlays().getArray()];
 
-    overlaysArray.forEach((overlay) => {
-      if(overlay.pinName === undefined){
-        mapRef.current.removeOverlay(overlay);
-      }
-    });
-  }
+  overlaysArray.forEach((overlay) => {
+    if(overlay.pinName === undefined){
+      mapRef.current.removeOverlay(overlay);
+    }
+  });
 };

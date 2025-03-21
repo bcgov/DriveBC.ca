@@ -118,11 +118,6 @@ export const resetClickedStates = (
         updateClickedFeature(null);
         break;
       }
-      case 'route':
-        clickedFeatureRef.current.setStyle(routeStyles['static']);
-        clickedFeatureRef.current.set('clicked', false);
-        updateClickedFeature(null);
-        break;
       case 'borderCrossing':
         clickedFeatureRef.current.setStyle(borderCrossingStyles['static']);
         clickedFeatureRef.current.set('clicked', false);
@@ -322,7 +317,6 @@ const routeClickHandler = (
   // set new clicked route feature
   feature.set('clicked', true);
   feature.setStyle(routeStyles['active']);
-  updateClickedFeature(feature);
 };
 
 const borderCrossingClickHandler = (
@@ -352,7 +346,9 @@ export const pointerClickHandler = (
   mapView,
   isCamDetail,
   loadCamDetails,
-  updateReferenceFeature
+  updateReferenceFeature,
+  updateRouteDisplay,
+  mapContext
 ) => {
   if (features.length) {
     const clickedFeature = features[0];
@@ -465,6 +461,13 @@ export const pointerClickHandler = (
           updateClickedFeature,
           isCamDetail,
         );
+        if (clickedFeature.getProperties().type === 'largeRestStop') {
+          const currentUrl = window.location.href;
+          const newUrl = currentUrl.replace("restStop", "largeRestStop");
+          window.history.replaceState(null, "", newUrl);
+          mapContext.visible_layers.restStops = false;
+          mapContext.visible_layers.largeRestStops = true;
+        }
         return;
 
       case 'route':
@@ -479,6 +482,8 @@ export const pointerClickHandler = (
           clickedFeatureRef,
           updateClickedFeature,
         );
+
+        updateRouteDisplay(clickedFeature.get('route'));
         return;
 
       case 'borderCrossing':

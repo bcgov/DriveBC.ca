@@ -35,7 +35,7 @@ import '@vaadin/date-picker';
 
 // Internal imports
 import { AlertContext, AuthContext, MapContext } from '../../App';
-import { getRoute, removeRoute, saveRoute, patchRoute } from "../data/routes";
+import { getRoute, removeRoute, saveRoute, patchRoute, compareRoutes } from "../data/routes";
 import { addCameraGroups } from "../data/webcams";
 import { getEventCounts } from "../data/events";
 import { getAdvisoryCounts } from "../data/advisories";
@@ -295,7 +295,7 @@ export default function RouteDetails(props) {
   }
 
   const switchRouteHandler = () => {
-    if (route.searchTimestamp !== selectedRoute.searchTimestamp){
+    if (!compareRoutes(route, selectedRoute)){
       dispatch(updateSelectedRoute(route));
     }
   }
@@ -347,7 +347,6 @@ export default function RouteDetails(props) {
       pathname: '/',
       search: `?${createSearchParams({
         type: "route",
-        searchTimestamp: route.searchTimestamp,
       })}`
     });
   }
@@ -473,7 +472,7 @@ export default function RouteDetails(props) {
       </Modal>
 
       <div
-        className={`route-details ${isPanel && route.searchTimestamp === selectedRoute.searchTimestamp ? 'selected' : ''} ${onMobile ? 'mobile' : ''}`}
+        className={`route-details ${isPanel && compareRoutes(route, selectedRoute) ? 'selected' : ''} ${onMobile ? 'mobile' : ''}`}
         tabIndex={isPanel ? 0 : null}
         onClick={isPanel ? switchRouteHandler : null}
         onKeyPress={isPanel ? switchRouteHandler : null}>
@@ -481,7 +480,7 @@ export default function RouteDetails(props) {
         <div className="route-title">
           <div className="space-between-row route-tools">
             {isPanel &&
-              <span className={`route-index ${route.searchTimestamp === selectedRoute.searchTimestamp ? 'selected' : ''}`}>{index + 1}</span>
+              <span className={`route-index ${compareRoutes(route, selectedRoute) ? 'selected' : ''}`}>{index + 1}</span>
             }
 
             {!isPanel &&

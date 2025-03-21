@@ -1,4 +1,8 @@
+// External imports
 import { createSlice } from '@reduxjs/toolkit';
+
+// Internal imports
+import { compareRoutes } from "../Components/data/routes";
 
 export const routesSlice = createSlice({
   name: 'routes',
@@ -25,7 +29,7 @@ export const routesSlice = createSlice({
     updateSingleSearchedRoute: (state, action) => {
       if (!state.searchedRoutes) return;
 
-      const index = state.searchedRoutes.findIndex(route => route.searchTimestamp === action.payload.searchTimestamp);
+      const index = state.searchedRoutes.findIndex(route => compareRoutes(route, action.payload));
       if (index !== -1) {
         state.searchedRoutes[index] = action.payload;
       }

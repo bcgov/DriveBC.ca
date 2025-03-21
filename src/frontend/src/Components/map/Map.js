@@ -32,6 +32,7 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
 import { addCameraGroups } from '../data/webcams.js';
+import { compareRoutes } from "../data/routes";
 import {
   blueLocationMarkup,
   redLocationToMarkup,
@@ -73,7 +74,7 @@ import View from 'ol/View';
 
 // Styling
 import './Map.scss';
-import { cameraStyles } from "../data/featureStyleDefinitions";
+import { cameraStyles, restStopStyles, routeStyles } from "../data/featureStyleDefinitions";
 
 export default function DriveBCMap(props) {
   /* initialization */
@@ -212,11 +213,11 @@ export default function DriveBCMap(props) {
       return;
     }
 
-    const featureData = clickedFeature instanceof Feature ? clickedFeature.getProperties() : null;
+    const featureType = clickedFeature instanceof Feature ? clickedFeature.get('type') : null;
 
-    if (featureData && featureData.type === 'route' && featureData.searchTimestamp !== selectedRoute.searchTimestamp) {
+    if (featureType === 'route' && !compareRoutes(clickedFeature.get('route'), selectedRoute)) {
       for (const route of searchedRoutes) {
-        if (route.searchTimestamp === featureData.searchTimestamp) {
+        if (compareRoutes(route === clickedFeature.get('route'))) {
           dispatch(updateSelectedRoute(route));
         }
       }
@@ -385,7 +386,8 @@ export default function DriveBCMap(props) {
 
       pointerClickHandler(
         features, clickedFeatureRef, updateClickedFeature,
-        mapView, isCamDetail, loadCamDetails, updateReferenceFeature
+        mapView, isCamDetail, loadCamDetails, updateReferenceFeature,
+        updateRouteDisplay, mapContext
       );
     });
 
@@ -467,20 +469,37 @@ export default function DriveBCMap(props) {
   /* Triggering handlers based on navigation data */
   useEffect(() => {
     if (referenceFeature) {
-      // Do not trigger, routes will be handled by fitmap
-      if (referenceFeature.get('type') !== 'route') {
-        setZoomPan(mapView, 9, referenceFeature.getGeometry().flatCoordinates);
-      }
+      setZoomPan(mapView, 9, referenceFeature.getGeometry().flatCoordinates);
 
       pointerClickHandler(
         [referenceFeature], clickedFeatureRef, updateClickedFeature,
-        mapView, isCamDetail, loadCamDetails, updateReferenceFeature
+        mapView, isCamDetail, loadCamDetails, updateReferenceFeature,
+        updateRouteDisplay, mapContext
       );
     }
   }, [referenceFeature]);
 
   /* Loading map layers */
   // Route layer
+  const updateRouteDisplay = (route) => {
+    if (!route || !mapLayers.current.routeLayer) {
+      return;
+    }
+
+    const routeFeatures = mapLayers.current.routeLayer.getSource().getFeatures();
+    for (const feature of routeFeatures) {
+      if (compareRoutes(feature.get('route'), route)) {
+        feature.set('clicked', true);
+        feature.setStyle(routeStyles['active']);
+        dispatch(updateSelectedRoute(route));
+
+      } else {
+        feature.set('clicked', false);
+        feature.setStyle(routeStyles['static']);
+      }
+    }
+  }
+
   useEffect(() => {
     setLoadingLayers(getInitialLoadingLayers());
 
@@ -498,13 +517,7 @@ export default function DriveBCMap(props) {
       'routeLayer', routesData, routesData, 6, selectedRoute, updateReferenceFeature
     );
 
-    if (routesData) {
-      // Fit map to route if route found and not saved/unsaved
-      if (!!routesData.length && (!routesData[0].id || searchParams.get('type') == 'route')) {
-        fitMap(routesData, mapView);
-      }
-
-    } else {
+    if (!routesData || !routesData.length) {
       resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
     }
   }, [searchedRoutes]);
@@ -672,65 +685,64 @@ export default function DriveBCMap(props) {
   /* Constants for conditional rendering */
   // Disable cam panel in details page
   const disablePanel = isCamDetail && clickedFeature && clickedFeature.get('type') === 'camera';
-  const openPanel = !!clickedFeature && !disablePanel;
+  const openPanel = (!!clickedFeature || !!searchedRoutes) && !disablePanel;
   const smallScreen = useMediaQuery('only screen and (max-width: 767px)');
 
   // Reset search params when panel is closed
   useEffect(() => {
     if (searchParamInitialized.current) {
-      if (!openPanel) {
+      if (!clickedFeature) {
         setSearchParams(new URLSearchParams({}));
       }
 
     } else {
       searchParamInitialized.current = true;
     }
-  }, [openPanel]);
+  }, [clickedFeature]);
 
   /* Rendering */
   return (
     <div className={`map-container ${isCamDetail ? 'preview' : ''}`}>
-      <div
-        ref={panel}
-        className={`side-panel ${openPanel ? 'open' : ''}`}
-        onClick={() => maximizePanel(panel, clickedFeature)}
-        onTouchMove={() => maximizePanel(panel, clickedFeature)}
-        onKeyDown={keyEvent => {
-          if (keyEvent.keyCode == 13) {
-            maximizePanel(panel, clickedFeature);
-          }
-        }}>
-
-        <button
-          className="close-panel"
-          aria-label={`${openPanel ? 'close side panel' : ''}`}
-          aria-hidden={`${openPanel ? false : true}`}
-          tabIndex={`${openPanel ? 0 : -1}`}
-          onClick={() => {
-            togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
-              myLocationRef, routingContainerRef
-            ]);
+      {openPanel &&
+        <div
+          ref={panel}
+          className={`side-panel ${openPanel ? 'open' : ''}`}
+          onClick={() => maximizePanel(panel, clickedFeature)}
+          onTouchMove={() => maximizePanel(panel, clickedFeature)}
+          onKeyDown={keyEvent => {
+            if (keyEvent.keyCode == 13) {
+              maximizePanel(panel, clickedFeature);
+            }
           }}>
-          <FontAwesomeIcon icon={faXmark} />
-        </button>
 
-        <div className="panel-content">
-          {openPanel && searchedRoutes &&
-            renderPanel(clickedFeature, null, {...routeDetails, ferries: selectedFerries}, smallScreen, mapView)
+          {clickedFeature &&
+            <button
+              className="close-panel"
+              aria-label={`${openPanel ? 'close side panel' : ''}`}
+              aria-hidden={`${openPanel ? false : true}`}
+              tabIndex={`${openPanel ? 0 : -1}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
+                  myLocationRef, routingContainerRef
+                ], searchedRoutes);
+              }}>
+              <FontAwesomeIcon icon={faXmark} />
+            </button>
           }
 
-          {openPanel && searchedRoutes &&
-            <DistanceLabels mapLayers={mapLayers} mapRef={mapRef} updateClickedFeature={updateClickedFeature} />
-          }
+          <div className="panel-content">
+            {searchedRoutes &&
+              <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} />
+            }
 
-          {openPanel && !searchedRoutes &&
-            renderPanel(
+            {renderPanel(
               clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature,
-              isCamDetail, null, smallScreen, mapView
-            )
-          }
+              isCamDetail, smallScreen, mapView
+            )}
+          </div>
         </div>
-      </div>
+      }
 
       <div ref={mapElement} className="map">
         {!isCamDetail && (
@@ -741,7 +753,8 @@ export default function DriveBCMap(props) {
               showSpinner={showSpinner}
               onShowSpinnerChange={setShowSpinner}
               myLocation={myLocation}
-              mapRef={mapRef} />
+              mapRef={mapRef}
+              mapView={mapView} />
 
             <AdvisoriesWidget
               advisories={advisoriesInView}
