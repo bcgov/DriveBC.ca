@@ -1,0 +1,13 @@
+# We are creating a service account for the Gold standby check application to use to get the PostgresCluster CRD
+# To avoid issues with upgrades, we only create the ServiceAccount if the release is an initial install
+# and keep the resource if the release is deleted so that the ServiceAccount is not deleted when an 
+# admin tries to do an upgrade
+{{- if and .Values.serviceaccount.enabled (not .Release.IsUpgrade) }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "app.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/resource-policy": keep
+{{- end }}
