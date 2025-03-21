@@ -1,0 +1,38 @@
+fullnameOverride: uat-drivebc-standbycheck
+nameOverride: uat-drivebc-standbycheck
+
+replicaCount: 3 # How many replicas of the standbycheck pod to run
+
+cluster: gold # Can be gold or golddr
+
+image:
+  repository: ghcr.io/bcgov/drivebc.ca-standbycheck
+  tag: latest
+
+# Deploy the standbycheck control pod in the primary cluster
+controller:
+  enabled: true # Set to true if deploying to Gold, false if deploying to Gold DR
+
+# Deploy the role and serviceaccount in the standby cluster
+serviceaccount:
+  enabled: false # Set to true if deploying to Gold DR, false if deploying to Gold
+
+deployment:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 50Mi
+    limits:
+      memory: 100Mi
+
+route:
+  host: uat-drivebc.apps.gold.devops.gov.bc.ca # Hostname for the route
+  path: /lbhealth # Path for the route
+  iprestricted: true # Set to true if you want to limit IP's the the addresses in the ipallowlist below
+  ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 # The first 4 ranges are GOV IP's, the last one is for OXD external IP
+  vanityurl: true # Set to true if you want to use a vanity URL
+  vanityurlhost: uat.drivebc.ca # The vanity URL to use
+
+podDisruptionBudget: 
+  enabled: true # If you have more than 1 replica, you can set this to true.
+  minAvailable: 1 

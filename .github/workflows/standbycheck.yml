@@ -55,3 +55,59 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args:
             DEBUG_BUILD=false
+
+  update-openshift-gold:
+    needs: build-and-push-standbycheck
+    runs-on: ubuntu-latest
+    name: Deploy Latest Helm Chart to ${{ github.event.inputs.environment }} in Gold
+    environment:
+      name: ${{ github.event.inputs.environment }}
+      url: https://dev-drivebc.apps.gold.devops.gov.bc.ca/lbhealth/
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4 
+
+    - name: Install CLI tools from OpenShift Mirror
+      uses: redhat-actions/openshift-tools-installer@v1
+      with:
+        oc: "4"
+          
+    - name: Authenticate and set context for Gold
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        openshift_token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+        insecure_skip_tls_verify: true
+
+    - name: Helm upgrade on OpenShift ${{ github.event.inputs.environment }} Environment
+      run: |
+        helm upgrade ${{ github.event.inputs.environment }}-drivebc-standbycheck -f ./infrastructure/standbycheck/values-${{ github.event.inputs.environment }}.yaml ./infrastructure/standbycheck --set image.tag="sha-${{ github.sha }}"
+
+  update-openshift-golddr:
+    needs: build-and-push-standbycheck
+    runs-on: ubuntu-latest
+    name: Deploy Latest Helm Chart to ${{ github.event.inputs.environment }} in GoldDR
+    environment:
+      name: ${{ github.event.inputs.environment }}
+      url: https://dev-drivebc.apps.golddr.devops.gov.bc.ca/lbhealth/
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4 
+
+    - name: Install CLI tools from OpenShift Mirror
+      uses: redhat-actions/openshift-tools-installer@v1
+      with:
+        oc: "4"
+
+    - name: Authenticate and set context for GoldDR
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        openshift_token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+        insecure_skip_tls_verify: true
+  
+    - name: Helm upgrade on OpenShift ${{ github.event.inputs.environment }} Environment
+      run: |
+        helm upgrade ${{ github.event.inputs.environment }}-drivebc-standbycheck -f ./infrastructure/standbycheck/values-${{ github.event.inputs.environment }}.yaml -f ./infrastructure/standbycheck/values-${{ github.event.inputs.environment }}-dr.yaml ./infrastructure/standbycheck --set image.tag="sha-${{ github.sha }}" 
