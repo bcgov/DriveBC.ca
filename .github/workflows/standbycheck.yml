@@ -1,0 +1,57 @@
+# This workflow is to update the GSLB Monitoring Pods using Github actions.
+
+name: StandbyCheck - Build and Deploy Standbycheck to the Selected Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+
+env:
+  REGISTRY: ghcr.io
+  STANDBY_IMAGE_NAME: ${{ github.repository }}-standbycheck
+
+jobs:
+  build-and-push-standbycheck:
+    runs-on: ubuntu-latest
+    name: Build & Push standbycheck Image
+    environment: dev
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+    
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.STANDBY_IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=long
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./compose/standbycheck/
+          file: ./compose/standbycheck/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args:
+            DEBUG_BUILD=false
