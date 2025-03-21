@@ -1,6 +1,8 @@
 // Map & geospatial imports
+import { LineString, Point, Polygon } from "ol/geom";
 import * as turf from '@turf/turf';
 import Flatbush from 'flatbush';
+import GeoJSON from 'ol/format/GeoJSON';
 
 // Route filtering and ordering
 export const populateRouteProjection = (data, route) => {
@@ -53,6 +55,35 @@ export const filterAdvisoryByRoute = (data, route) => {
   return filteredAdvisoryList;
 }
 
+function getOLGeometry(location) {
+  let geom;
+  switch (location.type) {
+    case 'Point':
+      geom =  new Point(location.coordinates);
+      break;
+    case 'LineString':
+      geom = new LineString(location.coordinates);
+      break;
+    case 'Polygon':
+      geom = new Polygon(location.coordinates);
+      break;
+  }
+
+  geom.transform('EPSG:4326', 'EPSG:3857');
+  return geom;
+}
+
+function turfToOL(turfPolygon) {
+  const geoJsonFormat = new GeoJSON();
+  const feature = geoJsonFormat.readFeature(turfPolygon, {
+    dataProjection: 'EPSG:4326', // Assuming the GeoJSON is in EPSG:4326
+    featureProjection: 'EPSG:3857' // Desired projection for OpenLayers
+  });
+
+  return feature.getGeometry();
+}
+
+// with intersectsExtent and spatial index
 export const filterByRoute = (data, route, extraToleranceMeters, populateProjection) => {
   if (!route || !data || data.length === 0) {
     return data;
@@ -61,10 +92,10 @@ export const filterByRoute = (data, route, extraToleranceMeters, populateProject
   const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];
   const routeLineString = turf.lineString(lineCoords);
   const bufferedRouteLineString = turf.buffer(routeLineString, 150, {units: 'meters'});
+
+  // Initialize index and add data
   const routeBBox = turf.bbox(routeLineString);
-
   const spatialIndex = new Flatbush(data.length);
-
   data.forEach((entry) => {
     // Add points to the index with slight tolerance
     if (entry.location.type == "Point") {
@@ -90,23 +121,23 @@ export const filterByRoute = (data, route, extraToleranceMeters, populateProject
     dataInBBox.push(data[idx]);
   });
 
+  // Select all events that intersect with the route buffer (quick dirty filter that includes more records than needed)
+  const olBufferedLs = turfToOL(bufferedRouteLineString);
+  const dirtyFilteredData = dataInBBox.filter((feature) => {
+    const olGeom = getOLGeometry(feature.location)
+    const olExtent = olGeom.getExtent()
+    return olBufferedLs.intersectsExtent(olExtent);
+  });
+
   // Narrow down the results to only include intersections along the linestring
-  const intersectingData = dataInBBox.filter(entry => {
+  const intersectingData = dirtyFilteredData.filter(entry => {
     if (entry.location.type == "Point") {
       const coords = entry.location.coordinates;
-
-      // 10m default tolerance
-      const dataPoint = turf.buffer(
-        turf.point(coords),
-        (extraToleranceMeters ? extraToleranceMeters : 10), {units: 'meters'}
-      );
-
-      return turf.booleanIntersects(dataPoint, bufferedRouteLineString);
+      return turf.booleanPointInPolygon(turf.point(coords), bufferedRouteLineString);
 
     } else {
       const coords = entry.location.coordinates;
       const dataLs = turf.lineString(coords);
-
       return turf.booleanIntersects(dataLs, bufferedRouteLineString);
     }
   });
