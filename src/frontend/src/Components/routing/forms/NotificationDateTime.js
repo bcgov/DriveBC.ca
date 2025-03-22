@@ -34,7 +34,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
   const [endTime, setEndTime] = useState(defaultEndTime);
 
   // Date range
-  const defaultStartDate = route.notification_start_date;
+  const defaultStartDate = route.notification_start_date? route.notification_start_date : getCurrentPacificDateString();
   const defaultEndDate = route.notification_end_date;
   const [startDate, setStartDate] = useState(defaultStartDate);
   const [endDate, setEndDate] = useState(defaultEndDate);
