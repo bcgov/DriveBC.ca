@@ -217,7 +217,7 @@ def get_image_type_file_name(event):
         return icon_name_map.get(event.display_category, 'incident-minor.png')
 
 
-def send_event_notifications(updated_event_ids, dt=None):
+def get_notification_routes(dt=None):
     current_dt = datetime.datetime.now(ZoneInfo('America/Vancouver')) if not dt else dt
 
     # Get the current day of the week and time
@@ -243,8 +243,12 @@ def send_event_notifications(updated_event_ids, dt=None):
           notification_start_time__lte=current_time, notification_end_time__gte=current_time)
     )
 
-    for saved_route in filtered_routes:
-        send_route_notifications(saved_route, updated_event_ids)
+    return filtered_routes
+
+
+def send_event_notifications(updated_event_ids, dt=None):
+    for saved_route in get_notification_routes(dt):
+        send_route_event_notifications(saved_route, updated_event_ids)
 
 
 def generate_settings_message(route, test_time=None):
@@ -253,7 +257,7 @@ def generate_settings_message(route, test_time=None):
     msg = 'Based on your settings, you are being notified for all new and updated '
 
     # Add event types
-    if route.notification_types and len(route.notification_types) == 4:
+    if route.notification_types and len(route.notification_types) == 5:
         msg += 'information '
 
     else:
@@ -297,7 +301,7 @@ def generate_settings_message(route, test_time=None):
     return msg
 
 
-def send_route_notifications(saved_route, updated_event_ids):
+def send_route_event_notifications(saved_route, updated_event_ids):
     # Apply a 150m buffer to the route geometry
     saved_route.route.transform(3857)
     buffered_route = saved_route.route.buffer(150)

@@ -1,9 +1,8 @@
 import apps.cms.helptext as HelpText
-from apps.shared.enums import CacheKey
 from apps.shared.models import BaseModel
+from config import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.forms import OSMWidget
-from django.core.cache import cache
 from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
 from wagtail.api import APIField
@@ -60,10 +59,6 @@ class Advisory(Page, BaseModel):
     # Geo fields
     geometry = models.MultiPolygonField()
 
-    def save(self, *args, **kwargs):
-        super().save(log_action=None, *args, **kwargs)
-        # cache.delete(CacheKey.ADVISORY_LIST)
-
     # Editor panels configuration
     content_panels = [
         FieldPanel("title", help_text=HelpText.GENERIC_TITLE),
@@ -93,6 +88,17 @@ class Advisory(Page, BaseModel):
     class Meta:
         # IMPORTANT: must match first segment of frontend path for advisories
         verbose_name_plural = 'advisories'
+
+    @property
+    def site_link(self):
+        return f'{settings.FRONTEND_BASE_URL}/advisories/{self.slug}'
+
+    def save(self, *args, **kwargs):
+        super().save(log_action=None, *args, **kwargs)
+
+        # Import here to avoid circular reference
+        from apps.cms.tasks import send_advisory_notifications
+        send_advisory_notifications(self.id)
 
 
 class Bulletin(Page, BaseModel):
