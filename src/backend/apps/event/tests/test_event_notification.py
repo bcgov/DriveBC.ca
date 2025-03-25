@@ -17,6 +17,7 @@ from django.core import mail
 from django.test import TestCase
 
 all_display_categories = [
+    EVENT_DISPLAY_CATEGORY.ADVISORY,
     EVENT_DISPLAY_CATEGORY.CLOSURE,
     EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS,
     EVENT_DISPLAY_CATEGORY.MINOR_DELAYS,
@@ -245,6 +246,7 @@ class SendEventNotificationsTest(TestCase):
     def test_generate_footer_message(self):
         # All notification types
         route = SavedRoutes(notification_types=[
+            EVENT_DISPLAY_CATEGORY.ADVISORY,
             EVENT_DISPLAY_CATEGORY.CLOSURE,
             EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS,
             EVENT_DISPLAY_CATEGORY.MINOR_DELAYS,

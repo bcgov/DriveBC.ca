@@ -1,0 +1,153 @@
+<body style="margin:0; padding:0; font-family:Arial, sans-serif; font-size:16px line-height:1.75rem; color:#2D2D2D">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#F1F8FE" style="padding:50px">
+      <tr>
+        <td align="center" valign="top">
+          <!-- Email container -->
+          <table width="620" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#FFFFFF" style="border-top: 4px solid #CE3E39">
+            <!-- Body -->
+            <tr>
+              <td>
+                <table style="padding: 24px 24px 30px 24px;">
+                  <!-- Logo Header -->
+                  <tr>
+                    <td>
+                      <a href="{{ fe_base_url }}" target="_blank" rel="noopener noreferrer" style="display:inline-block">
+                        <img src="cid:drivebclogo" alt="DriveBC Logo" />
+                      </a>
+                    </td>
+                  </tr>
+                  <!-- Intro paragraph -->
+                  <tr>
+                    <td>
+                      <table style="padding-top:30px">
+                        <tr>
+                          <td style="padding-bottom:8px">
+                            Hello {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.email }}{% endif %},
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            This notification is sent based on your
+                            <span>
+                              <a href="{{ fe_base_url }}my-routes" target="_blank" rel="noopener noreferrer" style="display:inline-block">
+                              route notification settings
+                              </a>
+                            </span>
+                            on DriveBC for the following route:
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <!-- Saved route details -->
+                  <tr>
+                    <td style="padding-top:30px">
+                      <table width="100%">
+                        <tr>
+                          <td style="font-size:1.5rem; font-weight:700; color:#053662">
+                            {{ advisory.title }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <!-- card -->
+                            <table width="100%">
+                              <tr>
+                                <td bgcolor="#FFE4E5" style="padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#D8292F">
+                                  <img src="cid:dclogo" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px;" alt="{{ display_category_title }}" />
+                                  Advisory
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <table width="100%" style="padding:0 12px 8px">
+                                    <tr>
+                                      <td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
+                                        Description
+                                      </td>
+                                      <td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
+                                        {{ advisory.teaser }}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
+                                        Last updated
+                                      </td>
+                                      <td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
+                                        {{ advisory.latest_revision_created_at }}
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <!-- View on DriveBC button -->
+                              <tr>
+                                <td align="center" bgcolor="#255A90" style="border-radius:4px;">
+                                  <a href="{{ site_link }}" style="color:#ffffff; text-decoration: none; font-size: 0.875rem; font-weight: 700">
+                                    <div style="height:100%;width:100%; padding: 12px">
+                                      View on DriveBC
+                                    </div>
+                                  </a>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <!-- Outro -->
+                  <tr>
+                    <td style="padding-top:30px">
+                      Your DriveBC team.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-top:30px; font-size:0.875rem; color:#605E5C">
+                      {{ footer_message }}
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!-- Footer -->
+            <tr>
+              <td >
+                <table style="padding: 24px; border-top: 4px solid #FCBA19" bgcolor="#FAF9F8">
+                  <tr>
+                    <td style="font-size:0.75rem; color:#605E5C; padding-bottom: 32px;">
+                      Add {{ from_email }} to your address book to ensure that you receive these notifications to your inbox. If you do not want to receive emails related to this route, you can turn off or modify these notifications at any time.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-top: 16px; border-top: 1px solid #9F9D9C">
+                      <table>
+                        <tr>
+                          <td style="white-space: nowrap;">
+                            <img src="cid:bclogo" alt="BC Logo" />
+                          </td>
+                          <td style="width: 100%">
+                          </td>
+                          <td style="display: flex; text-align:right">
+                            <a href="https://twitter.com/DriveBC" target="_blank" rel="noopener noreferrer" style="margin-right: 16px;">
+                              <img src="cid:twitter" style="width: 48px; height: 48px; vertical-align: middle" alt="DriveBC Twitter" />
+                            </a>
+                            <a href="https://www.instagram.com/ministryoftranbc/" target="_blank" rel="noopener noreferrer" style="margin-right: 16px;">
+                              <img src="cid:instagram" style="width: 48px; height: 48px; vertical-align: middle" alt="DriveBC Instagram" />
+                            </a>
+                            <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-infrastructure/" target="_blank" rel="noopener noreferrer">
+                              <img src="cid:linkedin" style="width: 48px; height: 48px; vertical-align: middle" alt="DriveBC LinkedIn" />
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>

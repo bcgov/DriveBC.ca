@@ -19,7 +19,7 @@ const NotificationEventType = forwardRef((props, ref) => {
   // States
   const [errorMessage, setErrorMessage] = useState('');
   const [notificationEventTypes, setNotificationEventTypes] = useState({
-    // advisories: true,
+    advisories: route.notification_types && route.notification_types.includes('advisories'),
     closures: route.notification_types && route.notification_types.includes('closures'),
     majorEvents: route.notification_types && route.notification_types.includes('majorEvents'),
     minorEvents: route.notification_types && route.notification_types.includes('minorEvents'),
@@ -56,11 +56,11 @@ const NotificationEventType = forwardRef((props, ref) => {
 
   /* Rendering */
   // Sub components
-  // const tooltipAdvisories = (
-  //   <Tooltip id="tooltipAdvisories" className="tooltip-content">
-  //     <p>Major events, such as storms, that impact large areas that include locations on your trip</p>
-  //   </Tooltip>
-  // );
+  const tooltipAdvisories = (
+    <Tooltip id="tooltipAdvisories" className="tooltip-content">
+      <p>Major events, such as storms, that impact large areas that include locations on your trip</p>
+    </Tooltip>
+  );
 
   const tooltipClosures = (
     <Tooltip id="tooltipClosures" className="tooltip-content">
@@ -97,7 +97,7 @@ const NotificationEventType = forwardRef((props, ref) => {
     <Form className="notifications-section notifications-targets">
 
       {[
-        // { name: 'Advisories', tooltip: tooltipAdvisories, value: 'advisories' },
+        { name: 'Advisories', tooltip: tooltipAdvisories, value: 'advisories', checked: notificationEventTypes.advisories },
         { name: 'Closures', tooltip: tooltipClosures, value: 'closures', checked: notificationEventTypes.closures },
         { name: 'Major delays', tooltip: tooltipMajor, value: 'majorEvents', checked: notificationEventTypes.majorEvents },
         { name: 'Minor delays', tooltip: tooltipMinor, value: 'minorEvents', checked: notificationEventTypes.minorEvents },

@@ -69,10 +69,14 @@ class Event(BaseModel):
 
         super().save(*args, **kwargs)
 
+    # Workaround for wagtail logging error during unit tests
+    def get_admin_display_title(self):
+        return 'event'
+
     @property
     def display_category_title(self):
         if self.display_category == EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
-            return 'Future Delays'
+            return 'Future Delay'
         elif self.display_category == EVENT_DISPLAY_CATEGORY.CLOSURE:
             return 'Closure'
         elif self.display_category == EVENT_DISPLAY_CATEGORY.ROAD_CONDITION:
@@ -80,6 +84,6 @@ class Event(BaseModel):
         elif self.display_category == EVENT_DISPLAY_CATEGORY.CHAIN_UP:
             return 'Chain Up'
         elif self.display_category == EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS:
-            return 'Major Delays'
+            return 'Major Delay'
         else:
-            return 'Minor Delays'
+            return 'Minor Delay'
