@@ -1,0 +1,50 @@
+nameOverride: prod-drivebc-syncthing
+fullnameOverride: prod-drivebc-syncthing
+
+image:
+  repository: syncthing/syncthing # Official Syncthing image
+  tag: 1.29 # Syncthing tag. Check https://hub.docker.com/r/syncthing/syncthing/tags for available tags
+
+createTransportClaim: true # Set to true in Gold, and false for GoldDR as it will be automatically created there once installed on Gold
+
+deployment:
+  replicas: 1 # Should never exceed 1 as the Syncthing PVC is ReadWriteOnce
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  volumeMounts: # List of volume mounts for the deployment. Can add as many as needed.
+    - name: prod-drivebc-syncthing
+      mountPath: /var/syncthing
+      persistentVolumeClaim:
+        claimName: prod-drivebc-syncthing
+    - name: django-media-volume
+      mountPath: /app/media
+      persistentVolumeClaim:
+        claimName: prod-django
+    - name: django-app-images-volume
+      mountPath: /app/images/webcams
+      persistentVolumeClaim:
+        claimName: prod-django-app-images
+  oAuthProxy:
+    enabled: true
+    image:
+      repository: quay.io/openshift/origin-oauth-proxy
+      tag: 4.16
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 64Mi
+
+persistentVolumeClaim:
+  size: 100Mi
+
+route:
+  host: prod-drivebc-syncthing.apps.gold.devops.gov.bc.ca # Hostname for the route
+  iprestricted: true # Set to true if you want to limit IP's the the addresses in the ipallowlist below
+  ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 # The first 4 ranges are GOV IP's, the last one is for OXD external IP
