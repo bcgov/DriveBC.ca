@@ -186,6 +186,10 @@ export default function DriveBCMap(props) {
         trackedEvent.highlight = false;
     }
 
+    if (feature) {
+      feature.updated = false;
+    }
+    
     clickedFeatureRef.current = feature;
     setClickedFeature(feature);
     updatePosition(feature);

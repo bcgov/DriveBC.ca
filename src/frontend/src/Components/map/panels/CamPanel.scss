@@ -89,6 +89,18 @@
       animation-fill-mode:forwards;
     }
 
+    &.updated {
+      background-color: $Blue80;
+      p, svg {
+        font-size: 0.625rem;
+        color: $White;
+      }
+  
+      svg {
+        margin-left: 4px;
+      }
+    }
+
     @keyframes bounce {
         0% { transform:translateY(-200%); }
         40% { transform:translateY(20%); }

@@ -118,6 +118,11 @@ export const resetClickedStates = (
         updateClickedFeature(null);
         break;
       }
+      case 'route':
+        clickedFeatureRef.current.setStyle(routeStyles['static']);
+        clickedFeatureRef.current.set('clicked', false);
+        updateClickedFeature(null);
+        break;
       case 'borderCrossing':
         clickedFeatureRef.current.setStyle(borderCrossingStyles['static']);
         clickedFeatureRef.current.set('clicked', false);
@@ -174,6 +179,7 @@ const eventClickHandler = (
   setEventStyle(feature, 'active');
   setEventStyle(feature.get('altFeature') || [], 'active');
   feature.set('clicked', true);
+  feature.updated = false;
 
   // Set alt feature to clicked
   const altFeatureList = feature.get('altFeature');
@@ -317,6 +323,8 @@ const routeClickHandler = (
   // set new clicked route feature
   feature.set('clicked', true);
   feature.setStyle(routeStyles['active']);
+  // bruce test
+  // updateClickedFeature(feature);
 };
 
 const borderCrossingClickHandler = (
