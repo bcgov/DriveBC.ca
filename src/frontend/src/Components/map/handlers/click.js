@@ -499,6 +499,8 @@ export const pointerClickHandler = (
           updateClickedFeature,
         );
         return;
+      default:
+        return;
     }
   }
 
