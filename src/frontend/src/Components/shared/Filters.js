@@ -117,7 +117,7 @@ export default function Filters(props) {
 
   const tooltipCurrentRoutes = (
     <Tooltip id="tooltipCurrentRoutes" className="tooltip-content">
-      <p>Layer filters are updated to show relevant layers for your routes. To revert to your previous settings, cancel the route search.</p>
+      <p>Map Layers are updated to show relevant layers for your routes. To revert to your previous settings, cancel the route search.</p>
     </Tooltip>
   );
 
@@ -162,7 +162,7 @@ export default function Filters(props) {
   }
 
   function updateUrl(type1, type2) {
-    const currentUrl = window.location.href; 
+    const currentUrl = window.location.href;
     const newUrl = currentUrl.replace(type1, type2);
     window.history.replaceState(null, "", newUrl);
     if(type2 === 'largeRestStop') {
@@ -181,7 +181,7 @@ export default function Filters(props) {
         onClick={() => {
           open ? setOpen(false) : setOpen(true) }
         }>
-        <span className="filters-btn__text">{textOverride ? textOverride : 'Layer filters'}</span>
+        <span className="filters-btn__text">{textOverride ? textOverride : 'Map Layers'}</span>
 
         <FontAwesomeIcon icon={faFilter} />
       </Button>
@@ -189,7 +189,7 @@ export default function Filters(props) {
       {open &&
         <div className="filters">
           <div className="filters-title__container">
-          <h4 className="filters-title">{textOverride ? textOverride : 'Layer filters'}</h4>
+          <h4 className="filters-title">{textOverride ? textOverride : 'Map Layers'}</h4>
           {
             (mapLayers && mapLayers.current.routeLayer && mapLayers.current.routeLayer.rendered)
             &&
@@ -563,7 +563,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="rest stops"
                       id="filter--rest-stops-large-vehicle"
-                      onChange={e => {       
+                      onChange={e => {
                         trackEvent('click', 'map', 'Toggle rest stops layer')
                         if (restStops && !largeRestStops) {
                           setLayerVisibility('restStops', false);

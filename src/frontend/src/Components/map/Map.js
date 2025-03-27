@@ -873,7 +873,7 @@ export default function DriveBCMap(props) {
           disableFeatures={isCamDetail}
           enableRoadConditions={true}
           enableChainUps={true}
-          textOverride={'Layer filters'}
+          textOverride={'Map Layers'}
           isCamDetail={isCamDetail}
           referenceData={referenceData}
           loadingLayers={loadingLayers} />
