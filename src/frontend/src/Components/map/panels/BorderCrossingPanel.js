@@ -413,7 +413,7 @@ export default function BorderCrossingPanel(props) {
   );
 
   // Main component
-  const orderedLaneTypes = ['Trucks', 'FAST', 'Cars', 'NEXUS'];
+  const orderedLaneTypes = ['FAST', 'Cars', 'NEXUS'];
 
   return borderCrossing && (
     <div className="popup popup--border-crossing" tabIndex={0}>
