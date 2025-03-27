@@ -1,0 +1,143 @@
+nameOverride: prod-drivebc
+fullnameOverride: prod-drivebc
+
+django:
+  fullnameOverride: prod-django
+  nameOverride: prod-django
+  replicaCount: 3
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest-prod
+  deployment:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 300Mi
+    env:
+      postgresSecret: prod-drivebc-db-pguser-prod-drivebc-db
+      djangoConfigMap: prod-drivebc-django
+      djangoSecret: prod-drivebc-django
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 200
+  route:
+    host: prod-drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: true #Set to true if you want to limit IP's that can access publicly available pages to the the addresses in the ipallowlist 
+    iprestrictedAdminPages: true #Set to true if you want to limit IP's that can access backend admin pages
+  mediapvc:
+    storage: 1Gi
+  apppvc:
+    storage: 1Gi
+  podDisruptionBudget: 
+    enabled: true 
+    minAvailable: 1
+
+tasks:
+  fullnameOverride: prod-tasks
+  nameOverride: prod-tasks
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest-prod
+  deployment:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 250Mi
+    volumes:
+      claimName: prod-django-app-images
+    env:
+      postgresSecret: prod-drivebc-db-pguser-prod-drivebc-db
+      djangoConfigMap: prod-drivebc-django
+      djangoSecret: prod-drivebc-django
+
+redis:
+  fullnameOverride: prod-redis
+  nameOverride: prod-redis
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-redis
+    tag: latest-prod
+  deployment:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 50Mi
+
+static:
+  fullnameOverride: prod-static
+  nameOverride: prod-static
+  replicaCount: 3
+  release: 
+  image:
+    repository: ghcr.io/bcgov/drivebc-static
+    tag: latest-prod
+  deployment:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 100Mi
+    env:
+      staticConfigMap: prod-drivebc-static
+    volumes:
+      imagesClaimName: prod-django-app-images
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 200
+  route:
+    host: prod-drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: true  #Set to true if you want to limit IP's the the addresses in the ipallowlist 
+  logpvc:
+    storage: 10Gi
+  podDisruptionBudget: 
+    enabled: true 
+    minAvailable: 1
+
+openshiftjobs:
+  fullnameOverride: prod-openshiftjobs
+  nameOverride: prod-openshiftjobs
+
+  image:
+    repository: ghcr.io/bcgov/drivebc-openshiftjobs
+    tag: latest-prod
+
+  cronjobs:
+    analyzeuploadlogs:
+      name: analyzeuploadlogs
+      schedule: '0 9 * * *'  #NOTE: This is in UTC
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 150Mi
+        env:
+          s3Secret: prod-drivebc-cronjob-s3bucket
+        volumes:
+          logs: prod-static-log-storage
+    ziplogs:
+      name: ziplogs
+      schedule: '30 * * * *'
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+        volumes:
+          logs: prod-static-log-storage
+    
+    backupmediapvc:
+      name: backupmediapvc
+      schedule: '0 8 * * *'
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+        env:
+          s3Secret: prod-drivebc-cronjob-s3bucket
+        volumes:
+          media: prod-django

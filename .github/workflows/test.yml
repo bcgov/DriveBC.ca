@@ -224,13 +224,40 @@ jobs:
         username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
         password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
 
-  versionUpdate:
-    needs: [tag, build-static, build-backend, build-redis, build-openshiftjobs]
+  update-openshift-gold:
+    needs: [build-static, build-backend, build-redis, build-openshiftjobs]
     runs-on: ubuntu-latest
-    name: Deploy Latest Images
+    name: Deploy Latest Images to OpenShift Gold
     environment:
       name: test
       url: https://test-drivebc.apps.gold.devops.gov.bc.ca
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Install CLI tools from OpenShift Mirror
+      uses: redhat-actions/openshift-tools-installer@v1
+      with:
+        oc: "4"
+      
+    - name: Authenticate and set context
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        openshift_token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+        insecure_skip_tls_verify: true
+    - name: Helm upgrade on OpenShift Gold Environment
+      run: |
+        helm upgrade test-drivebc -f ./infrastructure/helm/values-test.yaml ./infrastructure/helm --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
+
+  # I have this run after the push to Gold because I want to make sure that Gold runs the migrations first. Gold DR can't run migrations as DB is read-only
+  update-openshift-golddr:
+    needs: [update-openshift-gold] 
+    runs-on: ubuntu-latest
+    name: Deploy Latest Images to OpenShift GoldDR
+    environment:
+      name: test
+      url: https://test-drivebc.apps.golddr.devops.gov.bc.ca
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -239,19 +266,18 @@ jobs:
       uses: redhat-actions/openshift-tools-installer@v1
       with:
         oc: "4"
-
+     
     - name: Authenticate and set context
       uses: redhat-actions/oc-login@v1
       with:
-        openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-        openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+        openshift_server_url: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        openshift_token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
         insecure_skip_tls_verify: true
 
-    - name: Helm upgrade on OpenShift Environment
+    - name: Helm upgrade on OpenShift GoldDR Environment
       run: |
-        helm dependency update ./infrastructure/main
-        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}"
+        helm upgrade test-drivebc -f ./infrastructure/helm/values-test.yaml -f ./infrastructure/helm/values-test-dr.yaml ./infrastructure/helm --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
 
 
 #  automatedTests:

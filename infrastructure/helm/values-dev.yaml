@@ -1,0 +1,208 @@
+nameOverride: dev-drivebc
+fullnameOverride: dev-drivebc
+
+# These global values are used by all components of the application.
+global:
+  vault:
+    licenceplate: a781ec # This is the license plate you are deploying to. It is used to determine the vault path
+    environment: nonprod #Set to prod if you want to use the prod vault or nonprod for dev/test/uat
+  route:
+    ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
+  release: # This is set by Github actions for the prod release. Do not change this value.
+
+django:
+  fullnameOverride: dev-drivebc-django
+  nameOverride: dev-drivebc-django
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest-dev
+  deployment:
+    resources:
+      requests:
+        cpu: 20m
+        memory: 200Mi
+      limits:
+        memory: 500Mi
+    env:
+      postgresSecret: dev-drivebc-db-crunchy-pguser-dev-drivebc-db
+      variables:
+        SHOW_DEBUG_TOOLBAR: 'True' # Set to False for UAT and Prod
+        DEBUG: 'True' # Set to False for UAT and Prod
+        ROOT_LOG_LEVEL: WARNING
+  vault:
+    secretName: dev-django  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 75
+  route:
+    host: dev-drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: false #Set to true if you want to limit IP's that can access publicly available pages to the the addresses in the ipallowlist 
+    iprestrictedAdminPages: false #Set to true if you want to limit IP's that can access backend admin pages
+    vanityurl: 
+      enabled: true
+      vanityurlhost: dev.drivebc.ca # You will need to add the cert manually
+  mediapvc:
+    storage: 1Gi
+  apppvc:
+    storage: 1Gi
+  podDisruptionBudget: 
+    enabled: false 
+    minAvailable:  
+  prometheus:
+    enabled: false # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
+
+
+tasks:
+  fullnameOverride: dev-drivebc-tasks
+  nameOverride: dev-drivebc-tasks
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest-dev
+  deployment:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 250Mi
+      limits:
+        memory: 500Mi
+    volumes:
+      claimName: dev-drivebc-django-app-images
+    env:
+      postgresSecret: dev-drivebc-db-crunchy-pguser-dev-drivebc-db
+      variables:
+        SHOW_DEBUG_TOOLBAR: 'True' # Set to False for UAT and Prod
+        DEBUG: 'True' # Set to False for UAT and Prod
+        ROOT_LOG_LEVEL: WARNING
+  vault:
+    secretName: dev-django  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+  prometheus:
+    enabled: false # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
+
+redis:
+  fullnameOverride: dev-drivebc-redis
+  nameOverride: dev-drivebc-redis
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-redis
+    tag: latest-dev
+  deployment:
+    resources:
+      requests:
+        cpu: 5m
+        memory: 16Mi
+      limits:
+        memory: 64Mi
+    env:    
+      variables: {}
+
+
+static:
+  fullnameOverride: dev-drivebc-static
+  nameOverride: dev-drivebc-static
+  replicaCount: 1
+  release: 
+  image:
+    repository: ghcr.io/bcgov/drivebc-static
+    tag: latest-dev
+  deployment:
+    resources:
+      requests:
+        cpu: 5m
+        memory: 50Mi
+      limits:
+        memory: 250Mi
+    volumes:
+      imagesClaimName: dev-drivebc-django-app-images
+    env:
+      variables:
+        MAINTENANCE_MODE: 'false'
+        ENVIRONMENT: dev-drivebc
+  vault:
+    secretName: dev-static  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 75
+  route:
+    host: dev-drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: false  #Set to true if you want to limit IP's the the addresses in the ipallowlist 
+    vanityurl: 
+      enabled: true
+      vanityurlhost: dev.drivebc.ca
+  logpvc:
+    storage: 1Gi
+  podDisruptionBudget: 
+    enabled: false 
+    minAvailable:  
+
+openshiftjobs:
+  fullnameOverride: dev-drivebc-openshiftjobs
+  nameOverride: dev-drivebc-openshiftjobs
+
+  image:
+    repository: ghcr.io/bcgov/drivebc-openshiftjobs
+    tag: latest-dev
+
+  vault:
+    secretName: dev-cronjobs  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+
+  cronjobs:
+    analyzeuploadlogs:
+      name: analyzeuploadlogs
+      enabled: true
+      schedule: '0 9 * * *'  #NOTE: This is in UTC
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 150Mi
+          limits:
+            memory: 250Mi
+        volumes:
+          logs: dev-drivebc-static-log-storage
+        env:
+          variables:
+            CLUSTER: gold # used to set the path in the s3 bucket
+            DAYS_AGO: 1
+
+    ziplogs:
+      name: ziplogs
+      enabled: true
+      schedule: '30 * * * *'
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+          limits:
+            memory: 250Mi
+        volumes:
+          logs: dev-drivebc-static-log-storage
+        env:
+          variables: {}
+
+    backupmediapvc:
+      name: backupmediapvc
+      enabled: true
+      schedule: '0 8 * * *'
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+          limits:
+            memory: 250Mi
+        volumes:
+          media: dev-drivebc-django
+        env:
+          variables: 
+            CLUSTER: gold # used to set the path in the s3 bucket
