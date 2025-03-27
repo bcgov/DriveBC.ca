@@ -256,14 +256,22 @@ export default function CamPanel(props) {
               </div>
             </div>
           ) : (
-            <div className="popup__content__image">
+            <div
+              className="popup__content__image"
+              onClick={handlePopupClick}
+              onKeyDown={keyEvent => {
+                if (keyEvent.keyCode == 13) {
+                  handlePopupClick();
+                }
+              }} tabIndex={0}>
+
               <div className="camera-unavailable">
                 <div className="card-pill">
                   <p>Unavailable</p>
                 </div>
 
                 <div className="card-img-box unavailable">
-                  <FontAwesomeIcon icon={faVideoSlash} />
+                  <FontAwesomeIcon icon={faVideoSlash}/>
                 </div>
 
                 <p>
@@ -279,7 +287,7 @@ export default function CamPanel(props) {
 
                 <FriendlyTime
                   date={camera.last_update_modified}
-                  asDate={true} />
+                  asDate={true}/>
               </div>
             </div>
           )}
@@ -289,7 +297,7 @@ export default function CamPanel(props) {
               className="colocated-camera-icon"
               src={colocatedCamIcon}
               role="presentation"
-              alt="colocated cameras icon" 
+              alt="colocated cameras icon"
               onClick={handleCameraImageClick}
               style={{ cursor: "pointer" }}
               />
