@@ -140,6 +140,11 @@ export const calculateCenter = (referenceData) => {
 }
 
 export const removeOverlays = (mapRef) => {
+  // map not initialized i.e. in cam list, do nothing
+  if (!mapRef || !mapRef.current) {
+    return;
+  }
+
   // Clone the overlays array to avoid issues when modifying the array during iteration
   const overlaysArray = [...mapRef.current.getOverlays().getArray()];
 
