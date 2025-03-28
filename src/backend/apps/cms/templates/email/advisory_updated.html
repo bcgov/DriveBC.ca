@@ -12,7 +12,7 @@
                   <tr>
                     <td>
                       <a href="{{ fe_base_url }}" target="_blank" rel="noopener noreferrer" style="display:inline-block">
-                        <img src="cid:drivebclogo" alt="DriveBC Logo" />
+                        <img src="cid:drivebclogo" alt="DriveBC Logo" style="width:165px" />
                       </a>
                     </td>
                   </tr>
@@ -45,7 +45,12 @@
                       <table width="100%">
                         <tr>
                           <td style="font-size:1.5rem; font-weight:700; color:#053662">
-                            {{ advisory.title }}
+                            {% if route.label %}{{ route.label }}{% else %}{{ route.start }} to {{ route.end }}{% endif %}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="color:#605E5C; padding-bottom:12px">
+                            {% if route.label %}{{ route.start }} to {{ route.end }}{% endif %}
                           </td>
                         </tr>
                         <tr>
@@ -54,8 +59,13 @@
                             <table width="100%">
                               <tr>
                                 <td bgcolor="#FFE4E5" style="padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#D8292F">
-                                  <img src="cid:dclogo" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px;" alt="{{ display_category_title }}" />
+                                  <img src="cid:dclogo" style="width: 12px; height: 14px; vertical-align: text-top; margin-right: 8px;" alt="{{ display_category_title }}" />
                                   Advisory
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="font-size: 1.25rem; font-weight:700; color:#013366; padding: 8px 12px 0">
+                                  {{ advisory.title }}
                                 </td>
                               </tr>
                               <tr>
@@ -124,7 +134,7 @@
                       <table>
                         <tr>
                           <td style="white-space: nowrap;">
-                            <img src="cid:bclogo" alt="BC Logo" />
+                            <img src="cid:bclogo" alt="BC Logo" style="width: 131px" />
                           </td>
                           <td style="width: 100%">
                           </td>
