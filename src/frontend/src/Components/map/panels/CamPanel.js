@@ -23,6 +23,7 @@ import { getCameraOrientation } from '../../cameras/helper';
 import FriendlyTime from '../../shared/FriendlyTime';
 import trackEvent from '../../shared/TrackEvent';
 import ShareURLButton from '../../shared/ShareURLButton';
+import { getCameras } from '../../data/webcams';
 
 // Static assets
 import colocatedCamIcon from '../../../images/colocated-camera.svg';
@@ -60,6 +61,9 @@ export default function CamPanel(props) {
   const [camIndex, setCamIndex] = useState(0);
   const [show, setShow] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isUpdated, setIsUpdated] = useState(false);
+  const [imageSrc, setImageSrc] = useState(camera.links.imageDisplay);
+  const [imageLastUpdateModified, setImageLastUpdateModified] = useState(camera.last_update_modified);
   const handleCameraImageClick = (event) => {
     const container = event.currentTarget.closest(".camera-orientations");
     const buttons = container.querySelectorAll(".camera-direction-btn");
@@ -76,6 +80,44 @@ export default function CamPanel(props) {
     setCamera(nextCamera);
     trackEvent("click", "camera-list", "camera", nextCamera.name);
   };
+
+  const updateCamera = async () => {
+    const camData = await getCameras(
+      null,
+      `${window.API_HOST}/api/webcams/${camFeature.id_}/`);
+    if (camData && camFeature) {
+      if (camData.last_update_modified !== camera.last_update_modified) {
+        if(!camFeature.updated) {
+          return;
+        }
+        setIsUpdated(true);
+        updateCameraImage(camData);
+        setImageLastUpdateModified(camData.last_update_modified);
+        setCamera(camData);
+        const timer = setTimeout(() => {
+          setCamera(camData);
+          setIsUpdated(false);
+        }, 10000);
+    
+        clearTimeout(timer);
+      }
+      else {
+        setTimeout(() => {
+          setIsUpdated(false);
+        }, 10000);
+      }
+      return;
+    }
+  }
+
+  const updateCameraImage = (cam) => {
+    const newImage = `${cam.links.imageDisplay}?ts=${new Date(cam.last_update_modified).getTime()}`;
+    setImageSrc(newImage);
+  }
+
+  useEffect(() => {
+    updateCamera();    
+  });
 
   // Effects
   useEffect(() => {
@@ -214,7 +256,7 @@ export default function CamPanel(props) {
               tabIndex={0}
             >
               <div className="clip">
-                <img src={camera.links.imageDisplay} width="300" />
+                <img src={imageSrc} width="300" />
 
                 {camera.marked_delayed && camera.marked_stale && (
                   <>
@@ -243,6 +285,20 @@ export default function CamPanel(props) {
                   </>
                 )}
 
+                {isUpdated && (
+                <div className="card-notification">
+                  <div
+                    className={'card-pill' + (show ? ' hidden' : ' bounce updated')}
+                    onKeyDown={keyEvent => {
+                      if (keyEvent.keyCode === 13) {
+                        handleChildClick();
+                      }
+                    }}>
+                    <p>Updated</p>
+                    <FontAwesomeIcon icon={faCircleInfo} />
+                  </div>
+                </div>
+                )}
               </div>
 
               <div className="timestamp">
@@ -251,7 +307,7 @@ export default function CamPanel(props) {
                 </p>
 
                 <FriendlyTime
-                  date={camera.last_update_modified}
+                  date={imageLastUpdateModified}
                   asDate={true} />
               </div>
             </div>
@@ -294,6 +350,7 @@ export default function CamPanel(props) {
 
           <div className="camera-orientations">
             <img
+              // ref={imageRef}
               className="colocated-camera-icon"
               src={colocatedCamIcon}
               role="presentation"

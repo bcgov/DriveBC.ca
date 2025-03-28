@@ -59,7 +59,27 @@ export function updateCamerasLayer(cameras, layer, setLoadingLayers) {
   }, {});
 
   for (const camFeature of layer.getSource().getFeatures()) {
-    camFeature.setStyle(camsDict[camFeature.getId()] ? cameraStyles['static'] : new Style(null));
+    const camId = camFeature.getId();
+    const matchingCamera = cameras.find(preCam => preCam.id === camId);
+    const isUpdated = camFeature.values_.last_update_modified !== matchingCamera.last_update_modified;
+    if (camId in camsDict) {
+      camFeature.setProperties(camsDict[camId]);
+      if (!isUpdated) {
+        if(camFeature.getStyle() === cameraStyles.cameras_unread['static'] 
+        || camFeature.getStyle() === cameraStyles['active']
+        ) {
+            continue;
+        }
+        camFeature.setStyle(camsDict[camFeature.getId()] ? cameraStyles['static'] : new Style(null));
+      } else {
+        if(camFeature.getStyle() !== cameraStyles['active']){
+          camFeature.setStyle(camsDict[camFeature.getId()] ? cameraStyles.cameras_unread['static'] : new Style(null));
+        }
+        camFeature.updated = true;  
+        }
+      } else {
+        camFeature.setStyle(new Style(null));
+      }
   }
 
   setLoadingLayers(prevState => ({
