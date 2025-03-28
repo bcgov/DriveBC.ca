@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels: {{ include "app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- include "app.selectorLabels" . | nindent 8 }}
+  template:
+    metadata:
+      labels:
+        {{ include "app.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/port: '8384' 
+        prometheus.io/scrape: 'true'       
+    spec:
+      serviceAccountName: {{ template "app.fullname" . }}
+      containers:
+      - name: {{ template "app.fullname" . }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        resources:
+          requests:
+            cpu: {{ .Values.deployment.resources.requests.cpu }}
+            memory: {{ .Values.deployment.resources.requests.memory }}
+          limits:
+            memory: {{ .Values.deployment.resources.limits.memory }}
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false            
+        ports:
+        - containerPort: 8384 # Web UI
+        - containerPort: 22000 # TCP
+        volumeMounts:
+        {{- range .Values.deployment.volumeMounts }}
+        - name: {{ .name }}
+          mountPath: {{ .mountPath }}
+        {{- end }}
+      - name: oauth-proxy
+        image: {{ .Values.deployment.oAuthProxy.image.repository }}:{{ .Values.deployment.oAuthProxy.image.tag }}
+        args:
+          - '--provider=openshift'
+          - '--pass-basic-auth=false'
+          - '--https-address='
+          - '--http-address=:8080'
+          - '--email-domain=*'
+          - '--upstream=http://localhost:8384'
+          - '--cookie-secret=some-secure-cookie-secret'
+          - '--openshift-service-account={{ template "app.fullname" . }}'
+          - '--skip-auth-regex=^/metrics'
+          - '--openshift-sar={"namespace": "{{ .Release.Namespace }}", "resource": "services", "verb": "get"}'
+        ports:
+          - name: oauth-proxy
+            containerPort: 8080
+            protocol: TCP
+        resources:
+          requests:
+            cpu: {{ .Values.deployment.oAuthProxy.resources.requests.cpu }}
+            memory: {{ .Values.deployment.oAuthProxy.resources.requests.memory }}
+          limits:
+            memory: {{ .Values.deployment.oAuthProxy.resources.limits.memory }}
+      volumes:
+      {{- range .Values.deployment.volumeMounts }}
+      - name: {{ .name }}
+        persistentVolumeClaim:
+          claimName: {{ .persistentVolumeClaim.claimName }}
+      {{- end }}
+  strategy:
+    type: Recreate

@@ -1,0 +1,14 @@
+{{- if .Values.createTransportClaim }}
+apiVersion: porter.devops.gov.bc.ca/v1alpha1
+kind: TransportServerClaim
+metadata:
+  name: {{ template "app.fullname" . }}-transport-server
+  namespace: {{ .Release.Namespace }}
+spec:
+  monitor:
+    interval: 10
+    timeout: 10
+    type: tcp
+  service: {{ template "app.fullname" . }}
+  servicePort: 22000
+{{- end }}
