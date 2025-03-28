@@ -1,0 +1,14 @@
+fullnameOverride: redis
+nameOverride: redis
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/bcgov/drivebc-redis
+  tag: latest
+
+deployment:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 50Mi

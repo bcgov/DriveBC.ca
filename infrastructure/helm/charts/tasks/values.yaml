@@ -1,0 +1,21 @@
+fullnameOverride: tasks
+nameOverride: tasks
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/bcgov/drivebc-django
+  tag: latest
+
+deployment:
+  resources:
+    requests:
+      cpu: 75m
+      memory: 150Mi
+      
+  env:
+    postgresSecret: drivebc-pguser-drivebc
+    djangoConfigMap: drivebc-django
+    djangoSecret: drivebc-django
+    volumes:
+      claimName: django-app-images

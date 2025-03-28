@@ -1,0 +1,142 @@
+nameOverride: drivebc
+fullnameOverride: drivebc
+
+django:
+  fullnameOverride: django
+  nameOverride: django
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest
+  deployment:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 250Mi
+    env:
+      postgresSecret: drivebc-pguser-drivebc
+      djangoConfigMap: drivebc-django
+      djangoSecret: drivebc-django
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 75
+  route:
+    host: drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist 
+  mediapvc:
+    storage: 1Gi
+  apppvc:
+    storage: 1Gi
+  podDisruptionBudget: 
+    enabled: false 
+    minAvailable: 1
+
+tasks:
+  fullnameOverride: tasks
+  nameOverride: tasks
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest
+  deployment:
+    resources:
+      requests:
+        cpu: 75m
+        memory: 150Mi
+    volumes:
+      claimName: django-app-images
+    env:
+      postgresSecret: drivebc-pguser-drivebc
+      djangoConfigMap: drivebc-django
+      djangoSecret: drivebc-django
+
+redis:
+  fullnameOverride: redis
+  nameOverride: redis
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-redis
+    tag: latest
+  deployment:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 50Mi
+
+static:
+  fullnameOverride: static
+  nameOverride: static
+  replicaCount: 1
+  release: 
+  image:
+    repository: ghcr.io/bcgov/drivebc-static
+    tag: latest
+  deployment:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 50Mi
+    env:
+      staticConfigMap: drivebc-static
+    volumes:
+      imagesClaimName: django-app-images
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 75
+  route:
+    host: drivebc.apps.gold.devops.gov.bc.ca
+    iprestricted: false  #Set to true if you want to limit IP's the the addresses in the ipallowlist 
+  logpvc:
+    storage: 1Gi
+  podDisruptionBudget: 
+    enabled: false 
+    minAvailable: 1
+
+openshiftjobs:
+  fullnameOverride: openshiftjobs
+  nameOverride: openshiftjobs
+
+  image:
+    repository: ghcr.io/bcgov/drivebc-openshiftjobs
+    tag: latest
+
+  cronjobs:
+    analyzeuploadlogs:
+      name: analyzeuploadlogs
+      schedule: '0 9 * * *'  #NOTE: This is in UTC
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 1Gi
+        env:
+          s3Secret: drivebc-cronjob-s3bucket
+        volumes:
+          logs: static-log-storage
+    ziplogs:
+      name: ziplogs
+      schedule: '30 * * * *'
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+        volumes:
+          logs: static-log-storage
+    
+    backupmediapvc:
+      name: backupmediapvc
+      schedule: '0 8 * * *'
+      deployment:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+        env:
+          s3Secret: drivebc-cronjob-s3bucket
+        volumes:
+          media: django

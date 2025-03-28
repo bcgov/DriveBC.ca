@@ -18,8 +18,7 @@ case "$1" in
         ;;
     analyzeexportlogs)
         # Run analyzeexportlogs with additional arguments which will send the specified days logs through goaccess and then upload to s3.
-        shift # Remove the first argument (script number)
-        /scripts/analyzeexportlogs.sh "$@"
+        /scripts/analyzeexportlogs.sh
         ;;
     *)
         echo "Invalid script"

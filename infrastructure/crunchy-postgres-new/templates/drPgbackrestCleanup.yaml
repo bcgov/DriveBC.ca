@@ -1,0 +1,41 @@
+# This is a temporary cronjob that needs to run in GOLD DR only for the standby clusters due these logs not being rotated
+# See https://moti-imb.atlassian.net/browse/DBC22-3706 for more detail
+
+{{- if .Values.pgbackrestLogCleanup.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "crunchy-postgres.fullname" . }}-cleanup-pgbackrest-logs
+spec:
+  schedule: {{ .Values.pgbackrestLogCleanup.schedule  }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: {{ .Values.pgbackrestLogCleanup.serviceAccountName  }}
+          containers:
+          - name: cleanup
+            image: {{ .Values.pgbackrestLogCleanup.image.repository  }}
+            env:
+            - name: CRUNCHY_CLUSTER
+              value: {{ .Values.pgbackrestLogCleanup.env.CRUNCHY_CLUSTER  }}
+            command:
+              - /bin/sh
+              - '-c'
+              - |
+                echo "Starting log cleanup job...";
+                for pod in $(oc get pods -l "postgres-operator.crunchydata.com/data=postgres,postgres-operator.crunchydata.com/cluster=$CRUNCHY_CLUSTER" -o name); do 
+                  echo "Processing pod: $pod";
+                  oc exec -it $pod -- bash -c "
+                    echo 'Moving old log file...';
+                    mv /pgdata/pgbackrest/log/db-archive-get-async.log /pgdata/pgbackrest/log/db-archive-get-async.log.old;
+                    echo 'Compressing old log file...';
+                    gzip -f /pgdata/pgbackrest/log/db-archive-get-async.log.old;
+                    echo 'Log cleanup completed for $pod';
+                  ";
+                done;
+                echo "Log cleanup job completed.";
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+{{- end }}

@@ -1,0 +1,100 @@
+{{- $deploymentTag := .Values.image.tag | default .Chart.AppVersion -}}
+{{- $deploymentTime := now | date "2006-01-02 15:04:05.000000" -}}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels: {{ include "app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{ include "app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{ include "app.selectorLabels" . | nindent 8 }}
+      annotations: 
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-secrets.env: {{ .Values.global.vault.licenceplate }}-{{ .Values.global.vault.environment}}/{{ .Values.vault.secretName }}
+        vault.hashicorp.com/agent-inject-template-secrets.env: |
+          {{`{{- with secret `}}"{{ .Values.global.vault.licenceplate }}-{{ .Values.global.vault.environment }}/{{ .Values.vault.secretName }}"{{` }}
+          {{- range $key, $value := .Data.data }}
+          export {{$key}}="{{$value}}"
+          {{- end }}
+          {{- end `}} }}
+        vault.hashicorp.com/agent-inject-token: 'false'
+        vault.hashicorp.com/agent-pre-populate-only: 'true'
+        vault.hashicorp.com/auth-path: {{ .Values.vault.authPath }}
+        vault.hashicorp.com/namespace: platform-services
+        vault.hashicorp.com/role: {{ .Values.global.vault.licenceplate }}-{{ .Values.global.vault.environment}}
+    spec:
+      volumes:
+        - name: django-app-images-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.deployment.volumes.imagesClaimName  }}
+        - name: log-storage
+          persistentVolumeClaim:
+            claimName: {{ template "app.fullname" . }}-log-storage
+      containers:
+        - resources:
+            requests:
+              cpu: {{ .Values.deployment.resources.requests.cpu  }}
+              memory: {{ .Values.deployment.resources.requests.memory  }}
+            limits:
+              memory: {{ .Values.deployment.resources.limits.memory  }}
+          name: {{ include "app.fullname" . }}
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: django-app-images-volume
+              mountPath: /app/images/webcams
+              readOnly: true
+            - name: log-storage
+              mountPath: /logs
+          image: >-
+            {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
+          command:
+            - sh
+            - '-c'
+          args:
+            - '. /vault/secrets/secrets.env && ./docker-entrypoint.d/add_client_env.sh && nginx -g "daemon off;"'
+          env:
+            - name: DEPLOYMENT_TAG
+              value: {{ $deploymentTag | quote }}
+            - name: DEPLOYMENT_TIME
+              value: {{ $deploymentTime | quote }}
+            - name: RELEASE
+              value: {{ .Values.global.release }}
+            {{- range $key, $value := .Values.deployment.env.variables }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+      serviceAccountName: {{ .Values.global.vault.licenceplate }}-vault
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: "app.kubernetes.io/instance"
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: {{ template "app.name" . }}

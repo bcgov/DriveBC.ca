@@ -1,4 +1,0 @@
-fullnameOverride: dev-drivebc #By default it will use the name you assign the helm chart. Since we are running
-#this separatly from the main Helm Chart with all dependencies we set this value to match.
-
-networkPolicyRequired: false  #Set to true if you need the allow traffic between pods and internet ingress setup

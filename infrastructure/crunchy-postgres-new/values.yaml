@@ -1,0 +1,160 @@
+nameOverride: dev-ride-db
+
+global:
+  config:
+    dbName: dev-ride-db
+crunchy: 
+  enabled: true
+  postgresVersion: 17
+  postGISVersion: '3.4'
+  imagePullPolicy: IfNotPresent
+  # Enable Standby below to create a standby cluster from the same backup location as the primary cluster.
+  standby:
+    enabled: false
+    repoName: repo2 # Always use the S3 repo for standby bootstrapping
+  shutdown: false
+
+  # enable below to start a new crunchy cluster after disaster from a backed-up location, crunchy will choose the best place to recover from.
+  # follow https://access.crunchydata.com/documentation/postgres-operator/5.7/tutorials/backups-disaster-recovery/disaster-recovery
+  # Clone From Backups Stored in S3
+  clone:
+    enabled: false
+    s3:
+      enabled: false
+    pvc:
+      enabled: false
+    path: ~ # provide the proper path to source the cluster. ex: /backups/cluster/version/1, if current new cluster being created, this should be current cluster version -1, ideally
+  # enable this to go back to a specific timestamp in history in the current cluster.
+  # follow https://access.crunchydata.com/documentation/postgres-operator/5.7/tutorials/backups-disaster-recovery/disaster-recovery
+  # Perform an In-Place Point-in-time-Recovery (PITR)
+  restore:
+    repoName: ~ # provide repo name
+    enabled: false
+    target: ~ # 2024-03-24 17:16:00-07 this is the target timestamp to go back to in current cluster
+  instances:
+    name: db # high availability
+    replicas: 1 # 2 or 3 for high availability in TEST and PROD.
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true' # enable prometheus scraping so you monitor the cluster in Sysdig
+        prometheus.io/port: '9187'
+    dataVolumeClaimSpec:
+      storage: 500Mi
+      storageClassName: netapp-block-standard
+      walStorage: 500Mi
+
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+    replicaCertCopy:
+      requests:
+        cpu: 1m
+        memory: 32Mi
+      limits:
+        memory: 64Mi
+
+  pgBackRest:
+    enabled: true
+    backupPath: /ride/db/version # change it for PROD, create values-prod.yaml
+    clusterCounter: 2 # this is the number to identify what is the current counter for the cluster, each time it is cloned it should be incremented.
+    # If retention-full-type set to 'count' then the oldest backups will expire when the number of backups reach the number defined in retention
+    # If retention-full-type set to 'time' then the number defined in retention will take that many days worth of full backups before expiration
+    retentionFullType: time
+    pvc:
+      retention: 1 # one day hot active backup in pvc
+      retentionFullType: time
+      fullBackupSchedule: 0 8 * * *
+      incrementalBackupSchedule:  0 0,4,12,16,20 * * * 
+      volume:
+        accessModes: "ReadWriteOnce"
+        storage: 400Mi
+        storageClassName: netapp-file-backup
+    s3:
+      enabled: true # if enabled, below must be provided
+      retention: 7 # one weeks backup in object store.
+      bucket:  # DO NOT UPLOAD TO GITHUB
+      endpoint: 
+      accessKey:  # DO NOT UPLOAD TO GITHUB
+      secretKey:  # DO NOT UPLOAD TO GITHUB
+      fullBackupSchedule: 0 9 * * * # make sure to provide values here, if s3 is enabled.
+      incrementalBackupSchedule: 30 0,4,12,16,20 * * * # make sure to provide values here, if s3 is enabled.
+    manual:
+      repo: repo2 # If you are doing a manual full backup, which repo do you want to backup to. repo1 is PVC and repo2 is S3
+
+    config:
+      requests:
+        cpu: 5m
+        memory: 32Mi
+      limits:
+        memory: 64Mi
+    repoHost:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+    sidecars:
+      requests:
+        cpu: 5m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+    jobs:
+      requests:
+        cpu: 20m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+
+  patroni:
+    postgresql:
+      pg_hba:
+        - "host all all 0.0.0.0/0 md5"
+        - "host all all ::1/128 md5"
+      parameters:
+        shared_buffers: 128MB # default is 128MB; a good tuned default for shared_buffers is 25% of the memory allocated to the pod
+        wal_buffers: "-1" # this can be set to -1 to automatically set as 1/32 of shared_buffers or 64kB, whichever is larger
+        min_wal_size: 32MB
+        max_wal_size: 64MB # default is 1GB
+        max_slot_wal_keep_size: 256MB # default is -1, allowing unlimited wal growth when replicas fall behind
+        work_mem: 4MB # a work_mem value of 4 MB (default)
+        log_min_duration_statement: 1000ms # log queries taking more than 1 second to respond.
+        effective_io_concurrency: 20 #If the underlying disk can handle multiple simultaneous requests, then you should increase the effective_io_concurrency value and test what value provides the best application performance. All BCGov clusters have SSD.
+
+  # pgBouncer values:
+  proxy:
+    enabled: true
+    pgBouncer:
+      image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+      replicas: 1
+      requests:
+        cpu: 5m
+        memory: 32Mi
+      limits:
+        memory: 64Mi
+      maxConnections: 95 # make sure less than postgres max connections. Postgres max connections is 100
+
+  # pgMonitor values:
+  pgmonitor:
+    enabled: true
+    exporter:
+      image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+      requests:
+        cpu: 10m
+        memory: 128Mi # Seems to require 128Mi to run properly. If I set to 64Mi then I don't see any metrics in Sysdig
+      limits:
+        memory: 256Mi
+
+  # Use this field to set a custom password for the user that is generated with the same db name. This is important if setting up a DR site
+  # that you want to have running in a read-only mode. Otherwise the dr site cannot connect to the db with the generated password till
+  # it becomes the primary. I usually set it to a 24 character random password
+  # If not enabled, the password will be generated randomly.
+  user:
+    customPassword: true # set to true or false
+    password:  # DO NOT UPLOAD TO GITHUB
+
+# Temporary till operator fix. See DBC22-3706
+pgbackrestLogCleanup:
+  enabled: false

@@ -74,7 +74,7 @@ if [ ${#zipped_files[@]} -gt 0 ]; then
     mmdb_file=$(find . -maxdepth 1 -type f -name "*.mmdb")
 
     #Run goaccess on all the log files from the date entered
-    goaccess_report_name=$start_time_formatted-goaccess_report.html
+    goaccess_report_name="${CLUSTER}_${start_time_formatted}-goaccess_report.html"
     zcat "${zipped_files[@]}" | grep -v '^-\s' | goaccess - -o "$goaccess_report_name" --log-format='~h{, } %e %^[%x] "%r" %s %b "%R" "%u" %C "%M" %T' --datetime-format='%d/%b/%Y:%H:%M:%S %z' --ignore-panel=REMOTE_USER --ignore-panel=ASN --tz=America/Vancouver --jobs=2 --geoip-database=$mmdb_file
     echo "GoAccess report generated successfully at $goaccess_report_name"
 
@@ -82,7 +82,7 @@ if [ ${#zipped_files[@]} -gt 0 ]; then
     start_time_formatted_s3=$(date -d "$start_time" +"%Y/%m/%d")
 
     # Create folder structure in S3 bucket
-    s3_path="s3://$AWS_BUCKET/logs/$start_time_formatted_s3/"
+    s3_path="s3://$AWS_BUCKET/logs/$start_time_formatted_s3/$CLUSTER/"
 
     # Upload zipped files to S3
     for file in "${zipped_files[@]}"; do

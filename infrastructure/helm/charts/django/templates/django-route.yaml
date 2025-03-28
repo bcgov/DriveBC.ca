@@ -1,0 +1,190 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" . }}-backend
+  labels: {{ include "app.labels" . | nindent 4 }}
+{{ if .Values.route.iprestrictedAdminPages }}
+  annotations:
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
+{{ end }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "app.fullname" . }}
+  port:
+    targetPort: 80-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+  host: {{ .Values.route.host  }}
+  path: /drivebc-cms/
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" . }}-backend-static
+  labels: {{ include "app.labels" . | nindent 4 }}
+{{ if .Values.route.iprestrictedAdminPages }}
+  annotations:
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
+{{ end }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "app.fullname" . }}
+  port:
+    targetPort: 80-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+  host: {{ .Values.route.host  }}
+  path: /django-static/
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" . }}-admin
+  labels: {{ include "app.labels" . | nindent 4 }}
+{{ if .Values.route.iprestrictedAdminPages }}
+  annotations:
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
+{{ end }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "app.fullname" . }}
+  port:
+    targetPort: 80-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+  host: {{ .Values.route.host  }}
+  path: /drivebc-admin/
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" . }}-healthcheck
+  labels: {{ include "app.labels" . | nindent 4 }}
+{{ if .Values.route.iprestrictedAdminPages }}
+  annotations:
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
+{{ end }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "app.fullname" . }}
+  port:
+    targetPort: 80-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+  host: {{ .Values.route.host  }}
+  path: /healthcheck/
+
+
+# The following is the same as above, but only set if the vanity url is enabled
+---
+{{- if .Values.route.vanityurl.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" . }}-backend-vanityurl
+  labels: {{ include "app.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/resource-policy": keep
+    {{ if .Values.route.iprestrictedAdminPages }}
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
+    {{ end }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "app.fullname" . }}
+  port:
+    targetPort: 80-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+  host: {{ .Values.route.vanityurl.vanityurlhost  }}
+  path: /drivebc-cms/
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" . }}-backend-static-vanityurl
+  labels: {{ include "app.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/resource-policy": keep
+    {{ if .Values.route.iprestrictedAdminPages }}
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
+    {{ end }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "app.fullname" . }}
+  port:
+    targetPort: 80-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+  host: {{ .Values.route.vanityurl.vanityurlhost  }}
+  path: /django-static/
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" . }}-admin-vanityurl
+  labels: {{ include "app.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/resource-policy": keep
+    {{ if .Values.route.iprestrictedAdminPages }}
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
+    {{ end }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "app.fullname" . }}
+  port:
+    targetPort: 80-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+  host: {{ .Values.route.vanityurl.vanityurlhost  }}
+  path: /drivebc-admin/
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" . }}-healthcheck-vanityurl
+  labels: {{ include "app.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/resource-policy": keep
+    {{ if .Values.route.iprestrictedAdminPages }}
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
+    {{ end }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "app.fullname" . }}
+  port:
+    targetPort: 80-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+  host: {{ .Values.route.vanityurl.vanityurlhost  }}
+  path: /healthcheck/
+{{- end }}
