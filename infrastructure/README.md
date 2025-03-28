@@ -19,8 +19,6 @@ Follow these steps to setup a brand new environment.
 1. Navigate to the infrastructure folder in your CLI
 1. Login to OpenShift using oc CLI
 1. Select the namespace you would like to deploy to using `oc project NAMESPACE`
-1. `helm install ENV-drivebc-init -f .\init\values-ENV.yaml .\init`
-    1. NOTE: Do not install this again as it will overwrite all values.
 1. Set the values in the `ENV-drivebc-django` & `ENV-drivebc-static` ConfigMap and Secrets (they both have )
 1. Run `helm install ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres --set pgBackRest.s3.key=<KEY> --set pgBackRest.s3.bucket=<BUCKET> --set pgBackRest.s3.endpoint=<ENDPOINT> --set pgBackRest.s3.keySecret=<SECRET-KEY>` to install CrunchyDB. 
 1. Once the database is running go to the terminal of the primary replica and enter `psql`, then enter `ALTER DATABASE "ENV-drivebc" OWNER TO "ENV-drivebc";`
@@ -35,10 +33,6 @@ If you need to upgrade the database (ie updating resources, etc) you will need t
 
 ## Other
 
-### Dependency Updates
-If one of the underlying HELM charts gets updated you may need to run a dependency update which will update the Chart.lock file
-1. Navigate to the main folder in command line
-2. Run `helm dependency update`
 
 ### Dry Run
 If you want to confirm the install or upgrade will work, you can do a dry run without making the actual changes in your environment. Just swap install with upgrade as needed

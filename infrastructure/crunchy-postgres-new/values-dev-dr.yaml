@@ -1,0 +1,14 @@
+crunchy: 
+  standby:
+    enabled: true
+    repoName: repo2 # Always use the S3 repo for standby bootstrapping
+
+# Temporary till operator fix. See DBC22-3706
+pgbackrestLogCleanup:
+  enabled: true
+  schedule: 0 10 * * *  # 2am Pacific
+  serviceAccountName: pipeline
+  image:
+    repository: registry.redhat.io/openshift4/ose-cli
+  env:
+    CRUNCHY_CLUSTER: dev-drivebc-db-crunchy

@@ -1,0 +1,12 @@
+{{- if .Values.crunchy.user.customPassword }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "crunchy-postgres.fullname" . }}-pguser-{{ .Values.global.config.dbName }}
+  labels:
+    postgres-operator.crunchydata.com/cluster: {{ template "crunchy-postgres.fullname" . }}
+    postgres-operator.crunchydata.com/pguser: {{ .Values.global.config.dbName }}
+    {{ include "crunchy-postgres.labels" . | nindent 4 }}
+stringData:
+  password: {{ .Values.crunchy.user.password }}
+{{- end }}

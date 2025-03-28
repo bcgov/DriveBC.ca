@@ -1,0 +1,146 @@
+{{- $deploymentTag := .Values.image.tag | default .Chart.AppVersion -}}
+{{- $deploymentTime := now | date "2006-01-02 15:04:05.000000" -}}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels: {{ include "app.labels" . | nindent 4 }}
+{{- if .Values.prometheus.enabled }}
+annotations:
+  prometheus.io/scrape: 'true'
+  prometheus.io/port: '8000'
+{{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{ include "app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{ include "app.selectorLabels" . | nindent 8 }}
+      annotations: 
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-secrets.env: {{ .Values.global.vault.licenceplate }}-{{ .Values.global.vault.environment}}/{{ .Values.vault.secretName }}
+        vault.hashicorp.com/agent-inject-template-secrets.env: |
+          {{`{{- with secret `}}"{{ .Values.global.vault.licenceplate }}-{{ .Values.global.vault.environment }}/{{ .Values.vault.secretName }}"{{` }}
+          {{- range $key, $value := .Data.data }}
+          export {{$key}}="{{$value}}"
+          {{- end }}
+          {{- end `}} }}
+        vault.hashicorp.com/agent-inject-token: 'false'
+        vault.hashicorp.com/agent-pre-populate-only: 'true'
+        vault.hashicorp.com/auth-path: {{ .Values.vault.authPath }}
+        vault.hashicorp.com/namespace: platform-services
+        vault.hashicorp.com/role: {{ .Values.global.vault.licenceplate }}-{{ .Values.global.vault.environment}}
+    spec:
+      volumes:
+        - name: django-media-volume
+          persistentVolumeClaim:
+            claimName: {{ include "app.fullname" . }}
+        - name: django-app-images-volume
+          persistentVolumeClaim:
+            claimName: {{ include "app.fullname" . }}-app-images
+      containers:
+        - resources:
+            requests:
+              cpu: {{ .Values.deployment.resources.requests.cpu  }}
+              memory: {{ .Values.deployment.resources.requests.memory  }}
+            limits:
+              memory: {{ .Values.deployment.resources.limits.memory  }}
+          name: {{ include "app.fullname" . }}
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          command:
+            - sh
+            - '-c'
+          args:
+            - . /vault/secrets/secrets.env && /start.sh
+          env:
+            - name: DEPLOYMENT_TAG
+              value: {{ $deploymentTag | quote }}
+            - name: DEPLOYMENT_TIME
+              value: {{ $deploymentTime | quote }}
+            - name: RELEASE
+              value: {{ .Values.global.release }}
+            {{- range $key, $value := .Values.deployment.env.variables }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: port
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: password
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  key: dbname
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: django-media-volume
+              mountPath: /app/media
+            - name: django-app-images-volume
+              mountPath: /app/images/webcams
+          terminationMessagePolicy: File
+          image: >-
+            {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
+          readinessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: 8000
+              scheme: HTTP
+              httpHeaders:
+                - name: host
+                  value: localhost
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: 8000
+              scheme: HTTP
+              httpHeaders:
+                - name: host
+                  value: localhost
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            periodSeconds: 60
+            successThreshold: 1
+            failureThreshold: 3
+      serviceAccountName: {{ .Values.global.vault.licenceplate }}-vault
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: "app.kubernetes.io/instance"
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: {{ template "app.name" . }}

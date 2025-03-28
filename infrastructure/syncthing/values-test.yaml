@@ -24,11 +24,11 @@ deployment:
     - name: django-media-volume
       mountPath: /app/media
       persistentVolumeClaim:
-        claimName: test-django
+        claimName: test-drivebc-django
     - name: django-app-images-volume
       mountPath: /app/images/webcams
       persistentVolumeClaim:
-        claimName: test-django-app-images
+        claimName: test-drivebc-django-app-images
   oAuthProxy:
     enabled: true
     image:
