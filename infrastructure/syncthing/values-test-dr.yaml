@@ -1,0 +1,4 @@
+createTransportClaim: false # Set to true in Gold, and false for GoldDR as it will be automatically created there once installed on Gold
+
+route:
+  host: test-drivebc-syncthing.apps.golddr.devops.gov.bc.ca # Hostname for the route
