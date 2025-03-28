@@ -24,7 +24,7 @@ const NotificationEventType = forwardRef((props, ref) => {
     majorEvents: route.notification_types && route.notification_types.includes('majorEvents'),
     minorEvents: route.notification_types && route.notification_types.includes('minorEvents'),
     roadConditions: route.notification_types && route.notification_types.includes('roadConditions'),
-    // chainUps: true
+    chainUps: route.notification_types && route.notification_types.includes('chainUps'),
   });
 
   /* Helpers */
@@ -86,11 +86,11 @@ const NotificationEventType = forwardRef((props, ref) => {
     </Tooltip>
   );
 
-  // const tooltipCommercial = (
-  //   <Tooltip id="tooltipCommercial" className="tooltip-content">
-  //     <p>Segments of the highway that require Commercial Vehicles over 11,794kg to have chains on in order to use the highway</p>
-  //   </Tooltip>
-  // );
+  const tooltipCommercial = (
+    <Tooltip id="tooltipCommercial" className="tooltip-content">
+      <p>Segments of the highway that require Commercial Vehicles over 11,794kg to have chains on in order to use the highway</p>
+    </Tooltip>
+  );
 
   // Main components
   return (
@@ -102,7 +102,7 @@ const NotificationEventType = forwardRef((props, ref) => {
         { name: 'Major delays', tooltip: tooltipMajor, value: 'majorEvents', checked: notificationEventTypes.majorEvents },
         { name: 'Minor delays', tooltip: tooltipMinor, value: 'minorEvents', checked: notificationEventTypes.minorEvents },
         { name: 'Road Conditions', tooltip: tooltipRoadConditions, value: 'roadConditions', checked: notificationEventTypes.roadConditions },
-        // { name: 'Commercial vehicle chain-ups in effect', tooltip: tooltipCommercial, value: '' },
+        { name: 'Chain-ups in effect', tooltip: tooltipCommercial, value: 'chainUps' },
 
       ].map(({ name, tooltip, value, checked }) => (
         <div key={name}>

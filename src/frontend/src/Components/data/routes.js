@@ -193,7 +193,7 @@ export const compareRoutes = (route1, route2) => {
 
 export const linkRoute = (route, favRoutes) => {
   // route is already saved or favRoutes is not available
-  if (route.saved || !favRoutes) {
+  if (route.saved || !favRoutes || !route.points) {
     return;
   }
 
