@@ -2,7 +2,7 @@ import logging
 
 from apps.cms.models import Advisory
 from apps.event.tasks import generate_settings_message, get_notification_routes
-from apps.shared.helpers import attach_default_email_images
+from apps.shared.helpers import attach_default_email_images, attach_image_to_email
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -49,6 +49,7 @@ def send_route_advisory_notifications(saved_route, updated_advisory_id):
 
             # image attachments
             attach_default_email_images(msg)
+            attach_image_to_email(msg, 'dclogo', 'advisory.png')
 
             msg.attach_alternative(html, 'text/html')
             msg.send()
