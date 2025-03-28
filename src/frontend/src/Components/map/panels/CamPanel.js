@@ -256,7 +256,6 @@ export default function CamPanel(props) {
               tabIndex={0}
             >
               <div className="clip">
-                {/* <img src={camera.links.imageDisplay} width="300" /> */}
                 <img src={imageSrc} width="300" />
 
                 {camera.marked_delayed && camera.marked_stale && (
@@ -287,20 +286,18 @@ export default function CamPanel(props) {
                 )}
 
                 {isUpdated && (
-                  <div className="card-notification">              
-                  <>
-                    <div
-                      className={'card-pill' + (show ? ' hidden' : ' bounce updated')}
-                      onKeyDown={keyEvent => {
-                        if (keyEvent.keyCode === 13) {
-                          handleChildClick();
-                        }
-                      }}>
-                      <p>Updated</p>
-                      <FontAwesomeIcon icon={faCircleInfo} />
-                    </div>
-                  </>
-              </div>
+                <div className="card-notification">
+                  <div
+                    className={'card-pill' + (show ? ' hidden' : ' bounce updated')}
+                    onKeyDown={keyEvent => {
+                      if (keyEvent.keyCode === 13) {
+                        handleChildClick();
+                      }
+                    }}>
+                    <p>Updated</p>
+                    <FontAwesomeIcon icon={faCircleInfo} />
+                  </div>
+                </div>
                 )}
               </div>
 
@@ -348,7 +345,6 @@ export default function CamPanel(props) {
               // ref={imageRef}
               className="colocated-camera-icon"
               src={colocatedCamIcon}
-              // src={imageSrc}
               role="presentation"
               alt="colocated cameras icon" 
               onClick={handleCameraImageClick}
