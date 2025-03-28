@@ -174,8 +174,13 @@ def populate_all_event_data():
             logger.warning(e)
 
     for chain_up in chain_ups:
+        # Active
         active_event_ids.append(chain_up.validated_data['id'])
-        chain_up.save()
+
+        # Updated
+        updated = populate_event_from_data(chain_up.validated_data)
+        if updated:
+            updated_event_ids.append(chain_up.validated_data['id'])
 
     # Purge events absent in the feed
     Event.objects.filter(status=EVENT_STATUS.ACTIVE)\
@@ -204,7 +209,8 @@ def get_image_type_file_name(event):
     icon_name_map = {
         EVENT_DISPLAY_CATEGORY.CLOSURE: 'closure.png',
         EVENT_DISPLAY_CATEGORY.ROAD_CONDITION: 'road.png',
-        EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS: 'future.png'
+        EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS: 'future.png',
+        EVENT_DISPLAY_CATEGORY.CHAIN_UP: 'chain-up.png'
     }
 
     if event.display_category == EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS:
