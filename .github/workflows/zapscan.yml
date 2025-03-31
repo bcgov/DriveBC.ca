@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
       - name: ZAP Scan
-        uses: zaproxy/action-baseline@v0.13.0
+        uses: zaproxy/action-baseline@v0.15.0
         with:
           target: "https://test-drivebc.apps.gold.devops.gov.bc.ca/"
           rules_file_name: "zap-rules.tsv"
