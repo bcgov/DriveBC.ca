@@ -511,7 +511,7 @@ export default function DriveBCMap(props) {
     });
 
     // Remove layer if no route found
-    const routesData = searchedRoutes ? searchedRoutes : null;
+    const routesData = isCamDetail ? [selectedRoute] : searchedRoutes;
     loadLayer(
       mapLayers, mapRef, mapContext,
       'routeLayer', routesData, routesData, 6, selectedRoute, updateReferenceFeature
@@ -685,7 +685,7 @@ export default function DriveBCMap(props) {
   /* Constants for conditional rendering */
   // Disable cam panel in details page
   const disablePanel = isCamDetail && clickedFeature && clickedFeature.get('type') === 'camera';
-  const openPanel = (!!clickedFeature || !!searchedRoutes) && !disablePanel;
+  const openPanel = (!!clickedFeature || (!!searchedRoutes && !isCamDetail)) && !disablePanel;
   const smallScreen = useMediaQuery('only screen and (max-width: 767px)');
 
   // Reset search params when panel is closed
@@ -703,6 +703,10 @@ export default function DriveBCMap(props) {
   /* Rendering */
   return (
     <div className={`map-container ${isCamDetail ? 'preview' : ''}`}>
+      {searchedRoutes &&
+        <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} isCamDetail={isCamDetail} />
+      }
+
       {openPanel &&
         <div
           ref={panel}
@@ -732,10 +736,6 @@ export default function DriveBCMap(props) {
           }
 
           <div className="panel-content">
-            {searchedRoutes &&
-              <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} />
-            }
-
             {renderPanel(
               clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature,
               isCamDetail, smallScreen, mapView
