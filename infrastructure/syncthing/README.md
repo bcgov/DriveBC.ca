@@ -9,13 +9,14 @@ The Helm chart will install required components listed below and then guide you 
 - PVC
 - Service
 - TransportClaim (Only installed on Gold)
+- Service Account (for the oAuth Proxy)
 
 ### Helm Install
 1. Navigate to the infrastructure folder in your CLI
 1. Login to oc for Gold
-1. `helm install dev-drivebc-syncthing -f ./syncthing/values-dev.yaml ./syncthing`
+1. `helm install ENV-drivebc-syncthing -f ./syncthing/values-ENV.yaml ./syncthing`
 1. Login to oc for GoldDR
-1. `helm install dev-drivebc-syncthing -f ./syncthing/values-dev.yaml -f ./syncthing/values-dev-dr.yaml ./syncthing`
+1. `helm install ENV-drivebc-syncthing -f ./syncthing/values-ENV.yaml -f ./syncthing/values-ENV-dr.yaml ./syncthing`
 1. Everything is now installed and you should be able to go to the routes.
 
 ### Connecting the Syncthing Instances
@@ -35,7 +36,7 @@ Once you have installed the HELM chart, follow these steps:
     1. Click `Settings`
     1. Device Name:
         1. In Gold set to: `ENV-drivebc-gold` (ie dev-drivebc-gold)
-        1. In GoldDR set to: `ENV-DriveBC-GoldDR`
+        1. In GoldDR set to: `ENV-drivebc-golddr`
     1. Go to `Connections` Tab 
         1. Uncheck `Enable NAT traversal`, `Global Discovery`, `Local Discovery` and `Enable Relaying`
     1. Save

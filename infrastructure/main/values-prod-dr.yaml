@@ -1,0 +1,52 @@
+
+django:
+  deployment:
+    env:
+      variables:
+        SHOW_DEBUG_TOOLBAR: 'False' # Set to False for UAT and Prod
+        DEBUG: 'False' # Set to False for UAT and Prod
+        ROOT_LOG_LEVEL: WARNING
+  vault:
+    secretName: prod-django  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-golddr # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+  route:
+    host: prod-drivebc.apps.golddr.devops.gov.bc.ca # Just the OpenShift URL. Vanity URL is same as Gold
+
+tasks:
+  replicaCount: 0
+  deployment:
+    env:
+      variables:
+        SHOW_DEBUG_TOOLBAR: 'False' # Set to False for UAT and Prod
+        DEBUG: 'False' # Set to False for UAT and Prod
+        ROOT_LOG_LEVEL: WARNING
+  vault:
+    secretName: prod-django  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-golddr # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+
+static:
+  vault:
+    secretName: prod-static  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-golddr # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+  route:
+    host: prod-drivebc.apps.golddr.devops.gov.bc.ca # Just the OpenShift URL. Vanity URL is same as Gold
+
+openshiftjobs:
+  vault:
+    secretName: prod-cronjobs  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-golddr # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+  cronjobs:
+    analyzeuploadlogs:
+      enabled: true
+      deployment:
+        env:
+          variables:
+            CLUSTER: golddr
+    ziplogs:
+      enabled: true
+    backupmediapvc:
+      enabled: true
+      deployment:
+        env:
+          variables:
+            CLUSTER: golddr # used to set the path in the s3 bucket
