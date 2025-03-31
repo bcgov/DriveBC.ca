@@ -1,8 +1,8 @@
-nameOverride: dev-drivebc-db
+nameOverride: prod-drivebc-db
 
 global:
   config:
-    dbName: dev-drivebc-db
+    dbName: prod-drivebc-db
 crunchy: 
   enabled: true
   postgresVersion: 17
@@ -36,15 +36,15 @@ crunchy:
     target: ~ # 2024-03-24 17:16:00-07 this is the target timestamp to go back to in current cluster
   instances:
     name: db # high availability
-    replicas: 1 # 2 or 3 for high availability in TEST and PROD.
+    replicas: 3 # 2 or 3 for high availability in TEST and PROD.
     metadata:
       annotations:
         prometheus.io/scrape: 'true' # enable prometheus scraping so you monitor the cluster in Sysdig
         prometheus.io/port: '9187'
     dataVolumeClaimSpec:
-      storage: 500Mi
+      storage: 5Gi
       storageClassName: netapp-block-standard
-      walStorage: 500Mi
+      walStorage: 5Gi
 
     requests:
       cpu: 50m
@@ -61,7 +61,7 @@ crunchy:
   pgBackRest:
     enabled: true
     backupPath: /db/cluster/version # change it for PROD, create values-prod.yaml
-    clusterCounter: 2 # this is the number to identify what is the current counter for the cluster, each time it is cloned it should be incremented.
+    clusterCounter: 1 # this is the number to identify what is the current counter for the cluster, each time it is cloned it should be incremented.
     # If retention-full-type set to 'count' then the oldest backups will expire when the number of backups reach the number defined in retention
     # If retention-full-type set to 'time' then the number defined in retention will take that many days worth of full backups before expiration
     retentionFullType: time
@@ -72,11 +72,11 @@ crunchy:
       incrementalBackupSchedule:  0 0,4,12,16,20 * * * 
       volume:
         accessModes: "ReadWriteOnce"
-        storage: 400Mi
+        storage: 10Gi
         storageClassName: netapp-file-backup
     s3:
       enabled: true # if enabled, below must be provided
-      retention: 7 # one weeks backup in object store.
+      retention: 30 # four weeks backup in object store.
       bucket:  # DO NOT UPLOAD TO GITHUB
       endpoint: 
       accessKey:  # DO NOT UPLOAD TO GITHUB
@@ -131,7 +131,7 @@ crunchy:
     enabled: true
     pgBouncer:
       image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
-      replicas: 1
+      replicas: 3
       requests:
         cpu: 5m
         memory: 32Mi

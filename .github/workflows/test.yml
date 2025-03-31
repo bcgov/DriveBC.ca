@@ -248,7 +248,7 @@ jobs:
         insecure_skip_tls_verify: true
     - name: Helm upgrade on OpenShift Gold Environment
       run: |
-        helm upgrade test-drivebc -f ./infrastructure/helm/values-test.yaml ./infrastructure/helm --set static.image.tag=${{ needs.tag.outputs.tag }} --set django.image.tag=${{ needs.tag.outputs.tag }} --set tasks.image.tag=${{ needs.tag.outputs.tag }} --set redis.image.tag=${{ needs.tag.outputs.tag }} --set openshiftjobs.image.tag=${{ needs.tag.outputs.tag }}
+        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set static.image.tag=${{ needs.tag.outputs.tag }} --set django.image.tag=${{ needs.tag.outputs.tag }} --set tasks.image.tag=${{ needs.tag.outputs.tag }} --set redis.image.tag=${{ needs.tag.outputs.tag }} --set openshiftjobs.image.tag=${{ needs.tag.outputs.tag }}
 
   # I have this run after the push to Gold because I want to make sure that Gold runs the migrations first. Gold DR can't run migrations as DB is read-only
   update-openshift-golddr:
@@ -277,7 +277,7 @@ jobs:
 
     - name: Helm upgrade on OpenShift GoldDR Environment
       run: |
-        helm upgrade test-drivebc -f ./infrastructure/helm/values-test.yaml -f ./infrastructure/helm/values-test-dr.yaml ./infrastructure/helm --set static.image.tag=${{ needs.tag.outputs.tag }} --set django.image.tag=${{ needs.tag.outputs.tag }} --set tasks.image.tag=${{ needs.tag.outputs.tag }} --set redis.image.tag=${{ needs.tag.outputs.tag }} --set openshiftjobs.image.tag=${{ needs.tag.outputs.tag }}
+        helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml -f ./infrastructure/main/values-test-dr.yaml ./infrastructure/main --set static.image.tag=${{ needs.tag.outputs.tag }} --set django.image.tag=${{ needs.tag.outputs.tag }} --set tasks.image.tag=${{ needs.tag.outputs.tag }} --set redis.image.tag=${{ needs.tag.outputs.tag }} --set openshiftjobs.image.tag=${{ needs.tag.outputs.tag }}
 
 
 #  automatedTests:
