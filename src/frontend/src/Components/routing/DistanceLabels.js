@@ -21,7 +21,7 @@ import './DistanceLabels.scss';
 export default function DistanceLabels(props) {
   /* initialization */
   // Props
-  const { updateRouteDisplay, mapRef } = props;
+  const { updateRouteDisplay, mapRef, isCamDetail } = props;
 
   // Map not loaded, do nothing
   if (!mapRef || !mapRef.current) {
@@ -29,7 +29,6 @@ export default function DistanceLabels(props) {
   }
 
   // Redux
-  const dispatch = useDispatch();
   const {
     routes: { searchedRoutes, selectedRoute },
 
@@ -61,12 +60,14 @@ export default function DistanceLabels(props) {
   const addDistanceOverlay = (closing=false) => {
     removeOverlays(mapRef);
 
-    const latlngs = searchedRoutes.map((route) => {
+    const routeData = isCamDetail ? [selectedRoute] : searchedRoutes;
+
+    const latlngs = routeData.map((route) => {
       return new LineString((Array.isArray(route.route) ? route.route : route.route.coordinates[0])).getCoordinateAt(0.5);
     });
     const isTooClose = arePointsClose(latlngs);
 
-    searchedRoutes.forEach((route, index) => {
+    routeData.forEach((route, index) => {
       const elem = document.createElement('div');
 
       elem.addEventListener('click', () => {
@@ -77,13 +78,22 @@ export default function DistanceLabels(props) {
 
       const showAsSelected = !closing && compareRoutes(route, selectedRoute);
       elem.className = showAsSelected ? 'distance-overlay selected' : 'distance-overlay';
-      elem.innerHTML = showAsSelected ? `
-        <span class="index-label">${index + 1}</span>
-        <span class="distance-text">${roundedDistance} km</span>
-      ` : `
-        <span class="index-label selected">${index + 1}</span>
-        <span class="distance-text">${roundedDistance} km</span>
-      `;
+      if (routeData.length === 1) {
+        elem.innerHTML = `<span class="distance-text">${roundedDistance} km</span>`;
+
+      } else if (showAsSelected) {
+        elem.innerHTML = `
+          <span class="index-label">${index + 1}</span>
+          <span class="distance-text">${roundedDistance} km</span>
+        `;
+
+      } else {
+        // Inverted selected styling for index bubble
+        elem.innerHTML = `
+          <span class="index-label selected">${index + 1}</span>
+          <span class="distance-text">${roundedDistance} km</span>
+        `;
+      }
 
       const routeLs = new LineString(Array.isArray(route.route) ? route.route : route.route.coordinates[0]);
       let midPointLatLng = routeLs.getCoordinateAt(0.5);
