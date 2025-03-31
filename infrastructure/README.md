@@ -1,52 +1,63 @@
 # DriveBC Infrastructure
 
-The new DriveBC site has a number of components that work together to serve the website. This infrastructure folder contains all the components required to build the infrastructure to support the site. Following the steps in the Deployments Steps section should quickly setup your namespace from scratch.
+## Components
+DriveBC.ca has a number of components that make up the site
+- Django backend (django)
+    - Deployment
+    - HPA
+    - Network Policies
+    - Pod disruption budget
+    - PVCs
+    - Routes
+    - Services
+- Django Huey Tasks (tasks)
+    - Deployment
+- Nginx frontend (static)
+    - Deployment
+    - HPA
+    - Network Policies
+    - Pod disruption budget
+    - PVCs
+    - Routes
+    - Services
+- Redis (redis)
+    - Deployment
+    - Service
+- Cronjobs to backup logs, etc (openshiftjobs)
+    - Cronjobs
 
-Here are the components that are in this folder:
-- Init
-  - Creates the blank Secrets and ConfigMaps prior to building the other components
-- CrunchyDB Postgres
-  - Based off: https://github.com/bcgov/crunchy-postgres/ with a few changes to support our environment.
-- Django
-- Tasks
-- Redis
-- Static
+## Initial Install
+#### Prerequisites:
+- CrunchyDB already configured
+- Vault values set:
+    - Look at the env.example file to see what you may need for each of these:
+    - ENV-django
+    - ENV-static
+    - ENV-openshiftjobs
 
-## Deployment Steps
-### New Environment
-Follow these steps to setup a brand new environment.
-1. Clone the Drivebc.ca repository to your PC
+#### Gold
+1. Login to oc for the environment
+1. Confirm your project and cluster by running `oc project`
 1. Navigate to the infrastructure folder in your CLI
-1. Login to OpenShift using oc CLI
-1. Select the namespace you would like to deploy to using `oc project NAMESPACE`
-1. Set the values in the `ENV-drivebc-django` & `ENV-drivebc-static` ConfigMap and Secrets (they both have )
-1. Run `helm install ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres --set pgBackRest.s3.key=<KEY> --set pgBackRest.s3.bucket=<BUCKET> --set pgBackRest.s3.endpoint=<ENDPOINT> --set pgBackRest.s3.keySecret=<SECRET-KEY>` to install CrunchyDB. 
-1. Once the database is running go to the terminal of the primary replica and enter `psql`, then enter `ALTER DATABASE "ENV-drivebc" OWNER TO "ENV-drivebc";`
-1. Run `helm install ENV-drivebc -f .\main\values-ENV.yaml .\main` to install the entire environment. 
-1. If you want to quickly get the cameras and events on a fresh db, login to the tasks pod and go to terminal where you will run these commands  `python manage.py populate_webcams` and `python manage.py populate_events` and `python manage.py populate_ferries`
+1. `helm install ENV-drivebc -f ./helm/values-ENV.yaml ./helm`
+1. Confirm the site is working as expected
 
-### Upgrades
+#### Gold DR
+To setup site in Gold ensure the DB is running there in Standby and:
+1. `oc project` to confirm you are in GOLD DR on the correct project
+1. `helm install ENV-drivebc -f ./helm/values-ENV.yaml -f ./helm/values-ENV-dr.yaml ./helm`
+1. Validate the site is working as expected
 
-If you made changes to any of the values for the DriveBC helm charts you should update the dependencies and then (see below) and then instead of doing a `helm install` do a `helm upgrade`
+#### Other tasks:
+- Install any certificates for the vanityURL's as per [Interal Confluence Page](https://moti-imb.atlassian.net/wiki/spaces/DBC22/pages/102511068/Requesting+and+adding+an+SSL+Certificate+to+a+Route)
+- Setup Syncthing to sync CMS and Webcam Images [Syncthing Readme](/infrastructure/syncthing/README.md)
+- Configure GSLB (if required)
+- Configure StandbyCheck (if required)
 
-If you need to upgrade the database (ie updating resources, etc) you will need to run the following command from within the infrastructure folder `helm upgrade ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres --set pgBackRest.s3.bucket=<BUCKET> --set pgBackRest.s3.endpoint=<ENDPOINT>`
-
-## Other
-
-
-### Dry Run
-If you want to confirm the install or upgrade will work, you can do a dry run without making the actual changes in your environment. Just swap install with upgrade as needed
-1. `helm install --dry-run ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres`
-1. `helm install --dry-run ENV-drivebc -f .\main\values-ENV.yaml .\main`
-
-### Template (YAML) Extract
-If you want to see what the YAML files that HELM will generate look like prior to the install/upgrade you can run the following commands:
-
-1. `helm template --output-dir yaml ENV-drivebc-crunchy-postgres -f .\crunchy-postgres\values-ENV.yaml .\crunchy-postgres`
-1. `helm template --output-dir yaml ENV-drivebc -f .\main\values-ENV.yaml .\main`
-
-### Uninstall
-If you need to uninstall the Helm Charts follow these steps:
-1. `helm uninstall ENV-drivebc`
-1. `helm uninstall ENV-drivebc-crunchy-postgres`
-1. `helm uninstall ENV-drivebc-init`
+## Upgrades
+Once the site is setup the Github actions should be able to handle most helm upgrades, but if you want to do do one manually (ie for testing) it's very similar to initial setup
+1. `oc project` to confirm the project and cluster
+1. `helm list` if you want to confirm the project is there already
+1. GOLD `helm install ENV-drivebc -f ./helm/values-ENV.yaml -f ./helm`
+1. GOLDDR: `helm install ENV-drivebc -f ./helm/values-ENV.yaml -f ./helm/values-ENV-dr.yaml ./helm`
+    - NOTE: If you want to set a specific tag instead of the default, you can add `--set django.image.tag=TAG` (doing same for static, tasks, redis, openshiftjobs)

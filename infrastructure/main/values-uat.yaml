@@ -1,9 +1,18 @@
 nameOverride: uat-drivebc
 fullnameOverride: uat-drivebc
 
+# These global values are used by all components of the application.
+global:
+  vault:
+    licenceplate: a781ec # This is the license plate you are deploying to. It is used to determine the vault path
+    environment: nonprod #Set to prod if you want to use the prod vault or nonprod for dev/test/uat
+  route:
+    ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
+  release: # This is set by Github actions for the prod release. Do not change this value.
+
 django:
-  fullnameOverride: uat-django
-  nameOverride: uat-django
+  fullnameOverride: uat-drivebc-django
+  nameOverride: uat-drivebc-django
   replicaCount: 3
   image:
     repository: ghcr.io/bcgov/drivebc-django
@@ -11,12 +20,19 @@ django:
   deployment:
     resources:
       requests:
-        cpu: 50m
+        cpu: 100m
         memory: 300Mi
+      limits:
+        memory: 500Mi
     env:
-      postgresSecret: uat-drivebc-db-pguser-uat-drivebc-db
-      djangoConfigMap: uat-drivebc-django
-      djangoSecret: uat-drivebc-django
+      postgresSecret: uat-drivebc-db-crunchy-pguser-uat-drivebc-db
+      variables:
+        SHOW_DEBUG_TOOLBAR: 'False' # Set to False for UAT and Prod
+        DEBUG: 'False' # Set to False for UAT and Prod
+        ROOT_LOG_LEVEL: WARNING
+  vault:
+    secretName: uat-django  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
   autoscaling:
     enabled: true
     minReplicas: 3
@@ -26,6 +42,9 @@ django:
     host: uat-drivebc.apps.gold.devops.gov.bc.ca
     iprestricted: true #Set to true if you want to limit IP's that can access publicly available pages to the the addresses in the ipallowlist 
     iprestrictedAdminPages: true #Set to true if you want to limit IP's that can access backend admin pages
+    vanityurl: 
+      enabled: true
+      vanityurlhost: uat.drivebc.ca # You will need to add the cert manually
   mediapvc:
     storage: 1Gi
   apppvc:
@@ -33,10 +52,13 @@ django:
   podDisruptionBudget: 
     enabled: true 
     minAvailable: 1
+  prometheus:
+    enabled: false # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
+
 
 tasks:
-  fullnameOverride: uat-tasks
-  nameOverride: uat-tasks
+  fullnameOverride: uat-drivebc-tasks
+  nameOverride: uat-drivebc-tasks
   replicaCount: 1
   image:
     repository: ghcr.io/bcgov/drivebc-django
@@ -45,17 +67,26 @@ tasks:
     resources:
       requests:
         cpu: 200m
-        memory: 250Mi
+        memory: 300Mi
+      limits:
+        memory: 1000Mi
     volumes:
-      claimName: uat-django-app-images
+      claimName: uat-drivebc-django-app-images
     env:
-      postgresSecret: uat-drivebc-db-pguser-uat-drivebc-db
-      djangoConfigMap: uat-drivebc-django
-      djangoSecret: uat-drivebc-django
+      postgresSecret: uat-drivebc-db-crunchy-pguser-uat-drivebc-db
+      variables:
+        SHOW_DEBUG_TOOLBAR: 'False' # Set to False for UAT and Prod
+        DEBUG: 'False' # Set to False for UAT and Prod
+        ROOT_LOG_LEVEL: WARNING
+  vault:
+    secretName: uat-django  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+  prometheus:
+    enabled: false # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
 
 redis:
-  fullnameOverride: uat-redis
-  nameOverride: uat-redis
+  fullnameOverride: uat-drivebc-redis
+  nameOverride: uat-drivebc-redis
   replicaCount: 1
   image:
     repository: ghcr.io/bcgov/drivebc-redis
@@ -65,80 +96,113 @@ redis:
       requests:
         cpu: 50m
         memory: 50Mi
+      limits:
+        memory: 100Mi
+    env:    
+      variables: {}
+
 
 static:
-  fullnameOverride: uat-static
-  nameOverride: uat-static
+  fullnameOverride: uat-drivebc-static
+  nameOverride: uat-drivebc-static
   replicaCount: 3
-  release:   
+  release: 
   image:
     repository: ghcr.io/bcgov/drivebc-static
     tag: latest-uat
   deployment:
     resources:
       requests:
-        cpu: 50m
-        memory: 50Mi
-    env:
-      staticConfigMap: uat-drivebc-static
+        cpu: 100m
+        memory: 100Mi
+      limits:
+        memory: 250Mi
     volumes:
-      imagesClaimName: uat-django-app-images
+      imagesClaimName: uat-drivebc-django-app-images
+    env:
+      variables:
+        MAINTENANCE_MODE: 'false'
+        ENVIRONMENT: uat-drivebc
+  vault:
+    secretName: uat-static  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
   autoscaling:
     enabled: true
     minReplicas: 3
-    maxReplicas: 5
+    maxReplicas: 10
     targetCPUUtilizationPercentage: 200
   route:
     host: uat-drivebc.apps.gold.devops.gov.bc.ca
     iprestricted: true  #Set to true if you want to limit IP's the the addresses in the ipallowlist 
+    vanityurl: 
+      enabled: true
+      vanityurlhost: uat.drivebc.ca
   logpvc:
-    storage: 5Gi
+    storage: 2Gi
   podDisruptionBudget: 
     enabled: true 
     minAvailable: 1
 
 openshiftjobs:
-  fullnameOverride: uat-openshiftjobs
-  nameOverride: uat-openshiftjobs
+  fullnameOverride: uat-drivebc-openshiftjobs
+  nameOverride: uat-drivebc-openshiftjobs
 
   image:
     repository: ghcr.io/bcgov/drivebc-openshiftjobs
     tag: latest-uat
 
+  vault:
+    secretName: uat-cronjobs  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+
   cronjobs:
     analyzeuploadlogs:
       name: analyzeuploadlogs
+      enabled: true
       schedule: '0 9 * * *'  #NOTE: This is in UTC
       deployment:
         resources:
           requests:
             cpu: 50m
             memory: 150Mi
-        env:
-          s3Secret: uat-drivebc-cronjob-s3bucket
+          limits:
+            memory: 250Mi
         volumes:
-          logs: uat-static-log-storage
+          logs: uat-drivebc-static-log-storage
+        env:
+          variables:
+            CLUSTER: gold # used to set the path in the s3 bucket
+            DAYS_AGO: 1
 
     ziplogs:
       name: ziplogs
+      enabled: true
       schedule: '30 * * * *'
       deployment:
         resources:
           requests:
             cpu: 50m
             memory: 100Mi
+          limits:
+            memory: 250Mi
         volumes:
-          logs: uat-static-log-storage
+          logs: uat-drivebc-static-log-storage
+        env:
+          variables: {}
 
     backupmediapvc:
       name: backupmediapvc
+      enabled: true
       schedule: '0 8 * * *'
       deployment:
         resources:
           requests:
             cpu: 50m
             memory: 100Mi
-        env:
-          s3Secret: uat-drivebc-cronjob-s3bucket
+          limits:
+            memory: 250Mi
         volumes:
-          media: uat-django
+          media: uat-drivebc-django
+        env:
+          variables: 
+            CLUSTER: gold # used to set the path in the s3 bucket

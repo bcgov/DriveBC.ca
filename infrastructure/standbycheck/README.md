@@ -31,7 +31,7 @@ Once you are ready to deploy for the first time to an environment follow these s
 1. Navigate to the `infrastructure` folder
 1. Run `helm install ENV-drivebc-standbycheck -f ./standbycheck/values-ENV.yaml ./standbycheck`
 1. Login to OC for GoldDR
-1. Run `helm install ENV-drivebc-standbycheck-dr -f ./standbycheck/values-ENV.yaml -f ./standbycheck/values-ENV-dr.yaml ./standbycheck`
+1. Run `helm install ENV-drivebc-standbycheck -f ./standbycheck/values-ENV.yaml -f ./standbycheck/values-ENV-dr.yaml ./standbycheck`
 1. Go to OpenShift Gold and do the following:
     1. Go to Secrets
     1. Find `ENV-drivebc-standbycheck`

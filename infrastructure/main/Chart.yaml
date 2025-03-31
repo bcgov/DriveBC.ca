@@ -1,5 +1,5 @@
 apiVersion: v2
-name: main
+name: DriveBC
 description: A Helm chart for DriveBC
 type: application
 version: 0.1.0
@@ -7,21 +7,21 @@ appVersion: '0.1.0'
 dependencies:
   - name: django
     version: '0.1.0'
-    repository: 'file://../_django'
+    repository: 'file://./charts/_django'
     condition: django.enabled
   - name: tasks
     version: '0.1.0'
-    repository: 'file://../_tasks'
+    repository: 'file://./charts/_tasks'
     condition: tasks.enabled
   - name: redis
     version: '0.1.0'
-    repository: 'file://../_redis'
+    repository: 'file://./charts/redis'
     condition: redis.enabled
   - name: static
     version: '0.1.0'
-    repository: 'file://../_static'
+    repository: 'file://./charts/static'
     condition: static.enabled
   - name: openshiftjobs
     version: '0.1.0'
-    repository: 'file://../_openshiftjobs'
+    repository: 'file://./charts/openshiftjobs'
     condition: openshiftjobs.enabled

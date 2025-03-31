@@ -50,7 +50,7 @@ jobs:
         target: ${{ needs.tag.outputs.tag }}
         tags: |
           latest-prod
-    - name: Add latest-uat tag to redis image
+    - name: Add latest-prod tag to redis image
       uses: shrink/actions-docker-registry-tag@v4
       with:
         registry: ghcr.io
@@ -59,7 +59,7 @@ jobs:
         tags: |
           latest-prod
 
-    - name: Add latest-uat tag to openshiftjobs image
+    - name: Add latest-prod tag to openshiftjobs image
       uses: shrink/actions-docker-registry-tag@v4
       with:
         registry: ghcr.io
@@ -68,31 +68,57 @@ jobs:
         tags: |
           latest-prod
 
-  deploy:
+  update-openshift-gold:
     needs: [tag]
     runs-on: ubuntu-latest
-    name: Promote Images to OpenShift
+    name: Deploy Images to OpenShift Gold
     environment:
       name: prod
       url: https://beta.drivebc.ca/
     steps:
-    - name: Checkout Code
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Install CLI tools from OpenShift Mirror
+      uses: redhat-actions/openshift-tools-installer@v1
+      with:
+        oc: "4"
+      
+    - name: Authenticate and set context
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        openshift_token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+        insecure_skip_tls_verify: true
+    - name: Helm upgrade on OpenShift Gold Environment
+      run: |
+        helm upgrade prod-drivebc -f ./infrastructure/main/values-prod.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}" --set static.release="${{ github.event.release.name }}"
+
+  # I have this run after the push to Gold because I want to make sure that Gold runs the migrations first. Gold DR can't run migrations as DB is read-only
+  update-openshift-golddr:
+    needs: [tag, update-openshift-gold] 
+    runs-on: ubuntu-latest
+    name: Deploy Images to OpenShift GoldDR
+    environment:
+      name: prod
+      url: https://beta.drivebc.ca/
+    steps:
+    - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Install CLI tools from OpenShift Mirror
       uses: redhat-actions/openshift-tools-installer@v1
       with:
         oc: "4"
-
+     
     - name: Authenticate and set context
       uses: redhat-actions/oc-login@v1
       with:
-        openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-        openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+        openshift_server_url: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        openshift_token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
         insecure_skip_tls_verify: true
 
-    - name: Helm upgrade on OpenShift Environment
+    - name: Helm upgrade on OpenShift GoldDR Environment
       run: |
-        helm dependency update ./infrastructure/main
-        helm upgrade prod-drivebc -f ./infrastructure/main/values-prod.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}" --set static.release="${{ github.event.release.name }}"
+        helm upgrade prod-drivebc -f ./infrastructure/main/values-prod.yaml -f ./infrastructure/main/values-prod-dr.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}" --set static.release="${{ github.event.release.name }}"
