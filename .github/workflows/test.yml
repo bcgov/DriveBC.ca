@@ -225,7 +225,7 @@ jobs:
         password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
 
   update-openshift-gold:
-    needs: [build-static, build-backend, build-redis, build-openshiftjobs]
+    needs: [tag, build-static, build-backend, build-redis, build-openshiftjobs]
     runs-on: ubuntu-latest
     name: Deploy Latest Images to OpenShift Gold
     environment:
@@ -248,11 +248,11 @@ jobs:
         insecure_skip_tls_verify: true
     - name: Helm upgrade on OpenShift Gold Environment
       run: |
-        helm upgrade test-drivebc -f ./infrastructure/helm/values-test.yaml ./infrastructure/helm --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
+        helm upgrade test-drivebc -f ./infrastructure/helm/values-test.yaml ./infrastructure/helm --set static.image.tag=${{ needs.tag.outputs.tag }} --set django.image.tag=${{ needs.tag.outputs.tag }} --set tasks.image.tag=${{ needs.tag.outputs.tag }} --set redis.image.tag=${{ needs.tag.outputs.tag }} --set openshiftjobs.image.tag=${{ needs.tag.outputs.tag }}
 
   # I have this run after the push to Gold because I want to make sure that Gold runs the migrations first. Gold DR can't run migrations as DB is read-only
   update-openshift-golddr:
-    needs: [update-openshift-gold] 
+    needs: [tag, update-openshift-gold] 
     runs-on: ubuntu-latest
     name: Deploy Latest Images to OpenShift GoldDR
     environment:
@@ -277,7 +277,7 @@ jobs:
 
     - name: Helm upgrade on OpenShift GoldDR Environment
       run: |
-        helm upgrade test-drivebc -f ./infrastructure/helm/values-test.yaml -f ./infrastructure/helm/values-test-dr.yaml ./infrastructure/helm --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
+        helm upgrade test-drivebc -f ./infrastructure/helm/values-test.yaml -f ./infrastructure/helm/values-test-dr.yaml ./infrastructure/helm --set static.image.tag=${{ needs.tag.outputs.tag }} --set django.image.tag=${{ needs.tag.outputs.tag }} --set tasks.image.tag=${{ needs.tag.outputs.tag }} --set redis.image.tag=${{ needs.tag.outputs.tag }} --set openshiftjobs.image.tag=${{ needs.tag.outputs.tag }}
 
 
 #  automatedTests:
