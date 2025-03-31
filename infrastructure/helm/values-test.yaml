@@ -67,9 +67,9 @@ tasks:
     resources:
       requests:
         cpu: 200m
-        memory: 250Mi
+        memory: 300Mi
       limits:
-        memory: 500Mi
+        memory: 1000Mi
     volumes:
       claimName: test-drivebc-django-app-images
     env:
