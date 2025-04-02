@@ -124,7 +124,7 @@ class CarsClosureSerializer(serializers.Serializer):
                     if isinstance(kind, str):
                         data["closed"] = False
                     else:
-                        data["closed"] = kind.get("category") == "traffic_pattern" and kind.get("phrase-id") in int_closed_ids
+                        data["closed"] = (kind.get("category") == "traffic_pattern" and kind.get("phrase-id") in int_closed_ids) or (kind.get("category") == "incident" and kind.get("phrase-id") in int_closed_ids)
 
                     # Stop inner for loop if already marked
                     if data["closed"]:

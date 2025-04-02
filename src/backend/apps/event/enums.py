@@ -100,7 +100,8 @@ EVENT_DIFF_FIELDS = [
     'last_updated',
     'schedule',
     'start',
-    'end'
+    'end',
+    'closed'
 ]
 
 EVENT_UPDATE_FIELDS = [
