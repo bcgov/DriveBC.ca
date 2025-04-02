@@ -137,7 +137,7 @@ export default function MapWrapper(props) {
     const loadFerries = !ferries || (!isInitialLoad.current && mapContext.visible_layers.inlandFerries);
     const loadLocalWeathers = !currentWeathers || (!isInitialLoad.current && mapContext.visible_layers.weather);
     const loadRegionalWeathers = !regionalWeathers || (!isInitialLoad.current && mapContext.visible_layers.weather);
-    const loadRestStops = !loadRestStops || (!isInitialLoad.current && mapContext.visible_layers.restStops);
+    const loadRestStops = !restStops || (!isInitialLoad.current && mapContext.visible_layers.restStops);
 
     // Non-toggleable map layers
     const loadHef = !hef || !isInitialLoad.current;

@@ -223,7 +223,7 @@ export function ReportMap(props) {
           ) {
             const mapCoords = fromLonLat([longitude, latitude]);
 
-            setZoomPan(mapView, 9, mapCoords);
+            setZoomPan(mapView, 6, mapCoords);
             setLocationPin([longitude, latitude], redLocationMarkup, mapRef);
 
             // Wait for map to pan before getting pixel coords
