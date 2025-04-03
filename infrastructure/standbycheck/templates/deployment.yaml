@@ -1,0 +1,73 @@
+
+{{- $deploymentTag := .Values.image.tag | default .Chart.AppVersion -}}
+{{- $deploymentTime := now | date "2006-01-02 15:04:05.000000" -}}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels: {{ include "app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      {{ include "app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{ include "app.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - resources:
+            requests:
+              cpu: {{ .Values.deployment.resources.requests.cpu  }}
+              memory: {{ .Values.deployment.resources.requests.memory  }}
+            limits:
+              memory: {{ .Values.deployment.resources.limits.memory  }}
+          name: {{ include "app.fullname" . }}
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          image: >-
+            {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
+          env:
+            - name: DEPLOYMENT_TAG
+              value: {{ $deploymentTag | quote }}
+            - name: DEPLOYMENT_TIME
+              value: {{ $deploymentTime | quote }}
+            - name: CLUSTER
+              value: {{ .Values.cluster }}
+          {{ if .Values.controller.enabled }}
+          envFrom:
+            - secretRef:
+                name: {{ template "app.fullname" . }}
+          {{ end }}  
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: "app.kubernetes.io/instance"
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: {{ template "app.name" . }}
+
+                

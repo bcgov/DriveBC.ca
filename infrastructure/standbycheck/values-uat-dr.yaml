@@ -1,0 +1,12 @@
+cluster: golddr # can be gold or golddr
+
+# deploy the standbycheck control pod in the primary cluster
+controller:
+  enabled: false # Set to true if deploying to Gold, false if deploying to Gold DR
+
+# deploy the role and serviceaccount in the standby cluster
+serviceaccount:
+  enabled: true # Set to true if deploying to Gold DR, false if deploying to Gold
+
+route:
+  host: uat-drivebc.apps.golddr.devops.gov.bc.ca
