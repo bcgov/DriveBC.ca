@@ -1,5 +1,9 @@
 // React
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useCallback, useEffect } from 'react';
+
+// Redux
+import { memoize } from 'proxy-memoize';
+import { useSelector } from 'react-redux';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -45,6 +49,18 @@ export default function Filters(props) {
     isDelaysPage
   } = props;
 
+  // Redux
+  const {
+    routes: { searchedRoutes },
+
+  } = useSelector(
+    useCallback(
+      memoize(state => ({
+        routes: state.routes,
+      })),
+    ),
+  );
+
   // Const for enabling layer that the reference event belongs to
   const eventCategory = referenceData ? referenceData.display_category : false;
 
@@ -52,6 +68,157 @@ export default function Filters(props) {
   // Show layer menu by default on main page, desktop only
   const [open, setOpen] = useState(largeScreen && !textOverride);
 
+  // States for toggles
+  const [closures, setClosures] = useState(eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures);
+  const [majorEvents, setMajorEvents] = useState(eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents);
+  const [minorEvents, setMinorEvents] = useState(eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents);
+  const [futureEvents, setFutureEvents] = useState(eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents);
+  const [roadConditions, setRoadConditions] = useState(mapContext.visible_layers.roadConditions);
+  const [chainUps, setChainUps] = useState(mapContext.visible_layers.chainUps);
+  const [highwayCams, setHighwayCams] = useState(isCamDetail ? isCamDetail : mapContext.visible_layers.highwayCams);
+  const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
+  const [weather, setWeather] = useState(mapContext.visible_layers.weather);
+  const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
+  const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
+
+  // Effects
+  useEffect(() => {
+    if (searchedRoutes && !!searchedRoutes.length) {
+      if (!closures) filterHandler('closures');
+      if (!majorEvents) filterHandler('majorEvents');
+      if (!minorEvents) filterHandler('minorEvents');
+      if (!futureEvents) filterHandler('futureEvents');
+      if (!roadConditions) filterHandler('roadConditions');
+      if (!inlandFerries) filterHandler('inlandFerries');
+    }
+  }, [searchedRoutes]);
+
+  // Helpers
+  const setLayerVisibility = (layer, checked, runCallback=true) => {
+    if (!mapLayers || !mapLayers.current[layer]) {
+      return;
+    }
+
+    // Set visible in map only
+    mapLayers?.current[layer].setVisible(checked);
+
+    // Run callback for event list, non-line layers
+    if (callback && runCallback) {
+      callback(layer, checked);
+    }
+
+    // Set context and local storage
+    mapContext.visible_layers[layer] = checked;
+    setMapContext(mapContext);
+    localStorage.setItem('mapContext', JSON.stringify(mapContext));
+  }
+
+  // Set focus on filters with a blur out after 1 second
+  function focusInput(filter) {
+    filter.focus();
+
+    // The input will lose focus after 1 second
+    setTimeout(() => {
+      filter.blur();
+    }, 1000);
+  }
+
+  function updateUrl(type1, type2) {
+    const currentUrl = window.location.href;
+    const newUrl = currentUrl.replace(type1, type2);
+    window.history.replaceState(null, "", newUrl);
+    if(type2 === 'largeRestStop') {
+      referenceData.type = "largeRestStop";
+    } else {
+      referenceData.type = "restStop";
+    }
+  }
+
+  // Handlers
+  const filterHandler = (layer, e) => {
+    switch (layer) {
+      case 'closures':
+        trackEvent('click', 'map', 'Toggle closures layer');
+        setLayerVisibility('closures', !closures);
+        setLayerVisibility('closuresLines', !closures, false);
+        setClosures(!closures);
+        break;
+      case 'majorEvents':
+        trackEvent('click', 'map', 'Toggle major events layer');
+        setLayerVisibility('majorEvents', !majorEvents);
+        setLayerVisibility('majorEventsLines', !majorEvents, false);
+        setMajorEvents(!majorEvents);
+        break;
+      case 'minorEvents':
+        trackEvent('click', 'map', 'Toggle minor events layer');
+        setLayerVisibility('minorEvents', !minorEvents);
+        setLayerVisibility('minorEventsLines', !minorEvents, false);
+        setMinorEvents(!minorEvents);
+        break;
+      case 'futureEvents':
+        trackEvent('click', 'map', 'Toggle future events layer');
+        setLayerVisibility('futureEvents', !futureEvents);
+        setLayerVisibility('futureEventsLines', !futureEvents, false);
+        setFutureEvents(!futureEvents);
+        break;
+      case 'roadConditions':
+        trackEvent('click', 'map', 'Toggle road conditions layer');
+        setLayerVisibility('roadConditions', !roadConditions);
+        setLayerVisibility('roadConditionsLines', !roadConditions, false);
+        setRoadConditions(!roadConditions);
+        break;
+      case 'chainUps':
+        trackEvent('click', 'map', 'Toggle chain ups layer')
+        setLayerVisibility('chainUps', !chainUps);
+        setLayerVisibility('chainUpsLines', !chainUps, false);
+        setChainUps(!chainUps);
+        break;
+      case 'highwayCams':
+        trackEvent('click', 'map', 'Toggle highway cameras layer');
+        setLayerVisibility('highwayCams', !highwayCams);
+        setHighwayCams(!highwayCams);
+        break;
+      case 'inlandFerries':
+        trackEvent('click', 'map', 'Toggle inland ferries layer');
+        setLayerVisibility('inlandFerries', !inlandFerries);
+        setInlandFerries(!inlandFerries);
+        break;
+      case 'weather':
+        trackEvent('click', 'map', 'Toggle weather layer')
+        setLayerVisibility('weather', !weather);
+        setLayerVisibility('regional', !weather);
+        setLayerVisibility('hef', !weather);
+        setWeather(!weather);
+        break;
+      case 'restStops':
+        trackEvent('click', 'map', 'Toggle rest stops layer')
+        if (!restStops && largeRestStops) {
+          setLayerVisibility('largeRestStops', false);
+          setLargeRestStops(false);
+        }
+        setLayerVisibility('restStops', !restStops);
+        setRestStops(!restStops);
+        updateUrl("largeRestStop", "restStop");
+        break;
+      case 'largeRestStops':
+        trackEvent('click', 'map', 'Toggle rest stops layer')
+        if (restStops && !largeRestStops) {
+          setLayerVisibility('restStops', false);
+          setRestStops(false);
+        }
+        setLayerVisibility('largeRestStops', !largeRestStops);
+        setLargeRestStops(!largeRestStops);
+        updateUrl("restStop", "largeRestStop");
+        break;
+    }
+
+    if (e) {
+      focusInput(e.target);
+    }
+  }
+
+  // Rendering
+  // Sub components
   const tooltipClosures = (
     <Tooltip id="tooltipClosures" className="tooltip-content">
       <p>Travel is not possible in one or both directions on this road. Find an alternate route or a detour where possible.</p>
@@ -121,57 +288,7 @@ export default function Filters(props) {
     </Tooltip>
   );
 
-  // States for toggles
-  const [closures, setClosures] = useState(eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures);
-  const [majorEvents, setMajorEvents] = useState(eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents);
-  const [minorEvents, setMinorEvents] = useState(eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents);
-  const [futureEvents, setFutureEvents] = useState(eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents);
-  const [roadConditions, setRoadConditions] = useState(mapContext.visible_layers.roadConditions);
-  const [chainUps, setChainUps] = useState(mapContext.visible_layers.chainUps);
-  const [highwayCams, setHighwayCams] = useState(isCamDetail ? isCamDetail : mapContext.visible_layers.highwayCams);
-  const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
-  const [weather, setWeather] = useState(mapContext.visible_layers.weather);
-  const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
-  const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
-
-  // Helpers
-  const setLayerVisibility = (layer, checked, runCallback=true) => {
-    // Set visible in map only
-    mapLayers?.current[layer].setVisible(checked);
-
-    // Run callback for event list, non-line layers
-    if (callback && runCallback) {
-      callback(layer, checked);
-    }
-
-    // Set context and local storage
-    mapContext.visible_layers[layer] = checked;
-    setMapContext(mapContext);
-    localStorage.setItem('mapContext', JSON.stringify(mapContext));
-  }
-
-  // Set focus on filters with a blur out after 1 second
-  function focusInput(filter) {
-
-    filter.focus();
-
-    // The input will lose focus after 1 second
-    setTimeout(() => {
-      filter.blur();
-    }, 1000);
-  }
-
-  function updateUrl(type1, type2) {
-    const currentUrl = window.location.href;
-    const newUrl = currentUrl.replace(type1, type2);
-    window.history.replaceState(null, "", newUrl);
-    if(type2 === 'largeRestStop') {
-      referenceData.type = "largeRestStop";
-    } else {
-      referenceData.type = "restStop";
-    }
-  }
-
+  // Main Component
   return (
     <div className="filters-component">
       <Button
@@ -222,13 +339,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="closures"
                       id="filter--closures"
-                      onChange={e => {
-                        trackEvent('click', 'map', 'Toggle closures layer')
-                        setLayerVisibility('closures', !closures);
-                        setLayerVisibility('closuresLines', !closures, false);
-                        setClosures(!closures);
-                        focusInput(e.target);
-                      }}
+                      onChange={e => filterHandler('closures', e)}
                       defaultChecked={eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures}
                     />
                     <label className="filter-item__button" htmlFor="filter--closures">
@@ -255,13 +366,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="major"
                       id="filter--major"
-                      onChange={e => {
-                        trackEvent('click', 'map', 'Toggle major events layer');
-                        setLayerVisibility('majorEvents', !majorEvents);
-                        setLayerVisibility('majorEventsLines', !majorEvents, false);
-                        setMajorEvents(!majorEvents);
-                        focusInput(e.target);
-                      }}
+                      onChange={e => filterHandler('majorEvents', e)}
                       defaultChecked={eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents}
                     />
                     <label className="filter-item__button" htmlFor="filter--major">
@@ -286,13 +391,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="minor"
                       id="filter--minor"
-                      onChange={e => {
-                        trackEvent('click', 'map', 'Toggle minor events layer');
-                        setLayerVisibility('minorEvents', !minorEvents);
-                        setLayerVisibility('minorEventsLines', !minorEvents, false);
-                        setMinorEvents(!minorEvents);
-                        focusInput(e.target);
-                      }}
+                      onChange={e => filterHandler('minorEvents', e)}
                       defaultChecked={eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents}
                     />
                     <label className="filter-item__button" htmlFor="filter--minor">
@@ -317,13 +416,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="future events"
                       id="filter--future-events"
-                      onChange={e => {
-                        trackEvent('click', 'map', 'Toggle future events layer')
-                        setLayerVisibility('futureEvents', !futureEvents);
-                        setLayerVisibility('futureEventsLines', !futureEvents, false);
-                        setFutureEvents(!futureEvents);
-                        focusInput(e.target);
-                      }}
+                      onChange={e => filterHandler('futureEvents', e)}
                       defaultChecked={eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents} />
 
                     <label className="filter-item__button" htmlFor="filter--future-events">
@@ -356,12 +449,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="highway cameras"
                       id="filter--highway-cameras"
-                      onChange={e => {
-                        trackEvent('click', 'map', 'Toggle highway cameras layer');
-                        setLayerVisibility('highwayCams', !highwayCams);
-                        setHighwayCams(!highwayCams);
-                        focusInput(e.target);
-                      }}
+                      onChange={e => filterHandler('highwayCams', e)}
                       defaultChecked={isCamDetail || mapContext.visible_layers.highwayCams}
                       disabled={isCamDetail || disableFeatures} />
 
@@ -388,13 +476,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="road conditions"
                       id="filter--road-conditions"
-                      onChange={e => {
-                        trackEvent('click', 'map', 'Toggle road conditions layer')
-                        setLayerVisibility('roadConditions', !roadConditions);
-                        setLayerVisibility('roadConditionsLines', !roadConditions, false);
-                        setRoadConditions(!roadConditions);
-                        focusInput(e.target);
-                      }}
+                      onChange={e => filterHandler('roadConditions', e)}
                       defaultChecked={mapContext.visible_layers.roadConditions}
                       disabled={(disableFeatures && !enableRoadConditions)}
                     />
@@ -421,12 +503,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="inland ferries"
                       id="filter--inland-ferries"
-                      onChange={e => {
-                        trackEvent('click', 'map', 'Toggle inland ferries layer');
-                        setLayerVisibility('inlandFerries', !inlandFerries);
-                        setInlandFerries(!inlandFerries);
-                        focusInput(e.target);
-                      }}
+                      onChange={e => filterHandler('inlandFerries', e)}
                       defaultChecked={mapContext.visible_layers.inlandFerries}
                       disabled={disableFeatures}
                     />
@@ -454,14 +531,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="weather"
                       id="filter--weather"
-                      onChange={e => {
-                        trackEvent('click', 'map', 'Toggle weather layer')
-                        setLayerVisibility('weather', !weather);
-                        setLayerVisibility('regional', !weather);
-                        setLayerVisibility('hef', !weather);
-                        setWeather(!weather);
-                        focusInput(e.target);
-                      }}
+                      onChange={e => filterHandler('weather', e)}
                       defaultChecked={mapContext.visible_layers.weather}
                       disabled={disableFeatures} />
 
@@ -488,17 +558,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="rest stops"
                       id="filter--rest-stops"
-                      onChange={e => {
-                        trackEvent('click', 'map', 'Toggle rest stops layer')
-                        if (!restStops && largeRestStops) {
-                          setLayerVisibility('largeRestStops', false);
-                          setLargeRestStops(false);
-                        }
-                        setLayerVisibility('restStops', !restStops);
-                        setRestStops(!restStops);
-                        focusInput(e.target);
-                        updateUrl("largeRestStop", "restStop");
-                      }}
+                      onChange={e => filterHandler('restStops', e)}
                       defaultChecked={mapContext.visible_layers.restStops}
                       disabled={disableFeatures}
                     />
@@ -532,12 +592,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="chain ups"
                       id="filter--chain-ups"
-                      onChange={e => {
-                        trackEvent('click', 'map', 'Toggle chain ups layer')
-                        setLayerVisibility('chainUps', !chainUps);
-                        setLayerVisibility('chainUpsLines', !chainUps, false);
-                        setChainUps(!chainUps);
-                      }}
+                      onChange={e => filterHandler('chainUps', e)}
                       defaultChecked={mapContext.visible_layers.chainUps}
                       disabled={(disableFeatures && !enableChainUps)}
                     />
@@ -563,17 +618,7 @@ export default function Filters(props) {
                       type="checkbox"
                       name="rest stops"
                       id="filter--rest-stops-large-vehicle"
-                      onChange={e => {
-                        trackEvent('click', 'map', 'Toggle rest stops layer')
-                        if (restStops && !largeRestStops) {
-                          setLayerVisibility('restStops', false);
-                          setRestStops(false);
-                        }
-                        setLayerVisibility('largeRestStops', !largeRestStops);
-                        setLargeRestStops(!largeRestStops);
-                        focusInput(e.target);
-                        updateUrl("restStop", "largeRestStop");
-                      }}
+                      onChange={e => filterHandler('largeRestStops', e)}
                       defaultChecked={mapContext.visible_layers.largeRestStops}
                       disabled={disableFeatures} />
 
