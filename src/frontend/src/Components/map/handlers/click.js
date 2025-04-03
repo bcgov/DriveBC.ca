@@ -174,6 +174,7 @@ const eventClickHandler = (
   setEventStyle(feature, 'active');
   setEventStyle(feature.get('altFeature') || [], 'active');
   feature.set('clicked', true);
+  feature.updated = false;
 
   // Set alt feature to clicked
   const altFeatureList = feature.get('altFeature');

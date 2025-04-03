@@ -12,7 +12,8 @@ import {
   borderCrossingStyles
 } from '../../data/featureStyleDefinitions.js';
 import {
-  setEventStyle
+  setEventStyle,
+  setCameraStyle
 } from '../helpers';
 import { isRestStopClosed } from '../../data/restStops.js';
 
@@ -24,7 +25,12 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
     if (!hoveredFeature.getProperties().clicked) {
       switch (hoveredFeature.getProperties()['type']) {
         case 'camera':
-          hoveredFeature.setStyle(cameraStyles['static']);
+          if (hoveredFeature.updated) {
+            hoveredFeature.setStyle(cameraStyles.cameras_unread['static']);
+          }
+          else {
+            hoveredFeature.setStyle(cameraStyles['static']);
+          }
           break;
         case 'event': {
           // Reset feature if alt feature also isn't clicked
@@ -109,7 +115,7 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
     switch (targetFeature.getProperties()['type']) {
       case 'camera':
         if (!targetFeature.getProperties().clicked) {
-          targetFeature.setStyle(cameraStyles['hover']);
+          setCameraStyle(targetFeature, 'hover');
         }
         return;
       case 'event':
