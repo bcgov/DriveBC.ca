@@ -1,0 +1,14 @@
+{
+        auto_https off
+        persist_config off
+        storage_clean_interval off
+        storage_check off
+        metrics
+        servers {
+                protocols h1
+        }
+}
+
+:8080 {
+        respond "server up" 200
+}
