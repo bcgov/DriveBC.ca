@@ -1,5 +1,5 @@
 // React
-import React, { useState, useContext, useCallback, useEffect } from 'react';
+import React, { useState, useContext, useCallback, useEffect, useRef } from 'react';
 
 // Redux
 import { memoize } from 'proxy-memoize';
@@ -49,6 +49,9 @@ export default function Filters(props) {
     isDelaysPage
   } = props;
 
+  // Refs
+  const isInitialLoad = useRef(true);
+
   // Redux
   const {
     routes: { searchedRoutes },
@@ -83,6 +86,11 @@ export default function Filters(props) {
 
   // Effects
   useEffect(() => {
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+      return;
+    }
+
     if (searchedRoutes && !!searchedRoutes.length) {
       if (!closures) filterHandler('closures');
       if (!majorEvents) filterHandler('majorEvents');
