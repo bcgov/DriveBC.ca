@@ -34,7 +34,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import './RouteSearch.scss';
 
 const RouteSearch = forwardRef((props, ref) => {
-  const { showFilterText, showSpinner, onShowSpinnerChange, mapRef, myLocation, mapView } = props;
+  const { showFilterText, showSpinner, onShowSpinnerChange, mapRef, myLocation, mapView, resetClickedStates } = props;
 
   const [_searchParams, setSearchParams] = useSearchParams();
 
@@ -79,6 +79,11 @@ const RouteSearch = forwardRef((props, ref) => {
     }
 
     if (showSpinner) {
+      // Reset clicked state on map before fetching new route
+      if (resetClickedStates) {
+        resetClickedStates();
+      }
+
       const firstPoint = searchLocationFrom[0].geometry.coordinates.toString();
       const secondPoint = searchLocationTo[0].geometry.coordinates.toString();
 

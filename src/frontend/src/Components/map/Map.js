@@ -510,16 +510,11 @@ export default function DriveBCMap(props) {
       });
     });
 
-    // Remove layer if no route found
     const routesData = isCamDetail ? [selectedRoute] : searchedRoutes;
     loadLayer(
       mapLayers, mapRef, mapContext,
       'routeLayer', routesData, routesData, 6, selectedRoute, updateReferenceFeature
     );
-
-    if (!routesData || !routesData.length) {
-      resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
-    }
   }, [searchedRoutes]);
 
   // Cameras layer
@@ -754,7 +749,8 @@ export default function DriveBCMap(props) {
               onShowSpinnerChange={setShowSpinner}
               myLocation={myLocation}
               mapRef={mapRef}
-              mapView={mapView} />
+              mapView={mapView}
+              resetClickedStates={() => resetClickedStates(null, clickedFeatureRef, updateClickedFeature)} />
 
             <AdvisoriesWidget
               advisories={advisoriesInView}
