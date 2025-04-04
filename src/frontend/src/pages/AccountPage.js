@@ -33,8 +33,9 @@ export default function AccountPage() {
 
   // Redux
   const dispatch = useDispatch();
-  const { selectedRoute } = useSelector(useCallback(memoize(state => ({
-    selectedRoute: state.routes.selectedRoute
+  const { selectedRoute, searchedRoutes } = useSelector(useCallback(memoize(state => ({
+    selectedRoute: state.routes.selectedRoute,
+    searchedRoutes: state.routes.searchedRoutes,
   }))));
 
   // Refs
@@ -73,7 +74,7 @@ export default function AccountPage() {
     if (response.status === 204) {
       // Successfully deleted the user, handle logout or redirect
       setAuthContext({ ...authContext, username: null });
-      logoutDispatch(dispatch, selectedRoute);
+      logoutDispatch(dispatch, selectedRoute, searchedRoutes);
       navigate('/account-deactivated');
     }
   };

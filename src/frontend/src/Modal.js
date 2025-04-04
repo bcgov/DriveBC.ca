@@ -27,13 +27,14 @@ export default function Modal() {
 
   // Redux
   const dispatch = useDispatch();
-  const { selectedRoute } = useSelector(useCallback(memoize(state => ({
-    selectedRoute: state.routes.selectedRoute
+  const { selectedRoute, searchedRoutes } = useSelector(useCallback(memoize(state => ({
+    selectedRoute: state.routes.selectedRoute,
+    searchedRoutes: state.routes.searchedRoutes,
   }))));
 
   /* Handlers */
   const handleSubmit = (e) => {
-    logoutDispatch(dispatch, selectedRoute);
+    logoutDispatch(dispatch, selectedRoute, searchedRoutes);
   };
 
   const resetAuthModal = () => {
