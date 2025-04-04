@@ -59,7 +59,9 @@ export function updateCamerasLayer(cameras, layer, setLoadingLayers) {
   }, {});
 
   for (const camFeature of layer.getSource().getFeatures()) {
-    camFeature.setStyle(camsDict[camFeature.getId()] ? cameraStyles['static'] : new Style(null));
+    if(camFeature.getStyle() !== cameraStyles['active']){
+      camFeature.setStyle(camsDict[camFeature.getId()] ? cameraStyles['static'] : new Style(null));
+    }
   }
 
   setLoadingLayers(prevState => ({

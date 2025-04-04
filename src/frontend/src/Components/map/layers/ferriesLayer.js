@@ -59,7 +59,9 @@ export function updateFerriesLayer(ferries, layer, setLoadingLayers) {
   }, {});
 
   for (const ferryFeature of layer.getSource().getFeatures()) {
-    ferryFeature.setStyle(ferriesDict[ferryFeature.getId()] ? ferryStyles['static'] : new Style(null));
+    if(ferryFeature.getStyle() !== ferryStyles['active']){
+      ferryFeature.setStyle(ferriesDict[ferryFeature.getId()] ? ferryStyles['static'] : new Style(null));
+    }
   }
 
   setLoadingLayers(prevState => ({
