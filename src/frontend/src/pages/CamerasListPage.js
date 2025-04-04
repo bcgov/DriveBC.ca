@@ -69,6 +69,7 @@ export default function CamerasListPage() {
 
   // Refs
   const isInitialMount = useRef(true);
+  const isInitialDataLoad = useRef(true);
   const selectedRouteRef = useRef();
 
   // States
@@ -80,7 +81,7 @@ export default function CamerasListPage() {
   const [showServerError, setShowServerError] = useState(false);
   const [openAdvisoriesOverlay, setOpenAdvisoriesOverlay] = useState(false);
   const [openSearchOverlay, setOpenSearchOverlay] = useState(false);
-  const [showLoader, setShowLoader] = useState(true);
+  const [showLoader, setShowLoader] = useState(!cameras);
   const [showSpinner, setShowSpinner] = useState(false);
   const [combinedCameras, setCombinedCameras] = useState(null);
   const [openCameraSearch, setOpenCameraSearch] = useState(false);
@@ -112,22 +113,28 @@ export default function CamerasListPage() {
 
   // Data functions
   const getCamerasData = async route => {
-    // Load if filtered cams don't exist or route doesn't match
-    if (!filteredCameras) {
-      // Fetch data
-      const camData = await getCameras().catch((error) => displayError(error));
+    if (isInitialDataLoad.current) {
+      isInitialDataLoad.current = false;
 
-      // Filter data by route
-      const filteredCamData = route && route.routeFound ? filterByRoute(camData, route, null, true) : camData;
-
-      dispatch(
-        updateCameras({
-          list: camData,
-          filteredList: filteredCamData,
-          timeStamp: new Date().getTime()
-        })
-      );
+      // Do not run on initial load if data is present
+      if (cameras) {
+        return;
+      }
     }
+
+    // Fetch data
+    const camData = await getCameras().catch((error) => displayError(error));
+
+    // Filter data by route
+    const filteredCamData = route && route.routeFound ? filterByRoute(camData, route, null, true) : camData;
+
+    dispatch(
+      updateCameras({
+        list: camData,
+        filteredList: filteredCamData,
+        timeStamp: new Date().getTime()
+      })
+    );
 
     setTimeout(function() {
       setShowLoader(false);
@@ -232,7 +239,7 @@ export default function CamerasListPage() {
       setProcessedCameras(finalCameras);
       getAdvisoriesData(finalCameras);
     }
-  }, [filteredCameras]);
+  }, [filteredCameras, selectedRoute]);
 
   useEffect(() => {
     // Search name and caption of all cams in group
