@@ -14,7 +14,8 @@ export const transformFeature = (feature, sourceCRS, targetCRS) => {
 
 // Zoom and pan
 export const fitMap = (routes, mapView) => {
-  if (!Array.isArray(routes) || routes.length === 0 || !mapView.current) {
+  // Only apply to map page when at least one route is returned
+  if (!Array.isArray(routes) || routes.length === 0 || !mapView || !mapView.current) {
     return;
   }
 
