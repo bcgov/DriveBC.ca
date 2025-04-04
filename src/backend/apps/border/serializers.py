@@ -1,5 +1,6 @@
 from datetime import datetime, time
 
+from apps.border.enums import LANE_TYPE
 from apps.border.models import BorderCrossing, BorderCrossingLanes
 from django.db.models import Max
 from rest_framework import serializers
@@ -50,3 +51,16 @@ class BorderCrossingSerializer(serializers.ModelSerializer):
     def get_last_updated(self, obj):
         last_updated = obj.bordercrossinglanes_set.aggregate(Max('last_updated'))['last_updated__max']
         return last_updated
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        # Filter out NEXUS lanes for these border crossings
+        if instance.id in [136, 137]:
+            representation['lanes'] = [lane for lane in representation['lanes'] if self.filter_lane(lane)]
+
+        return representation
+
+    def filter_lane(self, lane):
+        # omit NEXUS lanes
+        return lane['lane_type'] != LANE_TYPE.NEXUS
