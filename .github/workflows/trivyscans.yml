@@ -111,7 +111,7 @@ jobs:
         env:
           TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db:2
         with:
-          image-ref: 'ghcr.io/bcgov/drivebc-standbycheck:latest'
+          image-ref: 'ghcr.io/bcgov/drivebc.ca-standbycheck:latest'
           format: 'sarif'
           output: 'trivy-results.sarif'
           ignore-unfixed: true
