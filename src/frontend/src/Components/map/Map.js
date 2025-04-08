@@ -585,10 +585,24 @@ export default function DriveBCMap(props) {
 
   // Ferries layer
   useEffect(() => {
-    if (!isCamDetail) {
+    if (!isCamDetail && ferries && filteredFerries) {
+      const uniqueFerries = ferries.reduce((acc, current) => {
+        if (!acc.some(ferry => ferry.id === current.id)) {
+          acc.push(current);
+        }
+        return acc;
+      }, []);
+
+      const uniqueFilteredFerries = filteredFerries.reduce((acc, current) => {
+        if (!acc.some(ferry => ferry.id === current.id)) {
+          acc.push(current);
+        }
+        return acc;
+      }, []);
+
       loadLayer(
         mapLayers, mapRef, mapContext,
-        'inlandFerries', ferries, filteredFerries, 66,
+        'inlandFerries', uniqueFerries, uniqueFilteredFerries, 66,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
     }
