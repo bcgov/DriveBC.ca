@@ -109,7 +109,7 @@ export default function DriveBCMap(props) {
       restStops: { list: restStops, filteredList: filteredRestStops },
       borderCrossings: { list: borderCrossings, filteredList: filteredBorderCrossings },
     },
-    advisories: { list: advisories },
+    advisories: { list: advisories, filteredList: filteredAdvisories },
     routes: { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes },
     map: { zoom, pan }
 
@@ -663,19 +663,21 @@ export default function DriveBCMap(props) {
   useEffect(() => {
     loadLayer(
       mapLayers, mapRef, mapContext,
-      'advisoriesLayer', advisories, advisories, 5
+      'advisoriesLayer', advisories, filteredAdvisories, 5
     );
-
-    if (advisories) {
-      if (mapRef.current) {
-        // First filter
-        onMoveEnd(mapRef.current, advisories, setAdvisoriesInView);
-
-        // Set handler for filtering on map move
-        mapRef.current.on('moveend', (e) => onMoveEnd(e.map, advisories, setAdvisoriesInView));
-      }
-    }
   }, [advisories]);
+
+  useEffect(() => {
+    const advisoriesData = (filteredAdvisories && filteredAdvisories.length) ? filteredAdvisories : [];
+
+    if (mapRef.current) {
+      // First filter
+      onMoveEnd(mapRef.current, advisoriesData, setAdvisoriesInView);
+
+      // Set handler for filtering on map move
+      mapRef.current.on('moveend', (e) => onMoveEnd(e.map, advisoriesData, setAdvisoriesInView));
+    }
+  }, [filteredAdvisories]);
 
   /* Constants for conditional rendering */
   // Disable cam panel in details page

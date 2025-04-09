@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -7,14 +7,15 @@ import { memoize } from 'proxy-memoize'
 import { updateAdvisories } from '../slices/cmsSlice';
 
 // External imports
-import Container from 'react-bootstrap/Container';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleExclamation,
 } from '@fortawesome/pro-regular-svg-icons';
+import Container from 'react-bootstrap/Container';
 
 // Internal imports
 import { CMSContext } from '../App';
+import { filterAdvisoryByRoute } from "../Components/map/helpers";
 import { getAdvisories } from '../Components/data/advisories.js';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
@@ -23,6 +24,7 @@ import AdvisoriesList from '../Components/advisories/AdvisoriesList';
 import EmptyAdvisory from '../Components/advisories/EmptyAdvisory';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
+import PollingComponent from "../Components/shared/PollingComponent";
 
 // Styling
 import './AdvisoriesListPage.scss';
@@ -36,11 +38,16 @@ export default function AdvisoriesListPage() {
 
   // Redux
   const dispatch = useDispatch();
-  const { advisories } = useSelector(useCallback(memoize(state => ({
+  const { advisories, filteredAdvisories, selectedRoute } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
+    filteredAdvisories: state.cms.advisories.filteredList,
+    selectedRoute: state.routes.selectedRoute,
   }))));
 
-  // UseState hooks
+  // Refs
+  const isInitialMount = useRef(true);
+
+  // States
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
 
@@ -56,18 +63,22 @@ export default function AdvisoriesListPage() {
 
   // Data loading
   const loadAdvisories = async () => {
-    let advisoriesData = advisories;
-
-    if (!advisoriesData) {
-      advisoriesData = await getAdvisories().catch((error) => displayError(error));
-
-      dispatch(updateAdvisories({
-        list: advisoriesData,
-        timeStamp: new Date().getTime()
-      }));
+    // Skip loading if the advisories are already loaded on launch
+    if (advisories && isInitialMount.current) {
+      isInitialMount.current = false;
+      setShowLoader(false);
+      return;
     }
 
-    const advisoriesIds = advisoriesData.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
+    const advisoriesData = await getAdvisories().catch((error) => displayError(error));
+    const filteredAdvisoriesData = selectedRoute ? filterAdvisoryByRoute(advisoriesData, selectedRoute) : advisoriesData;
+    dispatch(updateAdvisories({
+      list: advisoriesData,
+      filteredList: filteredAdvisoriesData,
+      timeStamp: new Date().getTime()
+    }));
+
+    const advisoriesIds = filteredAdvisoriesData.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
 
     // Combine and remove duplicates
     const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));
@@ -76,17 +87,20 @@ export default function AdvisoriesListPage() {
     setCMSContext(updatedContext);
     localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
 
+    isInitialMount.current = false;
     setShowLoader(false);
   }
 
   useEffect(() => {
     loadAdvisories();
-  }, []);
+  }, [showLoader]);
 
   const isAdvisoriesEmpty = advisories?.length === 0;
 
   return (
     <div className='advisories-page'>
+      <PollingComponent runnable={() => setShowLoader(true)} interval={30000} />
+
       {showNetworkError &&
         <NetworkErrorPopup />
       }
@@ -117,7 +131,7 @@ export default function AdvisoriesListPage() {
         {isAdvisoriesEmpty ?
           <EmptyAdvisory/> :
 
-          <AdvisoriesList advisories={advisories} isAdvisoriesListPage={true} showLoader={showLoader} />
+          <AdvisoriesList advisories={filteredAdvisories} isAdvisoriesListPage={true} showLoader={showLoader} />
         }
       </Container>
 
