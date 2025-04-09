@@ -1,0 +1,30 @@
+{% extends "admin/login.html" %}
+
+{% load allauth %}
+
+{% block head_title %}Sign In{% endblock head_title %}
+
+{% block branding %}
+    <h1>
+        DriveBC {% if 'cms' in request.GET.next %}CMS{% else %}Administration{% endif %}
+    </h1>
+{% endblock %}
+
+{% block content %}
+    {% element h1 %}Sign In Via {{ provider }}{% endelement %}
+
+    {% element p %}
+        You need to sign in with an IDIR account to access this part of the site.
+    {% endelement %}
+
+    {% element form method="post" no_visible_fields=True %}
+        {% slot actions %}
+            {% csrf_token %}
+            <div style="text-align: center">
+                <button type="submit" class="button" style="padding: 0.5rem 1rem; font-size: larger">
+                    Continue to Keycloak
+                </button>
+            </div>
+        {% endslot %}
+    {% endelement %}
+{% endblock content %}
