@@ -3,6 +3,7 @@ import { transformFeature } from '../helpers';
 
 // OpenLayers
 import { MultiPolygon } from 'ol/geom';
+import { Style } from "ol/style";
 import * as ol from 'ol';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
@@ -47,4 +48,15 @@ export function getAdvisoriesLayer(
 
     style: () => advisoryStyles.polygon,
   });
+}
+
+export function updateAdvisoriesLayer(advisories, layer, setLoadingLayers) {
+  const advisoriesDict = advisories ? advisories.reduce((dict, obj) => {
+    dict[obj.id] = obj;
+    return dict;
+  }, {}) : {};
+
+  for (const advisoryFeature of layer.getSource().getFeatures()) {
+    advisoryFeature.setStyle(advisoriesDict[advisoryFeature.getId()] ? advisoryStyles.polygon : new Style(null));
+  }
 }

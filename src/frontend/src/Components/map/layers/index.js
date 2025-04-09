@@ -1,4 +1,4 @@
-import { getAdvisoriesLayer } from './advisoriesLayer.js';
+import { getAdvisoriesLayer, updateAdvisoriesLayer } from './advisoriesLayer.js';
 import { getCamerasLayer, updateCamerasLayer } from './camerasLayer.js';
 import { getCurrentWeatherLayer, updateCurrentWeatherLayer } from './currentWeatherLayer.js';
 import { loadEventsLayers, updateEventsLayers } from './eventsLayer.js';
@@ -24,6 +24,7 @@ const layerFuncMap = {
 }
 
 const layerUpdateFuncMap = {
+  advisoriesLayer: updateAdvisoriesLayer,
   highwayCams: updateCamerasLayer,
   inlandFerries: updateFerriesLayer,
   weather: updateCurrentWeatherLayer,
@@ -34,13 +35,13 @@ const layerUpdateFuncMap = {
 }
 
 export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filteredDataList, zIndex, referenceData, updateReferenceFeature, setLoadingLayers) => {
-  // Always remove and regenerate route and advisory layer
-  if (key == 'routeLayer' || key == 'advisoriesLayer') {
+  // Always remove and regenerate route layer
+  if (key == 'routeLayer') {
     mapRef.current.removeLayer(mapLayers.current[key]);
   }
 
   if (dataList) {
-    if (!mapLayers.current[key] || key == 'routeLayer' || key == 'advisoriesLayer') {
+    if (!mapLayers.current[key] || key == 'routeLayer') {
       // Generate and add layer if it doesn't exist
       mapLayers.current[key] = layerFuncMap[key](
         dataList,
@@ -53,11 +54,10 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filtered
 
       mapRef.current.addLayer(mapLayers.current[key]);
       mapLayers.current[key].setZIndex(zIndex);
-
     }
 
     // Toggle features' styles based on dataList
-    if (key != 'routeLayer' && key != 'advisoriesLayer' && key != 'borderCrossings') {
+    if (key != 'routeLayer' && key != 'borderCrossings') {
       layerUpdateFuncMap[key](filteredDataList, mapLayers.current[key], setLoadingLayers);
     }
   }
