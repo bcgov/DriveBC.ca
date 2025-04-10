@@ -63,7 +63,7 @@ export function updateCurrentWeatherLayer(weathers, layer, setLoadingLayers) {
   }, {});
 
   for (const weatherFeature of layer.getSource().getFeatures()) {
-    if(weatherFeature.getStyle() !== roadWeatherStyles['active']){
+    if(!weatherFeature.getProperties()['clicked']){
       weatherFeature.setStyle(weathersDict[weatherFeature.getId()] ? roadWeatherStyles['static'] : new Style(null));
     }
   }

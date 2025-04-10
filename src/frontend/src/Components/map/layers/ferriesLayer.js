@@ -59,7 +59,7 @@ export function updateFerriesLayer(ferries, layer, setLoadingLayers) {
   }, {});
 
   for (const ferryFeature of layer.getSource().getFeatures()) {
-    if(ferryFeature.getStyle() !== ferryStyles['active']){
+    if(!ferryFeature.getProperties()['clicked']){
       ferryFeature.setStyle(ferriesDict[ferryFeature.getId()] ? ferryStyles['static'] : new Style(null));
     }
   }

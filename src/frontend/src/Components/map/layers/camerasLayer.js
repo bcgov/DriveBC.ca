@@ -59,7 +59,7 @@ export function updateCamerasLayer(cameras, layer, setLoadingLayers) {
   }, {});
 
   for (const camFeature of layer.getSource().getFeatures()) {
-    if(camFeature.getStyle() !== cameraStyles['active']){
+    if(!camFeature.getProperties()['clicked']){
       camFeature.setStyle(camsDict[camFeature.getId()] ? cameraStyles['static'] : new Style(null));
     }
   }

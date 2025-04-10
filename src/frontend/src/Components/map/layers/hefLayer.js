@@ -71,7 +71,7 @@ export function updateHefLayer(weathers, layer, setLoadingLayers) {
   }, {});
 
   for (const weatherFeature of layer.getSource().getFeatures()) {
-    if(weatherFeature.getStyle() !== hefStyles['active']){
+    if(!weatherFeature.getProperties()['clicked']){
       weatherFeature.setStyle(weathersDict[weatherFeature.getId()] ? hefStyles['static'] : new Style(null));
     }
   }
