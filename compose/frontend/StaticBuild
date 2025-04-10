@@ -4,14 +4,12 @@ FROM node:22-slim AS buildnode
 WORKDIR /app/
 RUN chown node:root /app
 
-ARG FONTAWESOME_PACKAGE_TOKEN
-ENV FONTAWESOME_PACKAGE_TOKEN=${FONTAWESOME_PACKAGE_TOKEN}
-
 # Install dependencies
 COPY ./src/frontend/package.json /app/
 COPY ./src/frontend/package-lock.json /app/
 COPY ./src/frontend/.npmrc /app/
-RUN npm install
+RUN --mount=type=secret,id=FONTAWESOME_PACKAGE_TOKEN,env=FONTAWESOME_PACKAGE_TOKEN \
+      npm install
 
 # Add rest of the client code
 COPY ./src/frontend /app/
@@ -20,7 +18,7 @@ RUN chown node:root /app/node_modules
 # OpenShift runs as node, not as root (while docker runs as root), so need to
 # ensure running user can write to its home directory--without setting this,
 # home is /, so node can't create a cache dir
-ENV HOME /home/node
+ENV HOME=/home/node
 
 RUN npm run openshift_build
 
