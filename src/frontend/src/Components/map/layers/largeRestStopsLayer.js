@@ -72,7 +72,7 @@ export function updateLargeRestStopsLayer(restStops, layer, setLoadingLayers) {
   }, {});
 
   for (const restStopFeature of layer.getSource().getFeatures()) {
-    if(restStopFeature.getStyle() !== restStopTruckStyles['active']){
+    if(!restStopFeature.getProperties()['clicked']){
       restStopFeature.setStyle(restStopsDict[restStopFeature.getId()] ? getLargeRestStopStyle(restStopFeature.getProperties()) : new Style(null));
     }
   }
