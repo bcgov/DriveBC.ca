@@ -6,7 +6,7 @@ from rest_framework import viewsets
 
 
 class FerryAPI(CachedListModelMixin):
-    queryset = Ferry.objects.all()
+    queryset = Ferry.objects.distinct('route_id')
     serializer_class = FerryRouteSerializer
     cache_key = CacheKey.FERRY_LIST
     cache_timeout = CacheTimeout.FERRY_LIST
