@@ -35,6 +35,7 @@ def send_route_advisory_notifications(saved_route, updated_advisory_id):
                 'from_email': settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT,
                 'site_link': advisory.site_link,
                 'footer_message': generate_settings_message(saved_route),
+                'fe_base_url': settings.FRONTEND_BASE_URL,
             }
 
             text = render_to_string('email/advisory_updated.txt', context)

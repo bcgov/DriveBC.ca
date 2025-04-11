@@ -330,6 +330,7 @@ def send_route_event_notifications(saved_route, updated_event_ids):
                 'display_category_title': event.display_category_title,
                 'site_link': get_site_link(event, saved_route),
                 'footer_message': generate_settings_message(saved_route),
+                'fe_base_url': settings.FRONTEND_BASE_URL,
             }
 
             text = render_to_string('email/event_updated.txt', context)
