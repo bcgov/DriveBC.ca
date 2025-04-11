@@ -132,7 +132,8 @@ export default function Modal() {
 
               <div>
                 Don&apos;t have a Basic BCeID Account?<br />
-                <a href={window.BCEID_REGISTER_URL}>Click here to create one</a>
+                Anyone can create one (including non-BC residents).<br /><br />
+                <a href={window.BCEID_REGISTER_URL}>Click here to create</a>
               </div>
 
               <div className="BCeID-definition">
