@@ -103,9 +103,9 @@ export default function Filters(props) {
 
   // Helpers
   const setLayerVisibility = (layer, checked, runCallback=true) => {
-    if (!mapLayers || !mapLayers.current[layer]) {
+    if (mapLayers && mapLayers.current[layer]) {
       // Set visible in map only
-      mapLayers?.current[layer].setVisible(checked);
+      mapLayers.current[layer].setVisible(checked);
     }
 
     // Run callback for event list, non-line layers
