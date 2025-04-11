@@ -1,16 +1,31 @@
+import logging
+
+from apps.cms.models import Advisory
+from apps.cms.tasks import send_advisory_notifications
 from django.contrib.auth.models import Permission
 from django.templatetags.static import static
 from django.urls import path
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
-
 from wagtail import hooks
 from wagtail.admin.rich_text.editors.draftail.features import ControlFeature
 from wagtail.admin.ui.components import Component
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 
-from .models import Advisory, Bulletin, SubPage
+from .models import Bulletin, SubPage
 from .views import access_requested
+
+logger = logging.getLogger(__name__)
+
+
+@hooks.register("after_publish_page")
+def post_edit_hook(request, page):
+    # Only process published advisory pages
+    if page.specific_class == Advisory:
+        try:
+            send_advisory_notifications(page.id)
+
+        except Exception:
+            logger.error(request, 'There was a problem sending an advisory notification')
 
 
 @hooks.register("insert_global_admin_css")

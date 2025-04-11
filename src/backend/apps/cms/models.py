@@ -93,13 +93,6 @@ class Advisory(Page, BaseModel):
     def site_link(self):
         return f'{settings.FRONTEND_BASE_URL}advisories/{self.slug}'
 
-    def save(self, *args, **kwargs):
-        super().save(log_action=None, *args, **kwargs)
-
-        # Import here to avoid circular reference
-        from apps.cms.tasks import send_advisory_notifications
-        send_advisory_notifications(self.id)
-
 
 class Bulletin(Page, BaseModel):
     page_body = "Use this page for creating bulletins."
