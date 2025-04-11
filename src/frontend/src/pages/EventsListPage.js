@@ -9,7 +9,6 @@ import { updateAdvisories } from '../slices/cmsSlice';
 import * as slices from '../slices';
 
 // External imports
-import { booleanIntersects, point, lineString, multiPolygon } from '@turf/turf';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAngleDown,
@@ -30,6 +29,7 @@ import Button from 'react-bootstrap/Button';
 
 // Internal imports
 import { CMSContext } from '../App';
+import { filterAdvisoryByRoute } from "../Components/map/helpers";
 import { getAdvisories, markAdvisoriesAsRead } from '../Components/data/advisories';
 import { getEvents, getEventDetails } from '../Components/data/events';
 import { MapContext } from '../App.js';
@@ -90,8 +90,9 @@ export default function EventsListPage() {
 
   // Redux
   const dispatch = useDispatch();
-  const { advisories, events, filteredEvents, selectedRoute } = useSelector(useCallback(memoize(state => ({
+  const { advisories, filteredAdvisories, events, filteredEvents, selectedRoute } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
+    filteredAdvisories: state.cms.advisories.filteredList,
     events: state.feeds.events.list,
     filteredEvents: state.feeds.events.filteredList,
     selectedRoute: state.routes.selectedRoute
@@ -115,7 +116,6 @@ export default function EventsListPage() {
   const [trackedEvents, setTrackedEvents] = useState({}); // Track event updates between refreshes
   const [showLoader, setShowLoader] = useState(true);
   const [loadData, setLoadData] = useState(true);
-  const [advisoriesInRoute, setAdvisoriesInRoute] = useState([]);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
   const [openAdvisoriesOverlay, setOpenAdvisoriesOverlay] = useState(false);
@@ -136,6 +136,7 @@ export default function EventsListPage() {
   // Refs
   const isInitialMount = useRef(true);
   const isInitialLoad = useRef(true);
+  const isInitialAdvisoryLoad = useRef(true);
   const workerRef = useRef();
   const eventRefs = useRef({});
   const viewedHighlightedEvents = useRef(new Set());
@@ -146,41 +147,23 @@ export default function EventsListPage() {
   const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   // Data functions
-  const getAdvisoriesData = async (eventsData) => {
-    let advData = advisories;
-
-    if (!advisories) {
-      advData = await getAdvisories().catch((error) => displayError(error));
-
-      dispatch(updateAdvisories({
-        list: advData,
-        timeStamp: new Date().getTime()
-      }));
+  const loadAdvisories = async () => {
+    // Skip loading if the advisories are already loaded on launch
+    if (advisories && isInitialAdvisoryLoad.current) {
+      isInitialAdvisoryLoad.current = false;
+      return;
     }
 
-    // load all advisories if no route selected
-    const resAdvisories = selectedRoute && selectedRoute.routeFound ? [] : advData;
+    const advisoriesData = await getAdvisories().catch((error) => displayError(error));
+    const filteredAdvisoriesData = selectedRoute ? filterAdvisoryByRoute(advisoriesData, selectedRoute) : advisoriesData;
+    dispatch(updateAdvisories({
+      list: advisoriesData,
+      filteredList: filteredAdvisoriesData,
+      timeStamp: new Date().getTime()
+    }));
 
-    // Route selected, load advisories that intersect with at least one event on route
-    if (selectedRoute && selectedRoute.routeFound && advData && advData.length > 0 && eventsData && eventsData.length > 0) {
-      for (const adv of advData) {
-        const advPoly = multiPolygon(adv.geometry.coordinates);
-
-        for (const event of eventsData) {
-          // Event geometry, point or line based on type
-          const eventGeom = event.location.type == 'Point' ? point(event.location.coordinates) : lineString(event.location.coordinates);
-          if (booleanIntersects(advPoly, eventGeom)) {
-            // advisory intersects with an event, add to list and break loop
-            resAdvisories.push(adv);
-            break;
-          }
-        }
-      }
-    }
-
-    setAdvisoriesInRoute(resAdvisories);
     if (largeScreen) {
-      markAdvisoriesAsRead(resAdvisories, cmsContext, setCMSContext);
+      markAdvisoriesAsRead(filteredAdvisoriesData, cmsContext, setCMSContext);
     }
   };
 
@@ -268,7 +251,7 @@ export default function EventsListPage() {
     }
 
     setProcessedEvents(res);
-    getAdvisoriesData(res);
+    loadAdvisories();
   };
 
   // Scroll/Context functions
@@ -559,7 +542,7 @@ export default function EventsListPage() {
           { xXlargeScreen &&
             <div className="container--sidepanel__left">
               <RouteSearch showFilterText={true} showSpinner={showSpinner} onShowSpinnerChange={setShowSpinner}/>
-              <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
+              <Advisories advisories={filteredAdvisories} selectedRoute={selectedRoute} />
             </div>
           }
 
@@ -607,8 +590,7 @@ export default function EventsListPage() {
                   textOverride={'List'}
                   isDelaysPage={true}
                 />
-
-                {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
+                {!xXlargeScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
                   <Button
                     className={'advisories-btn'}
                     aria-label="open advisories list"
@@ -616,7 +598,7 @@ export default function EventsListPage() {
                     <span className="advisories-title">
                       <FontAwesomeIcon icon={faFlag} />
                     </span>
-                    <span className="advisories-count">{advisoriesInRoute.length}</span>
+                    <span className="advisories-count">{filteredAdvisories.length}</span>
                   </Button>
                 }
               </div>
@@ -684,7 +666,7 @@ export default function EventsListPage() {
         <Footer />
       </div>
 
-      {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
+      {!xXlargeScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
         <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}>
           <button
             className="close-panel close-overlay"
