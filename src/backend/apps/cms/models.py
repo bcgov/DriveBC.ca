@@ -91,7 +91,7 @@ class Advisory(Page, BaseModel):
 
     @property
     def site_link(self):
-        return f'{settings.FRONTEND_BASE_URL}/advisories/{self.slug}'
+        return f'{settings.FRONTEND_BASE_URL}advisories/{self.slug}'
 
     def save(self, *args, **kwargs):
         super().save(log_action=None, *args, **kwargs)
