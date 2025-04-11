@@ -21,7 +21,7 @@ import './HighwayFilter.scss';
 export default function HighwayFilters(props) {
   /* Setup */
   // Props
-  const { cameras } = props;
+  const { cameras, handleHwyFiltersClose } = props;
 
   // Contexts
   const { camsContext, setCamsContext } = useContext(CamsContext);
@@ -113,8 +113,14 @@ export default function HighwayFilters(props) {
             <div
               className="remove-btn"
               tabIndex={0}
-              onClick={() => setCamsContext({...camsContext, highwayFilterKey: null})}
-              onKeyPress={() => setCamsContext({...camsContext, highwayFilterKey: null})}>
+              onClick={() => {
+                setCamsContext({...camsContext, highwayFilterKey: null});
+                handleHwyFiltersClose();
+              }}
+              onKeyPress={() => {
+                setCamsContext({...camsContext, highwayFilterKey: null});
+                handleHwyFiltersClose();
+              }}>
               <FontAwesomeIcon icon={faXmark} />
             </div>
           </div>
@@ -128,8 +134,14 @@ export default function HighwayFilters(props) {
               key={highwayObj.key}
               className="highway-row"
               tabIndex={0}
-              onClick={() => setCamsContext({...camsContext, highwayFilterKey: highwayObj.key})}
-              onKeyPress={() => setCamsContext({...camsContext, highwayFilterKey: highwayObj.key})}>
+              onClick={() => {
+                setCamsContext({...camsContext, highwayFilterKey: highwayObj.key});
+                handleHwyFiltersClose();
+              }}
+              onKeyPress={() => {
+                setCamsContext({...camsContext, highwayFilterKey: highwayObj.key});
+                handleHwyFiltersClose();
+              }}>
 
               <span>{highwayObj.display}</span>
             </div>

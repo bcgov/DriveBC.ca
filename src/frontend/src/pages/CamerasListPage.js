@@ -399,7 +399,7 @@ export default function CamerasListPage() {
                 </Button>
 
                 {!smallScreen && showHwyFilters &&
-                  <HighwayFilter cameras={filteredCameras} />
+                  <HighwayFilter cameras={filteredCameras} handleHwyFiltersClose={handleHwyFiltersClose} />
                 }
 
                 {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
@@ -530,7 +530,7 @@ export default function CamerasListPage() {
             <FontAwesomeIcon icon={faXmark} />
           </button>
           <p className="overlay__header bold">Filter by highway</p>
-          <HighwayFilter cameras={filteredCameras} />
+          <HighwayFilter cameras={filteredCameras} handleHwyFiltersClose={handleHwyFiltersClose} />
         </div>
       }
 
