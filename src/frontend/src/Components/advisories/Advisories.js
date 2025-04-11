@@ -15,10 +15,9 @@ export default function Advisories(props) {
       </div>
 
       <div className="content">
-        <p>The following advisories are in effect on your route:</p>
-
-        {selectedRoute && selectedRoute.routeFound && Object.keys(selectedRoute).length !== 0 &&
-          <p className="description">The following advisory affects a portion of the route you’ve chosen:</p>
+        {(selectedRoute && selectedRoute.routeFound && Object.keys(selectedRoute).length !== 0) ?
+          <p className="description">The following advisory affects a portion of the route you’ve chosen:</p> :
+          <p className="description">The following advisories are in effect across BC:</p>
         }
 
         <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={true} showPublished={false} showArrow={true} />
