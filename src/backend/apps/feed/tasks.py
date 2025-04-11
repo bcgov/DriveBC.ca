@@ -87,7 +87,7 @@ def add_camera_orders():
     add_order_to_cameras()
 
 
-@db_periodic_task(crontab(minute="*/5"))
+@db_periodic_task(crontab(minute="*/1"))
 @lock_task('update-border-crossings-lock')
 def update_border_crossings():
     update_border_crossing_lanes()
