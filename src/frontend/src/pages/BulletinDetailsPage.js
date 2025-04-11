@@ -30,6 +30,7 @@ export default function BulletinDetailsPage() {
   /* Setup */
   // Navigation
   const params = useParams();
+  const slug = useParams();
   const navigate = useNavigate();
 
   // Context
@@ -78,7 +79,7 @@ export default function BulletinDetailsPage() {
 
   useEffect(() => {
     loadBulletin();
-  }, []);
+  }, [slug]);
 
   let content = bulletin;
   if (content && params.subid) {
