@@ -70,6 +70,7 @@ services:
   redis:
     image: "redis:6.2"
     container_name: redis
+    restart: unless-stopped
     command: redis-server --appendonly yes
     volumes:
       - redis:/data

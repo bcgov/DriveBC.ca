@@ -1,0 +1,28 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+<div id="content-main">
+
+  <div class="module">
+    <table class="">
+      <caption>Stats</caption>
+      <tbody>
+        <tr class="model-group">
+          <th>Users</th>
+          <td>{{ counts.users }}</td>
+        </tr>
+        <tr class="model-group">
+          <th>Saved Routes</th>
+          <td>{{ counts.saved_routes }}</td>
+        </tr>
+        <tr class="model-group">
+          <th>Favourited Cams</th>
+          <td>{{ counts.favourited_cams }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
+</div>
+{% endblock %}

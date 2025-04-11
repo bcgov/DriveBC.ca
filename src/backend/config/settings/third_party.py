@@ -32,7 +32,6 @@ HUEY = {
         "flush_locks": True,
         "workers": 4,
         "worker_type": "thread",
-
     }
 }
 

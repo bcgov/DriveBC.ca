@@ -24,6 +24,18 @@ class DriveBCAdminSite(AdminSite):
 
         return is_staff
 
+    def index(self, request, extra_context=None):
+        from apps.authentication.models import DriveBCUser, SavedRoutes, FavouritedCameras
+
+        extra = extra_context or {}
+        # Add your context here
+        extra['counts'] = {
+            'users': DriveBCUser.objects.count(),
+            'saved_routes': SavedRoutes.objects.count(),
+            'favourited_cams': FavouritedCameras.objects.count(),
+        }
+        return super().index(request, extra)
+
 
 class DriveBCAdminConfig(AdminConfig):
     default_site = 'config.admin.DriveBCAdminSite'

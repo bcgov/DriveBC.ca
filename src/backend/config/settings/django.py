@@ -7,6 +7,7 @@ from corsheaders.defaults import default_headers
 # Base dir and env
 BASE_DIR = Path(__file__).resolve().parents[4]
 SRC_DIR = Path(__file__).resolve().parents[3]
+APP_DIR = Path(__file__).resolve().parents[2]
 env = environ.Env()
 environ.Env.read_env(BASE_DIR / ".env", overwrite=True)
 
@@ -54,7 +55,7 @@ MIDDLEWARE = [
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [APP_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
