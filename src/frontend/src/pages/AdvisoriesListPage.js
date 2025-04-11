@@ -16,7 +16,7 @@ import Container from 'react-bootstrap/Container';
 // Internal imports
 import { CMSContext } from '../App';
 import { filterAdvisoryByRoute } from "../Components/map/helpers";
-import { getAdvisories } from '../Components/data/advisories.js';
+import { getAdvisories, markAdvisoriesAsRead } from '../Components/data/advisories.js';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -78,14 +78,7 @@ export default function AdvisoriesListPage() {
       timeStamp: new Date().getTime()
     }));
 
-    const advisoriesIds = filteredAdvisoriesData.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
-
-    // Combine and remove duplicates
-    const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));
-    const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
-
-    setCMSContext(updatedContext);
-    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+    markAdvisoriesAsRead(filteredAdvisoriesData);
 
     isInitialMount.current = false;
     setShowLoader(false);
