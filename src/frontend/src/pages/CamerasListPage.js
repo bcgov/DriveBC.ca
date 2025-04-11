@@ -9,7 +9,6 @@ import { updateCameras } from '../slices/feedsSlice';
 
 // External imports
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import { booleanIntersects, point, multiPolygon } from '@turf/turf';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFlag,
@@ -25,12 +24,14 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
 // Internal Imports
-import { CMSContext } from '../App';
+import { CamsContext, CMSContext } from '../App';
 import {
+  filterAdvisoryByRoute,
   filterByRoute
 } from '../Components/map/helpers';
 import { getAdvisories } from '../Components/data/advisories';
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
+import { markAdvisoriesAsRead } from '../Components/data/advisories';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -43,8 +44,6 @@ import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent.js';
 import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
 import PollingComponent from '../Components/shared/PollingComponent';
-import { CamsContext } from '../App.js';
-
 
 // Styling
 import './CamerasListPage.scss';
@@ -60,8 +59,9 @@ export default function CamerasListPage() {
 
   // Redux
   const dispatch = useDispatch();
-  const { advisories, cameras, filteredCameras, selectedRoute } = useSelector(useCallback(memoize(state => ({
+  const { advisories, filteredAdvisories, cameras, filteredCameras, selectedRoute } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
+    filteredAdvisories: state.cms.advisories.filteredList,
     cameras: state.feeds.cameras.list,
     filteredCameras: state.feeds.cameras.filteredList,
     selectedRoute: state.routes.selectedRoute
@@ -70,10 +70,10 @@ export default function CamerasListPage() {
   // Refs
   const isInitialMount = useRef(true);
   const isInitialDataLoad = useRef(true);
+  const isInitialAdvisoryLoad = useRef(true);
   const selectedRouteRef = useRef();
 
   // States
-  const [advisoriesInRoute, setAdvisoriesInRoute] = useState([]);
   const [displayedCameras, setDisplayedCameras] = useState(null);
   const [processedCameras, setProcessedCameras] = useState(null);
   const [searchText, setSearchText] = useState('');
@@ -141,51 +141,23 @@ export default function CamerasListPage() {
     }, 300);
   };
 
-  const markAdvisoriesAsRead = (advisoriesData) => {
-    const advisoriesIds = advisoriesData.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
-
-    // Combine and remove duplicates
-    const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));
-    const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
-
-    setCMSContext(updatedContext);
-    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
-  }
-
-  const getAdvisoriesData = async (camsData) => {
-    let advData = advisories;
-
-    if (!advisories) {
-      advData = await getAdvisories().catch((error) => displayError(error));
-
-      dispatch(updateAdvisories({
-        list: advData,
-        timeStamp: new Date().getTime()
-      }));
+  const loadAdvisories = async () => {
+    // Skip loading if the advisories are already loaded on launch
+    if (advisories && isInitialAdvisoryLoad.current) {
+      isInitialAdvisoryLoad.current = false;
+      return;
     }
 
-    // load all advisories if no route selected
-    const resAdvisories = !selectedRoute || !selectedRoute.routeFound ? advData : [];
+    const advisoriesData = await getAdvisories().catch((error) => displayError(error));
+    const filteredAdvisoriesData = selectedRoute ? filterAdvisoryByRoute(advisoriesData, selectedRoute) : advisoriesData;
+    dispatch(updateAdvisories({
+      list: advisoriesData,
+      filteredList: filteredAdvisoriesData,
+      timeStamp: new Date().getTime()
+    }));
 
-    // Route selected, load advisories that intersect with at least one cam on route
-    if (selectedRoute && selectedRoute.routeFound && advData && advData.length > 0 && camsData && camsData.length > 0) {
-      for (const adv of advData) {
-        const advPoly = multiPolygon(adv.geometry.coordinates);
-
-        for (const cam of camsData) {
-          const camPoint = point(cam.location.coordinates);
-          if (booleanIntersects(advPoly, camPoint)) {
-            // advisory intersects with a camera, add to list and break loop
-            resAdvisories.push(adv);
-            break;
-          }
-        }
-      }
-    }
-
-    setAdvisoriesInRoute(resAdvisories);
     if (largeScreen) {
-      markAdvisoriesAsRead(resAdvisories);
+      markAdvisoriesAsRead(filteredAdvisoriesData, cmsContext, setCMSContext);
     }
   };
 
@@ -237,7 +209,7 @@ export default function CamerasListPage() {
       });
 
       setProcessedCameras(finalCameras);
-      getAdvisoriesData(finalCameras);
+      loadAdvisories();
     }
   }, [filteredCameras, selectedRoute]);
 
@@ -320,7 +292,7 @@ export default function CamerasListPage() {
           { xXlargeScreen &&
             <div className="container--sidepanel__left">
               <RouteSearch showFilterText={true} showSpinner={showSpinner} onShowSpinnerChange={handleShowSpinnerChange}/>
-              <Advisories advisories={advisoriesInRoute} selectedRoute={selectedRoute} />
+              <Advisories advisories={filteredAdvisories} selectedRoute={selectedRoute} />
             </div>
           }
 
@@ -402,7 +374,7 @@ export default function CamerasListPage() {
                   <HighwayFilter cameras={filteredCameras} />
                 }
 
-                {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
+                {!xXlargeScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
                   <Button
                     className={'advisories-btn'}
                     aria-label="open advisories list"
@@ -410,7 +382,7 @@ export default function CamerasListPage() {
                     <span className="advisories-title">
                       <FontAwesomeIcon icon={faFlag} />
                     </span>
-                    <span className="advisories-count">{advisoriesInRoute.length}</span>
+                    <span className="advisories-count">{filteredAdvisories.length}</span>
                   </Button>
                 }
               </div>
@@ -488,7 +460,7 @@ export default function CamerasListPage() {
         <Footer />
       </div>
 
-      {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
+      {!xXlargeScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
         <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}>
           <button
             className="close-panel close-overlay"
@@ -498,7 +470,8 @@ export default function CamerasListPage() {
             onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
             <FontAwesomeIcon icon={faXmark} />
           </button>
-          <AdvisoriesPanel advisories={advisories} openAdvisoriesOverlay={openAdvisoriesOverlay} />
+
+          <AdvisoriesPanel advisories={filteredAdvisories} openAdvisoriesOverlay={openAdvisoriesOverlay} />
         </div>
       }
 

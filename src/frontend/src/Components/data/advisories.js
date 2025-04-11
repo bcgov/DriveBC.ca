@@ -12,3 +12,14 @@ export const getAdvisoryCounts = (advisories) => {
     return advisories.length;
   }
 }
+
+export const markAdvisoriesAsRead = (advisoriesData, cmsContext, setCMSContext) => {
+  const advisoriesIds = advisoriesData.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
+
+  // Combine and remove duplicates
+  const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));
+  const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
+
+  setCMSContext(updatedContext);
+  localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+}

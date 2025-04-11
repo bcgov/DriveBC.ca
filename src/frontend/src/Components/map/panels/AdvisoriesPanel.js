@@ -9,9 +9,9 @@ import {
 
 // Internal imports
 import { CMSContext } from '../../../App';
-import AdvisoriesList from '../../advisories/AdvisoriesList';
-
 import { fitMap } from '../helpers';
+import { markAdvisoriesAsRead } from "../../data/advisories";
+import AdvisoriesList from '../../advisories/AdvisoriesList';
 
 // Styling
 import './AdvisoriesPanel.scss';
@@ -28,14 +28,7 @@ export default function AdvisoriesPanel(props) {
       return;
     }
 
-    const advisoriesIds = advisories.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
-
-    // Combine and remove duplicates
-    const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));
-    const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
-
-    setCMSContext(updatedContext);
-    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+    markAdvisoriesAsRead(advisories, cmsContext, setCMSContext);
   }, [advisories, openAdvisoriesOverlay]);
 
   useEffect(() => {

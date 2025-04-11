@@ -18,7 +18,7 @@ import Skeleton from 'react-loading-skeleton';
 
 // Internal imports
 import { CMSContext } from '../App';
-import { getAdvisories } from '../Components/data/advisories.js';
+import { getAdvisories, markAdvisoriesAsRead } from '../Components/data/advisories.js';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -201,15 +201,7 @@ export default function AdvisoryDetailsPage() {
 
     document.title = `DriveBC - Advisories - ${advisoryData.title}`;
 
-    // Combine and remove duplicates
-    const readAdvisories = Array.from(new Set([
-      ...cmsContext.readAdvisories,
-      advisoryData.id.toString() + '-' + advisoryData.live_revision.toString()
-    ]));
-    const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
-
-    setCMSContext(updatedContext);
-    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+    markAdvisoriesAsRead([advisoryData], cmsContext, setCMSContext);
 
     setShowLoader(false);
   };
