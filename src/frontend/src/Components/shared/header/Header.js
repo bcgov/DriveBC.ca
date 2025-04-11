@@ -29,14 +29,17 @@ import logo from '../../..//images/dbc-logo-beta.svg';
 
 // Styling
 import './Header.scss';
+import { filterAdvisoryByRoute } from "../../map/helpers";
 
 export default function Header() {
   /* Setup */
   // Redux
   const dispatch = useDispatch();
-  const { advisories, bulletins } = useSelector(useCallback(memoize(state => ({
+  const { advisories, filteredAdvisories, bulletins, selectedRoute } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
+    filteredAdvisories: state.cms.advisories.filteredAdvisories,
     bulletins: state.cms.bulletins.list,
+    selectedRoute: state.routes.selectedRoute,
   }))));
 
   // Navigation
@@ -52,18 +55,21 @@ export default function Header() {
 
   // Effects
   const loadAdvisories = async () => {
-    let advisoriesData = advisories;
-
-    if (!advisoriesData) {
-      advisoriesData = await getAdvisories();
-
-      dispatch(updateAdvisories({
-        list: advisoriesData,
-        timeStamp: new Date().getTime()
-      }));
+    // Skip loading if the advisories are already loaded on launch
+    if (advisories) {
+      setAdvisoriesCount(getUnreadAdvisoriesCount(filteredAdvisories));
+      return;
     }
 
-    setAdvisoriesCount(getUnreadAdvisoriesCount(advisoriesData));
+    const advisoriesData = await getAdvisories();
+    const filteredAdvisoriesData = selectedRoute ? filterAdvisoryByRoute(advisoriesData, selectedRoute) : advisoriesData;
+    dispatch(updateAdvisories({
+      list: advisoriesData,
+      filteredList: filteredAdvisoriesData,
+      timeStamp: new Date().getTime()
+    }));
+
+    setAdvisoriesCount(getUnreadAdvisoriesCount(filteredAdvisoriesData));
   }
 
   const loadBulletins = async () => {
@@ -88,6 +94,10 @@ export default function Header() {
 
   /* Helpers */
   const getUnreadAdvisoriesCount = (advisoriesData) => {
+    if (!advisoriesData) {
+      return 0;
+    }
+
     const readAdvisories = advisoriesData.filter(advisory => cmsContext.readAdvisories.includes(
       advisory.id.toString() + '-' + advisory.live_revision.toString()
     ));
