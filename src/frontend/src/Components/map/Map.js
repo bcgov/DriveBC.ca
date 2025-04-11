@@ -584,7 +584,7 @@ export default function DriveBCMap(props) {
 
   // Ferries layer
   useEffect(() => {
-    if (!isCamDetail) {
+    if (!isCamDetail && ferries && filteredFerries) {
       loadLayer(
         mapLayers, mapRef, mapContext,
         'inlandFerries', ferries, filteredFerries, 66,
