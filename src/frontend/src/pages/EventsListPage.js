@@ -30,7 +30,7 @@ import Button from 'react-bootstrap/Button';
 
 // Internal imports
 import { CMSContext } from '../App';
-import { getAdvisories } from '../Components/data/advisories';
+import { getAdvisories, markAdvisoriesAsRead } from '../Components/data/advisories';
 import { getEvents, getEventDetails } from '../Components/data/events';
 import { MapContext } from '../App.js';
 import { defaultSortFn, routeAtSortFn, routeOrderSortFn, severitySortFn } from '../Components/events/functions';
@@ -146,17 +146,6 @@ export default function EventsListPage() {
   const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   // Data functions
-  const markAdvisoriesAsRead = (advisoriesData) => {
-    const advisoriesIds = advisoriesData.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
-
-    // Combine and remove duplicates
-    const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));
-    const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
-
-    setCMSContext(updatedContext);
-    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
-  }
-
   const getAdvisoriesData = async (eventsData) => {
     let advData = advisories;
 
@@ -191,7 +180,7 @@ export default function EventsListPage() {
 
     setAdvisoriesInRoute(resAdvisories);
     if (largeScreen) {
-      markAdvisoriesAsRead(resAdvisories);
+      markAdvisoriesAsRead(resAdvisories, cmsContext, setCMSContext);
     }
   };
 
