@@ -78,7 +78,7 @@ export default function AdvisoriesListPage() {
       timeStamp: new Date().getTime()
     }));
 
-    markAdvisoriesAsRead(filteredAdvisoriesData);
+    markAdvisoriesAsRead(filteredAdvisoriesData, cmsContext, setCMSContext);
 
     isInitialMount.current = false;
     setShowLoader(false);
