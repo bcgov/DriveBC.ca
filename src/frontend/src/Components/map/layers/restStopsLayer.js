@@ -97,8 +97,7 @@ export function updateRestStopsLayer(restStops, layer, setLoadingLayers) {
   }, {});
 
   for (const restStopFeature of layer.getSource().getFeatures()) {
-    console.log(restStopFeature.getStyle());
-    if(!restStopFeature.getProperties()['clicked']){
+    if (!restStopFeature.getProperties()['clicked']) {
       restStopFeature.setStyle(restStopsDict[restStopFeature.getId()] ? getRestStopStyle(restStopFeature.getProperties()) : new Style(null));
     }
   }

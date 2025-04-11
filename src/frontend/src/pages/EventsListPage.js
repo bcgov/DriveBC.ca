@@ -609,6 +609,7 @@ export default function EventsListPage() {
 
               <div className="tools-container">
                 {xXlargeScreen && <span className="filters-text">Filters: </span>}
+
                 <Filters
                   callback={toggleEventCategoryFilter}
                   disableFeatures={true}
@@ -617,6 +618,7 @@ export default function EventsListPage() {
                   textOverride={'List'}
                   isDelaysPage={true}
                 />
+
                 {!xXlargeScreen && (advisoriesInRoute && advisoriesInRoute.length > 0) &&
                   <Button
                     className={'advisories-btn'}
