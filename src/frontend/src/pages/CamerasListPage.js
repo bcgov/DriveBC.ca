@@ -25,12 +25,13 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
 // Internal Imports
-import { CMSContext } from '../App';
+import { CamsContext, CMSContext } from '../App';
 import {
   filterByRoute
 } from '../Components/map/helpers';
 import { getAdvisories } from '../Components/data/advisories';
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
+import { markAdvisoriesAsRead } from '../Components/data/advisories';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -43,8 +44,6 @@ import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent.js';
 import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
 import PollingComponent from '../Components/shared/PollingComponent';
-import { CamsContext } from '../App.js';
-
 
 // Styling
 import './CamerasListPage.scss';
@@ -140,17 +139,6 @@ export default function CamerasListPage() {
       setShowLoader(false);
     }, 300);
   };
-
-  const markAdvisoriesAsRead = (advisoriesData) => {
-    const advisoriesIds = advisoriesData.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
-
-    // Combine and remove duplicates
-    const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));
-    const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
-
-    setCMSContext(updatedContext);
-    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
-  }
 
   const getAdvisoriesData = async (camsData) => {
     let advData = advisories;
