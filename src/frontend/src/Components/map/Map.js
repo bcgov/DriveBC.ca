@@ -683,7 +683,10 @@ export default function DriveBCMap(props) {
   /* Constants for conditional rendering */
   // Disable cam panel in details page
   const disablePanel = isCamDetail && clickedFeature && clickedFeature.get('type') === 'camera';
-  const openPanel = (!!clickedFeature || (!!searchedRoutes && !isCamDetail)) && !disablePanel;
+  const openPanel =
+    (!!clickedFeature ||
+      (searchedRoutes && searchedRoutes.length && !isCamDetail)
+    ) && !disablePanel;
   const smallScreen = useMediaQuery('only screen and (max-width: 767px)');
 
   // Reset search params when panel is closed
