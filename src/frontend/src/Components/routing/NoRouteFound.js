@@ -14,8 +14,10 @@ export default function NoRouteFound(props) {
   const { searchedRoutes, searchLocationFrom, searchLocationTo } = props;
 
   const isInBc = (searchLocationFrom, searchLocationTo) => {
-    return searchLocationFrom[0] && searchLocationTo[0] &&
-    searchLocationFrom[0].label.includes(', BC') && searchLocationTo[0].label.includes(', BC');
+    return searchLocationFrom[0] && searchLocationTo[0] && (
+      (searchLocationFrom[0].label.includes(', BC') && searchLocationTo[0].label.includes(', BC')) ||
+      (searchLocationFrom[0].label.includes('Current location'))
+    );
 }
 
   // Rendering
