@@ -105,6 +105,12 @@ export default function CameraDetailsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isCameraSet, setIsCameraSet] = useState(false);
+  const pauseReplay = () => {
+    const pauseIcon = document.querySelectorAll(".fa-pause");
+    if (pauseIcon.length > 0) {
+      pauseIcon[0].parentElement.click();
+    }
+  };
   const handleCameraImageClick = (event) => {
     const container = event.currentTarget.closest(".camera-orientations");
     const buttons = container.querySelectorAll(".camera-direction-btn");
@@ -121,6 +127,7 @@ export default function CameraDetailsPage() {
     setCamera(nextCamera);
     setIsCameraSet(true);
     trackEvent("click", "camera-list", "camera", nextCamera.name);
+    pauseReplay();
   };
 
   useEffect(() => {
@@ -151,6 +158,7 @@ export default function CameraDetailsPage() {
 
       if(!isCameraSet){
         setCamera(camData);
+        pauseReplay();
       }
       
       trackEvent('click', 'camera-details', 'camera', camData.name);
