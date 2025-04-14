@@ -37,10 +37,6 @@ export function getRouteLayer(routeData, projectionCode, mapContext, selectedRou
         }
 
         routeData.forEach(function (route, i) {
-          if (!route) {
-            return;
-          }
-          
           const feature = getRouteFeature(route);
 
           if (!preview && (

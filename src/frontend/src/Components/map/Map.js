@@ -510,7 +510,8 @@ export default function DriveBCMap(props) {
       });
     });
 
-    const routesData = isCamDetail ? [selectedRoute] : searchedRoutes;
+    // Use only selectedRoute in cam details page
+    const routesData = isCamDetail ? (selectedRoute ? [selectedRoute] : null) : searchedRoutes;
     loadLayer(
       mapLayers, mapRef, mapContext,
       'routeLayer', routesData, routesData, 6, selectedRoute, updateReferenceFeature
