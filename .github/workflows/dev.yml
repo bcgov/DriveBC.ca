@@ -217,7 +217,7 @@ jobs:
         openshift_server_url: ${{ vars.OPENSHIFT_GOLD_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
-        insecure_skip_tls_verify: true
+        insecure_skip_tls_verify: false
 #    - name: Helm upgrade on OpenShift Gold Environment
 #      run: |
 #        helm upgrade dev-drivebc -f ./infrastructure/helm/values-dev.yaml ./infrastructure/helm --set static.image.tag="sha-${{ github.sha }} --set django.image.tag="sha-${{ github.sha }} --set tasks.image.tag="sha-${{ github.sha }} --set redis.image.tag="sha-${{ github.sha }} --set openshiftjobs.image.tag="sha-${{ github.sha }}"
@@ -245,7 +245,7 @@ jobs:
         openshift_server_url: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
-        insecure_skip_tls_verify: true
+        insecure_skip_tls_verify: false
 
 #    - name: Helm upgrade on OpenShift GoldDR Environment
 #      run: |
