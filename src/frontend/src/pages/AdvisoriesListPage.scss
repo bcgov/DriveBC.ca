@@ -10,10 +10,10 @@
   }
 
   .page-header {
-    background-color: $Surface-minor;
+    background-color: $Advisory-Bg;
     
     .page-title, .page-description {
-      color: $Gold110;
+      color: $Advisory-Text;
     }
   }
 
@@ -181,7 +181,7 @@
     justify-content: center;
     
     .beta-message {
-      background-color: $Surface-minor;
+      background-color: $Advisory-Bg;
       border-radius: 8px;
       width: fit-content;
       margin: 24px 16px 0;
@@ -196,7 +196,7 @@
       }
 
       p {
-        color: $Gold110;
+        color: $Advisory-Text;
       }
     }
   }

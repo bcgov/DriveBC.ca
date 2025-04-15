@@ -215,20 +215,25 @@ a[target="_blank"] {
 
 // Advisories button
 .btn.advisories-btn {
-  background: #FEF0D8;
+  background: $Advisory-Bg;
   width: fit-content;
   font-size: 0.875rem;
   font-weight: 700;
-  color: $Gold110;
+  color: $Advisory-Text;
   border-radius: 5px;
-  border: 1px solid $BC-Yellow;
+  border: 1px solid $Advisory-Text;
   margin-bottom: 0;
   display: flex;
   align-items: center;
 
   &:hover, &:active, &.active, &.open {
-    color: $Gold110;
-    background: darken(#FEF0D8, 10%);
+    color: $White;
+    background: $Advisory;
+
+    .advisories-count {
+      background: $White;
+      color: $Advisory;
+    }
   }
 
   &:focus, &.focus {
@@ -243,7 +248,7 @@ a[target="_blank"] {
     margin-left: 12px;
     font-size: 0.625rem;
     color: white;
-    background: $Error;
+    background: $Advisory-Text;
     width: 1rem;
     height: 1rem;
     border-radius: 0.5rem;
