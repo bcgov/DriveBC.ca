@@ -48,7 +48,6 @@ jobs:
 
     - name: Create Tag
       id: create_tag
-      if: github.event_name == 'workflow_dispatch'
       run: |
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor }}@users.noreply.github.com"
@@ -141,6 +140,8 @@ jobs:
             type=raw,value=latest-test
             type=sha,format=long
             type=raw,value=${{ needs.tag.outputs.tag }}
+          labels:
+            app=drivebc
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -186,6 +187,8 @@ jobs:
             type=raw,value=latest-test
             type=sha,format=long
             type=raw,value=${{ needs.tag.outputs.tag }}
+          labels:
+            app=drivebc
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -230,6 +233,8 @@ jobs:
             type=raw,value=latest-test
             type=sha,format=long
             type=raw,value=${{ needs.tag.outputs.tag }}
+          labels:
+            app=drivebc
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -267,7 +272,7 @@ jobs:
         openshift_server_url: ${{ vars.OPENSHIFT_GOLD_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
-        insecure_skip_tls_verify: true
+        insecure_skip_tls_verify: false
     - name: Helm upgrade on OpenShift Gold Environment
       run: |
         helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set static.image.tag=${{ needs.tag.outputs.tag }} --set django.image.tag=${{ needs.tag.outputs.tag }} --set tasks.image.tag=${{ needs.tag.outputs.tag }} --set redis.image.tag=${{ needs.tag.outputs.tag }} --set openshiftjobs.image.tag=${{ needs.tag.outputs.tag }}
@@ -295,7 +300,7 @@ jobs:
         openshift_server_url: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
-        insecure_skip_tls_verify: true
+        insecure_skip_tls_verify: false
 
     - name: Helm upgrade on OpenShift GoldDR Environment
       run: |

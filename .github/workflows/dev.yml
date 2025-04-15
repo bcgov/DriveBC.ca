@@ -93,6 +93,8 @@ jobs:
             type=raw,value=latest
             type=raw,value=latest-dev
             type=sha,format=long
+          labels:
+            app=drivebc
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -136,6 +138,8 @@ jobs:
             type=raw,value=latest
             type=raw,value=latest-dev
             type=sha,format=long
+          labels:
+            app=drivebc
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -179,6 +183,8 @@ jobs:
             type=raw,value=latest
             type=raw,value=latest-dev
             type=sha,format=long
+          labels:
+            app=drivebc
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
