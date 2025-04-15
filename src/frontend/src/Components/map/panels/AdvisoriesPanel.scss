@@ -4,16 +4,16 @@
   // Advisories panel
   &--advisories {
     .popup__title {
-      background-color: $Gold30;
-      border-top: 4px solid $BC-Yellow;
+      background-color: $Advisory-Bg;
+      border-top: 4px solid $Advisory;
 
       &__icon {
-        background-color: $BC-Yellow;
-        color: $Gold110;
+        background-color: $Advisory;
+        color: $Advisory-Bg;
       }
 
       .name {
-        color: $Gold110;
+        color: $Advisory-Text;
       }
     }
 

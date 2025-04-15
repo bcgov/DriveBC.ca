@@ -115,12 +115,12 @@ import genericDelaysStaticUnreadIcon from '../../images/mapIcons/incident-minor-
 export const advisoryStyles = {
   polygon: new Style({
     stroke: new Stroke({
-      color: 'rgb(88, 66, 21)',
+      color: 'rgba(242, 76, 39)',
       width: 2,
       lineDash: [10,10]
     }),
     fill: new Fill({
-      color: 'rgba(252, 186, 25, 0.25)',
+      color: 'rgba(252, 214, 192, 0.25)',
     }),
   })
 };

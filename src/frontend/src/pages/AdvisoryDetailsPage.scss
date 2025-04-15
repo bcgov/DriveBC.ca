@@ -10,7 +10,7 @@
   }
 
   .page-header {
-    background-color: $Surface-minor;
+    background-color: $Advisory-Bg;
 
     #back-container {
       padding-bottom: 16px;
@@ -18,13 +18,13 @@
 
       .back-link {
         margin-bottom: 0;
-        color: $Gold110;
+        color: $Advisory-Text;
       } 
     }
 
     &__title {
       .page-title, .page-description {
-        color: $Gold110;
+        color: $Advisory-Text;
       }
       .page-description {
         max-width: initial;
@@ -35,7 +35,7 @@
         align-items: center;
 
         .timestamp-container, .friendly-time-text {
-          color: $Gold110;
+          color: $Advisory-Text;
         }
 
         .timestamp-container {
@@ -46,10 +46,10 @@
           margin-left: auto;
 
           .copy-btn {
-            background: darken($Surface-minor, 8%);
+            background: $Advisory-Bg;
     
             &:hover {
-              background: darken($Surface-minor, 15%);
+              background: darken($Advisory-Bg, 15%);
             }
           }
         }
