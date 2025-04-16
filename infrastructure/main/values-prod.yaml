@@ -136,7 +136,19 @@ static:
     iprestricted: false  #Set to true if you want to limit IP's the the addresses in the ipallowlist 
     vanityurl: 
       enabled: true
-      vanityurlhost: www.drivebc.ca
+      vanityurlhost: www.drivebc.ca # should be the www.drivebc.ca url
+      extravanityurlhost: drivebc.ca # PROD ONLY: Set to drivebc.ca. This will create an extra vanityurl route that has a redirect to www.drivebc.ca
+    redirecthosts: # Mostly for the prod site. These will all redirect to www.drivebc.ca
+      - www.drivebc.com
+      - drivebc.com
+      - www.drivebc.info
+      - drivebc.info
+      - www.drivebc.net
+      - drivebc.net
+      - www.drivebc.org
+      - drivebc.org
+      - m.drivebc.ca
+      - mobile.drivebc.ca
   logpvc:
     storage: 2Gi
   podDisruptionBudget: 
