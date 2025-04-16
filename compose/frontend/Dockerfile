@@ -1,5 +1,5 @@
 # Use an official node runtime as a parent image
-FROM node:19
+FROM node:22-slim
 
 WORKDIR /app/
 RUN chown node:root /app
