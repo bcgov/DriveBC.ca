@@ -13,6 +13,12 @@ export class NetworkError extends CustomError {
   }
 }
 
+export class NotFoundError extends CustomError {
+  constructor() {
+    super("Not found error");
+  }
+}
+
 export class ServerError extends CustomError {
   constructor() {
     super("Server error");
@@ -39,8 +45,12 @@ const request = (url, params = {}, headers = {}, include_credentials = true, met
     const statusCode = response.status.toString();
 
     // Raise error for 4xx-5xx status codes
-    if (statusCode.startsWith('4') || statusCode.startsWith('5')) {
-      throw response.status == 500 ? new ServerError() : new NetworkError;
+    if (statusCode === '404') {
+      throw new NotFoundError();
+    } else if (statusCode.startsWith('4')) {
+      throw new NetworkError();
+    } else if (statusCode.startsWith('5')) {
+      throw new ServerError();
     }
 
     // Read the response body as text
