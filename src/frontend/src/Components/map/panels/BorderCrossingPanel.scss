@@ -37,7 +37,7 @@
           margin-bottom: 0;
           display: flex;
 
-          span, p {
+          & > span, p {
             font-size: 0.875rem;
             color: $Grey80;
           }
