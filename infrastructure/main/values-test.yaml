@@ -137,6 +137,8 @@ static:
     vanityurl: 
       enabled: true
       vanityurlhost: tst.drivebc.ca
+      extravanityurlhost: # PROD ONLY: Set to drivebc.ca. This will create an extra vanityurl route that has a redirect to www.drivebc.ca
+    redirecthosts: # Mostly for the prod site. These will all redirect to www.drivebc.ca
   logpvc:
     storage: 1Gi
   podDisruptionBudget: 

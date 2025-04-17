@@ -28,7 +28,7 @@ metadata:
   labels: {{ include "app.labels" . | nindent 4 }}
   annotations:
     "helm.sh/resource-policy": keep
-    {{ if .Values.route.iprestrictedAdminPages }}
+    {{ if .Values.route.iprestricted }}
     haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
     {{ end }}
 spec:
@@ -42,4 +42,47 @@ spec:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None
+{{- end }}
+
+---
+{{- if .Values.route.vanityurl.extravanityurlhost }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" . }}-frontend-nonwww-vanityurl
+  labels: {{ include "app.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/resource-policy": keep
+    {{ if .Values.route.iprestricted }}
+    haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
+    {{ end }}
+spec:
+  host: {{ .Values.route.vanityurl.extravanityurlhost  }}
+  to:
+    kind: Service
+    name: {{ template "app.fullname" . }}-frontend
+  port:
+    targetPort: 3000
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+{{- end }}
+---
+{{- if .Values.route.redirecthosts }}
+{{- range .Values.route.redirecthosts }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "app.fullname" $ }}-{{ . | replace "." "-" }}-redirect
+spec:
+  host: {{ . }}
+  to:
+    kind: Service
+    name: {{ template "app.fullname" $ }}-frontend
+  port:
+    targetPort: 3000
+  wildcardPolicy: None
+---
+{{- end }}
 {{- end }}

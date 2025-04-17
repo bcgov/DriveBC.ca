@@ -39,13 +39,13 @@ DriveBC.ca has a number of components that make up the site
 1. Login to oc for the environment
 1. Confirm your project and cluster by running `oc project`
 1. Navigate to the infrastructure folder in your CLI
-1. `helm install ENV-drivebc -f ./helm/values-ENV.yaml ./helm`
+1. `helm install ENV-drivebc -f ./main/values-ENV.yaml ./main`
 1. Confirm the site is working as expected
 
 #### Gold DR
 To setup site in Gold ensure the DB is running there in Standby and:
 1. `oc project` to confirm you are in GOLD DR on the correct project
-1. `helm install ENV-drivebc -f ./helm/values-ENV.yaml -f ./helm/values-ENV-dr.yaml ./helm`
+1. `helm install ENV-drivebc -f ./main/values-ENV.yaml -f ./main/values-ENV-dr.yaml ./main`
 1. Validate the site is working as expected
 
 #### Other tasks:
@@ -58,6 +58,6 @@ To setup site in Gold ensure the DB is running there in Standby and:
 Once the site is setup the Github actions should be able to handle most helm upgrades, but if you want to do do one manually (ie for testing) it's very similar to initial setup
 1. `oc project` to confirm the project and cluster
 1. `helm list` if you want to confirm the project is there already
-1. GOLD `helm install ENV-drivebc -f ./helm/values-ENV.yaml -f ./helm`
-1. GOLDDR: `helm install ENV-drivebc -f ./helm/values-ENV.yaml -f ./helm/values-ENV-dr.yaml ./helm`
+1. GOLD `helm upgrade ENV-drivebc -f ./main/values-ENV.yaml ./main`
+1. GOLDDR: `helm upgrade ENV-drivebc -f ./main/values-ENV.yaml -f ./main/values-ENV-dr.yaml ./main`
     - NOTE: If you want to set a specific tag instead of the default, you can add `--set django.image.tag=TAG` (doing same for static, tasks, redis, openshiftjobs)
