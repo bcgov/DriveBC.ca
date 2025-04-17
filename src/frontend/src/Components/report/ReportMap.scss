@@ -7,6 +7,12 @@
     display: flex;
     flex-direction: column;
     height: calc(var(--vh, 1vh) * 100 - 58px);
+
+    &:has(.report-map-container.expanded) {
+      position: absolute;
+      top: 0;
+      padding-top: 58px;
+    }
   }
 
   .page-header__content, .page-subtitle, .report-map-wrap {
@@ -349,16 +355,9 @@
       }
 
       .expand {
+        top: 1rem;
         right: 1rem;
       }
-
-      .expand.minimized {
-        top: 1rem;
-    }
-
-      .expand.expanded {
-        top: 13rem;
-    }
 
       .zoom-btn {
         background-color: $Surface-tinted;
