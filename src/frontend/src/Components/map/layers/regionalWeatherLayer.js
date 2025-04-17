@@ -9,7 +9,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Styling
-import { regionalStyles } from '../../data/featureStyleDefinitions.js';
+import { regionalStyles, regionalWarningStyles } from '../../data/featureStyleDefinitions.js';
 
 export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   const vectorSource = new VectorSource();
@@ -64,7 +64,14 @@ export function updateRegionalWeatherLayer(weathers, layer, setLoadingLayers) {
 
   for (const weatherFeature of layer.getSource().getFeatures()) {
     if(!weatherFeature.getProperties()['clicked']){
-      weatherFeature.setStyle(weathersDict[weatherFeature.getId()] ? regionalStyles['static'] : new Style(null));
+      if (weathersDict[weatherFeature.getId()]) {
+        const warnings = weatherFeature.get('warnings');
+        const weatherStyle = (warnings && warnings.length) ? regionalWarningStyles['static'] : regionalStyles['static'];
+        weatherFeature.setStyle(weatherStyle);
+
+      } else {
+        weatherFeature.setStyle(new Style(null));
+      }
     }
   }
 

@@ -9,7 +9,8 @@ import {
   restStopTruckStyles,
   restStopTruckClosedStyles,
   routeStyles,
-  borderCrossingStyles
+  borderCrossingStyles,
+  regionalWarningStyles
 } from '../../data/featureStyleDefinitions.js';
 import {
   setEventStyle
@@ -45,7 +46,11 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
           hoveredFeature.setStyle(roadWeatherStyles['static']);
           break;
         case 'regionalWeather':
-          hoveredFeature.setStyle(regionalStyles['static']);
+          hoveredFeature.setStyle(
+            (hoveredFeature.get('warnings') && hoveredFeature.get('warnings').length) ?
+            regionalWarningStyles['static'] :
+            regionalStyles['static']
+          );
           break;
         case 'hef':
           hoveredFeature.setStyle(hefStyles['static']);
@@ -138,7 +143,8 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
         return;
       case 'regionalWeather':
         if (!targetFeature.getProperties().clicked) {
-          targetFeature.setStyle(regionalStyles['hover']);
+          const warnings = targetFeature.get('warnings');
+          targetFeature.setStyle((warnings && warnings.length) ? regionalWarningStyles['hover'] : regionalStyles['hover']);
         }
         return;
       case 'hef':

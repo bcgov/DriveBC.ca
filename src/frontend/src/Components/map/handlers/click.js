@@ -15,7 +15,8 @@ import {
   restStopTruckStyles,
   restStopTruckClosedStyles,
   routeStyles,
-  borderCrossingStyles
+  borderCrossingStyles,
+  regionalWarningStyles
 } from '../../data/featureStyleDefinitions.js';
 
 // Click states
@@ -80,7 +81,11 @@ export const resetClickedStates = (
         updateClickedFeature(null);
         break;
       case 'regionalWeather':
-        clickedFeatureRef.current.setStyle(regionalStyles['static']);
+        clickedFeatureRef.current.setStyle(
+          (clickedFeatureRef.current.get('warnings') && clickedFeatureRef.current.get('warnings').length) ?
+          regionalWarningStyles['static'] :
+          regionalStyles['static']
+        );
         clickedFeatureRef.current.set('clicked', false);
         updateClickedFeature(null);
         break;
@@ -241,7 +246,8 @@ const regionalClickHandler = (
   );
 
   // set new clicked ferry feature
-  feature.setStyle(regionalStyles['active']);
+  const warnings = feature.get('warnings');
+  feature.setStyle((warnings && warnings.length) ? regionalWarningStyles['active'] : regionalStyles['active']);
   feature.setProperties({ clicked: true }, true);
   updateClickedFeature(feature);
 };

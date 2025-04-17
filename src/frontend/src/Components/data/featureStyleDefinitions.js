@@ -21,6 +21,11 @@ import regionalWeatherIconActive from '../../images/mapIcons/regional-weather-ac
 import regionalWeatherIconHover from '../../images/mapIcons/regional-weather-hover.png';
 import regionalWeatherIconStatic from '../../images/mapIcons/regional-weather-static.png';
 
+// Regional Weather with warning
+import regionalWeatherWarningIconActive from '../../images/mapIcons/regional-weather-advisory-active.png';
+import regionalWeatherWarningIconHover from '../../images/mapIcons/regional-weather-advisory-hover.png';
+import regionalWeatherWarningIconStatic from '../../images/mapIcons/regional-weather-advisory-static.png';
+
 // High Elevation Forecast
 import hefIconActive from '../../images/mapIcons/elevation-active.png';
 import hefIconHover from '../../images/mapIcons/elevation-hover.png';
@@ -209,6 +214,27 @@ export const regionalStyles = {
     image: new Icon({
       scale: 0.25,
       src: regionalWeatherIconActive,
+    }),
+  }),
+};
+
+export const regionalWarningStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: regionalWeatherWarningIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: regionalWeatherWarningIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: regionalWeatherWarningIconActive,
     }),
   }),
 };
