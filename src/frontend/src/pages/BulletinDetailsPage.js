@@ -78,7 +78,7 @@ export default function BulletinDetailsPage() {
 
   useEffect(() => {
     loadBulletin();
-  }, [params]);
+  }, [params.id]);
 
   let content = bulletin;
   if (content && params.subid) {
