@@ -54,7 +54,7 @@ Gold:
 `helm ugprade ENV-drivebc-standbycheck -f ./standbycheck/values-ENV.yaml ./standbycheck --set image.tag=<ENTER SHA>`
 
 Gold DR:
-`helm upgrade dev-drivebc-standbycheck -f ./standbycheck/values-dev.yaml -f ./standbycheck/values-dev-dr.yaml ./standbycheck --set image.tag=sha-<ENTER SHA>`
+`helm upgrade ENV-drivebc-standbycheck -f ./standbycheck/values-ENV.yaml -f ./standbycheck/values-ENV-dr.yaml ./standbycheck --set image.tag=sha-<ENTER SHA>`
 
 ## Delete
 Simply follow these steps:
