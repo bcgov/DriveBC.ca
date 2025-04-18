@@ -19,7 +19,7 @@ import Skeleton from 'react-loading-skeleton';
 // Internal imports
 import { CMSContext } from '../App';
 import { getAdvisories, markAdvisoriesAsRead } from '../Components/data/advisories.js';
-import { NetworkError, ServerError } from '../Components/data/helper';
+import { NetworkError, NotFoundError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Footer from '../Footer';
@@ -43,6 +43,14 @@ import MVT from 'ol/format/MVT.js';
 import VectorTileLayer from 'ol/layer/VectorTile.js';
 import VectorTileSource from 'ol/source/VectorTile.js';
 import View from 'ol/View.js';
+
+
+const NOT_FOUND_CONTENT = {
+  title: 'Advisory Not Found',
+  teaser: 'There is currently no published advisory at this URL',
+  body: '',
+};
+
 
 // OpenLayers functions
 function getMap(advisoryData) {
@@ -190,18 +198,26 @@ export default function AdvisoryDetailsPage() {
 
   // Data function and initialization
   const loadAdvisory = async () => {
-    const advisoryData = await getAdvisories(params.id).catch((error) => displayError(error));
+    const advisoryData = await getAdvisories(params.id).catch((error) => {
+      if (error instanceof NotFoundError) {
+        return NOT_FOUND_CONTENT;
+      } else {
+        displayError(error)
+      }
+    });
     setAdvisory(advisoryData);
 
-    if (!mapRef.current) {
-      mapRef.current = getMap(advisoryData);
+    if (advisoryData.id) {
+      if (!mapRef.current) {
+        mapRef.current = getMap(advisoryData);
+      }
+
+      fitMap(advisoryData);
+
+      document.title = `DriveBC - Advisories - ${advisoryData.title}`;
+
+      markAdvisoriesAsRead([advisoryData], cmsContext, setCMSContext);
     }
-
-    fitMap(advisoryData);
-
-    document.title = `DriveBC - Advisories - ${advisoryData.title}`;
-
-    markAdvisoriesAsRead([advisoryData], cmsContext, setCMSContext);
 
     setShowLoader(false);
   };
@@ -263,13 +279,15 @@ export default function AdvisoryDetailsPage() {
                 <p className="page-description body--large">{content.teaser}</p>
               }
 
-              <div className="page-header__title__meta">
-                <div className="timestamp-container">
-                  <span>{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span>
-                  <FriendlyTime date={content.latest_revision_created_at} />
+              {content.first_published_at &&
+                <div className="page-header__title__meta">
+                  <div className="timestamp-container">
+                    <span>{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span>
+                    <FriendlyTime date={content.latest_revision_created_at} />
+                  </div>
+                  <ShareURLButton />
                 </div>
-                <ShareURLButton />
-              </div>
+                }
             </React.Fragment>
           }
 
