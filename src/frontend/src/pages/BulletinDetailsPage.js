@@ -15,7 +15,7 @@ import Skeleton from 'react-loading-skeleton';
 // Internal imports
 import { CMSContext } from '../App';
 import { getBulletins } from '../Components/data/bulletins.js';
-import { NetworkError, ServerError } from '../Components/data/helper';
+import { NetworkError, NotFoundError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Footer from '../Footer.js';
@@ -25,6 +25,13 @@ import ShareURLButton from '../Components/shared/ShareURLButton';
 
 // Styling
 import './BulletinDetailsPage.scss';
+
+const NOT_FOUND_CONTENT = {
+  title: 'Bulletin Not Found',
+  teaser: 'There is currently no published bulletin at this URL',
+  body: '',
+};
+
 
 export default function BulletinDetailsPage() {
   /* Setup */
@@ -58,20 +65,28 @@ export default function BulletinDetailsPage() {
 
   // Data function and initialization
   const loadBulletin = async () => {
-    const bulletinData = await getBulletins(params.id).catch((error) => displayError(error));
+    const bulletinData = await getBulletins(params.id).catch((error) => {
+      if (error instanceof NotFoundError) {
+        return NOT_FOUND_CONTENT;
+      } else {
+        displayError(error)
+      }
+    });
     setBulletin(bulletinData);
 
     document.title = `DriveBC - Bulletins - ${bulletinData.title}`;
 
     // Combine and remove duplicates
-    const readBulletins = Array.from(new Set([
-      ...cmsContext.readBulletins,
-      bulletinData.id.toString() + '-' + bulletinData.live_revision.toString()
-    ]));
-    const updatedContext = {...cmsContext, readBulletins: readBulletins};
+    if (bulletinData.id) {
+      const readBulletins = Array.from(new Set([
+        ...cmsContext.readBulletins,
+        bulletinData.id.toString() + '-' + bulletinData.live_revision.toString()
+      ]));
+      const updatedContext = {...cmsContext, readBulletins: readBulletins};
 
-    setCMSContext(updatedContext);
-    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+      setCMSContext(updatedContext);
+      localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+    }
 
     setShowLoader(false);
   };
@@ -111,7 +126,7 @@ export default function BulletinDetailsPage() {
           </a>
         </Container>
       </div>
-      
+
       <Container className="page-header__title">
         {content && !showLoader &&
           <React.Fragment>
@@ -121,13 +136,15 @@ export default function BulletinDetailsPage() {
               <p className="page-description body--large">{content.teaser}</p>
             }
 
-            <div className="page-header__title__meta">
-              <div className="timestamp-container">
-                <span>{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span>
-                <FriendlyTime date={content.latest_revision_created_at} />
+            {content.first_published_at &&
+              <div className="page-header__title__meta">
+                <div className="timestamp-container">
+                  <span>{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span>
+                  <FriendlyTime date={content.latest_revision_created_at} />
+                </div>
+                <ShareURLButton />
               </div>
-              <ShareURLButton />
-            </div>
+            }
           </React.Fragment>
         }
 
