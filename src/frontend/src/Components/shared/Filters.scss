@@ -31,11 +31,15 @@ button.btn.open-filters {
 
   @media (min-width: 768px) {
     position: absolute;
-    top: calc(1rem + 36px);
+    top: calc(102px + 1rem);
     bottom: initial;
     left: initial;
     right: 1rem;
     width: 300px;
+  }
+
+  @media (min-width: 912px) {
+    top: calc(1rem + 36px);
   }
 
   .filters-title {

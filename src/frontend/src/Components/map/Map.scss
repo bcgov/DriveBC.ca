@@ -239,6 +239,10 @@
         right: 1rem;
         z-index: 5;
 
+        @media (max-width: 911px) {
+          top: calc(102px + 1rem);
+        }
+
         @media (max-width: 767px) {
           top: initial;
           bottom: 1rem;
