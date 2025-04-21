@@ -40,7 +40,7 @@ import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Advisories from '../Components/advisories/Advisories';
 import EventCard from '../Components/events/EventCard';
 import EventsTable from '../Components/events/EventsTable';
-import Filters from '../Components/shared/Filters.js';
+import Filters from '../Components/shared/Filters';
 import Footer from '../Footer.js';
 import PageHeader from '../PageHeader';
 import PollingComponent from '../Components/shared/PollingComponent';
@@ -51,7 +51,6 @@ import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
 // Styling
 import './EventsListPage.scss';
 import './ContainerSidePanel.scss';
-import '../Components/shared/Filters.scss';
 
 // Helpers
 const sortEvents = (events, key) => {

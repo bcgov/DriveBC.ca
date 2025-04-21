@@ -25,9 +25,6 @@ import trackEvent from './TrackEvent';
 // Components and functions
 import { MapContext } from '../../App.js';
 
-// Styling
-import './Filters.scss';
-
 export default function Filters(props) {
   // Misc
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
@@ -310,7 +307,7 @@ export default function Filters(props) {
       </Button>
 
       {open &&
-        <div className="filters">
+        <div className={'filters legacy' + (isDelaysPage ? ' delays' : '')}>
           <div className="filters-title__container">
           <h4 className="filters-title">{textOverride ? textOverride : 'Map Layers'}</h4>
           {
@@ -326,7 +323,7 @@ export default function Filters(props) {
             </div>
           }
           <button
-            className="close-filters"
+            className="close-filters-legacy"
             aria-label="close filters options"
             onClick={() => setOpen(false)
           }>

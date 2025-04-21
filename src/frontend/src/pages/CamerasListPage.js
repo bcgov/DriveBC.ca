@@ -47,7 +47,6 @@ import PollingComponent from '../Components/shared/PollingComponent';
 
 // Styling
 import './CamerasListPage.scss';
-import '../Components/shared/Filters.scss';
 
 export default function CamerasListPage() {
   /* Setup */

@@ -10,6 +10,10 @@
 
   .ol-scale-line {
     z-index: 10;
+
+    &.tabs-pushed {
+      right: 378px !important;
+    }
   }
 }
 
@@ -292,6 +296,10 @@
       display: flex;
       flex-direction: column;
 
+      &.tabs-pushed {
+        right: 330px;
+      }
+
       //Hide zoom slider on touch devices
       @media (max-width: 992px) {
         display: none;
@@ -343,4 +351,13 @@
       opacity: 0;
     }
   }
+}
+
+.mobile-mask {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background: black;
+  opacity: 0.25;
+  z-index: 10;
 }
