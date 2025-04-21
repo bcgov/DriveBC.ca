@@ -36,7 +36,6 @@ import { compareRoutes } from "../data/routes";
 import {
   blueLocationMarkup,
   redLocationToMarkup,
-  fitMap,
   onMoveEnd,
   setLocationPin,
   setZoomPan,
@@ -53,6 +52,7 @@ import AdvisoriesWidget from '../advisories/AdvisoriesWidget';
 import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
 import DistanceLabels from "../routing/DistanceLabels";
 import Filters from '../shared/Filters.js';
+import FilterTabs from './filter/FilterTabs';
 import RouteSearch from '../routing/RouteSearch.js';
 import NetworkErrorPopup from './errors/NetworkError';
 import ServerErrorPopup from './errors/ServerError';
@@ -74,10 +74,13 @@ import View from 'ol/View';
 
 // Styling
 import './Map.scss';
-import { cameraStyles, restStopStyles, routeStyles } from "../data/featureStyleDefinitions";
+import { cameraStyles, routeStyles } from "../data/featureStyleDefinitions";
 
 export default function DriveBCMap(props) {
   /* initialization */
+  // Misc
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+
   // Props
   const {
     mapProps: {referenceData, isCamDetail, mapViewRoute, loadCamDetails},
@@ -150,8 +153,10 @@ export default function DriveBCMap(props) {
   const locationSet = useRef();
   const routingContainerRef = useRef();
   const cameraLocationButtonRef = useRef();
+  const scaleLineRef = useRef();
 
   // States
+  const [openTabs, setOpenTabs] = useState(largeScreen && !isCamDetail);
   const [myLocationLoading, setMyLocationLoading] = useState(false);
   const [myLocation, setMyLocation] = useState();
   const [advisoriesInView, setAdvisoriesInView] = useState([]);
@@ -191,6 +196,20 @@ export default function DriveBCMap(props) {
     updatePosition(feature);
   };
 
+  // ScaleLine
+  const scaleLineControl = new ScaleLine({ units: 'metric' });
+  const updateScaleLineClass = (open) => {
+    if (!scaleLineRef.current) {
+      scaleLineRef.current = scaleLineControl.element;
+    }
+
+    if (open) {
+      scaleLineRef.current.classList.add('tabs-pushed');
+
+    } else {
+      scaleLineRef.current.classList.remove('tabs-pushed');
+    }
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -277,6 +296,11 @@ export default function DriveBCMap(props) {
   }, [myLocation])
 
   /* useEffect hooks */
+  /* Push ScaleLine to the left when tabs are open */
+  useEffect(() => {
+    updateScaleLineClass(openTabs);
+  }, [openTabs]);
+
   /* initialization for OpenLayers map */
   useEffect(() => {
     if (mapRef.current) return; // stops map from initializing more than once
@@ -355,7 +379,7 @@ export default function DriveBCMap(props) {
       layers: [vectorLayer, symbolLayer],
       view: mapView.current,
       moveTolerance: 7,
-      controls: [new ScaleLine({ units: 'metric' })],
+      controls: [scaleLineControl],
     });
 
     geolocation.current = new Geolocation({
@@ -704,6 +728,10 @@ export default function DriveBCMap(props) {
   /* Rendering */
   return (
     <div className={`map-container ${isCamDetail ? 'preview' : ''}`}>
+      {smallScreen && openTabs &&
+        <div className='mobile-mask'></div>
+      }
+
       {searchedRoutes &&
         <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} isCamDetail={isCamDetail} />
       }
@@ -784,27 +812,31 @@ export default function DriveBCMap(props) {
               My location
             </Button>
 
-            <Filters
+            <FilterTabs
               mapLayers={mapLayers}
               disableFeatures={isCamDetail}
               enableRoadConditions={true}
               enableChainUps={true}
               isCamDetail={isCamDetail}
               referenceData={referenceData}
-              loadingLayers={loadingLayers} />
+              loadingLayers={loadingLayers}
+              open={openTabs}
+              setOpen={setOpenTabs} />
           </React.Fragment>
         )}
 
         {(!isCamDetail && !smallScreen) && (
           <React.Fragment>
-            <Filters
+            <FilterTabs
               mapLayers={mapLayers}
               disableFeatures={isCamDetail}
               enableRoadConditions={true}
               enableChainUps={true}
               isCamDetail={isCamDetail}
               referenceData={referenceData}
-              loadingLayers={loadingLayers} />
+              loadingLayers={loadingLayers}
+              open={openTabs}
+              setOpen={setOpenTabs} />
 
             <Button
               ref={myLocationRef}
@@ -818,7 +850,7 @@ export default function DriveBCMap(props) {
           </React.Fragment>
         )}
 
-        <div className="map-btn zoom-btn">
+        <div className={"map-btn zoom-btn" + (openTabs ? ' tabs-pushed' : '')}>
           <Button
             className="zoom-in"
             variant="primary"
@@ -826,6 +858,7 @@ export default function DriveBCMap(props) {
             onClick={() => zoomIn(mapView)}>
             <FontAwesomeIcon icon={faPlus} />
           </Button>
+
           <Button
             className="zoom-out"
             variant="primary"
@@ -833,9 +866,9 @@ export default function DriveBCMap(props) {
             aria-label="zoom out">
             <FontAwesomeIcon icon={faMinus} />
           </Button>
+
           <div className="zoom-divider" />
         </div>
-
       </div>
 
       {isCamDetail && (
