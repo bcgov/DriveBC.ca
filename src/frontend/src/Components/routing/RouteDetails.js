@@ -480,7 +480,7 @@ export default function RouteDetails(props) {
         <div className="route-title">
           <div className="space-between-row route-tools">
             {isPanel &&
-              <span className={`route-index ${compareRoutes(route, selectedRoute) ? 'selected' : ''}`}>{index + 1}</span>
+              <span className={`route-index ${compareRoutes(route, selectedRoute) ? 'selected' : ''}`}>{(index === 0) ? 'A' : 'B'}</span>
             }
 
             {!isPanel &&
@@ -532,7 +532,7 @@ export default function RouteDetails(props) {
           }
 
           <div className="route-name-and-distance">
-            <h4 className="route-name">{route.label ? route.label : getDefaultLabel()}</h4>
+            <h4 className="route-name">{route.label ? route.label : 'Route'} {(index === 0) ? 'A' : 'B'}</h4>
             <p className="route-distance">{Math.round(route.distance)} km</p>
           </div>
           {route.label &&

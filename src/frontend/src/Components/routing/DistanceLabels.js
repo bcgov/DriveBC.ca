@@ -83,14 +83,14 @@ export default function DistanceLabels(props) {
 
       } else if (showAsSelected) {
         elem.innerHTML = `
-          <span class="index-label">${index + 1}</span>
+          <span class="index-label">${(index === 0) ? 'A' : 'B'}</span>
           <span class="distance-text">${roundedDistance} km</span>
         `;
 
       } else {
         // Inverted selected styling for index bubble
         elem.innerHTML = `
-          <span class="index-label selected">${index + 1}</span>
+          <span class="index-label">${(index === 0) ? 'A' : 'B'}</span>
           <span class="distance-text">${roundedDistance} km</span>
         `;
       }

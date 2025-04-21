@@ -89,6 +89,16 @@
             min-width: 100%;
           }
         }
+
+        &:has(.selected) {
+          @media (max-width: 767px) {
+            min-height: fit-content;
+            margin: -8px;
+            border: 2px solid $Focus;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+          }
+        }
       }
 
       &.maximized {

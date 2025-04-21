@@ -8,29 +8,9 @@
   font-size: 14px;
   cursor: default;
 
-  background-color: $Blue20; /* Light blue background */
+  background-color: $White;
   color: $BC-Blue; /* Dark blue text */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Light shadow */
-
-  &:not(.selected):hover {
-    background-color: $Distance-label-hover;
-    color: $White;
-    cursor: pointer;
-
-    .index-label {
-      background-color: $Distance-label-index;
-    }
-  }
-
-  &.selected {
-    background-color: $BC-Blue; /* Dark blue background */
-    color: $White;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
-  }
-
-  .distance-text {
-    font-weight: bold;
-  }
 
   .index-label {
     border-radius: 50%;
@@ -43,11 +23,27 @@
     font-weight: 700;
     margin-right: 8px;
     background-color: $White;
-    color: $BC-Blue; /* Matching the background color of the box */
+    color: $BC-Blue;
+    border: 1px solid $BC-Blue;
+  }
 
-    &.selected {
-      background-color: $BC-Blue; /* Dark blue background for the icon */
-      color: $White;
+  .distance-text {
+    font-weight: bold;
+  }
+
+  &.selected {
+    background-color: $Focus;
+    color: $White;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
+  }
+
+  &:not(.selected):hover {
+    cursor: pointer;
+    background-color: $Distance-label-hover;
+    color: $White;
+
+    .index-label {
+      border: 1px solid $BC-Blue;
     }
   }
 }
