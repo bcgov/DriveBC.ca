@@ -8,7 +8,7 @@ import { getHefLayer, updateHefLayer } from './hefLayer.js';
 import { getRestStopsLayer, updateRestStopsLayer } from './restStopsLayer.js';
 import { getLargeRestStopsLayer, updateLargeRestStopsLayer } from './largeRestStopsLayer.js';
 import { getRouteLayer } from './routeLayer.js';
-import { getBorderCrossingsLayer } from "./borderCrossingsLayer";
+import { getBorderCrossingsLayer, updateBorderCrossingsLayer } from "./borderCrossingsLayer";
 
 const layerFuncMap = {
   advisoriesLayer: getAdvisoriesLayer,
@@ -32,6 +32,7 @@ const layerUpdateFuncMap = {
   hef: updateHefLayer,
   restStops: updateRestStopsLayer,
   largeRestStops: updateLargeRestStopsLayer,
+  borderCrossings: updateBorderCrossingsLayer,
 }
 
 export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filteredDataList, zIndex, referenceData, updateReferenceFeature, setLoadingLayers) => {
@@ -57,7 +58,7 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filtered
     }
 
     // Toggle features' styles based on dataList
-    if (key != 'routeLayer' && key != 'borderCrossings') {
+    if (key != 'routeLayer') {
       layerUpdateFuncMap[key](filteredDataList, mapLayers.current[key], setLoadingLayers);
     }
   }
