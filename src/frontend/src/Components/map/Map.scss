@@ -89,6 +89,16 @@
             min-width: 100%;
           }
         }
+
+        &:has(.selected) {
+          @media (max-width: 767px) {
+            min-height: fit-content;
+            margin: -8px;
+            border: 2px solid $Focus;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+          }
+        }
       }
 
       &.maximized {
@@ -238,6 +248,10 @@
         top: 1rem;
         right: 1rem;
         z-index: 5;
+
+        @media (max-width: 911px) {
+          top: calc(102px + 1rem);
+        }
 
         @media (max-width: 767px) {
           top: initial;

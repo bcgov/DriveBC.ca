@@ -19,7 +19,7 @@
         height: 24px;
         width: 24px;
         border-radius: 12px;
-        border: 1px solid $Info;
+        border: 1px solid $Focus;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -27,10 +27,10 @@
         font-weight: 700;
         margin-bottom: 4px;
         background-color: $White;
-        color: $Info;
+        color: $Focus;
 
         &.selected {
-          background-color: $Info;
+          background-color: $Focus;
           color: $White;
         }
       }
@@ -38,9 +38,6 @@
       .notifications-settings {
         display: flex;
         align-items: center;
-
-        .notifications-toggle {
-        }
 
         svg {
           margin-left: 8px;
@@ -110,13 +107,14 @@
       align-items: baseline;
       justify-content: space-between;
       gap: 10px;
-      margin-top: 1rem;
+      margin-top: 4px;
 
       h4, p {
         margin-bottom: 0;
       }
       h4 {
         font-size: 1.125rem;
+        color: $Focus;
       }
 
       .route-distance {

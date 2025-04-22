@@ -29,9 +29,11 @@ export default function RouteDetailsPanel() {
   // Main component
   return !!searchedRoutes && (
     <div className="popup popup--route" tabIndex={0}>
-      <div className="popup__title">
-        <p className="name">Your route</p>
-      </div>
+      {largeScreen &&
+        <div className="popup__title">
+          <p className="name">Your route</p>
+        </div>
+    }
 
       <div className="popup__content">
         {largeScreen && searchedRoutes.map((route, index) => (
