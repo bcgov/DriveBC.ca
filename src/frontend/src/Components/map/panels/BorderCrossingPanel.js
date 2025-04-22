@@ -14,11 +14,13 @@ import Tooltip from 'react-bootstrap/Tooltip';
 // Styling
 import './BorderCrossingPanel.scss';
 import FriendlyTime from "../../shared/FriendlyTime";
+import { useSearchParams } from 'react-router-dom';
 
 export default function BorderCrossingPanel(props) {
   const { borderCrossing } = props;
 
   const [borderLanes, setBorderLanes] = useState({});
+  const [_searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     const res = {};
@@ -32,7 +34,8 @@ export default function BorderCrossingPanel(props) {
     }
 
     setBorderLanes(res);
-  }, [borderCrossing]);
+    setSearchParams(new URLSearchParams({ type: 'borderCrossing', id: borderCrossing.id }));
+  }, [borderCrossing?.id, borderCrossing?.lanes]); 
 
   /* Rendering */
   // Sub components
