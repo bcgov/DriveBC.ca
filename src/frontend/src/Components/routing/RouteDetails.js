@@ -183,10 +183,10 @@ export default function RouteDetails(props) {
     const routeData = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
     const displayError = () => {};
 
-    dataLoaders.loadAdvisories(routeData, advisories, dispatch, displayError, workerRef.current);
-    dataLoaders.loadCameras(routeData, cameras, dispatch, displayError, workerRef.current);
-    dataLoaders.loadEvents(routeData, events, dispatch, displayError, workerRef.current);
-    dataLoaders.loadFerries(routeData, ferries, dispatch, displayError, workerRef.current);
+    if (!advisories) dataLoaders.loadAdvisories(routeData, dispatch, displayError, workerRef.current);
+    if (!cameras) dataLoaders.loadCameras(routeData, dispatch, displayError, workerRef.current);
+    if (!events) dataLoaders.loadEvents(routeData, dispatch, displayError, workerRef.current);
+    if (!ferries) dataLoaders.loadFerries(routeData, dispatch, displayError, workerRef.current);
 
     // Cleanup function to terminate the worker when the component unmounts
     return () => {

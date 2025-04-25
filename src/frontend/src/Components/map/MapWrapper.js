@@ -198,22 +198,22 @@ export default function MapWrapper(props) {
       restStops: loadRestStops
     });
 
-    if (loadCameras) dataLoaders.loadCameras(routeData, camerasRef.current, dispatch, displayError, workerRef.current);
-    if (loadEvents) dataLoaders.loadEvents(routeData, eventsRef.current, dispatch, displayError, workerRef.current, isInitialLoad.current, trackedEventsRef);
-    if (loadFerries) dataLoaders.loadFerries(routeData, ferriesRef.current, dispatch, displayError, workerRef.current);
-    if (loadLocalWeathers) dataLoaders.loadCurrentWeather(routeData, currentWeathersRef.current, dispatch, displayError, workerRef.current);
-    if (loadRegionalWeathers) dataLoaders.loadRegionalWeather(routeData, regionalWeathersRef.current, dispatch, displayError, workerRef.current);
-    if (loadHef) dataLoaders.loadHef(routeData, hefRef.current, dispatch, displayError, workerRef.current);
-    if (loadRestStops) dataLoaders.loadRestStops(routeData, restStopsRef.current, dispatch, displayError, workerRef.current);
-    if (loadAdvisories) dataLoaders.loadAdvisories(routeData, advisoriesRef.current, dispatch, displayError, workerRef.current);
-    if (loadBorderCrossings) dataLoaders.loadBorderCrossings(routeData, borderCrossingsRef.current, dispatch, displayError, workerRef.current);
+    if (loadCameras) dataLoaders.loadCameras(routeData, dispatch, displayError, workerRef.current);
+    if (loadEvents) dataLoaders.loadEvents(routeData, dispatch, displayError, workerRef.current, isInitialLoad.current, trackedEventsRef);
+    if (loadFerries) dataLoaders.loadFerries(routeData, dispatch, displayError, workerRef.current);
+    if (loadLocalWeathers) dataLoaders.loadCurrentWeather(routeData, dispatch, displayError, workerRef.current);
+    if (loadRegionalWeathers) dataLoaders.loadRegionalWeather(routeData, dispatch, displayError, workerRef.current);
+    if (loadHef) dataLoaders.loadHef(routeData, dispatch, displayError, workerRef.current);
+    if (loadRestStops) dataLoaders.loadRestStops(routeData, dispatch, displayError, workerRef.current);
+    if (loadAdvisories) dataLoaders.loadAdvisories(routeData, dispatch, displayError, workerRef.current);
+    if (loadBorderCrossings) dataLoaders.loadBorderCrossings(routeData, dispatch, displayError, workerRef.current);
 
     isInitialLoad.current = false;
   };
 
   return (
     <React.Fragment>
-      <PollingComponent runnable={() => loadData()} interval={30000} />
+      <PollingComponent runnable={() => loadData()} interval={5000} />
 
       <DriveBCMap
         mapProps={props}
