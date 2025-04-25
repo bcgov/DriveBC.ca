@@ -321,6 +321,7 @@ export default function CamerasListPage() {
                   inputProps={{
                     'aria-label': 'input field for camera name search',
                   }}
+                  defaultInputValue={searchText}
                 >
                 {({ onClear, text }) => (
                   <>
@@ -400,6 +401,7 @@ export default function CamerasListPage() {
                 inputProps={{
                   'aria-label': 'input field for camera name search',
                 }}
+                defaultInputValue={searchText}
               >
               {({ onClear, text }) => (
                 <>
