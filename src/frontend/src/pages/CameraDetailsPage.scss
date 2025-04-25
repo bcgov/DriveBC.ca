@@ -222,7 +222,11 @@
       width: calc(50% - 12px);
     }
 
-    &.stale, &.delayed {
+    h3 {
+      font-size: 1.125rem;
+    }
+
+    &.stale {
       color: $Type-Primary;
       background-color: $Grey-invert;
 
@@ -233,10 +237,16 @@
 
     &.delayed {
       display: block;
+      color: $Gold110;
+      background-color: $Gold50;
+
+      p {
+        color: $Gold110;
+      }
 
       .main-message {
         display: flex;
-        align-items: center;
+        align-items: baseline;
         margin-bottom: 14px;
       }
     }
@@ -246,7 +256,6 @@
     }
 
     p {
-      font-weight: 700;
       color: white;
       margin-bottom: 0;
     }
@@ -283,7 +292,7 @@
             .unavailable-message {
               padding: 12px;
 
-              svg, p, ul {
+              svg, p, ul, h3 {
                 color: $Error;
               }
               p:has(+ul) {
@@ -390,6 +399,7 @@
             height: 388px;
             position: relative;
             border-radius: 8px;
+            overflow: hidden;
 
             img {
               width: 100%;
@@ -448,6 +458,7 @@
               svg {
                 padding: 5px 8px;
                 border-radius: 16px;
+                cursor: pointer;
 
                 &:not(.icon):hover {
                   background-color: rgba(0,0, 0,0.1);
@@ -462,6 +473,8 @@
               border-radius: 16px;
               transform:translateY(-200%);
               transition: background-color 0.1s ease-in-out;
+              position: absolute;
+              cursor: pointer;
 
               &:hover {
                 transition: background-color 0.1s ease-in-out;
