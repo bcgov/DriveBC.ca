@@ -27,7 +27,7 @@ export default function NoRouteFound(props) {
 
       <span>
         {isInBc(searchLocationFrom, searchLocationTo) ?
-          "No Valid route between these two points." :
+          "No valid route between these two points." :
           "Routes outside of BC are not possible at the moment."
         }
     </span>
