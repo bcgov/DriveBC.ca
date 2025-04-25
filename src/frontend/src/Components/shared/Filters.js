@@ -81,6 +81,13 @@ export default function Filters(props) {
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
   const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
 
+  const closeSidePanel = () => {
+    const closeBtn = document.querySelector('.close-panel');
+    if (closeBtn) {
+      closeBtn.click();
+    }
+  }
+
   // Effects
   useEffect(() => {
     if (isInitialLoad.current) {
@@ -218,6 +225,7 @@ export default function Filters(props) {
     if (e) {
       focusInput(e.target);
     }
+    closeSidePanel();
   }
 
   // Rendering
