@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faFilter,
+  faLayerGroup,
   faXmark,
   faCircleQuestion,
   faTruckContainer
@@ -304,9 +304,8 @@ export default function Filters(props) {
         onClick={() => {
           open ? setOpen(false) : setOpen(true) }
         }>
+        <FontAwesomeIcon icon={faLayerGroup} />
         <span className="filters-btn__text">{textOverride ? textOverride : 'Map Layers'}</span>
-
-        <FontAwesomeIcon icon={faFilter} />
       </Button>
     </div>
   );

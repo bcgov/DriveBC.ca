@@ -10,10 +10,6 @@
 
   .ol-scale-line {
     z-index: 10;
-
-    &.tabs-pushed {
-      right: 378px !important;
-    }
   }
 }
 
@@ -193,6 +189,17 @@
         will-change: contents, width;
         transition: all 0.25s;
       }
+
+      &:has(.filters-menu.long) {
+        .tabs-pushed {
+          &.zoom-btn {
+            right: 330px;
+          }
+          &.ol-scale-line {
+            right: 378px;
+          }
+        }
+      }
     }
 
     .map-btn {
@@ -291,10 +298,6 @@
       right: 1rem;
       display: flex;
       flex-direction: column;
-
-      &.tabs-pushed {
-        right: 330px;
-      }
 
       //Hide zoom slider on touch devices
       @media (max-width: 992px) {
