@@ -47,7 +47,6 @@ import PollingComponent from '../Components/shared/PollingComponent';
 
 // Styling
 import './CamerasListPage.scss';
-import '../Components/shared/Filters.scss';
 
 export default function CamerasListPage() {
   /* Setup */
@@ -322,6 +321,7 @@ export default function CamerasListPage() {
                   inputProps={{
                     'aria-label': 'input field for camera name search',
                   }}
+                  defaultInputValue={searchText}
                 >
                 {({ onClear, text }) => (
                   <>
@@ -401,6 +401,7 @@ export default function CamerasListPage() {
                 inputProps={{
                   'aria-label': 'input field for camera name search',
                 }}
+                defaultInputValue={searchText}
               >
               {({ onClear, text }) => (
                 <>

@@ -1,0 +1,86 @@
+@import "../../../styles/variables.scss";
+
+.legend {
+  padding: 10px 8px;
+
+  &__group-header {
+    padding: .5rem;
+
+    &__title {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    &__description {
+      font-size: 0.875rem;
+    }
+  }
+
+  &__group {
+    background: white;
+    padding: .5rem;
+
+    &__item {
+      padding: .5rem 0;
+      font-size: 0.875rem;
+
+      &__header {
+        display: flex;
+        align-items: center;
+
+        &__icon {
+          width: 24px;
+
+          &.last {
+            margin-left: 6px;
+          }
+        }
+
+        &__title {
+          font-weight: 700;
+          margin-left: 6px;
+
+          &.major {
+            color: $Error;
+          }
+
+          &.minor {
+            color: $Gold110;
+          }
+
+          &.general {
+            color: $BC-Blue;
+          }
+
+          &.rest-stop {
+            color: $Type-reststop;
+          }
+
+          &.advisories {
+            color: $Advisory-Text;
+          }
+
+          &.newly-updated {
+            color: $Blue80;
+          }
+
+          &.ferries {
+            color: $Ferry;
+          }
+
+          &.weather {
+            color: $Grey110;
+          }
+
+          &.chain-up {
+            color: $Type-Secondary;
+          }
+        }
+      }
+
+      &__description {
+
+      }
+    }
+  }
+}

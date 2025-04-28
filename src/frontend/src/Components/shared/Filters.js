@@ -8,10 +8,10 @@ import { useSelector } from 'react-redux';
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faFilter,
   faXmark,
   faCircleQuestion,
-  faTruckContainer
+  faTruckContainer,
+  faLayerGroup
 } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
@@ -24,9 +24,6 @@ import trackEvent from './TrackEvent';
 
 // Components and functions
 import { MapContext } from '../../App.js';
-
-// Styling
-import './Filters.scss';
 
 export default function Filters(props) {
   // Misc
@@ -312,13 +309,12 @@ export default function Filters(props) {
         onClick={() => {
           open ? setOpen(false) : setOpen(true) }
         }>
+        <FontAwesomeIcon icon={faLayerGroup} />
         <span className="filters-btn__text">{textOverride ? textOverride : 'Map Layers'}</span>
-
-        <FontAwesomeIcon icon={faFilter} />
       </Button>
 
       {open &&
-        <div className="filters">
+        <div className={'filters legacy' + (isDelaysPage ? ' delays' : '')}>
           <div className="filters-title__container">
           <h4 className="filters-title">{textOverride ? textOverride : 'Map Layers'}</h4>
           {
@@ -334,7 +330,7 @@ export default function Filters(props) {
             </div>
           }
           <button
-            className="close-filters"
+            className="close-filters-legacy"
             aria-label="close filters options"
             onClick={() => setOpen(false)
           }>

@@ -1,8 +1,8 @@
-@import "../../styles/variables.scss";
+@import "../../../styles/variables.scss";
 
 button.btn.open-filters {
   svg {
-    margin-left: 8px;
+    margin-right: 8px;
   }
 
   &.open {
@@ -11,35 +11,36 @@ button.btn.open-filters {
   }
 }
 
+button.close-filters-legacy {
+  position: absolute;
+  right: 1rem;
+  padding: 0;
+  min-width: 0;
+  line-height: 1.25rem;
+  height: auto;
+  background: none;
+  border:none;
+  font-size: 1rem;
+}
+
 .filters {
-  position: fixed;
-  z-index: 17;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  max-height: calc(100% - 58px);
-  border-radius: 4px;
-  background-color: white;
-  box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-
-  @media (orientation: landscape) and (max-width: 767px) {
-    max-height: calc(100% - 60px);
-  }
-
-  @media (min-width: 768px) {
+  &.legacy {
+    background: $Grey10;
+    z-index: 17;
     position: absolute;
-    top: calc(102px + 1rem);
-    bottom: initial;
-    left: initial;
-    right: 1rem;
     width: 300px;
-  }
+    box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
+    border-radius: 4px;
 
-  @media (min-width: 912px) {
-    top: calc(1rem + 36px);
+    @media (max-width: 912px) {
+      width: 100%;
+
+      &.delays {
+        width: 100vw;
+        position: fixed;
+        left: 0;
+      }
+    }
   }
 
   .filters-title {
@@ -48,16 +49,17 @@ button.btn.open-filters {
 
     &__container {
       display: flex;
-      align-items: center; 
-      margin: 12px 12px 0;
+      align-items: center;
+      margin: 0;
+      padding: .75rem .75rem .25rem .75rem;
     }
 
     &__notification {
       font-size:0.75rem;
-      color:$White; 
-      background-color: $Focus; 
+      color:$White;
+      background-color: $Focus;
       padding: 0.25rem 0.375rem;
-      border-radius: 4px; 
+      border-radius: 4px;
       margin-left: 8px;
     }
 
@@ -75,34 +77,28 @@ button.btn.open-filters {
     }
   }
 
-  button.close-filters {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    padding: 0;
-    min-width: 0;
-    line-height: 1.25rem;
-    height: auto;
-    background: none;
-    border:none;
-    font-size: 1rem;
-  }
-
   .filters-list {
     position: relative;
-    padding: 1rem;
+    padding: 12px 8px 8px;
     overflow-y: auto;
-    background: white;
+    background: $Grey10;
 
     .filter-group {
       &__title {
         font-size: 0.875rem;
         font-weight: 700;
-        margin-bottom: 0.25rem;
+        margin-left: 12px;
+        margin-bottom: 8px;
+      }
+
+      .filter-items-group {
+        padding: 8px 12px 16px;
+        background: white;
+        border-radius: 4px;
       }
 
       & + .filter-group {
-        margin-top: 12px;
+        margin-top: 8px;
       }
 
       .filter-item {
@@ -116,10 +112,10 @@ button.btn.open-filters {
         &__button {
           display: flex;
           align-items: center;
-          background: white;
+          background: $Grey20;
           color: $Type-Primary;
           padding: 2px 8px 2px 2px;
-          border: 1px solid $Border-dark;
+          border: none;
           border-radius: 1.75rem;
           font-size: 0.875rem;
           transition: all 0.2s ease-in-out;
@@ -130,7 +126,7 @@ button.btn.open-filters {
               background: $BtnHover-Secondary;
             }
           }
-          
+
           &__icon {
             margin-right: 8px;
             height: 24px;
@@ -218,7 +214,7 @@ button.btn.open-filters {
             margin-left: 8px;
             margin-right: 8px;
           }
-  
+
         }
 
         &.checked {

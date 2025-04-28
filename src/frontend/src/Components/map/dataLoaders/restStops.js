@@ -1,9 +1,9 @@
 import { getRestStops } from '../../data/restStops';
 
-export const loadRestStops = async (route, restStops, dispatch, displayError, worker) => {
+export const loadRestStops = async (route, dispatch, displayError, worker) => {
   // Fetch data if it doesn't already exist
-  const restStopsData = restStops ? restStops : await getRestStops().catch((error) => displayError(error));
+  const restStops = await getRestStops().catch((error) => displayError(error));
 
   // Trigger filter worker
-  worker.postMessage({data: restStopsData, route: (route && route.routeFound ? route : null), action: 'updateRestStops'});
+  worker.postMessage({data: restStops, route: (route && route.routeFound ? route : null), action: 'updateRestStops'});
 };

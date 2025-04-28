@@ -21,12 +21,6 @@ export default function ShareURLButton() {
     if (navigator.share) {
       navigator.share({
         url: window.location.href
-
-      }).then(() => {
-        setAlertMessage(<p>URL shared successfully</p>);
-
-      }).catch((error) => {
-        setAlertMessage(<p>Sharing failed: {error.message}</p>);
       });
 
     } else {

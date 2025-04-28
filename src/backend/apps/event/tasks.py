@@ -34,11 +34,15 @@ BACKEND_DIR = Path(__file__).resolve().parents[2]
 
 def compare_data(current_field_data, new_field_data):
     if isinstance(current_field_data, Point):
-        new_point = Point(new_field_data.get('coordinates'))
+        new_point = Point(new_field_data.get('coordinates'))\
+            if not isinstance(new_field_data, Point) else new_field_data
+
         return current_field_data.equals(new_point)
 
     elif isinstance(current_field_data, LineString):
-        new_ls = LineString(new_field_data.get('coordinates', []))
+        new_ls = LineString(new_field_data.get('coordinates', []))\
+            if not isinstance(new_field_data, LineString) else new_field_data
+
         return current_field_data.equals(new_ls)
 
     else:
