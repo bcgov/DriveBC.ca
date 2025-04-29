@@ -118,14 +118,34 @@ import genericDelaysStaticUnreadIcon from '../../images/mapIcons/incident-minor-
 
 // Map advisory styles
 export const advisoryStyles = {
-  polygon: new Style({
+  static: new Style({
     stroke: new Stroke({
       color: 'rgba(242, 76, 39)',
       width: 2,
-      lineDash: [10,10]
+      lineDash: [5,5]
     }),
     fill: new Fill({
       color: 'rgba(252, 214, 192, 0.25)',
+    }),
+  }),
+  hover: new Style({
+    stroke: new Stroke({
+      color: 'rgba(242, 76, 39)',
+      width: 2,
+      lineDash: [5,5]
+    }),
+    fill: new Fill({
+      color: 'rgba(202, 164, 142, 0.25)',
+    }),
+  }),
+  active: new Style({
+    stroke: new Stroke({
+      color: 'rgba(242, 76, 39)',
+      width: 2,
+      lineDash: [5,5]
+    }),
+    fill: new Fill({
+      color: 'rgba(152, 114, 92, 0.25)',
     }),
   })
 };

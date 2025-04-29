@@ -20,9 +20,10 @@ import Feature from "ol/Feature";
 export const renderPanel = (clickedFeature, isCamDetail, smallScreen, mapView) => {
   if (clickedFeature) {
     // Hack for rendering advisories panel since it's not a feature
-    if (!clickedFeature.get) {
-      return <AdvisoriesPanel advisories={clickedFeature} smallScreen={smallScreen} mapView={mapView}/>;
-    }
+    // DBC22-2871: temporarily disabled
+    // if (!clickedFeature.get) {
+    //   return <AdvisoriesPanel advisories={clickedFeature} smallScreen={smallScreen} mapView={mapView}/>;
+    // }
 
     switch (clickedFeature.get('type')) {
       case 'camera':
@@ -42,6 +43,8 @@ export const renderPanel = (clickedFeature, isCamDetail, smallScreen, mapView) =
         return <RestStopPanel feature={clickedFeature} />;
       case 'borderCrossing':
         return <BorderCrossingPanel borderCrossing={clickedFeature.getProperties()} />;
+      case 'advisory':
+        return <AdvisoriesPanel advisories={[clickedFeature.get('data')]} />;
     }
 
   // Render searched routes panel if no feature is clicked

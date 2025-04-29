@@ -31,6 +31,8 @@ export function getAdvisoriesLayer(
           const olGeometry = new MultiPolygon(advisory.geometry.coordinates);
           const olFeature = new ol.Feature({ geometry: olGeometry, type: 'advisory' });
 
+          olFeature.set('data', advisory);
+
           // Transform the projection
           const olFeatureForMap = transformFeature(
             olFeature,
@@ -46,7 +48,7 @@ export function getAdvisoriesLayer(
       },
     }),
 
-    style: () => advisoryStyles.polygon,
+    style: () => advisoryStyles.static,
   });
 }
 
@@ -57,6 +59,8 @@ export function updateAdvisoriesLayer(advisories, layer, setLoadingLayers) {
   }, {}) : {};
 
   for (const advisoryFeature of layer.getSource().getFeatures()) {
-    advisoryFeature.setStyle(advisoriesDict[advisoryFeature.getId()] ? advisoryStyles.polygon : new Style(null));
+    if(!advisoryFeature.get('clicked')){
+      advisoryFeature.setStyle(advisoriesDict[advisoryFeature.getId()] ? advisoryStyles.static : new Style(null));
+    }
   }
 }

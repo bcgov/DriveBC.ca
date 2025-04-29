@@ -245,7 +245,7 @@ export default function DriveBCMap(props) {
 
   const updatePosition = (feature) => {
     // Do not process empty features, routes and advisories
-    if (feature != null && !Array.isArray(feature) && feature.getProperties().type !== 'route') {
+    if (feature != null && !Array.isArray(feature) && feature.get('type') !== 'route'&& feature.get('type') !== 'advisory') {
       let geometry = feature.getGeometry();
 
       if (geometry.getType() !== 'Point') { // feature is a line or polygon
@@ -785,15 +785,6 @@ export default function DriveBCMap(props) {
               mapRef={mapRef}
               mapView={mapView}
               resetClickedStates={() => resetClickedStates(null, clickedFeatureRef, updateClickedFeature)} />
-
-            <AdvisoriesWidget
-              advisories={advisoriesInView}
-              updateClickedFeature={updateClickedFeature}
-              open={openPanel}
-              clickedFeature={clickedFeature}
-              clickedFeatureRef={clickedFeatureRef}
-              onMap={true}
-            />
           </div>
         )}
 
