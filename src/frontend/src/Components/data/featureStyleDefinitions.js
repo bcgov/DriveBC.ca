@@ -130,12 +130,12 @@ export const advisoryStyles = {
   }),
   hover: new Style({
     stroke: new Stroke({
-      color: 'rgba(242, 76, 39)',
+      color: 'rgba(248, 165, 147)',
       width: 2,
       lineDash: [5,5]
     }),
     fill: new Fill({
-      color: 'rgba(202, 164, 142, 0.25)',
+      color: 'rgba(252, 214, 192, 0.65)',
     }),
   }),
   active: new Style({
@@ -145,7 +145,7 @@ export const advisoryStyles = {
       lineDash: [5,5]
     }),
     fill: new Fill({
-      color: 'rgba(152, 114, 92, 0.25)',
+      color: 'rgba(252, 214, 192, 0.65)',
     }),
   })
 };
