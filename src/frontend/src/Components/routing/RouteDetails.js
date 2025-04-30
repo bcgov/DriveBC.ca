@@ -532,9 +532,10 @@ export default function RouteDetails(props) {
           }
 
           <div className="route-name-and-distance">
-            <h4 className="route-name">{route.label ? route.label : 'Route'} {(index === 0) ? 'A' : 'B'}</h4>
+            <h4 className="route-name">{route.label ? route.label : ('Route ' + (index === 0 ? 'A' : 'B'))}</h4>
             <p className="route-distance">{Math.round(route.distance)} km</p>
           </div>
+
           {route.label &&
             <p className="route-alt-name">{getDefaultLabel()}</p>
           }
