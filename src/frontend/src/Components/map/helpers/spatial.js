@@ -23,7 +23,7 @@ export const populateRouteProjection = (data, route) => {
 
   // Calculate and store distance along reference line
   copiedData.forEach((item, i) => {
-    const coords = getMidPoint(item.location);
+    const coords = getMidPoint(item.location ? item.location : item.geometry);
 
     // Find the closest point on the route using the spatial index
     const closestCoords = spatialIndex.neighbors(coords[0], coords[1], 1).map(idx => lineCoords[idx])[0];
@@ -163,16 +163,25 @@ export const getMidPoint = (location) => {
     return location.coordinates;
   }
 
-  // Create turf ls from location coordinates
-  const line = turf.lineString(location.coordinates);
+  // Return midpoint for lines
+  else if (location.type === "LineString") {
+    // Create turf ls from location coordinates
+    const line = turf.lineString(location.coordinates);
 
-  // Calculate the length of the LineString
-  const length = turf.length(line);
+    // Calculate the length of the LineString
+    const length = turf.length(line);
 
-  // Find the midpoint distance
-  const midpointDistance = length / 2;
+    // Find the midpoint distance
+    const midpointDistance = length / 2;
 
-  // Find and return the point coords at the midpoint distance
-  const midpoint = turf.along(line, midpointDistance);
-  return midpoint.geometry.coordinates;
+    // Find and return the point coords at the midpoint distance
+    const midpoint = turf.along(line, midpointDistance);
+    return midpoint.geometry.coordinates;
+
+  // Return centroid for multipolygons
+  } else {
+    const geometry = location.type === "MultiPolygon" ? turf.multiPolygon(location.coordinates) : turf.polygon(location.coordinates);
+    const centroid = turf.centroid(geometry);
+    return centroid.geometry.coordinates;
+  }
 }
