@@ -1,4 +1,4 @@
-FROM alpine:edge
+FROM alpine:3.21
 
 RUN addgroup -S nonroot \
     && adduser -S nonroot -G nonroot
@@ -7,17 +7,14 @@ EXPOSE 8080
 
 RUN apk add --no-cache \
     bash \
-    caddy \
     curl \
-    gcompat \
     gzip \
-    tar
+    tar \
+    jq
 
-RUN curl --proto "=https" -sSL https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux-amd64-rhel9.tar.gz \
-| tar xvzf - -C /usr/local/bin \
-&& chmod +x /usr/local/bin/oc
+# This line below is temporary till v 2.9.1 is vailable in the regular alpine repo (as of 28 Apr 2025 it's only in edge) Check https://pkgs.alpinelinux.org/packages?name=caddy to see latest version
+RUN apk add --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/community caddy
 
-ENV KUBECONFIG=/tmp/.kube/config
 ARG DEBUG_BUILD=false
 
 # Add debugging tools into builds if enabled

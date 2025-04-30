@@ -22,8 +22,12 @@ echodate() {
 }
 
 standby_status() {
-    output=$(oc -n ${l_namespace} get postgrescluster ${l_cluster_name} -o jsonpath="{.spec.standby.enabled}")
-    
+    output=$(curl -s \
+        -H "Authorization: Bearer $l_serviceaccount_token" \
+        -H 'Accept: application/json' \
+        "${l_ocp_api_server}/apis/postgres-operator.crunchydata.com/v1beta1/namespaces/${l_namespace}/postgresclusters/${l_cluster_name}" \
+    | jq '.spec.standby.enabled')
+
     if [[ $? -eq 0 ]]; then
         echo $output
     else
@@ -32,8 +36,12 @@ standby_status() {
 }
 
 shutdown_status() {
-    output=$(oc -n ${l_namespace} get postgrescluster ${l_cluster_name} -o jsonpath="{.spec.shutdown}")
-    
+    output=$(curl -s \
+        -H "Authorization: Bearer $l_serviceaccount_token" \
+        -H 'Accept: application/json' \
+        "${l_ocp_api_server}/apis/postgres-operator.crunchydata.com/v1beta1/namespaces/${l_namespace}/postgresclusters/${l_cluster_name}" \
+    | jq '.spec.shutdown')
+
     if [[ $? -eq 0 ]]; then
         echo $output
     else
@@ -51,17 +59,6 @@ caddy_reload_config() {
     fi
 }
 
-while true; do
-    oc login --token=$l_serviceaccount_token --server=${l_ocp_api_server}
-    if [[ $? -eq 0 ]]; then
-        echodate "[NOTICE] Successful login to OpenShift"
-        break
-    else
-        echodate "[CRITICAL] Unable to login to cluster. Check namespace and service accout configuration."
-        echodate "[CRITICAL] Assuming standby cluster is TRUE. Responding with HTTP 200. Retry in ${login_sleep}s."
-        sleep ${login_sleep}
-    fi
-done
 
 standbyspec=$(standby_status)
 echodate "[NOTICE] ${l_namespace}: Starting PostgresCluster standby watch. Current status of ${l_cluster_name}: ${standbyspec^^}"
