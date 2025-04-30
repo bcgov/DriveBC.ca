@@ -55,8 +55,7 @@ const RouteSearch = forwardRef((props, ref) => {
   const isInitialMount = useRef(true);
   const isInitialMountSpinner = useRef(true);
 
-  // useEffect hooks
-  useEffect(() => {
+  const updateSearch = () => {
     if (isInitialMount.current) { // Do nothing on first load
       isInitialMount.current = false;
       return;
@@ -70,7 +69,15 @@ const RouteSearch = forwardRef((props, ref) => {
       dispatch(clearSelectedRoute());
       removeOverlays(mapRef);
     }
-  }, [searchLocationFrom, searchLocationTo]);
+  }
+
+  useEffect(() => {
+    updateSearch();
+  }, [searchLocationFrom]);
+
+  useEffect(() => {
+    updateSearch();
+  }, [searchLocationTo]);
 
   useEffect(() => {
     if (isInitialMountSpinner.current) { // Do nothing on first load
