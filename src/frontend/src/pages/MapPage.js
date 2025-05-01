@@ -1,5 +1,5 @@
 // React
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 // Redux
@@ -33,13 +33,21 @@ export default function MapPage() {
 
   document.title = 'DriveBC';
 
-  const referenceData = {
-    type: searchParams.get('type'),
-    id: searchParams.get('id'),
-    display_category: searchParams.get('display_category')
-  };
+  const [referenceData, setReferenceData] = useState({
+    type: null,
+    id: null,
+    display_category: null,
+  });
 
   // Effects
+  useEffect(() => {
+    setReferenceData({
+      type: searchParams.get('type'),
+      id: searchParams.get('id'),
+      display_category: searchParams.get('display_category'),
+    });
+  }, [searchParams]);
+
   useEffect(() => {
     populateRoutesFromNotification();
   }, []);

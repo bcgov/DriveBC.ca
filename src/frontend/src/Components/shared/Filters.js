@@ -137,11 +137,6 @@ export default function Filters(props) {
     const currentUrl = window.location.href;
     const newUrl = currentUrl.replace(type1, type2);
     window.history.replaceState(null, "", newUrl);
-    if(type2 === 'largeRestStop') {
-      referenceData.type = "largeRestStop";
-    } else {
-      referenceData.type = "restStop";
-    }
   }
 
   // Handlers

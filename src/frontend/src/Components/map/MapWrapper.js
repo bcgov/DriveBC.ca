@@ -181,12 +181,14 @@ export default function MapWrapper(props) {
     const loadCameras = !camerasRef.current || (!isInitialLoad.current && mapContext.visible_layers.highwayCams);
     const loadEvents = !eventsRef.current || (!isInitialLoad.current && hasVisibleEvents());
     const loadFerries = !ferriesRef.current || (!isInitialLoad.current && mapContext.visible_layers.inlandFerries);
+    const loadHef = !hefRef.current || (!isInitialLoad.current && mapContext.visible_layers.weather);
     const loadLocalWeathers = !currentWeathersRef.current || (!isInitialLoad.current && mapContext.visible_layers.weather);
     const loadRegionalWeathers = !regionalWeathersRef.current || (!isInitialLoad.current && mapContext.visible_layers.weather);
-    const loadRestStops = !restStopsRef.current || (!isInitialLoad.current && mapContext.visible_layers.restStops);
+    const loadRestStops = !restStopsRef.current ||
+      (!isInitialLoad.current && mapContext.visible_layers.restStops) ||
+      (!isInitialLoad.current && mapContext.visible_layers.largeRestStops);
 
     // Non-toggleable map layers
-    const loadHef = !hefRef.current || !isInitialLoad.current;
     const loadAdvisories = !advisoriesRef.current || !isInitialLoad.current;
     const loadBorderCrossings = !borderCrossingsRef.current || !isInitialLoad.current;
 
