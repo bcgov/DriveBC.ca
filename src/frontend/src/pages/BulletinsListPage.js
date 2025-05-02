@@ -88,7 +88,7 @@ export default function BulletinsListPage() {
   const isBulletinsEmpty = bulletins?.length === 0;
 
   return (
-    <div className='bulletins-page'>
+    <div className='bulletins-page cms-page'>
       {showNetworkError &&
         <NetworkErrorPopup />
       }

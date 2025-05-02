@@ -12,7 +12,6 @@ import * as slices from '../slices';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAngleDown,
-  faBarsSort,
   faRoute,
   faXmark,
   faFlag
@@ -20,6 +19,7 @@ import {
 import {
   faArrowUp,
   faArrowDown,
+  faBarsSort,
   faRoute as faRouteEmpty
 } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
@@ -28,11 +28,10 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
-import { CMSContext } from '../App';
+import { CMSContext, MapContext, HeaderHeightContext } from '../App';
 import { filterAdvisoryByRoute } from "../Components/map/helpers";
 import { getAdvisories, markAdvisoriesAsRead } from '../Components/data/advisories';
 import { getEvents, getEventDetails } from '../Components/data/events';
-import { MapContext } from '../App.js';
 import { defaultSortFn, routeAtSortFn, routeOrderSortFn, severitySortFn } from '../Components/events/functions';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
@@ -100,6 +99,7 @@ export default function EventsListPage() {
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
   const { mapContext } = useContext(MapContext);
+  const { headerHeightContext, setHeaderHeightContext } = useContext(HeaderHeightContext);
 
   // States
   const [sortingKey, setSortingKey] = useState(selectedRoute && selectedRoute.routeFound ? 'route_order' : (localStorage.getItem('sorting-key')? localStorage.getItem('sorting-key') : 'severity_desc'));
@@ -142,6 +142,7 @@ export default function EventsListPage() {
   const eventsInViewport = useRef({});
 
   // Media queries
+  const smallScreen = useMediaQuery('only screen and (max-width : 575px)');
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
   const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
@@ -538,7 +539,7 @@ export default function EventsListPage() {
         </PageHeader>
 
         <Container className="container--sidepanel">
-          { xXlargeScreen &&
+          { !smallScreen &&
             <div className="container--sidepanel__left">
               <RouteSearch showFilterText={true} showSpinner={showSpinner} onShowSpinnerChange={setShowSpinner}/>
               <Advisories advisories={filteredAdvisories} selectedRoute={selectedRoute} />
@@ -546,62 +547,63 @@ export default function EventsListPage() {
           }
 
           <div className="container--sidepanel__right">
-            <div className="controls-container">
-              { !xXlargeScreen &&
-                <Button
-                  className={`findRoute-btn ${(selectedRoute && selectedRoute.routeFound) ? 'routeFound' : ''}`}
-                  variant="outline-primary"
-                  aria-label={(selectedRoute && selectedRoute.routeFound)? 'Edit route' : 'Find route'}
-                  onClick={() => setOpenSearchOverlay(!openSearchOverlay)}>
-                    <FontAwesomeIcon icon={(selectedRoute && selectedRoute.routeFound) ? faRoute : faRouteEmpty } />
-                    {(selectedRoute && selectedRoute.routeFound)? 'Edit route' : 'Find route'}
-                </Button>
-              }
+            <div className={`sticky-filters ${smallScreen ? 'mobile' : ''}`} style={{ top: `${headerHeightContext + 10}px` }}>
+              <div className="controls-group">
+                <div className="controls-container">
+                  <div className="sort">
+                    <Dropdown>
+                      {!smallScreen && <span className="sort-text">Sort: </span>}
+                      <Dropdown.Toggle variant="outline-primary" disabled={selectedRoute && selectedRoute.routeFound} className={smallScreen ? 'filter-option-btn' : ''}>
+                        {!smallScreen ?
+                          <React.Fragment>
+                            {getSortingDisplay(sortingKey)}
+                            <FontAwesomeIcon icon={faAngleDown} />
+                          </React.Fragment>
+                          :
+                          <React.Fragment>
+                            <span className="sr-only" aria-hidden="false">Sorting options</span>
+                            <FontAwesomeIcon icon={faBarsSort} />
+                            <span className="mobile-btn-text">Sort</span>
+                          </React.Fragment>}
+                      </Dropdown.Toggle>
 
-                <Dropdown className="sorting">
-                  {xXlargeScreen && <span className="sort-text">Sort: </span>}
-                  <Dropdown.Toggle variant="outline-primary" disabled={selectedRoute && selectedRoute.routeFound}>
-                    {xXlargeScreen ?
-                      <React.Fragment>
-                        {getSortingDisplay(sortingKey)}
-                        <FontAwesomeIcon icon={faAngleDown} />
-                      </React.Fragment>
-                      :
-                      <React.Fragment>
-                        <span className="sr-only" aria-hidden="false">Sorting options</span>
-                        <FontAwesomeIcon icon={faBarsSort} />
-                      </React.Fragment>}
-                  </Dropdown.Toggle>
+                      <Dropdown.Menu align="end" flip={false}>
+                        {getSortingList()}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </div>
 
-                  <Dropdown.Menu align={largeScreen ? 'end' : 'start'} flip={false}>
-                    {getSortingList()}
-                  </Dropdown.Menu>
-                </Dropdown>
+                  <div className="tools-container">
+                    <span className="filters-text">Filters{!smallScreen && ':'} </span>
+                    <div className="type filter-option-btn">
 
-              <div className="tools-container">
-                {xXlargeScreen && <span className="filters-text">Filters: </span>}
-
-                <Filters
-                  callback={toggleEventCategoryFilter}
-                  disableFeatures={true}
-                  enableRoadConditions={false}
-                  enableChainUps={true}
-                  textOverride={'List'}
-                  isDelaysPage={true}
-                />
-                {!xXlargeScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
-                  <Button
-                    className={'advisories-btn'}
-                    aria-label="open advisories list"
-                    onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
-                    <span className="advisories-title">
-                      <FontAwesomeIcon icon={faFlag} />
-                    </span>
-                    <span className="advisories-count">{filteredAdvisories.length}</span>
-                  </Button>
-                }
+                      <Filters
+                        callback={toggleEventCategoryFilter}
+                        disableFeatures={true}
+                        enableRoadConditions={false}
+                        enableChainUps={true}
+                        textOverride={'List'}
+                        iconOverride={true}
+                        isDelaysPage={true}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+
+            {smallScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
+              <Button
+                className={'advisories-btn'}
+                aria-label="open advisories list"
+                onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
+                <span className="advisories-title">
+                  <FontAwesomeIcon icon={faFlag} />
+                  Route advisories
+                </span>
+                <span className="advisories-count">{filteredAdvisories.length}</span>
+              </Button>
+            }
 
             <PollingComponent runnable={() => setLoadData(true)} interval={30000} />
 
@@ -665,7 +667,7 @@ export default function EventsListPage() {
         <Footer />
       </div>
 
-      {!xXlargeScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
+      {smallScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
         <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}>
           <button
             className="close-panel close-overlay"
@@ -679,7 +681,7 @@ export default function EventsListPage() {
         </div>
       }
 
-      {!xXlargeScreen &&
+      {smallScreen &&
         <div className={`overlay search-overlay ${openSearchOverlay ? 'open' : ''}`}>
           <button
             className="close-overlay"
