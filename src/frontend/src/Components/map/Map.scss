@@ -53,20 +53,17 @@
 
     .side-panel {
       height: 100%;
+      width: 390px;
       background-color: white;
       flex: 0;
-      min-width: 0px;
-      min-height: 0%;
       transition: min-width 0.25s ease-in-out;
-      overflow-y: hidden;
-      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       position: relative;
       z-index: 10;
 
       @media (max-width: 767px) {
-        transition: min-height 0.25s ease-in-out;
+        transition: height 0.25s ease-in-out;
         order: 2;
       }
 
@@ -82,34 +79,19 @@
         }
 
         @media (max-width: 767px) {
-          min-width: 100%;
-          min-height: 50%;
-
-          .panel-content {
-            min-width: 100%;
-          }
+          width: 100%;
+          max-height: 50%;
         }
 
         &:has(.selected) {
           @media (max-width: 767px) {
-            min-height: fit-content;
+            height: auto;
             margin-top: -8px;
             border: 2px solid $Focus;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
           }
         }
-      }
-
-      &.maximized {
-        @media (max-width: 767px) {
-          min-height: 100%;
-          overflow: auto;
-        }
-      }
-
-      .panel-content {
-        flex: 1;
       }
     }
 
