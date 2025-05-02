@@ -51,6 +51,7 @@ button.btn.open-filters {
 
       .tab-pane > div {
         height: calc(100vh - 222px);
+        max-height: fit-content;
       }
     }
   }
