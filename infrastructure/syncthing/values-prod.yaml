@@ -11,11 +11,10 @@ deployment:
   replicas: 1 # Should never exceed 1 as the Syncthing PVC is ReadWriteOnce
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 50m
+      memory: 275Mi
     limits:
-      cpu: 200m
-      memory: 256Mi
+      memory: 375Mi
   volumeMounts: # List of volume mounts for the deployment. Can add as many as needed.
     - name: prod-drivebc-syncthing
       mountPath: /var/syncthing

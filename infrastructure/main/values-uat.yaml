@@ -21,7 +21,7 @@ django:
     resources:
       requests:
         cpu: 100m
-        memory: 300Mi
+        memory: 250Mi
       limits:
         memory: 500Mi
     env:
@@ -66,10 +66,10 @@ tasks:
   deployment:
     resources:
       requests:
-        cpu: 200m
-        memory: 300Mi
+        cpu: 150Mi
+        memory: 350Mi
       limits:
-        memory: 1000Mi
+        memory: 500Mi
     volumes:
       claimName: uat-drivebc-django-app-images
     env:
@@ -129,8 +129,8 @@ static:
   autoscaling:
     enabled: true
     minReplicas: 3
-    maxReplicas: 10
-    targetCPUUtilizationPercentage: 200
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 400 # We want to scale UP (use more CPU) rather than out (use more pods) for static if possible to reduce backend load since caching is done on each individual pod.
   route:
     host: uat-drivebc.apps.gold.devops.gov.bc.ca
     iprestricted: true  #Set to true if you want to limit IP's the the addresses in the ipallowlist 
@@ -140,7 +140,7 @@ static:
       extravanityurlhost: # PROD ONLY: Set to drivebc.ca. This will create an extra vanityurl route that has a redirect to www.drivebc.ca
     redirecthosts: # Mostly for the prod site. These will all redirect to www.drivebc.ca
   logpvc:
-    storage: 2Gi
+    storage: 6Gi
   podDisruptionBudget: 
     enabled: true 
     minAvailable: 1
@@ -179,7 +179,7 @@ openshiftjobs:
     ziplogs:
       name: ziplogs
       enabled: true
-      schedule: '30 * * * *'
+      schedule: '5 * * * *'
       deployment:
         resources:
           requests:

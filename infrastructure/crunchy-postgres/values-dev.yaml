@@ -48,9 +48,9 @@ crunchy:
 
     requests:
       cpu: 50m
-      memory: 256Mi
+      memory: 500Mi
     limits:
-      memory: 512Mi
+      memory: 750Mi
     replicaCertCopy:
       requests:
         cpu: 1m
