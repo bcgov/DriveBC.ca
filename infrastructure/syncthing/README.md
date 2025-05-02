@@ -97,8 +97,8 @@ Now we can setup the syncing of folders:
 ## Upgrades
 From time to time you may need to change things like the Syncthing Version, oAuthProxy version, resources, PVC size, etc. 
 In that case, update the values file for your environment and run
-- Gold: `helm upgrade dev-drivebc-syncthing -f ./syncthing/values-dev.yaml ./syncthing`
-- GoldDR: `helm install dev-drivebc-syncthing -f ./syncthing/values-dev.yaml -f ./syncthing/values-dev-dr.yaml ./syncthing`
+- Gold: `helm upgrade ENV-drivebc-syncthing -f ./syncthing/values-ENV.yaml ./syncthing`
+- GoldDR: `helm upgrade ENV-drivebc-syncthing -f ./syncthing/values-ENV.yaml -f ./syncthing/values-ENV-dr.yaml ./syncthing`
 
 
 ## Sysdig

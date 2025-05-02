@@ -47,10 +47,10 @@ crunchy:
       walStorage: 2Gi
 
     requests:
-      cpu: 50m
-      memory: 256Mi
+      cpu: 100m
+      memory: 650Mi
     limits:
-      memory: 512Mi
+      memory: 1Gi
     replicaCertCopy:
       requests:
         cpu: 1m

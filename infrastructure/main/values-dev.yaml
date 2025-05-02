@@ -179,7 +179,7 @@ openshiftjobs:
     ziplogs:
       name: ziplogs
       enabled: true
-      schedule: '30 * * * *'
+      schedule: '5 * * * *'
       deployment:
         resources:
           requests:
