@@ -16,7 +16,8 @@ import {
   restStopTruckClosedStyles,
   routeStyles,
   borderCrossingStyles,
-  regionalWarningStyles
+  regionalWarningStyles,
+  advisoryStyles
 } from '../../data/featureStyleDefinitions.js';
 
 // Click states
@@ -125,6 +126,11 @@ export const resetClickedStates = (
       }
       case 'borderCrossing':
         clickedFeatureRef.current.setStyle(borderCrossingStyles['static']);
+        clickedFeatureRef.current.set('clicked', false);
+        updateClickedFeature(null);
+        break;
+      case 'advisory':
+        clickedFeatureRef.current.setStyle(advisoryStyles['static']);
         clickedFeatureRef.current.set('clicked', false);
         updateClickedFeature(null);
         break;
@@ -345,6 +351,26 @@ const borderCrossingClickHandler = (
   updateClickedFeature(feature);
 };
 
+const advisoryClickHandler = (
+  feature,
+  clickedFeatureRef,
+  updateClickedFeature,
+  isCamDetail,
+) => {
+  // reset previous clicked feature
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+    isCamDetail,
+  );
+
+  // set new clicked ferry feature
+  feature.setStyle(advisoryStyles['active']);
+  feature.setProperties({ clicked: true }, true);
+  updateClickedFeature(feature);
+};
+
 export const pointerClickHandler = (
   features,
   clickedFeatureRef,
@@ -505,6 +531,21 @@ export const pointerClickHandler = (
           updateClickedFeature,
         );
         return;
+
+      case 'advisory':
+        trackEvent(
+          'click',
+          'map',
+          'advisory',
+          'selected advisory',
+        );
+        advisoryClickHandler(
+          clickedFeature,
+          clickedFeatureRef,
+          updateClickedFeature,
+        );
+        return;
+
       default:
         return;
     }

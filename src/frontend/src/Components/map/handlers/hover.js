@@ -10,7 +10,8 @@ import {
   restStopTruckClosedStyles,
   routeStyles,
   borderCrossingStyles,
-  regionalWarningStyles
+  regionalWarningStyles,
+  advisoryStyles
 } from '../../data/featureStyleDefinitions.js';
 import {
   setEventStyle
@@ -92,6 +93,9 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
           break;
         case 'borderCrossing':
           hoveredFeature.setStyle(borderCrossingStyles['static']);
+          break;
+        case 'advisory':
+          hoveredFeature.setStyle(advisoryStyles['static']);
           break;
       }
     }
@@ -186,6 +190,11 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
       case 'borderCrossing':
         if (!targetFeature.getProperties().clicked) {
           targetFeature.setStyle(borderCrossingStyles['hover']);
+        }
+        return;
+      case 'advisory':
+        if (!targetFeature.getProperties().clicked) {
+          targetFeature.setStyle(advisoryStyles['hover']);
         }
         return;
     }
