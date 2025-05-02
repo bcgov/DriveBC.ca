@@ -1,5 +1,5 @@
 // React
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 // Redux
@@ -16,7 +16,6 @@ import {
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 
-// Internal imports
 import { shortenToOneDecimal } from "../Components/data/routes";
 import MapWrapper from '../Components/map/MapWrapper.js';
 
@@ -106,7 +105,7 @@ export default function MapPage() {
   // Main component
   return (
     <DndProvider options={HTML5toTouch}>
-      <div className="map-wrap">
+      <div className="map-page map-wrap">
         <MapWrapper referenceData={referenceData} />
       </div>
     </DndProvider>

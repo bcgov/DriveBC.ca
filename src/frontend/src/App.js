@@ -55,6 +55,7 @@ export const AuthContext = createContext(null);
 export const CamsContext = createContext(null);
 export const CMSContext = createContext();
 export const MapContext = createContext(null);
+export const HeaderHeightContext = createContext();
 
 let callingSession = false;
 
@@ -77,6 +78,7 @@ function App() {
   const [camsContext, setCamsContext] = useState({ displayLength: 21, setDisplayLength: (length) => {} });
   const [cmsContext, setCMSContext] = useState(getInitialCMSContext());
   const [mapContext, setMapContext] = useState(getInitialMapContext());
+  const [headerHeightContext, setHeaderHeightContext] = useState();
 
   // Effects
   useEffect(() => {
@@ -208,37 +210,39 @@ function App() {
         <CamsContext.Provider value={{ camsContext, setCamsContext }}>
           <AlertContext.Provider value={{ alertMessage, setAlertMessage }}>
             <CMSContext.Provider value={{ cmsContext, setCMSContext }}>
-              <div className="App">
-                <Header />
+              <HeaderHeightContext.Provider value={{ headerHeightContext, setHeaderHeightContext }}>
+                <div className="App" style={{ marginTop: `${headerHeightContext}px` }}>
+                  <Header />
 
-                <ScrollToTop />
+                  <ScrollToTop />
 
-                <Routes>
-                  <Route path="/" element={<MapPage />} />
-                  <Route path="/my-cameras" element={<SavedCamerasPage />} />
-                  <Route path="/my-routes" element={<SavedRoutesPage />} />
-                  <Route path="/cameras" element={<CamerasListPage />} />
-                  <Route path="/cameras/:id" element={<CameraDetailsPage />} />
-                  <Route path="/delays" element={<EventsListPage />} />
-                  <Route path="/advisories" element={<AdvisoriesListPage />} />
-                  <Route path="/advisories/:id/:subid?" element={<AdvisoryDetailsPage />} />
-                  <Route path="/bulletins" element={<BulletinsListPage />} />
-                  <Route path="/bulletins/:id/:subid?" element={<BulletinDetailsPage />} />
-                  <Route path="/account" element={<AccountPage />} />
-                  <Route path="/account-deactivated" element={<AccountDeactivatedPage />} />
-                  <Route path="/verify-email" element={<VerifyEmailPage />} />
-                  {/* Catch-all route for 404 errors */}
-                  <Route path="*" element={<NotFoundPage />} />
-                  <Route path="/problems" element={<ProblemsPage />} />
-                  <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
-                  <Route path="/highway-problem" element={<ReportRoadPage />} />
-                  <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />
-                </Routes>
+                  <Routes>
+                    <Route path="/" element={<MapPage />} />
+                    <Route path="/my-cameras" element={<SavedCamerasPage />} />
+                    <Route path="/my-routes" element={<SavedRoutesPage />} />
+                    <Route path="/cameras" element={<CamerasListPage />} />
+                    <Route path="/cameras/:id" element={<CameraDetailsPage />} />
+                    <Route path="/delays" element={<EventsListPage />} />
+                    <Route path="/advisories" element={<AdvisoriesListPage />} />
+                    <Route path="/advisories/:id/:subid?" element={<AdvisoryDetailsPage />} />
+                    <Route path="/bulletins" element={<BulletinsListPage />} />
+                    <Route path="/bulletins/:id/:subid?" element={<BulletinDetailsPage />} />
+                    <Route path="/account" element={<AccountPage />} />
+                    <Route path="/account-deactivated" element={<AccountDeactivatedPage />} />
+                    <Route path="/verify-email" element={<VerifyEmailPage />} />
+                    {/* Catch-all route for 404 errors */}
+                    <Route path="*" element={<NotFoundPage />} />
+                    <Route path="/problems" element={<ProblemsPage />} />
+                    <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
+                    <Route path="/highway-problem" element={<ReportRoadPage />} />
+                    <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />
+                  </Routes>
 
-                <Modal />
+                  <Modal />
 
-                <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
-              </div>
+                  <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
+                </div>
+              </HeaderHeightContext.Provider>
             </CMSContext.Provider>
           </AlertContext.Provider>
         </CamsContext.Provider>

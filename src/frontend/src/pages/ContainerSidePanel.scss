@@ -8,18 +8,22 @@
     padding-top: 24px;
   }
 
-  @media (min-width: 576px) {
+  @media (min-width: 768px) {
     flex-direction: row;
   }
 
   &__left {
     margin-right: 28px;
     padding-bottom: 24px;
-    width: 360px;
-    min-width: 360px;
-    position: sticky;
-    top: 82px;
+    width: 100%;
     align-self: flex-start;
+
+    @media (min-width: 768px) {
+      position: sticky;
+      top: 82px;
+      width: 360px;
+      min-width: 360px;
+    }
 
     @media (min-width: 1200px) {
       max-height: calc(100vh - 8vh);
@@ -118,6 +122,140 @@
   &__right {
     flex: 1 1 auto;
 
+    .sticky-filters {
+
+      &.mobile {
+        position: sticky;
+        z-index: 1;
+        top: 0;
+  
+        .controls-container {
+          .filters-text {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: $Grey80;
+          }
+          
+          .filter-option-btn {
+            display: flex;
+            flex-direction: column;
+            height: 42px;
+            width: 42px;
+            border: none;
+            padding: 0;
+            align-items: center;
+            justify-content: center;
+  
+            svg {
+              margin-top: 4px;
+              height: 16px;
+              width: 16px;
+            }
+          }
+        }
+      }
+      
+      .controls-group {
+        background-color: $Grey10;
+        padding: 4px 15px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+  
+        @media (min-width: 768px) {
+          padding: 8px;
+        }
+  
+        .controls-container {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          border-radius: 8px;
+  
+          @media (min-width: 768px) {
+            flex-direction: column;
+            align-items: flex-start;
+  
+            .camSearch-container {
+              margin-bottom: 12px;
+            }
+          }
+  
+          @media (min-width: 880px) {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+  
+            .camSearch-container {
+              margin-bottom: 0;
+            }
+          }
+  
+          .route-display-container {
+            display: flex;
+            align-items: center;
+  
+            @media (max-width: 767px) {
+              width: 100%;
+            }
+  
+            .routing-container {
+              position: relative;
+              padding: 0;
+  
+              @media (max-width: 767px) {
+                width: 100%;
+              }
+  
+              .swap-button {
+                position: absolute;
+                top: 22px;
+                right: -10px;
+              }
+            }
+          }
+  
+          .camSearch-container {
+            width: 100%;
+            margin-right: 20px;
+  
+            .rbt {
+              .rbt-input {
+                height: 36px;
+                font-size: 0.875rem;
+              }
+  
+              .clear-btn {
+                position: absolute;
+                top: 0;
+                right: 0;
+                background: none;
+                border: none;
+                font-size: 0.75rem;
+                padding: 0.75rem;
+              }
+            }
+  
+            @media (min-width: 768px) {
+              max-width: 400px;
+            }
+  
+            .rbt-menu {
+              display: none !important;
+            }
+          }
+        }
+      }
+
+      .mobile-btn-text {
+        font-size: 0.5rem;
+        margin-top: 4px;
+        
+        @media (min-width: 768px) {
+          display: none;
+        }
+      }
+    }
+
     .controls-container {
       justify-content: space-between;
 
@@ -134,11 +272,11 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-left: 16px;
+          margin-left: 8px;
           
-          @media (max-width: 1199px) {
+          @media (max-width: 575px) {
             padding: 0;
-            height: 36px;
+            height: 42px;
             width: 36px;
             border: none;
           }
@@ -165,6 +303,7 @@
           .btn-text {
             font-size: 0.875rem;
             margin-bottom: 0;
+            white-space: nowrap;
           }
 
           .dropdown-icon {
@@ -228,12 +367,12 @@
       height: 0;
       overflow: hidden;
       transition: height 0.2s ease-in-out;
-      margin-bottom: 16px;
 
       &.open {
         height: 36px;
         overflow: auto;
         transition: height 0.2s ease-in-out;
+        margin-top: 8px;
       }
 
       .rbt {

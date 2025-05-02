@@ -21,6 +21,11 @@
 
     &:last-of-type {
       margin-left: 12px;
+      margin-right: 10px;
+
+      @media (min-width: 576px) {
+        margin-right: 0;
+      }
     }
 
     button {

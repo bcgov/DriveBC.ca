@@ -53,7 +53,6 @@ import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
 import DistanceLabels from "../routing/DistanceLabels";
 import Filters from '../shared/Filters.js';
 import FilterTabs from './filter/FilterTabs';
-import RouteSearch from '../routing/RouteSearch.js';
 import NetworkErrorPopup from './errors/NetworkError';
 import ServerErrorPopup from './errors/ServerError';
 import StaleLinkErrorPopup from './errors/StaleLinkError';
@@ -774,19 +773,6 @@ export default function DriveBCMap(props) {
       }
 
       <div ref={mapElement} className="map">
-        {!isCamDetail && (
-          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
-            <RouteSearch
-              ref={routingContainerRef}
-              routeEdit={true}
-              showSpinner={showSpinner}
-              onShowSpinnerChange={setShowSpinner}
-              myLocation={myLocation}
-              mapRef={mapRef}
-              mapView={mapView}
-              resetClickedStates={() => resetClickedStates(null, clickedFeatureRef, updateClickedFeature)} />
-          </div>
-        )}
 
         {(!isCamDetail && smallScreen) && (
           <React.Fragment>

@@ -13,6 +13,7 @@ import {
   faTruckContainer,
   faLayerGroup
 } from '@fortawesome/pro-solid-svg-icons';
+import { faLayerGroup as faLayerGroupOutline } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -40,6 +41,7 @@ export default function Filters(props) {
     enableRoadConditions,
     enableChainUps,
     textOverride,
+    iconOverride,
     isCamDetail,
     referenceData,
     loadingLayers,
@@ -299,13 +301,14 @@ export default function Filters(props) {
     <div className="filters-component">
       <Button
         variant={isDelaysPage ? 'outline-primary' : 'primary'}
-        className={'map-btn open-filters' + (open ? ' open' : '')}
+        className={'map-btn open-filters' + (open ? ' open' : '') + (isDelaysPage ? ' filter-option-btn' : '')}
         aria-label="open filters options"
         onClick={() => {
           open ? setOpen(false) : setOpen(true) }
         }>
-        <FontAwesomeIcon icon={faLayerGroup} />
+        <FontAwesomeIcon icon={iconOverride ? faLayerGroupOutline : faLayerGroup } />
         <span className="filters-btn__text">{textOverride ? textOverride : 'Map Layers'}</span>
+        {isDelaysPage && <span className="mobile-btn-text">Type</span>}
       </Button>
 
       {open &&
