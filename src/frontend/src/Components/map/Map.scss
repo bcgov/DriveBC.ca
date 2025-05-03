@@ -65,17 +65,20 @@
       @media (max-width: 767px) {
         transition: height 0.25s ease-in-out;
         order: 2;
+        width: 100%;
+      }
+
+      .panel-content {
+        width: 390px;
+
+        @media (max-width: 767px) {
+          width: 100%;
+        }
       }
 
       &.open {
-        min-width: 390px;
-
-        .panel-content {
-          min-width: 390px;
-
-          .popup__content {
-            overflow-y: auto;
-          }
+        .popup__content {
+          overflow-y: auto;
         }
 
         @media (max-width: 767px) {
