@@ -279,9 +279,9 @@ export default {
       "line-color": "#d1d7dc"
     },
   },
-  "/ TRANSPORTATION/DRA/Large/Resource Roads/Line": {
-    paint: {
-      "line-color": "#d1d7dc"
+  "TRANSPORTATION/DRA/Large/Resource Roads/Line": {
+    layout: {
+      "visibility": "none"
     },
   },
   "TRANSPORTATION/DRA/Overpasses/Ramp/Line": {
@@ -373,11 +373,12 @@ export default {
     },
   },
   "TRANSPORTATION/DRA/Large/Resource Roads/Fill": {
-    "minzoom": "14",
-    paint: {
-      "line-color": "#d9dfe4"
+    // "minzoom": "14",
+    layout: {
+      "visibility": "none"
     },
   },
+
   "TRANSPORTATION/DRA/Overpasses/Resource/Fill": {
     paint: {
       "line-color": "#d9dfe4"
@@ -433,10 +434,42 @@ export default {
     "visibility": "none"
   },
 },
-
-"TRANSPORTATION/DRA/Large/Resource Roads/Line": {
-  "minzoom": "14" 
+"TRANSPORTATION/DRA/Large/Trail": {
+  layout: {
+    "visibility": "none"
+  },  
 },
+"TRANSPORTATION/DRA/Large/Trail Recreation": {
+  layout: {
+    "visibility": "none"
+  },  
+},
+"TRANSPORTATION/DRA Roads (L)/Resource Roads/0": {
+  layout: {
+    "visibility": "none"
+  },
+},
+"TRANSPORTATION/DRA Roads (L)/Resource Roads/1": {
+  layout : {
+    "visibility": "none"
+  },
+},
+"TRANSPORTATION/DRA/Seasonal/Large/Fill": {
+  layout: {
+    "visibility": "none"
+  },
+},
+"TRANSPORTATION/DRA/Seasonal/Large/Dash": {
+  layout: {
+    "visibility": "none"
+  },
+},
+"TRANSPORTATION/DRA/Seasonal/Medium/Line": {
+  layout: {
+    "visibility": "none"
+  },
+},
+
 
   merge,
 };
