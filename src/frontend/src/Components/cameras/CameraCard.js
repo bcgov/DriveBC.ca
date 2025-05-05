@@ -34,6 +34,7 @@ import trackEvent from '../shared/TrackEvent.js';
 
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import parse from "html-react-parser";
 
 export default function CameraCard(props) {
   /* Setup */
@@ -99,7 +100,7 @@ export default function CameraCard(props) {
 
   }, [cameraData]);
 
-  useEffect(() => { 
+  useEffect(() => {
     setCamera(cameraData);
   }, [cameraData]);
 
@@ -383,7 +384,7 @@ export default function CameraCard(props) {
         }
 
         { showLoader? (<div><Skeleton height={20}/><Skeleton width={210} height={8} /><Skeleton width={246} height={8} /><Skeleton width={261} height={8} /></div>) : <a className="camera-name bold" onClick={handleClick} onKeyDown={handleKeyDown}>{camera.name}</a>}
-        { showLoader? (<Skeleton />) : <p className="label">{camera.caption}</p>}
+        { showLoader? (<Skeleton />) : <p className="label">{parse(camera.caption)}</p>}
 
       </div>
 
