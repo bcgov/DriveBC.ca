@@ -596,7 +596,7 @@ export default function EventsListPage() {
               <Button
                 className={'advisories-btn'}
                 aria-label="open advisories list"
-                onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
+                onClick={() => setOpenAdvisoriesOverlay(true)}>
                 <span className="advisories-title">
                   <FontAwesomeIcon icon={faFlag} />
                   Route advisories
@@ -674,7 +674,7 @@ export default function EventsListPage() {
             aria-label={`${openAdvisoriesOverlay ? 'close overlay' : ''}`}
             aria-hidden={`${openAdvisoriesOverlay ? false : true}`}
             tabIndex={`${openAdvisoriesOverlay ? 0 : -1}`}
-            onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
+            onClick={() => {if (openAdvisoriesOverlay) setOpenAdvisoriesOverlay(false)}}>
             <FontAwesomeIcon icon={faXmark} />
           </button>
           <AdvisoriesPanel advisories={advisories} openAdvisoriesOverlay={openAdvisoriesOverlay} />
