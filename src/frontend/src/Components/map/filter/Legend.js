@@ -5,6 +5,7 @@ import React from 'react';
 // Major delays
 import closuresActiveIcon from '../../../images/mapIcons/closure-active.png';
 import genericDelaysMajorStaticIcon from '../../../images/mapIcons/incident-major-static.png';
+import constructionsMajorStaticIcon from '../../../images/mapIcons/delay-major-static.png';
 import futureEventsMajorStaticIcon from '../../../images/mapIcons/future-event-major-static.png';
 
 // Minor delays
@@ -95,6 +96,13 @@ export default function Legend() {
           genericDelaysMajorStaticIcon,
           'Incident',
           'An unexpected occurrence on the road that contributes to major delays.',
+          'major'
+        )}
+
+        {getLegendItem(
+          constructionsMajorStaticIcon,
+          'Delay',
+          'A planned for and expected delay that’s typically part of anticipated road work or construction.',
           'major'
         )}
 
