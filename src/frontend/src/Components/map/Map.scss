@@ -84,7 +84,8 @@
 
         &:has(.selected) {
           @media (max-width: 767px) {
-            height: auto;
+            min-height: fit-content;
+            max-height: 30vh;
             margin-top: -8px;
             border: 2px solid $Focus;
             border-top-left-radius: 8px;

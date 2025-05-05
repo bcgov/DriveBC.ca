@@ -1,1 +1,31 @@
 @import "../../styles/variables";
+
+
+.route-object-list {
+  .btn.back-to-routes {
+    background-color: $Surface-tinted;
+    color: $Type-Link;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 4px;
+    border: 1px solid $Type-Link;
+    margin: 14px 0 0 14px;
+
+    @media (min-width: 768px) {
+      margin: 0 0 14px 0;
+    }
+
+    &:hover {
+      background: $Type-Link;
+      color: $White;
+    }
+
+    svg {
+      margin-right: 8px;
+    }
+  }
+
+  .route-details {
+    max-height: calc(100vh - 210px);
+  }
+}
