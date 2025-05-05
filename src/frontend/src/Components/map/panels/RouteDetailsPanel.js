@@ -59,7 +59,7 @@ export default function RouteDetailsPanel() {
         </div>
       }
 
-      <div className="popup__content">
+      <div className="popup__content route-object-list">
         <RouteObjectList routeDetailIndex={routeDetailIndex} setRouteDetailIndex={setRouteDetailIndex} />
       </div>
     </div>

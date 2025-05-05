@@ -21,7 +21,10 @@
 }
 
 .route-details {
-  margin-bottom: 1rem;
+
+  & + .route-details {
+    margin-top: 16px;
+  }
 
   .form-check-input {
     position: static;
@@ -183,9 +186,13 @@
     }
   }
 
-  .route-items {
-    margin-top: 16px;
+  .route-items-text {
+    margin-top: 12px;
+  }
 
+  .route-items {
+    overflow-y: auto;
+    
     .route-item {
       padding: 4px 0;
 

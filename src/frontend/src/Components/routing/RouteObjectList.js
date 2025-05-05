@@ -256,12 +256,12 @@ export default function RouteObjectList(props) {
   // Main components
   return selectedRoute && (
     <React.Fragment>
-      <Button variant="primary-outline" className="btn-outline-primary" onClick={() => setRouteDetailIndex(null)}>
+      <Button variant="primary-outline" className="btn-outline-primary back-to-routes" onClick={() => setRouteDetailIndex(null)}>
         <FontAwesomeIcon icon={faArrowLeft}/>
         Routes
       </Button>
 
-      <div className={`route-details selected ${largeScreen ? 'mobile' : ''}`}>
+      <div className={`route-details selected ${largeScreen ? '' : 'mobile'}`}>
         <div className="route-title">
           <div className="space-between-row route-tools">
             <span className={`route-index selected`}>{(routeDetailIndex === 0) ? 'A' : 'B'}</span>
@@ -288,8 +288,9 @@ export default function RouteObjectList(props) {
           }
         </div>
 
+
+        <p className="route-items-text">In order of appearance along your route:</p>
         <div className="route-items">
-          <p>In order of appearance along your route:</p>
           {objList &&
             getObjectList(objList)
           }
