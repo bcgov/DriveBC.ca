@@ -21,6 +21,7 @@ import {
   faFlag,
   faLocationDot,
   faPencil,
+  faChevronRight
 } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline,
   faCheck,
@@ -53,7 +54,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 export default function RouteDetails(props) {
   /* Setup */
   // Props
-  const { route, isPanel, setRouteFavCams, setRouteLabel, index, onMobile } = props;
+  const { route, isPanel, setRouteFavCams, setRouteLabel, index, onMobile, setRouteDetailIndex } = props;
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -652,6 +653,16 @@ export default function RouteDetails(props) {
             </div>
           }
           {(!eventCount || ferryCount === null) && <Skeleton height={64}/>}
+
+          <Button
+            variant="light"
+            className='view-details-btn'
+            onClick={() => {if (setRouteDetailIndex) setRouteDetailIndex(index)}}
+            onKeyPress={() => {if (setRouteDetailIndex) setRouteDetailIndex(index)}}>
+
+            View Details
+            <FontAwesomeIcon icon={faChevronRight}/>
+          </Button>
         </div>
 
         {!isPanel &&
