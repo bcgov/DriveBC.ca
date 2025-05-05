@@ -86,7 +86,7 @@ export default function Legend() {
       <div className={'legend__group'}>
         {getLegendItem(
           closuresActiveIcon,
-          'Closure',
+          'Closures',
           'Travel is not possible in one or both directions on this road. Find an alternate route or detour if possible.',
           'major'
         )}
@@ -207,7 +207,7 @@ export default function Legend() {
 
         {getLegendItem(
           hefIconStatic,
-          'Regional',
+          'High elevation',
           'A special weather forecast, provided by Environment Canada, specifically for high mountain passes that can experience drastic changes in weather compared to the surrounding areas.  ',
           'weather'
         )}
@@ -218,7 +218,7 @@ export default function Legend() {
       <div className={'legend__group'}>
         {getLegendItem(
           chainUpsStaticIcon,
-          'Regional',
+          'Chain-ups in effect',
           'Segments of the highway that require commercial vehicles over 11,794 kg to have chains on in order to use the highway.',
           'chain-up'
         )}
