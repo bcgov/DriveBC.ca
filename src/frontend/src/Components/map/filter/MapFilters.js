@@ -1,5 +1,5 @@
 // React
-import React, { useState, useContext, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 
 // Redux
 import { memoize } from 'proxy-memoize';
@@ -15,15 +15,14 @@ import Spinner from 'react-bootstrap/Spinner';
 // Internal imports
 import trackEvent from '../../shared/TrackEvent';
 
-// Components and functions
-import { MapContext } from '../../../App.js';
-
 // Styling
 import './MapFilters.scss';
 
 export default function MapFilters(props) {
   // Context
-  const { mapContext, setMapContext } = useContext(MapContext);
+  const [mapContext, setMapContext] = useState(() => {
+    return JSON.parse(localStorage.getItem('mapContext'));
+  });
 
   // Props
   const {
