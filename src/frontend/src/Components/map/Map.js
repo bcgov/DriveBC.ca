@@ -712,7 +712,7 @@ export default function DriveBCMap(props) {
       (searchedRoutes && searchedRoutes.length && !isCamDetail)
     ) && !disablePanel;
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
-  const landscape = useMediaQuery('only screen and (orientation: landscape)');
+  const landscape = useMediaQuery('only screen and (orientation: landscape) and (hover: none) and (pointer: coarse)');
 
 
   // Reset search params when panel is closed
