@@ -34,14 +34,19 @@ import { filterAdvisoryByRoute } from "../../map/helpers";
 
 export default function Header() {
   /* Setup */
+  // Misc
+  const xXlargeScreen = useMediaQuery('only screen and (min-width : 1400px)');
+  const landscape = useMediaQuery('only screen and (orientation: landscape) and (hover: none) and (pointer: coarse)');
+  const largeScreen = useMediaQuery('only screen and (min-width : 576px)');
+  const smallScreen = !landscape && !largeScreen;
 
   // Check current page location
   const location = useLocation();
   const hideSearch = ['/advisories', '/bulletins'].some(path => location.pathname.startsWith(path));
-  
+
   // Redux
   const dispatch = useDispatch();
-  const { advisories, filteredAdvisories, bulletins, 
+  const { advisories, filteredAdvisories, bulletins,
     routes: { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes }
   } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
@@ -105,8 +110,10 @@ export default function Header() {
   }, [cmsContext]);
 
   useEffect(() => {
-      setHeaderHeightContext(document.querySelector('.header').offsetHeight);
-  }, [openSearch, showRouteLocation, selectedRoute,hideSearch]);
+
+
+    setHeaderHeightContext(smallScreen ? document.querySelector('.header').offsetHeight : 58);
+  }, [openSearch, showRouteLocation, selectedRoute, hideSearch]);
 
   useEffect(() => {
     if (searchLocationFrom.length && searchLocationTo.length) {
@@ -141,8 +148,6 @@ export default function Header() {
   }
 
   /* Rendering */
-  const smallScreen = useMediaQuery('only screen and (max-width : 575px)');
-  const xXlargeScreen = useMediaQuery('only screen and (min-width : 1400px)');
 
   // Sub components
   const getNavLink = (title, count) => {
