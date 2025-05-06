@@ -34,7 +34,7 @@
       position: relative;
       width: 100%;
 
-      @media (min-width: 768px), (orientation: landscape) {
+      @media (min-width: 576px), (orientation: landscape) {
         width: 340px;
       }
 

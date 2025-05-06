@@ -53,6 +53,7 @@ import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
 import DistanceLabels from "../routing/DistanceLabels";
 import Filters from '../shared/Filters.js';
 import FilterTabs from './filter/FilterTabs';
+import RouteSearch from '../routing/RouteSearch.js';
 import NetworkErrorPopup from './errors/NetworkError';
 import ServerErrorPopup from './errors/ServerError';
 import StaleLinkErrorPopup from './errors/StaleLinkError';
@@ -710,7 +711,9 @@ export default function DriveBCMap(props) {
     (!!clickedFeature ||
       (searchedRoutes && searchedRoutes.length && !isCamDetail)
     ) && !disablePanel;
-  const smallScreen = useMediaQuery('only screen and (max-width: 767px)');
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+  const landscape = useMediaQuery('only screen and (orientation: landscape)');
+
 
   // Reset search params when panel is closed
   useEffect(() => {
@@ -727,7 +730,7 @@ export default function DriveBCMap(props) {
   /* Rendering */
   return (
     <div className={`map-container ${isCamDetail ? 'preview' : ''}`}>
-      {smallScreen && openTabs &&
+      {(smallScreen || landscape ) && openTabs &&
         <div className='mobile-mask'></div>
       }
 
@@ -773,6 +776,19 @@ export default function DriveBCMap(props) {
       }
 
       <div ref={mapElement} className="map">
+        {!isCamDetail && !smallScreen && (
+          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
+            <RouteSearch
+              ref={routingContainerRef}
+              routeEdit={true}
+              showSpinner={showSpinner}
+              onShowSpinnerChange={setShowSpinner}
+              myLocation={myLocation}
+              mapRef={mapRef}
+              mapView={mapView}
+              resetClickedStates={() => resetClickedStates(null, clickedFeatureRef, updateClickedFeature)} />
+          </div>
+        )}
 
         {(!isCamDetail && smallScreen) && (
           <React.Fragment>

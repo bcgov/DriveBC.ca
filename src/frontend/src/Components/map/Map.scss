@@ -19,7 +19,6 @@
 
 .map-wrap {
   position: absolute;
-  top: 0;
   bottom: 0;
   width: 100%;
 
@@ -130,12 +129,6 @@
         }
       }
 
-      .routing {
-        @media (orientation: landscape) and (max-width: 767px) {
-          width: fit-content;
-        }
-      }
-
       .ol-zoom .ol-zoom-out {
         margin-top: 200px;
       }
@@ -149,7 +142,7 @@
         padding: 2px;
         position: absolute;
 
-        @media (min-width: 912px) {
+        @media (min-width: 576px) {
           right: 1rem;
           bottom: 1rem;
         }
@@ -157,6 +150,11 @@
         @media (min-width: 992px) {
           right: 4rem;
           bottom: 1rem;
+        }
+
+        @media (orientation: landscape) {
+          right: 1rem;
+          bottom: 4rem;
         }
       }
 
@@ -242,7 +240,12 @@
         right: 1rem;
         z-index: 5;
 
-        @media (max-width: 911px) {
+        @media (max-width: 575px) {
+          top: initial;
+          bottom: 1rem;
+        }
+
+        @media (orientation: landscape) {
           top: initial;
           bottom: 1rem;
         }
