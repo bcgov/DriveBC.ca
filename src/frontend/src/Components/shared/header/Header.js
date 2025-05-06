@@ -105,7 +105,7 @@ export default function Header() {
   }, [cmsContext]);
 
   useEffect(() => {
-      setHeaderHeightContext(document.querySelector('.navbar').offsetHeight);
+      setHeaderHeightContext(document.querySelector('.header').offsetHeight);
   }, [openSearch, showRouteLocation, selectedRoute,hideSearch]);
 
   useEffect(() => {

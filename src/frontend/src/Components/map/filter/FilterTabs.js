@@ -48,7 +48,7 @@ export default function FilterTabs(props) {
 
   // Media queries
   const smallScreen = useMediaQuery('only screen and (max-width : 575px)');
-  const landscape = useMediaQuery('only screen and (orientation: landscape)');
+  const landscape = useMediaQuery('only screen and (orientation: landscape) and (hover: none) and (pointer: coarse)');
 
   // Rendering
   // Main Component

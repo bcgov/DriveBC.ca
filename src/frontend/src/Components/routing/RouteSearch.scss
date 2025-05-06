@@ -34,7 +34,11 @@
       position: relative;
       width: 100%;
 
-      @media (min-width: 576px), (orientation: landscape) {
+      @media (min-width: 576px) {
+        width: 340px;
+      }
+
+      @media (orientation: landscape) and (hover: none) and (pointer: coarse) {
         width: 340px;
       }
 
