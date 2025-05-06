@@ -35,6 +35,10 @@
 		.header {
 			width: 100%;
 
+			@media (min-width: 1400px) {
+				width: auto;
+			}
+
 			.search-trigger {
 				margin: 12px 18px;
 				height: 36px;

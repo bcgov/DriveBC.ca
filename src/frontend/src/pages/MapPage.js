@@ -12,6 +12,10 @@ import {
   updateSearchLocationTo
 } from "../slices";
 
+
+// Internal imports
+import { HeaderHeightContext } from '../App.js';
+
 // External Imports
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
@@ -101,11 +105,14 @@ export default function MapPage() {
     }
   }
 
+  const { headerHeightContext, setHeaderHeightContext } = useContext(HeaderHeightContext);
+
+
   /* Rendering */
   // Main component
-  return (
+  return ( 
     <DndProvider options={HTML5toTouch}>
-      <div className="map-page map-wrap">
+      <div className="map-page map-wrap" style={{ top: `${headerHeightContext}px` }}>
         <MapWrapper referenceData={referenceData} />
       </div>
     </DndProvider>
