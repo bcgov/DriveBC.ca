@@ -248,6 +248,12 @@ export default function RouteDetails(props) {
     }
   }, [ferries]);
 
+  useEffect(() => {
+    if (showSavePopup) {
+      setNickName(getDefaultLabel());
+    }
+  }, [showSavePopup]);
+
   /* Helpers */
   const toggleAuthModal = (action) => {
     setAuthContext((prior) => {
@@ -537,7 +543,7 @@ export default function RouteDetails(props) {
             <p className="route-distance">{Math.round(route.distance)} km</p>
           </div>
 
-          {route.label &&
+          {route.label && route.label !== getDefaultLabel() &&
             <p className="route-alt-name">{getDefaultLabel()}</p>
           }
         </div>
