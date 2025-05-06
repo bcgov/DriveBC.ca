@@ -112,7 +112,7 @@ export default function MapPage() {
   // Main component
   return ( 
     <DndProvider options={HTML5toTouch}>
-      <div className="map-page map-wrap" style={{ top: `${headerHeightContext}px` }}>
+      <div className="map-page map-wrap" style={{ height: `calc(100vh - ${headerHeightContext}px` }}>
         <MapWrapper referenceData={referenceData} />
       </div>
     </DndProvider>

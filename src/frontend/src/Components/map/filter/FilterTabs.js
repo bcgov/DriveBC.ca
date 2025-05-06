@@ -2,9 +2,9 @@
 import React, {
   useRef,
   useEffect,
-  useState
+  useState,
+  useContext
 } from 'react';
-
 
 // External imports
 import Tab from 'react-bootstrap/Tab';
@@ -17,10 +17,12 @@ import {
   faXmark
 } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
+import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
 import MapFilters from './MapFilters';
 import Legend from "./Legend";
+import { HeaderHeightContext } from  '../../../App.js';
 
 // Styling
 import './FilterTabs.scss';
@@ -42,10 +44,16 @@ export default function FilterTabs(props) {
     setOpen
   } = props;
 
+  const { headerHeightContext, setHeaderHeightContext } = useContext(HeaderHeightContext);
+
+  // Media queries
+  const smallScreen = useMediaQuery('only screen and (max-width : 575px)');
+  const landscape = useMediaQuery('only screen and (orientation: landscape)');
+
   // Rendering
   // Main Component
   return (
-    <div className={'filters-menu'  + (!open ? ' closed' : '')}>
+    <div className={'filters-menu'  + (!open ? ' closed' : '')} style={smallScreen || landscape ? { height: `calc(99vh - ${headerHeightContext}px)` } : {}}>
       {!open &&
         <Button
           variant={isDelaysPage ? 'outline-primary' : 'primary'}
