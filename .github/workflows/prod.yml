@@ -101,7 +101,7 @@ jobs:
     name: Deploy Images to OpenShift GoldDR
     environment:
       name: prod
-      url: https://beta.drivebc.ca/
+      url: https://prod-drivebc.apps.golddr.devops.gov.bc.ca/
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
