@@ -42,14 +42,14 @@ import {
   toggleMyLocation,
   zoomIn,
   zoomOut,
-  fitMap
+  fitMap,
+  removeOverlays
 } from './helpers';
 import { loadLayer, loadEventsLayers, updateEventsLayers, enableReferencedLayer } from './layers';
 import { MapContext } from '../../App.js';
 import { maximizePanel, renderPanel, togglePanel } from './panels';
 import { pointerMoveHandler, resetHoveredStates } from './handlers/hover';
 import { pointerClickHandler, resetClickedStates } from './handlers/click';
-import AdvisoriesWidget from '../advisories/AdvisoriesWidget';
 import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
 import DistanceLabels from "../routing/DistanceLabels";
 import Filters from '../shared/Filters.js';
@@ -544,6 +544,11 @@ export default function DriveBCMap(props) {
 
     if (localStorage.getItem("pendingFit") === 'true') {
       fitMap(searchedRoutes, mapView);
+    }
+
+    // Remove all overlays from previously searched routes
+    if (!searchedRoutes || !searchedRoutes.length) {
+      removeOverlays(mapRef);
     }
   }, [searchedRoutes]);
 

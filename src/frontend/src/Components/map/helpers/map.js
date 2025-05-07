@@ -157,7 +157,7 @@ export const removeOverlays = (mapRef) => {
   const overlaysArray = [...mapRef.current.getOverlays().getArray()];
 
   overlaysArray.forEach((overlay) => {
-    if(overlay.pinName === undefined){
+    if (overlay.pinName === undefined) {
       mapRef.current.removeOverlay(overlay);
     }
   });
