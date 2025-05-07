@@ -223,8 +223,8 @@ export const getRoutes = async (firstPoint, secondPoint, favRoutes) => {
   const shortestRoute = await getRoute(points, true);
   if (shortestRoute && shortestRoute.routeFound) {
     const hasEqualDistance = compareRouteDistance(fastestRoute, shortestRoute);
-    if(!hasEqualDistance){
-      linkRoute(fastestRoute, favRoutes);
+    if (!hasEqualDistance) {
+      linkRoute(shortestRoute, favRoutes);
       routes.push(shortestRoute);
     }
   }

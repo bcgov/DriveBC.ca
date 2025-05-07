@@ -36,7 +36,7 @@ import '@vaadin/date-picker';
 
 // Internal imports
 import { AlertContext, AuthContext, MapContext } from '../../App';
-import { getRoute, removeRoute, saveRoute, patchRoute, compareRoutes } from "../data/routes";
+import { getRoute, removeRoute, saveRoute, patchRoute, compareRoutes, linkRoute } from "../data/routes";
 import { addCameraGroups } from "../data/webcams";
 import { getEventCounts } from "../data/events";
 import { getAdvisoryCounts } from "../data/advisories";
@@ -79,7 +79,7 @@ export default function RouteDetails(props) {
     },
     advisories: { list: advisories },
     routes: { searchLocationFrom, searchLocationTo, selectedRoute },
-    user: { favCams, pendingAction }
+    user: { favCams, favRoutes, pendingAction }
 
   } = useSelector(
     useCallback(
@@ -327,6 +327,8 @@ export default function RouteDetails(props) {
       [route.start_point.coordinates, route.end_point.coordinates],
       route.criteria === 'fastest'
     );
+    linkRoute(alternateRoute, favRoutes);
+
     let searchedRoutesPayload = route.criteria === 'fastest' ? // Fastest before shortest
       [routePayload, alternateRoute] : [alternateRoute, routePayload];
 

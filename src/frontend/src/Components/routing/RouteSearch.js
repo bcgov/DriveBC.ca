@@ -73,11 +73,7 @@ const RouteSearch = forwardRef((props, ref) => {
 
   useEffect(() => {
     updateSearch();
-  }, [searchLocationFrom]);
-
-  useEffect(() => {
-    updateSearch();
-  }, [searchLocationTo]);
+  }, [searchLocationFrom, searchLocationTo]);
 
   useEffect(() => {
     if (isInitialMountSpinner.current) { // Do nothing on first load
