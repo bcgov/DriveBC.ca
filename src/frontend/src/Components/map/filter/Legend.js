@@ -3,7 +3,7 @@ import React from 'react';
 
 // Assets
 // Major delays
-import closuresActiveIcon from '../../../images/mapIcons/closure-active.png';
+import closuresStaticIcon from '../../../images/mapIcons/closure-static.png';
 import genericDelaysMajorStaticIcon from '../../../images/mapIcons/incident-major-static.png';
 import constructionsMajorStaticIcon from '../../../images/mapIcons/delay-major-static.png';
 import futureEventsMajorStaticIcon from '../../../images/mapIcons/future-event-major-static.png';
@@ -27,7 +27,7 @@ import ferryIconStatic from '../../../images/mapIcons/ferry-static.png';
 
 // Weather
 import regionalWeatherIconStatic from '../../../images/mapIcons/regional-weather-static.png';
-import regionalWeatherIconAlt from '../../../images/legend/regional-alt.png';
+import regionalWeatherIconAlt from '../../../images/mapIcons/regional-weather-advisory-static.png';
 import roadWeatherIconStatic from '../../../images/mapIcons/road-weather-static.png';
 import hefIconStatic from '../../../images/mapIcons/elevation-static.png';
 
@@ -86,7 +86,7 @@ export default function Legend() {
 
       <div className={'legend__group'}>
         {getLegendItem(
-          closuresActiveIcon,
+          closuresStaticIcon,
           'Closures',
           'Travel is not possible in one or both directions on this road. Find an alternate route or detour if possible.',
           'major'
