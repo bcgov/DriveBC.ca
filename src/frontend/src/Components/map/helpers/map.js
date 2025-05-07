@@ -15,7 +15,13 @@ export const transformFeature = (feature, sourceCRS, targetCRS) => {
 // Zoom and pan
 export const fitMap = (routes, mapView) => {
   // Only apply to map page when at least one route is returned
-  if (!Array.isArray(routes) || routes.length === 0 || !mapView || !mapView.current) {
+  if (!Array.isArray(routes) || routes.length === 0) {
+    return;
+  }
+
+  // Not called in map, set pendingFit to true and return
+  if (!mapView || !mapView.current) {
+    localStorage.setItem("pendingFit", 'true');
     return;
   }
 
@@ -35,6 +41,7 @@ export const fitMap = (routes, mapView) => {
   const routeExtent = transformExtent(combinedBbox, 'EPSG:4326', 'EPSG:3857');
 
   mapView.current.fit(routeExtent, { duration: 1000 });
+  localStorage.setItem("pendingFit", 'false');
 }
 
 export const setZoomPan = (mapView, zoom, panCoords) => {

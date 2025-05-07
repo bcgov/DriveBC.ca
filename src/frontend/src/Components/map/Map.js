@@ -41,7 +41,8 @@ import {
   setZoomPan,
   toggleMyLocation,
   zoomIn,
-  zoomOut
+  zoomOut,
+  fitMap
 } from './helpers';
 import { loadLayer, loadEventsLayers, updateEventsLayers, enableReferencedLayer } from './layers';
 import { MapContext } from '../../App.js';
@@ -540,6 +541,10 @@ export default function DriveBCMap(props) {
       mapLayers, mapRef, mapContext,
       'routeLayer', routesData, routesData, 6, selectedRoute, updateReferenceFeature
     );
+
+    if (localStorage.getItem("pendingFit") === 'true') {
+      fitMap(searchedRoutes, mapView);
+    }
   }, [searchedRoutes]);
 
   // Cameras layer
