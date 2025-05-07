@@ -36,19 +36,18 @@ export default function MapPage() {
 
   document.title = 'DriveBC';
 
-  const [referenceData, setReferenceData] = useState({
-    type: null,
-    id: null,
-    display_category: null,
-  });
-
-  // Effects
-  useEffect(() => {
-    setReferenceData({
+  const getReferenceParams = () => {
+    return {
       type: searchParams.get('type'),
       id: searchParams.get('id'),
       display_category: searchParams.get('display_category'),
-    });
+    };
+  }
+  const [referenceData, setReferenceData] = useState(getReferenceParams());
+
+  // Effects
+  useEffect(() => {
+    setReferenceData(getReferenceParams());
   }, [searchParams]);
 
   useEffect(() => {
@@ -110,7 +109,7 @@ export default function MapPage() {
 
   /* Rendering */
   // Main component
-  return ( 
+  return (
     <DndProvider options={HTML5toTouch}>
       <div className="map-page map-wrap" style={{ height: `calc(100vh - ${headerHeightContext}px` }}>
         <MapWrapper referenceData={referenceData} />
