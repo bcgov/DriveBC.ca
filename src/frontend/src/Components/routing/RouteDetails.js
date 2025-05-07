@@ -362,7 +362,11 @@ export default function RouteDetails(props) {
 
   /* Rendering */
   // Subcomponents
-  const getDefaultLabel = () => {
+  const getDefaultLabel = (isPanel, index) => {
+    if (isPanel && index !== undefined) {
+      return 'Route ' + (index === 0 ? 'A' : 'B');
+    }
+
     if (route.start && route.end) {
       return route.start + ' to ' + route.end;
     }
@@ -541,7 +545,7 @@ export default function RouteDetails(props) {
           }
 
           <div className="route-name-and-distance">
-            <h4 className="route-name">{route.label ? route.label : ('Route ' + (index === 0 ? 'A' : 'B'))}</h4>
+            <h4 className="route-name">{route.label ? route.label : getDefaultLabel(isPanel, index)}</h4>
             <p className="route-distance">{Math.round(route.distance)} km</p>
           </div>
 
