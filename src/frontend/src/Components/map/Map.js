@@ -591,6 +591,7 @@ export default function DriveBCMap(props) {
       const eventFound = loadEventsLayers(events, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers);
       if (referenceData?.type === 'event' && !eventFound) {
         setStaleLinkMessage(true);
+        setSearchParams({});
       }
     }
 
