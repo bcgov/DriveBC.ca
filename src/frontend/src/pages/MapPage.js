@@ -32,20 +32,11 @@ export default function MapPage() {
 
   document.title = 'DriveBC';
 
-  const [referenceData, setReferenceData] = useState({
-    type: null,
-    id: null,
-    display_category: null,
-  });
-
-  // Effects
-  useEffect(() => {
-    setReferenceData({
-      type: searchParams.get('type'),
-      id: searchParams.get('id'),
-      display_category: searchParams.get('display_category'),
-    });
-  }, [searchParams]);
+  const referenceData = {
+    type: searchParams.get('type'),
+    id: searchParams.get('id'),
+    display_category: searchParams.get('display_category')
+  };
 
   useEffect(() => {
     populateRoutesFromNotification();
