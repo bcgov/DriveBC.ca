@@ -1,6 +1,8 @@
 // React
 import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
-import { createSearchParams, useNavigate } from 'react-router-dom';
+
+// Routing
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,7 +14,6 @@ import * as slices from '../slices';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAngleDown,
-  faRoute,
   faXmark,
   faFlag
 } from '@fortawesome/pro-solid-svg-icons';
@@ -20,7 +21,6 @@ import {
   faArrowUp,
   faArrowDown,
   faBarsSort,
-  faRoute as faRouteEmpty
 } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Container from 'react-bootstrap/Container';
@@ -85,6 +85,7 @@ export default function EventsListPage() {
 
   // Navigation
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   // Redux
   const dispatch = useDispatch();
@@ -99,18 +100,31 @@ export default function EventsListPage() {
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
   const { mapContext } = useContext(MapContext);
-  const { headerHeightContext, setHeaderHeightContext } = useContext(HeaderHeightContext);
+  const { headerHeightContext } = useContext(HeaderHeightContext);
 
   // States
+  const getDefaultFilterState = () => {
+    if (searchParams.get('chainUpsOnly') === 'true') {
+      return {
+        'closures': false,
+        'majorEvents': false,
+        'minorEvents': false,
+        'futureEvents': false,
+        'chainUps': true
+      };
+    }
+
+    return {
+      'closures': mapContext.visible_layers.closures,
+      'majorEvents': mapContext.visible_layers.majorEvents,
+      'minorEvents': mapContext.visible_layers.minorEvents,
+      'futureEvents': mapContext.visible_layers.futureEvents,
+      'chainUps': mapContext.visible_layers.chainUps
+    };
+  }
+
   const [sortingKey, setSortingKey] = useState(selectedRoute && selectedRoute.routeFound ? 'route_order' : (localStorage.getItem('sorting-key')? localStorage.getItem('sorting-key') : 'severity_desc'));
-  const [eventCategoryFilter, setEventCategoryFilter] = useState({
-    'closures': mapContext.visible_layers.closures,
-    'majorEvents': mapContext.visible_layers.majorEvents,
-    'minorEvents': mapContext.visible_layers.minorEvents,
-    'futureEvents': mapContext.visible_layers.futureEvents,
-    'roadConditions': false,
-    'chainUps': mapContext.visible_layers.chainUps,
-  });
+  const [eventCategoryFilter, setEventCategoryFilter] = useState(getDefaultFilterState());
   const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
   const [trackedEvents, setTrackedEvents] = useState({}); // Track event updates between refreshes
   const [showLoader, setShowLoader] = useState(true);
@@ -144,7 +158,6 @@ export default function EventsListPage() {
   // Media queries
   const smallScreen = useMediaQuery('only screen and (max-width : 575px)');
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
-  const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   // Data functions
   const loadAdvisories = async () => {
