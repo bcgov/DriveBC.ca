@@ -22,7 +22,6 @@ button.btn.open-filters {
   box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
   display: flex;
   flex-direction: column;
-  height: auto;
 
   &.closed {
     display: contents;
@@ -35,14 +34,6 @@ button.btn.open-filters {
     left: initial;
     right: 1rem;
     width: 300px;
-  }
-
-  @media (orientation: landscape) and (hover: none) and (pointer: coarse) {
-    position: fixed;
-    top: initial;
-    bottom: 0;
-    left: 0;
-    width: 100%;
   }
 
   .tabs-container {
@@ -65,6 +56,10 @@ button.btn.open-filters {
       .tab-pane > div {
         height: calc(100vh - 222px);
         max-height: fit-content;
+
+        @media (hover: none) and (pointer: coarse) and (min-width: 576px) {
+          height: calc(100vh - 132px);
+        }
       }
     }
   }

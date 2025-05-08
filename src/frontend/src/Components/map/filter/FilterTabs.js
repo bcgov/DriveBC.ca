@@ -47,13 +47,12 @@ export default function FilterTabs(props) {
   const { headerHeightContext, setHeaderHeightContext } = useContext(HeaderHeightContext);
 
   // Media queries
-  const smallScreen = useMediaQuery('only screen and (max-width : 575px)');
-  const landscape = useMediaQuery('only screen and (orientation: landscape) and (hover: none) and (pointer: coarse)');
-
+  const largeScreen = useMediaQuery('only screen and (min-width : 576px)');
+  const mobilePortrait = useMediaQuery('only screen and (max-width: 575px) and (orientation: portrait) and (hover: none) and (pointer: coarse)');
   // Rendering
   // Main Component
   return (
-    <div className={'filters-menu'  + (!open ? ' closed' : '')} style={smallScreen || landscape ? { height: `calc(99vh - ${headerHeightContext}px)` } : {}}>
+    <div className={'filters-menu'  + (!open ? ' closed' : '')}>
       {!open &&
         <Button
           variant={isDelaysPage ? 'outline-primary' : 'primary'}
