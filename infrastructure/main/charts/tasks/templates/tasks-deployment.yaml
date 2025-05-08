@@ -41,6 +41,10 @@ spec:
         - name: django-app-images-volume
           persistentVolumeClaim:
             claimName: {{ .Values.deployment.volumes.claimName  }}
+      hostAliases: # DBC22-1527: This is a temporary workaround due to the fact that we can only access this IP for DIT from Gold.
+        - ip: 142.34.81.128
+          hostnames:
+            - dit.th.gov.bc.ca
       containers:
         - resources:
             requests:
