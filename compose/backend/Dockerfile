@@ -1,16 +1,21 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11
+FROM python:3.13-slim
 
-# Install Python Package Libraries
-RUN apt-get update && apt-get upgrade -y && apt-get autoremove && apt-get autoclean
-RUN apt-get install -y binutils libproj-dev gdal-bin
+# Install only what you need, clean up apt caches in one RUN
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      binutils \
+      libproj-dev \
+      gdal-bin \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 # Adding backend directory to make absolute filepaths consistent across services
 WORKDIR /app/backend
 
 # Install Python dependencies
 COPY ./src/backend/requirements /app/backend/requirements
-RUN pip install -r requirements/development.txt
+RUN pip install --no-cache-dir -r requirements/development.txt
 
 COPY ./compose/backend/entrypoint /
 RUN sed -i 's/\r$//g' /entrypoint && chmod +x /entrypoint
@@ -33,10 +38,15 @@ RUN mkdir -p /app/media && chgrp -R 0 /app/media && chmod -R g=u /app/media && c
 ARG DEBUG_BUILD=false
 
 # Add debugging tools into builds if enabled
-RUN if [ $DEBUG_BUILD = true ]; then \
-  apt-get install -y jq vim procps less; \
-fi
-
+RUN if [ "$DEBUG_BUILD" = "true" ]; then \
+      apt-get update && \
+      DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        jq \
+        vim \
+        procps \
+        less && \
+      rm -rf /var/lib/apt/lists/*; \
+    fi
 ENTRYPOINT ["/entrypoint"]
 
 # Make port 8000 available for the app
