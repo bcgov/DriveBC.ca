@@ -19,6 +19,7 @@ import { HeaderHeightContext } from '../App.js';
 // External Imports
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
+import { useMediaQuery } from '@uidotdev/usehooks';
 
 import { shortenToOneDecimal } from "../Components/data/routes";
 import MapWrapper from '../Components/map/MapWrapper.js';
@@ -106,12 +107,13 @@ export default function MapPage() {
 
   const { headerHeightContext, setHeaderHeightContext } = useContext(HeaderHeightContext);
 
+  const mobilePortrait = useMediaQuery('only screen and (max-width: 575px) and (orientation: portrait) and (hover: none) and (pointer: coarse)');
 
   /* Rendering */
   // Main component
   return (
     <DndProvider options={HTML5toTouch}>
-      <div className="map-page map-wrap" style={{ height: `calc(100vh - ${headerHeightContext}px` }}>
+      <div className="map-page map-wrap" style={{ top: mobilePortrait ? `${headerHeightContext}px` : `58px` }}>
         <MapWrapper referenceData={referenceData} />
       </div>
     </DndProvider>

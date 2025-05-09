@@ -151,11 +151,6 @@
           right: 4rem;
           bottom: 1rem;
         }
-
-        @media (orientation: landscape) and (hover: none) and (pointer: coarse) {
-          right: 1rem;
-          bottom: 4rem;
-        }
       }
 
       .ol-scale-line-inner {
@@ -240,12 +235,12 @@
         right: 1rem;
         z-index: 5;
 
-        @media (max-width: 575px) {
-          top: initial;
-          bottom: 1rem;
+        @media (hover: none) and (pointer: coarse) {
+          top: 1rem;
+          right: 1rem;
         }
 
-        @media (orientation: landscape) and (hover: none) and (pointer: coarse) {
+        @media (max-width: 575px) {
           top: initial;
           bottom: 1rem;
         }
@@ -285,7 +280,7 @@
       flex-direction: column;
 
       //Hide zoom slider on touch devices
-      @media (max-width: 992px) {
+      @media (hover: none) and (pointer: coarse) {
         display: none;
       }
 

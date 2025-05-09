@@ -723,8 +723,6 @@ export default function DriveBCMap(props) {
       (searchedRoutes && searchedRoutes.length && !isCamDetail)
     ) && !disablePanel;
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
-  const landscape = useMediaQuery('only screen and (orientation: landscape) and (hover: none) and (pointer: coarse)');
-
 
   // Reset search params when panel is closed
   useEffect(() => {
@@ -741,7 +739,7 @@ export default function DriveBCMap(props) {
   /* Rendering */
   return (
     <div className={`map-container ${isCamDetail ? 'preview' : ''}`}>
-      {(smallScreen || landscape ) && openTabs &&
+      {smallScreen && openTabs &&
         <div className='mobile-mask'></div>
       }
 

@@ -36,9 +36,9 @@ export default function Header() {
   /* Setup */
   // Misc
   const xXlargeScreen = useMediaQuery('only screen and (min-width : 1400px)');
-  const landscape = useMediaQuery('only screen and (orientation: landscape) and (hover: none) and (pointer: coarse)');
   const largeScreen = useMediaQuery('only screen and (min-width : 576px)');
-  const smallScreen = !landscape && !largeScreen;
+  const mobilePortrait = useMediaQuery('only screen and (max-width: 575px) and (orientation: portrait) and (hover: none) and (pointer: coarse)');
+
 
   // Check current page location
   const location = useLocation();
@@ -112,7 +112,7 @@ export default function Header() {
   useEffect(() => {
 
 
-    setHeaderHeightContext(smallScreen ? document.querySelector('.header').offsetHeight : 58);
+    setHeaderHeightContext(mobilePortrait ? document.querySelector('.header').offsetHeight : 58);
   }, [openSearch, showRouteLocation, selectedRoute, hideSearch]);
 
   useEffect(() => {
@@ -198,7 +198,7 @@ export default function Header() {
               }
             </div>
 
-            {smallScreen && !hideSearch && !selectedRoute &&
+            {mobilePortrait && !hideSearch && !selectedRoute &&
               <button
                 className="search-trigger btn"
                 aria-label="search destination location"
@@ -206,7 +206,7 @@ export default function Header() {
                 Search destination location
               </button>
             }
-            {smallScreen && !hideSearch && selectedRoute && searchLocationFrom[0] && searchLocationTo[0] &&
+            {mobilePortrait && !hideSearch && selectedRoute && searchLocationFrom[0] && searchLocationTo[0] &&
               <button
                 className={`searched-route btn ${showRouteLocation ? 'show' : ''}`}
                 aria-label="searched route"
@@ -239,7 +239,7 @@ export default function Header() {
             }
           </div>
 
-          {smallScreen && !hideSearch &&
+          {mobilePortrait && !hideSearch &&
             <div className={'location-search' + (openSearch ? ' visible' : '')}>
               <button
                 className="close-search btn"
