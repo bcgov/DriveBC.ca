@@ -1,4 +1,5 @@
 from allauth.account.decorators import secure_admin_login
+from allauth.account import views
 from django.conf import settings
 from django.conf.urls import handler403, defaults
 from django.contrib import admin
@@ -51,6 +52,7 @@ admin.autodiscover()
 
 if settings.FORCE_IDIR_AUTHENTICATION:
     admin.site.login = secure_admin_login(admin.site.login)
+    admin.site.logout = views.logout
     handler403 = permission_denied_handler
 
 
