@@ -352,6 +352,8 @@ export default function RouteDetails(props) {
     }];
     dispatch(updateSearchLocationTo(endPayload));
 
+    localStorage.setItem("pendingFit", 'true');
+
     navigate({
       pathname: '/',
       search: `?${createSearchParams({
