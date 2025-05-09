@@ -20,9 +20,10 @@ import Button from 'react-bootstrap/Button';
 import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
-import MapFilters from './MapFilters';
-import Legend from "./Legend";
 import { HeaderHeightContext } from  '../../../App.js';
+import Legend from "./Legend";
+import MapFilters from './MapFilters';
+import trackEvent from "../../shared/TrackEvent";
 
 // Styling
 import './FilterTabs.scss';
@@ -85,7 +86,10 @@ export default function FilterTabs(props) {
                 loadingLayers={loadingLayers} />
             </Tab>
 
-            <Tab eventKey='legend' title='Legend' tabClassName='map-tab legend'>
+            <Tab eventKey='legend' title='Legend' tabClassName='map-tab legend'
+              onClick={() => {
+                trackEvent('click', 'map', 'Show legend');
+              }}>
               <Legend />
             </Tab>
           </Tabs>
