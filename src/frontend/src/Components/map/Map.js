@@ -97,9 +97,6 @@ export default function DriveBCMap(props) {
   // Context
   const { mapContext } = useContext(MapContext);
 
-  // Enable referenced layer
-  enableReferencedLayer(referenceData, mapContext);
-
   // Redux
   const dispatch = useDispatch();
   const {
@@ -305,6 +302,9 @@ export default function DriveBCMap(props) {
   /* initialization for OpenLayers map */
   useEffect(() => {
     if (mapRef.current) return; // stops map from initializing more than once
+
+    // Enable referenced layer
+    enableReferencedLayer(referenceData, mapContext);
 
     const tileSource = new VectorTileSource({
       format: new MVT(),
