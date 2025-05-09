@@ -1,6 +1,9 @@
 // React
 import React, { useState, useContext, useCallback, useEffect, useRef } from 'react';
 
+// Navigation
+import { useSearchParams } from "react-router-dom";
+
 // Redux
 import { memoize } from 'proxy-memoize';
 import { useSelector } from 'react-redux';
@@ -29,6 +32,9 @@ import { MapContext } from '../../App.js';
 export default function Filters(props) {
   // Misc
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+
+  // Navigation
+  const [searchParams] = useSearchParams();
 
   // Context
   const { mapContext, setMapContext } = useContext(MapContext);
@@ -71,17 +77,18 @@ export default function Filters(props) {
   const [open, setOpen] = useState(largeScreen && !textOverride);
 
   // States for toggles
-  const [closures, setClosures] = useState(eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures);
-  const [majorEvents, setMajorEvents] = useState(eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents);
-  const [minorEvents, setMinorEvents] = useState(eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents);
-  const [futureEvents, setFutureEvents] = useState(eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents);
-  const [roadConditions, setRoadConditions] = useState(mapContext.visible_layers.roadConditions);
-  const [chainUps, setChainUps] = useState(mapContext.visible_layers.chainUps);
-  const [highwayCams, setHighwayCams] = useState(isCamDetail ? isCamDetail : mapContext.visible_layers.highwayCams);
-  const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
-  const [weather, setWeather] = useState(mapContext.visible_layers.weather);
-  const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
-  const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
+  const chainUpsOnly = !isCamDetail && searchParams.get('chainUpsOnly') === 'true';
+  const [closures, setClosures] = useState(chainUpsOnly ? false : (eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures));
+  const [majorEvents, setMajorEvents] = useState(chainUpsOnly ? false : (eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents));
+  const [minorEvents, setMinorEvents] = useState(chainUpsOnly ? false : (eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents));
+  const [futureEvents, setFutureEvents] = useState(chainUpsOnly ? false : (eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents));
+  const [roadConditions, setRoadConditions] = useState(chainUpsOnly ? false : mapContext.visible_layers.roadConditions);
+  const [chainUps, setChainUps] = useState(chainUpsOnly ? true : mapContext.visible_layers.chainUps);
+  const [highwayCams, setHighwayCams] = useState(chainUpsOnly ? false : (isCamDetail ? isCamDetail : mapContext.visible_layers.highwayCams));
+  const [inlandFerries, setInlandFerries] = useState(chainUpsOnly ? false : mapContext.visible_layers.inlandFerries);
+  const [weather, setWeather] = useState(chainUpsOnly ? false : mapContext.visible_layers.weather);
+  const [restStops, setRestStops] = useState(chainUpsOnly ? false : mapContext.visible_layers.restStops);
+  const [largeRestStops, setLargeRestStops] = useState(chainUpsOnly ? false : mapContext.visible_layers.largeRestStops);
 
   const closeSidePanel = () => {
     const closeBtn = document.querySelector('.close-panel');
@@ -106,6 +113,14 @@ export default function Filters(props) {
       if (!inlandFerries) filterHandler('inlandFerries');
     }
   }, [searchedRoutes]);
+
+  useEffect(() => {
+    if (chainUpsOnly) {
+      setLayerVisibility('chainUps', true);
+      setLayerVisibility('chainUpsLines', true, false);
+      setChainUps(true);
+    }
+  }, []);
 
   // Helpers
   const setLayerVisibility = (layer, checked, runCallback=true) => {
