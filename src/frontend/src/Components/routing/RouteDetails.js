@@ -279,7 +279,7 @@ export default function RouteDetails(props) {
     const saveRouteResult = await saveRoute(route, selectedRoute, nickName, routeMapImg, searchLocationFrom[0].label, searchLocationTo[0].label, dispatch);
     resetPopup();
     if(saveRouteResult === false) {
-      setAlertMessage(<p>The specified route nickname is currently in use. Please select an alternative.</p>);
+      setAlertMessage(<p>You have already saved a route with this nickname. Please choose a different one.</p>);
       return;
     }
     else{
