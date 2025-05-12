@@ -13,8 +13,8 @@ def parse_recurring_datetime(date_string, time_string):
     # Combine the date and time into a single datetime object
     dt = datetime.datetime.combine(date, time)
 
-    # Convert the datetime object to Pacific Time and return
-    return dt.replace(tzinfo=ZoneInfo('America/Vancouver'))
+    # Convert the datetime object to UTC Time and return
+    return dt.replace(tzinfo=ZoneInfo('UTC'))
 
 
 def get_display_category(event):
