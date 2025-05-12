@@ -58,7 +58,7 @@ button.btn.open-filters {
         max-height: fit-content;
 
         @media (hover: none) and (pointer: coarse) and (min-width: 576px) {
-          height: calc(100vh - 132px);
+          height: calc(100vh - 172px);
         }
       }
     }
