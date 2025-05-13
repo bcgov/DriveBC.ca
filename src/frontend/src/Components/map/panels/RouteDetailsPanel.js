@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 
 // Redux
 import { useSelector } from 'react-redux';
@@ -15,19 +15,19 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 import './RouteDetailsPanel.scss';
 import RouteObjectList from "../../routing/RouteObjectList";
 
-export default function RouteDetailsPanel() {
+export default function RouteDetailsPanel(props) {
   /* Setup */
   // Misc
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+
+  // Props
+  const { clickedFeatureRef, updateClickedFeature, showRouteObjs, setShowRouteObjs } = props;
 
   // Redux
   const { searchedRoutes, selectedRoute } = useSelector(useCallback(memoize(state => ({
     searchedRoutes: state.routes.searchedRoutes,
     selectedRoute: state.routes.selectedRoute
   }))));
-
-  // States
-  const [routeDetailIndex, setRouteDetailIndex] = useState(null);
 
   /* Rendering */
   // Sub components
@@ -41,11 +41,11 @@ export default function RouteDetailsPanel() {
 
       <div className="popup__content">
         {largeScreen && searchedRoutes.map((route, index) => (
-          <RouteDetails route={route} isPanel={true} index={index} key={index} setRouteDetailIndex={setRouteDetailIndex} />
+          <RouteDetails route={route} isPanel={true} key={index} setShowRouteObjs={setShowRouteObjs} />
         ))}
 
         {(!largeScreen && selectedRoute) &&
-          <RouteDetails route={selectedRoute} isPanel={true} index={selectedRoute.criteria === 'fastest' ? 0 : 1} onMobile={true} setRouteDetailIndex={setRouteDetailIndex} />
+          <RouteDetails route={selectedRoute} isPanel={true} onMobile={true} setShowRouteObjs={setShowRouteObjs} />
         }
       </div>
     </div>
@@ -60,7 +60,10 @@ export default function RouteDetailsPanel() {
       }
 
       <div className="popup__content route-object-list">
-        <RouteObjectList routeDetailIndex={routeDetailIndex} setRouteDetailIndex={setRouteDetailIndex} />
+        <RouteObjectList
+          setShowRouteObjs={setShowRouteObjs}
+          clickedFeatureRef={clickedFeatureRef}
+          updateClickedFeature={updateClickedFeature} />
       </div>
     </div>
   );
@@ -70,5 +73,5 @@ export default function RouteDetailsPanel() {
     return;
   }
 
-  return routeDetailIndex !== null ? getListPanel() : getDefaultPanel();
+  return showRouteObjs ? getListPanel() : getDefaultPanel();
 }

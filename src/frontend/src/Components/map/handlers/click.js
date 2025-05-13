@@ -167,7 +167,7 @@ const camClickHandler = (
   }
 };
 
-const eventClickHandler = (
+export const eventClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,

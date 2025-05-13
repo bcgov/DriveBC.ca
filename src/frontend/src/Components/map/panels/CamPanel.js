@@ -13,6 +13,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVideoSlash, faVideo, faStar, faCircleInfo, faXmark, faChevronRight } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
+import { useMediaQuery } from "@uidotdev/usehooks";
 import Button from 'react-bootstrap/Button';
 import parse from 'html-react-parser';
 
@@ -33,8 +34,11 @@ import './CamPanel.scss';
 // Main component
 export default function CamPanel(props) {
   /* Setup */
+  // Misc
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+
   // Props
-  const { camFeature, isCamDetail } = props;
+  const { camFeature, isCamDetail, showRouteObjs } = props;
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -176,14 +180,14 @@ export default function CamPanel(props) {
   // Main component
   return (
     <div className="popup popup--camera">
-      <div className="popup__title">
+      <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__icon">
-          <FontAwesomeIcon icon={faVideo} />
+          <FontAwesomeIcon icon={faVideo}/>
         </div>
 
         <div className="popup__title__name">
           <p className="name">Camera</p>
-          <ShareURLButton />
+          <ShareURLButton/>
         </div>
       </div>
 

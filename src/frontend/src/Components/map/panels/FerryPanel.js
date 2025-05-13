@@ -20,6 +20,7 @@ import {
   faPhone,
   faWeightScale,
 } from '@fortawesome/pro-solid-svg-icons';
+import { useMediaQuery } from "@uidotdev/usehooks";
 import parse from 'html-react-parser';
 
 // Internal imports
@@ -30,7 +31,10 @@ import ShareURLButton from '../../shared/ShareURLButton';
 import './FerryPanel.scss';
 
 export default function FerryPanel(props) {
-  const { feature } = props;
+  // Misc
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+
+  const { feature, showRouteObjs } = props;
 
   const ferryData = feature.getProperties();
 
@@ -91,7 +95,7 @@ export default function FerryPanel(props) {
   // Main component
   return (
     <div className="popup popup--ferry" tabIndex={0}>
-      <div className="popup__title">
+      <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faFerry}/>
         </div>
@@ -159,7 +163,7 @@ export default function FerryPanel(props) {
               </div>
               <hr />
             </div>
-            
+
           ))}
 
           <div className='info__container'>
