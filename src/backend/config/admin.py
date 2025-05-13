@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.contrib.admin import AdminSite
 from django.contrib.admin.apps import AdminConfig
+from django.utils import timezone
+from datetime import timedelta
 
 
 class DriveBCAdminSite(AdminSite):
@@ -28,11 +30,23 @@ class DriveBCAdminSite(AdminSite):
         from apps.authentication.models import DriveBCUser, SavedRoutes, FavouritedCameras
 
         extra = extra_context or {}
+        thirty_days_ago = timezone.now() - timedelta(days=30)
         # Add your context here
         extra['counts'] = {
-            'users': DriveBCUser.objects.count(),
+            'basic_bceid_users_count': DriveBCUser.objects.filter(
+                username__endswith='bceidbasic'
+            ).count(),
+            'bceid_users_logged_in_last_30_days': DriveBCUser.objects.filter(
+                username__endswith='bceidbasic',
+                last_login__gte=thirty_days_ago
+            ).count(),
             'saved_routes': SavedRoutes.objects.count(),
+            'unique_users_with_saved_routes': SavedRoutes.objects.values('user').distinct().count(),
+            'unique_users_with_saved_routes_and_notifications': SavedRoutes.objects.filter(
+                notification=True 
+            ).values('user').distinct().count(),
             'favourited_cams': FavouritedCameras.objects.count(),
+            'unique_users_with_favorited_cameras': FavouritedCameras.objects.values('user').distinct().count(),
         }
         return super().index(request, extra)
 
