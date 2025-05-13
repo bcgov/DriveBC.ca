@@ -5,19 +5,37 @@
 
   <div class="module">
     <table class="">
-      <caption>Stats</caption>
+      <caption>User Stats</caption>
       <tbody>
         <tr class="model-group">
-          <th>Users</th>
-          <td>{{ counts.users }}</td>
+          <th>Basic BCeID Users Count</th>
+          <td>{{ counts.basic_bceid_users_count }}</td>
         </tr>
         <tr class="model-group">
-          <th>Saved Routes</th>
+          <th style="padding-left: 2em;">BCeID Users Logged In (Last 30 Days)</th>
+          <td>{{ counts.bceid_users_logged_in_last_30_days }}</td>
+        </tr>
+        <!-- Saved Routes Section -->
+        <tr class="model-group">
+          <th>Total Saved Routes Count</th>
           <td>{{ counts.saved_routes }}</td>
         </tr>
         <tr class="model-group">
-          <th>Favourited Cams</th>
-          <td>{{ counts.favourited_cams }}</td>
+          <th style="padding-left: 2em;">Unique Users with Saved Routes</th> 
+          <td>{{ counts.unique_users_with_saved_routes }}</td>
+        </tr>
+        <tr class="model-group">
+          <th style="padding-left: 2em;">Unique Users with Saved Routes and Notifications Enabled</th>
+          <td>{{ counts.unique_users_with_saved_routes_and_notifications }}</td>
+        </tr>
+        <!-- Favourited Cameras Section -->
+        <tr class="model-group">
+          <th>Total Favourited Cameras Count</th>
+          <td>{{ counts.favourited_cams }}</td> 
+        </tr>
+        <tr class="model-group">
+          <th style="padding-left: 2em;">Unique Users with Favorited Cameras</th>
+          <td>{{ counts.unique_users_with_favorited_cameras }}</td>
         </tr>
       </tbody>
     </table>
