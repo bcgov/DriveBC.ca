@@ -30,5 +30,13 @@ class SavedRoutesSerializer(SafeStringMixin, serializers.ModelSerializer):
     def save(self):
         ''' Save the route with the requesting user. '''
 
+        label = self.validated_data.get('label')
+        user_id = self.context['request'].user.id
+        existing_routes = SavedRoutes.objects.filter(label=label, user_id=user_id)
+        if existing_routes.exists():
+            raise serializers.ValidationError({
+            'error': 'Label already exists for this user.'
+        })
+
         request = self.context.get('request')
         super().save(user=request.user)

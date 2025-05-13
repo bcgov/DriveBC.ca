@@ -276,15 +276,13 @@ export default function RouteDetails(props) {
   }
 
   const saveRouteHandler = async () => {
-    const saveRouteResult = await saveRoute(route, selectedRoute, nickName, routeMapImg, searchLocationFrom[0].label, searchLocationTo[0].label, dispatch);
+    const messageReturn = await saveRoute(route, selectedRoute, nickName, routeMapImg, searchLocationFrom[0].label, searchLocationTo[0].label, dispatch);
     resetPopup();
-    if(saveRouteResult === false) {
-      setAlertMessage(<p>You have already saved a route with this nickname. Please choose a different one.</p>);
+    if (messageReturn) {
+      setAlertMessage(<p>{messageReturn}</p>);
       return;
     }
-    else{
-      setAlertMessage(<p>Saved to <a href="/my-routes">My routes</a></p>);
-    }  
+    setAlertMessage(<p>Saved to <a href="/my-routes">My routes</a></p>);
   }
 
   const favoriteHandler = () => {

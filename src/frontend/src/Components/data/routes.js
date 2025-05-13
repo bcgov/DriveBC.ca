@@ -100,7 +100,13 @@ export const saveRoute = async (route, selectedRoute, nickname, routeMapImg, sta
     });
 
     if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
+      const errorResponse = await response.json();
+      if(response.status === 400 && errorResponse) {
+        return "You have already saved a route with this nickname. Please choose a different one.";
+      }
+      else{
+        throw new Error(`Error: ${response.statusText}`);
+      }
     }
 
     const savedRoute = await response.json();
