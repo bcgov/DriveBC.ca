@@ -17,6 +17,7 @@ import {
   faCircleInfo,
   faTriangleExclamation,
 } from '@fortawesome/pro-solid-svg-icons';
+import { useMediaQuery } from "@uidotdev/usehooks";
 import Collapse from 'react-bootstrap/Collapse';
 
 // Internal imports
@@ -32,8 +33,11 @@ import './RegionalWeatherPanel.scss';
 // Main component
 export default function RegionalWeatherPanel(props) {
   /* Setup */
+  // Misc
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+
   // Props
-  const { feature } = props;
+  const { feature, showRouteObjs } = props;
 
   const weather = feature.getProperties();
   const conditions = weather.conditions;
@@ -68,9 +72,9 @@ export default function RegionalWeatherPanel(props) {
   // Main component
   return (
     <div className="popup popup--weather popup--weather--regional" tabIndex={0}>
-      <div className="popup__title">
+      <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__icon">
-          <FontAwesomeIcon icon={faSunCloud} />
+          <FontAwesomeIcon icon={faSunCloud}/>
         </div>
 
         <div className="popup__title__name">
@@ -197,7 +201,7 @@ export default function RegionalWeatherPanel(props) {
             </div>
           </div>
         </div>
-        
+
         <div className="popup__content__forecasts">
           {weather.current_day_forecasts.length &&
             <ForecastCarousel forecast_group={weather.current_day_forecasts} currentPane />

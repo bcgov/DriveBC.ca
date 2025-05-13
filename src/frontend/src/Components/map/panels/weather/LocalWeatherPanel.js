@@ -14,6 +14,7 @@ import {
   faTemperatureHalf,
   faWind,
 } from '@fortawesome/pro-light-svg-icons';
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
@@ -24,7 +25,10 @@ import './LocalWeatherPanel.scss';
 
 // Main component
 export default function LocalWeatherPanel(props) {
-  const { feature } = props;
+  // Misc
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+
+  const { feature, showRouteObjs } = props;
 
   const weatherData = feature.getProperties();
   const now = new Date();
@@ -43,20 +47,22 @@ export default function LocalWeatherPanel(props) {
 
   return (
     <div className="popup popup--weather popup--weather--local" tabIndex={0}>
-      <div className="popup__title">
+      <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__icon">
-          <FontAwesomeIcon icon={faTemperatureHalf} />
+          <FontAwesomeIcon icon={faTemperatureHalf}/>
         </div>
+
         <div className="popup__title__name">
           <p className='name'>Local Weather</p>
-          <ShareURLButton />
+          <ShareURLButton/>
         </div>
+
         <span className="sub-name">Weather Stations</span>
       </div>
 
       <div className="popup__content">
         <div className="popup__content__title">
-          <p className="name">{weatherData.weather_station_name}</p>
+        <p className="name">{weatherData.weather_station_name}</p>
           <p className="description">{weatherData.location_description}</p>
           <FriendlyTime date={weatherData.issuedUtc} asDate />
         </div>

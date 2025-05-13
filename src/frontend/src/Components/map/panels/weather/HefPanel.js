@@ -10,6 +10,7 @@ import {
   faMountain,
   faTriangleExclamation,
 } from '@fortawesome/pro-solid-svg-icons';
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
@@ -22,8 +23,11 @@ import './HefPanel.scss';
 // Main component
 export default function HefPanel(props) {
   /* Setup */
+  // Misc
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+
   // Props
-  const { feature } = props;
+  const { feature, showRouteObjs } = props;
 
   const data = feature.getProperties();
 
@@ -36,20 +40,20 @@ export default function HefPanel(props) {
 
   return (
     <div className="popup popup--weather popup--weather--hef" tabIndex={0}>
-      <div className="popup__title">
+      <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__icon">
-          <FontAwesomeIcon icon={faMountain} />
+          <FontAwesomeIcon icon={faMountain}/>
         </div>
 
         <div className="popup__title__name">
           <p className='name'>High Elevation Weather</p>
-          <ShareURLButton />
+          <ShareURLButton/>
         </div>
       </div>
 
-      { data.warnings && (
+      {data.warnings && (
         <div className="popup__advisory">
-          { data.warnings.Events.map(event => {
+          {data.warnings.Events.map(event => {
             return <div key={ event.expirytime } className="event">
               <FontAwesomeIcon icon={faTriangleExclamation} />
               <p className="advisory-title">{ event.Description }</p>

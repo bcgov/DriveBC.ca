@@ -17,6 +17,7 @@ import {
   faTruckContainer,
   faWifi,
 } from '@fortawesome/pro-solid-svg-icons';
+import { useMediaQuery } from "@uidotdev/usehooks";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
@@ -39,7 +40,10 @@ const tooltipLargeVehicles = (
 
 // Main component
 export default function RestStopPanel(props) {
-  const { feature } = props;
+  // Misc
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+
+  const { feature, showRouteObjs } = props;
 
   const restStopData = feature.getProperties();
 
@@ -57,18 +61,18 @@ export default function RestStopPanel(props) {
 
   return (
     <div className="popup popup--reststop" tabIndex={0}>
-      <div className="popup__title">
+      <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__icon">
-          <RestStopTypeIcon reststop={restStopData} state="active" />
+          <RestStopTypeIcon reststop={restStopData} state="active"/>
         </div>
         <div className="popup__title__name">
           <p className='name'>Rest area</p>
-          <ShareURLButton />
+          <ShareURLButton/>
         </div>
       </div>
       <div className="popup__content">
         <div className="popup__content__title">
-          <p className="name">{restStopData.properties.REST_AREA_NAME}</p>
+        <p className="name">{restStopData.properties.REST_AREA_NAME}</p>
           <p className="location">{restStopData.properties.DISTANCE_FROM_MUNICIPALITY}</p>
         </div>
         <hr/>
@@ -162,7 +166,7 @@ export default function RestStopPanel(props) {
               {restStopData.properties.ACCOM_COMMERCIAL_TRUCKS === "Yes" ? (
                   <p>Vehicles longer than 20 metres (66 feet) allowed</p>
                 ) : (
-                  <p className="red-text">Vehicles longer than 20 metres (66 feet) not allowed</p>                  
+                  <p className="red-text">Vehicles longer than 20 metres (66 feet) not allowed</p>
               )}
             </div>
             <div className='popup__content__description__container__row'>

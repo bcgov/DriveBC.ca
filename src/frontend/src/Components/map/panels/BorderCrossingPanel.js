@@ -1,6 +1,9 @@
 // React
 import React, { useEffect, useState } from 'react';
 
+// Navigation
+import { useSearchParams } from 'react-router-dom';
+
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -8,16 +11,19 @@ import {
   faTruckContainer,
   faCars
 } from '@fortawesome/pro-solid-svg-icons';
+import { useMediaQuery } from "@uidotdev/usehooks";
+import FriendlyTime from "../../shared/FriendlyTime";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
 // Styling
 import './BorderCrossingPanel.scss';
-import FriendlyTime from "../../shared/FriendlyTime";
-import { useSearchParams } from 'react-router-dom';
 
 export default function BorderCrossingPanel(props) {
-  const { borderCrossing } = props;
+  // Misc
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+
+  const { borderCrossing, showRouteObjs } = props;
 
   const [borderLanes, setBorderLanes] = useState({});
   const [_searchParams, setSearchParams] = useSearchParams();
@@ -35,7 +41,7 @@ export default function BorderCrossingPanel(props) {
 
     setBorderLanes(res);
     setSearchParams(new URLSearchParams({ type: 'borderCrossing', id: borderCrossing.id }));
-  }, [borderCrossing?.id, borderCrossing?.lanes]); 
+  }, [borderCrossing?.id, borderCrossing?.lanes]);
 
   /* Rendering */
   // Sub components
@@ -420,7 +426,7 @@ export default function BorderCrossingPanel(props) {
 
   return borderCrossing && (
     <div className="popup popup--border-crossing" tabIndex={0}>
-      <div className="popup__title">
+      <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faSignsPost}/>
         </div>
@@ -432,7 +438,7 @@ export default function BorderCrossingPanel(props) {
 
       <div className="popup__content">
         <div className="popup__content__title">
-          <p className="name">{borderCrossing.name}</p>
+        <p className="name">{borderCrossing.name}</p>
           <p className="delays">Current delays</p>
           <p className="update"><span className="updated">Updated </span><FriendlyTime date={borderCrossing.last_updated}/></p>
         </div>

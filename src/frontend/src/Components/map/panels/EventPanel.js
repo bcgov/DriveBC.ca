@@ -5,6 +5,7 @@ import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 // External imports
+import { useMediaQuery } from "@uidotdev/usehooks";
 import Linkify from 'linkify-react';
 import parse from "html-react-parser";
 
@@ -19,7 +20,10 @@ import './EventPanel.scss';
 
 // Main component
 export default function EventPanel(props) {
-  const { feature } = props;
+  // Misc
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+
+  const { feature, showRouteObjs } = props;
 
   const [_searchParams, setSearchParams] = useSearchParams();
 
@@ -35,15 +39,15 @@ export default function EventPanel(props) {
   return (
     <div
       className={`popup popup--event ${eventData.display_category} ${severity}`} tabIndex={0}>
-      <div className="popup__title">
+      <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__icon">
           <EventTypeIcon event={eventData} state="active" />
         </div>
+
         <div className="popup__title__name">
           <p className="name">{getTypeDisplay(eventData)}</p>
           <ShareURLButton />
         </div>
-
       </div>
 
       <div className="popup__content">

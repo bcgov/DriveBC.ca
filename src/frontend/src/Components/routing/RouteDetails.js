@@ -54,7 +54,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 export default function RouteDetails(props) {
   /* Setup */
   // Props
-  const { route, isPanel, setRouteFavCams, setRouteLabel, index, onMobile, setRouteDetailIndex } = props;
+  const { route, isPanel, setRouteFavCams, setRouteLabel, onMobile, setShowRouteObjs } = props;
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -364,9 +364,9 @@ export default function RouteDetails(props) {
 
   /* Rendering */
   // Subcomponents
-  const getDefaultLabel = (isPanel, index) => {
-    if (isPanel && index !== undefined) {
-      return 'Route ' + (index === 0 ? 'A' : 'B');
+  const getDefaultLabel = (isPanel) => {
+    if (isPanel) {
+      return 'Route ' + (selectedRoute.criteria === 'fastest' ? 'A' : 'B');
     }
 
     if (route.start && route.end) {
@@ -495,7 +495,7 @@ export default function RouteDetails(props) {
         <div className="route-title">
           <div className="space-between-row route-tools">
             {isPanel &&
-              <span className={`route-index ${compareRoutes(route, selectedRoute) ? 'selected' : ''}`}>{(index === 0) ? 'A' : 'B'}</span>
+              <span className={`route-index ${compareRoutes(route, selectedRoute) ? 'selected' : ''}`}>{(selectedRoute.criteria === 'fastest') ? 'A' : 'B'}</span>
             }
 
             {!isPanel &&
@@ -547,7 +547,7 @@ export default function RouteDetails(props) {
           }
 
           <div className="route-name-and-distance">
-            <h4 className="route-name">{route.label ? route.label : getDefaultLabel(isPanel, index)}</h4>
+            <h4 className="route-name">{route.label ? route.label : getDefaultLabel(isPanel)}</h4>
             <p className="route-distance">{Math.round(route.distance)} km</p>
           </div>
 
@@ -672,8 +672,8 @@ export default function RouteDetails(props) {
             <Button
               variant="light"
               className='view-details-btn'
-              onClick={() => {if (setRouteDetailIndex) setRouteDetailIndex(index)}}
-              onKeyPress={() => {if (setRouteDetailIndex) setRouteDetailIndex(index)}}>
+              onClick={() => {if (setShowRouteObjs) setShowRouteObjs(true)}}
+              onKeyPress={() => {if (setShowRouteObjs) setShowRouteObjs(true)}}>
 
               View Details
               <FontAwesomeIcon icon={faChevronRight}/>

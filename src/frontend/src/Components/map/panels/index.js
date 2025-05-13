@@ -17,7 +17,16 @@ import BorderCrossingPanel from './BorderCrossingPanel';
 import './index.scss';
 import Feature from "ol/Feature";
 
-export const renderPanel = (clickedFeature, isCamDetail, smallScreen, mapView) => {
+export const renderPanel = (
+  clickedFeature,
+  isCamDetail,
+  smallScreen,
+  mapView,
+  clickedFeatureRef,
+  updateClickedFeature,
+  showRouteObjs,
+  setShowRouteObjs
+) => {
   if (clickedFeature) {
     // Hack for rendering advisories panel since it's not a feature
     // DBC22-2871: temporarily disabled
@@ -27,29 +36,35 @@ export const renderPanel = (clickedFeature, isCamDetail, smallScreen, mapView) =
 
     switch (clickedFeature.get('type')) {
       case 'camera':
-        return <CamPanel camFeature={clickedFeature} isCamDetail={isCamDetail} />;
+        return <CamPanel camFeature={clickedFeature} isCamDetail={isCamDetail} showRouteObjs={showRouteObjs} />;
       case 'event':
-        return <EventPanel feature={clickedFeature} />;
+        return <EventPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
       case 'ferry':
-        return <FerryPanel feature={clickedFeature} />;
+        return <FerryPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
       case 'currentWeather':
-        return <LocalWeatherPanel feature={clickedFeature} />;
+        return <LocalWeatherPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
       case 'regionalWeather':
-        return <RegionalWeatherPanel feature={clickedFeature} />;
+        return <RegionalWeatherPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
       case 'hef':
-        return <HefPanel feature={clickedFeature} />;
+        return <HefPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
       case 'largeRestStop':
       case 'restStop':
-        return <RestStopPanel feature={clickedFeature} />;
+        return <RestStopPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
       case 'borderCrossing':
-        return <BorderCrossingPanel borderCrossing={clickedFeature.getProperties()} />;
+        return <BorderCrossingPanel borderCrossing={clickedFeature.getProperties()} showRouteObjs={showRouteObjs} />;
       case 'advisory':
-        return <AdvisoriesPanel advisories={[clickedFeature.get('data')]} />;
+        return <AdvisoriesPanel advisories={[clickedFeature.get('data')]} showRouteObjs={showRouteObjs} />;
     }
 
   // Render searched routes panel if no feature is clicked
   } else {
-    return <RouteDetailsPanel />;
+    return (
+      <RouteDetailsPanel
+        clickedFeatureRef={clickedFeatureRef}
+        updateClickedFeature={updateClickedFeature}
+        showRouteObjs={showRouteObjs}
+        setShowRouteObjs={setShowRouteObjs} />
+    );
   }
 }
 

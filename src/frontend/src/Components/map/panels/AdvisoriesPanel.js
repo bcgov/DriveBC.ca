@@ -17,7 +17,7 @@ import AdvisoriesList from '../../advisories/AdvisoriesList';
 import './AdvisoriesPanel.scss';
 
 export default function AdvisoriesPanel(props) {
-  const { advisories, openAdvisoriesOverlay, smallScreen, mapView } = props;
+  const { advisories, openAdvisoriesOverlay, smallScreen, mapView, showRouteObjs } = props;
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
@@ -42,12 +42,14 @@ export default function AdvisoriesPanel(props) {
 
   return (
     <div className="popup popup--advisories" tabIndex={0}>
-      <div className="popup__title">
+      <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faFlag} />
         </div>
+
         <p className="name">Advisories</p>
       </div>
+
       <div className="popup__content">
         <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={true} showArrow={true} />
         {advisories.length === 0 && <div className="popup__content">No advisory in view</div>}

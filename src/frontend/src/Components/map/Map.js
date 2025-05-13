@@ -27,6 +27,7 @@ import {
   faUpRightAndDownLeftFromCenter,
   faLocationCrosshairs,
   faXmark,
+  faArrowLeft
 } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 
@@ -46,7 +47,7 @@ import {
   removeOverlays
 } from './helpers';
 import { loadLayer, loadEventsLayers, updateEventsLayers, enableReferencedLayer } from './layers';
-import { MapContext } from '../../App.js';
+import { FeatureContext, MapContext } from '../../App.js';
 import { maximizePanel, renderPanel, togglePanel } from './panels';
 import { pointerMoveHandler, resetHoveredStates } from './handlers/hover';
 import { pointerClickHandler, resetClickedStates } from './handlers/click';
@@ -96,6 +97,7 @@ export default function DriveBCMap(props) {
 
   // Context
   const { mapContext } = useContext(MapContext);
+  const { featureContext, setFeatureContext } = useContext(FeatureContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -170,8 +172,8 @@ export default function DriveBCMap(props) {
     chainUps: null,
     advisories: null
   });
-
   const [showSpinner, setShowSpinner] = useState(false);
+  const [showRouteObjs, setShowRouteObjs] = useState(false);
 
   // Workaround for OL handlers not being able to read states
   const [clickedFeature, setClickedFeature] = useState();
@@ -598,7 +600,8 @@ export default function DriveBCMap(props) {
     // Count filtered events to store in routeDetails
     if (filteredEvents) {
       // Toggle features visibility
-      updateEventsLayers(filteredEvents, mapLayers, setLoadingLayers, referenceData);
+      const featuresDict = updateEventsLayers(filteredEvents, mapLayers, setLoadingLayers, referenceData);
+      setFeatureContext({...featureContext, events: featuresDict});
 
       const eventCounts = {
         closures: 0,
@@ -734,7 +737,17 @@ export default function DriveBCMap(props) {
     } else {
       searchParamInitialized.current = true;
     }
+
+    if (selectedRoute && clickedFeature && clickedFeature.get('type') !== 'route') {
+      setShowRouteObjs(true);
+    }
   }, [clickedFeature]);
+
+  useEffect(() => {
+    if (!selectedRoute) {
+      setShowRouteObjs(false);
+    }
+  }, [selectedRoute]);
 
   /* Rendering */
   return (
@@ -759,7 +772,7 @@ export default function DriveBCMap(props) {
             }
           }}>
 
-          {clickedFeature &&
+          {clickedFeature && !selectedRoute &&
             <button
               className="close-panel"
               aria-label={`${openPanel ? 'close side panel' : ''}`}
@@ -775,10 +788,40 @@ export default function DriveBCMap(props) {
             </button>
           }
 
+          {clickedFeature && selectedRoute &&
+            <Button
+              variant="primary-outline"
+              className="btn-outline-primary back-to-details"
+              aria-label={`back to route details`}
+              tabIndex={`${openPanel ? 0 : -1}`}
+              onKeyPress={(e) => {
+                e.stopPropagation();
+                togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
+                  myLocationRef, routingContainerRef
+                ], searchedRoutes);
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
+                  myLocationRef, routingContainerRef
+                ], searchedRoutes);
+              }}>
+
+              <FontAwesomeIcon icon={faArrowLeft}/>
+              Route details
+            </Button>
+          }
+
           <div className="panel-content">
             {renderPanel(
               clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature,
-              isCamDetail, smallScreen, mapView
+              isCamDetail,
+              smallScreen,
+              mapView,
+              clickedFeatureRef,
+              updateClickedFeature,
+              showRouteObjs,
+              setShowRouteObjs
             )}
           </div>
         </div>
