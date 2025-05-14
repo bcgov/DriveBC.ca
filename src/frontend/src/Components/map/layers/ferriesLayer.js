@@ -53,19 +53,25 @@ export function getFerriesLayer(ferriesData, projectionCode, mapContext, referen
 }
 
 export function updateFerriesLayer(ferries, layer, setLoadingLayers) {
+  const featuresDict = {};
+
   const ferriesDict = ferries.reduce((dict, obj) => {
     dict[obj.id] = obj;
     return dict;
   }, {});
 
   for (const ferryFeature of layer.getSource().getFeatures()) {
-    if(!ferryFeature.getProperties()['clicked']){
+    if(!ferryFeature.get('clicked')){
       ferryFeature.setStyle(ferriesDict[ferryFeature.getId()] ? ferryStyles['static'] : new Style(null));
     }
+
+    featuresDict[ferryFeature.get('id')] = ferryFeature;
   }
 
   setLoadingLayers(prevState => ({
     ...prevState,
     ferries: false
   }));
+
+  return featuresDict;
 }

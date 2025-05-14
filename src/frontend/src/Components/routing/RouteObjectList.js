@@ -30,12 +30,13 @@ import { AlertContext, AuthContext, FeatureContext } from '../../App';
 import { removeRoute, saveRoute } from "../data/routes";
 import { collator } from "../data/webcams";
 import { populateRouteProjection } from '../map/helpers';
-import { eventClickHandler } from "../map/handlers/click";
+import {eventClickHandler, ferryClickHandler} from "../map/handlers/click";
 import RouteMap from './RouteMap';
 
 // Styling
 import './RouteObjectList.scss';
 import 'react-loading-skeleton/dist/skeleton.css'
+import {advisoryStyles} from "../data/featureStyleDefinitions";
 
 export default function RouteObjectList(props) {
   /* Setup */
@@ -149,7 +150,7 @@ export default function RouteObjectList(props) {
     }
   }
 
-  const featureHandler = (event) => {
+  const eventFeatureHandler = (event) => {
     if (featureContext.events && event.id in featureContext.events) {
       eventClickHandler(
         featureContext.events[event.id],
@@ -157,6 +158,28 @@ export default function RouteObjectList(props) {
         updateClickedFeature,
         false
       );
+    }
+  }
+
+  const ferryFeatureHandler = (ferry) => {
+    if (featureContext.ferries && ferry.id in featureContext.ferries) {
+      ferryClickHandler(
+        featureContext.ferries[ferry.id],
+        clickedFeatureRef,
+        updateClickedFeature,
+        false,
+      );
+    }
+  }
+
+  const advisoryFeatureHandler = (advisory) => {
+    if (featureContext.advisories && advisory.id in featureContext.advisories) {
+      const feature = featureContext.advisories[advisory.id];
+
+      // set new clicked ferry feature
+      feature.setStyle(advisoryStyles['active']);
+      feature.setProperties({ clicked: true }, true);
+      updateClickedFeature(feature);
     }
   }
 
@@ -180,8 +203,8 @@ export default function RouteObjectList(props) {
             <div
               className="route-item route-item--major"
               key={index}
-              onClick={() => featureHandler(obj)}
-              onKeyPress={() => featureHandler(obj)}
+              onClick={() => eventFeatureHandler(obj)}
+              onKeyPress={() => eventFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 
@@ -198,8 +221,8 @@ export default function RouteObjectList(props) {
             <div
               className="route-item route-item--major"
               key={index}
-              onClick={() => featureHandler(obj)}
-              onKeyPress={() => featureHandler(obj)}
+              onClick={() => eventFeatureHandler(obj)}
+              onKeyPress={() => eventFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 
@@ -219,8 +242,8 @@ export default function RouteObjectList(props) {
             <div
               className="route-item route-item--minor"
               key={index}
-              onClick={() => featureHandler(obj)}
-              onKeyPress={() => featureHandler(obj)}
+              onClick={() => eventFeatureHandler(obj)}
+              onKeyPress={() => eventFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 
@@ -240,8 +263,8 @@ export default function RouteObjectList(props) {
             <div
               className="route-item route-item--roadConditions"
               key={index}
-              onClick={() => featureHandler(obj)}
-              onKeyPress={() => featureHandler(obj)}
+              onClick={() => eventFeatureHandler(obj)}
+              onKeyPress={() => eventFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 
@@ -261,8 +284,8 @@ export default function RouteObjectList(props) {
             <div
               className="route-item route-item--chainUps"
               key={index}
-              onClick={() => featureHandler(obj)}
-              onKeyPress={() => featureHandler(obj)}
+              onClick={() => eventFeatureHandler(obj)}
+              onKeyPress={() => eventFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 
@@ -284,8 +307,8 @@ export default function RouteObjectList(props) {
               <div
                 className="route-item route-item--ferries"
                 key={index}
-                onClick={() => featureHandler(obj)}
-                onKeyPress={() => featureHandler(obj)}
+                onClick={() => ferryFeatureHandler(obj)}
+                onKeyPress={() => ferryFeatureHandler(obj)}
                 role="button"
                 tabIndex={0}>
 
@@ -303,8 +326,8 @@ export default function RouteObjectList(props) {
               <div
                 className="route-item route-item--major"
                 key={index}
-                onClick={() => featureHandler(obj)}
-                onKeyPress={() => featureHandler(obj)}
+                onClick={() => advisoryFeatureHandler(obj)}
+                onKeyPress={() => advisoryFeatureHandler(obj)}
                 role="button"
                 tabIndex={0}>
 
@@ -355,8 +378,8 @@ export default function RouteObjectList(props) {
           }
         </div>
 
-
         <p className="route-items-text">In order of appearance along your route:</p>
+
         <div className="route-items">
           {objList &&
             getObjectList(objList)

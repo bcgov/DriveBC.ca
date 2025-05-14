@@ -59,7 +59,7 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filtered
 
     // Toggle features' styles based on dataList
     if (key != 'routeLayer') {
-      layerUpdateFuncMap[key](filteredDataList, mapLayers.current[key], setLoadingLayers);
+      return layerUpdateFuncMap[key](filteredDataList, mapLayers.current[key], setLoadingLayers);
     }
   }
 }

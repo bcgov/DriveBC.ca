@@ -197,7 +197,7 @@ export const eventClickHandler = (
   updateClickedFeature(feature);
 };
 
-const ferryClickHandler = (
+export const ferryClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,
@@ -351,7 +351,7 @@ const borderCrossingClickHandler = (
   updateClickedFeature(feature);
 };
 
-const advisoryClickHandler = (
+export const advisoryClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,

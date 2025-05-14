@@ -624,17 +624,18 @@ export default function DriveBCMap(props) {
   // Ferries layer
   useEffect(() => {
     if (!isCamDetail && ferries && filteredFerries) {
-      loadLayer(
+      const featuresDict = loadLayer(
         mapLayers, mapRef, mapContext,
         'inlandFerries', ferries, filteredFerries, 66,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
+      setFeatureContext({...featureContext, ferries: featuresDict});
     }
+
     // Add ferry count to routeDetails
     if (Array.isArray(filteredFerries)) {
       setSelectedFerries(filteredFerries.length);
     }
-
   }, [filteredFerries]);
 
   // Current weathers layer
@@ -700,10 +701,12 @@ export default function DriveBCMap(props) {
 
   // Advisories layer
   useEffect(() => {
-    loadLayer(
+    const featuresDict = loadLayer(
       mapLayers, mapRef, mapContext,
       'advisoriesLayer', advisories, filteredAdvisories, 5
     );
+
+    setFeatureContext({...featureContext, advisories: featuresDict});
   }, [advisories]);
 
   useEffect(() => {

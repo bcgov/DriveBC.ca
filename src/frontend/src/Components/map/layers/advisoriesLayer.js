@@ -53,6 +53,8 @@ export function getAdvisoriesLayer(
 }
 
 export function updateAdvisoriesLayer(advisories, layer, setLoadingLayers) {
+  const featuresDict = {};
+
   const advisoriesDict = advisories ? advisories.reduce((dict, obj) => {
     dict[obj.id] = obj;
     return dict;
@@ -62,5 +64,9 @@ export function updateAdvisoriesLayer(advisories, layer, setLoadingLayers) {
     if(!advisoryFeature.get('clicked')){
       advisoryFeature.setStyle(advisoriesDict[advisoryFeature.getId()] ? advisoryStyles.static : new Style(null));
     }
+
+    featuresDict[advisoryFeature.get('data').id] = advisoryFeature;
   }
+
+  return featuresDict;
 }
