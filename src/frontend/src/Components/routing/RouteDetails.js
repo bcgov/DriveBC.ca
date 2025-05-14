@@ -668,15 +668,17 @@ export default function RouteDetails(props) {
           }
           {(!eventCount || ferryCount === null) && <Skeleton height={64}/>}
 
-          <Button
-            variant="light"
-            className='view-details-btn'
-            onClick={() => {if (setRouteDetailIndex) setRouteDetailIndex(index)}}
-            onKeyPress={() => {if (setRouteDetailIndex) setRouteDetailIndex(index)}}>
+          {isPanel &&
+            <Button
+              variant="light"
+              className='view-details-btn'
+              onClick={() => {if (setRouteDetailIndex) setRouteDetailIndex(index)}}
+              onKeyPress={() => {if (setRouteDetailIndex) setRouteDetailIndex(index)}}>
 
-            View Details
-            <FontAwesomeIcon icon={faChevronRight}/>
-          </Button>
+              View Details
+              <FontAwesomeIcon icon={faChevronRight}/>
+            </Button>
+          }
         </div>
 
         {!isPanel &&
