@@ -366,7 +366,7 @@ export default function RouteDetails(props) {
   // Subcomponents
   const getDefaultLabel = (isPanel) => {
     if (isPanel) {
-      return 'Route ' + (selectedRoute.criteria === 'fastest' ? 'A' : 'B');
+      return 'Route ' + (route.criteria === 'fastest' ? 'A' : 'B');
     }
 
     if (route.start && route.end) {
@@ -495,7 +495,7 @@ export default function RouteDetails(props) {
         <div className="route-title">
           <div className="space-between-row route-tools">
             {isPanel &&
-              <span className={`route-index ${compareRoutes(route, selectedRoute) ? 'selected' : ''}`}>{(selectedRoute.criteria === 'fastest') ? 'A' : 'B'}</span>
+              <span className={`route-index ${compareRoutes(route, selectedRoute) ? 'selected' : ''}`}>{(route.criteria === 'fastest') ? 'A' : 'B'}</span>
             }
 
             {!isPanel &&
