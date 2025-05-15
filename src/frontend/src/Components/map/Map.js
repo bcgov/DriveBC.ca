@@ -763,7 +763,7 @@ export default function DriveBCMap(props) {
         <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} isCamDetail={isCamDetail} />
       }
 
-      {openPanel &&
+      {!!openPanel &&
         <div
           ref={panel}
           className={`side-panel ${openPanel ? 'open' : ''}`}
@@ -974,7 +974,7 @@ export default function DriveBCMap(props) {
         <ServerErrorPopup />
       }
 
-      { staleLinkMessage && <StaleLinkErrorPopup message={staleLinkMessage}/> }
+      {staleLinkMessage && <StaleLinkErrorPopup message={staleLinkMessage}/> }
     </div>
   );
 }
