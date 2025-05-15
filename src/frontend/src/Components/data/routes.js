@@ -66,6 +66,13 @@ export const getFavoriteRoutes = async (headers = {}) => {
 
 export const saveRoute = async (route, selectedRoute, nickname, routeMapImg, startLabel, endLabel, dispatch) => {
   const url = `${window.API_HOST}/api/users/routes/`;
+  const favRoutesData = await getFavoriteRoutes();
+  const routeExists = favRoutesData.some(route => route.label === nickname);
+  
+  if (routeExists) {
+    console.log('Route found!');
+    return false;
+  }
 
   const body = {
     label: nickname,
@@ -93,7 +100,13 @@ export const saveRoute = async (route, selectedRoute, nickname, routeMapImg, sta
     });
 
     if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
+      const errorResponse = await response.json();
+      if(response.status === 400 && errorResponse) {
+        return "You have already saved a route with this nickname. Please choose a different one.";
+      }
+      else{
+        throw new Error(`Error: ${response.statusText}`);
+      }
     }
 
     const savedRoute = await response.json();
@@ -104,6 +117,7 @@ export const saveRoute = async (route, selectedRoute, nickname, routeMapImg, sta
 
     dispatch(updateSingleSearchedRoute(payload));
     dispatch(pushFavRoute(savedRoute));
+    return true;
 
   } catch (error) {
     console.error('Error saving the camera:', error);

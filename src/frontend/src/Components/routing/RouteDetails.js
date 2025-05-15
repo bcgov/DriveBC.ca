@@ -275,9 +275,13 @@ export default function RouteDetails(props) {
     setNickName('');
   }
 
-  const saveRouteHandler = () => {
-    saveRoute(route, selectedRoute, nickName, routeMapImg, searchLocationFrom[0].label, searchLocationTo[0].label, dispatch);
+  const saveRouteHandler = async () => {
+    const messageReturn = await saveRoute(route, selectedRoute, nickName, routeMapImg, searchLocationFrom[0].label, searchLocationTo[0].label, dispatch);
     resetPopup();
+    if (messageReturn) {
+      setAlertMessage(<p>{messageReturn}</p>);
+      return;
+    }
     setAlertMessage(<p>Saved to <a href="/my-routes">My routes</a></p>);
   }
 
