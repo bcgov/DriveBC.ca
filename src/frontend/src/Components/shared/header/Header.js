@@ -59,7 +59,7 @@ export default function Header() {
 
   // Context
   const { cmsContext } = useContext(CMSContext);
-  const { headerHeightContext, setHeaderHeightContext } = useContext(HeaderHeightContext);
+  const { setHeaderHeightContext } = useContext(HeaderHeightContext);
 
   // States
   const [advisoriesCount, setAdvisoriesCount] = useState();
@@ -67,7 +67,6 @@ export default function Header() {
   const [expanded, setExpanded] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
-  const [showRouteLocation, setShowRouteLocation] = useState(false);
 
   // Effects
   const loadAdvisories = async () => {
@@ -110,12 +109,11 @@ export default function Header() {
 
   useEffect(() => {
     setHeaderHeightContext(mobilePortrait ? document.querySelector('.header').offsetHeight : 58);
-  }, [openSearch, showRouteLocation, selectedRoute, showSearch]);
+  }, [openSearch, selectedRoute, showSearch]);
 
   useEffect(() => {
     if (searchLocationFrom.length && searchLocationTo.length) {
       setOpenSearch(false);
-      setShowRouteLocation(true);
     }
   }, [selectedRoute]);
 
@@ -145,7 +143,6 @@ export default function Header() {
   }
 
   /* Rendering */
-
   // Sub components
   const getNavLink = (title, count) => {
     return (
@@ -195,20 +192,20 @@ export default function Header() {
               }
             </div>
 
-            {mobilePortrait && showSearch && !selectedRoute &&
+            {mobilePortrait && showSearch && !openSearch && !selectedRoute &&
               <button
                 className="search-trigger btn"
                 aria-label="search destination location"
-                onClick={() => setOpenSearch(!openSearch)}>
+                onClick={() => setOpenSearch(true)}>
                 Search destination location
               </button>
             }
 
-            {mobilePortrait && showSearch && selectedRoute && searchLocationFrom[0] && searchLocationTo[0] &&
+            {mobilePortrait && showSearch && !openSearch && selectedRoute &&
               <button
-                className={`searched-route btn ${showRouteLocation ? 'show' : ''}`}
+                className={`searched-route btn show`}
                 aria-label="searched route"
-                onClick={() => {setOpenSearch(!openSearch); setShowRouteLocation(!showRouteLocation)}}>
+                onClick={() => setOpenSearch(true)}>
                 <div className="searched-route__start">
                   <div className="searched-route__icon">
                     <svg width="14" height="13" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -237,14 +234,15 @@ export default function Header() {
             }
           </div>
 
-          {mobilePortrait && showSearch &&
+          {mobilePortrait && showSearch && openSearch &&
             <div className={'location-search' + (openSearch ? ' visible' : '')}>
               <button
                 className="close-search btn"
                 aria-label="close search"
-                onClick={() => {setOpenSearch(!openSearch); setShowRouteLocation(!showRouteLocation)}}>
+                onClick={() => setOpenSearch(false)}>
                 <FontAwesomeIcon icon={faChevronLeft} />
               </button>
+
               <RouteSearch showSpinner={showSpinner} onShowSpinnerChange={setShowSpinner}/>
             </div>
           }
