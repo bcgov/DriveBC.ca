@@ -575,7 +575,7 @@ export default function RouteDetails(props) {
           }
 
           {!isNaN(advisoryCount)
-            ? (advisoryCount > 0 &&
+            ? (advisoryCount >= 0 &&
               <div className="route-pill route-pill--advisories">
                   <span className="route-item__icon">
                     <FontAwesomeIcon icon={faFlag} alt="advisories"/>
