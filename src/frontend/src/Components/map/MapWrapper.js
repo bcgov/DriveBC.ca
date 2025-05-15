@@ -178,37 +178,37 @@ export default function MapWrapper(props) {
     const routeData = selectedRouteRef.current && selectedRouteRef.current.routeFound ? selectedRouteRef.current : null;
 
     // Toggleable map layers
-    const loadCameras = !camerasRef.current || (!isInitialLoad.current && mapContext.visible_layers.highwayCams);
-    const loadEvents = !eventsRef.current || (!isInitialLoad.current && hasVisibleEvents());
-    const loadFerries = !ferriesRef.current || (!isInitialLoad.current && mapContext.visible_layers.inlandFerries);
-    const loadHef = !hefRef.current || (!isInitialLoad.current && mapContext.visible_layers.weather);
-    const loadLocalWeathers = !currentWeathersRef.current || (!isInitialLoad.current && mapContext.visible_layers.weather);
-    const loadRegionalWeathers = !regionalWeathersRef.current || (!isInitialLoad.current && mapContext.visible_layers.weather);
-    const loadRestStops = !restStopsRef.current ||
+    const reloadCameras = !camerasRef.current || (!isInitialLoad.current && mapContext.visible_layers.highwayCams);
+    const reloadEvents = !eventsRef.current || (!isInitialLoad.current && hasVisibleEvents());
+    const reloadFerries = !ferriesRef.current || (!isInitialLoad.current && mapContext.visible_layers.inlandFerries);
+    const reloadHef = !hefRef.current || (!isInitialLoad.current && mapContext.visible_layers.weather);
+    const reloadLocalWeathers = !currentWeathersRef.current || (!isInitialLoad.current && mapContext.visible_layers.weather);
+    const reloadRegionalWeathers = !regionalWeathersRef.current || (!isInitialLoad.current && mapContext.visible_layers.weather);
+    const reloadRestStops = !restStopsRef.current ||
       (!isInitialLoad.current && mapContext.visible_layers.restStops) ||
       (!isInitialLoad.current && mapContext.visible_layers.largeRestStops);
 
     // Non-toggleable map layers
-    const loadAdvisories = !advisoriesRef.current || !isInitialLoad.current;
-    const loadBorderCrossings = !borderCrossingsRef.current || !isInitialLoad.current;
+    const reloadAdvisories = !advisoriesRef.current || !isInitialLoad.current;
+    const reloadBorderCrossings = !borderCrossingsRef.current || !isInitialLoad.current;
 
     setLoadingLayers({
-      cameras: loadCameras,
-      events: loadEvents,
-      ferries: loadFerries,
-      weathers: loadLocalWeathers || loadRegionalWeathers,
-      restStops: loadRestStops
+      cameras: reloadCameras,
+      events: reloadEvents,
+      ferries: reloadFerries,
+      weathers: reloadLocalWeathers || reloadRegionalWeathers,
+      restStops: reloadRestStops
     });
 
-    if (loadCameras) dataLoaders.loadCameras(routeData, dispatch, displayError, workerRef.current);
-    if (loadEvents) dataLoaders.loadEvents(routeData, dispatch, displayError, workerRef.current, isInitialLoad.current, trackedEventsRef);
-    if (loadFerries) dataLoaders.loadFerries(routeData, dispatch, displayError, workerRef.current);
-    if (loadLocalWeathers) dataLoaders.loadCurrentWeather(routeData, dispatch, displayError, workerRef.current);
-    if (loadRegionalWeathers) dataLoaders.loadRegionalWeather(routeData, dispatch, displayError, workerRef.current);
-    if (loadHef) dataLoaders.loadHef(routeData, dispatch, displayError, workerRef.current);
-    if (loadRestStops) dataLoaders.loadRestStops(routeData, dispatch, displayError, workerRef.current);
-    if (loadAdvisories) dataLoaders.loadAdvisories(routeData, dispatch, displayError, workerRef.current);
-    if (loadBorderCrossings) dataLoaders.loadBorderCrossings(routeData, dispatch, displayError, workerRef.current);
+    dataLoaders.loadCameras(routeData, reloadCameras ? null : camerasRef.current, dispatch, displayError, workerRef.current);
+    dataLoaders.loadEvents(routeData, reloadEvents ? null : eventsRef.current, dispatch, displayError, workerRef.current, isInitialLoad.current, trackedEventsRef);
+    dataLoaders.loadFerries(routeData, reloadFerries ? null : ferriesRef.current, dispatch, displayError, workerRef.current);
+    dataLoaders.loadCurrentWeather(routeData, reloadLocalWeathers ? null : currentWeathersRef.current, dispatch, displayError, workerRef.current);
+    dataLoaders.loadRegionalWeather(routeData, reloadRegionalWeathers ? null : regionalWeathersRef.current, dispatch, displayError, workerRef.current);
+    dataLoaders.loadHef(routeData, reloadHef ? null : hefRef.current, dispatch, displayError, workerRef.current);
+    dataLoaders.loadRestStops(routeData, reloadRestStops ? null : restStopsRef.current, dispatch, displayError, workerRef.current);
+    dataLoaders.loadAdvisories(routeData, reloadAdvisories ? null : advisoriesRef.current, dispatch, displayError, workerRef.current);
+    dataLoaders.loadBorderCrossings(routeData, reloadBorderCrossings ? null : borderCrossingsRef.current, dispatch, displayError, workerRef.current);
 
     isInitialLoad.current = false;
   };
