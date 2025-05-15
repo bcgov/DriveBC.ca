@@ -329,15 +329,15 @@ export default function RouteDetails(props) {
     );
     linkRoute(alternateRoute, favRoutes);
 
-    let searchedRoutesPayload = route.criteria === 'fastest' ? // Fastest before shortest
-      [routePayload, alternateRoute] : [alternateRoute, routePayload];
+    let searchedRoutesPayload;
+    if (compareRouteDistance(routePayload, alternateRoute)) { // Same route, don't use alternate route in payload
+      searchedRoutesPayload = [routePayload];
 
-    const isSameRoute = compareRouteDistance(routePayload, alternateRoute);
-    if(isSameRoute){
-      searchedRoutesPayload = searchedRoutesPayload?.filter(route =>
-        Object.prototype.hasOwnProperty.call(route, 'id')
-      );
+    } else {
+       searchedRoutesPayload = route.criteria === 'fastest' ? // Fastest before shortest
+        [routePayload, alternateRoute] : [alternateRoute, routePayload];
     }
+
     dispatch(updateSearchedRoutes(searchedRoutesPayload));
 
     const startPayload = [{
