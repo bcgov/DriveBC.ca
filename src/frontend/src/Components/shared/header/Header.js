@@ -39,10 +39,9 @@ export default function Header() {
   const largeScreen = useMediaQuery('only screen and (min-width : 576px)');
   const mobilePortrait = useMediaQuery('only screen and (max-width: 575px) and (orientation: portrait) and (hover: none) and (pointer: coarse)');
 
-
   // Check current page location
   const location = useLocation();
-  const hideSearch = ['/advisories', '/bulletins'].some(path => location.pathname.startsWith(path));
+  const showSearch = ['/cameras', '/delays'].some(path => location.pathname.startsWith(path)) || location.pathname === '/';
 
   // Redux
   const dispatch = useDispatch();
@@ -110,10 +109,8 @@ export default function Header() {
   }, [cmsContext]);
 
   useEffect(() => {
-
-
     setHeaderHeightContext(mobilePortrait ? document.querySelector('.header').offsetHeight : 58);
-  }, [openSearch, showRouteLocation, selectedRoute, hideSearch]);
+  }, [openSearch, showRouteLocation, selectedRoute, showSearch]);
 
   useEffect(() => {
     if (searchLocationFrom.length && searchLocationTo.length) {
@@ -198,7 +195,7 @@ export default function Header() {
               }
             </div>
 
-            {mobilePortrait && !hideSearch && !selectedRoute &&
+            {mobilePortrait && showSearch && !selectedRoute &&
               <button
                 className="search-trigger btn"
                 aria-label="search destination location"
@@ -206,7 +203,8 @@ export default function Header() {
                 Search destination location
               </button>
             }
-            {mobilePortrait && !hideSearch && selectedRoute && searchLocationFrom[0] && searchLocationTo[0] &&
+
+            {mobilePortrait && showSearch && selectedRoute && searchLocationFrom[0] && searchLocationTo[0] &&
               <button
                 className={`searched-route btn ${showRouteLocation ? 'show' : ''}`}
                 aria-label="searched route"
@@ -239,7 +237,7 @@ export default function Header() {
             }
           </div>
 
-          {mobilePortrait && !hideSearch &&
+          {mobilePortrait && showSearch &&
             <div className={'location-search' + (openSearch ? ' visible' : '')}>
               <button
                 className="close-search btn"
