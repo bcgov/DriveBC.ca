@@ -663,7 +663,18 @@ export default function CameraDetailsPage() {
                                     <div className="card-notification">
                                       {showLoader ? <Skeleton /> : !isLoading && (
                                         <>
-                                          <div className={'card-pill' + (show ? ' bounce' : ' hidden')}>
+                                          <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
+                                            <FontAwesomeIcon icon={faArrowsRotate} />
+                                            <p>Image automatically updated to show the latest image received.</p>
+                                            <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                                          </div>
+                                          <div className={'card-pill' + (show ? ' bounce' : ' hidden')}
+                                            onClick={handleChildClick}
+                                            onKeyDown={keyEvent => {
+                                              if (keyEvent.keyCode === 13) {
+                                                handleChildClick();
+                                              }
+                                            }}>
                                             <p>Updated</p>
                                             <FontAwesomeIcon icon={faCircleInfo} />
                                           </div>
