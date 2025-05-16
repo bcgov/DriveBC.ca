@@ -134,10 +134,15 @@
   .actions-bar {
     display: flex;
     justify-content: space-between;
+    flex-direction: column;
     padding: 0.5rem;
     background-color: $BC-Blue-Light;
     color: $BC-Blue;
     border-radius: 8px;
+
+    @media (min-width: 576px) {
+      flex-direction: row;
+    }
 
     @media (min-width: 992px) {
       min-height: 48px;
@@ -150,26 +155,27 @@
     &--webcam {
       .camera-orientations {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
+        justify-content: space-between;
         margin-top: 0;
+        margin-bottom: 18px;
         padding: 0;
         background-color: inherit;
 
         @media (min-width: 576px) {
-          flex-direction: row;
-          align-items: center;
-          margin-top: 0;
+          justify-content: flex-start;
+          margin-bottom: 0;
         }
-        .camera-orientations-group {
-          margin-top: 4px;
-          @media (min-width: 576px) {
-            margin-top: 0;
-          }
-        }
+
         .btn.camera-direction-btn {
           width: auto;
           padding: 0 12px;
+          font-size: 0.75rem;
+
+          @media (min-width: 576px) {
+            font-size: 0.875rem;
+          }
+          
           @media (min-width: 992px) {
             padding: 0 8px;
           }
@@ -185,12 +191,19 @@
         .camera-direction-label {
           margin-right: 0.5rem;
           font-size: 0.875rem;
+
           @media (min-width: 1240px) {
             font-size: 1rem;
             padding-left: 0;
           }
+
           span {
             margin-left: 8px;
+            font-size: 0.75rem;
+
+            @media (min-width: 576px) {
+              font-size: 0.875rem;
+            }
           }
         }
 
@@ -266,25 +279,31 @@
     @media (min-width: 768px) {
       padding: 0;
     }
+
+    .nav-tabs {
+      border-bottom: 1px solid #D9D9D9;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
     .tab-content {
-      padding: 0 12px;
-      @media (min-width: 576px) {
-        padding: 0;
-      }
       & > .tab-pane {
 
         .image-wrap {
           position: relative;
-          margin-top: 8px;
+
+          @media (min-width: 992px) {
+            margin-top: 8px;
+          }
 
           &.unavailable {
 
             .card-img-box {
               background-color: $Surface-major;
               padding: 12px;
-              display: flex; /* Add this line */
-              align-items: center; /* Add this line */
-              justify-content: center; /* Optional: center horizontally as well */
+              display: flex;
+              align-items: center;
+              justify-content: center;
               height: fit-content;
               min-height: 388px;
             }
@@ -398,8 +417,11 @@
           .card-img-box {
             height: 388px;
             position: relative;
-            border-radius: 8px;
             overflow: hidden;
+
+            @media (min-width: 992px) {
+              border-radius: 8px;
+            }
 
             &:has(.image-gallery) {
               overflow: visible;
@@ -662,25 +684,19 @@
       }
 
       .replay-the-day {
-        margin-bottom: 0.5em;
-
-        @media (min-width: 576px) {
-          margin-bottom: 0;
-        }
-      }
-
-      .replay-the-day {
         .form-switch {
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
           align-items: center;
           margin-bottom: 0;
 
-          @media (min-width: 576px) {
-            flex-direction: row;
-          }
-
           .form-check-input {
+            margin-left: auto;
+            position: absolute;
+            top: 0;
+            left: auto;
+            right: 0;
+
             @media (min-width: 576px) {
               margin-left: 8px;
               position: static;
@@ -747,9 +763,7 @@
       padding: 44px 0;
     }
 
-    & > div:not(.camera-notifications, .camera-imagery),
-    .camera-imagery .nav-tabs,
-    .replay-div {
+    & > div:not(.camera-notifications, .camera-imagery) {
       margin-left: 16px;
       margin-right: 16px;
 
