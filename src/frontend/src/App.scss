@@ -58,14 +58,15 @@ body {
 
   .cms-body {
     .responsive-object {
-      position: relative;
+      position: static;
+      padding-bottom: 2rem !important;
     }
 
     .responsive-object iframe,
     .responsive-object img,
     .responsive-object object,
     .responsive-object embed {
-      position: absolute;
+      position: static;
       top: 0;
       left: 0;
       width: 100%;
