@@ -121,6 +121,8 @@ button:focus:not(:focus-visible) {
 
       &.active {
         border-bottom: 2px solid $BC-Blue;
+        color: $BC-Blue;
+        font-weight: 700;
       }
 
       &:hover {
@@ -239,9 +241,10 @@ button:focus:not(:focus-visible) {
     order: 1;
     font-size: 0.875rem;
     vertical-align: middle;
+    font-size: 0.75rem;
 
-    @media (min-width: 1240px) {
-      font-size: 1rem;
+    @media (min-width: 576px) {
+      font-size: 0.875rem;
     }
   }
 }

@@ -15,7 +15,6 @@ import {
   faCircleInfo,
   faClockRotateLeft,
   faHourglassClock,
-  faFlag,
   faForward,
   faPause,
   faPlay,
@@ -24,7 +23,7 @@ import {
   faWarning,
   faXmark,
 } from '@fortawesome/pro-solid-svg-icons';
-import { faStar as faStarOutline, faMountain, faRefresh } from '@fortawesome/pro-regular-svg-icons';
+import { faStar as faStarOutline, faMountain, faRefresh, faFlag } from '@fortawesome/pro-regular-svg-icons';
 import { faArrowsRotate } from '@fortawesome/pro-solid-svg-icons';
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
