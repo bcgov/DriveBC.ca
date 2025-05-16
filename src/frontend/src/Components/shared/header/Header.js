@@ -37,7 +37,7 @@ export default function Header() {
   // Misc
   const xXlargeScreen = useMediaQuery('only screen and (min-width : 1400px)');
   const largeScreen = useMediaQuery('only screen and (min-width : 576px)');
-  const mobilePortrait = useMediaQuery('only screen and (max-width: 575px) and (orientation: portrait) and (hover: none) and (pointer: coarse)');
+  const mobilePortrait = useMediaQuery('only screen and (max-width: 575px) and (orientation: portrait) and (pointer: coarse)');
 
   // Check current page location
   const location = useLocation();
