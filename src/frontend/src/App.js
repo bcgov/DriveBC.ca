@@ -59,6 +59,7 @@ export const HeaderHeightContext = createContext();
 export const FeatureContext = createContext({});
 
 let callingSession = false;
+let sessionStateKnown = false;
 
 function App() {
   /* Setup */
@@ -146,7 +147,7 @@ function App() {
   }
 
   function getInitialAuthContext() {
-    if (!callingSession) {
+    if (!sessionStateKnown && !callingSession) {
       callingSession = true;
 
       fetch(`${window.API_HOST}/api/session`, {
@@ -156,7 +157,8 @@ function App() {
         .then((data) => {
           const ret = {
             loginStateKnown: true,
-          }
+          };
+          sessionStateKnown = true;
           if (data.username) {
             ret.username = data.username;
             ret.email = data.email;
@@ -172,7 +174,9 @@ function App() {
             return prior;
           });
         })
-        .finally(() => callingSession = false);
+        .finally(() => {
+          callingSession = false;
+        });
     }
 
     return { loginStateKnown: false }
