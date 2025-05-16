@@ -401,6 +401,10 @@
             border-radius: 8px;
             overflow: hidden;
 
+            &:has(.image-gallery) {
+              overflow: visible;
+            }
+
             img {
               width: 100%;
               height: 388px;
