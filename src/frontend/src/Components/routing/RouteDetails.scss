@@ -1,11 +1,5 @@
 @import "../../styles/variables";
 
-.invalid-feedback {
-  display: flex;
-  column-span: all;
-  flex-direction: column;
-}
-
 .view-details-btn {
   width: 100%;
   font-weight: 700;
@@ -192,7 +186,7 @@
 
   .route-items {
     overflow-y: auto;
-    
+
     .route-item {
       padding: 4px 0;
 
@@ -279,6 +273,11 @@
 
 
 .modal--notifications-settings {
+  .invalid-feedback {
+    display: flex;
+    column-span: all;
+    flex-direction: column;
+  }
 
   &.long {
     .modal-dialog {

@@ -32,7 +32,7 @@ def send_route_advisory_notifications(saved_route, updated_advisory_id):
                 'advisory': advisory,
                 'route': saved_route,
                 'user': saved_route.user,
-                'from_email': settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT,
+                'from_email': settings.DRIVEBC_FROM_EMAIL_DEFAULT,
                 'site_link': advisory.site_link,
                 'footer_message': generate_settings_message(saved_route),
                 'fe_base_url': settings.FRONTEND_BASE_URL,
@@ -44,7 +44,7 @@ def send_route_advisory_notifications(saved_route, updated_advisory_id):
             msg = EmailMultiAlternatives(
                 f'DriveBC route update: {saved_route.label}' if saved_route.label else 'DriveBC route update',
                 text,
-                settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT,
+                settings.DRIVEBC_FROM_EMAIL_DEFAULT,
                 [saved_route.user.email]
             )
 
