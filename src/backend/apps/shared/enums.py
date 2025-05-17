@@ -69,13 +69,22 @@ ROUTE_FILTER_TOLERANCE = 25
 
 class FeedbackSubject:
     WEBSITE_FEEDBACK = 0
+    WEBSITE_PROBLEM_OR_BUG = 1
+    WEBCAM_NOT_WORKING_OR_DELAYED = 2
+    HIGHWAY_OR_BRIDGE_PROBLEM = 3
 
 
 SUBJECT_CHOICES = (
     (FeedbackSubject.WEBSITE_FEEDBACK, 'Website Feedback'),
+    (FeedbackSubject.WEBSITE_PROBLEM_OR_BUG, 'Website problem or bug'),
+    (FeedbackSubject.WEBCAM_NOT_WORKING_OR_DELAYED, 'Webcam not working or delayed'),
+    (FeedbackSubject.HIGHWAY_OR_BRIDGE_PROBLEM, 'Highway or bridge problem'),
 )
 
 
 SUBJECT_TITLE = {
     FeedbackSubject.WEBSITE_FEEDBACK: 'Website Feedback',
+    FeedbackSubject.WEBSITE_PROBLEM_OR_BUG: 'Website problem or bug',
+    FeedbackSubject.WEBCAM_NOT_WORKING_OR_DELAYED: 'Webcam not working or delayed',
+    FeedbackSubject.HIGHWAY_OR_BRIDGE_PROBLEM: 'Highway or bridge problem',
 }

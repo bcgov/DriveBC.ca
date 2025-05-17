@@ -329,7 +329,7 @@ def send_route_event_notifications(saved_route, updated_event_ids):
                 'event': event,
                 'route': saved_route,
                 'user': saved_route.user,
-                'from_email': settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT,
+                'from_email': settings.DRIVEBC_FROM_EMAIL_DEFAULT,
                 'display_category': event.display_category,
                 'display_category_title': event.display_category_title,
                 'site_link': get_site_link(event, saved_route),
@@ -343,7 +343,7 @@ def send_route_event_notifications(saved_route, updated_event_ids):
             msg = EmailMultiAlternatives(
                 f'DriveBC route update: {saved_route.label}' if saved_route.label else 'DriveBC route update',
                 text,
-                settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT,
+                settings.DRIVEBC_FROM_EMAIL_DEFAULT,
                 [saved_route.user.email]
             )
 

@@ -1,0 +1,89 @@
+<body style="margin:0; padding:0; font-family:Arial, sans-serif; font-size:16px line-height:1.75rem; color:#2D2D2D">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#F1F8FE" style="padding:50px">
+      <tr>
+        <td align="center" valign="top">
+          <!-- Email container -->
+          <table width="620" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#FFFFFF" style="border-top: 4px solid #F8BB47">
+            <!-- Body -->
+            <tr>
+              <td>
+                <table style="padding: 24px 24px 30px 24px;">
+                  <!-- Logo Header -->
+                  <tr>
+                    <td>
+                      <a href="{{ fe_base_url }}" target="_blank" rel="noopener noreferrer" style="display:inline-block">
+                        <img src="cid:drivebclogo" alt="DriveBC Logo" style="width:165px" />
+                      </a>
+                    </td>
+                  </tr>
+                  <!-- Intro paragraph -->
+                  <tr>
+                    <td>
+                      <table style="padding-top:30px">
+                        <tr>
+                          <td style="padding-bottom:8px">
+                            Hello DriveBC Admin,
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            We have received a user feedback from {{ user_email }}: <br/>
+
+                            Subject: {{ subject }} <br/>
+                            Message: {{ message }} <br/>
+
+                            <br/>
+                            Device Information: <br/>
+                            OS: {{ deviceInfo.os }} <br/>
+                            Browser: {{ deviceInfo.browser }} <br/>
+                            Device: {{ deviceInfo.device }} <br/>
+                            Screen Dimensions: {{ deviceInfo.screenWidth }} x {{ deviceInfo.screenHeight }} <br/>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!-- Footer -->
+            <tr>
+              <td >
+                <table style="width:100%;padding: 24px; border-top: 4px solid #FCBA19" bgcolor="#FAF9F8">
+                  <tr>
+                    <td style="font-size:0.75rem; color:#605E5C; padding-bottom: 32px;">
+                      Add {{ from_email }} to your address book to ensure that you receive these notifications to your inbox.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-top: 16px; border-top: 1px solid #9F9D9C">
+                      <table>
+                        <tr>
+                          <td style="white-space: nowrap;">
+                            <img src="cid:bclogo" alt="BC Logo" style="width: 131px" />
+                          </td>
+                          <td style="width: 100%">
+                          </td>
+                          <td style="display: flex; text-align:right">
+                            <a href="https://twitter.com/DriveBC" target="_blank" rel="noopener noreferrer" style="margin-right: 16px;">
+                              <img src="cid:twitter" style="width: 48px; height: 48px; vertical-align: middle" alt="DriveBC Twitter" />
+                            </a>
+                            <a href="https://www.instagram.com/ministryoftranbc/" target="_blank" rel="noopener noreferrer" style="margin-right: 16px;">
+                              <img src="cid:instagram" style="width: 48px; height: 48px; vertical-align: middle" alt="DriveBC Instagram" />
+                            </a>
+                            <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-infrastructure/" target="_blank" rel="noopener noreferrer">
+                              <img src="cid:linkedin" style="width: 48px; height: 48px; vertical-align: middle" alt="DriveBC LinkedIn" />
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>

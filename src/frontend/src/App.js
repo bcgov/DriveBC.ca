@@ -32,6 +32,7 @@ import BulletinsListPage from './pages/BulletinsListPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
 import CamerasListPage from './pages/CamerasListPage';
 import EventsListPage from './pages/EventsListPage';
+import FeedbackPage from './pages/FeedbackPage';
 import Header from './Components/shared/header/Header.js';
 import MapPage from './pages/MapPage';
 import Modal from './Modal.js';
@@ -236,6 +237,7 @@ function App() {
                       <Route path="/bulletins/:id/:subid?" element={<BulletinDetailsPage />} />
                       <Route path="/account" element={<AccountPage />} />
                       <Route path="/account-deactivated" element={<AccountDeactivatedPage />} />
+                      <Route path="/feedback" element={<FeedbackPage />} />
                       <Route path="/verify-email" element={<VerifyEmailPage />} />
                       {/* Catch-all route for 404 errors */}
                       <Route path="*" element={<NotFoundPage />} />
