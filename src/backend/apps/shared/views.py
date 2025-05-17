@@ -1,13 +1,16 @@
 import re
-from pathlib import Path
 
+from apps.shared.enums import SUBJECT_CHOICES, SUBJECT_TITLE, CacheKey, CacheTimeout
+from apps.shared.helpers import attach_default_email_images
+from apps.shared.models import SiteSettings
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.db import connection
 from django.http import HttpResponse, JsonResponse
 from django.middleware.csrf import get_token
+from django.template.loader import render_to_string
 from django.urls import re_path
 from django.views.static import serve
 from drf_recaptcha.fields import ReCaptchaV3Field
@@ -16,8 +19,13 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
-from apps.shared.enums import SUBJECT_CHOICES, SUBJECT_TITLE, CacheKey, CacheTimeout
-from apps.shared.models import SiteSettings
+
+class DeviceInfoSerializer(Serializer):
+    os = serializers.CharField(max_length=100)
+    browser = serializers.CharField(max_length=100)
+    device = serializers.CharField(max_length=100)
+    screenWidth = serializers.IntegerField()
+    screenHeight = serializers.IntegerField()
 
 
 class FeedbackSerializer(Serializer):
@@ -28,6 +36,7 @@ class FeedbackSerializer(Serializer):
         action="feedbackForm",
         required_score=0.6,
     )
+    deviceInfo = DeviceInfoSerializer()
 
 
 class FeedbackView(APIView):
@@ -37,16 +46,30 @@ class FeedbackView(APIView):
         try:
             serializer.is_valid()
 
-            # Currently unused but potentially important data
-            # score = serializer.fields['recToken'].score
+            context = {
+                "from_email": settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+                "user_email": serializer.validated_data["email"],
+                "message": serializer.validated_data["message"],
+                "subject": SUBJECT_TITLE[serializer.validated_data["subject"]],
+                "deviceInfo": serializer.validated_data["deviceInfo"],
+                # Currently unused but potentially important data
+                # "score": serializer.fields['recToken'].score
+            }
 
-            send_mail(
+            text = render_to_string('email/user_feedback.txt', context)
+            html = render_to_string('email/user_feedback.html', context)
+
+            msg = EmailMultiAlternatives(
                 'DriveBC feedback received: ' + SUBJECT_TITLE[serializer.data['subject']],
-                serializer.data['message'],
-                serializer.data['email'],
+                text,
+                settings.DRIVEBC_FROM_EMAIL_DEFAULT,
                 [settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT],
-                fail_silently=False,
             )
+
+            # image attachments
+            attach_default_email_images(msg)
+            msg.attach_alternative(html, 'text/html')
+            msg.send()
 
             return Response(data={}, status=status.HTTP_200_OK)
 

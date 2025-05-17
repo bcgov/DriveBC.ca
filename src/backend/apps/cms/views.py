@@ -1,3 +1,9 @@
+from apps.cms.models import Advisory, Bulletin
+from apps.cms.serializers import (
+    AdvisorySerializer,
+    BulletinSerializer,
+    BulletinTestSerializer,
+)
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponseRedirect
@@ -5,15 +11,6 @@ from django.shortcuts import render, reverse
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
-
-from apps.cms.models import Advisory, Bulletin
-from apps.cms.serializers import (
-    AdvisorySerializer,
-    BulletinSerializer,
-    BulletinTestSerializer,
-)
-from apps.shared.enums import CacheKey, CacheTimeout
-from apps.shared.views import CachedListModelMixin
 
 
 class CMSViewSet(viewsets.ReadOnlyModelViewSet):
@@ -52,14 +49,16 @@ def access_requested(request):
     if request.method == 'POST':
         app = request.user._meta.app_label
         model = request.user._meta.model_name
-        path = reverse('admin:%s_%s_change' % (app, model),  args=[request.user.id])
+        path = reverse(f'admin:{app}_{model}_change',  args=[request.user.id])
         url = settings.FRONTEND_BASE_URL + path[1:]
         first = request.user.first_name
         last = request.user.last_name
         name = f'{first} {last}'
-        context = {'name': name,
-                'email': request.user.email,
-                'url': url, }
+        context = {
+            'name': name,
+            'email': request.user.email,
+            'url': url
+        }
 
         text = render_to_string('email/request_wagtail_access.txt', context)
         html = render_to_string('email/request_wagtail_access.html', context)
@@ -67,7 +66,7 @@ def access_requested(request):
         msg = EmailMultiAlternatives(
             f'{name} requests access to Wagtail admin',
             text,
-            settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT,
+            settings.DRIVEBC_FROM_EMAIL_DEFAULT,
             settings.ACCESS_REQUEST_RECEIVERS,
         )
         msg.attach_alternative(html, 'text/html')

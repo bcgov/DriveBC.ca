@@ -1,0 +1,10 @@
+We have received a user feedback from {{ user_email }}:
+
+Subject: {{ subject }}
+Message: {{ message }}
+
+Device Information:
+OS: {{ deviceInfo.os }}
+Browser: {{ deviceInfo.browser }}
+Device: {{ deviceInfo.device }}
+Screen Dimensions: {{ deviceInfo.screenWidth }} x {{ deviceInfo.screenHeight }}

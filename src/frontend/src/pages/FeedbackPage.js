@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 // External Components
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { UAParser } from "ua-parser-js";
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -19,11 +20,19 @@ export default function FeedbackPage() {
   document.title = 'DriveBC - Feedback';
 
   // States
-  const [ email, setEmail ] = useState();
-  const [ subject, setSubject ] = useState(0);
-  const [ message, setMessage ] = useState();
-  const [ error, setError ] = useState(false);
-  const [ success, setSuccess ] = useState(false);
+  const [email, setEmail] = useState('');
+  const [subject, setSubject] = useState(0);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [deviceInfo, setDeviceInfo] = useState({
+    os: "",
+    browser: "",
+    device: "",
+    screenWidth: window.innerWidth,
+    screenHeight: window.innerHeight,
+  });
+	const [validated, setValidated] = useState(false);
 
   // Recaptcha
   const [ recToken, setRecToken ] = useState();
@@ -44,15 +53,54 @@ export default function FeedbackPage() {
     handleReCaptchaVerify();
   }, [handleReCaptchaVerify]);
 
+  // Device info
+  useEffect(() => {
+    // Parse user agent
+    const parser = new UAParser();
+    const result = parser.getResult();
+
+    // Update state with device, OS, and browser info
+    setDeviceInfo({
+      os: result.os.name + " " + result.os.version,
+      browser: result.browser.name + " " + result.browser.version,
+      device: result.device.model || "Desktop",
+      screenWidth: window.innerWidth,
+      screenHeight: window.innerHeight,
+    });
+
+    // Update screen dimensions on resize
+    const handleResize = () => {
+      setDeviceInfo((prev) => ({
+        ...prev,
+        screenWidth: window.innerWidth,
+        screenHeight: window.innerHeight,
+      }));
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   // Handlers
   const handleSubmit = (event) => {
     event.preventDefault();
+
+		const form = event.currentTarget;
+		setValidated(true);
+		if (form.checkValidity() === false) {
+			event.stopPropagation();
+      return;
+		}
 
     const payload = {
       email: email,
       subject: subject,
       message: message,
-      recToken: recToken
+      recToken: recToken,
+      deviceInfo: deviceInfo,
     };
 
     const headers = {
@@ -85,22 +133,51 @@ export default function FeedbackPage() {
             <p className="description text-max-width">
               We welcome your input on DriveBC. Please let us know if you have feedback, see a problem, or have a suggestion on how we can improve the site.
             </p>
-            <Form onSubmit={handleSubmit}  className="feedback-form text-max-width">
-              <Form.Group>
+
+            <Form noValidate validated={validated} onSubmit={handleSubmit} className="feedback-form text-max-width">
+              <Form.Group controlId="validationEmail">
                 <Form.Label>Email</Form.Label>
-                <Form.Control type="email" placeholder="Enter your email address here" required value={email} onChange={e => setEmail(e.target.value)} />
+                <Form.Control
+                  type="email"
+                  placeholder="Enter your email address here"
+                  required
+                  value={email}
+                  isInvalid={
+                    validated && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+                  }
+                  onChange={e => setEmail(e.target.value)} />
+
+                <Form.Control.Feedback type="invalid">
+                  Please provide a valid email address.
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group>
                 <Form.Label>Subject</Form.Label>
                 <Form.Control as="select" aria-label="Select subject" value={subject} onChange={e => setSubject(e.target.value)}>
                   <option value={0}>Website Feedback</option>
+                  <option value={1}>Website problem or bug</option>
+                  <option value={2}>Webcam not working or delayed</option>
+                  <option value={3}>Highway or bridge problem</option>
                 </Form.Control>
               </Form.Group>
 
-              <Form.Group>
+              <Form.Group controlId="validationMessage">
                 <Form.Label>Message</Form.Label>
-                <Form.Control as="textarea" rows={5} placeholder="Enter your message here" required value={message} onChange={e => setMessage(e.target.value)} />
+                <Form.Control
+                  as="textarea"
+                  rows={5}
+                  placeholder="Enter your message here"
+                  required
+                  value={message}
+                  isInvalid={
+                    validated && (message.length < 10 || message.length > 200)
+                  }
+                  onChange={e => setMessage(e.target.value)} />
+
+                <Form.Control.Feedback type="invalid">
+                  Your message must include at least 10-200 characters of description.
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Button variant="primary" type="submit">
@@ -108,7 +185,7 @@ export default function FeedbackPage() {
               </Button>
 
               {error &&
-                <span>Error on submission. Please try again.</span>
+                <p className="error">Error on submission. Please try again.</p>
               }
             </Form>
           </Container>

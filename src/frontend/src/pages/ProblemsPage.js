@@ -26,19 +26,19 @@ const ProblemsPage = () => {
     <div className="report-problem-page">
       <PageHeader title='Report a problem'>
       </PageHeader>
-      
+
       <Container>
         <div className="report-problem">
           <div className="section section--online">
             <div className="section__content">
-              <div className="content-card content-card--website disabled">
+              <Link to="/feedback" className="content-card content-card--feedback">
                 <div className="circle-icon">
                   <FontAwesomeIcon icon={faBoxBallot} />
                 </div>
                 <h3>Website problem or suggestion</h3>
                 <p>Report website feedback, suggestions, or bugs related to the new DriveBC website.</p>
-                <p className="bold attention">This feature is currently not available in Beta. Alternatively, you may use the Feedback link in the website header.</p>
-              </div>
+              </Link>
+
               <Link to="/highway-problem" className="content-card content-card--highway">
                 <div className="circle-icon">
                   <FontAwesomeIcon icon={faBridge} />
@@ -53,6 +53,7 @@ const ProblemsPage = () => {
                   <li>Animal carcasses</li>
                 </ul>
               </Link>
+
               <Link to="/road-electrical-problem" className="content-card content-card--electrical">
                 <div className="circle-icon">
                   <FontAwesomeIcon icon={faPlug} />
@@ -94,7 +95,7 @@ const ProblemsPage = () => {
         </div>
       </Container>
       <Footer />
-      
+
     </div>
   );
 };
