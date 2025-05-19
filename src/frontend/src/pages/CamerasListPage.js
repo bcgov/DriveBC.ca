@@ -391,7 +391,7 @@ export default function CamerasListPage() {
                     <>
                       {text &&
                         <button
-                          className='clear-btn'
+                          className='close-camera-search-btn'
                           aria-label={'Clear camera name search'}
                           onClick={onClear}>
                           <FontAwesomeIcon icon={faXmark} />
