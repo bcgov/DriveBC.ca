@@ -231,7 +231,7 @@
                 background: none;
                 border: none;
                 font-size: 0.75rem;
-                padding: 0.75rem;
+                padding: 0.55rem 0.75rem;
               }
             }
   
@@ -382,6 +382,10 @@
         .rbt-input {
           height: 36px;
         }
+
+        .rbt-menu {
+          display: none !important;
+        }
       }
 
       .close-camera-search-btn {
@@ -390,6 +394,9 @@
         border: none;
         margin: 2px;
         padding: 4px 10px;
+        position: absolute;
+        top: 0;
+        right: 0;
       }
     }
   }
