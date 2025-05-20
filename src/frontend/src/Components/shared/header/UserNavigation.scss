@@ -35,8 +35,10 @@
     .dropdown-menu {
       margin-top: 0.5rem;
       min-width: 268px;
+      max-height: calc(100vh - 3.75rem); /* 3.75rem is rough height of header bar */
       padding: 0;
       box-shadow: 0px 6.4px 14.4px 0px rgba(0, 0, 0, 0.13), 0px 1.2px 3.6px 0px rgba(0, 0, 0, 0.10);
+      overflow-y: scroll;
 
       .dropdown-item {
         &:hover {
@@ -65,7 +67,7 @@
 
           svg {
             font-size: 0.825rem;
-            transition: 0.4s transform $Anim-gentle;  
+            transition: 0.4s transform $Anim-gentle;
           }
 
           .menu-item-header {
