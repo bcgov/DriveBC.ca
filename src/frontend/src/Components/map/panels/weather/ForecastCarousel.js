@@ -49,7 +49,7 @@ export default function ForecastCarousel(props) {
 
   /* Component helpers */
   const getTemperatureText = (text) => {
-    if (text.endsWith('.')) {
+    if ((text || '').endsWith('.')) {
       return text.slice(0, -1);
     }
 
