@@ -132,6 +132,11 @@
 					height: 100%;
 					overflow: auto;
 				}
+
+				// Adding padding for iphone 12 fix
+				a:last-of-type {
+					padding-bottom: 4rem;
+				}
 			}
 		}
 	}
