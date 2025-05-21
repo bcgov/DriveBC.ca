@@ -41,8 +41,15 @@ def populate_regional_weather_from_data(new_data):
 def populate_all_regional_weather_data():
     feed_data = get_regional_weather_list()
 
+    codes = []
     for regional_weather_data in feed_data:
+        codes.append(regional_weather_data.get('code'))
         populate_regional_weather_from_data(regional_weather_data)
+
+    # Remove regional weather data not in the feed, but ensure there's data in
+    # the feed so that an erroneous empty response doesn't empty our list
+    if len(codes) > 0:
+        RegionalWeather.objects.exclude(code__in=codes).delete()
 
     # Rebuild cache
     cache.delete(CacheKey.REGIONAL_WEATHER_LIST)
@@ -68,11 +75,13 @@ def populate_all_high_elevation_forecast_data():
     codes = []
 
     for forecast in feed_data:
-        codes.append(forecast['code'])
+        codes.append(forecast.get('code'))
         populate_high_elevation_forecast_from_data(forecast)
 
-    # Remove forecasts not included in this batch
-    HighElevationForecast.objects.exclude(code__in=codes).delete()
+    # Remove forecasts not in the feed, but ensure there's data in the feed so
+    # that an erroneous empty response doesn't empty our list
+    if len(codes) > 0:
+        HighElevationForecast.objects.exclude(code__in=codes).delete()
 
     # Rebuild cache
     cache.delete(CacheKey.HIGH_ELEVATION_FORECAST_LIST)
@@ -94,6 +103,13 @@ def populate_local_weather_from_data(new_current_weather_data):
 def populate_all_local_weather_data():
     client = FeedClient()
     feed_data = client.get_current_weather_list()
+    codes = []
 
     for current_weather_data in feed_data:
+        codes.append(current_weather_data.get('code'))
         populate_local_weather_from_data(current_weather_data)
+
+    # Remove local weather data not in the feed, but ensure there's data in the
+    # feed so that an erroneous empty response doesn't empty our list
+    if len(codes) > 0:
+        CurrentWeather.objects.exclude(code__in=codes).delete()
