@@ -101,8 +101,7 @@ EVENT_DIFF_FIELDS = [
     'schedule',
     'start',
     'end',
-    'closed',
-    'display_category',
+    'closed'
 ]
 
 EVENT_UPDATE_FIELDS = [
