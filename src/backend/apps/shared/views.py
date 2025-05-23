@@ -52,8 +52,6 @@ class FeedbackView(APIView):
                 "message": serializer.validated_data["message"],
                 "subject": SUBJECT_TITLE[serializer.validated_data["subject"]],
                 "deviceInfo": serializer.validated_data["deviceInfo"],
-                # Currently unused but potentially important data
-                # "score": serializer.fields['recToken'].score
             }
 
             text = render_to_string('email/user_feedback.txt', context)
@@ -64,6 +62,47 @@ class FeedbackView(APIView):
                 text,
                 settings.DRIVEBC_FROM_EMAIL_DEFAULT,
                 [settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT],
+            )
+
+            # image attachments
+            attach_default_email_images(msg)
+            msg.attach_alternative(html, 'text/html')
+            msg.send()
+
+            return Response(data={}, status=status.HTTP_200_OK)
+
+        except Exception:
+            return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SurveySerializer(Serializer):
+    email = serializers.EmailField()
+    recToken = ReCaptchaV3Field(
+        action="feedbackForm",
+        required_score=0.6,
+    )
+
+
+class SurveyView(APIView):
+    def post(self, request):
+        serializer = SurveySerializer(data=request.data, context={"request": request})
+
+        try:
+            serializer.is_valid()
+
+            user_email = serializer.validated_data["email"]
+            context = {
+                "survey_link": settings.DRIVEBC_EXIT_SURVEY_LINK,
+            }
+
+            text = render_to_string('email/user_survey.txt', context)
+            html = render_to_string('email/user_survey.html', context)
+
+            msg = EmailMultiAlternatives(
+                'DriveBC survey about your experience today',
+                text,
+                settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+                [user_email],
             )
 
             # image attachments

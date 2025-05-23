@@ -1,0 +1,7 @@
+Thank you for agreeing to fill in our survey about your visit to DriveBC today. We want to know how it was for you and how we can improve for future visits!
+
+It should take no longer than a couple of minutes of your time.
+
+By clicking on the link below, you will be directed to the survey. We truly appreciate your time and effort in providing us with this valuable feedback.
+
+Link to the survey: {{ survey_link }}

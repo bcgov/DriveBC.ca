@@ -23,6 +23,7 @@ urlpatterns = [
 
     # Misc
     path("feedback/", views.FeedbackView.as_view(), name="feedback"),
+    path("survey/", views.SurveyView.as_view(), name="survey"),
     path("session", session.as_view()),
     path("test/", include("apps.shared.test_urls")),
 ]

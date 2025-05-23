@@ -11,7 +11,8 @@ import Form from 'react-bootstrap/Form';
 // Styling
 import './FeedbackPage.scss';
 
-// Components and functions
+// Internal imports
+import { getCookie } from "../util";
 import { post } from '../Components/data/helper.js';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
@@ -105,7 +106,8 @@ export default function FeedbackPage() {
 
     const headers = {
       'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken')
     }
 
     post(`${window.API_HOST}/api/feedback/`, payload, headers)
