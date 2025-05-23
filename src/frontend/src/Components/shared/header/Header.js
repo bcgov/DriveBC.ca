@@ -156,9 +156,6 @@ export default function Header() {
     );
   };
 
-  const surveyLink = `${window.SURVEY_LINK}` ||
-   'https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3G-k6A-ZOZVMlxBJti4jf_VURjI4MlRKMlRYQTVFUFJZOU5XTVVZUjEwQS4u';
-
   const getWhatsNewLink = () => {
     const latestImprovementBulletin = bulletins.find(bulletin => bulletin.slug === 'latest-beta-improvements');
     return latestImprovementBulletin ? `/bulletins/${latestImprovementBulletin.slug}` : '/bulletins';
@@ -276,12 +273,6 @@ export default function Header() {
               }
 
               {!xXlargeScreen &&
-                <Nav.Link active={false} onClick={onClickActions} className='footer-nav-link first-link' href={surveyLink} target="_blank" rel="noreferrer" alt="Beta feedback">
-                  <div className='title'>Beta feedback</div>
-                </Nav.Link>
-              }
-
-              {!xXlargeScreen &&
                 <LinkContainer to={bulletins ? getWhatsNewLink() : ''}>
                   <Nav.Link active={false} onClick={onClickActions} className='footer-nav-link'>
                     <div className='title'>What&apos;s new</div>
@@ -301,8 +292,6 @@ export default function Header() {
                 <FontAwesomeIcon icon={faCommentExclamation}/>
                 Report a problem
               </Link>
-              <a href={surveyLink} className="btn btn-outline-primary header-right__btn" id="feedback-btn" target="_blank"
-                 rel="noreferrer" alt="Beta feedback"><FontAwesomeIcon icon={faCommentPen}/>Beta feedback</a>
 
               <button className="btn btn-outline-primary header-right__btn" id="whatsnew-btn" alt="What's new" tabIndex={0}
                       onClick={whatsNewHandler}

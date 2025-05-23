@@ -43,6 +43,7 @@ import ReportRoadPage from './pages/ReportRoadPage';
 import SavedCamerasPage from './pages/SavedCamerasPage';
 import SavedRoutesPage from './pages/SavedRoutesPage';
 import ScrollToTop from './Components/shared/ScrollToTop';
+import Survey from "./Components/shared/Survey";
 
 // FontAwesome Stylesheet
 import { config } from '@fortawesome/fontawesome-svg-core'
@@ -250,6 +251,8 @@ function App() {
                     <Modal />
 
                     <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
+
+                    <Survey />
                   </div>
                 </FeatureContext.Provider>
               </HeaderHeightContext.Provider>
