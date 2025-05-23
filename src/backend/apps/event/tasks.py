@@ -12,7 +12,7 @@ from apps.event.enums import (
     EVENT_TYPE,
     EVENT_UPDATE_FIELDS,
 )
-from apps.event.helpers import get_site_link
+from apps.event.helpers import get_display_category, get_site_link
 from apps.event.models import Event
 from apps.event.serializers import EventInternalSerializer
 from apps.feed.client import FeedClient
@@ -100,6 +100,14 @@ def populate_event_from_data(new_event_data):
                 event.save()
 
                 return True
+
+        # Update future events display category
+        # https://moti-imb.atlassian.net/browse/DBC22-2259
+        if event.display_category == EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
+            new_display_category = get_display_category(event)
+            if new_display_category != EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
+                # Update without triggering save
+                Event.objects.filter(id=event_id).update(display_category=new_display_category)
 
     except ObjectDoesNotExist:
         event = Event(id=event_id)
