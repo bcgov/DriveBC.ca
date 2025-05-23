@@ -11,7 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVideoSlash, faVideo, faStar, faCircleInfo, faXmark, faChevronRight } from '@fortawesome/pro-solid-svg-icons';
+import { faVideoSlash, faVideo, faStar, faCircleInfo, faXmark, faChevronRight, faArrowsRotate } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
 import Button from 'react-bootstrap/Button';
@@ -65,8 +65,9 @@ export default function CamPanel(props) {
   const [rootCam, setRootCam] = useState(newCam);
   const [camera, setCamera] = useState(newCam);
   const [camIndex, setCamIndex] = useState(0);
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isUpdated, setIsUpdated] = useState(false);
 
   // Effects
   useEffect(() => {
@@ -116,6 +117,7 @@ export default function CamPanel(props) {
           rootCam.camGroup[ii] = update;
           if (ii == currentCamIndex) {
             setCamera(rootCam.camGroup[ii]);
+            setIsUpdated(true);
           }
         }
       }).catch(error => console.log(error));
@@ -248,6 +250,26 @@ export default function CamPanel(props) {
               tabIndex={0}
             >
               <div className="clip">
+                {isUpdated && (
+                  <div className="card-notification updated">
+                    <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
+                      <FontAwesomeIcon icon={faArrowsRotate} />
+                      <p>Image automatically updated to show the latest image received.</p>
+                      <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                    </div>
+                    <div className={'card-pill' + (show ? ' bounce' : ' hidden')}
+                      onClick={handleChildClick}
+                      onKeyDown={keyEvent => {
+                        if (keyEvent.keyCode === 13) {
+                          handleChildClick();
+                        }
+                      }}>
+                      <p>Updated</p>
+                      <FontAwesomeIcon icon={faCircleInfo} />
+                    </div>
+                  </div>
+                )}
+
                 <img ref={imageRef} src={getCamLink(camera)} width="300" />
 
                 {camera.marked_delayed && camera.marked_stale && (

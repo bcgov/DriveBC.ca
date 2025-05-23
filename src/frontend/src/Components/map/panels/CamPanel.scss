@@ -5,17 +5,17 @@
   &--camera {
     .popup__content {
       padding: 1rem;
-      
+
       &__title {
         .name:hover {
           cursor:pointer;
           text-decoration: underline;
         }
       }
-      
+
       &__image {
         cursor: pointer;
-        
+
         .friendly-time__tooltip {
           transform: none;
           left: inherit;
@@ -56,7 +56,7 @@
           }
         }
       }
-    } 
+    }
   }
 }
 
@@ -140,6 +140,16 @@
 
     svg {
       margin-left: 4px;
+    }
+  }
+
+  .card-notification.updated {
+    .card-pill, .card-banner {
+      background-color: $Blue80;
+
+      p, svg {
+        color: $White;
+      }
     }
   }
 }
