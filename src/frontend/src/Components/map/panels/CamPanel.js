@@ -19,17 +19,19 @@ import parse from 'html-react-parser';
 
 // Internal imports
 import { AlertContext, AuthContext } from '../../../App';
-import { addFavoriteCamera, deleteFavoriteCamera } from "../../data/webcams";
+import { addFavoriteCamera, deleteFavoriteCamera, getCameras } from "../../data/webcams";
 import { getCameraOrientation } from '../../cameras/helper';
 import FriendlyTime from '../../shared/FriendlyTime';
 import trackEvent from '../../shared/TrackEvent';
 import ShareURLButton from '../../shared/ShareURLButton';
+import PollingComponent from '../../shared/PollingComponent';
 
 // Static assets
 import colocatedCamIcon from '../../../images/colocated-camera.svg';
 
 // Styling
 import './CamPanel.scss';
+
 
 // Main component
 export default function CamPanel(props) {
@@ -56,6 +58,7 @@ export default function CamPanel(props) {
 
   // Refs
   const isInitialMount = useRef(true);
+  const imageRef = useRef(null);
 
   // States
   const newCam = camFeature.id ? camFeature : camFeature.getProperties();
@@ -64,22 +67,6 @@ export default function CamPanel(props) {
   const [camIndex, setCamIndex] = useState(0);
   const [show, setShow] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  const handleCameraImageClick = (event) => {
-    const container = event.currentTarget.closest(".camera-orientations");
-    const buttons = container.querySelectorAll(".camera-direction-btn");
-    let currentIndex = Array.from(buttons).findIndex(
-      (button) => button.classList.contains("current")
-    );
-    if (currentIndex === -1) {
-      currentIndex = activeIndex;
-    }
-    const nextIndex = (currentIndex + 1) % buttons.length;
-    buttons[nextIndex].focus();
-    setActiveIndex(nextIndex);
-    const nextCamera = camera.camGroup[nextIndex];
-    setCamera(nextCamera);
-    trackEvent("click", "camera-list", "camera", nextCamera.name);
-  };
 
   // Effects
   useEffect(() => {
@@ -101,6 +88,9 @@ export default function CamPanel(props) {
     setCamera(rootCam.camGroup[camIndex]);
     _searchParams.set("camIndex", camIndex);
     setSearchParams(_searchParams);
+    // need to track camIndex as a data attribute to bypass lexical binding
+    // of camIndex in helper functions (i.e., updateCamera);
+    imageRef.current.setAttribute('data-current', camIndex);
   }, [camIndex]);
 
   /* Helpers */
@@ -113,7 +103,47 @@ export default function CamPanel(props) {
     })
   };
 
+  const updateCamera = () => {
+    rootCam.camGroup.forEach((cam, ii) => {
+      getCameras(
+        null,
+        `${window.API_HOST}/api/webcams/${cam.id}/`,
+      ).then((update) => {
+        if (update.last_update_modified !== cam.last_update_modified) {
+          // using data attribute avoids lexical binding of camIndex state that
+          // locks it at the initial value
+          const currentCamIndex = imageRef.current.getAttribute('data-current');
+          rootCam.camGroup[ii] = update;
+          if (ii == currentCamIndex) {
+            setCamera(rootCam.camGroup[ii]);
+          }
+        }
+      }).catch(error => console.log(error));
+    })
+  }
+
+  const getCamLink = (cam) => {
+    return `${cam.links.imageDisplay}?ts=${new Date(cam.last_update_modified).getTime()}`
+  }
+
   /* Handlers */
+  const handleCameraImageClick = (event) => {
+    const container = event.currentTarget.closest(".camera-orientations");
+    const buttons = container.querySelectorAll(".camera-direction-btn");
+    let currentIndex = Array.from(buttons).findIndex(
+      (button) => button.classList.contains("current")
+    );
+    if (currentIndex === -1) {
+      currentIndex = activeIndex;
+    }
+    const nextIndex = (currentIndex + 1) % buttons.length;
+    buttons[nextIndex].focus();
+    setActiveIndex(nextIndex);
+    const nextCamera = camera.camGroup[nextIndex];
+    setCamera(nextCamera);
+    trackEvent("click", "camera-list", "camera", nextCamera.name);
+  };
+
   const handlePopupClick = e => {
     if (!isCamDetail) {
       navigate(`/cameras/${camera.id}`);
@@ -218,7 +248,7 @@ export default function CamPanel(props) {
               tabIndex={0}
             >
               <div className="clip">
-                <img src={camera.links.imageDisplay} width="300" />
+                <img ref={imageRef} src={getCamLink(camera)} width="300" />
 
                 {camera.marked_delayed && camera.marked_stale && (
                   <>
@@ -340,6 +370,9 @@ export default function CamPanel(props) {
               </button>
             }
           </div>
+
+          <PollingComponent runnable={updateCamera} interval={5000} />
+
         </div>
       )}
     </div>

@@ -3,6 +3,7 @@ import io
 import logging
 import os
 import urllib.request
+from urllib.error import HTTPError
 from itertools import groupby
 from math import floor
 from pathlib import Path
@@ -208,6 +209,9 @@ def update_webcam_image(webcam):
             delta = datetime.timedelta(seconds=delta)
             lastmod = floor((lastmod + delta).timestamp())  # POSIX timestamp
             os.utime(filename, times=(lastmod, lastmod))
+
+    except HTTPError as e:  # log HTTP errors without stacktrace to reduce log noise
+        logger.error(f'{e} on {endpoint}')
 
     except Exception as e:
         logger.exception(e)
