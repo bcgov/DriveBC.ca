@@ -12,6 +12,7 @@ spec:
   {{ if .Values.crunchy.postGISVersion }}
   postGISVersion: {{ .Values.crunchy.postGISVersion | quote }}
   {{ end }}
+  openshift: true
   {{- if and .Values.crunchy.clone .Values.crunchy.clone.enabled }} # enabled when cloning from s3
   dataSource:
     {{- if .Values.crunchy.clone.s3.enabled }}

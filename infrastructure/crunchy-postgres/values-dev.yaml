@@ -44,7 +44,7 @@ crunchy:
     dataVolumeClaimSpec:
       storage: 1Gi
       storageClassName: netapp-block-standard
-      walStorage: 1Gi
+      walStorage: 2Gi
 
     requests:
       cpu: 50m
@@ -72,7 +72,7 @@ crunchy:
       incrementalBackupSchedule:  0 0,4,12,16,20 * * * 
       volume:
         accessModes: "ReadWriteOnce"
-        storage: 1Gi
+        storage: 2Gi
         storageClassName: netapp-file-backup
     s3:
       enabled: true # if enabled, below must be provided
