@@ -82,6 +82,21 @@ def build_data_diff(current_obj, new_obj_data):
 
     return data_diff
 
+def update_display_category(event, new_event_data):
+    now = datetime.datetime.now(ZoneInfo('UTC'))
+    schedule = new_event_data.get('schedule', {}).get('recurring_schedules', [{}])[0]
+    combined_start_datetime = datetime.datetime.strptime(
+        f"{schedule['start_date']} {schedule['daily_start_time']}", "%Y-%m-%d %H:%M"
+    ).replace(tzinfo=ZoneInfo('UTC'))
+
+    event_display_category = getattr(event, 'display_category')
+    if event_display_category == EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
+        if combined_start_datetime < now:
+            event.refresh_from_db()
+            event.save()
+            return True
+    
+    return False
 
 def populate_event_from_data(new_event_data):
     event_id = new_event_data.get('id')
@@ -100,6 +115,7 @@ def populate_event_from_data(new_event_data):
                 event.save()
 
                 return True
+        return update_display_category(event, new_event_data)
 
     except ObjectDoesNotExist:
         event = Event(id=event_id)
