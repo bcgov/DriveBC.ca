@@ -3,13 +3,13 @@
 .survey {
   position: fixed;
   left: 50%;
-  bottom: 0;
-  transform: translate(-50%, -50%);
+  bottom: 1rem;
+  transform: translate(-50%, 0);
   background-color: $Info;
   padding: .6rem 0.75rem .75rem 0.75rem;
   border-radius: 4px;
   box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
-  z-index: 22;
+  z-index: 12;
   color: white;
   width: 360px;
   font-size: 0.875rem;
