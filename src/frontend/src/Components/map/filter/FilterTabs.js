@@ -1,10 +1,5 @@
 // React
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  useContext
-} from 'react';
+import React from 'react';
 
 // External imports
 import Tab from 'react-bootstrap/Tab';
@@ -17,10 +12,8 @@ import {
   faXmark
 } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
-import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
-import { HeaderHeightContext } from  '../../../App.js';
 import Legend from "./Legend";
 import MapFilters from './MapFilters';
 import trackEvent from "../../shared/TrackEvent";
@@ -45,63 +38,54 @@ export default function FilterTabs(props) {
     setOpen
   } = props;
 
-  const { headerHeightContext, setHeaderHeightContext } = useContext(HeaderHeightContext);
-
-  // Media queries
-  const largeScreen = useMediaQuery('only screen and (min-width : 576px)');
-  const mobilePortrait = useMediaQuery('only screen and (max-width: 575px) and (orientation: portrait) and (hover: none) and (pointer: coarse)');
   // Rendering
   // Main Component
   return (
     <div className={'filters-menu'  + (!open ? ' closed' : '')}>
-      {!open &&
-        <Button
-          variant={isDelaysPage ? 'outline-primary' : 'primary'}
-          className={'map-btn open-filters' + (open ? ' open' : '')}
-          aria-label='open filters options'
-          onClick={() => {
-            open ? setOpen(false) : setOpen(true) }
-          }>
-          <FontAwesomeIcon icon={faLayerGroup} />
-          <span className='filters-btn__text'>{textOverride ? textOverride : 'Map Layers'}</span>
-        </Button>
-      }
+      <Button
+        variant={isDelaysPage ? 'outline-primary' : 'primary'}
+        className={'map-btn open-filters' + (open ? ' hide' : '')}
+        aria-label='open filters options'
+        onClick={() => {
+          open ? setOpen(false) : setOpen(true) }
+        }>
+        <FontAwesomeIcon icon={faLayerGroup} />
+        <span className='filters-btn__text'>{textOverride ? textOverride : 'Map Layers'}</span>
+      </Button>
 
-      {open &&
-        <div className='tabs-container'>
-          <Tabs
-            defaultActiveKey='layers'
-            className='tabs-header'>
+      <div className={`tabs-container` + (open ? '' : ' hide')}>
+        <Tabs
+          defaultActiveKey='layers'
+          className='tabs-header'>
 
-            <Tab eventKey='layers' title='Map layers' tabClassName='map-tab layers'>
-              <MapFilters
-                mapLayers={mapLayers}
-                callback={callback}
-                disableFeatures={disableFeatures}
-                enableRoadConditions={enableRoadConditions}
-                enableChainUps={enableChainUps}
-                isCamDetail={isCamDetail}
-                referenceData={referenceData}
-                loadingLayers={loadingLayers} />
-            </Tab>
+          <Tab eventKey='layers' title='Map layers' tabClassName='map-tab layers'>
+            <MapFilters
+              mapLayers={mapLayers}
+              callback={callback}
+              disableFeatures={disableFeatures}
+              enableRoadConditions={enableRoadConditions}
+              enableChainUps={enableChainUps}
+              isCamDetail={isCamDetail}
+              referenceData={referenceData}
+              loadingLayers={loadingLayers} />
+          </Tab>
 
-            <Tab eventKey='legend' title='Legend' tabClassName='map-tab legend'
-              onClick={() => {
-                trackEvent('click', 'map', 'Show legend');
-              }}>
-              <Legend />
-            </Tab>
-          </Tabs>
+          <Tab eventKey='legend' title='Legend' tabClassName='map-tab legend'
+            onClick={() => {
+              trackEvent('click', 'map', 'Show legend');
+            }}>
+            <Legend />
+          </Tab>
+        </Tabs>
 
-          <button
-            className='close-filters'
-            aria-label='close filters options'
-            onClick={() => setOpen(false)} >
+        <button
+          className='close-filters'
+          aria-label='close filters options'
+          onClick={() => setOpen(false)} >
 
-            <FontAwesomeIcon icon={faXmark} />
-          </button>
-        </div>
-      }
+          <FontAwesomeIcon icon={faXmark} />
+        </button>
+      </div>
     </div>
   );
 }
