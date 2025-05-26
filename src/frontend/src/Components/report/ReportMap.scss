@@ -8,7 +8,7 @@
     flex-direction: column;
     height: calc(var(--vh, 1vh) * 100 - 58px);
 
-    &:has(.report-map-container.expanded) {
+    &:has(.side-panel.open) {
       position: absolute;
       top: 0;
       padding-top: 58px;
