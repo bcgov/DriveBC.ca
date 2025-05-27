@@ -5,6 +5,8 @@ import { Fill, Icon, Stroke, Style } from 'ol/style.js';
 import cameraIconActive from '../../images/mapIcons/camera-active.png';
 import cameraIconHover from '../../images/mapIcons/camera-hover.png';
 import cameraIconStatic from '../../images/mapIcons/camera-static.png';
+import cameraIconHoverUnread from '../../images/mapIcons/camera-hover-unread.png';
+import cameraIconStaticUnread from '../../images/mapIcons/camera-static-unread.png';
 
 // Ferries
 import ferryIconActive from '../../images/mapIcons/ferry-active.png';
@@ -162,6 +164,27 @@ export const cameraStyles = {
     image: new Icon({
       scale: 0.25,
       src: cameraIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: cameraIconActive,
+    }),
+  }),
+};
+
+export const unreadCameraStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: cameraIconStaticUnread,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: cameraIconHoverUnread,
     }),
   }),
   active: new Style({

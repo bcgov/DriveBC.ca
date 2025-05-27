@@ -5,7 +5,6 @@ import { isRestStopClosed } from '../../data/restStops.js';
 
 // Styling
 import {
-  cameraStyles,
   ferryStyles,
   roadWeatherStyles,
   regionalStyles,
@@ -46,7 +45,7 @@ export const resetClickedStates = (
   ) {
     switch (clickedFeatureRef.current.get('type')) {
       case 'camera':
-        clickedFeatureRef.current.setStyle(cameraStyles['static']);
+        clickedFeatureRef.current.setCameraStyle('static');
         clickedFeatureRef.current.set('clicked', false);
         updateClickedFeature(null);
         break;
@@ -155,8 +154,9 @@ const camClickHandler = (
   );
 
   // set new clicked camera feature
-  feature.setStyle(cameraStyles['active']);
-  feature.setProperties({ clicked: true }, true);
+  feature.setCameraStyle('active');
+  feature.set('clicked', true, true);
+  feature.set('unread', false);
 
   updateClickedFeature(feature);
 

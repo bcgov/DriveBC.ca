@@ -1,5 +1,4 @@
 import {
-  cameraStyles,
   ferryStyles,
   roadWeatherStyles,
   regionalStyles,
@@ -26,7 +25,7 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
     if (!hoveredFeature.getProperties().clicked) {
       switch (hoveredFeature.getProperties()['type']) {
         case 'camera':
-          hoveredFeature.setStyle(cameraStyles['static']);
+          hoveredFeature.setCameraStyle('static');
           break;
         case 'event': {
           // Reset feature if alt feature also isn't clicked
@@ -117,8 +116,8 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
     // Set hover style if feature isn't clicked
     switch (targetFeature.getProperties()['type']) {
       case 'camera':
-        if (!targetFeature.getProperties().clicked) {
-          targetFeature.setStyle(cameraStyles['hover']);
+        if (!targetFeature.get('clicked')) {
+          targetFeature.setCameraStyle('hover');
         }
         return;
       case 'event':
