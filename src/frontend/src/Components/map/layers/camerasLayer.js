@@ -9,36 +9,36 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Styling
-import { cameraStyles } from '../../data/featureStyleDefinitions.js';
+import { cameraStyles, unreadCameraStyles } from '../../data/featureStyleDefinitions.js';
 
 export function getCamerasLayer(cameras, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   const vectorSource = new VectorSource();
 
   cameras.forEach(camera => {
-    // Build a new OpenLayers feature
     const olGeometry = new Point(camera.location.coordinates);
-    const olFeature = new ol.Feature({ geometry: olGeometry, type: 'camera' });
+    olGeometry.transform('EPSG:4326', projectionCode);
 
-    // Transfer properties
-    olFeature.setProperties(camera);
+    const feature = new ol.Feature({ geometry: olGeometry, type: 'camera' });
+    feature.setProperties(camera);
+    feature.setId(camera.id);
 
-    // Transform the projection
-    const olFeatureForMap = transformFeature(
-      olFeature,
-      'EPSG:4326',
-      projectionCode,
-    );
+    // special function for setting the feature's style, to centralize where
+    // style is differentiated based on the 'unread' property
+    feature.setCameraStyle = function (key) {
+      if (this.get('unread')) {
+        this.setStyle(unreadCameraStyles[key])
+      } else {
+        this.setStyle(cameraStyles[key]);
+      }
+    }
 
-    // feature ID to camera ID for retrieval
-    olFeatureForMap.setId(camera.id);
+    vectorSource.addFeature(feature);
 
-    vectorSource.addFeature(olFeatureForMap);
-
+    // Update the reference feature if one of the cameras is the reference
     if (referenceData?.type === 'camera') {
-      // Update the reference feature if one of the cameras is the reference
-      olFeatureForMap.getProperties().camGroup.forEach((cam) => {
+      feature.get('camGroup').forEach((cam) => {
         if (cam.id == referenceData.id) {
-          updateReferenceFeature(olFeatureForMap);
+          updateReferenceFeature(feature);
         }
       });
     }
@@ -53,15 +53,28 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
 }
 
 export function updateCamerasLayer(cameras, layer, setLoadingLayers) {
-  const camsDict = cameras.reduce((dict, obj) => {
+  const camerasLookup = cameras.reduce((dict, obj) => {
     dict[obj.id] = obj;
     return dict;
   }, {});
 
-  for (const camFeature of layer.getSource().getFeatures()) {
-    if(!camFeature.getProperties()['clicked']){
-      camFeature.setStyle(camsDict[camFeature.getId()] ? cameraStyles['static'] : new Style(null));
+  for (const feature of layer.getSource().getFeatures()) {
+    const camera = camerasLookup[feature.getId()];
+
+    if (!camera) {  // camera no longer in list from API
+      feature.setStyle(new Style(null));
+      continue;
     }
+
+    if (feature.get('last_update_modified') !== camera.last_update_modified) {
+      feature.set('unread', true);
+    }
+
+    feature.setProperties(camera); // update feature with latest API data.
+
+    if (feature.get('clicked')) { continue; }
+
+    feature.setCameraStyle('static');
   }
 
   setLoadingLayers(prevState => ({
