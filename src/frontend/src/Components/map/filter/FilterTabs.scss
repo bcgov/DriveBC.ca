@@ -59,7 +59,9 @@ button.btn.open-filters {
         max-height: fit-content;
 
         &.filters {
-          height: 100%;
+          @supports (-moz-appearance:none) {
+            height: 100%;
+          }
         }
 
         @media (hover: none) and (pointer: coarse) and (max-width: 575px) {
