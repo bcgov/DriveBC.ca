@@ -64,11 +64,11 @@ button.btn.open-filters {
           }
         }
 
-        @media (hover: none) and (pointer: coarse) and (max-width: 575px) {
+        @media (pointer: coarse) and (max-width: 575px) {
           max-height: 600px;
         }
 
-        @media (hover: none) and (pointer: coarse) and (min-width: 576px) {
+        @media (pointer: coarse) and (min-width: 576px) {
           height: calc(100vh - 172px);
         }
       }
