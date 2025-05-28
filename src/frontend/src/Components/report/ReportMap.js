@@ -267,8 +267,8 @@ export function ReportMap(props) {
     }
   };
 
-  const smallScreen = useMediaQuery('only screen and (max-width: 767px)');
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
+  const touchDevice = useMediaQuery('(pointer: coarse)');
 
   const renderPanel = () => {
     return (
@@ -413,7 +413,7 @@ export function ReportMap(props) {
       </div>
 
       <div id="report-map" className="report-map">
-        {smallScreen && (
+        {touchDevice && (
           <Button
             className={
               'map-btn expand ' + (expanded ? ' expanded' : 'minimized')
