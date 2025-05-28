@@ -106,7 +106,7 @@ export default function MapFilters(props) {
 
     // Set context and local storage
     mapContext.visible_layers[layer] = checked;
-    setMapContext(mapContext);
+    setMapContext({...mapContext});
     localStorage.setItem('mapContext', JSON.stringify(mapContext));
   }
 

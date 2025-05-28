@@ -24,6 +24,7 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import Skeleton from "react-loading-skeleton";
 
 // Internal imports
 import { AlertContext, AuthContext, FeatureContext } from '../../App';
@@ -36,7 +37,7 @@ import RouteMap from './RouteMap';
 // Styling
 import './RouteObjectList.scss';
 import 'react-loading-skeleton/dist/skeleton.css'
-import {advisoryStyles} from "../data/featureStyleDefinitions";
+import { advisoryStyles } from "../data/featureStyleDefinitions";
 
 export default function RouteObjectList(props) {
   /* Setup */
@@ -80,7 +81,10 @@ export default function RouteObjectList(props) {
   const [nickName, setNickName] = useState('');
   const [showSavePopup, setShowSavePopup] = useState(false);
   const [routeMapImg, setRouteMapImg] = useState(); // for map snapshot
-  const [objList, setObjList] = useState();
+  const [objList, setObjList] = useState([]);
+  const [pendingAdvisories, setPendingAdvisories] = useState(false);
+  const [pendingEvents, setPendingEvents] = useState(false);
+  const [pendingFerries, setPendingFerries] = useState(false);
 
   // Effects
   useEffect(() => {
@@ -94,9 +98,25 @@ export default function RouteObjectList(props) {
     }
   }, [authContext, pendingAction]);
 
+  // Mark data as not updating when they finish filtering
   useEffect(() => {
-    rankObjectList();
-  }, []);
+    setPendingAdvisories(true);
+  }, [filteredAdvisories]);
+
+  useEffect(() => {
+    setPendingEvents(true);
+  }, [filteredEvents]);
+
+  useEffect(() => {
+    setPendingFerries(true);
+  }, [filteredFerries]);
+
+  // When all data is filtered, rank the object list again
+  useEffect(() => {
+    if (pendingAdvisories && pendingEvents && pendingFerries) {
+      rankObjectList();
+    }
+  }, [pendingAdvisories, pendingEvents, pendingFerries]);
 
   /* Helpers */
   const toggleAuthModal = (action) => {
@@ -117,6 +137,9 @@ export default function RouteObjectList(props) {
     });
 
     setObjList(projectedObjs);
+    setPendingAdvisories(false);
+    setPendingEvents(false);
+    setPendingFerries(false);
   }
 
   const resetPopup = () => {
@@ -195,8 +218,16 @@ export default function RouteObjectList(props) {
     }
   }
 
-  const getObjectList = (objs) => {
-    return objs.map((obj, index) => {
+  const getObjectList = () => {
+    if (pendingAdvisories || pendingEvents || pendingFerries) {
+      return (
+        <div>
+          <Skeleton count={5} width={200} />
+        </div>
+      );
+    }
+
+    return objList.map((obj, index) => {
       switch (obj.display_category) {
         case 'closures':
           return (
@@ -382,7 +413,7 @@ export default function RouteObjectList(props) {
 
         <div className="route-items">
           {objList &&
-            getObjectList(objList)
+            getObjectList()
           }
         </div>
 
