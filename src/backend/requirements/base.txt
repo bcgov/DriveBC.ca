@@ -14,3 +14,4 @@ psycopg==3.1.9
 redis==4.5.5
 wagtail==6.2.2
 wagtail-modeladmin==2.0.0
+django-email-log==1.4.0
