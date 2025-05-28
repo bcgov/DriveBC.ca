@@ -126,15 +126,23 @@
       flex: 1 1 200px;
     }
 
+    &:has(.report-map-container.expanded) {
+      padding: 0;
+    }
+
     .report-map-container {
       display: flex;
-      height: 720px;
+      height: 700px;
       border: 1px solid $Divider;
 
       @media (max-width: 767px) {
         flex-direction: column;
         border: none;
         height: 100%;
+      }
+
+      @media (min-width: 768px) and (pointer: coarse) {
+        height: 75vh;
       }
 
       .side-panel {
