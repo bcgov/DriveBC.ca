@@ -228,20 +228,19 @@ export function ReportMap(props) {
 
             // Wait for map to pan before getting pixel coords
             setTimeout(() => {
-              if (xLargeScreen) {
-                const pixelCoords =
-                  mapRef.current.getPixelFromCoordinate(mapCoords);
-                clickListener(
-                  mapRef.current,
-                  pixelCoords,
-                  setActiveFeature,
-                  wmsLayer,
-                );
-              }
+              const pixelCoords =
+                mapRef.current.getPixelFromCoordinate(mapCoords);
+              clickListener(
+                mapRef.current,
+                pixelCoords,
+                setActiveFeature,
+                wmsLayer,
+              );
             }, 1000);
           } else {
             // set my location to the center of BC for users outside of BC
             setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
+            
           }
         },
         error => {
@@ -267,7 +266,6 @@ export function ReportMap(props) {
     }
   };
 
-  const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
   const touchDevice = useMediaQuery('(pointer: coarse)');
 
   const renderPanel = () => {
