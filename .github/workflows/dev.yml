@@ -153,6 +153,7 @@ jobs:
       uses: redhat-actions/openshift-tools-installer@v1
       with:
         oc: "4"
+        skip_cache: true
       
     - name: Authenticate and set context
       uses: redhat-actions/oc-login@v1
@@ -160,7 +161,7 @@ jobs:
         openshift_server_url: ${{ vars.OPENSHIFT_GOLD_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
-        insecure_skip_tls_verify: true
+        insecure_skip_tls_verify: false
     - name: Helm upgrade on OpenShift Gold Environment
       run: |
         helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml ./infrastructure/main --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
@@ -181,6 +182,7 @@ jobs:
       uses: redhat-actions/openshift-tools-installer@v1
       with:
         oc: "4"
+        skip_cache: true
      
     - name: Authenticate and set context
       uses: redhat-actions/oc-login@v1
@@ -188,7 +190,7 @@ jobs:
         openshift_server_url: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
-        insecure_skip_tls_verify: true
+        insecure_skip_tls_verify: false
 
     - name: Helm upgrade on OpenShift GoldDR Environment
       run: |
