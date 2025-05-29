@@ -103,7 +103,7 @@ export default function EventsListPage() {
   const { headerHeightContext } = useContext(HeaderHeightContext);
 
   // States
-  const getDefaultFilterState = () => {
+  const getFilterState = () => {
     if (searchParams.get('chainUpsOnly') === 'true') {
       return {
         'closures': false,
@@ -124,7 +124,7 @@ export default function EventsListPage() {
   }
 
   const [sortingKey, setSortingKey] = useState(selectedRoute && selectedRoute.routeFound ? 'route_order' : (localStorage.getItem('sorting-key')? localStorage.getItem('sorting-key') : 'severity_desc'));
-  const [eventCategoryFilter, setEventCategoryFilter] = useState(getDefaultFilterState());
+  const [eventCategoryFilter, setEventCategoryFilter] = useState(getFilterState());
   const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
   const [trackedEvents, setTrackedEvents] = useState({}); // Track event updates between refreshes
   const [showLoader, setShowLoader] = useState(true);
@@ -435,12 +435,10 @@ export default function EventsListPage() {
   }, [processedEvents, trackedEvents]);
 
   // Handlers
-  const toggleEventCategoryFilter = (targetCategory, check) => {
-    const newFilter = {...eventCategoryFilter};
-    newFilter[targetCategory] = check;
 
-    setEventCategoryFilter(newFilter);
-  };
+  useEffect(() => {
+    setEventCategoryFilter(getFilterState());
+  }, [mapContext]);
 
   const handleRoute = (event) => {
     trackEvent('click', 'event', 'events list page', event.event_type, event.event_sub_type);
@@ -591,7 +589,6 @@ export default function EventsListPage() {
                     <div className="type filter-option-btn">
 
                       <Filters
-                        callback={toggleEventCategoryFilter}
                         disableFeatures={true}
                         enableRoadConditions={false}
                         enableChainUps={true}

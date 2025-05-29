@@ -129,15 +129,15 @@ export default function Filters(props) {
       mapLayers.current[layer].setVisible(checked);
     }
 
-    // Run callback for event list, non-line layers
-    if (callback && runCallback) {
-      callback(layer, checked);
-    }
-
-    // Set context and local storage
-    mapContext.visible_layers[layer] = checked;
-    setMapContext(mapContext);
-    localStorage.setItem('mapContext', JSON.stringify(mapContext));
+    // Update context and local storage
+    const newMapContext = {
+      visible_layers: {
+        ...mapContext.visible_layers,
+        [layer]: checked,
+      }
+    };
+    setMapContext(newMapContext);
+    localStorage.setItem('mapContext', JSON.stringify(newMapContext));
   }
 
   // Set focus on filters with a blur out after 1 second
