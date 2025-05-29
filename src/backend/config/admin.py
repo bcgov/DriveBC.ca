@@ -28,10 +28,17 @@ class DriveBCAdminSite(AdminSite):
 
     def index(self, request, extra_context=None):
         from apps.authentication.models import DriveBCUser, SavedRoutes, FavouritedCameras
+        from email_log.models import Email
 
         extra = extra_context or {}
         thirty_days_ago = timezone.now() - timedelta(days=30)
+        twenty_four_hours_ago = timezone.now() - timedelta(hours=24)
         # Add your context here
+
+        recent_emails = Email.objects.filter(date_sent__gte=twenty_four_hours_ago)
+        total_recipients_last_24h = sum(
+            len(email.recipients.split(';')) for email in recent_emails if email.recipients
+        )
         extra['counts'] = {
             'basic_bceid_users_count': DriveBCUser.objects.filter(
                 username__endswith='bceidbasic'
@@ -47,6 +54,7 @@ class DriveBCAdminSite(AdminSite):
             ).values('user').distinct().count(),
             'favourited_cams': FavouritedCameras.objects.count(),
             'unique_users_with_favorited_cameras': FavouritedCameras.objects.values('user').distinct().count(),
+            'total_recipients_last_24h': total_recipients_last_24h,
         }
         return super().index(request, extra)
 
