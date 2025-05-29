@@ -9,6 +9,7 @@ from unittest.mock import patch
 import pytest
 from apps.event import enums as event_enums
 from apps.event.enums import EVENT_DIRECTION, EVENT_STATUS
+from apps.event.helpers import get_display_category
 from apps.event.models import Event
 from apps.event.tasks import populate_all_event_data, populate_event_from_data
 from apps.event.tests.test_data.event_parsed_feed import parsed_feed, parsed_feed_2
@@ -179,7 +180,7 @@ class TestEventModel(BaseTest):
         assert event.direction == EVENT_DIRECTION.NONE
         # closed value comes from CARS feed
         event = Event.objects.get(id="DBC-46014")
-        assert event.closed == True
+        assert event.closed is True
 
         # Second call with one missing event
         populate_all_event_data()
@@ -228,3 +229,64 @@ class TestEventModel(BaseTest):
             populate_all_event_data()
 
         assert Event.objects.count() == 0
+
+    def test_display_category(self):
+        data = {
+            'closed': False,
+            'closest_landmark': '5 km west of Purden Lake',
+            'description': 'Highway 16 (Yellowhead Highway). Paving operations between Willow River Rest Area and '
+                           'Bowron Pit Rd (5 km west of Purden Lake.... From 8:00 AM to 8:00 PM PDT on Wednesday, '
+                           'Thursday, Friday and Saturday. Last updated Tue May 27 at 8:00 AM PDT. (DBC-20342)',
+            'direction': 'NONE',
+            'event_sub_type': 'ROAD_MAINTENANCE',
+            'event_type': 'CONSTRUCTION',
+            'first_created': datetime.datetime(
+                2025, 5, 27, 8, 0, 35, tzinfo=zoneinfo.ZoneInfo(key='America/Vancouver')),
+            'highway_segment_names': '',
+            'id': 'DBC-20342',
+            'last_updated': datetime.datetime(2025, 5, 28, 0, 0, tzinfo=zoneinfo.ZoneInfo(key='America/Vancouver')),
+            'location': {
+                'coordinates': [-122.063117, 53.903021],
+                'type': 'Point'
+            },
+            'location_description': 'Between Willow River Rest Area and Bowron Pit Rd',
+            'next_update': None,
+            'route_at': 'Highway 16',
+            'route_from': 'Willow River Rest Area',
+            'route_to': '',
+            'schedule': {
+                'recurring_schedules': [
+                    {
+                        'daily_end_time': '20:00',
+                        'daily_start_time': '08:00',
+                        'days': [3, 4, 5, 6],
+                        'end_date': '2025-06-01',
+                        'start_date': '2025-05-28'
+                    }
+                ]
+            },
+            'severity': 'MINOR',
+            'start_point_linear_reference': 1076.938270924779,
+            'status': 'ACTIVE',
+            'timezone': 'America/Vancouver'
+        }
+        populate_event_from_data(data)
+        event = Event.objects.get(id='DBC-20342')
+
+        dc1 = get_display_category(
+            event,
+            datetime.datetime(2025, 5, 28, 7, 59, tzinfo=zoneinfo.ZoneInfo(key='America/Vancouver'))
+        )
+        assert dc1 == event_enums.EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
+
+        dc2 = get_display_category(
+            event,
+            datetime.datetime(2025, 5, 28, 8, 0, tzinfo=zoneinfo.ZoneInfo(key='America/Vancouver'))
+        )
+        assert dc2 == event_enums.EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
+
+        dc3 = get_display_category(
+            event,
+            datetime.datetime(2025, 5, 28, 8, 1, tzinfo=zoneinfo.ZoneInfo(key='America/Vancouver'))
+        )
+        assert dc3 == event_enums.EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
