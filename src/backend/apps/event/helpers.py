@@ -17,8 +17,9 @@ def parse_recurring_datetime(date_string, time_string):
     return dt.replace(tzinfo=ZoneInfo('America/Vancouver'))
 
 
-def get_display_category(event):
-    if event.start and datetime.datetime.now(ZoneInfo('UTC')) < event.start:
+def get_display_category(event, test_datetime=None):
+    current_datetime = test_datetime if test_datetime else datetime.datetime.now(ZoneInfo('UTC'))
+    if event.start and current_datetime < event.start:
         return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
 
     if 'recurring_schedules' in event.schedule and len(event.schedule['recurring_schedules']):
@@ -28,7 +29,7 @@ def get_display_category(event):
             recurring_schedules['daily_start_time']
         )
 
-        if datetime.datetime.now(ZoneInfo('UTC')) < start_datetime:
+        if current_datetime < start_datetime:
             return EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
 
     if event.closed:
