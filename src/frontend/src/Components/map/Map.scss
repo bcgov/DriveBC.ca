@@ -46,6 +46,15 @@
       }
     }
 
+    &:has(.side-panel.open) {
+
+      @media (min-width: 768px) and (max-width: 910px) {
+        .map-btn.open-filters, .filters-menu {
+          top: 7rem;
+        }
+      }
+    }
+
     .side-panel {
       height: 100%;
       width: 390px;
