@@ -40,8 +40,9 @@
         overflow-y: auto;
 
         &.open {
-          min-width: 100%;
+          min-width: 390px;
           min-height: 100%;
+          margin-right: auto;
         }
       }
     }
