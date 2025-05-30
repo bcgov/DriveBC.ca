@@ -210,6 +210,8 @@ export function ReportMap(props) {
 
   /* My location */
   const toggleMyLocation = (mapRef, mapView) => {
+    const start = performance.now();
+
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         position => {
@@ -240,8 +242,12 @@ export function ReportMap(props) {
           } else {
             // set my location to the center of BC for users outside of BC
             setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
-            
+
           }
+
+          const end = performance.now();
+          const durationMs = end - start;
+          console.log(`getCurrentPosition took ${durationMs} ms`);
         },
         error => {
           if (error.code === error.PERMISSION_DENIED) {
@@ -251,7 +257,11 @@ export function ReportMap(props) {
             // Zoom out and center to BC if location not available
             setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
           }
-        },
+        }, {
+          enableHighAccuracy: false,
+          timeout: Infinity,
+          maximumAge: 300000  // cache for 5 minutes
+        }
       );
     }
   };
