@@ -30,7 +30,7 @@ export default function AdvisoriesList(props) {
   const navigate = useNavigate();
 
   // Props
-  const { advisories, showDescription, showTimestamp, showPublished, showArrow, isAdvisoriesListPage, showLoader } = props;
+  const { advisories, showDescription, showTimestamp, showPublished, isAdvisoriesListPage, showLoader } = props;
 
   function handleClick(advisory, keyEvent) {
     if (keyEvent && keyEvent.keyCode != 13 && keyEvent.keyCode != 32) {

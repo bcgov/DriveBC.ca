@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect } from 'react';
 
 // Redux
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { memoize } from "proxy-memoize";
 
 // Internal imports

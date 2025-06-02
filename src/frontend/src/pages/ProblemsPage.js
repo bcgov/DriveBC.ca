@@ -9,7 +9,6 @@ import {
   faBoxBallot,
   faBridge,
   faPlug,
-  faUtilityPole,
   faFlask
 } from '@fortawesome/pro-regular-svg-icons';
 

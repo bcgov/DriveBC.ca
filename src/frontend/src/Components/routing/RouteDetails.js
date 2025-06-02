@@ -59,7 +59,7 @@ export default function RouteDetails(props) {
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
   const { setAlertMessage } = useContext(AlertContext);
-  const { mapContext, setMapContext } = useContext(MapContext);
+  const { mapContext } = useContext(MapContext);
 
   // Ref
   const workerRef = useRef();
@@ -146,7 +146,7 @@ export default function RouteDetails(props) {
 
     // Set up event listener for messages from the worker
     workerRef.current.onmessage = function (event) {
-      const { data, filteredData, route, action } = event.data;
+      const { data, filteredData, action } = event.data;
 
       // Data specific to the RouteDetails component
       if (action === 'setEventCount') {

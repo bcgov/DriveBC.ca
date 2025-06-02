@@ -30,7 +30,6 @@ import roadConditionsStaticIcon from '../../images/mapIcons/road-condition-stati
 
 // Chain Ups
 import chainUpsActiveIcon from '../../images/mapIcons/chain-ups-active.png';
-import chainUpsStaticIcon from '../../images/mapIcons/chain-ups-static.png';
 
 // Constructions
 import constructionsMajorActiveIcon from '../../images/mapIcons/delay-major-active.png';

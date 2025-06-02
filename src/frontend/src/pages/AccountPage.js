@@ -42,7 +42,7 @@ export default function AccountPage() {
   const showedModal = useRef(false);
 
   // States
-  const [verified, setVerified] = useState(params.get('verified'));
+  const [verified] = useState(params.get('verified'));
   const [showDeactivate, setShowDeactivate] = useState(false);
 
   // Effects

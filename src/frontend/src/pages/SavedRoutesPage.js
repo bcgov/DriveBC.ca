@@ -46,7 +46,7 @@ export default function SavedRoutesPage() {
   // States
   const [routeLabel, setRouteLabel] = useState();
   const [routeFavCams, setRouteFavCams] = useState(false);
-  const [verified, setVerified] = useState(params.get('verified'));
+  const [verified] = useState(params.get('verified'));
 
   // Effects
   useEffect(() => {

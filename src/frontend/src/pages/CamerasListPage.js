@@ -12,13 +12,10 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFlag,
-  faRoute,
   faXmark,
-  faXmarkLarge,
   faMagnifyingGlass,
   faChevronDown
 } from '@fortawesome/pro-solid-svg-icons';
-import { faRoute as faRouteEmpty } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
@@ -55,7 +52,7 @@ export default function CamerasListPage() {
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
   const { camsContext, setCamsContext } = useContext(CamsContext);
-  const { headerHeightContext, setHeaderHeightContext } = useContext(HeaderHeightContext);
+  const { headerHeightContext } = useContext(HeaderHeightContext);
 
   // Redux
   const dispatch = useDispatch();

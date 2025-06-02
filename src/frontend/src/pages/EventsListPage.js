@@ -310,7 +310,7 @@ export default function EventsListPage() {
 
       // Set up event listener for messages from the worker
       workerRef.current.onmessage = function (event) {
-        const { data, filteredData, route, action } = event.data;
+        const { data, filteredData, action } = event.data;
 
         // compare new and existing data here and tag them
         dispatch(

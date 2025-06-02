@@ -11,7 +11,7 @@ import { updateAdvisories, updateBulletins } from '../../../slices/cmsSlice';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight, faCommentExclamation, faCommentPen, faSparkles } from '@fortawesome/pro-regular-svg-icons';
+import { faChevronLeft, faChevronRight, faCommentExclamation, faSparkles } from '@fortawesome/pro-regular-svg-icons';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Container from 'react-bootstrap/Container';
@@ -36,7 +36,6 @@ export default function Header() {
   /* Setup */
   // Misc
   const xXlargeScreen = useMediaQuery('only screen and (min-width : 1400px)');
-  const largeScreen = useMediaQuery('only screen and (min-width : 576px)');
   const mobilePortrait = useMediaQuery('only screen and (max-width: 575px) and (orientation: portrait) and (pointer: coarse)');
 
   // Check current page location
@@ -46,7 +45,7 @@ export default function Header() {
   // Redux
   const dispatch = useDispatch();
   const { advisories, filteredAdvisories, bulletins,
-    routes: { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes }
+    routes: { searchLocationFrom, searchLocationTo, selectedRoute }
   } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
     filteredAdvisories: state.cms.advisories.filteredAdvisories,

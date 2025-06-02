@@ -1,6 +1,6 @@
 // React
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { createSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,7 +10,6 @@ import { pushFavCam, removeFavCam, updatePendingAction } from '../../slices/user
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faMapMarkerAlt,
   faXmark,
   faCircleInfo,
   faVideoSlash,
@@ -149,30 +148,6 @@ export default function CameraCard(props) {
     if (event.key === 'Enter') {
       handleClick();
     }
-  }
-
-  function handleViewOnMap() {
-    const refCamData = { ...camera };
-    refCamData.type = 'camera';
-
-    navigate({
-      pathname: '/',
-      search: `?${createSearchParams({
-        type: "camera",
-        id: camera.id,
-      })}`
-    });
-
-    window.snowplow('trackSelfDescribingEvent', {
-      schema: 'iglu:ca.bc.gov.drivebc/action/jsonschema/1-0-0',
-      data: {
-        action: 'click',
-        section: 'camera-list',
-        category: 'Camera',
-        label: camera.name,
-        sub_label: 'View on Map Select',
-      },
-    });
   }
 
   const addCamera = async () => {

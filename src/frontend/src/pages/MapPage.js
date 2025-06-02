@@ -105,7 +105,7 @@ export default function MapPage() {
     }
   }
 
-  const { headerHeightContext, setHeaderHeightContext } = useContext(HeaderHeightContext);
+  const { headerHeightContext } = useContext(HeaderHeightContext);
 
   const mobilePortrait = useMediaQuery('only screen and (max-width: 575px) and (orientation: portrait) and (hover: none) and (pointer: coarse)');
 

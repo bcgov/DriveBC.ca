@@ -6,10 +6,8 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMagnifyingGlass,
-  faChevronDown,
   faXmark
  } from '@fortawesome/pro-solid-svg-icons';
-import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
 import { CamsContext } from '../../App.js';
@@ -75,9 +73,6 @@ export default function HighwayFilters(props) {
   }, [searchText, orderedHighways]);
 
   /* Rendering */
-  // Media queries
-  const smallScreen = useMediaQuery('only screen and (max-width : 575px)');
-  const xXlargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   // Sub components
   const getHighwayDisplay = (highway) => {
