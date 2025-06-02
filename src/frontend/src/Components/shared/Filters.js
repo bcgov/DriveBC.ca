@@ -42,7 +42,6 @@ export default function Filters(props) {
   // Props
   const {
     mapLayers,
-    callback,
     disableFeatures,
     enableRoadConditions,
     enableChainUps,

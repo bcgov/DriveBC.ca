@@ -1,6 +1,3 @@
-// Components and functions
-import { transformFeature } from '../helpers';
-
 // OpenLayers
 import { Point } from 'ol/geom';
 import { Style } from 'ol/style';
