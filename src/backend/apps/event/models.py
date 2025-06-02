@@ -50,7 +50,7 @@ class Event(BaseModel):
     display_category = models.CharField(max_length=32, blank=True, default='')
 
     def save(self, *args, **kwargs):
-        uses_polygon = self.event_type in ['ROAD_CONDITION']  # chain up not used for now
+        uses_polygon = self.event_type in ['ROAD_CONDITION', 'WEATHER_CONDITION']
         width = 1500 if self.event_type == 'CHAIN_UP' else 2000
 
         # For road conditions or chain up events with linestring geometry
