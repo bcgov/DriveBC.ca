@@ -36,7 +36,7 @@ export default function Header() {
   /* Setup */
   // Misc
   const xXlargeScreen = useMediaQuery('only screen and (min-width : 1400px)');
-  const mobilePortrait = useMediaQuery('only screen and (max-width: 575px) and (orientation: portrait) and (pointer: coarse)');
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
 
   // Check current page location
   const location = useLocation();
@@ -107,7 +107,7 @@ export default function Header() {
   }, [cmsContext]);
 
   useEffect(() => {
-    setHeaderHeightContext(mobilePortrait ? document.querySelector('.header').offsetHeight : 58);
+    setHeaderHeightContext(smallScreen ? document.querySelector('.header').offsetHeight : 58);
   }, [openSearch, selectedRoute, showSearch]);
 
   useEffect(() => {
@@ -188,7 +188,7 @@ export default function Header() {
               }
             </div>
 
-            {mobilePortrait && showSearch && !openSearch && !selectedRoute &&
+            {smallScreen && showSearch && !openSearch && !selectedRoute &&
               <button
                 className="search-trigger btn"
                 aria-label="search destination location"
@@ -197,7 +197,7 @@ export default function Header() {
               </button>
             }
 
-            {mobilePortrait && showSearch && !openSearch && selectedRoute &&
+            {smallScreen && showSearch && !openSearch && selectedRoute &&
               <button
                 className={`searched-route btn show`}
                 aria-label="searched route"
@@ -230,7 +230,7 @@ export default function Header() {
             }
           </div>
 
-          {mobilePortrait && showSearch && openSearch &&
+          {smallScreen && showSearch && openSearch &&
             <div className={'location-search' + (openSearch ? ' visible' : '')}>
               <button
                 className="close-search btn"
