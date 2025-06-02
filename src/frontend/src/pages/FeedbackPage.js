@@ -36,23 +36,7 @@ export default function FeedbackPage() {
 	const [validated, setValidated] = useState(false);
 
   // Recaptcha
-  const [ recToken, setRecToken ] = useState();
-  const refreshRecToken = async () => {
-    setRecToken(await executeRecaptcha('feedbackForm'));
-  }
-
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const handleReCaptchaVerify = useCallback(async () => {
-    if (!executeRecaptcha) { // function not ready yet
-      return;
-    }
-
-    refreshRecToken();
-  }, [executeRecaptcha]);
-
-  useEffect(() => {
-    handleReCaptchaVerify();
-  }, [handleReCaptchaVerify]);
 
   // Device info
   useEffect(() => {
@@ -86,7 +70,7 @@ export default function FeedbackPage() {
   }, []);
 
   // Handlers
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
 		const form = event.currentTarget;
@@ -96,6 +80,11 @@ export default function FeedbackPage() {
       return;
 		}
 
+    if (!executeRecaptcha) {
+      throw new Error('Recaptcha not ready');
+    }
+
+    const recToken = await executeRecaptcha('feedbackForm')
     const payload = {
       email: email,
       subject: subject,
@@ -116,9 +105,6 @@ export default function FeedbackPage() {
     })
     .catch((error) => {
       setError(true);
-
-      // Refresh captcha token on error
-      refreshRecToken();
     });
   };
 
