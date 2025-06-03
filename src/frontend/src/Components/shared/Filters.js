@@ -122,17 +122,30 @@ export default function Filters(props) {
   }, []);
 
   // Helpers
-  const setLayerVisibility = (layer, checked, runCallback=true) => {
-    if (mapLayers && mapLayers.current[layer]) {
-      // Set visible in map only
-      mapLayers.current[layer].setVisible(checked);
+
+  /* IMPORTANT: This function triggers a context change, so repeated calls to
+   * it (such as three calls to trigger three different layers) will create a
+   * race condition where subsequent calls overwrite a previous call's changed
+   * value.  This is because we're mutating a nested object.
+   *
+   * Call this function singly with either one layer and checked value, or an
+   * object with key value pairs for the layers to toggle.
+   */
+  const setLayerVisibility = (layers, checked) => {
+    if (typeof layers === 'string') { // a string, boolean was passed
+      layers = {[layers]: checked}
     }
 
-    // Update context and local storage
+    for (const layer in layers) {
+      if (mapLayers && mapLayers.current[layer]) {
+        mapLayers.current[layer].setVisible(layers[layer]);
+      }
+    }
+
     const newMapContext = {
       visible_layers: {
         ...mapContext.visible_layers,
-        [layer]: checked,
+        ...layers
       }
     };
     setMapContext(newMapContext);
@@ -160,38 +173,32 @@ export default function Filters(props) {
     switch (layer) {
       case 'closures':
         trackEvent('click', 'map', 'Toggle closures layer');
-        setLayerVisibility('closures', !closures);
-        setLayerVisibility('closuresLines', !closures, false);
+        setLayerVisibility({'closures': !closures, 'closuresLines': !closures});
         setClosures(!closures);
         break;
       case 'majorEvents':
         trackEvent('click', 'map', 'Toggle major events layer');
-        setLayerVisibility('majorEvents', !majorEvents);
-        setLayerVisibility('majorEventsLines', !majorEvents, false);
+        setLayerVisibility({'majorEvents': !majorEvents, 'majorEventsLines': !majorEvents});
         setMajorEvents(!majorEvents);
         break;
       case 'minorEvents':
         trackEvent('click', 'map', 'Toggle minor events layer');
-        setLayerVisibility('minorEvents', !minorEvents);
-        setLayerVisibility('minorEventsLines', !minorEvents, false);
+        setLayerVisibility({'minorEvents': !minorEvents, 'minorEventsLines': !minorEvents});
         setMinorEvents(!minorEvents);
         break;
       case 'futureEvents':
         trackEvent('click', 'map', 'Toggle future events layer');
-        setLayerVisibility('futureEvents', !futureEvents);
-        setLayerVisibility('futureEventsLines', !futureEvents, false);
+        setLayerVisibility({'futureEvents': !futureEvents, 'futureEventsLines': !futureEvents});
         setFutureEvents(!futureEvents);
         break;
       case 'roadConditions':
         trackEvent('click', 'map', 'Toggle road conditions layer');
-        setLayerVisibility('roadConditions', !roadConditions);
-        setLayerVisibility('roadConditionsLines', !roadConditions, false);
+        setLayerVisibility({'roadConditions': !roadConditions, 'roadConditionsLines': !roadConditions});
         setRoadConditions(!roadConditions);
         break;
       case 'chainUps':
         trackEvent('click', 'map', 'Toggle chain ups layer')
-        setLayerVisibility('chainUps', !chainUps);
-        setLayerVisibility('chainUpsLines', !chainUps, false);
+        setLayerVisibility({'chainUps': !chainUps, 'chainUpsLines': !chainUps});
         setChainUps(!chainUps);
         break;
       case 'highwayCams':
@@ -206,29 +213,21 @@ export default function Filters(props) {
         break;
       case 'weather':
         trackEvent('click', 'map', 'Toggle weather layer')
-        setLayerVisibility('weather', !weather);
-        setLayerVisibility('regional', !weather);
-        setLayerVisibility('hef', !weather);
+        setLayerVisibility({'weather': !weather, 'regional': !weather, 'hef': !weather});
         setWeather(!weather);
         break;
       case 'restStops':
         trackEvent('click', 'map', 'Toggle rest stops layer')
-        if (!restStops && largeRestStops) {
-          setLayerVisibility('largeRestStops', false);
-          setLargeRestStops(false);
-        }
-        setLayerVisibility('restStops', !restStops);
+        setLayerVisibility({'restStops': !restStops, 'largeRestStops': false});
         setRestStops(!restStops);
+        setLargeRestStops(false);
         updateUrl("largeRestStop", "restStop");
         break;
       case 'largeRestStops':
-        trackEvent('click', 'map', 'Toggle rest stops layer')
-        if (restStops && !largeRestStops) {
-          setLayerVisibility('restStops', false);
-          setRestStops(false);
-        }
-        setLayerVisibility('largeRestStops', !largeRestStops);
+        trackEvent('click', 'map', 'Toggle large rest stops layer')
+        setLayerVisibility({'largeRestStops': !largeRestStops, 'restStops': false});
         setLargeRestStops(!largeRestStops);
+        setRestStops(false);
         updateUrl("restStop", "largeRestStop");
         break;
     }
