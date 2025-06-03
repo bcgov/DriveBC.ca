@@ -270,7 +270,7 @@ export default function CamPanel(props) {
                   </div>
                 )}
 
-                <img ref={imageRef} src={getCamLink(camera)} width="300" />
+                <img ref={imageRef} src={getCamLink(camera)} width="300" data-current="0" />
 
                 {camera.marked_delayed && camera.marked_stale && (
                   <>
