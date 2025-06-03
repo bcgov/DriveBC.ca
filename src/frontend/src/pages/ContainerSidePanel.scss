@@ -35,11 +35,11 @@
     }
 
     .routing {
-      margin-bottom: 20px;
       padding: 4px 10px 4px 4px;
 
       @media (min-width: 1200px) {
         width: 100%;
+        margin-bottom: 20px;
       }
 
       .routing-container {
