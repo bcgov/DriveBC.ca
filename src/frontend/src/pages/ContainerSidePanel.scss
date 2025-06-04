@@ -123,11 +123,14 @@
     flex: 1 1 auto;
 
     .sticky-filters {
+      position: sticky;
+      z-index: 1;
+      top: 0;
+      padding: 20px 0;
+      background: $White;
 
       &.mobile {
-        position: sticky;
-        z-index: 1;
-        top: 0;
+        padding: 0;
   
         .controls-container {
           .filters-text {
