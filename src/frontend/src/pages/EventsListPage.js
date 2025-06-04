@@ -558,7 +558,7 @@ export default function EventsListPage() {
           }
 
           <div className="container--sidepanel__right">
-            <div className={`sticky-filters ${smallScreen ? 'mobile' : ''}`} style={{ top: `${headerHeightContext + 10}px` }}>
+            <div className={`sticky-filters ${smallScreen ? 'mobile' : ''}`} style={{ top: `${headerHeightContext}px` }}>
               <div className="controls-group">
                 <div className="controls-container">
                   <div className="sort">
