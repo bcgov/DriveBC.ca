@@ -6,7 +6,8 @@
         "created_at": "2025-03-04T23:26:14.135Z",
         "modified_at": "2025-03-04T23:26:14.135Z",
         "name": "Peace Arch",
-        "location": "SRID=4326;POINT (-122.755215373302 49.0004903332751)"
+        "location": "SRID=4326;POINT (-122.755215373302 49.0004903332751)",
+        "schedule_url": "https://cbsa-asfc.gc.ca/do-rb/offices-bureaux/405-eng.html"
     }
 },
 {
@@ -16,7 +17,8 @@
         "created_at": "2025-03-04T23:26:14.182Z",
         "modified_at": "2025-03-04T23:26:14.182Z",
         "name": "Pacific Highway",
-        "location": "SRID=4326;POINT (-122.735322148821 49.0040969132511)"
+        "location": "SRID=4326;POINT (-122.735322148821 49.0040969132511)",
+        "schedule_url": "https://cbsa-asfc.gc.ca/do-rb/offices-bureaux/398-eng.html"
     }
 },
 {
@@ -26,7 +28,8 @@
         "created_at": "2025-03-04T23:26:14.187Z",
         "modified_at": "2025-03-04T23:26:14.187Z",
         "name": "Lynden/Aldergrove",
-        "location": "SRID=4326;POINT (-122.485026353147 49.0004223841645)"
+        "location": "SRID=4326;POINT (-122.485026353147 49.0004223841645)",
+        "schedule_url": "https://cbsa-asfc.gc.ca/do-rb/offices-bureaux/408-eng.html"
     }
 },
 {
@@ -36,7 +39,8 @@
         "created_at": "2025-03-04T23:26:14.190Z",
         "modified_at": "2025-03-04T23:26:14.190Z",
         "name": "Sumas/Huntingdon",
-        "location": "SRID=4326;POINT (-122.265219 49.004678)"
+        "location": "SRID=4326;POINT (-122.265219 49.004678)",
+        "schedule_url": "https://cbsa-asfc.gc.ca/do-rb/offices-bureaux/404-eng.html"
     }
 },
 {
