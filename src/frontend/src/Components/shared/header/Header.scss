@@ -137,6 +137,11 @@
 				a:last-of-type {
 					padding-bottom: 4rem;
 				}
+
+				.footer-nav-link {
+					text-decoration: none;
+					color: $Type-Primary;
+				}
 			}
 		}
 	}

@@ -11,7 +11,7 @@ import { updateAdvisories, updateBulletins } from '../../../slices/cmsSlice';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight, faCommentExclamation, faSparkles } from '@fortawesome/pro-regular-svg-icons';
+import { faChevronLeft, faChevronRight, faCommentExclamation, faGlobePointer } from '@fortawesome/pro-regular-svg-icons';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Container from 'react-bootstrap/Container';
@@ -155,13 +155,16 @@ export default function Header() {
     );
   };
 
-  const getWhatsNewLink = () => {
-    const latestImprovementBulletin = bulletins.find(bulletin => bulletin.slug === 'latest-beta-improvements');
-    return latestImprovementBulletin ? `/bulletins/${latestImprovementBulletin.slug}` : '/bulletins';
+  const getLegacyLink = () => {
+    return (window.LEGACY_URL && window.LEGACY_URL !== 'undefined') ? window.LEGACY_URL : 'https://drivebc.ca';
   }
 
-  const whatsNewHandler = () => {
-    navigate(getWhatsNewLink());
+  const legacyDBCHandler = () => {
+    window.open(
+      getLegacyLink(),
+      '_blank',
+      'noopener,noreferrer'
+    );
   }
 
   // Main component
@@ -272,11 +275,9 @@ export default function Header() {
               }
 
               {!xXlargeScreen &&
-                <LinkContainer to={bulletins ? getWhatsNewLink() : ''}>
-                  <Nav.Link active={false} onClick={onClickActions} className='footer-nav-link'>
-                    <div className='title'>What&apos;s new</div>
-                  </Nav.Link>
-                </LinkContainer>
+                <a href={getLegacyLink()} target="_blank" rel="noopener noreferrer" className='footer-nav-link'>
+                  <div className='title'>Legacy DriveBC</div>
+                </a>
               }
 
               {!xXlargeScreen &&
@@ -292,15 +293,17 @@ export default function Header() {
                 Report a problem
               </Link>
 
-              <button className="btn btn-outline-primary header-right__btn" id="whatsnew-btn" alt="What's new" tabIndex={0}
-                      onClick={whatsNewHandler}
-                      onKeyPress={(keyEvent) => {
-                        if (keyEvent.charCode == 13 || keyEvent.charCode == 32) {
-                          whatsNewHandler();
-                        }
-                      }}>
-                <FontAwesomeIcon icon={faSparkles}/>
-                What&apos;s new
+              <button
+                className="btn btn-outline-primary header-right__btn" id="whatsnew-btn" alt="Legacy DriveBC"
+                tabIndex={0}
+                onClick={legacyDBCHandler}
+                onKeyPress={(keyEvent) => {
+                  if (keyEvent.charCode == 13 || keyEvent.charCode == 32) {
+                    legacyDBCHandler();
+                  }
+                }}>
+                <FontAwesomeIcon icon={faGlobePointer}/>
+                Legacy DriveBC
               </button>
 
               <div className="nav-divider"/>
