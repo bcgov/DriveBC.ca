@@ -194,9 +194,9 @@ export default function Header() {
             {smallScreen && showSearch && !openSearch && !selectedRoute &&
               <button
                 className="search-trigger btn"
-                aria-label="search destination location"
+                aria-label="search location"
                 onClick={() => setOpenSearch(true)}>
-                Search destination location
+                Search location
               </button>
             }
 
