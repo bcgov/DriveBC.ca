@@ -129,8 +129,18 @@
       padding: 20px 0;
       background: $White;
 
-      &.mobile {
+      &[stuck] {
+        @media (max-width: 575px) {
+          box-shadow: 0px 0.6px 1.8px 0px rgba(0, 0, 0, 0.10), 0px 3.2px 7.2px 0px rgba(0, 0, 0, 0.13);
+          margin: 0 -20px;
+          background-color: $Grey10;
+          padding: 8px 16px;
+        }
+      }
+
+      @media (max-width: 575px) {
         padding: 0;
+        z-index: 20;
   
         .controls-container {
           .filters-text {
@@ -160,9 +170,8 @@
       
       .controls-group {
         background-color: $Grey10;
-        padding: 4px 15px;
+        padding: 4px 12px;
         border-radius: 8px;
-        margin-bottom: 8px;
   
         @media (min-width: 768px) {
           padding: 8px;
@@ -253,7 +262,7 @@
         font-size: 0.5rem;
         margin-top: 4px;
         
-        @media (min-width: 768px) {
+        @media (min-width: 576px) {
           display: none;
         }
       }
@@ -275,12 +284,12 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-left: 8px;
+          margin-left: 12px;
           
           @media (max-width: 575px) {
             padding: 0;
             height: 42px;
-            width: 36px;
+            width: 42px;
             border: none;
           }
 
