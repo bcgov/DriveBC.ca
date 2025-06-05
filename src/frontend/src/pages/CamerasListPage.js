@@ -268,6 +268,25 @@ export default function CamerasListPage() {
     setShowHwyFilters(!showHwyFilters);
   }
 
+  // Handle sticky filters on mobile
+  useEffect(() => {
+    const element = document.querySelector('.sticky-filters');
+    if (!element) return;
+
+    const handleScroll = () => {
+      const rect = element.getBoundingClientRect();
+      // If the element's top is less than or equal to headerHeight, it's stuck
+      const stuck = rect.top <= headerHeightContext;
+      element.toggleAttribute('stuck', stuck);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Initial check
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [headerHeightContext]);
+
   return (
     <React.Fragment>
       <div className="cameras-page">
@@ -293,7 +312,7 @@ export default function CamerasListPage() {
           }
 
           <div className="container--sidepanel__right">
-            <div className={`sticky-filters ${smallScreen ? 'mobile' : ''}`} style={{ top: `${headerHeightContext}px` }}>
+            <div className="sticky-filters" style={{ top: `${headerHeightContext}px` }}>
               <div className="controls-group">
                 <div className="controls-container">
 
