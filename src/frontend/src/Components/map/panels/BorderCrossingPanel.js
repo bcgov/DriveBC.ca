@@ -438,7 +438,14 @@ export default function BorderCrossingPanel(props) {
 
       <div className="popup__content">
         <div className="popup__content__title">
-        <p className="name">{borderCrossing.name}</p>
+          <p className="name">{borderCrossing.name}</p>
+
+          {borderCrossing.schedule_url &&
+            <div className="schedule_url">
+              Operating times are currently not available. See <a href={borderCrossing.schedule_url} target="_blank" rel="noopener noreferrer">hours of operation</a> for more details.
+            </div>
+          }
+
           <p className="delays">Current delays</p>
           <p className="update"><span className="updated">Updated </span><FriendlyTime date={borderCrossing.last_updated}/></p>
         </div>

@@ -7,6 +7,7 @@ class BorderCrossing(BaseModel):
     id = models.PositiveSmallIntegerField(primary_key=True)
     name = models.CharField(max_length=128)
     location = models.PointField()
+    schedule_url = models.URLField(null=True, blank=True)
 
 
 class BorderCrossingLanes(BaseModel):
