@@ -7,6 +7,8 @@ RUN apt-get update \
       binutils \
       libproj-dev \
       gdal-bin \
+      curl \
+      ca-certificates \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
