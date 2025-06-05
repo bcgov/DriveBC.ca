@@ -137,6 +137,8 @@ const RouteSearch = forwardRef((props, ref) => {
             location={searchLocationFrom}
             myLocation={myLocation}
             action={updateSearchLocationFrom}
+            // Select by default if from location is empty
+            selectByDefault={searchLocationFrom.length === 0}
             inputProps={{
               'aria-label': 'input field for starting location search',
               'id': 'location-search-starting-id',
@@ -153,6 +155,8 @@ const RouteSearch = forwardRef((props, ref) => {
             placeholder={'Search destination location'}
             location={searchLocationTo}
             action={updateSearchLocationTo}
+            // Select by default if from location exists and to location is empty
+            selectByDefault={searchLocationFrom.length > 0 && searchLocationTo.length === 0}
             inputProps={{
               'aria-label': 'input field for ending location search',
               'id': 'location-search-ending-id',

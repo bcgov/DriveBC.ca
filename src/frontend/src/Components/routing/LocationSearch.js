@@ -1,31 +1,37 @@
 // React
 import React, { useState } from 'react';
+
+// Redux
 import { useDispatch } from 'react-redux';
 
-// react-bootstrap-typeahead
+// External imports
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
-
-// Components and functions
-import { getLocations } from '../data/locations.js';
-import trackEvent from '../shared/TrackEvent.js';
-// Styling
-import './LocationSearch.scss';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/pro-solid-svg-icons';
 
+// Internal imports
+import { getLocations } from '../data/locations.js';
+import trackEvent from '../shared/TrackEvent.js';
+
+// Styling
+import './LocationSearch.scss';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
+
 export default function LocationSearch(props) {
+  /* Setup */
+  // Props
+  const { placeholder, location, action, myLocation, selectByDefault } = props;
+
   // Redux
   const dispatch = useDispatch();
 
-  const { placeholder, location, action, myLocation } = props;
-
+  // State
   const [minLength, setMinLength] = useState(3);
   const [cacheOptions, setCacheOptions] = useState(true);
   const [isSearching, setSearching] = useState(false);
   const [options, setLocationOptions] = useState([]);
 
+  // Helpers
   const setSelectedLocation = payload => {
     if (payload.length > 0) {
       window.document.activeElement.blur(); // De-focus textbox
@@ -59,6 +65,7 @@ export default function LocationSearch(props) {
   // Rendering
   return (
     <AsyncTypeahead
+      autoFocus={selectByDefault}
       selected={location}
       filterBy={() => true}
       id="location-search-typeahead"
