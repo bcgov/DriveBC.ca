@@ -107,13 +107,13 @@ export default function MapPage() {
 
   const { headerHeightContext } = useContext(HeaderHeightContext);
 
-  const mobilePortrait = useMediaQuery('only screen and (max-width: 575px) and (orientation: portrait) and (hover: none) and (pointer: coarse)');
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
 
   /* Rendering */
   // Main component
   return (
     <DndProvider options={HTML5toTouch}>
-      <div className="map-page map-wrap" style={{ top: mobilePortrait ? `${headerHeightContext}px` : `58px` }}>
+      <div className="map-page map-wrap" style={{ top: smallScreen ? `${headerHeightContext}px` : `58px` }}>
         <MapWrapper referenceData={referenceData} />
       </div>
     </DndProvider>
