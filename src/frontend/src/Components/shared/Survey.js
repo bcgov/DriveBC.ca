@@ -83,10 +83,11 @@ export default function Survey() {
     post(`${window.API_HOST}/api/survey/`, payload, headers).then(() => {
       localStorage.setItem('surveyTime', Date.now().toString());
       setSuccess(true);
+      setError(false);
 
       setTimeout(() => {
-        setVisible(false);
-      }, 3000);
+        closeHandler();
+      }, 5000);
 
     }).catch(() => {
       setError(true);
@@ -98,7 +99,11 @@ export default function Survey() {
 
   const closeHandler = () => {
     setVisible(false);
-    localStorage.setItem('surveyTime', Date.now().toString());
+
+    // Do not hide survey if there was an error
+    if (!error) {
+      localStorage.setItem('surveyTime', Date.now().toString());
+    }
   }
 
   /* Main rendering function */
@@ -119,8 +124,8 @@ export default function Survey() {
               <Button
                 className={'survey-close-btn'}
                 aria-label="close survey button"
-                onClick={() => closeHandler(false)}
-                onKeyPress={() => closeHandler(false)}
+                onClick={() => closeHandler()}
+                onKeyPress={() => closeHandler()}
                 tabIndex={0}>
 
                 <FontAwesomeIcon icon={faXmark}/>
@@ -143,8 +148,8 @@ export default function Survey() {
               <Button
                 className={'survey-close-btn'}
                 aria-label="close survey button"
-                onClick={() => closeHandler(false)}
-                onKeyPress={() => closeHandler(false)}
+                onClick={() => closeHandler()}
+                onKeyPress={() => closeHandler()}
                 tabIndex={0}>
 
                 <FontAwesomeIcon icon={faXmark}/>
@@ -182,7 +187,14 @@ export default function Survey() {
       }
 
       {error && !success &&
-        <div className="submit-error">Error on submission. Please try again.</div>
+        <div className="submit-error">
+          <span>{"We're having trouble submitting your feedback. You can try:"}</span>
+          <ul>
+            <li>Refreshing the page or waiting a couple of minutes and try sending again.</li>
+            <li>Request the survey directly by sending an email to <a href="mailto:MOTIDriveBC@gov.bc.ca">MOTIDriveBC@gov.bc.ca</a>.</li>
+          </ul>
+          <span>Thank you for your patience.</span>
+      </div>
       }
     </div>
   );
