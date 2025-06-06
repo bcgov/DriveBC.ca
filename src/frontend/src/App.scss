@@ -357,11 +357,6 @@ a[target="_blank"] {
   overflow: hidden;
   transition: all 0.2s ease-in-out;
 
-  &.open {
-    // need to update if AB route alts are present
-    min-height: calc(100vh - 118px);
-  }
-
   @media (min-width: 768px) {
     width: 0;
     min-height: 100%;
