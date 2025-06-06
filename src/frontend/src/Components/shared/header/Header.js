@@ -107,7 +107,12 @@ export default function Header() {
   }, [cmsContext]);
 
   useEffect(() => {
-    setHeaderHeightContext(smallScreen ? document.querySelector('.header').offsetHeight : 58);
+    if (openSearch) {
+      setHeaderHeightContext(smallScreen ? document.querySelector('.location-search').offsetHeight : 58);
+    }
+    else {
+      setHeaderHeightContext(smallScreen ? document.querySelector('.header').offsetHeight : 58);
+    }
   }, [openSearch, selectedRoute, showSearch]);
 
   useEffect(() => {
