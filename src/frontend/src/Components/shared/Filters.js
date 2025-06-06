@@ -104,12 +104,36 @@ export default function Filters(props) {
     }
 
     if (searchedRoutes && !!searchedRoutes.length) {
-      if (!closures) filterHandler('closures');
-      if (!majorEvents) filterHandler('majorEvents');
-      if (!minorEvents) filterHandler('minorEvents');
-      if (!futureEvents) filterHandler('futureEvents');
-      if (!roadConditions) filterHandler('roadConditions');
-      if (!inlandFerries) filterHandler('inlandFerries');
+      const visibleLayers = {};
+
+      if (!closures) {
+        visibleLayers.closures = true;
+        setClosures(true);
+      }
+      if (!majorEvents) {
+        visibleLayers.majorEvents = true;
+        setMajorEvents(true);
+      }
+      if (!minorEvents) {
+        visibleLayers.minorEvents = true;
+        setMinorEvents(true);
+      }
+      if (!futureEvents) {
+        visibleLayers.futureEvents = true;
+        setFutureEvents(true);
+      }
+      if (!roadConditions) {
+        visibleLayers.roadConditions = true;
+        setRoadConditions(true);
+      }
+      if (!inlandFerries) {
+        visibleLayers.inlandFerries = true;
+        setInlandFerries(true);
+      }
+
+      if (Object.keys(visibleLayers).length > 0) {
+        setLayerVisibility(visibleLayers);
+      }
     }
   }, [searchedRoutes]);
 
