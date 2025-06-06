@@ -2,6 +2,7 @@ kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   name: {{ template "app.fullname" . }}-allow-from-f5-ingress
+  labels: {{ include "app.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
