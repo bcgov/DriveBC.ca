@@ -132,7 +132,6 @@ export default function EventsListPage() {
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
   const [openAdvisoriesOverlay, setOpenAdvisoriesOverlay] = useState(false);
-  const [openSearchOverlay, setOpenSearchOverlay] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const [updateCounts, setUpdateCounts] = useState({above: 0, below: 0});
 
@@ -707,23 +706,6 @@ export default function EventsListPage() {
             <FontAwesomeIcon icon={faXmark} />
           </button>
           <AdvisoriesPanel advisories={advisories} openAdvisoriesOverlay={openAdvisoriesOverlay} />
-        </div>
-      }
-
-      {smallScreen &&
-        <div className={`overlay search-overlay ${openSearchOverlay ? 'open' : ''}`}>
-          <button
-            className="close-overlay"
-            aria-label={`${openSearchOverlay ? 'close overlay' : ''}`}
-            aria-hidden={`${openSearchOverlay ? false : true}`}
-            tabIndex={`${openSearchOverlay ? 0 : -1}`}
-            onClick={() => setOpenSearchOverlay(!openSearchOverlay)}>
-            <FontAwesomeIcon icon={faXmark} />
-          </button>
-
-          <p className="overlay__header bold">Find route</p>
-
-          <RouteSearch showFilterText={true} showSpinner={showSpinner} onShowSpinnerChange={setShowSpinner}/>
         </div>
       }
     </React.Fragment>
