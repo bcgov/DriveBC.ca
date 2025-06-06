@@ -11,11 +11,11 @@ from rest_framework import serializers
 class ScheduleSerializer(serializers.Serializer):
     intervals = serializers.ListField(
         child=serializers.CharField(),
-        required=False, default=[]
+        required=False
     )
 
     recurring_schedules = serializers.ListField(
-        required=False, default=[]
+        required=False
     )
 
 

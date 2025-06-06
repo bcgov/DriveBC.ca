@@ -90,7 +90,9 @@ def populate_event_from_data(new_event_data):
 
         # Only update if existing data differs for at least one of the fields
         for field in EVENT_DIFF_FIELDS:
-            if not compare_data(getattr(event, field), new_event_data.get(field)):
+            old_data = getattr(event, field)
+            new_data = new_event_data.get(field)
+            if not compare_data(old_data, new_data):
                 # Found diff, update and stop loop
                 data_diff = build_data_diff(event, new_event_data)
                 Event.objects.filter(id=event_id).update(**data_diff)
