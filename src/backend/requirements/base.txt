@@ -7,7 +7,7 @@ django-cors-headers==3.13.0
 django-filter==23.5
 drf-recaptcha==3.0.0
 whitenoise==6.5.0
-httpx==0.24.1
+httpx==0.28.1
 huey==2.5.2
 markdown==3.6
 psycopg==3.1.9
