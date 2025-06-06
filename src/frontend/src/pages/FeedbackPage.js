@@ -123,6 +123,20 @@ export default function FeedbackPage() {
             </p>
 
             <Form noValidate validated={validated} onSubmit={handleSubmit} className="feedback-form text-max-width">
+              {error &&
+                <div className="submit-error">
+                  <span>{"We're having trouble submitting your feedback. Here are some suggestions you can try:"}</span>
+                  <ul>
+                    <li><b>Wait a couple of minutes and try sending
+                      again. </b>{"Sometimes it's temporary and trying at a different time works."}</li>
+                    <li><b>Refresh the page and try sending again. </b>{"A quick page refresh may resolve the issue."}
+                    </li>
+                  </ul>
+                  <span>If the problem continues, please email your report directly to us at <a
+                    href="mailto:MOTIDriveBC@gov.bc.ca">MOTIDriveBC@gov.bc.ca</a>. We appreciate your patience and want to hear from you.</span>
+                </div>
+              }
+
               <Form.Group controlId="validationEmail">
                 <Form.Label>Email</Form.Label>
                 <Form.Control
@@ -171,10 +185,6 @@ export default function FeedbackPage() {
               <Button variant="primary" type="submit">
                 Send
               </Button>
-
-              {error &&
-                <p className="error">Error on submission. Please try again.</p>
-              }
             </Form>
           </Container>
         </React.Fragment>

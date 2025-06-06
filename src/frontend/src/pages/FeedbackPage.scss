@@ -30,4 +30,20 @@
   li::marker {
     color: $Type-Link;
   }
+
+  .submit-error {
+    margin-top: .5rem;
+    background: $Surface-major;
+    color: $Error;
+    padding: .5rem;
+    border-radius: 4px;
+
+    ul {
+      margin-bottom: 0;
+    }
+
+    li {
+      color: $Error;
+    }
+  }
 }
