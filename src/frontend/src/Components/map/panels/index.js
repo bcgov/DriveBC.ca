@@ -68,13 +68,19 @@ export const renderPanel = (
   }
 }
 
-export const maximizePanel = (panelRef, clickedFeature) => {
-  if (panelRef.current.classList.contains('open') &&
-      !panelRef.current.classList.contains('maximized')) {
-        // Prevent maximizing advisory and route panels on mobile view
-        if (clickedFeature instanceof Feature){
-          panelRef.current.classList.add('maximized');
-        }
+export const resizePanel = (panelRef, clickedFeature, setMaximizedPanel) => {
+  if (panelRef.current.classList.contains('open')){
+    // Prevent maximizing advisory and route panels on mobile view
+    if (clickedFeature instanceof Feature){
+      if(!panelRef.current.classList.contains('maximized')) {
+        panelRef.current.classList.add('maximized');
+        setMaximizedPanel(true);
+
+      } else {
+        panelRef.current.classList.remove('maximized');
+        setMaximizedPanel(false);
+      }
+    }
   }
 }
 

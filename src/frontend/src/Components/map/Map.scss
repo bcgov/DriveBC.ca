@@ -89,6 +89,15 @@
         @media (max-width: 767px) {
           width: 100%;
           max-height: 50%;
+
+          &.maximized {
+            min-height: 100%;
+            overflow: auto;
+
+            &.has-route {
+              min-height: calc(100% - 4rem);
+            }
+          }
         }
 
         &:has(.selected) {

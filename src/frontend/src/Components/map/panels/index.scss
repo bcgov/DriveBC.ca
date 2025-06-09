@@ -190,7 +190,7 @@
   }
 }
 
-.close-panel {
+.close-panel, .resize-panel {
   position: absolute;
   top: 1.125rem;
   right: 1rem;
@@ -203,6 +203,12 @@
   background: none;
   border: none;
   font-size: 1rem;
+}
+
+.resize-panel {
+  &.no-route {
+    right: 3.5rem;
+  }
 }
 
 .close-panel:has(+ .panel-content .popup.closure),

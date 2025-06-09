@@ -22,6 +22,8 @@ import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Spinner from 'react-bootstrap/Spinner';
 import {
+  faChevronUp,
+  faChevronDown,
   faPlus,
   faMinus,
   faUpRightAndDownLeftFromCenter,
@@ -48,7 +50,7 @@ import {
 } from './helpers';
 import { loadLayer, loadEventsLayers, updateEventsLayers, enableReferencedLayer } from './layers';
 import { FeatureContext, MapContext } from '../../App.js';
-import { maximizePanel, renderPanel, togglePanel } from './panels';
+import { resizePanel, renderPanel, togglePanel } from './panels';
 import { pointerMoveHandler, resetHoveredStates } from './handlers/hover';
 import { pointerClickHandler, resetClickedStates } from './handlers/click';
 import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
@@ -157,6 +159,7 @@ export default function DriveBCMap(props) {
 
   // States
   const [openTabs, setOpenTabs] = useState(largeScreen && !isCamDetail);
+  const [maximizedPanel, setMaximizedPanel] = useState(false);
   const [myLocationLoading, setMyLocationLoading] = useState(false);
   const [myLocation, setMyLocation] = useState();
   const [advisoriesInView, setAdvisoriesInView] = useState([]);
@@ -766,16 +769,25 @@ export default function DriveBCMap(props) {
       {!!openPanel &&
         <div
           ref={panel}
-          className={`side-panel ${openPanel ? 'open' : ''}`}
-          onClick={() => maximizePanel(panel, clickedFeature)}
-          onTouchMove={() => maximizePanel(panel, clickedFeature)}
-          onKeyDown={keyEvent => {
-            if (keyEvent.keyCode == 13) {
-              maximizePanel(panel, clickedFeature);
-            }
-          }}>
+          className={`side-panel ${openPanel ? 'open' : ''} ${selectedRoute ? 'has-route' : ''}`}>
 
-          {clickedFeature && !selectedRoute &&
+          {clickedFeature && !isCamDetail && smallScreen &&
+            <button
+              className={`resize-panel + ${selectedRoute ? '' : ' no-route'}`}
+              aria-label={`${(maximizedPanel ? 'minimize' : 'maximize') + ' side panel'}`}
+              tabIndex={0}
+              onClick={() => resizePanel(panel, clickedFeature, setMaximizedPanel)}
+              onTouchMove={() => resizePanel(panel, clickedFeature, setMaximizedPanel)}
+              onKeyDown={keyEvent => {
+                if (keyEvent.keyCode == 13) {
+                  resizePanel(panel, clickedFeature);
+                }
+              }}>
+              <FontAwesomeIcon icon={maximizedPanel ? faChevronDown : faChevronUp} />
+            </button>
+          }
+
+          {clickedFeature && (!selectedRoute || isCamDetail) &&
             <button
               className="close-panel"
               aria-label={`${openPanel ? 'close side panel' : ''}`}
@@ -786,12 +798,13 @@ export default function DriveBCMap(props) {
                 togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
                   myLocationRef, routingContainerRef
                 ], searchedRoutes);
+                setMaximizedPanel(false);
               }}>
               <FontAwesomeIcon icon={faXmark} />
             </button>
           }
 
-          {clickedFeature && selectedRoute &&
+          {clickedFeature && selectedRoute && !isCamDetail &&
             <Button
               variant="primary-outline"
               className="btn-outline-primary back-to-details"
@@ -802,12 +815,14 @@ export default function DriveBCMap(props) {
                 togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
                   myLocationRef, routingContainerRef
                 ], searchedRoutes);
+                setMaximizedPanel(false);
               }}
               onClick={(e) => {
                 e.stopPropagation();
                 togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
                   myLocationRef, routingContainerRef
                 ], searchedRoutes);
+                setMaximizedPanel(false);
               }}>
 
               <FontAwesomeIcon icon={faArrowLeft}/>
@@ -845,7 +860,7 @@ export default function DriveBCMap(props) {
           </div>
         )}
 
-        {(!isCamDetail && smallScreen) && (
+        {(!isCamDetail && smallScreen && !maximizedPanel) && (
           <React.Fragment>
             <Button
               ref={myLocationRef}
