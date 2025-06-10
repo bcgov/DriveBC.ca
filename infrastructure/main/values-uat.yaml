@@ -66,7 +66,7 @@ tasks:
   deployment:
     resources:
       requests:
-        cpu: 150Mi
+        cpu: 150m
         memory: 350Mi
       limits:
         memory: 500Mi
