@@ -75,9 +75,11 @@ root.render(
   <BrowserRouter>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <GoogleReCaptchaProvider reCaptchaKey={`${window.RECAPTCHA_CLIENT_ID}`}>
-          <App />
-        </GoogleReCaptchaProvider>
+        {window.RECAPTCHA_CLIENT_ID && (
+          <GoogleReCaptchaProvider reCaptchaKey={window.RECAPTCHA_CLIENT_ID}>
+            <App />
+          </GoogleReCaptchaProvider>
+        )}
       </PersistGate>
     </Provider>
   </BrowserRouter>
