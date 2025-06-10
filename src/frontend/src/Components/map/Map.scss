@@ -40,9 +40,12 @@
         overflow-y: auto;
 
         &.open {
-          min-width: 390px;
           min-height: 100%;
           margin-right: auto;
+
+          @media (min-width: 576px) {
+          min-width: 390px;
+          }
         }
       }
     }
