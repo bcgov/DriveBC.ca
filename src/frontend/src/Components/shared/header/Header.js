@@ -26,7 +26,7 @@ import UserNavigation from "./UserNavigation";
 import RouteSearch from '../../routing/RouteSearch';
 
 // Static files
-import logo from '../../..//images/dbc-logo-beta.svg';
+import logo from '../../..//images/dbc-header-logo.svg';
 
 // Styling
 import './Header.scss';
