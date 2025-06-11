@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // External Components
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
@@ -14,10 +14,13 @@ import './FeedbackPage.scss';
 // Internal imports
 import { getCookie } from "../util";
 import { post } from '../Components/data/helper.js';
+import { useRecaptchaVerification } from "../Components/shared/hooks/reCAPTCHA";
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 
 export default function FeedbackPage() {
+  const { checkRecaptcha, getRecaptchaAPIToken } = useRecaptchaVerification();
+
   document.title = 'DriveBC - Feedback';
 
   // States
@@ -34,9 +37,6 @@ export default function FeedbackPage() {
     screenHeight: window.innerHeight,
   });
 	const [validated, setValidated] = useState(false);
-
-  // Recaptcha
-  const { executeRecaptcha } = useGoogleReCaptcha();
 
   // Device info
   useEffect(() => {
@@ -80,11 +80,14 @@ export default function FeedbackPage() {
       return;
 		}
 
-    if (!executeRecaptcha) {
-      throw new Error('Recaptcha not ready');
+    // Recaptcha
+    const reCAPTCHAValid = await checkRecaptcha();
+    if (!reCAPTCHAValid) {
+      setError(true);
+      return;
     }
 
-    const recToken = await executeRecaptcha('feedbackForm')
+    const recToken = await getRecaptchaAPIToken('feedbackForm');
     const payload = {
       email: email,
       subject: subject,

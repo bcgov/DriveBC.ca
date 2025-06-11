@@ -44,7 +44,8 @@ class FeedbackView(APIView):
         serializer = FeedbackSerializer(data=request.data, context={"request": request})
 
         try:
-            serializer.is_valid()
+            if not serializer.is_valid():
+                return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
 
             context = {
                 "from_email": settings.DRIVEBC_FROM_EMAIL_DEFAULT,
@@ -78,7 +79,7 @@ class FeedbackView(APIView):
 class SurveySerializer(Serializer):
     email = serializers.EmailField()
     recToken = ReCaptchaV3Field(
-        action="feedbackForm",
+        action="postVisitSurvey",
         required_score=0.6,
     )
 
@@ -88,7 +89,8 @@ class SurveyView(APIView):
         serializer = SurveySerializer(data=request.data, context={"request": request})
 
         try:
-            serializer.is_valid()
+            if not serializer.is_valid():
+                return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
 
             user_email = serializer.validated_data["email"]
             context = {

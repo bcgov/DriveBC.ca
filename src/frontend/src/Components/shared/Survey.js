@@ -1,5 +1,5 @@
 // React
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,12 +7,12 @@ import {
   faComment,
   faXmark
 } from '@fortawesome/pro-solid-svg-icons';
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
 import { getCookie } from "../../util";
 import { post } from "../data/helper";
+import { useRecaptchaVerification } from "./hooks/reCAPTCHA";
 
 // Styling
 import './Survey.scss';
@@ -20,6 +20,8 @@ import Form from "react-bootstrap/Form";
 
 export default function Survey() {
   /* Setup */
+  const { checkRecaptcha, getRecaptchaAPIToken } = useRecaptchaVerification();
+
   // States
   const [visible, setVisible] = useState(false);
   const [validated, setValidated] = useState(false);
@@ -28,25 +30,6 @@ export default function Survey() {
   const [error, setError] = useState(false);
 
   // Effects
-  // Recaptcha
-  const [ recToken, setRecToken ] = useState();
-  const refreshRecToken = async () => {
-    setRecToken(await executeRecaptcha('feedbackForm'));
-  }
-
-  const { executeRecaptcha } = useGoogleReCaptcha();
-  const handleReCaptchaVerify = useCallback(async () => {
-    if (!executeRecaptcha) { // function not ready yet
-      return;
-    }
-
-    refreshRecToken();
-  }, [executeRecaptcha]);
-
-  useEffect(() => {
-    handleReCaptchaVerify();
-  }, [handleReCaptchaVerify]);
-
   useEffect(() => {
     const surveyTime = localStorage.getItem('surveyTime');
     const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
@@ -59,7 +42,7 @@ export default function Survey() {
   }, []);
 
   /* Handlers */
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
 		const form = event.currentTarget;
@@ -69,6 +52,14 @@ export default function Survey() {
       return;
 		}
 
+    // Recaptcha
+    const reCAPTCHAValid = await checkRecaptcha();
+    if (!reCAPTCHAValid) {
+      setError(true);
+      return;
+    }
+
+    const recToken = await getRecaptchaAPIToken('postVisitSurvey');
     const payload = {
       email: email,
       recToken: recToken,
@@ -85,15 +76,14 @@ export default function Survey() {
       setSuccess(true);
       setError(false);
 
+      // On success, set time immediately and hide survey after 5 seconds
+      localStorage.setItem('surveyTime', Date.now().toString());
       setTimeout(() => {
-        closeHandler();
+        setVisible(false);
       }, 5000);
 
     }).catch(() => {
       setError(true);
-
-      // Refresh captcha token on error
-      refreshRecToken();
     });
   };
 
