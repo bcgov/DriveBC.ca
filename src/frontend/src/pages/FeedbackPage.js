@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 
 // External Components
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { UAParser } from "ua-parser-js";
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
