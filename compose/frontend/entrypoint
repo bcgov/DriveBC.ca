@@ -38,7 +38,7 @@ echo -e "window.RELEASE='${RELEASE:-}';" >> $MAIN
 sed -i "s~{ENVIRONMENT}~$ENVIRONMENT~g" /etc/nginx/conf.d/default.conf
 
 # Check if the environment is 'prod' so that we remove the noindex header
-if [ "$ENVIRONMENT" = "prod" ]; then
+if [ "$ENVIRONMENT" = "prod-drivebc" ]; then
     echo "Environment is 'prod' removing X-Robots-Tag noindex header."
     sed -i '/add_header X-Robots-Tag "noindex";/d' /etc/nginx/conf.d/default.conf
 else
