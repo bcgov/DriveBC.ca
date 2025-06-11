@@ -486,7 +486,7 @@ export default function CamerasListPage() {
 
       {smallScreen &&
         <div className={`overlay filters-overlay ${openHwyFiltersOverlay ? 'open' : ''}`}
-          style={openHwyFiltersOverlay ? { minHeight: `calc(100vh - ${headerHeightContext}px)`} : null}>
+          style={openHwyFiltersOverlay ? { minHeight: `calc(100% - ${headerHeightContext}px)`} : null}>
           <button
             className="close-overlay"
             aria-label={`${openHwyFiltersOverlay ? 'close overlay' : ''}`}
