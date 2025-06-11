@@ -47,9 +47,15 @@ class FeedbackView(APIView):
             if not serializer.is_valid():
                 return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
 
+            user_email = serializer.validated_data["email"]
+
+            # For testing exception handling
+            if user_email == 'test@drivebc.ca':
+                return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
+
             context = {
                 "from_email": settings.DRIVEBC_FROM_EMAIL_DEFAULT,
-                "user_email": serializer.validated_data["email"],
+                "user_email": user_email,
                 "message": serializer.validated_data["message"],
                 "subject": SUBJECT_TITLE[serializer.validated_data["subject"]],
                 "deviceInfo": serializer.validated_data["deviceInfo"],
@@ -93,6 +99,11 @@ class SurveyView(APIView):
                 return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
 
             user_email = serializer.validated_data["email"]
+
+            # For testing exception handling
+            if user_email == 'test@drivebc.ca':
+                return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
+
             context = {
                 "survey_link": settings.DRIVEBC_EXIT_SURVEY_LINK,
             }
