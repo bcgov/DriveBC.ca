@@ -696,7 +696,8 @@ export default function EventsListPage() {
       </div>
 
       {smallScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
-        <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}>
+        <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}
+             style={openAdvisoriesOverlay ? {minHeight: `calc(100vh - ${headerHeightContext}px)`} : null}>
           <button
             className="close-panel close-overlay"
             aria-label={`${openAdvisoriesOverlay ? 'close overlay' : ''}`}
