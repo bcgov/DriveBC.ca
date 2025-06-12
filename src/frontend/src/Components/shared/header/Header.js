@@ -35,7 +35,7 @@ import { filterAdvisoryByRoute } from "../../map/helpers";
 export default function Header() {
   /* Setup */
   // Misc
-  const xXlargeScreen = useMediaQuery('only screen and (min-width : 1400px)');
+  const xLargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
 
   // Check current page location
@@ -153,7 +153,7 @@ export default function Header() {
       <Nav.Link active={false} onClick={onClickActions}>
         <div className='title'>{title} {!!count && <div className="unread-count">{count}</div>}</div>
 
-        {!xXlargeScreen &&
+        {!xLargeScreen &&
           <FontAwesomeIcon icon={faChevronRight} />
         }
       </Nav.Link>
@@ -175,7 +175,7 @@ export default function Header() {
   // Main component
   return (
     <header>
-      <Navbar expand="xxl" expanded={expanded}>
+      <Navbar expand="xl" expanded={expanded}>
         <Container>
           <div className='header'>
             <div className='header-left'>
@@ -185,13 +185,13 @@ export default function Header() {
                 <span className="line line3"></span>
               </Navbar.Toggle>
 
-              <Navbar.Brand href="/" tabIndex={xXlargeScreen ? "0": "-1"}>
+              <Navbar.Brand href="/" tabIndex={xLargeScreen ? "0": "-1"}>
                 <img className="header-logo" src={logo} alt="Government of British Columbia" />
               </Navbar.Brand>
 
               <div className="nav-divider"></div>
 
-              {!xXlargeScreen &&
+              {!xLargeScreen &&
                 <UserNavigation/>
               }
             </div>
@@ -273,25 +273,25 @@ export default function Header() {
                 {getNavLink('Bulletins', bulletinsCount)}
               </LinkContainer>
 
-              {!xXlargeScreen &&
+              {!xLargeScreen &&
                 <LinkContainer to="/problems">
                   {getNavLink('Report a problem')}
                 </LinkContainer>
               }
 
-              {!xXlargeScreen &&
+              {!xLargeScreen &&
                 <a href={getLegacyLink()} target="_blank" rel="noopener noreferrer" className='footer-nav-link'>
                   <div className='title'>Legacy DriveBC</div>
                 </a>
               }
 
-              {!xXlargeScreen &&
+              {!xLargeScreen &&
                 <div className='filler' />
               }
             </Nav>
           </Navbar.Collapse>
 
-          {xXlargeScreen &&
+          {xLargeScreen &&
             <div className='header-right'>
               <Link to="/problems" className="btn btn-outline-primary header-right__btn" id="report-problem-btn" alt="Report a problem">
                 <FontAwesomeIcon icon={faCommentExclamation}/>
