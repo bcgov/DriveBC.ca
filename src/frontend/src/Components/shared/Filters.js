@@ -140,7 +140,7 @@ export default function Filters(props) {
   useEffect(() => {
     if (chainUpsOnly) {
       setLayerVisibility('chainUps', true);
-      setLayerVisibility('chainUpsLines', true, false);
+      setLayerVisibility('chainUpsLines', true);
       setChainUps(true);
     }
   }, []);

@@ -14,23 +14,31 @@ import PageHeader from '../PageHeader';
 import './VerifyEmailPage.scss';
 
 export default function VerifyEmailPage() {
+  /* Setup */
   const { authContext } = useContext(AuthContext);
-
   const { setAlertMessage } = useContext(AlertContext);
 
+  /* Effects */
   useEffect(() => {
     if (authContext.loginStateKnown && !authContext.verified) {
-      const params = new URLSearchParams(window.location.search);
-      const myRoutes = params.get('my_routes') === 'true';
-      sendVerificationEmail({ my_routes: myRoutes });
+      sendEmailWithRoute();
     }
   }, [authContext]);
 
+  /* Helpers */
+  const sendEmailWithRoute = () => {
+    const params = new URLSearchParams(window.location.search);
+    const myRoutes = params.get('my_routes') === 'true';
+    sendVerificationEmail({ my_routes: myRoutes });
+  }
+
+  /* Handlers */
   const sendVerificationEmailHandler = () => {
-    sendVerificationEmail;
+    sendEmailWithRoute();
     setAlertMessage(<p>Verification email sent</p>);
   }
 
+  /* Rendering */
   return (
     <div className="verify-email-page">
       <PageHeader
