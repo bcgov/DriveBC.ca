@@ -30,6 +30,7 @@ from apps.feed.serializers import (
 )
 from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.core.cache import cache
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -142,9 +143,7 @@ class FeedClient:
         )
         return self._get_response_data_or_raise(response)
 
-    # TODO: make client manage token by expiry so that repeated calls to this
-    # method either return a currently valid token or fetch a fresh one
-    def get_access_token(self):
+    def get_new_weather_access_token(self):
         """
         Return a bearer token
 
@@ -164,7 +163,24 @@ class FeedClient:
 
         response = requests.post(token_url, data=token_params)
         response.raise_for_status()
-        return response.json().get("access_token")
+
+        token = response.json().get("access_token")
+        cache.set('weather_access_token', token, timeout=180)  # Cache for 3 minutes
+
+        return token
+
+    def make_weather_request(self, endpoint):
+        token = cache.get('weather_access_token') or self.get_new_weather_access_token()
+        headers = {"Authorization": f"Bearer {token}"}
+
+        response = requests.get(endpoint, headers=headers)
+        if response.status_code == 401 and 'token expired' in response.text.lower():
+            # Token expired, get a new one and retry
+            new_token = self.get_new_weather_access_token()
+            new_headers = {"Authorization": f"Bearer {new_token}"}
+            response = requests.get(endpoint, headers=new_headers)
+
+        return response
 
     def get_single_feed(self, dbo, resource_type, resource_name, serializer_cls, as_serializer=False):
         """
@@ -286,13 +302,7 @@ class FeedClient:
         area_code_endpoint = settings.DRIVEBC_SAWSX_API_BASE_URL + '/ec/list/fcstareas'
 
         try:
-            access_token = self.get_access_token()
-            headers = {"Authorization": f"Bearer {access_token}"}
-        except requests.RequestException as e:
-            return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
-
-        try:
-            response = requests.get(area_code_endpoint, headers=headers)
+            response = self.make_weather_request(area_code_endpoint)
             response.raise_for_status()
             json_response = response.json()
             json_objects = []
@@ -302,18 +312,11 @@ class FeedClient:
                 if entry.get('AreaType') != 'ECHIGHELEVN':
                     continue
 
-                # Get fresh token in case earlier token has expired
-                try:
-                    access_token = self.get_access_token()
-                    headers = {"Authorization": f"Bearer {access_token}"}
-                except requests.RequestException as e:
-                    return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
-
                 area_code = entry.get("AreaCode")
                 api_endpoint = settings.DRIVEBC_SAWSX_API_BASE_URL + f'/ec/hefforecast/{area_code}'
 
                 try:
-                    response = requests.get(api_endpoint, headers=headers)
+                    response = self.make_weather_request(api_endpoint)
                     if response.status_code == 204:
                         continue  # empty response, continue with next entry
                     data = response.json()
@@ -379,23 +382,12 @@ class FeedClient:
     # Current Weather
     def get_current_weather_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
         """Get data feed for list of objects."""
-        area_code_endpoint = settings.DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL
-
-        try:
-            access_token = self.get_access_token()
-            headers = {"Authorization": f"Bearer {access_token}"}
-
-        except requests.RequestException as e:
-            return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
-
-        external_api_url = area_code_endpoint
-        headers = {"Authorization": f"Bearer {access_token}"}
 
         try:
             # Delete existing VMS signs
             serializer_cls.Meta.model.objects.filter(weather_station_name__contains='VMS').delete()
 
-            response = requests.get(external_api_url, headers=headers)
+            response = self.make_weather_request(settings.DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL)
             response.raise_for_status()
             json_response = response.json()
             json_objects = []
@@ -405,15 +397,9 @@ class FeedClient:
                 station_number = station.get("WeatherStationNumber")
                 forecast_endpoint = settings.DRIVEBC_WEATHER_FORECAST_API_BASE_URL + f"/{station_number}"
                 api_endpoint = settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL + f"{station_number}"
-                # get fresh token to avoid previous token expiring
-                try:
-                    access_token = self.get_access_token()
-                    headers = {"Authorization": f"Bearer {access_token}"}
-                except requests.RequestException as e:
-                    return Response({"error": f"Error obtaining access token: {str(e)}"}, status=500)
 
                 try:
-                    response = requests.get(forecast_endpoint, headers=headers)
+                    response = self.make_weather_request(forecast_endpoint)
                     if response.status_code != 204:
                         hourly_forecast_data = response.json()
                         hourly_forecast_group = hourly_forecast_data.get("HourlyForecasts") or []
@@ -421,7 +407,7 @@ class FeedClient:
                     logger.error(f"Error making API call for Area Code {station_number}: {e}")
 
                 try:
-                    response = requests.get(api_endpoint, headers=headers)
+                    response = self.make_weather_request(api_endpoint)
                     data = response.json()
                     datasets = data.get("Datasets") if data else None
 

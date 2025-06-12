@@ -51,5 +51,4 @@ class Migration(migrations.Migration):
                 'abstract': False,
             },
         ),
-        migrations.RunPython(load_fixture),
     ]
