@@ -1,5 +1,6 @@
 from apps.authentication.models import DriveBCUser, SavedRoutes
 from apps.cms.models import Advisory
+from apps.cms.tasks import send_advisory_notifications
 from apps.event.enums import EVENT_DISPLAY_CATEGORY
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import (
@@ -68,6 +69,7 @@ class SendAdvisoryNotificationsTest(TestCase):
             ),
         )
         advisory.save()
+        send_advisory_notifications(advisory.id)
 
         # Check that one email was sent
         assert len(mail.outbox) == 1

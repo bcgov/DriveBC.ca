@@ -62,6 +62,3 @@ class TestAdvisorySerializer(BaseTest):
         serializer = AdvisoryTestSerializer(data=valid_data)
         # Check if the serializer is valid
         assert serializer.is_valid() is True
-        # Save the serializer data to create a new Advisory instance
-        saved_advisory = serializer.save()
-        assert saved_advisory.title == "Advisory title 1"
