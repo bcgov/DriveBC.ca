@@ -48,7 +48,7 @@ export default function Header() {
     routes: { searchLocationFrom, searchLocationTo, selectedRoute }
   } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
-    filteredAdvisories: state.cms.advisories.filteredAdvisories,
+    filteredAdvisories: state.cms.advisories.filteredList,
     bulletins: state.cms.bulletins.list,
     routes: state.routes
   }))));

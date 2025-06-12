@@ -14,7 +14,7 @@ import './BulletinsListPage.scss';
 
 // Internal imports
 import { CMSContext } from '../App';
-import { getBulletins } from '../Components/data/bulletins.js';
+import { getBulletins, markBulletinsAsRead } from '../Components/data/bulletins.js';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -56,7 +56,6 @@ export default function BulletinsListPage() {
   // Data loading
   const loadBulletins = async () => {
     let bulletinsData = bulletins;
-
     if (!bulletinsData) {
       bulletinsData = await getBulletins().catch((error) => displayError(error));
 
@@ -66,24 +65,17 @@ export default function BulletinsListPage() {
       }));
     }
 
-    const bulletinsIds = bulletinsData.map(bulletin => bulletin.id.toString() + '-' + bulletin.live_revision.toString());
+    markBulletinsAsRead(bulletinsData, cmsContext, setCMSContext);
 
-    // Combine and remove duplicates
-    const readBulletins = Array.from(new Set([...bulletinsIds, ...cmsContext.readBulletins]));
-    const updatedContext = {...cmsContext, readBulletins: readBulletins};
-
-    setCMSContext(updatedContext);
-    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
-
+    isInitialMount.current = false;
     setShowLoader(false);
   }
 
   useEffect(() => {
     if (isInitialMount.current) { // Only run on initial load
       loadBulletins();
-      isInitialMount.current = false;
     }
-  });
+  }, [showLoader]);
 
   const isBulletinsEmpty = bulletins?.length === 0;
 
