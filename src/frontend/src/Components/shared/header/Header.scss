@@ -29,13 +29,13 @@
 		}
 
 		@media (min-width: 992px) {
-			margin: 0 4rem;
+			margin: 0 1rem;
 		}
 
 		.header {
 			width: 100%;
 
-			@media (min-width: 1400px) {
+			@media (min-width: 1200px) {
 				width: auto;
 			}
 
@@ -112,7 +112,7 @@
 
 			@media (max-width: 1399px) {
 				width: 100%;
-				padding: 5px 10px;
+				padding: 5px 0 5px 10px;
 			}
 		}
 
@@ -211,7 +211,7 @@
 		height: 38px;
 		display: none;
 
-		@media (min-width: 1400px) {
+		@media (min-width: 1200px) {
 			display: block;
 		}
 	}

@@ -5,10 +5,11 @@
   flex-direction: row;
   right: 1rem;
   margin-left: auto;
+  margin-right: 1rem;
 
-  @media (min-width: 992px) {
+  @media (min-width: 1200px) {
     order: 2;
-    margin-right: 12px;
+    margin-left: 0;
   }
 
   #signin-btn {
