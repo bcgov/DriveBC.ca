@@ -22,7 +22,13 @@ button.btn.open-filters {
   box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
   display: flex;
   flex-direction: column;
+  height: fit-content;
   max-height: calc(100% - 120px);
+
+  //specific styles for Firefox
+  @-moz-document url-prefix() {
+    height: 100%;
+  }
 
   &.closed {
     display: contents;
