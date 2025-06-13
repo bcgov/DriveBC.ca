@@ -543,9 +543,9 @@ export default function EventsListPage() {
       element.toggleAttribute('stuck', stuck);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    // Initial check
-    handleScroll();
+    // window.addEventListener('scroll', handleScroll);
+    // // Initial check
+    // handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [headerHeightContext]);
