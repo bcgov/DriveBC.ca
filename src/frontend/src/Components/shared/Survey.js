@@ -166,13 +166,13 @@ export default function Survey() {
                 validated && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
               }
               onChange={e => setEmail(e.target.value)}/>
-
+          <button type='submit' className="btn btn-outline-primary">Send survey</button>
             <Form.Control.Feedback type="invalid">
               Please provide a valid email address.
             </Form.Control.Feedback>
           </Form.Group>
 
-          <button type='submit' className="btn btn-outline-primary">Send survey</button>
+
         </Form>
       }
 
