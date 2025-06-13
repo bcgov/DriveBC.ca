@@ -46,6 +46,9 @@
         }
 
         &.last-update {
+          .friendly-time-text {
+            font-size: 0.875rem;
+          }
           .friendly-time__tooltip {
             left: 0;
             transform: none;
@@ -61,6 +64,7 @@
       &__block {
         display: flex;
         justify-content: space-between;
+        gap: 12px;
 
       > div {
         flex: 1;
@@ -136,18 +140,18 @@
 
     &.chainUps {
       .popup__title {
-        background-color: $Gold10;
-        border-top: 4px solid $Gold80;
+        background-color: $Yellow-10;
+        border-top: 4px solid $Chainups;
 
         .name {
-          color: $Gold110;
+          color: $Type-Primary;
         }
       }
 
       .popup__content {
         &__title {
           .name {
-            color: $Gold110;
+            color: $Type-Primary;
           }
 
           .location {

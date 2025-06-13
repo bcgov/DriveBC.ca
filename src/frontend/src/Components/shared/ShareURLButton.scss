@@ -54,10 +54,10 @@
     }
     &.chainUps {
       .copy-btn {
-        background: darken($Gold40, 8%);
+        background: darken(#FFFEE0, 8%);
 
         &:hover {
-          background: darken($Gold40, 15%);
+          background: darken(#FFFEE0, 15%);
         }
       }
 

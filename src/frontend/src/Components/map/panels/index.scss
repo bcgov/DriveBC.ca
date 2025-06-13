@@ -231,6 +231,14 @@
   }
 }
 
+.close-panel.close-panel:has(+ .panel-content .popup.chainUps) {
+  color: $Type-Primary;
+  
+  &:hover {
+    background: lighten($Chainups, 20%);
+  }
+}
+
 .close-panel:has(+ .panel-content .popup.popup--camera) {
   color: $BC-Blue;
 
