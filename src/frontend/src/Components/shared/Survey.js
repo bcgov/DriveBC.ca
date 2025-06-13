@@ -37,7 +37,7 @@ export default function Survey() {
     if (!surveyTime || (Date.now() - parseInt(surveyTime, 10)) > thirtyDaysInMs) {
       setTimeout(() => {
         setVisible(true);
-      }, 0); // 2 minutes
+      }, 120000); // 2 minutes
     }
   }, []);
 
