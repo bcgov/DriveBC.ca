@@ -77,9 +77,19 @@
 
     .form-group {
       width: 100%;
+      display: grid;
+      row-gap: 4px;
 
       input {
+        grid-column: 1/4;
         padding: 4px 10px;
+      }
+      .invalid-feedback {
+        grid-column: 1/6;
+        padding: 4px 8px;
+        background: $Surface-major;
+        border: 1px solid $Base-red;
+        border-radius: 4px;
       }
     }
 
@@ -88,10 +98,10 @@
       border: 1px solid white;
       white-space: nowrap;
       padding: 4px 10px;
-      margin-left: 1rem;
+      margin-left: 0.5rem;
       margin-bottom: 0;
       height: fit-content;
-
+      grid-column: 4/6;
       &:hover {
         color: black;
       }
