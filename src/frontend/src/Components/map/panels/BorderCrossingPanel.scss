@@ -23,9 +23,11 @@
         .name {
           color: $BC-Blue;
           font-size: 2rem;
+          margin-bottom: 0;
         }
 
         .schedule_url {
+          font-size: 0.875rem;
           margin-bottom: 1rem;
         }
 
@@ -45,11 +47,7 @@
             font-size: 0.875rem;
             color: $Grey80;
           }
-
-          .updated {
-            margin-right: 1ch;
-          }
-
+          
           .friendly-time {
             margin-left: .2rem;
           }
@@ -128,7 +126,7 @@
         text-align: center;
 
         a {
-          margin-left: 1ch;
+          margin-left: 0.5ch;
         }
       }
     }
