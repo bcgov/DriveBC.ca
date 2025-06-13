@@ -165,7 +165,7 @@ class FeedClient:
         response.raise_for_status()
 
         token = response.json().get("access_token")
-        cache.set('weather_access_token', token, timeout=180)  # Cache for 3 minutes
+        cache.set('weather_access_token', token, timeout=600)  # Cache for 10 minutes
 
         return token
 
