@@ -145,6 +145,47 @@ class Bulletin(Page, BaseModel):
         verbose_name_plural = 'bulletins'
 
 
+class FloodGate(Page, BaseModel):
+    max_count = 1
+
+    page_body = "Use this page to create a sitewide alert"
+    body = StreamField(RichContent())
+
+    def rendered_body(self):
+        blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
+        return '\n'.join(blocks)
+
+    api_fields = [
+        APIField('rendered_body'),
+    ]
+
+    def save(self, *args, **kwargs):
+        super().save(log_action=None, *args, **kwargs)
+
+    # Editor panels configuration
+    content_panels = [
+        FieldPanel("title", help_text=HelpText.GENERIC_TITLE),
+        FieldPanel("body", help_text=HelpText.GENERIC_BODY),
+        FieldPanel('created_at', read_only=True, heading="Created"),
+        FieldPanel('first_published_at', read_only=True, heading="Published"),
+        FieldPanel('last_published_at', read_only=True, heading="Updated"),
+    ]
+    promote_panels = []
+
+    template = 'cms/floodgate.html'
+
+    def get_url_parts(self, request=None):
+        parts = super().get_url_parts(request)
+        if parts is None:
+            return None
+        site_id, root_url, _ = parts
+        plural = self.specific_class._meta.verbose_name_plural
+        return (site_id, root_url, f'/{plural}/{self.slug}')
+
+    class Meta:
+        verbose_name_plural = 'floodgate'
+
+
 class SubPage(Page, BaseModel):
     '''
     A page specifically for subpages of Advisories/Bulletins.

@@ -8,7 +8,7 @@ from django.core.files.images import ImageFile
 from wagtail.images.models import Image
 
 
-class TestBulletinSerialization(BaseTest):
+class TestBulletinSerializer(BaseTest):
     def setUp(self):
         super().setUp()
 

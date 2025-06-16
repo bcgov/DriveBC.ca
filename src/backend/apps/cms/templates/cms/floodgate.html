@@ -1,0 +1,20 @@
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-blogindexpage{% endblock %}
+
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static '../cms/templates/styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="title">
+    <h1>{{ page.title|safe }}</h1>
+    <h2>Published at {{ page.created_at|safe }}</h2>
+    <h2>Last updated at {{ page.modified_at|safe }}</h2>
+    <div class="description">
+        {{ page.description|safe }}
+    </div>
+</div>
+{% endblock %}

@@ -1,10 +1,6 @@
-from pathlib import Path
-
+from apps.cms.models import Advisory, Bulletin, FloodGate, SubPage
 from rest_framework import serializers
 from wagtail.templatetags.wagtailcore_tags import richtext
-
-from apps.cms.models import Advisory, Bulletin, SubPage
-
 
 CMS_FIELDS = [
     "live",
@@ -101,3 +97,16 @@ class BulletinSerializer(BulletinTestSerializer):
     def get_body(self, obj):
         return self.get_richtext(obj.body)
 
+
+# Serializer with no method fields for unit tests
+class FloodGateTestSerializer(CMSSerializer):
+    class Meta:
+        model = FloodGate
+        fields = "__all__"
+
+
+class FloodGateSerializer(FloodGateTestSerializer):
+    body = serializers.SerializerMethodField()
+
+    def get_body(self, obj):
+        return self.get_richtext(obj.body)
