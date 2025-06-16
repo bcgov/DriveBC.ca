@@ -26,6 +26,7 @@
     }
 
     &__content {
+      width: 100%;
       .advisory-li-title-container {
         .advisory-li-title {
           color: $Type-Link;
@@ -61,7 +62,7 @@
     display: flex;
     align-items: center;
 
-    .advisory-li-state, .friendly-time, .formatted-date {
+    .friendly-time, .formatted-date {
       margin-left: 0.5ch;
     }
 

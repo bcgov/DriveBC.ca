@@ -28,13 +28,20 @@
         font-size: 1rem;
       }
       .advisory-li {
+        width: 100%;
         .timestamp-container .friendly-time {
-          margin-left: 0;
+          margin-left: 0.5ch;
         }
         &:hover {
           background-color: $Grey10;
           transition: 0.1s ease-in-out background-color;    
         }
+      }
+      .advisory-li-state {
+        margin-left: 0;
+      }
+      .advisory-li__content {
+        width: 100%;
       }
 
       .advisory-li-teaser {
