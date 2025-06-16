@@ -212,9 +212,12 @@
 }
 
 .close-panel:has(+ .panel-content .popup.closure),
-.close-panel:has(+ .panel-content .popup.major) {
+.close-panel:has(+ .panel-content .popup.major),
+.resize-panel:has(~ .panel-content .popup.closure),
+.resize-panel:has(~ .panel-content .popup.major)
+ {
   color: $Error;
-
+  
   &:hover {
     background: lighten($Error, 38%);
   }
@@ -222,8 +225,8 @@
 
 .close-panel:has(+ .panel-content .popup.minor),
 .close-panel:has(+ .panel-content .popup.roadConditions),
-.close-panel:has(+ .panel-content .popup.popup--advisories),
-.close-panel:has(+ .popup.popup--advisories) {
+.resize-panel:has(~ .panel-content .popup.minor),
+.resize-panel:has(~ .panel-content .popup.roadConditions), {
   color: $Gold110;
 
   &:hover {
@@ -231,15 +234,29 @@
   }
 }
 
-.close-panel.close-panel:has(+ .panel-content .popup.chainUps) {
+.close-panel:has(+ .panel-content .popup.popup--advisories),
+.close-panel:has(+ .popup.popup--advisories),
+.resize-panel:has(~ .panel-content .popup.popup--advisories),
+.resize-panel:has(~ .popup.popup--advisories) {
+  color: $Advisory-Text;
+ 
+  &:hover {
+    background: lighten($Advisory-Text, 50%);
+  }
+}
+
+.close-panel.close-panel:has(+ .panel-content .popup.chainUps),
+.resize-panel:has(~ .panel-content .popup.chainUps) {
   color: $Type-Primary;
-  
   &:hover {
     background: lighten($Chainups, 20%);
   }
 }
 
-.close-panel:has(+ .panel-content .popup.popup--camera) {
+.close-panel:has(+ .panel-content .popup.popup--camera),
+.close-panel:has(+ .panel-content .popup.popup--border-crossing),
+.resize-panel:has(~ .panel-content .popup.popup--camera),
+.resize-panel:has(~ .panel-content .popup.popup--border-crossing) {
   color: $BC-Blue;
 
   &:hover {
@@ -247,7 +264,8 @@
   }
 }
 
-.close-panel:has(+ .panel-content .popup.popup--ferry) {
+.close-panel:has(+ .panel-content .popup.popup--ferry),
+.resize-panel:has(~ .panel-content .popup.popup--ferry) {
   color: $Success;
 
   &:hover {
@@ -255,7 +273,8 @@
   }
 }
 
-.close-panel:has(+ .panel-content .popup.popup--reststop) {
+.close-panel:has(+ .panel-content .popup.popup--reststop),
+.resize-panel:has(~ .panel-content .popup.popup--reststop) {
   color: $Type-reststop;
 
   &:hover {
@@ -263,7 +282,8 @@
   }
 }
 
-.close-panel:has(+ .panel-content .popup--weather){
+.close-panel:has(+ .panel-content .popup--weather),
+.resize-panel:has(~ .panel-content .popup--weather) {
   color: $Type-Primary;
 
   &:hover {
