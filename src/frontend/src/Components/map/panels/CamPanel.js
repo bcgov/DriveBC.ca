@@ -58,7 +58,7 @@ export default function CamPanel(props) {
 
   // Refs
   const isInitialMount = useRef(true);
-  const imageRef = useRef(null);
+  const camPanelRef = useRef(null);
 
   // States
   const newCam = camFeature.id ? camFeature : camFeature.getProperties();
@@ -91,7 +91,7 @@ export default function CamPanel(props) {
     setSearchParams(_searchParams);
     // need to track camIndex as a data attribute to bypass lexical binding
     // of camIndex in helper functions (i.e., updateCamera);
-    imageRef.current.setAttribute('data-current', camIndex);
+    camPanelRef.current.setAttribute('data-current', camIndex);
   }, [camIndex]);
 
   /* Helpers */
@@ -113,7 +113,7 @@ export default function CamPanel(props) {
         if (update.last_update_modified !== cam.last_update_modified) {
           // using data attribute avoids lexical binding of camIndex state that
           // locks it at the initial value
-          const currentCamIndex = imageRef.current.getAttribute('data-current');
+          const currentCamIndex = camPanelRef.current.getAttribute('data-current');
           rootCam.camGroup[ii] = update;
           if (ii == currentCamIndex) {
             setCamera(rootCam.camGroup[ii]);
@@ -211,7 +211,7 @@ export default function CamPanel(props) {
 
   // Main component
   return (
-    <div className="popup popup--camera">
+    <div className="popup popup--camera" ref={camPanelRef}>
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faVideo}/>
@@ -270,7 +270,7 @@ export default function CamPanel(props) {
                   </div>
                 )}
 
-                <img ref={imageRef} src={getCamLink(camera)} width="300" data-current="0" />
+                <img src={getCamLink(camera)} width="300" data-current="0" />
 
                 {camera.marked_delayed && camera.marked_stale && (
                   <>
