@@ -25,7 +25,7 @@ class AreaCodeException(requests.RequestException):
 # Regional Weather
 def get_area_weather(api_endpoint, area_code):
     try:
-        access_token = FeedClient().get_new_weather_access_token()
+        access_token = cache.get('weather_access_token') or FeedClient().get_new_weather_access_token()
 
         response = requests.get(
             api_endpoint,
