@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 import requests
 from apps.feed.client import FeedClient
 from django.conf import settings
+from django.core.cache import cache
 from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
@@ -125,7 +126,7 @@ def get_area_weather(api_endpoint, area_code):
 
 def get_regional_weather_list():
     """Get data feed for list of objects."""
-    access_token = FeedClient().get_new_weather_access_token()
+    access_token = cache.get('weather_access_token') or FeedClient().get_new_weather_access_token()
 
     try:
         areas_list = requests.get(
