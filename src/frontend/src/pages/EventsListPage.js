@@ -542,13 +542,15 @@ export default function EventsListPage() {
       const stuck = rect.top <= headerHeightContext;
       element.toggleAttribute('stuck', stuck);
     };
+    
+    window.addEventListener('scroll', handleScroll);
 
-    // window.addEventListener('scroll', handleScroll);
-    // // Initial check
-    // handleScroll();
-
-    return () => window.removeEventListener('scroll', handleScroll);
+    // Initial check
+    handleScroll();
+    
+      return () => window.removeEventListener('scroll', handleScroll);
   }, [headerHeightContext]);
+
 
   // Rendering - Main component
   return (
@@ -576,6 +578,7 @@ export default function EventsListPage() {
           }
 
           <div className="container--sidepanel__right">
+            <div className="sticky-sentinel" />
             <div className="sticky-filters" style={{ top: `${headerHeightContext}px` }}>
               <div className="controls-group">
                 <div className="controls-container">
