@@ -45,7 +45,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 );
 let collector;
 const hostname = window.location.hostname.toLowerCase();
-if (hostname.indexOf('beta.drivebc') > -1) {
+if (hostname.indexOf('beta.drivebc.ca') > -1 || hostname.indexOf('www.drivebc.ca') > -1) {
   collector = 'spt.apps.gov.bc.ca';
 } else {
   collector = 'spm.apps.gov.bc.ca';
