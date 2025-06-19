@@ -33,6 +33,7 @@ import CameraDetailsPage from './pages/CameraDetailsPage';
 import CamerasListPage from './pages/CamerasListPage';
 import EventsListPage from './pages/EventsListPage';
 import FeedbackPage from './pages/FeedbackPage';
+import FloodGate from "./Components/shared/FloodGate";
 import Header from './Components/shared/header/Header.js';
 import MapPage from './pages/MapPage';
 import Modal from './Modal.js';
@@ -125,7 +126,8 @@ function App() {
     const context = localStorage.getItem('cmsContext');
     return context ? JSON.parse(context) : {
       readAdvisories: [],
-      readBulletins: []
+      readBulletins: [],
+      readFloodGates: [],
     };
   }
 
@@ -222,6 +224,8 @@ function App() {
                 <FeatureContext.Provider value={{ featureContext, setFeatureContext }}>
                   <div className="App" style={{ marginTop: `${headerHeightContext}px` }}>
                     <Header />
+
+                    <FloodGate />
 
                     <ScrollToTop />
 
