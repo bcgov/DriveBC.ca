@@ -4,6 +4,7 @@ import React from 'react';
 // Internal imports
 import AdvisoriesPanel from './AdvisoriesPanel';
 import CamPanel from './CamPanel';
+import CoastalFerryPanel from "./CoastalFerryPanel";
 import EventPanel from './EventPanel';
 import FerryPanel from './FerryPanel';
 import LocalWeatherPanel from './weather/LocalWeatherPanel';
@@ -40,6 +41,10 @@ export const renderPanel = (
       case 'event':
         return <EventPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
       case 'ferry':
+        if (clickedFeature.get('coastal')) {
+          return <CoastalFerryPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
+        }
+
         return <FerryPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
       case 'currentWeather':
         return <LocalWeatherPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;

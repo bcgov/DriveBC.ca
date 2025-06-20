@@ -93,7 +93,7 @@ class CoastalFerryStopAPISerializer(serializers.ModelSerializer):
         )
 
     def get_routes(self, obj):
-        routes = CoastalFerryRoute.objects.filter(trips__stop_times__stop=obj).distinct()
+        routes = CoastalFerryRoute.objects.filter(trips__stop_times__stop=obj).exclude(url='').distinct()
         return CoastalFerryRouteSerializer(routes, many=True).data
 
 
