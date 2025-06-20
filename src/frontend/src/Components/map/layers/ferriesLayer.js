@@ -15,11 +15,16 @@ export function getFerriesLayer(ferriesData, projectionCode, mapContext, referen
   const vectorSource = new VectorSource();
 
   ferriesData.forEach(ferry => {
+    if (ferry.routes && ferry.routes.length === 0) {
+      // Skip coastal ferries without routes
+      return;
+    }
+
     // Offset ~500m East to prevent overlapping with other features
     const lat = ferry.location.coordinates[0] + 0.0044;
     const lng = ferry.location.coordinates[1]
     const olGeometry = new Point([lat, lng]);
-    const olFeature = new ol.Feature({ geometry: olGeometry, type: 'ferry'});
+    const olFeature = new ol.Feature({ geometry: olGeometry, type: 'ferry', coastal: !!ferry.routes });
 
     // Transfer properties
     olFeature.setProperties(ferry);

@@ -54,3 +54,59 @@ class Ferry(BaseModel):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         cache.delete(CacheKey.FERRY_LIST)
+
+
+class CoastalFerryStop(BaseModel):
+    # General
+    id = models.PositiveIntegerField(primary_key=True)
+    name = models.CharField(max_length=128, blank=True, default='')
+    parent_stop = models.ForeignKey('self', on_delete=models.CASCADE, related_name="child_stops", blank=True, null=True)
+
+    # Location
+    location = models.GeometryField(blank=True, null=True)
+
+
+class CoastalFerryCalendar(BaseModel):
+    # General
+    id = models.CharField(primary_key=True)
+    name = models.CharField(max_length=128, blank=True, default='')
+
+    # Schedule
+    schedule_start = models.DateField()
+    schedule_end = models.DateField()
+    active_week_days = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Comma-separated weekdays (e.g. monday,tuesday,wednesday)"
+    )
+
+
+class CoastalFerryRoute(BaseModel):
+    # General
+    id = models.PositiveSmallIntegerField(primary_key=True)
+    name = models.CharField(max_length=128, blank=True, default='')
+
+    # Urls
+    url = models.URLField(null=True, blank=True)
+
+
+class CoastalFerryTrip(BaseModel):
+    # General
+    id = models.CharField(primary_key=True)
+
+    # Foreign Keys
+    calendar = models.ForeignKey(CoastalFerryCalendar, related_name='trips', on_delete=models.CASCADE)
+    route = models.ForeignKey(CoastalFerryRoute, related_name='trips', on_delete=models.CASCADE)
+
+
+class CoastalFerryStopTime(BaseModel):
+    # Foreign Keys
+    trip = models.ForeignKey(CoastalFerryTrip, related_name='stop_times', on_delete=models.CASCADE)
+    stop = models.ForeignKey(CoastalFerryStop, related_name='stop_times', on_delete=models.CASCADE)
+
+    # Schedule
+    stop_time = models.CharField()
+    stop_sequence = models.PositiveSmallIntegerField()
+
+    class Meta:
+        unique_together = ('trip', 'stop')
