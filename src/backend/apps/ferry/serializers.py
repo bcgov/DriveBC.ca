@@ -1,4 +1,11 @@
-from apps.ferry.models import Ferry
+from apps.ferry.models import (
+    CoastalFerryCalendar,
+    CoastalFerryRoute,
+    CoastalFerryStop,
+    CoastalFerryStopTime,
+    CoastalFerryTrip,
+    Ferry,
+)
 from rest_framework import serializers
 
 
@@ -73,3 +80,63 @@ class FerryRouteSerializer(serializers.ModelSerializer):
 
     def get_id(self, obj):
         return obj.route_id
+
+
+class CoastalFerryStopAPISerializer(serializers.ModelSerializer):
+    routes = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CoastalFerryStop
+        exclude = (
+            "created_at",
+            "modified_at",
+        )
+
+    def get_routes(self, obj):
+        routes = CoastalFerryRoute.objects.filter(trips__stop_times__stop=obj).distinct()
+        return CoastalFerryRouteSerializer(routes, many=True).data
+
+
+class CoastalFerryStopSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CoastalFerryStop
+        exclude = (
+            "created_at",
+            "modified_at",
+        )
+
+
+class CoastalFerryCalendarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CoastalFerryCalendar
+        exclude = (
+            "created_at",
+            "modified_at",
+        )
+
+
+class CoastalFerryRouteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CoastalFerryRoute
+        exclude = (
+            "created_at",
+            "modified_at",
+        )
+
+
+class CoastalFerryTripSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CoastalFerryTrip
+        exclude = (
+            "created_at",
+            "modified_at",
+        )
+
+
+class CoastalFerryStopTimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CoastalFerryStopTime
+        exclude = (
+            "created_at",
+            "modified_at",
+        )
