@@ -978,18 +978,20 @@ export default function DriveBCMap(props) {
       )}
 
       {showLocationAccessError &&
-        <LocationAccessPopup />
+        <LocationAccessPopup marginPushed={!!openPanel} />
       }
 
       {showNetworkError &&
-        <NetworkErrorPopup />
+        <NetworkErrorPopup marginPushed={!!openPanel} />
       }
 
       {!showNetworkError && showServerError &&
-        <ServerErrorPopup />
+        <ServerErrorPopup marginPushed={!!openPanel} />
       }
 
-      {staleLinkMessage && <StaleLinkErrorPopup message={staleLinkMessage}/> }
+      {staleLinkMessage && 
+        <StaleLinkErrorPopup marginPushed={!!openPanel} message={staleLinkMessage}/>
+      }
     </div>
   );
 }
