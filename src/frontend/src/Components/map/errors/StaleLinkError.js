@@ -3,40 +3,43 @@ import React, { useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faXmark
-} from '@fortawesome/pro-solid-svg-icons';
+import { faXmark } from '@fortawesome/pro-regular-svg-icons';
+import { faTriangleExclamation } from '@fortawesome/pro-solid-svg-icons'
+import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Images
 import staleLogo from '../../../images/status-stale.svg';
 
-// Styling
-import './StaleLinkError.scss';
-
-export default function StaleLinkErrorPopup() {
+export default function StaleLinkErrorPopup(props) {
+  // Props
+  const { marginPushed } = props;
+  
   const [visible, setVisible] = useState(true);
 
   // Rendering
   return visible ? (
-    <div className="stale-link-error">
-      <img src={staleLogo} alt="Stale link error" />
-      <div className="message-container">
-        <p><strong>Information no longer available</strong></p>
-        <p>The link you followed might be for a closure, delay, or road condition that may have been cleared since the link was created.</p>
+    <div className={`stale-link-error error-notification ${marginPushed ? 'margin-pushed' : ''}`}>
+      <div className="error-icon" alt="Stale link error" >
+        <FontAwesomeIcon icon={faTriangleExclamation} />
       </div>
-
-      <div className="close-btn" aria-label="Close"
-        onClick={(event) => {
-          event.stopPropagation();
-          setVisible(false);
-        }}
-        onKeyDown={(keyEvent) => {
-          if (keyEvent.keyCode === 13) {
-            event.stopPropagation();
-            setVisible(false);
-          }
-        }}>
-        <FontAwesomeIcon icon={faXmark} />
+      <div className="message-container">
+        <div className="message-header">
+          <b>Information no longer available</b>
+          <div className="close-btn" aria-label="Close"
+            onClick={(event) => {
+              event.stopPropagation();
+              setVisible(false);
+            }}
+            onKeyDown={(keyEvent) => {
+              if (keyEvent.keyCode === 13) {
+                event.stopPropagation();
+                setVisible(false);
+              }
+            }}>
+            <FontAwesomeIcon icon={faXmark} />
+          </div>
+        </div>
+        <div>The link you followed might be for a closure, delay, or road condition that may have been cleared since the link was created.</div>
       </div>
     </div>
   ) : null;
