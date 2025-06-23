@@ -3,10 +3,11 @@ kind: Route
 metadata:
   name: {{ template "app.fullname" . }}-frontend
   labels: {{ include "app.labels" . | nindent 4 }}
-{{ if .Values.route.iprestricted }}
   annotations:
+    {{ if .Values.route.iprestricted }}
     haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
-{{ end }}
+    {{ end }}
+    haproxy.router.openshift.io/disable_cookies: 'true'
 spec:
   host: {{ .Values.route.host  }} 
   to:
@@ -28,6 +29,7 @@ metadata:
   labels: {{ include "app.labels" . | nindent 4 }}
   annotations:
     "helm.sh/resource-policy": keep
+    haproxy.router.openshift.io/disable_cookies: 'true'
     {{ if .Values.route.iprestricted }}
     haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
     {{ end }}
@@ -53,6 +55,7 @@ metadata:
   labels: {{ include "app.labels" . | nindent 4 }}
   annotations:
     "helm.sh/resource-policy": keep
+    haproxy.router.openshift.io/disable_cookies: 'true'
     {{ if .Values.route.iprestricted }}
     haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
     {{ end }}
@@ -75,6 +78,9 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: {{ template "app.fullname" $ }}-{{ . | replace "." "-" }}-redirect
+  labels: {{ include "app.labels" . | nindent 4 }}
+  annotations:
+    haproxy.router.openshift.io/disable_cookies: 'true'
 spec:
   host: {{ . }}
   to:

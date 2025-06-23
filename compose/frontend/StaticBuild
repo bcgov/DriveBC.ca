@@ -33,6 +33,7 @@ RUN touch /run/nginx.pid
 COPY ./compose/frontend/default.conf /etc/nginx/conf.d
 COPY ./compose/frontend/default_maintenance.txt /etc/nginx
 COPY ./compose/frontend/legacy_redirects.conf /etc/nginx
+COPY ./compose/frontend/security_headers.conf /etc/nginx/conf.d
 COPY --from=buildnode /app/build /usr/share/nginx/html
 RUN chmod -R 777 /run /var/log/nginx /var/cache/nginx /usr/share/nginx/html/static/js /usr/share/nginx/html/static/css /usr/share/nginx/html/static/media /etc/nginx/conf.d
 
