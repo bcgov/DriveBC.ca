@@ -14,11 +14,13 @@ from apps.webcam.tasks import (
     build_route_geometries,
     populate_all_webcam_data,
     update_all_webcam_data,
+    process_rabbitmq_image,
 )
 from django.core.cache import cache
 from django.core.management import call_command
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, lock_task, on_startup, post_execute
+import asyncio
 
 
 @db_periodic_task(crontab(hour="*/6", minute="0"))
@@ -92,6 +94,20 @@ def add_camera_orders():
 def update_border_crossings():
     update_border_crossing_lanes()
 
+# Async wrapper function of RabbitMQ image processing task
+async def process_image_async():
+    await process_rabbitmq_image()
+
+@db_periodic_task(crontab(minute="*/1"))
+@lock_task('process-image')
+def process_image():
+    print("Starting process_image task")
+    loop = asyncio.new_event_loop()
+    try:
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(process_image_async())
+    finally:
+        loop.close()
 
 @on_startup()
 def startup_timestamp(task, task_value, exc):
