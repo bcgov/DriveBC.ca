@@ -1,10 +1,10 @@
-from apps.cms.models import Advisory, Bulletin, FloodGate
+from apps.cms.models import Advisory, Bulletin, EmergencyAlert
 from apps.cms.serializers import (
     AdvisorySerializer,
     BulletinSerializer,
     BulletinTestSerializer,
-    FloodGateSerializer,
-    FloodGateTestSerializer,
+    EmergencyAlertSerializer,
+    EmergencyAlertTestSerializer,
 )
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -45,14 +45,14 @@ class BulletinAPI(BulletinTestAPI):
     serializer_class = BulletinSerializer
 
 
-class FloodGateTestAPI(CMSViewSet):
-    queryset = FloodGate.objects.filter(live=True)
-    serializer_class = FloodGateTestSerializer
+class EmergencyAlertTestAPI(CMSViewSet):
+    queryset = EmergencyAlert.objects.filter(live=True)
+    serializer_class = EmergencyAlertTestSerializer
     lookup_field = 'slug'
 
 
-class FloodGateAPI(FloodGateTestAPI):
-    serializer_class = FloodGateSerializer
+class EmergencyAlertAPI(EmergencyAlertTestAPI):
+    serializer_class = EmergencyAlertSerializer
 
 
 @csrf_exempt

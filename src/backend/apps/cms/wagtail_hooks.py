@@ -1,6 +1,6 @@
 import logging
 
-from apps.cms.models import Advisory, FloodGate
+from apps.cms.models import Advisory, EmergencyAlert
 from apps.cms.tasks import send_advisory_notifications
 from django.contrib.auth.models import Permission
 from django.templatetags.static import static
@@ -78,15 +78,15 @@ class BulletinAdmin(BaseCMSAdmin):
     menu_icon = "thumbtack"
 
 
-class FloodGateAdmin(BaseCMSAdmin):
-    model = FloodGate
+class EmergencyAlertAdmin(BaseCMSAdmin):
+    model = EmergencyAlert
     menu_icon = "thumbtack-crossed"
 
 
 # Now you just need to register your customised ModelAdmin class with Wagtail
 modeladmin_register(AdvisoryAdmin)
 modeladmin_register(BulletinAdmin)
-modeladmin_register(FloodGateAdmin)
+modeladmin_register(EmergencyAlertAdmin)
 
 
 @hooks.register('register_rich_text_features')

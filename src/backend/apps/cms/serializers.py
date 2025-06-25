@@ -1,4 +1,4 @@
-from apps.cms.models import Advisory, Bulletin, FloodGate, SubPage
+from apps.cms.models import Advisory, Bulletin, EmergencyAlert, SubPage
 from rest_framework import serializers
 from wagtail.templatetags.wagtailcore_tags import richtext
 
@@ -99,14 +99,17 @@ class BulletinSerializer(BulletinTestSerializer):
 
 
 # Serializer with no method fields for unit tests
-class FloodGateTestSerializer(CMSSerializer):
+class EmergencyAlertTestSerializer(CMSSerializer):
+
     class Meta:
-        model = FloodGate
-        fields = "__all__"
+        model = EmergencyAlert
+        fields = ['id', 'live_revision', 'alert']
 
 
-class FloodGateSerializer(FloodGateTestSerializer):
-    body = serializers.SerializerMethodField()
+class EmergencyAlertSerializer(EmergencyAlertTestSerializer):
 
-    def get_body(self, obj):
-        return self.get_richtext(obj.body)
+    alert = serializers.SerializerMethodField()
+
+    def get_alert(self, obj):
+        return self.get_richtext(obj.alert)
+

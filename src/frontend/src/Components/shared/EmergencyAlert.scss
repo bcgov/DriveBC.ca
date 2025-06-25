@@ -9,6 +9,11 @@
   padding: 1rem 2rem;
   color: white;
 
+  a {
+    color: white;
+    text-decoration: underline;
+  }
+
   @media (max-width: 575px) {
     padding: 1rem;
   }
@@ -26,7 +31,6 @@
       margin: 0;
       color: white;
       overflow-wrap: break-word;
-      display: contents;
     }
   }
 
