@@ -32,6 +32,7 @@ import {
   faArrowLeft
 } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
+import { Drawer } from '@vladyoslav/drawer';
 
 // Internal imports
 import { addCameraGroups } from '../data/webcams.js';
@@ -79,6 +80,7 @@ import View from 'ol/View';
 // Styling
 import './Map.scss';
 import { cameraStyles, routeStyles } from "../data/featureStyleDefinitions";
+
 
 export default function DriveBCMap(props) {
   /* initialization */
@@ -846,6 +848,16 @@ export default function DriveBCMap(props) {
       }
 
       <div ref={mapElement} className="map">
+        <Drawer.Root>
+          <Drawer.Trigger>Open Drawer</Drawer.Trigger>
+          <Drawer.Portal>
+            <Drawer.Overlay />
+            <Drawer.Content>
+              ...
+            </Drawer.Content>
+          </Drawer.Portal>
+        </Drawer.Root>
+
         {!isCamDetail && !smallScreen && (
           <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
             <RouteSearch
