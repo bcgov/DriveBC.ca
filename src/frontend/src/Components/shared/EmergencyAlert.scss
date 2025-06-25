@@ -1,0 +1,41 @@
+@import "../../styles/variables.scss";
+
+.fg {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background: $Error;
+  padding: 1rem 2rem;
+  color: white;
+
+  a {
+    color: white;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 575px) {
+    padding: 1rem;
+  }
+
+  .fg-content {
+    display: flex;
+    flex-direction: row;
+
+    .fg-exclamation {
+      margin-right: .5rem;
+      margin-top: .3rem;
+    }
+
+    p {
+      margin: 0;
+      color: white;
+      overflow-wrap: break-word;
+    }
+  }
+
+  .fg-close-btn {
+    cursor: pointer;
+    margin-left: 2rem;
+  }
+}

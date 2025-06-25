@@ -4,10 +4,10 @@ from config import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.forms import OSMWidget
 from wagtail import blocks
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import HelpPanel, FieldPanel
 from wagtail.api import APIField
 from wagtail.contrib.table_block.blocks import TableBlock
-from wagtail.fields import StreamField
+from wagtail.fields import StreamField, RichTextField
 from wagtail.images.models import Image
 from wagtail.models import Page
 from wagtail.templatetags import wagtailcore_tags
@@ -143,6 +143,41 @@ class Bulletin(Page, BaseModel):
     class Meta:
         # IMPORTANT: must match first segment of frontend path for bulletins
         verbose_name_plural = 'bulletins'
+
+
+class EmergencyAlert(Page, BaseModel):
+    max_count = 1
+
+    alert = RichTextField(max_length=90)
+    body = StreamField(RichContent(), blank=True)
+
+    def save(self, *args, **kwargs):
+        super().save(log_action=None, *args, **kwargs)
+
+    # Editor panels configuration
+    content_panels = [
+        HelpPanel("An Emergency alert is a significant message that's shown to all users of DriveBC on every page of the site. This should only be turned on in extreme emergencies. The global teaser is the rich text field that can be used to display the message as well as adding any links for the public to get more information. Only a single emergency alert message can be shown on the site at a time."),
+        FieldPanel("alert", heading='Global teaser', help_text='Shown in a red bar at the top of every page of DriveBC.  Maximum length 90 characters.'),
+        FieldPanel("title", help_text='This title is for internal use within Wagtail and does not appear on DriveBC.' ),
+        # FieldPanel("body", help_text='Currently not used, may be used in the future for alert specific content page'),
+        FieldPanel('created_at', read_only=True, heading="Created"),
+        FieldPanel('first_published_at', read_only=True, heading="Published"),
+        FieldPanel('last_published_at', read_only=True, heading="Updated"),
+    ]
+    promote_panels = []
+
+    template = 'cms/emergency-alert.html'
+
+    def get_url_parts(self, request=None):
+        parts = super().get_url_parts(request)
+        if parts is None:
+            return None
+        site_id, root_url, _ = parts
+        plural = self.specific_class._meta.verbose_name_plural
+        return (site_id, root_url, f'/{plural}/{self.slug}')
+
+    class Meta:
+        verbose_name_plural = 'Emergency Alert'
 
 
 class SubPage(Page, BaseModel):

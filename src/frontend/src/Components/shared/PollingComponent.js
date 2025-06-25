@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 export default function PollingComponent(props) {
   /* Setup */
   // Props
-  const { interval, runnable } = props;
+  const { interval, runnable, runImmediately=false } = props;
 
   // Effects
   useEffect(() => {
@@ -25,6 +25,10 @@ export default function PollingComponent(props) {
         runnable();
       }, interval);
     }, interval);
+
+    if (runImmediately) {
+      setTimeout(runnable, 0);
+    }
 
     // Add visibility change event listener
     document.addEventListener('visibilitychange', handleVisibilityChange);

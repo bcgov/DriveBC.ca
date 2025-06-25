@@ -15,6 +15,7 @@ import {
 
 // Internal imports
 import { HeaderHeightContext } from '../App.js';
+import EmergencyAlert from "../Components/shared/EmergencyAlert.js";
 
 // External Imports
 import { DndProvider } from 'react-dnd-multi-backend';
@@ -113,7 +114,10 @@ export default function MapPage() {
   // Main component
   return (
     <DndProvider options={HTML5toTouch}>
-      <div className="map-page map-wrap" style={{ top: smallScreen ? `${headerHeightContext}px` : `58px` }}>
+      <div className="map-page map-wrap" style={{ top: smallScreen ? `${headerHeightContext}px` : `58px`, background: 'white', }}>
+        {/* Need this to show alert above Map; duplicates App level alert which is hidden by map */}
+        <EmergencyAlert />
+
         <MapWrapper referenceData={referenceData} />
       </div>
     </DndProvider>
