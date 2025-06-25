@@ -33,32 +33,37 @@ export default function CoastalFerryPanel(props) {
   // Rendering
   // Main component
   return (
-    <div className="popup popup--coastal-ferry" tabIndex={0}>
+    <div className="popup popup--ferry popup--coastal-ferry" tabIndex={0}>
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faAnchor}/>
         </div>
 
         <div className="popup__title__name">
-          <p className='name'>{`${ferryData.name}`}</p>
+          <p className='name'>Coastal ferries</p>
           <ShareURLButton/>
         </div>
       </div>
 
       <div className="popup__content">
-        <div className="info">
-          <div className='info__container'>
-            <p className='info__header'>Routes</p>
-            <p>Clink on the links below for schedules on the selected ferry route.</p>
-            <ul className='info__routes'>
-              {ferryData.routes.map((ferryRoute, index) => ferryRoute.url && (
-                <li key={index}>
-                  <a href={ferryRoute.url} target="_blank" rel="noopener noreferrer">
-                    {ferryRoute.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
+        <div className="popup__content__container">
+          <div className="popup__content__title">
+            <p className='name'>{`${ferryData.name}`}</p>
+          </div>
+          <div className="popup__content__info">
+            <div className='popup__content__info__container'>
+              <p className='popup__content__info__header'>Routes</p>
+              <p>Clink on the links below for schedules on the selected ferry route.</p>
+              <ul className='popup__content__info__routes'>
+                {ferryData.routes.map((ferryRoute, index) => ferryRoute.url && (
+                  <li key={index}>
+                    <a href={ferryRoute.url} target="_blank" rel="noopener noreferrer">
+                      {ferryRoute.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
