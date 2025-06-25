@@ -16,14 +16,17 @@
       background-color: $Surface-ferry;
       border-top: 4px solid $Success;
 
-      .name {
-        color: $Success;
-        a {
+      &__name {
+        .name {
+          font-size: 1.25rem;
           color: $Success;
-          text-decoration: none;
-          &:hover {
-            cursor:pointer;
-            text-decoration: underline;
+          a {
+            color: $Success;
+            text-decoration: none;
+            &:hover {
+              cursor:pointer;
+              text-decoration: underline;
+            }
           }
         }
       }
@@ -42,6 +45,17 @@
     .popup__content {
       padding: 0;
       margin-bottom: 1rem;
+
+      &__container {
+        margin: 0.5rem 1rem 1rem;
+      }
+
+      &__title {
+        .name {
+          font-size: 1.5rem;
+          color: $Success;
+        }
+      }
 
       .ferries__schedule__container {
         display: flex;
@@ -85,29 +99,19 @@
         font-size: 0.75rem;
       }
 
-      .info {
-        &__container {
-          margin: 1.125rem;
-        }
-
+      &__info {
         &__header {
           font-weight: 700;
           margin-bottom: 0.5rem;
         }
 
-        &__row {
-          display: flex;
-          flex-direction: row;
+        &__routes {
+          font-size: 0.875rem;
+          color: $Grey110;
+          list-style: none;
 
-          p {
-            margin: 0.25rem 0;
-            width: 100%;
-
-            svg {
-              margin-right: 0.75rem;
-              width: 18px;
-              height: 16px;
-            }
+          a {
+            color: $Success;
           }
         }
 

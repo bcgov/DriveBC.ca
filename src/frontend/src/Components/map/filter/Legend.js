@@ -190,8 +190,8 @@ export default function Legend() {
       <div className={'legend__group'}>
         {getLegendItem(
           ferryIconStatic,
-          'Inland ferries',
-          'Travel that requires use of an inland ferry.',
+          'Ferries',
+          'Travel that requires use of a ferry.',
           'ferries'
         )}
       </div>

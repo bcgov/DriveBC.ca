@@ -661,9 +661,9 @@ export default function RouteDetails(props) {
                 {ferryCount}
               </span>
               <span className="route-item__icon">
-                <FontAwesomeIcon icon={faFerry} alt="inland ferries"/>
+                <FontAwesomeIcon icon={faFerry} alt="Ferries"/>
               </span>
-              <span className="route-item__name">{ferryCount != 1 ? 'Inland ferries' : 'Inland ferry'}</span>
+              <span className="route-item__name">{ferryCount != 1 ? 'Ferries' : 'Ferry'}</span>
             </div>
           }
           {(!eventCount || ferryCount === null) && <Skeleton height={64}/>}
