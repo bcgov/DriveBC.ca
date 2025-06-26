@@ -10,5 +10,6 @@ gunicorn[eventlet]
 pylint
 
 # Image processing
-aio-pica
+# aio-pika
 pillow
+pika
