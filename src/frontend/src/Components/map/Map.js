@@ -32,8 +32,7 @@ import {
   faArrowLeft
 } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
-import { Drawer, type Snap } from '@vladyoslav/drawer';
-import { Dialog } from '@radix-ui';
+import { Drawer } from '@vladyoslav/drawer';
 
 // Internal imports
 import { addCameraGroups } from '../data/webcams.js';
@@ -96,9 +95,9 @@ export default function DriveBCMap(props) {
   } = props;
 
 
-  const snapPoints = ['100px', '50%', '100%']
-  const [snap, setSnap] = useState<Snap>(snapPoints[0])
-  const [open, setOpen] = useState(false)
+  // const snapPoints = ['100px', '50%', '100%']
+  // const [snap, setSnap] = useState<Snap>(snapPoints[0])
+  // const [open, setOpen] = useState(false)
 
   // Navigation
   const [searchParams, setSearchParams] = useSearchParams();
@@ -854,63 +853,92 @@ export default function DriveBCMap(props) {
       }
 
       <div ref={mapElement} className="map">
-        <Drawer.Root
-        open={open}
-        onOpenChange={setOpen}
-        snapPoints={snapPoints}
-        snap={snap}
-        setSnap={setSnap}
-        modal={false}
-        dismissible={false}
-        shouldScaleBackground={true}
-        scaleFrom={snapPoints[1]}
-        >
-          <Drawer.Trigger>Open Drawer</Drawer.Trigger>
+        <Drawer.Root snapPoints={[100, '50%', '100%']}>
+          <Drawer.Trigger asChild>
+            <button 
+              style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                zIndex: 1000,
+                padding: '12px 24px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '16px'
+              }}
+            >
+              Open Drawer
+            </button>
+          </Drawer.Trigger>
           <Drawer.Portal>
-            <Drawer.Overlay />
-            <Drawer.Content>
-              This is the open drawer.
+            <Drawer.Overlay 
+              style={{
+                background: 'rgba(0, 0, 0, 0.4)',
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 1000
+              }}
+            />
+            <Drawer.Content
+              style={{
+                background: 'white',
+                borderTopLeftRadius: '12px',
+                borderTopRightRadius: '12px',
+                position: 'fixed',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                zIndex: 1001,
+                minHeight: '100px',
+                maxHeight: '100vh'
+              }}
+            >
+              <div style={{ padding: '20px' }}>
+                <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600' }}>
+                  Map Drawer with Snap Points
+                </h3>
+                <p style={{ margin: '0 0 16px 0', color: '#666' }}>
+                  This drawer has three snap points: 100px, 50%, and 100%. 
+                  Try dragging it up and down to see the snap behavior!
+                </p>
+                <div style={{ 
+                  height: '200px', 
+                  backgroundColor: '#f8f9fa', 
+                  borderRadius: '8px',
+                  padding: '16px',
+                  marginBottom: '16px',
+                  overflowY: 'auto'
+                }}>
+                  <p>Content area - you can scroll this if needed</p>
+                  {Array.from({ length: 10 }, (_, i) => (
+                    <p key={i} style={{ margin: '8px 0' }}>
+                      Line {i + 1} - This demonstrates scrollable content
+                    </p>
+                  ))}
+                </div>
+                <button 
+                  onClick={() => document.querySelector('[data-drawer-trigger]')?.click()}
+                  style={{
+                    padding: '8px 16px',
+                    backgroundColor: '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Close Drawer
+                </button>
+              </div>
             </Drawer.Content>
           </Drawer.Portal>
         </Drawer.Root>
-
-        <Dialog.Root>
-		<Dialog.Trigger asChild>
-			<button className="Button violet">Edit profile</button>
-		</Dialog.Trigger>
-		<Dialog.Portal>
-			<Dialog.Overlay className="DialogOverlay" />
-			<Dialog.Content className="DialogContent">
-				<Dialog.Title className="DialogTitle">Edit profile</Dialog.Title>
-				<Dialog.Description className="DialogDescription">blabla
-				</Dialog.Description>
-				<fieldset className="Fieldset">
-					<label className="Label" htmlFor="name">
-						Name
-					</label>
-					<input className="Input" id="name" defaultValue="Pedro Duarte" />
-				</fieldset>
-				<fieldset className="Fieldset">
-					<label className="Label" htmlFor="username">
-						Username
-					</label>
-					<input className="Input" id="username" defaultValue="@peduarte" />
-				</fieldset>
-				<div
-					style={{ display: "flex", marginTop: 25, justifyContent: "flex-end" }}
-				>
-					<Dialog.Close asChild>
-						<button className="Button green">Save changes</button>
-					</Dialog.Close>
-				</div>
-				<Dialog.Close asChild>
-					<button className="IconButton" aria-label="Close">
-						X
-					</button>
-				</Dialog.Close>
-			</Dialog.Content>
-		</Dialog.Portal>
-	</Dialog.Root>
 
         {!isCamDetail && !smallScreen && (
           <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>

@@ -1,6 +1,15 @@
 @import "../../styles/variables.scss";
 @import '~ol/ol.css';
 
+.drawer-content-test {
+  background-color: $Surface-tinted;
+  color: $Type-Link;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  border: 1px solid red;
+}   
+
 // Z-index
 .ol-overlaycontainer-stopevent {
 
