@@ -1,11 +1,10 @@
 // React
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/pro-solid-svg-icons';
 import { faHexagonExclamation } from '@fortawesome/pro-regular-svg-icons';
-import { getEmergencyAlert, markEmergencyAlertAsRead } from "../data/emergencyAlert";
 import parse from 'html-react-parser';
 
 // local imports

@@ -7,10 +7,6 @@ import { memoize } from 'proxy-memoize'
 import { updateAdvisories } from '../slices/cmsSlice';
 
 // External imports
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCircleExclamation,
-} from '@fortawesome/pro-regular-svg-icons';
 import Container from 'react-bootstrap/Container';
 
 // Internal imports

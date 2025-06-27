@@ -54,7 +54,7 @@ export default function Header() {
   }))));
 
   // Navigation
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
 
   // Context
   const { cmsContext } = useContext(CMSContext);
