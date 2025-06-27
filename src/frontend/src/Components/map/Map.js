@@ -32,7 +32,8 @@ import {
   faArrowLeft
 } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
-import { Drawer } from '@vladyoslav/drawer';
+import { Drawer, type Snap } from '@vladyoslav/drawer';
+import { Dialog } from '@radix-ui';
 
 // Internal imports
 import { addCameraGroups } from '../data/webcams.js';
@@ -93,6 +94,11 @@ export default function DriveBCMap(props) {
     showNetworkError, showServerError, trackedEventsRef,
     loadingLayers, setLoadingLayers, getInitialLoadingLayers
   } = props;
+
+
+  const snapPoints = ['100px', '50%', '100%']
+  const [snap, setSnap] = useState<Snap>(snapPoints[0])
+  const [open, setOpen] = useState(false)
 
   // Navigation
   const [searchParams, setSearchParams] = useSearchParams();
@@ -848,15 +854,63 @@ export default function DriveBCMap(props) {
       }
 
       <div ref={mapElement} className="map">
-        <Drawer.Root>
+        <Drawer.Root
+        open={open}
+        onOpenChange={setOpen}
+        snapPoints={snapPoints}
+        snap={snap}
+        setSnap={setSnap}
+        modal={false}
+        dismissible={false}
+        shouldScaleBackground={true}
+        scaleFrom={snapPoints[1]}
+        >
           <Drawer.Trigger>Open Drawer</Drawer.Trigger>
           <Drawer.Portal>
             <Drawer.Overlay />
             <Drawer.Content>
-              ...
+              This is the open drawer.
             </Drawer.Content>
           </Drawer.Portal>
         </Drawer.Root>
+
+        <Dialog.Root>
+		<Dialog.Trigger asChild>
+			<button className="Button violet">Edit profile</button>
+		</Dialog.Trigger>
+		<Dialog.Portal>
+			<Dialog.Overlay className="DialogOverlay" />
+			<Dialog.Content className="DialogContent">
+				<Dialog.Title className="DialogTitle">Edit profile</Dialog.Title>
+				<Dialog.Description className="DialogDescription">blabla
+				</Dialog.Description>
+				<fieldset className="Fieldset">
+					<label className="Label" htmlFor="name">
+						Name
+					</label>
+					<input className="Input" id="name" defaultValue="Pedro Duarte" />
+				</fieldset>
+				<fieldset className="Fieldset">
+					<label className="Label" htmlFor="username">
+						Username
+					</label>
+					<input className="Input" id="username" defaultValue="@peduarte" />
+				</fieldset>
+				<div
+					style={{ display: "flex", marginTop: 25, justifyContent: "flex-end" }}
+				>
+					<Dialog.Close asChild>
+						<button className="Button green">Save changes</button>
+					</Dialog.Close>
+				</div>
+				<Dialog.Close asChild>
+					<button className="IconButton" aria-label="Close">
+						X
+					</button>
+				</Dialog.Close>
+			</Dialog.Content>
+		</Dialog.Portal>
+	</Dialog.Root>
 
         {!isCamDetail && !smallScreen && (
           <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
