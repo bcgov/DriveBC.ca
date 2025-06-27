@@ -185,6 +185,13 @@ export default function DriveBCMap(props) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [showRouteObjs, setShowRouteObjs] = useState(false);
 
+  // Drawer states
+  const [drawerSnap, setDrawerSnap] = useState(100);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDrawerMinimized, setIsDrawerMinimized] = useState(true);
+  const [snapPoints, setSnapPoints] = useState([100, 300, 600]);
+  const drawerRef = useRef();
+
   // Workaround for OL handlers not being able to read states
   const [clickedFeature, setClickedFeature] = useState();
   const [staleLinkMessage, setStaleLinkMessage] = useState();
@@ -762,6 +769,99 @@ export default function DriveBCMap(props) {
     }
   }, [selectedRoute]);
 
+  // Drawer logic
+  // Calculate snap points based on viewport height
+  useEffect(() => {
+    const calculateSnapPoints = () => {
+      const vh = window.innerHeight;
+      const snap1 = 100; // Minimum height
+      const snap2 = Math.round(vh * 0.5); // 50% of viewport height
+      const snap3 = Math.round(vh * 0.9); // 90% of viewport height
+      const newSnapPoints = [snap1, snap2, snap3];
+      setSnapPoints(newSnapPoints);
+      console.log('Snap points calculated:', { vh, snap1, snap2, snap3, newSnapPoints });
+    };
+
+    calculateSnapPoints();
+    window.addEventListener('resize', calculateSnapPoints);
+    return () => window.removeEventListener('resize', calculateSnapPoints);
+  }, []);
+
+  // Watch drawer height to determine state
+  useEffect(() => {
+    if (!isDrawerOpen) return;
+
+    const checkDrawerState = () => {
+      console.log('Checking drawer state...');
+      if (drawerRef.current) {
+        console.log('Drawer ref found');
+        const drawerElement = drawerRef.current.querySelector('[data-drawer-content]');
+        if (drawerElement) {
+          console.log('Drawer element found');
+          const height = drawerElement.offsetHeight;
+          const rect = drawerElement.getBoundingClientRect();
+          
+          // Determine which snap point we're closest to
+          const snap1 = snapPoints[0]; // 100px
+          const snap2 = snapPoints[1]; // 50% of viewport
+          const snap3 = snapPoints[2]; // 90% of viewport
+          
+          // Check if we're at snap1 (minimized) or at snap2/snap3 (expanded)
+          const isAtSnap1 = Math.abs(height - snap1) < 50; // Allow some tolerance
+          const isMinimized = isAtSnap1;
+          
+          setIsDrawerMinimized(isMinimized);
+          setDrawerSnap(height);
+          console.log('Drawer height check:', { 
+            height, 
+            rectHeight: rect.height,
+            snap1, 
+            snap2, 
+            snap3, 
+            isAtSnap1, 
+            isMinimized,
+            tolerance: Math.abs(height - snap1)
+          });
+        } else {
+          console.log('Drawer element not found - trying alternative selector');
+          // Try alternative selectors
+          const alternativeElement = drawerRef.current.querySelector('[style*="position: fixed"]');
+          if (alternativeElement) {
+            console.log('Alternative element found');
+            const height = alternativeElement.offsetHeight;
+            setDrawerSnap(height);
+            console.log('Alternative height:', height);
+          } else {
+            console.log('No alternative element found either');
+          }
+        }
+      } else {
+        console.log('Drawer ref not found');
+      }
+    };
+
+    // Check immediately
+    checkDrawerState();
+
+    // Set up interval to check periodically
+    const interval = setInterval(checkDrawerState, 500); // Increased interval for debugging
+
+    return () => clearInterval(interval);
+  }, [isDrawerOpen, snapPoints]);
+
+  const handleDrawerSnapChange = (snap) => {
+    console.log('onSnapChange called with:', snap);
+    setDrawerSnap(snap);
+    // Update minimized state based on snap point
+    const isMinimized = snap === snapPoints[0];
+    setIsDrawerMinimized(isMinimized);
+    console.log('Drawer snap changed:', { snap, snapPoints, isMinimized, snapPoints0: snapPoints[0] });
+  };
+
+  const handleOpenChange = (open) => {
+    setIsDrawerOpen(open);
+  };
+
   /* Rendering */
   return (
     <div className={`map-container ${isCamDetail ? 'preview' : ''}`}>
@@ -853,7 +953,15 @@ export default function DriveBCMap(props) {
       }
 
       <div ref={mapElement} className="map">
-        <Drawer.Root snapPoints={[100, '50%', '100%']}>
+        <Drawer.Root
+          key={isDrawerOpen ? 'open' : 'closed'}
+          open={isDrawerOpen}
+          snapPoints={snapPoints}
+          onOpenChange={handleOpenChange}
+          onSnapChange={handleDrawerSnapChange}
+          ref={drawerRef}
+          defaultSnap={snapPoints[1]}
+        >
           <Drawer.Trigger asChild>
             <button 
               style={{
@@ -874,17 +982,6 @@ export default function DriveBCMap(props) {
             </button>
           </Drawer.Trigger>
           <Drawer.Portal>
-            <Drawer.Overlay 
-              style={{
-                background: 'rgba(0, 0, 0, 0.4)',
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                zIndex: 1000
-              }}
-            />
             <Drawer.Content
               style={{
                 background: 'white',
@@ -894,47 +991,195 @@ export default function DriveBCMap(props) {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                zIndex: 1001,
+                zIndex: 1000,
                 minHeight: '100px',
-                maxHeight: '100vh'
+                maxHeight: '100vh',
+                maxWidth: '500px',
+                width: '100%',
+                margin: '0 auto',
+                pointerEvents: 'auto',
+                boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.15)'
               }}
+              data-drawer-content
             >
-              <div style={{ padding: '20px' }}>
-                <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600' }}>
-                  Map Drawer with Snap Points
-                </h3>
-                <p style={{ margin: '0 0 16px 0', color: '#666' }}>
-                  This drawer has three snap points: 100px, 50%, and 100%. 
-                  Try dragging it up and down to see the snap behavior!
-                </p>
-                <div style={{ 
-                  height: '200px', 
-                  backgroundColor: '#f8f9fa', 
-                  borderRadius: '8px',
-                  padding: '16px',
-                  marginBottom: '16px',
-                  overflowY: 'auto'
-                }}>
-                  <p>Content area - you can scroll this if needed</p>
-                  {Array.from({ length: 10 }, (_, i) => (
-                    <p key={i} style={{ margin: '8px 0' }}>
-                      Line {i + 1} - This demonstrates scrollable content
-                    </p>
-                  ))}
+              {/* Drag handle for drawer */}
+              <div
+                style={{
+                  width: 80,
+                  height: 6,
+                  background: '#ccc',
+                  borderRadius: 3,
+                  margin: '8px auto 16px auto',
+                  cursor: 'grab'
+                }}
+              />
+              
+              {/* Expanded state - detailed view */}
+              <div style={{ padding: '20px', maxHeight: '70vh', overflowY: 'auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                  <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '700' }}>
+                    Detailed Information
+                  </h2>
+                  <Drawer.Close asChild>
+                    <button 
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#dc3545',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Close
+                    </button>
+                  </Drawer.Close>
                 </div>
-                <button 
-                  onClick={() => document.querySelector('[data-drawer-trigger]')?.click()}
-                  style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#dc3545',
+                
+                {/* Navigation tabs for different content sections */}
+                <div style={{ 
+                  display: 'flex', 
+                  borderBottom: '1px solid #ddd', 
+                  marginBottom: '20px',
+                  gap: '4px'
+                }}>
+                  <button style={{
+                    padding: '10px 16px',
+                    backgroundColor: '#007bff',
                     color: 'white',
                     border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Close Drawer
-                </button>
+                    borderRadius: '6px 6px 0 0',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}>
+                    Overview
+                  </button>
+                  <button style={{
+                    padding: '10px 16px',
+                    backgroundColor: '#f8f9fa',
+                    color: '#333',
+                    border: 'none',
+                    borderRadius: '6px 6px 0 0',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}>
+                    Details
+                  </button>
+                  <button style={{
+                    padding: '10px 16px',
+                    backgroundColor: '#f8f9fa',
+                    color: '#333',
+                    border: 'none',
+                    borderRadius: '6px 6px 0 0',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}>
+                    Actions
+                  </button>
+                </div>
+
+                {/* Main content area */}
+                <div style={{ marginBottom: '20px' }}>
+                  <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', fontWeight: '600' }}>
+                    Current Location Information
+                  </h3>
+                  <p style={{ margin: '0 0 16px 0', color: '#444', lineHeight: '1.5' }}>
+                    This expanded view shows detailed information about the selected location or feature on the map. 
+                    You can include any relevant data, images, or interactive elements here.
+                  </p>
+                  
+                  {/* Information cards */}
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: '1fr 1fr', 
+                    gap: '12px', 
+                    marginBottom: '20px' 
+                  }}>
+                    <div style={{
+                      padding: '12px',
+                      backgroundColor: '#f8f9fa',
+                      borderRadius: '8px',
+                      border: '1px solid #e9ecef'
+                    }}>
+                      <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: '600' }}>Status</h4>
+                      <p style={{ margin: 0, fontSize: '12px', color: '#28a745' }}>Active</p>
+                    </div>
+                    <div style={{
+                      padding: '12px',
+                      backgroundColor: '#f8f9fa',
+                      borderRadius: '8px',
+                      border: '1px solid #e9ecef'
+                    }}>
+                      <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: '600' }}>Type</h4>
+                      <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>Feature</p>
+                    </div>
+                  </div>
+
+                  {/* Interactive elements */}
+                  <div style={{ marginBottom: '20px' }}>
+                    <h4 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600' }}>
+                      Quick Actions
+                    </h4>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      <button style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#007bff',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                      }}>
+                        Get Directions
+                      </button>
+                      <button style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#28a745',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                      }}>
+                        Save Location
+                      </button>
+                      <button style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#ffc107',
+                        color: '#212529',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                      }}>
+                        Share
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Scrollable content area */}
+                  <div style={{
+                    height: '150px',
+                    backgroundColor: '#f8f9fa',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    marginBottom: '16px',
+                    overflowY: 'auto',
+                    border: '1px solid #e9ecef'
+                  }}>
+                    <h4 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600' }}>
+                      Additional Information
+                    </h4>
+                    <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#333' }}>
+                      This area can contain additional details, descriptions, or any other relevant information.
+                    </p>
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <p key={i} style={{ margin: '8px 0', fontSize: '14px', color: '#666' }}>
+                        Detail point {i + 1} - Additional information about this location or feature.
+                      </p>
+                    ))}
+                  </div>
+                </div>
               </div>
             </Drawer.Content>
           </Drawer.Portal>
