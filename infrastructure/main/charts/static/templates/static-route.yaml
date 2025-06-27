@@ -78,7 +78,6 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: {{ template "app.fullname" $ }}-{{ . | replace "." "-" }}-redirect
-  labels: {{ include "app.labels" . | nindent 4 }}
   annotations:
     haproxy.router.openshift.io/disable_cookies: 'true'
 spec:
