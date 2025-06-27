@@ -125,7 +125,7 @@ export default function CamPanel(props) {
   }
 
   const getCamLink = (cam) => {
-    return `${cam.links.imageDisplay}?ts=${new Date(cam.last_update_modified).getTime()}`
+    return `${cam.links.imageDisplay}?ts=${encodeURIComponent(cam.last_update_modified)}`
   }
 
   /* Handlers */
@@ -211,7 +211,7 @@ export default function CamPanel(props) {
 
   // Main component
   return (
-    <div className="popup popup--camera" ref={camPanelRef}>
+    <div className="popup popup--camera" ref={camPanelRef} data-current="0">
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__icon">
           <FontAwesomeIcon icon={faVideo}/>
@@ -270,7 +270,7 @@ export default function CamPanel(props) {
                   </div>
                 )}
 
-                <img src={getCamLink(camera)} width="300" data-current="0" />
+                <img src={getCamLink(camera)} width="300" />
 
                 {camera.marked_delayed && camera.marked_stale && (
                   <>
