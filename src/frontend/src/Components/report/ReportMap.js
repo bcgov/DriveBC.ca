@@ -41,7 +41,7 @@ import View from 'ol/View.js';
 import './ReportMap.scss';
 
 /* Map loading function */
-function loadReportMap(setActiveFeature, wmsLayer, styles) {
+function loadReportMap(setActiveFeature, wmsLayer, styles, smallScreen) {
   const tileLayer = new VectorTileLayer({
     declutter: true,
     source: new VectorTileSource({
@@ -99,9 +99,9 @@ function loadReportMap(setActiveFeature, wmsLayer, styles) {
       'EPSG:4326',
       'EPSG:3857',
     ),
-    zoom: 5,
+    zoom: smallScreen ? 5: 5.5,
     maxZoom: 15,
-    minZoom: 4,
+    minZoom: 4.1,
     extent: transformedExtent,
   });
 
@@ -154,6 +154,9 @@ const clickListener = (map, pixelCoords, setActiveFeature, wmsLayer) => {
 export function ReportMap(props) {
   const { wmsLayer, styles } = props;
 
+  // Misc
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+
   /* Refs */
   const isInitialMount = useRef(true);
   const mapRef = useRef();
@@ -168,7 +171,7 @@ export function ReportMap(props) {
   const loadMap = () => {
     // Run once on startup
     if (isInitialMount.current) {
-      mapRef.current = loadReportMap(setActiveFeature, wmsLayer, styles);
+      mapRef.current = loadReportMap(setActiveFeature, wmsLayer, styles, smallScreen);
       mapView.current = mapRef.current.getView();
       toggleMyLocation(mapRef, mapView);
     }
@@ -232,7 +235,7 @@ export function ReportMap(props) {
           ) {
             const mapCoords = fromLonLat([longitude, latitude]);
 
-            setZoomPan(mapView, 5, mapCoords);
+            setZoomPan(mapView, 6.5, mapCoords);
             setLocationPin([longitude, latitude], redLocationMarkup, mapRef);
 
             // Wait for map to pan before getting pixel coords
