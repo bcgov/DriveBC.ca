@@ -18,7 +18,9 @@ from apps.event.serializers import EventInternalSerializer
 from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
 from apps.shared.helpers import attach_default_email_images, attach_image_to_email
+from apps.shared.models import Area
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Centroid
 from django.contrib.gis.geos import LineString, Point
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
@@ -208,6 +210,9 @@ def populate_all_event_data():
     # Send notifications
     send_event_notifications(updated_event_ids)
 
+    # Update area relations
+    update_event_area_relations()
+
 
 def get_image_type_file_name(event):
     major_delay_icon_map = {
@@ -363,3 +368,10 @@ def send_route_event_notifications(saved_route, updated_event_ids):
 
             msg.attach_alternative(html, 'text/html')
             msg.send()
+
+
+def update_event_area_relations():
+    for area in Area.objects.all():
+        Event.objects.annotate(location_centroid=Centroid('location')).filter(
+            location_centroid__within=area.geometry
+        ).update(area=area)

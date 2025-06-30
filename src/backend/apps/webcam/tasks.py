@@ -3,25 +3,24 @@ import io
 import logging
 import os
 import urllib.request
-from urllib.error import HTTPError
 from itertools import groupby
 from math import floor
 from pathlib import Path
+from urllib.error import HTTPError
 from zoneinfo import ZoneInfo
 
 import httpx
-from django.conf import settings
-from django.contrib.gis.geos import LineString, MultiLineString, Point
-from django.core.exceptions import ObjectDoesNotExist
-from PIL import Image, ImageDraw, ImageFont
-
 from apps.feed.client import FeedClient
-from apps.shared.models import RouteGeometry
+from apps.shared.models import Area, RouteGeometry
 from apps.webcam.enums import CAMERA_DIFF_FIELDS
 from apps.webcam.hwy_coords import hwy_coords
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
 from apps.webcam.views import WebcamAPI
+from django.conf import settings
+from django.contrib.gis.geos import LineString, MultiLineString, Point
+from django.core.exceptions import ObjectDoesNotExist
+from PIL import Image, ImageDraw, ImageFont
 
 logger = logging.getLogger(__name__)
 
@@ -319,3 +318,8 @@ def build_route_geometries(coords=hwy_coords):
 
         else:
             RouteGeometry.objects.filter(id=key).update(routes=MultiLineString(ls_routes))
+
+
+def update_camera_area_relations():
+    for area in Area.objects.all():
+        Webcam.objects.filter(location__within=area.geometry).update(area=area)

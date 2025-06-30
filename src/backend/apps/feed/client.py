@@ -9,6 +9,7 @@ from apps.event.serializers import CarsEventSerializer
 from apps.feed.constants import (
     CURRENT_WEATHER,
     CURRENT_WEATHER_STATIONS,
+    DISTRICT_BOUNDARIES,
     DIT,
     FORECAST_WEATHER,
     INLAND_FERRY,
@@ -28,6 +29,7 @@ from apps.feed.serializers import (
     WebcamAPISerializer,
     WebcamFeedSerializer,
 )
+from apps.shared.serializers import DistrictAPISerializer
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
@@ -106,6 +108,9 @@ class FeedClient:
             },
             REST_STOP: {
                 "base_url": settings.DRIVEBC_REST_STOP_API_BASE_URL,
+            },
+            DISTRICT_BOUNDARIES: {
+                "base_url": settings.DRIVEBC_DISTRICT_BOUNDARIES_API_URL,
             },
         }
 
@@ -553,4 +558,20 @@ class FeedClient:
         return self.get_rest_stop_list_feed(
             REST_STOP, 'reststop', RestStopSerializer,
             {"format": "json", "limit": 500}
+        )
+
+    # District Boundaries
+    def get_district_list(self):
+        return self.get_list_feed(
+            DISTRICT_BOUNDARIES,
+            'geo/pub/WHSE_ADMIN_BOUNDARIES.TADM_MOT_DISTRICT_BNDRY_POLY/ows',
+            DistrictAPISerializer,
+            {
+                "service": "WFS",
+                "request": "GetFeature",
+                "typeName": "pub:WHSE_ADMIN_BOUNDARIES.TADM_MOT_DISTRICT_BNDRY_POLY",
+                "feature_info_type": "text/plain",
+                "srsName": "EPSG:4326",
+                "outputFormat": "json",
+            }
         )

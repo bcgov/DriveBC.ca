@@ -100,16 +100,13 @@ class BulletinSerializer(BulletinTestSerializer):
 
 # Serializer with no method fields for unit tests
 class EmergencyAlertTestSerializer(CMSSerializer):
-
     class Meta:
         model = EmergencyAlert
-        fields = ['id', 'live_revision', 'alert']
+        fields = "__all__"
 
 
 class EmergencyAlertSerializer(EmergencyAlertTestSerializer):
-
     alert = serializers.SerializerMethodField()
 
     def get_alert(self, obj):
         return self.get_richtext(obj.alert)
-
