@@ -29,6 +29,11 @@ from datetime import timezone, timedelta
 import pika
 import re
 
+from timezonefinder import TimezoneFinder
+from zoneinfo import ZoneInfo
+
+tf = TimezoneFinder()
+
 logger = logging.getLogger(__name__)
 
 APP_DIR = Path(__file__).resolve().parent
@@ -40,13 +45,22 @@ CAM_OFF = ('This highway cam image is currently unavailable due to technical dif
            'Our technicians have been alerted and service will resume as soon as possible.')
 
 # Global list to store all messages from RabbitMQ queue
-all_messages = []  
+all_messages = []
+
+def get_timezone(webcam):
+    lat = webcam.location.y
+    lon = webcam.location.x
+
+    tz_name = tf.timezone_at(lat=lat, lng=lon)
+    return tz_name if tz_name else 'America/Vancouver'  # Fallback to PST if no timezone found
 
 def populate_webcam_from_data_from_rabbitmq(webcam_data, all_messages):
     webcam_id = webcam_data.get("id")
+    tz_name = 'America/Vancouver'  # Default timezone
 
     try:
         webcam = Webcam.objects.get(id=webcam_id)
+        tz_name = get_timezone(webcam)
 
     except ObjectDoesNotExist:
         webcam = Webcam(id=webcam_id)
@@ -55,7 +69,8 @@ def populate_webcam_from_data_from_rabbitmq(webcam_data, all_messages):
     webcam_serializer.is_valid(raise_exception=True)
     webcam_serializer.save()
     image_data = process_camera_messages(all_messages, webcam_id)
-    update_webcam_image_from_rabbitmq(webcam_data, image_data)
+    
+    update_webcam_image_from_rabbitmq(webcam_data, image_data, tz_name)
 
 
 def extract_sort_key(filename: str) -> float:
@@ -175,7 +190,7 @@ def update_single_webcam_data(webcam):
             update_webcam_image(webcam_data)
             return
         
-def update_single_webcam_data_from_rabbitmq(webcam, image_data):
+def update_single_webcam_data_from_rabbitmq(webcam, image_data, tz):
     try:
         webcam_data = FeedClient().get_webcam(webcam)
     except httpx.HTTPStatusError as e:
@@ -192,7 +207,7 @@ def update_single_webcam_data_from_rabbitmq(webcam, image_data):
             webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
             webcam_serializer.is_valid(raise_exception=True)
             webcam_serializer.save()
-            update_webcam_image_from_rabbitmq(webcam_data, image_data)
+            update_webcam_image_from_rabbitmq(webcam_data, image_data, tz)
             return
 
 def update_all_webcam_data():
@@ -206,10 +221,11 @@ def update_all_webcam_data():
 
 def update_all_webcam_data_from_rabbitmq():
     for webcam in Webcam.objects.all():
-        current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
+        tz_name = get_timezone(webcam)
+        current_time = datetime.datetime.now(tz=ZoneInfo(tz_name))
         if webcam.should_update(current_time):
             image_data = process_camera_messages(all_messages, webcam.id)
-            update_single_webcam_data_from_rabbitmq(webcam, image_data)
+            update_single_webcam_data_from_rabbitmq(webcam, image_data, tz_name)
 
     # Rebuild cache
     WebcamAPI().set_list_data()
@@ -253,7 +269,7 @@ def wrap_text(text, pen, font, width):
     return ''.join(out)
 
 
-def update_webcam_image_from_rabbitmq(webcam, image_data):
+def update_webcam_image_from_rabbitmq(webcam, image_data, tz):
     '''
     Retrieve the current cam image, stamp it and save it
 
@@ -285,7 +301,8 @@ def update_webcam_image_from_rabbitmq(webcam, image_data):
                 month = lastmod.strftime('%b')
                 day = lastmod.strftime('%d')
                 day = day[1:] if day[:1] == '0' else day  # strip leading zero
-                timestamp = f'{month} {day}, {lastmod.strftime("%Y %H:%M:%S %p %Z")}'
+                dt_local = lastmod.astimezone(ZoneInfo(tz))
+                timestamp = f'{month} {day}, {dt_local.strftime("%Y %H:%M:%S %p %Z")}'
 
             pen.text((width - 3,  height + 14), timestamp, fill="white",
                      anchor='rs', font=FONT)

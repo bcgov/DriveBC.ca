@@ -13,3 +13,4 @@ pylint
 # aio-pika
 pillow
 pika
+timezonefinder
