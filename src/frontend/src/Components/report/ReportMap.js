@@ -26,7 +26,7 @@ import overrides from '../map/overrides.js';
 // OpenLayers
 import { applyStyle } from 'ol-mapbox-style';
 import { defaults } from 'ol/control.js';
-import { fromLonLat, transform } from 'ol/proj';
+import { fromLonLat, transform, transformExtent } from 'ol/proj';
 import { ImageWMS, Vector as VectorSource } from 'ol/source.js';
 import { Image as ImageLayer, Vector as VectorLayer } from 'ol/layer.js';
 import { Polygon } from 'ol/geom';
@@ -88,6 +88,10 @@ function loadReportMap(setActiveFeature, wmsLayer, styles) {
     });
   });
 
+  // Set map extent (W, S, E, N)
+  const extent = [-169.9999311184518, 14.504609139675608, -60.70077056146753, 75.20528693014171];
+  const transformedExtent = transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
+
   const mapViewObj = new View({
     // Centered on BC
     center: transform(
@@ -96,6 +100,9 @@ function loadReportMap(setActiveFeature, wmsLayer, styles) {
       'EPSG:3857',
     ),
     zoom: 5,
+    maxZoom: 15,
+    minZoom: 4,
+    extent: transformedExtent,
   });
 
   const newMap = new Map({
@@ -225,7 +232,7 @@ export function ReportMap(props) {
           ) {
             const mapCoords = fromLonLat([longitude, latitude]);
 
-            setZoomPan(mapView, 6, mapCoords);
+            setZoomPan(mapView, 5, mapCoords);
             setLocationPin([longitude, latitude], redLocationMarkup, mapRef);
 
             // Wait for map to pan before getting pixel coords
@@ -239,10 +246,10 @@ export function ReportMap(props) {
                 wmsLayer,
               );
             }, 1000);
+
           } else {
             // set my location to the center of BC for users outside of BC
             setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
-
           }
 
           const end = performance.now();
