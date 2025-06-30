@@ -4,6 +4,7 @@ from apps.border.tasks import update_border_crossing_lanes
 from apps.event.tasks import populate_all_event_data
 from apps.ferry.tasks import populate_all_ferry_data, populate_coastal_ferry_data
 from apps.rest.tasks import populate_all_rest_stop_data
+from apps.shared.tasks import populate_all_district_data
 from apps.weather.tasks import (
     populate_all_high_elevation_forecast_data,
     populate_all_local_weather_data,
@@ -39,13 +40,13 @@ def populate_event_task():
     populate_all_event_data()
 
 
-@db_periodic_task(crontab(hour="*/24", minute="0", day_of_week="2"))
+@db_periodic_task(crontab(hour="*/24", minute="0", day_of_week="0"))
 @lock_task('ferries-lock')
 def populate_ferry_task():
     populate_all_ferry_data()
 
 
-@db_periodic_task(crontab(hour="*/24", minute="0", day_of_week="2"))
+@db_periodic_task(crontab(hour="*/24", minute="5", day_of_week="0"))
 @lock_task('ferries-lock')
 def populate_coastal_ferry_task():
     populate_coastal_ferry_data()
@@ -81,13 +82,13 @@ def populate_rest_stop_task():
     populate_all_rest_stop_data()
 
 
-@db_periodic_task(crontab(hour="*/24", minute="0", day_of_week="6"))
+@db_periodic_task(crontab(hour="*/24", minute="10", day_of_week="0"))
 @lock_task('reference-route-lock')
 def build_reference_route_geometries():
     build_route_geometries()
 
 
-@db_periodic_task(crontab(hour="*/24", minute="0", day_of_week="0"))
+@db_periodic_task(crontab(hour="*/24", minute="15", day_of_week="0"))
 @lock_task('add-camera-lock')
 def add_camera_orders():
     add_order_to_cameras()
@@ -97,6 +98,12 @@ def add_camera_orders():
 @lock_task('update-border-crossings-lock')
 def update_border_crossings():
     update_border_crossing_lanes()
+
+
+@db_periodic_task(crontab(hour="*/24", minute="20", day_of_week="0"))
+@lock_task('districts-lock')
+def update_districts():
+    populate_all_district_data()
 
 
 @on_startup()

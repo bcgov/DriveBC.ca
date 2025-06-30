@@ -16,3 +16,14 @@ class SafeStringField(serializers.CharField):
     def to_representation(self, value):
         value = super().to_representation(value)
         return strip_tags(value)
+
+
+class DistrictPropertiesField(serializers.Field):
+    def to_internal_value(self, data):
+        res = {
+            # General
+            "id": data['DISTRICT_NUMBER'],
+            "name": data['DISTRICT_NAME'],
+        }
+
+        return res

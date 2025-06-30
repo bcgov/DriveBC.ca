@@ -30,3 +30,10 @@ class RouteGeometry(models.Model):
 
     def __str__(self):
         return self.id
+
+
+class Area(BaseModel):
+    id = models.PositiveSmallIntegerField(primary_key=True)
+    name = models.CharField(max_length=128)
+
+    geometry = models.PolygonField()

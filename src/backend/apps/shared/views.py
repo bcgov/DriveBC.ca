@@ -2,7 +2,8 @@ import re
 
 from apps.shared.enums import SUBJECT_CHOICES, SUBJECT_TITLE, CacheKey, CacheTimeout
 from apps.shared.helpers import attach_default_email_images
-from apps.shared.models import SiteSettings
+from apps.shared.models import Area, SiteSettings
+from apps.shared.serializers import DistrictSerializer
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
@@ -14,7 +15,7 @@ from django.template.loader import render_to_string
 from django.urls import re_path
 from django.views.static import serve
 from drf_recaptcha.fields import ReCaptchaV3Field
-from rest_framework import serializers, status
+from rest_framework import serializers, status, viewsets
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
@@ -224,3 +225,8 @@ class session(APIView):
 
         response.set_cookie('csrftoken', get_token(request, ))
         return response
+
+
+class DistrictViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Area.objects.all()
+    serializer_class = DistrictSerializer

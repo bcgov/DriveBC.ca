@@ -1,6 +1,9 @@
 from django.db.models import fields
+from rest_framework import serializers
+from rest_framework_gis.fields import GeometryField
 
-from .fields import SafeStringField
+from .fields import DistrictPropertiesField, SafeStringField
+from .models import Area
 
 
 class SafeStringMixin:
@@ -21,3 +24,22 @@ class SafeStringMixin:
         self.serializer_field_mapping[fields.CharField] = SafeStringField
         self.serializer_field_mapping[fields.TextField] = SafeStringField
         return super().build_standard_field(field_name, model_field)
+
+
+class DistrictSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Area
+        exclude = (
+            "geometry",
+            "created_at",
+            "modified_at",
+        )
+
+
+class DistrictFeedSerializer(serializers.Serializer):
+    geometry = GeometryField()
+    properties = DistrictPropertiesField(source="*")
+
+
+class DistrictAPISerializer(serializers.Serializer):
+    features = DistrictFeedSerializer(many=True)

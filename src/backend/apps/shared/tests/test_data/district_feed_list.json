@@ -1,0 +1,32 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "WHSE_ADMIN_BOUNDARIES.TADM_MOT_DISTRICT_BNDRY_POLY.1",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-126.05000031, 51.9999999],
+            [-126.09999975, 51.99999984],
+            [-126.15000013, 51.99999993],
+            [-126.19999963, 52.00000017],
+            [-126.25000018, 52],
+            [-126.05000031, 51.9999999]
+          ]
+        ]
+      },
+      "geometry_name": "GEOMETRY",
+      "properties": {
+        "DISTRICT_NUMBER": 1,
+        "DISTRICT_NAME": "Lower Mainland",
+        "FEATURE_CODE": null,
+        "OBJECTID": 65416,
+        "SE_ANNO_CAD_DATA": null,
+        "FEATURE_AREA_SQM": 85607611348.0806,
+        "FEATURE_LENGTH_M": 1868314.7737
+      }
+    }
+  ]
+}

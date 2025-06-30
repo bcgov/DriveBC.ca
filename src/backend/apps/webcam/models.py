@@ -1,4 +1,4 @@
-from apps.shared.models import BaseModel
+from apps.shared.models import Area, BaseModel
 from django.contrib.gis.db import models
 
 
@@ -19,6 +19,7 @@ class Webcam(BaseModel):
     location = models.PointField()
     orientation = models.CharField(max_length=32, blank=True)
     elevation = models.PositiveSmallIntegerField()
+    area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=False)
 
     # General status
     is_on = models.BooleanField(default=True)
