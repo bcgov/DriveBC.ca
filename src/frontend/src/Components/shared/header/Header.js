@@ -66,6 +66,7 @@ export default function Header() {
   const [expanded, setExpanded] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
+  const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(true);
 
   // Effects
   const loadAdvisories = async () => {
@@ -120,6 +121,34 @@ export default function Header() {
       setOpenSearch(false);
     }
   }, [selectedRoute]);
+
+  /* Track state of navbar-collapse */
+  useEffect(() => {
+    const navbarToggler = document.querySelector('.header-left .navbar-toggler');
+
+    const updateState = () => {
+      if (navbarToggler) {
+        const isCollapsed = navbarToggler.classList.contains('collapsed');
+        setIsNavbarCollapsed(isCollapsed);
+      }
+    };
+
+    if (navbarToggler) {
+      navbarToggler.addEventListener('click', () => {
+        // Let Bootstrap toggle classes first, then check the state
+        setTimeout(updateState, 0);
+      });
+    }
+
+    // Initial state check in case it's already rendered
+    updateState();
+
+    return () => {
+      if (navbarToggler) {
+        navbarToggler.removeEventListener('click', updateState);
+      }
+    };
+  }, []);
 
   /* Helpers */
   const getUnreadAdvisoriesCount = (advisoriesData) => {
@@ -205,7 +234,7 @@ export default function Header() {
               </button>
             }
 
-            {smallScreen && showSearch && !openSearch && selectedRoute &&
+            {smallScreen && showSearch && !openSearch && selectedRoute && isNavbarCollapsed &&
               <button
                 className={`searched-route btn show`}
                 aria-label="searched route"
