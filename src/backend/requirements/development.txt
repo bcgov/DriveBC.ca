@@ -8,3 +8,9 @@ coverage==7.6.1
 gunicorn
 gunicorn[eventlet]
 pylint
+
+# Image processing
+# aio-pika
+pillow
+pika
+timezonefinder

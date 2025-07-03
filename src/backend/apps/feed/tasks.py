@@ -1,4 +1,5 @@
 import datetime
+import os
 
 from apps.border.tasks import update_border_crossing_lanes
 from apps.event.tasks import populate_all_event_data
@@ -13,24 +14,35 @@ from apps.webcam.tasks import (
     add_order_to_cameras,
     build_route_geometries,
     populate_all_webcam_data,
+    populate_all_webcam_data_from_rabbitmq,
     update_all_webcam_data,
+    update_all_webcam_data_from_rabbitmq,    
 )
 from django.core.cache import cache
 from django.core.management import call_command
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, lock_task, on_startup, post_execute
+import asyncio
 
 
 @db_periodic_task(crontab(hour="*/6", minute="0"))
 @lock_task('populate-camera-lock')
 def populate_webcam_task():
-    populate_all_webcam_data()
+    pull_from_rabbitmq = os.getenv("PULL_FROM_RABBITMQ", "false").lower() == "true"
+    if pull_from_rabbitmq:
+        populate_all_webcam_data_from_rabbitmq()
+    else:
+        populate_all_webcam_data()
 
 
 @db_periodic_task(crontab(minute="*/1"))
 @lock_task('update-camera-lock')
 def update_camera_task():
-    update_all_webcam_data()
+    pull_from_rabbitmq = os.getenv("PULL_FROM_RABBITMQ", "false").lower() == "true"
+    if pull_from_rabbitmq:
+        update_all_webcam_data_from_rabbitmq()
+    else:
+        update_all_webcam_data()
 
 
 @db_periodic_task(crontab(minute="*/1"))
@@ -97,6 +109,7 @@ def add_camera_orders():
 @lock_task('update-border-crossings-lock')
 def update_border_crossings():
     update_border_crossing_lanes()
+
 
 
 @on_startup()
