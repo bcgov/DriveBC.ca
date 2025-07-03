@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
-import { CamsContext } from '../../App.js';
+import { CamsContext, FilterContext } from '../../App.js';
 import HighwayGroup from './HighwayGroup.js';
 
 // Styling
@@ -12,10 +12,11 @@ import './CameraList.scss';
 
 export default function CameraList(props) {
   // Props
-  const { cameras, showLoader, enableHighwayFilter } = props;
+  const { cameras, showLoader, enableExtraFilters } = props;
 
   // Contexts
   const { camsContext } = useContext(CamsContext);
+  const { filterContext } = useContext(FilterContext);
 
   // UseState hooks
   const [displayedCameras, setDisplayedCameras] = useState([]);
@@ -24,8 +25,14 @@ export default function CameraList(props) {
   const getDisplayedCameras = (length) => {
     // check for currently selected Highway from highway filter and process
     let filteredCameras = cameras;
-    if (enableHighwayFilter && camsContext.highwayFilterKey) {
-      filteredCameras = cameras.filter((camera) => (camera.highway_display === camsContext.highwayFilterKey));
+    if (enableExtraFilters) {
+      if (filterContext.highwayFilterKey) {
+        filteredCameras = cameras.filter((camera) => (camera.highway_display === filterContext.highwayFilterKey));
+      }
+
+      if (filterContext.areaFilter) {
+        filteredCameras = filteredCameras.filter((camera) => (camera.area === filterContext.areaFilter.id));
+      }
     }
 
     if (!length) { camsContext.displayLength += 4; }
@@ -37,7 +44,7 @@ export default function CameraList(props) {
     if (cameras) { // Do nothing until cameras are processed
       getDisplayedCameras(camsContext.displayLength);
     }
-  }, [cameras, camsContext.highwayFilterKey]);
+  }, [cameras, filterContext.highwayFilterKey, filterContext.areaFilter]);
 
   // Rendering
   const groupDisplayedCameras = () => {
