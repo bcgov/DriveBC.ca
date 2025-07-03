@@ -3,6 +3,30 @@
 .events-page {
   position: relative;
 
+  .selected-filters-container {
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+    margin-top: 8px;
+
+    .selected-filter {
+      display: flex;
+      background: $Info;
+      border-radius: 8px;
+      padding: 8px 8px 6px;
+      color: white;
+
+      .remove-btn {
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.875rem;
+        color: white;
+        margin-left: 8px;
+        margin-right: 4px;
+      }
+    }
+  }
+
   .network-error, .server-error {
     @media (max-width: 768px) {
       position: relative;
@@ -34,7 +58,7 @@
     }
   }
 
-    
+
   .controls-container {
     flex-direction: row;
 
@@ -97,7 +121,7 @@
           padding: 0;
           border: none;
         }
-        
+
         .filters-btn__text {
           @media (max-width: 575px) {
             display: none;
@@ -130,14 +154,14 @@
   .advisories-btn {
     margin-top: 1rem;
     width: 100%;
-  
+
     @media (min-width: 576px) {
       width: fit-content;
     }
-  
+
     .advisories-count {
       margin-left: auto;
-  
+
       @media (min-width: 576px) {
         margin-left: 8px;
       }

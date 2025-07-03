@@ -16,6 +16,7 @@ export const feedsSlice = createSlice({
     hef: feedsInitialState,
     restStops: feedsInitialState,
     borderCrossings: feedsInitialState,
+    areas: feedsInitialState,
   },
   reducers: {
     updateCameras: (state, action) => {
@@ -42,6 +43,9 @@ export const feedsSlice = createSlice({
     updateBorderCrossings: (state, action) => {
       state.borderCrossings = action.payload;
     },
+    updateAreas: (state, action) => {
+      state.areas = action.payload;
+    },
   },
 });
 
@@ -53,7 +57,8 @@ export const {
   updateRegional,
   updateHef,
   updateRestStops,
-  updateBorderCrossings
+  updateBorderCrossings,
+  updateAreas
 } = feedsSlice.actions;
 
 export default feedsSlice.reducer;

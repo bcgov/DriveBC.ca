@@ -8,6 +8,7 @@ import { Route, Routes } from 'react-router-dom';
 import { memoize } from "proxy-memoize";
 import { useDispatch, useSelector } from 'react-redux';
 import { updateFavCams, updateFavRoutes } from './slices/userSlice';
+import { updateAreas } from './slices/feedsSlice';
 import { updateSearchedRoutes } from "./slices";
 
 // External imports
@@ -20,6 +21,7 @@ import '@bcgov/bc-sans/css/BCSans.css';
 import './App.scss';
 
 // Internal imports
+import { getAreas } from "./Components/data/areas";
 import { getFavoriteCameraIds } from './Components/data/webcams';
 import { getFavoriteRoutes, linkRoute } from './Components/data/routes';
 import AccountPage from './pages/AccountPage';
@@ -61,6 +63,7 @@ export const EmergencyAlertContext = createContext();
 export const MapContext = createContext(null);
 export const HeaderHeightContext = createContext();
 export const FeatureContext = createContext({});
+export const FilterContext = createContext({});
 
 let callingSession = false;
 let sessionStateKnown = false;
@@ -69,9 +72,10 @@ function App() {
   /* Setup */
   // Redux
   const dispatch = useDispatch();
-  const { selectedRoute, searchedRoutes } = useSelector(useCallback(memoize(state => ({
+  const { selectedRoute, searchedRoutes, areas } = useSelector(useCallback(memoize(state => ({
     selectedRoute: state.routes.selectedRoute,
-    searchedRoutes: state.routes.searchedRoutes
+    searchedRoutes: state.routes.searchedRoutes,
+    areas: state.feeds.areas.list,
   }))));
 
   // Refs
@@ -87,6 +91,7 @@ function App() {
   const [mapContext, setMapContext] = useState(getInitialMapContext());
   const [headerHeightContext, setHeaderHeightContext] = useState();
   const [featureContext, setFeatureContext] = useState({});
+  const [filterContext, setFilterContext] = useState({});
 
   // Effects
   useEffect(() => {
@@ -121,6 +126,13 @@ function App() {
       initRoutes();
     }
   }, [authContext]);
+
+  useEffect(async () => {
+    if (!areas) {
+      const areaData = await getAreas();
+      dispatch(updateAreas({ list: areaData }));
+    }
+  }, []);
 
   /* Helpers */
   // Data functions
@@ -229,42 +241,44 @@ function App() {
               <EmergencyAlertContext.Provider value={{ emergencyAlertContext, setEmergencyAlertContext }}>
                 <HeaderHeightContext.Provider value={{ headerHeightContext, setHeaderHeightContext }}>
                   <FeatureContext.Provider value={{ featureContext, setFeatureContext }}>
-                    <div className="App" style={{ marginTop: `${headerHeightContext}px` }}>
-                      <Header />
+                    <FilterContext.Provider value={{ filterContext, setFilterContext }}>
+                      <div className="App" style={{ marginTop: `${headerHeightContext}px` }}>
+                        <Header />
 
-                      <EmergencyAlert />
+                        <EmergencyAlert />
 
-                      <ScrollToTop />
+                        <ScrollToTop />
 
-                      <Routes>
-                        <Route path="/" element={<MapPage />} />
-                        <Route path="/my-cameras" element={<SavedCamerasPage />} />
-                        <Route path="/my-routes" element={<SavedRoutesPage />} />
-                        <Route path="/cameras" element={<CamerasListPage />} />
-                        <Route path="/cameras/:id" element={<CameraDetailsPage />} />
-                        <Route path="/delays" element={<EventsListPage />} />
-                        <Route path="/advisories" element={<AdvisoriesListPage />} />
-                        <Route path="/advisories/:id/:subid?" element={<AdvisoryDetailsPage />} />
-                        <Route path="/bulletins" element={<BulletinsListPage />} />
-                        <Route path="/bulletins/:id/:subid?" element={<BulletinDetailsPage />} />
-                        <Route path="/account" element={<AccountPage />} />
-                        <Route path="/account-deactivated" element={<AccountDeactivatedPage />} />
-                        <Route path="/feedback" element={<FeedbackPage />} />
-                        <Route path="/verify-email" element={<VerifyEmailPage />} />
-                        {/* Catch-all route for 404 errors */}
-                        <Route path="*" element={<NotFoundPage />} />
-                        <Route path="/problems" element={<ProblemsPage />} />
-                        <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
-                        <Route path="/highway-problem" element={<ReportRoadPage />} />
-                        <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />
-                      </Routes>
+                        <Routes>
+                          <Route path="/" element={<MapPage />} />
+                          <Route path="/my-cameras" element={<SavedCamerasPage />} />
+                          <Route path="/my-routes" element={<SavedRoutesPage />} />
+                          <Route path="/cameras" element={<CamerasListPage />} />
+                          <Route path="/cameras/:id" element={<CameraDetailsPage />} />
+                          <Route path="/delays" element={<EventsListPage />} />
+                          <Route path="/advisories" element={<AdvisoriesListPage />} />
+                          <Route path="/advisories/:id/:subid?" element={<AdvisoryDetailsPage />} />
+                          <Route path="/bulletins" element={<BulletinsListPage />} />
+                          <Route path="/bulletins/:id/:subid?" element={<BulletinDetailsPage />} />
+                          <Route path="/account" element={<AccountPage />} />
+                          <Route path="/account-deactivated" element={<AccountDeactivatedPage />} />
+                          <Route path="/feedback" element={<FeedbackPage />} />
+                          <Route path="/verify-email" element={<VerifyEmailPage />} />
+                          {/* Catch-all route for 404 errors */}
+                          <Route path="*" element={<NotFoundPage />} />
+                          <Route path="/problems" element={<ProblemsPage />} />
+                          <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
+                          <Route path="/highway-problem" element={<ReportRoadPage />} />
+                          <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />
+                        </Routes>
 
-                      <Modal />
+                        <Modal />
 
-                      <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
+                        <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
 
-                      <Survey />
-                    </div>
+                        <Survey />
+                      </div>
+                    </FilterContext.Provider>
                   </FeatureContext.Provider>
                 </HeaderHeightContext.Provider>
               </EmergencyAlertContext.Provider>

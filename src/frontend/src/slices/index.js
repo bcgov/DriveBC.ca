@@ -7,7 +7,8 @@ import {
   updateHef,
   updateRestStops,
   updateWeather,
-  updateBorderCrossings
+  updateBorderCrossings,
+  updateAreas
 } from './feedsSlice';
 import { updateMapState } from './mapSlice';
 import {
@@ -37,6 +38,7 @@ export {
   updateHef,
   updateRestStops,
   updateBorderCrossings,
+  updateAreas,
 
   // mapSlice
   updateMapState,
