@@ -18,6 +18,7 @@ from apps.feed.constants import (
     REGIONAL_WEATHER_AREAS,
     REST_STOP,
     WEBCAM,
+    WILDFIRE,
 )
 from apps.feed.serializers import (
     CarsClosureSerializer,
@@ -30,6 +31,7 @@ from apps.feed.serializers import (
     WebcamFeedSerializer,
 )
 from apps.shared.serializers import DistrictAPISerializer
+from apps.wildfire.serializers import WildfireAreaSerializer, WildfirePointSerializer
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
@@ -110,7 +112,10 @@ class FeedClient:
                 "base_url": settings.DRIVEBC_REST_STOP_API_BASE_URL,
             },
             DISTRICT_BOUNDARIES: {
-                "base_url": settings.DRIVEBC_DISTRICT_BOUNDARIES_API_URL,
+                "base_url": settings.DRIVEBC_OPENMAPS_API_URL,
+            },
+            WILDFIRE: {
+                "base_url": settings.DRIVEBC_OPENMAPS_API_URL,
             },
         }
 
@@ -571,6 +576,36 @@ class FeedClient:
                 "request": "GetFeature",
                 "typeName": "pub:WHSE_ADMIN_BOUNDARIES.TADM_MOT_DISTRICT_BNDRY_POLY",
                 "feature_info_type": "text/plain",
+                "srsName": "EPSG:4326",
+                "outputFormat": "json",
+            }
+        )
+
+    def get_wildfire_area_list(self):
+        return self.get_list_feed(
+            WILDFIRE,
+            'geo/ows',
+            WildfireAreaSerializer,
+            {
+                "service": "WFS",
+                "version": "1.1.0",
+                "request": "GetFeature",
+                "typeName": "pub%3AWHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_POLYS_SP",
+                "srsName": "EPSG:4326",
+                "outputFormat": "json",
+            }
+        )
+
+    def get_wildfire_location_list(self):
+        return self.get_list_feed(
+            WILDFIRE,
+            'geo/ows',
+            WildfirePointSerializer,
+            {
+                "service": "WFS",
+                "version": "1.1.0",
+                "request": "GetFeature",
+                "typeName": "pub%3AWHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_PNTS_SP",
                 "srsName": "EPSG:4326",
                 "outputFormat": "json",
             }

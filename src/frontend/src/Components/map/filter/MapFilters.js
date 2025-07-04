@@ -67,6 +67,7 @@ export default function MapFilters(props) {
   const [weather, setWeather] = useState(mapContext.visible_layers.weather);
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
   const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
+  const [wildfires, setWildfires] = useState(mapContext.visible_layers.wildfires);
 
   const closeSidePanel = () => {
     const closeBtn = document.querySelector('.close-panel');
@@ -201,6 +202,11 @@ export default function MapFilters(props) {
         setLayerVisibility('largeRestStops', !largeRestStops);
         setLargeRestStops(!largeRestStops);
         updateUrl("restStop", "largeRestStop");
+        break;
+      case 'wildfires':
+        trackEvent('click', 'map', 'Toggle wildfires layer');
+        setLayerVisibility('wildfires', !wildfires);
+        setWildfires(!wildfires);
         break;
     }
 
@@ -404,6 +410,29 @@ export default function MapFilters(props) {
                 </label>
 
                 {loadingLayers && loadingLayers.weathers &&
+                  <Spinner animation="border" role="status" />
+                }
+              </div>
+
+              <div className={'filter-item filter-item--wildfire' + (wildfires ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.wildfires) ? ' loading' : '')}>
+                <input
+                  type="checkbox"
+                  name="wildfires"
+                  id="filter--wildfires"
+                  onChange={e => filterHandler('wildfires', e)}
+                  defaultChecked={mapContext.visible_layers.wildfires}
+                  disabled={disableFeatures} />
+
+                <label className="filter-item__button" htmlFor="filter--wildfires">
+                  <span className="filter-item__button__icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M13.4609 5.54688C13.5781 5.59375 13.6719 5.6875 13.6953 5.82813L14.1641 8.33594L16.6719 8.80469C16.8125 8.82813 16.9062 8.92188 16.9531 9.03906C17 9.15625 17 9.29688 16.9297 9.39063L16.4609 10.0703C16.2734 10.0234 16.0625 10 15.875 10C15.1016 10 14.3984 10.3516 13.9297 10.8672C13.625 9.53125 12.4297 8.5 11 8.5C9.33594 8.5 8 9.85938 8 11.5C8 13.1641 9.33594 14.5 11 14.5C11.2812 14.5 11.5625 14.4766 11.8203 14.3828C12.1016 15.2969 12.9219 15.9766 13.9062 16L13.6953 17.1953C13.6719 17.3359 13.5781 17.4297 13.4609 17.4766C13.3437 17.5234 13.2031 17.5234 13.1094 17.4531L11 15.9766L8.86719 17.4531C8.77344 17.5234 8.63281 17.5234 8.51562 17.4766C8.39844 17.4297 8.30469 17.3359 8.28125 17.1953L7.83594 14.6641L5.30469 14.2188C5.16406 14.1953 5.07031 14.1016 5.02344 13.9844C4.97656 13.8672 4.97656 13.7266 5.04687 13.6328L6.52344 11.5L5.04687 9.39062C4.97656 9.29688 4.97656 9.15625 5.02344 9.03906C5.07031 8.92188 5.16406 8.82812 5.30469 8.80469L7.83594 8.33594L8.28125 5.82812C8.30469 5.6875 8.39844 5.59375 8.51562 5.54688C8.63281 5.5 8.77344 5.5 8.86719 5.57031L11 7.04688L13.1094 5.57031C13.2031 5.5 13.3438 5.5 13.4609 5.54688ZM13.25 11.5C13.25 11.5469 13.2266 11.5938 13.2266 11.6406C12.4062 11.9453 11.7969 12.7188 11.75 13.6328C11.5156 13.7266 11.2578 13.75 10.9766 13.75C9.73437 13.75 8.72656 12.7422 8.72656 11.5C8.72656 10.2578 9.73438 9.25 10.9766 9.25C12.2188 9.25 13.2266 10.2578 13.2266 11.5H13.25ZM14 15.25C13.1562 15.25 12.5 14.5938 12.5 13.75C12.5 12.9297 13.1562 12.25 14 12.25H14.0234C14.2109 11.4063 14.9609 10.75 15.875 10.75C16.6953 10.75 17.375 11.2891 17.6328 12.0156C17.8438 11.9453 18.0547 11.875 18.3125 11.875C19.2266 11.875 20 12.6484 20 13.5625C20 14.5 19.2266 15.25 18.3125 15.25H14Z" fill="#474543"/>
+                    </svg>
+                  </span>
+                  Wildfires
+                </label>
+
+                {loadingLayers && loadingLayers.wildfires &&
                   <Spinner animation="border" role="status" />
                 }
               </div>

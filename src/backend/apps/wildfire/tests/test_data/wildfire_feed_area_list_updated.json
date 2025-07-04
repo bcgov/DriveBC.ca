@@ -1,0 +1,97 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_POLYS_SP.C50627",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-124.4613, 52.04083],
+            [-124.4619, 52.04068],
+            [-124.4625, 52.04055],
+            [-124.46308, 52.04041],
+            [-124.46364, 52.04024],
+            [-124.4613, 52.04083]
+          ]
+        ]
+      },
+      "geometry_name": "SHAPE",
+      "properties": {
+        "FIRE_NUMBER": "C50627",
+        "VERSION_NUMBER": 2025062001,
+        "FIRE_YEAR": 2025,
+        "FIRE_SIZE_HECTARES": 2244.5,
+        "SOURCE": "Non-corrected airborne GPS",
+        "TRACK_DATE": "2025-06-20Z",
+        "LOAD_DATE": "2025-06-20Z",
+        "FIRE_STATUS": "Out",
+        "FIRE_URL": "https://wildfiresituation.nrs.gov.bc.ca/incidents?fireYear=2025&incidentNumber=C50627",
+        "FEATURE_CODE": "JA70003000",
+        "FEATURE_AREA_SQM": 22445332.3082,
+        "FEATURE_LENGTH_M": 27766.0552,
+        "OBJECTID": 18460637,
+        "SE_ANNO_CAD_DATA": null
+      },
+      "bbox": [-124.50991, 51.98042, -124.41207, 52.0411]
+    },
+        {
+      "type": "Feature",
+      "id": "WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_POLYS_SP.G70422",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [-120.25528, 55.17328],
+              [-120.25429, 55.17298],
+              [-120.25319, 55.17299],
+              [-120.25169, 55.17252],
+              [-120.25115, 55.17193],
+              [-120.25528, 55.17328]
+            ]
+          ],
+          [
+            [
+              [-120.0636, 55.31285],
+              [-120.0635, 55.31323],
+              [-120.06355, 55.31341],
+              [-120.06383, 55.31345],
+              [-120.06422, 55.31337],
+              [-120.0636, 55.31285]
+            ]
+          ],
+          [
+            [
+              [-120.04361, 55.32151],
+              [-120.04371, 55.32162],
+              [-120.04383, 55.32165],
+              [-120.04402, 55.3214],
+              [-120.04439, 55.32125],
+              [-120.04361, 55.32151]
+            ]
+          ]
+        ]
+      },
+      "geometry_name": "SHAPE",
+      "properties": {
+        "FIRE_NUMBER": "G70422",
+        "VERSION_NUMBER": 2025070301,
+        "FIRE_YEAR": 2025,
+        "FIRE_SIZE_HECTARES": 26276.8,
+        "SOURCE": "Non-corrected airborne GPS",
+        "TRACK_DATE": "2025-07-03Z",
+        "LOAD_DATE": "2025-07-03Z",
+        "FIRE_STATUS": "Being Held",
+        "FIRE_URL": "https://wildfiresituation.nrs.gov.bc.ca/incidents?fireYear=2025&incidentNumber=G70422",
+        "FEATURE_CODE": "JA70003000",
+        "FEATURE_AREA_SQM": 262767703.1288,
+        "FEATURE_LENGTH_M": 138160.5866,
+        "OBJECTID": 18460661,
+        "SE_ANNO_CAD_DATA": null
+      },
+      "bbox": [-120.29439, 55.15204, -119.88462, 55.32745]
+    }
+  ]
+}

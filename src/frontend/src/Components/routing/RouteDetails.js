@@ -23,10 +23,12 @@ import {
   faPencil,
   faChevronRight
 } from '@fortawesome/pro-solid-svg-icons';
-import { faStar as faStarOutline,
+import {
+  faStar as faStarOutline,
   faCheck,
   faMinusCircle,
- } from '@fortawesome/pro-regular-svg-icons';
+  faFire
+} from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -76,6 +78,7 @@ export default function RouteDetails(props) {
       cameras: { list: cameras },
       events: { list: events },
       ferries: { list: ferries },
+      wildfires: { list: wildfires },
     },
     advisories: { list: advisories },
     routes: { searchLocationFrom, searchLocationTo, selectedRoute },
@@ -88,6 +91,7 @@ export default function RouteDetails(props) {
           cameras: state.feeds.cameras,
           events: state.feeds.events,
           ferries: state.feeds.ferries,
+          wildfires: state.feeds.wildfires,
         },
         advisories: state.cms.advisories,
         routes: state.routes,
@@ -99,6 +103,7 @@ export default function RouteDetails(props) {
   // States
   const [eventCount, setEventCount] = useState();
   const [ferryCount, setFerryCount] = useState();
+  const [wildfireCount, setWildfireCount] = useState();
   const [advisoryCount, setAdvisoryCount] = useState();
   const [nickName, setNickName] = useState('');
   const [showSavePopup, setShowSavePopup] = useState(false);
@@ -158,6 +163,9 @@ export default function RouteDetails(props) {
       // Data to be updated via dispatch
       } else if (action === 'setFilteredFavCams') {
         setFilteredFavCams(filteredData);
+
+      } else if (action === 'setWildfireCount') {
+        setWildfireCount(filteredData.length);
 
       // Data to be updated via dispatch
       } else {
@@ -247,6 +255,16 @@ export default function RouteDetails(props) {
       });
     }
   }, [ferries]);
+
+  useEffect(() => {
+    if (wildfires) {
+      workerRef.current.postMessage({
+        data: wildfires,
+        route: route,
+        action: 'setWildfireCount'
+      });
+    }
+  }, [wildfires]);
 
   useEffect(() => {
     if (showSavePopup) {
@@ -593,6 +611,19 @@ export default function RouteDetails(props) {
         </div>
 
         <div className="route-items">
+          {!!wildfireCount &&
+            <div className="route-item route-item--wildfires">
+              <span className="route-item__count">
+                {wildfireCount}
+              </span>
+              <span className="route-item__icon">
+                <FontAwesomeIcon icon={faFire} alt="Wildfires"/>
+              </span>
+              <span className="route-item__name">{wildfireCount !== 1 ? 'Wildfires' : 'Wildfire'}</span>
+            </div>
+          }
+          {(wildfireCount === undefined || wildfireCount === null) && <Skeleton height={32}/>}
+
           {(eventCount && mapContext.visible_layers.majorEvents) &&
             <div className="route-item route-item--major">
               <span className="route-item__count">
@@ -663,10 +694,10 @@ export default function RouteDetails(props) {
               <span className="route-item__icon">
                 <FontAwesomeIcon icon={faFerry} alt="Ferries"/>
               </span>
-              <span className="route-item__name">{ferryCount != 1 ? 'Ferries' : 'Ferry'}</span>
+              <span className="route-item__name">{ferryCount !== 1 ? 'Ferries' : 'Ferry'}</span>
             </div>
           }
-          {(!eventCount || ferryCount === null) && <Skeleton height={64}/>}
+          {(ferryCount === undefined || ferryCount === null) && <Skeleton height={32}/>}
 
           {isPanel &&
             <Button

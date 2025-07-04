@@ -9,6 +9,7 @@ import { getRestStopsLayer, updateRestStopsLayer } from './restStopsLayer.js';
 import { getLargeRestStopsLayer, updateLargeRestStopsLayer } from './largeRestStopsLayer.js';
 import { getRouteLayer } from './routeLayer.js';
 import { getBorderCrossingsLayer, updateBorderCrossingsLayer } from "./borderCrossingsLayer";
+import { getWildfiresLayer, updateWildfiresLayer } from "./wildfiresLayer";
 
 const layerFuncMap = {
   advisoriesLayer: getAdvisoriesLayer,
@@ -21,6 +22,7 @@ const layerFuncMap = {
   largeRestStops: getLargeRestStopsLayer,
   routeLayer: getRouteLayer,
   borderCrossings: getBorderCrossingsLayer,
+  wildfires: getWildfiresLayer
 }
 
 const layerUpdateFuncMap = {
@@ -33,6 +35,7 @@ const layerUpdateFuncMap = {
   restStops: updateRestStopsLayer,
   largeRestStops: updateLargeRestStopsLayer,
   borderCrossings: updateBorderCrossingsLayer,
+  wildfires: updateWildfiresLayer
 }
 
 export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filteredDataList, zIndex, referenceData, updateReferenceFeature, setLoadingLayers) => {
@@ -91,6 +94,9 @@ export const enableReferencedLayer = (referenceData, mapContext) => {
       mapContext.visible_layers['restStops'] = false;
       mapContext.visible_layers['largeRestStops'] = true;
     }
+
+  } else if (featureType === 'wildfire') {
+    mapContext.visible_layers['wildfire'] = true;
 
   } else {
     const featureDisplayCategory = referenceData.display_category;

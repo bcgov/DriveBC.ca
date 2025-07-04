@@ -16,7 +16,9 @@ import {
   routeStyles,
   borderCrossingStyles,
   regionalWarningStyles,
-  advisoryStyles
+  advisoryStyles,
+  wildfireCentroidStyles,
+  wildfireAreaStyles,
 } from '../../data/featureStyleDefinitions.js';
 
 // Click states
@@ -132,6 +134,19 @@ export const resetClickedStates = (
         clickedFeatureRef.current.setStyle(advisoryStyles['static']);
         clickedFeatureRef.current.set('clicked', false);
         updateClickedFeature(null);
+        break;
+      case 'wildfire':
+        {
+          const isCentroid = clickedFeatureRef.current.getGeometry().getType() === 'Point';
+          clickedFeatureRef.current.setStyle((isCentroid ? wildfireCentroidStyles['static'] : wildfireAreaStyles['static']));
+          clickedFeatureRef.current.set('clicked', false);
+
+          // Alt feature
+          clickedFeatureRef.current.get('altFeature').setStyle((isCentroid ? wildfireAreaStyles['static'] : wildfireCentroidStyles['static']));
+          clickedFeatureRef.current.get('altFeature').set('clicked', false);
+
+          updateClickedFeature(null);
+      }
         break;
     }
   }
@@ -371,6 +386,33 @@ export const advisoryClickHandler = (
   updateClickedFeature(feature);
 };
 
+const wildfireClickHandler = (
+  feature,
+  clickedFeatureRef,
+  updateClickedFeature,
+  isCamDetail,
+) => {
+  // reset previous clicked feature
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+    isCamDetail,
+  );
+
+  const isCentroidFeature = feature.getGeometry().getType() === 'Point';
+
+  feature.setStyle((isCentroidFeature ? wildfireCentroidStyles['active'] : wildfireAreaStyles['active']));
+  feature.set('clicked', true);
+
+  // alt feature
+  feature.get('altFeature').setStyle((isCentroidFeature ? wildfireAreaStyles['active'] : wildfireCentroidStyles['active']));
+  feature.get('altFeature').set('clicked', true);
+
+  updateClickedFeature(feature);
+};
+
+
 export const pointerClickHandler = (
   features,
   clickedFeatureRef,
@@ -540,6 +582,20 @@ export const pointerClickHandler = (
           'selected advisory',
         );
         advisoryClickHandler(
+          clickedFeature,
+          clickedFeatureRef,
+          updateClickedFeature,
+        );
+        return;
+
+      case 'wildfire':
+        trackEvent(
+          'click',
+          'map',
+          'wildfire',
+          'selected wildfire',
+        );
+        wildfireClickHandler(
           clickedFeature,
           clickedFeatureRef,
           updateClickedFeature,

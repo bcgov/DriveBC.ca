@@ -10,6 +10,7 @@ CURRENT_WEATHER = "current_weather"
 CURRENT_WEATHER_STATIONS = "current_weather_stations"
 REST_STOP = "rest_stop"
 DISTRICT_BOUNDARIES = "district_boundaries"
+WILDFIRE = "wildfire"
 
 DIRECTIONS = {
   'in both directions': 'BOTH',

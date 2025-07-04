@@ -113,6 +113,7 @@ export default function DriveBCMap(props) {
       hef: { list: hef, filteredList: filteredHef },
       restStops: { list: restStops, filteredList: filteredRestStops },
       borderCrossings: { list: borderCrossings, filteredList: filteredBorderCrossings },
+      wildfires: { list: wildfires, filteredList: filteredWildfires },
     },
     advisories: { list: advisories, filteredList: filteredAdvisories },
     routes: { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes },
@@ -130,6 +131,7 @@ export default function DriveBCMap(props) {
           hef: state.feeds.hef,
           restStops: state.feeds.restStops,
           borderCrossings: state.feeds.borderCrossings,
+          wildfires: state.feeds.wildfires,
         },
         advisories: state.cms.advisories,
         routes: state.routes,
@@ -702,6 +704,17 @@ export default function DriveBCMap(props) {
     }
   }, [borderCrossings]);
 
+  // Wildfires layer
+  useEffect(() => {
+    if (!isCamDetail) {
+      loadLayer(
+        mapLayers, mapRef, mapContext,
+        'wildfires', wildfires, filteredWildfires, 72,
+        referenceData, updateReferenceFeature, setLoadingLayers
+      );
+    }
+  }, [wildfires]);
+
   // Advisories layer
   useEffect(() => {
     const featuresDict = loadLayer(
@@ -989,7 +1002,7 @@ export default function DriveBCMap(props) {
         <ServerErrorPopup marginPushed={!!openPanel} />
       }
 
-      {staleLinkMessage && 
+      {staleLinkMessage &&
         <StaleLinkErrorPopup marginPushed={!!openPanel} message={staleLinkMessage}/>
       }
     </div>

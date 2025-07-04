@@ -8,7 +8,8 @@ import {
   updateRestStops,
   updateWeather,
   updateBorderCrossings,
-  updateAreas
+  updateAreas,
+  updateWildfires
 } from './feedsSlice';
 import { updateMapState } from './mapSlice';
 import {
@@ -39,6 +40,7 @@ export {
   updateRestStops,
   updateBorderCrossings,
   updateAreas,
+  updateWildfires,
 
   // mapSlice
   updateMapState,
