@@ -252,7 +252,10 @@ export default function EventsListPage() {
 
     // Area Filter
     if (filterContext.areaFilter) {
-      res = res.filter((e) => e.area === filterContext.areaFilter.id);
+      res = res.filter((e) => {
+        if (!e.area) return false; // Skip events without area data
+        return e.area.includes(filterContext.areaFilter.id);
+      });
     }
 
     // Reset sorting key and sort

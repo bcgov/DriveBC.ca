@@ -24,7 +24,7 @@ class Event(BaseModel):
     route_at = models.CharField(max_length=128)
     route_from = models.CharField(max_length=128)
     route_to = models.CharField(max_length=128, blank=True)
-    area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=False)
+    area = models.ManyToManyField(Area, null=True, blank=False)
 
     # CARS API info
     highway_segment_names = models.CharField(max_length=256, blank=True, default='')

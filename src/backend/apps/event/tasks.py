@@ -20,7 +20,6 @@ from apps.shared.enums import CacheKey
 from apps.shared.helpers import attach_default_email_images, attach_image_to_email
 from apps.shared.models import Area
 from django.conf import settings
-from django.contrib.gis.db.models.functions import Centroid
 from django.contrib.gis.geos import LineString, Point
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
@@ -103,6 +102,11 @@ def populate_event_from_data(new_event_data):
                 event.refresh_from_db()
                 event.save()
 
+                # Update intersecting areas only when location changes
+                if field == 'location':
+                    intersecting_areas = Area.objects.filter(geometry__intersects=event.location)
+                    event.area.set(intersecting_areas)
+
                 return True
 
         # Update future events display category
@@ -117,7 +121,11 @@ def populate_event_from_data(new_event_data):
         event = Event(id=event_id)
         event_serializer = EventInternalSerializer(event, data=new_event_data)
         event_serializer.is_valid(raise_exception=True)
-        event_serializer.save()
+        saved_event = event_serializer.save()
+
+        # Update intersecting areas on create
+        intersecting_areas = Area.objects.filter(geometry__intersects=event.location)
+        saved_event.area.set(intersecting_areas)
         return True
 
 
@@ -209,9 +217,6 @@ def populate_all_event_data():
 
     # Send notifications
     send_event_notifications(updated_event_ids)
-
-    # Update area relations
-    update_event_area_relations()
 
 
 def get_image_type_file_name(event):
@@ -371,7 +376,6 @@ def send_route_event_notifications(saved_route, updated_event_ids):
 
 
 def update_event_area_relations():
-    for area in Area.objects.all():
-        Event.objects.annotate(location_centroid=Centroid('location')).filter(
-            location_centroid__within=area.geometry
-        ).update(area=area)
+    for event in Event.objects.all():
+        intersecting_areas = Area.objects.filter(geometry__intersects=event.location)
+        event.area.set(intersecting_areas)

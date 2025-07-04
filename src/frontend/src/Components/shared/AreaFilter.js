@@ -103,7 +103,7 @@ export default function AreaFilter(props) {
         <div className="area-options">
           {searchedAreas.map(areaObj =>
             <div
-              key={areaObj.key}
+              key={areaObj.id}
               className="area-row"
               tabIndex={0}
               onClick={() => {
