@@ -7,6 +7,7 @@ import { loadFerries } from './ferries';
 import { loadRegionalWeather } from './regionalWeathers';
 import { loadHef } from './hef';
 import { loadRestStops } from './restStops';
+import { loadWildfires } from './wildfires';
 
 export {
   loadAdvisories,
@@ -17,5 +18,6 @@ export {
   loadCurrentWeather,
   loadRegionalWeather,
   loadHef,
-  loadRestStops
+  loadRestStops,
+  loadWildfires
 }

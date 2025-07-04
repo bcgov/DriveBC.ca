@@ -30,6 +30,7 @@ export default function MapWrapper(props) {
       hef: { list: hef },
       restStops: { list: restStops },
       borderCrossings: { list: borderCrossings },
+      wildfires: { list: wildfires },
     },
     advisories: { list: advisories },
     routes: { selectedRoute },
@@ -46,6 +47,7 @@ export default function MapWrapper(props) {
           hef: state.feeds.hef,
           restStops: state.feeds.restStops,
           borderCrossings: state.feeds.borderCrossings,
+          wildfires: state.feeds.wildfires,
         },
         advisories: state.cms.advisories,
         routes: state.routes,
@@ -69,7 +71,8 @@ export default function MapWrapper(props) {
       events: hasVisibleEvents(),
       ferries: mapContext.visible_layers.inlandFerries,
       weathers: mapContext.visible_layers.weather,
-      restStops: mapContext.visible_layers.restStops
+      restStops: mapContext.visible_layers.restStops,
+      wildfires: mapContext.visible_layers.wildfires
     };
   };
   const [loadingLayers, setLoadingLayers] = useState(getInitialLoadingLayers());
@@ -88,6 +91,7 @@ export default function MapWrapper(props) {
   const restStopsRef = useRef(restStops);
   const borderCrossingsRef = useRef(borderCrossings);
   const advisoriesRef = useRef(advisories);
+  const wildfiresRef = useRef(advisories);
 
   // Error handling
   const displayError = (error) => {
@@ -149,6 +153,10 @@ export default function MapWrapper(props) {
     advisoriesRef.current = advisories;
   }, [advisories]);
 
+  useEffect(() => {
+    wildfiresRef.current = wildfires;
+  }, [wildfires]);
+
   const resetWorker = () => {
     // Terminate the current worker if it exists
     if (workerRef.current) {
@@ -187,6 +195,7 @@ export default function MapWrapper(props) {
     const reloadRestStops = !restStopsRef.current ||
       (!isInitialLoad.current && mapContext.visible_layers.restStops) ||
       (!isInitialLoad.current && mapContext.visible_layers.largeRestStops);
+    const reloadWildfires = !wildfiresRef.current || (!isInitialLoad.current && mapContext.visible_layers.wildfires);
 
     // Non-toggleable map layers
     const reloadAdvisories = !advisoriesRef.current || !isInitialLoad.current;
@@ -197,7 +206,8 @@ export default function MapWrapper(props) {
       events: reloadEvents,
       ferries: reloadFerries,
       weathers: reloadLocalWeathers || reloadRegionalWeathers,
-      restStops: reloadRestStops
+      restStops: reloadRestStops,
+      wildfires: reloadWildfires
     });
 
     dataLoaders.loadCameras(routeData, reloadCameras ? null : camerasRef.current, dispatch, displayError, workerRef.current);
@@ -209,6 +219,7 @@ export default function MapWrapper(props) {
     dataLoaders.loadRestStops(routeData, reloadRestStops ? null : restStopsRef.current, dispatch, displayError, workerRef.current);
     dataLoaders.loadAdvisories(routeData, reloadAdvisories ? null : advisoriesRef.current, dispatch, displayError, workerRef.current);
     dataLoaders.loadBorderCrossings(routeData, reloadBorderCrossings ? null : borderCrossingsRef.current, dispatch, displayError, workerRef.current);
+    dataLoaders.loadWildfires(routeData, reloadWildfires ? null : wildfiresRef.current, dispatch, displayError, workerRef.current);
 
     isInitialLoad.current = false;
   };

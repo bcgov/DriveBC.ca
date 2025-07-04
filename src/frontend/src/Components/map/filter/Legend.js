@@ -16,6 +16,7 @@ import futureEventsStaticIcon from '../../../images/mapIcons/future-event-minor-
 // Conditions and features
 import cameraIconStatic from '../../../images/mapIcons/camera-static.png';
 import roadConditionsStaticIcon from '../../../images/mapIcons/road-condition-static.png';
+import wildfiresStaticIcon from '../../../images/mapIcons/wildfire/wildfires-static.png';
 import restStopIconStatic from '../../../images/mapIcons/restarea-open-static.png';
 import restStopIconStaticClosed from '../../../images/mapIcons/restarea-closed-static.png';
 import borderIconStatic from '../../../images/mapIcons/border-static.png';
@@ -154,6 +155,13 @@ export default function Legend() {
           'Road conditions',
           'States of the road that may impact drivability.',
           'minor'
+        )}
+
+        {getLegendItem(
+          wildfiresStaticIcon,
+          'Wildfires',
+          'Active forest fires that may impact drivability and are within 50 km of a road or population area.',
+          'major'
         )}
 
         {getLegendItem(

@@ -14,6 +14,7 @@ urlpatterns = [
     path("reststops/", include("apps.rest.urls")),
     path("bordercrossings/", include("apps.border.urls")),
     path("areas/", include("apps.shared.urls")),
+    path("wildfires/", include("apps.wildfire.urls")),
 
     # CMS
     path("wagtail/", wagtail_api_router.urls),

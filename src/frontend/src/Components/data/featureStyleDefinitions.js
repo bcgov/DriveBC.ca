@@ -38,6 +38,13 @@ import borderIconActive from '../../images/mapIcons/border-active.png';
 import borderIconHover from '../../images/mapIcons/border-hover.png';
 import borderIconStatic from '../../images/mapIcons/border-static.png';
 
+// Wildfires
+import wildfireIconActive from '../../images/mapIcons/wildfire/wildfires-active.png';
+import wildfireIconHover from '../../images/mapIcons/wildfire/wildfires-hover.png';
+import wildfireIconStatic from '../../images/mapIcons/wildfire/wildfires-static.png';
+import wildfireHoverUnread from '../../images/mapIcons/wildfire/wildfires-hover-unread.png';
+import wildfireStaticUnread from '../../images/mapIcons/wildfire/wildfires-static-unread.png';
+
 // Rest Stops
 import restStopIconActive from '../../images/mapIcons/restarea-open-active.png';
 import restStopIconHover from '../../images/mapIcons/restarea-open-hover.png';
@@ -1132,4 +1139,75 @@ export const borderCrossingStyles = {
       src: borderIconActive,
     }),
   }),
+};
+
+
+// Wildfire styles
+export const wildfireAreaStyles = {
+  static: new Style({
+    stroke: new Stroke({
+      color: 'rgba(242, 76, 39)',
+      width: 2,
+      lineDash: [5,5]
+    }),
+    fill: new Fill({
+      color: 'rgba(252, 214, 192, 0.25)',
+    }),
+  }),
+  hover: new Style({
+    stroke: new Stroke({
+      color: 'rgba(248, 165, 147)',
+      width: 2,
+      lineDash: [5,5]
+    }),
+    fill: new Fill({
+      color: 'rgba(252, 214, 192, 0.65)',
+    }),
+  }),
+  active: new Style({
+    stroke: new Stroke({
+      color: 'rgba(242, 76, 39)',
+      width: 2,
+      lineDash: [5,5]
+    }),
+    fill: new Fill({
+      color: 'rgba(252, 214, 192, 0.65)',
+    }),
+  })
+};
+
+export const wildfireCentroidStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: wildfireIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: wildfireIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: wildfireIconActive,
+    }),
+  }),
+};
+
+export const wildfireUnreadStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: wildfireStaticUnread,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: wildfireHoverUnread,
+    }),
+  })
 };

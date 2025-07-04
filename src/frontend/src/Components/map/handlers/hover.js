@@ -10,7 +10,7 @@ import {
   routeStyles,
   borderCrossingStyles,
   regionalWarningStyles,
-  advisoryStyles
+  advisoryStyles, wildfireCentroidStyles, wildfireAreaStyles
 } from '../../data/featureStyleDefinitions.js';
 import {
   setEventStyle
@@ -95,6 +95,13 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
           break;
         case 'advisory':
           hoveredFeature.setStyle(advisoryStyles['static']);
+          break;
+        case 'wildfire':
+          {
+            const isCentroid = hoveredFeature.getGeometry().getType() === 'Point';
+            hoveredFeature.setStyle((isCentroid ? wildfireCentroidStyles['static'] : wildfireAreaStyles['static']));
+            hoveredFeature.get('altFeature').setStyle((isCentroid ? wildfireAreaStyles['static'] : wildfireCentroidStyles['static']));
+          }
           break;
       }
     }
@@ -194,6 +201,13 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
       case 'advisory':
         if (!targetFeature.getProperties().clicked) {
           targetFeature.setStyle(advisoryStyles['hover']);
+        }
+        return;
+      case 'wildfire':
+        if (!targetFeature.get('clicked')) {
+          const isCentroid = targetFeature.getGeometry().getType() === 'Point';
+          targetFeature.setStyle((isCentroid ? wildfireCentroidStyles['hover'] : wildfireAreaStyles['hover']));
+          targetFeature.get('altFeature').setStyle((isCentroid ? wildfireAreaStyles['hover'] : wildfireCentroidStyles['hover']));
         }
         return;
     }

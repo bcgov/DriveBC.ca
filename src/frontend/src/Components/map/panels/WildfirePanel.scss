@@ -1,0 +1,43 @@
+@import "../../../styles/variables";
+
+.popup {
+  // Wildfire panel
+  &--wildfire {
+    .popup__title {
+      background-color: $Blue10;
+      border-top: 4px solid $BC-Blue;
+
+      &__icon {
+        background: $BC-Blue;
+      }
+
+      .name {
+        color: $BC-Blue;
+      }
+    }
+
+    .popup__content {
+      &__title {
+        margin-bottom: 24px;
+
+        .name {
+          color: $BC-Blue;
+          font-size: 2rem;
+          margin-bottom: 0;
+        }
+      }
+
+      &__footer {
+        margin-top: 32px;
+        margin-bottom: 32px;
+        color: $Grey80;
+        font-size: 0.875rem;
+        text-align: center;
+
+        a {
+          margin-left: 0.5ch;
+        }
+      }
+    }
+  }
+}

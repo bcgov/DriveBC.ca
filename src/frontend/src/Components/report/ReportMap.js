@@ -220,8 +220,6 @@ export function ReportMap(props) {
 
   /* My location */
   const toggleMyLocation = (mapRef, mapView) => {
-    const start = performance.now();
-
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         position => {
@@ -255,11 +253,7 @@ export function ReportMap(props) {
             setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
           }
 
-          const end = performance.now();
-          const durationMs = end - start;
-          console.log(`getCurrentPosition took ${durationMs} ms`);
-        },
-        error => {
+        }, error => {
           if (error.code === error.PERMISSION_DENIED) {
             // The user has blocked location access
             console.error('Location access denied by user.', error);

@@ -1,0 +1,84 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_PNTS_SP.C50627",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-124.49688, 51.98847]
+      },
+      "geometry_name": "SHAPE",
+      "properties": {
+        "FIRE_NUMBER": "C50627",
+        "FIRE_YEAR": 2025,
+        "RESPONSE_TYPE_DESC": "Full",
+        "IGNITION_DATE": "2025-06-15Z",
+        "FIRE_OUT_DATE": null,
+        "FIRE_STATUS": "Out",
+        "FIRE_CAUSE": "Lightning",
+        "FIRE_CENTRE": 7,
+        "ZONE": 5,
+        "FIRE_ID": 627,
+        "FIRE_TYPE": "Fire",
+        "INCIDENT_NAME": "Martin Lake",
+        "GEOGRAPHIC_DESCRIPTION": "3.5km NW of Tatla Lake",
+        "LATITUDE": 51.9885,
+        "LONGITUDE": -124.4969,
+        "CURRENT_SIZE": 2258,
+        "FIRE_URL": "https://wildfiresituation.nrs.gov.bc.ca/incidents?fireYear=2025&incidentNumber=C50627",
+        "FIRE_OF_NOTE_IND": "N",
+        "WAS_FIRE_OF_NOTE_IND": "N",
+        "FEATURE_CODE": "JA70003000",
+        "OBJECTID": 44398000,
+        "SE_ANNO_CAD_DATA": null
+      },
+      "bbox": [-124.49688, 51.98847, -124.49688, 51.98847]
+    },
+    {
+      "type": "Feature",
+      "id": "WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_PNTS_SP.G70422",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-120.27537, 55.17803]
+      },
+      "geometry_name": "SHAPE",
+      "properties": {
+        "FIRE_NUMBER": "G70422",
+        "FIRE_YEAR": 2025,
+        "RESPONSE_TYPE_DESC": "Full",
+        "IGNITION_DATE": "2025-05-28Z",
+        "FIRE_OUT_DATE": null,
+        "FIRE_STATUS": "Being Held",
+        "FIRE_CAUSE": "Lightning",
+        "FIRE_CENTRE": 4,
+        "ZONE": 7,
+        "FIRE_ID": 422,
+        "FIRE_TYPE": "Fire",
+        "INCIDENT_NAME": "Kiskatinaw River",
+        "GEOGRAPHIC_DESCRIPTION": "Kiskatinaw River",
+        "LATITUDE": 55.178,
+        "LONGITUDE": -120.2754,
+        "CURRENT_SIZE": 26277,
+        "FIRE_URL": "https://wildfiresituation.nrs.gov.bc.ca/incidents?fireYear=2025&incidentNumber=G70422",
+        "FIRE_OF_NOTE_IND": "N",
+        "WAS_FIRE_OF_NOTE_IND": "Y",
+        "FEATURE_CODE": "JA70003000",
+        "OBJECTID": 44397656,
+        "SE_ANNO_CAD_DATA": null
+      },
+      "bbox": [-120.27537, 55.17803, -120.27537, 55.17803]
+    }
+  ],
+  "totalFeatures": 509,
+  "numberMatched": 509,
+  "numberReturned": 509,
+  "timeStamp": "2025-07-07T20:35:33.747Z",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:EPSG::4326"
+    }
+  },
+  "bbox": [-133.7375, 48.33292, -115.11967, 59.87637]
+}

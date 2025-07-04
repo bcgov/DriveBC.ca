@@ -17,6 +17,7 @@ import BorderCrossingPanel from './BorderCrossingPanel';
 // Styling
 import './index.scss';
 import Feature from "ol/Feature";
+import WildfirePanel from "./WildfirePanel";
 
 export const renderPanel = (
   clickedFeature,
@@ -59,6 +60,8 @@ export const renderPanel = (
         return <BorderCrossingPanel borderCrossing={clickedFeature.getProperties()} showRouteObjs={showRouteObjs} />;
       case 'advisory':
         return <AdvisoriesPanel advisories={[clickedFeature.get('data')]} showRouteObjs={showRouteObjs} />;
+      case 'wildfire':
+        return <WildfirePanel wildfire={clickedFeature.get('data')} showRouteObjs={showRouteObjs} />;
     }
 
   // Render searched routes panel if no feature is clicked

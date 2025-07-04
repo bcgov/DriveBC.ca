@@ -17,7 +17,6 @@ repos:
     hooks:
     -   id: flake8
         additional_dependencies:
-        -   flake8-bugbear==22.7.1
         -   flake8-django==1.1.2
         -   flake8-pytest-style==1.6.0
         -   flake8-typing-imports==1.12.0

@@ -164,6 +164,7 @@ function App() {
         restStops: false,
         largeRestStops: false,
         chainUps: false,
+        wildfires: false,
       },
     };
   }
