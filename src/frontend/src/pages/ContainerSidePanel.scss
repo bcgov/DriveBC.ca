@@ -121,6 +121,12 @@
 
   &__right {
     flex: 1 1 auto;
+    
+    .sticky-sentinel {
+      height: 1px;
+      background: none;
+      margin: -1px;
+    }
 
     .sticky-filters {
       position: sticky;
@@ -128,6 +134,7 @@
       top: 0;
       padding: 20px 0;
       background: $White;
+      will-change: transform;
 
       &[stuck] {
         @media (max-width: 575px) {
@@ -141,8 +148,6 @@
       @media (max-width: 575px) {
         padding: 0;
         z-index: 20;
-        border-radius: 8px;
-        border: 1px solid $Input-border;
 
         .controls-container {
           .filters-text {
