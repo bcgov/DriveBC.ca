@@ -531,26 +531,40 @@ export default function EventsListPage() {
     return res;
   }
 
-  // Handle sticky filters on mobile
+  // Handle sticky filters tab on mobile
   useEffect(() => {
-    const element = document.querySelector('.sticky-filters');
-    if (!element) return;
+    const sentinel = document.querySelector('.sticky-sentinel');
+    const target = document.querySelector('.sticky-filters');
+    if (!sentinel || !target) return;
 
-    const handleScroll = () => {
-      const rect = element.getBoundingClientRect();
-      // If the element's top is less than or equal to headerHeight, it's stuck
-      const stuck = rect.top <= headerHeightContext;
-      element.toggleAttribute('stuck', stuck);
+    let rafId = null;
+
+    const updateStuck = (entry) => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const isStuck = entry.intersectionRatio === 0;
+        console.log('Is stuck?', isStuck, '| Sentinel top:', entry.boundingClientRect.top);
+        console.log('Observer fired at:', entry.boundingClientRect.top);
+        target.toggleAttribute('stuck', isStuck);
+      });
     };
-    
-    window.addEventListener('scroll', handleScroll);
 
-    // Initial check
-    handleScroll();
-    
-      return () => window.removeEventListener('scroll', handleScroll);
-  }, [headerHeightContext]);
+    const observer = new IntersectionObserver(
+      ([entry]) => updateStuck(entry),
+      {
+        root: null,
+        threshold: [0],
+        rootMargin: '-120px 0px 0px 0px',
+      }
+    );
 
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
 
   // Rendering - Main component
   return (
