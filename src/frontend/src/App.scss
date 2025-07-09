@@ -12,6 +12,7 @@
 html,
 body {
     overscroll-behavior-y: none;
+    overflow: hidden;
 }
 
 .divider {
@@ -323,22 +324,33 @@ a[target="_blank"] {
       width: 100%;
     }
   }
-  div[class*='-page'] {
-    .container {
-      @media (min-width: 576px) {
-        max-width: unset;
-        padding: 32px 16px;
-      }
 
-      @media (min-width: 992px) {
-        padding: 44px 64px;
-        max-width: 1828px;
-      }
-    }
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 
-    &.cms-page {
+  > main {
+    height: 100%;
+    overflow-y: auto;
+
+    div[class*='-page'] {
+      // overflow-y: scroll;
       .container {
-        max-width: 1260px;
+        @media (min-width: 576px) {
+          max-width: unset;
+          padding: 32px 16px;
+        }
+
+        @media (min-width: 992px) {
+          padding: 44px 64px;
+          max-width: 1828px;
+        }
+      }
+
+      &.cms-page {
+        .container {
+          max-width: 1260px;
+        }
       }
     }
   }
@@ -346,7 +358,7 @@ a[target="_blank"] {
 
 // advisories and search overlay
 .overlay {
-  position: absolute;
+  position: relative;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -356,6 +368,10 @@ a[target="_blank"] {
   background: white;
   overflow: hidden;
   transition: all 0.2s ease-in-out;
+
+  &.open {
+    height: 100%;
+  }
 
   @media (min-width: 768px) {
     width: 0;
@@ -389,6 +405,7 @@ a[target="_blank"] {
 
   &.filters-overlay {
     &.open {
+      height: 100%;
       .overlay__header {
         // need to update if AB route alts are present
         padding: 1rem 1rem 0;

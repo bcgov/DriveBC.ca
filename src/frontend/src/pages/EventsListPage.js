@@ -103,7 +103,7 @@ export default function EventsListPage() {
   const { cmsContext, setCMSContext } = useContext(CMSContext);
   const { filterContext, setFilterContext } = useContext(FilterContext);
   const { mapContext } = useContext(MapContext);
-  const { headerHeightContext } = useContext(HeaderHeightContext);
+  // const { headerHeightContext } = useContext(HeaderHeightContext);
 
   // States
   const getFilterState = () => {
@@ -603,7 +603,7 @@ export default function EventsListPage() {
 
           <div className="container--sidepanel__right">
             <div className="sticky-sentinel" />
-            <div className="sticky-filters" style={{ top: `${headerHeightContext}px` }}>
+            <div className="sticky-filters">
               <div className="controls-group">
                 <div className="controls-container">
                   <div className="sort">
@@ -772,8 +772,7 @@ export default function EventsListPage() {
       </div>
 
       {smallScreen &&
-        <div className={`overlay filters-overlay ${showAreaFilters ? 'open' : ''}`}
-          style={showAreaFilters ? { minHeight: `calc(100% - ${headerHeightContext}px)`} : null}>
+        <div className={`overlay filters-overlay ${showAreaFilters ? 'open' : ''}`}>
           <button
             className="close-overlay"
             aria-label={`${showAreaFilters ? 'close overlay' : ''}`}
@@ -791,8 +790,7 @@ export default function EventsListPage() {
       }
 
       {smallScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
-        <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}
-             style={openAdvisoriesOverlay ? {minHeight: `calc(100% - ${headerHeightContext}px)`} : null}>
+        <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}>
           <button
             className="close-panel close-overlay"
             aria-label={`${openAdvisoriesOverlay ? 'close overlay' : ''}`}

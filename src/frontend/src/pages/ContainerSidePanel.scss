@@ -20,7 +20,7 @@
 
     @media (min-width: 768px) {
       position: sticky;
-      top: 82px;
+      top: 1rem;
       width: 360px;
       min-width: 360px;
     }
@@ -121,7 +121,7 @@
 
   &__right {
     flex: 1 1 auto;
-    
+
     .sticky-sentinel {
       height: 1px;
       background: none;

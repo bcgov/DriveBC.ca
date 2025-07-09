@@ -19,7 +19,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 
 // Internal imports
-import { CMSContext, HeaderHeightContext } from '../../../App';
+import { CMSContext } from '../../../App';
 import { getAdvisories } from '../../data/advisories.js';
 import { getBulletins } from '../../data/bulletins.js';
 import UserNavigation from "./UserNavigation";
@@ -58,7 +58,7 @@ export default function Header() {
 
   // Context
   const { cmsContext } = useContext(CMSContext);
-  const { setHeaderHeightContext } = useContext(HeaderHeightContext);
+  // const { setHeaderHeightContext } = useContext(HeaderHeightContext);
 
   // States
   const [advisoriesCount, setAdvisoriesCount] = useState();
@@ -107,14 +107,14 @@ export default function Header() {
     loadBulletins();
   }, [cmsContext]);
 
-  useEffect(() => {
-    if (openSearch) {
-      setHeaderHeightContext(smallScreen ? document.querySelector('.location-search').offsetHeight : 58);
-    }
-    else {
-      setHeaderHeightContext(smallScreen ? document.querySelector('.header').offsetHeight : 58);
-    }
-  }, [openSearch, selectedRoute, showSearch]);
+  // useEffect(() => {
+  //   if (openSearch) {
+  //     setHeaderHeightContext(smallScreen ? document.querySelector('.location-search').offsetHeight : 58);
+  //   }
+  //   else {
+  //     setHeaderHeightContext(smallScreen ? document.querySelector('.header').offsetHeight : 58);
+  //   }
+  // }, [openSearch, selectedRoute, showSearch]);
 
   useEffect(() => {
     if (searchLocationFrom.length && searchLocationTo.length) {

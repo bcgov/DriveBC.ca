@@ -53,7 +53,7 @@ export default function CamerasListPage() {
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
   const { filterContext, setFilterContext } = useContext(FilterContext);
-  const { headerHeightContext } = useContext(HeaderHeightContext);
+  // const { headerHeightContext } = useContext(HeaderHeightContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -313,7 +313,7 @@ export default function CamerasListPage() {
 
           <div className="container--sidepanel__right">
             <div className="sticky-sentinel" />
-            <div className="sticky-filters" style={{ top: `${headerHeightContext}px` }}>
+            <div className="sticky-filters">
               <div className="controls-group">
                 <div className="controls-container">
                   {!smallScreen &&
@@ -522,8 +522,7 @@ export default function CamerasListPage() {
       </div>
 
       {smallScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
-        <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}
-          style={openAdvisoriesOverlay ? { minHeight: `calc(100% - ${headerHeightContext}px)`} : null}>
+        <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}>
           <button
             className="close-panel close-overlay"
             aria-label={`${openAdvisoriesOverlay ? 'close overlay' : ''}`}
@@ -538,8 +537,7 @@ export default function CamerasListPage() {
       }
 
       {smallScreen &&
-        <div className={`overlay filters-overlay ${showAreaFilters ? 'open' : ''}`}
-          style={showAreaFilters ? { minHeight: `calc(100% - ${headerHeightContext}px)`} : null}>
+        <div className={`overlay filters-overlay ${showAreaFilters ? 'open' : ''}`}>
           <button
             className="close-overlay"
             aria-label={`${showAreaFilters ? 'close overlay' : ''}`}
@@ -557,8 +555,7 @@ export default function CamerasListPage() {
       }
 
       {smallScreen &&
-        <div className={`overlay filters-overlay ${showHwyFilters ? 'open' : ''}`}
-          style={showHwyFilters ? { minHeight: `calc(100% - ${headerHeightContext}px)`} : null}>
+        <div className={`overlay filters-overlay ${showHwyFilters ? 'open' : ''}`}>
           <button
             className="close-overlay"
             aria-label={`${showHwyFilters ? 'close overlay' : ''}`}

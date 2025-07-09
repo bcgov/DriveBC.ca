@@ -14,7 +14,7 @@ import {
 
 
 // Internal imports
-import { HeaderHeightContext } from '../App.js';
+// import { HeaderHeightContext } from '../App.js';
 import EmergencyAlert from "../Components/shared/EmergencyAlert.js";
 
 // External Imports
@@ -106,7 +106,7 @@ export default function MapPage() {
     }
   }
 
-  const { headerHeightContext } = useContext(HeaderHeightContext);
+  // const { headerHeightContext } = useContext(HeaderHeightContext);
 
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
 
@@ -114,9 +114,9 @@ export default function MapPage() {
   // Main component
   return (
     <DndProvider options={HTML5toTouch}>
-      <div className="map-page map-wrap" style={{ top: smallScreen ? `${headerHeightContext}px` : `58px`, background: 'white', }}>
+      <div className="map-page map-wrap">
         {/* Need this to show alert above Map; duplicates App level alert which is hidden by map */}
-        <EmergencyAlert />
+        {/* <EmergencyAlert /> */}
 
         <MapWrapper referenceData={referenceData} />
       </div>
