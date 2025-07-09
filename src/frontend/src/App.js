@@ -61,7 +61,7 @@ export const CamsContext = createContext(null);
 export const CMSContext = createContext();
 export const EmergencyAlertContext = createContext();
 export const MapContext = createContext(null);
-export const HeaderHeightContext = createContext();
+// export const HeaderHeightContext = createContext();
 export const FeatureContext = createContext({});
 export const FilterContext = createContext({});
 
@@ -89,7 +89,7 @@ function App() {
   const [cmsContext, setCMSContext] = useState(getInitialCMSContext());
   const [emergencyAlertContext, setEmergencyAlertContext] = useState(getInitialEmergencyAlertContext());
   const [mapContext, setMapContext] = useState(getInitialMapContext());
-  const [headerHeightContext, setHeaderHeightContext] = useState();
+  // const [headerHeightContext, setHeaderHeightContext] = useState();
   const [featureContext, setFeatureContext] = useState({});
   const [filterContext, setFilterContext] = useState({});
 
@@ -240,38 +240,41 @@ function App() {
           <AlertContext.Provider value={{ alertMessage, setAlertMessage }}>
             <CMSContext.Provider value={{ cmsContext, setCMSContext }}>
               <EmergencyAlertContext.Provider value={{ emergencyAlertContext, setEmergencyAlertContext }}>
-                <HeaderHeightContext.Provider value={{ headerHeightContext, setHeaderHeightContext }}>
                   <FeatureContext.Provider value={{ featureContext, setFeatureContext }}>
                     <FilterContext.Provider value={{ filterContext, setFilterContext }}>
-                      <div className="App" style={{ marginTop: `${headerHeightContext}px` }}>
+                      <div className="App">
                         <Header />
 
                         <EmergencyAlert />
 
-                        <ScrollToTop />
+                        <main>
 
-                        <Routes>
-                          <Route path="/" element={<MapPage />} />
-                          <Route path="/my-cameras" element={<SavedCamerasPage />} />
-                          <Route path="/my-routes" element={<SavedRoutesPage />} />
-                          <Route path="/cameras" element={<CamerasListPage />} />
-                          <Route path="/cameras/:id" element={<CameraDetailsPage />} />
-                          <Route path="/delays" element={<EventsListPage />} />
-                          <Route path="/advisories" element={<AdvisoriesListPage />} />
-                          <Route path="/advisories/:id/:subid?" element={<AdvisoryDetailsPage />} />
-                          <Route path="/bulletins" element={<BulletinsListPage />} />
-                          <Route path="/bulletins/:id/:subid?" element={<BulletinDetailsPage />} />
-                          <Route path="/account" element={<AccountPage />} />
-                          <Route path="/account-deactivated" element={<AccountDeactivatedPage />} />
-                          <Route path="/feedback" element={<FeedbackPage />} />
-                          <Route path="/verify-email" element={<VerifyEmailPage />} />
-                          {/* Catch-all route for 404 errors */}
-                          <Route path="*" element={<NotFoundPage />} />
-                          <Route path="/problems" element={<ProblemsPage />} />
-                          <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
-                          <Route path="/highway-problem" element={<ReportRoadPage />} />
-                          <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />
-                        </Routes>
+                          <ScrollToTop />
+
+                          <Routes>
+                            <Route path="/" element={<MapPage />} />
+                            <Route path="/my-cameras" element={<SavedCamerasPage />} />
+                            <Route path="/my-routes" element={<SavedRoutesPage />} />
+                            <Route path="/cameras" element={<CamerasListPage />} />
+                            <Route path="/cameras/:id" element={<CameraDetailsPage />} />
+                            <Route path="/delays" element={<EventsListPage />} />
+                            <Route path="/advisories" element={<AdvisoriesListPage />} />
+                            <Route path="/advisories/:id/:subid?" element={<AdvisoryDetailsPage />} />
+                            <Route path="/bulletins" element={<BulletinsListPage />} />
+                            <Route path="/bulletins/:id/:subid?" element={<BulletinDetailsPage />} />
+                            <Route path="/account" element={<AccountPage />} />
+                            <Route path="/account-deactivated" element={<AccountDeactivatedPage />} />
+                            <Route path="/feedback" element={<FeedbackPage />} />
+                            <Route path="/verify-email" element={<VerifyEmailPage />} />
+                            {/* Catch-all route for 404 errors */}
+                            <Route path="*" element={<NotFoundPage />} />
+                            <Route path="/problems" element={<ProblemsPage />} />
+                            <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
+                            <Route path="/highway-problem" element={<ReportRoadPage />} />
+                            <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />
+                          </Routes>
+
+                        </main>
 
                         <Modal />
 
@@ -281,7 +284,6 @@ function App() {
                       </div>
                     </FilterContext.Provider>
                   </FeatureContext.Provider>
-                </HeaderHeightContext.Provider>
               </EmergencyAlertContext.Provider>
             </CMSContext.Provider>
           </AlertContext.Provider>

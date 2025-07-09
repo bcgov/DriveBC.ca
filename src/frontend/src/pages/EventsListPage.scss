@@ -112,7 +112,7 @@
     }
 
     .filters-component {
-      position: relative;
+      // position: relative;
 
       .open-filters {
         margin-left: 10px;
@@ -139,13 +139,15 @@
 
       .filters {
         @media (min-width: 576px) {
-          max-height: initial;
+          max-height: calc(100vh - 222px);
           top: 2.4375rem;
           right: 0;
           left: unset;
           position: absolute;
           width: 300px;
           height: fit-content;
+          display: flex;
+          flex-direction: column;
         }
       }
     }
