@@ -31,23 +31,20 @@ button.close-filters-legacy {
     width: 300px;
     box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
     border-radius: 4px;
+    max-height: calc(100vh - 200px);
 
     @media (max-width: 912px) {
       width: 100%;
 
       &.delays {
-        position: fixed;
+        position: absolute;
         z-index: 17;
-        bottom: 0;
-        left: 0;
-        width: 100%;
+        width: max-content;
         border-radius: 4px;
         background-color: white;
         box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.1);
         display: flex;
         flex-direction: column;
-        height: calc(80vh - 58px);
-        max-height: fit-content;
       }
     }
   }
@@ -89,7 +86,7 @@ button.close-filters-legacy {
   .filters-list {
     position: relative;
     padding: 12px 8px 8px;
-    overflow-y: scroll;
+    overflow-y: auto;
     background: $Grey10;
 
     .filter-group {
