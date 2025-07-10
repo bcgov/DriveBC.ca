@@ -590,7 +590,7 @@ class FeedClient:
                 "service": "WFS",
                 "version": "1.1.0",
                 "request": "GetFeature",
-                "typeName": "pub%3AWHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_POLYS_SP",
+                "typeName": "pub:WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_POLYS_SP",
                 "srsName": "EPSG:4326",
                 "outputFormat": "json",
             }
@@ -605,7 +605,7 @@ class FeedClient:
                 "service": "WFS",
                 "version": "1.1.0",
                 "request": "GetFeature",
-                "typeName": "pub%3AWHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_PNTS_SP",
+                "typeName": "pub:WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_PNTS_SP",
                 "srsName": "EPSG:4326",
                 "outputFormat": "json",
             }
