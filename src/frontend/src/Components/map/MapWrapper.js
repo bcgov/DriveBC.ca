@@ -91,7 +91,7 @@ export default function MapWrapper(props) {
   const restStopsRef = useRef(restStops);
   const borderCrossingsRef = useRef(borderCrossings);
   const advisoriesRef = useRef(advisories);
-  const wildfiresRef = useRef(advisories);
+  const wildfiresRef = useRef(wildfires);
 
   // Error handling
   const displayError = (error) => {
