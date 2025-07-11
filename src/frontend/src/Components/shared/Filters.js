@@ -548,7 +548,7 @@ export default function Filters(props) {
                     }
                   </div>
 
-                  <div className={'filter-item filter-item--inland-ferries' + (inlandFerries ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.ferries) ? ' loading' : '')}>
+                  <div className={'filter-item filter-item--inland-ferries' + (inlandFerries ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
                     <input
                       type="checkbox"
                       name="ferries"
@@ -570,20 +570,15 @@ export default function Filters(props) {
                     <OverlayTrigger placement="top" overlay={tooltipInlandFerries}>
                       <button className="tooltip-info" aria-label="ferries tooltip" aria-describedby="tooltipInlandFerries">?</button>
                     </OverlayTrigger>
-
-                    {loadingLayers && loadingLayers.ferries &&
-                      <Spinner animation="border" role="status" />
-                    }
                   </div>
 
-                  <div className={'filter-item filter-item--weather' + (weather ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.weathers) ? ' loading' : '')}>
+                  <div className={'filter-item filter-item--weather' + (weather ? ' checked' : '') + ((loadingLayers && loadingLayers.weathers) ? ' loading' : '')}>
                     <input
                       type="checkbox"
                       name="weather"
                       id="filter--weather"
                       onChange={e => filterHandler('weather', e)}
-                      defaultChecked={mapContext.visible_layers.weather}
-                      disabled={disableFeatures} />
+                      defaultChecked={mapContext.visible_layers.weather} />
 
                     <label className="filter-item__button" htmlFor="filter--weather">
                       <span className="filter-item__button__icon">
@@ -624,7 +619,7 @@ export default function Filters(props) {
                     </OverlayTrigger>
                   </div>
 
-                  <div className={'filter-item filter-item--rest-stops' + (restStops ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.restStops) ? ' loading' : '')}>
+                  <div className={'filter-item filter-item--rest-stops' + (restStops ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
                     <input
                       type="checkbox"
                       name="rest stops"
@@ -645,10 +640,6 @@ export default function Filters(props) {
                     <OverlayTrigger placement="top" overlay={tooltipRestStops}>
                       <button className="tooltip-info" aria-label="rest stops tooltip" aria-describedby="tooltipRestStops">?</button>
                     </OverlayTrigger>
-
-                    {loadingLayers && loadingLayers.restStops &&
-                      <Spinner animation="border" role="status" />
-                    }
                   </div>
                 </div>
               </div>
@@ -684,7 +675,8 @@ export default function Filters(props) {
                       <Spinner animation="border" role="status" />
                     }
                   </div>
-                  <div className={'filter-item filter-item--rest-stops-large-vehicle' + (largeRestStops ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.restStops) ? ' loading' : '')}>
+
+                  <div className={'filter-item filter-item--rest-stops-large-vehicle' + (largeRestStops ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
                     <input
                       type="checkbox"
                       name="rest stops"
@@ -706,10 +698,6 @@ export default function Filters(props) {
                     <OverlayTrigger placement="top" overlay={tooltipRestStopsCommercialVehicles}>
                       <button className="tooltip-info" aria-label="rest stops" aria-describedby="tooltipRestStopsCommercialVehicles">?</button>
                     </OverlayTrigger>
-
-                    {loadingLayers && loadingLayers.restStops &&
-                      <Spinner animation="border" role="status" />
-                    }
                   </div>
                   <div className="filter-item filter-item--seasonal-load">
                     <FontAwesomeIcon icon={faTruckContainer} />

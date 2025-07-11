@@ -645,35 +645,29 @@ export default function DriveBCMap(props) {
 
   // Current weathers layer
   useEffect(() => {
-    if (!isCamDetail) {
-      loadLayer(
-        mapLayers, mapRef, mapContext,
-        'weather', currentWeather, filteredCurrentWeathers, 68,
-        referenceData, updateReferenceFeature, setLoadingLayers
-      );
-    }
+    loadLayer(
+      mapLayers, mapRef, mapContext,
+      'weather', currentWeather, filteredCurrentWeathers, 68,
+      referenceData, updateReferenceFeature, setLoadingLayers
+    );
   }, [filteredCurrentWeathers]);
 
   // Regional weathers layer
   useEffect(() => {
-    if (!isCamDetail) {
-      loadLayer(
-        mapLayers, mapRef, mapContext,
-        'regional', regionalWeather, filteredRegionalWeathers, 69,
-        referenceData, updateReferenceFeature, setLoadingLayers
-      );
-    }
+    loadLayer(
+      mapLayers, mapRef, mapContext,
+      'regional', regionalWeather, filteredRegionalWeathers, 69,
+      referenceData, updateReferenceFeature, setLoadingLayers
+    );
   }, [filteredRegionalWeathers]);
 
   // High elevation forecasts layer
   useEffect(() => {
-    if (!isCamDetail) {
-      loadLayer(
-        mapLayers, mapRef, mapContext,
-        'hef', hef, filteredHef, 70,
-        referenceData, updateReferenceFeature, setLoadingLayers
-      );
-    }
+    loadLayer(
+      mapLayers, mapRef, mapContext,
+      'hef', hef, filteredHef, 70,
+      referenceData, updateReferenceFeature, setLoadingLayers
+    );
   }, [filteredHef]);
 
   // Rest stops layer
