@@ -26,8 +26,7 @@ import {
 import {
   faStar as faStarOutline,
   faCheck,
-  faMinusCircle,
-  faFire
+  faMinusCircle
 } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -617,7 +616,7 @@ export default function RouteDetails(props) {
                 {wildfireCount}
               </span>
               <span className="route-item__icon">
-                <FontAwesomeIcon icon={faFire} alt="Wildfires"/>
+                <span>fire</span>
               </span>
               <span className="route-item__name">{wildfireCount !== 1 ? 'Wildfires' : 'Wildfire'}</span>
             </div>

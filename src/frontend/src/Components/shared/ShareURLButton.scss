@@ -65,10 +65,10 @@
   }
   &--ferry {
     .copy-btn {
-      background: darken($Surface-ferry, 8%);
+      background: darken($Surface-green, 8%);
 
       &:hover {
-        background: darken($Surface-ferry, 15%);
+        background: darken($Surface-green, 15%);
       }
     }
 
