@@ -1,7 +1,10 @@
+// External imports
+import { fromLonLat } from "ol/proj";
+
+// Internal imports
+import { isRestStopClosed } from '../../data/restStops.js';
 import { setEventStyle, setZoomPan } from '../helpers';
 import trackEvent from '../../shared/TrackEvent.js';
-
-import { isRestStopClosed } from '../../data/restStops.js';
 
 // Styling
 import {
@@ -176,8 +179,21 @@ const camClickHandler = (
   updateClickedFeature(feature);
 
   if (isCamDetail) {
-    setZoomPan(mapView, null, feature.getGeometry().getCoordinates());
-    loadCamDetails(feature.getProperties());
+    if (feature.get('focusCamera')) {
+      const zoom = feature.get('zoom');
+      const pan = feature.get('pan');
+
+      setZoomPan(
+        mapView,
+        zoom ? zoom : 9,
+        pan ? fromLonLat(pan.split(",").map(Number)) : feature.getGeometry().getCoordinates()
+      );
+
+    } else {
+      setZoomPan(mapView, null, feature.getGeometry().getCoordinates());
+      loadCamDetails(feature.getProperties());
+    }
+
     updateReferenceFeature(feature);
   }
 };
@@ -422,7 +438,8 @@ export const pointerClickHandler = (
   loadCamDetails,
   updateReferenceFeature,
   updateRouteDisplay,
-  mapContext
+  mapContext,
+  loadingReferenceFeature=false,
 ) => {
   if (features.length) {
     const clickedFeature = features[0];
@@ -441,7 +458,8 @@ export const pointerClickHandler = (
           mapView,
           isCamDetail,
           loadCamDetails,
-          updateReferenceFeature
+          updateReferenceFeature,
+          loadingReferenceFeature
         );
         return;
 

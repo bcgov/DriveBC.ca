@@ -23,11 +23,13 @@ export default function CoastalFerryPanel(props) {
 
   const ferryData = feature.getProperties();
 
-  const [_searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // useEffect hooks
   useEffect(() => {
-    setSearchParams(new URLSearchParams({ type: 'ferry', id: ferryData.id }));
+    searchParams.set('type', 'ferry');
+    searchParams.set('id', ferryData.id);
+    setSearchParams(searchParams);
   }, [feature]);
 
   // Rendering

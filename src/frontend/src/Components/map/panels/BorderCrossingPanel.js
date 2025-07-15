@@ -26,7 +26,7 @@ export default function BorderCrossingPanel(props) {
   const { borderCrossing, showRouteObjs } = props;
 
   const [borderLanes, setBorderLanes] = useState({});
-  const [_searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     const res = {};
@@ -40,7 +40,10 @@ export default function BorderCrossingPanel(props) {
     }
 
     setBorderLanes(res);
-    setSearchParams(new URLSearchParams({ type: 'borderCrossing', id: borderCrossing.id }));
+
+    searchParams.set('type', 'borderCrossing');
+    searchParams.set('id', borderCrossing.id);
+    setSearchParams(searchParams);
   }, [borderCrossing?.id, borderCrossing?.lanes]);
 
   /* Rendering */

@@ -38,11 +38,13 @@ export default function LocalWeatherPanel(props) {
       new Date(forecast.TimestampUtc) > now
     ));
 
-  const [_searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // useEffect hooks
   useEffect(() => {
-    setSearchParams(new URLSearchParams({ type: 'localWeather', id: weatherData.id }));
+    searchParams.set('type', 'localWeather');
+    searchParams.set('id', weatherData.id);
+    setSearchParams(searchParams);
   }, [feature]);
 
   return (

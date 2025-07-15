@@ -1,6 +1,6 @@
 // React
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { createSearchParams, useParams, useNavigate } from 'react-router-dom';
+import { createSearchParams, useParams, useNavigate, useSearchParams } from 'react-router-dom';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -66,9 +66,13 @@ import Spinner from 'react-bootstrap/Spinner';
 
 export default function CameraDetailsPage() {
   /* Setup */
+  // Misc
+  let cameraGroupMap = {};
+
   // Navigation
   const navigate = useNavigate();
   const params = useParams();
+  const [searchParams] = useSearchParams();
 
   // Redux
   const dispatch = useDispatch();
@@ -82,6 +86,7 @@ export default function CameraDetailsPage() {
 
   // Refs
   const isInitialMount = useRef(true);
+  const referenceDataInitialized = useRef(false);
   const isUpdate = useRef(false);
   const imageRef = useRef(null);
   const viewedCamera = useRef({ id: params.id, last_update_modified: null});
@@ -104,36 +109,49 @@ export default function CameraDetailsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isCameraSet, setIsCameraSet] = useState(false);
-  const pauseReplay = () => {
-    const pauseIcon = document.querySelectorAll(".fa-pause");
-    if (pauseIcon.length > 0) {
-      pauseIcon[0].parentElement.click();
+
+  // Reference data
+  const getReferenceParams = () => {
+    referenceDataInitialized.current = true;
+
+    // Use current cam if no reference data and map params are not set
+    if (!searchParams.get('type')) {
+      return {
+        ...camera,
+        type: 'camera',
+        focusCamera: true,
+        pan: searchParams.get('pan'),
+        zoom: searchParams.get('zoom'),
+      };
     }
-  };
-  const handleCameraImageClick = (event) => {
-    const container = event.currentTarget.closest(".camera-orientations");
-    const buttons = container.querySelectorAll(".camera-direction-btn");
-    let currentIndex = Array.from(buttons).findIndex(
-      (button) => button.classList.contains("current")
-    );
-    if (currentIndex === -1) {
-      currentIndex = activeIndex;
+
+    return {
+      type: searchParams.get('type'),
+      id: searchParams.get('id'),
+      display_category: searchParams.get('display_category'),
+    };
+  }
+  const [referenceData, setReferenceData] = useState({});
+
+  // Effects
+  useEffect(() => {
+    if (searchParams && camera && !referenceDataInitialized.current) {
+      setReferenceData(getReferenceParams());
     }
-    const nextIndex = (currentIndex + 1) % buttons.length;
-    buttons[nextIndex].focus();
-    setActiveIndex(nextIndex);
-    const nextCamera = camera.camGroup[nextIndex];
-    setCamera(nextCamera);
-    setIsCameraSet(true);
-    trackEvent("click", "camera-list", "camera", nextCamera.name);
-    pauseReplay();
-  };
+  }, [searchParams, camera]);
 
   useEffect(() => {
     if (showLoader) {
       setShowLoader(true);
     }
   }, [showLoader]);
+
+  const pauseReplay = () => {
+    const pauseIcon = document.querySelectorAll(".fa-pause");
+    if (pauseIcon.length > 0) {
+      pauseIcon[0].parentElement.click();
+    }
+  };
 
   // Error handling
   const displayError = error => {
@@ -145,46 +163,52 @@ export default function CameraDetailsPage() {
   };
 
   // Data functions
-  const loadCamDetails = (camData, isButtonClicked = false) => {
+  const loadCamDetails = (camData) => {
     // Camera data
-    if (isButtonClicked) {
-      isInitialMount.current = false;
+    setIsUpdated(false);
+    viewedCamera.current = { id: camData.id, last_update_modified: camData.last_update_modified}
+
+    if (!isCameraSet) {
+      setCamera(camData);
+      pauseReplay();
     }
+
+    trackEvent('click', 'camera-details', 'camera', camData.name);
+
+    // Next update time
+    const nextUpdateTime = calculateNextUpdateTime(camData);
+    const nextUpdateTimeFormatted = new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      timeZoneName: 'short',
+    }).format(nextUpdateTime);
+    setNextUpdate(nextUpdateTimeFormatted);
+
+    // Last update time
+    setLastUpdate(camData.last_update_modified);
+
+    // Replace window title and URL
+    document.title = `DriveBC - Cameras - ${camData.name}`;
 
     if (!isInitialMount.current) {
-      setIsUpdated(false);
-      viewedCamera.current = { id: camData.id, last_update_modified: camData.last_update_modified}
-
-      if(!isCameraSet){
-        setCamera(camData);
-        pauseReplay();
-      }
-      
-      trackEvent('click', 'camera-details', 'camera', camData.name);
-
-      // Next update time
-      const nextUpdateTime = calculateNextUpdateTime(camData);
-      const nextUpdateTimeFormatted = new Intl.DateTimeFormat('en-US', {
-        hour: 'numeric',
-        minute: 'numeric',
-        timeZoneName: 'short',
-      }).format(nextUpdateTime);
-      setNextUpdate(nextUpdateTimeFormatted);
-
-      // Last update time
-      setLastUpdate(camData.last_update_modified);
-
-      // Replace window title and URL
-      document.title = `DriveBC - Cameras - ${camData.name}`;
-      window.history.replaceState(history.state, null, `/cameras/${camData.id}`);
+      const params = new URLSearchParams(window.location.search);
+      params.delete('type');
+      params.delete('id');
+      params.delete('display_category');
+      navigate(`/cameras/${camData.id}?${params.toString()}`, { replace: true });
     }
 
+    // Set camera group data
+    setCameraGroup(camData.camGroup);
+    cameraGroupRefs.current = new Set(camData.camGroup.map(cam => cam.id));
+
     setShowLoader(false);
+    isInitialMount.current = false;
   };
 
   async function initCamera(id) {
     const allCameras = await getCameras().catch(error => displayError(error));
-    const cameraGroupMap = getCameraGroupMap(allCameras);
+    cameraGroupMap = getCameraGroupMap(allCameras);
 
     const camData = await getCameras(
       null,
@@ -197,9 +221,6 @@ export default function CameraDetailsPage() {
     camData.camGroup.forEach(cam => (cam.camGroup = group));
 
     loadCamDetails(camData);
-    setCameraGroup(camData.camGroup);
-
-    cameraGroupRefs.current = new Set(group.map(cam => cam.id));
   }
 
   const updateCamera = async () => {
@@ -258,7 +279,7 @@ export default function CameraDetailsPage() {
   useEffect(() => {
     if (isInitialMount.current) {
       initCamera(params.id);
-      isInitialMount.current = false;
+
     } else if (camera) {
       loadReplay(camera);
     }
@@ -360,6 +381,25 @@ export default function CameraDetailsPage() {
   };
 
   // Handlers
+  const handleCameraImageClick = (event) => {
+    const container = event.currentTarget.closest(".camera-orientations");
+    const buttons = container.querySelectorAll(".camera-direction-btn");
+    let currentIndex = Array.from(buttons).findIndex(
+      (button) => button.classList.contains("current")
+    );
+    if (currentIndex === -1) {
+      currentIndex = activeIndex;
+    }
+    const nextIndex = (currentIndex + 1) % buttons.length;
+    buttons[nextIndex].focus();
+    setActiveIndex(nextIndex);
+    const nextCamera = camera.camGroup[nextIndex];
+    setCamera(nextCamera);
+    setIsCameraSet(true);
+    trackEvent("click", "camera-list", "camera", nextCamera.name);
+    pauseReplay();
+  };
+
   const favoriteHandler = () => {
     // User logged in, default handler
     if (favCams != null && authContext.loginStateKnown && authContext.username) {
@@ -621,7 +661,7 @@ export default function CameraDetailsPage() {
                                     (camera.id === cam.id ? ' current' : '')
                                   }
                                   key={cam.id}
-                                  onClick={() => loadCamDetails(cam, true)}>
+                                  onClick={() => loadCamDetails(cam)}>
                                   {cam.orientation}
                                 </Button>
                               ))}
@@ -815,12 +855,15 @@ export default function CameraDetailsPage() {
                         <div className="actions-bar actions-bar--nearby"></div>
                         <div className="map-wrap map-context-wrap">
                           <DndProvider options={HTML5toTouch}>
-                            <MapWrapper
-                              referenceData={{ ...camera, type: 'camera' }}
-                              isCamDetail={true}
-                              mapViewRoute={mapViewRoute}
-                              loadCamDetails={loadCamDetails}
-                            />
+                            {referenceDataInitialized.current &&
+                              <MapWrapper
+                                referenceData={referenceData}
+                                rootCamera={camera}
+                                isCamDetail={true}
+                                mapViewRoute={mapViewRoute}
+                                loadCamDetails={loadCamDetails}
+                              />
+                            }
                           </DndProvider>
                         </div>
                       </Tab>

@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 
 // Navigation
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // Redux
 import * as slices from '../../slices';
@@ -87,12 +87,13 @@ export default function DriveBCMap(props) {
 
   // Props
   const {
-    mapProps: {referenceData, isCamDetail, mapViewRoute, loadCamDetails},
+    mapProps: {referenceData, rootCamera, isCamDetail, mapViewRoute, loadCamDetails},
     showNetworkError, showServerError, trackedEventsRef,
     loadingLayers, setLoadingLayers, getInitialLoadingLayers
   } = props;
 
   // Navigation
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   let mousePointXClicked = undefined;
@@ -217,21 +218,6 @@ export default function DriveBCMap(props) {
   }
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (referenceFeature && isCamDetail) {
-        referenceFeature.set('clicked', true);
-        if (clickedFeature !== undefined) {
-          referenceFeature.setStyle(cameraStyles.active);
-          updateClickedFeature(referenceFeature);
-          clearInterval(interval);
-        }
-      }
-    }, 200);
-
-    return () => clearInterval(interval);
-  }, [referenceFeature]);
-
-  useEffect(() => {
     if (!isInitialClickedFeature.current) {
       isInitialClickedFeature.current = true;
       return;
@@ -313,6 +299,11 @@ export default function DriveBCMap(props) {
     // Enable referenced layer
     enableReferencedLayer(referenceData, mapContext);
 
+    // Enable highway cams layer if in cam detail
+    if (isCamDetail) {
+      mapContext.visible_layers['highwayCams'] = true;
+    }
+
     const tileSource = new VectorTileSource({
       format: new MVT(),
       url: window.BASE_MAP,
@@ -341,10 +332,20 @@ export default function DriveBCMap(props) {
     const extent = [-155.230138, 36.180153, -102.977437, 66.591323];
     const transformedExtent = transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
 
+    // Initialize map view
+    // Center
+    const sharedPan = searchParams.get('pan');
+    const initialCenter = sharedPan ? sharedPan.split(",").map(Number) : pan;
+
+    // Zoom
+    const defaultZoom = isCamDetail ? 5 : zoom;
+    const sharedZoom = searchParams.get('zoom');
+    const initialZoom = sharedZoom ? sharedZoom : defaultZoom;
+
     mapView.current = new View({
       projection: 'EPSG:3857',
-      center: fromLonLat(pan),
-      zoom: (isCamDetail || (referenceData && referenceData.type)) ? 5 : zoom,
+      center: fromLonLat(initialCenter),
+      zoom: initialZoom,
       maxZoom: 15,
       minZoom: 5,
       extent: transformedExtent,
@@ -398,6 +399,13 @@ export default function DriveBCMap(props) {
       if (smallScreen) {
         resetHoveredStates(null, hoveredFeature);
       }
+
+      const [lon, lat] = toLonLat(mapView.current.getCenter());
+
+      const params = new URLSearchParams(window.location.search);
+      params.set("pan", lon + ',' + lat);
+      params.set("zoom", mapView.current.getZoom());
+      navigate(`${location.pathname}?${params.toString()}`, { replace: true });
 
       dispatch(
         slices.updateMapState({
@@ -501,12 +509,10 @@ export default function DriveBCMap(props) {
   /* Triggering handlers based on navigation data */
   useEffect(() => {
     if (referenceFeature) {
-      setZoomPan(mapView, 9, referenceFeature.getGeometry().flatCoordinates);
-
       pointerClickHandler(
         [referenceFeature], clickedFeatureRef, updateClickedFeature,
         mapView, isCamDetail, loadCamDetails, updateReferenceFeature,
-        updateRouteDisplay, mapContext
+        updateRouteDisplay, mapContext, true
       );
     }
   }, [referenceFeature]);
@@ -577,20 +583,6 @@ export default function DriveBCMap(props) {
     }
   }, [filteredCameras]);
 
-
-  // Simulate camera location clicked on details page
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isCamDetail && cameraLocationButtonRef.current) {
-        cameraLocationButtonRef.current.click();
-        clearInterval(interval);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-
   // Events layer
   useEffect(() => {
     // Add layers if not loaded
@@ -598,7 +590,10 @@ export default function DriveBCMap(props) {
       const eventFound = loadEventsLayers(events, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers);
       if (referenceData?.type === 'event' && !eventFound) {
         setStaleLinkMessage(true);
-        setSearchParams({});
+        searchParams.delete('type');
+        searchParams.delete('display_category');
+        searchParams.delete('id');
+        setSearchParams(searchParams);
       }
     }
 
@@ -744,7 +739,10 @@ export default function DriveBCMap(props) {
   useEffect(() => {
     if (searchParamInitialized.current) {
       if (!clickedFeature) {
-        setSearchParams(new URLSearchParams({}));
+        searchParams.delete('type');
+        searchParams.delete('display_category');
+        searchParams.delete('id');
+        setSearchParams(searchParams);
       }
 
     } else {
@@ -947,9 +945,7 @@ export default function DriveBCMap(props) {
           className="map-btn cam-location"
           variant="primary"
           onClick={() => {
-            if (referenceData) {
-              setZoomPan(mapView, 9, fromLonLat(referenceData.location.coordinates));
-            }
+            setZoomPan(mapView, 9, fromLonLat(rootCamera.location.coordinates));
 
             if (referenceFeature) {
               referenceFeature.set('clicked', true);

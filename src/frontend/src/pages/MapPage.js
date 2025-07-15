@@ -45,7 +45,7 @@ export default function MapPage() {
       display_category: searchParams.get('display_category'),
     };
   }
-  const [referenceData, setReferenceData] = useState(getReferenceParams());
+  const [referenceData, setReferenceData] = useState({});
 
   // Effects
   useEffect(() => {
