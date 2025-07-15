@@ -308,6 +308,10 @@
               color: $White;
             }
           }
+
+          svg {
+            margin-left: 8px;
+          }
         }
 
         .highway-filter-btn, .area-filter-btn {
