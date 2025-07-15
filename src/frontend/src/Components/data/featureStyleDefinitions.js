@@ -1151,7 +1151,7 @@ export const wildfireAreaStyles = {
       lineDash: [5,5]
     }),
     fill: new Fill({
-      color: 'rgba(252, 214, 192, 0.25)',
+      color: 'rgba(210, 55, 55, 0.20)',
     }),
   }),
   hover: new Style({
@@ -1161,7 +1161,7 @@ export const wildfireAreaStyles = {
       lineDash: [5,5]
     }),
     fill: new Fill({
-      color: 'rgba(252, 214, 192, 0.65)',
+      color: 'rgba(210, 55, 55, 0.12)',
     }),
   }),
   active: new Style({
@@ -1171,7 +1171,7 @@ export const wildfireAreaStyles = {
       lineDash: [5,5]
     }),
     fill: new Fill({
-      color: 'rgba(252, 214, 192, 0.65)',
+      color: 'rgba(210, 55, 55, 0.28)',
     }),
   })
 };
