@@ -25,7 +25,7 @@ export default function EventPanel(props) {
 
   const { feature, showRouteObjs } = props;
 
-  const [_searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const eventData = feature.ol_uid ? feature.getProperties() : feature;
   const severity = eventData.severity.toLowerCase();
@@ -33,7 +33,11 @@ export default function EventPanel(props) {
   // useEffect hooks
   useEffect(() => {
     const event = feature.getProperties();
-    setSearchParams(new URLSearchParams({ type: 'event', display_category: event.display_category, id: event.id }));
+
+    searchParams.set('type', 'event');
+    searchParams.set('display_category', event.display_category);
+    searchParams.set('id', event.id);
+    setSearchParams(searchParams);
   }, [feature]);
 
   return (

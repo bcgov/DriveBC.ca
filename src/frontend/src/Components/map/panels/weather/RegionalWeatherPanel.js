@@ -58,14 +58,16 @@ export default function RegionalWeatherPanel(props) {
   }
 
   // Navigation
-  const [_searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // States
   const [expanded, setExpanded] = useState(false);
 
   // Effects
   useEffect(() => {
-    setSearchParams(new URLSearchParams({ type: 'regionalWeather', id: weather.id }));
+    searchParams.set('type', 'regionalWeather');
+    searchParams.set('id', weather.id);
+    setSearchParams(searchParams);
   }, [feature]);
 
   /* Rendering */

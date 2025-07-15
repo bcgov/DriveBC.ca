@@ -48,7 +48,7 @@ export default function CamPanel(props) {
 
   // Navigation
   const navigate = useNavigate();
-  const [_searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Redux
   const dispatch = useDispatch();
@@ -78,7 +78,9 @@ export default function CamPanel(props) {
     const savedCamIndex = params.get('camIndex') === null ? 0: params.get('camIndex');
     setCamIndex(savedCamIndex);
 
-    setSearchParams(new URLSearchParams({ type: 'camera', id: newCam.id }));
+    searchParams.set("type", 'camera');
+    searchParams.set("id", newCam.id);
+    setSearchParams(searchParams);
   }, [camFeature]);
 
   useEffect(() => {
@@ -87,8 +89,10 @@ export default function CamPanel(props) {
       return;
     }
     setCamera(rootCam.camGroup[camIndex]);
-    _searchParams.set("camIndex", camIndex);
-    setSearchParams(_searchParams);
+
+    searchParams.set("camIndex", camIndex);
+    setSearchParams(searchParams);
+
     // need to track camIndex as a data attribute to bypass lexical binding
     // of camIndex in helper functions (i.e., updateCamera);
     camPanelRef.current.setAttribute('data-current', camIndex);

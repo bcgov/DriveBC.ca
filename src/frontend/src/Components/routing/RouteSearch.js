@@ -36,7 +36,7 @@ import './RouteSearch.scss';
 const RouteSearch = forwardRef((props, ref) => {
   const { showFilterText, showSpinner, onShowSpinnerChange, mapRef, myLocation, mapView, resetClickedStates } = props;
 
-  const [_searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Redux
   const dispatch = useDispatch();
@@ -114,7 +114,11 @@ const RouteSearch = forwardRef((props, ref) => {
 
   // Handlers
   const swapHandler = () => {
-    setSearchParams({});
+    searchParams.delete('type');
+    searchParams.delete('id');
+    searchParams.delete('display_category');
+    setSearchParams(searchedRoutes);
+
     dispatch(updateSearchLocationFrom(searchLocationTo));
     dispatch(updateSearchLocationTo(searchLocationFrom));
   }

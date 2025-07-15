@@ -47,7 +47,7 @@ export default function RestStopPanel(props) {
 
   const restStopData = feature.getProperties();
 
-  const [_searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Context
   const { mapContext } = useContext(MapContext);
@@ -56,7 +56,10 @@ export default function RestStopPanel(props) {
   useEffect(() => {
     const isLargeRestStop = mapContext.visible_layers.largeRestStops;
     const featureType = isLargeRestStop && feature.get("properties").ACCOM_COMMERCIAL_TRUCKS == 'Yes' ? 'largeRestStop' : 'restStop';
-    setSearchParams(new URLSearchParams({ type: featureType, id: restStopData.id }));
+
+    searchParams.set('type', featureType);
+    searchParams.set('id', restStopData.id);
+    setSearchParams(searchParams);
   }, [feature]);
 
   return (

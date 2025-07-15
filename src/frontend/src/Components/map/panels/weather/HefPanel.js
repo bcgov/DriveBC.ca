@@ -32,10 +32,12 @@ export default function HefPanel(props) {
   const data = feature.getProperties();
 
   // Navigation
-  const [_searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    setSearchParams(new URLSearchParams({ type: 'hef', id: data.id }));
+    searchParams.set('type', 'hef');
+    searchParams.set('id', data.id);
+    setSearchParams(searchParams);
   }, [feature]);
 
   return (
