@@ -143,7 +143,7 @@ class FeedClient:
             response.raise_for_status()
 
     def _process_get_request(self, endpoint, params, resource_type, timeout=5.0):
-        logger.warning(f"Requesting GET {endpoint} with params {params}")
+        logger.info(f"Requesting GET {endpoint} with params {params}")
         response = httpx.get(
             endpoint,
             headers=self._get_auth_headers(resource_type),
@@ -151,8 +151,6 @@ class FeedClient:
             timeout=timeout,
             verify=False,
         )
-        logger.warning(f"Response status: {response.status_code} for {endpoint}")
-        logger.warning(f"Response data status: {response.text}")
         return self._get_response_data_or_raise(response)
 
     def get_new_weather_access_token(self):
@@ -592,11 +590,7 @@ class FeedClient:
                 "service": "WFS",
                 "version": "1.1.0",
                 "request": "GetFeature",
-<<<<<<< Updated upstream
                 "typeName": "pub:WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_POLYS_SP",
-=======
-                "typeName": "WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_POLYS_SP",
->>>>>>> Stashed changes
                 "srsName": "EPSG:4326",
                 "outputFormat": "json",
             }
@@ -611,11 +605,7 @@ class FeedClient:
                 "service": "WFS",
                 "version": "1.1.0",
                 "request": "GetFeature",
-<<<<<<< Updated upstream
                 "typeName": "pub:WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_PNTS_SP",
-=======
-                "typeName": "WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_PNTS_SP",
->>>>>>> Stashed changes
                 "srsName": "EPSG:4326",
                 "outputFormat": "json",
             }
