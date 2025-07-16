@@ -21,6 +21,10 @@ class Webcam(BaseModel):
     elevation = models.PositiveSmallIntegerField()
     area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=False)
 
+    # Relations
+    group = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True)
+    nearby_objs = models.JSONField(default=dict, blank=True)
+
     # General status
     is_on = models.BooleanField(default=True)
     should_appear = models.BooleanField(default=True)

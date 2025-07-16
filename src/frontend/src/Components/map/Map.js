@@ -512,7 +512,7 @@ export default function DriveBCMap(props) {
       pointerClickHandler(
         [referenceFeature], clickedFeatureRef, updateClickedFeature,
         mapView, isCamDetail, loadCamDetails, updateReferenceFeature,
-        updateRouteDisplay, mapContext, true
+        updateRouteDisplay, mapContext
       );
     }
   }, [referenceFeature]);

@@ -155,6 +155,31 @@ export const resetClickedStates = (
   }
 };
 
+const getVisibleNearbyObjectsCount = (mapContext, feature) => {
+  const layers = ['closures', 'majorEvents', 'minorEvents', 'futureEvents', 'roadConditions', 'chainUps', 'weather'];
+
+  let count = feature.get('nearby_objs').cameras;
+  for (const layer of layers) {
+    if (mapContext.visible_layers[layer] && feature.get('nearby_objs')[layer]) {
+      count += feature.get('nearby_objs')[layer];
+    }
+  }
+
+  return count;
+}
+
+const getDefaultZoom = (nearbyCount) => {
+  if (nearbyCount > 2) {
+    return 13.5;
+  }
+
+  if (nearbyCount > 0) {
+    return 12;
+  }
+
+  return 9;
+}
+
 const camClickHandler = (
   feature,
   clickedFeatureRef,
@@ -162,7 +187,8 @@ const camClickHandler = (
   mapView,
   isCamDetail,
   loadCamDetails,
-  updateReferenceFeature
+  updateReferenceFeature,
+  mapContext
 ) => {
   resetClickedStates(
     feature,
@@ -183,9 +209,12 @@ const camClickHandler = (
       const zoom = feature.get('zoom');
       const pan = feature.get('pan');
 
+      const nearbyCount = getVisibleNearbyObjectsCount(mapContext, feature);
+      console.log('cam id', feature.get('id'));
+      console.log('nearby objs count', nearbyCount);
       setZoomPan(
         mapView,
-        zoom ? zoom : 9,
+        zoom ? zoom : getDefaultZoom(nearbyCount),
         pan ? fromLonLat(pan.split(",").map(Number)) : feature.getGeometry().getCoordinates()
       );
 
@@ -438,8 +467,7 @@ export const pointerClickHandler = (
   loadCamDetails,
   updateReferenceFeature,
   updateRouteDisplay,
-  mapContext,
-  loadingReferenceFeature=false,
+  mapContext
 ) => {
   if (features.length) {
     const clickedFeature = features[0];
@@ -459,7 +487,7 @@ export const pointerClickHandler = (
           isCamDetail,
           loadCamDetails,
           updateReferenceFeature,
-          loadingReferenceFeature
+          mapContext
         );
         return;
 
