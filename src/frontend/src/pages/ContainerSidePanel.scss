@@ -309,8 +309,11 @@
             }
           }
 
-          svg {
-            margin-left: 8px;
+          .area-filter-btn__icon, .highway-filter-btn__icon {
+             @media (min-width: 576px) {
+              margin-left: 8px;
+              margin-right: 8px;
+            }
           }
         }
 
