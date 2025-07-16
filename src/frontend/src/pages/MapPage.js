@@ -45,7 +45,7 @@ export default function MapPage() {
       display_category: searchParams.get('display_category'),
     };
   }
-  const [referenceData, setReferenceData] = useState({});
+  const [referenceData, setReferenceData] = useState(null);
 
   // Effects
   useEffect(() => {
@@ -118,7 +118,9 @@ export default function MapPage() {
         {/* Need this to show alert above Map; duplicates App level alert which is hidden by map */}
         {/* <EmergencyAlert /> */}
 
-        <MapWrapper referenceData={referenceData} />
+        {referenceData &&
+          <MapWrapper referenceData={referenceData} />
+        }
       </div>
     </DndProvider>
   );

@@ -435,7 +435,7 @@ export default function DriveBCMap(props) {
     mapRef.current.on('pointermove', (e) => {
       pointerMoveHandler(e, mapRef, hoveredFeature);
     });
-  });
+  }, []);
 
   /* Map operations on location search */
   useEffect(() => {
@@ -865,7 +865,7 @@ export default function DriveBCMap(props) {
           </div>
         )}
 
-        {(!isCamDetail && smallScreen && !maximizedPanel) && (
+        {(!isCamDetail && smallScreen && !maximizedPanel && mapRef.current) && (
           <React.Fragment>
             <Button
               ref={myLocationRef}
@@ -893,7 +893,7 @@ export default function DriveBCMap(props) {
           </React.Fragment>
         )}
 
-        {(!isCamDetail && !smallScreen) && (
+        {(!isCamDetail && !smallScreen && mapRef.current) && (
           <React.Fragment>
             <FilterTabs
               mapLayers={mapLayers}
