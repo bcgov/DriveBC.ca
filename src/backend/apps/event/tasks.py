@@ -19,6 +19,7 @@ from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
 from apps.shared.helpers import attach_default_email_images, attach_image_to_email
 from apps.shared.models import Area
+from apps.webcam.tasks import update_camera_nearby_objs
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.core.cache import cache
@@ -217,6 +218,9 @@ def populate_all_event_data():
 
     # Send notifications
     send_event_notifications(updated_event_ids)
+
+    # Update nearby count for all cameras
+    update_camera_nearby_objs()
 
 
 def get_image_type_file_name(event):

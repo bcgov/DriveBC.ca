@@ -3,6 +3,7 @@ import io
 import logging
 import os
 import urllib.request
+from collections import Counter
 from itertools import groupby
 from math import floor
 from pathlib import Path
@@ -10,8 +11,11 @@ from urllib.error import HTTPError
 from zoneinfo import ZoneInfo
 
 import httpx
+from apps.event.enums import EVENT_DISPLAY_CATEGORY
+from apps.event.models import Event
 from apps.feed.client import FeedClient
 from apps.shared.models import Area, RouteGeometry
+from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
 from apps.webcam.enums import CAMERA_DIFF_FIELDS
 from apps.webcam.hwy_coords import hwy_coords
 from apps.webcam.models import Webcam
@@ -20,6 +24,7 @@ from apps.webcam.views import WebcamAPI
 from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import F
 from PIL import Image, ImageDraw, ImageFont
 
 logger = logging.getLogger(__name__)
@@ -54,9 +59,6 @@ def populate_all_webcam_data():
     for webcam_data in feed_data:
         populate_webcam_from_data(webcam_data)
 
-    # Rebuild cache
-    WebcamAPI().set_list_data()
-
 
 def update_single_webcam_data(webcam):
     try:
@@ -85,8 +87,7 @@ def update_all_webcam_data():
         if webcam.should_update(current_time):
             update_single_webcam_data(webcam)
 
-    # Rebuild cache
-    WebcamAPI().set_list_data()
+    update_camera_group_ids()
 
 
 def wrap_text(text, pen, font, width):
@@ -323,3 +324,51 @@ def build_route_geometries(coords=hwy_coords):
 def update_camera_area_relations():
     for area in Area.objects.all():
         Webcam.objects.filter(location__within=area.geometry).update(area=area)
+
+
+def update_camera_group_ids():
+    for camera in Webcam.objects.all():
+        group_id = Webcam.objects.filter(location=camera.location).order_by('id').first().id
+        Webcam.objects.filter(id=camera.id).update(group_id=group_id)  # update without triggering save
+
+
+def get_nearby_queryset(model, obj):
+    meters_in_degrees = 0.000008983152841195  # 1 meter in degrees at the equator
+    return model.objects.filter(
+        location__dwithin=(obj.location, 3000*meters_in_degrees),
+    ).exclude(
+        location__dwithin=(obj.location, 10*meters_in_degrees)
+    )
+
+
+def update_camera_nearby_objs():
+    # Iterate through "parent" webcams and update their nearby objects count
+    for parent_cam in Webcam.objects.filter(id=F('group_id')):
+        nearby_cams_count = get_nearby_queryset(Webcam, parent_cam).distinct('location').count()
+
+        nearby_events = get_nearby_queryset(Event, parent_cam).values_list('display_category', flat=True)
+        event_counts = Counter(nearby_events)
+
+        nearby_local_weathers = get_nearby_queryset(CurrentWeather, parent_cam).count()
+        nearby_regional_weathers = get_nearby_queryset(RegionalWeather, parent_cam).count()
+        nearby_hev_weathers = get_nearby_queryset(HighElevationForecast, parent_cam).count()
+
+        nearby_objs = {
+            "cameras": nearby_cams_count,
+            EVENT_DISPLAY_CATEGORY.CLOSURE: event_counts[EVENT_DISPLAY_CATEGORY.CLOSURE],
+            EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS: event_counts[EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS],
+            EVENT_DISPLAY_CATEGORY.MINOR_DELAYS: event_counts[EVENT_DISPLAY_CATEGORY.MINOR_DELAYS],
+            EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS: event_counts[EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS],
+            EVENT_DISPLAY_CATEGORY.ROAD_CONDITION: event_counts[EVENT_DISPLAY_CATEGORY.ROAD_CONDITION],
+            EVENT_DISPLAY_CATEGORY.CHAIN_UP: event_counts[EVENT_DISPLAY_CATEGORY.CHAIN_UP],
+            'weather': nearby_regional_weathers + nearby_local_weathers + nearby_hev_weathers,
+        }
+
+        Webcam.objects.filter(id=parent_cam.id).update(nearby_objs=nearby_objs)
+
+    for child_cam in Webcam.objects.exclude(id=F('group_id')):
+        parent_cam = child_cam.group
+        if parent_cam:
+            Webcam.objects.filter(id=child_cam.id).update(
+                nearby_objs=parent_cam.nearby_objs
+            )

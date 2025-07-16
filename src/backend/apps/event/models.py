@@ -48,7 +48,7 @@ class Event(BaseModel):
     timezone = models.CharField(max_length=32, null=True, blank=True)
 
     # Display category for emails
-    display_category = models.CharField(max_length=32, blank=True, default='')
+    display_category = models.CharField(max_length=32, blank=True, default='', db_index=True)
 
     def save(self, *args, **kwargs):
         uses_polygon = self.event_type in ['ROAD_CONDITION', 'WEATHER_CONDITION']
