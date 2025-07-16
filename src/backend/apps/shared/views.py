@@ -3,7 +3,7 @@ import re
 from apps.shared.enums import SUBJECT_CHOICES, SUBJECT_TITLE, CacheKey, CacheTimeout
 from apps.shared.helpers import attach_default_email_images
 from apps.shared.models import Area, SiteSettings
-from apps.shared.serializers import DistrictSerializer
+from apps.shared.serializers import DistrictViewSerializer
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
@@ -229,4 +229,4 @@ class session(APIView):
 
 class DistrictViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Area.objects.all()
-    serializer_class = DistrictSerializer
+    serializer_class = DistrictViewSerializer

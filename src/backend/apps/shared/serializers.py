@@ -30,6 +30,15 @@ class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = Area
         exclude = (
+            "created_at",
+            "modified_at",
+        )
+
+
+class DistrictViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Area
+        exclude = (
             "geometry",
             "created_at",
             "modified_at",
