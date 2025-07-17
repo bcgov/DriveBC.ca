@@ -1,5 +1,9 @@
 @import "../../styles/variables.scss";
 
+.hidden {
+  visibility: hidden;
+}
+
 .routing-caption {
   font-size: 0.875rem;
   font-weight: 700;

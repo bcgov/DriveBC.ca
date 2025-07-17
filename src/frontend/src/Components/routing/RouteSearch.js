@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useEffect, useRef, forwardRef } from 'react';
+import React, {useCallback, useEffect, useRef, forwardRef, useContext} from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 
@@ -17,6 +17,7 @@ import {
   updateSearchLocationTo, clearRouteDistance
 } from '../../slices/routesSlice'
 import { fitMap, removeOverlays } from "../map/helpers";
+import { MapContext } from "../../App";
 import LocationSearch from './LocationSearch.js';
 import NoRouteFound from './NoRouteFound';
 
@@ -34,9 +35,14 @@ import Spinner from 'react-bootstrap/Spinner';
 import './RouteSearch.scss';
 
 const RouteSearch = forwardRef((props, ref) => {
+  // Props
   const { showFilterText, showSpinner, onShowSpinnerChange, mapRef, myLocation, mapView, resetClickedStates } = props;
 
+  // Routing
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // Context
+  const { mapContext, setMapContext } = useContext(MapContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -55,8 +61,27 @@ const RouteSearch = forwardRef((props, ref) => {
   const isInitialMount = useRef(true);
   const isInitialMountSpinner = useRef(true);
 
+  // Helpers
+  const updateSearchParams = () => {
+    if (searchLocationFrom && searchLocationFrom.length > 0) {
+      searchParams.set('start', searchLocationFrom[0].label);
+    } else {
+      searchParams.set('start', null);
+    }
+
+    if (searchLocationTo && searchLocationTo.length > 0) {
+      searchParams.set('end', searchLocationTo[0].label);
+    } else {
+      searchParams.set('end', null);
+    }
+
+    setSearchParams(searchParams);
+  }
+
   const updateSearch = () => {
-    if (isInitialMount.current) { // Do nothing on first load
+    updateSearchParams();
+
+    if (isInitialMount.current) { // Only update search params on first load
       isInitialMount.current = false;
       return;
     }
@@ -100,9 +125,13 @@ const RouteSearch = forwardRef((props, ref) => {
           dispatch(updateSelectedRoute(routes[0]));
         }
 
-        // Fit map on routes if not from notification link
-        if (!routeDistance) {
+        // Fit map on routes only after user input
+        if (mapContext && mapContext.pendingRouteFit) {
           fitMap(routes, mapView);
+          setMapContext({
+            ...mapContext,
+            pendingRouteFit: false
+          });
         }
 
         dispatch(clearRouteDistance());
@@ -142,7 +171,7 @@ const RouteSearch = forwardRef((props, ref) => {
             myLocation={myLocation}
             action={updateSearchLocationFrom}
             // Select by default if from location is empty
-            selectByDefault={searchLocationFrom.length === 0}
+            selectByDefault={searchLocationFrom.length === 0 && !searchParams.get('start')}
             inputProps={{
               'aria-label': 'input field for starting location search',
               'id': 'location-search-starting-id',
@@ -160,7 +189,7 @@ const RouteSearch = forwardRef((props, ref) => {
             location={searchLocationTo}
             action={updateSearchLocationTo}
             // Select by default if from location exists and to location is empty
-            selectByDefault={searchLocationFrom.length > 0 && searchLocationTo.length === 0}
+            selectByDefault={searchLocationFrom.length > 0 && searchLocationTo.length === 0 && !searchParams.get('end')}
             inputProps={{
               'aria-label': 'input field for ending location search',
               'id': 'location-search-ending-id',
