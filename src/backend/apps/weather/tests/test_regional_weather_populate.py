@@ -47,23 +47,14 @@ class TestRegionalWeatherModel(BaseTest):
         assert regional_weather_one.location_latitude == \
                "58.66N"
 
-    @patch('requests.post')
     @patch('requests.get')
-    def test_populate_and_update_regional_weather(self, mock_requests_get, mock_requests_post):
+    def test_populate_and_update_regional_weather(self, mock_requests_get):
         mock_requests_get.side_effect = [
             MockResponse(self.mock_regional_weather_areas, status_code=200),
             MockResponse(self.mock_regional_weather_area_weather, status_code=200),
         ]
-        mock_requests_post.return_value = MockResponse({
-            "access_token": "mocked_access_token",
-            "expires_in": 300,
-            "refresh_expires_in": 0,
-            "token_type": "Bearer",
-            "not-before-policy": 0,
-            "scope": ""
-        }, status_code=200)
 
-        feed_data = get_regional_weather_list()
+        feed_data = get_regional_weather_list(token='mock_token')
 
         for regional_weather_data in feed_data:
             populate_regional_weather_from_data(regional_weather_data)

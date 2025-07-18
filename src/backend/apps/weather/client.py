@@ -23,9 +23,9 @@ class AreaCodeException(requests.RequestException):
 
 
 # Regional Weather
-def get_area_weather(api_endpoint, area_code):
+def get_area_weather(api_endpoint, area_code, token=None):
     try:
-        access_token = cache.get('weather_access_token') or FeedClient().get_new_weather_access_token()
+        access_token = token or cache.get('weather_access_token') or FeedClient().get_new_weather_access_token()
 
         response = requests.get(
             api_endpoint,
@@ -124,9 +124,9 @@ def get_area_weather(api_endpoint, area_code):
         raise AreaCodeException(str(e), area_code)
 
 
-def get_regional_weather_list():
+def get_regional_weather_list(token=None):
     """Get data feed for list of objects."""
-    access_token = cache.get('weather_access_token') or FeedClient().get_new_weather_access_token()
+    access_token = token or cache.get('weather_access_token') or FeedClient().get_new_weather_access_token()
 
     try:
         areas_list = requests.get(

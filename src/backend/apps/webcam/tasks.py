@@ -20,7 +20,6 @@ from apps.webcam.enums import CAMERA_DIFF_FIELDS
 from apps.webcam.hwy_coords import hwy_coords
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
-from apps.webcam.views import WebcamAPI
 from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core.exceptions import ObjectDoesNotExist
@@ -260,9 +259,6 @@ def add_order_to_cameras():
     # Group by route name and add order to cams in each group
     for route_name, cam_group in groupby(query, lambda x: x.highway if x.highway != '0' else x.highway_description):
         add_order_to_camera_group(route_name, list(cam_group))
-
-    # Rebuild cache
-    WebcamAPI().set_list_data()
 
 
 def reverse_ls_routes(ls_routes):

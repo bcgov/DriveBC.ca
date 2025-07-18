@@ -113,7 +113,8 @@ class TestEventSerializer(BaseTest):
 
     def test_serializer_data(self):
         # First serializer
-        assert len(self.serializer.data) == 28
+        # 2025/07/18 added 'area'
+        assert len(self.serializer.data) == 29
         # route_from beings with 'at '
         assert self.serializer.data['route_display'] == \
                "Test Road to Test Avenue"
@@ -126,7 +127,7 @@ class TestEventSerializer(BaseTest):
         assert self.serializer.data['route_to'] == "Test Avenue"
 
         # Second serializer
-        assert len(self.serializer_two.data) == 28
+        assert len(self.serializer_two.data) == 29
         # route_from doesn't being with 'at '
         assert self.serializer_two.data['route_display'] == \
                "Test Road Two to Test Avenue Two"
