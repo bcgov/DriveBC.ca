@@ -1,5 +1,8 @@
 // React
-import React, { useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
+
+// Routing
+import { useSearchParams } from "react-router-dom";
 
 // Redux
 import { useDispatch } from 'react-redux';
@@ -10,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/pro-solid-svg-icons';
 
 // Internal imports
+import { MapContext } from "../../App";
 import { getLocations } from '../data/locations.js';
 import trackEvent from '../shared/TrackEvent.js';
 
@@ -21,9 +25,16 @@ export default function LocationSearch(props) {
   /* Setup */
   // Props
   const { placeholder, location, action, myLocation, selectByDefault } = props;
+  const isStartLocation = placeholder === 'Search starting location';
+
+  // Context
+  const { mapContext, setMapContext } = useContext(MapContext);
 
   // Redux
   const dispatch = useDispatch();
+
+  // Routing
+  const [searchParams, _setSearchParams] = useSearchParams();
 
   // State
   const [minLength, setMinLength] = useState(3);
@@ -37,6 +48,19 @@ export default function LocationSearch(props) {
       window.document.activeElement.blur(); // De-focus textbox
     }
     dispatch(action(payload));
+
+    // Pending route fit after user input
+    const newContext = {
+      ...mapContext,
+      pendingRouteFit: true
+    };
+
+    // Pending pan to start location after user input
+    if (isStartLocation) {
+      newContext.pendingStartPan = true;
+    }
+
+    setMapContext(newContext);
   };
 
   const loadLocationOptions = locationInput => {
@@ -61,6 +85,37 @@ export default function LocationSearch(props) {
       setLocationOptions([{ ...myLocation, label: "Current location"}]);
     }
   }
+
+  // Populate location based on shared search params
+  const initializeSearchLocation = () => {
+    const locationText = searchParams.get((isStartLocation ? 'start' : 'end'));
+
+    if (locationText) {
+      if (locationText === 'null') {
+        dispatch(action([]));
+
+      } else {
+        setSearching(true);
+        getLocations(locationText).then(locationsData => {  // Fetch locations from text
+          for (let i=0; i < locationsData.features.length; i++) {
+            const feature = locationsData.features[i];
+            if (feature.properties.fullAddress === locationText) {  // Dispatch exact match
+              dispatch(action([{
+                ...feature,
+                label: feature.properties.fullAddress,
+              }]));
+              break;
+            }
+          }
+          setSearching(false);
+        });
+      }
+    }
+  }
+
+  useEffect(() => {
+    initializeSearchLocation()
+  }, []);
 
   // Rendering
   return (

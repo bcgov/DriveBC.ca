@@ -99,7 +99,7 @@ export default function DriveBCMap(props) {
   let mousePointXClicked = undefined;
 
   // Context
-  const { mapContext } = useContext(MapContext);
+  const { mapContext, setMapContext } = useContext(MapContext);
   const { featureContext, setFeatureContext } = useContext(FeatureContext);
 
   // Redux
@@ -464,11 +464,18 @@ export default function DriveBCMap(props) {
         searchLocationTo.length == 0
       ) {
         isInitialMountLocation.current = false;
-        setZoomPan(
-          mapView,
-          9,
-          fromLonLat(searchLocationFrom[0].geometry.coordinates),
-        );
+        if (mapContext.pendingStartPan) {
+          setZoomPan(
+            mapView,
+            null,
+            fromLonLat(searchLocationFrom[0].geometry.coordinates),
+          );
+
+          setMapContext({
+            ...mapContext,
+            pendingStartPan: false,
+          })
+        }
       }
 
     } else {
@@ -758,6 +765,10 @@ export default function DriveBCMap(props) {
     if (!selectedRoute) {
       setShowRouteObjs(false);
     }
+
+    if (panel.current) {
+      void panel.current.offsetHeight; // force reflow to update panel height
+    }
   }, [selectedRoute]);
 
   /* Rendering */
@@ -851,8 +862,8 @@ export default function DriveBCMap(props) {
       }
 
       <div ref={mapElement} className="map">
-        {!isCamDetail && !smallScreen && (
-          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
+        {!smallScreen && (
+          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'} ${isCamDetail && 'hidden'}`}>
             <RouteSearch
               ref={routingContainerRef}
               routeEdit={true}
