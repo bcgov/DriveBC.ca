@@ -252,18 +252,18 @@ export default function DriveBCMap(props) {
   const [showLocationAccessError, setShowLocationAccessError] = useState(false);
 
   // check if geolocation permission is granted
-  navigator.permissions
-  .query({ name: "geolocation" })
-  .then((permissionStatus) => {
-    permissionStatus.onchange = () => {
-      if(permissionStatus.state === 'denied') {
-        setShowLocationAccessError(true);
-      }
-      else {
-        setShowLocationAccessError(false);
-      }
-    };
-  });
+  if (navigator.permissions) {  // only when permissions API is supported
+    navigator.permissions.query({ name: "geolocation" }).then((permissionStatus) => {
+      permissionStatus.onchange = () => {
+        if(permissionStatus.state === 'denied') {
+          setShowLocationAccessError(true);
+        }
+        else {
+          setShowLocationAccessError(false);
+        }
+      };
+    });
+  }
 
   const loadMyLocation = () => {
     if (!locationSet.current) {
