@@ -24,6 +24,7 @@ button.btn.open-filters {
   flex-direction: column;
   max-height: calc(100% - 60px);
   height: calc(100% - 60px);
+  transition: all 0.25s ease-in-out;
 
   //specific styles for Firefox
   @-moz-document url-prefix() {
@@ -32,6 +33,10 @@ button.btn.open-filters {
 
   &.closed {
     display: contents;
+
+    @media (max-width: 575px) {
+      max-height: 0;
+    }
   }
 
   @media (min-width: 576px) {
