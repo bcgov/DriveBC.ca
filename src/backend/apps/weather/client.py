@@ -139,16 +139,14 @@ def get_regional_weather_list(token=None):
             area_code = entry.get("AreaCode")
             api_endpoint = settings.DRIVEBC_WEATHER_API_BASE_URL + f"/{area_code}"
 
-            weather = get_area_weather(api_endpoint, area_code)
+            weather = get_area_weather(api_endpoint, area_code, token)
             if weather:
                 area_weathers.append(weather)
 
         return area_weathers
 
     except (AccessTokenException, AreaCodeException) as e:
-        print(f"Error fetching data from weather API: {str(e)}")
         return Response({"error": str(e)}, status=500)
 
-    except requests.RequestException as e:
-        print(f"Error fetching data from weather API: {str(e)}")
+    except requests.RequestException:
         return Response("Error fetching data from weather API", status=500)

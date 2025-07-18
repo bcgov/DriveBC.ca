@@ -66,34 +66,34 @@ jobs:
         DJANGO_EMAIL_PORT: 1
         DJANGO_RECAPTCHA_SECRET_KEY: testvar
         DJANGO_FEEDBACK_EMAIL_DEFAULT: testvar@testvar.com
-        DRIVEBC_INLAND_FERRY_API_BASE_URL: testvar
-        DRIVEBC_IMAGE_API_BASE_URL: testvar
-        DRIVEBC_IMAGE_PROXY_URL: testvar
-        DRIVEBC_OPEN_511_API_BASE_URL: testvar
+        DRIVEBC_INLAND_FERRY_API_BASE_URL: https://testvar.com/
+        DRIVEBC_IMAGE_API_BASE_URL: https://testvar.com/
+        DRIVEBC_IMAGE_PROXY_URL: https://testvar.com/
+        DRIVEBC_OPEN_511_API_BASE_URL: https://testvar.com/
         DRIVEBC_WEBCAM_API_BASE_URL: https://images.drivebc.ca/webcam/api/v1/
-        DRIVEBC_ROUTE_PLANNER_API_BASE_URL: testvar
+        DRIVEBC_ROUTE_PLANNER_API_BASE_URL: https://testvar.com
         DRIVEBC_ROUTE_PLANNER_API_AUTH_KEY: testvar
-        DRIVEBC_DIT_API_BASE_URL: testvar
-        DRIVEBC_WEATHER_API_BASE_URL: testvar
-        DRIVEBC_WEATHER_API_TOKEN_URL: testvar
+        DRIVEBC_DIT_API_BASE_URL: https://testvar.com/
+        DRIVEBC_WEATHER_API_BASE_URL: https://testvar.com/cityforecast
+        DRIVEBC_WEATHER_API_TOKEN_URL: https://testvar.com/token/
         WEATHER_CLIENT_ID: testvar
         WEATHER_CLIENT_SECRET: testvar
-        DRIVEBC_WEATHER_AREAS_API_BASE_URL: testvar
-        DRIVEBC_SAWSX_API_BASE_URL: testvar
+        DRIVEBC_WEATHER_AREAS_API_BASE_URL: https://testvar.com/fcstareas
+        DRIVEBC_SAWSX_API_BASE_URL: https://testvar.com/api/v1
         DRIVEBC_IMAGE_BASE_URL: http://localhost:8000
-        DRIVEBC_WEATHER_CURRENT_API_BASE_URL: testvar
-        DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL: testvar
-        DRIVEBC_WEATHER_FORECAST_API_BASE_URL: testvar
-        DRIVEBC_REST_STOP_API_BASE_URL: testvar
-        DRIVEBC_BORDER_CROSSING_LANE_DELAY_BASE_URL: testvar
+        DRIVEBC_WEATHER_CURRENT_API_BASE_URL: https://testvar.com/observations/
+        DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL: https://testvar.com/stations
+        DRIVEBC_WEATHER_FORECAST_API_BASE_URL: https://testvar.com/forecast/
+        DRIVEBC_REST_STOP_API_BASE_URL: https://testvar.com/ows?service=WFS
+        DRIVEBC_BORDER_CROSSING_LANE_DELAY_BASE_URL: https://testvar.com/CurrentDelay
         SECRET_KEY: testvar
         BCEID_URL: testvar
         BCEID_SECRET: testvar
         BCEID_CLIENT_ID: testvar
         DRIVEBC_FEEDBACK_EMAIL_DEFAULT: testvar@testvar.com
         CLOSED_PHRASE_IDS: 18,20,22,23,26,30,32,182,320,325,327
-        DRIVEBC_COSTAL_FERRY_DATA_URL: testvar
-        DRIVEBC_OPENMAPS_API_URL: testvar
+        DRIVEBC_COSTAL_FERRY_DATA_URL: https://testvar.com/test.zip
+        DRIVEBC_OPENMAPS_API_URL: https://testvar.com/
       run: |
         coverage run ./src/backend/manage.py test --noinput && coverage report && coverage xml
 
