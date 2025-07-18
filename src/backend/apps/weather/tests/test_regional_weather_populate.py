@@ -55,8 +55,6 @@ class TestRegionalWeatherModel(BaseTest):
         ]
 
         feed_data = get_regional_weather_list(token='mock_token')
-        print("Feed Data for weather:")
-        print(feed_data)
 
         for regional_weather_data in feed_data:
             populate_regional_weather_from_data(regional_weather_data)

@@ -148,5 +148,6 @@ def get_regional_weather_list(token=None):
     except (AccessTokenException, AreaCodeException) as e:
         return Response({"error": str(e)}, status=500)
 
-    except requests.RequestException:
+    except requests.RequestException as e:
+        logger.error(f"Error fetching data from weather API: {str(e)}")
         return Response("Error fetching data from weather API", status=500)
