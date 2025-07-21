@@ -28,7 +28,7 @@ const addFeature = (feature, display_category, vsMap, lineVsMap, setNewFeatureSt
 }
 
 // Helper function that creates a feature and updates its properties for each event
-const processEvent = (event, currentProjection, vsMap, lineVsMap, referenceData, updateReferenceFeature, setNewFeatureStyle=false) => {
+const processEvent = (mapContext, event, currentProjection, vsMap, lineVsMap, referenceData, updateReferenceFeature, setNewFeatureStyle=false) => {
   let eventFound = false;
 
   // all events have a point coordinate for an icon; for line or zone
@@ -36,7 +36,7 @@ const processEvent = (event, currentProjection, vsMap, lineVsMap, referenceData,
   const pointFeature = new ol.Feature({
     ...event,
     type: 'event',
-    geometry: new Point(getMidPoint(event.location)),
+    geometry: new Point(getMidPoint(mapContext, event.location)),
   });
   pointFeature.setId(event.id);
   pointFeature.getGeometry().transform('EPSG:4326', currentProjection);
@@ -136,7 +136,7 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
 
     // Add features to VectorSources for each event
     for (const event of eventsData) {
-      eventFound = processEvent(event, currentProjection, vsMap, lineVsMap, referenceData, updateReferenceFeature);
+      eventFound = processEvent(mapContext, event, currentProjection, vsMap, lineVsMap, referenceData, updateReferenceFeature);
       if (eventFound) {
         break;
       }
@@ -183,7 +183,7 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
   return eventFound;
 }
 
-export function updateEventsLayers(events, mapLayers, setLoadingLayers, referenceData) {
+export function updateEventsLayers(mapContext, events, mapLayers, setLoadingLayers, referenceData) {
   const featuresDict = {};
 
   const eventsDict = events.reduce((dict, obj) => {
@@ -227,7 +227,7 @@ export function updateEventsLayers(events, mapLayers, setLoadingLayers, referenc
   Object.values(eventsDict).forEach((event) => {
     if (processedEvents.has(event.id)) { return; }
 
-    processEvent(event, 'EPSG:3857', vsMap, lineVsMap, null, null, true);
+    processEvent(mapContext, event, 'EPSG:3857', vsMap, lineVsMap, null, null, true);
   });
 
   setLoadingLayers(prevState => ({

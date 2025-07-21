@@ -607,7 +607,7 @@ export default function DriveBCMap(props) {
     // Count filtered events to store in routeDetails
     if (filteredEvents) {
       // Toggle features visibility
-      const featuresDict = updateEventsLayers(filteredEvents, mapLayers, setLoadingLayers, referenceData);
+      const featuresDict = updateEventsLayers(mapContext, filteredEvents, mapLayers, setLoadingLayers, referenceData);
       setFeatureContext({...featureContext, events: featuresDict});
 
       const eventCounts = {
@@ -781,7 +781,7 @@ export default function DriveBCMap(props) {
       {searchedRoutes &&
         <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} isCamDetail={isCamDetail} />
       }
-   
+
       <div
         ref={panel}
         className={`side-panel ${openPanel ? 'open' : ''} ${selectedRoute ? 'has-route' : ''}`}>
@@ -858,7 +858,7 @@ export default function DriveBCMap(props) {
           )}
         </div>
       </div>
-      
+
       <div ref={mapElement} className="map">
         {!smallScreen && (
           <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'} ${isCamDetail && 'hidden'}`}>

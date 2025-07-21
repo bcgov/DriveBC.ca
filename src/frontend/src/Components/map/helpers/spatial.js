@@ -157,10 +157,31 @@ export const compareRouteDistance = (route1, route2) => {
   return true;
 }
 
-export const getMidPoint = (location) => {
+const getPointCoords = (mapContext, coords) => {
+  if (!mapContext.features) {
+    mapContext.features = {};
+  }
+
+  if (!mapContext.features.events) {
+    mapContext.features.events = {};
+  }
+
+  const locationIndex = coords[0] + ',' + coords[1];
+  if (mapContext.features.events[locationIndex]) {
+    // point exists, retrieve offset location instead
+    return getPointCoords(mapContext, [coords[0] + 0.00176, coords[1]]);  // offset 0.00176 degrees (~200m) East
+
+  } else {
+    // point does not exist, record and return
+    mapContext.features.events[locationIndex] = coords;
+    return coords;
+  }
+}
+
+export const getMidPoint = (mapContext, location) => {
   // Return point coords if location is a point
   if (location.type === "Point") {
-    return location.coordinates;
+    return getPointCoords(mapContext, location.coordinates);
   }
 
   // Return midpoint for lines
