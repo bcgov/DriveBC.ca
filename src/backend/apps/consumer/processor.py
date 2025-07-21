@@ -49,9 +49,9 @@ S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
 S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
 RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq/")
 S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
-QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME", "image-queue-image-archiver")
-QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES", "419430400"))  # default 400MB
-EXCHANGE_NAME = os.getenv("RABBITMQ_EXCHANGE_NAME", "test.fanout_image_test")
+QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME", "drivebc-image-consumer")
+QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES", "209715200"))  # default 200MB
+EXCHANGE_NAME = os.getenv("RABBITMQ_EXCHANGE_NAME", "dev.exchange.fanout.drivebc.images")
 
 # S3 client
 s3_client = None
@@ -104,7 +104,7 @@ async def run_consumer(db_pool: any):
         )
 
         queue = await channel.declare_queue(
-            "image-queue-image-archiver",
+            QUEUE_NAME,
             durable=True,
             exclusive=False,
             auto_delete=False,
@@ -242,9 +242,14 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
         if webcam.get('is_on'):
             stamped.paste(raw)  # leaves 18 pixel black bar left at bottom
             dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
-            month = dt.strftime('%b')
-            day = dt.strftime('%d')
-            timestamp = f'{month} {day}, {dt.strftime("%Y %H:%M:%S %p %Z")}'
+
+            # Localize the naive datetime to the given timezone
+            timezone = pytz.timezone(tz)
+            dt_local = timezone.localize(dt)
+            
+            month = dt_local.strftime('%b')
+            day = dt_local.strftime('%d')
+            timestamp = f'{month} {day}, {dt_local.strftime("%Y %H:%M:%S %p %Z")}'
             pen.text((width - 3,  height + 14), timestamp, fill="white",
                      anchor='rs', font=FONT)
 
