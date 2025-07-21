@@ -151,6 +151,7 @@ LOCAL_APPS = [
     "apps.ferry",
     "apps.border",
     "apps.wildfire",
+    "apps.consumer",
 ]
 
 # apps with features overridden in local apps (e.g., admin templates) go here
