@@ -2,6 +2,7 @@ import datetime
 import io
 import logging
 import os
+import socket
 import time
 import urllib.request
 from collections import Counter
@@ -157,7 +158,7 @@ def update_webcam_image(webcam):
             base_url = base_url[:-1]
         endpoint = f'{base_url}/webcams/{webcam["id"]}/imageSource'
 
-        with urllib.request.urlopen(endpoint) as url:
+        with urllib.request.urlopen(endpoint, timeout=10) as url:
             image_data = io.BytesIO(url.read())
 
         raw = Image.open(image_data)
@@ -222,6 +223,9 @@ def update_webcam_image(webcam):
             delta = datetime.timedelta(seconds=delta)
             lastmod = floor((lastmod + delta).timestamp())  # POSIX timestamp
             os.utime(filename, times=(lastmod, lastmod))
+
+    except socket.timeout as e:
+        logger.error(f'Timeout fetching webcam image for camera {webcam.id}: {e}')
 
     except HTTPError as e:  # log HTTP errors without stacktrace to reduce log noise
         logger.error(f'{e} on {endpoint}')
