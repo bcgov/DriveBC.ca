@@ -2,6 +2,7 @@ import datetime
 import io
 import logging
 import os
+import time
 import urllib.request
 from collections import Counter
 from itertools import groupby
@@ -16,7 +17,7 @@ from apps.event.models import Event
 from apps.feed.client import FeedClient
 from apps.shared.models import Area, RouteGeometry
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
-from apps.webcam.enums import CAMERA_DIFF_FIELDS
+from apps.webcam.enums import CAMERA_DIFF_FIELDS, CAMERA_TASK_DEAFULT_TIMEOUT
 from apps.webcam.hwy_coords import hwy_coords
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
@@ -25,6 +26,7 @@ from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F
 from PIL import Image, ImageDraw, ImageFont
+from psycopg import IntegrityError
 
 logger = logging.getLogger(__name__)
 
@@ -53,9 +55,15 @@ def populate_webcam_from_data(webcam_data):
 
 
 def populate_all_webcam_data():
-    feed_data = FeedClient().get_webcam_list()["webcams"]
+    start_time = time.time()
 
+    feed_data = FeedClient().get_webcam_list()["webcams"]
     for webcam_data in feed_data:
+        # Check if the task has timed out at the start of each iteration
+        if time.time() - start_time > CAMERA_TASK_DEAFULT_TIMEOUT:
+            logger.warning(f"populate_all_webcam_data stopped: exceeded {CAMERA_TASK_DEAFULT_TIMEOUT} seconds.")
+            return
+
         populate_webcam_from_data(webcam_data)
 
 
@@ -81,7 +89,13 @@ def update_single_webcam_data(webcam):
 
 
 def update_all_webcam_data():
+    start_time = time.time()
     for camera in Webcam.objects.all():
+        # Check if the task has timed out at the start of each iteration
+        if time.time() - start_time > CAMERA_TASK_DEAFULT_TIMEOUT:
+            logger.warning(f"update_all_webcam_data stopped: exceeded {CAMERA_TASK_DEAFULT_TIMEOUT} seconds.")
+            return
+
         current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
         if camera.should_update(current_time):
             updated = update_single_webcam_data(camera)
@@ -323,8 +337,12 @@ def update_camera_area_relations():
 
 
 def update_camera_group_id(camera):
-    group_id = Webcam.objects.filter(location=camera.location).order_by('id').first().id
-    Webcam.objects.filter(id=camera.id).update(group_id=group_id)  # update without triggering save
+    try:
+        group_id = Webcam.objects.filter(location=camera.location).order_by('id').first().id
+        Webcam.objects.filter(id=camera.id).update(group_id=group_id)  # update without triggering save
+
+    except IntegrityError as e:
+        logger.warning(f"Error updating group id for camera {camera.id}: {e}")
 
 
 def update_all_camera_group_ids(*args, **kwargs):
