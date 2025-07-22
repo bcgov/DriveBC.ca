@@ -12,6 +12,17 @@ RUN apt-get update \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
+ # Install dependencies for sql database connection
+ RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl gnupg2 apt-transport-https && \
+    curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && \
+    ACCEPT_EULA=Y apt-get install -y --no-install-recommends msodbcsql17 unixodbc-dev gcc g++ && \
+    apt-get clean && \ 
+    rm -rf /var/lib/apt/lists/*
+
+
 # Adding backend directory to make absolute filepaths consistent across services
 WORKDIR /app/backend
 
@@ -27,6 +38,9 @@ RUN sed -i 's/\r$//g' /start.sh && chmod +x /start.sh
 
 COPY ./compose/backend/start_tasks.sh /
 RUN sed -i 's/\r$//g' /start_tasks.sh && chmod +x /start_tasks.sh
+
+COPY ./compose/backend/start_consumer.sh /
+RUN sed -i 's/\r$//g' /start_consumer.sh && chmod +x /start_consumer.sh
 
 # Add the rest of the code
 COPY ./src/backend /app/backend
