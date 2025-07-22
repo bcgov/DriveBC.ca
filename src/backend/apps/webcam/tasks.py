@@ -326,7 +326,7 @@ def update_camera_group_id(camera):
     Webcam.objects.filter(id=camera.id).update(group_id=group_id)  # update without triggering save
 
 
-def update_all_camera_group_ids():
+def update_all_camera_group_ids(*args, **kwargs):
     for camera in Webcam.objects.all():
         update_camera_group_id(camera)
 
