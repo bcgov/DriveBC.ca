@@ -15,6 +15,13 @@ body {
     overflow: hidden;
 }
 
+html,
+body,
+#root,
+.App {
+  height: 100%;
+}
+
 .divider {
   padding-bottom: 2em;
   margin-bottom: 1.5em;
@@ -325,7 +332,6 @@ a[target="_blank"] {
     }
   }
 
-  height: 100vh;
   display: flex;
   flex-direction: column;
 
