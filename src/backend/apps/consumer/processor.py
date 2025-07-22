@@ -31,6 +31,7 @@ FONT = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=14)
 FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
 PVC_ORIGINAL_PATH = f'{APP_DIR}/images/webcams/originals'
 PVC_WATERMARKED_PATH =f'{APP_DIR}/images/webcams/watermarked'
+DRIVCBC_PVC_WATERMARKED_PATH =f'/app/images/webcams'
 
 # Save files under "json" folder
 OUTPUT_DIR = "/app/ReplayTheDay/json"
@@ -133,6 +134,10 @@ async def run_consumer(db_pool: any):
 
                     try:
                         timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
+                        # For testing purposes, only allow camera with ID "343" to be processed
+                        # if camera_id != "343":
+                        #     logger.info("Skipping processing for camera %s", camera_id)
+                        #     continue
                         await handle_image_message(camera_id, db_data, message.body, timestamp_local, db_pool)
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
@@ -336,6 +341,25 @@ def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp:
     watermarked_pvc_path = filepath
     return watermarked_pvc_path
 
+def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes, timestamp: str):  
+    os.makedirs(os.path.dirname(f'{DRIVCBC_PVC_WATERMARKED_PATH}'), exist_ok=True)
+
+    save_dir = os.path.join(DRIVCBC_PVC_WATERMARKED_PATH)
+    os.makedirs(save_dir, exist_ok=True)
+    filename = f"{camera_id}.jpg"
+    filepath = os.path.join(save_dir, filename)
+
+    try:
+        with open(filepath, "wb") as f:
+            f.write(image_bytes)
+        logger.info(f"Watermarked image saved to drivebc PVC at {filepath}")
+    except Exception as e:
+        logger.error(f"Error saving Watermarked image to drivebc PVC {filepath}: {e}")
+    
+    watermarked_pvc_path = filepath
+    return watermarked_pvc_path
+
+
 def save_watermarked_image_to_s3(camera_id: str, image_bytes: bytes, timestamp: str):
     ext = "jpg"
     key = f"watermarked/{camera_id}/{timestamp}.{ext}"
@@ -393,6 +417,8 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     watermarked_pvc_path = save_watermarked_image_to_pvc(camera_id, image_bytes, timestamp)
     watermarked_s3_path = save_watermarked_image_to_s3(camera_id, image_bytes, timestamp)
 
+    watermarked_drivebc_pvc_path = save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes, timestamp)
+
     # update json file for replay the day
     await update_replay_json(camera_id, db_pool)
 
@@ -402,6 +428,14 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
             INSERT INTO image_index (camera_id, original_pvc_path, watermarked_pvc_path, original_s3_path, watermarked_s3_path, timestamp)
             VALUES ($1, $2, $3, $4, $5, $6)
         """, camera_id, original_pvc_path, watermarked_pvc_path, original_s3_path, watermarked_s3_path, dt)
+
+    # Update webcam db to set https_cam flag to True
+    async with db_pool.acquire() as conn:
+        await conn.execute("""
+            UPDATE webcam_webcam
+            SET https_cam = TRUE
+            WHERE id = $1
+        """, int(camera_id))
         
 async def update_replay_json(camera_id: str, db_pool: any):
     results = await get_images_within(camera_id, db_pool, hours=24)

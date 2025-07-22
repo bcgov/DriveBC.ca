@@ -40,6 +40,9 @@ class Webcam(BaseModel):
     update_period_mean = models.PositiveIntegerField()
     update_period_stddev = models.PositiveIntegerField()
 
+    # HTTPS camera flag
+    https_cam = models.BooleanField(default=False)
+
     # Within two standard deviations from mean
     @property
     def minimum_update_window(self):

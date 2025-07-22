@@ -26,6 +26,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F
 from PIL import Image, ImageDraw, ImageFont
 
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import URL
+import asyncpg
+from django.db import connection
+
 logger = logging.getLogger(__name__)
 
 APP_DIR = Path(__file__).resolve().parent
@@ -35,6 +40,29 @@ CAMS_DIR = f'{settings.SRC_DIR}/images/webcams'
 
 CAM_OFF = ('This highway cam image is currently unavailable due to technical difficulties. '
            'Our technicians have been alerted and service will resume as soon as possible.')
+
+db_pool = None
+
+# Connection settings
+SQL_DB_SERVER = os.getenv("SQL_DB_SERVER", "sql-server-db")
+SQL_DB_NAME = os.getenv("SQL_DB_NAME", "camera-db")
+SQL_DB_USER = os.getenv("SQL_DB_USER", "sa")
+SQL_DB_PASSWORD = os.getenv("SQL_DB_PASSWORD", "YourStrong@Passw0rd")
+SQL_DB_DRIVER = "ODBC Driver 17 for SQL Server"  # Make sure this driver is installed on the container
+
+# Build connection URL
+connection_url = URL.create(
+    "mssql+pyodbc",
+    username=SQL_DB_USER,
+    password=SQL_DB_PASSWORD,
+    host=SQL_DB_SERVER,
+    port=1433,
+    database=SQL_DB_NAME,
+    query={"driver": SQL_DB_DRIVER}
+)
+
+# Create SQLAlchemy engine
+engine = create_engine(connection_url)
 
 
 def populate_webcam_from_data(webcam_data):
@@ -80,11 +108,76 @@ def update_single_webcam_data(webcam):
             return
 
 
+def update_cam_from_sql_db(id: int):
+    cams_live_sql = text("""
+        SELECT Cams_Live.ID AS id, 
+        Cams_Live.Cam_InternetName AS name, 
+        Cams_Live.Cam_InternetCaption AS caption,
+        Regions_Live.seq AS region, 
+        Regions_Live.Name AS region_name,                 
+        Highways_Live.Hwy_Number AS highway, 
+        Highways_Live.Section AS highway_description, 
+        Region_Highways_Live.seq AS highway_group,
+        Cams_Live.seq AS highway_cam_order,
+        Cams_Live.Cam_LocationsOrientation AS orientation,
+        Cams_Live.Cam_LocationsElevation AS elevation,
+        Cams_Live.Cam_ControlDisabled AS isOn,
+        Cams_Live.isNew AS isNew,
+        Cams_Live.isNew, Cams_Live.Cam_MaintenanceIs_On_Demand AS isOnDemand,
+        Cams_Live.Cam_InternetCredit AS credit,
+        Cams_Live.Cam_InternetDBC_Mark AS dbc_mark                 
+        FROM [WEBCAM_DEV].[dbo].[Cams_Live]
+        INNER JOIN ((Region_Highways_Live INNER JOIN Highways_Live ON Region_Highways_Live.Highway_ID = Highways_Live.ID) 
+        INNER JOIN Regions_Live ON Region_Highways_Live.Region_ID = Regions_Live.ID) 
+        ON (Cams_Live.Cam_LocationsHighway = Region_Highways_Live.Highway_ID) 
+        AND (Cams_Live.Cam_LocationsRegion = Region_Highways_Live.Region_ID) 
+        WHERE Cams_Live.ID = :id
+    """)
+
+    with engine.connect() as connection:
+        try:
+            # Query from Cams_Live
+            result_live = connection.execute(cams_live_sql, {"id": id})
+            live_rows = {row.id: dict(row._mapping) for row in result_live}
+            update_webcam_db(id, live_rows.get(id, {}))
+            return live_rows
+
+        except Exception as e:
+            print(f"Failed to connect to the database: {e}")
+            return []
+
+def update_webcam_db(cam_id: int, cam_data: dict):
+    updated_count = Webcam.objects.filter(id=cam_id).update(region=cam_data.get("region"),
+        region_name=cam_data.get("region_name"),
+        is_on=cam_data.get("isOn", False),
+        name=cam_data.get("name"),
+        caption=cam_data.get("caption", ""),
+        highway=cam_data.get("highway", ""),
+        highway_description=cam_data.get("highway_description", ""),
+        highway_group=cam_data.get("highway_group", 0),
+        highway_cam_order=cam_data.get("highway_cam_order", 0),
+        orientation=cam_data.get("orientation", ""),
+        elevation=cam_data.get("elevation", 0),
+        dbc_mark=cam_data.get("dbc_mark", ""),
+        credit=cam_data.get("credit", ""),
+        is_new=cam_data.get("isNew", False),
+        is_on_demand=cam_data.get("isOnDemand", False),
+        marked_stale=False,
+        marked_delayed=False,
+        last_update_attempt=datetime.datetime.now(tz=ZoneInfo("America/Vancouver")),
+        last_update_modified=datetime.datetime.now(tz=ZoneInfo("America/Vancouver")),
+        update_period_mean=cam_data.get("update_period_mean", 300),
+        update_period_stddev=cam_data.get("update_period_stddev", 60))      
+    return updated_count
+        
+
 def update_all_webcam_data():
     for webcam in Webcam.objects.all():
         current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
-        if webcam.should_update(current_time):
+        if webcam.should_update(current_time) and webcam.https_cam:
             update_single_webcam_data(webcam)
+        else:
+            update_cam_from_sql_db(webcam.id)
 
     update_camera_group_ids()
 
