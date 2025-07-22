@@ -1,9 +1,6 @@
 // React
 import React, {useContext, useEffect, useState} from 'react';
 
-// Routing
-import { useSearchParams } from "react-router-dom";
-
 // Redux
 import { useDispatch } from 'react-redux';
 
@@ -32,9 +29,6 @@ export default function LocationSearch(props) {
 
   // Redux
   const dispatch = useDispatch();
-
-  // Routing
-  const [searchParams, _setSearchParams] = useSearchParams();
 
   // State
   const [minLength, setMinLength] = useState(3);
@@ -85,37 +79,6 @@ export default function LocationSearch(props) {
       setLocationOptions([{ ...myLocation, label: "Current location"}]);
     }
   }
-
-  // Populate location based on shared search params
-  const initializeSearchLocation = () => {
-    const locationText = searchParams.get((isStartLocation ? 'start' : 'end'));
-
-    if (locationText) {
-      if (locationText === 'null') {
-        dispatch(action([]));
-
-      } else {
-        setSearching(true);
-        getLocations(locationText).then(locationsData => {  // Fetch locations from text
-          for (let i=0; i < locationsData.features.length; i++) {
-            const feature = locationsData.features[i];
-            if (feature.properties.fullAddress === locationText) {  // Dispatch exact match
-              dispatch(action([{
-                ...feature,
-                label: feature.properties.fullAddress,
-              }]));
-              break;
-            }
-          }
-          setSearching(false);
-        });
-      }
-    }
-  }
-
-  useEffect(() => {
-    initializeSearchLocation()
-  }, []);
 
   // Rendering
   return (

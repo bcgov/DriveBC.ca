@@ -23,7 +23,7 @@ export const populateRouteProjection = (data, route) => {
 
   // Calculate and store distance along reference line
   copiedData.forEach((item, i) => {
-    const coords = getMidPoint(item.location ? item.location : item.geometry);
+    const coords = getMidPoint(null, item.location ? item.location : item.geometry);
 
     // Find the closest point on the route using the spatial index
     const closestCoords = spatialIndex.neighbors(coords[0], coords[1], 1).map(idx => lineCoords[idx])[0];
@@ -181,7 +181,11 @@ const getPointCoords = (mapContext, coords) => {
 export const getMidPoint = (mapContext, location) => {
   // Return point coords if location is a point
   if (location.type === "Point") {
-    return getPointCoords(mapContext, location.coordinates);
+    if (mapContext) {
+      return getPointCoords(mapContext, location.coordinates);
+    }
+
+    return location.coordinates;
   }
 
   // Return midpoint for lines

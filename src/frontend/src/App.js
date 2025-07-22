@@ -2,14 +2,14 @@
 import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 
 // Navigation
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useSearchParams } from 'react-router-dom';
 
 // Redux
 import { memoize } from "proxy-memoize";
 import { useDispatch, useSelector } from 'react-redux';
 import { updateFavCams, updateFavRoutes } from './slices/userSlice';
 import { updateAreas } from './slices/feedsSlice';
-import { updateSearchedRoutes } from "./slices";
+import { updateSearchedRoutes, updateSearchLocationFrom, updateSearchLocationTo } from "./slices";
 
 // External imports
 // https://github.com/dai-shi/proxy-memoize?tab=readme-ov-file#usage-with-immer
@@ -24,6 +24,7 @@ import './App.scss';
 import { getAreas } from "./Components/data/areas";
 import { getFavoriteCameraIds } from './Components/data/webcams';
 import { getFavoriteRoutes, linkRoute } from './Components/data/routes';
+import { getLocations } from "./Components/data/locations";
 import AccountPage from './pages/AccountPage';
 import AccountDeactivatedPage from "./pages/AccountDeactivatedPage";
 import AdvisoriesListPage from './pages/AdvisoriesListPage';
@@ -78,6 +79,9 @@ function App() {
     areas: state.feeds.areas.list,
   }))));
 
+  // Routing
+  const [searchParams, _setSearchParams] = useSearchParams();
+
   // Refs
   const isInitialAlertMount = useRef(true);
   const timeout = useRef();
@@ -127,11 +131,39 @@ function App() {
     }
   }, [authContext]);
 
+  // Populate location based on shared search params
+  const initializeSearchLocation = (action) => {
+    const locationText = searchParams.get((action === updateSearchLocationFrom ? 'start' : 'end'));
+
+    if (locationText) {
+      if (locationText === 'null') {
+        dispatch(action([]));
+
+      } else {
+        getLocations(locationText).then(locationsData => {  // Fetch locations from text
+          for (let i=0; i < locationsData.features.length; i++) {
+            const feature = locationsData.features[i];
+            if (feature.properties.fullAddress === locationText) {  // Dispatch exact match
+              dispatch(action([{
+                ...feature,
+                label: feature.properties.fullAddress,
+              }]));
+              break;
+            }
+          }
+        });
+      }
+    }
+  }
+
   useEffect(async () => {
     if (!areas) {
       const areaData = await getAreas();
       dispatch(updateAreas({ list: areaData }));
     }
+
+    initializeSearchLocation(updateSearchLocationFrom)
+    initializeSearchLocation(updateSearchLocationTo)
   }, []);
 
   /* Helpers */
