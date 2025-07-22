@@ -247,7 +247,7 @@ function App() {
 
                         <EmergencyAlert />
 
-                        <main>
+                        <main id='main'>
 
                           <ScrollToTop />
 

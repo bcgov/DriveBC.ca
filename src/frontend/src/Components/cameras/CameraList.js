@@ -85,7 +85,8 @@ export default function CameraList(props) {
       <InfiniteScroll
         dataLength={camsContext.displayLength}
         next={getDisplayedCameras}
-        hasMore={getHasMore}>
+        hasMore={getHasMore}
+        scrollableTarget="main">
 
         {renderHighways()}
       </InfiniteScroll>
