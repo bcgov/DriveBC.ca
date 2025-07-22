@@ -81,12 +81,13 @@ def update_single_webcam_data(webcam):
 
 
 def update_all_webcam_data():
-    for webcam in Webcam.objects.all():
+    for camera in Webcam.objects.all():
         current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
-        if webcam.should_update(current_time):
-            update_single_webcam_data(webcam)
+        if camera.should_update(current_time):
+            update_single_webcam_data(camera)
 
-    update_camera_group_ids()
+            group_id = Webcam.objects.filter(location=camera.location).order_by('id').first().id
+            Webcam.objects.filter(id=camera.id).update(group_id=group_id)  # update without triggering save
 
 
 def wrap_text(text, pen, font, width):
@@ -320,12 +321,6 @@ def build_route_geometries(coords=hwy_coords):
 def update_camera_area_relations():
     for area in Area.objects.all():
         Webcam.objects.filter(location__within=area.geometry).update(area=area)
-
-
-def update_camera_group_ids():
-    for camera in Webcam.objects.all():
-        group_id = Webcam.objects.filter(location=camera.location).order_by('id').first().id
-        Webcam.objects.filter(id=camera.id).update(group_id=group_id)  # update without triggering save
 
 
 def get_nearby_queryset(model, obj):
