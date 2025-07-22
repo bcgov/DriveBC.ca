@@ -25,3 +25,4 @@ pillow==10.4.0
 timezonefinder==6.6.3
 pytz==2025.2
 click==8.2.1
+aiofiles==24.1.0

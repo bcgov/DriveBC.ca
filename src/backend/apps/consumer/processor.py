@@ -14,6 +14,7 @@ import pytz
 import boto3
 import aio_pika
 import asyncio
+import aiofiles
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from .db import get_all_from_db
@@ -30,6 +31,10 @@ FONT = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=14)
 FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
 PVC_ORIGINAL_PATH = f'{APP_DIR}/images/webcams/originals'
 PVC_WATERMARKED_PATH =f'{APP_DIR}/images/webcams/watermarked'
+
+# Save files under "json" folder
+OUTPUT_DIR = "/app/ReplayTheDay/json"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 logger = logging.getLogger(__name__)
@@ -346,7 +351,7 @@ def save_watermarked_image_to_s3(camera_id: str, image_bytes: bytes, timestamp: 
 
 # Mount the folder so it’s accessible at /json
 async def get_images_within(camera_id: str, db_pool: any, hours: int = 24) -> list:
-    await ready_event.wait()
+    # await ready_event.wait()
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     index_db = await load_index_from_db(db_pool)
 
@@ -388,9 +393,37 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     watermarked_pvc_path = save_watermarked_image_to_pvc(camera_id, image_bytes, timestamp)
     watermarked_s3_path = save_watermarked_image_to_s3(camera_id, image_bytes, timestamp)
 
+    # update json file for replay the day
+    await update_replay_json(camera_id, db_pool)
+
     # Insert record into DB
     async with db_pool.acquire() as conn:
         await conn.execute("""
             INSERT INTO image_index (camera_id, original_pvc_path, watermarked_pvc_path, original_s3_path, watermarked_s3_path, timestamp)
             VALUES ($1, $2, $3, $4, $5, $6)
         """, camera_id, original_pvc_path, watermarked_pvc_path, original_s3_path, watermarked_s3_path, dt)
+        
+async def update_replay_json(camera_id: str, db_pool: any):
+    results = await get_images_within(camera_id, db_pool, hours=24)
+
+    ids = []
+    for item in results:
+        watermarked_path = item.watermarked_pvc_path
+        filename = os.path.basename(watermarked_path)
+        file_id, _ = os.path.splitext(filename)
+        ids.append(file_id)
+
+    # Create the JSON file
+    logger.info(f"Updating JSON file for camera {camera_id} with {len(ids)} IDs")
+    file_path = os.path.join(OUTPUT_DIR, f"{camera_id}.json")
+
+    async with aiofiles.open(file_path, "w", encoding="utf-8") as f:
+        data_str = json.dumps(ids, indent=4)
+        await f.write(data_str)
+    logger.info(f"JSON file for camera {camera_id} saved at {file_path}")
+
+    return {
+        "status": "success",
+        "file_path": f"/ReplayTheDay/json/{camera_id}.json",
+        "count": len(ids)
+    }
