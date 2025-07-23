@@ -306,9 +306,9 @@ export default function Filters(props) {
     </Tooltip>
   );
 
-  const tooltipInlandFerries = (
-    <Tooltip id="tooltipInlandFerries" className="tooltip-content">
-      <p>Travel requires the use of an inland ferry.</p>
+  const tooltipFerries = (
+    <Tooltip id="tooltipFerries" className="tooltip-content">
+      <p>Travel requires the use of a ferry.</p>
     </Tooltip>
   );
   const tooltipWeather  = (
@@ -567,8 +567,8 @@ export default function Filters(props) {
                       Ferries
                     </label>
 
-                    <OverlayTrigger placement="top" overlay={tooltipInlandFerries}>
-                      <button className="tooltip-info" aria-label="ferries tooltip" aria-describedby="tooltipInlandFerries">?</button>
+                    <OverlayTrigger placement="top" overlay={tooltipFerries}>
+                      <button className="tooltip-info" aria-label="ferries tooltip" aria-describedby="tooltipFerries">?</button>
                     </OverlayTrigger>
                   </div>
 

@@ -13,6 +13,11 @@ import ferryIconActive from '../../images/mapIcons/ferry-active.png';
 import ferryIconHover from '../../images/mapIcons/ferry-hover.png';
 import ferryIconStatic from '../../images/mapIcons/ferry-static.png';
 
+// Coastal Ferries
+import coastalFerryIconActive from '../../images/mapIcons/coastal-ferry-active.png';
+import coastalFerryIconHover from '../../images/mapIcons/coastal-ferry-hover.png';
+import coastalFerryIconStatic from '../../images/mapIcons/coastal-ferry-static.png';
+
 // Road Weather
 import roadWeatherIconActive from '../../images/mapIcons/road-weather-active.png';
 import roadWeatherIconHover from '../../images/mapIcons/road-weather-hover.png';
@@ -220,6 +225,26 @@ export const ferryStyles = {
     image: new Icon({
       scale: 0.25,
       src: ferryIconActive,
+    }),
+  }),
+};
+export const coastalFerryStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: coastalFerryIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: coastalFerryIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: coastalFerryIconActive,
     }),
   }),
 };

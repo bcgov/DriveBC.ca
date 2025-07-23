@@ -8,6 +8,7 @@ import trackEvent from '../../shared/TrackEvent.js';
 
 // Styling
 import {
+  coastalFerryStyles,
   ferryStyles,
   roadWeatherStyles,
   regionalStyles,
@@ -21,7 +22,7 @@ import {
   regionalWarningStyles,
   advisoryStyles,
   wildfireCentroidStyles,
-  wildfireAreaStyles,
+  wildfireAreaStyles
 } from '../../data/featureStyleDefinitions.js';
 
 // Click states
@@ -76,9 +77,12 @@ export const resetClickedStates = (
         break;
       }
       case 'ferry':
-        clickedFeatureRef.current.setStyle(ferryStyles['static']);
-        clickedFeatureRef.current.set('clicked', false);
-        updateClickedFeature(null);
+        {
+          const styles = clickedFeatureRef.current.get('coastal') ? coastalFerryStyles : ferryStyles;
+          clickedFeatureRef.current.setStyle(styles['static']);
+          clickedFeatureRef.current.set('clicked', false);
+          updateClickedFeature(null);
+        }
         break;
       case 'currentWeather':
         clickedFeatureRef.current.setStyle(roadWeatherStyles['static']);
@@ -271,8 +275,10 @@ export const ferryClickHandler = (
     isCamDetail,
   );
 
+  const styles = feature.get('coastal') ? coastalFerryStyles : ferryStyles;
+
   // set new clicked ferry feature
-  feature.setStyle(ferryStyles['active']);
+  feature.setStyle(styles['active']);
   feature.setProperties({ clicked: true }, true);
   updateClickedFeature(feature);
 };
@@ -291,7 +297,7 @@ const weatherClickHandler = (
     isCamDetail,
   );
 
-  // set new clicked ferry feature
+  // set new clicked local weather feature
   feature.setStyle(roadWeatherStyles['active']);
   feature.setProperties({ clicked: true }, true);
   updateClickedFeature(feature);
@@ -311,7 +317,7 @@ const regionalClickHandler = (
     isCamDetail,
   );
 
-  // set new clicked ferry feature
+  // set new clicked regional weather feature
   const warnings = feature.get('warnings');
   feature.setStyle((warnings && warnings.length) ? regionalWarningStyles['active'] : regionalStyles['active']);
   feature.setProperties({ clicked: true }, true);
@@ -332,7 +338,7 @@ const hefClickHandler = (
     isCamDetail,
   );
 
-  // set new clicked ferry feature
+  // set new clicked hef weather feature
   feature.setStyle(hefStyles['active']);
   feature.setProperties({ clicked: true }, true);
   updateClickedFeature(feature);
@@ -405,7 +411,7 @@ const borderCrossingClickHandler = (
     isCamDetail,
   );
 
-  // set new clicked ferry feature
+  // set new clicked border crossing feature
   feature.setStyle(borderCrossingStyles['active']);
   feature.setProperties({ clicked: true }, true);
   updateClickedFeature(feature);
@@ -425,7 +431,7 @@ export const advisoryClickHandler = (
     isCamDetail,
   );
 
-  // set new clicked ferry feature
+  // set new clicked advisory feature
   feature.setStyle(advisoryStyles['active']);
   feature.setProperties({ clicked: true }, true);
   updateClickedFeature(feature);

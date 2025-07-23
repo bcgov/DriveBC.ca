@@ -9,7 +9,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Styling
-import { ferryStyles } from '../../data/featureStyleDefinitions.js';
+import { coastalFerryStyles, ferryStyles } from '../../data/featureStyleDefinitions.js';
 
 export function getFerriesLayer(ferriesData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   const vectorSource = new VectorSource();
@@ -66,8 +66,9 @@ export function updateFerriesLayer(ferries, layer, setLoadingLayers) {
   }, {});
 
   for (const ferryFeature of layer.getSource().getFeatures()) {
-    if(!ferryFeature.get('clicked')){
-      ferryFeature.setStyle(ferriesDict[ferryFeature.getId()] ? ferryStyles['static'] : new Style(null));
+    if (!ferryFeature.get('clicked')) {
+      const styles = ferryFeature.get('coastal') ? coastalFerryStyles : ferryStyles;
+      ferryFeature.setStyle(ferriesDict[ferryFeature.getId()] ? styles['static'] : new Style(null));
     }
 
     featuresDict[ferryFeature.get('id')] = ferryFeature;

@@ -1,4 +1,5 @@
 import {
+  coastalFerryStyles,
   ferryStyles,
   roadWeatherStyles,
   regionalStyles,
@@ -10,7 +11,9 @@ import {
   routeStyles,
   borderCrossingStyles,
   regionalWarningStyles,
-  advisoryStyles, wildfireCentroidStyles, wildfireAreaStyles
+  advisoryStyles,
+  wildfireCentroidStyles,
+  wildfireAreaStyles
 } from '../../data/featureStyleDefinitions.js';
 import {
   setEventStyle
@@ -40,7 +43,10 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
           break;
         }
         case 'ferry':
-          hoveredFeature.setStyle(ferryStyles['static']);
+          {
+            const styles = hoveredFeature.get('coastal') ? coastalFerryStyles : ferryStyles;
+            hoveredFeature.setStyle(styles['static']);
+          }
           break;
         case 'currentWeather':
           hoveredFeature.setStyle(roadWeatherStyles['static']);
@@ -142,8 +148,11 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
         }
         return;
       case 'ferry':
-        if (!targetFeature.getProperties().clicked) {
-          targetFeature.setStyle(ferryStyles['hover']);
+        {
+          const styles = targetFeature.get('coastal') ? coastalFerryStyles : ferryStyles;
+          if (!targetFeature.getProperties().clicked) {
+            targetFeature.setStyle(styles['hover']);
+          }
         }
         return;
       case 'currentWeather':

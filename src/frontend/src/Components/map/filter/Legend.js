@@ -24,6 +24,7 @@ import advisoriesIcon from '../../../images/legend/advisories.png';
 import newlyUpdatedIcon from '../../../images/legend/newly-updated.png';
 
 // Ferries
+import coastalFerryIconStatic from '../../../images/mapIcons/coastal-ferry-static.png';
 import ferryIconStatic from '../../../images/mapIcons/ferry-static.png';
 
 // Weather
@@ -198,8 +199,14 @@ export default function Legend() {
       <div className={'legend__group'}>
         {getLegendItem(
           ferryIconStatic,
-          'Ferries',
-          'Travel that requires use of a ferry.',
+          'Inland ferries',
+          'Travel that requires use of an inland ferry.',
+          'ferries'
+        )}
+        {getLegendItem(
+          coastalFerryIconStatic,
+          'Coastal ferries',
+          'Travel that requires use of an coastal ferry.',
           'ferries'
         )}
       </div>
