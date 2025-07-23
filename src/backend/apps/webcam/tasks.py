@@ -18,7 +18,7 @@ from apps.event.models import Event
 from apps.feed.client import FeedClient
 from apps.shared.models import Area, RouteGeometry
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
-from apps.webcam.enums import CAMERA_DIFF_FIELDS, CAMERA_TASK_DEAFULT_TIMEOUT
+from apps.webcam.enums import CAMERA_DIFF_FIELDS, CAMERA_TASK_DEFAULT_TIMEOUT
 from apps.webcam.hwy_coords import hwy_coords
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
@@ -61,8 +61,8 @@ def populate_all_webcam_data():
     feed_data = FeedClient().get_webcam_list()["webcams"]
     for webcam_data in feed_data:
         # Check if the task has timed out at the start of each iteration
-        if time.time() - start_time > CAMERA_TASK_DEAFULT_TIMEOUT:
-            logger.warning(f"populate_all_webcam_data stopped: exceeded {CAMERA_TASK_DEAFULT_TIMEOUT} seconds.")
+        if time.time() - start_time > CAMERA_TASK_DEFAULT_TIMEOUT:
+            logger.warning(f"populate_all_webcam_data stopped: exceeded {CAMERA_TASK_DEFAULT_TIMEOUT} seconds.")
             return
 
         populate_webcam_from_data(webcam_data)
@@ -93,8 +93,8 @@ def update_all_webcam_data():
     start_time = time.time()
     for camera in Webcam.objects.all():
         # Check if the task has timed out at the start of each iteration
-        if time.time() - start_time > CAMERA_TASK_DEAFULT_TIMEOUT:
-            logger.warning(f"update_all_webcam_data stopped: exceeded {CAMERA_TASK_DEAFULT_TIMEOUT} seconds.")
+        if time.time() - start_time > CAMERA_TASK_DEFAULT_TIMEOUT:
+            logger.warning(f"update_all_webcam_data stopped: exceeded {CAMERA_TASK_DEFAULT_TIMEOUT} seconds.")
             return
 
         current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
@@ -225,7 +225,7 @@ def update_webcam_image(webcam):
             os.utime(filename, times=(lastmod, lastmod))
 
     except socket.timeout as e:
-        logger.error(f'Timeout fetching webcam image for camera {webcam.id}: {e}')
+        logger.error(f'Timeout fetching webcam image for camera {webcam["id"]}: {e}')
 
     except HTTPError as e:  # log HTTP errors without stacktrace to reduce log noise
         logger.error(f'{e} on {endpoint}')

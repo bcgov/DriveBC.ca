@@ -1,4 +1,4 @@
-CAMERA_TASK_DEAFULT_TIMEOUT = 480
+CAMERA_TASK_DEFAULT_TIMEOUT = 480
 CAMERA_DIFF_FIELDS = [
     'name',
     'last_update_modified',
