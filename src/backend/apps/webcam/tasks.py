@@ -68,7 +68,7 @@ def update_single_webcam_data(webcam):
             Webcam.objects.filter(id=webcam.id).delete()
 
         # Skip updating otherwise
-        return
+        return False
 
     # Only update if existing data differs for at least one of the fields
     for field in CAMERA_DIFF_FIELDS:
@@ -77,15 +77,16 @@ def update_single_webcam_data(webcam):
             webcam_serializer.is_valid(raise_exception=True)
             webcam_serializer.save()
             update_webcam_image(webcam_data)
-            return
+            return True
 
 
 def update_all_webcam_data():
     for camera in Webcam.objects.all():
         current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
         if camera.should_update(current_time):
-            update_single_webcam_data(camera)
-            update_camera_group_id(camera)
+            updated = update_single_webcam_data(camera)
+            if updated:
+                update_camera_group_id(camera)
 
 
 def wrap_text(text, pen, font, width):
