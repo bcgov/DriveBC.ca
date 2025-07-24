@@ -134,10 +134,6 @@ async def run_consumer(db_pool: any):
 
                     try:
                         timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
-                        # For testing purposes, only allow camera with ID "343" to be processed
-                        # if camera_id != "343":
-                        #     logger.info("Skipping processing for camera %s", camera_id)
-                        #     continue
                         await handle_image_message(camera_id, db_data, message.body, timestamp_local, db_pool)
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
@@ -414,10 +410,11 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
 
     image_bytes = watermark(webcam, body, tz, timestamp)
 
-    watermarked_pvc_path = save_watermarked_image_to_pvc(camera_id, image_bytes, timestamp)
-    watermarked_s3_path = save_watermarked_image_to_s3(camera_id, image_bytes, timestamp)
+    # watermarked_pvc_path = save_watermarked_image_to_pvc(camera_id, image_bytes, timestamp)
+    # watermarked_drivebc_pvc_path = save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes, timestamp)
 
-    watermarked_drivebc_pvc_path = save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes, timestamp)
+    watermarked_pvc_path = save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes, timestamp)
+    watermarked_s3_path = save_watermarked_image_to_s3(camera_id, image_bytes, timestamp)
 
     # update json file for replay the day
     await update_replay_json(camera_id, db_pool)
