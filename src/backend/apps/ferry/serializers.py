@@ -49,6 +49,7 @@ class FerryVesselSerializer(serializers.ModelSerializer):
 class FerryRouteSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
     vessels = serializers.SerializerMethodField()
+    display_category = serializers.SerializerMethodField()
 
     class Meta:
         model = Ferry
@@ -81,9 +82,13 @@ class FerryRouteSerializer(serializers.ModelSerializer):
     def get_id(self, obj):
         return obj.route_id
 
+    def get_display_category(self, obj):
+        return 'inlandFerry'
+
 
 class CoastalFerryStopAPISerializer(serializers.ModelSerializer):
     routes = serializers.SerializerMethodField()
+    display_category = serializers.SerializerMethodField()
 
     class Meta:
         model = CoastalFerryStop
@@ -95,6 +100,9 @@ class CoastalFerryStopAPISerializer(serializers.ModelSerializer):
     def get_routes(self, obj):
         routes = CoastalFerryRoute.objects.filter(trips__stop_times__stop=obj).exclude(url='').distinct()
         return CoastalFerryRouteSerializer(routes, many=True).data
+
+    def get_display_category(self, obj):
+        return 'costalFerry'
 
 
 class CoastalFerryStopSerializer(serializers.ModelSerializer):

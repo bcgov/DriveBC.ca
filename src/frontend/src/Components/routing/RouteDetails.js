@@ -673,7 +673,24 @@ export default function RouteDetails(props) {
             </div>
           }
 
-          {(eventCount && eventCount.chainUps > 0) &&
+          {(eventCount && mapContext.visible_layers.futureEvents) &&
+            <div className="route-item route-item--futureEvents">
+              <span className="route-item__count">
+                {eventCount.futureEvents}
+              </span>
+              <span className="route-item__icon">
+                <svg width="14" height="14" viewBox="5 6 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
+                     alt="future events" aria-hidden="true" focusable="false" role="img">
+                  <path className="route-item__icon__path" fill="#474543"
+                    d="M10 5.5C10.3984 5.5 10.75 5.85156 10.75 6.25V7H13.75V6.25C13.75 5.85156 14.0781 5.5 14.5 5.5C14.8984 5.5 15.25 5.85156 15.25 6.25V7L16.375 7C16.9844 7 17.5 7.51563 17.5 8.125V9.25L7 9.25V8.125C7 7.51562 7.49219 7 8.125 7H9.25V6.25C9.25 5.85156 9.57812 5.5 10 5.5ZM7 10L17.5 10V16.375C17.5 17.0078 16.9844 17.5 16.375 17.5H8.125C7.49219 17.5 7 17.0078 7 16.375L7 10ZM8.5 11.875V12.625C8.5 12.8359 8.66406 13 8.875 13H9.625C9.8125 13 10 12.8359 10 12.625V11.875C10 11.6875 9.8125 11.5 9.625 11.5H8.875C8.66406 11.5 8.5 11.6875 8.5 11.875ZM11.5 11.875V12.625C11.5 12.8359 11.6641 13 11.875 13L12.625 13C12.8125 13 13 12.8359 13 12.625V11.875C13 11.6875 12.8125 11.5 12.625 11.5L11.875 11.5C11.6641 11.5 11.5 11.6875 11.5 11.875ZM14.875 11.5C14.6641 11.5 14.5 11.6875 14.5 11.875V12.625C14.5 12.8359 14.6641 13 14.875 13H15.625C15.8125 13 16 12.8359 16 12.625V11.875C16 11.6875 15.8125 11.5 15.625 11.5H14.875ZM8.5 14.875V15.625C8.5 15.8359 8.66406 16 8.875 16H9.625C9.8125 16 10 15.8359 10 15.625V14.875C10 14.6875 9.8125 14.5 9.625 14.5H8.875C8.66406 14.5 8.5 14.6875 8.5 14.875ZM11.875 14.5C11.6641 14.5 11.5 14.6875 11.5 14.875V15.625C11.5 15.8359 11.6641 16 11.875 16H12.625C12.8125 16 13 15.8359 13 15.625V14.875C13 14.6875 12.8125 14.5 12.625 14.5L11.875 14.5ZM14.5 14.875V15.625C14.5 15.8359 14.6641 16 14.875 16H15.625C15.8125 16 16 15.8359 16 15.625V14.875C16 14.6875 15.8125 14.5 15.625 14.5H14.875C14.6641 14.5 14.5 14.6875 14.5 14.875Z" />
+                </svg>
+              </span>
+              <span
+                className="route-item__name">{eventCount.futureEvents != 1 ? 'Future events' : 'Future event'}</span>
+            </div>
+          }
+
+          {(eventCount && eventCount.chainUps > 0 && mapContext.visible_layers.chainUps) &&
             <div className="route-item route-item--chainUps">
               <span className="route-item__count">
                 {eventCount.chainUps}
@@ -687,7 +704,7 @@ export default function RouteDetails(props) {
             </div>
           }
 
-          {!!ferryCount &&
+          {(typeof ferryCount === 'number' && ferryCount > 0 && mapContext.visible_layers.inlandFerries) &&
             <div className="route-item route-item--ferries">
               <span className="route-item__count">
                 {ferryCount}

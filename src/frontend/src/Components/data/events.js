@@ -17,6 +17,7 @@ export const getEventCounts = (events) => {
       majorEvents: 0,
       minorEvents: 0,
       roadConditions: 0,
+      futureEvents: 0,
       chainUps: 0,
     }
 

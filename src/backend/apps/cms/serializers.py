@@ -75,9 +75,13 @@ class AdvisoryTestSerializer(CMSSerializer):
 class AdvisorySerializer(AdvisoryTestSerializer):
     body = serializers.SerializerMethodField()
     url_path = serializers.SerializerMethodField()
+    display_category = serializers.SerializerMethodField()
 
     def get_body(self, obj):
         return self.get_richtext(obj.body)
+
+    def get_display_category(self, obj):
+        return 'advisory'
 
 
 # Serializer with no method fields for unit tests
