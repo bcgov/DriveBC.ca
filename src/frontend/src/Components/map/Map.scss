@@ -185,6 +185,10 @@
           right: 4rem;
           bottom: 1rem;
         }
+
+        &.panel-open {
+          bottom: 1rem;
+        }
       }
 
       .ol-scale-line-inner {

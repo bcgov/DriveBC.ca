@@ -202,19 +202,25 @@ export default function DriveBCMap(props) {
     updatePosition(feature);
   };
 
+  /* Constants for conditional rendering */
+  // Disable cam panel in details page
+  const disablePanel = isCamDetail && clickedFeature && clickedFeature.get('type') === 'camera';
+  const openPanel =
+    (!!clickedFeature ||
+      (searchedRoutes && searchedRoutes.length && !isCamDetail)
+    ) && !disablePanel;
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+
   // ScaleLine
   const scaleLineControl = new ScaleLine({ units: 'metric' });
-  const updateScaleLineClass = (open) => {
+  const updateScaleLineClass = (openTabs, openPanel) => {
     if (!scaleLineRef.current) {
       scaleLineRef.current = scaleLineControl.element;
     }
 
-    if (open) {
-      scaleLineRef.current.classList.add('tabs-pushed');
-
-    } else {
-      scaleLineRef.current.classList.remove('tabs-pushed');
-    }
+    const el = scaleLineRef.current;
+    el.classList.toggle('tabs-pushed', !!openTabs);
+    el.classList.toggle('panel-open', !!openPanel);
   }
 
   useEffect(() => {
@@ -289,8 +295,8 @@ export default function DriveBCMap(props) {
   /* useEffect hooks */
   /* Push ScaleLine to the left when tabs are open */
   useEffect(() => {
-    updateScaleLineClass(openTabs);
-  }, [openTabs]);
+    updateScaleLineClass(openTabs, openPanel);
+  }, [openTabs, openPanel]);
 
   /* initialization for OpenLayers map */
   useEffect(() => {
@@ -733,15 +739,6 @@ export default function DriveBCMap(props) {
     }
   }, [filteredAdvisories]);
 
-  /* Constants for conditional rendering */
-  // Disable cam panel in details page
-  const disablePanel = isCamDetail && clickedFeature && clickedFeature.get('type') === 'camera';
-  const openPanel =
-    (!!clickedFeature ||
-      (searchedRoutes && searchedRoutes.length && !isCamDetail)
-    ) && !disablePanel;
-  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
-
   // Reset search params when panel is closed
   useEffect(() => {
     if (searchParamInitialized.current) {
@@ -874,7 +871,7 @@ export default function DriveBCMap(props) {
           </div>
         )}
 
-        {(!isCamDetail && smallScreen && !maximizedPanel && mapRef.current) && (
+        {(!isCamDetail && smallScreen && !maximizedPanel && mapRef.current && !openPanel) && (
           <React.Fragment>
             <Button
               ref={myLocationRef}
