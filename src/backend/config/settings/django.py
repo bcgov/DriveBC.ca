@@ -205,7 +205,11 @@ LOGGING = {
             "class": "logging.StreamHandler",
         },
     },
-    "root": {
+    "huey": {
+        "handlers": ["console"],
+        "level": ROOT_LOG_LEVEL,
+    },
+    "django": {
         "handlers": ["console"],
         "level": ROOT_LOG_LEVEL,
     },
