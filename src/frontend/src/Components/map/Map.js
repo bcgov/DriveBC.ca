@@ -257,23 +257,9 @@ export default function DriveBCMap(props) {
 
   const [showLocationAccessError, setShowLocationAccessError] = useState(false);
 
-  // check if geolocation permission is granted
-  if (navigator.permissions) {  // only when permissions API is supported
-    navigator.permissions.query({ name: "geolocation" }).then((permissionStatus) => {
-      permissionStatus.onchange = () => {
-        if(permissionStatus.state === 'denied') {
-          setShowLocationAccessError(true);
-        }
-        else {
-          setShowLocationAccessError(false);
-        }
-      };
-    });
-  }
-
   const loadMyLocation = () => {
     if (!locationSet.current) {
-      setMyLocationLoading(true)
+      setMyLocationLoading(true);
     } else {
       dispatch(updateSearchLocationFromWithMyLocation([locationSet.current]));
     }
@@ -281,7 +267,7 @@ export default function DriveBCMap(props) {
 
   useEffect(() => {
     if(myLocationLoading) {
-      toggleMyLocation(mapRef, mapView, setMyLocationLoading, setMyLocation);
+      toggleMyLocation(mapRef, mapView, setMyLocationLoading, setMyLocation, setShowLocationAccessError);
     }
   }, [myLocationLoading])
 
@@ -301,6 +287,13 @@ export default function DriveBCMap(props) {
   /* initialization for OpenLayers map */
   useEffect(() => {
     if (mapRef.current) return; // stops map from initializing more than once
+
+    // check if geolocation permission is granted
+    if (navigator.permissions) {  // only when permissions API is supported
+      navigator.permissions.query({ name: "geolocation" }).then((permissionStatus) => {
+        setShowLocationAccessError(permissionStatus.state === 'denied');
+      });
+    }
 
     // Enable referenced layer
     enableReferencedLayer(referenceData, mapContext);
@@ -987,7 +980,7 @@ export default function DriveBCMap(props) {
       )}
 
       {showLocationAccessError &&
-        <LocationAccessPopup marginPushed={!!openPanel} />
+        <LocationAccessPopup marginPushed={!!openPanel} setShowLocationAccessError={setShowLocationAccessError} />
       }
 
       {showNetworkError &&
