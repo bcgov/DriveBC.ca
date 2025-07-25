@@ -289,7 +289,7 @@ export default function DriveBCMap(props) {
     if (mapRef.current) return; // stops map from initializing more than once
 
     // check if geolocation permission is granted
-    if (navigator.permissions) {  // only when permissions API is supported
+    if (!isCamDetail && navigator.permissions) {  // only when permissions API is supported
       navigator.permissions.query({ name: "geolocation" }).then((permissionStatus) => {
         setShowLocationAccessError(permissionStatus.state === 'denied');
       });
