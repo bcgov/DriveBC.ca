@@ -410,6 +410,9 @@ a[target="_blank"] {
   }
 
   &.filters-overlay {
+    display: flex;
+    flex-direction: column;
+
     &.open {
       height: 100%;
       .overlay__header {
