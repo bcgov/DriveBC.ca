@@ -197,12 +197,21 @@ DEFAULT_FROM_EMAIL = 'DoNotReply_DriveBC@gov.bc.ca'
 
 # Logging
 ROOT_LOG_LEVEL = env('ROOT_LOG_LEVEL', default='WARNING')
+HUEY_LOG_LEVEL = env('HUEY_LOG_LEVEL', default='INFO')
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "formatter": 'standard',
+        },
+    },
+    'formatters': {
+        'standard': {
+            'class': 'logging.Formatter',
+            'format': '[%(asctime)s] %(levelname)s:%(name)s:%(threadName)s:%(message)s'
         },
     },
     "huey": {
@@ -212,6 +221,13 @@ LOGGING = {
     "django": {
         "handlers": ["console"],
         "level": ROOT_LOG_LEVEL,
+    },
+    "loggers": {
+        "huey": {
+            "handlers": ["console"],
+            "level": HUEY_LOG_LEVEL,
+            "propagate": False
+        },
     },
 }
 
