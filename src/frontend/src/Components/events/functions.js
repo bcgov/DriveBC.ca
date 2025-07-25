@@ -22,7 +22,7 @@ export const getTypeDisplay = (event) => {
     case 'roadConditions':
       return 'Road condition';
     case 'chainUps':
-      return 'Commercial chain up';
+      return 'Commercial chain-up';
     default:
       return '';
   }
