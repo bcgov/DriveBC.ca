@@ -28,6 +28,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F
 from PIL import Image, ImageDraw, ImageFont
 from psycopg import IntegrityError
+from huey.exceptions import CancelExecution
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,7 @@ def populate_all_webcam_data():
         # Check if the task has timed out at the start of each iteration
         if time.time() - start_time > CAMERA_TASK_DEFAULT_TIMEOUT:
             logger.warning(f"populate_all_webcam_data stopped: exceeded {CAMERA_TASK_DEFAULT_TIMEOUT} seconds.")
-            return
+            raise CancelExecution()
 
         populate_webcam_from_data(webcam_data)
 
@@ -95,7 +96,7 @@ def update_all_webcam_data():
         # Check if the task has timed out at the start of each iteration
         if time.time() - start_time > CAMERA_TASK_DEFAULT_TIMEOUT:
             logger.warning(f"update_all_webcam_data stopped: exceeded {CAMERA_TASK_DEFAULT_TIMEOUT} seconds.")
-            return
+            raise CancelExecution()
 
         current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
         if camera.should_update(current_time):
@@ -158,6 +159,7 @@ def update_webcam_image(webcam):
             base_url = base_url[:-1]
         endpoint = f'{base_url}/webcams/{webcam["id"]}/imageSource'
 
+        logger.info(f"Requesting GET {endpoint}")
         with urllib.request.urlopen(endpoint, timeout=10) as url:
             image_data = io.BytesIO(url.read())
 
@@ -217,7 +219,7 @@ def update_webcam_image(webcam):
             delta = mean - stddev
 
         except Exception as e:
-            logger.info(e)
+            logger.exception(e)
 
         if lastmod is not None:
             delta = datetime.timedelta(seconds=delta)
