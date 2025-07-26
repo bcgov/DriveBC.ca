@@ -214,10 +214,6 @@ LOGGING = {
             'format': '[%(asctime)s] %(levelname)s:%(name)s:%(threadName)s:%(message)s'
         },
     },
-    "huey": {
-        "handlers": ["console"],
-        "level": HUEY_LOG_LEVEL,
-    },
     "root": {
         "handlers": ["console"],
         "level": ROOT_LOG_LEVEL,
