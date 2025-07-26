@@ -216,9 +216,9 @@ LOGGING = {
     },
     "huey": {
         "handlers": ["console"],
-        "level": ROOT_LOG_LEVEL,
+        "level": HUEY_LOG_LEVEL,
     },
-    "django": {
+    "root": {
         "handlers": ["console"],
         "level": ROOT_LOG_LEVEL,
     },
