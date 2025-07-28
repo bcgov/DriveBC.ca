@@ -413,6 +413,10 @@ a[target="_blank"] {
     display: flex;
     flex-direction: column;
 
+    .filters-component {
+      overflow-y: auto;
+    }
+
     &.open {
       height: 100%;
       .overlay__header {
