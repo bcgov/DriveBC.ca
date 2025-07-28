@@ -146,15 +146,15 @@ async def run_consumer(db_pool: any):
                     camera_id = filename.split("_")[0].split(".")[0]
                     timestamp_utc = message.headers.get("timestamp", "unknown")
 
-                    await get_recent_timestamps()
+                    get_recent_timestamps()
                     camera_status = calculate_camera_status(timestamp_utc)
 
                     try:
                         timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
-                        # # For testing purposes, only allow camera with ID "343" to be processed
-                        # if camera_id != "343" and camera_id != "57":
-                        #     logger.info("Skipping processing for camera %s", camera_id)
-                        #     continue
+                        # For testing purposes, only allow camera with ID "343" to be processed
+                        if camera_id != "343" and camera_id != "57":
+                            logger.info("Skipping processing for camera %s", camera_id)
+                            continue
                         await handle_image_message(camera_id, db_data, message.body, timestamp_local, db_pool, camera_status)
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:

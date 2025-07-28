@@ -29,6 +29,10 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
 from apps.shared.status import get_recent_timestamps, calculate_camera_status
 
+from apps.consumer.models import ImageIndex
+import boto3
+from django.utils import timezone
+
 logger = logging.getLogger(__name__)
 
 APP_DIR = Path(__file__).resolve().parent
@@ -47,6 +51,14 @@ SQL_DB_NAME = os.getenv("SQL_DB_NAME", "camera-db")
 SQL_DB_USER = os.getenv("SQL_DB_USER", "sa")
 SQL_DB_PASSWORD = os.getenv("SQL_DB_PASSWORD", "YourStrong@Passw0rd")
 SQL_DB_DRIVER = "ODBC Driver 17 for SQL Server"  # Make sure this driver is installed on the container
+
+# Environment variables
+S3_BUCKET = os.getenv("S3_BUCKET")
+S3_REGION = os.getenv("S3_REGION", "us-east-1")
+S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
+S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
+RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq/")
+S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
 
 # Build connection URL
 connection_url = URL.create(
@@ -183,6 +195,123 @@ def update_all_webcam_data():
 
     update_camera_group_ids()
 
+# bruce test purge
+def purge_old_images():
+    print("Purging webcam images...")
+    purge_old_pvc_s3_images(age="1", is_pvc=True)
+    purge_old_pvc_s3_images(age="30", is_pvc=False)
+
+
+# Define data directory (PVC)
+PVC_ROOT = "/app/app/images/webcams/watermarked"
+S3_ROOT = "/test-s3-bucket"
+
+def purge_old_pvc_s3_images(age: str = "1", is_pvc: bool = True):
+    if is_pvc:
+        root_path = PVC_ROOT
+    else:
+        root_path = S3_ROOT
+    cutoff_time = timezone.now() - datetime.timedelta(days=int(age))
+    # # testing purpose only
+    # cutoff_time = timezone.now() - datetime.timedelta(minutes=int(age))
+
+    # Filter the queryset
+    records_to_delete_pvc = ImageIndex.objects.filter(
+        timestamp__lt=cutoff_time,
+        original_s3_path__isnull=False,
+        watermarked_s3_path__isnull=False
+    )
+
+    records_to_delete_s3 = ImageIndex.objects.filter(
+        timestamp__lt=cutoff_time,
+        original_s3_path__isnull=False,
+        watermarked_s3_path__isnull=False
+    )
+
+
+    files_to_delete = []
+    ids_to_delete = []
+
+    rows = records_to_delete_pvc if is_pvc else records_to_delete_s3
+
+    for row in rows:
+        if is_pvc:
+            path = row.watermarked_pvc_path
+        else:
+            path = row.watermarked_s3_path
+        
+        if path:
+            full_path = os.path.join(root_path, path)
+            files_to_delete.append(full_path)
+            ids_to_delete.append(row.timestamp)
+
+    # Update matching rows
+    if is_pvc:
+        ImageIndex.objects.filter(
+            timestamp__in=ids_to_delete,
+            original_pvc_path__isnull=False,
+            watermarked_pvc_path__isnull=False
+        ).update(
+            original_pvc_path=None,
+            watermarked_pvc_path=None
+        )
+    else:
+        ImageIndex.objects.filter(
+            timestamp__in=ids_to_delete,
+            original_s3_path__isnull=False,
+            watermarked_s3_path__isnull=False
+        ).update(
+            original_s3_path=None,
+            watermarked_s3_path=None
+        )
+
+    # Delete files from PVC or s3
+    if is_pvc:
+        print(f"Deleting {len(files_to_delete)} old PVC images...")
+        for file_path in files_to_delete:
+            try:
+                os.remove(file_path)
+                print(f"Deleted file: {file_path}")
+            except FileNotFoundError:
+                print(f"File not found: {file_path}")
+            except Exception as e:
+                print(f"Error deleting file {file_path}: {e}")
+    else:
+        print(f"Deleting {len(files_to_delete)} old S3 images...")
+        # Setup S3 client
+        s3_client = boto3.client(
+            "s3",
+            region_name=S3_REGION,
+            aws_access_key_id=S3_ACCESS_KEY,
+            aws_secret_access_key=S3_SECRET_KEY,
+            endpoint_url=S3_ENDPOINT_URL
+        )
+        
+        # Delete files from S3
+        for file_path in files_to_delete:
+            try:
+                s3_key = file_path.strip("/")
+
+                if s3_key.startswith(f"{S3_BUCKET}/"):
+                    s3_key = s3_key[len(S3_BUCKET) + 1:]
+
+                s3_client.delete_object(Bucket=S3_BUCKET, Key=s3_key)
+                print(f"Deleted from S3: {s3_key}")
+
+            except s3_client.exceptions.NoSuchKey:
+                print(f"S3 key not found: {s3_key}")
+            except Exception as e:
+                print(f"Error deleting S3 file {s3_key}: {e}")
+
+    # Delete all records if all images paths are NULL
+    ImageIndex.objects.filter(
+        original_pvc_path__isnull=True,
+        watermarked_pvc_path__isnull=True,
+        original_s3_path__isnull=True,
+        watermarked_s3_path__isnull=True
+    ).delete()
+
+    print("All purged recordes are deleted successfully.")
 
 def wrap_text(text, pen, font, width):
     '''
