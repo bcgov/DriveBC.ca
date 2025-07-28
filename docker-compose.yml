@@ -10,6 +10,8 @@ x-function: &backend
   volumes:
     - ./src/backend:/app/backend
     - ./src/images/webcams:/app/images/webcams
+    - ./src/ReplayTheDay/json:/app/ReplayTheDay/json
+    - ./src/ReplayTheDay/archive:/app/ReplayTheDay/archive
 
   stdin_open: true
   tty: true

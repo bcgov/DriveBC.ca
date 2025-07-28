@@ -20,7 +20,7 @@ class WebcamSerializer(serializers.ModelSerializer):
         webcam_id = obj.id
 
         links = {
-            "imageDisplay": f"{local_root}images/{webcam_id}.jpg",
+            "imageDisplay": f"{local_root}images/webcams/{webcam_id}.jpg",
             "replayTheDay": f"{proxy_root}ReplayTheDay/json/{webcam_id}.json",
         }
 

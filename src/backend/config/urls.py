@@ -10,6 +10,9 @@ from apps.authentication import views as auth_views
 from apps.shared import views as shared_views
 from apps.shared.views import static_override
 
+from django.conf.urls.static import static
+import os
+
 
 def admin_permission_denied_handler(request, exception):
     '''
@@ -76,6 +79,18 @@ urlpatterns = [
 
     # TO BE REMOVED IN PRODUCTION
 ] + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Serve /ReplayTheDay/ files directly from the file system
+urlpatterns += static(
+    "/ReplayTheDay/",
+    document_root=os.path.join(settings.BASE_DIR, "app", "ReplayTheDay")
+)
+
+# Serve images/webcams from /app/images
+urlpatterns += static(
+    '/images/', 
+    document_root=os.path.join(settings.BASE_DIR, 'app', 'images')
+)
 
 if settings.DEV_ENVIRONMENT:
     from django.views.static import serve

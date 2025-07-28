@@ -7,6 +7,7 @@ from datetime import datetime, timedelta, timezone
 import signal
 import sys
 from typing import Optional
+from zoneinfo import ZoneInfo
 from click import wrap_text
 import logging
 from pydantic import BaseModel
@@ -41,7 +42,9 @@ APP_DIR = Path(__file__).resolve().parent
 FONT = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=14)
 FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
 PVC_ORIGINAL_PATH = f'{APP_DIR}/images/webcams/originals'
-PVC_WATERMARKED_PATH =f'{APP_DIR}/images/webcams/watermarked'
+# Path to save watermarked images with timestamp for ReplayTheDay
+PVC_WATERMARKED_PATH =f'/app/ReplayTheDay/archive'
+# Path to save watermarked images for current DriveBC without timestamp
 DRIVCBC_PVC_WATERMARKED_PATH =f'/app/images/webcams'
 
 # Save files under "json" folder
@@ -355,7 +358,7 @@ def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp:
     watermarked_pvc_path = filepath
     return watermarked_pvc_path
 
-def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes, timestamp: str):  
+def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes):  
     os.makedirs(os.path.dirname(f'{DRIVCBC_PVC_WATERMARKED_PATH}'), exist_ok=True)
 
     save_dir = os.path.join(DRIVCBC_PVC_WATERMARKED_PATH)
@@ -430,14 +433,15 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
 
     image_bytes = watermark(webcam, body, tz, timestamp)
 
-    # watermarked_pvc_path = save_watermarked_image_to_pvc(camera_id, image_bytes, timestamp)
-    # watermarked_drivebc_pvc_path = save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes, timestamp)
-
-    watermarked_pvc_path = save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes, timestamp)
+    # Save watermarked images to PVC with timestamp
+    watermarked_pvc_path = save_watermarked_image_to_pvc(camera_id, image_bytes, timestamp)
+    # Save watermarked images to drivebc PVC with camera_id
+    watermarked_pvc_path = save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes)
+    # Save watermarked images to S3 with timestamp
     watermarked_s3_path = save_watermarked_image_to_s3(camera_id, image_bytes, timestamp)
 
     # update json file for replay the day
-    await update_replay_json(camera_id, db_pool)
+    await update_replay_json(camera_id, db_pool, tz)
 
     # Insert record into DB
     async with db_pool.acquire() as conn:
@@ -454,27 +458,22 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
             WHERE id = $1
         """, int(camera_id))
         
-async def update_replay_json(camera_id: str, db_pool: any):
+async def update_replay_json(camera_id: str, db_pool: any, tz: str):
     results = await get_images_within(camera_id, db_pool, hours=24)
-
-    ids = []
+    timestamps = []
     for item in results:
-        watermarked_path = item.watermarked_pvc_path
-        filename = os.path.basename(watermarked_path)
-        file_id, _ = os.path.splitext(filename)
-        ids.append(file_id)
+        local_time = item.timestamp.astimezone(ZoneInfo(tz))
+        timestamps.append(local_time.strftime("%Y%m%d%H%M"))
 
     # Create the JSON file
-    logger.info(f"Updating JSON file for camera {camera_id} with {len(ids)} IDs")
     file_path = os.path.join(OUTPUT_DIR, f"{camera_id}.json")
 
     async with aiofiles.open(file_path, "w", encoding="utf-8") as f:
-        data_str = json.dumps(ids, indent=4)
+        data_str = json.dumps(timestamps, indent=4)
         await f.write(data_str)
     logger.info(f"JSON file for camera {camera_id} saved at {file_path}")
 
     return {
         "status": "success",
-        "file_path": f"/ReplayTheDay/json/{camera_id}.json",
-        "count": len(ids)
+        "file_path": f"/ReplayTheDay/json/{camera_id}.json"
     }
