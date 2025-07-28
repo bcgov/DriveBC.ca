@@ -34,9 +34,8 @@ export default function AdvisoriesListPage() {
 
   // Redux
   const dispatch = useDispatch();
-  const { advisories, filteredAdvisories, selectedRoute } = useSelector(useCallback(memoize(state => ({
+  const { advisories, selectedRoute } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
-    filteredAdvisories: state.cms.advisories.filteredList,
     selectedRoute: state.routes.selectedRoute,
   }))));
 
@@ -107,7 +106,7 @@ export default function AdvisoriesListPage() {
         {isAdvisoriesEmpty ?
           <EmptyAdvisory/> :
 
-          <AdvisoriesList advisories={filteredAdvisories} isAdvisoriesListPage={true} showLoader={showLoader} />
+          <AdvisoriesList advisories={advisories} isAdvisoriesListPage={true} showLoader={showLoader} />
         }
       </Container>
 
