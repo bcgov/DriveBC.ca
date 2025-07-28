@@ -459,7 +459,9 @@ export default function EventsListPage() {
       search: `?${createSearchParams({
         type: "event",
         id: event.id,
-        display_category: event.display_category
+        display_category: event.display_category,
+        zoom: 11,
+        pan: event.location.coordinates[0] + ',' + event.location.coordinates[1],
       })}`
     });
   };
@@ -653,7 +655,7 @@ export default function EventsListPage() {
                         {smallScreen &&
                           <span className="mobile-btn-text">Area</span>
                         }
-                        
+
                         {!smallScreen &&
                           <FontAwesomeIcon className="dropdown-icon" icon={faChevronDown} />
                         }
