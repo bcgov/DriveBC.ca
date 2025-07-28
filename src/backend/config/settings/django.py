@@ -21,8 +21,11 @@ APPEND_SLASH = True
 ROOT_URLCONF = "config.urls"
 STATIC_URL = "/django-static/"
 STATIC_ROOT = os.path.join(SRC_DIR, 'static')
-MEDIA_URL = '/django-media/'
-MEDIA_ROOT = os.path.join(SRC_DIR, 'media')
+# MEDIA_URL = '/django-media/'
+# MEDIA_ROOT = os.path.join(SRC_DIR, 'media')
+
+MEDIA_URL = '/images/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'app/images/webcams')
 FRONTEND_BASE_URL = env("FRONTEND_BASE_URL", default="http://localhost:3000/")
 
 # Security

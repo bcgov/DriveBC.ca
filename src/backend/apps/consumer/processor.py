@@ -17,10 +17,21 @@ import asyncio
 import aiofiles
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
+
+
 from .db import get_all_from_db
 from timezonefinder import TimezoneFinder
 from contextlib import asynccontextmanager
 from aiormq.exceptions import ChannelInvalidStateError
+
+# from collections import deque
+# from asgiref.sync import sync_to_async
+# from statistics import mean, stdev
+# from apps.consumer.models import ImageIndex
+
+from apps.shared.status import get_50_recent_timestamps, calculate_camera_status
+
+
 
 
 tf = TimezoneFinder()
@@ -132,9 +143,16 @@ async def run_consumer(db_pool: any):
                     camera_id = filename.split("_")[0].split(".")[0]
                     timestamp_utc = message.headers.get("timestamp", "unknown")
 
+                    await get_50_recent_timestamps()
+                    camera_status = calculate_camera_status(timestamp_utc)
+
                     try:
                         timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
-                        await handle_image_message(camera_id, db_data, message.body, timestamp_local, db_pool)
+                        # For testing purposes, only allow camera with ID "343" to be processed
+                        if camera_id != "343" and camera_id != "57":
+                            logger.info("Skipping processing for camera %s", camera_id)
+                            continue
+                        await handle_image_message(camera_id, db_data, message.body, timestamp_local, db_pool, camera_status)
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
                         logger.exception("Failed processing message (camera %s): %s", camera_id, e)
@@ -387,6 +405,8 @@ def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     webcam = webcams[0] if webcams else None
     tz = get_timezone(webcam) if webcam else 'America/Vancouver'
     # Parse it as UTC datetime
+    timestamp = timestamp[:-5]
+
     utc_dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
     utc_dt = utc_dt.replace(tzinfo=pytz.utc)
 
@@ -398,7 +418,7 @@ def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     return timestamp
 
 
-async def handle_image_message(camera_id: str, db_data: any, body: bytes, timestamp: str, db_pool: any):
+async def handle_image_message(camera_id: str, db_data: any, body: bytes, timestamp: str, db_pool: any, camera_status: dict):
     dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
 
     original_pvc_path = save_original_image_to_pvc(camera_id, body)

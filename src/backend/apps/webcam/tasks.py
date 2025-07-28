@@ -25,11 +25,9 @@ from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F
 from PIL import Image, ImageDraw, ImageFont
-
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
-import asyncpg
-from django.db import connection
+from apps.shared.status import get_recent_timestamps, calculate_camera_status
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +106,8 @@ def update_single_webcam_data(webcam):
             return
 
 
-def update_cam_from_sql_db(id: int):
+def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
+    
     cams_live_sql = text("""
         SELECT Cams_Live.ID AS id, 
         Cams_Live.Cam_InternetName AS name, 
@@ -147,6 +146,9 @@ def update_cam_from_sql_db(id: int):
             return []
 
 def update_webcam_db(cam_id: int, cam_data: dict):
+    get_recent_timestamps()
+    timestamp_utc = cam_data.get("timestamp", datetime.datetime.now(tz=ZoneInfo("UTC"))).strftime("%Y%m%d%H%M%S%f")[:-3]
+    camera_status = calculate_camera_status(timestamp_utc)
     updated_count = Webcam.objects.filter(id=cam_id).update(region=cam_data.get("region"),
         region_name=cam_data.get("region_name"),
         is_on=cam_data.get("isOn", False),
@@ -162,12 +164,12 @@ def update_webcam_db(cam_id: int, cam_data: dict):
         credit=cam_data.get("credit", ""),
         is_new=cam_data.get("isNew", False),
         is_on_demand=cam_data.get("isOnDemand", False),
-        marked_stale=False,
-        marked_delayed=False,
+        marked_stale=camera_status["stale"],
+        marked_delayed=camera_status["delayed"],
         last_update_attempt=datetime.datetime.now(tz=ZoneInfo("America/Vancouver")),
         last_update_modified=datetime.datetime.now(tz=ZoneInfo("America/Vancouver")),
-        update_period_mean=cam_data.get("update_period_mean", 300),
-        update_period_stddev=cam_data.get("update_period_stddev", 60))      
+        update_period_mean=camera_status["mean_interval"] * 1000,
+        update_period_stddev= camera_status["stddev_interval"]) * 1000,  
     return updated_count
         
 
@@ -177,7 +179,7 @@ def update_all_webcam_data():
         if webcam.should_update(current_time) and webcam.https_cam:
             update_single_webcam_data(webcam)
         else:
-            update_cam_from_sql_db(webcam.id)
+            update_cam_from_sql_db(webcam.id, current_time)
 
     update_camera_group_ids()
 
