@@ -29,7 +29,7 @@ from aiormq.exceptions import ChannelInvalidStateError
 # from statistics import mean, stdev
 # from apps.consumer.models import ImageIndex
 
-from apps.shared.status import get_50_recent_timestamps, calculate_camera_status
+from apps.shared.status import get_recent_timestamps, calculate_camera_status
 
 
 
@@ -143,7 +143,7 @@ async def run_consumer(db_pool: any):
                     camera_id = filename.split("_")[0].split(".")[0]
                     timestamp_utc = message.headers.get("timestamp", "unknown")
 
-                    await get_50_recent_timestamps()
+                    await get_recent_timestamps()
                     camera_status = calculate_camera_status(timestamp_utc)
 
                     try:
