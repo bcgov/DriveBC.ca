@@ -759,7 +759,13 @@ export default function EventsListPage() {
                   <strong>Do you have a starting location and a destination entered?</strong>
                   <p>Adding a route will narrow down the information for the whole site, including the delays list. There might not be any delays between those two locations.</p>
 
-                  <strong>Have you hidden any of the layers using the filters?</strong>
+                  <strong>Have you applied filters (e.g. an area or a highway) to narrow down the list?</strong>
+                  <p>These filters also narrow down the delays on this page.</p>
+                  <ul>
+                    <li>Remove or adjust the area or highway filters to reveal more delays if they are in effect.</li>
+                  </ul>
+
+                  <strong>Have you hidden any of the layers using the list filter?</strong>
                   <p>Try toggling the filters on and off so that more information can be displayed.</p>
                 </div>
               }
