@@ -1,3 +1,4 @@
+import time
 from apps.webcam.models import Webcam
 from django.conf import settings
 from rest_framework import serializers
@@ -18,9 +19,10 @@ class WebcamSerializer(serializers.ModelSerializer):
         local_root = settings.DRIVEBC_IMAGE_BASE_URL
         proxy_root = settings.DRIVEBC_IMAGE_PROXY_URL
         webcam_id = obj.id
+        timestamp = int(time.time())
 
         links = {
-            "imageDisplay": f"{local_root}images/webcams/{webcam_id}.jpg",
+            "imageDisplay": f"{local_root}images/webcams/{webcam_id}.jpg?t={timestamp}",
             "replayTheDay": f"{proxy_root}ReplayTheDay/json/{webcam_id}.json",
         }
 
