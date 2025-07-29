@@ -186,10 +186,10 @@ async def run_consumer(db_pool: any):
 
 class ImageMeta(BaseModel):
     camera_id: str
-    original_pvc_path: str
-    watermarked_pvc_path: str
-    original_s3_path: str
-    watermarked_s3_path: str
+    original_pvc_path: Optional[str] = None
+    watermarked_pvc_path: Optional[str] = None
+    original_s3_path: Optional[str] = None
+    watermarked_s3_path: Optional[str] = None
     timestamp: datetime
 
 async def load_index_from_db(db_pool: any):
