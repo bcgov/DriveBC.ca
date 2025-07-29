@@ -1,5 +1,5 @@
 // React
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 // Third party packages
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -12,14 +12,11 @@ import './CameraList.scss';
 
 export default function CameraList(props) {
   // Props
-  const { cameras, showLoader, enableExtraFilters } = props;
+  const { cameras, onscreenCameras, setOnscreenCameras, showLoader, enableExtraFilters } = props;
 
   // Contexts
   const { camsContext } = useContext(CamsContext);
   const { filterContext } = useContext(FilterContext);
-
-  // UseState hooks
-  const [displayedCameras, setDisplayedCameras] = useState([]);
 
   // UseEffect hooks and data functions
   const getDisplayedCameras = (length) => {
@@ -37,7 +34,7 @@ export default function CameraList(props) {
 
     if (!length) { camsContext.displayLength += 4; }
     const shown = filteredCameras.slice(0, length ? length : camsContext.displayLength);
-    setDisplayedCameras(shown);
+    setOnscreenCameras(shown);
   };
 
   useEffect(() => {
@@ -50,7 +47,7 @@ export default function CameraList(props) {
   const groupDisplayedCameras = () => {
     // Group adjacent cams on the same road into  arrays
     const groups = [];
-    displayedCameras.forEach((cam) => {
+    onscreenCameras.forEach((cam) => {
       const highway = cam.highway_display;
       if (groups.length == 0 || groups[groups.length - 1]['highway'] !== highway) {
         groups.push({
@@ -77,7 +74,7 @@ export default function CameraList(props) {
   }
 
   const getHasMore = () => {
-    return displayedCameras.length < (cameras ? cameras.length : 0);
+    return onscreenCameras.length < (cameras ? cameras.length : 0);
   }
 
   return (

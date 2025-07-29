@@ -73,6 +73,7 @@ export default function CamerasListPage() {
 
   // States
   const [displayedCameras, setDisplayedCameras] = useState(null);
+  const [onscreenCameras, setOnscreenCameras] = useState([]);
   const [processedCameras, setProcessedCameras] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [showNetworkError, setShowNetworkError] = useState(false);
@@ -224,6 +225,7 @@ export default function CamerasListPage() {
       const filteredCams = !searchText ? processedCameras :
       processedCameras.filter((pc) => searchFn(pc, searchText));
       setDisplayedCameras(filteredCams);
+
     } else {
       const updatedProcessedCameras = getUpdatedProcessedCameras(combinedCameras, searchFn);
       const filteredCams = updatedProcessedCameras.filter((pc) => searchFn(pc, searchText));
@@ -502,17 +504,29 @@ export default function CamerasListPage() {
               </Button>
             }
 
-            <CameraList cameras={ displayedCameras ? displayedCameras : [] } showLoader={showLoader} enableExtraFilters={true}></CameraList>
+            <CameraList
+              cameras={ displayedCameras ? displayedCameras : [] }
+              onscreenCameras={onscreenCameras}
+              setOnscreenCameras={setOnscreenCameras}
+              showLoader={showLoader}
+              enableExtraFilters={true} />
 
-            {(!showLoader && !(displayedCameras && displayedCameras.length)) &&
+            {(!showLoader && (
+              !(displayedCameras && displayedCameras.length)) ||
+              !(onscreenCameras && onscreenCameras.length)
+            ) &&
               <div className="empty-cam-display">
                 <h2>No cameras to display</h2>
 
                 <h6><b>Do you have a starting location and a destination entered?</b></h6>
                 <p>Adding a route will narrow down the information for the whole site, including the camera list. There might not be any cameras between those two locations.</p>
 
-                <h6><b>Have you entered search terms to narrow down the list?</b></h6>
-                <p>Try checking your spelling, changing, or removing your search terms.</p>
+                <h6><b>Have you entered search terms or applied filters (e.g. an area or a highway) to narrow down the list?</b></h6>
+                <p>These also narrow down the cameras on this page.</p>
+                <ul>
+                  <li>Try checking your spelling, changing, or removing your search terms.</li>
+                  <li>Remove or adjust the area or highway filters to reveal more cameras.</li>
+                </ul>
               </div>
             }
           </div>
