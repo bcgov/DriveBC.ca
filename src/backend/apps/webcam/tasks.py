@@ -154,7 +154,7 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
             return live_rows
 
         except Exception as e:
-            print(f"Failed to connect to the database: {e}")
+            logger.error(f"Failed to connect to the database: {e}")
             return []
 
 def update_webcam_db(cam_id: int, cam_data: dict):
@@ -200,9 +200,8 @@ def update_all_webcam_data():
 
     update_camera_group_ids()
 
-# bruce test purge
 def purge_old_images():
-    print("Purging webcam images...")
+    logger.info("Purging webcam images...")
     REPLAY_THE_DAY_HOURS = os.getenv("REPLAY_THE_DAY_HOURS", "24")
     TIMELAPSE_HOURS = os.getenv("TIMELAPSE_HOURS", "720")
     purge_old_pvc_s3_images(age=REPLAY_THE_DAY_HOURS, is_pvc=True)
@@ -210,7 +209,7 @@ def purge_old_images():
 
 
 # Define data directory (PVC)
-PVC_ROOT = "/app/app/images/webcams/watermarked"
+PVC_ROOT = "/app/ReplayTheDay/archive"
 S3_ROOT = "/test-s3-bucket"
 
 def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
@@ -274,17 +273,17 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
 
     # Delete files from PVC or s3
     if is_pvc:
-        print(f"Deleting {len(files_to_delete)} old PVC images...")
+        logger.info(f"Deleting {len(files_to_delete)} old PVC images...")
         for file_path in files_to_delete:
             try:
                 os.remove(file_path)
-                print(f"Deleted file: {file_path}")
+                logger.info(f"Deleted file from PVC: {file_path}")
             except FileNotFoundError:
-                print(f"File not found: {file_path}")
+                logger.error(f"File not found: {file_path}")
             except Exception as e:
-                print(f"Error deleting file {file_path}: {e}")
+                logger.error(f"Error deleting file {file_path}: {e}")
     else:
-        print(f"Deleting {len(files_to_delete)} old S3 images...")
+        logger.info(f"Deleting {len(files_to_delete)} old S3 images...")
         # Setup S3 client
         s3_client = boto3.client(
             "s3",
@@ -303,12 +302,12 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
                     s3_key = s3_key[len(S3_BUCKET) + 1:]
 
                 s3_client.delete_object(Bucket=S3_BUCKET, Key=s3_key)
-                print(f"Deleted from S3: {s3_key}")
+                logger.info(f"Deleted from S3: {s3_key}")
 
             except s3_client.exceptions.NoSuchKey:
-                print(f"S3 key not found: {s3_key}")
+                logger.error(f"S3 key not found: {s3_key}")
             except Exception as e:
-                print(f"Error deleting S3 file {s3_key}: {e}")
+                logger.error(f"Error deleting S3 file {s3_key}: {e}")
 
     # Delete all records if all images paths are NULL
     ImageIndex.objects.filter(
@@ -318,7 +317,7 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
         watermarked_s3_path__isnull=True
     ).delete()
 
-    print("All purged recordes are deleted successfully.")
+    logger.info("All purged recordes are deleted successfully.")
 
 def wrap_text(text, pen, font, width):
     '''

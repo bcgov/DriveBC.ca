@@ -35,7 +35,6 @@ def populate_webcam_task():
 def update_camera_task():
     update_all_webcam_data()
 
-# bruce test purge
 @db_periodic_task(crontab(minute="*/1"))
 @lock_task('purge-image-lock')
 def purge_image_task():
