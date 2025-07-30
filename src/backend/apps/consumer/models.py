@@ -1,6 +1,7 @@
 from django.db import models
+from apps.shared.models import BaseModel
 
-class ImageIndex(models.Model):
+class ImageIndex(BaseModel):
     camera_id = models.TextField()  # NOT NULL by default requires null=False
     original_pvc_path = models.TextField(blank=True, null=True)
     watermarked_pvc_path = models.TextField(blank=True, null=True)

@@ -25,6 +25,10 @@ from timezonefinder import TimezoneFinder
 from contextlib import asynccontextmanager
 from aiormq.exceptions import ChannelInvalidStateError
 
+from asgiref.sync import sync_to_async
+from apps.webcam.models import Webcam
+from apps.consumer.models import ImageIndex
+
 # from collections import deque
 # from asgiref.sync import sync_to_async
 # from statistics import mean, stdev
@@ -54,6 +58,8 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+logger.propagate = False
+
 
 # Remove any default handlers
 if not logger.handlers:
@@ -387,7 +393,7 @@ def save_watermarked_image_to_s3(camera_id: str, image_bytes: bytes, timestamp: 
         logger.error(f"Error saving watermarked image to S3 bucket {S3_BUCKET}: {e}")
     
     watermarked_s3_path = key
-    logger.info(f"Wartermarked image saved to S3 at {key}")
+    logger.info(f"Watermarked image saved to S3 at {key}")
     return watermarked_s3_path
 
 # Mount the folder so it’s accessible at /json
@@ -420,9 +426,26 @@ def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     timestamp = local_dt.strftime("%Y%m%d%H%M")
     return timestamp
 
+@sync_to_async
+def insert_image_and_update_webcam(camera_id, original_pvc_path, watermarked_pvc_path,
+                                   original_s3_path, watermarked_s3_path, timestamp):
+    camera = Webcam.objects.get(id=camera_id)
+
+    ImageIndex.objects.create(
+        camera_id=camera_id,
+        original_pvc_path=original_pvc_path,
+        watermarked_pvc_path=watermarked_pvc_path,
+        original_s3_path=original_s3_path,
+        watermarked_s3_path=watermarked_s3_path,
+        timestamp=timestamp,
+    )
+
+    camera.https_cam = True
+    camera.save()
 
 async def handle_image_message(camera_id: str, db_data: any, body: bytes, timestamp: str, db_pool: any, camera_status: dict):
-    dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
+    # dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
+    dt = datetime.strptime(timestamp, "%Y%m%d%H%M").replace(tzinfo=timezone.utc)
 
     original_pvc_path = save_original_image_to_pvc(camera_id, body)
     original_s3_path = save_original_image_to_s3(camera_id, body)
@@ -444,26 +467,21 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     await update_replay_json(camera_id, db_pool, tz)
 
     # Insert record into DB
-    async with db_pool.acquire() as conn:
-        await conn.execute("""
-            INSERT INTO image_index (camera_id, original_pvc_path, watermarked_pvc_path, original_s3_path, watermarked_s3_path, timestamp)
-            VALUES ($1, $2, $3, $4, $5, $6)
-        """, camera_id, original_pvc_path, watermarked_pvc_path, original_s3_path, watermarked_s3_path, dt)
-
-    # Update webcam db to set https_cam flag to True
-    async with db_pool.acquire() as conn:
-        await conn.execute("""
-            UPDATE webcam_webcam
-            SET https_cam = TRUE
-            WHERE id = $1
-        """, int(camera_id))
+    await insert_image_and_update_webcam(
+        camera_id,
+        original_pvc_path,
+        watermarked_pvc_path,
+        original_s3_path,
+        watermarked_s3_path,
+        dt
+    )
         
 async def update_replay_json(camera_id: str, db_pool: any, tz: str):
     results = await get_images_within(camera_id, db_pool, hours=24)
     timestamps = []
     for item in results:
         local_time = item.timestamp.astimezone(ZoneInfo(tz))
-        timestamps.append(local_time.strftime("%Y%m%d%H%M"))
+        timestamps.append(item.timestamp.strftime("%Y%m%d%H%M"))
 
     # Create the JSON file
     file_path = os.path.join(OUTPUT_DIR, f"{camera_id}.json")
