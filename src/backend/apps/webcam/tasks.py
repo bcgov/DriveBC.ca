@@ -161,6 +161,11 @@ def update_webcam_db(cam_id: int, cam_data: dict):
     get_recent_timestamps()
     timestamp_utc = cam_data.get("timestamp", datetime.datetime.now(tz=ZoneInfo("UTC"))).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(timestamp_utc)
+    # Timestamp in milliseconds
+    ts_millis = int(camera_status["timestamp"])
+    ts_seconds = ts_millis / 1000
+    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
+
     updated_count = Webcam.objects.filter(id=cam_id).update(region=cam_data.get("region"),
         region_name=cam_data.get("region_name"),
         is_on=cam_data.get("isOn", False),
@@ -178,8 +183,8 @@ def update_webcam_db(cam_id: int, cam_data: dict):
         is_on_demand=cam_data.get("isOnDemand", False),
         marked_stale=camera_status["stale"],
         marked_delayed=camera_status["delayed"],
-        last_update_attempt=datetime.datetime.now(tz=ZoneInfo("America/Vancouver")),
-        last_update_modified=datetime.datetime.now(tz=ZoneInfo("America/Vancouver")),
+        last_update_attempt=dt_utc,
+        last_update_modified=dt_utc,
         update_period_mean=camera_status["mean_interval"] * 1000,
         update_period_stddev= camera_status["stddev_interval"]) * 1000,  
     return updated_count
@@ -198,22 +203,24 @@ def update_all_webcam_data():
 # bruce test purge
 def purge_old_images():
     print("Purging webcam images...")
-    purge_old_pvc_s3_images(age="1", is_pvc=True)
-    purge_old_pvc_s3_images(age="30", is_pvc=False)
+    REPLAY_THE_DAY_HOURS = os.getenv("REPLAY_THE_DAY_HOURS", "24")
+    TIMELAPSE_HOURS = os.getenv("TIMELAPSE_HOURS", "720")
+    purge_old_pvc_s3_images(age=REPLAY_THE_DAY_HOURS, is_pvc=True)
+    purge_old_pvc_s3_images(age=TIMELAPSE_HOURS, is_pvc=False)
 
 
 # Define data directory (PVC)
 PVC_ROOT = "/app/app/images/webcams/watermarked"
 S3_ROOT = "/test-s3-bucket"
 
-def purge_old_pvc_s3_images(age: str = "1", is_pvc: bool = True):
+def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
     if is_pvc:
         root_path = PVC_ROOT
     else:
         root_path = S3_ROOT
-    cutoff_time = timezone.now() - datetime.timedelta(days=int(age))
-    # # testing purpose only
-    # cutoff_time = timezone.now() - datetime.timedelta(minutes=int(age))
+    # cutoff_time = timezone.now() - datetime.timedelta(hours=int(age))
+    # testing purpose only
+    cutoff_time = timezone.now() - datetime.timedelta(minutes=int(age))
 
     # Filter the queryset
     records_to_delete_pvc = ImageIndex.objects.filter(

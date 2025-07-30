@@ -84,6 +84,7 @@ def calculate_camera_status(timestamp_str: str) -> tuple[float, float]:
     threshold_delayed = median + 3 * std_dev
 
     return {
+        "timestamp": new_ts, # current timestamp in milliseconds
         "mean_interval": median,
         "stddev_interval": std_dev,
         "stale": median > threshold_stale,

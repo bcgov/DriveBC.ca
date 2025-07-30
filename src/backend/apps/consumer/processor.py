@@ -436,7 +436,7 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     # Save watermarked images to PVC with timestamp
     watermarked_pvc_path = save_watermarked_image_to_pvc(camera_id, image_bytes, timestamp)
     # Save watermarked images to drivebc PVC with camera_id
-    watermarked_pvc_path = save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes)
+    watermarked_drivebc_pvc_path = save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes)
     # Save watermarked images to S3 with timestamp
     watermarked_s3_path = save_watermarked_image_to_s3(camera_id, image_bytes, timestamp)
 
