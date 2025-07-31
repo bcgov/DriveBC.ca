@@ -9,11 +9,9 @@ from django.http import FileResponse, Http404
 from .models import Webcam  # assuming you have this model
 import os
 
-
 class WebcamAPI:
     queryset = Webcam.objects.filter(should_appear=True)
     serializer_class = WebcamSerializer
-
 
 class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     @action(detail=True, methods=['get'], url_path='imageSource')

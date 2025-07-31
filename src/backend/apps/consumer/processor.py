@@ -4,7 +4,6 @@ import logging
 from math import floor
 import os
 from datetime import datetime, timedelta, timezone
-import signal
 import sys
 from typing import Optional
 from zoneinfo import ZoneInfo
@@ -18,43 +17,28 @@ import asyncio
 import aiofiles
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
-
-
-from .db import get_all_from_db
+from .db import get_all_from_db, load_index_from_db 
 from timezonefinder import TimezoneFinder
 from contextlib import asynccontextmanager
 from aiormq.exceptions import ChannelInvalidStateError
-
 from asgiref.sync import sync_to_async
 from apps.webcam.models import Webcam
 from apps.consumer.models import ImageIndex
-
-# from collections import deque
-# from asgiref.sync import sync_to_async
-# from statistics import mean, stdev
-# from apps.consumer.models import ImageIndex
-
 from apps.shared.status import get_recent_timestamps, calculate_camera_status
 
-
-
-
 tf = TimezoneFinder()
-
 
 APP_DIR = Path(__file__).resolve().parent
 FONT = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=14)
 FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
 PVC_ORIGINAL_PATH = f'{APP_DIR}/images/webcams/originals'
-# Path to save watermarked images with timestamp for ReplayTheDay
+# PVC path to watermarked images with timestamp for ReplayTheDay
 PVC_WATERMARKED_PATH =f'/app/ReplayTheDay/archive'
-# Path to save watermarked images for current DriveBC without timestamp
+# PVC path to watermarked images for current DriveBC without timestamp
 DRIVCBC_PVC_WATERMARKED_PATH =f'/app/images/webcams'
-
-# Save files under "json" folder
-OUTPUT_DIR = "/app/ReplayTheDay/json"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
+# Output directory for JSON files for ReplayTheDay and Timelapse
+JSON_OUTPUT_DIR = "/app/ReplayTheDay/json"
+os.makedirs(JSON_OUTPUT_DIR, exist_ok=True)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -90,10 +74,9 @@ s3_client = boto3.client(
 )
 
 index_db = [] # image index loaded from DB
-ready_event = asyncio.Event()
 stop_event = asyncio.Event()
 
-async def run_consumer(db_pool: any):
+async def run_consumer():
     """
     Long-running RabbitMQ consumer that processes image messages and watermarks them.
     Shuts down cleanly when stop_event is set.
@@ -161,7 +144,7 @@ async def run_consumer(db_pool: any):
                         if camera_id != "343" and camera_id != "57":
                             logger.info("Skipping processing for camera %s", camera_id)
                             continue
-                        await handle_image_message(camera_id, db_data, message.body, timestamp_local, db_pool, camera_status)
+                        await handle_image_message(camera_id, db_data, message.body, timestamp_local, camera_status)
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
                         logger.exception("Failed processing message (camera %s): %s", camera_id, e)
@@ -189,36 +172,6 @@ async def run_consumer(db_pool: any):
                 logger.warning("Error closing connection: %s", e)
 
         logger.info("Consumer stopped.")
-
-class ImageMeta(BaseModel):
-    camera_id: str
-    original_pvc_path: Optional[str] = None
-    watermarked_pvc_path: Optional[str] = None
-    original_s3_path: Optional[str] = None
-    watermarked_s3_path: Optional[str] = None
-    timestamp: datetime
-
-async def load_index_from_db(db_pool: any):
-    async with db_pool.acquire() as conn:
-        records = await conn.fetch("""
-            SELECT camera_id, original_pvc_path, watermarked_pvc_path, original_s3_path, watermarked_s3_path, timestamp
-            FROM image_index
-            ORDER BY timestamp
-        """)
-        
-        # Build the index list from DB rows
-        index_db = [
-            {
-                "camera_id": record["camera_id"],
-                "original_pvc_path": record["original_pvc_path"],
-                "watermarked_pvc_path": record["watermarked_pvc_path"],
-                "original_s3_path": record["original_s3_path"],
-                "watermarked_s3_path": record["watermarked_s3_path"],
-                "timestamp": record["timestamp"],
-            }
-            for record in records
-        ]
-        return index_db
 
 def shutdown():
     """Signal handler to gracefully stop the consumer."""
@@ -396,12 +349,11 @@ def save_watermarked_image_to_s3(camera_id: str, image_bytes: bytes, timestamp: 
     logger.info(f"Watermarked image saved to S3 at {key}")
     return watermarked_s3_path
 
-async def get_images_within(camera_id: str, db_pool: any, hours: int = 720) -> list:
+async def get_images_within(camera_id: str, hours: int = 720) -> list:
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
-    index_db = await load_index_from_db(db_pool)
-
+    index_db = await load_index_from_db()
     results = [
-        ImageMeta(**entry) for entry in index_db
+        ImageIndex(**entry) for entry in index_db
         if entry["camera_id"] == camera_id and entry["timestamp"] >= cutoff
     ]
 
@@ -413,11 +365,9 @@ def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     tz = get_timezone(webcam) if webcam else 'America/Vancouver'
     # Parse it as UTC datetime
     timestamp = timestamp[:-5]
-
     utc_dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
     utc_dt = utc_dt.replace(tzinfo=pytz.utc)
-
-    # Convert to PDT (America/Los_Angeles)
+    # Convert to local time
     local_tz = pytz.timezone(tz)
     local_dt = utc_dt.astimezone(local_tz)
     # Format back to string
@@ -441,7 +391,7 @@ def insert_image_and_update_webcam(camera_id, original_pvc_path, watermarked_pvc
     camera.https_cam = True
     camera.save()
 
-async def handle_image_message(camera_id: str, db_data: any, body: bytes, timestamp: str, db_pool: any, camera_status: dict):
+async def handle_image_message(camera_id: str, db_data: any, body: bytes, timestamp: str, camera_status: dict):
     # timestamp is in local time
     local_tz = pytz.timezone("America/Vancouver")
     naive_dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
@@ -465,7 +415,7 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     watermarked_s3_path = save_watermarked_image_to_s3(camera_id, image_bytes, timestamp)
 
     # update json file for replay the day
-    await update_replay_json(camera_id, db_pool, tz)
+    await update_replay_json(camera_id, tz)
 
     # Insert record into DB
     await insert_image_and_update_webcam(
@@ -477,17 +427,17 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
         utc_dt
     )
         
-async def update_replay_json(camera_id: str, db_pool: any, tz: str):
-    # By default, we will use the last 30 days of images for timelapse
+async def update_replay_json(camera_id: str, tz: str):
+    # By default, use the last 30 days of images for timelapse
     default_time_age = os.getenv("TIMELAPSE_HOURS", "720")
-    results = await get_images_within(camera_id, db_pool, hours=int(default_time_age))
+    results = await get_images_within(camera_id, hours=int(default_time_age))
     timestamps = []
     for item in results:
         local_time = item.timestamp.astimezone(ZoneInfo(tz))
         timestamps.append(local_time.strftime("%Y%m%d%H%M"))
 
     # Create the JSON file
-    file_path = os.path.join(OUTPUT_DIR, f"{camera_id}.json")
+    file_path = os.path.join(JSON_OUTPUT_DIR, f"{camera_id}.json")
 
     async with aiofiles.open(file_path, "w", encoding="utf-8") as f:
         data_str = json.dumps(timestamps, indent=4)

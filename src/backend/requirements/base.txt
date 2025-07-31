@@ -16,7 +16,6 @@ wagtail==6.2.2
 wagtail-modeladmin==2.0.0
 django-email-log==1.4.0
 sqlalchemy==1.4.52
-asyncpg==0.30.0
 pyodbc==5.2.0
 boto3==1.39.10
 aio-pika==9.5.5

@@ -23,7 +23,6 @@ STATIC_URL = "/django-static/"
 STATIC_ROOT = os.path.join(SRC_DIR, 'static')
 MEDIA_URL = '/django-media/'
 MEDIA_ROOT = os.path.join(SRC_DIR, 'media')
-
 FRONTEND_BASE_URL = env("FRONTEND_BASE_URL", default="http://localhost:3000/")
 
 # Security

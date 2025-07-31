@@ -1,9 +1,8 @@
 import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
-import asyncpg
-
-db_pool = None
+from apps.consumer.models import ImageIndex
+from asgiref.sync import sync_to_async
 
 # Connection settings
 SQL_DB_SERVER = os.getenv("SQL_DB_SERVER", "sql-server-db")
@@ -59,31 +58,21 @@ def get_all_from_db():
         except Exception as e:
             print(f"Failed to connect to the database: {e}")
             return []
-
-async def load_index_from_db(db_pool: any):
-    async with db_pool.acquire() as conn:
-        records = await conn.fetch("""
-            SELECT camera_id, original_pvc_path, watermarked_pvc_path, original_s3_path, watermarked_s3_path, timestamp
-            FROM image_index
-            ORDER BY timestamp
-        """)
         
-        # Build the index list from DB rows
-        index_db = [
-            {
-                "camera_id": record["camera_id"],
-                "original_pvc_path": record["original_pvc_path"],
-                "watermarked_pvc_path": record["watermarked_pvc_path"],
-                "original_s3_path": record["original_s3_path"],
-                "watermarked_s3_path": record["watermarked_s3_path"],
-                "timestamp": record["timestamp"],
-            }
-            for record in records
-        ]
-        return index_db
+@sync_to_async
+def load_index_from_db():
+    records = ImageIndex.objects.order_by('timestamp').all()
 
+    index_db = [
+        {
+            "camera_id": record.camera_id,
+            "original_pvc_path": record.original_pvc_path,
+            "watermarked_pvc_path": record.watermarked_pvc_path,
+            "original_s3_path": record.original_s3_path,
+            "watermarked_s3_path": record.watermarked_s3_path,
+            "timestamp": record.timestamp,
+        }
+        for record in records
+    ]
 
-async def init_db():
-    global db_pool
-    db_pool = await asyncpg.create_pool(dsn=os.getenv("POSTGRES_DSN"))
-    return db_pool
+    return index_db

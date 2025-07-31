@@ -13,7 +13,6 @@ from apps.shared.views import static_override
 from django.conf.urls.static import static
 import os
 
-
 def admin_permission_denied_handler(request, exception):
     '''
     If IDIR use is required, authenicated IDIR accounts get the request

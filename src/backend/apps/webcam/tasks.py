@@ -28,7 +28,6 @@ from PIL import Image, ImageDraw, ImageFont
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
 from apps.shared.status import get_recent_timestamps, calculate_camera_status
-
 from apps.consumer.models import ImageIndex
 import boto3
 from django.utils import timezone
@@ -43,16 +42,12 @@ CAMS_DIR = f'{settings.SRC_DIR}/images/webcams'
 CAM_OFF = ('This highway cam image is currently unavailable due to technical difficulties. '
            'Our technicians have been alerted and service will resume as soon as possible.')
 
-db_pool = None
-
-# Connection settings
+# Environment variables
 SQL_DB_SERVER = os.getenv("SQL_DB_SERVER", "sql-server-db")
 SQL_DB_NAME = os.getenv("SQL_DB_NAME", "camera-db")
 SQL_DB_USER = os.getenv("SQL_DB_USER", "sa")
 SQL_DB_PASSWORD = os.getenv("SQL_DB_PASSWORD", "YourStrong@Passw0rd")
 SQL_DB_DRIVER = "ODBC Driver 17 for SQL Server"  # Make sure this driver is installed on the container
-
-# Environment variables
 S3_BUCKET = os.getenv("S3_BUCKET")
 S3_REGION = os.getenv("S3_REGION", "us-east-1")
 S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
@@ -60,7 +55,7 @@ S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
 RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq/")
 S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
 
-# Build connection URL
+# Build connection URL for webcam SQL database
 connection_url = URL.create(
     "mssql+pyodbc",
     username=SQL_DB_USER,
@@ -119,7 +114,6 @@ def update_single_webcam_data(webcam):
 
 
 def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
-    
     cams_live_sql = text("""
         SELECT Cams_Live.ID AS id, 
         Cams_Live.Cam_InternetName AS name, 
@@ -207,7 +201,7 @@ def purge_old_images():
     purge_old_pvc_s3_images(age=TIMELAPSE_HOURS, is_pvc=False)
 
 
-# Define data directory (PVC)
+# Define data directory (PVC and S3)
 PVC_ROOT = "/app/ReplayTheDay/archive"
 S3_ROOT = "/test-s3-bucket"
 
@@ -229,7 +223,6 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
         original_s3_path__isnull=False,
         watermarked_s3_path__isnull=False
     )
-
 
     files_to_delete = []
     ids_to_delete = []
