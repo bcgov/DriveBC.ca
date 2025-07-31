@@ -1,4 +1,5 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars, no-prototype-builtins */
+
 // React
 import React, {
   useContext,
@@ -18,9 +19,7 @@ import { memoize } from 'proxy-memoize';
 import { useSelector, useDispatch } from 'react-redux';
 
 // External imports
-import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Spinner from 'react-bootstrap/Spinner';
 import {
   faChevronUp,
   faChevronDown,
@@ -32,6 +31,9 @@ import {
   faArrowLeft
 } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
+import Button from 'react-bootstrap/Button';
+import cloneDeep from 'lodash/cloneDeep';
+import Spinner from 'react-bootstrap/Spinner';
 
 // Internal imports
 import { addCameraGroups } from '../data/webcams.js';
@@ -576,9 +578,9 @@ export default function DriveBCMap(props) {
     // Do nothing if list empty
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
-      const clonedCameras = structuredClone(cameras);
+      const clonedCameras = window.structuredClone ? structuredClone(cameras) : cloneDeep(cameras);
       const groupedCameras = addCameraGroups(clonedCameras);
-      const clonedFilteredCameras = structuredClone(filteredCameras);
+      const clonedFilteredCameras = window.structuredClone ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
       const groupedFilteredCameras = addCameraGroups(clonedFilteredCameras);
 
       loadLayer(
@@ -618,9 +620,15 @@ export default function DriveBCMap(props) {
       }
       filteredEvents.forEach(event => {
         const eventType = event.display_category;
-        if (eventType && Object.hasOwn(routeDetails, eventType)) {
-          eventCounts[eventType] += 1;
-          setRouteDetails({ ...routeDetails, ...eventCounts});
+        if (eventType) {
+          const hasOwn = Object.hasOwn ?
+            Object.hasOwn(routeDetails, eventType) :
+            routeDetails.hasOwnProperty(eventType);
+
+          if (hasOwn) {
+            eventCounts[eventType] += 1;
+            setRouteDetails({ ...routeDetails, ...eventCounts});
+          }
         }
       });
     }

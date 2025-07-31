@@ -1,3 +1,6 @@
+// External imports
+import cloneDeep from 'lodash/cloneDeep';
+
 // Map & geospatial imports
 import { LineString, Point, Polygon } from "ol/geom";
 import * as turf from '@turf/turf';
@@ -7,7 +10,7 @@ import GeoJSON from 'ol/format/GeoJSON';
 // Route filtering and ordering
 export const populateRouteProjection = (data, route) => {
   // Deep copy to avoid direct state mutation
-  const copiedData = structuredClone(data);
+  const copiedData = window.structuredClone ? structuredClone(data) : cloneDeep(data);
 
   // Reference route start point/ls
   const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];

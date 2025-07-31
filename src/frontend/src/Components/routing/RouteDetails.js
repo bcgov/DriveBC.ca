@@ -29,6 +29,7 @@ import {
   faMinusCircle
 } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
+import cloneDeep from 'lodash/cloneDeep';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Skeleton from 'react-loading-skeleton';
@@ -124,7 +125,7 @@ export default function RouteDetails(props) {
     const favCamData = cameras.filter(item => favCams.includes(item.id));
     const favCamGroupIds = favCamData.map(cam => cam.group);
     const favCamGroups = cameras.filter(cam => favCamGroupIds.includes(cam.group));
-    const clonedFavCamGroups = structuredClone(favCamGroups);
+    const clonedFavCamGroups = window.structuredClone ? structuredClone(favCamGroups) : cloneDeep(favCamGroups);
 
     const groupedFavCamData = addCameraGroups(clonedFavCamGroups, favCams);
 

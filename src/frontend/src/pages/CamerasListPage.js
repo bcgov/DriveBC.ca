@@ -19,6 +19,7 @@ import {
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
+import cloneDeep from 'lodash/cloneDeep';
 
 // Internal Imports
 import { CMSContext, FilterContext, HeaderHeightContext } from '../App';
@@ -184,7 +185,8 @@ export default function CamerasListPage() {
   useEffect(() => {
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
-      const clonedCameras = structuredClone(filteredCameras);
+
+      const clonedCameras = window.structuredClone ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
       const finalCameras = addCameraGroups(clonedCameras);
       setCombinedCameras(clonedCameras);
 
