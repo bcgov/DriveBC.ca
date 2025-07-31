@@ -140,10 +140,6 @@ async def run_consumer():
 
                     try:
                         timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
-                        # For testing purposes, only allow camera with ID "343" to be processed
-                        if camera_id != "343" and camera_id != "57":
-                            logger.info("Skipping processing for camera %s", camera_id)
-                            continue
                         await handle_image_message(camera_id, db_data, message.body, timestamp_local, camera_status)
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
@@ -414,9 +410,6 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     # Save watermarked images to S3 with timestamp
     watermarked_s3_path = save_watermarked_image_to_s3(camera_id, image_bytes, timestamp)
 
-    # update json file for replay the day
-    await update_replay_json(camera_id, tz)
-
     # Insert record into DB
     await insert_image_and_update_webcam(
         camera_id,
@@ -426,6 +419,9 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
         watermarked_s3_path,
         utc_dt
     )
+
+    # update json file for replay the day
+    await update_replay_json(camera_id, tz)
         
 async def update_replay_json(camera_id: str, tz: str):
     # By default, use the last 30 days of images for timelapse

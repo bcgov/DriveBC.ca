@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import io
 import logging
@@ -189,7 +190,8 @@ def update_all_webcam_data():
         if webcam.should_update(current_time) and webcam.https_cam:
             update_single_webcam_data(webcam)
         else:
-            update_cam_from_sql_db(webcam.id, current_time)
+            # update_cam_from_sql_db(webcam.id, current_time)
+            asyncio.run(update_cam_from_sql_db(webcam.id, current_time))
 
     update_camera_group_ids()
 
