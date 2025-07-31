@@ -77,8 +77,36 @@ export const deleteFavoriteCamera = async (id, dispatch, action) => {
 }
 
 export function getWebcamReplay(webcam) {
-  // TODO: error handling
-  return fetch(webcam.links.replayTheDay).then(response => response.json());
+  const now = new Date(); // local time
+  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
+
+  return fetch(webcam.links.replayTheDay)
+    .then(response => response.json())
+    .then(timestamps => {
+      // Flatten the timestamps array and filter out invalid formats
+      const allTimestamps = timestamps
+        .flatMap(entry => entry.split(",").map(s => s.trim()))
+        .filter(s => /^\d{12}$/.test(s));
+
+      // Filter only those within the last 24 hours
+      const filtered = allTimestamps.filter(ts => {
+        const year = parseInt(ts.slice(0, 4));
+        const month = parseInt(ts.slice(4, 6)) - 1;
+        const day = parseInt(ts.slice(6, 8));
+        const hour = parseInt(ts.slice(8, 10));
+        const minute = parseInt(ts.slice(10, 12));
+
+        const date = new Date(year, month, day, hour, minute);
+
+        return date >= oneDayAgo && date <= now;
+      });
+
+      return filtered;
+    })
+    .catch(error => {
+      console.error("Error loading replay data:", error);
+      return [];
+    });
 }
 
 const CARDINAL_ORDER = {

@@ -161,7 +161,6 @@ def update_webcam_db(cam_id: int, cam_data: dict):
     get_recent_timestamps()
     timestamp_utc = cam_data.get("timestamp", datetime.datetime.now(tz=ZoneInfo("UTC"))).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(timestamp_utc)
-    # Timestamp in milliseconds
     ts_millis = int(camera_status["timestamp"])
     ts_seconds = ts_millis / 1000
     dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
@@ -217,11 +216,8 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
         root_path = PVC_ROOT
     else:
         root_path = S3_ROOT
-    # cutoff_time = timezone.now() - datetime.timedelta(hours=int(age))
-    # testing purpose only
-    cutoff_time = timezone.now() - datetime.timedelta(minutes=int(age))
+    cutoff_time = timezone.now() - datetime.timedelta(hours=int(age))
 
-    # Filter the queryset
     records_to_delete_pvc = ImageIndex.objects.filter(
         timestamp__lt=cutoff_time,
         original_s3_path__isnull=False,
@@ -251,7 +247,6 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
             files_to_delete.append(full_path)
             ids_to_delete.append(row.timestamp)
 
-    # Update matching rows
     if is_pvc:
         ImageIndex.objects.filter(
             timestamp__in=ids_to_delete,

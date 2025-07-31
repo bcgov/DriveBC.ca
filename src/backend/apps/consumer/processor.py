@@ -396,9 +396,7 @@ def save_watermarked_image_to_s3(camera_id: str, image_bytes: bytes, timestamp: 
     logger.info(f"Watermarked image saved to S3 at {key}")
     return watermarked_s3_path
 
-# Mount the folder so it’s accessible at /json
-async def get_images_within(camera_id: str, db_pool: any, hours: int = 24) -> list:
-    # await ready_event.wait()
+async def get_images_within(camera_id: str, db_pool: any, hours: int = 720) -> list:
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     index_db = await load_index_from_db(db_pool)
 
@@ -444,8 +442,11 @@ def insert_image_and_update_webcam(camera_id, original_pvc_path, watermarked_pvc
     camera.save()
 
 async def handle_image_message(camera_id: str, db_data: any, body: bytes, timestamp: str, db_pool: any, camera_status: dict):
-    # dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
-    dt = datetime.strptime(timestamp, "%Y%m%d%H%M").replace(tzinfo=timezone.utc)
+    # timestamp is in local time
+    local_tz = pytz.timezone("America/Vancouver")
+    naive_dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
+    local_dt = local_tz.localize(naive_dt)
+    utc_dt = local_dt.astimezone(pytz.utc)
 
     original_pvc_path = save_original_image_to_pvc(camera_id, body)
     original_s3_path = save_original_image_to_s3(camera_id, body)
@@ -473,15 +474,17 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
         watermarked_pvc_path,
         original_s3_path,
         watermarked_s3_path,
-        dt
+        utc_dt
     )
         
 async def update_replay_json(camera_id: str, db_pool: any, tz: str):
-    results = await get_images_within(camera_id, db_pool, hours=24)
+    # By default, we will use the last 30 days of images for timelapse
+    default_time_age = os.getenv("TIMELAPSE_HOURS", "720")
+    results = await get_images_within(camera_id, db_pool, hours=int(default_time_age))
     timestamps = []
     for item in results:
         local_time = item.timestamp.astimezone(ZoneInfo(tz))
-        timestamps.append(item.timestamp.strftime("%Y%m%d%H%M"))
+        timestamps.append(local_time.strftime("%Y%m%d%H%M"))
 
     # Create the JSON file
     file_path = os.path.join(OUTPUT_DIR, f"{camera_id}.json")
