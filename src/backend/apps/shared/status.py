@@ -12,7 +12,7 @@ max_samples = 50
 # Global rolling window of timestamps
 timestamp_list: deque[Union[str, float]] = deque(maxlen=max_samples)
 
-@sync_to_async
+# @sync_to_async
 def get_recent_timestamps():
     latest_50 = ImageIndex.objects.order_by('-timestamp')[:50]
 
@@ -21,11 +21,16 @@ def get_recent_timestamps():
     for obj in reversed(latest_50):
         timestamp = obj.timestamp.strftime("%Y%m%d%H%M%S") + f"{int(obj.timestamp.microsecond / 1000):03d}"
         timestamp_list.append(timestamp)
-    
+    return timestamp_list[-1] if timestamp_list else None
+
 def parse_timestamp(ts_str: str) -> float:
-    """Convert 'YYYYMMDDHHMMSSFFF' to UNIX timestamp (float with milliseconds)."""
-    dt = datetime.strptime(ts_str[:17], "%Y%m%d%H%M%S%f")
-    return dt.timestamp()
+    # Split into base datetime and milliseconds
+    base_str = ts_str[:14]  # YYYYMMDDHHMMSS
+    millis_str = ts_str[14:]  # FFF (3 digits)
+
+    dt = datetime.strptime(base_str, "%Y%m%d%H%M%S").replace(tzinfo=timezone.utc)
+    millis = int(millis_str)
+    return dt.timestamp() + millis / 1000.0
 
 def migrate_timestamp_list():
     """Ensure all values in timestamp_list are floats (convert from string if needed)."""
@@ -44,14 +49,14 @@ def calculate_camera_status(timestamp_str: str) -> tuple[float, float]:
         timestamp_str: Timestamp string in format 'YYYYMMDDHHMMSSFFF'
 
     Returns:
+        timestamp: Current timestamp in milliseconds
         median (float): Median update period in seconds
         std_dev (float): Standard deviation in seconds (capped)
         stale (bool): True if median > threshold_stale
         delayed (bool): True if median > threshold_delayed
     """
-    # Step 1: parse and append new timestamp
+    # Step 1: parse latest timestamp
     new_ts = parse_timestamp(timestamp_str)
-    timestamp_list.append(new_ts)
 
     # Step 2: ensure all timestamps are float
     migrate_timestamp_list()
