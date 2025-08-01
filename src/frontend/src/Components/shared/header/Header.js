@@ -295,8 +295,8 @@ export default function Header() {
                 className="btn btn-outline-primary header-right__btn" id="whatsnew-btn" alt="Legacy DriveBC"
                 tabIndex={0}
                 onClick={legacyDBCHandler}
-                onKeyPress={(keyEvent) => {
-                  if (keyEvent.charCode == 13 || keyEvent.charCode == 32) {
+                onKeyDown={(keyEvent) => {
+                  if (['Enter', 'NumpadEnter', 'Space'].includes(keyEvent.key)) {
                     legacyDBCHandler();
                   }
                 }}>

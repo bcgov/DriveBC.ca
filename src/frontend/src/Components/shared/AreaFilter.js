@@ -89,7 +89,7 @@ export default function AreaFilter(props) {
                 setFilterContext({...filterContext, areaFilter: null});
                 handleAreaFiltersClose();
               }}
-              onKeyPress={() => {
+              onKeyDown={() => {
                 setFilterContext({...filterContext, areaFilter: null});
                 handleAreaFiltersClose();
               }}>
@@ -110,7 +110,7 @@ export default function AreaFilter(props) {
                 setFilterContext({...filterContext, areaFilter: areaObj});
                 handleAreaFiltersClose();
               }}
-              onKeyPress={() => {
+              onKeyDown={() => {
                 setFilterContext({...filterContext, areaFilter: areaObj});
                 handleAreaFiltersClose();
               }}>

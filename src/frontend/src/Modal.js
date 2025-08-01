@@ -93,7 +93,7 @@ export default function Modal() {
       className="auth-modal"
       tabIndex={0}
       onClick={resetAuthModal}
-      onKeyPress={resetAuthModal}
+      onKeyDown={resetAuthModal}
     >
 
       <div
@@ -101,7 +101,7 @@ export default function Modal() {
         id="modal-content"
         className="content"
         onClick={(e) => { e.stopPropagation(); }}
-        onKeyPress={(e) => { e.stopPropagation(); }}
+        onKeyDown={(e) => { e.stopPropagation(); }}
         role="alertdialog"
         aria-modal="true"
       >
@@ -112,7 +112,7 @@ export default function Modal() {
             className="modal-closer close-panel"
             aria-label="close modal"
             onClick={resetAuthModal}
-            onKeyPress={resetAuthModal}>
+            onKeyDown={resetAuthModal}>
             <FontAwesomeIcon icon={faXmark} />
           </button>
 

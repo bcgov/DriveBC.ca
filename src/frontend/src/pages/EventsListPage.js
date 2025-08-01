@@ -703,7 +703,7 @@ export default function EventsListPage() {
                       className="remove-btn"
                       tabIndex={0}
                       onClick={() => setFilterContext({...filterContext, areaFilter: null})}
-                      onKeyPress={() => setFilterContext({...filterContext, areaFilter: null})}>
+                      onKeyDown={() => setFilterContext({...filterContext, areaFilter: null})}>
                       <FontAwesomeIcon icon={faXmark} />
                     </div>
                   </div>

@@ -120,7 +120,7 @@ export default function AccountPage() {
                   className='btn btn-outline-primary'
                   tabIndex={0}
                   onClick={() => navigate('/verify-email')}
-                  onKeyPress={() => navigate('/verify-email')}>
+                  onKeyDown={() => navigate('/verify-email')}>
 
                   <b>Verify email address</b>
                 </Button>
@@ -133,8 +133,8 @@ export default function AccountPage() {
           <Button
             variant="outline-primary" id="deactivate-btn" alt="Deactivate DriveBC account" tabIndex={0}
             onClick={() => setShowDeactivate(true)}
-            onKeyPress={(keyEvent) => {
-              if (keyEvent.charCode == 13 || keyEvent.charCode == 32) {
+            onKeyDown={(keyEvent) => {
+              if (['Enter', 'NumpadEnter', 'Space'].includes(keyEvent.key)) {
                 deactivateHandler();
               }
             }}>

@@ -235,7 +235,7 @@ export default function RouteObjectList(props) {
               className="route-item route-item--major"
               key={index}
               onClick={() => eventFeatureHandler(obj)}
-              onKeyPress={() => eventFeatureHandler(obj)}
+              onKeyDown={() => eventFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 
@@ -253,7 +253,7 @@ export default function RouteObjectList(props) {
               className="route-item route-item--major"
               key={index}
               onClick={() => eventFeatureHandler(obj)}
-              onKeyPress={() => eventFeatureHandler(obj)}
+              onKeyDown={() => eventFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 
@@ -274,7 +274,7 @@ export default function RouteObjectList(props) {
               className="route-item route-item--minor"
               key={index}
               onClick={() => eventFeatureHandler(obj)}
-              onKeyPress={() => eventFeatureHandler(obj)}
+              onKeyDown={() => eventFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 
@@ -295,7 +295,7 @@ export default function RouteObjectList(props) {
               className="route-item route-item--roadConditions"
               key={index}
               onClick={() => eventFeatureHandler(obj)}
-              onKeyPress={() => eventFeatureHandler(obj)}
+              onKeyDown={() => eventFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 
@@ -316,7 +316,7 @@ export default function RouteObjectList(props) {
               className="route-item route-item--futureEvents"
               key={index}
               onClick={() => eventFeatureHandler(obj)}
-              onKeyPress={() => eventFeatureHandler(obj)}
+              onKeyDown={() => eventFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 
@@ -338,7 +338,7 @@ export default function RouteObjectList(props) {
               className="route-item route-item--chainUps"
               key={index}
               onClick={() => eventFeatureHandler(obj)}
-              onKeyPress={() => eventFeatureHandler(obj)}
+              onKeyDown={() => eventFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 
@@ -359,7 +359,7 @@ export default function RouteObjectList(props) {
               className="route-item route-item--major"
               key={index}
               onClick={() => advisoryFeatureHandler(obj)}
-              onKeyPress={() => advisoryFeatureHandler(obj)}
+              onKeyDown={() => advisoryFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 
@@ -377,7 +377,7 @@ export default function RouteObjectList(props) {
               className="route-item route-item--ferries"
               key={index}
               onClick={() => ferryFeatureHandler(obj)}
-              onKeyPress={() => ferryFeatureHandler(obj)}
+              onKeyDown={() => ferryFeatureHandler(obj)}
               role="button"
               tabIndex={0}>
 

@@ -509,7 +509,7 @@ export default function RouteDetails(props) {
         className={`route-details ${isPanel && compareRoutes(route, selectedRoute) ? 'selected' : ''} ${onMobile ? 'mobile' : ''}`}
         tabIndex={isPanel ? 0 : null}
         onClick={isPanel ? switchRouteHandler : null}
-        onKeyPress={isPanel ? switchRouteHandler : null}>
+        onKeyDown={isPanel ? switchRouteHandler : null}>
 
         <div className="route-title">
           <div className="space-between-row route-tools">
@@ -554,7 +554,7 @@ export default function RouteDetails(props) {
               className="card-img-box"
               tabIndex={0}
               onClick={showOnMap}
-              onKeyPress={showOnMap}>
+              onKeyDown={showOnMap}>
 
               <div className="overlay-screen centered-content">
                 <p className="overlay-screen__text">
@@ -724,7 +724,7 @@ export default function RouteDetails(props) {
               variant="light"
               className='view-details-btn'
               onClick={() => {if (setShowRouteObjs) setShowRouteObjs(true)}}
-              onKeyPress={() => {if (setShowRouteObjs) setShowRouteObjs(true)}}>
+              onKeyDown={() => {if (setShowRouteObjs) setShowRouteObjs(true)}}>
 
               View Details
               <FontAwesomeIcon icon={faChevronRight}/>

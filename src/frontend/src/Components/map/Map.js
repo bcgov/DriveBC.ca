@@ -792,7 +792,7 @@ export default function DriveBCMap(props) {
             onClick={() => resizePanel(panel, clickedFeature, setMaximizedPanel)}
             onTouchMove={() => resizePanel(panel, clickedFeature, setMaximizedPanel)}
             onKeyDown={keyEvent => {
-              if (keyEvent.keyCode == 13) {
+              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                 resizePanel(panel, clickedFeature);
               }
             }}>
@@ -823,7 +823,7 @@ export default function DriveBCMap(props) {
             className="btn-outline-primary back-to-details"
             aria-label={`back to route details`}
             tabIndex={`${openPanel ? 0 : -1}`}
-            onKeyPress={(e) => {
+            onKeyDown={(e) => {
               e.stopPropagation();
               togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
                 myLocationRef, routingContainerRef

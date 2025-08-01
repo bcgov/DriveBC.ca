@@ -408,7 +408,7 @@ export function ReportMap(props) {
         onClick={() => maximizePanel(panel)}
         onTouchMove={() => maximizePanel(panel)}
         onKeyDown={keyEvent => {
-          if (keyEvent.keyCode == 13) {
+          if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
             maximizePanel(panel);
           }
         }}>

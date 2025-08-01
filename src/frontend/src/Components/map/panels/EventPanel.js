@@ -105,7 +105,7 @@ export default function EventPanel(props) {
           <p
             tabIndex={0}
             onClick={() => console.log(eventData)}
-            onKeyPress={() => console.log(eventData)}
+            onKeyDown={() => console.log(eventData)}
           >{eventData.id}</p>
         </div>
       </div>

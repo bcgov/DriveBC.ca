@@ -92,7 +92,7 @@ export default function SavedRoutesPage() {
             className='btn btn-outline-primary verify-link'
             tabIndex={0}
             onClick={() => navigate('/verify-email?my_routes=true')}
-            onKeyPress={() => navigate('/verify-email?my_routes=true')}>
+            onKeyDown={() => navigate('/verify-email?my_routes=true')}>
 
             <b>Verify email address</b>
           </Button>

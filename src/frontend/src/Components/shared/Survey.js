@@ -115,7 +115,7 @@ export default function Survey() {
                 className={'survey-close-btn'}
                 aria-label="close survey button"
                 onClick={() => closeHandler()}
-                onKeyPress={() => closeHandler()}
+                onKeyDown={() => closeHandler()}
                 tabIndex={0}>
 
                 <FontAwesomeIcon icon={faXmark}/>
@@ -139,7 +139,7 @@ export default function Survey() {
                 className={'survey-close-btn'}
                 aria-label="close survey button"
                 onClick={() => closeHandler()}
-                onKeyPress={() => closeHandler()}
+                onKeyDown={() => closeHandler()}
                 tabIndex={0}>
 
                 <FontAwesomeIcon icon={faXmark}/>

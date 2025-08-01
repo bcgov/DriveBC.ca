@@ -56,7 +56,7 @@ export default function EmergencyAlert() {
             {parse(emergencyAlert.alert)}
           </div>
 
-          <FontAwesomeIcon icon={faXmark} className="fg-close-btn" onClick={handleClose} onKeyPress={handleClose} tabIndex={0} />
+          <FontAwesomeIcon icon={faXmark} className="fg-close-btn" onClick={handleClose} onKeyDown={handleClose} tabIndex={0} />
         </div>
       }
 

@@ -469,7 +469,7 @@ export default function CamerasListPage() {
                         className="remove-btn"
                         tabIndex={0}
                         onClick={() => setFilterContext({...filterContext, highwayFilterKey: null})}
-                        onKeyPress={() => setFilterContext({...filterContext, highwayFilterKey: null})}>
+                        onKeyDown={() => setFilterContext({...filterContext, highwayFilterKey: null})}>
                         <FontAwesomeIcon icon={faXmark} />
                       </div>
                     </div>
@@ -484,7 +484,7 @@ export default function CamerasListPage() {
                         className="remove-btn"
                         tabIndex={0}
                         onClick={() => setFilterContext({...filterContext, areaFilter: null})}
-                        onKeyPress={() => setFilterContext({...filterContext, areaFilter: null})}>
+                        onKeyDown={() => setFilterContext({...filterContext, areaFilter: null})}>
                         <FontAwesomeIcon icon={faXmark} />
                       </div>
                     </div>

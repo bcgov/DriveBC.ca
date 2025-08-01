@@ -33,7 +33,8 @@ export default function AdvisoriesList(props) {
   const { advisories, showDescription, showTimestamp, showPublished, isAdvisoriesListPage, showLoader } = props;
 
   function handleClick(advisory, keyEvent) {
-    if (keyEvent && keyEvent.keyCode != 13 && keyEvent.keyCode != 32) {
+    // Ignore key presses that aren't enter or space
+    if (keyEvent && !(['Enter', 'NumpadEnter', 'Space'].includes(keyEvent.key))) {
       return;
     }
 

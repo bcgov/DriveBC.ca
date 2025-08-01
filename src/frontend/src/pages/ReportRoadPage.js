@@ -19,9 +19,9 @@ import './ReportRoadPage.scss';
 
 export default function ReportRoadPage() {
   document.title = `DriveBC - Report Road Maintenance`;
-  
+
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
-  
+
   const navigate = useNavigate();
 
   const returnHandler = () => {
@@ -42,7 +42,7 @@ export default function ReportRoadPage() {
               className="back-link"
               onClick={returnHandler}
               onKeyDown={keyEvent => {
-                if (keyEvent.keyCode == 13) {
+                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                   returnHandler();
                 }
               }}>
@@ -60,7 +60,7 @@ export default function ReportRoadPage() {
       <Container className="page-subtitle">
         <p>Select the area of the province where you have encountered the highway or bridge problem. If your location is known, it is selected and shown on the map.</p>
       </Container>
-      
+
       <Container className="report-map-wrap">
         <ReportMap wmsLayer='hwy:DSA_CONTRACT_AREA_INFO_V' styles='DSA_CONTRACT_AREA_INFO_V_V2' />
       </Container>

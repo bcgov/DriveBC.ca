@@ -26,8 +26,8 @@ export default function LocationAccessPopup(props) {
               setShowLocationAccessError(false);
             }}
             onKeyDown={(keyEvent) => {
-              if (keyEvent.keyCode == 13) {
-                event.stopPropagation();
+              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                keyEvent.stopPropagation();
                 setShowLocationAccessError(false);
               }
             }}>

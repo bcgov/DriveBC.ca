@@ -67,7 +67,7 @@ export default function VerifyEmailPage() {
           </ul>
         </p>
 
-        <button className='btn btn-outline-primary' onClick={sendVerificationEmailHandler} onKeyPress={sendVerificationEmailHandler}>Send another verification Email</button>
+        <button className='btn btn-outline-primary' onClick={sendVerificationEmailHandler} onKeyDown={sendVerificationEmailHandler}>Send another verification Email</button>
       </Container>
 
       <Footer/>

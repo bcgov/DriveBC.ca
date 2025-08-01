@@ -43,7 +43,7 @@ export default function ReportElectricalPage() {
               className="back-link"
               onClick={returnHandler}
               onKeyDown={keyEvent => {
-                if (keyEvent.keyCode == 13) {
+                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                   returnHandler();
                 }
               }}>
@@ -61,11 +61,11 @@ export default function ReportElectricalPage() {
       <Container className="page-subtitle">
         <p>Select the area of the province where you have encountered the highway or bridge problem. If your location is known, it is selected and shown on the map.</p>
       </Container>
-      
+
       <Container className="report-map-wrap">
         <ReportMap wmsLayer='hwy:DSA_ELECTRICAL_CA_INFO_V' styles='DSA_ELECTRICAL_CA_INFO_V_V2'/>
       </Container>
-      
+
       {xLargeScreen && <Footer />}
     </div>
   );

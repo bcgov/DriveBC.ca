@@ -1,5 +1,5 @@
 // React
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 
 // Redux
 import { useDispatch } from 'react-redux';
@@ -29,6 +29,9 @@ export default function LocationSearch(props) {
 
   // Redux
   const dispatch = useDispatch();
+
+  // Refs
+  const typeaheadRef = useRef(null);
 
   // State
   const [minLength, setMinLength] = useState(3);
@@ -83,6 +86,7 @@ export default function LocationSearch(props) {
   // Rendering
   return (
     <AsyncTypeahead
+      ref={typeaheadRef}
       autoFocus={selectByDefault}
       selected={location}
       filterBy={() => true}
@@ -110,11 +114,13 @@ export default function LocationSearch(props) {
       inputProps={{
         'aria-label': 'input field for location ' + placeholder,
         ...props.inputProps,
-
       }}
-      selectHint={(shouldSelect, e) => {
-        // Select the hint if the user hits 'enter'
-        return e.keyCode === 13 || shouldSelect;
+      onKeyDown={(keyEvent) => {
+        if (['Enter', 'NumpadEnter'].includes(keyEvent.key) && options.length) {
+          setLocationOptions([]);
+          setSelectedLocation([options[0]]);
+          typeaheadRef.current.toggleMenu();
+        }
       }}
       renderMenuItemChildren={location => (
         <div>

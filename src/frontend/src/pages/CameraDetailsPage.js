@@ -539,7 +539,7 @@ export default function CameraDetailsPage() {
             className="back-link"
             onClick={returnHandler}
             onKeyDown={keyEvent => {
-              if (keyEvent.keyCode == 13) {
+              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                 returnHandler();
               }
             }}>
@@ -711,7 +711,7 @@ export default function CameraDetailsPage() {
                                           <div className={'card-pill' + (show ? ' bounce' : ' hidden')}
                                             onClick={handleChildClick}
                                             onKeyDown={keyEvent => {
-                                              if (keyEvent.keyCode === 13) {
+                                              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                                                 handleChildClick();
                                               }
                                             }}>
@@ -736,7 +736,7 @@ export default function CameraDetailsPage() {
                                             className={'card-pill' + (show ? ' bounce' : ' hidden')}
                                             onClick={handleChildClick}
                                             onKeyDown={keyEvent => {
-                                              if (keyEvent.keyCode === 13) {
+                                              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                                                 handleChildClick();
                                               }
                                             }}>
@@ -772,7 +772,7 @@ export default function CameraDetailsPage() {
                                             className={'card-pill' + (show ? ' bounce' : ' hidden')}
                                             onClick={handleChildClick}
                                             onKeyDown={keyEvent => {
-                                              if (keyEvent.keyCode === 13) {
+                                              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                                                 handleChildClick();
                                               }
                                             }}>
