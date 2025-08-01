@@ -196,6 +196,7 @@ export default function RouteDetails(props) {
     if (!cameras) dataLoaders.loadCameras(routeData, null, dispatch, displayError, workerRef.current);
     if (!events) dataLoaders.loadEvents(routeData, null, dispatch, displayError, workerRef.current);
     if (!ferries) dataLoaders.loadFerries(routeData, null, dispatch, displayError, workerRef.current);
+    if (!wildfires) dataLoaders.loadWildfires(routeData, null, dispatch, displayError, workerRef.current);
 
     // Cleanup function to terminate the worker when the component unmounts
     return () => {
