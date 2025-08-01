@@ -184,10 +184,11 @@ def update_webcam_db(cam_id: int, cam_data: dict):
 def update_all_webcam_data():
     for webcam in Webcam.objects.all():
         current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
-        if webcam.should_update(current_time) and webcam.https_cam:
-            update_single_webcam_data(webcam)
-        else:
-            update_cam_from_sql_db(webcam.id, current_time)
+        if webcam.should_update(current_time):
+            if not webcam.https_cam:
+                update_single_webcam_data(webcam)
+            else:
+                update_cam_from_sql_db(webcam.id, current_time)          
 
     update_camera_group_ids()
 
@@ -200,8 +201,8 @@ def purge_old_images():
 
 
 # Define data directory (PVC and S3)
-PVC_ROOT = "/app/ReplayTheDay/archive"
-S3_ROOT = "/test-s3-bucket"
+PVC_ROOT = os.getenv("PVC_ROOT", "/app/ReplayTheDay/archive")
+S3_ROOT = os.getenv("S3_ROOT", "/test-s3-bucket")
 
 def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
     if is_pvc:

@@ -138,9 +138,6 @@ async def run_consumer():
 
                     try:
                         timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
-                        if camera_id != "343" and camera_id != "57" and camera_id != "658" and camera_id != "219":
-                            logger.info("Skipping processing for camera %s", camera_id)
-                            continue
                         await handle_image_message(camera_id, db_data, message.body, timestamp_local, camera_status)
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
@@ -232,7 +229,7 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
             
             month = dt_local.strftime('%b')
             day = dt_local.strftime('%d')
-            timestamp = f'{month} {day}, {dt_local.strftime("%Y %H:%M:%S %p %Z")}'
+            timestamp = f'{month} {day}, {dt_local.strftime("%Y %I:%M:%S %p %Z")}'
             pen.text((width - 3,  height + 14), timestamp, fill="white",
                      anchor='rs', font=FONT)
 
