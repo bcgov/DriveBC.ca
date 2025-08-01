@@ -134,16 +134,13 @@ async def run_consumer():
                     filename = message.headers.get("filename", "unknown.jpg")
                     camera_id = filename.split("_")[0].split(".")[0]
                     timestamp_utc = message.headers.get("timestamp", "unknown")
-
-                    get_recent_timestamps()
                     camera_status = calculate_camera_status(timestamp_utc)
 
                     try:
                         timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
-                        # # For testing purposes, only allow camera with ID "343" to be processed
-                        # if camera_id != "343" and camera_id != "57":
-                        #     logger.info("Skipping processing for camera %s", camera_id)
-                        #     continue
+                        if camera_id != "343" and camera_id != "57" and camera_id != "658" and camera_id != "219":
+                            logger.info("Skipping processing for camera %s", camera_id)
+                            continue
                         await handle_image_message(camera_id, db_data, message.body, timestamp_local, camera_status)
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
@@ -393,17 +390,20 @@ def insert_image_and_update_webcam(camera_id, original_pvc_path, watermarked_pvc
 
 async def handle_image_message(camera_id: str, db_data: any, body: bytes, timestamp: str, camera_status: dict):
     # timestamp is in local time
-    local_tz = pytz.timezone("America/Vancouver")
+    
+
+    webcams = [cam for cam in db_data if cam['id'] == int(camera_id)]
+    webcam = webcams[0] if webcams else None
+
+    tz = get_timezone(webcam) if webcam else 'America/Vancouver'
+    local_tz = pytz.timezone(tz)
     naive_dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
     local_dt = local_tz.localize(naive_dt)
     utc_dt = local_dt.astimezone(pytz.utc)
 
     original_pvc_path = save_original_image_to_pvc(camera_id, body)
     original_s3_path = save_original_image_to_s3(camera_id, body)
-
-    webcams = [cam for cam in db_data if cam['id'] == int(camera_id)]
-    webcam = webcams[0] if webcams else None
-    tz = get_timezone(webcam) if webcam else 'America/Vancouver'
+    
 
     image_bytes = watermark(webcam, body, tz, timestamp)
 

@@ -152,7 +152,7 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
             return []
 
 def update_webcam_db(cam_id: int, cam_data: dict):
-    timestamp_utc = get_recent_timestamps()
+    timestamp_utc = get_recent_timestamps(cam_id)
     camera_status = calculate_camera_status(timestamp_utc)
     ts_seconds = int(camera_status["timestamp"])
     dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
