@@ -160,23 +160,25 @@ export const compareRouteDistance = (route1, route2) => {
   return true;
 }
 
+function offsetCoordinates(coords, offset) {
+  const point = turf.point(coords);
+  const distance = 0.2;  // 200 meters
+  const bearing = 45 * offset;  // set direction by 15 degrees for each offset
+  const destination = turf.destination(point, distance, bearing, { units: 'kilometers' });
+  return destination.geometry.coordinates;
+}
+
 const getPointCoords = (mapContext, coords) => {
-  if (!mapContext.features) {
-    mapContext.features = {};
-  }
-
-  if (!mapContext.features.events) {
-    mapContext.features.events = {};
-  }
-
-  const locationIndex = coords[0] + ',' + coords[1];
-  if (mapContext.features.events[locationIndex]) {
-    // point exists, retrieve offset location instead
-    return getPointCoords(mapContext, [coords[0] + 0.00176, coords[1]]);  // offset 0.00176 degrees (~200m) East
+  const locationIndex = coords[0].toFixed(4) + ',' + coords[1].toFixed(4);
+  if (locationIndex in mapContext.features.events) {
+    // point exists, calculate and record new offset
+    const offsetCoords = offsetCoordinates(coords, mapContext.features.events[locationIndex]);
+    mapContext.features.events[locationIndex] += 1;
+    return offsetCoords;
 
   } else {
-    // point does not exist, record and return
-    mapContext.features.events[locationIndex] = coords;
+    // point does not exist, return original coordinates
+    mapContext.features.events[locationIndex] = 0;
     return coords;
   }
 }
