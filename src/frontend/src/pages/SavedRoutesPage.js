@@ -47,6 +47,7 @@ export default function SavedRoutesPage() {
   const [routeLabel, setRouteLabel] = useState();
   const [routeFavCams, setRouteFavCams] = useState(false);
   const [verified] = useState(params.get('verified'));
+  const [onscreenCameras, setOnscreenCameras] = useState([]);
 
   // Effects
   useEffect(() => {
@@ -106,7 +107,7 @@ export default function SavedRoutesPage() {
 
       {authContext.loginStateKnown && authContext.username &&
         <Container className="content-container">
-          {!(favRoutes && favRoutes.length) &&
+          {favRoutes && !favRoutes.length &&
             <div className="empty-routes-display">
               <h3>No saved routes</h3>
 
@@ -135,7 +136,10 @@ export default function SavedRoutesPage() {
                 <FontAwesomeIcon className="close-btn" icon={faXmark} onClick={() => setRouteFavCams(!routeFavCams)} />
               </div>
 
-              <CameraList cameras={routeFavCams} />
+              <CameraList
+                cameras={routeFavCams}
+                onscreenCameras={onscreenCameras}
+                setOnscreenCameras={setOnscreenCameras} />
             </div>
           }
         </Container>
