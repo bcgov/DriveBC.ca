@@ -106,7 +106,7 @@ export default function SavedCamerasPage() {
     // Filter cameras by user's saved cameras
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
-      const clonedCameras = window.structuredClone ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
+      const clonedCameras = typeof structuredClone === 'function' ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
       const finalCameras = addCameraGroups(clonedCameras, favCams);
 
       // Sort cameras by highway number and route_order

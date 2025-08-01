@@ -186,7 +186,7 @@ export default function CamerasListPage() {
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
 
-      const clonedCameras = window.structuredClone ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
+      const clonedCameras = typeof structuredClone === 'function' ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
       const finalCameras = addCameraGroups(clonedCameras);
       setCombinedCameras(clonedCameras);
 

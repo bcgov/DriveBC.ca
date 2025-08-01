@@ -578,9 +578,9 @@ export default function DriveBCMap(props) {
     // Do nothing if list empty
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
-      const clonedCameras = window.structuredClone ? structuredClone(cameras) : cloneDeep(cameras);
+      const clonedCameras = typeof structuredClone === 'function' ? structuredClone(cameras) : cloneDeep(cameras);
       const groupedCameras = addCameraGroups(clonedCameras);
-      const clonedFilteredCameras = window.structuredClone ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
+      const clonedFilteredCameras = typeof structuredClone === 'function' ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
       const groupedFilteredCameras = addCameraGroups(clonedFilteredCameras);
 
       loadLayer(

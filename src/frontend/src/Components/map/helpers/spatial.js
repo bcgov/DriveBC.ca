@@ -10,7 +10,7 @@ import GeoJSON from 'ol/format/GeoJSON';
 // Route filtering and ordering
 export const populateRouteProjection = (data, route) => {
   // Deep copy to avoid direct state mutation
-  const copiedData = window.structuredClone ? structuredClone(data) : cloneDeep(data);
+  const copiedData = typeof structuredClone === 'function' ? structuredClone(data) : cloneDeep(data);
 
   // Reference route start point/ls
   const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];

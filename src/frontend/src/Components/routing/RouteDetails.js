@@ -125,7 +125,7 @@ export default function RouteDetails(props) {
     const favCamData = cameras.filter(item => favCams.includes(item.id));
     const favCamGroupIds = favCamData.map(cam => cam.group);
     const favCamGroups = cameras.filter(cam => favCamGroupIds.includes(cam.group));
-    const clonedFavCamGroups = window.structuredClone ? structuredClone(favCamGroups) : cloneDeep(favCamGroups);
+    const clonedFavCamGroups = typeof structuredClone === 'function' ? structuredClone(favCamGroups) : cloneDeep(favCamGroups);
 
     const groupedFavCamData = addCameraGroups(clonedFavCamGroups, favCams);
 
