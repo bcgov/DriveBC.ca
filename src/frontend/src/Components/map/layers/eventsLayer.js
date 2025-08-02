@@ -1,5 +1,5 @@
 // Internal imports
-import { getMidPoint, setEventStyle } from '../helpers';
+import { savePointFeature, getMidPoint, setEventStyle, offsetCoordinates } from '../helpers';
 
 // OpenLayers
 import { Point, LineString, Polygon } from 'ol/geom';
@@ -41,6 +41,10 @@ const processEvent = (mapContext, event, currentProjection, vsMap, lineVsMap, re
   pointFeature.setId(event.id);
   pointFeature.getGeometry().transform('EPSG:4326', currentProjection);
   addFeature(pointFeature, event.display_category, vsMap, lineVsMap, setNewFeatureStyle);
+
+  if (event.location.type === 'Point') {
+    savePointFeature(mapContext, event, pointFeature);
+  }
 
   if (referenceData?.type === 'event' && event.id === referenceData?.id) {
     updateReferenceFeature(pointFeature);
@@ -134,12 +138,8 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
 
     const currentProjection = mapRef.current.getView().getProjection().getCode();
 
-    if (!mapContext.features) {
-      mapContext.features = {};
-    }
-
-    // Reset events offset
-    mapContext.features.events = {};
+    // Reset events dict for offsetting overlaps
+    mapContext.events = {};
 
     // Add features to VectorSources for each event
     for (const event of eventsData) {
@@ -190,7 +190,7 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
   return eventFound;
 }
 
-export function updateEventsLayers(mapContext, events, mapLayers, setLoadingLayers, referenceData) {
+export function updateEventsLayers(mapContext, events, mapLayers, setLoadingLayers, referenceData, mapView) {
   const featuresDict = {};
 
   const eventsDict = events.reduce((dict, obj) => {
@@ -206,6 +206,8 @@ export function updateEventsLayers(mapContext, events, mapLayers, setLoadingLaye
     // for each feature in a layer, set the style or hide the
     // feature, depending on whether the event is current
     for (const feature of layer.getSource().getFeatures()) {
+      updateOverlappingEventPosition(feature, mapContext, mapView);
+
       const featureId = feature.getId();
       if (featureId in eventsDict) {
         // Update the feature with the new event data
@@ -243,4 +245,43 @@ export function updateEventsLayers(mapContext, events, mapLayers, setLoadingLaye
   }));
 
   return featuresDict;
+}
+
+// Iterate through all event layers and update overlapping positions for each feature
+export const updateOverlappingPositions = (mapLayers, mapContext, mapView) => {
+  const eventLayers = ['closures', 'majorEvents', 'minorEvents', 'futureEvents', 'roadConditions', 'chainUps'];
+  eventLayers.forEach((layerKey) => {
+    // Iterate through features of each event layer
+    const layer = mapLayers.current[layerKey];
+    layer.getSource().getFeatures().forEach((feature) => {
+      updateOverlappingEventPosition(feature, mapContext, mapView);
+    });
+  });
+}
+
+// Update the position of an overlapping event based on its index
+export const updateOverlappingEventPosition = (feature, mapContext, mapView) => {
+  if (feature.get('locationIndex')) {
+    // Do not update if there is only one event at the point
+    const eventsAtPoint = mapContext.events[feature.get('locationIndex')];
+    if (eventsAtPoint.length > 1) {
+      const eventIndex = eventsAtPoint.indexOf(feature.get('id'));
+
+      // Skip the event at center
+      if (eventIndex > 0) {
+        const parsedCoords = feature.get('locationIndex').split(',').map((stringCoords) => Number(stringCoords));
+        const coords = offsetCoordinates(
+          parsedCoords,
+          eventIndex,
+          eventsAtPoint.length - 1,  // Exclude the event at center
+          mapView.current.getResolution()
+        );
+
+        // Transform and set new geometry
+        const newGeometry = new Point(coords);
+        newGeometry.transform('EPSG:4326', mapView.current.getProjection().getCode());
+        feature.setGeometry(newGeometry);
+      }
+    }
+  }
 }

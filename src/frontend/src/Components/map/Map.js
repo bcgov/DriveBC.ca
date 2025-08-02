@@ -55,6 +55,7 @@ import { FeatureContext, MapContext } from '../../App.js';
 import { resizePanel, renderPanel, togglePanel } from './panels';
 import { pointerMoveHandler, resetHoveredStates } from './handlers/hover';
 import { pointerClickHandler, resetClickedStates } from './handlers/click';
+import { updateOverlappingPositions } from "./layers/eventsLayer";
 import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
 import DistanceLabels from "../routing/DistanceLabels";
 import Filters from '../shared/Filters.js';
@@ -374,7 +375,6 @@ export default function DriveBCMap(props) {
           layers: glStyle.layers.filter((layer) => (
             layer.id.startsWith('TRANSPORTATION/DRA/Hwy Symbols') ||
             layer.id.startsWith('TRANSPORTATION/DRA/Road Names')
-
           )),
         };
 
@@ -404,6 +404,12 @@ export default function DriveBCMap(props) {
       const [lon, lat] = toLonLat(mapView.current.getCenter());
 
       const params = new URLSearchParams(window.location.search);
+
+      // Zoom/resolution changed, update overlapping event positions
+      if (params.get('zoom') != mapView.current.getZoom()) {
+        updateOverlappingPositions(mapLayers, mapContext, mapView);
+      }
+
       params.set("pan", lon + ',' + lat);
       params.set("zoom", mapView.current.getZoom());
       navigate(`${location.pathname}?${params.toString()}`, { replace: true });
@@ -608,7 +614,7 @@ export default function DriveBCMap(props) {
     // Count filtered events to store in routeDetails
     if (filteredEvents) {
       // Toggle features visibility
-      const featuresDict = updateEventsLayers(mapContext, filteredEvents, mapLayers, setLoadingLayers, referenceData);
+      const featuresDict = updateEventsLayers(mapContext, filteredEvents, mapLayers, setLoadingLayers, referenceData, mapView);
       setFeatureContext({...featureContext, events: featuresDict});
 
       const eventCounts = {

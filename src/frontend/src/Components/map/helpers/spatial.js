@@ -160,41 +160,44 @@ export const compareRouteDistance = (route1, route2) => {
   return true;
 }
 
-function offsetCoordinates(coords, offset) {
+// Offset coordinates for overlapping points
+export function offsetCoordinates(coords, index, overlaps, resolution) {
+  // scale offset distance so it increases as you zoom out
+  const baseDistance = 0.1; // 100 meters at default resolution
+  const scale = Math.pow(resolution / 4.77, 0.7);  // scale distance with falloff based on minimum resolution at max zoom 4.77
+  const distance = baseDistance * scale;
+
+  // spread points evenly around a circle
+  const angle = 360 / overlaps;
+  const bearing = angle * index;
+
+  // Return new offset coordinates
   const point = turf.point(coords);
-  const distance = 0.2;  // 200 meters
-  const bearing = 45 * offset;  // set direction by 15 degrees for each offset
   const destination = turf.destination(point, distance, bearing, { units: 'kilometers' });
   return destination.geometry.coordinates;
 }
 
-const getPointCoords = (mapContext, coords) => {
-  const locationIndex = coords[0].toFixed(4) + ',' + coords[1].toFixed(4);
-  if (locationIndex in mapContext.features.events) {
-    // point exists, calculate and record new offset
-    const offsetCoords = offsetCoordinates(coords, mapContext.features.events[locationIndex]);
-    mapContext.features.events[locationIndex] += 1;
-    return offsetCoords;
+// Save point events in mapContext with coordinates as key
+export const savePointFeature = (mapContext, event, feature) => {
+  const locationIndex = event.location.coordinates[0].toFixed(4) + ',' + event.location.coordinates[1].toFixed(4);
+  feature.set('locationIndex', locationIndex);
+
+  if (locationIndex in mapContext.events) {
+    mapContext.events[locationIndex].push(event.id);
 
   } else {
     // point does not exist, return original coordinates
-    mapContext.features.events[locationIndex] = 0;
-    return coords;
+    mapContext.events[locationIndex] = [event.id];
   }
 }
 
 export const getMidPoint = (mapContext, location) => {
   // Return point coords if location is a point
   if (location.type === "Point") {
-    if (mapContext) {
-      return getPointCoords(mapContext, location.coordinates);
-    }
-
     return location.coordinates;
-  }
 
   // Return midpoint for lines
-  else if (location.type === "LineString") {
+  } else if (location.type === "LineString") {
     // Create turf ls from location coordinates
     const line = turf.lineString(location.coordinates);
 
