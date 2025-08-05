@@ -23,7 +23,7 @@ class WebcamSerializer(serializers.ModelSerializer):
 
         links = {
             "imageDisplay": f"{local_root}images/webcams/{webcam_id}.jpg?t={timestamp}",
-            "replayTheDay": f"{proxy_root}ReplayTheDay/json/{webcam_id}.json",
+            "replayTheDay": f"{proxy_root}data/images/{webcam_id}/index.json",
         }
 
         return links

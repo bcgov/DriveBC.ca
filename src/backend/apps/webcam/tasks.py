@@ -159,7 +159,7 @@ def update_webcam_db(cam_id: int, cam_data: dict):
 
     updated_count = Webcam.objects.filter(id=cam_id).update(region=cam_data.get("region"),
         region_name=cam_data.get("region_name"),
-        is_on=cam_data.get("isOn", False),
+        is_on=cam_data.get("isOn", True),
         name=cam_data.get("name"),
         caption=cam_data.get("caption", ""),
         highway=cam_data.get("highway", ""),

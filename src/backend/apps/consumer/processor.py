@@ -37,7 +37,8 @@ PVC_WATERMARKED_PATH =f'/app/ReplayTheDay/archive'
 # PVC path to watermarked images for current DriveBC without timestamp
 DRIVCBC_PVC_WATERMARKED_PATH =f'/app/images/webcams'
 # Output directory for JSON files for ReplayTheDay and Timelapse
-JSON_OUTPUT_DIR = "/app/ReplayTheDay/json"
+JSON_OUTPUT_DIR = "/app/data/images"
+
 os.makedirs(JSON_OUTPUT_DIR, exist_ok=True)
 
 logger = logging.getLogger(__name__)
@@ -123,6 +124,8 @@ async def run_consumer():
         await queue.bind(exchange)
         logger.info("Queue bound to exchange; beginning consume loop.")
 
+        await update_webcams_json(db_data)
+
         # Consume loop
         async with queue.iterator() as queue_iter:
             async for message in queue_iter:
@@ -181,23 +184,39 @@ def process_camera_rows(rows):
     for row in rows:
         camera_obj = {
             'id': row.get('ID'),
-            'cam_locationsGeo_latitude': row.get('Cam_LocationsGeo_Latitude'),
-            'cam_locationsGeo_longitude': row.get('Cam_LocationsGeo_Longitude'),
+            'cam_internet_name': row.get('Cam_InternetName', ''),
+            'cam_internet_caption': row.get('Cam_InternetCaption', ''),
+            'Cam_internet_comments': row.get('Cam_InternetComments', ''),
+            'cam_locations_orientation': row.get('Cam_LocationsOrientation', ''),
+            'cam_locations_geo_latitude': row.get('Cam_LocationsGeo_Latitude'),
+            'cam_locations_geo_longitude': row.get('Cam_LocationsGeo_Longitude'),
+            'cam_locations_segment': row.get('Cam_LocationsSegment', ''),
+            'cam_locations_lrs_node': row.get('Cam_LocationsLRS_Node', ''),
+            "cam_installation_date_approximate": row.get('Cam_InstallationDate_Approximate', '0'),
+            "cam_installation_approx_install_cost": row.get('Cam_InstallationApprox_Install_Cost', '0'),
+            "cam_installation_fed_funding": row.get('Cam_InstallationFed_Funding', '0'),
+            "cam_locations_region": row.get('Cam_LocationsRegion', ''),
+            "cam_locations_highway": row.get('Cam_LocationsHighway', ''),
+            "cam_locations_highway_section": row.get('Cam_LocationsHighway_Section', ''),
+            "cam_locations_elevation": row.get('Cam_LocationsElevation', ''),
+            "cam_locations_weather_station": row.get('Cam_LocationsWeather_Station', ''),
+            "cam_locations_forecast_id": row.get('Cam_LocationsForecast_ID', ''),
+            "cam_maintenance_asset_No": row.get('Cam_MaintenanceAsset_No', ''),
             "last_update_modified": datetime.now(timezone.utc),
             "update_period_mean": 300,
             "update_period_stddev": 60,
-            "dbc_mark": "DriveBC",
+            "dbc_mark": row.get('Cam_InternetDBC_Mark', 'DriveBC.ca'),
             "is_on": True if not row.get('Cam_ControlDisabled') else False,
             "message": {
-                "long": "This is a sample message for the webcam."
+                "long": row.get('Cam_MaintenanceMaint_Notes', 'This is a sample message for the webcam.')
             }
         }
         camera_list.append(camera_obj)
     return camera_list
 
 def get_timezone(webcam):
-    lat = float(webcam.get('cam_locationsGeo_latitude'))
-    lon = float(webcam.get('cam_locationsGeo_longitude'))
+    lat = float(webcam.get('cam_locations_geo_latitude'))
+    lon = float(webcam.get('cam_locations_geo_longitude'))
 
     tz_name = tf.timezone_at(lat=lat, lng=lon)
     return tz_name if tz_name else 'America/Vancouver'  # Fallback to PST if no timezone found
@@ -423,7 +442,55 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
 
     # update json file for replay the day
     await update_replay_json(camera_id, tz)
-        
+    
+async def update_webcams_json(db_data: list):
+    output = []
+    for cam in db_data:
+        lat = cam.get("cam_locations_geo_latitude")
+        lng = cam.get("cam_locations_geo_longitude")
+
+        # Skip if latitude or longitude is missing or empty
+        if not lat or not lng:
+            print(f"Skipping camera {cam.get('id')} due to missing coordinates.")
+            continue
+
+        try:
+            lat = float(lat)
+            lng = float(lng)
+        except ValueError:
+            print(f"Skipping camera {cam.get('id')} due to invalid coordinates: lat={lat}, lng={lng}")
+            continue
+
+        output.append([
+            cam["id"],
+            cam.get("cam_internet_name", ""),
+            cam.get("cam_internet_caption", ""),
+            cam.get("cam_locations_orientation", ""),
+            lat,
+            lng,
+            cam.get("cam_locations_segment", ""),
+            cam.get("cam_locations_lrs_node", ""),
+            "1" if cam.get("is_on") else "0",
+            cam.get("cam_installation_date_approximate", "0"),
+            cam.get("cam_installation_approx_install_cost", "0"),
+            cam.get("cam_LocationsRegion", ""),
+            cam.get("cam_locationsElevation", ""),
+            cam.get("cam_locations_highway_section", ""),
+            cam.get("cam_locations_weather_station", ""),
+            cam.get("cam_locations_forecast_id", ""),
+            cam.get("cam_maintenance_maint_notes", ""),
+            cam.get("cam_maintenance_asset_no", ""),
+        ])
+    file_path = os.path.join(JSON_OUTPUT_DIR, "webcams.json")
+    os.makedirs(os.path.join(JSON_OUTPUT_DIR), exist_ok=True)
+
+    async with aiofiles.open(file_path, "w", encoding="utf-8") as f_test:
+        data_str = json.dumps(output, indent=4)
+        await f_test.write(data_str)
+    logger.info(f"JSON file for cameras saved at {file_path}")
+
+    print(f"webcams.json generated with {len(output)} records.")
+
 async def update_replay_json(camera_id: str, tz: str):
     # By default, use the last 30 days of images for timelapse
     default_time_age = os.getenv("TIMELAPSE_HOURS", "720")
@@ -431,17 +498,18 @@ async def update_replay_json(camera_id: str, tz: str):
     timestamps = []
     for item in results:
         local_time = item.timestamp.astimezone(ZoneInfo(tz))
-        timestamps.append(local_time.strftime("%Y%m%d%H%M"))
+        timestamps.append(local_time.strftime("%Y%m%d%H%M") + ".jpg")
 
-    # Create the JSON file
-    file_path = os.path.join(JSON_OUTPUT_DIR, f"{camera_id}.json")
+    # Create the camera index JSON file
+    file_path = os.path.join(JSON_OUTPUT_DIR, f"{camera_id}/index.json")
+    os.makedirs(os.path.join(JSON_OUTPUT_DIR, camera_id), exist_ok=True)
 
-    async with aiofiles.open(file_path, "w", encoding="utf-8") as f:
+    async with aiofiles.open(file_path, "w", encoding="utf-8") as f_test:
         data_str = json.dumps(timestamps, indent=4)
-        await f.write(data_str)
+        await f_test.write(data_str)
     logger.info(f"JSON file for camera {camera_id} saved at {file_path}")
 
     return {
         "status": "success",
-        "file_path": f"/ReplayTheDay/json/{camera_id}.json"
+        "file_path": f"/data/images/{camera_id}/index.json"
     }

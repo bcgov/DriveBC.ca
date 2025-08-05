@@ -85,6 +85,12 @@ urlpatterns += static(
     document_root=os.path.join(settings.BASE_DIR, "app", "ReplayTheDay")
 )
 
+# Serve /data/images/webcams.json and camera index.json directly from the file system
+urlpatterns += static(
+    "/data/",
+    document_root=os.path.join(settings.BASE_DIR, "app", "data")
+)
+
 # Serve images/webcams from /app/images
 urlpatterns += static(
     '/images/', 
