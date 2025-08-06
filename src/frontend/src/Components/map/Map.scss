@@ -76,11 +76,14 @@
         transform: translateX(0%);
         transform: translateY(100%);
         transition: all 0.25s ease-in-out;
+
+        @media (min-width: 767px) {
+          transform: translateX(-100%);
+        }
       }
 
       @media (min-width: 767px) {
         height: 100%;
-        transform: translateX(-100%);
         order: 1;
         width: 390px;
       }
