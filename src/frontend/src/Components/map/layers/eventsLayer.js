@@ -253,9 +253,11 @@ export const updateOverlappingPositions = (mapLayers, mapContext, mapView) => {
   eventLayers.forEach((layerKey) => {
     // Iterate through features of each event layer
     const layer = mapLayers.current[layerKey];
-    layer.getSource().getFeatures().forEach((feature) => {
-      updateOverlappingEventPosition(feature, mapContext, mapView);
-    });
+    if (layer) {
+      layer.getSource().getFeatures().forEach((feature) => {
+        updateOverlappingEventPosition(feature, mapContext, mapView);
+      });
+    }
   });
 }
 

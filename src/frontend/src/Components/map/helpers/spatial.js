@@ -163,8 +163,8 @@ export const compareRouteDistance = (route1, route2) => {
 // Offset coordinates for overlapping points
 export function offsetCoordinates(coords, index, overlaps, resolution) {
   // scale offset distance so it increases as you zoom out
-  const baseDistance = 0.1; // 100 meters at default resolution
-  const scale = Math.pow(resolution / 4.77, 0.7);  // scale distance with falloff based on minimum resolution at max zoom 4.77
+  const baseDistance = 0.066; // 100 meters at default resolution
+  const scale = Math.pow(resolution / 4.77, 0.8);  // scale distance with falloff based on minimum resolution at max zoom 4.77
   const distance = baseDistance * scale;
 
   // spread points evenly around a circle
