@@ -126,7 +126,7 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
         Cams_Live.seq AS highway_cam_order,
         Cams_Live.Cam_LocationsOrientation AS orientation,
         Cams_Live.Cam_LocationsElevation AS elevation,
-        Cams_Live.Cam_ControlDisabled AS isOn,
+        CASE WHEN Cams_Live.Cam_ControlDisabled = 0 THEN 1 ELSE 0 END AS isOn,
         Cams_Live.isNew AS isNew,
         Cams_Live.isNew, Cams_Live.Cam_MaintenanceIs_On_Demand AS isOnDemand,
         Cams_Live.Cam_InternetCredit AS credit,
@@ -153,13 +153,16 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
 
 def update_webcam_db(cam_id: int, cam_data: dict):
     timestamp_utc = get_recent_timestamps(cam_id)
+    if not timestamp_utc:
+        return
+
     camera_status = calculate_camera_status(timestamp_utc)
     ts_seconds = int(camera_status["timestamp"])
     dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 
     updated_count = Webcam.objects.filter(id=cam_id).update(region=cam_data.get("region"),
         region_name=cam_data.get("region_name"),
-        is_on=cam_data.get("isOn", True),
+        is_on=True if cam_data.get("isOn") == 1 else False,
         name=cam_data.get("name"),
         caption=cam_data.get("caption", ""),
         highway=cam_data.get("highway", ""),
@@ -179,7 +182,6 @@ def update_webcam_db(cam_id: int, cam_data: dict):
         update_period_mean=camera_status["mean_interval"] * 1000,
         update_period_stddev= camera_status["stddev_interval"]) * 1000,  
     return updated_count
-        
 
 def update_all_webcam_data():
     for webcam in Webcam.objects.all():

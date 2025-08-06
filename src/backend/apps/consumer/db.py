@@ -176,7 +176,7 @@ def get_all_from_db():
         ,[Cam_ControlNotes]
         ,[Cam_ControlShort_Message]
         ,[Cam_ControlLong_Message]
-        ,[Cam_ControlDisabled]
+        
         ,[Cam_ControlDisappear]
         ,[Cam_ControlTimeout1]
         ,[Cam_Controltimeout2]
