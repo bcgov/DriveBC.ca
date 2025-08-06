@@ -71,9 +71,12 @@
       flex-direction: column;
       position: relative;
       z-index: 10;
-      transform: translateX(0%);
-      transform: translateY(100%);
-      transition: all 0.25s ease-in-out;
+
+      &:not(.has-route) {
+        transform: translateX(0%);
+        transform: translateY(100%);
+        transition: all 0.25s ease-in-out;
+      }
 
       @media (min-width: 767px) {
         height: 100%;
@@ -92,9 +95,12 @@
 
       &.open {
         height: 100%;
-        transform: translateX(0%);
-        transform: translateY(0%);
-        transition: all 0.25s ease-in-out;
+
+        &:not(.has-route) {
+          transform: translateX(0%);
+          transform: translateY(0%);
+          transition: all 0.25s ease-in-out;
+        }
 
         @media (max-width: 767px) {
           width: 100%;
