@@ -203,7 +203,7 @@ def purge_old_images():
 
 
 # Define data directory (PVC and S3)
-PVC_ROOT = os.getenv("PVC_ROOT", "/app/ReplayTheDay/archive")
+PVC_ROOT = os.getenv("PVC_ROOT", "/app/data/webcams/processed")
 S3_ROOT = os.getenv("S3_ROOT", "/test-s3-bucket")
 
 def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):

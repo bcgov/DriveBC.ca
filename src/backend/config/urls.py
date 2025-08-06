@@ -79,13 +79,7 @@ urlpatterns = [
     # TO BE REMOVED IN PRODUCTION
 ] + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# Serve /ReplayTheDay/ files directly from the file system
-urlpatterns += static(
-    "/ReplayTheDay/",
-    document_root=os.path.join(settings.BASE_DIR, "app", "ReplayTheDay")
-)
-
-# Serve /data/images/webcams.json and camera index.json directly from the file system
+# Serve json files and processed images to ReplayTheDay and Timelapse
 urlpatterns += static(
     "/data/",
     document_root=os.path.join(settings.BASE_DIR, "app", "data")

@@ -31,13 +31,14 @@ tf = TimezoneFinder()
 APP_DIR = Path(__file__).resolve().parent
 FONT = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=14)
 FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
-PVC_ORIGINAL_PATH = f'{APP_DIR}/images/webcams/originals'
+# PVC path to original images for RIDE
+PVC_ORIGINAL_PATH = f'/app/data/webcams/originals'
 # PVC path to watermarked images with timestamp for ReplayTheDay
-PVC_WATERMARKED_PATH =f'/app/ReplayTheDay/archive'
+PVC_WATERMARKED_PATH =f'/app/data/webcams/processed'
 # PVC path to watermarked images for current DriveBC without timestamp
 DRIVCBC_PVC_WATERMARKED_PATH =f'/app/images/webcams'
 # Output directory for JSON files for ReplayTheDay and Timelapse
-JSON_OUTPUT_DIR = "/app/data/images"
+JSON_OUTPUT_DIR = f"/app/data"
 
 os.makedirs(JSON_OUTPUT_DIR, exist_ok=True)
 
@@ -141,6 +142,12 @@ async def run_consumer():
 
                     try:
                         timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
+                        # # For testing purposes, only allow camera with IDs below to be processed
+                        # 658 is off
+                        # 219 MDT
+                        if camera_id != "343" and camera_id != "57" and camera_id != "658" and camera_id != "219":
+                            logger.info("Skipping processing for camera %s", camera_id)
+                            continue
                         await handle_image_message(camera_id, db_data, message.body, timestamp_local, camera_status)
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
@@ -351,12 +358,12 @@ def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes):
 
 def save_watermarked_image_to_s3(camera_id: str, image_bytes: bytes, timestamp: str):
     ext = "jpg"
-    key = f"watermarked/{camera_id}/{timestamp}.{ext}"
+    key = f"processed/{camera_id}/{timestamp}.{ext}"
     
     try:
         s3_client.put_object(Bucket=S3_BUCKET, Key=key, Body=image_bytes)
     except Exception as e:
-        logger.error(f"Error saving watermarked image to S3 bucket {S3_BUCKET}: {e}")
+        logger.error(f"Error saving processed image to S3 bucket {S3_BUCKET}: {e}")
     
     watermarked_s3_path = key
     logger.info(f"Watermarked image saved to S3 at {key}")
@@ -441,7 +448,7 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     )
 
     # update json file for replay the day
-    await update_replay_json(camera_id, tz)
+    await update_index_json(camera_id, tz)
     
 async def update_webcams_json(db_data: list):
     output = []
@@ -481,8 +488,8 @@ async def update_webcams_json(db_data: list):
             cam.get("cam_maintenance_maint_notes", ""),
             cam.get("cam_maintenance_asset_no", ""),
         ])
-    file_path = os.path.join(JSON_OUTPUT_DIR, "webcams.json")
-    os.makedirs(os.path.join(JSON_OUTPUT_DIR), exist_ok=True)
+    file_path = os.path.join(JSON_OUTPUT_DIR, "json", "images", "webcams.json")
+    os.makedirs(os.path.join(JSON_OUTPUT_DIR, "json", "images"), exist_ok=True)
 
     async with aiofiles.open(file_path, "w", encoding="utf-8") as f_test:
         data_str = json.dumps(output, indent=4)
@@ -491,7 +498,7 @@ async def update_webcams_json(db_data: list):
 
     print(f"webcams.json generated with {len(output)} records.")
 
-async def update_replay_json(camera_id: str, tz: str):
+async def update_index_json(camera_id: str, tz: str):
     # By default, use the last 30 days of images for timelapse
     default_time_age = os.getenv("TIMELAPSE_HOURS", "720")
     results = await get_images_within(camera_id, hours=int(default_time_age))
@@ -501,8 +508,8 @@ async def update_replay_json(camera_id: str, tz: str):
         timestamps.append(local_time.strftime("%Y%m%d%H%M") + ".jpg")
 
     # Create the camera index JSON file
-    file_path = os.path.join(JSON_OUTPUT_DIR, f"{camera_id}/index.json")
-    os.makedirs(os.path.join(JSON_OUTPUT_DIR, camera_id), exist_ok=True)
+    file_path = os.path.join(JSON_OUTPUT_DIR, f"json/images/{camera_id}/index.json")
+    os.makedirs(os.path.join(JSON_OUTPUT_DIR, f"json", f"images", camera_id), exist_ok=True)
 
     async with aiofiles.open(file_path, "w", encoding="utf-8") as f_test:
         data_str = json.dumps(timestamps, indent=4)
@@ -511,5 +518,5 @@ async def update_replay_json(camera_id: str, tz: str):
 
     return {
         "status": "success",
-        "file_path": f"/data/images/{camera_id}/index.json"
+        "file_path": f"/data/json/images/{camera_id}/index.json"
     }

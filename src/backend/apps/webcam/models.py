@@ -62,7 +62,7 @@ class Webcam(BaseModel):
         return time_delta.total_seconds() >= self.minimum_update_window
     
     def get_image_paths(self):
-        image_root_json_path = os.environ.get(f"IMAGE_JSON_ROOT_PATH", "/app/data/images")
+        image_root_json_path = os.environ.get(f"IMAGE_JSON_ROOT_PATH", "/app/data/json/images")
         json_path = Path(f"{image_root_json_path}/{self.id}/index.json")
         image_paths = []
         base_url = os.environ.get("S3_IMAGE_BASE_URL", "http://localhost:9000/test-s3-bucket/watermarked")
