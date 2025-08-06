@@ -6,10 +6,8 @@ import os
 from datetime import datetime, timedelta, timezone
 import sys
 from typing import Optional
-from zoneinfo import ZoneInfo
 from click import wrap_text
 import logging
-from pydantic import BaseModel
 import pytz
 import boto3
 import aio_pika
@@ -407,8 +405,6 @@ def insert_image_and_update_webcam(camera_id, original_pvc_path, watermarked_pvc
 
 async def handle_image_message(camera_id: str, db_data: any, body: bytes, timestamp: str, camera_status: dict):
     # timestamp is in local time
-    
-
     webcams = [cam for cam in db_data if cam['id'] == int(camera_id)]
     webcam = webcams[0] if webcams else None
 
@@ -417,19 +413,18 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     naive_dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
     local_dt = local_tz.localize(naive_dt)
     utc_dt = local_dt.astimezone(pytz.utc)
-
+    utc_timestamp_str = utc_dt.strftime("%Y%m%d%H%M")
     original_pvc_path = save_original_image_to_pvc(camera_id, body)
     original_s3_path = save_original_image_to_s3(camera_id, body)
     
-
     image_bytes = watermark(webcam, body, tz, timestamp)
 
     # Save watermarked images to PVC with timestamp
-    watermarked_pvc_path = save_watermarked_image_to_pvc(camera_id, image_bytes, timestamp)
+    watermarked_pvc_path = save_watermarked_image_to_pvc(camera_id, image_bytes, utc_timestamp_str)
     # Save watermarked images to drivebc PVC with camera_id
     watermarked_drivebc_pvc_path = save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes)
     # Save watermarked images to S3 with timestamp
-    watermarked_s3_path = save_watermarked_image_to_s3(camera_id, image_bytes, timestamp)
+    watermarked_s3_path = save_watermarked_image_to_s3(camera_id, image_bytes, utc_timestamp_str)
 
     # Insert record into DB
     await insert_image_and_update_webcam(
@@ -498,8 +493,7 @@ async def update_index_json(camera_id: str, tz: str):
     results = await get_images_within(camera_id, hours=int(default_time_age))
     timestamps = []
     for item in results:
-        local_time = item.timestamp.astimezone(ZoneInfo(tz))
-        timestamps.append(local_time.strftime("%Y%m%d%H%M") + ".jpg")
+        timestamps.append(item.timestamp.strftime("%Y%m%d%H%M") + ".jpg")
 
     # Create the camera index JSON file
     file_path = os.path.join(JSON_OUTPUT_DIR, f"json/images/{camera_id}/index.json")

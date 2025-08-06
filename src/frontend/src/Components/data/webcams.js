@@ -77,8 +77,8 @@ export const deleteFavoriteCamera = async (id, dispatch, action) => {
 }
 
 export function getWebcamReplay(webcam) {
-  const now = new Date(); // local time
-  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
+  const nowUtc = new Date(); // current UTC time
+  const oneDayAgoUtc = new Date(nowUtc.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago in UTC
 
   return fetch(webcam.links.replayTheDay)
     .then(response => response.json())
@@ -95,10 +95,8 @@ export function getWebcamReplay(webcam) {
         const day = parseInt(ts.slice(6, 8));
         const hour = parseInt(ts.slice(8, 10));
         const minute = parseInt(ts.slice(10, 12));
-
-        const date = new Date(year, month, day, hour, minute);
-
-        return date >= oneDayAgo && date <= now;
+        const timestampUtc = new Date(Date.UTC(year, month, day, hour, minute)); 
+        return timestampUtc >= oneDayAgoUtc && timestampUtc <= nowUtc;
       });
 
       return filtered;
