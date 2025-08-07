@@ -4,6 +4,8 @@ from apps.shared.models import Area, BaseModel
 from django.contrib.gis.db import models
 from pathlib import Path
 
+from apps.shared.status import get_image_list
+
 
 class Webcam(BaseModel):
     # Description
@@ -62,16 +64,11 @@ class Webcam(BaseModel):
         return time_delta.total_seconds() >= self.minimum_update_window
     
     def get_image_paths(self):
-        image_root_json_path = os.environ.get(f"IMAGE_JSON_ROOT_PATH", "/app/data/json/images")
-        json_path = Path(f"{image_root_json_path}/{self.id}/index.json")
+        timestamps = get_image_list(self.id, "TIMELAPSE_HOURS")
+        base_url = os.environ.get("S3_IMAGE_BASE_URL", "http://localhost:9000/test-s3-bucket/processed")
+
         image_paths = []
-        base_url = os.environ.get("S3_IMAGE_BASE_URL", "http://localhost:9000/test-s3-bucket/watermarked")
-
-        if json_path.exists():
-            with open(json_path) as f:
-                timestamps = json.load(f)
-
-            for ts in timestamps:
-                img_path = f"{base_url}/{self.id}/{ts}"
-                image_paths.append(img_path)
+        for ts in timestamps:
+            img_path = f"{base_url}/{self.id}/{ts}"
+            image_paths.append(img_path)
         return image_paths

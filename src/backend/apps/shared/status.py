@@ -1,4 +1,5 @@
 from collections import deque
+import os
 from asgiref.sync import sync_to_async
 from statistics import mean, stdev
 from apps.consumer.models import ImageIndex
@@ -95,3 +96,13 @@ def calculate_camera_status(timestamp_str: str) -> tuple[float, float]:
         "stale": median > threshold_stale,
         "delayed": median > threshold_delayed,
     }
+
+
+def get_image_list(camera_id, age="TIMELAPSE_HOURS"):
+    camera_id = int(camera_id)
+    hours = int(os.getenv(age))
+    now = datetime.now(timezone.utc)
+    cutoff = now - timedelta(hours=hours)
+    results = ImageIndex.objects.filter(camera_id=camera_id, timestamp__gte=cutoff).order_by('timestamp')
+    timestamps = [item.timestamp.strftime("%Y%m%d%H%M") + ".jpg" for item in results]
+    return timestamps

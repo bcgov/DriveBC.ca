@@ -10,6 +10,8 @@ from rest_framework import status
 from django.http import FileResponse, Http404
 from .models import Webcam
 import os
+from apps.consumer.models import ImageIndex
+from apps.shared.status import get_image_list
 
 class WebcamAPI:
     queryset = Webcam.objects.filter(should_appear=True)
@@ -24,29 +26,31 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
 
         return FileResponse(open(image_path, 'rb'), content_type='image/jpeg')
     
+    @action(detail=True, methods=['get'], url_path='replayTheDay')
+    def replayTheDay(self, request, pk=None):
+        timestamps = get_image_list(pk, "REPLAY_THE_DAY_HOURS")
+        return Response(timestamps, status=status.HTTP_200_OK)
+    
     @action(detail=True, methods=['get'], url_path='timelapse')
     def timelapse(self, request, pk=None):
-        # Path to the index.json file
-        index_file_path = os.path.join(settings.BASE_DIR, "app", "data", "images", str(pk), "index.json")
+        timestamps = get_image_list(pk, "TIMELAPSE_HOURS")
+        return Response(timestamps, status=status.HTTP_200_OK)
 
-        latest_image = None
-        if os.path.exists(index_file_path):
-            try:
-                with open(index_file_path, "r", encoding="utf-8") as f:
-                    image_list = json.load(f)
-                    if isinstance(image_list, list) and image_list:
-                        latest_image = sorted(image_list)[-1]
-            except Exception as e:
-                print(f"Failed to read index.json for camera {pk}: {e}")
+    @action(detail=True, methods=['get'], url_path='cameraImage')
+    def cameraImage(self, request, pk=None):
+        timestamps = get_image_list(pk, "TIMELAPSE_HOURS")
+        if isinstance(timestamps, list) and timestamps:
+            latest_image = sorted(timestamps)[-1]
 
         response_data = {
             "CameraImage": {
                 "camera_provider_list_cameras_endpoint": "webcams.json",
-                "camera_provider_camera_image_endpoint": f"images/{pk}/index.json",
+                "camera_provider_camera_image_endpoint": f"api/webcams/{pk}/timelapse/",
                 "camera_provider_image_template": f"images/{pk}/{latest_image}",
                 "camera_provider_api_root": "http://localhost:8000/api/webcams/"
             }
         }
+
         return Response(response_data, status=status.HTTP_200_OK)
 
 

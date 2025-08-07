@@ -123,7 +123,7 @@ async def run_consumer():
         await queue.bind(exchange)
         logger.info("Queue bound to exchange; beginning consume loop.")
 
-        await update_webcams_json(db_data)
+        # await update_webcams_json(db_data)
 
         # Consume loop
         async with queue.iterator() as queue_iter:
@@ -436,8 +436,8 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
         utc_dt
     )
 
-    # update json file for replay the day
-    await update_index_json(camera_id, tz)
+    # # update json file for replay the day
+    # await update_index_json(camera_id, tz)
     
 async def update_webcams_json(db_data: list):
     output = []

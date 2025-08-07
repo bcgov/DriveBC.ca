@@ -10,8 +10,6 @@ x-function: &backend
   volumes:
     - ./src/backend:/app/backend
     - ./src/images/webcams:/app/images/webcams
-    - ./src/data/images:/app/data/images
-    - ./src/data/json:/app/data/json
     - ./src/data/webcams:/app/data/webcams
 
   stdin_open: true
