@@ -61,6 +61,10 @@ export default function AreaFilter(props) {
   }, [searchText, displayedAreas]);
 
   useEffect(() => {
+    if (!areas || !objects) {
+      return;
+    }
+
     // Show only areas that have an object
     const uniqueAreaIds = Array.from(new Set(objects.flatMap(obj =>
       // Handle both single and multiple areas (events)
