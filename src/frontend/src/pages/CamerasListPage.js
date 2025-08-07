@@ -178,11 +178,6 @@ export default function CamerasListPage() {
 
   // Effects
   useEffect(() => {
-    selectedRouteRef.current = selectedRoute;
-    getCamerasData(selectedRoute);
-  }, [selectedRoute]);
-
-  useEffect(() => {
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
 
@@ -213,28 +208,42 @@ export default function CamerasListPage() {
   }, [filteredCameras, selectedRoute]);
 
   useEffect(() => {
+    if (!processedCameras) {
+      return;
+    }
+
     // Search name and caption of all cams in group
     const searchFn = (pc, targetText) => {
-      if(pc.name.trim().toLowerCase().includes(targetText.toLowerCase())
-        || pc.caption.trim().toLowerCase().includes(targetText.toLowerCase())) {
-        return true;
-      } else {
-        return false;
-      }
+      return pc.name.trim().toLowerCase().includes(targetText.toLowerCase())
+        || pc.caption.trim().toLowerCase().includes(targetText.toLowerCase());
     }
 
-    if(searchText.trim() === '') {
-      const filteredCams = !searchText ? processedCameras :
-      processedCameras.filter((pc) => searchFn(pc, searchText));
-      setDisplayedCameras(filteredCams);
+    let resCams;
+
+    // Apply search filter
+    if (searchText.trim() === '') {
+      // No text, show all processed cams
+      resCams = processedCameras;
 
     } else {
+      // Text entered, filter processed cams by search text
       const updatedProcessedCameras = getUpdatedProcessedCameras(combinedCameras, searchFn);
-      const filteredCams = updatedProcessedCameras.filter((pc) => searchFn(pc, searchText));
-      setDisplayedCameras(filteredCams);
+      resCams = updatedProcessedCameras.filter((pc) => searchFn(pc, searchText));
     }
 
-  }, [searchText, processedCameras]);
+    // Apply highway filter
+    if (filterContext.highwayFilterKey) {
+      resCams = resCams.filter((camera) => (camera.highway_display === filterContext.highwayFilterKey));
+    }
+
+    // Apply area filter
+    if (filterContext.areaFilter) {
+      resCams = resCams.filter((camera) => (camera.area === filterContext.areaFilter.id));
+    }
+
+    setDisplayedCameras(resCams);
+
+  }, [searchText, processedCameras, filterContext.highwayFilterKey, filterContext.areaFilter]);
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -392,7 +401,7 @@ export default function CamerasListPage() {
                     </Button>
 
                     {!smallScreen && showAreaFilters &&
-                      <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} />
+                      <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={displayedCameras} />
                     }
 
                     <Button
@@ -421,7 +430,7 @@ export default function CamerasListPage() {
                     </Button>
 
                     {!smallScreen && showHwyFilters &&
-                      <HighwayFilter cameras={filteredCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} />
+                      <HighwayFilter cameras={displayedCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} />
                     }
                   </div>
                 </div>
@@ -510,13 +519,9 @@ export default function CamerasListPage() {
               cameras={ displayedCameras ? displayedCameras : [] }
               onscreenCameras={onscreenCameras}
               setOnscreenCameras={setOnscreenCameras}
-              showLoader={showLoader}
-              enableExtraFilters={true} />
+              showLoader={showLoader} />
 
-            {(!showLoader && (
-              !(displayedCameras && displayedCameras.length)) ||
-              !(onscreenCameras && onscreenCameras.length)
-            ) &&
+            {!showLoader && displayedCameras && displayedCameras.length === 0 &&
               <div className="empty-cam-display">
                 <h2>No cameras to display</h2>
 
@@ -566,7 +571,7 @@ export default function CamerasListPage() {
           </button>
 
           <p className="overlay__header bold">Filter by area</p>
-          <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} />
+          <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={displayedCameras} />
         </div>
       }
 
@@ -584,11 +589,11 @@ export default function CamerasListPage() {
           </button>
 
           <p className="overlay__header bold">Filter by highway</p>
-          <HighwayFilter cameras={filteredCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} />
+          <HighwayFilter cameras={displayedCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} />
         </div>
       }
 
-      <PollingComponent runnable={() => getCamerasData(selectedRouteRef.current)} interval={30000} />
+      <PollingComponent runnable={() => getCamerasData(selectedRouteRef.current)} interval={30000} runImmediately={true} />
 
     </React.Fragment>
   );

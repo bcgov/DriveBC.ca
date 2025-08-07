@@ -687,7 +687,7 @@ export default function EventsListPage() {
                     }
 
                     {!smallScreen && showAreaFilters &&
-                      <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} />
+                      <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={processedEvents} />
                     }
                   </div>
                 </div>

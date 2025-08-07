@@ -22,7 +22,7 @@ import './AreaFilter.scss';
 export default function AreaFilter(props) {
   /* Setup */
   // Props
-  const { handleAreaFiltersClose } = props;
+  const { handleAreaFiltersClose, objects } = props;
 
   // Contexts
   const { filterContext, setFilterContext } = useContext(FilterContext);
@@ -33,13 +33,19 @@ export default function AreaFilter(props) {
   }))));
 
   // States
+  const [displayedAreas, setDisplayedAreas] = useState();
   const [searchedAreas, setSearchedAreas] = useState();
   const [searchText, setSearchText] = useState('');
 
   // Effects
   useEffect(() => {
+    if (!displayedAreas || displayedAreas.length === 0) {
+      setSearchedAreas([]);
+      return;
+    }
+
     if (searchText === '') {
-      setSearchedAreas(areas);
+      setSearchedAreas(displayedAreas);
       return;
     }
 
@@ -51,7 +57,20 @@ export default function AreaFilter(props) {
 
     const filteredAreas = areas.filter(areaObj => searchFn(areaObj, searchText));
     setSearchedAreas(filteredAreas);
-  }, [searchText, areas]);
+
+  }, [searchText, displayedAreas]);
+
+  useEffect(() => {
+    // Show only areas that have an object
+    const uniqueAreaIds = Array.from(new Set(objects.flatMap(obj =>
+      // Handle both single and multiple areas (events)
+      Array.isArray(obj.area) ? obj.area : [obj.area]
+    )));
+
+    const currentAreas = areas.filter(area => uniqueAreaIds.includes(area.id));
+    setDisplayedAreas(currentAreas);
+
+  }, [areas, objects]);
 
   /* Rendering */
   // Main component
