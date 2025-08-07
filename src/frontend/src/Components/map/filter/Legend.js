@@ -206,7 +206,7 @@ export default function Legend() {
         {getLegendItem(
           coastalFerryIconStatic,
           'Coastal ferries',
-          'Travel that requires use of an coastal ferry.',
+          'Travel that requires use of a coastal ferry.',
           'ferries'
         )}
       </div>
