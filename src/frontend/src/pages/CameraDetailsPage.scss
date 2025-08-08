@@ -175,7 +175,7 @@
           @media (min-width: 576px) {
             font-size: 0.875rem;
           }
-          
+
           @media (min-width: 992px) {
             padding: 0 8px;
           }
@@ -841,7 +841,6 @@
     .filters {
       position: absolute;
       right: 0;
-      bottom: 0;
       left: initial;
       max-height: initial;
       height: auto;
@@ -849,7 +848,40 @@
       @media (min-width: 992px) {
         top: 0;
         bottom: initial;
-        right: 8px;
+      }
+
+      button {
+        display: flex;
+        align-items: center;
+
+        span {
+          white-space: nowrap;
+        }
+      }
+
+      .legacy-filters-menu {
+        min-width: 300px;
+        z-index: 100;
+
+        @media (max-width: 575px) {
+          position: fixed;
+          height: calc(100vh - 120px);
+          width: 100%;
+          bottom: 0;
+          right: 0;
+          z-index: 100;
+          overflow-y: auto;
+
+          .filters-list {
+            height: calc(100% - 38px);
+          }
+        }
+
+        .filters-title {
+          &__container {
+            background: $Grey10;
+          }
+        }
       }
     }
   }

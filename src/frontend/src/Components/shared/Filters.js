@@ -32,7 +32,7 @@ import { MapContext } from '../../App.js';
 export default function Filters(props) {
   // Misc
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
-  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+  const largeScreen = useMediaQuery('only screen and (min-width: 768px)');
 
   // Navigation
   const [searchParams] = useSearchParams();
@@ -343,7 +343,7 @@ export default function Filters(props) {
   // Main Component
   return (
     <div className="filters-component filters">
-      {!isDelaysPage || (isDelaysPage && !smallScreen) &&
+      {(!isDelaysPage || !smallScreen) &&
         <Button
           variant={isDelaysPage ? 'outline-primary' : 'primary'}
           className={'map-btn open-filters' + (open ? ' open' : '') + (isDelaysPage ? ' filter-option-btn' : '')}
@@ -358,7 +358,7 @@ export default function Filters(props) {
       }
 
       {open &&
-        <div className={'filters legacy' + (isDelaysPage ? ' delays' : '')}>
+        <div className={'filters legacy-filters-menu' + (isDelaysPage ? ' delays' : '')}>
           <div className="filters-title__container">
             <h4 className="filters-title">{textOverride ? textOverride : 'Map Layers'}</h4>
             {
