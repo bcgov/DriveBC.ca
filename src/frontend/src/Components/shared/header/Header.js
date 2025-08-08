@@ -189,7 +189,7 @@ export default function Header() {
               }
             </div>
 
-            {smallScreen && showSearch && !openSearch && !selectedRoute &&
+            {smallScreen && showSearch && !selectedRoute &&
               <button
                 className="search-trigger btn"
                 aria-label="search location"

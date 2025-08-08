@@ -101,13 +101,6 @@ button.close-filters-legacy {
         padding: 8px 12px 16px;
         background: white;
         border-radius: 4px;
-
-        &:last-of-type {
-          //specific styles for Firefox
-          @-moz-document url-prefix() {
-            margin-bottom: 40px;
-          }
-        }
       }
 
       & + .filter-group {
