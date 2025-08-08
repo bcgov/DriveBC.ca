@@ -806,7 +806,7 @@ export default function EventsListPage() {
           </button>
 
           <p className="overlay__header bold">Filter by area</p>
-          <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} />
+          <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={processedEvents} />
         </div>
       }
 
