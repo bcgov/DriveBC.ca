@@ -704,13 +704,11 @@ export default function DriveBCMap(props) {
 
   // Border crossings layer
   useEffect(() => {
-    if (!isCamDetail) {
-      loadLayer(
-        mapLayers, mapRef, mapContext,
-        'borderCrossings', borderCrossings, filteredBorderCrossings, 71,
-        referenceData, updateReferenceFeature, setLoadingLayers
-      );
-    }
+    loadLayer(
+      mapLayers, mapRef, mapContext,
+      'borderCrossings', borderCrossings, filteredBorderCrossings, 71,
+      referenceData, updateReferenceFeature, setLoadingLayers
+    );
   }, [borderCrossings]);
 
   // Wildfires layer
