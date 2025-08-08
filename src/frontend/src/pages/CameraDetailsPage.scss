@@ -862,11 +862,14 @@
       .legacy-filters-menu {
         min-width: 300px;
         z-index: 100;
+        top: -10px;
+        right: 8px;
 
         @media (max-width: 575px) {
           position: fixed;
           height: calc(100vh - 120px);
           width: 100%;
+          top: initial;
           bottom: 0;
           right: 0;
           z-index: 100;
