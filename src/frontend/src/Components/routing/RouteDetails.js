@@ -56,7 +56,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 export default function RouteDetails(props) {
   /* Setup */
   // Props
-  const { route, isPanel, setRouteFavCams, setRouteLabel, onMobile, setShowRouteObjs } = props;
+  const { route, isPanel, setRouteFavCams, setRouteLabel, onMobile, setShowRouteObjs, setRouteSwitched } = props;
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -322,6 +322,7 @@ export default function RouteDetails(props) {
 
   const switchRouteHandler = () => {
     if (!compareRoutes(route, selectedRoute)){
+      setRouteSwitched(true);
       dispatch(updateSelectedRoute(route));
     }
   }
@@ -723,8 +724,8 @@ export default function RouteDetails(props) {
             <Button
               variant="light"
               className='view-details-btn'
-              onClick={() => {if (setShowRouteObjs) setShowRouteObjs(true)}}
-              onKeyDown={() => {if (setShowRouteObjs) setShowRouteObjs(true)}}>
+              onClick={() => {setShowRouteObjs(true)}}
+              onKeyDown={() => {setShowRouteObjs(true)}}>
 
               View Details
               <FontAwesomeIcon icon={faChevronRight}/>

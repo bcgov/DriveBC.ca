@@ -45,7 +45,7 @@ export default function RouteObjectList(props) {
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
   // Props
-  const { setShowRouteObjs, clickedFeatureRef, updateClickedFeature } = props;
+  const { routeSwitched, setShowRouteObjs, clickedFeatureRef, updateClickedFeature } = props;
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -82,9 +82,6 @@ export default function RouteObjectList(props) {
   const [showSavePopup, setShowSavePopup] = useState(false);
   const [routeMapImg, setRouteMapImg] = useState(); // for map snapshot
   const [objList, setObjList] = useState([]);
-  const [pendingAdvisories, setPendingAdvisories] = useState(false);
-  const [pendingEvents, setPendingEvents] = useState(false);
-  const [pendingFerries, setPendingFerries] = useState(false);
 
   // Effects
   useEffect(() => {
@@ -98,25 +95,13 @@ export default function RouteObjectList(props) {
     }
   }, [authContext, pendingAction]);
 
-  // Mark data as not updating when they finish filtering
-  useEffect(() => {
-    setPendingAdvisories(true);
-  }, [filteredAdvisories]);
-
-  useEffect(() => {
-    setPendingEvents(true);
-  }, [filteredEvents]);
-
-  useEffect(() => {
-    setPendingFerries(true);
-  }, [filteredFerries]);
-
   // When all data is filtered, rank the object list again
   useEffect(() => {
-    if (pendingAdvisories && pendingEvents && pendingFerries) {
+    // Only rank when route has finished switching
+    if (!routeSwitched) {
       rankObjectList();
     }
-  }, [pendingAdvisories, pendingEvents, pendingFerries]);
+  }, [routeSwitched]);
 
   /* Helpers */
   const toggleAuthModal = (action) => {
@@ -137,9 +122,6 @@ export default function RouteObjectList(props) {
     });
 
     setObjList(projectedObjs);
-    setPendingAdvisories(false);
-    setPendingEvents(false);
-    setPendingFerries(false);
   }
 
   const resetPopup = () => {
@@ -219,7 +201,7 @@ export default function RouteObjectList(props) {
   }
 
   const getObjectList = () => {
-    if (pendingAdvisories || pendingEvents || pendingFerries) {
+    if (routeSwitched) {
       return (
         <div>
           <Skeleton count={5} width={200} />
