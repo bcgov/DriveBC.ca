@@ -65,7 +65,7 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         cache_folder = os.path.join(IMAGE_CACHE_DIR, str(pk))
         os.makedirs(cache_folder, exist_ok=True)
 
-        cache_path = os.path.join(cache_folder, filename)
+        cache_path = os.path.join(cache_folder, f'{filename}.jpg')
 
         # Serve from cache if exists
         if os.path.exists(cache_path):
