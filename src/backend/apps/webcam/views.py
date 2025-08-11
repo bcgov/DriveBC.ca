@@ -1,5 +1,3 @@
-import json
-from django.conf import settings
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
 from rest_framework import viewsets
@@ -12,6 +10,11 @@ from .models import Webcam
 import os
 from apps.consumer.models import ImageIndex
 from apps.shared.status import get_image_list
+
+import requests
+
+IMAGE_CACHE_DIR = os.getenv("IMAGE_CACHE_DIR", "/app/data/webcams/cache")
+S3_BASE_URL = os.getenv("S3_IMAGE_BASE_URL", "http://minio:9000/test-s3-bucket/processed")
 
 class WebcamAPI:
     queryset = Webcam.objects.filter(should_appear=True)
@@ -53,6 +56,34 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
 
         return Response(response_data, status=status.HTTP_200_OK)
 
+    @action(
+        detail=True,
+        methods=['get'],
+        url_path=r'(?P<filename>[0-9]{12})/timelapse'
+    )
+    def cachedTimelapse(self, request, pk=None, filename=None):
+        cache_folder = os.path.join(IMAGE_CACHE_DIR, str(pk))
+        os.makedirs(cache_folder, exist_ok=True)
+
+        cache_path = os.path.join(cache_folder, filename)
+
+        # Serve from cache if exists
+        if os.path.exists(cache_path):
+            return FileResponse(open(cache_path, "rb"), content_type="image/jpeg")
+
+        # Fetch from S3
+        s3_url = f"{S3_BASE_URL}/{pk}/{filename}.jpg"
+        resp = requests.get(s3_url, stream=True)
+
+        if resp.status_code != 200:
+            raise Http404("Image not found in S3.")
+
+        # Save to cache
+        with open(cache_path, "wb") as f:
+            for chunk in resp.iter_content(1024):
+                f.write(chunk)
+
+        return FileResponse(open(cache_path, "rb"), content_type="image/jpeg")
 
 class WebcamTestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = WebcamAPI.queryset

@@ -62,13 +62,13 @@ class Webcam(BaseModel):
 
         time_delta = time - self.last_update_modified
         return time_delta.total_seconds() >= self.minimum_update_window
-    
+
     def get_image_paths(self):
         timestamps = get_image_list(self.id, "TIMELAPSE_HOURS")
-        base_url = os.environ.get("S3_IMAGE_BASE_URL", "http://localhost:9000/test-s3-bucket/processed")
-
+        TIMELAPSE_API_ROOT_URL = os.environ.get("TIMELAPSE_API_ROOT_URL", "http://localhost:8000/api/webcams")
         image_paths = []
         for ts in timestamps:
-            img_path = f"{base_url}/{self.id}/{ts}"
-            image_paths.append(img_path)
+            filename = ts
+            img_path = f"{TIMELAPSE_API_ROOT_URL}/{self.id}/{filename}/timelapse/"
+            image_paths.append(img_path.replace(".jpg", ""))
         return image_paths
