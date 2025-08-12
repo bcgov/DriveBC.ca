@@ -1,0 +1,46 @@
+{
+    "XmlCreationUtc": "Friday June 13, 2025 at 14:05 UTC",
+    "ForecastIssuedUtc": "2025-06-11T04:35:00",
+    "Location": {
+        "Continent": "North America",
+        "Country": {
+            "Code": "ca",
+            "Value": "Canada"
+        },
+        "Province": {
+            "Code": "bc",
+            "Value": "British Columbia"
+        },
+        "Name": {
+            "Code": "s0000868",
+            "Latitude": "48.56N",
+            "Longitude": "123.57W",
+            "Value": "Malahat Highway - Goldstream to Mill Bay"
+        },
+        "Region": "Malahat Highway - Goldstream to Mill Bay"
+    },
+    "Warnings": {
+        "Url": null,
+        "Events": [
+            {
+                "Type": "ended",
+                "Priority": "low",
+                "Description": "SPECIAL WEATHER STATEMENT ENDED",
+                "ExpiryTime": "20250611053528",
+                "EventIssueUTC": {
+                    "Name": "eventIssue",
+                    "Zone": "UTC",
+                    "UTCOffset": 0,
+                    "TextSummary": "Wednesday June 11, 2025 at 04:35 UTC"
+                },
+                "Url": "https://weather.gc.ca/warnings/report_highway_e.html?mesoCode=bcrm4382"
+            }
+        ]
+    },
+    "CurrentConditions": null,
+    "ForecastGroup": null,
+    "HourlyForecastGroup": null,
+    "RiseSet": null,
+    "Almanac": null,
+    "ForecastId": 828462128
+}
