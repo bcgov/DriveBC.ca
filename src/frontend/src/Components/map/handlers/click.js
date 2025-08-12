@@ -319,7 +319,7 @@ const regionalClickHandler = (
 
   // set new clicked regional weather feature
   const warnings = feature.get('warnings');
-  feature.setStyle((warnings && warnings.length) ? regionalWarningStyles['active'] : regionalStyles['active']);
+  feature.setStyle((warnings && warnings.events) ? regionalWarningStyles['active'] : regionalStyles['active']);
   feature.setProperties({ clicked: true }, true);
   updateClickedFeature(feature);
 };

@@ -163,7 +163,7 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
       case 'regionalWeather':
         if (!targetFeature.getProperties().clicked) {
           const warnings = targetFeature.get('warnings');
-          targetFeature.setStyle((warnings && warnings.length) ? regionalWarningStyles['hover'] : regionalStyles['hover']);
+          targetFeature.setStyle((warnings && warnings.events) ? regionalWarningStyles['hover'] : regionalStyles['hover']);
         }
         return;
       case 'hef':

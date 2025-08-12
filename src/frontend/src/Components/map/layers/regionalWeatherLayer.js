@@ -25,7 +25,7 @@ export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext,
     const olFeature = new ol.Feature({ geometry: olGeometry, type: 'regionalWeather' });
 
     // Transfer properties
-    olFeature.setProperties(weather)
+    olFeature.setProperties(weather);
 
     // Transform the projection
     const olFeatureForMap = transformFeature(
@@ -65,7 +65,7 @@ export function updateRegionalWeatherLayer(weathers, layer, setLoadingLayers) {
     if(!weatherFeature.getProperties()['clicked']){
       if (weathersDict[weatherFeature.getId()]) {
         const warnings = weatherFeature.get('warnings');
-        const weatherStyle = (warnings && warnings.length) ? regionalWarningStyles['static'] : regionalStyles['static'];
+        const weatherStyle = (warnings && warnings.events) ? regionalWarningStyles['static'] : regionalStyles['static'];
         weatherFeature.setStyle(weatherStyle);
 
       } else {
