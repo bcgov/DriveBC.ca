@@ -37,7 +37,7 @@ export default function Footer(props) {
                 <a href="https://www2.gov.bc.ca/gov/content/home/privacy" className="footer-link" target="_blank" rel="noreferrer" alt="Privacy" >Privacy</a>
               </li>
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/governments/about-the-bc-government/accessibility" className="footer-link" target="_blank" rel="noreferrer" alt="Acccessibility" >Accessibility</a>
+                <a href="https://www2.gov.bc.ca/gov/content/home/accessible-government" className="footer-link" target="_blank" rel="noreferrer" alt="Acccessibility" >Accessibility</a>
               </li>
             </ul>
           </div>
