@@ -391,3 +391,90 @@
   opacity: 0.25;
   z-index: 10;
 }
+
+
+// Drawer Styles - Mobile Only (768px and under)
+
+.drawer-overlay {
+  background-color: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  // Hide on desktop
+  @media (min-width: 769px) {
+    display: none;
+  }
+}
+
+.drawer-content {
+  background-color: white;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  
+  .drawer-drag-handle {
+    position: absolute;
+    width: 100%;
+    height: 44px;
+    cursor: grab;
+    z-index: 2;
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: 0.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 64px;
+      height: 0.25rem;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      z-index: 5;
+      cursor: grab;
+      transition: 0.1s ease-in-out all;
+    }
+
+    &:active::after {
+      cursor: grabbing;
+      background-color: rgba(0, 0, 0, 0.4);
+      width: 84px;
+      height: 0.35rem;
+      transition: 0.1s ease-in-out all;
+    }
+  }
+
+  > div {
+    overflow-y: auto;
+    height: calc(100vh - 228px);
+    .popup__content {
+      overflow-y: scroll;
+    }
+  }
+
+  .close-panel {
+    z-index: 3;
+  }
+
+  .side-panel {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px 12px 0 0;
+  }
+
+  @media (min-width: 769px) {
+    display: none;
+  }
+}
+
+
+.drawer-content, .panel-content {
+  &:focus, &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }    
+}

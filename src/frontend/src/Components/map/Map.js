@@ -35,6 +35,7 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 import cloneDeep from 'lodash/cloneDeep';
 import Spinner from 'react-bootstrap/Spinner';
+import { Drawer } from '@vladyoslav/drawer';
 
 // Internal imports
 import { addCameraGroups } from '../data/webcams.js';
@@ -97,6 +98,11 @@ export default function DriveBCMap(props) {
     loadingLayers, setLoadingLayers, getInitialLoadingLayers
   } = props;
 
+  // Drawer state
+  const snapPoints = ['25%', '50%', '100%'];
+  const [snap, setSnap] = useState(snapPoints[0]);
+  
+  
   // Navigation
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -801,7 +807,7 @@ export default function DriveBCMap(props) {
 
   /* Rendering */
   return (
-    <div className={`map-container ${isCamDetail ? 'preview' : ''}`}>
+    <div className={`map-container ${isCamDetail ? 'preview' : ''}`} data-vladyoslav-drawer-wrapper="">
       {smallScreen && openTabs &&
         <div className='mobile-mask'></div>
       }
@@ -809,6 +815,9 @@ export default function DriveBCMap(props) {
       {searchedRoutes &&
         <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} isCamDetail={isCamDetail} />
       }
+
+      {/* Desktop Side Panel (768px and above) */}
+      {!!openPanel && largeScreen &&
 
       <div
         ref={panel}
@@ -886,9 +895,61 @@ export default function DriveBCMap(props) {
           )}
         </div>
       </div>
-
+    }
       <div ref={mapElement} className="map">
-        {!smallScreen && (
+                {/* Mobile Drawer (768px and under) */}
+                {!largeScreen && (
+          <Drawer.Root
+            open={openPanel && !largeScreen}
+            onOpenChange={(open) => {
+              if (!open) {
+                resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
+              }
+            }}
+            snapPoints={['25%', '50%', '100%']}
+            snap={snap}
+            setSnap={setSnap}
+            modal={false}
+            dismissible={true}
+            shouldScaleBackground={false}
+            scaleFrom={'50%'}
+          >
+            <Drawer.Portal>
+              <Drawer.Overlay className="drawer-overlay" />
+              <Drawer.Content className="drawer-content">
+                {clickedFeature && (!selectedRoute || isCamDetail) &&
+                  <button
+                    className="close-panel"
+                    aria-label={`${openPanel ? 'close side panel' : ''}`}
+                    aria-hidden={`${openPanel ? false : true}`}
+                    tabIndex={`${openPanel ? 0 : -1}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
+                    }}>
+                    <FontAwesomeIcon icon={faXmark} />
+                  </button>
+                }
+                <div className="panel-content">
+                  <div className="drawer-drag-handle"></div>
+                {openPanel && renderPanel(
+                  clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature,
+                  isCamDetail,
+                  smallScreen,
+                  mapView,
+                  clickedFeatureRef,
+                  updateClickedFeature,
+                  showRouteObjs,
+                  setShowRouteObjs
+                )}
+                </div>
+              </Drawer.Content>
+            </Drawer.Portal>
+          </Drawer.Root>
+        )}
+
+        {!isCamDetail && !smallScreen && (
+
           <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'} ${isCamDetail && 'hidden'}`}>
             <RouteSearch
               ref={routingContainerRef}
