@@ -62,10 +62,10 @@ export function updateRegionalWeatherLayer(weathers, layer, setLoadingLayers) {
   }, {});
 
   for (const weatherFeature of layer.getSource().getFeatures()) {
-    if(!weatherFeature.getProperties()['clicked']){
+    if (!weatherFeature.getProperties()['clicked']) {
       if (weathersDict[weatherFeature.getId()]) {
         const warnings = weatherFeature.get('warnings');
-        const weatherStyle = (warnings && warnings.events) ? regionalWarningStyles['static'] : regionalStyles['static'];
+        const weatherStyle = warnings ? regionalWarningStyles['static'] : regionalStyles['static'];
         weatherFeature.setStyle(weatherStyle);
 
       } else {

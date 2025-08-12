@@ -91,7 +91,7 @@ export const resetClickedStates = (
         break;
       case 'regionalWeather':
         clickedFeatureRef.current.setStyle(
-          (clickedFeatureRef.current.get('warnings') && clickedFeatureRef.current.get('warnings').length) ?
+          clickedFeatureRef.current.get('warnings') ?
           regionalWarningStyles['static'] :
           regionalStyles['static']
         );
@@ -319,7 +319,7 @@ const regionalClickHandler = (
 
   // set new clicked regional weather feature
   const warnings = feature.get('warnings');
-  feature.setStyle((warnings && warnings.events) ? regionalWarningStyles['active'] : regionalStyles['active']);
+  feature.setStyle(warnings ? regionalWarningStyles['active'] : regionalStyles['active']);
   feature.setProperties({ clicked: true }, true);
   updateClickedFeature(feature);
 };

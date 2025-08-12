@@ -53,7 +53,7 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
           break;
         case 'regionalWeather':
           hoveredFeature.setStyle(
-            (hoveredFeature.get('warnings') && hoveredFeature.get('warnings').length) ?
+            hoveredFeature.get('warnings') ?
             regionalWarningStyles['static'] :
             regionalStyles['static']
           );
@@ -163,7 +163,7 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
       case 'regionalWeather':
         if (!targetFeature.getProperties().clicked) {
           const warnings = targetFeature.get('warnings');
-          targetFeature.setStyle((warnings && warnings.events) ? regionalWarningStyles['hover'] : regionalStyles['hover']);
+          targetFeature.setStyle(warnings ? regionalWarningStyles['hover'] : regionalStyles['hover']);
         }
         return;
       case 'hef':
