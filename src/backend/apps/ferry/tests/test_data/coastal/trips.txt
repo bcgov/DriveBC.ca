@@ -1,0 +1,5 @@
+route_id,service_id,trip_id,trip_short_name,trip_headsign,direction_id,block_id,shape_id,bikes_allowed,wheelchair_accessible,trip_type,drt_max_travel_time,drt_avg_travel_time,drt_advance_book_min,drt_pickup_message,drt_drop_off_message,continuous_pickup_message,continuous_drop_off_message,tts_trip_headsign,tts_trip_short_name
+12443,c_71123_b_84398_d_88,t_6024149_b_84398_tn_0,,Tsawwassen (Vancouver),0,,p_531155,,,,,,,,,,,,
+12443,c_71123_b_84398_d_88,t_6024145_b_84398_tn_0,,Tsawwassen (Vancouver),0,,p_531155,,,,,,,,,,,,
+12443,c_71123_b_84398_d_88,t_6024150_b_84398_tn_0,,Swartz Bay (Victoria),1,,p_531154,,,,,,,,,,,,
+12443,c_71123_b_84398_d_88,t_6024144_b_84398_tn_0,,Swartz Bay (Victoria),1,,p_531154,,,,,,,,,,,,

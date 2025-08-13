@@ -1,0 +1,7 @@
+stop_id,stop_code,platform_code,stop_name,stop_desc,stop_lat,stop_lon,zone_id,stop_url,location_type,parent_station,stop_timezone,position,direction,wheelchair_boarding,tts_stop_name
+2505787,,,Victoria (Swartz Bay) Ferry Terminal,,48.688614,-123.411361,,,1,,America/Vancouver,,,0,
+2505788,,,Victoria (Swartz Bay) Berth 1,,48.689526,-123.411706,,,0,2505787,,,,0,
+2505789,,,Vancouver (Tsawwassen) Ferry Terminal,,49.006885,-123.130334,,,1,,America/Los_Angeles,,,0,
+2505790,,,Vancouver (Tsawwassen),,49.006623,-123.132269,,,0,2505789,,,,0,
+2506403,,,Vancouver (Tsawwassen Berth 2),,49.0062144442562,-123.12942224916,,,0,2505789,,,,0,
+2506537,,,Victoria (Swartz Bay) Berth 2,,48.68959901202,-123.410116656483,,,0,2505787,,,,0,

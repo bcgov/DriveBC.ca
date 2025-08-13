@@ -1,0 +1,9 @@
+trip_id,arrival_time,departure_time,stop_id,stop_sequence,stop_headsign,pickup_type,drop_off_type,shape_dist_traveled,timepoint,start_service_area_id,end_service_area_id,start_service_area_radius,end_service_area_radius,continuous_pickup,continuous_drop_off,pickup_booking_rule_id,drop_off_booking_rule_id,start_pickup_drop_off_window,end_pickup_drop_off_window,mean_duration_factor,mean_duration_offset,safe_duration_factor,safe_duration_offset,tts_stop_headsign,min_arrival_time,max_departure_time
+t_6024149_b_84398_tn_0,14:00:00,14:00:00,2506537,1,,0,0,0,1,,,,,1,1,,,,,,,,,,,
+t_6024149_b_84398_tn_0,15:35:00,15:35:00,2505790,2,,0,0,47284.98700474001,1,,,,,1,1,,,,,,,,,,,
+t_6024145_b_84398_tn_0,18:00:00,18:00:00,2506537,1,,0,0,0,1,,,,,1,1,,,,,,,,,,,
+t_6024145_b_84398_tn_0,19:35:00,19:35:00,2505790,2,,0,0,47284.98700474001,1,,,,,1,1,,,,,,,,,,,
+t_6024150_b_84398_tn_0,12:00:00,12:00:00,2505790,1,,0,0,0,1,,,,,1,1,,,,,,,,,,,
+t_6024150_b_84398_tn_0,13:35:00,13:35:00,2506537,2,,0,0,47284.98700474,1,,,,,1,1,,,,,,,,,,,
+t_6024144_b_84398_tn_0,16:00:00,16:00:00,2505790,1,,0,0,0,1,,,,,1,1,,,,,,,,,,,
+t_6024144_b_84398_tn_0,17:35:00,17:35:00,2506537,2,,0,0,47284.98700474,1,,,,,1,1,,,,,,,,,,,

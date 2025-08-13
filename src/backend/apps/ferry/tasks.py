@@ -63,28 +63,28 @@ def populate_all_ferry_data():
     cache.delete(CacheKey.FERRY_LIST)
 
 
-# TODO: Unit tests
-def populate_coastal_ferry_data():
+def populate_coastal_ferry_data(test_data=None):
     accepted_files = ['routes.txt', 'stops.txt', 'trips.txt', 'stop_times.txt', 'calendar.txt']
 
     url = settings.DRIVEBC_COSTAL_FERRY_DATA_URL
     response = requests.get(url)
     response.raise_for_status()
 
-    csv_data = {}
-    with tempfile.TemporaryDirectory() as tmpdir:
-        zip_path = os.path.join(tmpdir, "bcferries.zip")
-        with open(zip_path, "wb") as f:
-            f.write(response.content)
+    csv_data = test_data or {}
+    if not test_data:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            zip_path = os.path.join(tmpdir, "bcferries.zip")
+            with open(zip_path, "wb") as f:
+                f.write(response.content)
 
-        with zipfile.ZipFile(zip_path, "r") as zip_ref:
-            for file in zip_ref.namelist():
-                if file in accepted_files:
-                    zip_ref.extract(file, tmpdir)
-                    csv_path = os.path.join(tmpdir, file)
-                    with open(csv_path, newline='', encoding='utf-8') as csvfile:
-                        reader = csv.DictReader(csvfile)
-                        csv_data[file] = list(reader)
+            with zipfile.ZipFile(zip_path, "r") as zip_ref:
+                for file in zip_ref.namelist():
+                    if file in accepted_files:
+                        zip_ref.extract(file, tmpdir)
+                        csv_path = os.path.join(tmpdir, file)
+                        with open(csv_path, newline='', encoding='utf-8') as csvfile:
+                            reader = csv.DictReader(csvfile)
+                            csv_data[file] = list(reader)
 
     if 'stops.txt' in csv_data:
         populate_coastal_ferry_stops(csv_data['stops.txt'])

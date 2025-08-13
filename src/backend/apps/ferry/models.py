@@ -65,6 +65,9 @@ class CoastalFerryStop(BaseModel):
     # Location
     location = models.GeometryField(blank=True, null=True)
 
+    def __str__(self):
+        return str(self.name)
+
 
 class CoastalFerryCalendar(BaseModel):
     # General
@@ -80,6 +83,9 @@ class CoastalFerryCalendar(BaseModel):
         help_text="Comma-separated weekdays (e.g. monday,tuesday,wednesday)"
     )
 
+    def __str__(self):
+        return str(self.name)
+
 
 class CoastalFerryRoute(BaseModel):
     # General
@@ -88,6 +94,9 @@ class CoastalFerryRoute(BaseModel):
 
     # Urls
     url = models.URLField(null=True, blank=True)
+
+    def __str__(self):
+        return str(self.name)
 
 
 class CoastalFerryTrip(BaseModel):

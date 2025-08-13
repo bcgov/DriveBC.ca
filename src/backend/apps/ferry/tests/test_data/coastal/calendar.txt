@@ -1,0 +1,2 @@
+service_id,service_name,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start_date,end_date
+c_71123_b_84398_d_88,2026-03-13 to 2026-03-31 (ThFSu),0,0,0,1,1,0,1,20260313,20260331
