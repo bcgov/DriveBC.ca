@@ -214,13 +214,13 @@ const camClickHandler = (
       const pan = feature.get('pan');
 
       const nearbyCount = getVisibleNearbyObjectsCount(mapContext, feature);
-      console.log('cam id', feature.get('id'));
-      console.log('nearby objs count', nearbyCount);
       setZoomPan(
         mapView,
         zoom ? zoom : getDefaultZoom(nearbyCount),
         pan ? fromLonLat(pan.split(",").map(Number)) : feature.getGeometry().getCoordinates()
       );
+
+      feature.unset('focusCamera');
 
     } else {
       setZoomPan(mapView, null, feature.getGeometry().getCoordinates());

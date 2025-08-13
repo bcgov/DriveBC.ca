@@ -148,8 +148,6 @@ export default function DriveBCMap(props) {
   const mapLayers = useRef({}); window.mapLayers = mapLayers;
   const geolocation = useRef();
   const hoveredFeature = useRef();
-  const isInitialMountLocation = useRef();
-  const isInitialClickedFeature = useRef();
   const searchParamInitialized = useRef();
   const locationPinRef = useRef();
   const locationToPinRef = useRef();
@@ -162,6 +160,11 @@ export default function DriveBCMap(props) {
   const routingContainerRef = useRef();
   const cameraLocationButtonRef = useRef();
   const scaleLineRef = useRef();
+
+  // Initialization flags
+  const isInitialMountLocation = useRef();
+  const isInitialClickedFeature = useRef();
+  const referenceFeatureInitialized = useRef(false);
 
   // States
   const [openTabs, setOpenTabs] = useState(largeScreen && !isCamDetail);
@@ -522,12 +525,14 @@ export default function DriveBCMap(props) {
 
   /* Triggering handlers based on navigation data */
   useEffect(() => {
-    if (referenceFeature) {
+    if (referenceFeature && !referenceFeatureInitialized.current) {
       pointerClickHandler(
         [referenceFeature], clickedFeatureRef, updateClickedFeature,
         mapView, isCamDetail, loadCamDetails, updateReferenceFeature,
         updateRouteDisplay, mapContext
       );
+
+      referenceFeatureInitialized.current = true;
     }
   }, [referenceFeature]);
 
