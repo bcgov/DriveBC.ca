@@ -14,6 +14,31 @@ function replace(domNode) {
     document.head.appendChild(script);
   }
 
+  /* DBC22-4645
+   * Resize YouTube videos based on screen size while keeping aspect ratio
+   */
+  if (domNode.name === 'iframe') {
+    const width = parseInt(domNode.attribs.width, 10);
+    const height = parseInt(domNode.attribs.height, 10);
+
+    if (width && height && !isNaN(width) && !isNaN(height)) {
+      const aspectRatio = width / height;
+
+      // Copy all original attributes
+      const props = {...domNode.attribs};
+
+      // Set the style object
+      props.style = { aspectRatio: aspectRatio };
+
+      // Return a React iframe element with all props
+      return (
+        <iframe {...props}>
+          {domToReact(domNode.children, { replace })}
+        </iframe>
+      );
+    }
+  }
+
   /* DBC22-3141
    * Part of implementing subpages for advisories and bulletins: links coming
    * from cms need to be converted to NavLinks so they participate properly in

@@ -117,7 +117,7 @@ export default function BulletinDetailsPage() {
             className="back-link"
             onClick={returnHandler}
             onKeyDown={keyEvent => {
-              if (keyEvent.keyCode == 13) {
+              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                 returnHandler();
               }
             }}>

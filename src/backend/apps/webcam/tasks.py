@@ -2,6 +2,8 @@ import datetime
 import io
 import logging
 import os
+import socket
+import time
 import urllib.request
 from collections import Counter
 from itertools import groupby
@@ -16,7 +18,7 @@ from apps.event.models import Event
 from apps.feed.client import FeedClient
 from apps.shared.models import Area, RouteGeometry
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
-from apps.webcam.enums import CAMERA_DIFF_FIELDS
+from apps.webcam.enums import CAMERA_DIFF_FIELDS, CAMERA_TASK_DEFAULT_TIMEOUT
 from apps.webcam.hwy_coords import hwy_coords
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
@@ -25,6 +27,8 @@ from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F
 from PIL import Image, ImageDraw, ImageFont
+from psycopg import IntegrityError
+from huey.exceptions import CancelExecution
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
 from apps.shared.status import get_recent_timestamps, calculate_camera_status
@@ -86,9 +90,15 @@ def populate_webcam_from_data(webcam_data):
 
 
 def populate_all_webcam_data():
-    feed_data = FeedClient().get_webcam_list()["webcams"]
+    start_time = time.time()
 
+    feed_data = FeedClient().get_webcam_list()["webcams"]
     for webcam_data in feed_data:
+        # Check if the task has timed out at the start of each iteration
+        if time.time() - start_time > CAMERA_TASK_DEFAULT_TIMEOUT:
+            logger.warning(f"populate_all_webcam_data stopped: exceeded {CAMERA_TASK_DEFAULT_TIMEOUT} seconds.")
+            raise CancelExecution()
+
         populate_webcam_from_data(webcam_data)
 
 
@@ -101,7 +111,7 @@ def update_single_webcam_data(webcam):
             Webcam.objects.filter(id=webcam.id).delete()
 
         # Skip updating otherwise
-        return
+        return False
 
     # Only update if existing data differs for at least one of the fields
     for field in CAMERA_DIFF_FIELDS:
@@ -110,7 +120,7 @@ def update_single_webcam_data(webcam):
             webcam_serializer.is_valid(raise_exception=True)
             webcam_serializer.save()
             update_webcam_image(webcam_data)
-            return
+            return True
 
 
 def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
@@ -183,16 +193,92 @@ def update_webcam_db(cam_id: int, cam_data: dict):
         update_period_stddev= camera_status["stddev_interval"]) * 1000,  
     return updated_count
 
-def update_all_webcam_data():
-    for webcam in Webcam.objects.all():
-        current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
-        if webcam.should_update(current_time):
-            if not webcam.https_cam:
-                update_single_webcam_data(webcam)
-            else:
-                update_cam_from_sql_db(webcam.id, current_time)          
+def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
+    cams_live_sql = text("""
+        SELECT Cams_Live.ID AS id, 
+        Cams_Live.Cam_InternetName AS name, 
+        Cams_Live.Cam_InternetCaption AS caption,
+        Regions_Live.seq AS region, 
+        Regions_Live.Name AS region_name,                 
+        Highways_Live.Hwy_Number AS highway, 
+        Highways_Live.Section AS highway_description, 
+        Region_Highways_Live.seq AS highway_group,
+        Cams_Live.seq AS highway_cam_order,
+        Cams_Live.Cam_LocationsOrientation AS orientation,
+        Cams_Live.Cam_LocationsElevation AS elevation,
+        CASE WHEN Cams_Live.Cam_ControlDisabled = 0 THEN 1 ELSE 0 END AS isOn,
+        Cams_Live.isNew AS isNew,
+        Cams_Live.isNew, Cams_Live.Cam_MaintenanceIs_On_Demand AS isOnDemand,
+        Cams_Live.Cam_InternetCredit AS credit,
+        Cams_Live.Cam_InternetDBC_Mark AS dbc_mark                 
+        FROM [WEBCAM_DEV].[dbo].[Cams_Live]
+        INNER JOIN ((Region_Highways_Live INNER JOIN Highways_Live ON Region_Highways_Live.Highway_ID = Highways_Live.ID) 
+        INNER JOIN Regions_Live ON Region_Highways_Live.Region_ID = Regions_Live.ID) 
+        ON (Cams_Live.Cam_LocationsHighway = Region_Highways_Live.Highway_ID) 
+        AND (Cams_Live.Cam_LocationsRegion = Region_Highways_Live.Region_ID) 
+        WHERE Cams_Live.ID = :id
+    """)
 
-    update_camera_group_ids()
+    with engine.connect() as connection:
+        try:
+            # Query from Cams_Live
+            result_live = connection.execute(cams_live_sql, {"id": id})
+            live_rows = {row.id: dict(row._mapping) for row in result_live}
+            update_webcam_db(id, live_rows.get(id, {}))
+            return live_rows
+
+        except Exception as e:
+            logger.error(f"Failed to connect to the database: {e}")
+            return []
+
+def update_webcam_db(cam_id: int, cam_data: dict):
+    timestamp_utc = get_recent_timestamps(cam_id)
+    if not timestamp_utc:
+        return
+
+    camera_status = calculate_camera_status(timestamp_utc)
+    ts_seconds = int(camera_status["timestamp"])
+    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
+
+    updated_count = Webcam.objects.filter(id=cam_id).update(region=cam_data.get("region"),
+        region_name=cam_data.get("region_name"),
+        is_on=True if cam_data.get("isOn") == 1 else False,
+        name=cam_data.get("name"),
+        caption=cam_data.get("caption", ""),
+        highway=cam_data.get("highway", ""),
+        highway_description=cam_data.get("highway_description", ""),
+        highway_group=cam_data.get("highway_group", 0),
+        highway_cam_order=cam_data.get("highway_cam_order", 0),
+        orientation=cam_data.get("orientation", ""),
+        elevation=cam_data.get("elevation", 0),
+        dbc_mark=cam_data.get("dbc_mark", ""),
+        credit=cam_data.get("credit", ""),
+        is_new=cam_data.get("isNew", False),
+        is_on_demand=cam_data.get("isOnDemand", False),
+        marked_stale=camera_status["stale"],
+        marked_delayed=camera_status["delayed"],
+        last_update_attempt=dt_utc,
+        last_update_modified=dt_utc,
+        update_period_mean=camera_status["mean_interval"] * 1000,
+        update_period_stddev= camera_status["stddev_interval"]) * 1000,  
+    return updated_count
+
+def update_all_webcam_data():
+    start_time = time.time()
+    for camera in Webcam.objects.all():
+        # Check if the task has timed out at the start of each iteration
+        if time.time() - start_time > CAMERA_TASK_DEFAULT_TIMEOUT:
+            logger.warning(f"update_all_webcam_data stopped: exceeded {CAMERA_TASK_DEFAULT_TIMEOUT} seconds.")
+            raise CancelExecution()
+
+        current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
+        if camera.should_update(current_time):
+            if not camera.https_cam:
+                updated = update_single_webcam_data(camera)
+                if updated:
+                    update_camera_group_id(camera)
+            else:
+                update_cam_from_sql_db(camera.id, current_time)          
 
 def purge_old_images():
     logger.info("Purging webcam images...")
@@ -362,7 +448,8 @@ def update_webcam_image(webcam):
             base_url = base_url[:-1]
         endpoint = f'{base_url}/webcams/{webcam["id"]}/imageSource'
 
-        with urllib.request.urlopen(endpoint) as url:
+        logger.info(f"Requesting GET {endpoint}")
+        with urllib.request.urlopen(endpoint, timeout=10) as url:
             image_data = io.BytesIO(url.read())
 
         raw = Image.open(image_data)
@@ -421,12 +508,15 @@ def update_webcam_image(webcam):
             delta = mean - stddev
 
         except Exception as e:
-            logger.info(e)
+            logger.exception(e)
 
         if lastmod is not None:
             delta = datetime.timedelta(seconds=delta)
             lastmod = floor((lastmod + delta).timestamp())  # POSIX timestamp
             os.utime(filename, times=(lastmod, lastmod))
+
+    except socket.timeout as e:
+        logger.error(f'Timeout fetching webcam image for camera {webcam["id"]}: {e}')
 
     except HTTPError as e:  # log HTTP errors without stacktrace to reduce log noise
         logger.error(f'{e} on {endpoint}')
@@ -541,10 +631,18 @@ def update_camera_area_relations():
         Webcam.objects.filter(location__within=area.geometry).update(area=area)
 
 
-def update_camera_group_ids():
-    for camera in Webcam.objects.all():
+def update_camera_group_id(camera):
+    try:
         group_id = Webcam.objects.filter(location=camera.location).order_by('id').first().id
         Webcam.objects.filter(id=camera.id).update(group_id=group_id)  # update without triggering save
+
+    except IntegrityError as e:
+        logger.warning(f"Error updating group id for camera {camera.id}: {e}")
+
+
+def update_all_camera_group_ids(*args, **kwargs):
+    for camera in Webcam.objects.all():
+        update_camera_group_id(camera)
 
 
 def get_nearby_queryset(model, obj):

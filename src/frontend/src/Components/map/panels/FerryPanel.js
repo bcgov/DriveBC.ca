@@ -188,14 +188,14 @@ export default function FerryPanel(props) {
             {ferryData.contact_phone &&
               <div className='info__row'>
                 <p><FontAwesomeIcon icon={faPhone}/> Phone</p>
-                <p>{formatPhoneNumber(ferryData.contact_phone)}</p>
+                <a href={"tel:" + formatPhoneNumber(ferryData.contact_phone)}>{formatPhoneNumber(ferryData.contact_phone)}</a>
               </div>
             }
 
             {ferryData.contact_alt_phone &&
               <div className='info__row'>
                 <p><FontAwesomeIcon icon={faPhone}/> {ferryData.contact_phone ? 'Alt phone' : 'Phone'}</p>
-                <p>{formatPhoneNumber(ferryData.contact_alt_phone)}</p>
+                <a href={"tel:" + formatPhoneNumber(ferryData.contact_alt_phone)}>{formatPhoneNumber(ferryData.contact_alt_phone)}</a>
               </div>
             }
 
@@ -209,13 +209,13 @@ export default function FerryPanel(props) {
             {ferryData.contact_email &&
               <div className='info__row'>
                 <p><FontAwesomeIcon icon={faEnvelope}/> Email</p>
-                <p>{ferryData.contact_email}</p>
+                <a href={"mailto:" + ferryData.contact_email}>{ferryData.contact_email}</a>
               </div>
             }
 
-            <SocialURL url={ferryData.contact_url_1} />
+            <SocialURL url={ferryData.contact_url_1}/>
 
-            <SocialURL url={ferryData.contact_url_2} />
+            <SocialURL url={ferryData.contact_url_2}/>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 // React
-import React from 'react';
+import React, { useState } from 'react';
 
 // External imports
 import Tab from 'react-bootstrap/Tab';
@@ -38,10 +38,13 @@ export default function FilterTabs(props) {
     setOpen
   } = props;
 
+  // States
+  const [activeTab, setActiveTab] = useState('layers');
+
   // Rendering
   // Main Component
   return (
-    <div className={'filters-menu'  + (!open ? ' closed' : '')}>
+    <div className={'filters-menu'  + (!open ? ' closed' : '') + (activeTab === 'layers' ? ' layers-tab' : ' legend-tab')}>
       <Button
         variant={isDelaysPage ? 'outline-primary' : 'primary'}
         className={'map-btn open-filters' + (open ? ' hide' : '')}
@@ -56,7 +59,11 @@ export default function FilterTabs(props) {
       <div className={`tabs-container` + (open ? '' : ' hide')}>
         <Tabs
           defaultActiveKey='layers'
-          className='tabs-header'>
+          className='tabs-header'
+          onSelect={(key) => {
+            setActiveTab(key);
+            trackEvent('click', 'map', `Show ${key} tab`);
+          }}>
 
           <Tab eventKey='layers' title='Map layers' tabClassName='map-tab layers'>
             <MapFilters
@@ -70,10 +77,7 @@ export default function FilterTabs(props) {
               loadingLayers={loadingLayers} />
           </Tab>
 
-          <Tab eventKey='legend' title='Legend' tabClassName='map-tab legend'
-            onClick={() => {
-              trackEvent('click', 'map', 'Show legend');
-            }}>
+          <Tab eventKey='legend' title='Legend' tabClassName='map-tab legend'>
             <Legend />
           </Tab>
         </Tabs>

@@ -95,8 +95,8 @@ export default function EventPanel(props) {
                 href="https://www2.gov.bc.ca//gov/content/transportation/driving-and-cycling/traveller-information/seasonal/winter-driving/commercial"
                 target="_blank"
                 rel="noreferrer"
-                alt="BC chain up requirements"
-              >Chain up requirements</a> apply to a commercial
+                alt="BC chain-up requirements"
+              >Chain-up requirements</a> apply to a commercial
             vehicle with a weight of 11,794 Kg or greater.</p>
           </div>
         }
@@ -105,7 +105,7 @@ export default function EventPanel(props) {
           <p
             tabIndex={0}
             onClick={() => console.log(eventData)}
-            onKeyPress={() => console.log(eventData)}
+            onKeyDown={() => console.log(eventData)}
           >{eventData.id}</p>
         </div>
       </div>

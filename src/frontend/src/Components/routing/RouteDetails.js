@@ -29,6 +29,7 @@ import {
   faMinusCircle
 } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
+import cloneDeep from 'lodash/cloneDeep';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Skeleton from 'react-loading-skeleton';
@@ -55,7 +56,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 export default function RouteDetails(props) {
   /* Setup */
   // Props
-  const { route, isPanel, setRouteFavCams, setRouteLabel, onMobile, setShowRouteObjs } = props;
+  const { route, isPanel, setRouteFavCams, setRouteLabel, onMobile, setShowRouteObjs, setRouteSwitched } = props;
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -124,7 +125,7 @@ export default function RouteDetails(props) {
     const favCamData = cameras.filter(item => favCams.includes(item.id));
     const favCamGroupIds = favCamData.map(cam => cam.group);
     const favCamGroups = cameras.filter(cam => favCamGroupIds.includes(cam.group));
-    const clonedFavCamGroups = structuredClone(favCamGroups);
+    const clonedFavCamGroups = typeof structuredClone === 'function' ? structuredClone(favCamGroups) : cloneDeep(favCamGroups);
 
     const groupedFavCamData = addCameraGroups(clonedFavCamGroups, favCams);
 
@@ -195,6 +196,7 @@ export default function RouteDetails(props) {
     if (!cameras) dataLoaders.loadCameras(routeData, null, dispatch, displayError, workerRef.current);
     if (!events) dataLoaders.loadEvents(routeData, null, dispatch, displayError, workerRef.current);
     if (!ferries) dataLoaders.loadFerries(routeData, null, dispatch, displayError, workerRef.current);
+    if (!wildfires) dataLoaders.loadWildfires(routeData, null, dispatch, displayError, workerRef.current);
 
     // Cleanup function to terminate the worker when the component unmounts
     return () => {
@@ -320,6 +322,7 @@ export default function RouteDetails(props) {
 
   const switchRouteHandler = () => {
     if (!compareRoutes(route, selectedRoute)){
+      setRouteSwitched(true);
       dispatch(updateSelectedRoute(route));
     }
   }
@@ -507,7 +510,7 @@ export default function RouteDetails(props) {
         className={`route-details ${isPanel && compareRoutes(route, selectedRoute) ? 'selected' : ''} ${onMobile ? 'mobile' : ''}`}
         tabIndex={isPanel ? 0 : null}
         onClick={isPanel ? switchRouteHandler : null}
-        onKeyPress={isPanel ? switchRouteHandler : null}>
+        onKeyDown={isPanel ? switchRouteHandler : null}>
 
         <div className="route-title">
           <div className="space-between-row route-tools">
@@ -552,7 +555,7 @@ export default function RouteDetails(props) {
               className="card-img-box"
               tabIndex={0}
               onClick={showOnMap}
-              onKeyPress={showOnMap}>
+              onKeyDown={showOnMap}>
 
               <div className="overlay-screen centered-content">
                 <p className="overlay-screen__text">
@@ -673,7 +676,24 @@ export default function RouteDetails(props) {
             </div>
           }
 
-          {(eventCount && eventCount.chainUps > 0) &&
+          {(eventCount && mapContext.visible_layers.futureEvents) &&
+            <div className="route-item route-item--futureEvents">
+              <span className="route-item__count">
+                {eventCount.futureEvents}
+              </span>
+              <span className="route-item__icon">
+                <svg width="14" height="14" viewBox="5 6 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
+                     alt="future events" aria-hidden="true" focusable="false" role="img">
+                  <path className="route-item__icon__path" fill="#474543"
+                    d="M10 5.5C10.3984 5.5 10.75 5.85156 10.75 6.25V7H13.75V6.25C13.75 5.85156 14.0781 5.5 14.5 5.5C14.8984 5.5 15.25 5.85156 15.25 6.25V7L16.375 7C16.9844 7 17.5 7.51563 17.5 8.125V9.25L7 9.25V8.125C7 7.51562 7.49219 7 8.125 7H9.25V6.25C9.25 5.85156 9.57812 5.5 10 5.5ZM7 10L17.5 10V16.375C17.5 17.0078 16.9844 17.5 16.375 17.5H8.125C7.49219 17.5 7 17.0078 7 16.375L7 10ZM8.5 11.875V12.625C8.5 12.8359 8.66406 13 8.875 13H9.625C9.8125 13 10 12.8359 10 12.625V11.875C10 11.6875 9.8125 11.5 9.625 11.5H8.875C8.66406 11.5 8.5 11.6875 8.5 11.875ZM11.5 11.875V12.625C11.5 12.8359 11.6641 13 11.875 13L12.625 13C12.8125 13 13 12.8359 13 12.625V11.875C13 11.6875 12.8125 11.5 12.625 11.5L11.875 11.5C11.6641 11.5 11.5 11.6875 11.5 11.875ZM14.875 11.5C14.6641 11.5 14.5 11.6875 14.5 11.875V12.625C14.5 12.8359 14.6641 13 14.875 13H15.625C15.8125 13 16 12.8359 16 12.625V11.875C16 11.6875 15.8125 11.5 15.625 11.5H14.875ZM8.5 14.875V15.625C8.5 15.8359 8.66406 16 8.875 16H9.625C9.8125 16 10 15.8359 10 15.625V14.875C10 14.6875 9.8125 14.5 9.625 14.5H8.875C8.66406 14.5 8.5 14.6875 8.5 14.875ZM11.875 14.5C11.6641 14.5 11.5 14.6875 11.5 14.875V15.625C11.5 15.8359 11.6641 16 11.875 16H12.625C12.8125 16 13 15.8359 13 15.625V14.875C13 14.6875 12.8125 14.5 12.625 14.5L11.875 14.5ZM14.5 14.875V15.625C14.5 15.8359 14.6641 16 14.875 16H15.625C15.8125 16 16 15.8359 16 15.625V14.875C16 14.6875 15.8125 14.5 15.625 14.5H14.875C14.6641 14.5 14.5 14.6875 14.5 14.875Z" />
+                </svg>
+              </span>
+              <span
+                className="route-item__name">{eventCount.futureEvents != 1 ? 'Future events' : 'Future event'}</span>
+            </div>
+          }
+
+          {(eventCount && eventCount.chainUps > 0 && mapContext.visible_layers.chainUps) &&
             <div className="route-item route-item--chainUps">
               <span className="route-item__count">
                 {eventCount.chainUps}
@@ -683,11 +703,11 @@ export default function RouteDetails(props) {
                 <path d="M5.05 4H9.52188C11.7719 4 13.6 5.86198 13.5719 8.15365C13.5719 10.1875 12.1375 11.9062 10.1969 12.25H10.1406C9.63438 12.3359 9.18438 11.9922 9.1 11.5052C9.01563 10.9896 9.35313 10.5312 9.83125 10.4453H9.8875C10.9844 10.2448 11.8 9.27083 11.8 8.15365C11.8 6.89323 10.7594 5.83333 9.52188 5.83333H5.05C3.8125 5.83333 2.8 6.89323 2.8 8.15365C2.8 9.27083 3.5875 10.2448 4.68438 10.4453H4.74063C5.21875 10.5312 5.55625 10.9896 5.47188 11.5052C5.3875 11.9922 4.9375 12.3359 4.43125 12.25H4.375C2.43438 11.9062 1 10.1875 1 8.15365C1 5.86198 2.8 4 5.05 4ZM14.9219 15H10.45C8.2 15 6.4 13.1667 6.4 10.875C6.4 8.84115 7.83438 7.1224 9.80313 6.77865H9.83125C10.3375 6.69271 10.7875 7.03646 10.8719 7.52344C10.9563 8.03906 10.6188 8.4974 10.1406 8.58333H10.0844C8.9875 8.78385 8.2 9.72917 8.2 10.875C8.2 12.1354 9.2125 13.1667 10.45 13.1667H14.9219C16.1875 13.1667 17.2 12.1354 17.2 10.875C17.2 9.72917 16.3844 8.78385 15.2875 8.58333H15.2313C14.7531 8.4974 14.4156 8.03906 14.5 7.52344C14.5844 7.03646 15.0344 6.69271 15.5406 6.77865H15.5969C17.5375 7.1224 19 8.84115 19 10.875C19 13.1667 17.1719 15 14.9219 15Z" fill="#474543"/>
               </svg>
               </span>
-              <span className="route-item__name">{eventCount.chainUps != 1 ? 'Commercial chain ups' : 'Commercial chain up'}</span>
+              <span className="route-item__name">{eventCount.chainUps != 1 ? 'Commercial chain-ups' : 'Commercial chain-up'}</span>
             </div>
           }
 
-          {!!ferryCount &&
+          {(typeof ferryCount === 'number' && ferryCount > 0 && mapContext.visible_layers.inlandFerries) &&
             <div className="route-item route-item--ferries">
               <span className="route-item__count">
                 {ferryCount}
@@ -704,8 +724,8 @@ export default function RouteDetails(props) {
             <Button
               variant="light"
               className='view-details-btn'
-              onClick={() => {if (setShowRouteObjs) setShowRouteObjs(true)}}
-              onKeyPress={() => {if (setShowRouteObjs) setShowRouteObjs(true)}}>
+              onClick={() => {setShowRouteObjs(true)}}
+              onKeyDown={() => {setShowRouteObjs(true)}}>
 
               View Details
               <FontAwesomeIcon icon={faChevronRight}/>

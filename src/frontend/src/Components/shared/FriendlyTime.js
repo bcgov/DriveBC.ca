@@ -67,8 +67,8 @@ export default function FriendlyTime({ date, timezone, asDate=false, includeFull
             setShowTooltip(!showTooltip);
           }}
           onKeyDown={(keyEvent) => {
-            if (keyEvent.keyCode == 13) {
-              event.stopPropagation();
+            if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+              keyEvent.stopPropagation();
               setShowTooltip(!showTooltip)
             }
           }}>

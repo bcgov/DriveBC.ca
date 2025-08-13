@@ -39,7 +39,7 @@ export default function Bulletins(props) {
         return (
           <li className='bulletin-li' key={bulletin.id} onClick={() => handleClick(bulletin)}
             onKeyDown={(keyEvent) => {
-              if (keyEvent.keyCode == 13) {
+              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                 handleClick(bulletin);
               }
             }}>

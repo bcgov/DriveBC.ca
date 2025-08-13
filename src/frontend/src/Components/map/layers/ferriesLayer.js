@@ -9,7 +9,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Styling
-import { ferryStyles } from '../../data/featureStyleDefinitions.js';
+import { coastalFerryStyles, ferryStyles } from '../../data/featureStyleDefinitions.js';
 
 export function getFerriesLayer(ferriesData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   const vectorSource = new VectorSource();
@@ -20,11 +20,13 @@ export function getFerriesLayer(ferriesData, projectionCode, mapContext, referen
       return;
     }
 
-    // Offset ~500m East to prevent overlapping with other features
-    const lat = ferry.location.coordinates[0] + 0.0044;
+    const isCoastal = !!ferry.routes;
+
+    // Offset inland ferries ~500m East to prevent overlapping with other features
+    const lat = isCoastal ? ferry.location.coordinates[0] : ferry.location.coordinates[0] + 0.0044;
     const lng = ferry.location.coordinates[1]
     const olGeometry = new Point([lat, lng]);
-    const olFeature = new ol.Feature({ geometry: olGeometry, type: 'ferry', coastal: !!ferry.routes });
+    const olFeature = new ol.Feature({ geometry: olGeometry, type: 'ferry', coastal: isCoastal });
 
     // Transfer properties
     olFeature.setProperties(ferry);
@@ -66,8 +68,9 @@ export function updateFerriesLayer(ferries, layer, setLoadingLayers) {
   }, {});
 
   for (const ferryFeature of layer.getSource().getFeatures()) {
-    if(!ferryFeature.get('clicked')){
-      ferryFeature.setStyle(ferriesDict[ferryFeature.getId()] ? ferryStyles['static'] : new Style(null));
+    if (!ferryFeature.get('clicked')) {
+      const styles = ferryFeature.get('coastal') ? coastalFerryStyles : ferryStyles;
+      ferryFeature.setStyle(ferriesDict[ferryFeature.getId()] ? styles['static'] : new Style(null));
     }
 
     featuresDict[ferryFeature.get('id')] = ferryFeature;

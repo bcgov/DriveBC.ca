@@ -229,7 +229,7 @@ export default function CameraCard(props) {
                     className={'card-pill' + (show ? ' bounce' : ' hidden')}
                     onClick={handleChildClick}
                     onKeyDown={keyEvent => {
-                      if (keyEvent.keyCode === 13) {
+                      if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                         handleChildClick();
                       }
                     }}>
@@ -255,7 +255,7 @@ export default function CameraCard(props) {
                     className={'card-pill' + (show ? ' bounce' : ' hidden')}
                     onClick={handleChildClick}
                     onKeyDown={keyEvent => {
-                      if (keyEvent.keyCode === 13) {
+                      if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                         handleChildClick();
                       }
                     }}>
@@ -281,7 +281,7 @@ export default function CameraCard(props) {
                     className={'card-pill' + (show ? ' bounce' : ' hidden')}
                     onClick={handleChildClick}
                     onKeyDown={keyEvent => {
-                      if (keyEvent.keyCode === 13) {
+                      if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                         handleChildClick();
                       }
                     }}>

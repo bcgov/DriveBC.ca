@@ -108,7 +108,6 @@ export default function CameraDetailsPage() {
   const [isUpdated, setIsUpdated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isCameraSet, setIsCameraSet] = useState(false);
 
   // Reference data
   const getReferenceParams = () => {
@@ -164,14 +163,17 @@ export default function CameraDetailsPage() {
 
   // Data functions
   const loadCamDetails = (camData) => {
+    // Do nothing when data is unchanged
+    if (viewedCamera.current && viewedCamera.current.id === camData.id) {
+      return;
+    }
+
     // Camera data
     setIsUpdated(false);
-    viewedCamera.current = { id: camData.id, last_update_modified: camData.last_update_modified}
+    viewedCamera.current = { id: camData.id, last_update_modified: camData.last_update_modified };
 
-    if (!isCameraSet) {
-      setCamera(camData);
-      pauseReplay();
-    }
+    setCamera(camData);
+    pauseReplay();
 
     trackEvent('click', 'camera-details', 'camera', camData.name);
 
@@ -201,6 +203,9 @@ export default function CameraDetailsPage() {
     // Set camera group data
     setCameraGroup(camData.camGroup);
     cameraGroupRefs.current = new Set(camData.camGroup.map(cam => cam.id));
+
+    // DBC22-4282: switch tab back to cameras on changing camera
+    setActiveTab('webcam');
 
     setShowLoader(false);
     isInitialMount.current = false;
@@ -244,9 +249,7 @@ export default function CameraDetailsPage() {
     camData.camGroup.forEach(cam => (cam.camGroup = group));
 
     setCameraGroup(camData.camGroup);
-    if(!isCameraSet){
-      setCamera(camData);
-    }
+    setCamera(camData);
 
     if (camData.last_update_modified !== viewedCamera.current.last_update_modified) {
       setIsUpdated(true);
@@ -395,7 +398,6 @@ export default function CameraDetailsPage() {
     setActiveIndex(nextIndex);
     const nextCamera = camera.camGroup[nextIndex];
     setCamera(nextCamera);
-    setIsCameraSet(true);
     trackEvent("click", "camera-list", "camera", nextCamera.name);
     pauseReplay();
   };
@@ -539,7 +541,7 @@ export default function CameraDetailsPage() {
             className="back-link"
             onClick={returnHandler}
             onKeyDown={keyEvent => {
-              if (keyEvent.keyCode == 13) {
+              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                 returnHandler();
               }
             }}>
@@ -711,7 +713,7 @@ export default function CameraDetailsPage() {
                                           <div className={'card-pill' + (show ? ' bounce' : ' hidden')}
                                             onClick={handleChildClick}
                                             onKeyDown={keyEvent => {
-                                              if (keyEvent.keyCode === 13) {
+                                              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                                                 handleChildClick();
                                               }
                                             }}>
@@ -736,7 +738,7 @@ export default function CameraDetailsPage() {
                                             className={'card-pill' + (show ? ' bounce' : ' hidden')}
                                             onClick={handleChildClick}
                                             onKeyDown={keyEvent => {
-                                              if (keyEvent.keyCode === 13) {
+                                              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                                                 handleChildClick();
                                               }
                                             }}>
@@ -772,7 +774,7 @@ export default function CameraDetailsPage() {
                                             className={'card-pill' + (show ? ' bounce' : ' hidden')}
                                             onClick={handleChildClick}
                                             onKeyDown={keyEvent => {
-                                              if (keyEvent.keyCode === 13) {
+                                              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                                                 handleChildClick();
                                               }
                                             }}>

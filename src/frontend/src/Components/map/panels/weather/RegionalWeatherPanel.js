@@ -118,8 +118,8 @@ export default function RegionalWeatherPanel(props) {
             <FontAwesomeIcon
               icon={expanded ? faChevronUp : faChevronDown}
               onClick={() => setExpanded(!expanded)}
-              onKeyPress={(keyEvent) => {
-                if (keyEvent.charCode == 13 || keyEvent.charCode == 32) {
+              onKeyDown={(keyEvent) => {
+                if (['Enter', 'NumpadEnter', 'Space'].includes(keyEvent.key)) {
                   setExpanded(!expanded);
                 }
               }}

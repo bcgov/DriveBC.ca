@@ -19,6 +19,7 @@ import {
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
+import cloneDeep from 'lodash/cloneDeep';
 
 // Internal Imports
 import { CMSContext, FilterContext, HeaderHeightContext } from '../App';
@@ -73,6 +74,7 @@ export default function CamerasListPage() {
 
   // States
   const [displayedCameras, setDisplayedCameras] = useState(null);
+  const [onscreenCameras, setOnscreenCameras] = useState([]);
   const [processedCameras, setProcessedCameras] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [showNetworkError, setShowNetworkError] = useState(false);
@@ -176,14 +178,10 @@ export default function CamerasListPage() {
 
   // Effects
   useEffect(() => {
-    selectedRouteRef.current = selectedRoute;
-    getCamerasData(selectedRoute);
-  }, [selectedRoute]);
-
-  useEffect(() => {
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
-      const clonedCameras = structuredClone(filteredCameras);
+
+      const clonedCameras = typeof structuredClone === 'function' ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
       const finalCameras = addCameraGroups(clonedCameras);
       setCombinedCameras(clonedCameras);
 
@@ -210,27 +208,42 @@ export default function CamerasListPage() {
   }, [filteredCameras, selectedRoute]);
 
   useEffect(() => {
+    if (!processedCameras) {
+      return;
+    }
+
     // Search name and caption of all cams in group
     const searchFn = (pc, targetText) => {
-      if(pc.name.trim().toLowerCase().includes(targetText.toLowerCase())
-        || pc.caption.trim().toLowerCase().includes(targetText.toLowerCase())) {
-        return true;
-      } else {
-        return false;
-      }
+      return pc.name.trim().toLowerCase().includes(targetText.toLowerCase())
+        || pc.caption.trim().toLowerCase().includes(targetText.toLowerCase());
     }
 
-    if(searchText.trim() === '') {
-      const filteredCams = !searchText ? processedCameras :
-      processedCameras.filter((pc) => searchFn(pc, searchText));
-      setDisplayedCameras(filteredCams);
+    let resCams;
+
+    // Apply search filter
+    if (searchText.trim() === '') {
+      // No text, show all processed cams
+      resCams = processedCameras;
+
     } else {
+      // Text entered, filter processed cams by search text
       const updatedProcessedCameras = getUpdatedProcessedCameras(combinedCameras, searchFn);
-      const filteredCams = updatedProcessedCameras.filter((pc) => searchFn(pc, searchText));
-      setDisplayedCameras(filteredCams);
+      resCams = updatedProcessedCameras.filter((pc) => searchFn(pc, searchText));
     }
 
-  }, [searchText, processedCameras]);
+    // Apply highway filter
+    if (filterContext.highwayFilterKey) {
+      resCams = resCams.filter((camera) => (camera.highway_display === filterContext.highwayFilterKey));
+    }
+
+    // Apply area filter
+    if (filterContext.areaFilter) {
+      resCams = resCams.filter((camera) => (camera.area === filterContext.areaFilter.id));
+    }
+
+    setDisplayedCameras(resCams);
+
+  }, [searchText, processedCameras, filterContext.highwayFilterKey, filterContext.areaFilter]);
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -388,7 +401,7 @@ export default function CamerasListPage() {
                     </Button>
 
                     {!smallScreen && showAreaFilters &&
-                      <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} />
+                      <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={displayedCameras} />
                     }
 
                     <Button
@@ -417,7 +430,7 @@ export default function CamerasListPage() {
                     </Button>
 
                     {!smallScreen && showHwyFilters &&
-                      <HighwayFilter cameras={filteredCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} />
+                      <HighwayFilter cameras={displayedCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} />
                     }
                   </div>
                 </div>
@@ -465,7 +478,7 @@ export default function CamerasListPage() {
                         className="remove-btn"
                         tabIndex={0}
                         onClick={() => setFilterContext({...filterContext, highwayFilterKey: null})}
-                        onKeyPress={() => setFilterContext({...filterContext, highwayFilterKey: null})}>
+                        onKeyDown={() => setFilterContext({...filterContext, highwayFilterKey: null})}>
                         <FontAwesomeIcon icon={faXmark} />
                       </div>
                     </div>
@@ -480,7 +493,7 @@ export default function CamerasListPage() {
                         className="remove-btn"
                         tabIndex={0}
                         onClick={() => setFilterContext({...filterContext, areaFilter: null})}
-                        onKeyPress={() => setFilterContext({...filterContext, areaFilter: null})}>
+                        onKeyDown={() => setFilterContext({...filterContext, areaFilter: null})}>
                         <FontAwesomeIcon icon={faXmark} />
                       </div>
                     </div>
@@ -502,17 +515,25 @@ export default function CamerasListPage() {
               </Button>
             }
 
-            <CameraList cameras={ displayedCameras ? displayedCameras : [] } showLoader={showLoader} enableExtraFilters={true}></CameraList>
+            <CameraList
+              cameras={ displayedCameras ? displayedCameras : [] }
+              onscreenCameras={onscreenCameras}
+              setOnscreenCameras={setOnscreenCameras}
+              showLoader={showLoader} />
 
-            {(!showLoader && !(displayedCameras && displayedCameras.length)) &&
+            {!showLoader && displayedCameras && displayedCameras.length === 0 &&
               <div className="empty-cam-display">
                 <h2>No cameras to display</h2>
 
                 <h6><b>Do you have a starting location and a destination entered?</b></h6>
                 <p>Adding a route will narrow down the information for the whole site, including the camera list. There might not be any cameras between those two locations.</p>
 
-                <h6><b>Have you entered search terms to narrow down the list?</b></h6>
-                <p>Try checking your spelling, changing, or removing your search terms.</p>
+                <h6><b>Have you entered search terms or applied filters (e.g. an area or a highway) to narrow down the list?</b></h6>
+                <p>These also narrow down the cameras on this page.</p>
+                <ul>
+                  <li>Try checking your spelling, changing, or removing your search terms.</li>
+                  <li>Remove or adjust the area or highway filters to reveal more cameras.</li>
+                </ul>
               </div>
             }
           </div>
@@ -550,7 +571,7 @@ export default function CamerasListPage() {
           </button>
 
           <p className="overlay__header bold">Filter by area</p>
-          <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} />
+          <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={displayedCameras} />
         </div>
       }
 
@@ -568,11 +589,11 @@ export default function CamerasListPage() {
           </button>
 
           <p className="overlay__header bold">Filter by highway</p>
-          <HighwayFilter cameras={filteredCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} />
+          <HighwayFilter cameras={displayedCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} />
         </div>
       }
 
-      <PollingComponent runnable={() => getCamerasData(selectedRouteRef.current)} interval={30000} />
+      <PollingComponent runnable={() => getCamerasData(selectedRouteRef.current)} interval={30000} runImmediately={true} />
 
     </React.Fragment>
   );

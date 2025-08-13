@@ -1,4 +1,5 @@
 import {
+  coastalFerryStyles,
   ferryStyles,
   roadWeatherStyles,
   regionalStyles,
@@ -10,7 +11,9 @@ import {
   routeStyles,
   borderCrossingStyles,
   regionalWarningStyles,
-  advisoryStyles, wildfireCentroidStyles, wildfireAreaStyles
+  advisoryStyles,
+  wildfireCentroidStyles,
+  wildfireAreaStyles
 } from '../../data/featureStyleDefinitions.js';
 import {
   setEventStyle
@@ -40,14 +43,17 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
           break;
         }
         case 'ferry':
-          hoveredFeature.setStyle(ferryStyles['static']);
+          {
+            const styles = hoveredFeature.get('coastal') ? coastalFerryStyles : ferryStyles;
+            hoveredFeature.setStyle(styles['static']);
+          }
           break;
         case 'currentWeather':
           hoveredFeature.setStyle(roadWeatherStyles['static']);
           break;
         case 'regionalWeather':
           hoveredFeature.setStyle(
-            (hoveredFeature.get('warnings') && hoveredFeature.get('warnings').length) ?
+            hoveredFeature.get('warnings') ?
             regionalWarningStyles['static'] :
             regionalStyles['static']
           );
@@ -142,8 +148,11 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
         }
         return;
       case 'ferry':
-        if (!targetFeature.getProperties().clicked) {
-          targetFeature.setStyle(ferryStyles['hover']);
+        {
+          const styles = targetFeature.get('coastal') ? coastalFerryStyles : ferryStyles;
+          if (!targetFeature.getProperties().clicked) {
+            targetFeature.setStyle(styles['hover']);
+          }
         }
         return;
       case 'currentWeather':
@@ -154,7 +163,7 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
       case 'regionalWeather':
         if (!targetFeature.getProperties().clicked) {
           const warnings = targetFeature.get('warnings');
-          targetFeature.setStyle((warnings && warnings.length) ? regionalWarningStyles['hover'] : regionalStyles['hover']);
+          targetFeature.setStyle(warnings ? regionalWarningStyles['hover'] : regionalStyles['hover']);
         }
         return;
       case 'hef':

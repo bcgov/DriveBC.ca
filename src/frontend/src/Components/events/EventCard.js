@@ -95,7 +95,7 @@ export default function EventCard(props) {
               aria-label="View on map"
               onClick={() => handleRoute(event)}
               onKeyDown={(keyEvent) => {
-                if (keyEvent.keyCode == 13) {
+                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                   handleRoute(event);
                 }
               }}>

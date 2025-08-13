@@ -103,7 +103,7 @@ export default function UserNavigation(props) {
             className="nav-link"
             alt="Sign Out"
             onClick={() => toggleAuthModal('Sign Out')}
-            onKeyPress={() => toggleAuthModal('Sign Out')}
+            onKeyDown={() => toggleAuthModal('Sign Out')}
             tabIndex={0}
           >Sign out</a>
         </div>
@@ -186,7 +186,7 @@ export default function UserNavigation(props) {
         id="signin-btn"
         alt="Sign in button"
         onClick={() => {toggleAuthModal('Sign In')}}
-        onKeyPress={() => {toggleAuthModal('Sign In')}}
+        onKeyDown={() => {toggleAuthModal('Sign In')}}
         tabIndex={0}>
 
         Sign in

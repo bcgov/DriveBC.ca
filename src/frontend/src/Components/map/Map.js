@@ -1,4 +1,5 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars, no-prototype-builtins */
+
 // React
 import React, {
   useContext,
@@ -18,9 +19,7 @@ import { memoize } from 'proxy-memoize';
 import { useSelector, useDispatch } from 'react-redux';
 
 // External imports
-import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Spinner from 'react-bootstrap/Spinner';
 import {
   faChevronUp,
   faChevronDown,
@@ -32,6 +31,9 @@ import {
   faArrowLeft
 } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
+import Button from 'react-bootstrap/Button';
+import cloneDeep from 'lodash/cloneDeep';
+import Spinner from 'react-bootstrap/Spinner';
 
 // Internal imports
 import { addCameraGroups } from '../data/webcams.js';
@@ -53,6 +55,7 @@ import { FeatureContext, MapContext } from '../../App.js';
 import { resizePanel, renderPanel, togglePanel } from './panels';
 import { pointerMoveHandler, resetHoveredStates } from './handlers/hover';
 import { pointerClickHandler, resetClickedStates } from './handlers/click';
+import { updateOverlappingPositions } from "./layers/eventsLayer";
 import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
 import DistanceLabels from "../routing/DistanceLabels";
 import Filters from '../shared/Filters.js';
@@ -145,8 +148,6 @@ export default function DriveBCMap(props) {
   const mapLayers = useRef({}); window.mapLayers = mapLayers;
   const geolocation = useRef();
   const hoveredFeature = useRef();
-  const isInitialMountLocation = useRef();
-  const isInitialClickedFeature = useRef();
   const searchParamInitialized = useRef();
   const locationPinRef = useRef();
   const locationToPinRef = useRef();
@@ -159,6 +160,11 @@ export default function DriveBCMap(props) {
   const routingContainerRef = useRef();
   const cameraLocationButtonRef = useRef();
   const scaleLineRef = useRef();
+
+  // Initialization flags
+  const isInitialMountLocation = useRef();
+  const isInitialClickedFeature = useRef();
+  const referenceFeatureInitialized = useRef(false);
 
   // States
   const [openTabs, setOpenTabs] = useState(largeScreen && !isCamDetail);
@@ -202,19 +208,25 @@ export default function DriveBCMap(props) {
     updatePosition(feature);
   };
 
+  /* Constants for conditional rendering */
+  // Disable cam panel in details page
+  const disablePanel = isCamDetail && clickedFeature && clickedFeature.get('type') === 'camera';
+  const openPanel =
+    (!!clickedFeature ||
+      (searchedRoutes && searchedRoutes.length && !isCamDetail)
+    ) && !disablePanel;
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+
   // ScaleLine
   const scaleLineControl = new ScaleLine({ units: 'metric' });
-  const updateScaleLineClass = (open) => {
+  const updateScaleLineClass = (openTabs, openPanel) => {
     if (!scaleLineRef.current) {
       scaleLineRef.current = scaleLineControl.element;
     }
 
-    if (open) {
-      scaleLineRef.current.classList.add('tabs-pushed');
-
-    } else {
-      scaleLineRef.current.classList.remove('tabs-pushed');
-    }
+    const el = scaleLineRef.current;
+    el.classList.toggle('tabs-pushed', !!openTabs);
+    el.classList.toggle('panel-open', !!openPanel);
   }
 
   useEffect(() => {
@@ -251,23 +263,9 @@ export default function DriveBCMap(props) {
 
   const [showLocationAccessError, setShowLocationAccessError] = useState(false);
 
-  // check if geolocation permission is granted
-  if (navigator.permissions) {  // only when permissions API is supported
-    navigator.permissions.query({ name: "geolocation" }).then((permissionStatus) => {
-      permissionStatus.onchange = () => {
-        if(permissionStatus.state === 'denied') {
-          setShowLocationAccessError(true);
-        }
-        else {
-          setShowLocationAccessError(false);
-        }
-      };
-    });
-  }
-
   const loadMyLocation = () => {
     if (!locationSet.current) {
-      setMyLocationLoading(true)
+      setMyLocationLoading(true);
     } else {
       dispatch(updateSearchLocationFromWithMyLocation([locationSet.current]));
     }
@@ -275,7 +273,7 @@ export default function DriveBCMap(props) {
 
   useEffect(() => {
     if(myLocationLoading) {
-      toggleMyLocation(mapRef, mapView, setMyLocationLoading, setMyLocation);
+      toggleMyLocation(mapRef, mapView, setMyLocationLoading, setMyLocation, setShowLocationAccessError);
     }
   }, [myLocationLoading])
 
@@ -289,12 +287,19 @@ export default function DriveBCMap(props) {
   /* useEffect hooks */
   /* Push ScaleLine to the left when tabs are open */
   useEffect(() => {
-    updateScaleLineClass(openTabs);
-  }, [openTabs]);
+    updateScaleLineClass(openTabs, openPanel);
+  }, [openTabs, openPanel]);
 
   /* initialization for OpenLayers map */
   useEffect(() => {
     if (mapRef.current) return; // stops map from initializing more than once
+
+    // check if geolocation permission is granted
+    if (!isCamDetail && navigator.permissions) {  // only when permissions API is supported
+      navigator.permissions.query({ name: "geolocation" }).then((permissionStatus) => {
+        setShowLocationAccessError(permissionStatus.state === 'denied');
+      });
+    }
 
     // Enable referenced layer
     enableReferencedLayer(referenceData, mapContext);
@@ -373,7 +378,6 @@ export default function DriveBCMap(props) {
           layers: glStyle.layers.filter((layer) => (
             layer.id.startsWith('TRANSPORTATION/DRA/Hwy Symbols') ||
             layer.id.startsWith('TRANSPORTATION/DRA/Road Names')
-
           )),
         };
 
@@ -403,6 +407,12 @@ export default function DriveBCMap(props) {
       const [lon, lat] = toLonLat(mapView.current.getCenter());
 
       const params = new URLSearchParams(window.location.search);
+
+      // Zoom/resolution changed, update overlapping event positions
+      if (params.get('zoom') != mapView.current.getZoom()) {
+        updateOverlappingPositions(mapLayers, mapContext, mapView);
+      }
+
       params.set("pan", lon + ',' + lat);
       params.set("zoom", mapView.current.getZoom());
       navigate(`${location.pathname}?${params.toString()}`, { replace: true });
@@ -515,12 +525,14 @@ export default function DriveBCMap(props) {
 
   /* Triggering handlers based on navigation data */
   useEffect(() => {
-    if (referenceFeature) {
+    if (referenceFeature && !referenceFeatureInitialized.current) {
       pointerClickHandler(
         [referenceFeature], clickedFeatureRef, updateClickedFeature,
         mapView, isCamDetail, loadCamDetails, updateReferenceFeature,
         updateRouteDisplay, mapContext
       );
+
+      referenceFeatureInitialized.current = true;
     }
   }, [referenceFeature]);
 
@@ -577,9 +589,9 @@ export default function DriveBCMap(props) {
     // Do nothing if list empty
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
-      const clonedCameras = structuredClone(cameras);
+      const clonedCameras = typeof structuredClone === 'function' ? structuredClone(cameras) : cloneDeep(cameras);
       const groupedCameras = addCameraGroups(clonedCameras);
-      const clonedFilteredCameras = structuredClone(filteredCameras);
+      const clonedFilteredCameras = typeof structuredClone === 'function' ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
       const groupedFilteredCameras = addCameraGroups(clonedFilteredCameras);
 
       loadLayer(
@@ -607,7 +619,7 @@ export default function DriveBCMap(props) {
     // Count filtered events to store in routeDetails
     if (filteredEvents) {
       // Toggle features visibility
-      const featuresDict = updateEventsLayers(filteredEvents, mapLayers, setLoadingLayers, referenceData);
+      const featuresDict = updateEventsLayers(mapContext, filteredEvents, mapLayers, setLoadingLayers, referenceData, mapView);
       setFeatureContext({...featureContext, events: featuresDict});
 
       const eventCounts = {
@@ -619,9 +631,15 @@ export default function DriveBCMap(props) {
       }
       filteredEvents.forEach(event => {
         const eventType = event.display_category;
-        if (eventType && Object.hasOwn(routeDetails, eventType)) {
-          eventCounts[eventType] += 1;
-          setRouteDetails({ ...routeDetails, ...eventCounts});
+        if (eventType) {
+          const hasOwn = Object.hasOwn ?
+            Object.hasOwn(routeDetails, eventType) :
+            routeDetails.hasOwnProperty(eventType);
+
+          if (hasOwn) {
+            eventCounts[eventType] += 1;
+            setRouteDetails({ ...routeDetails, ...eventCounts});
+          }
         }
       });
     }
@@ -691,13 +709,11 @@ export default function DriveBCMap(props) {
 
   // Border crossings layer
   useEffect(() => {
-    if (!isCamDetail) {
-      loadLayer(
-        mapLayers, mapRef, mapContext,
-        'borderCrossings', borderCrossings, filteredBorderCrossings, 71,
-        referenceData, updateReferenceFeature, setLoadingLayers
-      );
-    }
+    loadLayer(
+      mapLayers, mapRef, mapContext,
+      'borderCrossings', borderCrossings, filteredBorderCrossings, 71,
+      referenceData, updateReferenceFeature, setLoadingLayers
+    );
   }, [borderCrossings]);
 
   // Wildfires layer
@@ -732,15 +748,6 @@ export default function DriveBCMap(props) {
       mapRef.current.on('moveend', (e) => onMoveEnd(e.map, advisoriesData, setAdvisoriesInView));
     }
   }, [filteredAdvisories]);
-
-  /* Constants for conditional rendering */
-  // Disable cam panel in details page
-  const disablePanel = isCamDetail && clickedFeature && clickedFeature.get('type') === 'camera';
-  const openPanel =
-    (!!clickedFeature ||
-      (searchedRoutes && searchedRoutes.length && !isCamDetail)
-    ) && !disablePanel;
-  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
 
   // Reset search params when panel is closed
   useEffect(() => {
@@ -781,7 +788,7 @@ export default function DriveBCMap(props) {
       {searchedRoutes &&
         <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} isCamDetail={isCamDetail} />
       }
-   
+
       <div
         ref={panel}
         className={`side-panel ${openPanel ? 'open' : ''} ${selectedRoute ? 'has-route' : ''}`}>
@@ -794,7 +801,7 @@ export default function DriveBCMap(props) {
             onClick={() => resizePanel(panel, clickedFeature, setMaximizedPanel)}
             onTouchMove={() => resizePanel(panel, clickedFeature, setMaximizedPanel)}
             onKeyDown={keyEvent => {
-              if (keyEvent.keyCode == 13) {
+              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                 resizePanel(panel, clickedFeature);
               }
             }}>
@@ -825,7 +832,7 @@ export default function DriveBCMap(props) {
             className="btn-outline-primary back-to-details"
             aria-label={`back to route details`}
             tabIndex={`${openPanel ? 0 : -1}`}
-            onKeyPress={(e) => {
+            onKeyDown={(e) => {
               e.stopPropagation();
               togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
                 myLocationRef, routingContainerRef
@@ -858,7 +865,7 @@ export default function DriveBCMap(props) {
           )}
         </div>
       </div>
-      
+
       <div ref={mapElement} className="map">
         {!smallScreen && (
           <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'} ${isCamDetail && 'hidden'}`}>
@@ -874,7 +881,7 @@ export default function DriveBCMap(props) {
           </div>
         )}
 
-        {(!isCamDetail && smallScreen && !maximizedPanel && mapRef.current) && (
+        {(!isCamDetail && smallScreen && !maximizedPanel && mapRef.current && !openPanel) && (
           <React.Fragment>
             <Button
               ref={myLocationRef}
@@ -990,7 +997,7 @@ export default function DriveBCMap(props) {
       )}
 
       {showLocationAccessError &&
-        <LocationAccessPopup marginPushed={!!openPanel} />
+        <LocationAccessPopup marginPushed={!!openPanel} setShowLocationAccessError={setShowLocationAccessError} />
       }
 
       {showNetworkError &&

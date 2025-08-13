@@ -27,8 +27,7 @@ export function getHefLayer(
       return;
     }
 
-    // Offset ~500m East to prevent overlapping with other features
-    const lng = forecast.location.coordinates[0] + 0.0044;
+    const lng = forecast.location.coordinates[0];
     const lat = forecast.location.coordinates[1];
     const olGeometry = new Point([lng, lat]);
     const olFeature = new ol.Feature({ geometry: olGeometry, type: 'hef' });

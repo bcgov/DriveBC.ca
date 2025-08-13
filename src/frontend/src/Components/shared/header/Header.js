@@ -2,7 +2,7 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
 // Navigation
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -20,6 +20,7 @@ import Navbar from 'react-bootstrap/Navbar';
 
 // Internal imports
 import { CMSContext } from '../../../App';
+import { filterAdvisoryByRoute } from "../../map/helpers";
 import { getAdvisories } from '../../data/advisories.js';
 import { getBulletins } from '../../data/bulletins.js';
 import UserNavigation from "./UserNavigation";
@@ -30,7 +31,6 @@ import logo from '../../..//images/dbc-header-logo.svg';
 
 // Styling
 import './Header.scss';
-import { filterAdvisoryByRoute } from "../../map/helpers";
 
 export default function Header() {
   /* Setup */
@@ -53,12 +53,8 @@ export default function Header() {
     routes: state.routes
   }))));
 
-  // Navigation
-  const _navigate = useNavigate();
-
   // Context
   const { cmsContext } = useContext(CMSContext);
-  // const { setHeaderHeightContext } = useContext(HeaderHeightContext);
 
   // States
   const [advisoriesCount, setAdvisoriesCount] = useState();
@@ -107,48 +103,11 @@ export default function Header() {
     loadBulletins();
   }, [cmsContext]);
 
-  // useEffect(() => {
-  //   if (openSearch) {
-  //     setHeaderHeightContext(smallScreen ? document.querySelector('.location-search').offsetHeight : 58);
-  //   }
-  //   else {
-  //     setHeaderHeightContext(smallScreen ? document.querySelector('.header').offsetHeight : 58);
-  //   }
-  // }, [openSearch, selectedRoute, showSearch]);
-
   useEffect(() => {
     if (searchLocationFrom.length && searchLocationTo.length) {
       setOpenSearch(false);
     }
   }, [selectedRoute]);
-
-  /* Track state of navbar-collapse */
-  useEffect(() => {
-    const navbarToggler = document.querySelector('.header-left .navbar-toggler');
-
-    const updateState = () => {
-      if (navbarToggler) {
-        const isCollapsed = navbarToggler.classList.contains('collapsed');
-        setIsNavbarCollapsed(isCollapsed);
-      }
-    };
-
-    if (navbarToggler) {
-      navbarToggler.addEventListener('click', () => {
-        // Let Bootstrap toggle classes first, then check the state
-        setTimeout(updateState, 0);
-      });
-    }
-
-    // Initial state check in case it's already rendered
-    updateState();
-
-    return () => {
-      if (navbarToggler) {
-        navbarToggler.removeEventListener('click', updateState);
-      }
-    };
-  }, []);
 
   /* Helpers */
   const getUnreadAdvisoriesCount = (advisoriesData) => {
@@ -204,7 +163,12 @@ export default function Header() {
   // Main component
   return (
     <header>
-      <Navbar expand="xl" expanded={expanded}>
+      <Navbar
+        expand="xl"
+        expanded={expanded}
+        onToggle={(visible) => setIsNavbarCollapsed(!visible)}
+        onSelect={() => setIsNavbarCollapsed(true)}>
+
         <Container>
           <div className='header'>
             <div className='header-left'>
@@ -225,7 +189,7 @@ export default function Header() {
               }
             </div>
 
-            {smallScreen && showSearch && !openSearch && !selectedRoute &&
+            {smallScreen && showSearch && !selectedRoute &&
               <button
                 className="search-trigger btn"
                 aria-label="search location"
@@ -331,8 +295,8 @@ export default function Header() {
                 className="btn btn-outline-primary header-right__btn" id="whatsnew-btn" alt="Legacy DriveBC"
                 tabIndex={0}
                 onClick={legacyDBCHandler}
-                onKeyPress={(keyEvent) => {
-                  if (keyEvent.charCode == 13 || keyEvent.charCode == 32) {
+                onKeyDown={(keyEvent) => {
+                  if (['Enter', 'NumpadEnter', 'Space'].includes(keyEvent.key)) {
                     legacyDBCHandler();
                   }
                 }}>

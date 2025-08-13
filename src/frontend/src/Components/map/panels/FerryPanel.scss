@@ -62,7 +62,7 @@
           text-align: left;
         }
         + p a {
-          position: relative; 
+          position: relative;
 
           &:hover {
             color: $Blue80;
@@ -80,7 +80,7 @@
         }
       }
 
-      
+
       .ferries__footnote {
         font-size: 0.75rem;
       }
@@ -99,9 +99,10 @@
           display: flex;
           flex-direction: row;
 
-          p {
+          p, a {
             margin: 0.25rem 0;
             width: 100%;
+            font-size: 0.875rem;
 
             svg {
               margin-right: 0.75rem;

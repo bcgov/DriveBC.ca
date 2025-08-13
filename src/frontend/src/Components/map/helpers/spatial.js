@@ -1,3 +1,6 @@
+// External imports
+import cloneDeep from 'lodash/cloneDeep';
+
 // Map & geospatial imports
 import { LineString, Point, Polygon } from "ol/geom";
 import * as turf from '@turf/turf';
@@ -7,7 +10,7 @@ import GeoJSON from 'ol/format/GeoJSON';
 // Route filtering and ordering
 export const populateRouteProjection = (data, route) => {
   // Deep copy to avoid direct state mutation
-  const copiedData = structuredClone(data);
+  const copiedData = typeof structuredClone === 'function' ? structuredClone(data) : cloneDeep(data);
 
   // Reference route start point/ls
   const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];
@@ -23,7 +26,7 @@ export const populateRouteProjection = (data, route) => {
 
   // Calculate and store distance along reference line
   copiedData.forEach((item, i) => {
-    const coords = getMidPoint(item.location ? item.location : item.geometry);
+    const coords = getMidPoint(null, item.location ? item.location : item.geometry);
 
     // Find the closest point on the route using the spatial index
     const closestCoords = spatialIndex.neighbors(coords[0], coords[1], 1).map(idx => lineCoords[idx])[0];
@@ -157,14 +160,44 @@ export const compareRouteDistance = (route1, route2) => {
   return true;
 }
 
-export const getMidPoint = (location) => {
+// Offset coordinates for overlapping points
+export function offsetCoordinates(coords, index, overlaps, resolution) {
+  // scale offset distance so it increases as you zoom out
+  const baseDistance = 0.066; // 100 meters at default resolution
+  const scale = Math.pow(resolution / 4.77, 0.8);  // scale distance with falloff based on minimum resolution at max zoom 4.77
+  const distance = baseDistance * scale;
+
+  // spread points evenly around a circle
+  const angle = 360 / overlaps;
+  const bearing = angle * index;
+
+  // Return new offset coordinates
+  const point = turf.point(coords);
+  const destination = turf.destination(point, distance, bearing, { units: 'kilometers' });
+  return destination.geometry.coordinates;
+}
+
+// Save point events in mapContext with coordinates as key
+export const savePointFeature = (mapContext, event, feature) => {
+  const locationIndex = event.location.coordinates[0].toFixed(4) + ',' + event.location.coordinates[1].toFixed(4);
+  feature.set('locationIndex', locationIndex);
+
+  if (locationIndex in mapContext.events) {
+    mapContext.events[locationIndex].push(event.id);
+
+  } else {
+    // point does not exist, return original coordinates
+    mapContext.events[locationIndex] = [event.id];
+  }
+}
+
+export const getMidPoint = (mapContext, location) => {
   // Return point coords if location is a point
   if (location.type === "Point") {
     return location.coordinates;
-  }
 
   // Return midpoint for lines
-  else if (location.type === "LineString") {
+  } else if (location.type === "LineString") {
     // Create turf ls from location coordinates
     const line = turf.lineString(location.coordinates);
 

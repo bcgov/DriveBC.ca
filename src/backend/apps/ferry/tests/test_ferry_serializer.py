@@ -73,7 +73,8 @@ class TestFerrySerializer(BaseTest):
         self.serializer = FerryRouteSerializer(self.ferry)
 
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 21  # vessel field + 20 non-vessel fields
+        # 2025/07/24 added ferry type
+        assert len(self.serializer.data) == 22  # vessel field + 21 non-vessel fields
         assert self.serializer.data["route_name"] == "Adam\'s Lake Cable Ferry"
         assert self.serializer.data["contact_phone"] == "2502652105"  # number in string
         assert self.serializer.data["webcam_url_3"] == "https://images.drivebc.ca/bchighwaycams/cameras/1094.jpg"

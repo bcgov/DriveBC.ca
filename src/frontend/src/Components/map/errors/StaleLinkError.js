@@ -13,7 +13,7 @@ import staleLogo from '../../../images/status-stale.svg';
 export default function StaleLinkErrorPopup(props) {
   // Props
   const { marginPushed } = props;
-  
+
   const [visible, setVisible] = useState(true);
 
   // Rendering
@@ -31,8 +31,8 @@ export default function StaleLinkErrorPopup(props) {
               setVisible(false);
             }}
             onKeyDown={(keyEvent) => {
-              if (keyEvent.keyCode === 13) {
-                event.stopPropagation();
+              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                keyEvent.stopPropagation();
                 setVisible(false);
               }
             }}>

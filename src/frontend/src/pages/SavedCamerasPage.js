@@ -10,6 +10,8 @@ import { memoize } from 'proxy-memoize';
 import Container from 'react-bootstrap/Container';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
+import cloneDeep from 'lodash/cloneDeep';
+import Skeleton from "react-loading-skeleton";
 
 // Internal imports
 import { AuthContext } from '../App';
@@ -45,6 +47,7 @@ export default function SavedCamerasPage() {
   const [processedCameras, setProcessedCameras] = useState(null);
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
+  const [onscreenCameras, setOnscreenCameras] = useState([]);
 
   // Effects
   useEffect(() => {
@@ -103,7 +106,7 @@ export default function SavedCamerasPage() {
     // Filter cameras by user's saved cameras
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
-      const clonedCameras = structuredClone(filteredCameras);
+      const clonedCameras = typeof structuredClone === 'function' ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
       const finalCameras = addCameraGroups(clonedCameras, favCams);
 
       // Sort cameras by highway number and route_order
@@ -150,9 +153,21 @@ export default function SavedCamerasPage() {
 
       {authContext.loginStateKnown && authContext.username &&
         <Container>
-          <CameraList cameras={ processedCameras ? processedCameras : [] } />
+          <CameraList
+            cameras={ processedCameras ? processedCameras : [] }
+            onscreenCameras={onscreenCameras}
+            setOnscreenCameras={setOnscreenCameras} />
 
-          {!(processedCameras && processedCameras.length) &&
+          {!processedCameras &&
+            <div>
+              <Skeleton width={400} height={200} />
+              <Skeleton width={400} height={30} />
+              <Skeleton width={400} height={30} />
+              <Skeleton width={400} height={30} />
+            </div>
+          }
+
+          {processedCameras && !processedCameras.length &&
             <div className="empty-cam-display">
               <h3>No saved cameras</h3>
 

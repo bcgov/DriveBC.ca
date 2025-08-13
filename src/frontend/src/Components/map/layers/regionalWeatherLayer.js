@@ -19,14 +19,13 @@ export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext,
       return;
     }
 
-    // Offset ~500m East to prevent overlapping with other features
-    const lng = weather.location.coordinates[0] + 0.0044;
+    const lng = weather.location.coordinates[0];
     const lat = weather.location.coordinates[1];
     const olGeometry = new Point([lng, lat]);
     const olFeature = new ol.Feature({ geometry: olGeometry, type: 'regionalWeather' });
 
     // Transfer properties
-    olFeature.setProperties(weather)
+    olFeature.setProperties(weather);
 
     // Transform the projection
     const olFeatureForMap = transformFeature(
@@ -63,10 +62,10 @@ export function updateRegionalWeatherLayer(weathers, layer, setLoadingLayers) {
   }, {});
 
   for (const weatherFeature of layer.getSource().getFeatures()) {
-    if(!weatherFeature.getProperties()['clicked']){
+    if (!weatherFeature.getProperties()['clicked']) {
       if (weathersDict[weatherFeature.getId()]) {
         const warnings = weatherFeature.get('warnings');
-        const weatherStyle = (warnings && warnings.length) ? regionalWarningStyles['static'] : regionalStyles['static'];
+        const weatherStyle = warnings ? regionalWarningStyles['static'] : regionalStyles['static'];
         weatherFeature.setStyle(weatherStyle);
 
       } else {

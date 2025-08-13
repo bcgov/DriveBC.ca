@@ -1,3 +1,5 @@
+/* eslint-disable no-prototype-builtins */
+
 import { get } from "./helper.js";
 
 export function getEventDetails(id) {
@@ -17,13 +19,20 @@ export const getEventCounts = (events) => {
       majorEvents: 0,
       minorEvents: 0,
       roadConditions: 0,
+      futureEvents: 0,
       chainUps: 0,
     }
 
     events.forEach(e => {
       const eventType = e.display_category;
       if (eventType && Object.hasOwn(eventCounts, eventType)) {
-        eventCounts[eventType] += 1;
+        const hasOwn = Object.hasOwn ?
+          Object.hasOwn(eventCounts, eventType) :
+          eventCounts.hasOwnProperty(eventType);
+
+        if (hasOwn) {
+          eventCounts[eventType] += 1;
+        }
       }
     });
 

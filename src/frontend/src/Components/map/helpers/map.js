@@ -80,7 +80,7 @@ export const zoomOut = (mapView) => {
   setZoomPan(mapView, mapView.current.getZoom() - 1);
 }
 
-export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading, setMyLocation) => {
+export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading, setMyLocation, setShowLocationAccessError) => {
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(
       position => {
@@ -123,10 +123,11 @@ export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading, setMyLoc
         }
       },
       error => {
+        // The user has blocked location access
         if (error.code === error.PERMISSION_DENIED) {
-          // The user has blocked location access
-          console.error('Location access denied by user.', error);
+          setShowLocationAccessError(true);
           setMyLocationLoading(false);
+
         } else {
           // Zoom out and center to BC if location not available
           setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));

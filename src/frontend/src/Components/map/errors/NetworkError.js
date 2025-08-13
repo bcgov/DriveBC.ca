@@ -27,8 +27,8 @@ export default function NetworkErrorPopup(props) {
               setVisible(false);
             }}
             onKeyDown={(keyEvent) => {
-              if (keyEvent.keyCode == 13) {
-                event.stopPropagation();
+              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                keyEvent.stopPropagation();
                 setVisible(false);
               }
             }}>

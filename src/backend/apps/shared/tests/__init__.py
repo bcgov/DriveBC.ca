@@ -25,7 +25,8 @@ class MockResponse:
         return mock
 
     def raise_for_status(self):
-        raise HTTPStatusError('', request=None, response=self)
+        if self.status_code != 200:
+            raise HTTPStatusError('', request=None, response=self)
 
 
 class BaseTest(TestCase):

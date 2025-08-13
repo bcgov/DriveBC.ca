@@ -112,7 +112,7 @@ export default function HighwayFilter(props) {
                 setFilterContext({...filterContext, highwayFilterKey: null});
                 handleHwyFiltersClose();
               }}
-              onKeyPress={() => {
+              onKeyDown={() => {
                 setFilterContext({...filterContext, highwayFilterKey: null});
                 handleHwyFiltersClose();
               }}>
@@ -133,7 +133,7 @@ export default function HighwayFilter(props) {
                 setFilterContext({...filterContext, highwayFilterKey: highwayObj.key});
                 handleHwyFiltersClose();
               }}
-              onKeyPress={() => {
+              onKeyDown={() => {
                 setFilterContext({...filterContext, highwayFilterKey: highwayObj.key});
                 handleHwyFiltersClose();
               }}>

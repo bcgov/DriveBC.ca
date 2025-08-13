@@ -234,7 +234,7 @@ export default function CamPanel(props) {
               className="name"
               onClick={handlePopupClick}
               onKeyDown={keyEvent => {
-                if (keyEvent.keyCode == 13) {
+                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                   handlePopupClick();
                 }
               }}
@@ -247,7 +247,7 @@ export default function CamPanel(props) {
             <div className="popup__content__image"
               onClick={handlePopupClick}
               onKeyDown={keyEvent => {
-                if (keyEvent.keyCode == 13) {
+                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                   handlePopupClick();
                 }
               }}
@@ -264,7 +264,7 @@ export default function CamPanel(props) {
                     <div className={'card-pill' + (show ? ' bounce' : ' hidden')}
                       onClick={handleChildClick}
                       onKeyDown={keyEvent => {
-                        if (keyEvent.keyCode === 13) {
+                        if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                           handleChildClick();
                         }
                       }}>
@@ -291,7 +291,7 @@ export default function CamPanel(props) {
                       className={'card-pill' + (show ? ' bounce' : ' hidden')}
                       onClick={handleChildClick}
                       onKeyDown={keyEvent => {
-                        if (keyEvent.keyCode === 13) {
+                        if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                           handleChildClick();
                         }
                       }}
@@ -320,7 +320,7 @@ export default function CamPanel(props) {
               className="popup__content__image"
               onClick={handlePopupClick}
               onKeyDown={keyEvent => {
-                if (keyEvent.keyCode == 13) {
+                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                   handlePopupClick();
                 }
               }} tabIndex={0}>
@@ -374,7 +374,7 @@ export default function CamPanel(props) {
               className="view-details"
               onClick={handlePopupClick}
               onKeyDown={keyEvent => {
-                if (keyEvent.keyCode == 13) {
+                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                   handlePopupClick();
                 }
               }}

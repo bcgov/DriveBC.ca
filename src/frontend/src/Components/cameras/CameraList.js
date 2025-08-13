@@ -1,10 +1,11 @@
 // React
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
+
 // Third party packages
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
-import { CamsContext, FilterContext } from '../../App.js';
+import { CamsContext } from '../../App.js';
 import HighwayGroup from './HighwayGroup.js';
 
 // Styling
@@ -12,45 +13,29 @@ import './CameraList.scss';
 
 export default function CameraList(props) {
   // Props
-  const { cameras, showLoader, enableExtraFilters } = props;
+  const { cameras, onscreenCameras, setOnscreenCameras, showLoader } = props;
 
   // Contexts
   const { camsContext } = useContext(CamsContext);
-  const { filterContext } = useContext(FilterContext);
-
-  // UseState hooks
-  const [displayedCameras, setDisplayedCameras] = useState([]);
 
   // UseEffect hooks and data functions
   const getDisplayedCameras = (length) => {
-    // check for currently selected Highway from highway filter and process
-    let filteredCameras = cameras;
-    if (enableExtraFilters) {
-      if (filterContext.highwayFilterKey) {
-        filteredCameras = cameras.filter((camera) => (camera.highway_display === filterContext.highwayFilterKey));
-      }
-
-      if (filterContext.areaFilter) {
-        filteredCameras = filteredCameras.filter((camera) => (camera.area === filterContext.areaFilter.id));
-      }
-    }
-
     if (!length) { camsContext.displayLength += 4; }
-    const shown = filteredCameras.slice(0, length ? length : camsContext.displayLength);
-    setDisplayedCameras(shown);
+    const shown = cameras.slice(0, length ? length : camsContext.displayLength);
+    setOnscreenCameras(shown);
   };
 
   useEffect(() => {
-    if (cameras) { // Do nothing until cameras are processed
+    if (cameras && cameras.length > 0) { // Do nothing until cameras are processed
       getDisplayedCameras(camsContext.displayLength);
     }
-  }, [cameras, filterContext.highwayFilterKey, filterContext.areaFilter]);
+  }, [cameras]);
 
   // Rendering
   const groupDisplayedCameras = () => {
     // Group adjacent cams on the same road into  arrays
     const groups = [];
-    displayedCameras.forEach((cam) => {
+    onscreenCameras.forEach((cam) => {
       const highway = cam.highway_display;
       if (groups.length == 0 || groups[groups.length - 1]['highway'] !== highway) {
         groups.push({
@@ -77,15 +62,16 @@ export default function CameraList(props) {
   }
 
   const getHasMore = () => {
-    return displayedCameras.length < (cameras ? cameras.length : 0);
+    return onscreenCameras.length < (cameras ? cameras.length : 0);
   }
 
-  return (
+  return cameras && cameras.length > 0 && (
     <div className="camera-list">
       <InfiniteScroll
         dataLength={camsContext.displayLength}
         next={getDisplayedCameras}
-        hasMore={getHasMore}>
+        hasMore={getHasMore}
+        scrollableTarget="main">
 
         {renderHighways()}
       </InfiniteScroll>

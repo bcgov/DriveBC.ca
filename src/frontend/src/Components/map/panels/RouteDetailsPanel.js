@@ -1,5 +1,5 @@
 // React
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 // Redux
 import { useSelector } from 'react-redux';
@@ -24,10 +24,56 @@ export default function RouteDetailsPanel(props) {
   const { clickedFeatureRef, updateClickedFeature, showRouteObjs, setShowRouteObjs } = props;
 
   // Redux
-  const { searchedRoutes, selectedRoute } = useSelector(useCallback(memoize(state => ({
-    searchedRoutes: state.routes.searchedRoutes,
-    selectedRoute: state.routes.selectedRoute
-  }))));
+  const {
+    feeds: {
+      events: { filteredList: filteredEvents },
+      ferries: { filteredList: filteredFerries },
+    },
+    advisories: { filteredList: filteredAdvisories },
+    routes: { selectedRoute, searchedRoutes },
+
+  } = useSelector(
+    useCallback(
+      memoize(state => ({
+        feeds: {
+          events: state.feeds.events,
+          ferries: state.feeds.ferries,
+        },
+        advisories: state.cms.advisories,
+        routes: state.routes,
+      })),
+    ),
+  );
+
+  // States
+  const [routeSwitched, setRouteSwitched] = useState(false);
+  const [pendingAdvisories, setPendingAdvisories] = useState(false);
+  const [pendingEvents, setPendingEvents] = useState(false);
+  const [pendingFerries, setPendingFerries] = useState(false);
+
+  // Effects
+  // Mark data as not updating when they finish filtering
+  useEffect(() => {
+    setPendingAdvisories(true);
+  }, [filteredAdvisories]);
+
+  useEffect(() => {
+    setPendingEvents(true);
+  }, [filteredEvents]);
+
+  useEffect(() => {
+    setPendingFerries(true);
+  }, [filteredFerries]);
+
+  // When all data is filtered, rank the object list again
+  useEffect(() => {
+    if (pendingAdvisories && pendingEvents && pendingFerries) {
+      setPendingAdvisories(false);
+      setPendingEvents(false);
+      setPendingFerries(false);
+      setRouteSwitched(false);
+    }
+  }, [pendingAdvisories, pendingEvents, pendingFerries]);
 
   /* Rendering */
   // Sub components
@@ -41,11 +87,21 @@ export default function RouteDetailsPanel(props) {
 
       <div className="popup__content">
         {largeScreen && searchedRoutes.map((route, index) => (
-          <RouteDetails route={route} isPanel={true} key={index} setShowRouteObjs={setShowRouteObjs} />
+          <RouteDetails
+            key={index}
+            route={route}
+            isPanel={true}
+            setShowRouteObjs={setShowRouteObjs}
+            setRouteSwitched={setRouteSwitched} />
         ))}
 
         {(!largeScreen && selectedRoute) &&
-          <RouteDetails route={selectedRoute} isPanel={true} onMobile={true} setShowRouteObjs={setShowRouteObjs} />
+          <RouteDetails
+            route={selectedRoute}
+            isPanel={true}
+            onMobile={true}
+            setShowRouteObjs={setShowRouteObjs}
+            setRouteSwitched={setRouteSwitched} />
         }
       </div>
     </div>
@@ -61,6 +117,7 @@ export default function RouteDetailsPanel(props) {
 
       <div className="popup__content route-object-list">
         <RouteObjectList
+          routeSwitched={routeSwitched}
           setShowRouteObjs={setShowRouteObjs}
           clickedFeatureRef={clickedFeatureRef}
           updateClickedFeature={updateClickedFeature} />

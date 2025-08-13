@@ -360,7 +360,9 @@ class FeedClient:
                             logger.error(f"Issued UTC sent by {area_code} as {issued}")
                             issued = None
 
-                    source = data.get('ForecastGroup', {}).get('Forecasts', [])
+                    forecast_group = data.get('ForecastGroup', {}) or {}
+                    source = forecast_group.get('Forecasts', []) or []
+
                     forecasts = []
                     for forecast in source:
                         period = forecast.get('Period', {})

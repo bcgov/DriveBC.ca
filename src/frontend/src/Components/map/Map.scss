@@ -71,13 +71,19 @@
       flex-direction: column;
       position: relative;
       z-index: 10;
-      transform: translateX(0%);
-      transform: translateY(100%);
-      transition: all 0.25s ease-in-out;
+
+      &:not(.has-route) {
+        transform: translateX(0%);
+        transform: translateY(100%);
+        transition: all 0.25s ease-in-out;
+
+        @media (min-width: 767px) {
+          transform: translateX(-100%);
+        }
+      }
 
       @media (min-width: 767px) {
         height: 100%;
-        transform: translateX(-100%);
         order: 1;
         width: 390px;
       }
@@ -92,9 +98,12 @@
 
       &.open {
         height: 100%;
-        transform: translateX(0%);
-        transform: translateY(0%);
-        transition: all 0.25s ease-in-out;
+
+        &:not(.has-route) {
+          transform: translateX(0%);
+          transform: translateY(0%);
+          transition: all 0.25s ease-in-out;
+        }
 
         @media (max-width: 767px) {
           width: 100%;
@@ -183,6 +192,10 @@
 
         @media (min-width: 992px) {
           right: 4rem;
+          bottom: 1rem;
+        }
+
+        &.panel-open {
           bottom: 1rem;
         }
       }

@@ -15,6 +15,13 @@ body {
     overflow: hidden;
 }
 
+html,
+body,
+#root,
+.App {
+  height: 100%;
+}
+
 .divider {
   padding-bottom: 2em;
   margin-bottom: 1.5em;
@@ -61,18 +68,23 @@ body {
     .responsive-object {
       position: static;
       padding-bottom: 2rem !important;
-    }
 
-    .responsive-object iframe,
-    .responsive-object img,
-    .responsive-object object,
-    .responsive-object embed {
-      position: static;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      iframe, img, object, embed {
+        position: static;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+
+        @media screen and (min-width: 768px) {
+          width: 60%;
+        }
+      }
     }
 
     img {
@@ -325,7 +337,6 @@ a[target="_blank"] {
     }
   }
 
-  height: 100vh;
   display: flex;
   flex-direction: column;
 
@@ -404,6 +415,13 @@ a[target="_blank"] {
   }
 
   &.filters-overlay {
+    display: flex;
+    flex-direction: column;
+
+    .filters-component {
+      overflow-y: auto;
+    }
+
     &.open {
       height: 100%;
       .overlay__header {
