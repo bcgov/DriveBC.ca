@@ -66,12 +66,12 @@ def populate_all_ferry_data():
 def populate_coastal_ferry_data(test_data=None):
     accepted_files = ['routes.txt', 'stops.txt', 'trips.txt', 'stop_times.txt', 'calendar.txt']
 
-    url = settings.DRIVEBC_COSTAL_FERRY_DATA_URL
-    response = requests.get(url)
-    response.raise_for_status()
-
     csv_data = test_data or {}
     if not test_data:
+        url = settings.DRIVEBC_COSTAL_FERRY_DATA_URL
+        response = requests.get(url)
+        response.raise_for_status()
+
         with tempfile.TemporaryDirectory() as tmpdir:
             zip_path = os.path.join(tmpdir, "bcferries.zip")
             with open(zip_path, "wb") as f:
