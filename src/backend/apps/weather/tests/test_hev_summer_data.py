@@ -16,7 +16,7 @@ class TestHEVSummerData(BaseTest):
             str(Path(__file__).parent) +
             "/test_data/hev_summer_area_list.json"
         )
-        self.hev_area_list = json.load(hev_summer_area_list)
+        self.hev_summer_area_list = json.load(hev_summer_area_list)
 
         hev_summer_data = open(
             str(Path(__file__).parent) +
