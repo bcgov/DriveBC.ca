@@ -89,6 +89,7 @@ class FerryRouteSerializer(serializers.ModelSerializer):
 class CoastalFerryStopAPISerializer(serializers.ModelSerializer):
     routes = serializers.SerializerMethodField()
     display_category = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
 
     class Meta:
         model = CoastalFerryStop
@@ -103,6 +104,10 @@ class CoastalFerryStopAPISerializer(serializers.ModelSerializer):
 
     def get_display_category(self, obj):
         return 'costalFerry'
+
+    # DBC22-4614: Use name from parent_stop if available
+    def get_name(self, obj):
+        return obj.parent_stop.name if obj.parent_stop else obj.name
 
 
 class CoastalFerryStopSerializer(serializers.ModelSerializer):
