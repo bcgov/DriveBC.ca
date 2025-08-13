@@ -15,7 +15,7 @@ jobs:
     name: Scan ZAP Test Site
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.14.0
         with:
