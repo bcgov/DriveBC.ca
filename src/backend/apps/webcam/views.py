@@ -11,6 +11,10 @@ import os
 from apps.consumer.models import ImageIndex
 from apps.shared.status import get_image_list
 
+import boto3
+from botocore.config import Config
+from django.shortcuts import redirect
+
 import requests
 
 IMAGE_CACHE_DIR = os.getenv("IMAGE_CACHE_DIR", "/app/data/webcams/cache")
@@ -73,17 +77,57 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
 
         # Fetch from S3
         s3_url = f"{S3_BASE_URL}/{pk}/{filename}.jpg"
-        resp = requests.get(s3_url, stream=True)
 
-        if resp.status_code != 200:
-            raise Http404("Image not found in S3.")
+        # Environment variables
+        S3_BUCKET = os.getenv("S3_BUCKET")
+        S3_REGION = os.getenv("S3_REGION", "us-east-1")
+        S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
+        S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
+        S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
 
-        # Save to cache
-        with open(cache_path, "wb") as f:
-            for chunk in resp.iter_content(1024):
-                f.write(chunk)
+        config = Config(
+            signature_version='s3v4',
+            retries={'max_attempts': 10},
+            s3={
+                'payload_signing_enabled': False,
+                'checksum_validation': False,
+                'enable_checksum': False,
+                'addressing_style': 'path',
+                'use_expect_continue': False  # Disable Expect header
+            }
+        )
 
-        return FileResponse(open(cache_path, "rb"), content_type="image/jpeg")
+        s3_client = boto3.client(
+            "s3",
+            region_name=S3_REGION,
+            aws_access_key_id=S3_ACCESS_KEY,
+            aws_secret_access_key=S3_SECRET_KEY,
+            endpoint_url=S3_ENDPOINT_URL,
+            config=config
+        )
+
+        url = s3_client.generate_presigned_url(
+            ClientMethod="get_object",
+            Params={
+                "Bucket": "timelapse",
+                "Key": f"processed/{pk}/{filename}.jpg"
+            },
+            ExpiresIn=3600  # 1 hour
+        )
+ 
+        # Disable caching by using requests to stream the content, this code does not save correctly
+        # resp = requests.get(s3_url, stream=True)
+
+        # if resp.status_code != 200:
+        #     url = f"http://localhost:8000/data/webcams/cache/{pk}/{filename}.jpg"
+
+        # # Save to cache
+        # with open(cache_path, "wb") as f:
+        #     for chunk in resp.iter_content(1024):
+        #         f.write(chunk)
+        
+        return redirect(url)
+
 
 class WebcamTestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = WebcamAPI.queryset

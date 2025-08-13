@@ -9,6 +9,7 @@ from typing import Optional
 from click import wrap_text
 import logging
 import pytz
+import requests
 import boto3
 import aio_pika
 import asyncio
@@ -23,6 +24,9 @@ from asgiref.sync import sync_to_async
 from apps.webcam.models import Webcam
 from apps.consumer.models import ImageIndex
 from apps.shared.status import get_recent_timestamps, calculate_camera_status
+import base64
+
+from botocore.config import Config
 
 tf = TimezoneFinder()
 
@@ -63,14 +67,51 @@ QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME", "drivebc-image-consumer")
 QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES", "209715200"))  # default 200MB
 EXCHANGE_NAME = os.getenv("RABBITMQ_EXCHANGE_NAME", "dev.exchange.fanout.drivebc.images")
 
+
+boto3.set_stream_logger('botocore', logging.DEBUG)
+
 # S3 client
 s3_client = None
+# s3_client = boto3.client(
+#     "s3",
+#     region_name=S3_REGION,
+#     aws_access_key_id=S3_ACCESS_KEY,
+#     aws_secret_access_key=S3_SECRET_KEY,
+#     endpoint_url=S3_ENDPOINT_URL,
+#     config = Config(signature_version='s3v4', retries={'max_attempts': 10})
+# )
+
+# config = Config(
+#     signature_version='s3v4',
+#     retries={'max_attempts': 10},
+#     s3={
+#         'payload_signing_enabled': False,
+#         'checksum_validation': False,        # Disable checksum validation
+#         'enable_checksum': False,             # Disable checksum generation
+#         'addressing_style': 'path'            # If custom endpoint needs this
+#     }
+# )
+
+config = Config(
+    signature_version='s3v4',
+    retries={'max_attempts': 10},
+    s3={
+        'payload_signing_enabled': False,
+        'checksum_validation': False,
+        'enable_checksum': False,
+        'addressing_style': 'path',
+        'use_expect_continue': False  # Disable Expect header
+    },
+    # use_expect_continue=False,  # Also try this at top-level config
+)
+
 s3_client = boto3.client(
     "s3",
     region_name=S3_REGION,
     aws_access_key_id=S3_ACCESS_KEY,
     aws_secret_access_key=S3_SECRET_KEY,
-    endpoint_url=S3_ENDPOINT_URL
+    endpoint_url=S3_ENDPOINT_URL,
+    config=config
 )
 
 index_db = [] # image index loaded from DB
@@ -140,6 +181,12 @@ async def run_consumer():
 
                     try:
                         timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
+                        # # For testing purposes, only allow camera with IDs below to be processed
+                        # 658 is off
+                        # 219 MDT
+                        if camera_id != "343" and camera_id != "57" and camera_id != "658" and camera_id != "219":
+                            logger.info("Skipping processing for camera %s", camera_id)
+                            continue
                         await handle_image_message(camera_id, db_data, message.body, timestamp_local, camera_status)
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
@@ -275,7 +322,8 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
         # Return image as byte array
         buffer = io.BytesIO()
         stamped.save(buffer, format="JPEG")
-        return buffer.getvalue()
+        buffer.seek(0)
+        return buffer.read()
 
     except Exception as e:
         logger.error(f"Error processing image from camer: {e}")
@@ -301,14 +349,12 @@ def save_original_image_to_s3(camera_id: str, image_bytes: bytes):
     # Save original image to s3
     ext = "jpg"
     key = f"originals/{camera_id}.{ext}"
-    
+    original_s3_path = key
     try:
         s3_client.put_object(Bucket=S3_BUCKET, Key=key, Body=image_bytes)
+        logger.info(f"Original image saved to S3 at {key}")
     except Exception as e:
         logger.error(f"Error saving original image to S3 bucket {S3_BUCKET}: {e}")
-
-    original_s3_path = key
-    logger.info(f"Origianal image saved to S3 at {key}")
     return original_s3_path
 
 def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp: str):  
@@ -349,16 +395,17 @@ def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes):
 
 
 def save_watermarked_image_to_s3(camera_id: str, image_bytes: bytes, timestamp: str):
+    # Decode base64 to raw image bytes
+    raw_image_bytes = base64.b64decode(image_bytes)
     ext = "jpg"
     key = f"processed/{camera_id}/{timestamp}.{ext}"
-    
+    watermarked_s3_path = key
     try:
-        s3_client.put_object(Bucket=S3_BUCKET, Key=key, Body=image_bytes)
+        s3_client.put_object(Bucket=S3_BUCKET, Key=key, Body=raw_image_bytes)
+        logger.info(f"Watermarked image saved to S3 at {key}")
     except Exception as e:
         logger.error(f"Error saving processed image to S3 bucket {S3_BUCKET}: {e}")
     
-    watermarked_s3_path = key
-    logger.info(f"Watermarked image saved to S3 at {key}")
     return watermarked_s3_path
 
 async def get_images_within(camera_id: str, hours: int = 720) -> list:
@@ -403,7 +450,64 @@ def insert_image_and_update_webcam(camera_id, original_pvc_path, watermarked_pvc
     camera.https_cam = True
     camera.save()
 
+def push_to_s3(image_bytes: bytes, camera_id: str, is_original: bool, timestamp: str):
+    """
+    Pushes the image bytes to S3 using a presigned URL.
+    """
+    if image_bytes is None:
+        return
+    key = f"originals/{camera_id}.jpg" if is_original else f"processed/{camera_id}/{timestamp}.jpg"   
+    # Generate presigned PUT URL (signed for simple PUT)
+    url = s3_client.generate_presigned_url(
+        'put_object',
+        Params={'Bucket': S3_BUCKET, 'Key': key, 'ContentType': 'image/jpeg'},
+        ExpiresIn=300,
+        HttpMethod='PUT'
+    )
+
+    # Upload with requests — a single PUT with Content-Length (no aws-chunked)
+    resp = requests.put(
+        url,
+        data=image_bytes,
+        headers={
+            'Content-Type': 'image/jpeg',
+            'Content-Length': str(len(image_bytes))
+        },
+        timeout=30
+    )
+
+    print('presigned put status:', resp.status_code, resp.text)
+    if resp.status_code not in (200, 201):
+        raise RuntimeError(f'Presigned upload failed: {resp.status_code} {resp.text}')
+
 async def handle_image_message(camera_id: str, db_data: any, body: bytes, timestamp: str, camera_status: dict):
+    # # key and body already defined in your handler
+    # key = f"originals/{camera_id}.jpg"
+
+    # # generate presigned PUT URL (signed for simple PUT)
+    # url = s3_client.generate_presigned_url(
+    #     'put_object',
+    #     Params={'Bucket': S3_BUCKET, 'Key': key, 'ContentType': 'image/jpeg'},
+    #     ExpiresIn=300,
+    #     HttpMethod='PUT'
+    # )
+
+    # # upload with requests — a single PUT with Content-Length (no aws-chunked)
+    # resp = requests.put(
+    #     url,
+    #     data=body,
+    #     headers={
+    #         'Content-Type': 'image/jpeg',
+    #         'Content-Length': str(len(body))
+    #     },
+    #     timeout=30
+    # )
+
+    # print('presigned put status:', resp.status_code, resp.text)
+    # if resp.status_code not in (200, 201):
+    #     raise RuntimeError(f'Presigned upload failed: {resp.status_code} {resp.text}')
+
+
     # timestamp is in local time
     webcams = [cam for cam in db_data if cam['id'] == int(camera_id)]
     webcam = webcams[0] if webcams else None
@@ -415,7 +519,8 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     utc_dt = local_dt.astimezone(pytz.utc)
     utc_timestamp_str = utc_dt.strftime("%Y%m%d%H%M")
     original_pvc_path = save_original_image_to_pvc(camera_id, body)
-    original_s3_path = save_original_image_to_s3(camera_id, body)
+    push_to_s3(body, camera_id, True, utc_timestamp_str)
+    original_s3_path = "test.jpg"  # For testing purposes, use a dummy path
     
     image_bytes = watermark(webcam, body, tz, timestamp)
 
@@ -424,7 +529,8 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     # Save watermarked images to drivebc PVC with camera_id
     watermarked_drivebc_pvc_path = save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes)
     # Save watermarked images to S3 with timestamp
-    watermarked_s3_path = save_watermarked_image_to_s3(camera_id, image_bytes, utc_timestamp_str)
+    push_to_s3(image_bytes, camera_id, False, utc_timestamp_str)
+    watermarked_s3_path = "test.jpg"  # For testing purposes, use a dummy path
 
     # Insert record into DB
     await insert_image_and_update_webcam(
