@@ -706,12 +706,12 @@
       }
     }
 
-    //Desktop view without tabs
+    // Desktop view without tabs
     @media (min-width: 992px) {
       max-width: unset;
       margin: 0.875rem 0 0;
 
-      .nav-tabs {
+      .mobile-tabs {
         display: none;
         margin: 0 16px;
       }

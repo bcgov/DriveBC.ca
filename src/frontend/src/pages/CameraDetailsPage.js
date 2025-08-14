@@ -628,7 +628,7 @@ export default function CameraDetailsPage() {
 
                   <div className="camera-imagery">
                     <Tabs
-                      id="camera-details"
+                      className="mobile-tabs"
                       activeKey={activeTab}
                       onSelect={selectedTab => setActiveTab(selectedTab)}>
                       <Tab
