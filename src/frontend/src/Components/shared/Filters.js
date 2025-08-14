@@ -162,6 +162,7 @@ export default function Filters(props) {
     }
 
     const newMapContext = {
+      ...mapContext,
       visible_layers: {
         ...mapContext.visible_layers,
         ...layers
