@@ -10,6 +10,7 @@ x-function: &backend
   volumes:
     - ./src/backend:/app/backend
     - ./src/images/webcams:/app/images/webcams
+    - ./src/data/webcams:/app/data/webcams
 
   stdin_open: true
   tty: true
@@ -34,6 +35,11 @@ services:
     <<: *backend
     container_name: tasks
     command: /start_tasks.sh
+
+  consumer:
+    <<: *backend
+    container_name: consumer
+    command: /start_consumer.sh
 
   node:
     env_file: .env

@@ -1,8 +1,268 @@
+from datetime import datetime, time
+from urllib.parse import urlparse
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
+from django.http import FileResponse, Http404, HttpResponse, StreamingHttpResponse
+from .models import Webcam
+import os
+from apps.shared.status import get_image_list
+import boto3
+from botocore.config import Config
+from django.utils.dateparse import parse_date
+import zipstream
+from django.utils import timezone
+from django.urls import reverse
+from drf_spectacular.utils import extend_schema, extend_schema_view
 
 
-class CameraViewSet(viewsets.ReadOnlyModelViewSet):
+IMAGE_CACHE_DIR = os.getenv("IMAGE_CACHE_DIR", "/app/data/webcams/cache")
+BASE_URL = os.getenv("S3_ENDPOINT_URL", "https://moti-int.objectstore.gov.bc.ca")
+S3_BASE_URL = f"{BASE_URL.rstrip('/')}/timelapse/processed"
+S3_BUCKET = os.getenv("S3_BUCKET", "tran_api_dbc_backup_dev")
+
+
+class WebcamAPI:
     queryset = Webcam.objects.filter(should_appear=True)
     serializer_class = WebcamSerializer
+
+@extend_schema_view(
+    list=extend_schema(exclude=True),
+    retrieve=extend_schema(exclude=True),
+)
+class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
+    @action(
+            detail=True, 
+            methods=['get'], 
+            url_path='originalImage', 
+            )
+    def image_source(self, request, pk=None):
+        image_path = f"/app/images/webcams/originals/{pk}.jpg"
+        if not os.path.exists(image_path):
+            raise Http404("Image not found.")
+
+        return FileResponse(open(image_path, 'rb'), content_type='image/jpeg')
+
+    @action(
+            detail=True, 
+            methods=['get'], 
+            url_path='replayTheDay',
+            )
+    def replayTheDay(self, request, pk=None):
+        timestamps = get_image_list(pk, "REPLAY_THE_DAY_HOURS")
+        return Response(timestamps, status=status.HTTP_200_OK)
+
+    @action(
+            detail=True, 
+            methods=['get'], 
+            url_path='timelapse',
+            )
+    def timelapse(self, request, pk=None):
+        timestamps = get_image_list(pk, "TIMELAPSE_HOURS")
+        return Response(timestamps, status=status.HTTP_200_OK)
+
+    @action(
+            detail=True, 
+            methods=['get'], 
+            url_path='cameraImage',
+            )
+    def cameraImage(self, request, pk=None):
+        timestamps = get_image_list(pk, "TIMELAPSE_HOURS")
+        if isinstance(timestamps, list) and timestamps:
+            latest_image = sorted(timestamps)[-1]
+
+        response_data = {
+            "CameraImage": {
+                "camera_provider_list_cameras_endpoint": "webcams.json",
+                "camera_provider_camera_image_endpoint": f"api/webcams/{pk}/timelapse/",
+                "camera_provider_image_template": f"images/{pk}/{latest_image}",
+                "camera_provider_api_root": "http://localhost:8000/api/webcams/"
+            }
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True,
+        methods=['get'],
+        url_path=r'timelapse/(?P<filename>[0-9]{14})',
+    )
+    def cachedTimelapse(self, request, pk=None, filename=None):
+        cache_folder = os.path.join(IMAGE_CACHE_DIR, str(pk))
+        os.makedirs(cache_folder, exist_ok=True)
+
+        cache_path = os.path.join(cache_folder, f'{filename}.jpg')
+
+        # Serve from cache if exists
+        if os.path.exists(cache_path):
+            return FileResponse(open(cache_path, "rb"), content_type="image/jpeg")
+        
+        # Fetch from S3
+        s3_url = f"{S3_BASE_URL}/{pk}/{filename}.jpg"
+
+        # Environment variables
+        S3_BUCKET = os.getenv("S3_BUCKET")
+        S3_REGION = os.getenv("S3_REGION", "us-east-1")
+        S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
+        S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
+        S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
+
+        config = Config(
+            signature_version='s3v4',
+            retries={'max_attempts': 10},
+            s3={
+                'payload_signing_enabled': False,
+                'checksum_validation': False,
+                'enable_checksum': False,
+                'addressing_style': 'path',
+                'use_expect_continue': False  # Disable Expect header
+            }
+        )
+
+        s3_client = boto3.client(
+            "s3",
+            region_name=S3_REGION,
+            aws_access_key_id=S3_ACCESS_KEY,
+            aws_secret_access_key=S3_SECRET_KEY,
+            endpoint_url=S3_ENDPOINT_URL,
+            config=config
+        )   
+
+        try:  
+            response = s3_client.get_object(
+                Bucket=S3_BUCKET,
+                Key=f"processed/{pk}/{filename}.jpg"
+            )
+
+            response = StreamingHttpResponse(
+                response['Body'].iter_chunks(),
+                content_type="image/jpeg"
+            )
+
+            return response
+
+        except Exception as e:
+            return HttpResponse(
+                f"Error fetching image from S3: {str(e)}",
+                content_type="text/plain",
+                status=500
+            )
+        
+
+    @action(detail=True, methods=['get'], url_path='timelapse/download')
+    def download(self, request, pk=None):
+        from_date_str = request.query_params.get("from")
+        to_date_str = request.query_params.get("to")
+        from_time_str = request.query_params.get("time_from")
+        to_time_str = request.query_params.get("time_to")
+
+        from_date = parse_date(from_date_str) if from_date_str else None
+        to_date = parse_date(to_date_str) if to_date_str else None
+        from_time = datetime.strptime(from_time_str, "%H:%M").time() if from_time_str else time.min
+        to_time = datetime.strptime(to_time_str, "%H:%M").time() if to_time_str else time.max
+
+        all_images = get_image_list(pk, "TIMELAPSE_HOURS")
+        print(f"Total images available: {len(all_images)}")
+
+        if from_date and to_date:
+            # combine into full datetimes
+            start_dt = datetime.combine(from_date, from_time)
+            end_dt = datetime.combine(to_date, to_time)
+
+            filtered_images = []
+            for img in all_images:
+                ts_str = img.replace(".jpg", "")
+                img_dt = datetime.strptime(ts_str, "%Y%m%d%H%M%S")
+                if start_dt <= img_dt <= end_dt:
+                    filtered_images.append(img)
+        else:
+            filtered_images = all_images
+
+        if not filtered_images:
+            return Response({"detail": "No images found."}, status=404)
+
+        # --- CREATE S3 CLIENT ONCE ---
+        S3_BUCKET = os.getenv("S3_BUCKET")
+        S3_REGION = os.getenv("S3_REGION", "us-east-1")
+        S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
+        S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
+        S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
+
+        config = Config(
+            signature_version='s3v4',
+            retries={'max_attempts': 10},
+            s3={
+                'payload_signing_enabled': False,
+                'checksum_validation': False,
+                'enable_checksum': False,
+                'addressing_style': 'path',
+                'use_expect_continue': False
+            }
+        )
+
+        s3_client = boto3.client(
+            "s3",
+            region_name=S3_REGION,
+            aws_access_key_id=S3_ACCESS_KEY,
+            aws_secret_access_key=S3_SECRET_KEY,
+            endpoint_url=S3_ENDPOINT_URL,
+            config=config
+        )
+
+        def s3_file_iterator(key: str, chunk_size: int = 65536):
+            """Stream S3 object in chunks without loading into memory."""
+            obj = s3_client.get_object(Bucket=S3_BUCKET, Key=key)
+            body = obj["Body"]
+            while True:
+                chunk = body.read(chunk_size)
+                if not chunk:
+                    break
+                yield chunk
+
+        # --- STREAMING ZIP ---
+        z = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
+
+        for img in filtered_images:
+            key = f"processed/{pk}/{img}"  # S3 key
+            filename_in_zip = img.split("/")[-1]
+            try:
+                z.write_iter(filename_in_zip, s3_file_iterator(key))
+            except Exception as e:
+                print(f"Error adding {img}: {e}")
+                continue
+
+        response = StreamingHttpResponse(z, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename="images.zip"'
+        return response
+
+    @action(
+            detail=False, 
+            methods=['get'], 
+            url_path='staleAndDelayed',
+            )
+    def staleAndDelayed(self, request, pk=None):
+        countStale = Webcam.objects.filter(should_appear=True, marked_stale=True).count()
+        countDelayed = Webcam.objects.filter(should_appear=True, marked_delayed=True).count()
+        totalCams = Webcam.objects.filter(should_appear=True).count()
+        host = request.get_host()
+        path = reverse('webcams-staleAndDelayed')
+        self_link = f"{request.scheme}://{host}{path}"
+        
+        data = {
+            "links": {
+                "self": self_link
+            },
+            "time": timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "cams": totalCams,
+            "stale": countStale,
+            "delayed": countDelayed,
+        }
+
+        return Response(data)
+
+class WebcamTestViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = WebcamAPI.queryset
+    serializer_class = WebcamAPI.serializer_class
