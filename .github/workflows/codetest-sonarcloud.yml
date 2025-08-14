@@ -94,6 +94,7 @@ jobs:
         CLOSED_PHRASE_IDS: 18,20,22,23,26,30,32,182,320,325,327
         DRIVEBC_COSTAL_FERRY_DATA_URL: https://testvar.com/test.zip
         DRIVEBC_OPENMAPS_API_URL: https://testvar.com/
+        FRONTEND_BASE_URL: http://localhost:3000/
       run: |
         coverage run ./src/backend/manage.py test --noinput && coverage report && coverage xml
 
