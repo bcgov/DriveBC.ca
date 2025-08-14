@@ -53,7 +53,8 @@
     "react-time-ago": "^7.2.1",
     "redux-persist": "^6.0.0",
     "ua-parser-js": "^2.0.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "@vladyoslav/drawer": "^0.1.0"
   },
   "scripts": {
     "start": "env-cmd -f ../../.env react-scripts start",
