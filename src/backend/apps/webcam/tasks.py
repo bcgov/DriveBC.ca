@@ -31,6 +31,13 @@ from huey.exceptions import CancelExecution
 from PIL import Image, ImageDraw, ImageFont
 from psycopg import IntegrityError
 
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import URL
+from apps.shared.status import get_recent_timestamps, calculate_camera_status
+from apps.consumer.models import ImageIndex
+import boto3
+from django.utils import timezone
+
 logger = logging.getLogger(__name__)
 
 APP_DIR = Path(__file__).resolve().parent
@@ -41,6 +48,36 @@ CAMS_DIR = f'{settings.SRC_DIR}/images/webcams'
 CAM_OFF = ('This highway cam image is currently unavailable due to technical difficulties. '
            'Our technicians have been alerted and service will resume as soon as possible.')
 
+# Environment variables
+SQL_DB_SERVER = os.getenv("SQL_DB_SERVER", "sql-server-db")
+SQL_DB_NAME = os.getenv("SQL_DB_NAME", "camera-db")
+SQL_DB_USER = os.getenv("SQL_DB_USER", "sa")
+SQL_DB_PASSWORD = os.getenv("SQL_DB_PASSWORD", "YourStrong@Passw0rd")
+SQL_DB_DRIVER = "ODBC Driver 17 for SQL Server"  # Make sure this driver is installed on the container
+S3_BUCKET = os.getenv("S3_BUCKET")
+S3_REGION = os.getenv("S3_REGION", "us-east-1")
+S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
+S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
+RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq/")
+S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
+
+# Define data directory (PVC and S3)
+PVC_ROOT = os.getenv("PVC_ROOT", "/app/data/webcams/processed")
+S3_ROOT = os.getenv("S3_ROOT", "/test-s3-bucket")
+
+# Build connection URL for webcam SQL database
+connection_url = URL.create(
+    "mssql+pyodbc",
+    username=SQL_DB_USER,
+    password=SQL_DB_PASSWORD,
+    host=SQL_DB_SERVER,
+    port=1433,
+    database=SQL_DB_NAME,
+    query={"driver": SQL_DB_DRIVER}
+)
+
+# Create SQLAlchemy engine
+engine = create_engine(connection_url)
 
 def populate_webcam_from_data(webcam_data):
     webcam_id = webcam_data.get("id")
@@ -101,9 +138,12 @@ def update_all_webcam_data():
 
         current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
         if camera.should_update(current_time):
-            updated = update_single_webcam_data(camera)
-            if updated:
-                update_camera_group_id(camera)
+            if not camera.https_cam:
+                updated = update_single_webcam_data(camera)
+                if updated:
+                    update_camera_group_id(camera)
+            else:
+                update_cam_from_sql_db(camera.id, current_time)
 
 
 def wrap_text(text, pen, font, width):
@@ -431,3 +471,253 @@ def update_camera_nearby_objs():
             Webcam.objects.filter(id=child_cam.id).update(
                 nearby_objs=parent_cam.nearby_objs
             )
+
+def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
+    cams_live_sql = text("""
+        SELECT Cams_Live.ID AS id, 
+        Cams_Live.Cam_InternetName AS name, 
+        Cams_Live.Cam_InternetCaption AS caption,
+        Regions_Live.seq AS region, 
+        Regions_Live.Name AS region_name,                 
+        Highways_Live.Hwy_Number AS highway, 
+        Highways_Live.Section AS highway_description, 
+        Region_Highways_Live.seq AS highway_group,
+        Cams_Live.seq AS highway_cam_order,
+        Cams_Live.Cam_LocationsOrientation AS orientation,
+        Cams_Live.Cam_LocationsElevation AS elevation,
+        CASE WHEN Cams_Live.Cam_ControlDisabled = 0 THEN 1 ELSE 0 END AS isOn,
+        Cams_Live.isNew AS isNew,
+        Cams_Live.isNew, Cams_Live.Cam_MaintenanceIs_On_Demand AS isOnDemand,
+        Cams_Live.Cam_InternetCredit AS credit,
+        Cams_Live.Cam_InternetDBC_Mark AS dbc_mark                 
+        FROM [WEBCAM_DEV].[dbo].[Cams_Live]
+        INNER JOIN ((Region_Highways_Live INNER JOIN Highways_Live ON Region_Highways_Live.Highway_ID = Highways_Live.ID) 
+        INNER JOIN Regions_Live ON Region_Highways_Live.Region_ID = Regions_Live.ID) 
+        ON (Cams_Live.Cam_LocationsHighway = Region_Highways_Live.Highway_ID) 
+        AND (Cams_Live.Cam_LocationsRegion = Region_Highways_Live.Region_ID) 
+        WHERE Cams_Live.ID = :id
+    """)
+
+    with engine.connect() as connection:
+        try:
+            # Query from Cams_Live
+            result_live = connection.execute(cams_live_sql, {"id": id})
+            live_rows = {row.id: dict(row._mapping) for row in result_live}
+            update_webcam_db(id, live_rows.get(id, {}))
+            return live_rows
+
+        except Exception as e:
+            logger.error(f"Failed to connect to the database: {e}")
+            return []
+
+def update_webcam_db(cam_id: int, cam_data: dict):
+    timestamp_utc = get_recent_timestamps(cam_id)
+    if not timestamp_utc:
+        return
+
+    camera_status = calculate_camera_status(timestamp_utc)
+    ts_seconds = int(camera_status["timestamp"])
+    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
+
+    updated_count = Webcam.objects.filter(id=cam_id).update(region=cam_data.get("region"),
+        region_name=cam_data.get("region_name"),
+        is_on=True if cam_data.get("isOn") == 1 else False,
+        name=cam_data.get("name"),
+        caption=cam_data.get("caption", ""),
+        highway=cam_data.get("highway", ""),
+        highway_description=cam_data.get("highway_description", ""),
+        highway_group=cam_data.get("highway_group", 0),
+        highway_cam_order=cam_data.get("highway_cam_order", 0),
+        orientation=cam_data.get("orientation", ""),
+        elevation=cam_data.get("elevation", 0),
+        dbc_mark=cam_data.get("dbc_mark", ""),
+        credit=cam_data.get("credit", ""),
+        is_new=cam_data.get("isNew", False),
+        is_on_demand=cam_data.get("isOnDemand", False),
+        marked_stale=camera_status["stale"],
+        marked_delayed=camera_status["delayed"],
+        last_update_attempt=dt_utc,
+        last_update_modified=dt_utc,
+        update_period_mean=camera_status["mean_interval"] * 1000,
+        update_period_stddev= camera_status["stddev_interval"]) * 1000,  
+    return updated_count
+
+def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
+    cams_live_sql = text("""
+        SELECT Cams_Live.ID AS id, 
+        Cams_Live.Cam_InternetName AS name, 
+        Cams_Live.Cam_InternetCaption AS caption,
+        Regions_Live.seq AS region, 
+        Regions_Live.Name AS region_name,                 
+        Highways_Live.Hwy_Number AS highway, 
+        Highways_Live.Section AS highway_description, 
+        Region_Highways_Live.seq AS highway_group,
+        Cams_Live.seq AS highway_cam_order,
+        Cams_Live.Cam_LocationsOrientation AS orientation,
+        Cams_Live.Cam_LocationsElevation AS elevation,
+        CASE WHEN Cams_Live.Cam_ControlDisabled = 0 THEN 1 ELSE 0 END AS isOn,
+        Cams_Live.isNew AS isNew,
+        Cams_Live.isNew, Cams_Live.Cam_MaintenanceIs_On_Demand AS isOnDemand,
+        Cams_Live.Cam_InternetCredit AS credit,
+        Cams_Live.Cam_InternetDBC_Mark AS dbc_mark                 
+        FROM [WEBCAM_DEV].[dbo].[Cams_Live]
+        INNER JOIN ((Region_Highways_Live INNER JOIN Highways_Live ON Region_Highways_Live.Highway_ID = Highways_Live.ID) 
+        INNER JOIN Regions_Live ON Region_Highways_Live.Region_ID = Regions_Live.ID) 
+        ON (Cams_Live.Cam_LocationsHighway = Region_Highways_Live.Highway_ID) 
+        AND (Cams_Live.Cam_LocationsRegion = Region_Highways_Live.Region_ID) 
+        WHERE Cams_Live.ID = :id
+    """)
+
+    with engine.connect() as connection:
+        try:
+            # Query from Cams_Live
+            result_live = connection.execute(cams_live_sql, {"id": id})
+            live_rows = {row.id: dict(row._mapping) for row in result_live}
+            update_webcam_db(id, live_rows.get(id, {}))
+            return live_rows
+
+        except Exception as e:
+            logger.error(f"Failed to connect to the database: {e}")
+            return []
+
+def update_webcam_db(cam_id: int, cam_data: dict):
+    timestamp_utc = get_recent_timestamps(cam_id)
+    if not timestamp_utc:
+        return
+
+    camera_status = calculate_camera_status(timestamp_utc)
+    ts_seconds = int(camera_status["timestamp"])
+    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
+
+    updated_count = Webcam.objects.filter(id=cam_id).update(region=cam_data.get("region"),
+        region_name=cam_data.get("region_name"),
+        is_on=True if cam_data.get("isOn") == 1 else False,
+        name=cam_data.get("name"),
+        caption=cam_data.get("caption", ""),
+        highway=cam_data.get("highway", ""),
+        highway_description=cam_data.get("highway_description", ""),
+        highway_group=cam_data.get("highway_group", 0),
+        highway_cam_order=cam_data.get("highway_cam_order", 0),
+        orientation=cam_data.get("orientation", ""),
+        elevation=cam_data.get("elevation", 0),
+        dbc_mark=cam_data.get("dbc_mark", ""),
+        credit=cam_data.get("credit", ""),
+        is_new=cam_data.get("isNew", False),
+        is_on_demand=cam_data.get("isOnDemand", False),
+        marked_stale=camera_status["stale"],
+        marked_delayed=camera_status["delayed"],
+        last_update_attempt=dt_utc,
+        last_update_modified=dt_utc,
+        update_period_mean=camera_status["mean_interval"] * 1000,
+        update_period_stddev= camera_status["stddev_interval"]) * 1000,  
+    return updated_count
+
+def purge_old_images():
+    logger.info("Purging webcam images...")
+    REPLAY_THE_DAY_HOURS = os.getenv("REPLAY_THE_DAY_HOURS", "24")
+    TIMELAPSE_HOURS = os.getenv("TIMELAPSE_HOURS", "720")
+    purge_old_pvc_s3_images(age=REPLAY_THE_DAY_HOURS, is_pvc=True)
+    purge_old_pvc_s3_images(age=TIMELAPSE_HOURS, is_pvc=False)
+
+
+def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
+    if is_pvc:
+        root_path = PVC_ROOT
+    else:
+        root_path = S3_ROOT
+    cutoff_time = timezone.now() - datetime.timedelta(hours=int(age))
+
+    records_to_delete_pvc = ImageIndex.objects.filter(
+        timestamp__lt=cutoff_time,
+        original_s3_path__isnull=False,
+        watermarked_s3_path__isnull=False
+    )
+
+    records_to_delete_s3 = ImageIndex.objects.filter(
+        timestamp__lt=cutoff_time,
+        original_s3_path__isnull=False,
+        watermarked_s3_path__isnull=False
+    )
+
+    files_to_delete = []
+    ids_to_delete = []
+
+    rows = records_to_delete_pvc if is_pvc else records_to_delete_s3
+
+    for row in rows:
+        if is_pvc:
+            path = row.watermarked_pvc_path
+        else:
+            path = row.watermarked_s3_path
+
+        if path:
+            full_path = os.path.join(root_path, path)
+            files_to_delete.append(full_path)
+            ids_to_delete.append(row.timestamp)
+
+    if is_pvc:
+        ImageIndex.objects.filter(
+            timestamp__in=ids_to_delete,
+            original_pvc_path__isnull=False,
+            watermarked_pvc_path__isnull=False
+        ).update(
+            original_pvc_path=None,
+            watermarked_pvc_path=None
+        )
+    else:
+        ImageIndex.objects.filter(
+            timestamp__in=ids_to_delete,
+            original_s3_path__isnull=False,
+            watermarked_s3_path__isnull=False
+        ).update(
+            original_s3_path=None,
+            watermarked_s3_path=None
+        )
+
+    # Delete files from PVC or s3
+    if is_pvc:
+        logger.info(f"Deleting {len(files_to_delete)} old PVC images...")
+        for file_path in files_to_delete:
+            try:
+                os.remove(file_path)
+                logger.info(f"Deleted file from PVC: {file_path}")
+            except FileNotFoundError:
+                logger.error(f"File not found: {file_path}")
+            except Exception as e:
+                logger.error(f"Error deleting file {file_path}: {e}")
+    else:
+        logger.info(f"Deleting {len(files_to_delete)} old S3 images...")
+        # Setup S3 client
+        s3_client = boto3.client(
+            "s3",
+            region_name=S3_REGION,
+            aws_access_key_id=S3_ACCESS_KEY,
+            aws_secret_access_key=S3_SECRET_KEY,
+            endpoint_url=S3_ENDPOINT_URL
+        )
+
+        # Delete files from S3
+        for file_path in files_to_delete:
+            try:
+                s3_key = file_path.strip("/")
+
+                if s3_key.startswith(f"{S3_BUCKET}/"):
+                    s3_key = s3_key[len(S3_BUCKET) + 1:]
+
+                s3_client.delete_object(Bucket=S3_BUCKET, Key=s3_key)
+                logger.info(f"Deleted from S3: {s3_key}")
+
+            except s3_client.exceptions.NoSuchKey:
+                logger.error(f"S3 key not found: {s3_key}")
+            except Exception as e:
+                logger.error(f"Error deleting S3 file {s3_key}: {e}")
+
+    # Delete all records if all images paths are NULL
+    ImageIndex.objects.filter(
+        original_pvc_path__isnull=True,
+        watermarked_pvc_path__isnull=True,
+        original_s3_path__isnull=True,
+        watermarked_s3_path__isnull=True
+    ).delete()
+
+    logger.info("All purged recordes are deleted successfully.")
