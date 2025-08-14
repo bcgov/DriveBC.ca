@@ -469,14 +469,14 @@ async def update_webcams_json(db_data: list):
 
         # Skip if latitude or longitude is missing or empty
         if not lat or not lng:
-            print(f"Skipping camera {cam.get('id')} due to missing coordinates.")
+            logger.info(f"Skipping camera due to missing coordinates.")
             continue
 
         try:
             lat = float(lat)
             lng = float(lng)
         except ValueError:
-            print(f"Skipping camera {cam.get('id')} due to invalid coordinates: lat={lat}, lng={lng}")
+            logger.error(f"Skipping camera due to invalid coordinates")
             continue
 
         output.append([
