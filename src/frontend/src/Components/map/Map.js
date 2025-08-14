@@ -50,6 +50,7 @@ import {
   fitMap,
   removeOverlays
 } from './helpers';
+import { layerNameMap, toggleableLayers } from "./enums";
 import { loadLayer, loadEventsLayers, updateEventsLayers, enableReferencedLayer } from './layers';
 import { FeatureContext, MapContext } from '../../App.js';
 import { resizePanel, renderPanel, togglePanel } from './panels';
@@ -283,6 +284,22 @@ export default function DriveBCMap(props) {
       dispatch(updateSearchLocationFromWithMyLocation([myLocation]));
     }
   }, [myLocation])
+
+  // DBC22-4575: re-implementing DBC22-3835
+  useEffect(() => {
+    if (!clickedFeature) return;
+
+    // Fetch layer status
+    const featureType = clickedFeature.get('type');
+    const layerName = featureType == 'event' ?
+      clickedFeature.get('display_category') :
+      layerNameMap[featureType];
+    const layerActive = mapContext.visible_layers[layerName];
+
+    // If layer is off, close panel
+    if (!layerActive) resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
+
+  }, toggleableLayers.map(layer => mapContext.visible_layers[layer]));
 
   /* useEffect hooks */
   /* Push ScaleLine to the left when tabs are open */

@@ -69,13 +69,6 @@ export default function MapFilters(props) {
   const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
   const [wildfires, setWildfires] = useState(mapContext.visible_layers.wildfires);
 
-  const closeSidePanel = () => {
-    const closeBtn = document.querySelector('.close-panel');
-    if (closeBtn) {
-      closeBtn.click();
-    }
-  }
-
   // Effects
   useEffect(() => {
     if (isInitialLoad.current) {
@@ -213,7 +206,6 @@ export default function MapFilters(props) {
     if (e) {
       focusInput(e.target);
     }
-    closeSidePanel();
   }
 
   // Rendering
