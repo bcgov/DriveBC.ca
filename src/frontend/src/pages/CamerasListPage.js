@@ -22,7 +22,7 @@ import Container from 'react-bootstrap/Container';
 import cloneDeep from 'lodash/cloneDeep';
 
 // Internal Imports
-import { CMSContext, FilterContext, HeaderHeightContext } from '../App';
+import { CMSContext, FilterContext } from '../App';
 import {
   filterAdvisoryByRoute,
   filterByRoute
@@ -54,7 +54,6 @@ export default function CamerasListPage() {
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
   const { filterContext, setFilterContext } = useContext(FilterContext);
-  // const { headerHeightContext } = useContext(HeaderHeightContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -134,9 +133,7 @@ export default function CamerasListPage() {
       })
     );
 
-    setTimeout(function() {
-      setShowLoader(false);
-    }, 300);
+    setShowLoader(false);
   };
 
   const loadAdvisories = async () => {

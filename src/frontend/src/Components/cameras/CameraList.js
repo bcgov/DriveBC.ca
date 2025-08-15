@@ -65,16 +65,28 @@ export default function CameraList(props) {
     return onscreenCameras.length < (cameras ? cameras.length : 0);
   }
 
-  return cameras && cameras.length > 0 && (
-    <div className="camera-list">
-      <InfiniteScroll
-        dataLength={camsContext.displayLength}
-        next={getDisplayedCameras}
-        hasMore={getHasMore}
-        scrollableTarget="main">
+  const getCameraList = () => {
+    return cameras && cameras.length > 0 && (
+      <div className="camera-list">
+        <InfiniteScroll
+          dataLength={camsContext.displayLength}
+          next={getDisplayedCameras}
+          hasMore={getHasMore}
+          scrollableTarget="main">
 
-        {renderHighways()}
-      </InfiniteScroll>
-    </div>
-  );
+          {renderHighways()}
+        </InfiniteScroll>
+      </div>
+    );
+  };
+
+  const getLoader = () => {
+    return (
+      <div className="camera-list">
+        <HighwayGroup key={`loading`} highway={'loading'} cams={[null, null, null]} showLoader={showLoader}/>
+      </div>
+    );
+  };
+
+  return showLoader ? getLoader() : getCameraList();
 }

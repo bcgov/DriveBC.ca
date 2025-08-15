@@ -1,6 +1,9 @@
 // React
 import React from 'react';
 
+// External imports
+import Skeleton from "react-loading-skeleton";
+
 // Static files
 import BCHwyCrest from '../../images/BCHwyCrest.svg';
 import BCHwyCrest1 from '../../images/BCHwyCrest1.svg';
@@ -28,7 +31,7 @@ export default function highwayShield(highway) {
   if (highwaySplit !== null) {
     highwaySplit = highwaySplit[0];
   }
-  return (
+  return highway === 'loading' ? <Skeleton width={30} height={40} /> : (
     <div className="highway-shield">
       { ['1', '3', '5', '16'].indexOf(highway) < 0 &&
         <p className="highway-shield__number">
