@@ -32,13 +32,14 @@ APP_DIR = Path(__file__).resolve().parent
 FONT = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=14)
 FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
 # PVC path to original images for RIDE
-PVC_ORIGINAL_PATH = f'/app/data/webcams/originals'
+PVC_ORIGINAL_PATH = os.getenv("PVC_ORIGINAL_PATH", "/app/data/webcams/originals")
 # PVC path to watermarked images with timestamp for ReplayTheDay
-PVC_WATERMARKED_PATH =f'/app/data/webcams/processed'
+PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH", "/app/data/webcams/processed")
 # PVC path to watermarked images for current DriveBC without timestamp
-DRIVCBC_PVC_WATERMARKED_PATH =f'/app/images/webcams'
+DRIVCBC_PVC_WATERMARKED_PATH = os.getenv("DRIVCBC_PVC_WATERMARKED_PATH", "/app/images/webcams")
 # Output directory for JSON files for ReplayTheDay and Timelapse
-JSON_OUTPUT_DIR = f"/app/data"
+JSON_OUTPUT_DIR = os.getenv("JSON_OUTPUT_DIR", "/app/data")
+
 
 os.makedirs(JSON_OUTPUT_DIR, exist_ok=True)
 
