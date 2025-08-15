@@ -67,7 +67,7 @@ QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES", "209715200"))  # def
 EXCHANGE_NAME = os.getenv("RABBITMQ_EXCHANGE_NAME", "dev.exchange.fanout.drivebc.images")
 
 
-boto3.set_stream_logger('botocore', logging.DEBUG)
+#boto3.set_stream_logger('botocore', logging.DEBUG)
 
 # S3 client configuration
 config = Config(
