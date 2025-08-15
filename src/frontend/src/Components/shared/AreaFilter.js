@@ -22,14 +22,15 @@ import './AreaFilter.scss';
 export default function AreaFilter(props) {
   /* Setup */
   // Props
-  const { handleAreaFiltersClose, objects } = props;
+  const { handleAreaFiltersClose, objects, showAllByDefault } = props;
 
   // Contexts
   const { filterContext, setFilterContext } = useContext(FilterContext);
 
   // Redux
-  const { areas } = useSelector(useCallback(memoize(state => ({
+  const { areas, selectedRoute } = useSelector(useCallback(memoize(state => ({
     areas: state.feeds.areas.list,
+    selectedRoute: state.routes.selectedRoute
   }))));
 
   // States
@@ -62,6 +63,12 @@ export default function AreaFilter(props) {
 
   useEffect(() => {
     if (!areas || !objects) {
+      return;
+    }
+
+    // DBC22-4686: delay list should show all areas when no route is selected
+    if (showAllByDefault && !selectedRoute) {
+      setDisplayedAreas(areas);
       return;
     }
 

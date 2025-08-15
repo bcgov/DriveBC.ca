@@ -687,7 +687,7 @@ export default function EventsListPage() {
                     }
 
                     {!smallScreen && showAreaFilters &&
-                      <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={processedEvents} />
+                      <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={processedEvents} showAllByDefault={true} />
                     }
                   </div>
                 </div>
@@ -806,7 +806,7 @@ export default function EventsListPage() {
           </button>
 
           <p className="overlay__header bold">Filter by area</p>
-          <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={processedEvents} />
+          <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={processedEvents} showAllByDefault={true} />
         </div>
       }
 
