@@ -273,9 +273,9 @@ export default function CameraDetailsPage() {
 
   const loadReplay = async cam => {
     const replayImageList = await getWebcamReplay(cam);
-    const replayImages = replayImageList.map(url => {
-      return { original: `${window.REPLAY_THE_DAY}${camera.id}/${url}.jpg` };
-    });
+    const replayImages = replayImageList.map(url => ({
+      original: `${window.location.origin}/images/replaytheday/${cam.id}/${url}.jpg`
+    }));
     setReplayImages(replayImages);
   };
 
