@@ -261,7 +261,7 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
 
         if webcam.get('is_on'):
             stamped.paste(raw)  # leaves 18 pixel black bar left at bottom
-            dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
+            dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
 
             # Localize the naive datetime to the given timezone
             timezone = pytz.timezone(tz)
@@ -371,14 +371,13 @@ def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     webcam = webcams[0] if webcams else None
     tz = get_timezone(webcam) if webcam else 'America/Vancouver'
     # Parse it as UTC datetime
-    timestamp = timestamp[:-5]
-    utc_dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
+    utc_dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
     utc_dt = utc_dt.replace(tzinfo=pytz.utc)
     # Convert to local time
     local_tz = pytz.timezone(tz)
     local_dt = utc_dt.astimezone(local_tz)
     # Format back to string
-    timestamp = local_dt.strftime("%Y%m%d%H%M")
+    timestamp = local_dt.strftime("%Y%m%d%H%M%S")
     return timestamp
 
 @sync_to_async
@@ -436,7 +435,7 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
 
     tz = get_timezone(webcam) if webcam else 'America/Vancouver'
     local_tz = pytz.timezone(tz)
-    naive_dt = datetime.strptime(timestamp, "%Y%m%d%H%M")
+    naive_dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
     local_dt = local_tz.localize(naive_dt)
     utc_dt = local_dt.astimezone(pytz.utc)
     utc_timestamp_str = utc_dt.strftime("%Y%m%d%H%M")
@@ -516,7 +515,7 @@ async def update_index_json(camera_id: str, tz: str):
     results = await get_images_within(camera_id, hours=int(default_time_age))
     timestamps = []
     for item in results:
-        timestamps.append(item.timestamp.strftime("%Y%m%d%H%M") + ".jpg")
+        timestamps.append(item.timestamp.strftime("%Y%m%d%H%M%S") + ".jpg")
 
     # Create the camera index JSON file
     file_path = os.path.join(JSON_OUTPUT_DIR, f"json/images/{camera_id}/index.json")
