@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import FileResponse, Http404, HttpResponse, StreamingHttpResponse, HttpResponse
+from django.http import FileResponse, Http404, HttpResponse, StreamingHttpResponse
 from .models import Webcam
 import os
 from apps.shared.status import get_image_list
