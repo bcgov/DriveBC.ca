@@ -4,7 +4,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import FileResponse, Http404, HttpResponse
+from django.http import FileResponse, Http404, HttpResponse, StreamingHttpResponse
 from .models import Webcam
 import os
 from apps.consumer.models import ImageIndex
@@ -112,13 +112,19 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
                 Key=f"processed/{pk}/{filename}.jpg"
             )
 
-            body = response['Body'].read()
+            stream = response['Body'].read()
+            response = StreamingHttpResponse(
+                stream,
+                content_type="image/jpeg"
+            )
 
-            return HttpResponse(
-                body,
-                content_type="image/jpeg",
-                status=200
-            ) 
+            return response
+
+            # return HttpResponse(
+            #     body,
+            #     content_type="image/jpeg",
+            #     status=200
+            # ) 
         except Exception as e:
             raise HttpResponse(f"Error fetching image from S3: {str(e)}", status=500)
 
