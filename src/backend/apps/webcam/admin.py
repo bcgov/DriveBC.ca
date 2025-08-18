@@ -16,6 +16,7 @@ class WebcamAdmin(ModelAdmin):
 
         if webcam:
             extra_context["image_paths"] = webcam.get_image_paths()
+            extra_context["self"] = webcam
 
         return super().change_view(
             request, object_id, form_url, extra_context=extra_context
