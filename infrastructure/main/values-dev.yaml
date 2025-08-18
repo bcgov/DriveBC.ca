@@ -107,7 +107,7 @@ image-consumer:
         DEBUG: 'True' # Set to False for UAT and Prod
         ROOT_LOG_LEVEL: WARNING
   vault:
-    secretName: dev-image-consumer  # This is the name of the secret in vault that contains the environment variables for the app
+    secretName: dev-django  # This is the name of the secret in vault that contains the environment variables for the app
     authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
   prometheus:
     enabled: false # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
