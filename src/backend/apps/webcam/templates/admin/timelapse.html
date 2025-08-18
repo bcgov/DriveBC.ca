@@ -13,7 +13,7 @@
           // Construct the API endpoint URL dynamically if needed
           const cameraId = "{{ self.id }}";
           const imagePath = "{{ image_paths.0 }}";
-          const apiUrl = `/api/webcams/${cameraId}/${imagePath}/timelapse/`;
+          const apiUrl = `/api/webcams/${cameraId}/timelapse/`;
 
           fetch(apiUrl)
             .then(response => response.json())
