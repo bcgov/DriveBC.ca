@@ -274,7 +274,7 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
                      anchor='rs', font=FONT)
 
         else:  # camera is unavailable, replace image with message
-            message = webcam.get('message', {}).get('long')
+            message = webcam.get('message', {}).get('long') or ""
             wrapped = wrap_text(
                 text=message,
                 width=min(width - 40, 500),
@@ -291,7 +291,7 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
                         fill="red")
 
         # add mark and timestamp to black bar
-        mark = webcam.get('dbc_mark', '')
+        mark = webcam.get('dbc_mark', 'DriveBC.ca')
         pen.text((3,  height + 14), mark, fill="white", anchor='ls', font=FONT)
 
         # Return image as byte array
