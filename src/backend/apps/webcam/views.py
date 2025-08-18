@@ -4,7 +4,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from .models import Webcam
 import os
 from apps.consumer.models import ImageIndex
@@ -74,7 +74,7 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         # Serve from cache if exists
         if os.path.exists(cache_path):
             return FileResponse(open(cache_path, "rb"), content_type="image/jpeg")
-
+        
         # Fetch from S3
         s3_url = f"{S3_BASE_URL}/{pk}/{filename}.jpg"
 
@@ -104,29 +104,23 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
             aws_secret_access_key=S3_SECRET_KEY,
             endpoint_url=S3_ENDPOINT_URL,
             config=config
-        )
+        )   
 
-        url = s3_client.generate_presigned_url(
-            ClientMethod="get_object",
-            Params={
-                "Bucket": "timelapse",
-                "Key": f"processed/{pk}/{filename}.jpg"
-            },
-            ExpiresIn=3600  # 1 hour
-        )
+        try:  
+            response = s3_client.get_object(
+                Bucket="timelapse",
+                Key=f"processed/{pk}/{filename}.jpg"
+            )
 
-        # Disable caching by using requests to stream the content, this code does not save correctly
-        # resp = requests.get(s3_url, stream=True)
+            body = response['Body'].read()
 
-        # if resp.status_code != 200:
-        #     url = f"http://localhost:8000/data/webcams/cache/{pk}/{filename}.jpg"
-
-        # # Save to cache
-        # with open(cache_path, "wb") as f:
-        #     for chunk in resp.iter_content(1024):
-        #         f.write(chunk)
-
-        return redirect(url)
+            return HttpResponse(
+                body,
+                content_type="image/jpeg",
+                status=200
+            ) 
+        except Exception as e:
+            raise HttpResponse(f"Error fetching image from S3: {str(e)}", status=500)
 
 
 class WebcamTestViewSet(viewsets.ReadOnlyModelViewSet):
