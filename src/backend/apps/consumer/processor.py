@@ -377,7 +377,7 @@ def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     local_tz = pytz.timezone(tz)
     local_dt = utc_dt.astimezone(local_tz)
     # Format back to string
-    timestamp = local_dt.strftime("%Y%m%d%H%M%S")
+    timestamp = local_dt.strftime("%Y%m%d%H%M%S%f")
     return timestamp
 
 @sync_to_async
