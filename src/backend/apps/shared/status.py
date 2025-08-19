@@ -21,8 +21,6 @@ def get_recent_timestamps(camera_id: int):
     for obj in reversed(latest_50):
         timestamp = obj.timestamp.strftime("%Y%m%d%H%M%S") + f"{int(obj.timestamp.microsecond / 1000):03d}"
         timestamp_list.append(timestamp)
-    if camera_id == 1041 or camera_id == 1064 or camera_id == 1103 or camera_id == 1002 or camera_id == 1005:
-        print(f"Retrieved timestamp_list for camera {camera_id}: {timestamp_list}")
     return timestamp_list[-1] if timestamp_list else None
 
 def parse_timestamp(ts_str: str) -> float:
