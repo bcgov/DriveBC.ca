@@ -16,16 +16,11 @@ timestamp_list: deque[Union[str, float]] = deque(maxlen=max_samples)
 # @sync_to_async
 def get_recent_timestamps(camera_id: int):
     latest_50 = ImageIndex.objects.filter(camera_id=str(camera_id)).order_by('-timestamp')[:50]  
-    if camera_id == 1041 or camera_id == 1064 or camera_id == 1103 or camera_id == 1002 or camera_id == 1005:
-        print(f"Retrieved {len(latest_50)} timestamps for camera {camera_id}")
-
     timestamp_list.clear()
 
     for obj in reversed(latest_50):
         timestamp = obj.timestamp.strftime("%Y%m%d%H%M%S") + f"{int(obj.timestamp.microsecond / 1000):03d}"
         timestamp_list.append(timestamp)
-    if camera_id == 1041 or camera_id == 1064 or camera_id == 1103 or camera_id == 1002 or camera_id == 1005:
-        print(f"Retrieved timestamp_list for camera {camera_id}: {timestamp_list}")
     return timestamp_list[-1] if timestamp_list else None
 
 def parse_timestamp(ts_str: str) -> float:
