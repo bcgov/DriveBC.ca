@@ -550,13 +550,8 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
 
 def update_webcam_db(cam_id: int, cam_data: dict):
     timestamp_utc = get_recent_timestamps(cam_id)
-    if cam_id == 1041 or cam_id == 1064 or cam_id == 1103 or cam_id == 1002 or cam_id == 1005:
-        print(f"update_webcam_db: Retrieved timestamp_utc for camera {cam_id}: {timestamp_utc}")
     if not timestamp_utc:
         return
-    
-    if cam_id == 1041 or cam_id == 1064 or cam_id == 1103 or cam_id == 1002 or cam_id == 1005:
-        print(f"starting to update {cam_id}")
 
     camera_status = calculate_camera_status(timestamp_utc)
     ts_seconds = int(camera_status["timestamp"])
