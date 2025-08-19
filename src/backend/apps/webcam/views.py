@@ -63,7 +63,7 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     @action(
         detail=True,
         methods=['get'],
-        url_path=r'(?P<filename>[0-9]{12})/timelapse'
+        url_path=r'(?P<filename>[0-9]{14})/timelapse'
     )
     def cachedTimelapse(self, request, pk=None, filename=None):
         cache_folder = os.path.join(IMAGE_CACHE_DIR, str(pk))
