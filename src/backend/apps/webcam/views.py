@@ -108,7 +108,7 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
 
         try:  
             response = s3_client.get_object(
-                Bucket="timelapse",
+                Bucket="tran_api_dbc_backup_dev",
                 Key=f"processed/{pk}/{filename}.jpg"
             )
 
