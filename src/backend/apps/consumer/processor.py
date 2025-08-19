@@ -438,7 +438,7 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     naive_dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
     local_dt = local_tz.localize(naive_dt)
     utc_dt = local_dt.astimezone(pytz.utc)
-    utc_timestamp_str = utc_dt.strftime("%Y%m%d%H%M")
+    utc_timestamp_str = utc_dt.strftime("%Y%m%d%H%M%S")
     original_pvc_path = save_original_image_to_pvc(camera_id, body)
     original_s3_path = push_to_s3(body, camera_id, True, utc_timestamp_str)
     
