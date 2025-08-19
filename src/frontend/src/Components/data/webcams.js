@@ -87,7 +87,7 @@ export function getWebcamReplay(webcam) {
       const allTimestamps = timestamps
       .flatMap(entry => entry.split(",").map(s => s.trim()))
       .map(s => s.replace(/\.jpg$/, ""))
-      .filter(s => /^\d{12}$/.test(s)); 
+      .filter(s => /^\d{14}$/.test(s)); 
 
       // Filter only those within the last 24 hours
       const filtered = allTimestamps.filter(ts => {
