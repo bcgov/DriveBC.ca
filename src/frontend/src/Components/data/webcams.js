@@ -96,7 +96,8 @@ export function getWebcamReplay(webcam) {
         const day = parseInt(ts.slice(6, 8));
         const hour = parseInt(ts.slice(8, 10));
         const minute = parseInt(ts.slice(10, 12));
-        const timestampUtc = new Date(Date.UTC(year, month, day, hour, minute)); 
+        const second = parseInt(ts.slice(12, 14));
+        const timestampUtc = new Date(Date.UTC(year, month, day, hour, minute, second)); 
         return timestampUtc >= oneDayAgoUtc && timestampUtc <= nowUtc;
       });
 
