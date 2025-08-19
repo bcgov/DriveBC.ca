@@ -2,7 +2,7 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
 // Navigation
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -53,6 +53,9 @@ export default function Header() {
     routes: state.routes
   }))));
 
+  // Routing
+  const [searchParams, _setSearchParams] = useSearchParams();
+
   // Context
   const { cmsContext } = useContext(CMSContext);
 
@@ -61,7 +64,7 @@ export default function Header() {
   const [bulletinsCount, setBulletinsCount] = useState();
   const [expanded, setExpanded] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [openSearch, setOpenSearch] = useState(false);
+  const [openSearch, setOpenSearch] = useState(searchParams.get('start') || searchParams.get('end'));
   const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(true);
 
   // Effects
