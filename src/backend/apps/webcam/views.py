@@ -112,21 +112,19 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
                 Key=f"processed/{pk}/{filename}.jpg"
             )
 
-            stream = response['Body'].read()
             response = StreamingHttpResponse(
-                stream,
+                response['Body'].iter_chunks(),
                 content_type="image/jpeg"
             )
 
             return response
 
-            # return HttpResponse(
-            #     body,
-            #     content_type="image/jpeg",
-            #     status=200
-            # ) 
         except Exception as e:
-            raise HttpResponse(f"Error fetching image from S3: {str(e)}", status=500)
+            return HttpResponse(
+                f"Error fetching image from S3: {str(e)}",
+                content_type="text/plain",
+                status=500
+            )
 
 
 class WebcamTestViewSet(viewsets.ReadOnlyModelViewSet):
