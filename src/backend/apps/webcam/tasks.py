@@ -510,38 +510,6 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
             logger.error(f"Failed to connect to the database: {e}")
             return []
 
-def update_webcam_db(cam_id: int, cam_data: dict):
-    timestamp_utc = get_recent_timestamps(cam_id)
-    if not timestamp_utc:
-        return
-
-    camera_status = calculate_camera_status(timestamp_utc)
-    ts_seconds = int(camera_status["timestamp"])
-    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
-
-    updated_count = Webcam.objects.filter(id=cam_id).update(region=cam_data.get("region"),
-        region_name=cam_data.get("region_name"),
-        is_on=True if cam_data.get("isOn") == 1 else False,
-        name=cam_data.get("name"),
-        caption=cam_data.get("caption", ""),
-        highway=cam_data.get("highway", ""),
-        highway_description=cam_data.get("highway_description", ""),
-        highway_group=cam_data.get("highway_group", 0),
-        highway_cam_order=cam_data.get("highway_cam_order", 0),
-        orientation=cam_data.get("orientation", ""),
-        elevation=cam_data.get("elevation", 0),
-        dbc_mark=cam_data.get("dbc_mark", ""),
-        credit=cam_data.get("credit", ""),
-        is_new=cam_data.get("isNew", False),
-        is_on_demand=cam_data.get("isOnDemand", False),
-        marked_stale=camera_status["stale"],
-        marked_delayed=camera_status["delayed"],
-        last_update_attempt=dt_utc,
-        last_update_modified=dt_utc,
-        update_period_mean=camera_status["mean_interval"] * 1000,
-        update_period_stddev= camera_status["stddev_interval"]) * 1000,  
-    return updated_count
-
 def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
     cams_live_sql = text("""
         SELECT Cams_Live.ID AS id, 
@@ -582,8 +550,13 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
 
 def update_webcam_db(cam_id: int, cam_data: dict):
     timestamp_utc = get_recent_timestamps(cam_id)
+    if cam_id == 1041 or cam_id == 1064 or cam_id == 1103 or cam_id == 1002 or cam_id == 1005:
+        print(f"update_webcam_db: Retrieved timestamp_utc for camera {cam_id}: {timestamp_utc}")
     if not timestamp_utc:
         return
+    
+    if cam_id == 1041 or cam_id == 1064 or cam_id == 1103 or cam_id == 1002 or cam_id == 1005:
+        print(f"starting to update {cam_id}")
 
     camera_status = calculate_camera_status(timestamp_utc)
     ts_seconds = int(camera_status["timestamp"])
