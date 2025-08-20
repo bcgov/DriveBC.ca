@@ -445,7 +445,7 @@ export default function BorderCrossingPanel(props) {
 
           {borderCrossing.schedule_url &&
             <div className="schedule_url">
-              Operating times are currently not available. See <a href={borderCrossing.schedule_url} target="_blank" rel="noopener noreferrer">hours of operation</a> for more details.
+              Operating times are currently not available. See <a href={borderCrossing.schedule_url} rel="noopener noreferrer">hours of operation</a> for more details.
             </div>
           }
 
@@ -484,8 +484,7 @@ export default function BorderCrossingPanel(props) {
         <div className="popup__content__footer">
           <span>
             Courtesy of
-            <a href="https://www.cascadegatewaydata.com/Dashboard" target="_blank"
-               rel="noreferrer">Cascade Gateway Data</a>
+            <a href="https://www.cascadegatewaydata.com/Dashboard" rel="noreferrer">Cascade Gateway Data</a>
           </span>
         </div>
       </div>

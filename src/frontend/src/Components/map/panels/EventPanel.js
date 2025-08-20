@@ -93,7 +93,6 @@ export default function EventPanel(props) {
             <p>
               <a
                 href="https://www2.gov.bc.ca//gov/content/transportation/driving-and-cycling/traveller-information/seasonal/winter-driving/commercial"
-                target="_blank"
                 rel="noreferrer"
                 alt="BC chain-up requirements"
               >Chain-up requirements</a> apply to a commercial

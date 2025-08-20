@@ -276,7 +276,7 @@ export default function Header() {
               }
 
               {!xLargeScreen &&
-                <a href={getLegacyLink()} target="_blank" rel="noopener noreferrer" className='footer-nav-link'>
+                <a href={getLegacyLink()} rel="noopener noreferrer" className='footer-nav-link'>
                   <div className='title'>Legacy DriveBC</div>
                 </a>
               }

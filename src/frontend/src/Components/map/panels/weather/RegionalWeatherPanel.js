@@ -95,7 +95,6 @@ export default function RegionalWeatherPanel(props) {
                 <p className="label link">
                 <a
                   alt="Environment Canada Details Link"
-                  target="_blank"
                   rel="noreferrer"
                   href={ event.Url }>
                   Details
@@ -132,7 +131,7 @@ export default function RegionalWeatherPanel(props) {
           <Collapse in={expanded}>
             <div id="collapse-text">
               We haven’t received complete data from Environment Canada. It could be because it hasn’t been observed or wasn’t transmitted.<br/><br/>
-              For more information on why this might happen, read more on <a href="https://climate.weather.gc.ca/FAQ_e.html#Q4" target="_blank" rel="noreferrer">Environment Canada’s help page</a>
+              For more information on why this might happen, read more on <a href="https://climate.weather.gc.ca/FAQ_e.html#Q4" rel="noreferrer">Environment Canada’s help page</a>
             </div>
           </Collapse>
         </div>
@@ -217,7 +216,6 @@ export default function RegionalWeatherPanel(props) {
             <p className="label">
               <a
                 alt="Past 24 Hours"
-                target="_blank"
                 rel="noreferrer"
                 href={`https://weather.gc.ca/past_conditions/index_e.html?station=${weather.station}`}
               >Past 24 hours</a>
@@ -230,7 +228,6 @@ export default function RegionalWeatherPanel(props) {
             Courtesy of&nbsp;
 
             <a alt="Environment Canada"
-              target="_blank"
               rel="noreferrer"
               href="https://weather.gc.ca/canada_e.html">
               Environment Canada
