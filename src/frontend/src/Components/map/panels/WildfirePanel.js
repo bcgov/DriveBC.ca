@@ -10,7 +10,6 @@ import {
 } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
 
-
 // Internal imports
 import FriendlyTime from '../../shared/FriendlyTime';
 
@@ -22,7 +21,7 @@ export default function WildfirePanel(props) {
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
 
   const { wildfire, showRouteObjs } = props;
-  
+
   const wildfireStatusDescriptions = {
     'wildfire of note': 'A wildfire that is creating an increased level of interest. We use this designation to make it easier to find and access response information on the wildfire map. A wildfire that is spreading or it is anticipated to spread beyond the current perimeter, or control line.',
     'out of control': 'A wildfire that is spreading or it is anticipated to spread beyond the current perimeter, or control line.',
@@ -60,8 +59,6 @@ export default function WildfirePanel(props) {
     return `${monthYear.split(' ')[0]} ${ordinalSuffix(day)}, ${date.getFullYear()}`;
   };
 
-  
-
   /* Rendering */
   // Main component
   return wildfire && (
@@ -79,10 +76,13 @@ export default function WildfirePanel(props) {
       </div>
 
       <div className="popup__content">
+        <p className="popup__content__title">{wildfire.name}</p>
+
         <div className={`wildfire-status ${getWildfireStatusClass(wildfire.status)}`}>
           <p className="wildfire-status__title">{wildfire.status}</p>
           <p className="wildfire-status__description">{getWildfireStatusDescription(wildfire.status)}</p>
         </div>
+
         <div className="data-card">
           <div className="data-card__row">
             <div className="data-icon">
@@ -108,7 +108,7 @@ export default function WildfirePanel(props) {
         </div>
 
         <div className="popup__content__footer">
-          <div className="url-btn" >
+          <div className="url-btn">
             <a href={wildfire.url} target="_blank" rel="noreferrer">View details</a>
           </div>
           <span>Courtesy of </span>
