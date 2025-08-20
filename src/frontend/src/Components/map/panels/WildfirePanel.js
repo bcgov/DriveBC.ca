@@ -108,11 +108,11 @@ export default function WildfirePanel(props) {
         </div>
 
         <div className="popup__content__footer">
-          <div className="url-btn">
-            <a href={wildfire.url} target="_blank" rel="noreferrer">View details</a>
+          <div className="url-btn" >
+            <a href={wildfire.url} rel="noreferrer">View details</a>
           </div>
           <span>Courtesy of </span>
-          <a href="https://www2.gov.bc.ca/gov/content/safety/wildfire-status" target="_blank" rel="noreferrer">BC Wildfire Service</a>
+          <a href="https://www2.gov.bc.ca/gov/content/safety/wildfire-status" rel="noreferrer">BC Wildfire Service</a>
         </div>
       </div>
     </div>

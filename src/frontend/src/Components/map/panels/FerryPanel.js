@@ -105,7 +105,6 @@ export default function FerryPanel(props) {
         <div className="popup__title__name">
           <p className='name'><a
             href={ferryData.url}
-            target="_blank"
             rel="noreferrer">{`${ferryData.route_name}`}</a>
           </p>
           <ShareURLButton/>

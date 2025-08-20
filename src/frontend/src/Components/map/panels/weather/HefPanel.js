@@ -63,7 +63,6 @@ export default function HefPanel(props) {
                 <p className="label link">
                 <a
                   alt="Environment Canada Details Link"
-                  target="_blank"
                   rel="noreferrer"
                   href={ event.Url }>
                   Details
@@ -101,7 +100,6 @@ export default function HefPanel(props) {
             Courtesy of&nbsp;
 
             <a alt="Environment Canada"
-              target="_blank"
               rel="noreferrer"
               href="https://weather.gc.ca/canada_e.html">
               Environment Canada

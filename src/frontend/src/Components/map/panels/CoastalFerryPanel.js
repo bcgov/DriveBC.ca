@@ -59,7 +59,7 @@ export default function CoastalFerryPanel(props) {
               <ul className='popup__content__info__routes'>
                 {ferryData.routes.map((ferryRoute, index) => (
                   <li key={index}>
-                    <a href={ferryRoute.url ? ferryRoute.url : "https://www.bcferries.com/routes-fares/discover-route-map"} target="_blank" rel="noopener noreferrer">
+                    <a href={ferryRoute.url ? ferryRoute.url : "https://www.bcferries.com/routes-fares/discover-route-map"} rel="noopener noreferrer">
                       {ferryRoute.name}
                     </a>
                   </li>

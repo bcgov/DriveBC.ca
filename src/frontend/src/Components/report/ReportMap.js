@@ -330,7 +330,6 @@ export function ReportMap(props) {
                   <a
                     href={activeFeature.properties.CONTRACTOR1_WEBSITE}
                     className="website-link"
-                    target="_blank"
                     rel="noreferrer"
                     alt="contractor website link">
                     {activeFeature.properties.CONTRACTOR1_NAME}
@@ -364,7 +363,6 @@ export function ReportMap(props) {
                   <a
                     href={activeFeature.properties.CONTRACTOR2_WEBSITE}
                     className="website-link"
-                    target="_blank"
                     rel="noreferrer"
                     alt="contractor website link">
                     {activeFeature.properties.CONTRACTOR2_NAME}

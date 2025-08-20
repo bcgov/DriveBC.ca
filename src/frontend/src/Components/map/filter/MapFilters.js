@@ -506,7 +506,7 @@ export default function MapFilters(props) {
               </div>
               <div className="filter-item filter-item--seasonal-load">
                 <FontAwesomeIcon icon={faTruckContainer} />
-                <a className="seasonal-load-link" href="https://www.th.gov.bc.ca/bchighways/loadrestrictions/loadrestrictions.htm" target="_blank" rel="noopener noreferrer" alt="Seasonal load restrictions">Seasonal load restrictions</a>
+                <a className="seasonal-load-link" href="https://www.th.gov.bc.ca/bchighways/loadrestrictions/loadrestrictions.htm" rel="noopener noreferrer" alt="Seasonal load restrictions">Seasonal load restrictions</a>
               </div>
             </div>
           </div>

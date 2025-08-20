@@ -31,26 +31,26 @@ export default function Footer(props) {
             <h2>More Info</h2>
             <ul className="link-list">
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" className="footer-link" target="_blank" rel="noreferrer" alt="Disclaimer" >Disclaimer</a>
+                <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" className="footer-link" rel="noreferrer" alt="Disclaimer" >Disclaimer</a>
               </li>
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/home/privacy" className="footer-link" target="_blank" rel="noreferrer" alt="Privacy" >Privacy</a>
+                <a href="https://www2.gov.bc.ca/gov/content/home/privacy" className="footer-link" rel="noreferrer" alt="Privacy" >Privacy</a>
               </li>
               <li>
-                <a href="https://www2.gov.bc.ca/gov/content/home/accessible-government" className="footer-link" target="_blank" rel="noreferrer" alt="Acccessibility" >Accessibility</a>
+                <a href="https://www2.gov.bc.ca/gov/content/home/accessible-government" className="footer-link" rel="noreferrer" alt="Acccessibility" >Accessibility</a>
               </li>
             </ul>
           </div>
         </div>
         <div className='bottom'>
           <div className="connect">
-            <a href="https://twitter.com/DriveBC" className="footer-link social-icon" target="_blank" rel="noreferrer"  alt="Twitter" aria-label="X Twitter">
+            <a href="https://twitter.com/DriveBC" className="footer-link social-icon" rel="noreferrer"  alt="Twitter" aria-label="X Twitter">
               <FontAwesomeIcon icon={faXTwitter} />
             </a>
-            <a href="https://www.instagram.com/ministryoftranbc/" className="footer-link  social-icon" target="_blank" rel="noreferrer"  alt="Instagram" aria-label="Instagram">
+            <a href="https://www.instagram.com/ministryoftranbc/" className="footer-link social-icon" rel="noreferrer"  alt="Instagram" aria-label="Instagram">
               <FontAwesomeIcon icon={faInstagram}/>
             </a>
-            <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-infrastructure/" className="footer-link  social-icon" target="_blank" rel="noreferrer" alt="Linkedin" aria-label="Linkedin">
+            <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-infrastructure/" className="footer-link social-icon" rel="noreferrer" alt="Linkedin" aria-label="Linkedin">
               <FontAwesomeIcon icon={faLinkedin}/>
             </a>
           </div>
