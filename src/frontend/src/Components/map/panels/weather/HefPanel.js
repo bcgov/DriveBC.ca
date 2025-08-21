@@ -37,7 +37,7 @@ export default function HefPanel(props) {
   useEffect(() => {
     searchParams.set('type', 'hef');
     searchParams.set('id', data.id);
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: true });
   }, [feature]);
 
   return (

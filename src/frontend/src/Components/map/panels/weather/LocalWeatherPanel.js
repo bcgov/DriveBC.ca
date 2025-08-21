@@ -44,7 +44,7 @@ export default function LocalWeatherPanel(props) {
   useEffect(() => {
     searchParams.set('type', 'localWeather');
     searchParams.set('id', weatherData.id);
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: true });
   }, [feature]);
 
   return (

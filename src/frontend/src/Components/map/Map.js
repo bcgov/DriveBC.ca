@@ -629,7 +629,7 @@ export default function DriveBCMap(props) {
         searchParams.delete('type');
         searchParams.delete('display_category');
         searchParams.delete('id');
-        setSearchParams(searchParams);
+        setSearchParams(searchParams, { replace: true });
       }
     }
 
@@ -773,7 +773,7 @@ export default function DriveBCMap(props) {
         searchParams.delete('type');
         searchParams.delete('display_category');
         searchParams.delete('id');
-        setSearchParams(searchParams);
+        setSearchParams(searchParams, { replace: true });
       }
 
     } else {

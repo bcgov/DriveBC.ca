@@ -44,7 +44,7 @@ export default function FerryPanel(props) {
   useEffect(() => {
     searchParams.set('type', 'ferry');
     searchParams.set('id', ferryData.id);
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: true });
   }, [feature]);
 
   // Helpers

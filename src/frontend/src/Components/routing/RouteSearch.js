@@ -75,7 +75,7 @@ const RouteSearch = forwardRef((props, ref) => {
       searchParams.set('end', null);
     }
 
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: true });
   }
 
   const updateSearch = () => {
@@ -146,7 +146,7 @@ const RouteSearch = forwardRef((props, ref) => {
     searchParams.delete('type');
     searchParams.delete('id');
     searchParams.delete('display_category');
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: true });
 
     dispatch(updateSearchLocationFrom(searchLocationTo));
     dispatch(updateSearchLocationTo(searchLocationFrom));

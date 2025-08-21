@@ -80,7 +80,7 @@ export default function CamPanel(props) {
 
     searchParams.set("type", 'camera');
     searchParams.set("id", newCam.id);
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: true });
   }, [camFeature]);
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export default function CamPanel(props) {
     setCamera(rootCam.camGroup[camIndex]);
 
     searchParams.set("camIndex", camIndex);
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: true });
 
     // need to track camIndex as a data attribute to bypass lexical binding
     // of camIndex in helper functions (i.e., updateCamera);

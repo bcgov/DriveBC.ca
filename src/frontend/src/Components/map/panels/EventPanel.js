@@ -37,7 +37,7 @@ export default function EventPanel(props) {
     searchParams.set('type', 'event');
     searchParams.set('display_category', event.display_category);
     searchParams.set('id', event.id);
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: true });
   }, [feature]);
 
   return (
