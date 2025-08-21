@@ -678,17 +678,19 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
                 # print(f"test: Deleted from S3: {s3_key}")
                 # logger.info(f"Deleted from S3: {s3_key}")
 
-                resp = s3_client.head_object(Bucket=S3_BUCKET, Key=s3_key)
-                print("Before delete:", resp)
+                # resp = s3_client.head_object(Bucket=S3_BUCKET, Key=s3_key)
+                # print("Before delete:", resp)
 
-                s3_client.delete_object(Bucket=S3_BUCKET, Key=s3_key)
+                # s3_client.delete_object(Bucket=S3_BUCKET, Key=s3_key)
 
-                try:
-                    resp = s3_client.head_object(Bucket=S3_BUCKET, Key=s3_key)
-                    print("Still exists after delete:", resp)
-                except s3_client.exceptions.ClientError as e:
-                    if e.response['Error']['Code'] == '404':
-                        print("Object successfully deleted")
+                # try:
+                #     resp = s3_client.head_object(Bucket=S3_BUCKET, Key=s3_key)
+                #     print("Still exists after delete:", resp)
+                # except s3_client.exceptions.ClientError as e:
+                #     if e.response['Error']['Code'] == '404':
+                #         print("Object successfully deleted")
+
+                hard_delete_s3_object(s3_client, S3_BUCKET, s3_key)
 
             except s3_client.exceptions.NoSuchKey:
                 print(f"test: S3 key not found: {s3_key}")
@@ -706,3 +708,58 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
     ).delete()
 
     logger.info("All purged recordes are deleted successfully.")
+
+
+
+def hard_delete_s3_object(s3_client, bucket: str, key: str):
+    # Helpful logging (use repr to reveal hidden spaces/slashes)
+    print(f"Bucket={bucket!r}, Key={key!r}, Region={getattr(s3_client.meta, 'region_name', None)!r}")
+
+    # Guard against accidental leading slash or whitespace differences
+    if key != key.strip():
+        print("Warning: Key has leading/trailing whitespace; trimming for delete.")
+        key = key.strip()
+    if key.startswith('/'):
+        print("Warning: Key starts with '/'; S3 keys should not. Stripping leading '/'.")
+        key = key.lstrip('/')
+
+    # Is versioning enabled?
+    status = s3_client.get_bucket_versioning(Bucket=bucket).get("Status")
+
+    if status == "Enabled":
+        # Delete ALL versions + delete markers for this exact key
+        paginator = s3_client.get_paginator("list_object_versions")
+        to_delete = []
+        for page in paginator.paginate(Bucket=bucket, Prefix=key):
+            for v in page.get("Versions", []):
+                if v["Key"] == key:
+                    to_delete.append({"Key": key, "VersionId": v["VersionId"]})
+            for m in page.get("DeleteMarkers", []):
+                if m["Key"] == key:
+                    to_delete.append({"Key": key, "VersionId": m["VersionId"]})
+
+        if not to_delete:
+            print("No versions found for this key (nothing to delete).")
+        else:
+            # Batch in chunks of 1000
+            for i in range(0, len(to_delete), 1000):
+                s3_client.delete_objects(
+                    Bucket=bucket,
+                    Delete={"Objects": to_delete[i:i+1000], "Quiet": True},
+                )
+            print(f"Deleted {len(to_delete)} version(s)/delete marker(s) for {key!r}.")
+    else:
+        # Non-versioned: single delete is enough
+        s3_client.delete_object(Bucket=bucket, Key=key)
+        print(f"Issued delete for {key!r} on non-versioned bucket.")
+
+    # Verify accessibility of the current key (without VersionId)
+    try:
+        s3_client.head_object(Bucket=bucket, Key=key)
+        print("Object is still accessible (unexpected). Check key/bucket/region.")
+    except s3_client.exceptions.ClientError as e:
+        code = e.response["Error"].get("Code")
+        if code in ("404", "NoSuchKey", "NotFound"):
+            print("Confirmed: object not accessible (deleted or delete marker is current).")
+        else:
+            raise
