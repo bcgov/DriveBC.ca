@@ -158,8 +158,7 @@ export default function Header() {
   const legacyDBCHandler = () => {
     window.open(
       getLegacyLink(),
-      '_blank',
-      'noopener,noreferrer'
+      "_self"
     );
   }
 
