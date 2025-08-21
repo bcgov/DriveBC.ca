@@ -674,9 +674,21 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
                 if s3_key.startswith(f"{S3_BUCKET}/"):
                     s3_key = s3_key[len(S3_BUCKET) + 1:]
 
+                # s3_client.delete_object(Bucket=S3_BUCKET, Key=s3_key)
+                # print(f"test: Deleted from S3: {s3_key}")
+                # logger.info(f"Deleted from S3: {s3_key}")
+
+                resp = s3_client.head_object(Bucket=S3_BUCKET, Key=s3_key)
+                print("Before delete:", resp)
+
                 s3_client.delete_object(Bucket=S3_BUCKET, Key=s3_key)
-                print(f"test: Deleted from S3: {s3_key}")
-                logger.info(f"Deleted from S3: {s3_key}")
+
+                try:
+                    resp = s3_client.head_object(Bucket=S3_BUCKET, Key=s3_key)
+                    print("Still exists after delete:", resp)
+                except s3_client.exceptions.ClientError as e:
+                    if e.response['Error']['Code'] == '404':
+                        print("Object successfully deleted")
 
             except s3_client.exceptions.NoSuchKey:
                 print(f"test: S3 key not found: {s3_key}")
