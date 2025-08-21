@@ -554,6 +554,9 @@ def purge_old_images():
 
 
 def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
+    # bruce test
+    age = "5"
+    
     if is_pvc:
         root_path = PVC_ROOT
     else:
