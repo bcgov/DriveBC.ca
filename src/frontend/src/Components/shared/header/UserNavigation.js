@@ -186,7 +186,11 @@ export default function UserNavigation(props) {
         id="signin-btn"
         alt="Sign in button"
         onClick={() => {toggleAuthModal('Sign In')}}
-        onKeyDown={() => {toggleAuthModal('Sign In')}}
+        onKeyDown={keyEvent => {
+          if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+            toggleAuthModal('Sign In')
+          }
+        }}
         tabIndex={0}>
 
         Sign in

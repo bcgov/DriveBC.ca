@@ -264,7 +264,8 @@ export default function AdvisoryDetailsPage() {
                 if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                   returnHandler();
                 }
-              }}>
+              }}
+              tabIndex={0}>
               <FontAwesomeIcon icon={faArrowLeft} />
               Back to last page
             </a>
