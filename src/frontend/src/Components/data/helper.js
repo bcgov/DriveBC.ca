@@ -67,7 +67,7 @@ const request = (url, params = {}, headers = {}, include_credentials = true, met
     // throw network error on failed fetches
     if (error instanceof TypeError && (
       error.message.includes("Failed to fetch") ||  // Chrome
-      error.message.includes("network") ||  // Safari
+      error.message.includes("Load failed") ||  // Safari
       error.message.includes("NetworkError") // Firefox
     )) {
       throw new NetworkError();
