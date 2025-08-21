@@ -42,9 +42,9 @@ function replace(domNode) {
   /* DBC22-3141
    * Part of implementing subpages for advisories and bulletins: links coming
    * from cms need to be converted to NavLinks so they participate properly in
-   * the React lifecycel (i.e., they don't trigger a whole page load)
+   * the React lifecycle (i.e., they don't trigger a whole page load)
    */
-  if (domNode.name === 'a') {
+  if (domNode.name === 'a' && domNode.attribs['href'].includes('flickr')) {  // DBC22-4580 added check so only flickr links are converted
     /* DBC22-2719
      * failing to copy other attributes of the domNode broke flickr's embed
      */
