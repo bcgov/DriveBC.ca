@@ -60,7 +60,7 @@ class TestWildfireModel(BaseTest):
         assert isinstance(wildfire_one.geometry, Polygon)
         assert wildfire_one.size == 2244.5
         assert wildfire_one.status == "Under Control"
-        assert wildfire_one.reported_date == datetime.date(2025, 6, 20)
+        assert wildfire_one.reported_date == datetime.date(2025, 6, 15)
 
         # Out, not populated
         populate_wildfire_from_data(self.parsed_feed[1])
@@ -76,7 +76,7 @@ class TestWildfireModel(BaseTest):
         assert isinstance(wildfire_two.geometry, MultiPolygon)
         assert wildfire_two.size == 26276.8
         assert wildfire_two.status == "Being Held"
-        assert wildfire_two.reported_date == datetime.date(2025, 7, 3)
+        assert wildfire_two.reported_date == datetime.date(2025, 5, 28)
 
     @patch("httpx.get")
     def test_populate_and_update_wildfires(self, mock_requests_get):
@@ -91,8 +91,11 @@ class TestWildfireModel(BaseTest):
 
         # validate data
         assert Wildfire.objects.count() == 2  # wildfires with "Out" not populated
-        assert Wildfire.objects.filter(id='C50627').exists()
-        assert Wildfire.objects.filter(id='G70422').exists()
+        wildfire_one = Wildfire.objects.get(id='C50627')
+        assert wildfire_one.reported_date == datetime.date(2025, 6, 15)
+
+        wildfire_two = Wildfire.objects.get(id='G70422')
+        assert wildfire_two.reported_date == datetime.date(2025, 5, 28)
 
         # Second call with one updated wildfire
         populate_all_wildfire_data()

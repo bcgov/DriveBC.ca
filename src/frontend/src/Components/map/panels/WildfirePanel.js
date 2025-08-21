@@ -98,13 +98,6 @@ export default function WildfirePanel(props) {
             <p className="label">Discovered</p>
             <p className="data">{formatDate(wildfire.reported_date)}</p>
           </div>
-          <div className="data-card__row">
-            <div className="data-icon">
-              <FontAwesomeIcon icon={faArrowsRotate} />
-            </div>
-            <p className="label">Updated</p>
-            <p className="data"><FriendlyTime date={wildfire.modified_at}/></p>
-          </div>
         </div>
 
         <div className="popup__content__footer">

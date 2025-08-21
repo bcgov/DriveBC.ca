@@ -9,7 +9,6 @@ class WildfireAreaPropertiesField(serializers.Field):
             # General
             "id": data['FIRE_NUMBER'],
             "size": data['FIRE_SIZE_HECTARES'],
-            "reported_date": datetime.datetime.strptime(data['TRACK_DATE'], "%Y-%m-%dZ").date(),
             "status": data['FIRE_STATUS'],
             "url": data['FIRE_URL'],
         }
@@ -23,6 +22,7 @@ class WildfirePointPropertiesField(serializers.Field):
             # General
             "id": data['FIRE_NUMBER'],
             "name": data['INCIDENT_NAME'],
+            "reported_date": datetime.datetime.strptime(data['IGNITION_DATE'], "%Y-%m-%dZ").date(),
         }
 
         return res

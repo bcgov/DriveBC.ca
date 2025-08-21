@@ -72,6 +72,14 @@
         }
       }
 
+      .data-icon {
+        width: 18px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       &__footer {
         margin-top: 12px;
         margin-bottom: 32px;

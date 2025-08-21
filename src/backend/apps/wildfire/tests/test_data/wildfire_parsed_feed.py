@@ -15,7 +15,7 @@ parsed_feed = [
         ]),
         'id': 'C50627',
         'name': 'Martin Lake',
-        'reported_date': datetime.date(2025, 6, 20),
+        'reported_date': datetime.date(2025, 6, 15),
         'size': 2244.5,
         'status': 'Under Control',
         'url': 'https://wildfiresituation.nrs.gov.bc.ca/incidents?fireYear=2025&incidentNumber=C50627'
@@ -67,7 +67,7 @@ parsed_feed = [
         ]),
         'id': 'G70422',
         'name': 'Kiskatinaw River',
-        'reported_date': datetime.date(2025, 7, 3),
+        'reported_date': datetime.date(2025, 5, 28),
         'size': 26276.8,
         'status': 'Being Held',
         'url': 'https://wildfiresituation.nrs.gov.bc.ca/incidents?fireYear=2025&incidentNumber=G70422'
