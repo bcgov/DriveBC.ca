@@ -641,8 +641,10 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
                 hard_delete_s3_object(s3_client, s3_key)
 
             except s3_client.exceptions.NoSuchKey:
+                print(f"test: S3 key not found: {s3_key}")
                 logger.error(f"S3 key not found: {s3_key}")
             except Exception as e:
+                print(f"test: Error deleting S3 file {s3_key}: {e}")
                 logger.error(f"Error deleting S3 file {s3_key}: {e}")
 
     # Delete all records if all images paths are NULL
