@@ -663,6 +663,8 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
             endpoint_url=S3_ENDPOINT_URL
         )
 
+        print(f"Deleting {len(files_to_delete)} old S3 images...")
+
         # Delete files from S3
         for file_path in files_to_delete:
             try:
@@ -674,6 +676,7 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
                 if s3_key.startswith(f"{S3_BUCKET}/"):
                     s3_key = s3_key[len(S3_BUCKET) + 1:]
 
+                print(f"Deleting S3 file: {s3_key}")
                 hard_delete_s3_object(s3_client, s3_key)
 
             except s3_client.exceptions.NoSuchKey:
@@ -696,10 +699,14 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
 
 
 def hard_delete_s3_object(s3_client, full_key: str):
+    
     """
     Deletes an object from S3. If the input full_key starts with "<bucket>/<rest_of_key>",
     this function will split it into bucket + key automatically.
     """
+
+    print(f"Hard deleting S3 object: {full_key} (Region: {getattr(s3_client.meta, 'region_name', None)})")
+
     full_key = full_key.strip().lstrip("/")
     parts = full_key.split("/", 1)
 
