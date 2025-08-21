@@ -38,6 +38,8 @@ from apps.consumer.models import ImageIndex
 import boto3
 from django.utils import timezone
 
+from django.forms.models import model_to_dict
+
 logger = logging.getLogger(__name__)
 
 APP_DIR = Path(__file__).resolve().parent
@@ -597,14 +599,10 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
 
     records_to_delete_pvc = ImageIndex.objects.filter(
         timestamp__lt=cutoff_time,
-        original_s3_path__isnull=False,
-        watermarked_s3_path__isnull=False
     )
 
     records_to_delete_s3 = ImageIndex.objects.filter(
         timestamp__lt=cutoff_time,
-        original_s3_path__isnull=False,
-        watermarked_s3_path__isnull=False
     )
 
     files_to_delete = []
@@ -620,26 +618,27 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
 
         if path:
             full_path = os.path.join(root_path, path)
-            files_to_delete.append(full_path)
-            ids_to_delete.append(row.timestamp)
-
+        else:
+            full_path = path
+        
+        files_to_delete.append(full_path)
+        ids_to_delete.append(row.timestamp)
+    
     if is_pvc:
         ImageIndex.objects.filter(
             timestamp__in=ids_to_delete,
-            original_pvc_path__isnull=False,
-            watermarked_pvc_path__isnull=False
         ).update(
             original_pvc_path=None,
-            watermarked_pvc_path=None
+            watermarked_pvc_path=None,
+            modified_at=timezone.now()
         )
     else:
         ImageIndex.objects.filter(
             timestamp__in=ids_to_delete,
-            original_s3_path__isnull=False,
-            watermarked_s3_path__isnull=False
         ).update(
             original_s3_path=None,
-            watermarked_s3_path=None
+            watermarked_s3_path=None,
+            modified_at=timezone.now()
         )
 
     # Delete files from PVC or s3
@@ -667,6 +666,8 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
         # Delete files from S3
         for file_path in files_to_delete:
             try:
+                if not file_path:
+                    continue
                 s3_key = file_path.strip("/")
 
                 if s3_key.startswith(f"{S3_BUCKET}/"):
