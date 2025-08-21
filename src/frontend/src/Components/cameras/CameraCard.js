@@ -205,7 +205,7 @@ export default function CameraCard(props) {
     <div className={`camera-card ${updated} ${stale} ${delayed} ${unavailable} ${loading}`}>
       <div className="camera-card__body">
         <div className="card-img-box" onClick={handleClick} onKeyDown={handleKeyDown} tabIndex={0}>
-          {!showLoader && !isLoading && !unavailable &&
+          {camera &&
             <img
               ref={imageRef}
               className="card-img"
