@@ -674,23 +674,7 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
                 if s3_key.startswith(f"{S3_BUCKET}/"):
                     s3_key = s3_key[len(S3_BUCKET) + 1:]
 
-                # s3_client.delete_object(Bucket=S3_BUCKET, Key=s3_key)
-                # print(f"test: Deleted from S3: {s3_key}")
-                # logger.info(f"Deleted from S3: {s3_key}")
-
-                # resp = s3_client.head_object(Bucket=S3_BUCKET, Key=s3_key)
-                # print("Before delete:", resp)
-
-                # s3_client.delete_object(Bucket=S3_BUCKET, Key=s3_key)
-
-                # try:
-                #     resp = s3_client.head_object(Bucket=S3_BUCKET, Key=s3_key)
-                #     print("Still exists after delete:", resp)
-                # except s3_client.exceptions.ClientError as e:
-                #     if e.response['Error']['Code'] == '404':
-                #         print("Object successfully deleted")
-
-                hard_delete_s3_object(s3_client, S3_BUCKET, s3_key)
+                hard_delete_s3_object(s3_client, s3_key)
 
             except s3_client.exceptions.NoSuchKey:
                 print(f"test: S3 key not found: {s3_key}")
@@ -711,17 +695,20 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
 
 
 
-def hard_delete_s3_object(s3_client, bucket: str, key: str):
-    # Helpful logging (use repr to reveal hidden spaces/slashes)
-    print(f"Bucket={bucket!r}, Key={key!r}, Region={getattr(s3_client.meta, 'region_name', None)!r}")
+def hard_delete_s3_object(s3_client, full_key: str):
+    """
+    Deletes an object from S3. If the input full_key starts with "<bucket>/<rest_of_key>",
+    this function will split it into bucket + key automatically.
+    """
+    full_key = full_key.strip().lstrip("/")
+    parts = full_key.split("/", 1)
 
-    # Guard against accidental leading slash or whitespace differences
-    if key != key.strip():
-        print("Warning: Key has leading/trailing whitespace; trimming for delete.")
-        key = key.strip()
-    if key.startswith('/'):
-        print("Warning: Key starts with '/'; S3 keys should not. Stripping leading '/'.")
-        key = key.lstrip('/')
+    if len(parts) < 2:
+        raise ValueError(f"Invalid key format: {full_key!r}. Expected '<bucket>/<object_key>'")
+
+    bucket, key = parts[0], parts[1]
+
+    print(f"Bucket={bucket!r}, Key={key!r}, Region={getattr(s3_client.meta, 'region_name', None)!r}")
 
     # Is versioning enabled?
     status = s3_client.get_bucket_versioning(Bucket=bucket).get("Status")
