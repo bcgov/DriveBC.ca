@@ -45,10 +45,14 @@ export default function WildfirePanel(props) {
   }
 
   const formatDate = (dateStr) => {
-    const date = new Date(dateStr);
-    const options = { year: 'numeric', month: 'long' };
-    const monthYear = date.toLocaleDateString('en-US', options);
-    const day = date.getDate();
+    // YYYY-MM-DD format
+    const [year, month, day] = dateStr.split('-').map(Number);
+
+    // Create array of month names
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
 
     const ordinalSuffix = (n) => {
         const s = ["th", "st", "nd", "rd"];
@@ -56,7 +60,7 @@ export default function WildfirePanel(props) {
         return n + (s[(v - 20) % 10] || s[v] || s[0]);
     };
 
-    return `${monthYear.split(' ')[0]} ${ordinalSuffix(day)}, ${date.getFullYear()}`;
+    return `${monthNames[month-1]} ${ordinalSuffix(day)}, ${year}`;
   };
 
   /* Rendering */
