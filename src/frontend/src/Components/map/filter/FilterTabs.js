@@ -1,9 +1,9 @@
 // React
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // External imports
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
+import { createPortal } from 'react-dom';
+import { useMediaQuery } from "@uidotdev/usehooks";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faLayerGroup
@@ -12,6 +12,8 @@ import {
   faXmark
 } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
 // Internal imports
 import Legend from "./Legend";
@@ -38,25 +40,25 @@ export default function FilterTabs(props) {
     setOpen
   } = props;
 
+  const smallScreen = useMediaQuery('only screen and (max-width : 768px)');
+
   // States
   const [activeTab, setActiveTab] = useState('layers');
+  const [mapContainer, setMapContainer] = useState(null);
+
+  // Find the map element on component mount
+  useEffect(() => {
+    const container = document.querySelector('.map-container');
+    if (container) {
+      setMapContainer(container);
+    }
+  }, []);
 
   // Rendering
-  // Main Component
-  return (
-    <div className={'filters-menu'  + (!open ? ' closed' : '') + (activeTab === 'layers' ? ' layers-tab' : ' legend-tab')}>
-      <Button
-        variant={isDelaysPage ? 'outline-primary' : 'primary'}
-        className={'map-btn open-filters' + (open ? ' hide' : '')}
-        aria-label='open filters options'
-        onClick={() => {
-          open ? setOpen(false) : setOpen(true) }
-        }>
-        <FontAwesomeIcon icon={faLayerGroup} />
-        <span className='filters-btn__text'>{textOverride ? textOverride : 'Map Layers'}</span>
-      </Button>
-
-      <div className={`tabs-container` + (open ? '' : ' hide')}>
+  // Sub components
+  const getTabsContainer = () => {
+    return (
+      <div className={(smallScreen ? `mobile-filter-tabs` : `filter-tabs`) + (open ? '' : ' hide')}>
         <Tabs
           defaultActiveKey='layers'
           className='tabs-header'
@@ -85,11 +87,33 @@ export default function FilterTabs(props) {
         <button
           className='close-filters'
           aria-label='close filters options'
-          onClick={() => setOpen(false)} >
+          onClick={() => setOpen(false)}>
 
           <FontAwesomeIcon icon={faXmark} />
         </button>
       </div>
+    );
+  }
+
+  // Main Component
+  return (
+    <div className={'filters-menu'  + (!open ? ' closed' : '') + (activeTab === 'layers' ? ' layers-tab' : ' legend-tab')}>
+      <Button
+        variant={isDelaysPage ? 'outline-primary' : 'primary'}
+        className={'map-btn open-filters' + (open ? ' hide' : '')}
+        aria-label='open filters options'
+        onClick={() => {
+          open ? setOpen(false) : setOpen(true)
+        }}>
+        <FontAwesomeIcon icon={faLayerGroup}/>
+        <span className='filters-btn__text'>{textOverride ? textOverride : 'Map Layers'}</span>
+      </Button>
+
+      {smallScreen && mapContainer &&
+        createPortal(getTabsContainer(), mapContainer)
+      }
+
+      {!smallScreen && getTabsContainer()}
     </div>
   );
 }

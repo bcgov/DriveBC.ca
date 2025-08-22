@@ -220,14 +220,14 @@ export default function DriveBCMap(props) {
 
   // ScaleLine
   const scaleLineControl = new ScaleLine({ units: 'metric' });
-  const updateScaleLineClass = (openTabs, openPanel) => {
+  const updateScaleLineClass = (openTabs, showRouteObjs) => {
     if (!scaleLineRef.current) {
       scaleLineRef.current = scaleLineControl.element;
     }
 
     const el = scaleLineRef.current;
     el.classList.toggle('tabs-pushed', !!openTabs);
-    el.classList.toggle('panel-open', !!openPanel);
+    el.classList.toggle('route-details-open', (showRouteObjs && !clickedFeature));
   }
 
   useEffect(() => {
@@ -304,8 +304,8 @@ export default function DriveBCMap(props) {
   /* useEffect hooks */
   /* Push ScaleLine to the left when tabs are open */
   useEffect(() => {
-    updateScaleLineClass(openTabs, openPanel);
-  }, [openTabs, openPanel]);
+    updateScaleLineClass(openTabs, showRouteObjs);
+  }, [openTabs, showRouteObjs]);
 
   /* initialization for OpenLayers map */
   useEffect(() => {
@@ -898,7 +898,7 @@ export default function DriveBCMap(props) {
           </div>
         )}
 
-        {(!isCamDetail && smallScreen && !maximizedPanel && mapRef.current && !openPanel) && (
+        {(!isCamDetail && smallScreen && !maximizedPanel && mapRef.current && (!showRouteObjs || clickedFeature)) && (
           <React.Fragment>
             <Button
               ref={myLocationRef}

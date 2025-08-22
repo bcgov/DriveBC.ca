@@ -181,7 +181,7 @@
         border-radius: 4px;
         left: auto;
         right: 1rem;
-        bottom: 4rem;
+        bottom: 3.5rem;
         padding: 2px;
         position: absolute;
 
@@ -195,7 +195,7 @@
           bottom: 1rem;
         }
 
-        &.panel-open {
+        &.route-details-open {
           bottom: 1rem;
         }
       }
