@@ -568,13 +568,14 @@ export default function Filters(props) {
                     </OverlayTrigger>
                   </div>
 
-                  <div className={'filter-item filter-item--weather' + (weather ? ' checked' : '') + ((loadingLayers && loadingLayers.weathers) ? ' loading' : '')}>
+                  <div className={'filter-item filter-item--weather' + (weather ? ' checked' : '') + ((loadingLayers && loadingLayers.weathers) ? ' loading' : '') + (isDelaysPage ? ' disabled' : '')}>
                     <input
                       type="checkbox"
                       name="weather"
                       id="filter--weather"
                       onChange={e => filterHandler('weather', e)}
-                      defaultChecked={mapContext.visible_layers.weather} />
+                      defaultChecked={mapContext.visible_layers.weather}
+                      disabled={isDelaysPage} />
 
                     <label className="filter-item__button" htmlFor="filter--weather">
                       <span className="filter-item__button__icon">
@@ -900,13 +901,14 @@ export default function Filters(props) {
                   </OverlayTrigger>
                 </div>
 
-                <div className={'filter-item filter-item--weather' + (weather ? ' checked' : '') + ((loadingLayers && loadingLayers.weathers) ? ' loading' : '')}>
+                <div className={'filter-item filter-item--weather' + (weather ? ' checked' : '') + ((loadingLayers && loadingLayers.weathers) ? ' loading' : '') + + (disableFeatures ? ' disabled' : '')}>
                   <input
                     type="checkbox"
                     name="weather"
                     id="filter--weather"
                     onChange={e => filterHandler('weather', e)}
-                    defaultChecked={mapContext.visible_layers.weather} />
+                    defaultChecked={mapContext.visible_layers.weather}
+                    disabled={isDelaysPage} />
 
                   <label className="filter-item__button" htmlFor="filter--weather">
                     <span className="filter-item__button__icon">
