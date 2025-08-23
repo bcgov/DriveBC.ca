@@ -304,9 +304,6 @@ def build_route_geometries(coords=hwy_coords):
 
     """
     for key, routes in coords.items():
-        if key != '15':
-            continue
-
         ls_routes = []
 
         # Go through each route and create a geometry
