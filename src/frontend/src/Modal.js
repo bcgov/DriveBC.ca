@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/pro-solid-svg-icons';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import FocusLock from 'react-focus-lock';
 
 // Internal imports
 import { AuthContext } from "./App";
@@ -95,7 +96,7 @@ export default function Modal() {
       onClick={resetAuthModal}
       onKeyDown={resetAuthModal}
     >
-
+      <FocusLock>
       <div
         tabIndex={0}
         id="modal-content"
@@ -105,14 +106,17 @@ export default function Modal() {
         role="alertdialog"
         aria-modal="true"
       >
-
         <div className='header'>
           <button
             id="modal-closer"
             className="modal-closer close-panel"
             aria-label="close modal"
             onClick={resetAuthModal}
-            onKeyDown={resetAuthModal}>
+            onKeyDown={keyEvent => {
+              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                resetAuthModal
+              }
+            }}>
             <FontAwesomeIcon icon={faXmark} />
           </button>
 
@@ -155,10 +159,11 @@ export default function Modal() {
         </div>
 
         <div className='release-tag'>
-            { window.DEPLOYMENT_TAG || '' }
-            { window.RELEASE ? ` (${window.RELEASE})` : '' }
-          </div>
+          { window.DEPLOYMENT_TAG || '' }
+          { window.RELEASE ? ` (${window.RELEASE})` : '' }
         </div>
       </div>
+      </FocusLock>
+    </div>
   )
 }
