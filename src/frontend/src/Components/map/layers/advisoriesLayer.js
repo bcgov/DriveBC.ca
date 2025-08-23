@@ -16,6 +16,8 @@ export function getAdvisoriesLayer(
   advisories,
   projectionCode,
   mapContext,
+  referenceData,
+  updateReferenceFeature
 ) {
   return new VectorLayer({
     classname: 'advisories',
@@ -44,6 +46,14 @@ export function getAdvisoriesLayer(
           olFeatureForMap.setId(advisory.id);
 
           vectorSource.addFeature(olFeatureForMap);
+
+          // Update the reference feature if id is the reference
+          if (referenceData?.type === 'advisory') {
+            // Loose comparison as types may differ (string vs number)
+            if (advisory.id == referenceData.id) {
+              updateReferenceFeature(olFeatureForMap);
+            }
+          }
         });
       },
     }),

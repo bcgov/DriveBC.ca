@@ -1,26 +1,24 @@
 // React
-import React from 'react';
+import React, {useEffect} from 'react';
+
+// Navigation
+import { useSearchParams } from "react-router-dom";
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFire,
-  faEye,
-  faArrowsRotate
+  faEye
 } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
-
-// Internal imports
-import FriendlyTime from '../../shared/FriendlyTime';
 
 // Styling
 import './WildfirePanel.scss';
 
 export default function WildfirePanel(props) {
+  /* Setup */
   // Misc
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
-
-  const { wildfire, showRouteObjs } = props;
 
   const wildfireStatusDescriptions = {
     'wildfire of note': 'A wildfire that is creating an increased level of interest. We use this designation to make it easier to find and access response information on the wildfire map. A wildfire that is spreading or it is anticipated to spread beyond the current perimeter, or control line.',
@@ -36,6 +34,21 @@ export default function WildfirePanel(props) {
     'under control': 'wildfire-status--under-control',
   };
 
+  // Props
+  const { wildfire, showRouteObjs } = props;
+
+  // Navigation
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Effects
+  useEffect(() => {
+    searchParams.set("type", 'wildfire');
+    searchParams.set("id", wildfire.id);
+    searchParams.delete("display_category");
+    setSearchParams(searchParams, { replace: true });
+  }, [wildfire]);
+
+  /* Helpers */
   function getWildfireStatusDescription(status) {
     return wildfireStatusDescriptions[status.toLowerCase()] || '';
   }

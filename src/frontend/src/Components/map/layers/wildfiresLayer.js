@@ -65,12 +65,12 @@ export function getWildfiresLayer(
     // Set reference to each other and add to vector source
     locationFeatureForMap.set('altFeature', areaFeatureForMap);
     areaFeatureForMap.set('altFeature', locationFeatureForMap);
-
     vectorSource.addFeature(locationFeatureForMap);
     vectorSource.addFeature(areaFeatureForMap);
+
+    // Update the reference feature if id is the reference
     if (referenceData?.type === 'wildfire') {
-      // Update the reference feature if id is the reference
-      if (wildfire.id === referenceData.id) {
+      if (wildfire.id == referenceData.id) {  // Intentional loose equality for string IDs
         updateReferenceFeature(areaFeatureForMap);
         updateReferenceFeature(locationFeatureForMap);
       }

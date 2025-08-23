@@ -748,7 +748,8 @@ export default function DriveBCMap(props) {
   useEffect(() => {
     const featuresDict = loadLayer(
       mapLayers, mapRef, mapContext,
-      'advisoriesLayer', advisories, filteredAdvisories, 5
+      'advisoriesLayer', advisories, filteredAdvisories, 5,
+      referenceData, updateReferenceFeature, setLoadingLayers
     );
 
     setFeatureContext({...featureContext, advisories: featuresDict});

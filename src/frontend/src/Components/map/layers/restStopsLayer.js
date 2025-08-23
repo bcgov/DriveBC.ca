@@ -76,7 +76,7 @@ export function getRestStopsLayer(restStopsData, projectionCode, mapContext, ref
 
     if (referenceData?.type === 'restStop' || referenceData?.type === 'largeRestStop') {
       // Update the reference feature if id is the reference
-      if (restStop.id == referenceData.id) {
+      if (restStop.id == referenceData.id) {  // Intentional loose equality for string IDs
         updateReferenceFeature(olFeatureForMap);
       }
     }

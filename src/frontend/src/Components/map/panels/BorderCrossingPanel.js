@@ -43,6 +43,7 @@ export default function BorderCrossingPanel(props) {
 
     searchParams.set('type', 'borderCrossing');
     searchParams.set('id', borderCrossing.id);
+    searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
   }, [borderCrossing?.id, borderCrossing?.lanes]);
 

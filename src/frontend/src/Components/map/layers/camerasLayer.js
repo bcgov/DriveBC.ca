@@ -34,7 +34,7 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
     // Update the reference feature if one of the cameras is the reference
     if (referenceData?.type === 'camera') {
       feature.get('camGroup').forEach((cam) => {
-        if (cam.id == referenceData.id) {  // Intentional loose equality check
+        if (cam.id == referenceData.id) {  // Intentional loose equality for string IDs
           if (referenceData.focusCamera) {
             feature.set('focusCamera', referenceData.focusCamera);
             feature.set('zoom', referenceData.zoom);

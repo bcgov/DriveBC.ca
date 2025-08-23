@@ -49,7 +49,7 @@ export function getHefLayer(
 
     if (referenceData?.type === 'hef') {
       // Update the reference feature if id is the reference
-      if (forecast.id == referenceData.id) {
+      if (forecast.id == referenceData.id) {  // Intentional loose equality for string IDs
         updateReferenceFeature(olFeatureForMap);
       }
     }

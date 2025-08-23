@@ -42,7 +42,7 @@ export function getCurrentWeatherLayer(weatherData, projectionCode, mapContext, 
 
     if (referenceData?.type === 'localWeather') {
       // Update the reference feature if id is the reference
-      if (weather.id == referenceData.id) {
+      if (weather.id == referenceData.id) {  // Intentional loose equality for string IDs
         updateReferenceFeature(olFeatureForMap);
       }
     }

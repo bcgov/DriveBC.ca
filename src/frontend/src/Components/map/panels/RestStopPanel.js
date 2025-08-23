@@ -59,6 +59,7 @@ export default function RestStopPanel(props) {
 
     searchParams.set('type', featureType);
     searchParams.set('id', restStopData.id);
+    searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
   }, [feature]);
 

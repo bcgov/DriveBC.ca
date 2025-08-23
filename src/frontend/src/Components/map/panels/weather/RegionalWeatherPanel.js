@@ -67,6 +67,7 @@ export default function RegionalWeatherPanel(props) {
   useEffect(() => {
     searchParams.set('type', 'regionalWeather');
     searchParams.set('id', weather.id);
+    searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
   }, [feature]);
 

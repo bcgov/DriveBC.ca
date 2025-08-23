@@ -29,6 +29,7 @@ export default function CoastalFerryPanel(props) {
   useEffect(() => {
     searchParams.set('type', 'ferry');
     searchParams.set('id', ferryData.id);
+    searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
   }, [feature]);
 

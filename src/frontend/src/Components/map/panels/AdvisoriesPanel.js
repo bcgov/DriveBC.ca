@@ -1,6 +1,9 @@
 // React
 import React, { useContext, useEffect } from 'react';
 
+// Navigation
+import { useSearchParams } from "react-router-dom";
+
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -17,7 +20,11 @@ import AdvisoriesList from '../../advisories/AdvisoriesList';
 import './AdvisoriesPanel.scss';
 
 export default function AdvisoriesPanel(props) {
+  // Props
   const { advisories, openAdvisoriesOverlay, smallScreen, mapView, showRouteObjs } = props;
+
+  // Navigation
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
@@ -29,6 +36,13 @@ export default function AdvisoriesPanel(props) {
     }
 
     markAdvisoriesAsRead(advisories, cmsContext, setCMSContext);
+
+    if (advisories && advisories.length > 0) {
+      searchParams.set("type", 'advisory');
+      searchParams.set("id", advisories[0].id);
+      searchParams.delete("display_category");
+      setSearchParams(searchParams, { replace: true });
+    }
   }, [advisories, openAdvisoriesOverlay]);
 
   useEffect(() => {

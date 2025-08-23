@@ -40,7 +40,7 @@ export function getBorderCrossingsLayer(
     vectorSource.addFeature(olFeatureForMap);
     if (referenceData?.type === 'borderCrossing') {
       // Update the reference feature if id is the reference
-      if (borderCrossing.id == referenceData.id) {
+      if (borderCrossing.id == referenceData.id) {  // Intentional loose equality for string IDs
         updateReferenceFeature(olFeatureForMap);
       }
     }
@@ -59,7 +59,7 @@ export function updateBorderCrossingsLayer(borderCrossings, layer, setLoadingLay
     dict[obj.id] = obj;
     return dict;
   }, {});
-  
+
   for (const borderCrossingsFeature of layer.getSource().getFeatures()) {
     if(!borderCrossingsFeature.getProperties()['clicked']){
       borderCrossingsFeature.setStyle(borderCrossingsDict[borderCrossingsFeature.getId()] ? borderCrossingStyles['static'] : new Style(null));

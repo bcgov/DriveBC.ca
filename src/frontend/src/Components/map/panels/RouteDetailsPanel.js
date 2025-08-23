@@ -7,13 +7,13 @@ import { memoize } from 'proxy-memoize';
 
 // Internal imports
 import RouteDetails from '../../routing/RouteDetails';
+import RouteObjectList from "../../routing/RouteObjectList";
 
 // External imports
 import { useMediaQuery } from "@uidotdev/usehooks";
 
 // Styling
 import './RouteDetailsPanel.scss';
-import RouteObjectList from "../../routing/RouteObjectList";
 
 export default function RouteDetailsPanel(props) {
   /* Setup */

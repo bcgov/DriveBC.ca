@@ -45,7 +45,7 @@ export function getFerriesLayer(ferriesData, projectionCode, mapContext, referen
 
     if (referenceData?.type === 'ferry') {
       // Update the reference feature if id is the reference
-      if (ferry.id == referenceData.id) {
+      if (ferry.id == referenceData.id) {  // Intentional loose equality for string IDs
         updateReferenceFeature(olFeatureForMap);
       }
     }

@@ -46,7 +46,7 @@ const processEvent = (mapContext, event, currentProjection, vsMap, lineVsMap, re
     savePointFeature(mapContext, event, pointFeature);
   }
 
-  if (referenceData?.type === 'event' && event.id === referenceData?.id) {
+  if (referenceData?.type === 'event' && event.id == referenceData?.id) {  // Intentional loose equality for string IDs
     updateReferenceFeature(pointFeature);
     eventFound = true;
   }

@@ -80,6 +80,7 @@ export default function CamPanel(props) {
 
     searchParams.set("type", 'camera');
     searchParams.set("id", newCam.id);
+    searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
   }, [camFeature]);
 

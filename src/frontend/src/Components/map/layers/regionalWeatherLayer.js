@@ -41,7 +41,7 @@ export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext,
 
     if (referenceData?.type === 'regionalWeather') {
       // Update the reference feature if id is the reference
-      if (weather.id == referenceData.id) {
+      if (weather.id == referenceData.id) {  // Intentional loose equality for string IDs
         updateReferenceFeature(olFeatureForMap);
       }
     }
