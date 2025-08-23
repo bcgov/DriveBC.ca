@@ -26,9 +26,9 @@ from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F
+from huey.exceptions import CancelExecution
 from PIL import Image, ImageDraw, ImageFont
 from psycopg import IntegrityError
-from huey.exceptions import CancelExecution
 
 logger = logging.getLogger(__name__)
 
@@ -249,7 +249,11 @@ def add_order_to_camera_group(key, cams):
         # Save distance along route to cams
         route_ls = LineString(all_coords)
         for cam in cams:
-            cam.route_distance = route_ls.project(cam.location)
+            try:
+                cam.route_distance = route_ls.project(cam.location)
+            except Exception as e:
+                logger.warning(f"Error projecting cam {cam.id} on route {key}: {e}")
+                cam.route_distance = 0
 
         # Sort cams by distance along route and update
         last_point = None
@@ -300,6 +304,9 @@ def build_route_geometries(coords=hwy_coords):
 
     """
     for key, routes in coords.items():
+        if key != '15':
+            continue
+
         ls_routes = []
 
         # Go through each route and create a geometry

@@ -67,7 +67,6 @@ export default function CamerasListPage() {
 
   // Refs
   const isInitialMount = useRef(true);
-  const isInitialDataLoad = useRef(true);
   const isInitialAdvisoryLoad = useRef(true);
   const selectedRouteRef = useRef();
 
@@ -110,15 +109,6 @@ export default function CamerasListPage() {
 
   // Data functions
   const getCamerasData = async route => {
-    if (isInitialDataLoad.current) {
-      isInitialDataLoad.current = false;
-
-      // Do not run on initial load if data is present
-      if (cameras) {
-        return;
-      }
-    }
-
     // Fetch data
     const camData = await getCameras().catch((error) => displayError(error));
 
@@ -132,8 +122,6 @@ export default function CamerasListPage() {
         timeStamp: new Date().getTime()
       })
     );
-
-    setShowLoader(false);
   };
 
   const loadAdvisories = async () => {
@@ -177,32 +165,15 @@ export default function CamerasListPage() {
   useEffect(() => {
     if (filteredCameras) {
       // Deep clone and add group reference to each cam
-
       const clonedCameras = typeof structuredClone === 'function' ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
-      const finalCameras = addCameraGroups(clonedCameras);
       setCombinedCameras(clonedCameras);
 
-      // Sort cameras by highway number and route_order
-      finalCameras.sort(function(a, b) {
-        // Route exists, sort by route projection distance only
-        if (selectedRoute && selectedRoute.routeFound) {
-          return collator.compare(a.route_projection, b.route_projection);
+      const groupedCameras = addCameraGroups(clonedCameras);
+      setProcessedCameras(groupedCameras);
 
-        // No route, sort by highway first, then default highway/route order
-        } else {
-          const highwayCompare = collator.compare(a.highway_display, b.highway_display);
-          if (highwayCompare == 0) {
-            return collator.compare(a.route_order, b.route_order);
-          }
-
-          return highwayCompare;
-        }
-      });
-
-      setProcessedCameras(finalCameras);
       loadAdvisories();
     }
-  }, [filteredCameras, selectedRoute]);
+  }, [filteredCameras]);
 
   useEffect(() => {
     if (!processedCameras) {
@@ -238,6 +209,23 @@ export default function CamerasListPage() {
       resCams = resCams.filter((camera) => (camera.area === filterContext.areaFilter.id));
     }
 
+    // Sort cameras by highway number and route_order
+    resCams.sort(function(a, b) {
+      // Route exists, sort by route projection distance only
+      if (selectedRoute && selectedRoute.routeFound) {
+        return collator.compare(a.route_projection, b.route_projection);
+
+      // No route, sort by highway first, then default highway/route order
+      } else {
+        const highwayCompare = collator.compare(a.highway_display, b.highway_display);
+        if (highwayCompare == 0) {
+          return collator.compare(a.route_order, b.route_order);
+        }
+
+        return highwayCompare;
+      }
+    });
+
     setDisplayedCameras(resCams);
 
   }, [searchText, processedCameras, filterContext.highwayFilterKey, filterContext.areaFilter]);
@@ -256,13 +244,11 @@ export default function CamerasListPage() {
       }
 
       isInitialMount.current = false;
+
+    } else {
+      setShowLoader(false);
     }
   }, [displayedCameras]);
-
-  // Sub components
-  const getHighwayDisplay = (highway) => {
-    return !isNaN(highway.charAt(0)) ? 'Highway ' + highway : highway;
-  }
 
   // Handle sticky filters on mobile
   useEffect(() => {
@@ -296,6 +282,17 @@ export default function CamerasListPage() {
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
+
+  useEffect(() => {
+    selectedRouteRef.current = selectedRoute;
+    setShowLoader(true);
+    getCamerasData(selectedRoute);
+  }, [selectedRoute]);
+
+  // Sub components
+  const getHighwayDisplay = (highway) => {
+    return !isNaN(highway.charAt(0)) ? 'Highway ' + highway : highway;
+  }
 
   return (
     <React.Fragment>
@@ -590,7 +587,7 @@ export default function CamerasListPage() {
         </div>
       }
 
-      <PollingComponent runnable={() => getCamerasData(selectedRouteRef.current)} interval={30000} runImmediately={true} />
+      <PollingComponent runnable={() => getCamerasData(selectedRouteRef.current)} interval={30000} />
 
     </React.Fragment>
   );
