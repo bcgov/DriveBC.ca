@@ -21,7 +21,7 @@ import './AdvisoriesPanel.scss';
 
 export default function AdvisoriesPanel(props) {
   // Props
-  const { advisories, openAdvisoriesOverlay, smallScreen, mapView, showRouteObjs } = props;
+  const { advisories, openAdvisoriesOverlay, smallScreen, mapView, showRouteObjs, inMap } = props;
 
   // Navigation
   const [searchParams, setSearchParams] = useSearchParams();
@@ -35,23 +35,24 @@ export default function AdvisoriesPanel(props) {
       return;
     }
 
-    markAdvisoriesAsRead(advisories, cmsContext, setCMSContext);
+    markAdvisoriesAsRead(inMap ? [advisories] : advisories, cmsContext, setCMSContext);
 
-    if (advisories && advisories.length > 0) {
+    if (inMap && advisories) {
       searchParams.set("type", 'advisory');
-      searchParams.set("id", advisories[0].id);
+      searchParams.set("id", advisories.id);
       searchParams.delete("display_category");
       setSearchParams(searchParams, { replace: true });
     }
   }, [advisories, openAdvisoriesOverlay]);
 
   useEffect(() => {
+    // Temporarily disabled since we are no longer rendering a list of advisories in map
     // Center to the geometric center of all advisories' boundaries for mobile view
-    if (smallScreen) {
-      const allCoordinates = advisories.map(advisory => advisory.geometry.coordinates).flat(3);
-      const simulatedRoute = [{route: allCoordinates}];
-      fitMap(simulatedRoute, mapView);
-    }
+    // if (smallScreen) {
+    //   const allCoordinates = advisories.map(advisory => advisory.geometry.coordinates).flat(3);
+    //   const simulatedRoute = [{route: allCoordinates}];
+    //   fitMap(simulatedRoute, mapView);
+    // }
   }, []);
 
   return (

@@ -59,7 +59,7 @@ export const renderPanel = (
       case 'borderCrossing':
         return <BorderCrossingPanel borderCrossing={clickedFeature.getProperties()} showRouteObjs={showRouteObjs} />;
       case 'advisory':
-        return <AdvisoriesPanel advisories={[clickedFeature.get('data')]} showRouteObjs={showRouteObjs} />;
+        return <AdvisoriesPanel advisories={clickedFeature.get('data')} showRouteObjs={showRouteObjs} inMap={true} />;
       case 'wildfire':
         return <WildfirePanel wildfire={clickedFeature.get('data')} showRouteObjs={showRouteObjs} />;
     }
