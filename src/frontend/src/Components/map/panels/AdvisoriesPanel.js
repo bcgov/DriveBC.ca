@@ -66,7 +66,7 @@ export default function AdvisoriesPanel(props) {
       </div>
 
       <div className="popup__content">
-        <AdvisoriesList advisories={advisories} showDescription={false} showTimestamp={true} showPublished={true} showArrow={true} />
+        <AdvisoriesList advisories={inMap ? [advisories] : advisories} showDescription={false} showTimestamp={true} showPublished={true} showArrow={true} />
         {advisories.length === 0 && <div className="popup__content">No advisory in view</div>}
       </div>
     </div>
