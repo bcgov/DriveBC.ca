@@ -591,13 +591,10 @@ def purge_old_images():
 
 
 def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
-    # bruce test
-    age = "5"
-    
     if is_pvc:
         root_path = PVC_ROOT
     else:
-        root_path = S3_ROOT
+        root_path = S3_BUCKET
     cutoff_time = timezone.now() - datetime.timedelta(hours=int(age))
 
     records_to_delete_pvc = ImageIndex.objects.filter(
@@ -676,17 +673,11 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
                     continue
                 s3_key = file_path.strip("/")
 
-                if s3_key.startswith(f"{S3_BUCKET}/"):
-                    s3_key = s3_key[len(S3_BUCKET) + 1:]
-
-                print(f"Deleting S3 file: {s3_key}")
                 hard_delete_s3_object(s3_client, s3_key)
 
             except s3_client.exceptions.NoSuchKey:
-                print(f"test: S3 key not found: {s3_key}")
                 logger.error(f"S3 key not found: {s3_key}")
             except Exception as e:
-                print(f"test: Error deleting S3 file {s3_key}: {e}")
                 logger.error(f"Error deleting S3 file {s3_key}: {e}")
 
     # Delete all records if all images paths are NULL
