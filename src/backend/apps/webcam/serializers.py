@@ -18,20 +18,21 @@ class WebcamSerializer(serializers.ModelSerializer):
     def get_links(self, obj):
         local_root = settings.DRIVEBC_IMAGE_BASE_URL
         proxy_root = settings.DRIVEBC_IMAGE_PROXY_URL
+        new_local_root = settings.NEW_DRIVEBC_IMAGE_BASE_URL
+        new_proxy_root = settings.NEW_DRIVEBC_IMAGE_PROXY_URL
         webcam_id = obj.id
         timestamp = int(time.time())
 
-        # default link values
-        links = {
-            "imageDisplay": f"{local_root}images/{webcam_id}.jpg?t={timestamp}",
-        }
-
         if obj.https_cam:
-            # URL when https_cam = True
-            links["replayTheDay"] = f"{local_root}api/webcams/{webcam_id}/replayTheDay/"
+            links = {
+            "imageDisplay": f"{new_local_root}images/webcams/{webcam_id}.jpg?t={timestamp}",
+            "replayTheDay": f"{new_proxy_root}api/webcams/{webcam_id}/replayTheDay/",
+        }
         else:
-            # URL when https_cam = False
-            links["replayTheDay"] = f"{proxy_root}ReplayTheDay/json/{webcam_id}.json" 
+            links = {
+            "imageDisplay": f"{local_root}images/{webcam_id}.jpg",
+            "replayTheDay": f"{proxy_root}ReplayTheDay/json/{webcam_id}.json",
+        }
         return links
 
     # use road name if highway doesn't exist

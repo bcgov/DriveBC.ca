@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 import json
 from apps.webcam.models import Webcam
+from django.conf import settings
 
 
 class WebcamAdmin(ModelAdmin):
@@ -13,6 +14,7 @@ class WebcamAdmin(ModelAdmin):
     def change_view(self, request, object_id, form_url='', extra_context=None):
         webcam = self.get_object(request, object_id)
         extra_context = extra_context or {}
+        extra_context['api_key'] = settings.TIMELAPSE_API_KEY
 
         if webcam:
             extra_context["image_paths"] = webcam.get_image_paths()
