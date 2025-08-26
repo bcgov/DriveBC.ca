@@ -25,8 +25,8 @@ class WebcamSerializer(serializers.ModelSerializer):
 
         if obj.https_cam:
             links = {
-            "imageDisplay": f"{local_root}images/webcams/{webcam_id}.jpg?t={timestamp}",
-            "replayTheDay": f"{proxy_root}api/webcams/{webcam_id}/replayTheDay/",
+            "imageDisplay": f"{local_root}images/{webcam_id}.jpg?t={timestamp}",
+            "replayTheDay": f"{local_root}api/webcams/{webcam_id}/replayTheDay/",
         }
         else:
             links = {
