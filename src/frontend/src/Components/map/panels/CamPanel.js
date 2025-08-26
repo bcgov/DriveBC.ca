@@ -41,6 +41,7 @@ export default function CamPanel(props) {
 
   // Props
   const { camFeature, isCamDetail, showRouteObjs } = props;
+  const newCam = camFeature.id ? camFeature : camFeature.getProperties();
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -59,10 +60,9 @@ export default function CamPanel(props) {
   // Refs
   const isInitialMount = useRef(true);
   const camPanelRef = useRef(null);
+  const rootCamRef = useRef(newCam);
 
   // States
-  const newCam = camFeature.id ? camFeature : camFeature.getProperties();
-  const [rootCam, setRootCam] = useState(newCam);
   const [camera, setCamera] = useState(newCam);
   const [camIndex, setCamIndex] = useState(0);
   const [show, setShow] = useState(true);
@@ -72,7 +72,7 @@ export default function CamPanel(props) {
   // Effects
   useEffect(() => {
     const newCam = camFeature.id ? camFeature : camFeature.getProperties();
-    setRootCam(newCam);
+    rootCamRef.current = newCam;
     setCamera(newCam);
     const params = new URLSearchParams(window.location.search);
     const savedCamIndex = params.get('camIndex') === null ? 0: params.get('camIndex');
@@ -89,7 +89,7 @@ export default function CamPanel(props) {
       isInitialMount.current = false;
       return;
     }
-    setCamera(rootCam.camGroup[camIndex]);
+    setCamera(rootCamRef.current.camGroup[camIndex]);
 
     searchParams.set("camIndex", camIndex);
     setSearchParams(searchParams, { replace: true });
@@ -110,7 +110,7 @@ export default function CamPanel(props) {
   };
 
   const updateCamera = () => {
-    rootCam.camGroup.forEach((cam, ii) => {
+    rootCamRef.current.camGroup.forEach((cam, ii) => {
       getCameras(
         null,
         `${window.API_HOST}/api/webcams/${cam.id}/`,
@@ -119,9 +119,9 @@ export default function CamPanel(props) {
           // using data attribute avoids lexical binding of camIndex state that
           // locks it at the initial value
           const currentCamIndex = camPanelRef.current.getAttribute('data-current');
-          rootCam.camGroup[ii] = update;
+          rootCamRef.current.camGroup[ii] = update;
           if (ii == currentCamIndex) {
-            setCamera(rootCam.camGroup[ii]);
+            setCamera(rootCamRef.current.camGroup[ii]);
             setIsUpdated(true);
           }
         }
@@ -191,7 +191,7 @@ export default function CamPanel(props) {
       setCamIndex(i); // Trigger re-render
     };
 
-    const res = Object.entries(rootCam.camGroup).map(([index, cam]) => {
+    const res = Object.entries(rootCamRef.current.camGroup).map(([index, cam]) => {
       return (
         <Button
           aria-label={getCameraOrientation(cam.orientation)}
