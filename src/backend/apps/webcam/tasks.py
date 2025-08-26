@@ -139,13 +139,13 @@ def update_all_webcam_data():
             raise CancelExecution()
 
         current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
-        if camera.should_update(current_time):
-            if not camera.https_cam:
+        if camera.https_cam:
+            update_cam_from_sql_db(camera.id, current_time)
+        else:
+            if camera.should_update(current_time):
                 updated = update_single_webcam_data(camera)
                 if updated:
                     update_camera_group_id(camera)
-            else:
-                update_cam_from_sql_db(camera.id, current_time)
 
 
 def wrap_text(text, pen, font, width):
@@ -473,44 +473,6 @@ def update_camera_nearby_objs():
             Webcam.objects.filter(id=child_cam.id).update(
                 nearby_objs=parent_cam.nearby_objs
             )
-
-def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
-    cams_live_sql = text("""
-        SELECT Cams_Live.ID AS id, 
-        Cams_Live.Cam_InternetName AS name, 
-        Cams_Live.Cam_InternetCaption AS caption,
-        Regions_Live.seq AS region, 
-        Regions_Live.Name AS region_name,                 
-        Highways_Live.Hwy_Number AS highway, 
-        Highways_Live.Section AS highway_description, 
-        Region_Highways_Live.seq AS highway_group,
-        Cams_Live.seq AS highway_cam_order,
-        Cams_Live.Cam_LocationsOrientation AS orientation,
-        Cams_Live.Cam_LocationsElevation AS elevation,
-        CASE WHEN Cams_Live.Cam_ControlDisabled = 0 THEN 1 ELSE 0 END AS isOn,
-        Cams_Live.isNew AS isNew,
-        Cams_Live.isNew, Cams_Live.Cam_MaintenanceIs_On_Demand AS isOnDemand,
-        Cams_Live.Cam_InternetCredit AS credit,
-        Cams_Live.Cam_InternetDBC_Mark AS dbc_mark                 
-        FROM [WEBCAM_DEV].[dbo].[Cams_Live]
-        INNER JOIN ((Region_Highways_Live INNER JOIN Highways_Live ON Region_Highways_Live.Highway_ID = Highways_Live.ID) 
-        INNER JOIN Regions_Live ON Region_Highways_Live.Region_ID = Regions_Live.ID) 
-        ON (Cams_Live.Cam_LocationsHighway = Region_Highways_Live.Highway_ID) 
-        AND (Cams_Live.Cam_LocationsRegion = Region_Highways_Live.Region_ID) 
-        WHERE Cams_Live.ID = :id
-    """)
-
-    with engine.connect() as connection:
-        try:
-            # Query from Cams_Live
-            result_live = connection.execute(cams_live_sql, {"id": id})
-            live_rows = {row.id: dict(row._mapping) for row in result_live}
-            update_webcam_db(id, live_rows.get(id, {}))
-            return live_rows
-
-        except Exception as e:
-            logger.error(f"Failed to connect to the database: {e}")
-            return []
 
 def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
     cams_live_sql = text("""
