@@ -6,30 +6,26 @@
     <div style="margin: 20px 0;">
       <h3>Timelapse</h3>
       <div id="timelapse-container" style="max-width: 500px;">
-  
         <img id="replay-image" src="" style="width: 100%; border: 1px solid #ccc;" />
 
         <script>
-          // Construct the API endpoint URL dynamically if needed
           const cameraId = "{{ self.id }}";
           const imagePath = "{{ image_paths.0 }}";
           const apiUrl = `/api/webcams/${cameraId}/timelapse/`;
+          const apiKey = "{{ api_key|escapejs }}";
 
-          fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-              // data.url contains the presigned URL
-              document.getElementById("replay-image").src = data.url;
-            })
-            .catch(error => {
-              console.error("Failed to fetch image URL:", error);
-            });
+          fetch(apiUrl, {
+            headers: {
+              "Authorization": `Api-Key ${apiKey}`
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById("replay-image").src = data[0];
+          })
+          .catch(error => console.error("Failed to fetch timelapse:", error));
         </script>
-        
-        
-        
-        
-        
+
         <div style="margin-top: 10px; text-align: center;">
           <button type="button" id="prev-btn">⏮️</button>
           <button type="button" id="play-pause-btn">▶️</button>
@@ -60,8 +56,16 @@
         let autoplay = false;
         let autoplayInterval;
 
-        function updateImage() {
-          imgElem.src = imagePaths[currentIndex];
+        async function updateImage() {
+          const apiUrl = imagePaths[currentIndex];
+          const response = await fetch(apiUrl, {
+            headers: {
+              "Authorization": `Api-Key ${apiKey}`
+            }
+          });
+          const blob = await response.blob();
+          imgElem.src = URL.createObjectURL(blob);
+
           indexElem.innerText = currentIndex + 1;
           sliderElem.value = currentIndex;
         }

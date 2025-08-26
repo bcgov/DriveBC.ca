@@ -7,12 +7,10 @@ from rest_framework import status
 from django.http import FileResponse, Http404, HttpResponse, StreamingHttpResponse
 from .models import Webcam
 import os
-from apps.consumer.models import ImageIndex
 from apps.shared.status import get_image_list
 import boto3
 from botocore.config import Config
-from django.shortcuts import redirect
-import requests
+from rest_framework_api_key.permissions import HasAPIKey
 
 IMAGE_CACHE_DIR = os.getenv("IMAGE_CACHE_DIR", "/app/data/webcams/cache")
 BASE_URL = os.getenv("S3_ENDPOINT_URL", "https://moti-int.objectstore.gov.bc.ca")
@@ -25,25 +23,44 @@ class WebcamAPI:
 
 
 class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
-    @action(detail=True, methods=['get'], url_path='imageSource')
+    @action(
+            detail=True, 
+            methods=['get'], 
+            url_path='imageSource', 
+            permission_classes=[HasAPIKey]
+            )
     def image_source(self, request, pk=None):
-        image_path = f"/app/data/webcams/originals/{pk}.jpg"
+        image_path = f"/app/images/webcams/originals/{pk}.jpg"
         if not os.path.exists(image_path):
             raise Http404("Image not found.")
 
         return FileResponse(open(image_path, 'rb'), content_type='image/jpeg')
 
-    @action(detail=True, methods=['get'], url_path='replayTheDay')
+    @action(
+            detail=True, 
+            methods=['get'], 
+            url_path='replayTheDay',
+            )
     def replayTheDay(self, request, pk=None):
         timestamps = get_image_list(pk, "REPLAY_THE_DAY_HOURS")
         return Response(timestamps, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['get'], url_path='timelapse')
+    @action(
+            detail=True, 
+            methods=['get'], 
+            url_path='timelapse',
+            permission_classes=[HasAPIKey]
+            )
     def timelapse(self, request, pk=None):
         timestamps = get_image_list(pk, "TIMELAPSE_HOURS")
         return Response(timestamps, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['get'], url_path='cameraImage')
+    @action(
+            detail=True, 
+            methods=['get'], 
+            url_path='cameraImage',
+            permission_classes=[HasAPIKey]
+            )
     def cameraImage(self, request, pk=None):
         timestamps = get_image_list(pk, "TIMELAPSE_HOURS")
         if isinstance(timestamps, list) and timestamps:
@@ -63,7 +80,8 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     @action(
         detail=True,
         methods=['get'],
-        url_path=r'(?P<filename>[0-9]{14})/timelapse'
+        url_path=r'(?P<filename>[0-9]{14})/timelapse',
+        permission_classes=[HasAPIKey]
     )
     def cachedTimelapse(self, request, pk=None, filename=None):
         cache_folder = os.path.join(IMAGE_CACHE_DIR, str(pk))
@@ -108,7 +126,7 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
 
         try:  
             response = s3_client.get_object(
-                Bucket="tran_api_dbc_backup_dev",
+                Bucket=S3_BUCKET,
                 Key=f"processed/{pk}/{filename}.jpg"
             )
 
