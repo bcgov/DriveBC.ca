@@ -26,7 +26,7 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     @action(
             detail=True, 
             methods=['get'], 
-            url_path='imageSource', 
+            url_path='originalImage', 
             permission_classes=[HasAPIKey]
             )
     def image_source(self, request, pk=None):
