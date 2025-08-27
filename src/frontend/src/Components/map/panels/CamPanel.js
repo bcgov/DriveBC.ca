@@ -345,10 +345,6 @@ export default function CamPanel(props) {
                 <p className="driveBC">
                   Drive<span>BC</span>
                 </p>
-
-                <FriendlyTime
-                  date={camera.last_update_modified}
-                  asDate={true}/>
               </div>
             </div>
           )}
