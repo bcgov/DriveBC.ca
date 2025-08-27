@@ -901,7 +901,7 @@ export default function Filters(props) {
                   </OverlayTrigger>
                 </div>
 
-                <div className={'filter-item filter-item--weather' + (weather ? ' checked' : '') + ((loadingLayers && loadingLayers.weathers) ? ' loading' : '') + + (disableFeatures ? ' disabled' : '')}>
+                <div className={'filter-item filter-item--weather' + (weather ? ' checked' : '') + ((loadingLayers && loadingLayers.weathers) ? ' loading' : '') + (isDelaysPage ? ' disabled' : '')}>
                   <input
                     type="checkbox"
                     name="weather"
