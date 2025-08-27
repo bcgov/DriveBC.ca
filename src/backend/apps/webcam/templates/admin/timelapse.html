@@ -49,6 +49,39 @@
       </div>
     </div>
 
+    <div style="margin-top: 20px;">
+      <div style="margin: 20px 0; border: 1px solid #ccc; padding: 15px; border-radius: 5px; max-width: 400px;">
+      <h3>Select Date Range</h3>
+      
+      <label style="display: block; margin-bottom: 8px;">
+        <input type="radio" name="date-option" value="all" checked>
+        All Available Dates
+      </label>
+      
+      <label style="display: block; margin-bottom: 8px;">
+        <input type="radio" name="date-option" value="custom">
+        Custom Date Range
+      </label>
+      
+      <div id="date-range-inputs" style="margin-left: 20px; display: none;">
+        <label>
+          From:
+          <input type="date" id="date-from" value="{{ default_start_date|default:'' }}">
+        </label>
+        <br/>
+        <label>
+          To:
+          <input type="date" id="date-to" value="{{ default_end_date|default:'' }}">
+        </label>
+      </div>
+
+      <div style="margin-top: 15px;">
+        <button type="button" id="download-btn">Download</button>
+      </div>
+    </div>
+    </div>
+
+
     <script id="image-paths-json" type="application/json">
       {{ image_paths_json|safe }}
     </script>
@@ -65,9 +98,44 @@
         const nextBtn = document.getElementById("next-btn");
         const prevBtn = document.getElementById("prev-btn");
 
+        const radios = document.querySelectorAll("input[name='date-option']");
+        const dateInputs = document.getElementById("date-range-inputs");
+        const downloadBtn = document.getElementById("download-btn");
+
         let currentIndex = 0;
         let autoplay = false;
         let autoplayInterval;
+
+        async function downloadImage(from, to) {
+          let apiUrl = imagePaths[imagePaths.length - 1];
+          apiUrl = apiUrl.replace(/\/\d{14}\/timelapse\//, "/download/");
+          // If from/to provided, append them as query params
+          const params = new URLSearchParams();
+          if (from) params.append("from", from);
+          if (to) params.append("to", to);
+
+          if (params.toString()) {
+            apiUrl += "?" + params.toString();
+          }
+
+          console.log("Download API URL:", apiUrl);
+          const response = await fetch(apiUrl, {
+            headers: {
+              "Authorization": `Api-Key ${apiKey}`
+            }
+          });
+          const blob = await response.blob();
+          imgElemOriginal.src = URL.createObjectURL(blob);
+
+          const url = imgElemOriginal.src;
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'images.zip'; // filename
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url); // cleanup
+        }
 
         async function displayOriginalImage() {
           let apiUrl = imagePaths[imagePaths.length - 1];
@@ -145,6 +213,29 @@
         sliderElem.addEventListener("input", function () {
           currentIndex = parseInt(this.value, 10);
           updateImage();
+        });
+
+          // Toggle visibility of custom date inputs
+        radios.forEach(r => {
+          r.addEventListener("change", () => {
+            dateInputs.style.display = (r.value === "custom" && r.checked) ? "block" : "none";
+          });
+        });
+
+        // Example: Hook into your API fetch
+        downloadBtn.addEventListener("click", () => {
+          const option = document.querySelector("input[name='date-option']:checked").value;
+          if (option === "all") {
+            console.log("Download all available images");
+            // call your API here with no date filter
+            downloadImage();
+          } else {
+            const from = document.getElementById("date-from").value;
+            const to = document.getElementById("date-to").value;
+            console.log("Download images from", from, "to", to);
+            // call your API here with from/to
+            downloadImage(from, to);
+          }
         });
 
         updateImage();

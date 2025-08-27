@@ -1,3 +1,5 @@
+from datetime import datetime
+from urllib.parse import urlparse
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
 from rest_framework import viewsets
@@ -11,10 +13,14 @@ from apps.shared.status import get_image_list
 import boto3
 from botocore.config import Config
 from rest_framework_api_key.permissions import HasAPIKey
+from django.utils.dateparse import parse_date
+import io, zipfile
+import zipstream
 
 IMAGE_CACHE_DIR = os.getenv("IMAGE_CACHE_DIR", "/app/data/webcams/cache")
 BASE_URL = os.getenv("S3_ENDPOINT_URL", "https://moti-int.objectstore.gov.bc.ca")
 S3_BASE_URL = f"{BASE_URL.rstrip('/')}/timelapse/processed"
+S3_BUCKET = os.getenv("S3_BUCKET", "tran_api_dbc_backup_dev")
 
 
 class WebcamAPI:
@@ -143,7 +149,85 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
                 content_type="text/plain",
                 status=500
             )
+        
 
+    @action(detail=True, methods=['get'], url_path='download', permission_classes=[HasAPIKey])
+    def download(self, request, pk=None):
+        from_date_str = request.query_params.get("from")
+        to_date_str = request.query_params.get("to")
+
+        from_date = parse_date(from_date_str) if from_date_str else None
+        to_date = parse_date(to_date_str) if to_date_str else None
+
+        all_images = get_image_list(pk, "TIMELAPSE_HOURS")
+
+        # Filter images
+        if from_date and to_date:
+            filtered_images = [
+                img for img in all_images
+                if from_date <= datetime.strptime(img.replace(".jpg",""), "%Y%m%d%H%M%S").date() <= to_date
+            ]
+        else:
+            filtered_images = all_images
+
+        if not filtered_images:
+            return Response({"detail": "No images found."}, status=404)
+
+        print(f"Images after filtering: {len(filtered_images)}")
+
+        # --- CREATE S3 CLIENT ONCE ---
+        S3_BUCKET = os.getenv("S3_BUCKET")
+        S3_REGION = os.getenv("S3_REGION", "us-east-1")
+        S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
+        S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
+        S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
+
+        config = Config(
+            signature_version='s3v4',
+            retries={'max_attempts': 10},
+            s3={
+                'payload_signing_enabled': False,
+                'checksum_validation': False,
+                'enable_checksum': False,
+                'addressing_style': 'path',
+                'use_expect_continue': False
+            }
+        )
+
+        s3_client = boto3.client(
+            "s3",
+            region_name=S3_REGION,
+            aws_access_key_id=S3_ACCESS_KEY,
+            aws_secret_access_key=S3_SECRET_KEY,
+            endpoint_url=S3_ENDPOINT_URL,
+            config=config
+        )
+
+        def s3_file_iterator(key: str, chunk_size: int = 65536):
+            """Stream S3 object in chunks without loading into memory."""
+            obj = s3_client.get_object(Bucket=S3_BUCKET, Key=key)
+            body = obj["Body"]
+            while True:
+                chunk = body.read(chunk_size)
+                if not chunk:
+                    break
+                yield chunk
+
+        # --- STREAMING ZIP ---
+        z = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
+
+        for img in filtered_images:
+            key = f"processed/{pk}/{img}"  # S3 key
+            filename_in_zip = img.split("/")[-1]
+            try:
+                z.write_iter(filename_in_zip, s3_file_iterator(key))
+            except Exception as e:
+                print(f"Error adding {img}: {e}")
+                continue
+
+        response = StreamingHttpResponse(z, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename="images.zip"'
+        return response
 
 class WebcamTestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = WebcamAPI.queryset
