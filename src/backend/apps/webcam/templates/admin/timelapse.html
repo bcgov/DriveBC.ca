@@ -106,13 +106,15 @@
         let autoplay = false;
         let autoplayInterval;
 
-        async function downloadImage(from, to) {
+        async function downloadImage(from, to, timeFrom, timeTo) {
           let apiUrl = imagePaths[imagePaths.length - 1];
           apiUrl = apiUrl.replace(/\/\d{14}\/timelapse\//, "/download/");
           // If from/to provided, append them as query params
           const params = new URLSearchParams();
           if (from) params.append("from", from);
           if (to) params.append("to", to);
+          if (timeFrom) params.append("time_from", timeFrom);
+          if (timeTo) params.append("time_to", timeTo);
 
           if (params.toString()) {
             apiUrl += "?" + params.toString();
