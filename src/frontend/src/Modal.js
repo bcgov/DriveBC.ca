@@ -21,12 +21,14 @@ import { getCookie } from "./util";
 import './Modal.scss';
 
 // Focus lock inside modal
-function useFocusLock(isActive, { initialFocusRef } = {}) {
+function useFocusLock(isActive) {
   const containerRef = useRef(null);
-  const getFocusableElements = () =>
-  containerRef.current?.querySelectorAll(
-    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-  ) || [];
+
+  const getFocusableElements = () => {
+    return containerRef.current?.querySelectorAll(
+      'button, [href], select, textarea, [tabindex]:not([tabindex="-1"])'
+    ) || [];
+  };
 
   const handleFocusStart = () => {
     const focusables = getFocusableElements();
@@ -42,14 +44,8 @@ function useFocusLock(isActive, { initialFocusRef } = {}) {
   useEffect(() => {
     if (!isActive || !containerRef.current) return;
 
-    if (initialFocusRef?.current) {
-      initialFocusRef.current.focus();
-    }
-    else {
-      const first = getFocusableElements()[0];
-      first?.focus();
-    }
-  }, [isActive, initialFocusRef]);
+    getFocusableElements()[0]?.focus();
+  }, [isActive]);
 
   return { containerRef, handleFocusStart, handleFocusEnd };
 }
@@ -58,10 +54,7 @@ export default function Modal() {
   /* Setup */
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
-  const closeBtnRef = useRef(null);
-  const previouslyFocusedRef = useRef(null);
-  const { containerRef, handleFocusStart, handleFocusEnd } =
-    useFocusLock(isOpen, { initialFocusRef: closeBtnRef });
+  const { containerRef, handleFocusStart, handleFocusEnd } = useFocusLock(authContext && authContext.showingModal);
 
   // Redux
   const dispatch = useDispatch();
@@ -119,32 +112,14 @@ export default function Modal() {
     </Tooltip>
   );
 
-  // Store and restore focus
-  useEffect(() => {
-    if (authContext.showingModal) {
-      // remember the element that was focused before opening
-      previouslyFocusedRef.current = document.activeElement;
-    }
-
-    return () => {
-      // when the modal unmounts (closes), restore focus
-      previouslyFocusedRef.current?.focus();
-    };
-  }, [authContext.showingModal]);
-
-  if (!authContext.showingModal) {
-    return null;
-    // return <div />;
-  }
-
   // Main component
-  return (
+  return authContext.showingModal && (
     <div
       className="auth-modal"
       tabIndex={0}
       onClick={resetAuthModal}
-      onKeyDown={resetAuthModal}
-    >
+      onKeyDown={resetAuthModal}>
+
       {/* Top sentinel for focus */}
       <div tabIndex={0} onFocus={handleFocusStart} />
 
@@ -156,37 +131,21 @@ export default function Modal() {
         onClick={(e) => { e.stopPropagation(); }}
         onKeyDown={(e) => { e.stopPropagation(); }}
         role="alertdialog"
-        aria-modal="true"
-      >
+        aria-modal="true">
 
         <div className='header'>
-          <button
-            ref={closeBtnRef}
-            id="modal-closer"
-            className="modal-closer close-panel"
-            aria-label="close modal"
-            onClick={() => { resetAuthModal() }}
-            onKeyDown={keyEvent => {
-              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                resetAuthModal()
-              }
-            }}>
-            <FontAwesomeIcon icon={faXmark} />
-          </button>
-
           <div className='title'>{authContext.action}</div>
-
         </div>
 
         <div className='body'>
-          { authContext.action === 'Sign In' &&
+          {authContext.action === 'Sign In' &&
             <form method='post' action={`${window.API_HOST}/accounts/oidc/bceid/login/`}>
               <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
               <input type='hidden' name='next' value={window.location.href} />
 
               <p>Access your saved cameras and routes</p>
 
-              <button type='submit' className="btn btn-outline-primary">Sign in with Basic BCeID</button>
+              <button type='submit' className="btn btn-outline-primary" autoFocus={true}>Sign in with Basic BCeID</button>
 
               <div>
                 Don&apos;t have a Basic BCeID Account?<br />
@@ -198,13 +157,13 @@ export default function Modal() {
                 <span>What is a BCeID?</span>
 
                 <OverlayTrigger placement="top" overlay={tooltipBCeID}>
-                <button type="button" className="tooltip-info" aria-label={'What is a BCeID? ' + whatIsBCeID}>?</button>
+                  <button type="button" className="tooltip-info" aria-label={'What is a BCeID? ' + whatIsBCeID}>?</button>
                 </OverlayTrigger>
               </div>
             </form>
           }
 
-          { authContext.action === 'Sign Out' &&
+          {authContext.action === 'Sign Out' &&
             <form method='post' action={`${window.API_HOST}/accounts/logout/`} onSubmit={handleSubmit}>
               <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
               <button type='submit' className="btn btn-outline-primary">Sign out of DriveBC</button>
@@ -212,13 +171,29 @@ export default function Modal() {
           }
         </div>
 
+        <button
+          id="modal-closer"
+          className="modal-closer close-panel"
+          aria-label="close modal"
+          onClick={() => {
+            resetAuthModal()
+          }}
+          onKeyDown={keyEvent => {
+            if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+              resetAuthModal()
+            }
+          }}>
+          <FontAwesomeIcon icon={faXmark}/>
+        </button>
+
         <div className='release-tag'>
-            { window.DEPLOYMENT_TAG || '' }
-            { window.RELEASE ? ` (${window.RELEASE})` : '' }
-          </div>
+          { window.DEPLOYMENT_TAG || '' }
+          { window.RELEASE ? ` (${window.RELEASE})` : '' }
         </div>
-        {/* Bottom sentinel for focus */}
-        <div tabIndex={0} onFocus={handleFocusEnd} />
       </div>
+
+      {/* Bottom sentinel for focus */}
+      <div tabIndex={0} onFocus={handleFocusEnd} />
+    </div>
   )
 }
