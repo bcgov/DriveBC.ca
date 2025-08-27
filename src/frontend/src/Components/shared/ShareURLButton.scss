@@ -93,4 +93,24 @@
     }
 
   }
+  &--wildfire {
+    .copy-btn {
+      background: darken($Surface-major, 8%);
+
+      &:hover {
+        background: darken($Surface-major, 15%);
+      }
+    }
+
+  }
+  &--advisories {
+    .copy-btn {
+      background: darken($Advisory-Bg, 8%);
+
+      &:hover {
+        background: darken($Advisory-Bg, 15%);
+      }
+    }
+
+  }
 }

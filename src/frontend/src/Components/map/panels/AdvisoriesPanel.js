@@ -15,6 +15,7 @@ import { CMSContext } from '../../../App';
 import { fitMap } from '../helpers';
 import { markAdvisoriesAsRead } from "../../data/advisories";
 import AdvisoriesList from '../../advisories/AdvisoriesList';
+import ShareURLButton from '../../shared/ShareURLButton';
 
 // Styling
 import './AdvisoriesPanel.scss';
@@ -62,7 +63,10 @@ export default function AdvisoriesPanel(props) {
           <FontAwesomeIcon icon={faFlag} />
         </div>
 
-        <p className="name">Advisories</p>
+        <div className="popup__title__name">
+          <p className="name">Advisories</p>
+          <ShareURLButton />
+        </div>
       </div>
 
       <div className="popup__content">

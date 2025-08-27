@@ -4,6 +4,9 @@ import React, {useEffect} from 'react';
 // Navigation
 import { useSearchParams } from "react-router-dom";
 
+// Internal imports
+import ShareURLButton from '../../shared/ShareURLButton';
+
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -89,6 +92,7 @@ export default function WildfirePanel(props) {
 
         <div className="popup__title__name">
           <p className='name'>Wildfire</p>
+          <ShareURLButton />
         </div>
       </div>
 
