@@ -187,7 +187,7 @@ export default function Header() {
               <div className="nav-divider"></div>
 
               {!xLargeScreen &&
-                <UserNavigation/>
+                <UserNavigation />
               }
             </div>
 
@@ -308,7 +308,7 @@ export default function Header() {
 
               <div className="nav-divider"/>
 
-              <UserNavigation/>
+              <UserNavigation />
             </div>
           }
         </Container>

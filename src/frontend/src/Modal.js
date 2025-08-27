@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useEffect, useRef } from "react";
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -20,10 +20,48 @@ import { getCookie } from "./util";
 // Styling
 import './Modal.scss';
 
+// Focus lock inside modal
+function useFocusLock(isActive, { initialFocusRef } = {}) {
+  const containerRef = useRef(null);
+  const getFocusableElements = () =>
+  containerRef.current?.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  ) || [];
+
+  const handleFocusStart = () => {
+    const focusables = getFocusableElements();
+    focusables[focusables.length - 1]?.focus();
+  };
+
+  const handleFocusEnd = () => {
+    const focusables = getFocusableElements();
+    focusables[0]?.focus();
+  };
+
+  // focus on mount
+  useEffect(() => {
+    if (!isActive || !containerRef.current) return;
+
+    if (initialFocusRef?.current) {
+      initialFocusRef.current.focus();
+    }
+    else {
+      const first = getFocusableElements()[0];
+      first?.focus();
+    }
+  }, [isActive, initialFocusRef]);
+
+  return { containerRef, handleFocusStart, handleFocusEnd };
+}
+
 export default function Modal() {
   /* Setup */
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
+  const closeBtnRef = useRef(null);
+  const previouslyFocusedRef = useRef(null);
+  const { containerRef, handleFocusStart, handleFocusEnd } =
+    useFocusLock(isOpen, { initialFocusRef: closeBtnRef });
 
   // Redux
   const dispatch = useDispatch();
@@ -71,12 +109,6 @@ export default function Modal() {
     }));
   };
 
-  /* Rendering */
-  // Subcomponents
-  if (!authContext.showingModal) {
-    return <div />;
-  }
-
   const whatIsBCeID = (
     "BCeID is a secure login service that allows you to access various government services online."
   );
@@ -87,6 +119,24 @@ export default function Modal() {
     </Tooltip>
   );
 
+  // Store and restore focus
+  useEffect(() => {
+    if (authContext.showingModal) {
+      // remember the element that was focused before opening
+      previouslyFocusedRef.current = document.activeElement;
+    }
+
+    return () => {
+      // when the modal unmounts (closes), restore focus
+      previouslyFocusedRef.current?.focus();
+    };
+  }, [authContext.showingModal]);
+
+  if (!authContext.showingModal) {
+    return null;
+    // return <div />;
+  }
+
   // Main component
   return (
     <div
@@ -95,9 +145,12 @@ export default function Modal() {
       onClick={resetAuthModal}
       onKeyDown={resetAuthModal}
     >
+      {/* Top sentinel for focus */}
+      <div tabIndex={0} onFocus={handleFocusStart} />
 
       <div
-        tabIndex={0}
+        ref={containerRef}
+        tabIndex={-1}
         id="modal-content"
         className="content"
         onClick={(e) => { e.stopPropagation(); }}
@@ -108,11 +161,16 @@ export default function Modal() {
 
         <div className='header'>
           <button
+            ref={closeBtnRef}
             id="modal-closer"
             className="modal-closer close-panel"
             aria-label="close modal"
-            onClick={resetAuthModal}
-            onKeyDown={resetAuthModal}>
+            onClick={() => { resetAuthModal() }}
+            onKeyDown={keyEvent => {
+              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                resetAuthModal()
+              }
+            }}>
             <FontAwesomeIcon icon={faXmark} />
           </button>
 
@@ -159,6 +217,8 @@ export default function Modal() {
             { window.RELEASE ? ` (${window.RELEASE})` : '' }
           </div>
         </div>
+        {/* Bottom sentinel for focus */}
+        <div tabIndex={0} onFocus={handleFocusEnd} />
       </div>
   )
 }
