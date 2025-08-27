@@ -106,6 +106,37 @@
         let autoplay = false;
         let autoplayInterval;
 
+        async function downloadImage(from, to) {
+          let apiUrl = imagePaths[imagePaths.length - 1];
+          apiUrl = apiUrl.replace(/\/\d{14}\/timelapse\//, "/download/");
+          // If from/to provided, append them as query params
+          const params = new URLSearchParams();
+          if (from) params.append("from", from);
+          if (to) params.append("to", to);
+
+          if (params.toString()) {
+            apiUrl += "?" + params.toString();
+          }
+
+          console.log("Download API URL:", apiUrl);
+          const response = await fetch(apiUrl, {
+            headers: {
+              "Authorization": `Api-Key ${apiKey}`
+            }
+          });
+          const blob = await response.blob();
+          imgElemOriginal.src = URL.createObjectURL(blob);
+
+          const url = imgElemOriginal.src;
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'images.zip'; // filename
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url); // cleanup
+        }
+
         async function displayOriginalImage() {
           let apiUrl = imagePaths[imagePaths.length - 1];
           apiUrl = apiUrl.replace(/\/\d{14}\/timelapse\//, "/originalImage/");
