@@ -9,10 +9,6 @@ RUN apk add --no-cache \
     ca-certificates \
     tzdata
 
-#Two lines below can be removed after July 2025. Workaround for Entrust Root Cert distrust. Object Storage will get new cert in July. See DBC22-3249   
-COPY ./compose/openshiftjobs/root.crt /usr/local/share/ca-certificates/
-RUN update-ca-certificates
-
 COPY ./compose/openshiftjobs/entrypoint.sh /
 COPY ./compose/openshiftjobs/scripts/analyzeexportlogs.sh /scripts/
 COPY ./compose/openshiftjobs/scripts/backupmediapvc.sh /scripts/
