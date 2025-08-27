@@ -166,7 +166,7 @@ export default function Modal() {
           {authContext.action === 'Sign Out' &&
             <form method='post' action={`${window.API_HOST}/accounts/logout/`} onSubmit={handleSubmit}>
               <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
-              <button type='submit' className="btn btn-outline-primary">Sign out of DriveBC</button>
+              <button type='submit' className="btn btn-outline-primary" autoFocus={true}>Sign out of DriveBC</button>
             </form>
           }
         </div>
