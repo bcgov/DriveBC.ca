@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, time
 from urllib.parse import urlparse
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
@@ -155,25 +155,33 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     def download(self, request, pk=None):
         from_date_str = request.query_params.get("from")
         to_date_str = request.query_params.get("to")
+        from_time_str = request.query_params.get("time_from")
+        to_time_str = request.query_params.get("time_to")
 
         from_date = parse_date(from_date_str) if from_date_str else None
         to_date = parse_date(to_date_str) if to_date_str else None
+        from_time = datetime.strptime(from_time_str, "%H:%M").time() if from_time_str else time.min
+        to_time = datetime.strptime(to_time_str, "%H:%M").time() if to_time_str else time.max
 
         all_images = get_image_list(pk, "TIMELAPSE_HOURS")
+        print(f"Total images available: {len(all_images)}")
 
-        # Filter images
         if from_date and to_date:
-            filtered_images = [
-                img for img in all_images
-                if from_date <= datetime.strptime(img.replace(".jpg",""), "%Y%m%d%H%M%S").date() <= to_date
-            ]
+            # combine into full datetimes
+            start_dt = datetime.combine(from_date, from_time)
+            end_dt = datetime.combine(to_date, to_time)
+
+            filtered_images = []
+            for img in all_images:
+                ts_str = img.replace(".jpg", "")
+                img_dt = datetime.strptime(ts_str, "%Y%m%d%H%M%S")
+                if start_dt <= img_dt <= end_dt:
+                    filtered_images.append(img)
         else:
             filtered_images = all_images
 
         if not filtered_images:
             return Response({"detail": "No images found."}, status=404)
-
-        print(f"Images after filtering: {len(filtered_images)}")
 
         # --- CREATE S3 CLIENT ONCE ---
         S3_BUCKET = os.getenv("S3_BUCKET")
