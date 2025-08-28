@@ -32,9 +32,9 @@ APP_DIR = Path(__file__).resolve().parent
 FONT = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=14)
 FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
 # PVC path to original images for RIDE
-PVC_ORIGINAL_PATH = os.getenv("PVC_ORIGINAL_PATH", "/app/data/webcams/originals")
+PVC_ORIGINAL_PATH = os.getenv("PVC_ORIGINAL_PATH", "/app/images/webcams/originals")
 # PVC path to watermarked images with timestamp for ReplayTheDay
-PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH", "/app/data/webcams/processed")
+PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH", "/app/images/webcams/processed")
 # PVC path to watermarked images for current DriveBC without timestamp
 DRIVCBC_PVC_WATERMARKED_PATH = os.getenv("DRIVCBC_PVC_WATERMARKED_PATH", "/app/images/webcams")
 # Output directory for JSON files for ReplayTheDay and Timelapse
@@ -156,12 +156,6 @@ async def run_consumer():
 
                     try:
                         timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
-                        # # # For testing purposes, only allow camera with IDs below to be processed
-                        # # 658 is off
-                        # # 219 MDT
-                        # if camera_id != "343" and camera_id != "57" and camera_id != "658" and camera_id != "219":
-                        #     logger.info("Skipping processing for camera %s", camera_id)
-                        #     continue
                         await handle_image_message(camera_id, db_data, message.body, timestamp_local, camera_status)
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
@@ -395,6 +389,9 @@ def insert_image_and_update_webcam(camera_id, original_pvc_path, watermarked_pvc
     )
 
     camera.https_cam = True
+    utc_dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S")
+    camera.last_update_modified = utc_dt.replace(tzinfo=timezone.utc)
+    camera.last_update_attempt = utc_dt.replace(tzinfo=timezone.utc)
     camera.save()
 
 def push_to_s3(image_bytes: bytes, camera_id: str, is_original: bool, timestamp: str):
