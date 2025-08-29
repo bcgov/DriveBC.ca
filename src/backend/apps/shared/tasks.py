@@ -5,7 +5,7 @@ from apps.event.tasks import update_event_area_relations
 from apps.feed.client import FeedClient
 from apps.shared.models import Area
 from apps.shared.serializers import DistrictSerializer
-from apps.webcam.tasks import update_camera_area_relations
+from apps.webcam.tasks import update_camera_relations
 from django.core.exceptions import ObjectDoesNotExist
 from email_log.models import Email
 from huey import crontab
@@ -42,9 +42,7 @@ def populate_all_district_data():
     for district_data in feed_data:
         populate_district_from_data(district_data)
 
-    update_area_relations()
 
-
-def update_area_relations():
-    update_camera_area_relations()
+def update_object_relations():
+    update_camera_relations()
     update_event_area_relations()
