@@ -14,8 +14,8 @@ import boto3
 from botocore.config import Config
 from rest_framework_api_key.permissions import HasAPIKey
 from django.utils.dateparse import parse_date
-import io, zipfile
 import zipstream
+from django.utils import timezone
 
 IMAGE_CACHE_DIR = os.getenv("IMAGE_CACHE_DIR", "/app/data/webcams/cache")
 BASE_URL = os.getenv("S3_ENDPOINT_URL", "https://moti-int.objectstore.gov.bc.ca")
@@ -236,6 +236,28 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         response = StreamingHttpResponse(z, content_type='application/zip')
         response['Content-Disposition'] = 'attachment; filename="images.zip"'
         return response
+
+    @action(
+            detail=False, 
+            methods=['get'], 
+            url_path='staleAndDelayed',
+            )
+    def staleAndDelayed(self, request, pk=None):
+        countStale = Webcam.objects.filter(should_appear=True, marked_stale=True).count()
+        countDelayed = Webcam.objects.filter(should_appear=True, marked_delayed=True).count()
+        totalCams = Webcam.objects.filter(should_appear=True).count()
+        
+        data = {
+            "links": {
+                "self": request.build_absolute_uri(),  # dynamic current URL
+            },
+            "time": timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "cams": totalCams,
+            "stale": countStale,
+            "delayed": countDelayed,
+        }
+
+        return Response(data)
 
 class WebcamTestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = WebcamAPI.queryset
