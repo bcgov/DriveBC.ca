@@ -139,11 +139,14 @@ def update_all_webcam_data():
             raise CancelExecution()
 
         current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
-        update_cam_from_sql_db(camera.id, current_time)
-        if camera.should_update(current_time):
-            updated = update_single_webcam_data(camera)
-            if updated:
-                update_camera_group_id(camera)
+
+        if camera.https_cam:
+            update_cam_from_sql_db(camera.id, current_time)
+        else:
+            if camera.should_update(current_time):
+                updated = update_single_webcam_data(camera)
+                if updated:
+                    update_camera_group_id(camera)
 
 
 def wrap_text(text, pen, font, width):
