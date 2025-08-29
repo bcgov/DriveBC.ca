@@ -254,7 +254,7 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         
         data = {
             "links": {
-                "self": request.build_absolute_uri(),  # dynamic current URL
+                "self": self_link
             },
             "time": timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
             "cams": totalCams,
