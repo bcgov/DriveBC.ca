@@ -16,6 +16,8 @@ from rest_framework_api_key.permissions import HasAPIKey
 from django.utils.dateparse import parse_date
 import zipstream
 from django.utils import timezone
+from django.urls import reverse
+
 
 IMAGE_CACHE_DIR = os.getenv("IMAGE_CACHE_DIR", "/app/data/webcams/cache")
 BASE_URL = os.getenv("S3_ENDPOINT_URL", "https://moti-int.objectstore.gov.bc.ca")
@@ -246,6 +248,9 @@ class WebcamViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         countStale = Webcam.objects.filter(should_appear=True, marked_stale=True).count()
         countDelayed = Webcam.objects.filter(should_appear=True, marked_delayed=True).count()
         totalCams = Webcam.objects.filter(should_appear=True).count()
+        host = request.get_host()
+        path = reverse('webcams-staleAndDelayed')
+        self_link = f"{request.scheme}://{host}{path}"
         
         data = {
             "links": {
