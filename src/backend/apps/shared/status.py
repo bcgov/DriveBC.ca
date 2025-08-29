@@ -74,28 +74,35 @@ def calculate_camera_status(timestamp_str: str) -> tuple[float, float]:
         update_periods.sort()
         trim = math.floor(0.125 * c)
         trimmed = update_periods[trim : c - trim]
-        c_trimmed = len(trimmed)
 
-        median = trimmed[math.floor(c_trimmed / 2)]
         std_dev = calculate_stddev(trimmed)
-        if std_dev > (median / 2):
-            std_dev = median / 2
+
+        mean_interval = sum(trimmed) / len(trimmed)
+
+        # 2. thresholds
+        threshold_stale = mean_interval * 1.1
+        threshold_delayed = mean_interval * 3
+
+        # 3. actual time since last image
+        time_since_last = new_ts - timestamp_list[-1]
+
+        # 4. stale/delayed flags
+        stale = time_since_last > threshold_stale
+        delayed = time_since_last > threshold_delayed
+
     else:
-        median = 300.0
+        mean_interval = 300.0
         std_dev = 0.0
-    
-    # Step 4: calculate thresholds
-    threshold_stale = median + 2 *std_dev
-    threshold_delayed = median + 3 * std_dev
+        stale = False
+        delayed = False
 
     return {
         "timestamp": new_ts, # current timestamp in milliseconds
-        "mean_interval": median,
+        "mean_interval": mean_interval,
         "stddev_interval": std_dev,
-        "stale": median > threshold_stale,
-        "delayed": median > threshold_delayed,
+        "stale": stale,
+        "delayed": delayed,
     }
-
 
 def get_image_list(camera_id, age="TIMELAPSE_HOURS"):
     camera_id = int(camera_id)
