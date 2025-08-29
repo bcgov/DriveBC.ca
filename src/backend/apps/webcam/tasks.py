@@ -506,9 +506,6 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
             # Query from Cams_Live
             result_live = connection.execute(cams_live_sql, {"id": id})
             live_rows = {row.id: dict(row._mapping) for row in result_live}
-            # bruce test
-            if id == 36:
-                print(f"bruce test SQL DB returned {len(live_rows)} rows for cam ID {id}")
             update_webcam_db(id, live_rows.get(id, {}))
             return live_rows
 
@@ -521,12 +518,7 @@ def update_webcam_db(cam_id: int, cam_data: dict):
     if not timestamp_utc:
         return
 
-    # bruce test
-    if cam_id == 36:
-        print(f"bruce test update_webcam_db for cam ID {cam_id} with timestamp_utc: {timestamp_utc}")
     camera_status = calculate_camera_status(timestamp_utc)
-    if cam_id == 36:
-        print(f"bruce test camera_status: {camera_status}")
     ts_seconds = int(camera_status["timestamp"])
     dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 
