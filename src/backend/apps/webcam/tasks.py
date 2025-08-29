@@ -23,6 +23,7 @@ from apps.webcam.hwy_coords import hwy_coords
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F
@@ -341,9 +342,39 @@ def build_route_geometries(coords=hwy_coords):
             RouteGeometry.objects.filter(id=key).update(routes=MultiLineString(ls_routes))
 
 
-def update_camera_area_relations():
+# DBC22-4679 find and update the nearest weather stations for a camera
+def update_camera_weather_station(camera, weather_class):
+    meters_in_degrees = 0.000008983152841195  # 1 meter in degrees at the equator
+
+    stations_qs = weather_class.objects.filter(
+        location__dwithin=(camera.location, 30000 * meters_in_degrees),  # 30km in degrees
+        elevation__lte=camera.elevation + 300,
+        elevation__gte=camera.elevation - 300,  # within 300m elevation,
+    ) if isinstance(weather_class, CurrentWeather) else weather_class.objects.all()
+
+    closest_station = stations_qs.annotate(
+        distance=Distance('location', camera.location)
+    ).order_by('distance').first()
+
+    if closest_station:
+        if weather_class == CurrentWeather:
+            Webcam.objects.filter(id=camera.id).update(local_weather_station=closest_station)
+
+        elif weather_class == RegionalWeather:
+            Webcam.objects.filter(id=camera.id).update(regional_weather_station=closest_station)
+
+        elif weather_class == HighElevationForecast:
+            Webcam.objects.filter(id=camera.id).update(hev_station=closest_station)
+
+
+def update_camera_relations():
     for area in Area.objects.all():
         Webcam.objects.filter(location__within=area.geometry).update(area=area)
+
+    for camera in Webcam.objects.all():
+        update_camera_weather_station(camera, RegionalWeather)
+        update_camera_weather_station(camera, CurrentWeather)
+        update_camera_weather_station(camera, HighElevationForecast)
 
 
 def update_camera_group_id(camera):

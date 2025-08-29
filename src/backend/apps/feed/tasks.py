@@ -4,7 +4,7 @@ from apps.border.tasks import update_border_crossing_lanes
 from apps.event.tasks import populate_all_event_data
 from apps.ferry.tasks import populate_all_ferry_data, populate_coastal_ferry_data
 from apps.rest.tasks import populate_all_rest_stop_data
-from apps.shared.tasks import populate_all_district_data
+from apps.shared.tasks import populate_all_district_data, update_object_relations
 from apps.weather.tasks import (
     populate_all_high_elevation_forecast_data,
     populate_all_local_weather_data,
@@ -105,6 +105,12 @@ def update_border_crossings():
 @lock_task('districts-lock')
 def update_districts():
     populate_all_district_data()
+
+
+@db_periodic_task(crontab(hour="*/24", minute="30", day_of_week="0"))
+@lock_task('relations-lock')
+def update_relations():
+    update_object_relations()
 
 
 @db_periodic_task(crontab(minute="*/20"))

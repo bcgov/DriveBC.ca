@@ -1,4 +1,5 @@
 from apps.shared.models import Area, BaseModel
+from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
 from django.contrib.gis.db import models
 
 
@@ -19,7 +20,12 @@ class Webcam(BaseModel):
     location = models.PointField()
     orientation = models.CharField(max_length=32, blank=True)
     elevation = models.PositiveSmallIntegerField()
+
+    # Foreign keys
     area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=False)
+    regional_weather_station = models.ForeignKey(RegionalWeather, on_delete=models.SET_NULL, null=True, blank=True)
+    local_weather_station = models.ForeignKey(CurrentWeather, on_delete=models.SET_NULL, null=True, blank=True)
+    hev_station = models.ForeignKey(HighElevationForecast, on_delete=models.SET_NULL, null=True, blank=True)
 
     # Relations
     group = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True)
