@@ -54,6 +54,7 @@ import FriendlyTime from '../Components/shared/FriendlyTime';
 import CurrentCameraIcon from '../Components/cameras/CurrentCameraIcon';
 import trackEvent from '../Components/shared/TrackEvent';
 import PollingComponent from '../Components/shared/PollingComponent';
+import NearbyWeathers from "../Components/cameras/NearbyWeathers";
 
 // Styling
 import './CameraDetailsPage.scss';
@@ -840,8 +841,13 @@ export default function CameraDetailsPage() {
                     </div>
                     <div className="camera-imagery__nearby d-flex">
                       <div className="camera-imagery__details__left">
-                        <p>Placeholder for Weather</p>
+                        {camera &&
+                          <Container>
+                            <NearbyWeathers camera={camera} />
+                          </Container>
+                        }
                       </div>
+
                       <div className="camera-imagery__details__right flex-grow-1">
                         <div className="actions-bar actions-bar--nearby"></div>
                         <div className="map-wrap map-context-wrap">
