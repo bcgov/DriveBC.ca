@@ -96,7 +96,7 @@ export const enableReferencedLayer = (referenceData, mapContext) => {
     }
 
   } else if (featureType === 'wildfire') {
-    mapContext.visible_layers['wildfire'] = true;
+    mapContext.visible_layers['wildfires'] = true;
 
   } else {
     const featureDisplayCategory = referenceData.display_category;
@@ -120,6 +120,10 @@ export const enableReferencedLayer = (referenceData, mapContext) => {
       case 'chainUps':
         mapContext.visible_layers['chainUps'] = true;
         mapContext.visible_layers['chainUpsLines'] = true;
+        break;
+      case 'roadConditions':
+        mapContext.visible_layers['roadConditions'] = true;
+        mapContext.visible_layers['roadConditionsLines'] = true;
         break;
     }
   }
