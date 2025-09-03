@@ -12,7 +12,12 @@ from apps.shared.views import static_override
 
 from django.conf.urls.static import static
 import os
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from drf_spectacular.utils import extend_schema
 
+@extend_schema(exclude=True)   # 👈 this hides it from Swagger/Redoc
+class HiddenSpectacularAPIView(SpectacularAPIView):
+    pass
 
 def admin_permission_denied_handler(request, exception):
     '''
@@ -79,6 +84,15 @@ urlpatterns = [
 
     # TO BE REMOVED IN PRODUCTION
 ] + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+# Swagger API schema and documentation for timelapse
+urlpatterns = [
+    path("internal/schema/", HiddenSpectacularAPIView.as_view(), name="schema"),
+    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    path("api/webcams/", include("apps.webcam.urls")),
+]
 
 # Serve processed images to ReplayTheDay
 urlpatterns += static(

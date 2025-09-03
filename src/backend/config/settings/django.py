@@ -137,6 +137,8 @@ THIRD_PARTY_APPS = [
     "modelcluster",
     "taggit",
     'email_log',
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
 ]
 
 LOCAL_APPS = [
