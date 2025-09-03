@@ -32,7 +32,7 @@ import AdvisoryDetailsPage from './pages/AdvisoryDetailsPage';
 import Alert from './Components/shared/Alert';
 import BulletinDetailsPage from './pages/BulletinDetailsPage';
 import BulletinsListPage from './pages/BulletinsListPage';
-import CameraDetailsPage from './pages/CameraDetailsPage';
+import CameraDetailsPageNew from './pages/CameraDetailsPageNew';
 import CamerasListPage from './pages/CamerasListPage';
 import EventsListPage from './pages/EventsListPage';
 import FeedbackPage from './pages/FeedbackPage';
@@ -288,7 +288,7 @@ function App() {
                             <Route path="/my-cameras" element={<SavedCamerasPage />} />
                             <Route path="/my-routes" element={<SavedRoutesPage />} />
                             <Route path="/cameras" element={<CamerasListPage />} />
-                            <Route path="/cameras/:id" element={<CameraDetailsPage />} />
+                            <Route path="/cameras/:id" element={<CameraDetailsPageNew />} />
                             <Route path="/delays" element={<EventsListPage />} />
                             <Route path="/advisories" element={<AdvisoriesListPage />} />
                             <Route path="/advisories/:id/:subid?" element={<AdvisoryDetailsPage />} />
