@@ -73,6 +73,6 @@ class Webcam(BaseModel):
         image_paths = []
         for ts in timestamps:
             filename = ts
-            img_path = f"{TIMELAPSE_API_ROOT_URL}/{self.id}/{filename}/timelapse/"
+            img_path = f"{TIMELAPSE_API_ROOT_URL}/{self.id}/timelapse/{filename}/"
             image_paths.append(img_path.replace(".jpg", ""))
         return image_paths
