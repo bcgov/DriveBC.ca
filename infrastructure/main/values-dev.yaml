@@ -48,7 +48,7 @@ django:
   mediapvc:
     storage: 1Gi
   apppvc:
-    storage: 1Gi
+    storage: 2Gi
   podDisruptionBudget: 
     enabled: false 
     minAvailable:  
