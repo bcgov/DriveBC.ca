@@ -110,5 +110,5 @@ def get_image_list(camera_id, age="TIMELAPSE_HOURS"):
     now = datetime.now(timezone.utc)
     cutoff = now - timedelta(hours=hours)
     results = ImageIndex.objects.filter(camera_id=camera_id, timestamp__gte=cutoff).order_by('timestamp')
-    timestamps = [item.timestamp.strftime("%Y%m%d%H%M%S") + ".jpg" for item in results]
+    timestamps = [item.timestamp.strftime("%Y%m%d%H%M%S") for item in results]
     return timestamps
