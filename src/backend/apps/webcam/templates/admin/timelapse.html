@@ -23,13 +23,8 @@
           const cameraId = "{{ self.id }}";
           const imagePath = "{{ image_paths.0 }}";
           const apiUrl = `/api/webcams/${cameraId}/timelapse/`;
-          const apiKey = "{{ api_key|escapejs }}";
 
-          fetch(apiUrl, {
-            headers: {
-              "Authorization": `Api-Key ${apiKey}`
-            }
-          })
+          fetch(apiUrl)
           .then(response => response.json())
           .then(data => {
             document.getElementById("timelapse-image").src = data[0];
@@ -126,11 +121,7 @@
           }
 
           console.log("Download API URL:", apiUrl);
-          const response = await fetch(apiUrl, {
-            headers: {
-              "Authorization": `Api-Key ${apiKey}`
-            }
-          });
+          const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElemOriginal.src = URL.createObjectURL(blob);
 
@@ -148,33 +139,21 @@
           let apiUrl = imagePaths[imagePaths.length - 1];
           apiUrl = apiUrl.replace(/\/\d{14}\/timelapse\//, "/originalImage/");
           console.log("Original image URL:", apiUrl);
-          const response = await fetch(apiUrl, {
-            headers: {
-              "Authorization": `Api-Key ${apiKey}`
-            }
-          });
+          const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElemOriginal.src = URL.createObjectURL(blob);
         }
 
         async function displayWatermarkedImage() {
           const apiUrl = imagePaths[imagePaths.length - 1];
-          const response = await fetch(apiUrl, {
-            headers: {
-              "Authorization": `Api-Key ${apiKey}`
-            }
-          });
+          const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElemWatermarked.src = URL.createObjectURL(blob);
         }
 
         async function updateImage() {
           const apiUrl = imagePaths[currentIndex];
-          const response = await fetch(apiUrl, {
-            headers: {
-              "Authorization": `Api-Key ${apiKey}`
-            }
-          });
+          const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElem.src = URL.createObjectURL(blob);
 
