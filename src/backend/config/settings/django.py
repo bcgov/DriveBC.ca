@@ -119,7 +119,6 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_gis",
-    "rest_framework_api_key",
     "django_filters",
     "drf_recaptcha",
     "corsheaders",
