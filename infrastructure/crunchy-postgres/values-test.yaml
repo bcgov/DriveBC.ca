@@ -42,9 +42,9 @@ crunchy:
         prometheus.io/scrape: 'true' # enable prometheus scraping so you monitor the cluster in Sysdig
         prometheus.io/port: '9187'
     dataVolumeClaimSpec:
-      storage: 1Gi
+      storage: 2Gi
       storageClassName: netapp-block-standard
-      walStorage: 3.5Gi
+      walStorage: 4Gi
 
     requests:
       cpu: 50m
@@ -72,7 +72,7 @@ crunchy:
       incrementalBackupSchedule:  0 0,4,12,16,20 * * * 
       volume:
         accessModes: "ReadWriteOnce"
-        storage: 3Gi
+        storage: 4Gi
         storageClassName: netapp-file-backup
     s3:
       enabled: true # if enabled, below must be provided
