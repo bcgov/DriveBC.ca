@@ -15,9 +15,9 @@ import os
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from drf_spectacular.utils import extend_schema
 
-@extend_schema(exclude=True)   # 👈 this hides it from Swagger/Redoc
-class HiddenSpectacularAPIView(SpectacularAPIView):
-    pass
+# @extend_schema(exclude=True)   # 👈 this hides it from Swagger/Redoc
+# class HiddenSpectacularAPIView(SpectacularAPIView):
+#     pass
 
 def admin_permission_denied_handler(request, exception):
     '''
@@ -88,9 +88,19 @@ urlpatterns = [
 
 # Swagger API schema and documentation for timelapse
 urlpatterns = [
-    path("internal/schema/", HiddenSpectacularAPIView.as_view(), name="schema"),
+    # path("internal/schema/", HiddenSpectacularAPIView.as_view(), name="schema"),
+    # path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    # path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    # path("api/webcams/", include("apps.webcam.urls")),
+
+    # public schema
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+
+    # Swagger UI & Redoc
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+
+    # webcams
     path("api/webcams/", include("apps.webcam.urls")),
 ]
 
