@@ -108,7 +108,7 @@
 
         async function downloadImage(from, to, timeFrom, timeTo) {
           let apiUrl = imagePaths[imagePaths.length - 1];
-          apiUrl = apiUrl.replace(/\/\d{14}\/timelapse\//, "/download/");
+          apiUrl = apiUrl.replace(/\/timelapse\/\d{14}/, "/timelapse/download");
           // If from/to provided, append them as query params
           const params = new URLSearchParams();
           if (from) params.append("from", from);
