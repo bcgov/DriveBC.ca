@@ -19,6 +19,13 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
         "rest_framework.renderers.BrowsableAPIRenderer",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "DriveBC Timelapse API",
+    "DESCRIPTION": "DriveBC Timelapse API",
+    "VERSION": "1.0.0",
 }
 
 # Huey
