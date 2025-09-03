@@ -1,0 +1,184 @@
+@import "../../styles/variables";
+
+.popup {
+  // Regional Weather popup
+  &--weather--hef {
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    .popup__title {
+      background-color: $Grey30;
+      border-top: 4px solid $Type-Primary;
+
+      .name {
+        color: $Type-Primary;
+      }
+
+      &__icon {
+        background-color: $Type-Primary;
+        color: white;
+      }
+    }
+
+    .popup__advisory, .popup__info {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      background-color: $Gold60;
+      color: $Gold110;
+      padding: 0.875rem;
+      font-size: 0.875rem;
+
+      .event {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+
+        &:not(:last-child) {
+          margin-bottom: 1rem;
+        }
+
+        p {
+          line-height: 1.3;
+        }
+
+        svg {
+          margin-right: 0.5rem;
+        }
+      }
+
+      svg {
+        margin-right: 4px;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .advisory-title {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: $Gold110;
+        margin-right: auto
+      }
+
+      .link {
+        min-width: max-content;
+        padding-left: 0.25rem;
+        margin-left: auto
+      }
+    }
+
+    .popup__info {
+      background-color: $Blue20;
+      flex-direction: column;
+      color: $Type-Link;
+
+      .event {
+        justify-content: space-between;
+
+        div {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+
+          svg, p {
+            color: $BC-Blue;
+          }
+        }
+
+        .expand-toggle {
+          cursor: pointer;
+          color: $Gold110;
+        }
+      }
+    }
+
+
+    .popup__content {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      p {
+        margin-bottom: 0;
+      }
+
+      &__title {
+        .highway {
+          color: $Type-Primary;
+          font-size: 0.875rem;
+          margin-bottom: 0;
+        }
+
+        .name {
+          color: $Type-Primary;
+          font-size: 1.75rem;
+          margin-bottom: 0;
+        }
+
+        .friendly-time {
+          margin: 0 auto 1rem;
+          &-text {
+            color: $Type-Secondary;
+            font-size: 0.875rem;
+          }
+        }
+      }
+
+      &__forecasts {
+        padding-top: 0;
+        margin: 0;
+        flex-grow: 1;
+
+        .forecast {
+          margin-top: 1rem;
+          padding: 1rem;
+          border-radius: 10px;
+          box-shadow: rgb(0 0 0 / 20%) 0px 3px 6px;
+
+          .title {
+            display: flex;
+            margin-bottom: 0.5rem;
+
+            .icon {
+              width: 2rem;
+              font-size: 1rem;
+              flex: none;
+            }
+
+            .label {
+              font-size: 1rem;
+              font-weight: 700;
+            }
+          }
+
+          .summary {
+            font-size: 0.925rem;
+          }
+        }
+      }
+      &__additional {
+        padding: 0.5rem 1rem;
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        p {
+          text-align: center;
+          color: $Type-Secondary;
+          line-height: 1.5rem;
+        }
+
+        .label {
+          line-height: 2rem;
+        }
+      }
+    }
+  }
+}
