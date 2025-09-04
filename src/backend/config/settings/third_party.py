@@ -26,6 +26,7 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "DriveBC Timelapse API",
     "DESCRIPTION": "DriveBC Timelapse API",
     "VERSION": "1.0.0",
+    "SWAGGER_UI_DIST": "SIDECAR",
 }
 
 # Huey
