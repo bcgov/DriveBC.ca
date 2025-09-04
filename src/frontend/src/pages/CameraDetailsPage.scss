@@ -115,10 +115,16 @@
       }
 
       &__update, &__elevation {
-
         svg {
           width: 1rem;
           color: $Grey80;
+        }
+      }
+
+      &__title.label {
+        font-size: 1rem;
+        svg {
+          margin-right: 8px;
         }
       }
     }
@@ -129,7 +135,7 @@
     justify-content: space-between;
     flex-direction: column;
     padding: 0.5rem;
-    background-color: $BC-Blue-Light;
+    background-color: $Blue10;
     color: $BC-Blue;
     border-radius: 8px;
 
@@ -183,20 +189,14 @@
 
         .camera-direction-label {
           margin-right: 0.5rem;
-          font-size: 0.875rem;
 
           @media (min-width: 1240px) {
-            font-size: 1rem;
             padding-left: 0;
           }
 
           span {
             margin-left: 8px;
-            font-size: 0.75rem;
-
-            @media (min-width: 576px) {
-              font-size: 0.875rem;
-            }
+            font-weight: 700;
           }
         }
 
@@ -733,6 +733,66 @@
         @media (min-width: 992px) {
           margin-top: 50px;
         }
+      }
+    }
+
+    &__details {
+      margin-bottom: 31px;
+      &__right {
+        margin-left: 24px;
+      }
+    }
+
+    &__nearby {
+      &__left {
+        min-width: 560px;
+
+        .actions-bar--weathers {
+          background-color: $Grey10;
+          color: $Grey110;
+
+          .btn {
+            margin-bottom: 0;
+          }
+
+          .title {
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+
+            svg {
+              margin-right: 8px;
+            }
+          }
+
+          .weather-types {
+            .btn {
+              margin-left: 8px;
+              background: $Grey110;
+              font-weight: 700;
+
+              &:hover {
+                background: $Grey110;
+                color: white;
+              }
+
+              &:not(.current) {
+                background: none;
+                border-color: transparent;
+                color: $Grey110;
+                font-weight: 400;
+              }
+
+              &:hover {
+                background: $Grey40;
+                color: $Grey110;
+              }
+            }
+          }
+        }
+      }
+      &__right {
+        margin-left: 24px;
       }
     }
   }

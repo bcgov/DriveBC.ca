@@ -29,16 +29,17 @@ export default function CameraOrientations(props) {
   return (
     <div className="camera-orientations-container">
       <div className="header">
-        <img
-          className="colocated-camera-icon"
-          src={colocatedCamIcon}
-          role="presentation"
-          alt="colocated cameras icon"
+        <button className="rotate-direction-btn"
           onClick={rotateCameraOrientation}
-          style={{cursor: "pointer"}}
-        />
-
-        <span className="title">Direction</span>
+        >
+          <img
+            className="colocated-camera-icon"
+            src={colocatedCamIcon}
+            role="presentation"
+            alt="colocated cameras icon"
+          />
+          <span className="title">Direction</span>
+        </button>
       </div>
 
       <div className="main-content">

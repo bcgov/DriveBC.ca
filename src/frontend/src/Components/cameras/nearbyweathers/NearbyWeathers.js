@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMediaQuery } from "@uidotdev/usehooks";
 import Skeleton from "react-loading-skeleton";
+import Button from "react-bootstrap/Button";
 
 // Styling
 import './NearbyWeathers.scss';
@@ -135,31 +136,35 @@ export default function NearbyWeathers(props) {
   const btnTitles = ['Regional', 'Local', 'High elevation'];
 
   return (
-    <div>
-      <div>
-        <FontAwesomeIcon className="weather-icon" icon={FA.faSunCloud}/>
-        Weather
+    <React.Fragment>
+      <div className="actions-bar actions-bar--weathers">
+        <div className="title">
+          <FontAwesomeIcon className="weather-icon" icon={FA.faSunCloud}/>
+          Weather
+        </div>
+        <div className="weather-types">
+          {[regionalWeather, localWeather, hef].map((station, index) => {
+            if (!station) {
+              return null;
+            }
 
-        {[regionalWeather, localWeather, hef].map((station, index) => {
-          if (!station) {
-            return null;
-          }
+            return (
+              <Button
+                variant="primary"
+                className={activeTab === btnTitles[index] ? 'current' : ''}
+                key={index}
+                onClick={() => setActiveTab(btnTitles[index])}
+                onKeyDown={keyEvent => {
+                  if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                    setActiveTab(btnTitles[index]);
+                  }
+                }}>
 
-          return (
-            <button
-              key={index}
-              onClick={() => setActiveTab(btnTitles[index])}
-              onKeyDown={keyEvent => {
-                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                  setActiveTab(btnTitles[index]);
-                }
-              }}
-              className="btn btn-outline-primary">
-
-              {btnTitles[index]}
-            </button>
-          );
-        })}
+                {btnTitles[index]}
+              </Button>
+            );
+          })}
+        </div>
       </div>
 
       {regionalWeather && activeTab === 'Regional' &&
@@ -173,6 +178,6 @@ export default function NearbyWeathers(props) {
       {hef && activeTab === 'High elevation' &&
         <NearbyHevWeather weather={hef} />
       }
-    </div>
+    </React.Fragment>
   );
 }

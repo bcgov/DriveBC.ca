@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  margin: 0 8px;
+  min-width: 400px;
 
   .header {
     display: flex;
@@ -23,14 +23,23 @@
     }
   }
 
+  .rotate-direction-btn {
+    background: none;
+    border: none;
+  }
+
   .main-content {
+    column-count: 2;
+    column-gap: 12px;
+    padding: 8px 0;
+
     .orientation {
       position: relative;
       width: 210px;
       height: 160px;  // Crop off 20px timestamp from the bottom
       border-radius: 8px;
       overflow: hidden;
-      margin: 8px 0;
+      margin-bottom: 12px;
 
       &.current {
         border: 3px solid $Focus;
