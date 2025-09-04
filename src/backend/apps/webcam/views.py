@@ -29,6 +29,14 @@ S3_BUCKET = os.getenv("S3_BUCKET", "tran_api_dbc_backup_dev")
 #     queryset = Webcam.objects.filter(should_appear=True)
 #     serializer_class = WebcamSerializer
 
+# class CameraViewSet(viewsets.ReadOnlyModelViewSet):
+#     queryset = Webcam.objects.filter(should_appear=True)
+#     serializer_class = WebcamSerializer
+
+class CameraViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Webcam.objects.filter(should_appear=True)
+    serializer_class = WebcamSerializer
+
 class WebcamAPI:
     queryset = Webcam.objects.filter(should_appear=True)
     serializer_class = WebcamSerializer
