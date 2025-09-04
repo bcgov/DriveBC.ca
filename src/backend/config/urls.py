@@ -15,9 +15,6 @@ import os
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from drf_spectacular.utils import extend_schema
 
-# @extend_schema(exclude=True)   # 👈 this hides it from Swagger/Redoc
-# class HiddenSpectacularAPIView(SpectacularAPIView):
-#     pass
 
 def admin_permission_denied_handler(request, exception):
     '''
