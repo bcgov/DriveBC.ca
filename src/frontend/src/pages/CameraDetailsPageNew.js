@@ -19,6 +19,7 @@ import {
   faPause,
   faPlay,
   faStar,
+  faVideoCamera,
   faVideoSlash,
   faWarning,
   faXmark,
@@ -42,8 +43,13 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
 import { AlertContext, AuthContext } from '../App';
-import { addFavoriteCamera, deleteFavoriteCamera, getCameraGroupMap, getCameras } from '../Components/data/webcams.js';
-import { getCameraOrientation } from '../Components/cameras/helper.js';
+import {
+  addFavoriteCamera,
+  deleteFavoriteCamera,
+  getCameraGroupMap,
+  getCameras,
+} from '../Components/data/webcams.js';
+import { getFullOrientation } from '../Components/cameras/helper.js';
 import { getWebcamReplay } from '../Components/data/webcams';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components/map/errors/NetworkError';
@@ -54,7 +60,7 @@ import FriendlyTime from '../Components/shared/FriendlyTime';
 import CurrentCameraIcon from '../Components/cameras/CurrentCameraIcon';
 import trackEvent from '../Components/shared/TrackEvent';
 import PollingComponent from '../Components/shared/PollingComponent';
-import NearbyWeathers from "../Components/cameras/NearbyWeathers";
+import NearbyWeathers from "../Components/cameras/nearbyweathers/NearbyWeathers";
 
 // Styling
 import './CameraDetailsPage.scss';
@@ -65,6 +71,7 @@ import colocatedCamIcon from '../images/colocated-camera.svg';
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import Spinner from 'react-bootstrap/Spinner';
+import CameraOrientations from "../Components/cameras/directions/CameraOrientations";
 
 export default function CameraDetailsPage() {
   /* Setup */
@@ -386,24 +393,6 @@ export default function CameraDetailsPage() {
   };
 
   // Handlers
-  const handleCameraImageClick = (event) => {
-    const container = event.currentTarget.closest(".camera-orientations");
-    const buttons = container.querySelectorAll(".camera-direction-btn");
-    let currentIndex = Array.from(buttons).findIndex(
-      (button) => button.classList.contains("current")
-    );
-    if (currentIndex === -1) {
-      currentIndex = activeIndex;
-    }
-    const nextIndex = (currentIndex + 1) % buttons.length;
-    buttons[nextIndex].focus();
-    setActiveIndex(nextIndex);
-    const nextCamera = camera.camGroup[nextIndex];
-    setCamera(nextCamera);
-    trackEvent("click", "camera-list", "camera", nextCamera.name);
-    pauseReplay();
-  };
-
   const favoriteHandler = () => {
     // User logged in, default handler
     if (favCams != null && authContext.loginStateKnown && authContext.username) {
@@ -635,30 +624,14 @@ export default function CameraDetailsPage() {
                         <div className="actions-bar actions-bar--webcam">
                           <div className="camera-orientations">
                             <span className="camera-direction-label">
-                              <img
+                              <FontAwesomeIcon
                                 className="colocated-camera-icon"
-                                src={colocatedCamIcon}
+                                icon={faVideoCamera}
                                 role="presentation"
-                                alt="colocated cameras icon"
-                                onClick={handleCameraImageClick}
-                                style={{ cursor: "pointer" }}
-                              />
-                              <span>Direction</span>
+                                alt="colocated cameras icon" />
+
+                              <span>{getFullOrientation(camera.orientation)}</span>
                             </span>
-                            <div className="camera-orientations-group">
-                              {camera.camGroup.map(cam => (
-                                <Button
-                                  aria-label={getCameraOrientation(cam.orientation)}
-                                  className={
-                                    'camera-direction-btn' +
-                                    (camera.id === cam.id ? ' current' : '')
-                                  }
-                                  key={cam.id}
-                                  onClick={() => loadCamDetails(cam)}>
-                                  {cam.orientation}
-                                </Button>
-                              ))}
-                            </div>
                           </div>
 
                           <div className="replay-div">
@@ -836,7 +809,7 @@ export default function CameraDetailsPage() {
                         </p>
                       </div>
                       <div className="camera-imagery__details__right">
-                        <p>Placeholder for directions</p>
+                        <CameraOrientations camera={camera} loadCamDetails={loadCamDetails} />
                       </div>
                     </div>
                     <div className="camera-imagery__nearby d-flex">

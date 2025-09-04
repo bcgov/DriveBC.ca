@@ -14,7 +14,7 @@ import {
 import { useMediaQuery } from "@uidotdev/usehooks";
 
 // Internal imports
-import FriendlyTime from '../shared/FriendlyTime';
+import FriendlyTime from '../../shared/FriendlyTime';
 
 // Styling
 import './NearbyLocalWeather.scss';
