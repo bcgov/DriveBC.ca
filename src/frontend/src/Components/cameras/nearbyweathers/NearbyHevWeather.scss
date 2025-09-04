@@ -1,8 +1,8 @@
-@import "../../styles/variables";
+@import "../../../styles/variables";
 
 .popup {
   // Regional Weather popup
-  &--weather--regional {
+  &--weather--hef {
     .section-title {
       font-size: 1rem;
       font-weight: 700;
@@ -29,7 +29,7 @@
       align-items: stretch;
       background-color: $Gold60;
       color: $Gold110;
-      padding: 0.5rem 0.875rem;
+      padding: 0.875rem;
       font-size: 0.875rem;
 
       .event {
@@ -37,10 +37,9 @@
         width: 100%;
         align-items: center;
         justify-content: space-between;
-        padding: 8px 0;
 
-        &:only-child {
-          padding: 0.5rem 0;
+        &:not(:last-child) {
+          margin-bottom: 1rem;
         }
 
         p {
@@ -82,15 +81,6 @@
       .event {
         justify-content: space-between;
 
-        &:only-child {
-          padding: 0;
-          border: 1px solid red;
-        }
-
-        + div {
-          padding-bottom: 0.5rem;
-        }
-
         div {
           display: flex;
           flex-direction: row;
@@ -103,25 +93,31 @@
 
         .expand-toggle {
           cursor: pointer;
-          color: $Type-Link;
+          color: $Gold110;
         }
       }
     }
+
 
     .popup__content {
       display: flex;
       flex-direction: column;
       height: 100%;
-      overflow-x: hidden;
 
       p {
         margin-bottom: 0;
       }
 
       &__title {
+        .highway {
+          color: $Type-Primary;
+          font-size: 0.875rem;
+          margin-bottom: 0;
+        }
+
         .name {
           color: $Type-Primary;
-          font-size: 2rem;
+          font-size: 1.75rem;
           margin-bottom: 0;
         }
 
@@ -134,112 +130,55 @@
         }
       }
 
-      &__description {
-        text-align: center;
+      &__forecasts {
         padding-top: 0;
+        margin: 0;
+        flex-grow: 1;
 
-        .temp-and-icon {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 1.5rem;
+        .forecast {
+          margin-top: 1rem;
+          padding: 1rem;
+          border-radius: 10px;
+          box-shadow: rgb(0 0 0 / 20%) 0px 3px 6px;
 
-          p, .weather-icon {
-            flex: 1;
+          .title {
+            display: flex;
+            margin-bottom: 0.5rem;
+
+            .icon {
+              width: 2rem;
+              font-size: 1rem;
+              flex: none;
+            }
+
+            .label {
+              font-size: 1rem;
+              font-weight: 700;
+            }
+          }
+
+          .summary {
+            font-size: 0.925rem;
           }
         }
-
-        .weather-icon {
-          font-size: 7.375rem;
-          color: lighten(saturate($Type-Primary, 0.47), 40.59)
-
-        }
-
-        .weather {
-          font-size: 0.875rem;
-        }
-
-        .temperature {
-          font-size: 5.5rem;
-        }
       }
-
-      &__forecasts {
-        flex-grow: 1;
-      }
-
       &__additional {
         padding: 0.5rem 1rem;
+        margin-top: auto;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        margin-top: auto;
 
         p {
           text-align: center;
-          color: $Grey80;
+          color: $Type-Secondary;
+          line-height: 1.5rem;
         }
 
         .label {
           line-height: 2rem;
         }
       }
-    }
-  }
-
-  // Common styles for local weather and Regional weather
-  .data-card {
-    margin: 0.75rem 0;
-    padding: 0.75rem;
-    border-radius: 8px;
-    box-shadow: 0px 6.4px 14.4px 0px rgba(0, 0, 0, 0.13), 0px 1.2px 3.6px 0px rgba(0, 0, 0, 0.10);
-
-    &__row {
-      display: flex;
-
-      & + .data-card__row {
-        margin-top: 0.75rem;
-        padding-top: 0.75rem;
-        border-top: 1px solid $Divider;
-      }
-
-      &:not(.group) {
-        .data-icon {
-          align-self: top;
-        }
-      }
-
-      .data-icon {
-        margin-right: 0.75rem;
-        color: $Grey80;
-      }
-
-      .data-group {
-        flex: 1 0;
-
-        &__row {
-          display: flex;
-        }
-      }
-    }
-
-    .label, .data {
-      font-size: 0.875rem;
-      margin-bottom: 0;
-    }
-
-    .label {
-      text-align: left;
-      color: $Grey80;
-    }
-
-    .data {
-      text-align: right;
-      margin-left: auto;
-      min-width: 80px;
-      color: $Type-Primary;
-      font-weight: 700;
     }
   }
 }

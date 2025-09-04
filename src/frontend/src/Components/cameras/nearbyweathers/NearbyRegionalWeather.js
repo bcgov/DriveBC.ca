@@ -15,10 +15,10 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 import Collapse from 'react-bootstrap/Collapse';
 
 // Internal imports
-import ForecastCarousel from '../map/panels/weather/ForecastCarousel';
-import ForecastTabs from '../map/panels/weather/ForecastTabs';
-import FriendlyTime from '../shared/FriendlyTime';
-import WeatherIconThin from '../map/WeatherIconThin';
+import ForecastCarousel from '../../map/panels/weather/ForecastCarousel';
+import ForecastTabs from '../../map/panels/weather/ForecastTabs';
+import FriendlyTime from '../../shared/FriendlyTime';
+import WeatherIconThin from '../../map/WeatherIconThin';
 
 // Styling
 import './NearbyRegionalWeather.scss';

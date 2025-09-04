@@ -1,0 +1,64 @@
+@import "../../../styles/variables";
+
+.camera-orientations-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin: 0 8px;
+
+  .header {
+    display: flex;
+    align-items: center;
+    background-color: $Blue10;
+    padding: 12px;
+    border-radius: 8px;
+
+    img {
+      margin-right: 8px;
+    }
+
+    .title {
+      font-weight: 700;
+      color: $BC-Blue
+    }
+  }
+
+  .main-content {
+    .orientation {
+      position: relative;
+      width: 210px;
+      height: 160px;  // Crop off 20px timestamp from the bottom
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 8px 0;
+
+      &.current {
+        border: 3px solid $Focus;
+      }
+
+      img {
+        width: 210px;
+        height: 180px;
+        object-position: top;
+      }
+
+      .label {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        background-color: $Grey20;
+        color: $BC-Blue;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-size: 0.875rem;
+
+        &.current {
+          background: $Focus;
+          color: white;
+        }
+      }
+    }
+
+  }
+}

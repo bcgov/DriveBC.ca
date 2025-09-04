@@ -10,8 +10,8 @@ import {
 import { useMediaQuery } from "@uidotdev/usehooks";
 
 // Internal imports
-import FriendlyTime from '../shared/FriendlyTime';
-import WeatherIcon from "../map/WeatherIcon";
+import FriendlyTime from '../../shared/FriendlyTime';
+import WeatherIcon from "../../map/WeatherIcon";
 
 // Styling
 import './NearbyHevWeather.scss';
