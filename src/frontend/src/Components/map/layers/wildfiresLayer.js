@@ -91,6 +91,8 @@ export function updateWildfiresLayer(wildfiresList, layer, setLoadingLayers) {
     return dict;
   }, {});
 
+  const featuresDict = {};
+
   for (const wildfiresFeature of layer.getSource().getFeatures()) {
     const wildfire = wildfiresDict[wildfiresFeature.get('data').id];
 
@@ -115,10 +117,14 @@ export function updateWildfiresLayer(wildfiresList, layer, setLoadingLayers) {
         wildfiresFeature.setStyle(wildfireAreaStyles['static']);
       }
     }
+
+    featuresDict[wildfiresFeature.get('data').id] = wildfiresFeature;
   }
 
   setLoadingLayers(prevState => ({
     ...prevState,
     wildfires: false
   }));
+
+  return featuresDict;
 }

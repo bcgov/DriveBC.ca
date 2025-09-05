@@ -736,11 +736,13 @@ export default function DriveBCMap(props) {
   // Wildfires layer
   useEffect(() => {
     if (!isCamDetail) {
-      loadLayer(
+      const featuresDict = loadLayer(
         mapLayers, mapRef, mapContext,
         'wildfires', wildfires, filteredWildfires, 72,
         referenceData, updateReferenceFeature, setLoadingLayers
       );
+
+      setFeatureContext({...featureContext, wildfires: featuresDict});
     }
   }, [wildfires]);
 
