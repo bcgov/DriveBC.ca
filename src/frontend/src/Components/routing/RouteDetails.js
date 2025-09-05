@@ -613,7 +613,7 @@ export default function RouteDetails(props) {
         </div>
 
         <div className="route-items">
-          {(wildfireCount && mapContext.visible_layers.wildfires) &&
+          {(!!wildfireCount && mapContext.visible_layers.wildfires) &&
             <div className="route-item route-item--wildfires">
               <span className="route-item__count">
                 {wildfireCount}
