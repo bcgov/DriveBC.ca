@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('weather', '0016_currentweather_code'),
-        ('webcam', '0010_webcam_group_webcam_nearby_objs'),
+        ('webcam', '0011_webcam_group_webcam_nearby_objs'),
     ]
 
     operations = [
