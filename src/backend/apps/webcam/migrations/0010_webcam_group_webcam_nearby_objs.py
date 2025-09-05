@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webcam', '0010_webcam_https_cam'),
+        ('webcam', '0009_webcam_area'),
     ]
 
     operations = [
