@@ -437,7 +437,7 @@ export const advisoryClickHandler = (
   updateClickedFeature(feature);
 };
 
-const wildfireClickHandler = (
+export const wildfireClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,

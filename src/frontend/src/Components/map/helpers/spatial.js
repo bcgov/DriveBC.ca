@@ -94,7 +94,7 @@ export const filterByRoute = (data, route, extraToleranceMeters, populateProject
 
   const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];
   const routeLineString = turf.lineString(lineCoords);
-  const bufferedRouteLineString = turf.buffer(routeLineString, 150, {units: 'meters'});
+  const bufferedRouteLineString = turf.buffer(routeLineString, extraToleranceMeters ? 150 + extraToleranceMeters : 150, {units: 'meters'});
 
   // Initialize index and add data
   const routeBBox = turf.bbox(routeLineString);

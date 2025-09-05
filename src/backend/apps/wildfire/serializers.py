@@ -15,6 +15,7 @@ class WildfireInternalSerializer(serializers.ModelSerializer):
 
 class WildfireSerializer(serializers.ModelSerializer):
     centroid = serializers.SerializerMethodField()
+    display_category = serializers.SerializerMethodField()
 
     class Meta:
         model = Wildfire
@@ -29,6 +30,9 @@ class WildfireSerializer(serializers.ModelSerializer):
                 "coordinates": [obj.geometry.centroid.x, obj.geometry.centroid.y]
             }
         return None
+
+    def get_display_category(self, obj):
+        return 'wildfire'
 
 
 class WildfireAreaFeedSerializer(serializers.Serializer):
