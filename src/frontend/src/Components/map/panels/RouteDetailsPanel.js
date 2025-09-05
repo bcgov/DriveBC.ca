@@ -28,6 +28,7 @@ export default function RouteDetailsPanel(props) {
     feeds: {
       events: { filteredList: filteredEvents },
       ferries: { filteredList: filteredFerries },
+      wildfires: { filteredList: filteredWildfires },
     },
     advisories: { filteredList: filteredAdvisories },
     routes: { selectedRoute, searchedRoutes },
@@ -38,6 +39,7 @@ export default function RouteDetailsPanel(props) {
         feeds: {
           events: state.feeds.events,
           ferries: state.feeds.ferries,
+          wildfires: state.feeds.wildfires,
         },
         advisories: state.cms.advisories,
         routes: state.routes,
@@ -50,30 +52,48 @@ export default function RouteDetailsPanel(props) {
   const [pendingAdvisories, setPendingAdvisories] = useState(false);
   const [pendingEvents, setPendingEvents] = useState(false);
   const [pendingFerries, setPendingFerries] = useState(false);
+  const [pendingWildfires, setPendingWildfires] = useState(false);
 
   // Effects
   // Mark data as not updating when they finish filtering
   useEffect(() => {
     setPendingAdvisories(true);
+    if (!routeSwitched) {
+      setRouteSwitched(true);
+    }
   }, [filteredAdvisories]);
 
   useEffect(() => {
     setPendingEvents(true);
+    if (!routeSwitched) {
+      setRouteSwitched(true);
+    }
   }, [filteredEvents]);
 
   useEffect(() => {
     setPendingFerries(true);
+    if (!routeSwitched) {
+      setRouteSwitched(true);
+    }
   }, [filteredFerries]);
+
+  useEffect(() => {
+    setPendingWildfires(true);
+    if (!routeSwitched) {
+      setRouteSwitched(true);
+    }
+  }, [filteredWildfires]);
 
   // When all data is filtered, rank the object list again
   useEffect(() => {
-    if (pendingAdvisories && pendingEvents && pendingFerries) {
+    if (pendingAdvisories && pendingEvents && pendingFerries && pendingWildfires) {
       setPendingAdvisories(false);
       setPendingEvents(false);
       setPendingFerries(false);
+      setPendingWildfires(false);
       setRouteSwitched(false);
     }
-  }, [pendingAdvisories, pendingEvents, pendingFerries]);
+  }, [pendingAdvisories, pendingEvents, pendingFerries, pendingWildfires]);
 
   /* Rendering */
   // Sub components
