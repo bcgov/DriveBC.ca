@@ -322,7 +322,6 @@ export default function RouteDetails(props) {
 
   const switchRouteHandler = () => {
     if (!compareRoutes(route, selectedRoute)){
-      setRouteSwitched(true);
       dispatch(updateSelectedRoute(route));
     }
   }
