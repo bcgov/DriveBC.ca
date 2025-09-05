@@ -161,7 +161,7 @@ export default function Legend() {
         {getLegendItem(
           wildfiresStaticIcon,
           'Wildfires',
-          'Active forest fires that may impact drivability and are within 50 km of a road or population area.',
+          'Active forest fires that may impact drivability and are near a road or population area.',
           'major'
         )}
 
