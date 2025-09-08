@@ -23,6 +23,7 @@ import {
   faVideoSlash,
   faWarning,
   faXmark,
+  faMapPin
 } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline, faMountain, faRefresh, faFlag } from '@fortawesome/pro-regular-svg-icons';
 import { faArrowsRotate } from '@fortawesome/pro-solid-svg-icons';
@@ -638,12 +639,10 @@ export default function CameraDetailsPage() {
                                 <span>{getFullOrientation(camera.orientation)}</span>
                               </span>
                             </div>
-
+                          </div>
+                          <div className={`image-wrap ${updated} ${stale} ${delayed} ${unavailable} ${loading} ${replay ? 'replay' : ''}`}>
+                            
                             <div className="replay-div">
-                              {shouldRenderReplay() && (
-                                <FontAwesomeIcon icon={faClockRotateLeft} />
-                              )}
-
                               {shouldRenderReplay() && (
                                 <Form className="replay-the-day">
                                   <Form.Check
@@ -655,8 +654,7 @@ export default function CameraDetailsPage() {
                                 </Form>
                               )}
                             </div>
-                          </div>
-                          <div className={`image-wrap ${updated} ${stale} ${delayed} ${unavailable} ${loading}`}>
+
                             <div className="card-img-box">
                                 {!replay ? (
                                   <>
@@ -827,7 +825,12 @@ export default function CameraDetailsPage() {
                         </div>  
 
                         <div className="camera-imagery__nearby__right flex-grow-1">
-                          <div className="actions-bar actions-bar--nearby"></div>
+                          <div className="actions-bar actions-bar--nearby">
+                            <span className="title">
+                              <FontAwesomeIcon icon={faMapPin} />
+                              <span>Area map</span>
+                            </span>
+                          </div>
                           <div className="map-wrap map-context-wrap">
                             <DndProvider options={HTML5toTouch}>
                               {referenceDataInitialized.current &&
@@ -917,12 +920,10 @@ export default function CameraDetailsPage() {
                                       <span>{getFullOrientation(camera.orientation)}</span>
                                     </span>
                                   </div>
-
+                                </div>
+                                <div className={`image-wrap ${updated} ${stale} ${delayed} ${unavailable} ${loading}  ${replay ? 'replay' : ''}`}>
+                                  
                                   <div className="replay-div">
-                                    {shouldRenderReplay() && (
-                                      <FontAwesomeIcon icon={faClockRotateLeft} />
-                                    )}
-
                                     {shouldRenderReplay() && (
                                       <Form className="replay-the-day">
                                         <Form.Check
@@ -934,8 +935,7 @@ export default function CameraDetailsPage() {
                                       </Form>
                                     )}
                                   </div>
-                                </div>
-                                <div className={`image-wrap ${updated} ${stale} ${delayed} ${unavailable} ${loading}`}>
+                                  
                                   <div className="card-img-box">
                                       {!replay ? (
                                         <>
@@ -1114,7 +1114,12 @@ export default function CameraDetailsPage() {
                             }>
                             <div className="camera-imagery__nearby d-flex">
                               <div className="camera-imagery__nearby__right flex-grow-1">
-                                <div className="actions-bar actions-bar--nearby"></div>
+                                <div className="actions-bar actions-bar--nearby">
+                                  <span className="title">
+                                    <FontAwesomeIcon icon={faMapPin} />
+                                    <span>Area map</span>
+                                  </span>
+                                </div>
                                 <div className="map-wrap map-context-wrap">
                                   <DndProvider options={HTML5toTouch}>
                                     {referenceDataInitialized.current &&

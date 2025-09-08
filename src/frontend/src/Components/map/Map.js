@@ -28,7 +28,8 @@ import {
   faUpRightAndDownLeftFromCenter,
   faLocationCrosshairs,
   faXmark,
-  faArrowLeft
+  faArrowLeft,
+  faMap
 } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
@@ -997,8 +998,8 @@ export default function DriveBCMap(props) {
           className="map-btn map-view"
           variant="primary"
           onClick={mapViewRoute}>
-          <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
-          Map view
+          <FontAwesomeIcon icon={faMap} />
+          View on map page
         </Button>
       )}
 
