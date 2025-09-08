@@ -48,7 +48,7 @@ django:
   mediapvc:
     storage: 1Gi
   apppvc:
-    storage: 1Gi
+    storage: 2Gi
   podDisruptionBudget: 
     enabled: false 
     minAvailable:  
@@ -72,6 +72,7 @@ tasks:
         memory: 1000Mi
     volumes:
       claimName: dev-drivebc-django-app-images
+      storage: 3Gi
     env:
       postgresSecret: dev-drivebc-db-crunchy-pguser-dev-drivebc-db
       variables:
@@ -100,6 +101,7 @@ image-consumer:
         memory: 1000Mi
     volumes:
       claimName: dev-drivebc-django-app-images
+      storage: 3Gi
     env:
       postgresSecret: dev-drivebc-db-crunchy-pguser-dev-drivebc-db
       variables:
@@ -147,6 +149,7 @@ static:
         memory: 250Mi
     volumes:
       imagesClaimName: dev-drivebc-django-app-images
+      storage: 3Gi
     env:
       variables:
         MAINTENANCE_MODE: 'false'
