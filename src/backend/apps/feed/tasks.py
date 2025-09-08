@@ -16,8 +16,7 @@ from apps.webcam.tasks import (
     populate_all_webcam_data,
     update_all_webcam_data,
 )
-
-# from apps.wildfire.tasks import populate_all_wildfire_data
+from apps.wildfire.tasks import populate_all_wildfire_data
 from django.core.cache import cache
 from django.core.management import call_command
 from huey import crontab
@@ -111,8 +110,7 @@ def update_districts():
 @db_periodic_task(crontab(minute="*/20"))
 @lock_task('wildfires-lock')
 def update_wildfires():
-    # populate_all_wildfire_data()
-    pass  # Temporarily disable wildfires due to API issues
+    populate_all_wildfire_data()
 
 
 @on_startup()
