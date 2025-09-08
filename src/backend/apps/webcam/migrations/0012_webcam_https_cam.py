@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webcam', '0010_webcam_group_webcam_nearby_objs'),
+        ('webcam', '0011_webcam_hev_station_webcam_local_weather_station_and_more'),
     ]
 
     operations = [
