@@ -1,7 +1,11 @@
+import logging
+
 from apps.feed.client import FeedClient
 from apps.wildfire.models import Wildfire
 from apps.wildfire.serializers import WildfireInternalSerializer
 from django.core.exceptions import ObjectDoesNotExist
+
+logger = logging.getLogger(__name__)
 
 
 def populate_wildfire_from_data(wildfire_data):
@@ -31,6 +35,8 @@ def populate_all_wildfire_data():
     for wildfire_area in wildfire_areas_list:
         wildfire_areas_dict[wildfire_area['id']] = wildfire_area
 
+    logger.warning("wildfire area count: %s", len(wildfire_areas_list))
+
     # Combine area data with point data
     wildfire_data = []
     wildfire_points_list = FeedClient().get_wildfire_location_list()['features']
@@ -43,11 +49,16 @@ def populate_all_wildfire_data():
                 **wildfire_area
             })
 
+    logger.warning("wildfire data count: %s", len(wildfire_data))
+
     # Populate wildfires from the combined data
     active_wildfires = []
     for wildfire_data in wildfire_data:
         wildfire_id = populate_wildfire_from_data(wildfire_data)
-        active_wildfires.append(wildfire_id)
+        if wildfire_id:
+            active_wildfires.append(wildfire_id)
+
+    logger.warning("active wildfire count: %s", len(active_wildfires))
 
     # Delete all wildfires that are not in the active list
-    Wildfire.objects.exclude(id__in=active_wildfires).delete()
+    # Wildfire.objects.exclude(id__in=active_wildfires).delete()  # Temporarily disabled wildfire deletion
