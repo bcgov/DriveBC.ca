@@ -36,6 +36,8 @@ def populate_all_wildfire_data():
         wildfire_areas_dict[wildfire_area['id']] = wildfire_area
 
     logger.warning("wildfire area count: %s", len(wildfire_areas_list))
+    if len(wildfire_areas_list) == 0:
+        return
 
     # Combine area data with point data
     wildfire_data = []
@@ -50,6 +52,8 @@ def populate_all_wildfire_data():
             })
 
     logger.warning("wildfire data count: %s", len(wildfire_data))
+    if len(wildfire_data) == 0:
+        return
 
     # Populate wildfires from the combined data
     active_wildfires = []
@@ -58,7 +62,7 @@ def populate_all_wildfire_data():
         if wildfire_id:
             active_wildfires.append(wildfire_id)
 
-    logger.warning("active wildfire count: %s", len(active_wildfires))
-
     # Delete all wildfires that are not in the active list
-    # Wildfire.objects.exclude(id__in=active_wildfires).delete()  # Temporarily disabled wildfire deletion
+    logger.warning("active wildfire count: %s", len(active_wildfires))
+    if len(active_wildfires) > 0:  # 2025/09/09 hotfix to prevent deletion of all wildfires
+        Wildfire.objects.exclude(id__in=active_wildfires).delete()
