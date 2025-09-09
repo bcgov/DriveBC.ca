@@ -25,7 +25,7 @@ import {
   faXmark,
   faMapPin
 } from '@fortawesome/pro-solid-svg-icons';
-import { faStar as faStarOutline, faMountain, faRefresh, faFlag } from '@fortawesome/pro-regular-svg-icons';
+import { faStar as faStarOutline, faMountain, faRefresh, faFlag, faVideoCamera as faVideoOutline } from '@fortawesome/pro-regular-svg-icons';
 import { faArrowsRotate } from '@fortawesome/pro-solid-svg-icons';
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
@@ -860,7 +860,7 @@ export default function CameraDetailsPage() {
                             title={
                               !largeScreen && (
                                 <span>
-                                  <CurrentCameraIcon variant="outline" /> Current camera
+                                  <FontAwesomeIcon icon={faVideoOutline} /><span>Details</span>
                                 </span>
                               )
                             }>
