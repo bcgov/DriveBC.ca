@@ -113,55 +113,72 @@
       flex-direction: column;
       height: 100%;
       overflow-x: hidden;
+      padding: 4px;
 
       p {
         margin-bottom: 0;
       }
 
-      &__title {
-        .name {
-          color: $Type-Primary;
-          font-size: 2rem;
-          margin-bottom: 0;
-        }
+      .time-container {
+        margin: 4px;
 
         .friendly-time {
-          margin: 0 auto 1rem;
           &-text {
             color: $Type-Secondary;
-            font-size: 0.875rem;
+            font-size: 12px;
+            line-height: 18px;
+            text-align: center;
           }
         }
       }
 
-      &__description {
-        text-align: center;
-        padding-top: 0;
+      &__title {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 12px;
 
-        .temp-and-icon {
+        .info-container {
+          flex: 1;
           display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 1.5rem;
+          flex-direction: column;
+          margin: 0 4px;
 
-          p, .weather-icon {
-            flex: 1;
+          .temperature {
+            font-size: 2rem;
+          }
+
+          .name {
+            color: $Type-Primary;
+            font-size: 1.5rem;
+            margin-bottom: 0;
           }
         }
 
-        .weather-icon {
-          font-size: 7.375rem;
-          color: lighten(saturate($Type-Primary, 0.47), 40.59)
+        .icon-container {
+          flex: 1;
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+          flex-direction: column;
 
-        }
+          .icon-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin-right: 4rem;
 
-        .weather {
-          font-size: 0.875rem;
-        }
+            .weather-icon {
+              font-size: 2rem;
+              color: lighten(saturate($Type-Primary, 0.47), 40.59)
+            }
 
-        .temperature {
-          font-size: 5.5rem;
+            .weather {
+              margin-top: 4px;
+              font-size: 0.875rem;
+            }
+          }
         }
       }
 

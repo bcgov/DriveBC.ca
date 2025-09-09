@@ -11,10 +11,11 @@ import WeatherIcon from '../../WeatherIcon';
 
 // Styling
 import './ForecastTabs.scss';
+import ForecastCard from "./ForecastCard";
 
 // Main component
 export default function ForecastTabs(props) {
-  const { forecasts, sunset } = props;
+  const { forecasts, sunset, showCards } = props;
 
   // Split forecasts into groups of day and night
   const all_forecast_groups = [];
@@ -70,16 +71,21 @@ export default function ForecastTabs(props) {
 
   /* Main component */
   return (
-    <div>
+    <div className="forecast-tabs-container">
       <div className="forecast-container">
         <p className="section-title">5-day forecast</p>
       </div>
-      <div className="forecast-tab-list">
+
+      <div className={`forecast-tab-list ${showCards ? 'show-cards' : ''}`}>
         <Tabs activeKey={activeKey} onSelect={(key) => setActiveKey(key)} id="regional-weather-tabs">
           {forecast_tabs}
         </Tabs>
       </div>
-      <ForecastCarousel forecast_group={all_forecast_groups[activeKey]} />
+
+      {showCards ?
+        <ForecastCard forecast_group={all_forecast_groups[activeKey]} /> :
+        <ForecastCarousel forecast_group={all_forecast_groups[activeKey]} />
+      }
     </div>
   );
 }

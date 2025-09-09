@@ -22,6 +22,7 @@ import WeatherIconThin from '../../map/WeatherIconThin';
 
 // Styling
 import './NearbyRegionalWeather.scss';
+import ForecastCard from "../../map/panels/weather/ForecastCard";
 
 export default function NearbyRegionalWeather(props) {
   /* Setup */
@@ -114,30 +115,38 @@ export default function NearbyRegionalWeather(props) {
       }
 
       <div className="popup__content">
-        <div className="popup__content__title">
-          <p className="name">{weather.name}</p>
-          { weather.observed && <FriendlyTime date={weather.observed} asDate={true} /> }
+        <div className="time-container">
+          {weather.observed && <FriendlyTime date={weather.observed} asDate={true}/>}
         </div>
 
-        <div className="popup__content__description">
-          { conditions.temperature_value &&
-            <div className="temp-and-icon">
-              <p className="temperature">
-                { Math.round(conditions.temperature_value) }&deg;
-                <p className="weather">{ conditions.condition ? conditions.condition : 'Partly Cloudy' }</p>
-              </p>
+        <div className="popup__content__title">
+          <div className="info-container">
+            <p className="name">{weather.name}</p>
 
-              <WeatherIconThin className="weather-icon" code={conditions.icon_code} />
+            {conditions.temperature_value &&
+              <p className="temperature">
+                {Math.round(conditions.temperature_value)}&deg;
+              </p>
+            }
+          </div>
+
+          <div className="icon-container">
+            <div className="icon-content">
+              <WeatherIconThin className="weather-icon" code={conditions.icon_code}/>
+              <p className="weather">{conditions.condition ? conditions.condition : 'Partly Cloudy'}</p>
             </div>
-          }
+          </div>
         </div>
 
         <div className="popup__content__forecasts">
           {weather.current_day_forecasts.length &&
-            <ForecastCarousel forecast_group={weather.current_day_forecasts} currentPane />
+            (!smallScreen ?
+              <ForecastCard forecast_group={weather.current_day_forecasts}/> :
+              <ForecastCarousel forecast_group={weather.current_day_forecasts} currentPane/>
+            )
           }
 
-          <ForecastTabs forecasts={weather.future_forecasts} sunset={weather.sunset} />
+          <ForecastTabs forecasts={weather.future_forecasts} sunset={weather.sunset} showCards={!smallScreen} />
         </div>
       </div>
     </div>

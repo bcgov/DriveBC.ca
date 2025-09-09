@@ -137,47 +137,49 @@ export default function NearbyWeathers(props) {
 
   return (
     <React.Fragment>
-      <div className="actions-bar actions-bar--weathers">
-        <div className="title">
-          <FontAwesomeIcon className="weather-icon" icon={FA.faSunCloud}/>
-          Weather
-        </div>
-        <div className="weather-types">
-          {[regionalWeather, localWeather, hef].map((station, index) => {
-            if (!station) {
-              return null;
-            }
+      <div className="nearby-weathers-container">
+        <div className="actions-bar actions-bar--weathers">
+          <div className="title">
+            <FontAwesomeIcon className="weather-icon" icon={FA.faSunCloud}/>
+            <p>Weather</p>
+          </div>
+          <div className="weather-types">
+            {[regionalWeather, localWeather, hef].map((station, index) => {
+              if (!station) {
+                return null;
+              }
 
-            return (
-              <Button
-                variant="primary"
-                className={activeTab === btnTitles[index] ? 'current' : ''}
-                key={index}
-                onClick={() => setActiveTab(btnTitles[index])}
-                onKeyDown={keyEvent => {
-                  if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                    setActiveTab(btnTitles[index]);
-                  }
-                }}>
+              return (
+                <Button
+                  variant="primary"
+                  className={activeTab === btnTitles[index] ? 'current' : ''}
+                  key={index}
+                  onClick={() => setActiveTab(btnTitles[index])}
+                  onKeyDown={keyEvent => {
+                    if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                      setActiveTab(btnTitles[index]);
+                    }
+                  }}>
 
-                {btnTitles[index]}
-              </Button>
-            );
-          })}
+                  {btnTitles[index]}
+                </Button>
+              );
+            })}
+          </div>
         </div>
+
+        {regionalWeather && activeTab === 'Regional' &&
+          <NearbyRegionalWeather weather={regionalWeather} />
+        }
+
+        {localWeather && activeTab === 'Local' &&
+          <NearbyLocalWeather weather={localWeather} />
+        }
+
+        {hef && activeTab === 'High elevation' &&
+          <NearbyHevWeather weather={hef} />
+        }
       </div>
-
-      {regionalWeather && activeTab === 'Regional' &&
-        <NearbyRegionalWeather weather={regionalWeather} />
-      }
-
-      {localWeather && activeTab === 'Local' &&
-        <NearbyLocalWeather weather={localWeather} />
-      }
-
-      {hef && activeTab === 'High elevation' &&
-        <NearbyHevWeather weather={hef} />
-      }
     </React.Fragment>
   );
 }
