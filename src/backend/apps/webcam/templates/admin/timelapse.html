@@ -151,8 +151,12 @@
           imgElemWatermarked.src = URL.createObjectURL(blob);
         }
 
-        function updateImage() {
-          imgElem.src = imagePaths[currentIndex];
+        async function updateImage() {
+          const apiUrl = imagePaths[currentIndex];
+          const response = await fetch(apiUrl);
+          const blob = await response.blob();
+          imgElem.src = URL.createObjectURL(blob);
+
           indexElem.innerText = currentIndex + 1;
           sliderElem.value = currentIndex;
         }

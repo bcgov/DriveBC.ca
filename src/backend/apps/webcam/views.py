@@ -24,6 +24,11 @@ BASE_URL = os.getenv("S3_ENDPOINT_URL", "https://moti-int.objectstore.gov.bc.ca"
 S3_BASE_URL = f"{BASE_URL.rstrip('/')}/timelapse/processed"
 S3_BUCKET = os.getenv("S3_BUCKET", "tran_api_dbc_backup_dev")
 
+
+# class CameraViewSet(viewsets.ReadOnlyModelViewSet):
+#     queryset = Webcam.objects.filter(should_appear=True)
+#     serializer_class = WebcamSerializer
+
 class WebcamAPI:
     queryset = Webcam.objects.filter(should_appear=True)
     serializer_class = WebcamSerializer
