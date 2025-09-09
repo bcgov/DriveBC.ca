@@ -107,7 +107,7 @@ def update_districts():
     populate_all_district_data()
 
 
-@db_periodic_task(crontab(minute="*/20"))
+@db_periodic_task(crontab(minute="*/5"))
 @lock_task('wildfires-lock')
 def update_wildfires():
     populate_all_wildfire_data()
