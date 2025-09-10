@@ -629,33 +629,33 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
                 logger.error(f"File not found: {file_path}")
             except Exception as e:
                 logger.error(f"Error deleting file {file_path}: {e}")
-    else:
-        logger.info(f"Deleting {len(files_to_delete)} old S3 images...")
-        # Setup S3 client
-        s3_client = boto3.client(
-            "s3",
-            region_name=S3_REGION,
-            aws_access_key_id=S3_ACCESS_KEY,
-            aws_secret_access_key=S3_SECRET_KEY,
-            endpoint_url=S3_ENDPOINT_URL
-        )
+    # else:
+    #     logger.info(f"Deleting {len(files_to_delete)} old S3 images...")
+    #     # Setup S3 client
+    #     s3_client = boto3.client(
+    #         "s3",
+    #         region_name=S3_REGION,
+    #         aws_access_key_id=S3_ACCESS_KEY,
+    #         aws_secret_access_key=S3_SECRET_KEY,
+    #         endpoint_url=S3_ENDPOINT_URL
+    #     )
 
-        print(f"Deleting {len(files_to_delete)} old S3 images...")
+    #     print(f"Deleting {len(files_to_delete)} old S3 images...")
 
-        # Delete files from S3
-        for file_path in files_to_delete:
-            try:
-                if not file_path:
-                    print("test: Empty S3 file path, skipping...")
-                    continue
-                s3_key = file_path.strip("/")
+    #     # Delete files from S3
+    #     for file_path in files_to_delete:
+    #         try:
+    #             if not file_path:
+    #                 print("test: Empty S3 file path, skipping...")
+    #                 continue
+    #             s3_key = file_path.strip("/")
 
-                hard_delete_s3_object(s3_client, s3_key)
+    #             # hard_delete_s3_object(s3_client, s3_key)
 
-            except s3_client.exceptions.NoSuchKey:
-                logger.error(f"S3 key not found: {s3_key}")
-            except Exception as e:
-                logger.error(f"Error deleting S3 file {s3_key}: {e}")
+    #         except s3_client.exceptions.NoSuchKey:
+    #             logger.error(f"S3 key not found: {s3_key}")
+    #         except Exception as e:
+    #             logger.error(f"Error deleting S3 file {s3_key}: {e}")
 
     # Delete all records if all images paths are NULL
     ImageIndex.objects.filter(
