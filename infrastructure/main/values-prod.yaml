@@ -20,7 +20,7 @@ django:
   deployment:
     resources:
       requests:
-        cpu: 100m
+        cpu: 200m
         memory: 250Mi
       limits:
         memory: 500Mi
