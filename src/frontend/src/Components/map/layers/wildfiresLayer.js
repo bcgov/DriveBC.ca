@@ -12,7 +12,7 @@ import { Style } from 'ol/style';
 import {
   wildfireAreaStyles,
   wildfireCentroidStyles,
-  wildfireUnreadStyles
+  // wildfireUnreadStyles
 } from '../../data/featureStyleDefinitions.js';
 
 export function getWildfiresLayer(
@@ -105,12 +105,14 @@ export function updateWildfiresLayer(wildfiresList, layer, setLoadingLayers) {
       const geometry = wildfiresFeature.getGeometry();
       // Centroid features
       if (geometry.getType() === 'Point') {
-        if (wildfiresFeature.get('data').modified_at !== wildfire.modified_at) {
-          wildfiresFeature.setStyle(wildfireUnreadStyles['static']);
+        // if (wildfiresFeature.get('data').modified_at !== wildfire.modified_at) {
+        //   wildfiresFeature.setStyle(wildfireUnreadStyles['static']);
+        //
+        // } else {
+        //   wildfiresFeature.setStyle(wildfireCentroidStyles['static']);
+        // }
 
-        } else {
-          wildfiresFeature.setStyle(wildfireCentroidStyles['static']);
-        }
+        wildfiresFeature.setStyle(wildfireCentroidStyles['static']);
 
       // Area features
       } else {
