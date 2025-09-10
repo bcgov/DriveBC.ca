@@ -103,12 +103,6 @@ urlpatterns = [
 ] + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
-# Serve processed images to ReplayTheDay
-urlpatterns += static(
-    "/data/",
-    document_root=os.path.join(settings.BASE_DIR, "app", "data")
-)
-
 # Serve images/webcams from /app/images
 urlpatterns += static(
     '/images/', 

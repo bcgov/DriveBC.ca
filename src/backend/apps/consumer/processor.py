@@ -405,7 +405,7 @@ def push_to_s3(image_bytes: bytes, camera_id: str, is_original: bool, timestamp:
     """
     if image_bytes is None:
         return
-    key = f"originals/{camera_id}.jpg" if is_original else f"processed/{camera_id}/{timestamp}.jpg"   
+    key = f"originals/{camera_id}.jpg" if is_original else f"timelapse/{camera_id}/{timestamp}.jpg"   
     # Generate presigned PUT URL (signed for simple PUT)
     url = s3_client.generate_presigned_url(
         'put_object',
