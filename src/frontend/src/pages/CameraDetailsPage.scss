@@ -302,6 +302,22 @@
       }
     }
 
+    &__nearby {
+      flex-direction: column;
+
+      @media (min-width: 1400px) {
+        flex-direction: row;
+      }
+
+      &__right {
+        margin-left: 0;
+
+        @media (min-width: 1400px) {
+          margin-left: 24px;
+        }
+      }
+    }
+
     .mobile-tabs {
       .nav-item {
         width: 50%;
@@ -756,7 +772,11 @@
 
   .camera-imagery__nearby {
     &__left {
-      width: 560px;
+      width: 100%;
+
+      @media (min-width: 1440px) {
+        width: 560px;
+      }
     }
     &__right {
       .actions-bar--nearby {
