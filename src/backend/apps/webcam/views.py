@@ -21,8 +21,8 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 
 IMAGE_CACHE_DIR = os.getenv("IMAGE_CACHE_DIR", "/app/data/webcams/cache")
 BASE_URL = os.getenv("S3_ENDPOINT_URL", "https://moti-int.objectstore.gov.bc.ca")
-S3_BASE_URL = f"{BASE_URL.rstrip('/')}/timelapse/processed"
 S3_BUCKET = os.getenv("S3_BUCKET", "tran_api_dbc_backup_dev")
+S3_BASE_URL = f"{BASE_URL.rstrip('/')}/{S3_BUCKET}/webcams/timelapse"
 
 
 # class CameraViewSet(viewsets.ReadOnlyModelViewSet):
@@ -138,7 +138,7 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         try:  
             response = s3_client.get_object(
                 Bucket=S3_BUCKET,
-                Key=f"processed/{pk}/{filename}.jpg"
+                Key=f"webcams/timelapse/{pk}/{filename}.jpg"
             )
 
             response = StreamingHttpResponse(
