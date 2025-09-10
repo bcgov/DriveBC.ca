@@ -175,13 +175,11 @@
         align-items: center;
         justify-content: space-between;
         margin-top: 0;
-        margin-bottom: 18px;
         padding: 0;
         background-color: inherit;
 
         @media (min-width: 576px) {
           justify-content: flex-start;
-          margin-bottom: 0;
         }
 
         .btn.camera-direction-btn {
@@ -713,16 +711,8 @@
             margin-bottom: 0;
 
             .form-check-input {
-              margin-left: auto;
-              position: absolute;
-              top: 0;
-              left: auto;
-              right: 0;
-
-              @media (min-width: 576px) {
                 margin-left: 8px;
                 position: static;
-              }
             }
           }
         }
@@ -747,6 +737,12 @@
 
       @media (min-width: 768px) {
         margin-left: 24px;
+      }
+
+      .camera-orientations-container {
+        .header {
+          margin-bottom: 8px;
+        }
       }
     }
   }
