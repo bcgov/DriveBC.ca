@@ -1,5 +1,5 @@
 // React
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -52,33 +52,29 @@ export default function NearbyRegionalWeather(props) {
   // States
   const [expanded, setExpanded] = useState(false);
 
-  // Effects
-  useEffect(() => {
-    // pass
-  }, []);
-
   /* Rendering */
   // Main component
   return (
-    <div className="popup popup--weather popup--weather--regional" tabIndex={0}>
-
-      { weather.warnings && (
+    <div className="popup popup--weather popup--cam--weather--regional" tabIndex={0}>
+      {weather.warnings && (
         <div className="popup__advisory">
-          { weather.warnings.Events.map(event => {
-            return <div key={ event.expirytime } className="event">
-              <FontAwesomeIcon icon={faTriangleExclamation} />
-              <p className="advisory-title">{ event.Description }</p>
-              {event.Url && (
-                <p className="label link">
-                <a
-                  alt="Environment Canada Details Link"
-                  rel="noreferrer"
-                  href={ event.Url }>
-                  Details
-                </a>
-              </p>
-              )}
-            </div>;
+          {weather.warnings.Events.map(event => {
+            return (
+              <div key={event.expirytime} className="event">
+                <FontAwesomeIcon icon={faTriangleExclamation}/>
+                <p className="advisory-title">{event.Description}</p>
+                {event.Url &&
+                  <p className="label link">
+                    <a
+                      alt="Environment Canada Details Link"
+                      rel="noreferrer"
+                      href={event.Url}>
+                      Details
+                    </a>
+                  </p>
+                }
+              </div>
+            );
           })}
         </div>
       )}

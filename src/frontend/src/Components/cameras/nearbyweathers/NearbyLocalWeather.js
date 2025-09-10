@@ -1,5 +1,5 @@
 // React
-import React, { useEffect } from 'react';
+import React from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,7 +11,6 @@ import {
   faTemperatureHalf,
   faWind,
 } from '@fortawesome/pro-light-svg-icons';
-import { useMediaQuery } from "@uidotdev/usehooks";
 
 // Internal imports
 import FriendlyTime from '../../shared/FriendlyTime';
@@ -21,20 +20,21 @@ import './NearbyLocalWeather.scss';
 
 // Main component
 export default function NearbyLocalWeather(props) {
-  // Misc
-  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
-
+  /* Setup */
+  // Props
   const { weather } = props;
 
+  /* Helpers */
   const now = new Date();
-  const forecastData = (weather.hourly_forecast_group || [])
-    .filter((forecast) => (
-      forecast.ObservationTypeName === 'surfaceTemp' &&
-      new Date(forecast.TimestampUtc) > now
-    ));
+  const forecastData = (weather.hourly_forecast_group || []).filter((forecast) => (
+    forecast.ObservationTypeName === 'surfaceTemp' &&
+    new Date(forecast.TimestampUtc) > now
+  ));
 
+  /* Rendering */
+  // Main component
   return (
-    <div className="popup popup--weather popup--weather--local" tabIndex={0}>
+    <div className="popup popup--weather popup--cam--weather--local" tabIndex={0}>
       <div className="popup__content">
         <div className="popup__content__title">
         <p className="name">{weather.weather_station_name}</p>
@@ -58,6 +58,92 @@ export default function NearbyLocalWeather(props) {
                   <p className="data">{weather.road_temperature}&deg;</p>
                 </div>
               )}
+            </div>
+          )}
+
+          {(weather.elevation || weather.precipitation || weather.precipitation_stdobs ||
+            weather.snow || weather.snow_stdobs || weather.average_wind || weather.maximum_wind) && (
+
+            <div className="data-card-container">
+              <p className="container-label">Conditions</p>
+
+              <div className="data-card">
+                {weather.elevation && (
+                  <div className="data-card__row">
+                    <div className="data-icon">
+                      <FontAwesomeIcon className="icon" icon={faMountain} />
+                    </div>
+                    <p className="label">Elevation</p>
+                    <p className="data">{weather.elevation} m</p>
+                  </div>
+                )}
+
+                {(weather.precipitation || weather.precipitation_stdobs) && (
+                  <div className="data-card__row data-card__row group">
+                    <div className="data-icon">
+                      <FontAwesomeIcon className="icon" icon={faDroplet} />
+                    </div>
+                    <div className="data-group">
+                      {weather.precipitation && (
+                        <div className="data-group__row">
+                          <p className="label">Precipitation (last hour)</p>
+                          <p className="data">{weather.precipitation}</p>
+                        </div>
+                      )}
+                      {weather.precipitation_stdobs && (
+                        <div className="data-group__row">
+                          <p className="label">Precipitation (since 6am/6pm)</p>
+                          <p className="data">{weather.precipitation_stdobs}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {(weather.snow || weather.snow_stdobs) && (
+                  <div className="data-card__row data-card__row group">
+                    <div className="data-icon">
+                      <FontAwesomeIcon className="icon" icon={faSnowflake} />
+                    </div>
+                    <div className="data-group">
+                      {weather.snow && (
+                        <div className="data-group__row">
+                          <p className="label">Snow (last hour)</p>
+                          <p className="data">{weather.snow}</p>
+                        </div>
+                      )}
+                      {weather.snow_stdobs && (
+                        <div className="data-group__row">
+                          <p className="label">Snow (since 6am/6pm)</p>
+                          <p className="data">{weather.snow_stdobs}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {(weather.average_wind || weather.maximum_wind) && (
+                  <div className="data-card__row data-card__row group">
+                    <div className="data-icon">
+                      <FontAwesomeIcon className="icon" icon={faWind} />
+                    </div>
+                    <div className="data-group">
+                      {weather.average_wind && (
+                        <div className="data-group__row">
+                          <p className="label">Average wind</p>
+                          <p className="data">{weather.wind_direction} {weather.average_wind}</p>
+                        </div>
+                      )}
+                      {weather.maximum_wind && (
+                        <div className="data-group__row">
+                          <p className="label">Maximum wind</p>
+                          <p className="data">{weather.maximum_wind}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
