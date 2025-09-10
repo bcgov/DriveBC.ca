@@ -415,22 +415,23 @@ def push_to_s3(image_bytes: bytes, camera_id: str, is_original: bool, timestamp:
     )
 
     # Upload with requests — a single PUT with Content-Length (no aws-chunked)
-    resp = requests.put(
-        url,
-        data=image_bytes,
-        headers={
-            'Content-Type': 'image/jpeg',
-            'Content-Length': str(len(image_bytes))
-        },
-        timeout=30
-    )
-    if resp.status_code not in (200, 201):
-        raise RuntimeError(f's3 upload failed: {resp.status_code} {resp.text}')
-    else:
-        if not is_original:
-            logger.info(f"Watermarked image saved to s3 at {key}")
+    if not is_original:
+        resp = requests.put(
+            url,
+            data=image_bytes,
+            headers={
+                'Content-Type': 'image/jpeg',
+                'Content-Length': str(len(image_bytes))
+            },
+            timeout=30
+        )
+        if resp.status_code not in (200, 201):
+            raise RuntimeError(f's3 upload failed: {resp.status_code} {resp.text}')
         else:
-            logger.info(f"Original image saved to s3 at {key}")
+            if not is_original:
+                logger.info(f"Watermarked image saved to s3 at {key}")
+            else:
+                logger.info(f"Original image saved to s3 at {key}")
     return key
 
 async def handle_image_message(camera_id: str, db_data: any, body: bytes, timestamp: str, camera_status: dict):
