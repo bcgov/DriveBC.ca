@@ -33,7 +33,7 @@ from psycopg import IntegrityError
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
-from apps.shared.status import get_recent_timestamps, calculate_camera_status
+from apps.shared.status import get_recent_timestamps, calculate_camera_status, parse_timestamp
 from apps.consumer.models import ImageIndex
 import boto3
 from django.utils import timezone
@@ -143,19 +143,23 @@ def update_all_webcam_data():
         if camera.https_cam:
             update_cam_from_sql_db(camera.id, current_time)
         else:
+            update_webcam_db_stale_delayed(camera)
             if camera.should_update(current_time):
                 updated = update_single_webcam_data(camera)
                 if updated:
                     update_camera_group_id(camera)
 
-        if camera.https_cam:
-            update_cam_from_sql_db(camera.id, current_time)
-        else:
-            if camera.should_update(current_time):
-                updated = update_single_webcam_data(camera)
-                if updated:
-                    update_camera_group_id(camera)
-
+def update_webcam_db_stale_delayed(camera: Webcam):
+    time_now_utc = datetime.datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
+    camera_status = calculate_camera_status(time_now_utc)
+    ts_seconds = int(camera_status["timestamp"])
+    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
+    
+    Webcam.objects.filter(id=camera.id).update(
+        marked_stale=camera_status["stale"],
+        marked_delayed=camera_status["delayed"],
+        last_update_attempt=dt_utc,
+        last_update_modified=dt_utc),  
 
 def wrap_text(text, pen, font, width):
     '''
