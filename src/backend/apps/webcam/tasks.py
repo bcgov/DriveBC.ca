@@ -33,7 +33,7 @@ from psycopg import IntegrityError
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
-from apps.shared.status import get_recent_timestamps, calculate_camera_status
+from apps.shared.status import get_recent_timestamps, calculate_camera_status, parse_timestamp
 from apps.consumer.models import ImageIndex
 import boto3
 from django.utils import timezone
@@ -143,19 +143,23 @@ def update_all_webcam_data():
         if camera.https_cam:
             update_cam_from_sql_db(camera.id, current_time)
         else:
+            update_webcam_db_stale_delayed(camera)
             if camera.should_update(current_time):
                 updated = update_single_webcam_data(camera)
                 if updated:
                     update_camera_group_id(camera)
 
-        if camera.https_cam:
-            update_cam_from_sql_db(camera.id, current_time)
-        else:
-            if camera.should_update(current_time):
-                updated = update_single_webcam_data(camera)
-                if updated:
-                    update_camera_group_id(camera)
-
+def update_webcam_db_stale_delayed(camera: Webcam):
+    time_now_utc = datetime.datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
+    camera_status = calculate_camera_status(time_now_utc)
+    ts_seconds = int(camera_status["timestamp"])
+    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
+    
+    Webcam.objects.filter(id=camera.id).update(
+        marked_stale=camera_status["stale"],
+        marked_delayed=camera_status["delayed"],
+        last_update_attempt=dt_utc,
+        last_update_modified=dt_utc),  
 
 def wrap_text(text, pen, font, width):
     '''
@@ -625,33 +629,33 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
                 logger.error(f"File not found: {file_path}")
             except Exception as e:
                 logger.error(f"Error deleting file {file_path}: {e}")
-    else:
-        logger.info(f"Deleting {len(files_to_delete)} old S3 images...")
-        # Setup S3 client
-        s3_client = boto3.client(
-            "s3",
-            region_name=S3_REGION,
-            aws_access_key_id=S3_ACCESS_KEY,
-            aws_secret_access_key=S3_SECRET_KEY,
-            endpoint_url=S3_ENDPOINT_URL
-        )
+    # else:
+    #     logger.info(f"Deleting {len(files_to_delete)} old S3 images...")
+    #     # Setup S3 client
+    #     s3_client = boto3.client(
+    #         "s3",
+    #         region_name=S3_REGION,
+    #         aws_access_key_id=S3_ACCESS_KEY,
+    #         aws_secret_access_key=S3_SECRET_KEY,
+    #         endpoint_url=S3_ENDPOINT_URL
+    #     )
 
-        print(f"Deleting {len(files_to_delete)} old S3 images...")
+    #     print(f"Deleting {len(files_to_delete)} old S3 images...")
 
-        # Delete files from S3
-        for file_path in files_to_delete:
-            try:
-                if not file_path:
-                    print("test: Empty S3 file path, skipping...")
-                    continue
-                s3_key = file_path.strip("/")
+    #     # Delete files from S3
+    #     for file_path in files_to_delete:
+    #         try:
+    #             if not file_path:
+    #                 print("test: Empty S3 file path, skipping...")
+    #                 continue
+    #             s3_key = file_path.strip("/")
 
-                hard_delete_s3_object(s3_client, s3_key)
+    #             # hard_delete_s3_object(s3_client, s3_key)
 
-            except s3_client.exceptions.NoSuchKey:
-                logger.error(f"S3 key not found: {s3_key}")
-            except Exception as e:
-                logger.error(f"Error deleting S3 file {s3_key}: {e}")
+    #         except s3_client.exceptions.NoSuchKey:
+    #             logger.error(f"S3 key not found: {s3_key}")
+    #         except Exception as e:
+    #             logger.error(f"Error deleting S3 file {s3_key}: {e}")
 
     # Delete all records if all images paths are NULL
     ImageIndex.objects.filter(
