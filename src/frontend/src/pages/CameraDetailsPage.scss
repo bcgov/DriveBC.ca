@@ -284,6 +284,24 @@
   }
 
   .camera-imagery {
+
+    &__details, &__nearby {
+      display: flex;
+      flex-direction: column;
+
+      @media (min-width: 1200px) {
+        flex-direction: row;
+      }
+
+      &__right {
+        margin-left: 0;
+
+        @media (min-width: 1200px) {
+          margin-left: 24px;
+        }
+      }
+    }
+
     .mobile-tabs {
       .nav-item {
         width: 50%;
@@ -297,11 +315,6 @@
 
   .camera-imagery__details {
     margin-bottom: 30px;
-    flex-direction: column;
-
-    @media (min-width: 768px) {
-    flex-direction: row;
-    }
 
     &__left {
       margin: 0;
@@ -733,12 +746,6 @@
     }
 
     &__right {
-      margin-left: 0;
-
-      @media (min-width: 768px) {
-        margin-left: 24px;
-      }
-
       .camera-orientations-container {
         .header {
           margin-bottom: 8px;
@@ -752,12 +759,6 @@
       width: 560px;
     }
     &__right {
-      margin-left: 0;
-
-      @media (min-width: 768px) {
-        margin-left: 24px;
-      }
-
       .actions-bar--nearby {
         .title {
           font-weight: 700;
