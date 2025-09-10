@@ -34,7 +34,7 @@ export default function CameraOrientations(props) {
     trackEvent("click", "camera-details", "camera-rotate", nextCamera.name);
   };
 
-  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+  const xLargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   // For mobile carousel
   const carouselRef = useRef(null);
@@ -82,7 +82,7 @@ export default function CameraOrientations(props) {
         </button>
       </div>
 
-      {!largeScreen &&
+      {!xLargeScreen &&
         <div className="main-content carousel-container--camera-orientations" ref={carouselRef}>
           <GoodCarousel
             className="camera-orientations-carousel"
@@ -137,7 +137,7 @@ export default function CameraOrientations(props) {
           )}
         </div>
       }
-      {largeScreen &&
+      {xLargeScreen &&
         <div className="main-content">
           {camera.camGroup.map(cam => (
             <div
