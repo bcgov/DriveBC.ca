@@ -1,8 +1,18 @@
 // React
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Internal imports
 import { getCameraOrientation, getFullOrientation } from "../helper";
+
+// External imports
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faChevronRight,
+  faChevronLeft,
+} from '@fortawesome/pro-solid-svg-icons';
+import Button from 'react-bootstrap/Button';
+import GoodCarousel from 'react-good-carousel';
+import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Styling
 import './CameraOrientations.scss';
@@ -24,6 +34,36 @@ export default function CameraOrientations(props) {
     trackEvent("click", "camera-details", "camera-rotate", nextCamera.name);
   };
 
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+
+  // For mobile carousel
+  const carouselRef = useRef(null);
+
+  const [currentPane, setCurrentPane] = useState(0);
+  const [touchstartX, setTouchstartX] = useState(0);
+
+  useEffect(() => {
+    // Implements swiping for mobile/tablet devices
+    if (!carouselRef.current) {
+      return;
+    }
+    const carouselRefLocal = carouselRef;
+    const onTouchStart = (e) => {
+      setTouchstartX(e.changedTouches[0].screenX);
+    };
+    const onTouchEnd = (e) => {
+      const touchendX = e.changedTouches[0].screenX;
+      if (touchendX < touchstartX && currentPane !== camera.camGroup.length - 1) {
+        setCurrentPane(currentPane + 1);
+      } else if (touchendX > touchstartX && currentPane !== 0) {
+        setCurrentPane(currentPane - 1);
+      }
+    };
+    carouselRefLocal.current.addEventListener("touchstart", onTouchStart);
+    carouselRefLocal.current.addEventListener("touchend", onTouchEnd);
+
+  }, [carouselRef, touchstartX]);
+
   /* Rendering */
   // Main component
   return (
@@ -42,34 +82,91 @@ export default function CameraOrientations(props) {
         </button>
       </div>
 
-      <div className="main-content">
-        {camera.camGroup.map(cam => (
-          <div
-            key={cam.id}
-            className={'orientation' + (camera.id === cam.id ? ' current' : '')}
-            onClick={() => {
-              loadCamDetails(cam);
-              trackEvent("click", "camera-details", "camera-orientation", cam.name);
-            }}
-            onKeyDown={keyEvent => {
-              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-              loadCamDetails(cam);
-              trackEvent("click", "camera-details", "camera-orientation", cam.name);
-            }}}>
+      {!largeScreen &&
+        <div className="main-content carousel-container--camera-orientations" ref={carouselRef}>
+          <GoodCarousel
+            className="camera-orientations-carousel"
+            currentPane={currentPane}
+            itemsPerPane={2}
+            gap={16}
+            itemPeek={12}
+            animationDuration={0.4}>
 
-            <img
-              src={cam.links.imageDisplay}
-              alt={cam.name} />
+            {camera.camGroup.map(cam => (
+              <div
+                key={cam.id}
+                className={'orientation' + (camera.id === cam.id ? ' current' : '')}
+                onClick={() => {
+                  loadCamDetails(cam);
+                  trackEvent("click", "camera-details", "camera-orientation", cam.name);
+                }}
+                onKeyDown={keyEvent => {
+                  if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                  loadCamDetails(cam);
+                  trackEvent("click", "camera-details", "camera-orientation", cam.name);
+                }}}>
 
-            <span
-              aria-label={getCameraOrientation(cam.orientation)}
-              className={'label' + (camera.id === cam.id ? ' current' : '')}>
+                <img
+                  src={cam.links.imageDisplay}
+                  alt={cam.name} />
 
-              {getFullOrientation(cam.orientation)}
-            </span>
-          </div>
-        ))}
-      </div>
+                <span
+                  aria-label={getCameraOrientation(cam.orientation)}
+                  className={'label' + (camera.id === cam.id ? ' current' : '')}>
+
+                  {getFullOrientation(cam.orientation)}
+                </span>
+              </div>
+            ))}
+          </GoodCarousel>
+
+          {currentPane === 0 && (
+            <Button
+              className="carousel-button next"
+              onClick={() => setCurrentPane(currentPane + 1)}>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </Button>
+          )}
+
+          {currentPane === 1 && (
+            <Button
+              className="carousel-button prev"
+              onClick={() => setCurrentPane(currentPane - 1)}>
+              <FontAwesomeIcon icon={faChevronLeft} />
+            </Button>
+          )}
+        </div>
+      }
+      {largeScreen &&
+        <div className="main-content">
+          {camera.camGroup.map(cam => (
+            <div
+              key={cam.id}
+              className={'orientation' + (camera.id === cam.id ? ' current' : '')}
+              onClick={() => {
+                loadCamDetails(cam);
+                trackEvent("click", "camera-details", "camera-orientation", cam.name);
+              }}
+              onKeyDown={keyEvent => {
+                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                loadCamDetails(cam);
+                trackEvent("click", "camera-details", "camera-orientation", cam.name);
+              }}}>
+
+              <img
+                src={cam.links.imageDisplay}
+                alt={cam.name} />
+
+              <span
+                aria-label={getCameraOrientation(cam.orientation)}
+                className={'label' + (camera.id === cam.id ? ' current' : '')}>
+
+                {getFullOrientation(cam.orientation)}
+              </span>
+            </div>
+          ))}
+        </div>
+      }
     </div>
   );
 }
