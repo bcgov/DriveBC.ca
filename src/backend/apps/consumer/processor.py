@@ -310,14 +310,14 @@ def save_original_image_to_pvc(camera_id: str, image_bytes: bytes):
     filename = f"{camera_id}.jpg"
 
     filepath = os.path.join(save_dir, filename)
-    try:
-        with open(filepath, "wb") as f:
-            f.write(image_bytes)
-    except Exception as e:
-        logger.error(f"Error saving original image to PVC {filepath}: {e}")
+    # try:
+    #     with open(filepath, "wb") as f:
+    #         f.write(image_bytes)
+    # except Exception as e:
+    #     logger.error(f"Error saving original image to PVC {filepath}: {e}")
 
     original_pvc_path = filepath
-    logger.info(f"Original image saved to PVC at {filepath}")
+    # logger.info(f"Original image saved to PVC at {filepath}")
     return original_pvc_path
 
 def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp: str):  
