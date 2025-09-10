@@ -1,13 +1,11 @@
 // React
-import React, { useEffect } from 'react';
+import React from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faMountain,
   faTriangleExclamation,
 } from '@fortawesome/pro-solid-svg-icons';
-import { useMediaQuery } from "@uidotdev/usehooks";
 
 // Internal imports
 import FriendlyTime from '../../shared/FriendlyTime';
@@ -19,14 +17,13 @@ import './NearbyHevWeather.scss';
 // Main component
 export default function NearbyHevWeather(props) {
   /* Setup */
-  // Misc
-  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
-
   // Props
   const { weather } = props;
 
+  /* Rendering */
+  // Main component
   return (
-    <div className="popup popup--weather popup--weather--hef" tabIndex={0}>
+    <div className="popup popup--weather popup--cam--weather--hef" tabIndex={0}>
       {weather.warnings && (
         <div className="popup__advisory">
           {weather.warnings.Events.map(event => {
@@ -52,11 +49,13 @@ export default function NearbyHevWeather(props) {
         <div className="popup__content__title">
           <p className="highway">{weather.hwyName}</p>
           <p className="name">{weather.hwyDescription}</p>
-          { weather.issued_utc && <FriendlyTime date={weather.issued_utc} asDate={true} /> }
+          {weather.issued_utc &&
+            <FriendlyTime date={weather.issued_utc} asDate={true} />
+          }
         </div>
 
         <div className="popup__content__forecasts">
-          { weather.forecasts.map((forecast) => (
+          {weather.forecasts.map((forecast) => (
             <div className='forecast' key={forecast.label}>
               <div className='title'>
                 <div className='icon'>

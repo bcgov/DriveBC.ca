@@ -7,61 +7,21 @@ import { useSelector } from "react-redux";
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useMediaQuery } from "@uidotdev/usehooks";
+import * as FA from "@fortawesome/pro-regular-svg-icons";
 import Skeleton from "react-loading-skeleton";
 import Button from "react-bootstrap/Button";
 
-// Styling
-import './NearbyWeathers.scss';
-import * as FA from "@fortawesome/pro-regular-svg-icons";
+// Internal imports
 import NearbyRegionalWeather from "./NearbyRegionalWeather";
 import NearbyLocalWeather from "./NearbyLocalWeather";
 import NearbyHevWeather from "./NearbyHevWeather";
 
+// Styling
+import './NearbyWeathers.scss';
+
 // Main component
 export default function NearbyWeathers(props) {
   /* Setup */
-  // Misc
-  const hev_data_sample =  {
-    id: "hef_123",
-    hwyName: "Highway 99",
-    hwyDescription: "Sea to Sky - Squamish to Whistler",
-    issued_utc: "2023-11-15T08:30:00Z",
-    forecasts: [
-      {
-        label: "Today",
-        icon: "01d",
-        summary: "Mainly sunny with high of 8°C. Winds light from the northwest."
-      },
-      {
-        label: "Tonight",
-        icon: "04n",
-        summary: "Increasing cloudiness with a low of 2°C. 30% chance of flurries after midnight."
-      },
-      {
-        label: "Tomorrow",
-        icon: "13d",
-        summary: "Periods of light snow. High 4°C. Snowfall amount 2-4cm."
-      },
-      {
-        label: "Tomorrow Night",
-        icon: "48",
-        summary: "Fog patches developing overnight with a risk of freezing rain. Low -1°C."
-      }
-    ],
-    warnings: {
-      Events: [
-        {
-          Description: "Winter Storm Watch: Heavy snow and freezing rain possible",
-          expirytime: "2023-11-16T23:59:00Z",
-          Url: "https://weather.gc.ca/warnings/report_e.html?bc42"
-        }
-      ]
-    }
-  };
-
-  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
-
   // Redux
   const {
     feeds: {
@@ -83,7 +43,7 @@ export default function NearbyWeathers(props) {
   // States
   const [regionalWeather, setRegionalWeather] = useState();
   const [localWeather, setLocalWeather] = useState();
-  const [hef, setHef] = useState(hev_data_sample);
+  const [hef, setHef] = useState();
 
   // States
   const [activeTab, setActiveTab] = useState('Regional');
@@ -97,7 +57,6 @@ export default function NearbyWeathers(props) {
 
     const station = regionalWeatherList.find(station => station.id === camera.regional_weather_station);
     setRegionalWeather(station);
-    console.log('regional station: ', station);
 
   }, [regionalWeatherList]);
 
@@ -109,7 +68,6 @@ export default function NearbyWeathers(props) {
 
     const station = currentWeatherList.find(station => station.id === camera.local_weather_station);
     setLocalWeather(station);
-    console.log('local station: ', station);
 
   }, [currentWeatherList]);
 
@@ -121,12 +79,10 @@ export default function NearbyWeathers(props) {
 
     const station = hefList.find(station => station.id === camera.hef_station);
     setHef(station);
-    console.log('hev station: ', station);
 
   }, [hefList]);
 
   /* Rendering */
-  // Subcomponents
   // Loading state
   if (!regionalWeather && !localWeather && !hef) {
     return <Skeleton />;
