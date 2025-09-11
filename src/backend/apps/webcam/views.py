@@ -69,27 +69,6 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         return Response(timestamps, status=status.HTTP_200_OK)
 
     @action(
-            detail=True, 
-            methods=['get'], 
-            url_path='cameraImage',
-            )
-    def cameraImage(self, request, pk=None):
-        timestamps = get_image_list(pk, "TIMELAPSE_HOURS")
-        if isinstance(timestamps, list) and timestamps:
-            latest_image = sorted(timestamps)[-1]
-
-        response_data = {
-            "CameraImage": {
-                "camera_provider_list_cameras_endpoint": "webcams.json",
-                "camera_provider_camera_image_endpoint": f"api/webcams/{pk}/timelapse/",
-                "camera_provider_image_template": f"images/{pk}/{latest_image}",
-                "camera_provider_api_root": "http://localhost:8000/api/webcams/"
-            }
-        }
-
-        return Response(response_data, status=status.HTTP_200_OK)
-
-    @action(
         detail=True,
         methods=['get'],
         url_path=r'timelapse/(?P<filename>[0-9]{14})',
