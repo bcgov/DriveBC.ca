@@ -34,7 +34,45 @@
   }
 
   .main-content {
-    column-count: 1;
+
+    &.camCount1 {
+      column-count: unset;
+
+      @media (min-width: 1440px) {
+        column-count: 2;
+        column-gap: 12px;
+        padding: 8px 0;
+      }
+    }
+
+    &.camCount2 {
+      column-count: 2;
+    }
+
+    &.camCount3 {
+      column-count: 3;
+    }
+
+    &.camCount2, &.camCount3 {
+      @media (min-width: 768px) and (max-width: 1199px) {
+        display: flex;
+        justify-content: flex-start;
+
+        .orientation + .orientation {
+          margin-left: 12px;
+        }
+      }
+
+      @media (min-width: 768px) {
+        column-count: unset;
+      }
+
+      @media (min-width: 1440px) {
+        column-count: 2;
+        column-gap: 12px;
+        padding: 8px 0;
+      }
+    }
 
     @media (min-width: 1440px) {
       column-count: 2;
@@ -54,6 +92,16 @@
       @media (min-width: 768px) {
         width: 210px;
         height: 160px;  // Crop off 20px timestamp from the bottom
+      }
+
+      @media (min-width: 992px) {
+        width: 170px;
+        height: 130px;
+      }
+
+      @media (min-width: 1200px) {
+        width: 210px;
+        height: 160px;
       }
 
       &.current {
@@ -87,6 +135,10 @@
           color: white;
         }
       }
+    }
+
+    &.camCount1 .orientation {
+      width: fit-content;
     }
 
     &.carousel-container--camera-orientations {
