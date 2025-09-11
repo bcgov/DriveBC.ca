@@ -19,7 +19,6 @@ from django.urls import reverse
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
 
-IMAGE_CACHE_DIR = os.getenv("IMAGE_CACHE_DIR", "/app/data/webcams/cache")
 BASE_URL = os.getenv("S3_ENDPOINT_URL", "https://moti-int.objectstore.gov.bc.ca")
 S3_BUCKET = os.getenv("S3_BUCKET", "tran_api_dbc_backup_dev")
 S3_BASE_URL = f"{BASE_URL.rstrip('/')}/{S3_BUCKET}/webcams/timelapse"
@@ -74,18 +73,6 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         url_path=r'timelapse/(?P<filename>[0-9]{14})',
     )
     def cachedTimelapse(self, request, pk=None, filename=None):
-        cache_folder = os.path.join(IMAGE_CACHE_DIR, str(pk))
-        os.makedirs(cache_folder, exist_ok=True)
-
-        cache_path = os.path.join(cache_folder, f'{filename}.jpg')
-
-        # Serve from cache if exists
-        if os.path.exists(cache_path):
-            return FileResponse(open(cache_path, "rb"), content_type="image/jpeg")
-        
-        # Fetch from S3
-        s3_url = f"{S3_BASE_URL}/{pk}/{filename}.jpg"
-
         # Environment variables
         S3_BUCKET = os.getenv("S3_BUCKET")
         S3_REGION = os.getenv("S3_REGION", "us-east-1")

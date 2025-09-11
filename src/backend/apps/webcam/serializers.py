@@ -18,8 +18,6 @@ class WebcamSerializer(serializers.ModelSerializer):
     def get_links(self, obj):
         local_root = settings.DRIVEBC_IMAGE_BASE_URL
         proxy_root = settings.DRIVEBC_IMAGE_PROXY_URL
-        # new_local_root = settings.NEW_DRIVEBC_IMAGE_BASE_URL
-        # new_proxy_root = settings.NEW_DRIVEBC_IMAGE_PROXY_URL
         webcam_id = obj.id
         timestamp = int(time.time())
 

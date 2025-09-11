@@ -34,14 +34,9 @@ FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
 # PVC path to original images for RIDE
 PVC_ORIGINAL_PATH = os.getenv("PVC_ORIGINAL_PATH", "/app/images/webcams/originals")
 # PVC path to watermarked images with timestamp for ReplayTheDay
-PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH", "/app/images/webcams/processed")
+PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH", "/app/images/webcams/replaytheday")
 # PVC path to watermarked images for current DriveBC without timestamp
 DRIVCBC_PVC_WATERMARKED_PATH = os.getenv("DRIVCBC_PVC_WATERMARKED_PATH", "/app/images/webcams")
-# Output directory for JSON files for ReplayTheDay and Timelapse
-JSON_OUTPUT_DIR = os.getenv("JSON_OUTPUT_DIR", "/app/data")
-
-
-os.makedirs(JSON_OUTPUT_DIR, exist_ok=True)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -466,73 +461,3 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
         watermarked_s3_path,
         utc_dt
     )
-
-async def update_webcams_json(db_data: list):
-    output = []
-    for cam in db_data:
-        lat = cam.get("cam_locations_geo_latitude")
-        lng = cam.get("cam_locations_geo_longitude")
-
-        # Skip if latitude or longitude is missing or empty
-        if not lat or not lng:
-            logger.info(f"Skipping camera due to missing coordinates.")
-            continue
-
-        try:
-            lat = float(lat)
-            lng = float(lng)
-        except ValueError:
-            logger.error(f"Skipping camera due to invalid coordinates")
-            continue
-
-        output.append([
-            cam["id"],
-            cam.get("cam_internet_name", ""),
-            cam.get("cam_internet_caption", ""),
-            cam.get("cam_locations_orientation", ""),
-            lat,
-            lng,
-            cam.get("cam_locations_segment", ""),
-            cam.get("cam_locations_lrs_node", ""),
-            "1" if cam.get("is_on") else "0",
-            cam.get("cam_installation_date_approximate", "0"),
-            cam.get("cam_installation_approx_install_cost", "0"),
-            cam.get("cam_LocationsRegion", ""),
-            cam.get("cam_locationsElevation", ""),
-            cam.get("cam_locations_highway_section", ""),
-            cam.get("cam_locations_weather_station", ""),
-            cam.get("cam_locations_forecast_id", ""),
-            cam.get("cam_maintenance_maint_notes", ""),
-            cam.get("cam_maintenance_asset_no", ""),
-        ])
-    file_path = os.path.join(JSON_OUTPUT_DIR, "json", "images", "webcams.json")
-    os.makedirs(os.path.join(JSON_OUTPUT_DIR, "json", "images"), exist_ok=True)
-
-    async with aiofiles.open(file_path, "w", encoding="utf-8") as f_test:
-        data_str = json.dumps(output, indent=4)
-        await f_test.write(data_str)
-    logger.info(f"JSON file for cameras saved at {file_path}")
-
-    print(f"webcams.json generated with {len(output)} records.")
-
-async def update_index_json(camera_id: str, tz: str):
-    # By default, use the last 30 days of images for timelapse
-    default_time_age = os.getenv("TIMELAPSE_HOURS", "720")
-    results = await get_images_within(camera_id, hours=int(default_time_age))
-    timestamps = []
-    for item in results:
-        timestamps.append(item.timestamp.strftime("%Y%m%d%H%M%S") + ".jpg")
-
-    # Create the camera index JSON file
-    file_path = os.path.join(JSON_OUTPUT_DIR, f"json/images/{camera_id}/index.json")
-    os.makedirs(os.path.join(JSON_OUTPUT_DIR, f"json", f"images", camera_id), exist_ok=True)
-
-    async with aiofiles.open(file_path, "w", encoding="utf-8") as f_test:
-        data_str = json.dumps(timestamps, indent=4)
-        await f_test.write(data_str)
-    logger.info(f"JSON file for camera {camera_id} saved at {file_path}")
-
-    return {
-        "status": "success",
-        "file_path": f"/data/json/images/{camera_id}/index.json"
-    }

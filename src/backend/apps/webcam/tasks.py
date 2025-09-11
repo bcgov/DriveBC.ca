@@ -63,9 +63,8 @@ S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
 RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq/")
 S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
 
-# Define data directory (PVC and S3)
-PVC_ROOT = os.getenv("PVC_ROOT", "/app/data/webcams/processed")
-S3_ROOT = os.getenv("S3_ROOT", "/test-s3-bucket")
+# Define PVC directory
+PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH", "/app/images/webcams/replaytheday")
 
 # Build connection URL for webcam SQL database
 connection_url = URL.create(
@@ -567,7 +566,7 @@ def purge_old_images():
 
 def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
     if is_pvc:
-        root_path = PVC_ROOT
+        root_path = PVC_WATERMARKED_PATH
     else:
         root_path = S3_BUCKET
     cutoff_time = timezone.now() - datetime.timedelta(hours=int(age))
