@@ -63,8 +63,12 @@
         margin: 1.5rem 0 0;
       }
 
-      @media (min-width: 768px) {
+      @media (min-width: 992px) {
         display: inline;
+      }
+
+      p {
+        white-space: nowrap;
       }
 
 
