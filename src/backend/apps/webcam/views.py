@@ -230,8 +230,8 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         z = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
 
         for img in filtered_images:
-            key = f"webcams/timelapse/{pk}/{img}"  # S3 key
-            filename_in_zip = img.split("/")[-1]
+            key = f"webcams/timelapse/{pk}/{img}.jpg"  # S3 key
+            filename_in_zip = f"{img.split('/')[-1]}.jpg"
             try:
                 z.write_iter(filename_in_zip, s3_file_iterator(key))
             except Exception as e:
