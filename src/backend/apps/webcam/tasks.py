@@ -559,9 +559,10 @@ def update_webcam_db(cam_id: int, cam_data: dict):
 def purge_old_images():
     logger.info("Purging webcam images...")
     REPLAY_THE_DAY_HOURS = os.getenv("REPLAY_THE_DAY_HOURS", "24")
-    TIMELAPSE_HOURS = os.getenv("TIMELAPSE_HOURS", "720")
     purge_old_pvc_s3_images(age=REPLAY_THE_DAY_HOURS, is_pvc=True)
-    purge_old_pvc_s3_images(age=TIMELAPSE_HOURS, is_pvc=False)
+
+def backup_purge_old_images():
+    backup_purge_old_pvc_images()
 
 
 def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
@@ -664,4 +665,34 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
         watermarked_s3_path__isnull=True
     ).delete()
 
+    logger.info("All purged recordes are deleted successfully.")
+
+def backup_purge_old_pvc_images():
+    PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH", "/app/images/webcams/replaytheday")
+    BASE_DIR = Path(PVC_WATERMARKED_PATH)
+    logger.info("Starting backup purge of old PVC images...")
+    now = time.time()
+    cutoff = now - 24 * 60 * 60
+
+    deleted_count = 0
+    skipped_count = 0
+
+    for root, dirs, files in os.walk(BASE_DIR):
+        for filename in files:
+            file_path = Path(root) / filename
+
+            try:
+                stat = file_path.stat()
+                if stat.st_mtime < cutoff:
+                    os.remove(file_path)
+                    logger.info(f"Deleted old image: {file_path}")
+                    deleted_count += 1
+                else:
+                    skipped_count += 1
+            except Exception as e:
+                logger.error(f"Error checking/deleting {file_path}: {e}")
+
+    logger.info(
+        f"Backup purge completed. Deleted: {deleted_count}, Skipped (newer): {skipped_count}"
+    )
     logger.info("All purged recordes are deleted successfully.")
