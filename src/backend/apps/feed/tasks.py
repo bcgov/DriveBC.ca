@@ -15,6 +15,8 @@ from apps.webcam.tasks import (
     build_route_geometries,
     populate_all_webcam_data,
     update_all_webcam_data,
+    purge_old_images,
+    backup_purge_old_images,
 )
 from apps.wildfire.tasks import populate_all_wildfire_data
 from django.core.cache import cache
@@ -34,6 +36,15 @@ def populate_webcam_task():
 def update_camera_task():
     update_all_webcam_data()
 
+@db_periodic_task(crontab(minute="*/1"))
+@lock_task('purge-image-lock')
+def purge_image_task():
+    purge_old_images()
+
+@db_periodic_task(crontab(minute=0, hour=0))
+@lock_task('backup-purge-image-lock')
+def backup_purge_image_task():
+    backup_purge_old_images()
 
 @db_periodic_task(crontab(minute="*/1"))
 @lock_task('events-lock')
