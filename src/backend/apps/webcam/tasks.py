@@ -142,7 +142,7 @@ def update_all_webcam_data():
         if camera.https_cam:
             update_cam_from_sql_db(camera.id, current_time)
         else:
-            update_webcam_db_stale_delayed(camera)
+            # update_webcam_db_stale_delayed(camera)
             if camera.should_update(current_time):
                 updated = update_single_webcam_data(camera)
                 if updated:
@@ -549,8 +549,8 @@ def update_webcam_db(cam_id: int, cam_data: dict):
         credit=cam_data.get("credit", ""),
         is_new=cam_data.get("isNew", False),
         is_on_demand=cam_data.get("isOnDemand", False),
-        marked_stale=camera_status["stale"],
-        marked_delayed=camera_status["delayed"],
+        # marked_stale=camera_status["stale"],
+        # marked_delayed=camera_status["delayed"],
         last_update_attempt=dt_utc,
         last_update_modified=dt_utc,
         update_period_mean=camera_status["mean_interval"],
