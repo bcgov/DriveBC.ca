@@ -429,10 +429,34 @@ def push_to_s3(image_bytes: bytes, camera_id: str, is_original: bool, timestamp:
                 logger.info(f"Original image saved to s3 at {key}")
     return key
 
+async def is_camera_pushed_too_soon(camera_id: str, timestamp: str):
+    image = await sync_to_async(lambda: ImageIndex.objects.filter(camera_id=camera_id).order_by('-id').first())()
+    last_modified = image.timestamp 
+    dt_last_modified_str = last_modified.isoformat(sep=" ")
+    dt_last_modified = datetime.fromisoformat(dt_last_modified_str)
+    # convert to seconds
+    millis_last_modified = int(dt_last_modified.timestamp())
+
+    # parse pushed in timestamp
+    dt_pushed_in = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
+    dt_pushed_in_utc = dt_pushed_in.astimezone(pytz.UTC)
+
+    # convert to seconds
+    millis_pushed_in = int(dt_pushed_in_utc.timestamp())
+    diff = millis_pushed_in - millis_last_modified
+    shred_interval = int(os.getenv("SECONDS_BETWEEN_IMAGE_UPLOADS", "60"))
+    if diff < shred_interval:
+        return True
+    return False
+
 async def handle_image_message(camera_id: str, db_data: any, body: bytes, timestamp: str, camera_status: dict):
     # timestamp is in local time
     webcams = [cam for cam in db_data if cam['id'] == int(camera_id)]
     webcam = webcams[0] if webcams else None
+
+    camera_pushed_too_soon = await is_camera_pushed_too_soon(camera_id, timestamp)
+    if camera_pushed_too_soon:
+        return
 
     tz = get_timezone(webcam) if webcam else 'America/Vancouver'
     local_tz = pytz.timezone(tz)
