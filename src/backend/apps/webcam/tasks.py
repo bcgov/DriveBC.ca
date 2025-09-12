@@ -529,7 +529,8 @@ def update_webcam_db(cam_id: int, cam_data: dict):
     if not timestamp_utc:
         return
 
-    camera_status = calculate_camera_status(timestamp_utc)
+    time_now_utc = datetime.datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
+    camera_status = calculate_camera_status(time_now_utc)
     ts_seconds = int(camera_status["timestamp"])
     dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 
