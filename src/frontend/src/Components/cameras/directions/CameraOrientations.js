@@ -1,8 +1,5 @@
 // React
-import React, { useEffect, useRef, useState } from 'react';
-
-// Internal imports
-import { getCameraOrientation, getFullOrientation } from "../helper";
+import React, { useEffect, useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,9 +7,12 @@ import {
   faChevronRight,
   faChevronLeft,
 } from '@fortawesome/pro-solid-svg-icons';
+import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 import GoodCarousel from 'react-good-carousel';
-import { useMediaQuery } from '@uidotdev/usehooks';
+
+// Internal imports
+import { getCameraOrientation, getFullOrientation } from "../helper";
 
 // Styling
 import './CameraOrientations.scss';
@@ -21,10 +21,27 @@ import trackEvent from "../../shared/TrackEvent";
 
 export default function CameraOrientations(props) {
   /* Setup */
+  // Misc
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+  const largeScreen = useMediaQuery('only screen and (min-width: 768px)');
+  // const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
+  const xXLargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
+
   // Props
   const { camera, loadCamDetails } = props;
 
-  // Handlers
+  // States
+  const initialIndex = camera.camGroup.findIndex(cam => cam.id === camera.id);
+  const [currentCamIndex, setCurrentCamIndex] = useState(initialIndex);
+  const [currentPane, setCurrentPane] = useState(Math.floor(initialIndex / 2));
+
+  // Effects
+  useEffect(() => {
+    const nextCam = camera.camGroup[currentCamIndex];
+    loadCamDetails(nextCam);
+  }, [currentCamIndex]);
+
+  /* Handlers */
   const rotateCameraOrientation = () => {
     const currentIndex = camera.camGroup.findIndex(cam => cam.id === camera.id);
     const nextIndex = (currentIndex + 1) % camera.camGroup.length;
@@ -34,38 +51,11 @@ export default function CameraOrientations(props) {
     trackEvent("click", "camera-details", "camera-rotate", nextCamera.name);
   };
 
-  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
-  const largeScreen = useMediaQuery('only screen and (min-width: 768px)');
-  // const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
-  const xXLargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
-
-  // For mobile carousel
-  const carouselRef = useRef(null);
-
-  const [currentPane, setCurrentPane] = useState(0);
-  const [touchstartX, setTouchstartX] = useState(0);
-
-  useEffect(() => {
-    // Implements swiping for mobile/tablet devices
-    if (!carouselRef.current) {
-      return;
-    }
-    const carouselRefLocal = carouselRef;
-    const onTouchStart = (e) => {
-      setTouchstartX(e.changedTouches[0].screenX);
-    };
-    const onTouchEnd = (e) => {
-      const touchendX = e.changedTouches[0].screenX;
-      if (touchendX < touchstartX && currentPane !== camera.camGroup.length - 1) {
-        setCurrentPane(currentPane + 1);
-      } else if (touchendX > touchstartX && currentPane !== 0) {
-        setCurrentPane(currentPane - 1);
-      }
-    };
-    carouselRefLocal.current.addEventListener("touchstart", onTouchStart);
-    carouselRefLocal.current.addEventListener("touchend", onTouchEnd);
-
-  }, [carouselRef, touchstartX]);
+  // Switch orientation for mobile carousel
+  const switchOrientation = (index) => {
+    setCurrentCamIndex(index);
+    setCurrentPane(Math.floor(index / 2));
+  }
 
   /* Rendering */
   // Main component
@@ -73,20 +63,21 @@ export default function CameraOrientations(props) {
     <div className="camera-orientations-container">
       <div className="header">
         <button className="rotate-direction-btn"
-          onClick={rotateCameraOrientation}
-        >
+          onClick={rotateCameraOrientation}>
+
           <img
             className="colocated-camera-icon"
             src={colocatedCamIcon}
             role="presentation"
             alt="colocated cameras icon"
           />
+
           <span className="title">Direction</span>
         </button>
       </div>
 
       {(camera.camGroup.length > 2) && smallScreen && !largeScreen && !xXLargeScreen &&
-        <div className="main-content carousel-container--camera-orientations" ref={carouselRef}>
+        <div className="main-content carousel-container--camera-orientations">
           <GoodCarousel
             className="camera-orientations-carousel"
             currentPane={currentPane}
@@ -95,23 +86,24 @@ export default function CameraOrientations(props) {
             itemPeek={12}
             animationDuration={0.4}>
 
-            {camera.camGroup.map(cam => (
+            {camera.camGroup.map((cam, index) => (
               <div
                 key={cam.id}
                 className={'orientation' + (camera.id === cam.id ? ' current' : '')}
                 onClick={() => {
-                  loadCamDetails(cam);
-                  trackEvent("click", "camera-details", "camera-orientation", cam.name);
+                  switchOrientation(index);
+                  trackEvent("click", "camera-details", "mobile-camera-orientation", cam.name);
                 }}
                 onKeyDown={keyEvent => {
                   if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                  loadCamDetails(cam);
-                  trackEvent("click", "camera-details", "camera-orientation", cam.name);
-                }}}>
+                    switchOrientation(index);
+                    trackEvent("click", "camera-details", "mobile-camera-orientation", cam.name);
+                  }
+                }}>
 
                 <img
                   src={cam.links.imageDisplay}
-                  alt={cam.name} />
+                  alt={cam.name}/>
 
                 <span
                   aria-label={getCameraOrientation(cam.orientation)}
@@ -123,18 +115,18 @@ export default function CameraOrientations(props) {
             ))}
           </GoodCarousel>
 
-          {currentPane === 0 && (
+          {currentCamIndex < (camera.camGroup.length - 1) && (
             <Button
               className="carousel-button next"
-              onClick={() => setCurrentPane(currentPane + 1)}>
+              onClick={() => switchOrientation(currentCamIndex + 1)}>
               <FontAwesomeIcon icon={faChevronRight} />
             </Button>
           )}
 
-          {currentPane === 1 && (
+          {currentCamIndex > 0 && (
             <Button
               className="carousel-button prev"
-              onClick={() => setCurrentPane(currentPane - 1)}>
+              onClick={() => switchOrientation(currentCamIndex - 1)}>
               <FontAwesomeIcon icon={faChevronLeft} />
             </Button>
           )}
@@ -142,7 +134,7 @@ export default function CameraOrientations(props) {
       }
 
       {(camera.camGroup.length > 3) && !smallScreen && !xXLargeScreen &&
-        <div className="main-content carousel-container--camera-orientations" ref={carouselRef}>
+        <div className="main-content carousel-container--camera-orientations">
           <GoodCarousel
             className="camera-orientations-carousel"
             currentPane={currentPane}
@@ -197,22 +189,23 @@ export default function CameraOrientations(props) {
         </div>
       }
 
-      {( ((camera.camGroup.length < 3) && smallScreen) || ((camera.camGroup.length < 4) && 
+      {( ((camera.camGroup.length < 3) && smallScreen) || ((camera.camGroup.length < 4) &&
       !smallScreen && !xXLargeScreen) || xXLargeScreen ) &&
         <div className={'main-content' + ' camCount' + camera.camGroup.length}>
-          {camera.camGroup.map(cam => (
+          {camera.camGroup.map((cam, index) => (
             <div
               key={cam.id}
               className={'orientation' + (camera.id === cam.id ? ' current' : '')}
               onClick={() => {
-                loadCamDetails(cam);
+                switchOrientation(index);
                 trackEvent("click", "camera-details", "camera-orientation", cam.name);
               }}
               onKeyDown={keyEvent => {
                 if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                loadCamDetails(cam);
-                trackEvent("click", "camera-details", "camera-orientation", cam.name);
-              }}}>
+                  switchOrientation(index);
+                  trackEvent("click", "camera-details", "camera-orientation", cam.name);
+                }
+              }}>
 
               <img
                 src={cam.links.imageDisplay}
@@ -228,7 +221,6 @@ export default function CameraOrientations(props) {
           ))}
         </div>
       }
-      
     </div>
   );
 }
