@@ -1,0 +1,178 @@
+@import "../../../styles/variables";
+
+.camera-orientations-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 200px;
+
+  @media (min-width: 1440px) {
+    min-width: 400px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    background-color: $Blue10;
+    padding: 12px;
+    border-radius: 8px;
+
+    img {
+      margin-right: 8px;
+    }
+
+    .title {
+      font-weight: 700;
+      color: $BC-Blue
+    }
+  }
+
+  .rotate-direction-btn {
+    background: none;
+    border: none;
+  }
+
+  .main-content {
+
+    &.camCount1 {
+      column-count: unset;
+
+      @media (min-width: 1440px) {
+        column-count: 2;
+        column-gap: 12px;
+        padding: 8px 0;
+      }
+    }
+
+    &.camCount2 {
+      column-count: 2;
+    }
+
+    &.camCount3 {
+      column-count: 3;
+    }
+
+    &.camCount2, &.camCount3 {
+      @media (min-width: 768px) and (max-width: 1199px) {
+        display: flex;
+        justify-content: flex-start;
+
+        .orientation + .orientation {
+          margin-left: 12px;
+        }
+      }
+
+      @media (min-width: 768px) {
+        column-count: unset;
+      }
+
+      @media (min-width: 1440px) {
+        column-count: 2;
+        column-gap: 12px;
+        padding: 8px 0;
+      }
+    }
+
+    @media (min-width: 1440px) {
+      display: flex;
+      flex-flow: wrap;
+      width: 432px;
+      column-count: unset;
+    }
+
+    .orientation {
+      position: relative;
+      height: 132px;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      cursor: pointer;
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      background: black;
+
+      @media (min-width: 768px) {
+        width: 210px;
+        height: 160px;  // Crop off 20px timestamp from the bottom
+
+        &:nth-child(odd) {
+          margin-right: 12px;
+        }
+      }
+
+      @media (min-width: 992px) {
+        width: 170px;
+        height: 130px;
+      }
+
+      @media (min-width: 1200px) {
+        width: 210px;
+        height: 160px;
+      }
+
+      &.current {
+        border: 3px solid $Focus;
+      }
+
+      img {
+        width: 100%;
+        height: auto;
+        clip-path: inset(0 0 5px 0); /* Crops timestamp */
+      }
+
+      .label {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        background-color: $Grey20;
+        color: $BC-Blue;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-size: 0.875rem;
+
+        &.current {
+          background: $Focus;
+          color: white;
+        }
+      }
+    }
+
+    &.camCount1 .orientation {
+      width: fit-content;
+    }
+
+    &.carousel-container--camera-orientations {
+      position: relative;
+
+      .carousel-button {
+        position: absolute;
+        top: calc(50% - (35px / 2));
+
+        border: 1px solid $Input-border;
+        border-radius: 2rem;
+
+        background: #FFFFFF;
+        color: $Type-Primary;
+        box-shadow: 0px 3.2px 7.2px 0px #00000021, 0px 0.6px 1.8px 0px #0000001A;
+
+        &:focus, &:active, &:hover {
+          background-color: $Grey40;
+          color: $Type-Primary;
+          border: 1px solid $Input-border;
+        }
+
+        &.next {
+          right: 4px;
+          animation: show 600ms 100ms cubic-bezier(0.38, 0.97, 0.56, 0.76) forwards;
+        }
+
+        &.prev {
+          left: 4px;
+          animation: show 600ms 100ms cubic-bezier(0.38, 0.97, 0.56, 0.76) forwards;
+        }
+      }
+    }
+  }
+}

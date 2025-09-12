@@ -266,6 +266,10 @@ export const updateOverlappingEventPosition = (feature, mapContext, mapView) => 
   if (feature.get('locationIndex')) {
     // Do not update if there is only one event at the point
     const eventsAtPoint = mapContext.events[feature.get('locationIndex')];
+    if (!eventsAtPoint) {
+      return;
+    }
+
     if (eventsAtPoint.length > 1) {
       const eventIndex = eventsAtPoint.indexOf(feature.get('id'));
 
