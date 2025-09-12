@@ -6,6 +6,8 @@ from apps.consumer.models import ImageIndex
 from datetime import datetime, timedelta, timezone
 from typing import List, Tuple, Union
 import math
+from botocore.config import Config
+import boto3
 
 # Max samples to calculate camera status
 max_samples = 50
@@ -104,11 +106,87 @@ def calculate_camera_status(timestamp_str: str) -> tuple[float, float]:
         "delayed": delayed,
     }
 
-def get_image_list(camera_id, age="TIMELAPSE_HOURS"):
+def get_image_list_from_db(camera_id, age="TIMELAPSE_HOURS"):
     camera_id = int(camera_id)
     hours = int(os.getenv(age))
     now = datetime.now(timezone.utc)
     cutoff = now - timedelta(hours=hours)
     results = ImageIndex.objects.filter(camera_id=camera_id, timestamp__gte=cutoff).order_by('timestamp')
     timestamps = [item.timestamp.strftime("%Y%m%d%H%M%S") for item in results]
+    return timestamps
+    
+def get_image_list(camera_id, age="TIMELAPSE_HOURS"):
+    if age == "TIMELAPSE_HOURS":
+        return get_image_list_from_s3(camera_id, age)
+    else:
+        return get_image_list_from_db(camera_id, age)
+
+def get_image_list_from_s3(camera_id, age="TIMELAPSE_HOURS"):
+    camera_id = int(camera_id)
+    hours = int(os.getenv(age, 24))
+    now = datetime.now(timezone.utc)
+    cutoff = now - timedelta(hours=hours)
+    S3_BUCKET = os.getenv("S3_BUCKET")
+    S3_REGION = os.getenv("S3_REGION", "us-east-1")
+    S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
+    S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
+    S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
+
+    # S3 client configuration
+    config = Config(
+        signature_version='s3v4',
+        retries={'max_attempts': 10},
+        s3={
+            'payload_signing_enabled': False,
+            'checksum_validation': False,
+            'enable_checksum': False,
+            'addressing_style': 'path',
+            'use_expect_continue': False
+        }
+    )
+    # S3 client
+    s3_client = boto3.client(
+        "s3",
+        region_name=S3_REGION,
+        aws_access_key_id=S3_ACCESS_KEY,
+        aws_secret_access_key=S3_SECRET_KEY,
+        endpoint_url=S3_ENDPOINT_URL,
+        config=config
+    )
+    
+    bucket_name = S3_BUCKET
+    prefix = f"webcams/timelapse/{camera_id}/"  # adjust based on your folder structure
+    
+    # List objects in S3 under the prefix
+    all_objects = []
+    continuation_token = None
+
+    while True:
+        if continuation_token:
+            response = s3_client.list_objects_v2(
+                Bucket=bucket_name, Prefix=prefix, ContinuationToken=continuation_token
+            )
+        else:
+            response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
+        
+        objects = response.get("Contents", [])
+        all_objects.extend(objects)
+        
+        if response.get("IsTruncated"):  # there are more objects
+            continuation_token = response.get("NextContinuationToken")
+        else:
+            break
+    
+    # Filter objects by timestamp in key
+    timestamps = []
+    for obj in all_objects:
+        key = obj["Key"]  # e.g., "images/123/20250912050045.jpg"
+        # extract timestamp part
+        timestamp_str = key.split("/")[-1].split(".")[0]  # "20250912050045"
+        dt = datetime.strptime(timestamp_str, "%Y%m%d%H%M%S").replace(tzinfo=timezone.utc)
+        if dt >= cutoff:
+            timestamps.append(timestamp_str)
+    
+    # Sort ascending by timestamp
+    timestamps.sort()
     return timestamps
