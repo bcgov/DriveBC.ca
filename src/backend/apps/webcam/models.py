@@ -1,6 +1,10 @@
 from apps.shared.models import Area, BaseModel
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
 from django.contrib.gis.db import models
+import json
+import os
+from pathlib import Path
+from apps.shared.status import get_image_list
 
 
 class Webcam(BaseModel):
@@ -46,6 +50,9 @@ class Webcam(BaseModel):
     update_period_mean = models.PositiveIntegerField()
     update_period_stddev = models.PositiveIntegerField()
 
+    # HTTPS camera flag
+    https_cam = models.BooleanField(default=False)
+
     # Within two standard deviations from mean
     @property
     def minimum_update_window(self):
@@ -60,3 +67,13 @@ class Webcam(BaseModel):
 
         time_delta = time - self.last_update_modified
         return time_delta.total_seconds() >= self.minimum_update_window
+
+    def get_image_paths(self):
+            timestamps = get_image_list(self.id, "TIMELAPSE_HOURS")
+            TIMELAPSE_API_ROOT_URL = os.environ.get("TIMELAPSE_API_ROOT_URL", "http://localhost:8000/api/webcams")
+            image_paths = []
+            for ts in timestamps:
+                filename = ts
+                img_path = f"{TIMELAPSE_API_ROOT_URL}/{self.id}/timelapse/{filename}/"
+                image_paths.append(img_path)
+            return image_paths
