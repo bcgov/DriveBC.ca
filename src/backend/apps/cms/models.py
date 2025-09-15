@@ -27,6 +27,7 @@ class DriveBCMapWidget(OSMWidget):
     default_lon = -119.49662112970556
     default_lat = 49.887338062986295
     default_zoom = 14
+    template_name = 'cms/map.html'
 
 
 class RichContent(blocks.StreamBlock):
