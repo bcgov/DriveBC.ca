@@ -340,6 +340,9 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         permission_classes=[IsAdminUser],
     )
     def timelapse_admin(self, request, pk=None):
+        user = request.user
+        if not user.is_authenticated or not user.is_staff:
+            return Response({"detail": "Admin access required."}, status=status.HTTP_403_FORBIDDEN)
         return self._timelapse_impl(pk)
     
     @action(
@@ -349,10 +352,16 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         permission_classes=[IsAdminUser],
     )
     def timelapse_image_admin(self, request, pk=None, filename=None):
+        user = request.user
+        if not user.is_authenticated or not user.is_staff:
+            return Response({"detail": "Admin access required."}, status=status.HTTP_403_FORBIDDEN)
         return self._timelapse_image_impl(request, pk, filename)
     
     @action(detail=True, methods=['get'], url_path='admin-timelapse/download')
     def download_admin(self, request, pk=None):
+        user = request.user
+        if not user.is_authenticated or not user.is_staff:
+            return Response({"detail": "Admin access required."}, status=status.HTTP_403_FORBIDDEN)
         return self._download(request, pk)
     
     @action(
@@ -362,6 +371,9 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
             permission_classes=[IsAdminUser],
             )
     def staleAndDelayed_admin(self, request, pk=None):
+        user = request.user
+        if not user.is_authenticated or not user.is_staff:
+            return Response({"detail": "Admin access required."}, status=status.HTTP_403_FORBIDDEN)
         return self._staleAndDelayed(request, pk)
     
     # Public proxy endpoint

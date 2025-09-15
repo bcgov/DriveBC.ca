@@ -47,8 +47,6 @@ class WebcamSerializer(serializers.ModelSerializer):
         now = datetime.now(timezone.utc)
         diff_seconds = (now - obj.last_update_modified).total_seconds()
         threshold = obj.update_period_mean * 1.1
-        if obj.id == 57 or obj.id == 1024:
-            print(f"webcam {obj.id} marked_stale: diff_seconds={diff_seconds}, threshold={threshold}, result={diff_seconds > threshold}")
 
         return diff_seconds > threshold
 
@@ -59,7 +57,5 @@ class WebcamSerializer(serializers.ModelSerializer):
         now = datetime.now(timezone.utc)
         diff_seconds = (now - obj.last_update_modified).total_seconds()
         threshold = obj.update_period_mean * 3
-        if obj.id == 57 or obj.id == 1024:
-            print(f"webcam {obj.id} marked_delayed: diff_seconds={diff_seconds}, threshold={threshold}, result={diff_seconds > threshold}")
 
         return diff_seconds > threshold
