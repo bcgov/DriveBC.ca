@@ -549,10 +549,8 @@ def update_webcam_db(cam_id: int, cam_data: dict):
         credit=cam_data.get("credit", ""),
         is_new=cam_data.get("isNew", False),
         is_on_demand=cam_data.get("isOnDemand", False),
-        # marked_stale=camera_status["stale"],
-        # marked_delayed=camera_status["delayed"],
-        last_update_attempt=dt_utc,
-        last_update_modified=dt_utc,
+        # last_update_attempt=dt_utc,
+        # last_update_modified=dt_utc,
         update_period_mean=camera_status["mean_interval"],
         update_period_stddev= camera_status["stddev_interval"]),  
     return updated_count
