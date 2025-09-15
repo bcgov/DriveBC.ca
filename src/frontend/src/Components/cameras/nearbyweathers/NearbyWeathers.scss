@@ -226,6 +226,15 @@
 
         &__forecasts {
           flex-grow: 1;
+
+          .forecast-cards-container {
+            column-count: 2;
+            column-gap: 16px;
+
+            .forecast-card {
+              width: 100%;
+            }
+          }
         }
 
         &__additional {
