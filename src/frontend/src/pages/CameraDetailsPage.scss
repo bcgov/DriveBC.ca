@@ -776,13 +776,6 @@
 
   .camera-imagery__nearby {
     &__left {
-      width: 100%;
-
-      @media (min-width: 1440px) {
-        width: 560px;
-      }
-    }
-    &__right {
       .actions-bar--nearby {
         .title {
           font-weight: 700;
@@ -793,6 +786,13 @@
             margin-right: 8px;
           }
         }
+      }
+    }
+    &__right {
+      width: 100%;
+
+      @media (min-width: 1440px) {
+        width: 560px;
       }
     }
   }
