@@ -46,7 +46,8 @@ class WebcamSerializer(serializers.ModelSerializer):
 
         now = datetime.now(timezone.utc)
         diff_seconds = (now - obj.last_update_modified).total_seconds()
-        threshold = obj.update_period_mean * 1.1
+        # threshold = obj.update_period_mean * 1.1
+        threshold = max(obj.update_period_mean * 1.1, obj.update_period_mean + 2 * obj.update_period_stddev)
 
         return diff_seconds > threshold
 
@@ -56,6 +57,7 @@ class WebcamSerializer(serializers.ModelSerializer):
 
         now = datetime.now(timezone.utc)
         diff_seconds = (now - obj.last_update_modified).total_seconds()
-        threshold = obj.update_period_mean * 3
+        # threshold = obj.update_period_mean * 3
+        threshold = 2 * obj.update_period_mean + 2 * obj.update_period_stddev
 
         return diff_seconds > threshold

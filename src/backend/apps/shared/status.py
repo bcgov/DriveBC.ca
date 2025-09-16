@@ -82,8 +82,8 @@ def calculate_camera_status(timestamp_str: str) -> tuple[float, float]:
         mean_interval = sum(trimmed) / len(trimmed)
 
         # 2. thresholds
-        threshold_stale = mean_interval * 1.1
-        threshold_delayed = mean_interval * 3
+        threshold_stale = max(mean_interval * 1.1, mean_interval + 2 * std_dev)
+        threshold_delayed = 2 * mean_interval + 2 * std_dev
 
         # 3. actual time since last image
         time_since_last = new_ts - timestamp_list[-1]
