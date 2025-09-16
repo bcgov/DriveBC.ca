@@ -100,7 +100,7 @@
       background: black;
 
       @media (min-width: 768px) {
-        width: 210px;
+        width: fit-content;
         height: 160px;  // Crop off 20px timestamp from the bottom
 
         &:nth-child(odd) {

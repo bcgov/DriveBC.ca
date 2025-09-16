@@ -378,7 +378,10 @@
             align-items: center;
             justify-content: center;
             height: fit-content;
-            min-height: 388px;
+
+            @media (min-width: 768px) {
+              min-height: 388px;
+            }
           }
 
           .unavailable-message {
