@@ -392,6 +392,8 @@ def insert_image_and_update_webcam(camera_id, original_pvc_path, watermarked_pvc
     camera.https_cam = True
     camera.last_update_modified = timestamp
     camera.last_update_attempt = timestamp
+    group_id = Webcam.objects.filter(location=camera.location).order_by('id').first().id
+    camera.group_id = group_id
     camera.save()
 
 def push_to_s3(image_bytes: bytes, camera_id: str, is_original: bool, timestamp: str):
@@ -431,6 +433,8 @@ def push_to_s3(image_bytes: bytes, camera_id: str, is_original: bool, timestamp:
 
 async def is_camera_pushed_too_soon(camera_id: str, timestamp: str):
     image = await sync_to_async(lambda: ImageIndex.objects.filter(camera_id=camera_id).order_by('-id').first())()
+    if not image:
+        return False
     last_modified = image.timestamp 
     dt_last_modified_str = last_modified.isoformat(sep=" ")
     dt_last_modified = datetime.fromisoformat(dt_last_modified_str)
