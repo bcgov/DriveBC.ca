@@ -556,37 +556,29 @@ def update_webcam_db(cam_id: int, cam_data: dict):
 def purge_old_images():
     logger.info("Purging webcam images...")
     REPLAY_THE_DAY_HOURS = os.getenv("REPLAY_THE_DAY_HOURS", "24")
-    purge_old_pvc_s3_images(age=REPLAY_THE_DAY_HOURS, is_pvc=True)
+    purge_old_pvc_images(age=REPLAY_THE_DAY_HOURS, is_pvc=True)
 
 def backup_purge_old_images():
     backup_purge_old_pvc_images()
 
 
-def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
-    if is_pvc:
-        root_path = PVC_WATERMARKED_PATH
-    else:
-        root_path = S3_BUCKET
+def purge_old_pvc_images(age: str = "24"):
+    root_path = PVC_WATERMARKED_PATH
+    
     cutoff_time = timezone.now() - datetime.timedelta(hours=int(age))
 
     records_to_delete_pvc = ImageIndex.objects.filter(
         timestamp__lt=cutoff_time,
     )
 
-    records_to_delete_s3 = ImageIndex.objects.filter(
-        timestamp__lt=cutoff_time,
-    )
-
     files_to_delete = []
     ids_to_delete = []
 
-    rows = records_to_delete_pvc if is_pvc else records_to_delete_s3
+    rows = records_to_delete_pvc
 
     for row in rows:
-        if is_pvc:
-            path = row.watermarked_pvc_path
-        else:
-            path = row.watermarked_s3_path
+        # path = row.watermarked_pvc_path
+        path = f"{root_path}/{row.camera_id}/{row.timestamp.strftime("%Y%m%d%H%M%S")}.jpg"
 
         if path:
             full_path = os.path.join(root_path, path)
@@ -596,33 +588,25 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
         files_to_delete.append(full_path)
         ids_to_delete.append(row.timestamp)
 
-    if is_pvc:
-        ImageIndex.objects.filter(
-            timestamp__in=ids_to_delete,
-        ).update(
-            modified_at=timezone.now()
-        )
-    else:
-        ImageIndex.objects.filter(
+    ImageIndex.objects.filter(
             timestamp__in=ids_to_delete,
         ).update(
             modified_at=timezone.now()
         )
 
     # Delete files from PVC or s3
-    if is_pvc:
-        logger.info(f"Deleting {len(files_to_delete)} old PVC images...")
-        for file_path in files_to_delete:
-            try:
-                if not file_path:
-                    continue
-                os.remove(file_path)
-                logger.info(f"Deleted file from PVC: {file_path}")
-            except FileNotFoundError:
-                logger.error(f"File not found: {file_path}")
-            except Exception as e:
-                logger.error(f"Error deleting file {file_path}: {e}")
-
+    logger.info(f"Deleting {len(files_to_delete)} old PVC images...")
+    for file_path in files_to_delete:
+        try:
+            if not file_path:
+                continue
+            os.remove(file_path)
+            logger.info(f"Deleted file from PVC: {file_path}")
+        except FileNotFoundError:
+            logger.error(f"File not found: {file_path}")
+        except Exception as e:
+            logger.error(f"Error deleting file {file_path}: {e}")
+        
     # Delete all records if all images paths are NULL
     ImageIndex.objects.filter(
         timestamp__in=ids_to_delete,
