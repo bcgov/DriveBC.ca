@@ -1,5 +1,5 @@
 // React
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,11 +13,11 @@ import GoodCarousel from 'react-good-carousel';
 
 // Internal imports
 import { getCameraOrientation, getFullOrientation } from "../helper";
+import colocatedCamIcon from '../../../images/colocated-camera.svg';
+import trackEvent from "../../shared/TrackEvent";
 
 // Styling
 import './CameraOrientations.scss';
-import colocatedCamIcon from '../../../images/colocated-camera.svg';
-import trackEvent from "../../shared/TrackEvent";
 
 export default function CameraOrientations(props) {
   /* Setup */
@@ -28,18 +28,38 @@ export default function CameraOrientations(props) {
   const xXLargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   // Props
-  const { camera, loadCamDetails } = props;
+  const { camData, loadCamDetails } = props;
+
+  // Refs
+  const imageRef = useRef(null);
 
   // States
-  const initialIndex = camera.camGroup.findIndex(cam => cam.id === camera.id);
+  const initialIndex = camData.camGroup.findIndex(cam => cam.id === camData.id);
   const [currentCamIndex, setCurrentCamIndex] = useState(initialIndex);
   const [currentPane, setCurrentPane] = useState(Math.floor(initialIndex / 2));
+  const [camera, setCamera] = useState(camData);
 
   // Effects
   useEffect(() => {
     const nextCam = camera.camGroup[currentCamIndex];
     loadCamDetails(nextCam);
   }, [currentCamIndex]);
+
+  useEffect(() => {
+    if (camera.last_update_modified !== camData.last_update_modified) {
+      updateCameraImage(camData);
+    }
+
+    setCamera(camData);
+  }, [camData]);
+
+  /* Helpers */
+  const updateCameraImage = (cam) => {
+    // Update the image src
+    if (imageRef.current) {
+      imageRef.current.src = `${cam.links.imageDisplay}?ts=${new Date(cam.last_update_modified).getTime()}`;
+    }
+  }
 
   /* Handlers */
   const rotateCameraOrientation = () => {
@@ -102,6 +122,7 @@ export default function CameraOrientations(props) {
                 }}>
 
                 <img
+                  ref={imageRef}
                   src={cam.links.imageDisplay}
                   alt={cam.name}/>
 
@@ -158,6 +179,7 @@ export default function CameraOrientations(props) {
                 }}}>
 
                 <img
+                  ref={imageRef}
                   src={cam.links.imageDisplay}
                   alt={cam.name} />
 
@@ -208,6 +230,7 @@ export default function CameraOrientations(props) {
               }}>
 
               <img
+                ref={imageRef}
                 src={cam.links.imageDisplay}
                 alt={cam.name} />
 
