@@ -16,10 +16,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('camera_id', models.TextField()),
-                ('original_pvc_path', models.TextField(blank=True, null=True)),
-                ('watermarked_pvc_path', models.TextField(blank=True, null=True)),
-                ('original_s3_path', models.TextField(blank=True, null=True)),
-                ('watermarked_s3_path', models.TextField(blank=True, null=True)),
                 ('timestamp', models.DateTimeField()),
             ],
             options={

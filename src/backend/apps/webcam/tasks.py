@@ -600,16 +600,12 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
         ImageIndex.objects.filter(
             timestamp__in=ids_to_delete,
         ).update(
-            original_pvc_path=None,
-            watermarked_pvc_path=None,
             modified_at=timezone.now()
         )
     else:
         ImageIndex.objects.filter(
             timestamp__in=ids_to_delete,
         ).update(
-            original_s3_path=None,
-            watermarked_s3_path=None,
             modified_at=timezone.now()
         )
 
@@ -629,10 +625,7 @@ def purge_old_pvc_s3_images(age: str = "24", is_pvc: bool = True):
 
     # Delete all records if all images paths are NULL
     ImageIndex.objects.filter(
-        original_pvc_path__isnull=True,
-        watermarked_pvc_path__isnull=True,
-        original_s3_path__isnull=True,
-        watermarked_s3_path__isnull=True
+        timestamp__in=ids_to_delete,
     ).delete()
 
     logger.info("All purged recordes are deleted successfully.")

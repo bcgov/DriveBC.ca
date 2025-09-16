@@ -410,10 +410,6 @@ def load_index_from_db():
     index_db = [
         {
             "camera_id": record.camera_id,
-            "original_pvc_path": record.original_pvc_path,
-            "watermarked_pvc_path": record.watermarked_pvc_path,
-            "original_s3_path": record.original_s3_path,
-            "watermarked_s3_path": record.watermarked_s3_path,
             "timestamp": record.timestamp,
         }
         for record in records

@@ -310,10 +310,7 @@ def save_original_image_to_pvc(camera_id: str, image_bytes: bytes):
             f.write(image_bytes)
     except Exception as e:
         logger.error(f"Error saving original image to PVC {filepath}: {e}")
-
-    original_pvc_path = filepath
     logger.info(f"Original image saved to PVC at {filepath}")
-    return original_pvc_path
 
 def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp: str):  
     os.makedirs(os.path.dirname(f'{PVC_WATERMARKED_PATH}'), exist_ok=True)
@@ -329,9 +326,6 @@ def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp:
         logger.info(f"Watermarked image saved to PVC at {filepath}")
     except Exception as e:
         logger.error(f"Error saving Watermarked image to PVC {filepath}: {e}")
-    
-    watermarked_pvc_path = filepath
-    return watermarked_pvc_path
 
 def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes):  
     os.makedirs(os.path.dirname(f'{DRIVCBC_PVC_WATERMARKED_PATH}'), exist_ok=True)
@@ -347,9 +341,6 @@ def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes):
         logger.info(f"Watermarked image saved to drivebc PVC at {filepath}")
     except Exception as e:
         logger.error(f"Error saving Watermarked image to drivebc PVC {filepath}: {e}")
-    
-    watermarked_pvc_path = filepath
-    return watermarked_pvc_path
 
 async def get_images_within(camera_id: str, hours: int = 720) -> list:
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
@@ -376,16 +367,11 @@ def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     return timestamp
 
 @sync_to_async
-def insert_image_and_update_webcam(camera_id, original_pvc_path, watermarked_pvc_path,
-                                   original_s3_path, watermarked_s3_path, timestamp):
+def insert_image_and_update_webcam(camera_id, timestamp):
     camera = Webcam.objects.get(id=camera_id)
 
     ImageIndex.objects.create(
         camera_id=camera_id,
-        original_pvc_path=original_pvc_path,
-        watermarked_pvc_path=watermarked_pvc_path,
-        original_s3_path=original_s3_path,
-        watermarked_s3_path=watermarked_s3_path,
         timestamp=timestamp,
     )
 
@@ -429,7 +415,6 @@ def push_to_s3(image_bytes: bytes, camera_id: str, is_original: bool, timestamp:
                 logger.info(f"Watermarked image saved to s3 at {key}")
             else:
                 logger.info(f"Original image saved to s3 at {key}")
-    return key
 
 async def is_camera_pushed_too_soon(camera_id: str, timestamp: str):
     image = await sync_to_async(lambda: ImageIndex.objects.filter(camera_id=camera_id).order_by('-id').first())()
@@ -468,24 +453,20 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     local_dt = local_tz.localize(naive_dt)
     utc_dt = local_dt.astimezone(pytz.utc)
     utc_timestamp_str = utc_dt.strftime("%Y%m%d%H%M%S")
-    original_pvc_path = save_original_image_to_pvc(camera_id, body)
-    original_s3_path = push_to_s3(body, camera_id, True, utc_timestamp_str)
+    save_original_image_to_pvc(camera_id, body)
+    push_to_s3(body, camera_id, True, utc_timestamp_str)
     
     image_bytes = watermark(webcam, body, tz, timestamp)
 
     # Save watermarked images to PVC with timestamp
-    watermarked_pvc_path = save_watermarked_image_to_pvc(camera_id, image_bytes, utc_timestamp_str)
+    save_watermarked_image_to_pvc(camera_id, image_bytes, utc_timestamp_str)
     # Save watermarked images to drivebc PVC with camera_id
-    watermarked_drivebc_pvc_path = save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes)
+    save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes)
     # Save watermarked images to S3 with timestamp
-    watermarked_s3_path = push_to_s3(image_bytes, camera_id, False, utc_timestamp_str)
+    push_to_s3(image_bytes, camera_id, False, utc_timestamp_str)
 
     # Insert record into DB
     await insert_image_and_update_webcam(
         camera_id,
-        original_pvc_path,
-        watermarked_pvc_path,
-        original_s3_path,
-        watermarked_s3_path,
         utc_dt
     )
