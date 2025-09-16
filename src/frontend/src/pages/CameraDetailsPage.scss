@@ -18,6 +18,13 @@
   .camera-details {
     display: flex;
     flex-direction: column;
+    
+    // addition
+    width: 100%;
+    @media (min-width: 992px) {
+    flex: 1 1 25%;
+    min-width: initial;
+    }
 
     &__description {
       &__title {
@@ -288,7 +295,8 @@
   }
 
   .camera-imagery {
-
+    // addition
+    flex: 1 1 75%;
     &__details, &__nearby {
       display: flex;
       flex-direction: column;
@@ -338,9 +346,15 @@
 
     &__left {
       margin: 0;
-
       @media (min-width: 768px) {
         padding: 0;
+      }
+
+      @media (min-width: 1200px) {
+        flex: 1 1 77%;
+      }
+      @media (min-width: 1440px) {
+        flex: 1 1 66%;
       }
 
       .image-wrap {
@@ -364,8 +378,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: fit-content;
             min-height: 388px;
+            
           }
 
           .unavailable-message {
@@ -475,7 +489,7 @@
         }
 
         .card-img-box {
-          height: 388px;
+          height: fit-content;
           position: relative;
           overflow: hidden;
 
@@ -489,7 +503,8 @@
 
           img {
             width: 100%;
-            height: 388px;
+            // height: 388px;
+            min-height: 388px;
             object-fit: cover;
 
             &.image-gallery-image {
@@ -766,6 +781,13 @@
     }
 
     &__right {
+       //addition 
+      @media (min-width: 1200px) {
+        flex: 1 1 22%;
+      }
+      @media (min-width: 1440px) {
+        flex: 1 1 33%;
+      }
       .camera-orientations-container {
         .header {
           margin-bottom: 8px;
