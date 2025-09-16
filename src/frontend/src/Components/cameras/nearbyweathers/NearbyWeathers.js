@@ -85,7 +85,12 @@ export default function NearbyWeathers(props) {
   /* Rendering */
   // Loading state
   if (!regionalWeather && !localWeather && !hef) {
-    return <Skeleton />;
+    return (
+      <div>
+        <Skeleton height={48}/>
+        <Skeleton height={600}/>
+      </div>
+    );
   }
 
   // Main component
