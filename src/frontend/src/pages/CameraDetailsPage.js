@@ -479,7 +479,7 @@ export default function CameraDetailsPage() {
   const updateCameraImage = (cam) => {
     setIsUpdated(true);
     setIsLoading(true);
-    setShow(true)
+    setShow(true);
 
     // Update the image src
     if (imageRef.current) {
@@ -808,7 +808,7 @@ export default function CameraDetailsPage() {
                           </p>
                         </div>
                         <div className="camera-imagery__details__right">
-                          <CameraOrientations camera={camera} loadCamDetails={loadCamDetails} />
+                          <CameraOrientations camData={camera} loadCamDetails={loadCamDetails} />
                         </div>
                       </div>
                       <div className="camera-imagery__nearby d-flex">
@@ -1089,7 +1089,7 @@ export default function CameraDetailsPage() {
                                 </p>
                               </div>
                               <div className="camera-imagery__details__right">
-                                <CameraOrientations camera={camera} loadCamDetails={loadCamDetails} />
+                                <CameraOrientations camData={camera} loadCamDetails={loadCamDetails} />
                               </div>
                             </div>
                             {camera &&
