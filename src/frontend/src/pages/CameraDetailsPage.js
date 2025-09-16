@@ -812,18 +812,10 @@ export default function CameraDetailsPage() {
                         </div>
                       </div>
                       <div className="camera-imagery__nearby d-flex">
-                        <div className="camera-imagery__nearby__left">
-                          {camera &&
-                            <React.Fragment>
-                              <NearbyWeathers camera={camera} />
-                            </React.Fragment>
-                          }
-                        </div>
-
-                        <div className="camera-imagery__nearby__right flex-grow-1">
+                        <div className="camera-imagery__nearby__left flex-grow-1">
                           <div className="actions-bar actions-bar--nearby">
                             <span className="title">
-                              <FontAwesomeIcon icon={faMapPin} />
+                              <FontAwesomeIcon icon={faMapPin}/>
                               <span>Area map</span>
                             </span>
                           </div>
@@ -841,21 +833,29 @@ export default function CameraDetailsPage() {
                             </DndProvider>
                           </div>
                         </div>
+
+                        <div className="camera-imagery__nearby__right">
+                          {camera &&
+                            <React.Fragment>
+                              <NearbyWeathers camera={camera}/>
+                            </React.Fragment>
+                          }
+                        </div>
                       </div>
                     </div>
                   )}
 
                   {!largeScreen && (
                     <div className="container--sidepanel__right camera-imagery">
-                        <Tabs
-                          className="mobile-tabs"
-                          activeKey={activeTab}
-                          onSelect={selectedTab => setActiveTab(selectedTab)}>
-                          <Tab
-                            eventKey="webcam"
-                            title={
-                              !largeScreen && (
-                                <span>
+                      <Tabs
+                        className="mobile-tabs"
+                        activeKey={activeTab}
+                        onSelect={selectedTab => setActiveTab(selectedTab)}>
+                        <Tab
+                          eventKey="webcam"
+                          title={
+                            !largeScreen && (
+                              <span>
                                   <FontAwesomeIcon icon={faVideoOutline} /><span>Details</span>
                                 </span>
                               )
@@ -868,9 +868,10 @@ export default function CameraDetailsPage() {
                                 </div>
                                 <div className="camera-details__more__update-detail">
                                   <p className="number">{nextUpdate}</p>
+
                                   <OverlayTrigger placement="top" overlay={tooltipUpdateInterval}>
-                                      <button className="tooltip-info" aria-label="update interval tooltip" aria-describedby="tooltipUpdateInterval">?</button>
-                                    </OverlayTrigger>
+                                    <button className="tooltip-info" aria-label="update interval tooltip" aria-describedby="tooltipUpdateInterval">?</button>
+                                  </OverlayTrigger>
                                 </div>
                               </div>
 
