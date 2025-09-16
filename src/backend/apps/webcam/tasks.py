@@ -550,7 +550,10 @@ def update_webcam_db(cam_id: int, cam_data: dict):
         is_new=cam_data.get("isNew", False),
         is_on_demand=cam_data.get("isOnDemand", False),
         update_period_mean=camera_status["mean_interval"],
-        update_period_stddev= camera_status["stddev_interval"]),  
+        update_period_stddev= camera_status["stddev_interval"],
+        marked_stale=camera_status["stale"],
+        marked_delayed=camera_status["delayed"]
+        ),
     return updated_count
 
 def purge_old_images():
