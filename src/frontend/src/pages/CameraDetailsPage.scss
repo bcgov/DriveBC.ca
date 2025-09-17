@@ -15,12 +15,21 @@
     padding-bottom: 16px;
   }
 
+   .container--sidepanel {
+    @media (min-width: 992px) {
+      flex-direction: column;
+    }
+    @media (min-width: 1200px) {
+      flex-direction: row;
+    }    
+   }
+
   .camera-details {
     display: flex;
     flex-direction: column;
     width: 100%;
 
-    @media (min-width: 992px) {
+    @media (min-width: 1200px) {
       flex: 1 1 25%;
       min-width: initial;
     }
@@ -70,6 +79,9 @@
       }
 
       @media (min-width: 992px) {
+        display: flex;
+      }
+      @media (min-width: 1200px) {
         display: inline;
       }
 
@@ -137,9 +149,10 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-
-        @media (min-width: 768px) {
+        @media (min-width: 576px) {
           flex-direction: row;
+        }
+        @media (min-width: 768px) {
           align-items: center;
         }
 
@@ -160,23 +173,38 @@
   .actions-bar {
     display: flex;
     justify-content: space-between;
-    flex-direction: column;
     padding: 0.5rem;
+    height: 44px;
+    align-items: center;
     background-color: $Blue10;
     color: $BC-Blue;
     border-radius: 8px;
     margin-bottom: 8px;
+    
+    .title {
+      font-weight: 700;
+      display: flex;
+      align-items: center;
 
+      svg {
+        margin-right: 8px;
+      }
+    }
+    @media (max-width: 576px) {
+      span {
+        font-size: 0.875rem;
+      }
+    }
     @media (min-width: 576px) {
       flex-direction: row;
     }
 
     @media (min-width: 992px) {
-      min-height: 48px;
+      min-height: 44px;
     }
 
     &--nearby {
-      height: 48px;
+      height: 44px;
     }
 
     &--webcam {
@@ -315,16 +343,50 @@
 
     &__nearby {
       flex-direction: column;
-
-      @media (min-width: 1400px) {
+      gap: 24px;
+      @media (min-width: 992px) {
         flex-direction: row;
       }
-
+      @media (min-width: 1200px) {
+        gap: initial;
+      }
+      
       &__right {
-        margin-left: 0;
 
-        @media (min-width: 1400px) {
-          margin-left: 24px;
+      }
+      .nearby-weathers-container {      
+        .popup {
+          &:focus {
+            outline: none;
+            box-shadow: none;
+          }
+        }
+      }
+      .forecast-card {
+        container: card / inline-size;
+        @container card (width < 227px) {
+          .header {
+            flex-direction: column;
+          }
+        }
+  
+      }
+
+
+      .forecast-cards-container {
+        flex-direction: column;
+        gap: 8px;
+        
+        .forecast-name {
+          font-size: 0.875rem;
+        }
+        .weather-icon {
+          margin-right: 0.5rem;
+        }
+
+        @media (min-width: 1440px) {
+          flex-direction: row;
+          gap: 12px;
         }
       }
     }
@@ -785,7 +847,9 @@
       }
       .camera-orientations-container {
         .header {
+          height: 44px;
           margin-bottom: 8px;
+          padding: 0.5rem;
         }
       }
     }
@@ -793,6 +857,10 @@
 
   .camera-imagery__nearby {
     &__left {
+      width: 100%;
+      @media (min-width: 992px) {
+        width: 50%;
+      }
       .actions-bar--nearby {
         .title {
           font-weight: 700;
@@ -807,9 +875,12 @@
     }
     &__right {
       width: 100%;
+      @media (min-width: 992px) {
+        width: 50%;
+      }
 
       @media (min-width: 1440px) {
-        width: 560px;
+        // width: 560px;
       }
     }
   }
@@ -851,6 +922,11 @@
     bottom: 0;
     width: 100%;
     height: 388px;
+    clip-path: inset(-56px 0 0 0px);
+
+   @media (min-width: 992px) {
+    height: calc(100% - 64px);
+   }
 
     .map {
       width: 100%;
@@ -866,6 +942,11 @@
     .map-btn {
       background-color: $Blue10;
 
+      &.cam-location, &.map-view, &.open-filters {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+      }
+
       .btn {
         background-color: $Blue10;
       }
@@ -876,7 +957,7 @@
 
       &.map-view {
         position: absolute;
-        top: -49px;
+        top: -45px;
         right: 8px;
         bottom: initial;
         left: initial;
@@ -956,6 +1037,16 @@
   }
 }
 
+.tab-content {
+  margin-top: 24px;
+  .map-context-wrap {
+    min-height: 388px;
+    height: calc(100vh - 470px);
+  }
+  .camera-imagery__nearby {
+    margin-top: 2px;
+  }
+}
 .loader-container {
   display: flex;
   justify-content: center;

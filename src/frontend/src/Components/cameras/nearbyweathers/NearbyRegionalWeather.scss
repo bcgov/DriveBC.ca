@@ -120,7 +120,7 @@
       }
 
       .time-container {
-        margin: 4px;
+        margin: 0 4px;
 
         .friendly-time {
           &-text {
@@ -170,7 +170,7 @@
             margin-right: 4rem;
 
             .weather-icon {
-              font-size: 2rem;
+              font-size: 3rem;
               color: lighten(saturate($Type-Primary, 0.47), 40.59)
             }
 

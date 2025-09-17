@@ -29,17 +29,22 @@
   .rotate-direction-btn {
     background: none;
     border: none;
+    padding: 0;
+    @media (max-width: 576px) {
+      font-size: 0.875rem;
+    }
   }
 
   .main-content {
     @media (min-width: 1200px) {
       height: fit-content;
-      overflow-y: auto; 
+      overflow-y: scroll; 
       max-height: 388px;   
     }
 
     &.camCount1 {
       column-count: unset;
+      overflow-y: hidden;
 
       @media (min-width: 1440px) {
         column-count: 2;
@@ -51,10 +56,12 @@
 
     &.camCount2 {
       column-count: 2;
+      overflow-y: hidden;
     }
 
     &.camCount3 {
       column-count: 3;
+      overflow-y: hidden;
     }
 
     &.camCount2, &.camCount3 {
@@ -92,12 +99,22 @@
       height: 132px;
       border-radius: 8px;
       overflow: hidden;
-      margin-bottom: 12px;
+      // margin-bottom: 12px;
       cursor: pointer;
       display: flex;
       align-content: center;
       justify-content: center;
-      background: black;
+      border: 3px solid transparent;
+      opacity: 1;
+      &:hover {
+        .label {
+          background-color: $Grey40;
+        }
+        img {
+          transform: scale(1.15);
+          transition: 0.3s ease-in-out all;
+        }
+      }
 
       @media (min-width: 768px) {
         width: fit-content;
