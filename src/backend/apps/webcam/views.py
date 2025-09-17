@@ -153,9 +153,9 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
             "id", "last_update_modified", "update_period_mean", "update_period_stddev"
         )
 
-        stale_ids = [w.id for w in qs if self.is_stale(w, now)]
+        stale_ids = sorted([w.id for w in qs if self.is_stale(w, now)])
         count_stale = len(stale_ids)
-        delayed_ids = [w.id for w in qs if self.is_delayed(w, now)]
+        delayed_ids = sorted([w.id for w in qs if self.is_delayed(w, now)])
         count_delayed = len(delayed_ids)
 
         
