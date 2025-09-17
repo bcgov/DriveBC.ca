@@ -150,6 +150,9 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         countStale = Webcam.objects.filter(should_appear=True, marked_stale=True).count()
         countDelayed = Webcam.objects.filter(should_appear=True, marked_delayed=True).count()
         totalCams = Webcam.objects.filter(should_appear=True).count()
+        qs = Webcam.objects.filter(should_appear=True)
+        stale_ids = list(qs.filter(marked_stale=True).values_list("id", flat=True))
+        delayed_ids = list(qs.filter(marked_delayed=True).values_list("id", flat=True))
         host = request.get_host()
         path = reverse('webcams-staleAndDelayed')
         self_link = f"{request.scheme}://{host}{path}"
@@ -162,6 +165,8 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
             "cams": totalCams,
             "stale": countStale,
             "delayed": countDelayed,
+            "stale_ids": stale_ids,
+            "delayed_ids": delayed_ids,
         }
 
         return Response(data)
