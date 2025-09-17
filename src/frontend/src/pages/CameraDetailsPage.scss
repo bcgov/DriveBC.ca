@@ -502,11 +502,6 @@
 
           img {
             width: 100%;
-            object-fit: cover;
-
-            @media (min-width: 768px) {
-              min-height: 388px;
-            }
 
             &.image-gallery-image {
               height: 388px;
