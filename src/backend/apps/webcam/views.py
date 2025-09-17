@@ -147,12 +147,24 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
             url_path='staleAndDelayed',
             )
     def staleAndDelayed(self, request, pk=None):
-        countStale = Webcam.objects.filter(should_appear=True, marked_stale=True).count()
-        countDelayed = Webcam.objects.filter(should_appear=True, marked_delayed=True).count()
+
+        now = timezone.now()
+        qs = Webcam.objects.filter(should_appear=True).only(
+            "id", "last_update_modified", "update_period_mean", "update_period_stddev"
+        )
+
+        stale_ids = [w.id for w in qs if self.is_stale(w, now)]
+        count_stale = len(stale_ids)
+        delayed_ids = [w.id for w in qs if self.is_delayed(w, now)]
+        count_delayed = len(delayed_ids)
+
+        
+        # countStale = Webcam.objects.filter(should_appear=True, marked_stale=True).count()
+        # countDelayed = Webcam.objects.filter(should_appear=True, marked_delayed=True).count()
         totalCams = Webcam.objects.filter(should_appear=True).count()
         qs = Webcam.objects.filter(should_appear=True)
-        stale_ids = list(qs.filter(marked_stale=True).values_list("id", flat=True))
-        delayed_ids = list(qs.filter(marked_delayed=True).values_list("id", flat=True))
+        # stale_ids = list(qs.filter(marked_stale=True).values_list("id", flat=True))
+        # delayed_ids = list(qs.filter(marked_delayed=True).values_list("id", flat=True))
         host = request.get_host()
         path = reverse('webcams-staleAndDelayed')
         self_link = f"{request.scheme}://{host}{path}"
@@ -163,8 +175,8 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
             },
             "time": timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
             "cams": totalCams,
-            "stale": countStale,
-            "delayed": countDelayed,
+            "stale": count_stale,
+            "delayed": count_delayed,
             "stale_ids": stale_ids,
             "delayed_ids": delayed_ids,
         }
@@ -411,6 +423,23 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     def staleAndDelayed_public(self, request, pk=None):
         # forward to the real admin logic
         return self._staleAndDelayed(request, pk)
+    
+    @staticmethod
+    def is_stale(obj, now=None):
+        now = now or timezone.now()
+        std = obj.update_period_stddev or 0.0
+        diff_seconds = (now - obj.last_update_modified).total_seconds()
+        threshold = max(obj.update_period_mean * 1.1,
+                        obj.update_period_mean + 2 * std)
+        return diff_seconds > threshold
+    
+    @staticmethod
+    def is_delayed(obj, now=None):
+        now = now or timezone.now()
+        std = obj.update_period_stddev or 0.0
+        diff_seconds = (now - obj.last_update_modified).total_seconds()
+        threshold = 2 * obj.update_period_mean + 2 * std
+        return diff_seconds > threshold 
 
 class WebcamTestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = WebcamAPI.queryset
