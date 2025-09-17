@@ -194,7 +194,7 @@ jobs:
 
     - name: Helm upgrade on OpenShift GoldDR Environment
       run: |
-        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml -f ./infrastructure/main/values-dev-dr.yaml ./infrastructure/main --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
+        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml -f ./infrastructure/main/values-dev-dr.yaml ./infrastructure/main --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set image-consumer.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
 
 
 
