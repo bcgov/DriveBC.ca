@@ -164,7 +164,7 @@ jobs:
         insecure_skip_tls_verify: false
     - name: Helm upgrade on OpenShift Gold Environment
       run: |
-        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml ./infrastructure/main --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
+        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml ./infrastructure/main --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set image-consumer.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
 
   # I have this run after the push to Gold because I want to make sure that Gold runs the migrations first. Gold DR can't run migrations as DB is read-only
   update-openshift-golddr:
