@@ -559,7 +559,7 @@ def update_webcam_db(cam_id: int, cam_data: dict):
 def purge_old_images():
     logger.info("Purging webcam images...")
     REPLAY_THE_DAY_HOURS = os.getenv("REPLAY_THE_DAY_HOURS", "24")
-    purge_old_pvc_images(age=REPLAY_THE_DAY_HOURS, is_pvc=True)
+    purge_old_pvc_images(age=REPLAY_THE_DAY_HOURS)
 
 def backup_purge_old_images():
     backup_purge_old_pvc_images()
