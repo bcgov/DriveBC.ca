@@ -1,0 +1,42 @@
+@import "../../../../styles/variables";
+
+.forecast-cards-container {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  column-count: 2;
+  column-gap: 16px;
+          
+  .forecast-card {
+    width: 100%;
+    border: 1px solid $Grey20;
+    box-shadow: 0px 3.2px 7.2px 0px #00000021;
+    padding: .75rem 1rem;
+    border-radius: 8px;
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.25rem 0 0.5rem 0;
+
+      .forecast-name {
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .forecast-temp-text {
+        font-size: 0.875rem;
+      }
+
+      .weather-icon {
+        margin-right: 1rem;
+      }
+    }
+
+    .forecast-text-summary {
+      font-size: 0.875rem;
+    }
+  }
+}

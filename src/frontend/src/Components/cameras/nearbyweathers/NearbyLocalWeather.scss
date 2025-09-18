@@ -1,0 +1,123 @@
+@import "../../../styles/variables";
+
+.popup {
+  // Local weather popup
+  &--cam--weather--local {
+    .popup__title {
+      background-color: $Grey30;
+      border-top: 4px solid $Type-Primary;
+
+      .name {
+        color: $Type-Primary;
+      }
+
+      .sub-name {
+        font-size: 0.875rem;
+        color: $Grey80;
+      }
+
+      &__icon {
+        background-color: $Type-Primary;
+        color: white;
+      }
+    }
+
+    .popup__content {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 4px;
+      
+      p {
+        margin-bottom: 0.4rem;
+      }
+
+      &__title {
+        padding-bottom: 1rem;
+
+        .name {
+          color: $Type-Primary;
+          font-size: 2rem;
+        }
+
+        .description {
+          font-size: 0.875rem;
+        }
+
+        .friendly-time {
+          margin-top: 0.5rem;
+
+          &-text {
+            color: $Grey80;
+            font-size: 0.875rem;
+          }
+        }
+      }
+
+      &__description {
+        flex-grow: 1;
+        & > div {
+          padding-bottom: 1rem;
+        }
+        .temperatures {
+          display: flex;
+          justify-content: space-around;
+          text-align: center;
+
+          .temperature {
+            .label {
+              color: $Grey80;
+            }
+
+            .data {
+              font-size: 4rem;
+              font-weight: 400;
+            }
+          }
+        }
+      }
+
+      &__footer {
+        padding: 1rem;
+        margin-top: auto;
+
+        p {
+          font-size: 0.875rem;
+          color: $Grey80;
+          text-align: center;
+          margin-bottom: 0.4rem;
+        }
+      }
+    }
+  }
+
+  .data-card-container {
+    .container-label {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .hourly-forecast {
+      .data-card__row:not(:first-child) {
+        padding-top: 0.4rem;
+      }
+
+      .data-card__row {
+        margin-top: 0;
+        display: flex;
+        justify-content: space-between;
+
+        .friendly-time-text {
+          font-size: 0.875rem;
+          color: $Grey80;
+        }
+
+        .temperature {
+          font-size: 0.875rem;
+          font-weight: 700;
+          color: $Type-Primary;
+        }
+      }
+    }
+  }
+}

@@ -5,6 +5,16 @@
 }
 
 .forecast-tab-list {
+  &.show-cards {
+    .nav-tabs{
+      justify-content: flex-start;
+
+      .nav-item {
+        padding-right: 2rem;
+      }
+    }
+  }
+
   .nav-tabs {
     flex-wrap: nowrap;
     justify-content: space-between;
@@ -17,6 +27,7 @@
       display: flex;
       flex: 1;
     }
+
     li {
       flex: 0 auto;
     }

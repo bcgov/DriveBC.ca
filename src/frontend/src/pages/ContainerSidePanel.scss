@@ -8,12 +8,12 @@
     padding-top: 24px;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 992px) {
     flex-direction: row;
   }
 
   &__left {
-    margin-right: 28px;
+    margin-right: 24px;
     padding-bottom: 24px;
     width: 100%;
     align-self: flex-start;
@@ -22,7 +22,7 @@
       position: sticky;
       top: 1rem;
       width: 360px;
-      min-width: 360px;
+      min-width: 310px;
     }
 
     @media (min-width: 1200px) {

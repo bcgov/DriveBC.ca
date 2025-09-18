@@ -131,7 +131,7 @@ def update_relations():
     update_object_relations()
 
 
-@db_periodic_task(crontab(minute="*/5"))
+@db_periodic_task(crontab(minute="0,15,30,45"))
 @lock_task('wildfires-lock')
 def update_wildfires():
     populate_all_wildfire_data()
