@@ -23,6 +23,12 @@
   width: 100%;
   height: 100%;
 
+  @media (min-width: 576px) {
+    .error-notification {
+      top: 118px;
+    }
+  }
+
   .map-container {
     display: flex;
     align-items: center;

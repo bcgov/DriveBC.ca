@@ -517,7 +517,9 @@ export default function CameraDetailsPage() {
 
   return (
     <div className="camera-page">
-      {showNetworkError && <NetworkErrorPopup />}
+      {showNetworkError &&
+        <NetworkErrorPopup />
+      }
 
       {!showNetworkError && showServerError && (
         <ServerErrorPopup setShowServerError={setShowServerError} />

@@ -493,9 +493,9 @@ button.text-only-btn {
   background: $Stale-Notification;
   transition: margin-left 0.25s ease-in-out;
   margin-left: 0;
+  z-index: 1000;
 
   @media (min-width: 576px) {
-    top: 118px;
     width: 374px;
   }
 
