@@ -106,9 +106,9 @@ def calculate_camera_status(timestamp_str: str) -> tuple[float, float]:
         "delayed": delayed,
     }
 
-def get_image_list_from_db(camera_id, age="TIMELAPSE_HOURS"):
+def get_image_list_from_db(camera_id):
     camera_id = int(camera_id)
-    hours = int(os.getenv(age))
+    hours = 24
     now = datetime.now(timezone.utc)
     cutoff = now - timedelta(hours=hours)
     results = ImageIndex.objects.filter(camera_id=camera_id, timestamp__gte=cutoff).order_by('timestamp')
@@ -117,13 +117,13 @@ def get_image_list_from_db(camera_id, age="TIMELAPSE_HOURS"):
     
 def get_image_list(camera_id, age="TIMELAPSE_HOURS"):
     if age == "TIMELAPSE_HOURS":
-        return get_image_list_from_s3(camera_id, age)
+        return get_image_list_from_s3(camera_id)
     else:
-        return get_image_list_from_db(camera_id, age)
+        return get_image_list_from_db(camera_id)
 
-def get_image_list_from_s3(camera_id, age="TIMELAPSE_HOURS"):
+def get_image_list_from_s3(camera_id):
     camera_id = int(camera_id)
-    hours = int(os.getenv(age, 24))
+    hours = 720
     now = datetime.now(timezone.utc)
     cutoff = now - timedelta(hours=hours)
     S3_BUCKET = os.getenv("S3_BUCKET")
