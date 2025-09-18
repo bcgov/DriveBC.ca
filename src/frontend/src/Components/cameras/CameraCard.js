@@ -334,13 +334,24 @@ export default function CameraCard(props) {
 
         {showLoader? <Skeleton  width={149} height={20}/> :
           <div className={`camera-orientations ${isLoading ? 'no-margin-top' : ''}`}>
-            <img
-              className="colocated-camera-icon"
-              src={colocatedCamIcon}
-              role="presentation"
-              alt="colocated cameras icon"
+            <div
+              className="rotate-cam-container"
+              tabIndex={0}
               onClick={handleCameraImageClick}
-              style={{ cursor: "pointer" }} />
+              onKeyDown={(keyEvent) => {
+                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                  handleCameraImageClick(keyEvent);
+                }
+              }}>
+
+              <img
+                src={colocatedCamIcon}
+                role="presentation"
+                alt="colocated cameras icon"
+                onClick={handleCameraImageClick}/>
+
+              <span>Direction</span>
+            </div>
 
             {camera.camGroup.map(cam => (
               <Button
@@ -364,9 +375,9 @@ export default function CameraCard(props) {
         {showLoader ?
           <div>
             <Skeleton height={20}/>
-            <Skeleton width={210} height={8} />
-            <Skeleton width={246} height={8} />
-            <Skeleton width={261} height={8} />
+            <Skeleton width={210} height={8}/>
+            <Skeleton width={246} height={8}/>
+            <Skeleton width={261} height={8}/>
           </div> :
 
           <a className="camera-name bold" onClick={handleClick} onKeyDown={handleKeyDown}>{camera.name}</a>

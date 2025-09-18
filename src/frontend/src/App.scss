@@ -148,25 +148,37 @@ body,
 
 // Common styling
 .camera-orientations {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  display: flex;
   align-items: center;
   background-color: $Blue10;
   border-radius: 4px;
   margin-top: 8px;
   padding: 4px 0px;
+  font-size: 14px;
+  font-weight: bold;
+  color: $BC-Blue;
 
-  .colocated-camera-icon {
-    margin: 0 auto;
+  .rotate-cam-container {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    img {
+      margin: 0 8px;
+    }
+
+    span {
+      margin-right: 12px;
+    }
   }
 
   .btn.camera-direction-btn {
-    margin: 0 auto;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     border-radius: 8px;
     font-size: 0.875rem;
     font-weight: 700;
-    width: 6ch;
+    width: 5ch;
 
     &:hover {
       background: $BC-Blue;

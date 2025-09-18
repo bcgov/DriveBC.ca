@@ -350,14 +350,23 @@ export default function CamPanel(props) {
           )}
 
           <div className="camera-orientations">
-            <img
-              className="colocated-camera-icon"
-              src={colocatedCamIcon}
-              role="presentation"
-              alt="colocated cameras icon"
+            <div
+              className="rotate-cam-container"
+              tabIndex={0}
               onClick={handleCameraImageClick}
-              style={{ cursor: "pointer" }}
-              />
+              onKeyDown={(keyEvent) => {
+                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                  handleCameraImageClick(keyEvent);
+                }
+              }}>
+
+              <img
+                src={colocatedCamIcon}
+                role="presentation"
+                alt="colocated cameras icon"/>
+
+              <span>Direction</span>
+            </div>
 
             {renderCamGroup()}
           </div>
