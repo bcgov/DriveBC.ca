@@ -1006,15 +1006,16 @@ export default function DriveBCMap(props) {
       )}
 
       {isCamDetail && (
-        <Filters
+        <FilterTabs
           mapLayers={mapLayers}
           disableFeatures={isCamDetail}
           enableRoadConditions={true}
           enableChainUps={true}
-          textOverride={'Map Layers'}
           isCamDetail={isCamDetail}
           referenceData={referenceData}
-          loadingLayers={loadingLayers} />
+          loadingLayers={loadingLayers}
+          open={openTabs}
+          setOpen={setOpenTabs} />
       )}
 
       {showLocationAccessError &&
