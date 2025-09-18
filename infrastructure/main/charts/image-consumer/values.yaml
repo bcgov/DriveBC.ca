@@ -1,0 +1,16 @@
+fullnameOverride: image-consumer
+nameOverride: image-consumer
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/bcgov/drivebc-django
+  tag: latest
+
+deployment:
+  resources:
+    requests:
+      cpu: 75m
+      memory: 150Mi
+      
+
