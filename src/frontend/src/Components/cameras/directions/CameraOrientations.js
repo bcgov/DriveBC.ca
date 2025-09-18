@@ -23,8 +23,7 @@ export default function CameraOrientations(props) {
   /* Setup */
   // Misc
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
-  const largeScreen = useMediaQuery('only screen and (min-width: 768px)');
-  // const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
+  const inBetweenScreen = useMediaQuery('only screen and (min-width: 576px) and (max-width: 1199px)');
   const xXLargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   // Props
@@ -34,10 +33,19 @@ export default function CameraOrientations(props) {
   const imageRef = useRef(null);
 
   // States
+  const [camera, setCamera] = useState(camData);
+  const showCompactLayout = (camera.camGroup.length > 2) && smallScreen;
+  const showReducedLayout = (camera.camGroup.length > 3) && inBetweenScreen;
+  const showFullLayout = (
+    ((camera.camGroup.length < 3) && smallScreen) ||
+    ((camera.camGroup.length < 4) && inBetweenScreen) ||
+    xXLargeScreen
+  );
+  const perPane = showCompactLayout ? 2 : 3;
+
   const initialIndex = camData.camGroup.findIndex(cam => cam.id === camData.id);
   const [currentCamIndex, setCurrentCamIndex] = useState(initialIndex);
-  const [currentPane, setCurrentPane] = useState(Math.floor(initialIndex / 2));
-  const [camera, setCamera] = useState(camData);
+  const [currentPane, setCurrentPane] = useState(Math.floor(initialIndex / perPane));
 
   // Effects
   useEffect(() => {
@@ -74,7 +82,7 @@ export default function CameraOrientations(props) {
   // Switch orientation for mobile carousel
   const switchOrientation = (index) => {
     setCurrentCamIndex(index);
-    setCurrentPane(Math.floor(index / 2));
+    setCurrentPane(Math.floor(index / perPane));
   }
 
   /* Rendering */
@@ -96,12 +104,12 @@ export default function CameraOrientations(props) {
         </button>
       </div>
 
-      {(camera.camGroup.length > 2) && smallScreen && !largeScreen && !xXLargeScreen &&
+      {(showCompactLayout || showReducedLayout) &&
         <div className="main-content carousel-container--camera-orientations">
           <GoodCarousel
             className="camera-orientations-carousel"
             currentPane={currentPane}
-            itemsPerPane={2}
+            itemsPerPane={perPane}
             gap={16}
             itemPeek={12}
             animationDuration={0.4}>
@@ -154,65 +162,7 @@ export default function CameraOrientations(props) {
         </div>
       }
 
-      {(camera.camGroup.length > 3) && !smallScreen && !xXLargeScreen &&
-        <div className="main-content carousel-container--camera-orientations">
-          <GoodCarousel
-            className="camera-orientations-carousel"
-            currentPane={currentPane}
-            itemsPerPane={3}
-            gap={16}
-            itemPeek={12}
-            animationDuration={0.4}>
-
-            {camera.camGroup.map(cam => (
-              <div
-                key={cam.id}
-                className={'orientation' + (camera.id === cam.id ? ' current' : '')}
-                onClick={() => {
-                  loadCamDetails(cam);
-                  trackEvent("click", "camera-details", "camera-orientation", cam.name);
-                }}
-                onKeyDown={keyEvent => {
-                  if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                  loadCamDetails(cam);
-                  trackEvent("click", "camera-details", "camera-orientation", cam.name);
-                }}}>
-
-                <img
-                  ref={imageRef}
-                  src={cam.links.imageDisplay}
-                  alt={cam.name} />
-
-                <span
-                  aria-label={getCameraOrientation(cam.orientation)}
-                  className={'label' + (camera.id === cam.id ? ' current' : '')}>
-
-                  {getFullOrientation(cam.orientation)}
-                </span>
-              </div>
-            ))}
-          </GoodCarousel>
-
-          {currentPane === 0 && (
-            <Button
-              className="carousel-button next"
-              onClick={() => setCurrentPane(currentPane + 1)}>
-              <FontAwesomeIcon icon={faChevronRight} />
-            </Button>
-          )}
-
-          {currentPane === 1 && (
-            <Button
-              className="carousel-button prev"
-              onClick={() => setCurrentPane(currentPane - 1)}>
-              <FontAwesomeIcon icon={faChevronLeft} />
-            </Button>
-          )}
-        </div>
-      }
-
-      {( ((camera.camGroup.length < 3) && smallScreen) || ((camera.camGroup.length < 4) &&
-      !smallScreen && !xXLargeScreen) || xXLargeScreen ) &&
+      {showFullLayout &&
         <div className={'main-content' + ' camCount' + camera.camGroup.length}>
           {camera.camGroup.map((cam, index) => (
             <div
