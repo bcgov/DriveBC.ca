@@ -36,18 +36,6 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     @action(
             detail=True, 
             methods=['get'], 
-            url_path='originalImage', 
-            )
-    def image_source(self, request, pk=None):
-        image_path = f"/app/images/webcams/originals/{pk}.jpg"
-        if not os.path.exists(image_path):
-            raise Http404("Image not found.")
-
-        return FileResponse(open(image_path, 'rb'), content_type='image/jpeg')
-
-    @action(
-            detail=True, 
-            methods=['get'], 
             url_path='replayTheDay',
             )
     def replayTheDay(self, request, pk=None):
@@ -178,6 +166,13 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         return Response(data)
 
     # internal logic
+    def _original_image_impl(self, pk):
+        image_path = f"/app/images/webcams/originals/{pk}.jpg"
+        if not os.path.exists(image_path):
+            raise Http404("Image not found.")
+
+        return FileResponse(open(image_path, 'rb'), content_type='image/jpeg')
+    
     def _timelapse_impl(self, pk):
         timestamps = get_image_list(pk, "TIMELAPSE_HOURS")
         return Response(timestamps, status=status.HTTP_200_OK)
@@ -342,6 +337,18 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     @action(
         detail=True,
         methods=['get'],
+        url_path='admin-originalImage',
+        permission_classes=[IsAdminUser],
+    )
+    def original_image_admin(self, request, pk=None):
+        user = request.user
+        if not user.is_authenticated or not user.is_staff:
+            return Response({"detail": "Admin access required."}, status=status.HTTP_403_FORBIDDEN)
+        return self._original_image_impl(pk)
+
+    @action(
+        detail=True,
+        methods=['get'],
         url_path='admin-timelapse',
         permission_classes=[IsAdminUser],
     )
@@ -383,6 +390,16 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         return self._staleAndDelayed(request, pk)
 
     # Public proxy endpoint
+    @action(
+        detail=True,
+        methods=['get'],
+        url_path='originalImage',
+        permission_classes=[AllowAny],
+    )
+    def timelapse_public(self, request, pk=None):
+        # forward to the real admin logic
+        return self._original_image_impl(pk)
+
     @action(
         detail=True,
         methods=['get'],

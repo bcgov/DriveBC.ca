@@ -161,7 +161,7 @@
 
         async function displayOriginalImage() {
           let apiUrl = imagePaths[imagePaths.length - 1];
-          apiUrl = apiUrl.replace(/admin-timelapse\/\d{14}\//, "originalImage/");
+          apiUrl = apiUrl.replace(/admin-timelapse\/\d{14}\//, "admin-originalImage/");
           const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElemOriginal.src = URL.createObjectURL(blob);
