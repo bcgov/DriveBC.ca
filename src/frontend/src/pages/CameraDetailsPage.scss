@@ -879,6 +879,11 @@
           }
         }
       }
+      .map-wrap {
+        .filters-menu {
+          height: calc(100% - 140px);
+        }
+      }
     }
     &__right {
       width: 100%;
@@ -989,56 +994,6 @@
       &.zoom-btn {
         bottom: 48px;
         right: 8px;
-      }
-    }
-
-    .filters {
-      position: absolute;
-      right: 0;
-      left: initial;
-      max-height: initial;
-      height: auto;
-
-      @media (min-width: 992px) {
-        top: 0;
-        bottom: initial;
-      }
-
-      button {
-        display: flex;
-        align-items: center;
-
-        span {
-          white-space: nowrap;
-        }
-      }
-
-      .legacy-filters-menu {
-        min-width: 300px;
-        z-index: 100;
-        top: 8px;
-        right: 8px;
-
-        @media (max-width: 575px) {
-          position: fixed;
-          height: calc(100vh - 120px);
-          width: 100%;
-          top: initial;
-          bottom: 0;
-          right: 0;
-          z-index: 100;
-          overflow-y: auto;
-
-          .filters-list {
-            height: calc(100% - 38px);
-          }
-        }
-
-        .filters-title {
-          &__container {
-            background: $Grey10;
-          }
-        }
       }
     }
   }
