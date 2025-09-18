@@ -47,6 +47,9 @@
     <div style="margin-top: 20px;">
       <div style="margin: 20px 0; border: 1px solid #ccc; padding: 15px; border-radius: 5px; max-width: 400px;">
         <h3>Select Date & Time Range</h3>
+        <div>
+          <small>Download original images as a ZIP file. Timezone: {{ timezone }}</small>
+        </div>
 
         <label style="display: block; margin-bottom: 8px;">
           <input type="radio" name="date-option" value="all" checked>
@@ -58,7 +61,7 @@
           Custom Date & Time Range
         </label>
 
-        <div id="date-range-inputs" style="margin-left: 20px; display: none;">
+        <!-- <div id="date-range-inputs" style="margin-left: 20px; display: none;">
           <div style="display: grid; grid-template-columns: 50px auto; align-items: center; gap: 8px; margin-bottom: 10px;">
             <label for="date-from" style="text-align: right;">From:</label>
             <div>
@@ -74,8 +77,29 @@
               <input type="time" id="time-to" value="23:59">
             </div>
           </div>
+        </div> -->
+
+        <div id="date-range-inputs" style="margin-left: 20px; display: none;">
+          <div style="display: grid; grid-template-columns: 50px auto; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <label for="date-from" style="text-align: right;">From:</label>
+            <div>
+              <input type="date" id="date-from" value="{{ default_start_date|default:'' }}">
+              <input type="time" id="time-from" value="{{ default_start_time|default:'00:00' }}">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 50px auto; align-items: center; gap: 8px;">
+            <label for="date-to" style="text-align: right;">To:</label>
+            <div>
+              <input type="date" id="date-to" value="{{ default_end_date|default:'' }}">
+              <input type="time" id="time-to" value="{{ default_end_time|default:'23:59' }}">
+            </div>
+          </div>
         </div>
 
+        <p style="margin-top:10px; font-style: italic;">
+          Time zone: {{ timezone }}
+        </p>
         <div style="margin-top: 15px;">
           <button type="button" id="download-btn">Download</button>
         </div>
@@ -108,7 +132,7 @@
 
         async function downloadImage(from, to, timeFrom, timeTo) {
           let apiUrl = imagePaths[imagePaths.length - 1];
-          apiUrl = apiUrl.replace(/\/timelapse\/\d{14}/, "/admin-timelapse/download");
+          apiUrl = apiUrl.replace(/\/admin-timelapse\/\d{14}/, "/admin-timelapse/download");
           // If from/to provided, append them as query params
           const params = new URLSearchParams();
           if (from) params.append("from", from);
@@ -137,7 +161,7 @@
 
         async function displayOriginalImage() {
           let apiUrl = imagePaths[imagePaths.length - 1];
-          apiUrl = apiUrl.replace(/timelapse\/\d{14}\//, "originalImage/");
+          apiUrl = apiUrl.replace(/admin-timelapse\/\d{14}\//, "originalImage/");
           const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElemOriginal.src = URL.createObjectURL(blob);

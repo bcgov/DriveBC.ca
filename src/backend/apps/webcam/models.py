@@ -6,6 +6,10 @@ import os
 from pathlib import Path
 from apps.shared.status import get_image_list
 
+from timezonefinder import TimezoneFinder
+import pytz
+from django.utils import timezone
+
 
 class Webcam(BaseModel):
     # Description
@@ -74,6 +78,15 @@ class Webcam(BaseModel):
             image_paths = []
             for ts in timestamps:
                 filename = ts
-                img_path = f"{TIMELAPSE_API_ROOT_URL}/{self.id}/timelapse/{filename}/"
+                img_path = f"{TIMELAPSE_API_ROOT_URL}/{self.id}/admin-timelapse/{filename}/"
                 image_paths.append(img_path)
             return image_paths
+    
+    def get_timezone(self):
+        if not self.location:
+            return timezone.utc  # fallback
+
+        tf = TimezoneFinder()
+        # PointField stores as (x=lon, y=lat)
+        tzname = tf.timezone_at(lng=self.location.x, lat=self.location.y)
+        return pytz.timezone(tzname) if tzname else timezone.utc
