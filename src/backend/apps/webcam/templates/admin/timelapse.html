@@ -61,24 +61,6 @@
           Custom Date & Time Range
         </label>
 
-        <!-- <div id="date-range-inputs" style="margin-left: 20px; display: none;">
-          <div style="display: grid; grid-template-columns: 50px auto; align-items: center; gap: 8px; margin-bottom: 10px;">
-            <label for="date-from" style="text-align: right;">From:</label>
-            <div>
-              <input type="date" id="date-from" value="{{ default_start_date|default:'' }}">
-              <input type="time" id="time-from" value="00:00">
-            </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 50px auto; align-items: center; gap: 8px;">
-            <label for="date-to" style="text-align: right;">To:</label>
-            <div>
-              <input type="date" id="date-to" value="{{ default_end_date|default:'' }}">
-              <input type="time" id="time-to" value="23:59">
-            </div>
-          </div>
-        </div> -->
-
         <div id="date-range-inputs" style="margin-left: 20px; display: none;">
           <div style="display: grid; grid-template-columns: 50px auto; align-items: center; gap: 8px; margin-bottom: 10px;">
             <label for="date-from" style="text-align: right;">From:</label>
@@ -130,21 +112,20 @@
         let autoplay = false;
         let autoplayInterval;
 
-        async function downloadImage(from, to, timeFrom, timeTo) {
+        async function downloadImage(from, to, timeFrom, timeTo, timezone) {
           let apiUrl = imagePaths[imagePaths.length - 1];
           apiUrl = apiUrl.replace(/\/admin-timelapse\/\d{14}/, "/admin-timelapse/download");
-          // If from/to provided, append them as query params
           const params = new URLSearchParams();
           if (from) params.append("from", from);
           if (to) params.append("to", to);
           if (timeFrom) params.append("time_from", timeFrom);
           if (timeTo) params.append("time_to", timeTo);
+          if (timezone) params.append("timezone", timezone);
 
           if (params.toString()) {
             apiUrl += "?" + params.toString();
           }
 
-          console.log("Download API URL:", apiUrl);
           const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElemOriginal.src = URL.createObjectURL(blob);
@@ -152,7 +133,7 @@
           const url = imgElemOriginal.src;
           const a = document.createElement('a');
           a.href = url;
-          a.download = 'images.zip'; // filename
+          a.download = 'images.zip';
           document.body.appendChild(a);
           a.click();
           a.remove();
@@ -240,8 +221,7 @@
             const to = document.getElementById("date-to").value;
             const timeFrom = document.getElementById("time-from").value;
             const timeTo = document.getElementById("time-to").value;
-            console.log("Download images from", from, "to", to, "time from", timeFrom, "to", timeTo);
-            downloadImage(from, to, timeFrom, timeTo);
+            downloadImage(from, to, timeFrom, timeTo, timezone="{{ timezone }}");
           }
         });
 

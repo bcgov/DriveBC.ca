@@ -18,6 +18,7 @@ from django.utils import timezone
 from django.urls import reverse
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAdminUser, AllowAny
+from zoneinfo import ZoneInfo
 
 BASE_URL = os.getenv("S3_ENDPOINT_URL", "https://moti-int.objectstore.gov.bc.ca")
 S3_BUCKET = os.getenv("S3_BUCKET", "tran_api_dbc_backup_dev")
@@ -41,93 +42,6 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     def replayTheDay(self, request, pk=None):
         timestamps = get_image_list(pk, "REPLAY_THE_DAY_HOURS")
         return Response(timestamps, status=status.HTTP_200_OK)
-
-
-    @action(detail=True, methods=['get'], url_path='timelapse/download')
-    def download(self, request, pk=None):
-        from_date_str = request.query_params.get("from")
-        to_date_str = request.query_params.get("to")
-        from_time_str = request.query_params.get("time_from")
-        to_time_str = request.query_params.get("time_to")
-
-        from_date = parse_date(from_date_str) if from_date_str else None
-        to_date = parse_date(to_date_str) if to_date_str else None
-        from_time = datetime.strptime(from_time_str, "%H:%M").time() if from_time_str else time.min
-        to_time = datetime.strptime(to_time_str, "%H:%M").time() if to_time_str else time.max
-
-        all_images = get_image_list(pk, "TIMELAPSE_HOURS")
-        print(f"Total images available: {len(all_images)}")
-
-        if from_date and to_date:
-            # combine into full datetimes
-            start_dt = datetime.combine(from_date, from_time)
-            end_dt = datetime.combine(to_date, to_time)
-
-            filtered_images = []
-            for img in all_images:
-                ts_str = img.replace(".jpg", "")
-                img_dt = datetime.strptime(ts_str, "%Y%m%d%H%M%S")
-                if start_dt <= img_dt <= end_dt:
-                    filtered_images.append(img)
-        else:
-            filtered_images = all_images
-
-        if not filtered_images:
-            return Response({"detail": "No images found."}, status=404)
-
-        # --- CREATE S3 CLIENT ONCE ---
-        S3_BUCKET = os.getenv("S3_BUCKET")
-        S3_REGION = os.getenv("S3_REGION", "us-east-1")
-        S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
-        S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
-        S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
-
-        config = Config(
-            signature_version='s3v4',
-            retries={'max_attempts': 10},
-            s3={
-                'payload_signing_enabled': False,
-                'checksum_validation': False,
-                'enable_checksum': False,
-                'addressing_style': 'path',
-                'use_expect_continue': False
-            }
-        )
-
-        s3_client = boto3.client(
-            "s3",
-            region_name=S3_REGION,
-            aws_access_key_id=S3_ACCESS_KEY,
-            aws_secret_access_key=S3_SECRET_KEY,
-            endpoint_url=S3_ENDPOINT_URL,
-            config=config
-        )
-
-        def s3_file_iterator(key: str, chunk_size: int = 65536):
-            """Stream S3 object in chunks without loading into memory."""
-            obj = s3_client.get_object(Bucket=S3_BUCKET, Key=key)
-            body = obj["Body"]
-            while True:
-                chunk = body.read(chunk_size)
-                if not chunk:
-                    break
-                yield chunk
-
-        # --- STREAMING ZIP ---
-        z = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
-
-        for img in filtered_images:
-            key = f"webcams/timelapse/{pk}/{img}.jpg"  # S3 key
-            filename_in_zip = f"{img.split('/')[-1]}.jpg"
-            try:
-                z.write_iter(filename_in_zip, s3_file_iterator(key))
-            except Exception as e:
-                print(f"Error adding {img}: {e}")
-                continue
-
-        response = StreamingHttpResponse(z, content_type='application/zip')
-        response['Content-Disposition'] = 'attachment; filename="images.zip"'
-        return response
 
     @action(
             detail=False, 
@@ -230,27 +144,38 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
 
     def _download(self, request, pk=None):
         from_date_str = request.query_params.get("from")
-        to_date_str = request.query_params.get("to")
+        to_date_str = request.query_params.get("to")  
         from_time_str = request.query_params.get("time_from")
         to_time_str = request.query_params.get("time_to")
+        timezone_str = request.query_params.get("timezone", "UTC")
+
+        tz = ZoneInfo(timezone_str)
 
         from_date = parse_date(from_date_str) if from_date_str else None
         to_date = parse_date(to_date_str) if to_date_str else None
+
         from_time = datetime.strptime(from_time_str, "%H:%M").time() if from_time_str else time.min
         to_time = datetime.strptime(to_time_str, "%H:%M").time() if to_time_str else time.max
 
-        all_images = get_image_list(pk, "TIMELAPSE_HOURS")
-        print(f"Total images available: {len(all_images)}")
+        base_from_date = from_date or datetime.now(tz).date()
+        base_to_date = to_date or datetime.now(tz).date()
 
-        if from_date and to_date:
-            # combine into full datetimes
-            start_dt = datetime.combine(from_date, from_time)
-            end_dt = datetime.combine(to_date, to_time)
+        local_from_dt = datetime.combine(base_from_date, from_time, tzinfo=tz)
+        local_to_dt = datetime.combine(base_to_date, to_time, tzinfo=tz)
+
+        # Convert to UTC
+        from_dt_utc = local_from_dt.astimezone(ZoneInfo("UTC"))
+        to_dt_utc = local_to_dt.astimezone(ZoneInfo("UTC"))
+
+        all_images = get_image_list(pk, "TIMELAPSE_HOURS")
+        if from_dt_utc and to_dt_utc:
+            start_dt = from_dt_utc
+            end_dt = to_dt_utc
 
             filtered_images = []
             for img in all_images:
                 ts_str = img.replace(".jpg", "")
-                img_dt = datetime.strptime(ts_str, "%Y%m%d%H%M%S")
+                img_dt = datetime.strptime(ts_str, "%Y%m%d%H%M%S").replace(tzinfo=ZoneInfo("UTC"))
                 if start_dt <= img_dt <= end_dt:
                     filtered_images.append(img)
         else:
@@ -370,7 +295,11 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
             return Response({"detail": "Admin access required."}, status=status.HTTP_403_FORBIDDEN)
         return self._timelapse_image_impl(request, pk, filename)
 
-    @action(detail=True, methods=['get'], url_path='admin-timelapse/download')
+    @action(
+            detail=True, 
+            methods=['get'], 
+            url_path='admin-timelapse/download'
+            )
     def download_admin(self, request, pk=None):
         user = request.user
         if not user.is_authenticated or not user.is_staff:
