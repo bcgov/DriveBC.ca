@@ -267,6 +267,7 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     )
     def original_image_admin(self, request, pk=None):
         user = request.user
+        print(user, user.is_authenticated, user.is_staff)
         if not user.is_authenticated or not user.is_staff:
             return Response({"detail": "Admin access required."}, status=status.HTTP_403_FORBIDDEN)
         return self._original_image_impl(pk)
