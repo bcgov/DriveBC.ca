@@ -152,9 +152,7 @@ async def run_consumer():
                     try:
                         timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
                         # # # For testing purposes, only allow camera with IDs below to be processed
-                        # # 658 is off
-                        # # 219 MDT
-                        # if camera_id != "343" and camera_id != "57" and camera_id != "658" and camera_id != "219" and camera_id != "36":
+                        # if camera_id != "343" and camera_id != "19" and camera_id != "57":
                         #     logger.info("Skipping processing for camera %s", camera_id)
                         #     continue
                         await handle_image_message(camera_id, db_data, message.body, timestamp_local, camera_status)
@@ -255,6 +253,8 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
         lastmod = webcam.get('last_update_modified')
 
         if webcam.get('is_on'):
+            if webcam["id"] == 19:
+                print(f"Camera {webcam["id"]} is on, webcam get is_on: {webcam.get('is_on')}.")
             stamped.paste(raw)  # leaves 18 pixel black bar left at bottom
             dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
 
@@ -269,6 +269,8 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
                      anchor='rs', font=FONT)
 
         else:  # camera is unavailable, replace image with message
+            if webcam["id"] == 19:
+                print(f"Camera {webcam["id"]} is off, webcam get is_on: {webcam.get('is_on')}.")
             message = webcam.get('message', {}).get('long') or ""
             wrapped = wrap_text(
                 text=message,
