@@ -325,7 +325,7 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         url_path='originalImage',
         permission_classes=[AllowAny],
     )
-    def timelapse_public(self, request, pk=None):
+    def original_image_public(self, request, pk=None):
         # forward to the real admin logic
         return self._original_image_impl(pk)
 

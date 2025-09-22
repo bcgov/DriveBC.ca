@@ -447,6 +447,7 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
 
     camera_pushed_too_soon = await is_camera_pushed_too_soon(camera_id, timestamp)
     if camera_pushed_too_soon:
+        print(f"Camera {camera_id} pushed too soon, skipping.")
         return
 
     tz = get_timezone(webcam) if webcam else 'America/Vancouver'
