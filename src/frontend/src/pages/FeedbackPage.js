@@ -162,7 +162,6 @@ export default function FeedbackPage() {
                   <option value={0}>Website Feedback</option>
                   <option value={1}>Website problem or bug</option>
                   <option value={2}>Webcam not working or delayed</option>
-                  <option value={3}>Highway or bridge problem</option>
                 </Form.Control>
               </Form.Group>
 
