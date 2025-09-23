@@ -565,9 +565,8 @@
             width: 100%;
 
             &.image-gallery-image {
-              height: 388px;
               cursor: auto;
-              object-fit: fill;
+              object-fit: contain;
             }
           }
 
@@ -648,8 +647,9 @@
           }
 
           .image-gallery {
-            box-shadow: 0px 1.600000023841858px 3.5999999046325684px 0px rgba(0, 0, 0, 0.13), 0px 0.30000001192092896px 0.8999999761581421px 0px rgba(0, 0, 0, 0.10);
+            // box-shadow: 0px 1.600000023841858px 3.5999999046325684px 0px rgba(0, 0, 0, 0.13), 0px 0.30000001192092896px 0.8999999761581421px 0px rgba(0, 0, 0, 0.10);
             margin-bottom: 1rem;
+            background: #000;
 
             &-slide-wrapper {
               display: flex;
@@ -665,8 +665,8 @@
                 }
 
                 .replay-btn {
-                  color: $Type-Primary;
-                  background-color: $White;
+                  color: $White;
+                  background: transparent;
                   border: none;
                   width: 60px;
                   height: 60px;
@@ -674,18 +674,21 @@
                   padding: initial;
                   margin-bottom: 0;
 
+                  .fa-pause {
+                    margin-left: 1px;
+                  }
                   @media(min-width: 992px) {
-                    width: 36px;
-                    height: 36px;
-                    border-radius: 18px;
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
                   }
 
                   &:hover {
-                    background-color: $Grey30;
+                    background-color: $Grey90;
                   }
 
                   &:focus {
-                    border: rgb(46, 93, 215) solid 2px;
+                    // border: rgb(46, 93, 215) solid 1px;
                   }
                 }
               }
@@ -694,12 +697,14 @@
               .range-slider-container {
                 order: 2;
                 margin: 0 15px;
+                padding: 4px 0 8px;
                 width: calc(100% - 30px);
               }
 
               .replay-control--backward {
                 order: 3;
                 width: 33.33%;
+                padding: 4px 0 8px;
                 svg {
                   font-size: 1.25rem;
                 }
@@ -708,6 +713,7 @@
               .replay-control--forward {
                 order: 5;
                 width: 33.33%;
+                padding: 4px 0 8px;
                 svg {
                   font-size: 1.25rem;
                 }
@@ -721,8 +727,14 @@
               .replay-control--play {
                 order: 4;
                 width: 33.33%;
-                svg {
-                  font-size: 1.5rem;
+                padding: 4px 0 8px;
+                .fa-play {
+                  font-size: 1.25rem;
+                  margin-left: 4px;
+                }
+                .fa-pause {
+                  font-size: 1.25rem;
+                  margin-left: 0;
                 }
               }
 
@@ -795,16 +807,33 @@
       .replay-div {
         position: absolute;
         z-index: 2;
-        left: 16px;
-        bottom: 32px;
-        padding: 6px;
-        border: 2px solid white;
+        left: 8px;
+        padding: 2px 8px;
+        bottom: 16px;
+        background: rgba(0,0,0,0.65);
         border-radius: 4px;
         color: white;
         font-weight: 700;
+        @media (min-width: 576px) {
+          bottom: 20px
+        }
 
+        @media (min-width: 768px) {
+          bottom: 24px
+        }
+        @media (min-width: 992px) {
+          bottom: 28px;
+        }
+        @media (min-width: 1200px) {
+          bottom: 22px;
+        }
+
+        &:hover {
+          background: rgba(0,0,0,0.9);
+          transition: 0.1s ease-in-out background;
+        }
         &.replay-on {
-          bottom: 88px;
+          bottom: 93px;
 
           @media (max-width: 991px) {
             bottom: 152px;
@@ -821,11 +850,16 @@
             display: flex;
             flex-direction: row;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: 0;
-
+            .form-check-label {
+              font-size: 0.75rem;
+            }
             .form-check-input {
-                margin-left: 8px;
+                margin: 0 0 0 8px;
                 position: static;
+                height: 1rem;
+                width: 1.75rem;
             }
           }
         }
