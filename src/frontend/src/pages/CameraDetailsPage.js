@@ -13,10 +13,10 @@ import { pushFavCam, removeFavCam, updatePendingAction } from '../slices/userSli
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowLeft,
-  faBackward,
+  faBackwardStep,
   faCircleInfo,
   faHourglassClock,
-  faForward,
+  faForwardStep,
   faPause,
   faPlay,
   faStar,
@@ -351,7 +351,7 @@ export default function CameraDetailsPage() {
           onClick={onClick}
           disabled={disabled}
           aria-label="rewind">
-          <FontAwesomeIcon icon={faBackward} />
+          <FontAwesomeIcon icon={faBackwardStep} />
         </Button>
       </div>
     );
@@ -383,7 +383,7 @@ export default function CameraDetailsPage() {
           onClick={onClick}
           disabled={disabled}
           aria-label="fastforward">
-          <FontAwesomeIcon icon={faForward} />
+          <FontAwesomeIcon icon={faForwardStep} />
         </Button>
       </div>
     );
