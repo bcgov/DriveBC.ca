@@ -6,6 +6,7 @@ from apps.ferry.models import (
     CoastalFerryTrip,
     Ferry,
 )
+from django.db.models import Q
 from rest_framework import serializers
 
 
@@ -89,7 +90,6 @@ class FerryRouteSerializer(serializers.ModelSerializer):
 class CoastalFerryStopAPISerializer(serializers.ModelSerializer):
     routes = serializers.SerializerMethodField()
     display_category = serializers.SerializerMethodField()
-    name = serializers.SerializerMethodField()
 
     class Meta:
         model = CoastalFerryStop
@@ -99,15 +99,14 @@ class CoastalFerryStopAPISerializer(serializers.ModelSerializer):
         )
 
     def get_routes(self, obj):
-        routes = CoastalFerryRoute.objects.filter(trips__stop_times__stop=obj).distinct()
+        routes = CoastalFerryRoute.objects.filter(
+            Q(trips__stop_times__stop=obj) |
+            Q(trips__stop_times__stop__parent_stop=obj)
+        ).distinct()
         return CoastalFerryRouteSerializer(routes, many=True).data
 
     def get_display_category(self, obj):
         return 'costalFerry'
-
-    # DBC22-4614: Use name from parent_stop if available
-    def get_name(self, obj):
-        return obj.parent_stop.name if obj.parent_stop else obj.name
 
 
 class CoastalFerryStopSerializer(serializers.ModelSerializer):

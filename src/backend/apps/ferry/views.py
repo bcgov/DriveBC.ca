@@ -10,7 +10,7 @@ class FerryAPI(CachedListModelMixin):
 
 
 class CoastalViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = CoastalFerryStop.objects.all()
+    queryset = CoastalFerryStop.objects.filter(parent_stop=None)
     serializer_class = CoastalFerryStopAPISerializer
 
 
