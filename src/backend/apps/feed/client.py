@@ -179,12 +179,12 @@ class FeedClient:
 
         return token
 
-    def make_weather_request(self, endpoint):
-        token = cache.get('weather_access_token') or self.get_new_weather_access_token()
+    def make_weather_request(self, endpoint, mock_token=None):
+        token = mock_token or cache.get('weather_access_token') or self.get_new_weather_access_token()
         headers = {"Authorization": f"Bearer {token}"}
 
         response = requests.get(endpoint, headers=headers)
-        if response.status_code == 401 and 'token expired' in response.text.lower():
+        if not mock_token and response.status_code == 401 and 'token expired' in response.text.lower():
             # Token expired, get a new one and retry
             new_token = self.get_new_weather_access_token()
             new_headers = {"Authorization": f"Bearer {new_token}"}
@@ -392,14 +392,14 @@ class FeedClient:
             return Response("Error fetching data from weather API", status=500)
 
     # Current Weather
-    def get_current_weather_list_feed(self, resource_type, resource_name, serializer_cls, params=None):
+    def get_current_weather_list_feed(self, serializer_cls, token):
         """Get data feed for list of objects."""
 
         try:
             # Delete existing VMS signs
             serializer_cls.Meta.model.objects.filter(weather_station_name__contains='VMS').delete()
 
-            response = self.make_weather_request(settings.DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL)
+            response = self.make_weather_request(settings.DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL, token)
             response.raise_for_status()
             json_response = response.json()
             json_objects = []
@@ -411,7 +411,7 @@ class FeedClient:
                 api_endpoint = settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL + f"{station_number}"
 
                 try:
-                    response = self.make_weather_request(forecast_endpoint)
+                    response = self.make_weather_request(forecast_endpoint, token)
                     if response.status_code != 204:
                         hourly_forecast_data = response.json()
                         hourly_forecast_group = hourly_forecast_data.get("HourlyForecasts") or []
@@ -419,7 +419,7 @@ class FeedClient:
                     logger.error(f"Error making API call for Area Code {station_number}: {e}")
 
                 try:
-                    response = self.make_weather_request(api_endpoint)
+                    response = self.make_weather_request(api_endpoint, token)
                     data = response.json()
                     datasets = data.get("Datasets") if data else None
 
@@ -517,11 +517,8 @@ class FeedClient:
         except requests.RequestException:
             return Response("Error fetching data from weather API", status=500)
 
-    def get_current_weather_list(self):
-        return self.get_current_weather_list_feed(
-            CURRENT_WEATHER, 'currentweather', CurrentWeatherSerializer,
-            {"format": "json", "limit": 500}
-        )
+    def get_current_weather_list(self, token):
+        return self.get_current_weather_list_feed(CurrentWeatherSerializer, token)
 
     # Rest Stop
     def get_rest_stop_list_feed(self, resource_type, resource_name, serializer_cls, params=None):

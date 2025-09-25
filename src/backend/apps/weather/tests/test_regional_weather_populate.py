@@ -5,9 +5,7 @@ from unittest.mock import patch
 from apps.shared.tests import BaseTest, MockResponse
 from apps.weather.client import get_regional_weather_list
 from apps.weather.models import RegionalWeather
-from apps.weather.tasks import (  # populate_all_regional_weather_data,
-    populate_regional_weather_from_data,
-)
+from apps.weather.tasks import populate_regional_weather_from_data
 from apps.weather.tests.test_data.regional_weather_parsed_feed import json_feed
 
 

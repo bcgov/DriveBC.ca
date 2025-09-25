@@ -100,9 +100,9 @@ def populate_local_weather_from_data(new_current_weather_data):
         CurrentWeather.objects.create(**new_current_weather_data)
 
 
-def populate_all_local_weather_data():
+def populate_all_local_weather_data(token=None):
     client = FeedClient()
-    feed_data = client.get_current_weather_list()
+    feed_data = client.get_current_weather_list(token)
     codes = []
 
     for current_weather_data in feed_data:

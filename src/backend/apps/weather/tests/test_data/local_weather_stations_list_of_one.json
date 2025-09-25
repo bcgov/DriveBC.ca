@@ -1,0 +1,68 @@
+[
+  {
+    "AssociatedAreas": [
+      {
+        "AreaCode": "s0000854",
+        "AreaName": "Sea to Sky - Squamish to Whistler",
+        "AreaType": null
+      },
+      {
+        "AreaCode": "4",
+        "AreaName": "Howe Sound",
+        "AreaType": "CONTRACT AREA"
+      },
+      {
+        "AreaCode": "082511-082514-082520",
+        "AreaName": "Howe Sound",
+        "AreaType": "EC MESOSCALE ZONE"
+      },
+      {
+        "AreaCode": "082400",
+        "AreaName": "Whistler",
+        "AreaType": "EC MESOSCALE ZONE"
+      },
+      {
+        "AreaCode": "082511-082514-082520",
+        "AreaName": "Howe Sound",
+        "AreaType": "EC STANDARD ZONE"
+      },
+      {
+        "AreaCode": "082400",
+        "AreaName": "Whistler",
+        "AreaType": "EC STANDARD ZONE"
+      },
+      {
+        "AreaCode": "s0000173",
+        "AreaName": "Pemberton",
+        "AreaType": "ECPUBLIC"
+      },
+      {
+        "AreaCode": "s0000323",
+        "AreaName": "Squamish",
+        "AreaType": "ECPUBLIC"
+      },
+      {
+        "AreaCode": "s0000078",
+        "AreaName": "Whistler",
+        "AreaType": "ECPUBLIC"
+      },
+      {
+        "AreaCode": "1",
+        "AreaName": "Victoria",
+        "AreaType": "EET SERVICE AREA"
+      }
+    ],
+    "Elevation": 30,
+    "Latitude": 49.8777,
+    "LocationDescription": "15.7km on Squamish Valley Rd\nLine 2\nLine3",
+    "Longitude": -123.24611,
+    "OperationEndDate": null,
+    "OperationStartDate": null,
+    "Status": "Active",
+    "WeatherStationId": 259,
+    "WeatherStationName": "Squamish Valley Renamed",
+    "WeatherStationNumber": "10461",
+    "WeatherStationShortName": null,
+    "WeatherStationTypeName": "GeoTech"
+  }
+]
