@@ -53,6 +53,6 @@ class TestWebcamSerializer(BaseTest):
 
         self.serializer = WebcamSerializer(self.webcam)
 
-    # 2025/07/18 added 'nearby_objects' and 'group'
+    # 2025/08/29 added 3 weather statino fields
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 30
+        assert len(self.serializer.data) == 33

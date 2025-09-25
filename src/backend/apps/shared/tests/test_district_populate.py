@@ -20,6 +20,8 @@ class TestDistrictModel(BaseTest):
     def setUp(self):
         super().setUp()
 
+        Area.objects.all().delete()
+
         # Normal feed
         district_feed_data = open(
             str(Path(__file__).parent) +

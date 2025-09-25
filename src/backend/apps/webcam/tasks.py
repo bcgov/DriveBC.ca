@@ -28,8 +28,10 @@ from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F
 from huey.exceptions import CancelExecution
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFile, ImageFont
 from psycopg import IntegrityError
+
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 logger = logging.getLogger(__name__)
 
