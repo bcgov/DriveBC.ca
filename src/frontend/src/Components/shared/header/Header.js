@@ -275,12 +275,6 @@ export default function Header() {
               }
 
               {!xLargeScreen &&
-                <a href={getLegacyLink()} rel="noopener noreferrer" className='footer-nav-link'>
-                  <div className='title'>Legacy DriveBC</div>
-                </a>
-              }
-
-              {!xLargeScreen &&
                 <div className='filler' />
               }
             </Nav>
@@ -292,19 +286,6 @@ export default function Header() {
                 <FontAwesomeIcon icon={faCommentExclamation}/>
                 Report a problem
               </Link>
-
-              <button
-                className="btn btn-outline-primary header-right__btn" id="whatsnew-btn" alt="Legacy DriveBC"
-                tabIndex={0}
-                onClick={legacyDBCHandler}
-                onKeyDown={(keyEvent) => {
-                  if (['Enter', 'NumpadEnter', 'Space'].includes(keyEvent.key)) {
-                    legacyDBCHandler();
-                  }
-                }}>
-                <FontAwesomeIcon icon={faGlobePointer}/>
-                Legacy DriveBC
-              </button>
 
               <div className="nav-divider"/>
 
