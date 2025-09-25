@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronRight,
   faChevronLeft,
+  faVideoSlash
 } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
@@ -46,6 +47,7 @@ export default function CameraOrientations(props) {
   const initialIndex = camData.camGroup.findIndex(cam => cam.id === camData.id);
   const [currentCamIndex, setCurrentCamIndex] = useState(initialIndex);
   const [currentPane, setCurrentPane] = useState(Math.floor(initialIndex / perPane));
+  const [isUpdated, setIsUpdated] = useState(false);
 
   // Effects
   useEffect(() => {
@@ -83,6 +85,35 @@ export default function CameraOrientations(props) {
   const switchOrientation = (index) => {
     setCurrentCamIndex(index);
     setCurrentPane(Math.floor(index / perPane));
+  }
+
+  const stale = camera && camera.marked_stale ? 'stale' : '';
+  const delayed = camera && camera.marked_delayed ? 'delayed' : '';
+  const unavailable = camera && camera.is_on ? '' : 'unavailable';
+  const updated = isUpdated ? 'updated' : '';
+
+  // get camera state message
+  const getStateMessage = () => {
+    if (updated) {
+      return 'Updated';
+    }
+
+    else {
+      if (unavailable) {
+        return 'Unavailable';
+      }
+      else {
+        if (delayed && stale) {
+          return 'Delayed';
+        }
+        else if (!delayed && stale) {
+          return 'Stale';
+        }
+        else {
+          return '';
+        }
+      }
+    }
   }
 
   /* Rendering */
@@ -134,6 +165,13 @@ export default function CameraOrientations(props) {
                   src={cam.links.imageDisplay}
                   alt={cam.name}/>
 
+                {(!stale && !delayed && !unavailable && !updated) &&
+                <span
+                  className={'status-pill' + (stale ? ' stale' : '') + (delayed ? ' delayed' : '') + (unavailable ? ' unavailable' : '') + (updated ? ' updated' : '')}>
+                    {getStateMessage()}
+                </span>
+}
+
                 <span
                   aria-label={getCameraOrientation(cam.orientation)}
                   className={'label' + (camera.id === cam.id ? ' current' : '')}>
@@ -167,7 +205,7 @@ export default function CameraOrientations(props) {
           {camera.camGroup.map((cam, index) => (
             <div
               key={cam.id}
-              className={'orientation' + (camera.id === cam.id ? ' current' : '')}
+              className={'orientation' + (camera.id === cam.id ? ' current' : '') + (unavailable ? ' unavailable' : '')}
               onClick={() => {
                 switchOrientation(index);
                 trackEvent("click", "camera-details", "camera-orientation", cam.name);
@@ -179,10 +217,23 @@ export default function CameraOrientations(props) {
                 }
               }}>
 
+              {unavailable && 
+                <div className="unavailable-overlay">
+                  <FontAwesomeIcon className="icon" icon={faVideoSlash} />
+                </div>
+              }
+
               <img
                 ref={imageRef}
                 src={cam.links.imageDisplay}
                 alt={cam.name} />
+
+              {(stale || delayed || unavailable || updated) &&
+                <span
+                  className={'status-pill' + (stale ? ' stale' : '') + (delayed ? ' delayed' : '') + (unavailable ? ' unavailable' : '') + (updated ? ' updated' : '')}>
+                  {getStateMessage()}
+                </span>
+              }
 
               <span
                 aria-label={getCameraOrientation(cam.orientation)}
