@@ -99,22 +99,12 @@
       height: 132px;
       border-radius: 8px;
       overflow: hidden;
-      // margin-bottom: 12px;
       cursor: pointer;
       display: flex;
       align-content: center;
       justify-content: center;
       border: 3px solid transparent;
       opacity: 1;
-      &:hover {
-        .label {
-          background-color: $Grey40;
-        }
-        img {
-          transform: scale(1.15);
-          transition: 0.3s ease-in-out all;
-        }
-      }
 
       @media (min-width: 768px) {
         width: fit-content;
@@ -153,23 +143,6 @@
         height: calc(100% + 12px);
         object-fit: cover;
         clip-path: inset(0 0 5px 0); /* Crops timestamp */
-      }
-
-      .label {
-        position: absolute;
-        bottom: 8px;
-        left: 8px;
-        background-color: $Grey20;
-        color: $BC-Blue;
-        font-weight: 700;
-        padding: 4px 8px;
-        border-radius: 8px;
-        font-size: 0.875rem;
-
-        &.current {
-          background: $Focus;
-          color: white;
-        }
       }
     }
 
