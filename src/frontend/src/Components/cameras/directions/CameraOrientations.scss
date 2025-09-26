@@ -105,49 +105,6 @@
       justify-content: center;
       border: 3px solid transparent;
       opacity: 1;
-      &:hover {
-        .label {
-          background-color: $Grey40;
-        }
-        img {
-          transform: scale(1.15);
-          transition: 0.3s ease-in-out all;
-        }
-      }
-
-      &.unavailable {
-        .unavailable-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: $Surface-major;
-          z-index: 1;
-
-          .icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%,-50%);
-            color: $Error;
-            font-size: 36px;
-
-            @media (min-width: 768px) {
-              font-size: 50px;
-            }
-
-            @media (min-width: 992px) {
-              font-size: 36px;
-            }
-
-          }
-        }
-
-        .status-pill, .label {
-          z-index: 2;
-        }
-      }
 
       @media (min-width: 768px) {
         width: fit-content;
@@ -186,50 +143,6 @@
         height: calc(100% + 12px);
         object-fit: cover;
         clip-path: inset(0 0 5px 0); /* Crops timestamp */
-      }
-
-      .label {
-        position: absolute;
-        bottom: 8px;
-        left: 8px;
-        background-color: $Grey20;
-        color: $BC-Blue;
-        font-weight: 700;
-        padding: 4px 8px;
-        border-radius: 8px;
-        font-size: 0.875rem;
-
-        &.current {
-          background: $Focus;
-          color: white;
-        }
-      }
-
-      .status-pill {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background-color: $Grey20;
-        color: $BC-Blue;
-        font-weight: 700;
-        padding: 4px 8px;
-        border-radius: 16px;
-        font-size: 0.75rem;
-
-        &.stale {
-          background-color: $Grey50;
-          color: $Grey100;
-        }
-
-        &.delayed {
-          background-color: $Gold20;
-          color: $BC-Yellow-Dark;
-        }
-
-        &.unavailable {
-          background-color: $Error;
-          color: $White;
-        }
       }
     }
 
