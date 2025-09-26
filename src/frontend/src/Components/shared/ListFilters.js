@@ -24,12 +24,13 @@ import Spinner from 'react-bootstrap/Spinner';
 import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
+import { MapContext } from '../../App.js';
 import trackEvent from './TrackEvent';
 
-// Components and functions
-import { MapContext } from '../../App.js';
+// Styling
+import './ListFilters.scss';
 
-export default function Filters(props) {
+export default function ListFilters(props) {
   // Misc
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
   const largeScreen = useMediaQuery('only screen and (min-width: 768px)');
@@ -42,6 +43,7 @@ export default function Filters(props) {
 
   // Props
   const {
+    hidden,
     mapLayers,
     disableFeatures,
     enableRoadConditions,
@@ -103,24 +105,34 @@ export default function Filters(props) {
 
       if (!closures) {
         visibleLayers.closures = true;
+        visibleLayers.closuresLines = true;
         setClosures(true);
       }
+
       if (!majorEvents) {
         visibleLayers.majorEvents = true;
+        visibleLayers.majorEventsLines = true;
         setMajorEvents(true);
       }
+
       if (!minorEvents) {
         visibleLayers.minorEvents = true;
+        visibleLayers.minorEventsLines = true;
         setMinorEvents(true);
       }
+
       if (!futureEvents) {
         visibleLayers.futureEvents = true;
+        visibleLayers.futureEventsLines = true;
         setFutureEvents(true);
       }
+
       if (!roadConditions) {
         visibleLayers.roadConditions = true;
+        visibleLayers.roadConditionsLines = true;
         setRoadConditions(true);
       }
+
       if (!inlandFerries) {
         visibleLayers.inlandFerries = true;
         setInlandFerries(true);
@@ -335,7 +347,7 @@ export default function Filters(props) {
 
   // Main Component
   return (
-    <div className="filters-component filters">
+    <div className={`list-layers-filter filters-component filters ${hidden ? 'hidden' : ''}`}>
       {(!isDelaysPage || !smallScreen) &&
         <Button
           variant={isDelaysPage ? 'outline-primary' : 'primary'}

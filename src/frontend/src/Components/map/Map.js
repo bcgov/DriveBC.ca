@@ -60,7 +60,6 @@ import { pointerClickHandler, resetClickedStates } from './handlers/click';
 import { updateOverlappingPositions } from "./layers/eventsLayer";
 import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
 import DistanceLabels from "../routing/DistanceLabels";
-import Filters from '../shared/Filters.js';
 import FilterTabs from './filter/FilterTabs';
 import RouteSearch from '../routing/RouteSearch.js';
 import NetworkErrorPopup from './errors/NetworkError';

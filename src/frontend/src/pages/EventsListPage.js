@@ -41,7 +41,7 @@ import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Advisories from '../Components/advisories/Advisories';
 import EventCard from '../Components/events/EventCard';
 import EventsTable from '../Components/events/EventsTable';
-import Filters from '../Components/shared/Filters';
+import ListFilters from '../Components/shared/ListFilters';
 import Footer from '../Footer.js';
 import PageHeader from '../PageHeader';
 import PollingComponent from '../Components/shared/PollingComponent';
@@ -675,14 +675,13 @@ export default function EventsListPage() {
 
                     {!smallScreen &&
                       <div className="type filter-option-btn">
-                        <Filters
+                        <ListFilters
                           disableFeatures={true}
                           enableRoadConditions={false}
                           enableChainUps={true}
                           textOverride={'List'}
                           iconOverride={true}
-                          isDelaysPage={true}
-                        />
+                          isDelaysPage={true} />
                       </div>
                     }
 
@@ -824,15 +823,15 @@ export default function EventsListPage() {
           </button>
 
           <p className="overlay__header bold">List</p>
-          <Filters
+
+          <ListFilters
             disableFeatures={true}
             enableRoadConditions={false}
             enableChainUps={true}
             textOverride={'List'}
             iconOverride={true}
             isDelaysPage={true}
-            fullOverlay={true}
-          />
+            fullOverlay={true} />
         </div>
       }
 
