@@ -914,7 +914,7 @@ export default function DriveBCMap(props) {
             shouldScaleBackground={false}
             scaleFrom={'50%'}
           >
-            <Drawer.Portal>
+            <Drawer.Portal container={mapElement.current}>
               <Drawer.Overlay className="drawer-overlay" />
               <Drawer.Content className="drawer-content">
                 {clickedFeature && (!selectedRoute || isCamDetail) &&

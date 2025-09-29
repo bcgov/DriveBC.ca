@@ -139,12 +139,13 @@
     .map {
       flex: 1;
       position: absolute;
-      @media (max-width: 767px) {
-        position: relative;
-      }
       width: 100%;
       height: 100%;
       overflow: hidden;
+
+      @media (max-width: 767px) {
+        position: relative;
+      }
 
       .map-left-container {
         position: absolute;
@@ -411,11 +412,12 @@
   background-color: white;
   border-radius: 12px 12px 0 0;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 1001;
+  height: 100%;
   
   .drawer-drag-handle {
     position: absolute;
@@ -450,7 +452,7 @@
 
   > div {
     overflow-y: auto;
-    height: calc(100vh - 228px);
+    height: 100%;
     .popup__content {
       overflow-y: scroll;
     }
@@ -477,4 +479,8 @@
     outline: none;
     box-shadow: none;
   }    
+}
+
+.panel-content {
+  height: 100%;
 }
