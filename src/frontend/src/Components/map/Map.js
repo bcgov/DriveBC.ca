@@ -763,9 +763,18 @@ export default function DriveBCMap(props) {
     if (mapRef.current) {
       // First filter
       onMoveEnd(mapRef.current, advisoriesData, setAdvisoriesInView);
+      // Create a named function to use for both adding and removing
+      const handleMoveEnd = (e) => onMoveEnd(e.map, advisoriesData, setAdvisoriesInView);
 
       // Set handler for filtering on map move
-      mapRef.current.on('moveend', (e) => onMoveEnd(e.map, advisoriesData, setAdvisoriesInView));
+      mapRef.current.on('moveend', handleMoveEnd);
+
+      // Return cleanup function that removes the listener
+      return () => {
+        if (mapRef.current) {
+          mapRef.current.un('moveend', handleMoveEnd);
+        }
+      };
     }
   }, [filteredAdvisories]);
 
