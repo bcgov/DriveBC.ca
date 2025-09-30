@@ -816,89 +816,87 @@ export default function DriveBCMap(props) {
         <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} isCamDetail={isCamDetail} />
       }
 
-      {/* Desktop Side Panel (768px and above) */}
       {!!openPanel && largeScreen &&
+        <div
+          ref={panel}
+          className={`side-panel ${openPanel ? 'open' : ''} ${selectedRoute ? 'has-route' : ''}`}>
 
-      <div
-        ref={panel}
-        className={`side-panel ${openPanel ? 'open' : ''} ${selectedRoute ? 'has-route' : ''}`}>
+          {clickedFeature && !isCamDetail && smallScreen &&
+            <button
+              className={`resize-panel + ${selectedRoute ? '' : ' no-route'}`}
+              aria-label={`${(maximizedPanel ? 'minimize' : 'maximize') + ' side panel'}`}
+              tabIndex={0}
+              onClick={() => resizePanel(panel, clickedFeature, setMaximizedPanel)}
+              onTouchMove={() => resizePanel(panel, clickedFeature, setMaximizedPanel)}
+              onKeyDown={keyEvent => {
+                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                  resizePanel(panel, clickedFeature);
+                }
+              }}>
+              <FontAwesomeIcon icon={maximizedPanel ? faChevronDown : faChevronUp} />
+            </button>
+          }
 
-        {clickedFeature && !isCamDetail && smallScreen &&
-          <button
-            className={`resize-panel + ${selectedRoute ? '' : ' no-route'}`}
-            aria-label={`${(maximizedPanel ? 'minimize' : 'maximize') + ' side panel'}`}
-            tabIndex={0}
-            onClick={() => resizePanel(panel, clickedFeature, setMaximizedPanel)}
-            onTouchMove={() => resizePanel(panel, clickedFeature, setMaximizedPanel)}
-            onKeyDown={keyEvent => {
-              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                resizePanel(panel, clickedFeature);
-              }
-            }}>
-            <FontAwesomeIcon icon={maximizedPanel ? faChevronDown : faChevronUp} />
-          </button>
-        }
+          {clickedFeature && (!selectedRoute || isCamDetail) &&
+            <button
+              className="close-panel"
+              aria-label={`${openPanel ? 'close side panel' : ''}`}
+              aria-hidden={`${openPanel ? false : true}`}
+              tabIndex={`${openPanel ? 0 : -1}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
+                  myLocationRef, routingContainerRef
+                ], searchedRoutes);
+                setMaximizedPanel(false);
+              }}>
+              <FontAwesomeIcon icon={faXmark} />
+            </button>
+          }
 
-        {clickedFeature && (!selectedRoute || isCamDetail) &&
-          <button
-            className="close-panel"
-            aria-label={`${openPanel ? 'close side panel' : ''}`}
-            aria-hidden={`${openPanel ? false : true}`}
-            tabIndex={`${openPanel ? 0 : -1}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
-                myLocationRef, routingContainerRef
-              ], searchedRoutes);
-              setMaximizedPanel(false);
-            }}>
-            <FontAwesomeIcon icon={faXmark} />
-          </button>
-        }
+          {clickedFeature && selectedRoute && !isCamDetail &&
+            <Button
+              variant="primary-outline"
+              className="btn-outline-primary back-to-details"
+              aria-label={`back to route details`}
+              tabIndex={`${openPanel ? 0 : -1}`}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
+                  myLocationRef, routingContainerRef
+                ], searchedRoutes);
+                setMaximizedPanel(false);
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
+                  myLocationRef, routingContainerRef
+                ], searchedRoutes);
+                setMaximizedPanel(false);
+              }}>
 
-        {clickedFeature && selectedRoute && !isCamDetail &&
-          <Button
-            variant="primary-outline"
-            className="btn-outline-primary back-to-details"
-            aria-label={`back to route details`}
-            tabIndex={`${openPanel ? 0 : -1}`}
-            onKeyDown={(e) => {
-              e.stopPropagation();
-              togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
-                myLocationRef, routingContainerRef
-              ], searchedRoutes);
-              setMaximizedPanel(false);
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
-                myLocationRef, routingContainerRef
-              ], searchedRoutes);
-              setMaximizedPanel(false);
-            }}>
+              <FontAwesomeIcon icon={faArrowLeft}/>
+              Route details
+            </Button>
+          }
 
-            <FontAwesomeIcon icon={faArrowLeft}/>
-            Route details
-          </Button>
-        }
-
-        <div className="panel-content">
-          {renderPanel(
-            clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature,
-            isCamDetail,
-            smallScreen,
-            mapView,
-            clickedFeatureRef,
-            updateClickedFeature,
-            showRouteObjs,
-            setShowRouteObjs
-          )}
+          <div className="panel-content">
+            {renderPanel(
+              clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature,
+              isCamDetail,
+              smallScreen,
+              mapView,
+              clickedFeatureRef,
+              updateClickedFeature,
+              showRouteObjs,
+              setShowRouteObjs
+            )}
+          </div>
         </div>
-      </div>
-    }
+      }
+      
       <div ref={mapElement} className="map">
-                {/* Mobile Drawer (768px and under) */}
-                {!largeScreen && (
+        {!largeScreen && (
           <Drawer.Root
             open={openPanel && !largeScreen}
             onOpenChange={(open) => {
