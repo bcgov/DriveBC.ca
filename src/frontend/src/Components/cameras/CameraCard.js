@@ -143,7 +143,10 @@ export default function CameraCard(props) {
       },
     });
 
-    sessionStorage.setItem('scrollPosition', window.pageYOffset);
+    // Record scroll position
+    const scrollableContainer = document.querySelector('#main');
+    const scrollPosition = scrollableContainer.scrollTop;
+    sessionStorage.setItem('scrollPosition', scrollPosition);
   }
 
   function handleKeyDown(event) {

@@ -235,12 +235,16 @@ export default function CamerasListPage() {
     if (isInitialMount.current) {
       const scrollPosition = sessionStorage.getItem('scrollPosition');
       if (scrollPosition) {
+        const scrollableContainer = document.querySelector('#main');
+
         setTimeout(function() {
-          window.scrollTo({
+          scrollableContainer.scrollTo({
             top: parseInt(scrollPosition, 10),
             left: 0,
-            behavior: "smooth"
+            behavior: "instant"
           });
+
+          sessionStorage.setItem('scrollPosition', 0);
         }, 300);
       }
 

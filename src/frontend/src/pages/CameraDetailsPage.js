@@ -146,10 +146,9 @@ export default function CameraDetailsPage() {
   }, [searchParams, camera]);
 
   useEffect(() => {
-    if (showLoader) {
-      setShowLoader(true);
-    }
-  }, [showLoader]);
+    const scrollableContainer = document.querySelector('#main');
+    scrollableContainer.scrollTo(0, 0);
+  }, []);
 
   const pauseReplay = () => {
     const pauseIcon = document.querySelectorAll(".fa-pause");
