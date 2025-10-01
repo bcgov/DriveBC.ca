@@ -409,9 +409,6 @@
 }
 
 .drawer-content {
-  background-color: white;
-  border-radius: 12px 12px 0 0;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
   position: absolute;
   bottom: 0;
   left: 0;
@@ -450,12 +447,20 @@
     }
   }
 
-  > div {
+  & > div.panel-content {
     overflow-y: auto;
     height: 100%;
+    background-color: white;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+
     .popup__content {
       overflow-y: scroll;
     }
+  }
+
+  &:has(.back-to-routes) {
+    padding-top: 4rem;
   }
 
   .close-panel {
