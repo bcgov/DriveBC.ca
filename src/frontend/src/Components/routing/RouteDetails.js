@@ -56,7 +56,19 @@ import 'react-loading-skeleton/dist/skeleton.css'
 export default function RouteDetails(props) {
   /* Setup */
   // Props
-  const { route, isPanel, setRouteFavCams, setRouteLabel, onMobile, setShowRouteObjs, setRouteSwitched } = props;
+  const {
+    route,
+    isPanel,
+    setRouteFavCams,
+    setRouteLabel,
+    onMobile,
+    setShowRouteObjs,
+
+    // Tracking which routes have loaded
+    index,
+    routesLoaded,
+    setRoutesLoaded,
+  } = props;
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -272,6 +284,23 @@ export default function RouteDetails(props) {
       setNickName(getDefaultLabel());
     }
   }, [showSavePopup]);
+
+  useEffect(() => {
+    // Not finished loading, return
+    if (
+      !routesLoaded ||
+      !eventCount ||
+      isNaN(advisoryCount) ||
+      isNaN(wildfireCount) ||
+      isNaN(ferryCount) ||
+      filteredFavCams === undefined
+    ) return;
+
+    // Finished loading, update tracking array
+    const updatedRoutesLoaded = [...routesLoaded];
+    updatedRoutesLoaded[index] = true;
+    setRoutesLoaded(updatedRoutesLoaded);
+  }, [eventCount, advisoryCount, wildfireCount, ferryCount, filteredFavCams]);
 
   /* Helpers */
   const toggleAuthModal = (action) => {
@@ -625,7 +654,7 @@ export default function RouteDetails(props) {
               <span className="route-item__name">{wildfireCount !== 1 ? 'Wildfires' : 'Wildfire'}</span>
             </div>
           }
-          {(wildfireCount === undefined || wildfireCount === null) && <Skeleton height={32}/>}
+          {isNaN(wildfireCount) && <Skeleton height={32}/>}
 
           {(eventCount && mapContext.visible_layers.majorEvents) &&
             <div className="route-item route-item--major">
@@ -717,7 +746,7 @@ export default function RouteDetails(props) {
               <span className="route-item__name">{ferryCount !== 1 ? 'Ferries' : 'Ferry'}</span>
             </div>
           }
-          {(ferryCount === undefined || ferryCount === null) && <Skeleton height={32}/>}
+          {isNaN(ferryCount) && <Skeleton height={32}/>}
 
           {isPanel &&
             <Button
