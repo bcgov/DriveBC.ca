@@ -45,7 +45,7 @@ export default function Header() {
   // Redux
   const dispatch = useDispatch();
   const { advisories, filteredAdvisories, bulletins,
-    routes: { searchLocationFrom, searchLocationTo, selectedRoute }
+    routes: { searchLocationFrom, searchLocationTo, selectedRoute, showRouteObjs }
   } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
     filteredAdvisories: state.cms.advisories.filteredList,
@@ -200,7 +200,7 @@ export default function Header() {
               </button>
             }
 
-            {smallScreen && showSearch && !openSearch && selectedRoute && isNavbarCollapsed &&
+            {smallScreen && showSearch && !openSearch && selectedRoute && isNavbarCollapsed && !showRouteObjs &&
               <button
                 className={`searched-route btn show`}
                 aria-label="searched route"
