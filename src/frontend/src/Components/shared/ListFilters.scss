@@ -1,6 +1,13 @@
 .list-layers-filter {
   &.hidden {
-    visibility: hidden;
     position: absolute;
+    z-index: -999;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    margin: 0;
+    padding: 0;
   }
 }
