@@ -73,11 +73,11 @@ export default function NearbyWeathers(props) {
 
   // find hef and set state
   useEffect(() => {
-    if (!hefList || !camera.hef_station) {
+    if (!hefList || !camera.hev_station) {
       return;
     }
 
-    const station = hefList.find(station => station.id === camera.hef_station);
+    const station = hefList.find(station => station.id === camera.hev_station);
     setHef(station);
 
   }, [hefList]);
