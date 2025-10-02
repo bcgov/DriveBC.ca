@@ -12,6 +12,7 @@ import { memoize } from 'proxy-memoize';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarOutline, faXmark } from '@fortawesome/pro-regular-svg-icons';
 import Button from "react-bootstrap/Button";
+import Skeleton from 'react-loading-skeleton';
 
 // Internal imports
 import { AuthContext } from '../App';
@@ -48,6 +49,9 @@ export default function SavedRoutesPage() {
   const [routeFavCams, setRouteFavCams] = useState(false);
   const [verified] = useState(params.get('verified'));
   const [onscreenCameras, setOnscreenCameras] = useState([]);
+
+  // Track which routes have loaded
+  const [routesLoaded, setRoutesLoaded] = useState(favRoutes ? favRoutes.map(r => false) : []);
 
   // Effects
   useEffect(() => {
@@ -120,11 +124,19 @@ export default function SavedRoutesPage() {
           {!routeFavCams &&
             <div className={`route-list ${routeFavCams ? 'collapsed' : ''}`}>
               {favRoutes && favRoutes.length > 0 &&
-                favRoutes.map(route => (
+                favRoutes.map((route, index) => (index === 0 || routesLoaded[index-1]) ?
                   <div key={route.id} className='route-card'>
-                    <RouteDetails route={route} setRouteFavCams={setRouteFavCams} setRouteLabel={setRouteLabel} />
-                  </div>
-                ))
+                    <RouteDetails
+                      route={route}
+                      setRouteFavCams={setRouteFavCams}
+                      setRouteLabel={setRouteLabel}
+                      routesLoaded={routesLoaded}
+                      setRoutesLoaded={setRoutesLoaded}
+                      index={index} />
+                  </div> :
+
+                  <Skeleton key={route.id} height={450} />
+                )
               }
             </div>
           }
