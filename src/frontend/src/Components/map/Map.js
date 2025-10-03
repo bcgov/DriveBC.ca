@@ -88,6 +88,7 @@ import { cameraStyles, routeStyles } from "../data/featureStyleDefinitions";
 export default function DriveBCMap(props) {
   /* initialization */
   // Misc
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
   // Props
@@ -97,11 +98,6 @@ export default function DriveBCMap(props) {
     loadingLayers, setLoadingLayers, getInitialLoadingLayers
   } = props;
 
-  // Drawer state
-  const snapPoints = ['25%', '50%', '100%'];
-  const [snap, setSnap] = useState(snapPoints[0]);
-  
-  
   // Navigation
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -225,7 +221,33 @@ export default function DriveBCMap(props) {
     (!!clickedFeature ||
       (searchedRoutes && searchedRoutes.length && !isCamDetail)
     ) && !disablePanel;
-  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
+
+  // Drawer state
+  const getSnapPoints = () => {
+    if (!isCamDetail && showRouteObjs && selectedRoute) {
+      return !smallScreen ? ['25%', '50%', '80%'] : ['25%', '50%', '90%'];
+    } else {
+      return !smallScreen ? ['25%', '50%', '80%'] : ['25%', '50%', '100%'];
+    }
+  };
+  const snapPoints = getSnapPoints();
+  const [snap, setSnap] = useState('25%');
+
+  // Update snap when route details are shown
+  const prevRouteDetailsActive = useRef(false);
+  const routeDetailsActive = !isCamDetail && showRouteObjs && selectedRoute;
+  
+  useEffect(() => {
+    if (routeDetailsActive && !prevRouteDetailsActive.current) {
+      // Reset snappoints when entering route details view
+      setSnap(snapPoints[snapPoints.length - 1]);
+    } else if (!routeDetailsActive && prevRouteDetailsActive.current) {
+      // Reset to max snap point when exiting route details view
+      const maxSnap = !smallScreen ? '80%' : '100%';
+      setSnap(maxSnap);
+    }
+    prevRouteDetailsActive.current = routeDetailsActive;
+  }, [routeDetailsActive, snapPoints]);
 
   // ScaleLine
   const scaleLineControl = new ScaleLine({ units: 'metric' });
@@ -915,7 +937,7 @@ export default function DriveBCMap(props) {
                 resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
               }
             }}
-            snapPoints={['25%', '50%', '100%']}
+            snapPoints={snapPoints}
             snap={snap}
             setSnap={setSnap}
             modal={false}
@@ -1023,6 +1045,16 @@ export default function DriveBCMap(props) {
               My location
             </Button>
           </React.Fragment>
+        )}
+
+        {(!isCamDetail && showRouteObjs && selectedRoute) && (
+          <Button 
+            variant="primary-outline" 
+            className="btn-outline-primary back-to-routes" 
+            onClick={() => dispatch(updateShowRouteObjs(false))}>
+            <FontAwesomeIcon icon={faArrowLeft}/>
+            Routes
+          </Button>
         )}
 
         <div className={"map-btn zoom-btn" + (openTabs ? ' tabs-pushed' : '')}>
