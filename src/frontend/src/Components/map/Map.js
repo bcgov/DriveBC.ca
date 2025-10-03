@@ -14,7 +14,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // Redux
 import * as slices from '../../slices';
-import { updateSearchLocationFromWithMyLocation, updateSelectedRoute } from "../../slices";
+import { updateSearchLocationFromWithMyLocation, updateSelectedRoute, updateShowRouteObjs } from "../../slices";
 import { memoize } from 'proxy-memoize';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -127,7 +127,7 @@ export default function DriveBCMap(props) {
       wildfires: { list: wildfires, filteredList: filteredWildfires },
     },
     advisories: { list: advisories, filteredList: filteredAdvisories },
-    routes: { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes },
+    routes: { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes, showRouteObjs },
     map: { zoom, pan }
 
   } = useSelector(
@@ -192,7 +192,6 @@ export default function DriveBCMap(props) {
     advisories: null
   });
   const [showSpinner, setShowSpinner] = useState(false);
-  const [showRouteObjs, setShowRouteObjs] = useState(false);
 
   // Workaround for OL handlers not being able to read states
   const [clickedFeature, setClickedFeature] = useState();
@@ -213,6 +212,10 @@ export default function DriveBCMap(props) {
     clickedFeatureRef.current = feature;
     setClickedFeature(feature);
     updatePosition(feature);
+  };
+
+  const handleSetShowRouteObjs = (value) => {
+    dispatch(updateShowRouteObjs(value));
   };
 
   /* Constants for conditional rendering */
@@ -799,13 +802,13 @@ export default function DriveBCMap(props) {
     }
 
     if (selectedRoute && clickedFeature && clickedFeature.get('type') !== 'route') {
-      setShowRouteObjs(true);
+      dispatch(updateShowRouteObjs(true));
     }
   }, [clickedFeature]);
 
   useEffect(() => {
     if (!selectedRoute) {
-      setShowRouteObjs(false);
+      dispatch(updateShowRouteObjs(false));
     }
 
     if (panel.current) {
@@ -897,7 +900,7 @@ export default function DriveBCMap(props) {
               clickedFeatureRef,
               updateClickedFeature,
               showRouteObjs,
-              setShowRouteObjs
+              handleSetShowRouteObjs
             )}
           </div>
         </div>
@@ -946,7 +949,7 @@ export default function DriveBCMap(props) {
                   clickedFeatureRef,
                   updateClickedFeature,
                   showRouteObjs,
-                  setShowRouteObjs
+                  handleSetShowRouteObjs
                 )}
                 </div>
               </Drawer.Content>
