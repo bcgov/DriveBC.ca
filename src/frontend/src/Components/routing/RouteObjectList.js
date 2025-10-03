@@ -414,11 +414,6 @@ export default function RouteObjectList(props) {
   // Main components
   return selectedRoute && (
     <React.Fragment>
-      <Button variant="primary-outline" className="btn-outline-primary back-to-routes" onClick={() => setShowRouteObjs(false)}>
-        <FontAwesomeIcon icon={faArrowLeft}/>
-        Routes
-      </Button>
-
       <div className={`route-details selected ${largeScreen ? '' : 'mobile'}`}>
         <div className="route-title">
           <div className="space-between-row route-tools">
