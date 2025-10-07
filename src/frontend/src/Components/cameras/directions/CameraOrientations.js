@@ -59,6 +59,7 @@ export default function CameraOrientations(props) {
     const nextIndex = (currentIndex + 1) % camData.camGroup.length;
 
     const nextCamera = camData.camGroup[nextIndex];
+    switchOrientation(nextIndex);
     loadCamDetails(nextCamera);
     trackEvent("click", "camera-details", "camera-rotate", nextCamera.name);
   };
