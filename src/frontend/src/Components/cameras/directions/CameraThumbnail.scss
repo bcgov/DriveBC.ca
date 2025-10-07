@@ -53,6 +53,11 @@
       background-color: $Error;
       color: $White;
     }
+    
+    &.updated {
+      background-color: $Blue80;
+      color: $White;
+    }
   }
 
   &.unavailable {
