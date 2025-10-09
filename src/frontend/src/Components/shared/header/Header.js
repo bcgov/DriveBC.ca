@@ -234,7 +234,7 @@ export default function Header() {
           </div>
 
           {smallScreen && showSearch && openSearch &&
-            <div className={'location-search' + (openSearch ? ' visible' : '')}>
+            <div className={'location-search' + (openSearch ? ' visible' : '') + (selectedRoute ? ' selected-route' : '')}>
               <button
                 className="close-search btn"
                 aria-label="close search"

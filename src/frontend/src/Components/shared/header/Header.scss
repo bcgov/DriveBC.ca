@@ -39,7 +39,7 @@
 				width: auto;
 			}
 
-			&:has(~.location-search.visible) {
+			&:has(~.location-search.visible.selected-route) {
 				padding-bottom: 60px;
 			}
 
