@@ -56,7 +56,7 @@ export default function CoastalFerryPanel(props) {
           <div className="popup__content__info">
             <div className='popup__content__info__container'>
               <p className='popup__content__info__header'>Routes</p>
-              <p>Clink on the links below for schedules on the selected ferry route.</p>
+              <p>Click on the links below for schedules on the selected ferry route.</p>
               <ul className='popup__content__info__routes'>
                 {ferryData.routes.map((ferryRoute, index) => (
                   <li key={index}>
