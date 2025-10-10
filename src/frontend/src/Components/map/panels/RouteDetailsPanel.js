@@ -48,7 +48,7 @@ export default function RouteDetailsPanel(props) {
   );
 
   // States
-  const [routeSwitched, setRouteSwitched] = useState(false);
+  const [routeSwitched, setRouteSwitched] = useState(true);
   const [pendingAdvisories, setPendingAdvisories] = useState(false);
   const [pendingEvents, setPendingEvents] = useState(false);
   const [pendingFerries, setPendingFerries] = useState(false);
@@ -57,6 +57,8 @@ export default function RouteDetailsPanel(props) {
   // Effects
   // Mark data as not updating when they finish filtering
   useEffect(() => {
+    if (!filteredAdvisories) return;
+
     setPendingAdvisories(true);
     if (!routeSwitched) {
       setRouteSwitched(true);
@@ -64,6 +66,8 @@ export default function RouteDetailsPanel(props) {
   }, [filteredAdvisories]);
 
   useEffect(() => {
+    if (!filteredEvents) return;
+
     setPendingEvents(true);
     if (!routeSwitched) {
       setRouteSwitched(true);
@@ -71,6 +75,8 @@ export default function RouteDetailsPanel(props) {
   }, [filteredEvents]);
 
   useEffect(() => {
+    if (!filteredFerries) return;
+
     setPendingFerries(true);
     if (!routeSwitched) {
       setRouteSwitched(true);
@@ -78,6 +84,8 @@ export default function RouteDetailsPanel(props) {
   }, [filteredFerries]);
 
   useEffect(() => {
+    if (!filteredWildfires) return;
+
     setPendingWildfires(true);
     if (!routeSwitched) {
       setRouteSwitched(true);
