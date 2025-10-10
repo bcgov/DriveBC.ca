@@ -1,0 +1,73 @@
+@import "styles/variables";
+
+.consent-modal {
+  position: fixed;
+
+  .content {
+    width: 636px;
+    padding: 24px 32px;
+
+    .header-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+
+      p {
+        font-weight: 700;
+        font-size: 20px;
+        align-self: flex-start;
+        color: $BC-Blue;
+        margin-bottom: 0;
+      }
+
+      .close-btn {
+        cursor: pointer;
+        font-size: 20px;
+        color: #070707;
+
+        &:hover {
+          color: $Grey80;
+        }
+      }
+    }
+
+    .body {
+      padding-bottom: 0;
+
+      .form-container {
+        align-items: flex-start;
+
+        p {
+          text-align: start;
+          font-size: 1rem;
+          color: $MyAccountHeader;
+        }
+
+        .btn-container {
+          display: flex;
+          flex-direction: row;
+          margin-top: 1.5rem;
+
+          .btn {
+            width: unset;
+            margin-right: 1rem;
+
+            svg {
+              margin-left: .5rem;
+            }
+          }
+
+          .btn-cancel {
+            background-color: $Error;
+
+            &:hover, &:active, &:focus {
+              background-color: $Advisory;
+            }
+          }
+        }
+      }
+    }
+
+  }
+}

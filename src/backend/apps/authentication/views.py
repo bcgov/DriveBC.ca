@@ -221,6 +221,24 @@ class SendVerificationEmailView(APIView):
         return Response({'message': 'Verification email sent'}, status=status.HTTP_200_OK)
 
 
+class EmailConsentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if user.consent:  # already have consent, do nothing
+            return Response({'status': status.HTTP_204_NO_CONTENT}, status=status.HTTP_204_NO_CONTENT)
+
+        consent = request.data.get('consent', None)
+        if consent:
+            user.consent = True
+
+        user.attempted_consent = True
+        user.save()
+
+        return Response({'status': status.HTTP_200_OK}, status=status.HTTP_200_OK)
+
+
 class DriveBCUserViewset(mixins.DestroyModelMixin, viewsets.GenericViewSet):
     queryset = DriveBCUser.objects.all()
     serializer_class = DriveBCUserSerializer

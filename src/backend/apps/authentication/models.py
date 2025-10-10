@@ -11,6 +11,9 @@ class DriveBCUser(AbstractUser, BaseModel):
     verified = models.BooleanField(default=False)
     attempted_verification = models.BooleanField(default=False)
 
+    consent = models.BooleanField(default=False)
+    attempted_consent = models.BooleanField(default=False)
+
 
 class FavouritedCameras(BaseModel):
     '''

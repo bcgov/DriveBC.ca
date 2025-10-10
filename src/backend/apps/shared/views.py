@@ -217,7 +217,9 @@ class session(APIView):
                 "username": request.user.username,
                 "email": request.user.email,
                 "verified": request.user.verified,
-                "attempted_verification": request.user.attempted_verification
+                "attempted_verification": request.user.attempted_verification,
+                "consent": request.user.consent,
+                "attempted_consent": request.user.attempted_consent
             })
 
         else:

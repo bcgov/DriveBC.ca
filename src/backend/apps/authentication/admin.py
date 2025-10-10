@@ -5,9 +5,15 @@ from django.contrib.auth.admin import UserAdmin
 
 
 class DriveBCUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'verified')
+    list_display = (
+        'username', 'email',
+        'first_name', 'last_name',
+        'is_staff', 'is_superuser',
+        'verified', 'attempted_verification',
+        'consent', 'attempted_consent'
+    )
     fieldsets = UserAdmin.fieldsets + (
-        ('DriveBC', {'fields': ('verified', 'attempted_verification')}),
+        ('DriveBC', {'fields': ('verified', 'attempted_verification', 'consent', 'attempted_consent')}),
     )
 
 

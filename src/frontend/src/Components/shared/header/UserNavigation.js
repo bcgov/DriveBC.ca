@@ -101,9 +101,9 @@ export default function UserNavigation(props) {
           <p id="user-email">{authContext.email}</p>
           <a id="signout-link"
             className="nav-link"
-            alt="Sign Out"
-            onClick={() => toggleAuthModal('Sign Out')}
-            onKeyDown={() => toggleAuthModal('Sign Out')}
+            alt="Sign out"
+            onClick={() => toggleAuthModal('Sign out')}
+            onKeyDown={() => toggleAuthModal('Sign out')}
             tabIndex={0}
           >Sign out</a>
         </div>
@@ -186,12 +186,12 @@ export default function UserNavigation(props) {
       id="signin-btn"
       alt="Sign in button"
       onClick={() => {
-        toggleAuthModal('Sign In');
+        toggleAuthModal('Sign in');
       }}
       onKeyDown={keyEvent => {
         if (keyEvent.key === 'Enter' || keyEvent.key === 'NumpadEnter') {
         keyEvent.preventDefault();
-        toggleAuthModal('Sign In');
+        toggleAuthModal('Sign in');
         }
       }}
       tabIndex={0}

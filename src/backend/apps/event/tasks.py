@@ -256,7 +256,7 @@ def get_notification_routes(dt=None):
     current_time = current_dt.time()
 
     # Get all saved routes that have notifications enabled
-    filtered_routes = SavedRoutes.objects.filter(user__verified=True, notification=True).filter(
+    filtered_routes = SavedRoutes.objects.filter(user__verified=True, user__consent=True, notification=True).filter(
         # Routes that are always active
         Q(notification_start_time=None) |
 
