@@ -51,16 +51,15 @@ export default function LocalWeatherPanel(props) {
   return (
     <div className="popup popup--weather popup--weather--local" tabIndex={0}>
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
-        <div className="popup__title__icon">
-          <FontAwesomeIcon icon={faTemperatureHalf}/>
-        </div>
-
         <div className="popup__title__name">
-          <p className='name'>Local Weather</p>
-          <ShareURLButton/>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="22" height="22" rx="3" fill="white"/>
+          <rect x="1" y="1" width="22" height="22" rx="3" stroke="#2D2D2D" strokeWidth="2"/>
+          <path d="M12 7.75C11.4199 7.75 10.9688 8.22266 10.9688 8.78125V12.3262C10.9688 12.6914 10.7969 13.0137 10.625 13.2285C10.4102 13.5293 10.2812 13.8945 10.2812 14.2812C10.2812 15.248 11.0332 16 12 16C12.9453 16 13.7188 15.248 13.7188 14.2812C13.7188 13.8945 13.5684 13.5293 13.3535 13.25C13.1816 13.0137 13.0312 12.6914 13.0312 12.3262V8.78125C13.0312 8.22266 12.5586 7.75 12 7.75ZM9.59375 8.78125C9.59375 7.4707 10.668 6.375 12 6.375C13.3105 6.375 14.4062 7.4707 14.4062 8.78125V12.3262C14.4062 12.3477 14.4277 12.3691 14.4277 12.3906C14.8359 12.9277 15.0938 13.5723 15.0938 14.2812C15.0938 16 13.6973 17.375 12 17.375C10.2812 17.375 8.90625 16 8.90625 14.2812C8.90625 13.5723 9.14258 12.9277 9.55078 12.3906C9.57227 12.3691 9.57227 12.3477 9.57227 12.3477C9.57227 12.3262 9.59375 12.3262 9.59375 12.3262V8.78125ZM13.0312 14.2812C13.0312 14.8613 12.5586 15.3125 12 15.3125C11.4199 15.3125 10.9688 14.8613 10.9688 14.2812C10.9688 13.8516 11.248 13.4648 11.6562 13.3145V10.8438C11.6562 10.6719 11.8066 10.5 12 10.5C12.1719 10.5 12.3438 10.6719 12.3438 10.8438V13.3145C12.7305 13.4648 13.0312 13.8516 13.0312 14.2812Z" fill="#2D2D2D"/>
+        </svg>
+          <p className='name'>Local weather station</p>
         </div>
-
-        <span className="sub-name">Weather Stations</span>
+        <ShareURLButton/>
       </div>
 
       <div className="popup__content">

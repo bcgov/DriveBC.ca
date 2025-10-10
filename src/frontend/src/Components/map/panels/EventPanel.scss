@@ -76,7 +76,6 @@
     &.major, &.closures, &.futureEvents.closure {
       .popup__title {
         background-color: $Surface-major;
-        border-top: 4px solid $Error;
 
         .name {
           color: $Error;
@@ -108,7 +107,6 @@
     &.minor, &.roadConditions {
       .popup__title {
         background-color: $Gold30;
-        border-top: 4px solid $BC-Yellow;
 
         .name {
           color: $Gold110;
@@ -140,7 +138,6 @@
     &.chainUps {
       .popup__title {
         background-color: $Yellow-10;
-        border-top: 4px solid $Chainups;
 
         .name {
           color: $Type-Primary;
