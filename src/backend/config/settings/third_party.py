@@ -68,6 +68,9 @@ SOCIALACCOUNT_PROVIDERS = {
                 'secret': KEYCLOAK_SECRET,
                 'settings': {
                     'server_url': KEYCLOAK_URL,
+                    'auth_params': {
+                        'kc_idp_hint': 'azureidir',
+                    },
                 },
             },
             {
@@ -77,6 +80,21 @@ SOCIALACCOUNT_PROVIDERS = {
                 'secret': KEYCLOAK_SECRET,
                 'settings': {
                     'server_url': KEYCLOAK_URL,
+                    'auth_params': {
+                        'kc_idp_hint': 'bceidbasic',
+                    },
+                },
+            },
+            {
+                'provider_id': 'otp',
+                'name': 'One-time password via Keycloak',
+                'client_id': KEYCLOAK_CLIENT_ID,
+                'secret': KEYCLOAK_SECRET,
+                'settings': {
+                    'server_url': KEYCLOAK_URL,
+                    'auth_params': {
+                        'kc_idp_hint': 'otp',
+                    },
                 },
             },
         ],

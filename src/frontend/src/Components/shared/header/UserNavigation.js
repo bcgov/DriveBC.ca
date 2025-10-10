@@ -186,12 +186,12 @@ export default function UserNavigation(props) {
       id="signin-btn"
       alt="Sign in button"
       onClick={() => {
-        toggleAuthModal('Sign In');
+        toggleAuthModal('Sign in');
       }}
       onKeyDown={keyEvent => {
         if (keyEvent.key === 'Enter' || keyEvent.key === 'NumpadEnter') {
         keyEvent.preventDefault();
-        toggleAuthModal('Sign In');
+        toggleAuthModal('Sign in');
         }
       }}
       tabIndex={0}

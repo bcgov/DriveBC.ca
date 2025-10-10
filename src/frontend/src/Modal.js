@@ -138,29 +138,29 @@ export default function Modal() {
         </div>
 
         <div className='body'>
-          {authContext.action === 'Sign In' &&
-            <form method='post' action={`${window.API_HOST}/accounts/oidc/bceid/login/`}>
-              <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
-              <input type='hidden' name='next' value={window.location.href} />
+          {authContext.action === 'Sign in' &&
+            <div className={'form-container'}>
+              <p>Save cameras, routes, and setup notifications to be informed on delays that could affect your travel.</p>
 
-              <p>Access your saved cameras and routes</p>
+              <form method='post' action={`${window.API_HOST}/accounts/oidc/otp/login/`}>
+                <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
+                <input type='hidden' name='next' value={window.location.href} />
 
-              <button type='submit' className="btn btn-outline-primary" autoFocus={true}>Sign in with Basic BCeID</button>
+                <button type='submit' className="btn btn-outline-primary" autoFocus={true}>Sign in with a one-time passcode</button>
 
-              <div>
-                Don&apos;t have a Basic BCeID Account?<br />
-                Anyone can create one (including non-BC residents).<br /><br />
-                <a href={window.BCEID_REGISTER_URL}>Click here to create</a>
-              </div>
+                <p>Login with any email and we’ll send you a one-time passcode.</p>
+              </form>
 
-              <div className="BCeID-definition">
-                <span>What is a BCeID?</span>
+              <form method='post' action={`${window.API_HOST}/accounts/oidc/bceid/login/`}>
+                <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
+                <input type='hidden' name='next' value={window.location.href} />
 
-                <OverlayTrigger placement="top" overlay={tooltipBCeID}>
-                  <button type="button" className="tooltip-info" aria-label={'What is a BCeID? ' + whatIsBCeID}>?</button>
-                </OverlayTrigger>
-              </div>
-            </form>
+                <button type='submit' className="btn btn-primary" autoFocus={true}>Sign in with Basic BCeID</button>
+
+                <p>BCeID is a secure login service to access government services online for all residents and visitors.</p>
+                <p>Don&apos;t have an account? <a href={window.BCEID_REGISTER_URL}>Create one</a></p>
+              </form>
+            </div>
           }
 
           {authContext.action === 'Sign Out' &&

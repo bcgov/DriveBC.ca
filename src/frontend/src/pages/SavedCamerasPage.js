@@ -57,7 +57,7 @@ export default function SavedCamerasPage() {
 
     // Show login modal once if user is not logged in
     if (!authContext.username && !showedModal.current) {
-      toggleAuthModal("Sign In");
+      toggleAuthModal("Sign in");
       showedModal.current = true;
     }
 
@@ -185,7 +185,7 @@ export default function SavedCamerasPage() {
             <h3>Login required</h3>
 
             <p>
-              You must be <a href="#" onClick={() => toggleAuthModal("Sign In")}>logged in</a> to view this page.
+              You must be <a href="#" onClick={() => toggleAuthModal("Sign in")}>logged in</a> to view this page.
             </p>
           </div>
         </Container>
