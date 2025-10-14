@@ -431,11 +431,12 @@ export default function BorderCrossingPanel(props) {
   return borderCrossing && (
     <div className="popup popup--border-crossing" tabIndex={0}>
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
-        <div className="popup__title__icon">
-          <FontAwesomeIcon icon={faSignsPost}/>
-        </div>
-
         <div className="popup__title__name">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="22" height="22" rx="3" fill="white"/>
+          <rect x="1" y="1" width="22" height="22" rx="3" stroke="#255A90" strokeWidth="2"/>
+          <path d="M11.25 6.75C11.25 6.35156 11.5781 6 12 6C12.3984 6 12.75 6.35156 12.75 6.75H16.3359C16.4297 6.75 16.5234 6.79688 16.5938 6.86719L17.7188 7.99219C17.8594 8.13281 17.8594 8.39062 17.7188 8.53125L16.5938 9.65625C16.5234 9.72656 16.4297 9.75 16.3359 9.75H7.5C7.07812 9.75 6.75 9.42188 6.75 9V7.5C6.75 7.10156 7.07812 6.75 7.5 6.75H11.25ZM17.25 12V13.5C17.25 13.9219 16.8984 14.25 16.5 14.25H7.64062C7.54688 14.25 7.45312 14.2266 7.38281 14.1562L6.25781 13.0312C6.11719 12.8906 6.11719 12.6328 6.25781 12.4922L7.38281 11.3672C7.45312 11.2969 7.54688 11.25 7.64062 11.25H11.25V10.5H12.75V11.25H16.5C16.8984 11.25 17.25 11.6016 17.25 12ZM12.75 17.25C12.75 17.6719 12.3984 18 12 18C11.5781 18 11.25 17.6719 11.25 17.25V15H12.75V17.25Z" fill="#255A90"/>
+        </svg>
           <p className='name'>Border Crossing</p>
         </div>
       </div>

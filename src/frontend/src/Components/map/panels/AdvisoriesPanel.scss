@@ -5,12 +5,6 @@
   &--advisories {
     .popup__title {
       background-color: $Advisory-Bg;
-      border-top: 4px solid $Advisory;
-
-      &__icon {
-        background-color: $Advisory;
-        color: $Advisory-Bg;
-      }
 
       .name {
         color: $Advisory-Text;

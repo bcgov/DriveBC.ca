@@ -218,14 +218,15 @@ export default function CamPanel(props) {
   return (
     <div className="popup popup--camera" ref={camPanelRef} data-current="0">
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
-        <div className="popup__title__icon">
-          <FontAwesomeIcon icon={faVideo}/>
-        </div>
-
         <div className="popup__title__name">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="1" width="22" height="22" rx="11" fill="white"/>
+            <rect x="1" y="1" width="22" height="22" rx="11" stroke="#255A90" strokeWidth="2"/>
+            <path d="M6 9.125C6 8.37305 6.60156 7.75 7.375 7.75H12.875C13.627 7.75 14.25 8.37305 14.25 9.125V14.625C14.25 15.3984 13.627 16 12.875 16H7.375C6.60156 16 6 15.3984 6 14.625V9.125ZM18.0098 8.52344C18.2246 8.65234 18.375 8.88867 18.375 9.125V14.625C18.375 14.8828 18.2246 15.1191 18.0098 15.248C17.7734 15.3555 17.5156 15.3555 17.3008 15.2051L15.2383 13.8301L14.9375 13.6367V13.25V10.5V10.1348L15.2383 9.94141L17.3008 8.56641C17.5156 8.41602 17.7734 8.41602 18.0098 8.52344Z" fill="#255A90"/>
+          </svg>
           <p className="name">Camera</p>
-          <ShareURLButton/>
         </div>
+        <ShareURLButton/>
       </div>
 
       {camera && (
