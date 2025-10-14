@@ -5,7 +5,6 @@
   &--weather--local {
     .popup__title {
       background-color: $Grey30;
-      border-top: 4px solid $Type-Primary;
 
       .name {
         color: $Type-Primary;
@@ -14,11 +13,6 @@
       .sub-name {
         font-size: 0.875rem;
         color: $Grey80;
-      }
-
-      &__icon {
-        background-color: $Type-Primary;
-        color: white;
       }
     }
 

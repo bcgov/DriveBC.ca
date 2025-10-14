@@ -458,10 +458,10 @@
     &:after {
       content: "";
       position: absolute;
-      top: 0.75rem;
+      top: 0.25rem;
       left: 50%;
       transform: translateX(-50%);
-      width: 64px;
+      width: 32px;
       height: 0.25rem;
       background-color: rgba(0, 0, 0, 0.2);
       border-radius: 8px;

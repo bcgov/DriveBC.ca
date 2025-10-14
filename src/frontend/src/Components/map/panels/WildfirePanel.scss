@@ -5,16 +5,9 @@
   &--wildfire {
     .popup__title {
       background-color: $Surface-major;
-      border-top: 4px solid $Error;
 
-      &__icon {
-        background-color: $Error;
-      }
-
-      &__name {
-        .name {
-          color: $Error;
-        }
+      .name {
+        color: $Error;
       }
     }
 

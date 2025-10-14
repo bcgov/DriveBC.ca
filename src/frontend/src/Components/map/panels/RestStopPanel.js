@@ -46,6 +46,7 @@ export default function RestStopPanel(props) {
   const { feature, showRouteObjs } = props;
 
   const restStopData = feature.getProperties();
+  const isClosed = isRestStopClosed(restStopData.properties);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -64,15 +65,13 @@ export default function RestStopPanel(props) {
   }, [feature]);
 
   return (
-    <div className="popup popup--reststop" tabIndex={0}>
+    <div className={`popup popup--reststop ${isClosed ? 'closed' : ''}`} tabIndex={0}>
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
-        <div className="popup__title__icon">
-          <RestStopTypeIcon reststop={restStopData} state="active"/>
-        </div>
         <div className="popup__title__name">
+          <RestStopTypeIcon reststop={restStopData} />
           <p className='name'>Rest area</p>
-          <ShareURLButton/>
         </div>
+        <ShareURLButton/>
       </div>
       <div className="popup__content">
         <div className="popup__content__title">

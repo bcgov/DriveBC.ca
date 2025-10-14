@@ -14,26 +14,9 @@
 
     .popup__title {
       background-color: $Surface-green;
-      border-top: 4px solid $Success;
 
-      &__name {
-        .name {
-          font-size: 1.25rem;
-          color: $Success;
-          a {
-            color: $Success;
-            text-decoration: none;
-            &:hover {
-              cursor:pointer;
-              text-decoration: underline;
-            }
-          }
-        }
-      }
-
-      &__icon {
-        background-color: $Success;
-        color: white;
+      .name {
+        color: $Green;
       }
 
       &__updated {

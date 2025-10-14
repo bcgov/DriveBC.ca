@@ -3,6 +3,14 @@
 .popup {
   // Cameras panel
   &--camera {
+    .popup__title {
+      background-color: $Blue10;
+
+      .name {
+        color: $Blue90;
+      }
+    }
+
     .popup__content {
       padding: 1rem;
 

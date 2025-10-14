@@ -26,14 +26,16 @@
   height: 100%;
 
   &__title {
-    background-color: $Blue10;
-    border-top: 4px solid $Info;
-    padding: 1rem;
+    padding: 1rem 3rem 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
 
     &__name {
       display: flex;
-      justify-content: space-between;
-      margin-top: 8px;
+
+      svg {
+        margin-right: 8px;
+      }
     }
 
     &.from-route-objs {
@@ -42,21 +44,9 @@
 
     .name {
       margin-bottom: 0;
-      font-size: 1.25rem;
-      color: $Info;
-    }
-
-    &__icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 6px;
-      background-color: $Info;
-      color: white;
-      display: flex;
-
-      svg {
-        margin: auto;
-      }
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: $BC-Blue;
     }
   }
 
@@ -196,13 +186,16 @@
   right: 1rem;
   padding: 0;
   min-width: 0;
-  line-height: 1.25rem;
-  height: 2rem;
-  width: 2rem;
   border-radius: 50%;
   background: none;
   border: none;
-  font-size: 1rem;
+  font-size: 0.875rem;
+}
+
+.close-panel {
+  padding: 12px 17px;
+  top: 6px;
+  right: 0;
 }
 
 .resize-panel {
@@ -213,8 +206,12 @@
 
 .close-panel:has(+ .panel-content .popup.closure),
 .close-panel:has(+ .panel-content .popup.major),
+.close-panel:has(+ .panel-content .popup--wildfire),
+.close-panel:has(+ .panel-content .popup.popup--reststop.closed),
 .resize-panel:has(~ .panel-content .popup.closure),
-.resize-panel:has(~ .panel-content .popup.major)
+.resize-panel:has(~ .panel-content .popup.major),
+.resize-panel:has(~ .panel-content .popup--wildfire),
+.resize-panel:has(~ .panel-content .popup.popup--reststop.closed)
  {
   color: $Error;
   
@@ -226,7 +223,7 @@
 .close-panel:has(+ .panel-content .popup.minor),
 .close-panel:has(+ .panel-content .popup.roadConditions),
 .resize-panel:has(~ .panel-content .popup.minor),
-.resize-panel:has(~ .panel-content .popup.roadConditions), {
+.resize-panel:has(~ .panel-content .popup.roadConditions) {
   color: $Gold110;
 
   &:hover {
@@ -257,7 +254,7 @@
 .close-panel:has(+ .panel-content .popup.popup--border-crossing),
 .resize-panel:has(~ .panel-content .popup.popup--camera),
 .resize-panel:has(~ .panel-content .popup.popup--border-crossing) {
-  color: $BC-Blue;
+  color: $Blue90;
 
   &:hover {
     background: lighten($BC-Blue, 70%);
