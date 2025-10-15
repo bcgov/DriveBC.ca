@@ -11,7 +11,7 @@
 }
 
 .routing {
-  padding: 1rem 1rem 0;
+  padding: 1rem 0 0 1rem;
 
   .routing-container {
     position: relative;
@@ -21,8 +21,8 @@
     .swap-button{
       position: absolute;
       top: calc(50% - 20px);
-      right: -13px;
-      padding: 8px 4px 8px 4px;
+      right: 2rem;
+      padding: 4px;
       color: $Type-Link;
       border-radius: 32px 32px 32px 32px;
       border: 1px solid #D9D9D9;
@@ -40,7 +40,7 @@
       width: 100%;
 
       @media (min-width: 576px) {
-        width: 374px;
+        width: 390px;
       }
 
       .typeahead-spinner {
@@ -74,7 +74,7 @@
         background: none;
         border: none;
         font-size: 0.75rem;
-        padding: 0.75rem 1.5rem 0.75rem 0.5rem;
+        padding: 0.75rem 1rem;
       }
 
       #location-search-typeahead {

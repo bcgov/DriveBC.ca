@@ -929,6 +929,16 @@ export default function DriveBCMap(props) {
       }
       
       <div ref={mapElement} className="map">
+        {(!isCamDetail && showRouteObjs && selectedRoute) && (
+          <Button 
+            variant="primary-outline" 
+            className="btn-outline-primary back-to-routes" 
+            onClick={() => dispatch(updateShowRouteObjs(false))}>
+            <FontAwesomeIcon icon={faArrowLeft}/>
+            Routes
+          </Button>
+        )}
+
         {!largeScreen && (
           <Drawer.Root
             open={openPanel && !largeScreen}
@@ -1045,16 +1055,6 @@ export default function DriveBCMap(props) {
               My location
             </Button>
           </React.Fragment>
-        )}
-
-        {(!isCamDetail && showRouteObjs && selectedRoute) && (
-          <Button 
-            variant="primary-outline" 
-            className="btn-outline-primary back-to-routes" 
-            onClick={() => dispatch(updateShowRouteObjs(false))}>
-            <FontAwesomeIcon icon={faArrowLeft}/>
-            Routes
-          </Button>
         )}
 
         <div className={"map-btn zoom-btn" + (openTabs ? ' tabs-pushed' : '')}>
