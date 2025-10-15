@@ -499,14 +499,6 @@ button.text-only-btn {
     width: 374px;
   }
 
-  &.margin-pushed {
-    margin-left: 390px;
-
-    @media (max-width: 767px) {
-      margin-left: 0px;
-    }
-  }
-
   &.stale-link-error, &.server-error {
     background: $Stale-Notification;
     .error-icon {
