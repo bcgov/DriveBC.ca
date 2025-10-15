@@ -62,34 +62,49 @@ SOCIALACCOUNT_PROVIDERS = {
     'openid_connect': {
         'APPS': [
             {
-                'provider_id': 'bceid',
-                'name': 'BCeID via Keycloak',
-                'client_id': KEYCLOAK_CLIENT_ID,
-                'secret': KEYCLOAK_SECRET,
-                'settings': {
-                    'server_url': KEYCLOAK_URL,
-                },
-            },
-            {
                 'provider_id': 'idir',
                 'name': 'Azure IDIR via Keycloak',
                 'client_id': KEYCLOAK_CLIENT_ID,
                 'secret': KEYCLOAK_SECRET,
                 'settings': {
                     'server_url': KEYCLOAK_URL,
+                    'auth_params': {
+                        'kc_idp_hint': 'azureidir',
+                    },
+                },
+            },
+            {
+                'provider_id': 'bceid',
+                'name': 'BCeID via Keycloak',
+                'client_id': KEYCLOAK_CLIENT_ID,
+                'secret': KEYCLOAK_SECRET,
+                'settings': {
+                    'server_url': KEYCLOAK_URL,
+                    'auth_params': {
+                        'kc_idp_hint': 'bceidbasic',
+                    },
+                },
+            },
+            {
+                'provider_id': 'otp',
+                'name': 'One-time password via Keycloak',
+                'client_id': KEYCLOAK_CLIENT_ID,
+                'secret': KEYCLOAK_SECRET,
+                'settings': {
+                    'server_url': KEYCLOAK_URL,
+                    'auth_params': {
+                        'kc_idp_hint': 'otp',
+                    },
                 },
             },
         ],
-        'AUTH_PARAMS': {
-            'kc_idp_hint': 'bceidbasic',
-        },
         'EMAIL_AUTHENTICATION_AUTO_CONNECT': True,
         'EMAIL_AUTHENTICATION': True,
         'STORE_TOKENS': True,
     },
 }
 
-# SOCIALACCOUNT_ADAPTER = 'apps.authentication.adapters.SocialAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'apps.authentication.adapters.SocialAdapter'
 ACCOUNT_EMAIL_VERIFICATION = "none"
 SOCIALACCOUNT_LOGIN_ON_GET = False
 SOCIALACCOUNT_EMAIL_VERIFICATION = False

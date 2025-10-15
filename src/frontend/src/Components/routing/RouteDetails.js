@@ -48,6 +48,7 @@ import * as slices from '../../slices';
 import NotificationEventType from "./forms/NotificationEventType";
 import NotificationDateTime from "./forms/NotificationDateTime";
 import RouteMap from './RouteMap';
+import ConsentModal from "../../ConsentModal";
 
 // Styling
 import './RouteDetails.scss';
@@ -121,6 +122,7 @@ export default function RouteDetails(props) {
   const [showSavePopup, setShowSavePopup] = useState(false);
   const [routeMapImg, setRouteMapImg] = useState(); // for map snapshot
   const [filteredFavCams, setFilteredFavCams] = useState();
+  const [showConsentModal, setShowConsentModal] = useState(false);
 
   /* Notification states */
   const [notificationsEnabled, setNotificationsEnabled] = useState(route.notification);
@@ -306,10 +308,10 @@ export default function RouteDetails(props) {
   const toggleAuthModal = (action) => {
     setAuthContext((prior) => {
       if (!prior.showingModal) {
-        return { ...prior, showingModal: true, action };
+        return {...prior, showingModal: true, action};
       }
       return prior;
-    })
+    });
   };
 
   /* Handlers */
@@ -342,7 +344,7 @@ export default function RouteDetails(props) {
 
     // User not logged in, save pending action and open login modal
     } else {
-      toggleAuthModal('Sign In');
+      toggleAuthModal('Sign in');
       dispatch(updatePendingAction({
         action: 'showSavePopup'
       }));
@@ -437,6 +439,13 @@ export default function RouteDetails(props) {
       }));
 
       navigate('/verify-email?my_routes=true');
+      return;
+    }
+
+    if (!authContext.consent) {
+      e.preventDefault();
+
+      setShowConsentModal(true);
       return;
     }
 
@@ -805,6 +814,10 @@ export default function RouteDetails(props) {
 
         {isPanel &&
           <RouteMap route={route} showSavePopup={showSavePopup} setRouteMapImg={setRouteMapImg}/>
+        }
+
+        {showConsentModal &&
+          <ConsentModal setShowConsentModal={setShowConsentModal} postConsentHandler={() => setShowNotificationForm(true)} />
         }
       </div>
     </React.Fragment>

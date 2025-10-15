@@ -3,6 +3,7 @@ from rest_framework import routers
 
 from .views import (
     DriveBCUserViewset,
+    EmailConsentView,
     FavouritedCamerasViewset,
     SavedRoutesViewset,
     SendVerificationEmailView,
@@ -18,4 +19,5 @@ urlpatterns = [
     path("", include(router.urls)),
     path('verify-email/<uidb64>/<token>/', VerifyEmailView.as_view(), name='verify-email'),
     path('send-verification-email/', SendVerificationEmailView.as_view(), name='send-verification-email'),
+    path('email-consent/', EmailConsentView.as_view(), name='email-consent'),
 ]

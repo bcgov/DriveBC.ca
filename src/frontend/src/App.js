@@ -39,7 +39,8 @@ import FeedbackPage from './pages/FeedbackPage';
 import EmergencyAlert from "./Components/shared/EmergencyAlert.js";
 import Header from './Components/shared/header/Header.js';
 import MapPage from './pages/MapPage';
-import Modal from './Modal.js';
+import AuthModal from './AuthModal.js';
+import ConsentModal from "./ConsentModal";
 import NotFoundPage from './pages/NotFoundPage';
 import ProblemsPage from './pages/ProblemsPage.js';
 import ReportElectricalPage from './pages/ReportElectricalPage';
@@ -96,6 +97,7 @@ function App() {
   // const [headerHeightContext, setHeaderHeightContext] = useState();
   const [featureContext, setFeatureContext] = useState({});
   const [filterContext, setFilterContext] = useState({});
+  const [showConsentModal, setShowConsentModal] = useState(false);
 
   // Effects
   useEffect(() => {
@@ -128,6 +130,10 @@ function App() {
     if (authContext.username) {
       initCams();
       initRoutes();
+
+      if (!authContext.consent && !authContext.attempted_consent) {
+        setShowConsentModal(true);
+      }
     }
   }, [authContext]);
 
@@ -219,6 +225,8 @@ function App() {
             ret.email = data.email;
             ret.verified = data.verified;
             ret.attempted_verification = data.attempted_verification;
+            ret.consent = data.consent;
+            ret.attempted_consent = data.attempted_consent;
           }
           setAuthContext((prior) => {
             if (ret.loginStateKnown != prior.loginStateKnown) { return ret; }
@@ -308,7 +316,11 @@ function App() {
 
                         </main>
 
-                        <Modal />
+                        <AuthModal />
+
+                        {showConsentModal &&
+                          <ConsentModal setShowConsentModal={setShowConsentModal} />
+                        }
 
                         <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
 

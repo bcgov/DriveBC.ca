@@ -178,7 +178,7 @@ export default function CameraCard(props) {
 
     // User not logged in, save pending action and open login modal
     } else {
-      toggleAuthModal('Sign In');
+      toggleAuthModal('Sign in');
       dispatch(updatePendingAction({
         action: 'pushFavCam',
         payload: camera.id,
