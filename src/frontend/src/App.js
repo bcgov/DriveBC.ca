@@ -40,7 +40,7 @@ import EmergencyAlert from "./Components/shared/EmergencyAlert.js";
 import Header from './Components/shared/header/Header.js';
 import MapPage from './pages/MapPage';
 import AuthModal from './AuthModal.js';
-import ConsentModal from "./ConsentModal";
+// import ConsentModal from "./ConsentModal";
 import NotFoundPage from './pages/NotFoundPage';
 import ProblemsPage from './pages/ProblemsPage.js';
 import ReportElectricalPage from './pages/ReportElectricalPage';
@@ -97,7 +97,7 @@ function App() {
   // const [headerHeightContext, setHeaderHeightContext] = useState();
   const [featureContext, setFeatureContext] = useState({});
   const [filterContext, setFilterContext] = useState({});
-  const [showConsentModal, setShowConsentModal] = useState(false);
+  // const [showConsentModal, setShowConsentModal] = useState(false);
 
   // Effects
   useEffect(() => {
@@ -131,9 +131,9 @@ function App() {
       initCams();
       initRoutes();
 
-      if (!authContext.consent && !authContext.attempted_consent) {
-        setShowConsentModal(true);
-      }
+      // if (!authContext.consent && !authContext.attempted_consent) {
+      //   setShowConsentModal(true);
+      // }
     }
   }, [authContext]);
 
@@ -317,10 +317,6 @@ function App() {
                         </main>
 
                         <AuthModal />
-
-                        {showConsentModal &&
-                          <ConsentModal setShowConsentModal={setShowConsentModal} />
-                        }
 
                         <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
 

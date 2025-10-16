@@ -59,15 +59,6 @@ export default function AuthModal() {
 
   // Redux
   const dispatch = useDispatch();
-  const { selectedRoute, searchedRoutes } = useSelector(useCallback(memoize(state => ({
-    selectedRoute: state.routes.selectedRoute,
-    searchedRoutes: state.routes.searchedRoutes,
-  }))));
-
-  /* Handlers */
-  const handleSubmit = (e) => {
-    logoutDispatch(dispatch, selectedRoute, searchedRoutes);
-  };
 
   const resetAuthModal = () => {
     // Reset focus and screen reader content
@@ -128,7 +119,7 @@ export default function AuthModal() {
         ref={containerRef}
         tabIndex={-1}
         id="modal-content"
-        className={`content ${authContext.action === 'Sign out' ? 'sign-out' : ''}`}
+        className={`content`}
         onClick={(e) => { e.stopPropagation(); }}
         onKeyDown={(e) => { e.stopPropagation(); }}
         role="alertdialog"
@@ -143,32 +134,24 @@ export default function AuthModal() {
             <div className={'form-container'}>
               <p>Save cameras, routes, and setup notifications to be informed on delays that could affect your travel.</p>
 
-              <form method='post' action={`${window.API_HOST}/accounts/oidc/otp/login/`}>
+              <form className={'otp-form'} method='post' action={`${window.API_HOST}/accounts/oidc/otp/login/`}>
                 <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
                 <input type='hidden' name='next' value={window.location.href} />
 
-                <button type='submit' className="btn btn-outline-primary" autoFocus={true}>Sign in with a one-time passcode</button>
+                <button type='submit' className="btn btn-primary" autoFocus={true}>Sign in with a one-time passcode</button>
 
-                <p>Login with any email and we’ll send you a one-time passcode.</p>
+                <p>Login with your email and we’ll send you a one-time passcode.</p>
               </form>
 
-              <form method='post' action={`${window.API_HOST}/accounts/oidc/bceid/login/`}>
+              <form className={'bceid-form'} method='post' action={`${window.API_HOST}/accounts/oidc/bceid/login/`}>
                 <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
                 <input type='hidden' name='next' value={window.location.href} />
 
-                <button type='submit' className="btn btn-primary" autoFocus={true}>Sign in with Basic BCeID</button>
+                <button type='submit' className="btn btn-outline-primary" autoFocus={true}>Sign in with Basic BCeID</button>
 
-                <p>BCeID is a secure login service to access government services online for all residents and visitors.</p>
-                <p>Don&apos;t have an account? <a href={window.BCEID_REGISTER_URL}>Create one</a></p>
+                <p>BCeID is a secure login service to access government services online for all residents and visitors. Don&apos;t have a BCeID account? <a href={window.BCEID_REGISTER_URL}>Create one</a></p>
               </form>
             </div>
-          }
-
-          {authContext.action === 'Sign out' &&
-            <form method='post' action={`${window.API_HOST}/accounts/logout/`} onSubmit={handleSubmit}>
-              <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
-              <button type='submit' className="btn btn-outline-primary" autoFocus={true}>Sign out of DriveBC</button>
-            </form>
           }
         </div>
 

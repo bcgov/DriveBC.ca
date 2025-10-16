@@ -1,7 +1,13 @@
 @import "styles/variables";
 
 .auth-modal {
-  .content.sign-out {
-    width: 500px;
+  .form-container {
+    button {
+      margin-bottom: .25rem;
+    }
+
+    form {
+      margin-top: .5rem;
+    }
   }
 }
