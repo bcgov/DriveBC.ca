@@ -18,20 +18,11 @@
     width: 100%;
     align-self: flex-start;
 
-    @media (min-width: 768px) {
+    @media (min-width: 992px) {
       position: sticky;
       top: 1rem;
-      width: 360px;
+      width: 310px;
       min-width: 310px;
-    }
-
-    @media (min-width: 1200px) {
-      max-height: calc(100vh - 8vh);
-      overflow-y: auto;
-
-      &::-webkit-scrollbar {
-       display: none;
-      }
     }
 
     .routing {
@@ -81,6 +72,15 @@
         padding: 16px 16px 32px;
         border-bottom-left-radius: 8px;
         border-bottom-right-radius: 8px;
+
+        @media (min-width: 992px) {
+          max-height: calc(100vh - 278px);
+          overflow-y: auto;
+    
+          &::-webkit-scrollbar {
+           display: none;
+          }
+        }
 
         .advisories-list {
           list-style: none;
