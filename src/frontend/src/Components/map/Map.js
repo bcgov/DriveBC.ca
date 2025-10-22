@@ -230,24 +230,100 @@ export default function DriveBCMap(props) {
       return !smallScreen ? ['25%', '50%', '80%'] : ['25%', '50%', '100%'];
     }
   };
-  const snapPoints = getSnapPoints();
+
+  // Use a ref to persist the snap point across renders
+  const snapPointRef = useRef('25%');
   const [snap, setSnap] = useState('25%');
 
-  // Update snap when route details are shown
+  // Update both state and ref when snap changes
+  const handleSnapChange = useCallback((newSnap) => {
+    snapPointRef.current = newSnap;
+    setSnap(newSnap);
+  }, []);
+
+  const snapPoints = getSnapPoints();
+
+  // Update snap when route details are shown/hidden (only when snap points actually change)
   const prevRouteDetailsActive = useRef(false);
+  const prevSnapPoints = useRef(snapPoints);
   const routeDetailsActive = !isCamDetail && showRouteObjs && selectedRoute;
-  
+
   useEffect(() => {
-    if (routeDetailsActive && !prevRouteDetailsActive.current) {
-      // Reset snappoints when entering route details view
-      setSnap(snapPoints[snapPoints.length - 1]);
-    } else if (!routeDetailsActive && prevRouteDetailsActive.current) {
-      // Reset to max snap point when exiting route details view
-      const maxSnap = !smallScreen ? '80%' : '100%';
-      setSnap(maxSnap);
+    // Only adjust snap if the available snap points have changed
+    const snapPointsChanged = JSON.stringify(prevSnapPoints.current) !== JSON.stringify(snapPoints);
+    
+    if (snapPointsChanged) {
+      // Check if current snap point is valid in new snap points array
+      if (!snapPoints.includes(snapPointRef.current)) {
+        // Current snap isn't valid, adjust to nearest valid snap
+        const currentSnapValue = parseInt(snapPointRef.current);
+        const closestSnap = snapPoints.reduce((prev, curr) => {
+          return Math.abs(parseInt(curr) - currentSnapValue) < Math.abs(parseInt(prev) - currentSnapValue) ? curr : prev;
+        });
+        handleSnapChange(closestSnap);
+      }
+      
+      prevSnapPoints.current = snapPoints;
     }
+    
     prevRouteDetailsActive.current = routeDetailsActive;
-  }, [routeDetailsActive, snapPoints]);
+  }, [snapPoints, routeDetailsActive, handleSnapChange]);
+
+  // When opening a new feature, maintain the last used snap point
+  useEffect(() => {
+    if (openPanel && !largeScreen) {
+      // Use the stored snap point reference
+      setSnap(snapPointRef.current);
+    } else if (!openPanel) {
+      // Reset to default when drawer is completely dismissed
+      snapPointRef.current = '25%';
+      setSnap('25%');
+    }
+  }, [openPanel, largeScreen]);
+
+  // Track drawer y-position to reposition buttons fixed to draggable mobile panel
+  const drawerRef = useRef();
+  const [drawerY, setDrawerY] = useState(0);
+  const drawerInitialOffset = useRef(null);
+
+  useEffect(() => {
+    let frame;
+    
+    const updatePosition = () => {
+      if (drawerRef.current) {
+        const transform = getComputedStyle(drawerRef.current).transform;
+        if (transform && transform !== 'none') {
+          const match = transform.match(/matrix.*\((.+)\)/);
+          if (match) {
+            const values = match[1].split(', ');
+            const translateY = parseFloat(values[5]);
+            
+            // Capture the initial offset on first read
+            if (drawerInitialOffset.current === null) {
+              drawerInitialOffset.current = translateY;
+            }
+            
+            // Calculate relative movement from initial position
+            const relativeY = translateY - drawerInitialOffset.current;
+            
+            // Add offset for navbar when route is selected
+            // -58px when route objects are shown, -37px when just route is selected
+            const routeDetailsOffset = selectedRoute ? (showRouteObjs ? -58 : 20) : 0;
+            setDrawerY(relativeY + routeDetailsOffset);
+          }
+        } else {
+          setDrawerY(0);
+        }
+      } else {
+        setDrawerY(0);
+        drawerInitialOffset.current = null; // Reset when drawer unmounts
+      }
+      frame = requestAnimationFrame(updatePosition);
+    };
+
+    frame = requestAnimationFrame(updatePosition);
+    return () => cancelAnimationFrame(frame);
+  }, [showRouteObjs, selectedRoute]);
 
   // ScaleLine
   const scaleLineControl = new ScaleLine({ units: 'metric' });
@@ -949,7 +1025,7 @@ export default function DriveBCMap(props) {
             }}
             snapPoints={snapPoints}
             snap={snap}
-            setSnap={setSnap}
+            setSnap={handleSnapChange}
             modal={false}
             dismissible={true}
             shouldScaleBackground={false}
@@ -957,8 +1033,8 @@ export default function DriveBCMap(props) {
           >
             <Drawer.Portal container={mapElement.current}>
               <Drawer.Overlay className="drawer-overlay" />
-              <Drawer.Content className="drawer-content">
-                {clickedFeature && (!selectedRoute || isCamDetail) &&
+              <Drawer.Content className="drawer-content" ref={drawerRef}>
+                {clickedFeature && !isCamDetail &&
                   <button
                     className="close-panel"
                     aria-label={`${openPanel ? 'close side panel' : ''}`}
@@ -1005,10 +1081,14 @@ export default function DriveBCMap(props) {
         )}
 
         {(!isCamDetail && smallScreen && !maximizedPanel && mapRef.current && (!showRouteObjs || clickedFeature)) && (
-          <React.Fragment>
+          <div className="fixed-to-mobile-group"
+            style={{
+              transform: `translateY(${drawerY}px)`
+            }}
+          >
             <Button
               ref={myLocationRef}
-              className="map-btn my-location"
+              className="map-btn my-location fixed-to-mobile"
               variant="primary"
               onClick={loadMyLocation}
               aria-label="my location">
@@ -1016,7 +1096,6 @@ export default function DriveBCMap(props) {
                 ? <Spinner animation="border" role="status" />
                 : <FontAwesomeIcon icon={faLocationCrosshairs} />
               }
-              My location
             </Button>
 
             <FilterTabs
@@ -1029,7 +1108,7 @@ export default function DriveBCMap(props) {
               loadingLayers={loadingLayers}
               open={openTabs}
               setOpen={setOpenTabs} />
-          </React.Fragment>
+          </div>
         )}
 
         {(!isCamDetail && !smallScreen && mapRef.current) && (
