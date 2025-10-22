@@ -100,13 +100,15 @@ export default function FilterTabs(props) {
     <div className={'filters-menu'  + (!open ? ' closed' : '') + (activeTab === 'layers' ? ' layers-tab' : ' legend-tab')}>
       <Button
         variant={isDelaysPage ? 'outline-primary' : 'primary'}
-        className={'map-btn open-filters' + (open ? ' hide' : '')}
+        className={'map-btn open-filters' + (open ? ' hide' : '')  + (smallScreen ? ' fixed-to-mobile-panel' : '')}
         aria-label='open filters options'
         onClick={() => {
           open ? setOpen(false) : setOpen(true)
         }}>
         <FontAwesomeIcon icon={faLayerGroup}/>
-        <span className='filters-btn__text'>{textOverride ? textOverride : 'Map Layers'}</span>
+        {!smallScreen && (
+          <span className='filters-btn__text'>{textOverride ? textOverride : 'Map Layers'}</span>
+        )}
       </Button>
 
       {smallScreen && mapContainer &&

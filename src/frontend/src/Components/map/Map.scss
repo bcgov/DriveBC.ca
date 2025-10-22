@@ -249,6 +249,13 @@
       }
     }
 
+    .fixed-to-mobile-group {
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+      z-index: 5000;
+    }
+
     .map-btn {
       background-color: $Surface-tinted;
       color: $Type-Link;
@@ -265,9 +272,17 @@
         color: $White;
       }
 
-      &.map-view, &.my-location,  &.cam-location {
+      &.map-view, &.cam-location {
         svg {
           margin-right: 8px;
+        }
+      }
+
+      &.my-location, &.open-filters {
+        svg {
+          @media (min-width: 576px) {
+            margin-right: 8px;
+          }
         }
       }
 
