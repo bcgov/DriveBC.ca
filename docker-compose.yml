@@ -35,6 +35,11 @@ services:
     container_name: tasks
     command: /start_tasks.sh
 
+  consumer:
+    <<: *backend
+    container_name: consumer
+    command: /start_consumer.sh
+
   node:
     env_file: .env
     container_name: node
