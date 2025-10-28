@@ -73,11 +73,10 @@ class Webcam(BaseModel):
     
     def get_image_paths(self):
             timestamps = get_image_list(self.id, "TIMELAPSE_HOURS")
-            TIMELAPSE_API_ROOT_URL = os.environ.get("TIMELAPSE_API_ROOT_URL", "http://localhost:8000/api/webcams")
             image_paths = []
             for ts in timestamps:
                 filename = ts
-                img_path = f"{TIMELAPSE_API_ROOT_URL}/{self.id}/admin-timelapse/{filename}/"
+                img_path = f"{self.id}/admin-timelapse/{filename}/"
                 image_paths.append(img_path)
             return image_paths
 
