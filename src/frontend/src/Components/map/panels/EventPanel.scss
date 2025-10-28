@@ -17,7 +17,6 @@
 
     .popup__content {
       &__title {
-        border-bottom: 1px solid $Divider;
         .name {
           margin-bottom: 0;
         }
@@ -26,18 +25,15 @@
           color: $Grey80;
           margin-bottom: 0;
         }
-      }
-      &__description {
-        > p:first-child {
-          font-weight: bold;
-          font-size: 0.875rem;
-          height: 1.3125rem;
-          margin-bottom: 0;
-        }
-
-        > p:nth-child(2) {
+        .location {
           font-size: 0.875rem;
           margin-top: 0;
+          color: $Grey80;
+        }
+      }
+      &__description {
+        & > p:first-child {
+          font-weight: bold;
           margin-bottom: 0;
         }
 
@@ -80,27 +76,6 @@
         .name {
           color: $Error;
         }
-
-      }
-
-      .popup__content {
-        &__title {
-          .name {
-            color: $Error;
-            font-size: 1.5rem;
-          }
-
-          .location {
-            color: $Red-dark;
-            font-size: 0.875rem;
-            margin-top: 0;
-          }
-        }
-        &__description {
-          time {
-            font-size: 0.875rem;
-          }
-        }
       }
     }
 
@@ -110,27 +85,6 @@
 
         .name {
           color: $Gold110;
-        }
-      }
-
-      .popup__content {
-        &__title {
-          .name {
-            color: $Gold110;
-          }
-
-          .location {
-            color: $Type-Secondary;
-            font-size: 0.875rem;
-          }
-        }
-        &__description {
-          time {
-            font-size: 0.875rem;
-            &:hover {
-              color: $Type-Link;
-            }
-          }
         }
       }
     }
@@ -145,16 +99,6 @@
       }
 
       .popup__content {
-        &__title {
-          .name {
-            color: $Type-Primary;
-          }
-
-          .location {
-            color: $Type-Secondary;
-            font-size: 0.875rem;
-          }
-        }
         &__description {
           time {
             font-size: 0.875rem;
@@ -162,6 +106,9 @@
               color: $Type-Link;
             }
           }
+        }
+        &__shadow-box {
+          font-size: 0.875rem;
         }
       }
     }

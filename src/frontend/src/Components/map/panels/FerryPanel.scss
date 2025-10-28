@@ -7,11 +7,6 @@
       margin: 0;
     }
 
-    p {
-      margin-bottom: 0.875rem;
-      font-size: 0.875rem;
-    }
-
     .popup__title {
       background-color: $Surface-green;
 
@@ -34,7 +29,7 @@
       }
 
       &__updated {
-        color: #605E5C;
+        color: $Grey80;
         font-size: 0.875rem;
       }
     }
@@ -42,6 +37,25 @@
     .popup__content {
       padding: 0;
       margin-bottom: 1rem;
+
+      &__container {
+        margin: 0.5rem 1rem 1rem;
+      }
+
+      &__image {
+        margin: 0.5rem 1rem 1rem;
+
+        img {
+          border-radius: 8px;
+        }
+      }
+
+      &__title {
+        .name, .name a {
+          margin-bottom: 0;
+          font-weight: 700;
+        }
+      }
 
       .ferries__schedule__container {
         display: flex;
@@ -114,6 +128,60 @@
 
         &__map {
           margin-bottom: 0.5rem;
+        }
+
+        .data-card {
+          margin: 0.75rem 0;
+          padding: 0.75rem;
+          border-radius: 8px;
+          box-shadow: 0px 6.4px 14.4px 0px rgba(0, 0, 0, 0.13), 0px 1.2px 3.6px 0px rgba(0, 0, 0, 0.10);
+    
+          &__row {
+            display: flex;
+    
+            & + .data-card__row {
+              margin-top: 0.75rem;
+              padding-top: 0.75rem;
+              border-top: 1px solid $Divider;
+            }
+    
+            &:not(.group) {
+              .data-icon {
+                align-self: top;
+              }
+            }
+    
+            .data-icon {
+              margin-right: 0.75rem;
+              color: $Grey80;
+            }
+    
+            .data-group {
+              flex: 1 0;
+    
+              &__row {
+                display: flex;
+              }
+            }
+          }
+    
+          .label, .data {
+            font-size: 0.875rem;
+            margin-bottom: 0;
+          }
+    
+          .label {
+            text-align: left;
+            color: $Grey80;
+          }
+    
+          .data {
+            text-align: right;
+            margin-left: auto;
+            min-width: 80px;
+            color: $Type-Primary;
+            font-weight: 700;
+          }
         }
       }
     }

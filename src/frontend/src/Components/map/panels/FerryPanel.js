@@ -11,7 +11,6 @@ import {
   faFacebookF,
 } from '@fortawesome/free-brands-svg-icons';
 import {
-  faFerry,
   faCar,
   faClock,
   faEnvelope,
@@ -19,7 +18,7 @@ import {
   faPersonWalkingLuggage,
   faPhone,
   faWeightScale,
-} from '@fortawesome/pro-solid-svg-icons';
+} from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
 import parse from 'html-react-parser';
 
@@ -122,15 +121,54 @@ export default function FerryPanel(props) {
           </div>
         </div>
 
-        {ferryData.image_url && (
-          <div className="popup__content__image">
-            <img src={ferryData.image_url} alt={`${ferryData.route_name} vessel`} />
-          </div>
-        )}
-
         <div className="info">
           {ferryData.vessels && ferryData.vessels.map((vessel, index) => (
             <div className='info__block' key={index}>
+              <div className='info__container'>
+                <p className='info__header'>Ferry details</p>
+
+                <div className="data-card">
+                  <div className="data-card__row">
+                    <div className="data-icon">
+                      <FontAwesomeIcon icon={faCar}/>
+                    </div>
+                    <p className="label">Vehicle capacity</p>
+                    <p className="data">{vessel.vehicle_capacity ? `${vessel.vehicle_capacity}` : 'N/A'}
+                    </p>
+                  </div>
+                  <div className="data-card__row">
+                    <div className="data-icon">
+                      <FontAwesomeIcon icon={faPersonWalkingLuggage}/>
+                    </div>
+                    <p className="label">Passengers</p>
+                    <p className="data">{vessel.passenger_capacity ? `${vessel.passenger_capacity}` : 'N/A'}
+                    </p>
+                  </div>
+                  <div className="data-card__row">
+                    <div className="data-icon">
+                      <FontAwesomeIcon icon={faClock}/>
+                    </div>
+                    <p className="label">Trip time</p>
+                    <p className="data">{vessel.crossing_time_min ? `${vessel.crossing_time_min} minutes` : 'N/A'}
+                    </p>
+                  </div>
+                  <div className="data-card__row">
+                    <div className="data-icon">
+                      <FontAwesomeIcon icon={faWeightScale}/>
+                    </div>
+                    <p className="label">Weight limit</p>
+                    <p className="data">{vessel.weight_capacity_kg ? `${vessel.weight_capacity_kg}kg` : 'N/A'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {ferryData.image_url && (
+                <div className="popup__content__image">
+                  <img src={ferryData.image_url} alt={`${ferryData.route_name} vessel`} />
+                </div>
+              )}
+
               <div className='info__container'>
                 {vessel.schedule_detail &&
                   <p>{parse(vessel.schedule_detail)}</p>
@@ -140,34 +178,7 @@ export default function FerryPanel(props) {
                   <p>{vessel.special_restriction}</p>
                 }
               </div>
-
-              <div className='info__container'>
-                <p className='info__header'>Ferry details</p>
-
-                <div className='info__row'>
-                  <p>
-                    <FontAwesomeIcon icon={faCar}/>
-                    {vessel.vehicle_capacity ? `${vessel.vehicle_capacity} vehicles` : 'N/A'}
-                  </p>
-
-                  <p>
-                    <FontAwesomeIcon icon={faPersonWalkingLuggage}/>
-                    {vessel.passenger_capacity ? `${vessel.passenger_capacity} passengers` : 'N/A'}
-                  </p>
-                </div>
-
-                <div className='info__row'>
-                  <p>
-                    <FontAwesomeIcon icon={faClock}/>
-                    {vessel.crossing_time_min ? `${vessel.crossing_time_min} minutes` : 'N/A'}
-                  </p>
-
-                  <p>
-                    <FontAwesomeIcon icon={faWeightScale}/>
-                    {vessel.weight_capacity_kg ? `${vessel.weight_capacity_kg}kg` : 'N/A'}
-                  </p>
-                </div>
-              </div>
+              
               <hr />
             </div>
 

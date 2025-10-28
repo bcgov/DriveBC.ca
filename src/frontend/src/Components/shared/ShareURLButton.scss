@@ -25,17 +25,17 @@
     }
   }
   &--event {
-    &.major, &.closures, &.closure {
-      .copy-btn {
-        color: $Error;
+    &:not(.roadConditions) {
+      &.major, &.closures, &.closure {
+        .copy-btn {
+          color: $Error;
+        }
       }
-
     }
     &.minor {
       .copy-btn {
         color: $Gold110;
       }
-
     }
     &.chainUps {
       .copy-btn {

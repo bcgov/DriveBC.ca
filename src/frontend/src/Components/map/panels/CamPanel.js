@@ -245,6 +245,32 @@ export default function CamPanel(props) {
             </p>
           </div>
 
+          <div className="popup__content__description">
+            <p>{parse(camera.caption)}</p>
+          </div>
+
+          <div className="camera-orientations">
+            <div
+              className="rotate-cam-container"
+              tabIndex={0}
+              onClick={handleCameraImageClick}
+              onKeyDown={(keyEvent) => {
+                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+                  handleCameraImageClick(keyEvent);
+                }
+              }}>
+
+              <img
+                src={colocatedCamIcon}
+                role="presentation"
+                alt="colocated cameras icon"/>
+
+              <span>Direction</span>
+            </div>
+
+            {renderCamGroup()}
+          </div>
+
           {camera.is_on ? (
             <div className="popup__content__image"
               onClick={handlePopupClick}
@@ -349,32 +375,6 @@ export default function CamPanel(props) {
               </div>
             </div>
           )}
-
-          <div className="camera-orientations">
-            <div
-              className="rotate-cam-container"
-              tabIndex={0}
-              onClick={handleCameraImageClick}
-              onKeyDown={(keyEvent) => {
-                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                  handleCameraImageClick(keyEvent);
-                }
-              }}>
-
-              <img
-                src={colocatedCamIcon}
-                role="presentation"
-                alt="colocated cameras icon"/>
-
-              <span>Direction</span>
-            </div>
-
-            {renderCamGroup()}
-          </div>
-
-          <div className="popup__content__description">
-            <p>{parse(camera.caption)}</p>
-          </div>
 
           <div className="popup__content__tools">
             <p

@@ -8,7 +8,6 @@ import { useSearchParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChargingStation,
-  faCircleInfo,
   faClock,
   faDoorOpen,
   faRoad,
@@ -16,7 +15,7 @@ import {
   faToilet,
   faTruckContainer,
   faWifi,
-} from '@fortawesome/pro-solid-svg-icons';
+} from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -69,7 +68,13 @@ export default function RestStopPanel(props) {
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__name">
           <RestStopTypeIcon reststop={restStopData} />
-          <p className='name'>Rest area</p>
+            {restStopData.properties.OPEN_YEAR_ROUND === "No" && !restStopData.properties.OPEN_DATE && !restStopData.properties.CLOSE_DATE ? (
+              <div className='name-div'>
+                <p className='name'>Rest area</p>
+                <p className="label red-text">Closed</p>
+              </div>
+              ) : (<p className='name'>Rest area</p>
+              )}
         </div>
         <ShareURLButton/>
       </div>
@@ -78,52 +83,86 @@ export default function RestStopPanel(props) {
         <p className="name">{restStopData.properties.REST_AREA_NAME}</p>
           <p className="location">{restStopData.properties.DISTANCE_FROM_MUNICIPALITY}</p>
         </div>
-        <hr/>
         <div className='popup__content__description'>
           <p className="description-label label">Access</p>
-          <div className='popup__content__description__container'>
-            <div className='popup__content__description__container__row'>
-              <FontAwesomeIcon icon={faClock} />
-              {restStopData.properties.OPEN_YEAR_ROUND === "Yes" && (
-                <p className="green-text">Open year round</p>
-              )}
-              {restStopData.properties.OPEN_YEAR_ROUND === "No" && restStopData.properties.OPEN_DATE && restStopData.properties.CLOSE_DATE && (
-                <div>
-                    {<OpenSeason returnState={true} openDate={restStopData.properties.OPEN_DATE} closeDate={restStopData.properties.CLOSE_DATE} /> === "open" ? (
-                      <p className="green-text">Open seasonally</p>
-                      ) : ( isRestStopClosed(restStopData.properties)? (<p className="red-text">Closed &#40;open seasonally&#41;</p>)
-                      : (<p className="green-text">Open seasonally</p>)
-                    )}
-                    <OpenSeason openDate={restStopData.properties.OPEN_DATE} closeDate={restStopData.properties.CLOSE_DATE} />
-                </div>
-              )}
-              {restStopData.properties.OPEN_YEAR_ROUND === "No" && !restStopData.properties.OPEN_DATE && !restStopData.properties.CLOSE_DATE && (
-                <p className="red-text">Closed</p>
-              )}
+          <div className="data-card">
+            <div className="data-card__row">
+              <div className="data-icon">
+                <FontAwesomeIcon icon={faClock}/>
+              </div>
+                {restStopData.properties.OPEN_YEAR_ROUND === "Yes" && (
+                  <p className="label">Open year round</p>
+                )}
+                {restStopData.properties.OPEN_YEAR_ROUND === "No" && restStopData.properties.OPEN_DATE && restStopData.properties.CLOSE_DATE && (
+                  <div>
+                      {<OpenSeason returnState={true} openDate={restStopData.properties.OPEN_DATE} closeDate={restStopData.properties.CLOSE_DATE} /> === "open" ? (
+                        <p className="label">Open seasonally</p>
+                        ) : ( isRestStopClosed(restStopData.properties)? (<p className="label">Closed &#40;open seasonally&#41;</p>)
+                        : (<p className="label">Open seasonally</p>)
+                      )}
+                  </div>
+                )}
+                {restStopData.properties.OPEN_YEAR_ROUND === "No" && !restStopData.properties.OPEN_DATE && !restStopData.properties.CLOSE_DATE && (
+                  <p className="label red-text">Closed</p>
+                )}
+              <p className="data">
+                {restStopData.properties.OPEN_YEAR_ROUND === "No" && restStopData.properties.OPEN_DATE && restStopData.properties.CLOSE_DATE && (
+                  <OpenSeason openDate={restStopData.properties.OPEN_DATE} closeDate={restStopData.properties.CLOSE_DATE} />
+                )}
+              </p>
             </div>
-            <div className='popup__content__description__container__row'>
-              <FontAwesomeIcon icon={faDoorOpen} />
-              <div>
-                <p>{restStopData.properties.DIRECTION_OF_TRAFFIC} entrance</p>
+
+            <div className="data-card__row">
+              <div className="data-icon">
+                <FontAwesomeIcon icon={faDoorOpen} />
+              </div>
+              <p className="label">
+                Entrance
+              </p>
+              <div className="datas">
+                <p className="data">
+                  {restStopData.properties.DIRECTION_OF_TRAFFIC} entrance
+                </p>
                 {restStopData.properties.ACCESS_RESTRICTION === "No Restriction" ? (
-                  <p>Accessible from both directions</p>
+                  <p className="data-label">Accessible from both directions</p>
                 ) : (
-                  <p>No <span className="lowercase">{restStopData.properties.ACCESS_RESTRICTION}</span> access</p>
+                  <p className="data-label">No <span className="lowercase">{restStopData.properties.ACCESS_RESTRICTION}</span> access</p>
                 )}
               </div>
+            </div>
+
+            <div className="data-card__row">
+              <div className="data-icon">
+                <FontAwesomeIcon icon={faTruckContainer} />
+              </div>
+              <p className="label">
+                Large vehicles
+              </p>
+              {restStopData.properties.ACCOM_COMMERCIAL_TRUCKS === "Yes" ? (
+                  <p className="data">Accomodated</p>
+                ) : (
+                  <p className="data red-text">Not accomodated</p>
+              )}
             </div>
           </div>
         </div>
 
-        <hr/>
         <div className='popup__content__description'>
           <p className="description-label label">Features</p>
-          <div className='popup__content__description__container'>
-            <div className='popup__content__description__container__row'>
-              <FontAwesomeIcon icon={faToilet} />
-              <div>
-                <p className="toilets">{restStopData.properties.NUMBER_OF_TOILETS} {restStopData.properties.TOILET_TYPE} toilet{restStopData.properties.NUMBER_OF_TOILETS > 1 ? 's' : ''}</p>
-                <p>
+
+          <div className="data-card">
+            <div className="data-card__row">
+              <div className="data-icon">
+                <FontAwesomeIcon icon={faToilet} />
+              </div>
+              <p className="label">
+                Toilets
+              </p>
+              <div className="datas">
+                <p className="data">
+                  {restStopData.properties.NUMBER_OF_TOILETS} {restStopData.properties.TOILET_TYPE} toilet{restStopData.properties.NUMBER_OF_TOILETS > 1 ? 's' : ''}
+                </p>
+                <p className="label data-label">
                   {restStopData.properties.WHEELCHAIR_ACCESS_TOILET === "Yes" ? (
                   'Wheelchair accessible'
                   ) : (
@@ -132,113 +171,115 @@ export default function RestStopPanel(props) {
                 </p>
               </div>
             </div>
-            <div className='popup__content__description__container__row'>
-              <FontAwesomeIcon icon={faTablePicnic} />
-              <p>
-                {restStopData.properties.NUMBER_OF_TABLES !== 0 && restStopData.properties.NUMBER_OF_TABLES !== null ? (
-                  `${restStopData.properties.NUMBER_OF_TABLES} tables`
-                ) : (
-                  `No tables`
-                )}
+            <div className="data-card__row">
+              <div className="data-icon">
+                <FontAwesomeIcon icon={faTablePicnic} />
+              </div>
+              <p className="label">
+                Tables
               </p>
+                <p className="data">
+                  {restStopData.properties.NUMBER_OF_TABLES !== 0 && restStopData.properties.NUMBER_OF_TABLES !== null ? (
+                    `${restStopData.properties.NUMBER_OF_TABLES} tables`
+                  ) : (
+                    `No tables`
+                  )}
+                </p>
             </div>
-            <div className='popup__content__description__container__row'>
-              <FontAwesomeIcon icon={faWifi} />
-              <p>
-                {restStopData.properties.WI_FI === "No" ? (
-                  `Wi-Fi unavailable`
-                ) : (
-                  `Wi-Fi available`
-                )}
+            <div className="data-card__row">
+              <div className="data-icon">
+                <FontAwesomeIcon icon={faWifi} />
+              </div>
+              <p className="label">
+                Wifi
               </p>
-            </div>
-          </div>
-        </div>
-
-        <hr/>
-        <div className='popup__content__description'>
-          <div className='popup__content--row'>
-            <p className="description-label label">Commercial Vehicles</p>
-            <OverlayTrigger placement="top" overlay={tooltipLargeVehicles}>
-              <button className="tooltip-vehicles" aria-label="commercial vehicles info" aria-describedby="tooltipLargeVehicles"><FontAwesomeIcon icon={faCircleInfo} /></button>
-            </OverlayTrigger>
-          </div>
-          <div className='popup__content__description__container'>
-            <div className='popup__content__description__container__row'>
-              <FontAwesomeIcon icon={faTruckContainer} />
-              {restStopData.properties.ACCOM_COMMERCIAL_TRUCKS === "Yes" ? (
-                  <p>Vehicles longer than 20 metres (66 feet) allowed</p>
-                ) : (
-                  <p className="red-text">Vehicles longer than 20 metres (66 feet) not allowed</p>
+              <p className="data">
+              {restStopData.properties.WI_FI === "No" ? (
+                `Wi-Fi unavailable`
+              ) : (
+                `Wi-Fi available`
               )}
+              </p>
             </div>
-            <div className='popup__content__description__container__row'>
-              <FontAwesomeIcon icon={faRoad} />
+            <div className="data-card__row">
+              <div className="data-icon">
+                <FontAwesomeIcon icon={faRoad} />
+              </div>
+              <p className="label">
+                Lanes
+              </p>
               {(restStopData.properties.ACCELERATION_LANE === "No" &&
                 restStopData.properties.DECELERATION_LANE === "No") && (
-                <p>No acceleration and deceleration lanes</p>
+                <div className="datas">
+                  <p className="data">No acceleration</p>
+                  <p className="data">and deceleration</p>
+                </div>
               )}
               {(restStopData.properties.ACCELERATION_LANE === "Yes" &&
                 restStopData.properties.DECELERATION_LANE === "Yes") && (
-                <p>Has acceleration and deceleration lanes</p>
+                <div className="datas">
+                  <p className="data">Has acceleration</p>
+                  <p className="data">and deceleration</p>
+                </div>
               )}
               {(restStopData.properties.ACCELERATION_LANE === "Yes" &&
                 restStopData.properties.DECELERATION_LANE === "No") && (
-                <div>
-                  <p>Has acceleration lane</p>
-                  <p>No deceleration lane</p>
+                <div className="datas">
+                  <p className="data">Has acceleration</p>
+                  <p className="data">No deceleration</p>
                 </div>
               )}
               {(restStopData.properties.ACCELERATION_LANE === "No" &&
                 restStopData.properties.DECELERATION_LANE === "Yes") && (
-                <div>
-                  <p>No acceleration lane</p>
-                  <p>Has deceleration lane</p>
+                <div className="datas">
+                  <p className="data">No acceleration</p>
+                  <p className="data">Has deceleration</p>
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        <hr/>
         <div className='popup__content__description'>
           <div className='popup__content__description__row'>
-          <p className='description-label label'>Electric Vehicles</p>
-          <a href="https://www.plugshare.com/"  className="footer-link label" rel="noreferrer" alt="Disclaimer" >View on Plugshare</a>
+            <p className='description-label label'>Electric Vehicles</p>
+            <a href="https://www.plugshare.com/"  className="footer-link" rel="noreferrer" alt="Disclaimer" >View on Plugshare</a>
           </div>
-          <div className='popup__content__description__container'>
-            {restStopData.properties.EV_STATION_25_KW_DCFC === 0
-              && restStopData.properties.EV_STATION_50_KW_DCFC === 0
-              && restStopData.properties.EV_STATION_LEVEL_2_J1772 === 0 && (
-            <div className='popup__content__description__container__row'>
-              <FontAwesomeIcon icon={faChargingStation} />
-              <p>No charging stations</p>
+          <div className="data-card">
+            <div className="data-card__row">
+              <div className="data-icon">
+                <FontAwesomeIcon icon={faChargingStation}/>
+              </div>
+              <p className="label">Charging</p>
+              <div className="datas">
+                {restStopData.properties.EV_STATION_25_KW_DCFC === 0
+                && restStopData.properties.EV_STATION_50_KW_DCFC === 0
+                && restStopData.properties.EV_STATION_LEVEL_2_J1772 === 0 && (
+                  <p className="data">No charging stations</p>
+                )}
+                  
+                {restStopData.properties.EV_STATION_25_KW_DCFC !== 0 && (
+                  <p className="data">
+                    <span className="count">{restStopData.properties.EV_STATION_25_KW_DCFC} </span>
+                    25KW
+                  </p>
+                )}
+
+                {restStopData.properties.EV_STATION_50_KW_DCFC !== 0 && (
+                  <p className="data">
+                    <span className="count">{restStopData.properties.EV_STATION_50_KW_DCFC}</span>
+                    50KW
+                  </p>
+                )}
+
+                {restStopData.properties.EV_STATION_LEVEL_2_J1772 !== 0 && (
+                  <p className="data">
+                    <span className="count">{restStopData.properties.EV_STATION_LEVEL_2_J1772}</span>
+                    Level 2 &#40;J1772&#41;
+                  </p>
+                )}
+              </div>
             </div>
-            )}
-
-            {restStopData.properties.EV_STATION_25_KW_DCFC !== 0 && (
-              <div className='popup__content__description__container__row'>
-                <FontAwesomeIcon icon={faChargingStation} />
-                <p>25KW</p>
-                <p className="count">{restStopData.properties.EV_STATION_25_KW_DCFC}</p>
-              </div>
-            )}
-
-            {restStopData.properties.EV_STATION_50_KW_DCFC !== 0 && (
-              <div className='popup__content__description__container__row'>
-                <FontAwesomeIcon icon={faChargingStation} />
-                <p>50KW</p>
-                <p className="count">{restStopData.properties.EV_STATION_50_KW_DCFC}</p>
-              </div>
-            )}
-
-            {restStopData.properties.EV_STATION_LEVEL_2_J1772 !== 0 && (
-              <div className='popup__content__description__container__row'>
-                <FontAwesomeIcon icon={faChargingStation} />
-                <p>Level 2 &#40;J1772&#41;</p>
-                <p className="count">{restStopData.properties.EV_STATION_LEVEL_2_J1772}</p>
-              </div>
-            )}
           </div>
         </div>
       </div>

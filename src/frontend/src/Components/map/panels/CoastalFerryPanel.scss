@@ -20,7 +20,7 @@
       }
 
       &__updated {
-        color: #605E5C;
+        color: $Grey80;
         font-size: 0.875rem;
       }
     }
@@ -31,13 +31,6 @@
 
       &__container {
         margin: 0.5rem 1rem 1rem;
-      }
-
-      &__title {
-        .name {
-          font-size: 1.5rem;
-          color: $Success;
-        }
       }
 
       .ferries__schedule__container {
@@ -83,9 +76,8 @@
       }
 
       &__info {
-        &__header {
-          font-weight: 700;
-          margin-bottom: 0.5rem;
+        &__container {
+          padding: 1.5rem 0;
         }
 
         &__routes {
@@ -93,8 +85,20 @@
           color: $Grey110;
           list-style: none;
 
-          a {
-            color: $Success;
+          .route-links {
+            color: $ViewDetailsText;
+            font-weight: 700;
+            border: none;
+            padding: 0.75rem;
+            box-shadow: 0 0.6px 1.8px 0 rgba(0, 0, 0, 0.10), 0 3.2px 7.2px 0 rgba(0, 0, 0, 0.13);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            svg {
+              margin-left: 8px;
+            }
           }
         }
 

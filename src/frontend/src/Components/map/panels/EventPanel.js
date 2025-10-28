@@ -152,57 +152,63 @@ export default function EventPanel(props) {
 
       <div className="popup__content">
         <div className="popup__content__title">
-          <p className="direction">{convertDirection(eventData.direction)}</p>
           <p className="name">{eventData.highway_segment_names ? eventData.highway_segment_names : eventData.route_at}</p>
-          <p className="location">{eventData.location_description}</p>
+          <p className="direction">{convertDirection(eventData.direction)}</p>
+        </div>
+
+        <div className="popup__content__description">
+          <p className="location">Location</p>
+
+          <div className="popup__content__shadow-box">
+            {eventData.location_description}
+          </div>
+        </div>
+
+        <div className="popup__content__description">
+          <p>Description</p>
+          <div className="popup__content__shadow-box">
+            <p><Linkify>{parse(eventData.optimized_description)}</Linkify></p>
+          </div>
         </div>
 
         {eventData.closest_landmark &&
           <div className="popup__content__description">
             <p>Closest Landmark</p>
-            <p>{eventData.closest_landmark}</p>
+
+            <div className="popup__content__shadow-box">
+              <p>{eventData.closest_landmark}</p>
+            </div>
           </div>
         }
 
-        <div className="popup__content__description">
-          <p>Description</p>
-          <p><Linkify>{parse(eventData.optimized_description)}</Linkify></p>
-        </div>
-
-        <div className="popup__content__block">
-          <div className="popup__content__description last-update">
-            <p>Last update</p>
-            <FriendlyTime date={eventData.last_updated} timezone={eventData.timezone} />
-          </div>
-
-          {eventData.next_update &&
-            <div className="popup__content__description next-update">
-              <p>Next update</p>
+        {eventData.next_update &&
+          <div className="popup__content__description next-update">
+            <p>Next update</p>
+            <div className="popup__content__shadow-box">
               <FriendlyTime date={eventData.next_update} isNextUpdate={true} timezone={eventData.timezone} />
             </div>
-          }
+          </div>
+        }
+
+        <div className="popup__content__description last-update">
+          <p>Last update</p>
+          <div className="popup__content__shadow-box">
+            <FriendlyTime date={eventData.last_updated} timezone={eventData.timezone} />
+          </div>
         </div>
 
         { eventData.display_category === 'chainUps' &&
           <div className="popup__content__description">
             <p>Who does this impact?</p>
-            <p>
+            <div className="popup__content__shadow-box">
               <a
                 href="https://www2.gov.bc.ca//gov/content/transportation/driving-and-cycling/traveller-information/seasonal/winter-driving/commercial"
                 rel="noreferrer"
                 alt="BC chain-up requirements"
-              >Chain-up requirements</a> apply to a commercial
-            vehicle with a weight of 11,794 Kg or greater.</p>
+              >Chain-up requirements</a> apply to a Commercial Vehicles with a weight of 11,794 kg or greater.
+            </div>
           </div>
         }
-
-        <div className="popup__content__description debug-data">
-          <p
-            tabIndex={0}
-            onClick={() => console.log(eventData)}
-            onKeyDown={() => console.log(eventData)}
-          >{eventData.id}</p>
-        </div>
       </div>
     </div>
   );
