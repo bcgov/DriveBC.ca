@@ -77,13 +77,13 @@ export default function HefPanel(props) {
 
       <div className="popup__content">
         <div className="popup__content__title">
-          <p className="highway">{data.hwyName}</p>
           <p className="name">{data.hwyDescription}</p>
+          <p className="highway">{data.hwyName}</p>
           { data.issued_utc && <FriendlyTime date={data.issued_utc} asDate={true} /> }
         </div>
 
         <div className="popup__content__forecasts">
-
+          <p className="forecasts-title">Conditions</p>
           { data.forecasts.map((forecast) => (
             <div className='forecast' key={forecast.label}>
               <div className='title'>

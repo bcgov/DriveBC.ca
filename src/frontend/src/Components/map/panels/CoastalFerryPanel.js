@@ -6,7 +6,7 @@ import { useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAnchor } from '@fortawesome/pro-solid-svg-icons';
+import { faChevronRight } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
 
 // Internal imports
@@ -56,17 +56,15 @@ export default function CoastalFerryPanel(props) {
           </div>
           <div className="popup__content__info">
             <div className='popup__content__info__container'>
-              <p className='popup__content__info__header'>Routes</p>
               <p>Click on the links below for schedules on the selected ferry route.</p>
-              <ul className='popup__content__info__routes'>
+              <div className='popup__content__info__routes'>
                 {ferryData.routes.map((ferryRoute, index) => (
-                  <li key={index}>
-                    <a href={ferryRoute.url ? ferryRoute.url : "https://www.bcferries.com/routes-fares/discover-route-map"} rel="noopener noreferrer">
-                      {ferryRoute.name}
-                    </a>
-                  </li>
+                  <a key={index} className="btn btn-outline-primary route-links" href={ferryRoute.url ? ferryRoute.url : "https://www.bcferries.com/routes-fares/discover-route-map"} rel="noopener noreferrer">
+                    {ferryRoute.name}
+                    <FontAwesomeIcon icon={faChevronRight} />
+                  </a>
                 ))}
-              </ul>
+              </div>
             </div>
           </div>
         </div>

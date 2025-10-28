@@ -53,11 +53,24 @@
   &__content {
     padding: 1rem 1rem 1.5rem;
 
+    &__shadow-box {
+      background-color: $White;
+      padding: 0.75rem;
+      border-radius: 8px;
+      box-shadow: 0 0.6px 1.8px 0 rgba(0, 0, 0, 0.10), 0 3.2px 7.2px 0 rgba(0, 0, 0, 0.13);
+      margin-top: 0.75rem;
+
+      p {
+        margin-bottom: 0;
+        font-size: 0.875rem;
+      }
+    }
+
     &__title {
 
       .name {
-        font-size: 1.25rem;
-        color: $Info;
+        font-size: 1.5rem;
+        font-weight: 700;
       }
     }
 
@@ -171,7 +184,7 @@
     }
 
     &__description {
-      padding: 1rem 0 0;
+      margin-top: 1.5rem;
     }
 
     &__tools {
@@ -218,6 +231,11 @@
   &:hover {
     background: lighten($Error, 38%);
   }
+}
+
+
+.close-panel:has(+ .panel-content .popup.popup--reststop.closed) {
+  top: 16px;
 }
 
 .close-panel:has(+ .panel-content .popup.minor),

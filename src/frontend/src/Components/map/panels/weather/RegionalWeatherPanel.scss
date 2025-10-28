@@ -113,17 +113,12 @@
       }
 
       &__title {
-        .name {
-          color: $Type-Primary;
-          font-size: 2rem;
-          margin-bottom: 0;
-        }
 
         .friendly-time {
           margin: 0 auto 1rem;
           &-text {
             color: $Type-Secondary;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
           }
         }
       }

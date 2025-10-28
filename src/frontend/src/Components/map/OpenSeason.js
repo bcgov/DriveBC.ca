@@ -26,5 +26,5 @@ export default function OpenSeason({ openDate, closeDate, returnState=false}) {
       return "closed";
   }
 
-  return <p>{openDateFormatted} – {closeDateFormatted}</p>;
+  return <span>{openDateFormatted} – {closeDateFormatted}</span>;
 }

@@ -106,13 +106,7 @@
         .highway {
           color: $Type-Primary;
           font-size: 0.875rem;
-          margin-bottom: 0;
-        }
-        
-        .name {
-          color: $Type-Primary;
-          font-size: 1.75rem;
-          margin-bottom: 0;
+          margin-bottom: 0.4rem;
         }
 
         .friendly-time {
@@ -128,6 +122,11 @@
         padding-top: 0;
         margin: 0;
         flex-grow: 1;
+
+        .forecasts-title {
+          font-size: 1rem;
+          font-weight: 700;
+        }
 
         .forecast {
           margin-top: 1rem;

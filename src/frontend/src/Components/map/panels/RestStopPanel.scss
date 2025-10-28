@@ -6,17 +6,31 @@
     .popup__title {
       background-color: $Surface-reststop;
 
-      .name {
-        color: $Type-reststop;
+      &__name {
+
+        .name {
+          color: $Type-reststop;
+        }
+
+        .name-div {
+          .label {
+            margin-bottom: 0;
+          }
+        }
       }
     }
 
     &.closed {
       .popup__title {
         background-color: $Surface-major;
+        align-items: center;
+
+        &__name {
+          align-items: center;
   
-        .name {
-          color: $Error;
+          .name {
+            color: $Error;
+          }
         }
       }
     }
@@ -44,6 +58,7 @@
 
       &__description {
         .description-label {
+          font-size: 1rem;
           font-weight: 700;
           margin-bottom: 0;
         }
@@ -99,9 +114,76 @@
       }
     }
 
-    hr {
-      margin-bottom: 0;
-      border-top: 1px solid $Divider;
+    .footer-link {
+      font-size: 0.75rem;
+    }
+    
+    .data-card {
+      margin: 0.75rem 0;
+      padding: 0.75rem;
+      border-radius: 8px;
+      box-shadow: 0px 6.4px 14.4px 0px rgba(0, 0, 0, 0.13), 0px 1.2px 3.6px 0px rgba(0, 0, 0, 0.10);
+
+      &__row {
+        display: flex;
+
+        & + .data-card__row {
+          margin-top: 0.75rem;
+          padding-top: 0.75rem;
+          border-top: 1px solid $Divider;
+        }
+
+        &:not(.group) {
+          .data-icon {
+            align-self: top;
+          }
+        }
+
+        .data-icon {
+          margin-right: 0.75rem;
+          color: $Grey80;
+        }
+
+        .data-group {
+          flex: 1 0;
+
+          &__row {
+            display: flex;
+          }
+        }
+      }
+
+      .label, .data {
+        font-size: 0.875rem;
+        margin-bottom: 0;
+      }
+
+      .label {
+        text-align: left;
+        color: $Grey80;
+      }
+
+      .data {
+        text-align: right;
+        margin-left: auto;
+        min-width: 80px;
+        color: $Type-Primary;
+        font-weight: 700;
+      }
+
+      .datas {
+        margin-left: auto;
+        text-align: right;
+
+        .data-label {
+          font-size: 0.75rem;
+          margin-bottom: 0;
+        }
+      }
+
+      .count {
+        margin-right: 4px;
+      }
     }
   }
 }
