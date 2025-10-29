@@ -10,6 +10,11 @@ from apps.authentication import views as auth_views
 from apps.shared import views as shared_views
 from apps.shared.views import static_override
 
+from django.conf.urls.static import static
+import os
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from drf_spectacular.utils import extend_schema
+
 
 def admin_permission_denied_handler(request, exception):
     '''
@@ -74,8 +79,35 @@ urlpatterns = [
     # misc
     path("healthcheck/", shared_views.health_check, name="health_check"),
 
+    # Webcam-only schema/docs
+    path(
+        "api/schema/",
+        SpectacularAPIView.as_view(urlconf="apps.webcam.schema_urls"),
+        name="api-schema",
+    ),
+    path(
+        "api/swagger/",
+        SpectacularSwaggerView.as_view(url_name="api-schema"),
+        name="api-swagger",
+    ),
+    path(
+        "api/redoc/",
+        SpectacularRedocView.as_view(url_name="api-schema"),
+        name="api-redoc",
+    ),
+
+    # Actual webcam endpoints
+    path("api/webcams/", include("apps.webcam.urls")),
+
     # TO BE REMOVED IN PRODUCTION
 ] + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Serve images/webcams from /app/images
+urlpatterns += static(
+    '/images/', 
+    document_root=os.path.join(settings.BASE_DIR, 'app', 'images')
+)
+
 
 if settings.DEV_ENVIRONMENT:
     from django.views.static import serve
