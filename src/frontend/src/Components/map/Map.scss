@@ -97,14 +97,17 @@
         @media (max-width: 767px) {
           width: 100%;
         }
+        @media (min-width: 767px) {
+          border-radius: 8px;
+        }
       }
 
       &.open {
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
+        border-radius: 8px;
         margin-top: auto;
         margin-left: 1rem;
-        height: calc(100% - 112px);
+        margin-bottom: 16px;
+        height: calc(100% - 130px);
 
         &:not(.has-route) {
           transform: translateX(0%);
@@ -113,7 +116,15 @@
         }
 
         &.has-route{
-          height: calc(100% - 160px);
+          height: calc(100% - 175px);
+
+          &:has(.route-object-list) {
+            height: calc(100% - 175px);
+          }
+          .popup__title {
+            padding-right: 1rem;
+          }
+
         }
 
         @media (max-width: 767px) {
@@ -250,8 +261,8 @@
     .fixed-to-mobile-group {
       position: absolute;
       width: 100%;
-      bottom: 0;
-      z-index: 1;
+      bottom: -8px;
+      z-index: 5000;
     }
 
     .map-btn {
@@ -259,11 +270,16 @@
       color: $Type-Link;
       position: absolute;
       margin-bottom: 0;
-      font-size: 0.875rem;
+      font-size: 0.75rem;
+      padding: 4px 8px;
       font-weight: 700;
       height: auto;
       border-radius: 4px;
       border: 1px solid $Type-Link;
+
+      @media (min-width: 767px) {
+        font-size: 0.875rem;
+      }
 
       &:hover {
         background: $Type-Link;
@@ -361,6 +377,7 @@
       right: 1rem;
       display: flex;
       flex-direction: column;
+      padding: 0;
 
       // Hide zoom buttons on touch devices
       @media (pointer: coarse) {
@@ -450,11 +467,11 @@
   right: 0;
   z-index: 1;
   height: 100%;
-  
+
   .drawer-drag-handle {
     position: absolute;
     width: 100%;
-    height: 44px;
+    height: 14px;
     cursor: grab;
     z-index: 2;
 
@@ -514,7 +531,7 @@
   &:focus, &:focus-visible {
     outline: none;
     box-shadow: none;
-  }    
+  }
 }
 
 .panel-content {

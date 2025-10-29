@@ -5,13 +5,20 @@
   height: 100%;
 
   &__title {
-    padding: 1rem 3rem 0.75rem 1rem;
+    padding: 1rem 4rem 0.75rem 1rem;
+    height: 52px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-
+    @media (min-width: 768px) {
+      padding: 1rem 3rem 0.75rem 1rem;
+    }
+    &:has(.name-div) {
+      height: 62px;
+    }
     &__name {
       display: flex;
+      align-items: center;
 
       svg {
         margin-right: 8px;
@@ -35,6 +42,7 @@
       border-radius: 8px;
       box-shadow: 0 0.6px 1.8px 0 rgba(0, 0, 0, 0.10), 0 3.2px 7.2px 0 rgba(0, 0, 0, 0.13);
       margin-top: 0.75rem;
+      font-size: 0.875rem;
 
       p {
         margin-bottom: 0;
@@ -47,6 +55,7 @@
       .name {
         font-size: 1.5rem;
         font-weight: 700;
+        margin-bottom: 0;
       }
     }
 
@@ -61,11 +70,13 @@
         background-color: $Black;
         position: absolute;
         bottom: 0;
-        padding: 0 10px;
+        padding: 0 4px;
         display: flex;
         color: $White;
         align-items: baseline;
         width: 100%;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
 
         p {
           color: $White;
@@ -160,7 +171,8 @@
     }
 
     &__description {
-      margin-top: 1.5rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1.5rem;
     }
 
     &__tools {
@@ -182,9 +194,10 @@
 }
 
 .close-panel {
-  padding: 12px 17px;
-  top: 6px;
-  right: 0;
+  width: 36px;
+  height: 36px;
+  top: 10px;
+  right: 6px;
   color: $Type-Primary;
   &:hover {
     background: lighten($Type-Primary, 70%);
@@ -206,16 +219,16 @@
 .resize-panel:has(~ .panel-content .popup--wildfire),
 .resize-panel:has(~ .panel-content .popup.popup--reststop.closed)
  {
-  color: $Error;
-  
+  color: $Red-dark;
+
   &:hover {
-    background: lighten($Error, 38%);
+    background: lighten($Red-dark, 50%);
   }
 }
 
 
 .close-panel:has(+ .panel-content .popup.popup--reststop.closed) {
-  top: 16px;
+  // top: 11px;
 }
 
 .close-panel:has(+ .panel-content .popup.minor),
@@ -234,7 +247,7 @@
 .resize-panel:has(~ .panel-content .popup.popup--advisories),
 .resize-panel:has(~ .popup.popup--advisories) {
   color: $Advisory-Text;
- 
+
   &:hover {
     background: lighten($Advisory-Text, 50%);
   }
@@ -261,7 +274,7 @@
 
 .close-panel:has(+ .panel-content .popup.popup--ferry),
 .resize-panel:has(~ .panel-content .popup.popup--ferry) {
-  color: $Success;
+  color: $Green;
 
   &:hover {
     background: lighten($Success, 60%);
@@ -303,3 +316,8 @@
     background: lighten($Info, 5%);
   }
 }
+
+.close-panel:has(+ .panel-content .name-div) {
+  top: 15px;
+}
+

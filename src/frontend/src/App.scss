@@ -151,10 +151,10 @@ body,
   display: flex;
   align-items: center;
   background-color: $Blue10;
-  border-radius: 4px;
+  border-radius: 8px;
   margin-top: 8px;
-  padding: 4px 0px;
-  font-size: 14px;
+  padding: 8px 0px;
+  font-size: 0.875rem;
   font-weight: bold;
   color: $BC-Blue;
 
@@ -169,6 +169,7 @@ body,
 
     span {
       margin-right: 12px;
+      font-size: 0.75rem;
     }
   }
 
@@ -179,6 +180,7 @@ body,
     font-size: 0.875rem;
     font-weight: 700;
     width: 5ch;
+    margin-right: 8px;
 
     &:hover {
       background: $BC-Blue;

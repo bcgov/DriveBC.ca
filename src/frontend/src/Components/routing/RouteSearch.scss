@@ -17,10 +17,11 @@
     position: relative;
     z-index: 5;
     width: 100%;
+    z-index: 11;
 
     .swap-button{
       position: absolute;
-      top: calc(50% - 20px);
+      top: calc(50% - 16px);
       right: 2rem;
       padding: 4px;
       color: $Type-Link;
@@ -75,6 +76,10 @@
         border: none;
         font-size: 0.75rem;
         padding: 0.75rem 1rem;
+        border-radius: 50%;
+        &:hover {
+          color: $Grey80;
+        }
       }
 
       #location-search-typeahead {
@@ -97,6 +102,8 @@
 
         &.typeahead-container--from {
           .form-control {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
             border-bottom: 0;
@@ -107,6 +114,8 @@
           .form-control {
             border-top-left-radius: 0;
             border-top-right-radius: 0;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
           }
         }
       }

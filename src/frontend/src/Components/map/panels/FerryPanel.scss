@@ -11,59 +11,63 @@
       background-color: $Surface-green;
 
       .name {
-        color: $Success;
-        
-        a {
-          color: $Success;
-          text-decoration: none;
-          &:hover {
-            cursor:pointer;
-            text-decoration: underline;
-          }
-        }
-      }
+        color: $Green;
+       }
 
       &__icon {
-        background-color: $Success;
+        background-color: $Green;
         color: white;
       }
 
       &__updated {
         color: $Grey80;
-        font-size: 0.875rem;
+        font-size: 0.75rem;
       }
     }
 
     .popup__content {
       padding: 0;
-      margin-bottom: 1rem;
 
       &__container {
         margin: 0.5rem 1rem 1rem;
       }
 
       &__image {
-        margin: 0.5rem 1rem 1rem;
-
         img {
           border-radius: 8px;
         }
       }
 
       &__title {
-        .name, .name a {
+        .name {
           margin-bottom: 0;
-          font-weight: 700;
+          a {
+            color: $Type-Primary;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.5rem;
+
+            &:hover {
+              cursor: pointer;
+              text-decoration: underline;
+            }
+          }
+  
         }
       }
 
       .ferries__schedule__container {
         display: flex;
-        margin-bottom: 4px;
+        margin-bottom: 12px;
+        font-size: 0.875rem;
         &:last-of-type {
           margin-bottom: 12px;
         }
+        &:has(ul) {
+          margin-bottom: 4px;
+        }
         p {
+          font-size: 0.875rem;
           max-width: 160px;
           width: 100%;
           margin-bottom: 0;
@@ -100,8 +104,24 @@
       }
 
       .info {
+        &__block {
+          .popup__content__image {
+            margin: 0.5rem 1rem 1rem;
+          }
+        }
         &__container {
           margin: 1.125rem;
+
+          p {
+            font-size: 0.875rem;
+            p { 
+              &:has(strong) {
+                margin-top: 16px;
+                margin-bottom: 4px;
+              }
+              strong { font-size: 1rem; }
+            }
+          }
         }
 
         &__header {
@@ -124,6 +144,9 @@
               height: 16px;
             }
           }
+        }
+        p.info__header {
+          font-size: 1rem;
         }
 
         &__map {
