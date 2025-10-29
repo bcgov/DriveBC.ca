@@ -4,6 +4,8 @@ import React, { useEffect, useContext } from 'react';
 // Navigation
 import { useSearchParams } from 'react-router-dom';
 
+import { titleCase } from 'title-case';
+
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -80,8 +82,8 @@ export default function RestStopPanel(props) {
       </div>
       <div className="popup__content">
         <div className="popup__content__title">
-        <p className="name">{restStopData.properties.REST_AREA_NAME}</p>
-          <p className="location">{restStopData.properties.DISTANCE_FROM_MUNICIPALITY}</p>
+        <p className="name">{titleCase(restStopData.properties.REST_AREA_NAME.toLowerCase())}</p>
+          <p className="location">{titleCase(restStopData.properties.DISTANCE_FROM_MUNICIPALITY.toLowerCase())}</p>
         </div>
         <div className='popup__content__description'>
           <p className="description-label label">Access</p>
@@ -191,13 +193,13 @@ export default function RestStopPanel(props) {
                 <FontAwesomeIcon icon={faWifi} />
               </div>
               <p className="label">
-                Wifi
+                Wi-Fi
               </p>
               <p className="data">
               {restStopData.properties.WI_FI === "No" ? (
-                `Wi-Fi unavailable`
+                `Unavailable`
               ) : (
-                `Wi-Fi available`
+                `Available`
               )}
               </p>
             </div>
@@ -257,7 +259,7 @@ export default function RestStopPanel(props) {
                 && restStopData.properties.EV_STATION_LEVEL_2_J1772 === 0 && (
                   <p className="data">No charging stations</p>
                 )}
-                  
+
                 {restStopData.properties.EV_STATION_25_KW_DCFC !== 0 && (
                   <p className="data">
                     <span className="count">{restStopData.properties.EV_STATION_25_KW_DCFC} </span>

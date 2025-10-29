@@ -22,13 +22,14 @@
       height: 100%; 
 
       p {
-        margin-bottom: 0.4rem;
+        margin-bottom: 0;
       }
 
       &__title {
-
+        margin-bottom: 1rem;
         .description {
           font-size: 0.875rem;
+          margin-bottom: 0.5rem;
         }
 
         .friendly-time {
@@ -50,6 +51,7 @@
           display: flex;
           justify-content: space-around;
           text-align: center;
+          margin-bottom: 1rem;
 
           .temperature {
             .label {
@@ -59,6 +61,7 @@
             .data {
               font-size: 4rem;
               font-weight: 400;
+              line-height: 1.2;
             }
           }
         }
@@ -93,6 +96,7 @@
         margin-top: 0;
         display: flex;
         justify-content: space-between;
+        padding: 0.25rem 0 0.75rem;
 
         .friendly-time-text {
           font-size: 0.875rem;

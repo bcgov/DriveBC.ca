@@ -9,11 +9,21 @@
 .view-details-btn {
   width: 100%;
   font-weight: 700;
-  color: $ViewDetailsText;
+  background-color: $Grey10;
+  font-size: 0.875rem;
+  color: $Type-Link;
   margin-top: 1rem;
   margin-bottom: 0;
   z-index: 10;
   position: relative;
+  border: none;
+  padding: 10px 0;
+
+  &:hover {
+    background-color: $Grey20;
+    color: $Type-LinkHover;
+    border: none;
+  }
 
   svg {
     margin-left: 0.5rem;
@@ -21,7 +31,6 @@
 }
 
 .route-details {
-
   & + .route-details {
     margin-top: 16px;
   }
@@ -36,7 +45,7 @@
         height: 24px;
         width: 24px;
         border-radius: 12px;
-        border: 1px solid $Focus;
+        border: 1px solid $BC-Blue;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -44,11 +53,12 @@
         font-weight: 700;
         margin-bottom: 4px;
         background-color: $White;
-        color: $Focus;
+        color: $BC-Blue;
 
         &.selected {
           background-color: $Focus;
-          color: $White;
+          border-color: $Focus;
+          color: $White;        
         }
       }
 
@@ -131,29 +141,37 @@
       }
       h4 {
         font-size: 1.125rem;
-        color: $Focus;
+        color: $BC-Blue;
       }
 
       .route-distance {
-        font-size: 1rem;
+        font-size: 0.875rem;
         color: $Grey80;
         white-space: nowrap;
       }
     }
   }
+
+  &.selected {
+    h4.route-name {
+      color: $Focus;
+    }
+  }
+
   .route-disclosures {
     display: flex;
     width: fit-content;
     margin-top: 16px;
+    margin-bottom: 12px;
 
     .route-pill {
       display: flex;
       justify-content: center;
       align-items: center;
       border-radius: 20px;
-      padding: 8px 16px;
+      padding: 4px 12px;
       font-weight: 700;
-      font-size: 0.875rem;
+      font-size: 0.75rem;
       width: 100%;
 
       @media (min-width: 768px) {
@@ -194,24 +212,39 @@
     overflow-y: auto;
 
     .route-item {
-      padding: 4px 0;
+      // padding: 2px 0;
+      
+      
+      &:first-child {
+        padding-top: 0;
+      }
+
+      &:last-child {
+        padding-bottom: 0;
+      }
 
       &__count {
         display: inline-block;
         width: 2ch;
         font-weight: 700;
         margin-left: 12px;
+        font-size: 0.875rem;
       }
 
       &__icon {
-        margin-left: 8px;
+        // margin-left: 8px;
         margin-right: 8px;
 
         svg {
-          width: 17px;
-          height: 17px;
+          width: 14px;
+          height: 14px;
         }
       }
+
+      &__name {
+        font-size: 0.875rem;
+      }
+
 
       &--closures {
         border-left: 2px solid $Error;

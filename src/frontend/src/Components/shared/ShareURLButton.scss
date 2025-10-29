@@ -10,7 +10,7 @@
     font-weight: 700;
     background: none;
     white-space: nowrap;
-    padding: 0;
+    padding: 8px 8px;
 
     svg {
       margin-right: 0.4rem;
@@ -22,35 +22,53 @@
   &--camera {
     .copy-btn {
       color: $Blue90;
+      &:hover {
+        background: lighten($BC-Blue, 70%);
+      }
     }
   }
   &--event {
     &:not(.roadConditions) {
       &.major, &.closures, &.closure {
         .copy-btn {
-          color: $Error;
+          color: $Red-dark;
+          &:hover {
+            background: lighten($Red-dark, 50%);
+          }       
         }
       }
     }
     &.minor {
       .copy-btn {
         color: $Gold110;
+        &:hover {
+          background: lighten($Gold110, 60%);
+        }      
       }
     }
     &.chainUps {
       .copy-btn {
         color: $Type-Primary;
+        &:hover {
+          background: lighten($Chainups, 20%);
+        }      
       }
     }
   }
   &--ferry {
     .copy-btn {
       color: $Green;
+      &:hover {
+        background: lighten($Success, 60%);
+      }    
     }
   }
   &--weather {
     .copy-btn {
       color: $Type-Primary;
+      &:hover {
+        background: lighten($Type-Primary, 70%);
+      }    
     }
     &.advisory-issued {
       .copy-btn {
@@ -62,22 +80,35 @@
   &--reststop {
     .copy-btn {
       color: $Type-reststop;
+      &:hover {
+        background: lighten($Type-reststop, 60%);
+      }    
     }
 
     &.closed {
       .copy-btn {
-        color: $Error;
+        color: $Red-dark;
+        &:hover {
+          background: lighten($Red-dark, 50%);
+        }      
       }
     }
   }
   &--wildfire {
     .copy-btn {
-      color: $Error;
+      color: $Red-dark;
+      &:hover {
+        background: lighten($Red-dark, 50%);
+      }    
     }
   }
   &--advisories {
     .copy-btn {
       color: $Advisory-Text;
+      &:hover {
+        background: lighten($Advisory-Text, 50%);
+      }    
     }
   }
 }
+

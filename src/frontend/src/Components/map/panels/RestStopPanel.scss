@@ -29,7 +29,7 @@
           align-items: center;
   
           .name {
-            color: $Error;
+            color: $Red-dark;
           }
         }
       }
@@ -49,10 +49,9 @@
         }
 
         .location {
-          color: $Type-Secondary;
-          font-size: 0.875rem;
+          color: $Grey80;
+          font-size: 0.75rem;
           margin-top: 0;
-          letter-spacing: 0.075em;
         }
       }
 
@@ -65,7 +64,7 @@
 
         &__row {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           justify-content: space-between;
         }
 
@@ -169,6 +168,9 @@
         min-width: 80px;
         color: $Type-Primary;
         font-weight: 700;
+        &.red-text {
+          color: $Error;
+        }
       }
 
       .datas {
