@@ -15,6 +15,32 @@
       .name {
         color: $Type-Primary;
       }
+
+      &--warning {
+        background-color: $Gold20;
+        
+        .name {
+          color: $Gold110;
+        }
+
+        .popup--title--name {
+          align-items: center;
+        }
+
+        .share-url {
+          display: flex;
+          align-items: center;
+        }
+      }
+
+    }
+
+    .popup__title__group {
+      .context {
+        font-size: 0.875rem;
+        color: $Gold110;
+        margin-bottom: 0;
+      }
     }
 
     .popup__advisory, .popup__info {
@@ -25,16 +51,18 @@
       color: $Gold110;
       padding: 0.5rem 0.875rem;
       font-size: 0.875rem;
+      margin: 0.725rem 0.725rem 0;
+      border-radius: 8px;
 
       .event {
         display: flex;
         width: 100%;
         align-items: center;
         justify-content: space-between;
-        padding: 8px 0;
+        padding: 0.25rem 0;
         
         &:only-child {
-          padding: 0.5rem 0;
+          padding: 0.25rem 0;
         }
 
         p {
@@ -44,6 +72,7 @@
         svg {
           margin-right: 0.5rem;
         }
+
       }
 
       svg {
@@ -82,6 +111,7 @@
         }
 
         + div {
+          margin-top: 4px;
           padding-bottom: 0.5rem;
         }
 

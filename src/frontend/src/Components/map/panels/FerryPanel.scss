@@ -12,16 +12,7 @@
 
       .name {
         color: $Success;
-        
-        a {
-          color: $Success;
-          text-decoration: none;
-          &:hover {
-            cursor:pointer;
-            text-decoration: underline;
-          }
-        }
-      }
+       }
 
       &__icon {
         background-color: $Success;
@@ -30,7 +21,7 @@
 
       &__updated {
         color: $Grey80;
-        font-size: 0.875rem;
+        font-size: 0.75rem;
       }
     }
 
@@ -43,27 +34,38 @@
       }
 
       &__image {
-        margin: 0.5rem 1rem 1rem;
-
         img {
           border-radius: 8px;
         }
       }
 
       &__title {
-        .name, .name a {
+        .name {
           margin-bottom: 0;
-          font-weight: 700;
+          a {
+            color: $Type-Primary;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.5rem;
+
+            &:hover {
+              cursor: pointer;
+              text-decoration: underline;
+            }
+          }
+  
         }
       }
 
       .ferries__schedule__container {
         display: flex;
         margin-bottom: 4px;
+        font-size: 0.875rem;
         &:last-of-type {
           margin-bottom: 12px;
         }
         p {
+          font-size: 0.875rem;
           max-width: 160px;
           width: 100%;
           margin-bottom: 0;
@@ -100,8 +102,17 @@
       }
 
       .info {
+        &__block {
+          .popup__content__image {
+            margin: 0.5rem 1rem 1rem;
+          }
+        }
         &__container {
           margin: 1.125rem;
+
+          p {
+            font-size: 0.875rem;
+          }
         }
 
         &__header {

@@ -12,16 +12,17 @@
     }
 
     .popup__content {
-      &__title {
-        color: $Error;
-        font-size: 24px;
-        line-height: 36px;
-      }
+      // &__title {
+      //   color: $Error;
+      //   font-size: 24px;
+      //   line-height: 36px;
+      // }
 
       .wildfire-status {
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
         padding: 8px 12px;
         border-radius: 8px;
-        font-size: 0.875rem;
 
         &--note {
           background-color: $Advisory-Bg;
@@ -63,6 +64,16 @@
           font-weight: 700;
           margin-bottom: 6px;
         }
+      }
+
+      .wildfire-status__title {
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+      .wildfire-status__description {
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin-bottom: 0;
       }
 
       .data-icon {

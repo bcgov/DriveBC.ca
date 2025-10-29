@@ -206,9 +206,11 @@
 }
 
 .close-panel {
-  padding: 12px 17px;
-  top: 6px;
-  right: 0;
+  // padding: 12px 17px;
+  width: 36px;
+  height: 36px;
+  top: 11px;
+  right: 6px;
 }
 
 .resize-panel {
@@ -235,7 +237,7 @@
 
 
 .close-panel:has(+ .panel-content .popup.popup--reststop.closed) {
-  top: 16px;
+  top: 11px;
 }
 
 .close-panel:has(+ .panel-content .popup.minor),

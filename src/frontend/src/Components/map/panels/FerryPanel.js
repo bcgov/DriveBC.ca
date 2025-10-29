@@ -178,8 +178,6 @@ export default function FerryPanel(props) {
                   <p>{vessel.special_restriction}</p>
                 }
               </div>
-              
-              <hr />
             </div>
 
           ))}

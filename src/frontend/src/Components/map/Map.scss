@@ -100,11 +100,11 @@
       }
 
       &.open {
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
+        border-radius: 8px;
         margin-top: auto;
         margin-left: 1rem;
-        height: calc(100% - 112px);
+        margin-bottom: 16px;
+        height: calc(100% - 124px);
 
         &:not(.has-route) {
           transform: translateX(0%);

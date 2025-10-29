@@ -15,15 +15,9 @@
       &__title {
         margin-bottom: 24px;
 
-        .name {
-          color: $BC-Blue;
-          font-size: 2rem;
-          margin-bottom: 0;
-        }
-
         .schedule_url {
           font-size: 0.875rem;
-          margin-bottom: 1rem;
+          margin: 0.75rem 0 1.5rem 0;
         }
 
         .delays {
@@ -33,13 +27,13 @@
         }
 
         .update {
-          font-size: 0.875rem;
+          font-size: 0.75rem;
           color: $Grey80;
           margin-bottom: 0;
           display: flex;
 
           & > span, p {
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             color: $Grey80;
           }
           
