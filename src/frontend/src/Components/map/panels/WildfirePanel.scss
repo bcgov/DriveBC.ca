@@ -84,24 +84,29 @@
         justify-content: center;
       }
 
+      .url-btn {
+        a {
+          background-color: $Grey10;
+          font-size: 0.875rem;
+          font-weight: 700;
+          text-align: center;
+          display: block;
+          text-decoration: none;
+          padding: 10px;
+          margin-bottom: 16px;
+          border-radius: 4px;
+          &:hover {
+            background-color: $Grey20;
+          }
+        }
+      }
+
       &__footer {
         margin-top: 12px;
         margin-bottom: 32px;
         color: $Grey80;
         font-size: 0.875rem;
         text-align: center;
-
-        .url-btn {
-          background-color: $Grey10;
-          padding: 10px;
-          margin-bottom: 16px;
-          border-radius: 4px;
-
-          a {
-            font-weight: 700;
-            text-decoration: none;
-          }
-        }
       }
     }
   }

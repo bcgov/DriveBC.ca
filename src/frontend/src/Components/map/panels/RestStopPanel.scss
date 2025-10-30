@@ -168,6 +168,9 @@
         min-width: 80px;
         color: $Type-Primary;
         font-weight: 700;
+        &.red-text {
+          color: $Error;
+        }
       }
 
       .datas {

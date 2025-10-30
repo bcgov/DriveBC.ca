@@ -11,11 +11,11 @@
       background-color: $Surface-green;
 
       .name {
-        color: $Success;
+        color: $Green;
        }
 
       &__icon {
-        background-color: $Success;
+        background-color: $Green;
         color: white;
       }
 
@@ -27,7 +27,6 @@
 
     .popup__content {
       padding: 0;
-      margin-bottom: 1rem;
 
       &__container {
         margin: 0.5rem 1rem 1rem;
@@ -59,10 +58,13 @@
 
       .ferries__schedule__container {
         display: flex;
-        margin-bottom: 4px;
+        margin-bottom: 12px;
         font-size: 0.875rem;
         &:last-of-type {
           margin-bottom: 12px;
+        }
+        &:has(ul) {
+          margin-bottom: 4px;
         }
         p {
           font-size: 0.875rem;
@@ -112,6 +114,13 @@
 
           p {
             font-size: 0.875rem;
+            p { 
+              &:has(strong) {
+                margin-top: 16px;
+                margin-bottom: 4px;
+              }
+              strong { font-size: 1rem; }
+            }
           }
         }
 
@@ -135,6 +144,9 @@
               height: 16px;
             }
           }
+        }
+        p.info__header {
+          font-size: 1rem;
         }
 
         &__map {

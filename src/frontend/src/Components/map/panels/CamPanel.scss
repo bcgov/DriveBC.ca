@@ -21,6 +21,11 @@
         }
       }
 
+      &__description p {
+        font-size: 0.875rem;
+      }
+
+
       &__image {
         cursor: pointer;
 
@@ -37,6 +42,7 @@
       }
 
       &__tools {
+        margin-top: 8px;
         padding: 0;
         display: flex;
         justify-content: space-between;
@@ -74,9 +80,8 @@
 .clip {
   position: relative;
   overflow: hidden;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-
+  border-radius: 8px;
+  
   .card-img{
     height: 100%;
     width: 100%;
@@ -136,8 +141,8 @@
   }
 
   .card-pill {
-    top: 18px;
-    right: 10px;
+    top: 8px;
+    right: 8px;
     padding: 4px 6px;
     border-radius: 12px;
     transform:translateY(-200%);
