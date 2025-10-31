@@ -308,7 +308,7 @@ export default function DriveBCMap(props) {
             
             // Add offset for navbar when route is selected
             // -58px when route objects are shown, -37px when just route is selected
-            const routeDetailsOffset = selectedRoute ? (showRouteObjs ? -60 : 30) : 0;
+            const routeDetailsOffset = selectedRoute ? (showRouteObjs ? -58 : 20) : 0;
             setDrawerY(relativeY + routeDetailsOffset);
           }
         } else {

@@ -29,7 +29,7 @@
           align-items: center;
   
           .name {
-            color: $Error;
+            color: $Red-dark;
           }
         }
       }
@@ -169,7 +169,7 @@
         color: $Type-Primary;
         font-weight: 700;
         &.red-text {
-          color: $Error;
+          color: $Red-dark;
         }
       }
 

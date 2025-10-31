@@ -23,8 +23,10 @@
       align-items: stretch;
       background-color: $Gold60;
       color: $Gold110;
-      padding: 0.875rem;
+      padding: 0.5rem 0.875rem;
       font-size: 0.875rem;
+      margin: 0.725rem 0.725rem 0;
+      border-radius: 8px;
 
       .event {
         display: flex;

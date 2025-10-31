@@ -99,32 +99,33 @@ export default function WildfirePanel(props) {
         <div className="popup__content__title">
           <p className="name">{wildfire.name ? wildfire.name : wildfire.id}</p>
         </div>
-        <div className={`wildfire-status ${getWildfireStatusClass(wildfire.status)}`}>
-          <p className="wildfire-status__title">{wildfire.status}</p>
-          <p className="wildfire-status__description">{getWildfireStatusDescription(wildfire.status)}</p>
-        </div>
-
-        <div className="data-card">
-          <div className="data-card__row">
-            <div className="data-icon">
-              <FontAwesomeIcon icon={faFire} />
-            </div>
-            <p className="label">Size</p>
-            <p className="data">{wildfire.size} hectares</p>
+        <div className="popup__content__description">
+          <div className={`wildfire-status ${getWildfireStatusClass(wildfire.status)}`}>
+            <p className="wildfire-status__title">{wildfire.status}</p>
+            <p className="wildfire-status__description">{getWildfireStatusDescription(wildfire.status)}</p>
           </div>
-          <div className="data-card__row">
-            <div className="data-icon">
-              <FontAwesomeIcon icon={faEye} />
+
+          <div className="data-card">
+            <div className="data-card__row">
+              <div className="data-icon">
+                <FontAwesomeIcon icon={faFire} />
+              </div>
+              <p className="label">Size</p>
+              <p className="data">{wildfire.size} hectares</p>
             </div>
-            <p className="label">Discovered</p>
-            <p className="data">{formatDate(wildfire.reported_date)}</p>
+            <div className="data-card__row">
+              <div className="data-icon">
+                <FontAwesomeIcon icon={faEye} />
+              </div>
+              <p className="label">Discovered</p>
+              <p className="data">{formatDate(wildfire.reported_date)}</p>
+            </div>
+          </div>
+
+          <div className="url-btn" >
+            <a href={wildfire.url} rel="noreferrer">View details</a>
           </div>
         </div>
-
-        <div className="url-btn" >
-          <a href={wildfire.url} rel="noreferrer">View details</a>
-        </div>
-
 
         <div className="popup__content__footer">
           <span>Courtesy of </span>

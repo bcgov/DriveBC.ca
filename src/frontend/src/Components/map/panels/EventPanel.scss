@@ -18,7 +18,7 @@
     .popup__content {
       &__title {
         margin-bottom: 1rem;
-        
+
         .name {
           margin-bottom: 0;
         }
@@ -76,7 +76,7 @@
         background-color: $Surface-major;
 
         .name {
-          color: $Error;
+          color: $Red-dark;
         }
       }
     }

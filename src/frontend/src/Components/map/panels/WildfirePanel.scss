@@ -7,16 +7,19 @@
       background-color: $Surface-major;
 
       .name {
-        color: $Error;
+        color: $Red-dark;
       }
     }
 
     .popup__content {
-      // &__title {
-      //   color: $Error;
-      //   font-size: 24px;
-      //   line-height: 36px;
-      // }
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+
+      &__description {
+        flex-grow: 1;
+      }
 
       .wildfire-status {
         margin-top: 1rem;
@@ -35,10 +38,10 @@
 
         &--out-of-control {
           background-color: $Surface-major;
-          border: 1px solid $Error;
+          border: 1px solid $Red-dark;
 
           .wildfire-status__title {
-            color: $Error;
+            color: $Red-dark;
           }
         }
 
@@ -93,7 +96,7 @@
           display: block;
           text-decoration: none;
           padding: 10px;
-          margin-bottom: 16px;
+          margin: 16px 0;
           border-radius: 4px;
           &:hover {
             background-color: $Grey20;
@@ -102,7 +105,7 @@
       }
 
       &__footer {
-        margin-top: 12px;
+        margin-top: auto;
         margin-bottom: 32px;
         color: $Grey80;
         font-size: 0.875rem;

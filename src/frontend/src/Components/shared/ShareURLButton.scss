@@ -31,9 +31,9 @@
     &:not(.roadConditions) {
       &.major, &.closures, &.closure {
         .copy-btn {
-          color: $Error;
+          color: $Red-dark;
           &:hover {
-            background: lighten($Error, 38%);
+            background: lighten($Red-dark, 50%);
           }       
         }
       }
@@ -84,9 +84,9 @@
 
     &.closed {
       .copy-btn {
-        color: $Error;
+        color: $Red-dark;
         &:hover {
-          background: lighten($Error, 38%);
+          background: lighten($Red-dark, 50%);
         }      
       }
     }
@@ -94,9 +94,9 @@
   }
   &--wildfire {
     .copy-btn {
-      color: $Error;
+      color: $Red-dark;
       &:hover {
-        background: lighten($Error, 38%);
+        background: lighten($Red-dark, 50%);
       }    
     }
 

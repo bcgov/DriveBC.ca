@@ -46,10 +46,6 @@
       }
     }
 
-    &.from-route-objs {
-      padding-top: 4rem;
-    }
-
     .name {
       margin-bottom: 0;
       font-size: 0.875rem;
@@ -240,10 +236,10 @@
 .resize-panel:has(~ .panel-content .popup--wildfire),
 .resize-panel:has(~ .panel-content .popup.popup--reststop.closed)
  {
-  color: $Error;
+  color: $Red-dark;
   
   &:hover {
-    background: lighten($Error, 38%);
+    background: lighten($Red-dark, 50%);
   }
 }
 
