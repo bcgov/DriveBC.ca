@@ -7,21 +7,25 @@
       background-color: $Surface-major;
 
       .name {
-        color: $Error;
+        color: $Red-dark;
       }
     }
 
     .popup__content {
-      &__title {
-        color: $Error;
-        font-size: 24px;
-        line-height: 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+
+      &__description {
+        flex-grow: 1;
       }
 
       .wildfire-status {
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
         padding: 8px 12px;
         border-radius: 8px;
-        font-size: 0.875rem;
 
         &--note {
           background-color: $Advisory-Bg;
@@ -34,10 +38,10 @@
 
         &--out-of-control {
           background-color: $Surface-major;
-          border: 1px solid $Error;
+          border: 1px solid $Red-dark;
 
           .wildfire-status__title {
-            color: $Error;
+            color: $Red-dark;
           }
         }
 
@@ -65,6 +69,16 @@
         }
       }
 
+      .wildfire-status__title {
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+      .wildfire-status__description {
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin-bottom: 0;
+      }
+
       .data-icon {
         width: 18px;
         height: 24px;
@@ -73,24 +87,29 @@
         justify-content: center;
       }
 
+      .url-btn {
+        a {
+          background-color: $Grey10;
+          font-size: 0.875rem;
+          font-weight: 700;
+          text-align: center;
+          display: block;
+          text-decoration: none;
+          padding: 10px;
+          margin: 16px 0;
+          border-radius: 4px;
+          &:hover {
+            background-color: $Grey20;
+          }
+        }
+      }
+
       &__footer {
-        margin-top: 12px;
+        margin-top: auto;
         margin-bottom: 32px;
         color: $Grey80;
         font-size: 0.875rem;
         text-align: center;
-
-        .url-btn {
-          background-color: $Grey10;
-          padding: 10px;
-          margin-bottom: 16px;
-          border-radius: 4px;
-
-          a {
-            font-weight: 700;
-            text-decoration: none;
-          }
-        }
       }
     }
   }

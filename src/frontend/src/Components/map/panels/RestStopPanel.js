@@ -191,13 +191,13 @@ export default function RestStopPanel(props) {
                 <FontAwesomeIcon icon={faWifi} />
               </div>
               <p className="label">
-                Wifi
+                Wi-Fi
               </p>
               <p className="data">
               {restStopData.properties.WI_FI === "No" ? (
-                `Wi-Fi unavailable`
+                `Unavailable`
               ) : (
-                `Wi-Fi available`
+                `Available`
               )}
               </p>
             </div>

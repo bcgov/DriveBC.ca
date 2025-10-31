@@ -5,16 +5,41 @@
   .route-details {
     max-height: calc(60vh);
 
+    &.selected {
+      h4 {
+        color: $Focus;
+      }
+    }
     .route-items {
+      &-text {
+        font-size: 0.875rem;
+      }
+
       .route-item {
+        margin-left: 0;
+
+        &:first-child {
+          padding-top: 0;
+        }
+        &:last-child {
+          padding-bottom: 0;
+        }
+        
+        &--group {
+          padding: 4px 8px;
+          display: inline-block;
+          border-radius: 4px;
+          margin-left: 8px;
+          &:hover {
+            background: $Grey20;
+          }  
+        }
+      
         svg {
-          width: 18px;
-          height: 16px;
+          width: 14px;
+          height: 14px;
         }
 
-        &:hover {
-          background: $Grey20;
-        }
       }
     }
   }
