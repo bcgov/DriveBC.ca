@@ -37,6 +37,50 @@ const tooltipLargeVehicles = (
   </Tooltip>
 );
 
+// Convert uppercase strings to sentence case and capitalize after hyphens
+const toSentenceCase = (str) => {
+  if (!str || typeof str !== 'string') return str;
+  return str
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word) => {
+      if (word.includes('-')) {
+        return word
+          .split('-')
+          .map((part) => (part ? part.charAt(0).toUpperCase() + part.slice(1) : part))
+          .join('-');
+      }
+      return word ? word.charAt(0).toUpperCase() + word.slice(1) : word;
+    })
+    .join(' ');
+};
+
+// Title case with common small words kept lowercase unless first or after hyphen
+const toTitleCaseExceptSmallWords = (str) => {
+  if (!str || typeof str !== 'string') return str;
+  const smallWords = new Set(['of','and','the','in','on','at','to','for','from','by','with','a','an','or']);
+  const lower = str.toLowerCase();
+  return lower
+    .split(/\s+/)
+    .map((word, idx) => {
+      if (word.includes('-')) {
+        return word
+          .split('-')
+          .map((part, partIdx) => {
+            // Always capitalize first letter after hyphen if present
+            if (!part) return part;
+            return part.charAt(0).toUpperCase() + part.slice(1);
+          })
+          .join('-');
+      }
+      if (idx > 0 && smallWords.has(word)) {
+        return word;
+      }
+      return word ? word.charAt(0).toUpperCase() + word.slice(1) : word;
+    })
+    .join(' ');
+};
+
 // Main component
 export default function RestStopPanel(props) {
   // Misc
@@ -80,8 +124,8 @@ export default function RestStopPanel(props) {
       </div>
       <div className="popup__content">
         <div className="popup__content__title">
-        <p className="name">{restStopData.properties.REST_AREA_NAME}</p>
-          <p className="location">{restStopData.properties.DISTANCE_FROM_MUNICIPALITY}</p>
+        <p className="name">{toSentenceCase(restStopData.properties.REST_AREA_NAME)}</p>
+          <p className="location">{toTitleCaseExceptSmallWords(restStopData.properties.DISTANCE_FROM_MUNICIPALITY)}</p>
         </div>
         <div className='popup__content__description'>
           <p className="description-label label">Access</p>
@@ -109,6 +153,7 @@ export default function RestStopPanel(props) {
                 {restStopData.properties.OPEN_YEAR_ROUND === "No" && restStopData.properties.OPEN_DATE && restStopData.properties.CLOSE_DATE && (
                   <OpenSeason openDate={restStopData.properties.OPEN_DATE} closeDate={restStopData.properties.CLOSE_DATE} />
                 )}
+                Closed
               </p>
             </div>
 
@@ -191,13 +236,13 @@ export default function RestStopPanel(props) {
                 <FontAwesomeIcon icon={faWifi} />
               </div>
               <p className="label">
-                Wifi
+                Wi-Fi
               </p>
               <p className="data">
               {restStopData.properties.WI_FI === "No" ? (
-                `Wi-Fi unavailable`
+                `Unavailable`
               ) : (
-                `Wi-Fi available`
+                `Available`
               )}
               </p>
             </div>
