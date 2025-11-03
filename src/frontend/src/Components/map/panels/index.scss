@@ -209,6 +209,10 @@
   padding: 12px 17px;
   top: 6px;
   right: 0;
+  color: $Type-Primary;
+  &:hover {
+    background: lighten($Type-Primary, 70%);
+  }
 }
 
 .resize-panel {
