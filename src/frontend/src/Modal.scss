@@ -17,7 +17,7 @@
     background: white;
     display: flex;
     flex-direction: column;
-    padding: 64px 24px;
+    padding: 48px 24px;
     min-height: 200px;
     min-width: 300px;
     width: 100%;
@@ -56,15 +56,11 @@
 
     .body {
       flex: 1;
-      padding: 24px 0;
-
-      p {
-        font-size: 1.125rem;
-      }
+      padding: 12px 0;
 
       .btn {
-        width: 100%;
-        font-size: 1rem;
+        width: 100%;          
+        font-size: 0.875rem;
       }
 
       .BCeID-definition {
