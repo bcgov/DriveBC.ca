@@ -12,7 +12,7 @@
   }
 }
 
-.btn.back-to-routes {
+.btn.back-to-routes, .btn.back-to-details {
   position: absolute;
   z-index: 1;
   top: 1rem;
@@ -113,9 +113,7 @@
         }
 
         &.has-route{
-          &:has(.route-object-list) {
-            height: calc(100% - 160px);
-          }
+          height: calc(100% - 160px);
         }
 
         @media (max-width: 767px) {

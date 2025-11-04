@@ -963,32 +963,6 @@ export default function DriveBCMap(props) {
             </button>
           }
 
-          {clickedFeature && selectedRoute && !isCamDetail &&
-            <Button
-              variant="primary-outline"
-              className="btn-outline-primary back-to-details"
-              aria-label={`back to route details`}
-              tabIndex={`${openPanel ? 0 : -1}`}
-              onKeyDown={(e) => {
-                e.stopPropagation();
-                togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
-                  myLocationRef, routingContainerRef
-                ], searchedRoutes);
-                setMaximizedPanel(false);
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
-                  myLocationRef, routingContainerRef
-                ], searchedRoutes);
-                setMaximizedPanel(false);
-              }}>
-
-              <FontAwesomeIcon icon={faArrowLeft}/>
-              Route details
-            </Button>
-          }
-
           <div className="panel-content">
             {renderPanel(
               clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature,
@@ -1005,13 +979,39 @@ export default function DriveBCMap(props) {
       }
       
       <div ref={mapElement} className="map">
-        {(!isCamDetail && showRouteObjs && selectedRoute) && (
+        {(!isCamDetail && selectedRoute && showRouteObjs && !clickedFeature) && (
           <Button 
             variant="primary-outline" 
             className="btn-outline-primary back-to-routes" 
             onClick={() => dispatch(updateShowRouteObjs(false))}>
             <FontAwesomeIcon icon={faArrowLeft}/>
             Routes
+          </Button>
+        )}
+
+        {(!smallScreen && !isCamDetail && selectedRoute && showRouteObjs && clickedFeature) && (
+          <Button
+            variant="primary-outline"
+            className="btn-outline-primary back-to-details"
+            aria-label={`back to route details`}
+            tabIndex={`${openPanel ? 0 : -1}`}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+              togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
+                myLocationRef, routingContainerRef
+              ], searchedRoutes);
+              setMaximizedPanel(false);
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
+                myLocationRef, routingContainerRef
+              ], searchedRoutes);
+              setMaximizedPanel(false);
+            }}>
+
+            <FontAwesomeIcon icon={faArrowLeft}/>
+            Route details
           </Button>
         )}
 
@@ -1080,7 +1080,7 @@ export default function DriveBCMap(props) {
           </div>
         )}
 
-        {(!isCamDetail && smallScreen && !maximizedPanel && mapRef.current && (!showRouteObjs || clickedFeature)) && (
+        {(!isCamDetail && smallScreen && mapRef.current && (!showRouteObjs || clickedFeature)) && (
           <div className="fixed-to-mobile-group"
             style={{
               transform: `translateY(${drawerY}px)`

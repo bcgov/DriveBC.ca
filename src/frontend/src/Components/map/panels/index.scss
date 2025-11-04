@@ -1,25 +1,4 @@
 @import "../../../styles/variables";
-
-.btn.back-to-details {
-  position: absolute;
-  left: 1rem;
-  top: 1rem;
-  color: $Type-Link;
-  font-size: 0.875rem;
-  font-weight: 700;
-  border: 1px solid $Type-Link;
-
-  @media (max-width: 575px) {
-    position: fixed;
-    top: 9.6rem;
-    background: white;
-  }
-
-  svg {
-    margin-right: .5rem;
-  }
-}
-
 .popup {
   display: flex;
   flex-direction: column;
@@ -36,10 +15,6 @@
       svg {
         margin-right: 8px;
       }
-    }
-
-    &.from-route-objs {
-      padding-top: 4rem;
     }
 
     .name {
