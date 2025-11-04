@@ -18,7 +18,7 @@ import Skeleton from 'react-loading-skeleton';
 
 // Internal imports
 import { CMSContext } from '../App';
-import { getAdvisories, markAdvisoriesAsRead } from '../Components/data/advisories.js';
+import { getAdvisories, getAdvisoriesPreview, markAdvisoriesAsRead } from '../Components/data/advisories.js';
 import { NetworkError, NotFoundError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -198,13 +198,19 @@ export default function AdvisoryDetailsPage() {
 
   // Data function and initialization
   const loadAdvisory = async () => {
-    const advisoryData = await getAdvisories(params.id).catch((error) => {
+    let advisoryData;
+
+    try {
+      const isPreview = window.location.href.includes("advisories-preview");
+      advisoryData = await (isPreview ? getAdvisoriesPreview(params.id) : getAdvisories(params.id));
+    } catch (error) {
       if (error instanceof NotFoundError) {
-        return NOT_FOUND_CONTENT;
+        advisoryData = NOT_FOUND_CONTENT;
       } else {
-        displayError(error)
+        displayError(error);
       }
-    });
+    }
+    
     setAdvisory(advisoryData);
 
     if (advisoryData.id) {
@@ -275,15 +281,25 @@ export default function AdvisoryDetailsPage() {
         <Container className="page-header__title">
           {content && !showLoader &&
             <React.Fragment>
+              {!content.live && <span className="preview-badge">Preview</span>}
               <h1 className="page-title">{content.title}</h1>
               {content.teaser &&
                 <p className="page-description body--large">{content.teaser}</p>
               }
 
-              {content.first_published_at &&
+              {(content.first_published_at || !content.live) &&
                 <div className="page-header__title__meta">
                   <div className="timestamp-container">
-                    <span>{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span>
+                    {/* <span>{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span> */}
+                    <span>
+                      {content.live
+                        ? content.first_published_at !== content.last_published_at
+                          ? "Updated"
+                          : "Published"
+                        : content.first_published_at !== content.last_published_at
+                          ? "Updated"
+                          : "Saved"}
+                    </span>
                     <FriendlyTime date={content.latest_revision_created_at} />
                   </div>
                   <ShareURLButton />

@@ -14,7 +14,7 @@ import './BulletinsListPage.scss';
 
 // Internal imports
 import { CMSContext } from '../App';
-import { getBulletins, markBulletinsAsRead } from '../Components/data/bulletins.js';
+import { getBulletins, getBulletinsPreview, markBulletinsAsRead } from '../Components/data/bulletins.js';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -55,9 +55,10 @@ export default function BulletinsListPage() {
 
   // Data loading
   const loadBulletins = async () => {
-    let bulletinsData = bulletins;
+    const bulletinsData = bulletins;
     if (!bulletinsData) {
-      bulletinsData = await getBulletins().catch((error) => displayError(error));
+      const isPreview = window.location.href.includes("bulletins-preview");
+      const bulletinsData = await (isPreview ? getBulletinsPreview() : getBulletins()).catch((error) => displayError(error));
 
       dispatch(updateBulletins({
         list: bulletinsData,

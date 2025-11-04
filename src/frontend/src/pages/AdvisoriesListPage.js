@@ -12,7 +12,7 @@ import Container from 'react-bootstrap/Container';
 // Internal imports
 import { CMSContext } from '../App';
 import { filterAdvisoryByRoute } from "../Components/map/helpers";
-import { getAdvisories, markAdvisoriesAsRead } from '../Components/data/advisories.js';
+import { getAdvisories, getAdvisoriesPreview, markAdvisoriesAsRead } from '../Components/data/advisories.js';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -65,7 +65,10 @@ export default function AdvisoriesListPage() {
       return;
     }
 
-    const advisoriesData = await getAdvisories().catch((error) => displayError(error));
+    const isPreview = window.location.href.includes("advisories-preview");
+    const advisoriesData = await (isPreview ? getAdvisoriesPreview() : getAdvisories()).catch((error) => displayError(error));
+
+    // const advisoriesData = await getAdvisories().catch((error) => displayError(error));
     const filteredAdvisoriesData = selectedRoute ? filterAdvisoryByRoute(advisoriesData, selectedRoute) : advisoriesData;
     dispatch(updateAdvisories({
       list: advisoriesData,

@@ -26,20 +26,28 @@ class CMSViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class AdvisoryAPI(CMSViewSet):
-    queryset = Advisory.objects.filter(live=True)
+    queryset = Advisory.objects.all()
     serializer_class = AdvisorySerializer
-    # cache_key = CacheKey.ADVISORY_LIST
-    # cache_timeout = CacheTimeout.DEFAULT
     lookup_field = 'slug'
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        preview = self.request.query_params.get('preview')
+        if preview == 'true':
+            return queryset.filter(live=False)
+        return queryset.filter(live=True)
 
 class BulletinTestAPI(CMSViewSet):
-    queryset = Bulletin.objects.filter(live=True)
-    serializer_class = BulletinTestSerializer
-    # cache_key = CacheKey.BULLETIN_LIST
-    # cache_timeout = CacheTimeout.DEFAULT
+    queryset = Bulletin.objects.all()
+    serializer_class = BulletinSerializer
     lookup_field = 'slug'
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        preview = self.request.query_params.get('preview')
+        if preview == 'true':
+            return queryset.filter(live=False)
+        return queryset.filter(live=True)
 
 class BulletinAPI(BulletinTestAPI):
     serializer_class = BulletinSerializer
