@@ -25,7 +25,10 @@ export default function Bulletins(props) {
 
   function handleClick(bulletin) {
     trackEvent('click', 'bulletins-list', 'Bulletin', bulletin.title, bulletin.teaser);
-    navigate(`/bulletins/${bulletin.slug}`);
+    const path = bulletin.live
+      ? `/bulletins/${bulletin.slug}`
+      : `/bulletins-preview/${bulletin.slug}`;
+    navigate(path);
   }
 
   const sortedBulletins = bulletins && bulletins.sort((a, b) => {

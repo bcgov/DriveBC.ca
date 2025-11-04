@@ -39,7 +39,11 @@ export default function AdvisoriesList(props) {
     }
 
     trackEvent('click', 'advisories-list', 'Advisory', advisory.title, advisory.teaser);
-    navigate(`/advisories/${advisory.slug}`);
+    const path = advisory.live
+      ? `/advisories/${advisory.slug}`
+      : `/advisories-preview/${advisory.slug}`;
+
+    navigate(path);
   }
 
   const sortedAdvisories = advisories && advisories.sort((a, b) => {

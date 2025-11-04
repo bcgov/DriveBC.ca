@@ -21,8 +21,8 @@ import Navbar from 'react-bootstrap/Navbar';
 // Internal imports
 import { CMSContext } from '../../../App';
 import { filterAdvisoryByRoute } from "../../map/helpers";
-import { getAdvisories } from '../../data/advisories.js';
-import { getBulletins } from '../../data/bulletins.js';
+import { getAdvisories, getAdvisoriesPreview } from '../../data/advisories.js';
+import { getBulletins, getBulletinsPreview } from '../../data/bulletins.js';
 import UserNavigation from "./UserNavigation";
 import RouteSearch from '../../routing/RouteSearch';
 
@@ -70,12 +70,20 @@ export default function Header() {
   // Effects
   const loadAdvisories = async () => {
     // Skip loading if the advisories are already loaded on launch
-    if (advisories) {
+    if (advisories && advisories.length > 0 && advisories[0].live_revision != null) {
       setAdvisoriesCount(getUnreadAdvisoriesCount(filteredAdvisories));
       return;
     }
 
-    const advisoriesData = await getAdvisories();
+    const path = window.location.pathname;
+
+    let advisoriesData;
+    if (path.includes("preview")) {
+      advisoriesData = await getAdvisoriesPreview();
+    } else {
+      advisoriesData = await getAdvisories();
+    }
+    
     const filteredAdvisoriesData = selectedRoute ? filterAdvisoryByRoute(advisoriesData, selectedRoute) : advisoriesData;
     dispatch(updateAdvisories({
       list: advisoriesData,
@@ -87,16 +95,18 @@ export default function Header() {
   }
 
   const loadBulletins = async () => {
-    let bulletinsData = bulletins;
-
-    if (!bulletinsData) {
+    let bulletinsData;
+    const path = window.location.pathname;
+    if (path.includes("preview")) {
+      bulletinsData = await getBulletinsPreview();
+    } else {
       bulletinsData = await getBulletins();
-
-      dispatch(updateBulletins({
-        list: bulletinsData,
-        timeStamp: new Date().getTime()
-      }));
     }
+
+    dispatch(updateBulletins({
+      list: bulletinsData,
+      timeStamp: new Date().getTime()
+    }));
 
     setBulletinsCount(getUnreadBulletinsCount(bulletinsData));
   }
@@ -104,7 +114,7 @@ export default function Header() {
   useEffect(() => {
     loadAdvisories();
     loadBulletins();
-  }, [cmsContext]);
+  }, [cmsContext, location.pathname]);
 
   useEffect(() => {
     if (searchLocationFrom.length && searchLocationTo.length) {
@@ -118,6 +128,10 @@ export default function Header() {
       return 0;
     }
 
+    if (advisoriesData.length !== 0 && advisoriesData[0].live_revision == null) {
+      return 0;
+    }
+
     const readAdvisories = advisoriesData.filter(advisory => cmsContext.readAdvisories.includes(
       advisory.id.toString() + '-' + advisory.live_revision.toString()
     ));
@@ -125,6 +139,14 @@ export default function Header() {
   }
 
   const getUnreadBulletinsCount = (bulletinsData) => {
+    if (!bulletinsData) {
+      return 0;
+    }
+
+    if (bulletinsData.length !== 0 && bulletinsData[0].live_revision == null) {
+      return 0;
+    }
+
     const readBulletins = bulletinsData.filter(bulletin => cmsContext.readBulletins.includes(
       bulletin.id.toString() + '-' + bulletin.live_revision.toString()
     ));
