@@ -68,7 +68,7 @@ export default function RestStopPanel(props) {
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__name">
           <RestStopTypeIcon reststop={restStopData} />
-            {restStopData.properties.OPEN_YEAR_ROUND === "No" && !restStopData.properties.OPEN_DATE && !restStopData.properties.CLOSE_DATE ? (
+            {isClosed ? (
               <div className='name-div'>
                 <p className='name'>Rest area</p>
                 <p className="label red-text">Closed</p>
@@ -97,7 +97,7 @@ export default function RestStopPanel(props) {
                   <div>
                       {<OpenSeason returnState={true} openDate={restStopData.properties.OPEN_DATE} closeDate={restStopData.properties.CLOSE_DATE} /> === "open" ? (
                         <p className="label">Open seasonally</p>
-                        ) : ( isRestStopClosed(restStopData.properties)? (<p className="label">Closed &#40;open seasonally&#41;</p>)
+                        ) : ( isRestStopClosed(restStopData.properties) ? (<p className="label">Closed &#40;open seasonally&#41;</p>)
                         : (<p className="label">Open seasonally</p>)
                       )}
                   </div>
