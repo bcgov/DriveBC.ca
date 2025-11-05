@@ -67,8 +67,6 @@ export default function AdvisoriesListPage() {
 
     const isPreview = window.location.href.includes("advisories-preview");
     const advisoriesData = await (isPreview ? getAdvisoriesPreview() : getAdvisories()).catch((error) => displayError(error));
-
-    // const advisoriesData = await getAdvisories().catch((error) => displayError(error));
     const filteredAdvisoriesData = selectedRoute ? filterAdvisoryByRoute(advisoriesData, selectedRoute) : advisoriesData;
     dispatch(updateAdvisories({
       list: advisoriesData,
