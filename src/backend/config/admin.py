@@ -47,6 +47,13 @@ class DriveBCAdminSite(AdminSite):
                 username__endswith='bceidbasic',
                 last_login__gte=thirty_days_ago
             ).count(),
+            'otp_users_count': DriveBCUser.objects.filter(
+                username__endswith='otp'
+            ).count(),
+            'otp_users_logged_in_last_30_days': DriveBCUser.objects.filter(
+                username__endswith='otp',
+                last_login__gte=thirty_days_ago
+            ).count(),
             'saved_routes': SavedRoutes.objects.count(),
             'unique_users_with_saved_routes': SavedRoutes.objects.values('user').distinct().count(),
             'unique_users_with_saved_routes_and_notifications': SavedRoutes.objects.filter(
