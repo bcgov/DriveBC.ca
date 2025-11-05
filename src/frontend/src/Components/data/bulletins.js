@@ -17,7 +17,6 @@ export function getBulletinsPreview(id) {
     : `${baseUrl}?preview=true&timestamp=${Date.now()}`;
 
   return get(url).then((data) => {
-    console.log("Preview bulletins data:", data);
     return data;
   });
 }
@@ -26,7 +25,7 @@ export function markBulletinsAsRead(bulletinsData, cmsContext, setCMSContext) {
   if (!bulletinsData) {
     return;
   }
-  
+
   if (bulletinsData && bulletinsData.length !== 0 && bulletinsData[0].live_revision == null) {
     return;
   }

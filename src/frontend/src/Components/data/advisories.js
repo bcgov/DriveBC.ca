@@ -17,7 +17,6 @@ export function getAdvisoriesPreview(id) {
     : `${baseUrl}?preview=true&timestamp=${Date.now()}`;
 
   return get(url).then((data) => {
-    console.log("Preview advisories data:", data);
     return data;
   });
 }

@@ -143,7 +143,6 @@ export default function BulletinDetailsPage() {
             {(content.first_published_at || !content.live) &&
               <div className="page-header__title__meta">
                 <div className="timestamp-container">
-                  {/* <span>{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span> */}
                   <span>
                       {content.live
                         ? content.first_published_at !== content.last_published_at
