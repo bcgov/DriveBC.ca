@@ -175,7 +175,19 @@ DATABASES = {
         "PASSWORD": env("DB_PASSWORD"),
         "HOST": env("DB_HOST"),
         "PORT": env.int("DB_PORT"),
-    }
+    },
+
+    "mssql": {
+        "ENGINE": "mssql",
+        "NAME": env("SQL_DB_NAME"),
+        "USER": env("SQL_DB_USER"),
+        "PASSWORD": env("SQL_DB_PASSWORD"),
+        "HOST": env("SQL_DB_SERVER"),
+        "PORT": env.int("SQL_DB_PORT", default=1433),
+        "OPTIONS": {
+            "driver": "ODBC Driver 17 for SQL Server",
+        },
+    },
 }
 CACHES = {
     "default": {

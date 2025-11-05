@@ -5,11 +5,11 @@ from apps.consumer.models import ImageIndex
 from asgiref.sync import sync_to_async
 
 # Connection settings
-SQL_DB_SERVER = os.getenv("SQL_DB_SERVER", "sql-server-db")
-SQL_DB_NAME = os.getenv("SQL_DB_NAME", "camera-db")
-SQL_DB_USER = os.getenv("SQL_DB_USER", "sa")
-SQL_DB_PASSWORD = os.getenv("SQL_DB_PASSWORD", "YourStrong@Passw0rd")
-SQL_DB_DRIVER = "ODBC Driver 17 for SQL Server"  # Make sure this driver is installed on the container
+SQL_DB_SERVER = os.getenv("SQL_DB_SERVER")
+SQL_DB_NAME = os.getenv("SQL_DB_NAME")
+SQL_DB_USER = os.getenv("SQL_DB_USER")
+SQL_DB_PASSWORD = os.getenv("SQL_DB_PASSWORD")
+SQL_DB_DRIVER = "ODBC Driver 17 for SQL Server"
 
 # Build connection URL
 connection_url = URL.create(
