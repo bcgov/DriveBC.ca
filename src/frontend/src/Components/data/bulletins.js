@@ -23,6 +23,10 @@ export function getBulletinsPreview(id) {
 }
 
 export function markBulletinsAsRead(bulletinsData, cmsContext, setCMSContext) {
+  if (!bulletinsData) {
+    return;
+  }
+  
   if (bulletinsData && bulletinsData.length !== 0 && bulletinsData[0].live_revision == null) {
     return;
   }
