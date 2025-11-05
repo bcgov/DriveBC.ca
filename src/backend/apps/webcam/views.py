@@ -20,8 +20,8 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAdminUser, AllowAny
 from zoneinfo import ZoneInfo
 
-BASE_URL = os.getenv("S3_ENDPOINT_URL", "https://moti-int.objectstore.gov.bc.ca")
-S3_BUCKET = os.getenv("S3_BUCKET", "tran_api_dbc_backup_dev")
+BASE_URL = os.getenv("S3_ENDPOINT_URL")
+S3_BUCKET = os.getenv("S3_BUCKET")
 S3_BASE_URL = f"{BASE_URL.rstrip('/')}/{S3_BUCKET}/webcams/timelapse"
 
 
@@ -94,10 +94,10 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     def _timelapse_image_impl(self, request, pk=None, filename=None):
         # Environment variables
         S3_BUCKET = os.getenv("S3_BUCKET")
-        S3_REGION = os.getenv("S3_REGION", "us-east-1")
+        S3_REGION = os.getenv("S3_REGION")
         S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
         S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
-        S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
+        S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
 
         config = Config(
             signature_version='s3v4',
@@ -186,10 +186,10 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
 
         # --- CREATE S3 CLIENT ONCE ---
         S3_BUCKET = os.getenv("S3_BUCKET")
-        S3_REGION = os.getenv("S3_REGION", "us-east-1")
+        S3_REGION = os.getenv("S3_REGION")
         S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
         S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
-        S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
+        S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
 
         config = Config(
             signature_version='s3v4',

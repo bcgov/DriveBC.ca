@@ -32,11 +32,11 @@ APP_DIR = Path(__file__).resolve().parent
 FONT = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=14)
 FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
 # PVC path to original images for RIDE
-PVC_ORIGINAL_PATH = os.getenv("PVC_ORIGINAL_PATH", "/app/images/webcams/originals")
+PVC_ORIGINAL_PATH = os.getenv("PVC_ORIGINAL_PATH")
 # PVC path to watermarked images with timestamp for ReplayTheDay
-PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH", "/app/images/webcams/replaytheday")
+PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH")
 # PVC path to watermarked images for current DriveBC without timestamp
-DRIVCBC_PVC_WATERMARKED_PATH = os.getenv("DRIVCBC_PVC_WATERMARKED_PATH", "/app/images/webcams")
+DRIVCBC_PVC_WATERMARKED_PATH = os.getenv("DRIVCBC_PVC_WATERMARKED_PATH")
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -52,14 +52,14 @@ if not logger.handlers:
 
 # Environment variables
 S3_BUCKET = os.getenv("S3_BUCKET")
-S3_REGION = os.getenv("S3_REGION", "us-east-1")
+S3_REGION = os.getenv("S3_REGION")
 S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
 S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
-RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq/")
-S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
-QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME", "drivebc-image-consumer")
-QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES", "209715200"))  # default 200MB
-EXCHANGE_NAME = os.getenv("RABBITMQ_EXCHANGE_NAME", "dev.exchange.fanout.drivebc.images")
+RABBITMQ_URL = os.getenv("RABBITMQ_URL")
+S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
+QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME")
+QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES"))
+EXCHANGE_NAME = os.getenv("RABBITMQ_EXCHANGE_NAME")
 
 
 #boto3.set_stream_logger('botocore', logging.DEBUG)
@@ -431,7 +431,7 @@ async def is_camera_pushed_too_soon(camera_id: str, timestamp: str):
     # convert to seconds
     millis_pushed_in = int(dt_pushed_in_utc.timestamp())
     diff = millis_pushed_in - millis_last_modified
-    shred_interval = int(os.getenv("SECONDS_BETWEEN_IMAGE_UPLOADS", "60"))
+    shred_interval = int(os.getenv("SECONDS_BETWEEN_IMAGE_UPLOADS"))
     if diff < shred_interval:
         return True
     return False

@@ -125,10 +125,10 @@ def get_image_list_from_s3(camera_id):
     now = datetime.now(timezone.utc)
     cutoff = now - timedelta(hours=hours)
     S3_BUCKET = os.getenv("S3_BUCKET")
-    S3_REGION = os.getenv("S3_REGION", "us-east-1")
+    S3_REGION = os.getenv("S3_REGION")
     S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
     S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
-    S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
+    S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
 
     # S3 client configuration
     config = Config(

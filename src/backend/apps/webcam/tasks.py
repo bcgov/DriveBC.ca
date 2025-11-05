@@ -21,6 +21,7 @@ from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalW
 from apps.webcam.enums import CAMERA_DIFF_FIELDS, CAMERA_TASK_DEFAULT_TIMEOUT
 from apps.webcam.hwy_coords import hwy_coords
 from apps.webcam.models import Webcam
+from apps.webcam.models import Cam
 from apps.webcam.serializers import WebcamSerializer
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Distance
@@ -38,6 +39,7 @@ from apps.consumer.models import ImageIndex
 import boto3
 from django.utils import timezone
 from django.forms.models import model_to_dict
+from django.db.models import F, Case, When, Value, IntegerField
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -52,20 +54,20 @@ CAM_OFF = ('This highway cam image is currently unavailable due to technical dif
            'Our technicians have been alerted and service will resume as soon as possible.')
 
 # Environment variables
-SQL_DB_SERVER = os.getenv("SQL_DB_SERVER", "sql-server-db")
-SQL_DB_NAME = os.getenv("SQL_DB_NAME", "camera-db")
-SQL_DB_USER = os.getenv("SQL_DB_USER", "sa")
-SQL_DB_PASSWORD = os.getenv("SQL_DB_PASSWORD", "YourStrong@Passw0rd")
-SQL_DB_DRIVER = "ODBC Driver 17 for SQL Server"  # Make sure this driver is installed on the container
+SQL_DB_SERVER = os.getenv("SQL_DB_SERVER")
+SQL_DB_NAME = os.getenv("SQL_DB_NAME")
+SQL_DB_USER = os.getenv("SQL_DB_USER")
+SQL_DB_PASSWORD = os.getenv("SQL_DB_PASSWORD")
+SQL_DB_DRIVER = "ODBC Driver 17 for SQL Server"
 S3_BUCKET = os.getenv("S3_BUCKET")
-S3_REGION = os.getenv("S3_REGION", "us-east-1")
+S3_REGION = os.getenv("S3_REGION")
 S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
 S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
-RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq/")
-S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
+RABBITMQ_URL = os.getenv("RABBITMQ_URL")
+S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
 
 # Define PVC directory
-PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH", "/app/images/webcams/replaytheday")
+PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH")
 
 # Build connection URL for webcam SQL database
 connection_url = URL.create(
@@ -113,42 +115,54 @@ def update_webcam_db_stale_delayed(camera: Webcam):
         last_update_modified=dt_utc),
 
 def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
-    cams_live_sql = text("""
-        SELECT Cams_Live.ID AS id, 
-        Cams_Live.Cam_InternetName AS name, 
-        Cams_Live.Cam_InternetCaption AS caption,
-        Regions_Live.seq AS region, 
-        Regions_Live.Name AS region_name,                 
-        Highways_Live.Hwy_Number AS highway, 
-        Highways_Live.Section AS highway_description, 
-        Region_Highways_Live.seq AS highway_group,
-        Cams_Live.seq AS highway_cam_order,
-        Cams_Live.Cam_LocationsOrientation AS orientation,
-        Cams_Live.Cam_LocationsElevation AS elevation,
-        CASE WHEN Cams_Live.Cam_ControlDisabled = 0 THEN 1 ELSE 0 END AS isOn,
-        Cams_Live.isNew AS isNew,
-        Cams_Live.isNew, Cams_Live.Cam_MaintenanceIs_On_Demand AS isOnDemand,
-        Cams_Live.Cam_InternetCredit AS credit,
-        Cams_Live.Cam_InternetDBC_Mark AS dbc_mark                 
-        FROM [WEBCAM_DEV].[dbo].[Cams_Live]
-        INNER JOIN ((Region_Highways_Live INNER JOIN Highways_Live ON Region_Highways_Live.Highway_ID = Highways_Live.ID) 
-        INNER JOIN Regions_Live ON Region_Highways_Live.Region_ID = Regions_Live.ID) 
-        ON (Cams_Live.Cam_LocationsHighway = Region_Highways_Live.Highway_ID) 
-        AND (Cams_Live.Cam_LocationsRegion = Region_Highways_Live.Region_ID) 
-        WHERE Cams_Live.ID = :id
-    """)
+    try:
+        cam = (
+            Cam.objects.using("mssql")
+            .filter(id=id)
+            .select_related(
+                'cam_locationsregion',
+                'cam_locationshighway',
+            )
+            .annotate(
+                region=F('cam_locationsregion__seq'),
+                region_name=F('cam_locationsregion__name'),
+                highway=F('cam_locationshighway__hwy_number'),
+                highway_description=F('cam_locationshighway__section'),
+                isOn=Case(
+                    When(cam_controldisabled=False, then=Value(1)),
+                    default=Value(0),
+                    output_field=IntegerField()
+                ),
+                isOnDemand=F('cam_maintenanceis_on_demand'),
+                credit=F('cam_internetcredit'),
+                dbc_mark=F('cam_internetdbc_mark')
+            )
+            .values(
+                'id',
+                'cam_internetname',
+                'cam_internetcaption',
+                'region',
+                'region_name',
+                'highway',
+                'highway_description',
+                'isOn',
+                'isnew',
+                'isOnDemand',
+                'credit',
+                'dbc_mark',
+            )
+            .first()
+        )
 
-    with engine.connect() as connection:
-        try:
-            # Query from Cams_Live
-            result_live = connection.execute(cams_live_sql, {"id": id})
-            live_rows = {row.id: dict(row._mapping) for row in result_live}
-            update_webcam_db(id, live_rows.get(id, {}))
-            return live_rows
+        if cam:
+            update_webcam_db(id, cam)
+            return cam
+        else:
+            return {}
 
-        except Exception as e:
-            logger.error(f"Failed to connect to the database: {e}")
-            return []
+    except Exception as e:
+        logger.error(f"Failed to query camera from ORM: {e}")
+        return {}
 
 def update_webcam_db(cam_id: int, cam_data: dict):
     timestamp_utc = get_recent_timestamps(cam_id)
@@ -184,7 +198,7 @@ def update_webcam_db(cam_id: int, cam_data: dict):
 
 def purge_old_images():
     logger.info("Purging webcam images...")
-    REPLAY_THE_DAY_HOURS = os.getenv("REPLAY_THE_DAY_HOURS", "24")
+    REPLAY_THE_DAY_HOURS = os.getenv("REPLAY_THE_DAY_HOURS")
     purge_old_pvc_images(age=REPLAY_THE_DAY_HOURS)
 
 def backup_purge_old_images():
@@ -244,7 +258,7 @@ def purge_old_pvc_images(age: str = "24"):
     logger.info("All purged recordes are deleted successfully.")
 
 def backup_purge_old_pvc_images():
-    PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH", "/app/images/webcams/replaytheday")
+    PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH")
     BASE_DIR = Path(PVC_WATERMARKED_PATH)
     logger.info("Starting backup purge of old PVC images...")
     now = time.time()
