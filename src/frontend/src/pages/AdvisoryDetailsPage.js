@@ -1,6 +1,6 @@
 // React
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -158,6 +158,9 @@ export default function AdvisoryDetailsPage() {
   const params = useParams();
   const navigate = useNavigate();
 
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get("preview") === "true";
+
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
 
@@ -201,7 +204,6 @@ export default function AdvisoryDetailsPage() {
     let advisoryData;
 
     try {
-      const isPreview = window.location.href.includes("advisories-preview");
       advisoryData = await (isPreview ? getAdvisoriesPreview(params.id) : getAdvisories(params.id));
     } catch (error) {
       if (error instanceof NotFoundError) {

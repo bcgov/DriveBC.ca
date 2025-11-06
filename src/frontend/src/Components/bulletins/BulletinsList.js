@@ -27,7 +27,7 @@ export default function Bulletins(props) {
     trackEvent('click', 'bulletins-list', 'Bulletin', bulletin.title, bulletin.teaser);
     const path = bulletin.live
       ? `/bulletins/${bulletin.slug}`
-      : `/bulletins-preview/${bulletin.slug}`;
+      : `/bulletins/${bulletin.slug}?preview=true`;
     navigate(path);
   }
 
