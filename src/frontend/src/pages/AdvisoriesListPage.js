@@ -1,5 +1,6 @@
 // React
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from "react-router-dom";
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -27,6 +28,8 @@ import './AdvisoriesListPage.scss';
 
 export default function AdvisoriesListPage() {
   document.title = 'DriveBC - Advisories';
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get("preview") === "true";
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
@@ -65,7 +68,6 @@ export default function AdvisoriesListPage() {
       return;
     }
 
-    const isPreview = window.location.href.includes("advisories-preview");
     const advisoriesData = await (isPreview ? getAdvisoriesPreview() : getAdvisories()).catch((error) => displayError(error));
     const filteredAdvisoriesData = selectedRoute ? filterAdvisoryByRoute(advisoriesData, selectedRoute) : advisoriesData;
     dispatch(updateAdvisories({
@@ -82,7 +84,7 @@ export default function AdvisoriesListPage() {
 
   useEffect(() => {
     loadAdvisories();
-  }, [showLoader]);
+  }, [showLoader, isPreview]);
 
   const isAdvisoriesEmpty = advisories?.length === 0;
 

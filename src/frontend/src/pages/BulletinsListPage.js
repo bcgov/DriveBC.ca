@@ -1,6 +1,6 @@
 // React
 import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
-
+import { useSearchParams } from "react-router-dom";
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
@@ -25,6 +25,8 @@ import PageHeader from '../PageHeader';
 
 export default function BulletinsListPage() {
   document.title = 'DriveBC - Bulletins';
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get("preview") === "true";
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
@@ -50,33 +52,23 @@ export default function BulletinsListPage() {
     }
   }
 
-  // Refs
-  const isInitialMount = useRef(true);
 
   // Data loading
   const loadBulletins = async () => {
-    const bulletinsData = bulletins;
-    if (!bulletinsData) {
-      const isPreview = window.location.href.includes("bulletins-preview");
-      const bulletinsData = await (isPreview ? getBulletinsPreview() : getBulletins()).catch((error) => displayError(error));
+    const bulletinsData = await (isPreview ? getBulletinsPreview() : getBulletins()).catch((error) => displayError(error));
 
-      dispatch(updateBulletins({
-        list: bulletinsData,
-        timeStamp: new Date().getTime()
-      }));
-    }
+    dispatch(updateBulletins({
+      list: bulletinsData,
+      timeStamp: new Date().getTime()
+    }));
 
     markBulletinsAsRead(bulletinsData, cmsContext, setCMSContext);
-
-    isInitialMount.current = false;
     setShowLoader(false);
   }
 
   useEffect(() => {
-    if (isInitialMount.current) { // Only run on initial load
-      loadBulletins();
-    }
-  }, [showLoader]);
+    loadBulletins();
+  }, [showLoader, isPreview]);
 
   const isBulletinsEmpty = bulletins?.length === 0;
 

@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 // Navigation
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 
 // External imports
 import Container from 'react-bootstrap/Container';
@@ -48,6 +48,9 @@ export default function BulletinDetailsPage() {
   const [showServerError, setShowServerError] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
 
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get("preview") === "true";
+
   // Error handling
   const displayError = (error) => {
     if (error instanceof ServerError) {
@@ -65,7 +68,6 @@ export default function BulletinDetailsPage() {
 
   // Data function and initialization
   const loadBulletin = async () => {
-    const isPreview = window.location.href.includes("bulletins-preview");
     const bulletinData = await (isPreview ? getBulletinsPreview(params.id) : getBulletins(params.id)).catch((error) => {
       if (error instanceof NotFoundError) {
         return NOT_FOUND_CONTENT;

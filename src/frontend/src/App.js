@@ -299,13 +299,9 @@ function App() {
                             <Route path="/cameras/:id" element={<CameraDetailsPage />} />
                             <Route path="/delays" element={<EventsListPage />} />
                             <Route path="/advisories" element={<AdvisoriesListPage />} />
-                            <Route path="/advisories-preview" element={<AdvisoriesListPage />} />
                             <Route path="/advisories/:id/:subid?" element={<AdvisoryDetailsPage />} />
-                            <Route path="/advisories-preview/:id/:subid?" element={<AdvisoryDetailsPage />} />
                             <Route path="/bulletins" element={<BulletinsListPage />} />
-                            <Route path="/bulletins-preview" element={<BulletinsListPage />} />
                             <Route path="/bulletins/:id/:subid?" element={<BulletinDetailsPage />} />
-                            <Route path="/bulletins-preview/:id/:subid?" element={<BulletinDetailsPage />} />
                             <Route path="/account" element={<AccountPage />} />
                             <Route path="/account-deactivated" element={<AccountDeactivatedPage />} />
                             <Route path="/feedback" element={<FeedbackPage />} />

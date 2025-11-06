@@ -41,7 +41,7 @@ export default function AdvisoriesList(props) {
     trackEvent('click', 'advisories-list', 'Advisory', advisory.title, advisory.teaser);
     const path = advisory.live
       ? `/advisories/${advisory.slug}`
-      : `/advisories-preview/${advisory.slug}`;
+      : `/advisories/${advisory.slug}?preview=true`;
 
     navigate(path);
   }
