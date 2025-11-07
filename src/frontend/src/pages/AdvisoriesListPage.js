@@ -13,7 +13,7 @@ import Container from 'react-bootstrap/Container';
 // Internal imports
 import { CMSContext } from '../App';
 import { filterAdvisoryByRoute } from "../Components/map/helpers";
-import { getAdvisories, getAdvisoriesPreview, markAdvisoriesAsRead } from '../Components/data/advisories.js';
+import { getAdvisories, markAdvisoriesAsRead } from '../Components/data/advisories.js';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -28,8 +28,6 @@ import './AdvisoriesListPage.scss';
 
 export default function AdvisoriesListPage() {
   document.title = 'DriveBC - Advisories';
-  const [searchParams] = useSearchParams();
-  const isPreview = searchParams.get("preview") === "true";
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
@@ -68,7 +66,7 @@ export default function AdvisoriesListPage() {
       return;
     }
 
-    const advisoriesData = await (isPreview ? getAdvisoriesPreview() : getAdvisories()).catch((error) => displayError(error));
+    const advisoriesData = await getAdvisories().catch((error) => displayError(error));
     const filteredAdvisoriesData = selectedRoute ? filterAdvisoryByRoute(advisoriesData, selectedRoute) : advisoriesData;
     dispatch(updateAdvisories({
       list: advisoriesData,
@@ -84,7 +82,7 @@ export default function AdvisoriesListPage() {
 
   useEffect(() => {
     loadAdvisories();
-  }, [showLoader, isPreview]);
+  }, [showLoader]);
 
   const isAdvisoriesEmpty = advisories?.length === 0;
 
