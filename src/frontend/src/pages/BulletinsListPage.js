@@ -14,7 +14,7 @@ import './BulletinsListPage.scss';
 
 // Internal imports
 import { CMSContext } from '../App';
-import { getBulletins, getBulletinsPreview, markBulletinsAsRead } from '../Components/data/bulletins.js';
+import { getBulletins, markBulletinsAsRead } from '../Components/data/bulletins.js';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -25,8 +25,8 @@ import PageHeader from '../PageHeader';
 
 export default function BulletinsListPage() {
   document.title = 'DriveBC - Bulletins';
-  const [searchParams] = useSearchParams();
-  const isPreview = searchParams.get("preview") === "true";
+  // const [searchParams] = useSearchParams();
+  // const isPreview = searchParams.get("preview") === "true";
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
@@ -52,23 +52,31 @@ export default function BulletinsListPage() {
     }
   }
 
+  // Refs
+  const isInitialMount = useRef(true);
 
   // Data loading
   const loadBulletins = async () => {
-    const bulletinsData = await (isPreview ? getBulletinsPreview() : getBulletins()).catch((error) => displayError(error));
+    let bulletinsData = bulletins;
+    if (!bulletinsData) {
+      bulletinsData = await getBulletins().catch((error) => displayError(error));
 
-    dispatch(updateBulletins({
-      list: bulletinsData,
-      timeStamp: new Date().getTime()
-    }));
+      dispatch(updateBulletins({
+        list: bulletinsData,
+        timeStamp: new Date().getTime()
+      }));
+    }
 
+    isInitialMount.current = false;
     markBulletinsAsRead(bulletinsData, cmsContext, setCMSContext);
     setShowLoader(false);
   }
 
   useEffect(() => {
-    loadBulletins();
-  }, [showLoader, isPreview]);
+    if (isInitialMount.current) { // Only run on initial load
+      loadBulletins();
+    }
+  }, [showLoader]);
 
   const isBulletinsEmpty = bulletins?.length === 0;
 

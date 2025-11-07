@@ -9,12 +9,7 @@ export function getAdvisories(id) {
 export function getAdvisoriesPreview(id) {
   // Base URL with a cache-busting timestamp
   const baseUrl = `${window.API_HOST}/api/cms/advisories/`;
-
-  // If we have an ID, fetch that specific advisory
-  // If not, fetch the list
-  const url = id
-    ? `${baseUrl}${id}/?preview=true&timestamp=${Date.now()}`
-    : `${baseUrl}?preview=true&timestamp=${Date.now()}`;
+  const url = `${baseUrl}${id}/?preview=true&timestamp=${Date.now()}`
 
   return get(url).then((data) => {
     return data;
@@ -29,10 +24,7 @@ export const getAdvisoryCounts = (advisories) => {
 }
 
 export const markAdvisoriesAsRead = (advisoriesData, cmsContext, setCMSContext) => {
-  if (advisoriesData && advisoriesData.length !== 0 && advisoriesData[0].live_revision == null) {
-    return;
-  }
-
+  if (advisoriesData && advisoriesData.length > 0 && !advisoriesData[0].live_revision) return;
   const advisoriesIds = advisoriesData.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
 
   // Combine and remove duplicates
