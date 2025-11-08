@@ -89,15 +89,6 @@
     }
   }
 
-  .page-subtitle {
-    padding-top: 16px;
-    padding-bottom: 16px;
-
-    p {
-      margin-bottom: 0;
-    }
-  }
-
   // Z-index
   .ol-overlaycontainer-stopevent {
     z-index: 20 !important;
@@ -145,6 +136,40 @@
         height: 75vh;
       }
 
+      .fixed-to-mobile-group {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        z-index: 1;
+      }
+
+      .reportMap-instructions {
+        position: absolute;
+        z-index: 1;
+        width: 100%;
+        max-width: 100%;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: $BC-Blue;
+        border-radius: 8px;
+        padding: 12px;
+
+        @media (min-width: 375px) {
+          width: fit-content;
+        }
+
+        p {
+          color: White;
+          font-size: 0.875rem;
+          margin-bottom: 0;
+
+          @media (min-width: 375px) {
+            white-space: nowrap;
+          }
+        }
+      }
+
       .side-panel {
         height: 100%;
         background-color: white;
@@ -190,87 +215,71 @@
         }
 
         .close-panel {
-          position: absolute;
-          top: 2rem;
-          right: 1rem;
-          padding: 0;
-          min-width: 0;
-          line-height: 1.25rem;
-          height: 2rem;
-          width: 2rem;
-          border-radius: 50%;
-          background: none;
-          border: none;
-          font-size: 1rem;
-          color: $White;
-          z-index: 1000;
+          color: $BC-Blue;
 
           &:hover {
-            background: $Type-Link;
+            background: lighten($BC-Blue, 70%);
           }
         }
 
         .panel-content {
           flex: 1;
+        }
+      }
 
-          .popup {
-            &__title {
-              background-color: $Info;
-              padding: 1rem 1rem 0.5rem;
+      .popup {
+        &__title {
 
-              &__icon {
-                background-color: $Type-Link;
-              }
+          &__icon {
+            width: 24px;
+            height: 24px;
+            border: 2px solid $BC-Blue;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 8px;
+            font-size: 0.75rem;
+            
+            svg {
+              color: $BC-Blue;
+              margin-right: 0;
+            }
+          }
 
-              .name {
-                color: $White;
-              }
+          &__name {
+            .name {
+              color: $BC-Blue;
             }
 
-            &__content {
-              padding: 1rem;
+          }
+        }
 
-              .service-area {
-                font-size: 1.5rem;
-                font-weight: 700;
-                color: $Info;
-                margin-bottom: 0;
-              }
+        &__content {
+          padding: 1rem;
 
-              .service-area-number {
-                color: $Info;
-              }
+          p {
+            color: $Type-Primary;
+            font-size: 0.875rem;
+            line-height: 1.5rem;
+            margin-bottom: 0;
+          }
 
-              .contractor-name {
-                margin-bottom: 1rem;
+          .service-area {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0;
+          }
 
-                .website-link {
-                  color: $Grey100;
-                  font-weight: 700;
-                }
+          .service-area-number {
+            color: $Grey80;
+            font-size: 0.75rem;
+          }
 
-                .without-link {
-                  color: $Grey100;
-                  font-weight: 700;
-                }
-              }
-
-              .contractor-description {
-                font-size: 0.875rem;
-              }
-
-              .contractor-phone {
-                display: flex;
-                align-items: center;
-                margin-bottom: 1rem;
-                color: $Type-Link;
-                font-weight: 700;
-
-                svg {
-                  margin-right: 8px;
-                }
-              }
-            }
+          .contractor-name {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-top: 24px;
           }
         }
       }
@@ -361,8 +370,17 @@
       }
 
       .expand {
-        top: 1rem;
+        bottom: 1rem;
         right: 1rem;
+      }
+
+      .back {
+        top: 1rem;
+        left: 1rem;
+
+        svg {
+          margin-right: 8px;
+        }
       }
 
       .zoom-btn {
@@ -415,6 +433,159 @@
           border-bottom: 1px solid $Divider;
         }
       }
+
+      .data-card {
+        margin: 0.75rem 0;
+        padding: 0.75rem;
+        border-radius: 8px;
+        box-shadow: 0px 6.4px 14.4px 0px rgba(0, 0, 0, 0.13), 0px 1.2px 3.6px 0px rgba(0, 0, 0, 0.10);
+    
+        &__row {
+          display: flex;
+    
+          & + .data-card__row {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid $Divider;
+          }
+    
+          &:not(.group) {
+            .data-icon {
+              align-self: top;
+            }
+          }
+    
+          .data-icon {
+            margin-right: 0.75rem;
+            color: $Grey80;
+          }
+    
+          .data-group {
+            flex: 1 0;
+    
+            &__row {
+              display: flex;
+            }
+          }
+        }
+    
+        .label, .data {
+          font-size: 0.875rem;
+          margin-bottom: 0;
+        }
+    
+        .label {
+          text-align: left;
+          color: $Grey80;
+        }
+    
+        .data {
+          text-align: right;
+          margin-left: auto;
+          min-width: 80px;
+          color: $Type-Primary;
+          font-weight: 700;
+          font-size: 0.875rem;
+        }
+
+        .data-link {
+          text-align: right;
+          margin-left: auto;
+          min-width: 80px;
+          font-weight: 700;
+          font-size: 0.875rem;
+        }
+      }
     }
+  }
+
+    // Drawer Styles - Mobile Only (768px and under)
+  .drawer-overlay {
+    background-color: rgba(0, 0, 0, 0.4);
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    // Hide on desktop
+    @media (min-width: 769px) {
+      display: none;
+    }
+  }
+
+  .drawer-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    height: 100%;
+    
+    .drawer-drag-handle {
+      position: absolute;
+      width: 100%;
+      height: 44px;
+      cursor: grab;
+      z-index: 2;
+
+      &:after {
+        content: "";
+        position: absolute;
+        top: 0.25rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 32px;
+        height: 0.25rem;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        z-index: 5;
+        cursor: grab;
+        transition: 0.1s ease-in-out all;
+      }
+
+      &:active::after {
+        cursor: grabbing;
+        background-color: rgba(0, 0, 0, 0.4);
+        width: 84px;
+        height: 0.35rem;
+        transition: 0.1s ease-in-out all;
+      }
+    }
+
+    & > div.panel-content {
+      overflow-y: auto;
+      height: 100%;
+      background-color: white;
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+
+      .popup__content {
+        overflow-y: scroll;
+      }
+    }
+
+    .close-panel {
+      z-index: 3;
+    }
+
+    .side-panel {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px 12px 0 0;
+    }
+
+    @media (min-width: 769px) {
+      display: none;
+    }
+  }
+
+  .drawer-content, .panel-content {
+    &:focus, &:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }    
+  }
+
+  .panel-content {
+    height: 100%;
   }
 }

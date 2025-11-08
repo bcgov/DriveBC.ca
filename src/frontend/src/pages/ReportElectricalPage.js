@@ -34,7 +34,6 @@ export default function ReportElectricalPage() {
 
   // Rendering
   return (
-    // TODO: need to add back button
     <div className='report-page report-page--electrical'>
       <div className="page-header">
         <Container>
@@ -58,13 +57,9 @@ export default function ReportElectricalPage() {
         </Container>
       </div>
 
-      <Container className="page-subtitle">
-        <p>Select the area of the province where you have encountered the highway or bridge problem. If your location is known, it is selected and shown on the map.</p>
-      </Container>
-
-      <Container className="report-map-wrap">
+      <div className="report-map-wrap">
         <ReportMap wmsLayer='hwy:DSA_ELECTRICAL_CA_INFO_V' styles='DSA_ELECTRICAL_CA_INFO_V_V2'/>
-      </Container>
+      </div>
 
       {xLargeScreen && <Footer />}
     </div>
