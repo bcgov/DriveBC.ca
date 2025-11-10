@@ -1,4 +1,5 @@
 import logging
+import os
 
 from apps.cms.models import Advisory, EmergencyAlert
 from apps.cms.tasks import send_advisory_notifications
@@ -154,6 +155,10 @@ class CopyPreviewURLMenuItem(ActionMenuItem):
         Determines whether the button is visible.
         Only show if the page is NOT published.
         """
+        page = context.get("page")
+        if not page:
+            return False
+        
         page = context.get("page").specific
         return not page.live  # Only show when page is not live/published
 
@@ -161,13 +166,11 @@ class CopyPreviewURLMenuItem(ActionMenuItem):
         context = parent_context.get("context", parent_context)
         page = context["page"].specific
 
-        # preview_url = f"http://localhost:3000/advisories/{page.slug}?preview=true"
-
-        base_url = "http://localhost:3000"
+        base_url = os.environ.get("FRONTEND_BASE_URL")
         if isinstance(page, Advisory):
-            preview_url = f"{base_url}/advisories/{page.slug}?preview=true"
+            preview_url = f"{base_url}advisories/{page.slug}?preview=true"
         elif isinstance(page, Bulletin):
-            preview_url = f"{base_url}/bulletins/{page.slug}?preview=true"
+            preview_url = f"{base_url}bulletins/{page.slug}?preview=true"
 
         # Match Wagtail's built-in action menu structure
         return format_html(
