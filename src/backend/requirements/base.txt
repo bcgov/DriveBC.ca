@@ -28,4 +28,4 @@ aiofiles==24.1.0
 zipstream==1.1.4
 drf-spectacular==0.28.0
 drf-spectacular-sidecar==2025.9.1
-mssql-django=1.6
+mssql-django==1.6
