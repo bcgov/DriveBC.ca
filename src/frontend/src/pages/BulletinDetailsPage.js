@@ -135,7 +135,7 @@ export default function BulletinDetailsPage() {
       <Container className="page-header__title">
         {content && !showLoader &&
           <React.Fragment>
-             {!content.live && <span className="preview-badge">Preview</span>}
+             {isPreview && <span className="preview-badge">Preview</span>}
             <h1 className="page-title">{content.title}</h1>
 
             {content.teaser &&

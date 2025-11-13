@@ -151,16 +151,7 @@ class CopyPreviewURLMenuItem(ActionMenuItem):
     icon_name = "link"
 
     def is_shown(self, context):
-        """
-        Determines whether the button is visible.
-        Only show if the page is NOT published.
-        """
-        page = context.get("page")
-        if not page:
-            return False
-        
-        page = context.get("page").specific
-        return not page.live  # Only show when page is not live/published
+        return True  # Always show the button
 
     def render_html(self, parent_context):
         context = parent_context.get("context", parent_context)
