@@ -152,9 +152,9 @@ export default function BulletinDetailsPage() {
                           : "Published"
                         : content.first_published_at !== content.last_published_at
                           ? "Updated"
-                          : "Saved"}
+                          : content !== NOT_FOUND_CONTENT ? "Saved" : ""}
                     </span>
-                  <FriendlyTime date={content.latest_revision_created_at} />
+                    { content !== NOT_FOUND_CONTENT && <FriendlyTime date={content.latest_revision_created_at} /> }
                 </div>
                 <ShareURLButton />
               </div>
