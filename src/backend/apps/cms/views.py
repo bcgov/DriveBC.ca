@@ -23,31 +23,48 @@ class CMSViewSet(viewsets.ReadOnlyModelViewSet):
         context['request'] = self.request
 
         return context
+    
+    def get_queryset(self):
+        """
+        For listing pages — show only published ones by default.
+        """
+        queryset = super().get_queryset()
+        preview = self.request.query_params.get('preview')
+        if preview == 'true':
+            return queryset
+        return queryset.filter(live=True)
 
+    def get_object(self):
+        """
+        For single-item (detail) requests — handle ?preview=true properly.
+        """
+        obj = super().get_object()
+        preview = self.request.query_params.get('preview')
+
+        if preview == 'true':
+
+            # Page not published yet, just return as-is
+            if not obj.live:
+                return obj
+
+            # Page published but has a newer revision, return that revision
+            latest_revision = obj.get_latest_revision()
+            if latest_revision and latest_revision.created_at > obj.last_published_at:
+                obj = latest_revision.as_object()
+
+        return obj
 
 class AdvisoryAPI(CMSViewSet):
     queryset = Advisory.objects.all()
     serializer_class = AdvisorySerializer
     lookup_field = 'slug'
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        preview = self.request.query_params.get('preview')
-        if preview == 'true':
-            return queryset.filter(live=False)
-        return queryset.filter(live=True)
 
 class BulletinTestAPI(CMSViewSet):
     queryset = Bulletin.objects.all()
     serializer_class = BulletinSerializer
     lookup_field = 'slug'
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        preview = self.request.query_params.get('preview')
-        if preview == 'true':
-            return queryset.filter(live=False)
-        return queryset.filter(live=True)
 
 class BulletinAPI(BulletinTestAPI):
     serializer_class = BulletinSerializer
