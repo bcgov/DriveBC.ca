@@ -433,7 +433,9 @@ export default function RouteObjectList(props) {
 
           <div className="route-name-and-distance">
             <h4
-              className="route-name">{selectedRoute.label ? selectedRoute.label : 'Route'} {(selectedRoute.criteria === 'fastest') ? 'A' : 'B'}</h4>
+              className="route-name">
+                {selectedRoute.label ? selectedRoute.label : `Route ${(selectedRoute.criteria === 'fastest') ? 'A' : 'B'}`}
+              </h4>
             <p className="route-distance">{Math.round(selectedRoute.distance)} km</p>
           </div>
           {selectedRoute.label &&
