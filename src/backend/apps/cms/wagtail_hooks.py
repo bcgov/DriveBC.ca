@@ -151,11 +151,19 @@ class CopyPreviewURLMenuItem(ActionMenuItem):
     icon_name = "link"
 
     def is_shown(self, context):
-        return True  # Always show the button
+        # Show the button if editing an existing page
+        page = None
+        if isinstance(context, dict):
+            inner = context.get("context", context)
+            page = inner.get("page") if isinstance(inner, dict) else None
+        return page is not None
 
     def render_html(self, parent_context):
         context = parent_context.get("context", parent_context)
         page = context["page"].specific
+
+        if not page:
+            return ""
 
         base_url = os.environ.get("FRONTEND_BASE_URL")
         if isinstance(page, Advisory):
