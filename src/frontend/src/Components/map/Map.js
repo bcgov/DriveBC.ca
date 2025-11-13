@@ -989,7 +989,7 @@ export default function DriveBCMap(props) {
           </Button>
         )}
 
-        {(!smallScreen && !isCamDetail && selectedRoute && showRouteObjs && clickedFeature) && (
+        {(!isCamDetail && selectedRoute && showRouteObjs && clickedFeature) && (
           <Button
             variant="primary-outline"
             className="btn-outline-primary back-to-details"
@@ -997,21 +997,29 @@ export default function DriveBCMap(props) {
             tabIndex={`${openPanel ? 0 : -1}`}
             onKeyDown={(e) => {
               e.stopPropagation();
-              togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
-                myLocationRef, routingContainerRef
-              ], searchedRoutes);
-              setMaximizedPanel(false);
+              if (smallScreen) {
+                resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
+              } else {
+                togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
+                  myLocationRef, routingContainerRef
+                ], searchedRoutes);
+                setMaximizedPanel(false);
+              }
             }}
             onClick={(e) => {
               e.stopPropagation();
-              togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
-                myLocationRef, routingContainerRef
-              ], searchedRoutes);
-              setMaximizedPanel(false);
+              if (smallScreen) {
+                resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
+              } else {
+                togglePanel(panel, resetClickedStates, clickedFeatureRef, updateClickedFeature, [
+                  myLocationRef, routingContainerRef
+                ], searchedRoutes);
+                setMaximizedPanel(false);
+              }
             }}>
 
             <FontAwesomeIcon icon={faArrowLeft}/>
-            Route details
+            {selectedRoute?.label || `Route ${(selectedRoute?.criteria === 'fastest') ? 'A' : 'B'}`}
           </Button>
         )}
 
@@ -1080,7 +1088,7 @@ export default function DriveBCMap(props) {
           </div>
         )}
 
-        {(!isCamDetail && smallScreen && mapRef.current && (!showRouteObjs || clickedFeature)) && (
+        {(!isCamDetail && smallScreen && mapRef.current && !showRouteObjs) && (
           <div className="fixed-to-mobile-group"
             style={{
               transform: `translateY(${drawerY}px)`
