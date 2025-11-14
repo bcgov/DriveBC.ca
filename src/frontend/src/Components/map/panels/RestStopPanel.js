@@ -74,7 +74,7 @@ export default function RestStopPanel(props) {
                 <p className="label red-text">Closed</p>
               </div>
               ) : (<p className='name'>Rest area</p>
-              )}
+            )}
         </div>
         <ShareURLButton/>
       </div>

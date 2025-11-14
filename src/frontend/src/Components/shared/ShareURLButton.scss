@@ -41,21 +41,24 @@
       .copy-btn {
         color: $Type-Primary;
       }
-
     }
   }
   &--ferry {
     .copy-btn {
       color: $Green;
     }
-
   }
   &--weather {
     .copy-btn {
       color: $Type-Primary;
     }
-
+    &.advisory-issued {
+      .copy-btn {
+        color: $Gold110;
+      }
+    }
   }
+
   &--reststop {
     .copy-btn {
       color: $Type-reststop;
@@ -66,18 +69,15 @@
         color: $Error;
       }
     }
-
   }
   &--wildfire {
     .copy-btn {
       color: $Error;
     }
-
   }
   &--advisories {
     .copy-btn {
       color: $Advisory-Text;
     }
-
   }
 }
