@@ -183,6 +183,10 @@ CACHES = {
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": os.path.join(SRC_DIR, 'media'),
+            "base_url": "/django-media/",
+        },
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
