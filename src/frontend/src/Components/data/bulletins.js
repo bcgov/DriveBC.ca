@@ -6,7 +6,18 @@ export function getBulletins(id) {
   return get(id ? url + id : url).then((data) => data);
 }
 
+export function getBulletinsPreview(id) {
+  // Base URL with a cache-busting timestamp
+  const baseUrl = `${window.API_HOST}/api/cms/bulletins/`;
+  const url = `${baseUrl}${id}/?preview=true&timestamp=${Date.now()}`
+
+  return get(url).then((data) => {
+    return data;
+  });
+}
+
 export function markBulletinsAsRead(bulletinsData, cmsContext, setCMSContext) {
+  if (bulletinsData && bulletinsData.length > 0 && !bulletinsData[0].live_revision) return;
   const bulletinsIds = bulletinsData.map(bulletin => bulletin.id.toString() + '-' + bulletin.live_revision.toString());
 
   // Combine and remove duplicates

@@ -1,6 +1,6 @@
 // React
 import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
-
+import { useSearchParams } from "react-router-dom";
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
@@ -25,6 +25,8 @@ import PageHeader from '../PageHeader';
 
 export default function BulletinsListPage() {
   document.title = 'DriveBC - Bulletins';
+  // const [searchParams] = useSearchParams();
+  // const isPreview = searchParams.get("preview") === "true";
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
@@ -65,9 +67,8 @@ export default function BulletinsListPage() {
       }));
     }
 
-    markBulletinsAsRead(bulletinsData, cmsContext, setCMSContext);
-
     isInitialMount.current = false;
+    markBulletinsAsRead(bulletinsData, cmsContext, setCMSContext);
     setShowLoader(false);
   }
 

@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 // Navigation
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 
 // External imports
 import Container from 'react-bootstrap/Container';
@@ -14,7 +14,7 @@ import Skeleton from 'react-loading-skeleton';
 
 // Internal imports
 import { CMSContext } from '../App';
-import { getBulletins } from '../Components/data/bulletins.js';
+import { getBulletins, getBulletinsPreview } from '../Components/data/bulletins.js';
 import { NetworkError, NotFoundError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -48,6 +48,9 @@ export default function BulletinDetailsPage() {
   const [showServerError, setShowServerError] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
 
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get("preview") === "true";
+
   // Error handling
   const displayError = (error) => {
     if (error instanceof ServerError) {
@@ -65,7 +68,7 @@ export default function BulletinDetailsPage() {
 
   // Data function and initialization
   const loadBulletin = async () => {
-    const bulletinData = await getBulletins(params.id).catch((error) => {
+    const bulletinData = await (isPreview ? getBulletinsPreview(params.id) : getBulletins(params.id)).catch((error) => {
       if (error instanceof NotFoundError) {
         return NOT_FOUND_CONTENT;
       } else {
@@ -80,8 +83,9 @@ export default function BulletinDetailsPage() {
     if (bulletinData.id) {
       const readBulletins = Array.from(new Set([
         ...cmsContext.readBulletins,
-        bulletinData.id.toString() + '-' + bulletinData.live_revision.toString()
+        bulletinData.id.toString() + '-' + ((bulletinData.live_revision != null) ? bulletinData.live_revision.toString() : '')
       ]));
+
       const updatedContext = {...cmsContext, readBulletins: readBulletins};
 
       setCMSContext(updatedContext);
@@ -131,17 +135,26 @@ export default function BulletinDetailsPage() {
       <Container className="page-header__title">
         {content && !showLoader &&
           <React.Fragment>
+             {isPreview && <span className="preview-badge">Preview</span>}
             <h1 className="page-title">{content.title}</h1>
 
             {content.teaser &&
               <p className="page-description body--large">{content.teaser}</p>
             }
 
-            {content.first_published_at &&
+            {(content.first_published_at || !content.live) &&
               <div className="page-header__title__meta">
                 <div className="timestamp-container">
-                  <span>{content.first_published_at != content.last_published_at ? "Updated" : "Published" }</span>
-                  <FriendlyTime date={content.latest_revision_created_at} />
+                  <span>
+                      {content.live
+                        ? content.first_published_at !== content.last_published_at
+                          ? "Updated"
+                          : "Published"
+                        : content.first_published_at !== content.last_published_at
+                          ? "Updated"
+                          : content !== NOT_FOUND_CONTENT ? "Saved" : ""}
+                    </span>
+                    { content !== NOT_FOUND_CONTENT && <FriendlyTime date={content.latest_revision_created_at} /> }
                 </div>
                 <ShareURLButton />
               </div>
