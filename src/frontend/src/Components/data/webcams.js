@@ -78,7 +78,42 @@ export const deleteFavoriteCamera = async (id, dispatch, action) => {
 
 export function getWebcamReplay(webcam) {
   // TODO: error handling
-  return fetch(webcam.links.replayTheDay).then(response => response.json());
+  const nowUtc = new Date(); // current UTC time
+  const oneDayAgoUtc = new Date(nowUtc.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago in UTC
+
+  return fetch(webcam.links.replayTheDay)
+    .then(response => response.json())
+    .then(timestamps => {
+      if(webcam.https_cam === false) {
+        return fetch(webcam.links.replayTheDay).then(response => response.json());
+      }
+      else {
+        const allTimestamps = timestamps
+        .flatMap(entry => entry.split(",").map(s => s.trim()))
+        .map(s => s.replace(/\.jpg$/, ""))
+        .filter(s => /^\d{14}$/.test(s)); 
+
+        // Filter only those within the last 24 hours
+        const filtered = allTimestamps.filter(ts => {
+          const year = parseInt(ts.slice(0, 4));
+          const month = parseInt(ts.slice(4, 6)) - 1;
+          const day = parseInt(ts.slice(6, 8));
+          const hour = parseInt(ts.slice(8, 10));
+          const minute = parseInt(ts.slice(10, 12));
+          const second = parseInt(ts.slice(12, 14));
+          const timestampUtc = new Date(Date.UTC(year, month, day, hour, minute, second)); 
+          return timestampUtc >= oneDayAgoUtc && timestampUtc <= nowUtc;
+        });
+
+        return filtered;
+
+      }
+
+    })
+    .catch(error => {
+      console.error("Error loading replay data:", error);
+      return [];
+    });
 }
 
 const CARDINAL_ORDER = {

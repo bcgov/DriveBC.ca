@@ -21,6 +21,7 @@ from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalW
 from apps.webcam.enums import CAMERA_DIFF_FIELDS, CAMERA_TASK_DEFAULT_TIMEOUT
 from apps.webcam.hwy_coords import hwy_coords
 from apps.webcam.models import Webcam
+from apps.webcam.models import Cam
 from apps.webcam.serializers import WebcamSerializer
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Distance
@@ -30,6 +31,15 @@ from django.db.models import F
 from huey.exceptions import CancelExecution
 from PIL import Image, ImageDraw, ImageFile, ImageFont
 from psycopg import IntegrityError
+
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import URL
+from apps.shared.status import get_recent_timestamps, calculate_camera_status, parse_timestamp
+from apps.consumer.models import ImageIndex
+import boto3
+from django.utils import timezone
+from django.forms.models import model_to_dict
+from django.db.models import F, Case, When, Value, IntegerField
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -43,6 +53,35 @@ CAMS_DIR = f'{settings.SRC_DIR}/images/webcams'
 CAM_OFF = ('This highway cam image is currently unavailable due to technical difficulties. '
            'Our technicians have been alerted and service will resume as soon as possible.')
 
+# Environment variables
+SQL_DB_SERVER = os.getenv("SQL_DB_SERVER")
+SQL_DB_NAME = os.getenv("SQL_DB_NAME")
+SQL_DB_USER = os.getenv("SQL_DB_USER")
+SQL_DB_PASSWORD = os.getenv("SQL_DB_PASSWORD")
+SQL_DB_DRIVER = "ODBC Driver 17 for SQL Server"
+S3_BUCKET = os.getenv("S3_BUCKET")
+S3_REGION = os.getenv("S3_REGION")
+S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
+S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
+RABBITMQ_URL = os.getenv("RABBITMQ_URL")
+S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
+
+# Define PVC directory
+PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH")
+
+# Build connection URL for webcam SQL database
+connection_url = URL.create(
+    "mssql+pyodbc",
+    username=SQL_DB_USER,
+    password=SQL_DB_PASSWORD,
+    host=SQL_DB_SERVER,
+    port=1433,
+    database=SQL_DB_NAME,
+    query={"driver": SQL_DB_DRIVER}
+)
+
+# Create SQLAlchemy engine
+engine = create_engine(connection_url)
 
 def populate_webcam_from_data(webcam_data):
     webcam_id = webcam_data.get("id")
@@ -56,8 +95,197 @@ def populate_webcam_from_data(webcam_data):
     webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
     webcam_serializer.is_valid(raise_exception=True)
     webcam_serializer.save()
-    update_webcam_image(webcam_data)
 
+    current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
+    if webcam.https_cam:
+        update_cam_from_sql_db(webcam.id, current_time)
+    else:
+        update_webcam_image(webcam_data)
+
+def update_webcam_db_stale_delayed(camera: Webcam):
+    time_now_utc = datetime.datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
+    camera_status = calculate_camera_status(time_now_utc)
+    ts_seconds = int(camera_status["timestamp"])
+    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
+
+    Webcam.objects.filter(id=camera.id).update(
+        marked_stale=camera_status["stale"],
+        marked_delayed=camera_status["delayed"],
+        last_update_attempt=dt_utc,
+        last_update_modified=dt_utc),
+
+def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
+    try:
+        cam = (
+            Cam.objects.using("mssql")
+            .filter(id=id)
+            .select_related(
+                'cam_locationsregion',
+                'cam_locationshighway',
+            )
+            .annotate(
+                region=F('cam_locationsregion__seq'),
+                region_name=F('cam_locationsregion__name'),
+                highway=F('cam_locationshighway__hwy_number'),
+                highway_description=F('cam_locationshighway__section'),
+                isOn=Case(
+                    When(cam_controldisabled=False, then=Value(1)),
+                    default=Value(0),
+                    output_field=IntegerField()
+                ),
+                isOnDemand=F('cam_maintenanceis_on_demand'),
+                credit=F('cam_internetcredit'),
+                dbc_mark=F('cam_internetdbc_mark')
+            )
+            .values(
+                'id',
+                'cam_internetname',
+                'cam_internetcaption',
+                'region',
+                'region_name',
+                'highway',
+                'highway_description',
+                'isOn',
+                'isnew',
+                'isOnDemand',
+                'credit',
+                'dbc_mark',
+            )
+            .first()
+        )
+
+        if cam:
+            update_webcam_db(id, cam)
+            return cam
+        else:
+            return {}
+
+    except Exception as e:
+        logger.error(f"Failed to query camera from ORM: {e}")
+        return {}
+
+def update_webcam_db(cam_id: int, cam_data: dict):
+    timestamp_utc = get_recent_timestamps(cam_id)
+    if not timestamp_utc:
+        return
+
+    time_now_utc = datetime.datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
+    camera_status = calculate_camera_status(time_now_utc)
+    ts_seconds = int(camera_status["timestamp"])
+    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
+
+    updated_count = Webcam.objects.filter(id=cam_id).update(region=cam_data.get("region"),
+        region_name=cam_data.get("region_name"),
+        is_on=True if cam_data.get("isOn") == 1 else False,
+        name=cam_data.get("name"),
+        caption=cam_data.get("caption", ""),
+        highway=cam_data.get("highway", ""),
+        highway_description=cam_data.get("highway_description", ""),
+        highway_group=cam_data.get("highway_group", 0),
+        highway_cam_order=cam_data.get("highway_cam_order", 0),
+        orientation=cam_data.get("orientation", ""),
+        elevation=cam_data.get("elevation", 0),
+        dbc_mark=cam_data.get("dbc_mark", ""),
+        credit=cam_data.get("credit", ""),
+        is_new=cam_data.get("isNew", False),
+        is_on_demand=cam_data.get("isOnDemand", False),
+        update_period_mean=camera_status["mean_interval"],
+        update_period_stddev= camera_status["stddev_interval"],
+        marked_stale=camera_status["stale"],
+        marked_delayed=camera_status["delayed"]
+        ),
+    return updated_count
+
+def purge_old_images():
+    logger.info("Purging webcam images...")
+    REPLAY_THE_DAY_HOURS = os.getenv("REPLAY_THE_DAY_HOURS")
+    purge_old_pvc_images(age=REPLAY_THE_DAY_HOURS)
+
+def backup_purge_old_images():
+    backup_purge_old_pvc_images()
+
+
+def purge_old_pvc_images(age: str = "24"):
+    root_path = PVC_WATERMARKED_PATH
+
+    cutoff_time = timezone.now() - datetime.timedelta(hours=int(age))
+
+    records_to_delete_pvc = ImageIndex.objects.filter(
+        timestamp__lt=cutoff_time,
+    )
+
+    files_to_delete = []
+    ids_to_delete = []
+
+    rows = records_to_delete_pvc
+
+    for row in rows:
+        # path = row.watermarked_pvc_path
+        path = f"{root_path}/{row.camera_id}/{row.timestamp.strftime("%Y%m%d%H%M%S")}.jpg"
+
+        if path:
+            full_path = os.path.join(root_path, path)
+        else:
+            full_path = path
+
+        files_to_delete.append(full_path)
+        ids_to_delete.append(row.timestamp)
+
+    ImageIndex.objects.filter(
+            timestamp__in=ids_to_delete,
+        ).update(
+            modified_at=timezone.now()
+        )
+
+    # Delete files from PVC or s3
+    logger.info(f"Deleting {len(files_to_delete)} old PVC images...")
+    for file_path in files_to_delete:
+        try:
+            if not file_path:
+                continue
+            os.remove(file_path)
+            logger.info(f"Deleted file from PVC: {file_path}")
+        except FileNotFoundError:
+            logger.error(f"File not found: {file_path}")
+        except Exception as e:
+            logger.error(f"Error deleting file {file_path}: {e}")
+
+    # Delete all records if all images paths are NULL
+    ImageIndex.objects.filter(
+        timestamp__in=ids_to_delete,
+    ).delete()
+
+    logger.info("All purged recordes are deleted successfully.")
+
+def backup_purge_old_pvc_images():
+    PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH")
+    BASE_DIR = Path(PVC_WATERMARKED_PATH)
+    logger.info("Starting backup purge of old PVC images...")
+    now = time.time()
+    cutoff = now - 24 * 60 * 60
+
+    deleted_count = 0
+    skipped_count = 0
+
+    for root, dirs, files in os.walk(BASE_DIR):
+        for filename in files:
+            file_path = Path(root) / filename
+
+            try:
+                stat = file_path.stat()
+                if stat.st_mtime < cutoff:
+                    os.remove(file_path)
+                    logger.info(f"Deleted old image: {file_path}")
+                    deleted_count += 1
+                else:
+                    skipped_count += 1
+            except Exception as e:
+                logger.error(f"Error checking/deleting {file_path}: {e}")
+
+    logger.info(
+        f"Backup purge completed. Deleted: {deleted_count}, Skipped (newer): {skipped_count}"
+    )
+    logger.info("All purged recordes are deleted successfully.")
 
 def populate_all_webcam_data():
     start_time = time.time()

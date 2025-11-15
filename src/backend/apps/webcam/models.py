@@ -1,6 +1,13 @@
 from apps.shared.models import Area, BaseModel
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
 from django.contrib.gis.db import models
+import json
+import os
+from pathlib import Path
+from apps.shared.status import get_image_list
+from timezonefinder import TimezoneFinder
+import pytz
+from django.utils import timezone
 
 
 class Webcam(BaseModel):
@@ -46,6 +53,9 @@ class Webcam(BaseModel):
     update_period_mean = models.PositiveIntegerField()
     update_period_stddev = models.PositiveIntegerField()
 
+    # HTTPS camera flag
+    https_cam = models.BooleanField(default=False)
+
     # Within two standard deviations from mean
     @property
     def minimum_update_window(self):
@@ -60,3 +70,67 @@ class Webcam(BaseModel):
 
         time_delta = time - self.last_update_modified
         return time_delta.total_seconds() >= self.minimum_update_window
+    
+    def get_image_paths(self):
+            timestamps = get_image_list(self.id, "TIMELAPSE_HOURS")
+            image_paths = []
+            for ts in timestamps:
+                filename = ts
+                img_path = f"{self.id}/admin-timelapse/{filename}/"
+                image_paths.append(img_path)
+            return image_paths
+
+    def get_timezone(self):
+        if not self.location:
+            return timezone.utc  # fallback
+
+        tf = TimezoneFinder()
+        # PointField stores as (x=lon, y=lat)
+        tzname = tf.timezone_at(lng=self.location.x, lat=self.location.y)
+        return pytz.timezone(tzname) if tzname else timezone.utc
+
+class Region(BaseModel):
+    id = models.AutoField(primary_key=True)
+    seq = models.IntegerField()
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        db_table = 'Regions_Live'
+
+
+class Highway(BaseModel):
+    id = models.AutoField(primary_key=True)
+    hwy_number = models.CharField(max_length=20)
+    section = models.CharField(max_length=100)
+
+    class Meta:
+        db_table = 'Highways_Live'
+
+
+class RegionHighway(BaseModel):
+    id = models.AutoField(primary_key=True)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    highway = models.ForeignKey(Highway, on_delete=models.CASCADE)
+    seq = models.IntegerField()
+
+    class Meta:
+        db_table = 'Region_Highways_Live'
+
+
+class Cam(BaseModel):
+    id = models.AutoField(primary_key=True)
+    cam_internetname = models.CharField(max_length=100)
+    cam_internetcaption = models.CharField(max_length=255)
+    cam_locationsregion = models.ForeignKey(Region, on_delete=models.CASCADE)
+    cam_locationshighway = models.ForeignKey(Highway, on_delete=models.CASCADE)
+    cam_locationsorientation = models.CharField(max_length=50, blank=True, null=True)
+    cam_locationselevation = models.IntegerField(blank=True, null=True)
+    cam_controldisabled = models.BooleanField(default=False)
+    isnew = models.BooleanField(default=False)
+    cam_maintenanceis_on_demand = models.BooleanField(default=False)
+    cam_internetcredit = models.CharField(max_length=255, blank=True, null=True)
+    cam_internetdbc_mark = models.CharField(max_length=255, blank=True, null=True)
+    seq = models.IntegerField()
+
+    class Meta:
+        db_table = 'Cams_Live'

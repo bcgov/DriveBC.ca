@@ -137,6 +137,8 @@ THIRD_PARTY_APPS = [
     "modelcluster",
     "taggit",
     'email_log',
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
 ]
 
 LOCAL_APPS = [
@@ -151,6 +153,7 @@ LOCAL_APPS = [
     "apps.ferry",
     "apps.border",
     "apps.wildfire",
+    "apps.consumer",
 ]
 
 # apps with features overridden in local apps (e.g., admin templates) go here
@@ -172,7 +175,19 @@ DATABASES = {
         "PASSWORD": env("DB_PASSWORD"),
         "HOST": env("DB_HOST"),
         "PORT": env.int("DB_PORT"),
-    }
+    },
+
+    "mssql": {
+        "ENGINE": "mssql",
+        "NAME": env("SQL_DB_NAME"),
+        "USER": env("SQL_DB_USER"),
+        "PASSWORD": env("SQL_DB_PASSWORD"),
+        "HOST": env("SQL_DB_SERVER"),
+        "PORT": env.int("SQL_DB_PORT", default=1433),
+        "OPTIONS": {
+            "driver": "ODBC Driver 17 for SQL Server",
+        },
+    },
 }
 CACHES = {
     "default": {
