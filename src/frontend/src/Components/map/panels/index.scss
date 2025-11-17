@@ -8,6 +8,7 @@
     padding: 1rem 3rem 0.75rem 1rem;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
     &__name {
       display: flex;
@@ -282,6 +283,16 @@
 
   &:hover {
     background: lighten($Type-Primary, 70%);
+  }
+}
+
+.close-panel:has(+ .panel-content .popup--weather.advisory-issued),
+.resize-panel:has(~ .panel-content .popup--weather.advisory-issued) {
+  top: 16px;
+  color: $Gold110;
+
+  &:hover {
+    background: lighten($Gold110, 60%);
   }
 }
 
