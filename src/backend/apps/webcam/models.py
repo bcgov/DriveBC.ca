@@ -96,6 +96,7 @@ class Region(BaseModel):
 
     class Meta:
         db_table = 'Regions_Live'
+        managed = False
 
 
 class Highway(BaseModel):
@@ -105,6 +106,7 @@ class Highway(BaseModel):
 
     class Meta:
         db_table = 'Highways_Live'
+        managed = False
 
 
 class RegionHighway(BaseModel):
@@ -115,6 +117,7 @@ class RegionHighway(BaseModel):
 
     class Meta:
         db_table = 'Region_Highways_Live'
+        managed = False
 
 
 class CameraSource(BaseModel):
