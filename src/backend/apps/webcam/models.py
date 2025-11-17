@@ -117,7 +117,7 @@ class RegionHighway(BaseModel):
         db_table = 'Region_Highways_Live'
 
 
-class Cam(BaseModel):
+class CameraSource(BaseModel):
     id = models.AutoField(primary_key=True)
     cam_internetname = models.CharField(max_length=100)
     cam_internetcaption = models.CharField(max_length=255)
@@ -134,3 +134,4 @@ class Cam(BaseModel):
 
     class Meta:
         db_table = 'Cams_Live'
+        managed = False

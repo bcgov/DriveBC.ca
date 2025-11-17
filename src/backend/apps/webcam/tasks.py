@@ -21,7 +21,7 @@ from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalW
 from apps.webcam.enums import CAMERA_DIFF_FIELDS, CAMERA_TASK_DEFAULT_TIMEOUT
 from apps.webcam.hwy_coords import hwy_coords
 from apps.webcam.models import Webcam
-from apps.webcam.models import Cam
+from apps.webcam.models import CameraSource
 from apps.webcam.serializers import WebcamSerializer
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Distance
@@ -117,7 +117,7 @@ def update_webcam_db_stale_delayed(camera: Webcam):
 def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
     try:
         cam = (
-            Cam.objects.using("mssql")
+            CameraSource.objects.using("mssql")
             .filter(id=id)
             .select_related(
                 'cam_locationsregion',
