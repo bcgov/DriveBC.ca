@@ -19,6 +19,7 @@ class WebcamAdmin(ModelAdmin):
         extra_context = extra_context or {}
         extra_context["image_paths"] = webcam.get_image_paths()
         extra_context["self"] = webcam
+        extra_context['DRIVEBC_IMAGE_API_BASE_URL'] = settings.DRIVEBC_IMAGE_API_BASE_URL
 
         if webcam and webcam.location:
             lat, lon = webcam.location.y, webcam.location.x

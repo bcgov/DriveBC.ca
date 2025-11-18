@@ -23,6 +23,7 @@
           const cameraId = "{{ self.id }}";
           const imagePath = "{{ image_paths.0 }}";
           const apiUrl = `/api/webcams/${cameraId}/admin-timelapse/`;
+          const DRIVEBC_IMAGE_API_BASE_URL = "{{ DRIVEBC_IMAGE_API_BASE_URL|escapejs }}";
 
           fetch(apiUrl)
           .then(response => response.json())
@@ -141,22 +142,25 @@
         }
 
         async function displayOriginalImage() {
-          let apiUrl = imagePaths[imagePaths.length - 1];
-          apiUrl = apiUrl.replace(/admin-timelapse\/\d{14}\//, "admin-originalImage/");
+          let apiPath = imagePaths[imagePaths.length - 1];
+          apiPath = apiPath.replace(/admin-timelapse\/\d{14}\//, "admin-originalImage/");
+          const apiUrl = `${DRIVEBC_IMAGE_API_BASE_URL}api/webcams/${apiPath}`;
           const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElemOriginal.src = URL.createObjectURL(blob);
         }
 
         async function displayWatermarkedImage() {
-          const apiUrl = imagePaths[imagePaths.length - 1];
+          const apiPath = imagePaths[imagePaths.length - 1];
+          const apiUrl = `${DRIVEBC_IMAGE_API_BASE_URL}api/webcams/${apiPath}`;
           const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElemWatermarked.src = URL.createObjectURL(blob);
         }
 
         async function updateImage() {
-          const apiUrl = imagePaths[currentIndex];
+          const apiPath = imagePaths[currentIndex];
+          const apiUrl = `${DRIVEBC_IMAGE_API_BASE_URL}api/webcams/${apiPath}`;
           const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElem.src = URL.createObjectURL(blob);
