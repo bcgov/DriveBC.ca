@@ -32,7 +32,7 @@ APP_DIR = Path(__file__).resolve().parent
 FONT = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=14)
 FONT_LARGE = ImageFont.truetype(f'{APP_DIR}/static/BCSans.otf', size=24)
 # PVC path to original images for RIDE
-PVC_ORIGINAL_PATH = os.getenv("PVC_ORIGINAL_PATH")
+PVC_ORIGINAL_PATH = os.getenv("PVC_ORIGINAL_PATH", "")
 # PVC path to watermarked images with timestamp for ReplayTheDay
 PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH")
 # PVC path to watermarked images for current DriveBC without timestamp
@@ -98,8 +98,8 @@ async def run_consumer():
     if not rb_url:
         raise RuntimeError("RABBITMQ_URL environment variable is not set.")
 
-    # Load DB camera metadata once at startup.
-    rows = get_all_from_db()
+    rows = await sync_to_async(get_all_from_db)()
+
     db_data = process_camera_rows(rows)
     if not db_data:
         logger.error("No camera data available for watermarking. Consumer exiting.")
@@ -152,7 +152,7 @@ async def run_consumer():
                     try:
                         timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
                         # # # For testing purposes, only allow camera with IDs below to be processed
-                        # if camera_id != "343" and camera_id != "19" and camera_id != "57":
+                        # if camera_id != "57":
                         #     logger.info("Skipping processing for camera %s", camera_id)
                         #     continue
                         await handle_image_message(camera_id, db_data, message.body, timestamp_local, camera_status)
@@ -189,44 +189,38 @@ def shutdown():
     logger.info("Received shutdown signal.")
     stop_event.set()
 
-
 def process_camera_rows(rows):
     if not rows:
         logger.error("No camera rows found in the database.")
         return []
+
     camera_list = []
     for row in rows:
         camera_obj = {
-            'id': row.get('ID'),
-            'cam_internet_name': row.get('Cam_InternetName', ''),
-            'cam_internet_caption': row.get('Cam_InternetCaption', ''),
-            'Cam_internet_comments': row.get('Cam_InternetComments', ''),
-            'cam_locations_orientation': row.get('Cam_LocationsOrientation', ''),
-            'cam_locations_geo_latitude': row.get('Cam_LocationsGeo_Latitude'),
-            'cam_locations_geo_longitude': row.get('Cam_LocationsGeo_Longitude'),
-            'cam_locations_segment': row.get('Cam_LocationsSegment', ''),
-            'cam_locations_lrs_node': row.get('Cam_LocationsLRS_Node', ''),
-            "cam_installation_date_approximate": row.get('Cam_InstallationDate_Approximate', '0'),
-            "cam_installation_approx_install_cost": row.get('Cam_InstallationApprox_Install_Cost', '0'),
-            "cam_installation_fed_funding": row.get('Cam_InstallationFed_Funding', '0'),
-            "cam_locations_region": row.get('Cam_LocationsRegion', ''),
-            "cam_locations_highway": row.get('Cam_LocationsHighway', ''),
-            "cam_locations_highway_section": row.get('Cam_LocationsHighway_Section', ''),
-            "cam_locations_elevation": row.get('Cam_LocationsElevation', ''),
-            "cam_locations_weather_station": row.get('Cam_LocationsWeather_Station', ''),
-            "cam_locations_forecast_id": row.get('Cam_LocationsForecast_ID', ''),
-            "cam_maintenance_asset_No": row.get('Cam_MaintenanceAsset_No', ''),
-            "last_update_modified": datetime.now(timezone.utc),
-            "update_period_mean": 300,
-            "update_period_stddev": 60,
-            "dbc_mark": row.get('Cam_InternetDBC_Mark', 'DriveBC.ca'),
-            "is_on": True if not row.get('Cam_ControlDisabled') else False,
-            "message": {
-                "long": row.get('Cam_MaintenanceMaint_Notes', 'This is a sample message for the webcam.')
-            }
+            'id': row.id if hasattr(row, 'id') else '',
+            'cam_internet_name': row.cam_internetname if hasattr(row, 'cam_internetname') else '',
+            'cam_internet_caption': row.cam_internetcaption if hasattr(row, 'cam_internetcaption') else '',
+            'cam_internet_comments': row.cam_internetcomments if hasattr(row, 'cam_internetcomments') else '',
+            'cam_locations_orientation': row.cam_locationsorientation if hasattr(row, 'cam_locationsorientation') else '',
+            'cam_locations_geo_latitude': row.cam_locationsgeo_latitude if hasattr(row, 'cam_locationsgeo_latitude') else '',
+            'cam_locations_geo_longitude': row.cam_locationsgeo_longitude if hasattr(row, 'cam_locationsgeo_longitude') else '',
+            'cam_locations_segment': row.cam_locationssegment if hasattr(row, 'cam_locationssegment') else '',
+            'cam_locations_lrs_node': row.cam_locationslrs_node if hasattr(row, 'cam_locationslrs_node') else '',
+            'cam_locations_region': row.cam_locationsregion if hasattr(row, 'cam_locationsregion') else '',
+            'cam_locations_highway': row.cam_locationshighway if hasattr(row, 'cam_locationshighway') else '',
+            'cam_locations_highway_section': row.cam_locationshighway_section if hasattr(row, 'cam_locationshighway_section') else '',
+            'cam_locations_elevation': row.cam_locationsorientation if hasattr(row, 'cam_locationsorientation') else '',
+            'update_period_mean': 300,
+            'update_period_stddev': 60,
+            'dbc_mark': row.dbc_mark if hasattr(row, 'dbc_mark') else 'DriveBC.ca',
+            'is_on': not row.is_on if hasattr(row, 'is_on') else True,
+            'cam_maintenanceis_on_demand': row.cam_maintenanceis_on_demand if hasattr(row, 'cam_maintenanceis_on_demand') else False,
+            'is_new': row.is_new if hasattr(row, 'is_new') else False,
+            
         }
         camera_list.append(camera_obj)
     return camera_list
+
 
 def get_timezone(webcam):
     lat = float(webcam.get('cam_locations_geo_latitude'))
