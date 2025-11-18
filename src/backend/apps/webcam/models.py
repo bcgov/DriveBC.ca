@@ -120,20 +120,69 @@ class RegionHighway(BaseModel):
         managed = False
 
 
-class CameraSource(BaseModel):
-    id = models.AutoField(primary_key=True)
-    cam_internetname = models.CharField(max_length=100)
-    cam_internetcaption = models.CharField(max_length=255)
-    cam_locationsregion = models.ForeignKey(Region, on_delete=models.CASCADE)
-    cam_locationshighway = models.ForeignKey(Highway, on_delete=models.CASCADE)
+# class CameraSource(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     cam_internetname = models.CharField(max_length=100)
+#     cam_internetcaption = models.CharField(max_length=255)
+#     cam_locationsregion = models.ForeignKey(Region, on_delete=models.CASCADE)
+#     cam_locationshighway = models.ForeignKey(Highway, on_delete=models.CASCADE)
+#     cam_locationsorientation = models.CharField(max_length=50, blank=True, null=True)
+#     cam_locationselevation = models.IntegerField(blank=True, null=True)
+#     cam_controldisabled = models.BooleanField(default=False)
+#     isnew = models.BooleanField(default=False)
+#     cam_maintenanceis_on_demand = models.BooleanField(default=False)
+#     cam_internetcredit = models.CharField(max_length=255, blank=True, null=True)
+#     cam_internetdbc_mark = models.CharField(max_length=255, blank=True, null=True)
+#     seq = models.IntegerField()
+
+#     class Meta:
+#         db_table = 'Cams_Live'
+#         managed = False
+
+class CameraSource(models.Model):
+    id = models.IntegerField(primary_key=True)
+    cam_internetname = models.CharField(max_length=255, blank=True, null=True)
+    cam_internetcaption = models.CharField(max_length=255, blank=True, null=True)
+    cam_internetcredit = models.CharField(max_length=255, blank=True, null=True)
+    cam_internetcomments = models.TextField(blank=True, null=True)
+    cam_internetwebsite_url = models.CharField(max_length=500, blank=True, null=True)
+    cam_internetgetfile2_url = models.CharField(max_length=500, blank=True, null=True)
+    cam_internetdrivebc_url = models.CharField(max_length=500, blank=True, null=True)
+    cam_internetftp_path = models.CharField(max_length=500, blank=True, null=True)
+    cam_internetftp_folder = models.CharField(max_length=255, blank=True, null=True)
+    cam_internetftp_filename = models.CharField(max_length=255, blank=True, null=True)
+    cam_internetdisplay_folder = models.CharField(max_length=255, blank=True, null=True)
+    cam_internetdisplay_filename = models.CharField(max_length=255, blank=True, null=True)
+    cam_internetcontact_notes = models.TextField(blank=True, null=True)
+    cam_internetdbc_mark = models.CharField(max_length=255, blank=True, null=True)
+    cam_internetinset_horizontal = models.CharField(max_length=255, blank=True, null=True)
+    cam_internetupdated_by = models.CharField(max_length=255, blank=True, null=True)
+    cam_internetlast_updated = models.DateTimeField(blank=True, null=True)
+    cam_locationsregion = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationsbusiness_area = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationshighway = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationshighway_section = models.CharField(max_length=255, blank=True, null=True)
     cam_locationsorientation = models.CharField(max_length=50, blank=True, null=True)
+    cam_locationslandmark = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationscrossroad = models.CharField(max_length=255, blank=True, null=True)
     cam_locationselevation = models.IntegerField(blank=True, null=True)
+    cam_locationscam_group = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationsgeo_latitude = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationsgeo_longitude = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationsalbers_northing = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationsalbers_easting = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationssegment = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationslrs_node = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationsdd = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationsmap_art_no = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationsthumbnail_map_url = models.CharField(max_length=500, blank=True, null=True)
+    cam_locationsregional_map_url = models.CharField(max_length=500, blank=True, null=True)
+    cam_locationsupdated_by = models.CharField(max_length=255, blank=True, null=True)
+    cam_locationslast_updated = models.DateTimeField(blank=True, null=True)
     cam_controldisabled = models.BooleanField(default=False)
     isnew = models.BooleanField(default=False)
     cam_maintenanceis_on_demand = models.BooleanField(default=False)
-    cam_internetcredit = models.CharField(max_length=255, blank=True, null=True)
-    cam_internetdbc_mark = models.CharField(max_length=255, blank=True, null=True)
-    seq = models.IntegerField()
+    seq = models.IntegerField(blank=True, null=True)
 
     class Meta:
         db_table = 'Cams_Live'

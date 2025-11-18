@@ -31,9 +31,6 @@ from django.db.models import F
 from huey.exceptions import CancelExecution
 from PIL import Image, ImageDraw, ImageFile, ImageFont
 from psycopg import IntegrityError
-
-from sqlalchemy import create_engine, text
-from sqlalchemy.engine import URL
 from apps.shared.status import get_recent_timestamps, calculate_camera_status, parse_timestamp
 from apps.consumer.models import ImageIndex
 import boto3
@@ -68,20 +65,6 @@ S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
 
 # Define PVC directory
 PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH")
-
-# Build connection URL for webcam SQL database
-connection_url = URL.create(
-    "mssql+pyodbc",
-    username=SQL_DB_USER,
-    password=SQL_DB_PASSWORD,
-    host=SQL_DB_SERVER,
-    port=1433,
-    database=SQL_DB_NAME,
-    query={"driver": SQL_DB_DRIVER}
-)
-
-# Create SQLAlchemy engine
-engine = create_engine(connection_url)
 
 def populate_webcam_from_data(webcam_data):
     webcam_id = webcam_data.get("id")
