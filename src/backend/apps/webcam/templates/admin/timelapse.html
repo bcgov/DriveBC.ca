@@ -23,7 +23,7 @@
           const cameraId = "{{ self.id }}";
           const imagePath = "{{ image_paths.0 }}";
           const apiUrl = `/api/webcams/${cameraId}/admin-timelapse/`;
-          const DRIVEBC_IMAGE_API_BASE_URL = "{{ DRIVEBC_IMAGE_API_BASE_URL|escapejs }}";
+          const FRONTEND_BASE_URL = "{{ FRONTEND_BASE_URL|escapejs }}";
 
           fetch(apiUrl)
           .then(response => response.json())
@@ -114,8 +114,9 @@
         let autoplayInterval;
 
         async function downloadImage(from, to, timeFrom, timeTo, timezone) {
-          let apiUrl = imagePaths[imagePaths.length - 1];
-          apiUrl = apiUrl.replace(/\/admin-timelapse\/\d{14}/, "/admin-timelapse/download");
+          let apiPath = imagePaths[imagePaths.length - 1];
+          apiPath = apiPath.replace(/\/admin-timelapse\/\d{14}/, "/admin-timelapse/download");
+          const apiUrl = `${FRONTEND_BASE_URL}api/webcams/${apiPath}`;
           const params = new URLSearchParams();
           if (from) params.append("from", from);
           if (to) params.append("to", to);
@@ -144,7 +145,7 @@
         async function displayOriginalImage() {
           let apiPath = imagePaths[imagePaths.length - 1];
           apiPath = apiPath.replace(/admin-timelapse\/\d{14}\//, "admin-originalImage/");
-          const apiUrl = `${DRIVEBC_IMAGE_API_BASE_URL}api/webcams/${apiPath}`;
+          const apiUrl = `${FRONTEND_BASE_URL}api/webcams/${apiPath}`;
           const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElemOriginal.src = URL.createObjectURL(blob);
@@ -152,7 +153,7 @@
 
         async function displayWatermarkedImage() {
           const apiPath = imagePaths[imagePaths.length - 1];
-          const apiUrl = `${DRIVEBC_IMAGE_API_BASE_URL}api/webcams/${apiPath}`;
+          const apiUrl = `${FRONTEND_BASE_URL}api/webcams/${apiPath}`;
           const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElemWatermarked.src = URL.createObjectURL(blob);
@@ -160,7 +161,7 @@
 
         async function updateImage() {
           const apiPath = imagePaths[currentIndex];
-          const apiUrl = `${DRIVEBC_IMAGE_API_BASE_URL}api/webcams/${apiPath}`;
+          const apiUrl = `${FRONTEND_BASE_URL}api/webcams/${apiPath}`;
           const response = await fetch(apiUrl);
           const blob = await response.blob();
           imgElem.src = URL.createObjectURL(blob);
