@@ -170,6 +170,8 @@ class CopyPreviewURLMenuItem(ActionMenuItem):
             preview_url = f"{base_url}advisories/{page.slug}?preview=true"
         elif isinstance(page, Bulletin):
             preview_url = f"{base_url}bulletins/{page.slug}?preview=true"
+        else:
+            return ""
 
         # Match Wagtail's built-in action menu structure
         return format_html(
