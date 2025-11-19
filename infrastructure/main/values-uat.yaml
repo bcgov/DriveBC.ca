@@ -48,7 +48,7 @@ django:
   mediapvc:
     storage: 1Gi
   apppvc:
-    storage: 1Gi
+    storage: 5Gi
   podDisruptionBudget: 
     enabled: true 
     minAvailable: 1
@@ -70,6 +70,34 @@ tasks:
         memory: 350Mi
       limits:
         memory: 500Mi
+    volumes:
+      claimName: uat-drivebc-django-app-images
+    env:
+      postgresSecret: uat-drivebc-db-crunchy-pguser-uat-drivebc-db
+      variables:
+        SHOW_DEBUG_TOOLBAR: 'False' # Set to False for UAT and Prod
+        DEBUG: 'False' # Set to False for UAT and Prod
+        ROOT_LOG_LEVEL: WARNING
+  vault:
+    secretName: uat-django  # This is the name of the secret in vault that contains the environment variables for the app
+    authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+  prometheus:
+    enabled: false # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
+
+image-consumer:
+  fullnameOverride: uat-drivebc-image-consumer
+  nameOverride: uat-drivebc-image-consumer
+  replicaCount: 1
+  image:
+    repository: ghcr.io/bcgov/drivebc-django
+    tag: latest-uat
+  deployment:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 300Mi
+      limits:
+        memory: 1000Mi
     volumes:
       claimName: uat-drivebc-django-app-images
     env:

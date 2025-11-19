@@ -24,6 +24,17 @@ tasks:
     secretName: prod-django  # This is the name of the secret in vault that contains the environment variables for the app
     authPath: auth/k8s-golddr # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
 
+image-consumer:
+  replicaCount: 0
+  deployment:
+    env:
+      variables:
+        SHOW_DEBUG_TOOLBAR: 'False' # Set to False for UAT and Prod
+        DEBUG: 'False' # Set to False for UAT and Prod
+        ROOT_LOG_LEVEL: WARNING
+  vault:
+    authPath: auth/k8s-golddr # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+
 static:
   vault:
     secretName: prod-static  # This is the name of the secret in vault that contains the environment variables for the app
