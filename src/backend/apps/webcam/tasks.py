@@ -297,10 +297,11 @@ def update_single_webcam_data(webcam):
     # Only update if existing data differs for at least one of the fields
     for field in CAMERA_DIFF_FIELDS:
         if getattr(webcam, field) != webcam_data[field]:
-            webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
-            webcam_serializer.is_valid(raise_exception=True)
-            webcam_serializer.save()
-            update_webcam_image(webcam_data)
+            if not webcam.https_cam:
+                webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
+                webcam_serializer.is_valid(raise_exception=True)
+                webcam_serializer.save() 
+                update_webcam_image(webcam_data)
             return True
 
 
