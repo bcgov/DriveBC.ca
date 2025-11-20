@@ -74,7 +74,7 @@ jobs:
     name: Deploy Images to OpenShift Gold
     environment:
       name: prod
-      url: https://beta.drivebc.ca/
+      url: https://www.drivebc.ca/
     steps:
     - name: Checkout code
       uses: actions/checkout@v5
