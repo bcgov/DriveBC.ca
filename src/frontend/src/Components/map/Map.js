@@ -19,6 +19,7 @@ import { memoize } from 'proxy-memoize';
 import { useSelector, useDispatch } from 'react-redux';
 
 // External imports
+import { Drawer } from '@vladyoslav/drawer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronUp,
@@ -35,7 +36,6 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 import cloneDeep from 'lodash/cloneDeep';
 import Spinner from 'react-bootstrap/Spinner';
-import { Drawer } from '@vladyoslav/drawer';
 
 // Internal imports
 import { addCameraGroups } from '../data/webcams.js';
@@ -170,6 +170,7 @@ export default function DriveBCMap(props) {
   const referenceFeatureInitialized = useRef(false);
 
   // States
+  const [mapRendered, setMapRendered] = useState(false);
   const [openTabs, setOpenTabs] = useState(largeScreen && !isCamDetail);
   const [maximizedPanel, setMaximizedPanel] = useState(false);
   const [myLocationLoading, setMyLocationLoading] = useState(false);
@@ -251,7 +252,7 @@ export default function DriveBCMap(props) {
   useEffect(() => {
     // Only adjust snap if the available snap points have changed
     const snapPointsChanged = JSON.stringify(prevSnapPoints.current) !== JSON.stringify(snapPoints);
-    
+
     if (snapPointsChanged) {
       // Check if current snap point is valid in new snap points array
       if (!snapPoints.includes(snapPointRef.current)) {
@@ -262,10 +263,10 @@ export default function DriveBCMap(props) {
         });
         handleSnapChange(closestSnap);
       }
-      
+
       prevSnapPoints.current = snapPoints;
     }
-    
+
     prevRouteDetailsActive.current = routeDetailsActive;
   }, [snapPoints, routeDetailsActive, handleSnapChange]);
 
@@ -284,12 +285,11 @@ export default function DriveBCMap(props) {
   // Track drawer y-position to reposition buttons fixed to draggable mobile panel
   const drawerRef = useRef();
   const [drawerY, setDrawerY] = useState(0);
-  const drawerInitialOffset = useRef(null);
 
   useEffect(() => {
     let frame;
-    
-    const updatePosition = () => {
+
+    const updatePanelOffset = () => {
       if (drawerRef.current) {
         const transform = getComputedStyle(drawerRef.current).transform;
         if (transform && transform !== 'none') {
@@ -297,31 +297,27 @@ export default function DriveBCMap(props) {
           if (match) {
             const values = match[1].split(', ');
             const translateY = parseFloat(values[5]);
-            
-            // Capture the initial offset on first read
-            if (drawerInitialOffset.current === null) {
-              drawerInitialOffset.current = translateY;
-            }
-            
+
             // Calculate relative movement from initial position
-            const relativeY = translateY - drawerInitialOffset.current;
-            
-            // Add offset for navbar when route is selected
-            // -58px when route objects are shown, -37px when just route is selected
-            const routeDetailsOffset = selectedRoute ? (showRouteObjs ? -58 : 20) : 0;
+            const relativeY = translateY - drawerRef.current.offsetHeight;
+
+            // Add -58px offset when route objects are shown
+            const routeDetailsOffset = (selectedRoute && showRouteObjs) ? -78 : 0;
             setDrawerY(relativeY + routeDetailsOffset);
           }
+
         } else {
           setDrawerY(0);
         }
+
       } else {
         setDrawerY(0);
-        drawerInitialOffset.current = null; // Reset when drawer unmounts
       }
-      frame = requestAnimationFrame(updatePosition);
+
+      frame = requestAnimationFrame(updatePanelOffset);
     };
 
-    frame = requestAnimationFrame(updatePosition);
+    frame = requestAnimationFrame(updatePanelOffset);
     return () => cancelAnimationFrame(frame);
   }, [showRouteObjs, selectedRoute]);
 
@@ -569,6 +565,17 @@ export default function DriveBCMap(props) {
     mapRef.current.on('pointermove', (e) => {
       pointerMoveHandler(e, mapRef, hoveredFeature);
     });
+
+    // Update render complete state
+    const handleRenderComplete = () => setMapRendered(true);
+    mapRef.current.on('rendercomplete', handleRenderComplete);
+
+    // Cleanup on unmount
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.un('rendercomplete', handleRenderComplete);
+      }
+    };
   }, []);
 
   /* Map operations on location search */
@@ -977,12 +984,12 @@ export default function DriveBCMap(props) {
           </div>
         </div>
       }
-      
+
       <div ref={mapElement} className="map">
         {(!isCamDetail && selectedRoute && showRouteObjs && !clickedFeature) && (
-          <Button 
-            variant="primary-outline" 
-            className="btn-outline-primary back-to-routes" 
+          <Button
+            variant="primary-outline"
+            className="btn-outline-primary back-to-routes"
             onClick={() => dispatch(updateShowRouteObjs(false))}>
             <FontAwesomeIcon icon={faArrowLeft}/>
             Routes
@@ -1023,9 +1030,9 @@ export default function DriveBCMap(props) {
           </Button>
         )}
 
-        {!largeScreen && (
+        {!largeScreen && openPanel && mapRendered && (
           <Drawer.Root
-            open={openPanel && !largeScreen}
+            open={true}
             onOpenChange={(open) => {
               if (!open) {
                 resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
@@ -1037,8 +1044,8 @@ export default function DriveBCMap(props) {
             modal={false}
             dismissible={true}
             shouldScaleBackground={false}
-            scaleFrom={'50%'}
-          >
+            scaleFrom={'50%'}>
+
             <Drawer.Portal container={mapElement.current}>
               <Drawer.Overlay className="drawer-overlay" />
               <Drawer.Content className="drawer-content" ref={drawerRef}>
@@ -1055,18 +1062,20 @@ export default function DriveBCMap(props) {
                     <FontAwesomeIcon icon={faXmark} />
                   </button>
                 }
+
                 <div className="panel-content">
                   <div className="drawer-drag-handle"></div>
-                {openPanel && renderPanel(
-                  clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature,
-                  isCamDetail,
-                  smallScreen,
-                  mapView,
-                  clickedFeatureRef,
-                  updateClickedFeature,
-                  showRouteObjs,
-                  handleSetShowRouteObjs
-                )}
+
+                  {renderPanel(
+                    clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature,
+                    isCamDetail,
+                    smallScreen,
+                    mapView,
+                    clickedFeatureRef,
+                    updateClickedFeature,
+                    showRouteObjs,
+                    handleSetShowRouteObjs
+                  )}
                 </div>
               </Drawer.Content>
             </Drawer.Portal>
