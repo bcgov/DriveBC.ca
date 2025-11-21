@@ -106,9 +106,7 @@ export default function FilterTabs(props) {
           open ? setOpen(false) : setOpen(true)
         }}>
         <FontAwesomeIcon icon={faLayerGroup}/>
-        {!smallScreen && (
-          <span className='filters-btn__text'>{textOverride ? textOverride : 'Map Layers'}</span>
-        )}
+        <span className='filters-btn__text'>{textOverride ? textOverride : 'Map Layers'}</span>
       </Button>
 
       {smallScreen && mapContainer &&
