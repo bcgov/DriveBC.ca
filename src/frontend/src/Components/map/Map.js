@@ -1113,6 +1113,7 @@ export default function DriveBCMap(props) {
                 ? <Spinner animation="border" role="status" />
                 : <FontAwesomeIcon icon={faLocationCrosshairs} />
               }
+              My location
             </Button>
 
             <FilterTabs

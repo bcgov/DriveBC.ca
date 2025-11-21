@@ -278,9 +278,7 @@
 
       &.my-location, &.open-filters {
         svg {
-          @media (min-width: 576px) {
-            margin-right: 8px;
-          }
+          margin-right: 8px;
         }
       }
 
