@@ -563,7 +563,7 @@ export function ReportMap(props) {
             </Button>
           )}
 
-          {!isDrawerOpen && (
+          {!isDrawerOpen && smallScreen && (
             <Button
               className={
                 'map-btn expand ' + (expanded ? ' expanded' : 'minimized')
