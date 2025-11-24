@@ -102,15 +102,12 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
         cam = (
             CameraSource.objects.using("mssql")
             .filter(id=id)
-            .select_related(
-                'cam_locationsregion',
-                'cam_locationshighway',
-            )
             .annotate(
-                region=F('cam_locationsregion__seq'),
-                region_name=F('cam_locationsregion__name'),
-                highway=F('cam_locationshighway__hwy_number'),
-                highway_description=F('cam_locationshighway__section'),
+                region_name=F('cam_locationsregion'),
+                highway=F('cam_locationshighway'),
+                highway_description=F('cam_locationshighway_section'),
+                orientation=F('cam_locationsorientation'),
+                elevation=F('cam_locationselevation'),
                 isOn=Case(
                     When(cam_controldisabled=False, then=Value(1)),
                     default=Value(0),
@@ -118,24 +115,27 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
                 ),
                 isOnDemand=F('cam_maintenanceis_on_demand'),
                 credit=F('cam_internetcredit'),
-                dbc_mark=F('cam_internetdbc_mark')
+                dbc_mark=F('cam_internetdbc_mark'),
+                isNew=F('isnew'),
             )
             .values(
                 'id',
                 'cam_internetname',
                 'cam_internetcaption',
-                'region',
                 'region_name',
                 'highway',
                 'highway_description',
+                'orientation',
+                'elevation',
                 'isOn',
-                'isnew',
                 'isOnDemand',
                 'credit',
                 'dbc_mark',
+                'isNew',
             )
             .first()
         )
+
 
         if cam:
             update_webcam_db(id, cam)
@@ -154,18 +154,14 @@ def update_webcam_db(cam_id: int, cam_data: dict):
 
     time_now_utc = datetime.datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(time_now_utc)
-    ts_seconds = int(camera_status["timestamp"])
-    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 
-    updated_count = Webcam.objects.filter(id=cam_id).update(region=cam_data.get("region"),
+    updated_count = Webcam.objects.filter(id=cam_id).update(
         region_name=cam_data.get("region_name"),
         is_on=True if cam_data.get("isOn") == 1 else False,
-        name=cam_data.get("name"),
-        caption=cam_data.get("caption", ""),
+        name=cam_data.get("cam_internetname"),
+        caption=cam_data.get("cam_internetcaption", ""),
         highway=cam_data.get("highway", ""),
         highway_description=cam_data.get("highway_description", ""),
-        highway_group=cam_data.get("highway_group", 0),
-        highway_cam_order=cam_data.get("highway_cam_order", 0),
         orientation=cam_data.get("orientation", ""),
         elevation=cam_data.get("elevation", 0),
         dbc_mark=cam_data.get("dbc_mark", ""),
@@ -297,10 +293,11 @@ def update_single_webcam_data(webcam):
     # Only update if existing data differs for at least one of the fields
     for field in CAMERA_DIFF_FIELDS:
         if getattr(webcam, field) != webcam_data[field]:
-            webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
-            webcam_serializer.is_valid(raise_exception=True)
-            webcam_serializer.save()
-            update_webcam_image(webcam_data)
+            if not webcam.https_cam:
+                webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
+                webcam_serializer.is_valid(raise_exception=True)
+                webcam_serializer.save() 
+                update_webcam_image(webcam_data)
             return True
 
 
@@ -317,6 +314,9 @@ def update_all_webcam_data():
             updated = update_single_webcam_data(camera)
             if updated:
                 update_camera_group_id(camera)
+        current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
+        if camera.https_cam:
+            update_cam_from_sql_db(camera.id, current_time)
 
 
 def wrap_text(text, pen, font, width):
