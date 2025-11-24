@@ -80,7 +80,6 @@ export default function MapFilters(props) {
       if (!closures) filterHandler('closures');
       if (!majorEvents) filterHandler('majorEvents');
       if (!minorEvents) filterHandler('minorEvents');
-      if (!futureEvents) filterHandler('futureEvents');
       if (!roadConditions) filterHandler('roadConditions');
       if (!inlandFerries) filterHandler('inlandFerries');
     }
