@@ -54,7 +54,8 @@ export default function ListFilters(props) {
     referenceData,
     loadingLayers,
     isDelaysPage,
-    fullOverlay
+    fullOverlay,
+    onOpen
   } = props;
 
   // Refs
@@ -151,6 +152,14 @@ export default function ListFilters(props) {
       setChainUps(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (open) {
+      if (onOpen) {
+        onOpen();
+      }
+    }
+  }, [open]);
 
   // Helpers
 

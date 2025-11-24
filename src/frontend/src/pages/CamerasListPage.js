@@ -377,7 +377,10 @@ export default function CamerasListPage() {
                       variant="outline-primary"
                       className={'filter-option-btn area-filter-btn' + (filterContext.areaFilter ? ' filtered' : '') + (showAreaFilters ? ' active' : '')}
                       aria-label="show area filters options"
-                      onClick={() => setShowAreaFilters(!showAreaFilters)}>
+                      onClick={() => {
+                        setShowAreaFilters(!showAreaFilters);
+                        setShowHwyFilters(false);
+                      }}>
 
                       {!smallScreen &&
                         <p className="btn-text">
@@ -407,7 +410,10 @@ export default function CamerasListPage() {
                       variant="outline-primary"
                       className={'filter-option-btn highway-filter-btn' + (filterContext.highwayFilterKey ? ' filtered' : '') + (showHwyFilters ? ' active' : '')}
                       aria-label="show highway filters options"
-                      onClick={() => setShowHwyFilters(!showHwyFilters)}>
+                      onClick={() => {
+                        setShowHwyFilters(!showHwyFilters);
+                        setShowAreaFilters(false);
+                      }}>
 
                       {!smallScreen &&
                         <p className="btn-text">

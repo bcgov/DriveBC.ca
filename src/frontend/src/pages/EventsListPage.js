@@ -681,7 +681,10 @@ export default function EventsListPage() {
                           enableChainUps={true}
                           textOverride={'List'}
                           iconOverride={true}
-                          isDelaysPage={true} />
+                          isDelaysPage={true}
+                          onOpen={() => {
+                            setShowAreaFilters(false);
+                          }}/>
                       </div>
                     }
 
