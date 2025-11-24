@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
     
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -65,7 +65,7 @@ jobs:
       url: https://${{ github.event.inputs.environment }}-drivebc.apps.gold.devops.gov.bc.ca/lbhealth/
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5 
+      uses: actions/checkout@v6 
 
     - name: Install CLI tools from OpenShift Mirror
       uses: redhat-actions/openshift-tools-installer@v1
@@ -93,7 +93,7 @@ jobs:
       url: https://${{ github.event.inputs.environment }}-drivebc.apps.golddr.devops.gov.bc.ca/lbhealth/
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5 
+      uses: actions/checkout@v6 
 
     - name: Install CLI tools from OpenShift Mirror
       uses: redhat-actions/openshift-tools-installer@v1

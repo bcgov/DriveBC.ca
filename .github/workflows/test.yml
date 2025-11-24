@@ -30,7 +30,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Create Tag (if manually triggered)
       if: github.event_name == 'workflow_dispatch'
@@ -62,7 +62,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         ref: ${{ needs.tag.outputs.tag }}
 
@@ -108,7 +108,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         ref: ${{ needs.tag.outputs.tag }}
 
@@ -150,7 +150,7 @@ jobs:
     environment: test
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         ref: ${{ needs.tag.outputs.tag }}
 
@@ -191,7 +191,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         ref: ${{ needs.tag.outputs.tag }}
 
@@ -233,7 +233,7 @@ jobs:
       url: https://test-drivebc.apps.gold.devops.gov.bc.ca
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Install CLI tools from OpenShift Mirror
       uses: redhat-actions/openshift-tools-installer@v1
       with:
@@ -261,7 +261,7 @@ jobs:
       url: https://test-drivebc.apps.golddr.devops.gov.bc.ca
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Install CLI tools from OpenShift Mirror
       uses: redhat-actions/openshift-tools-installer@v1

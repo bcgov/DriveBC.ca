@@ -22,7 +22,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Build Static
       id: build_image
@@ -55,7 +55,7 @@ jobs:
     
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     
     - name: Build Backend
       id: build_image
@@ -86,7 +86,7 @@ jobs:
     
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     
     - name: Build Redis
       id: build_image
@@ -115,7 +115,7 @@ jobs:
     
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Build OpenShift Jobs
       id: build_image
@@ -148,7 +148,7 @@ jobs:
       url: https://dev-drivebc.apps.gold.devops.gov.bc.ca
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Install CLI tools from OpenShift Mirror
       uses: redhat-actions/openshift-tools-installer@v1
       with:
@@ -176,7 +176,7 @@ jobs:
       url: https://dev-drivebc.apps.golddr.devops.gov.bc.ca
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Install CLI tools from OpenShift Mirror
       uses: redhat-actions/openshift-tools-installer@v1
