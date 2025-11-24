@@ -113,6 +113,7 @@ export default function LocationSearch(props) {
       useCache={cacheOptions}
       inputProps={{
         'aria-label': 'input field for location ' + placeholder,
+        'enterKeyHint': 'go',
         ...props.inputProps,
       }}
       onKeyDown={(keyEvent) => {
