@@ -63,18 +63,6 @@ export default function Bulletins(props) {
               }
 
               {showLoader ?
-                <p>
-                  <Skeleton height={10} />
-                  <Skeleton height={10} />
-                  <Skeleton height={10} />
-                </p> :
-
-                (bulletin.teaser &&
-                  <div className='bulletin-li-body'>{stripRichText(bulletin.body)}</div>
-                )
-              }
-
-              {showLoader ?
                 <p><Skeleton width={150} height={10} /></p> :
 
                 <div className='timestamp-container'>
