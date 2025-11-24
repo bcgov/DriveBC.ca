@@ -367,7 +367,12 @@ export default function CamerasListPage() {
                         variant="outline-primary"
                         className={'filter-option-btn camera-search-btn' + (openCameraSearch ? ' active' : '')}
                         aria-label="open camera search"
-                        onClick={() => setOpenCameraSearch(!openCameraSearch)}>
+                        onClick={() => {
+                          // DBC22-4194: minimal-effort fix to prevent closing search bar when there is text
+                          if (searchText && openCameraSearch) return;
+
+                          setOpenCameraSearch(!openCameraSearch);
+                        }}>
                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                         <span className="mobile-btn-text">Search</span>
                       </Button>
@@ -453,8 +458,8 @@ export default function CamerasListPage() {
                       inputProps={{
                         'aria-label': 'input field for camera name search',
                       }}
-                      defaultInputValue={searchText}
-                    >
+                      defaultInputValue={searchText}>
+
                     {({ onClear, text }) => (
                       <>
                         {text &&
