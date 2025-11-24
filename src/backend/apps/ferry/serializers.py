@@ -33,6 +33,7 @@ class FerryVesselSerializer(serializers.ModelSerializer):
             # Vessel specific fields
             "id",
             "name",
+            "priority",
 
             # Capacity
             "vehicle_capacity",
@@ -58,6 +59,7 @@ class FerryRouteSerializer(serializers.ModelSerializer):
             # Exclude vessel specific fields
             "route_id",  # omit since vessel id mapped to route_id
             "name",
+            "priority",
 
             # Capacity
             "vehicle_capacity",
@@ -77,8 +79,8 @@ class FerryRouteSerializer(serializers.ModelSerializer):
         )
 
     def get_vessels(self, obj):
-        grouped = Ferry.objects.filter(route_id=obj.route_id).order_by("id")
-        return FerryVesselSerializer(grouped, many=True).data
+        vessels = Ferry.objects.filter(route_id=obj.route_id).order_by("priority")
+        return FerryVesselSerializer(vessels, many=True).data
 
     def get_id(self, obj):
         return obj.route_id

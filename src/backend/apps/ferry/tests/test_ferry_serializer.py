@@ -18,6 +18,7 @@ class TestFerrySerializer(BaseTest):
                               "20km north of Highway 1 between Chase and Sorrento. "
                               "The ferry is located approximately 80km northeast of "
                               "Kamloops and 50km northwest of Salmon Arm.",
+            priority=12,
 
             # Urls
             url="https://www2.gov.bc.ca/gov/content/transportation/"
@@ -63,6 +64,7 @@ class TestFerrySerializer(BaseTest):
         # Change ID to create second ferry with the same route ID
         self.ferry.id = 2
         self.ferry.name = "Eve"
+        self.ferry.priority = 7
         self.ferry.schedule_detail = "<p><strong>Service hours</strong>:</p> <p>Every hour, 7am-7pm</p>"
         self.ferry.schedule_type = "Summer Schedule"
         self.ferry.vehicle_capacity = 20
@@ -83,23 +85,25 @@ class TestFerrySerializer(BaseTest):
         # Vessels
         assert len(self.serializer.data["vessels"]) == 2
 
-        assert self.serializer.data["vessels"][0]["name"] == "Adam"
-        assert self.serializer.data["vessels"][0]["vehicle_capacity"] == 10
-        assert self.serializer.data["vessels"][0]["passenger_capacity"] == 48
-        assert self.serializer.data["vessels"][0]["crossing_time_min"] == 6
-        assert self.serializer.data["vessels"][0]["weight_capacity_kg"] == 34000
-        assert self.serializer.data["vessels"][0]["schedule_type"] == "On Demand 24hr With Gaps"
-        assert (self.serializer.data["vessels"][0]["schedule_detail"] ==
+        assert self.serializer.data["vessels"][1]["name"] == "Adam"
+        assert self.serializer.data["vessels"][1]["priority"] == 12  # Second in list due to asc order on priority
+        assert self.serializer.data["vessels"][1]["vehicle_capacity"] == 10
+        assert self.serializer.data["vessels"][1]["passenger_capacity"] == 48
+        assert self.serializer.data["vessels"][1]["crossing_time_min"] == 6
+        assert self.serializer.data["vessels"][1]["weight_capacity_kg"] == 34000
+        assert self.serializer.data["vessels"][1]["schedule_type"] == "On Demand 24hr With Gaps"
+        assert (self.serializer.data["vessels"][1]["schedule_detail"] ==
                 "<p><strong>Service hours</strong>:</p> <p>On demand, "
                 "24-hours</p> <ul> <li>5 am - 3 am</li> <li>3 am - 5 "
                 "am (emergency only)</li> </ul>")
 
-        assert self.serializer.data["vessels"][1]["name"] == "Eve"
-        assert self.serializer.data["vessels"][1]["vehicle_capacity"] == 20
-        assert self.serializer.data["vessels"][1]["passenger_capacity"] == 200
-        assert self.serializer.data["vessels"][1]["crossing_time_min"] == 6
-        assert self.serializer.data["vessels"][1]["weight_capacity_kg"] == 60000
-        assert self.serializer.data["vessels"][1]["schedule_type"] == "Summer Schedule"
-        assert (self.serializer.data["vessels"][1]["schedule_detail"] ==
+        assert self.serializer.data["vessels"][0]["name"] == "Eve"
+        assert self.serializer.data["vessels"][0]["priority"] == 7
+        assert self.serializer.data["vessels"][0]["vehicle_capacity"] == 20
+        assert self.serializer.data["vessels"][0]["passenger_capacity"] == 200
+        assert self.serializer.data["vessels"][0]["crossing_time_min"] == 6
+        assert self.serializer.data["vessels"][0]["weight_capacity_kg"] == 60000
+        assert self.serializer.data["vessels"][0]["schedule_type"] == "Summer Schedule"
+        assert (self.serializer.data["vessels"][0]["schedule_detail"] ==
                 "<p><strong>Service hours</strong>:</p> <p>Every hour, "
                 "7am-7pm</p>")

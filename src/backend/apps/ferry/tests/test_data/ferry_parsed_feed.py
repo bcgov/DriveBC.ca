@@ -7,6 +7,7 @@ parsed_feed = {
     'feed_created_at': '2024-11-22T01:09:42Z',
     'feed_modified_at': '2024-11-22T01:09:42Z',
     'id': 1,
+    'priority': 7,
     'image_url': 'https://www2.gov.bc.ca/assets/gov/driving-and-transportation/passenger/inland-ferries/photos/adamslakeii.jpg',
     'location': {
         'coordinates': [1443586.90943286, 680099.30986824],

@@ -51,6 +51,7 @@ class TestFerryModel(BaseTest):
                 '20km north of Highway 1 between Chase and Sorrento. '
                 'The ferry is located approximately 80km northeast of '
                 'Kamloops and 50km northwest of Salmon Arm.')
+        assert ferry_one.priority == 7
 
         # Urls
         assert (ferry_one.url ==
@@ -112,6 +113,10 @@ class TestFerryModel(BaseTest):
         ferry = Ferry.objects.get(id=1)
         assert ferry.route_name == "Adam's Lake Cable Ferry"
         assert ferry.vehicle_capacity == 10
+        assert ferry.priority == 0
+
+        balfour_ferry = Ferry.objects.get(id=9)
+        assert balfour_ferry.priority == 1
 
         # Second call with one updated and one missing event
         populate_all_ferry_data()

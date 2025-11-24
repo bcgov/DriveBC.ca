@@ -11,6 +11,7 @@ class Ferry(BaseModel):
     route_id = models.PositiveSmallIntegerField()
     route_name = models.CharField(max_length=128, blank=True, default='')
     route_description = models.CharField(max_length=750, blank=True, default='')
+    priority = models.PositiveSmallIntegerField(default=0)
 
     # Urls
     url = models.URLField(blank=True)

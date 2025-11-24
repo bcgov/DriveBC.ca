@@ -134,6 +134,7 @@ class FerryPropertiesField(serializers.Field):
             "route_id": data['FERRY_ROUTE_ID'],
             "route_name": data['FERRY_ROUTE_NAME'] or '',
             "route_description": data['ROUTE_LOCATION_DESCRIPTION'] or '',
+            "priority": (data['VESSEL_PRIORITY'] or 0) if 'VESSEL_PRIORITY' in data else 0,
 
             # Urls
             "url": data['ROUTE_OVERVIEW_URL'] or '',
