@@ -123,6 +123,7 @@ export default function RouteDetails(props) {
   const [routeMapImg, setRouteMapImg] = useState(); // for map snapshot
   const [filteredFavCams, setFilteredFavCams] = useState();
   const [showConsentModal, setShowConsentModal] = useState(false);
+  const [validationError, setValidationError] = useState();
 
   /* Notification states */
   const [notificationsEnabled, setNotificationsEnabled] = useState(route.notification);
@@ -326,9 +327,15 @@ export default function RouteDetails(props) {
   }
 
   const saveRouteHandler = () => {
-    saveRoute(route, selectedRoute, nickName, routeMapImg, searchLocationFrom[0].label, searchLocationTo[0].label, dispatch);
-    resetPopup();
-    setAlertMessage(<p>Saved to <a href="/my-routes">My routes</a></p>);
+    saveRoute(route, selectedRoute, nickName, routeMapImg, searchLocationFrom[0].label, searchLocationTo[0].label, dispatch).then(() => {
+      resetPopup();
+      setAlertMessage(<p>Saved to <a href="/my-routes">My routes</a></p>);
+
+    }).catch((error) => {
+      if (error.message === 'duplicate_name') {
+        setValidationError('You have already saved a route with this nickname. Please choose a different one.');
+      }
+    });
   }
 
   const favoriteHandler = () => {
@@ -802,6 +809,10 @@ export default function RouteDetails(props) {
                   </Form.Label>
                   <Form.Control defaultValue={getDefaultLabel()} type="text" placeholder="Enter a name for this route"
                                 onChange={(e) => setNickName(e.target.value)}/>
+
+                  {validationError &&
+                    <p className={'validation-error'}>{validationError}</p>
+                  }
                 </Form.Group>
               </Form>
               <div className="modal-buttons">

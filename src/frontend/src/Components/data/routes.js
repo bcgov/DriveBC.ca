@@ -81,34 +81,33 @@ export const saveRoute = async (route, selectedRoute, nickname, routeMapImg, sta
     searchTimestamp: route.searchTimestamp
   };
 
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': getCookie('csrftoken')
-      },
-      body: JSON.stringify(body),
-      credentials: 'include'
-    });
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken')
+    },
+    body: JSON.stringify(body),
+    credentials: 'include'
+  });
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
+  if (!response.ok) {
+    const errData = await response.json();
+    if ('code' in errData && errData.code === 'duplicate_name') {
+      throw new Error('duplicate_name');
     }
 
-    const savedRoute = await response.json();
-    const payload = {...route, saved: true, id: savedRoute.id, label: nickname};
-    if (selectedRoute && selectedRoute.id === route.id) {
-      dispatch(updateSelectedRoute(payload));
-    }
-
-    dispatch(updateSingleSearchedRoute(payload));
-    dispatch(pushFavRoute(savedRoute));
-
-  } catch (error) {
-    console.error('Error saving the camera:', error);
-    throw error;
+    throw new Error(`Error: ${response.statusText}`);
   }
+
+  const savedRoute = await response.json();
+  const payload = {...route, saved: true, id: savedRoute.id, label: nickname};
+  if (selectedRoute && selectedRoute.id === route.id) {
+    dispatch(updateSelectedRoute(payload));
+  }
+
+  dispatch(updateSingleSearchedRoute(payload));
+  dispatch(pushFavRoute(savedRoute));
 }
 
 export const removeRoute = async (route, selectedRoute, dispatch) => {

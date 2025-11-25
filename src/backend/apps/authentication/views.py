@@ -147,6 +147,16 @@ class SavedRoutesViewset(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.request.user.routes.all().order_by('-created_at')
 
+    def create(self, request, *args, **kwargs):
+        # add validation for duplicate route name
+        label = request.data.get('label', None)
+        if label is not None:
+            existing = self.request.user.routes.filter(label=label).first()
+            if existing is not None:
+                return Response({'code': 'duplicate_name'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return super().create(request, *args, **kwargs)
+
 
 class EmailVerificationTokenGenerator(PasswordResetTokenGenerator):
     pass

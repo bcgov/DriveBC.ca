@@ -1,5 +1,11 @@
 @import "../../styles/variables";
 
+.validation-error {
+  color: $Error;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
 .view-details-btn {
   width: 100%;
   font-weight: 700;
