@@ -88,3 +88,8 @@ class Event(BaseModel):
             return 'Major Delay'
         else:
             return 'Minor Delay'
+
+    @property
+    def optimized_description(self):
+        from apps.event.serializers import optimize_description
+        return optimize_description(self.description)

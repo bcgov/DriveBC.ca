@@ -1,5 +1,5 @@
 Update for DriveBC route {{ route.label }}
 
 {{ event.event_type }}
-{{ event.description }}
+{{ event.optimized_description }}
 Last updated: {{ event.last_updated }}
