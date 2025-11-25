@@ -116,7 +116,7 @@
         async function downloadImage(from, to, timeFrom, timeTo, timezone) {
           let apiPath = imagePaths[imagePaths.length - 1];
           apiPath = apiPath.replace(/\/admin-timelapse\/\d{14}/, "/admin-timelapse/download");
-          const apiUrl = `${FRONTEND_BASE_URL}api/webcams/${apiPath}`;
+          let apiUrl = `${FRONTEND_BASE_URL}api/webcams/${apiPath}`;
           const params = new URLSearchParams();
           if (from) params.append("from", from);
           if (to) params.append("to", to);
@@ -222,11 +222,17 @@
             console.log("Download all available images");
             downloadImage();
           } else {
+            console.log("bruce test Download images in custom date & time range");
             const from = document.getElementById("date-from").value;
+            console.log("From date:", from);
             const to = document.getElementById("date-to").value;
+            console.log("To date:", to);
             const timeFrom = document.getElementById("time-from").value;
+            console.log("From time:", timeFrom);
             const timeTo = document.getElementById("time-to").value;
+            console.log("To time:", timeTo);
             downloadImage(from, to, timeFrom, timeTo, timezone="{{ timezone }}");
+            console.log("Download completed.");
           }
         });
 
