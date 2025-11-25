@@ -11,6 +11,8 @@ import Form from 'react-bootstrap/Form';
 import './FeedbackPage.scss';
 
 // Internal imports
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown } from "@fortawesome/pro-regular-svg-icons";
 import { getCookie } from "../util";
 import { post } from '../Components/data/helper.js';
 import { useRecaptchaVerification } from "../Components/shared/hooks/reCAPTCHA";
@@ -156,13 +158,18 @@ export default function FeedbackPage() {
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group>
+              <Form.Group className={'subject-select'}>
                 <Form.Label>Subject</Form.Label>
-                <Form.Control as="select" aria-label="Select subject" value={subject} onChange={e => setSubject(e.target.value)}>
-                  <option value={0}>Website Feedback</option>
-                  <option value={1}>Website problem or bug</option>
-                  <option value={2}>Webcam not working or delayed</option>
-                </Form.Control>
+
+                <div className={'dropdown-container'}>
+                  <Form.Control as="select" aria-label="Select subject" value={subject} onChange={e => setSubject(e.target.value)}>
+                    <option value={0}>Website Feedback</option>
+                    <option value={1}>Website problem or bug</option>
+                    <option value={2}>Webcam not working or delayed</option>
+                  </Form.Control>
+
+                  <FontAwesomeIcon icon={faChevronDown} />
+                </div>
               </Form.Group>
 
               <Form.Group controlId="validationMessage">

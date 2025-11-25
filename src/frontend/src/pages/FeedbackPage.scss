@@ -1,6 +1,23 @@
 @import "../styles/variables.scss";
 
 .feedback-page {
+  .subject-select {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    .dropdown-container {
+      position: relative;
+
+      svg {
+        position: absolute;
+        right: 6px;
+        top: 6px;
+        pointer-events: none;
+      }
+    }
+  }
+
   .text-max-width {
     max-width: 550px;
   }
