@@ -59,7 +59,7 @@ def populate_event_task():
     populate_all_event_data()
 
 
-@db_periodic_task(crontab(hour="*/24", minute="0", day_of_week="0"))
+@db_periodic_task(crontab(hour="*/1", minute="0"))
 @lock_task('ferries-lock')
 def populate_ferry_task():
     populate_all_ferry_data()
