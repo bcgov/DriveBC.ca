@@ -116,7 +116,7 @@
         async function downloadImage(from, to, timeFrom, timeTo, timezone) {
           let apiPath = imagePaths[imagePaths.length - 1];
           apiPath = apiPath.replace(/\/admin-timelapse\/\d{14}/, "/admin-timelapse/download");
-          const apiUrl = `${FRONTEND_BASE_URL}api/webcams/${apiPath}`;
+          let apiUrl = `${FRONTEND_BASE_URL}api/webcams/${apiPath}`;
           const params = new URLSearchParams();
           if (from) params.append("from", from);
           if (to) params.append("to", to);
@@ -227,6 +227,7 @@
             const timeFrom = document.getElementById("time-from").value;
             const timeTo = document.getElementById("time-to").value;
             downloadImage(from, to, timeFrom, timeTo, timezone="{{ timezone }}");
+            console.log("Download completed.");
           }
         });
 
