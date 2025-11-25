@@ -157,7 +157,7 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         from_time = datetime.strptime(from_time_str, "%H:%M").time() if from_time_str else time.min
         to_time = datetime.strptime(to_time_str, "%H:%M").time() if to_time_str else time.max
 
-        base_from_date = from_date or datetime.now(tz).date()
+        base_from_date = from_date
         base_to_date = to_date or datetime.now(tz).date()
 
         local_from_dt = datetime.combine(base_from_date, from_time, tzinfo=tz)
