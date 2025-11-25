@@ -169,6 +169,7 @@ export function ReportMap(props) {
   const isInitialMount = useRef(true);
   const mapRef = useRef();
   const mapView = useRef();
+  const pinRef = useRef();
   const panel = useRef();
   const mapElement = useRef();
   const drawerRef = useRef();
@@ -176,18 +177,18 @@ export function ReportMap(props) {
   /* States */
   const [activeFeature, setActiveFeature] = useState(null);
   const [expanded, setExpanded] = useState(false);
-  
+
   // Drawer state
   const snapPointRef = useRef('25%');
   const [snap, setSnap] = useState('25%');
-  
+
   const handleSnapChange = (newSnap) => {
     snapPointRef.current = newSnap;
     setSnap(newSnap);
   };
-  
+
   const snapPoints = ['25%', '50%', '80%'];
-  
+
   // When opening/closing panel, update snap state
   useEffect(() => {
     if (activeFeature && !largeScreen) {
@@ -204,7 +205,7 @@ export function ReportMap(props) {
 
   useEffect(() => {
     let frame;
-    
+
     const updatePosition = () => {
       if (drawerRef.current) {
         const transform = getComputedStyle(drawerRef.current).transform;
@@ -213,12 +214,12 @@ export function ReportMap(props) {
           if (match) {
             const values = match[1].split(', ');
             const translateY = parseFloat(values[5]);
-            
+
             // Capture the initial offset on first read
             if (drawerInitialOffset.current === null) {
               drawerInitialOffset.current = translateY;
             }
-            
+
             // Calculate relative movement from initial position
             const relativeY = translateY - drawerInitialOffset.current;
             setDrawerY(relativeY);
@@ -304,7 +305,7 @@ export function ReportMap(props) {
             const mapCoords = fromLonLat([longitude, latitude]);
 
             setZoomPan(mapView, 6.5, mapCoords);
-            setLocationPin([longitude, latitude], redLocationMarkup, mapRef);
+            setLocationPin([longitude, latitude], redLocationMarkup, mapRef, pinRef);
 
             // Wait for map to pan before getting pixel coords
             setTimeout(() => {
@@ -546,7 +547,7 @@ export function ReportMap(props) {
       )}
 
       <div id="report-map" className="report-map">
-        <div 
+        <div
           className="fixed-to-mobile-group"
           style={{
             transform: `translateY(${drawerY}px)`
