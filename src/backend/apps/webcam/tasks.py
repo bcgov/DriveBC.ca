@@ -104,7 +104,6 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
             .filter(id=id)
             .annotate(
                 region_name=F('cam_locationsregion'),
-                highway=F('cam_locationshighway'),
                 highway_description=F('cam_locationshighway_section'),
                 orientation=F('cam_locationsorientation'),
                 elevation=F('cam_locationselevation'),
@@ -123,7 +122,6 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
                 'cam_internetname',
                 'cam_internetcaption',
                 'region_name',
-                'highway',
                 'highway_description',
                 'orientation',
                 'elevation',
