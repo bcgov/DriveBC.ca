@@ -250,7 +250,10 @@
   .chain-up .eventType {
     background: #FFEF76;
     color: #292929;
-    border: 1px solid #292929
+
+    @media (min-width: 768px) {
+      border: 1px solid #292929
+    }
   }
 
   .updated-pill {

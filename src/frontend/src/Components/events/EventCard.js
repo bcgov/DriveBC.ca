@@ -50,7 +50,7 @@ export default function EventCard(props) {
         <div className="name">
           <div className="content">
             <div className="route">{ showLoader ? <Skeleton width={150} /> : event.route_at }</div>
-            <div className="direction">{ showLoader ? <Skeleton width={100} /> : event.direction_display }</div>
+            <div className="direction">{ showLoader ? <Skeleton width={100} /> : (event.event_type === 'CHAIN_UP' ? '' : event.direction_display) }</div>
           </div>
         </div>
 

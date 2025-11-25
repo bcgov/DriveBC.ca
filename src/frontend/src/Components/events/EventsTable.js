@@ -242,7 +242,7 @@ export default function EventsTable(props) {
         >
           <td colSpan={2}>
             <p className={'roadName'}>{row.original.route_at}</p>
-            <p className={'directionDisplay'}>{row.original.direction_display}</p>
+            <p className={'directionDisplay'}>{row.original.event_type === 'CHAIN_UP' ? '' : row.original.direction_display}</p>
           </td>
           <td colSpan={3}>
             <div className="space-between-row">
@@ -266,7 +266,7 @@ export default function EventsTable(props) {
                       parse(cell.getValue())
                     ) : (
                       flexRender(cell.column.columnDef.cell, cell.getContext())
-                    )}                
+                    )}
               </td>
             );
           })}
