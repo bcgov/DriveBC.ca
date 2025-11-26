@@ -120,7 +120,7 @@ export default function LocationSearch(props) {
         if (['Enter', 'NumpadEnter'].includes(keyEvent.key) && options.length) {
           setLocationOptions([]);
           setSelectedLocation([options[0]]);
-          typeaheadRef.current.toggleMenu();
+          typeaheadRef.current.hideMenu();
         }
       }}
       renderMenuItemChildren={location => (
