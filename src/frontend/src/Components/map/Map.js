@@ -376,7 +376,7 @@ export default function DriveBCMap(props) {
   }
 
   useEffect(() => {
-    if(myLocationLoading) {
+    if (myLocationLoading) {
       toggleMyLocation(mapRef, mapView, setMyLocationLoading, setMyLocation, setShowLocationAccessError);
     }
   }, [myLocationLoading])
@@ -581,10 +581,6 @@ export default function DriveBCMap(props) {
   /* Map operations on location search */
   useEffect(() => {
     if (searchLocationFrom && searchLocationFrom.length) {
-      if (locationPinRef.current) {
-        mapRef.current.removeOverlay(locationPinRef.current);
-      }
-
       setLocationPin(
         searchLocationFrom[0].geometry.coordinates,
         blueLocationMarkup,

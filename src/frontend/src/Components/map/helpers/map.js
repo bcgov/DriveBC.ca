@@ -113,12 +113,11 @@ export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading, setMyLoc
 
           setMyLocation(myLocation);
           setZoomPan(mapView, 9, fromLonLat([longitude, latitude]));
-          setLocationPin([longitude, latitude], redLocationMarkup, mapRef);
           setMyLocationLoading(false);
+
         } else {
           // set my location to the center of BC for users outside of BC
           setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
-          setLocationPin([-126.5, 54.2], redLocationMarkup, mapRef);
           setMyLocationLoading(false);
         }
       },

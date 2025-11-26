@@ -86,14 +86,10 @@ export const setLocationPin = (coordinates, svgMarkup, mapRef, pinRef, pinName) 
 
   pinOverlay.pinName = pinName;
 
-  if (pinRef) {
-    // Do nothing if the pin already exists
-    if (!pinRef.current) {
-      pinRef.current = pinOverlay;
-      mapRef.current.addOverlay(pinOverlay);
-    }
-
-  } else {
-    mapRef.current.addOverlay(pinOverlay);
+  if (pinRef && pinRef.current) {
+    mapRef.current.removeOverlay(pinRef.current);
   }
+
+  pinRef.current = pinOverlay;
+  mapRef.current.addOverlay(pinOverlay);
 }
