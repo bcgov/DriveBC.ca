@@ -67,7 +67,8 @@ class Advisory(Page, BaseModel):
         FieldPanel(
             "geometry",
             widget=DriveBCMapWidget,
-            help_text=HelpText.ADVISORY_AREA
+            help_text=HelpText.ADVISORY_AREA,
+            heading="Area",
         ),
         FieldPanel("body", help_text=HelpText.GENERIC_BODY),
         FieldPanel('created_at', read_only=True, heading="Created"),
@@ -122,7 +123,9 @@ class Bulletin(Page, BaseModel):
     content_panels = [
         FieldPanel("title", help_text=HelpText.GENERIC_TITLE),
         FieldPanel("teaser", help_text=HelpText.GENERIC_TEASER),
-        FieldPanel("image", help_text=HelpText.BULLETIN_IMAGE),
+        FieldPanel("image",
+                   help_text=HelpText.BULLETIN_IMAGE,
+                   heading="Newsfeed Image"),
         FieldPanel("image_alt_text", help_text=HelpText.BULLETIN_IMAGE_ALT_TEXT),
         FieldPanel("body", help_text=HelpText.GENERIC_BODY),
         FieldPanel('created_at', read_only=True, heading="Created"),
