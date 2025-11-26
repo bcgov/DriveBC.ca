@@ -160,7 +160,7 @@ def update_webcam_db(cam_id: int, cam_data: dict):
         is_on=True if cam_data.get("isOn") == 1 else False,
         name=cam_data.get("cam_internetname"),
         caption=cam_data.get("cam_internetcaption", ""),
-        highway=cam_data.get("highway", "").split("_", 1)[0] if cam_data.get("highway", "") else "",
+        highway=cam_data.get("highway", "").split("_", 1)[0],
         highway_description=cam_data.get("highway_description", ""),
         orientation=cam_data.get("orientation", ""),
         elevation=cam_data.get("elevation", 0),
