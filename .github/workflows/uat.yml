@@ -252,7 +252,7 @@ jobs:
         insecure_skip_tls_verify: false
     - name: Helm upgrade on OpenShift Gold Environment
       run: |
-        helm upgrade uat-drivebc -f ./infrastructure/main/values-uat.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}"
+        helm upgrade uat-drivebc -f ./infrastructure/main/values-uat.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set image-consumer.image.tag=${{ needs.tag.outputs.tag }} --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}"
 
   # I have this run after the push to Gold because I want to make sure that Gold runs the migrations first. Gold DR can't run migrations as DB is read-only
   update-openshift-golddr:
@@ -282,4 +282,4 @@ jobs:
 
     - name: Helm upgrade on OpenShift GoldDR Environment
       run: |
-        helm upgrade uat-drivebc -f ./infrastructure/main/values-uat.yaml -f ./infrastructure/main/values-uat-dr.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}"
+        helm upgrade uat-drivebc -f ./infrastructure/main/values-uat.yaml -f ./infrastructure/main/values-uat-dr.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set image-consumer.image.tag=${{ needs.tag.outputs.tag }} --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}"
