@@ -212,10 +212,10 @@ def process_camera_rows(rows):
             'cam_locations_elevation': row.cam_locationsorientation if hasattr(row, 'cam_locationsorientation') else '',
             'update_period_mean': 300,
             'update_period_stddev': 60,
-            'dbc_mark': row.dbc_mark if hasattr(row, 'dbc_mark') else '',
-            'is_on': not row.is_on if hasattr(row, 'is_on') else True,
+            'dbc_mark': row.cam_internetdbc_mark if hasattr(row, 'cam_internetdbc_mark') else '',
+            'is_on': not row.cam_controldisabled if hasattr(row, 'cam_controldisabled') else True,
             'cam_maintenanceis_on_demand': row.cam_maintenanceis_on_demand if hasattr(row, 'cam_maintenanceis_on_demand') else False,
-            'is_new': row.is_new if hasattr(row, 'is_new') else False,
+            'is_new': row.isnew if hasattr(row, 'isnew') else False,
             
         }
         camera_list.append(camera_obj)
