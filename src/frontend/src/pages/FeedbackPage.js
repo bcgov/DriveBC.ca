@@ -1,6 +1,9 @@
 // React
 import React, { useEffect, useState } from 'react';
 
+// Routing
+import { useNavigate } from "react-router-dom";
+
 // External Components
 import { UAParser } from "ua-parser-js";
 import Button from 'react-bootstrap/Button';
@@ -20,9 +23,15 @@ import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 
 export default function FeedbackPage() {
+  /* Setup */
+  // Misc
+  document.title = 'DriveBC - Feedback';
+
+  // reCAPTCHA
   const { checkRecaptcha, getRecaptchaAPIToken } = useRecaptchaVerification();
 
-  document.title = 'DriveBC - Feedback';
+  // Navigation
+  const navigate = useNavigate();
 
   // States
   const [email, setEmail] = useState('');
@@ -39,6 +48,7 @@ export default function FeedbackPage() {
   });
 	const [validated, setValidated] = useState(false);
 
+  // Effects
   // Device info
   useEffect(() => {
     // Parse user agent
@@ -112,15 +122,22 @@ export default function FeedbackPage() {
     });
   };
 
-  // Rendering
+  const returnHandler = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate('/', { replace: true }); // the current entry in the history stack will be replaced with the new one with { replace: true }
+    }
+  };
+
+  /* Rendering */
+  // Main component
   return (
     <div className='feedback-page'>
       {!success &&
         <React.Fragment>
-          <PageHeader
-            title='Web feedback, problems, or suggestion'
-          >
-          </PageHeader>
+          <PageHeader title='Web feedback, problems, or suggestion' returnHandler={returnHandler} />
+
           <Container>
             <p className="description text-max-width">
               We welcome your input on DriveBC. Please let us know if you have feedback, see a problem, or have a suggestion on how we can improve the site.
