@@ -212,7 +212,7 @@ def process_camera_rows(rows):
             'cam_locations_elevation': row.cam_locationsorientation if hasattr(row, 'cam_locationsorientation') else '',
             'update_period_mean': 300,
             'update_period_stddev': 60,
-            'dbc_mark': row.dbc_mark if hasattr(row, 'dbc_mark') else 'DriveBC.ca',
+            'dbc_mark': row.dbc_mark if hasattr(row, 'dbc_mark') else '',
             'is_on': not row.is_on if hasattr(row, 'is_on') else True,
             'cam_maintenanceis_on_demand': row.cam_maintenanceis_on_demand if hasattr(row, 'cam_maintenanceis_on_demand') else False,
             'is_new': row.is_new if hasattr(row, 'is_new') else False,
@@ -278,7 +278,7 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
                         fill="red")
 
         # add mark and timestamp to black bar
-        mark = webcam.get('dbc_mark', 'DriveBC.ca')
+        mark = webcam.get('dbc_mark', '')
         pen.text((3,  height + 14), mark, fill="white", anchor='ls', font=FONT)
 
         # Return image as byte array
