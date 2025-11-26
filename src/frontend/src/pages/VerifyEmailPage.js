@@ -1,6 +1,9 @@
 // React
 import React, { useContext, useEffect } from 'react';
 
+// Navigation
+import { useNavigate } from "react-router-dom";
+
 // External imports
 import Container from 'react-bootstrap/Container';
 
@@ -15,13 +18,23 @@ import './VerifyEmailPage.scss';
 
 export default function VerifyEmailPage() {
   /* Setup */
+  // Contexts
   const { authContext } = useContext(AuthContext);
   const { setAlertMessage } = useContext(AlertContext);
 
-  /* Effects */
+  // Navigation
+  const navigate = useNavigate();
+
+  // Effects
   useEffect(() => {
-    if (authContext.loginStateKnown && !authContext.verified) {
-      sendEmailWithRoute();
+    if (authContext.loginStateKnown) {
+      if (!authContext.verified) {
+        sendEmailWithRoute();
+
+      } else {
+        navigate('/account');
+        setAlertMessage(<p>Your account is now verified.</p>);
+      }
     }
   }, [authContext]);
 
