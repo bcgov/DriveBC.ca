@@ -36,7 +36,7 @@ PVC_ORIGINAL_PATH = os.getenv("PVC_ORIGINAL_PATH", "")
 # PVC path to watermarked images with timestamp for ReplayTheDay
 PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH")
 # PVC path to watermarked images for current DriveBC without timestamp
-DRIVCBC_PVC_WATERMARKED_PATH = os.getenv("DRIVCBC_PVC_WATERMARKED_PATH")
+DRIVEBC_PVC_WATERMARKED_PATH = os.getenv("DRIVEBC_PVC_WATERMARKED_PATH")
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -320,9 +320,9 @@ def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp:
         logger.error(f"Error saving Watermarked image to PVC {filepath}: {e}")
 
 def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes):  
-    os.makedirs(os.path.dirname(f'{DRIVCBC_PVC_WATERMARKED_PATH}'), exist_ok=True)
+    os.makedirs(os.path.dirname(f'{DRIVEBC_PVC_WATERMARKED_PATH}'), exist_ok=True)
 
-    save_dir = os.path.join(DRIVCBC_PVC_WATERMARKED_PATH)
+    save_dir = os.path.join(DRIVEBC_PVC_WATERMARKED_PATH)
     os.makedirs(save_dir, exist_ok=True)
     filename = f"{camera_id}.jpg"
     filepath = os.path.join(save_dir, filename)
