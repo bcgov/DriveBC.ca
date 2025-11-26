@@ -1,19 +1,21 @@
-from allauth.account.decorators import secure_admin_login
-from allauth.account import views
-from django.conf import settings
-from django.conf.urls import handler403, defaults
-from django.contrib import admin
-from django.shortcuts import redirect
-from django.urls import include, path, re_path
+import os
 
+from allauth.account import views
+from allauth.account.decorators import secure_admin_login
 from apps.authentication import views as auth_views
 from apps.shared import views as shared_views
 from apps.shared.views import static_override
-
+from django.conf import settings
+from django.conf.urls import defaults
 from django.conf.urls.static import static
-import os
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
-from drf_spectacular.utils import extend_schema
+from django.contrib import admin
+from django.shortcuts import redirect
+from django.urls import include, path, re_path
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 
 
 def admin_permission_denied_handler(request, exception):
@@ -21,8 +23,7 @@ def admin_permission_denied_handler(request, exception):
     If IDIR use is required, authenicated IDIR accounts get the request
     access page; other requests get app specific denial page.
     '''
-    if settings.FORCE_IDIR_AUTHENTICATION and \
-        request.user.username.endswith('azureidir'):
+    if settings.FORCE_IDIR_AUTHENTICATION and request.user.username.endswith('azureidir'):
         return redirect('admin-request-access')
 
     return defaults.permission_denied(request, exception,
@@ -34,8 +35,7 @@ def cms_permission_denied_handler(request, exception):
     If IDIR use is required, authenicated IDIR accounts get the request
     access page; other requests get app specific denial page.
     '''
-    if settings.FORCE_IDIR_AUTHENTICATION and \
-        request.user.username.endswith('azureidir'):
+    if settings.FORCE_IDIR_AUTHENTICATION and request.user.username.endswith('azureidir'):
         return redirect('admin-request-access')
 
     return defaults.permission_denied(request, exception,
@@ -102,15 +102,16 @@ urlpatterns = [
     # TO BE REMOVED IN PRODUCTION
 ] + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# Serve images/webcams from /app/images
-urlpatterns += static(
-    '/images/', 
-    document_root=os.path.join(settings.BASE_DIR, 'app', 'images')
-)
-
 
 if settings.DEV_ENVIRONMENT:
     from django.views.static import serve
     urlpatterns.append(re_path(r"^images/(?P<path>.*)$", serve, {
         "document_root": f'{settings.SRC_DIR}/images/webcams',
     }))
+
+else:
+    # Serve images/webcams from /app/images
+    urlpatterns += static(
+        '/images/',
+        document_root=os.path.join(settings.BASE_DIR, 'app', 'images')
+    )

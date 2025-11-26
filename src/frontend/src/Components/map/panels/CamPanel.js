@@ -82,6 +82,8 @@ export default function CamPanel(props) {
     searchParams.set("id", newCam.id);
     searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
+
+    setIsUpdated(false);
   }, [camFeature]);
 
   useEffect(() => {
