@@ -310,7 +310,9 @@ export default function EventsListPage() {
 
       if (element && offsetFromTop) {
         const newTop = document.querySelector(`[data-key="${key}"]`).getBoundingClientRect().top + window.scrollY - offsetFromTop;
-        window.scrollTo({ top: newTop, behavior: 'instant' });
+
+        const scrollableContainer = document.querySelector('#main');
+        scrollableContainer.scrollTo({ top: newTop, behavior: 'instant' });
         break;
       }
     }
@@ -530,7 +532,8 @@ export default function EventsListPage() {
     }
 
     if (nextElementTopPosition !== undefined) {
-      window.scrollTo({ top: nextElementTopPosition, behavior: 'smooth' });
+      const scrollableContainer = document.querySelector('#main');
+      scrollableContainer.scrollTo({ top: nextElementTopPosition, behavior: 'smooth' });
     }
   };
 
