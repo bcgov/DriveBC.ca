@@ -11,6 +11,8 @@ self.onmessage = (event) => {
         filteredData = filterAdvisoryByRoute(data, route);
         break;
       case 'updateCameras':
+        filteredData = filterByRoute(data, route, 50, false);
+        break;
       case 'updateEvents':
         filteredData = filterByRoute(data, route, null, true);
         break;
