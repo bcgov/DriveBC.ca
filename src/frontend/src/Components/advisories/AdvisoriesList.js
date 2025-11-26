@@ -134,8 +134,8 @@ export default function AdvisoriesList(props) {
                 <div className="advisory-li-title-container">
                   <p className='advisory-li-title'>{advisory.title}</p>
 
-                  {!showDescription && advisory.teaser &&
-                    <p className="advisory-li-teaser">{advisory.teaser}</p>
+                  {!showDescription &&
+                    <p className="advisory-li-teaser">{advisory.teaser ? advisory.teaser : stripRichText(advisory.body).substring(0, 250)}</p>
                   }
 
                   {(showTimestamp && showPublished) &&
