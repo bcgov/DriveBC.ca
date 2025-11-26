@@ -155,12 +155,14 @@ def update_webcam_db(cam_id: int, cam_data: dict):
     time_now_utc = datetime.datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(time_now_utc)
 
+    
+    raw_highway = cam_data.get("highway", "")
     updated_count = Webcam.objects.filter(id=cam_id).update(
         region_name=cam_data.get("region_name"),
         is_on=True if cam_data.get("isOn") == 1 else False,
         name=cam_data.get("cam_internetname"),
         caption=cam_data.get("cam_internetcaption", ""),
-        highway=cam_data.get("highway", "").split("_", 1)[0],
+        highway=raw_highway.split("_", 1)[1] if "_" in raw_highway else int(raw_highway),
         highway_description=cam_data.get("highway_description", ""),
         orientation=cam_data.get("orientation", ""),
         elevation=cam_data.get("elevation", 0),
