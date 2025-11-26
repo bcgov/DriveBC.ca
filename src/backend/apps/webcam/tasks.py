@@ -104,6 +104,7 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
             .filter(id=id)
             .annotate(
                 region_name=F('cam_locationsregion'),
+                highway=F('cam_locationshighway'),
                 highway_description=F('cam_locationshighway_section'),
                 orientation=F('cam_locationsorientation'),
                 elevation=F('cam_locationselevation'),
@@ -122,6 +123,7 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
                 'cam_internetname',
                 'cam_internetcaption',
                 'region_name',
+                'highway',
                 'highway_description',
                 'orientation',
                 'elevation',
@@ -158,7 +160,7 @@ def update_webcam_db(cam_id: int, cam_data: dict):
         is_on=True if cam_data.get("isOn") == 1 else False,
         name=cam_data.get("cam_internetname"),
         caption=cam_data.get("cam_internetcaption", ""),
-        highway=cam_data.get("highway", ""),
+        highway=cam_data.get("highway", "").split("_", 1)[0] if cam_data.get("highway", "") else "",
         highway_description=cam_data.get("highway_description", ""),
         orientation=cam_data.get("orientation", ""),
         elevation=cam_data.get("elevation", 0),
