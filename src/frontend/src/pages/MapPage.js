@@ -9,7 +9,8 @@ import {
   clearSelectedRoute,
   updateRouteDistance,
   updateSearchLocationFrom,
-  updateSearchLocationTo
+  updateSearchLocationTo,
+  updateShowRouteObjs
 } from "../slices";
 
 
@@ -71,6 +72,7 @@ export default function MapPage() {
       dispatch(clearSearchedRoutes());
       dispatch(clearSelectedRoute());
       dispatch(updateRouteDistance(shortenToOneDecimal(parseFloat(routeData.route_distance))));
+      dispatch(updateShowRouteObjs(true));
 
       // Start point
       const route_start_coords = [

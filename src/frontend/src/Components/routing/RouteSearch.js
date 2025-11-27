@@ -14,7 +14,9 @@ import {
   updateSelectedRoute,
   updateSearchedRoutes,
   updateSearchLocationFrom,
-  updateSearchLocationTo, clearRouteDistance
+  updateSearchLocationTo,
+  clearRouteDistance,
+  updateShowRouteObjs
 } from '../../slices/routesSlice'
 import { fitMap, removeOverlays } from "../map/helpers";
 import { MapContext } from "../../App";
@@ -81,16 +83,12 @@ const RouteSearch = forwardRef((props, ref) => {
   const updateSearch = () => {
     updateSearchParams();
 
-    if (isInitialMount.current) { // Only update search params on first load
-      isInitialMount.current = false;
-      return;
-    }
-
     if (validSearch) {
       onShowSpinnerChange(true);
 
     } else {
       dispatch(clearSearchedRoutes());
+      dispatch(updateShowRouteObjs(false));
       dispatch(clearSelectedRoute());
       removeOverlays(mapRef);
     }
@@ -125,8 +123,18 @@ const RouteSearch = forwardRef((props, ref) => {
           dispatch(updateSelectedRoute(routes[0]));
         }
 
-        // Fit map on routes only after user input
-        if (mapContext && mapContext.pendingRouteFit) {
+        // Fit map on routes after user input or notification link
+        const fromNotification = searchParams.get('route_distance');
+        if ((mapContext && mapContext.pendingRouteFit) || fromNotification) {
+          if (fromNotification) {
+            searchParams.delete('route_start');
+            searchParams.delete('route_start_point');
+            searchParams.delete('route_end');
+            searchParams.delete('route_end_point');
+            searchParams.delete('route_distance');
+            setSearchParams(searchParams);
+          }
+
           fitMap(routes, mapView);
           setMapContext({
             ...mapContext,

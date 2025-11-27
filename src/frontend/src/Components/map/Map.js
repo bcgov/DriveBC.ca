@@ -908,10 +908,6 @@ export default function DriveBCMap(props) {
   }, [clickedFeature]);
 
   useEffect(() => {
-    if (!selectedRoute) {
-      dispatch(updateShowRouteObjs(false));
-    }
-
     if (panel.current) {
       void panel.current.offsetHeight; // force reflow to update panel height
     }
