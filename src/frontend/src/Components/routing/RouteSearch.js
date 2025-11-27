@@ -83,6 +83,16 @@ const RouteSearch = forwardRef((props, ref) => {
   const updateSearch = () => {
     updateSearchParams();
 
+    // Only update search params on first load
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+
+      // Unless coming from notifications, then load route
+      if (!searchParams.get('route_distance')) {
+        return;
+      }
+    }
+
     if (validSearch) {
       onShowSpinnerChange(true);
 
