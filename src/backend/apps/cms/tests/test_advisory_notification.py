@@ -27,7 +27,8 @@ class SendAdvisoryNotificationsTest(TestCase):
             username='verifieduser',
             email='verifieduser@example.com',
             password='password',
-            verified=True
+            verified=True,
+            consent=True
         )
 
         # Always active route

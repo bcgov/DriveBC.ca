@@ -33,7 +33,8 @@ class SendEventNotificationsTest(TestCase):
             username='verifieduser',
             email='verifieduser@example.com',
             password='password',
-            verified=True
+            verified=True,
+            consent=True
         )
 
         self.unverified_user = DriveBCUser.objects.create_user(
