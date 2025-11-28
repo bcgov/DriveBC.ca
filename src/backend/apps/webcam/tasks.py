@@ -168,7 +168,23 @@ def update_webcam_db(cam_id: int, cam_data: dict):
 
     
     raw_highway = cam_data.get("highway", "")
-    
+
+# --- Parsing and Formatting ---
+    formatted_region_name = format_region_name(cam_data.get("region_name", ""))
+    parsed_highway = raw_highway.split("_", 1)[0] if "_" in raw_highway else raw_highway
+    parsed_highway_description = raw_highway.split("_", 1)[1] if "_" in raw_highway else ""
+    # ------------------------------
+
+    # --- Console Output Added Here ---
+    logger.info(f"--- Webcam ID: {cam_id} ---")
+    logger.info(f"Raw highway data: {raw_highway}")
+    logger.info(f"Parsed highway: {parsed_highway}")
+    logger.info(f"Parsed highway_description: {parsed_highway_description}")
+    logger.info(f"Formatted region_name: {formatted_region_name}")
+    logger.info(f"------------------------")
+    # ---------------------------------
+
+
     updated_count = Webcam.objects.filter(id=cam_id).update(
         region_name=format_region_name(cam_data.get("region_name", "")),
         is_on=True if cam_data.get("isOn") == 1 else False,
