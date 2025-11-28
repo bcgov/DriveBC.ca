@@ -38,6 +38,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 MIDDLEWARE = [
     "django.middleware.gzip.GZipMiddleware",
+    "apps.shared.middleware.request_metrics.RequestMetricsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
