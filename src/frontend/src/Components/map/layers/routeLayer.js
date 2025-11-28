@@ -43,7 +43,7 @@ export function getRouteLayer(routeData, projectionCode, mapContext, selectedRou
             // set first route if there's no feature specified in the URL
             (!selectedRoute && i === 0) ||
             // set the route if it's the same as the selected route
-            (selectedRoute.distance === feature.get('route').distance))
+            (selectedRoute && selectedRoute.distance === feature.get('route').distance))
           ) {
             feature.set('clicked', true);
             feature.setStyle(routeStyles['active']);
