@@ -105,7 +105,6 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
             .annotate(
                 region_name=F('cam_locationsregion'),
                 highway=F('cam_locationshighway'),
-                highway_description=F('cam_locationshighway_section'),
                 orientation=F('cam_locationsorientation'),
                 elevation=F('cam_locationselevation'),
                 isOn=Case(
@@ -124,7 +123,6 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
                 'cam_internetcaption',
                 'region_name',
                 'highway',
-                'highway_description',
                 'orientation',
                 'elevation',
                 'isOn',
@@ -147,6 +145,18 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
         logger.error(f"Failed to query camera from ORM: {e}")
         return {}
 
+def format_region_name(region_name):
+    if not region_name:
+        return region_name
+    
+    result = []
+    for i, char in enumerate(region_name):
+        if i > 0 and char.isupper():
+            result.append(' ')
+        result.append(char)
+    
+    return ''.join(result)
+
 def update_webcam_db(cam_id: int, cam_data: dict):
     timestamp_utc = get_recent_timestamps(cam_id)
     if not timestamp_utc:
@@ -155,15 +165,14 @@ def update_webcam_db(cam_id: int, cam_data: dict):
     time_now_utc = datetime.datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(time_now_utc)
 
-    
     raw_highway = cam_data.get("highway", "")
     updated_count = Webcam.objects.filter(id=cam_id).update(
-        region_name=cam_data.get("region_name"),
+        region_name=format_region_name(cam_data.get("region_name", "")),
         is_on=True if cam_data.get("isOn") == 1 else False,
         name=cam_data.get("cam_internetname"),
         caption=cam_data.get("cam_internetcaption", ""),
-        highway=raw_highway.split("_", 1)[0],
-        highway_description=cam_data.get("highway_description", ""),
+        highway=raw_highway.split("_", 1)[0] if "_" in raw_highway else raw_highway,
+        highway_description=raw_highway.split("_", 1)[1] if "_" in raw_highway else "",
         orientation=cam_data.get("orientation", ""),
         elevation=cam_data.get("elevation", 0),
         dbc_mark=cam_data.get("dbc_mark", ""),
@@ -174,7 +183,7 @@ def update_webcam_db(cam_id: int, cam_data: dict):
         update_period_stddev= camera_status["stddev_interval"],
         marked_stale=camera_status["stale"],
         marked_delayed=camera_status["delayed"]
-        ),
+        )
     return updated_count
 
 def purge_old_images():
