@@ -150,7 +150,7 @@ class SavedRoutesViewset(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         # add validation for duplicate route name
         label = request.data.get('label', None)
-        if label is not None:
+        if label is not None and label != '':
             existing = self.request.user.routes.filter(label=label).first()
             if existing is not None:
                 return Response({'code': 'duplicate_name'}, status=status.HTTP_400_BAD_REQUEST)
