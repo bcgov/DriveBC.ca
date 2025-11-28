@@ -19,10 +19,17 @@ class RequestMetricsMiddleware:
         if random.random() > self.SAMPLE_RATE:
             return self.get_response(request)
 
+        # Enable query logging for this sampled request even when DEBUG=False
+        prev_force_debug = connection.force_debug_cursor
+        connection.force_debug_cursor = True
         start = time.perf_counter()
         num_queries_before = len(connection.queries)
 
-        response = self.get_response(request)
+        try:
+            response = self.get_response(request)
+        finally:
+            # Restore prior setting to avoid global impact
+            connection.force_debug_cursor = prev_force_debug
 
         duration_ms = (time.perf_counter() - start) * 1000
         queries = connection.queries[num_queries_before:]
