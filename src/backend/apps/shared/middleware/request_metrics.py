@@ -9,7 +9,7 @@ class RequestMetricsMiddleware:
     Logs per-request latency and DB query stats. Safe for prod when sampling.
     Set SAMPLE_RATE to 1.0 to log every request, or lower to sample.
     """
-    SAMPLE_RATE = 0.1  # 10% of requests; adjust as needed
+    SAMPLE_RATE = 1.0  
 
     def __init__(self, get_response):
         self.get_response = get_response
