@@ -179,8 +179,8 @@ export function ReportMap(props) {
   const [expanded, setExpanded] = useState(false);
 
   // Drawer state
-  const snapPointRef = useRef('25%');
-  const [snap, setSnap] = useState('25%');
+  const snapPointRef = useRef('50%');
+  const [snap, setSnap] = useState('50%');
 
   const handleSnapChange = (newSnap) => {
     snapPointRef.current = newSnap;
@@ -194,8 +194,8 @@ export function ReportMap(props) {
     if (activeFeature && !largeScreen) {
       setSnap(snapPointRef.current);
     } else if (!activeFeature) {
-      snapPointRef.current = '25%';
-      setSnap('25%');
+      snapPointRef.current = '50%';
+      setSnap('50%');
     }
   }, [activeFeature, largeScreen]);
 
