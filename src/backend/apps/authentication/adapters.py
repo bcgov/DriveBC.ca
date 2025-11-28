@@ -28,6 +28,9 @@ class AccountAdapter(DefaultAccountAdapter):
             else:
                 redirect_url += path
 
+        elif request.GET.get('deactivate'):
+            redirect_url += 'account-deactivated'
+
         url = f'{settings.KEYCLOAK_URL}/protocol/openid-connect/logout'
 
         token = request.session.get('id_token')

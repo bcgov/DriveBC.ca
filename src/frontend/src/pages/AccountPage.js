@@ -54,8 +54,9 @@ export default function AccountPage() {
     // Show login modal once if user is not logged in
     if (!authContext.username && !showedModal.current) {
       toggleAuthModal('Sign in');
-      showedModal.current = true;
     }
+
+    showedModal.current = true;
   }, [authContext]);
 
   /* Handlers */
@@ -71,11 +72,17 @@ export default function AccountPage() {
       credentials: 'include'
     });
 
+    return response;
+  };
+
+  const handleDeactivateAndSignout = async (e) => {
+    e.preventDefault();
+    const response = await deactivateHandler();
     if (response.status === 204) {
       // Successfully deleted the user, handle logout or redirect
-      setAuthContext({ ...authContext, username: null });
+      setAuthContext({ ...authContext, showingModal: false, username: null });
       logoutDispatch(dispatch, selectedRoute, searchedRoutes);
-      navigate('/account-deactivated');
+      e.target.submit();
     }
   };
 
@@ -169,7 +176,10 @@ export default function AccountPage() {
             </p>
 
             <div className="modal-buttons">
-              <Button variant="danger" onClick={deactivateHandler}>Yes, deactivate my account</Button>
+              <form id="signout-link" className="nav-link" method='post' action={`${window.API_HOST}/accounts/logout/?deactivate=true`} onSubmit={handleDeactivateAndSignout}>
+                <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
+                <button type='submit' className="btn btn-outline-primary">Yes, deactivate my account</button>
+              </form>
               <Button variant="outline-primary" onClick={() => setShowDeactivate(false)}>Cancel</Button>
             </div>
           </Modal.Body>

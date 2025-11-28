@@ -75,6 +75,11 @@
 
   .modal-buttons {
     margin-top: 3rem;
+    display: flex;
+
+    form {
+      margin-right: .5rem;
+    }
 
     button {
       & + button {
