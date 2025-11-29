@@ -460,7 +460,7 @@ export default function CamerasListPage() {
                         }
                       </Button>
 
-                      {!smallScreen && showHwyFilters &&
+                      {!smallScreen && showHwyFilters && displayedCameras &&
                         <HighwayFilter cameras={displayedCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} />
                       }
                     </div>
@@ -621,7 +621,7 @@ export default function CamerasListPage() {
           </button>
 
           <p className="overlay__header bold">Filter by highway</p>
-          <HighwayFilter cameras={displayedCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} />
+          {displayedCameras && <HighwayFilter cameras={displayedCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} />}
         </div>
       }
 
