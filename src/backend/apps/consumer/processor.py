@@ -233,6 +233,9 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
     try:
         if image_data is None:
             return
+        
+        if not verify_image(image_data, webcam.get('id')): 
+            return
 
         raw = Image.open(io.BytesIO(image_data))
         width, height = raw.size
@@ -312,6 +315,9 @@ def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp:
     filename = f"{timestamp}.jpg"
     filepath = os.path.join(save_dir, filename)
 
+    if not verify_image(image_bytes, camera_id):
+        return
+
     try:
         with open(filepath, "wb") as f:
             f.write(image_bytes)
@@ -326,6 +332,9 @@ def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes):
     os.makedirs(save_dir, exist_ok=True)
     filename = f"{camera_id}.jpg"
     filepath = os.path.join(save_dir, filename)
+
+    if not verify_image(image_bytes, camera_id):
+        return
 
     try:
         with open(filepath, "wb") as f:
@@ -463,3 +472,13 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
         camera_id,
         utc_dt
     )
+
+def verify_image(image_data: bytes, camera_id: str) -> bool:
+    # Validate image first
+    try:
+        with Image.open(io.BytesIO(image_data)) as img:
+            img.verify()
+        return True
+    except Exception as e:
+        logger.warning(f"Invalid image for camera {camera_id}: {e}")
+        return False
