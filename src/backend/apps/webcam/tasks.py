@@ -148,13 +148,13 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
 def format_region_name(region_name):
     if not region_name:
         return region_name
-    
+
     result = []
     for i, char in enumerate(region_name):
         if i > 0 and char.isupper():
             result.append(' ')
         result.append(char)
-    
+
     return ''.join(result)
 
 def update_webcam_db(cam_id: int, cam_data: dict):
@@ -211,7 +211,7 @@ def purge_old_pvc_images(age: str = "24"):
 
     for row in rows:
         # path = row.watermarked_pvc_path
-        path = f"{root_path}/{row.camera_id}/{row.timestamp.strftime("%Y%m%d%H%M%S")}.jpg"
+        path = f"{root_path}/{row.camera_id}/{row.timestamp.strftime('%Y%m%d%H%M%S')}.jpg"
 
         if path:
             full_path = os.path.join(root_path, path)
@@ -307,7 +307,7 @@ def update_single_webcam_data(webcam):
             if not webcam.https_cam:
                 webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
                 webcam_serializer.is_valid(raise_exception=True)
-                webcam_serializer.save() 
+                webcam_serializer.save()
                 update_webcam_image(webcam_data)
             return True
 
