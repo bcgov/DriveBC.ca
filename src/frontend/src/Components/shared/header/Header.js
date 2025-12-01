@@ -64,7 +64,7 @@ export default function Header() {
   const [bulletinsCount, setBulletinsCount] = useState();
   const [expanded, setExpanded] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [openSearch, setOpenSearch] = useState(searchParams.get('start') || searchParams.get('end'));
+  const [openSearch, setOpenSearch] = useState(searchParams.get('start') || searchParams.get('end') || searchParams.get('route_distance'));
   const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(true);
 
   // Effects
@@ -83,7 +83,7 @@ export default function Header() {
     } else {
       advisoriesData = await getAdvisories();
     }
-    
+
     const filteredAdvisoriesData = selectedRoute ? filterAdvisoryByRoute(advisoriesData, selectedRoute) : advisoriesData;
     dispatch(updateAdvisories({
       list: advisoriesData,
@@ -121,6 +121,10 @@ export default function Header() {
       setOpenSearch(false);
     }
   }, [selectedRoute]);
+
+  useEffect(() => {
+    console.log('Open search changed:', openSearch);
+  }, [openSearch]);
 
   /* Helpers */
   const getUnreadAdvisoriesCount = (advisoriesData) => {

@@ -422,7 +422,7 @@ export default function RouteDetails(props) {
   /* Rendering */
   // Subcomponents
   const getDefaultLabel = (isPanel) => {
-    if (isPanel) {
+    if (isPanel && !route.id) {
       return 'Route ' + (route.criteria === 'fastest' ? 'A' : 'B');
     }
 
@@ -615,8 +615,8 @@ export default function RouteDetails(props) {
             <p className="route-distance">{Math.round(route.distance)} km</p>
           </div>
 
-          {route.label && route.label !== getDefaultLabel() &&
-            <p className="route-alt-name">{getDefaultLabel()}</p>
+          {route.label && route.label !== getDefaultLabel(isPanel) &&
+            <p className="route-alt-name">{getDefaultLabel(isPanel)}</p>
           }
         </div>
 

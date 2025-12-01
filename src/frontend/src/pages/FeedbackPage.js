@@ -154,7 +154,7 @@ export default function FeedbackPage() {
                     </li>
                   </ul>
                   <span>If the problem continues, please email your report directly to us at <a
-                    href="mailto:MOTIDriveBC@gov.bc.ca">MOTIDriveBC@gov.bc.ca</a>. We appreciate your patience and want to hear from you.</span>
+                    href="mailto:DriveBC@gov.bc.ca">DriveBC@gov.bc.ca</a>. We appreciate your patience and want to hear from you.</span>
                 </div>
               }
 

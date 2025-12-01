@@ -233,8 +233,8 @@ export default function DriveBCMap(props) {
   };
 
   // Use a ref to persist the snap point across renders
-  const snapPointRef = useRef('25%');
-  const [snap, setSnap] = useState('25%');
+  const snapPointRef = useRef('50%');
+  const [snap, setSnap] = useState('50%');
 
   // Update both state and ref when snap changes
   const handleSnapChange = useCallback((newSnap) => {
@@ -277,8 +277,8 @@ export default function DriveBCMap(props) {
       setSnap(snapPointRef.current);
     } else if (!openPanel) {
       // Reset to default when drawer is completely dismissed
-      snapPointRef.current = '25%';
-      setSnap('25%');
+      snapPointRef.current = '50%';
+      setSnap('50%');
     }
   }, [openPanel, largeScreen]);
 
@@ -908,10 +908,6 @@ export default function DriveBCMap(props) {
   }, [clickedFeature]);
 
   useEffect(() => {
-    if (!selectedRoute) {
-      dispatch(updateShowRouteObjs(false));
-    }
-
     if (panel.current) {
       void panel.current.offsetHeight; // force reflow to update panel height
     }

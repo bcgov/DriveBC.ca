@@ -95,6 +95,12 @@ jobs:
         DRIVEBC_COSTAL_FERRY_DATA_URL: https://testvar.com/test.zip
         DRIVEBC_OPENMAPS_API_URL: https://testvar.com/
         FRONTEND_BASE_URL: http://localhost:3000/
+        SQL_DB_NAME: testvar
+        SQL_DB_USER: testvar
+        SQL_DB_PASSWORD: testvar
+        SQL_DB_SERVER: testvar
+        S3_ENDPOINT_URL: https://testvar.com/
+        S3_BUCKET: https://testvar.com/
       run: |
         coverage run ./src/backend/manage.py test --noinput && coverage report && coverage xml
 

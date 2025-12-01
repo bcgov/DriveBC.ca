@@ -187,6 +187,9 @@ export const shortenToOneDecimal = (num) => {
 }
 
 export const compareRoutes = (route1, route2) => {
+  if (!route1 && !route2) return true;  // Return true if both routes are null
+  if (!route1 || !route2) return false;  // Return false if only one route is null
+
   return shortenToOneDecimal(route1.distance) === shortenToOneDecimal(route2.distance)
 }
 

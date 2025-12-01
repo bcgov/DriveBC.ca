@@ -181,7 +181,7 @@ export default function Survey() {
           <span>{"We're having trouble submitting your feedback. You can try:"}</span>
           <ul>
             <li>Refreshing the page or waiting a couple of minutes and try sending again.</li>
-            <li>Request the survey directly by sending an email to <a href="mailto:MOTIDriveBC@gov.bc.ca">MOTIDriveBC@gov.bc.ca</a>.</li>
+            <li>Request the survey directly by sending an email to <a href="mailto:DriveBC@gov.bc.ca">DriveBC@gov.bc.ca</a>.</li>
           </ul>
           <span>Thank you for your patience.</span>
       </div>

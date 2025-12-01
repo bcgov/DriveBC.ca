@@ -203,7 +203,11 @@ export default function RouteObjectList(props) {
 
   /* Rendering */
   // Subcomponents
-  const getDefaultLabel = () => {
+  const getDefaultLabel = (isPanel) => {
+    if (isPanel && !selectedRoute.id) {
+      return 'Route ' + (selectedRoute.criteria === 'fastest' ? 'A' : 'B');
+    }
+
     if (selectedRoute.start && selectedRoute.end) {
       return selectedRoute.start + ' to ' + selectedRoute.end;
     }
@@ -443,12 +447,12 @@ export default function RouteObjectList(props) {
           <div className="route-name-and-distance">
             <h4
               className="route-name">
-                {selectedRoute.label ? selectedRoute.label : `Route ${(selectedRoute.criteria === 'fastest') ? 'A' : 'B'}`}
+                {selectedRoute.label ? selectedRoute.label : getDefaultLabel(true)}
               </h4>
             <p className="route-distance">{Math.round(selectedRoute.distance)} km</p>
           </div>
-          {selectedRoute.label &&
-            <p className="route-alt-name">{getDefaultLabel()}</p>
+          {selectedRoute.label && selectedRoute.label !== getDefaultLabel(true) &&
+            <p className="route-alt-name">{getDefaultLabel(true)}</p>
           }
         </div>
 
