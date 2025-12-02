@@ -117,9 +117,6 @@ export default function MapPage() {
   return (
     <DndProvider options={HTML5toTouch}>
       <div className="map-page map-wrap">
-        {/* Need this to show alert above Map; duplicates App level alert which is hidden by map */}
-        {/* <EmergencyAlert /> */}
-
         {referenceData &&
           <MapWrapper referenceData={referenceData} />
         }

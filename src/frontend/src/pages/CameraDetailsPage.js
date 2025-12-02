@@ -315,12 +315,13 @@ export default function CameraDetailsPage() {
     setReplay(!replay);
   };
 
-  const mapViewRoute = () => {
+  const mapViewRoute = (id) => {
     navigate({
       pathname: '/',
       search: `?${createSearchParams({
         type: "camera",
-        id: camera.id,
+        camIndex: [...cameraGroupRefs.current].indexOf(id),
+        id,
       })}`
     });
   };
@@ -811,7 +812,7 @@ export default function CameraDetailsPage() {
                                   referenceData={referenceData}
                                   rootCamera={camera}
                                   isCamDetail={true}
-                                  mapViewRoute={mapViewRoute}
+                                  mapViewRoute={() => mapViewRoute(camera.id)}
                                   loadCamDetails={loadCamDetails}
                                 />
                               }
@@ -1090,7 +1091,7 @@ export default function CameraDetailsPage() {
                                         referenceData={referenceData}
                                         rootCamera={camera}
                                         isCamDetail={true}
-                                        mapViewRoute={mapViewRoute}
+                                        mapViewRoute={() => mapViewRoute(camera.id)}
                                         loadCamDetails={loadCamDetails}
                                       />
                                     }
