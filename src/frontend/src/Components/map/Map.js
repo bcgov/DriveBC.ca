@@ -920,7 +920,7 @@ export default function DriveBCMap(props) {
         <div className='mobile-mask'></div>
       }
 
-      {searchedRoutes &&
+      {searchedRoutes && searchedRoutes.length > 0 &&
         <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} isCamDetail={isCamDetail} />
       }
 
