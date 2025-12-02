@@ -124,7 +124,8 @@ export default function DriveBCMap(props) {
     },
     advisories: { list: advisories, filteredList: filteredAdvisories },
     routes: { searchLocationFrom, searchLocationTo, selectedRoute, searchedRoutes, showRouteObjs },
-    map: { zoom, pan }
+    map: { zoom, pan },
+    user: { pendingAction }
 
   } = useSelector(
     useCallback(
@@ -142,7 +143,8 @@ export default function DriveBCMap(props) {
         },
         advisories: state.cms.advisories,
         routes: state.routes,
-        map: state.map
+        map: state.map,
+        user: state.user
       })),
     ),
   );
@@ -1024,6 +1026,7 @@ export default function DriveBCMap(props) {
 
         {!largeScreen && openPanel && mapRendered && (
           <Drawer.Root
+            key={pendingAction && pendingAction.action === 'showSavePopup' ? pendingAction.action : 'defaultKey'}
             open={true}
             onOpenChange={(open) => {
               if (!open) {

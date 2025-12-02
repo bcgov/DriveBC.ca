@@ -93,7 +93,6 @@ export default function RouteObjectList(props) {
 
     if (pendingAction.action === 'showSavePopup') {
       setShowSavePopup(true);
-      dispatch(resetPendingAction());
     }
   }, [authContext, pendingAction]);
 
@@ -129,6 +128,7 @@ export default function RouteObjectList(props) {
   const resetPopup = () => {
     setShowSavePopup(false);
     setNickName('');
+    dispatch(resetPendingAction());
   }
 
   const saveRouteHandler = () => {

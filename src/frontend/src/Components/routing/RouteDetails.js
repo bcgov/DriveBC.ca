@@ -229,7 +229,6 @@ export default function RouteDetails(props) {
     if (pendingAction.action === 'showSavePopup') {
       if(route.criteria !== selectedRoute.criteria) return;
       setShowSavePopup(true);
-      dispatch(resetPendingAction());
     }
 
     if (pendingAction.action === 'toggleRouteNotification' && pendingAction.payload === route.id && authContext.verified) {
@@ -324,6 +323,7 @@ export default function RouteDetails(props) {
   const resetPopup = () => {
     setShowSavePopup(false);
     setNickName('');
+    dispatch(resetPendingAction());
   }
 
   const saveRouteHandler = () => {
