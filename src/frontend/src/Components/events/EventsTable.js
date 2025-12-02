@@ -242,7 +242,10 @@ export default function EventsTable(props) {
         >
           <td colSpan={2}>
             <p className={'roadName'}>{row.original.route_at}</p>
-            <p className={'directionDisplay'}>{row.original.event_type === 'CHAIN_UP' ? '' : row.original.direction_display}</p>
+            <p className={'directionDisplay'}>
+              {row.original.event_type === 'CHAIN_UP' && row.original.direction_display == 'Both directions' ?
+                '' : row.original.direction_display}
+            </p>
           </td>
           <td colSpan={3}>
             <div className="space-between-row">
