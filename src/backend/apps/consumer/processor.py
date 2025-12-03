@@ -89,6 +89,8 @@ s3_client = boto3.client(
 index_db = [] # image index loaded from DB
 stop_event = asyncio.Event()
 
+image_invalid = False
+
 async def run_consumer():
     """
     Long-running RabbitMQ consumer that processes image messages and watermarks them.
@@ -235,6 +237,7 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
             return
         
         if not verify_image(image_data, webcam.get('id')): 
+            image_invalid = True
             return
 
         raw = Image.open(io.BytesIO(image_data))
@@ -459,6 +462,9 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     push_to_s3(body, camera_id, True, utc_timestamp_str)
 
     image_bytes = watermark(webcam, body, tz, timestamp)
+    if image_invalid:
+        logger.warning(f"Image from camera {camera_id} is invalid after watermarking. Skipping save and DB insert.")
+        return
 
     # Save watermarked images to PVC with timestamp
     save_watermarked_image_to_pvc(camera_id, image_bytes, utc_timestamp_str)
