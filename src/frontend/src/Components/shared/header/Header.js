@@ -122,10 +122,6 @@ export default function Header() {
     }
   }, [selectedRoute]);
 
-  useEffect(() => {
-    console.log('Open search changed:', openSearch);
-  }, [openSearch]);
-
   /* Helpers */
   const getUnreadAdvisoriesCount = (advisoriesData) => {
     if (!advisoriesData) {

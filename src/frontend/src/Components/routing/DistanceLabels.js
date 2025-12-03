@@ -18,20 +18,12 @@ import { destination, point, distance } from "@turf/turf";
 // Styling
 import './DistanceLabels.scss';
 
-export default function DistanceLabels(props) {
+export default function DistanceLabels({ updateRouteDisplay, mapRef, isCamDetail }) {
   /* initialization */
-  // Props
-  const { updateRouteDisplay, mapRef, isCamDetail } = props;
-
-  // Map not loaded, do nothing
-  if (!mapRef || !mapRef.current) {
-    return;
-  }
 
   // Redux
   const {
     routes: { searchedRoutes, selectedRoute },
-
   } = useSelector(
     useCallback(
       memoize(state => ({
@@ -42,6 +34,10 @@ export default function DistanceLabels(props) {
 
   /* useEffect hooks */
   useEffect(() => {
+    if (!mapRef || !mapRef.current) {
+      return;
+    }
+
     addDistanceOverlay();
     updateRouteDisplay(selectedRoute);
   }, [selectedRoute]);
@@ -117,5 +113,5 @@ export default function DistanceLabels(props) {
     });
   }
 
-  return <div />;
+  return <></>;
 }

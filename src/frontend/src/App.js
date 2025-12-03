@@ -162,14 +162,17 @@ function App() {
     }
   }
 
-  useEffect(async () => {
-    if (!areas) {
-      const areaData = await getAreas();
-      dispatch(updateAreas({ list: areaData }));
-    }
+  useEffect(() => {
+    async function fetchAreas() {
+      if (!areas) {
+        const areaData = await getAreas();
+        dispatch(updateAreas({ list: areaData }));
+      }
 
-    initializeSearchLocation(updateSearchLocationFrom)
-    initializeSearchLocation(updateSearchLocationTo)
+      initializeSearchLocation(updateSearchLocationFrom)
+      initializeSearchLocation(updateSearchLocationTo)
+    }
+    fetchAreas();
   }, []);
 
   /* Helpers */
