@@ -132,12 +132,6 @@
           border-top: 1px solid $Divider;
         }
 
-        &:not(.group) {
-          .data-icon {
-            align-self: top;
-          }
-        }
-
         .data-icon {
           margin-right: 0.75rem;
           color: $Grey80;

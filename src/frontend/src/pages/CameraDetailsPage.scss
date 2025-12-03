@@ -93,8 +93,6 @@
       &__update, &__elevation, &__hwy {
         display: flex;
         flex-direction: column;
-        align-items: left;
-        justify-content: flex-end;
 
         &-detail {
           display: flex;
@@ -363,7 +361,8 @@
         }
       }
       .forecast-card {
-        container: card / inline-size;
+        container-name: card;
+        container-type: inline-size;
         @container card (width < 227px) {
           .header {
             flex-direction: column;
