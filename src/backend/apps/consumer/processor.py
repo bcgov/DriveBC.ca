@@ -89,6 +89,8 @@ s3_client = boto3.client(
 index_db = [] # image index loaded from DB
 stop_event = asyncio.Event()
 
+image_invalid = False
+
 async def run_consumer():
     """
     Long-running RabbitMQ consumer that processes image messages and watermarks them.
@@ -232,7 +234,7 @@ def get_timezone(webcam):
 def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
     try:
         if image_data is None:
-            return
+            return None
 
         raw = Image.open(io.BytesIO(image_data))
         width, height = raw.size
@@ -288,7 +290,8 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
         return buffer.read()
 
     except Exception as e:
-        logger.error(f"Error processing image from camer: {e}")
+        logger.error(f"Error processing image from camera {webcam.get('id')}: {e}")
+        return None
 
 def save_original_image_to_pvc(camera_id: str, image_bytes: bytes):
     # Save original image to PVC, can be overwritten each time
@@ -449,7 +452,16 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     save_original_image_to_pvc(camera_id, body)
     push_to_s3(body, camera_id, True, utc_timestamp_str)
 
+    image_invalid = not verify_image(body, camera_id)
+    if image_invalid:
+        logger.warning(f"Image from camera {camera_id} is invalid after watermarking. Skipping save and DB insert.") 
+        return
+
     image_bytes = watermark(webcam, body, tz, timestamp)
+
+    if image_bytes is None:
+        logger.warning(f"Watermarking failed for camera {camera_id}. Skipping save and DB insert.")
+        return
 
     # Save watermarked images to PVC with timestamp
     save_watermarked_image_to_pvc(camera_id, image_bytes, utc_timestamp_str)
@@ -463,3 +475,13 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
         camera_id,
         utc_dt
     )
+
+def verify_image(image_data: bytes, camera_id: str) -> bool:
+    # Validate image first
+    try:
+        with Image.open(io.BytesIO(image_data)) as img:
+            img.verify()
+        return True
+    except Exception as e:
+        logger.warning(f"Invalid image for camera {camera_id}: {e}")
+        return False
