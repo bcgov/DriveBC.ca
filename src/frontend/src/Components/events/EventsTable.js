@@ -225,6 +225,22 @@ export default function EventsTable(props) {
     return "";
   }
 
+  const renderCell = (row, cell) => {
+    if (row.original.display_category === 'chainUps') {
+      if (cell.column.id === 'location_description') {
+        return row.original.highway_segment_names;
+      }
+
+      if (cell.column.id === 'optimized_description') {
+        return row.original.description;
+      }
+    }
+
+    return typeof cell.getValue() === "string" && cell.id.includes("optimized_description") ?
+      parse(cell.getValue()) :
+      flexRender(cell.column.columnDef.cell, cell.getContext());
+  }
+
   const renderTable = (rows) => {
     const res = [];
 
@@ -265,11 +281,8 @@ export default function EventsTable(props) {
               <td className={cell.column.id}
                 key={cell.id}
                 title={getEventTitle(cell)}>
-                {(typeof cell.getValue() === "string") && cell.id.includes("optimized_description") ? (
-                      parse(cell.getValue())
-                    ) : (
-                      flexRender(cell.column.columnDef.cell, cell.getContext())
-                    )}
+
+                {renderCell(row, cell)}
               </td>
             );
           })}
