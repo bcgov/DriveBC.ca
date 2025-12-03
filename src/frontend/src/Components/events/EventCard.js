@@ -60,7 +60,10 @@ export default function EventCard(props) {
 
         <div className="location">
           <div className="header">{ showLoader ? <Skeleton /> : 'Location' }</div>
-          <div className="content">{ showLoader ? <Skeleton count={2} width={200} /> : event.location_description }</div>
+          <div className="content">
+            {showLoader ? <Skeleton count={2} width={200} /> :
+              (event.display_category === 'chainUps' ? event.highway_segment_names : event.location_description)}
+          </div>
         </div>
 
         <div className="closest-landmark">
@@ -72,7 +75,10 @@ export default function EventCard(props) {
 
         <div className="description">
           <div className="header">{ showLoader ? <Skeleton /> : 'Description' }</div>
-          <div className="content">{ showLoader ? <Skeleton count={5} /> : parse(event.optimized_description) }</div>
+          <div className="content">
+            {showLoader ? <Skeleton count={5} /> :
+              (event.display_category === 'chainUps' ? parse(event.description) : parse(event.optimized_description))}
+          </div>
         </div>
 
         <div className="last-update">
