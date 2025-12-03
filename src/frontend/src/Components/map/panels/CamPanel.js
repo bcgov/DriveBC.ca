@@ -283,7 +283,7 @@ export default function CamPanel(props) {
               }}
               tabIndex={0}
             >
-              <div className="clip">
+              <div className="clip react-loading-skeleton">
                 {isUpdated && (
                   <div className="card-notification updated">
                     <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
@@ -304,7 +304,7 @@ export default function CamPanel(props) {
                   </div>
                 )}
 
-                <img src={getCamLink(camera)} width="300" />
+                <img className="panel-img" src={getCamLink(camera)}/>
 
                 {camera.marked_delayed && camera.marked_stale && (
                   <>

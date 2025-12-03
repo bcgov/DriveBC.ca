@@ -81,7 +81,13 @@
   position: relative;
   overflow: hidden;
   border-radius: 8px;
-  
+
+  .panel-img {
+    width: 100%;
+    min-height: 200px;
+    background-color: #ddd;
+  }
+
   .card-img{
     height: 100%;
     width: 100%;
@@ -168,4 +174,23 @@
       }
     }
   }
+}
+
+
+.react-loading-skeleton {
+    --base-color: #D8EAFD;
+    --highlight-color: #F1F8FE;
+    --animation-duration: 1s !important;
+    background: linear-gradient(90deg, var(--base-color) 10%, var(--highlight-color) 50%, var(--highlight-color) 75%) !important;
+    --animation-duration: 1.5s;
+    --animation-direction: normal;
+    --pseudo-element-display: block;
+    background-color: var(--base-color);
+    width: 100%;
+    border-radius: 0.25rem;
+    display: inline-flex;
+    line-height: 1;
+    position: relative;
+    user-select: none;
+    overflow: hidden;
 }
