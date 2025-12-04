@@ -116,6 +116,7 @@ export default function CamPanel(props) {
       getCameras(
         null,
         `${window.API_HOST}/api/webcams/${cam.id}/`,
+
       ).then((update) => {
         if (update.last_update_modified !== cam.last_update_modified) {
           // using data attribute avoids lexical binding of camIndex state that
