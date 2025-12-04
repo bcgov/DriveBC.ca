@@ -75,15 +75,17 @@ def populate_webcam_from_data(webcam_data):
     except ObjectDoesNotExist:
         webcam = Webcam(id=webcam_id)
 
+    # HTTPS cams should only pull updates from SQL, not the legacy feed data.
+    current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
+    if webcam.https_cam:
+        update_cam_from_sql_db(webcam.id, current_time)
+        return
+
     webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
     webcam_serializer.is_valid(raise_exception=True)
     webcam_serializer.save()
 
-    current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
-    if webcam.https_cam:
-        update_cam_from_sql_db(webcam.id, current_time)
-    else:
-        update_webcam_image(webcam_data)
+    update_webcam_image(webcam_data)
 
 def update_webcam_db_stale_delayed(camera: Webcam):
     time_now_utc = datetime.datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
