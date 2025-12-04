@@ -370,6 +370,21 @@ export default function DriveBCMap(props) {
   const [showLocationAccessError, setShowLocationAccessError] = useState(false);
 
   const loadMyLocation = () => {
+    // per DBC22-5228, clicking button always moves to user's current location
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        if (
+          position.coords.longitude <= -113.7 &&
+          position.coords.longitude >= -139.3 &&
+          position.coords.latitude <= 60.1 &&
+          position.coords.latitude >= 48.2
+        ) {
+          setZoomPan(mapView, 9, fromLonLat([longitude, latitude]));
+        }
+      });
+    }
+
     if (!locationSet.current) {
       setMyLocationLoading(true);
     } else {
