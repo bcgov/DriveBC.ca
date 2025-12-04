@@ -1,6 +1,7 @@
 import io
 import json
 import logging
+import time
 from math import floor
 import os
 from datetime import datetime, timedelta, timezone
@@ -61,6 +62,7 @@ S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
 QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME")
 QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES"))
 EXCHANGE_NAME = os.getenv("RABBITMQ_EXCHANGE_NAME")
+CAMERA_CACHE_REFRESH_SECONDS = int(os.getenv("CAMERA_CACHE_REFRESH_SECONDS", "60"))
 
 
 #boto3.set_stream_logger('botocore', logging.DEBUG)
@@ -90,6 +92,8 @@ s3_client = boto3.client(
 index_db = [] # image index loaded from DB
 stop_event = asyncio.Event()
 
+db_data = []  # cached camera metadata from SQL
+last_camera_refresh = 0.0
 image_invalid = False
 
 async def run_consumer():
@@ -103,7 +107,9 @@ async def run_consumer():
 
     rows = await sync_to_async(get_all_from_db)()
 
+    global db_data, last_camera_refresh
     db_data = process_camera_rows(rows)
+    last_camera_refresh = time.time()
     if not db_data:
         logger.error("No camera data available for watermarking. Consumer exiting.")
         return
@@ -158,7 +164,7 @@ async def run_consumer():
                         # if camera_id != "57":
                         #     logger.info("Skipping processing for camera %s", camera_id)
                         #     continue
-                        await handle_image_message(camera_id, db_data, message.body, timestamp_local, camera_status)
+                        await handle_image_message(camera_id, message.body, timestamp_local, camera_status)
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
                         logger.exception("Failed processing message (camera %s): %s", camera_id, e)
@@ -484,7 +490,28 @@ async def is_camera_pushed_too_soon(camera_id: str, timestamp: str):
         return True
     return False
 
-async def handle_image_message(camera_id: str, db_data: any, body: bytes, timestamp: str, camera_status: dict):
+async def refresh_camera_cache():
+    """
+    Periodically refresh the cached camera metadata so status fields (e.g., is_on)
+    stay in sync without restarting the consumer.
+    """
+    global db_data, last_camera_refresh
+    now = time.time()
+    if now - last_camera_refresh < CAMERA_CACHE_REFRESH_SECONDS:
+        return
+
+    try:
+        rows = await sync_to_async(get_all_from_db)()
+        refreshed = process_camera_rows(rows)
+        if refreshed:
+            db_data = refreshed
+            last_camera_refresh = now
+            logger.info("Refreshed camera metadata cache.")
+    except Exception as e:
+        logger.warning(f"Failed to refresh camera metadata cache: {e}")
+
+async def handle_image_message(camera_id: str, body: bytes, timestamp: str, camera_status: dict):
+    await refresh_camera_cache()
     # timestamp is in local time
     webcams = [cam for cam in db_data if cam['id'] == int(camera_id)]
     webcam = webcams[0] if webcams else None
