@@ -13,6 +13,7 @@ import {
   roadWeatherStyles,
   regionalStyles,
   hefStyles,
+  hefWarningStyles,
   restStopStyles,
   restStopClosedStyles,
   restStopTruckStyles,
@@ -99,7 +100,11 @@ export const resetClickedStates = (
         updateClickedFeature(null);
         break;
       case 'hef':
-        clickedFeatureRef.current.setStyle(hefStyles['static']);
+        clickedFeatureRef.current.setStyle(
+          clickedFeatureRef.current.get('warnings') ?
+          hefWarningStyles['static'] :
+          hefStyles['static']
+        );
         clickedFeatureRef.current.set('clicked', false);
         updateClickedFeature(null);
         break;
@@ -339,7 +344,8 @@ const hefClickHandler = (
   );
 
   // set new clicked hef weather feature
-  feature.setStyle(hefStyles['active']);
+  const warnings = feature.get('warnings');
+  feature.setStyle(warnings ? hefWarningStyles['active'] : hefStyles['active']);
   feature.setProperties({ clicked: true }, true);
   updateClickedFeature(feature);
 };

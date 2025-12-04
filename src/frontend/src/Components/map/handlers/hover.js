@@ -4,6 +4,7 @@ import {
   roadWeatherStyles,
   regionalStyles,
   hefStyles,
+  hefWarningStyles,
   restStopStyles,
   restStopClosedStyles,
   restStopTruckStyles,
@@ -59,7 +60,11 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
           );
           break;
         case 'hef':
-          hoveredFeature.setStyle(hefStyles['static']);
+          hoveredFeature.setStyle(
+            hoveredFeature.get('warnings') ?
+            hefWarningStyles['static'] :
+            hefStyles['static']
+          );
           break;
         case 'largeRestStop':
         case 'restStop':
@@ -168,7 +173,8 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
         return;
       case 'hef':
         if (!targetFeature.getProperties().clicked) {
-          targetFeature.setStyle(hefStyles['hover']);
+          const warnings = targetFeature.get('warnings');
+          targetFeature.setStyle(warnings ? hefWarningStyles['hover'] : hefStyles['hover']);
         }
         return;
       case 'largeRestStop':
