@@ -83,7 +83,7 @@ export const zoomOut = (mapView) => {
 export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading, setMyLocation, setShowLocationAccessError) => {
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(
-      position => {
+      (position) => {
         const { latitude, longitude } = position.coords;
         if (
           position.coords.longitude <= -113.7 &&
@@ -112,6 +112,7 @@ export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading, setMyLoc
           };
 
           setMyLocation(myLocation);
+          setZoomPan(mapView, 9, fromLonLat([longitude, latitude]));
           setMyLocationLoading(false);
 
         } else {
@@ -132,6 +133,9 @@ export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading, setMyLoc
           setMyLocationLoading(false);
         }
       },
+      {
+        maximumAge: 30000, // 30 seconds
+      }
     );
   }
 }
