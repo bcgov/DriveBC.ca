@@ -222,7 +222,7 @@ export default function Header() {
               </button>
             }
 
-            {smallScreen && showSearch && !openSearch && selectedRoute && isNavbarCollapsed && !showRouteObjs &&
+            {smallScreen && showSearch && !openSearch && selectedRoute && isNavbarCollapsed &&
               <button
                 className={`searched-route btn show`}
                 aria-label="searched route"
