@@ -370,24 +370,41 @@ export default function DriveBCMap(props) {
   const [showLocationAccessError, setShowLocationAccessError] = useState(false);
 
   const loadMyLocation = () => {
-    // per DBC22-5228, clicking button always moves to user's current location
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        if (
-          position.coords.longitude <= -113.7 &&
-          position.coords.longitude >= -139.3 &&
-          position.coords.latitude <= 60.1 &&
-          position.coords.latitude >= 48.2
-        ) {
-          setZoomPan(mapView, 9, fromLonLat([longitude, latitude]));
-        }
-      });
-    }
-
     if (!locationSet.current) {
       setMyLocationLoading(true);
     } else {
+      // per DBC22-5228, clicking button always moves to user's current location
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            if (
+              position.coords.longitude <= -113.7 &&
+              position.coords.longitude >= -139.3 &&
+              position.coords.latitude <= 60.1 &&
+              position.coords.latitude >= 48.2
+            ) {
+              setZoomPan(mapView, 9, fromLonLat([longitude, latitude]));
+            }
+          },
+          (error) => {
+            // The user has blocked location access
+            if (error.code === error.PERMISSION_DENIED) {
+              setShowLocationAccessError(true);
+              setMyLocationLoading(false);
+
+            } else {
+              // Zoom out and center to BC if location not available
+              setZoomPan(mapView, 9, fromLonLat([-126.5, 54.2]));
+              setMyLocationLoading(false);
+            }
+          },
+          {
+            maximumAge: 30000, // 30 seconds
+          }
+        );
+      }
+
       dispatch(updateSearchLocationFromWithMyLocation([locationSet.current]));
     }
   }
