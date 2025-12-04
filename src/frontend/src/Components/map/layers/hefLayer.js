@@ -73,7 +73,6 @@ export function updateHefLayer(weathers, layer, setLoadingLayers) {
     if(!weatherFeature.getProperties()['clicked']){
       if (weathersDict[weatherFeature.getId()]) {
         const warnings = weatherFeature.get('warnings');
-        console.log(warnings);
         const weatherStyle = warnings ? hefWarningStyles['static'] : hefStyles['static'];
         weatherFeature.setStyle(weatherStyle);
       } else {
