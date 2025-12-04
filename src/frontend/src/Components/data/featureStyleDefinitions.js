@@ -38,6 +38,11 @@ import hefIconActive from '../../images/mapIcons/elevation-active.png';
 import hefIconHover from '../../images/mapIcons/elevation-hover.png';
 import hefIconStatic from '../../images/mapIcons/elevation-static.png';
 
+// High Elevation Forecast with warning
+import hefIconWarningActive from '../../images/mapIcons/elevation-advisory-active.png';
+import hefIconWarningHover from '../../images/mapIcons/elevation-advisory-hover.png';
+import hefIconWarningStatic from '../../images/mapIcons/elevation-advisory-static.png';
+
 // Border Crossings
 import borderIconActive from '../../images/mapIcons/border-active.png';
 import borderIconHover from '../../images/mapIcons/border-hover.png';
@@ -332,6 +337,28 @@ export const hefStyles = {
     image: new Icon({
       scale: 0.25,
       src: hefIconActive,
+    }),
+  }),
+};
+
+// High elevation forecase styles
+export const hefWarningStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: hefIconWarningStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: hefIconWarningHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: hefIconWarningActive,
     }),
   }),
 };

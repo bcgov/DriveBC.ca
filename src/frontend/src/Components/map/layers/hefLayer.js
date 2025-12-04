@@ -9,7 +9,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Styling
-import { hefStyles } from '../../data/featureStyleDefinitions.js';
+import { hefStyles, hefWarningStyles } from '../../data/featureStyleDefinitions.js';
 
 export function getHefLayer(
   forecasts,
@@ -71,7 +71,14 @@ export function updateHefLayer(weathers, layer, setLoadingLayers) {
 
   for (const weatherFeature of layer.getSource().getFeatures()) {
     if(!weatherFeature.getProperties()['clicked']){
-      weatherFeature.setStyle(weathersDict[weatherFeature.getId()] ? hefStyles['static'] : new Style(null));
+      if (weathersDict[weatherFeature.getId()]) {
+        const warnings = weatherFeature.get('warnings');
+        console.log(warnings);
+        const weatherStyle = warnings ? hefWarningStyles['static'] : hefStyles['static'];
+        weatherFeature.setStyle(weatherStyle);
+      } else {
+        weatherFeature.setStyle(new Style(null));
+      }
     }
   }
 
