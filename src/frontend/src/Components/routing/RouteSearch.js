@@ -68,13 +68,13 @@ const RouteSearch = forwardRef((props, ref) => {
     if (searchLocationFrom && searchLocationFrom.length > 0) {
       searchParams.set('start', searchLocationFrom[0].label);
     } else {
-      searchParams.set('start', null);
+      searchParams.delete('start');
     }
 
     if (searchLocationTo && searchLocationTo.length > 0) {
       searchParams.set('end', searchLocationTo[0].label);
     } else {
-      searchParams.set('end', null);
+      searchParams.delete('end');
     }
 
     setSearchParams(searchParams, { replace: true });
