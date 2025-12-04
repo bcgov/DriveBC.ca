@@ -112,7 +112,6 @@ export const toggleMyLocation = (mapRef, mapView, setMyLocationLoading, setMyLoc
           };
 
           setMyLocation(myLocation);
-          setZoomPan(mapView, 9, fromLonLat([longitude, latitude]));
           setMyLocationLoading(false);
 
         } else {
