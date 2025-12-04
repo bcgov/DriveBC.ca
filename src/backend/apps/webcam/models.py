@@ -89,8 +89,8 @@ class Webcam(BaseModel):
         tzname = tf.timezone_at(lng=self.location.x, lat=self.location.y)
         return pytz.timezone(tzname) if tzname else timezone.utc
 
-class Region(BaseModel):
-    id = models.AutoField(primary_key=True)
+class Region(models.Model):
+    id = models.CharField(primary_key=True)
     seq = models.IntegerField()
     name = models.CharField(max_length=100)
 
@@ -99,7 +99,7 @@ class Region(BaseModel):
         managed = False
 
 
-class Highway(BaseModel):
+class Highway(models.Model):
     id = models.AutoField(primary_key=True)
     hwy_number = models.CharField(max_length=20)
     section = models.CharField(max_length=100)
@@ -109,35 +109,15 @@ class Highway(BaseModel):
         managed = False
 
 
-class RegionHighway(BaseModel):
-    id = models.AutoField(primary_key=True)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE)
-    highway = models.ForeignKey(Highway, on_delete=models.CASCADE)
+class RegionHighway(models.Model):
+    highway_id = models.CharField(max_length=20, primary_key=True)
+    region_id = models.CharField(max_length=20)
     seq = models.IntegerField()
 
     class Meta:
         db_table = 'Region_Highways_Live'
         managed = False
 
-
-# class CameraSource(models.Model):
-#     id = models.AutoField(primary_key=True)
-#     cam_internetname = models.CharField(max_length=100)
-#     cam_internetcaption = models.CharField(max_length=255)
-#     cam_locationsregion = models.ForeignKey(Region, on_delete=models.CASCADE)
-#     cam_locationshighway = models.ForeignKey(Highway, on_delete=models.CASCADE)
-#     cam_locationsorientation = models.CharField(max_length=50, blank=True, null=True)
-#     cam_locationselevation = models.IntegerField(blank=True, null=True)
-#     cam_controldisabled = models.BooleanField(default=False)
-#     isnew = models.BooleanField(default=False)
-#     cam_maintenanceis_on_demand = models.BooleanField(default=False)
-#     cam_internetcredit = models.CharField(max_length=255, blank=True, null=True)
-#     cam_internetdbc_mark = models.CharField(max_length=255, blank=True, null=True)
-#     seq = models.IntegerField()
-
-#     class Meta:
-#         db_table = 'Cams_Live'
-#         managed = False
 
 class CameraSource(models.Model):
     id = models.IntegerField(primary_key=True)

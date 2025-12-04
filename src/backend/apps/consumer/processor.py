@@ -21,10 +21,11 @@ from timezonefinder import TimezoneFinder
 from contextlib import asynccontextmanager
 from aiormq.exceptions import ChannelInvalidStateError
 from asgiref.sync import sync_to_async
-from apps.webcam.models import Webcam
+from apps.webcam.models import Region, RegionHighway, Webcam
 from apps.consumer.models import ImageIndex
 from apps.shared.status import get_recent_timestamps, calculate_camera_status
 from botocore.config import Config
+from django.contrib.gis.geos import Point
 
 tf = TimezoneFinder()
 
@@ -211,13 +212,14 @@ def process_camera_rows(rows):
             'cam_locations_region': row.cam_locationsregion if hasattr(row, 'cam_locationsregion') else '',
             'cam_locations_highway': row.cam_locationshighway if hasattr(row, 'cam_locationshighway') else '',
             'cam_locations_highway_section': row.cam_locationshighway_section if hasattr(row, 'cam_locationshighway_section') else '',
-            'cam_locations_elevation': row.cam_locationsorientation if hasattr(row, 'cam_locationsorientation') else '',
+            'cam_locations_elevation': row.cam_locationselevation if hasattr(row, 'cam_locationselevation') else '',
             'update_period_mean': 300,
             'update_period_stddev': 60,
             'dbc_mark': row.cam_internetdbc_mark if hasattr(row, 'cam_internetdbc_mark') else '',
             'is_on': not row.cam_controldisabled if hasattr(row, 'cam_controldisabled') else True,
             'cam_maintenanceis_on_demand': row.cam_maintenanceis_on_demand if hasattr(row, 'cam_maintenanceis_on_demand') else False,
             'is_new': row.isnew if hasattr(row, 'isnew') else False,
+            'seq': row.seq if hasattr(row, 'seq') else 0,
             
         }
         camera_list.append(camera_obj)
@@ -362,8 +364,57 @@ def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     return timestamp
 
 @sync_to_async
-def insert_image_and_update_webcam(camera_id, timestamp):
-    camera = Webcam.objects.get(id=camera_id)
+def insert_image_and_update_webcam(camera_id, timestamp, webcam):
+    region = webcam.get('cam_locations_region', '')
+    region_obj = Region.objects.using("mssql").filter(id=region).first()
+    region_number = region_obj.seq if region_obj else None
+    region_name = region_obj.name if region_obj else ''
+    cam_locations_geo_latitude = webcam.get('cam_locations_geo_latitude', None)
+    cam_locations_geo_longitude = webcam.get('cam_locations_geo_longitude', None)
+     
+    geometry = None
+    if cam_locations_geo_latitude and cam_locations_geo_longitude:
+        try:
+            geometry = Point(float(cam_locations_geo_longitude), float(cam_locations_geo_latitude))
+        except (ValueError, TypeError):
+            geometry = None
+
+    elevation = webcam.get('cam_locations_elevation', None)
+    raw_hw = webcam.get("cam_locations_highway") or ""
+    parts = raw_hw.split("_", 1)
+    highway_number = parts[0]
+    highway_description = parts[1] if len(parts) > 1 else ""
+    highway_id = (
+    f"{highway_number}_{highway_description}"
+        if highway_description
+        else highway_number
+    )
+
+    region_id = region_obj.id if region_obj else None
+    highway_group = RegionHighway.objects.using("mssql").filter(
+        highway_id=highway_id,
+        region_id=region_id
+    ).first().seq if region_id else None
+
+    camera, created = Webcam.objects.get_or_create(
+        id=camera_id,
+        defaults={
+            "name": f"{webcam.get('cam_internet_name', '')}",
+            "caption": f"{webcam.get('cam_internet_caption', '')}",
+            "region": region_number,
+            "region_name": f"{region_name}",
+            "highway": highway_number,
+            "highway_description": highway_description,
+            "highway_group": highway_group,
+            "highway_cam_order": f"{webcam.get('seq', 0)}",
+            "location": geometry,
+            "orientation": webcam.get('cam_locations_orientation', ''),
+            "elevation": elevation,
+            "dbc_mark": webcam.get('dbc_mark', ''),
+            "update_period_mean": webcam.get('update_period_mean', 300),
+            "update_period_stddev": webcam.get('update_period_stddev', 60),
+        }
+    )
 
     ImageIndex.objects.create(
         camera_id=camera_id,
@@ -473,7 +524,8 @@ async def handle_image_message(camera_id: str, db_data: any, body: bytes, timest
     # Insert record into DB
     await insert_image_and_update_webcam(
         camera_id,
-        utc_dt
+        utc_dt,
+        webcam
     )
 
 def verify_image(image_data: bytes, camera_id: str) -> bool:
