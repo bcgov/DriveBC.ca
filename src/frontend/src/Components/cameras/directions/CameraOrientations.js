@@ -1,5 +1,5 @@
 // React
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,7 +12,6 @@ import Button from 'react-bootstrap/Button';
 import GoodCarousel from 'react-good-carousel';
 
 // Internal imports
-import { getCameraOrientation, getFullOrientation } from "../helper";
 import colocatedCamIcon from '../../../images/colocated-camera.svg';
 import trackEvent from "../../shared/TrackEvent";
 import CameraThumbnail from './CameraThumbnail';
@@ -30,9 +29,6 @@ export default function CameraOrientations(props) {
   // Props
   const { camData, loadCamDetails } = props;
 
-  // Refs
-  const imageRef = useRef(null);
-
   // States
   const showCompactLayout = (camData.camGroup.length > 2) && smallScreen;
   const showReducedLayout = (camData.camGroup.length > 3) && inBetweenScreen;
@@ -43,15 +39,24 @@ export default function CameraOrientations(props) {
   );
   const perPane = showCompactLayout ? 2 : 3;
 
-  const initialIndex = camData.camGroup.findIndex(cam => cam.id === camData.id);
-  const [currentCamIndex, setCurrentCamIndex] = useState(initialIndex);
-  const [currentPane, setCurrentPane] = useState(Math.floor(initialIndex / perPane));
+  const [currentCamIndex, setCurrentCamIndex] = useState(0);
+  const [currentPane, setCurrentPane] = useState(0);
 
   // Effects
   useEffect(() => {
     const nextCam = camData.camGroup[currentCamIndex];
     loadCamDetails(nextCam);
   }, [currentCamIndex]);
+
+  const getInitialIndex = () => {
+    return camData.camGroup.findIndex(cam => cam.id === camData.id);
+  }
+
+  useEffect(() => {
+    const initialIndex = getInitialIndex();
+    setCurrentCamIndex(initialIndex);
+    setCurrentPane(Math.floor(initialIndex / perPane));
+  }, [camData]);
 
   /* Handlers */
   const rotateCameraOrientation = () => {

@@ -16,7 +16,7 @@ import './CameraThumbnail.scss';
 export default function CameraThumbnail(props) {
 
   const { thumbnailCamera, mainCamera, index, switchOrientation } = props;
-  
+
   // Refs
   const imageRef = useRef(null);
 
@@ -48,11 +48,11 @@ export default function CameraThumbnail(props) {
   // get camera state message
   const getStateMessage = () => {
     let statusMessage = '';
-    
+
     if (unavailable) {
         statusMessage = 'Unavailable';
     }
-    
+
     else if (stale){
       if (delayed) {
         statusMessage = 'Delayed';
@@ -77,7 +77,7 @@ export default function CameraThumbnail(props) {
 
   /* Rendering */
   // Main component
-  return (
+  return mainCamera && (
     <div className={'camera-thumbnail orientation' + (mainCamera.id === camData.id ? ' current' : '') + (stale ? ' stale' : '') + (delayed ? ' delayed' : '') + (unavailable ? ' unavailable' : '') + (updated ? ' updated' : '')}
       key={camData.id}
       onClick={() => {
@@ -94,7 +94,7 @@ export default function CameraThumbnail(props) {
         }
       }}>
 
-      {unavailable && 
+      {unavailable &&
         <div className="overlay-unavailable">
           <FontAwesomeIcon className="icon" icon={faVideoSlash} />
         </div>
