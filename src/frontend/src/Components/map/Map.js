@@ -1044,7 +1044,7 @@ export default function DriveBCMap(props) {
             <Drawer.Portal container={mapElement.current}>
               <Drawer.Overlay className="drawer-overlay" />
               <Drawer.Content className="drawer-content" ref={drawerRef}>
-                {clickedFeature && !isCamDetail &&
+                {clickedFeature &&
                   <button
                     className="close-panel"
                     aria-label={`${openPanel ? 'close side panel' : ''}`}
