@@ -148,8 +148,9 @@ export default function CamPanel(props) {
     const nextIndex = (currentIndex + 1) % buttons.length;
     buttons[nextIndex].focus();
     setActiveIndex(nextIndex);
-    const nextCamera = camera.camGroup[nextIndex];
+    const nextCamera = camFeature.getProperties().camGroup[nextIndex];
     setCamera(nextCamera);
+    setCamIndex(nextIndex);
     trackEvent("click", "camera-list", "camera", nextCamera.name);
   };
 
