@@ -380,8 +380,10 @@ def insert_image_and_update_webcam(camera_id, timestamp, webcam):
             geometry = None
 
     elevation = webcam.get('cam_locations_elevation', None)
-    highway_number = f"{webcam.get('cam_locations_highway', '').split('_')[0] if webcam.get('cam_locations_highway') else ''}"
-    highway_description = f"{webcam.get('cam_locations_highway', '').split('_')[1] if webcam.get('cam_locations_highway') else ''}"
+    raw_hw = webcam.get("cam_locations_highway") or ""
+    parts = raw_hw.split("_", 1)
+    highway_number = parts[0]
+    highway_description = parts[1] if len(parts) > 1 else ""
     highway_id = (
     f"{highway_number}_{highway_description}"
         if highway_description
