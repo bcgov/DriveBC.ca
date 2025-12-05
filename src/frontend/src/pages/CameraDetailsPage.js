@@ -212,6 +212,9 @@ export default function CameraDetailsPage() {
     // DBC22-4282: switch tab back to cameras on changing camera
     setActiveTab('webcam');
 
+    // DBC22-5236: reset replay controls
+    setReplay(false);
+
     setShowLoader(false);
     isInitialMount.current = false;
   };
@@ -650,7 +653,8 @@ export default function CameraDetailsPage() {
                                     onChange={toggleReplay}
                                     type="switch"
                                     id="replay-toggle"
-                                    label="Replay the day" />
+                                    label="Replay the day"
+                                    checked={replay} />
                                 </Form>
                               </div>
                             )}
@@ -913,7 +917,7 @@ export default function CameraDetailsPage() {
                                           type="switch"
                                           id="replay-toggle"
                                           label="Replay the day"
-                                        />
+                                          checked={replay} />
                                       </Form>
                                     </div>
                                   )}
