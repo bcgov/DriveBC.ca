@@ -4,5 +4,5 @@ from rest_framework import viewsets
 
 
 class WildfireViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Wildfire.objects.all().exclude(status='Under Control')
+    queryset = Wildfire.objects.filter(status='Out of Control')
     serializer_class = WildfireSerializer
