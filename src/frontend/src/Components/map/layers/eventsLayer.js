@@ -28,7 +28,12 @@ const addFeature = (feature, display_category, vsMap, lineVsMap, setNewFeatureSt
 }
 
 // Helper function that creates a feature and updates its properties for each event
-const processEvent = (mapContext, event, currentProjection, vsMap, lineVsMap, referenceData, updateReferenceFeature, setNewFeatureStyle=false) => {
+const processEvent = (
+  mapContext, event, currentProjection, vsMap, lineVsMap,
+  referenceData, updateReferenceFeature,  // Reference feature handling
+  setNewFeatureStyle=false,
+  eventFeaturesInContextDict=null
+) => {
   let eventFound = false;
 
   // all events have a point coordinate for an icon; for line or zone
@@ -41,6 +46,11 @@ const processEvent = (mapContext, event, currentProjection, vsMap, lineVsMap, re
   pointFeature.setId(event.id);
   pointFeature.getGeometry().transform('EPSG:4326', currentProjection);
   addFeature(pointFeature, event.display_category, vsMap, lineVsMap, setNewFeatureStyle);
+
+  // Save feature to featuresDict for route details panel
+  if (eventFeaturesInContextDict && !(event.id in eventFeaturesInContextDict)) {
+    eventFeaturesInContextDict[event.id] = pointFeature;
+  }
 
   if (event.location.type === 'Point') {
     savePointFeature(mapContext, event, pointFeature);
@@ -190,8 +200,12 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
   return eventFound;
 }
 
-export function updateEventsLayers(mapContext, events, mapLayers, setLoadingLayers, referenceData, mapView) {
+export function updateEventsLayers(
+  mapContext, events, mapLayers, setLoadingLayers, referenceData, mapView,
+  featureContext, setFeatureContext  // Feature context for route details panel
+) {
   const featuresDict = {};
+  const contextFeaturesDict = featureContext.events || {};
 
   const eventsDict = events.reduce((dict, obj) => {
     dict[obj.id] = obj;
@@ -220,6 +234,11 @@ export function updateEventsLayers(mapContext, events, mapLayers, setLoadingLaye
       } else {
         feature.setStyle(new Style(null));
       }
+
+      // Store point features in dict for context
+      if (!(layer.name.endsWith('Lines')) && !(feature.featureId in contextFeaturesDict)) {
+        contextFeaturesDict[featureId] = feature;
+      }
     }
   });
 
@@ -236,8 +255,14 @@ export function updateEventsLayers(mapContext, events, mapLayers, setLoadingLaye
   Object.values(eventsDict).forEach((event) => {
     if (processedEvents.has(event.id)) { return; }
 
-    processEvent(mapContext, event, 'EPSG:3857', vsMap, lineVsMap, null, null, true);
+    processEvent(mapContext, event, 'EPSG:3857', vsMap, lineVsMap, null, null, true, contextFeaturesDict);
   });
+
+  // Update feature context with new features
+  setFeatureContext(prevState => ({
+    ...prevState,
+    events: contextFeaturesDict
+  }));
 
   setLoadingLayers(prevState => ({
     ...prevState,

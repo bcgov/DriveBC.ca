@@ -780,8 +780,10 @@ export default function DriveBCMap(props) {
     // Count filtered events to store in routeDetails
     if (filteredEvents) {
       // Toggle features visibility
-      const featuresDict = updateEventsLayers(mapContext, filteredEvents, mapLayers, setLoadingLayers, referenceData, mapView);
-      setFeatureContext({...featureContext, events: featuresDict});
+      updateEventsLayers(
+        mapContext, filteredEvents, mapLayers, setLoadingLayers, referenceData, mapView,
+        featureContext, setFeatureContext // DBC22-5106
+      );
 
       const eventCounts = {
         closures: 0,
