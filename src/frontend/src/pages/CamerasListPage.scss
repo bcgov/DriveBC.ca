@@ -59,4 +59,29 @@
       margin-top: 2rem;
     }
   }
+
+  .container--sidepanel {
+    flex-direction: column;
+
+    @media (min-width: 1096px) {
+      flex-direction: row;
+    }
+
+    &__left {
+      width: 100%;
+      position: initial;
+
+      @media (min-width: 1096px) {
+        width: 310px;
+        min-width: 310px;
+        position: sticky;
+      }
+    }
+
+    &__right {
+      .sticky-filters .controls-group .controls-container {
+        flex-direction: row;
+      }
+    }
+  }
 }

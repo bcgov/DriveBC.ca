@@ -62,7 +62,7 @@
     grid-template-columns: repeat(1, 1fr );
     grid-template-rows: auto;
 
-    @media (min-width: 624px) {
+    @media (min-width: 668px) {
       grid-template-columns: repeat(2, 1fr );
     }
 
@@ -70,8 +70,23 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    @media (min-width: 1620px) {
+    @media (min-width: 1750px) {
       grid-template-columns: repeat(4, 1fr );
+    }
+
+    .camera-card {
+      .card-img-box { 
+        min-height: 180px;
+        height: 40vw;
+
+        @media (min-width: 668px) {
+          height: 20vw;
+        }
+
+        @media (min-width: 1240px) {
+          height: 220px;
+        }
+      }
     }
   }
 }
