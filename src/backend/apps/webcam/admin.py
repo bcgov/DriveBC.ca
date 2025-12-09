@@ -1,13 +1,13 @@
+import json
+
+import pytz
 from apps.shared.models import RouteGeometry
 from apps.webcam.models import Webcam
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
-import json
-from apps.webcam.models import Webcam
-from django.conf import settings
-from timezonefinder import TimezoneFinder
-import pytz
 from django.utils import timezone
+from timezonefinder import TimezoneFinder
 
 
 class WebcamAdmin(ModelAdmin):

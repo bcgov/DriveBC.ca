@@ -1,11 +1,14 @@
+import time
+from datetime import datetime, timezone
+
 from apps.webcam.models import Webcam
 from django.conf import settings
 from rest_framework import serializers
-import time
-from datetime import datetime, timedelta, timezone
 
 
 class WebcamSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    caption = serializers.SerializerMethodField()
     links = serializers.SerializerMethodField()
     highway_display = serializers.SerializerMethodField()
     regional_weather_station = serializers.SerializerMethodField()
@@ -21,6 +24,12 @@ class WebcamSerializer(serializers.ModelSerializer):
             "modified_at",
         )
 
+    def get_name(self, obj):
+        return obj.name_override if obj.name_override else obj.name
+
+    def get_caption(self, obj):
+        return obj.caption_override if obj.caption_override else obj.caption
+
     def get_links(self, obj):
         local_root = settings.DRIVEBC_IMAGE_BASE_URL
         proxy_root = settings.DRIVEBC_IMAGE_PROXY_URL
@@ -29,14 +38,15 @@ class WebcamSerializer(serializers.ModelSerializer):
         timestamp = int(time.time())
         if obj.https_cam:
             links = {
-            "imageDisplay": f"{local_root}images/{webcam_id}.jpg?t={timestamp}",
-            "replayTheDay": f"{local_root}api/webcams/{webcam_id}/replayTheDay/",
-        }
+                "imageDisplay": f"{local_root}images/{webcam_id}.jpg?t={timestamp}",
+                "replayTheDay": f"{local_root}api/webcams/{webcam_id}/replayTheDay/",
+            }
+
         else:
             links = {
-            "imageDisplay": f"{local_root}images/{webcam_id}.jpg",
-            "replayTheDay": f"{proxy_root}ReplayTheDay/json/{webcam_id}.json",
-        }
+                "imageDisplay": f"{local_root}images/{webcam_id}.jpg",
+                "replayTheDay": f"{proxy_root}ReplayTheDay/json/{webcam_id}.json",
+            }
 
         return links
 
@@ -61,7 +71,7 @@ class WebcamSerializer(serializers.ModelSerializer):
             return obj.hev_station.code
 
         return None
-    
+
     def get_marked_stale(self, obj):
         if not obj.last_update_modified or not obj.update_period_mean:
             return False

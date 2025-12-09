@@ -20,7 +20,7 @@ repos:
         -   flake8-django==1.1.2
         -   flake8-pytest-style==1.6.0
         -   flake8-typing-imports==1.12.0
-        args: [ --max-line-length=128, --extend-ignore=DJ01]
+        args: [ --max-line-length=128, '--extend-ignore=DJ08,DJ01']
         stages: [commit]
         exclude: '^backend/\w+/migrations'
 -   repo: https://github.com/PyCQA/bandit

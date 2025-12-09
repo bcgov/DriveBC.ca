@@ -1,19 +1,18 @@
+import pytz
 from apps.shared.models import Area, BaseModel
+from apps.shared.status import get_image_list
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
 from django.contrib.gis.db import models
-import json
-import os
-from pathlib import Path
-from apps.shared.status import get_image_list
-from timezonefinder import TimezoneFinder
-import pytz
 from django.utils import timezone
+from timezonefinder import TimezoneFinder
 
 
 class Webcam(BaseModel):
     # Description
     name = models.CharField(max_length=128)
+    name_override = models.CharField(blank=True, max_length=128)
     caption = models.CharField(blank=True, max_length=256)
+    caption_override = models.CharField(blank=True, max_length=256)
     dbc_mark = models.CharField(blank=True, max_length=256)
     credit = models.CharField(blank=True, max_length=256)
 
@@ -70,15 +69,15 @@ class Webcam(BaseModel):
 
         time_delta = time - self.last_update_modified
         return time_delta.total_seconds() >= self.minimum_update_window
-    
+
     def get_image_paths(self):
-            timestamps = get_image_list(self.id, "TIMELAPSE_HOURS")
-            image_paths = []
-            for ts in timestamps:
-                filename = ts
-                img_path = f"{self.id}/admin-timelapse/{filename}/"
-                image_paths.append(img_path)
-            return image_paths
+        timestamps = get_image_list(self.id, "TIMELAPSE_HOURS")
+        image_paths = []
+        for ts in timestamps:
+            filename = ts
+            img_path = f"{self.id}/admin-timelapse/{filename}/"
+            image_paths.append(img_path)
+        return image_paths
 
     def get_timezone(self):
         if not self.location:
@@ -88,6 +87,7 @@ class Webcam(BaseModel):
         # PointField stores as (x=lon, y=lat)
         tzname = tf.timezone_at(lng=self.location.x, lat=self.location.y)
         return pytz.timezone(tzname) if tzname else timezone.utc
+
 
 class Region(models.Model):
     id = models.CharField(primary_key=True)
