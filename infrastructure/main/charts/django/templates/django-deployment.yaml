@@ -1,4 +1,4 @@
-{{- $deploymentTag := .Values.image.tag | default .Chart.AppVersion -}}
+{{- $deploymentTag := .Values.global.image.tag | default .Chart.AppVersion -}}
 {{- $deploymentTime := now | date "2006-01-02 15:04:05.000000" -}}
 
 apiVersion: apps/v1
@@ -107,7 +107,7 @@ spec:
               mountPath: /app/images/webcams
           terminationMessagePolicy: File
           image: >-
-            {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
+            {{ .Values.image.repository  }}:{{ .Values.global.image.tag  }}
           readinessProbe:
             httpGet:
               path: /healthcheck/

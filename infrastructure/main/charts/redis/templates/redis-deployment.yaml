@@ -1,4 +1,4 @@
-{{- $deploymentTag := .Values.image.tag | default .Chart.AppVersion -}}
+{{- $deploymentTag := .Values.global.image.tag | default .Chart.AppVersion -}}
 {{- $deploymentTime := now | date "2006-01-02 15:04:05.000000" -}}
 
 apiVersion: apps/v1
@@ -35,7 +35,7 @@ spec:
           volumeMounts:
             - name: redis-1
               mountPath: /data
-          image: {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
+          image: {{ .Values.image.repository  }}:{{ .Values.global.image.tag  }}
           env:
             - name: DEPLOYMENT_TAG
               value: {{ $deploymentTag | quote }}

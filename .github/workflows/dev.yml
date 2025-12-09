@@ -1,151 +1,116 @@
 name: 1. Build & Deploy to Dev
-#Will automatically run on a push to main, but can also be run manually
 
+#Will automatically run on a push to main, but can also be run manually
 on:
   push:
     branches: [ "main" ]
     paths-ignore:
     - '.github/**'
+    - '.infrastructure/standbycheck/**'
+    - '.infrastructure/crunchy-postgres/**'
   workflow_dispatch:
 
-env:
-  ENVIRONMENT: dev
-  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-  REGISTRY_USER: ${{ github.actor }}
-  REGISTRY_PASSWORD: ${{ github.token }}
+permissions:
+  contents: read
+  packages: write
 
 jobs:
-  build-static:
+  setup: # Need to define variables this way because certain fields don't accept env variables (ie. environment)
     runs-on: ubuntu-latest
-    name: Build & Push Static Image
-    environment: dev
+    name: Setup Job to define outputs
+    outputs:
+      environment_name: dev
+      helm_release_name: dev-drivebc
+      image_registry: ghcr.io
+      image_repository: bcgov # In our case it's always bcgov
+      openshift_gold_url: https://dev-drivebc.apps.gold.devops.gov.bc.ca
+      openshift_golddr_url: https://dev-drivebc.apps.golddr.devops.gov.bc.ca
+      custom_tag: '' 
+      tag_for_helm: sha-${{ github.sha }} 
+    steps:
+      - name: Set outputs
+        run: echo "This step is required to set job outputs."
+
+  build-and-push:
+    needs: [setup]
+    runs-on: ubuntu-latest
+    name: Build & Push ${{ matrix.name }} Image
+    environment: ${{ needs.setup.outputs.environment_name }}
+    outputs:
+      tag: ${{ steps.meta.outputs.tags }}
+    strategy:
+      matrix:
+        include:
+          - name: Static
+            image_name: drivebc-static
+            dockerfile: ./compose/frontend/StaticBuild
+            build_args: ''
+            needs_fontawesome: true
+          - name: Django
+            image_name: drivebc-django
+            dockerfile: ./compose/backend/Dockerfile
+            build_args: |
+              DEBUG_BUILD=false
+            needs_fontawesome: false
+          - name: Redis
+            image_name: drivebc-redis
+            dockerfile: ./compose/redis/Dockerfile
+            build_args: ''
+            needs_fontawesome: false
+          - name: OpenShiftJobs
+            image_name: drivebc-openshiftjobs
+            dockerfile: ./compose/openshiftjobs/Dockerfile
+            build_args: ''
+            needs_fontawesome: false
+
+### EVERYTHING PAST THIS POINT SHOULD BE THE SAME IN DEV, TEST AND UAT WORKFLOWS ###            
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v6
 
-    - name: Build Static
-      id: build_image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        context: .
-        layers: true
-        image: drivebc-static
-        tags: latest latest-dev ${{ github.sha }}
-        labels: |
-          app=drivebc
-        containerfiles: ./compose/frontend/StaticBuild
-        build-args: |
-          FONTAWESOME_PACKAGE_TOKEN=${{ secrets.FONTAWESOME_PACKAGE_TOKEN }}
-          DEBUG_BUILD=true
-
-    - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
-
-  build-backend:
-    runs-on: ubuntu-latest
-    name: Build & Push Backend Image
-    environment: dev
-    
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-    
-    - name: Build Backend
-      id: build_image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        image: drivebc-django
-        tags: latest latest-dev ${{ github.sha }}
-        labels: |
-          app=drivebc
-        containerfiles: ./compose/backend/Dockerfile
-        build-args:
-          DEBUG_BUILD=true
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ needs.setup.outputs.image_registry }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
   
-    - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
-
-
-  build-redis:
-    runs-on: ubuntu-latest
-    name: Build & Push Redis Image
-    environment: dev
-    
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-    
-    - name: Build Redis
-      id: build_image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        image: drivebc-redis
-        tags: latest latest-dev ${{ github.sha }}
-        labels: |
-          app=drivebc
-        containerfiles: ./compose/redis/Dockerfile
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ needs.setup.outputs.image_registry }}/${{ needs.setup.outputs.image_repository }}/${{ matrix.image_name }}
+          tags: |
+            type=raw,value=latest
+            type=raw,value=latest-${{ needs.setup.outputs.environment_name }}
+            type=sha,format=long
+            ${{ needs.setup.outputs.custom_tag }}
+            
   
-    - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
-
-
-  build-openshiftjobs:
-    runs-on: ubuntu-latest
-    name: Build & Push OpenShift Jobs Image
-    environment: dev
-    
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Build OpenShift Jobs
-      id: build_image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        context: .
-        layers: true
-        image: drivebc-openshiftjobs
-        tags: latest latest-dev ${{ github.sha }}
-        labels: |
-          app=drivebc
-        containerfiles: ./compose/openshiftjobs/DockerFile
-
-    - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
-
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+  
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: ${{ matrix.build_args }}
+          secrets: |
+            ${{ matrix.needs_fontawesome && format('FONTAWESOME_PACKAGE_TOKEN={0}', secrets.FONTAWESOME_PACKAGE_TOKEN) || '' }}
 
   update-openshift-gold:
-    needs: [build-static, build-backend, build-redis, build-openshiftjobs]
+    needs: [setup, build-and-push]
     runs-on: ubuntu-latest
-    name: Deploy Latest Images to OpenShift Gold
+    name: Deploy to Gold. Tag ${{ needs.setup.outputs.tag_for_helm }}
     environment:
-      name: dev
-      url: https://dev-drivebc.apps.gold.devops.gov.bc.ca
+      name: ${{ needs.setup.outputs.environment_name }}
+      url: ${{ needs.setup.outputs.openshift_gold_url }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v6
@@ -164,16 +129,16 @@ jobs:
         insecure_skip_tls_verify: false
     - name: Helm upgrade on OpenShift Gold Environment
       run: |
-        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml ./infrastructure/main --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set image-consumer.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
+        helm upgrade ${{ needs.setup.outputs.helm_release_name }} -f ./infrastructure/main/values-${{ needs.setup.outputs.environment_name }}.yaml ./infrastructure/main --set global.image.tag="${{ needs.setup.outputs.tag_for_helm }}"
 
-  # I have this run after the push to Gold because I want to make sure that Gold runs the migrations first. Gold DR can't run migrations as DB is read-only
+  # GoldDR Runs after Gold Deployment due to GoldDR DB being read-only replica of Gold
   update-openshift-golddr:
-    needs: [update-openshift-gold] 
+    needs: [setup, update-openshift-gold] 
     runs-on: ubuntu-latest
-    name: Deploy Latest Images to OpenShift GoldDR
+    name: Deploy to GoldDR. Tag ${{ needs.setup.outputs.tag_for_helm }}
     environment:
-      name: dev
-      url: https://dev-drivebc.apps.golddr.devops.gov.bc.ca
+      name: ${{ needs.setup.outputs.environment_name }}
+      url: ${{ needs.setup.outputs.openshift_golddr_url }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v6
@@ -194,8 +159,7 @@ jobs:
 
     - name: Helm upgrade on OpenShift GoldDR Environment
       run: |
-        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml -f ./infrastructure/main/values-dev-dr.yaml ./infrastructure/main --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set image-consumer.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
-
+        helm upgrade ${{ needs.setup.outputs.helm_release_name }} -f ./infrastructure/main/values-${{ needs.setup.outputs.environment_name }}.yaml -f ./infrastructure/main/values-${{ needs.setup.outputs.environment_name }}-dr.yaml ./infrastructure/main --set global.image.tag="${{ needs.setup.outputs.tag_for_helm }}"
 
 
 #  automatedTests:

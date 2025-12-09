@@ -1,16 +1,11 @@
 name: 4. Promote from UAT to Prod
 
 on: 
-  workflow_dispatch: #Make sure you select a tag and not a branch if using manually
   release:
     types: [published]
 
-env:
-    IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-    REGISTRY_USER: ${{ github.actor }}
-    REGISTRY_PASSWORD: ${{ github.token }}
-
-permissions:
+permissions: 
+  contents: read
   packages: write
 
 jobs:
@@ -19,62 +14,65 @@ jobs:
     name: Create Tag Variable
     timeout-minutes: 1
     outputs:
-      tag: ${{ steps.vars.outputs.tag }}
+      tag: ${{ steps.create_tag.outputs.tag }}
 
     steps:
       - name: Set the tag variable
-        id: vars
+        id: create_tag
         run: |
           vtag=${{ github.ref_name }}
           echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
 
-#This job adds 'latest-prod' docker tags to the existing image in Github Packages so it's always clear which image is current for a particular environment
-  addDockerTag:
-    needs: [tag]
+  setup: # Need to define variables this way because certain fields don't accept env variables (ie. environment)
+    needs : [tag]
     runs-on: ubuntu-latest
-    name: Add latest-prod Tag
+    name: Setup Job to define outputs
+    outputs:
+      environment_name: prod
+      helm_release_name: prod-drivebc
+      image_registry: ghcr.io
+      image_repository: bcgov # In our case it's always bcgov
+      openshift_gold_url: https://prod-drivebc.apps.gold.devops.gov.bc.ca
+      openshift_golddr_url: https://prod-drivebc.apps.golddr.devops.gov.bc.ca
+      custom_tag: type=raw,value=${{ needs.tag.outputs.tag }}
+      tag_for_helm: ${{ needs.tag.outputs.tag }}
     steps:
-    - name: Add latest-prod tag to django image
-      uses: shrink/actions-docker-registry-tag@v4
-      with:
-        registry: ghcr.io
-        repository: bcgov/drivebc-django
-        target: ${{ needs.tag.outputs.tag }}
-        tags: |
-          latest-prod
-    - name: Add latest-prod tag to static image
-      uses: shrink/actions-docker-registry-tag@v4
-      with:
-        registry: ghcr.io
-        repository: bcgov/drivebc-static
-        target: ${{ needs.tag.outputs.tag }}
-        tags: |
-          latest-prod
-    - name: Add latest-prod tag to redis image
-      uses: shrink/actions-docker-registry-tag@v4
-      with:
-        registry: ghcr.io
-        repository: bcgov/drivebc-redis
-        target: ${{ needs.tag.outputs.tag }}
-        tags: |
-          latest-prod
+      - name: Set outputs
+        run: echo "This step is required to set job outputs."
 
-    - name: Add latest-prod tag to openshiftjobs image
+  #This job adds 'latest-prod' docker tags to the existing image in Github Packages so it's always clear which image is current for a particular environment
+  addDockerTag:
+    needs: [setup, tag]
+    runs-on: ubuntu-latest
+    name: Add latest-prod Tag to ${{ matrix.name }} Image
+    strategy:
+      matrix:
+        include:
+          - name: Django
+            image_name: bcgov/drivebc-django
+          - name: Static
+            image_name: bcgov/drivebc-static
+          - name: Redis
+            image_name: bcgov/drivebc-redis
+          - name: OpenShiftJobs
+            image_name: bcgov/drivebc-openshiftjobs
+    steps:
+    - name: Add Tag
       uses: shrink/actions-docker-registry-tag@v4
       with:
-        registry: ghcr.io
-        repository: bcgov/drivebc-openshiftjobs
+        registry: ${{ needs.setup.outputs.image_registry }}
+        repository: ${{ matrix.image_name }}
         target: ${{ needs.tag.outputs.tag }}
         tags: |
-          latest-prod
+          latest-${{ needs.setup.outputs.environment_name }}
 
   update-openshift-gold:
-    needs: [tag]
+    needs: [setup]
     runs-on: ubuntu-latest
-    name: Deploy Images to OpenShift Gold
+    name: Deploy to Gold. Tag ${{ needs.setup.outputs.tag_for_helm }}
     environment:
-      name: prod
-      url: https://www.drivebc.ca/
+      name: ${{ needs.setup.outputs.environment_name }}
+      url: ${{ needs.setup.outputs.openshift_gold_url }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v6
@@ -93,16 +91,16 @@ jobs:
         insecure_skip_tls_verify: false
     - name: Helm upgrade on OpenShift Gold Environment
       run: |
-        helm upgrade prod-drivebc -f ./infrastructure/main/values-prod.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set image-consumer.image.tag=${{ needs.tag.outputs.tag }} --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}" --set global.release="${{ github.event.release.name }}"
+        helm upgrade ${{ needs.setup.outputs.helm_release_name }} -f ./infrastructure/main/values-${{ needs.setup.outputs.environment_name }}.yaml ./infrastructure/main --set global.image.tag="${{ needs.setup.outputs.tag_for_helm }}" --set global.release="${{ github.event.release.name }}"
 
-  # I have this run after the push to Gold because I want to make sure that Gold runs the migrations first. Gold DR can't run migrations as DB is read-only
+  # GoldDR Runs after Gold Deployment due to GoldDR DB being read-only replica of Gold
   update-openshift-golddr:
-    needs: [tag, update-openshift-gold] 
+    needs: [setup, update-openshift-gold] 
     runs-on: ubuntu-latest
-    name: Deploy Images to OpenShift GoldDR
+    name: Deploy to GoldDR. Tag ${{ needs.setup.outputs.tag_for_helm }}
     environment:
-      name: prod
-      url: https://prod-drivebc.apps.golddr.devops.gov.bc.ca/
+      name: ${{ needs.setup.outputs.environment_name }}
+      url: ${{ needs.setup.outputs.openshift_golddr_url }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v6
@@ -123,4 +121,4 @@ jobs:
 
     - name: Helm upgrade on OpenShift GoldDR Environment
       run: |
-        helm upgrade prod-drivebc -f ./infrastructure/main/values-prod.yaml -f ./infrastructure/main/values-prod-dr.yaml ./infrastructure/main --set django.image.tag="${{ needs.tag.outputs.tag }}" --set redis.image.tag="${{ needs.tag.outputs.tag }}" --set static.image.tag="${{ needs.tag.outputs.tag }}" --set tasks.image.tag="${{ needs.tag.outputs.tag }}" --set image-consumer.image.tag=${{ needs.tag.outputs.tag }} --set openshiftjobs.image.tag="${{ needs.tag.outputs.tag }}" --set global.release="${{ github.event.release.name }}"
+        helm upgrade ${{ needs.setup.outputs.helm_release_name }} -f ./infrastructure/main/values-${{ needs.setup.outputs.environment_name }}.yaml -f ./infrastructure/main/values-${{ needs.setup.outputs.environment_name }}-dr.yaml ./infrastructure/main --set global.image.tag="${{ needs.setup.outputs.tag_for_helm }}" --set global.release="${{ github.event.release.name }}"

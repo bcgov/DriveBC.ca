@@ -1,4 +1,4 @@
-{{- $deploymentTag := .Values.image.tag | default .Chart.AppVersion -}}
+{{- $deploymentTag := .Values.global.image.tag | default .Chart.AppVersion -}}
 {{- $deploymentTime := now | date "2006-01-02 15:04:05.000000" -}}
 {{- if .Values.cronjobs.backupmediapvc.enabled }}
 apiVersion: batch/v1
@@ -78,7 +78,7 @@ spec:
                   value: {{ $value | quote }}
                 {{- end }}
               imagePullPolicy: IfNotPresent
-              image: {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
+              image: {{ .Values.image.repository  }}:{{ .Values.global.image.tag  }}
               securityContext:
                 seccompProfile:
                   type: 'RuntimeDefault'
