@@ -25,7 +25,9 @@ metadata:
   name: {{ include "app.fullname" . }}-allow-same-namespace
   labels: {{ include "app.labels" . | nindent 4 }}
 spec:
-  podSelector: {}
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "app.fullname" . }}
   ingress:
     - from:
         - podSelector: {}

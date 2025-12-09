@@ -8,6 +8,7 @@ metadata:
     haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
     {{ end }}
     haproxy.router.openshift.io/disable_cookies: 'true'
+    haproxy.router.openshift.io/set-forwarded-headers: replace
 spec:
   host: {{ .Values.route.host  }} 
   to:
@@ -30,6 +31,7 @@ metadata:
   annotations:
     "helm.sh/resource-policy": keep
     haproxy.router.openshift.io/disable_cookies: 'true'
+    haproxy.router.openshift.io/set-forwarded-headers: replace
     {{ if .Values.route.iprestricted }}
     haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
     {{ end }}
@@ -56,6 +58,7 @@ metadata:
   annotations:
     "helm.sh/resource-policy": keep
     haproxy.router.openshift.io/disable_cookies: 'true'
+    haproxy.router.openshift.io/set-forwarded-headers: replace
     {{ if .Values.route.iprestricted }}
     haproxy.router.openshift.io/ip_whitelist: {{ .Values.global.route.ipallowlist  }}
     {{ end }}
@@ -80,6 +83,7 @@ metadata:
   name: {{ template "app.fullname" $ }}-{{ . | replace "." "-" }}-redirect
   annotations:
     haproxy.router.openshift.io/disable_cookies: 'true'
+    haproxy.router.openshift.io/set-forwarded-headers: replace
 spec:
   host: {{ . }}
   to:

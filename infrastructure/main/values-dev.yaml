@@ -6,8 +6,6 @@ global:
   vault:
     licenceplate: a781ec # This is the license plate you are deploying to. It is used to determine the vault path
     environment: nonprod #Set to prod if you want to use the prod vault or nonprod for dev/test/uat
-  route:
-    ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
   release: # This is set by Github actions for the prod release. Do not change this value.
 
 django:
@@ -38,13 +36,6 @@ django:
     minReplicas: 1
     maxReplicas: 2
     targetCPUUtilizationPercentage: 75
-  route:
-    host: dev-drivebc.apps.gold.devops.gov.bc.ca
-    iprestricted: false #Set to true if you want to limit IP's that can access publicly available pages to the the addresses in the ipallowlist 
-    iprestrictedAdminPages: false #Set to true if you want to limit IP's that can access backend admin pages
-    vanityurl: 
-      enabled: true
-      vanityurlhost: dev.drivebc.ca # You will need to add the cert manually
   mediapvc:
     storage: 1Gi
   apppvc:
@@ -54,7 +45,9 @@ django:
     minAvailable:  
   prometheus:
     enabled: false # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
-
+  apigateway: # Used for the connection from the API Gateway to the django application
+    enabled: true # Set to true if you want to expose the django app via the API Gateway
+    namespace: b8840c # This is the namespace that the API Gateway is deployed in
 
 tasks:
   fullnameOverride: dev-drivebc-tasks
@@ -176,15 +169,12 @@ static:
 openshiftjobs:
   fullnameOverride: dev-drivebc-openshiftjobs
   nameOverride: dev-drivebc-openshiftjobs
-
   image:
     repository: ghcr.io/bcgov/drivebc-openshiftjobs
     tag: latest-dev
-
   vault:
     secretName: dev-cronjobs  # This is the name of the secret in vault that contains the environment variables for the app
     authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
-
   cronjobs:
     analyzeuploadlogs:
       name: analyzeuploadlogs

@@ -9,8 +9,6 @@ django:
   vault:
     secretName: dev-django  # This is the name of the secret in vault that contains the environment variables for the app
     authPath: auth/k8s-golddr # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
-  route:
-    host: dev-drivebc.apps.golddr.devops.gov.bc.ca # Just the OpenShift URL. Vanity URL is same as Gold
 
 tasks:
   replicaCount: 0

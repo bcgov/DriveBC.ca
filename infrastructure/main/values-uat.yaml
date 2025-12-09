@@ -54,6 +54,9 @@ django:
     minAvailable: 1
   prometheus:
     enabled: false # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
+  apigateway: # Used for the connection from the API Gateway to the django application
+    enabled: true # Set to true if you want to expose the django app via the API Gateway
+    namespace: b8840c # This is the namespace that the API Gateway is deployed in
 
 
 tasks:
@@ -176,15 +179,12 @@ static:
 openshiftjobs:
   fullnameOverride: uat-drivebc-openshiftjobs
   nameOverride: uat-drivebc-openshiftjobs
-
   image:
     repository: ghcr.io/bcgov/drivebc-openshiftjobs
     tag: latest-uat
-
   vault:
     secretName: uat-cronjobs  # This is the name of the secret in vault that contains the environment variables for the app
     authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
-
   cronjobs:
     analyzeuploadlogs:
       name: analyzeuploadlogs
