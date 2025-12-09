@@ -20,7 +20,16 @@
       display: flex;
       justify-content: space-between;
       margin: 0.25rem 0 0.5rem 0;
+      flex-direction: row;
 
+      @media (min-width: 576px) {
+        flex-direction: column;
+      }
+      
+      @media (min-width: 768px) {
+        flex-direction: row;
+      }
+      
       .forecast-name {
         font-size: 1rem;
         font-weight: 700;

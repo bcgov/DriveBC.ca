@@ -220,16 +220,6 @@ button.close-filters-legacy {
 
         }
 
-        &--wildfires {
-          .filter-item__button {
-            &__icon {
-              svg{
-                align-self: anchor-center;
-              }
-            }
-          }
-        }
-
         &.checked {
           .filter-item__button {
             background-color: $BC-Blue;

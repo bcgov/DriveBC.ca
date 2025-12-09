@@ -348,10 +348,7 @@
       @media (min-width: 1200px) {
         gap: initial;
       }
-
-      &__right {
-
-      }
+      
       .nearby-weathers-container {
         .popup {
           &:focus {
@@ -360,17 +357,6 @@
           }
         }
       }
-      .forecast-card {
-        container-name: card;
-        container-type: inline-size;
-        @container card (width < 227px) {
-          .header {
-            flex-direction: column;
-          }
-        }
-
-      }
-
 
       .forecast-cards-container {
         flex-direction: column;
