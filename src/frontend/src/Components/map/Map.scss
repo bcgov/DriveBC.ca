@@ -195,12 +195,6 @@
         margin-left: 0;
         transition: margin-left 0.25s ease-in-out;
 
-        @media (max-width: 768px) {
-          &.error-showing {
-            top: 100px;
-          }
-        }
-
         @media (min-width: 768px) {
           width: initial;
         }
