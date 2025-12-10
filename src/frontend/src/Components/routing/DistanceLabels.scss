@@ -35,6 +35,11 @@
     background-color: $Focus;
     color: $White;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
+
+    .index-label {
+      color: $Focus;
+      border: 1px solid $Focus;
+    }
   }
 
   &:not(.selected):hover {
