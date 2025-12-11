@@ -172,6 +172,10 @@
 
   .events-list-table {
     margin-top: 32px;
+
+    .next_update .friendly-time__tooltip {
+      left: 0;
+    }
   }
 
   .empty-event-display {
