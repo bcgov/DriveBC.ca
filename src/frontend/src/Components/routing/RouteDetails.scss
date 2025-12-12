@@ -194,8 +194,9 @@
       }
 
       &--advisories {
-        background: #FEF0D8;
-        color: $Gold110;
+        background: $Advisory-Bg;
+        border: 1px solid $Advisory-Text;
+        color: $Advisory-Text;
       }
 
       &:first-of-type {
