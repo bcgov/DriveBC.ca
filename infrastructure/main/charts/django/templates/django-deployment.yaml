@@ -117,7 +117,7 @@ spec:
                 - name: host
                   value: localhost
             initialDelaySeconds: 10
-            timeoutSeconds: 5
+            timeoutSeconds: 10
             periodSeconds: 10
             successThreshold: 1
             failureThreshold: 5
@@ -130,7 +130,7 @@ spec:
                 - name: host
                   value: localhost
             initialDelaySeconds: 60
-            timeoutSeconds: 5
+            timeoutSeconds: 10
             periodSeconds: 60
             successThreshold: 1
             failureThreshold: 3

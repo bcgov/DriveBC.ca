@@ -20,10 +20,10 @@ django:
   deployment:
     resources:
       requests:
-        cpu: 200m
-        memory: 250Mi
-      limits:
+        cpu: 250m
         memory: 500Mi
+      limits:
+        memory: 1Gi
     env:
       postgresSecret: prod-drivebc-db-crunchy-pguser-prod-drivebc-db
       variables:
@@ -37,7 +37,7 @@ django:
     enabled: true
     minReplicas: 3
     maxReplicas: 5
-    targetCPUUtilizationPercentage: 200
+    targetCPUUtilizationPercentage: 150
   route:
     host: prod-drivebc.apps.gold.devops.gov.bc.ca
     iprestricted: false #Set to true if you want to limit IP's that can access publicly available pages to the the addresses in the ipallowlist 
