@@ -191,13 +191,8 @@
 
       .map-left-container {
         position: absolute;
-        width: 100%;
         margin-left: 0;
         transition: margin-left 0.25s ease-in-out;
-
-        @media (min-width: 768px) {
-          width: initial;
-        }
       }
 
       .ol-zoom .ol-zoom-out {
