@@ -2,7 +2,6 @@ import datetime
 from zoneinfo import ZoneInfo
 
 from apps.event.enums import EVENT_DISPLAY_CATEGORY, EVENT_SEVERITY
-from config import settings
 
 
 def parse_recurring_datetime(date_string, time_string):
@@ -43,12 +42,3 @@ def get_display_category(event, test_datetime=None):
     return EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS \
         if event.severity == EVENT_SEVERITY.MAJOR \
         else EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
-
-
-def get_site_link(event, route):
-    return (
-        f'{settings.FRONTEND_BASE_URL}?type=event&display_category={event.display_category}&id={event.id}'
-        f'&route_start={route.start}&route_start_point={route.start_point.x},{route.start_point.y}'
-        f'&route_end={route.end}&route_end_point={route.end_point.x},{route.end_point.y}'
-        f'&route_distance={route.distance}'
-    )

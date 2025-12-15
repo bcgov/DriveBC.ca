@@ -12,8 +12,8 @@ from apps.event.enums import (
     EVENT_TYPE,
     EVENT_UPDATE_FIELDS,
 )
-from apps.event.helpers import get_display_category, get_site_link
-from apps.event.models import Event
+from apps.event.helpers import get_display_category
+from apps.event.models import Event, QueuedEventNotification
 from apps.event.serializers import EventInternalSerializer
 from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
@@ -216,7 +216,7 @@ def populate_all_event_data():
     cache.delete(CacheKey.EVENT_LIST_POLLING)
 
     # Send notifications
-    send_event_notifications(updated_event_ids)
+    queue_event_notifications(updated_event_ids)
 
 
 def get_image_type_file_name(event):
@@ -245,6 +245,13 @@ def get_image_type_file_name(event):
 
     else:
         return icon_name_map.get(event.display_category, 'incident-minor.png')
+
+
+def get_unique_image_type_files_names(events):
+    unique_file_names = set()
+    for event in events:
+        unique_file_names.add(get_image_type_file_name(event))
+    return list(unique_file_names)
 
 
 def get_notification_routes(dt=None):
@@ -276,9 +283,9 @@ def get_notification_routes(dt=None):
     return filtered_routes
 
 
-def send_event_notifications(updated_event_ids, dt=None):
+def queue_event_notifications(updated_event_ids, dt=None):
     for saved_route in get_notification_routes(dt):
-        send_route_event_notifications(saved_route, updated_event_ids)
+        queue_route_event_notifications(saved_route, updated_event_ids)
 
 
 def generate_settings_message(route, test_time=None):
@@ -331,7 +338,7 @@ def generate_settings_message(route, test_time=None):
     return msg
 
 
-def send_route_event_notifications(saved_route, updated_event_ids):
+def queue_route_event_notifications(saved_route, updated_event_ids):
     # Apply a 150m buffer to the route geometry
     saved_route.route.transform(3857)
     buffered_route = saved_route.route.buffer(150)
@@ -343,16 +350,91 @@ def send_route_event_notifications(saved_route, updated_event_ids):
         display_category__in=saved_route.notification_types  # Only notify for selected event types
     )
 
+    queued_notifications = []
     if updated_interecting_events.count() > 0:
         for event in updated_interecting_events:
+            queued_notifications.append(QueuedEventNotification(route_id=saved_route.id, event_id=event.id))
+
+    QueuedEventNotification.objects.bulk_create(queued_notifications, ignore_conflicts=True)
+
+
+def update_event_area_relations():
+    for event in Event.objects.all():
+        intersecting_areas = Area.objects.filter(geometry__intersects=event.location)
+        event.area.set(intersecting_areas)
+
+
+def merge_multilinestring(multilinestring):
+    # Flatten all coordinates from each LineString in the MultiLineString
+    coords = []
+    for line in multilinestring:
+        coords.extend(line.coords)
+    ls = LineString(coords, srid=multilinestring.srid)
+
+    # Apply a 150m buffer to the route geometry
+    ls.transform(3857)
+    buffered_route = ls.buffer(150)
+    buffered_route.transform(4326)
+
+    return buffered_route
+
+
+def get_event_reference_point(event_location, route):
+    # If event_location is a Point, return as is
+    if event_location.geom_type == 'Point':
+        return event_location
+
+    # If event_location is a LineString, get intersection with route
+    elif event_location.geom_type == 'LineString':
+        intersection = event_location.intersection(route)
+        # If intersection is a Point, return it
+        if intersection.geom_type == 'Point':
+            return intersection
+
+        # If intersection is a MultiPoint or LineString, return centroid or first point
+        elif intersection.geom_type in ['MultiPoint', 'LineString']:
+            return intersection.centroid
+
+    # Fallback: return centroid
+    return event_location.centroid
+
+
+def get_ordered_events(events, route):
+    events = list(events)
+    event_distances = []
+    for event in events:
+        # Get reference point from buffered route
+        ref_point = get_event_reference_point(event.location, merge_multilinestring(route))
+        distance = route.project(ref_point)
+        event_distances.append((distance, event))
+
+    # Sort events by distance along the route
+    event_distances.sort(key=lambda x: x[0])
+    ordered_events = [e for _, e in event_distances]
+
+    return ordered_events
+
+
+def send_queued_notifications():
+    active_events = Event.objects.filter(status=EVENT_STATUS.ACTIVE)
+    queued_notification_ids = []
+
+    for route_id in QueuedEventNotification.objects.values_list('route_id', flat=True).distinct():
+        saved_route = SavedRoutes.objects.filter(id=route_id).first()
+        if saved_route:  # Skip is route is missing
+            queued_notifications = QueuedEventNotification.objects.filter(route_id=saved_route.id)
+
+            # Notifications to delete
+            queued_notification_ids += queued_notifications.values_list('id', flat=True)
+
+            queued_event_ids = queued_notifications.values_list('event_id', flat=True)
+            events = active_events.filter(id__in=queued_event_ids)  # filter out inactive events
+            ordered_events = get_ordered_events(events, saved_route.route)
             context = {
-                'event': event,
+                'events': ordered_events,
                 'route': saved_route,
                 'user': saved_route.user,
                 'from_email': settings.DRIVEBC_FROM_EMAIL_DEFAULT,
-                'display_category': event.display_category,
-                'display_category_title': event.display_category_title,
-                'site_link': get_site_link(event, saved_route),
                 'footer_message': generate_settings_message(saved_route),
                 'fe_base_url': settings.FRONTEND_BASE_URL,
             }
@@ -360,8 +442,9 @@ def send_route_event_notifications(saved_route, updated_event_ids):
             text = render_to_string('email/event_updated.txt', context)
             html = render_to_string('email/event_updated.html', context)
 
+            update_text = 'updates' if len(ordered_events) > 1 else 'update'
             msg = EmailMultiAlternatives(
-                f'DriveBC route update: {saved_route.label}' if saved_route.label else 'DriveBC route update',
+                f'DriveBC: {len(ordered_events)} {update_text} on {saved_route.label}',
                 text,
                 settings.DRIVEBC_FROM_EMAIL_DEFAULT,
                 [saved_route.user.email]
@@ -369,13 +452,13 @@ def send_route_event_notifications(saved_route, updated_event_ids):
 
             # image attachments
             attach_default_email_images(msg)
-            attach_image_to_email(msg, 'dclogo', get_image_type_file_name(event))
+
+            file_names = get_unique_image_type_files_names(events)
+            for fn in file_names:
+                attach_image_to_email(msg, fn.split('.')[0], fn)  # use file name (without extension) as cid
 
             msg.attach_alternative(html, 'text/html')
             msg.send()
 
-
-def update_event_area_relations():
-    for event in Event.objects.all():
-        intersecting_areas = Area.objects.filter(geometry__intersects=event.location)
-        event.area.set(intersecting_areas)
+    # Clear sent notifications
+    QueuedEventNotification.objects.filter(id__in=queued_notification_ids).delete()
