@@ -26,6 +26,7 @@ export function getRoute(points, alternate=false) {
 //    roundTrip: false
   }
 
+  // Alternate route params
   if (alternate) {
     payload.criteria = 'shortest';
 
@@ -37,6 +38,19 @@ export function getRoute(points, alternate=false) {
 
     const defaultTurnCost = '3.0,1.0,10.0,5.0';
     payload.turnCost = (window.ALTERNATE_ROUTE_TURNCOST && window.ALTERNATE_ROUTE_TURNCOST !== 'undefined') ? window.ALTERNATE_ROUTE_TURNCOST : defaultTurnCost;
+
+  // Primary route params
+  } else {
+    const defaultGdf = 'resource:2.0,';
+    payload.gdf = (window.PRIMARY_ROUTE_GDF && window.PRIMARY_ROUTE_GDF !== 'undefined') ? window.PRIMARY_ROUTE_GDF : defaultGdf;
+
+    if (window.PRIMARY_ROUTE_XINGCOST && window.PRIMARY_ROUTE_XINGCOST !== 'undefined') {
+      payload.xingCost = window.PRIMARY_ROUTE_XINGCOST;
+    }
+
+    if (window.PRIMARY_ROUTE_TURNCOST && window.PRIMARY_ROUTE_TURNCOST !== 'undefined') {
+      payload.turnCost = window.PRIMARY_ROUTE_TURNCOST;
+    }
   }
 
   return get(url, payload, {
