@@ -1,20 +1,26 @@
-from apps.event.models import Event
-from apps.event.tasks import send_event_notifications
+from apps.event.models import Event, QueuedEventNotification
+from apps.event.tasks import queue_event_notifications
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 
 
 @admin.action(description="Send route notifications")
-def send_route_notifications(modeladmin, request, queryset):
-    send_event_notifications(list(queryset.values_list('id', flat=True)))
+def queue_route_notifications(modeladmin, request, queryset):
+    queue_event_notifications(list(queryset.values_list('id', flat=True)))
 
 
 class EventAdmin(ModelAdmin):
     readonly_fields = ('id', )
-    actions = [send_route_notifications]
+    actions = [queue_route_notifications]
     list_display = ('id', 'event_type', 'display_category',
                     'event_sub_type', 'severity', 'closed',
                     'first_created', 'last_updated')
 
 
+class QueuedEventNotificationAdmin(ModelAdmin):
+    readonly_fields = ('id', 'created_at', 'modified_at')
+    list_display = ('id', 'event_id', 'route_id', 'created_at')
+
+
+admin.site.register(QueuedEventNotification, QueuedEventNotificationAdmin)
 admin.site.register(Event, EventAdmin)

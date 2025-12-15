@@ -93,3 +93,11 @@ class Event(BaseModel):
     def optimized_description(self):
         from apps.event.serializers import optimize_description
         return optimize_description(self.description)
+
+
+class QueuedEventNotification(BaseModel):
+    route_id = models.PositiveIntegerField()
+    event_id = models.CharField(max_length=32)
+
+    class Meta:
+        unique_together = ('route_id', 'event_id')

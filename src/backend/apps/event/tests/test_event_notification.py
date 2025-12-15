@@ -11,7 +11,11 @@ from apps.event.enums import (
     EVENT_TYPE,
 )
 from apps.event.models import Event
-from apps.event.tasks import generate_settings_message, send_event_notifications
+from apps.event.tasks import (
+    generate_settings_message,
+    queue_event_notifications,
+    send_queued_notifications,
+)
 from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core import mail
 from django.test import TestCase
@@ -183,66 +187,93 @@ class SendEventNotificationsTest(TestCase):
         self.non_intersecting_event.save()
 
     def test_always_active_route(self):
-        send_event_notifications(
+        queue_event_notifications(
             ['intersecting'],
             dt=datetime.datetime(
-                2025, 1, 8, 10, 0,  # Outside all conditional day or date ranges
+                2025, 1, 8, 10, 0,
                 tzinfo=ZoneInfo('America/Vancouver')
             )
         )
+
+        send_queued_notifications()
+
+        # One email for always active route
         assert len(mail.outbox) == 1
-        assert 'Always Active Route' in mail.outbox[0].subject
-        assert 'Intersecting Event' in mail.outbox[0].body
-        assert 'verifieduser@example.com' in mail.outbox[0].to
+        email = mail.outbox[0]
+        assert 'Always Active Route' in email.subject
+        assert 'Intersecting Event' in email.body
+        assert 'verifieduser@example.com' in email.to
 
     def test_day_and_time_route(self):
-        send_event_notifications(
+        queue_event_notifications(
             ['intersecting'],
             dt=datetime.datetime(
-                2025, 1, 7, 10, 0,  # Tuesday
+                2025, 1, 7, 10, 0,
                 tzinfo=ZoneInfo('America/Vancouver')
             )
         )
 
-        assert len(mail.outbox) == 2  # day and time route and always active route
-        assert 'Day and Time Route' in mail.outbox[1].subject
+        send_queued_notifications()
+
+        # One email for always active route and one for day and time route
+        assert len(mail.outbox) == 2
+        subjects = [email.subject for email in mail.outbox]
+        assert any('Always Active Route' in subject for subject in subjects)
+        assert any('Day and Time Route' in subject for subject in subjects)
 
     def test_date_and_time_range_route(self):
-        send_event_notifications(
+        queue_event_notifications(
             ['intersecting'],
             dt=datetime.datetime(
-                2023, 10, 12, 10, 0,  # Within 10/10-10/20
+                2023, 10, 12, 10, 0,
                 tzinfo=ZoneInfo('America/Vancouver')
             )
         )
 
-        assert len(mail.outbox) == 2  # date and time route and always active route
-        assert 'Date and Time Range Route' in mail.outbox[1].subject
+        send_queued_notifications()
+
+        # One email for always active route and one for date and time range route
+        assert len(mail.outbox) == 2
+        subjects = [email.subject for email in mail.outbox]
+        assert any('Always Active Route' in subject for subject in subjects)
+        assert any('Date and Time Range Route' in subject for subject in subjects)
 
     def test_specific_date_and_time_route(self):
-        send_event_notifications(
+        queue_event_notifications(
             ['intersecting'],
             dt=datetime.datetime(
-                2023, 10, 11, 10, 0,  # Within 10/10-10/20, exactly 10/11
+                2023, 10, 11, 10, 0,
                 tzinfo=ZoneInfo('America/Vancouver')
             )
         )
 
-        assert len(mail.outbox) == 3  # date and time route and always active route
-        assert 'Specific Date and Time Route' in mail.outbox[2].subject
+        send_queued_notifications()
+
+        # One more email for specific date and time route
+        assert len(mail.outbox) == 3
+        subjects = [email.subject for email in mail.outbox]
+        assert any('Always Active Route' in subject for subject in subjects)
+        assert any('Date and Time Range Route' in subject for subject in subjects)
+        assert any('Specific Date and Time Route' in subject for subject in subjects)
 
     def test_restricted_types(self):
-        send_event_notifications(
+        queue_event_notifications(
             ['intersecting_minor'],
             dt=datetime.datetime(
-                2025, 1, 8, 10, 0,  # Outside all conditional day or date ranges
+                2025, 1, 8, 10, 0,
                 tzinfo=ZoneInfo('America/Vancouver')
             )
         )
-        assert len(mail.outbox) == 2  # always active and type restricted routes
-        assert 'Always Active Route' in mail.outbox[0].subject
-        assert 'Always Active Minor Route' in mail.outbox[1].subject
-        assert 'Intersecting Event Minor' in mail.outbox[1].body
+
+        send_queued_notifications()
+
+        # One email for always active route and one for restricted types route
+        assert len(mail.outbox) == 2
+        subjects = [email.subject for email in mail.outbox]
+        bodies = [email.body for email in mail.outbox]
+        assert any('Always Active Route' in subject for subject in subjects)
+        assert any('Always Active Minor Route' in subject for subject in subjects)
+        assert any('Intersecting Event Minor' in body for body in bodies)
 
     def test_generate_footer_message(self):
         # All notification types

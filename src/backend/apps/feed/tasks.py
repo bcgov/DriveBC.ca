@@ -1,7 +1,7 @@
 import datetime
 
 from apps.border.tasks import update_border_crossing_lanes
-from apps.event.tasks import populate_all_event_data
+from apps.event.tasks import populate_all_event_data, send_queued_notifications
 from apps.ferry.tasks import populate_all_ferry_data, populate_coastal_ferry_data
 from apps.rest.tasks import populate_all_rest_stop_data
 from apps.shared.tasks import populate_all_district_data, update_object_relations
@@ -12,12 +12,12 @@ from apps.weather.tasks import (
 )
 from apps.webcam.tasks import (
     add_order_to_cameras,
+    backup_purge_old_images,
     build_route_geometries,
     populate_all_webcam_data,
+    purge_old_images,
     update_all_webcam_data,
     update_camera_nearby_objs,
-    purge_old_images,
-    backup_purge_old_images,
 )
 from apps.wildfire.tasks import populate_all_wildfire_data
 from django.core.cache import cache
@@ -37,15 +37,18 @@ def populate_webcam_task():
 def update_camera_task():
     update_all_webcam_data()
 
+
 @db_periodic_task(crontab(minute="*/1"))
 @lock_task('purge-image-lock')
 def purge_image_task():
     purge_old_images()
 
+
 @db_periodic_task(crontab(minute=0, hour=0))
 @lock_task('backup-purge-image-lock')
 def backup_purge_image_task():
     backup_purge_old_images()
+
 
 @db_periodic_task(crontab(hour="*/1", minute="0"))
 @lock_task('update-camera-nearby-lock')
@@ -57,6 +60,12 @@ def update_camera_nearby_objs_task():
 @lock_task('events-lock')
 def populate_event_task():
     populate_all_event_data()
+
+
+@db_periodic_task(crontab(minute="*/5"))
+@lock_task('notifications-lock')
+def send_queued_event_notifications():
+    send_queued_notifications()
 
 
 @db_periodic_task(crontab(hour="*/1", minute="0"))

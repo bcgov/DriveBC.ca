@@ -12,7 +12,7 @@ def timed(method):
         method(*args, **kw)
         te = time.time()
 
-        print('%r  %2.2f ms' % (method.__name__, (te - ts) * 1000))
+        print(f'{method.__name__!r}  {(te - ts) * 1000:2.2f} ms')
 
     return inner
 
