@@ -5,6 +5,7 @@ from allauth.account.decorators import secure_admin_login
 from apps.authentication import views as auth_views
 from apps.shared import views as shared_views
 from apps.shared.views import static_override
+from debug_toolbar.toolbar import debug_toolbar_urls
 from django.conf import settings
 from django.conf.urls import defaults
 from django.conf.urls.static import static
@@ -99,8 +100,7 @@ urlpatterns = [
     # Actual webcam endpoints
     path("api/webcams/", include("apps.webcam.urls")),
 
-    # TO BE REMOVED IN PRODUCTION
-] + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + debug_toolbar_urls() + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 if settings.DEV_ENVIRONMENT:
