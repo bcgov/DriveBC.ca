@@ -50,7 +50,7 @@ export default function Footer(props) {
             <a href="https://www.instagram.com/ministryoftranbc/" className="footer-link social-icon" rel="noreferrer"  alt="Instagram" aria-label="Instagram">
               <FontAwesomeIcon icon={faInstagram}/>
             </a>
-            <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-infrastructure/" className="footer-link social-icon" rel="noreferrer" alt="Linkedin" aria-label="Linkedin">
+            <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-transit/" className="footer-link social-icon" rel="noreferrer" alt="Linkedin" aria-label="Linkedin">
               <FontAwesomeIcon icon={faLinkedin}/>
             </a>
           </div>

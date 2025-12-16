@@ -25,7 +25,7 @@ export default function SocialSharing() {
         <a href="https://www.instagram.com/ministryoftranbc/" className="footer-link" rel="noreferrer"  alt="Instagram">
           <FontAwesomeIcon icon={faInstagram}/>
         </a>
-        <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-infrastructure/" className="footer-link" rel="noreferrer" alt="Linkedin" >
+        <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-transit/" className="footer-link" rel="noreferrer" alt="Linkedin" >
           <FontAwesomeIcon icon={faLinkedin}/>
         </a>
         <a href="" className="footer-link" rel="noreferrer" alt="Email" >
