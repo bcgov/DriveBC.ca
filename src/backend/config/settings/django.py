@@ -49,6 +49,7 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
@@ -68,6 +69,16 @@ TEMPLATES = [
         },
     },
 ]
+
+# Django Debug Toolbar settings
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
+SHOW_DEBUG_TOOLBAR = env('SHOW_DEBUG_TOOLBAR', default=False)
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': lambda request: SHOW_DEBUG_TOOLBAR,
+}
 
 # Auth
 AUTH_USER_MODEL = "authentication.DriveBCUser"
@@ -119,6 +130,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_gis",
+    'debug_toolbar',
     "django_filters",
     "drf_recaptcha",
     "corsheaders",
