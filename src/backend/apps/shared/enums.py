@@ -51,7 +51,7 @@ class CacheTimeout:
     CURRENT_WEATHER_LIST = 60 * 15 # 15 minutes
     HIGH_ELEVATION_LIST = 60 * 15 # 15 minutes
     REST_STOP_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
-    WILDFIRES_LIST = 60 * 15  # 15 minutes as this data doesn't change that often
+    WILDFIRE_LIST = 60 * 15  # 15 minutes as this data doesn't change that often
     BORDER_CROSSING_LIST = 60 * 5  # 5 minutes
 
 
@@ -69,7 +69,7 @@ class CacheKey:
     CURRENT_WEATHER_LIST = 'current_weather_list'
     HIGH_ELEVATION_LIST = 'high_elevation_list'
     REST_STOP_LIST = "rest_stop_list"
-    WILDFIRES_LIST = "wildfires_list"
+    WILDFIRE_LIST = "wildfire_list"
     BORDER_CROSSING_LIST = 'border_crossing_list'
     
 
