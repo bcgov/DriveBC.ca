@@ -101,6 +101,7 @@ def populate_coastal_ferry_data(test_data=None):
     if 'stop_times.txt' in csv_data:
         populate_coastal_ferry_stop_times(csv_data['stop_times.txt'])
 
+    cache.delete(CacheKey.COASTAL_FERRY_LIST)
 
 def populate_coastal_ferry_stops(stops_data):
     for stop in stops_data:

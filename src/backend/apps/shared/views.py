@@ -229,6 +229,12 @@ class session(APIView):
         return response
 
 
-class DistrictViewSet(viewsets.ReadOnlyModelViewSet):
+class DistrictAPI(CachedListModelMixin):
     queryset = Area.objects.all()
     serializer_class = DistrictViewSerializer
+    cache_key = CacheKey.DISTRICT_LIST
+    cache_timeout = CacheTimeout.DISTRICT_LIST
+
+
+class DistrictViewSet(DistrictAPI, viewsets.ReadOnlyModelViewSet):
+    pass

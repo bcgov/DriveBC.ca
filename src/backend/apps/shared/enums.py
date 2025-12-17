@@ -46,13 +46,14 @@ class CacheTimeout:
     WEBCAM_LIST = 60*1  # 1min
     EVENT_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
     FERRY_LIST = 60*60*24  # 24hr
-    COASTAL_FERRY_LIST = 60*60*24  # 24hr
+    COASTAL_FERRY_LIST = 60*60*24  # 24hr. 
     REGIONAL_WEATHER_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
     CURRENT_WEATHER_LIST = 60 * 15 # 15 minutes
     HIGH_ELEVATION_LIST = 60 * 15 # 15 minutes
     REST_STOP_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
-    WILDFIRE_LIST = 60 * 15  # 15 minutes as this data doesn't change that often
-    BORDER_CROSSING_LIST = 60 * 5  # 5 minutes
+    WILDFIRE_LIST = 60 * 15  # 15 minutes
+    BORDER_CROSSING_LIST = 60 * 15  # 15 minutes
+    DISTRICT_LIST = 60 * 60 * 24 # 24 hours 
 
 
 class CacheKey:
@@ -71,6 +72,7 @@ class CacheKey:
     REST_STOP_LIST = "rest_stop_list"
     WILDFIRE_LIST = "wildfire_list"
     BORDER_CROSSING_LIST = 'border_crossing_list'
+    DISTRICT_LIST = 'district_list'
     
 
 

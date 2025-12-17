@@ -4,6 +4,8 @@ from apps.feed.client import FeedClient
 from apps.wildfire.models import Wildfire
 from apps.wildfire.serializers import WildfireInternalSerializer
 from django.core.exceptions import ObjectDoesNotExist
+from apps.shared.enums import CacheKey
+from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
@@ -66,3 +68,6 @@ def populate_all_wildfire_data():
     logger.warning("active wildfire count: %s", len(active_wildfires))
     if len(active_wildfires) > 0:  # 2025/09/09 hotfix to prevent deletion of all wildfires
         Wildfire.objects.exclude(id__in=active_wildfires).delete()
+
+    # Rebuild cache
+    cache.delete(CacheKey.WILDFIRE_LIST)

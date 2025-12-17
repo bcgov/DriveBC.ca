@@ -10,6 +10,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from email_log.models import Email
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, lock_task
+from django.core.cache import cache
+from apps.shared.enums import CacheKey
 
 
 @db_periodic_task(crontab(hour="*/24", minute="0"))
@@ -41,6 +43,8 @@ def populate_all_district_data():
 
     for district_data in feed_data:
         populate_district_from_data(district_data)
+
+    cache.delete(CacheKey.DISTRICT_LIST)    
 
 
 def update_object_relations():
