@@ -21,7 +21,8 @@ import {
   faFlag,
   faLocationDot,
   faPencil,
-  faChevronRight
+  faChevronRight,
+  faBell
 } from '@fortawesome/pro-solid-svg-icons';
 import {
   faStar as faStarOutline,
@@ -497,7 +498,12 @@ export default function RouteDetails(props) {
     <React.Fragment>
       <Modal show={showNotificationForm} onHide={() => setShowNotificationForm(false)} animation={false} className={'modal--notifications-settings' + (showSpecificTimeDate ? ' long' : '')}>
         <Modal.Header closeButton>
-          <Modal.Title>Notifications</Modal.Title>
+          <Modal.Title>
+            <div className="modal-title-icon">
+              <FontAwesomeIcon icon={faBell} />
+            </div>
+            Notifications
+          </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -505,11 +511,11 @@ export default function RouteDetails(props) {
 
           <div className="info-row row">
             <div className="info-row__label">
-              <p className="bold">Email notifications to</p>
+              <p className="bold">Email notifications</p>
             </div>
 
             <div className="info-row__data">
-              <p>{authContext.email}</p>
+              <span>{authContext.email}</span>
             </div>
           </div>
 
@@ -798,7 +804,12 @@ export default function RouteDetails(props) {
             show={showSavePopup} onHide={resetPopup}>
 
             <Modal.Header closeButton>
-              <Modal.Title>Save this route</Modal.Title>
+              <Modal.Title>
+                <div className="modal-title-icon">
+                  <FontAwesomeIcon icon={faStar} />
+                </div>
+                Save this route
+              </Modal.Title>
             </Modal.Header>
 
             <Modal.Body>

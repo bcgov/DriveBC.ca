@@ -11,11 +11,14 @@ import { DropdownButton } from 'react-bootstrap';
 import { faChevronRight } from '@fortawesome/pro-regular-svg-icons';
 import {
   faCircleUser,
-  faGear,
   faRoute,
   faStar,
   faVideoCamera
 } from '@fortawesome/pro-solid-svg-icons';
+import {
+  faGear,
+  faArrowRightFromBracket
+} from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMediaQuery } from '@uidotdev/usehooks';
 
@@ -108,11 +111,6 @@ export default function UserNavigation(props) {
         <div id="user-menu-header">
           <FontAwesomeIcon id="user-icon" icon={faCircleUser} />
           <p id="user-email">{authContext.email}</p>
-
-          <form id="signout-link" className="nav-link" method='post' action={`${window.API_HOST}/accounts/logout/`} onSubmit={handleSubmit}>
-            <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
-            <button type='submit' autoFocus={true}>Sign out</button>
-          </form>
         </div>
 
         <div className="menu-items">
@@ -148,6 +146,14 @@ export default function UserNavigation(props) {
 
             <FontAwesomeIcon icon={faChevronRight} />
           </a>
+
+          <form id="signout-link" className="sign-out-btn" method='post' action={`${window.API_HOST}/accounts/logout/`} onSubmit={handleSubmit}>
+            <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
+            <button type='submit' autoFocus={true} className="menu-item menu-item--sign-out">
+              <FontAwesomeIcon icon={faArrowRightFromBracket} />
+              Sign out
+            </button>
+          </form>
 
           <div className='release-tag'>
             { window.DEPLOYMENT_TAG || '' }
