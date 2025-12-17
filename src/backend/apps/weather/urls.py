@@ -3,11 +3,11 @@ from django.urls import include, path
 from rest_framework import routers
 
 weather_router = routers.DefaultRouter()
-weather_router.register(r"", weather_views.WeatherViewSet, basename="weather")
+
+weather_router.register(r"regional", weather_views.RegionalWeatherViewSet, basename="regional")
+weather_router.register(r"current", weather_views.CurrentWeatherViewSet, basename="current")
+weather_router.register(r"hef", weather_views.HighElevationViewSet, basename="hef")
 
 urlpatterns = [
-    path('regional', weather_views.WeatherViewSet.as_view({'get': 'regional'}), name='regional'),
-    path('current', weather_views.WeatherViewSet.as_view({'get': 'current'}), name='current'),
-    path('hef', weather_views.WeatherViewSet.as_view({'get': 'hef'}), name='hef'),
     path('', include(weather_router.urls)),
 ]
