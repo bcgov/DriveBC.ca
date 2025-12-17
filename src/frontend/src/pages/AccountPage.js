@@ -12,6 +12,10 @@ import { useNavigate } from 'react-router-dom';
 import Button from "react-bootstrap/Button";
 import Container from 'react-bootstrap/Container';
 import Modal from "react-bootstrap/Modal";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faExclamation
+} from '@fortawesome/pro-solid-svg-icons';
 
 // Internal imports
 import { AuthContext } from '../App';
@@ -166,7 +170,13 @@ export default function AccountPage() {
       {showDeactivate && (
         <Modal show={showDeactivate} onHide={() => setShowDeactivate(false)} id='deactivate-modal'>
           <Modal.Header closeButton>
-            <Modal.Title>Deactivate DriveBC account</Modal.Title>
+            <Modal.Title>
+              <div className="modal-title-icon">
+                <FontAwesomeIcon icon={faExclamation} />
+              </div>
+              Deactivate DriveBC account
+            </Modal.Title>
+            
           </Modal.Header>
 
           <Modal.Body>
@@ -178,9 +188,9 @@ export default function AccountPage() {
             <div className="modal-buttons">
               <form id="signout-link" className="nav-link" method='post' action={`${window.API_HOST}/accounts/logout/?deactivate=true`} onSubmit={handleDeactivateAndSignout}>
                 <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
-                <button type='submit' className="btn btn-outline-primary">Yes, deactivate my account</button>
+                <button type='submit' className="btn btn-primary">Yes, deactivate my account</button>
               </form>
-              <Button variant="outline-primary" onClick={() => setShowDeactivate(false)}>Cancel</Button>
+              <Button variant="outline-primary" className="btn-cancel btn-light" onClick={() => setShowDeactivate(false)}>Cancel</Button>
             </div>
           </Modal.Body>
         </Modal>

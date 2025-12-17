@@ -1,8 +1,22 @@
 @import "../../../styles/variables";
+.notifications-section {
+  width: 100%;
+
+  .notifications-targets {
+    width: 100%;
+    margin-top: 6px;
+  
+    @media (min-width: 576px) {
+      column-count: 2;
+      column-gap: 12px;
+    }
+  }
+}
 
 .specific-time-dates {
   padding-left: 24px;
   flex-direction: column;
+  border-left: 2px solid $BC-Blue;
 
   .info-row {
     margin-left: 0;
@@ -22,29 +36,43 @@
       select {
         margin-bottom: 8px;
         width: fit-content;
-        border: 1px solid $Input-border;
-        border-radius: 4px;
         font-weight: 700;
-        color: #605E5C;
       }
     }
 
 
     &__data {
-      padding: 8px 16px;
-      margin-left: 8px;
-      border-left: 1px solid $Grey80;
+      padding-left: 0;
+    }
+  }
+
+  .time-row {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+
+    p {
+      margin-bottom: 0;
+      margin-right: 24px;
+    }
+
+    & +  .info-row.for-time-row {
+      margin-top: 4px;
+    }
+    
+  }
+
+  .date-row {
+    .form-select {
+      border: none;
+      padding-left: 0;
     }
   }
 
   .tz-note {
-    margin-left: 1rem;
+    padding-left: 0;
     font-size: 0.75rem;
     color: $Grey80;
-  }
-
-  .form-check {
-    margin-top: .5rem;
   }
 }
 
@@ -52,7 +80,7 @@
   width: 100%;
 
   @media (min-width: 768px) {
-    column-count: 2;
+    column-count: 4;
   }
 }
 
@@ -61,8 +89,17 @@ vaadin-time-picker, vaadin-date-picker {
   --vaadin-input-field-background: white;
   --vaadin-input-field-placeholder-color: #A19F9D;
 
+  @media (max-width: 432px) {
+    width: 100%;
+  }
+
   &::part(input-field) {
     border: 1px solid $Input-border;
+  }
+
+  input {
+    font-weight: 400;
+    font-size: 0.875rem;
   }
 }
 

@@ -3,13 +3,13 @@ import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo } from "@fortawesome/pro-solid-svg-icons";
+import { faCircleInfo } from "@fortawesome/pro-regular-svg-icons";
 import Form from "react-bootstrap/Form";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from "react-bootstrap/Tooltip";
 
 // Styling
-import './NotificaitonEventType.scss';
+import './NotificationEventType.scss';
 
 const NotificationEventType = forwardRef((props, ref) => {
   /* Setup */
@@ -94,7 +94,7 @@ const NotificationEventType = forwardRef((props, ref) => {
 
   // Main components
   return (
-    <Form className="notifications-section notifications-targets">
+    <Form className="notifications-section notifications-targets notifications-event-types">
 
       {[
         { name: 'Advisories', tooltip: tooltipAdvisories, value: 'advisories', checked: notificationEventTypes.advisories },
@@ -105,7 +105,7 @@ const NotificationEventType = forwardRef((props, ref) => {
         { name: 'Chain-ups in effect', tooltip: tooltipCommercial, value: 'chainUps', checked: notificationEventTypes.chainUps },
 
       ].map(({ name, tooltip, value, checked }) => (
-        <div key={name}>
+        <div key={name} className="notifications-target">
           <Form.Check
             type='checkbox'
             id={name}

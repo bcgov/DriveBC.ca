@@ -8,7 +8,7 @@ import Form from "react-bootstrap/Form";
 import { getPacficMidnight, getCurrentPacificDateString, isDaylightSavingTime } from "../../data/date";
 
 // Styling
-import './NotificaitonDateTime.scss';
+import './NotificationDateTime.scss';
 
 const NotificationDateTime = forwardRef((props, ref) => {
   /* Setup */
@@ -235,43 +235,45 @@ const NotificationDateTime = forwardRef((props, ref) => {
   /* Rendering */
   // Main components
   return (
-    <Form className="notifications-section notifications-time">
-      <div key='Immediately and all the time'>
-        <Form.Check
-          type='radio'
-          id='immediately'
-          name='notifications-time'
-          label='Immediately and all the time'
-          onChange={handleRadioChange}
-          defaultChecked={!showSpecificTimeDate} />
-      </div>
+    <Form className="notifications-section">
+      <div className="notifications-targets">
+        <div key='Immediately and all the time' className="notifications-target">
+          <Form.Check
+            type='radio'
+            id='immediately'
+            name='notifications-time'
+            label='Immediately and all the time'
+            onChange={handleRadioChange}
+            defaultChecked={!showSpecificTimeDate} />
+        </div>
 
-      <div key='At a specific time and dates'>
-        <Form.Check
-          type='radio'
-          id='specific'
-          name='notifications-time'
-          label='At a specific time and dates'
-          onChange={handleRadioChange}
-          defaultChecked={showSpecificTimeDate} />
+        <div key='At a specific time and dates' className="notifications-target">
+          <Form.Check
+            type='radio'
+            id='specific'
+            name='notifications-time'
+            label='At a specific time and dates'
+            onChange={handleRadioChange}
+            defaultChecked={showSpecificTimeDate} />
+        </div>
       </div>
 
       { showSpecificTimeDate &&
         <div className="specific-time-dates">
-          <Form.Check
-            type='checkbox'
-            id='all-day-checkbox'
-            label='All Day'
-            value={allDay}
-            checked={allDay}
-            onChange={() => setAllDay(!allDay)} />
+          <div className="time-row">
+            <p className="bold">Time</p>
+
+            <Form.Check
+              type='checkbox'
+              id='all-day-checkbox'
+              label='All Day'
+              value={allDay}
+              checked={allDay}
+              onChange={() => setAllDay(!allDay)} />
+          </div>
 
           {!allDay &&
-            <div className="info-row row">
-              <div className="info-row__label">
-                <p className="bold">Time</p>
-              </div>
-
+            <div className="info-row row for-time-row">
               <div className="info-row__data double-picker">
                 <vaadin-time-picker
                   id="startTimePicker"
@@ -308,7 +310,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
             </div>
           }
 
-          <div className="info-row row">
+          <div className="info-row row date-row">
             <div className="info-row__label">
               <Form.Select
                 onChange={(e) => setSpecificDateOption(e.target.value)}
@@ -376,7 +378,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
                     { day: "Saturday", checked: dayOfWeek.Saturday },
                     { day: "Sunday", checked: dayOfWeek.Sunday }
                   ].map(({day, checked}) => (
-                    <div key={`${day}`}>
+                    <div key={`${day}`} className="notifications-target">
                       <Form.Check
                         type='checkbox'
                         id={day}
