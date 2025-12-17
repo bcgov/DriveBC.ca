@@ -161,13 +161,17 @@ class CachedListModelMixin:
         )
 
     def list(self, request, *args, **kwargs):
-        site_settings = SiteSettings.objects.first()
-        if site_settings:
-            if site_settings.disable_apis:
-                raise ImproperlyConfigured("API endpoints disabled for testing")
+        # Cache the site settings check for 60 minutes to avoid DB hit on every request
+        disable_apis = cache.get_or_set(
+            'site_settings_disable_apis',
+            lambda: SiteSettings.objects.values_list('disable_apis', flat=True).first() or False,
+            3600  # 60 minutes
+        )
+        
+        if disable_apis:
+            raise ImproperlyConfigured("API endpoints disabled for testing")
 
         return Response(self.get_or_set_list_data())
-
 
 class AppCacheTestViewSet(APIView):
     """
@@ -229,6 +233,12 @@ class session(APIView):
         return response
 
 
-class DistrictViewSet(viewsets.ReadOnlyModelViewSet):
+class DistrictAPI(CachedListModelMixin):
     queryset = Area.objects.all()
     serializer_class = DistrictViewSerializer
+    cache_key = CacheKey.DISTRICT_LIST
+    cache_timeout = CacheTimeout.DISTRICT_LIST
+
+
+class DistrictViewSet(DistrictAPI, viewsets.ReadOnlyModelViewSet):
+    pass

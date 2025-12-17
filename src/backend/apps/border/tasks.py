@@ -5,6 +5,8 @@ import zoneinfo
 import requests
 from apps.border.models import BorderCrossingLanes
 from config import settings
+from django.core.cache import cache
+from apps.shared.enums import CacheKey
 
 logger = logging.getLogger(__name__)
 
@@ -33,3 +35,5 @@ def update_border_crossing_lanes(testing=False):
         # run only once in unit tests
         if testing:
             return
+        
+    cache.delete(CacheKey.BORDER_CROSSING_LIST)

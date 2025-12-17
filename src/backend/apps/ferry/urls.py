@@ -9,6 +9,6 @@ coastal_router = routers.DefaultRouter()
 coastal_router.register(r"", ferry_views.CoastalViewSet, basename="coastal-ferries")
 
 urlpatterns = [
+    path("coastal/", include(coastal_router.urls)),
     path("", include(ferry_router.urls)),
-    path("coastal", include(coastal_router.urls)),
 ]

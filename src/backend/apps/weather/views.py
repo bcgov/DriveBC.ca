@@ -6,33 +6,32 @@ from apps.weather.serializers import (
     HighElevationForecastSerializer,
     RegionalWeatherSerializer,
 )
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from rest_framework import viewsets
 
 
 class RegionalWeatherAPI(CachedListModelMixin):
-    queryset = RegionalWeather.objects.all()
+    queryset = RegionalWeather.objects.all().exclude(code=None)
     serializer_class = RegionalWeatherSerializer
     cache_key = CacheKey.REGIONAL_WEATHER_LIST
     cache_timeout = CacheTimeout.REGIONAL_WEATHER_LIST
 
+class RegionalWeatherViewSet(RegionalWeatherAPI, viewsets.ReadOnlyModelViewSet):
+    pass
 
-class WeatherViewSet(viewsets.ViewSet):
-    @action(detail=True, methods=['get'])
-    def regional(self, request, pk=None):
-        regional_weather_objects = RegionalWeather.objects.all().exclude(code=None)
-        serializer = RegionalWeatherSerializer(regional_weather_objects, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+class CurrentWeatherAPI(CachedListModelMixin):
+    queryset = CurrentWeather.objects.all().exclude(code=None)
+    serializer_class = CurrentWeatherSerializer
+    cache_key = CacheKey.CURRENT_WEATHER_LIST
+    cache_timeout = CacheTimeout.CURRENT_WEATHER_LIST
 
-    @action(detail=True, methods=['get'])
-    def current(self, request, pk=None):
-        current_weather_objects = CurrentWeather.objects.all().exclude(code=None)
-        serializer = CurrentWeatherSerializer(current_weather_objects, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+class CurrentWeatherViewSet(CurrentWeatherAPI, viewsets.ReadOnlyModelViewSet):
+    pass
 
-    @action(detail=True, methods=['get'])
-    def hef(self, request, pk=None):
-        forecasts = HighElevationForecast.objects.all()
-        serializer = HighElevationForecastSerializer(forecasts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+class HighElevationAPI(CachedListModelMixin):
+    queryset = HighElevationForecast.objects.all()
+    serializer_class = HighElevationForecastSerializer
+    cache_key = CacheKey.HIGH_ELEVATION_LIST
+    cache_timeout = CacheTimeout.HIGH_ELEVATION_LIST
+
+class HighElevationViewSet(HighElevationAPI, viewsets.ReadOnlyModelViewSet):
+    pass
