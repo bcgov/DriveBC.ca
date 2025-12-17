@@ -49,6 +49,8 @@ class CacheTimeout:
     COASTAL_FERRY_LIST = 60*60*24  # 24hr
     REGIONAL_WEATHER_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
     REST_STOP_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
+    WILDFIRES_LIST = 60 * 15  # 15 minutes as this data doesn't change that often
+    BORDER_CROSSING_LIST = 60 * 5  # 5 minutes
 
 
 class CacheKey:
@@ -64,6 +66,9 @@ class CacheKey:
     REGIONAL_WEATHER_LIST = "regional_weather_list"
     HIGH_ELEVATION_FORECAST_LIST = "high_elevation_forecast_list"
     REST_STOP_LIST = "rest_stop_list"
+    WILDFIRES_LIST = "wildfires_list"
+    BORDER_CROSSING_LIST = 'border_crossing_list'
+    
 
 
 ROUTE_FILTER_TOLERANCE = 25
