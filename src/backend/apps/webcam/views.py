@@ -1,3 +1,5 @@
+from apps.shared.enums import CacheKey, CacheTimeout
+from apps.shared.views import CachedListModelMixin
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
 from rest_framework import viewsets
@@ -19,28 +21,69 @@ from django.urls import reverse
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAdminUser, AllowAny
 from zoneinfo import ZoneInfo
+from django.core.cache import cache
 
 BASE_URL = os.getenv("S3_ENDPOINT_URL")
 S3_BUCKET = os.getenv("S3_BUCKET")
 S3_BASE_URL = f"{BASE_URL.rstrip('/')}/{S3_BUCKET}/webcams/timelapse"
 
 
-class WebcamAPI:
+class WebcamAPI(CachedListModelMixin):
     queryset = Webcam.objects.filter(should_appear=True)
     serializer_class = WebcamSerializer
+    cache_key = CacheKey.WEBCAM_LIST
+    cache_timeout = CacheTimeout.WEBCAM_LIST
 
 @extend_schema_view(
     list=extend_schema(exclude=True),
     retrieve=extend_schema(exclude=True),
 )
 class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
+    
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieve a single webcam with caching.
+        """
+        pk = kwargs.get('pk')
+        cache_key = f"webcam_detail_{pk}"
+        
+        # Try to get from cache
+        cached_data = cache.get(cache_key)
+        if cached_data is not None:
+            return Response(cached_data)
+        
+        # If not in cache, get from database
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        
+        # Cache the result
+        cache.set(cache_key, data, CacheTimeout.WEBCAM_INDIVIDUAL)
+        
+        return Response(data)
+    
     @action(
             detail=True, 
             methods=['get'], 
             url_path='replayTheDay',
             )
     def replayTheDay(self, request, pk=None):
+        """
+        Get replay the day timestamps with caching.
+        """
+        cache_key = f"webcam_replay_{pk}"
+        
+        # Try to get from cache
+        cached_timestamps = cache.get(cache_key)
+        if cached_timestamps is not None:
+            return Response(cached_timestamps, status=status.HTTP_200_OK)
+        
+        # If not in cache, generate timestamps
         timestamps = get_image_list(pk, "REPLAY_THE_DAY_HOURS")
+        
+        # Cache the result
+        cache.set(cache_key, timestamps, CacheTimeout.WEBCAM_REPLAYTHEDAY)
+        
         return Response(timestamps, status=status.HTTP_200_OK)
 
     @action(
@@ -382,6 +425,5 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         threshold = 2 * obj.update_period_mean + 2 * std
         return diff_seconds > threshold 
 
-class WebcamTestViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = WebcamAPI.queryset
-    serializer_class = WebcamAPI.serializer_class
+class WebcamTestViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
+    pass

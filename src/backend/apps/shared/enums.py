@@ -43,11 +43,38 @@ ORIENTATION_CHOICES = (
 # Caching
 class CacheTimeout:
     DEFAULT = 120
-    WEBCAM_LIST = 60*7  # 5min buffer + (2*1)min twice of task interval
-    EVENT_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
-    FERRY_LIST = 60*60*24  # 24hr
-    REGIONAL_WEATHER_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
-    REST_STOP_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
+    # Manually entered so we have short 30 second TTL to ensure that we aren't serving stale data too long.
+    ADVISORY_LIST = 30 # Cache not automatically invalidated, so keep TTL short
+    BULLETIN_LIST = 30 # Cache not automatically invalidated, so keep TTL short
+    EMERGENCY_ALERT_LIST = 30 # Cache not automatically invalidated, so keep TTL short
+
+    # Huey job based timeouts. Cache timeouts are set to double the task interval to allow for delays.
+    # 1 MINUTE TASKS (Interval x 2)
+    WEBCAM_LIST = 30 # Cache is automatically invalidated after job runs. However image consumer constantly ingests images so keeping TTL short.
+    WEBCAM_INDIVIDUAL = 30 # Individual webcams are not automatically invalidated, so keep TTL short.
+    WEBCAM_REPLAYTHEDAY = 60 * 1 # Replay the day timestamps are not automatically invalidated, so keep TTL shorter.
+    EVENT_LIST = 60 * 2 # Cache is automatically invalidated after job runs
+    EVENT_LIST_POLLING = 60 * 2 # Cache is automatically invalidated after job runs
+    EVENT_INDIVUDAL = 60 * 1 # Individual events are not automatically invalidated, so keep TTL short
+    BORDER_CROSSING_LIST = 60 * 2 # Cache is automatically invalidated after job runs
+
+    # 10 MINUTE TASKS (Interval x 2)
+    REGIONAL_WEATHER_LIST = 60 * 20 # Cache is automatically invalidated after job runs
+    CURRENT_WEATHER_LIST = 60 * 20 # Cache is automatically invalidated after job runs
+    HIGH_ELEVATION_LIST = 60 * 20 # Cache is automatically invalidated after job runs
+
+    # 15 MINUTE TASKS (Interval x 2)
+    WILDFIRE_LIST = 60 * 30 # Cache is automatically invalidated after job runs
+
+    # 1 HOUR TASKS (Interval x 2)
+    FERRY_LIST = 60 * 60 * 2 # Cache is automatically invalidated after job runs
+
+    # 24 HOUR TASKS (Interval x 2)
+    REST_STOP_LIST = 60 * 60 * 48 # Cache is automatically invalidated after job runs
+
+    # WEEKLY TASKS (Interval x 2)
+    DISTRICT_LIST = 60 * 60 * 24 * 14 # Cache is automatically invalidated after job runs
+    COASTAL_FERRY_LIST = 60 * 60 * 24 * 14 # Cache is automatically invalidated after job runs
 
 
 class CacheKey:
@@ -57,11 +84,18 @@ class CacheKey:
     EVENT_LIST_POLLING = "event_list_polling"
     ADVISORY_LIST = "advisory_list"
     BULLETIN_LIST = "bulletin_list"
+    EMERGENCY_ALERT_LIST = "emergency_alert_list"
     FERRY_LIST = "ferry_list"
+    COASTAL_FERRY_LIST = "coastal_ferry_list"
     TEST_APP_CACHE = "test_app_cache"
-    REGIONAL_WEATHER_LIST = "regional_weather_list"
-    HIGH_ELEVATION_FORECAST_LIST = "high_elevation_forecast_list"
+    REGIONAL_WEATHER_LIST = 'regional_weather_list'
+    CURRENT_WEATHER_LIST = 'current_weather_list'
+    HIGH_ELEVATION_LIST = 'high_elevation_list'
     REST_STOP_LIST = "rest_stop_list"
+    WILDFIRE_LIST = "wildfire_list"
+    BORDER_CROSSING_LIST = 'border_crossing_list'
+    DISTRICT_LIST = 'district_list'
+    
 
 
 ROUTE_FILTER_TOLERANCE = 25
