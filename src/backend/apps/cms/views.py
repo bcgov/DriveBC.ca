@@ -6,6 +6,8 @@ from apps.cms.serializers import (
     EmergencyAlertSerializer,
     EmergencyAlertTestSerializer,
 )
+from apps.shared.enums import CacheKey, CacheTimeout
+from apps.shared.views import CachedListModelMixin
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponseRedirect
@@ -54,10 +56,13 @@ class CMSViewSet(viewsets.ReadOnlyModelViewSet):
 
         return obj
 
-class AdvisoryAPI(CMSViewSet):
-    queryset = Advisory.objects.all()
+class AdvisoryAPI(CachedListModelMixin, CMSViewSet):
+    # Filter live=True so the cache only stores public data
+    queryset = Advisory.objects.filter(live=True)
     serializer_class = AdvisorySerializer
     lookup_field = 'slug'
+    cache_key = CacheKey.ADVISORY_LIST
+    cache_timeout = CacheTimeout.ADVISORY_LIST
 
 
 class BulletinTestAPI(CMSViewSet):
@@ -66,8 +71,12 @@ class BulletinTestAPI(CMSViewSet):
     lookup_field = 'slug'
 
 
-class BulletinAPI(BulletinTestAPI):
+class BulletinAPI(CachedListModelMixin, BulletinTestAPI):
+    # Filter live=True so the cache only stores public data
+    queryset = Bulletin.objects.filter(live=True)
     serializer_class = BulletinSerializer
+    cache_key = CacheKey.BULLETIN_LIST
+    cache_timeout = CacheTimeout.BULLETIN_LIST
 
 
 class EmergencyAlertTestAPI(CMSViewSet):
@@ -76,8 +85,11 @@ class EmergencyAlertTestAPI(CMSViewSet):
     lookup_field = 'slug'
 
 
-class EmergencyAlertAPI(EmergencyAlertTestAPI):
+class EmergencyAlertAPI(CachedListModelMixin, EmergencyAlertTestAPI):
+    queryset = EmergencyAlert.objects.filter(live=True)
     serializer_class = EmergencyAlertSerializer
+    cache_key = CacheKey.EMERGENCY_ALERT_LIST
+    cache_timeout = CacheTimeout.EMERGENCY_ALERT_LIST
 
 
 @csrf_exempt

@@ -16,6 +16,7 @@ class EventAPI(CachedListModelMixin):
 class EventPollingAPI(EventAPI):
     serializer_class = EventPollingSerializer
     cache_key = CacheKey.EVENT_LIST_POLLING
+    cache_timeout = CacheTimeout.EVENT_LIST_POLLING
 
 
 class EventViewSet(EventAPI, viewsets.ReadOnlyModelViewSet):

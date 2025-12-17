@@ -37,6 +37,8 @@ import boto3
 from django.utils import timezone
 from django.forms.models import model_to_dict
 from django.db.models import F, Case, When, Value, IntegerField
+from apps.shared.enums import CacheKey
+from django.core.cache import cache
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -312,6 +314,7 @@ def update_single_webcam_data(webcam):
                 webcam_serializer.save()
                 update_webcam_image(webcam_data)
             return True
+    cache.delete(CacheKey.WEBCAM_LIST)
 
 
 def update_all_webcam_data():
@@ -330,7 +333,7 @@ def update_all_webcam_data():
         current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
         if camera.https_cam:
             update_cam_from_sql_db(camera.id, current_time)
-
+    cache.delete(CacheKey.WEBCAM_LIST)
 
 def wrap_text(text, pen, font, width):
     '''

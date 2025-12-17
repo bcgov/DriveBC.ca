@@ -43,11 +43,36 @@ ORIENTATION_CHOICES = (
 # Caching
 class CacheTimeout:
     DEFAULT = 120
-    WEBCAM_LIST = 60*7  # 5min buffer + (2*1)min twice of task interval
-    EVENT_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
-    FERRY_LIST = 60*60*24  # 24hr
-    REGIONAL_WEATHER_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
-    REST_STOP_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
+    # TRIGGER-BASED (No Huey Job)
+    # Short TTL to ensure manual updates reflect quickly
+    ADVISORY_LIST = 60 * 1 
+    BULLETIN_LIST = 60 * 1
+    EMERGENCY_ALERT_LIST = 60 * 1
+
+    # Huey JOB-BASED TIMEOUTS. Cache timeouts are set to double the task interval to allow for delays.
+    # 1 MINUTE TASKS (Interval x 2)
+    WEBCAM_LIST = 60 * 1 # Set to 60 seconds since we have the new image-consumer updating images constantly
+    EVENT_LIST = 60 * 2
+    EVENT_LIST_POLLING = 60 * 2
+    BORDER_CROSSING_LIST = 60 * 2
+
+    # 10 MINUTE TASKS (Interval x 2)
+    REGIONAL_WEATHER_LIST = 60 * 20
+    CURRENT_WEATHER_LIST = 60 * 20
+    HIGH_ELEVATION_LIST = 60 * 20
+
+    # 15 MINUTE TASKS (Interval x 2)
+    WILDFIRE_LIST = 60 * 30
+
+    # 1 HOUR TASKS (Interval x 2)
+    FERRY_LIST = 60 * 60 * 2
+
+    # 24 HOUR TASKS (Interval x 2)
+    REST_STOP_LIST = 60 * 60 * 48
+
+    # WEEKLY TASKS (Interval x 2)
+    DISTRICT_LIST = 60 * 60 * 24 * 14
+    COASTAL_FERRY_LIST = 60 * 60 * 24 * 14
 
 
 class CacheKey:
@@ -57,11 +82,18 @@ class CacheKey:
     EVENT_LIST_POLLING = "event_list_polling"
     ADVISORY_LIST = "advisory_list"
     BULLETIN_LIST = "bulletin_list"
+    EMERGENCY_ALERT_LIST = "emergency_alert_list"
     FERRY_LIST = "ferry_list"
+    COASTAL_FERRY_LIST = "coastal_ferry_list"
     TEST_APP_CACHE = "test_app_cache"
-    REGIONAL_WEATHER_LIST = "regional_weather_list"
-    HIGH_ELEVATION_FORECAST_LIST = "high_elevation_forecast_list"
+    REGIONAL_WEATHER_LIST = 'regional_weather_list'
+    CURRENT_WEATHER_LIST = 'current_weather_list'
+    HIGH_ELEVATION_LIST = 'high_elevation_list'
     REST_STOP_LIST = "rest_stop_list"
+    WILDFIRE_LIST = "wildfire_list"
+    BORDER_CROSSING_LIST = 'border_crossing_list'
+    DISTRICT_LIST = 'district_list'
+    
 
 
 ROUTE_FILTER_TOLERANCE = 25

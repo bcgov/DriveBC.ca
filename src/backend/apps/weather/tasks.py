@@ -84,7 +84,7 @@ def populate_all_high_elevation_forecast_data():
         HighElevationForecast.objects.exclude(code__in=codes).delete()
 
     # Rebuild cache
-    cache.delete(CacheKey.HIGH_ELEVATION_FORECAST_LIST)
+    cache.delete(CacheKey.HIGH_ELEVATION_LIST)
 
 
 def populate_local_weather_from_data(new_current_weather_data):
@@ -113,3 +113,6 @@ def populate_all_local_weather_data(token=None):
     # feed so that an erroneous empty response doesn't empty our list
     if len(codes) > 0:
         CurrentWeather.objects.exclude(code__in=codes).delete()
+
+    # Rebuild cache
+    cache.delete(CacheKey.CURRENT_WEATHER_LIST)    
