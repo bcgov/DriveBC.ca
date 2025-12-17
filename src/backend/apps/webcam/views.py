@@ -1,3 +1,5 @@
+from apps.shared.enums import CacheKey, CacheTimeout
+from apps.shared.views import CachedListModelMixin
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
 from rest_framework import viewsets
@@ -25,9 +27,11 @@ S3_BUCKET = os.getenv("S3_BUCKET")
 S3_BASE_URL = f"{BASE_URL.rstrip('/')}/{S3_BUCKET}/webcams/timelapse"
 
 
-class WebcamAPI:
+class WebcamAPI(CachedListModelMixin):
     queryset = Webcam.objects.filter(should_appear=True)
     serializer_class = WebcamSerializer
+    cache_key = CacheKey.WEBCAM_LIST
+    cache_timeout = CacheTimeout.WEBCAM_LIST
 
 @extend_schema_view(
     list=extend_schema(exclude=True),
@@ -382,6 +386,5 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         threshold = 2 * obj.update_period_mean + 2 * std
         return diff_seconds > threshold 
 
-class WebcamTestViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = WebcamAPI.queryset
-    serializer_class = WebcamAPI.serializer_class
+class WebcamTestViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
+    pass

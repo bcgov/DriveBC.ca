@@ -43,7 +43,7 @@ ORIENTATION_CHOICES = (
 # Caching
 class CacheTimeout:
     DEFAULT = 120
-    WEBCAM_LIST = 60*7  # 5min buffer + (2*1)min twice of task interval
+    WEBCAM_LIST = 60*1  # 1min
     EVENT_LIST = 60 * 15  # 5min buffer + (2*5)min twice of task interval
     FERRY_LIST = 60*60*24  # 24hr
     COASTAL_FERRY_LIST = 60*60*24  # 24hr
