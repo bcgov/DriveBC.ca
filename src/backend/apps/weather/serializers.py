@@ -8,7 +8,6 @@ tz = ZoneInfo("America/Vancouver")
 
 
 class RegionalWeatherSerializer(serializers.ModelSerializer):
-    id = serializers.SerializerMethodField()
 
     class Meta:
         model = RegionalWeather
@@ -26,13 +25,10 @@ class RegionalWeatherSerializer(serializers.ModelSerializer):
             'warnings',
         ]
 
-    def get_id(self, obj):
-        return obj.code
 
 
 # Current Weather serializer
 class CurrentWeatherSerializer(serializers.ModelSerializer):
-    id = serializers.SerializerMethodField()
     air_temperature = serializers.SerializerMethodField()
     road_temperature = serializers.SerializerMethodField()
     precipitation = serializers.SerializerMethodField()
@@ -65,9 +61,6 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
             'issuedUtc',
             'elevation'
         ]
-
-    def get_id(self, obj):
-        return obj.code
 
     def get_air_temperature(self, obj):
         if "air_temperature" in obj.datasets:
