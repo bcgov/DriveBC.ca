@@ -21,6 +21,7 @@ from django.urls import reverse
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAdminUser, AllowAny
 from zoneinfo import ZoneInfo
+from django.core.cache import cache
 
 BASE_URL = os.getenv("S3_ENDPOINT_URL")
 S3_BUCKET = os.getenv("S3_BUCKET")
@@ -38,13 +39,55 @@ class WebcamAPI(CachedListModelMixin):
     retrieve=extend_schema(exclude=True),
 )
 class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
+    
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieve a single webcam with caching.
+        Cache key: webcam_detail_{pk}
+        """
+        pk = kwargs.get('pk')
+        cache_key = f"webcam_detail_{pk}"
+        
+        # Try to get from cache
+        cached_data = cache.get(cache_key)
+        if cached_data is not None:
+            return Response(cached_data)
+        
+        # If not in cache, get from database
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        
+        # Cache the result
+        cache.set(cache_key, data, CacheTimeout.WEBCAM_INDIVIDUAL)
+        
+        return Response(data)
+    
     @action(
             detail=True, 
             methods=['get'], 
             url_path='replayTheDay',
             )
     def replayTheDay(self, request, pk=None):
+        """
+        Get replay the day timestamps with caching.
+        Cache key: webcam_replay_{pk}_{date}
+        """
+        # Create cache key with current date to invalidate daily
+        today = timezone.now().date().isoformat()
+        cache_key = f"webcam_replay_{pk}_{today}"
+        
+        # Try to get from cache
+        cached_timestamps = cache.get(cache_key)
+        if cached_timestamps is not None:
+            return Response(cached_timestamps, status=status.HTTP_200_OK)
+        
+        # If not in cache, generate timestamps
         timestamps = get_image_list(pk, "REPLAY_THE_DAY_HOURS")
+        
+        # Cache the result
+        cache.set(cache_key, timestamps, CacheTimeout.WEBCAM_INDIVIDUAL)
+        
         return Response(timestamps, status=status.HTTP_200_OK)
 
     @action(

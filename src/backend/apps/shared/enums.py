@@ -43,36 +43,37 @@ ORIENTATION_CHOICES = (
 # Caching
 class CacheTimeout:
     DEFAULT = 120
-    # TRIGGER-BASED (No Huey Job)
-    # Short TTL to ensure manual updates reflect quickly
-    ADVISORY_LIST = 60 * 1 
-    BULLETIN_LIST = 60 * 1
-    EMERGENCY_ALERT_LIST = 60 * 1
+    # Manually entered so we have short 30 second TTL to ensure that updates get out quickly
+    ADVISORY_LIST = 30
+    BULLETIN_LIST = 30
+    EMERGENCY_ALERT_LIST = 30
 
     # Huey JOB-BASED TIMEOUTS. Cache timeouts are set to double the task interval to allow for delays.
     # 1 MINUTE TASKS (Interval x 2)
-    WEBCAM_LIST = 60 * 1 # Set to 60 seconds since we have the new image-consumer updating images constantly
-    EVENT_LIST = 60 * 2
-    EVENT_LIST_POLLING = 60 * 2
-    BORDER_CROSSING_LIST = 60 * 2
+    WEBCAM_LIST = 30 # Cache is automatically invalidated after job runs. However image consumer constantly ingests images so need to keep it short
+    WEBCAM_INDIVIDUAL = 60 * 1 # Individual webcams are not automatically invalidated, so keep TTL short
+    EVENT_LIST = 60 * 2 # Cache is automatically invalidated after job runs
+    EVENT_LIST_POLLING = 60 * 2 # Cache is automatically invalidated after job runs
+    EVENT_INDIVUDAL = 60 * 1 # Individual events are not automatically invalidated, so keep TTL short
+    BORDER_CROSSING_LIST = 60 * 2 # Cache is automatically invalidated after job runs
 
     # 10 MINUTE TASKS (Interval x 2)
-    REGIONAL_WEATHER_LIST = 60 * 20
-    CURRENT_WEATHER_LIST = 60 * 20
-    HIGH_ELEVATION_LIST = 60 * 20
+    REGIONAL_WEATHER_LIST = 60 * 20 # Cache is automatically invalidated after job runs
+    CURRENT_WEATHER_LIST = 60 * 20 # Cache is automatically invalidated after job runs
+    HIGH_ELEVATION_LIST = 60 * 20 # Cache is automatically invalidated after job runs
 
     # 15 MINUTE TASKS (Interval x 2)
-    WILDFIRE_LIST = 60 * 30
+    WILDFIRE_LIST = 60 * 30 # Cache is automatically invalidated after job runs
 
     # 1 HOUR TASKS (Interval x 2)
-    FERRY_LIST = 60 * 60 * 2
+    FERRY_LIST = 60 * 60 * 2 # Cache is automatically invalidated after job runs
 
     # 24 HOUR TASKS (Interval x 2)
-    REST_STOP_LIST = 60 * 60 * 48
+    REST_STOP_LIST = 60 * 60 * 48 # Cache is automatically invalidated after job runs
 
     # WEEKLY TASKS (Interval x 2)
-    DISTRICT_LIST = 60 * 60 * 24 * 14
-    COASTAL_FERRY_LIST = 60 * 60 * 24 * 14
+    DISTRICT_LIST = 60 * 60 * 24 * 14 # Cache is automatically invalidated after job runs
+    COASTAL_FERRY_LIST = 60 * 60 * 24 * 14 # Cache is automatically invalidated after job runs
 
 
 class CacheKey:
