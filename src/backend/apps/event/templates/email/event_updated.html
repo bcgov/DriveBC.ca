@@ -78,17 +78,21 @@
 																		{{ event.display_category_title }}
 																	</td>
 																</tr>
-																{% if event.highway_segment_names %}
+																
 																<tr>
 																	{% if event.severity == 'MAJOR' %}
 																	<td style="font-size: 1.25rem; font-weight:700; color:#D8292F; padding: 8px 12px 0">
 																	{% else %}
 																	<td style="font-size: 1.25rem; font-weight:700; color:#013366; padding: 8px 12px 0">
 																	{% endif %}
+                                  {% if event.highway_segment_names %}
 																		{{ event.highway_segment_names }}
+                                  {% else %}
+                                    {{ event.route_at }}
+                                  {% endif %}
 																	</td>
 																</tr>
-																{% endif %}
+                                
 																{% if event.direction != 'NONE' %}
 																<tr>
 																	<td style="font-size: 0.875rem; font-weight:700; color:#464341; padding: 8px 12px 0">
