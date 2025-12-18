@@ -49,11 +49,11 @@ def optimize_description(text):
 
 
 class EventInternalSerializer(serializers.ModelSerializer):
-    display_category = serializers.SerializerMethodField()
     direction_display = serializers.SerializerMethodField()
     route_display = serializers.SerializerMethodField()
     optimized_description = serializers.SerializerMethodField()
     schedule = ScheduleSerializer()
+    area = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Event
@@ -86,9 +86,6 @@ class EventInternalSerializer(serializers.ModelSerializer):
 
     def get_optimized_description(self, obj):
         return optimize_description(obj.description)
-
-    def get_display_category(self, obj):
-        return obj.display_category
 
 
 class EventSerializer(EventInternalSerializer):
