@@ -11,7 +11,16 @@ from django.core.cache import cache
 
 
 class EventAPI(CachedListModelMixin):
-    queryset = Event.objects.all().exclude(status=EVENT_STATUS.INACTIVE)
+    queryset = (
+        Event.objects
+        .exclude(status=EVENT_STATUS.INACTIVE)
+        .prefetch_related(
+            Prefetch(
+                "area",
+                queryset=Area.objects.only("id"),
+            )
+        )
+    )
     serializer_class = EventSerializer
     cache_key = CacheKey.EVENT_LIST
     cache_timeout = CacheTimeout.EVENT_LIST
