@@ -53,7 +53,7 @@ django:
     enabled: false 
     minAvailable:  
   prometheus:
-    enabled: false # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
+    enabled: true # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
 
 
 tasks:

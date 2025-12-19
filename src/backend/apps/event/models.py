@@ -4,9 +4,10 @@ from apps.event.helpers import get_display_category
 from apps.shared.models import Area, BaseModel
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry
+from django_prometheus.models import ExportModelOperationsMixin
 
 
-class Event(BaseModel):
+class Event(ExportModelOperationsMixin('event'), BaseModel):
     id = models.CharField(max_length=32, primary_key=True)
 
     # Description
@@ -110,7 +111,7 @@ class Event(BaseModel):
         return optimize_description(self.description)
 
 
-class QueuedEventNotification(BaseModel):
+class QueuedEventNotification(ExportModelOperationsMixin('queued_event_notifications'), BaseModel):
     route_id = models.PositiveIntegerField()
     event_id = models.CharField(max_length=32)
 

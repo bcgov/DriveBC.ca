@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.db import models as gis_models
 from django.db import models
 from django.db.models.constraints import UniqueConstraint
+from django_prometheus.models import ExportModelOperationsMixin
 
 
 class DriveBCUser(AbstractUser, BaseModel):
@@ -15,7 +16,7 @@ class DriveBCUser(AbstractUser, BaseModel):
     attempted_consent = models.BooleanField(default=False)
 
 
-class FavouritedCameras(BaseModel):
+class FavouritedCameras(ExportModelOperationsMixin('favorite-cams'), BaseModel):
     '''
     Webcam views favourited by the user.
 
@@ -43,7 +44,7 @@ class FavouritedCameras(BaseModel):
 # TODO: Add a clean_distance method that saves the value in km; distance_unit
 # can be a preferred unit, but the standard value should be in km to allow for
 # sorting/filtering
-class SavedRoutes(BaseModel):
+class SavedRoutes(ExportModelOperationsMixin('saved-routes'), BaseModel):
     '''
     Routes saved by the user.
 
