@@ -48,6 +48,20 @@ else
     echo "Environment is not 'prod', keeping X-Robots-Tag noindex header."
 fi
 
+# Create blocked IPs configuration file
+BLOCKED_CONF="/etc/nginx/conf.d/blocked_ips.conf"
+> "$BLOCKED_CONF"
+if [ -n "$BLOCKED_IPS" ]; then
+    echo "Processing blocked IPs..."
+    for ip in $(echo "$BLOCKED_IPS" | tr ';' ' '); do
+        CLEAN_IP=$(echo "$ip" | tr -d ' ')
+        if [ -n "$CLEAN_IP" ]; then
+            echo "deny $CLEAN_IP;" >> "$BLOCKED_CONF"
+        fi
+    done
+    echo "Blocked IPs configuration updated."
+fi
+
 #precompress the main js and css files to improve performance
 gzip -k $MAIN
 gzip -k $MAINCSS
