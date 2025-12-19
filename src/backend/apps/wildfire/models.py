@@ -1,8 +1,9 @@
 from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
+from django_prometheus.models import ExportModelOperationsMixin
 
 
-class Wildfire(BaseModel):
+class Wildfire(ExportModelOperationsMixin('wildfire'), BaseModel):
     id = models.CharField(max_length=128, primary_key=True)
     url = models.URLField(null=True, blank=True)
     name = models.CharField(max_length=256, null=True, blank=True, default='')

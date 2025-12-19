@@ -1,16 +1,17 @@
 from apps.border.enums import LANE_DIRECTION_CHOICES, LANE_TYPE_CHOICES
 from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
+from django_prometheus.models import ExportModelOperationsMixin
 
 
-class BorderCrossing(BaseModel):
+class BorderCrossing(ExportModelOperationsMixin('border_crossing'), BaseModel):
     id = models.PositiveSmallIntegerField(primary_key=True)
     name = models.CharField(max_length=128)
     location = models.PointField()
     schedule_url = models.URLField(null=True, blank=True)
 
 
-class BorderCrossingLanes(BaseModel):
+class BorderCrossingLanes(ExportModelOperationsMixin('border_crossing_lanes'), BaseModel):
     id = models.PositiveSmallIntegerField(primary_key=True)
     border_crossing = models.ForeignKey(BorderCrossing, on_delete=models.CASCADE)
 

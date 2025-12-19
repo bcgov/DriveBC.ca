@@ -2,9 +2,10 @@ from apps.shared.enums import CacheKey
 from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
 from django.core.cache import cache
+from django_prometheus.models import ExportModelOperationsMixin
 
 
-class Ferry(BaseModel):
+class Ferry(ExportModelOperationsMixin('inland_ferries'), BaseModel):
     # General
     id = models.PositiveSmallIntegerField(primary_key=True)
     name = models.CharField(max_length=128, blank=True, default='')
@@ -57,7 +58,7 @@ class Ferry(BaseModel):
         cache.delete(CacheKey.FERRY_LIST)
 
 
-class CoastalFerryStop(BaseModel):
+class CoastalFerryStop(ExportModelOperationsMixin('coastal_ferry_stops'), BaseModel):
     # General
     id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=128, blank=True, default='')
@@ -70,7 +71,7 @@ class CoastalFerryStop(BaseModel):
         return str(self.name)
 
 
-class CoastalFerryCalendar(BaseModel):
+class CoastalFerryCalendar(ExportModelOperationsMixin('coastal_ferry_calendar'), BaseModel):
     # General
     id = models.CharField(primary_key=True)
     name = models.CharField(max_length=128, blank=True, default='')
@@ -88,7 +89,7 @@ class CoastalFerryCalendar(BaseModel):
         return str(self.name)
 
 
-class CoastalFerryRoute(BaseModel):
+class CoastalFerryRoute(ExportModelOperationsMixin('coastal_ferry_routes'), BaseModel):
     # General
     id = models.PositiveSmallIntegerField(primary_key=True)
     name = models.CharField(max_length=128, blank=True, default='')
@@ -100,7 +101,7 @@ class CoastalFerryRoute(BaseModel):
         return str(self.name)
 
 
-class CoastalFerryTrip(BaseModel):
+class CoastalFerryTrip(ExportModelOperationsMixin('coastal_ferry_trips'), BaseModel):
     # General
     id = models.CharField(primary_key=True)
 
@@ -109,7 +110,7 @@ class CoastalFerryTrip(BaseModel):
     route = models.ForeignKey(CoastalFerryRoute, related_name='trips', on_delete=models.CASCADE)
 
 
-class CoastalFerryStopTime(BaseModel):
+class CoastalFerryStopTime(ExportModelOperationsMixin('coastal_ferry_stop_times'), BaseModel):
     # Foreign Keys
     trip = models.ForeignKey(CoastalFerryTrip, related_name='stop_times', on_delete=models.CASCADE)
     stop = models.ForeignKey(CoastalFerryStop, related_name='stop_times', on_delete=models.CASCADE)

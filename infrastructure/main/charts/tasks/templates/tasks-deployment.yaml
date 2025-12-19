@@ -6,11 +6,6 @@ kind: Deployment
 metadata:
   name: {{ template "app.fullname" . }}
   labels: {{ include "app.labels" . | nindent 4 }}
-{{- if .Values.prometheus.enabled }}
-annotations:
-  prometheus.io/scrape: 'true'
-  prometheus.io/port: '8000'
-{{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -36,6 +31,11 @@ spec:
         vault.hashicorp.com/auth-path: {{ .Values.vault.authPath }}
         vault.hashicorp.com/namespace: platform-services
         vault.hashicorp.com/role: {{ .Values.global.vault.licenceplate }}-{{ .Values.global.vault.environment}}
+        {{- if .Values.prometheus.enabled }}
+        prometheus.io/port: '8080'
+        prometheus.io/path: /metrics
+        prometheus.io/scrape: 'true'
+        {{- end }}
     spec:
       volumes:
         - name: django-app-images-volume

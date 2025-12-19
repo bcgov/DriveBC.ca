@@ -100,6 +100,8 @@ urlpatterns = [
     # Actual webcam endpoints
     path("api/webcams/", include("apps.webcam.urls")),
 
+    path('', include('django_prometheus.urls')),
+
 ] + debug_toolbar_urls() + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
