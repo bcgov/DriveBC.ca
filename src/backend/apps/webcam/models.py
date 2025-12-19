@@ -5,9 +5,10 @@ from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalW
 from django.contrib.gis.db import models
 from django.utils import timezone
 from timezonefinder import TimezoneFinder
+from django_prometheus.models import ExportModelOperationsMixin
 
 
-class Webcam(BaseModel):
+class Webcam(ExportModelOperationsMixin('webcam'), BaseModel):
     # Description
     name = models.CharField(max_length=128)
     name_override = models.CharField(blank=True, max_length=128)

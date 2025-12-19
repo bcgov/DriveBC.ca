@@ -1,9 +1,10 @@
 from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
+from django_prometheus.models import ExportModelOperationsMixin
 
 
-class RegionalWeather(BaseModel):
+class RegionalWeather(ExportModelOperationsMixin('regional_weather'), BaseModel):
     """ Weather reports and forecasts from Environment Canada """
 
     code = models.CharField(max_length=10, null=True)
@@ -49,7 +50,7 @@ class RegionalWeather(BaseModel):
         return latitude, longitude
 
 
-class CurrentWeather(BaseModel):
+class CurrentWeather(ExportModelOperationsMixin('current_weather'), BaseModel):
     """ Local Weather reports and forecasts from MOTT sites """
     code = models.CharField(max_length=10, null=True)
 
@@ -71,7 +72,7 @@ class CurrentWeather(BaseModel):
         super().save(*args, **kwargs)
 
 
-class HighElevationForecast(BaseModel):
+class HighElevationForecast(ExportModelOperationsMixin('hef_weather'), BaseModel):
     """ Forecasts available through the winter for select areas """
 
     code = models.CharField(max_length=10, primary_key=True)

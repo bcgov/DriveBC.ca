@@ -100,6 +100,8 @@ urlpatterns = [
     # Actual webcam endpoints
     path("api/webcams/", include("apps.webcam.urls")),
 
+    path('', include('django_prometheus.urls')),
+
 ] + debug_toolbar_urls()
 
 

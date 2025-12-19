@@ -1,9 +1,10 @@
 from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
+from django_prometheus.models import ExportModelOperationsMixin
 
 
-class RestStop(BaseModel):
+class RestStop(ExportModelOperationsMixin('rest_stops'), BaseModel):
     rest_stop_id = models.CharField(max_length=100, null=True)
     location = models.PointField(null=True)
     geometry = models.JSONField(null=True)

@@ -29,3 +29,5 @@ drf-spectacular==0.28.0
 drf-spectacular-sidecar==2025.9.1
 mssql-django==1.6
 django-debug-toolbar==6.1.0
+django-prometheus==2.4.1
+django-redis==6.0.0
