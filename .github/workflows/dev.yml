@@ -15,38 +15,38 @@ env:
   REGISTRY_PASSWORD: ${{ github.token }}
 
 jobs:
-  build-static:
-    runs-on: ubuntu-latest
-    name: Build & Push Static Image
-    environment: dev
+  # build-static:
+  #   runs-on: ubuntu-latest
+  #   name: Build & Push Static Image
+  #   environment: dev
 
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
+  #   steps:
+  #   - name: Checkout Code
+  #     uses: actions/checkout@v6
 
-    - name: Build Static
-      id: build_image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        context: .
-        layers: true
-        image: drivebc-static
-        tags: latest latest-dev ${{ github.sha }}
-        labels: |
-          app=drivebc
-        containerfiles: ./compose/frontend/StaticBuild
-        build-args: |
-          FONTAWESOME_PACKAGE_TOKEN=${{ secrets.FONTAWESOME_PACKAGE_TOKEN }}
-          DEBUG_BUILD=true
+    # - name: Build Static
+    #   id: build_image
+    #   uses: redhat-actions/buildah-build@v2
+    #   with:
+    #     context: .
+    #     layers: true
+    #     image: drivebc-static
+    #     tags: latest latest-dev ${{ github.sha }}
+    #     labels: |
+    #       app=drivebc
+    #     containerfiles: ./compose/frontend/StaticBuild
+    #     build-args: |
+    #       FONTAWESOME_PACKAGE_TOKEN=${{ secrets.FONTAWESOME_PACKAGE_TOKEN }}
+    #       DEBUG_BUILD=true
 
-    - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
+    # - name: Push to Github Packages
+    #   uses: redhat-actions/push-to-registry@v2
+    #   with:
+    #     image: ${{ steps.build_image.outputs.image }}
+    #     tags: ${{ steps.build_image.outputs.tags }}
+    #     registry: ${{ env.IMAGE_REGISTRY }}
+    #     username: ${{ env.REGISTRY_USER }}
+    #     password: ${{ env.REGISTRY_PASSWORD }}
 
   build-backend:
     runs-on: ubuntu-latest
@@ -79,68 +79,68 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
 
 
-  build-redis:
-    runs-on: ubuntu-latest
-    name: Build & Push Redis Image
-    environment: dev
+  # build-redis:
+  #   runs-on: ubuntu-latest
+  #   name: Build & Push Redis Image
+  #   environment: dev
     
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
+  #   steps:
+  #   - name: Checkout Code
+  #     uses: actions/checkout@v6
     
-    - name: Build Redis
-      id: build_image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        image: drivebc-redis
-        tags: latest latest-dev ${{ github.sha }}
-        labels: |
-          app=drivebc
-        containerfiles: ./compose/redis/Dockerfile
+  #   - name: Build Redis
+  #     id: build_image
+  #     uses: redhat-actions/buildah-build@v2
+  #     with:
+  #       image: drivebc-redis
+  #       tags: latest latest-dev ${{ github.sha }}
+  #       labels: |
+  #         app=drivebc
+  #       containerfiles: ./compose/redis/Dockerfile
   
-    - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
+  #   - name: Push to Github Packages
+  #     uses: redhat-actions/push-to-registry@v2
+  #     with:
+  #       image: ${{ steps.build_image.outputs.image }}
+  #       tags: ${{ steps.build_image.outputs.tags }}
+  #       registry: ${{ env.IMAGE_REGISTRY }}
+  #       username: ${{ env.REGISTRY_USER }}
+  #       password: ${{ env.REGISTRY_PASSWORD }}
 
 
-  build-openshiftjobs:
-    runs-on: ubuntu-latest
-    name: Build & Push OpenShift Jobs Image
-    environment: dev
+  # build-openshiftjobs:
+  #   runs-on: ubuntu-latest
+  #   name: Build & Push OpenShift Jobs Image
+  #   environment: dev
     
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
+  #   steps:
+  #   - name: Checkout Code
+  #     uses: actions/checkout@v6
 
-    - name: Build OpenShift Jobs
-      id: build_image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        context: .
-        layers: true
-        image: drivebc-openshiftjobs
-        tags: latest latest-dev ${{ github.sha }}
-        labels: |
-          app=drivebc
-        containerfiles: ./compose/openshiftjobs/DockerFile
+  #   - name: Build OpenShift Jobs
+  #     id: build_image
+  #     uses: redhat-actions/buildah-build@v2
+  #     with:
+  #       context: .
+  #       layers: true
+  #       image: drivebc-openshiftjobs
+  #       tags: latest latest-dev ${{ github.sha }}
+  #       labels: |
+  #         app=drivebc
+  #       containerfiles: ./compose/openshiftjobs/DockerFile
 
-    - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
+  #   - name: Push to Github Packages
+  #     uses: redhat-actions/push-to-registry@v2
+  #     with:
+  #       image: ${{ steps.build_image.outputs.image }}
+  #       tags: ${{ steps.build_image.outputs.tags }}
+  #       registry: ${{ env.IMAGE_REGISTRY }}
+  #       username: ${{ env.REGISTRY_USER }}
+  #       password: ${{ env.REGISTRY_PASSWORD }}
 
 
   update-openshift-gold:
-    needs: [build-static, build-backend, build-redis, build-openshiftjobs]
+    needs: [build-backend]
     runs-on: ubuntu-latest
     name: Deploy Latest Images to OpenShift Gold
     environment:
@@ -164,7 +164,7 @@ jobs:
         insecure_skip_tls_verify: false
     - name: Helm upgrade on OpenShift Gold Environment
       run: |
-        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml ./infrastructure/main --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set image-consumer.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
+        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml ./infrastructure/main --set static.image.tag=4cecd55d6c549b2eba3415bf6e8f521950537c6a --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set image-consumer.image.tag=${{ github.sha }} --set redis.image.tag=4cecd55d6c549b2eba3415bf6e8f521950537c6a --set openshiftjobs.image.tag=4cecd55d6c549b2eba3415bf6e8f521950537c6a
 
   # I have this run after the push to Gold because I want to make sure that Gold runs the migrations first. Gold DR can't run migrations as DB is read-only
   update-openshift-golddr:
@@ -194,7 +194,7 @@ jobs:
 
     - name: Helm upgrade on OpenShift GoldDR Environment
       run: |
-        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml -f ./infrastructure/main/values-dev-dr.yaml ./infrastructure/main --set static.image.tag=${{ github.sha }} --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set image-consumer.image.tag=${{ github.sha }} --set redis.image.tag=${{ github.sha }} --set openshiftjobs.image.tag=${{ github.sha }}
+        helm upgrade dev-drivebc -f ./infrastructure/main/values-dev.yaml -f ./infrastructure/main/values-dev-dr.yaml ./infrastructure/main --set static.image.tag=4cecd55d6c549b2eba3415bf6e8f521950537c6a --set django.image.tag=${{ github.sha }} --set tasks.image.tag=${{ github.sha }} --set image-consumer.image.tag=${{ github.sha }} --set redis.image.tag=4cecd55d6c549b2eba3415bf6e8f521950537c6a --set openshiftjobs.image.tag=4cecd55d6c549b2eba3415bf6e8f521950537c6a
 
 
 
