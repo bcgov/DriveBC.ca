@@ -102,7 +102,7 @@ const NotificationEventType = forwardRef((props, ref) => {
         { name: 'Major delays', tooltip: tooltipMajor, value: 'majorEvents', checked: notificationEventTypes.majorEvents },
         { name: 'Minor delays', tooltip: tooltipMinor, value: 'minorEvents', checked: notificationEventTypes.minorEvents },
         { name: 'Road Conditions', tooltip: tooltipRoadConditions, value: 'roadConditions', checked: notificationEventTypes.roadConditions },
-        { name: 'Chain-ups in effect', tooltip: tooltipCommercial, value: 'chainUps', checked: notificationEventTypes.chainUps },
+        { name: 'Chain-ups', tooltip: tooltipCommercial, value: 'chainUps', checked: notificationEventTypes.chainUps },
 
       ].map(({ name, tooltip, value, checked }) => (
         <div key={name} className="notifications-target">
