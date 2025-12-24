@@ -55,6 +55,19 @@ def build_data_diff(current_obj, new_obj_data):
     for field in EVENT_UPDATE_FIELDS:
         current_field_data = getattr(current_obj, field)
         new_field_data = new_obj_data.get(field)
+
+        # Pre-check location with simplification to match models.py behavior. This is to avoid unnecessary updates.
+        if field == 'location' and \
+                current_obj.event_type in [EVENT_TYPE.ROAD_CONDITION, EVENT_TYPE.WEATHER_CONDITION] and \
+                isinstance(current_field_data, LineString) and \
+                new_field_data and new_field_data.get('type') == 'LineString':
+            ls = LineString(new_field_data['coordinates'], srid=4326)
+            ls.transform(3857)
+            ls = ls.simplify(50, preserve_topology=True)
+            ls.transform(4326)
+            if compare_data(current_field_data, ls):
+                continue
+
         if not compare_data(current_field_data, new_field_data):
             if field == 'location':
                 # {'coordinates': [-122.601346, 49.143921], 'type': 'Point'}
