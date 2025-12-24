@@ -430,6 +430,10 @@ def send_queued_notifications():
             queued_event_ids = queued_notifications.values_list('event_id', flat=True)
             events = active_events.filter(id__in=queued_event_ids)  # filter out inactive events
             ordered_events = get_ordered_events(events, saved_route.route)
+
+            if not ordered_events:
+                continue
+
             context = {
                 'events': ordered_events,
                 'route': saved_route,
