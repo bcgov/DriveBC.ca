@@ -1,4 +1,4 @@
-Update for DriveBC route {{ route.label }}
+Update for DriveBC route {% if route.label %}{{ route.label }}{% else %}{{ route.start }} to {{ route.end }}{% endif %}
 
 {% for event in events %}
 {{ event.event_type }}
