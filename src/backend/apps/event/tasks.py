@@ -447,8 +447,9 @@ def send_queued_notifications():
             html = render_to_string('email/event_updated.html', context)
 
             update_text = 'updates' if len(ordered_events) > 1 else 'update'
+            route_label = saved_route.label if saved_route.label else f'{saved_route.start} to {saved_route.end}'
             msg = EmailMultiAlternatives(
-                f'DriveBC: {len(ordered_events)} {update_text} on {saved_route.label}',
+                f'DriveBC: {len(ordered_events)} {update_text} on {route_label}',
                 text,
                 settings.DRIVEBC_FROM_EMAIL_DEFAULT,
                 [saved_route.user.email]
