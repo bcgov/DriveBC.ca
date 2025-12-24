@@ -228,7 +228,7 @@ export default function DriveBCMap(props) {
   // Drawer state
   const getSnapPoints = () => {
     if (!isCamDetail && showRouteObjs && selectedRoute) {
-      return !smallScreen ? ['25%', '50%', '80%'] : ['25%', '50%', '90%'];
+      return !smallScreen ? ['25%', '50%', '80%'] : ['25%', '50%', '88%'];
     } else {
       return !smallScreen ? ['25%', '50%', '80%'] : ['25%', '50%', '100%'];
     }
@@ -303,9 +303,7 @@ export default function DriveBCMap(props) {
             // Calculate relative movement from initial position
             const relativeY = translateY - drawerRef.current.offsetHeight;
 
-            // Add -58px offset when route objects are shown
-            const routeDetailsOffset = (selectedRoute && showRouteObjs) ? -78 : 0;
-            setDrawerY(relativeY + routeDetailsOffset);
+            setDrawerY(relativeY);
           }
 
         } else {
@@ -321,7 +319,7 @@ export default function DriveBCMap(props) {
 
     frame = requestAnimationFrame(updatePanelOffset);
     return () => cancelAnimationFrame(frame);
-  }, [showRouteObjs, selectedRoute]);
+  }, []);
 
   // ScaleLine
   const scaleLineControl = new ScaleLine({ units: 'metric' });
@@ -1126,10 +1124,12 @@ export default function DriveBCMap(props) {
           </div>
         )}
 
-        {(!isCamDetail && smallScreen && mapRef.current && !showRouteObjs) && (
+        {(!isCamDetail && smallScreen && mapRef.current) && (
           <div className="fixed-to-mobile-group"
             style={{
-              transform: `translateY(${drawerY}px)`
+              transform: `translateY(${drawerY}px)`,
+              display: (showRouteObjs && selectedRoute && snapPoints.length > 0 && snap === snapPoints[snapPoints.length - 1])
+                ? 'none' : 'block'
             }}
           >
             <Button
