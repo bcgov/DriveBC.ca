@@ -132,8 +132,8 @@
 				}
 
 				// Adding padding for iphone 12 fix
-				a:last-of-type {
-					padding-bottom: 4rem;
+				& >.nav-link:last-of-type {
+					margin-bottom: 4rem;
 				}
 
 				.footer-nav-link {
@@ -304,6 +304,109 @@
 					position: relative;
 					left: -4px;
 					transition: 0.2s ease-in-out left;
+				}
+			}
+
+			.commercial-dropdown {
+				position: relative;
+				border-bottom: 1px solid $Nav-link-border;
+
+				@media (min-width: 1200px) {
+					border-bottom: none;
+				}
+
+				.nav-link {
+					background: none;
+					border-bottom: none;
+
+					.title {
+						.chevron-icon {
+							font-size: 0.875rem;
+							margin-left: 8px;
+							transition: transform 0.3s ease-in-out;
+							position: relative;
+							left: 0;
+							display: inline-flex;
+							align-items: center;
+
+							@media (min-width: 992px) {
+								margin-left: 6px;
+							}
+
+							&.rotated {
+								transform: rotate(180deg);
+							}
+						}
+					}
+				}
+
+				.commercial-dropdown-content {
+					max-height: 0;
+					overflow: hidden;
+					transition: max-height 0.3s ease-in-out;
+					background: none;
+					will-change: max-height;
+					display: flex;
+					flex-direction: column;
+
+					@media (max-width: 1199px) {
+						overflow: hidden;
+						pointer-events: auto;
+						-webkit-overflow-scrolling: touch;
+						touch-action: pan-y;
+					}
+
+					@media (min-width: 1200px) {
+						position: absolute;
+						top: calc(100% - 10px);
+						left: 0;
+						z-index: 1000;
+						background-color: white;
+						box-shadow: 0px 6.4px 14.4px 0px rgba(0, 0, 0, 0.13), 0px 1.2px 3.6px 0px rgba(0, 0, 0, 0.10);
+						min-width: 260px;
+						border-radius: 4px;
+						opacity: 0;
+						transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+						pointer-events: none;
+					}
+
+					&.open {
+						max-height: 500px;
+
+						@media (max-width: 1199px) {
+							overflow: visible;
+						}
+
+						@media (min-width: 1200px) {
+							opacity: 1;
+							pointer-events: auto;
+							overflow-y: auto;
+							max-height: calc(100vh - 150px);
+						}
+					}
+
+					.commercial-dropdown-item {
+						padding: 8px 28px;
+						text-decoration: none;
+						color: $Type-Primary;
+						font-size: 0.875rem;
+
+						@media (min-width: 1200px) {
+							padding: 12px 12px 0;
+						}
+
+						&:last-of-type {
+							padding-bottom: 16px;
+							@media (min-width: 1200px) {
+								padding-bottom: 12px;
+							}
+						}
+
+						svg {
+							margin-left: 8px;	
+							font-size: 0.75rem;
+						}
+					}
 				}
 			}
 
