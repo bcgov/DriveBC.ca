@@ -99,9 +99,15 @@
         border: none;
         border-radius: 5px;
         box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
+        padding: 0;
 
         .dropdown-item {
-          padding: 15px;
+          font-size: 0.875rem;
+          padding: 14px 14px 0;
+
+          &:last-of-type {
+            padding-bottom: 14px;
+          }
 
           &.selected {
             font-weight: 700;
