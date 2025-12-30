@@ -71,6 +71,7 @@
       display: flex;
       justify-content: space-between;
       margin: 0;
+      gap: 8px;
 
       @media (min-width: 576px) {
         justify-content: flex-start;
@@ -84,11 +85,6 @@
       @media (min-width: 1200px) {
         display: inline;
       }
-
-      p {
-        white-space: nowrap;
-      }
-
 
       &__update, &__elevation, &__hwy {
         display: flex;
