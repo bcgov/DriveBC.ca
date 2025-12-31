@@ -8,5 +8,9 @@
     column-count: 2;
     column-gap: 12px;
   }
-  
+
+  .notifications-target {
+    break-inside: avoid;
+    page-break-inside: avoid; // For older browsers
+  }
 }
