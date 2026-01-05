@@ -62,7 +62,6 @@ S3_BUCKET = os.getenv("S3_BUCKET")
 S3_REGION = os.getenv("S3_REGION")
 S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
 S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
-RABBITMQ_URL = os.getenv("RABBITMQ_URL")
 S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
 
 # Define PVC directory
