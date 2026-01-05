@@ -58,7 +58,6 @@ S3_BUCKET = os.getenv("S3_BUCKET")
 S3_REGION = os.getenv("S3_REGION")
 S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
 S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
-RABBITMQ_URL = os.getenv("RABBITMQ_URL")
 S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
 QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME")
 QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES", "209715200"))
@@ -107,6 +106,16 @@ max_idle_time = 300  # 5 minutes before warning
 
 tz_pst = 'America/Vancouver'
 
+async def consume_from(rb_url: str):
+    """
+    Consumer instance bound to a single RabbitMQ URL.
+    """
+    try:
+        db_data = await parse_rows(rb_url)
+    except Exception as exc:
+        logger.error("Failed to initialize consumer for %s: %s", rb_url, exc)
+        return
+
 async def on_reconnect(conn):
     logger.info("RabbitMQ connection re-established")
     global last_activity
@@ -123,7 +132,6 @@ async def on_message(message: aio_pika.IncomingMessage):
     """Process incoming RabbitMQ message."""
     if stop_event.is_set():
         logger.info("Stop requested. Dropping message.")
-        return
     
     async with message.process(ignore_processed=True):
         filename = message.headers.get("filename", "unknown.jpg")
@@ -222,6 +230,68 @@ async def run_consumer():
                     
                     try:
                         await process_message(message)
+
+    logger.info("Starting RabbitMQ consumer for %s", rb_url)
+
+    connection = None
+    channel = None
+    queue = None
+
+    try:
+        connection = await aio_pika.connect_robust(rb_url)
+        logger.info("Connected to RabbitMQ at %s", rb_url)
+
+        channel = await connection.channel()
+        # Limit how many unacked messages take at once
+        await channel.set_qos(prefetch_count=1)
+
+        exchange = await channel.declare_exchange(
+            name=EXCHANGE_NAME,
+            type=aio_pika.ExchangeType.FANOUT,
+            durable=True,
+        )
+
+        queue = await channel.declare_queue(
+            QUEUE_NAME,
+            durable=True,
+            exclusive=False,
+            auto_delete=False,
+            arguments={"x-max-length-bytes": QUEUE_MAX_BYTES},
+        )
+
+        await queue.bind(exchange)
+        logger.info("Queue bound to exchange for %s; beginning consume loop.", rb_url)
+
+        # Consume loop
+        async with queue.iterator() as queue_iter:
+            async for message in queue_iter:
+                if stop_event.is_set():
+                    logger.info("Stop requested. Breaking consume loop for %s.", rb_url)
+                    break
+
+                async with message.process(ignore_processed=True):
+                    filename = message.headers.get("filename", "unknown.jpg")
+                    camera_id = filename.split("_")[0].split(".")[0]
+                    timestamp_utc = message.headers.get("timestamp", "unknown")
+                    camera_status = calculate_camera_status(timestamp_utc)
+
+                    try:
+                        timestamp_local = generate_local_timestamp(
+                            db_data, camera_id, timestamp_utc
+                        )
+
+                        # # For testing purposes, only allow camera with IDs below to be processed
+                        # if camera_id != "524":
+                        #     logger.info("Skipping processing for camera %s", camera_id)
+                        #     continue
+                        await handle_image_message(
+                            camera_id,
+                            message.body,
+                            timestamp_local,
+                            camera_status,
+                        )
+                        logger.info("Processed message for camera %s on %s.", camera_id, rb_url)
+
                     except Exception as e:
                         logger.error(f"Error processing message: {e}")
                         # Continue to next message (processing errors don't trigger reconnect)
@@ -240,6 +310,26 @@ async def run_consumer():
         finally:
             logger.info("Cleaning up RabbitMQ resources...")
             if connection and not connection.is_closed:
+                        logger.exception("Failed processing message (camera %s): %s", camera_id, e)
+
+        logger.info("Exited message iterator for %s.", rb_url)
+
+    except asyncio.CancelledError:
+        logger.info("Consumer cancelled for %s.", rb_url)
+        raise
+    except ChannelInvalidStateError:
+        logger.warning("AMQP channel closed unexpectedly for %s.", rb_url)
+    except Exception as e:
+        logger.exception("Unhandled error in consumer for %s: %s", rb_url, e)
+    finally:
+        logger.info("Cleaning up RabbitMQ resources for %s...", rb_url)
+        if channel:
+            try: 
+                await channel.close()
+            except Exception as e: 
+                logger.warning("Error closing channel: %s", e)
+        if connection:
+            try: 
                 await connection.close()
         
         if not stop_event.is_set():
@@ -276,6 +366,64 @@ def safe_db_call(func, *args, **kwargs):
     # This forces Django to open a fresh connection if needed
     connection.ensure_connection()
     return func(*args, **kwargs)
+            except Exception as e: 
+                logger.warning("Error closing connection: %s", e)
+
+        logger.info("Consumer stopped for %s.", rb_url)
+
+
+async def parse_rows(rb_url: str):
+    """
+    Loads camera rows from DB and prepares DB metadata for this RabbitMQ URL.
+    Raises an exception if no data is available.
+    """
+    logger.info("Fetching DB camera rows for %s", rb_url)
+
+    rows = await sync_to_async(get_all_from_db)()
+    db_data = process_camera_rows(rows)
+
+    if not db_data:
+        raise RuntimeError(
+            f"No camera data available for watermarking. Consumer ({rb_url}) exiting."
+        )
+
+    logger.info("DB camera data loaded for %s (%d rows).", rb_url, len(db_data))
+    return db_data
+
+
+async def run_consumer():
+    """
+    Launch consumers for Gold and GoldDR in parallel.
+    Each consumer listens to its own RabbitMQ instance.
+    """
+    gold_url = os.getenv("RABBITMQ_URL_GOLD")
+    golddr_url = os.getenv("RABBITMQ_URL_GOLDDR")
+
+    if not gold_url and not golddr_url:
+        raise RuntimeError("No RabbitMQ URLs configured. At least one is required.")
+
+    tasks = []
+
+    if gold_url:
+        logger.info("Starting GOLD consumer...")
+        tasks.append(asyncio.create_task(consume_from(gold_url)))
+
+    if golddr_url:
+        logger.info("Starting GOLDDR consumer...")
+        tasks.append(asyncio.create_task(consume_from(golddr_url)))
+
+    logger.info("All configured RabbitMQ consumers started.")
+
+    # Wait until stop_event is set (SIGTERM / SIGINT)
+    try:
+        await stop_event.wait()
+    finally:
+        logger.info("Stop event received; cancelling consumers...")
+        for task in tasks:
+            task.cancel()
+
+        await asyncio.gather(*tasks, return_exceptions=True)
+        logger.info("All consumers stopped.")
 
 def shutdown():
     """Signal handler to gracefully stop the consumer."""
