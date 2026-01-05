@@ -13,6 +13,7 @@ class WebcamSerializer(serializers.ModelSerializer):
     highway_display = serializers.SerializerMethodField()
     marked_stale = serializers.SerializerMethodField()
     marked_delayed = serializers.SerializerMethodField()
+    credit = serializers.SerializerMethodField()
 
     class Meta:
         model = Webcam
@@ -20,6 +21,9 @@ class WebcamSerializer(serializers.ModelSerializer):
             "created_at",
             "modified_at",
         )
+
+    def get_credit(self, obj):
+        return obj.credit
 
     def get_name(self, obj):
         return obj.name_override if obj.name_override else obj.name
