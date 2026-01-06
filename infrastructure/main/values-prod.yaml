@@ -38,13 +38,6 @@ django:
     minReplicas: 3
     maxReplicas: 5
     targetCPUUtilizationPercentage: 150
-  route:
-    host: prod-drivebc.apps.gold.devops.gov.bc.ca
-    iprestricted: false #Set to true if you want to limit IP's that can access publicly available pages to the the addresses in the ipallowlist 
-    iprestrictedAdminPages: true #Set to true if you want to limit IP's that can access backend admin pages
-    vanityurl: 
-      enabled: true
-      vanityurlhost: www.drivebc.ca # You will need to add the cert manually
   mediapvc:
     storage: 1Gi
   apppvc:
@@ -54,6 +47,9 @@ django:
     minAvailable: 1
   prometheus:
     enabled: true # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
+  apigateway: # Used for the connection from the API Gateway to the django application
+    enabled: true # Set to true if you want to expose the django app via the API Gateway
+    namespace: b8840c # This is the namespace that the API Gateway is deployed in
 
 
 tasks:

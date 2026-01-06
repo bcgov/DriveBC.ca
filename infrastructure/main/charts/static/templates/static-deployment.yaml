@@ -17,6 +17,7 @@ spec:
         {{ include "app.selectorLabels" . | nindent 8 }}
       annotations: 
         vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-init-first: 'true'
         vault.hashicorp.com/agent-inject-secret-secrets.env: {{ .Values.global.vault.licenceplate }}-{{ .Values.global.vault.environment}}/{{ .Values.vault.secretName }}
         vault.hashicorp.com/agent-inject-template-secrets.env: |
           {{`{{- with secret `}}"{{ .Values.global.vault.licenceplate }}-{{ .Values.global.vault.environment }}/{{ .Values.vault.secretName }}"{{` }}
@@ -37,6 +38,29 @@ spec:
         - name: log-storage
           persistentVolumeClaim:
             claimName: {{ template "app.fullname" . }}-log-storage
+        - name: shared-config
+          emptyDir: {}
+      initContainers:
+        - name: config-init
+          image: "{{ .Values.image.repository  }}:{{ .Values.image.tag  }}"
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "/tmp/generate-config.sh"]
+          env:
+            - name: SHARED_VOLUME_PATH
+              value: "/shared-config"
+            - name: DEPLOYMENT_TAG
+              value: {{ $deploymentTag | quote }}
+            - name: DEPLOYMENT_TIME
+              value: {{ $deploymentTime | quote }}
+            - name: RELEASE
+              value: {{ .Values.global.release }}
+            {{- range $key, $value := .Values.deployment.env.variables }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          volumeMounts:
+            - name: shared-config
+              mountPath: /shared-config
       containers:
         - resources:
             requests:
@@ -55,13 +79,20 @@ spec:
               readOnly: true
             - name: log-storage
               mountPath: /logs
+            - name: shared-config
+              mountPath: /usr/share/nginx/html/static
+              subPath: static
+              readOnly: true
+            - name: shared-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+            - name: shared-config
+              mountPath: /etc/nginx/conf.d/security_headers.conf
+              subPath: security_headers.conf
+              readOnly: true
           image: >-
             {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
-          command:
-            - sh
-            - '-c'
-          args:
-            - '. /vault/secrets/secrets.env && ./docker-entrypoint.d/add_client_env.sh && nginx -g "daemon off;"'
           env:
             - name: DEPLOYMENT_TAG
               value: {{ $deploymentTag | quote }}

@@ -1,49 +1,46 @@
-# Use an official node runtime as a parent image
-FROM node:22-slim AS buildnode
+# syntax=docker/dockerfile:1
+
+############################################
+# Builder: install deps and build frontend #
+############################################
+FROM node:24-alpine AS buildnode
 
 WORKDIR /app/
-RUN chown node:root /app
+COPY ./src/frontend/package.json ./src/frontend/package-lock.json ./src/frontend/.npmrc ./
 
-ARG FONTAWESOME_PACKAGE_TOKEN
-ENV FONTAWESOME_PACKAGE_TOKEN=${FONTAWESOME_PACKAGE_TOKEN}
+RUN --mount=type=secret,id=FONTAWESOME_PACKAGE_TOKEN \
+    test -s /run/secrets/FONTAWESOME_PACKAGE_TOKEN || { echo "FONTAWESOME_PACKAGE_TOKEN secret missing"; exit 1; }; \
+    export FONTAWESOME_PACKAGE_TOKEN="$(cat /run/secrets/FONTAWESOME_PACKAGE_TOKEN)" && \
+    npm ci
 
-# Install dependencies
-COPY ./src/frontend/package.json /app/
-COPY ./src/frontend/package-lock.json /app/
-COPY ./src/frontend/.npmrc /app/
-RUN npm install
-
-# Add rest of the client code
-COPY ./src/frontend /app/
-RUN chown node:root /app/node_modules
-
-# OpenShift runs as node, not as root (while docker runs as root), so need to
-# ensure running user can write to its home directory--without setting this,
-# home is /, so node can't create a cache dir
-ENV HOME /home/node
+COPY ./src/frontend/ /app/
 
 RUN npm run openshift_build
 
-FROM nginx:stable-alpine
+############################################
+# Runtime: nginx serving built assets      #
+############################################
+FROM nginxinc/nginx-unprivileged:stable-alpine
 
 EXPOSE 3000
 
-RUN touch /run/nginx.pid
-
-COPY ./compose/frontend/default.conf /etc/nginx/conf.d
-COPY ./compose/frontend/default_maintenance.txt /etc/nginx
-COPY ./compose/frontend/legacy_redirects.conf /etc/nginx
-COPY ./compose/frontend/security_headers.conf /etc/nginx/conf.d
-COPY ./compose/frontend/blocked_ips.conf /etc/nginx/conf.d
+# Copy built assets
+RUN mkdir -p /usr/share/nginx/html
 COPY --from=buildnode /app/build /usr/share/nginx/html
-RUN chmod -R 777 /run /var/log/nginx /var/cache/nginx /usr/share/nginx/html/static/js /usr/share/nginx/html/static/css /usr/share/nginx/html/static/media /etc/nginx/conf.d
 
-ARG DEBUG_BUILD=false
+USER root
+RUN mkdir -p /tmp/cache/nginx && \
+    chgrp -R 0 /tmp/cache && \
+    chmod -R g=u /tmp/cache
+USER nginx
 
-# Add debugging tools into builds if enabled
-RUN if [ ${DEBUG_BUILD} = true ]; then \
-  apk update && apk add --no-cache jq vim procps less; \
-fi
+# Nginx config and runtime permissions
+COPY ./compose/frontend/default.conf /etc/nginx/conf.d/default.conf
+COPY ./compose/frontend/security_headers.conf /etc/nginx/conf.d/security_headers.conf
+COPY ./compose/frontend/blocked_ips.conf /etc/nginx/conf.d/blocked_ips.conf
+COPY ./compose/frontend/legacy_redirects.conf /etc/nginx/legacy_redirects.conf
 
-COPY ./compose/frontend/entrypoint /docker-entrypoint.d/add_client_env.sh
-RUN sed -i 's/\r$//g' /docker-entrypoint.d/add_client_env.sh && chmod +x /docker-entrypoint.d/add_client_env.sh
+COPY ./compose/frontend/default_maintenance.txt /etc/nginx/default_maintenance.txt
+
+# Runtime env injection hook (This will be run by an initContainer in OpenShift)
+COPY --chmod=755 ./compose/frontend/generate-config.sh /tmp/generate-config.sh

@@ -61,44 +61,55 @@ jobs:
     environment: uat
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-      with:
-        ref: ${{ needs.tag.outputs.tag }}
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.tag.outputs.tag }}
 
-    - name: Build Static
-      id: build_image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        context: .
-        layers: true
-        image: drivebc-static
-        tags: latest latest-uat ${{ github.sha }} ${{ needs.tag.outputs.tag }}
-        labels: |
-          app=drivebc
-        containerfiles: ./compose/frontend/StaticBuild
-        build-args: |
-          FONTAWESOME_PACKAGE_TOKEN=${{ secrets.FONTAWESOME_PACKAGE_TOKEN }}
-          DEBUG_BUILD=false
+      - name: Log in to the Container registry (GitHub)
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.IMAGE_REGISTRY }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
 
-    - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build_image.outputs.image }}
-        tags: ${{ steps.build_image.outputs.tags }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
+      - name: Log in to OpenShift Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
+          username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
+          password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
 
-# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
-    - name: Push to OpenShift ImageStream
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build_image.outputs.image }}
-        tags: latest latest-uat ${{ needs.tag.outputs.tag }}
-        registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
-        username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
-        password: ${{ secrets.OPENSHIFT_IMAGESTREAM_TOKEN }}
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.IMAGE_REGISTRY }}/drivebc-static
+            ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}drivebc-static
+          tags: |
+            type=raw,value=latest
+            type=raw,value=latest-test
+            type=sha,format=long
+            type=raw,value=${{ needs.tag.outputs.tag }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push to both registries
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./compose/frontend/StaticBuild
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: |
+            ${{ steps.meta.outputs.labels }}
+            app=drivebc
+          build-args: |
+            DEBUG_BUILD=false
+          secrets: |
+            "FONTAWESOME_PACKAGE_TOKEN=${{ secrets.FONTAWESOME_PACKAGE_TOKEN }}"
 
   build-backend:
     needs: [tag]

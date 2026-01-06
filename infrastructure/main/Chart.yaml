@@ -7,12 +7,15 @@ appVersion: '0.1.0'
 dependencies:
   - name: django
     version: '0.1.0'
-    repository: 'file://./charts/_django'
+    repository: 'file://./charts/django'
     condition: django.enabled
   - name: tasks
     version: '0.1.0'
-    repository: 'file://./charts/_tasks'
+    repository: 'file://./charts/tasks'
     condition: tasks.enabled
+  - name: image-consumer
+    version: '0.1.0'
+    repository: 'file://./charts/image-consumer'
   - name: redis
     version: '0.1.0'
     repository: 'file://./charts/redis'

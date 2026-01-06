@@ -27,8 +27,8 @@ django:
     env:
       postgresSecret: test-drivebc-db-crunchy-pguser-test-drivebc-db
       variables:
-        SHOW_DEBUG_TOOLBAR: 'True' # Set to False for UAT and Prod
-        DEBUG: 'True' # Set to False for UAT and Prod
+        SHOW_DEBUG_TOOLBAR: 'False' # Set to False for UAT and Prod
+        DEBUG: 'False' # Set to False for UAT and Prod
         ROOT_LOG_LEVEL: WARNING
   vault:
     secretName: test-django  # This is the name of the secret in vault that contains the environment variables for the app
@@ -38,13 +38,6 @@ django:
     minReplicas: 1
     maxReplicas: 2
     targetCPUUtilizationPercentage: 75
-  route:
-    host: test-drivebc.apps.gold.devops.gov.bc.ca
-    iprestricted: false #Set to true if you want to limit IP's that can access publicly available pages to the the addresses in the ipallowlist 
-    iprestrictedAdminPages: false #Set to true if you want to limit IP's that can access backend admin pages
-    vanityurl: 
-      enabled: true
-      vanityurlhost: tst.drivebc.ca # You will need to add the cert manually
   mediapvc:
     storage: 1Gi
   apppvc:
@@ -54,6 +47,9 @@ django:
     minAvailable:  
   prometheus:
     enabled: true # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
+  apigateway: # Used for the connection from the API Gateway to the django application
+    enabled: true # Set to true if you want to expose the django app via the API Gateway
+    namespace: b8840c # This is the namespace that the API Gateway is deployed in
 
 
 tasks:
@@ -75,8 +71,8 @@ tasks:
     env:
       postgresSecret: test-drivebc-db-crunchy-pguser-test-drivebc-db
       variables:
-        SHOW_DEBUG_TOOLBAR: 'True' # Set to False for UAT and Prod
-        DEBUG: 'True' # Set to False for UAT and Prod
+        SHOW_DEBUG_TOOLBAR: 'False' # Set to False for UAT and Prod
+        DEBUG: 'False' # Set to False for UAT and Prod
         ROOT_LOG_LEVEL: WARNING
   vault:
     secretName: test-django  # This is the name of the secret in vault that contains the environment variables for the app
@@ -103,8 +99,8 @@ image-consumer:
     env:
       postgresSecret: test-drivebc-db-crunchy-pguser-test-drivebc-db
       variables:
-        SHOW_DEBUG_TOOLBAR: 'True' # Set to False for UAT and Prod
-        DEBUG: 'True' # Set to False for UAT and Prod
+        SHOW_DEBUG_TOOLBAR: 'False' # Set to False for UAT and Prod
+        DEBUG: 'False' # Set to False for UAT and Prod
         ROOT_LOG_LEVEL: WARNING
   vault:
     secretName: test-django  # This is the name of the secret in vault that contains the environment variables for the app

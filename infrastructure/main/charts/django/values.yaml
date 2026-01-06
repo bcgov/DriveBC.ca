@@ -23,11 +23,6 @@ autoscaling:
   maxReplicas: 2
   targetCPUUtilizationPercentage: 75
 
-route:
-  host:
-  iprestricted: false #Set to true if you want to limit IP's the the addresses in the ipallowlist below
-  iprestrictedAdminPages: true
-  ipallowlist: 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 #The first 4 ranges are GOV IP's, the last one is for OXD external IP
 
 mediapvc:
   storage: 1Gi
