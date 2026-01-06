@@ -10,5 +10,5 @@ export function getFerries(routePoints) {
 export function getCoastalFerries(routePoints) {
   const payload = routePoints ? { route: routePoints } : {};
 
-  return get(`${window.API_HOST}/api/ferries/coastal`, payload).then((data) => data);
+  return get(`${window.API_HOST}/api/ferries/coastal/`, payload).then((data) => data);
 }
