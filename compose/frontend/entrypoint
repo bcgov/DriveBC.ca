@@ -48,6 +48,14 @@ else
     echo "Environment is not 'prod', keeping X-Robots-Tag noindex header."
 fi
 
+# --- Handle Debug Route ---
+if [ "$ENVIRONMENT" = "dev-drivebc" ]; then
+    echo "Environment is 'dev'; Adding the debug toolbar route."
+    sed -i 's/healthcheck)/healthcheck|__debug__)/' /etc/nginx/conf.d/default.conf
+else
+    echo "Environment is not 'dev'; not adding the debug toolbar route."
+fi
+
 # Create blocked IPs configuration file
 BLOCKED_CONF="/etc/nginx/conf.d/blocked_ips.conf"
 > "$BLOCKED_CONF"
