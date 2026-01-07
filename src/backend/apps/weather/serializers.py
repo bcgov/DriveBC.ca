@@ -13,6 +13,7 @@ class RegionalWeatherSerializer(serializers.ModelSerializer):
         model = RegionalWeather
         fields = [
             'id',
+            'code',
             'location',
             'conditions',
             'name',
@@ -44,6 +45,7 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
         model = CurrentWeather
         fields = [
             'id',
+            'code',
             'weather_station_name',
             'air_temperature',
             'average_wind',
