@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@bcgov/bc-sans": "^1.0.1",
+    "@bcgov/bc-sans": "^2.1.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-brands-svg-icons": "^6.4.2",
     "@fortawesome/pro-light-svg-icons": "^6.5.2",
@@ -20,6 +20,7 @@
     "@uidotdev/usehooks": "^2.0.1",
     "@vaadin/date-picker": "^24.6.2",
     "@vaadin/time-picker": "^24.6.2",
+    "@vladyoslav/drawer": "^0.1.0",
     "bootstrap": "^5.3.0",
     "env-cmd": "^10.1.0",
     "flatbush": "^4.4.0",
@@ -54,8 +55,7 @@
     "redux-persist": "^6.0.0",
     "title-case": "^4.3.2",
     "ua-parser-js": "^2.0.3",
-    "web-vitals": "^2.1.4",
-    "@vladyoslav/drawer": "^0.1.0"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "env-cmd -f ../../.env react-scripts start",
