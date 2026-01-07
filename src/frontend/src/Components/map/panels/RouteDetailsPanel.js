@@ -8,6 +8,7 @@ import { memoize } from 'proxy-memoize';
 // Internal imports
 import RouteDetails from '../../routing/RouteDetails';
 import RouteObjectList from "../../routing/RouteObjectList";
+import ShareURLButton from '../../shared/ShareURLButton';
 
 // External imports
 import { useMediaQuery } from "@uidotdev/usehooks";
@@ -115,6 +116,7 @@ export default function RouteDetailsPanel(props) {
         </svg>
           <p className="name">Routes</p>
         </div>
+        <ShareURLButton/>
       </div>
 
       <div className="popup__content">
