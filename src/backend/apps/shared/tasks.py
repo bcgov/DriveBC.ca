@@ -1,12 +1,14 @@
 import datetime
 from zoneinfo import ZoneInfo
 
+from allauth.usersessions.models import UserSession
 from apps.event.tasks import update_event_area_relations
 from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
 from apps.shared.models import Area
 from apps.shared.serializers import DistrictSerializer
 from apps.webcam.tasks import update_camera_relations
+from django.contrib.sessions.models import Session
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management import call_command
@@ -28,6 +30,13 @@ def clean_email_logs():
 @lock_task("clear-sessions-lock")
 def clear_sessions():
     call_command("clearsessions")
+
+    # Get all valid session keys currently in the main Django session table
+    valid_keys = Session.objects.values_list('session_key', flat=True)
+
+    # Delete records in UserSession that refer to a key NOT in that list
+    # Using .exclude() is the most efficient way here
+    UserSession.objects.exclude(session_key__in=valid_keys).delete()
 
 
 def populate_district_from_data(district_data):
