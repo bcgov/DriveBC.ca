@@ -28,6 +28,9 @@ class WebcamSerializer(serializers.ModelSerializer):
         data["name"] = instance.name_override or instance.name
         return data
 
+    def get_credit(self, obj):
+        return obj.credit
+
     def get_name(self, obj):
         return obj.name_override if obj.name_override else obj.name
 
