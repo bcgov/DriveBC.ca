@@ -168,6 +168,14 @@ async def run_consumer():
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
                         logger.exception("Failed processing message (camera %s): %s", camera_id, e)
+                        # Force Django to drop broken DB connection
+                        try:
+                            connection.close()
+                            logger.warning("DB connection closed and will reconnect automatically.")
+                        except Exception:
+                            logger.exception("Failed to close DB connection")
+                        # Prevent hot retry loop
+                        await asyncio.sleep(2)
 
         logger.info("Exited message iterator.")
 

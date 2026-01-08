@@ -191,6 +191,7 @@ DATABASES = {
         "PASSWORD": env("DB_PASSWORD"),
         "HOST": env("DB_HOST"),
         "PORT": env.int("DB_PORT"),
+        "CONN_MAX_AGE": 60,   # recycle connections every 60 seconds
     },
 
     "mssql": {
