@@ -7,8 +7,8 @@ from rest_framework import serializers
 
 
 class WebcamSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
-    caption = serializers.SerializerMethodField()
+    name = serializers.CharField(required=False, allow_blank=True)
+    caption = serializers.CharField(required=False, allow_blank=True)
     links = serializers.SerializerMethodField()
     highway_display = serializers.SerializerMethodField()
     marked_stale = serializers.SerializerMethodField()
@@ -22,8 +22,11 @@ class WebcamSerializer(serializers.ModelSerializer):
             "modified_at",
         )
 
-    def get_credit(self, obj):
-        return obj.credit
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["caption"] = instance.caption_override or instance.caption
+        data["name"] = instance.name_override or instance.name
+        return data
 
     def get_name(self, obj):
         return obj.name_override if obj.name_override else obj.name
