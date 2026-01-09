@@ -19,6 +19,14 @@
 }
 
 .popup {
+  &--route {
+    .copy-btn {
+      color: $BC-Blue;
+      &:hover {
+        background: lighten($Type-Primary, 70%);
+      }
+    }
+  }
   &--camera {
     .copy-btn {
       color: $Blue90;
