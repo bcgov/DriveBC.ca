@@ -51,7 +51,6 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
@@ -133,7 +132,6 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_gis",
-    'debug_toolbar',
     "django_filters",
     "drf_recaptcha",
     "corsheaders",
@@ -180,12 +178,19 @@ OVERRIDDEN_APPS = [
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS + OVERRIDDEN_APPS
+if SHOW_DEBUG_TOOLBAR:
+    INSTALLED_APPS += [
+        "debug_toolbar",
+    ]
+    MIDDLEWARE += [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
 
 # Storage
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DATABASES = {
     "default": {
-        "ENGINE": "django_prometheus.db.backends.postgis", 
+        "ENGINE": "django_prometheus.db.backends.postgis",
         "NAME": env("DB_NAME"),
         "USER": env("DB_USER"),
         "PASSWORD": env("DB_PASSWORD"),

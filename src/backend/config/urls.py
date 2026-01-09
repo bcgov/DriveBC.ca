@@ -5,7 +5,7 @@ from allauth.account.decorators import secure_admin_login
 from apps.authentication import views as auth_views
 from apps.shared import views as shared_views
 from apps.shared.views import static_override
-from debug_toolbar.toolbar import debug_toolbar_urls
+from config.settings import SHOW_DEBUG_TOOLBAR
 from django.conf import settings
 from django.conf.urls import defaults
 from django.conf.urls.static import static
@@ -102,8 +102,11 @@ urlpatterns = [
 
     path('', include('django_prometheus.urls')),
 
-] + debug_toolbar_urls() + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static_override(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+if SHOW_DEBUG_TOOLBAR:
+    from debug_toolbar.toolbar import debug_toolbar_urls
+    urlpatterns += debug_toolbar_urls()
 
 if settings.DEV_ENVIRONMENT:
     from django.views.static import serve
