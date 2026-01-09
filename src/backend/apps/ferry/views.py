@@ -6,10 +6,22 @@ from rest_framework import viewsets
 
 
 class FerryAPI(CachedListModelMixin):
-    queryset = Ferry.objects.distinct('route_id')
+    queryset = Ferry.objects.all()
     serializer_class = FerryRouteSerializer
     cache_key = CacheKey.FERRY_LIST
     cache_timeout = CacheTimeout.FERRY_LIST
+
+    def fetch_list_data(self, queryset=None):
+        qs = Ferry.objects.all().order_by('route_id', 'priority')
+        routes = {}
+        for ferry in qs:
+            if ferry.route_id not in routes:
+                ferry.vessels_list = []
+                routes[ferry.route_id] = ferry
+
+            routes[ferry.route_id].vessels_list.append(ferry)
+
+        return self.get_serializer(list(routes.values()), many=True).data
 
 class FerryViewSet(FerryAPI, viewsets.ReadOnlyModelViewSet):
     pass
