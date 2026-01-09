@@ -27,7 +27,8 @@ import {
 import {
   faStar as faStarOutline,
   faCheck,
-  faMinusCircle
+  faMinusCircle,
+  faCircleInfo
 } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 import cloneDeep from 'lodash/cloneDeep';
@@ -36,6 +37,8 @@ import Modal from 'react-bootstrap/Modal';
 import Skeleton from 'react-loading-skeleton';
 import '@vaadin/time-picker';
 import '@vaadin/date-picker';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
 import { AlertContext, AuthContext, MapContext } from '../../App';
@@ -493,6 +496,12 @@ export default function RouteDetails(props) {
     setShowNotificationForm(false);
   }
 
+  const tooltipRouteNickname = (
+    <Tooltip id="tooltipRouteNickname" className="tooltip-content">
+      <p>To finish saving this route, give it a nickname to differentiate it from other routes you&apos;ve saved.</p>
+    </Tooltip>
+  );
+
   // Main components
   return route && (
     <React.Fragment>
@@ -817,6 +826,12 @@ export default function RouteDetails(props) {
                 <Form.Group className="mb-3">
                   <Form.Label className="route-nickname">
                     <p className="bold">Route nickname</p>
+                    <OverlayTrigger placement="top" overlay={tooltipRouteNickname}>
+                      <button type="button" className="route-nickname-tooltip" aria-label="Route nickname tooltip"
+                              aria-describedby="tooltipRouteNickname">
+                        <FontAwesomeIcon icon={faCircleInfo} />
+                      </button>
+                    </OverlayTrigger>
                   </Form.Label>
                   <Form.Control defaultValue={getDefaultLabel()} type="text" placeholder="Enter a name for this route"
                                 onChange={(e) => setNickName(e.target.value)}/>
