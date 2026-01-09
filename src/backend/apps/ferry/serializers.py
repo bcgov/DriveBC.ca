@@ -104,10 +104,13 @@ class CoastalFerryStopAPISerializer(serializers.ModelSerializer):
         )
 
     def get_routes(self, obj):
-        routes = CoastalFerryRoute.objects.filter(
-            Q(trips__stop_times__stop=obj) |
-            Q(trips__stop_times__stop__parent_stop=obj)
-        ).distinct()
+        if hasattr(obj, 'routes_list'):
+            routes = obj.routes_list
+        else:
+            routes = CoastalFerryRoute.objects.filter(
+                Q(trips__stop_times__stop=obj) |
+                Q(trips__stop_times__stop__parent_stop=obj)
+            ).distinct()
         return CoastalFerryRouteSerializer(routes, many=True).data
 
     def get_display_category(self, obj):
