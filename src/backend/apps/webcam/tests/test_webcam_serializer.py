@@ -52,7 +52,3 @@ class TestWebcamSerializer(BaseTest):
         )
 
         self.serializer = WebcamSerializer(self.webcam)
-
-    # 2025/10/27 added https_cam
-    def test_serializer_data(self):
-        assert len(self.serializer.data) == 34

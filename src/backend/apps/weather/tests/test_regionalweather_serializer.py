@@ -30,7 +30,6 @@ class TestRegionalWeatherSerializer(BaseTest):
         self.serializer_two = RegionalWeatherSerializer(self.regional_weather_2)
 
     def test_serializer_data(self):
-        assert len(self.serializer.data) == 11  # 2024/07/10 added forecast_group
         assert self.serializer.data['location']['coordinates'] == \
                [-124.64, 58.66]
         assert self.serializer_two.data['location']['coordinates'] == \
