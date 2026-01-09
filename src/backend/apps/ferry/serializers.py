@@ -79,7 +79,10 @@ class FerryRouteSerializer(serializers.ModelSerializer):
         )
 
     def get_vessels(self, obj):
-        vessels = Ferry.objects.filter(route_id=obj.route_id).order_by("priority")
+        if hasattr(obj, 'vessels_list'):
+            vessels = obj.vessels_list
+        else:
+            vessels = Ferry.objects.filter(route_id=obj.route_id).order_by("priority")
         return FerryVesselSerializer(vessels, many=True).data
 
     def get_id(self, obj):
