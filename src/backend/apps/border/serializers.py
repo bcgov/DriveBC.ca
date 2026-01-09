@@ -2,7 +2,6 @@ from datetime import datetime, time
 
 from apps.border.enums import LANE_TYPE
 from apps.border.models import BorderCrossing, BorderCrossingLanes
-from django.db.models import Max
 from rest_framework import serializers
 
 
@@ -49,8 +48,8 @@ class BorderCrossingSerializer(serializers.ModelSerializer):
         )
 
     def get_last_updated(self, obj):
-        last_updated = obj.bordercrossinglanes_set.aggregate(Max('last_updated'))['last_updated__max']
-        return last_updated
+        dates = [lane.last_updated for lane in obj.bordercrossinglanes_set.all() if lane.last_updated]
+        return max(dates) if dates else None
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

@@ -6,7 +6,7 @@ from rest_framework import viewsets
 
 
 class BorderCrossingAPI(CachedListModelMixin):
-    queryset = BorderCrossing.objects.all()
+    queryset = BorderCrossing.objects.all().prefetch_related("bordercrossinglanes_set")
     serializer_class = BorderCrossingSerializer
     cache_key = CacheKey.BORDER_CROSSING_LIST
     cache_timeout = CacheTimeout.BORDER_CROSSING_LIST
