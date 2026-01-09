@@ -241,7 +241,7 @@ export default function Legend() {
       <div className={'legend__group'}>
         {getLegendItem(
           chainUpsStaticIcon,
-          'Chain-ups in effect',
+          'Chain-ups',
           'Segments of the highway that require commercial vehicles over 11,794 kg to have chains on in order to use the highway.',
           'chain-up'
         )}

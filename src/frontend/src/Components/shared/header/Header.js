@@ -1,8 +1,8 @@
 // React
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 // Navigation
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -11,7 +11,7 @@ import { updateAdvisories, updateBulletins } from '../../../slices/cmsSlice';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight, faCommentExclamation, faGlobePointer } from '@fortawesome/pro-regular-svg-icons';
+import { faChevronLeft, faCommentExclamation, faArrowRight, faChevronDown, faArrowUpRightFromSquare } from '@fortawesome/pro-regular-svg-icons';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Container from 'react-bootstrap/Container';
@@ -54,6 +54,7 @@ export default function Header() {
   }))));
 
   // Routing
+  const navigate = useNavigate();
   const [searchParams, _setSearchParams] = useSearchParams();
 
   // Context
@@ -66,6 +67,8 @@ export default function Header() {
   const [showSpinner, setShowSpinner] = useState(false);
   const [openSearch, setOpenSearch] = useState(searchParams.get('start') || searchParams.get('end') || searchParams.get('route_distance'));
   const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(true);
+  const [isCommercialOpen, setIsCommercialOpen] = useState(false);
+  const commercialDropdownRef = useRef(null);
 
   // Effects
   const loadAdvisories = async () => {
@@ -122,6 +125,34 @@ export default function Header() {
     }
   }, [selectedRoute]);
 
+  useEffect(() => {
+    if (isNavbarCollapsed) {
+      setIsCommercialOpen(false);
+    }
+  }, [isNavbarCollapsed]);
+
+  useEffect(() => {
+    // Close dropdown when clicking outside on xLarge screens
+    const handleClickOutside = (event) => {
+      if (
+        xLargeScreen &&
+        isCommercialOpen &&
+        commercialDropdownRef.current &&
+        !commercialDropdownRef.current.contains(event.target)
+      ) {
+        setIsCommercialOpen(false);
+      }
+    };
+
+    if (xLargeScreen && isCommercialOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [xLargeScreen, isCommercialOpen]);
+
   /* Helpers */
   const getUnreadAdvisoriesCount = (advisoriesData) => {
     if (!advisoriesData) {
@@ -159,6 +190,13 @@ export default function Header() {
     sessionStorage.setItem('scrollPosition', 0);
   }
 
+  const handleChainUpsClick = (e) => {
+    e.preventDefault();
+    navigate('/delays?chainUpsOnly=true');
+    setIsCommercialOpen(false);
+    onClickActions();
+  }
+
   /* Rendering */
   // Sub components
   const getNavLink = (title, count) => {
@@ -167,7 +205,7 @@ export default function Header() {
         <div className='title'>{title} {!!count && <div className="unread-count">{count}</div>}</div>
 
         {!xLargeScreen &&
-          <FontAwesomeIcon icon={faChevronRight} />
+          <FontAwesomeIcon icon={faArrowRight} />
         }
       </Nav.Link>
     );
@@ -281,6 +319,45 @@ export default function Header() {
               <LinkContainer to="/delays">
                 {getNavLink('Delays')}
               </LinkContainer>
+
+              <div className="commercial-dropdown" ref={commercialDropdownRef}>
+                <Nav.Link 
+                  active={false} 
+                  onClick={() => {
+                    setIsCommercialOpen(!isCommercialOpen);
+                  }}
+                  className={isCommercialOpen ? 'open' : ''}
+                >
+                  <div className='title'>
+                    Commercial
+                    <FontAwesomeIcon 
+                      icon={faChevronDown} 
+                      className={`chevron-icon ${isCommercialOpen ? 'rotated' : ''}`}
+                    />
+                  </div>
+                </Nav.Link>
+                <div className={`commercial-dropdown-content ${isCommercialOpen ? 'open' : ''}`}>
+                  <a href="/delays?chainUpsOnly=true" className='commercial-dropdown-item' onClick={handleChainUpsClick}>
+                    Chain-ups
+                  </a>
+                  <a href="https://onroutebc.gov.bc.ca/" className='commercial-dropdown-item' onClick={() => { setIsCommercialOpen(false); onClickActions(); }}>
+                    onRoute
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                  </a>
+                  <a href="https://www.th.gov.bc.ca/bchighways/loadrestrictions/loadrestrictions.htm" className='commercial-dropdown-item' onClick={() => { setIsCommercialOpen(false); onClickActions(); }}>
+                    Seasonal load restrictions
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                  </a>
+                  <a href="https://www2.gov.bc.ca/gov/content/transportation/vehicle-safety-enforcement" className='commercial-dropdown-item' onClick={() => { setIsCommercialOpen(false); onClickActions(); }}>
+                    Vehicle safety and enforcement
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                  </a>
+                  <a href="https://www.cvse.ca/" className='commercial-dropdown-item' onClick={() => { setIsCommercialOpen(false); onClickActions(); }}>
+                    CVSE.ca
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                  </a>
+                </div>
+              </div>
 
               <LinkContainer to="/advisories">
                 {getNavLink('Advisories', advisoriesCount)}
