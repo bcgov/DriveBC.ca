@@ -104,11 +104,6 @@
       }
 
       .info {
-        &__block {
-          .popup__content__image {
-            margin: 0.5rem 1rem 1rem;
-          }
-        }
         &__container {
           margin: 1.125rem;
 
@@ -198,6 +193,30 @@
             min-width: 80px;
             color: $Type-Primary;
             font-weight: 700;
+          }
+        }
+      }
+    }
+    .vessel-tabs {
+      border-bottom: 1px solid #D9D9D9;
+
+      .nav-item {
+        &:first-of-type {
+          margin-left: 1rem;
+        }
+        &:last-of-type {
+          margin-right: 1rem;
+        }
+        .nav-link {
+          color: $Green;
+    
+          &.active {
+            border-bottom: 2px solid $Green;
+            color: $Green;
+          }
+    
+          &:hover {
+            border-bottom: 2px solid $Green;
           }
         }
       }
