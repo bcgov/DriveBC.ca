@@ -1,11 +1,13 @@
 // React
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Navigation
 import { useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 import {
   faXTwitter,
   faFacebookF,
@@ -39,6 +41,7 @@ export default function FerryPanel(props) {
   const ferryData = feature.getProperties();
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const [activeVesselTab, setActiveVesselTab] = useState(0);
 
   // useEffect hooks
   useEffect(() => {
@@ -46,6 +49,7 @@ export default function FerryPanel(props) {
     searchParams.set('id', ferryData.id);
     searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
+    setActiveVesselTab(0);
   }, [feature]);
 
   // Helpers
@@ -103,6 +107,81 @@ export default function FerryPanel(props) {
     }
   }
 
+  const renderVessel = (vessel, index, isFirstVessel = false) => (
+    <div className='info__block' key={index}>
+      <div className='info__container'>
+        <p className='info__header'>Ferry details</p>
+
+        <div className="data-card">
+          <div className="data-card__row">
+            <div className="data-icon">
+              <FontAwesomeIcon icon={faCar}/>
+            </div>
+            <p className="label">Vehicle capacity</p>
+            <p className="data">{vessel.vehicle_capacity ? `${vessel.vehicle_capacity}` : 'N/A'}
+            </p>
+          </div>
+          <div className="data-card__row">
+            <div className="data-icon">
+              <FontAwesomeIcon icon={faPersonWalkingLuggage}/>
+            </div>
+            <p className="label">Passengers</p>
+            <p className="data">{vessel.passenger_capacity ? `${vessel.passenger_capacity}` : 'N/A'}
+            </p>
+          </div>
+          <div className="data-card__row">
+            <div className="data-icon">
+              <FontAwesomeIcon icon={faClock}/>
+            </div>
+            <p className="label">Trip time</p>
+            <p className="data">{vessel.crossing_time_min ? `${vessel.crossing_time_min} minutes` : 'N/A'}
+            </p>
+          </div>
+          <div className="data-card__row">
+            <div className="data-icon">
+              <FontAwesomeIcon icon={faWeightScale}/>
+            </div>
+            <p className="label">Weight limit</p>
+            <p className="data">{vessel.weight_capacity_kg ? `${vessel.weight_capacity_kg}kg` : 'N/A'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {isFirstVessel && ferryData.image_url && (
+        <div className='info__container ferry-image'>
+          <div className="popup__content__image">
+            <img src={ferryData.image_url} alt={`${ferryData.route_name} vessel`} />
+          </div>
+        </div>
+      )}
+
+      <div className='info__container'>
+        {vessel.schedule_detail &&
+          <p>{parse(vessel.schedule_detail)}</p>
+        }
+
+        {vessel.special_restriction &&
+          <p>{vessel.special_restriction}</p>
+        }
+      </div>
+
+      {isFirstVessel && (
+        <div className='info__container route-description'>
+          <p className='info__header'>Description</p>
+
+          {ferryData.route_image_url && (
+            <div className="popup__content__image info__map">
+              <img src={ferryData.route_image_url} alt={`${ferryData.route_name} map`}/>
+            </div>
+          )}
+
+          <p>{ferryData.route_description}</p>
+        </div>
+      )}
+    </div>
+  );
+
   // Main component
   return (
     <div className="popup popup--ferry" tabIndex={0}>
@@ -131,77 +210,25 @@ export default function FerryPanel(props) {
         </div>
 
         <div className="info">
-          {ferryData.vessels && ferryData.vessels.map((vessel, index) => (
-            <div className='info__block' key={index}>
-              <div className='info__container'>
-                <p className='info__header'>Ferry details</p>
-
-                <div className="data-card">
-                  <div className="data-card__row">
-                    <div className="data-icon">
-                      <FontAwesomeIcon icon={faCar}/>
-                    </div>
-                    <p className="label">Vehicle capacity</p>
-                    <p className="data">{vessel.vehicle_capacity ? `${vessel.vehicle_capacity}` : 'N/A'}
-                    </p>
-                  </div>
-                  <div className="data-card__row">
-                    <div className="data-icon">
-                      <FontAwesomeIcon icon={faPersonWalkingLuggage}/>
-                    </div>
-                    <p className="label">Passengers</p>
-                    <p className="data">{vessel.passenger_capacity ? `${vessel.passenger_capacity}` : 'N/A'}
-                    </p>
-                  </div>
-                  <div className="data-card__row">
-                    <div className="data-icon">
-                      <FontAwesomeIcon icon={faClock}/>
-                    </div>
-                    <p className="label">Trip time</p>
-                    <p className="data">{vessel.crossing_time_min ? `${vessel.crossing_time_min} minutes` : 'N/A'}
-                    </p>
-                  </div>
-                  <div className="data-card__row">
-                    <div className="data-icon">
-                      <FontAwesomeIcon icon={faWeightScale}/>
-                    </div>
-                    <p className="label">Weight limit</p>
-                    <p className="data">{vessel.weight_capacity_kg ? `${vessel.weight_capacity_kg}kg` : 'N/A'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {ferryData.image_url && (
-                <div className="popup__content__image">
-                  <img src={ferryData.image_url} alt={`${ferryData.route_name} vessel`} />
-                </div>
-              )}
-
-              <div className='info__container'>
-                {vessel.schedule_detail &&
-                  <p>{parse(vessel.schedule_detail)}</p>
-                }
-
-                {vessel.special_restriction &&
-                  <p>{vessel.special_restriction}</p>
-                }
-              </div>
-            </div>
-
-          ))}
-
-          <div className='info__container'>
-            <p className='info__header'>Description</p>
-
-            {ferryData.route_image_url && (
-              <div className="popup__content__image info__map">
-                <img src={ferryData.route_image_url} alt={`${ferryData.route_name} map`}/>
-              </div>
-            )}
-
-            <p>{ferryData.route_description}</p>
-          </div>
+          {ferryData.vessels && ferryData.vessels.length > 1 ? (
+            <Tabs
+              activeKey={activeVesselTab}
+              onSelect={(k) => setActiveVesselTab(parseInt(k))}
+              className="vessel-tabs"
+            >
+              {ferryData.vessels.map((vessel, index) => (
+                <Tab
+                  key={index}
+                  eventKey={index}
+                  title={index === 0 ? "Main ferry" : index === 1 ? "Additional summer service" : `Vessel ${index + 1}`}
+                >
+                  {renderVessel(vessel, index, index === 0)}
+                </Tab>
+              ))}
+            </Tabs>
+          ) : (
+            ferryData.vessels && ferryData.vessels.map((vessel, index) => renderVessel(vessel, index, true))
+          )}
           <div className='info__block'>
             <div className='info__container'>
               <p className='info__header'>{ferryData.contact_org}</p>
