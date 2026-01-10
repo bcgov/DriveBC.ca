@@ -1,3 +1,8 @@
 .dj_map_wrapper {
   float: none !important;
 }
+
+#id_geometry_map {
+  width: 100%;
+  height: 480px;
+}
