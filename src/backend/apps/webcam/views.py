@@ -285,9 +285,9 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         countStale = Webcam.objects.filter(should_appear=True, marked_stale=True).count()
         countDelayed = Webcam.objects.filter(should_appear=True, marked_delayed=True).count()
         totalCams = Webcam.objects.filter(should_appear=True).count()
-        host = request.get_host()
-        path = reverse('webcams-staleAndDelayed')
-        self_link = f"{request.scheme}://{host}{path}"
+        host = os.environ.get("FRONTEND_BASE_URL")
+        path = reverse('webcams-staleAndDelayed').lstrip("/")
+        self_link = f"{host}{path}"
 
         data = {
             "links": {
