@@ -27,6 +27,8 @@ from apps.consumer.models import ImageIndex
 from apps.shared.status import get_recent_timestamps, calculate_camera_status
 from botocore.config import Config
 from django.contrib.gis.geos import Point
+from django.db import close_old_connections, connection
+
 
 tf = TimezoneFinder()
 
@@ -159,15 +161,21 @@ async def run_consumer():
                     camera_status = calculate_camera_status(timestamp_utc)
 
                     try:
-                        timestamp_local = generate_local_timestamp(db_data, camera_id, timestamp_utc)
+                        timestamp_local = await sync_to_async(safe_db_call)(generate_local_timestamp, db_data, camera_id, timestamp_utc)
                         # # # For testing purposes, only allow camera with IDs below to be processed
                         # if camera_id != "57":
                         #     logger.info("Skipping processing for camera %s", camera_id)
                         #     continue
-                        await handle_image_message(camera_id, message.body, timestamp_local, camera_status)
+                        await handle_image_message(camera_id, message.body, timestamp_local, camera_status)  
                         logger.info("Processed message for camera %s.", camera_id)
                     except Exception as e:
                         logger.exception("Failed processing message (camera %s): %s", camera_id, e)
+                        try:
+                            logger.warning("DB connection closed and will reconnect automatically.")
+                        except Exception:
+                            logger.exception("Failed to close DB connection")
+                        # Prevent hot retry loop
+                        await asyncio.sleep(2)
 
         logger.info("Exited message iterator.")
 
@@ -192,6 +200,14 @@ async def run_consumer():
                 logger.warning("Error closing connection: %s", e)
 
         logger.info("Consumer stopped.")
+
+
+def safe_db_call(func, *args, **kwargs):
+    """Call a sync ORM function safely after dropping dead connections"""
+    close_old_connections()
+    # This forces Django to open a fresh connection if needed
+    connection.ensure_connection()
+    return func(*args, **kwargs)
 
 def shutdown():
     """Signal handler to gracefully stop the consumer."""
