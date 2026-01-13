@@ -46,7 +46,7 @@ export default function NearbyWeathers(props) {
   const [hef, setHef] = useState();
 
   // States
-  const [activeTab, setActiveTab] = useState('Regional');
+  const [activeTab, setActiveTab] = useState('Local');
 
   // Effects
   // find regional weather and set state
@@ -94,7 +94,7 @@ export default function NearbyWeathers(props) {
   }
 
   // Main component
-  const btnTitles = ['Regional', 'Local', 'High elevation'];
+  const btnTitles = ['Local', 'Regional', 'High elevation'];
 
   return (
     <React.Fragment>
@@ -105,7 +105,7 @@ export default function NearbyWeathers(props) {
             <p>Weather</p>
           </div>
           <div className="weather-types">
-            {[regionalWeather, localWeather, hef].map((station, index) => {
+            {[localWeather, regionalWeather, hef].map((station, index) => {
               if (!station) {
                 return null;
               }
@@ -129,12 +129,12 @@ export default function NearbyWeathers(props) {
           </div>
         </div>
 
-        {regionalWeather && activeTab === 'Regional' &&
-          <NearbyRegionalWeather weather={regionalWeather} />
-        }
-
         {localWeather && activeTab === 'Local' &&
           <NearbyLocalWeather weather={localWeather} />
+        }
+
+        {regionalWeather && activeTab === 'Regional' &&
+          <NearbyRegionalWeather weather={regionalWeather} />
         }
 
         {hef && activeTab === 'High elevation' &&
