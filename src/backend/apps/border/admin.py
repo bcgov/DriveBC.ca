@@ -1,13 +1,12 @@
 from apps.border.models import BorderCrossing, BorderCrossingLanes
-from django.contrib import admin
-from django.contrib.admin import ModelAdmin
+from django.contrib.gis import admin
 
 
-class BorderCrossingAdmin(ModelAdmin):
+class BorderCrossingAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
 
 
-class BorderCrossingLanesAdmin(ModelAdmin):
+class BorderCrossingLanesAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
 
 

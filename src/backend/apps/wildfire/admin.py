@@ -1,9 +1,8 @@
 from apps.wildfire.models import Wildfire
-from django.contrib import admin
-from django.contrib.admin import ModelAdmin
+from django.contrib.gis import admin
 
 
-class WildfireAdmin(ModelAdmin):
+class WildfireAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
 
 

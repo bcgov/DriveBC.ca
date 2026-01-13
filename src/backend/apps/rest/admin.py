@@ -1,9 +1,8 @@
 from apps.rest.models import RestStop
-from django.contrib import admin
-from django.contrib.admin import ModelAdmin
+from django.contrib.gis import admin
 
 
-class RestStopAdmin(ModelAdmin):
+class RestStopAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
 
 

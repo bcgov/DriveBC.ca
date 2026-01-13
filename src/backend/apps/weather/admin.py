@@ -1,12 +1,11 @@
 from apps.weather.models import CurrentWeather, RegionalWeather, HighElevationForecast
-from django.contrib import admin
-from django.contrib.admin import ModelAdmin
+from django.contrib.gis import admin
 
 
-class WeatherAdmin(ModelAdmin):
+class WeatherAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
 
-class HefAdmin(ModelAdmin):
+class HefAdmin(admin.GISModelAdmin):
     readonly_fields = ('code', )
 
 admin.site.register(RegionalWeather, WeatherAdmin)

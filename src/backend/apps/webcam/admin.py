@@ -4,13 +4,12 @@ import pytz
 from apps.shared.models import RouteGeometry
 from apps.webcam.models import Webcam
 from django.conf import settings
-from django.contrib import admin
-from django.contrib.admin import ModelAdmin
+from django.contrib.gis import admin
 from django.utils import timezone
 from timezonefinder import TimezoneFinder
 
 
-class WebcamAdmin(ModelAdmin):
+class WebcamAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
     change_form_template = "admin/timelapse.html"  # custom template
 
@@ -43,7 +42,7 @@ class WebcamAdmin(ModelAdmin):
         return super().render_change_form(request, context, add, change, form_url, obj)
 
 
-class RouteGeometryAdmin(ModelAdmin):
+class RouteGeometryAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
     change_form_template = "admin/timelapse.html"  # custom template
 
