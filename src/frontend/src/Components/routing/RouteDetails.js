@@ -524,7 +524,7 @@ export default function RouteDetails(props) {
             </div>
 
             <div className="info-row__data">
-              <span>{authContext.email}</span>
+              <p className="email">{authContext.email}</p>
             </div>
           </div>
 
