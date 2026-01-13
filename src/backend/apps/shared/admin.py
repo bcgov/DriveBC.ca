@@ -1,13 +1,12 @@
 from apps.shared.models import Area, SiteSettings
-from django.contrib import admin
-from django.contrib.admin import ModelAdmin
+from django.contrib.gis import admin
 
 
-class SiteSettingsAdmin(ModelAdmin):
+class SiteSettingsAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
 
 
-class AreaAdmin(ModelAdmin):
+class AreaAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
 
 

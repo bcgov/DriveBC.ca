@@ -6,35 +6,34 @@ from apps.ferry.models import (
     CoastalFerryTrip,
     Ferry,
 )
-from django.contrib import admin
-from django.contrib.admin import ModelAdmin
+from django.contrib.gis import admin
 
 
-class FerryAdmin(ModelAdmin):
+class FerryAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
 
 
-class CoastalFerryStopAdmin(ModelAdmin):
+class CoastalFerryStopAdmin(admin.GISModelAdmin):
     list_display = ['id', 'name', 'parent_stop']
     readonly_fields = ('id', )
 
 
-class CoastalFerryCalendarAdmin(ModelAdmin):
+class CoastalFerryCalendarAdmin(admin.GISModelAdmin):
     list_display = ['id', 'name', 'schedule_start', 'schedule_end', 'active_week_days']
     readonly_fields = ('id', )
 
 
-class CoastalFerryRouteAdmin(ModelAdmin):
+class CoastalFerryRouteAdmin(admin.GISModelAdmin):
     list_display = ['id', 'name', 'url']
     readonly_fields = ('id', )
 
 
-class CoastalFerryTripAdmin(ModelAdmin):
+class CoastalFerryTripAdmin(admin.GISModelAdmin):
     list_display = ['id', 'calendar', 'route']
     readonly_fields = ('id', )
 
 
-class CoastalFerryStopTimeAdmin(ModelAdmin):
+class CoastalFerryStopTimeAdmin(admin.GISModelAdmin):
     list_display = ['id', 'trip', 'stop', 'stop_time', 'stop_sequence']
     readonly_fields = ('id', )
 

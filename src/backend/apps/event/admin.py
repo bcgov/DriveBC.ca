@@ -1,7 +1,6 @@
 from apps.event.models import Event, QueuedEventNotification
 from apps.event.tasks import queue_event_notifications
-from django.contrib import admin
-from django.contrib.admin import ModelAdmin
+from django.contrib.gis import admin
 
 
 @admin.action(description="Send route notifications")
@@ -9,7 +8,7 @@ def queue_route_notifications(modeladmin, request, queryset):
     queue_event_notifications(list(queryset.values_list('id', flat=True)))
 
 
-class EventAdmin(ModelAdmin):
+class EventAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
     actions = [queue_route_notifications]
     list_display = ('id', 'event_type', 'display_category',
@@ -17,7 +16,7 @@ class EventAdmin(ModelAdmin):
                     'first_created', 'last_updated')
 
 
-class QueuedEventNotificationAdmin(ModelAdmin):
+class QueuedEventNotificationAdmin(admin.ModelAdmin):
     readonly_fields = ('id', 'created_at', 'modified_at')
     list_display = ('id', 'event_id', 'route_id', 'created_at')
 
