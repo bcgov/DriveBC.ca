@@ -412,6 +412,7 @@
 
     h3 {
       font-size: 1.25rem;
+      margin-bottom: 1rem;
     }
 
     .info-row {
@@ -428,6 +429,10 @@
           svg {
             margin-right: 8px;
           }
+        }
+
+        .email {
+          font-size: 0.875rem;
         }
       }
     }
