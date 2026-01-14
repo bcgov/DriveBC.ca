@@ -36,6 +36,11 @@ SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT")
 SESSION_COOKIE_SECURE = env.bool("DJANGO_SESSION_COOKIE_SECURE")
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+# Allow the pod IP to be an allowed host so that Sysdig prometheus scraping works
+pod_ip = os.getenv('POD_IP')
+if pod_ip:
+    ALLOWED_HOSTS.append(pod_ip)
+
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
     "django.middleware.gzip.GZipMiddleware",
