@@ -72,7 +72,7 @@ crunchy:
       incrementalBackupSchedule:  0 0,4,12,16,20 * * * 
       volume:
         accessModes: "ReadWriteOnce"
-        storage: 15Gi
+        storage: 20Gi
         storageClassName: netapp-file-backup
     s3:
       enabled: true # if enabled, below must be provided
