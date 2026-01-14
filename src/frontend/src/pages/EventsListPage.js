@@ -470,7 +470,7 @@ export default function EventsListPage() {
 
   useEffect(() => {
     setEventCategoryFilter(getFilterState());
-  }, [mapContext]);
+  }, [mapContext, location.search]);
 
   // Handlers
   const handleRoute = (event) => {
