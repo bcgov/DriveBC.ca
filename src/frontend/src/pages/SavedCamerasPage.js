@@ -22,6 +22,7 @@ import ServerErrorPopup from '../Components/map/errors/ServerError';
 import CameraList from '../Components/cameras/CameraList';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
+import PollingComponent from "../Components/shared/PollingComponent";
 
 // Styling
 import './SavedCamerasPage.scss';
@@ -34,8 +35,7 @@ export default function SavedCamerasPage() {
   const { authContext, setAuthContext } = useContext(AuthContext);
 
   // Redux
-  const { cameras, favCams } = useSelector(useCallback(memoize(state => ({
-    cameras: state.feeds.cameras.list,
+  const { favCams } = useSelector(useCallback(memoize(state => ({
     favCams: state.user.favCams
   }))));
 
@@ -77,6 +77,7 @@ export default function SavedCamerasPage() {
     getSavedCameras();
   }, [favCams]);
 
+
   // Error handling
   const displayError = (error) => {
     if (error instanceof ServerError) {
@@ -94,7 +95,8 @@ export default function SavedCamerasPage() {
     if (!favCams) return;
 
     // Fetch data if it doesn't already exist
-    const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
+    // const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
+    const camData = await getCameras().catch((error) => displayError(error));
 
     // Get fav group IDs from saved cams
     const filteredFavCams = camData.filter(item => favCams.includes(item.id));
@@ -138,6 +140,7 @@ export default function SavedCamerasPage() {
   // Main component
   return (
     <div className="saved-cameras-page">
+      <PollingComponent runnable={getSavedCameras} interval={30000} />
       {showNetworkError &&
         <NetworkErrorPopup />
       }
