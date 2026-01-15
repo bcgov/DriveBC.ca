@@ -40,7 +40,7 @@ export default function DistanceLabels({ updateRouteDisplay, mapRef, isCamDetail
 
     addDistanceOverlay();
     updateRouteDisplay(selectedRoute);
-  }, [selectedRoute]);
+  }, [selectedRoute, location.search]);
 
   /* Rendering */
   // Threshold of 500 meters in distance by default
