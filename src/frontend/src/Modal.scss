@@ -17,17 +17,24 @@
     background: white;
     display: flex;
     flex-direction: column;
+    align-self: center;
     padding: 48px 24px;
     min-height: 200px;
     min-width: 300px;
     width: 100%;
-    margin: auto 10px;
+    margin: 146px 10px 0;
     position: relative;
     border-radius: 4px;
 
     @media (min-width: 576px) {
       width: 736px;
       padding: 64px 128px;
+    }
+
+    @media (max-width: 374px) {
+      align-self: flex-start;
+      overflow-y: auto;
+      max-height: calc(100vh - 176px);
     }
 
     .header {
