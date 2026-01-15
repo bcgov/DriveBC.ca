@@ -3,7 +3,7 @@ import { transformFeature } from '../helpers';
 
 // OpenLayers
 import { Point } from 'ol/geom';
-import * as ol from 'ol';
+import Feature from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Style } from 'ol/style';
@@ -22,7 +22,7 @@ export function getBorderCrossingsLayer(
   borderCrossings.forEach(borderCrossing => {
     // Build a new OpenLayers feature
     const olGeometry = new Point(borderCrossing.location.coordinates);
-    const olFeature = new ol.Feature({ geometry: olGeometry, type: 'borderCrossing' });
+    const olFeature = new Feature({ geometry: olGeometry, type: 'borderCrossing' });
 
     // Transfer properties
     olFeature.setProperties(borderCrossing);

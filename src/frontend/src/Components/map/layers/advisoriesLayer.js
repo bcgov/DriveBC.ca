@@ -4,7 +4,7 @@ import { transformFeature } from '../helpers';
 // OpenLayers
 import { MultiPolygon } from 'ol/geom';
 import { Style } from "ol/style";
-import * as ol from 'ol';
+import Feature from 'ol/Feature';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -31,7 +31,7 @@ export function getAdvisoriesLayer(
         advisories.forEach(advisory => {
           // Build a new OpenLayers feature
           const olGeometry = new MultiPolygon(advisory.geometry.coordinates);
-          const olFeature = new ol.Feature({ geometry: olGeometry, type: 'advisory' });
+          const olFeature = new Feature({ geometry: olGeometry, type: 'advisory' });
 
           olFeature.set('data', advisory);
 

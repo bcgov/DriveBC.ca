@@ -3,7 +3,7 @@ import { transformFeature } from '../helpers';
 
 // OpenLayers
 import { Point, Polygon, MultiPolygon } from 'ol/geom';
-import * as ol from 'ol';
+import Feature from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Style } from 'ol/style';
@@ -26,7 +26,7 @@ export function getWildfiresLayer(
   const vectorSource = new VectorSource();
   wildfiresList.forEach(wildfire => {
     // Location feature
-    const locationFeature = new ol.Feature({ geometry: new Point(wildfire.location.coordinates), type: 'wildfire' });
+    const locationFeature = new Feature({ geometry: new Point(wildfire.location.coordinates), type: 'wildfire' });
 
     // Transfer properties
     locationFeature.set('data', wildfire);
@@ -47,7 +47,7 @@ export function getWildfiresLayer(
       new Polygon(wildfire.geometry.coordinates) :
       new MultiPolygon(wildfire.geometry.coordinates);
 
-    const areaFeature = new ol.Feature({ geometry: olGeometry, type: 'wildfire' });
+    const areaFeature = new Feature({ geometry: olGeometry, type: 'wildfire' });
 
     // Transfer properties
     areaFeature.set('data', wildfire);

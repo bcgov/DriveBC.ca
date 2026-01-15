@@ -1,56 +1,82 @@
 import React from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import * as FA from '@fortawesome/pro-regular-svg-icons';
+import {
+  faSun,
+  faSunCloud,
+  faCloudsSun,
+  faCloudShowers,
+  faCloudSleet,
+  faCloudSnow,
+  faClouds,
+  faCloudRain,
+  faCloudShowersHeavy,
+  faCloudHailMixed,
+  faSnowflake,
+  faCloudBolt,
+  faSunHaze,
+  faCloudFog,
+  faSnowBlowing,
+  faIcicles,
+  faCloudHail,
+  faMoonStars,
+  faMoon,
+  faMoonCloud,
+  faCloudsMoon,
+  faCloudMoonRain,
+  faTornado,
+  faWind,
+  faSmoke
+} from '@fortawesome/pro-regular-svg-icons';
 
 // Environment Canada icon code to weather condition icon mapping
 const ICONS = {
-  "00": FA.faSun,
-  "01": FA.faSun,
-  "02": FA.faSunCloud,
-  "03": FA.faCloudsSun,
-  "06": FA.faCloudShowers,
-  "07": FA.faCloudSleet,
-  "08": FA.faCloudSnow,
-  "10": FA.faClouds,
-  "11": FA.faCloudRain,
-  "12": FA.faCloudShowersHeavy,
-  "13": FA.faCloudShowersHeavy,
-  "14": FA.faCloudHailMixed,
-  "15": FA.faCloudSleet,
-  "16": FA.faSnowflake,
-  "17": FA.faSnowflake,
-  "18": FA.faSnowflake,
-  "19": FA.faCloudBolt,
-  "23": FA.faSunHaze,
-  "24": FA.faCloudFog,
-  "25": FA.faSnowBlowing,
-  "26": FA.faIcicles,
-  "27": FA.faCloudHail,
-  "28": FA.faCloudHailMixed,
-  "30": FA.faMoonStars,
-  "31": FA.faMoon,
-  "32": FA.faMoonCloud,
-  "33": FA.faCloudsMoon,
-  "36": FA.faCloudMoonRain,
-  "37": FA.faCloudMoonRain,
-  "38": FA.faMoonCloud,
-  "39": FA.faCloudBolt,
-  "40": FA.faSnowBlowing,
-  "41": FA.faTornado,
-  "42": FA.faTornado,
-  "43": FA.faWind,
-  "44": FA.faSmoke,
-  "45": FA.faSun,  // custom
-  "46": FA.faCloudBolt,
-  "47": FA.faSun,  // custom
-  "48": FA.faSun,  // custom
+  "00": faSun,
+  "01": faSun,
+  "02": faSunCloud,
+  "03": faCloudsSun,
+  "06": faCloudShowers,
+  "07": faCloudSleet,
+  "08": faCloudSnow,
+  "10": faClouds,
+  "11": faCloudRain,
+  "12": faCloudShowersHeavy,
+  "13": faCloudShowersHeavy,
+  "14": faCloudHailMixed,
+  "15": faCloudSleet,
+  "16": faSnowflake,
+  "17": faSnowflake,
+  "18": faSnowflake,
+  "19": faCloudBolt,
+  "23": faSunHaze,
+  "24": faCloudFog,
+  "25": faSnowBlowing,
+  "26": faIcicles,
+  "27": faCloudHail,
+  "28": faCloudHailMixed,
+  "30": faMoonStars,
+  "31": faMoon,
+  "32": faMoonCloud,
+  "33": faCloudsMoon,
+  "36": faCloudMoonRain,
+  "37": faCloudMoonRain,
+  "38": faMoonCloud,
+  "39": faCloudBolt,
+  "40": faSnowBlowing,
+  "41": faTornado,
+  "42": faTornado,
+  "43": faWind,
+  "44": faSmoke,
+  "45": faSun,  // custom
+  "46": faCloudBolt,
+  "47": faSun,  // custom
+  "48": faSun,  // custom
 }
 
 export default function WeatherIcon({code, className}) {
   if (['45', '47', '48'].includes(code)) {
     // FIXME: replace with custom SVGs from design
-    // return <FontAwesomeIcon className={className} icon={FA.faSun} />;
+    // return <FontAwesomeIcon className={className} icon={faSun} />;
     switch (code) {
       case '45':
         return (
@@ -72,7 +98,7 @@ export default function WeatherIcon({code, className}) {
         );
       default:
         return (
-          <FontAwesomeIcon className="weather-icon" icon={FA.faSunCloud} />
+          <FontAwesomeIcon className="weather-icon" icon={faSunCloud} />
         );
     }
   } else if (ICONS[code]) {
@@ -80,5 +106,5 @@ export default function WeatherIcon({code, className}) {
   }
 
   // default to generic sun cloud icon
-  return <FontAwesomeIcon className="weather-icon" icon={FA.faSunCloud} />;
+  return <FontAwesomeIcon className="weather-icon" icon={faSunCloud} />;
 }

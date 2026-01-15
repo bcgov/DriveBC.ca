@@ -1,7 +1,7 @@
 // OpenLayers
 import { Point } from 'ol/geom';
 import { Style } from 'ol/style';
-import * as ol from 'ol';
+import Feature from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
@@ -15,7 +15,7 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
     const olGeometry = new Point(camera.location.coordinates);
     olGeometry.transform('EPSG:4326', projectionCode);
 
-    const feature = new ol.Feature({ geometry: olGeometry, type: 'camera' });
+    const feature = new Feature({ geometry: olGeometry, type: 'camera' });
     feature.setProperties(camera);
     feature.setId(camera.id);
 

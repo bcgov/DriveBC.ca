@@ -1,5 +1,5 @@
 // External imports
-import { point, multiLineString } from '@turf/turf';
+import { point, multiLineString } from '@turf/helpers';
 
 // Env Variables
 import { API_HOST, ROUTE_PLANNER, ROUTE_PLANNER_CLIENT_ID, ALTERNATE_ROUTE_GDF, ALTERNATE_ROUTE_XINGCOST, ALTERNATE_ROUTE_TURNCOST, PRIMARY_ROUTE_GDF, PRIMARY_ROUTE_XINGCOST, PRIMARY_ROUTE_TURNCOST } from "../../env.js";

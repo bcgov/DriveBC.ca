@@ -7,7 +7,8 @@ import { BASE_MAP, MAP_STYLE } from "../../env.js";
 // Geo
 import { applyStyle } from 'ol-mapbox-style';
 import { fromLonLat, transformExtent } from 'ol/proj';
-import * as turf from '@turf/turf';
+import bbox from '@turf/bbox';
+import { lineString } from '@turf/helpers';
 import Map from 'ol/Map';
 import MVT from 'ol/format/MVT.js';
 import VectorTileLayer from 'ol/layer/VectorTile.js';
@@ -119,7 +120,7 @@ export default function RouteMap(props) {
     mapRef.current.addLayer(mapLayers.current['route']);
 
     // fit map to route
-    const routeBbox = turf.bbox(turf.lineString(route.route));
+    const routeBbox = bbox(lineString(route.route));
     const routeExtent = transformExtent(routeBbox, 'EPSG:4326', 'EPSG:3857');
     if (mapView.current) {
       mapView.current.fit(routeExtent);
@@ -146,7 +147,7 @@ export default function RouteMap(props) {
       const image = document.createElement('canvas');
       image.width = 400;
       image.height = 200;
-      const context = image.getContext('2d', { alpha: 1 });
+      const context = image.getContext('2d', { alpha: 1, willReadFrequently: true });
       const matrix = [
         image.width / canvas.width, 0, 0,
         image.height / canvas.height, 0, 0

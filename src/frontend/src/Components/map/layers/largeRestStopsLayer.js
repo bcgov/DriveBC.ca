@@ -4,7 +4,7 @@ import { transformFeature } from '../helpers';
 // OpenLayers
 import { Point } from 'ol/geom';
 import { Style } from 'ol/style';
-import * as ol from 'ol';
+import Feature from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
@@ -29,7 +29,7 @@ export function getLargeRestStopsLayer(restStopsData, projectionCode, mapContext
 
     // Build a new OpenLayers feature
     const olGeometry = new Point(restStop.location.coordinates);
-    const olFeature = new ol.Feature({ geometry: olGeometry, type: 'largeRestStop' });
+    const olFeature = new Feature({ geometry: olGeometry, type: 'largeRestStop' });
 
     // Transfer properties
     olFeature.setProperties(restStop);

@@ -37,7 +37,7 @@ import { fromLonLat, transform, transformExtent } from 'ol/proj';
 import { ImageWMS, Vector as VectorSource } from 'ol/source.js';
 import { Image as ImageLayer, Vector as VectorLayer } from 'ol/layer.js';
 import { Polygon } from 'ol/geom';
-import * as ol from 'ol';
+import Feature from 'ol/Feature';
 import Map from 'ol/Map.js';
 import MVT from 'ol/format/MVT.js';
 import VectorTileLayer from 'ol/layer/VectorTile.js';
@@ -283,7 +283,7 @@ export function ReportMap(props) {
 
       if (activeFeature) {
         // Add the new feature
-        const newFeature = new ol.Feature({
+        const newFeature = new Feature({
           geometry: new Polygon(activeFeature.geometry.coordinates),
         });
 
