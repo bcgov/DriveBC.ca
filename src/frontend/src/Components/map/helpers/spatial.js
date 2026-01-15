@@ -3,7 +3,17 @@ import cloneDeep from 'lodash/cloneDeep';
 
 // Map & geospatial imports
 import { LineString, Point, Polygon } from "ol/geom";
-import * as turf from '@turf/turf';
+import { lineString, point, multiPolygon, polygon } from '@turf/helpers';
+import length from '@turf/length';
+import lineSlice from '@turf/line-slice';
+import buffer from '@turf/buffer';
+import booleanIntersects from '@turf/boolean-intersects';
+import bbox from '@turf/bbox';
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
+import destination from '@turf/destination';
+import along from '@turf/along';
+import centroid from '@turf/centroid';
+
 import Flatbush from 'flatbush';
 import GeoJSON from 'ol/format/GeoJSON';
 
@@ -14,8 +24,8 @@ export const populateRouteProjection = (data, route) => {
 
   // Reference route start point/ls
   const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];
-  const routeLs = turf.lineString(lineCoords);
-  const startPoint = turf.point(lineCoords[0]);
+  const routeLs = lineString(lineCoords);
+  const startPoint = point(lineCoords[0]);
 
   // Create a spatial index for the route line
   const spatialIndex = new Flatbush(lineCoords.length);
@@ -30,10 +40,10 @@ export const populateRouteProjection = (data, route) => {
 
     // Find the closest point on the route using the spatial index
     const closestCoords = spatialIndex.neighbors(coords[0], coords[1], 1).map(idx => lineCoords[idx])[0];
-    const closestPoint = turf.point(closestCoords);
+    const closestPoint = point(closestCoords);
 
     // Find and save the distance along the route
-    const distanceAlongLine = turf.lineDistance(turf.lineSlice(startPoint, closestPoint, routeLs), { units: 'meters' });
+    const distanceAlongLine = length(lineSlice(startPoint, closestPoint, routeLs), { units: 'meters' });
     copiedData[i].route_projection = distanceAlongLine;
   });
 
@@ -46,11 +56,11 @@ export const filterAdvisoryByRoute = (data, route) => {
   }
 
   const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];
-  const routeLineString = turf.lineString(lineCoords);
-  const bufferedRouteLineString = turf.buffer(routeLineString, 150, {units: 'meters'});
+  const routeLineString = lineString(lineCoords);
+  const bufferedRouteLineString = buffer(routeLineString, 150, {units: 'meters'});
   const filteredAdvisoryList = [];
   data.forEach(advisory =>{
-    if (turf.booleanIntersects(bufferedRouteLineString, turf.multiPolygon(advisory.geometry.coordinates))) {
+    if (booleanIntersects(bufferedRouteLineString, multiPolygon(advisory.geometry.coordinates))) {
       filteredAdvisoryList.push(advisory);
     }
   });
@@ -93,11 +103,11 @@ export const filterByRoute = (data, route, extraToleranceMeters, populateProject
   }
 
   const lineCoords = Array.isArray(route.route) ? route.route : route.route.coordinates[0];
-  const routeLineString = turf.lineString(lineCoords);
-  const bufferedRouteLineString = turf.buffer(routeLineString, extraToleranceMeters ? 150 + extraToleranceMeters : 150, {units: 'meters'});
+  const routeLineString = lineString(lineCoords);
+  const bufferedRouteLineString = buffer(routeLineString, extraToleranceMeters ? 150 + extraToleranceMeters : 150, {units: 'meters'});
 
   // Initialize index and add data
-  const routeBBox = turf.bbox(routeLineString);
+  const routeBBox = bbox(routeLineString);
   const spatialIndex = new Flatbush(data.length);
   data.forEach((entry) => {
     // Add points to the index with slight tolerance
@@ -109,8 +119,8 @@ export const filterByRoute = (data, route, extraToleranceMeters, populateProject
     // Add linestrings to the index
     } else {
       const coords = entry.location.coordinates;
-      const entryLs = turf.lineString(coords);
-      const entryBbox = turf.bbox(entryLs);
+      const entryLs = lineString(coords);
+      const entryBbox = bbox(entryLs);
       spatialIndex.add(entryBbox[0], entryBbox[1], entryBbox[2], entryBbox[3]);
     }
   });
@@ -136,12 +146,12 @@ export const filterByRoute = (data, route, extraToleranceMeters, populateProject
   const intersectingData = dirtyFilteredData.filter(entry => {
     if (entry.location.type == "Point") {
       const coords = entry.location.coordinates;
-      return turf.booleanPointInPolygon(turf.point(coords), bufferedRouteLineString);
+      return booleanPointInPolygon(point(coords), bufferedRouteLineString);
 
     } else {
       const coords = entry.location.coordinates;
-      const dataLs = turf.lineString(coords);
-      return turf.booleanIntersects(dataLs, bufferedRouteLineString);
+      const dataLs = lineString(coords);
+      return booleanIntersects(dataLs, bufferedRouteLineString);
     }
   });
 
@@ -172,9 +182,9 @@ export function offsetCoordinates(coords, index, overlaps, resolution) {
   const bearing = angle * index;
 
   // Return new offset coordinates
-  const point = turf.point(coords);
-  const destination = turf.destination(point, distance, bearing, { units: 'kilometers' });
-  return destination.geometry.coordinates;
+  const turfPoint = point(coords);
+  const destinationPoint = destination(turfPoint, distance, bearing, { units: 'kilometers' });
+  return destinationPoint.geometry.coordinates;
 }
 
 // Save point events in mapContext with coordinates as key
@@ -199,22 +209,22 @@ export const getMidPoint = (mapContext, location) => {
   // Return midpoint for lines
   } else if (location.type === "LineString") {
     // Create turf ls from location coordinates
-    const line = turf.lineString(location.coordinates);
+    const line = lineString(location.coordinates);
 
     // Calculate the length of the LineString
-    const length = turf.length(line);
+    const lineLen = length(line);
 
     // Find the midpoint distance
-    const midpointDistance = length / 2;
+    const midpointDistance = lineLen / 2;
 
     // Find and return the point coords at the midpoint distance
-    const midpoint = turf.along(line, midpointDistance);
+    const midpoint = along(line, midpointDistance);
     return midpoint.geometry.coordinates;
 
   // Return centroid for multipolygons
   } else {
-    const geometry = location.type === "MultiPolygon" ? turf.multiPolygon(location.coordinates) : turf.polygon(location.coordinates);
-    const centroid = turf.centroid(geometry);
-    return centroid.geometry.coordinates;
+    const geometry = location.type === "MultiPolygon" ? multiPolygon(location.coordinates) : polygon(location.coordinates);
+    const geometryCentroid = centroid(geometry);
+    return geometryCentroid.geometry.coordinates;
   }
 }

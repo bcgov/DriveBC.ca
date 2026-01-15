@@ -4,7 +4,7 @@ import { savePointFeature, getMidPoint, setEventStyle, offsetCoordinates } from 
 // OpenLayers
 import { Point, LineString, Polygon } from 'ol/geom';
 import { Style } from 'ol/style';
-import * as ol from 'ol';
+import Feature from 'ol/Feature';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -38,7 +38,7 @@ const processEvent = (
 
   // all events have a point coordinate for an icon; for line or zone
   // events, the point is the median lat/long in the lineString
-  const pointFeature = new ol.Feature({
+  const pointFeature = new Feature({
     ...event,
     type: 'event',
     geometry: new Point(getMidPoint(mapContext, event.location)),
@@ -63,7 +63,7 @@ const processEvent = (
 
   // polygons are generated backend and used if available
   if (event.polygon) {
-    const feature = new ol.Feature({
+    const feature = new Feature({
       ...event,
       type: 'event',
       altFeature: pointFeature,
@@ -85,7 +85,7 @@ const processEvent = (
         ? new LineString(location.coordinates)
         : new Point(location.coordinates);
 
-      const feature = new ol.Feature({
+      const feature = new Feature({
         ...event,
         type: 'event',
         altFeature: pointFeature,

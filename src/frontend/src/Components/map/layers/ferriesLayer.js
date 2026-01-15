@@ -4,7 +4,7 @@ import { transformFeature } from '../helpers';
 // OpenLayers
 import { Point } from 'ol/geom';
 import { Style } from 'ol/style';
-import * as ol from 'ol';
+import Feature from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
@@ -26,7 +26,7 @@ export function getFerriesLayer(ferriesData, projectionCode, mapContext, referen
     const lat = isCoastal ? ferry.location.coordinates[0] : ferry.location.coordinates[0] + 0.0044;
     const lng = ferry.location.coordinates[1]
     const olGeometry = new Point([lat, lng]);
-    const olFeature = new ol.Feature({ geometry: olGeometry, type: 'ferry', coastal: isCoastal });
+    const olFeature = new Feature({ geometry: olGeometry, type: 'ferry', coastal: isCoastal });
 
     // Transfer properties
     olFeature.setProperties(ferry);

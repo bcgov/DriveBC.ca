@@ -3,7 +3,8 @@ import { redLocationMarkup, setLocationPin } from './';
 
 // Map & geospatial imports
 import { fromLonLat, transformExtent } from 'ol/proj';
-import * as turf from '@turf/turf';
+import bbox from '@turf/bbox';
+import { lineString } from '@turf/helpers';
 
 // Map transformation
 export const transformFeature = (feature, sourceCRS, targetCRS) => {
@@ -26,11 +27,11 @@ export const fitMap = (routes, mapView) => {
   }
 
   // Initialize the combined bounding box with the first route's bounding box
-  const combinedBbox = turf.bbox(turf.lineString(routes[0].route));
+  const combinedBbox = bbox(lineString(routes[0].route));
 
   // Iterate over the remaining routes and extend the combined bounding box
   for (let i = 1; i < routes.length; i++) {
-    const routeBbox = turf.bbox(turf.lineString(routes[i].route));
+    const routeBbox = bbox(lineString(routes[i].route));
     combinedBbox[0] = Math.min(combinedBbox[0], routeBbox[0]);
     combinedBbox[1] = Math.min(combinedBbox[1], routeBbox[1]);
     combinedBbox[2] = Math.max(combinedBbox[2], routeBbox[2]);

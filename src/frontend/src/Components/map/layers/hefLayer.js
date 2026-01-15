@@ -4,7 +4,7 @@ import { transformFeature } from '../helpers/index.js';
 // OpenLayers
 import { Point } from 'ol/geom';
 import { Style } from 'ol/style';
-import * as ol from 'ol';
+import Feature from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
@@ -30,7 +30,7 @@ export function getHefLayer(
     const lng = forecast.location.coordinates[0];
     const lat = forecast.location.coordinates[1];
     const olGeometry = new Point([lng, lat]);
-    const olFeature = new ol.Feature({ geometry: olGeometry, type: 'hef' });
+    const olFeature = new Feature({ geometry: olGeometry, type: 'hef' });
 
     // Transfer properties
     olFeature.setProperties(forecast)
