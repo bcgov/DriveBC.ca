@@ -15,8 +15,8 @@ import {
 
 
 // Internal imports
-// import { HeaderHeightContext } from '../App.js';
-import EmergencyAlert from "../Components/shared/EmergencyAlert.js";
+// import { HeaderHeightContext } from '../App';
+import EmergencyAlert from "../Components/shared/EmergencyAlert";
 
 // External Imports
 import { DndProvider } from 'react-dnd-multi-backend';
@@ -24,7 +24,7 @@ import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 import { useMediaQuery } from '@uidotdev/usehooks';
 
 import { shortenToOneDecimal } from "../Components/data/routes";
-import MapWrapper from '../Components/map/MapWrapper.js';
+import MapWrapper from '../Components/map/MapWrapper';
 
 // Styling
 import '../Components/map/Map.scss';

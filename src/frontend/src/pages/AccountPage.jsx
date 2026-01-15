@@ -20,7 +20,7 @@ import {
 // Internal imports
 import { AuthContext } from '../App';
 import { getCookie } from "../util";
-import Footer from '../Footer.js';
+import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 
 // Styling

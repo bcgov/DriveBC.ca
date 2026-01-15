@@ -38,7 +38,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import Spinner from 'react-bootstrap/Spinner';
 
 // Internal imports
-import { addCameraGroups } from '../data/webcams.js';
+import { addCameraGroups } from '../data/webcams';
 import { compareRoutes } from "../data/routes";
 import {
   blueLocationMarkup,
@@ -54,7 +54,7 @@ import {
 } from './helpers';
 import { layerNameMap, toggleableLayers } from "./enums";
 import { loadLayer, loadEventsLayers, updateEventsLayers, enableReferencedLayer } from './layers';
-import { FeatureContext, MapContext } from '../../App.js';
+import { FeatureContext, MapContext } from '../../App';
 import { resizePanel, renderPanel, togglePanel } from './panels';
 import { pointerMoveHandler, resetHoveredStates } from './handlers/hover';
 import { pointerClickHandler, resetClickedStates } from './handlers/click';
@@ -62,7 +62,7 @@ import { updateOverlappingPositions } from "./layers/eventsLayer";
 import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
 import DistanceLabels from "../routing/DistanceLabels";
 import FilterTabs from './filter/FilterTabs';
-import RouteSearch from '../routing/RouteSearch.js';
+import RouteSearch from '../routing/RouteSearch';
 import NetworkErrorPopup from './errors/NetworkError';
 import ServerErrorPopup from './errors/ServerError';
 import StaleLinkErrorPopup from './errors/StaleLinkError';

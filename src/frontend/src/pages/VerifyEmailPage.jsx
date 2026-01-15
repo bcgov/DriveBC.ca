@@ -10,7 +10,7 @@ import Container from 'react-bootstrap/Container';
 // Internal imports
 import { AlertContext, AuthContext } from '../App';
 import { sendVerificationEmail } from "../Components/data/user";
-import Footer from '../Footer.js';
+import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 
 // Styling

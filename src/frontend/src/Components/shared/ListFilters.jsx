@@ -24,7 +24,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
-import { MapContext } from '../../App.js';
+import { MapContext } from '../../App';
 import trackEvent from './TrackEvent';
 
 // Styling

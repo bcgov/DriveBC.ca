@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 
 // Internal imports
-import Footer from '../Footer.js';
+import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import { AuthContext } from "../App";
 

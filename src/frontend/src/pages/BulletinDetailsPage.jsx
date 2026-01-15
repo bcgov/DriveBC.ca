@@ -18,9 +18,9 @@ import { getBulletins, getBulletinsPreview } from '../Components/data/bulletins.
 import { NetworkError, NotFoundError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
-import Footer from '../Footer.js';
+import Footer from '../Footer';
 import FriendlyTime from '../Components/shared/FriendlyTime';
-import renderWagtailBody from '../Components/shared/renderWagtailBody.js';
+import renderWagtailBody from '../Components/shared/renderWagtailBody';
 import ShareURLButton from '../Components/shared/ShareURLButton';
 
 // Styling

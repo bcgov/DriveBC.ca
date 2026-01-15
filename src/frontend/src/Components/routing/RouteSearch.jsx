@@ -20,7 +20,7 @@ import {
 } from '../../slices/routesSlice'
 import { fitMap, removeOverlays } from "../map/helpers";
 import { MapContext } from "../../App";
-import LocationSearch from './LocationSearch.js';
+import LocationSearch from './LocationSearch';
 import NoRouteFound from './NoRouteFound';
 
 // Third party packages

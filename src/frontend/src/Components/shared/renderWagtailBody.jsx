@@ -27,6 +27,20 @@ function replace(domNode) {
       // Copy all original attributes
       const props = {...domNode.attribs};
 
+      // --- Sanitize attributes for React ---
+      if ('frameborder' in props) {
+        props.frameBorder = props.frameborder;
+        delete props.frameborder;
+      }
+      if ('referrerpolicy' in props) {
+        props.referrerPolicy = props.referrerpolicy;
+        delete props.referrerpolicy;
+      }
+      if ('allowfullscreen' in props) {
+        props.allowFullScreen = true; 
+        delete props.allowfullscreen;
+      }
+
       // Set the style object
       props.style = { aspectRatio: aspectRatio };
 

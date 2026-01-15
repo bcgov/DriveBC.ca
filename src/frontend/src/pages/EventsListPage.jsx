@@ -30,7 +30,8 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
-import { CMSContext, MapContext, HeaderHeightContext, FilterContext } from '../App';
+// import { CMSContext, MapContext, HeaderHeightContext, FilterContext } from '../App';
+import { CMSContext, MapContext, FilterContext } from '../App';
 import { filterAdvisoryByRoute } from "../Components/map/helpers";
 import { getAdvisories, markAdvisoriesAsRead } from '../Components/data/advisories';
 import { getEvents, getEventDetails } from '../Components/data/events';
@@ -42,7 +43,7 @@ import Advisories from '../Components/advisories/Advisories';
 import EventCard from '../Components/events/EventCard';
 import EventsTable from '../Components/events/EventsTable';
 import ListFilters from '../Components/shared/ListFilters';
-import Footer from '../Footer.js';
+import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import PollingComponent from '../Components/shared/PollingComponent';
 import RouteSearch from '../Components/routing/RouteSearch';
@@ -322,7 +323,9 @@ export default function EventsListPage() {
   useEffect(() => {
     // Create a new worker if it doesn't exist
     if (!workerRef.current) {
-      workerRef.current = new Worker(new URL('../Components/map/filterRouteWorker.js', import.meta.url));
+      workerRef.current = new Worker(new URL('../Components/map/filterRouteWorker.js', import.meta.url), {
+        type: 'module' 
+      });
 
       // Set up event listener for messages from the worker
       workerRef.current.onmessage = function (event) {

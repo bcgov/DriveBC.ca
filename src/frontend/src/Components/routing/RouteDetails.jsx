@@ -166,7 +166,9 @@ export default function RouteDetails(props) {
       workerRef.current.terminate();
     }
 
-    workerRef.current = new Worker(new URL('../map/filterRouteWorker.js', import.meta.url));
+    workerRef.current = new Worker(new URL('../map/filterRouteWorker.js', import.meta.url), {
+      type: 'module' 
+    });
 
     // Set up event listener for messages from the worker
     workerRef.current.onmessage = function (event) {

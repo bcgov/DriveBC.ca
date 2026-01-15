@@ -10,7 +10,7 @@ import {
  } from '@fortawesome/pro-solid-svg-icons';
 
 // Internal imports
-import { FilterContext } from '../../App.js';
+import { FilterContext } from '../../App';
 import { collator } from '../data/webcams';
 
 // Styling

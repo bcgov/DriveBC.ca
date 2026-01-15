@@ -24,7 +24,7 @@ import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Footer from '../Footer';
 import FriendlyTime from '../Components/shared/FriendlyTime';
-import renderWagtailBody from '../Components/shared/renderWagtailBody.js';
+import renderWagtailBody from '../Components/shared/renderWagtailBody';
 import overrides from '../Components/map/overrides.js';
 import ShareURLButton from '../Components/shared/ShareURLButton';
 

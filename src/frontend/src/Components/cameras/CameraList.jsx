@@ -5,8 +5,8 @@ import React, { useContext, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 // Components and functions
-import { CamsContext } from '../../App.js';
-import HighwayGroup from './HighwayGroup.js';
+import { CamsContext } from '../../App';
+import HighwayGroup from './HighwayGroup';
 
 // Styling
 import './CameraList.scss';

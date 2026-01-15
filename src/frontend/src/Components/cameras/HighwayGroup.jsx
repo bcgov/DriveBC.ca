@@ -5,7 +5,7 @@ import React from 'react';
 import Skeleton from "react-loading-skeleton";
 
 // Internal imports
-import CameraCard from './CameraCard.js';
+import CameraCard from './CameraCard';
 import highwayShield from './highwayShield';
 
 export default function HighwayGroup(props) {

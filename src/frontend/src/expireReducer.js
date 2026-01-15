@@ -1,6 +1,6 @@
 // https://github.com/kamranahmedse/redux-persist-expire
 // Copied over and fixed issue with expiry
-const { createTransform } = require('redux-persist');
+import { createTransform } from 'redux-persist';
 
 const transformRehydrate = (outboundState, config) => {
   outboundState = outboundState || null;
@@ -51,4 +51,4 @@ function expireReducer(reducerKey, config = {}) {
   );
 }
 
-module.exports = expireReducer;
+export default expireReducer;

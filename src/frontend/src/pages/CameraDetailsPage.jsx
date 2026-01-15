@@ -58,7 +58,7 @@ import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components/map/errors/NetworkError';
 import ServerErrorPopup from '../Components/map/errors/ServerError';
 import MapWrapper from '../Components/map/MapWrapper';
-import Footer from '../Footer.js';
+import Footer from '../Footer';
 import trackEvent from '../Components/shared/TrackEvent';
 import PollingComponent from '../Components/shared/PollingComponent';
 import NearbyWeathers from "../Components/cameras/nearbyweathers/NearbyWeathers";

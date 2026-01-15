@@ -16,7 +16,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import trackEvent from '../../shared/TrackEvent';
 
 // Components and functions
-import { MapContext } from '../../../App.js';
+import { MapContext } from '../../../App';
 
 // Styling
 import './MapFilters.scss';
