@@ -77,6 +77,18 @@ export default function SavedCamerasPage() {
     getSavedCameras();
   }, [favCams]);
 
+useEffect(() => {
+  if (authContext.username) {
+    // Set interval to refresh camera data every 30 seconds
+    const interval = setInterval(() => {
+      console.log('Refreshing camera data...');
+      getSavedCameras();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }
+}, [authContext.username, favCams]);
+
   // Error handling
   const displayError = (error) => {
     if (error instanceof ServerError) {
