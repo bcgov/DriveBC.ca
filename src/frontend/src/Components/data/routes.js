@@ -1,5 +1,5 @@
 // External imports
-import { point, multiLineString } from '@turf/turf';
+import { point, multiLineString } from '@turf/helpers';
 
 // Internal imports
 import { get } from "./helper.js";
