@@ -16,41 +16,59 @@ if [ "$MAINTENANCE_MODE" = "true" ]; then
     exit 0
 fi
 
-# --- Copy Static Assets ---
-cp -r /usr/share/nginx/html/static/. "${SHARED_CONFIG}/static/"
+# 1. COPY ALL FILES TO SHARED VOLUME
+# We copy the entire html root (index.html, assets/, etc) to the shared folder
+echo "Copying /usr/share/nginx/html/ to ${SHARED_CONFIG}..."
+cp -r /usr/share/nginx/html/* "${SHARED_CONFIG}/"
 
-# --- Locate Main File ---
-MAIN=$(find "${SHARED_CONFIG}/static/js" -name "main.*.js" | head -n 1)
-
-if [ -z "$MAIN" ]; then
-    echo "Error: Could not find main.js file to inject variables."
-    exit 1
-fi
-
-# --- Inject Environment Variables ---
-cat <<EOF >> "$MAIN"
-
-/* Runtime Environment Variables Injected by Init Container */
-window.BASE_MAP='${REACT_APP_BASE_MAP}';
-window.MAP_STYLE='${REACT_APP_MAP_STYLE}';
-window.API_HOST='${REACT_APP_API_HOST}';
-window.REPORT_WMS_LAYER='${REACT_APP_REPORT_WMS_LAYER}';
-window.GEOCODER_HOST='${REACT_APP_GEOCODER_HOST}';
-window.GEOCODER_API_CLIENT_ID='${REACT_APP_GEOCODER_API_CLIENT_ID}';
-window.ROUTE_PLANNER='${REACT_APP_ROUTE_PLANNER}';
-window.ROUTE_PLANNER_CLIENT_ID='${REACT_APP_ROUTE_PLANNER_CLIENT_ID}';
-window.REPLAY_THE_DAY='${REACT_APP_REPLAY_THE_DAY}';
-window.SURVEY_LINK='${REACT_APP_SURVEY_LINK}';
-window.BCEID_REGISTER_URL='${REACT_APP_BCEID_REGISTER_URL}';
-window.FROM_EMAIL='${REACT_APP_FROM_EMAIL}';
-window.LEGACY_URL='${REACT_APP_LEGACY_URL}';
-window.RECAPTCHA_CLIENT_ID='${REACT_APP_RECAPTCHA_CLIENT_ID}';
-window.ALTERNATE_ROUTE_GDF='${REACT_APP_ALTERNATE_ROUTE_GDF}';
-window.ALTERNATE_ROUTE_TURNCOST='${REACT_APP_ALTERNATE_ROUTE_TURNCOST}';
-window.ALTERNATE_ROUTE_XINGCOST='${REACT_APP_ALTERNATE_ROUTE_XINGCOST}';
-window.DEPLOYMENT_TAG='${DEPLOYMENT_TAG}';
-window.RELEASE='${RELEASE:-}';
+# 2. PREPARE THE CONFIG BLOCK
+# Create the temporary file with the script tag. 
+# We do NOT need to remove newlines or escape special characters here anymore.
+cat > "${SHARED_CONFIG}/config_snippet.html" <<EOF
+<script>
+window.__ENV__ = {
+  BASE_MAP: '${REACT_APP_BASE_MAP}',
+  MAP_STYLE: '${REACT_APP_MAP_STYLE}',
+  API_HOST: '${REACT_APP_API_HOST}',
+  REPORT_WMS_LAYER: '${REACT_APP_REPORT_WMS_LAYER}',
+  GEOCODER_HOST: '${REACT_APP_GEOCODER_HOST}',
+  GEOCODER_API_CLIENT_ID: '${REACT_APP_GEOCODER_API_CLIENT_ID}',
+  ROUTE_PLANNER: '${REACT_APP_ROUTE_PLANNER}',
+  ROUTE_PLANNER_CLIENT_ID: '${REACT_APP_ROUTE_PLANNER_CLIENT_ID}',
+  REPLAY_THE_DAY: '${REACT_APP_REPLAY_THE_DAY}',
+  SURVEY_LINK: '${REACT_APP_SURVEY_LINK}',
+  BCEID_REGISTER_URL: '${REACT_APP_BCEID_REGISTER_URL}',
+  FROM_EMAIL: '${REACT_APP_FROM_EMAIL}',
+  LEGACY_URL: '${REACT_APP_LEGACY_URL}',
+  RECAPTCHA_CLIENT_ID: '${REACT_APP_RECAPTCHA_CLIENT_ID}',
+  ALTERNATE_ROUTE_GDF: '${REACT_APP_ALTERNATE_ROUTE_GDF}',
+  ALTERNATE_ROUTE_TURNCOST: '${REACT_APP_ALTERNATE_ROUTE_TURNCOST}',
+  ALTERNATE_ROUTE_XINGCOST: '${REACT_APP_ALTERNATE_ROUTE_XINGCOST}',
+  DEPLOYMENT_TAG: '${DEPLOYMENT_TAG}',
+  RELEASE: '${RELEASE:-}'
+};
+</script>
 EOF
+
+# 3. INJECT INTO INDEX.HTML
+TARGET_INDEX="${SHARED_CONFIG}/index.html"
+SNIPPET_FILE="${SHARED_CONFIG}/config_snippet.html"
+
+echo "Injecting runtime config into ${TARGET_INDEX}..."
+
+# EXPLANATION:
+# /<head>/ finds the line containing the <head> tag.
+# r reads the content of config_snippet.html and appends it AFTER that line.
+sed -i "/<head>/r ${SNIPPET_FILE}" "$TARGET_INDEX"
+
+# 4. RE-COMPRESS INDEX.HTML
+# The old index.html.gz is now stale because we modified the html.
+echo "Re-compressing index.html..."
+rm "${TARGET_INDEX}.gz"
+gzip -9 -k "$TARGET_INDEX"
+
+# Cleanup temp file
+rm "${SHARED_CONFIG}/config_snippet.html"
 
 # --- Nginx Configuration ---
 cp /etc/nginx/conf.d/default.conf "${SHARED_CONFIG}/default.conf"
@@ -89,11 +107,5 @@ if [ -n "$BLOCKED_IPS" ]; then
     echo "Blocked IPs configuration created."
 fi
 
-# --- Pre-compression ---
-echo "Compressing static assets..."
-find "${SHARED_CONFIG}/static/js" -name "*.js" -exec gzip -k -9 {} +
-find "${SHARED_CONFIG}/static/css" -name "main.*.css" -exec gzip -k -9 {} +
-find "${SHARED_CONFIG}/static/media" -name "*.svg" -exec gzip -k -9 {} +
-
-echo "Configuration and assets ready in ${SHARED_CONFIG}:"
+echo "Configuration files ready in ${SHARED_CONFIG}:"
 ls -la "${SHARED_CONFIG}/"

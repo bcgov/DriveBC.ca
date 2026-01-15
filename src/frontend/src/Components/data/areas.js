@@ -1,5 +1,6 @@
 import { get } from "./helper.js";
+import { API_HOST } from "../../env.js";
 
 export function getAreas() {
-  return get(`${window.API_HOST}/api/areas/`, {}).then((data) => data);
+  return get(`${API_HOST}/api/areas/`, {}).then((data) => data);
 }

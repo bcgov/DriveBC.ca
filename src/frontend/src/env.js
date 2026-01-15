@@ -1,35 +1,41 @@
-/* This file exists to take environment variables and populate them in the
- * browser, using Create React App's build-time substitution mechanism for
- * environment variables starting REACT_APP_.  Previously, these values were
- * 'baked in' to the image at build time in the Github action.
- *
- * In OpenShift, a different process adds these actual values from the runtime
- * environment (where they're populated by a config map).  The script runs in
- * Openshift as a docker-entrypoint.d shell script, appending the same list to
- * the end of the bundle file, overriding any values or undefineds here.
- *
- * These are defined here so that they're included in the dev environment that
- * runs locally and has only the node build step.
- */
-window.API_HOST = `${process.env.REACT_APP_API_HOST}`;
-window.BASE_MAP = `${process.env.REACT_APP_BASE_MAP}`;
-window.REPORT_WMS_LAYER = `${process.env.REACT_APP_REPORT_WMS_LAYER}`;
-window.MAP_STYLE = `${process.env.REACT_APP_MAP_STYLE}`;
-window.REPLAY_THE_DAY = `${process.env.REACT_APP_REPLAY_THE_DAY}`;
-window.GEOCODER_HOST = `${process.env.REACT_APP_GEOCODER_HOST}`;
-window.GEOCODER_API_CLIENT_ID = `${process.env.REACT_APP_GEOCODER_API_CLIENT_ID}`;
-window.ROUTE_PLANNER = `${process.env.REACT_APP_ROUTE_PLANNER}`;
-window.ROUTE_PLANNER_CLIENT_ID = `${process.env.REACT_APP_ROUTE_PLANNER_CLIENT_ID}`;
-window.PRIMARY_ROUTE_GDF = `${process.env.REACT_APP_PRIMARY_ROUTE_GDF}`;
-window.PRIMARY_ROUTE_XINGCOST = `${process.env.REACT_APP_PRIMARY_ROUTE_XINGCOST}`;
-window.PRIMARY_ROUTE_TURNCOST = `${process.env.REACT_APP_PRIMARY_ROUTE_TURNCOST}`;
-window.ALTERNATE_ROUTE_GDF = `${process.env.REACT_APP_ALTERNATE_ROUTE_GDF}`;
-window.ALTERNATE_ROUTE_XINGCOST = `${process.env.REACT_APP_ALTERNATE_ROUTE_XINGCOST}`;
-window.ALTERNATE_ROUTE_TURNCOST = `${process.env.REACT_APP_ALTERNATE_ROUTE_TURNCOST}`;
-window.RECAPTCHA_CLIENT_ID = `${process.env.REACT_APP_RECAPTCHA_CLIENT_ID}`;
-window.SURVEY_LINK = `${process.env.REACT_APP_SURVEY_LINK}`;
-window.BCEID_REGISTER_URL = `${process.env.REACT_APP_BCEID_REGISTER_URL}`;
-window.DEPLOYMENT_TAG = `${process.env.REACT_APP_DEPLOYMENT_TAG || ''}`
-window.RELEASE = `${process.env.REACT_APP_RELEASE || ''}`
-window.FROM_EMAIL = `${process.env.REACT_APP_FROM_EMAIL}`;
-window.LEGACY_URL = `${process.env.REACT_APP_LEGACY_URL}`;
+console.log('=== ENV DEBUG ===');
+console.log('All import.meta.env:', import.meta.env);
+console.log('VITE_API_HOST from import.meta.env:', import.meta.env.VITE_API_HOST);
+
+
+
+// Only access window if we are in the browser. Without this the build will fail.
+const RUNTIME = (typeof window !== 'undefined') ? (window.__ENV__ || {}) : {};
+
+console.log('window.__ENV__:', window.__ENV__);
+console.log('RUNTIME object:', RUNTIME);
+
+// During the build (Node.js), RUNTIME is {}, so it falls back to import.meta.env (which Vite replaces).
+// In the browser, RUNTIME is populated, so it takes precedence.
+
+export const API_HOST = RUNTIME.API_HOST || import.meta.env.VITE_API_HOST || '';
+export const BASE_MAP = RUNTIME.BASE_MAP || import.meta.env.VITE_BASE_MAP || '';
+export const REPORT_WMS_LAYER = RUNTIME.REPORT_WMS_LAYER || import.meta.env.REPORT_WMS_LAYER || '';
+export const MAP_STYLE = RUNTIME.MAP_STYLE || import.meta.env.VITE_MAP_STYLE || '';
+export const REPLAY_THE_DAY = RUNTIME.REPLAY_THE_DAY || import.meta.env.VITE_REPLAY_THE_DAY || '';
+export const GEOCODER_HOST = RUNTIME.GEOCODER_HOST || import.meta.env.VITE_GEOCODER_HOST || '';
+export const GEOCODER_API_CLIENT_ID = RUNTIME.GEOCODER_API_CLIENT_ID || import.meta.env.VITE_GEOCODER_API_CLIENT_ID || '';
+export const ROUTE_PLANNER = RUNTIME.ROUTE_PLANNER || import.meta.env.VITE_ROUTE_PLANNER || '';
+export const ROUTE_PLANNER_CLIENT_ID = RUNTIME.ROUTE_PLANNER_CLIENT_ID || import.meta.env.VITE_ROUTE_PLANNER_CLIENT_ID || '';
+export const PRIMARY_ROUTE_GDF = RUNTIME.PRIMARY_ROUTE_GDF || import.meta.env.VITE_PRIMARY_ROUTE_GDF || '';
+export const PRIMARY_ROUTE_XINGCOST = RUNTIME.PRIMARY_ROUTE_XINGCOST || import.meta.env.VITE_PRIMARY_ROUTE_XINGCOST || '';
+export const PRIMARY_ROUTE_TURNCOST = RUNTIME.PRIMARY_ROUTE_TURNCOST || import.meta.env.VITE_PRIMARY_ROUTE_TURNCOST || '';
+export const ALTERNATE_ROUTE_GDF = RUNTIME.ALTERNATE_ROUTE_GDF || import.meta.env.VITE_ALTERNATE_ROUTE_GDF || '';
+export const ALTERNATE_ROUTE_XINGCOST = RUNTIME.ALTERNATE_ROUTE_XINGCOST || import.meta.env.VITE_ALTERNATE_ROUTE_XINGCOST || '';
+export const ALTERNATE_ROUTE_TURNCOST = RUNTIME.ALTERNATE_ROUTE_TURNCOST || import.meta.env.VITE_ALTERNATE_ROUTE_TURNCOST || '';
+export const RECAPTCHA_CLIENT_ID = RUNTIME.RECAPTCHA_CLIENT_ID || import.meta.env.VITE_RECAPTCHA_CLIENT_ID;
+export const SURVEY_LINK = RUNTIME.SURVEY_LINK || import.meta.env.VITE_SURVEY_LINK;
+export const BCEID_REGISTER_URL = RUNTIME.BCEID_REGISTER_URL || import.meta.env.VITE_BCEID_REGISTER_URL;
+export const DEPLOYMENT_TAG = RUNTIME.DEPLOYMENT_TAG || import.meta.env.VITE_DEPLOYMENT_TAG;
+export const RELEASE = RUNTIME.RELEASE || import.meta.env.VITE_RELEASE;
+export const FROM_EMAIL = RUNTIME.FROM_EMAIL || import.meta.env.VITE_FROM_EMAIL;
+export const LEGACY_URL = RUNTIME.LEGACY_URL || import.meta.env.VITE_LEGACY_URL;
+
+console.log('EXPORTED API_HOST:', API_HOST);
+console.log('EXPORTED BASE_MAP:', BASE_MAP);
+console.log('=================');

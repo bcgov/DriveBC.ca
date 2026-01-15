@@ -1,14 +1,17 @@
 import { get } from "./helper.js";
 
+// Env Variables
+import { API_HOST } from "../../env.js";
+
 export function getBulletins(id) {
-  const url = `${window.API_HOST}/api/cms/bulletins/`;
+  const url = `${API_HOST}/api/cms/bulletins/`;
 
   return get(id ? url + id : url).then((data) => data);
 }
 
 export function getBulletinsPreview(id) {
   // Base URL with a cache-busting timestamp
-  const baseUrl = `${window.API_HOST}/api/cms/bulletins/`;
+  const baseUrl = `${API_HOST}/api/cms/bulletins/`;
   const url = `${baseUrl}${id}/?preview=true&timestamp=${Date.now()}`
 
   return get(url).then((data) => {

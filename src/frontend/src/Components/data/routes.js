@@ -1,6 +1,9 @@
 // External imports
 import { point, multiLineString } from '@turf/turf';
 
+// Env Variables
+import { API_HOST, ROUTE_PLANNER, ROUTE_PLANNER_CLIENT_ID, ALTERNATE_ROUTE_GDF, ALTERNATE_ROUTE_XINGCOST, ALTERNATE_ROUTE_TURNCOST, PRIMARY_ROUTE_GDF, PRIMARY_ROUTE_XINGCOST, PRIMARY_ROUTE_TURNCOST } from "../../env.js";
+
 // Internal imports
 import { get } from "./helper.js";
 import { getCookie } from "../../util";
@@ -9,7 +12,7 @@ import { updateSingleSearchedRoute, updateSelectedRoute } from "../../slices/rou
 import { compareRouteDistance } from "../map/helpers";
 
 export function getRoute(points, alternate=false) {
-  const url = `${window.ROUTE_PLANNER}/directions.json`;
+  const url = `${ROUTE_PLANNER}/directions.json`;
 
   const payload = {
     points: points,
@@ -31,35 +34,35 @@ export function getRoute(points, alternate=false) {
     payload.criteria = 'shortest';
 
     const defaultGdf = '0.5,local:2,yield_lane:1,collector_major:2,collector_minor:2,ferry:2,arterial_minor:1,lane:1,arterial_major:0.7,resource:1.3,ramp:1,recreation:1.2,highway_major:0.5,strata:1,highway_minor:0.7,driveway:1,restricted:1.2,service:1.2,alleyway:1,';
-    payload.gdf = (window.ALTERNATE_ROUTE_GDF && window.ALTERNATE_ROUTE_GDF !== 'undefined') ? window.ALTERNATE_ROUTE_GDF : defaultGdf;
+    payload.gdf = (ALTERNATE_ROUTE_GDF && ALTERNATE_ROUTE_GDF !== 'undefined') ? ALTERNATE_ROUTE_GDF : defaultGdf;
 
     const defaultXingCost = '3.0,10.0,7.0,1.2';
-    payload.xingCost = (window.ALTERNATE_ROUTE_XINGCOST && window.ALTERNATE_ROUTE_XINGCOST !== 'undefined') ? window.ALTERNATE_ROUTE_XINGCOST : defaultXingCost;
+    payload.xingCost = (ALTERNATE_ROUTE_XINGCOST && ALTERNATE_ROUTE_XINGCOST !== 'undefined') ? ALTERNATE_ROUTE_XINGCOST : defaultXingCost;
 
     const defaultTurnCost = '3.0,1.0,10.0,5.0';
-    payload.turnCost = (window.ALTERNATE_ROUTE_TURNCOST && window.ALTERNATE_ROUTE_TURNCOST !== 'undefined') ? window.ALTERNATE_ROUTE_TURNCOST : defaultTurnCost;
+    payload.turnCost = (ALTERNATE_ROUTE_TURNCOST && ALTERNATE_ROUTE_TURNCOST !== 'undefined') ? ALTERNATE_ROUTE_TURNCOST : defaultTurnCost;
 
   // Primary route params
   } else {
     const defaultGdf = 'resource:2.0,';
-    payload.gdf = (window.PRIMARY_ROUTE_GDF && window.PRIMARY_ROUTE_GDF !== 'undefined') ? window.PRIMARY_ROUTE_GDF : defaultGdf;
+    payload.gdf = (PRIMARY_ROUTE_GDF && PRIMARY_ROUTE_GDF !== 'undefined') ? PRIMARY_ROUTE_GDF : defaultGdf;
 
-    if (window.PRIMARY_ROUTE_XINGCOST && window.PRIMARY_ROUTE_XINGCOST !== 'undefined') {
-      payload.xingCost = window.PRIMARY_ROUTE_XINGCOST;
+    if (PRIMARY_ROUTE_XINGCOST && PRIMARY_ROUTE_XINGCOST !== 'undefined') {
+      payload.xingCost = PRIMARY_ROUTE_XINGCOST;
     }
 
-    if (window.PRIMARY_ROUTE_TURNCOST && window.PRIMARY_ROUTE_TURNCOST !== 'undefined') {
-      payload.turnCost = window.PRIMARY_ROUTE_TURNCOST;
+    if (PRIMARY_ROUTE_TURNCOST && PRIMARY_ROUTE_TURNCOST !== 'undefined') {
+      payload.turnCost = PRIMARY_ROUTE_TURNCOST;
     }
   }
 
   return get(url, payload, {
-    'apiKey': window.ROUTE_PLANNER_CLIENT_ID
+    'apiKey': ROUTE_PLANNER_CLIENT_ID
   }).then((data) => data);
 }
 
 export const getFavoriteRoutes = async (headers = {}) => {
-  const url = `${window.API_HOST}/api/users/routes/`;
+  const url = `${API_HOST}/api/users/routes/`;
 
   const response = await fetch(url, {
     method: 'GET',
@@ -79,7 +82,7 @@ export const getFavoriteRoutes = async (headers = {}) => {
 
 
 export const saveRoute = async (route, selectedRoute, nickname, routeMapImg, startLabel, endLabel, dispatch) => {
-  const url = `${window.API_HOST}/api/users/routes/`;
+  const url = `${API_HOST}/api/users/routes/`;
 
   const body = {
     label: nickname,
@@ -125,7 +128,7 @@ export const saveRoute = async (route, selectedRoute, nickname, routeMapImg, sta
 }
 
 export const removeRoute = async (route, selectedRoute, dispatch) => {
-  const url = `${window.API_HOST}/api/users/routes/${route.id}/`;
+  const url = `${API_HOST}/api/users/routes/${route.id}/`;
 
   try {
     const response = await fetch(url, {
@@ -157,7 +160,7 @@ export const removeRoute = async (route, selectedRoute, dispatch) => {
 }
 
 export const patchRoute = async (route, selectedRoute, dispatch, body) => {
-  const url = `${window.API_HOST}/api/users/routes/${route.id}/`;
+  const url = `${API_HOST}/api/users/routes/${route.id}/`;
 
   try {
     const response = await fetch(url, {

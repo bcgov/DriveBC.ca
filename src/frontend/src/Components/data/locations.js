@@ -1,7 +1,10 @@
 import { get } from "./helper.js";
 
+// Env Variables
+import { GEOCODER_HOST, GEOCODER_API_CLIENT_ID } from "../../env.js";
+
 export function getLocations(addressInput) {
-  return get(`${window.GEOCODER_HOST}/addresses.json`, {
+  return get(`${GEOCODER_HOST}/addresses.json`, {
       minScore: 50,
       maxResults: 7,
       echo: 'false',
@@ -12,7 +15,7 @@ export function getLocations(addressInput) {
       locationDescriptor: 'routingPoint',
       fuzzyMatch: true,
     }, {
-      'apiKey': `${window.GEOCODER_API_CLIENT_ID}`,
+      'apiKey': `${GEOCODER_API_CLIENT_ID}`,
     }
   ).then((data) => data);
 }

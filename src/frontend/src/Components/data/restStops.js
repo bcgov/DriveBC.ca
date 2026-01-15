@@ -1,9 +1,12 @@
 import { get } from "./helper.js";
 
+// Env Variables
+import { API_HOST } from "../../env.js";
+
 export function getRestStops(routePoints) {
   const payload = routePoints ? { route: routePoints } : {};
 
-  return get(`${window.API_HOST}/api/reststops/`, payload).then((data) => data);
+  return get(`${API_HOST}/api/reststops/`, payload).then((data) => data);
 }
 
 export function isRestStopClosed(restStopProperties) {

@@ -21,7 +21,8 @@
     "@vaadin/date-picker": "^24.6.2",
     "@vaadin/time-picker": "^24.6.2",
     "@vladyoslav/drawer": "^0.1.0",
-    "bootstrap": "^5.3.0",
+    "bootstrap": "^5.3.8",
+    "core-js": "^3.47.0",
     "env-cmd": "^10.1.0",
     "flatbush": "^4.4.0",
     "html-react-parser": "^4.2.1",
@@ -50,7 +51,6 @@
     "react-redux": "^8.1.2",
     "react-router-bootstrap": "^0.26.2",
     "react-router-dom": "^6.11.2",
-    "react-scripts": "5.0.1",
     "react-time-ago": "^7.2.1",
     "redux-persist": "^6.0.0",
     "title-case": "^4.3.2",
@@ -58,15 +58,13 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "env-cmd -f ../../.env react-scripts start",
-    "start-frontend": "react-scripts start",
-    "build": "env-cmd -f ../../.env react-scripts build",
-    "openshift_build": "react-scripts build",
-    "test": "env-cmd -f ../../.env react-scripts test",
-    "eject": "env-cmd -f ../../.env react-scripts eject",
+    "start": "vite",
+    "build": "vite build",
+    "openshift_build": "vite build",
     "lint": "eslint ./",
     "lint-fix": "eslint ./ --fix",
-    "format": "prettier --write \"**/*.{js,jsx,json,md}\""
+    "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
+    "dev": "vite"
   },
   "eslintConfig": {
     "extends": [
@@ -103,6 +101,9 @@
     ]
   },
   "devDependencies": {
+    "@svgr/core": "^8.1.0",
+    "@svgr/plugin-jsx": "^8.1.0",
+    "@vitejs/plugin-react": "^4.6.0",
     "eslint": "^8.47.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^9.0.0",
@@ -111,6 +112,8 @@
     "eslint-plugin-react": "^7.33.1",
     "prettier": "^3.0.2",
     "pretty-quick": "^3.1.3",
-    "sass": "^1.63.6"
+    "rollup-plugin-visualizer": "^6.0.5",
+    "sass": "^1.97.2",
+    "vite": "^7.0.0"
   }
 }

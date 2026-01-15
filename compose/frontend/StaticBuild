@@ -3,19 +3,26 @@
 ############################################
 # Builder: install deps and build frontend #
 ############################################
-FROM node:24-alpine AS buildnode
+FROM node:24-alpine AS dependencies
 
-WORKDIR /app/
-COPY ./src/frontend/package.json ./src/frontend/package-lock.json ./src/frontend/.npmrc ./
+WORKDIR /app
+COPY ./src/frontend/ /app/
+
+ARG DEBUG_BUILD=false
 
 RUN --mount=type=secret,id=FONTAWESOME_PACKAGE_TOKEN \
     test -s /run/secrets/FONTAWESOME_PACKAGE_TOKEN || { echo "FONTAWESOME_PACKAGE_TOKEN secret missing"; exit 1; }; \
     export FONTAWESOME_PACKAGE_TOKEN="$(cat /run/secrets/FONTAWESOME_PACKAGE_TOKEN)" && \
     npm ci
 
-COPY ./src/frontend/ /app/
-
+ENV NODE_ENV=production
 RUN npm run openshift_build
+
+# Gzip static assets
+RUN apk add --no-cache gzip && \
+    find /app/build -type f \( \
+      -name '*.js' -o -name '*.css' -o -name '*.html' -o -name '*.json' -o -name '*.svg' -o -name '*.xml' -o -name '*.wasm' \
+    \) -exec sh -c 'gzip -9 -c "$1" > "$1.gz"' _ {} \;
 
 ############################################
 # Runtime: nginx serving built assets      #
@@ -26,7 +33,7 @@ EXPOSE 3000
 
 # Copy built assets
 RUN mkdir -p /usr/share/nginx/html
-COPY --from=buildnode /app/build /usr/share/nginx/html
+COPY --from=dependencies /app/build /usr/share/nginx/html
 
 USER root
 RUN mkdir -p /tmp/cache/nginx && \
