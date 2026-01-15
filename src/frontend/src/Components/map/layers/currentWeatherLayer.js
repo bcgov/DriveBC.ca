@@ -4,7 +4,7 @@ import { transformFeature } from '../helpers';
 // OpenLayers
 import { Point } from 'ol/geom';
 import { Style } from 'ol/style';
-import * as ol from 'ol';
+import Feature from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
@@ -23,7 +23,7 @@ export function getCurrentWeatherLayer(weatherData, projectionCode, mapContext, 
     const lng = weather.location.coordinates[0] + 0.0044;
     const lat = weather.location.coordinates[1]
     const olGeometry = new Point([lng, lat]);
-    const olFeature = new ol.Feature({ geometry: olGeometry, type: 'currentWeather' });
+    const olFeature = new Feature({ geometry: olGeometry, type: 'currentWeather' });
 
     // Transfer properties
     olFeature.setProperties(weather)

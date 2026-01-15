@@ -3,7 +3,7 @@ import { transformFeature } from '../helpers';
 
 // OpenLayers
 import { LineString } from 'ol/geom';
-import * as ol from 'ol';
+import Feature from 'ol/Feature';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -21,7 +21,7 @@ export function getRouteLayer(routeData, projectionCode, mapContext, selectedRou
 
         const getRouteFeature = (routeData) => {
           const olGeometry = new LineString(Array.isArray(routeData.route) ? routeData.route : routeData.route.coordinates[0]);
-          const olFeature = new ol.Feature({ geometry: olGeometry, type: 'route' });
+          const olFeature = new Feature({ geometry: olGeometry, type: 'route' });
 
           // Transfer properties
           olFeature.set('route', routeData);

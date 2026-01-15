@@ -143,7 +143,7 @@ export default function RouteMap(props) {
       const image = document.createElement('canvas');
       image.width = 400;
       image.height = 200;
-      const context = image.getContext('2d', { alpha: 1 });
+      const context = image.getContext('2d', { alpha: 1, willReadFrequently: true });
       const matrix = [
         image.width / canvas.width, 0, 0,
         image.height / canvas.height, 0, 0

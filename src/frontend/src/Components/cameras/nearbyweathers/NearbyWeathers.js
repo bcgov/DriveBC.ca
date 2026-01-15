@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import * as FA from "@fortawesome/pro-regular-svg-icons";
+import { faSunCloud } from "@fortawesome/pro-regular-svg-icons";
 import Skeleton from "react-loading-skeleton";
 import Button from "react-bootstrap/Button";
 
@@ -101,7 +101,7 @@ export default function NearbyWeathers(props) {
       <div className="nearby-weathers-container">
         <div className="actions-bar actions-bar--weathers">
           <div className="title">
-            <FontAwesomeIcon className="weather-icon" icon={FA.faSunCloud}/>
+            <FontAwesomeIcon className="weather-icon" icon={faSunCloud}/>
             <p>Weather</p>
           </div>
           <div className="weather-types">
