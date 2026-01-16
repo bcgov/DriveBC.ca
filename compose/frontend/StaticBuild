@@ -33,7 +33,7 @@ EXPOSE 3000
 
 # Copy built assets
 RUN mkdir -p /usr/share/nginx/html
-COPY --from=development-dependencies-env /app/build/client /usr/share/nginx/html
+COPY --from=development-dependencies-env /app/build /usr/share/nginx/html
 
 USER root
 RUN mkdir -p /tmp/cache/nginx && \
