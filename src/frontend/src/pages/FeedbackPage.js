@@ -196,9 +196,14 @@ export default function FeedbackPage() {
                   rows={5}
                   placeholder="Enter your message here"
                   required
+                  minLength={10}
+                  maxLength={200}
                   value={message}
                   isInvalid={
                     validated && (message.length < 10 || message.length > 200)
+                  }
+                  isValid={
+                    validated && message.length >= 10 && message.length <= 200
                   }
                   onChange={e => setMessage(e.target.value)} />
 
