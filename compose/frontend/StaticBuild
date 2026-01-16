@@ -20,7 +20,7 @@ RUN npm run openshift_build
 
 # Gzip static assets
 RUN apk add --no-cache gzip && \
-    find /app/build/client -type f \( \
+    find /app/build -type f \( \
       -name '*.js' -o -name '*.css' -o -name '*.html' -o -name '*.json' -o -name '*.svg' -o -name '*.xml' -o -name '*.wasm' \
     \) -exec sh -c 'gzip -9 -c "$1" > "$1.gz"' _ {} \;
 
