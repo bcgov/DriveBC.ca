@@ -1,4 +1,5 @@
 @import "../../../styles/variables";
+
 .notifications-section {
   width: 100%;
 
@@ -45,9 +46,28 @@
       }
     }
 
-
     &__data {
       padding-left: 0;
+
+      // Style native date/time inputs
+      input[type="date"],
+      input[type="time"] {
+        font-weight: 400;
+        font-size: 0.875rem;
+        
+        &::placeholder {
+          color: #A19F9D;
+        }
+
+        @media (max-width: 432px) {
+          width: 100%;
+        }
+      }
+
+      // Error state for pickers
+      .picker-error {
+        background-color: #FFEEEE;
+      }
     }
   }
 
@@ -61,10 +81,9 @@
       margin-right: 24px;
     }
 
-    & +  .info-row.for-time-row {
+    & + .info-row.for-time-row {
       margin-top: 4px;
     }
-    
   }
 
   .date-row {
@@ -79,6 +98,30 @@
     font-size: 0.75rem;
     color: $Grey80;
   }
+
+  // Double picker layout (for time/date ranges)
+  .double-picker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .spacer {
+      white-space: nowrap;
+    }
+
+    input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    @media (max-width: 432px) {
+      flex-direction: column;
+      
+      .spacer {
+        display: none;
+      }
+    }
+  }
 }
 
 .notifications-dates {
@@ -87,31 +130,4 @@
   @media (min-width: 768px) {
     column-count: 4;
   }
-}
-
-// Time picker and date picker
-vaadin-time-picker, vaadin-date-picker {
-  --vaadin-input-field-background: white;
-  --vaadin-input-field-placeholder-color: #A19F9D;
-
-  @media (max-width: 432px) {
-    width: 100%;
-  }
-
-  &::part(input-field) {
-    border: 1px solid $Input-border;
-  }
-
-  input {
-    font-weight: 400;
-    font-size: 0.875rem;
-  }
-}
-
-vaadin-time-picker-overlay, vaadin-date-picker-overlay  {
-  z-index: 10000;
-}
-
-.pickerError {
-  --vaadin-input-field-background: #FFEEEE;
 }
