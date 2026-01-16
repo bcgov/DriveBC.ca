@@ -35,8 +35,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Skeleton from 'react-loading-skeleton';
-import '@vaadin/time-picker';
-import '@vaadin/date-picker';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 

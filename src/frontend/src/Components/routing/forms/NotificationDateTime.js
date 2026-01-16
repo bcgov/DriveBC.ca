@@ -1,5 +1,5 @@
 // React
-import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import React, {forwardRef, useImperativeHandle, useState} from 'react';
 
 // External imports
 import Form from "react-bootstrap/Form";
@@ -15,9 +15,6 @@ const NotificationDateTime = forwardRef((props, ref) => {
   // Props
   const { route, showSpecificTimeDate, setShowSpecificTimeDate } = props;
 
-  // Ref
-  const startTimeRef = useRef();
-
   // States
   const [errorMessages, setErrorMessages] = useState([]);
 
@@ -27,15 +24,15 @@ const NotificationDateTime = forwardRef((props, ref) => {
   const [specificDateOption, setSpecificDateOption] = useState(defaultSpecificDateOption);
 
   // Time range
-  const defaultStartTime = route.notification_start_time ? route.notification_start_time.split(':').slice(0, 2).join(':') : null;
-  const defaultEndTime = route.notification_end_time ? route.notification_end_time.split(':').slice(0, 2).join(':') : null;
+  const defaultStartTime = route.notification_start_time ? route.notification_start_time.split(':').slice(0, 2).join(':') : '';
+  const defaultEndTime = route.notification_end_time ? route.notification_end_time.split(':').slice(0, 2).join(':') : '';
   const [allDay, setAllDay] = useState(defaultEndTime === '23:59');
-  const [startTime, setStartTime] = useState(defaultStartTime);
-  const [endTime, setEndTime] = useState(defaultEndTime);
+  const [startTime, setStartTime] = useState(allDay ? '00:00' : defaultStartTime);
+  const [endTime, setEndTime] = useState(allDay ? '23:59' : defaultEndTime);
 
   // Date range
-  const defaultStartDate = route.notification_start_date? route.notification_start_date : getCurrentPacificDateString();
-  const defaultEndDate = route.notification_end_date;
+  const defaultStartDate = route.notification_start_date ? route.notification_start_date : getCurrentPacificDateString();
+  const defaultEndDate = route.notification_end_date || '';
   const [startDate, setStartDate] = useState(defaultStartDate);
   const [endDate, setEndDate] = useState(defaultEndDate);
 
@@ -50,77 +47,6 @@ const NotificationDateTime = forwardRef((props, ref) => {
     Sunday: route.notification_days.includes('Sunday')
   }
   const [dayOfWeek, setDayOfWeek] = useState(defaultDayOfWeek);
-
-  // Effects
-  useEffect(() => {
-    // Reset all date time options
-    setDayOfWeek(defaultDayOfWeek);
-    setStartTime(defaultStartTime);
-    setEndTime(defaultEndTime);
-    setStartDate(defaultStartDate);
-    setEndDate(defaultEndDate);
-  }, [showSpecificTimeDate]);
-
-  useEffect(() => {
-    if (!allDay) {
-      setStartTime(defaultStartTime);
-      setEndTime(defaultEndTime);
-
-    } else {
-      setStartTime('00:00');
-      setEndTime('23:59');
-    }
-  }, [allDay]);
-
-  useEffect(() => {
-    // Bind event listeners to time pickers
-    if (showSpecificTimeDate && !allDay) {
-      const startTimePicker = document.querySelector('#startTimePicker');
-      startTimePicker.addEventListener('value-changed', handleStartTimeChange);
-
-      const endTimePicker = document.querySelector('#endTimePicker');
-      endTimePicker.addEventListener('value-changed', handleEndTimeChange);
-
-      return () => {
-        startTimePicker.removeEventListener('value-changed', handleStartTimeChange);
-        endTimePicker.removeEventListener('value-changed', handleEndTimeChange);
-      }
-    }
-  }, [showSpecificTimeDate, allDay]);
-
-  useEffect(() => {
-    // Reset date options
-    setStartDate(defaultStartDate);
-    setEndDate(defaultEndDate);
-    setDayOfWeek(defaultDayOfWeek);
-
-    // No need to bind event listeners if specific time date is not shown
-    if (!showSpecificTimeDate) {
-      return;
-    }
-
-    // Bind event listeners to date pickers
-    if (specificDateOption === 'Specific date') {
-      const specificDatePicker = document.querySelector('#specificDate');
-      specificDatePicker.addEventListener('value-changed', handleStartDateChange);
-
-      return () => {
-        specificDatePicker.removeEventListener('value-changed', handleStartDateChange);
-      }
-
-    } else if (specificDateOption === 'Date range') {
-      const startDatePicker = document.querySelector('#startDate');
-      startDatePicker.addEventListener('value-changed', handleStartDateChange);
-
-      const endDatePicker = document.querySelector('#endDate');
-      endDatePicker.addEventListener('value-changed', handleEndDateChange);
-
-      return () => {
-        startDatePicker.removeEventListener('value-changed', handleStartDateChange);
-        endDatePicker.removeEventListener('value-changed', handleEndDateChange);
-      };
-    }
-  }, [specificDateOption]);
 
   /* Helpers */
   useImperativeHandle(ref, () => ({
@@ -203,26 +129,21 @@ const NotificationDateTime = forwardRef((props, ref) => {
   const handleRadioChange = (event) => {
     if (event.target.id === 'specific') {
       setShowSpecificTimeDate(true);
-    }
-    else {
+    } else {
       setShowSpecificTimeDate(false);
     }
   };
 
-  const handleStartDateChange = (event) => {
-    setStartDate(event.detail.value);
-  };
-
-  const handleEndDateChange = (event) => {
-    setEndDate(event.detail.value);
-  };
-
-  const handleStartTimeChange = (event) => {
-    setStartTime(event.detail.value);
-  };
-
-  const handleEndTimeChange = (event) => {
-    setEndTime(event.detail.value);
+  const handleAllDayChange = () => {
+    const newAllDay = !allDay;
+    setAllDay(newAllDay);
+    if (newAllDay) {
+      setStartTime('00:00');
+      setEndTime('23:59');
+    } else {
+      setStartTime(defaultStartTime || '');
+      setEndTime(defaultEndTime || '');
+    }
   };
 
   const handleWeekDayChange = (event) => {
@@ -232,8 +153,14 @@ const NotificationDateTime = forwardRef((props, ref) => {
     });
   };
 
+  const hasTimeError = errorMessages.includes('Please select a start and end time.') ||
+    errorMessages.includes('End time must be after start time.');
+  const hasSpecificDateError = errorMessages.includes('Please select a specific date.') ||
+    errorMessages.includes('Specific date must be after today.');
+  const hasDateRangeError = errorMessages.includes('Please select a start and end date.') ||
+    errorMessages.includes('End date must be after start date.');
+
   /* Rendering */
-  // Main components
   return (
     <Form className="notifications-section">
       <div className="notifications-targets">
@@ -258,7 +185,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
         </div>
       </div>
 
-      { showSpecificTimeDate &&
+      {showSpecificTimeDate &&
         <div className="specific-time-dates">
           <div className="time-row">
             <p className="bold">Time</p>
@@ -267,41 +194,48 @@ const NotificationDateTime = forwardRef((props, ref) => {
               type='checkbox'
               id='all-day-checkbox'
               label='All Day'
-              value={allDay}
               checked={allDay}
-              onChange={() => setAllDay(!allDay)} />
+              onChange={handleAllDayChange} />
           </div>
 
           {!allDay &&
             <div className="info-row row for-time-row">
               <div className="info-row__data double-picker">
-                <vaadin-time-picker
+                <Form.Control
+                  type="time"
                   id="startTimePicker"
-                  class={
-                    errorMessages.includes('Please select a start and end time.') ||
-                    errorMessages.includes('End time must be after start time.') ?
-                      'pickerError' : ''
-                  }
-                  ref={startTimeRef}
-                  step={60 * 15}
+                  className={hasTimeError ? 'picker-error' : ''}
                   placeholder="Start time"
-                  value={defaultStartTime}
-                  max={endTime ? endTime : null}
-                  error-message={startTimeRef.current ? startTimeRef.current.errorMessage : null}/>
+                  value={startTime}
+                  max={endTime || undefined}
+                  step={900}
+                  onChange={(e) => {
+                    setStartTime(e.target.value);
+                    if (e.target.value && endTime && e.target.value > endTime) {
+                      setEndTime(e.target.value);
+                    }
+                  }}
+                  isInvalid={hasTimeError}
+                />
 
                 <span className="spacer"> — </span>
 
-                <vaadin-time-picker
+                <Form.Control
+                  type="time"
                   id="endTimePicker"
-                  class={
-                    errorMessages.includes('Please select a start and end time.') ||
-                    errorMessages.includes('End time must be after start time.') ?
-                      'pickerError' : ''
-                  }
-                  step={60 * 15}
+                  className={hasTimeError ? 'picker-error' : ''}
                   placeholder="End time"
-                  value={defaultEndTime}
-                  min={startTime ? startTime : null} />
+                  value={endTime}
+                  min={startTime || undefined}
+                  step={900}
+                  onChange={(e) => {
+                    setEndTime(e.target.value);
+                    if (e.target.value && startTime && e.target.value < startTime) {
+                      setStartTime(e.target.value);
+                    }
+                  }}
+                  isInvalid={hasTimeError}
+                />
               </div>
 
               <p className='tz-note'>
@@ -314,8 +248,7 @@ const NotificationDateTime = forwardRef((props, ref) => {
             <div className="info-row__label">
               <Form.Select
                 onChange={(e) => setSpecificDateOption(e.target.value)}
-                defaultValue={specificDateOption}>
-
+                value={specificDateOption}>
                 {specificDateOptions.map((option) => (
                   <option key={option}>{option}</option>
                 ))}
@@ -324,45 +257,45 @@ const NotificationDateTime = forwardRef((props, ref) => {
 
             {specificDateOption === 'Specific date' &&
               <div className="info-row__data">
-                <vaadin-date-picker
+                <Form.Control
+                  type="date"
                   id="specificDate"
-                  class={
-                    errorMessages.includes('Please select a specific date.') ||
-                    errorMessages.includes('Specific date must be after today.') ?
-                    'pickerError' : ''
-                  }
+                  className={hasSpecificDateError ? 'picker-error' : ''}
                   placeholder="Select date"
-                  value={defaultStartDate}
-                  min={getCurrentPacificDateString()} />
+                  value={startDate}
+                  min={getCurrentPacificDateString()}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  isInvalid={hasSpecificDateError}
+                />
               </div>
             }
 
             {specificDateOption === 'Date range' &&
               <div className="info-row__data double-picker">
-                <vaadin-date-picker
+                <Form.Control
+                  type="date"
                   id="startDate"
-                  class={
-                    errorMessages.includes('Please select a start and end date.') ||
-                    errorMessages.includes('End date must be after start date.') ?
-                    'pickerError' : ''
-                  }
+                  className={hasDateRangeError ? 'picker-error' : ''}
                   placeholder="Start date"
-                  value={defaultStartDate}
+                  value={startDate}
                   min={getCurrentPacificDateString()}
-                  max={endDate ? endDate : null } />
+                  max={endDate || undefined}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  isInvalid={hasDateRangeError}
+                />
 
                 <span className="spacer"> — </span>
 
-                <vaadin-date-picker
+                <Form.Control
+                  type="date"
                   id="endDate"
-                  class={
-                    errorMessages.includes('Please select a start and end date.') ||
-                    errorMessages.includes('End date must be after start date.') ?
-                    'pickerError' : ''
-                  }
+                  className={hasDateRangeError ? 'picker-error' : ''}
                   placeholder="End date"
-                  value={defaultEndDate}
-                  min={startDate ? startDate : getCurrentPacificDateString() } />
+                  value={endDate}
+                  min={startDate || getCurrentPacificDateString()}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  isInvalid={hasDateRangeError}
+                />
               </div>
             }
 
