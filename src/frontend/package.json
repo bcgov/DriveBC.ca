@@ -22,6 +22,7 @@
     "@vaadin/time-picker": "^24.6.2",
     "@vladyoslav/drawer": "^0.1.0",
     "bootstrap": "^5.3.8",
+    "core-js": "^3.47.0",
     "env-cmd": "^10.1.0",
     "flatbush": "^4.4.0",
     "html-react-parser": "^4.2.1",
