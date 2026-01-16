@@ -28,8 +28,6 @@
     "@turf/length": "^7.3.2",
     "@turf/line-slice": "^7.3.2",
     "@uidotdev/usehooks": "^2.0.1",
-    "@vaadin/date-picker": "^24.6.2",
-    "@vaadin/time-picker": "^24.6.2",
     "@vladyoslav/drawer": "^0.1.0",
     "bootstrap": "^5.3.8",
     "core-js": "^3.47.0",
