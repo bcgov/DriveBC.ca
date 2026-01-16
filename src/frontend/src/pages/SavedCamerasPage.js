@@ -22,6 +22,7 @@ import ServerErrorPopup from '../Components/map/errors/ServerError';
 import CameraList from '../Components/cameras/CameraList';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
+import PollingComponent from "../Components/shared/PollingComponent";
 
 // Styling
 import './SavedCamerasPage.scss';
@@ -77,17 +78,6 @@ export default function SavedCamerasPage() {
     getSavedCameras();
   }, [favCams]);
 
-useEffect(() => {
-  if (authContext.username) {
-    // Set interval to refresh camera data every 30 seconds
-    const interval = setInterval(() => {
-      console.log('Refreshing camera data...');
-      getSavedCameras();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }
-}, [authContext.username, favCams]);
 
   // Error handling
   const displayError = (error) => {
@@ -150,6 +140,7 @@ useEffect(() => {
   // Main component
   return (
     <div className="saved-cameras-page">
+      <PollingComponent runnable={getSavedCameras} interval={30000} />
       {showNetworkError &&
         <NetworkErrorPopup />
       }
