@@ -1,6 +1,7 @@
 import { resolve } from "node:path";
 import { readFileSync } from "node:fs";
 import { defineConfig, loadEnv, createFilter, transformWithEsbuild } from "vite";
+import { visualizer } from "rollup-plugin-visualizer";
 import react from "@vitejs/plugin-react";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -16,6 +17,12 @@ export default defineConfig(({ mode }) => {
             importPrefixPlugin(),
             htmlPlugin(mode),
             svgrPlugin(),
+            visualizer({
+                open: true,
+                filename: "stats.html", 
+                gzipSize: true,
+                brotliSize: true,
+                }),
         ],
         css: {
             preprocessorOptions: {
