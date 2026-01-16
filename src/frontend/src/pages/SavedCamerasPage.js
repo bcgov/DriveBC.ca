@@ -22,6 +22,7 @@ import ServerErrorPopup from '../Components/map/errors/ServerError';
 import CameraList from '../Components/cameras/CameraList';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
+import PollingComponent from "../Components/shared/PollingComponent";
 
 // Styling
 import './SavedCamerasPage.scss';
@@ -76,6 +77,7 @@ export default function SavedCamerasPage() {
 
     getSavedCameras();
   }, [favCams]);
+
 
   // Error handling
   const displayError = (error) => {
@@ -138,6 +140,7 @@ export default function SavedCamerasPage() {
   // Main component
   return (
     <div className="saved-cameras-page">
+      <PollingComponent runnable={getSavedCameras} interval={30000} />
       {showNetworkError &&
         <NetworkErrorPopup />
       }
