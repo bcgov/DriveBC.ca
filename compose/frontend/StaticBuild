@@ -16,7 +16,7 @@ RUN --mount=type=secret,id=FONTAWESOME_PACKAGE_TOKEN \
     export FONTAWESOME_PACKAGE_TOKEN="$(cat /run/secrets/FONTAWESOME_PACKAGE_TOKEN)" && \
     npm ci --include=dev
 
-RUN npm run build
+RUN npm run openshift_build
 
 # Gzip static assets
 RUN apk add --no-cache gzip && \
