@@ -1,6 +1,7 @@
 import { getBottomLeft, getTopRight } from 'ol/extent';
 import { toLonLat } from 'ol/proj';
-import { polygon, booleanIntersects } from '@turf/turf';
+import { polygon } from '@turf/helpers';
+import booleanIntersects from '@turf/boolean-intersects';
 
 const wrapLon = (value) => {
   const worlds = Math.floor((value + 180) / 360);

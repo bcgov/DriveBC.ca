@@ -4,7 +4,8 @@ import React, { useRef, useEffect, useState } from 'react';
 // Geo
 import { applyStyle } from 'ol-mapbox-style';
 import { fromLonLat, transformExtent } from 'ol/proj';
-import { bbox, lineString } from '@turf/turf';
+import bbox from '@turf/bbox';
+import { lineString } from '@turf/helpers';
 import Map from 'ol/Map';
 import MVT from 'ol/format/MVT.js';
 import VectorTileLayer from 'ol/layer/VectorTile.js';

@@ -3,21 +3,16 @@ import cloneDeep from 'lodash/cloneDeep';
 
 // Map & geospatial imports
 import { LineString, Point, Polygon } from "ol/geom";
-import { 
-  lineString, 
-  point, 
-  length,
-  lineSlice, 
-  buffer, 
-  multiPolygon, 
-  booleanIntersects, 
-  bbox, 
-  booleanPointInPolygon, 
-  destination, 
-  along, 
-  polygon, 
-  centroid 
-} from '@turf/turf';
+import { lineString, point, multiPolygon, polygon } from '@turf/helpers';
+import length from '@turf/length';
+import lineSlice from '@turf/line-slice';
+import buffer from '@turf/buffer';
+import booleanIntersects from '@turf/boolean-intersects';
+import bbox from '@turf/bbox';
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
+import destination from '@turf/destination';
+import along from '@turf/along';
+import centroid from '@turf/centroid';
 
 import Flatbush from 'flatbush';
 import GeoJSON from 'ol/format/GeoJSON';

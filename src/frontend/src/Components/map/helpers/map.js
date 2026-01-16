@@ -3,7 +3,8 @@ import { redLocationMarkup, setLocationPin } from './';
 
 // Map & geospatial imports
 import { fromLonLat, transformExtent } from 'ol/proj';
-import { bbox, lineString } from '@turf/turf';
+import bbox from '@turf/bbox';
+import { lineString } from '@turf/helpers';
 
 // Map transformation
 export const transformFeature = (feature, sourceCRS, targetCRS) => {
