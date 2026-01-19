@@ -20,7 +20,7 @@ import {
   faVideo,
   faFlag,
   faLocationDot,
-  faPencil,
+  faGear,
   faChevronRight,
   faBell
 } from '@fortawesome/pro-solid-svg-icons';
@@ -511,7 +511,7 @@ export default function RouteDetails(props) {
             <div className="modal-title-icon">
               <FontAwesomeIcon icon={faBell} />
             </div>
-            Notifications
+            Notification settings
           </Modal.Title>
         </Modal.Header>
 
@@ -589,7 +589,7 @@ export default function RouteDetails(props) {
                   />
                 </Form>
                 {notificationsEnabled &&
-                  <FontAwesomeIcon icon={faPencil}
+                  <FontAwesomeIcon icon={faGear}
                     tabIndex={0}
                     onClick={() => setShowNotificationForm(true)}
                   />
