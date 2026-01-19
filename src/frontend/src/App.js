@@ -17,7 +17,6 @@ import { setAutoFreeze } from 'immer';
 setAutoFreeze(false);
 
 // Styling
-import '@bcgov/bc-sans/css/BCSans.css';
 import './App.scss';
 
 // Internal imports
