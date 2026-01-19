@@ -24,6 +24,20 @@ FROM nginxinc/nginx-unprivileged:stable-alpine
 
 EXPOSE 3000
 
+# Install Brotli module and CLI tool
+#### IMPORTANT: nginx-mod-http-brotli must match the nginx version in the base image ####
+USER root
+RUN apk add --no-cache brotli
+RUN echo "@edge https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
+RUN apk update
+RUN apk add --no-cache nginx-mod-http-brotli@edge
+
+# Load Brotli modules in the main nginx.conf
+# The nginxinc image expects modules to be loaded in /etc/nginx/nginx.conf
+RUN sed -i '1i load_module modules/ngx_http_brotli_filter_module.so;\nload_module modules/ngx_http_brotli_static_module.so;\n' /etc/nginx/nginx.conf
+
+USER nginx
+
 # Copy built assets
 RUN mkdir -p /usr/share/nginx/html
 COPY --from=buildnode /app/build /usr/share/nginx/html
