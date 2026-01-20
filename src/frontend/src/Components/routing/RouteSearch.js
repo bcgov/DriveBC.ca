@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 
 // Routing
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 
 // Internal imports
 import { getRoutes, shortenToOneDecimal } from '../data/routes.js';

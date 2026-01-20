@@ -2,7 +2,7 @@
 import React, { useContext, useEffect } from 'react';
 
 // Navigation
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 // External imports
 import Container from 'react-bootstrap/Container';
