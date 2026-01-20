@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { API_HOST } from "../env.js";
 
 // Routing
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 // External Components
 import { UAParser } from "ua-parser-js";

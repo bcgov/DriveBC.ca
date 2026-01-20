@@ -2,7 +2,7 @@
 import React, { useContext, useEffect } from 'react';
 
 // Navigation
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

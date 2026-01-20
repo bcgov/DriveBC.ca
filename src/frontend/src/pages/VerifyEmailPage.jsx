@@ -5,7 +5,7 @@ import React, { useContext, useEffect } from 'react';
 import { FROM_EMAIL } from "../env.js";
 
 // Navigation
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 // External imports
 import Container from 'react-bootstrap/Container';

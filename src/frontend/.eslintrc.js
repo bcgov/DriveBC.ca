@@ -5,7 +5,6 @@ module.exports = {
     'es2021': true,
   },
   'extends': [
-    'google',
     'prettier',
     'plugin:react/recommended',
     "eslint:recommended",
