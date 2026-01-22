@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShareFromSquare } from '@fortawesome/pro-regular-svg-icons';
+import { faShareFromSquare } from '@fortawesome/pro-regular-svg-icons/faShareFromSquare';
 
 // Internal imports
 import { AlertContext } from '../../App';

@@ -1,10 +1,10 @@
-@import "../../styles/variables.scss";
+@use "../../styles/variables" as v;
 
 .share-url {
   .copy-btn {
     border-radius: 4px;
     border: none;
-    color: $Type-Primary;
+    color: v.$Type-Primary;
     transition: 0.3s;
     font-size: 0.75rem;
     font-weight: 700;
@@ -21,17 +21,17 @@
 .popup {
   &--route {
     .copy-btn {
-      color: $BC-Blue;
+      color: v.$BC-Blue;
       &:hover {
-        background: lighten($Type-Primary, 70%);
+        background: lighten(v.$Type-Primary, 70%);
       }
     }
   }
   &--camera {
     .copy-btn {
-      color: $Blue90;
+      color: v.$Blue90;
       &:hover {
-        background: lighten($BC-Blue, 70%);
+        background: lighten(v.$BC-Blue, 70%);
       }
     }
   }
@@ -39,82 +39,82 @@
     &:not(.roadConditions) {
       &.major, &.closures, &.closure {
         .copy-btn {
-          color: $Red-dark;
+          color: v.$Red-dark;
           &:hover {
-            background: lighten($Red-dark, 50%);
+            background: lighten(v.$Red-dark, 50%);
           }       
         }
       }
     }
     &.minor {
       .copy-btn {
-        color: $Gold110;
+        color: v.$Gold110;
         &:hover {
-          background: lighten($Gold110, 60%);
+          background: lighten(v.$Gold110, 60%);
         }      
       }
     }
     &.chainUps {
       .copy-btn {
-        color: $Type-Primary;
+        color: v.$Type-Primary;
         &:hover {
-          background: lighten($Chainups, 20%);
+          background: lighten(v.$Chainups, 20%);
         }      
       }
     }
   }
   &--ferry {
     .copy-btn {
-      color: $Green;
+      color: v.$Green;
       &:hover {
-        background: lighten($Success, 60%);
+        background: lighten(v.$Success, 60%);
       }    
     }
   }
   &--weather {
     .copy-btn {
-      color: $Type-Primary;
+      color: v.$Type-Primary;
       &:hover {
-        background: lighten($Type-Primary, 70%);
+        background: lighten(v.$Type-Primary, 70%);
       }    
     }
     &.advisory-issued {
       .copy-btn {
-        color: $Gold110;
+        color: v.$Gold110;
       }
     }
   }
 
   &--reststop {
     .copy-btn {
-      color: $Type-reststop;
+      color: v.$Type-reststop;
       &:hover {
-        background: lighten($Type-reststop, 60%);
+        background: lighten(v.$Type-reststop, 60%);
       }    
     }
 
     &.closed {
       .copy-btn {
-        color: $Red-dark;
+        color: v.$Red-dark;
         &:hover {
-          background: lighten($Red-dark, 50%);
+          background: lighten(v.$Red-dark, 50%);
         }      
       }
     }
   }
   &--wildfire {
     .copy-btn {
-      color: $Red-dark;
+      color: v.$Red-dark;
       &:hover {
-        background: lighten($Red-dark, 50%);
+        background: lighten(v.$Red-dark, 50%);
       }    
     }
   }
   &--advisories {
     .copy-btn {
-      color: $Advisory-Text;
+      color: v.$Advisory-Text;
       &:hover {
-        background: lighten($Advisory-Text, 50%);
+        background: lighten(v.$Advisory-Text, 50%);
       }    
     }
   }
