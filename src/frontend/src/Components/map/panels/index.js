@@ -1,23 +1,30 @@
 // React
-import React from 'react';
-
-// Internal imports
-import AdvisoriesPanel from './AdvisoriesPanel';
-import CamPanel from './CamPanel';
-import CoastalFerryPanel from "./CoastalFerryPanel";
-import EventPanel from './EventPanel';
-import FerryPanel from './FerryPanel';
-import LocalWeatherPanel from './weather/LocalWeatherPanel';
-import RegionalWeatherPanel from './weather/RegionalWeatherPanel';
-import HefPanel from './weather/HefPanel';
-import RestStopPanel from './RestStopPanel';
-import RouteDetailsPanel from './RouteDetailsPanel';
-import BorderCrossingPanel from './BorderCrossingPanel';
+import React, { lazy, Suspense } from 'react';
+import Feature from "ol/Feature";
 
 // Styling
 import './index.scss';
-import Feature from "ol/Feature";
-import WildfirePanel from "./WildfirePanel";
+
+// Lazy load all panels
+const AdvisoriesPanel = lazy(() => import('./AdvisoriesPanel'));
+const CamPanel = lazy(() => import('./CamPanel'));
+const CoastalFerryPanel = lazy(() => import('./CoastalFerryPanel'));
+const EventPanel = lazy(() => import('./EventPanel'));
+const FerryPanel = lazy(() => import('./FerryPanel'));
+const RestStopPanel = lazy(() => import('./RestStopPanel'));
+const RouteDetailsPanel = lazy(() => import('./RouteDetailsPanel'));
+const BorderCrossingPanel = lazy(() => import('./BorderCrossingPanel'));
+const WildfirePanel = lazy(() => import('./WildfirePanel'));
+
+// Lazy load weather panels as a single chunk
+const WeatherPanels = lazy(() => import('./weather'));
+
+// Loading fallback component
+const PanelLoader = () => (
+  <div className="panel-loader" style={{ padding: '20px', textAlign: 'center' }}>
+    Loading...
+  </div>
+);
 
 export const renderPanel = (
   clickedFeature,
@@ -29,50 +36,105 @@ export const renderPanel = (
   showRouteObjs,
   setShowRouteObjs
 ) => {
+  const renderWithSuspense = (Component, props) => (
+    <Suspense fallback={<PanelLoader />}>
+      <Component {...props} />
+    </Suspense>
+  );
+
   if (clickedFeature) {
     // Hack for rendering advisories panel since it's not a feature
     // DBC22-2871: temporarily disabled
     // if (!clickedFeature.get) {
-    //   return <AdvisoriesPanel advisories={clickedFeature} smallScreen={smallScreen} mapView={mapView}/>;
+    //   return renderWithSuspense(AdvisoriesPanel, { 
+    //     advisories: clickedFeature, 
+    //     smallScreen, 
+    //     mapView 
+    //   });
     // }
 
     switch (clickedFeature.get('type')) {
       case 'camera':
-        return <CamPanel camFeature={clickedFeature} isCamDetail={isCamDetail} showRouteObjs={showRouteObjs} />;
+        return renderWithSuspense(CamPanel, { 
+          camFeature: clickedFeature, 
+          isCamDetail, 
+          showRouteObjs 
+        });
+      
       case 'event':
-        return <EventPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
+        return renderWithSuspense(EventPanel, { 
+          feature: clickedFeature, 
+          showRouteObjs 
+        });
+      
       case 'ferry':
         if (clickedFeature.get('coastal')) {
-          return <CoastalFerryPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
+          return renderWithSuspense(CoastalFerryPanel, { 
+            feature: clickedFeature, 
+            showRouteObjs 
+          });
         }
-
-        return <FerryPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
+        return renderWithSuspense(FerryPanel, { 
+          feature: clickedFeature, 
+          showRouteObjs 
+        });
+      
       case 'currentWeather':
-        return <LocalWeatherPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
+        return renderWithSuspense(WeatherPanels, { 
+          type: 'local',
+          feature: clickedFeature, 
+          showRouteObjs 
+        });
+      
       case 'regionalWeather':
-        return <RegionalWeatherPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
+        return renderWithSuspense(WeatherPanels, { 
+          type: 'regional',
+          feature: clickedFeature, 
+          showRouteObjs 
+        });
+      
       case 'hef':
-        return <HefPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
+        return renderWithSuspense(WeatherPanels, { 
+          type: 'hef',
+          feature: clickedFeature, 
+          showRouteObjs 
+        });
+      
       case 'largeRestStop':
       case 'restStop':
-        return <RestStopPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
+        return renderWithSuspense(RestStopPanel, { 
+          feature: clickedFeature, 
+          showRouteObjs 
+        });
+      
       case 'borderCrossing':
-        return <BorderCrossingPanel borderCrossing={clickedFeature.getProperties()} showRouteObjs={showRouteObjs} />;
+        return renderWithSuspense(BorderCrossingPanel, { 
+          borderCrossing: clickedFeature.getProperties(), 
+          showRouteObjs 
+        });
+      
       case 'advisory':
-        return <AdvisoriesPanel advisories={clickedFeature.get('data')} showRouteObjs={showRouteObjs} inMap={true} />;
+        return renderWithSuspense(AdvisoriesPanel, { 
+          advisories: clickedFeature.get('data'), 
+          showRouteObjs, 
+          inMap: true 
+        });
+      
       case 'wildfire':
-        return <WildfirePanel wildfire={clickedFeature.get('data')} showRouteObjs={showRouteObjs} />;
+        return renderWithSuspense(WildfirePanel, { 
+          wildfire: clickedFeature.get('data'), 
+          showRouteObjs 
+        });
     }
 
   // Render searched routes panel if no feature is clicked
   } else {
-    return (
-      <RouteDetailsPanel
-        clickedFeatureRef={clickedFeatureRef}
-        updateClickedFeature={updateClickedFeature}
-        showRouteObjs={showRouteObjs}
-        setShowRouteObjs={setShowRouteObjs} />
-    );
+    return renderWithSuspense(RouteDetailsPanel, {
+      clickedFeatureRef,
+      updateClickedFeature,
+      showRouteObjs,
+      setShowRouteObjs
+    });
   }
 }
 
