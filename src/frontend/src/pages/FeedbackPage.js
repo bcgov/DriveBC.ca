@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 
 // Routing
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 // External Components
 import { UAParser } from "ua-parser-js";

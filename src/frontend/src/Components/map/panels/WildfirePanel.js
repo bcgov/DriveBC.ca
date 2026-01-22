@@ -2,7 +2,7 @@
 import React, {useEffect} from 'react';
 
 // Navigation
-import { useSearchParams } from "react-router";
+import { useSearchParams } from "react-router-dom";
 
 // Internal imports
 import ShareURLButton from '../../shared/ShareURLButton';

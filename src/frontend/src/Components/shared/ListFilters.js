@@ -2,7 +2,7 @@
 import React, { useState, useContext, useCallback, useEffect, useRef } from 'react';
 
 // Navigation
-import { useSearchParams } from "react-router";
+import { useSearchParams } from "react-router-dom";
 
 // Redux
 import { memoize } from 'proxy-memoize';
