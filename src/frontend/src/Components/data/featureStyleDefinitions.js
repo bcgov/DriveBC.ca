@@ -2,138 +2,67 @@ import { Fill, Icon, Stroke, Style } from 'ol/style.js';
 
 // Static assets
 // Cameras
-import cameraIconActive from '../../images/mapIcons/camera-active.png';
-import cameraIconHover from '../../images/mapIcons/camera-hover.png';
 import cameraIconStatic from '../../images/mapIcons/camera-static.png';
-import cameraIconHoverUnread from '../../images/mapIcons/camera-hover-unread.png';
-import cameraIconStaticUnread from '../../images/mapIcons/camera-static-unread.png';
+import cameraIconActive from '../../images/mapIcons/camera-active.png';
 
 // Ferries
-import ferryIconActive from '../../images/mapIcons/ferry-active.png';
-import ferryIconHover from '../../images/mapIcons/ferry-hover.png';
 import ferryIconStatic from '../../images/mapIcons/ferry-static.png';
 
 // Coastal Ferries
-import coastalFerryIconActive from '../../images/mapIcons/coastal-ferry-active.png';
-import coastalFerryIconHover from '../../images/mapIcons/coastal-ferry-hover.png';
 import coastalFerryIconStatic from '../../images/mapIcons/coastal-ferry-static.png';
 
 // Road Weather
-import roadWeatherIconActive from '../../images/mapIcons/road-weather-active.png';
-import roadWeatherIconHover from '../../images/mapIcons/road-weather-hover.png';
 import roadWeatherIconStatic from '../../images/mapIcons/road-weather-static.png';
 
 // Regional Weather
-import regionalWeatherIconActive from '../../images/mapIcons/regional-weather-active.png';
-import regionalWeatherIconHover from '../../images/mapIcons/regional-weather-hover.png';
 import regionalWeatherIconStatic from '../../images/mapIcons/regional-weather-static.png';
 
 // Regional Weather with warning
-import regionalWeatherWarningIconActive from '../../images/mapIcons/regional-weather-advisory-active.png';
-import regionalWeatherWarningIconHover from '../../images/mapIcons/regional-weather-advisory-hover.png';
 import regionalWeatherWarningIconStatic from '../../images/mapIcons/regional-weather-advisory-static.png';
 
 // High Elevation Forecast
-import hefIconActive from '../../images/mapIcons/elevation-active.png';
-import hefIconHover from '../../images/mapIcons/elevation-hover.png';
 import hefIconStatic from '../../images/mapIcons/elevation-static.png';
 
 // High Elevation Forecast with warning
-import hefIconWarningActive from '../../images/mapIcons/elevation-advisory-active.png';
-import hefIconWarningHover from '../../images/mapIcons/elevation-advisory-hover.png';
 import hefIconWarningStatic from '../../images/mapIcons/elevation-advisory-static.png';
 
 // Border Crossings
-import borderIconActive from '../../images/mapIcons/border-active.png';
-import borderIconHover from '../../images/mapIcons/border-hover.png';
 import borderIconStatic from '../../images/mapIcons/border-static.png';
 
 // Wildfires
-import wildfireIconActive from '../../images/mapIcons/wildfire/wildfires-active.png';
-import wildfireIconHover from '../../images/mapIcons/wildfire/wildfires-hover.png';
 import wildfireIconStatic from '../../images/mapIcons/wildfire/wildfires-static.png';
-import wildfireHoverUnread from '../../images/mapIcons/wildfire/wildfires-hover-unread.png';
-import wildfireStaticUnread from '../../images/mapIcons/wildfire/wildfires-static-unread.png';
 
 // Rest Stops
-import restStopIconActive from '../../images/mapIcons/restarea-open-active.png';
-import restStopIconHover from '../../images/mapIcons/restarea-open-hover.png';
 import restStopIconStatic from '../../images/mapIcons/restarea-open-static.png';
 
-import restStopIconActiveClosed from '../../images/mapIcons/restarea-closed-active.png';
-import restStopIconHoverClosed from '../../images/mapIcons/restarea-closed-hover.png';
 import restStopIconStaticClosed from '../../images/mapIcons/restarea-closed-static.png';
 
-import restStopIconActiveTruck from '../../images/mapIcons/restarea-truck-open-active.png';
-import restStopIconHoverTruck from '../../images/mapIcons/restarea-truck-open-hover.png';
 import restStopIconStaticTruck from '../../images/mapIcons/restarea-truck-open-static.png';
 
-import restStopIconActiveTruckClosed from '../../images/mapIcons/restarea-truck-closed-active.png';
-import restStopIconHoverTruckClosed from '../../images/mapIcons/restarea-truck-closed-hover.png';
 import restStopIconStaticTruckClosed from '../../images/mapIcons/restarea-truck-closed-static.png';
 
 // Events
 // Closures
-import closuresActiveIcon from '../../images/mapIcons/closure-active.png';
-import closuresHoverIcon from '../../images/mapIcons/closure-hover.png';
-import closuresHoverUnreadIcon from '../../images/mapIcons/closure-hover-unread.png';
 import closuresStaticIcon from '../../images/mapIcons/closure-static.png';
-import closuresStaticUnreadIcon from '../../images/mapIcons/closure-static-unread.png';
-import futureClosureActiveIcon from '../../images/mapIcons/future-closure-active.png';
-import futureClosureHoverIcon from '../../images/mapIcons/future-closure-hover.png';
-import futureClosureHoverUnreadIcon from '../../images/mapIcons/future-closure-hover-unread.png';
 import futureClosureStaticIcon from '../../images/mapIcons/future-closure-static.png';
-import futureClosureStaticUnreadIcon from '../../images/mapIcons/future-closure-static-unread.png';
 
 // Future Events
-import futureEventsMajorActiveIcon from '../../images/mapIcons/future-event-major-active.png';
-import futureEventsMajorHoverIcon from '../../images/mapIcons/future-event-major-hover.png';
-import futureEventsMajorHoverUnreadIcon from '../../images/mapIcons/future-event-major-hover-unread.png';
 import futureEventsMajorStaticIcon from '../../images/mapIcons/future-event-major-static.png';
-import futureEventsMajorStaticUnreadIcon from '../../images/mapIcons/future-event-major-static-unread.png';
-import futureEventsActiveIcon from '../../images/mapIcons/future-event-minor-active.png';
-import futureEventsHoverIcon from '../../images/mapIcons/future-event-minor-hover.png';
-import futureEventsHoverUnreadIcon from '../../images/mapIcons/future-event-minor-hover-unread.png';
 import futureEventsStaticIcon from '../../images/mapIcons/future-event-minor-static.png';
-import futureEventsStaticUnreadIcon from '../../images/mapIcons/future-event-minor-static-unread.png';
 
 // Road Conditions
-import roadConditionsActiveIcon from '../../images/mapIcons/road-condition-active.png';
-import roadConditionsHoverIcon from '../../images/mapIcons/road-condition-hover.png';
-import roadConditionsHoverUnreadIcon from '../../images/mapIcons/road-condition-hover-unread.png';
 import roadConditionsStaticIcon from '../../images/mapIcons/road-condition-static.png';
-import roadConditionsStaticUnreadIcon from '../../images/mapIcons/road-condition-static-unread.png';
 
 // Chain Ups
-import chainUpsActiveIcon from '../../images/mapIcons/chain-ups-active.png';
-import chainUpsHoverIcon from '../../images/mapIcons/chain-ups-hover.png';
-import chainUpsHoverUnreadIcon from '../../images/mapIcons/chain-ups-hover-unread.png';
 import chainUpsStaticIcon from '../../images/mapIcons/chain-ups-static.png';
-import chainUpsStaticUnreadIcon from '../../images/mapIcons/chain-ups-static-unread.png';
 
 // Constructions
-import constructionsMajorActiveIcon from '../../images/mapIcons/delay-major-active.png';
-import constructionsMajorHoverIcon from '../../images/mapIcons/delay-major-hover.png';
-import constructionsMajorHoverUnreadIcon from '../../images/mapIcons/delay-major-hover-unread.png';
 import constructionsMajorStaticIcon from '../../images/mapIcons/delay-major-static.png';
-import constructionsMajorStaticUnreadIcon from '../../images/mapIcons/delay-major-static-unread.png';
-import constructionsActiveIcon from '../../images/mapIcons/delay-minor-active.png';
-import constructionsHoverIcon from '../../images/mapIcons/delay-minor-hover.png';
-import constructionsHoverUnreadIcon from '../../images/mapIcons/delay-minor-hover-unread.png';
 import constructionsStaticIcon from '../../images/mapIcons/delay-minor-static.png';
-import constructionsStaticUnreadIcon from '../../images/mapIcons/delay-minor-static-unread.png';
 
 // Generic Events
-import genericDelaysMajorActiveIcon from '../../images/mapIcons/incident-major-active.png';
-import genericDelaysMajorHoverIcon from '../../images/mapIcons/incident-major-hover.png';
-import genericDelaysMajorHoverUnreadIcon from '../../images/mapIcons/incident-major-hover-unread.png';
 import genericDelaysMajorStaticIcon from '../../images/mapIcons/incident-major-static.png';
-import genericDelaysMajorStaticUnreadIcon from '../../images/mapIcons/incident-major-static-unread.png';
-import genericDelaysActiveIcon from '../../images/mapIcons/incident-minor-active.png';
-import genericDelaysHoverIcon from '../../images/mapIcons/incident-minor-hover.png';
-import genericDelaysHoverUnreadIcon from '../../images/mapIcons/incident-minor-hover-unread.png';
 import genericDelaysStaticIcon from '../../images/mapIcons/incident-minor-static.png';
-import genericDelaysStaticUnreadIcon from '../../images/mapIcons/incident-minor-static-unread.png';
 
 // Map advisory styles
 export const advisoryStyles = {
@@ -180,7 +109,7 @@ export const cameraStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: cameraIconHover,
+      src: cameraIconStatic,
     }),
   }),
   active: new Style({
@@ -195,13 +124,13 @@ export const unreadCameraStyles = {
   static: new Style({
     image: new Icon({
       scale: 0.25,
-      src: cameraIconStaticUnread,
+      src: cameraIconStatic,
     }),
   }),
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: cameraIconHoverUnread,
+      src: cameraIconStatic,
     }),
   }),
   active: new Style({
@@ -223,13 +152,13 @@ export const ferryStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: ferryIconHover,
+      src: ferryIconStatic,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: ferryIconActive,
+      src: ferryIconStatic,
     }),
   }),
 };
@@ -243,13 +172,13 @@ export const coastalFerryStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: coastalFerryIconHover,
+      src: coastalFerryIconStatic,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: coastalFerryIconActive,
+      src: coastalFerryIconStatic,
     }),
   }),
 };
@@ -265,13 +194,13 @@ export const roadWeatherStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: roadWeatherIconHover,
+      src: roadWeatherIconStatic,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: roadWeatherIconActive,
+      src: roadWeatherIconStatic,
     }),
   }),
 };
@@ -287,13 +216,13 @@ export const regionalStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: regionalWeatherIconHover,
+      src: regionalWeatherIconStatic,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: regionalWeatherIconActive,
+      src: regionalWeatherIconStatic,
     }),
   }),
 };
@@ -308,13 +237,13 @@ export const regionalWarningStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: regionalWeatherWarningIconHover,
+      src: regionalWeatherWarningIconStatic,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: regionalWeatherWarningIconActive,
+      src: regionalWeatherWarningIconStatic,
     }),
   }),
 };
@@ -330,13 +259,13 @@ export const hefStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: hefIconHover,
+      src: hefIconStatic,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: hefIconActive,
+      src: hefIconStatic,
     }),
   }),
 };
@@ -352,13 +281,13 @@ export const hefWarningStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: hefIconWarningHover,
+      src: hefIconWarningStatic,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: hefIconWarningActive,
+      src: hefIconWarningStatic,
     }),
   }),
 };
@@ -374,13 +303,13 @@ export const restStopStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: restStopIconHover,
+      src: restStopIconStatic,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: restStopIconActive,
+      src: restStopIconStatic,
     }),
   }),
 };
@@ -395,13 +324,13 @@ export const restStopTruckStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: restStopIconHoverTruck,
+      src: restStopIconStaticTruck,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: restStopIconActiveTruck,
+      src: restStopIconStaticTruck,
     }),
   }),
 };
@@ -416,13 +345,13 @@ export const restStopClosedStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: restStopIconHoverClosed,
+      src: restStopIconStaticClosed,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: restStopIconActiveClosed,
+      src: restStopIconStaticClosed,
     }),
   }),
 };
@@ -437,13 +366,13 @@ export const restStopTruckClosedStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: restStopIconHoverTruckClosed,
+      src: restStopIconStaticTruckClosed,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: restStopIconActiveTruckClosed,
+      src: restStopIconStaticTruckClosed,
     }),
   }),
 };
@@ -664,14 +593,14 @@ export const eventStyles = {
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: closuresHoverIcon,
+        src: closuresStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: closuresActiveIcon,
+        src: closuresStaticIcon,
       }),
     }),
   },
@@ -679,21 +608,21 @@ export const eventStyles = {
     static: new Style({
       image: new Icon({
         scale: 0.25,
-        src: closuresStaticUnreadIcon,
+        src: closuresStaticIcon,
       }),
     }),
 
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: closuresHoverUnreadIcon,
+        src: closuresStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: closuresActiveIcon,
+        src: closuresStaticIcon,
       }),
     }),
   },
@@ -710,14 +639,14 @@ export const eventStyles = {
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureEventsMajorHoverIcon,
+        src: futureEventsMajorStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureEventsMajorActiveIcon,
+        src: futureEventsMajorStaticIcon,
       }),
     }),
   },
@@ -726,21 +655,21 @@ export const eventStyles = {
     static: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureEventsMajorStaticUnreadIcon,
+        src: futureEventsMajorStaticIcon,
       }),
     }),
 
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureEventsMajorHoverUnreadIcon,
+        src: futureEventsMajorStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureEventsMajorActiveIcon,
+        src: futureEventsMajorStaticIcon,
       }),
     }),
   },
@@ -756,14 +685,14 @@ export const eventStyles = {
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureEventsHoverIcon,
+        src: futureEventsStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureEventsActiveIcon,
+        src: futureEventsStaticIcon,
       }),
     }),
   },
@@ -772,21 +701,21 @@ export const eventStyles = {
     static: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureEventsStaticUnreadIcon,
+        src: futureEventsStaticIcon,
       }),
     }),
 
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureEventsHoverUnreadIcon,
+        src: futureEventsStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureEventsActiveIcon,
+        src: futureEventsStaticIcon,
       }),
     }),
   },
@@ -803,14 +732,14 @@ export const eventStyles = {
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: roadConditionsHoverIcon,
+        src: roadConditionsStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: roadConditionsActiveIcon,
+        src: roadConditionsStaticIcon,
       }),
     }),
   },
@@ -819,21 +748,21 @@ export const eventStyles = {
     static: new Style({
       image: new Icon({
         scale: 0.25,
-        src: roadConditionsStaticUnreadIcon,
+        src: roadConditionsStaticIcon,
       }),
     }),
 
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: roadConditionsHoverUnreadIcon,
+        src: roadConditionsStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: roadConditionsActiveIcon,
+        src: roadConditionsStaticIcon,
       }),
     }),
   },
@@ -850,14 +779,14 @@ export const eventStyles = {
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: chainUpsHoverIcon,
+        src: chainUpsStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: chainUpsActiveIcon,
+        src: chainUpsStaticIcon,
       }),
     }),
   },
@@ -866,21 +795,21 @@ export const eventStyles = {
     static: new Style({
       image: new Icon({
         scale: 0.25,
-        src: chainUpsStaticUnreadIcon,
+        src: chainUpsStaticIcon,
       }),
     }),
 
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: chainUpsHoverUnreadIcon,
+        src: chainUpsStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: chainUpsActiveIcon,
+        src: chainUpsStaticIcon,
       }),
     }),
   },
@@ -897,14 +826,14 @@ export const eventStyles = {
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: constructionsMajorHoverIcon,
+        src: constructionsMajorStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: constructionsMajorActiveIcon,
+        src: constructionsMajorStaticIcon,
       }),
     }),
   },
@@ -913,21 +842,21 @@ export const eventStyles = {
     static: new Style({
       image: new Icon({
         scale: 0.25,
-        src: constructionsMajorStaticUnreadIcon,
+        src: constructionsMajorStaticIcon,
       }),
     }),
 
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: constructionsMajorHoverUnreadIcon,
+        src: constructionsMajorStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: constructionsMajorActiveIcon,
+        src: constructionsMajorStaticIcon,
       }),
     }),
   },
@@ -943,14 +872,14 @@ export const eventStyles = {
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: constructionsHoverIcon,
+        src: constructionsStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: constructionsActiveIcon,
+        src: constructionsStaticIcon,
       }),
     }),
   },
@@ -959,21 +888,21 @@ export const eventStyles = {
     static: new Style({
       image: new Icon({
         scale: 0.25,
-        src: constructionsStaticUnreadIcon,
+        src: constructionsStaticIcon,
       }),
     }),
 
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: constructionsHoverUnreadIcon,
+        src: constructionsStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: constructionsActiveIcon,
+        src: constructionsStaticIcon,
       }),
     }),
   },
@@ -990,14 +919,14 @@ export const eventStyles = {
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureClosureHoverIcon,
+        src: futureClosureStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureClosureActiveIcon,
+        src: futureClosureStaticIcon,
       }),
     }),
   },
@@ -1006,21 +935,21 @@ export const eventStyles = {
     static: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureClosureStaticUnreadIcon,
+        src: futureClosureStaticIcon,
       }),
     }),
 
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureClosureHoverUnreadIcon,
+        src: futureClosureStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: futureClosureActiveIcon,
+        src: futureClosureStaticIcon,
       }),
     }),
   },
@@ -1037,14 +966,14 @@ export const eventStyles = {
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: genericDelaysMajorHoverIcon,
+        src: genericDelaysMajorStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: genericDelaysMajorActiveIcon,
+        src: genericDelaysMajorStaticIcon,
       }),
     }),
   },
@@ -1053,21 +982,21 @@ export const eventStyles = {
     static: new Style({
       image: new Icon({
         scale: 0.25,
-        src: genericDelaysMajorStaticUnreadIcon,
+        src: genericDelaysMajorStaticIcon,
       }),
     }),
 
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: genericDelaysMajorHoverUnreadIcon,
+        src: genericDelaysMajorStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: genericDelaysMajorActiveIcon,
+        src: genericDelaysMajorStaticIcon,
       }),
     }),
   },
@@ -1083,14 +1012,14 @@ export const eventStyles = {
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: genericDelaysHoverIcon,
+        src: genericDelaysStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: genericDelaysActiveIcon,
+        src: genericDelaysStaticIcon,
       }),
     }),
   },
@@ -1099,21 +1028,21 @@ export const eventStyles = {
     static: new Style({
       image: new Icon({
         scale: 0.25,
-        src: genericDelaysStaticUnreadIcon,
+        src: genericDelaysStaticIcon,
       }),
     }),
 
     hover: new Style({
       image: new Icon({
         scale: 0.25,
-        src: genericDelaysHoverUnreadIcon,
+        src: genericDelaysStaticIcon,
       }),
     }),
 
     active: new Style({
       image: new Icon({
         scale: 0.25,
-        src: genericDelaysActiveIcon,
+        src: genericDelaysStaticIcon,
       }),
     }),
   }
@@ -1182,13 +1111,13 @@ export const borderCrossingStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: borderIconHover,
+      src: borderIconStatic,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: borderIconActive,
+      src: borderIconStatic,
     }),
   }),
 };
@@ -1238,13 +1167,13 @@ export const wildfireCentroidStyles = {
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: wildfireIconHover,
+      src: wildfireIconStatic,
     }),
   }),
   active: new Style({
     image: new Icon({
       scale: 0.25,
-      src: wildfireIconActive,
+      src: wildfireIconStatic,
     }),
   }),
 };
@@ -1253,13 +1182,159 @@ export const wildfireUnreadStyles = {
   static: new Style({
     image: new Icon({
       scale: 0.25,
-      src: wildfireStaticUnread,
+      src: wildfireIconStatic,
     }),
   }),
   hover: new Style({
     image: new Icon({
       scale: 0.25,
-      src: wildfireHoverUnread,
+      src: wildfireIconStatic,
     }),
   })
 };
+
+// Dynamic loading of hover/active and unread icons
+const loadIcons = () => {
+  const update = (style, src) => style.setImage(new Icon({ scale: 0.25, src }));
+
+  // Hover/Active Group (Fast Follow)
+  // Cameras
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/camera-hover.png').then(m => update(cameraStyles.hover, m.default));
+
+  // Ferries
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/ferry-active.png').then(m => update(ferryStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/ferry-hover.png').then(m => update(ferryStyles.hover, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/coastal-ferry-active.png').then(m => update(coastalFerryStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/coastal-ferry-hover.png').then(m => update(coastalFerryStyles.hover, m.default));
+
+  // Weather
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/road-weather-active.png').then(m => update(roadWeatherStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/road-weather-hover.png').then(m => update(roadWeatherStyles.hover, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/regional-weather-active.png').then(m => update(regionalStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/regional-weather-hover.png').then(m => update(regionalStyles.hover, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/regional-weather-advisory-active.png').then(m => update(regionalWarningStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/regional-weather-advisory-hover.png').then(m => update(regionalWarningStyles.hover, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/elevation-active.png').then(m => update(hefStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/elevation-hover.png').then(m => update(hefStyles.hover, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/elevation-advisory-active.png').then(m => update(hefWarningStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/elevation-advisory-hover.png').then(m => update(hefWarningStyles.hover, m.default));
+
+  // Border
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/border-active.png').then(m => update(borderCrossingStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/border-hover.png').then(m => update(borderCrossingStyles.hover, m.default));
+
+  // Wildfire
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/wildfire/wildfires-active.png').then(m => update(wildfireCentroidStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/wildfire/wildfires-hover.png').then(m => update(wildfireCentroidStyles.hover, m.default));
+
+  // Rest Stops
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/restarea-open-active.png').then(m => update(restStopStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/restarea-open-hover.png').then(m => update(restStopStyles.hover, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/restarea-closed-active.png').then(m => update(restStopClosedStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/restarea-closed-hover.png').then(m => update(restStopClosedStyles.hover, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/restarea-truck-open-active.png').then(m => update(restStopTruckStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/restarea-truck-open-hover.png').then(m => update(restStopTruckStyles.hover, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/restarea-truck-closed-active.png').then(m => update(restStopTruckClosedStyles.active, m.default));
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/restarea-truck-closed-hover.png').then(m => update(restStopTruckClosedStyles.hover, m.default));
+
+  // Events
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/closure-active.png').then(m => {
+    update(eventStyles.closures.active, m.default);
+    update(eventStyles.closures_unread.active, m.default);
+  });
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/closure-hover.png').then(m => update(eventStyles.closures.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/future-closure-active.png').then(m => {
+    update(eventStyles.future_closures.active, m.default);
+    update(eventStyles.future_closures_unread.active, m.default);
+  });
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/future-closure-hover.png').then(m => update(eventStyles.future_closures.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/future-event-major-active.png').then(m => {
+    update(eventStyles.major_future_events.active, m.default);
+    update(eventStyles.major_future_events_unread.active, m.default);
+  });
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/future-event-major-hover.png').then(m => update(eventStyles.major_future_events.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/future-event-minor-active.png').then(m => {
+    update(eventStyles.future_events.active, m.default);
+    update(eventStyles.future_events_unread.active, m.default);
+  });
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/future-event-minor-hover.png').then(m => update(eventStyles.future_events.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/road-condition-active.png').then(m => {
+    update(eventStyles.road_conditions.active, m.default);
+    update(eventStyles.road_conditions_unread.active, m.default);
+  });
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/road-condition-hover.png').then(m => update(eventStyles.road_conditions.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/chain-ups-active.png').then(m => {
+    update(eventStyles.chain_ups.active, m.default);
+    update(eventStyles.chain_ups_unread.active, m.default);
+  });
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/chain-ups-hover.png').then(m => update(eventStyles.chain_ups.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/delay-major-active.png').then(m => {
+    update(eventStyles.major_constructions.active, m.default);
+    update(eventStyles.major_constructions_unread.active, m.default);
+  });
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/delay-major-hover.png').then(m => update(eventStyles.major_constructions.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/delay-minor-active.png').then(m => {
+    update(eventStyles.constructions.active, m.default);
+    update(eventStyles.constructions_unread.active, m.default);
+  });
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/delay-minor-hover.png').then(m => update(eventStyles.constructions.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/incident-major-active.png').then(m => {
+    update(eventStyles.major_generic_delays.active, m.default);
+    update(eventStyles.major_generic_delays_unread.active, m.default);
+  });
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/incident-major-hover.png').then(m => update(eventStyles.major_generic_delays.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/incident-minor-active.png').then(m => {
+    update(eventStyles.generic_delays.active, m.default);
+    update(eventStyles.generic_delays_unread.active, m.default);
+  });
+  import(/* webpackChunkName: "map-icons-hover" */ '../../images/mapIcons/incident-minor-hover.png').then(m => update(eventStyles.generic_delays.hover, m.default));
+
+
+  // Unread Group (Lazy)
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/camera-static-unread.png').then(m => update(unreadCameraStyles.static, m.default));
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/camera-hover-unread.png').then(m => update(unreadCameraStyles.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/wildfire/wildfires-static-unread.png').then(m => update(wildfireUnreadStyles.static, m.default));
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/wildfire/wildfires-hover-unread.png').then(m => update(wildfireUnreadStyles.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/closure-static-unread.png').then(m => update(eventStyles.closures_unread.static, m.default));
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/closure-hover-unread.png').then(m => update(eventStyles.closures_unread.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/future-closure-static-unread.png').then(m => update(eventStyles.future_closures_unread.static, m.default));
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/future-closure-hover-unread.png').then(m => update(eventStyles.future_closures_unread.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/future-event-major-static-unread.png').then(m => update(eventStyles.major_future_events_unread.static, m.default));
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/future-event-major-hover-unread.png').then(m => update(eventStyles.major_future_events_unread.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/future-event-minor-static-unread.png').then(m => update(eventStyles.future_events_unread.static, m.default));
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/future-event-minor-hover-unread.png').then(m => update(eventStyles.future_events_unread.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/road-condition-static-unread.png').then(m => update(eventStyles.road_conditions_unread.static, m.default));
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/road-condition-hover-unread.png').then(m => update(eventStyles.road_conditions_unread.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/chain-ups-static-unread.png').then(m => update(eventStyles.chain_ups_unread.static, m.default));
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/chain-ups-hover-unread.png').then(m => update(eventStyles.chain_ups_unread.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/delay-major-static-unread.png').then(m => update(eventStyles.major_constructions_unread.static, m.default));
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/delay-major-hover-unread.png').then(m => update(eventStyles.major_constructions_unread.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/delay-minor-static-unread.png').then(m => update(eventStyles.constructions_unread.static, m.default));
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/delay-minor-hover-unread.png').then(m => update(eventStyles.constructions_unread.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/incident-major-static-unread.png').then(m => update(eventStyles.major_generic_delays_unread.static, m.default));
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/incident-major-hover-unread.png').then(m => update(eventStyles.major_generic_delays_unread.hover, m.default));
+
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/incident-minor-static-unread.png').then(m => update(eventStyles.generic_delays_unread.static, m.default));
+  import(/* webpackChunkName: "map-icons-unread" */ '../../images/mapIcons/incident-minor-hover-unread.png').then(m => update(eventStyles.generic_delays_unread.hover, m.default));
+};
+
+loadIcons();
