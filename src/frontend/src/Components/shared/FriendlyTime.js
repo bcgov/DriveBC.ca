@@ -3,7 +3,6 @@ import React from 'react';
 import  {useState} from 'react';
 
 // Third Party packages
-import ReactTimeAgo from 'react-time-ago';
 import OutsideClickHandler from 'react-outside-click-handler';
 
 // Styling
@@ -27,6 +26,40 @@ export const formatDate = (date, tz, isNextUpdate=false) => {
   // get time difference in milliseconds
   const timeDiff = (new Date() - new Date(date));
   return (isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." : formatter.format(new Date(date));
+}
+
+const getRelativeTime = (date) => {
+  const diff = (date.getTime() - new Date().getTime()) / 1000;
+  const rtf = new Intl.RelativeTimeFormat('en-US', { numeric: 'auto' });
+
+  const absSeconds = Math.abs(diff);
+
+  // Seconds
+  if (absSeconds < 60) return rtf.format(Math.round(diff), 'second');
+
+  // Minutes
+  const minutes = diff / 60;
+  if (Math.abs(minutes) < 60) return rtf.format(Math.round(minutes), 'minute');
+
+  // Hours
+  const hours = diff / 3600;
+  if (Math.abs(hours) < 24) return rtf.format(Math.round(hours), 'hour');
+
+  // Days
+  const days = diff / 86400;
+  if (Math.abs(days) < 7) return rtf.format(Math.round(days), 'day');
+
+  // Weeks
+  const weeks = diff / 604800;
+  if (Math.abs(weeks) < 4) return rtf.format(Math.round(weeks), 'week');
+
+  // Months
+  const months = diff / 2629746; // Average month in seconds (30.44 days)
+  if (Math.abs(months) < 12) return rtf.format(Math.round(months), 'month');
+
+  // Years
+  const years = diff / 31536000;
+  return rtf.format(Math.round(years), 'year');
 }
 
 export default function FriendlyTime({ date, timezone, asDate=false, includeFullIfHumanized=false, timeOnly=false, isNextUpdate=false }) {
@@ -82,7 +115,7 @@ export default function FriendlyTime({ date, timezone, asDate=false, includeFull
           >
             <div className="friendly-time-text">
               {(isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." :
-                <ReactTimeAgo date={dt} verboseDate={dateFormatted} locale="en-US"/>
+                <time dateTime={dt.toISOString()} title={dateFormatted}>{getRelativeTime(dt)}</time>
               }
             </div>
             { !(isNextUpdate && timeDiff > 0) &&

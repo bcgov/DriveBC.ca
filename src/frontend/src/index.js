@@ -8,15 +8,11 @@ import { BrowserRouter } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom/client';
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en.json';
 
 // Components and functions
 import App from './App';
 import './env.js';
 import { store, persistor } from './store';
-
-TimeAgo.addDefaultLocale(en);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
