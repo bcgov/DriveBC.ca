@@ -57,6 +57,12 @@
       grid-template-rows: 0fr auto;
     }
 
+    .empty-routes-display {
+      a {
+        color: $Type-Primary;
+      }
+    }
+
     .route-list {
       display: grid;
       column-gap: 1.5em;
