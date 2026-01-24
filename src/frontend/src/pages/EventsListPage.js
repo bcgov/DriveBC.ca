@@ -84,10 +84,10 @@ const sortEvents = (events, key) => {
 
 export default function EventsListPage(props) {
   /* Setup */
-  document.title = 'DriveBC - Delays';
-
   // Props
   const { chainUpsOnly } = props;
+
+  document.title = chainUpsOnly ? 'DriveBC - Chain-ups' : 'DriveBC - Delays';
 
   // Navigation
   const navigate = useNavigate();
@@ -128,7 +128,22 @@ export default function EventsListPage(props) {
     };
   }
 
-  const [sortingKey, setSortingKey] = useState(selectedRoute && selectedRoute.routeFound ? 'route_order' : (localStorage.getItem('sorting-key')? localStorage.getItem('sorting-key') : 'severity_desc'));
+  const getDefaultSortingKey = () => {
+    if (selectedRoute && selectedRoute.routeFound) {
+      return 'route_order';
+    }
+
+    if (chainUpsOnly) {
+      return 'road_name_asc';
+    }
+
+    if (localStorage.getItem('sorting-key')) {
+      return localStorage.getItem('sorting-key');
+    }
+
+    return 'severity_desc';
+  }
+  const [sortingKey, setSortingKey] = useState(getDefaultSortingKey());
   const [eventCategoryFilter, setEventCategoryFilter] = useState(getFilterState());
   const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
   const [trackedEvents, setTrackedEvents] = useState({}); // Track event updates between refreshes
@@ -263,17 +278,18 @@ export default function EventsListPage(props) {
     }
 
     // Reset sorting key and sort
+    setSortingKey(getDefaultSortingKey());
     if (selectedRoute && selectedRoute.routeFound) {
-      setSortingKey('route_order');
       sortEvents(res, 'route_order');
 
     } else {
-      if (localStorage.getItem('sorting-key')){
-        setSortingKey(localStorage.getItem('sorting-key'));
+      if (chainUpsOnly) {
+        sortEvents(res, 'road_name_asc');
+
+      } else if (localStorage.getItem('sorting-key')){
         sortEvents(res, localStorage.getItem('sorting-key'));
-      }
-      else {
-        setSortingKey('severity_desc');
+
+      } else {
         sortEvents(res, 'severity_desc');
       }
     }
@@ -553,7 +569,10 @@ export default function EventsListPage(props) {
     return sortingDisplayMap[key];
   }
 
-  const allSortingKeys = ['route_order', 'severity_desc', 'severity_asc', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc'];
+  const allSortingKeys = chainUpsOnly ?
+    ['route_order', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc'] :
+    ['route_order', 'severity_desc', 'severity_asc', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc'];
+
   const getSortingList = () => {
     const res = [];
 
