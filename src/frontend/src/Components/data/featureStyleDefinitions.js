@@ -72,6 +72,28 @@ import restStopIconActiveTruckClosed from '../../images/mapIcons/restarea-truck-
 import restStopIconHoverTruckClosed from '../../images/mapIcons/restarea-truck-closed-hover.png';
 import restStopIconStaticTruckClosed from '../../images/mapIcons/restarea-truck-closed-static.png';
 
+// Dms
+import dmsIconActive from '../../images/mapIcons/dms-east-active.png';
+import dmsIconHover from '../../images/mapIcons/dms-east-hover.png';
+import dmsIconStatic from '../../images/mapIcons/dms-east-static.png';
+
+import dmsEastIconActive from '../../images/mapIcons/dms-east-active.png';
+import dmsEastIconHover from '../../images/mapIcons/dms-east-hover.png';
+import dmsEastIconStatic from '../../images/mapIcons/dms-east-static.png';
+
+import dmsSouthIconActive from '../../images/mapIcons/dms-south-active.png';
+import dmsSouthIconHover from '../../images/mapIcons/dms-south-hover.png';
+import dmsSouthIconStatic from '../../images/mapIcons/dms-south-static.png';
+
+import dmsWestIconActive from '../../images/mapIcons/dms-west-active.png';
+import dmsWestIconHover from '../../images/mapIcons/dms-west-hover.png';
+import dmsWestIconStatic from '../../images/mapIcons/dms-west-static.png';
+
+import dmsNorthIconActive from '../../images/mapIcons/dms-north-active.png';
+import dmsNorthIconHover from '../../images/mapIcons/dms-north-hover.png';
+import dmsNorthIconStatic from '../../images/mapIcons/dms-north-static.png';
+
+
 // Events
 // Closures
 import closuresActiveIcon from '../../images/mapIcons/closure-active.png';
@@ -359,6 +381,91 @@ export const hefWarningStyles = {
     image: new Icon({
       scale: 0.25,
       src: hefIconWarningActive,
+    }),
+  }),
+};
+
+// DMS icon styles
+export const dmsEastStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: dmsEastIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: dmsEastIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: dmsEastIconActive,
+    }),
+  }),
+};
+
+export const dmsSouthStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: dmsSouthIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: dmsSouthIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: dmsSouthIconActive,
+    }),
+  }),
+};
+
+export const dmsWestStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: dmsWestIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: dmsWestIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: dmsWestIconActive,
+    }),
+  }),
+};
+
+export const dmsNorthStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: dmsNorthIconStatic,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: dmsNorthIconHover,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: dmsNorthIconActive,
     }),
   }),
 };

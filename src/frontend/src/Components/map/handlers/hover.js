@@ -14,7 +14,11 @@ import {
   regionalWarningStyles,
   advisoryStyles,
   wildfireCentroidStyles,
-  wildfireAreaStyles
+  wildfireAreaStyles,
+  dmsEastStyles,
+  dmsSouthStyles,
+  dmsWestStyles,
+  dmsNorthStyles
 } from '../../data/featureStyleDefinitions.js';
 import {
   setEventStyle
@@ -112,6 +116,20 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
             const isCentroid = hoveredFeature.getGeometry().getType() === 'Point';
             hoveredFeature.setStyle((isCentroid ? wildfireCentroidStyles['static'] : wildfireAreaStyles['static']));
             hoveredFeature.get('altFeature').setStyle((isCentroid ? wildfireAreaStyles['static'] : wildfireCentroidStyles['static']));
+          }
+          break;
+        case 'dms':
+          if (hoveredFeature.get('roadway_direction') === 'Eastbound') {
+            hoveredFeature.setStyle(dmsEastStyles['static']);
+          }
+          if (hoveredFeature.get('roadway_direction') === 'Southbound') {
+            hoveredFeature.setStyle(dmsSouthStyles['static']);
+          }
+          if (hoveredFeature.get('roadway_direction') === 'Westbound') {
+            hoveredFeature.setStyle(dmsWestStyles['static']);
+          }
+          if (hoveredFeature.get('roadway_direction') === 'Northbound') {
+            hoveredFeature.setStyle(dmsNorthStyles['static']);
           }
           break;
       }
@@ -223,6 +241,22 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
           const isCentroid = targetFeature.getGeometry().getType() === 'Point';
           targetFeature.setStyle((isCentroid ? wildfireCentroidStyles['hover'] : wildfireAreaStyles['hover']));
           targetFeature.get('altFeature').setStyle((isCentroid ? wildfireAreaStyles['hover'] : wildfireCentroidStyles['hover']));
+        }
+        return;
+      case 'dms':
+        if (!targetFeature.get('clicked')) {
+          if (targetFeature.get('roadway_direction') === 'Eastbound') {
+            targetFeature.setStyle(dmsEastStyles['hover']);
+          }
+          if (targetFeature.get('roadway_direction') === 'Southbound') {
+            targetFeature.setStyle(dmsSouthStyles['hover']);
+          }
+          if (targetFeature.get('roadway_direction') === 'Westbound') {
+            targetFeature.setStyle(dmsWestStyles['hover']);
+          }
+          if (targetFeature.get('roadway_direction') === 'Northbound') {
+            targetFeature.setStyle(dmsNorthStyles['hover']);
+          }
         }
         return;
     }

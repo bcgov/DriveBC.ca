@@ -23,6 +23,13 @@ import borderIconStatic from '../../../images/mapIcons/border-static.png';
 import advisoriesIcon from '../../../images/legend/advisories.png';
 import newlyUpdatedIcon from '../../../images/legend/newly-updated.png';
 
+// DMS
+import dmsIconStatic from '../../../images/mapIcons/dms-east-static.png';
+import dmsEastIconStatic from '../../../images/mapIcons/dms-east-static.png';
+import dmsSouthIconStatic from '../../../images/mapIcons/dms-south-static.png';
+import dmsWestIconStatic from '../../../images/mapIcons/dms-west-static.png';
+import dmsNorthIconStatic from '../../../images/mapIcons/dms-north-static.png';
+
 // Ferries
 import coastalFerryIconStatic from '../../../images/mapIcons/coastal-ferry-static.png';
 import ferryIconStatic from '../../../images/mapIcons/ferry-static.png';

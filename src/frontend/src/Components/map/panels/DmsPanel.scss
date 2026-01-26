@@ -1,0 +1,270 @@
+@import "../../../styles/variables";
+
+.popup {
+  // DMS panel
+  &--dms {
+    .popup__title {
+      background-color: $Surface-minor;
+
+      &__name {
+
+        .name {
+          color: $MyAccountWarningText;
+        }
+
+        .name-div {
+          .label {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+
+    &.closed {
+      .popup__title {
+        background-color: $Gold30;
+        align-items: center;
+
+        &__name {
+          align-items: center;
+  
+          .name {
+            color: $MyAccountWarningText;
+          }
+        }
+      }
+    }
+
+    .popup__content {
+      display: flex;
+      flex-direction: column;
+      height: 100%; 
+
+      p {
+        margin-bottom: 0;
+      }
+
+      &__title {
+        margin-bottom: 1rem;
+        .description {
+          font-size: 0.875rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .friendly-time {
+          margin-top: 0.5rem;
+
+          &-text {
+            color: $Grey80;
+            font-size: 0.75rem;
+          }
+        }
+      }
+
+      &__description {
+        flex-grow: 1;
+        & > div {
+          padding-bottom: 1rem;
+        }
+        .temperatures {
+          display: flex;
+          justify-content: space-around;
+          text-align: center;
+          margin-bottom: 1rem;
+
+          .temperature {
+            .label {
+              color: $Grey80;
+            }
+
+            .data {
+              font-size: 4rem;
+              font-weight: 400;
+              line-height: 1.2;
+            }
+          }
+        }
+      }
+      
+      &__footer {
+        padding: 1rem;
+        margin-top: auto;
+  
+        p {
+          font-size: 0.875rem;
+          color: $Grey80;
+          text-align: center;
+          margin-bottom: 0.4rem;
+        }
+      }
+    }
+
+    .footer-link {
+      font-size: 0.75rem;
+    }
+    
+    .data-card {
+      margin: 0.75rem 0;
+      padding: 0.75rem;
+      border-radius: 8px;
+      box-shadow: 0px 6.4px 14.4px 0px rgba(0, 0, 0, 0.13), 0px 1.2px 3.6px 0px rgba(0, 0, 0, 0.10);
+
+      &__row {
+        display: flex;
+
+        & + .data-card__row {
+          margin-top: 0.75rem;
+          padding-top: 0.75rem;
+          border-top: 1px solid $Divider;
+        }
+
+        .data-icon {
+          margin-right: 0.75rem;
+          color: $Grey80;
+        }
+
+        .data-group {
+          flex: 1 0;
+
+          &__row {
+            display: flex;
+          }
+        }
+      }
+
+      .label, .data {
+        font-size: 0.875rem;
+        margin-bottom: 0;
+      }
+
+      .label {
+        text-align: left;
+        color: $Grey80;
+      }
+
+      .data {
+        text-align: right;
+        margin-left: auto;
+        min-width: 80px;
+        color: $Type-Primary;
+        font-weight: 700;
+        &.red-text {
+          color: $Error;
+        }
+      }
+
+      .datas {
+        margin-left: auto;
+        text-align: right;
+
+        .data-label {
+          font-size: 0.75rem;
+          margin-bottom: 0;
+        }
+      }
+
+      .count {
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+
+.popup__content__description {
+  .dms-container {
+    background-color: #fff;
+    max-width: 500px;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+    padding-bottom: 20px;
+
+    .display-item {
+      margin-bottom: 30px;
+
+      .display-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 8px;
+
+        .display-label {
+          font-weight: 700;
+          font-size: 16px;
+          color: #333;
+        }
+
+        .status-badge {
+          padding: 4px 12px;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: bold;
+
+          &--active {
+            background-color: #2d7a45;
+            color: white;
+          }
+
+          &--inactive {
+            background-color: #e2e8f0;
+            color: #4a5568;
+          }
+        }
+      }
+
+      .black-board {
+        background-color: black;
+        border-radius: 8px;
+        padding: 15px 20px; // Standardized padding
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 80px;
+        border: 1px solid #333;
+
+        .message-line {
+          font-family: 'Repetition Scrolling', monospace;
+          font-style: normal;
+          font-weight: 400;
+          font-size: 24px;
+          line-height: 30px;
+          color: #F7CE46;
+          text-transform: uppercase;
+          letter-spacing: 0.02em;
+
+          // 1. FULL WIDTH ALIGNMENT
+          width: 100%;
+          // display: block;
+          text-align: justify;
+          // text-align-last: justify; // Forces "SUMAS X-ING" and "5 MIN" to opposite ends
+          margin: 0;
+
+          // 2. DOTTED ELECTRICAL EFFECT
+          // We use a mask-image to create a grid of holes
+          mask-image: radial-gradient(circle, black 50%, rgba(0, 0, 0, 0.2) 50%);
+          mask-size: 2px 2px; // Adjust this to make dots bigger or smaller
+          -webkit-mask-image: radial-gradient(circle, black 50%, rgba(0, 0, 0, 0.2) 55%);
+          -webkit-mask-size: 3px 3px;
+
+          // 3. LED GLOW
+          text-shadow: 0 0 2px rgba(247, 206, 70, 0.6);
+        }
+
+      }
+
+      
+    }
+
+    .sign-id-footer {
+      margin-top: auto; // Pins to the bottom of the dms-container
+      padding-top: 20px;
+      font-size: 11px;
+      color: #a0aec0;
+      font-weight: 500;
+      text-align: left;
+    }
+  }
+}

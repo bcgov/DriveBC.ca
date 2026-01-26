@@ -17,6 +17,8 @@ from apps.feed.fields import (
     WebcamLocationField,
     WebcamRegionField,
     WebcamRegionGroupField,
+    DmsGeographyField,
+    DmsPropertiesField,
 )
 from apps.rest.models import RestStop
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
@@ -237,6 +239,14 @@ class FerryFeedSerializer(serializers.Serializer):
 class FerryAPISerializer(serializers.Serializer):
     features = FerryFeedSerializer(many=True)
 
+
+# DMS
+class DmsFeedSerializer(serializers.Serializer):
+    geometry = DmsGeographyField('geometry', source="*")
+    properties = DmsPropertiesField(source="*")
+
+class DmsAPISerializer(serializers.Serializer):
+    features = DmsFeedSerializer(many=True)
 
 # Regional Weather
 class RegionalWeatherFeedSerializer(serializers.Serializer):
