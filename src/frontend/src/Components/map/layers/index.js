@@ -10,6 +10,7 @@ import { getLargeRestStopsLayer, updateLargeRestStopsLayer } from './largeRestSt
 import { getRouteLayer } from './routeLayer.js';
 import { getBorderCrossingsLayer, updateBorderCrossingsLayer } from "./borderCrossingsLayer";
 import { getWildfiresLayer, updateWildfiresLayer } from "./wildfiresLayer";
+import { getDmsLayer, updateDmsLayer } from './dmsLayer.js';
 
 const layerFuncMap = {
   advisoriesLayer: getAdvisoriesLayer,
@@ -22,7 +23,8 @@ const layerFuncMap = {
   largeRestStops: getLargeRestStopsLayer,
   routeLayer: getRouteLayer,
   borderCrossings: getBorderCrossingsLayer,
-  wildfires: getWildfiresLayer
+  wildfires: getWildfiresLayer,
+  dms: getDmsLayer,
 }
 
 const layerUpdateFuncMap = {
@@ -35,7 +37,8 @@ const layerUpdateFuncMap = {
   restStops: updateRestStopsLayer,
   largeRestStops: updateLargeRestStopsLayer,
   borderCrossings: updateBorderCrossingsLayer,
-  wildfires: updateWildfiresLayer
+  wildfires: updateWildfiresLayer,
+  dms: updateDmsLayer,
 }
 
 export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filteredDataList, zIndex, referenceData, updateReferenceFeature, setLoadingLayers) => {

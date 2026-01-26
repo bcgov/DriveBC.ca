@@ -50,6 +50,9 @@ export const feedsSlice = createSlice({
     updateWildfires: (state, action) => {
       state.wildfires = action.payload;
     },
+    updateDms: (state, action) => {
+      state.dms = action.payload;
+    },
   },
 });
 
@@ -63,7 +66,8 @@ export const {
   updateRestStops,
   updateBorderCrossings,
   updateAreas,
-  updateWildfires
+  updateWildfires,
+  updateDms
 } = feedsSlice.actions;
 
 export default feedsSlice.reducer;
