@@ -709,7 +709,7 @@ export default function EventsListPage(props) {
                       }
                     </div>
 
-                    {smallScreen &&
+                    {smallScreen && !chainUpsOnly &&
                       <Button
                         variant="outline-primary"
                         className={'map-btn open-filters filter-option-btn'  + (showTypeFilters ? ' active' : '')}
