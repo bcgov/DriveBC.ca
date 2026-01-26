@@ -13,6 +13,7 @@ import HefPanel from './weather/HefPanel';
 import RestStopPanel from './RestStopPanel';
 import RouteDetailsPanel from './RouteDetailsPanel';
 import BorderCrossingPanel from './BorderCrossingPanel';
+import DmsPanel from './DmsPanel';
 
 // Styling
 import './index.scss';
@@ -62,6 +63,8 @@ export const renderPanel = (
         return <AdvisoriesPanel advisories={clickedFeature.get('data')} showRouteObjs={showRouteObjs} inMap={true} />;
       case 'wildfire':
         return <WildfirePanel wildfire={clickedFeature.get('data')} showRouteObjs={showRouteObjs} />;
+      case 'dms':
+        return <DmsPanel dms={clickedFeature} showRouteObjs={showRouteObjs} />;
     }
 
   // Render searched routes panel if no feature is clicked
