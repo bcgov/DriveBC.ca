@@ -367,34 +367,20 @@
       }
 
       .modal-header {
-
         @media (max-width: 575px) {
-          position: fixed;
-          top: 0;
-          width: 100%;
-          z-index: 1;
+          margin-top: 60px;
         }
       }
 
       .modal-body {
         padding: 16px 24px 30px;
         overflow: auto;
-
-        @media (max-width: 575px) {
-          margin: 60px 0;
-        }
       }
 
       .modal-footer {
         justify-content: flex-start;
         padding: 16px;
         background: white;
-
-        @media (max-width: 575px) {
-          position: fixed;
-          bottom: 0;
-          width: 100%;
-        }
 
         .btn {
           margin: 0;
