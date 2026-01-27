@@ -1,5 +1,5 @@
 // React
-import React, { createContext, useCallback, useEffect, useRef, useState, lazy, Suspense } from 'react';
+import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 
 // Navigation
 import { Route, Routes, useSearchParams } from 'react-router-dom';
@@ -24,40 +24,35 @@ import { getAreas } from "./Components/data/areas";
 import { getFavoriteCameraIds } from './Components/data/webcams';
 import { getFavoriteRoutes, linkRoute } from './Components/data/routes';
 import { getLocations } from "./Components/data/locations";
-
-// Eagerly loaded components (shared/layout)
+import AccountPage from './pages/AccountPage';
+import AccountDeactivatedPage from "./pages/AccountDeactivatedPage";
+import AdvisoriesListPage from './pages/AdvisoriesListPage';
+import AdvisoryDetailsPage from './pages/AdvisoryDetailsPage';
 import Alert from './Components/shared/Alert';
+import BulletinDetailsPage from './pages/BulletinDetailsPage';
+import BulletinsListPage from './pages/BulletinsListPage';
+import CameraDetailsPage from './pages/CameraDetailsPage';
+import CamerasListPage from './pages/CamerasListPage';
+import EventsListPage from './pages/EventsListPage';
+import FeedbackPage from './pages/FeedbackPage';
 import EmergencyAlert from "./Components/shared/EmergencyAlert.js";
 import Header from './Components/shared/header/Header.js';
+import MapPage from './pages/MapPage';
 import AuthModal from './AuthModal.js';
+// import ConsentModal from "./ConsentModal";
+import NotFoundPage from './pages/NotFoundPage';
+import ProblemsPage from './pages/ProblemsPage.js';
+import ReportElectricalPage from './pages/ReportElectricalPage';
+import ReportRoadPage from './pages/ReportRoadPage';
+import SavedCamerasPage from './pages/SavedCamerasPage';
+import SavedRoutesPage from './pages/SavedRoutesPage';
 import ScrollToTop from './Components/shared/ScrollToTop';
 import Survey from "./Components/shared/Survey";
-
-// Eagerly loaded pages (default route and tiny pages)
-import MapPage from './pages/MapPage';
-import NotFoundPage from './pages/NotFoundPage';
-import AccountDeactivatedPage from './pages/AccountDeactivatedPage';
-
-// Lazy loaded pages
-const SavedCamerasPage = lazy(() => import('./pages/SavedCamerasPage'));
-const SavedRoutesPage = lazy(() => import('./pages/SavedRoutesPage'));
-const CamerasListPage = lazy(() => import('./pages/CamerasListPage'));
-const CameraDetailsPage = lazy(() => import('./pages/CameraDetailsPage'));
-const EventsListPage = lazy(() => import('./pages/EventsListPage'));
-const AdvisoriesListPage = lazy(() => import('./pages/AdvisoriesListPage'));
-const AdvisoryDetailsPage = lazy(() => import('./pages/AdvisoryDetailsPage'));
-const BulletinsListPage = lazy(() => import('./pages/BulletinsListPage'));
-const BulletinDetailsPage = lazy(() => import('./pages/BulletinDetailsPage'));
-const AccountPage = lazy(() => import('./pages/AccountPage'));
-const FeedbackPage = lazy(() => import('./pages/FeedbackPage'));
-const VerifyEmailPage = lazy(() => import('./pages/VerifyEmailPage'));
-const ProblemsPage = lazy(() => import('./pages/ProblemsPage.js'));
-const ReportRoadPage = lazy(() => import('./pages/ReportRoadPage'));
-const ReportElectricalPage = lazy(() => import('./pages/ReportElectricalPage'));
 
 // FontAwesome Stylesheet
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
+import VerifyEmailPage from "./pages/VerifyEmailPage";
 config.autoAddCss = false
 
 // Variables
@@ -73,20 +68,6 @@ export const FilterContext = createContext({});
 
 let callingSession = false;
 let sessionStateKnown = false;
-
-// Loading fallback component
-const PageLoader = () => (
-  <div style={{ 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    minHeight: '400px',
-    fontSize: '1.2rem',
-    color: '#666'
-  }}>
-    Loading...
-  </div>
-);
 
 function App() {
   /* Setup */
