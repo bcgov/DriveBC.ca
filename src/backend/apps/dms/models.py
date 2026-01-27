@@ -43,6 +43,7 @@ def parse_dms_pages(raw: str) -> Tuple[str, str, str]:
 class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     id = models.CharField(primary_key=True, max_length=128, blank=True, default='')
     name = models.CharField(max_length=128, blank=True, default='')
+    name_override = models.CharField(blank=True, max_length=128)
     category = models.CharField(max_length=128, blank=True, default='')
     description = models.CharField(max_length=750, blank=True, default='')
     roadway_name = models.CharField(max_length=128, blank=True, default='')
@@ -58,6 +59,8 @@ class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     message_display_1 = models.TextField(blank=True, default="")
     message_display_2 = models.TextField(blank=True, default="")
     message_display_3 = models.TextField(blank=True, default="")
+
+    is_on = models.BooleanField(default=True)
 
     def __str__(self):
         return f"dms for {self.pk}"

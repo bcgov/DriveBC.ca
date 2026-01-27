@@ -1,3 +1,8 @@
-from django.contrib import admin
+from apps.dms.models import Dms
+from django.contrib.gis import admin
 
-# Register your models here.
+
+class DmsAdmin(admin.GISModelAdmin):
+    readonly_fields = ('id', )
+
+admin.site.register(Dms, DmsAdmin)
