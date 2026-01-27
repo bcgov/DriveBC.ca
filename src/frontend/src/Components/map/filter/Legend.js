@@ -24,11 +24,7 @@ import advisoriesIcon from '../../../images/legend/advisories.png';
 import newlyUpdatedIcon from '../../../images/legend/newly-updated.png';
 
 // DMS
-import dmsIconStatic from '../../../images/mapIcons/dms-east-static.png';
-import dmsEastIconStatic from '../../../images/mapIcons/dms-east-static.png';
-import dmsSouthIconStatic from '../../../images/mapIcons/dms-south-static.png';
-import dmsWestIconStatic from '../../../images/mapIcons/dms-west-static.png';
-import dmsNorthIconStatic from '../../../images/mapIcons/dms-north-static.png';
+import dmsIconStatic from '../../../images/legend/dms.png';
 
 // Ferries
 import coastalFerryIconStatic from '../../../images/mapIcons/coastal-ferry-static.png';
@@ -162,6 +158,13 @@ export default function Legend() {
           roadConditionsStaticIcon,
           'Road conditions',
           'States of the road that may impact drivability.',
+          'minor'
+        )}
+
+        {getLegendItem(
+          dmsIconStatic,
+          'Dynamic message signs (DMS)',
+          'Digital traffic signs that communicate travel information to drivers.',
           'minor'
         )}
 

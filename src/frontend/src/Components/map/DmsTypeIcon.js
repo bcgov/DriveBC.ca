@@ -1,3 +1,6 @@
+// React
+import React from 'react';
+
 export default function DmsTypeIcon(props) {
   const { dms } = props;
   const roadwayDirection = dms.roadway_direction;
