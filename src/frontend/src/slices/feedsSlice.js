@@ -18,6 +18,7 @@ export const feedsSlice = createSlice({
     borderCrossings: feedsInitialState,
     areas: feedsInitialState,
     wildfires: feedsInitialState,
+    dms: feedsInitialState,
   },
   reducers: {
     updateCameras: (state, action) => {
