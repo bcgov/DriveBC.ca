@@ -779,7 +779,7 @@ export default function DriveBCMap(props) {
     if (filteredEvents) {
       // Toggle features visibility
       updateEventsLayers(
-        mapContext, filteredEvents, mapLayers, setLoadingLayers, referenceData, mapView,
+        mapContext, filteredEvents, mapLayers, setLoadingLayers, clickedFeature, mapView,
         featureContext, setFeatureContext // DBC22-5106
       );
 

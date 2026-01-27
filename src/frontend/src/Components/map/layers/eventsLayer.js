@@ -201,7 +201,7 @@ export function loadEventsLayers(eventsData, mapContext, mapLayers, mapRef, refe
 }
 
 export function updateEventsLayers(
-  mapContext, events, mapLayers, setLoadingLayers, referenceData, mapView,
+  mapContext, events, mapLayers, setLoadingLayers, clickedFeature, mapView,
   featureContext, setFeatureContext  // Feature context for route details panel
 ) {
   const featuresDict = {};
@@ -226,7 +226,7 @@ export function updateEventsLayers(
       if (featureId in eventsDict) {
         // Update the feature with the new event data
         feature.setProperties(eventsDict[featureId]);
-        setEventStyle(feature, referenceData.id === featureId ? 'active' : 'static');
+        setEventStyle(feature, clickedFeature?.getId() === featureId ? 'active' : 'static');
         processedEvents.add(featureId);  // Track processed events
         featuresDict[featureId] = feature;
 
