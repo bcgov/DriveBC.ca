@@ -34,6 +34,7 @@ export default function MapWrapper(props) {
       restStops: { list: restStops },
       borderCrossings: { list: borderCrossings },
       wildfires: { list: wildfires },
+      dms: { list: dms } = { list: [] }
     },
     advisories: { list: advisories },
     routes: { selectedRoute },
@@ -51,6 +52,7 @@ export default function MapWrapper(props) {
           restStops: state.feeds.restStops,
           borderCrossings: state.feeds.borderCrossings,
           wildfires: state.feeds.wildfires,
+          dms: state.feeds.dms,
         },
         advisories: state.cms.advisories,
         routes: state.routes,
@@ -95,6 +97,7 @@ export default function MapWrapper(props) {
   const borderCrossingsRef = useRef(borderCrossings);
   const advisoriesRef = useRef(advisories);
   const wildfiresRef = useRef(wildfires);
+  const dmsRef = useRef(dms);
 
   // Error handling
   const displayError = (error) => {
@@ -163,6 +166,10 @@ export default function MapWrapper(props) {
     wildfiresRef.current = wildfires;
   }, [wildfires]);
 
+  useEffect(() => {
+    dmsRef.current = dms;
+  }, [dms]);
+
   const resetWorker = () => {
     // Terminate the current worker if it exists
     if (workerRef.current) {
@@ -202,6 +209,7 @@ export default function MapWrapper(props) {
       (!isInitialLoad.current && mapContext.visible_layers.restStops) ||
       (!isInitialLoad.current && mapContext.visible_layers.largeRestStops);
     const reloadWildfires = !wildfiresRef.current || (!isInitialLoad.current && mapContext.visible_layers.wildfires);
+    const reloadDms = !dmsRef.current || (!isInitialLoad.current && mapContext.visible_layers.dms);
 
     // Non-toggleable map layers
     const reloadAdvisories = !advisoriesRef.current || !isInitialLoad.current;
@@ -226,6 +234,7 @@ export default function MapWrapper(props) {
     dataLoaders.loadAdvisories(routeData, reloadAdvisories ? null : advisoriesRef.current, dispatch, displayError, workerRef.current);
     dataLoaders.loadBorderCrossings(routeData, reloadBorderCrossings ? null : borderCrossingsRef.current, dispatch, displayError, workerRef.current);
     dataLoaders.loadWildfires(routeData, reloadWildfires ? null : wildfiresRef.current, dispatch, displayError, workerRef.current);
+    dataLoaders.loadDms(routeData, reloadDms ? null : dmsRef.current, dispatch, displayError, workerRef.current);
 
     isInitialLoad.current = false;
   };
