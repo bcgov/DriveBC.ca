@@ -339,6 +339,7 @@ export default function Header() {
                 <div className={`commercial-dropdown-content ${isCommercialOpen ? 'open' : ''}`}>
                   <a href="/delays?chainUpsOnly=true" className='commercial-dropdown-item' onClick={handleChainUpsClick}>
                     Chain-ups
+                    {xLargeScreen && <FontAwesomeIcon icon={faArrowRight} />}
                   </a>
                   <a href="https://onroutebc.gov.bc.ca/" className='commercial-dropdown-item' onClick={() => { setIsCommercialOpen(false); onClickActions(); }}>
                     onRoute

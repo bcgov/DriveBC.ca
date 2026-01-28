@@ -8,12 +8,13 @@ import { pushFavCam, resetPendingAction } from '../../../slices/userSlice';
 
 // External imports
 import { DropdownButton } from 'react-bootstrap';
-import { faChevronRight } from '@fortawesome/pro-regular-svg-icons';
+import { faChevronRight, faArrowRight } from '@fortawesome/pro-regular-svg-icons';
 import {
   faCircleUser,
   faRoute,
   faStar,
-  faVideoCamera
+  faVideoCamera,
+  faChevronDown
 } from '@fortawesome/pro-solid-svg-icons';
 import {
   faGear,
@@ -106,7 +107,7 @@ export default function UserNavigation(props) {
         variant="outline-primary"
         align="end"
         id="user-menu"
-        title={<><FontAwesomeIcon icon={faCircleUser} /> <span className="sr-only">Account</span></>}>
+        title={<><FontAwesomeIcon icon={faCircleUser} /> <FontAwesomeIcon icon={faChevronDown} className="dropdown-chevron" /> <span className="sr-only">Account</span></>}>
 
         <div id="user-menu-header">
           <FontAwesomeIcon id="user-icon" icon={faCircleUser} />
@@ -122,7 +123,7 @@ export default function UserNavigation(props) {
                 <span className="item-count">{favCams ? favCams.length : 0}</span>
               </div>
 
-              <FontAwesomeIcon icon={faChevronRight} />
+              <FontAwesomeIcon icon={faArrowRight} />
             </a>
           }
 
@@ -134,7 +135,7 @@ export default function UserNavigation(props) {
                 <span className="item-count">{favRoutes ? favRoutes.length : 0}</span>
               </div>
 
-              <FontAwesomeIcon icon={faChevronRight} />
+              <FontAwesomeIcon icon={faArrowRight} />
             </a>
           }
 
@@ -144,7 +145,7 @@ export default function UserNavigation(props) {
               Account settings
             </div>
 
-            <FontAwesomeIcon icon={faChevronRight} />
+            <FontAwesomeIcon icon={faArrowRight} />
           </a>
 
           <form id="signout-link" className="sign-out-btn" method='post' action={`${window.API_HOST}/accounts/logout/`} onSubmit={handleSubmit}>
@@ -170,7 +171,7 @@ export default function UserNavigation(props) {
         variant="outline-primary"
         align="end"
         id="favorites-menu"
-        title={<><FontAwesomeIcon icon={faStar} /> Favourites</>}>
+        title={<><FontAwesomeIcon icon={faStar} /> Favourites <FontAwesomeIcon icon={faChevronDown} className="dropdown-chevron" /></>}>
 
         <div className="menu-items">
           <a href="/my-cameras" className="menu-item">
@@ -180,7 +181,7 @@ export default function UserNavigation(props) {
               <span className="item-count">{favCams ? favCams.length : 0}</span>
             </div>
 
-            <FontAwesomeIcon icon={faChevronRight} />
+            <FontAwesomeIcon icon={faArrowRight} />
           </a>
 
           <a href="/my-routes" className="menu-item">
@@ -190,7 +191,7 @@ export default function UserNavigation(props) {
               <span className="item-count">{favRoutes ? favRoutes.length : 0}</span>
             </div>
 
-            <FontAwesomeIcon icon={faChevronRight} />
+            <FontAwesomeIcon icon={faArrowRight} />
           </a>
         </div>
       </DropdownButton>
