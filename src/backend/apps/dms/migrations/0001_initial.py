@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('static_text', models.CharField(blank=True, default='', max_length=256)),
                 ('message_text', models.CharField(blank=True, default='', max_length=512)),
                 ('status', models.CharField(blank=True, default='', max_length=64)),
-                ('geometry', django.contrib.gis.db.models.fields.GeometryField(blank=True, null=True, srid=4326)),
+                ('location', django.contrib.gis.db.models.fields.GeometryField(blank=True, null=True, srid=4326)),
                 ('updated_datetime_utc', models.DateTimeField(blank=True, null=True)),
                 ('message_expiry_datetime_utc', models.DateTimeField(blank=True, null=True)),
                 ('cache_datetime_utc', models.DateTimeField(blank=True, null=True)),
