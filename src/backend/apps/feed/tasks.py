@@ -20,6 +20,7 @@ from apps.webcam.tasks import (
     update_camera_nearby_objs,
 )
 from apps.wildfire.tasks import populate_all_wildfire_data
+from apps.dms.tasks import populate_all_dms_data
 from django.core.cache import cache
 from django.core.management import call_command
 from huey import crontab
@@ -144,6 +145,11 @@ def update_relations():
 @lock_task('wildfires-lock')
 def update_wildfires():
     populate_all_wildfire_data()
+
+@db_periodic_task(crontab(minute="*/2"))
+@lock_task('dms-lock')
+def populate_dms_task():
+    populate_all_dms_data()
 
 
 @on_startup()

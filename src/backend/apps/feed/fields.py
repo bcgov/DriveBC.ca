@@ -186,3 +186,28 @@ class FerryGeographyField(DriveBCField, GeometryField):
 # Regional Weather
 class RegionalWeatherPropertiesField(serializers.Field):
     pass
+
+# DMS
+class DmsPropertiesField(serializers.Field):
+    def to_internal_value(self, data):
+        res = {
+            # General
+            "id": data['Id'],
+            "name": data['Name'] or '',
+            "category": data['Category'],
+            "description": data['Description'] or '',
+            "roadway_name": data['RoadwayName'] or '',
+            "roadway_direction": data['RoadwayDirection'] or '',
+            "static_text": data['StaticText'] or '',
+            "message_text": data['MessageText'] or '',
+            "status": data['Status'] or '',
+            "updated_datetime_utc": data['UpdatedDateTimeUtc'],
+            "message_expiry_datetime_utc": data['MessageExpiryDateTimeUtc'],
+            "cache_datetime_utc": data['CacheDateTimeUtc'],
+        }
+
+        return res
+
+
+class DmsGeographyField(DriveBCField, GeometryField):
+    pass

@@ -76,6 +76,9 @@ class CacheTimeout:
     DISTRICT_LIST = 60 * 60 * 24 * 14 # Cache is automatically invalidated after job runs
     COASTAL_FERRY_LIST = 60 * 60 * 24 * 14 # Cache is automatically invalidated after job runs
 
+    # 24 HOUR TASKS (Interval x 2)
+    DMS_LIST = 60 * 60 * 48 # Cache is automatically invalidated after job runs
+
 
 class CacheKey:
     DEFAULT = "default_key"
@@ -95,6 +98,7 @@ class CacheKey:
     WILDFIRE_LIST = "wildfire_list"
     BORDER_CROSSING_LIST = 'border_crossing_list'
     DISTRICT_LIST = 'district_list'
+    DMS_LIST = "dms_list"
     
 
 

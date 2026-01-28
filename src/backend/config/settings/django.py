@@ -173,6 +173,7 @@ LOCAL_APPS = [
     "apps.border",
     "apps.wildfire",
     "apps.consumer",
+    "apps.dms",
 ]
 
 # apps with features overridden in local apps (e.g., admin templates) go here

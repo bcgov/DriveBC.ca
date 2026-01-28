@@ -19,6 +19,7 @@ from apps.feed.constants import (
     REST_STOP,
     WEBCAM,
     WILDFIRE,
+    DMS,
 )
 from apps.feed.serializers import (
     CarsClosureSerializer,
@@ -29,9 +30,11 @@ from apps.feed.serializers import (
     RestStopSerializer,
     WebcamAPISerializer,
     WebcamFeedSerializer,
+    DmsAPISerializer,
 )
 from apps.shared.serializers import DistrictAPISerializer
 from apps.wildfire.serializers import WildfireAreaSerializer, WildfirePointSerializer
+from apps.dms.serializers import DmsSerializer
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
@@ -116,6 +119,9 @@ class FeedClient:
             },
             WILDFIRE: {
                 "base_url": settings.DRIVEBC_OPENMAPS_API_URL,
+            },
+            DMS: {
+                "base_url": settings.DRIVEBC_DMS_API_BASE_URL,
             },
         }
 
@@ -609,3 +615,34 @@ class FeedClient:
                 "outputFormat": "json",
             }
         )
+
+    def get_dms_list(self):
+        try:
+            result = self.get_list_feed(
+                DMS,
+                'geoV05/ows',
+                DmsAPISerializer,
+                {
+                    "service": "WFS",
+                    "version": "1.0.0",
+                    "request": "GetFeature",
+                    "typeName": "dbc:DYNAMIC_MESSAGE_SIGNS",
+                    "maxFeatures": 500,
+                    "outputFormat": "application/json",
+                }
+            )
+
+            return result
+        except httpx.HTTPStatusError as e:
+            logger.error(
+                "DMS WFS request failed",
+                extra={
+                    "url": str(e.request.url),
+                    "method": e.request.method,
+                    "status_code": e.response.status_code,
+                    "response_headers": dict(e.response.headers),
+                    "response_text": e.response.text[:2000],
+                },
+            )
+            raise 
+            
