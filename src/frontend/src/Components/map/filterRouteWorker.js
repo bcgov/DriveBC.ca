@@ -20,6 +20,9 @@ self.onmessage = (event) => {
       case 'setWildfireCount':
         filteredData = filterByRoute(data, route, 10000, false);
         break;
+      case 'updateDms':
+        filteredData = filterByRoute(data, route, 10, false);
+        break;
       default:
         filteredData = filterByRoute(data, route, 10, false);
         break;

@@ -283,7 +283,7 @@ export default function CameraDetailsPage() {
     const replayImageList = await getWebcamReplay(cam);
     const replayImages = replayImageList.map(url => {
       if (cam.https_cam) {
-        return { original: `${window.location.origin}/images/replaytheday/${cam.id}/${url}.jpg` };
+        return { original: `${window.location.origin}/images/webcams/replaytheday/${cam.id}/${url}.jpg` };
       } else {
         return { original: `${window.REPLAY_THE_DAY}${cam.id}/${url}.jpg` };
       }

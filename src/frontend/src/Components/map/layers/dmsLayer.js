@@ -33,7 +33,7 @@ export function getDmsLayer(dmsData, projectionCode, mapContext, referenceData, 
 
   dmsData.forEach(dms => {
     // Offset DMS ~250m to prevent overlapping with others
-    let lat = dms.geometry.coordinates[0];
+    let lat = dms.location.coordinates[0];
     if (dms.roadway_direction == 'Eastbound') {
       lat += 0.0022;
     }
@@ -41,7 +41,7 @@ export function getDmsLayer(dmsData, projectionCode, mapContext, referenceData, 
       lat -= 0.0022;
     }
 
-    let lng = dms.geometry.coordinates[1];
+    let lng = dms.location.coordinates[1];
     if (dms.roadway_direction == 'Northbound') {
       lng += 0.0022;
     }
