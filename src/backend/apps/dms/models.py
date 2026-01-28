@@ -51,7 +51,7 @@ class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     static_text = models.CharField(max_length=256, blank=True, default='')
     message_text = models.CharField(max_length=512, blank=True, default='')
     status = models.CharField(max_length=64, blank=True, default='')
-    geometry = models.GeometryField(blank=True, null=True)
+    location = models.GeometryField(blank=True, null=True)
     updated_datetime_utc = models.DateTimeField(blank=True, null=True)
     message_expiry_datetime_utc = models.DateTimeField(blank=True, null=True)
     cache_datetime_utc = models.DateTimeField(blank=True, null=True)

@@ -242,7 +242,7 @@ class FerryAPISerializer(serializers.Serializer):
 
 # DMS
 class DmsFeedSerializer(serializers.Serializer):
-    geometry = DmsGeographyField('geometry', source="*")
+    geometry = DmsGeographyField('location', source="*")
     properties = DmsPropertiesField(source="*")
 
 class DmsAPISerializer(serializers.Serializer):
