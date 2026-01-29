@@ -238,10 +238,12 @@ STORAGES = {
 }
 
 # Email
-EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND')
-EMAIL_HOST = env('DJANGO_EMAIL_HOST')
-EMAIL_PORT = env('DJANGO_EMAIL_PORT')
-DEFAULT_FROM_EMAIL = 'DoNotReply_DriveBC@gov.bc.ca'
+EMAIL_SERVICE = env('EMAIL_SERVICE', default='azure')
+SMTP_HOST = env('DJANGO_SMTP_HOST', default=None)
+SMTP_PORT = env('DJANGO_SMTP_PORT', default=None)
+
+# Azure Communication Services (required if EMAIL_SERVICE='azure')
+AZURE_COMMUNICATIONS_CONNECTION_STRING = env('AZURE_COMMUNICATIONS_CONNECTION_STRING', default=None)
 
 # Logging
 ROOT_LOG_LEVEL = env('ROOT_LOG_LEVEL', default='WARNING')

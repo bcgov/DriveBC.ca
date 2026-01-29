@@ -2,9 +2,8 @@ import logging
 
 from apps.cms.models import Advisory
 from apps.event.tasks import generate_settings_message, get_notification_routes
-from apps.shared.helpers import attach_default_email_images, attach_image_to_email
+from apps.shared.email_helpers import send_email_message, get_default_email_images, get_inline_image_bytes
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
 logger = logging.getLogger(__name__)
@@ -41,16 +40,14 @@ def send_route_advisory_notifications(saved_route, updated_advisory_id):
             text = render_to_string('email/advisory_updated.txt', context)
             html = render_to_string('email/advisory_updated.html', context)
 
-            msg = EmailMultiAlternatives(
-                f'DriveBC route update: {saved_route.label}' if saved_route.label else 'DriveBC route update',
-                text,
-                settings.DRIVEBC_FROM_EMAIL_DEFAULT,
-                [saved_route.user.email]
+            inline_images = get_default_email_images()
+            inline_images['dclogo'] = get_inline_image_bytes('advisory.png')
+
+            send_email_message(
+                subject=f'DriveBC route update: {saved_route.label}' if saved_route.label else 'DriveBC route update',
+                body_text=text,
+                body_html=html,
+                from_email=settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+                to_emails=[saved_route.user.email],
+                inline_images=inline_images
             )
-
-            # image attachments
-            attach_default_email_images(msg)
-            attach_image_to_email(msg, 'dclogo', 'advisory.png')
-
-            msg.attach_alternative(html, 'text/html')
-            msg.send()

@@ -1,13 +1,12 @@
 import re
 
 from apps.shared.enums import SUBJECT_CHOICES, SUBJECT_TITLE, CacheKey, CacheTimeout
-from apps.shared.helpers import attach_default_email_images
+from apps.shared.email_helpers import send_email_message, get_default_email_images
 from apps.shared.models import Area, SiteSettings
 from apps.shared.serializers import DistrictViewSerializer
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import EmailMultiAlternatives
 from django.db import connection
 from django.http import HttpResponse, JsonResponse
 from django.middleware.csrf import get_token
@@ -65,17 +64,14 @@ class FeedbackView(APIView):
             text = render_to_string('email/user_feedback.txt', context)
             html = render_to_string('email/user_feedback.html', context)
 
-            msg = EmailMultiAlternatives(
-                'DriveBC feedback received: ' + SUBJECT_TITLE[serializer.data['subject']],
-                text,
-                settings.DRIVEBC_FROM_EMAIL_DEFAULT,
-                [settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT],
+            send_email_message(
+                subject='DriveBC feedback received: ' + SUBJECT_TITLE[serializer.data['subject']],
+                body_text=text,
+                body_html=html,
+                from_email=settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+                to_emails=[settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT],
+                inline_images=get_default_email_images()
             )
-
-            # image attachments
-            attach_default_email_images(msg)
-            msg.attach_alternative(html, 'text/html')
-            msg.send()
 
             return Response(data={}, status=status.HTTP_200_OK)
 
@@ -112,17 +108,14 @@ class SurveyView(APIView):
             text = render_to_string('email/user_survey.txt', context)
             html = render_to_string('email/user_survey.html', context)
 
-            msg = EmailMultiAlternatives(
-                'DriveBC survey about your experience today',
-                text,
-                settings.DRIVEBC_FROM_EMAIL_DEFAULT,
-                [user_email],
+            send_email_message(
+                subject='DriveBC survey about your experience today',
+                body_text=text,
+                body_html=html,
+                from_email=settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+                to_emails=[user_email],
+                inline_images=get_default_email_images()
             )
-
-            # image attachments
-            attach_default_email_images(msg)
-            msg.attach_alternative(html, 'text/html')
-            msg.send()
 
             return Response(data={}, status=status.HTTP_200_OK)
 

@@ -4,7 +4,6 @@ from apps.webcam.models import Webcam
 from django.conf import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import EmailMultiAlternatives
 from django.db.utils import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
@@ -17,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..shared.helpers import attach_default_email_images
+from ..shared.email_helpers import send_email_message, get_default_email_images
 from .models import DriveBCUser, FavouritedCameras, SavedRoutes
 from .serializers import (
     DriveBCUserSerializer,
@@ -48,14 +47,13 @@ def access_requested(request):
         text = render_to_string('email/request_admin_access.txt', context)
         html = render_to_string('email/request_admin_access.html', context)
 
-        msg = EmailMultiAlternatives(
-            f'{name} requests access to DriveBC admin',
-            text,
-            settings.DRIVEBC_FROM_EMAIL_DEFAULT,
-            settings.ACCESS_REQUEST_RECEIVERS,
+        send_email_message(
+            subject=f'{name} requests access to DriveBC admin',
+            body_text=text,
+            body_html=html,
+            from_email=settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+            to_emails=settings.ACCESS_REQUEST_RECEIVERS,
         )
-        msg.attach_alternative(html, 'text/html')
-        msg.send()
         return HttpResponseRedirect(request.path)
 
     return render(request, "admin/access_requested.html")
@@ -215,18 +213,14 @@ class SendVerificationEmailView(APIView):
         text = render_to_string('email/email_verification.txt', context)
         html = render_to_string('email/email_verification.html', context)
 
-        msg = EmailMultiAlternatives(
-            'Please verify your email address to setup email notifications',
-            text,
-            settings.DRIVEBC_FROM_EMAIL_DEFAULT,
-            [request.user.email]
+        send_email_message(
+            subject='Please verify your email address to setup email notifications',
+            body_text=text,
+            body_html=html,
+            from_email=settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+            to_emails=[request.user.email],
+            inline_images=get_default_email_images()
         )
-
-        # image attachments
-        attach_default_email_images(msg)
-
-        msg.attach_alternative(html, 'text/html')
-        msg.send()
 
         return Response({'message': 'Verification email sent'}, status=status.HTTP_200_OK)
 

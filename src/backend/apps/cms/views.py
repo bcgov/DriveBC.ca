@@ -6,10 +6,10 @@ from apps.cms.serializers import (
     EmergencyAlertSerializer,
     EmergencyAlertTestSerializer,
 )
+from apps.shared.email_helpers import send_email_message
 from apps.shared.enums import CacheKey, CacheTimeout
 from apps.shared.views import CachedListModelMixin
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.template.loader import render_to_string
@@ -112,14 +112,13 @@ def access_requested(request):
         text = render_to_string('email/request_wagtail_access.txt', context)
         html = render_to_string('email/request_wagtail_access.html', context)
 
-        msg = EmailMultiAlternatives(
-            f'{name} requests access to Wagtail admin',
-            text,
-            settings.DRIVEBC_FROM_EMAIL_DEFAULT,
-            settings.ACCESS_REQUEST_RECEIVERS,
+        send_email_message(
+            subject=f'{name} requests access to Wagtail admin',
+            body_text=text,
+            body_html=html,
+            from_email=settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+            to_emails=settings.ACCESS_REQUEST_RECEIVERS,
         )
-        msg.attach_alternative(html, 'text/html')
-        msg.send()
         return HttpResponseRedirect(request.path)
 
     return render(request, 'wagtailadmin/access_requested.html')

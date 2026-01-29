@@ -17,13 +17,12 @@ from apps.event.models import Event, QueuedEventNotification
 from apps.event.serializers import EventInternalSerializer
 from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
-from apps.shared.helpers import attach_default_email_images, attach_image_to_email
+from apps.shared.email_helpers import send_email_message, get_default_email_images, get_inline_image_bytes
 from apps.shared.models import Area
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import EmailMultiAlternatives
 from django.db.models import Q
 from django.template.loader import render_to_string
 
@@ -461,22 +460,20 @@ def send_queued_notifications():
 
             update_text = 'updates' if len(ordered_events) > 1 else 'update'
             route_label = saved_route.label if saved_route.label else f'{saved_route.start} to {saved_route.end}'
-            msg = EmailMultiAlternatives(
-                f'DriveBC: {len(ordered_events)} {update_text} on {route_label}',
-                text,
-                settings.DRIVEBC_FROM_EMAIL_DEFAULT,
-                [saved_route.user.email]
-            )
-
-            # image attachments
-            attach_default_email_images(msg)
-
+            
+            inline_images = get_default_email_images()
             file_names = get_unique_image_type_files_names(events)
             for fn in file_names:
-                attach_image_to_email(msg, fn.split('.')[0], fn)  # use file name (without extension) as cid
+                inline_images[fn.split('.')[0]] = get_inline_image_bytes(fn)
 
-            msg.attach_alternative(html, 'text/html')
-            msg.send()
+            send_email_message(
+                subject=f'DriveBC: {len(ordered_events)} {update_text} on {route_label}',
+                body_text=text,
+                body_html=html,
+                from_email=settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+                to_emails=[saved_route.user.email],
+                inline_images=inline_images
+            )
 
     # Clear sent notifications
     QueuedEventNotification.objects.filter(id__in=queued_notification_ids).delete()
