@@ -308,28 +308,6 @@
   }
 }
 
-.modal-dialog {
-  .route-nickname {
-    display: flex;
-    align-items: center;
-
-    p {
-      margin-bottom: 0;
-    }
-
-    svg {
-      margin-left: 4px;
-    }
-
-    .route-nickname-tooltip {
-      border: 0;
-      background: none;
-      padding: 0;
-    }
-  }
-}
-
-
 .modal--notifications-settings {
   .invalid-feedback {
     display: flex;
@@ -337,28 +315,35 @@
     flex-direction: column;
   }
 
-  &.long {
-    .modal-dialog {
-      @media (min-width: 576px) {
-        margin-top: 0;
+  .modal-dialog {
+    .route-nickname {
+      display: flex;
+      align-items: center;
+  
+      p {
+        margin-bottom: 0;
+      }
+  
+      svg {
+        margin-left: 4px;
+      }
+  
+      .route-nickname-tooltip {
+        border: 0;
+        background: none;
+        padding: 0;
       }
     }
-  }
-
-  .modal-dialog {
-    margin: 0;
-    padding: 60px 0;
-    height: 100vh;
 
     @media (min-width: 576px) {
       max-width: 650px;
-      margin-top: 15vh;
       margin-left: auto;
       margin-right: auto;
     }
-
+    
     .modal-content {
       height: fit-content;
+      max-height: calc(100vh - 7.75rem);
 
       @media (max-width: 575px) {
         height: 100%;

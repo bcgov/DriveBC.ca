@@ -3,6 +3,11 @@
 @import "styles/bootstrap-customizations";
 @import "styles/typography";
 
+// Global styling
+* {
+  touch-action: pan-x pan-y;
+}
+
 // Prevent refresh on swipe-down
 html,
 body {
