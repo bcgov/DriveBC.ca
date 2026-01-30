@@ -505,7 +505,7 @@ export default function RouteDetails(props) {
   // Main components
   return route && (
     <React.Fragment>
-      <Modal show={showNotificationForm} onHide={() => setShowNotificationForm(false)} animation={false} className={'modal--notifications-settings' + (showSpecificTimeDate ? ' long' : '')}>
+      <Modal show={showNotificationForm} onHide={() => setShowNotificationForm(false)} animation={false} className={'modal--notifications-settings'}>
         <Modal.Header closeButton>
           <Modal.Title>
             <div className="modal-title-icon">
