@@ -3,28 +3,11 @@ import React, { useEffect, useContext } from 'react';
 
 // Navigation
 import { useSearchParams } from 'react-router-dom';
-
-import { titleCase } from 'title-case';
-
-// External imports
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faChargingStation,
-  faClock,
-  faDoorOpen,
-  faRoad,
-  faTablePicnic,
-  faToilet,
-  faTruckContainer,
-  faWifi,
-} from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
 import { isRestStopClosed } from '../../data/restStops';
-import OpenSeason from '../OpenSeason';
 import DmsTypeIcon from '../DmsTypeIcon';
 import ShareURLButton from '../../shared/ShareURLButton';
 import { MapContext } from '../../../App';
@@ -32,8 +15,6 @@ import FriendlyTime from '../../shared/FriendlyTime';
 
 // Styling
 import './DmsPanel.scss';
-
-// import { Share, X, Monitor } from 'lucide-react'; // Using Lucide for icons
 
 // Helper components
 const tooltipLargeVehicles = (
@@ -102,7 +83,7 @@ export default function DmsPanel(props) {
       </div>
       <div className="popup__content">
         <div className="popup__content__title">
-          <p className="name">{titleCase(dmsData.description)}</p>
+          <p className="name">{dmsData.description}</p>
           <FriendlyTime date={dmsData.updated_datetime_utc} asDate />          
         </div>
 
