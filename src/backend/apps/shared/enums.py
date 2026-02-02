@@ -58,6 +58,9 @@ class CacheTimeout:
     EVENT_INDIVUDAL = 60 * 1 # Individual events are not automatically invalidated, so keep TTL short
     BORDER_CROSSING_LIST = 60 * 2 # Cache is automatically invalidated after job runs
 
+    # 2 MINUTE TASKS (Interval x 2)
+    DMS_LIST = 60 * 2 # Cache is automatically invalidated after job runs
+
     # 10 MINUTE TASKS (Interval x 2)
     REGIONAL_WEATHER_LIST = 60 * 20 # Cache is automatically invalidated after job runs
     CURRENT_WEATHER_LIST = 60 * 20 # Cache is automatically invalidated after job runs
@@ -75,9 +78,6 @@ class CacheTimeout:
     # WEEKLY TASKS (Interval x 2)
     DISTRICT_LIST = 60 * 60 * 24 * 14 # Cache is automatically invalidated after job runs
     COASTAL_FERRY_LIST = 60 * 60 * 24 * 14 # Cache is automatically invalidated after job runs
-
-    # 24 HOUR TASKS (Interval x 2)
-    DMS_LIST = 60 * 60 * 48 # Cache is automatically invalidated after job runs
 
 
 class CacheKey:
