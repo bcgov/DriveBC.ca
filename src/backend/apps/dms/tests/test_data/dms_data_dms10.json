@@ -1,0 +1,26 @@
+{
+        "id": "ATIS-SUR-17W-2",
+        "name": "DMS10",
+        "name_override": "",
+        "category": "ADDCO 2x20 LM-2 FRATIS",
+        "description": "Hwy 17 WB at 136 St.",
+        "roadway_name": "Highway 17",
+        "roadway_direction": "Westbound",
+        "static_text": "",
+        "message_text": "[pt30o0][fo3][jl2]PATTULLO BR[jl4]<5 MIN[nl][jl2]PORT MANN BR[jl4]<5 MIN[np][pt30o0][fo3][jl2]ALEX FRASER BR[jl4]<5 MIN[nl][jl2]MASSEY TUNNEL[jl4]<5 MIN",
+        "status": "OK",
+        "location": {
+            "type": "Point",
+            "coordinates": [
+                -122.848,
+                49.2133
+            ]
+        },
+        "updated_datetime_utc": "2025-12-08T05:02:16-08:00",
+        "message_expiry_datetime_utc": null,
+        "cache_datetime_utc": "2026-02-02T17:30:01-08:00",
+        "message_display_1": "PATTULLO BR<5 MIN\nPORT MANN BR<5 MIN",
+        "message_display_2": "ALEX FRASER BR<5 MIN\nMASSEY TUNNEL<5 MIN",
+        "message_display_3": "",
+        "is_on": true
+    }
