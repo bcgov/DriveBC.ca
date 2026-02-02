@@ -20,7 +20,7 @@ import distance from "@turf/distance";
 // Styling
 import './DistanceLabels.scss';
 
-export default function DistanceLabels({ updateRouteDisplay, mapRef, isCamDetail }) {
+export default function DistanceLabels({ updateRouteDisplay, mapRef, isCamDetail, mapRendered }) {
   /* initialization */
 
   // Redux
@@ -36,13 +36,13 @@ export default function DistanceLabels({ updateRouteDisplay, mapRef, isCamDetail
 
   /* useEffect hooks */
   useEffect(() => {
-    if (!mapRef || !mapRef.current) {
+    if (!mapRef || !mapRef.current || !mapRendered) {
       return;
     }
 
     addDistanceOverlay();
     updateRouteDisplay(selectedRoute);
-  }, [selectedRoute, location.search]);
+  }, [selectedRoute, mapRendered]);
 
   /* Rendering */
   // Threshold of 500 meters in distance by default
