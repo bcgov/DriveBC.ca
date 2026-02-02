@@ -447,11 +447,15 @@ export default function DriveBCMap(props) {
   /* initialization for OpenLayers map */
   useEffect(() => {
     if (mapRef.current) return; // stops map from initializing more than once
+    const deniedBefore = localStorage.getItem('geoDenied') === 'true';
 
     // check if geolocation permission is granted
     if (!isCamDetail && navigator.permissions) {  // only when permissions API is supported
       navigator.permissions.query({ name: "geolocation" }).then((permissionStatus) => {
-        setShowLocationAccessError(permissionStatus.state === 'denied');
+        if (!deniedBefore) {
+          setShowLocationAccessError(permissionStatus.state === 'denied');
+          localStorage.setItem('geoDenied', 'true');
+        }
       });
     }
 

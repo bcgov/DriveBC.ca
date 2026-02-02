@@ -386,9 +386,20 @@
 						text-decoration: none;
 						color: $Type-Primary;
 						font-size: 0.875rem;
+						display: flex;
+						align-items: center;
+						justify-content: flex-start;
 
 						@media (min-width: 1200px) {
-							padding: 12px 12px 0;
+							justify-content: space-between;
+						}
+
+						@media (min-width: 1200px) {
+							padding: 6px 12px;
+						}
+
+						&:focus {
+							outline-offset: -2px;
 						}
 
 						&:last-of-type {
