@@ -29,6 +29,29 @@
       }
     }
 
+    &-toggle {
+      &::after {
+        display: none;
+      }
+    }
+
+    .dropdown-chevron {
+      margin-left: 4px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    #favorites-menu.show {
+      .dropdown-chevron {
+        transform: rotate(180deg);
+      }
+    }
+
+    #user-menu.show {
+      .dropdown-chevron {
+        transform: rotate(180deg);
+      }
+    }
+
     button {
       margin: 0;
     }

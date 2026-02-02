@@ -1,6 +1,7 @@
 import { getBottomLeft, getTopRight } from 'ol/extent';
 import { toLonLat } from 'ol/proj';
-import * as turf from '@turf/turf';
+import { polygon } from '@turf/helpers';
+import booleanIntersects from '@turf/boolean-intersects';
 
 const wrapLon = (value) => {
   const worlds = Math.floor((value + 180) / 360);
@@ -13,7 +14,7 @@ export const onMoveEnd = (map, advisories, setAdvisoriesInView) => {
   const bottomLeft = toLonLat(getBottomLeft(extent));
   const topRight = toLonLat(getTopRight(extent));
 
-  const mapPoly = turf.polygon([[
+  const mapPoly = polygon([[
     [wrapLon(bottomLeft[0]), topRight[1]], // Top left
     [wrapLon(bottomLeft[0]), bottomLeft[1]], // Bottom left
     [wrapLon(topRight[0]), bottomLeft[1]], // Bottom right
@@ -28,8 +29,8 @@ export const onMoveEnd = (map, advisories, setAdvisoriesInView) => {
       // For each polygon in multipolygon field
       for (const coords of advisory.geometry.coordinates) {
         // Build polygon and check if it intersects with map extent
-        const advPoly = turf.polygon(coords);
-        if (turf.booleanIntersects(mapPoly, advPoly)) {
+        const advPoly = polygon(coords);
+        if (booleanIntersects(mapPoly, advPoly)) {
           resAdvisories.push(advisory);
           break;
         }

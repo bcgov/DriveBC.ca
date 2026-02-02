@@ -2,7 +2,7 @@
 import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
 
 // Routing
-import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -30,7 +30,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
-import { CMSContext, MapContext, HeaderHeightContext, FilterContext } from '../App';
+import { CMSContext, MapContext, FilterContext } from '../App';
 import { filterAdvisoryByRoute } from "../Components/map/helpers";
 import { getAdvisories, markAdvisoriesAsRead } from '../Components/data/advisories';
 import { getEvents, getEventDetails } from '../Components/data/events';
@@ -82,13 +82,15 @@ const sortEvents = (events, key) => {
   }
 }
 
-export default function EventsListPage() {
+export default function EventsListPage(props) {
   /* Setup */
-  document.title = 'DriveBC - Delays';
+  // Props
+  const { chainUpsOnly } = props;
+
+  document.title = chainUpsOnly ? 'DriveBC - Chain-ups' : 'DriveBC - Delays';
 
   // Navigation
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   // Redux
   const dispatch = useDispatch();
@@ -104,11 +106,10 @@ export default function EventsListPage() {
   const { cmsContext, setCMSContext } = useContext(CMSContext);
   const { filterContext, setFilterContext } = useContext(FilterContext);
   const { mapContext } = useContext(MapContext);
-  // const { headerHeightContext } = useContext(HeaderHeightContext);
 
   // States
   const getFilterState = () => {
-    if (searchParams.get('chainUpsOnly') === 'true') {
+    if (chainUpsOnly) {
       return {
         'closures': false,
         'majorEvents': false,
@@ -127,7 +128,22 @@ export default function EventsListPage() {
     };
   }
 
-  const [sortingKey, setSortingKey] = useState(selectedRoute && selectedRoute.routeFound ? 'route_order' : (localStorage.getItem('sorting-key')? localStorage.getItem('sorting-key') : 'severity_desc'));
+  const getDefaultSortingKey = () => {
+    if (selectedRoute && selectedRoute.routeFound) {
+      return 'route_order';
+    }
+
+    if (chainUpsOnly) {
+      return 'road_name_asc';
+    }
+
+    if (localStorage.getItem('sorting-key')) {
+      return localStorage.getItem('sorting-key');
+    }
+
+    return 'severity_desc';
+  }
+  const [sortingKey, setSortingKey] = useState(getDefaultSortingKey());
   const [eventCategoryFilter, setEventCategoryFilter] = useState(getFilterState());
   const [processedEvents, setProcessedEvents] = useState([]); // Nulls for mapping loader
   const [trackedEvents, setTrackedEvents] = useState({}); // Track event updates between refreshes
@@ -262,17 +278,18 @@ export default function EventsListPage() {
     }
 
     // Reset sorting key and sort
+    setSortingKey(getDefaultSortingKey());
     if (selectedRoute && selectedRoute.routeFound) {
-      setSortingKey('route_order');
       sortEvents(res, 'route_order');
 
     } else {
-      if (localStorage.getItem('sorting-key')){
-        setSortingKey(localStorage.getItem('sorting-key'));
+      if (chainUpsOnly) {
+        sortEvents(res, 'road_name_asc');
+
+      } else if (localStorage.getItem('sorting-key')){
         sortEvents(res, localStorage.getItem('sorting-key'));
-      }
-      else {
-        setSortingKey('severity_desc');
+
+      } else {
         sortEvents(res, 'severity_desc');
       }
     }
@@ -552,7 +569,10 @@ export default function EventsListPage() {
     return sortingDisplayMap[key];
   }
 
-  const allSortingKeys = ['route_order', 'severity_desc', 'severity_asc', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc'];
+  const allSortingKeys = chainUpsOnly ?
+    ['route_order', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc'] :
+    ['route_order', 'severity_desc', 'severity_asc', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc'];
+
   const getSortingList = () => {
     const res = [];
 
@@ -614,8 +634,8 @@ export default function EventsListPage() {
         }
 
         <PageHeader
-          title="Delays"
-          description="Find out if there are any delays that might impact your journey before you go.">
+          title={chainUpsOnly ? 'Commercial chain-ups' : 'Delays'}
+          description={chainUpsOnly ? 'Segments of the highway that require commercial vehicles over 11,794 kg to have chains on.' : 'Find out if there are any delays that might impact your journey before you go.'}>
         </PageHeader>
 
         <Container className="container--sidepanel">
@@ -689,7 +709,7 @@ export default function EventsListPage() {
                       }
                     </div>
 
-                    {smallScreen &&
+                    {smallScreen && !chainUpsOnly &&
                       <Button
                         variant="outline-primary"
                         className={'map-btn open-filters filter-option-btn'  + (showTypeFilters ? ' active' : '')}
@@ -700,7 +720,7 @@ export default function EventsListPage() {
                       </Button>
                     }
 
-                    {!smallScreen &&
+                    {!smallScreen && !chainUpsOnly &&
                       <div className="type filter-option-btn">
                         <ListFilters
                           disableFeatures={true}
@@ -789,7 +809,7 @@ export default function EventsListPage() {
 
               {(!showLoader && !processedEvents.length) &&
                 <div className="empty-event-display">
-                  <h2>No delays to display</h2>
+                  <h2>{`No ${chainUpsOnly ? 'chain-ups' : 'delays'} to display`}</h2>
 
                   <strong>Do you have a starting location and a destination entered?</strong>
                   <p>Adding a route will narrow down the information for the whole site, including the delays list. There might not be any delays between those two locations.</p>
@@ -847,14 +867,16 @@ export default function EventsListPage() {
 
           <p className="overlay__header bold">List</p>
 
-          <ListFilters
-            disableFeatures={true}
-            enableRoadConditions={false}
-            enableChainUps={true}
-            textOverride={'List'}
-            iconOverride={true}
-            isDelaysPage={true}
-            fullOverlay={true} />
+          {!chainUpsOnly &&
+            <ListFilters
+              disableFeatures={true}
+              enableRoadConditions={false}
+              enableChainUps={true}
+              textOverride={'List'}
+              iconOverride={true}
+              isDelaysPage={true}
+              fullOverlay={true} />
+          }
         </div>
       }
 

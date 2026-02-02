@@ -13,7 +13,9 @@ import { removeOverlays } from "../map/helpers";
 import { Overlay } from "ol";
 import { fromLonLat } from "ol/proj";
 import { LineString } from "ol/geom";
-import { destination, point, distance } from "@turf/turf";
+import { point } from "@turf/helpers";
+import destination from "@turf/destination";
+import distance from "@turf/distance";
 
 // Styling
 import './DistanceLabels.scss';

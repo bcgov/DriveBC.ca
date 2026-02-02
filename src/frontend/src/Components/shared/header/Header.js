@@ -192,7 +192,7 @@ export default function Header() {
 
   const handleChainUpsClick = (e) => {
     e.preventDefault();
-    navigate('/delays?chainUpsOnly=true');
+    navigate('/chain-ups');
     setIsCommercialOpen(false);
     onClickActions();
   }
@@ -321,8 +321,8 @@ export default function Header() {
               </LinkContainer>
 
               <div className="commercial-dropdown" ref={commercialDropdownRef}>
-                <Nav.Link 
-                  active={false} 
+                <Nav.Link
+                  active={false}
                   onClick={() => {
                     setIsCommercialOpen(!isCommercialOpen);
                   }}
@@ -330,8 +330,8 @@ export default function Header() {
                 >
                   <div className='title'>
                     Commercial
-                    <FontAwesomeIcon 
-                      icon={faChevronDown} 
+                    <FontAwesomeIcon
+                      icon={faChevronDown}
                       className={`chevron-icon ${isCommercialOpen ? 'rotated' : ''}`}
                     />
                   </div>
@@ -339,6 +339,7 @@ export default function Header() {
                 <div className={`commercial-dropdown-content ${isCommercialOpen ? 'open' : ''}`}>
                   <a href="/delays?chainUpsOnly=true" className='commercial-dropdown-item' onClick={handleChainUpsClick}>
                     Chain-ups
+                    {xLargeScreen && <FontAwesomeIcon icon={faArrowRight} />}
                   </a>
                   <a href="https://onroutebc.gov.bc.ca/" className='commercial-dropdown-item' onClick={() => { setIsCommercialOpen(false); onClickActions(); }}>
                     onRoute

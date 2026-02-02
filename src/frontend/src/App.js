@@ -17,7 +17,6 @@ import { setAutoFreeze } from 'immer';
 setAutoFreeze(false);
 
 // Styling
-import '@bcgov/bc-sans/css/BCSans.css';
 import './App.scss';
 
 // Internal imports
@@ -300,7 +299,8 @@ function App() {
                             <Route path="/my-routes" element={<SavedRoutesPage />} />
                             <Route path="/cameras" element={<CamerasListPage />} />
                             <Route path="/cameras/:id" element={<CameraDetailsPage />} />
-                            <Route path="/delays" element={<EventsListPage />} />
+                            <Route path="/delays" element={<EventsListPage key="/delays" />} />
+                            <Route path="/chain-ups" element={<EventsListPage key="/chain-ups" chainUpsOnly={true} />} />
                             <Route path="/advisories" element={<AdvisoriesListPage />} />
                             <Route path="/advisories/:id/:subid?" element={<AdvisoryDetailsPage />} />
                             <Route path="/bulletins" element={<BulletinsListPage />} />

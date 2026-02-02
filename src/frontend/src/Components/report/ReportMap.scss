@@ -54,6 +54,7 @@
         padding-bottom: 0;
         overflow: hidden;
         transition: all 0.20s ease-in-out;
+        height: 0;
 
         .back-link-wrap {
           overflow: hidden;
@@ -557,6 +558,12 @@
 
       .popup__content {
         overflow-y: scroll;
+      }
+    }
+
+    &.snap-80 {
+      & > div.panel-content {
+        padding-bottom: 20vh;
       }
     }
 

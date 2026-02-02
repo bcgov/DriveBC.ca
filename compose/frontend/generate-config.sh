@@ -89,11 +89,22 @@ if [ -n "$BLOCKED_IPS" ]; then
     echo "Blocked IPs configuration created."
 fi
 
-# --- Pre-compression ---
-echo "Compressing static assets..."
+# --- GzipPre-compression ---
+echo "Gzip Compressing static assets..."
 find "${SHARED_CONFIG}/static/js" -name "*.js" -exec gzip -k -9 {} +
 find "${SHARED_CONFIG}/static/css" -name "main.*.css" -exec gzip -k -9 {} +
 find "${SHARED_CONFIG}/static/media" -name "*.svg" -exec gzip -k -9 {} +
+
+# --- Brotli Pre-compression ---
+if command -v brotli > /dev/null; then
+    echo "Brotli compressing static assets..."
+    find "${SHARED_CONFIG}/static/js" -name "*.js" -exec brotli -f -k -q 11 {} +
+    find "${SHARED_CONFIG}/static/css" -name "main.*.css" -exec brotli -f -k -q 11 {} +
+    find "${SHARED_CONFIG}/static/media" -name "*.svg" -exec brotli -f -k -q 11 {} +
+else
+    echo "Warning: brotli command not found in init container. Assets will only have Gzip."
+fi
+
 
 echo "Configuration and assets ready in ${SHARED_CONFIG}:"
 ls -la "${SHARED_CONFIG}/"
