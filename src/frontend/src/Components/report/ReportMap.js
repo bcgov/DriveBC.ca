@@ -401,74 +401,78 @@ export function ReportMap(props) {
                 {activeFeature.properties.CONTRACTOR1_NAME}
               </p>
               <div className="data-card">
-                  {activeFeature.properties.CONTRACTOR1_WEBSITE && (
-                    <div className="data-card__row">
-                      <div className="data-icon">
-                        <FontAwesomeIcon icon={faLink} />
-                      </div>
-                      <p className="label">Website</p>
-                      <a
-                        href={activeFeature.properties.CONTRACTOR1_WEBSITE}
-                        className="data-link website-link"
-                        rel="noreferrer"
-                        alt="contractor website link">
-                        {activeFeature.properties.CONTRACTOR1_NAME}
-                      </a>
+                {activeFeature.properties.CONTRACTOR1_WEBSITE && (
+                  <div className="data-card__row">
+                    <div className="data-icon">
+                      <FontAwesomeIcon icon={faLink} />
                     </div>
-                  )}
-                  {activeFeature.properties.CONTRACTOR1_CONTACT && (
-                    <div className="data-card__row">
-                      <div className="data-icon">
-                        <FontAwesomeIcon icon={faPhone} />
-                      </div>
-                      <p className="label">Phone</p>
-                      <a
-                        href={'tel:' + activeFeature.properties.CONTRACTOR1_CONTACT}
-                        className="data-link tel-number bold"
-                        rel="noreferrer"
-                        alt="contractor phone link">
-                        {activeFeature.properties.CONTRACTOR1_CONTACT}
-                      </a>
+                    <p className="label">Website</p>
+                    <a
+                      href={activeFeature.properties.CONTRACTOR1_WEBSITE}
+                      className="data-link website-link"
+                      rel="noreferrer"
+                      alt="contractor website link">
+                      {activeFeature.properties.CONTRACTOR1_NAME}
+                    </a>
+                  </div>
+                )}
+                {activeFeature.properties.CONTRACTOR1_CONTACT && (
+                  <div className="data-card__row">
+                    <div className="data-icon">
+                      <FontAwesomeIcon icon={faPhone} />
                     </div>
-                  )}
+                    <p className="label">Phone</p>
+                    <a
+                      href={'tel:' + activeFeature.properties.CONTRACTOR1_CONTACT}
+                      className="data-link tel-number bold"
+                      rel="noreferrer"
+                      alt="contractor phone link">
+                      {activeFeature.properties.CONTRACTOR1_CONTACT}
+                    </a>
+                  </div>
+                )}
               </div>
             </React.Fragment>
           )}
 
           { (activeFeature.properties.CONTRACTOR2_CONTACT && activeFeature.properties.CONTRACTOR2_CONTACT != activeFeature.properties.CONTRACTOR1_CONTACT) && (
-            <div>
-              <div className="contractor-name">
-                {activeFeature.properties.CONTRACTOR2_WEBSITE ? (
-                  <React.Fragment>
-                    <FontAwesomeIcon icon={faLink} />
+            <React.Fragment>
+              <p className="contractor-name">
+                {activeFeature.properties.CONTRACTOR2_NAME}
+              </p>
+              <div className="data-card">
+                {activeFeature.properties.CONTRACTOR2_WEBSITE && (
+                  <div className="data-card__row">
+                    <div className="data-icon">
+                      <FontAwesomeIcon icon={faLink} />
+                    </div>
+                    <p className="label">Website</p>
                     <a
                       href={activeFeature.properties.CONTRACTOR2_WEBSITE}
-                      className="website-link"
+                      className="data-link website-link"
                       rel="noreferrer"
                       alt="contractor website link">
                       {activeFeature.properties.CONTRACTOR2_NAME}
                     </a>
-                  </React.Fragment>
-                ) : (
-                  <p className="without-link">
-                    {activeFeature.properties.CONTRACTOR2_NAME}
-                  </p>
+                  </div>
+                )}
+                {activeFeature.properties.CONTRACTOR2_CONTACT && (
+                  <div className="data-card__row">
+                    <div className="data-icon">
+                      <FontAwesomeIcon icon={faPhone} />
+                    </div>
+                    <p className="label">Phone</p>
+                    <a
+                      href={'tel:' + activeFeature.properties.CONTRACTOR2_CONTACT}
+                      className="data-link tel-number bold"
+                      rel="noreferrer"
+                      alt="contractor phone link">
+                      {activeFeature.properties.CONTRACTOR2_CONTACT}
+                    </a>
+                  </div>
                 )}
               </div>
-              {activeFeature.properties.CONTRACTOR2_DESCRIPTION && (
-                <p className="contractor-description">
-                  {activeFeature.properties.CONTRACTOR2_DESCRIPTION}
-                </p>
-              )}
-              <div className="contractor-phone">
-                <FontAwesomeIcon icon={faPhone} />
-                <a
-                  className="tel-number bold"
-                  href={'tel:' + activeFeature.properties.CONTRACTOR2_CONTACT}>
-                  {activeFeature.properties.CONTRACTOR2_CONTACT}
-                </a>
-              </div>
-            </div>
+            </React.Fragment>
           )}
 
           <p>Thank you for bringing this issue to our attention.</p>
@@ -525,7 +529,9 @@ export function ReportMap(props) {
         >
           <Drawer.Portal container={mapElement.current}>
             <Drawer.Overlay className="drawer-overlay" />
-            <Drawer.Content className="drawer-content" ref={drawerRef}>
+            <Drawer.Content 
+              className={`drawer-content ${snap === '80%' ? 'snap-80' : ''}`} 
+              ref={drawerRef}>
               <button
                 className="close-panel"
                 aria-label={`${openPanel ? 'close side panel' : ''}`}

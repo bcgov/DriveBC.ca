@@ -118,5 +118,23 @@
       }    
     }
   }
+
+  &--dms {
+    .copy-btn {
+      color: $Gold110;
+      &:hover {
+        background: lighten($Gold110, 60%);
+      }    
+    }
+
+    &.closed {
+      .copy-btn {
+        color: $MyAccountWarningText;
+        &:hover {
+          background: lighten($Gold30, 50%);
+        }      
+      }
+    }
+  }
 }
 

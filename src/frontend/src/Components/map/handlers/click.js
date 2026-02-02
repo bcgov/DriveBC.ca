@@ -23,7 +23,11 @@ import {
   regionalWarningStyles,
   advisoryStyles,
   wildfireCentroidStyles,
-  wildfireAreaStyles
+  wildfireAreaStyles,
+  dmsEastStyles,
+  dmsSouthStyles,
+  dmsWestStyles,
+  dmsNorthStyles
 } from '../../data/featureStyleDefinitions.js';
 
 // Click states
@@ -159,6 +163,24 @@ export const resetClickedStates = (
 
           updateClickedFeature(null);
       }
+        break;
+      case 'dms':
+        switch (clickedFeatureRef.current.get("roadway_direction")) {
+            case 'Eastbound':
+              clickedFeatureRef.current.setStyle(dmsEastStyles['static']);
+              break;
+            case 'Southbound':
+              clickedFeatureRef.current.setStyle(dmsSouthStyles['static']);
+              break;
+            case 'Westbound':
+              clickedFeatureRef.current.setStyle(dmsWestStyles['static']);
+              break;
+            case 'Northbound':
+              clickedFeatureRef.current.setStyle(dmsNorthStyles['static']);
+              break;
+          }
+        clickedFeatureRef.current.set('clicked', false);
+        updateClickedFeature(null);
         break;
     }
   }
@@ -660,6 +682,20 @@ export const pointerClickHandler = (
         );
         return;
 
+      case 'dms':
+        trackEvent(
+          'click',
+          'map',
+          'dms',
+          'selected dms',
+        );
+        dmsClickHandler(
+          clickedFeature,
+          clickedFeatureRef,
+          updateClickedFeature,
+        );
+        return;
+
       default:
         return;
     }
@@ -672,4 +708,35 @@ export const pointerClickHandler = (
     updateClickedFeature,
     isCamDetail,
   );
+};
+
+export const dmsClickHandler = (
+  feature,
+  clickedFeatureRef,
+  updateClickedFeature,
+  isCamDetail,
+) => {
+  // reset previous clicked feature
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+    isCamDetail,
+  );
+
+  if (feature.getProperties().roadway_direction === 'Eastbound') {
+    feature.setStyle(dmsEastStyles['active']);
+  }
+  if (feature.getProperties().roadway_direction === 'Southbound') {
+    feature.setStyle(dmsSouthStyles['active']);
+  }
+  if (feature.getProperties().roadway_direction === 'Westbound') {
+    feature.setStyle(dmsWestStyles['active']);
+  }
+  if (feature.getProperties().roadway_direction === 'Northbound') {
+    feature.setStyle(dmsNorthStyles['active']);
+  }
+
+  feature.set('clicked', true);
+  updateClickedFeature(feature);
 };

@@ -94,7 +94,7 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     def staleAndDelayed(self, request, pk=None):
 
         now = timezone.now()
-        qs = Webcam.objects.filter(should_appear=True).only(
+        qs = Webcam.objects.filter(should_appear=True, is_on=True).only(
             "id", "last_update_modified", "update_period_mean", "update_period_stddev"
         )
 
@@ -102,8 +102,7 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         count_stale = len(stale_ids)
         delayed_ids = sorted([w.id for w in qs if self.is_delayed(w, now)])
         count_delayed = len(delayed_ids)
-        totalCams = Webcam.objects.filter(should_appear=True).count()
-        qs = Webcam.objects.filter(should_appear=True)
+        totalCams = qs.count()
         host = request.get_host()
         path = reverse('webcams-staleAndDelayed')
         self_link = f"{request.scheme}://{host}{path}"
@@ -281,26 +280,6 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         response['Content-Disposition'] = 'attachment; filename="images.zip"'
         return response
 
-    def _staleAndDelayed(self, request, pk=None):
-        countStale = Webcam.objects.filter(should_appear=True, marked_stale=True).count()
-        countDelayed = Webcam.objects.filter(should_appear=True, marked_delayed=True).count()
-        totalCams = Webcam.objects.filter(should_appear=True).count()
-        host = request.get_host()
-        path = reverse('webcams-staleAndDelayed')
-        self_link = f"{request.scheme}://{host}{path}"
-
-        data = {
-            "links": {
-                "self": self_link
-            },
-            "time": timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "cams": totalCams,
-            "stale": countStale,
-            "delayed": countDelayed,
-        }
-
-        return Response(data)
-
     # Admin-only endpoint
     @action(
         detail=True,
@@ -350,18 +329,6 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
             return Response({"detail": "Admin access required."}, status=status.HTTP_403_FORBIDDEN)
         return self._download(request, pk)
 
-    @action(
-            detail=False, 
-            methods=['get'], 
-            url_path='admin-staleAndDelayed',
-            permission_classes=[IsAdminUser],
-            )
-    def staleAndDelayed_admin(self, request, pk=None):
-        user = request.user
-        if not user.is_authenticated or not user.is_staff:
-            return Response({"detail": "Admin access required."}, status=status.HTTP_403_FORBIDDEN)
-        return self._staleAndDelayed(request, pk)
-
     # Public proxy endpoint
     @action(
         detail=True,
@@ -404,9 +371,6 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
             url_path='staleAndDelayed',
             permission_classes=[AllowAny],
             )
-    def staleAndDelayed_public(self, request, pk=None):
-        # forward to the real admin logic
-        return self._staleAndDelayed(request, pk)
 
     @staticmethod
     def is_stale(obj, now=None):

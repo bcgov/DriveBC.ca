@@ -2,7 +2,7 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 // Navigation
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Redux
 import { useSelector } from 'react-redux';
@@ -116,7 +116,7 @@ export default function SavedRoutesPage() {
               <h3>No saved routes</h3>
 
               <p>
-              You don&apos;t have any saved routes yet. You can add a saved route by searching for a &apos;From&apos; and &apos;To&apos; location on the map and clicking the save route button &#40;<FontAwesomeIcon icon={faStarOutline} />&#41;.
+              You don&apos;t have any saved routes yet. You can add a saved route from the <Link to="/">map</Link> by clicking the Save button &#40;<FontAwesomeIcon icon={faStarOutline} />&#41;.
               </p>
             </div>
           }

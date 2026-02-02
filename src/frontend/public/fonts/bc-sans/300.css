@@ -4,4 +4,5 @@
     font-weight: 300;
     src: url("BCSans-Light.woff2") format("woff2"),
          url("BCSans-Light.woff") format("woff");
+    font-display: swap;     
 }

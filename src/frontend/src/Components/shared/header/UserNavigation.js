@@ -149,7 +149,7 @@ export default function UserNavigation(props) {
 
           <form id="signout-link" className="sign-out-btn" method='post' action={`${window.API_HOST}/accounts/logout/`} onSubmit={handleSubmit}>
             <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
-            <button type='submit' autoFocus={true} className="menu-item menu-item--sign-out">
+            <button type='submit' className="menu-item menu-item--sign-out">
               <FontAwesomeIcon icon={faArrowRightFromBracket} />
               Sign out
             </button>
