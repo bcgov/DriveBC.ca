@@ -959,7 +959,7 @@ export default function DriveBCMap(props) {
       }
 
       {searchedRoutes && searchedRoutes.length > 0 &&
-        <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} isCamDetail={isCamDetail} />
+        <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} isCamDetail={isCamDetail} mapRendered={mapRendered} />
       }
 
       {!!openPanel && largeScreen &&
