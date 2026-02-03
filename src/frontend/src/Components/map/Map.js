@@ -119,6 +119,7 @@ export default function DriveBCMap(props) {
       regional: { list: regionalWeather, filteredList: filteredRegionalWeathers },
       hef: { list: hef, filteredList: filteredHef },
       restStops: { list: restStops, filteredList: filteredRestStops },
+      dms: { list: dms = [], filteredList: filteredDms = [] } = {},
       borderCrossings: { list: borderCrossings, filteredList: filteredBorderCrossings },
       wildfires: { list: wildfires, filteredList: filteredWildfires },
     },
@@ -140,6 +141,7 @@ export default function DriveBCMap(props) {
           restStops: state.feeds.restStops,
           borderCrossings: state.feeds.borderCrossings,
           wildfires: state.feeds.wildfires,
+          dms: state.feeds.dms,
         },
         advisories: state.cms.advisories,
         routes: state.routes,
@@ -950,6 +952,18 @@ export default function DriveBCMap(props) {
       void panel.current.offsetHeight; // force reflow to update panel height
     }
   }, [selectedRoute]);
+
+  // Dms layer
+  useEffect(() => {
+    if (!isCamDetail) {
+      loadLayer(
+        mapLayers, mapRef, mapContext,
+        'dms', dms, filteredDms, 60,
+        referenceData, updateReferenceFeature, setLoadingLayers
+      );
+    }
+  }, [filteredDms]);
+
 
   /* Rendering */
   return (

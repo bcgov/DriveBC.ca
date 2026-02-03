@@ -20,6 +20,9 @@ urlpatterns = [
     path("wagtail/", wagtail_api_router.urls),
     path("cms/", include(cms_api_router.urls)),
 
+    # DMS
+    path("dms/", include("apps.dms.urls")),
+
     # Users
     path("users/", include("apps.authentication.urls")),
 
