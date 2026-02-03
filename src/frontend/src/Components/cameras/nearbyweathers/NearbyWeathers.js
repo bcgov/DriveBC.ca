@@ -41,8 +41,8 @@ export default function NearbyWeathers(props) {
   const { camera } = props;
 
   // States
-  const [regionalWeather, setRegionalWeather] = useState();
   const [localWeather, setLocalWeather] = useState();
+  const [regionalWeather, setRegionalWeather] = useState();
   const [hef, setHef] = useState();
 
   // States
@@ -81,6 +81,23 @@ export default function NearbyWeathers(props) {
     setHef(station);
 
   }, [hefList]);
+
+  // set active tab based on available data
+  useEffect(() => {
+    if (localWeather) {
+      setActiveTab('Local');
+      return;
+    }
+
+    if (regionalWeather) {
+      setActiveTab('Regional');
+      return;
+    }
+
+    if (hef) {
+      setActiveTab('High elevation');
+    }
+  }, [localWeather, regionalWeather, hef]);
 
   /* Rendering */
   // Loading state
