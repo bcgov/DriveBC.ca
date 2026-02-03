@@ -92,6 +92,7 @@ export default function ListFilters(props) {
   const [weather, setWeather] = useState(chainUpsOnly ? false : mapContext.visible_layers.weather);
   const [restStops, setRestStops] = useState(chainUpsOnly ? false : mapContext.visible_layers.restStops);
   const [largeRestStops, setLargeRestStops] = useState(chainUpsOnly ? false : mapContext.visible_layers.largeRestStops);
+  const [dms, setDms] = useState(chainUpsOnly ? false : mapContext.visible_layers.dms);
 
   // Effects
   useEffect(() => {
@@ -261,6 +262,12 @@ export default function ListFilters(props) {
         setLargeRestStops(!largeRestStops);
         setRestStops(false);
         updateUrl("restStop", "largeRestStop");
+        break;
+      case 'dms':
+        trackEvent('click', 'map', 'Toggle dms layer')
+        setLayerVisibility({'dms': !dms});
+        setDms(!dms);
+        updateUrl("dms", "dms");
         break;
     }
 
@@ -650,6 +657,29 @@ export default function ListFilters(props) {
                       <button className="tooltip-info" aria-label="rest stops tooltip" aria-describedby="tooltipRestStops">?</button>
                     </OverlayTrigger>
                   </div>
+
+                  <div className={'filter-item filter-item--dms' + (dms ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
+                    <input
+                      type="checkbox"
+                      name="dms"
+                      id="filter--dms"
+                      onChange={e => filterHandler('dms', e)}
+                      defaultChecked={mapContext.visible_layers.dms}
+                      disabled={disableFeatures}
+                    />
+                    <label className="filter-item__button" htmlFor="filter--dms">
+                      <span className="filter-item__button__icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M7.33333 8C7.74653 8 8.11111 8.38086 8.11111 8.8125H15.8889C15.8889 8.38086 16.2292 8 16.6667 8C17.0799 8 17.4444 8.38086 17.4444 8.8125H17.8333C18.4653 8.8125 19 9.37109 19 10.0312V17.3438C19 18.0293 18.4653 18.5625 17.8333 18.5625H6.16667C5.51042 18.5625 5 18.0293 5 17.3438V10.0312C5 9.37109 5.51042 8.8125 6.16667 8.8125H6.55556C6.55556 8.38086 6.89583 8 7.33333 8ZM8.11111 19.375V20.1875C8.11111 20.6445 7.74653 21 7.33333 21C6.89583 21 6.55556 20.6445 6.55556 20.1875V19.375H8.11111ZM15.8889 19.375H17.4444V20.1875C17.4444 20.6445 17.0799 21 16.6667 21C16.2292 21 15.8889 20.6445 15.8889 20.1875V19.375Z" fill="#252423"/>
+                        </svg>
+                      </span>
+                      Dynamic message signs
+                    </label>
+
+                    <OverlayTrigger placement="top" overlay={tooltipRestStops}>
+                      <button className="tooltip-info" aria-label="rest stops tooltip" aria-describedby="tooltipRestStops">?</button>
+                    </OverlayTrigger>
+                  </div>
                 </div>
               </div>
             </div>
@@ -974,6 +1004,29 @@ export default function ListFilters(props) {
                     <span className="filter-item__button__icon">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18.0625 8.4375C18.0625 8.56641 18.041 8.67383 18.0195 8.78125C18.4492 9.08203 18.75 9.59766 18.75 10.1563C18.75 11.123 17.9766 11.875 17.0312 11.875H16.6875V16.6875C16.6875 17.0742 16.3652 17.375 16 17.375C15.6133 17.375 15.3125 17.0742 15.3125 16.6875V11.875H14.9687C14.002 11.875 13.25 11.123 13.25 10.1562C13.25 9.59766 13.5293 9.08203 13.959 8.78125C13.9375 8.67383 13.9375 8.56641 13.9375 8.4375C13.9375 7.29883 14.8613 6.375 16 6.375C17.1387 6.375 18.0625 7.29883 18.0625 8.4375ZM5.6875 11.1875C5.6875 10.8223 5.98828 10.5 6.375 10.5H11.875C12.2402 10.5 12.5625 10.8223 12.5625 11.1875L12.5625 12.5625C12.5625 12.9492 12.2402 13.25 11.875 13.25L6.375 13.25C5.98828 13.25 5.6875 12.9492 5.6875 12.5625V11.1875ZM5.6875 13.9375L12.5625 13.9375C12.9277 13.9375 13.25 14.2598 13.25 14.625C13.25 15.0117 12.9277 15.3125 12.5625 15.3125V16.6875C12.5625 17.0742 12.2402 17.375 11.875 17.375C11.4883 17.375 11.1875 17.0742 11.1875 16.6875V15.3125L7.0625 15.3125V16.6875C7.0625 17.0742 6.74023 17.375 6.375 17.375C5.98828 17.375 5.6875 17.0742 5.6875 16.6875V15.3125C5.30078 15.3125 5 15.0117 5 14.625C5 14.2598 5.30078 13.9375 5.6875 13.9375Z" fill="#273F94"/>
+                      </svg>
+                    </span>
+                    Rest stops
+                  </label>
+
+                  <OverlayTrigger placement="top" overlay={tooltipRestStops}>
+                    <button className="tooltip-info" aria-label="rest stops tooltip" aria-describedby="tooltipRestStops">?</button>
+                  </OverlayTrigger>
+                </div>
+
+                <div className={'filter-item filter-item--dms' + (dms ? ' checked' : '') + (disableFeatures ? ' disabled' : '')}>
+                  <input
+                    type="checkbox"
+                    name="dms"
+                    id="filter--dms"
+                    onChange={e => filterHandler('dms', e)}
+                    defaultChecked={mapContext.visible_layers.dms}
+                    disabled={disableFeatures}
+                  />
+                  <label className="filter-item__button" htmlFor="filter--dms">
+                    <span className="filter-item__button__icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7.33333 8C7.74653 8 8.11111 8.38086 8.11111 8.8125H15.8889C15.8889 8.38086 16.2292 8 16.6667 8C17.0799 8 17.4444 8.38086 17.4444 8.8125H17.8333C18.4653 8.8125 19 9.37109 19 10.0312V17.3438C19 18.0293 18.4653 18.5625 17.8333 18.5625H6.16667C5.51042 18.5625 5 18.0293 5 17.3438V10.0312C5 9.37109 5.51042 8.8125 6.16667 8.8125H6.55556C6.55556 8.38086 6.89583 8 7.33333 8ZM8.11111 19.375V20.1875C8.11111 20.6445 7.74653 21 7.33333 21C6.89583 21 6.55556 20.6445 6.55556 20.1875V19.375H8.11111ZM15.8889 19.375H17.4444V20.1875C17.4444 20.6445 17.0799 21 16.6667 21C16.2292 21 15.8889 20.6445 15.8889 20.1875V19.375Z" fill="#252423"/>
                       </svg>
                     </span>
                     Rest stops
