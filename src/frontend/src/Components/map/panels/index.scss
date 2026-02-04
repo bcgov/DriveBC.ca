@@ -3,6 +3,13 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  margin-bottom: 0;
+
+  @supports (-webkit-touch-callout: none) {
+    @media (max-width: 430px) {
+      margin-bottom: 270px;
+    }
+  }
 
   &__title {
     padding: 1rem 4rem 0.75rem 1rem;
