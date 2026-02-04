@@ -35,8 +35,7 @@ export default function SavedCamerasPage() {
   const { authContext, setAuthContext } = useContext(AuthContext);
 
   // Redux
-  const { cameras, favCams } = useSelector(useCallback(memoize(state => ({
-    cameras: state.feeds.cameras.list,
+  const { favCams } = useSelector(useCallback(memoize(state => ({
     favCams: state.user.favCams
   }))));
 
@@ -96,7 +95,8 @@ export default function SavedCamerasPage() {
     if (!favCams) return;
 
     // Fetch data if it doesn't already exist
-    const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
+    // const camData = cameras ? cameras : await getCameras().catch((error) => displayError(error));
+    const camData = await getCameras().catch((error) => displayError(error));
 
     // Get fav group IDs from saved cams
     const filteredFavCams = camData.filter(item => favCams.includes(item.id));
