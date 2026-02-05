@@ -364,6 +364,29 @@ export default function MapFilters(props) {
                 }
               </div>
 
+              <div className={'filter-item filter-item--dms' + (dms ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.dms) ? ' loading' : '')}>
+                <input
+                  type="checkbox"
+                  name="dms"
+                  id="filter--dms"
+                  onChange={e => filterHandler('dms', e)}
+                  defaultChecked={mapContext.visible_layers.dms}
+                  disabled={disableFeatures}
+                />
+                <label className="filter-item__button" htmlFor="filter--dms">
+                  <span className="filter-item__button__icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M7.33333 8C7.74653 8 8.11111 8.38086 8.11111 8.8125H15.8889C15.8889 8.38086 16.2292 8 16.6667 8C17.0799 8 17.4444 8.38086 17.4444 8.8125H17.8333C18.4653 8.8125 19 9.37109 19 10.0312V17.3438C19 18.0293 18.4653 18.5625 17.8333 18.5625H6.16667C5.51042 18.5625 5 18.0293 5 17.3438V10.0312C5 9.37109 5.51042 8.8125 6.16667 8.8125H6.55556C6.55556 8.38086 6.89583 8 7.33333 8ZM8.11111 19.375V20.1875C8.11111 20.6445 7.74653 21 7.33333 21C6.89583 21 6.55556 20.6445 6.55556 20.1875V19.375H8.11111ZM15.8889 19.375H17.4444V20.1875C17.4444 20.6445 17.0799 21 16.6667 21C16.2292 21 15.8889 20.6445 15.8889 20.1875V19.375Z" fill="#252423"/>
+                    </svg>
+                  </span>
+                  Dynamic message signs
+                </label>
+
+                {loadingLayers && loadingLayers.dms &&
+                  <Spinner animation="border" role="status" />
+                }
+              </div>
+
               <div className={'filter-item filter-item--inland-ferries' + (inlandFerries ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.ferries) ? ' loading' : '')}>
                 <input
                   type="checkbox"
@@ -453,29 +476,6 @@ export default function MapFilters(props) {
                 </label>
 
                 {loadingLayers && loadingLayers.restStops &&
-                  <Spinner animation="border" role="status" />
-                }
-              </div>
-
-              <div className={'filter-item filter-item--dms' + (dms ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.dms) ? ' loading' : '')}>
-                <input
-                  type="checkbox"
-                  name="dms"
-                  id="filter--dms"
-                  onChange={e => filterHandler('dms', e)}
-                  defaultChecked={mapContext.visible_layers.dms}
-                  disabled={disableFeatures}
-                />
-                <label className="filter-item__button" htmlFor="filter--dms">
-                  <span className="filter-item__button__icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M7.33333 8C7.74653 8 8.11111 8.38086 8.11111 8.8125H15.8889C15.8889 8.38086 16.2292 8 16.6667 8C17.0799 8 17.4444 8.38086 17.4444 8.8125H17.8333C18.4653 8.8125 19 9.37109 19 10.0312V17.3438C19 18.0293 18.4653 18.5625 17.8333 18.5625H6.16667C5.51042 18.5625 5 18.0293 5 17.3438V10.0312C5 9.37109 5.51042 8.8125 6.16667 8.8125H6.55556C6.55556 8.38086 6.89583 8 7.33333 8ZM8.11111 19.375V20.1875C8.11111 20.6445 7.74653 21 7.33333 21C6.89583 21 6.55556 20.6445 6.55556 20.1875V19.375H8.11111ZM15.8889 19.375H17.4444V20.1875C17.4444 20.6445 17.0799 21 16.6667 21C16.2292 21 15.8889 20.6445 15.8889 20.1875V19.375Z" fill="#252423"/>
-                    </svg>
-                  </span>
-                  Dynamic message signs
-                </label>
-
-                {loadingLayers && loadingLayers.dms &&
                   <Spinner animation="border" role="status" />
                 }
               </div>
