@@ -188,6 +188,10 @@
         margin-right: 0.5ch;
       }
 
+      .route-item__name {
+        white-space: nowrap;
+      }
+
       &--closures {
         background: $Error;
         color: white;
