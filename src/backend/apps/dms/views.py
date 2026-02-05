@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 
 class DmsAPI(CachedListModelMixin):
-    queryset = Dms.objects.all()
+    queryset = Dms.objects.filter(is_on=True)
     serializer_class = DmsSerializer
     cache_key = CacheKey.DMS_LIST
     cache_timeout = CacheTimeout.DMS_LIST
