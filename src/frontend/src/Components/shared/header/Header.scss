@@ -237,6 +237,12 @@
 			background: unset;
 		}
 
+		@media (max-width: 575px) {
+			max-height: calc(100vh - 58px);
+			height: calc(100vh - 58px);
+			overflow-y: auto;
+		}
+
 		.navbar-nav {
 			.nav-link {
 				color: $Type-Primary;
@@ -440,10 +446,6 @@
 					margin-top: 8px;
 				}
 			}
-
-			.filler {
-				height: 100vh;
-			}
 		}
 	}
 
@@ -472,6 +474,14 @@
 			@media (min-width: 768px) {
 				display: block;
 			}
+		}
+	}
+
+	&:has(.search-trigger.show) {
+		@media (max-width: 575px) {
+			max-height: calc(100vh - 118px);
+			height: calc(100vh - 118px);
+			overflow-y: auto;
 		}
 	}
 
