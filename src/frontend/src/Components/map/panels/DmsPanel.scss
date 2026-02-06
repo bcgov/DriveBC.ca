@@ -234,11 +234,12 @@
           color: #F7CE46;
           text-transform: uppercase;
           letter-spacing: 0.02em;
+          white-space: pre-line;
 
           // 1. FULL WIDTH ALIGNMENT
           width: 100%;
           // display: block;
-          text-align: justify;
+          text-align: center;
           // text-align-last: justify; // Forces "SUMAS X-ING" and "5 MIN" to opposite ends
           margin: 0;
 
