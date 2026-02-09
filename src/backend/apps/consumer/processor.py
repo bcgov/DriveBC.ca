@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import io
 import json
 import logging
@@ -66,6 +67,11 @@ QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES"))
 EXCHANGE_NAME = os.getenv("RABBITMQ_EXCHANGE_NAME")
 CAMERA_CACHE_REFRESH_SECONDS = int(os.getenv("CAMERA_CACHE_REFRESH_SECONDS", "60"))
 
+RABBITMQ_HEARTBEAT = int(os.getenv("RABBITMQ_HEARTBEAT", "60"))
+RABBITMQ_TIMEOUT = int(os.getenv("RABBITMQ_TIMEOUT", "30")) 
+RABBITMQ_RECONNECT_INTERVAL = int(os.getenv("RABBITMQ_RECONNECT_INTERVAL", "5"))
+RABBITMQ_CONSUMER_TIMEOUT = int(os.getenv("RABBITMQ_CONSUMER_TIMEOUT", "300"))  # seconds
+
 
 #boto3.set_stream_logger('botocore', logging.DEBUG)
 
@@ -98,11 +104,43 @@ db_data = []  # cached camera metadata from SQL
 last_camera_refresh = 0.0
 image_invalid = False
 
+last_activity = 0.0  # Track last message processing time
+health_check_interval = 60  # seconds
+max_idle_time = 300  # 5 minutes before warning
+
+async def on_reconnect(conn):
+    logger.info("RabbitMQ connection re-established")
+    global last_activity
+    last_activity = time.time()
+   
+async def on_close(conn, exc=None):
+    logger.warning(f"RabbitMQ connection closed: {exc}")
+
+async def on_channel_close(ch, exc=None):
+    logger.warning(f"RabbitMQ channel closed: {exc}")
+
+async def health_monitor():
+    """Background task to monitor connection health"""
+    while not stop_event.is_set():
+        await asyncio.sleep(health_check_interval)
+        
+        # Check connection state
+        if connection and connection.is_closed:
+            logger.warning("Connection detected as closed, should reconnect")
+            
+        # Check for extended idle periods
+        if last_activity > 0:
+            idle_time = time.time() - last_activity
+            if idle_time > max_idle_time:
+                logger.warning(f"Consumer idle for {idle_time:.0f} seconds")
+
 async def run_consumer():
     """
     Long-running RabbitMQ consumer that processes image messages and watermarks them.
     Shuts down cleanly when stop_event is set.
     """
+    monitor_task = None 
+    connection_metrics = None
     rb_url = os.getenv("RABBITMQ_URL")
     if not rb_url:
         raise RuntimeError("RABBITMQ_URL environment variable is not set.")
@@ -123,10 +161,27 @@ async def run_consumer():
     queue = None
 
     try:
-        connection = await aio_pika.connect_robust(rb_url)
+        connection = await aio_pika.connect_robust(
+            rb_url,
+            heartbeat=RABBITMQ_HEARTBEAT,
+            timeout=RABBITMQ_TIMEOUT,
+            reconnect_interval=RABBITMQ_RECONNECT_INTERVAL,
+            fail_fast=False,
+            client_properties={"connection_name": "image-processor"}
+        )
         logger.info("Connected to RabbitMQ.")
+        connection.reconnect_callbacks.add(on_reconnect)
+        connection.close_callbacks.add(on_close)
+
+        connection_metrics = ConnectionMetrics(
+            connect_time=time.time(),
+            last_activity=time.time()
+        )
+        monitor_task = asyncio.create_task(health_monitor())
 
         channel = await connection.channel()
+        channel.close_callbacks.add(on_channel_close)
+
         # Limit how many unacked messages take at once
         await channel.set_qos(prefetch_count=1)
 
@@ -165,9 +220,22 @@ async def run_consumer():
                         # # # For testing purposes, only allow camera with IDs below to be processed
                         # if camera_id != "57":
                         #     logger.info("Skipping processing for camera %s", camera_id)
-                        #     continue
-                        await handle_image_message(camera_id, message.body, timestamp_local, camera_status)  
+                        #     continue 
+                        connection_metrics.messages_processed += 1
+                        connection_metrics.last_activity = time.time()
+                        try:
+                            await asyncio.wait_for(
+                                handle_image_message(camera_id, message.body, timestamp_local, camera_status),
+                                timeout=120  # 2 minute processing timeout
+                            )
+                        except asyncio.TimeoutError:
+                            logger.error(f"Processing timeout for camera {camera_id}")
                         logger.info("Processed message for camera %s.", camera_id)
+                    except (aio_pika.exceptions.AMQPConnectionError,
+                        aio_pika.exceptions.ConnectionClosed,
+                        aio_pika.exceptions.ChannelClosed) as conn_error:
+                        logger.error(f"RabbitMQ connection error: {conn_error}")
+                        break  # Exit to trigger reconnection
                     except Exception as e:
                         logger.exception("Failed processing message (camera %s): %s", camera_id, e)
                         try:
@@ -188,16 +256,27 @@ async def run_consumer():
         logger.exception("Unhandled error in consumer: %s", e)
     finally:
         logger.info("Cleaning up RabbitMQ resources...")
+        # Cancel health monitor task
+        if 'monitor_task' in locals():
+            monitor_task.cancel()
+            try:
+                await monitor_task
+            except asyncio.CancelledError:
+                pass
+        
+        # Enhanced connection cleanup
+        if connection and not connection.is_closed:
+            try:
+                await connection.close()
+                logger.info("RabbitMQ connection closed successfully")
+            except Exception as e:
+                logger.warning(f"Error closing connection: {e}")
+                
         if channel:
             try:
                 await channel.close()
             except Exception as e:
                 logger.warning("Error closing channel: %s", e)
-        if connection:
-            try:
-                await connection.close()
-            except Exception as e:
-                logger.warning("Error closing connection: %s", e)
 
         logger.info("Consumer stopped.")
 
@@ -580,3 +659,11 @@ def verify_image(image_data: bytes, camera_id: str) -> bool:
     except Exception as e:
         logger.warning(f"Invalid image for camera {camera_id}: {e}")
         return False
+    
+
+@dataclass
+class ConnectionMetrics:
+    connect_time: float
+    last_activity: float  
+    reconnect_count: int = 0
+    messages_processed: int = 0
