@@ -12,33 +12,45 @@ NTCIP_TOKEN_PATTERN = re.compile(r"\[[^\]]+\]")
 def parse_dms_pages(raw: str) -> Tuple[str, str, str]:
     if not raw:
         return "", "", ""
-
     text = raw
-
     # Normalize newlines
     text = re.sub(r"\[nl\]", "\n", text, flags=re.IGNORECASE)
-
     # Split pages BEFORE removing other tokens
     pages = re.split(r"\[np\]", text, flags=re.IGNORECASE)
-
     cleaned_pages = []
-
     for page in pages[:3]:  # max 3 pages
+        # Process justification tokens BEFORE removing other NTCIP tokens
+        page = process_justification_tokens(page)
+        
         # Remove remaining NTCIP formatting tokens
         page = NTCIP_TOKEN_PATTERN.sub("", page)
-
-        # Normalize whitespace
+        # Normalize whitespace (tabs to single space, multiple spaces to single space)
         page = re.sub(r"[ \t]+", " ", page)
+        
+        # Replace placeholder with spacing AFTER whitespace normalization
+        page = page.replace('__JUSTIFY_RIGHT__', '    ')  # 4 spaces for right justification
+        
+        # Normalize excessive newlines
         page = re.sub(r"\n{3,}", "\n\n", page)
-
         cleaned_pages.append(page.strip())
-
     # Pad missing pages
     while len(cleaned_pages) < 3:
         cleaned_pages.append("")
-
     return tuple(cleaned_pages)
 
+def process_justification_tokens(page: str) -> str:
+    """
+    Process justification tokens with whitespace preservation.
+    """
+    processed = page
+    
+    # Replace [jl4] with a unique placeholder that won't be collapsed
+    processed = processed.replace('[jl4]', '__JUSTIFY_RIGHT__')
+    
+    # Remove [jl2] tokens
+    processed = processed.replace('[jl2]', '')
+    
+    return processed
 
 class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     id = models.CharField(primary_key=True, max_length=128, blank=True, default='')
