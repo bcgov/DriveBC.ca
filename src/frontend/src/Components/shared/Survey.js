@@ -96,6 +96,10 @@ export default function Survey() {
     }
   }
 
+  if (!window.SURVEY_LINK) {
+    return null;
+  }
+
   /* Main rendering function */
   return visible && (
     <div className='survey fade-out'>
