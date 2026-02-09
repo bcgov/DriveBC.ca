@@ -60,7 +60,7 @@ class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     message_display_2 = models.TextField(blank=True, default="")
     message_display_3 = models.TextField(blank=True, default="")
 
-    is_on = models.BooleanField(default=True)
+    is_on = models.BooleanField(default=False)
 
     def __str__(self):
         return f"dms for {self.pk}"
