@@ -13,6 +13,8 @@ def parse_dms_pages(raw: str) -> Tuple[str, str, str]:
     if not raw:
         return "", "", ""
     text = raw
+    # Remove control characters
+    text = remove_control_characters(text)
     # Normalize newlines
     text = re.sub(r"\[nl\]", "\n", text, flags=re.IGNORECASE)
     # Split pages BEFORE removing other tokens
@@ -51,6 +53,14 @@ def process_justification_tokens(page: str) -> str:
     processed = processed.replace('[jl2]', '')
     
     return processed
+
+def remove_control_characters(text: str) -> str:
+    """
+    Remove control characters that appear after NTCIP formatting tokens.
+    """
+    # Remove single lowercase letters that appear immediately after closing brackets
+    # Pattern: ] followed by lowercase letter(s) at start of text content
+    return re.sub(r'\][a-z](?=[A-Z])', ']', text)
 
 class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     id = models.CharField(primary_key=True, max_length=128, blank=True, default='')
