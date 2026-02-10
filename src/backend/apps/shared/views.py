@@ -242,3 +242,47 @@ class DistrictAPI(CachedListModelMixin):
 
 class DistrictViewSet(DistrictAPI, viewsets.ReadOnlyModelViewSet):
     pass
+
+
+class AzureTestWebhookView(APIView):
+    """
+    Endpoint for Azure Communication Services Event Grid webhooks.
+    Handles the handshake validation and logs email delivery/bounce events.
+    """
+    # Disable authentication for this specific endpoint so Azure can reach it
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        try:
+            # Azure sends events in a list
+            events = request.data
+            if not isinstance(events, list):
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+            for event in events:
+                event_type = event.get('eventType')
+                data = event.get('data', {})
+
+                # 1. Handle Azure Subscription Validation (Handshake)
+                if event_type == "Microsoft.EventGrid.SubscriptionValidationEvent":
+                    validation_code = data.get('validationCode')
+                    print(f"--- Azure Handshake Received: {validation_code} ---")
+                    return Response({"validationResponse": validation_code}, status=status.HTTP_200_OK)
+
+                # 2. Handle Email Delivery Reports (Bounces, Success, etc.)
+                if event_type == "Microsoft.Communication.EmailDeliveryReportReceived":
+                    recipient = data.get('recipient')
+                    delivery_status = data.get('status') # Bounced, Delivered, Failed, Suppressed
+                    
+                    print("--- ACS EMAIL REPORT ---")
+                    print(f"Recipient: {recipient}")
+                    print(f"Status:    {delivery_status}")
+                    print(f"Full Data: {data}")
+                    print("------------------------")
+
+            return Response(status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(f"Error in Azure Webhook: {str(e)}")
+            return Response(status=status.HTTP_400_BAD_REQUEST)

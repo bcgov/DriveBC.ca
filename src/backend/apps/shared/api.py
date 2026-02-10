@@ -31,4 +31,5 @@ urlpatterns = [
     path("survey/", views.SurveyView.as_view(), name="survey"),
     path("session", session.as_view()),
     path("test/", include("apps.shared.test_urls")),
+    path("azuretest", views.AzureTestWebhookView.as_view(), name="azure-test-webhook"),
 ]
