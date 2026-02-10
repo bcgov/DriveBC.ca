@@ -6,6 +6,9 @@ from django_prometheus.models import ExportModelOperationsMixin
 from apps.shared.enums import CacheKey
 import re
 from typing import Tuple
+from django.utils.dateparse import parse_datetime
+# from django.utils import timezone
+from datetime import timezone as dt_timezone
 
 NTCIP_TOKEN_PATTERN = re.compile(r"\[[^\]]+\]")
 
@@ -61,6 +64,19 @@ def remove_control_characters(text: str) -> str:
     # Remove single lowercase letters that appear immediately after closing brackets
     # Pattern: ] followed by lowercase letter(s) at start of text content
     return re.sub(r'\][a-z](?=[A-Z])', ']', text)
+def parse_api_utc(dt_str):
+    if not dt_str:
+        return None
+
+    dt = parse_datetime(dt_str)
+
+    if dt is None:
+        return None
+
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=dt_timezone.utc)
+
+    return dt.astimezone(dt_timezone.utc)
 
 class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     id = models.CharField(primary_key=True, max_length=128, blank=True, default='')

@@ -2,6 +2,7 @@ from apps.shared.helpers import parse_and_localize_time_str
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
+from apps.dms.models import parse_api_utc
 
 
 # Shared
@@ -201,9 +202,9 @@ class DmsPropertiesField(serializers.Field):
             "static_text": data['StaticText'] or '',
             "message_text": data['MessageText'] or '',
             "status": data['Status'] or '',
-            "updated_datetime_utc": data['UpdatedDateTimeUtc'],
-            "message_expiry_datetime_utc": data['MessageExpiryDateTimeUtc'],
-            "cache_datetime_utc": data['CacheDateTimeUtc'],
+            "updated_datetime_utc": parse_api_utc(data['UpdatedDateTimeUtc']),
+            "message_expiry_datetime_utc": parse_api_utc(data['MessageExpiryDateTimeUtc']),
+            "cache_datetime_utc": parse_api_utc(data['CacheDateTimeUtc']),
         }
 
         return res
