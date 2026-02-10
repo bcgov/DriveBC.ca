@@ -31,3 +31,4 @@ mssql-django==1.6
 django-debug-toolbar==6.1.0
 django-prometheus==2.4.1
 django-redis==6.0.0
+azure-communication-email==1.1.0
