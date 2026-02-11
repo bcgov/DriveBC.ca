@@ -373,10 +373,6 @@ export default function Header() {
                   {getNavLink('Report a problem')}
                 </LinkContainer>
               }
-
-              {!xLargeScreen &&
-                <div className='filler' />
-              }
             </Nav>
           </Navbar.Collapse>
 
