@@ -91,6 +91,7 @@ class TestEventSerializer(BaseTest):
         self.event_four.id = 'DBCRCON-1234'
         self.event_four.event_type = event_enums.EVENT_TYPE.ROAD_CONDITION
         self.event_four.closed = False
+        self.event_four.location = LineString([(-123.569743, 48.561231), (-123.569743, 48.561231)])
         self.event_four.save()
         self.serializer_four = EventSerializer(self.event_four)
 
