@@ -34,6 +34,7 @@ from psycopg import IntegrityError
 from apps.shared.status import get_recent_timestamps, calculate_camera_status, parse_timestamp
 from apps.consumer.models import ImageIndex
 import boto3
+# from datetime import timezone
 from django.utils import timezone
 from django.forms.models import model_to_dict
 from django.db.models import F, Case, When, Value, IntegerField
@@ -90,7 +91,7 @@ def populate_webcam_from_data(webcam_data):
     update_webcam_image(webcam_data)
 
 def update_webcam_db_stale_delayed(camera: Webcam):
-    time_now_utc = datetime.datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
+    time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(time_now_utc)
     ts_seconds = int(camera_status["timestamp"])
     dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
@@ -166,7 +167,7 @@ def update_webcam_db(cam_id: int, cam_data: dict):
     if not timestamp_utc:
         return
 
-    time_now_utc = datetime.datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
+    time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(time_now_utc)
 
     raw_highway = cam_data.get("highway", "")

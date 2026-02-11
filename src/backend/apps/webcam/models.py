@@ -3,7 +3,7 @@ from apps.shared.models import Area, BaseModel
 from apps.shared.status import get_image_list
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
 from django.contrib.gis.db import models
-from django.utils import timezone
+from datetime import timezone
 from timezonefinder import TimezoneFinder
 from django_prometheus.models import ExportModelOperationsMixin
 
