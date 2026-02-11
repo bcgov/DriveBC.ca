@@ -90,9 +90,9 @@ class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     message_text = models.CharField(max_length=512, blank=True, default='')
     status = models.CharField(max_length=64, blank=True, default='')
     location = models.GeometryField(blank=True, null=True)
-    updated_datetime_utc = models.DateTimeField(blank=True, null=True)
-    message_expiry_datetime_utc = models.DateTimeField(blank=True, null=True)
-    cache_datetime_utc = models.DateTimeField(blank=True, null=True)
+    updated_datetime_utc = models.DateTimeField(blank=True, null=True, verbose_name="Updated datetime")
+    message_expiry_datetime_utc = models.DateTimeField(blank=True, null=True, verbose_name="Message expiry datetime")
+    cache_datetime_utc = models.DateTimeField(blank=True, null=True, verbose_name="Cache datetime")
 
     message_display_1 = models.TextField(blank=True, default="")
     message_display_2 = models.TextField(blank=True, default="")
