@@ -6,6 +6,9 @@ from django_prometheus.models import ExportModelOperationsMixin
 from apps.shared.enums import CacheKey
 import re
 from typing import Tuple
+from django.utils.dateparse import parse_datetime
+# from django.utils import timezone
+from datetime import timezone as dt_timezone
 
 NTCIP_TOKEN_PATTERN = re.compile(r"\[[^\]]+\]")
 
@@ -61,6 +64,19 @@ def remove_control_characters(text: str) -> str:
     # Remove single lowercase letters that appear immediately after closing brackets
     # Pattern: ] followed by lowercase letter(s) at start of text content
     return re.sub(r'\][a-z](?=[A-Z])', ']', text)
+def parse_api_utc(dt_str):
+    if not dt_str:
+        return None
+
+    dt = parse_datetime(dt_str)
+
+    if dt is None:
+        return None
+
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=dt_timezone.utc)
+
+    return dt.astimezone(dt_timezone.utc)
 
 class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     id = models.CharField(primary_key=True, max_length=128, blank=True, default='')
@@ -74,9 +90,9 @@ class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     message_text = models.CharField(max_length=512, blank=True, default='')
     status = models.CharField(max_length=64, blank=True, default='')
     location = models.GeometryField(blank=True, null=True)
-    updated_datetime_utc = models.DateTimeField(blank=True, null=True)
-    message_expiry_datetime_utc = models.DateTimeField(blank=True, null=True)
-    cache_datetime_utc = models.DateTimeField(blank=True, null=True)
+    updated_datetime_utc = models.DateTimeField(blank=True, null=True, verbose_name="Updated datetime")
+    message_expiry_datetime_utc = models.DateTimeField(blank=True, null=True, verbose_name="Message expiry datetime")
+    cache_datetime_utc = models.DateTimeField(blank=True, null=True, verbose_name="Cache datetime")
 
     message_display_1 = models.TextField(blank=True, default="")
     message_display_2 = models.TextField(blank=True, default="")
