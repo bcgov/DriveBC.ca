@@ -34,7 +34,7 @@ from psycopg import IntegrityError
 from apps.shared.status import get_recent_timestamps, calculate_camera_status, parse_timestamp
 from apps.consumer.models import ImageIndex
 import boto3
-from django.utils import timezone
+from datetime import timezone
 from django.forms.models import model_to_dict
 from django.db.models import F, Case, When, Value, IntegerField
 from apps.shared.enums import CacheKey
