@@ -1,5 +1,5 @@
 // React
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 
 // Navigation
 import { useSearchParams } from 'react-router-dom';
@@ -10,7 +10,6 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import { isRestStopClosed } from '../../data/restStops';
 import DmsTypeIcon from '../DmsTypeIcon';
 import ShareURLButton from '../../shared/ShareURLButton';
-import { MapContext } from '../../../App';
 import FriendlyTime from '../../shared/FriendlyTime';
 
 // Styling
@@ -36,27 +35,39 @@ export default function DmsPanel(props) {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Context
-  const { mapContext } = useContext(MapContext);
-
-
-  const displays = [
-    {
-      id: 1,
-      status: dms.values_.message_display_1?.trim() ? 'Active' : 'No message',
-      messages: [dms.values_.message_display_1]
-    },
-    {
-      id: 2,
-      status: dms.values_.message_display_2?.trim() ? 'Active' : 'No message',
-      messages: [dms.values_.message_display_2]
-    },
-    {
-      id: 3,
-      status: dms.values_.message_display_3?.trim() ? 'Active' : 'No message',
-      messages: [dms.values_.message_display_3]
+  const parseMessageWithAlignment = (message) => {
+  if (!message) return [];
+  
+  const lines = message.split('\n');
+  return lines.map(line => {
+    // Extract alignment markers
+    if (line.startsWith('[ALIGN_LEFT]')) {
+      return { content: line.replace('[ALIGN_LEFT]', ''), alignment: 'left' };
+    } else if (line.startsWith('[ALIGN_RIGHT]')) {
+      return { content: line.replace('[ALIGN_RIGHT]', ''), alignment: 'right' };
+    } else {
+      return { content: line.replace('[ALIGN_CENTER]', ''), alignment: 'center' };
     }
-  ];
+  }).filter(line => line.content.trim() !== ''); // Remove empty lines
+};
+
+const displays = [
+  {
+    id: 1,
+    status: dms.values_.message_display_1?.trim() ? 'Active' : 'No message',
+    messages: parseMessageWithAlignment(dms.values_.message_display_1)
+  },
+  {
+    id: 2,
+    status: dms.values_.message_display_2?.trim() ? 'Active' : 'No message',
+    messages: parseMessageWithAlignment(dms.values_.message_display_2)
+  },
+  {
+    id: 3,
+    status: dms.values_.message_display_3?.trim() ? 'Active' : 'No message',
+    messages: parseMessageWithAlignment(dms.values_.message_display_3)
+  }
+];
 
   // useEffect hooks
   useEffect(() => {
@@ -106,12 +117,8 @@ export default function DmsPanel(props) {
                 {display.messages && display.messages.length > 0 && display.messages[0] != "" && (
                   <div className="black-board">
                     {display.messages.map((line, index) => (
-                      <div key={index} className="message-line">
-                        {line}
-                        {/* This empty span is a common trick to ensure the 
-                          justification triggers correctly on all browsers. 
-                        */}
-                        <span style={{ display: 'inline-block', width: '100%' }}></span>
+                      <div key={index} className={`message-line message-line--${line.alignment}`}>
+                        {line.content}
                       </div>
                     ))}
                   </div>

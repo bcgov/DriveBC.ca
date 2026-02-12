@@ -1,25 +1,122 @@
 from apps.shared.models import BaseModel
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point
 from django.core.cache import cache
 from django_prometheus.models import ExportModelOperationsMixin
 from apps.shared.enums import CacheKey
 import re
 from typing import Tuple
 from django.utils.dateparse import parse_datetime
-# from django.utils import timezone
 from datetime import timezone as dt_timezone
 
 NTCIP_TOKEN_PATTERN = re.compile(r"\[[^\]]+\]")
 
+def parse_api_utc(dt_str):
+    if not dt_str:
+        return None
+
+    dt = parse_datetime(dt_str)
+
+    if dt is None:
+        return None
+
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=dt_timezone.utc)
+
+    return dt.astimezone(dt_timezone.utc)
+
+def create_structured_message(content: str, alignment: str) -> dict:
+    return {
+        "content": content.strip(),
+        "alignment": alignment  # "left", "center", "right"
+    }
+
+def clean_tags(text):
+    """Removes NTCIP tags to find the true visible character count."""
+    # Matches anything in brackets like [jl2], [fo3], [pt30o0]
+    return re.sub(r'\[[^\]]*\]?', '', text).strip()
+
+def convert_message(input_string: str) -> list:
+    """
+    Convert message with justification tokens to structured alignment format.
+    Returns list of dictionaries with content and alignment information.
+    """
+    # Split by both page [np] and line [nl] markers
+    all_segments = re.split(r'\[nl\]|\[np\]', input_string)
+    
+    for segment in all_segments:
+        # Replace the justification token with a single space to measure baseline length
+        clean_segment = segment.replace('[jl4]', ' ').replace('__JUSTIFY_RIGHT__', ' ')
+        visible_len = len(clean_tags(clean_segment))
+        
+    pages = input_string.split('[np]')
+    all_processed_lines = []
+    
+    for page in pages:
+        raw_lines = page.split('[nl]')
+        
+        for line in raw_lines:
+            visible_content = clean_tags(line)
+            
+            # Filter out empty lines or stray tag fragments
+            if not visible_content and '[jl4]' not in line and '__JUSTIFY_RIGHT__' not in line:
+                continue
+            if '[' in visible_content and ']' not in visible_content:
+                continue
+            # Check for Right-Justification markers
+            if '[jl4]' in line or '__JUSTIFY_RIGHT__' in line:
+                # Split at whichever token is present
+                token = '[jl4]' if '[jl4]' in line else '__JUSTIFY_RIGHT__'
+                parts = line.split(token)
+                
+                left = clean_tags(parts[0])
+                right = clean_tags(parts[1])
+                combined_content = f"{left} {right}".strip()
+                
+                # Create structured data for right alignment
+                all_processed_lines.append({
+                    "content": combined_content,
+                    "alignment": "right"
+                })
+            
+            else:
+                # Create structured data for center alignment
+                all_processed_lines.append({
+                    "content": visible_content,
+                    "alignment": "center"
+                })
+    
+    return all_processed_lines
+
+def format_structured_for_display(structured_lines: list) -> str:
+    """Convert structured message data to display format with alignment markers"""
+    if not structured_lines:
+        return ""
+        
+    formatted_lines = []
+    for line_data in structured_lines:
+        if isinstance(line_data, dict):
+            alignment_prefix = {
+                "left": "[ALIGN_LEFT]",
+                "center": "[ALIGN_CENTER]", 
+                "right": "[ALIGN_RIGHT]"
+            }
+            prefix = alignment_prefix.get(line_data["alignment"], "[ALIGN_CENTER]")
+            formatted_lines.append(f"{prefix}{line_data['content']}")
+        else:
+            # Handle any string fallbacks
+            formatted_lines.append(f"[ALIGN_CENTER]{line_data}")
+    
+    return "\n".join(formatted_lines)
+
 def parse_dms_pages(raw: str) -> Tuple[str, str, str]:
-    if not raw:
+    # Ensure raw is a string and handle None or empty cases
+    if not raw or raw is None:
         return "", "", ""
+    text = str(raw)  # Ensure string type
     text = raw
     # Remove control characters
     text = remove_control_characters(text)
-    # Normalize newlines
-    text = re.sub(r"\[nl\]", "\n", text, flags=re.IGNORECASE)
+    
     # Split pages BEFORE removing other tokens
     pages = re.split(r"\[np\]", text, flags=re.IGNORECASE)
     cleaned_pages = []
@@ -27,17 +124,19 @@ def parse_dms_pages(raw: str) -> Tuple[str, str, str]:
         # Process justification tokens BEFORE removing other NTCIP tokens
         page = process_justification_tokens(page)
         
-        # Remove remaining NTCIP formatting tokens
-        page = NTCIP_TOKEN_PATTERN.sub("", page)
-        # Normalize whitespace (tabs to single space, multiple spaces to single space)
-        page = re.sub(r"[ \t]+", " ", page)
+        # Convert to structured data
+        structured_lines = convert_message(page)
         
-        # Replace placeholder with spacing AFTER whitespace normalization
-        page = page.replace('__JUSTIFY_RIGHT__', '    ')  # 4 spaces for right justification
+        # Convert structured data to display format with alignment markers
+        display_format = format_structured_for_display(structured_lines)
+        
+        # Remove remaining NTCIP formatting tokens
+        display_format = NTCIP_TOKEN_PATTERN.sub("", display_format)
         
         # Normalize excessive newlines
-        page = re.sub(r"\n{3,}", "\n\n", page)
-        cleaned_pages.append(page.strip())
+        display_format = re.sub(r"\n{3,}", "\n\n", display_format)
+        cleaned_pages.append(display_format.strip())
+    
     # Pad missing pages
     while len(cleaned_pages) < 3:
         cleaned_pages.append("")
@@ -53,30 +152,23 @@ def process_justification_tokens(page: str) -> str:
     processed = processed.replace('[jl4]', '__JUSTIFY_RIGHT__')
     
     # Remove [jl2] tokens
-    processed = processed.replace('[jl2]', '')
+    processed = processed.replace('[jl2]', ' ')
     
     return processed
 
 def remove_control_characters(text: str) -> str:
     """
-    Remove control characters that appear after NTCIP formatting tokens.
+    Remove control characters that appear after NTCIP formatting tokens
+    or at the end of words.
     """
-    # Remove single lowercase letters that appear immediately after closing brackets
-    # Pattern: ] followed by lowercase letter(s) at start of text content
-    return re.sub(r'\][a-z](?=[A-Z])', ']', text)
-def parse_api_utc(dt_str):
-    if not dt_str:
-        return None
+    if not text or text is None:
+        return ""
+    
+    # Remove single lowercase letters after brackets: [nl]cTEXT -> [nl]TEXT
+    # Remove trailing lowercase letters: TEXTt -> TEXT
+    pattern = r'(?<=\])[a-z]|[a-z](?=\s|$)'
+    return re.sub(pattern, '', text).strip(']')
 
-    dt = parse_datetime(dt_str)
-
-    if dt is None:
-        return None
-
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=dt_timezone.utc)
-
-    return dt.astimezone(dt_timezone.utc)
 
 class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     id = models.CharField(primary_key=True, max_length=128, blank=True, default='')

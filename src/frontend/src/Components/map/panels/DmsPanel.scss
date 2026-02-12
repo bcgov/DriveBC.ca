@@ -1,5 +1,4 @@
 @import "../../../styles/variables";
-
 .popup {
   // DMS panel
   &--dms {
@@ -229,34 +228,21 @@
           font-family: 'Repetition Scrolling', monospace;
           font-style: normal;
           font-weight: 400;
-          font-size: 24px;
+          font-size: 22px;
           line-height: 30px;
           color: #F7CE46;
           text-transform: uppercase;
-          letter-spacing: 0.02em;
-          white-space: pre-line;
-
-          // 1. FULL WIDTH ALIGNMENT
-          width: 100%;
-          // display: block;
-          text-align: center;
-          // text-align-last: justify; // Forces "SUMAS X-ING" and "5 MIN" to opposite ends
+          width: auto;
+          overflow-wrap: break-word;
           margin: 0;
-
-          // 2. DOTTED ELECTRICAL EFFECT
-          // We use a mask-image to create a grid of holes
-          mask-image: radial-gradient(circle, black 50%, rgba(0, 0, 0, 0.2) 50%);
-          mask-size: 2px 2px; // Adjust this to make dots bigger or smaller
-          -webkit-mask-image: radial-gradient(circle, black 50%, rgba(0, 0, 0, 0.2) 55%);
-          -webkit-mask-size: 3px 3px;
-
-          // 3. LED GLOW
-          text-shadow: 0 0 2px rgba(247, 206, 70, 0.6);
+          
+          // Alignment modifiers
+          &--left { text-align: left; }
+          &--center { text-align: center; }
+          &--right { text-align: right; }
         }
 
       }
-
-      
     }
 
     .sign-id-footer {

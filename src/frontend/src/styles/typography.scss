@@ -1,3 +1,12 @@
+@font-face {
+  font-family: 'Repetition Scrolling';
+  src: url("./fonts/repetition-scrolling/RepetitionScrolling.woff2") format("woff2"),
+       url("./fonts/repetition-scrolling/RepetitionScrolling.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 body, p, h1, h2, h3, h4, a, span {
   font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
