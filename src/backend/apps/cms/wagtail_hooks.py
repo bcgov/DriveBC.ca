@@ -20,6 +20,8 @@ from wagtail.admin.action_menu import ActionMenuItem
 from django.urls import reverse
 from django.utils.html import format_html
 
+from django.utils.safestring import mark_safe
+
 logger = logging.getLogger(__name__)
 
 
@@ -211,3 +213,35 @@ def register_copy_preview_button():
     Registers the custom button to appear in the page editor action bar.
     """
     return CopyPreviewURLMenuItem(order=100)
+
+@hooks.register("insert_global_admin_js")
+def add_custom_emergency_alert_js():
+    return mark_safe("""
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var path = window.location.pathname;
+            if (path.includes('/drivebc-cms/') &&  !path.includes('/advisory/') && !path.includes('/bulletin/')) {
+                fetch('/api/cms/emergency-alert/')
+                        .then(function(response) { 
+                            return response.json(); 
+                        })
+                        .then(function(data) {
+                            if (data && data.length > 0) {
+                                var errorLi = document.querySelector('li.error');
+                                if (errorLi) {
+                                    errorLi.innerHTML = 
+                                        '<svg class="icon icon-warning messages-icon" aria-hidden="true">' +
+                                        '<use href="#icon-warning"></use>' +
+                                        '</svg>' +
+                                        'You are able to only create one emergency alert at a time. ' +
+                                        'Please edit the existing one to update your emergency alert.';
+                                }
+                            }
+                        })
+                        .catch(function(error) {
+                            console.error('Error checking Emergency Alert:', error);
+                        });
+            }
+        });              
+    </script>
+    """)
