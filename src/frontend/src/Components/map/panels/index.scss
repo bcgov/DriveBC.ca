@@ -180,6 +180,10 @@
     &__description {
       margin-top: 0.5rem;
       margin-bottom: 1.5rem;
+
+      p {
+        word-break: break-word;
+      }
     }
 
     &__tools {
