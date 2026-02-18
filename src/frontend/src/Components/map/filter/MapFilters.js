@@ -62,8 +62,8 @@ export default function MapFilters(props) {
   const [futureEvents, setFutureEvents] = useState(eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents);
   const [roadConditions, setRoadConditions] = useState(mapContext.visible_layers.roadConditions);
   const [chainUps, setChainUps] = useState(mapContext.visible_layers.chainUps);
-  const [highwayCams, setHighwayCams] = useState(isCamDetail ? isCamDetail : mapContext.visible_layers.highwayCams);
-  const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
+  const [highwayCams, setHighwayCams] = useState(isCamDetail ? true : mapContext.visible_layers.highwayCams);
+  const [inlandFerries, setInlandFerries] = useState(isCamDetail ? true : mapContext.visible_layers.highwayCams);
   const [weather, setWeather] = useState(mapContext.visible_layers.weather);
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
   const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
@@ -318,7 +318,7 @@ export default function MapFilters(props) {
           <p className="filter-group__title">Conditions and features</p>
           <div className="filter-items-group">
             <div className="filter-items filter-items--conditions">
-              <div className={'filter-item filter-item--highway-cameras' + (highwayCams ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.cameras) ? ' loading' : '')}>
+              <div className={'filter-item filter-item--highway-cameras' + (highwayCams ? ' checked' : '') + (isCamDetail || disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.cameras) ? ' loading' : '')}>
                 <input
                   type="checkbox"
                   name="highway cameras"
@@ -387,15 +387,14 @@ export default function MapFilters(props) {
                 }
               </div>
 
-              <div className={'filter-item filter-item--inland-ferries' + (inlandFerries ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.ferries) ? ' loading' : '')}>
+              <div className={'filter-item filter-item--inland-ferries' + (inlandFerries ? ' checked' : '') + (isCamDetail || disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.ferries) ? ' loading' : '')}>
                 <input
                   type="checkbox"
                   name="ferries"
                   id="filter--inland-ferries"
                   onChange={e => filterHandler('inlandFerries', e)}
                   defaultChecked={mapContext.visible_layers.inlandFerries}
-                  disabled={disableFeatures}
-                />
+                  disabled={isCamDetail || disableFeatures} />
 
                 <label className="filter-item__button" htmlFor="filter--inland-ferries">
                   <span className="filter-item__button__icon">
@@ -494,8 +493,8 @@ export default function MapFilters(props) {
                   id="filter--chain-ups"
                   onChange={e => filterHandler('chainUps', e)}
                   defaultChecked={mapContext.visible_layers.chainUps}
-                  disabled={(disableFeatures && !enableChainUps)}
-                />
+                  disabled={(disableFeatures && !enableChainUps)} />
+
                 <label className="filter-item__button" htmlFor="filter--chain-ups">
                   <span className="filter-item__button__icon">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

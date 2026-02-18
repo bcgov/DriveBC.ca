@@ -815,7 +815,7 @@ export default function DriveBCMap(props) {
 
   // Ferries layer
   useEffect(() => {
-    if (!isCamDetail && ferries && filteredFerries) {
+    if (ferries && filteredFerries) {
       const featuresDict = loadLayer(
         mapLayers, mapRef, mapContext,
         'inlandFerries', ferries, filteredFerries, 66,
@@ -859,19 +859,17 @@ export default function DriveBCMap(props) {
 
   // Rest stops layer
   useEffect(() => {
-    if (!isCamDetail) {
-      loadLayer(
-        mapLayers, mapRef, mapContext,
-        'restStops', restStops, filteredRestStops, 60,
-        referenceData, updateReferenceFeature, setLoadingLayers
-      );
+    loadLayer(
+      mapLayers, mapRef, mapContext,
+      'restStops', restStops, filteredRestStops, 60,
+      referenceData, updateReferenceFeature, setLoadingLayers
+    );
 
-      loadLayer(
-        mapLayers, mapRef, mapContext,
-        'largeRestStops', restStops, filteredRestStops, 60,
-        referenceData, updateReferenceFeature, setLoadingLayers
-      );
-    }
+    loadLayer(
+      mapLayers, mapRef, mapContext,
+      'largeRestStops', restStops, filteredRestStops, 60,
+      referenceData, updateReferenceFeature, setLoadingLayers
+    );
   }, [filteredRestStops]);
 
   // Border crossings layer
@@ -885,15 +883,13 @@ export default function DriveBCMap(props) {
 
   // Wildfires layer
   useEffect(() => {
-    if (!isCamDetail) {
-      const featuresDict = loadLayer(
-        mapLayers, mapRef, mapContext,
-        'wildfires', wildfires, filteredWildfires, 72,
-        referenceData, updateReferenceFeature, setLoadingLayers
-      );
+    const featuresDict = loadLayer(
+      mapLayers, mapRef, mapContext,
+      'wildfires', wildfires, filteredWildfires, 72,
+      referenceData, updateReferenceFeature, setLoadingLayers
+    );
 
-      setFeatureContext({...featureContext, wildfires: featuresDict});
-    }
+    setFeatureContext({...featureContext, wildfires: featuresDict});
   }, [wildfires]);
 
   // Advisories layer
@@ -955,13 +951,11 @@ export default function DriveBCMap(props) {
 
   // Dms layer
   useEffect(() => {
-    if (!isCamDetail) {
-      loadLayer(
-        mapLayers, mapRef, mapContext,
-        'dms', dms, filteredDms, 60,
-        referenceData, updateReferenceFeature, setLoadingLayers
-      );
-    }
+    loadLayer(
+      mapLayers, mapRef, mapContext,
+      'dms', dms, filteredDms, 60,
+      referenceData, updateReferenceFeature, setLoadingLayers
+    );
   }, [filteredDms]);
 
 
@@ -1254,7 +1248,6 @@ export default function DriveBCMap(props) {
       {isCamDetail && (
         <FilterTabs
           mapLayers={mapLayers}
-          disableFeatures={isCamDetail}
           enableRoadConditions={true}
           enableChainUps={true}
           isCamDetail={isCamDetail}
