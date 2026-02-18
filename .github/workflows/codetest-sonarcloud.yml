@@ -18,7 +18,7 @@ jobs:
         ports:
           - 6379:6379
       postgres:
-        image: postgis/postgis:15-3.4
+        image: postgis/postgis:17-3.4
         ports:
           - 5432:5432
         env:
@@ -33,10 +33,10 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y gdal-bin
-    - name: Set up Python 3.11
+    - name: Set up Python 3.13
       uses: actions/setup-python@v6
       with:
-        python-version: '3.11'
+        python-version: '3.13'
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
@@ -108,9 +108,8 @@ jobs:
     - name: Override Coverage Source Path for Sonar
       run: |
         sed -i "s/<source>\/home\/runner\/work\/DriveBC.ca\/DriveBC.ca<\/source>/<source>\/github\/workspace<\/source>/g" /home/runner/work/DriveBC.ca/DriveBC.ca/coverage.xml
-
     - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
+      uses: SonarSource/sonarqube-scan-action@v5.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
