@@ -40,6 +40,8 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
     wind_direction = serializers.SerializerMethodField()
     maximum_wind = serializers.SerializerMethodField()
     road_condition = serializers.SerializerMethodField()
+    visibility = serializers.SerializerMethodField()
+    present_weather = serializers.SerializerMethodField()
 
     class Meta:
         model = CurrentWeather
@@ -57,6 +59,8 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
             'road_temperature',
             'maximum_wind',
             'road_condition',
+            'visibility',
+            'present_weather',
             'location',
             'location_description',
             'hourly_forecast_group',
@@ -120,6 +124,65 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
         if "road_surface" in obj.datasets:
             data = obj.datasets["road_surface"]
             return data["value"]
+
+    def get_visibility(self, obj):
+        if "visibility" in obj.datasets:
+            data = obj.datasets["visibility"]
+            value = round(float(data["value"]))
+            if value <= 250:
+                return "Dense fog"
+            elif 250 < value <= 450:
+                return "Limited"
+        return None
+
+    def get_present_weather(self, obj):
+        if "present_weather" in obj.datasets:
+            data = obj.datasets["present_weather"]
+            code = int(data["value"])
+
+            weather_map = {
+                0: "Clear",
+                4: "Haze or Smoke",
+                5: "Haze or Smoke",
+                10: "Mist",
+                20: "Fog",
+                21: "Precipitation",
+                22: "Drizzle",
+                23: "Rain",
+                24: "Snow",
+                30: "Fog",
+                31: "Fog",
+                32: "Fog",
+                33: "Fog",
+                34: "Fog",
+                40: "Precipitation",
+                41: "Precipitation",
+                42: "Heavy Precipitation",
+                50: "Drizzle",
+                51: "Light Drizzle",
+                52: "Moderate Drizzle",
+                53: "Heavy Drizzle",
+                60: "Rain",
+                61: "Light Rain",
+                62: "Moderate Rain",
+                63: "Heavy Rain",
+                67: "Light Mixed Rain and Snow",
+                68: "Moderate or Heavy Mixed Rain and Snow",
+                70: "Snow",
+                71: "Light Snow",
+                72: "Moderate Snow",
+                73: "Heavy Snow",
+                80: "Showers",
+                81: "Light Rain Showers",
+                82: "Moderate Rain Showers",
+                83: "Heavy Rain Showers",
+                84: "Very Heavy Rain Showers",
+                85: "Light Snow Showers",
+                86: "Moderate Snow Showers",
+                87: "Heavy Snow Showers",
+            }
+
+            return weather_map.get(code)
 
 
 class HighElevationForecastSerializer(serializers.ModelSerializer):
