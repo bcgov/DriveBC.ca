@@ -7,8 +7,8 @@ import {
   compareRouteDistance,
   filterByRoute,
   filterAdvisoryByRoute,
-  offsetCoordinates,
-  savePointFeature,
+  groupNearbyFeatures,
+  applyOverlapOffsets,
   getMidPoint,
   populateRouteProjection
 } from './spatial';
@@ -23,5 +23,5 @@ export {
   // map
   calculateCenter, fitMap, setZoomPan, toggleMyLocation, transformFeature, zoomIn, zoomOut, removeOverlays,
   // spatial
-  compareRouteDistance, filterByRoute, filterAdvisoryByRoute, offsetCoordinates, savePointFeature, getMidPoint, populateRouteProjection
+  compareRouteDistance, filterByRoute, filterAdvisoryByRoute, groupNearbyFeatures, applyOverlapOffsets, getMidPoint, populateRouteProjection
 };
