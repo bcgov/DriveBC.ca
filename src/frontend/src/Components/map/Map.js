@@ -58,7 +58,7 @@ import { FeatureContext, MapContext } from '../../App.js';
 import { resizePanel, renderPanel, togglePanel } from './panels';
 import { pointerMoveHandler, resetHoveredStates } from './handlers/hover';
 import { pointerClickHandler, resetClickedStates } from './handlers/click';
-import { updateOverlappingPositions } from "./layers/eventsLayer";
+import { groupNearbyFeatures, applyOverlapOffsets } from "./helpers";
 import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
 import DistanceLabels from "../routing/DistanceLabels";
 import FilterTabs from './filter/FilterTabs';
@@ -153,6 +153,7 @@ export default function DriveBCMap(props) {
 
   // Refs
   const mapLayers = useRef({}); window.mapLayers = mapLayers;
+  const overlapGroups = useRef({});
   const geolocation = useRef();
   const hoveredFeature = useRef();
   const searchParamInitialized = useRef();
@@ -566,9 +567,9 @@ export default function DriveBCMap(props) {
 
       const params = new URLSearchParams(window.location.search);
 
-      // Zoom/resolution changed, update overlapping event positions
+      // Zoom/resolution changed, update overlapping feature positions
       if (params.get('zoom') != mapView.current.getZoom()) {
-        updateOverlappingPositions(mapLayers, mapContext, mapView);
+        applyOverlapOffsets(overlapGroups.current, mapView);
       }
 
       params.set("pan", lon + ',' + lat);
@@ -957,6 +958,15 @@ export default function DriveBCMap(props) {
       referenceData, updateReferenceFeature, setLoadingLayers
     );
   }, [filteredDms]);
+
+  // Group and offset overlapping point features after all layers finish loading
+  useEffect(() => {
+    const allLoaded = Object.values(loadingLayers).every(v => v === false);
+    if (allLoaded && mapView.current) {
+      overlapGroups.current = groupNearbyFeatures(mapLayers);
+      applyOverlapOffsets(overlapGroups.current, mapView);
+    }
+  }, [loadingLayers]);
 
 
   /* Rendering */

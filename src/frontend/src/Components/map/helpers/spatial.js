@@ -170,34 +170,120 @@ export const compareRouteDistance = (route1, route2) => {
   return true;
 }
 
-// Offset coordinates for overlapping points
-export function offsetCoordinates(coords, index, overlaps, resolution) {
-  // scale offset distance so it increases as you zoom out
-  const baseDistance = 0.066; // 100 meters at default resolution
-  const scale = Math.pow(resolution / 4.77, 0.8);  // scale distance with falloff based on minimum resolution at max zoom 4.77
+// Compute offset coordinates for a single overlapping point
+function offsetCoordinates(coords, index, overlaps, resolution) {
+  const baseDistance = 0.066;
+  const scale = Math.pow(resolution / 4.77, 0.8);
   const distance = baseDistance * scale;
 
-  // spread points evenly around a circle
   const angle = 360 / overlaps;
   const bearing = angle * index;
 
-  // Return new offset coordinates
   const turfPoint = point(coords);
   const destinationPoint = destination(turfPoint, distance, bearing, { units: 'kilometers' });
   return destinationPoint.geometry.coordinates;
 }
 
-// Save point events in mapContext with coordinates as key
-export const savePointFeature = (mapContext, event, feature) => {
-  const locationIndex = event.location.coordinates[0].toFixed(4) + ',' + event.location.coordinates[1].toFixed(4);
-  feature.set('locationIndex', locationIndex);
+// Collect all point features from loaded map layers, then group nearby
+// ones using a Flatbush spatial index. Returns an object of overlap groups
+// keyed by a locationIndex string, each containing { id, feature } entries.
+export const groupNearbyFeatures = (mapLayers, toleranceMeters = 50) => {
+  const pending = [];
+  const seenIds = new Set();
+  for (const [key, layer] of Object.entries(mapLayers.current)) {
+    if (!layer || key.endsWith('Lines') || key === 'advisoriesLayer' || key === 'routeLayer') continue;
 
-  if (locationIndex in mapContext.events) {
-    mapContext.events[locationIndex].push(event.id);
+    const projection = layer.getSource().getProjection()?.getCode() || 'EPSG:3857';
+    for (const feature of layer.getSource().getFeatures()) {
+      if (feature.getGeometry().getType() !== 'Point') continue;
 
-  } else {
-    // point does not exist, return original coordinates
-    mapContext.events[locationIndex] = [event.id];
+      const id = feature.getId();
+      if (seenIds.has(id)) continue;
+      seenIds.add(id);
+
+      // Stores original EPSG:4326 coordinates on each feature so that subsequent
+      // calls (after polling) always group based on the true position, not an
+      // already-offset geometry.
+      let coords = feature.get('_originalCoords');
+      if (!coords) {
+        coords = feature.getGeometry().clone().transform(projection, 'EPSG:4326').getCoordinates();
+        feature.set('_originalCoords', coords);
+      }
+
+      pending.push({ coords, id, feature });
+    }
+  }
+
+  if (pending.length === 0) return {};
+
+  const groups = {};
+  const toleranceDeg = toleranceMeters / 111320;
+
+  const index = new Flatbush(pending.length);
+  for (const { coords } of pending) {
+    index.add(coords[0], coords[1], coords[0], coords[1]);
+  }
+  index.finish();
+
+  const assigned = new Set();
+
+  for (let i = 0; i < pending.length; i++) {
+    if (assigned.has(i)) continue;
+
+    const { coords } = pending[i];
+    const neighborIndices = index.search(
+      coords[0] - toleranceDeg, coords[1] - toleranceDeg,
+      coords[0] + toleranceDeg, coords[1] + toleranceDeg,
+    );
+
+    const locationIndex = coords[0].toFixed(4) + ',' + coords[1].toFixed(4);
+    groups[locationIndex] = [];
+
+    for (const idx of neighborIndices) {
+      if (assigned.has(idx)) continue;
+      assigned.add(idx);
+
+      const entry = pending[idx];
+      groups[locationIndex].push({ id: entry.id, feature: entry.feature });
+      entry.feature.set('locationIndex', locationIndex);
+    }
+
+    // Sort features by id to ensure consistent ordering
+    groups[locationIndex].sort((a, b) => String(a.id).localeCompare(String(b.id)));
+  }
+
+  return groups;
+}
+
+// Apply offsets to all overlapping feature groups.
+// Called after groupNearbyFeatures on load, and again on zoom change.
+export const applyOverlapOffsets = (overlapGroups, mapView) => {
+  const resolution = mapView.current.getResolution();
+  const projection = mapView.current.getProjection().getCode();
+
+  for (const [, entries] of Object.entries(overlapGroups)) {
+    for (let i = 0; i < entries.length; i++) {
+      // Resets every feature to its original position first, then offsets
+      // entries[1..n] in groups with more than one feature.
+      const original = entries[i].feature.get('_originalCoords');
+      if (original) {
+        const restored = new Point(original);
+        restored.transform('EPSG:4326', projection);
+        entries[i].feature.setGeometry(restored);
+      }
+    }
+
+    if (entries.length <= 1) continue;
+
+    const original = entries[0].feature.get('_originalCoords');
+    if (!original) continue;
+
+    for (let i = 1; i < entries.length; i++) {
+      const coords = offsetCoordinates(original, i, entries.length - 1, resolution);
+      const newGeometry = new Point(coords);
+      newGeometry.transform('EPSG:4326', projection);
+      entries[i].feature.setGeometry(newGeometry);
+    }
   }
 }
 
