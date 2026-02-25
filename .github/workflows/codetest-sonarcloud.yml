@@ -3,8 +3,8 @@ name: Unit tests & Sonar Scan
 on:
   push:
     branches: [ "main" ]
-#  pull_request:
-#      types: [opened, synchronize, reopened]
+  pull_request:
+      types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 jobs:
