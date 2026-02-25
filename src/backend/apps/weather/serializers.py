@@ -63,7 +63,7 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
             'present_weather',
             'location',
             'location_description',
-            'hourly_forecast_group',
+            'forecast_group',
             'issuedUtc',
             'elevation'
         ]

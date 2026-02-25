@@ -62,7 +62,7 @@ class CurrentWeather(ExportModelOperationsMixin('current_weather'), BaseModel):
     location_description = models.TextField(null=True)
     datasets = models.JSONField(default=list, null=True)
     issuedUtc = models.DateTimeField(null=True)
-    hourly_forecast_group = models.JSONField(null=True)
+    forecast_group = models.JSONField(null=True)
 
     def __str__(self):
         return f"Current weather for {self.weather_station_name}"

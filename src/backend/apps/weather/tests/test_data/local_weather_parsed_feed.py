@@ -18,294 +18,39 @@ parsed_feed = {
     "location_longitude": -123.11806,
     "location_latitude": 50.05417,
     "issuedUtc": "2024-07-04T21:00:00Z",
-    "hourly_forecast_group": [
+    "forecast_group": [
         {
-            "TimestampUtc": "2024-01-15T13:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
+            "Code": "16",
+            "Text": "Cloudy.  Flurries/light snow showers possible between 8 am and noon.  0-1 cm road snow accumulations.  High: 2.",
+            "Period": "Wednesday",
+            "High": "2"
+    
         },
         {
-            "TimestampUtc": "2024-01-15T13:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-12.8",
-            "Unit": "°C"
+            "Code": "10",
+            "Text": "Cloudy.  Low: -1.",
+            "Period": "Wednesday Night",
+            "Low": "-1"
         },
         {
-            "TimestampUtc": "2024-01-15T14:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
+            "Code": "10",
+            "Text": "Cloudy.",
+            "Period": "Thursday"
         },
         {
-            "TimestampUtc": "2024-01-15T14:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-13.2",
-            "Unit": "°C"
+            "Code": "16",
+            "Text": "Cloudy.  Flurries at times, mainly am.",
+            "Period": "Thursday Night"
         },
         {
-            "TimestampUtc": "2024-01-15T15:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
+            "Code": "16",
+            "Text": "Cloudy.  Flurries at times, mainly am.",
+            "Period": "Friday"
         },
         {
-            "TimestampUtc": "2024-01-15T15:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-13.1",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-15T16:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-15T16:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-12.5",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-15T17:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-15T17:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-12.3",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-15T18:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-15T18:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-10.8",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-15T19:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-15T19:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-8.8",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-15T20:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-15T20:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-5.2",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-15T21:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-15T21:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-4.3",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-15T22:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-15T22:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-4.5",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-15T23:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-15T23:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-5.1",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T00:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T00:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-4.2",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T01:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T01:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-5.7",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T02:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T02:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-6.4",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T03:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T03:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-6.8",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T04:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T04:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-7",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T05:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T05:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-7.1",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T06:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T06:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-7.2",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T07:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T07:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-7.5",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T08:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T08:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-7.7",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T09:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T09:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-7.9",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T10:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T10:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-8",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T11:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T11:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-7.9",
-            "Unit": "°C"
-        },
-        {
-            "TimestampUtc": "2024-01-16T12:00:00.000Z",
-            "ObservationTypeName": "surfaceCondition",
-            "Value": "DRY",
-            "Unit": ""
-        },
-        {
-            "TimestampUtc": "2024-01-16T12:00:00.000Z",
-            "ObservationTypeName": "surfaceTemp",
-            "Value": "-7.9",
-            "Unit": "°C"
+            "Code": "17",
+            "Text": "Cloudy.  Snow begins around 10-11 pm and tapers off around 2-3 am.",
+            "Period": "Friday Night"
         }
     ]
 }
@@ -319,5 +64,5 @@ parsed_summer_feed = {
     "location_longitude": -123.11806,
     "location_latitude": 50.05417,
     "issuedUtc": "2024-07-04T21:00:00Z",
-    "hourly_forecast_group": []
+    "forecast_group": []
 }

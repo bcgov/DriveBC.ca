@@ -1,58 +1,89 @@
 {
   "11091": {
-    "HourlyForecasts": [
-      {
-        "ObservationTypeName": "surfaceCondition",
-        "TimestampUtc": "2026-02-23T23:00:00.000Z",
-        "Unit": "",
-        "Value": "SNOW"
-      },
-      {
-        "ObservationTypeName": "surfaceTemp",
-        "TimestampUtc": "2026-02-23T23:00:00.000Z",
-        "Unit": "deg C",
-        "Value": "2.3"
-      }
-    ]
+    "Forecasts": [
+            {
+                "Code": "12",
+                "Text": "Cloudy.  Rain tapers off early then dry before occasional light rain after 11 am-noon.  High: 4.",
+                "high": 4.0,
+                "Period": "Thursday"
+            },
+            {
+                "low": 2.0,
+                "Code": "12",
+                "Text": "Cloudy.  Occasional light rain showers.  Low: 2.",
+                "Period": "Thursday Night"
+            },
+            {
+                "Code": "12",
+                "Text": "Cloudy.  Occasional light rain showers, mainly before 11 am-noon.",
+                "Period": "Friday"
+            },
+            {
+                "Code": "10",
+                "Text": "Mostly cloudy.",
+                "Period": "Friday Night"
+            },
+            {
+                "Code": "05",
+                "Text": "Clearing skies.",
+                "Period": "Saturday"
+            },
+            {
+                "Code": "30",
+                "Text": "Clear.",
+                "Period": "Saturday Night"
+            }
+        ]
   },
   "11092": {
-    "HourlyForecasts": [
-      {
-        "ObservationTypeName": "surfaceCondition",
-        "TimestampUtc": "2026-02-23T23:00:00.000Z",
-        "Unit": "",
-        "Value": "WET"
-      }
-    ]
+    "Forecasts": [
+            {
+                "Code": "12",
+                "Text": "Cloudy.  Rain tapers off early then dry before occasional light rain after 11 am-noon.  High: 7.",
+                "high": 7.0,
+                "Period": "Thursday"
+            },
+            {
+                "low": 3.0,
+                "Code": "12",
+                "Text": "Cloudy.  Occasional light rain showers.  Low: 3.",
+                "Period": "Thursday Night"
+            },
+            {
+                "Code": "12",
+                "Text": "Cloudy.  Occasional light rain showers, mainly before 11 am-noon.",
+                "Period": "Friday"
+            },
+            {
+                "Code": "10",
+                "Text": "Mostly cloudy.",
+                "Period": "Friday Night"
+            },
+            {
+                "Code": "05",
+                "Text": "Clearing skies.",
+                "Period": "Saturday"
+            },
+            {
+                "Code": "30",
+                "Text": "Clear.",
+                "Period": "Saturday Night"
+            }
+        ]
   },
   "11093": {
-    "HourlyForecasts": [
-      {
-        "ObservationTypeName": "surfaceCondition",
-        "TimestampUtc": "2026-02-23T23:00:00.000Z",
-        "Unit": "",
-        "Value": "DRY"
-      }
+    "Forecasts": [
+      
     ]
   },
   "11094": {
-    "HourlyForecasts": [
-      {
-        "ObservationTypeName": "surfaceCondition",
-        "TimestampUtc": "2026-02-23T23:00:00.000Z",
-        "Unit": "",
-        "Value": "DRY"
-      }
+    "Forecasts": [
+      
     ]
   },
   "11095": {
-    "HourlyForecasts": [
-      {
-        "ObservationTypeName": "surfaceCondition",
-        "TimestampUtc": "2026-02-23T23:00:00.000Z",
-        "Unit": "",
-        "Value": "DRY"
-      }
+    "Forecasts": [
+      
     ]
   }
 }

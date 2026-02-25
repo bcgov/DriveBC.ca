@@ -3,6 +3,11 @@
 .popup {
   // Local weather popup
   &--weather--local {
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: left;
+    }
     .popup__title {
       background-color: $Grey30;
 
@@ -19,7 +24,8 @@
     .popup__content {
       display: flex;
       flex-direction: column;
-      height: 100%; 
+      height: 100%;
+      overflow-x: hidden; 
 
       p {
         margin-bottom: 0;

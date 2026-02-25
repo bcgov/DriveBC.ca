@@ -104,13 +104,13 @@ class TestCurrentWeatherFeedParser(BaseTest):
             "unit": "km/h",
         }
 
-        # Hourly forecast feed passthrough
-        assert len(weather_data["hourly_forecast_group"]) == len(
-            self.forecast_data["11091"]["HourlyForecasts"]
+        # Forecast feed passthrough
+        assert len(weather_data["forecast_group"]) == len(
+            self.forecast_data["11091"]["Forecasts"]
         )
-        assert weather_data["hourly_forecast_group"][0] == {
-            "ObservationTypeName": "surfaceCondition",
-            "TimestampUtc": "2026-02-23T23:00:00.000Z",
-            "Unit": "",
-            "Value": "SNOW",
+        assert weather_data["forecast_group"][0] == {
+            "Code": "12",
+            "Text": "Cloudy.  Rain tapers off early then dry before occasional light rain after 11 am-noon.  High: 4.",
+            "High": 4.0,
+            "Period": "Thursday"
         }
