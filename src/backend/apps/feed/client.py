@@ -11,6 +11,7 @@ from apps.feed.constants import (
     CURRENT_WEATHER_STATIONS,
     DISTRICT_BOUNDARIES,
     DIT,
+    DMS,
     FORECAST_WEATHER,
     INLAND_FERRY,
     OPEN511,
@@ -19,26 +20,23 @@ from apps.feed.constants import (
     REST_STOP,
     WEBCAM,
     WILDFIRE,
-    DMS,
 )
 from apps.feed.serializers import (
     CarsClosureSerializer,
     CurrentWeatherSerializer,
+    DmsAPISerializer,
     EventAPISerializer,
     EventFeedSerializer,
     FerryAPISerializer,
     RestStopSerializer,
     WebcamAPISerializer,
     WebcamFeedSerializer,
-    DmsAPISerializer,
 )
 from apps.shared.serializers import DistrictAPISerializer
 from apps.wildfire.serializers import WildfireAreaSerializer, WildfirePointSerializer
-from apps.dms.serializers import DmsSerializer
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
-from django.db import transaction
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
@@ -399,129 +397,116 @@ class FeedClient:
 
     # Current Weather
     def get_current_weather_list_feed(self, serializer_cls, token):
-        """Get data feed for list of objects."""
+        # Delete existing VMS signs
+        serializer_cls.Meta.model.objects.filter(weather_station_name__contains='VMS').delete()
 
-        try:
-            # Delete existing VMS signs
-            serializer_cls.Meta.model.objects.filter(weather_station_name__contains='VMS').delete()
+        res = []
 
-            response = self.make_weather_request(settings.DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL, token)
-            response.raise_for_status()
-            json_response = response.json()
-            json_objects = []
+        # Get list of stations and iterate to build serializer data
+        response = self.make_weather_request(settings.DRIVEBC_WEATHER_CURRENT_STATIONS_API_BASE_URL, token)
+        if response.status_code != 200:
+            logger.warning('Error fetching list of weather stations')
+            return res
 
-            for station in json_response:
-                hourly_forecast_group = []
-                station_number = station.get("WeatherStationNumber")
-                forecast_endpoint = settings.DRIVEBC_WEATHER_FORECAST_API_BASE_URL + f"/{station_number}"
-                api_endpoint = settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL + f"{station_number}"
+        stations_data = response.json()
+        for station in stations_data:
+            station_number = station.get("WeatherStationNumber")
 
+            # Hourly forecast
+            hourly_forecast_group = []
+            forecast_endpoint = settings.DRIVEBC_WEATHER_FORECAST_API_BASE_URL + f"/{station_number}"
+            forecast_response = self.make_weather_request(forecast_endpoint, token)
+            if forecast_response.status_code == 200:
+                hourly_forecast_data = forecast_response.json()
+                hourly_forecast_group = hourly_forecast_data.get("HourlyForecasts") or []
+
+            elif forecast_response.status_code != 204:
+                logger.warning(f"Error fetching hourly forcast for station {station_number}")
+                continue
+
+            # General station data
+            general_data_endpoint = settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL + f"{station_number}"
+            general_data_response = self.make_weather_request(general_data_endpoint, token)
+            if general_data_response.status_code != 200:
+                logger.warning(f"Error fetching data for station {station_number}")
+                continue
+
+            general_station_data = general_data_response.json()
+
+            weather_station_name = general_station_data.get('WeatherStation').get("WeatherStationName")
+            if weather_station_name and 'VMS' in weather_station_name:
+                continue  # Do not process VMS stations
+
+            general_station_datasets = general_station_data.get("Datasets") if general_station_data else None
+            if general_station_datasets is None:
+                logger.warning(f"Empty dataset for station {station_number}")
+                continue  # Empty dataset, do not process
+
+            # DBC22-2125 - use CollectionUtc of first dataset instead of IssuedUtc, to be improved
+            issuedUtc = general_station_datasets[0].get("CollectionUtc") \
+                if general_station_datasets and len(general_station_datasets) else None
+
+            if issuedUtc is not None:
                 try:
-                    response = self.make_weather_request(forecast_endpoint, token)
-                    if response.status_code != 204:
-                        hourly_forecast_data = response.json()
-                        hourly_forecast_group = hourly_forecast_data.get("HourlyForecasts") or []
-                except requests.RequestException as e:
-                    logger.error(f"Error making API call for Area Code {station_number}: {e}")
+                    # SAWSx sends this field as ISO time without
+                    # offset, needed for python to parse correctly
+                    issuedUtc = datetime.fromisoformat(f"{issuedUtc}+00:00")
 
-                try:
-                    response = self.make_weather_request(api_endpoint, token)
-                    data = response.json()
-                    datasets = data.get("Datasets") if data else None
+                except Exception:  # date parsing error
+                    logger.warning(f"Issued UTC sent by {station_number} as {issuedUtc}")
+                    continue
 
-                    # DBC22-2125 - use CollectionUtc of first dataset instead of IssuedUtc, to be improved
-                    issuedUtc = datasets[0].get("CollectionUtc") if datasets and len(datasets) else None
+            # Filter down datasets to known mapped entries
+            mapped_datasets = []
+            for dataset in general_station_datasets:
+                dataset_name = dataset.get("DataSetName")
+                if dataset_name not in DATASETNAMES:
+                    logger.info(f"Unknown dataset name {dataset_name} for station {station_number}")
+                    continue
+                mapped_datasets.append(dataset)
 
-                    if issuedUtc is not None:
-                        try:
-                            # SAWSx sends this field as ISO time without
-                            # offset, needed for python to parse correctly
-                            issuedUtc = datetime.fromisoformat(f"{issuedUtc}+00:00")
-                        except Exception:  # date parsing error
-                            logger.error(f"Issued UTC sent by {station_number} as {issuedUtc}")
+            # DBC22-2126 - skip stations where all mapped weather values are null/empty
+            has_weather_data = any(
+                dataset.get(VALUE_FIELD_MAPPING[dataset.get("DataSetName")]) not in (None, "")
+                for dataset in mapped_datasets
+            )
+            if not has_weather_data:
+                continue
 
-                    weather_station_name = data.get('WeatherStation').get("WeatherStationName")
-                    # Do not process VMS stations
-                    if weather_station_name and 'VMS' in weather_station_name:
-                        continue
+            filtered_dataset = {}
+            for dataset in mapped_datasets:
+                dataset_name = dataset.get("DataSetName")
+                display_name = DISPLAYNAME_MAPPING[dataset_name]
+                serializer_name = SERIALIZER_MAPPING[dataset_name]
+                value_field = VALUE_FIELD_MAPPING[dataset_name]
 
-                    elevation = data.get('WeatherStation').get("Elevation")
-                    Longitude = data.get('WeatherStation').get("Longitude")
-                    Latitude = data.get('WeatherStation').get("Latitude")
-                    location_description = data.get('WeatherStation').get("LocationDescription")
-                    # filtering down dataset to just SensorTypeName and DataSetName
-                    filtered_dataset = {}
+                if display_name == dataset.get("DisplayName"):
+                    filtered_dataset[serializer_name] = {
+                        "value": dataset.get(value_field),
+                        "unit": dataset.get("Unit"),
+                    }
 
-                    if datasets is None:
-                        continue
+            weather_station = general_station_data.get('WeatherStation') or {}
+            current_weather_data = {
+                'code': station_number,
+                'weather_station_name': weather_station_name,
+                'elevation': weather_station.get("Elevation"),
+                'location_description': weather_station.get("LocationDescription"),
+                'datasets': filtered_dataset,
+                'location_longitude': weather_station.get("Longitude"),
+                'location_latitude': weather_station.get("Latitude"),
+                'issuedUtc': issuedUtc,
+                'hourly_forecast_group': hourly_forecast_group
+            }
 
-                    # DBC22-2126 - filtering out dataset that weather info is null
-                    shouldSkip = True
-                    for dataset in datasets:
-                        dataset_name = dataset["DataSetName"]
-                        if dataset_name not in DATASETNAMES:
-                            continue
-                        value_field = VALUE_FIELD_MAPPING[dataset_name]
-                        if value_field is not None:
-                            shouldSkip = False
+            serializer = serializer_cls(data=current_weather_data)
+            if serializer.is_valid(raise_exception=False):
+                res.append(current_weather_data)
 
-                    for dataset in datasets:
-                        dataset_name = dataset["DataSetName"]
-                        if dataset_name not in DATASETNAMES:
-                            continue
-                        display_name = DISPLAYNAME_MAPPING[dataset_name]
-                        serializer_name = SERIALIZER_MAPPING[dataset_name]
-                        value_field = VALUE_FIELD_MAPPING[dataset_name]
+            else:
+                logger.warning(f"Data error for station {station_number}")
 
-                        if display_name == dataset["DisplayName"]:
-                            filtered_dataset[serializer_name] = {
-                                "value": dataset[value_field], "unit": dataset["Unit"],
-                            }
-
-                    if shouldSkip is False:
-                        current_weather_data = {
-                            'code': station_number,
-                            'weather_station_name': weather_station_name,
-                            'elevation': elevation,
-                            'location_description': location_description,
-                            'datasets': filtered_dataset,
-                            'location_longitude': Longitude,
-                            'location_latitude': Latitude,
-                            'issuedUtc': issuedUtc,
-                            'hourly_forecast_group': hourly_forecast_group
-                        }
-                        serializer = serializer_cls(data=current_weather_data,
-                                                    many=isinstance(current_weather_data, list))
-                        json_objects.append(current_weather_data)
-
-                except requests.RequestException as e:
-                    logger.error(f"Error making API call for Area Code {station_number}: {e}")
-
-            try:
-                serializer.is_valid(raise_exception=True)
-                return json_objects
-
-            except (KeyError, ValidationError):
-                field_errors = serializer.errors
-                for field, errors in field_errors.items():
-                    logger.error(f"Field: {field}, Errors: {errors}")
-
-            try:
-                with transaction.atomic():
-                    serializer = serializer_cls(data=json_objects, many=True)
-                    if serializer.is_valid(raise_exception=True):
-                        serializer.save()
-                        return Response({"message": "Data successfully updated"}, status=200)
-                    else:
-                        return Response(serializer.errors, status=400)
-            except (KeyError, ValidationError):
-                field_errors = serializer.errors
-                for field, errors in field_errors.items():
-                    logger.error(f"Field: {field}, Errors: {errors}")
-                return Response({"error": "Validation error occurred"}, status=400)
-
-        except requests.RequestException:
-            return Response("Error fetching data from weather API", status=500)
+        return res
 
     def get_current_weather_list(self, token):
         return self.get_current_weather_list_feed(CurrentWeatherSerializer, token)
@@ -644,5 +629,4 @@ class FeedClient:
                     "response_text": e.response.text[:2000],
                 },
             )
-            raise 
-            
+            raise
