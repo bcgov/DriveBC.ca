@@ -1,0 +1,22 @@
+[
+  {
+    "WeatherStationNumber": "11091",
+    "WeatherStationName": "Brandywine Devar"
+  },
+  {
+    "WeatherStationNumber": "11092",
+    "WeatherStationName": "Sea to Sky VMS"
+  },
+  {
+    "WeatherStationNumber": "11093",
+    "WeatherStationName": "Dataset Missing Station"
+  },
+  {
+    "WeatherStationNumber": "11094",
+    "WeatherStationName": "Issued Parse Error Station"
+  },
+  {
+    "WeatherStationNumber": "11095",
+    "WeatherStationName": "No Weather Values Station"
+  }
+]

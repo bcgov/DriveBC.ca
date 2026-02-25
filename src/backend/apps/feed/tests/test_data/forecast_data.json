@@ -1,0 +1,58 @@
+{
+  "11091": {
+    "HourlyForecasts": [
+      {
+        "ObservationTypeName": "surfaceCondition",
+        "TimestampUtc": "2026-02-23T23:00:00.000Z",
+        "Unit": "",
+        "Value": "SNOW"
+      },
+      {
+        "ObservationTypeName": "surfaceTemp",
+        "TimestampUtc": "2026-02-23T23:00:00.000Z",
+        "Unit": "deg C",
+        "Value": "2.3"
+      }
+    ]
+  },
+  "11092": {
+    "HourlyForecasts": [
+      {
+        "ObservationTypeName": "surfaceCondition",
+        "TimestampUtc": "2026-02-23T23:00:00.000Z",
+        "Unit": "",
+        "Value": "WET"
+      }
+    ]
+  },
+  "11093": {
+    "HourlyForecasts": [
+      {
+        "ObservationTypeName": "surfaceCondition",
+        "TimestampUtc": "2026-02-23T23:00:00.000Z",
+        "Unit": "",
+        "Value": "DRY"
+      }
+    ]
+  },
+  "11094": {
+    "HourlyForecasts": [
+      {
+        "ObservationTypeName": "surfaceCondition",
+        "TimestampUtc": "2026-02-23T23:00:00.000Z",
+        "Unit": "",
+        "Value": "DRY"
+      }
+    ]
+  },
+  "11095": {
+    "HourlyForecasts": [
+      {
+        "ObservationTypeName": "surfaceCondition",
+        "TimestampUtc": "2026-02-23T23:00:00.000Z",
+        "Unit": "",
+        "Value": "DRY"
+      }
+    ]
+  }
+}

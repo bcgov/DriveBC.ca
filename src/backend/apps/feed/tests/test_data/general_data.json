@@ -1,0 +1,147 @@
+{
+  "11091": {
+    "WeatherStation": {
+      "WeatherStationName": "Brandywine Devar",
+      "Elevation": 496,
+      "LocationDescription": "W side of Hwy99, 11 km S of Whistler Creek",
+      "Longitude": -123.11806,
+      "Latitude": 50.05417
+    },
+    "Datasets": [
+      {
+        "CollectionUtc": "2026-02-24T02:00:00",
+        "DataSetName": "air_temp",
+        "DisplayName": "Air Temp",
+        "Unit": "deg C",
+        "Value": "-0.332"
+      },
+      {
+        "CollectionUtc": "2026-02-24T02:00:00",
+        "DataSetName": "pcpn_amt_pst1hr",
+        "DisplayName": "Precip Hourly",
+        "Unit": "mm",
+        "Value": "-0.2"
+      },
+      {
+        "CollectionUtc": "2026-02-24T02:00:00",
+        "DataSetName": "pcpn_amt_snc_std_obs",
+        "DisplayName": "Precip New",
+        "Unit": "mm",
+        "Value": "5.6"
+      },
+      {
+        "CollectionUtc": "2026-02-24T02:00:00",
+        "DataSetName": "snwfl_amt_pst1hr",
+        "DisplayName": "Snowfall (hourly)",
+        "Unit": "cm",
+        "Value": "-0.1"
+      },
+      {
+        "CollectionUtc": "2026-02-24T02:00:00",
+        "DataSetName": "snwfl_amt_snc_std_obs",
+        "DisplayName": "Snowfall (new)",
+        "Unit": "cm",
+        "Value": "4"
+      },
+      {
+        "CollectionUtc": "2026-02-24T02:00:00",
+        "DataSetName": "mean_wnd_dir_pst1hr",
+        "DisplayName": "Wind Direction (mean)",
+        "Unit": "deg",
+        "Value": "358.7"
+      },
+      {
+        "CollectionUtc": "2026-02-24T02:00:00",
+        "DataSetName": "max_wnd_spd_pst1hr",
+        "DisplayName": "Wind Speed (max)",
+        "Unit": "km/h",
+        "Value": "5.574"
+      },
+      {
+        "CollectionUtc": "2026-02-24T02:00:00",
+        "DataSetName": "mean_wnd_spd_pst1hr",
+        "DisplayName": "Wind Speed (mean)",
+        "Unit": "km/h",
+        "Value": "1.063"
+      }
+    ]
+  },
+  "11092": {
+    "WeatherStation": {
+      "WeatherStationName": "Sea to Sky VMS",
+      "Elevation": 100,
+      "LocationDescription": "A VMS station",
+      "Longitude": -123.1,
+      "Latitude": 50.0
+    },
+    "Datasets": [
+      {
+        "CollectionUtc": "2026-02-24T02:00:00",
+        "DataSetName": "air_temp",
+        "DisplayName": "Air Temp",
+        "Unit": "deg C",
+        "Value": "1.0"
+      }
+    ]
+  },
+  "11093": {
+    "WeatherStation": {
+      "WeatherStationName": "Dataset Missing Station",
+      "Elevation": 120,
+      "LocationDescription": "Datasets missing",
+      "Longitude": -123.2,
+      "Latitude": 50.1
+    },
+    "Datasets": null
+  },
+  "11094": {
+    "WeatherStation": {
+      "WeatherStationName": "Issued Parse Error Station",
+      "Elevation": 140,
+      "LocationDescription": "Invalid collection timestamp",
+      "Longitude": -123.3,
+      "Latitude": 50.2
+    },
+    "Datasets": [
+      {
+        "CollectionUtc": "not-a-valid-iso-datetime",
+        "DataSetName": "air_temp",
+        "DisplayName": "Air Temp",
+        "Unit": "deg C",
+        "Value": "3.1"
+      }
+    ]
+  },
+  "11095": {
+    "WeatherStation": {
+      "WeatherStationName": "No Weather Values Station",
+      "Elevation": 160,
+      "LocationDescription": "Mapped weather values are empty",
+      "Longitude": -123.4,
+      "Latitude": 50.3
+    },
+    "Datasets": [
+      {
+        "CollectionUtc": "2026-02-24T02:00:00",
+        "DataSetName": "air_temp",
+        "DisplayName": "Air Temp",
+        "Unit": "deg C",
+        "Value": ""
+      },
+      {
+        "CollectionUtc": "2026-02-24T02:00:00",
+        "DataSetName": "pcpn_amt_pst1hr",
+        "DisplayName": "Precip Hourly",
+        "Unit": "mm",
+        "Value": null
+      },
+      {
+        "CollectionUtc": "2026-02-24T02:00:00",
+        "DataSetName": "sfc_stat_derived_state",
+        "DisplayName": "Pavement Status (State)",
+        "Unit": "",
+        "MeaningfulValue": null
+      }
+    ]
+  }
+}
