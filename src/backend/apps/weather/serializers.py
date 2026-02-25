@@ -180,9 +180,14 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
                 85: "Light Snow Showers",
                 86: "Moderate Snow Showers",
                 87: "Heavy Snow Showers",
+                89: "Hail",
             }
 
-            return weather_map.get(code)
+            label = weather_map.get(code)
+            return {
+                "code": code,
+                "label": label,
+            }
 
 
 class HighElevationForecastSerializer(serializers.ModelSerializer):

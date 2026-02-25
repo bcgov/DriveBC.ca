@@ -85,6 +85,25 @@
     .container-label {
       font-size: 1rem;
       font-weight: 700;
+
+      &.present-weather {
+        margin-bottom: 24px;
+      }
+
+      .data-card__row {
+        &:first-child {
+          border-top: 0;
+        }
+      }
+    }
+
+    .row--present-weather {
+      display: flex;
+
+      .data-icon {
+        margin-right: 0.75rem;
+        color: $Grey80;
+      }
     }
 
     .hourly-forecast {
