@@ -45,7 +45,11 @@ class AccountAdapter(DefaultAccountAdapter):
 class SocialAdapter(DefaultSocialAccountAdapter):
     ''' Hooks specific to social logins like BCeID and OTP '''
     def update_verified_consent_status(self, sociallogin, request=None):
-        email = sociallogin.account.extra_data['email'].lower()  # ignore cases
+        email = sociallogin.user.email
+        if not email:
+            return
+        email = email.lower()  # ignore cases
+
         user = DriveBCUser.objects.filter(email=email).first()
         if user:
             # connect new social logins to the existing user
