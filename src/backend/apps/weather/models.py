@@ -68,7 +68,17 @@ class CurrentWeather(ExportModelOperationsMixin('current_weather'), BaseModel):
         return f"Current weather for {self.weather_station_name}"
 
     def save(self, *args, **kwargs):
-        self.location = Point(self.location_longitude, self.location_latitude)
+        if self.location_longitude and self.location_latitude:
+            try:
+                self.location = Point(
+                    float(self.location_longitude), 
+                    float(self.location_latitude)
+                )
+            except (ValueError, TypeError):
+                self.location = None
+        else:
+            self.location = None
+
         super().save(*args, **kwargs)
 
 
