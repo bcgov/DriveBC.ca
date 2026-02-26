@@ -13,12 +13,14 @@ import {
   faSnowflake,
   faTemperatureHalf,
   faWind,
+  faEye
 } from '@fortawesome/pro-light-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
 
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
 import ShareURLButton from '../../../shared/ShareURLButton';
+import CurrentWeatherIcon from '../../CurrentWeatherIcon';
 
 // Styling
 import './LocalWeatherPanel.scss';
@@ -92,9 +94,32 @@ export default function LocalWeatherPanel(props) {
             weatherData.snow || weatherData.snow_stdobs || weatherData.average_wind || weatherData.maximum_wind) && (
 
             <div className="data-card-container">
-              <p className="container-label">Conditions</p>
-
+              <p className="container-label">Current conditions</p>
+                
               <div className="data-card">
+                {weatherData.present_weather && (
+                  <div className="row--present-weather">
+                    <div className="data-icon">
+                      {weatherData.present_weather?.label && (
+                        <CurrentWeatherIcon code={weatherData.present_weather.code} /> 
+                      )}
+                    </div>
+                    <p className="container-label present-weather">
+                      {weatherData.present_weather?.label || 'Unknown conditions'}
+                    </p>
+                  </div>
+                )}
+
+                {weatherData.visibility && (
+                  <div className="data-card__row">
+                    <div className="data-icon">
+                      <FontAwesomeIcon className="icon" icon={faEye} />
+                    </div>
+                    <p className="label">Visibility</p>
+                    <p className="data">{weatherData.visibility}</p>
+                  </div>
+                )}
+
                 {weatherData.elevation && (
                   <div className="data-card__row">
                     <div className="data-icon">

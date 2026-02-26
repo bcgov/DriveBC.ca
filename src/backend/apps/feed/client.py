@@ -53,7 +53,9 @@ SERIALIZER_TO_DATASET_MAPPING = {
     "snow_stdobs":          ("snwfl_amt_snc_std_obs",  "Snowfall (new)"),
     "wind_direction":       ("mean_wnd_dir_pst1hr",    "Wind Direction (mean)"),
     "average_wind":         ("mean_wnd_spd_pst1hr",    "Wind Speed (mean)"),
-    "maximum_wind":         ("max_wnd_spd_pst1hr",     "Wind Speed (max)")
+    "maximum_wind":         ("max_wnd_spd_pst1hr",     "Wind Speed (max)"),
+    "visibility":           ("vis_pst10mins",          "Visibility (10 min)"),
+    "present_weather":      ("wx_code_pst15mins",      "Weather Code (15 min)")
 }
 
 # Generated list of DataSetName values for filtering excluded dataset entries
