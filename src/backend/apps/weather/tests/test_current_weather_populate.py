@@ -56,7 +56,7 @@ class TestCurrentWeatherPopulate(BaseTest):
 
         local_weather_winter = CurrentWeather.objects.get(weather_station_name='Brandywine Devar')
         assert local_weather_winter.location_longitude == '-123.11806'
-        assert len(local_weather_winter.hourly_forecast_group) != 0
+        assert len(local_weather_winter.forecast_group) != 0
 
         # Update existing record
         updated_parsed_feed = copy.copy(parsed_feed)
@@ -68,7 +68,7 @@ class TestCurrentWeatherPopulate(BaseTest):
 
         populate_local_weather_from_data(parsed_summer_feed)
         local_weather_summer = CurrentWeather.objects.get(weather_station_name='Brandywine Devar Summer')
-        assert len(local_weather_summer.hourly_forecast_group) == 0
+        assert len(local_weather_summer.forecast_group) == 0
 
 
 class TestCurrentWeatherSerializer(BaseTest):
@@ -78,7 +78,7 @@ class TestCurrentWeatherSerializer(BaseTest):
             weather_station_name='Test Station',
             datasets=datasets,
             location_description='Test Location',
-            hourly_forecast_group=[],
+            forecast_group=[],
             elevation=100,
         )
         return obj

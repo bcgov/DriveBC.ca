@@ -21,6 +21,7 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 import FriendlyTime from '../../../shared/FriendlyTime';
 import ShareURLButton from '../../../shared/ShareURLButton';
 import CurrentWeatherIcon from '../../CurrentWeatherIcon';
+import LocalForecastTabs from './LocalForecastTabs';
 
 // Styling
 import './LocalWeatherPanel.scss';
@@ -34,11 +35,24 @@ export default function LocalWeatherPanel(props) {
 
   const weatherData = feature.getProperties();
   const now = new Date();
-  const forecastData = (weatherData.hourly_forecast_group || [])
-    .filter((forecast) => (
-      forecast.ObservationTypeName === 'surfaceTemp' &&
-      new Date(forecast.TimestampUtc) > now
-    ));
+  const dailyForecastData = (weatherData.forecast_group || [])
+  
+
+  // Split forecast into current and future
+  const current_day_forecasts = [];
+  const future_forecasts = [];
+  let count = 0;
+  for (const forecast of weatherData.forecast_group) {
+    if (count == 0 || count == 1) {
+      current_day_forecasts.push(forecast);
+    } else {
+      future_forecasts.push(forecast);
+    }
+
+    weatherData.current_day_forecasts = current_day_forecasts;
+    weatherData.future_forecasts = future_forecasts;
+    count += 1;
+  }
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -199,27 +213,16 @@ export default function LocalWeatherPanel(props) {
             </div>
           )}
 
-          {forecastData.length > 0 &&
-            <div className="data-card-container">
-              <p className="container-label">Road surface forecast</p>
-
-              <div className="data-card hourly-forecast">
-                {forecastData.map((forecast, index) => (
-                  <div key={index} className="data-card__row data-card__row group">
-                    <FriendlyTime date={forecast.TimestampUtc} timeOnly />
-                    <p className="temperature">{Math.round(forecast.Value)}&deg;</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          }
+          <div className="popup__content__forecasts">
+            <LocalForecastTabs forecasts={dailyForecastData} />
+          </div>
         </div>
 
         <div className="popup__content__footer">
           <p>Temperatures displayed in Celsius (&deg;C) <br /></p>
           <p>
             Local weather is provided by local Ministry of Transportation and Transit weather stations. <br />
-            {forecastData.length > 0 && <span>Forecasts courtesy of Weathernet.</span>}
+            {dailyForecastData.length > 0 && <span>Forecasts courtesy of Weathernet.</span>}
           </p>
         </div>
       </div>

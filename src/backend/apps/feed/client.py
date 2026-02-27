@@ -39,6 +39,7 @@ from django.contrib.gis.geos import Point
 from django.core.cache import cache
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from apps.weather.models import CurrentWeather
 
 # Maps the key for our client API's serializer fields to the matching pair of
 # the source API's DataSetName and DisplayName fields
@@ -184,6 +185,7 @@ class FeedClient:
         cache.set('weather_access_token', token, timeout=270)  # Cache for slightly less than 5 minutes
 
         return token
+    
 
     def make_weather_request(self, endpoint, mock_token=None):
         token = mock_token or cache.get('weather_access_token') or self.get_new_weather_access_token()
@@ -197,6 +199,7 @@ class FeedClient:
             response = requests.get(endpoint, headers=new_headers)
 
         return response
+    
 
     def get_single_feed(self, dbo, resource_type, resource_name, serializer_cls, as_serializer=False):
         """
@@ -410,18 +413,37 @@ class FeedClient:
             logger.warning('Error fetching list of weather stations')
             return res
 
+
         stations_data = response.json()
         for station in stations_data:
             station_number = station.get("WeatherStationNumber")
 
-            # Hourly forecast
-            hourly_forecast_group = []
+            # Forecast
+            forecast_group = []
             forecast_endpoint = settings.DRIVEBC_WEATHER_FORECAST_API_BASE_URL + f"/{station_number}"
             forecast_response = self.make_weather_request(forecast_endpoint, token)
             if forecast_response.status_code == 200:
-                hourly_forecast_data = forecast_response.json()
-                hourly_forecast_group = hourly_forecast_data.get("HourlyForecasts") or []
+                forecast_data = forecast_response.json()
+                forecasts_list = forecast_data.get("Forecasts", [])
+                for forecast in forecasts_list:
+                    period = forecast.get("Period", "")
+                    text = forecast.get("Text", "")
+                    high_value = self.extract_high_value(text)
+                    low_value = self.extract_low_value(text)
+                    code = self.get_local_weather_icon_code(text, period)
+                    period_key = period.title()
 
+                    forecast_item = {
+                        "Period": period_key,
+                        "Text": text,
+                        "Code": code,
+                    }
+                    if high_value is not None:
+                        forecast_item["High"] = high_value
+                        
+                    if low_value is not None:
+                        forecast_item["Low"] = low_value
+                    forecast_group.append(forecast_item)
             elif forecast_response.status_code != 204:
                 logger.warning(f"Error fetching hourly forcast for station {station_number}")
                 continue
@@ -441,7 +463,8 @@ class FeedClient:
 
             general_station_datasets = general_station_data.get("Datasets") if general_station_data else None
             if general_station_datasets is None:
-                logger.warning(f"Empty dataset for station {station_number}")
+                if CurrentWeather.objects.filter(code=station_number).exists():
+                    logger.warning(f"Empty dataset for station {station_number}")
                 continue  # Empty dataset, do not process
 
             # DBC22-2125 - use CollectionUtc of first dataset instead of IssuedUtc, to be improved
@@ -498,7 +521,7 @@ class FeedClient:
                 'location_longitude': weather_station.get("Longitude"),
                 'location_latitude': weather_station.get("Latitude"),
                 'issuedUtc': issuedUtc,
-                'hourly_forecast_group': hourly_forecast_group
+                'forecast_group': forecast_group,
             }
 
             serializer = serializer_cls(data=current_weather_data)
@@ -632,3 +655,85 @@ class FeedClient:
                 },
             )
             raise
+
+            raise
+
+    def get_local_weather_icon_code(self, text, period):
+        f = text.lower()
+        if 'thunder' in f:
+            return '19'
+        if 'sun' in f:
+            if 'cloud' in f:
+                return '02'
+            return '00'
+        if 'rain' in f:
+            if 'snow' in f or 'flurries' in f:
+                return '15'
+            if 'heavy' in f:
+                return '13'
+            if ('cloud' in f and 'partly' in f) or 'clearing' in f:
+                if 'night' in period:
+                    return '36'
+                return '06'
+            return '12'
+        if 'snow' in f:
+            if 'light' in f or 'flurries' in f:
+                return '16'
+            return '17'
+        if 'flurries' in f:
+            return '16'
+        if 'showers' in f:
+            if ('cloud' in f and 'partly' in f) or 'clearing' in f:
+                if 'night' in period:
+                    return '36'
+                return '06'
+            return '12'
+        if 'night' in period:
+            if 'increasing' in f:
+                return '34'
+            if 'clearing' in f:
+                return '35'
+            if 'clear' in f:
+                return '30'
+            if 'cloud' in f:
+                if 'periods' in f:
+                    return '32'
+                if 'partly' in f:
+                    return '33'
+        if 'cloud' in f:
+            if 'increasing' in f:
+                return '04'
+            if 'clearing' in f:
+                return '05'
+            if 'periods' in f:
+                return '02'
+            if 'partly' in f:
+                return '03'
+            return '10'
+        if 'overcast' in f:
+            return '10'
+        if 'clearing' in f:
+            return '05'
+        if 'fog' in f:
+            return '24'
+
+    def extract_high_value(self, text):
+        """Extract the High temperature from forecast text."""
+        if not text or "High: " not in text:
+            return None
+        
+        high_start = text.index("High: ") + 6  # After "High: "
+        high_end = text.find(".", high_start)
+        if high_end != -1:
+            return float(text[high_start:high_end].strip())
+        return None
+    def extract_low_value(self, text):
+        """Extract the Low temperature from forecast text."""
+        if not text or "Low: " not in text:
+            return None
+        
+        low_start = text.index("Low: ") + 5  # After "Low: "
+        low_end = text.find(".", low_start)
+        if low_end != -1:
+            return float(text[low_start:low_end].strip())
+        return None
