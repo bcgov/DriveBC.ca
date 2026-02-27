@@ -31,6 +31,14 @@ class DriveBCMapWidget(OSMWidget):
     default_zoom = 14
     template_name = 'cms/map.html'
 
+    class Media:
+        css = {
+            'all': ('css/map-widget.css',)
+        }
+        js = (
+            'js/map-widget.js',
+        )
+
 
 class RichContent(blocks.StreamBlock):
     ''' Common set of rich content controls for all page types. '''
