@@ -113,6 +113,11 @@ class TestCurrentWeatherSerializer(BaseTest):
         data = CurrentWeatherSerializer(obj).data
         assert data['snow_stdobs'] == '0 cm'
 
+    def test_get_snow_depth(self):
+        obj = self._make_weather_obj({'snow_depth': {'value': '1.0', 'unit': 'cm'}})
+        data = CurrentWeatherSerializer(obj).data
+        assert data['snow_depth'] == '1 cm'
+
     def test_get_precipitation_stdobs(self):
         obj = self._make_weather_obj({'precipitation_stdobs': {'value': '1.2', 'unit': 'mm'}})
         data = CurrentWeatherSerializer(obj).data
@@ -183,6 +188,36 @@ class TestCurrentWeatherSerializer(BaseTest):
         obj = self._make_weather_obj({'present_weather': {'value': '0'}})
         data = CurrentWeatherSerializer(obj).data
         assert data['present_weather']['label'] == 'Clear'
+
+    def test_get_pavement_status_known_code(self):
+        obj = self._make_weather_obj({'pavement_status': {'value': '1'}})
+        data = CurrentWeatherSerializer(obj).data
+        assert data['pavement_status'] == 'Dry'
+
+    def test_get_pavement_status_unknown_code(self):
+        obj = self._make_weather_obj({'pavement_status': {'value': '4'}})
+        data = CurrentWeatherSerializer(obj).data
+        assert data['pavement_status'] is None
+
+    def test_get_pavement_status_icy(self):
+        obj = self._make_weather_obj({'pavement_status': {'value': '7'}})
+        data = CurrentWeatherSerializer(obj).data
+        assert data['pavement_status'] == 'Icy'
+
+    def test_get_pavement_grip_icy(self):
+        obj = self._make_weather_obj({'pavement_grip': {'value': '0.16'}})
+        data = CurrentWeatherSerializer(obj).data
+        assert data['pavement_grip'] == 'Icy'
+
+    def test_get_pavement_grip_slippery_sections(self):
+        obj = self._make_weather_obj({'pavement_grip': {'value': '0.3'}})
+        data = CurrentWeatherSerializer(obj).data
+        assert data['pavement_grip'] == 'Slippery sections'
+
+    def test_get_pavement_grip_other(self):
+        obj = self._make_weather_obj({'pavement_grip': {'value': '0.7'}})
+        data = CurrentWeatherSerializer(obj).data
+        assert data['pavement_grip'] is None
 
     def test_missing_datasets_return_none(self):
         """All get_* methods should return None gracefully when dataset key is absent."""

@@ -53,6 +53,7 @@
         & > div {
           padding-bottom: 1rem;
         }
+
         .temperatures {
           display: flex;
           justify-content: space-around;
@@ -69,6 +70,26 @@
               font-weight: 400;
               line-height: 1.2;
             }
+          }
+        }
+
+        .multi-line-label-group {
+          margin-bottom: 6px;
+
+          .label {
+            line-height: 1.5;
+
+            &.small {
+              font-size: 0.75rem;
+            }
+          }
+        }
+
+        .data {
+          &.small {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: $Grey80;
           }
         }
       }
@@ -132,6 +153,10 @@
           font-size: 0.875rem;
           font-weight: 700;
           color: $Type-Primary;
+        }
+
+        .label {
+          line-height: 1.5;
         }
       }
     }
