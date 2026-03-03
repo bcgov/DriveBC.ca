@@ -1,13 +1,15 @@
 import apps.cms.helptext as HelpText
+from apps.shared.enums import CacheKey
 from apps.shared.models import BaseModel
 from config import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.forms import OSMWidget
+from django.core.cache import cache
 from wagtail import blocks
-from wagtail.admin.panels import HelpPanel, FieldPanel
+from wagtail.admin.panels import FieldPanel, HelpPanel
 from wagtail.api import APIField
 from wagtail.contrib.table_block.blocks import TableBlock
-from wagtail.fields import StreamField, RichTextField
+from wagtail.fields import RichTextField, StreamField
 from wagtail.images.models import Image
 from wagtail.models import Page
 from wagtail.templatetags import wagtailcore_tags
@@ -95,6 +97,10 @@ class Advisory(Page, BaseModel):
     def site_link(self):
         return f'{settings.FRONTEND_BASE_URL}advisories/{self.slug}'
 
+    def save(self, *args, **kwargs):
+        super().save(log_action=None, *args, **kwargs)
+        cache.delete(CacheKey.ADVISORY_LIST)
+
 
 class Bulletin(Page, BaseModel):
     page_body = "Use this page for creating bulletins."
@@ -117,7 +123,7 @@ class Bulletin(Page, BaseModel):
 
     def save(self, *args, **kwargs):
         super().save(log_action=None, *args, **kwargs)
-        # cache.delete(CacheKey.BULLETIN_LIST)
+        cache.delete(CacheKey.BULLETIN_LIST)
 
     # Editor panels configuration
     content_panels = [
@@ -160,9 +166,22 @@ class EmergencyAlert(Page, BaseModel):
 
     # Editor panels configuration
     content_panels = [
-        HelpPanel("An Emergency alert is a significant message that's shown to all users of DriveBC on every page of the site. This should only be turned on in extreme emergencies. The global teaser is the rich text field that can be used to display the message as well as adding any links for the public to get more information. Only a single emergency alert message can be shown on the site at a time."),
-        FieldPanel("alert", heading='Global teaser', help_text='Shown in a red bar at the top of every page of DriveBC.  Maximum length 90 characters.'),
-        FieldPanel("title", help_text='This title is for internal use within Wagtail and does not appear on DriveBC.' ),
+        HelpPanel(
+            "An Emergency alert is a significant message that's shown"
+            " to all users of DriveBC on every page of the site. This"
+            " should only be turned on in extreme emergencies. The global"
+            " teaser is the rich text field that can be used to display"
+            " the message as well as adding any links for the public to"
+            " get more information. Only a single emergency alert message"
+            " can be shown on the site at a time."
+        ),
+        FieldPanel(
+            "alert",
+            heading='Global teaser',
+            help_text='Shown in a red bar at the top of every page of DriveBC.'
+                      ' Maximum length 90 characters.'
+        ),
+        FieldPanel("title", help_text='This title is for internal use within Wagtail and does not appear on DriveBC.'),
         # FieldPanel("body", help_text='Currently not used, may be used in the future for alert specific content page'),
         FieldPanel('created_at', read_only=True, heading="Created"),
         FieldPanel('first_published_at', read_only=True, heading="Published"),

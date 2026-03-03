@@ -2,7 +2,6 @@ from apps.cms.models import Advisory, Bulletin, EmergencyAlert
 from apps.cms.serializers import (
     AdvisorySerializer,
     BulletinSerializer,
-    BulletinTestSerializer,
     EmergencyAlertSerializer,
     EmergencyAlertTestSerializer,
 )
@@ -25,7 +24,7 @@ class CMSViewSet(viewsets.ReadOnlyModelViewSet):
         context['request'] = self.request
 
         return context
-    
+
     def get_queryset(self):
         """
         For listing pages — show only published ones by default.
@@ -56,9 +55,10 @@ class CMSViewSet(viewsets.ReadOnlyModelViewSet):
 
         return obj
 
+
 class AdvisoryAPI(CachedListModelMixin, CMSViewSet):
-    # Filter live=True so the cache only stores public data
-    queryset = Advisory.objects.filter(live=True)
+    # Fetch preview items too
+    queryset = Advisory.objects.all()
     serializer_class = AdvisorySerializer
     lookup_field = 'slug'
     cache_key = CacheKey.ADVISORY_LIST
@@ -72,8 +72,8 @@ class BulletinTestAPI(CMSViewSet):
 
 
 class BulletinAPI(CachedListModelMixin, BulletinTestAPI):
-    # Filter live=True so the cache only stores public data
-    queryset = Bulletin.objects.filter(live=True)
+    # Fetch preview items too
+    queryset = Bulletin.objects.all()
     serializer_class = BulletinSerializer
     cache_key = CacheKey.BULLETIN_LIST
     cache_timeout = CacheTimeout.BULLETIN_LIST

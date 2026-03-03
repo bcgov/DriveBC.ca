@@ -163,9 +163,17 @@ export default function Header() {
       return 0;
     }
 
-    const readAdvisories = advisoriesData.filter(advisory => cmsContext.readAdvisories.includes(
-      advisory.id.toString() + '-' + advisory.live_revision.toString()
-    ));
+    const readAdvisories = advisoriesData.filter(advisory => {
+      // Do not count preview items as unread
+      if (!advisory.id || !advisory.live_revision) {
+        return true;
+      }
+
+      return cmsContext.readAdvisories.includes(
+        advisory.id.toString() + '-' + advisory.live_revision.toString()
+      );
+    });
+
     return advisoriesData.length - readAdvisories.length;
   }
 
