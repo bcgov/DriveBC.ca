@@ -739,10 +739,6 @@ export default function ListFilters(props) {
                       <button className="tooltip-info" aria-label="rest stops" aria-describedby="tooltipRestStopsCommercialVehicles">?</button>
                     </OverlayTrigger>
                   </div>
-                  <div className="filter-item filter-item--seasonal-load">
-                    <FontAwesomeIcon icon={faTruckContainer} />
-                    <a className="seasonal-load-link" href="https://www.th.gov.bc.ca/bchighways/loadrestrictions/loadrestrictions.htm" rel="noopener noreferrer" alt="Seasonal load restrictions">Seasonal load restrictions</a>
-                  </div>
                 </div>
               </div>
             </div>
@@ -1094,10 +1090,6 @@ export default function ListFilters(props) {
                   <OverlayTrigger placement="top" overlay={tooltipRestStopsCommercialVehicles}>
                     <button className="tooltip-info" aria-label="rest stops" aria-describedby="tooltipRestStopsCommercialVehicles">?</button>
                   </OverlayTrigger>
-                </div>
-                <div className="filter-item filter-item--seasonal-load">
-                  <FontAwesomeIcon icon={faTruckContainer} />
-                  <a className="seasonal-load-link" href="https://www.th.gov.bc.ca/bchighways/loadrestrictions/loadrestrictions.htm" rel="noopener noreferrer" alt="Seasonal load restrictions">Seasonal load restrictions</a>
                 </div>
               </div>
             </div>
