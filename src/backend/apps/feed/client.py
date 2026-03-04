@@ -52,11 +52,14 @@ SERIALIZER_TO_DATASET_MAPPING = {
     "precipitation_stdobs": ("pcpn_amt_snc_std_obs",   "Precip New"),
     "snow":                 ("snwfl_amt_pst1hr",       "Snowfall (hourly)"),
     "snow_stdobs":          ("snwfl_amt_snc_std_obs",  "Snowfall (new)"),
+    "snow_depth":           ("snw_dpth",               "Snowpack Depth"),
     "wind_direction":       ("mean_wnd_dir_pst1hr",    "Wind Direction (mean)"),
     "average_wind":         ("mean_wnd_spd_pst1hr",    "Wind Speed (mean)"),
     "maximum_wind":         ("max_wnd_spd_pst1hr",     "Wind Speed (max)"),
     "visibility":           ("vis_pst10mins",          "Visibility (10 min)"),
-    "present_weather":      ("wx_code_pst15mins",      "Weather Code (15 min)")
+    "present_weather":      ("wx_code_pst15mins",      "Weather Code (15 min)"),
+    "pavement_status":      ("sfc_stat_derived_state", "Pavement Status (State)"),
+    "pavement_grip":        ("sfc_grip_lvl",           "Pavement Grip"),
 }
 
 # Generated list of DataSetName values for filtering excluded dataset entries

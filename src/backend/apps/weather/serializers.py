@@ -36,12 +36,15 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
     precipitation_stdobs = serializers.SerializerMethodField()
     snow = serializers.SerializerMethodField()
     snow_stdobs = serializers.SerializerMethodField()
+    snow_depth = serializers.SerializerMethodField()
     average_wind = serializers.SerializerMethodField()
     wind_direction = serializers.SerializerMethodField()
     maximum_wind = serializers.SerializerMethodField()
     road_condition = serializers.SerializerMethodField()
     visibility = serializers.SerializerMethodField()
     present_weather = serializers.SerializerMethodField()
+    pavement_status = serializers.SerializerMethodField()
+    pavement_grip = serializers.SerializerMethodField()
 
     class Meta:
         model = CurrentWeather
@@ -56,6 +59,7 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
             'precipitation_stdobs',
             'snow',
             'snow_stdobs',
+            'snow_depth',
             'road_temperature',
             'maximum_wind',
             'road_condition',
@@ -65,7 +69,9 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
             'location_description',
             'forecast_group',
             'issuedUtc',
-            'elevation'
+            'elevation',
+            'pavement_status',
+            'pavement_grip',
         ]
 
     def get_air_temperature(self, obj):
@@ -102,6 +108,12 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
             value = round(float(data["value"]), 1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
             return f'{value} {data["unit"]}'
 
+    def get_snow_depth(self, obj):
+        if "snow_depth" in obj.datasets:
+            data = obj.datasets["snow_depth"]
+            value = round(float(data["value"]), 1) if float(data["value"]) > 0 else 0  # Replace negative values with 0
+            return f'{round(float(data["value"]))} {data["unit"]}'
+
     def get_average_wind(self, obj):
         if "average_wind" in obj.datasets:
             data = obj.datasets["average_wind"]
@@ -133,7 +145,7 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
                 return "Dense fog"
             elif 250 < value <= 450:
                 return "Limited"
-        return None
+            return None
 
     def get_present_weather(self, obj):
         if "present_weather" in obj.datasets:
@@ -189,6 +201,35 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
                 "label": label,
             }
 
+    def get_pavement_status(self, obj):
+        if "pavement_status" in obj.datasets:
+            data = obj.datasets["pavement_status"]
+            value = round(float(data["value"]))
+            if value in (1, 101, 201):
+                return "Dry"
+            elif value in (2, 102, 202):
+                return "Moist"
+            elif value in (3, 103, 203):
+                return "Wet"
+            elif value in (9, 109, 209):
+                return "Slushy"
+            elif value in (5, 105, 205):
+                return "Frosty"
+            elif value in (6, 106, 206):
+                return "Snowy"
+            elif value in (7, 107, 207):
+                return "Icy"
+            return None
+
+    def get_pavement_grip(self, obj):
+        if "pavement_grip" in obj.datasets:
+            data = obj.datasets["pavement_grip"]
+            value = float(data["value"])
+            if value <= 0.16:
+                return "Icy"
+            elif 0.16 < value < 0.6:
+                return "Slippery sections"
+            return None
 
 class HighElevationForecastSerializer(serializers.ModelSerializer):
     """ The outbound serializer, consumed by the frontend """

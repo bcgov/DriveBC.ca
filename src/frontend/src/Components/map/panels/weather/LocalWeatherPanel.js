@@ -134,6 +134,25 @@ export default function LocalWeatherPanel(props) {
                   </div>
                 )}
 
+                {(weatherData.pavement_status || weatherData.pavement_grip) && (
+                  <div className="data-card__row">
+                    <div className="data-icon">
+                      <FontAwesomeIcon className="icon" icon={faRoad} />
+                    </div>
+                    <p className="label">Road condition</p>
+                    <div className="data-group">
+                      {weatherData.pavement_status && (
+                        <p className="data">{weatherData.pavement_status}</p>
+                      )}
+                      {weatherData.pavement_grip && !(weatherData.pavement_status === "Icy" && weatherData.pavement_grip === "Icy") && (
+                        <p className="data small">
+                          {weatherData.pavement_grip}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {weatherData.elevation && (
                   <div className="data-card__row">
                     <div className="data-icon">
@@ -152,13 +171,19 @@ export default function LocalWeatherPanel(props) {
                     <div className="data-group">
                       {weatherData.precipitation && (
                         <div className="data-group__row">
-                          <p className="label">Precipitation (last hour)</p>
+                          <div className="multi-line-label-group">
+                            <p className="label">Precipitation</p>
+                            <p className="label small">Last hour</p>
+                          </div>
                           <p className="data">{weatherData.precipitation}</p>
                         </div>
                       )}
                       {weatherData.precipitation_stdobs && (
                         <div className="data-group__row">
-                          <p className="label">Precipitation (since 6am/6pm)</p>
+                          <div className="multi-line-label-group">
+                            <p className="label">Precipitation</p>
+                            <p className="label small">Since 6am / 6pm</p>
+                          </div>
                           <p className="data">{weatherData.precipitation_stdobs}</p>
                         </div>
                       )}
@@ -166,7 +191,7 @@ export default function LocalWeatherPanel(props) {
                   </div>
                 )}
 
-                {(weatherData.snow || weatherData.snow_stdobs) && (
+                {(weatherData.snow || weatherData.snow_stdobs || weatherData.snow_depth) && (
                   <div className="data-card__row data-card__row group">
                     <div className="data-icon">
                       <FontAwesomeIcon className="icon" icon={faSnowflake} />
@@ -174,14 +199,28 @@ export default function LocalWeatherPanel(props) {
                     <div className="data-group">
                       {weatherData.snow && (
                         <div className="data-group__row">
-                          <p className="label">Snow (last hour)</p>
+                          <div className="multi-line-label-group">
+                            <p className="label">Snow</p>
+                            <p className="label small">Last hour</p>
+                          </div>
                           <p className="data">{weatherData.snow}</p>
                         </div>
                       )}
                       {weatherData.snow_stdobs && (
                         <div className="data-group__row">
-                          <p className="label">Snow (since 6am/6pm)</p>
+                          <div className="multi-line-label-group">
+                            <p className="label">Snow</p>
+                            <p className="label small">Since 6am / 6pm</p>
+                          </div>
                           <p className="data">{weatherData.snow_stdobs}</p>
+                        </div>
+                      )}
+                      {weatherData.snow_depth && (
+                        <div className="data-group__row">
+                          <div className="multi-line-label-group">
+                            <p className="label">Roadside snow depth</p>
+                          </div>
+                          <p className="data">{weatherData.snow_depth}</p>
                         </div>
                       )}
                     </div>
