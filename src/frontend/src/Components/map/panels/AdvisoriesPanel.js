@@ -46,7 +46,7 @@ export default function AdvisoriesPanel(props) {
     }
   }, [advisories, openAdvisoriesOverlay]);
 
-  useEffect(() => {
+  // useEffect(() => {
     // Temporarily disabled since we are no longer rendering a list of advisories in map
     // Center to the geometric center of all advisories' boundaries for mobile view
     // if (smallScreen) {
@@ -54,7 +54,7 @@ export default function AdvisoriesPanel(props) {
     //   const simulatedRoute = [{route: allCoordinates}];
     //   fitMap(simulatedRoute, mapView);
     // }
-  }, []);
+  // }, []);
 
   return (
     <div className="popup popup--advisories" tabIndex={0}>

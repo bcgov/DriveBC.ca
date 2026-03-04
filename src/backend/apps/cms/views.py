@@ -57,7 +57,6 @@ class CMSViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class AdvisoryAPI(CachedListModelMixin, CMSViewSet):
-    # Fetch preview items too
     queryset = Advisory.objects.all()
     serializer_class = AdvisorySerializer
     lookup_field = 'slug'
@@ -72,7 +71,6 @@ class BulletinTestAPI(CMSViewSet):
 
 
 class BulletinAPI(CachedListModelMixin, BulletinTestAPI):
-    # Fetch preview items too
     queryset = Bulletin.objects.all()
     serializer_class = BulletinSerializer
     cache_key = CacheKey.BULLETIN_LIST

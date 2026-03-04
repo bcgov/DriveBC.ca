@@ -141,8 +141,16 @@ class CachedListModelMixin:
     cache_key = CacheKey.DEFAULT
     cache_timeout = CacheTimeout.DEFAULT
 
+    def is_preview_request(self):
+        return getattr(self, "request", None) and self.request.query_params.get('preview') == 'true'
+
     def fetch_list_data(self, queryset=None):
-        qs = queryset.all() if queryset is not None else self.queryset.all()
+        if queryset is not None:
+            qs = queryset.all()
+        elif hasattr(self, "get_queryset"):
+            qs = self.get_queryset()
+        else:
+            qs = self.queryset.all()
 
         # Use get_serializer for FE api to build URLs from self.request
         serializer = self.get_serializer(qs, many=True) \
@@ -167,11 +175,16 @@ class CachedListModelMixin:
             lambda: SiteSettings.objects.values_list('disable_apis', flat=True).first() or False,
             3600  # 60 minutes
         )
-        
+
         if disable_apis:
             raise ImproperlyConfigured("API endpoints disabled for testing")
 
+        # Preview responses can include unpublished content and should never be cached.
+        if self.is_preview_request():
+            return Response(self.fetch_list_data(self.get_queryset()))
+
         return Response(self.get_or_set_list_data())
+
 
 class AppCacheTestViewSet(APIView):
     """
