@@ -497,6 +497,7 @@
 
     .popup__content {
       overflow-y: scroll;
+      height: calc(var(--drawer-snap-point, 100%) - 52px);
     }
   }
 
