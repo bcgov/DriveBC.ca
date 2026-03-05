@@ -365,6 +365,10 @@ export default function Header() {
                     CVSE.ca
                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                   </a>
+                  <a href="https://twm.th.gov.bc.ca/?c=cvrt" className='commercial-dropdown-item' onClick={() => { setIsCommercialOpen(false); onClickActions(); }}>
+                    Commercial vehicle routing tool
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                  </a>
                 </div>
               </div>
 
