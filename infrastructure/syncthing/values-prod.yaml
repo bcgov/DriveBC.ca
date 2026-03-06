@@ -11,10 +11,10 @@ deployment:
   replicas: 1 # Should never exceed 1 as the Syncthing PVC is ReadWriteOnce
   resources:
     requests:
-      cpu: 50m
-      memory: 275Mi
+      cpu: 100m
+      memory: 750Mi
     limits:
-      memory: 375Mi
+      memory: 1Gi
   volumeMounts: # List of volume mounts for the deployment. Can add as many as needed.
     - name: prod-drivebc-syncthing
       mountPath: /var/syncthing
@@ -41,7 +41,7 @@ deployment:
         memory: 64Mi
 
 persistentVolumeClaim:
-  size: 500Mi
+  size: 750Mi
 
 route:
   host: prod-drivebc-syncthing.apps.gold.devops.gov.bc.ca # Hostname for the route
