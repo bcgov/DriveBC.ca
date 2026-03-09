@@ -8,10 +8,20 @@ from rest_framework.response import Response
 
 
 class DmsAPI(CachedListModelMixin):
-    queryset = Dms.objects.filter(is_on=True)
     serializer_class = DmsSerializer
     cache_key = CacheKey.DMS_LIST
     cache_timeout = CacheTimeout.DMS_LIST
+
+    def get_queryset(self):
+        all_dms_count = Dms.objects.count()
+        if all_dms_count == 0:
+            return Dms.objects.none()
+        
+        on_count = Dms.objects.filter(is_on=True).count()
+        if on_count == 0:
+            return Dms.objects.all()
+        
+        return Dms.objects.filter(is_on=True)
 
 
 class DmsViewSet(DmsAPI, viewsets.ReadOnlyModelViewSet):
