@@ -48,7 +48,19 @@ export default function NearbyWeathers(props) {
   // States
   const [activeTab, setActiveTab] = useState('Local');
 
+  const btnTitles = ['Local', 'Regional', 'High elevation'];
+
   // Effects
+
+  // if Local has no data once its list has loaded, switch to the first tab that does.
+  useEffect(() => {
+    if (activeTab !== 'Local') return;
+    if (currentWeatherList == null || localWeather) return;
+
+    if (regionalWeather) setActiveTab('Regional');
+    else if (hef) setActiveTab('High elevation');
+  }, [currentWeatherList, localWeather, regionalWeather, hef, activeTab]);
+
   // find regional weather and set state
   useEffect(() => {
     if (!regionalWeatherList || !camera.regional_weather_station) {
@@ -92,9 +104,6 @@ export default function NearbyWeathers(props) {
       </div>
     );
   }
-
-  // Main component
-  const btnTitles = ['Local', 'Regional', 'High elevation'];
 
   return (
     <React.Fragment>
