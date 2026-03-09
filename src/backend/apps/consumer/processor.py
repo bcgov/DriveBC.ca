@@ -101,7 +101,7 @@ index_db = [] # image index loaded from DB
 stop_event = asyncio.Event()
 
 db_data = []  # cached camera metadata from SQL
-last_camera_refresh = 0.0
+last_camera_refresh = {}
 image_invalid = False
 
 last_activity = 0.0  # Track last message processing time
@@ -574,28 +574,30 @@ async def is_camera_pushed_too_soon(camera_id: str, timestamp: str):
         return True
     return False
 
-async def refresh_camera_cache():
+async def refresh_camera_cache(camera_id: str):
     """
     Periodically refresh the cached camera metadata so status fields (e.g., is_on)
     stay in sync without restarting the consumer.
     """
     global db_data, last_camera_refresh
     now = time.time()
-    if now - last_camera_refresh < CAMERA_CACHE_REFRESH_SECONDS:
+    last_refresh = last_camera_refresh.get(camera_id, 0)
+    if now - last_refresh < CAMERA_CACHE_REFRESH_SECONDS:
         return
 
     try:
-        rows = await sync_to_async(get_all_from_db)()
+        rows = await sync_to_async(get_all_from_db)(camera_id)
         refreshed = process_camera_rows(rows)
         if refreshed:
-            db_data = refreshed
-            last_camera_refresh = now
-            logger.info("Refreshed camera metadata cache.")
+            existing = [cam for cam in db_data if cam['id'] != int(camera_id)]
+            db_data = existing + refreshed
+            last_camera_refresh[camera_id] = now
+            logger.info(f"Refreshed camera metadata cache for camera {camera_id}.")
     except Exception as e:
         logger.warning(f"Failed to refresh camera metadata cache: {e}")
 
 async def handle_image_message(camera_id: str, body: bytes, timestamp: str, camera_status: dict):
-    await refresh_camera_cache()
+    await refresh_camera_cache(camera_id)
     # timestamp is in local time
     webcams = [cam for cam in db_data if cam['id'] == int(camera_id)]
     webcam = webcams[0] if webcams else None

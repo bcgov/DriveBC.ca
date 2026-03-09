@@ -21,6 +21,7 @@ from apps.webcam.tasks import (
 )
 from apps.wildfire.tasks import populate_all_wildfire_data
 from apps.dms.tasks import populate_all_dms_data
+from apps.consumer.tasks import generate_offline_camera_images 
 from django.core.cache import cache
 from django.core.management import call_command
 from huey import crontab
@@ -160,3 +161,8 @@ def startup_timestamp(task, task_value, exc):
 @post_execute()
 def post_execute_timestamp(task, task_value, exc):
     cache.set("last_task_execution", datetime.datetime.now())
+
+@db_periodic_task(crontab(minute="*/1"))
+@lock_task('generate-offline-camera-images-lock')
+def generate_offline_camera_images_task():
+    generate_offline_camera_images()
