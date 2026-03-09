@@ -67,14 +67,14 @@ jobs:
           ref: ${{ needs.tag.outputs.tag }}
 
       - name: Log in to the Container registry (GitHub)
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.IMAGE_REGISTRY }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
 
       - name: Log in to OpenShift Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
           username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
