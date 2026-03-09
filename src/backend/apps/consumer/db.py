@@ -11,7 +11,6 @@ SQL_DB_PASSWORD = os.getenv("SQL_DB_PASSWORD")
 SQL_DB_DRIVER = "ODBC Driver 17 for SQL Server"
 
 def get_all_from_db(camera_id=None):
-    # return list(CameraSource.objects.using("mssql").all())
     query = CameraSource.objects.using("mssql").all()
     if camera_id:
         query = query.filter(id=camera_id)

@@ -318,8 +318,17 @@ def process_camera_rows(rows):
 
 
 def get_timezone(webcam):
-    lat = float(webcam.get('cam_locations_geo_latitude'))
-    lon = float(webcam.get('cam_locations_geo_longitude'))
+    lat_str = webcam.get('cam_locations_geo_latitude')
+    lon_str = webcam.get('cam_locations_geo_longitude')
+    
+    if not lat_str or not lon_str:
+        return 'America/Vancouver'
+    
+    try:
+        lat = float(lat_str)
+        lon = float(lon_str)
+    except (ValueError, TypeError):
+        return 'America/Vancouver'
 
     tz_name = tf.timezone_at(lat=lat, lng=lon)
     return tz_name if tz_name else 'America/Vancouver'  # Fallback to PST if no timezone found
