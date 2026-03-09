@@ -442,7 +442,7 @@ export default function CameraDetailsPage() {
     const lastUpdatedDate = Date.parse(lastUpdate);
     const oneDayAgo = new Date().getTime() - 1 * 24 * 60 * 60 * 1000;
 
-    return lastUpdatedDate > oneDayAgo;
+    return camera.is_on && lastUpdatedDate > oneDayAgo;
   };
 
   const returnHandler = () => {

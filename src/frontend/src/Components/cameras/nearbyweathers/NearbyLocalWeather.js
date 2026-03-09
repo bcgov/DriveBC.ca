@@ -23,6 +23,7 @@ export default function NearbyLocalWeather(props) {
   /* Setup */
   // Props
   const { weather } = props;
+  if (!weather) return null;
 
   /* Helpers */
   const now = new Date();
