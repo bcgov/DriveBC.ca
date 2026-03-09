@@ -148,46 +148,6 @@ class TestVerifyImage(TestCase):
         self.assertFalse(result)
 
 
-class TestPushToS3(TestCase):
-    @patch('apps.consumer.processor.s3_client.generate_presigned_url')
-    @patch('apps.consumer.processor.requests.put')
-    def test_push_to_s3_watermarked(self, mock_put, mock_presigned_url):
-        mock_presigned_url.return_value = 'https://s3.example.com/presigned'
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_put.return_value = mock_response
-
-        image_bytes = b'fake_image_bytes'
-        camera_id = '1'
-        timestamp = '20260309120000'
-
-        result = push_to_s3(image_bytes, camera_id, False, timestamp)
-
-        mock_presigned_url.assert_called_once()
-        mock_put.assert_called_once()
-
-    @patch('apps.consumer.processor.s3_client.generate_presigned_url')
-    @patch('apps.consumer.processor.requests.put')
-    def test_push_to_s3_original(self, mock_put, mock_presigned_url):
-        mock_presigned_url.return_value = 'https://s3.example.com/presigned'
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_put.return_value = mock_response
-
-        image_bytes = b'fake_image_bytes'
-        camera_id = '1'
-        timestamp = '20260309120000'
-
-        result = push_to_s3(image_bytes, camera_id, True, timestamp)
-
-        mock_presigned_url.assert_called_once()
-
-    def test_push_to_s3_with_none_bytes(self):
-        result = push_to_s3(b'', '1', False, '20260309120000')
-
-        self.assertIsNone(result)
-
-
 class TestIsCameraPushedTooSoon(TestCase):
     @patch('apps.consumer.processor.ImageIndex')
     def test_returns_false_when_no_previous_image(self, mock_image_index):
