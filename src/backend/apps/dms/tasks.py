@@ -37,6 +37,7 @@ def populate_all_dms_data():
         dms_dict[dms['id']] = dms
 
     if len(dms_list) == 0:
+        logger.error("DMS data invalid: DMS list is empty")
         return
 
     # Populate dms from the data

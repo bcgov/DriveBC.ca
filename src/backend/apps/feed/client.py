@@ -659,8 +659,6 @@ class FeedClient:
             )
             raise
 
-            raise
-
     def get_local_weather_icon_code(self, text, period):
         f = text.lower()
         if 'thunder' in f:
