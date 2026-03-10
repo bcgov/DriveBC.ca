@@ -94,7 +94,7 @@ jobs:
             type=raw,value=${{ needs.tag.outputs.tag }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Build and push to both registries
         uses: docker/build-push-action@v7
