@@ -163,7 +163,7 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         )   
 
         try:
-            response = s3_client.get_object(
+            response = s3_client.get_object(  # NOSONAR - ExpectedBucketOwner not supported by Dell EMC ECS
                 Bucket=S3_BUCKET,
                 Key=f"webcams/timelapse/{pk}/{filename}.jpg"
             )
@@ -256,7 +256,7 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
 
         def s3_file_iterator(key: str, chunk_size: int = 65536):
             """Stream S3 object in chunks without loading into memory."""
-            obj = s3_client.get_object(Bucket=S3_BUCKET, Key=key)
+            obj = s3_client.get_object(Bucket=S3_BUCKET, Key=key)  # NOSONAR - ExpectedBucketOwner not supported by Dell EMC ECS
             body = obj["Body"]
             while True:
                 chunk = body.read(chunk_size)
