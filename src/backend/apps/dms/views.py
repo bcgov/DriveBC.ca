@@ -8,12 +8,12 @@ from rest_framework.response import Response
 
 
 class DmsAPI(CachedListModelMixin):
+    queryset = Dms.objects.filter(is_on=True)
     serializer_class = DmsSerializer
     cache_key = CacheKey.DMS_LIST
     cache_timeout = CacheTimeout.DMS_LIST
 
-    def get_queryset(self):
-        return Dms.objects.filter(is_on=True)
+
 
 
 class DmsViewSet(DmsAPI, viewsets.ReadOnlyModelViewSet):
