@@ -97,7 +97,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push to both registries
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: ./compose/frontend/StaticBuild
