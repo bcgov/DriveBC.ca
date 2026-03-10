@@ -1,4 +1,4 @@
-Django==5.2.11
+Django==5.2.12
 django-allauth==65.14.2
 django-environ==0.10.0
 djangorestframework==3.15.2
