@@ -161,11 +161,11 @@ def get_image_list_from_s3(camera_id):
 
     while True:
         if continuation_token:
-            response = s3_client.list_objects_v2(
+            response = s3_client.list_objects_v2( # NOSONAR - ExpectedBucketOwner not supported by Dell EMC ECS
                 Bucket=bucket_name, Prefix=prefix, ContinuationToken=continuation_token
             )
         else:
-            response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
+            response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=prefix) # NOSONAR - ExpectedBucketOwner not supported by Dell EMC ECS
 
         objects = response.get("Contents", [])
         all_objects.extend(objects)

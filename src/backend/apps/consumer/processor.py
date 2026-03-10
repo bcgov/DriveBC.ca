@@ -382,7 +382,7 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
         return buffer.read()
 
     except Exception as e:
-        logger.error(f"Error processing image from camera {webcam.get('id')}: {e}")
+        logger.error(f"Error processing image from camera: {e}")
         return None
 
 def save_original_image_to_pvc(camera_id: str, image_bytes: bytes):
