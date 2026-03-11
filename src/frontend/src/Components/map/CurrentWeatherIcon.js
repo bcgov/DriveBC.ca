@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import * as FA from '@fortawesome/pro-thin-svg-icons';
+import * as FA from '@fortawesome/pro-regular-svg-icons';
 
 // Environment Canada icon code to weather condition icon mapping
 const ICONS = {
