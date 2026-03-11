@@ -1,0 +1,32 @@
+#map-toolbar {
+    top: 10px;
+    left: 50px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+#map-toolbar button {
+    margin: 0 4px;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+#map-toolbar button:hover {
+    background: #e6f2ff;
+    border-color: #0066cc;
+}
+#map-toolbar button.active {
+    background: #0066cc;
+    color: #fff;
+    border-color: #0052a3;
+}
+#map-toolbar button#btn-delete:hover {
+    background: #ffebee;
+    border-color: #cc0000;
+    color: #cc0000;
+}
