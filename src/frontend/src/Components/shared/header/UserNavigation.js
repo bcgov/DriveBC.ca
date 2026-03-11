@@ -32,7 +32,7 @@ import { logoutDispatch } from "../../data/account";
 // Styling
 import './UserNavigation.scss';
 
-export default function UserNavigation(props) {
+export default function UserNavigation({ isNavbarExpanded, onCollapseNavbar }) {
   /* Setup */
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);
@@ -59,6 +59,12 @@ export default function UserNavigation(props) {
   }, [favCams]);
 
   /* Helpers */
+  const collapseNavbarIfOpen = () => {
+    if (isNavbarExpanded && onCollapseNavbar) {
+      onCollapseNavbar();
+    }
+  };
+
   const toggleAuthModal = (action) => {
     // Hide screen reader content behind the lightbox
     const allFocuses = document.querySelectorAll("a, button, input");
@@ -205,11 +211,13 @@ export default function UserNavigation(props) {
       id="signin-btn"
       alt="Sign in button"
       onClick={() => {
+        collapseNavbarIfOpen();
         toggleAuthModal('Sign in');
       }}
       onKeyDown={keyEvent => {
         if (keyEvent.key === 'Enter' || keyEvent.key === 'NumpadEnter') {
         keyEvent.preventDefault();
+        collapseNavbarIfOpen();
         toggleAuthModal('Sign in');
         }
       }}
