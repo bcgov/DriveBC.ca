@@ -109,7 +109,7 @@ class TestCurrentWeatherFeedParser(BaseTest):
             self.forecast_data["11091"]["Forecasts"]
         )
         assert weather_data["forecast_group"][0] == {
-            "Code": "12",
+            "Code": "13",
             "Text": "Cloudy.  Rain tapers off early then dry before occasional light rain after 11 am-noon.  High: 4.",
             "High": 4.0,
             "Period": "Thursday"

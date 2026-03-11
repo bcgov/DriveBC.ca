@@ -58,6 +58,9 @@ export default function ForecastCarousel(props) {
       }
       return period;
     } else {
+      if (period.toLowerCase().includes('afternoon')) {
+        return 'Afternoon';
+      }
       return 'Day';
     }
   };
@@ -78,8 +81,8 @@ export default function ForecastCarousel(props) {
 
     // Split by "High:" or "Low:" and take the first part
     const LocalText = forecast.Text;
-    const highIndex = LocalText.toLowerCase().indexOf('high:');
-    const lowIndex = LocalText.toLowerCase().indexOf('low:');
+    const highIndex = LocalText?.toLowerCase().indexOf('high:') ?? -1;
+    const lowIndex = LocalText?.toLowerCase().indexOf('low:') ?? -1;
     // Find the earliest occurrence
     const minIndex = Math.min(
       highIndex === -1 ? Infinity : highIndex,

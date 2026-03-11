@@ -660,64 +660,119 @@ class FeedClient:
             raise
 
     def get_local_weather_icon_code(self, text, period):
+        """
+        Maps text descriptions to Environment Canada Forecast Icon Codes.
+        period: string containing 'day' or 'night'
+        """
         f = text.lower()
+        is_night = 'night' in period.lower()
+
+        # --- 1. SEVERE / THUNDERSTORMS ---
         if 'thunder' in f:
+            # Separate 'Chance of' (9/39) from 'Thunderstorm' (19)
+            if any(x in f for x in ['chance', 'risk', 'possible', 'few', 'spotty', 'stray']):
+                return '39' if is_night else '09'
             return '19'
-        if 'sun' in f:
-            if 'cloud' in f:
-                return '02'
-            return '00'
-        if 'rain' in f:
-            if 'snow' in f or 'flurries' in f:
-                return '15'
+
+        # --- 2. FREEZING PRECIPITATION ---
+        # Prioritize freezing conditions over standard rain
+        if 'freezing' in f:
+            if 'drizzle' in f:
+                return '28' # Freezing drizzle
+            return '14' # Freezing rain
+
+        # --- 3. MIXED PRECIPITATION ---
+        if 'ice pellet' in f or 'hail' in f:
+            return '27'
+        
+        # Catch cases like "Rain mixed with snow" or "Wintry mix"
+        if ('rain' in f and ('snow' in f or 'flurries' in f)) or 'mixed' in f or 'wintry mix' in f:
+            if any(x in f for x in ['chance', 'risk', 'possible', 'few', 'spotty', 'stray']):
+                return '37' if is_night else '07'
+            return '15'
+
+        # --- 4. SNOW ---
+        if 'snow' in f or 'flurries' in f or 'flurry' in f:
+            # Specific check for Blowing/Drifting snow
+            if 'blowing' in f or 'drifting' in f:
+                return '40'
+            
+            # Heavy Snow
+            if 'heavy' in f or 'squall' in f:
+                return '17'
+            
+            # Probability / Light Snow
+            # Includes "A few flurries" -> 08/38
+            if any(x in f for x in ['chance', 'risk', 'possible', 'few', 'spotty', 'stray', 'occasional']):
+                return '38' if is_night else '08'
+            
+            # Steady Snow / Light Snow
+            return '16'
+
+        # --- 5. RAIN / DRIZZLE ---
+        if 'rain' in f or 'shower' in f or 'drizzle' in f or 'sprinkle' in f:
+            if 'drizzle' in f and 'rain' not in f:
+                return '28' # Drizzle
+            
+
+            if any(x in f for x in ['chance', 'risk', 'possible', 'few', 'spotty', 'stray', 'sprinkle']):
+                return '36' if is_night else '06'
+            
+            # Heavy Rain
             if 'heavy' in f:
                 return '13'
-            if ('cloud' in f and 'partly' in f) or 'clearing' in f:
-                if 'night' in period:
-                    return '36'
-                return '06'
-            return '12'
-        if 'snow' in f:
-            if 'light' in f or 'flurries' in f:
-                return '16'
-            return '17'
-        if 'flurries' in f:
-            return '16'
-        if 'showers' in f:
-            if ('cloud' in f and 'partly' in f) or 'clearing' in f:
-                if 'night' in period:
-                    return '36'
-                return '06'
-            return '12'
-        if 'night' in period:
-            if 'increasing' in f:
-                return '34'
-            if 'clearing' in f:
-                return '35'
-            if 'clear' in f:
-                return '30'
-            if 'cloud' in f:
-                if 'periods' in f:
-                    return '32'
-                if 'partly' in f:
-                    return '33'
-        if 'cloud' in f:
-            if 'increasing' in f:
-                return '04'
-            if 'clearing' in f:
-                return '05'
-            if 'periods' in f:
-                return '02'
-            if 'partly' in f:
-                return '03'
-            return '10'
-        if 'overcast' in f:
-            return '10'
-        if 'clearing' in f:
-            return '05'
-        if 'fog' in f:
+                
+            # Showers (Code 12)
+            if 'shower' in f:
+                return '12'
+            
+            # Default for  "Rain"
+            return '13' 
+
+        # --- 6. OBSCURATION ---
+        if 'smoke' in f:
+            return '44'
+        if 'fog' in f or 'haze' in f or 'mist' in f:
+            if 'haze' in f: 
+                return '23'
             return '24'
 
+        # --- 7. SKY CONDITIONS ---
+        # Change in cloud cover
+        if 'increasing' in f and 'cloud' in f:
+            return '34' if is_night else '04'
+        if 'clearing' in f:
+            return '35' if is_night else '05'
+
+        # Sunny / Clear
+        if 'sun' in f or 'clear' in f:
+            if 'mix' in f or 'cloud' in f: 
+                return '02' # Sunny with cloudy periods
+            if 'mostly' in f: 
+                return '31' if is_night else '01' # Mostly clear/sunny
+            return '30' if is_night else '00' # Clear/Sunny
+
+        # Partly Cloudy / Variable
+        if 'partly' in f or 'variable' in f or 'mix' in f:
+            return '32' if is_night else '22'
+
+        # Cloudy / Overcast
+        if 'overcast' in f or 'mostly cloudy' in f or 'cloud' in f:
+            return '33' if is_night else '10'
+
+        # --- 8. WIND ---
+        if 'wind' in f or 'breezy' in f or 'gusty' in f:
+            return '43'
+
+        # --- 9. DRY ---
+        if 'dry' in f or 'frigid' in f or 'cold' in f:
+            if is_night:
+                return '31' 
+            return '01' 
+
+        # --- 10. FALLBACK ---
+        return '' # Default to nothing
+        
     def extract_high_value(self, text):
         """Extract the High temperature from forecast text."""
         if not text or "High: " not in text:
