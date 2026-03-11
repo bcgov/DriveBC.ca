@@ -85,11 +85,15 @@
           }
         }
 
+        .label, .data {
+          color: $Type-Secondary;
+        }
+
         .data {
           &.small {
             font-weight: 400;
             font-size: 0.75rem;
-            color: $Grey80;
+            color: $Type-Secondary;
           }
         }
       }
@@ -129,7 +133,7 @@
 
       .data-icon {
         margin-right: 0.75rem;
-        color: $Grey80;
+        color: $Type-Secondary;
       }
     }
 
