@@ -43,11 +43,12 @@ class RichContent(blocks.StreamBlock):
 
 
 class Advisory(Page, BaseModel):
+    priority = models.PositiveIntegerField(default=0, help_text="Lower = higher priority")
     page_body = "Use this page for creating advisories."
     teaser = models.CharField(max_length=250, blank=True)
     body = StreamField(RichContent())
 
-    def rendered_body(self):
+    def rendered_body():
         blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
         return '\n'.join(blocks)
 
@@ -66,6 +67,7 @@ class Advisory(Page, BaseModel):
     content_panels = [
         FieldPanel("title", help_text=HelpText.GENERIC_TITLE),
         FieldPanel("teaser", help_text=HelpText.GENERIC_TEASER),
+        FieldPanel("priority"),
         FieldPanel(
             "geometry",
             widget=DriveBCMapWidget,

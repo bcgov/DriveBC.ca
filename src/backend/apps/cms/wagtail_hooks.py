@@ -71,9 +71,10 @@ class BaseCMSAdmin(ModelAdmin):
         False  # or True to exclude pages of this type from Wagtail's explorer view
     )
     add_to_admin_menu = True  # or False to exclude your model from the menu
-    list_display = ("title",)
-    list_filter = ("title",)
+    list_display = ("title", "priority", "created_at", "modified_at")
+    list_filter = ("title", "priority", "created_at", "modified_at")
     search_fields = ("title",)
+    ordering = ("priority", "created_at", "modified_at", "title")
 
 
 class AdvisoryAdmin(BaseCMSAdmin):
