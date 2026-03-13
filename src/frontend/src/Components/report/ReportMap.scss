@@ -486,12 +486,27 @@
           font-size: 0.875rem;
         }
 
+        .data-link__group {
+          display: flex;
+          margin-left: auto;
+        }
+
         .data-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.15em;
           text-align: right;
           margin-left: auto;
           min-width: 80px;
           font-weight: 700;
           font-size: 0.875rem;
+
+          &__external-icon {
+            font-size: 0.75em;
+            margin-bottom: 0.25rem;
+            margin-left: 0.25rem;
+            align-self: flex-end;
+          }
         }
       }
     }
