@@ -71,9 +71,10 @@ class BaseCMSAdmin(ModelAdmin):
         False  # or True to exclude pages of this type from Wagtail's explorer view
     )
     add_to_admin_menu = True  # or False to exclude your model from the menu
-    list_display = ("title",)
-    list_filter = ("title",)
-    search_fields = ("title",)
+    list_display = ("title", "priority")
+    list_filter = ("title", "priority")
+    ordering = ("priority", "title")
+    search_fields = ("title")
 
 
 class AdvisoryAdmin(BaseCMSAdmin):
@@ -90,6 +91,10 @@ class EmergencyAlertAdmin(BaseCMSAdmin):
     model = EmergencyAlert
     menu_icon = "thumbtack-crossed"
 
+    list_display = ("title",)
+    list_filter = []
+    ordering = ("title",)
+    search_fields = ("title",)
 
 # Now you just need to register your customised ModelAdmin class with Wagtail
 modeladmin_register(AdvisoryAdmin)

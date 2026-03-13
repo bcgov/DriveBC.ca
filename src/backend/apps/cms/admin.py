@@ -13,15 +13,20 @@ class AdvisoryAdmin(GISModelAdmin):
     actions = [send_route_notifications]
     list_display = [
         'title', 'teaser', 'geometry', 'body',
-        'created_at', 'modified_at'
+        'priority', 'created_at', 'modified_at'
     ]
+    list_filter = ['title', 'priority', 'created_at', 'modified_at']
+    ordering = ['priority', 'title', 'created_at', 'modified_at']
+
 
 
 class BulletinAdmin(GISModelAdmin):
     list_display = [
-        'title', 'teaser', 'body',
+        'title', 'teaser', 'body', 'priority',
         'created_at', 'modified_at'
     ]
+    list_filter = ['title', 'priority', 'created_at', 'modified_at']
+    ordering = ['priority', 'title', 'created_at', 'modified_at']
 
 
 admin.site.register(Advisory, AdvisoryAdmin)

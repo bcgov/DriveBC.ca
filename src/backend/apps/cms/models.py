@@ -43,6 +43,7 @@ class RichContent(blocks.StreamBlock):
 
 
 class Advisory(Page, BaseModel):
+    priority = models.PositiveIntegerField(default=0, help_text="Lower = higher priority")
     page_body = "Use this page for creating advisories."
     teaser = models.CharField(max_length=250, blank=True)
     body = StreamField(RichContent())
@@ -66,6 +67,7 @@ class Advisory(Page, BaseModel):
     content_panels = [
         FieldPanel("title", help_text=HelpText.GENERIC_TITLE),
         FieldPanel("teaser", help_text=HelpText.GENERIC_TEASER),
+        FieldPanel("priority"),
         FieldPanel(
             "geometry",
             widget=DriveBCMapWidget,
@@ -103,6 +105,7 @@ class Advisory(Page, BaseModel):
 
 
 class Bulletin(Page, BaseModel):
+    priority = models.PositiveIntegerField(default=0, help_text="Lower = higher priority")
     page_body = "Use this page for creating bulletins."
     teaser = models.CharField(max_length=250, blank=True)
     body = StreamField(RichContent())
@@ -129,6 +132,7 @@ class Bulletin(Page, BaseModel):
     content_panels = [
         FieldPanel("title", help_text=HelpText.GENERIC_TITLE),
         FieldPanel("teaser", help_text=HelpText.GENERIC_TEASER),
+        FieldPanel("priority"),
         FieldPanel("image",
                    help_text=HelpText.BULLETIN_IMAGE,
                    heading="Newsfeed Image"),
