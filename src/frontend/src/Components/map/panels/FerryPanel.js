@@ -201,6 +201,7 @@ export default function FerryPanel(props) {
         <div className="popup__content__container">
         <div className="popup__content__title">
             <p className='name'><a
+            className="ferry-route-name"
             href={ferryData.url}
             rel="noreferrer">{`${ferryData.route_name}`}</a></p>
             <div className="popup__title__updated">

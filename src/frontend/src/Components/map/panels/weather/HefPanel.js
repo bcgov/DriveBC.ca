@@ -77,6 +77,7 @@ export default function HefPanel(props) {
               {event.Url && (
                 <p className="label link">
                 <a
+                  className="environment-canada-link"
                   alt="Environment Canada Details Link"
                   rel="noreferrer"
                   href={ event.Url }>
