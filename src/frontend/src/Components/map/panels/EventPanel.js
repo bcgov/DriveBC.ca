@@ -205,6 +205,7 @@ export default function EventPanel(props) {
                 href="https://www2.gov.bc.ca//gov/content/transportation/driving-and-cycling/traveller-information/seasonal/winter-driving/commercial"
                 rel="noreferrer"
                 alt="BC chain-up requirements"
+                className="chain-ups-link"
               >Chain-up requirements</a> apply to a Commercial Vehicles with a weight of 11,794 kg or greater.
             </div>
           </div>

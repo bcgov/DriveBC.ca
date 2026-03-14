@@ -270,7 +270,7 @@ export default function RestStopPanel(props) {
         <div className='popup__content__description'>
           <div className='popup__content__description__row'>
             <p className='description-label label'>Electric Vehicles</p>
-            <a href="https://www.plugshare.com/"  className="footer-link" rel="noreferrer" alt="Disclaimer" >View on Plugshare</a>
+            <a className="plugshare-link footer-link" href="https://www.plugshare.com/" rel="noreferrer" alt="Disclaimer" >View on Plugshare</a>
           </div>
           <div className="data-card">
             <div className="data-card__row">
