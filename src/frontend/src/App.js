@@ -36,6 +36,7 @@ import CamerasListPage from './pages/CamerasListPage';
 import EventsListPage from './pages/EventsListPage';
 import FeedbackPage from './pages/FeedbackPage';
 import EmergencyAlert from "./Components/shared/EmergencyAlert.js";
+import EmergencyAlertDetail from "./Components/shared/EmergencyAlertDetail.js";
 import Header from './Components/shared/header/Header.js';
 import MapPage from './pages/MapPage';
 import AuthModal from './AuthModal.js';
@@ -310,6 +311,7 @@ function App() {
                             <Route path="/account-deactivated" element={<AccountDeactivatedPage />} />
                             <Route path="/feedback" element={<FeedbackPage />} />
                             <Route path="/verify-email" element={<VerifyEmailPage />} />
+                            <Route path="/emergency-alert-detail/:slug" element={<EmergencyAlertDetail />} />
                             {/* Catch-all route for 404 errors */}
                             <Route path="*" element={<NotFoundPage />} />
                             <Route path="/problems" element={<ProblemsPage />} />

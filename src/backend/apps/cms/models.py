@@ -13,6 +13,7 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.images.models import Image
 from wagtail.models import Page
 from wagtail.templatetags import wagtailcore_tags
+from wagtail.admin.panels import PageChooserPanel
 from django.contrib.gis.forms import MultiPolygonField
 from django.contrib.gis.geos import MultiPolygon, Polygon, GEOSGeometry
 from wagtail.admin.forms import WagtailAdminPageForm
@@ -200,9 +201,33 @@ class Bulletin(Page, BaseModel):
 
 class EmergencyAlert(Page, BaseModel):
     max_count = 1
+    subpage_types = ["cms.EmergencyAlertDetail"]
 
     alert = RichTextField(max_length=90)
     body = StreamField(RichContent(), blank=True)
+
+    detail_page = models.ForeignKey(
+        "wagtailcore.Page",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        help_text="Optional: link to an Emergency Alert detail page shown to the public.",
+    )
+
+    @property
+    def detail_url(self):
+        """Returns the frontend URL of the child detail page if one exists (live or draft)."""
+        detail = (
+            EmergencyAlertDetail.objects
+            .child_of(self)
+            .filter(live=True)
+            .first()
+        )
+        if detail:
+            base_url = settings.FRONTEND_BASE_URL
+            return f"{base_url}emergency-alert-detail/{detail.slug}"
+        return None
 
     def save(self, *args, **kwargs):
         super().save(log_action=None, *args, **kwargs)
@@ -224,6 +249,12 @@ class EmergencyAlert(Page, BaseModel):
             help_text='Shown in a red bar at the top of every page of DriveBC.'
                       ' Maximum length 90 characters.'
         ),
+        PageChooserPanel(
+            "detail_page",
+            page_type="cms.EmergencyAlertDetail",
+            heading="Detail page link",
+            help_text="Optional: select a page that the 'Learn more' link in the teaser will navigate to.",
+        ),
         FieldPanel("title", help_text='This title is for internal use within Wagtail and does not appear on DriveBC.'),
         # FieldPanel("body", help_text='Currently not used, may be used in the future for alert specific content page'),
         FieldPanel('created_at', read_only=True, heading="Created"),
@@ -232,7 +263,6 @@ class EmergencyAlert(Page, BaseModel):
     ]
     promote_panels = []
 
-    template = 'cms/emergency-alert.html'
 
     def get_url_parts(self, request=None):
         parts = super().get_url_parts(request)
@@ -245,6 +275,33 @@ class EmergencyAlert(Page, BaseModel):
     class Meta:
         verbose_name_plural = 'Emergency Alert'
 
+
+class EmergencyAlertDetail(Page, BaseModel):
+    # Restrict to only be creatable under EmergencyAlert
+    parent_page_types = ["cms.EmergencyAlert"]
+    subpage_types = []  # no children allowed
+    max_count_per_parent = 1  # only one detail page per alert
+
+    body = StreamField(RichContent(), blank=True)
+
+    content_panels = [
+        FieldPanel("title", help_text="Internal title for this detail page."),
+        FieldPanel("body"),
+    ]
+    promote_panels = []
+
+    template = "cms/emergency-alert-detail.html"
+
+    def get_url_parts(self, request=None):
+        parts = super().get_url_parts(request)
+        if parts is None:
+            return None
+        site_id, root_url, _ = parts
+        return (site_id, root_url, f"/emergency-alert-detail/{self.slug}")
+
+    class Meta:
+        verbose_name = "Emergency Alert Detail"
+        verbose_name_plural = "Emergency Alert Details"
 
 class SubPage(Page, BaseModel):
     '''
