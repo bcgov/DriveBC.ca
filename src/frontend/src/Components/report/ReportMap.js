@@ -14,7 +14,8 @@ import {
   faPhone,
   faUpRightAndDownLeftFromCenter,
   faMinimize,
-  faArrowLeft
+  faArrowLeft,
+  faArrowUpRightFromSquare
 } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 import { useMediaQuery } from '@uidotdev/usehooks';
@@ -407,13 +408,16 @@ export function ReportMap(props) {
                       <FontAwesomeIcon icon={faLink} />
                     </div>
                     <p className="label">Website</p>
-                    <a
-                      href={activeFeature.properties.CONTRACTOR1_WEBSITE}
-                      className="data-link website-link"
-                      rel="noreferrer"
-                      alt="contractor website link">
-                      {activeFeature.properties.CONTRACTOR1_NAME}
-                    </a>
+                    <div className="data-link__group">
+                      <a
+                        href={activeFeature.properties.CONTRACTOR1_WEBSITE}
+                        className="data-link website-link"
+                        rel="noreferrer"
+                        alt="contractor website link">
+                        {activeFeature.properties.CONTRACTOR1_NAME}
+                      </a>
+                      <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="data-link__external-icon" />
+                    </div>
                   </div>
                 )}
                 {activeFeature.properties.CONTRACTOR1_CONTACT && (
@@ -447,13 +451,16 @@ export function ReportMap(props) {
                       <FontAwesomeIcon icon={faLink} />
                     </div>
                     <p className="label">Website</p>
-                    <a
-                      href={activeFeature.properties.CONTRACTOR2_WEBSITE}
-                      className="data-link website-link"
-                      rel="noreferrer"
-                      alt="contractor website link">
-                      {activeFeature.properties.CONTRACTOR2_NAME}
-                    </a>
+                    <div className="data-link__group">
+                      <a
+                        href={activeFeature.properties.CONTRACTOR2_WEBSITE}
+                        className="data-link website-link"
+                        rel="noreferrer"
+                        alt="contractor website link">
+                        {activeFeature.properties.CONTRACTOR2_NAME}
+                      </a>
+                      <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="data-link__external-icon" />
+                    </div>
                   </div>
                 )}
                 {activeFeature.properties.CONTRACTOR2_CONTACT && (
