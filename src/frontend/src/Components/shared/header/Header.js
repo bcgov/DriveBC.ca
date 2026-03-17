@@ -255,7 +255,12 @@ export default function Header() {
               <div className="nav-divider"></div>
 
               {!xLargeScreen &&
-                <UserNavigation />
+                <UserNavigation
+                  isNavbarExpanded={Boolean(expanded)}
+                  onCollapseNavbar={() => {
+                  setExpanded(false);
+                  setIsNavbarCollapsed(true);
+                }} />
               }
             </div>
 
@@ -397,7 +402,12 @@ export default function Header() {
 
               <div className="nav-divider"/>
 
-              <UserNavigation />
+              <UserNavigation
+                isNavbarExpanded={Boolean(expanded)}
+                onCollapseNavbar={() => {
+                setExpanded(false);
+                setIsNavbarCollapsed(true);
+              }} />
             </div>
           }
         </Container>
