@@ -42,9 +42,7 @@ export default function AdvisoriesList(props) {
     navigate(`/advisories/${advisory.slug}`);
   }
 
-  const sortedAdvisories = advisories && advisories.sort((a, b) => {
-    return new Date(b.last_published_at) - new Date(a.last_published_at);
-  });
+  const sortedAdvisories = advisories;
 
   // Rendering
   return (

@@ -129,6 +129,7 @@ class Advisory(Page, BaseModel):
     class Meta:
         # IMPORTANT: must match first segment of frontend path for advisories
         verbose_name_plural = 'advisories'
+        ordering = ["path"]
 
     @property
     def site_link(self):
@@ -194,6 +195,7 @@ class Bulletin(Page, BaseModel):
     class Meta:
         # IMPORTANT: must match first segment of frontend path for bulletins
         verbose_name_plural = 'bulletins'
+        ordering = ["path"]
 
 
 class EmergencyAlert(Page, BaseModel):
