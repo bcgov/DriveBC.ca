@@ -28,9 +28,7 @@ export default function Bulletins(props) {
     navigate(`/bulletins/${bulletin.slug}`);
   }
 
-  const sortedBulletins = bulletins && bulletins.sort((a, b) => {
-    return new Date(b.last_published_at) - new Date(a.last_published_at);
-  });
+  const sortedBulletins = bulletins;
 
   // Rendering
   return (
