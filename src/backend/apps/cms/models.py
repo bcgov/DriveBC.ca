@@ -13,6 +13,9 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.images.models import Image
 from wagtail.models import Page
 from wagtail.templatetags import wagtailcore_tags
+from django.contrib.gis.forms import MultiPolygonField
+from django.contrib.gis.geos import MultiPolygon, Polygon, GEOSGeometry
+from wagtail.admin.forms import WagtailAdminPageForm
 
 TABLE_OPTIONS = {'rowHeaders': True,
                  'colHeaders': True, }
@@ -23,6 +26,26 @@ styled according to the BC gov't's style guide (light grey background, blue
 border on the left).
 '''
 
+class FlexibleMultiPolygonField(MultiPolygonField):
+    def to_python(self, value):
+        if not value:
+            return None
+        try:
+            geom = GEOSGeometry(value)
+            # OSMWidget submits in 3857, label it correctly
+            if not geom.srid:
+                geom.srid = 3857
+
+            if geom.geom_type == 'Polygon':
+                mp = MultiPolygon(geom)
+                mp.srid = 3857
+                return mp
+            if geom.geom_type == 'MultiPolygon':
+                geom.srid = 3857
+                return geom
+        except Exception as e:
+            print(f"DEBUG to_python error: {e}")
+        return super().to_python(value)
 
 class DriveBCMapWidget(OSMWidget):
     # Defaults to Kelowna
@@ -31,6 +54,19 @@ class DriveBCMapWidget(OSMWidget):
     default_zoom = 14
     template_name = 'cms/map.html'
 
+    class Media:
+        css = {
+            'all': ('css/map-widget.css',)
+        }
+        js = (
+            'js/map-widget.js',
+        )
+
+class AdvisoryAdminForm(WagtailAdminPageForm):
+    geometry = FlexibleMultiPolygonField(
+        widget=DriveBCMapWidget,
+        required=False  # allows autosave with incomplete geometry
+    )
 
 class RichContent(blocks.StreamBlock):
     ''' Common set of rich content controls for all page types. '''
@@ -46,6 +82,7 @@ class Advisory(Page, BaseModel):
     page_body = "Use this page for creating advisories."
     teaser = models.CharField(max_length=250, blank=True)
     body = StreamField(RichContent())
+    base_form_class = AdvisoryAdminForm
 
     def rendered_body(self):
         blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
@@ -98,6 +135,10 @@ class Advisory(Page, BaseModel):
         return f'{settings.FRONTEND_BASE_URL}advisories/{self.slug}'
 
     def save(self, *args, **kwargs):
+        if self.geometry is not None:
+            if self.geometry.srid == 3857 or not self.geometry.srid:
+                self.geometry.srid = 3857
+                self.geometry = self.geometry.transform(4326, clone=True)
         super().save(log_action=None, *args, **kwargs)
         cache.delete(CacheKey.ADVISORY_LIST)
 

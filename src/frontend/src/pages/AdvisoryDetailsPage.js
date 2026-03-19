@@ -196,7 +196,11 @@ export default function AdvisoryDetailsPage() {
       featureProjection: 'EPSG:3857'
     });
 
-    mapRef.current.getView().fit(geom);
+    mapRef.current.getView().fit(geom, {
+      padding: [50, 50, 50, 50],
+      maxZoom: 12,
+      duration: 0
+    });
   }
 
   // Data function and initialization
@@ -238,6 +242,7 @@ export default function AdvisoryDetailsPage() {
     if (activeTab === 'map') {
       setTimeout(() => {
         fitMap(advisory);
+        mapRef.current.updateSize();
       }, 100);
     }
   }, [activeTab]);
