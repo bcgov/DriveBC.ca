@@ -155,6 +155,11 @@ def populate_all_event_data():
     closures, chain_ups = client.get_dit_event_dict()
     open511_data = client.get_event_list()['events']
 
+    # DBC22-5979: skip task when result is empty
+    if not len(open511_data):
+        logger.warning('No open 511 events found, stopping task')
+        return
+
     active_event_ids = []
     updated_event_ids = []
     for event_data in open511_data:
