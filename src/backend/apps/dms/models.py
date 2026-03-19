@@ -180,7 +180,7 @@ class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     roadway_direction = models.CharField(max_length=64, blank=True, default='')
     static_text = models.CharField(max_length=256, blank=True, default='')
     message_text = models.CharField(max_length=512, blank=True, default='')
-    status = models.CharField(max_length=64, blank=True, default='')
+    status = models.CharField(max_length=512, blank=True, default='')
     location = models.GeometryField(blank=True, null=True)
     updated_datetime_utc = models.DateTimeField(blank=True, null=True, verbose_name="Updated datetime")
     message_expiry_datetime_utc = models.DateTimeField(blank=True, null=True, verbose_name="Message expiry datetime")
