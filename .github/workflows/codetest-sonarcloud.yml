@@ -102,6 +102,7 @@ jobs:
         SQL_DB_SERVER: testvar
         S3_ENDPOINT_URL: https://testvar.com/
         S3_BUCKET: https://testvar.com/
+        RIDE_EVENT_API_URL: https://testvar.com/
       run: |
         coverage run ./src/backend/manage.py test --noinput && coverage report && coverage xml
 
