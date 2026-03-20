@@ -14,6 +14,7 @@ from apps.event.enums import (
 )
 from apps.event.helpers import get_display_category
 from apps.event.models import Event, QueuedEventNotification
+from apps.event.ride import get_ride_event_dict
 from apps.event.serializers import EventInternalSerializer
 from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
@@ -152,13 +153,16 @@ def cap_time_to_now(datetime_value):
 
 def populate_all_event_data():
     client = FeedClient()
-    closures, chain_ups = client.get_dit_event_dict()
+
     open511_data = client.get_event_list()['events']
 
     # DBC22-5979: skip task when result is empty
     if not len(open511_data):
         logger.warning('No open 511 events found, stopping task')
         return
+
+    closures, chain_ups = client.get_dit_event_dict()
+    ride_events = get_ride_event_dict()
 
     active_event_ids = []
     updated_event_ids = []
@@ -167,26 +171,34 @@ def populate_all_event_data():
             id = event_data.get("id", "").split("/")[-1]
             event_data["id"] = id
 
-            # CARS data
-            cars_data = closures[id] if id in closures else {}
-            event_data["closed"] = cars_data.get('closed', False)
-            event_data["highway_segment_names"] = cars_data.get('highway_segment_names', '')
+            # only process latest ride event version, for local dev only
+            # if 'RIDE' in id and 'RIDEv2' not in id:
+            #     continue
+            #
+            # direct_data_source = ride_events if 'RIDEv2-' in id else closures
 
-            location_description = cars_data.get('location_description', '')
-            location_extent = cars_data.get('location_extent', '')
+            # Data pulled directly from DIT or RIDE
+            direct_data_source = ride_events if 'RIDE-' in id else closures
+
+            direct_data = direct_data_source[id] if id in direct_data_source else {}
+            event_data["closed"] = direct_data.get('closed', False)
+            event_data["highway_segment_names"] = direct_data.get('highway_segment_names', '')
+
+            location_description = direct_data.get('location_description', '')
+            location_extent = direct_data.get('location_extent', '')
             if location_extent:
                 location_description += ' for ' + location_extent
 
             event_data["location_description"] = location_description
-            event_data["closest_landmark"] = cars_data.get('closest_landmark', '')
-            event_data["next_update"] = cars_data.get('next_update', None)
-            event_data["start_point_linear_reference"] = cars_data.get('start_point_linear_reference', None)
-            if 'route_at' in cars_data and cars_data['route_at'] != '':
-                event_data["route_at"] = cars_data['route_at']
+            event_data["closest_landmark"] = direct_data.get('closest_landmark', '')
+            event_data["next_update"] = direct_data.get('next_update', None)
+            event_data["start_point_linear_reference"] = direct_data.get('start_point_linear_reference', None)
+            if 'route_at' in direct_data and direct_data['route_at'] != '':
+                event_data["route_at"] = direct_data['route_at']
             # DBC22-3081 replace timezone with DIT API data, to be removed if source is corrected
-            if 'timezone' in cars_data and cars_data['timezone']:
-                new_tz = ZoneInfo(cars_data['timezone'])
-                event_data['timezone'] = cars_data['timezone']
+            if 'timezone' in direct_data and direct_data['timezone']:
+                new_tz = ZoneInfo(direct_data['timezone'])
+                event_data['timezone'] = direct_data['timezone']
 
                 first_created_time = event_data["first_created"].replace(tzinfo=new_tz)
                 event_data["first_created"] = cap_time_to_now(first_created_time)

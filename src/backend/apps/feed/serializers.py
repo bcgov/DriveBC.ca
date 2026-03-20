@@ -4,6 +4,8 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from apps.feed.fields import (
+    DmsGeographyField,
+    DmsPropertiesField,
     DriveBCDateField,
     DriveBCField,
     DriveBCSingleListField,
@@ -17,14 +19,12 @@ from apps.feed.fields import (
     WebcamLocationField,
     WebcamRegionField,
     WebcamRegionGroupField,
-    DmsGeographyField,
-    DmsPropertiesField,
 )
 from apps.rest.models import RestStop
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
+from django.conf import settings
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
-from django.conf import settings
 
 
 # Webcam
@@ -126,7 +126,10 @@ class CarsClosureSerializer(serializers.Serializer):
                     if isinstance(kind, str):
                         data["closed"] = False
                     else:
-                        data["closed"] = (kind.get("category") == "traffic_pattern" and kind.get("phrase-id") in int_closed_ids) or (kind.get("category") == "incident" and kind.get("phrase-id") in int_closed_ids)
+                        data["closed"] = (
+                            (kind.get("category") == "traffic_pattern" and kind.get("phrase-id") in int_closed_ids) or
+                            (kind.get("category") == "incident" and kind.get("phrase-id") in int_closed_ids)
+                        )
 
                     # Stop inner for loop if already marked
                     if data["closed"]:
@@ -175,6 +178,73 @@ class CarsClosureSerializer(serializers.Serializer):
         data["timezone"] = ''
         if "update-time" in data:
             data["timezone"] = data.get("update-time")['timeZoneId']
+
+        return super().to_internal_value(data)
+
+
+class RIDEEventSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    closed = serializers.BooleanField(default=False)
+    highway_segment_names = serializers.CharField(allow_blank=True)
+    location_description = serializers.CharField(allow_blank=True)
+    closest_landmark = serializers.CharField(allow_blank=True)
+    next_update = serializers.DateTimeField(allow_null=True)
+    start_point_linear_reference = serializers.FloatField(allow_null=True)
+    route_at = serializers.CharField(allow_blank=True)
+    timezone = serializers.CharField(allow_blank=True)
+
+    def to_internal_value(self, data):
+        # Initial state for data we want to capture
+        data["closed"] = False
+        data["highway_segment_names"] = ''
+        data["location_description"] = ''
+        data["closest_landmark"] = ''
+        data["next_update"] = None
+        data["start_point_linear_reference"] = 0
+        data["route_at"] = ''
+        data["timezone"] = ''
+
+        # closed
+        for impact in data.get("impacts", []):
+            if impact.get('closed'):
+                data["closed"] = True
+
+        locations_data = data.get("location", {})
+        start_location = locations_data.get('start', {})
+        if start_location:
+            # route_at - was "route-designator" but now "name"
+            data['route_at'] = start_location.get('name', '')
+
+            # closest_landmark / location_description
+            nearby_locations = start_location.get('nearby', [])
+            if nearby_locations:
+                included_locations = [loc for loc in nearby_locations if 'include' in loc and loc['include']]
+                if len(included_locations):
+                    sorted_locations = sorted(included_locations, key=lambda x: x['distance'])
+                    data["closest_landmark"] = sorted_locations[0]['name']
+
+                    location_description = ''
+                    for loc in included_locations:
+                        if location_description != '':
+                            location_description += '\n'
+
+                        location_description += loc.get('phrase', '')
+
+                    data["location_description"] = location_description
+
+        # highway_segment_names
+        segment = data.get("segment", None)
+        data['highway_segment_names'] = segment.get('name') if segment else ''
+
+        # next_update
+        timings = data.get("timings", {})
+        data["next_update"] = timings.get('nextUpdate')
+
+        # start_point_linear_reference
+        data["start_point_linear_reference"] = data.get('route_projection', 0)
+
+        # timezone
+        data['timezone'] = 'America/Vancouver'
 
         return super().to_internal_value(data)
 
@@ -245,8 +315,10 @@ class DmsFeedSerializer(serializers.Serializer):
     geometry = DmsGeographyField('location', source="*")
     properties = DmsPropertiesField(source="*")
 
+
 class DmsAPISerializer(serializers.Serializer):
     features = DmsFeedSerializer(many=True)
+
 
 # Regional Weather
 class RegionalWeatherFeedSerializer(serializers.Serializer):
