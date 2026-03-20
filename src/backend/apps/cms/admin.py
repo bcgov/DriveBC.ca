@@ -1,3 +1,4 @@
+from apps.cms.models import DriveBCMapWidget
 from apps.cms.models import Advisory, Bulletin
 from apps.cms.tasks import send_advisory_notifications
 from django.contrib import admin
@@ -15,6 +16,7 @@ class AdvisoryAdmin(GISModelAdmin):
         'title', 'teaser', 'geometry', 'body',
         'created_at', 'modified_at'
     ]
+    gis_widget = DriveBCMapWidget
 
 
 class BulletinAdmin(GISModelAdmin):
@@ -22,6 +24,7 @@ class BulletinAdmin(GISModelAdmin):
         'title', 'teaser', 'body',
         'created_at', 'modified_at'
     ]
+    gis_widget = DriveBCMapWidget
 
 
 admin.site.register(Advisory, AdvisoryAdmin)

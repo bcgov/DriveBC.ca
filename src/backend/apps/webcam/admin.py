@@ -1,6 +1,7 @@
 import json
 
 import pytz
+from apps.cms.models import DriveBCMapWidget
 from apps.shared.models import RouteGeometry
 from apps.webcam.models import Webcam
 from django.conf import settings
@@ -11,6 +12,7 @@ from timezonefinder import TimezoneFinder
 
 class WebcamAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
+    gis_widget = DriveBCMapWidget
     change_form_template = "admin/timelapse.html"  # custom template
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
@@ -45,6 +47,7 @@ class WebcamAdmin(admin.GISModelAdmin):
 class RouteGeometryAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
     change_form_template = "admin/timelapse.html"  # custom template
+    gis_widget = DriveBCMapWidget
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         webcam = self.get_object(request, object_id)
