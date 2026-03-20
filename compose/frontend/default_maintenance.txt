@@ -33,7 +33,7 @@ server {
     listen  [::]:3000;
     server_name  localhost;
     root         /usr/share/nginx/html;
-    access_log /logs/$hostname-$formatted_date-access.log combined;
+    access_log syslog:server={SYSLOG_SERVER},tag={ENVIRONMENT}_static_access_log drivebc;
     
     server_tokens off;
 
