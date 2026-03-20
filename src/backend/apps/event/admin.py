@@ -1,3 +1,4 @@
+from apps.cms.models import DriveBCMapWidget
 from apps.event.models import Event, QueuedEventNotification
 from apps.event.tasks import queue_event_notifications
 from django.contrib.gis import admin
@@ -14,6 +15,7 @@ class EventAdmin(admin.GISModelAdmin):
     list_display = ('id', 'event_type', 'display_category',
                     'event_sub_type', 'severity', 'closed',
                     'first_created', 'last_updated')
+    gis_widget = DriveBCMapWidget
 
 
 class QueuedEventNotificationAdmin(admin.ModelAdmin):
