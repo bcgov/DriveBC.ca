@@ -74,13 +74,14 @@ export default function CamPanel(props) {
     const newCam = camFeature.id ? camFeature : camFeature.getProperties();
     rootCamRef.current = newCam;
     setCamera(newCam);
-    const params = new URLSearchParams(window.location.search);
-    const savedCamIndex = params.get('camIndex') === null ? 0: params.get('camIndex');
-    setCamIndex(savedCamIndex);
+
+    setCamIndex(0); 
 
     searchParams.set("type", 'camera');
     searchParams.set("id", newCam.id);
     searchParams.delete("display_category");
+    searchParams.delete("camIndex"); 
+    
     setSearchParams(searchParams, { replace: true });
 
     setIsUpdated(false);
