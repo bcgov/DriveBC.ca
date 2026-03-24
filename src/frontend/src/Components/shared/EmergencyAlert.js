@@ -53,7 +53,17 @@ export default function EmergencyAlert() {
         <div className={`fg`}>
           <div className='fg-content'>
             <FontAwesomeIcon icon={faHexagonExclamation} className="fg-exclamation" />
-            {parse(emergencyAlert.alert)}
+            <span>
+              {parse(emergencyAlert.alert)}
+              {emergencyAlert.detail_url && (
+                <>
+                  {' '}
+                  <a href={emergencyAlert.detail_url} className="fg-detail-link">
+                    Learn more
+                  </a>
+                </>
+              )}
+            </span>
           </div>
 
           <FontAwesomeIcon icon={faXmark} className="fg-close-btn" onClick={handleClose} onKeyDown={handleClose} tabIndex={0} />

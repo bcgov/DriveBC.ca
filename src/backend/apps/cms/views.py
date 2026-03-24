@@ -1,9 +1,10 @@
-from apps.cms.models import Advisory, Bulletin, EmergencyAlert
+from apps.cms.models import Advisory, Bulletin, EmergencyAlert, EmergencyAlertDetail
 from apps.cms.serializers import (
     AdvisorySerializer,
     BulletinSerializer,
     EmergencyAlertSerializer,
     EmergencyAlertTestSerializer,
+    EmergencyAlertDetailSerializer,
 )
 from apps.shared.enums import CacheKey, CacheTimeout
 from apps.shared.views import CachedListModelMixin
@@ -89,6 +90,19 @@ class EmergencyAlertAPI(CachedListModelMixin, EmergencyAlertTestAPI):
     cache_key = CacheKey.EMERGENCY_ALERT_LIST
     cache_timeout = CacheTimeout.EMERGENCY_ALERT_LIST
 
+class EmergencyAlertDetailTestAPI(CMSViewSet):
+    queryset = EmergencyAlertDetail.objects.all()
+    serializer_class = EmergencyAlertDetailSerializer
+    lookup_field = 'slug'
+
+class EmergencyAlertDetailAPI(CachedListModelMixin, EmergencyAlertDetailTestAPI):
+    queryset = EmergencyAlertDetail.objects.all()
+    serializer_class = EmergencyAlertDetailSerializer
+    cache_key = CacheKey.EMERGENCY_ALERT_DETAIL_LIST
+    cache_timeout = CacheTimeout.EMERGENCY_ALERT_DETAIL_LIST
+
+    def get_queryset(self):
+        return EmergencyAlertDetail.objects.filter(live=True)  # live only
 
 @csrf_exempt
 def access_requested(request):

@@ -1,7 +1,7 @@
 import logging
 import os
 
-from apps.cms.models import Advisory, EmergencyAlert
+from apps.cms.models import Advisory, EmergencyAlert, EmergencyAlertDetail
 from apps.cms.tasks import send_advisory_notifications
 from django.contrib.auth.models import Permission
 from django.templatetags.static import static

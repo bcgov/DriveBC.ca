@@ -1,0 +1,119 @@
+@import "../../styles/variables.scss";
+
+.emergency-alert-detail {
+  position: relative;
+
+  .network-error, .server-error {
+    @media (max-width: 768px) {
+      position: relative;
+    }
+  }
+
+  .page-header {
+
+    #back-container {
+      padding-bottom: 16px;
+      padding-top: 16px;
+
+      .back-link {
+        margin-bottom: 0;
+      }
+    }
+    
+    &__title {
+      .page-title, .page-description {
+        color: $Error;
+      }
+
+      &__meta {
+        display: flex;
+        align-items: center;
+
+        .timestamp-container, .friendly-time-text {
+          color: $Type-Primary;
+        }
+
+        .timestamp-container {
+          margin-right: 40px;
+          display: flex;
+        }
+
+        .share-url {
+          margin-left: auto;
+
+          .copy-btn {
+            background: darken(#E9C3C5, 8%);
+      
+            &:hover {
+              background: darken(#E9C3C5, 15%);
+            }
+          }
+        }
+      }
+
+      & + .container {
+        padding-top: 24px;
+
+        @media (min-width: 992px) {
+          padding-top: 48px;
+        }
+      }
+    }
+  }
+
+  .cms-body {
+    .responsive-object {
+      img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+.emergency-detail-timestamp-container {
+  margin-right: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: bold;
+  }
+}
+
+.emergency-detail-meta-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; // keeps Share button to the right on desktop
+
+  .share-url {
+      .copy-btn {
+        background: darken(#E9C3C5, 8%);
+      
+        &:hover {
+          background: darken(#E9C3C5, 15%);
+        }
+      }
+    }
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: flex-start;
+    .share-url {
+      margin-left: 0;
+      margin-top: 20px;
+      
+    }
+  }
+}
+
+.emergency-detail-timestamp-container {
+  span, .friendly-time-text, span .friendly-time-text {
+    color: black !important;
+  }
+}

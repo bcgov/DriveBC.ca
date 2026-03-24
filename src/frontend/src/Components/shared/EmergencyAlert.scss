@@ -38,4 +38,17 @@
     cursor: pointer;
     margin-left: 2rem;
   }
+
+  .fg-detail-link {
+    font-weight: bold;
+    display: inline;
+    white-space: nowrap;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  .fg-content span p,
+  .fg-content span div {
+    display: inline;
+  }
 }

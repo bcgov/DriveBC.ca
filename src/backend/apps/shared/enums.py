@@ -47,6 +47,7 @@ class CacheTimeout:
     ADVISORY_LIST = 30 # Cache not automatically invalidated, so keep TTL short
     BULLETIN_LIST = 30 # Cache not automatically invalidated, so keep TTL short
     EMERGENCY_ALERT_LIST = 30 # Cache not automatically invalidated, so keep TTL short
+    EMERGENCY_ALERT_DETAIL_LIST = 30 # Cache not automatically invalidated, so keep TTL short
 
     # Huey job based timeouts. Cache timeouts are set to double the task interval to allow for delays.
     # 1 MINUTE TASKS (Interval x 2)
@@ -88,6 +89,7 @@ class CacheKey:
     ADVISORY_LIST = "advisory_list"
     BULLETIN_LIST = "bulletin_list"
     EMERGENCY_ALERT_LIST = "emergency_alert_list"
+    EMERGENCY_ALERT_DETAIL_LIST = "emergency_alert_list_detail"
     FERRY_LIST = "ferry_list"
     COASTAL_FERRY_LIST = "coastal_ferry_list"
     TEST_APP_CACHE = "test_app_cache"

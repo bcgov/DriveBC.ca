@@ -16,7 +16,7 @@ from wagtail.documents.api.v2.views import DocumentsAPIViewSet
 from wagtail.images.api.v2.views import ImagesAPIViewSet
 from wagtail.utils.urlpatterns import decorate_urlpatterns
 
-from .views import AdvisoryAPI, BulletinAPI, EmergencyAlertAPI, access_denied_idir
+from .views import AdvisoryAPI, BulletinAPI, EmergencyAlertAPI, EmergencyAlertDetailAPI, access_denied_idir
 
 wagtail_api_router = WagtailAPIRouter('wagtailapi')
 wagtail_api_router.register_endpoint('pages', PagesAPIViewSet)
@@ -27,6 +27,7 @@ cms_api_router = routers.DefaultRouter()
 cms_api_router.register('advisories', AdvisoryAPI)
 cms_api_router.register('bulletins', BulletinAPI)
 cms_api_router.register('emergency-alert', EmergencyAlertAPI)
+cms_api_router.register('emergency-alert-detail', EmergencyAlertDetailAPI)
 
 
 def require_idir_auth(view_func):
