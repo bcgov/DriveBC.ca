@@ -28,11 +28,11 @@ body,
   border-bottom: 1px solid $Divider;
 }
 
-// External link icon (links whose href starts with http, excluding .data-link, .commercial-dropdown-item, .route-links, .ferry-route-name, .plugshare-link, .social-icon)
-a[href^="http://"]:not(.data-link):not(.commercial-dropdown-item):not(.route-links):not(.ferry-route-name):not(.plugshare-link):not(.social-icon),
-a[href^="https://"]:not(.data-link):not(.commercial-dropdown-item):not(.route-links):not(.ferry-route-name):not(.plugshare-link):not(.social-icon),
-a[href^="Http://"]:not(.data-link):not(.commercial-dropdown-item):not(.route-links):not(.ferry-route-name):not(.plugshare-link):not(.social-icon),
-a[href^="Https://"]:not(.data-link):not(.commercial-dropdown-item):not(.route-links):not(.ferry-route-name):not(.plugshare-link):not(.social-icon) {
+// External link icon (links whose href starts with http, excluding .data-link, .commercial-dropdown-item, .route-links, .ferry-route-name, .social-icon)
+a[href^="http://"]:not(.data-link):not(.commercial-dropdown-item):not(.route-links):not(.ferry-route-name):not(.social-icon),
+a[href^="https://"]:not(.data-link):not(.commercial-dropdown-item):not(.route-links):not(.ferry-route-name):not(.social-icon),
+a[href^="Http://"]:not(.data-link):not(.commercial-dropdown-item):not(.route-links):not(.ferry-route-name):not(.social-icon),
+a[href^="Https://"]:not(.data-link):not(.commercial-dropdown-item):not(.route-links):not(.ferry-route-name):not(.social-icon) {
   position: relative;
 
   &::after {
