@@ -53,6 +53,12 @@ const NotificationDateTime = forwardRef((props, ref) => {
 
   // Effects
   useEffect(() => {
+    // Dynamically import Vaadin components when needed
+    import('@vaadin/time-picker');
+    import('@vaadin/date-picker');
+  }, []);
+
+  useEffect(() => {
     // Reset all date time options
     setDayOfWeek(defaultDayOfWeek);
     setStartTime(defaultStartTime);
