@@ -233,7 +233,7 @@ export default function Legend() {
 
         {getLegendItem(
           roadWeatherIconStatic,
-          'Local',
+          'Roadside',
           'Weather data from weather stations that collect data on weather and (if beside road) pavement conditions from strategic locations across the province.',
           'weather'
         )}
