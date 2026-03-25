@@ -484,41 +484,54 @@ class FeedClient:
                     logger.warning(f"Issued UTC sent by {station_number} as {issuedUtc}")
                     continue
 
-            # Filter down datasets to known mapped entries
-            mapped_datasets = []
+            quality_map = {}
             for dataset in general_station_datasets:
-                dataset_name = dataset.get("DataSetName")
-                if dataset_name not in DATASETNAMES:
-                    logger.info(f"Unknown dataset name {dataset_name} for station {station_number}")
-                    continue
-                mapped_datasets.append(dataset)
+                ds_name = dataset.get("DataSetName") or ""
+                if "_snsr_qn" in ds_name:
+                    s_type = dataset.get("SensorTypeName")
+                    try:
+                        # Convert to int; handle potential nulls or non-numeric strings
+                        quality_val = int(float(dataset.get("Value", 0)))
+                        quality_map[s_type] = quality_val
+                    except (ValueError, TypeError):
+                        quality_map[s_type] = -1  # Default to "bad" if unreadable
 
-            # DBC22-2126 - skip stations where all mapped weather values are null/empty
-            has_weather_data = any(
-                dataset.get(VALUE_FIELD_MAPPING[dataset.get("DataSetName")]) not in (None, "")
-                for dataset in mapped_datasets
-            )
-            if not has_weather_data:
-                continue
+            mapped_datasets = [
+                ds for ds in general_station_datasets 
+                if ds.get("DataSetName") in DATASETNAMES
+            ]
 
             def precedence_sort(ds):
                 p = ds.get("Precedence")
-                return p if p is not None else 1
-
-            mapped_datasets.sort(key=precedence_sort, reverse=True)
+                return p if p is not None else 99
+            
+            mapped_datasets.sort(key=precedence_sort) 
 
             filtered_dataset = {}
             for dataset in mapped_datasets:
                 dataset_name = dataset.get("DataSetName")
-                display_name = DISPLAYNAME_MAPPING[dataset_name]
-                serializer_name = SERIALIZER_MAPPING[dataset_name]
-                value_field = VALUE_FIELD_MAPPING[dataset_name]
+                serializer_name = SERIALIZER_MAPPING.get(dataset_name)
+                
+                if not serializer_name or serializer_name in filtered_dataset:
+                    continue
 
-                if display_name == dataset.get("DisplayName"):
-                    filtered_dataset[serializer_name] = {
-                        "value": dataset.get(value_field),
-                        "unit": dataset.get("Unit"),
-                    }
+                sensor_type = dataset.get("SensorTypeName")
+                display_name = DISPLAYNAME_MAPPING.get(dataset_name)
+                value_field = VALUE_FIELD_MAPPING.get(dataset_name, "Value")
+                
+                sensor_quality = quality_map.get(sensor_type, 0)
+
+                if sensor_quality >= 0 and display_name == dataset.get("DisplayName"):
+                    val = dataset.get(value_field)
+                    if val not in (None, ""):
+                        filtered_dataset[serializer_name] = {
+                            "value": val,
+                            "unit": dataset.get("Unit"),
+                        }
+
+            # DBC22-2126 - skip stations where no valid weather data was found after quality filtering
+            if not filtered_dataset:
+                continue
 
             weather_station = general_station_data.get('WeatherStation') or {}
             current_weather_data = {
