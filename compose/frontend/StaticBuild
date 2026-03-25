@@ -20,7 +20,7 @@ RUN npm run openshift_build
 ############################################
 # Runtime: nginx serving built assets      #
 ############################################
-FROM nginx:stable-alpine3.23
+FROM nginx:stable-alpine3.23@sha256:5b4900b042ccfa8b0a73df622c3a60f2322faeb2be800cbee5aa7b44d241649e
 
 EXPOSE 3000
 
