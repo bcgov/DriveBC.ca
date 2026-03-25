@@ -501,6 +501,12 @@ class FeedClient:
             if not has_weather_data:
                 continue
 
+            def precedence_sort(ds):
+                p = ds.get("Precedence")
+                return p if p is not None else 1
+
+            mapped_datasets.sort(key=precedence_sort, reverse=True)
+
             filtered_dataset = {}
             for dataset in mapped_datasets:
                 dataset_name = dataset.get("DataSetName")
