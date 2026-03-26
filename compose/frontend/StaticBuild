@@ -18,17 +18,41 @@ COPY ./src/frontend/ /app/
 RUN npm run openshift_build
 
 ############################################
+# Builder: compile brotli modules from     #
+# source against the exact nginx version   #
+############################################
+FROM nginx:stable-alpine3.23 AS brotli-builder
+
+RUN apk add --no-cache \
+    git cmake gcc g++ make \
+    pcre2-dev zlib-dev openssl-dev \
+    linux-headers brotli-dev
+
+RUN git clone --recurse-submodules https://github.com/google/ngx_brotli /ngx_brotli
+
+RUN set -eux; \
+    NGINX_VERSION=$(nginx -v 2>&1 | sed 's|.*nginx/||'); \
+    wget -q "https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz"; \
+    tar -xzf "nginx-${NGINX_VERSION}.tar.gz"; \
+    NGINX_CONFIGURE_ARGS=$(nginx -V 2>&1 | grep 'configure arguments:' | sed 's/configure arguments: //'); \
+    cd "nginx-${NGINX_VERSION}"; \
+    eval "./configure ${NGINX_CONFIGURE_ARGS} --add-dynamic-module=/ngx_brotli"; \
+    make modules
+
+RUN mkdir /brotli-modules && \
+    find /nginx-*/objs -name 'ngx_http_brotli_*.so' -exec cp {} /brotli-modules/ \;
+
+############################################
 # Runtime: nginx serving built assets      #
 ############################################
-FROM nginx:stable-alpine3.23@sha256:5b4900b042ccfa8b0a73df622c3a60f2322faeb2be800cbee5aa7b44d241649e
+FROM nginx:stable-alpine3.23
 
 EXPOSE 3000
 
-# Install Brotli and the nginx brotli module for better compression of static assets.
-RUN apk add --no-cache brotli \
-    nginx-mod-http-brotli
+# Copy pre-compiled brotli modules — no apk install needed, no version skew possible
+COPY --from=brotli-builder /brotli-modules/ /etc/nginx/modules/
 
-# Configure nginx to load Brotli modules and adjust default config to work in OpenShift    
+# Load modules and harden nginx.conf for OpenShift (non-root, no pid in /var/run)
 RUN sed -i '1i load_module modules/ngx_http_brotli_filter_module.so;\nload_module modules/ngx_http_brotli_static_module.so;' /etc/nginx/nginx.conf && \
     sed -i '/^user/d' /etc/nginx/nginx.conf && \
     sed -i 's|^pid .*|pid /tmp/nginx.pid;|' /etc/nginx/nginx.conf
@@ -49,5 +73,5 @@ COPY ./compose/frontend/blocked_ips.conf /etc/nginx/conf.d/blocked_ips.conf
 COPY ./compose/frontend/legacy_redirects.conf /etc/nginx/legacy_redirects.conf
 COPY ./compose/frontend/default_maintenance.txt /etc/nginx/default_maintenance.txt
 
-# Runtime env injection hook (This will be run by an initContainer in OpenShift)
+# Runtime env injection hook (run by an initContainer in OpenShift)
 COPY --chmod=755 ./compose/frontend/generate-config.sh /tmp/generate-config.sh
