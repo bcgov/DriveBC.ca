@@ -48,7 +48,11 @@ export default function NearbyWeathers(props) {
   // States
   const [activeTab, setActiveTab] = useState('Local');
 
-  const btnTitles = ['Local', 'Regional', 'High elevation'];
+  const btnTitles = [
+    camera.local_weather_station && 'Local',
+    camera.regional_weather_station && 'Regional',
+    camera.hev_station && 'High elevation',
+  ].filter(Boolean);
 
   // Effects
 
@@ -64,35 +68,53 @@ export default function NearbyWeathers(props) {
   // find regional weather and set state
   useEffect(() => {
     if (!regionalWeatherList || !camera.regional_weather_station) {
+      if (camera.hef_station) {
+        setActiveTab("High elevation");
+      }
+      else {
+        setActiveTab("Local");
+      }
       return;
     }
 
     const station = regionalWeatherList.find(station => station.id === camera.regional_weather_station);
     setRegionalWeather(station);
 
-  }, [regionalWeatherList]);
+  }, [regionalWeatherList, camera]);
 
   // find local weather and set state
   useEffect(() => {
     if (!currentWeatherList || !camera.local_weather_station) {
+      if (camera.regional_weather_station) {
+        setActiveTab("Regional");
+      }
+      else {
+        setActiveTab("High elevation");
+      }  
       return;
     }
 
     const station = currentWeatherList.find(station => station.id === camera.local_weather_station);
     setLocalWeather(station);
 
-  }, [currentWeatherList]);
+  }, [currentWeatherList, camera]);
 
   // find hef and set state
   useEffect(() => {
     if (!hefList || !camera.hev_station) {
+      if (camera.local_weather_station) {
+        setActiveTab("Local");
+      }
+      else {
+        setActiveTab("Regional");
+      }  
       return;
     }
 
     const station = hefList.find(station => station.id === camera.hev_station);
     setHef(station);
 
-  }, [hefList]);
+  }, [hefList, camera]);
 
   /* Rendering */
   // Loading state
@@ -138,15 +160,15 @@ export default function NearbyWeathers(props) {
           </div>
         </div>
 
-        {localWeather && activeTab === 'Local' &&
+        { activeTab === 'Local' && camera.local_weather_station &&
           <NearbyLocalWeather weather={localWeather} />
         }
 
-        {regionalWeather && activeTab === 'Regional' &&
+        { activeTab === 'Regional' && camera.regional_weather_station &&
           <NearbyRegionalWeather weather={regionalWeather} />
         }
 
-        {hef && activeTab === 'High elevation' &&
+        { activeTab === 'High elevation' && camera.hef_station && 
           <NearbyHevWeather weather={hef} />
         }
       </div>
