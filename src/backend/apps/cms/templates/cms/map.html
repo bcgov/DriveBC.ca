@@ -1,6 +1,5 @@
 {% extends "gis/openlayers.html" %}
 {% load l10n %}
-
 {% block options %}{{ block.super }}
 options['default_lon'] = {{ default_lon|unlocalize }};
 options['default_lat'] = {{ default_lat|unlocalize }};
@@ -8,5 +7,21 @@ options['default_zoom'] = {{ default_zoom|unlocalize }};
 {% endblock %}
 
 {% block base_layer %}
-var base_layer = new ol.layer.Tile({source: new ol.source.OSM({ url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}' })});
+var base_layer = new ol.layer.Tile({
+    source: new ol.source.XYZ({
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+        attributions: "Powered by <a href='https://www.esri.com/en-us/home' target='_blank'>Esri</a>"
+    })
+});
+
+fetch('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer?f=json')
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+        if (data.copyrightText) {
+            base_layer.getSource().setAttributions(
+                "Powered by <a href='https://www.esri.com/en-us/home' target='_blank'>Esri</a> | " +
+                data.copyrightText
+            );
+        }
+    });
 {% endblock %}
