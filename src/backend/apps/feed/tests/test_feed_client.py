@@ -705,7 +705,16 @@ class TestFeedClientCurrentWeather(BaseTest):
                 'Longitude': -123.0,
                 'Latitude': 49.0
             },
-            'Datasets': [{'DataSetName': 'air_temp', 'CollectionUtc': '2024-01-01T12:00:00', 'Value': '20', 'Unit': 'C'}]
+            'Datasets': [
+                {
+                    'DataSetName': 'air_temp', 
+                    'DisplayName': 'Air Temp', 
+                    'CollectionUtc': '2024-01-01T12:00:00', 
+                    'Value': '20', 
+                    'Unit': 'C',
+                    'Precedence': 1
+                }
+            ]
         })
         mock_weather_request.side_effect = [stations_response, forecast_response, current_response]
 
