@@ -1099,7 +1099,11 @@ export default function DriveBCMap(props) {
 
             <Drawer.Portal container={mapElement.current}>
               <Drawer.Overlay className="drawer-overlay" />
-              <Drawer.Content className="drawer-content" ref={drawerRef}>
+              <Drawer.Content
+                className="drawer-content"
+                ref={drawerRef}
+                style={{ '--drawer-snap-point': snap }}
+              >
                 {clickedFeature &&
                   <button
                     className="close-panel"

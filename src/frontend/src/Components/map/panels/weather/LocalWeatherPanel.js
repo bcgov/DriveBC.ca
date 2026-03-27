@@ -252,9 +252,11 @@ export default function LocalWeatherPanel(props) {
             </div>
           )}
 
-          <div className="popup__content__forecasts">
-            <LocalForecastTabs forecasts={dailyForecastData} />
-          </div>
+          {dailyForecastData.length > 0 && (
+            <div className="popup__content__forecasts">
+              <LocalForecastTabs forecasts={dailyForecastData} />
+            </div>
+          )}
         </div>
 
         <div className="popup__content__footer">
