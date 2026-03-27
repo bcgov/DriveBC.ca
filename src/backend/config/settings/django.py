@@ -4,6 +4,8 @@ from pathlib import Path
 import environ
 from corsheaders.defaults import default_headers
 
+import django_brotli.middleware as brotli_mw
+
 # Base dir and env
 BASE_DIR = Path(__file__).resolve().parents[4]
 SRC_DIR = Path(__file__).resolve().parents[3]
@@ -44,6 +46,7 @@ if pod_ip:
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
     "django.middleware.gzip.GZipMiddleware",
+    'django_brotli.middleware.BrotliMiddleware',
     "django.middleware.http.ConditionalGetMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -86,6 +89,9 @@ SHOW_DEBUG_TOOLBAR = env('SHOW_DEBUG_TOOLBAR', default=False)
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': lambda request: SHOW_DEBUG_TOOLBAR,
 }
+
+# Compression
+brotli_mw.BROTLI_QUALITY = 6
 
 # Auth
 AUTH_USER_MODEL = "authentication.DriveBCUser"
