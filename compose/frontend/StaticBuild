@@ -49,7 +49,10 @@ FROM nginx:stable-alpine3.23
 
 EXPOSE 3000
 
-# Copy pre-compiled brotli modules — no apk install needed, no version skew possible
+# Install Brotli for better compression of static assets.
+RUN apk add --no-cache brotli
+
+# Copy pre-compiled brotli modules — no apk install needed, no version mismatches
 COPY --from=brotli-builder /brotli-modules/ /etc/nginx/modules/
 
 # Load modules and harden nginx.conf for OpenShift (non-root, no pid in /var/run)
