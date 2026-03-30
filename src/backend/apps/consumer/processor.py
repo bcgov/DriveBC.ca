@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 import io
-import json
 import logging
-import queue
 import time
 from math import floor
 import os
@@ -16,7 +14,6 @@ import requests
 import boto3
 import aio_pika
 import asyncio
-import aiofiles
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from .db import get_all_from_db, load_index_from_db 
@@ -64,7 +61,7 @@ S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
 RABBITMQ_URL = os.getenv("RABBITMQ_URL")
 S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
 QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME")
-QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES"))
+QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES", "209715200"))
 EXCHANGE_NAME = os.getenv("RABBITMQ_EXCHANGE_NAME")
 CAMERA_CACHE_REFRESH_SECONDS = int(os.getenv("CAMERA_CACHE_REFRESH_SECONDS", "60"))
 
@@ -101,12 +98,14 @@ index_db = [] # image index loaded from DB
 stop_event = asyncio.Event()
 
 db_data = []  # cached camera metadata from SQL
-last_camera_refresh = 0.0
+last_camera_refresh = {}
 image_invalid = False
 
 last_activity = 0.0  # Track last message processing time
 health_check_interval = 60  # seconds
 max_idle_time = 300  # 5 minutes before warning
+
+tz_pst = 'America/Vancouver'
 
 async def on_reconnect(conn):
     logger.info("RabbitMQ connection re-established")
@@ -268,7 +267,7 @@ async def process_message(message: aio_pika.IncomingMessage):
             )
         except asyncio.TimeoutError:
             logger.error(f"Processing timeout for camera {camera_id}")
-        
+
         logger.info("Processed message for camera %s.", camera_id)
 
 def safe_db_call(func, *args, **kwargs):
@@ -318,11 +317,20 @@ def process_camera_rows(rows):
 
 
 def get_timezone(webcam):
-    lat = float(webcam.get('cam_locations_geo_latitude'))
-    lon = float(webcam.get('cam_locations_geo_longitude'))
+    lat_str = webcam.get('cam_locations_geo_latitude')
+    lon_str = webcam.get('cam_locations_geo_longitude')
+    
+    if not lat_str or not lon_str:
+        return tz_pst
+    
+    try:
+        lat = float(lat_str)
+        lon = float(lon_str)
+    except (ValueError, TypeError):
+        return tz_pst
 
     tz_name = tf.timezone_at(lat=lat, lng=lon)
-    return tz_name if tz_name else 'America/Vancouver'  # Fallback to PST if no timezone found
+    return tz_name if tz_name else tz_pst  # Fallback to PST if no timezone found
 
 def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
     try:
@@ -339,38 +347,20 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
 
         stamped = Image.new('RGB', (width, height + 18))
         pen = ImageDraw.Draw(stamped)
+        
+        stamped.paste(raw)  # leaves 18 pixel black bar left at bottom
+        dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
 
-        if webcam.get('is_on'):
-            stamped.paste(raw)  # leaves 18 pixel black bar left at bottom
-            dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
+        # Localize the naive datetime to the given timezone
+        timezone = pytz.timezone(tz)
+        dt_local = timezone.localize(dt)
 
-            # Localize the naive datetime to the given timezone
-            timezone = pytz.timezone(tz)
-            dt_local = timezone.localize(dt)
-
-            month = dt_local.strftime('%b')
-            day = dt_local.strftime('%d')
-            timestamp = f'{month} {day}, {dt_local.strftime("%Y %I:%M:%S %p %Z")}'
-            pen.text((width - 3,  height + 14), timestamp, fill="white",
+        month = dt_local.strftime('%b')
+        day = dt_local.strftime('%d')
+        timestamp = f'{month} {day}, {dt_local.strftime("%Y %I:%M:%S %p %Z")}'
+        pen.text((width - 3,  height + 14), timestamp, fill="white",
                      anchor='rs', font=FONT)
-
-        else:  # camera is unavailable, replace image with message
-            message = webcam.get('message', {}).get('long') or ""
-            wrapped = wrap_text(
-                text=message,
-                width=min(width - 40, 500),
-                initial_indent="",
-                subsequent_indent="",
-                preserve_paragraphs=False
-            )
-            bbox = pen.multiline_textbbox((0, 0), wrapped, font=FONT_LARGE)
-            x = (width - bbox[2]) / 2
-            pen.multiline_text((x, 20), wrapped, fill="white", align='center',
-                               font=FONT_LARGE)
-            pen.polygon(((0, height), (width, height),
-                         (width, height + 18), (0, height + 18)),
-                        fill="red")
-
+        
         # add mark and timestamp to black bar
         mark = webcam.get('dbc_mark', '')
         pen.text((3,  height + 14), mark, fill="white", anchor='ls', font=FONT)
@@ -384,6 +374,53 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
     except Exception as e:
         logger.error(f"Error processing image from camera: {e}")
         return None
+
+def blank_out_image(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
+    try:
+        if image_data is None:
+            return None
+
+        raw = Image.open(io.BytesIO(image_data))
+        width, height = raw.size
+        if width > 800:
+            ratio = 800 / width
+            width = 800
+            height = floor(height * ratio)
+            raw = raw.resize((width, height))
+
+        stamped = Image.new('RGB', (width, height + 18))
+        pen = ImageDraw.Draw(stamped)
+
+        message = webcam.get('message', {}).get('long') or ""
+        wrapped = wrap_text(
+        text=message,
+        width=min(width - 40, 500),
+        initial_indent="",
+        subsequent_indent="",
+        preserve_paragraphs=False
+        )
+        bbox = pen.multiline_textbbox((0, 0), wrapped, font=FONT_LARGE)
+        x = (width - bbox[2]) / 2
+        pen.multiline_text((x, 20), wrapped, fill="white", align='center',
+                               font=FONT_LARGE)
+        pen.polygon(((0, height), (width, height),
+                         (width, height + 18), (0, height + 18)),
+                        fill="red")
+        
+        # add mark and timestamp to black bar
+        mark = webcam.get('dbc_mark', '')
+        pen.text((3,  height + 14), mark, fill="white", anchor='ls', font=FONT)
+
+        # Return image as byte array
+        buffer = io.BytesIO()
+        stamped.save(buffer, format="JPEG")
+        buffer.seek(0)
+        return buffer.read()
+
+    except Exception as e:
+        logger.error(f"Error processing image from camera: {e}")
+        return None
+
 
 def save_original_image_to_pvc(camera_id: str, image_bytes: bytes):
     # Save original image to PVC, can be overwritten each time
@@ -399,7 +436,7 @@ def save_original_image_to_pvc(camera_id: str, image_bytes: bytes):
         logger.error(f"Error saving original image to PVC {filepath}: {e}")
     logger.info(f"Original image saved to PVC at {filepath}")
 
-def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp: str):  
+def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp: str, is_on: bool):  
     os.makedirs(os.path.dirname(f'{PVC_WATERMARKED_PATH}'), exist_ok=True)
 
     save_dir = os.path.join(PVC_WATERMARKED_PATH, camera_id)
@@ -410,11 +447,14 @@ def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp:
     try:
         with open(filepath, "wb") as f:
             f.write(image_bytes)
-        logger.info(f"Watermarked image saved to PVC at {filepath}")
+        if is_on:
+            logger.info(f"Watermarked image saved to PVC at {filepath}")
+        else:
+            logger.info(f"Blank out image saved to PVC at {filepath}")
     except Exception as e:
-        logger.error(f"Error saving Watermarked image to PVC {filepath}: {e}")
+        logger.error(f"Error saving image to PVC {filepath}: {e}")
 
-def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes):  
+def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes, is_on: bool):  
     os.makedirs(os.path.dirname(f'{DRIVEBC_PVC_WATERMARKED_PATH}'), exist_ok=True)
 
     save_dir = os.path.join(DRIVEBC_PVC_WATERMARKED_PATH)
@@ -425,10 +465,31 @@ def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes):
     try:
         with open(filepath, "wb") as f:
             f.write(image_bytes)
-        logger.info(f"Watermarked image saved to drivebc PVC at {filepath}")
+        if is_on:
+            logger.info(f"Watermarked image saved to drivebc PVC at {filepath}")
+        else:
+            logger.info(f"Blank out image saved to drivebc PVC at {filepath}")
     except Exception as e:
-        logger.error(f"Error saving Watermarked image to drivebc PVC {filepath}: {e}")
+        logger.error(f"Error saving image to drivebc PVC {filepath}: {e}")
 
+def delete_watermarked_image_from_pvc(camera_id: str):
+    save_dir = os.path.join(PVC_WATERMARKED_PATH, camera_id)
+
+    if not os.path.exists(save_dir):
+        logger.warning(f"Directory does not exist: {save_dir}")
+        return
+
+    try:
+        deleted_count = 0
+        for filename in os.listdir(save_dir):
+            filepath = os.path.join(save_dir, filename)
+            if os.path.isfile(filepath):
+                os.remove(filepath)
+                deleted_count += 1
+        logger.info(f"Deleted {deleted_count} watermarked image(s) from {save_dir}")
+    except Exception as e:
+        logger.error(f"Error deleting watermarked images from PVC {save_dir}: {e}")
+        
 async def get_images_within(camera_id: str, hours: int = 720) -> list:
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     index_db = await load_index_from_db()
@@ -442,7 +503,7 @@ async def get_images_within(camera_id: str, hours: int = 720) -> list:
 def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     webcams = [cam for cam in db_data if cam['id'] == int(camera_id)]
     webcam = webcams[0] if webcams else None
-    tz = get_timezone(webcam) if webcam else 'America/Vancouver'
+    tz = get_timezone(webcam) if webcam else tz_pst
     # Parse it as UTC datetime
     utc_dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
     utc_dt = utc_dt.replace(tzinfo=pytz.utc)
@@ -454,7 +515,14 @@ def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     return timestamp
 
 @sync_to_async
-def insert_image_and_update_webcam(camera_id, timestamp, webcam):
+def insert_image_index(camera_id, timestamp):
+    ImageIndex.objects.create(
+        camera_id=camera_id,
+        timestamp=timestamp,
+    )
+
+@sync_to_async
+def update_webcam(camera_id, timestamp, webcam):
     region = webcam.get('cam_locations_region', '')
     region_obj = Region.objects.using("mssql").filter(id=region).first()
     region_number = region_obj.seq if region_obj else None
@@ -506,18 +574,19 @@ def insert_image_and_update_webcam(camera_id, timestamp, webcam):
         }
     )
 
-    ImageIndex.objects.create(
-        camera_id=camera_id,
-        timestamp=timestamp,
-    )
-
     camera.https_cam = True
+    camera.is_on = webcam.get('is_on')
     camera.last_update_modified = timestamp
     camera.last_update_attempt = timestamp
     group_id = Webcam.objects.filter(location=camera.location).order_by('id').first().id
     camera.group_id = group_id
     camera.save()
 
+
+@sync_to_async
+def delete_offline_webcam_records(camera_id):
+    ImageIndex.objects.filter(camera_id=camera_id).delete()
+    
 def push_to_s3(image_bytes: bytes, camera_id: str, is_original: bool, timestamp: str):
     """
     Pushes the image bytes to S3 using a presigned URL.
@@ -574,28 +643,30 @@ async def is_camera_pushed_too_soon(camera_id: str, timestamp: str):
         return True
     return False
 
-async def refresh_camera_cache():
+async def refresh_camera_cache(camera_id: str):
     """
     Periodically refresh the cached camera metadata so status fields (e.g., is_on)
     stay in sync without restarting the consumer.
     """
     global db_data, last_camera_refresh
     now = time.time()
-    if now - last_camera_refresh < CAMERA_CACHE_REFRESH_SECONDS:
+    last_refresh = last_camera_refresh.get(camera_id, 0)
+    if now - last_refresh < CAMERA_CACHE_REFRESH_SECONDS:
         return
 
     try:
-        rows = await sync_to_async(get_all_from_db)()
+        rows = await sync_to_async(get_all_from_db)(camera_id)
         refreshed = process_camera_rows(rows)
         if refreshed:
-            db_data = refreshed
-            last_camera_refresh = now
-            logger.info("Refreshed camera metadata cache.")
+            existing = [cam for cam in db_data if cam['id'] != int(camera_id)]
+            db_data = existing + refreshed
+            last_camera_refresh[camera_id] = now
+            logger.info(f"Refreshed camera metadata cache for camera {camera_id}.")
     except Exception as e:
         logger.warning(f"Failed to refresh camera metadata cache: {e}")
 
 async def handle_image_message(camera_id: str, body: bytes, timestamp: str, camera_status: dict):
-    await refresh_camera_cache()
+    await refresh_camera_cache(camera_id)
     # timestamp is in local time
     webcams = [cam for cam in db_data if cam['id'] == int(camera_id)]
     webcam = webcams[0] if webcams else None
@@ -605,7 +676,7 @@ async def handle_image_message(camera_id: str, body: bytes, timestamp: str, came
         logger.warning(f"Camera {camera_id} pushed too soon, skipping.")
         return
 
-    tz = get_timezone(webcam) if webcam else 'America/Vancouver'
+    tz = get_timezone(webcam) if webcam else tz_pst
     local_tz = pytz.timezone(tz)
     naive_dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
     local_dt = local_tz.localize(naive_dt)
@@ -618,26 +689,46 @@ async def handle_image_message(camera_id: str, body: bytes, timestamp: str, came
     if image_invalid:
         logger.warning(f"Image from camera {camera_id} is invalid after watermarking. Skipping save and DB insert.") 
         return
+    
+    watermarked_image_bytes = None
+    blank_out_image_bytes = None
+    watermarked_image_bytes = watermark(webcam, body, tz, timestamp)
+    # webcam is_on comes from Webcam SQL db
+    if webcam.get('is_on'):
+        if watermarked_image_bytes is None:
+            logger.warning(f"Watermarking failed for camera {camera_id}. Skipping save and DB insert.")
+            return
+    else:
+        blank_out_image_bytes = blank_out_image(webcam, body, tz, timestamp)
+        if blank_out_image_bytes is None:
+            logger.warning(f"Watermarking failed for camera {camera_id}. Skipping save and DB insert.")
+            return
+    
+    if webcam.get('is_on'):
+        # Save watermarked images to PVC with timestamp for replay the day
+        save_watermarked_image_to_pvc(camera_id, watermarked_image_bytes, utc_timestamp_str, webcam.get('is_on'))
+        # Save watermarked image to drivebc PVC for display
+        save_watermarked_image_to_drivebc_pvc(camera_id, watermarked_image_bytes, webcam.get('is_on'))
+        # Save watermarked images to S3 with timestamp
+        push_to_s3(watermarked_image_bytes, camera_id, False, utc_timestamp_str)
+        # Insert record into DB
+        await insert_image_index(
+            camera_id,
+            utc_dt
+        )
 
-    image_bytes = watermark(webcam, body, tz, timestamp)
+    else:
+        # Save blank out image to drivebc PVC for accessing image directly, not from frontend
+        save_watermarked_image_to_drivebc_pvc(camera_id, blank_out_image_bytes, webcam.get('is_on'))
+        # Save watermarked images to S3 with timestamp
+        push_to_s3(watermarked_image_bytes, camera_id, False, utc_timestamp_str)
 
-    if image_bytes is None:
-        logger.warning(f"Watermarking failed for camera {camera_id}. Skipping save and DB insert.")
-        return
+    await update_webcam(
+            camera_id,
+            utc_dt,
+            webcam
+        )
 
-    # Save watermarked images to PVC with timestamp
-    save_watermarked_image_to_pvc(camera_id, image_bytes, utc_timestamp_str)
-    # Save watermarked images to drivebc PVC with camera_id
-    save_watermarked_image_to_drivebc_pvc(camera_id, image_bytes)
-    # Save watermarked images to S3 with timestamp
-    push_to_s3(image_bytes, camera_id, False, utc_timestamp_str)
-
-    # Insert record into DB
-    await insert_image_and_update_webcam(
-        camera_id,
-        utc_dt,
-        webcam
-    )
 
 def verify_image(image_data: bytes, camera_id: str) -> bool:
     # Validate image first
