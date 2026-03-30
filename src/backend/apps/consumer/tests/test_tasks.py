@@ -53,7 +53,7 @@ class TestGenerateOfflineCameraImages(TestCase):
 
             generate_offline_camera_images()
 
-            mock_save_pvc.assert_called_once()
+            mock_save_pvc.assert_not_called()
             mock_save_drivebc.assert_called_once()
 
     @patch('apps.consumer.tasks.get_all_from_db')
@@ -84,7 +84,7 @@ class TestGenerateOfflineCameraImages(TestCase):
 
             generate_offline_camera_images()
 
-            mock_save_pvc.assert_called_once()
+            mock_save_pvc.assert_not_called()
             mock_save_drivebc.assert_called_once()
 
     @patch('apps.consumer.tasks.get_all_from_db')

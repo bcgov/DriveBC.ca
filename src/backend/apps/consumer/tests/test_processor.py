@@ -43,6 +43,7 @@ class TestProcessCameraRows(TestCase):
                 cam_locationselevation=100,
                 cam_internetdbc_mark='MARK1',
                 cam_controldisabled=False,
+                cam_controldisappear=False,
                 cam_maintenanceis_on_demand=False,
                 isnew=False,
                 seq=1,
