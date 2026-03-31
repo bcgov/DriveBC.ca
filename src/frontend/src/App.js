@@ -200,7 +200,7 @@ function App() {
         futureEvents: false,
         roadConditions: true,
         highwayCams: false,
-        inlandFerries: true,
+        inlandFerries: false,
         weather: false,
         restStops: false,
         largeRestStops: false,
