@@ -228,12 +228,18 @@ export default function DriveBCMap(props) {
       (searchedRoutes && searchedRoutes.length && !isCamDetail)
     ) && !disablePanel;
 
+  // Matches renderPanel’s RouteDetailsPanel branch (no map feature selected)
+  const drawerShowsRouteDetailsPanel =
+    !clickedFeature &&
+    !isCamDetail &&
+    !!(searchedRoutes && searchedRoutes.length);
+
   // Drawer state
   const getSnapPoints = () => {
     if (!isCamDetail && showRouteObjs && selectedRoute) {
-      return !smallScreen ? ['25%', '50%', '80%'] : ['25%', '50%', '88%'];
+      return !smallScreen ? ['25%', '50%', '80%'] : ['10%', '50%', '88%'];
     } else {
-      return !smallScreen ? ['25%', '50%', '80%'] : ['25%', '50%', '100%'];
+      return !smallScreen ? ['25%', '50%', '80%'] : ['10%', '50%', '100%'];
     }
   };
 
@@ -1093,7 +1099,7 @@ export default function DriveBCMap(props) {
             snap={snap}
             setSnap={handleSnapChange}
             modal={false}
-            dismissible={true}
+            dismissible={!drawerShowsRouteDetailsPanel}
             shouldScaleBackground={false}
             scaleFrom={'50%'}>
 
