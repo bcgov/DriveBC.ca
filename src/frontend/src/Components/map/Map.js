@@ -46,6 +46,7 @@ import {
   onMoveEnd,
   setLocationPin,
   setZoomPan,
+  setZoomPanAnchored,
   toggleMyLocation,
   zoomIn,
   zoomOut,
@@ -369,7 +370,13 @@ export default function DriveBCMap(props) {
       }
 
       if (mousePointXClicked < 390) {
-        setZoomPan(mapView, mapView.current.getZoom(), geometry.flatCoordinates);
+        const zoom = mapView.current.getZoom();
+        const coords = geometry.flatCoordinates;
+        if (smallScreen) {
+          setZoomPanAnchored(mapRef, mapView, zoom, coords);
+        } else {
+          setZoomPan(mapView, zoom, coords);
+        }
       }
     }
   };
@@ -939,7 +946,7 @@ export default function DriveBCMap(props) {
         searchParams.delete('type');
         searchParams.delete('display_category');
         searchParams.delete('id');
-        searchParams.delete('camIndex'); 
+        searchParams.delete('camIndex');
         setSearchParams(searchParams, { replace: true });
       }
 
