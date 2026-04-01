@@ -1,5 +1,6 @@
 // React
 import React from 'react';
+import PropTypes from 'prop-types';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -219,3 +220,28 @@ export default function NearbyLocalWeather(props) {
     </div>
   );
 }
+
+NearbyLocalWeather.propTypes = {
+  weather: PropTypes.shape({
+    weather_station_name: PropTypes.string,
+    location_description: PropTypes.string,
+    issuedUtc: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+    air_temperature: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    road_temperature: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    elevation: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    precipitation: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    precipitation_stdobs: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    snow: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    snow_stdobs: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    average_wind: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    maximum_wind: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    wind_direction: PropTypes.string,
+    hourly_forecast_group: PropTypes.arrayOf(
+      PropTypes.shape({
+        ObservationTypeName: PropTypes.string,
+        TimestampUtc: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+        Value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      })
+    ),
+  }),
+};
