@@ -12,8 +12,7 @@ import {
   faRoad,
   faSnowflake,
   faTemperatureHalf,
-  faWind,
-  faEye
+  faWind
 } from '@fortawesome/pro-light-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
 
@@ -104,8 +103,7 @@ export default function LocalWeatherPanel(props) {
             </div>
           )}
 
-          {(weatherData.elevation || weatherData.precipitation || weatherData.precipitation_stdobs ||
-            weatherData.snow || weatherData.snow_stdobs || weatherData.average_wind || weatherData.maximum_wind) && (
+          {(weatherData.pavement_status || weatherData.pavement_grip || weatherData.elevation || weatherData.precipitation || weatherData.precipitation_stdobs || weatherData.snow || weatherData.snow_depth || weatherData.snow_stdobs || weatherData.average_wind || weatherData.maximum_wind) && (
 
             <div className="data-card-container">
               <p className="container-label">Current conditions</p>
@@ -121,16 +119,6 @@ export default function LocalWeatherPanel(props) {
                     <p className="container-label present-weather">
                       {weatherData.present_weather?.label || 'Unknown conditions'}
                     </p>
-                  </div>
-                )}
-
-                {weatherData.visibility && (
-                  <div className="data-card__row">
-                    <div className="data-icon">
-                      <FontAwesomeIcon className="icon" icon={faEye} />
-                    </div>
-                    <p className="label">Visibility</p>
-                    <p className="data">{weatherData.visibility}</p>
                   </div>
                 )}
 
