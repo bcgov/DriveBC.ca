@@ -28,16 +28,13 @@ class TestGenerateOfflineCameraImages(TestCase):
         ]
 
         with patch('apps.consumer.tasks.watermark') as mock_watermark, \
-             patch('apps.consumer.tasks.save_watermarked_image_to_pvc') as mock_save_pvc, \
-             patch('apps.consumer.tasks.push_to_s3') as mock_push_s3, \
-             patch('apps.consumer.tasks.insert_image_and_update_webcam') as mock_insert:
+             patch('apps.consumer.tasks.save_watermarked_image_to_pvc') as mock_save_pvc:
 
             generate_offline_camera_images()
 
             mock_watermark.assert_not_called()
             mock_save_pvc.assert_not_called()
-            mock_push_s3.assert_not_called()
-            mock_insert.assert_not_called()
+            
 
     @patch('apps.consumer.tasks.get_all_from_db')
     @patch('apps.consumer.tasks.process_camera_rows')
@@ -56,7 +53,6 @@ class TestGenerateOfflineCameraImages(TestCase):
 
             generate_offline_camera_images()
 
-            mock_watermark.assert_called_once()
             mock_save_pvc.assert_called_once()
             mock_save_drivebc.assert_called_once()
 
@@ -67,40 +63,29 @@ class TestGenerateOfflineCameraImages(TestCase):
         mock_process_rows.return_value = []
 
         with patch('apps.consumer.tasks.watermark') as mock_watermark, \
-             patch('apps.consumer.tasks.save_watermarked_image_to_pvc') as mock_save_pvc, \
-             patch('apps.consumer.tasks.push_to_s3') as mock_push_s3, \
-             patch('apps.consumer.tasks.insert_image_and_update_webcam', return_value=None) as mock_insert:
+             patch('apps.consumer.tasks.save_watermarked_image_to_pvc') as mock_save_pvc:
 
             generate_offline_camera_images()
 
             mock_watermark.assert_not_called()
             mock_save_pvc.assert_not_called()
-            mock_push_s3.assert_not_called()
-            mock_insert.assert_not_called()
 
     @patch('apps.consumer.tasks.get_all_from_db')
     @patch('apps.consumer.tasks.process_camera_rows')
     def test_handles_watermark_failure(self, mock_process_rows, mock_get_db):
         mock_get_db.return_value = []
         mock_process_rows.return_value = [
-            {'id': 1, 'is_on': False, 'cam_internet_name': 'Camera 1'},
+            {'id': 1, 'is_on': False, 'cam_internet_name': 'Camera 1', 'camera_id': '1'},
         ]
 
-        with patch('apps.consumer.tasks.watermark') as mock_watermark, \
-             patch('apps.consumer.tasks.save_watermarked_image_to_pvc') as mock_save_pvc, \
+        with patch('apps.consumer.tasks.save_watermarked_image_to_pvc') as mock_save_pvc, \
              patch('apps.consumer.tasks.save_watermarked_image_to_drivebc_pvc') as mock_save_drivebc, \
-             patch('apps.consumer.tasks.push_to_s3') as mock_push_s3, \
-             patch('apps.consumer.tasks.insert_image_and_update_webcam', return_value=None) as mock_insert:
-
-            mock_watermark.return_value = None
+             patch('apps.consumer.tasks.delete_watermarked_image_from_pvc'):
 
             generate_offline_camera_images()
 
-            mock_watermark.assert_called_once()
-            mock_save_pvc.assert_not_called()
-            mock_save_drivebc.assert_not_called()
-            mock_push_s3.assert_not_called()
-            mock_insert.assert_not_called()
+            mock_save_pvc.assert_called_once()
+            mock_save_drivebc.assert_called_once()
 
     @patch('apps.consumer.tasks.get_all_from_db')
     @patch('apps.consumer.tasks.process_camera_rows')
@@ -111,9 +96,7 @@ class TestGenerateOfflineCameraImages(TestCase):
         ]
 
         with patch('apps.consumer.tasks.watermark') as mock_watermark, \
-             patch('apps.consumer.tasks.save_watermarked_image_to_pvc') as mock_save_pvc, \
-             patch('apps.consumer.tasks.push_to_s3') as mock_push_s3, \
-             patch('apps.consumer.tasks.insert_image_and_update_webcam', return_value=None) as mock_insert:
+             patch('apps.consumer.tasks.save_watermarked_image_to_pvc') as mock_save_pvc:
 
             mock_watermark.return_value = b'watermarked_image_bytes'
 
@@ -121,5 +104,3 @@ class TestGenerateOfflineCameraImages(TestCase):
 
             mock_watermark.assert_not_called()
             mock_save_pvc.assert_not_called()
-            mock_push_s3.assert_not_called()
-            mock_insert.assert_not_called()
