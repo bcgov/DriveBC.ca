@@ -45,35 +45,18 @@ export default function NearbyWeathers(props) {
   const [localWeather, setLocalWeather] = useState();
   const [hef, setHef] = useState();
 
-  // States
-  const [activeTab, setActiveTab] = useState('Local');
-
   const btnTitles = [
-    camera.local_weather_station && 'Local',
-    camera.regional_weather_station && 'Regional',
-    camera.hev_station && 'High elevation',
+    currentWeatherList && camera.local_weather_station && 'Local',
+    regionalWeatherList && camera.regional_weather_station && 'Regional',
+    hefList && camera.hev_station && 'High elevation',
   ].filter(Boolean);
 
+  const [activeTab, setActiveTab] = useState(btnTitles && btnTitles.length ? btnTitles[0] : null);
+
   // Effects
-
-  // if Local has no data once its list has loaded, switch to the first tab that does.
-  useEffect(() => {
-    if (activeTab !== 'Local') return;
-    if (currentWeatherList == null || localWeather) return;
-
-    if (regionalWeather) setActiveTab('Regional');
-    else if (hef) setActiveTab('High elevation');
-  }, [currentWeatherList, localWeather, regionalWeather, hef, activeTab]);
-
   // find regional weather and set state
   useEffect(() => {
     if (!regionalWeatherList || !camera.regional_weather_station) {
-      if (camera.hef_station) {
-        setActiveTab("High elevation");
-      }
-      else {
-        setActiveTab("Local");
-      }
       return;
     }
 
@@ -85,12 +68,6 @@ export default function NearbyWeathers(props) {
   // find local weather and set state
   useEffect(() => {
     if (!currentWeatherList || !camera.local_weather_station) {
-      if (camera.regional_weather_station) {
-        setActiveTab("Regional");
-      }
-      else {
-        setActiveTab("High elevation");
-      }  
       return;
     }
 
@@ -102,12 +79,6 @@ export default function NearbyWeathers(props) {
   // find hef and set state
   useEffect(() => {
     if (!hefList || !camera.hev_station) {
-      if (camera.local_weather_station) {
-        setActiveTab("Local");
-      }
-      else {
-        setActiveTab("Regional");
-      }  
       return;
     }
 
@@ -160,15 +131,15 @@ export default function NearbyWeathers(props) {
           </div>
         </div>
 
-        { activeTab === 'Local' && camera.local_weather_station &&
+        { activeTab === 'Local' && localWeather &&
           <NearbyLocalWeather weather={localWeather} />
         }
 
-        { activeTab === 'Regional' && camera.regional_weather_station &&
+        { activeTab === 'Regional' && regionalWeather &&
           <NearbyRegionalWeather weather={regionalWeather} />
         }
 
-        { activeTab === 'High elevation' && camera.hef_station && 
+        { activeTab === 'High elevation' && hef &&
           <NearbyHevWeather weather={hef} />
         }
       </div>
