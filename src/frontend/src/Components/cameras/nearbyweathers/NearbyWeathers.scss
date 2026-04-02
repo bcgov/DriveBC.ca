@@ -294,6 +294,20 @@
         min-width: 80px;
         color: $Type-Primary;
         font-weight: 700;
+
+        &.small {
+          font-weight: 400;
+          font-size: 0.75rem;
+          color: $Type-Secondary;
+        }
+      }
+
+      .multi-line-label-group {
+        margin-bottom: 6px;
+
+        .label.small {
+          font-size: 0.75rem;
+        }
       }
     }
   }
