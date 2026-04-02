@@ -33,13 +33,13 @@ from apps.feed.serializers import (
     WebcamFeedSerializer,
 )
 from apps.shared.serializers import DistrictAPISerializer
+from apps.weather.models import CurrentWeather
 from apps.wildfire.serializers import WildfireAreaSerializer, WildfirePointSerializer
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from apps.weather.models import CurrentWeather
 
 # Maps the key for our client API's serializer fields to the matching pair of
 # the source API's DataSetName and DisplayName fields
@@ -188,7 +188,6 @@ class FeedClient:
         cache.set('weather_access_token', token, timeout=270)  # Cache for slightly less than 5 minutes
 
         return token
-    
 
     def make_weather_request(self, endpoint, mock_token=None):
         token = mock_token or cache.get('weather_access_token') or self.get_new_weather_access_token()
@@ -202,7 +201,6 @@ class FeedClient:
             response = requests.get(endpoint, headers=new_headers)
 
         return response
-    
 
     def get_single_feed(self, dbo, resource_type, resource_name, serializer_cls, as_serializer=False):
         """
@@ -279,8 +277,7 @@ class FeedClient:
 
     def get_event_list(self):
         return self.get_list_feed(
-            OPEN511, 'events', EventAPISerializer,
-            {"format": "json", "limit": 500}
+            OPEN511, 'events', EventAPISerializer
         )
 
     def get_dit_event_dict(self):
@@ -416,7 +413,6 @@ class FeedClient:
             logger.warning('Error fetching list of weather stations')
             return res
 
-
         stations_data = response.json()
         for station in stations_data:
             station_number = station.get("WeatherStationNumber")
@@ -443,7 +439,7 @@ class FeedClient:
                     }
                     if high_value is not None:
                         forecast_item["High"] = high_value
-                        
+
                     if low_value is not None:
                         forecast_item["Low"] = low_value
                     forecast_group.append(forecast_item)
@@ -497,28 +493,28 @@ class FeedClient:
                         quality_map[s_type] = -1  # Default to "bad" if unreadable
 
             mapped_datasets = [
-                ds for ds in general_station_datasets 
+                ds for ds in general_station_datasets
                 if ds.get("DataSetName") in DATASETNAMES
             ]
 
             def precedence_sort(ds):
                 p = ds.get("Precedence")
                 return p if p is not None else 99
-            
-            mapped_datasets.sort(key=precedence_sort) 
+
+            mapped_datasets.sort(key=precedence_sort)
 
             filtered_dataset = {}
             for dataset in mapped_datasets:
                 dataset_name = dataset.get("DataSetName")
                 serializer_name = SERIALIZER_MAPPING.get(dataset_name)
-                
+
                 if not serializer_name or serializer_name in filtered_dataset:
                     continue
 
                 sensor_type = dataset.get("SensorTypeName")
                 display_name = DISPLAYNAME_MAPPING.get(dataset_name)
                 value_field = VALUE_FIELD_MAPPING.get(dataset_name, "Value")
-                
+
                 sensor_quality = quality_map.get(sensor_type, 0)
 
                 if sensor_quality >= 0 and display_name == dataset.get("DisplayName"):
@@ -697,13 +693,13 @@ class FeedClient:
         # Prioritize freezing conditions over standard rain
         if 'freezing' in f:
             if 'drizzle' in f:
-                return '28' # Freezing drizzle
-            return '14' # Freezing rain
+                return '28'  # Freezing drizzle
+            return '14'  # Freezing rain
 
         # --- 3. MIXED PRECIPITATION ---
         if 'ice pellet' in f or 'hail' in f:
             return '27'
-        
+
         # Catch cases like "Rain mixed with snow" or "Wintry mix"
         if ('rain' in f and ('snow' in f or 'flurries' in f)) or 'mixed' in f or 'wintry mix' in f:
             if any(x in f for x in ['chance', 'risk', 'possible', 'few', 'spotty', 'stray']):
@@ -715,44 +711,43 @@ class FeedClient:
             # Specific check for Blowing/Drifting snow
             if 'blowing' in f or 'drifting' in f:
                 return '40'
-            
+
             # Heavy Snow
             if 'heavy' in f or 'squall' in f:
                 return '17'
-            
+
             # Probability / Light Snow
             # Includes "A few flurries" -> 08/38
             if any(x in f for x in ['chance', 'risk', 'possible', 'few', 'spotty', 'stray', 'occasional']):
                 return '38' if is_night else '08'
-            
+
             # Steady Snow / Light Snow
             return '16'
 
         # --- 5. RAIN / DRIZZLE ---
         if 'rain' in f or 'shower' in f or 'drizzle' in f or 'sprinkle' in f:
             if 'drizzle' in f and 'rain' not in f:
-                return '28' # Drizzle
-            
+                return '28'  # Drizzle
 
             if any(x in f for x in ['chance', 'risk', 'possible', 'few', 'spotty', 'stray', 'sprinkle']):
                 return '36' if is_night else '06'
-            
+
             # Heavy Rain
             if 'heavy' in f:
                 return '13'
-                
+
             # Showers (Code 12)
             if 'shower' in f:
                 return '12'
-            
+
             # Default for  "Rain"
-            return '13' 
+            return '13'
 
         # --- 6. OBSCURATION ---
         if 'smoke' in f:
             return '44'
         if 'fog' in f or 'haze' in f or 'mist' in f:
-            if 'haze' in f: 
+            if 'haze' in f:
                 return '23'
             return '24'
 
@@ -765,11 +760,11 @@ class FeedClient:
 
         # Sunny / Clear
         if 'sun' in f or 'clear' in f:
-            if 'mix' in f or 'cloud' in f: 
-                return '02' # Sunny with cloudy periods
-            if 'mostly' in f: 
-                return '31' if is_night else '01' # Mostly clear/sunny
-            return '30' if is_night else '00' # Clear/Sunny
+            if 'mix' in f or 'cloud' in f:
+                return '02'  # Sunny with cloudy periods
+            if 'mostly' in f:
+                return '31' if is_night else '01'  # Mostly clear/sunny
+            return '30' if is_night else '00'  # Clear/Sunny
 
         # Partly Cloudy / Variable
         if 'partly' in f or 'variable' in f or 'mix' in f:
@@ -786,27 +781,28 @@ class FeedClient:
         # --- 9. DRY ---
         if 'dry' in f or 'frigid' in f or 'cold' in f:
             if is_night:
-                return '31' 
-            return '01' 
+                return '31'
+            return '01'
 
         # --- 10. FALLBACK ---
-        return '' # Default to nothing
-        
+        return ''  # Default to nothing
+
     def extract_high_value(self, text):
         """Extract the High temperature from forecast text."""
         if not text or "High: " not in text:
             return None
-        
+
         high_start = text.index("High: ") + 6  # After "High: "
         high_end = text.find(".", high_start)
         if high_end != -1:
             return float(text[high_start:high_end].strip())
         return None
+
     def extract_low_value(self, text):
         """Extract the Low temperature from forecast text."""
         if not text or "Low: " not in text:
             return None
-        
+
         low_start = text.index("Low: ") + 5  # After "Low: "
         low_end = text.find(".", low_start)
         if low_end != -1:

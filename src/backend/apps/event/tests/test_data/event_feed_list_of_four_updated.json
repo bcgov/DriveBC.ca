@@ -13,7 +13,7 @@
       "+linear_reference_km": 78.35,
       "schedule": {
         "intervals": [
-          "2022-10-21T15:01/"
+          "2022-10-21T15:01:00+00:00/"
         ]
       },
       "event_type": "CONSTRUCTION",
@@ -647,7 +647,7 @@
       "+linear_reference_km": 37.49,
       "schedule": {
         "intervals": [
-          "2022-10-21T15:01/"
+          "2022-10-21T15:01:00+00:00/"
         ],
         "recurring_schedules": [
           {
@@ -1450,7 +1450,7 @@
       "+linear_reference_km": 37.33,
       "schedule": {
         "intervals": [
-          "2023-05-24T16:00/2023-07-27T22:00"
+          "2023-05-24T16:00:00+00:00/2023-07-27T22:00:00+00:00"
         ]
       },
       "event_type": "CONSTRUCTION",
@@ -2152,7 +2152,7 @@
       "+linear_reference_km": 131.14,
       "schedule": {
         "intervals": [
-          "2023-05-23T14:00/2023-07-22T14:00"
+          "2023-05-23T14:00:00+00:00/2023-07-22T14:00:00+00:00"
         ]
       },
       "event_type": "CONSTRUCTION",
