@@ -1,5 +1,5 @@
 // Components and functions
-import { transformFeature } from '../helpers/index.js';
+import { transformFeature } from '../helpers/index';
 
 // OpenLayers
 import { Point } from 'ol/geom';
@@ -9,7 +9,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Styling
-import { hefStyles, hefWarningStyles } from '../../data/featureStyleDefinitions.js';
+import { hefStyles, hefWarningStyles } from '../../data/featureStyleDefinitions';
 
 export function getHefLayer(
   forecasts,

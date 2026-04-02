@@ -1,36 +1,27 @@
-/* This file exists to take environment variables and populate them in the
- * browser, using Create React App's build-time substitution mechanism for
- * environment variables starting REACT_APP_.  Previously, these values were
- * 'baked in' to the image at build time in the Github action.
- *
- * In OpenShift, a different process adds these actual values from the runtime
- * environment (where they're populated by a config map).  The script runs in
- * Openshift as a docker-entrypoint.d shell script, appending the same list to
- * the end of the bundle file, overriding any values or undefineds here.
- *
- * These are defined here so that they're included in the dev environment that
- * runs locally and has only the node build step.
- */
-window.API_HOST = `${process.env.REACT_APP_API_HOST}`;
-window.BASE_MAP = `${process.env.REACT_APP_BASE_MAP}`;
-window.REPORT_WMS_LAYER = `${process.env.REACT_APP_REPORT_WMS_LAYER}`;
-window.MAP_STYLE = `${process.env.REACT_APP_MAP_STYLE}`;
-window.REPLAY_THE_DAY = `${process.env.REACT_APP_REPLAY_THE_DAY}`;
-window.GEOCODER_HOST = `${process.env.REACT_APP_GEOCODER_HOST}`;
-window.GEOCODER_API_CLIENT_ID = `${process.env.REACT_APP_GEOCODER_API_CLIENT_ID}`;
-window.ROUTABLE_LOCATIONS_HOST = `${process.env.REACT_APP_ROUTABLE_LOCATIONS_HOST}`;
-window.ROUTE_PLANNER = `${process.env.REACT_APP_ROUTE_PLANNER}`;
-window.ROUTE_PLANNER_CLIENT_ID = `${process.env.REACT_APP_ROUTE_PLANNER_CLIENT_ID}`;
-window.PRIMARY_ROUTE_GDF = `${process.env.REACT_APP_PRIMARY_ROUTE_GDF}`;
-window.PRIMARY_ROUTE_XINGCOST = `${process.env.REACT_APP_PRIMARY_ROUTE_XINGCOST}`;
-window.PRIMARY_ROUTE_TURNCOST = `${process.env.REACT_APP_PRIMARY_ROUTE_TURNCOST}`;
-window.ALTERNATE_ROUTE_GDF = `${process.env.REACT_APP_ALTERNATE_ROUTE_GDF}`;
-window.ALTERNATE_ROUTE_XINGCOST = `${process.env.REACT_APP_ALTERNATE_ROUTE_XINGCOST}`;
-window.ALTERNATE_ROUTE_TURNCOST = `${process.env.REACT_APP_ALTERNATE_ROUTE_TURNCOST}`;
-window.RECAPTCHA_CLIENT_ID = `${process.env.REACT_APP_RECAPTCHA_CLIENT_ID}`;
-window.SURVEY_LINK = `${process.env.REACT_APP_SURVEY_LINK}`;
-window.BCEID_REGISTER_URL = `${process.env.REACT_APP_BCEID_REGISTER_URL}`;
-window.DEPLOYMENT_TAG = `${process.env.REACT_APP_DEPLOYMENT_TAG || ''}`
-window.RELEASE = `${process.env.REACT_APP_RELEASE || ''}`
-window.FROM_EMAIL = `${process.env.REACT_APP_FROM_EMAIL}`;
-window.LEGACY_URL = `${process.env.REACT_APP_LEGACY_URL}`;
+// Values are injected at runtime into globalThis.__ENV__ by nginx-served /env.js.
+const runtimeEnv = (typeof globalThis !== 'undefined' && globalThis.__ENV__) || {};
+const getEnv = (key, fallback = '') => runtimeEnv[key] ?? import.meta.env?.[`VITE_${key}`] ?? fallback;
+
+export const API_HOST = `${getEnv('API_HOST')}`;
+export const BASE_MAP = `${getEnv('BASE_MAP')}`;
+export const REPORT_WMS_LAYER = `${getEnv('REPORT_WMS_LAYER')}`;
+export const MAP_STYLE = `${getEnv('MAP_STYLE')}`;
+export const REPLAY_THE_DAY = `${getEnv('REPLAY_THE_DAY')}`;
+export const GEOCODER_HOST = `${getEnv('GEOCODER_HOST')}`;
+export const GEOCODER_API_CLIENT_ID = `${getEnv('GEOCODER_API_CLIENT_ID')}`;
+export const ROUTABLE_LOCATIONS_HOST = `${getEnv('ROUTABLE_LOCATIONS_HOST')}`;
+export const ROUTE_PLANNER = `${getEnv('ROUTE_PLANNER')}`;
+export const ROUTE_PLANNER_CLIENT_ID = `${getEnv('ROUTE_PLANNER_CLIENT_ID')}`;
+export const PRIMARY_ROUTE_GDF = `${getEnv('PRIMARY_ROUTE_GDF')}`;
+export const PRIMARY_ROUTE_XINGCOST = `${getEnv('PRIMARY_ROUTE_XINGCOST')}`;
+export const PRIMARY_ROUTE_TURNCOST = `${getEnv('PRIMARY_ROUTE_TURNCOST')}`;
+export const ALTERNATE_ROUTE_GDF = `${getEnv('ALTERNATE_ROUTE_GDF')}`;
+export const ALTERNATE_ROUTE_XINGCOST = `${getEnv('ALTERNATE_ROUTE_XINGCOST')}`;
+export const ALTERNATE_ROUTE_TURNCOST = `${getEnv('ALTERNATE_ROUTE_TURNCOST')}`;
+export const RECAPTCHA_CLIENT_ID = `${getEnv('RECAPTCHA_CLIENT_ID')}`;
+export const SURVEY_LINK = `${getEnv('SURVEY_LINK')}`;
+export const BCEID_REGISTER_URL = `${getEnv('BCEID_REGISTER_URL')}`;
+export const DEPLOYMENT_TAG = `${getEnv('DEPLOYMENT_TAG')}`;
+export const RELEASE = `${getEnv('RELEASE')}`;
+export const FROM_EMAIL = `${getEnv('FROM_EMAIL')}`;
+export const LEGACY_URL = `${getEnv('LEGACY_URL')}`;

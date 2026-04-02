@@ -1,8 +1,6 @@
-@import "~react-image-gallery/styles/scss/image-gallery.scss";
-@import "styles/variables";
-@import "styles/bootstrap-customizations";
-@import "styles/typography";
-
+@use "styles/variables" as *;
+@use "styles/bootstrap-customizations";
+@use "styles/typography";
 // Global styling
 * {
   touch-action: pan-x pan-y;
