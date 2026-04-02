@@ -59,6 +59,7 @@ export default function CamPanel(props) {
 
   // Refs
   const isInitialMount = useRef(true);
+  const isFirstCamFeature = useRef(true);
   const camPanelRef = useRef(null);
   const rootCamRef = useRef(newCam);
 
@@ -75,16 +76,26 @@ export default function CamPanel(props) {
     rootCamRef.current = newCam;
     setCamera(newCam);
 
-    setCamIndex(0); 
+    let initialIndex = 0;
+    if (isFirstCamFeature.current) {
+      const urlIndex = searchParams.get("camIndex");
+      initialIndex = urlIndex ? Number.parseInt(urlIndex, 10) : 0;
+      isFirstCamFeature.current = false;
+    }
 
-    searchParams.set("type", 'camera');
-    searchParams.set("id", newCam.id);
-    searchParams.delete("display_category");
-    searchParams.delete("camIndex"); 
+setCamIndex(initialIndex);
     
-    setSearchParams(searchParams, { replace: true });
+    setCamIndex(initialIndex); 
 
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("type", 'camera');
+    newParams.set("id", newCam.id);
+    newParams.set("camIndex", initialIndex);
+    newParams.delete("display_category");
+    
+    setSearchParams(newParams, { replace: true });
     setIsUpdated(false);
+
   }, [camFeature]);
 
   useEffect(() => {
@@ -92,14 +103,17 @@ export default function CamPanel(props) {
       isInitialMount.current = false;
       return;
     }
-    setCamera(rootCamRef.current.camGroup[camIndex]);
 
-    searchParams.set("camIndex", camIndex);
-    setSearchParams(searchParams, { replace: true });
+    // Update the displayed camera based on the new index
+    if (rootCamRef.current.camGroup?.[camIndex]) {
+      setCamera(rootCamRef.current.camGroup[camIndex]);
 
-    // need to track camIndex as a data attribute to bypass lexical binding
-    // of camIndex in helper functions (i.e., updateCamera);
-    camPanelRef.current.setAttribute('data-current', camIndex);
+      // Sync the URL index
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("camIndex", camIndex);
+      setSearchParams(newParams, { replace: true });
+
+    }
   }, [camIndex]);
 
   /* Helpers */
@@ -122,7 +136,7 @@ export default function CamPanel(props) {
         if (update.last_update_modified !== cam.last_update_modified) {
           // using data attribute avoids lexical binding of camIndex state that
           // locks it at the initial value
-          const currentCamIndex = camPanelRef.current.getAttribute('data-current');
+          const currentCamIndex = camPanelRef.current.dataset.current;
           rootCamRef.current.camGroup[ii] = update;
           if (ii == currentCamIndex) {
             setCamera(rootCamRef.current.camGroup[ii]);
@@ -221,7 +235,7 @@ export default function CamPanel(props) {
 
   // Main component
   return (
-    <div className="popup popup--camera" ref={camPanelRef} data-current="0">
+    <div className="popup popup--camera" ref={camPanelRef} data-current={camIndex}>
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__name">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
