@@ -1,4 +1,4 @@
-import { get } from "./helper.js";
+import { get } from "./helper";
 
 function escapeCqlString(value) {
   return String(value).replace(/'/g, "''");

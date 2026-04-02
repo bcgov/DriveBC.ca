@@ -2,9 +2,9 @@
 import { fromLonLat } from "ol/proj";
 
 // Internal imports
-import { isRestStopClosed } from '../../data/restStops.js';
+import { isRestStopClosed } from '../../data/restStops';
 import { setEventStyle, setZoomPan } from '../helpers';
-import trackEvent from '../../shared/TrackEvent.js';
+import trackEvent from '../../shared/TrackEvent';
 
 // Styling
 import {
@@ -28,7 +28,7 @@ import {
   dmsSouthStyles,
   dmsWestStyles,
   dmsNorthStyles
-} from '../../data/featureStyleDefinitions.js';
+} from '../../data/featureStyleDefinitions';
 
 // Click states
 export const resetClickedStates = (

@@ -9,8 +9,8 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Styling
-import { restStopTruckStyles, restStopTruckClosedStyles } from '../../data/featureStyleDefinitions.js';
-import { isRestStopClosed } from '../../data/restStops.js';
+import { restStopTruckStyles, restStopTruckClosedStyles } from '../../data/featureStyleDefinitions';
+import { isRestStopClosed } from '../../data/restStops';
 
 const getLargeRestStopStyle = (restStop) => {
   const isClosed = isRestStopClosed(restStop.properties);

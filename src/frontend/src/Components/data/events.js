@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 
-import { get } from "./helper.js";
+import { get } from "./helper";
 
 export function getEventDetails(id) {
   return get(`${window.API_HOST}/api/events/${id}/`).then((data) => data);

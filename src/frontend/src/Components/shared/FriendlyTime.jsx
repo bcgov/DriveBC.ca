@@ -1,0 +1,150 @@
+// React
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+
+// Styling
+import './FriendlyTime.scss';
+
+const ONE_DAY = 1000 * 60 * 60 * 24; // 24 hours in milliseconds
+
+function useOutsideClick(callback) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleClick = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        callback();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('touchstart', handleClick);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('touchstart', handleClick);
+    };
+  }, [callback]);
+
+  return ref;
+}
+
+export const formatDate = (date, tz, isNextUpdate=false) => {
+  const datetimeFormat = {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    year: 'numeric',
+    timeZoneName: 'short',
+    timeZone: tz !== null ? tz: 'America/Vancouver',
+  };
+  const formatter = new Intl.DateTimeFormat('en-US', datetimeFormat);
+
+  // get time difference in milliseconds
+  const timeDiff = (new Date() - new Date(date));
+  return (isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." : formatter.format(new Date(date));
+}
+
+const getRelativeTime = (date) => {
+  const diff = (date.getTime() - new Date().getTime()) / 1000;
+  const rtf = new Intl.RelativeTimeFormat('en-US', { numeric: 'auto' });
+
+  const absSeconds = Math.abs(diff);
+
+  // Seconds
+  if (absSeconds < 60) return rtf.format(Math.round(diff), 'second');
+
+  // Minutes
+  const minutes = diff / 60;
+  if (Math.abs(minutes) < 60) return rtf.format(Math.round(minutes), 'minute');
+
+  // Hours
+  const hours = diff / 3600;
+  if (Math.abs(hours) < 24) return rtf.format(Math.round(hours), 'hour');
+
+  // Days
+  const days = diff / 86400;
+  if (Math.abs(days) < 7) return rtf.format(Math.round(days), 'day');
+
+  // Weeks
+  const weeks = diff / 604800;
+  if (Math.abs(weeks) < 4) return rtf.format(Math.round(weeks), 'week');
+
+  // Months
+  const months = diff / 2629746; // Average month in seconds (30.44 days)
+  if (Math.abs(months) < 12) return rtf.format(Math.round(months), 'month');
+
+  // Years
+  const years = diff / 31536000;
+  return rtf.format(Math.round(years), 'year');
+}
+
+export default function FriendlyTime({ date, timezone, asDate=false, includeFullIfHumanized=false, timeOnly=false, isNextUpdate=false }) {
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  const handleOutsideClick = useCallback(() => {
+    if (showTooltip) setShowTooltip(false);
+  }, [showTooltip]);
+
+  const outsideClickRef = useOutsideClick(handleOutsideClick);
+
+  // get time difference in milliseconds
+  const timeDiff = (new Date() - new Date(date));
+  const dateFormatted = formatDate(date, timezone, isNextUpdate);
+
+  // if difference is less than 24hrs
+  const humanize = timeDiff < ONE_DAY;
+  const dt = new Date(date);
+
+  if (timeOnly) {
+    let hour = dt.getHours();
+    const period = hour >= 12 ? 'pm' : 'am';
+
+    // Convert to 12-hour format
+    hour = hour % 12;
+    // Convert '0' to '12'
+    hour = hour ? hour : 12;
+
+    return <p className="friendly-time-text formatted-date">{`${hour}:00${period}`}</p>;
+  }
+
+  if (humanize && !asDate) {
+    return (
+      <React.Fragment>
+        { includeFullIfHumanized &&
+          <span className="friendly-time-text formatted-date">{dateFormatted}</span>
+        }
+
+        <div
+          className="friendly-time"
+          title={dateFormatted}
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowTooltip(!showTooltip);
+          }}
+          onKeyDown={(keyEvent) => {
+            if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
+              keyEvent.stopPropagation();
+              setShowTooltip(!showTooltip)
+            }
+          }}>
+
+          <div ref={outsideClickRef}>
+            <div className="friendly-time-text">
+              {(isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." :
+                <time dateTime={dt.toISOString()} title={dateFormatted}>{getRelativeTime(dt)}</time>
+              }
+            </div>
+            { !(isNextUpdate && timeDiff > 0) &&
+              <span className={"friendly-time__tooltip" + (showTooltip ? " showTooltip" : "")}>
+                {dateFormatted}
+              </span>
+            }
+          </div>
+        </div>
+      </React.Fragment>
+    )
+  }
+
+  return <span className="friendly-time-text formatted-date">{dateFormatted}</span>;
+}

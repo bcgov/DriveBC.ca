@@ -1,4 +1,4 @@
-import { get } from "./helper.js";
+import { get } from "./helper";
 
 export function getBulletins(id) {
   const url = `${window.API_HOST}/api/cms/bulletins/`;
