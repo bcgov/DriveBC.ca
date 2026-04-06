@@ -162,7 +162,7 @@ def populate_all_event_data():
         return
 
     closures, chain_ups = client.get_dit_event_dict()
-    ride_events = get_ride_event_dict()
+    ride_events, ride_chainups = get_ride_event_dict()
 
     active_event_ids = []
     updated_event_ids = []
@@ -227,7 +227,7 @@ def populate_all_event_data():
         except Exception as e:
             logger.warning(e)
 
-    for chain_up in chain_ups:
+    for chain_up in ride_chainups:
         # Active
         active_event_ids.append(chain_up.validated_data['id'])
 
