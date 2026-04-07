@@ -24,6 +24,7 @@ class TestGetRideEventDict(BaseTest):
         payload = [
             {
                 "id": "RIDE-A",
+                "type": "INCIDENT",
                 "impacts": [{"closed": True}],
                 "location": {
                     "start": {
@@ -37,18 +38,20 @@ class TestGetRideEventDict(BaseTest):
             }
         ]
         with patch("apps.event.ride.requests.get", return_value=_ride_http_response(payload)):
-            result = get_ride_event_dict()
+            events, chainups = get_ride_event_dict()
 
-        assert set(result.keys()) == {"RIDE-A"}
-        assert result["RIDE-A"]["closed"] is True
-        assert result["RIDE-A"]["route_at"] == "Highway 1"
-        assert result["RIDE-A"]["highway_segment_names"] == "Seg 1"
+        assert set(events.keys()) == {"RIDE-A"}
+        assert chainups == []
+        assert events["RIDE-A"]["closed"] is True
+        assert events["RIDE-A"]["route_at"] == "Highway 1"
+        assert events["RIDE-A"]["highway_segment_names"] == "Seg 1"
 
     def test_invalid_payload_returns_empty_dict(self):
         # Unparseable nextUpdate fails RIDEEventSerializer; ride module logs and returns {}
         bad = [
             {
                 "id": "RIDE-BAD",
+                "type": "INCIDENT",
                 "impacts": [],
                 "location": {},
                 "segment": None,
@@ -57,7 +60,7 @@ class TestGetRideEventDict(BaseTest):
             }
         ]
         with patch("apps.event.ride.requests.get", return_value=_ride_http_response(bad)):
-            assert get_ride_event_dict() == {}
+            assert get_ride_event_dict() == ({}, [])
 
 
 class TestPopulateRideMerge(BaseTest):
@@ -89,6 +92,7 @@ class TestPopulateRideMerge(BaseTest):
         ride_payload = [
             {
                 "id": "RIDE-TEST1",
+                "type": "INCIDENT",
                 "impacts": [{"closed": True}],
                 "location": {
                     "start": {
