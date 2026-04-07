@@ -573,6 +573,7 @@
 
       .popup__content {
         overflow-y: scroll;
+        touch-action: pan-y;
       }
     }
 
