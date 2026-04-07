@@ -536,8 +536,8 @@ export function ReportMap(props) {
         >
           <Drawer.Portal container={mapElement.current}>
             <Drawer.Overlay className="drawer-overlay" />
-            <Drawer.Content 
-              className={`drawer-content ${snap === '80%' ? 'snap-80' : ''}`} 
+            <Drawer.Content
+              className={`drawer-content ${snap === '80%' ? 'snap-80' : ''}`}
               ref={drawerRef}>
               <button
                 className="close-panel"
@@ -550,7 +550,13 @@ export function ReportMap(props) {
                 }}>
                 <FontAwesomeIcon icon={faXmark} />
               </button>
-              <div className="panel-content">
+              <div
+                className="panel-content"
+                onPointerDown={(e) => {
+                  if (e.target.closest('.popup__content')) {
+                    e.stopPropagation();
+                  }
+                }}>
                 <div className="drawer-drag-handle"></div>
                 {openPanel && renderPanel()}
               </div>
