@@ -1131,7 +1131,13 @@ export default function DriveBCMap(props) {
                   </button>
                 }
 
-                <div className="panel-content">
+                <div
+                  className="panel-content"
+                  onPointerDown={(e) => {
+                    if (e.target.closest('.popup__content')) {
+                      e.stopPropagation();
+                    }
+                  }}>
                   <div className="drawer-drag-handle"></div>
 
                   {renderPanel(
