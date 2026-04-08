@@ -73,10 +73,6 @@ import restStopIconHoverTruckClosed from '../../images/mapIcons/restarea-truck-c
 import restStopIconStaticTruckClosed from '../../images/mapIcons/restarea-truck-closed-static.png';
 
 // Dms
-import dmsIconActive from '../../images/mapIcons/dms-east-active.png';
-import dmsIconHover from '../../images/mapIcons/dms-east-hover.png';
-import dmsIconStatic from '../../images/mapIcons/dms-east-static.png';
-
 import dmsEastIconActive from '../../images/mapIcons/dms-east-active.png';
 import dmsEastIconHover from '../../images/mapIcons/dms-east-hover.png';
 import dmsEastIconStatic from '../../images/mapIcons/dms-east-static.png';
