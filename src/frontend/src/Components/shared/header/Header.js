@@ -354,6 +354,10 @@ export default function Header() {
                     Chain-ups
                     {xLargeScreen && <FontAwesomeIcon icon={faArrowRight} />}
                   </a>
+                  <a href="https://twm.th.gov.bc.ca/?c=cvrt" className='commercial-dropdown-item' onClick={() => { setIsCommercialOpen(false); onClickActions(); }}>
+                    Commercial vehicle routing tool
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                  </a>
                   <a href="https://onroutebc.gov.bc.ca/" className='commercial-dropdown-item' onClick={() => { setIsCommercialOpen(false); onClickActions(); }}>
                     onRoute
                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
@@ -368,10 +372,6 @@ export default function Header() {
                   </a>
                   <a href="https://www.cvse.ca/" className='commercial-dropdown-item' onClick={() => { setIsCommercialOpen(false); onClickActions(); }}>
                     CVSE.ca
-                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                  </a>
-                  <a href="https://twm.th.gov.bc.ca/?c=cvrt" className='commercial-dropdown-item' onClick={() => { setIsCommercialOpen(false); onClickActions(); }}>
-                    Commercial vehicle routing tool
                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                   </a>
                 </div>
