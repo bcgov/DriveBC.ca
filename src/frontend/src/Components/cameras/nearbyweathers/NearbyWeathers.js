@@ -45,13 +45,14 @@ export default function NearbyWeathers(props) {
   const [localWeather, setLocalWeather] = useState();
   const [hef, setHef] = useState();
 
-  const btnTitles = [
-    currentWeatherList && camera.local_weather_station && 'Local',
-    regionalWeatherList && camera.regional_weather_station && 'Regional',
-    hefList && camera.hev_station && 'High elevation',
-  ].filter(Boolean);
+  const weatherTabs = [
+    { key: 'Local', station: localWeather },
+    { key: 'Regional', station: regionalWeather },
+    { key: 'High elevation', station: hef },
+  ].filter(tab => !!tab.station);
 
-  const [activeTab, setActiveTab] = useState(btnTitles && btnTitles.length ? btnTitles[0] : null);
+  const defaultActiveTab = weatherTabs.length ? weatherTabs[0].key : null;
+  const [activeTab, setActiveTab] = useState(defaultActiveTab);
 
   // Effects
   // find regional weather and set state
@@ -87,6 +88,18 @@ export default function NearbyWeathers(props) {
 
   }, [hefList, camera]);
 
+  // Keep active tab valid across direct loads, refreshes, and camera changes.
+  useEffect(() => {
+    if (!weatherTabs.length) {
+      return;
+    }
+
+    const tabIsValid = weatherTabs.some(tab => tab.key === activeTab);
+    if (!tabIsValid) {
+      setActiveTab(weatherTabs[0].key);
+    }
+  }, [activeTab, weatherTabs]);
+
   /* Rendering */
   // Loading state
   if (!regionalWeather && !localWeather && !hef) {
@@ -107,24 +120,20 @@ export default function NearbyWeathers(props) {
             <p>Weather</p>
           </div>
           <div className="weather-types">
-            {[localWeather, regionalWeather, hef].map((station, index) => {
-              if (!station) {
-                return null;
-              }
-
+            {weatherTabs.map(tab => {
               return (
                 <Button
                   variant="primary"
-                  className={activeTab === btnTitles[index] ? 'current' : ''}
-                  key={index}
-                  onClick={() => setActiveTab(btnTitles[index])}
+                  className={activeTab === tab.key ? 'current' : ''}
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
                   onKeyDown={keyEvent => {
                     if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                      setActiveTab(btnTitles[index]);
+                      setActiveTab(tab.key);
                     }
                   }}>
 
-                  {btnTitles[index]}
+                  {tab.key}
                 </Button>
               );
             })}
