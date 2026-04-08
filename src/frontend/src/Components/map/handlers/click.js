@@ -233,14 +233,16 @@ const camClickHandler = (
   feature.set('clicked', true, true);
   feature.set('unread', false);
 
-  updateClickedFeature(feature);
-
   if (isCamDetail) {
+    // Do not auto center on feature on cam details page
+    updateClickedFeature(feature, false);
+
     if (feature.get('focusCamera')) {
       const zoom = feature.get('zoom');
       const pan = feature.get('pan');
 
       const nearbyCount = getVisibleNearbyObjectsCount(mapContext, feature);
+
       setZoomPan(
         mapView,
         zoom ? zoom : getDefaultZoom(nearbyCount),
@@ -255,6 +257,9 @@ const camClickHandler = (
     }
 
     updateReferenceFeature(feature);
+
+  } else {
+    updateClickedFeature(feature);
   }
 };
 

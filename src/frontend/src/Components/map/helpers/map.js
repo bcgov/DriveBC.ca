@@ -65,9 +65,15 @@ export const setZoomPan = (mapView, zoom, panCoords) => {
   mapView.current.animate(args);
 };
 
-// Same as setZoomPan but places `coordinate` at a pixel anchor (default: horizontal center,
-// upper quarter) so the point stays visible above a bottom sheet on mobile.
-export const setZoomPanAnchored = (mapRef, mapView, zoom, coordinate, anchorYFraction = 0.25) => {
+// Used when we want to center on somewhere that's not the actual center
+export const setZoomPanAnchored = (
+  mapRef,
+  mapView,
+  zoom,
+  coordinate,
+  anchorXFraction,
+  anchorYFraction
+) => {
   if (!mapView.current || !mapRef.current) {
     return;
   }
@@ -79,7 +85,7 @@ export const setZoomPanAnchored = (mapRef, mapView, zoom, coordinate, anchorYFra
   }
 
   const view = mapView.current;
-  const position = [size[0] / 2, size[1] * anchorYFraction];
+  const position = [size[0] * anchorXFraction, size[1] * anchorYFraction];
   const prevCenter = view.getCenter().slice();
   view.centerOn(coordinate, size, position);
   const targetCenter = view.getCenter().slice();

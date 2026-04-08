@@ -204,7 +204,7 @@ export default function DriveBCMap(props) {
   const [clickedFeature, setClickedFeature] = useState();
   const [staleLinkMessage, setStaleLinkMessage] = useState();
   const clickedFeatureRef = useRef();
-  const updateClickedFeature = feature => {
+  const updateClickedFeature = (feature, center=true) => {
     // Remove highlight from feature on click
     if (feature && feature instanceof Feature && feature.get('highlight')) {
       // Remove highlight from feature
@@ -218,7 +218,10 @@ export default function DriveBCMap(props) {
 
     clickedFeatureRef.current = feature;
     setClickedFeature(feature);
-    updatePosition(feature);
+
+    if (center) {
+      updatePosition(feature);
+    }
   };
 
   const handleSetShowRouteObjs = (value) => {
@@ -373,11 +376,24 @@ export default function DriveBCMap(props) {
         geometry = feature.getProperties().altFeature.getGeometry(); // use the point feature's geometry
       }
 
-      if (mousePointXClicked < 390) {
+      // Center if panel from bottom or clicked within 390px from left of the screen
+      if (mousePointXClicked < 390 || smallScreen) {
         const zoom = mapView.current.getZoom();
         const coords = geometry.flatCoordinates;
-        if (smallScreen) {
-          setZoomPanAnchored(mapRef, mapView, zoom, coords);
+        const mapWidth = mapRef.current?.getSize()?.[0] ?? 0;
+
+        // Use anchored pan if panel from bottom or screen smaller than 1000px
+        const shouldUseAnchoredPan = mapWidth < 1000 || smallScreen;
+
+        // Center on top half of the screen, if panel open from bottom
+        const anchorYFraction = !viewportLargeScreen || isCamDetail ? 0.25 : 0.5;
+
+        // Center on right side of screen minus 390px panel, if panel open from left
+        const anchorXFraction = anchorYFraction !== 0.25 ? (((mapWidth-390)/2) + 390) / mapWidth : 0.5;
+
+        if (shouldUseAnchoredPan) {
+          setZoomPanAnchored(mapRef, mapView, zoom, coords, anchorXFraction, anchorYFraction);
+
         } else {
           setZoomPan(mapView, zoom, coords);
         }
