@@ -97,7 +97,7 @@ export default function DriveBCMap(props) {
 
   // width breakpoints
   const viewportSmallScreen = useMediaQuery('only screen and (max-width: 575px)');
-  const viewportLargeScreen = useMediaQuery('only screen and (min-width : 768px)');
+  const viewportLargeScreen = useMediaQuery('only screen and (min-width: 768px)');
 
   // cam-detail map is narrow regardless of viewport - use mobile mode
   const smallScreen = viewportSmallScreen || !!isCamDetail;
