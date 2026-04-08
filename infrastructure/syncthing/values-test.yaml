@@ -12,9 +12,9 @@ deployment:
   resources:
     requests:
       cpu: 50m
-      memory: 275Mi
+      memory: 500Mi
     limits:
-      memory: 375Mi
+      memory: 1Gi
   volumeMounts: # List of volume mounts for the deployment. Can add as many as needed.
     - name: test-drivebc-syncthing
       mountPath: /var/syncthing

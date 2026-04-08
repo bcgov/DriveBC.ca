@@ -117,6 +117,7 @@ crunchy:
         - "host all all 0.0.0.0/0 md5"
         - "host all all ::1/128 md5"
       parameters:
+        wal_retrieve_retry_interval: 30000
         shared_buffers: 128MB # default is 128MB; a good tuned default for shared_buffers is 25% of the memory allocated to the pod
         wal_buffers: "-1" # this can be set to -1 to automatically set as 1/32 of shared_buffers or 64kB, whichever is larger
         min_wal_size: 32MB
