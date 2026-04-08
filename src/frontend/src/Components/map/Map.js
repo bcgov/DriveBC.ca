@@ -88,16 +88,20 @@ import { cameraStyles, routeStyles } from "../data/featureStyleDefinitions";
 
 export default function DriveBCMap(props) {
   /* initialization */
-  // Misc
-  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
-  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
-
   // Props
   const {
     mapProps: {referenceData, rootCamera, isCamDetail, mapViewRoute, loadCamDetails},
     showNetworkError, showServerError, trackedEventsRef,
     loadingLayers, setLoadingLayers, getInitialLoadingLayers
   } = props;
+
+  // width breakpoints
+  const viewportSmallScreen = useMediaQuery('only screen and (max-width: 575px)');
+  const viewportLargeScreen = useMediaQuery('only screen and (min-width : 768px)');
+
+  // cam-detail map is narrow regardless of viewport - use mobile mode
+  const smallScreen = viewportSmallScreen || !!isCamDetail;
+  const largeScreen = viewportLargeScreen && !isCamDetail;
 
   // Navigation
   const navigate = useNavigate();
@@ -177,7 +181,7 @@ export default function DriveBCMap(props) {
 
   // States
   const [mapRendered, setMapRendered] = useState(false);
-  const [openTabs, setOpenTabs] = useState(largeScreen && !isCamDetail);
+  const [openTabs, setOpenTabs] = useState(largeScreen);
   const [maximizedPanel, setMaximizedPanel] = useState(false);
   const [myLocationLoading, setMyLocationLoading] = useState(false);
   const [myLocation, setMyLocation] = useState();

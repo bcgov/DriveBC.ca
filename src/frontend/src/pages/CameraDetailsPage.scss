@@ -344,7 +344,7 @@
       @media (min-width: 1200px) {
         gap: initial;
       }
-      
+
       .nearby-weathers-container {
         .popup {
           &:focus {
@@ -881,6 +881,7 @@
       width: 100%;
       @media (min-width: 992px) {
         width: 50%;
+        height: 720px;
       }
       .actions-bar--nearby {
         .title {
@@ -958,6 +959,7 @@
       width: 100%;
       height: 100%;
       border-radius: 8px;
+      border: 1px solid lightgrey;
 
       .ol-scale-line {
         bottom: 8px;

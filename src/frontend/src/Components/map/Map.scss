@@ -39,7 +39,7 @@
 }
 
 .zoom-btn, .my-location {
-  z-index: 5;
+  z-index: 1;
 }
 
 .map-wrap {
@@ -517,6 +517,20 @@
   }
 }
 
+// Camera details embed uses the drawer on wide viewports too (map box is narrow; drawer was hidden by rule above)
+.map-container.preview {
+  .drawer-overlay {
+    @media (min-width: 769px) {
+      display: block;
+    }
+  }
+
+  .drawer-content {
+    @media (min-width: 769px) {
+      display: block;
+    }
+  }
+}
 
 .drawer-content, .panel-content {
   &:focus, &:focus-visible {
