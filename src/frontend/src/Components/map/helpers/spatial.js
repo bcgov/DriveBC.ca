@@ -261,6 +261,11 @@ export const applyOverlapOffsets = (overlapGroups, mapView) => {
   const resolution = mapView.current.getResolution();
   const projection = mapView.current.getProjection().getCode();
 
+  // Map not visible, return
+  if (resolution <= 0) {
+    return;
+  }
+
   for (const [, entries] of Object.entries(overlapGroups)) {
     for (let i = 0; i < entries.length; i++) {
       // Resets every feature to its original position first, then offsets
