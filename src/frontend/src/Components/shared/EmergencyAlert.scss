@@ -45,6 +45,10 @@
     white-space: nowrap;
     margin-left: 0;
     padding-left: 0;
+
+    &:after {
+      filter: brightness(0) invert(1);
+    }
   }
 
   .fg-content span p,
