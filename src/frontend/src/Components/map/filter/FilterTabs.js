@@ -40,7 +40,8 @@ export default function FilterTabs(props) {
     setOpen
   } = props;
 
-  const smallScreen = useMediaQuery('only screen and (max-width : 768px)');
+  const viewportNarrowForFilters = useMediaQuery('only screen and (max-width : 768px)');
+  const smallScreen = viewportNarrowForFilters || !!isCamDetail;
 
   // States
   const [activeTab, setActiveTab] = useState('layers');
