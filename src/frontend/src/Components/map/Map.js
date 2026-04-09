@@ -32,6 +32,7 @@ import {
   faArrowLeft,
   faMap
 } from '@fortawesome/pro-solid-svg-icons';
+import { faCircleInfo } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 import cloneDeep from 'lodash/cloneDeep';
@@ -69,11 +70,12 @@ import ServerErrorPopup from './errors/ServerError';
 import StaleLinkErrorPopup from './errors/StaleLinkError';
 import LocationAccessPopup from './errors/LocationAccessError';
 import overrides from '../map/overrides.js';
+import { faAttributionToggleLabel } from './attributionControlLabels.js';
 
 // Map & geospatial imports
 import { applyStyle } from 'ol-mapbox-style';
 import { fromLonLat, toLonLat, transformExtent } from 'ol/proj';
-import { ScaleLine } from 'ol/control.js';
+import { Attribution, defaults, ScaleLine } from 'ol/control.js';
 import Feature from 'ol/Feature';
 import Map from 'ol/Map';
 import Geolocation from 'ol/Geolocation.js';
@@ -338,6 +340,27 @@ export default function DriveBCMap(props) {
     return () => cancelAnimationFrame(frame);
   }, []);
 
+  const attributionControlRef = useRef(null);
+  if (!attributionControlRef.current) {
+    attributionControlRef.current = new Attribution({
+      className: 'ol-attribution attribution-control',
+      label: faAttributionToggleLabel('expand', faCircleInfo),
+      collapseLabel: faAttributionToggleLabel('collapse', faXmark),
+    });
+  }
+
+  useEffect(() => {
+    const el = attributionControlRef.current?.element;
+    if (!el) return;
+
+    if (!(!isCamDetail && smallScreen)) {
+      el.style.transform = '';
+      return;
+    }
+
+    el.style.transform = `translateY(${drawerY}px)`;
+  }, [isCamDetail, smallScreen, drawerY]);
+
   // ScaleLine
   const scaleLineControl = new ScaleLine({ units: 'metric' });
   const updateScaleLineClass = (openTabs, showRouteObjs) => {
@@ -555,6 +578,13 @@ export default function DriveBCMap(props) {
       headers: { 'Content-Type': 'application/json' },
     }).then(function (response) {
       response.json().then(function (glStyle) {
+        const sourceKeys = Object.keys(glStyle.sources);
+        const autoAttribution =
+          sourceKeys.length > 0 ? glStyle.sources[sourceKeys[0]].attribution : '';
+        const esriPower =
+          "Powered by <a href='https://www.esri.com/en-us/home' target='_blank'>Esri | </a>";
+        tileSource.setAttributions([esriPower, autoAttribution]);
+
         // DBC22-2153
         glStyle.metadata['ol:webfonts'] = '/fonts/{font-family}/{fontweight}{-fontstyle}.css';
 
@@ -584,7 +614,11 @@ export default function DriveBCMap(props) {
       layers: [vectorLayer, symbolLayer],
       view: mapView.current,
       moveTolerance: 7,
-      controls: [scaleLineControl],
+      controls: defaults({
+        attribution: false,
+        zoom: false,
+        rotate: false,
+      }).extend([scaleLineControl, attributionControlRef.current]),
     });
 
     geolocation.current = new Geolocation({
@@ -1190,6 +1224,19 @@ export default function DriveBCMap(props) {
               resetClickedStates={() => resetClickedStates(null, clickedFeatureRef, updateClickedFeature)} />
           </div>
         )}
+        
+        {(!isCamDetail && smallScreen && mapRef.current) && (
+          <FilterTabs
+          mapLayers={mapLayers}
+          disableFeatures={isCamDetail}
+          enableRoadConditions={true}
+          enableChainUps={true}
+          isCamDetail={isCamDetail}
+          referenceData={referenceData}
+          loadingLayers={loadingLayers}
+          open={openTabs}
+          setOpen={setOpenTabs} />
+          )}
 
         {(!isCamDetail && smallScreen && mapRef.current) && (
           <div className="fixed-to-mobile-group"
@@ -1211,17 +1258,6 @@ export default function DriveBCMap(props) {
               }
               My location
             </Button>
-
-            <FilterTabs
-              mapLayers={mapLayers}
-              disableFeatures={isCamDetail}
-              enableRoadConditions={true}
-              enableChainUps={true}
-              isCamDetail={isCamDetail}
-              referenceData={referenceData}
-              loadingLayers={loadingLayers}
-              open={openTabs}
-              setOpen={setOpenTabs} />
           </div>
         )}
 

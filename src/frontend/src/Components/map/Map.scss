@@ -209,12 +209,7 @@
         position: absolute;
 
         @media (min-width: 576px) {
-          right: 4rem;
-          bottom: 1rem;
-        }
-
-        @media (min-width: 992px) {
-          right: 4rem;
+          right: 10rem;
           bottom: 1rem;
         }
 
@@ -250,7 +245,7 @@
     .fixed-to-mobile-group {
       position: absolute;
       width: 100%;
-      bottom: -8px;
+      bottom: 0;
       z-index: 1;
     }
 
@@ -302,7 +297,7 @@
       &.my-location {
         position: absolute;
         bottom: 1rem;
-        left: 1rem;
+        right: 1rem;
         margin-left: 0;
         transition: margin-left 0.25s ease-in-out;
 
@@ -326,11 +321,6 @@
         @media (pointer: coarse) {
           top: 1rem;
           right: 1rem;
-        }
-
-        @media (max-width: 575px) {
-          top: initial;
-          bottom: 1rem;
         }
       }
     }
@@ -362,7 +352,7 @@
       border-radius: 6px;
       border: 1px solid $Type-Link;
       box-shadow: 0px 1.9368422031402588px 4.3578948974609375px 0px #00000021;
-      bottom: 6rem;
+      bottom: 4rem;
       right: 1rem;
       display: flex;
       flex-direction: column;
@@ -371,10 +361,6 @@
       // Hide zoom buttons on touch devices
       @media (pointer: coarse) {
         display: none;
-      }
-
-      @media (min-width: 576px) {
-        bottom: 1rem;
       }
 
       & > .btn {
