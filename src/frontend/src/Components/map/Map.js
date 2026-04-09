@@ -36,6 +36,7 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 import cloneDeep from 'lodash/cloneDeep';
 import Spinner from 'react-bootstrap/Spinner';
+import PropTypes from 'prop-types';
 
 // Internal imports
 import { addCameraGroups } from '../data/webcams.js';
@@ -1341,3 +1342,13 @@ export default function DriveBCMap(props) {
     </div>
   );
 }
+
+DriveBCMap.propTypes = {
+  mapProps: PropTypes.shape({
+    rootCamera: PropTypes.shape({
+      location: PropTypes.shape({
+        coordinates: PropTypes.arrayOf(PropTypes.number),
+      }),
+    }),
+  }),
+};
