@@ -5,11 +5,13 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faCircleInfo,
   faMap,
   faMemoCircleInfo
 } from '@fortawesome/pro-regular-svg-icons';
 import {
-  faArrowLeft
+  faArrowLeft,
+  faXmark
 } from '@fortawesome/pro-solid-svg-icons';
 import Container from 'react-bootstrap/Container';
 import Tab from 'react-bootstrap/Tab';
@@ -26,6 +28,7 @@ import Footer from '../Footer';
 import FriendlyTime from '../Components/shared/FriendlyTime';
 import renderWagtailBody from '../Components/shared/renderWagtailBody.js';
 import overrides from '../Components/map/overrides.js';
+import { faAttributionToggleLabel } from '../Components/map/attributionControlLabels.js';
 import ShareURLButton from '../Components/shared/ShareURLButton';
 
 // Styling
@@ -38,6 +41,7 @@ import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
 import { Vector as VectorSource } from 'ol/source.js';
 import { Vector as VectorLayer } from 'ol/layer.js';
 import GeoJSON from 'ol/format/GeoJSON.js';
+import { Attribution, defaults } from 'ol/control.js';
 import Map from 'ol/Map.js';
 import MVT from 'ol/format/MVT.js';
 import VectorTileLayer from 'ol/layer/VectorTile.js';
@@ -113,11 +117,13 @@ function getMap(advisoryData) {
     style: styleFunction,
   });
 
+  const tileSource = new VectorTileSource({
+    format: new MVT(),
+    url: window.BASE_MAP,
+  });
+
   const tileLayer = new VectorTileLayer({
-    source: new VectorTileSource({
-      format: new MVT(),
-      url: window.BASE_MAP,
-    }),
+    source: tileSource,
   });
 
   // Apply the basemap style from the arcgis resource
@@ -126,6 +132,13 @@ function getMap(advisoryData) {
     headers: {'Content-Type': 'application/json'},
   }).then(function(response) {
     response.json().then(function(glStyle) {
+      const sourceKeys = Object.keys(glStyle.sources);
+      const autoAttribution =
+        sourceKeys.length > 0 ? glStyle.sources[sourceKeys[0]].attribution : '';
+      const esriPower =
+        "Powered by <a href='https://www.esri.com/en-us/home' target='_blank'>Esri | </a>";
+      tileSource.setAttributions([esriPower, autoAttribution]);
+
       // DBC22-2153
       glStyle.metadata['ol:webfonts'] = '/fonts/{font-family}/{fontweight}{-fontstyle}.css';
 
@@ -135,6 +148,12 @@ function getMap(advisoryData) {
 
       applyStyle(tileLayer, glStyle, 'esri');
     });
+  });
+
+  const attributionControl = new Attribution({
+    className: 'ol-attribution attribution-control',
+    label: faAttributionToggleLabel('expand', faCircleInfo),
+    collapseLabel: faAttributionToggleLabel('collapse', faXmark),
   });
 
   const mapViewObj = new View({
@@ -150,6 +169,9 @@ function getMap(advisoryData) {
       vectorLayer,
     ],
     view: mapViewObj,
+    controls: defaults({
+      attribution: false,
+    }).extend([attributionControl]),
   });
 }
 

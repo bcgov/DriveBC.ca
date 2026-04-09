@@ -962,8 +962,13 @@
       border: 1px solid lightgrey;
 
       .ol-scale-line {
-        bottom: 8px;
-        right: 8px;
+        bottom: 2.5rem;
+        right: 0.5rem;
+      }
+      
+      .ol-attribution.attribution-control {
+        bottom: 0.5rem;
+        left: 0.5rem;
       }
     }
 
@@ -993,8 +998,8 @@
 
       &.open-filters {
         position: absolute;
-        top: 8px;
-        right: 8px;
+        top: 0.5rem;
+        right: 0.5rem;
         bottom: initial;
         left: initial;
         z-index: 0;
@@ -1002,15 +1007,16 @@
 
       &.cam-location {
         position: absolute;
-        bottom: 8px;
-        left: 8px;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        left: initial;
         display: flex;
         align-items: center;
       }
 
       &.zoom-btn {
-        bottom: 48px;
-        right: 8px;
+        bottom: 4.5rem;
+        right: 0.5rem;
       }
     }
   }
