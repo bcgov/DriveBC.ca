@@ -840,6 +840,7 @@ export default function CameraDetailsPage() {
                       <Tabs
                         className="mobile-tabs"
                         activeKey={activeTab}
+                        transition={false}
                         onSelect={selectedTab => setActiveTab(selectedTab)}>
                         <Tab
                           eventKey="webcam"
@@ -1071,6 +1072,7 @@ export default function CameraDetailsPage() {
                           </Tab>
                           <Tab
                             eventKey="nearby"
+                            className="nearby-tab"
                             title={
                               !largeScreen && (
                                 <span>
