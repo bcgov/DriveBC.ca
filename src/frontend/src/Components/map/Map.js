@@ -620,6 +620,9 @@ export default function DriveBCMap(props) {
 
     if (rootCamera) {
       mapRef.current.on('change:size', function() {
+        const params = new URLSearchParams(window.location.search);
+        const urlZoom = parseFloat(params.get('zoom'));
+        mapView.current.setZoom(urlZoom);
         mapView.current.setCenter(
           fromLonLat([
             rootCamera.location.coordinates[0],
