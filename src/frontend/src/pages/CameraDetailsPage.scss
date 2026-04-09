@@ -965,7 +965,7 @@
         bottom: 2.5rem;
         right: 0.5rem;
       }
-      
+
       .ol-attribution.attribution-control {
         bottom: 0.5rem;
         left: 0.5rem;
@@ -1030,6 +1030,21 @@
   }
   .camera-imagery__nearby {
     margin-top: 2px;
+  }
+
+  // Keep the map tab pane rendered even when tab not active
+  > .tab-pane.nearby-tab:not(.active) {
+    display: block !important;
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+    width: 100%;
+    height: calc(100vh - 470px);
+    min-height: 388px;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: -1;
   }
 }
 .loader-container {
