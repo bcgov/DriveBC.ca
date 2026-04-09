@@ -7,6 +7,7 @@ import {
   faLocationCrosshairs,
   faPlus,
   faMinus,
+  faCircleInfo,
   faXmark,
   faBridge,
   faPlug,
@@ -27,10 +28,11 @@ import { zoomIn, zoomOut } from '../map/helpers';
 import { get } from '../data/helper';
 import { redLocationMarkup, setLocationPin, setZoomPan } from '../map/helpers';
 import overrides from '../map/overrides.js';
+import { faAttributionToggleLabel } from '../map/attributionControlLabels.js';
 
 // OpenLayers
 import { applyStyle } from 'ol-mapbox-style';
-import { defaults } from 'ol/control.js';
+import { Attribution, defaults } from 'ol/control.js';
 import { fromLonLat, transform, transformExtent } from 'ol/proj';
 import { ImageWMS, Vector as VectorSource } from 'ol/source.js';
 import { Image as ImageLayer, Vector as VectorLayer } from 'ol/layer.js';
@@ -46,7 +48,7 @@ import View from 'ol/View.js';
 import './ReportMap.scss';
 
 /* Map loading function */
-function loadReportMap(setActiveFeature, wmsLayer, styles, smallScreen) {
+function loadReportMap(setActiveFeature, wmsLayer, styles, smallScreen, attributionControl) {
   const tileLayer = new VectorTileLayer({
     declutter: true,
     source: new VectorTileSource({
@@ -79,6 +81,14 @@ function loadReportMap(setActiveFeature, wmsLayer, styles, smallScreen) {
   }).then(function (response) {
     response.json().then(function (glStyle) {
       window.glStyle = glStyle;
+
+      const sourceKeys = Object.keys(glStyle.sources);
+      const autoAttribution = sourceKeys.length > 0 ? glStyle.sources[sourceKeys[0]].attribution : '';
+
+      const esriPower = "Powered by <a href='https://www.esri.com/en-us/home' target='_blank'>Esri | </a>";
+      
+      tileLayer.getSource().setAttributions([esriPower, autoAttribution]);
+
 
       // DBC22-2153
       glStyle.metadata['ol:webfonts'] =
@@ -114,7 +124,10 @@ function loadReportMap(setActiveFeature, wmsLayer, styles, smallScreen) {
     target: 'report-map',
     layers: [tileLayer, imageLayer, vectorLayer],
     view: mapViewObj,
-    controls: defaults({ attribution: false, zoom: false }),
+    controls: defaults({
+      attribution: false,
+      zoom: false,
+    }).extend([attributionControl]),
   });
 
   // Register click listener
@@ -174,6 +187,14 @@ export function ReportMap(props) {
   const panel = useRef();
   const mapElement = useRef();
   const drawerRef = useRef();
+  const attributionControlRef = useRef(null);
+  if (!attributionControlRef.current) {
+    attributionControlRef.current = new Attribution({
+      className: 'ol-attribution attribution-control',
+      label: faAttributionToggleLabel('expand', faCircleInfo),
+      collapseLabel: faAttributionToggleLabel('collapse', faXmark),
+    });
+  }
 
   /* States */
   const [activeFeature, setActiveFeature] = useState(null);
@@ -239,11 +260,29 @@ export function ReportMap(props) {
     return () => cancelAnimationFrame(frame);
   }, [activeFeature, largeScreen]);
 
+  useEffect(() => {
+    const el = attributionControlRef.current?.element;
+    if (!el) return;
+
+    if (!smallScreen) {
+      el.style.transform = '';
+      return;
+    }
+
+    el.style.transform = `translateY(${drawerY}px)`;
+  }, [smallScreen, drawerY]);
+
   /* Data function and initialization */
   const loadMap = () => {
     // Run once on startup
     if (isInitialMount.current) {
-      mapRef.current = loadReportMap(setActiveFeature, wmsLayer, styles, smallScreen);
+      mapRef.current = loadReportMap(
+        setActiveFeature,
+        wmsLayer,
+        styles,
+        smallScreen,
+        attributionControlRef.current,
+      );
       mapView.current = mapRef.current.getView();
       toggleMyLocation(mapRef, mapView);
     }

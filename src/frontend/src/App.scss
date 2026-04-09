@@ -559,3 +559,70 @@ button.text-only-btn {
     }
   }
 }
+
+.ol-attribution.attribution-control {
+  right: auto;
+  left: 1rem;
+  bottom: 1rem;
+  max-width: calc(100% - 180px);
+  background: rgba(255, 255, 255, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: none;
+    order: 1;
+    margin-top: 4px;
+
+    &:has(span.attribution-control-collapse) {
+      margin-left: 4px;
+    }
+
+    span.ol-attribution {
+      max-width: 100%;
+      text-align: left;
+      font-family: Georgia, Times, serif;
+      font-size: 0.625rem;
+      background: none;
+
+      .svg-inline--fa {
+        width: 10px;
+        height: 10px;
+        color: $Type-Secondary;
+      }
+    }
+  }
+
+  ul {
+    text-align: left;
+
+    li {
+      color: $Type-Secondary;
+    }
+  }
+
+  &.ol-collapsed {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+
+    button {
+
+      span.attribution-control-expand .svg-inline--fa {
+        width: 12px;
+        height: 12px;
+      }
+    }
+  }
+
+  a::after {
+    content: none !important;
+  }
+}
