@@ -617,6 +617,17 @@ export default function DriveBCMap(props) {
       );
     });
 
+    if (rootCamera) {
+      mapRef.current.on('change:size', function() {
+        mapView.current.setCenter(
+          fromLonLat([
+            rootCamera.location.coordinates[0],
+            rootCamera.location.coordinates[1]
+          ])
+        );
+      });
+    }
+
     // Event listeners
     mapRef.current.on('click', async e => {
       const features = mapRef.current.getFeaturesAtPixel(e.pixel, {
