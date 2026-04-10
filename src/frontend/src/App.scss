@@ -132,11 +132,11 @@ a[href^="https://" i]#{$external-link-optouts}:not([href*="drivebc.ca" i]) {
     padding-top: 0;
 
     p, ol, ul {
-      margin-bottom: 0.25rem;
+      margin-bottom: 1em;
     }
 
     p:empty {
-      height: 24px;
+      height: 0;
       margin-bottom: 0;
     }
 
