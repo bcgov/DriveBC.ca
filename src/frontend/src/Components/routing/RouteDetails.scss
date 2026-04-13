@@ -320,6 +320,11 @@
   }
 
   .modal-dialog {
+
+    @media (max-width: 575px) {
+      margin-top: 180px;
+    }
+
     .route-nickname {
       display: flex;
       align-items: center;
