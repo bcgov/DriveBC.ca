@@ -30,10 +30,14 @@
 
     .weather-types {
       .btn {
-        margin-left: 8px;
         background: $Grey110;
         font-weight: 700;
         margin-bottom: 0;
+        padding: 4px 8px;
+
+        &:first-child {
+          margin-left: 8px;
+        }
 
         @media (max-width: 575px) {
           padding: 3px 6px;
