@@ -46,7 +46,7 @@ export default function NearbyWeathers(props) {
   const [hef, setHef] = useState();
 
   const weatherTabs = [
-    { key: 'Local', station: localWeather },
+    { key: 'Roadside', station: localWeather },
     { key: 'Regional', station: regionalWeather },
     { key: 'High elevation', station: hef },
   ].filter(tab => !!tab.station);
