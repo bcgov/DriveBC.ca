@@ -1,7 +1,7 @@
 import logging
 import os
 
-from apps.cms.models import Advisory, EmergencyAlert, EmergencyAlertDetail
+from apps.cms.models import EmergencyAlert, EmergencyAlertDetail
 from apps.cms.tasks import send_advisory_notifications
 from django.contrib.auth.models import Permission
 from django.templatetags.static import static
@@ -12,7 +12,7 @@ from wagtail.admin.rich_text.editors.draftail.features import ControlFeature
 from wagtail.admin.ui.components import Component
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 
-from .models import Bulletin, SubPage
+from .models import Advisory, Bulletin, SubPage, get_or_create_advisory_index, get_or_create_bulletin_index
 from .views import access_requested
 
 # from wagtail.admin.ui.components import ActionMenuItem
@@ -21,6 +21,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from django.utils.safestring import mark_safe
+from django.shortcuts import redirect
 
 logger = logging.getLogger(__name__)
 
@@ -245,3 +246,38 @@ def add_custom_emergency_alert_js():
         });              
     </script>
     """)
+
+@hooks.register("before_create_page")
+def ensure_advisory_parent(request, parent_page, page_class, **kwargs):
+    if page_class != Advisory:
+        return
+
+    index = get_or_create_advisory_index()
+    if index is None:
+        return
+
+    if parent_page.pk == index.pk:
+        return
+
+    return redirect(f"/drivebc-cms/pages/add/cms/advisory/{index.pk}/")
+
+
+@hooks.register("before_create_page")
+def ensure_bulletin_parent(request, parent_page, page_class, **kwargs):
+    if page_class != Bulletin:
+        return
+
+    index = get_or_create_bulletin_index()
+    if index is None:
+        return
+
+    if parent_page.pk == index.pk:
+        return
+
+    return redirect(f"/drivebc-cms/pages/add/cms/bulletin/{index.pk}/")
+
+@hooks.register("after_create_page")
+def move_new_advisory_to_top(request, page):
+    if page.specific_class == Advisory:
+        parent = page.get_parent()
+        page.move(parent, pos="first-child")

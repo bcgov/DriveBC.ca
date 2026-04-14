@@ -22,6 +22,7 @@ import BulletinsList from '../Components/bulletins/BulletinsList';
 import EmptyBulletin from '../Components/bulletins/EmptyBulletin';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
+import PollingComponent from "../Components/shared/PollingComponent";
 
 export default function BulletinsListPage() {
   document.title = 'DriveBC - Bulletins';
@@ -57,6 +58,13 @@ export default function BulletinsListPage() {
 
   // Data loading
   const loadBulletins = async () => {
+    // Skip loading if the bulletins are already loaded on launch
+    if (bulletins && isInitialMount.current) {
+      isInitialMount.current = false;
+      setShowLoader(false);
+      return;
+    }
+
     let bulletinsData = bulletins;
     if (!bulletinsData) {
       bulletinsData = await getBulletins().catch((error) => displayError(error));
@@ -73,15 +81,14 @@ export default function BulletinsListPage() {
   }
 
   useEffect(() => {
-    if (isInitialMount.current) { // Only run on initial load
-      loadBulletins();
-    }
+    loadBulletins();
   }, [showLoader]);
 
   const isBulletinsEmpty = bulletins?.length === 0;
 
   return (
     <div className='bulletins-page cms-page'>
+      <PollingComponent runnable={() => setShowLoader(true)} interval={30000} />
       {showNetworkError &&
         <NetworkErrorPopup />
       }

@@ -27,6 +27,96 @@ styled according to the BC gov't's style guide (light grey background, blue
 border on the left).
 '''
 
+def reparent_orphan_advisories():
+    """
+    Move all Advisory pages that are not children of AdvisoryIndexPage
+    to be children of the existing AdvisoryIndexPage.
+    """
+    index = AdvisoryIndexPage.objects.first()
+    if not index:
+        return
+
+    orphans = []
+    for advisory in Advisory.objects.all():
+        if advisory.get_parent().specific_class != AdvisoryIndexPage:
+            orphans.append(advisory)
+
+    if not orphans:
+        return
+
+    for advisory in orphans:
+        advisory.move(index, pos="first-child")  # Use "first-child" for newest on top
+
+def reparent_orphan_bulletins():
+    """
+    Move all Bulletin pages that are not children of BulletinIndexPage
+    to be children of the existing BulletinIndexPage.
+    """
+    index = BulletinIndexPage.objects.first()
+    if not index:
+        return
+
+    orphans = []
+    for bulletin in Bulletin.objects.all():
+        if bulletin.get_parent().specific_class != BulletinIndexPage:
+            orphans.append(bulletin)
+
+    if not orphans:
+        return
+
+    for bulletin in orphans:
+        bulletin.move(index, pos="first-child")  # Use "first-child" for newest on top
+
+def get_or_create_advisory_index():
+    index = AdvisoryIndexPage.objects.first()
+
+    if index:
+        actual_children_count = index.get_children().count()
+
+        if index.numchild != actual_children_count:
+            index.numchild = actual_children_count
+            index.save(update_fields=["numchild"])
+        reparent_orphan_advisories()
+
+        return index
+
+    root = Page.get_first_root_node()
+
+    index = AdvisoryIndexPage(
+        title="Advisories",
+        slug="advisories",
+    )
+
+    root.add_child(instance=index)
+    index.save_revision().publish()
+
+    return index
+
+def get_or_create_bulletin_index():
+    index = BulletinIndexPage.objects.first()
+    if index:
+        actual_children_count = index.get_children().count()
+
+        if index.numchild != actual_children_count:
+            index.numchild = actual_children_count
+            index.save(update_fields=["numchild"])
+
+        reparent_orphan_bulletins()
+        return index
+
+    # create properly
+    root = Page.get_first_root_node()
+
+    index = BulletinIndexPage(
+        title="Bulletins",
+        slug="bulletins",
+    )
+
+    root.add_child(instance=index)
+    index.save_revision().publish()
+
+    return index
+
 class FlexibleMultiPolygonField(MultiPolygonField):
     def to_python(self, value):
         if not value:
@@ -79,6 +169,12 @@ class RichContent(blocks.StreamBlock):
                                    template='cms/callout.html')
 
 
+class AdvisoryIndexPage(Page):
+    parent_page_types = ["wagtailcore.Page"]
+    subpage_types = ["cms.Advisory"]
+
+    max_count = 1
+
 class Advisory(Page, BaseModel):
     page_body = "Use this page for creating advisories."
     teaser = models.CharField(max_length=250, blank=True)
@@ -92,7 +188,7 @@ class Advisory(Page, BaseModel):
     api_fields = [
         APIField('rendered_body'),
     ]
-
+    parent_page_types = ["cms.AdvisoryIndexPage"]
     subpage_types = [
         'cms.SubPage',
     ]
@@ -144,6 +240,11 @@ class Advisory(Page, BaseModel):
         super().save(log_action=None, *args, **kwargs)
         cache.delete(CacheKey.ADVISORY_LIST)
 
+class BulletinIndexPage(Page):
+    parent_page_types = ["wagtailcore.Page"]
+    subpage_types = ["cms.Bulletin"]
+
+    max_count = 1 
 
 class Bulletin(Page, BaseModel):
     page_body = "Use this page for creating bulletins."
@@ -159,7 +260,7 @@ class Bulletin(Page, BaseModel):
     api_fields = [
         APIField('rendered_body'),
     ]
-
+    parent_page_types = ["cms.BulletinIndexPage"]
     subpage_types = [
         'cms.SubPage',
     ]
