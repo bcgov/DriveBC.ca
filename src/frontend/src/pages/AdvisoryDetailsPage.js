@@ -132,12 +132,16 @@ function getMap(advisoryData) {
     headers: {'Content-Type': 'application/json'},
   }).then(function(response) {
     response.json().then(function(glStyle) {
-      const sourceKeys = Object.keys(glStyle.sources);
-      const autoAttribution =
-        sourceKeys.length > 0 ? glStyle.sources[sourceKeys[0]].attribution : '';
+      // const sourceKeys = Object.keys(glStyle.sources);
+      // const autoAttribution =
+      //   sourceKeys.length > 0 ? glStyle.sources[sourceKeys[0]].attribution : '';
+      // const esriPower =
+      //   "Powered by <a href='https://www.esri.com/en-us/home' target='_blank'>Esri | </a>";
+      // tileSource.setAttributions([esriPower, autoAttribution]);
+
       const esriPower =
-        "Powered by <a href='https://www.esri.com/en-us/home' target='_blank'>Esri | </a>";
-      tileSource.setAttributions([esriPower, autoAttribution]);
+        "Powered by <a href='https://www.esri.com/en-us/home' target='_blank'>Esri</a> | Tiles: <a href='https://catalogue.data.gov.bc.ca/dataset/78895ec6-c679-4837-a01a-8d65876a3da9' target='_blank'>Ministry of Water, Land and Resource Stewardship</a>";
+      tileSource.setAttributions([esriPower]);
 
       // DBC22-2153
       glStyle.metadata['ol:webfonts'] = '/fonts/{font-family}/{fontweight}{-fontstyle}.css';
