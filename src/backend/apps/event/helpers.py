@@ -6,7 +6,8 @@ from apps.event.enums import EVENT_DISPLAY_CATEGORY, EVENT_SEVERITY
 
 def parse_recurring_datetime(date_string, time_string):
     # Parse the date and time strings into datetime objects
-    date = datetime.datetime.strptime(date_string, "%Y-%m-%d").date()
+    stripped_date_string = date_string.split("T")[0]
+    date = datetime.datetime.strptime(stripped_date_string, "%Y-%m-%d").date()
     time = datetime.datetime.strptime(time_string, "%H:%M").time()
 
     # Combine the date and time into a single datetime object
