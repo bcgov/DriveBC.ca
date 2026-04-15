@@ -962,13 +962,19 @@
       border: 1px solid lightgrey;
 
       .ol-scale-line {
-        bottom: 2.5rem;
-        right: 0.5rem;
+        bottom: 0.5rem;
+        right: 10rem;
       }
 
       .ol-attribution.attribution-control {
         bottom: 0.5rem;
         left: 0.5rem;
+      }
+
+      .ol-overlaycontainer-stopevent:has(.ol-attribution.attribution-control:not(.ol-collapsed)) {
+        .ol-scale-line {
+          display: none;
+        }
       }
     }
 
@@ -1015,7 +1021,7 @@
       }
 
       &.zoom-btn {
-        bottom: 4.5rem;
+        bottom: 3rem;
         right: 0.5rem;
       }
     }
