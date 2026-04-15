@@ -3,11 +3,14 @@ from unittest.mock import MagicMock, patch
 import pytest
 from django.core.cache import cache
 from httpx import HTTPStatusError
-from apps.feed.client import FeedClient, WEBCAM, OPEN511
+from apps.feed.client import FeedClient, OPEN511
 from apps.feed.constants import REST_STOP
 from apps.feed.serializers import WebcamAPISerializer, EventAPISerializer
 from apps.shared.tests import BaseTest
 from django.conf import settings
+from apps.webcam.models import CameraSource
+from pathlib import Path
+import json
 
 logging.getLogger().setLevel(logging.CRITICAL)
 
@@ -27,18 +30,6 @@ class TestFeedClientHelperMethods(BaseTest):
         super().setUp()
         self.client = FeedClient()
 
-    def test_get_endpoint(self):
-        endpoint = self.client._get_endpoint(WEBCAM, 'webcams/123')
-        self.assertIn('webcams/123', endpoint)
-
-    def test_get_auth_headers_with_key(self):
-        self.client.resource_map[WEBCAM]['auth_key'] = 'test_api_key'
-        headers = self.client._get_auth_headers(WEBCAM)
-        self.assertEqual(headers, {'apiKey': 'test_api_key'})
-
-    def test_get_auth_headers_without_key(self):
-        headers = self.client._get_auth_headers(WEBCAM)
-        self.assertEqual(headers, {})
 
     def test_get_response_data_or_raise_success(self):
         mock_response = create_mock_response(200, {'key': 'value'})
@@ -174,49 +165,6 @@ class TestFeedClientGetSingleFeed(BaseTest):
             }
         }
 
-    @patch('apps.feed.client.httpx.get')
-    @patch('apps.feed.serializers.WebcamFeedSerializer')
-    def test_get_single_feed(self, mock_serializer_cls, mock_get):
-        mock_response = create_mock_response(200, self.valid_webcam_data)
-        mock_get.return_value = mock_response
-
-        mock_serializer = MagicMock()
-        mock_serializer.is_valid = MagicMock(return_value=True)
-        mock_serializer.validated_data = {'id': 123}
-        mock_serializer_cls.return_value = mock_serializer
-
-        from apps.feed.serializers import WebcamFeedSerializer
-        result = self.client.get_single_feed('123', WEBCAM, 'webcams/', WebcamFeedSerializer)
-        self.assertIsNotNone(result)
-
-    @patch('apps.feed.client.httpx.get')
-    @patch('apps.feed.serializers.WebcamFeedSerializer')
-    def test_get_single_feed_returns_list(self, mock_serializer_cls, mock_get):
-        mock_response = create_mock_response(200, [self.valid_webcam_data])
-        mock_get.return_value = mock_response
-
-        mock_serializer = MagicMock()
-        mock_serializer.is_valid = MagicMock(return_value=True)
-        mock_serializer.validated_data = {'id': 123}
-        mock_serializer_cls.return_value = mock_serializer
-
-        from apps.feed.serializers import WebcamFeedSerializer
-        result = self.client.get_single_feed('123', WEBCAM, 'webcams/', WebcamFeedSerializer)
-        self.assertIsNotNone(result)
-
-    @patch('apps.feed.client.httpx.get')
-    @patch('apps.feed.client.WebcamFeedSerializer')
-    def test_get_single_feed_as_serializer(self, mock_serializer_cls, mock_get):
-        mock_response = create_mock_response(200, {'id': '123', 'name': 'Test'})
-        mock_get.return_value = mock_response
-
-        mock_serializer = MagicMock()
-        mock_serializer_cls.return_value = mock_serializer
-        mock_serializer.is_valid = MagicMock()
-        mock_serializer.save = MagicMock()
-
-        result = self.client.get_single_feed('123', WEBCAM, 'webcams/', mock_serializer_cls, as_serializer=True)
-        self.assertEqual(result, mock_serializer)
 
 
 class TestFeedClientGetListFeed(BaseTest):
@@ -226,13 +174,6 @@ class TestFeedClientGetListFeed(BaseTest):
         super().setUp()
         self.client = FeedClient()
 
-    @patch('apps.feed.client.httpx.get')
-    def test_get_list_feed_success(self, mock_get):
-        mock_response = create_mock_response(200, {'webcams': []})
-        mock_get.return_value = mock_response
-
-        result = self.client.get_list_feed(WEBCAM, 'webcams', WebcamAPISerializer)
-        self.assertIn('webcams', result)
 
     @patch('apps.feed.client.httpx.get')
     def test_get_list_feed_with_params(self, mock_get):
@@ -245,28 +186,47 @@ class TestFeedClientGetListFeed(BaseTest):
 
 class TestFeedClientWebcam(BaseTest):
     """Test webcam feed methods."""
+    
+    def populate_webcam_data(self, mock_data=None):
+        for cam in mock_data['webcams']:
+            CameraSource.objects.using('mssql').create(
+                id=cam['id'],
+                cam_internetname=cam['cam_internetname'],
+                cam_internetcaption=cam['cam_internetcaption'],
+                cam_internetcredit=cam['cam_internetcredit'],
+                cam_internetdbc_mark=cam['cam_internetdbc_mark'],
+                cam_locationsregion=cam['cam_locationsregion'],
+                cam_locationshighway=cam['cam_locationshighway'],
+                cam_controldisabled=cam['cam_controldisabled'],
+                cam_controldisappear=cam['cam_controldisappear'],
+                isnew=cam['isnew'],
+                cam_maintenanceis_on_demand=cam['cam_maintenanceis_on_demand'],
+                seq=cam['seq']
+            )
 
     def setUp(self):
         super().setUp()
         self.client = FeedClient()
 
-    @patch('apps.feed.client.httpx.get')
-    def test_get_webcam_list(self, mock_get):
-        mock_response = create_mock_response(200, {'webcams': []})
-        mock_get.return_value = mock_response
+    def test_get_webcam_list(self):
+        fake_cam = MagicMock()
+        fake_cam.cam_internetname = "TestWebCam New"
+        with patch("apps.webcam.models.CameraSource.objects.using") as mock_using:
+            mock_qs = MagicMock()
+            mock_qs.all.return_value = [fake_cam]
+            mock_using.return_value = mock_qs
+            result = self.client.get_webcam_list()
+            self.assertEqual(len(result), 1)
+            self.assertEqual(result[0].cam_internetname, "TestWebCam New")
+            
+    def test_get_webcam_list_exception(self):
+        with patch("apps.webcam.models.CameraSource.objects.using") as mock_using:
+            mock_using.side_effect = Exception("DB error")
 
-        result = self.client.get_webcam_list()
-        self.assertIn('webcams', result)
+            result = self.client.get_webcam_list()
 
-    @patch('apps.feed.client.FeedClient.get_single_feed')
-    def test_get_webcam(self, mock_get_single):
-        mock_get_single.return_value = {'id': 123, 'name': 'Test'}
-
-        class MockWebcam:
-            id = 123
-
-        result = self.client.get_webcam(MockWebcam())
-        self.assertEqual(result, {'id': 123, 'name': 'Test'})
+            assert result == []
+            
 
 
 class TestFeedClientEvent(BaseTest):
@@ -324,15 +284,6 @@ class TestFeedClientGetListFeedWithErrors(BaseTest):
         super().setUp()
         self.client = FeedClient()
 
-    @patch('apps.feed.client.httpx.get')
-    def test_get_list_feed_empty_response(self, mock_get):
-        from apps.feed.serializers import WebcamAPISerializer
-
-        mock_response = create_mock_response(200, {'webcams': []})
-        mock_get.return_value = mock_response
-
-        result = self.client.get_list_feed(WEBCAM, 'webcams', WebcamAPISerializer)
-        self.assertIn('webcams', result)
 
 
 class TestFeedClientFerry(BaseTest):

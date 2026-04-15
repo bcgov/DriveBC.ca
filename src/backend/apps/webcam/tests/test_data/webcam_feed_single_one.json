@@ -1,0 +1,33 @@
+
+{
+  "webcams": [
+  {
+    "id": 8,
+    "name": "TestWebCam New",
+    "region": 3,
+    "region_name": "Vancouver Island",
+    "is_on": true,
+    "should_appear": true,
+    "caption": "Hwy 1 at South Shawnigan Lake Road, looking north.",
+    "highway": "1",
+    "highway_group": 0,
+    "highway_cam_order": 29,
+    "location_longitude": -123.569743,
+    "location_latitude": 48.561231,
+    "highway_description": "Vancouver Island",
+    "orientation": "N",
+    "elevation": 327,
+    "dbc_mark": false,
+    "credit": "DriveBC",
+    "is_new": false,
+    "is_on_demand": false,
+    "update_period_mean": 675,
+    "update_period_stddev": 55,
+    "marked_stale": false,
+    "marked_delayed": false,
+    "last_update_attempt": "2024-01-01T00:00:00Z",
+    "last_update_modified": "2024-01-01T00:00:00Z"
+  }
+]
+}
+

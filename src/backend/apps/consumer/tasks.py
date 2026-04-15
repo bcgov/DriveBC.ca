@@ -32,18 +32,9 @@ def generate_offline_camera_images():
             watermarked = blank_out_image(camera, dummy_image_bytes, tz, timestamp)
             
             if watermarked:
-                # Convert timestamp to UTC for storage
-                local_tz = pytz.timezone(tz)
-                naive_dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
-                local_dt = local_tz.localize(naive_dt)
-                utc_dt = local_dt.astimezone(pytz.utc)
-                utc_timestamp_str = utc_dt.strftime("%Y%m%d%H%M%S")
-                
                 # Delete all the images for replay the day
                 delete_watermarked_image_from_pvc(camera_id)
                 # Delete all the records from image index table for offline cams
                 async_to_sync(delete_offline_webcam_records)(camera_id)
-                # Save blank image for replay the day
-                save_watermarked_image_to_pvc(camera_id, watermarked, utc_timestamp_str, False)
                 # Save blank image for current image displaying
                 save_watermarked_image_to_drivebc_pvc(camera_id, watermarked, False)

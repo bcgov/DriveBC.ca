@@ -161,6 +161,7 @@ class CameraSource(models.Model):
     cam_locationsupdated_by = models.CharField(max_length=255, blank=True, null=True)
     cam_locationslast_updated = models.DateTimeField(blank=True, null=True)
     cam_controldisabled = models.BooleanField(default=False)
+    cam_controldisappear = models.BooleanField(default=False)
     isnew = models.BooleanField(default=False)
     cam_maintenanceis_on_demand = models.BooleanField(default=False)
     seq = models.IntegerField(blank=True, null=True)

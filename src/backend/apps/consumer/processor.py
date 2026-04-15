@@ -307,6 +307,7 @@ def process_camera_rows(rows):
             'update_period_stddev': 60,
             'dbc_mark': row.cam_internetdbc_mark if hasattr(row, 'cam_internetdbc_mark') else '',
             'is_on': not row.cam_controldisabled if hasattr(row, 'cam_controldisabled') else True,
+            'cam_controldisappear': not row.cam_controldisappear if hasattr(row, 'cam_controldisappear') else True,
             'cam_maintenanceis_on_demand': row.cam_maintenanceis_on_demand if hasattr(row, 'cam_maintenanceis_on_demand') else False,
             'is_new': row.isnew if hasattr(row, 'isnew') else False,
             'seq': row.seq if hasattr(row, 'seq') else 0,
@@ -467,8 +468,6 @@ def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes, is
             f.write(image_bytes)
         if is_on:
             logger.info(f"Watermarked image saved to drivebc PVC at {filepath}")
-        else:
-            logger.info(f"Blank out image saved to drivebc PVC at {filepath}")
     except Exception as e:
         logger.error(f"Error saving image to drivebc PVC {filepath}: {e}")
 
@@ -480,13 +479,10 @@ def delete_watermarked_image_from_pvc(camera_id: str):
         return
 
     try:
-        deleted_count = 0
         for filename in os.listdir(save_dir):
             filepath = os.path.join(save_dir, filename)
             if os.path.isfile(filepath):
                 os.remove(filepath)
-                deleted_count += 1
-        logger.info(f"Deleted {deleted_count} watermarked image(s) from {save_dir}")
     except Exception as e:
         logger.error(f"Error deleting watermarked images from PVC {save_dir}: {e}")
         

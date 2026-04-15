@@ -1,0 +1,60 @@
+
+{
+  "webcams": [
+    {
+    "id": 2,
+    "name": "Test Webcam 8",
+    "region": 1,
+    "region_name": "Lower Mainland",
+    "is_on": true,
+    "should_appear": true,
+    "caption": "Test Caption 8",
+    "highway": "1",
+    "highway_group": 1,
+    "highway_cam_order": 2,
+    "location_longitude": -121.32536,
+    "location_latitude": 50.80836,
+    "highway_description": "",
+    "orientation": "N",
+    "elevation": 100,
+    "dbc_mark": false,
+    "credit": "DriveBC",
+    "is_new": false,
+    "is_on_demand": false,
+    "update_period_mean": 600,
+    "update_period_stddev": 60,
+    "marked_stale": false,
+    "marked_delayed": false,
+    "last_update_attempt": "2024-01-01T00:00:00Z",
+    "last_update_modified": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": 1,
+    "name": "Coquihalla Great Bear Snowshed - N",
+    "region": 1,
+    "region_name": "Vancouver Island",
+    "is_on": true,
+    "should_appear": true,
+    "caption": "Hwy 5, Great Bear Snowshed looking north.",
+    "highway": "1",
+    "highway_group": 1,
+    "highway_cam_order": 1,
+    "location_longitude": -121.159832,
+    "location_latitude": 49.596374,
+    "highway_description": "Vancouver Island",
+    "orientation": "N",
+    "elevation": 980,
+    "dbc_mark": false,
+    "credit": "DriveBC",
+    "is_new": false,
+    "is_on_demand": false,
+    "update_period_mean": 899,
+    "update_period_stddev": 12,
+    "marked_stale": false,
+    "marked_delayed": false,
+    "last_update_attempt": "2024-01-01T00:00:00Z",
+    "last_update_modified": "2024-01-01T00:00:00Z"
+  }
+]
+}
+
