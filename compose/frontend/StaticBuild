@@ -82,7 +82,6 @@ COPY ./compose/frontend/security_headers.conf /etc/nginx/conf.d/security_headers
 COPY ./compose/frontend/security_headers_admin.conf /etc/nginx/conf.d/security_headers_admin.conf
 COPY ./compose/frontend/blocked_ips.conf /etc/nginx/conf.d/blocked_ips.conf
 COPY ./compose/frontend/legacy_redirects.conf /etc/nginx/legacy_redirects.conf
-COPY ./compose/frontend/default_maintenance.txt /etc/nginx/default_maintenance.txt
 
 # Runtime env injection hook (run by an initContainer in OpenShift)
 COPY --chmod=755 ./compose/frontend/generate-config.sh /tmp/generate-config.sh

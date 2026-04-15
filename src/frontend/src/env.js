@@ -25,3 +25,4 @@ export const DEPLOYMENT_TAG = `${getEnv('DEPLOYMENT_TAG')}`;
 export const RELEASE = `${getEnv('RELEASE')}`;
 export const FROM_EMAIL = `${getEnv('FROM_EMAIL')}`;
 export const LEGACY_URL = `${getEnv('LEGACY_URL')}`;
+export const MAINTENANCE_MODE = `${getEnv('MAINTENANCE_MODE')}`;
