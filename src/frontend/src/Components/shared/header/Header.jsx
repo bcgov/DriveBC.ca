@@ -32,12 +32,32 @@ import logo from '../../..//images/dbc-header-logo.svg';
 // Styling
 import './Header.scss';
 
-export default function Header() {
+export default function Header({ isMaintenance }) {
   /* Setup */
   // Misc
   const xLargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
-  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
 
+  if (isMaintenance) {
+    return (
+      <header className="maintenance-header"> {/* Added class here */}
+        <Navbar expand="xl">
+          <Container>
+            <div className='header'>
+              <div className='header-left'>
+                <Navbar.Brand href="/">
+                  <img className="header-logo" src={logo} alt="Government of British Columbia" />
+                </Navbar.Brand>
+                {/* Ensure the divider shows even in maintenance if screen is large */}
+                <div className="nav-divider"></div>
+              </div>
+            </div>
+          </Container>
+        </Navbar>
+      </header>
+    );
+  }
+
+  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
   // Check current page location
   const location = useLocation();
   const showSearch = ['/cameras', '/delays'].some(path => location.pathname.startsWith(path)) || location.pathname === '/';

@@ -12,13 +12,6 @@ mkdir -p "${SHARED_CONFIG}/NGINX_CONFIG"
 SITE_ASSETS="${SHARED_CONFIG}/SITE_ASSETS"
 NGINX_CONFIG="${SHARED_CONFIG}/NGINX_CONFIG"
 
-# --- Maintenance Mode Check ---
-if [ "$MAINTENANCE_MODE" = "true" ]; then
-    echo "Maintenance mode is enabled."
-    cp /etc/nginx/default_maintenance.txt "${NGINX_CONFIG}/default.conf"
-    exit 0
-fi
-
 echo "Copying /usr/share/nginx/html/ to ${SITE_ASSETS}..."
 cp -r /usr/share/nginx/html/* "${SITE_ASSETS}/"
 
