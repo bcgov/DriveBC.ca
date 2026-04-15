@@ -2,6 +2,7 @@ import datetime
 import io
 import logging
 import os
+import pprint
 import socket
 import time
 import urllib.request
@@ -18,16 +19,16 @@ from apps.event.models import Event
 from apps.feed.client import FeedClient
 from apps.shared.models import Area, RouteGeometry
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
-from apps.webcam.enums import CAMERA_DIFF_FIELDS, CAMERA_TASK_DEFAULT_TIMEOUT
+from apps.webcam.enums import CAMERA_DIFF_FIELDS, CAMERA_TASK_DEFAULT_TIMEOUT, CAMERA_FIELD_MAPPING
 from apps.webcam.hwy_coords import hwy_coords
-from apps.webcam.models import Webcam
+from apps.webcam.models import Region, RegionHighway, Webcam
 from apps.webcam.models import CameraSource
 from apps.webcam.serializers import WebcamSerializer
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import F
+from django.db.models import F, BooleanField
 from huey.exceptions import CancelExecution
 from PIL import Image, ImageDraw, ImageFile, ImageFont
 from psycopg import IntegrityError
@@ -70,25 +71,14 @@ S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
 PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH")
 
 def populate_webcam_from_data(webcam_data):
-    webcam_id = webcam_data.get("id")
+    webcam_id = webcam_data.id
 
     try:
-        webcam = Webcam.objects.get(id=webcam_id)
-
+        create_webcam_db(webcam_data)
     except ObjectDoesNotExist:
-        webcam = Webcam(id=webcam_id)
+        logger.error(f"Webcam with id {webcam_id} not found in SQL database, skipping creation.")
+        return    
 
-    # HTTPS cams should only pull updates from SQL, not the legacy feed data.
-    current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
-    if webcam.https_cam:
-        update_cam_from_sql_db(webcam.id, current_time)
-        return
-
-    webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
-    webcam_serializer.is_valid(raise_exception=True)
-    webcam_serializer.save()
-
-    update_webcam_image(webcam_data)
 
 def update_webcam_db_stale_delayed(camera: Webcam):
     time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
@@ -113,9 +103,14 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
                 orientation=F('cam_locationsorientation'),
                 elevation=F('cam_locationselevation'),
                 isOn=Case(
-                    When(cam_controldisabled=False, then=Value(1)),
-                    default=Value(0),
-                    output_field=IntegerField()
+                    When(cam_controldisabled=0, then=Value(True)),
+                    default=Value(False),
+                    output_field=BooleanField()
+                ),
+                should_appear=Case(
+                    When(cam_controldisappear=0, then=Value(True)),
+                    default=Value(False),
+                    output_field=BooleanField()
                 ),
                 isOnDemand=F('cam_maintenanceis_on_demand'),
                 credit=F('cam_internetcredit'),
@@ -131,6 +126,7 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
                 'orientation',
                 'elevation',
                 'isOn',
+                'should_appear',
                 'isOnDemand',
                 'credit',
                 'dbc_mark',
@@ -142,9 +138,9 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
 
         if cam:
             update_webcam_db(id, cam)
-            return cam
+            return True
         else:
-            return {}
+            return False
 
     except Exception as e:
         logger.error(f"Failed to query camera from ORM: {e}")
@@ -163,33 +159,90 @@ def format_region_name(region_name):
     return ''.join(result)
 
 def update_webcam_db(cam_id: int, cam_data: dict):
-    timestamp_utc = get_recent_timestamps(cam_id)
-    if not timestamp_utc:
-        return
-
+    is_updated = False
     time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(time_now_utc)
+    ts_seconds = int(camera_status["timestamp"])
+    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 
-    raw_highway = cam_data.get("highway", "")
-    updated_count = Webcam.objects.filter(id=cam_id).update(
-        region_name=format_region_name(cam_data.get("region_name", "")),
-        is_on=True if cam_data.get("isOn") == 1 else False,
-        name=cam_data.get("cam_internetname"),
-        caption=cam_data.get("cam_internetcaption", ""),
-        highway=raw_highway.split("_", 1)[0] if "_" in raw_highway else raw_highway,
-        highway_description=raw_highway.split("_", 1)[1] if "_" in raw_highway else "",
-        orientation=cam_data.get("orientation", ""),
-        elevation=cam_data.get("elevation", 0),
-        dbc_mark=cam_data.get("dbc_mark", ""),
-        credit=cam_data.get("credit", ""),
-        is_new=cam_data.get("isNew", False),
-        is_on_demand=cam_data.get("isOnDemand", False),
-        update_period_mean=camera_status["mean_interval"],
-        update_period_stddev= camera_status["stddev_interval"],
-        marked_stale=camera_status["stale"],
-        marked_delayed=camera_status["delayed"]
+    existing_webcam = Webcam.objects.filter(id=cam_id).first()
+    if not existing_webcam:
+        return is_updated
+    else:
+        for field in CAMERA_DIFF_FIELDS:
+            source_field = CAMERA_FIELD_MAPPING.get(field, field)
+            webcam_value = getattr(existing_webcam, field)
+            source_value = cam_data.get(source_field)
+            if webcam_value != source_value:
+                Webcam.objects.filter(id=cam_id).update(
+                    is_on=True if cam_data.get("isOn") == 1 else False,
+                    should_appear=True if cam_data.get("should_appear") == 1 else False,
+                    name=cam_data.get("cam_internetname"),
+                    caption=cam_data.get("cam_internetcaption"),
+                    is_new=cam_data.get("isNew"),
+                    is_on_demand=cam_data.get("isOnDemand"),
+                    last_update_attempt=dt_utc,
+                    last_update_modified=dt_utc
+                    )
+                is_updated = True
+        return is_updated
+
+def create_webcam_db(cam_data: dict):
+    cam_id = cam_data.id
+
+    try:
+        time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
+        camera_status = calculate_camera_status(time_now_utc)
+        ts_seconds = int(camera_status["timestamp"])
+        dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
+
+        region_obj = Region.objects.using("mssql").filter(id=cam_data.cam_locationsregion).first()
+        region_id = region_obj.seq if region_obj else None
+        raw_hw = cam_data.cam_locationshighway
+        highway_group = RegionHighway.objects.using("mssql").filter(highway_id=raw_hw).first().seq
+        cam_locations_geo_latitude = cam_data.cam_locationsgeo_latitude
+        cam_locations_geo_longitude = cam_data.cam_locationsgeo_longitude
+
+        geometry = None
+        if cam_locations_geo_latitude and cam_locations_geo_longitude:
+            try:
+                geometry = Point(float(cam_locations_geo_longitude), float(cam_locations_geo_latitude))
+            except (ValueError, TypeError):
+                geometry = None
+
+        webcam, created = Webcam.objects.update_or_create(
+            id=cam_id,
+            defaults={
+                "region": region_id,
+                "region_name": format_region_name(cam_data.cam_locationsregion),
+                "is_on": True if cam_data.cam_controldisabled == 0 else False,
+                "should_appear": True if cam_data.cam_controldisappear == 0 else False,
+                "name": cam_data.cam_internetname,
+                "caption": cam_data.cam_internetcaption,
+                "highway": raw_hw.split("_", 1)[0] if "_" in raw_hw else raw_hw,
+                "highway_group": highway_group,
+                "highway_cam_order": cam_data.seq,
+                "location": geometry,
+                "highway_description": raw_hw.split("_", 1)[1] if "_" in raw_hw else "",
+                "orientation": cam_data.cam_locationsorientation,
+                "elevation": cam_data.cam_locationselevation,
+                "dbc_mark": cam_data.cam_internetdbc_mark,
+                "credit": cam_data.cam_internetcredit,
+                "is_new": cam_data.isnew,
+                "is_on_demand": cam_data.cam_maintenanceis_on_demand,
+                "update_period_mean": camera_status["mean_interval"],
+                "update_period_stddev": camera_status["stddev_interval"],
+                "marked_stale": camera_status["stale"],
+                "marked_delayed": camera_status["delayed"],
+                "last_update_attempt": dt_utc,
+                "last_update_modified": dt_utc
+            }
         )
-    return updated_count
+        return webcam, created
+
+    except Exception as e:
+        logger.error(f"Failed to create webcam for cam_id {cam_id}: {e}")
+        return None, False
 
 def purge_old_images():
     logger.info("Purging webcam images...")
@@ -285,7 +338,7 @@ def backup_purge_old_pvc_images():
 def populate_all_webcam_data():
     start_time = time.time()
 
-    feed_data = FeedClient().get_webcam_list()["webcams"]
+    feed_data = FeedClient().get_webcam_list()
     for webcam_data in feed_data:
         # Check if the task has timed out at the start of each iteration
         if time.time() - start_time > CAMERA_TASK_DEFAULT_TIMEOUT:
@@ -297,24 +350,23 @@ def populate_all_webcam_data():
 
 def update_single_webcam_data(webcam):
     try:
-        webcam_data = FeedClient().get_webcam(webcam)
+        webcam_data = CameraSource.objects.using("mssql").filter(id=webcam.id).first()
     except httpx.HTTPStatusError as e:
-        # Cam removed/not found, delete it
         if e.response.status_code == 404:
             Webcam.objects.filter(id=webcam.id).delete()
-
-        # Skip updating otherwise
         return False
 
     # Only update if existing data differs for at least one of the fields
     for field in CAMERA_DIFF_FIELDS:
-        if getattr(webcam, field) != webcam_data[field]:
+        source_field = CAMERA_FIELD_MAPPING.get(field, field)  # fallback to same name if no mapping
+        if getattr(webcam, field) != getattr(webcam_data, source_field):
             if not webcam.https_cam:
-                webcam_serializer = WebcamSerializer(webcam, data=webcam_data)
+                webcam_serializer = WebcamSerializer(webcam, data=webcam_data.__dict__)
                 webcam_serializer.is_valid(raise_exception=True)
                 webcam_serializer.save()
-                update_webcam_image(webcam_data)
             return True
+
+    return False
 
 
 def update_all_webcam_data():
@@ -327,12 +379,9 @@ def update_all_webcam_data():
 
         current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
         if camera.should_update(current_time):
-            updated = update_single_webcam_data(camera)
+            updated = update_cam_from_sql_db(camera.id, current_time)
             if updated:
                 update_camera_group_id(camera)
-        current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
-        if camera.https_cam:
-            update_cam_from_sql_db(camera.id, current_time)
     cache.delete(CacheKey.WEBCAM_LIST)
 
 def wrap_text(text, pen, font, width):
@@ -372,99 +421,6 @@ def wrap_text(text, pen, font, width):
         out[-1] = out[-1][:-1]
 
     return ''.join(out)
-
-
-def update_webcam_image(webcam):
-    '''
-    Retrieve the current cam image, stamp it and save it
-
-    Per JIRA ticket DBC22-1857
-
-    '''
-
-    try:
-        # retrieve source image into a file-like buffer
-        base_url = settings.DRIVEBC_WEBCAM_API_BASE_URL
-        if base_url[-1] == '/':
-            base_url = base_url[:-1]
-        endpoint = f'{base_url}/webcams/{webcam["id"]}/imageSource'
-
-        logger.info(f"Requesting GET {endpoint}")
-        with urllib.request.urlopen(endpoint, timeout=10) as url:
-            image_data = io.BytesIO(url.read())
-
-        raw = Image.open(image_data)
-        width, height = raw.size
-        if width > 800:
-            ratio = 800 / width
-            width = 800
-            height = floor(height * ratio)
-            raw = raw.resize((width, height))
-
-        stamped = Image.new('RGB', (width, height + 18))
-        pen = ImageDraw.Draw(stamped)
-        lastmod = webcam.get('last_update_modified')
-
-        if webcam.get('is_on'):
-            stamped.paste(raw)  # leaves 18 pixel black bar left at bottom
-
-            timestamp = 'Last modification time unavailable'
-            if lastmod is not None:
-                month = lastmod.strftime('%b')
-                day = lastmod.strftime('%d')
-                day = day[1:] if day[:1] == '0' else day  # strip leading zero
-                timestamp = f'{month} {day}, {lastmod.strftime("%Y %H:%M:%S %p %Z")}'
-
-            pen.text((width - 3,  height + 14), timestamp, fill="white",
-                     anchor='rs', font=FONT)
-
-        else:  # camera is unavailable, replace image with message
-            message = webcam.get('message', {}).get('long')
-            wrapped = wrap_text(message, pen, FONT_LARGE, min(width - 40, 500))
-            bbox = pen.multiline_textbbox((0, 0), wrapped, font=FONT_LARGE)
-            x = (width - bbox[2]) / 2
-            pen.multiline_text((x, 20), wrapped, fill="white", align='center',
-                               font=FONT_LARGE)
-            pen.polygon(((0, height), (width, height),
-                         (width, height + 18), (0, height + 18)),
-                        fill="red")
-
-        # add mark and timestamp to black bar
-        mark = webcam.get('dbc_mark', '')
-        pen.text((3,  height + 14), mark, fill="white", anchor='ls', font=FONT)
-
-        # save image in shared volume
-        filename = f'{CAMS_DIR}/{webcam["id"]}.jpg'
-        with open(filename, 'wb') as saved:
-            stamped.save(saved, 'jpeg', quality=75, exif=raw.getexif())
-
-        # Set the last modified time to the last modified time plus a timedelta
-        # calculated mean time between updates, minus the standard
-        # deviation.  If that can't be calculated, default to 5 minutes.  This is
-        # then used to set the expires header in nginx.
-        delta = 300  # 5 minutes
-        try:
-            mean = webcam.get('update_period_mean')
-            stddev = webcam.get('update_period_stddev', 0)
-            delta = mean - stddev
-
-        except Exception as e:
-            logger.exception(e)
-
-        if lastmod is not None:
-            delta = datetime.timedelta(seconds=delta)
-            lastmod = floor((lastmod + delta).timestamp())  # POSIX timestamp
-            os.utime(filename, times=(lastmod, lastmod))
-
-    except socket.timeout as e:
-        logger.error(f'Timeout fetching webcam image for camera {webcam["id"]}: {e}')
-
-    except HTTPError as e:  # log HTTP errors without stacktrace to reduce log noise
-        logger.error(f'{e} on {endpoint}')
-
-    except Exception as e:
-        logger.exception(e)
-
 
 # Helper function for add_order_to_cameras that updates order of each cam in a highway/route group
 def add_order_to_camera_group(key, cams):

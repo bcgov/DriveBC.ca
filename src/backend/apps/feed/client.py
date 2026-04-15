@@ -18,7 +18,7 @@ from apps.feed.constants import (
     REGIONAL_WEATHER,
     REGIONAL_WEATHER_AREAS,
     REST_STOP,
-    WEBCAM,
+    # WEBCAM,
     WILDFIRE,
 )
 from apps.feed.serializers import (
@@ -40,6 +40,8 @@ from django.contrib.gis.geos import Point
 from django.core.cache import cache
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from apps.weather.models import CurrentWeather
+from apps.webcam.models import CameraSource, Region, RegionHighway
 
 # Maps the key for our client API's serializer fields to the matching pair of
 # the source API's DataSetName and DisplayName fields
@@ -88,9 +90,6 @@ class FeedClient:
 
     def __init__(self):
         self.resource_map: Dict[str, dict] = {
-            WEBCAM: {
-                "base_url": settings.DRIVEBC_WEBCAM_API_BASE_URL,
-            },
             OPEN511: {
                 "base_url": settings.DRIVEBC_OPEN_511_API_BASE_URL,
             },
@@ -264,13 +263,16 @@ class FeedClient:
             new_serializer.is_valid(raise_exception=True)
             return new_serializer.validated_data
 
-    # Webcam
-    def get_webcam(self, webcam):
-        return self.get_single_feed(webcam, WEBCAM, 'webcams/', WebcamFeedSerializer)
 
     def get_webcam_list(self):
-        return self.get_list_feed(WEBCAM, 'webcams', WebcamAPISerializer)
+        try:
+            cameras = list(CameraSource.objects.using("mssql").all())
+            return cameras
 
+        except Exception as e:
+            logger.error(f"Failed to query camera from Webcam database: {e}")
+            return []
+        
     # Events
     def get_event(self, event):
         return self.get_single_feed(event, OPEN511, 'events/', EventFeedSerializer)

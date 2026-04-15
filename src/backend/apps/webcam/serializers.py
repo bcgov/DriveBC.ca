@@ -39,20 +39,12 @@ class WebcamSerializer(serializers.ModelSerializer):
 
     def get_links(self, obj):
         local_root = settings.DRIVEBC_IMAGE_BASE_URL
-        proxy_root = settings.DRIVEBC_IMAGE_PROXY_URL
         webcam_id = obj.id
 
         timestamp = int(time.time())
-        if obj.https_cam:
-            links = {
+        links = {
                 "imageDisplay": f"{local_root}images/{webcam_id}.jpg?t={timestamp}",
-                "replayTheDay": f"{local_root}api/webcams/{webcam_id}/replayTheDay/",
-            }
-
-        else:
-            links = {
-                "imageDisplay": f"{local_root}images/{webcam_id}.jpg",
-                "replayTheDay": f"{proxy_root}ReplayTheDay/json/{webcam_id}.json",
+                "replayTheDay": f"{local_root}api/webcams/{webcam_id}/replayTheDay/",                
             }
 
         return links

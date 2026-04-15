@@ -1,0 +1,60 @@
+
+{
+  "webcams": [
+    {
+    "id": 2,
+    "name": "Test Webcam 8",
+    "region": 1,
+    "region_name": "Lower Mainland",
+    "is_on": true,
+    "should_appear": true,
+    "caption": "Test Caption 8",
+    "highway": "1",
+    "highway_group": 1,
+    "highway_cam_order": 2,
+    "location_longitude": -121.32536,
+    "location_latitude": 50.80836,
+    "highway_description": "",
+    "orientation": "N",
+    "elevation": 100,
+    "dbc_mark": false,
+    "credit": "DriveBC",
+    "is_new": false,
+    "is_on_demand": false,
+    "update_period_mean": 600,
+    "update_period_stddev": 60,
+    "marked_stale": false,
+    "marked_delayed": false,
+    "last_update_attempt": "2024-01-01T00:00:00Z",
+    "last_update_modified": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": 1,
+    "name": "Test Webcam 7",
+    "region": 1,
+    "region_name": "Lower Mainland",
+    "is_on": true,
+    "should_appear": true,
+    "caption": "Test Caption 7",
+    "highway": "1",
+    "highway_group": 1,
+    "highway_cam_order": 1,
+    "location_longitude": -123.95486,
+    "location_latitude": 49.19312,
+    "highway_description": "",
+    "orientation": "N",
+    "elevation": 100,
+    "dbc_mark": false,
+    "credit": "DriveBC",
+    "is_new": false,
+    "is_on_demand": false,
+    "update_period_mean": 600,
+    "update_period_stddev": 60,
+    "marked_stale": false,
+    "marked_delayed": false,
+    "last_update_attempt": "2024-01-01T00:00:00Z",
+    "last_update_modified": "2024-01-01T00:00:00Z"
+  }
+]
+}
+

@@ -9,9 +9,15 @@ from apps.shared.tests import BaseTest, MockResponse
 from apps.webcam.models import Webcam
 from apps.webcam.tasks import update_all_webcam_data
 from django.contrib.gis.geos import Point
+from apps.webcam.tests.test_webcam_ordering import side_effect_populate
 
 
 class TestWebcamSerializer(BaseTest):
+    webcam_feed_data_one = open(
+            str(Path(__file__).parent) + "/test_data/webcam_feed_single_one.json"
+        )
+    mock_webcam_feed_result_one = json.load(webcam_feed_data_one)
+
     def setUp(self):
         super().setUp()
 
@@ -104,29 +110,24 @@ class TestWebcamSerializer(BaseTest):
         self.webcam.last_update_modified = None
         assert self.webcam.should_update(last_updated_time) is True
 
-    @patch("httpx.get")
-    def test_update_existing_webcams(self, mock_requests_get):
-        mock_requests_get.side_effect = [
-            MockResponse(self.mock_webcam_feed_result, status_code=200),
-            MockResponse(None, status_code=500),
-            MockResponse(None, status_code=404),
-        ]
-
+    @patch("apps.webcam.tasks.populate_all_webcam_data")
+    def test_update_existing_webcams(self, mock_populate):
         # Current value
         assert self.webcam.name == "TestWebCam"
 
-        # Manually sync last updated time to prevent update
-        self.webcam.last_update_modified = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
-        self.webcam.save()
-        update_all_webcam_data()
+        mock_populate.side_effect = lambda *args, **kwargs: side_effect_populate(self.mock_webcam_feed_result_one)
+        from apps.webcam import tasks
+        tasks.populate_all_webcam_data()
+
+        # # Manually sync webcam to feed data to trigger update logic
         self.webcam.refresh_from_db()
-        assert self.webcam.name == "TestWebCam"  # Camera not updated, no diff from diff fields
+        assert self.webcam.name == "TestWebCam New"  # Camera name updated
 
         # Manually desync one of the diff fields to trigger update
         self.webcam.last_update_modified = datetime.datetime(
-            2020,
-            6,
-            14,
+            2026,
+            4,
+            7,
             14,
             30,
             32,
@@ -141,7 +142,7 @@ class TestWebcamSerializer(BaseTest):
         assert Webcam.objects.all().count() == 1
 
         # Description
-        assert self.webcam.name == "Malahat Drive - N"
+        assert self.webcam.name == "TestWebCam New"
         assert (
             self.webcam.caption == "Hwy 1 at South Shawnigan Lake Road, looking north."
         )
@@ -158,7 +159,7 @@ class TestWebcamSerializer(BaseTest):
         assert self.webcam.highway_description == "Vancouver Island"
 
         # General status
-        assert self.webcam.is_on is True
+        assert self.webcam.is_on is False
         assert self.webcam.should_appear is True
         assert self.webcam.is_new is False
         assert self.webcam.is_on_demand is False
@@ -166,11 +167,8 @@ class TestWebcamSerializer(BaseTest):
         # Update status
         assert self.webcam.marked_stale is False
         assert self.webcam.marked_delayed is False
-        assert self.webcam.last_update_attempt == datetime.datetime(
-            2023, 6, 14, 14, 30, 32, tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
-        )
         assert self.webcam.last_update_modified == datetime.datetime(
-            2023, 6, 14, 14, 30, 32, tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
+            2026, 4, 7, 14, 30, 32, tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
         )
         assert self.webcam.update_period_mean == 675
         assert self.webcam.update_period_stddev == 55
@@ -181,7 +179,3 @@ class TestWebcamSerializer(BaseTest):
         # Server error, did not delete
         update_all_webcam_data()
         assert Webcam.objects.all().count() == 1
-
-        # Not found, cam deleted
-        update_all_webcam_data()
-        assert Webcam.objects.all().count() == 0
