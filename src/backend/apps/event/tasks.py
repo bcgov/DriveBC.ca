@@ -227,7 +227,8 @@ def populate_all_event_data():
         except Exception as e:
             logger.warning(e)
 
-    for chain_up in ride_chainups:
+    all_chainups = chain_ups + ride_chainups
+    for chain_up in all_chainups:
         # Active
         active_event_ids.append(chain_up.validated_data['id'])
 
