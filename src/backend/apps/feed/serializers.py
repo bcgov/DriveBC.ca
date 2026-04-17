@@ -286,11 +286,11 @@ class EventFeedSerializer(serializers.Serializer):
 
             # Parse start and end into datetime objects
             if start != '':
-                start_time = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S%z").replace(tzinfo=ZoneInfo('UTC'))
+                start_time = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S%z").replace(tzinfo=ZoneInfo('America/Vancouver'))
                 internal_data['start'] = start_time
 
             if end != '':
-                end_time = datetime.strptime(end, "%Y-%m-%dT%H:%M:%S%z").replace(tzinfo=ZoneInfo('UTC'))
+                end_time = datetime.strptime(end, "%Y-%m-%dT%H:%M:%S%z").replace(tzinfo=ZoneInfo('America/Vancouver'))
                 internal_data['end'] = end_time
 
         return internal_data
