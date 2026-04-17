@@ -193,8 +193,10 @@ def populate_all_event_data():
             event_data["closest_landmark"] = direct_data.get('closest_landmark', '')
             event_data["next_update"] = direct_data.get('next_update', None)
             event_data["start_point_linear_reference"] = direct_data.get('start_point_linear_reference', None)
+
             if 'route_at' in direct_data and direct_data['route_at'] != '':
                 event_data["route_at"] = direct_data['route_at']
+
             # DBC22-3081 replace timezone with DIT API data, to be removed if source is corrected
             if 'timezone' in direct_data and direct_data['timezone']:
                 new_tz = ZoneInfo(direct_data['timezone'])
@@ -206,13 +208,6 @@ def populate_all_event_data():
                 last_updated_time = event_data["last_updated"].replace(tzinfo=new_tz)
                 event_data["last_updated"] = cap_time_to_now(last_updated_time)
 
-                if "start" in event_data:
-                    pacific_start_time = event_data["start"].astimezone(ZoneInfo('America/Vancouver'))
-                    event_data["start"] = pacific_start_time.replace(tzinfo=new_tz)
-
-                if "end" in event_data:
-                    pacific_end_time = event_data["end"].astimezone(ZoneInfo('America/Vancouver'))
-                    event_data["end"] = pacific_end_time.replace(tzinfo=new_tz)
             else:
                 event_data['timezone'] = 'America/Vancouver'
 
