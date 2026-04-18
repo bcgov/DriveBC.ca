@@ -21,16 +21,26 @@
   .fg-content {
     display: flex;
     flex-direction: row;
+    word-break: break-word;
 
     .fg-exclamation {
       margin-right: .5rem;
       margin-top: .3rem;
     }
 
+    span p,
+    span div {
+      display: inline;
+    }
+
     p {
       margin: 0;
       color: white;
       overflow-wrap: break-word;
+    }
+
+    a:after {
+      filter: brightness(0) invert(1);
     }
   }
 
@@ -49,10 +59,5 @@
     &:after {
       filter: brightness(0) invert(1);
     }
-  }
-
-  .fg-content span p,
-  .fg-content span div {
-    display: inline;
   }
 }
