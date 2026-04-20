@@ -3,7 +3,7 @@ from apps.shared.views import CachedListModelMixin
 from apps.webcam.models import Webcam
 from apps.webcam.serializers import WebcamSerializer
 from rest_framework import viewsets
-from datetime import datetime, time, date
+from datetime import datetime, time, date, timedelta
 from urllib.parse import urlparse
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -129,9 +129,46 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
 
         return FileResponse(open(image_path, 'rb'), content_type='image/jpeg')
 
-    def _timelapse_impl(self, pk):
+    def _timelapse_impl(self, request, pk):
+        from_date_str = request.query_params.get("from")
+        to_date_str = request.query_params.get("to")
+        from_time_str = request.query_params.get("time_from")
+        to_time_str = request.query_params.get("time_to")
+        timezone_str = request.query_params.get("timezone", "UTC")
+
         timestamps = get_image_list(pk, "TIMELAPSE_HOURS")
-        return Response(timestamps, status=status.HTTP_200_OK)
+
+        # If no filter params provided, return full list unfiltered
+        if not any([from_date_str, to_date_str, from_time_str, to_time_str, timezone_str]):
+            return Response(timestamps, status=status.HTTP_200_OK)
+
+        tz = ZoneInfo(timezone_str)
+
+        from_date = parse_date(from_date_str) if from_date_str else None
+        to_date = parse_date(to_date_str) if to_date_str else None
+        from_time = datetime.strptime(from_time_str, "%H:%M").time() if from_time_str else time.min
+        to_time = datetime.strptime(to_time_str, "%H:%M").time() if to_time_str else time.max
+
+        # Default: last 24 hours in the requested timezone
+        now_local = datetime.now(tz)
+        default_from_dt = now_local - timedelta(hours=24)
+
+        base_from_date = from_date or default_from_dt.date()
+        base_to_date = to_date or now_local.date()
+
+        local_from_dt = datetime.combine(base_from_date, from_time, tzinfo=tz)
+        local_to_dt = datetime.combine(base_to_date, to_time, tzinfo=tz)
+
+        from_dt_utc = local_from_dt.astimezone(ZoneInfo("UTC"))
+        to_dt_utc = local_to_dt.astimezone(ZoneInfo("UTC"))
+
+        filtered_images = []
+        for timestamp in timestamps:
+            img_dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S").replace(tzinfo=ZoneInfo("UTC"))
+            if from_dt_utc <= img_dt <= to_dt_utc:
+                filtered_images.append(timestamp)
+
+        return Response(filtered_images, status=status.HTTP_200_OK)
 
     def _timelapse_image_impl(self, request, pk=None, filename=None):
         # Environment variables
@@ -348,7 +385,7 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
     )
     def timelapse_public(self, request, pk=None):
         # forward to the real admin logic
-        return self._timelapse_impl(pk)
+        return self._timelapse_impl(request, pk)
 
     @action(
         detail=True,
