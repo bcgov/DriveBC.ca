@@ -341,7 +341,7 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         user = request.user
         if not user.is_authenticated or not user.is_staff:
             return Response({"detail": "Admin access required."}, status=status.HTTP_403_FORBIDDEN)
-        return self._timelapse_impl(pk)
+        return self._timelapse_impl(request, pk)
 
     @action(
         detail=True,
