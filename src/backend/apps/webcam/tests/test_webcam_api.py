@@ -110,3 +110,46 @@ class TestCameraAPI(APITestCase, BaseTest):
         webcams_list = response.json().get('webcams', [])
         webcams_list_length = len(webcams_list)
         assert webcams_list_length == 0
+
+    @patch('apps.webcam.views.get_image_list')
+    def test_timelapse_filtering(self, mock_get_image_list):
+        pk = 67
+        url = f"/api/webcams/{pk}/timelapse/"
+
+        mock_timestamps = [
+            "20260419140000",  # 07:00 Vancouver (UTC-7)
+            "20260419150000",  # 08:00 Vancouver
+            "20260419160000",  # 09:00 Vancouver
+            "20260419170000",  # 10:00 Vancouver
+            "20260419180000",  # 11:00 Vancouver
+            "20260419230000",  # 16:00 Vancouver
+            "20260420000000",  # 17:00 Vancouver
+            "20260420010000",  # 18:00 Vancouver
+            "20260420020000",  # 19:00 Vancouver (outside range)
+        ]
+
+        # No filtering - returns all images
+        mock_get_image_list.return_value = mock_timestamps
+        response = self.client.get(url)
+        assert response.status_code == 200
+        result = response.json()
+        assert len(result) == len(mock_timestamps)
+
+        # Filter by date and time in Vancouver timezone
+        mock_get_image_list.return_value = mock_timestamps
+        response = self.client.get(url, {
+            'from': '2026-04-19',
+            'to': '2026-04-19',
+            'time_from': '08:00',
+            'time_to': '18:00',
+            'timezone': 'America/Vancouver',
+        })
+        assert response.status_code == 200
+        result = response.json()
+        # 08:00-18:00 Vancouver = 15:00-01:00 UTC
+        # Expected: 20260419150000 through 20260420010000 (inclusive)
+        assert len(result) == 7
+        assert "20260419140000" not in result  # 07:00 Vancouver - before range
+        assert "20260419150000" in result      # 08:00 Vancouver - start of range
+        assert "20260420010000" in result      # 18:00 Vancouver - end of range
+        assert "20260420020000" not in result  # 19:00 Vancouver - after
