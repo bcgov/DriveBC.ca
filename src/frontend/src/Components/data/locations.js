@@ -38,7 +38,7 @@ export function getExtraLocations(addressInput) {
       typeName: "public:routable-locations",
       outputFormat: "application/json",
       maxFeatures: 5,
-      cql_filter: `authority='DriveBC' and name ilike '${literal}%'`,
+      cql_filter: `authority='DriveBC' and name ilike '%${literal}%'`,
     },
     {},
     false,
