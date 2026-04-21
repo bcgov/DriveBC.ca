@@ -80,9 +80,10 @@ def populate_webcam_from_data(webcam_data):
         return    
 
 
-def update_webcam_db_stale_delayed(camera: Webcam):
+async def update_webcam_db_stale_delayed(camera: Webcam):
     time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
-    camera_status = calculate_camera_status(time_now_utc)
+    get_recent_timestamps(camera.id)  # Ensure timestamp_list is populated with latest data
+    camera_status = calculate_camera_status(camera.id, time_now_utc)
     ts_seconds = int(camera_status["timestamp"])
     dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 
@@ -161,7 +162,7 @@ def format_region_name(region_name):
 def update_webcam_db(cam_id: int, cam_data: dict):
     is_updated = False
     time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
-    camera_status = calculate_camera_status(time_now_utc)
+    camera_status = calculate_camera_status(cam_id, time_now_utc)
     ts_seconds = int(camera_status["timestamp"])
     dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 
@@ -182,8 +183,12 @@ def update_webcam_db(cam_id: int, cam_data: dict):
                     is_new=cam_data.get("isNew"),
                     is_on_demand=cam_data.get("isOnDemand"),
                     last_update_attempt=dt_utc,
-                    last_update_modified=dt_utc
-                    )
+                    last_update_modified=dt_utc,
+                    update_period_mean=camera_status["mean_interval"],
+                    update_period_stddev=camera_status["stddev_interval"],
+                    marked_stale=camera_status["stale"],
+                    marked_delayed=camera_status["delayed"]
+                )
                 is_updated = True
         return is_updated
 
@@ -192,7 +197,7 @@ def create_webcam_db(cam_data: dict):
 
     try:
         time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
-        camera_status = calculate_camera_status(time_now_utc)
+        camera_status = calculate_camera_status(cam_id, time_now_utc)
         ts_seconds = int(camera_status["timestamp"])
         dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 

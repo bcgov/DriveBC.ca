@@ -16,7 +16,7 @@ max_samples = 50
 timestamp_list: deque[Union[str, float]] = deque(maxlen=max_samples)
 
 # @sync_to_async
-def get_recent_timestamps(camera_id: int):
+def get_recent_timestamps(camera_id: str):
     latest_50 = ImageIndex.objects.filter(camera_id=str(camera_id)).order_by('-timestamp')[:50]  
     timestamp_list.clear()
 
@@ -43,10 +43,11 @@ def migrate_timestamp_list():
 def calculate_stddev(values: List[float]) -> float:
     return stdev(values) if len(values) > 1 else 0.0
 
-def calculate_camera_status(timestamp_str: str) -> tuple[float, float]:
+def calculate_camera_status(camera_id: str, timestamp_str: str) -> tuple[float, float]:
     """
     Add new timestamp and calculate median/stddev of update periods.
     Args:
+        camera_id: Camera ID
         timestamp_str: Timestamp string in format 'YYYYMMDDHHMMSSFFF'
     Returns:
         timestamp: Current timestamp in milliseconds
@@ -57,6 +58,7 @@ def calculate_camera_status(timestamp_str: str) -> tuple[float, float]:
     """
     # Step 1: parse latest timestamp
     new_ts = parse_timestamp(timestamp_str)
+    get_recent_timestamps(camera_id)  # Ensure timestamp_list is populated with latest data
 
     # Step 2: ensure all timestamps are float
     migrate_timestamp_list()
