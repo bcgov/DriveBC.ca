@@ -68,6 +68,13 @@ class TestUpdateWebcamDb(TestCase):
         _make_existing_webcam(mock_populate, mock_webcam_feed_result_1)
         webcam = Webcam.objects.filter(id=1).first()
 
+        mock_calc_status.return_value = {
+            "stale": False,
+            "delayed": False,
+            "period_mean": 900,
+            "period_stddev": 0,
+        }
+
         camera_source_data = {
             "id": 1,
             "cam_internetname": "Test Cam",
