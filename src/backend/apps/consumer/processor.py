@@ -254,7 +254,6 @@ async def process_message(message: aio_pika.IncomingMessage):
         filename = message.headers.get("filename", "unknown.jpg")
         camera_id = filename.split("_")[0].split(".")[0]
         timestamp_utc = message.headers.get("timestamp", "unknown")
-        # camera_status = calculate_camera_status(camera_id, timestamp_utc)
         camera_status = await sync_to_async(calculate_camera_status)(camera_id, timestamp_utc)
         
         timestamp_local = await sync_to_async(safe_db_call)(
