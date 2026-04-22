@@ -4,6 +4,8 @@ CAMERA_DIFF_FIELDS = [
     'caption',
     'is_on',
     'should_appear',
+    'marked_stale',
+    'marked_delayed',
 ]
 
 CAMERA_FIELD_MAPPING = {
@@ -11,4 +13,7 @@ CAMERA_FIELD_MAPPING = {
     'caption': 'cam_internetcaption',
     'is_on': 'isOn',
     'should_appear': 'should_appear',
+    'marked_stale': 'stale',
+    'marked_delayed': 'delayed',
+
 }

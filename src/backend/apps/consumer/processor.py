@@ -129,7 +129,7 @@ async def on_message(message: aio_pika.IncomingMessage):
         filename = message.headers.get("filename", "unknown.jpg")
         camera_id = filename.split("_")[0].split(".")[0]
         timestamp_utc = message.headers.get("timestamp", "unknown")
-        camera_status = calculate_camera_status(timestamp_utc)
+        camera_status = calculate_camera_status(camera_id, timestamp_utc)
         
         try:
             timestamp_local = await sync_to_async(safe_db_call)(
@@ -254,7 +254,7 @@ async def process_message(message: aio_pika.IncomingMessage):
         filename = message.headers.get("filename", "unknown.jpg")
         camera_id = filename.split("_")[0].split(".")[0]
         timestamp_utc = message.headers.get("timestamp", "unknown")
-        camera_status = calculate_camera_status(timestamp_utc)
+        camera_status = await sync_to_async(calculate_camera_status)(camera_id, timestamp_utc)
         
         timestamp_local = await sync_to_async(safe_db_call)(
             generate_local_timestamp, db_data, camera_id, timestamp_utc
@@ -550,7 +550,11 @@ def update_webcam(camera_id, timestamp, webcam):
         region_id=region_id
     ).first().seq if region_id else None
 
-    camera, created = Webcam.objects.get_or_create(
+    time_now_utc = timestamp.strftime("%Y%m%d%H%M%S%f")[:-3]
+    camera_status = calculate_camera_status(camera_id, time_now_utc)
+
+
+    camera, created = Webcam.objects.update_or_create(
         id=camera_id,
         defaults={
             "name": f"{webcam.get('cam_internet_name', '')}",
@@ -565,15 +569,16 @@ def update_webcam(camera_id, timestamp, webcam):
             "orientation": webcam.get('cam_locations_orientation', ''),
             "elevation": elevation,
             "dbc_mark": webcam.get('dbc_mark', ''),
-            "update_period_mean": webcam.get('update_period_mean', 300),
-            "update_period_stddev": webcam.get('update_period_stddev', 60),
+            "update_period_mean": camera_status["mean_interval"],
+            "update_period_stddev": camera_status["stddev_interval"],
+            "marked_stale": camera_status["stale"],
+            "marked_delayed": camera_status["delayed"],
+            "https_cam": True,
+            "is_on": webcam.get('is_on'),
+            "last_update_modified": timestamp,
+            "last_update_attempt": timestamp,
         }
     )
-
-    camera.https_cam = True
-    camera.is_on = webcam.get('is_on')
-    camera.last_update_modified = timestamp
-    camera.last_update_attempt = timestamp
     group_id = Webcam.objects.filter(location=camera.location).order_by('id').first().id
     camera.group_id = group_id
     camera.save()
