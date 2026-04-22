@@ -139,7 +139,7 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
         timestamps = get_image_list(pk, "TIMELAPSE_HOURS")
 
         # If no filter params provided, return full list unfiltered
-        if not any([from_date_str, to_date_str, from_time_str, to_time_str, timezone_str]):
+        if not any([from_date_str, to_date_str, from_time_str, to_time_str]):
             return Response(timestamps, status=status.HTTP_200_OK)
 
         tz = ZoneInfo(timezone_str)
