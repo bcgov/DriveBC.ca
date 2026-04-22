@@ -69,10 +69,11 @@ class TestUpdateWebcamDb(TestCase):
         webcam = Webcam.objects.filter(id=1).first()
 
         mock_calc_status.return_value = {
+            "timestamp": "1776852000",
+            "mean_interval": 10,
+            "stddev_interval": 2,
             "stale": False,
             "delayed": False,
-            "period_mean": 900,
-            "period_stddev": 0,
         }
 
         camera_source_data = {
