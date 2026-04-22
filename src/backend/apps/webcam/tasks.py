@@ -197,6 +197,9 @@ def create_webcam_db(cam_data: dict):
         dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 
         region_obj = Region.objects.using("mssql").filter(id=cam_data.cam_locationsregion).first()
+        if not region_obj:
+            logger.error(f"Region not found for camera {cam_id}, skipping webcam creation.")
+            return None, False
         region_id = region_obj.seq if region_obj else None
         raw_hw = cam_data.cam_locationshighway
         highway_group = RegionHighway.objects.using("mssql").filter(highway_id=raw_hw).first().seq
