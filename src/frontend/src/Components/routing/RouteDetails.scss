@@ -312,6 +312,35 @@
   }
 }
 
+.modal-dialog {
+  .route-nickname {
+    display: flex;
+    align-items: center;
+
+    p {
+      margin-bottom: 0;
+    }
+
+    svg {
+      margin-left: 4px;
+    }
+
+    .route-nickname-tooltip {
+      border: 0;
+      background: none;
+      padding: 0;
+    }
+  }
+}
+
+.modal--saveRoute {
+  .modal-dialog {
+    @media (max-width: 575px) {
+      margin-top: 180px;
+    }
+  }
+}
+
 .modal--notifications-settings {
   .invalid-feedback {
     display: flex;
@@ -320,29 +349,6 @@
   }
 
   .modal-dialog {
-
-    @media (max-width: 575px) {
-      margin-top: 180px;
-    }
-
-    .route-nickname {
-      display: flex;
-      align-items: center;
-  
-      p {
-        margin-bottom: 0;
-      }
-  
-      svg {
-        margin-left: 4px;
-      }
-  
-      .route-nickname-tooltip {
-        border: 0;
-        background: none;
-        padding: 0;
-      }
-    }
 
     @media (min-width: 576px) {
       max-width: 650px;

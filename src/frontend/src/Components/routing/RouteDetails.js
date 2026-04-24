@@ -808,7 +808,7 @@ export default function RouteDetails(props) {
 
         {showSavePopup && (
           <Modal
-            show={showSavePopup} onHide={resetPopup}>
+            show={showSavePopup} onHide={resetPopup} className="modal--saveRoute">
 
             <Modal.Header closeButton>
               <Modal.Title>
