@@ -60,12 +60,9 @@ S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
 S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
 S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
 QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME")
-QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES", "209715200"))
+QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES", "20971520"))
 EXCHANGE_NAME = os.getenv("RABBITMQ_EXCHANGE_NAME")
 CAMERA_CACHE_REFRESH_SECONDS = int(os.getenv("CAMERA_CACHE_REFRESH_SECONDS", "60"))
-
-
-#boto3.set_stream_logger('botocore', logging.DEBUG)
 
 # S3 client configuration
 config = Config(
@@ -79,6 +76,7 @@ config = Config(
         'use_expect_continue': False
     }
 )
+
 # S3 client
 s3_client = boto3.client(
     "s3",
@@ -96,129 +94,108 @@ db_data = []  # cached camera metadata from SQL
 last_camera_refresh = {}
 image_invalid = False
 
-async def run_consumer():
-    """
-    Long-running RabbitMQ consumer that processes image messages and watermarks them.
-    Shuts down cleanly when stop_event is set.
-    """
-    rb_url = os.getenv("RABBITMQ_URL")
-    if not rb_url:
-        raise RuntimeError("RABBITMQ_URL environment variable is not set.")
+# RABBITMQ_URL = os.getenv("RABBITMQ_URL")
+RABBITMQ_HEARTBEAT = int(os.getenv("RABBITMQ_HEARTBEAT", "60"))
+RABBITMQ_TIMEOUT = int(os.getenv("RABBITMQ_TIMEOUT", "30")) 
+RABBITMQ_RECONNECT_INTERVAL = int(os.getenv("RABBITMQ_RECONNECT_INTERVAL", "5"))
 
-    rows = await sync_to_async(get_all_from_db)()
+tz_pst = 'America/Vancouver'
 
-    global db_data, last_camera_refresh
-    db_data = process_camera_rows(rows)
-    last_camera_refresh = time.time()
-    if not db_data:
-        logger.error("No camera data available for watermarking. Consumer exiting.")
-        return
+async def on_reconnect(conn):
+    logger.info("RabbitMQ connection re-established")
+    global last_activity
+    last_activity = time.time()
+   
+async def on_close(conn, exc=None):
+    logger.warning(f"RabbitMQ connection closed: {exc}")
 
-    logger.info("Starting RabbitMQ consumer.")
+async def on_channel_close(ch, exc=None):
+    logger.warning(f"RabbitMQ channel closed: {exc}")
 
-    connection: Optional[aio_pika.RobustConnection] = None
-    channel: Optional[aio_pika.RobustChannel] = None
-    queue = None
-
-    try:
-        connection = await aio_pika.connect_robust(rb_url)
-        logger.info("Connected to RabbitMQ at %s", rb_url)
-
-        channel = await connection.channel()
-        # Limit how many unacked messages take at once
-        await channel.set_qos(prefetch_count=1)
-
-        exchange = await channel.declare_exchange(
-            name=EXCHANGE_NAME,
-            type=aio_pika.ExchangeType.FANOUT,
-            durable=True,
-        )
-
-        queue = await channel.declare_queue(
-            QUEUE_NAME,
-            durable=True,
-            exclusive=False,
-            auto_delete=False,
-            arguments={"x-max-length-bytes": QUEUE_MAX_BYTES},
-        )
-
-        await queue.bind(exchange)
-        logger.info("Queue bound to exchange for %s; beginning consume loop.", rb_url)
-
-        # Consume loop
-        async with queue.iterator() as queue_iter:
-            async for message in queue_iter:
-                if stop_event.is_set():
-                    logger.info("Stop requested. Breaking consume loop for %s.", rb_url)
-                    break
-
-                async with message.process(ignore_processed=True):
-                    filename = message.headers.get("filename", "unknown.jpg")
-                    camera_id = filename.split("_")[0].split(".")[0]
-                    timestamp_utc = message.headers.get("timestamp", "unknown")
-                    camera_status = calculate_camera_status(timestamp_utc)
-
+async def consume_from(rb_url: str, name: str):
+    """Long-running RabbitMQ consumer with automatic reconnection."""
+    
+    while not stop_event.is_set():
+        connection = None
+        channel = None
+        queue = None
+        
+        try:
+            # 1. Connect to RabbitMQ (auto-reconnects on RabbitMQ restart)
+            connection = await aio_pika.connect_robust(
+                rb_url,
+                heartbeat=RABBITMQ_HEARTBEAT,
+                timeout=RABBITMQ_TIMEOUT,
+                reconnect_interval=RABBITMQ_RECONNECT_INTERVAL,
+                fail_fast=False,
+            )
+            logger.info(f"RabbitMQ connection established for {name}.")
+            connection.reconnect_callbacks.add(on_reconnect)
+            connection.close_callbacks.add(on_close)
+            
+            # 2. Setup channel and queue
+            channel = await connection.channel()
+            logger.info(f"RabbitMQ channel created for {name}.")
+            channel.close_callbacks.add(on_channel_close)
+            
+            exchange = await channel.declare_exchange(
+                EXCHANGE_NAME,
+                type=aio_pika.ExchangeType.FANOUT,
+                durable=True,
+            )
+            logger.info(f"RabbitMQ exchange '{EXCHANGE_NAME}' declared for {name}.")
+            
+            queue = await channel.declare_queue(
+                QUEUE_NAME,
+                durable=True,
+                exclusive=False,
+                auto_delete=False,
+                arguments={
+                    "x-max-length-bytes": QUEUE_MAX_BYTES,
+                    "x-queue-type": "quorum"
+                },
+            )
+            logger.info(f"RabbitMQ queue '{QUEUE_NAME}' declared.")
+            
+            await queue.bind(exchange)
+            logger.info(f"RabbitMQ queue '{QUEUE_NAME}' bound to exchange '{EXCHANGE_NAME}' for {name}.")
+            
+            logger.info(f"Starting message consumption from {name}...")
+            
+            # 3. Consume messages using iterator (blocks waiting for messages)
+            async with queue.iterator() as queue_iter:
+                async for message in queue_iter:
+                    if stop_event.is_set():
+                        logger.info(f"Stop requested. Breaking consume loop for {name}.")
+                        break
+                    
                     try:
-                        timestamp_local = generate_local_timestamp(
-                            db_data, camera_id, timestamp_utc
-                        )
-
-                        # # For testing purposes, only allow camera with IDs below to be processed
-                        # if camera_id != "524":
-                        #     logger.info("Skipping processing for camera %s", camera_id)
-                        #     continue
-                        await handle_image_message(
-                            camera_id,
-                            message.body,
-                            timestamp_local,
-                            camera_status,
-                        )
-                        logger.info("Processed message for camera %s on %s.", camera_id, rb_url)
-
+                        await process_message(message)
                     except Exception as e:
-                        logger.error(f"Error processing message: {e}")
+                        logger.error(f"Error processing message from {name}: {e}")
                         # Continue to next message (processing errors don't trigger reconnect)
                         continue
             
         except asyncio.CancelledError:
-            logger.info("Consumer cancelled; shutting down.")
+            logger.info(f"Consumer cancelled from {name}; shutting down.")
             raise
         except (aio_pika.exceptions.AMQPConnectionError,
                 aio_pika.exceptions.ConnectionClosed,
                 aio_pika.exceptions.ChannelClosed,
                 ChannelInvalidStateError) as e:
-            logger.warning(f"RabbitMQ connection/channel lost: {e}. Reconnecting...")
+            logger.warning(f"RabbitMQ connection/channel lost from {name}: {e}. Reconnecting...")
         except Exception as e:
-            logger.exception(f"Unexpected error: {e}. Reconnecting...")
+            logger.exception(f"Unexpected error from {name}: {e}. Reconnecting...")
         finally:
             logger.info("Cleaning up RabbitMQ resources...")
             if connection and not connection.is_closed:
-                        logger.exception("Failed processing message (camera %s): %s", camera_id, e)
-
-        logger.info("Exited message iterator for %s.", rb_url)
-
-    except asyncio.CancelledError:
-        logger.info("Consumer cancelled for %s.", rb_url)
-        raise
-    except ChannelInvalidStateError:
-        logger.warning("AMQP channel closed unexpectedly for %s.", rb_url)
-    except Exception as e:
-        logger.exception("Unhandled error in consumer for %s: %s", rb_url, e)
-    finally:
-        logger.info("Cleaning up RabbitMQ resources for %s...", rb_url)
-        if channel:
-            try: 
-                await channel.close()
-            except Exception as e: 
-                logger.warning("Error closing channel: %s", e)
-        if connection:
-            try: 
                 await connection.close()
-            except Exception as e:
-                logger.warning("Error closing connection: %s", e)
-
-        logger.info("Consumer stopped for %s.", rb_url)
-
+        
+        if not stop_event.is_set():
+            logger.info(f"Waiting {RABBITMQ_RECONNECT_INTERVAL}s before reconnecting...")
+            await asyncio.sleep(RABBITMQ_RECONNECT_INTERVAL)
+    
+    logger.info("Consumer stopped.")
 
 async def parse_rows(rb_url: str):
     """
@@ -254,11 +231,13 @@ async def run_consumer():
 
     if gold_url:
         logger.info("Starting GOLD consumer...")
-        tasks.append(asyncio.create_task(consume_from(gold_url)))
+        tasks.append(asyncio.create_task(consume_from(gold_url, "GOLD")))
+        # pass
 
     if golddr_url:
         logger.info("Starting GOLDDR consumer...")
-        tasks.append(asyncio.create_task(consume_from(golddr_url)))
+        tasks.append(asyncio.create_task(consume_from(golddr_url, "GOLDDR")))
+        # pass
 
     logger.info("All configured RabbitMQ consumers started.")
 
@@ -277,6 +256,36 @@ def shutdown():
     """Signal handler to gracefully stop the consumer."""
     logger.info("Received shutdown signal.")
     stop_event.set()
+
+async def process_message(message: aio_pika.IncomingMessage):
+    """Process a single message from the queue."""
+    async with message.process(ignore_processed=True):
+        filename = message.headers.get("filename", "unknown.jpg")
+        camera_id = filename.split("_")[0].split(".")[0]
+        timestamp_utc = message.headers.get("timestamp", "unknown")
+        camera_status = await sync_to_async(calculate_camera_status)(camera_id, timestamp_utc)
+        
+        timestamp_local = await sync_to_async(safe_db_call)(
+            generate_local_timestamp, db_data, camera_id, timestamp_utc
+        )
+        
+        try:
+            await asyncio.wait_for(
+                handle_image_message(camera_id, message.body, timestamp_local, camera_status),
+                timeout=120
+            )
+        except asyncio.TimeoutError:
+            logger.error(f"Processing timeout for camera {camera_id}")
+
+        logger.info("Processed message for camera %s.", camera_id)
+
+def safe_db_call(func, *args, **kwargs):
+    """Call a sync ORM function safely after dropping dead connections"""
+    close_old_connections()
+    # This forces Django to open a fresh connection if needed
+    connection.ensure_connection()
+    return func(*args, **kwargs)
+
 
 def process_camera_rows(rows):
     if not rows:
