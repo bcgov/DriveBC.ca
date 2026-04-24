@@ -41,7 +41,7 @@ deployment:
         memory: 64Mi
 
 persistentVolumeClaim:
-  size: 750Mi
+  size: 3Gi
 
 route:
   host: prod-drivebc-syncthing.apps.gold.devops.gov.bc.ca # Hostname for the route
