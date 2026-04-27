@@ -140,7 +140,7 @@ export default function NearbyWeathers(props) {
           </div>
         </div>
 
-        { activeTab === 'Local' && localWeather &&
+        { activeTab === 'Roadside' && localWeather &&
           <NearbyLocalWeather weather={localWeather} />
         }
 
