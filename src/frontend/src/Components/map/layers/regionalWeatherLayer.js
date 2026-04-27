@@ -9,7 +9,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Styling
-import { regionalStyles, regionalWarningStyles } from '../../data/featureStyleDefinitions.js';
+import { regionalStyles, regionalWarningStyles } from '../../data/featureStyleDefinitions';
 
 export function getRegionalWeatherLayer(weatherData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   const vectorSource = new VectorSource();

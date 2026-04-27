@@ -491,3 +491,21 @@
 		}
 	}
 }
+
+.maintenance-header {
+  .navbar {
+    .header-left {
+      padding: 10px 0 10px 20px; 
+
+      @media (min-width: 1200px) {
+        padding-left: 0; 
+      }
+    }
+    
+    .nav-divider {
+      @media (min-width: 1200px) {
+        display: block;
+      }
+    }
+  }
+}

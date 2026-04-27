@@ -114,3 +114,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.verbose=true
+          -Dsonar.javascript.node.maxspace=4096
+          -Dsonar.exclusions=.git/**,**/node_modules/**,**/venv/**,src/backend/static/**

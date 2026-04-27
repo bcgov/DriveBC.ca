@@ -9,7 +9,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Styling
-import { coastalFerryStyles, ferryStyles } from '../../data/featureStyleDefinitions.js';
+import { coastalFerryStyles, ferryStyles } from '../../data/featureStyleDefinitions';
 
 export function getFerriesLayer(ferriesData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   const vectorSource = new VectorSource();
