@@ -178,7 +178,7 @@ def populate_all_event_data():
             # direct_data_source = ride_events if 'RIDEv2-' in id else closures
 
             # Data pulled directly from DIT or RIDE
-            direct_data_source = ride_events if 'RIDE-' in id else closures
+            direct_data_source = ride_events if 'RIDE' in id else closures
 
             direct_data = direct_data_source[id] if id in direct_data_source else {}
             event_data["closed"] = direct_data.get('closed', False)
