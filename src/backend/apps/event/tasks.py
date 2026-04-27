@@ -20,6 +20,7 @@ from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
 from apps.shared.helpers import attach_default_email_images, attach_image_to_email
 from apps.shared.models import Area
+from config.settings import RIDE_EVENT_PREFIX
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.core.cache import cache
@@ -171,14 +172,8 @@ def populate_all_event_data():
             id = event_data.get("id", "").split("/")[-1]
             event_data["id"] = id
 
-            # only process latest ride event version, for local dev only
-            # if 'RIDE' in id and 'RIDEv2' not in id:
-            #     continue
-            #
-            # direct_data_source = ride_events if 'RIDEv2-' in id else closures
-
             # Data pulled directly from DIT or RIDE
-            direct_data_source = ride_events if 'RIDE' in id else closures
+            direct_data_source = ride_events if RIDE_EVENT_PREFIX in id else closures
 
             direct_data = direct_data_source[id] if id in direct_data_source else {}
             event_data["closed"] = direct_data.get('closed', False)
