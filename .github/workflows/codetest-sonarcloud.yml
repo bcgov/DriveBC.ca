@@ -117,3 +117,5 @@ jobs:
       with:
         args: >
           -Dsonar.verbose=true
+          -Dsonar.javascript.node.maxspace=4096
+          -Dsonar.exclusions=.git/**,**/node_modules/**,**/venv/**,src/backend/static/**
