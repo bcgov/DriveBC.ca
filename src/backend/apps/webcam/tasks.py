@@ -42,6 +42,9 @@ from django.db.models import F, Case, When, Value, IntegerField
 from apps.shared.enums import CacheKey
 from django.core.cache import cache
 
+from django.contrib.gis.measure import D
+
+
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 logger = logging.getLogger(__name__)
@@ -540,25 +543,24 @@ def build_route_geometries(coords=hwy_coords):
 
 # DBC22-4679 find and update the nearest weather stations for a camera
 def update_camera_weather_station(camera, weather_class):
-    meters_in_degrees = 0.000008983152841195  # 1 meter in degrees at the equator
-
-    stations_qs = weather_class.objects.filter(
-        location__dwithin=(camera.location, 30000 * meters_in_degrees),  # 30km in degrees
-        elevation__lte=camera.elevation + 300,
-        elevation__gte=camera.elevation - 300,  # within 300m elevation,
-    ) if isinstance(weather_class, CurrentWeather) else weather_class.objects.all()
-
-    closest_station = stations_qs.annotate(
+    stations_qs = weather_class.objects.annotate(
         distance=Distance('location', camera.location)
-    ).order_by('distance').first()
+    )
+
+    if weather_class == CurrentWeather:
+        stations_qs = stations_qs.filter(
+            distance__lte=D(km=30),
+            elevation__lte=camera.elevation + 300,
+            elevation__gte=camera.elevation - 300,
+        )
+
+    closest_station = stations_qs.order_by('distance').first()
 
     if closest_station:
         if weather_class == CurrentWeather:
             Webcam.objects.filter(id=camera.id).update(local_weather_station=closest_station)
-
         elif weather_class == RegionalWeather:
             Webcam.objects.filter(id=camera.id).update(regional_weather_station=closest_station)
-
         elif weather_class == HighElevationForecast:
             Webcam.objects.filter(id=camera.id).update(hev_station=closest_station)
 
