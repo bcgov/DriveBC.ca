@@ -556,13 +556,13 @@ def update_camera_weather_station(camera, weather_class):
 
     closest_station = stations_qs.order_by('distance').first()
 
-    if closest_station:
-        if weather_class == CurrentWeather:
-            Webcam.objects.filter(id=camera.id).update(local_weather_station=closest_station)
-        elif weather_class == RegionalWeather:
-            Webcam.objects.filter(id=camera.id).update(regional_weather_station=closest_station)
-        elif weather_class == HighElevationForecast:
-            Webcam.objects.filter(id=camera.id).update(hev_station=closest_station)
+    # ALWAYS update, even if None
+    if weather_class == CurrentWeather:
+        Webcam.objects.filter(id=camera.id).update(local_weather_station=closest_station)
+    elif weather_class == RegionalWeather:
+        Webcam.objects.filter(id=camera.id).update(regional_weather_station=closest_station)
+    elif weather_class == HighElevationForecast:
+        Webcam.objects.filter(id=camera.id).update(hev_station=closest_station)
 
 
 def update_camera_relations():
