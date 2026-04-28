@@ -1,7 +1,9 @@
 import json
+
 from apps.event.enums import EVENT_DISPLAY_CATEGORY
 from apps.event.helpers import get_display_category
 from apps.shared.models import Area, BaseModel
+from config.settings import RIDE_EVENT_PREFIX
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry
 from django_prometheus.models import ExportModelOperationsMixin
@@ -73,12 +75,14 @@ class Event(ExportModelOperationsMixin('event'), BaseModel):
 
             # Reduce precision to 5 decimal places
             geojson = json.loads(self.polygon.json)
+
             def round_coords(coords):
                 if not coords:
                     return coords
                 if isinstance(coords[0], (int, float)):
                     return [round(c, 5) for c in coords]
                 return [round_coords(c) for c in coords]
+
             geojson['coordinates'] = round_coords(geojson['coordinates'])
             self.polygon = GEOSGeometry(json.dumps(geojson), srid=4326)
 
@@ -108,7 +112,7 @@ class Event(ExportModelOperationsMixin('event'), BaseModel):
     @property
     def optimized_description(self):
         from apps.event.serializers import optimize_description
-        return optimize_description(self.description)
+        return self.description if RIDE_EVENT_PREFIX in self.id else optimize_description(self.description)
 
 
 class QueuedEventNotification(ExportModelOperationsMixin('queued_event_notifications'), BaseModel):

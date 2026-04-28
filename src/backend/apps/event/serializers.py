@@ -4,6 +4,7 @@ from zoneinfo import ZoneInfo
 
 from apps.event.enums import EVENT_DIRECTION_DISPLAY
 from apps.event.models import Event
+from config.settings import RIDE_EVENT_PREFIX
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
 
@@ -85,7 +86,7 @@ class EventInternalSerializer(serializers.ModelSerializer):
         return res
 
     def get_optimized_description(self, obj):
-        return optimize_description(obj.description)
+        return obj.description if RIDE_EVENT_PREFIX in obj.id else optimize_description(obj.description)
 
 
 class EventSerializer(EventInternalSerializer):
