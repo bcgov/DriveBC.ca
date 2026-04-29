@@ -16,6 +16,8 @@ import aio_pika
 import asyncio
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
+
+from apps.consumer.token import RabbitMQTokenConnection
 from .db import get_all_from_db, load_index_from_db 
 from timezonefinder import TimezoneFinder
 from contextlib import asynccontextmanager
@@ -68,6 +70,14 @@ CAMERA_CACHE_REFRESH_SECONDS = int(os.getenv("CAMERA_CACHE_REFRESH_SECONDS", "60
 RABBITMQ_HEARTBEAT = int(os.getenv("RABBITMQ_HEARTBEAT", "60"))
 RABBITMQ_TIMEOUT = int(os.getenv("RABBITMQ_TIMEOUT", "30")) 
 RABBITMQ_RECONNECT_INTERVAL = int(os.getenv("RABBITMQ_RECONNECT_INTERVAL", "5"))
+
+# RABBITMQ_HOST = os.getenv("RABBITMQ_HOST")
+# RABBITMQ_PORT = int(os.getenv("RABBITMQ_PORT", "5672"))
+# RABBITMQ_VHOST = os.getenv("RABBITMQ_VHOST")
+# OAUTH2_TOKEN_URL = os.getenv("OAUTH2_TOKEN_URL")
+# OAUTH2_CLIENT_ID = os.getenv("OAUTH2_CLIENT_ID")
+# OAUTH2_CLIENT_SECRET = os.getenv("OAUTH2_CLIENT_SECRET")
+# OAUTH2_SCOPE = os.getenv("OAUTH2_SCOPE", "")
 
 
 #boto3.set_stream_logger('botocore', logging.DEBUG)
@@ -165,22 +175,28 @@ async def run_consumer():
         queue = None
         
         try:
-            # 1. Connect to RabbitMQ (auto-reconnects on RabbitMQ restart)
-            connection = await aio_pika.connect_robust(
-                RABBITMQ_URL,
-                heartbeat=RABBITMQ_HEARTBEAT,
-                timeout=RABBITMQ_TIMEOUT,
-                reconnect_interval=RABBITMQ_RECONNECT_INTERVAL,
-                fail_fast=False,
-            )
-            logger.info("RabbitMQ connection established.")
-            connection.reconnect_callbacks.add(on_reconnect)
-            connection.close_callbacks.add(on_close)
+            # # 1. Connect to RabbitMQ (auto-reconnects on RabbitMQ restart)
+            # connection = await aio_pika.connect_robust(
+            #     RABBITMQ_URL,
+            #     heartbeat=RABBITMQ_HEARTBEAT,
+            #     timeout=RABBITMQ_TIMEOUT,
+            #     reconnect_interval=RABBITMQ_RECONNECT_INTERVAL,
+            #     fail_fast=False,
+            # )
+            # logger.info("RabbitMQ connection established.")
+            # connection.reconnect_callbacks.add(on_reconnect)
+            # connection.close_callbacks.add(on_close)
             
-            # 2. Setup channel and queue
+            # # 2. Setup channel and queue
+            # channel = await connection.channel()
+            # logger.info("RabbitMQ channel created.")
+            # channel.close_callbacks.add(on_channel_close)
+            
+            rabbitmq = RabbitMQTokenConnection()
+            connection = await rabbitmq.connect()
+            logger.info("RabbitMQ channel created.")
             channel = await connection.channel()
             logger.info("RabbitMQ channel created.")
-            channel.close_callbacks.add(on_channel_close)
             
             exchange = await channel.declare_exchange(
                 EXCHANGE_NAME,
