@@ -1,0 +1,140 @@
+name: DR Failover - Scale DriveBC
+run-name: ${{ github.event.inputs.environment }} DR Failover - Scale DriveBC - ${{ github.event.inputs.step }}
+# This workflow is designed to work in conjunction with the Crunchy DR Failover actions. 
+# It is meant to help automate the process of scaling up and down various components of DriveBC during a failover event.
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+      step:
+        type: choice
+        description: Step of the DR failover process to run
+        options: 
+        - Scale down DriveBC Backend in Gold
+        - Scale down DriveBC Backend in Gold DR
+        - Scale up DriveBC Backend in Gold
+        - Scale up DriveBC Backend in Gold DR
+
+jobs:
+  scale-down-gold:
+    if: ${{ github.event.inputs.step == 'Scale down DriveBC Backend in Gold' }}
+    runs-on: ubuntu-latest
+    name: Scale down DriveBC Backend in Gold (${{ github.event.inputs.environment }})
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+# Since we are scaling down the backend, we turn off the PDB if enabled and set maintenance mode to true so the frontend can display a maintenance page.
+    - name: Scale down DriveBC Backend in Gold
+      run: |
+        helm upgrade ${{ github.event.inputs.environment }}-drivebc ./infrastructure/main \
+            --reuse-values \
+            --set django.replicaCount=0 \
+            --set tasks.replicaCount=0 \
+            --set image-consumer.replicaCount=0 \
+            --set static.env.variables.MAINTENANCE_MODE='true' \
+            --set django.podDisruptionBudget.enabled=false
+
+  scale-down-golddr:
+    if: ${{ github.event.inputs.step == 'Scale down DriveBC Backend in Gold DR' }}
+    runs-on: ubuntu-latest
+    name: Scale down DriveBC Backend in Gold DR (${{ github.event.inputs.environment }})
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Scale down DriveBC Backend in Gold DR
+      run: |
+        helm upgrade ${{ github.event.inputs.environment }}-drivebc ./infrastructure/main \
+            --reuse-values \
+            --set django.replicaCount=0 \
+            --set tasks.replicaCount=0 \
+            --set image-consumer.replicaCount=0 \
+            --set static.env.variables.MAINTENANCE_MODE='true' \
+            --set django.podDisruptionBudget.enabled=false
+
+  scale-up-gold:
+    if: ${{ github.event.inputs.step == 'Scale up DriveBC Backend in Gold' }}
+    runs-on: ubuntu-latest
+    name: Scale up DriveBC Backend in Gold (${{ github.event.inputs.environment }})
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Scale up DriveBC Backend in Gold
+      run: |
+        HELM_VALUES=$(helm get values ${{ github.event.inputs.environment }}-drivebc -o json) \
+        CURRENT_TAG=$(echo $HELM_VALUES | jq -r '.django.image.tag // empty')')
+        CURRENT_RELEASE=$(echo $HELM_VALUES | jq -r '.global.release // empty')
+        helm upgrade ${{ github.event.inputs.environment }}-drivebc ./infrastructure/main \
+            -f ./infrastructure/main/values-${{ github.event.inputs.environment }}.yaml \
+            --set global.release=$CURRENT_RELEASE \
+            --set static.image.tag=sha-$CURRENT_TAG \
+            --set django.image.tag=$CURRENT_TAG \
+            --set tasks.image.tag=$CURRENT_TAG \
+            --set image-consumer.image.tag=$CURRENT_TAG \
+            --set redis.image.tag=$CURRENT_TAG \
+            --set openshiftjobs.image.tag=$CURRENT_TAG
+
+  scale-up-golddr:
+    if: ${{ github.event.inputs.step == 'Scale up DriveBC Backend in Gold DR' }}
+    runs-on: ubuntu-latest
+    name: Scale up DriveBC Backend in Gold DR (${{ github.event.inputs.environment }})
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Scale up DriveBC Backend in Gold DR
+      run: |
+        HELM_VALUES=$(helm get values ${{ github.event.inputs.environment }}-drivebc -o json)
+        CURRENT_TAG=$(echo $HELM_VALUES | jq -r '.django.image.tag // empty')
+        CURRENT_RELEASE=$(echo $HELM_VALUES | jq -r '.global.release // empty')
+        helm upgrade ${{ github.event.inputs.environment }}-drivebc ./infrastructure/main \
+            -f ./infrastructure/main/values-${{ github.event.inputs.environment }}.yaml \
+            -f ./infrastructure/main/values-${{ github.event.inputs.environment }}-dr.yaml \
+            --set global.release=$CURRENT_RELEASE \
+            --set static.image.tag=sha-$CURRENT_TAG \
+            --set django.image.tag=$CURRENT_TAG \
+            --set tasks.image.tag=$CURRENT_TAG \
+            --set image-consumer.image.tag=$CURRENT_TAG \
+            --set redis.image.tag=$CURRENT_TAG \
+            --set openshiftjobs.image.tag=$CURRENT_TAG
+

@@ -1,0 +1,12 @@
+name: DR Failover - Crunchy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    if: ${{ github.event.inputs.step == 'Placeholder' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder for Cruchy DR Failover
+        run: echo "Temp place holder."
