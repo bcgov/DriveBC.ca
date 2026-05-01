@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "app.fullname" . }}-allow-same-namespace
+  labels: {{ include "app.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "app.fullname" . }}
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: {{ .Release.Name }}-django
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: {{ .Release.Name }}-tasks
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: {{ .Release.Name }}-image-consumer
+  policyTypes:
+    - Ingress
+
