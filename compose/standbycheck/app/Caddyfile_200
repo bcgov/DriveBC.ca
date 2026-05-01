@@ -12,3 +12,7 @@
 :8080 {
         respond "server up" 200
 }
+
+:8081 {
+    respond "ok" 200
+}
