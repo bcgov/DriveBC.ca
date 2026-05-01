@@ -12,3 +12,6 @@ pgbackrestLogCleanup:
     repository: registry.redhat.io/openshift4/ose-cli
   env:
     CRUNCHY_CLUSTER: dev-drivebc-db-crunchy
+
+backup-storage:
+  enabled: false

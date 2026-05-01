@@ -1,0 +1,6 @@
+dependencies:
+- name: backup-storage
+  repository: https://bcgov.github.io/helm-charts
+  version: 0.1.18
+digest: sha256:0e0c30e06b5ab7d8c56738abdd26d46878aa21b280ba6d737a27d84f9b59cd34
+generated: "2026-05-01T09:34:17.53662-07:00"
