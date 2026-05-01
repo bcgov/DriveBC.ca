@@ -1,12 +1,87 @@
-name: Crunchy release
+name: Crunchy - Deploy Updated Crunchy Helm Chart to OpenShift
+run-name: Deploy Crunchy Helm Chart to OpenShift ${{ github.event.inputs.cluster }} for ${{ github.event.inputs.environment }}
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+      cluster:
+        type: choice
+        description: OpenShift Cluster
+        options: 
+        - gold
+        - golddr
+        - both
+
+permissions: 
+  contents: read
+
+env:
+  HELM_CHART_NAME: ${{ github.event.inputs.environment }}-drivebc-db
 
 jobs:
-  placeholder:
-    if: ${{ github.event.inputs.step == 'Placeholder' }}
+  deploy-gold:
+    if: ${{ github.event.inputs.cluster == 'gold' || github.event.inputs.cluster == 'both' }}
     runs-on: ubuntu-latest
+    name: Deploy to Gold (${{ github.event.inputs.environment }})
+    environment:
+      name: ${{ github.event.inputs.environment }}
     steps:
-      - name: Placeholder for Cruchy DR Failover
-        run: echo "Temp place holder."
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+# In github secrets the bucket for pgbackrest is just the bucket name, for backup-storage it's the bucket/path because the 
+# backup container needs the exact path to save the files. Note that you need to create the folder in S3 for the backup storage 
+# bucket before running this workflow, otherwise the backup will fail because it can't create the folder itself as of the time of writing this.
+    - name: Helm upgrade on Gold
+      run: |
+        helm dep update ./infrastructure/crunchy-postgres
+        helm upgrade ${{ env.HELM_CHART_NAME }} \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}.yaml \
+          ./infrastructure/crunchy-postgres \
+          --set crunchy.pgBackRest.s3.bucket=${{ secrets.CRUNCHY_S3_BUCKET }} \
+          --set crunchy.pgBackRest.s3.endpoint=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
+          --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+
+
+  deploy-golddr:
+    if: ${{ github.event.inputs.cluster == 'golddr' || github.event.inputs.cluster == 'both' }}
+    runs-on: ubuntu-latest
+    name: Deploy to GoldDR (${{ github.event.inputs.environment }})
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Helm upgrade on GoldDR
+      run: |
+        helm dep update ./infrastructure/crunchy-postgres
+        helm upgrade ${{ env.HELM_CHART_NAME }} \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}.yaml \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}-dr.yaml \
+          ./infrastructure/crunchy-postgres \
+          --set crunchy.pgBackRest.s3.bucket=${{ secrets.CRUNCHY_S3_BUCKET }} \
+          --set crunchy.pgBackRest.s3.endpoint=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
+          --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}

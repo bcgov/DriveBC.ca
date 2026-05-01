@@ -9,6 +9,7 @@ Features include
 - Ability to set a custom password for the default user which is important if you have two clusters with an application reading the standby cluster in read-only mode
 - Exporter and Prometheus setup so you can view database stats and setup alerts in Sysdig
 - Separate PVC for WAL logs to reduce risk of disk space exhaustion on the main PVC which can lead to data corruption
+- Tail the Postgres logs so that errors are sent to stderr in the fluent-bit container so they can be easily viewed in OpenShift or SIEM
 
 ## Initial Install
 The initial setup needs to be done from your local machine. Subsequent updates can be done either via Github actions (based on latest code in Github) or manually.

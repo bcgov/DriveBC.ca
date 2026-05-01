@@ -3,9 +3,15 @@ kind: NetworkPolicy
 metadata:
   name: {{ include "crunchy-postgres.fullname" . }}-allow-same-namespace
 spec:
-  podSelector: {}
+  podSelector:
+    matchLabels:
+      postgres-operator.crunchydata.com/cluster: {{ include "crunchy-postgres.fullname" . }}
   ingress:
     - from:
-        - podSelector: {}
+        {{- range .Values.networkPolicy.ingressFromSelectors }}
+        - podSelector:
+            matchLabels:
+              {{- toYaml . | nindent 14 }}
+        {{- end }}
   policyTypes:
     - Ingress

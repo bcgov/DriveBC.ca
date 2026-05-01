@@ -1,8 +1,8 @@
-nameOverride: dev-ride-db
+nameOverride: dev-drivebc-db
 
 global:
   config:
-    dbName: dev-ride-db
+    dbName: dev-drivebc-db
 crunchy: 
   enabled: true
   postgresVersion: 17
@@ -23,7 +23,10 @@ crunchy:
       enabled: false
     pvc:
       enabled: false
-    path: ~ # provide the proper path to source the cluster. ex: /backups/cluster/version/1, if current new cluster being created, this should be current cluster version -1, ideally
+    bucket:  # DO NOT UPLOAD TO GITHUB. This is the s3 bucket where you are cloning from
+    endpoint:  # DO NOT UPLOAD TO GITHUB. This is the endpoint where you are cloning from
+    s3SecretName:  # This is the name of the secret that contains the s3 credentials of the s3 bucket where you are cloning from
+    path:  # provide the proper path to source the cluster. ex: /backups/cluster/version/1, if current new cluster being created, this should be current cluster version -1, ideally
   # enable this to go back to a specific timestamp in history in the current cluster.
   # follow https://access.crunchydata.com/documentation/postgres-operator/5.7/tutorials/backups-disaster-recovery/disaster-recovery
   # Perform an In-Place Point-in-time-Recovery (PITR)
@@ -39,26 +42,37 @@ crunchy:
         prometheus.io/scrape: 'true' # enable prometheus scraping so you monitor the cluster in Sysdig
         prometheus.io/port: '9187'
     dataVolumeClaimSpec:
-      storage: 500Mi
+      storage: 2Gi
       storageClassName: netapp-block-standard
-      walStorage: 500Mi
+      walStorage: 5Gi
 
     requests:
       cpu: 50m
-      memory: 256Mi
+      memory: 500Mi
     limits:
-      memory: 512Mi
+      memory: 750Mi
     replicaCertCopy:
       requests:
         cpu: 1m
         memory: 32Mi
       limits:
         memory: 64Mi
-
+   # Fluent Bit sidecar container configuration. This is for sending postgres logs to stdout/stderr so that they can be collected by the cluster logging solution.
+   # You can configure the fluent-bit-config.yaml file to determine what logs to send to stdout/stderr and how to parse them.
+    containers:
+      fluentBit:
+        enabled: true
+        image: fluent/fluent-bit:5.0
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 128Mi
   pgBackRest:
     enabled: true
-    backupPath: /ride/db/version # change it for PROD, create values-prod.yaml
-    clusterCounter: 2 # this is the number to identify what is the current counter for the cluster, each time it is cloned it should be incremented.
+    backupPath: /db/cluster/version # change it for PROD, create values-prod.yaml
+    clusterCounter: 1 # this is the number to identify what is the current counter for the cluster, each time it is cloned it should be incremented.
     # If retention-full-type set to 'count' then the oldest backups will expire when the number of backups reach the number defined in retention
     # If retention-full-type set to 'time' then the number defined in retention will take that many days worth of full backups before expiration
     retentionFullType: time
@@ -69,7 +83,7 @@ crunchy:
       incrementalBackupSchedule:  0 0,4,12,16,20 * * * 
       volume:
         accessModes: "ReadWriteOnce"
-        storage: 400Mi
+        storage: 5Gi
         storageClassName: netapp-file-backup
     s3:
       enabled: true # if enabled, below must be provided
@@ -114,18 +128,19 @@ crunchy:
         - "host all all 0.0.0.0/0 md5"
         - "host all all ::1/128 md5"
       parameters:
+        wal_retrieve_retry_interval: 30000 # set to prevent excessive queries to object storage from the standby cluster
         shared_buffers: 128MB # default is 128MB; a good tuned default for shared_buffers is 25% of the memory allocated to the pod
         wal_buffers: "-1" # this can be set to -1 to automatically set as 1/32 of shared_buffers or 64kB, whichever is larger
-        min_wal_size: 32MB
-        max_wal_size: 64MB # default is 1GB
-        max_slot_wal_keep_size: 256MB # default is -1, allowing unlimited wal growth when replicas fall behind
+        min_wal_size: 64MB
+        max_wal_size: 512MB # default is 1GB
+        max_slot_wal_keep_size: 512MB # default is -1, allowing unlimited wal growth when replicas fall behind
         work_mem: 4MB # a work_mem value of 4 MB (default)
         log_min_duration_statement: 1000ms # log queries taking more than 1 second to respond.
-        effective_io_concurrency: 20 #If the underlying disk can handle multiple simultaneous requests, then you should increase the effective_io_concurrency value and test what value provides the best application performance. All BCGov clusters have SSD.
+        effective_io_concurrency: 100 #If the underlying disk can handle multiple simultaneous requests, then you should increase the effective_io_concurrency value and test what value provides the best application performance. All BCGov clusters have SSD.
 
   # pgBouncer values:
   proxy:
-    enabled: true
+    enabled: false
     pgBouncer:
       image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
       replicas: 1
@@ -143,7 +158,7 @@ crunchy:
       image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
       requests:
         cpu: 10m
-        memory: 128Mi # Seems to require 128Mi to run properly. If I set to 64Mi then I don't see any metrics in Sysdig
+        memory: 64Mi
       limits:
         memory: 256Mi
 
@@ -158,3 +173,10 @@ crunchy:
 # Temporary till operator fix. See DBC22-3706
 pgbackrestLogCleanup:
   enabled: false
+
+networkPolicy:
+  ingressFromSelectors: 
+    - app.kubernetes.io/instance: dev-drivebc-db
+    - app.kubernetes.io/name: dev-drivebc-django
+    - app.kubernetes.io/name: dev-drivebc-image-consumer
+    - app.kubernetes.io/name: dev-drivebc-tasks

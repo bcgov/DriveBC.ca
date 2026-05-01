@@ -12,6 +12,12 @@ spec:
   {{ if .Values.crunchy.postGISVersion }}
   postGISVersion: {{ .Values.crunchy.postGISVersion | quote }}
   {{ end }}
+  config:
+    files:
+      {{- if .Values.crunchy.instances.containers.fluentBit.enabled }}
+      - configMap:
+          name: {{ .Release.Name }}-fluent-bit-config
+      {{ end }}
   openshift: true
   {{- if and .Values.crunchy.clone .Values.crunchy.clone.enabled }} # enabled when cloning from s3
   dataSource:
@@ -86,6 +92,26 @@ spec:
               memory: {{ .Values.crunchy.instances.replicaCertCopy.requests.memory }}
             limits:
               memory: {{ .Values.crunchy.instances.replicaCertCopy.limits.memory }}
+
+      containers:
+      {{- if .Values.crunchy.instances.containers.fluentBit.enabled }}
+        - image: {{ .Values.crunchy.instances.containers.fluentBit.image }}
+          imagePullPolicy: IfNotPresent
+          name: fluent-bit
+          resources:
+            limits:
+              memory: {{ .Values.crunchy.instances.containers.fluentBit.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.crunchy.instances.containers.fluentBit.resources.requests.cpu }}
+              memory: {{ .Values.crunchy.instances.containers.fluentBit.resources.requests.memory }}
+          volumeMounts:
+            - mountPath: /pgdata
+              name: postgres-data
+              readOnly: false
+            - mountPath: /fluent-bit/etc/
+              name: postgres-config
+              readOnly: true
+      {{- end }}
       dataVolumeClaimSpec:
         accessModes:
           - "ReadWriteOnce"
@@ -222,6 +248,7 @@ spec:
           max_wal_size: {{ .Values.crunchy.patroni.postgresql.parameters.max_wal_size }}
           max_slot_wal_keep_size:  {{ .Values.crunchy.patroni.postgresql.parameters.max_slot_wal_keep_size }}
           effective_io_concurrency: {{ .Values.crunchy.patroni.postgresql.parameters.effective_io_concurrency }}
+          wal_retrieve_retry_interval: {{ .Values.crunchy.patroni.postgresql.parameters.wal_retrieve_retry_interval }}
   {{- if and .Values.crunchy.proxy .Values.crunchy.proxy.enabled }}
   proxy:
     pgBouncer:
@@ -255,3 +282,4 @@ spec:
                     postgres-operator.crunchydata.com/role: pgbouncer
   {{- end }}
   {{- end }}
+
