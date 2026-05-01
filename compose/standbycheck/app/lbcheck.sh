@@ -26,7 +26,7 @@ standby_status() {
         -H "Authorization: Bearer $l_serviceaccount_token" \
         -H 'Accept: application/json' \
         "${l_ocp_api_server}/apis/postgres-operator.crunchydata.com/v1beta1/namespaces/${l_namespace}/postgresclusters/${l_cluster_name}" \
-    | jq '.spec.standby.enabled')
+    | jq '.spec.standby.enabled // false')
 
     if [[ $? -eq 0 ]]; then
         echo $output
@@ -63,6 +63,14 @@ caddy_reload_config() {
 standbyspec=$(standby_status)
 echodate "[NOTICE] ${l_namespace}: Starting PostgresCluster standby watch. Current status of ${l_cluster_name}: ${standbyspec^^}"
 
+# On startup, if GoldDR is already primary, switch to 503 immediately without waiting for 3 failures. This prevents a flip flop scenario where 
+# the load balancer marks Gold as healthy, and then immediatly reverts back. This can happen if all pods were shutdown in Gold during the outage.
+if [[ $standbyspec == "false" ]]; then
+    echodate "[CRITICAL] ${l_namespace}: GoldDR is already in primary mode on startup. Immediately switching to 503."
+    caddy_reload_config ${caddy_503_conf}
+    failures=$max_failures 
+fi
+
 while true; do
     standbyspec=$(standby_status)
     shutdownspec=$(shutdown_status)
@@ -77,9 +85,10 @@ while true; do
 
         # standby spec is false - postgrescluster is in primary mode and we should shut down
         "false")
-            if [[ $shutdownspec -eq "true" ]]; then
+            if [[ $shutdownspec == "true" ]]; then
                 echodate "[CRITICAL]: ${l_namespace}: GOLDDR is in primary mode AND in a shutdown state. Staying up."
                 caddy_reload_config ${caddy_200_conf}
+                sleep ${sleep}
                 continue
             fi
             

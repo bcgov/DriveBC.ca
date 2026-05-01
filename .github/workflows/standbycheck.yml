@@ -1,6 +1,7 @@
 # This workflow is to update the GSLB Monitoring Pods using Github actions.
 
 name: StandbyCheck - Build and Deploy Standbycheck to the Selected Environment
+run-name: StandbyCheck - Build and Deploy Standbycheck to ${{ github.event.inputs.environment }}
 
 on:
   workflow_dispatch:
