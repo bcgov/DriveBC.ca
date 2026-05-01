@@ -1,12 +1,430 @@
-name: DR Failover - Crunchy
+name: DR Failover - Crunchy DB
+run-name: ${{ github.event.inputs.environment }} DR Failover - Crunchy DB - Step ${{ github.event.inputs.step }}
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+      step:
+        type: choice
+        description: Step of the DR failover process to run
+        options: 
+        - 1. Shutdown Gold DB
+        - 2. Set Gold DR as Primary DB
+        - 3. Delete Gold DB
+        - 4. Rebuild Gold as Standby
+        - 5. Shutdown Gold DR DB
+        - 6. Set Gold as Primary
+        - 7. Delete Gold DR DB
+        - 8. Rebuild Gold DR as Standby
+        - 9. Set Monitoring Password
+
+env:
+  HELM_CHART_NAME: ${{ github.event.inputs.environment }}-drivebc-db
+
+permissions: 
+  contents: read
 
 jobs:
-  placeholder:
-    if: ${{ github.event.inputs.step == 'Placeholder' }}
+  shutdown-gold-db:
+    if: ${{ github.event.inputs.step == '1. Shutdown Gold DB' }}
     runs-on: ubuntu-latest
+    name: 1. Shutdown Gold DB
+    environment:
+      name: ${{ github.event.inputs.environment }}
     steps:
-      - name: Placeholder for Cruchy DR Failover
-        run: echo "Temp place holder."
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Shutdown Gold DB
+      run: |
+        helm dep update ./infrastructure/crunchy-postgres
+        helm upgrade ${{ env.HELM_CHART_NAME }} \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}.yaml \
+          ./infrastructure/crunchy-postgres \
+          --set crunchy.pgBackRest.s3.bucket=${{ secrets.CRUNCHY_S3_BUCKET }} \
+          --set crunchy.pgBackRest.s3.endpoint=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set crunchy.shutdown=true \
+          --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
+          --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+
+    - name: Wait for Gold DB to shut down
+      run: |
+        if ! oc wait pods \
+          --selector postgres-operator.crunchydata.com/cluster=${{ env.HELM_CHART_NAME }}-crunchy,postgres-operator.crunchydata.com/data=postgres \
+          --for=delete \
+          --timeout=300s \
+          --namespace=${{ vars.OPENSHIFT_NAMESPACE }}; then
+          echo "WARNING: Timed out waiting for pods to terminate. Verify manually before proceeding."
+          exit 1
+        fi
+
+  set-golddr-primary:
+    if: ${{ github.event.inputs.step == '2. Set Gold DR as Primary DB' }}
+    runs-on: ubuntu-latest
+    name: 2. Set Gold DR as Primary DB
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Set Gold DR as Primary DB
+      run: |
+        helm dep update ./infrastructure/crunchy-postgres
+        helm upgrade ${{ env.HELM_CHART_NAME }} \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}.yaml \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}-dr.yaml \
+          ./infrastructure/crunchy-postgres \
+          --set crunchy.pgBackRest.s3.bucket=${{ secrets.CRUNCHY_S3_BUCKET }} \
+          --set crunchy.pgBackRest.s3.endpoint=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set crunchy.standby.enabled=false \
+          --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
+          --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+
+    - name: Confirm Gold DR is Primary
+      run: |
+        TIMEOUT=300
+        INTERVAL=10
+        ELAPSED=0
+        until oc logs \
+          --selector postgres-operator.crunchydata.com/cluster=${{ env.HELM_CHART_NAME }}-crunchy,postgres-operator.crunchydata.com/role=master \
+          -c database --tail=1 | grep "the leader with the lock" | grep -qv "standby"
+        do
+          if [ $ELAPSED -ge $TIMEOUT ]; then
+            echo "ERROR: Timed out after ${TIMEOUT}s waiting for cluster to become primary. Verify manually."
+            exit 1
+          fi
+          echo "Waiting for primary leader... (${ELAPSED}s elapsed)"
+          sleep $INTERVAL
+          ELAPSED=$((ELAPSED + INTERVAL))
+        done
+        echo "Primary leader confirmed."
+
+  delete-gold-db:
+    if: ${{ github.event.inputs.step == '3. Delete Gold DB' }}
+    runs-on: ubuntu-latest
+    name: 3. Delete Gold DB
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Delete Gold DB
+      run: |
+        helm dep update ./infrastructure/crunchy-postgres
+        helm upgrade ${{ env.HELM_CHART_NAME }} \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}.yaml \
+          ./infrastructure/crunchy-postgres \
+          --set crunchy.enabled=false \
+          --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
+          --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+
+    - name: Confirm Gold DB deleted
+      run: |
+        oc wait postgrescluster/${{ env.HELM_CHART_NAME }}-crunchy \
+          --for=delete \
+          --timeout=300s \
+        || echo "WARNING: Timed out waiting for PostgresCluster to be deleted. Verify before proceeding."
+
+  rebuild-gold-standby:
+    if: ${{ github.event.inputs.step == '4. Rebuild Gold as Standby' }}
+    runs-on: ubuntu-latest
+    name: 4. Rebuild Gold as Standby
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Rebuild Gold as Standby
+      run: |
+        helm dep update ./infrastructure/crunchy-postgres
+        helm upgrade ${{ env.HELM_CHART_NAME }} \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}.yaml \
+          ./infrastructure/crunchy-postgres \
+          --set crunchy.pgBackRest.s3.bucket="${{ secrets.CRUNCHY_S3_BUCKET }}" \
+          --set crunchy.pgBackRest.s3.endpoint="${{ secrets.CRUNCHY_S3_ENDPOINT }}" \
+          --set crunchy.pgBackRest.s3.accessKey="${{ secrets.CRUNCHY_S3_ACCESS_KEY }}" \
+          --set crunchy.pgBackRest.s3.secretKey="${{ secrets.CRUNCHY_S3_SECRET_KEY }}" \
+          --set crunchy.standby.enabled=true \
+          --set crunchy.user.password="${{ secrets.CRUNCHY_USER_PASSWORD }}" \
+          --set backup-storage.env.S3_BUCKET.value="${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }}" \
+          --set backup-storage.env.S3_ENDPOINT.value="${{ secrets.CRUNCHY_S3_ENDPOINT }}" \
+          --set backup-storage.env.S3_USER.value="${{ secrets.CRUNCHY_S3_ACCESS_KEY }}" \
+          --set backup-storage.env.S3_PASSWORD.value="${{ secrets.CRUNCHY_S3_SECRET_KEY }}"
+
+    - name: Confirm Cluster is Standby
+      run: |
+        TIMEOUT=300
+        INTERVAL=10
+        ELAPSED=0
+        until oc logs \
+          --selector postgres-operator.crunchydata.com/cluster=${{ env.HELM_CHART_NAME }}-crunchy,postgres-operator.crunchydata.com/role=master \
+          -c database --tail=1 | grep -q "the standby leader with the lock"
+        do
+          if [ $ELAPSED -ge $TIMEOUT ]; then
+            echo "ERROR: Timed out after ${TIMEOUT}s waiting for standby leader confirmation. Verify replication manually."
+            exit 1
+          fi
+          echo "Waiting for standby leader... (${ELAPSED}s elapsed)"
+          sleep $INTERVAL
+          ELAPSED=$((ELAPSED + INTERVAL))
+        done
+        echo "Standby leader confirmed."
+
+  shutdown-golddr-db:
+    if: ${{ github.event.inputs.step == '5. Shutdown Gold DR DB' }}
+    runs-on: ubuntu-latest
+    name: 5. Shutdown Gold DR DB
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Shutdown Gold DR DB 
+      run: |
+        helm dep update ./infrastructure/crunchy-postgres
+        helm upgrade ${{ env.HELM_CHART_NAME }} \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}.yaml \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}-dr.yaml \
+          ./infrastructure/crunchy-postgres \
+          --set crunchy.pgBackRest.s3.bucket=${{ secrets.CRUNCHY_S3_BUCKET }} \
+          --set crunchy.pgBackRest.s3.endpoint=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set crunchy.shutdown=true \
+          --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
+          --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+
+    - name: Wait for Gold DB DR to shut down
+      run: |
+        if ! oc wait pods \
+          --selector postgres-operator.crunchydata.com/cluster=${{ env.HELM_CHART_NAME }}-crunchy,postgres-operator.crunchydata.com/data=postgres \
+          --for=delete \
+          --timeout=300s \
+          --namespace=${{ vars.OPENSHIFT_NAMESPACE }}; then
+          echo "WARNING: Timed out waiting for pods to terminate. Verify manually before proceeding."
+          exit 1
+        fi
+
+  set-gold-primary:
+    if: ${{ github.event.inputs.step == '6. Set Gold as Primary' }}
+    runs-on: ubuntu-latest
+    name: 6. Set Gold as Primary
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Set Gold as Primary
+      run: |
+        helm dep update ./infrastructure/crunchy-postgres
+        helm upgrade ${{ env.HELM_CHART_NAME }} \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}.yaml \
+          ./infrastructure/crunchy-postgres \
+          --set crunchy.pgBackRest.s3.bucket=${{ secrets.CRUNCHY_S3_BUCKET }} \
+          --set crunchy.pgBackRest.s3.endpoint=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set crunchy.standby.enabled=false \
+          --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
+          --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+
+    - name: Confirm Gold is Primary
+      run: |
+        TIMEOUT=300
+        INTERVAL=10
+        ELAPSED=0
+        until oc logs \
+          --selector postgres-operator.crunchydata.com/cluster=${{ env.HELM_CHART_NAME }}-crunchy,postgres-operator.crunchydata.com/role=master \
+          -c database --tail=1 | grep "the leader with the lock" | grep -qv "standby"
+        do
+          if [ $ELAPSED -ge $TIMEOUT ]; then
+            echo "ERROR: Timed out after ${TIMEOUT}s waiting for cluster to become primary. Verify manually."
+            exit 1
+          fi
+          echo "Waiting for primary leader... (${ELAPSED}s elapsed)"
+          sleep $INTERVAL
+          ELAPSED=$((ELAPSED + INTERVAL))
+        done
+        echo "Primary leader confirmed."
+        
+  delete-golddr-db:
+    if: ${{ github.event.inputs.step == '7. Delete Gold DR DB' }}
+    runs-on: ubuntu-latest
+    name: 7. Delete Gold DR DB
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Delete Gold DR DB
+      run: |
+        helm dep update ./infrastructure/crunchy-postgres
+        helm upgrade ${{ env.HELM_CHART_NAME }} \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}.yaml \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}-dr.yaml \
+          ./infrastructure/crunchy-postgres \
+          --set crunchy.enabled=false \
+          --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
+          --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
+          --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+
+    - name: Verify Gold DR DB deleted
+      run: |
+        oc wait postgrescluster/${{ env.HELM_CHART_NAME }}-crunchy \
+          --for=delete \
+          --timeout=300s \
+        || echo "WARNING: Timed out waiting for PostgresCluster to be deleted. Verify before proceeding."
+
+  rebuild-golddr-standby:
+    if: ${{ github.event.inputs.step == '8. Rebuild Gold DR as Standby' }}
+    runs-on: ubuntu-latest
+    name: 8. Rebuild Gold DR as Standby
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Rebuild Gold DR as Standby
+      run: |
+        helm dep update ./infrastructure/crunchy-postgres
+        helm upgrade ${{ env.HELM_CHART_NAME }} \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}.yaml \
+          -f ./infrastructure/crunchy-postgres/values-${{ github.event.inputs.environment }}-dr.yaml \
+          ./infrastructure/crunchy-postgres \
+          --set crunchy.pgBackRest.s3.bucket="${{ secrets.CRUNCHY_S3_BUCKET }}" \
+          --set crunchy.pgBackRest.s3.endpoint="${{ secrets.CRUNCHY_S3_ENDPOINT }}" \
+          --set crunchy.pgBackRest.s3.accessKey="${{ secrets.CRUNCHY_S3_ACCESS_KEY }}" \
+          --set crunchy.pgBackRest.s3.secretKey="${{ secrets.CRUNCHY_S3_SECRET_KEY }}" \
+          --set crunchy.standby.enabled=true \
+          --set crunchy.user.password="${{ secrets.CRUNCHY_USER_PASSWORD }}" \
+          --set backup-storage.env.S3_BUCKET.value="${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }}" \
+          --set backup-storage.env.S3_ENDPOINT.value="${{ secrets.CRUNCHY_S3_ENDPOINT }}" \
+          --set backup-storage.env.S3_USER.value="${{ secrets.CRUNCHY_S3_ACCESS_KEY }}" \
+          --set backup-storage.env.S3_PASSWORD.value="${{ secrets.CRUNCHY_S3_SECRET_KEY }}"
+
+    - name: Confirm Gold DR is Standby
+      run: |
+        TIMEOUT=300
+        INTERVAL=10
+        ELAPSED=0
+        until oc logs \
+          --selector postgres-operator.crunchydata.com/cluster=${{ env.HELM_CHART_NAME }}-crunchy,postgres-operator.crunchydata.com/role=master \
+          -c database --tail=1 | grep -q "the standby leader with the lock"
+        do
+          if [ $ELAPSED -ge $TIMEOUT ]; then
+            echo "ERROR: Timed out after ${TIMEOUT}s waiting for standby leader confirmation. Verify replication manually."
+            exit 1
+          fi
+          echo "Waiting for standby leader... (${ELAPSED}s elapsed)"
+          sleep $INTERVAL
+          ELAPSED=$((ELAPSED + INTERVAL))
+        done
+        echo "Standby leader confirmed."
+
+  sync-monitoring-password:
+    if: ${{ github.event.inputs.step == '9. Set Monitoring Password' }}
+    name: 9. Sync Monitoring Password
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup (Gold)
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Get Password from Gold
+      run: |
+        TEMP_PASS=$(oc get secret ${{ env.HELM_CHART_NAME }}-crunchy-monitoring -o jsonpath='{.data.password}')
+        echo "::add-mask::$TEMP_PASS"
+        echo "ENCODED_PASS=$TEMP_PASS" >> $GITHUB_ENV
+
+    - name: OC Setup (GoldDR)
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Apply Password to GoldDR
+      run: |
+        oc patch secret ${{ env.HELM_CHART_NAME }}-crunchy-monitoring \
+          -p "{\"data\":{\"password\":\"$ENCODED_PASS\"}}" \
+          --type=merge
