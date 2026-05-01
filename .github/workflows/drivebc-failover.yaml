@@ -15,7 +15,8 @@ on:
         - Scale down DriveBC Backend in Gold
         - Scale down DriveBC Backend in Gold DR
         - Scale up DriveBC Backend in Gold
-        - Scale up DriveBC Backend in Gold DR
+        - Scale up DriveBC Backend in Gold DR as Primary
+        - Scale up DriveBC Backend in Gold DR as Standby
 
 jobs:
   scale-down-gold:
@@ -43,7 +44,7 @@ jobs:
             --set django.replicaCount=0 \
             --set tasks.replicaCount=0 \
             --set image-consumer.replicaCount=0 \
-            --set static.env.variables.MAINTENANCE_MODE='true' \
+            --set static.deployment.env.variables.MAINTENANCE_MODE='true' \
             --set django.podDisruptionBudget.enabled=false
 
   scale-down-golddr:
@@ -70,7 +71,7 @@ jobs:
             --set django.replicaCount=0 \
             --set tasks.replicaCount=0 \
             --set image-consumer.replicaCount=0 \
-            --set static.env.variables.MAINTENANCE_MODE='true' \
+            --set static.deployment.env.variables.MAINTENANCE_MODE='true' \
             --set django.podDisruptionBudget.enabled=false
 
   scale-up-gold:
@@ -93,7 +94,7 @@ jobs:
     - name: Scale up DriveBC Backend in Gold
       run: |
         HELM_VALUES=$(helm get values ${{ github.event.inputs.environment }}-drivebc -o json) \
-        CURRENT_TAG=$(echo $HELM_VALUES | jq -r '.django.image.tag // empty')')
+        CURRENT_TAG=$(echo $HELM_VALUES | jq -r '.django.image.tag // empty')
         CURRENT_RELEASE=$(echo $HELM_VALUES | jq -r '.global.release // empty')
         helm upgrade ${{ github.event.inputs.environment }}-drivebc ./infrastructure/main \
             -f ./infrastructure/main/values-${{ github.event.inputs.environment }}.yaml \
@@ -105,8 +106,8 @@ jobs:
             --set redis.image.tag=$CURRENT_TAG \
             --set openshiftjobs.image.tag=$CURRENT_TAG
 
-  scale-up-golddr:
-    if: ${{ github.event.inputs.step == 'Scale up DriveBC Backend in Gold DR' }}
+  scale-up-golddr-primary:
+    if: ${{ github.event.inputs.step == 'Scale up DriveBC Backend in Gold DR as Primary' }}
     runs-on: ubuntu-latest
     name: Scale up DriveBC Backend in Gold DR (${{ github.event.inputs.environment }})
     environment:
@@ -122,7 +123,7 @@ jobs:
         token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
 
-    - name: Scale up DriveBC Backend in Gold DR
+    - name: Scale up DriveBC Backend in Gold DR as Primary
       run: |
         HELM_VALUES=$(helm get values ${{ github.event.inputs.environment }}-drivebc -o json)
         CURRENT_TAG=$(echo $HELM_VALUES | jq -r '.django.image.tag // empty')
@@ -136,5 +137,42 @@ jobs:
             --set tasks.image.tag=$CURRENT_TAG \
             --set image-consumer.image.tag=$CURRENT_TAG \
             --set redis.image.tag=$CURRENT_TAG \
-            --set openshiftjobs.image.tag=$CURRENT_TAG
+            --set openshiftjobs.image.tag=$CURRENT_TAG \
+            --set django.replicaCount=3 \
+            --set tasks.replicaCount=1 \
+            --set image-consumer.replicaCount=1 \
+            --set static.deployment.env.variables.MAINTENANCE_MODE='false'
+
+  scale-up-golddr-standby:
+    if: ${{ github.event.inputs.step == 'Scale up DriveBC Backend in Gold DR as Standby' }}
+    runs-on: ubuntu-latest
+    name: Scale up DriveBC Backend in Gold DR (${{ github.event.inputs.environment }})
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Scale up DriveBC Backend in Gold DR as Standby
+      run: |
+        HELM_VALUES=$(helm get values ${{ github.event.inputs.environment }}-drivebc -o json)
+        CURRENT_TAG=$(echo $HELM_VALUES | jq -r '.django.image.tag // empty')
+        CURRENT_RELEASE=$(echo $HELM_VALUES | jq -r '.global.release // empty')
+        helm upgrade ${{ github.event.inputs.environment }}-drivebc ./infrastructure/main \
+            -f ./infrastructure/main/values-${{ github.event.inputs.environment }}.yaml \
+            -f ./infrastructure/main/values-${{ github.event.inputs.environment }}-dr.yaml \
+            --set global.release=$CURRENT_RELEASE \
+            --set static.image.tag=sha-$CURRENT_TAG \
+            --set django.image.tag=$CURRENT_TAG \
+            --set tasks.image.tag=$CURRENT_TAG \
+            --set image-consumer.image.tag=$CURRENT_TAG \
+            --set redis.image.tag=$CURRENT_TAG \
+            --set openshiftjobs.image.tag=$CURRENT_TAG \
 
