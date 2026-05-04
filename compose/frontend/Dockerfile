@@ -16,7 +16,7 @@ COPY ./src/frontend /app/
 COPY ./.env /app/
 RUN chown node:root /app/node_modules
 
-EXPOSE 3000
+EXPOSE 5173
 
 ARG DEBUG_BUILD=false
 

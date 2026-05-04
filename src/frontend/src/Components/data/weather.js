@@ -1,4 +1,4 @@
-import { get } from "./helper.js";
+import { get } from "./helper";
 
 export function getWeather(routePoints) {
   const payload = routePoints ? { route: routePoints } : {};

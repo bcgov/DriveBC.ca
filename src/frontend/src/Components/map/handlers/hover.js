@@ -19,11 +19,11 @@ import {
   dmsSouthStyles,
   dmsWestStyles,
   dmsNorthStyles
-} from '../../data/featureStyleDefinitions.js';
+} from '../../data/featureStyleDefinitions';
 import {
   setEventStyle
 } from '../helpers';
-import { isRestStopClosed } from '../../data/restStops.js';
+import { isRestStopClosed } from '../../data/restStops';
 
 export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
   let hoveredFeature = hoveredFeatureRef.current;
