@@ -270,7 +270,7 @@ class FeedClient:
             return cameras
 
         except Exception as e:
-            logger.error(f"Failed to query camera from Webcam database: {e}")
+            logging.exception(f"Failed to query camera from Webcam database: {e}")
             return []
         
     # Events
@@ -322,11 +322,11 @@ class FeedClient:
 
         area_code_endpoint = settings.DRIVEBC_SAWSX_API_BASE_URL + '/ec/list/fcstareas'
 
+        json_objects = []
         try:
             response = self.make_weather_request(area_code_endpoint)
             response.raise_for_status()
-            json_response = response.json()
-            json_objects = []
+            json_response = response.json()         
 
             for entry in json_response:
                 # only high elevation ares will return anything; skip others
@@ -358,8 +358,9 @@ class FeedClient:
                         latitude = float(location.get('Latitude').replace('N', ''))
                         longitude = float('-' + location.get('Longitude').replace('W', ''))
                     except ValueError:
-                        logger.error(f"coudn't covert coords for {area_code}: {location}")
+                        logging.exception(f"coudn't covert coords for {area_code}: {location}")
                         latitude = longitude = None
+                        continue
 
                     issued = data.get("ForecastIssuedUtc")
                     if issued is not None:
@@ -395,12 +396,13 @@ class FeedClient:
                     })
 
                 except requests.RequestException as e:
-                    logger.error(f"Error making API call for Area Code {area_code}: {e}")
+                    logging.exception(f"Error making API call for Area Code {area_code}: {e}")
 
-            return json_objects
 
-        except requests.RequestException:
-            return Response("Error fetching data from weather API", status=500)
+        except requests.RequestException as e:
+            logging.exception(f"Error fetching data from weather API: {e}")
+        
+        return json_objects  
 
     # Current Weather
     def get_current_weather_list_feed(self, serializer_cls, token):
@@ -664,7 +666,7 @@ class FeedClient:
 
             return result
         except httpx.HTTPStatusError as e:
-            logger.error(
+            logging.exception(
                 "DMS WFS request failed",
                 extra={
                     "url": str(e.request.url),

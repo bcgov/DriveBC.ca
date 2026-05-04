@@ -520,7 +520,7 @@ class TestFeedClientHighElevation(BaseTest):
         mock_weather_request.side_effect = requests.RequestException("Connection Error")
 
         result = self.client.get_high_elevation_forecast_list()
-        self.assertEqual(result.status_code, 500)
+        self.assertEqual(result, [])
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_high_elevation_forecast_list_valid_issued_date(self, mock_weather_request):
@@ -537,6 +537,45 @@ class TestFeedClientHighElevation(BaseTest):
         result = self.client.get_high_elevation_forecast_list()
         self.assertEqual(len(result), 1)
         self.assertIsNotNone(result[0].get('issued_utc'))
+
+    @patch('apps.feed.client.FeedClient.make_weather_request')
+    def test_get_high_elevation_forecast_list_invalid_data(self, mock_weather_request):
+        """Test that valid items are returned and errors are logged when some entries have invalid data."""
+        
+        # Area list with one valid and one invalid entry
+        area_list_response = create_mock_response(200, [
+            {'AreaType': 'ECHIGHELEVN', 'AreaCode': 'ABC', 'AreaName': 'Valid Area'},
+            {'AreaType': 'ECHIGHELEVN', 'AreaCode': 'XYZ', 'AreaName': 'Invalid Area'},
+        ])
+
+        valid_forecast_response = create_mock_response(200, {
+            'Location': {'Name': {'Latitude': '50N', 'Longitude': '120W'}},
+            'ForecastIssuedUtc': '2024-01-01T12:00:00',
+            'ForecastGroup': {
+                'Forecasts': [
+                    {'Period': {'TextForecastName': 'Today'}, 'TextSummary': 'Sunny', 'AbbreviatedForecast': {'IconCode': {'Code': '00'}}}
+                ]
+            }
+        })
+
+        invalid_forecast_response = create_mock_response(200, {
+            'Location': {'Name': {'Latitude': 'INVALID', 'Longitude': 'INVALID'}},
+            'ForecastIssuedUtc': '2024-01-01T12:00:00',
+            'ForecastGroup': {'Forecasts': []},
+        })
+
+        mock_weather_request.side_effect = [area_list_response, valid_forecast_response, invalid_forecast_response]
+
+        with patch('apps.feed.client.logging.exception') as mock_log:
+            result = self.client.get_high_elevation_forecast_list()
+
+            # Only valid item is returned
+            self.assertEqual(len(result), 1)
+            self.assertEqual(result[0]['code'], 'ABC')
+
+            # Error was logged for the invalid item
+            mock_log.assert_called_once()
+            assert 'XYZ' in str(mock_log.call_args)
 
 
 class TestFeedClientCurrentWeather(BaseTest):
