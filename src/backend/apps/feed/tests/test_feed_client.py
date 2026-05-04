@@ -520,7 +520,7 @@ class TestFeedClientHighElevation(BaseTest):
         mock_weather_request.side_effect = requests.RequestException("Connection Error")
 
         result = self.client.get_high_elevation_forecast_list()
-        self.assertEqual(result.status_code, 500)
+        self.assertEqual(result, [])
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_high_elevation_forecast_list_valid_issued_date(self, mock_weather_request):
