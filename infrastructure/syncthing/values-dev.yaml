@@ -3,7 +3,7 @@ fullnameOverride: dev-drivebc-syncthing
 
 image:
   repository: syncthing/syncthing # Official Syncthing image
-  tag: 1.29 # Syncthing tag. Check https://hub.docker.com/r/syncthing/syncthing/tags for available tags
+  tag: 2.0 # Syncthing tag. Check https://hub.docker.com/r/syncthing/syncthing/tags for available tags
 
 createTransportClaim: true # Set to true in Gold, and false for GoldDR as it will be automatically created there once installed on Gold
 
@@ -14,7 +14,7 @@ deployment:
       cpu: 50m
       memory: 500Mi
     limits:
-      memory: 1Gi
+      memory: 2Gi
   volumeMounts: # List of volume mounts for the deployment. Can add as many as needed.
     - name: dev-drivebc-syncthing
       mountPath: /var/syncthing
@@ -41,7 +41,7 @@ deployment:
         memory: 64Mi
 
 persistentVolumeClaim:
-  size: 500Mi
+  size: 1Gi
 
 route:
   host: dev-drivebc-syncthing.apps.gold.devops.gov.bc.ca # Hostname for the route

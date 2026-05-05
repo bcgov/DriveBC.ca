@@ -29,7 +29,7 @@ Once you have installed the HELM chart, follow these steps:
     1. Click `Actions`
     1. Click `Advanced`
     1. Under GUI, Check `Insecure Admin Access` (We put the GUI behind the oAuth Proxy instead of using local credentials)
-    1. Under Options, uncheck `Announce LAN Addresses` and `Crash Reporting Enabled`
+    1. Under Options, uncheck `Local Announce Enabled`, `Global Announce Enabled` and `Crash Reporting Enabled`
     1. Save
 1. In both
     1. Click `Actions`
@@ -38,7 +38,7 @@ Once you have installed the HELM chart, follow these steps:
         1. In Gold set to: `ENV-drivebc-gold` (ie dev-drivebc-gold)
         1. In GoldDR set to: `ENV-drivebc-golddr`
     1. Go to `Connections` Tab 
-        1. Uncheck `Enable NAT traversal`, `Global Discovery`, `Local Discovery` and `Enable Relaying`
+        1. Uncheck `Enable NAT traversal`, `Global Discovery`, `Local Discovery` and `Relaying Enabled`
     1. Save
 1. In Gold
     1. Click `Add Remote Device` under Remote Devices
