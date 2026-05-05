@@ -1,0 +1,21 @@
+dependencies:
+- name: django
+  repository: file://./charts/django
+  version: 0.1.0
+- name: tasks
+  repository: file://./charts/tasks
+  version: 0.1.0
+- name: image-consumer
+  repository: file://./charts/image-consumer
+  version: 0.1.0
+- name: redis
+  repository: file://./charts/redis
+  version: 0.1.0
+- name: static
+  repository: file://./charts/static
+  version: 0.1.0
+- name: openshiftjobs
+  repository: file://./charts/openshiftjobs
+  version: 0.1.0
+digest: sha256:8c754e966cf470ecfc4a37fb1249a93ad6d0393b4b2c5e31de67da244f4e3e63
+generated: "2026-05-05T15:27:08.1836247-07:00"

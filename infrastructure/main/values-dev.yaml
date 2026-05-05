@@ -107,6 +107,9 @@ image-consumer:
     authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
   prometheus:
     enabled: false # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
+  podDisruptionBudget: 
+    enabled: false 
+    minAvailable:  
 
 redis:
   fullnameOverride: dev-drivebc-redis
