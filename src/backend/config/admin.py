@@ -3,6 +3,7 @@ from django.contrib.admin import AdminSite
 from django.contrib.admin.apps import AdminConfig
 from django.utils import timezone
 from datetime import timedelta
+# from allauth.socialaccount.models import SocialAccount
 
 
 class DriveBCAdminSite(AdminSite):
@@ -22,7 +23,7 @@ class DriveBCAdminSite(AdminSite):
         is_staff = super().has_permission(request)
 
         if settings.FORCE_IDIR_AUTHENTICATION:
-            return is_staff and request.user.username.endswith('azureidir')
+            return is_staff and request.user.is_idir_authenticated()
 
         return is_staff
 
@@ -39,19 +40,25 @@ class DriveBCAdminSite(AdminSite):
         total_recipients_last_24h = sum(
             len(email.recipients.split(';')) for email in recent_emails if email.recipients
         )
+        
+        # Get user IDs for each provider type
+        from allauth.socialaccount.models import SocialAccount
+        bceid_user_ids = SocialAccount.objects.filter(provider='bceid').values_list('user_id', flat=True)
+        otp_user_ids = SocialAccount.objects.filter(provider='otp').values_list('user_id', flat=True)
+        
         extra['counts'] = {
             'basic_bceid_users_count': DriveBCUser.objects.filter(
-                username__endswith='bceidbasic'
+                id__in=bceid_user_ids
             ).count(),
             'bceid_users_logged_in_last_30_days': DriveBCUser.objects.filter(
-                username__endswith='bceidbasic',
+                id__in=bceid_user_ids,
                 last_login__gte=thirty_days_ago
             ).count(),
             'otp_users_count': DriveBCUser.objects.filter(
-                username__endswith='otp'
+                id__in=otp_user_ids
             ).count(),
             'otp_users_logged_in_last_30_days': DriveBCUser.objects.filter(
-                username__endswith='otp',
+                id__in=otp_user_ids,
                 last_login__gte=thirty_days_ago
             ).count(),
             'saved_routes': SavedRoutes.objects.count(),

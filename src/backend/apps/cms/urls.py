@@ -37,7 +37,7 @@ def require_idir_auth(view_func):
         if user.is_anonymous:
             return reject_request(request)
 
-        if user.username.endswith('azureidir'):
+        if user.is_idir_authenticated():
             return view_func(request, *args, **kwargs)
 
         return redirect("cms_denied_idir")
