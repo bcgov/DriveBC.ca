@@ -83,7 +83,7 @@ tasks:
 image-consumer:
   fullnameOverride: prod-drivebc-image-consumer
   nameOverride: prod-drivebc-image-consumer
-  replicaCount: 1
+  replicaCount: 3
   image:
     repository: ghcr.io/bcgov/drivebc-django
     tag: latest-prod
@@ -107,7 +107,9 @@ image-consumer:
     authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
   prometheus:
     enabled: false # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
-
+  podDisruptionBudget: 
+    enabled: true 
+    minAvailable: 1
 
 redis:
   fullnameOverride: prod-drivebc-redis

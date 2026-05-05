@@ -105,3 +105,12 @@ spec:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
       serviceAccountName: {{ .Values.global.vault.licenceplate }}-vault
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: "app.kubernetes.io/instance"
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: {{ template "app.name" . }}
