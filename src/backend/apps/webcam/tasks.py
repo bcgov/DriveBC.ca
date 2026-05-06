@@ -35,6 +35,7 @@ from django.utils import timezone
 from huey.exceptions import CancelExecution
 from PIL import ImageFile, ImageFont
 from psycopg import IntegrityError
+import shutil
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -127,6 +128,35 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
     except Exception as e:
         logging.exception(f"Failed to query camera from ORM: {e}")
         return {}
+    
+def update_cam_status_from_sql_db(id: int):
+    try:
+        cam = (
+            CameraSource.objects.using("mssql")
+            .filter(id=id)
+            .annotate(
+                isOn=Case(
+                    When(cam_controldisabled=0, then=Value(True)),
+                    default=Value(False),
+                    output_field=BooleanField()
+                ),
+            )
+            .values(
+                'id',
+                'isOn',
+            )
+            .first()
+        )
+
+        if cam:
+            update_webcam_status_db(id, cam)
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        logging.exception(f"Failed to query camera from ORM: {e}")
+        return {}
 
 
 def format_region_name(region_name):
@@ -145,10 +175,6 @@ def format_region_name(region_name):
 def update_webcam_db(cam_id: int, cam_data: dict):
     time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(cam_id, time_now_utc)
-
-    # Unused
-    # ts_seconds = int(camera_status["timestamp"])
-    # dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 
     existing_webcam = Webcam.objects.filter(id=cam_id).first()
     if not existing_webcam:
@@ -185,6 +211,36 @@ def update_webcam_db(cam_id: int, cam_data: dict):
 
     Webcam.objects.filter(id=cam_id).update(**update_data)
     return True
+
+def update_webcam_status_db(cam_id: int, cam_data: dict):
+    is_on = cam_data.get("isOn") == 1
+
+    webcam = Webcam.objects.only("id", "is_on").filter(id=cam_id).first()
+    if not webcam:
+        return False
+    
+
+    # Detect OFF -> ON transition
+    if not webcam.is_on and is_on:
+        restore_backup_image(str(cam_id))
+
+    Webcam.objects.filter(id=cam_id).update(is_on=is_on)
+
+    return True
+
+def restore_backup_image(camera_id: str):
+    DRIVEBC_PVC_WATERMARKED_PATH = os.getenv("DRIVEBC_PVC_WATERMARKED_PATH")
+    save_dir = DRIVEBC_PVC_WATERMARKED_PATH
+    backup_dir = os.path.join(save_dir, "backup")
+
+    image_path = os.path.join(save_dir, f"{camera_id}.jpg")
+    backup_path = os.path.join(backup_dir, f"{camera_id}.jpg")
+
+    if os.path.exists(backup_path):
+        shutil.move(backup_path, image_path)
+        logger.info(f"Restored backup image for camera {camera_id}")
+    else:
+        logger.warning(f"No backup image found for camera {camera_id}")
 
 
 def create_webcam_db(cam_data: dict):
@@ -393,6 +449,12 @@ def update_all_webcam_data():
                 update_camera_group_id(camera)
     cache.delete(CacheKey.WEBCAM_LIST)
 
+def update_camera_is_on_status():
+    for camera in Webcam.objects.all():
+        updated = update_cam_status_from_sql_db(camera.id)
+        if updated:
+            update_camera_group_id(camera)
+    
 
 def wrap_text(text, pen, font, width):
     '''

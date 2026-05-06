@@ -1,4 +1,5 @@
 import os
+from PIL import Image
 from unittest.mock import patch, MagicMock, AsyncMock
 from datetime import datetime
 import io
@@ -11,6 +12,7 @@ import asyncio
 from apps.consumer.processor import (
     process_camera_rows,
     get_timezone,
+    process_message,
     watermark,
     verify_image,
     push_to_s3,
@@ -535,6 +537,160 @@ class TestParseRows(TestCase):
         asyncio.run(run_test())
 
         mock_logger.info.assert_called()
+
+class TestProcessMessage(TestCase):
+
+    @patch("apps.consumer.processor.logger")
+    @patch("apps.consumer.processor.handle_image_message", new_callable=AsyncMock)
+    @patch("apps.consumer.processor.safe_db_call")
+    @patch("apps.consumer.processor.generate_local_timestamp")
+    @patch("apps.consumer.processor.calculate_camera_status")
+    @patch("apps.consumer.processor.sync_to_async")
+    async def test_process_message_success(
+        self,
+        mock_sync_to_async,
+        mock_calculate_status,
+        mock_generate_local_timestamp,
+        mock_safe_db_call,
+        mock_handle_image,
+        mock_logger,
+    ):
+        message = MagicMock()
+        message.headers = {
+            "filename": "12345_20250101.jpg",
+            "timestamp": "2025-01-01T00:00:00Z",
+        }
+        message.body = b"image"
+
+        process_cm = AsyncMock()
+        message.process.return_value = process_cm
+
+        def sync_wrapper(func):
+            if func == mock_calculate_status:
+                return AsyncMock(return_value=True)
+            return AsyncMock(return_value="local_timestamp")
+
+        mock_sync_to_async.side_effect = sync_wrapper
+
+        await process_message(message)
+
+        mock_handle_image.assert_awaited_once_with(
+            "12345",
+            b"image",
+            "local_timestamp",
+            True,
+        )
+
+        mock_logger.info.assert_called_once_with(
+            "Processed message for camera %s.",
+            "12345",
+        )
+
+    @patch("apps.consumer.processor.logger")
+    @patch(
+        "apps.consumer.processor.handle_image_message",
+        new_callable=AsyncMock,
+        side_effect=asyncio.TimeoutError,
+    )
+    @patch("apps.consumer.processor.sync_to_async")
+    async def test_process_message_timeout(
+        self,
+        mock_sync_to_async,
+        mock_handle_image,
+        mock_logger,
+    ):
+        message = MagicMock()
+        message.headers = {
+            "filename": "123.jpg",
+            "timestamp": "2025",
+        }
+        message.body = b""
+
+        message.process.return_value = AsyncMock()
+
+        mock_sync_to_async.side_effect = [
+            AsyncMock(return_value=True),
+            AsyncMock(return_value="local"),
+        ]
+
+        await process_message(message)
+
+        mock_logger.error.assert_called_once_with(
+            "Processing timeout for camera 123"
+        )
+
+class TestWatermark(TestCase):
+
+    def create_image(self, width=640, height=480):
+        img = Image.new("RGB", (width, height), color="red")
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG")
+        return buf.getvalue()
+    
+    def test_returns_none_when_image_is_none(self):
+        webcam = {"dbc_mark": "TEST"}
+
+        result = watermark(
+            webcam,
+            None,
+            "America/Vancouver",
+            "20250720120000000000",
+        )
+
+        self.assertIsNone(result)
+
+    def test_successfully_watermarks_image(self):
+        webcam = {"dbc_mark": "DriveBC"}
+
+        result = watermark(
+            webcam,
+            self.create_image(),
+            "America/Vancouver",
+            "20250720120000000000",
+        )
+
+        self.assertIsNotNone(result)
+
+        img = Image.open(io.BytesIO(result))
+
+        # original height = 480
+        self.assertEqual(img.size, (640, 498))
+
+    def test_missing_dbc_mark(self):
+        webcam = {}
+
+        result = watermark(
+            webcam,
+            self.create_image(),
+            "America/Vancouver",
+            "20250720120000000000",
+        )
+
+        self.assertIsNotNone(result)
+
+    def test_invalid_timestamp_returns_none(self):
+        webcam = {"dbc_mark": "DriveBC"}
+
+        result = watermark(
+            webcam,
+            self.create_image(),
+            "America/Vancouver",
+            "bad timestamp",
+        )
+
+        self.assertIsNone(result)
+
+    def test_invalid_image_returns_none(self):
+        webcam = {"dbc_mark": "DriveBC"}
+
+        result = watermark(
+            webcam,
+            b"not an image",
+            "America/Vancouver",
+            "20250720120000000000",
+        )
+
+        self.assertIsNone(result)
 
 def reset_stop_event():
     import asyncio

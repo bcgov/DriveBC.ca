@@ -90,6 +90,7 @@ class Webcam(ExportModelOperationsMixin('webcam'), BaseModel):
         # PointField stores as (x=lon, y=lat)
         tzname = tf.timezone_at(lng=self.location.x, lat=self.location.y)
         return pytz.timezone(tzname) if tzname else timezone.utc
+    
 
 
 class Region(models.Model):
