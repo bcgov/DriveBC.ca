@@ -66,8 +66,8 @@
   "scripts": {
     "start": "env-cmd -f ../../.env react-scripts start",
     "start-frontend": "react-scripts start",
-    "build": "env-cmd -f ../../.env react-scripts build",
-    "openshift_build": "react-scripts build",
+    "build": "env-cmd -f ../../.env react-scripts build && node scripts/generate-version.js",
+    "openshift_build": "react-scripts build && node scripts/generate-version.js",
     "test": "env-cmd -f ../../.env react-scripts test",
     "eject": "env-cmd -f ../../.env react-scripts eject",
     "lint": "eslint ./",
