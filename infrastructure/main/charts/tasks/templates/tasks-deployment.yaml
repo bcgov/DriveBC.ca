@@ -12,7 +12,7 @@ spec:
     matchLabels:
       {{ include "app.selectorLabels" . | nindent 6 }}
   strategy:
-    type: Recreate
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -124,3 +124,12 @@ spec:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
       serviceAccountName: {{ .Values.global.vault.licenceplate }}-vault
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: "app.kubernetes.io/instance"
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: {{ template "app.name" . }}

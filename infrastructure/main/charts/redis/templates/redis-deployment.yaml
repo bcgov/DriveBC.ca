@@ -12,12 +12,13 @@ spec:
     matchLabels:
       {{ include "app.selectorLabels" . | nindent 6 }}
   strategy:
-    type: Recreate
+    type: RollingUpdate
   template:
     metadata:
       labels:
         {{- include "app.selectorLabels" . | nindent 8 }}
     spec:
+      serviceAccountName: {{ template "app.fullname" . }}
       volumes:
         - name: redis-1
       containers:
@@ -43,6 +44,16 @@ spec:
               value: {{ $deploymentTime | quote }}
             - name: RELEASE
               value: {{ .Values.global.release }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: LEASE_NAME
+              value: "redis-primary"
             {{- range $key, $value := .Values.deployment.env.variables }}
             - name: {{ $key }}
               value: {{ $value | quote }}
@@ -52,3 +63,12 @@ spec:
               type: RuntimeDefault
             runAsNonRoot: true
             allowPrivilegeEscalation: false
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: "app.kubernetes.io/instance"
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: {{ template "app.name" . }}

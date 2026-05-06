@@ -12,3 +12,4 @@ spec:
   internalTrafficPolicy: Cluster
   selector:
     {{ include "app.selectorLabels" . | nindent 4 }}
+    redis-role: primary
