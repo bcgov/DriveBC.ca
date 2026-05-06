@@ -14,7 +14,7 @@ deployment:
       cpu: 100m
       memory: 750Mi
     limits:
-      memory: 2Gi
+      memory: 1Gi
   volumeMounts: # List of volume mounts for the deployment. Can add as many as needed.
     - name: prod-drivebc-syncthing
       mountPath: /var/syncthing
@@ -41,7 +41,8 @@ deployment:
         memory: 64Mi
 
 persistentVolumeClaim:
-  size: 2Gi
+  size: 1Gi
+  storageClassName: netapp-block-standard
 
 route:
   host: prod-drivebc-syncthing.apps.gold.devops.gov.bc.ca # Hostname for the route

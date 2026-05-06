@@ -41,7 +41,8 @@ deployment:
         memory: 64Mi
 
 persistentVolumeClaim:
-  size: 2Gi
+  size: 1Gi
+  storageClassName: netapp-block-standard
 
 route:
   host: uat-drivebc-syncthing.apps.gold.devops.gov.bc.ca # Hostname for the route

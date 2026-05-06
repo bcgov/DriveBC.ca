@@ -8,5 +8,5 @@ spec:
   resources:
     requests:
       storage: {{ .Values.persistentVolumeClaim.size }}
-  storageClassName: netapp-file-standard
+  storageClassName: {{ .Values.persistentVolumeClaim.storageClassName }}
   volumeMode: Filesystem
