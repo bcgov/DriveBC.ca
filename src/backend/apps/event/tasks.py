@@ -174,8 +174,11 @@ def populate_all_event_data():
 
             # Data pulled directly from DIT or RIDE
             direct_data_source = ride_events if RIDE_EVENT_PREFIX in id else closures
+            if id not in direct_data_source:
+                logger.warning(f'Direct event data for {id} not found')
+                continue
 
-            direct_data = direct_data_source[id] if id in direct_data_source else {}
+            direct_data = direct_data_source[id]
             event_data["closed"] = direct_data.get('closed', False)
             event_data["highway_segment_names"] = direct_data.get('highway_segment_names', '')
 
