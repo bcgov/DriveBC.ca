@@ -55,7 +55,9 @@ django:
 tasks:
   fullnameOverride: prod-drivebc-tasks
   nameOverride: prod-drivebc-tasks
-  replicaCount: 1
+  replicaCount: 2 # Set to 1 for dev/test. In uat/prod we want at least 2 replicas for high availability, which we can do because it uses Kubernetes leases
+  rbac:
+    create: false # The pipeline account is not able to create or update the rbac, so you set this to true for the initial deployment and can for local upgrades but set to false otherwise.
   image:
     repository: ghcr.io/bcgov/drivebc-django
     tag: latest-uat
@@ -79,6 +81,10 @@ tasks:
     authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
   prometheus:
     enabled: false # If you have prometheus metrics in the app, set to true so sysdig can scrape them.
+  podDisruptionBudget: 
+    enabled: true 
+    minAvailable: 1
+
 
 image-consumer:
   fullnameOverride: prod-drivebc-image-consumer
@@ -114,19 +120,24 @@ image-consumer:
 redis:
   fullnameOverride: prod-drivebc-redis
   nameOverride: prod-drivebc-redis
-  replicaCount: 1
+  replicaCount: 3
+  rbac:
+    create: false # The pipeline account is not able to create or update the rbac, so you set this to true for the initial deployment and can for local upgrades but set to false otherwise.
   image:
     repository: ghcr.io/bcgov/drivebc-redis
     tag: latest-uat
   deployment:
     resources:
       requests:
-        cpu: 50m
-        memory: 50Mi
+        cpu: 5m
+        memory: 64Mi
       limits:
-        memory: 100Mi
+        memory: 128Mi
     env:    
       variables: {}
+  podDisruptionBudget: 
+    enabled: true 
+    minAvailable: 1
 
 
 static:
