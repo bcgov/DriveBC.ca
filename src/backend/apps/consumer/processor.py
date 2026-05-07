@@ -16,6 +16,8 @@ import aio_pika
 import asyncio
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
+from apps.consumer.rabbitmq import RabbitMQTokenConnection
+from apps.consumer.rabbitmq import RabbitMQTokenConnection
 from .db import get_all_from_db, load_index_from_db 
 from timezonefinder import TimezoneFinder
 from contextlib import asynccontextmanager
@@ -23,7 +25,7 @@ from aiormq.exceptions import ChannelInvalidStateError
 from asgiref.sync import sync_to_async
 from apps.webcam.models import Region, RegionHighway, Webcam
 from apps.consumer.models import ImageIndex
-from apps.shared.status import get_recent_timestamps, calculate_camera_status
+from apps.shared.status import calculate_camera_status
 from botocore.config import Config
 from django.contrib.gis.geos import Point
 from django.db import close_old_connections, connection
@@ -63,7 +65,6 @@ QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME")
 QUEUE_MAX_BYTES = int(os.getenv("RABBITMQ_QUEUE_MAX_BYTES", "209715200"))
 EXCHANGE_NAME = os.getenv("RABBITMQ_EXCHANGE_NAME")
 CAMERA_CACHE_REFRESH_SECONDS = int(os.getenv("CAMERA_CACHE_REFRESH_SECONDS", "60"))
-
 RABBITMQ_HEARTBEAT = int(os.getenv("RABBITMQ_HEARTBEAT", "60"))
 RABBITMQ_TIMEOUT = int(os.getenv("RABBITMQ_TIMEOUT", "30")) 
 RABBITMQ_RECONNECT_INTERVAL = int(os.getenv("RABBITMQ_RECONNECT_INTERVAL", "5"))
@@ -100,32 +101,23 @@ image_invalid = False
 
 tz_pst = 'America/Vancouver'
 
-async def on_reconnect(conn):
+def on_reconnect():
     logger.info("RabbitMQ connection re-established")
     global last_activity
     last_activity = time.time()
-   
+
 async def on_close(conn, exc=None):
     logger.warning(f"RabbitMQ connection closed: {exc}")
 
 async def on_channel_close(ch, exc=None):
     logger.warning(f"RabbitMQ channel closed: {exc}")
 
-
-async def setup_rabbitmq(rb_url: str, name: str):
-    connection = await aio_pika.connect_robust(
-        rb_url,
-        heartbeat=RABBITMQ_HEARTBEAT,
-        timeout=RABBITMQ_TIMEOUT,
-        reconnect_interval=RABBITMQ_RECONNECT_INTERVAL,
-        fail_fast=False,
-    )
-    logger.info(f"RabbitMQ connection established for {name}.")
-    connection.reconnect_callbacks.add(on_reconnect)
-    connection.close_callbacks.add(on_close)
-
+async def setup_rabbitmq(host: str, port: int, name: str):
+    rabbitmq = RabbitMQTokenConnection()
+    connection = await rabbitmq.connect(host=host, port=port)
+    logger.info("RabbitMQ connection created.")
     channel = await connection.channel()
-    logger.info(f"RabbitMQ channel created for {name}.")
+    logger.info("RabbitMQ channel created.")
     channel.close_callbacks.add(on_channel_close)
 
     exchange = await channel.declare_exchange(
@@ -161,12 +153,12 @@ async def consume_queue(queue, name: str):
             except Exception as e:
                 logger.error(f"Error processing message from {name}: {e}")
 
-async def consume_from(rb_url: str, name: str):
+async def consume_from(host: str, port: str, name: str):
     while not stop_event.is_set():
         connection = None
 
         try:
-            connection, queue = await setup_rabbitmq(rb_url, name)
+            connection, queue = await setup_rabbitmq(host, int(port), name)
 
             logger.info(f"Starting message consumption from {name}...")
             await consume_queue(queue, name)
@@ -223,22 +215,24 @@ async def run_consumer():
     Launch consumers for Gold and GoldDR in parallel.
     Each consumer listens to its own RabbitMQ instance.
     """
-    gold_url = os.getenv("RABBITMQ_URL_GOLD")
-    golddr_url = os.getenv("RABBITMQ_URL_GOLDDR")
+    gold_host = os.getenv("RABBITMQ_HOST_GOLD")
+    gold_port = os.getenv("RABBITMQ_PORT_GOLD")
+    golddr_host = os.getenv("RABBITMQ_HOST_GOLDDR")
+    golddr_port = os.getenv("RABBITMQ_PORT_GOLDDR")
 
-    if not gold_url and not golddr_url:
+    if not gold_host and not golddr_host:
         raise RuntimeError("No RabbitMQ URLs configured. At least one is required.")
 
     tasks = []
 
-    if gold_url:
+    if gold_host:
         logger.info("Starting GOLD consumer...")
-        tasks.append(asyncio.create_task(consume_from(gold_url, "GOLD")))
+        tasks.append(asyncio.create_task(consume_from(gold_host, gold_port, "GOLD")))
         # pass
 
-    if golddr_url:
+    if golddr_host:
         logger.info("Starting GOLDDR consumer...")
-        tasks.append(asyncio.create_task(consume_from(golddr_url, "GOLDDR")))
+        tasks.append(asyncio.create_task(consume_from(golddr_host, golddr_port, "GOLDDR")))
         # pass
 
     logger.info("All configured RabbitMQ consumers started.")
