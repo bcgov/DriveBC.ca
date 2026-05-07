@@ -11,7 +11,7 @@ deployment:
   replicas: 1 # Should never exceed 1 as the Syncthing PVC is ReadWriteOnce
   resources:
     requests:
-      cpu: 100m
+      cpu: 150m
       memory: 750Mi
     limits:
       memory: 1Gi
@@ -35,7 +35,7 @@ deployment:
       tag: 4.16
     resources:
       requests:
-        cpu: 10m
+        cpu: 5m
         memory: 32Mi
       limits:
         memory: 64Mi
