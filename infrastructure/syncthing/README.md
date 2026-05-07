@@ -27,12 +27,6 @@ Once you have installed the HELM chart, follow these steps:
 1. Click `OK` for `GUI Authentication: Set User and Password`
 1. In both
     1. Click `Actions`
-    1. Click `Advanced`
-    1. Under GUI, Check `Insecure Admin Access` (We put the GUI behind the oAuth Proxy instead of using local credentials)
-    1. Under Options, uncheck `Local Announce Enabled`, `Global Announce Enabled` and `Crash Reporting Enabled`
-    1. Save
-1. In both
-    1. Click `Actions`
     1. Click `Settings`
     1. Device Name:
         1. In Gold set to: `ENV-drivebc-gold` (ie dev-drivebc-gold)
@@ -40,6 +34,13 @@ Once you have installed the HELM chart, follow these steps:
     1. Go to `Connections` Tab 
         1. Uncheck `Enable NAT traversal`, `Global Discovery`, `Local Discovery` and `Relaying Enabled`
     1. Save
+1. In both
+    1. Click `Actions`
+    1. Click `Advanced`
+    1. Under GUI, Check `Insecure Admin Access` (We put the GUI behind the oAuth Proxy instead of using local credentials)
+    1. Under Options, uncheck `Announce LAN Addresses`, `Auto Upgrade Interval (hours)` (Set to 0) `Crash Reporting Enabled`.
+    1. Save
+
 1. In Gold
     1. Click `Add Remote Device` under Remote Devices
     1. Paste the ID from `GoldDR`
@@ -71,6 +72,7 @@ Now we can setup the syncing of folders:
             1. Select `ENV-drivebc-golddr`
         1. Advanced Tab:
             1. Uncheck `Watch for Changes`
+            1. Check `Ignore Permissions`
         1. Save
     1. Add Folder
         1. Folder Label: `Webcam Images`
@@ -79,24 +81,43 @@ Now we can setup the syncing of folders:
             1. Select `ENV-drivebc-golddr`
         1. Advanced Tab:
             1. Uncheck `Watch for Changes`
+            1. Check `Ignore Permissions`
         1. Save
 1. In GoldDR
     1. Click Add on the `New Folder` request for CMS Media:
         1. Set Folder path `/app/media`
         1. Advanced Tab:
             1. Uncheck `Watch for Changes`
+            1. Check `Ignore Permissions`
         1. Save
     1. Click Add on the second request for Webcam Images
         1. Set folder path: `/app/images/webcams`
         1. Advanced Tab:
             1. Uncheck `Watch for Changes`
+            1. Check `Ignore Permissions`
         1. Save
-1. All set! The folders should be syncing
+1. In Both we need to adjust a few settings to improve performance:
+    1. Click `Actions` (top right)
+    1. Click `Advanced`
+    1. Click `Folders`
+    1. Select `Folder "Webcam Images"`
+        1. Check `Case Sensitive FS`
+        1. Set `Copy Range Method` to `all`
 
 
 ## Upgrades
 From time to time you may need to change things like the Syncthing Version, oAuthProxy version, resources, PVC size, etc. 
-In that case, update the values file for your environment and run
+
+To do this you can do it via Github actions ideally, or locally as well.
+If you run it via Github Actions
+1. Run the `syncthing.yaml` file in Github (Called `Syncthing - Deploy Updated Syncthing Helm Chart to OpenShift`). 
+1. Select the Branch branch where the updated helm charts are (if not in main yet) 
+1. Select which environment you want to deploy too
+1. Select `Gold`, `GoldDR` or `Both` for the cluster you want to deploy to.
+1. Run the workflow and monitor in OpenShift
+
+
+Alternativiely you can do it locally, but you need to be more careful that you run the command on the correct openshift cluster:
 - Gold: `helm upgrade ENV-drivebc-syncthing -f ./syncthing/values-ENV.yaml ./syncthing`
 - GoldDR: `helm upgrade ENV-drivebc-syncthing -f ./syncthing/values-ENV.yaml -f ./syncthing/values-ENV-dr.yaml ./syncthing`
 
