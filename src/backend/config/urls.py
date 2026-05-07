@@ -21,10 +21,10 @@ from drf_spectacular.views import (
 
 def admin_permission_denied_handler(request, exception):
     '''
-    If IDIR use is required, authenicated IDIR accounts get the request
+    If IDIR use is required, authenticated IDIR accounts get the request
     access page; other requests get app specific denial page.
     '''
-    if settings.FORCE_IDIR_AUTHENTICATION and request.user.username.endswith('azureidir'):
+    if settings.FORCE_IDIR_AUTHENTICATION and request.user.is_idir_authenticated():
         return redirect('admin-request-access')
 
     return defaults.permission_denied(request, exception,
@@ -33,10 +33,10 @@ def admin_permission_denied_handler(request, exception):
 
 def cms_permission_denied_handler(request, exception):
     '''
-    If IDIR use is required, authenicated IDIR accounts get the request
+    If IDIR use is required, authenticated IDIR accounts get the request
     access page; other requests get app specific denial page.
     '''
-    if settings.FORCE_IDIR_AUTHENTICATION and request.user.username.endswith('azureidir'):
+    if settings.FORCE_IDIR_AUTHENTICATION and request.user.is_idir_authenticated():
         return redirect('admin-request-access')
 
     return defaults.permission_denied(request, exception,

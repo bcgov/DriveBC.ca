@@ -15,6 +15,26 @@ class DriveBCUser(AbstractUser, BaseModel):
     consent = models.BooleanField(default=False)
     attempted_consent = models.BooleanField(default=False)
 
+    def get_auth_provider(self):
+        """
+        Get the user's authentication provider (idir, otp, bceid, etc.)
+        Returns the provider string or None if no social account exists.
+        """
+        social_account = self.socialaccount_set.first()
+        return social_account.provider if social_account else None
+
+    def is_idir_authenticated(self):
+        """Check if user authenticated via Azure IDIR"""
+        return self.get_auth_provider() == 'idir'
+
+    def is_otp_authenticated(self):
+        """Check if user authenticated via OTP"""
+        return self.get_auth_provider() == 'otp'
+
+    def is_bceid_authenticated(self):
+        """Check if user authenticated via BCeID"""
+        return self.get_auth_provider() == 'bceid'
+
 
 class FavouritedCameras(ExportModelOperationsMixin('favorite-cams'), BaseModel):
     '''
