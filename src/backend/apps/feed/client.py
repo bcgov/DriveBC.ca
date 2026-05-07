@@ -399,8 +399,9 @@ class FeedClient:
 
             return json_objects
 
-        except requests.RequestException:
-            return Response("Error fetching data from weather API", status=500)
+        except requests.RequestException as e:
+            logger.error(f"Error fetching data from weather API: {e}")
+            return []
 
     # Current Weather
     def get_current_weather_list_feed(self, serializer_cls, token):
