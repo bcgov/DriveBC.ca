@@ -547,12 +547,11 @@ def update_camera_weather_station(camera, weather_class):
         distance=Distance('location', camera.location)
     )
 
-    if weather_class == CurrentWeather:
-        stations_qs = stations_qs.filter(
-            distance__lte=D(km=30),
-            elevation__lte=camera.elevation + 300,
-            elevation__gte=camera.elevation - 300,
-        )
+    stations_qs = stations_qs.filter(
+        distance__lte=D(km=30),
+        elevation__lte=camera.elevation + 300,
+        elevation__gte=camera.elevation - 300,
+    )
 
     closest_station = stations_qs.order_by('distance').first()
 
