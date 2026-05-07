@@ -1,0 +1,12 @@
+name: Syncthing - Deploy Updated Syncthing Helm Chart to OpenShift
+
+on:
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    if: ${{ github.event.inputs.step == 'Placeholder' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder for Syncthing Release
+        run: echo "Temp place holder."
