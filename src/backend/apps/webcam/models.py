@@ -39,6 +39,7 @@ class Webcam(ExportModelOperationsMixin('webcam'), BaseModel):
     nearby_objs = models.JSONField(default=dict, blank=True)
 
     # General status
+    is_on = models.BooleanField(default=True)
     should_appear = models.BooleanField(default=True)
     is_new = models.BooleanField(default=False)
     is_on_demand = models.BooleanField(default=False)
@@ -88,18 +89,18 @@ class Webcam(ExportModelOperationsMixin('webcam'), BaseModel):
         tzname = tf.timezone_at(lng=self.location.x, lat=self.location.y)
         return pytz.timezone(tzname) if tzname else timezone.utc
     
-    @property
-    def camera_source(self):
-        if not self.id:
-            return None
-        return CameraSource.objects.using("mssql").filter(
-            id=self.id
-        ).first()
+    # @property
+    # def camera_source(self):
+    #     if not self.id:
+    #         return None
+    #     return CameraSource.objects.using("mssql").filter(
+    #         id=self.id
+    #     ).first()
 
-    @property
-    def is_on(self):
-        cs = self.camera_source
-        return True if not cs else not cs.cam_controldisabled
+    # @property
+    # def is_on(self):
+    #     cs = self.camera_source
+    #     return True if not cs else not cs.cam_controldisabled
 
 
 class Region(models.Model):

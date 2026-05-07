@@ -11,7 +11,7 @@ from timezonefinder import TimezoneFinder
 
 
 class WebcamAdmin(admin.GISModelAdmin):
-    readonly_fields = ('id', 'is_on')
+    readonly_fields = ('id')
     gis_widget = DriveBCMapWidget
     change_form_template = "admin/timelapse.html"  # custom template
 
