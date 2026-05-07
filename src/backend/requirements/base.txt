@@ -33,3 +33,4 @@ django-prometheus==2.4.1
 django-redis==6.0.0
 PyJWT==2.11.0
 cryptography==46.0.5
+django-http-compression[brotli]==1.4.0

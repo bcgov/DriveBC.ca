@@ -43,7 +43,7 @@ if pod_ip:
 
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
-    "django.middleware.gzip.GZipMiddleware",
+    "django_http_compression.middleware.HttpCompressionMiddleware",
     "django.middleware.http.ConditionalGetMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -86,6 +86,7 @@ SHOW_DEBUG_TOOLBAR = env('SHOW_DEBUG_TOOLBAR', default=False)
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': lambda request: SHOW_DEBUG_TOOLBAR,
 }
+
 
 # Auth
 AUTH_USER_MODEL = "authentication.DriveBCUser"
@@ -158,6 +159,7 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "drf_spectacular_sidecar",
     'django_prometheus',
+    'django_http_compression'
 ]
 
 LOCAL_APPS = [
