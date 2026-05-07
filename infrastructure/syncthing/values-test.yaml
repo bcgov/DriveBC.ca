@@ -11,8 +11,8 @@ deployment:
   replicas: 1 # Should never exceed 1 as the Syncthing PVC is ReadWriteOnce
   resources:
     requests:
-      cpu: 50m
-      memory: 500Mi
+      cpu: 100m
+      memory: 750Mi
     limits:
       memory: 1Gi
   volumeMounts: # List of volume mounts for the deployment. Can add as many as needed.
@@ -35,7 +35,7 @@ deployment:
       tag: 4.16
     resources:
       requests:
-        cpu: 10m
+        cpu: 5m
         memory: 32Mi
       limits:
         memory: 64Mi
