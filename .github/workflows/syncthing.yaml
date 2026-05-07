@@ -1,12 +1,72 @@
 name: Syncthing - Deploy Updated Syncthing Helm Chart to OpenShift
+run-name: Deploy Syncthing Helm Chart to OpenShift ${{ github.event.inputs.cluster }} for ${{ github.event.inputs.environment }}
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+      cluster:
+        type: choice
+        description: OpenShift Cluster
+        options: 
+        - gold
+        - golddr
+        - both
+
+permissions: 
+  contents: read
+
+env:
+  HELM_CHART_NAME: ${{ github.event.inputs.environment }}-drivebc-syncthing
 
 jobs:
-  placeholder:
-    if: ${{ github.event.inputs.step == 'Placeholder' }}
+  deploy-gold:
+    if: ${{ github.event.inputs.cluster == 'gold' || github.event.inputs.cluster == 'both' }}
     runs-on: ubuntu-latest
+    name: Deploy to Gold (${{ github.event.inputs.environment }})
+    environment:
+      name: ${{ github.event.inputs.environment }}
+      url: https://${{ github.event.inputs.environment }}-drivebc-syncthing.apps.gold.devops.gov.bc.ca
     steps:
-      - name: Placeholder for Syncthing Release
-        run: echo "Temp place holder."
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Helm upgrade on Gold
+      run: |
+        helm upgrade ${{ env.HELM_CHART_NAME }} \
+          -f ./infrastructure/syncthing/values-${{ github.event.inputs.environment }}.yaml \
+          ./infrastructure/syncthing
+
+
+  deploy-golddr:
+    if: ${{ github.event.inputs.cluster == 'golddr' || github.event.inputs.cluster == 'both' }}
+    runs-on: ubuntu-latest
+    name: Deploy to GoldDR (${{ github.event.inputs.environment }})
+    environment:
+      name: ${{ github.event.inputs.environment }}
+      url: https://${{ github.event.inputs.environment }}-drivebc-syncthing.apps.golddr.devops.gov.bc.ca
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
+      with:
+        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
+
+    - name: Helm upgrade on GoldDR
+      run: |
+        helm upgrade ${{ env.HELM_CHART_NAME }} \
+          -f ./infrastructure/syncthing/values-${{ github.event.inputs.environment }}.yaml \
+          -f ./infrastructure/syncthing/values-${{ github.event.inputs.environment }}-dr.yaml \
+          ./infrastructure/syncthing
