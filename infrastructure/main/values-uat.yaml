@@ -157,7 +157,7 @@ static:
     targetCPUUtilizationPercentage: 400 # We want to scale UP (use more CPU) rather than out (use more pods) for static if possible to reduce backend load since caching is done on each individual pod.
   route:
     host: uat-drivebc.apps.gold.devops.gov.bc.ca
-    iprestricted: true  #Set to true if you want to limit IP's the the addresses in the ipallowlist 
+    iprestricted: false  #Set to true if you want to limit IP's the the addresses in the ipallowlist 
     vanityurl: 
       enabled: true
       vanityurlhost: uat.drivebc.ca
