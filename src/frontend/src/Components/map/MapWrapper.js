@@ -110,6 +110,15 @@ export default function MapWrapper(props) {
     } else if (error instanceof NetworkError) {
       setShowNetworkError(true);
     }
+
+    if (!error) {
+      setShowServerError(false);
+      setShowNetworkError(false);
+      return;
+  }
+
+  setShowServerError(error instanceof ServerError);
+  setShowNetworkError(error instanceof NetworkError);
   }
 
   useEffect(() => {
@@ -224,20 +233,32 @@ export default function MapWrapper(props) {
       wildfires: reloadWildfires
     });
 
-    dataLoaders.loadCameras(routeData, reloadCameras ? null : camerasRef.current, dispatch, displayError, workerRef.current);
-    dataLoaders.loadEvents(routeData, reloadEvents ? null : eventsRef.current, dispatch, displayError, workerRef.current, isInitialLoad.current, trackedEventsRef);
-    dataLoaders.loadFerries(routeData, reloadFerries ? null : ferriesRef.current, dispatch, displayError, workerRef.current);
-    dataLoaders.loadCurrentWeather(routeData, reloadLocalWeathers ? null : currentWeathersRef.current, dispatch, displayError, workerRef.current);
-    dataLoaders.loadRegionalWeather(routeData, reloadRegionalWeathers ? null : regionalWeathersRef.current, dispatch, displayError, workerRef.current);
-    dataLoaders.loadHef(routeData, reloadHef ? null : hefRef.current, dispatch, displayError, workerRef.current);
-    dataLoaders.loadRestStops(routeData, reloadRestStops ? null : restStopsRef.current, dispatch, displayError, workerRef.current);
-    dataLoaders.loadAdvisories(routeData, reloadAdvisories ? null : advisoriesRef.current, dispatch, displayError, workerRef.current);
-    dataLoaders.loadBorderCrossings(routeData, reloadBorderCrossings ? null : borderCrossingsRef.current, dispatch, displayError, workerRef.current);
-    dataLoaders.loadWildfires(routeData, reloadWildfires ? null : wildfiresRef.current, dispatch, displayError, workerRef.current);
-    dataLoaders.loadDms(routeData, reloadDms ? null : dmsRef.current, dispatch, displayError, workerRef.current);
+    handleLoad(() => dataLoaders.loadCameras(routeData, reloadCameras ? null : camerasRef.current, dispatch, workerRef.current), displayError);
+    handleLoad(() => dataLoaders.loadEvents(routeData, reloadEvents ? null : eventsRef.current, dispatch, workerRef.current, isInitialLoad.current, trackedEventsRef), displayError);
+    handleLoad(() => dataLoaders.loadFerries(routeData, reloadFerries ? null : ferriesRef.current, dispatch, workerRef.current), displayError);
+    handleLoad(() => dataLoaders.loadCurrentWeather(routeData, reloadLocalWeathers ? null : currentWeathersRef.current, dispatch, workerRef.current), displayError);
+    handleLoad(() => dataLoaders.loadRegionalWeather(routeData, reloadRegionalWeathers ? null : regionalWeathersRef.current, dispatch, workerRef.current), displayError);
+    handleLoad(() => dataLoaders.loadHef(routeData, reloadHef ? null : hefRef.current, dispatch, workerRef.current), displayError);
+    handleLoad(() => dataLoaders.loadRestStops(routeData, reloadRestStops ? null : restStopsRef.current, dispatch, workerRef.current), displayError);
+    handleLoad(() => dataLoaders.loadAdvisories(routeData, reloadAdvisories ? null : advisoriesRef.current, dispatch, workerRef.current), displayError);
+    handleLoad(() => dataLoaders.loadBorderCrossings(routeData, reloadBorderCrossings ? null : borderCrossingsRef.current, dispatch, workerRef.current), displayError);
+    handleLoad(() => dataLoaders.loadWildfires(routeData, reloadWildfires ? null : wildfiresRef.current, dispatch, workerRef.current), displayError);
+    handleLoad(() => dataLoaders.loadDms(routeData, reloadDms ? null : dmsRef.current, dispatch, workerRef.current), displayError);
 
     isInitialLoad.current = false;
   };
+
+  const handleLoad = async (loader, displayError) => {
+  try {
+    await loader();
+
+    // clear previous errors
+    displayError(null);
+  }
+  catch (error) {
+    displayError(error);
+  }
+};
 
   return (
     <React.Fragment>

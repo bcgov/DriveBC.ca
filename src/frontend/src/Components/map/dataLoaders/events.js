@@ -1,16 +1,16 @@
 import { getEventDetails, getEvents } from '../../data/events';
 
 // Event layers
-const loadEventDetail = async (event_id, displayError) => {
-  return await getEventDetails(event_id).catch((error) => displayError(error));
+const loadEventDetail = async (event_id) => {
+  return await getEventDetails(event_id);
 }
 
 export const loadEvents = async (
-  route, events, dispatch, displayError,
+  route, events, dispatch,
   worker, isInitialLoad = true, trackedEventsRef
 ) => {
   // Fetch data
-  const eventData = await getEvents(!isInitialLoad).catch((error) => displayError(error));
+  const eventData = await getEvents(!isInitialLoad);
 
   // Track unfiltered events' highlight status and last_updated timestamp
   const trackedEventsDict = eventData.reduce((acc, event) => {
