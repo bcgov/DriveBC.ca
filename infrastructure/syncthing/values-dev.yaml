@@ -12,7 +12,7 @@ deployment:
   resources:
     requests:
       cpu: 50m
-      memory: 500Mi
+      memory: 300Mi
     limits:
       memory: 1Gi
   volumeMounts: # List of volume mounts for the deployment. Can add as many as needed.
