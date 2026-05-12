@@ -37,7 +37,7 @@ export default function NearbyLocalWeather(props) {
   /* Rendering */
   // Main component
   return (
-    <div className="popup popup--weather popup--cam--weather--local" tabIndex={0}>
+    <div className="popup popup--weather popup--cam--weather--local">
       <div className="popup__content">
         <div className="popup__content__title">
         <p className="name">{weather.weather_station_name}</p>
