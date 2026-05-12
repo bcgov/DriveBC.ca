@@ -41,7 +41,7 @@ deployment:
         memory: 64Mi
 
 persistentVolumeClaim:
-  size: 1Gi
+  size: 2Gi
   storageClassName: netapp-block-standard
 
 route:
