@@ -237,8 +237,8 @@ class RIDEEventSerializer(serializers.Serializer):
         data['highway_segment_names'] = segment.get('name') if segment else ''
 
         # next_update
-        timings = data.get("timings", {})
-        data["next_update"] = timings.get('nextUpdate')
+        timing = data.get("timing", {})
+        data["next_update"] = timing.get('nextUpdate')
 
         # start_point_linear_reference
         data["start_point_linear_reference"] = data.get('route_projection', 0)
