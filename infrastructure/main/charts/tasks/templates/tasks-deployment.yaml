@@ -53,7 +53,7 @@ spec:
             - sh
             - '-c'
           args:
-            - . /vault/secrets/secrets.env && /start_tasks.sh
+            - . /vault/secrets/secrets.env && /start_tasks_openshift.sh
           env:
             - name: DEPLOYMENT_TAG
               value: {{ $deploymentTag | quote }}
@@ -61,6 +61,14 @@ spec:
               value: {{ $deploymentTime | quote }}
             - name: RELEASE
               value: {{ .Values.global.release }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             {{- range $key, $value := .Values.deployment.env.variables }}
             - name: {{ $key }}
               value: {{ $value | quote }}
