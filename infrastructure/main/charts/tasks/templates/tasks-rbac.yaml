@@ -1,0 +1,28 @@
+{{- if .Values.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ template "app.fullname" . }}-huey-leader-election
+  annotations:
+    "helm.sh/resource-policy": "keep"
+rules:
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "create", "update"]
+{{- end }}
+---
+{{- if .Values.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ template "app.fullname" . }}-huey-leader-election
+  annotations:
+    "helm.sh/resource-policy": "keep"
+subjects:
+  - kind: ServiceAccount
+    name: a781ec-vault # We must use vault service account as you can only have one service account per deployment.
+roleRef:
+  kind: Role
+  name: {{ template "app.fullname" . }}-huey-leader-election
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

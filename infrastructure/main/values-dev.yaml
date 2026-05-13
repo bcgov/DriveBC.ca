@@ -55,7 +55,9 @@ django:
 tasks:
   fullnameOverride: dev-drivebc-tasks
   nameOverride: dev-drivebc-tasks
-  replicaCount: 1
+  replicaCount: 2 # Set to 1 for dev/test. In uat/prod we want at least 2 replicas for high availability, which we can do because it uses Kubernetes leases
+  rbac:
+    create: false # The pipeline account is not able to create or update the rbac, so you set this to true for the initial deployment and can for local upgrades but set to false otherwise.
   image:
     repository: ghcr.io/bcgov/drivebc-django
     tag: latest-dev

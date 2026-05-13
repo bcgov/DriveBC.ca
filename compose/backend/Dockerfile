@@ -41,6 +41,12 @@ RUN sed -i 's/\r$//g' /start.sh && chmod +x /start.sh
 COPY ./compose/backend/start_tasks.sh /
 RUN sed -i 's/\r$//g' /start_tasks.sh && chmod +x /start_tasks.sh
 
+COPY ./compose/backend/start_tasks_openshift.sh /
+RUN sed -i 's/\r$//g' /start_tasks_openshift.sh && chmod +x /start_tasks_openshift.sh
+
+COPY ./compose/backend/leader-election.py /
+RUN sed -i 's/\r$//g' /leader-election.py && chmod +x /leader-election.py
+
 COPY ./compose/backend/start_consumer.sh /
 RUN sed -i 's/\r$//g' /start_consumer.sh && chmod +x /start_consumer.sh
 
