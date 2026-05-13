@@ -23,7 +23,7 @@ export default function NearbyHevWeather(props) {
   /* Rendering */
   // Main component
   return (
-    <div className="popup popup--weather popup--cam--weather--hef" tabIndex={0}>
+    <div className="popup popup--weather popup--cam--weather--hef">
       {weather.warnings && (
         <div className="popup__advisory">
           {weather.warnings.Events.map(event => {

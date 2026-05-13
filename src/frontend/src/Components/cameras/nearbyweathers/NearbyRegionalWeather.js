@@ -55,7 +55,7 @@ export default function NearbyRegionalWeather(props) {
   /* Rendering */
   // Main component
   return (
-    <div className="popup popup--weather popup--cam--weather--regional" tabIndex={0}>
+    <div className="popup popup--weather popup--cam--weather--regional">
       {weather.warnings && (
         <div className="popup__advisory">
           {weather.warnings.Events.map(event => {
