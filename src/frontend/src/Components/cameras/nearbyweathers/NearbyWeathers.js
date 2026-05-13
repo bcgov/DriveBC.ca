@@ -102,7 +102,7 @@ export default function NearbyWeathers(props) {
 
   /* Rendering */
   // Loading state
-  if (!regionalWeather && !localWeather && !hef) {
+  if ((regionalWeather || localWeather || hef) && (!regionalWeather && !localWeather && !hef)) {
     return (
       <div>
         <Skeleton height={48}/>
