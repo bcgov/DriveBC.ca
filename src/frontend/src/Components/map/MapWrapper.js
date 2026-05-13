@@ -230,7 +230,8 @@ export default function MapWrapper(props) {
       ferries: reloadFerries,
       weathers: reloadLocalWeathers || reloadRegionalWeathers,
       restStops: reloadRestStops,
-      wildfires: reloadWildfires
+      wildfires: reloadWildfires,
+      dms: reloadDms
     });
 
     handleLoad(() => dataLoaders.loadCameras(routeData, reloadCameras ? null : camerasRef.current, dispatch, workerRef.current), displayError);
