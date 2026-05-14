@@ -3,6 +3,8 @@ import io
 
 from apps.consumer.processor import process_camera_rows, watermark, blank_out_image, save_watermarked_image_to_pvc, save_watermarked_image_to_drivebc_pvc, delete_watermarked_image_from_pvc, delete_offline_webcam_records
 from datetime import datetime
+
+from apps.webcam.models import Webcam
 from .db import get_all_from_db
 import pytz
 from PIL import Image
@@ -38,3 +40,8 @@ def generate_offline_camera_images():
                 async_to_sync(delete_offline_webcam_records)(camera_id)
                 # Save blank image for current image displaying
                 save_watermarked_image_to_drivebc_pvc(camera_id, watermarked, False)
+            # Update postgres db is_on status to False for offline cameras
+            Webcam.objects.filter(id=camera['id']).update(is_on=False)
+        else:
+            # Update postgres db is_on status to True for online cameras
+            Webcam.objects.filter(id=camera['id']).update(is_on=True)
