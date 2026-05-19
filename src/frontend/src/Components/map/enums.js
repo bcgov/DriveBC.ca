@@ -10,6 +10,7 @@ export const WILDFIRES_LAYER = 'wildfires';
 export const REST_STOPS_LAYER = 'restStops';
 export const CHAIN_UPS_LAYER = 'chainUps';
 export const LARGE_REST_STOPS_LAYER = 'largeRestStops';
+export const DMS_LAYER = 'dms';
 
 export const toggleableLayers = [
   CLOSURE_LAYER,
@@ -23,7 +24,8 @@ export const toggleableLayers = [
   WILDFIRES_LAYER,
   REST_STOPS_LAYER,
   CHAIN_UPS_LAYER,
-  LARGE_REST_STOPS_LAYER
+  LARGE_REST_STOPS_LAYER,
+  DMS_LAYER
 ];
 
 export const layerNameMap = {
