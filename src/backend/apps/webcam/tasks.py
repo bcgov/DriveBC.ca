@@ -553,6 +553,10 @@ def update_camera_weather_station(camera, weather_class):
             elevation__lte=camera.elevation + 300,
             elevation__gte=camera.elevation - 300,
         )
+    elif weather_class == RegionalWeather or weather_class == HighElevationForecast:
+        stations_qs = stations_qs.filter(
+            distance__lte=D(km=30),
+        )
 
     closest_station = stations_qs.order_by('distance').first()
 
