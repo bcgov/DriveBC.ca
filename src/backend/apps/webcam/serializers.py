@@ -6,6 +6,7 @@ from django.conf import settings
 from rest_framework import serializers
 
 
+
 class WebcamSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=False, allow_blank=True)
     caption = serializers.CharField(required=False, allow_blank=True)
@@ -21,6 +22,7 @@ class WebcamSerializer(serializers.ModelSerializer):
             "created_at",
             "modified_at",
         )
+
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
