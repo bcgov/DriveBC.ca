@@ -70,7 +70,39 @@ export const FilterContext = createContext({});
 let callingSession = false;
 let sessionStateKnown = false;
 
+function useVersionCheck() {
+  const currentVersion = useRef(null);
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const res = await fetch('/version.json', { cache: 'no-store' });
+        const data = await res.json();
+
+        if (!currentVersion.current) {
+          currentVersion.current = data.version;
+          return;
+        }
+
+        if (data.version !== currentVersion.current) {
+          window.location.reload();
+        }
+      } catch (e) {
+        console.error('Version check failed', e);
+      }
+    };
+
+    check();
+
+    const interval = setInterval(check, 60 * 60 * 1000); // refresh every hour
+    console.log('Started version check interval');
+
+    return () => clearInterval(interval);
+  }, []);
+}
+
 function App() {
+  useVersionCheck();
+
   /* Setup */
   // Redux
   const dispatch = useDispatch();
