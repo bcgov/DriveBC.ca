@@ -55,7 +55,7 @@ class TestGetRideEventDict(BaseTest):
                 "impacts": [],
                 "location": {},
                 "segment": None,
-                "timings": {"nextUpdate": "not-a-datetime"},
+                "timing": {"nextUpdate": "not-a-datetime"},
                 "route_projection": 0,
             }
         ]
