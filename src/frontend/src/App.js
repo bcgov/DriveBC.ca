@@ -16,6 +16,9 @@ import { updateSearchedRoutes, updateSearchLocationFrom, updateSearchLocationTo 
 import { setAutoFreeze } from 'immer';
 setAutoFreeze(false);
 
+// Image Gallery
+import "react-image-gallery/styles/image-gallery.css";
+
 // Styling
 import './App.scss';
 
