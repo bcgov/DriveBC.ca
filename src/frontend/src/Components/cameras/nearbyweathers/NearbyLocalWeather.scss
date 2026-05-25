@@ -1,5 +1,4 @@
-@import "../../../styles/variables";
-
+@use "../../../styles/variables" as *;
 .popup {
   // Local weather popup
   &--cam--weather--local {

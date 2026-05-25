@@ -1,4 +1,4 @@
-@import "../../../styles/variables";
+@use "../../../styles/variables.scss" as *;
 
 #user-navigation {
   display: flex;

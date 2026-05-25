@@ -19,6 +19,7 @@ import { memoize } from 'proxy-memoize';
 import { useSelector, useDispatch } from 'react-redux';
 
 // External imports
+import 'ol/ol.css';
 import { Drawer } from '@vladyoslav/drawer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {

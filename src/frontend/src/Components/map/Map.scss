@@ -1,5 +1,4 @@
-@import "../../styles/variables.scss";
-@import '~ol/ol.css';
+@use "../../styles/variables.scss" as *;
 
 // Z-index
 .ol-overlaycontainer-stopevent {

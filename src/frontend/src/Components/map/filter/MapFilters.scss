@@ -1,4 +1,4 @@
-@import "../../../styles/variables.scss";
+@use "../../../styles/variables.scss" as *;
 
 button.btn.open-filters {
   &.open {

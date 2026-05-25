@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 
 // External imports
+import 'ol/ol.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faLocationCrosshairs,

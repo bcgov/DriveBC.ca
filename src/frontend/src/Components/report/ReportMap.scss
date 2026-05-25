@@ -1,5 +1,4 @@
-@import "../../styles/variables.scss";
-@import '~ol/ol.css';
+@use "../../styles/variables" as *;
 
 .report-page {
   .ol-viewport {
