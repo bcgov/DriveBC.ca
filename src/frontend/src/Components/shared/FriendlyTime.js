@@ -1,14 +1,31 @@
 // React
-import React from 'react';
-import  {useState} from 'react';
-
-// Third Party packages
-import OutsideClickHandler from 'react-outside-click-handler';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 // Styling
 import './FriendlyTime.scss';
 
 const ONE_DAY = 1000 * 60 * 60 * 24; // 24 hours in milliseconds
+
+function useOutsideClick(callback) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleClick = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        callback();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('touchstart', handleClick);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('touchstart', handleClick);
+    };
+  }, [callback]);
+
+  return ref;
+}
 
 export const formatDate = (date, tz, isNextUpdate=false) => {
   const datetimeFormat = {
@@ -65,6 +82,12 @@ const getRelativeTime = (date) => {
 export default function FriendlyTime({ date, timezone, asDate=false, includeFullIfHumanized=false, timeOnly=false, isNextUpdate=false }) {
   const [showTooltip, setShowTooltip] = useState(false);
 
+  const handleOutsideClick = useCallback(() => {
+    if (showTooltip) setShowTooltip(false);
+  }, [showTooltip]);
+
+  const outsideClickRef = useOutsideClick(handleOutsideClick);
+
   // get time difference in milliseconds
   const timeDiff = (new Date() - new Date(date));
   const dateFormatted = formatDate(date, timezone, isNextUpdate);
@@ -106,13 +129,7 @@ export default function FriendlyTime({ date, timezone, asDate=false, includeFull
             }
           }}>
 
-          <OutsideClickHandler
-            onOutsideClick={() => {
-              if (showTooltip) {
-                setShowTooltip(!showTooltip);
-              }
-            }}
-          >
+          <div ref={outsideClickRef}>
             <div className="friendly-time-text">
               {(isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." :
                 <time dateTime={dt.toISOString()} title={dateFormatted}>{getRelativeTime(dt)}</time>
@@ -123,7 +140,7 @@ export default function FriendlyTime({ date, timezone, asDate=false, includeFull
                 {dateFormatted}
               </span>
             }
-          </OutsideClickHandler>
+          </div>
         </div>
       </React.Fragment>
     )
