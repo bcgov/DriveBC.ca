@@ -11,7 +11,6 @@ import parse from "html-react-parser";
 
 // Internal imports
 import { getTypeDisplay, convertDirection } from '../../events/functions';
-import EventTypeIcon from '../../events/EventTypeIcon';
 import FriendlyTime from '../../shared/FriendlyTime';
 import ShareURLButton from '../../shared/ShareURLButton';
 

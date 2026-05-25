@@ -19,7 +19,6 @@ import {
   faFax,
   faPersonWalkingLuggage,
   faPhone,
-  faPhoneOffice,
   faWeightScale,
 } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";

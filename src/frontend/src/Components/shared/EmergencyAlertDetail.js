@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 // Navigation
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 // External imports
 import Container from 'react-bootstrap/Container';
@@ -32,7 +32,6 @@ export default function EmergencyAlertDetail() {
   /* Setup */
   // Navigation
   const { slug } = useParams();
-  const navigate = useNavigate();
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
@@ -52,10 +51,6 @@ export default function EmergencyAlertDetail() {
     }
   };
 
-  // Navigating back
-  const returnHandler = () => {
-    navigate(-1);
-  };
 
   // Render body blocks
   const renderBody = (body) => {

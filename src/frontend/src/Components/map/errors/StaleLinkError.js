@@ -5,10 +5,6 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/pro-regular-svg-icons';
 import { faTriangleExclamation } from '@fortawesome/pro-solid-svg-icons'
-import { useMediaQuery } from '@uidotdev/usehooks';
-
-// Images
-import staleLogo from '../../../images/status-stale.svg';
 
 export default function StaleLinkErrorPopup(props) {
   // Props

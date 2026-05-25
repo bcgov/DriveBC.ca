@@ -17,8 +17,6 @@ import {
   faWifi,
 } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
 import { isRestStopClosed } from '../../data/restStops';
@@ -57,12 +55,6 @@ const toTitleCase = (str) => {
   }).join('');
 };
 
-// Helper components
-const tooltipLargeVehicles = (
-  <Tooltip id="tooltipLargeVehicles" className="tooltip-content">
-    <p>A commercial vehicle is defined as one that is larger than 20 metres &#40;66 feet&#41; in length.</p>
-  </Tooltip>
-);
 
 // Main component
 export default function RestStopPanel(props) {

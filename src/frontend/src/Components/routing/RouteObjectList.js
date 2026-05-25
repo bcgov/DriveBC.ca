@@ -14,7 +14,6 @@ import {
   faFerry,
   faStar,
   faFlag,
-  faArrowLeft
 } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline,
   faCheck,
@@ -45,7 +44,7 @@ export default function RouteObjectList(props) {
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
 
   // Props
-  const { routeSwitched, setShowRouteObjs, clickedFeatureRef, updateClickedFeature } = props;
+  const { routeSwitched, clickedFeatureRef, updateClickedFeature } = props;
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);

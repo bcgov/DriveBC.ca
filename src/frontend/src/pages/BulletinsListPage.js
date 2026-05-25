@@ -1,6 +1,5 @@
 // React
 import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
-import { useSearchParams } from "react-router-dom";
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'

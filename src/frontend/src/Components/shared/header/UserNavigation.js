@@ -8,7 +8,7 @@ import { pushFavCam, resetPendingAction } from '../../../slices/userSlice';
 
 // External imports
 import { DropdownButton } from 'react-bootstrap';
-import { faChevronRight, faArrowRight } from '@fortawesome/pro-regular-svg-icons';
+import { faArrowRight } from '@fortawesome/pro-regular-svg-icons';
 import {
   faCircleUser,
   faRoute,

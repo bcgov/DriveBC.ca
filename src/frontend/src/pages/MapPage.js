@@ -1,5 +1,5 @@
 // React
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 // Redux
@@ -16,12 +16,10 @@ import {
 
 // Internal imports
 // import { HeaderHeightContext } from '../App.js';
-import EmergencyAlert from "../Components/shared/EmergencyAlert.js";
 
 // External Imports
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
-import { useMediaQuery } from '@uidotdev/usehooks';
 
 import { shortenToOneDecimal } from "../Components/data/routes";
 import MapWrapper from '../Components/map/MapWrapper.js';
@@ -110,7 +108,6 @@ export default function MapPage() {
 
   // const { headerHeightContext } = useContext(HeaderHeightContext);
 
-  const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
 
   /* Rendering */
   // Main component

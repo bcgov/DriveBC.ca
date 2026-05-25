@@ -14,7 +14,7 @@ import './ForecastTabs.scss';
 
 // Main component
 export default function LocalForecastTabs(props) {
-  const { forecasts, sunset, showCards } = props;
+  const { forecasts, showCards } = props;
   const dayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   // Determine today's day name and filter

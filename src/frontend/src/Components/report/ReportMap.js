@@ -394,8 +394,6 @@ export function ReportMap(props) {
     }
   };
 
-  const touchDevice = useMediaQuery('(pointer: coarse)');
-
   const renderPanel = () => {
     return (
       <div className="popup popup--problem" tabIndex={0}>

@@ -52,7 +52,7 @@ export function getDmsLayer(dmsData, projectionCode, mapContext, referenceData, 
     const olGeometry = new Point([lat, lng]);
     const olFeature = new ol.Feature({ geometry: olGeometry, type: 'dms' });
 
-    const { geometry, ...props } = dms;
+    const { ...props } = dms;
 
     // Transfer properties
     olFeature.setProperties(props);

@@ -4,15 +4,8 @@ import React, { useContext, useEffect } from 'react';
 // Navigation
 import { useSearchParams } from "react-router-dom";
 
-// External imports
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faFlag
-} from '@fortawesome/pro-solid-svg-icons';
-
 // Internal imports
 import { CMSContext } from '../../../App';
-import { fitMap } from '../helpers';
 import { markAdvisoriesAsRead } from "../../data/advisories";
 import AdvisoriesList from '../../advisories/AdvisoriesList';
 import ShareURLButton from '../../shared/ShareURLButton';
@@ -22,7 +15,7 @@ import './AdvisoriesPanel.scss';
 
 export default function AdvisoriesPanel(props) {
   // Props
-  const { advisories, openAdvisoriesOverlay, smallScreen, mapView, showRouteObjs, inMap } = props;
+  const { advisories, openAdvisoriesOverlay, smallScreen, showRouteObjs, inMap } = props;
 
   // Navigation
   const [searchParams, setSearchParams] = useSearchParams();

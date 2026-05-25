@@ -33,7 +33,6 @@ export default function LocalWeatherPanel(props) {
   const { feature, showRouteObjs } = props;
 
   const weatherData = feature.getProperties();
-  const now = new Date();
   const dailyForecastData = (weatherData.forecast_group || [])
   
 

@@ -11,7 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVideoSlash, faVideo, faStar, faCircleInfo, faXmark, faChevronRight, faArrowsRotate } from '@fortawesome/pro-solid-svg-icons';
+import { faVideoSlash, faStar, faCircleInfo, faXmark, faChevronRight, faArrowsRotate } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
 import Button from 'react-bootstrap/Button';

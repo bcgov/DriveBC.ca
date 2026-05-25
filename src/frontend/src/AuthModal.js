@@ -1,17 +1,13 @@
 // React
-import React, { useCallback, useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 
 // Redux
-import { useSelector, useDispatch } from 'react-redux';
-import { memoize } from 'proxy-memoize';
+import { useDispatch } from 'react-redux';
 import { updatePendingAction } from './slices/userSlice';
-import { logoutDispatch } from "./Components/data/account";
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/pro-solid-svg-icons';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
 import { AuthContext } from "./App";
@@ -94,15 +90,6 @@ export default function AuthModal() {
     }));
   };
 
-  const whatIsBCeID = (
-    "BCeID is a secure login service that allows you to access various government services online."
-  );
-
-  const tooltipBCeID = (
-    <Tooltip id="tooltipID" className="tooltip-content">
-      <p>{whatIsBCeID}</p>
-    </Tooltip>
-  );
 
   // Main component
   return authContext.showingModal && (

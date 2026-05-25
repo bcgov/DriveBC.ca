@@ -4,7 +4,6 @@ import React, { useEffect } from 'react';
 // Navigation
 import { useSearchParams } from 'react-router-dom';
 import { useMediaQuery } from "@uidotdev/usehooks";
-import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
 import { isRestStopClosed } from '../../data/restStops';
@@ -15,12 +14,6 @@ import FriendlyTime from '../../shared/FriendlyTime';
 // Styling
 import './DmsPanel.scss';
 
-// Helper components
-const tooltipLargeVehicles = (
-  <Tooltip id="tooltipLargeVehicles" className="tooltip-content">
-    <p>A commercial vehicle is defined as one that is larger than 20 metres &#40;66 feet&#41; in length.</p>
-  </Tooltip>
-);
 
 // Main component
 export default function DmsPanel(props) {

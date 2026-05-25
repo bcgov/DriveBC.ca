@@ -1,6 +1,3 @@
-// Internal imports
-import { redLocationMarkup, setLocationPin } from './';
-
 // Map & geospatial imports
 import { fromLonLat, transformExtent } from 'ol/proj';
 import bbox from '@turf/bbox';

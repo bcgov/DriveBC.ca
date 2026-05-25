@@ -13,7 +13,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faXmark,
   faCircleQuestion,
-  faTruckContainer,
   faLayerGroup
 } from '@fortawesome/pro-solid-svg-icons';
 import { faLayerGroup as faLayerGroupOutline } from '@fortawesome/pro-regular-svg-icons';

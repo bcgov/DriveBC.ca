@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faWind,
   faEye,
-  faSunCloud,
   faChevronUp,
   faChevronDown,
   faTriangleExclamation,

@@ -5,7 +5,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Internal imports
-import { stripRichText } from '../data/helper';
 import FriendlyTime from '../shared/FriendlyTime';
 import trackEvent from '../shared/TrackEvent';
 

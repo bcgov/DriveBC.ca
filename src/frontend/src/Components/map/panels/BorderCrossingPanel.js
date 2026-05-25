@@ -7,7 +7,6 @@ import { useSearchParams } from 'react-router-dom';
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faSignsPost,
   faTruckContainer,
   faCars
 } from '@fortawesome/pro-solid-svg-icons';

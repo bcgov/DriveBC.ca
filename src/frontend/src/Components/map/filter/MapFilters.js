@@ -6,10 +6,6 @@ import { memoize } from 'proxy-memoize';
 import { useSelector } from 'react-redux';
 
 // External imports
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faTruckContainer
-} from '@fortawesome/pro-solid-svg-icons';
 import Spinner from 'react-bootstrap/Spinner';
 
 // Internal imports

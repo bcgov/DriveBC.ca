@@ -44,12 +44,11 @@ export default function Header() {
 
   // Redux
   const dispatch = useDispatch();
-  const { advisories, filteredAdvisories, bulletins,
-    routes: { searchLocationFrom, searchLocationTo, selectedRoute, showRouteObjs }
+  const { advisories, filteredAdvisories, 
+    routes: { searchLocationFrom, searchLocationTo, selectedRoute }
   } = useSelector(useCallback(memoize(state => ({
     advisories: state.cms.advisories.list,
     filteredAdvisories: state.cms.advisories.filteredList,
-    bulletins: state.cms.bulletins.list,
     routes: state.routes
   }))));
 
@@ -219,16 +218,6 @@ export default function Header() {
     );
   };
 
-  const getLegacyLink = () => {
-    return (window.LEGACY_URL && window.LEGACY_URL !== 'undefined') ? window.LEGACY_URL : 'https://drivebc.ca';
-  }
-
-  const legacyDBCHandler = () => {
-    window.open(
-      getLegacyLink(),
-      "_self"
-    );
-  }
 
   // Main component
   return (
