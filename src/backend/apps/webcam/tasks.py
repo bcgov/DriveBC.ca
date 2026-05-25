@@ -83,7 +83,7 @@ def populate_webcam_from_data(webcam_data):
         return    
 
 
-async def update_webcam_db_stale_delayed(camera: Webcam):
+def update_webcam_db_stale_delayed(camera: Webcam):
     time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     get_recent_timestamps(camera.id)  # Ensure timestamp_list is populated with latest data
     camera_status = calculate_camera_status(camera.id, time_now_utc)
@@ -147,7 +147,7 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
             return False
 
     except Exception as e:
-        logger.error(f"Failed to query camera from ORM: {e}")
+        logging.exception(f"Failed to query camera from ORM: {e}")
         return {}
 
 def format_region_name(region_name):
@@ -248,14 +248,16 @@ def create_webcam_db(cam_data: dict):
                 "update_period_stddev": camera_status["stddev_interval"],
                 "marked_stale": camera_status["stale"],
                 "marked_delayed": camera_status["delayed"],
+            },
+            create_defaults={ # only applied on INSERT, never on UPDATE
                 "last_update_attempt": dt_utc,
-                "last_update_modified": dt_utc
+                "last_update_modified": dt_utc,
             }
         )
         return webcam, created
 
     except Exception as e:
-        logger.error(f"Failed to create webcam for cam_id {cam_id}: {e}")
+        logging.exception(f"Failed to create webcam for cam_id {cam_id}: {e}")
         return None, False
 
 def purge_old_images():
@@ -310,7 +312,7 @@ def purge_old_pvc_images(age: str = "24"):
         except FileNotFoundError:
             logger.error(f"File not found: {file_path}")
         except Exception as e:
-            logger.error(f"Error deleting file {file_path}: {e}")
+            logging.exception(f"Error deleting file {file_path}: {e}")
 
     # Delete all records if all images paths are NULL
     ImageIndex.objects.filter(
@@ -342,7 +344,7 @@ def backup_purge_old_pvc_images():
                 else:
                     skipped_count += 1
             except Exception as e:
-                logger.error(f"Error checking/deleting {file_path}: {e}")
+                logging.exception(f"Error checking/deleting {file_path}: {e}")
 
     logger.info(
         f"Backup purge completed. Deleted: {deleted_count}, Skipped (newer): {skipped_count}"
