@@ -3,13 +3,10 @@ import React, { useEffect, useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faChevronRight,
-  faChevronLeft
-} from '@fortawesome/pro-solid-svg-icons';
+import { faChevronRight, faChevronLeft } from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
-import GoodCarousel from 'react-good-carousel';
+import useEmblaCarousel from 'embla-carousel-react'; 
 
 // Internal imports
 import colocatedCamIcon from '../../../images/colocated-camera.svg';
@@ -42,7 +39,17 @@ export default function CameraOrientations(props) {
   const [currentCamIndex, setCurrentCamIndex] = useState(0);
   const [currentPane, setCurrentPane] = useState(0);
 
-  // Effects
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    slidesToScroll: perPane,
+    duration: 25,
+    containScroll: 'trimSnaps',
+  });
+
+  useEffect(() => {
+    if (emblaApi) emblaApi.scrollTo(currentPane);
+  }, [currentPane, emblaApi]);
+
   useEffect(() => {
     const nextCam = camData.camGroup[currentCamIndex];
     loadCamDetails(nextCam);
@@ -62,52 +69,54 @@ export default function CameraOrientations(props) {
   const rotateCameraOrientation = () => {
     const currentIndex = camData.camGroup.findIndex(cam => cam.id === camData.id);
     const nextIndex = (currentIndex + 1) % camData.camGroup.length;
-
     const nextCamera = camData.camGroup[nextIndex];
     switchOrientation(nextIndex);
     loadCamDetails(nextCamera);
     trackEvent("click", "camera-details", "camera-rotate", nextCamera.name);
   };
 
-  // Switch orientation for mobile carousel
   const switchOrientation = (index) => {
     setCurrentCamIndex(index);
     setCurrentPane(Math.floor(index / perPane));
   }
 
-  /* Rendering */
-  // Main component
+  const slideWidth = `calc((100% - ${(perPane - 1) * 16}px - 12px) / ${perPane})`;
+
   return (
     <div className="camera-orientations-container">
       <div className="header">
-        <button className="rotate-direction-btn"
-          onClick={rotateCameraOrientation}>
-
+        <button className="rotate-direction-btn" onClick={rotateCameraOrientation}>
           <img
             className="colocated-camera-icon"
             src={colocatedCamIcon}
             role="presentation"
             alt="colocated cameras icon"
           />
-
           <span className="title">Direction</span>
         </button>
       </div>
 
       {(showCompactLayout || showReducedLayout) &&
         <div className="main-content carousel-container--camera-orientations">
-          <GoodCarousel
-            className="camera-orientations-carousel"
-            currentPane={currentPane}
-            itemsPerPane={perPane}
-            gap={16}
-            itemPeek={12}
-            animationDuration={0.4}>
 
-            {camData.camGroup.map((cam, index) => (
-              <CameraThumbnail key={cam.id} thumbnailCamera={cam} mainCamera={camData.camGroup[currentCamIndex]} index={index} switchOrientation={switchOrientation} />
-            ))}
-          </GoodCarousel>
+          <div className="camera-orientations-carousel embla" ref={emblaRef}>
+            <div className="embla__container">
+              {camData.camGroup.map((cam, index) => (
+                <div
+                  key={cam.id}
+                  className="embla__slide"
+                  style={{ flex: `0 0 ${slideWidth}` }}
+                >
+                  <CameraThumbnail
+                    thumbnailCamera={cam}
+                    mainCamera={camData.camGroup[currentCamIndex]}
+                    index={index}
+                    switchOrientation={switchOrientation}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
 
           {currentCamIndex < (camData.camGroup.length - 1) && (
             <Button
@@ -130,7 +139,13 @@ export default function CameraOrientations(props) {
       {showFullLayout &&
         <div className={'main-content' + ' camCount' + camData.camGroup.length}>
           {camData.camGroup.map((cam, index) => (
-            <CameraThumbnail key={cam.id} thumbnailCamera={cam} mainCamera={camData.camGroup[currentCamIndex]} index={index} switchOrientation={switchOrientation} />
+            <CameraThumbnail
+              key={cam.id}
+              thumbnailCamera={cam}
+              mainCamera={camData.camGroup[currentCamIndex]}
+              index={index}
+              switchOrientation={switchOrientation}
+            />
           ))}
         </div>
       }

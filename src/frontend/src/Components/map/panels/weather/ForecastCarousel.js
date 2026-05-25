@@ -1,156 +1,96 @@
-// React
-import React, { useEffect, useRef, useState } from 'react';
-
-// External imports
+import React, { useEffect, useState, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faChevronRight,
-  faChevronLeft,
-} from '@fortawesome/pro-solid-svg-icons';
+import { faChevronRight, faChevronLeft } from '@fortawesome/pro-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
-import GoodCarousel from 'react-good-carousel';
-
-// Internal imports
+import useEmblaCarousel from 'embla-carousel-react';
 import WeatherIcon from '../../WeatherIcon';
-
-// Styling
 import './ForecastCarousel.scss';
 
-// Main component
 export default function ForecastCarousel(props) {
   const { forecast_group } = props;
-
-  const carouselRef = useRef(null);
-
   const [currentPane, setCurrentPane] = useState(0);
-  const [touchstartX, setTouchstartX] = useState(0);
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    containScroll: 'trimSnaps',
+    duration: 25,
+  });
+
+  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setCurrentPane(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
 
   useEffect(() => {
-    // Implements swiping for mobile/tablet devices
-    if (!carouselRef.current) {
-      return;
-    }
-    const carouselRefLocal = carouselRef;
-    const onTouchStart = (e) => {
-      setTouchstartX(e.changedTouches[0].screenX);
-    };
-    const onTouchEnd = (e) => {
-      const touchendX = e.changedTouches[0].screenX;
-      if (touchendX < touchstartX && currentPane !== carouselList.length - 1) {
-        setCurrentPane(currentPane + 1);
-      } else if (touchendX > touchstartX && currentPane !== 0) {
-        setCurrentPane(currentPane - 1);
-      }
-    };
-    carouselRefLocal.current.addEventListener("touchstart", onTouchStart);
-    carouselRefLocal.current.addEventListener("touchend", onTouchEnd);
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+  }, [emblaApi, onSelect]);
 
-  }, [carouselRef, touchstartX]);
-
-  /* Component helpers */
   const isLocalFormat = (forecast) => typeof forecast.Period === 'string';
   const transformPeriod = (period) => {
     const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-    
     if (period.toLowerCase().includes('night')) {
-      if (period.toLowerCase().includes(today.toLowerCase())) {
-        return 'Tonight';
-      }
-      return period;
-    } else {
-      if (period.toLowerCase().includes('afternoon')) {
-        return 'Afternoon';
-      }
-      return 'Day';
+      return period.toLowerCase().includes(today.toLowerCase()) ? 'Tonight' : period;
     }
+    return period.toLowerCase().includes('afternoon') ? 'Afternoon' : 'Day';
   };
-  const getTemperatureText = (text) => {
-    if ((text || '').endsWith('.')) {
-      return text.slice(0, -1);
-    }
 
-    return text;
-  }
-
-  const carouselList = [];
-  for (const [index, forecast] of forecast_group.entries()) {
-    const isLocal = isLocalFormat(forecast);
-    const period = isLocal ? forecast.Period : forecast.Period.TextForecastName;
-    const displayPeriod = isLocal ? transformPeriod(forecast.Period) : period;
-    const code = isLocal ? forecast.Code : forecast.AbbreviatedForecast.IconCode.Code;
-
-    // Split by "High:" or "Low:" and take the first part
-    const LocalText = forecast.Text;
-    const highIndex = LocalText?.toLowerCase().indexOf('high:') ?? -1;
-    const lowIndex = LocalText?.toLowerCase().indexOf('low:') ?? -1;
-    // Find the earliest occurrence
-    const minIndex = Math.min(
-      highIndex === -1 ? Infinity : highIndex,
-      lowIndex === -1 ? Infinity : lowIndex
-    );
-    const result = minIndex === Infinity 
-      ? LocalText 
-      : LocalText.substring(0, minIndex).trim();
-      
-    const text = isLocal ? result: forecast.TextSummary;
-    
-    let temperature = null;
-    let showTemperature = true;
-    
-    if (isLocal) {
-      const tempValue = index === 0 ? forecast.High : forecast.Low;
-      temperature = tempValue !== undefined ? Math.round(tempValue) : null;
-      showTemperature = forecast.High !== undefined || forecast.Low !== undefined;
-    } else {
-      temperature = getTemperatureText(forecast.Temperatures.Temperature.Value);
-    }
-    
-    const key = isLocal ? forecast.Period : forecast.Period.TextForecastName;
-    
-    carouselList.push(
-      <div key={key} className={currentPane !== index ? 'inactive' : ''}>
-        <header className="carousel-header-container">
-          <p className="forecast-name">
-            <WeatherIcon className="weather-icon" code={code} />
-            {displayPeriod}
-          </p>
-          {showTemperature && (
-            <p className="forecast-temp-text">
-              {index === 0 ? "High of " : "Low of "}{temperature}&deg;
-            </p>
-          )}
-        </header>
-        <p className="forecast-text">{text}</p>
-      </div>
-    );
-  }
-
-  /* Main component */
   return (
-    <div className="carousel-container" ref={carouselRef}>
-      <GoodCarousel
-        className="current-forecast-carousel"
-        currentPane={currentPane}
-        itemsPerPane={1}
-        gap={16}
-        itemPeek={12}
-        animationDuration={0.4}>
+    <div className={`carousel-container`}>
+      <div className="embla" ref={emblaRef}>
+        <div className="embla__container">
+          {forecast_group.map((forecast, index) => {
+            const isLocal = isLocalFormat(forecast);
+            const period = isLocal ? forecast.Period : forecast.Period.TextForecastName;
+            const displayPeriod = isLocal ? transformPeriod(forecast.Period) : period;
+            const code = isLocal ? forecast.Code : forecast.AbbreviatedForecast.IconCode.Code;
+            const LocalText = forecast.Text || "";
+            
+            const highIndex = LocalText.toLowerCase().indexOf('high:');
+            const lowIndex = LocalText.toLowerCase().indexOf('low:');
+            const minIndex = [highIndex, lowIndex].filter(i => i !== -1);
+            const splitPoint = minIndex.length > 0 ? Math.min(...minIndex) : LocalText.length;
+            const text = isLocal ? LocalText.substring(0, splitPoint).trim() : forecast.TextSummary;
 
-        {carouselList}
-      </GoodCarousel>
+            let temperature = isLocal 
+                ? (index === 0 ? forecast.High : forecast.Low)
+                : forecast.Temperatures.Temperature.Value;
+            
+            if (temperature && typeof temperature === 'string') temperature = temperature.replace('.', '');
 
-      {currentPane !== carouselList.length - 1 && (
-        <Button
-          className="carousel-button next"
-          onClick={() => setCurrentPane(currentPane + 1)}>
+            return (
+              <div key={index} className={`embla__slide ${currentPane !== index ? 'inactive' : ''}`}>
+                <div className="slide-inner">
+                  <header className="carousel-header-container">
+                    <p className="forecast-name">
+                      <WeatherIcon className="weather-icon" code={code} />
+                      {displayPeriod}
+                    </p>
+                    <p className="forecast-temp-text">
+                      {index === 0 ? "High of " : "Low of "}{Math.round(temperature)}&deg;
+                    </p>
+                  </header>
+                  <p className="forecast-text">{text}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {currentPane !== forecast_group.length - 1 && (
+        <Button className="carousel-button next" onClick={scrollNext}>
           <FontAwesomeIcon icon={faChevronRight} />
         </Button>
       )}
 
       {currentPane !== 0 && (
-        <Button
-          className="carousel-button prev"
-          onClick={() => setCurrentPane(currentPane - 1)}>
+        <Button className="carousel-button prev" onClick={scrollPrev}>
           <FontAwesomeIcon icon={faChevronLeft} />
         </Button>
       )}
