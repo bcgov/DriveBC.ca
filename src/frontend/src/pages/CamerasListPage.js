@@ -430,7 +430,7 @@ export default function CamerasListPage() {
                       </Button>
 
                       {!smallScreen && showAreaFilters &&
-                        <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={displayedCameras} />
+                        <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={displayedCameras} showAllByDefault={true} />
                       }
                     </div>
 
@@ -461,7 +461,7 @@ export default function CamerasListPage() {
                       </Button>
 
                       {!smallScreen && showHwyFilters && displayedCameras &&
-                        <HighwayFilter cameras={displayedCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} />
+                        <HighwayFilter cameras={processedCameras} handleHwyFiltersClose={() => setShowHwyFilters(false)} showAllByDefault={true} />
                       }
                     </div>
                   </div>
@@ -603,7 +603,7 @@ export default function CamerasListPage() {
           </button>
 
           <p className="overlay__header bold">Filter by area</p>
-          <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={displayedCameras} />
+          <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={displayedCameras} showAllByDefault={true} />
         </div>
       }
 
