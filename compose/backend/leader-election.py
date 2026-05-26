@@ -166,17 +166,10 @@ def main():
     configuration = client.Configuration()
     try:
         config.load_incluster_config(client_configuration=configuration)
+        logger.info("Successfully loaded in-cluster Kubernetes configuration.")
     except config.ConfigException:
         logger.warning("Not in-cluster — falling back to local kubeconfig (dev mode)")
         config.load_kube_config(client_configuration=configuration)
-
-    token_path = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-    if os.path.exists(token_path):
-        with open(token_path) as token_file:
-            raw = token_file.read().strip()
-        token = raw.removeprefix("bearer ").removeprefix("Bearer ")
-        configuration.api_key = {"BearerToken": token}
-        configuration.api_key_prefix = {"BearerToken": "Bearer"}
 
     api_client = client.ApiClient(configuration=configuration)
     api = client.CoordinationV1Api(api_client=api_client)
