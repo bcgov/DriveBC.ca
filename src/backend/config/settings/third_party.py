@@ -63,6 +63,7 @@ KEYCLOAK_SECRET = env("BCEID_SECRET")
 KEYCLOAK_URL = env("BCEID_URL")
 
 ACCOUNT_ADAPTER = 'apps.authentication.adapters.AccountAdapter'
+ALLAUTH_TRUSTED_PROXY_COUNT = 1
 
 # need our own adapter to override various redirect url methods following
 # login or logout
