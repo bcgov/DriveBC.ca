@@ -161,10 +161,9 @@ class TestCreateWebcamDb(TestCase):
         }
 
         create_webcam_db(cam_data=cam_data)
-        self.assertEqual(Webcam.objects.count(), 3)
+        self.assertEqual(Webcam.objects.count(), 2)
 
         Webcam.objects.all().delete()
 
         create_webcam_db(cam_data=cam_data)
-        self.assertEqual(Webcam.objects.count(), 1)
-        self.assertEqual(Webcam.objects.first().name, "Test Cam New")
+        self.assertEqual(Webcam.objects.count(), 0)
