@@ -31,6 +31,10 @@ runs:
 
     - name: Authenticate and set project
       shell: bash
+      env:
+        OC_SERVER: ${{ inputs.server }}
+        OC_TOKEN: ${{ inputs.token }}
+        OC_NAMESPACE: ${{ inputs.namespace }}
       run: |
-        oc login --server=${{ inputs.server }} --token=${{ inputs.token }}
-        oc project ${{ inputs.namespace }}
+        oc login --server="$OC_SERVER" --token="$OC_TOKEN"
+        oc project "$OC_NAMESPACE"
