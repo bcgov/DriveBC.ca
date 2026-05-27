@@ -41,6 +41,7 @@ import Header from './Components/shared/header/Header.js';
 import MapPage from './pages/MapPage';
 import AuthModal from './AuthModal.js';
 // import ConsentModal from "./ConsentModal";
+import MaintenancePage from './pages/MaintenancePage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProblemsPage from './pages/ProblemsPage.js';
 import ReportElectricalPage from './pages/ReportElectricalPage';
@@ -101,6 +102,7 @@ function useVersionCheck() {
 }
 
 function App() {
+  const isMaintenanceMode = window.MAINTENANCE_MODE === 'true' || window.MAINTENANCE_MODE === true;
   useVersionCheck();
 
   /* Setup */
@@ -195,6 +197,10 @@ function App() {
   }
 
   useEffect(() => {
+    if (isMaintenanceMode) {
+      return;
+    }
+
     async function fetchAreas() {
       if (!areas) {
         const areaData = await getAreas();
@@ -205,7 +211,7 @@ function App() {
       initializeSearchLocation(updateSearchLocationTo)
     }
     fetchAreas();
-  }, []);
+  }, [isMaintenanceMode]);
 
   /* Helpers */
   // Data functions
@@ -244,6 +250,9 @@ function App() {
   }
 
   function getInitialAuthContext() {
+    if (isMaintenanceMode) {
+      return { loginStateKnown: true }; 
+    }
     if (!sessionStateKnown && !callingSession) {
       callingSession = true;
 
@@ -309,6 +318,7 @@ function App() {
 
   /* Rendering */
   // Main component
+
   return (
     <AuthContext.Provider value={{ authContext, setAuthContext }}>
       <MapContext.Provider value={{ mapContext, setMapContext }}>
@@ -316,17 +326,20 @@ function App() {
           <AlertContext.Provider value={{ alertMessage, setAlertMessage }}>
             <CMSContext.Provider value={{ cmsContext, setCMSContext }}>
               <EmergencyAlertContext.Provider value={{ emergencyAlertContext, setEmergencyAlertContext }}>
-                  <FeatureContext.Provider value={{ featureContext, setFeatureContext }}>
-                    <FilterContext.Provider value={{ filterContext, setFilterContext }}>
-                      <div className="App">
-                        <Header />
+                <FeatureContext.Provider value={{ featureContext, setFeatureContext }}>
+                  <FilterContext.Provider value={{ filterContext, setFilterContext }}>
+                    
+                    <div className="App">
+                      <Header isMaintenance={isMaintenanceMode} />
 
-                        <EmergencyAlert />
+                      {!isMaintenanceMode && <EmergencyAlert />}
 
-                        <main id='main'>
+                      <main id='main'>
+                        <ScrollToTop />
 
-                          <ScrollToTop />
-
+                        {isMaintenanceMode ? (
+                          <MaintenancePage />
+                        ) : (
                           <Routes>
                             <Route path="/" element={<MapPage />} />
                             <Route path="/my-cameras" element={<SavedCamerasPage />} />
@@ -344,24 +357,22 @@ function App() {
                             <Route path="/feedback" element={<FeedbackPage />} />
                             <Route path="/verify-email" element={<VerifyEmailPage />} />
                             <Route path="/emergency-alert-detail/:slug" element={<EmergencyAlertDetail />} />
-                            {/* Catch-all route for 404 errors */}
                             <Route path="*" element={<NotFoundPage />} />
                             <Route path="/problems" element={<ProblemsPage />} />
                             <Route path="/website-problem" element={<div>Website Problem or Suggestion Page</div>} />
                             <Route path="/highway-problem" element={<ReportRoadPage />} />
                             <Route path="/road-electrical-problem" element={<ReportElectricalPage />} />
                           </Routes>
+                        )}
+                      </main>
 
-                        </main>
+                      <AuthModal />
+                      <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
+                      <Survey />
+                    </div>
 
-                        <AuthModal />
-
-                        <Alert alertMessage={alertMessage} closeAlert={() => setAlertMessage(null)} />
-
-                        <Survey />
-                      </div>
-                    </FilterContext.Provider>
-                  </FeatureContext.Provider>
+                  </FilterContext.Provider>
+                </FeatureContext.Provider>
               </EmergencyAlertContext.Provider>
             </CMSContext.Provider>
           </AlertContext.Provider>

@@ -1,0 +1,21 @@
+@import "../styles/variables.scss";
+
+.maintenance-page {
+  .text-container {
+    max-width: 50rem;
+    margin: 50px auto;
+    padding: 0 15px;
+    
+    color: $BC-Blue; 
+
+    h1, p {
+      color: inherit;
+      margin-bottom: 15px;
+    }
+
+    a {
+      color: inherit;
+      margin-right: 1rem;
+    }
+  }
+}

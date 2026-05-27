@@ -34,3 +34,4 @@ window.DEPLOYMENT_TAG = `${process.env.REACT_APP_DEPLOYMENT_TAG || ''}`
 window.RELEASE = `${process.env.REACT_APP_RELEASE || ''}`
 window.FROM_EMAIL = `${process.env.REACT_APP_FROM_EMAIL}`;
 window.LEGACY_URL = `${process.env.REACT_APP_LEGACY_URL}`;
+window.MAINTENANCE_MODE = `${process.env.REACT_APP_MAINTENANCE_MODE}`;
