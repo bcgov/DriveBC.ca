@@ -11,6 +11,7 @@ import parse from 'html-react-parser';
 import { EmergencyAlertContext } from "../../App";
 import PollingComponent from "./PollingComponent";
 import { get } from "../data/helper.js";
+import { API_HOST } from '../../env';
 
 // Styling
 import './EmergencyAlert.scss';
@@ -25,7 +26,7 @@ export default function EmergencyAlert() {
 
   // Data functions
   const fetchEmergencyAlert = async () => {
-    const data = await get(`${window.API_HOST}/api/cms/emergency-alert/`);
+    const data = await get(`${API_HOST}/api/cms/emergency-alert/`);
 
     if (!data || !Array.isArray(data)) { // endpoint returned nothing, distinct from an empty list
       return;

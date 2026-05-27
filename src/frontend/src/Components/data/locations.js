@@ -1,4 +1,5 @@
 import { get } from "./helper.js";
+import { GEOCODER_HOST, GEOCODER_API_CLIENT_ID, ROUTABLE_LOCATIONS_HOST } from '../../env';
 
 function escapeCqlString(value) {
   return String(value).replace(/'/g, "''");
@@ -30,7 +31,7 @@ export function getExtraLocations(addressInput) {
   // escape CQL string and sanitize for ILike prefix
   const literal = escapeCqlString(sanitizeForILikePrefix(trimmed));
   return get(
-    `${window.ROUTABLE_LOCATIONS_HOST}`,
+    `${ROUTABLE_LOCATIONS_HOST}`,
     {
       service: "WFS",
       version: "1.0.0",
@@ -46,7 +47,7 @@ export function getExtraLocations(addressInput) {
 }
 
 export function getLocations(addressInput) {
-  const geocoderPromise = get(`${window.GEOCODER_HOST}/addresses.json`, {
+  const geocoderPromise = get(`${GEOCODER_HOST}/addresses.json`, {
     minScore: 50,
     maxResults: 7,
     echo: "false",
@@ -57,7 +58,7 @@ export function getLocations(addressInput) {
     locationDescriptor: "routingPoint",
     fuzzyMatch: true,
   }, {
-    apiKey: `${window.GEOCODER_API_CLIENT_ID}`,
+    apiKey: `${GEOCODER_API_CLIENT_ID}`,
   });
 
   const extraPromise = getExtraLocations(addressInput).catch(() => ({

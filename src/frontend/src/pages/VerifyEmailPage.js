@@ -12,6 +12,7 @@ import { AlertContext, AuthContext } from '../App';
 import { sendVerificationEmail } from "../Components/data/user";
 import Footer from '../Footer.js';
 import PageHeader from '../PageHeader';
+import { FROM_EMAIL } from '../env';
 
 // Styling
 import './VerifyEmailPage.scss';
@@ -76,7 +77,7 @@ export default function VerifyEmailPage() {
           <ul>
             <li>double check the spelling of your email address</li>
             <li>check your junk mail folders, and</li>
-            <li>add {window.FROM_EMAIL} to your whitelist</li>
+            <li>add {FROM_EMAIL} to your whitelist</li>
           </ul>
         </p>
 

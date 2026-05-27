@@ -16,6 +16,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 // Internal imports
 import { AuthContext } from "./App";
 import { getCookie } from "./util";
+import { API_HOST, BCEID_REGISTER_URL } from './env';
 
 // Styling
 import './Modal.scss';
@@ -134,7 +135,7 @@ export default function AuthModal() {
             <div className={'form-container'}>
               <p>Save cameras, routes, and setup notifications to be informed on delays that could affect your travel.</p>
 
-              <form className={'otp-form'} method='post' action={`${window.API_HOST}/accounts/oidc/otp/login/`}>
+              <form className={'otp-form'} method='post' action={`${API_HOST}/accounts/oidc/otp/login/`}>
                 <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
                 <input type='hidden' name='next' value={window.location.href} />
 
@@ -143,13 +144,13 @@ export default function AuthModal() {
                 <p>Login with your email and we’ll send you a one-time passcode.</p>
               </form>
 
-              <form className={'bceid-form'} method='post' action={`${window.API_HOST}/accounts/oidc/bceid/login/`}>
+              <form className={'bceid-form'} method='post' action={`${API_HOST}/accounts/oidc/bceid/login/`}>
                 <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
                 <input type='hidden' name='next' value={window.location.href} />
 
                 <button type='submit' className="btn btn-outline-primary" autoFocus={true}>Sign in with Basic BCeID</button>
 
-                <p>BCeID is a secure login service to access government services online for all residents and visitors. Don&apos;t have a BCeID account? <a href={window.BCEID_REGISTER_URL}>Create one</a></p>
+                <p>BCeID is a secure login service to access government services online for all residents and visitors. Don&apos;t have a BCeID account? <a href={BCEID_REGISTER_URL}>Create one</a></p>
               </form>
             </div>
           }

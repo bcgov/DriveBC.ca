@@ -5,6 +5,7 @@ import React, { useContext } from "react";
 import { AuthContext } from "./App";
 import { getCookie } from "./util";
 import { post } from "./Components/data/helper";
+import { API_HOST } from './env.js';
 
 // External imports
 import { faCircleCheck, faBan, faXmark } from '@fortawesome/pro-regular-svg-icons';
@@ -40,7 +41,7 @@ export default function ConsentModal(props) {
       'X-CSRFToken': getCookie('csrftoken')
     }
 
-    post(`${window.API_HOST}/api/users/email-consent/`, payload, headers).then((response) => {
+    post(`${API_HOST}/api/users/email-consent/`, payload, headers).then((response) => {
       if (Math.floor(response.status / 100) == 2) {
         setAuthContext((prior) => {
           return {...prior, consent: consent, attempted_consent: true};

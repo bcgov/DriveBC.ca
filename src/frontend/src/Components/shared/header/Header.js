@@ -25,6 +25,7 @@ import { getAdvisories, getAdvisoriesPreview } from '../../data/advisories.js';
 import { getBulletins, getBulletinsPreview } from '../../data/bulletins.js';
 import UserNavigation from "./UserNavigation";
 import RouteSearch from '../../routing/RouteSearch';
+import { LEGACY_URL } from '../../../env';
 
 // Static files
 import logo from '../../..//images/dbc-header-logo.svg';
@@ -241,7 +242,7 @@ export default function Header({ isMaintenance }) {
   };
 
   const getLegacyLink = () => {
-    return (window.LEGACY_URL && window.LEGACY_URL !== 'undefined') ? window.LEGACY_URL : 'https://drivebc.ca';
+    return (LEGACY_URL && LEGACY_URL !== 'undefined') ? LEGACY_URL : 'https://drivebc.ca';
   }
 
   const legacyDBCHandler = () => {
