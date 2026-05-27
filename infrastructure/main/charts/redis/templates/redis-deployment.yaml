@@ -53,7 +53,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: LEASE_NAME
-              value: "redis-primary"
+              value: {{ template "app.fullname" . }}
             {{- range $key, $value := .Values.deployment.env.variables }}
             - name: {{ $key }}
               value: {{ $value | quote }}

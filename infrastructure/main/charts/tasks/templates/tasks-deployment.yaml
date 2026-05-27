@@ -98,6 +98,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.deployment.env.postgresSecret  }}
                   key: dbname
+            - name: LEASE_NAME
+              value: {{ template "app.fullname" . }}
           ports:
             - containerPort: 8080
               protocol: TCP
