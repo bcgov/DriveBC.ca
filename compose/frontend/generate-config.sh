@@ -9,13 +9,6 @@ set -e
 SHARED_CONFIG="/shared-config"
 mkdir -p "${SHARED_CONFIG}/static"
 
-# --- Maintenance Mode Check ---
-if [ "$MAINTENANCE_MODE" = "true" ]; then
-    echo "Maintenance mode is enabled."
-    cp /etc/nginx/default_maintenance.txt "${SHARED_CONFIG}/default.conf"
-    exit 0
-fi
-
 # --- Copy Static Assets ---
 cp -r /usr/share/nginx/html/static/. "${SHARED_CONFIG}/static/"
 
@@ -50,6 +43,7 @@ window.ALTERNATE_ROUTE_GDF='${REACT_APP_ALTERNATE_ROUTE_GDF}';
 window.ALTERNATE_ROUTE_TURNCOST='${REACT_APP_ALTERNATE_ROUTE_TURNCOST}';
 window.ALTERNATE_ROUTE_XINGCOST='${REACT_APP_ALTERNATE_ROUTE_XINGCOST}';
 window.DEPLOYMENT_TAG='${DEPLOYMENT_TAG}';
+window.MAINTENANCE_MODE='${MAINTENANCE_MODE}';
 window.RELEASE='${RELEASE:-}';
 EOF
 
