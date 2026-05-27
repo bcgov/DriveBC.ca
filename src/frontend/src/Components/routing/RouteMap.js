@@ -15,6 +15,7 @@ import View from 'ol/View';
 // Internal imports
 import { getRouteLayer } from '../map/layers/routeLayer.js';
 import overrides from '../map/overrides.js';
+import { BASE_MAP, MAP_STYLE } from '../../env';
 
 // Styling
 import './RouteMap.scss';
@@ -42,7 +43,7 @@ export default function RouteMap(props) {
       declutter: true,
       source: new VectorTileSource({
         format: new MVT(),
-        url: window.BASE_MAP,
+        url: BASE_MAP,
       }),
     });
 
@@ -67,7 +68,7 @@ export default function RouteMap(props) {
     window.mapRef = mapRef.current;
 
     // Apply the basemap style from the arcgis resource
-    fetch(window.MAP_STYLE, {
+    fetch(MAP_STYLE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     }).then(function (response) {

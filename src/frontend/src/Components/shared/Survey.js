@@ -13,6 +13,7 @@ import Button from 'react-bootstrap/Button';
 import { getCookie } from "../../util";
 import { post } from "../data/helper";
 import { useRecaptchaVerification } from "./hooks/reCAPTCHA";
+import { API_HOST, SURVEY_LINK } from '../../env';
 
 // Styling
 import './Survey.scss';
@@ -71,7 +72,7 @@ export default function Survey() {
       'X-CSRFToken': getCookie('csrftoken')
     }
 
-    post(`${window.API_HOST}/api/survey/`, payload, headers).then(() => {
+    post(`${API_HOST}/api/survey/`, payload, headers).then(() => {
       localStorage.setItem('surveyTime', Date.now().toString());
       setSuccess(true);
       setError(false);
@@ -96,7 +97,7 @@ export default function Survey() {
     }
   }
 
-  if (!window.SURVEY_LINK) {
+  if (!SURVEY_LINK) {
     return null;
   }
 

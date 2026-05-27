@@ -25,6 +25,7 @@ import FriendlyTime from '../../shared/FriendlyTime';
 import trackEvent from '../../shared/TrackEvent';
 import ShareURLButton from '../../shared/ShareURLButton';
 import PollingComponent from '../../shared/PollingComponent';
+import { API_HOST } from '../../../env';
 
 // Static assets
 import colocatedCamIcon from '../../../images/colocated-camera.svg';
@@ -130,7 +131,7 @@ setCamIndex(initialIndex);
     rootCamRef.current.camGroup.forEach((cam, ii) => {
       getCameras(
         null,
-        `${window.API_HOST}/api/webcams/${cam.id}/`,
+        `${API_HOST}/api/webcams/${cam.id}/`,
 
       ).then((update) => {
         if (update.last_update_modified !== cam.last_update_modified) {

@@ -50,6 +50,7 @@ import SavedCamerasPage from './pages/SavedCamerasPage';
 import SavedRoutesPage from './pages/SavedRoutesPage';
 import ScrollToTop from './Components/shared/ScrollToTop';
 import Survey from "./Components/shared/Survey";
+import { API_HOST, MAINTENANCE_MODE } from './env';
 
 // FontAwesome Stylesheet
 import { config } from '@fortawesome/fontawesome-svg-core'
@@ -102,7 +103,7 @@ function useVersionCheck() {
 }
 
 function App() {
-  const isMaintenanceMode = window.MAINTENANCE_MODE === 'true' || window.MAINTENANCE_MODE === true;
+  const isMaintenanceMode = MAINTENANCE_MODE === 'true' || MAINTENANCE_MODE === true;
   useVersionCheck();
 
   /* Setup */
@@ -256,7 +257,7 @@ function App() {
     if (!sessionStateKnown && !callingSession) {
       callingSession = true;
 
-      fetch(`${window.API_HOST}/api/session`, {
+      fetch(`${API_HOST}/api/session`, {
         headers: { 'Accept': 'application/json' },
         credentials: "include",
       }).then((response) => response.json())

@@ -21,6 +21,7 @@ import { post } from '../Components/data/helper.js';
 import { useRecaptchaVerification } from "../Components/shared/hooks/reCAPTCHA";
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
+import { API_HOST } from '../env';
 
 export default function FeedbackPage() {
   /* Setup */
@@ -113,7 +114,7 @@ export default function FeedbackPage() {
       'X-CSRFToken': getCookie('csrftoken')
     }
 
-    post(`${window.API_HOST}/api/feedback/`, payload, headers)
+    post(`${API_HOST}/api/feedback/`, payload, headers)
     .then((data) => {
       setSuccess(true);
     })

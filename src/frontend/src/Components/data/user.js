@@ -1,7 +1,8 @@
 import { getCookie } from "../../util";
+import { API_HOST } from '../../env';
 
 export const sendVerificationEmail = async ({ my_routes = false } = {}) => {
-  const url = `${window.API_HOST}/api/users/send-verification-email/`;
+  const url = `${API_HOST}/api/users/send-verification-email/`;
 
   try {
    const response = await fetch(url, {

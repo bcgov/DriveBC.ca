@@ -30,6 +30,7 @@ import renderWagtailBody from '../Components/shared/renderWagtailBody.js';
 import overrides from '../Components/map/overrides.js';
 import { faAttributionToggleLabel } from '../Components/map/attributionControlLabels.js';
 import ShareURLButton from '../Components/shared/ShareURLButton';
+import { BASE_MAP, MAP_STYLE } from '../env';
 
 // Styling
 import './AdvisoryDetailsPage.scss';
@@ -119,7 +120,7 @@ function getMap(advisoryData) {
 
   const tileSource = new VectorTileSource({
     format: new MVT(),
-    url: window.BASE_MAP,
+    url: BASE_MAP,
   });
 
   const tileLayer = new VectorTileLayer({
@@ -127,7 +128,7 @@ function getMap(advisoryData) {
   });
 
   // Apply the basemap style from the arcgis resource
-  fetch(window.MAP_STYLE, {
+  fetch(MAP_STYLE, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
   }).then(function(response) {
