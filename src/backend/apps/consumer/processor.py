@@ -159,14 +159,15 @@ async def consume_queue(queue, name: str):
             try:
                 await process_message(message)
             except Exception as e:
-                logger.error(f"Error processing message from {name}: {e}")
+                logging.exception(f"Error processing message from {name}: {e}")
 
 async def consume_from(rb_url: str, name: str):
+    connection = None
     while not stop_event.is_set():
-        connection = None
-
         try:
-            connection, queue = await setup_rabbitmq(rb_url, name)
+            # Only create connection if we don't have one
+            if connection is None or connection.is_closed:
+                connection, queue = await setup_rabbitmq(rb_url, name)
 
             logger.info(f"Starting message consumption from {name}...")
             await consume_queue(queue, name)
@@ -380,7 +381,7 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
         return buffer.read()
 
     except Exception as e:
-        logger.error(f"Error processing image from camera: {e}")
+        logging.exception(f"Error processing image from camera: {e}")
         return None
 
 def blank_out_image(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
@@ -426,7 +427,7 @@ def blank_out_image(webcam: any, image_data: bytes, tz: str, timestamp: str) -> 
         return buffer.read()
 
     except Exception as e:
-        logger.error(f"Error processing image from camera: {e}")
+        logging.exception(f"Error processing image from camera: {e}")
         return None
 
 
@@ -441,8 +442,8 @@ def save_original_image_to_pvc(camera_id: str, image_bytes: bytes):
         with open(filepath, "wb") as f:
             f.write(image_bytes)
     except Exception as e:
-        logger.error(f"Error saving original image to PVC {filepath}: {e}")
-    logger.info(f"Original image saved to PVC at {filepath}")
+        logging.exception(f"Error saving original image to PVC {filepath}: {e}")
+    logging.info(f"Original image saved to PVC at {filepath}")
 
 def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp: str, is_on: bool):  
     os.makedirs(os.path.dirname(f'{PVC_WATERMARKED_PATH}'), exist_ok=True)
@@ -456,11 +457,11 @@ def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp:
         with open(filepath, "wb") as f:
             f.write(image_bytes)
         if is_on:
-            logger.info(f"Watermarked image saved to PVC at {filepath}")
+            logging.info(f"Watermarked image saved to PVC at {filepath}")
         else:
-            logger.info(f"Blank out image saved to PVC at {filepath}")
+            logging.info(f"Blank out image saved to PVC at {filepath}")
     except Exception as e:
-        logger.error(f"Error saving image to PVC {filepath}: {e}")
+        logging.exception(f"Error saving image to PVC {filepath}: {e}")
 
 def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes, is_on: bool):  
     os.makedirs(os.path.dirname(f'{DRIVEBC_PVC_WATERMARKED_PATH}'), exist_ok=True)
@@ -474,15 +475,15 @@ def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes, is
         with open(filepath, "wb") as f:
             f.write(image_bytes)
         if is_on:
-            logger.info(f"Watermarked image saved to drivebc PVC at {filepath}")
+            logging.info(f"Watermarked image saved to drivebc PVC at {filepath}")
     except Exception as e:
-        logger.error(f"Error saving image to drivebc PVC {filepath}: {e}")
+        logging.exception(f"Error saving image to drivebc PVC {filepath}: {e}")
 
 def delete_watermarked_image_from_pvc(camera_id: str):
     save_dir = os.path.join(PVC_WATERMARKED_PATH, camera_id)
 
     if not os.path.exists(save_dir):
-        logger.warning(f"Directory does not exist: {save_dir}")
+        logging.warning(f"Directory does not exist: {save_dir}")
         return
 
     try:
@@ -491,7 +492,7 @@ def delete_watermarked_image_from_pvc(camera_id: str):
             if os.path.isfile(filepath):
                 os.remove(filepath)
     except Exception as e:
-        logger.error(f"Error deleting watermarked images from PVC {save_dir}: {e}")
+        logging.exception(f"Error deleting watermarked images from PVC {save_dir}: {e}")
         
 async def get_images_within(camera_id: str, hours: int = 720) -> list:
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
