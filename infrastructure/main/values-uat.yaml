@@ -195,40 +195,6 @@ openshiftjobs:
     authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
 
   cronjobs:
-    analyzeuploadlogs:
-      name: analyzeuploadlogs
-      enabled: true
-      schedule: '0 9 * * *'  #NOTE: This is in UTC
-      deployment:
-        resources:
-          requests:
-            cpu: 50m
-            memory: 150Mi
-          limits:
-            memory: 250Mi
-        volumes:
-          logs: uat-drivebc-static-log-storage
-        env:
-          variables:
-            CLUSTER: gold # used to set the path in the s3 bucket
-            DAYS_AGO: 1
-
-    ziplogs:
-      name: ziplogs
-      enabled: true
-      schedule: '5 * * * *'
-      deployment:
-        resources:
-          requests:
-            cpu: 50m
-            memory: 100Mi
-          limits:
-            memory: 250Mi
-        volumes:
-          logs: uat-drivebc-static-log-storage
-        env:
-          variables: {}
-
     backupmediapvc:
       name: backupmediapvc
       enabled: true
