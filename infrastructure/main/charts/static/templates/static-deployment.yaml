@@ -35,9 +35,6 @@ spec:
         - name: django-app-images-volume
           persistentVolumeClaim:
             claimName: {{ .Values.deployment.volumes.imagesClaimName  }}
-        - name: log-storage
-          persistentVolumeClaim:
-            claimName: {{ template "app.fullname" . }}-log-storage
         - name: shared-config
           emptyDir: {}
       initContainers:
@@ -77,8 +74,6 @@ spec:
             - name: django-app-images-volume
               mountPath: /app/images/webcams
               readOnly: true
-            - name: log-storage
-              mountPath: /logs
             - name: shared-config
               mountPath: /usr/share/nginx/html
               readOnly: true
