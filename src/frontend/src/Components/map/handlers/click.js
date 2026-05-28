@@ -240,7 +240,6 @@ const camClickHandler = (
   }
 
   if (highlighted_camera_list.length > 0) {
-      console.log("highlighted_camera_list: ", highlighted_camera_list)
       resetClickedStates(
       feature,
       highlighted_camera_list[0],
