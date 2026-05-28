@@ -19,7 +19,7 @@ spec:
       serviceAccountName: {{ template "app.fullname" . }}
       containers:
       - name: {{ template "app.fullname" . }}
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | toString }}"
         resources:
           requests:
             cpu: {{ .Values.deployment.resources.requests.cpu }}

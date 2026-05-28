@@ -3,7 +3,7 @@ fullnameOverride: prod-drivebc-syncthing
 
 image:
   repository: syncthing/syncthing # Official Syncthing image
-  tag: 2.0 # Syncthing tag. Check https://hub.docker.com/r/syncthing/syncthing/tags for available tags
+  tag: "2.1"  # Syncthing tag. Check https://hub.docker.com/r/syncthing/syncthing/tags for available tags
 
 createTransportClaim: true # Set to true in Gold, and false for GoldDR as it will be automatically created there once installed on Gold
 
@@ -11,7 +11,7 @@ deployment:
   replicas: 1 # Should never exceed 1 as the Syncthing PVC is ReadWriteOnce
   resources:
     requests:
-      cpu: 200m
+      cpu: 350m
       memory: 1Gi
     limits:
       memory: 1Gi
