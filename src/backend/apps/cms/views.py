@@ -54,6 +54,11 @@ class CMSViewSet(viewsets.ReadOnlyModelViewSet):
             if latest_revision and latest_revision.created_at > obj.last_published_at:
                 obj = latest_revision.as_object()
 
+                # Revision geometry may be stored as SRID=3857 (Web Mercator),
+                # but the frontend expects SRID=4326 (WGS84) — normalize it.
+                if obj.geometry and obj.geometry.srid != 4326:
+                    obj.geometry.transform(4326)
+
         return obj
 
 
