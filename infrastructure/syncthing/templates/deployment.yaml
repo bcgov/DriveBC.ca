@@ -26,6 +26,9 @@ spec:
             memory: {{ .Values.deployment.resources.requests.memory }}
           limits:
             memory: {{ .Values.deployment.resources.limits.memory }}
+        env:
+          - name: STTRACE
+            value: 'connections:ERROR,model:WARN'
         securityContext:
           seccompProfile:
             type: RuntimeDefault
