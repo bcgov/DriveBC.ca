@@ -31,8 +31,8 @@ deployment:
   oAuthProxy:
     enabled: true
     image:
-      repository: quay.io/openshift/origin-oauth-proxy
-      tag: 4.16
+      repository: registry.redhat.io/openshift4/ose-oauth-proxy-rhel9
+      tag: v4.16
     resources:
       requests:
         cpu: 5m
