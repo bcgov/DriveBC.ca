@@ -1,5 +1,5 @@
 // Styling
-import { eventStyles } from '../../data/featureStyleDefinitions.js';
+import { eventStyles } from '../../data/featureStyleDefinitions';
 
 // Append _unread to the key if the event is highlighted/updated
 const getStyleKey = (baseKey, isHighlighted) => {

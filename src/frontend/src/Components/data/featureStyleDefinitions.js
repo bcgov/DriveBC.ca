@@ -1,4 +1,4 @@
-import { Fill, Icon, Stroke, Style } from 'ol/style.js';
+import { Fill, Icon, Stroke, Style } from 'ol/style';
 
 // Static assets
 // Cameras

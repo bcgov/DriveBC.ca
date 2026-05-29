@@ -2,7 +2,7 @@
 import { point, multiLineString } from '@turf/helpers';
 
 // Internal imports
-import { get } from "./helper.js";
+import { get } from "./helper";
 import { getCookie } from "../../util";
 import { removeFavRoute, pushFavRoute, updateSingleFavRoute } from '../../slices/userSlice';
 import { updateSingleSearchedRoute, updateSelectedRoute } from "../../slices/routesSlice";

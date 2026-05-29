@@ -9,7 +9,7 @@ import VectorSource from 'ol/source/Vector';
 import { Style } from 'ol/style';
 
 // Styling
-import { borderCrossingStyles } from '../../data/featureStyleDefinitions.js';
+import { borderCrossingStyles } from '../../data/featureStyleDefinitions';
 
 export function getBorderCrossingsLayer(
   borderCrossings,
