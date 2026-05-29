@@ -30,6 +30,8 @@ import {
   dmsNorthStyles
 } from '../../data/featureStyleDefinitions.js';
 
+let highlighted_camera_list = []
+
 // Click states
 export const resetClickedStates = (
   targetFeature,
@@ -183,6 +185,12 @@ export const resetClickedStates = (
         updateClickedFeature(null);
         break;
     }
+    if (isCamDetail && targetFeature && targetFeature.get('type') === 'camera') {
+      if (highlighted_camera_list.length > 0) {     
+          highlighted_camera_list[0].setCameraStyle('static');
+          highlighted_camera_list[0].set('clicked', false); 
+        }
+    }
   }
 };
 
@@ -221,12 +229,26 @@ const camClickHandler = (
   updateReferenceFeature,
   mapContext
 ) => {
-  resetClickedStates(
-    feature,
-    clickedFeatureRef,
-    updateClickedFeature,
-    isCamDetail,
-  );
+  if ((clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')
+    || (clickedFeatureRef.current && (clickedFeatureRef.current.values_.type != feature.values_.type))) {
+    resetClickedStates(
+      feature,
+      clickedFeatureRef,
+      updateClickedFeature,
+      isCamDetail,
+    );
+  }
+
+  if (highlighted_camera_list.length > 0) {
+      resetClickedStates(
+      feature,
+      highlighted_camera_list[0],
+      updateClickedFeature,
+      isCamDetail,
+    );
+    highlighted_camera_list = [];
+    highlighted_camera_list.push(feature);
+    }
 
   // set new clicked camera feature
   feature.setCameraStyle('active');
@@ -270,12 +292,17 @@ export const eventClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  resetClickedStates(
-    feature,
-    clickedFeatureRef,
-    updateClickedFeature,
-    isCamDetail,
-  );
+  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+      resetClickedStates(
+      feature,
+      clickedFeatureRef,
+      updateClickedFeature,
+      isCamDetail,
+    );
+  }
+  else {
+    highlighted_camera_list.push(clickedFeatureRef.current);
+  }
 
   // set new clicked event feature
   setEventStyle(feature, 'active');
@@ -300,12 +327,17 @@ export const ferryClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  resetClickedStates(
-    feature,
-    clickedFeatureRef,
-    updateClickedFeature,
-    isCamDetail,
-  );
+  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+      resetClickedStates(
+      feature,
+      clickedFeatureRef,
+      updateClickedFeature,
+      isCamDetail,
+    );
+  }
+  else {
+    highlighted_camera_list.push(clickedFeatureRef.current);
+  }
 
   const styles = feature.get('coastal') ? coastalFerryStyles : ferryStyles;
 
@@ -321,13 +353,19 @@ const weatherClickHandler = (
   updateClickedFeature,
   isCamDetail,
 ) => {
-  // reset previous clicked feature
-  resetClickedStates(
-    feature,
-    clickedFeatureRef,
-    updateClickedFeature,
-    isCamDetail,
-  );
+  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+    // reset previous clicked feature
+    resetClickedStates(
+      feature,
+      clickedFeatureRef,
+      updateClickedFeature,
+      isCamDetail,
+    );
+  }
+  else {
+     highlighted_camera_list.push(clickedFeatureRef.current);
+
+  }
 
   // set new clicked local weather feature
   feature.setStyle(roadWeatherStyles['active']);
@@ -341,13 +379,20 @@ const regionalClickHandler = (
   updateClickedFeature,
   isCamDetail,
 ) => {
-  // reset previous clicked feature
-  resetClickedStates(
-    feature,
-    clickedFeatureRef,
-    updateClickedFeature,
-    isCamDetail,
-  );
+  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+    // reset previous clicked feature
+    resetClickedStates(
+      feature,
+      clickedFeatureRef,
+      updateClickedFeature,
+      isCamDetail,
+    );
+    
+  }
+  else {
+    highlighted_camera_list.push(clickedFeatureRef.current);
+
+  }
 
   // set new clicked regional weather feature
   const warnings = feature.get('warnings');
@@ -363,12 +408,18 @@ const hefClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  resetClickedStates(
-    feature,
-    clickedFeatureRef,
-    updateClickedFeature,
-    isCamDetail,
-  );
+  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+      resetClickedStates(
+      feature,
+      clickedFeatureRef,
+      updateClickedFeature,
+      isCamDetail,
+    );
+
+  }
+  else {
+    highlighted_camera_list.push(clickedFeatureRef.current);
+  }
 
   // set new clicked hef weather feature
   const warnings = feature.get('warnings');
@@ -384,12 +435,17 @@ const restStopClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  resetClickedStates(
-    feature,
-    clickedFeatureRef,
-    updateClickedFeature,
-    isCamDetail,
-  );
+  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+      resetClickedStates(
+      feature,
+      clickedFeatureRef,
+      updateClickedFeature,
+      isCamDetail,
+    );
+  }
+  else {
+    highlighted_camera_list.push(clickedFeatureRef.current);
+  }
 
   // set new clicked rest stop feature
   const isClosed = isRestStopClosed(feature.values_.properties);
@@ -418,12 +474,17 @@ const routeClickHandler = (
   updateClickedFeature,
 ) => {
   // reset previous clicked feature
-  resetClickedStates(
-    feature,
-    clickedFeatureRef,
-    updateClickedFeature,
-    false,
-  );
+  if (!(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+      resetClickedStates(
+      feature,
+      clickedFeatureRef,
+      updateClickedFeature,
+      false,
+    );
+  }
+  else {
+    highlighted_camera_list.push(clickedFeatureRef.current);
+  }
 
   // set new clicked route feature
   feature.set('clicked', true);
@@ -437,12 +498,14 @@ const borderCrossingClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  resetClickedStates(
-    feature,
-    clickedFeatureRef,
-    updateClickedFeature,
-    isCamDetail,
-  );
+  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+    resetClickedStates(
+        feature,
+        clickedFeatureRef,
+        updateClickedFeature,
+        isCamDetail,
+      );
+  }
 
   // set new clicked border crossing feature
   feature.setStyle(borderCrossingStyles['active']);
@@ -477,12 +540,14 @@ export const wildfireClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  resetClickedStates(
-    feature,
-    clickedFeatureRef,
-    updateClickedFeature,
-    isCamDetail,
-  );
+  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+    resetClickedStates(
+        feature,
+        clickedFeatureRef,
+        updateClickedFeature,
+        isCamDetail,
+      );
+  }
 
   const isCentroidFeature = feature.getGeometry().getType() === 'Point';
 
@@ -722,13 +787,18 @@ export const dmsClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  resetClickedStates(
-    feature,
-    clickedFeatureRef,
-    updateClickedFeature,
-    isCamDetail,
-  );
+  if (!(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+      resetClickedStates(
+      feature,
+      clickedFeatureRef,
+      updateClickedFeature,
+      isCamDetail,
+    );
 
+  }
+  else {
+    highlighted_camera_list.push(clickedFeatureRef.current);
+  }
   if (feature.getProperties().roadway_direction === 'Eastbound') {
     feature.setStyle(dmsEastStyles['active']);
   }
