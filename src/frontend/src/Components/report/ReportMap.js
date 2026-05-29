@@ -29,6 +29,7 @@ import { get } from '../data/helper';
 import { redLocationMarkup, setLocationPin, setZoomPan } from '../map/helpers';
 import overrides from '../map/overrides.js';
 import { faAttributionToggleLabel } from '../map/attributionControlLabels.js';
+import { BASE_MAP, MAP_STYLE, REPORT_WMS_LAYER } from '../../env';
 
 // OpenLayers
 import { applyStyle } from 'ol-mapbox-style';
@@ -53,7 +54,7 @@ function loadReportMap(setActiveFeature, wmsLayer, styles, smallScreen, attribut
     declutter: true,
     source: new VectorTileSource({
       format: new MVT(),
-      url: window.BASE_MAP,
+      url: BASE_MAP,
     }),
   });
 
@@ -61,7 +62,7 @@ function loadReportMap(setActiveFeature, wmsLayer, styles, smallScreen, attribut
     opacity: 0.5,
     visible: true,
     source: new ImageWMS({
-      url: window.REPORT_WMS_LAYER,
+      url: REPORT_WMS_LAYER,
       params: {
         LAYERS: wmsLayer,
         STYLES: styles,
@@ -75,7 +76,7 @@ function loadReportMap(setActiveFeature, wmsLayer, styles, smallScreen, attribut
   });
 
   // Apply the basemap style from the arcgis resource
-  fetch(window.MAP_STYLE, {
+  fetch(MAP_STYLE, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   }).then(function (response) {
@@ -167,7 +168,7 @@ const clickListener = (map, pixelCoords, setActiveFeature, wmsLayer) => {
     feature_count: 1,
   };
 
-  get(window.REPORT_WMS_LAYER, payload, {}, false).then(data => {
+  get(REPORT_WMS_LAYER, payload, {}, false).then(data => {
     setActiveFeature(data.features[0]);
   });
 };

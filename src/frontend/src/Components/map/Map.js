@@ -71,6 +71,7 @@ import StaleLinkErrorPopup from './errors/StaleLinkError';
 import LocationAccessPopup from './errors/LocationAccessError';
 import overrides from '../map/overrides.js';
 import { faAttributionToggleLabel } from './attributionControlLabels.js';
+import { BASE_MAP, MAP_STYLE } from '../../env';
 
 // Map & geospatial imports
 import { applyStyle } from 'ol-mapbox-style';
@@ -526,7 +527,7 @@ export default function DriveBCMap(props) {
 
     const tileSource = new VectorTileSource({
       format: new MVT(),
-      url: window.BASE_MAP,
+      url: BASE_MAP,
     });
 
     // base tile map layer
@@ -573,7 +574,7 @@ export default function DriveBCMap(props) {
     });
 
     // Apply the basemap style from the arcgis resource
-    fetch(window.MAP_STYLE, {
+    fetch(MAP_STYLE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     }).then(function (response) {

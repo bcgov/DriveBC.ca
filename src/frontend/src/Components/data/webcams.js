@@ -1,15 +1,16 @@
 import { get } from './helper.js';
 import { getCookie } from "../../util";
+import { API_HOST } from '../../env';
 
 export function getCameras(routePoints, url = null) {
   const payload = routePoints ? { route: routePoints } : {};
 
-  return get(url ? url : `${window.API_HOST}/api/webcams/`, payload)
+  return get(url ? url : `${API_HOST}/api/webcams/`, payload)
   .then((data) => data);
 }
 
 export async function getFavoriteCameraIds(url, headers = {}) {
-  const response = await fetch(url ? url : `${window.API_HOST}/api/users/webcams/`, {
+  const response = await fetch(url ? url : `${API_HOST}/api/users/webcams/`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -26,7 +27,7 @@ export async function getFavoriteCameraIds(url, headers = {}) {
 }
 
 export const addFavoriteCamera = async (id, dispatch, action) => {
-  const url = `${window.API_HOST}/api/users/webcams/`;
+  const url = `${API_HOST}/api/users/webcams/`;
 
   try {
    const response = await fetch(url, {
@@ -52,7 +53,7 @@ export const addFavoriteCamera = async (id, dispatch, action) => {
 }
 
 export const deleteFavoriteCamera = async (id, dispatch, action) => {
-  const url = `${window.API_HOST}/api/users/webcams/${id}/`;
+  const url = `${API_HOST}/api/users/webcams/${id}/`;
 
   try {
    const response = await fetch(url, {

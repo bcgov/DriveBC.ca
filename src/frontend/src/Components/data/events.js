@@ -1,13 +1,14 @@
 /* eslint-disable no-prototype-builtins */
 
 import { get } from "./helper.js";
+import { API_HOST } from '../../env';
 
 export function getEventDetails(id) {
-  return get(`${window.API_HOST}/api/events/${id}/`).then((data) => data);
+  return get(`${API_HOST}/api/events/${id}/`).then((data) => data);
 }
 
 export function getEvents(polling=false) {
-  const endpoint = polling ? `${window.API_HOST}/api/eventspolling/` : `${window.API_HOST}/api/events/`;
+  const endpoint = polling ? `${API_HOST}/api/eventspolling/` : `${API_HOST}/api/events/`;
   return get(endpoint).then((data) => data);
 }
 

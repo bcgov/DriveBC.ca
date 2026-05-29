@@ -63,6 +63,7 @@ import trackEvent from '../Components/shared/TrackEvent';
 import PollingComponent from '../Components/shared/PollingComponent';
 import NearbyWeathers from "../Components/cameras/nearbyweathers/NearbyWeathers";
 import CameraOrientations from "../Components/cameras/directions/CameraOrientations";
+import { API_HOST, REPLAY_THE_DAY } from '../env';
 
 // Styling
 import './CameraDetailsPage.scss';
@@ -225,7 +226,7 @@ export default function CameraDetailsPage() {
 
     const camData = await getCameras(
       null,
-      `${window.API_HOST}/api/webcams/${id}/`,
+      `${API_HOST}/api/webcams/${id}/`,
     ).catch(error => displayError(error));
 
     // Group cameras
@@ -244,7 +245,7 @@ export default function CameraDetailsPage() {
     for (const cameraId of cameraGroupRefs.current) {
       const camData = await getCameras(
         null,
-        `${window.API_HOST}/api/webcams/${cameraId}/`,
+        `${API_HOST}/api/webcams/${cameraId}/`,
       ).catch(error => displayError(error));
 
       if (camData) {
@@ -285,7 +286,7 @@ export default function CameraDetailsPage() {
       if (cam.https_cam) {
         return { original: `${window.location.origin}/images/replaytheday/${cam.id}/${url}.jpg` };
       } else {
-        return { original: `${window.REPLAY_THE_DAY}${cam.id}/${url}.jpg` };
+        return { original: `${REPLAY_THE_DAY}${cam.id}/${url}.jpg` };
       }
     });
     setReplayImages(replayImages);

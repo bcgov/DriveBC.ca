@@ -25,6 +25,7 @@ import { getAdvisories, getAdvisoriesPreview } from '../../data/advisories.js';
 import { getBulletins, getBulletinsPreview } from '../../data/bulletins.js';
 import UserNavigation from "./UserNavigation";
 import RouteSearch from '../../routing/RouteSearch';
+import { LEGACY_URL } from '../../../env';
 
 // Static files
 import logo from '../../..//images/dbc-header-logo.svg';
@@ -32,10 +33,31 @@ import logo from '../../..//images/dbc-header-logo.svg';
 // Styling
 import './Header.scss';
 
-export default function Header() {
+export default function Header({ isMaintenance }) {
   /* Setup */
   // Misc
   const xLargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
+
+  if (isMaintenance) {
+    return (
+      <header className="maintenance-header"> {/* Added class here */}
+        <Navbar expand="xl">
+          <Container>
+            <div className='header'>
+              <div className='header-left'>
+                <Navbar.Brand href="/">
+                  <img className="header-logo" src={logo} alt="Government of British Columbia" />
+                </Navbar.Brand>
+                {/* Ensure the divider shows even in maintenance if screen is large */}
+                <div className="nav-divider"></div>
+              </div>
+            </div>
+          </Container>
+        </Navbar>
+      </header>
+    );
+  }
+  
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
 
   // Check current page location
@@ -220,7 +242,7 @@ export default function Header() {
   };
 
   const getLegacyLink = () => {
-    return (window.LEGACY_URL && window.LEGACY_URL !== 'undefined') ? window.LEGACY_URL : 'https://drivebc.ca';
+    return (LEGACY_URL && LEGACY_URL !== 'undefined') ? LEGACY_URL : 'https://drivebc.ca';
   }
 
   const legacyDBCHandler = () => {

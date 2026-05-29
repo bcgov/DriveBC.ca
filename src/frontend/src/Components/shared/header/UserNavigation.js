@@ -28,6 +28,7 @@ import { AuthContext } from "../../../App";
 import { addFavoriteCamera } from '../../data/webcams';
 import { getCookie } from "../../../util";
 import { logoutDispatch } from "../../data/account";
+import { API_HOST, DEPLOYMENT_TAG, RELEASE } from '../../../env';
 
 // Styling
 import './UserNavigation.scss';
@@ -154,7 +155,7 @@ export default function UserNavigation({ isNavbarExpanded, onCollapseNavbar }) {
             <FontAwesomeIcon icon={faArrowRight} />
           </a>
 
-          <form id="signout-link" className="sign-out-btn" method='post' action={`${window.API_HOST}/accounts/logout/`} onSubmit={handleSubmit}>
+          <form id="signout-link" className="sign-out-btn" method='post' action={`${API_HOST}/accounts/logout/`} onSubmit={handleSubmit}>
             <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
             <button type='submit' className="menu-item menu-item--sign-out">
               <FontAwesomeIcon icon={faArrowRightFromBracket} />
@@ -163,8 +164,8 @@ export default function UserNavigation({ isNavbarExpanded, onCollapseNavbar }) {
           </form>
 
           <div className='release-tag'>
-            { window.DEPLOYMENT_TAG || '' }
-            { window.RELEASE ? ` (${window.RELEASE})` : '' }
+            { DEPLOYMENT_TAG || '' }
+            { RELEASE ? ` (${RELEASE})` : '' }
           </div>
         </div>
       </DropdownButton>

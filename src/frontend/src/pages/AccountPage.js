@@ -22,6 +22,7 @@ import { AuthContext } from '../App';
 import { getCookie } from "../util";
 import Footer from '../Footer.js';
 import PageHeader from '../PageHeader';
+import { API_HOST } from '../env';
 
 // Styling
 import './AccountPage.scss';
@@ -65,7 +66,7 @@ export default function AccountPage() {
 
   /* Handlers */
   const deactivateHandler = async () => {
-    const url = `${window.API_HOST}/api/users/drivebcuser/${authContext.username}/`;
+    const url = `${API_HOST}/api/users/drivebcuser/${authContext.username}/`;
 
     const response = await fetch(url, {
       method: 'DELETE',
@@ -186,7 +187,7 @@ export default function AccountPage() {
             </p>
 
             <div className="modal-buttons">
-              <form id="signout-link" className="nav-link" method='post' action={`${window.API_HOST}/accounts/logout/?deactivate=true`} onSubmit={handleDeactivateAndSignout}>
+              <form id="signout-link" className="nav-link" method='post' action={`${API_HOST}/accounts/logout/?deactivate=true`} onSubmit={handleDeactivateAndSignout}>
                 <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
                 <button type='submit' className="btn btn-primary">Yes, deactivate my account</button>
               </form>
