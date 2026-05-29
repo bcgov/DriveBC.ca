@@ -13,7 +13,7 @@ import {
   wildfireAreaStyles,
   wildfireCentroidStyles,
   // wildfireUnreadStyles
-} from '../../data/featureStyleDefinitions.js';
+} from '../../data/featureStyleDefinitions';
 
 export function getWildfiresLayer(
   wildfiresList,
