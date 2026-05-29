@@ -6,7 +6,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Styling
-import { cameraStyles, unreadCameraStyles } from '../../data/featureStyleDefinitions.js';
+import { cameraStyles, unreadCameraStyles } from '../../data/featureStyleDefinitions';
 
 export function getCamerasLayer(cameras, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   const vectorSource = new VectorSource();

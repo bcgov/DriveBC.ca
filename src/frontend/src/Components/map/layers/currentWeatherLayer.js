@@ -9,7 +9,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 // Styling
-import { roadWeatherStyles } from '../../data/featureStyleDefinitions.js';
+import { roadWeatherStyles } from '../../data/featureStyleDefinitions';
 
 export function getCurrentWeatherLayer(weatherData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
   const vectorSource = new VectorSource();

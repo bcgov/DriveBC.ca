@@ -4,7 +4,7 @@ import { transformFeature } from '../helpers';
 // OpenLayers
 import { LineString } from 'ol/geom';
 import * as ol from 'ol';
-import GeoJSON from 'ol/format/GeoJSON.js';
+import GeoJSON from 'ol/format/GeoJSON';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { routeStyles } from "../../data/featureStyleDefinitions";

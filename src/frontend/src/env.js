@@ -1,6 +1,6 @@
 const runtimeEnv = (typeof globalThis !== 'undefined' && globalThis.__ENV__) || {};
 const getEnv = (key, fallback = '') => {
-  return runtimeEnv[key] ?? process.env[`REACT_APP_${key}`] ?? fallback;
+  return runtimeEnv[key] ?? import.meta.env[`VITE_${key}`] ?? fallback;
 };
 
 export const BASE_MAP = `${getEnv('BASE_MAP')}`;
@@ -25,6 +25,6 @@ export const ALTERNATE_ROUTE_GDF = `${getEnv('ALTERNATE_ROUTE_GDF')}`;
 export const ALTERNATE_ROUTE_TURNCOST = `${getEnv('ALTERNATE_ROUTE_TURNCOST')}`;
 export const ALTERNATE_ROUTE_XINGCOST = `${getEnv('ALTERNATE_ROUTE_XINGCOST')}`;
 
-export const DEPLOYMENT_TAG = runtimeEnv.DEPLOYMENT_TAG ?? process.env.DEPLOYMENT_TAG ?? '';
-export const MAINTENANCE_MODE = runtimeEnv.MAINTENANCE_MODE ?? process.env.MAINTENANCE_MODE ?? 'false';
-export const RELEASE = runtimeEnv.RELEASE ?? process.env.RELEASE ?? '';
+export const DEPLOYMENT_TAG = runtimeEnv.DEPLOYMENT_TAG ?? import.meta.env.VITE_DEPLOYMENT_TAG ?? '';
+export const MAINTENANCE_MODE = runtimeEnv.MAINTENANCE_MODE ?? import.meta.env.VITE_MAINTENANCE_MODE ?? 'false';
+export const RELEASE = runtimeEnv.RELEASE ?? import.meta.env.VITE_RELEASE ?? '';

@@ -1,4 +1,4 @@
-import { get } from "./helper.js";
+import { get } from "./helper";
 import { GEOCODER_HOST, GEOCODER_API_CLIENT_ID, ROUTABLE_LOCATIONS_HOST } from '../../env';
 
 function escapeCqlString(value) {
@@ -47,7 +47,7 @@ export function getExtraLocations(addressInput) {
 }
 
 export function getLocations(addressInput) {
-  const geocoderPromise = get(`${GEOCODER_HOST}/addresses.json`, {
+  const geocoderPromise = get(`${GEOCODER_HOST}/addresseson`, {
     minScore: 50,
     maxResults: 7,
     echo: "false",
