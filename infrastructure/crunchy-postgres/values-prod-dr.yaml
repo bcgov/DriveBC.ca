@@ -9,7 +9,7 @@ pgbackrestLogCleanup:
   schedule: 0 10 * * *  # 2am Pacific
   serviceAccountName: pipeline
   image:
-    repository: registry.redhat.io/openshift4/ose-cli
+    repository: registry.redhat.io/openshift4/ose-cli-rhel9:v4.16
   env:
     CRUNCHY_CLUSTER: prod-drivebc-db-crunchy
 
