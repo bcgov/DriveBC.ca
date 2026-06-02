@@ -1,4 +1,5 @@
 #!/bin/bash
+# The local version has --reload enabled for development.
 
 set -o errexit
 set -o pipefail
@@ -14,13 +15,13 @@ echo 'migration done; creating superuser'
 python manage.py createsuperuser \
     --noinput \
     --username $DJANGO_SUPERUSER_USERNAME \
-    --email $DJANGO_SUPERUSER_EMAIL 2>/dev/null || true
+    --email $DJANGO_SUPERUSER_EMAIL || true 2> /dev/null
 
 echo 'creating superuser done; starting service'
-
+# python manage.py runserver 0.0.0.0:8000
+#trap : TERM INT; sleep 9999999999d & wait
 export DJANGO_SETTINGS_MODULE=config.settings
-export HOME=/tmp
-gunicorn -b 0.0.0.0:8000 config.wsgi \
+gunicorn -b 0.0.0.0 --reload config.wsgi \
     --log-file=- \
     --access-logfile=- \
     --error-logfile=-
