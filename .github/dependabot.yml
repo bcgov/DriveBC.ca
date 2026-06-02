@@ -7,8 +7,16 @@ version: 2
 updates:
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
-    # Workflow files stored in the default location of `.github/workflows`
-    # You don't need to specify `/.github/workflows` for `directory`. You can use `directory: "/"`.
     directory: "/"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "docker"
+    directories:
+      - "/compose/frontend"
+      - "/compose/backend"
+      - "/compose/openshiftjobs"
+      - "/compose/redis"
+      - "/compose/standbycheck"
     schedule:
       interval: "weekly"
