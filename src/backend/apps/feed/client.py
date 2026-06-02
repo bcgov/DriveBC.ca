@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 import httpx
 import requests
 from apps.event.serializers import CarsEventSerializer
-from apps.feed.constants import (
+from apps.feed.constants import (  # WEBCAM,
     CURRENT_WEATHER,
     CURRENT_WEATHER_STATIONS,
     DISTRICT_BOUNDARIES,
@@ -18,7 +18,6 @@ from apps.feed.constants import (
     REGIONAL_WEATHER,
     REGIONAL_WEATHER_AREAS,
     REST_STOP,
-    # WEBCAM,
     WILDFIRE,
 )
 from apps.feed.serializers import (
@@ -29,19 +28,16 @@ from apps.feed.serializers import (
     EventFeedSerializer,
     FerryAPISerializer,
     RestStopSerializer,
-    WebcamAPISerializer,
-    WebcamFeedSerializer,
 )
 from apps.shared.serializers import DistrictAPISerializer
 from apps.weather.models import CurrentWeather
+from apps.webcam.models import CameraSource
 from apps.wildfire.serializers import WildfireAreaSerializer, WildfirePointSerializer
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from apps.weather.models import CurrentWeather
-from apps.webcam.models import CameraSource, Region, RegionHighway
 
 # Maps the key for our client API's serializer fields to the matching pair of
 # the source API's DataSetName and DisplayName fields
@@ -151,7 +147,7 @@ class FeedClient:
             logger.error(f"An error occurred with status: {response.status_code}")
             response.raise_for_status()
 
-    def _process_get_request(self, endpoint, params, resource_type, timeout=5.0):
+    def _process_get_request(self, endpoint, params, resource_type, timeout=15.0):
         logger.info(f"Requesting GET {endpoint} with params {params}")
         response = httpx.get(
             endpoint,
@@ -263,7 +259,6 @@ class FeedClient:
             new_serializer.is_valid(raise_exception=True)
             return new_serializer.validated_data
 
-
     def get_webcam_list(self):
         try:
             cameras = list(CameraSource.objects.using("mssql").all())
@@ -272,7 +267,7 @@ class FeedClient:
         except Exception as e:
             logging.exception(f"Failed to query camera from Webcam database: {e}")
             return []
-        
+
     # Events
     def get_event(self, event):
         return self.get_single_feed(event, OPEN511, 'events/', EventFeedSerializer)
@@ -326,7 +321,7 @@ class FeedClient:
         try:
             response = self.make_weather_request(area_code_endpoint)
             response.raise_for_status()
-            json_response = response.json()         
+            json_response = response.json()
 
             for entry in json_response:
                 # only high elevation ares will return anything; skip others
@@ -398,11 +393,10 @@ class FeedClient:
                 except requests.RequestException as e:
                     logging.exception(f"Error making API call for Area Code {area_code}: {e}")
 
-
         except requests.RequestException as e:
             logging.exception(f"Error fetching data from weather API: {e}")
-        
-        return json_objects  
+
+        return json_objects
 
     # Current Weather
     def get_current_weather_list_feed(self, serializer_cls, token):
