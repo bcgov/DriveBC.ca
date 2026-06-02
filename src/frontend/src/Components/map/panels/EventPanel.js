@@ -160,7 +160,7 @@ export default function EventPanel(props) {
           <p className="location">Location</p>
 
           <div className="popup__content__shadow-box">
-            {eventData.location_description}
+            {parse(eventData.location_description)}
           </div>
         </div>
 

@@ -209,32 +209,35 @@ class RIDEEventSerializer(serializers.Serializer):
             if impact.get('closed'):
                 data["closed"] = True
 
-        locations_data = data.get("location", {})
-        start_location = locations_data.get('start', {})
-        if start_location:
-            # route_at - was "route-designator" but now "name"
-            data['route_at'] = start_location.get('name', '')
+        # highway_segment_names
+        segment = data.get("segment", None)
+        data['highway_segment_names'] = segment.get('name') if segment else ''
 
-            # closest_landmark / location_description
-            nearby_locations = start_location.get('nearby', [])
-            if nearby_locations:
-                included_locations = [loc for loc in nearby_locations if 'include' in loc and loc['include']]
-                if len(included_locations):
-                    sorted_locations = sorted(included_locations, key=lambda x: x['distance'])
-                    data["closest_landmark"] = sorted_locations[0]['name']
+        # location_description
+        if segment:  # Bulk road conditions
+            data["location_description"] = segment.get('description') or ''
 
+        else:  # All other non-chainup events
+            locations_data = data.get("location", {})
+            start_location = locations_data.get('start', {})
+            if start_location:
+                # route_at - was "route-designator" but now "name"
+                data['route_at'] = start_location.get('name', '')
+
+                # closest_landmark / location_description
+                nearby_locations = start_location.get('nearby', [])
+                if nearby_locations and len(nearby_locations) > 0:
                     location_description = ''
-                    for loc in included_locations:
+                    for loc in nearby_locations:
+                        if not data.get('closest_landmark') and (loc.get('name') or loc.get('phrase')):
+                            data["closest_landmark"] = loc.get('name') or loc.get('phrase')
+
                         if location_description != '':
-                            location_description += '\n'
+                            location_description += '<br>'
 
                         location_description += loc.get('phrase', '')
 
                     data["location_description"] = location_description
-
-        # highway_segment_names
-        segment = data.get("segment", None)
-        data['highway_segment_names'] = segment.get('name') if segment else ''
 
         # next_update
         timing = data.get("timing", {})
