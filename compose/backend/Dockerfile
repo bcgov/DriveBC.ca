@@ -1,77 +1,81 @@
-# Use an official Python runtime as a parent image
-FROM python:3.13-slim
+# This is intended for the production image. For development, see Dockerfile.dev
+# ==========================================
+# STAGE 1: Build
+# ==========================================
+FROM python:3.13-slim AS builder
 
-# Install only what you need, clean up apt caches in one RUN
+# Install system dependencies + compilers needed to build Python wheels
 RUN apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       binutils \
       libproj-dev \
       gdal-bin \
       curl \
       ca-certificates \
+      gnupg2 \
+      apt-transport-https \
+      unixodbc-dev \
       gcc \
+      g++ \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-  # Install dependencies for SQL database connection
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl gnupg2 apt-transport-https && \
-    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/microsoft-prod.gpg && \
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" > /etc/apt/sources.list.d/mssql-release.list && \
-    apt-get update && \
-    ACCEPT_EULA=Y apt-get install -y --no-install-recommends msodbcsql17 unixodbc-dev gcc g++ && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-
-
-# Adding backend directory to make absolute filepaths consistent across services
 WORKDIR /app/backend
 
-# Install Python dependencies
+# Install Python dependencies into a local virtual environment
+# This makes it incredibly easy to copy to the next stage
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
 COPY ./src/backend/requirements /app/backend/requirements
-RUN pip install --no-cache-dir -r requirements/development.txt
+RUN pip install --no-cache-dir -r requirements/requirements.txt
 
-COPY ./compose/backend/entrypoint /
-RUN sed -i 's/\r$//g' /entrypoint && chmod +x /entrypoint
 
-COPY ./compose/backend/start.sh /
-RUN sed -i 's/\r$//g' /start.sh && chmod +x /start.sh
+# ==========================================
+# STAGE 2: Final Runtime
+# ==========================================
+FROM python:3.13-slim AS runner
 
-COPY ./compose/backend/start_tasks.sh /
-RUN sed -i 's/\r$//g' /start_tasks.sh && chmod +x /start_tasks.sh
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      binutils \
+      libproj-dev \
+      gdal-bin \
+      curl \
+      ca-certificates \
+      gnupg2 \
+      apt-transport-https \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
-COPY ./compose/backend/start_tasks_openshift.sh /
-RUN sed -i 's/\r$//g' /start_tasks_openshift.sh && chmod +x /start_tasks_openshift.sh
+RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/microsoft-prod.gpg \
+ && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" > /etc/apt/sources.list.d/mssql-release.list \
+ && apt-get update \
+ && ACCEPT_EULA=Y apt-get install -y --no-install-recommends msodbcsql17 \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
-COPY ./compose/backend/leader-election.py /
-RUN sed -i 's/\r$//g' /leader-election.py && chmod +x /leader-election.py
+WORKDIR /app/backend
 
-COPY ./compose/backend/start_consumer.sh /
-RUN sed -i 's/\r$//g' /start_consumer.sh && chmod +x /start_consumer.sh
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Add the rest of the code
+COPY ./compose/backend/entrypoint \
+     ./compose/backend/start.sh \
+     ./compose/backend/start_tasks.sh \
+     ./compose/backend/start_tasks_openshift.sh \
+     ./compose/backend/leader-election.py \
+     ./compose/backend/start_consumer.sh /
+
+RUN sed -i 's/\r$//g' /entrypoint /start.sh /start_tasks.sh /start_tasks_openshift.sh /leader-election.py /start_consumer.sh \
+ && chmod +x /entrypoint /start.sh /start_tasks.sh /start_tasks_openshift.sh /leader-election.py /start_consumer.sh
+
 COPY ./src/backend /app/backend
-COPY ./compose/backend/.vimrc /
-COPY ./compose/backend/.vimrc /root
 
-# Create static and media folders with rw permissions
-RUN mkdir -p /app/static && chgrp -R 0 /app/static && chmod -R g=u /app/static && chmod 775 /app/static
-RUN mkdir -p /app/media && chgrp -R 0 /app/media && chmod -R g=u /app/media && chmod 775 /app/media
+RUN mkdir -p /app/static /app/media \
+ && chgrp -R 0 /app/static /app/media \
+ && chmod -R g=u /app/static /app/media \
+ && chmod 775 /app/static /app/media
 
-ARG DEBUG_BUILD=false
-
-# Add debugging tools into builds if enabled
-RUN if [ "$DEBUG_BUILD" = "true" ]; then \
-      apt-get update && \
-      DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        jq \
-        vim \
-        procps \
-        less && \
-      rm -rf /var/lib/apt/lists/*; \
-    fi
-ENTRYPOINT ["/entrypoint"]
-
-# Make port 8000 available for the app
 EXPOSE 8000
+ENTRYPOINT ["/entrypoint"]

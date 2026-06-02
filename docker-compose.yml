@@ -3,7 +3,7 @@ x-function: &backend
 
   build:
     context: .
-    dockerfile: ./compose/backend/Dockerfile
+    dockerfile: ./compose/backend/Dockerfile.dev
     args:
       DEBUG_BUILD: true
 
@@ -28,7 +28,7 @@ services:
     container_name: django
     ports:
       - "8000:8000"
-    command: /start.sh
+    command: /start_local.sh
 
   tasks:
     <<: *backend
