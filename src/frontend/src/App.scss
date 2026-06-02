@@ -626,3 +626,9 @@ button.text-only-btn {
     content: none !important;
   }
 }
+
+.side-panel.open ~ .map .ol-attribution.attribution-control,
+.map-container:has(.side-panel.open) .ol-attribution.attribution-control {
+  left: 420px;
+  transition: left 0.3s ease;
+}
