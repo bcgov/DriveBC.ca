@@ -9,7 +9,7 @@ drf-recaptcha==3.0.0
 whitenoise==6.5.0
 httpx==0.28.1
 huey==2.6.0
-markdown==3.6
+markdown==3.8.1
 psycopg==3.1.9
 redis==4.5.5
 wagtail==7.4.1
