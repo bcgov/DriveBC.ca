@@ -39,6 +39,9 @@ spec:
         - name: {{ .name }}
           mountPath: {{ .mountPath }}
         {{- end }}
+        env:
+        - name: STTRACE
+          value: "connections:ERROR,model:WARN"
       - name: oauth-proxy
         image: {{ .Values.deployment.oAuthProxy.image.repository }}:{{ .Values.deployment.oAuthProxy.image.tag }}
         args:
