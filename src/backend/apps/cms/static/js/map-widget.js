@@ -28,8 +28,6 @@
         setupKeyboardShortcuts();
         setupSaveHook();
         enterDrawMode(); // default mode on load
-
-        console.log('map-widget initialized');
     }
 
     // Styles
@@ -418,8 +416,6 @@ function enterSelectedMode() {
             if (form) {
                 // Force our correct geometry value into the field before FormData reads it
                 updateHiddenField();
-                console.log('FormData intercepted, geometry:', 
-                    document.getElementById('id_geometry')?.value?.substring(0, 80));
             }
             return new originalFormData(form);
         };
