@@ -1,22 +1,19 @@
 // React
-import React, { useCallback, useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 
 // Redux
-import { useSelector, useDispatch } from 'react-redux';
-import { memoize } from 'proxy-memoize';
+import { useDispatch } from 'react-redux';
 import { updatePendingAction } from './slices/userSlice';
-import { logoutDispatch } from "./Components/data/account";
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/pro-solid-svg-icons';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
 import { AuthContext } from "./App";
 import { getCookie } from "./util";
-import { API_HOST, BCEID_REGISTER_URL } from './env';
+import { API_HOST, DEPLOYMENT_TAG, RELEASE, BCEID_REGISTER_URL } from './env';
 
 // Styling
 import './Modal.scss';
@@ -172,8 +169,8 @@ export default function AuthModal() {
         </button>
 
         <div className='release-tag'>
-          { window.DEPLOYMENT_TAG || '' }
-          { window.RELEASE ? ` (${window.RELEASE})` : '' }
+          { DEPLOYMENT_TAG || '' }
+          { RELEASE ? ` (${RELEASE})` : '' }
         </div>
       </div>
 
