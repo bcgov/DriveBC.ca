@@ -16,6 +16,12 @@ class WebcamSerializer(serializers.ModelSerializer):
     marked_delayed = serializers.SerializerMethodField()
     credit = serializers.SerializerMethodField()
 
+    local_weather_station_code = serializers.CharField(
+        source="local_weather_station.code", 
+        allow_null=True, 
+        read_only=True
+    )
+
     class Meta:
         model = Webcam
         exclude = (
