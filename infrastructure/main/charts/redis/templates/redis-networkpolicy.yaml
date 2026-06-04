@@ -15,6 +15,9 @@ spec:
         - podSelector:
             matchLabels:
               app.kubernetes.io/name: {{ .Release.Name }}-tasks
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: {{ .Release.Name }}-static
   policyTypes:
     - Ingress
 
