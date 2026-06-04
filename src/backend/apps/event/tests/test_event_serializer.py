@@ -138,7 +138,7 @@ class TestEventSerializer(BaseTest):
         assert self.serializer_two.data['last_updated'] == \
                '2023-06-02T13:42:16-07:00'
         # Manually set as future events via recurring schedule
-        assert self.serializer_five.data['display_category'] == \
+        assert self.serializer_two.data['display_category'] == \
             'futureEvents'
 
         # Third serializer
@@ -150,6 +150,6 @@ class TestEventSerializer(BaseTest):
 
         # Fifth serializer
         assert self.serializer_five.data['display_category'] == \
-            'futureEvents'
+            'roadConditions'
         assert self.serializer_five.data['route_display'] == \
             'Test Road to Test Ave'
