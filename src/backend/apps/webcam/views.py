@@ -29,7 +29,7 @@ S3_BASE_URL = f"{BASE_URL.rstrip('/')}/{S3_BUCKET}/webcams/timelapse"
 
 
 class WebcamAPI(CachedListModelMixin):
-    queryset = Webcam.objects.filter(should_appear=True)
+    queryset = Webcam.objects.filter(should_appear=True).select_related('local_weather_station')
     serializer_class = WebcamSerializer
     cache_key = CacheKey.WEBCAM_LIST
     cache_timeout = CacheTimeout.WEBCAM_LIST
@@ -53,7 +53,7 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
             return Response(cached_data)
         
         # If not in cache, get from database
-        instance = self.get_object()
+        instance = self.get_queryset().filter(pk=pk).first()
         serializer = self.get_serializer(instance)
         data = serializer.data
         
