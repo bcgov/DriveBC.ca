@@ -42,30 +42,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: Backend
-            image_name: bcgov/drivebc-django
-            dockerfile: ./compose/backend/Dockerfile
-            build_args: |
-              DEBUG_BUILD=true
-            needs_fontawesome: false
           - name: Static
             image_name: bcgov/drivebc-static
-            dockerfile: ./compose/frontend/StaticBuild
+            dockerfile: ./compose/frontend_caddy/Dockerfile
             build_args: |
               DEBUG_BUILD=true
             needs_fontawesome: true
-          - name: Redis
-            image_name: bcgov/drivebc-redis
-            dockerfile: ./compose/redis/Dockerfile
-            build_args: |
-              DEBUG_BUILD=true
-            needs_fontawesome: false
-          - name: OpenShiftJobs
-            image_name: bcgov/drivebc-openshiftjobs
-            dockerfile: ./compose/openshiftjobs/DockerFile
-            build_args: |
-              DEBUG_BUILD=true
-            needs_fontawesome: false
 
 
 ### EVERYTHING PAST THIS POINT SHOULD BE THE SAME IN DEV, TEST AND UAT WORKFLOWS ###            
@@ -142,51 +124,4 @@ jobs:
         helm upgrade ${{ needs.setup.outputs.helm_release_name }} \
          -f ./infrastructure/main/values-${{ needs.setup.outputs.environment_name }}.yaml \
          ./infrastructure/main \
-         --set static.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set django.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set tasks.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set image-consumer.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set redis.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set openshiftjobs.image.tag=${{ needs.setup.outputs.tag_for_helm }}
-
-  # GoldDR Runs after Gold Deployment due to GoldDR DB being read-only replica of Gold
-  update-openshift-golddr:
-    needs: [setup, update-openshift-gold] 
-    runs-on: ubuntu-latest
-    name: Deploy to GoldDR. Tag ${{ needs.setup.outputs.tag_for_helm }}
-    environment:
-      name: ${{ needs.setup.outputs.environment_name }}
-      url: ${{ needs.setup.outputs.openshift_golddr_url }}
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v6
-
-    - name: OC Setup
-      uses: ./.github/actions/oc-setup
-      with:
-        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
-        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
-        namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
-
-    - name: Helm upgrade on OpenShift GoldDR Environment
-      run: |
-        helm dependency update ./infrastructure/main
-        helm upgrade ${{ needs.setup.outputs.helm_release_name }} \
-         -f ./infrastructure/main/values-${{ needs.setup.outputs.environment_name }}.yaml \
-         -f ./infrastructure/main/values-${{ needs.setup.outputs.environment_name }}-dr.yaml \
-         ./infrastructure/main \
-         --set static.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set django.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set tasks.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set image-consumer.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set redis.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set openshiftjobs.image.tag=${{ needs.setup.outputs.tag_for_helm }}
-
-
-#  automatedTests:
-#    needs: [versionUpdate]
-#    name: Automated Smoke Test
-#    uses: bcgov/DriveBC.ca-automated-tests/.github/workflows/playwright.yml@main
-#    with:
-#      environment: 'dev'
-#    secrets: inherit
+         --set static.image.tag=${{ needs.setup.outputs.tag_for_helm }}

@@ -160,6 +160,7 @@ static:
       variables:
         MAINTENANCE_MODE: 'false'
         ENVIRONMENT: dev-drivebc
+        REDIS_URL: dev-drivebc-redis:6379
   vault:
     secretName: dev-static  # This is the name of the secret in vault that contains the environment variables for the app
     authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald

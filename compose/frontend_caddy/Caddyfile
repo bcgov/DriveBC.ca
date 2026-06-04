@@ -1,0 +1,155 @@
+{
+    admin off
+    auto_https off
+    http_port 3000
+
+    cache {
+        ttl 30s
+        stale 10s
+        regex {
+            exclude ^/api/session/.*
+        }
+        key {
+            disable_host
+            disable_method
+            disable_query
+            headers Accept-Encoding
+        }
+        redis {
+            url {$REDIS_URL}
+        }
+        log_level debug
+    }
+
+    metrics
+
+    servers {
+        trusted_proxies static 10.0.0.0/8
+    }
+}
+
+# Snippet for Security Headers
+(security_headers) {
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        Permissions-Policy "geolocation=(self), fullscreen=*"
+        X-Content-Type-Options "nosniff"
+        Cross-Origin-Opener-Policy "same-origin-allow-popups"
+        Cross-Origin-Resource-Policy "cross-origin"
+        Referrer-Policy "no-referrer-when-downgrade"
+        Content-Security-Policy "default-src 'self' https://*.arcgis.com https://*.gov.bc.ca https://*.drivebc.ca https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ data: https://*.flickr.com https://*.staticflickr.com https://www.youtube.com https://*.ytimg.com; script-src 'self' https://*.gov.bc.ca https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://*.flickr.com https://*.staticflickr.com 'unsafe-inline'; style-src 'self' https://*.flickr.com https://*.staticflickr.com 'unsafe-inline'; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'self'; form-action 'self' https://*.drivebc.ca https://*.gov.bc.ca https://*.loginproxy.gov.bc.ca https://login.microsoftonline.com https://*.microsoftonline.com;"
+    }
+}
+
+# Domain Redirects
+drivebc.ca:3000, m.drivebc.ca:3000, mobile.drivebc.ca:3000, drivebc.com:3000, www.drivebc.com:3000, drivebc.info:3000, www.drivebc.info:3000, drivebc.net:3000, www.drivebc.net:3000, drivebc.org:3000, www.drivebc.org:3000 {
+    redir https://www.drivebc.ca{uri} 301
+}
+
+# Main Application
+www.drivebc.ca:3000, :3000 {
+    root * /usr/share/caddy/html
+    import security_headers
+    
+    # Conditional X-Robots-Tag
+    @notProd {
+        expression `{env.ENVIRONMENT} != "prod-drivebc"`
+    }
+    header @notProd X-Robots-Tag "noindex"
+
+    # 2. EXPOSE PROMETHEUS METRICS
+    # We restrict this to internal OpenShift IPs and localhost
+    handle /metrics {
+        @allowed remote_ip 10.0.0.0/8 127.0.0.1
+        metrics @allowed
+        error 404
+    }
+
+    # Log to stdout
+    log {
+        output stdout
+        format filter {
+            wrap json
+            fields {
+                resp_headers delete
+            }
+        }
+    }  
+
+    # Legacy Redirects
+    redir /cvrp* https://twm.th.gov.bc.ca/?c=hct 301
+    redir /rahp* /highway-problem 301
+    redir /mobile* / 301
+    redir /directions.html / 301
+    redir /chainup.php /chain-ups 301
+    redir /vsls* https://vsls.drivebc.ca/ 301
+
+    # Admin & CMS (IP Restricted)
+    @adminPaths path /drivebc-admin* /drivebc-cms* /django-static* /healthcheck*
+
+    @debugPath {
+        expression `{env.ENVIRONMENT} == "dev-drivebc"`
+        path /__debug__*
+    }
+    handle @adminPaths {
+        @blocked not remote_ip 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 127.0.0.1
+        abort @blocked
+        reverse_proxy {
+            to {env.ENVIRONMENT}-django:80
+            transport http
+        }
+    }
+
+    handle @debugPath {
+        @blocked not remote_ip 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 127.0.0.1
+        abort @blocked
+        reverse_proxy {
+            to {env.ENVIRONMENT}-django:80
+            transport http
+        }
+    }
+
+    # API Caching with Redis
+
+    handle /api/* {
+        @rss query format=rss
+        error @rss 404
+        cache
+        reverse_proxy {
+            to {env.ENVIRONMENT}-django:80
+            transport http
+        }
+    }
+
+    # Static Images
+    handle_path /images/* {
+        root * /app/images/webcams
+        file_server
+    }
+    
+    handle_path /images/replaytheday/* {
+        root * /app/images/webcams/processed
+        file_server
+    }
+
+    # Blocked paths
+    @blockedImages path /images/originals/* /api/webcams/*/timelapse/* /api/webcams/*/originalImage/*
+    error @blockedImages 403
+
+    # Health check
+    handle /healthz {
+        respond "healthy\n" 200
+    }
+
+    # Static Assets & SPA Routing
+    handle {
+        encode zstd gzip
+        file_server {
+            precompressed br gzip
+        }
+        try_files {path} {path}/ /index.html
+    }
+    
+    @staticAssets path *.css *.js *.woff2 *.svg *.png *.jpg
+    header @staticAssets Cache-Control "public, max-age=31536000, immutable"
+}
