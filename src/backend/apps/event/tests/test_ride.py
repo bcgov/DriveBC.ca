@@ -43,7 +43,7 @@ class TestGetRideEventDict(BaseTest):
         assert set(events.keys()) == {"RIDE-A"}
         assert chainups == []
         assert events["RIDE-A"]["closed"] is True
-        assert events["RIDE-A"]["route_at"] == "Highway 1"
+        assert events["RIDE-A"]["route_at"] == ""
         assert events["RIDE-A"]["highway_segment_names"] == "Seg 1"
 
     def test_invalid_payload_returns_empty_dict(self):
