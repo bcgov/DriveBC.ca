@@ -234,7 +234,7 @@ backup-storage:
 
   persistence:
     backup:
-      size: 10Gi
+      size: 15Gi
       storageClassName: netapp-block-standard
     verification:
       size: 100Mi
