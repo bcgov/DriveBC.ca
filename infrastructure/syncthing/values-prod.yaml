@@ -3,7 +3,7 @@ fullnameOverride: prod-drivebc-syncthing
 
 image:
   repository: syncthing/syncthing # Official Syncthing image
-  tag: "2.1"  # Syncthing tag. Check https://hub.docker.com/r/syncthing/syncthing/tags for available tags
+  tag: "2.1.1"  # Syncthing tag. Check https://hub.docker.com/r/syncthing/syncthing/tags for available tags
 
 createTransportClaim: true # Set to true in Gold, and false for GoldDR as it will be automatically created there once installed on Gold
 

@@ -8,6 +8,7 @@ on:
     - '.github/**'
     - '.infrastructure/standbycheck/**'
     - '.infrastructure/crunchy-postgres/**'
+    - '.infrastructure/syncthing/**'
   workflow_dispatch:
 
 permissions:
