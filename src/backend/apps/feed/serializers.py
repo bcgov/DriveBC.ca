@@ -219,16 +219,23 @@ class RIDEEventSerializer(serializers.Serializer):
 
         else:  # All other non-chainup events
             locations_data = data.get("location", {})
-            start_location = locations_data.get('start', {})
-            if start_location:
+
+            # Description from start and end points and their nearby locations
+            location_description = ''
+            for location_key in ('start', 'end'):
+                start_or_end = locations_data.get(location_key, {})
+                if not start_or_end:
+                    continue
+
                 # route_at - was "route-designator" but now "name"
-                data['route_at'] = start_location.get('name', '')
+                data['route_at'] = start_or_end.get('name', '')
 
                 # closest_landmark / location_description
-                nearby_locations = start_location.get('nearby', [])
-                if nearby_locations and len(nearby_locations) > 0:
-                    location_description = ''
-                    for loc in nearby_locations:
+                nearby_locs = start_or_end.get('nearby', [])
+                if nearby_locs and len(nearby_locs) > 0:
+                    location_description += 'Starts: ' if location_key == 'start' else '<br><br>Ends: '
+
+                    for loc in nearby_locs:
                         if not data.get('closest_landmark') and (loc.get('name') or loc.get('phrase')):
                             data["closest_landmark"] = loc.get('name') or loc.get('phrase')
 
@@ -237,7 +244,7 @@ class RIDEEventSerializer(serializers.Serializer):
 
                         location_description += loc.get('phrase', '')
 
-                    data["location_description"] = location_description
+            data["location_description"] = location_description
 
         # next_update
         timing = data.get("timing", {})
