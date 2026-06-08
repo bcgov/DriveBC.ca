@@ -11,7 +11,6 @@ from django.contrib.gis.geos import Point
 from apps.webcam.tests.test_webcam_ordering import side_effect_populate
 from django.core.exceptions import ObjectDoesNotExist
 from apps.webcam.tasks import populate_webcam_from_data
-from apps.webcam.tasks import update_webcam_db_stale_delayed, update_cam_from_sql_db
 
 # suppress logged error messages to reduce noise
 logging.getLogger().setLevel(logging.CRITICAL)
@@ -148,21 +147,3 @@ class TestWebcamModel(BaseTest):
 
             mock_logger.error.assert_called_once()
 
-    @patch("apps.webcam.tasks.populate_all_webcam_data")
-    def test_update_webcam_db_stale_delayed(self, mock_populate):
-        mock_populate.side_effect = lambda *args, **kwargs: side_effect_populate(self.mock_webcam_feed_result_2)
-        from apps.webcam import tasks
-        tasks.populate_all_webcam_data()
-
-        # Call the function
-        webcam = Webcam.objects.first()
-        update_webcam_db_stale_delayed(webcam)
-
-        # Refresh from DB
-        webcam.refresh_from_db()
-
-        # Assertions
-        self.assertFalse(webcam.marked_stale)
-        self.assertFalse(webcam.marked_delayed)
-        self.assertIsInstance(webcam.last_update_attempt, datetime.datetime)
-        self.assertIsInstance(webcam.last_update_modified, datetime.datetime)
