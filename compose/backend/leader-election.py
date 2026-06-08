@@ -106,7 +106,8 @@ def _is_expired(lease) -> bool:
     if renew_time is None:
         return True
     if isinstance(renew_time, str):
-        renew_dt = datetime.strptime(renew_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+        ts = renew_time.replace('Z', '+00:00')
+        renew_dt = datetime.fromisoformat(ts)
     else:
         renew_dt = renew_time  # already a datetime
     age = (datetime.now(timezone.utc) - renew_dt).total_seconds()
@@ -197,9 +198,15 @@ def main():
                     _stop_huey()
                     leading = False
                 else:
-                    # Check Huey is still up; if it died, exit so the pod restarts
-                    if not _huey_alive():
-                        logger.error("Huey exited unexpectedly — terminating pod so it restarts")
+                    if huey_process is None:
+                        # We hold the lease (e.g. after a container restart) 
+                        # but haven't started the process yet.
+                        logger.info("Already hold lease after restart — starting Huey")
+                        leading = True
+                        _start_huey()
+                    elif not _huey_alive():
+                        # Huey was running, but now it's not.
+                        logger.error("Huey exited unexpectedly — terminating container so it restarts")
                         os._exit(1)
 
             elif _is_expired(lease):
