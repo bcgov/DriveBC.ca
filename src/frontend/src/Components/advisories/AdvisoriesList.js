@@ -30,7 +30,7 @@ export default function AdvisoriesList(props) {
   const navigate = useNavigate();
 
   // Props
-  const { advisories, showDescription, showTimestamp, showPublished, isAdvisoriesListPage, showLoader } = props;
+  const { advisories, showDescription, showTimestamp, showPublished, isAdvisoriesListPage, showLoader, trackedAdvisories = {}, advisoryRefs, dismissHighlight } = props;
 
   function handleClick(advisory, keyEvent) {
     // Ignore key presses that aren't enter or space
@@ -39,6 +39,12 @@ export default function AdvisoriesList(props) {
     }
 
     trackEvent('click', 'advisories-list', 'Advisory', advisory.title, advisory.teaser);
+    // dismissedHighlightsRef.current.add(advisory.id);
+    // sessionStorage.setItem(
+    //   'dismissedHighlights',
+    //   JSON.stringify([...dismissedHighlightsRef.current])
+    // );
+    dismissHighlight(advisory.id);  // use parent's function
     navigate(`/advisories/${advisory.slug}`);
   }
 
@@ -50,7 +56,12 @@ export default function AdvisoriesList(props) {
       {!!sortedAdvisories && sortedAdvisories.map((advisory, index) => {
         if (isAdvisoriesListPage) {
           return (
-            <div className="advisory-li" key={advisory.id}>
+            <div
+              className={`advisory-li${trackedAdvisories[advisory.id]?.highlight ? ' highlighted' : ''}`}
+              key={advisory.id}
+              data-key={advisory.id}
+              ref={(el) => { if (advisoryRefs) advisoryRefs.current[advisory.id] = el; }}
+            >
               <div className="advisory-li__content">
                 <div className="advisory-li__content__partition advisory-li-title-container">
                   <div className="advisory-li-title link-div"
@@ -65,8 +76,11 @@ export default function AdvisoriesList(props) {
                     <Skeleton width={260} height={10} className="hidden-mobile" /> :
 
                     <div className="timestamp-container">
-                      <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
-                      <FriendlyTime date={advisory.latest_revision_created_at} />
+                      <span className="advisory-li-state">{advisory.last_notified_at != advisory.first_published_at ? "Updated" : "Published" }</span>
+                      <FriendlyTime date={advisory.last_notified_at ?? advisory.last_published_at} />
+                      {trackedAdvisories[advisory.id]?.highlight &&
+                        <div className="updated-pill">Updated</div>
+                      }
                     </div>
                   }
                 </div>
@@ -95,8 +109,11 @@ export default function AdvisoriesList(props) {
                   <Skeleton width={320} height={10} className='hidden-desktop' /> :
 
                   <div className="advisory-li__content__partition timestamp-container timestamp-container--mobile">
-                    <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published"}</span>
-                    <FriendlyTime date={advisory.latest_revision_created_at}/>
+                    <span className="advisory-li-state">{advisory.last_notified_at != advisory.first_published_at ? "Updated" : "Published"}</span>
+                    <FriendlyTime date={advisory.last_notified_at ?? advisory.last_published_at} />
+                    {trackedAdvisories[advisory.id]?.highlight &&
+                        <div className="updated-pill">Updated</div>
+                      }
                   </div>
                 }
 
@@ -122,7 +139,7 @@ export default function AdvisoriesList(props) {
 
         } else {
           return (
-            <div className={`advisory-li link-div ${!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.live_revision.toString()) ? 'unread' : ''}`}
+            <div className={`advisory-li link-div ${!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.last_notified_at?.toString()) ? 'unread' : ''}`}
               key={advisory.id}
               onClick={() => handleClick(advisory)}
               onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}
@@ -139,8 +156,11 @@ export default function AdvisoriesList(props) {
                   {(showTimestamp && showPublished) &&
                     <div className="timestamp-container">
                       {!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.live_revision.toString()) && <div className="unread-display"></div>}
-                      <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
-                      <FriendlyTime date={advisory.latest_revision_created_at} />
+                      <span className="advisory-li-state">{advisory.last_notified_at != advisory.first_published_at ? "Updated" : "Published" }</span>
+                      <FriendlyTime date={advisory.last_notified_at ?? advisory.last_published_at} />
+                      {trackedAdvisories[advisory.id]?.highlight &&
+                        <div className="updated-pill">Updated</div>
+                      }
                     </div>
                   }
 
@@ -165,7 +185,10 @@ export default function AdvisoriesList(props) {
                 {showTimestamp &&
                   <div className="timestamp-container timestamp-container--mobile">
                     <span className="advisory-li-state">{advisory.first_published_at != advisory.last_published_at ? "Updated" : "Published" }</span>
-                    <FriendlyTime date={advisory.latest_revision_created_at} />
+                    <FriendlyTime date={advisory.last_notified_at ?? advisory.last_published_at} />
+                    {trackedAdvisories[advisory.id]?.highlight &&
+                        <div className="updated-pill">Updated</div>
+                      }
                   </div>
                 }
               </div>

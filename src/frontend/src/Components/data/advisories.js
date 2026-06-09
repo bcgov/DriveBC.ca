@@ -24,14 +24,34 @@ export const getAdvisoryCounts = (advisories) => {
   }
 }
 
-export const markAdvisoriesAsRead = (advisoriesData, cmsContext, setCMSContext) => {
-  if (advisoriesData && advisoriesData.length > 0 && !advisoriesData[0].live_revision) return;
-  const advisoriesIds = advisoriesData.map(advisory => advisory.id.toString() + '-' + advisory.live_revision.toString());
+// export const markAdvisoriesAsRead = (advisories, cmsContext, setCMSContext) => {
+//   const newRead = advisories
+//     .filter(a => a.id && a.last_notified_at)
+//     .map(a => a.id.toString() + '-' + a.last_notified_at.toString());
 
-  // Combine and remove duplicates
-  const readAdvisories = Array.from(new Set([...advisoriesIds, ...cmsContext.readAdvisories]));
-  const updatedContext = {...cmsContext, readAdvisories: readAdvisories};
+//   const merged = [...new Set([...cmsContext.readAdvisories, ...newRead])];
+//   setCMSContext(prev => ({ ...prev, readAdvisories: merged }));
+// }
 
-  setCMSContext(updatedContext);
-  localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+export const markAdvisoriesAsRead = (advisories, cmsContext, setCMSContext) => {
+  if (!advisories) return;
+
+  const newRead = advisories
+    .filter(a => a.id && a.last_notified_at)
+    .map(a => a.id.toString() + '-' + a.last_notified_at.toString());
+
+  if (newRead.length === 0) return;
+
+  setCMSContext((prevContext) => {
+    const previousRead = prevContext?.readAdvisories || [];
+    const merged = [...new Set([...previousRead, ...newRead])];
+
+    if (merged.length === previousRead.length) {
+      return prevContext;
+    }
+
+    const updatedContext = { ...prevContext, readAdvisories: merged };
+    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+    return updatedContext;
+  });
 }

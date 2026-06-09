@@ -15,6 +15,10 @@ from django.shortcuts import render, reverse
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
+from django.contrib import messages
+from django.shortcuts import redirect
+from wagtail.models import Page
+from django.http import Http404
 
 
 class CMSViewSet(viewsets.ReadOnlyModelViewSet):
@@ -146,3 +150,38 @@ def access_denied_idir(request):
     return render(request, 'wagtailadmin/access_denied.html', context={
         "is_non_idir_login": True,
     })
+
+
+def publish_minor_update(request, page_id):
+    if request.method != "POST":
+        try:
+            page_id = int(page_id)
+        except (TypeError, ValueError):
+            raise Http404()
+        return redirect(f"/drivebc-cms/pages/{page_id}/edit/")
+
+    page = Page.objects.get(pk=page_id).specific
+    latest_revision = page.get_latest_revision()
+
+    if latest_revision:
+        # Snapshot the current last_notified_at before publishing
+        last_notified_at = page.last_notified_at
+
+        # Publish the revision (updates content but triggers after_publish_page)
+        latest_revision.publish(changed=False)
+
+        # Restore last_notified_at and also revert last_published_at
+        # so the "Updated" panel field doesn't change
+        Page.objects.filter(pk=page.pk).update(
+            last_published_at=last_notified_at
+        )
+        type(page).objects.filter(pk=page.pk).update(
+            last_notified_at=last_notified_at
+        )
+
+    messages.success(request, f'"{page.title}" published as a minor update.')
+    try:
+        page_id = int(page_id)
+    except (TypeError, ValueError):
+        raise Http404()
+    return redirect(f"/drivebc-cms/pages/{page_id}/edit/")

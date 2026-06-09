@@ -40,7 +40,7 @@ export default function Header({ isMaintenance }) {
 
   if (isMaintenance) {
     return (
-      <header className="maintenance-header"> {/* Added class here */}
+      <header className="maintenance-header">
         <Navbar expand="xl">
           <Container>
             <div className='header'>
@@ -48,7 +48,6 @@ export default function Header({ isMaintenance }) {
                 <Navbar.Brand href="/">
                   <img className="header-logo" src={logo} alt="Government of British Columbia" />
                 </Navbar.Brand>
-                {/* Ensure the divider shows even in maintenance if screen is large */}
                 <div className="nav-divider"></div>
               </div>
             </div>
@@ -57,7 +56,7 @@ export default function Header({ isMaintenance }) {
       </header>
     );
   }
-  
+
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
 
   // Check current page location
@@ -66,14 +65,14 @@ export default function Header({ isMaintenance }) {
 
   // Redux
   const dispatch = useDispatch();
-  const { advisories, filteredAdvisories, bulletins,
-    routes: { searchLocationFrom, searchLocationTo, selectedRoute, showRouteObjs }
-  } = useSelector(useCallback(memoize(state => ({
-    advisories: state.cms.advisories.list,
-    filteredAdvisories: state.cms.advisories.filteredList,
-    bulletins: state.cms.bulletins.list,
-    routes: state.routes
-  }))));
+
+  const { advisories, bulletins,
+  routes: { searchLocationFrom, searchLocationTo, selectedRoute }
+} = useSelector(useCallback(memoize(state => ({
+  advisories: state.cms.advisories.list,
+  bulletins: state.cms.bulletins.list,
+  routes: state.routes
+}))));
 
   // Routing
   const navigate = useNavigate();
@@ -81,6 +80,7 @@ export default function Header({ isMaintenance }) {
 
   // Context
   const { cmsContext } = useContext(CMSContext);
+  const cmsContextRef = useRef(cmsContext);
 
   // States
   const [advisoriesCount, setAdvisoriesCount] = useState();
@@ -91,17 +91,59 @@ export default function Header({ isMaintenance }) {
   const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(true);
   const [isCommercialOpen, setIsCommercialOpen] = useState(false);
   const commercialDropdownRef = useRef(null);
+  const loadRef = useRef(null);
 
-  // Effects
-  const loadAdvisories = async () => {
-    // Skip loading if the advisories are already loaded on launch
-    if (advisories && advisories.length > 0 && advisories[0].live_revision != null) {
-      setAdvisoriesCount(getUnreadAdvisoriesCount(filteredAdvisories));
-      return;
+  const isFirstAdvisoriesVisit = useRef(!sessionStorage.getItem('lastAdvisoriesVisit'));
+  const isFirstBulletinsVisit = useRef(!sessionStorage.getItem('lastBulletinsVisit'));
+
+  /* Helpers */
+  const getUnreadAdvisoriesCount = (advisoriesData) => {
+    if (!advisoriesData) {
+      return 0;
     }
 
-    const path = window.location.pathname;
+    if (advisoriesData.length !== 0 && advisoriesData[0].last_notified_at == null) {
+      return 0;
+    }
 
+    const readAdvisories = advisoriesData.filter(advisory => {
+      // Do not count preview items as unread
+      if (!advisory.id || !advisory.last_notified_at) {
+        return true;
+      }
+
+      return cmsContext.readAdvisories.includes(
+        advisory.id.toString() + '-' + advisory.last_notified_at
+      );
+    });
+
+    return advisoriesData.length - readAdvisories.length;
+  }
+
+  const getUnreadBulletinsCount = (bulletinsData) => {
+    if (!bulletinsData) {
+      return 0;
+    }
+
+    if (bulletinsData.length !== 0 && bulletinsData[0].last_notified_at == null) {
+      return 0;
+    }
+
+    const readBulletins = bulletinsData.filter(bulletin => cmsContext.readBulletins.includes(
+      bulletin.id.toString() + '-' + bulletin.last_notified_at
+    ));
+    return bulletinsData.length - readBulletins.length;
+  }
+
+
+
+  /* Data loading */
+  const loadAdvisories = async () => {
+    // Flip ref once the key exists (set by AdvisoriesListPage on first visit)
+    if (isFirstAdvisoriesVisit.current && sessionStorage.getItem('lastAdvisoriesVisit')) {
+      isFirstAdvisoriesVisit.current = false;
+    }
+    const path = window.location.pathname;
     let advisoriesData;
     if (path.includes("preview")) {
       advisoriesData = await getAdvisoriesPreview();
@@ -109,19 +151,26 @@ export default function Header({ isMaintenance }) {
       advisoriesData = await getAdvisories();
     }
 
-    const filteredAdvisoriesData = selectedRoute ? filterAdvisoryByRoute(advisoriesData, selectedRoute) : advisoriesData;
-    dispatch(updateAdvisories({
-      list: advisoriesData,
-      filteredList: filteredAdvisoriesData,
-      timeStamp: new Date().getTime()
-    }));
+  const filteredAdvisoriesData = selectedRoute
+    ? filterAdvisoryByRoute(advisoriesData, selectedRoute)
+    : advisoriesData;
 
-    setAdvisoriesCount(getUnreadAdvisoriesCount(filteredAdvisoriesData));
-  }
+  dispatch(updateAdvisories({
+    list: advisoriesData,
+    filteredList: filteredAdvisoriesData,
+    timeStamp: new Date().getTime()
+  }));
+
+  // Use advisoriesData directly, not filteredAdvisoriesData
+  setAdvisoriesCount(getUnreadAdvisoriesCount(advisoriesData));
+}
 
   const loadBulletins = async () => {
-    let bulletinsData;
+    if (isFirstBulletinsVisit.current && sessionStorage.getItem('lastBulletinsVisit')) {
+      isFirstBulletinsVisit.current = false;
+    }
     const path = window.location.pathname;
+    let bulletinsData;
     if (path.includes("preview")) {
       bulletinsData = await getBulletinsPreview();
     } else {
@@ -133,13 +182,38 @@ export default function Header({ isMaintenance }) {
       timeStamp: new Date().getTime()
     }));
 
+    // setBulletinsCount(getUnreadBulletinsCount(bulletinsData));
     setBulletinsCount(getUnreadBulletinsCount(bulletinsData));
+
   }
 
+  // Always point loadRef to the latest versions of load functions
+  loadRef.current = { loadAdvisories, loadBulletins };
+
+  /* Effects */
   useEffect(() => {
-    loadAdvisories();
-    loadBulletins();
-  }, [cmsContext, location.pathname]);
+  cmsContextRef.current = cmsContext;
+
+  if (advisories) {
+    setAdvisoriesCount(getUnreadAdvisoriesCount(advisories));
+  }
+  if (bulletins) {
+    setBulletinsCount(getUnreadBulletinsCount(bulletins));
+  }
+}, [cmsContext, advisories, bulletins]);
+
+  // Load on mount + pathname change + poll every 30s
+  useEffect(() => {
+    loadRef.current.loadAdvisories();
+    loadRef.current.loadBulletins();
+
+    const interval = setInterval(() => {
+      loadRef.current.loadAdvisories();
+      loadRef.current.loadBulletins();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (searchLocationFrom.length && searchLocationTo.length) {
@@ -154,7 +228,6 @@ export default function Header({ isMaintenance }) {
   }, [isNavbarCollapsed]);
 
   useEffect(() => {
-    // Close dropdown when clicking outside on xLarge screens
     const handleClickOutside = (event) => {
       if (
         xLargeScreen &&
@@ -175,45 +248,6 @@ export default function Header({ isMaintenance }) {
     };
   }, [xLargeScreen, isCommercialOpen]);
 
-  /* Helpers */
-  const getUnreadAdvisoriesCount = (advisoriesData) => {
-    if (!advisoriesData) {
-      return 0;
-    }
-
-    if (advisoriesData.length !== 0 && advisoriesData[0].live_revision == null) {
-      return 0;
-    }
-
-    const readAdvisories = advisoriesData.filter(advisory => {
-      // Do not count preview items as unread
-      if (!advisory.id || !advisory.live_revision) {
-        return true;
-      }
-
-      return cmsContext.readAdvisories.includes(
-        advisory.id.toString() + '-' + advisory.live_revision.toString()
-      );
-    });
-
-    return advisoriesData.length - readAdvisories.length;
-  }
-
-  const getUnreadBulletinsCount = (bulletinsData) => {
-    if (!bulletinsData) {
-      return 0;
-    }
-
-    if (bulletinsData.length !== 0 && bulletinsData[0].live_revision == null) {
-      return 0;
-    }
-
-    const readBulletins = bulletinsData.filter(bulletin => cmsContext.readBulletins.includes(
-      bulletin.id.toString() + '-' + bulletin.live_revision.toString()
-    ));
-    return bulletinsData.length - readBulletins.length;
-  }
-
   /* Handlers */
   const onClickActions = () => {
     setTimeout(() => setExpanded(false));
@@ -228,7 +262,6 @@ export default function Header({ isMaintenance }) {
   }
 
   /* Rendering */
-  // Sub components
   const getNavLink = (title, count) => {
     return (
       <Nav.Link active={false} onClick={onClickActions}>
