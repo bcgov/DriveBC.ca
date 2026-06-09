@@ -21,6 +21,7 @@ import PollingComponent from "./PollingComponent";
 
 // Styling
 import './EmergencyAlertDetail.scss';
+import { API_HOST } from '../../env';
 
 const NOT_FOUND_CONTENT = {
   title: 'Emergency Alert Detail Not Found',
@@ -78,7 +79,7 @@ export default function EmergencyAlertDetail() {
   // Data function and initialization
   const loadDetail = async () => {
     try {
-      const url = `${globalThis.API_HOST}/api/cms/emergency-alert-detail/${slug}`;
+      const url = `${API_HOST}/api/cms/emergency-alert-detail/${slug}`;
       const data = await get(url);
       if (data) {
         setDetailData(data);
