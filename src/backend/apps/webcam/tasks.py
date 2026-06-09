@@ -83,19 +83,6 @@ def populate_webcam_from_data(webcam_data):
         return    
 
 
-def update_webcam_db_stale_delayed(camera: Webcam):
-    time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
-    get_recent_timestamps(camera.id)  # Ensure timestamp_list is populated with latest data
-    camera_status = calculate_camera_status(camera.id, time_now_utc)
-    ts_seconds = int(camera_status["timestamp"])
-    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
-
-    Webcam.objects.filter(id=camera.id).update(
-        marked_stale=camera_status["stale"],
-        marked_delayed=camera_status["delayed"],
-        last_update_attempt=dt_utc,
-        last_update_modified=dt_utc),
-
 def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
     try:
         cam = (
@@ -163,7 +150,6 @@ def format_region_name(region_name):
     return ''.join(result)
 
 def update_webcam_db(cam_id: int, cam_data: dict):
-    is_updated = False
     time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(cam_id, time_now_utc)
     ts_seconds = int(camera_status["timestamp"])
@@ -171,32 +157,39 @@ def update_webcam_db(cam_id: int, cam_data: dict):
 
     existing_webcam = Webcam.objects.filter(id=cam_id).first()
     if not existing_webcam:
-        return is_updated
-    else:
-        for field in CAMERA_DIFF_FIELDS:
-            source_field = CAMERA_FIELD_MAPPING.get(field, field)
-            webcam_value = getattr(existing_webcam, field)
-            if field in ['marked_stale', 'marked_delayed']:
-                source_value = camera_status[source_field]
-            else:
-                source_value = cam_data.get(source_field)
-            if webcam_value != source_value:
-                Webcam.objects.filter(id=cam_id).update(
-                    is_on=True if cam_data.get("isOn") == 1 else False,
-                    should_appear=True if cam_data.get("should_appear") == 1 else False,
-                    name=cam_data.get("cam_internetname"),
-                    caption=cam_data.get("cam_internetcaption"),
-                    is_new=cam_data.get("isNew"),
-                    is_on_demand=cam_data.get("isOnDemand"),
-                    last_update_attempt=dt_utc,
-                    last_update_modified=dt_utc,
-                    update_period_mean=camera_status["mean_interval"],
-                    update_period_stddev=camera_status["stddev_interval"],
-                    marked_stale=camera_status["stale"],
-                    marked_delayed=camera_status["delayed"],
-                )
-                is_updated = True
-        return is_updated
+        return False
+
+    should_update = False
+    for field in CAMERA_DIFF_FIELDS:
+        source_field = CAMERA_FIELD_MAPPING.get(field, field)
+        webcam_value = getattr(existing_webcam, field)
+        if field in ['marked_stale', 'marked_delayed']:
+            source_value = camera_status[source_field]
+        else:
+            source_value = cam_data.get(source_field)
+
+        if webcam_value != source_value:
+            should_update = True
+            break
+
+    if not should_update:
+        return False
+
+    update_data = {
+        "is_on": True if cam_data.get("isOn") == 1 else False,
+        "should_appear": True if cam_data.get("should_appear") == 1 else False,
+        "name": cam_data.get("cam_internetname"),
+        "caption": cam_data.get("cam_internetcaption"),
+        "is_new": cam_data.get("isNew"),
+        "is_on_demand": cam_data.get("isOnDemand"),
+        "update_period_mean": camera_status["mean_interval"],
+        "update_period_stddev": camera_status["stddev_interval"],
+        "marked_stale": camera_status["stale"],
+        "marked_delayed": camera_status["delayed"],
+    }
+
+    Webcam.objects.filter(id=cam_id).update(**update_data)
+    return True
 
 def create_webcam_db(cam_data: dict):
     cam_id = cam_data.id

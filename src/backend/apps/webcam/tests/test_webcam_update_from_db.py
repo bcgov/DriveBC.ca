@@ -113,6 +113,41 @@ class TestUpdateWebcamDb(TestCase):
         result = update_webcam_db(cam_id=1, cam_data=camera_source_data)
         self.assertEqual(result, False)
 
+    @patch("apps.webcam.tasks.populate_all_webcam_data")
+    @patch("apps.webcam.tasks.calculate_camera_status")
+    def test_webcam_stale_or_delayed_does_not_update_timestamps(self, mock_calc_status, mock_populate):
+        _make_existing_webcam(mock_populate, mock_webcam_feed_result_1)
+        webcam = Webcam.objects.filter(id=1).first()
+
+        original_attempt = webcam.last_update_attempt
+        original_modified = webcam.last_update_modified
+
+        mock_calc_status.return_value = {
+            "timestamp": "1776852000",
+            "mean_interval": 10,
+            "stddev_interval": 2,
+            "stale": True,
+            "delayed": False,
+        }
+
+        camera_source_data = {
+            "id": 1,
+            "cam_internetname": "Test Cam",
+            "cam_internetcaption": "Updated Caption",
+            "isOn": True,
+            "should_appear": True,
+            "isNew": 0,
+            "isOnDemand": 0,
+        }
+
+        result = update_webcam_db(cam_id=1, cam_data=camera_source_data)
+        webcam.refresh_from_db()
+
+        self.assertTrue(result)
+        self.assertEqual(webcam.caption, "Updated Caption")
+        self.assertEqual(webcam.last_update_attempt, original_attempt)
+        self.assertEqual(webcam.last_update_modified, original_modified)
+
 class TestCreateWebcamDb(TestCase):
 
     @patch("apps.webcam.tasks.populate_all_webcam_data")
