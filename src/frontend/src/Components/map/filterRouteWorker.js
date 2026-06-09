@@ -21,7 +21,11 @@ self.onmessage = (event) => {
         filteredData = filterByRoute(data, route, 10000, false);
         break;
       case 'updateRegional':
+      case 'updateHef':
         filteredData = filterByRoute(data, route, 10000, false);
+        break;
+      case 'updateWeather':
+        filteredData = filterByRoute(data, route, 5000, false);
         break;
       default:
         filteredData = filterByRoute(data, route, 10, false);
