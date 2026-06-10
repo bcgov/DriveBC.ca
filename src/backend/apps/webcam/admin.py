@@ -15,7 +15,6 @@ class WebcamAdmin(admin.GISModelAdmin):
     gis_widget = DriveBCMapWidget
     change_form_template = "admin/timelapse.html"  # custom template
 
-
     def change_view(self, request, object_id, form_url='', extra_context=None):
         webcam = self.get_object(request, object_id)
         extra_context = extra_context or {}
@@ -35,9 +34,6 @@ class WebcamAdmin(admin.GISModelAdmin):
             extra_context["default_end_date"] = now_local.date().isoformat()
             extra_context["default_end_time"] = "23:59"
 
-
-        
-        
         return super().change_view(request, object_id, form_url, extra_context=extra_context)
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):

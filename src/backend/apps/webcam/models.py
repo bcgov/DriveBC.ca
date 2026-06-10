@@ -1,11 +1,12 @@
+from datetime import timezone
+
 import pytz
 from apps.shared.models import Area, BaseModel
 from apps.shared.status import get_image_list
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
 from django.contrib.gis.db import models
-from datetime import timezone
-from timezonefinder import TimezoneFinder
 from django_prometheus.models import ExportModelOperationsMixin
+from timezonefinder import TimezoneFinder
 
 
 class Webcam(ExportModelOperationsMixin('webcam'), BaseModel):
@@ -33,6 +34,7 @@ class Webcam(ExportModelOperationsMixin('webcam'), BaseModel):
     regional_weather_station = models.ForeignKey(RegionalWeather, on_delete=models.SET_NULL, null=True, blank=True)
     local_weather_station = models.ForeignKey(CurrentWeather, on_delete=models.SET_NULL, null=True, blank=True)
     hev_station = models.ForeignKey(HighElevationForecast, on_delete=models.SET_NULL, null=True, blank=True)
+    update_weather_stations = models.BooleanField(default=True)
 
     # Relations
     group = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True)

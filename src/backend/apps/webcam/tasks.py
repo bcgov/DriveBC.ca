@@ -1,49 +1,40 @@
 import datetime
-import io
 import logging
 import os
-import pprint
-import socket
 import time
-import urllib.request
 from collections import Counter
 from itertools import groupby
-from math import floor
 from pathlib import Path
-from urllib.error import HTTPError
 from zoneinfo import ZoneInfo
 
 import httpx
+from apps.consumer.models import ImageIndex
 from apps.event.enums import EVENT_DISPLAY_CATEGORY
 from apps.event.models import Event
 from apps.feed.client import FeedClient
+from apps.shared.enums import CacheKey
 from apps.shared.models import Area, RouteGeometry
+from apps.shared.status import calculate_camera_status
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
-from apps.webcam.enums import CAMERA_DIFF_FIELDS, CAMERA_TASK_DEFAULT_TIMEOUT, CAMERA_FIELD_MAPPING
+from apps.webcam.enums import (
+    CAMERA_DIFF_FIELDS,
+    CAMERA_FIELD_MAPPING,
+    CAMERA_TASK_DEFAULT_TIMEOUT,
+)
 from apps.webcam.hwy_coords import hwy_coords
-from apps.webcam.models import Region, RegionHighway, Webcam
-from apps.webcam.models import CameraSource
+from apps.webcam.models import CameraSource, Region, RegionHighway, Webcam
 from apps.webcam.serializers import WebcamSerializer
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import LineString, MultiLineString, Point
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import F, BooleanField
-from huey.exceptions import CancelExecution
-from PIL import Image, ImageDraw, ImageFile, ImageFont
-from psycopg import IntegrityError
-from apps.shared.status import get_recent_timestamps, calculate_camera_status, parse_timestamp
-from apps.consumer.models import ImageIndex
-import boto3
-# from datetime import timezone
-from django.utils import timezone
-from django.forms.models import model_to_dict
-from django.db.models import F, Case, When, Value, IntegerField
-from apps.shared.enums import CacheKey
-from django.core.cache import cache
-
 from django.contrib.gis.measure import D
-
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import BooleanField, Case, F, Value, When
+from django.utils import timezone
+from huey.exceptions import CancelExecution
+from PIL import ImageFile, ImageFont
+from psycopg import IntegrityError
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -73,6 +64,7 @@ S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL")
 # Define PVC directory
 PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH")
 
+
 def populate_webcam_from_data(webcam_data):
     webcam_id = webcam_data.id
 
@@ -80,7 +72,7 @@ def populate_webcam_from_data(webcam_data):
         create_webcam_db(webcam_data)
     except ObjectDoesNotExist:
         logger.error(f"Webcam with id {webcam_id} not found in SQL database, skipping creation.")
-        return    
+        return
 
 
 def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
@@ -126,7 +118,6 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
             .first()
         )
 
-
         if cam:
             update_webcam_db(id, cam)
             return True
@@ -136,6 +127,7 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
     except Exception as e:
         logging.exception(f"Failed to query camera from ORM: {e}")
         return {}
+
 
 def format_region_name(region_name):
     if not region_name:
@@ -149,11 +141,14 @@ def format_region_name(region_name):
 
     return ''.join(result)
 
+
 def update_webcam_db(cam_id: int, cam_data: dict):
     time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(cam_id, time_now_utc)
-    ts_seconds = int(camera_status["timestamp"])
-    dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
+
+    # Unused
+    # ts_seconds = int(camera_status["timestamp"])
+    # dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 
     existing_webcam = Webcam.objects.filter(id=cam_id).first()
     if not existing_webcam:
@@ -190,6 +185,7 @@ def update_webcam_db(cam_id: int, cam_data: dict):
 
     Webcam.objects.filter(id=cam_id).update(**update_data)
     return True
+
 
 def create_webcam_db(cam_data: dict):
     cam_id = cam_data.id
@@ -242,7 +238,7 @@ def create_webcam_db(cam_data: dict):
                 "marked_stale": camera_status["stale"],
                 "marked_delayed": camera_status["delayed"],
             },
-            create_defaults={ # only applied on INSERT, never on UPDATE
+            create_defaults={  # only applied on INSERT, never on UPDATE
                 "last_update_attempt": dt_utc,
                 "last_update_modified": dt_utc,
             }
@@ -253,10 +249,12 @@ def create_webcam_db(cam_data: dict):
         logging.exception(f"Failed to create webcam for cam_id {cam_id}: {e}")
         return None, False
 
+
 def purge_old_images():
     logger.info("Purging webcam images...")
     REPLAY_THE_DAY_HOURS = os.getenv("REPLAY_THE_DAY_HOURS")
     purge_old_pvc_images(age=REPLAY_THE_DAY_HOURS)
+
 
 def backup_purge_old_images():
     backup_purge_old_pvc_images()
@@ -314,6 +312,7 @@ def purge_old_pvc_images(age: str = "24"):
 
     logger.info("All purged recordes are deleted successfully.")
 
+
 def backup_purge_old_pvc_images():
     PVC_WATERMARKED_PATH = os.getenv("PVC_WATERMARKED_PATH")
     BASE_DIR = Path(PVC_WATERMARKED_PATH)
@@ -343,6 +342,7 @@ def backup_purge_old_pvc_images():
         f"Backup purge completed. Deleted: {deleted_count}, Skipped (newer): {skipped_count}"
     )
     logger.info("All purged recordes are deleted successfully.")
+
 
 def populate_all_webcam_data():
     start_time = time.time()
@@ -393,6 +393,7 @@ def update_all_webcam_data():
                 update_camera_group_id(camera)
     cache.delete(CacheKey.WEBCAM_LIST)
 
+
 def wrap_text(text, pen, font, width):
     '''
     Return text wrapped to width with newlines
@@ -430,6 +431,7 @@ def wrap_text(text, pen, font, width):
         out[-1] = out[-1][:-1]
 
     return ''.join(out)
+
 
 # Helper function for add_order_to_cameras that updates order of each cam in a highway/route group
 def add_order_to_camera_group(key, cams):
@@ -564,7 +566,7 @@ def update_camera_relations():
     for area in Area.objects.all():
         Webcam.objects.filter(location__within=area.geometry).update(area=area)
 
-    for camera in Webcam.objects.all():
+    for camera in Webcam.objects.filter(update_weather_stations=True):
         update_camera_weather_station(camera, RegionalWeather)
         update_camera_weather_station(camera, CurrentWeather)
         update_camera_weather_station(camera, HighElevationForecast)
