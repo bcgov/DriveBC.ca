@@ -264,51 +264,28 @@ export default function RestStopPanel(props) {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-
-        <div className='popup__content__description'>
-          <div className='popup__content__description__row'>
-            <p className='description-label label'>Electric Vehicles</p>
-            <a className="plugshare-link footer-link" href="https://www.plugshare.com/" rel="noreferrer" alt="Disclaimer" >View on Plugshare</a>
-          </div>
-          <div className="data-card">
             <div className="data-card__row">
               <div className="data-icon">
-                <FontAwesomeIcon icon={faChargingStation}/>
               </div>
-              <p className="label">Charging</p>
+              <p className="label">
+                Ev Charging
+              </p>
               <div className="datas">
-                {restStopData.properties.EV_STATION_25_KW_DCFC === 0
-                && restStopData.properties.EV_STATION_50_KW_DCFC === 0
-                && restStopData.properties.EV_STATION_LEVEL_2_J1772 === 0 && (
-                  <p className="data">No charging stations</p>
-                )}
-
-                {restStopData.properties.EV_STATION_25_KW_DCFC !== 0 && (
-                  <p className="data">
-                    <span className="count">{restStopData.properties.EV_STATION_25_KW_DCFC} </span>
-                    25KW
-                  </p>
-                )}
-
-                {restStopData.properties.EV_STATION_50_KW_DCFC !== 0 && (
-                  <p className="data">
-                    <span className="count">{restStopData.properties.EV_STATION_50_KW_DCFC}</span>
-                    50KW
-                  </p>
-                )}
-
-                {restStopData.properties.EV_STATION_LEVEL_2_J1772 !== 0 && (
-                  <p className="data">
-                    <span className="count">{restStopData.properties.EV_STATION_LEVEL_2_J1772}</span>
-                    Level 2 &#40;J1772&#41;
-                  </p>
-                )}
+                <div className="data">
+                  {restStopData.properties.EV_STATIONS === "Y" ? (
+                    'Yes'
+                  ) : (
+                    'No'
+                  )}
+                </div>
+                <div className="data">
+                <a className="plugshare-link footer-link" href="https://www.plugshare.com/" rel="noreferrer" alt="Disclaimer" >View on Plugshare</a>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

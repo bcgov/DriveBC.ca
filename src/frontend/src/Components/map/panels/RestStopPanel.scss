@@ -184,6 +184,11 @@
 
     .plugshare-link {
       margin-right: 1rem;
+
+      &::after {
+        top: 50%;
+        transform: translateY(-50%);
+      }
     }
   }
 }
