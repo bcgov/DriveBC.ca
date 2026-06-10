@@ -209,6 +209,11 @@ backup-storage:
   env:
     ENVIRONMENT_FRIENDLY_NAME:
       value: "DriveBC Dev Database"
+    ENVIRONMENT_NAME:
+      value: "dev-drivebc-db"
+    WEBHOOK_URL:
+      value: "" # DO NOT UPLOAD TO GITHUB.
+      secure: true
     BACKUP_STRATEGY:
       value: "rolling"
     DAILY_BACKUPS:

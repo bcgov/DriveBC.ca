@@ -56,7 +56,8 @@ jobs:
           --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
           --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
           --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
-          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }} \
+          --set backup-storage.env.WEBHOOK_URL.value=${{ secrets.CRUNCHY_WEBHOOK_URL }}
 
     - name: Wait for Gold DB to shut down
       run: |
@@ -99,7 +100,8 @@ jobs:
           --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
           --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
           --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
-          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }} \
+          --set backup-storage.env.WEBHOOK_URL.value=${{ secrets.CRUNCHY_WEBHOOK_URL }}
 
     - name: Confirm Gold DR is Primary
       run: |
@@ -147,7 +149,8 @@ jobs:
           --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
           --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
           --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
-          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }} \
+          --set backup-storage.env.WEBHOOK_URL.value=${{ secrets.CRUNCHY_WEBHOOK_URL }}
 
     - name: Confirm Gold DB deleted
       run: |
@@ -188,7 +191,8 @@ jobs:
           --set backup-storage.env.S3_BUCKET.value="${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }}" \
           --set backup-storage.env.S3_ENDPOINT.value="${{ secrets.CRUNCHY_S3_ENDPOINT }}" \
           --set backup-storage.env.S3_USER.value="${{ secrets.CRUNCHY_S3_ACCESS_KEY }}" \
-          --set backup-storage.env.S3_PASSWORD.value="${{ secrets.CRUNCHY_S3_SECRET_KEY }}"
+          --set backup-storage.env.S3_PASSWORD.value="${{ secrets.CRUNCHY_S3_SECRET_KEY }}" \
+          --set backup-storage.env.WEBHOOK_URL.value=${{ secrets.CRUNCHY_WEBHOOK_URL }}
 
     - name: Confirm Cluster is Standby
       run: |
@@ -239,7 +243,8 @@ jobs:
           --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
           --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
           --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
-          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }} \
+          --set backup-storage.env.WEBHOOK_URL.value=${{ secrets.CRUNCHY_WEBHOOK_URL }}
 
     - name: Wait for Gold DB DR to shut down
       run: |
@@ -281,7 +286,8 @@ jobs:
           --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
           --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
           --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
-          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }} \
+          --set backup-storage.env.WEBHOOK_URL.value=${{ secrets.CRUNCHY_WEBHOOK_URL }}
 
     - name: Confirm Gold is Primary
       run: |
@@ -330,7 +336,8 @@ jobs:
           --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
           --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
           --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
-          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }} \
+          --set backup-storage.env.WEBHOOK_URL.value=${{ secrets.CRUNCHY_WEBHOOK_URL }}
 
     - name: Verify Gold DR DB deleted
       run: |
@@ -372,7 +379,8 @@ jobs:
           --set backup-storage.env.S3_BUCKET.value="${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }}" \
           --set backup-storage.env.S3_ENDPOINT.value="${{ secrets.CRUNCHY_S3_ENDPOINT }}" \
           --set backup-storage.env.S3_USER.value="${{ secrets.CRUNCHY_S3_ACCESS_KEY }}" \
-          --set backup-storage.env.S3_PASSWORD.value="${{ secrets.CRUNCHY_S3_SECRET_KEY }}"
+          --set backup-storage.env.S3_PASSWORD.value="${{ secrets.CRUNCHY_S3_SECRET_KEY }}" \
+          --set backup-storage.env.WEBHOOK_URL.value=${{ secrets.CRUNCHY_WEBHOOK_URL }}
 
     - name: Confirm Gold DR is Standby
       run: |

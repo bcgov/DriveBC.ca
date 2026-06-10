@@ -34,7 +34,9 @@ Assumptions:
           --set backup-storage.env.S3_BUCKET.value="${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }}" \
           --set backup-storage.env.S3_ENDPOINT.value="${{ secrets.CRUNCHY_S3_ENDPOINT }}" \
           --set backup-storage.env.S3_USER.value="${{ secrets.CRUNCHY_S3_ACCESS_KEY }}" \
-          --set backup-storage.env.S3_PASSWORD.value="${{ secrets.CRUNCHY_S3_SECRET_KEY }}"
+          --set backup-storage.env.S3_PASSWORD.value="${{ secrets.CRUNCHY_S3_SECRET_KEY }}" \
+          --set backup-storage.env.WEBHOOK_URL.value=${{ secrets.CRUNCHY_WEBHOOK_URL }}
+
 1. Confirm everything has installed as expected
 1. Run these commands to set DB owner in the primary pod like this
     1. `oc exec -it $(oc get pods -l "postgres-operator.crunchydata.com/role=master" -o jsonpath='{.items[0].metadata.name}') -- /bin/bash`
@@ -61,7 +63,8 @@ If you are setting up Crunchy in Active-Standby configuration you will also need
           --set backup-storage.env.S3_BUCKET.value="${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }}" \
           --set backup-storage.env.S3_ENDPOINT.value="${{ secrets.CRUNCHY_S3_ENDPOINT }}" \
           --set backup-storage.env.S3_USER.value="${{ secrets.CRUNCHY_S3_ACCESS_KEY }}" \
-          --set backup-storage.env.S3_PASSWORD.value="${{ secrets.CRUNCHY_S3_SECRET_KEY }}"
+          --set backup-storage.env.S3_PASSWORD.value="${{ secrets.CRUNCHY_S3_SECRET_KEY }}" \
+          --set backup-storage.env.WEBHOOK_URL.value=${{ secrets.CRUNCHY_WEBHOOK_URL }}
 
 Due to how the clusters are setup, you will need to update the password for `ccp_monitoring` for the Standby cluster based on this documentation: https://access.crunchydata.com/documentation/postgres-operator/latest/tutorials/backups-disaster-recovery/disaster-recovery#monitoring-a-standby-cluster
 Here are the steps: https://access.crunchydata.com/documentation/postgres-operator/latest/guides/exporter-configuration#setting-a-custom-ccp_monitoring-password
@@ -86,6 +89,7 @@ To be able to run that workflow, ensure you have these secrets set for each envi
 - CRUNCHY_S3_ACCESS_KEY
 - CRUNCHY_S3_SECRET_KEY
 - CRUNCHY_USER_PASSWORD
+- CRUNCHY_WEBHOOK_URL
 - OPENSHIFT_GOLD_TOKEN
 - OPENSHIFT_GOLDDR_TOKEN
 
