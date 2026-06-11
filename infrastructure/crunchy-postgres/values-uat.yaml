@@ -208,6 +208,11 @@ backup-storage:
   env:
     ENVIRONMENT_FRIENDLY_NAME:
       value: "DriveBC UAT Database"
+    ENVIRONMENT_NAME:
+      value: "uat-drivebc-db"
+    WEBHOOK_URL:
+      value: "" # DO NOT UPLOAD TO GITHUB.
+      secure: true
     BACKUP_STRATEGY:
       value: "rolling"
     DAILY_BACKUPS:

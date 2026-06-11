@@ -52,7 +52,8 @@ jobs:
           --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
           --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
           --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
-          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }} \
+          --set backup-storage.env.WEBHOOK_URL.value=${{ secrets.CRUNCHY_WEBHOOK_URL }}
 
 
   deploy-golddr:
@@ -84,4 +85,5 @@ jobs:
           --set backup-storage.env.S3_BUCKET.value=${{ secrets.CRUNCHY_S3_BACKUP_STORAGE_BUCKET }} \
           --set backup-storage.env.S3_ENDPOINT.value=${{ secrets.CRUNCHY_S3_ENDPOINT }} \
           --set backup-storage.env.S3_USER.value=${{ secrets.CRUNCHY_S3_ACCESS_KEY }} \
-          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }}
+          --set backup-storage.env.S3_PASSWORD.value=${{ secrets.CRUNCHY_S3_SECRET_KEY }} \
+          --set backup-storage.env.WEBHOOK_URL.value=${{ secrets.CRUNCHY_WEBHOOK_URL }}
