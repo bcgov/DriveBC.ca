@@ -28,6 +28,8 @@ deployment:
       mountPath: /app/images/webcams
       persistentVolumeClaim:
         claimName: dev-drivebc-django-app-images
+  env:
+    dbretention: "168h" # 7 days. This is the interval for how long Syncthing will keep deleted files in the database before permanently deleting them. 
   oAuthProxy:
     enabled: true
     image:
