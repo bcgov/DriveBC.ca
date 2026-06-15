@@ -35,7 +35,7 @@ deployment:
     enabled: true
     image:
       repository: registry.redhat.io/openshift4/ose-oauth-proxy-rhel9
-      tag: v4.16
+      tag: v4.18
     resources:
       requests:
         cpu: 5m
