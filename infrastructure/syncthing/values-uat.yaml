@@ -14,6 +14,7 @@ deployment:
       cpu: 250m
       memory: 750Mi
     limits:
+      cpu: 1000m # Syncthing should have a CPU Limit as it has been known to use all available CPU on the node if not limited.
       memory: 1Gi
   volumeMounts: # List of volume mounts for the deployment. Can add as many as needed.
     - name: uat-drivebc-syncthing
