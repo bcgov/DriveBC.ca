@@ -279,7 +279,13 @@ export default function RestStopPanel(props) {
                   )}
                 </div>
                 <div className="data">
-                <a className="plugshare-link footer-link" href="https://www.plugshare.com/" rel="noreferrer" alt="Disclaimer" >View on Plugshare</a>
+                <a className="plugshare-link footer-link" href="https://www.plugshare.com/" rel="noreferrer" alt="Disclaimer" >
+                  {restStopData.properties.EV_STATIONS === "Y" ? (
+                    'View on Plugshare'
+                  ) : (
+                    'Find chargers on Plugshare'
+                  )}
+                </a>
                 </div>
               </div>
             </div>
