@@ -58,6 +58,7 @@ export default function NearbyWeathers(props) {
   // find regional weather and set state
   useEffect(() => {
     if (!regionalWeatherList || !camera.regional_weather_station) {
+      setRegionalWeather(null);
       return;
     }
 
@@ -69,6 +70,7 @@ export default function NearbyWeathers(props) {
   // find local weather and set state
   useEffect(() => {
     if (!currentWeatherList || !camera.local_weather_station) {
+      setLocalWeather(null);
       return;
     }
 
@@ -80,6 +82,7 @@ export default function NearbyWeathers(props) {
   // find hef and set state
   useEffect(() => {
     if (!hefList || !camera.hev_station) {
+      setHef(null);
       return;
     }
 
@@ -102,7 +105,7 @@ export default function NearbyWeathers(props) {
 
   /* Rendering */
   // Loading state
-  if (!regionalWeather && !localWeather && !hef) {
+  if ((regionalWeather || localWeather || hef) && (!regionalWeather && !localWeather && !hef)) {
     return (
       <div>
         <Skeleton height={48}/>
