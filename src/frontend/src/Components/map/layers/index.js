@@ -1,16 +1,16 @@
-import { getAdvisoriesLayer, updateAdvisoriesLayer } from './advisoriesLayer.js';
-import { getCamerasLayer, updateCamerasLayer } from './camerasLayer.js';
-import { getCurrentWeatherLayer, updateCurrentWeatherLayer } from './currentWeatherLayer.js';
-import { loadEventsLayers, updateEventsLayers } from './eventsLayer.js';
-import { getFerriesLayer, updateFerriesLayer } from './ferriesLayer.js';
-import { getRegionalWeatherLayer, updateRegionalWeatherLayer } from './regionalWeatherLayer.js';
-import { getHefLayer, updateHefLayer } from './hefLayer.js';
-import { getRestStopsLayer, updateRestStopsLayer } from './restStopsLayer.js';
-import { getLargeRestStopsLayer, updateLargeRestStopsLayer } from './largeRestStopsLayer.js';
-import { getRouteLayer } from './routeLayer.js';
+import { getAdvisoriesLayer, updateAdvisoriesLayer } from './advisoriesLayer';
+import { getCamerasLayer, updateCamerasLayer } from './camerasLayer';
+import { getCurrentWeatherLayer, updateCurrentWeatherLayer } from './currentWeatherLayer';
+import { loadEventsLayers, updateEventsLayers } from './eventsLayer';
+import { getFerriesLayer, updateFerriesLayer } from './ferriesLayer';
+import { getRegionalWeatherLayer, updateRegionalWeatherLayer } from './regionalWeatherLayer';
+import { getHefLayer, updateHefLayer } from './hefLayer';
+import { getRestStopsLayer, updateRestStopsLayer } from './restStopsLayer';
+import { getLargeRestStopsLayer, updateLargeRestStopsLayer } from './largeRestStopsLayer';
+import { getRouteLayer } from './routeLayer';
 import { getBorderCrossingsLayer, updateBorderCrossingsLayer } from "./borderCrossingsLayer";
 import { getWildfiresLayer, updateWildfiresLayer } from "./wildfiresLayer";
-import { getDmsLayer, updateDmsLayer } from './dmsLayer.js';
+import { getDmsLayer, updateDmsLayer } from './dmsLayer';
 
 const layerFuncMap = {
   advisoriesLayer: getAdvisoriesLayer,

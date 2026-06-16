@@ -1,4 +1,4 @@
-import { get } from "./helper.js";
+import { get } from "./helper";
 import { API_HOST } from '../../env';
 
 export function getWildfires() {
