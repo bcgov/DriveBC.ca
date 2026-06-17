@@ -25,6 +25,7 @@ spec:
             cpu: {{ .Values.deployment.resources.requests.cpu }}
             memory: {{ .Values.deployment.resources.requests.memory }}
           limits:
+            cpu: {{ .Values.deployment.resources.limits.cpu }}
             memory: {{ .Values.deployment.resources.limits.memory }}
         securityContext:
           seccompProfile:
@@ -42,6 +43,8 @@ spec:
         env:
         - name: STTRACE
           value: "connections:ERROR,model:WARN"
+        - name: STDBDELETERETENTIONINTERVAL
+          value: {{ .Values.deployment.env.dbretention }}
       - name: oauth-proxy
         image: {{ .Values.deployment.oAuthProxy.image.repository }}:{{ .Values.deployment.oAuthProxy.image.tag }}
         imagePullPolicy: Always
