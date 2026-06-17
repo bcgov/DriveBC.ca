@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 # Install only what you need, clean up apt caches in one RUN
 RUN apt-get update \

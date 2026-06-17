@@ -2,7 +2,7 @@
 # ==========================================
 # STAGE 1: Build
 # ==========================================
-FROM python:3.13-slim AS builder
+FROM python:3.14-slim AS builder
 
 # Install system dependencies + compilers needed to build Python wheels
 RUN apt-get update \
@@ -34,7 +34,7 @@ RUN pip install --no-cache-dir -r requirements/requirements.txt
 # ==========================================
 # STAGE 2: Final Runtime
 # ==========================================
-FROM python:3.13-slim AS runner
+FROM python:3.14-slim AS runner
 
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
