@@ -30,7 +30,7 @@ jobs:
       url: https://${{ github.event.inputs.environment }}-drivebc-syncthing.apps.gold.devops.gov.bc.ca
     steps:
     - name: Checkout code
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: OC Setup
       uses: ./.github/actions/oc-setup
@@ -55,7 +55,7 @@ jobs:
       url: https://${{ github.event.inputs.environment }}-drivebc-syncthing.apps.golddr.devops.gov.bc.ca
     steps:
     - name: Checkout code
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: OC Setup
       uses: ./.github/actions/oc-setup
