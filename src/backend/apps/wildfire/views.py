@@ -6,7 +6,7 @@ from rest_framework import viewsets
 
 
 class WildfireAPI(CachedListModelMixin):
-    queryset = Wildfire.objects.filter(status__in=['Out of Control', 'Being Held'])
+    queryset = Wildfire.objects.filter(status__in=['Out of Control', 'Being Held', 'Fire of Note'])
     serializer_class = WildfireSerializer
     cache_key = CacheKey.WILDFIRE_LIST
     cache_timeout = CacheTimeout.WILDFIRE_LIST
