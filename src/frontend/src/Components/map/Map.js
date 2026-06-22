@@ -604,6 +604,7 @@ export default function DriveBCMap(props) {
           ...glStyle,
           layers: glStyle.layers.filter((layer) => (
             layer.id.startsWith('TRANSPORTATION/DRA/Hwy Symbols') ||
+            layer.id.startsWith('POLITICAL/Populated Places') ||
             layer.id.startsWith('TRANSPORTATION/DRA/Road Names')
           )),
         };
@@ -1222,7 +1223,7 @@ export default function DriveBCMap(props) {
               resetClickedStates={() => resetClickedStates(null, clickedFeatureRef, updateClickedFeature)} />
           </div>
         )}
-        
+
         {(!isCamDetail && smallScreen && mapRef.current) && (
           <FilterTabs
           mapLayers={mapLayers}
