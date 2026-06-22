@@ -82,7 +82,6 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    font-weight: bold;
   }
 }
 
@@ -116,4 +115,11 @@
   span, .friendly-time-text, span .friendly-time-text {
     color: black !important;
   }
+  .showTooltip {
+    color: white !important;
+  }
+}
+
+.friendly-time-text {
+  font-weight: normal !important;
 }
