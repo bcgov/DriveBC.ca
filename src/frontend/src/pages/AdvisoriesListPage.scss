@@ -201,3 +201,45 @@
     }
   }
 }
+
+
+// Highlighted row
+.advisory-li.highlighted {
+  background-color: var(--highlighted-row-bg, #fff8e1);
+  border-left: 3px solid var(--colour-primary, #003366);
+  transition: background-color 0.3s ease;
+}
+
+// "Updated" pill — reuse same class as EventsTable
+.updated-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background-color: var(--colour-primary, #003366);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+// Floating scroll pills — reuse same class as EventsListPage
+.update-count-pill {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--colour-primary, #003366);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &.top { top: 80px; }
+  &.bottom { bottom: 24px; }
+}

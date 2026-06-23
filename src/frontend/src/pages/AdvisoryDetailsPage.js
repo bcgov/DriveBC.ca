@@ -31,6 +31,7 @@ import overrides from '../Components/map/overrides.js';
 import { faAttributionToggleLabel } from '../Components/map/attributionControlLabels.js';
 import ShareURLButton from '../Components/shared/ShareURLButton';
 import { BASE_MAP, MAP_STYLE } from '../env';
+import PollingComponent from "../Components/shared/PollingComponent";
 
 // Styling
 import './AdvisoryDetailsPage.scss';
@@ -190,9 +191,12 @@ export default function AdvisoryDetailsPage() {
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
+  const cmsContextRef = useRef(cmsContext);
 
   // Refs
   const mapRef = useRef();
+  const advisoryRef = useRef(null);
+  const pendingMapUpdate = useRef(false);
 
   // UseState hooks
   const [activeTab, setActiveTab] = useState('details');
@@ -200,6 +204,11 @@ export default function AdvisoryDetailsPage() {
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
+  const [showUpdateOverlay, setShowUpdateOverlay] = useState(false);
+  const initialNotifiedAt = useRef(null);
+  const dismissedNotifiedAt = useRef(null);
+  const [latestNotifiedAt, setLatestNotifiedAt] = useState(null);
+  const currentRevision = useRef(null);
 
   // Navigating to
   const returnHandler = () => {
@@ -230,7 +239,77 @@ export default function AdvisoryDetailsPage() {
     });
   }
 
-  // Data function and initialization
+  const updateMapGeometry = (data) => {
+  if (!mapRef.current || !data.geometry) return;
+
+  // Find the vector layer (not the tile layer)
+  const vectorLayer = mapRef.current.getLayers().getArray().find(
+    layer => layer instanceof VectorLayer
+  );
+  if (!vectorLayer) return;
+
+  const newSource = new VectorSource({
+    features: new GeoJSON().readFeatures({
+      type: 'FeatureCollection',
+      crs: {
+        type: 'name',
+        properties: { name: 'EPSG:3857' },
+      },
+      features: [{ type: 'Feature', geometry: data.geometry }]
+    }, {
+      dataProjection: 'EPSG:4326',
+      featureProjection: 'EPSG:3857'
+    }),
+  });
+
+  vectorLayer.setSource(newSource);
+};
+
+  const checkForUpdates = async () => {
+    try {
+      const latestData = await getAdvisories(params.id);
+
+      if (!latestData) return;
+
+      // Detect any publish (major or minor)
+      const contentChanged =
+        latestData.live_revision !== currentRevision.current;
+
+      if (contentChanged) {
+        setAdvisory(latestData);
+
+        currentRevision.current = latestData.live_revision;
+
+        if (latestData.geometry && mapRef.current) {
+          updateMapGeometry(latestData); 
+          // Only fitMap if map tab is visible, otherwise defer
+          if (activeTab === 'map') {
+            fitMap(latestData);
+          } else {
+            pendingMapUpdate.current = true;
+          }
+        }
+
+        document.title = `DriveBC - Advisories - ${latestData.title}`;
+      }
+
+      // Detect major update only
+      const latestNotified = latestData.last_notified_at;
+
+      if (
+        latestNotified &&
+        latestNotified !== initialNotifiedAt.current &&
+        latestNotified !== dismissedNotifiedAt.current
+      ) {
+        setLatestNotifiedAt(latestNotified);
+        initialNotifiedAt.current = latestNotified;
+        setShowUpdateOverlay(true);
+      }
+    } catch (error) {
+      // silently ignore
+    }
+  };
+  
   const loadAdvisory = async () => {
     let advisoryData;
 
@@ -247,6 +326,9 @@ export default function AdvisoryDetailsPage() {
     setAdvisory(advisoryData);
 
     if (advisoryData.id) {
+      initialNotifiedAt.current = advisoryData.last_notified_at;
+      currentRevision.current = advisoryData.live_revision;
+
       if (!mapRef.current) {
         mapRef.current = getMap(advisoryData);
       }
@@ -262,8 +344,20 @@ export default function AdvisoryDetailsPage() {
   };
 
   useEffect(() => {
+    cmsContextRef.current = cmsContext;
+  }, [cmsContext]);
+
+  useEffect(() => {
     loadAdvisory();
-  }, []);
+  }, [params.id]);
+
+  useEffect(() => {
+    return () => {
+      if (advisory && advisory.id) {
+        markAdvisoriesAsRead([advisory], cmsContextRef.current, setCMSContext);
+      }
+    };
+  }, [advisory, setCMSContext]);
 
   useEffect(() => {
     if (activeTab === 'map') {
@@ -273,6 +367,10 @@ export default function AdvisoryDetailsPage() {
       }, 100);
     }
   }, [activeTab]);
+
+  useEffect(() => {
+    advisoryRef.current = advisory;
+}, [advisory]);
 
   // Tabs view on mobile
   const advisoryDetails = <FontAwesomeIcon icon={faMemoCircleInfo} />;
@@ -287,6 +385,23 @@ export default function AdvisoryDetailsPage() {
   // Rendering
   return (
     <div className='advisory-page cms-page'>
+      {showUpdateOverlay && (
+        <div className="update-overlay">
+          <span className="update-overlay__message">
+            Advisory updated just now
+          </span>
+          <button
+            className="update-overlay__close"
+            aria-label="Dismiss"
+            onClick={() => {
+              dismissedNotifiedAt.current = latestNotifiedAt;
+              setShowUpdateOverlay(false);
+            }}>
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
+        </div>
+      )}
+      <PollingComponent runnable={checkForUpdates} interval={5000} />
       {showNetworkError &&
         <NetworkErrorPopup />
       }
@@ -333,7 +448,9 @@ export default function AdvisoryDetailsPage() {
                           ? "Updated"
                           : content !== NOT_FOUND_CONTENT ? "Saved" : ""}
                     </span>
-                    { content !== NOT_FOUND_CONTENT && <FriendlyTime date={content.latest_revision_created_at} /> }
+                    {content !== NOT_FOUND_CONTENT && (
+                        <FriendlyTime date={content.last_notified_at ?? content.last_published_at} />
+                      )}
                   </div>
                   <ShareURLButton />
                 </div>

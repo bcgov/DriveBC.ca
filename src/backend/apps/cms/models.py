@@ -196,6 +196,8 @@ class Advisory(Page, BaseModel):
     # Geo fields
     geometry = models.MultiPolygonField()
 
+    last_notified_at = models.DateTimeField(null=True, blank=True)
+
     # Editor panels configuration
     content_panels = [
         FieldPanel("title", help_text=HelpText.GENERIC_TITLE),
@@ -209,7 +211,7 @@ class Advisory(Page, BaseModel):
         FieldPanel("body", help_text=HelpText.GENERIC_BODY),
         FieldPanel('created_at', read_only=True, heading="Created"),
         FieldPanel('first_published_at', read_only=True, heading="Published"),
-        FieldPanel('last_published_at', read_only=True, heading="Updated"),
+        FieldPanel('last_notified_at', read_only=True, heading="Updated"),
     ]
     promote_panels = []
 
@@ -252,6 +254,7 @@ class Bulletin(Page, BaseModel):
     body = StreamField(RichContent())
     image = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=False)
     image_alt_text = models.CharField(max_length=125, default='', blank=False)
+    last_notified_at = models.DateTimeField(null=True, blank=True)
 
     def rendered_body(self):
         blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
@@ -280,7 +283,7 @@ class Bulletin(Page, BaseModel):
         FieldPanel("body", help_text=HelpText.GENERIC_BODY),
         FieldPanel('created_at', read_only=True, heading="Created"),
         FieldPanel('first_published_at', read_only=True, heading="Published"),
-        FieldPanel('last_published_at', read_only=True, heading="Updated"),
+        FieldPanel('last_notified_at', read_only=True, heading="Updated"),
     ]
     promote_panels = []
 

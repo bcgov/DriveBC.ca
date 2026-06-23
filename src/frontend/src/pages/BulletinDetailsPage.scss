@@ -70,4 +70,51 @@
       }
     }
   }
+
+  .friendly-time-text {
+    font-weight: bold !important;  
+  }
+
+  .friendly-time{
+    &__tooltip {
+      font-weight: normal !important;
+    }
+  }
+}
+
+.update-overlay {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #013366;
+  color: white;
+  border-radius: 4px;
+  padding: 12px 16px;
+  min-width: 280px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  &__message {
+    flex: 1;
+    font-size: 0.95rem;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 }

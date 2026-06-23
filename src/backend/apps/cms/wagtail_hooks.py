@@ -13,7 +13,7 @@ from wagtail.admin.ui.components import Component
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 
 from .models import Advisory, Bulletin, SubPage, get_or_create_advisory_index, get_or_create_bulletin_index
-from .views import access_requested
+from .views import access_requested, publish_minor_update
 
 # from wagtail.admin.ui.components import ActionMenuItem
 from wagtail.admin.action_menu import ActionMenuItem
@@ -28,13 +28,20 @@ logger = logging.getLogger(__name__)
 
 @hooks.register("after_publish_page")
 def post_edit_hook(request, page):
-    # Only process published advisory pages
+    from django.utils import timezone
+    
     if page.specific_class == Advisory:
         try:
+            Advisory.objects.filter(pk=page.pk).update(last_notified_at=timezone.now())
             send_advisory_notifications(page.id)
-
         except Exception:
             logger.error(request, 'There was a problem sending an advisory notification')
+
+    elif page.specific_class == Bulletin:
+        try:
+            Bulletin.objects.filter(pk=page.pk).update(last_notified_at=timezone.now())
+        except Exception:
+            logger.error(request, 'There was a problem updating bulletin notification timestamp')
 
 
 @hooks.register("insert_global_admin_css")
@@ -207,6 +214,49 @@ class CopyPreviewURLMenuItem(ActionMenuItem):
             preview_url,
         )
 
+class PublishMinorUpdateMenuItem(ActionMenuItem):
+    label = "Publish minor update"
+    name = "publish-minor-update"
+    icon_name = "upload"
+    order = 15
+
+    def render_html(self, parent_context):
+        context = parent_context.get("context", parent_context)
+        page = context.get("page")
+
+        if not page:
+            return ""
+
+        url = reverse("cms-publish-minor-update", args=[page.pk])
+
+        if isinstance(page.specific, Advisory):
+            redirect_url = "/drivebc-cms/cms/advisory/"
+        elif isinstance(page.specific, Bulletin):
+            redirect_url = "/drivebc-cms/cms/bulletin/"
+        else:
+            redirect_url = "/drivebc-cms/"
+
+        return format_html(
+            """
+            <li class="action-menu__item">
+                <button
+                    type="button"
+                    class="action button"
+                    style="width: 100%; text-align: left;"
+                    onclick="fetch('{}', {{
+                        method: 'POST',
+                        headers: {{'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)[1]}},
+                    }}).then(() => window.location.href = '{}'); return false;"
+                >
+                    <svg class="icon icon-upload icon" aria-hidden="true"><use href="#icon-upload"></use></svg>
+                    Publish minor update
+                </button>
+            </li>
+            """,
+            url,
+            redirect_url,
+        )
+
 
 @hooks.register("register_page_action_menu_item")
 def register_copy_preview_button():
@@ -281,3 +331,21 @@ def move_new_advisory_to_top(request, page):
     if page.specific_class == Advisory:
         parent = page.get_parent()
         page.move(parent, pos="first-child")
+
+@hooks.register("register_page_action_menu_item")
+def register_publish_minor_update():
+    return PublishMinorUpdateMenuItem(order=25)
+
+@hooks.register("construct_page_action_menu")
+def customize_page_action_menu(menu_items, request, context):
+    for item in menu_items:
+        if item.name == "action-publish":
+            item.label = "Publish with notifications"
+
+
+@hooks.register('register_admin_urls')
+def add_access_requested_url():
+    return [
+        path('access-requested', access_requested, name='cms-access-requested'),
+        path('publish-minor-update/<int:page_id>/', publish_minor_update, name='cms-publish-minor-update'),
+    ]

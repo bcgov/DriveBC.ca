@@ -17,14 +17,25 @@ export function getBulletinsPreview(id) {
   });
 }
 
-export function markBulletinsAsRead(bulletinsData, cmsContext, setCMSContext) {
-  if (bulletinsData && bulletinsData.length > 0 && !bulletinsData[0].live_revision) return;
-  const bulletinsIds = bulletinsData.map(bulletin => bulletin.id.toString() + '-' + bulletin.live_revision.toString());
+export const markBulletinsAsRead = (bulletins, cmsContext, setCMSContext) => {
+  if (!bulletins) return;
 
-  // Combine and remove duplicates
-  const readBulletins = Array.from(new Set([...bulletinsIds, ...cmsContext.readBulletins]));
-  const updatedContext = {...cmsContext, readBulletins: readBulletins};
+  const newRead = bulletins
+    .filter(b => b.id && b.last_notified_at)
+    .map(b => b.id.toString() + '-' + b.last_notified_at.toString());
 
-  setCMSContext(updatedContext);
-  localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+  if (newRead.length === 0) return;
+
+  setCMSContext((prevContext) => {
+    const previousRead = prevContext?.readBulletins || [];
+    const merged = [...new Set([...previousRead, ...newRead])];
+
+    if (merged.length === previousRead.length) {
+      return prevContext;
+    }
+
+    const updatedContext = { ...prevContext, readBulletins: merged };
+    localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+    return updatedContext;
+  });
 }

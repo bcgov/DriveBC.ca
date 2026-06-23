@@ -16,15 +16,16 @@ import Skeleton from 'react-loading-skeleton';
 // Static files
 import logo from '../../images/dbc-logo--white.svg';
 
-export default function Bulletins(props) {
-  // State, props and context
-  const { bulletins, showLoader } = props;
+export default function BulletinsList(props) {
+  // Props
+  const { bulletins, showLoader, trackedBulletins = {}, bulletinRefs, dismissHighlight } = props;
 
   // Navigation
   const navigate = useNavigate();
 
   function handleClick(bulletin) {
     trackEvent('click', 'bulletins-list', 'Bulletin', bulletin.title, bulletin.teaser);
+    if (dismissHighlight) dismissHighlight(bulletin.id);
     navigate(`/bulletins/${bulletin.slug}`);
   }
 
@@ -33,9 +34,14 @@ export default function Bulletins(props) {
   // Rendering
   return (
     <ul className='bulletins-list'>
-      {!!sortedBulletins && sortedBulletins.map((bulletin, index) => {
+      {!!sortedBulletins && sortedBulletins.map((bulletin) => {
         return (
-          <li className='bulletin-li' key={bulletin.id} onClick={() => handleClick(bulletin)}
+          <li
+            className={`bulletin-li${trackedBulletins[bulletin.id]?.highlight ? ' highlighted' : ''}`}
+            key={bulletin.id}
+            data-key={bulletin.id}
+            ref={(el) => { if (bulletinRefs) bulletinRefs.current[bulletin.id] = el; }}
+            onClick={() => handleClick(bulletin)}
             onKeyDown={(keyEvent) => {
               if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                 handleClick(bulletin);
@@ -45,7 +51,6 @@ export default function Bulletins(props) {
             <div className='bulletin-li-title-container' tabIndex={0}>
               {showLoader ?
                 <p><Skeleton height={30} /></p> :
-
                 <h2 className='bulletin-li-title'>{bulletin.title}</h2>
               }
 
@@ -54,7 +59,6 @@ export default function Bulletins(props) {
                   <Skeleton height={10} />
                   <Skeleton height={10} />
                 </p> :
-
                 (bulletin.teaser &&
                   <div className="bulletin-li-body">{bulletin.teaser}</div>
                 )
@@ -62,10 +66,14 @@ export default function Bulletins(props) {
 
               {showLoader ?
                 <p><Skeleton width={150} height={10} /></p> :
-
                 <div className='timestamp-container'>
-                  <span className='bulletin-li-state'>{bulletin.first_published_at != bulletin.last_published_at ? 'Updated' : 'Published' }</span>
-                  <FriendlyTime date={bulletin.latest_revision_created_at} />
+                  <span className='bulletin-li-state'>
+                    {bulletin.first_published_at != bulletin.last_notified_at ? 'Updated' : 'Published'}
+                  </span>
+                  <FriendlyTime date={bulletin.last_notified_at ?? bulletin.last_published_at} />
+                  {trackedBulletins[bulletin.id]?.highlight &&
+                    <div className="updated-pill">Updated</div>
+                  }
                 </div>
               }
             </div>
@@ -74,7 +82,6 @@ export default function Bulletins(props) {
               <div className={bulletin.image_url ? 'bulletin-li-thumbnail' : 'bulletin-li-thumbnail-default'}>
                 {showLoader ?
                   <Skeleton width={320} height={200} /> :
-
                   <img className='thumbnail-logo' src={bulletin.image_url ? bulletin.image_url : logo} alt={bulletin.image_alt_text} />
                 }
               </div>

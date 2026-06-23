@@ -1,5 +1,5 @@
 // React
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 
 // Navigation
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
@@ -8,13 +8,14 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faArrowLeft
+  faArrowLeft,
+  faXmark
 } from '@fortawesome/pro-solid-svg-icons';
 import Skeleton from 'react-loading-skeleton';
 
 // Internal imports
 import { CMSContext } from '../App';
-import { getBulletins, getBulletinsPreview } from '../Components/data/bulletins.js';
+import { getBulletins, getBulletinsPreview, markBulletinsAsRead } from '../Components/data/bulletins.js';
 import { NetworkError, NotFoundError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -22,6 +23,7 @@ import Footer from '../Footer.js';
 import FriendlyTime from '../Components/shared/FriendlyTime';
 import renderWagtailBody from '../Components/shared/renderWagtailBody.js';
 import ShareURLButton from '../Components/shared/ShareURLButton';
+import PollingComponent from "../Components/shared/PollingComponent";
 
 // Styling
 import './BulletinDetailsPage.scss';
@@ -41,6 +43,7 @@ export default function BulletinDetailsPage() {
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
+  const cmsContextRef = useRef(cmsContext);
 
   // States
   const [bulletin, setBulletin] = useState(null);
@@ -50,6 +53,11 @@ export default function BulletinDetailsPage() {
 
   const [searchParams] = useSearchParams();
   const isPreview = searchParams.get("preview") === "true";
+  const [showUpdateOverlay, setShowUpdateOverlay] = useState(false);
+  const initialNotifiedAt = useRef(null);
+  const dismissedNotifiedAt = useRef(null);
+  const [latestNotifiedAt, setLatestNotifiedAt] = useState(null);
+  const currentRevision = useRef(null);
 
   // Error handling
   const displayError = (error) => {
@@ -66,6 +74,41 @@ export default function BulletinDetailsPage() {
     navigate(-1);
   };
 
+  const checkForUpdates = async () => {
+    try {
+      const latestData = await getBulletins(params.id);
+
+      if (!latestData) return;
+
+      // Detect any publish (major or minor)
+      const contentChanged =
+        latestData.live_revision !== currentRevision.current;
+
+      if (contentChanged) {
+        setBulletin(latestData);
+
+        currentRevision.current = latestData.live_revision;
+
+        document.title = `DriveBC - Bulletins - ${latestData.title}`;
+      }
+
+      // Detect major update only
+      const latestNotified = latestData.last_notified_at;
+
+      if (
+        latestNotified &&
+        latestNotified !== initialNotifiedAt.current &&
+        latestNotified !== dismissedNotifiedAt.current
+      ) {
+        setLatestNotifiedAt(latestNotified);
+        initialNotifiedAt.current = latestNotified;
+        setShowUpdateOverlay(true);
+      }
+    } catch (error) {
+      // silently ignore
+    }
+  };
+
   // Data function and initialization
   const loadBulletin = async () => {
     const bulletinData = await (isPreview ? getBulletinsPreview(params.id) : getBulletins(params.id)).catch((error) => {
@@ -79,25 +122,30 @@ export default function BulletinDetailsPage() {
 
     document.title = `DriveBC - Bulletins - ${bulletinData.title}`;
 
-    // Combine and remove duplicates
     if (bulletinData.id) {
-      const readBulletins = Array.from(new Set([
-        ...cmsContext.readBulletins,
-        bulletinData.id.toString() + '-' + ((bulletinData.live_revision != null) ? bulletinData.live_revision.toString() : '')
-      ]));
-
-      const updatedContext = {...cmsContext, readBulletins: readBulletins};
-
-      setCMSContext(updatedContext);
-      localStorage.setItem('cmsContext', JSON.stringify(updatedContext));
+      initialNotifiedAt.current = bulletinData.last_notified_at;
+      currentRevision.current = bulletinData.live_revision;
+      markBulletinsAsRead([bulletinData], cmsContextRef.current, setCMSContext);
     }
 
     setShowLoader(false);
   };
 
   useEffect(() => {
+    cmsContextRef.current = cmsContext;
+  }, [cmsContext]);
+
+  useEffect(() => {
     loadBulletin();
   }, [params.id]);
+
+  useEffect(() => {
+    return () => {
+      if (bulletin && bulletin.id) {
+        markBulletinsAsRead([bulletin], cmsContextRef.current, setCMSContext);
+      }
+    };
+  }, [bulletin, setCMSContext]);
 
   let content = bulletin;
   if (content && params.subid) {
@@ -107,6 +155,24 @@ export default function BulletinDetailsPage() {
   // Rendering
   return (
     <div className='bulletin-page cms-page'>
+        {showUpdateOverlay && (
+        <div className="update-overlay">
+          <span className="update-overlay__message">
+            Bulletin updated just now
+          </span>
+          <button
+            className="update-overlay__close"
+            aria-label="Dismiss"
+            onClick={() => {
+              dismissedNotifiedAt.current = latestNotifiedAt;
+              setShowUpdateOverlay(false);
+            }}>
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
+        </div>
+      )}
+      <PollingComponent runnable={checkForUpdates} interval={5000} />
+
       {showNetworkError &&
         <NetworkErrorPopup />
       }
@@ -154,7 +220,7 @@ export default function BulletinDetailsPage() {
                           ? "Updated"
                           : content !== NOT_FOUND_CONTENT ? "Saved" : ""}
                     </span>
-                    { content !== NOT_FOUND_CONTENT && <FriendlyTime date={content.latest_revision_created_at} /> }
+                    { content !== NOT_FOUND_CONTENT && <FriendlyTime date={content.last_notified_at ?? content.last_published_at} /> }
                 </div>
                 <ShareURLButton />
               </div>
