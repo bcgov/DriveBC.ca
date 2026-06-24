@@ -17,6 +17,9 @@ from wagtail.admin.panels import PageChooserPanel
 from django.contrib.gis.forms import MultiPolygonField
 from django.contrib.gis.geos import MultiPolygon, Polygon, GEOSGeometry
 from wagtail.admin.forms import WagtailAdminPageForm
+from wagtail.admin.panels import Panel
+from django.core.exceptions import ValidationError
+
 
 TABLE_OPTIONS = {'rowHeaders': True,
                  'colHeaders': True, }
@@ -168,6 +171,24 @@ class RichContent(blocks.StreamBlock):
     callout = blocks.RichTextBlock(help_text=CALLOUT_HELP_TEXT,
                                    template='cms/callout.html')
 
+class ReadOnlyPanel(Panel):
+    def __init__(self, field_name, **kwargs):
+        self.field_name = field_name
+        super().__init__(**kwargs)
+
+    def clone(self):
+        return self.__class__(
+            field_name=self.field_name,
+            heading=self.heading,
+        )
+
+    class BoundPanel(Panel.BoundPanel):
+        template_name = 'cms/read_only_panel.html'
+
+        def get_context_data(self, parent_context=None):
+            ctx = super().get_context_data(parent_context)
+            ctx['value'] = getattr(self.instance, self.panel.field_name, '')
+            return ctx
 
 class AdvisoryIndexPage(Page):
     parent_page_types = ["wagtailcore.Page"]
@@ -198,6 +219,14 @@ class Advisory(Page, BaseModel):
 
     last_notified_at = models.DateTimeField(null=True, blank=True)
 
+    def clean(self):
+        super().clean()
+
+        if self.geometry is None or self.geometry.empty:
+            raise ValidationError({
+                "geometry": "Please draw at least one polygon."
+            })
+
     # Editor panels configuration
     content_panels = [
         FieldPanel("title", help_text=HelpText.GENERIC_TITLE),
@@ -209,9 +238,9 @@ class Advisory(Page, BaseModel):
             heading="Area",
         ),
         FieldPanel("body", help_text=HelpText.GENERIC_BODY),
-        FieldPanel('created_at', read_only=True, heading="Created"),
-        FieldPanel('first_published_at', read_only=True, heading="Published"),
-        FieldPanel('last_notified_at', read_only=True, heading="Updated"),
+        ReadOnlyPanel('created_at', heading="Created"),
+        ReadOnlyPanel('first_published_at', heading="Published"),
+        ReadOnlyPanel('last_published_at', heading="Updated"),
     ]
     promote_panels = []
 
@@ -241,6 +270,7 @@ class Advisory(Page, BaseModel):
                 self.geometry = self.geometry.transform(4326, clone=True)
         super().save(log_action=None, *args, **kwargs)
         cache.delete(CacheKey.ADVISORY_LIST)
+
 
 class BulletinIndexPage(Page):
     parent_page_types = ["wagtailcore.Page"]
@@ -281,9 +311,9 @@ class Bulletin(Page, BaseModel):
                    heading="Newsfeed Image"),
         FieldPanel("image_alt_text", help_text=HelpText.BULLETIN_IMAGE_ALT_TEXT),
         FieldPanel("body", help_text=HelpText.GENERIC_BODY),
-        FieldPanel('created_at', read_only=True, heading="Created"),
-        FieldPanel('first_published_at', read_only=True, heading="Published"),
-        FieldPanel('last_notified_at', read_only=True, heading="Updated"),
+        ReadOnlyPanel('created_at', heading="Created"),
+        ReadOnlyPanel('first_published_at', heading="Published"),
+        ReadOnlyPanel('last_published_at', heading="Updated"),
     ]
     promote_panels = []
 
@@ -447,9 +477,9 @@ class SubPage(Page, BaseModel):
     content_panels = [
         FieldPanel("title", help_text=HelpText.GENERIC_TITLE),
         FieldPanel("body", help_text=HelpText.GENERIC_BODY),
-        FieldPanel('created_at', read_only=True, heading="Created"),
-        FieldPanel('first_published_at', read_only=True, heading="Published"),
-        FieldPanel('last_published_at', read_only=True, heading="Updated"),
+        ReadOnlyPanel('created_at', heading="Created"),
+        ReadOnlyPanel('first_published_at', heading="Published"),
+        ReadOnlyPanel('last_published_at', heading="Updated"),
     ]
 
     promote_panels = []
