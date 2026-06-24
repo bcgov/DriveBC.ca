@@ -49,9 +49,24 @@ export default function BulletinsList(props) {
             }}>
 
             <div className='bulletin-li-title-container' tabIndex={0}>
+              <div className="bulletin-li-title-row">
+                {showLoader ?
+                  <p><Skeleton height={30} /></p> :
+                  <h2 className='bulletin-li-title'>{bulletin.title}</h2>
+                }
+                {trackedBulletins[bulletin.id]?.highlight &&
+                      <div className="updated-pill">Updated</div>
+                    }
+              </div>
+
               {showLoader ?
-                <p><Skeleton height={30} /></p> :
-                <h2 className='bulletin-li-title'>{bulletin.title}</h2>
+                <p><Skeleton width={150} height={10} /></p> :
+                <div className='timestamp-container'>
+                  <span className='bulletin-li-state'>
+                    {bulletin.first_published_at != bulletin.last_notified_at ? 'Updated' : 'Published'}
+                  </span>
+                  <FriendlyTime date={bulletin.last_notified_at ?? bulletin.last_published_at} />
+                </div>
               }
 
               {showLoader ?
@@ -62,19 +77,6 @@ export default function BulletinsList(props) {
                 (bulletin.teaser &&
                   <div className="bulletin-li-body">{bulletin.teaser}</div>
                 )
-              }
-
-              {showLoader ?
-                <p><Skeleton width={150} height={10} /></p> :
-                <div className='timestamp-container'>
-                  <span className='bulletin-li-state'>
-                    {bulletin.first_published_at != bulletin.last_notified_at ? 'Updated' : 'Published'}
-                  </span>
-                  <FriendlyTime date={bulletin.last_notified_at ?? bulletin.last_published_at} />
-                  {trackedBulletins[bulletin.id]?.highlight &&
-                    <div className="updated-pill">Updated</div>
-                  }
-                </div>
               }
             </div>
 
