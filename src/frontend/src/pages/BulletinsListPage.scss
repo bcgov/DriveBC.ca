@@ -27,7 +27,7 @@
       }
 
       & + li.bulletin-li {
-        margin-top: 24px;
+        margin-top: 0;
       }
 
       .timestamp-container, .friendly-time-text {
@@ -51,10 +51,9 @@
 
       .timestamp-container {
         display: flex;
-        margin-top: 16px;
 
         @media (min-width: 992px) {
-          margin-top: 24px;
+          margin-top: 2px;
         }
 
         .friendly-time, .formatted-date {
@@ -126,8 +125,7 @@
 
 // Highlighted row
 li.highlighted {
-  background-color: var(--highlighted-row-bg, #fff8e1);
-  border-left: 3px solid var(--colour-primary, #003366);
+  background-color: var(--highlighted-row-bg, $Blue20);
   transition: background-color 0.3s ease;
 }
 
@@ -137,11 +135,13 @@ li.highlighted {
   align-items: center;
   padding: 2px 8px;
   border-radius: 12px;
-  background-color: var(--colour-primary, #003366);
+  background-color: var(--colour-primary, $Blue80);
   color: #fff;
   font-size: 0.75rem;
   font-weight: 600;
   margin-left: 8px;
+  top: -4px;
+  position: relative;
 }
 
 // Floating scroll pills — reuse same class as EventsListPage
@@ -149,7 +149,7 @@ li.highlighted {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  background-color: var(--colour-primary, #003366);
+  background-color: var(--colour-primary, $Blue80);
   color: #fff;
   border: none;
   border-radius: 20px;

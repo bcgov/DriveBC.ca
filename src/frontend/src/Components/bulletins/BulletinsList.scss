@@ -3,7 +3,6 @@
 ul.bulletins-list {
   li.bulletin-li {
     padding: 12px;
-    border-radius: 4px;
     text-decoration: none;
 
 
@@ -22,4 +21,23 @@ ul.bulletins-list {
     margin-bottom: 2rem;
     color: $BC-Blue;
   }
+}
+
+.bulletin-li-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bulletin-li-title {
+  margin: 0;
+}
+
+.updated-pill {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.bulletin-li-body {
+  margin-top: 20px;
 }

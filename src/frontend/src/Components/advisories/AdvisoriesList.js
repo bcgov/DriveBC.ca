@@ -70,6 +70,9 @@ export default function AdvisoriesList(props) {
                     onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}>
 
                     {showLoader ? <Skeleton width={320} height={40} /> : advisory.title}
+                    {trackedAdvisories[advisory.id]?.highlight &&
+                      <div className="updated-pill">Updated</div>
+                    }
                   </div>
 
                   {showLoader ?
@@ -78,9 +81,6 @@ export default function AdvisoriesList(props) {
                     <div className="timestamp-container">
                       <span className="advisory-li-state">{advisory.last_notified_at != advisory.first_published_at ? "Updated" : "Published" }</span>
                       <FriendlyTime date={advisory.last_notified_at ?? advisory.last_published_at} />
-                      {trackedAdvisories[advisory.id]?.highlight &&
-                        <div className="updated-pill">Updated</div>
-                      }
                     </div>
                   }
                 </div>
@@ -111,9 +111,6 @@ export default function AdvisoriesList(props) {
                   <div className="advisory-li__content__partition timestamp-container timestamp-container--mobile">
                     <span className="advisory-li-state">{advisory.last_notified_at != advisory.first_published_at ? "Updated" : "Published"}</span>
                     <FriendlyTime date={advisory.last_notified_at ?? advisory.last_published_at} />
-                    {trackedAdvisories[advisory.id]?.highlight &&
-                        <div className="updated-pill">Updated</div>
-                      }
                   </div>
                 }
 
@@ -148,6 +145,9 @@ export default function AdvisoriesList(props) {
               <div className="advisory-li__content">
                 <div className="advisory-li-title-container">
                   <p className='advisory-li-title'>{advisory.title}</p>
+                  {trackedAdvisories[advisory.id]?.highlight &&
+                    <div className="updated-pill">Updated</div>
+                  }
 
                   {!showDescription &&
                     <p className="advisory-li-teaser">{advisory.teaser ? advisory.teaser : stripRichText(advisory.body).substring(0, 250)}</p>
@@ -158,9 +158,6 @@ export default function AdvisoriesList(props) {
                       {!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.live_revision.toString()) && <div className="unread-display"></div>}
                       <span className="advisory-li-state">{advisory.last_notified_at != advisory.first_published_at ? "Updated" : "Published" }</span>
                       <FriendlyTime date={advisory.last_notified_at ?? advisory.last_published_at} />
-                      {trackedAdvisories[advisory.id]?.highlight &&
-                        <div className="updated-pill">Updated</div>
-                      }
                     </div>
                   }
 
