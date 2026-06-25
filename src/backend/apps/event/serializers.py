@@ -56,6 +56,9 @@ class EventInternalSerializer(serializers.ModelSerializer):
     schedule = ScheduleSerializer()
     area = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
+    # Explicit CharField to not be affected by SafeStringMixin's global mapping
+    location_description = serializers.CharField(max_length=256, allow_blank=True)
+
     class Meta:
         model = Event
         exclude = (
