@@ -62,7 +62,7 @@ export default function EventCard(props) {
           <div className="header">{ showLoader ? <Skeleton /> : 'Location' }</div>
           <div className="content">
             {showLoader ? <Skeleton count={2} width={200} /> :
-              (event.display_category === 'chainUps' ? event.highway_segment_names : event.location_description)}
+              (event.display_category === 'chainUps' ? event.highway_segment_names : parse(event.location_description))}
           </div>
         </div>
 
