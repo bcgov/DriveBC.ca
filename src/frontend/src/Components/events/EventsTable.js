@@ -92,7 +92,7 @@ export default function EventsTable(props) {
       header: <span tabIndex={0}>{'Location'}</span>,
       accessorKey: 'location_description',
       sortingFn: 'severitySort', // override to sort by severity instead
-      cell: (props) => <span>{props.getValue()}</span>,
+      cell: (props) => <span>{parse(props.getValue())}</span>,
     },
     {
       header: <span tabIndex={0}>{'Closest Landmark'}</span>,
