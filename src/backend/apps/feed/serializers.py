@@ -228,7 +228,9 @@ class RIDEEventSerializer(serializers.Serializer):
                     continue
 
                 # route_at - was "route-designator" but now "name"
-                data['route_at'] = start_or_end.get('name', '')
+                route_name = start_or_end.get('name', '')
+                route_alias = start_or_end.get('alias')
+                data['route_at'] = route_name + ', ' + route_alias if route_alias else route_name
 
                 # closest_landmark / location_description
                 nearby_locs = start_or_end.get('nearby', [])

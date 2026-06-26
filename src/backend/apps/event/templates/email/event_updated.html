@@ -78,7 +78,7 @@
 																		{{ event.display_category_title }}
 																	</td>
 																</tr>
-																
+
 																<tr>
 																	{% if event.severity == 'MAJOR' %}
 																	<td style="font-size: 1.25rem; font-weight:700; color:#D8292F; padding: 8px 12px 0">
@@ -92,7 +92,7 @@
                                   {% endif %}
 																	</td>
 																</tr>
-                                
+
 																{% if event.direction != 'NONE' %}
 																<tr>
 																	<td style="font-size: 0.875rem; font-weight:700; color:#464341; padding: 8px 12px 0">
@@ -118,7 +118,7 @@
 																					Location
 																				</td>
 																				<td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
-																					{{ event.location_description }}
+																					{{ event.location_description|safe }}
 																				</td>
 																			</tr>
 																			<tr>
