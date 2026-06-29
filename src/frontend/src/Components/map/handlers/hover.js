@@ -30,9 +30,22 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
 
   // Reset feature if target isn't clicked
   if (hoveredFeature && targetFeature != hoveredFeature) {
+
+    const clusterFeatures = hoveredFeature.get('features');
+    if (clusterFeatures && clusterFeatures.length > 1) {
+      clusterFeatures.forEach((f) => {
+        if (!f.get('clicked')) {
+          f.set('hovered', false);
+        }
+      });
+    } else
+
+
+
     if (!hoveredFeature.getProperties().clicked) {
       switch (hoveredFeature.getProperties()['type']) {
         case 'camera':
+          hoveredFeature.set('hovered', false);
           hoveredFeature.setCameraStyle('static');
           break;
         case 'event': {
@@ -148,15 +161,34 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
   });
 
   if (features.length) {
-    const targetFeature = features[0];
-    resetHoveredStates(targetFeature, hoveredFeature);
-    hoveredFeature.current = targetFeature;
+    let targetFeature = features[0];
+    let clusterFeatures = targetFeature?.get('features');
+    if(targetFeature && !targetFeature.get('type')) {
 
-    // Set hover style if feature isn't clicked
-    switch (targetFeature.getProperties()['type']) {
+      if (clusterFeatures?.length === 1) {
+          targetFeature = clusterFeatures[0];
+          clusterFeatures = null;
+      }
+    }
+
+    const realFeature = targetFeature;
+    resetHoveredStates(realFeature, hoveredFeature);
+    hoveredFeature.current = realFeature;
+
+    if (clusterFeatures?.length > 1) {
+      clusterFeatures.forEach((f) => {
+        if (!f.get('clicked')) {
+          f.set('hovered', true);
+        }
+      });
+      return;
+    }
+
+    switch (realFeature?.get('type')) {
       case 'camera':
-        if (!targetFeature.get('clicked')) {
-          targetFeature.setCameraStyle('hover');
+        if (!realFeature.get('clicked')) {
+          realFeature.setCameraStyle('hover');
+          realFeature.set('hovered', true);
         }
         return;
       case 'event':

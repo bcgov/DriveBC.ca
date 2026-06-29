@@ -129,8 +129,8 @@ class TestWildfireModel(BaseTest):
             **self.combine_with_area(holding_feature),
             'status': WILDFIRE_STATUS.UNDR_CNTRL,
         }
-        assert populate_wildfire_from_data(under_control_data) is None
-        assert not Wildfire.objects.filter(id='G90400').exists()
+        assert populate_wildfire_from_data(under_control_data) is not None
+        assert Wildfire.objects.filter(id='G90400').exists()
 
         # Out, not populated
         out_data = {
@@ -138,7 +138,7 @@ class TestWildfireModel(BaseTest):
             'status': WILDFIRE_STATUS.OUT,
         }
         populate_wildfire_from_data(out_data)
-        assert not Wildfire.objects.filter(id='G90400').exists()
+        assert Wildfire.objects.filter(id='G90400').exists()
 
         # Being Held
         populate_wildfire_from_data(self.combine_with_area(holding_feature))

@@ -1,14 +1,16 @@
 // OpenLayers
 import { Point } from 'ol/geom';
-import { Style } from 'ol/style';
+import {Style, Fill, Text, Icon} from 'ol/style';
 import * as ol from 'ol';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
+import Cluster from 'ol/source/Cluster.js';
+// import CircleStyle from 'ol/style/Circle.js';
 
 // Styling
-import { cameraStyles, unreadCameraStyles } from '../../data/featureStyleDefinitions.js';
+import { cameraStyles, cameraGroupedStyles, unreadCameraStyles } from '../../data/featureStyleDefinitions.js';
 
-export function getCamerasLayer(cameras, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
+export function getCamerasLayer(cameras, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers, pixelDistance) {
   const vectorSource = new VectorSource();
 
   cameras.forEach(camera => {
@@ -47,12 +49,69 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
     }
   });
 
-  return new VectorLayer({
+  const clusterSource = new Cluster({
+    distance: pixelDistance,
+    source: vectorSource,
+  });
+
+  const styleCache = {};
+
+  const layer = new VectorLayer({
     classname: 'webcams',
     visible: mapContext.visible_layers.highwayCams,
-    source: vectorSource,
-    style: () => null
+    source: clusterSource,
+
+    style: function (feature) {
+      const features = feature.get('features');
+      const size = features.length;
+
+      // single camera
+      if (size === 1) {
+        const cam = features[0];
+        if (cam.get('clicked')) return cameraStyles.active;
+        if (cam.get('hovered')) return cameraStyles.hover;
+        return cameraStyles.static;
+      }
+
+      const cam = features[0];
+      let state = 'static';
+      if (cam.get('clicked')) {
+        state = 'active';
+      } else if (cam.get('hovered')) {
+        state = 'hover';
+      }
+
+      const cacheKey = `${state}_${size}`;
+      let style = styleCache[cacheKey];
+
+      if (!style) {
+        const textColor = state === 'static' ? '#255A90' : '#fff';
+
+        style = new Style({
+          image: new Icon({
+            scale: 0.25,
+            src: cameraGroupedStyles[state].getImage().getSrc(),
+          }),
+          text: new Text({
+            text: String(size),
+            font: 'bold 12px BC Sans',
+            fill: new Fill({ color: textColor }),
+            textAlign: 'center',
+            textBaseline: 'middle',
+            offsetX: 4,
+            offsetY: 1,
+          }),
+        });
+        styleCache[cacheKey] = style;
+      }
+
+      return style;
+    },
   });
+
+  layer.getClusterSource = () => clusterSource;
+
+  return layer;
 }
 
 export function updateCamerasLayer(cameras, layer, setLoadingLayers) {
@@ -62,7 +121,11 @@ export function updateCamerasLayer(cameras, layer, setLoadingLayers) {
   }, {});
 
   for (const feature of layer.getSource().getFeatures()) {
-    const camera = camerasLookup[feature.getId()];
+    let camera = camerasLookup[feature.getId()];
+    if (!camera) {
+      camera = camerasLookup[feature.values_.features[0].getId()];
+    }
+    
 
     if (!camera) {  // camera no longer in list from API
       feature.setStyle(new Style(null));
@@ -76,8 +139,12 @@ export function updateCamerasLayer(cameras, layer, setLoadingLayers) {
     feature.setProperties(camera); // update feature with latest API data.
 
     if (feature.get('clicked')) { continue; }
-
-    feature.setCameraStyle('static');
+    try {
+      feature.setCameraStyle('static');
+    }
+    catch {
+      feature.values_.features[0].setCameraStyle('static');
+    }
   }
 
   setLoadingLayers(prevState => ({
