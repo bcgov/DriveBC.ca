@@ -47,6 +47,7 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filtered
     mapRef.current.removeLayer(mapLayers.current[key]);
   }
 
+
   if (dataList) {
     if (!mapLayers.current[key] || key == 'routeLayer') {
       // Generate and add layer if it doesn't exist
@@ -56,7 +57,10 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filtered
         mapContext,
         referenceData,
         updateReferenceFeature,
-        setLoadingLayers
+        setLoadingLayers,
+        // Pass the clustering distance (in screen pixels) to `getCamerasLayer`.
+        // A value of 50 provides a balanced level of clustering for grouping nearby camera icons.
+        50 
       );
 
       mapRef.current.addLayer(mapLayers.current[key]);
@@ -69,6 +73,8 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filtered
     }
   }
 }
+
+
 
 export const enableReferencedLayer = (referenceData, mapContext) => {
   // Do nothing if no reference data
