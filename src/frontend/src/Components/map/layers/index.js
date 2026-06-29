@@ -41,11 +41,25 @@ const layerUpdateFuncMap = {
   dms: updateDmsLayer,
 }
 
+const CLUSTER_DISTANCE_METERS = 178571; // 178 km converted to about 50 pixel on the map has the best effect when zoom in/out
+let pixelDistance = 50; // defalt pixel 50 has the best effect
+
 export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filteredDataList, zIndex, referenceData, updateReferenceFeature, setLoadingLayers) => {
   // Always remove and regenerate route layer
   if (key == 'routeLayer') {
     mapRef.current.removeLayer(mapLayers.current[key]);
   }
+
+  const view = mapRef.current.getView();
+  
+  function updateClusterDistance() {
+    const resolution = view.getResolution(); // meters per pixel
+    // Convert meters to pixels
+    pixelDistance = CLUSTER_DISTANCE_METERS / resolution;
+  }
+
+  view.on('change:resolution', updateClusterDistance);
+  updateClusterDistance();
 
   if (dataList) {
     if (!mapLayers.current[key] || key == 'routeLayer') {
@@ -56,7 +70,8 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filtered
         mapContext,
         referenceData,
         updateReferenceFeature,
-        setLoadingLayers
+        setLoadingLayers,
+        pixelDistance
       );
 
       mapRef.current.addLayer(mapLayers.current[key]);
@@ -69,6 +84,8 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filtered
     }
   }
 }
+
+
 
 export const enableReferencedLayer = (referenceData, mapContext) => {
   // Do nothing if no reference data
