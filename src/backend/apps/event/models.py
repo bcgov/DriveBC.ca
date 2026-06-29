@@ -13,7 +13,7 @@ class Event(ExportModelOperationsMixin('event'), BaseModel):
     id = models.CharField(max_length=32, primary_key=True)
 
     # Description
-    description = models.CharField(max_length=1024)
+    description = models.CharField(max_length=2048)
     event_type = models.CharField(max_length=32)
     event_sub_type = models.CharField(max_length=32, blank=True, default='')
 
@@ -26,15 +26,15 @@ class Event(ExportModelOperationsMixin('event'), BaseModel):
     direction = models.CharField(max_length=32)
     location = models.GeometryField()
     polygon = models.GeometryField(null=True)
-    route_at = models.CharField(max_length=128)
-    route_from = models.CharField(max_length=128)
-    route_to = models.CharField(max_length=128, blank=True)
+    route_at = models.CharField(max_length=1024)
+    route_from = models.CharField(max_length=1024)
+    route_to = models.CharField(max_length=1024, blank=True)
     area = models.ManyToManyField(Area, blank=True)
 
     # CARS API info
-    highway_segment_names = models.CharField(max_length=256, blank=True, default='')
-    location_description = models.CharField(max_length=256, blank=True, default='')
-    closest_landmark = models.CharField(max_length=256, blank=True, default='')
+    highway_segment_names = models.CharField(max_length=1024, blank=True, default='')
+    location_description = models.CharField(max_length=2048, blank=True, default='')
+    closest_landmark = models.CharField(max_length=1024, blank=True, default='')
     next_update = models.DateTimeField(null=True, blank=True)
     start_point_linear_reference = models.FloatField(null=True)
 
