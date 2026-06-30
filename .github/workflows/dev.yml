@@ -47,7 +47,7 @@ jobs:
 
   # GoldDR Runs after Gold Deployment due to GoldDR DB being read-only replica of Gold
   update-openshift-golddr:
-    needs: [setup, update-openshift-gold] 
+    needs: [setup] 
     runs-on: ubuntu-latest
     name: Deploy to GoldDR. Tag ${{ needs.setup.outputs.tag_for_helm }}
     environment:
