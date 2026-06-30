@@ -2,13 +2,6 @@ name: 1. Build & Deploy to Dev
 #Will automatically run on a push to main, but can also be run manually
 
 on:
-  push:
-    branches: [ "main" ]
-    paths-ignore:
-    - '.github/**'
-    - '.infrastructure/standbycheck/**'
-    - '.infrastructure/crunchy-postgres/**'
-    - '.infrastructure/syncthing/**'
   workflow_dispatch:
 
 permissions:
@@ -16,7 +9,7 @@ permissions:
   packages: write
   id-token: write
   attestations: write
-  artifact-metadata: write # 
+  artifact-metadata: write #
 
 jobs:
   setup:
@@ -34,94 +27,9 @@ jobs:
       - name: Set outputs
         run: echo "This step is required to set job outputs."
 
-  build-and-push:
-    needs: [setup]
-    runs-on: ubuntu-latest
-    name: Build & Push ${{ matrix.name }} Image
-    outputs:
-      tag: ${{ steps.meta.outputs.tags }}
-    strategy:
-      matrix:
-        include:
-          - name: Backend
-            image_name: bcgov/drivebc-django
-            dockerfile: ./compose/backend/Dockerfile
-            build_args: |
-              DEBUG_BUILD=true
-            needs_fontawesome: false
-          - name: Static
-            image_name: bcgov/drivebc-static
-            dockerfile: ./compose/frontend/StaticBuild
-            build_args: |
-              DEBUG_BUILD=true
-            needs_fontawesome: true
-          - name: Redis
-            image_name: bcgov/drivebc-redis
-            dockerfile: ./compose/redis/Dockerfile
-            build_args: |
-              DEBUG_BUILD=true
-            needs_fontawesome: false
-          - name: OpenShiftJobs
-            image_name: bcgov/drivebc-openshiftjobs
-            dockerfile: ./compose/openshiftjobs/DockerFile
-            build_args: |
-              DEBUG_BUILD=true
-            needs_fontawesome: false
-
-
-### EVERYTHING PAST THIS POINT SHOULD BE THE SAME IN DEV, TEST AND UAT WORKFLOWS ###            
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@v4
-        with:
-          registry: ${{ needs.setup.outputs.image_registry }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-  
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ needs.setup.outputs.image_registry }}/${{ matrix.image_name }}
-          tags: |
-            type=raw,value=latest
-            type=raw,value=latest-${{ needs.setup.outputs.environment_name }}
-            type=sha,format=long
-            ${{ needs.setup.outputs.custom_tag }}
-            
-  
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-  
-      - name: Build and push Docker image
-        id: push
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: ${{ matrix.dockerfile }}
-          push: true
-          sbom: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ matrix.build_args }}
-          secrets: |
-            ${{ matrix.needs_fontawesome && format('FONTAWESOME_PACKAGE_TOKEN={0}', secrets.FONTAWESOME_PACKAGE_TOKEN) || '' }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Generate Build Attestation
-        uses: actions/attest@v4
-        with:
-          subject-name: ${{ needs.setup.outputs.image_registry }}/${{ matrix.image_name }}
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
 
   update-openshift-gold:
-    needs: [setup, build-and-push]
+    needs: [setup]
     runs-on: ubuntu-latest
     name: Deploy to Gold. Tag ${{ needs.setup.outputs.tag_for_helm }}
     environment:
@@ -136,19 +44,6 @@ jobs:
         server: ${{ vars.OPENSHIFT_GOLD_SERVER }}
         token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
-
-    - name: Helm upgrade on OpenShift Gold Environment
-      run: |
-        helm dependency update ./infrastructure/main
-        helm upgrade ${{ needs.setup.outputs.helm_release_name }} \
-         -f ./infrastructure/main/values-${{ needs.setup.outputs.environment_name }}.yaml \
-         ./infrastructure/main \
-         --set static.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set django.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set tasks.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set image-consumer.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set redis.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set openshiftjobs.image.tag=${{ needs.setup.outputs.tag_for_helm }}
 
   # GoldDR Runs after Gold Deployment due to GoldDR DB being read-only replica of Gold
   update-openshift-golddr:
@@ -169,19 +64,6 @@ jobs:
         token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
 
-    - name: Helm upgrade on OpenShift GoldDR Environment
-      run: |
-        helm dependency update ./infrastructure/main
-        helm upgrade ${{ needs.setup.outputs.helm_release_name }} \
-         -f ./infrastructure/main/values-${{ needs.setup.outputs.environment_name }}.yaml \
-         -f ./infrastructure/main/values-${{ needs.setup.outputs.environment_name }}-dr.yaml \
-         ./infrastructure/main \
-         --set static.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set django.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set tasks.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set image-consumer.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set redis.image.tag=${{ needs.setup.outputs.tag_for_helm }} \
-         --set openshiftjobs.image.tag=${{ needs.setup.outputs.tag_for_helm }}
 
 
 #  automatedTests:
