@@ -29,11 +29,19 @@ runs:
         curl -sL https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz \
           | tar -xz -C /usr/local/bin oc
 
+    - name: Get Runner Public IP
+      shell: bash
+      run: |
+        echo "=========================================="
+        echo "GitHub Runner Public IP:"
+        curl -s https://ifconfig.me
+        echo -e "\n=========================================="
+
     - name: Authenticate and set project
       shell: bash
       run: |
         attempt=1
-        max_attempts=3
+        max_attempts=10
 
         until [ $attempt -gt $max_attempts ]
         do
