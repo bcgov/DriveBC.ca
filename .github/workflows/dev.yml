@@ -35,7 +35,7 @@ jobs:
     
     strategy:
       matrix:
-        iteration: [1, 2, 3, 4, 5]
+        iteration: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
       max-parallel: 1 # Ensures they run sequentially. Remove this line if you want all 5 to run at the same time.
 
     environment:
