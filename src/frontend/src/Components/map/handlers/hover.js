@@ -33,6 +33,7 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
     if (!hoveredFeature.getProperties().clicked) {
       switch (hoveredFeature.getProperties()['type']) {
         case 'camera':
+          hoveredFeature.set('hovered', false);
           hoveredFeature.setCameraStyle('static');
           break;
         case 'event': {
@@ -145,15 +146,25 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
   });
 
   if (features.length) {
-    const targetFeature = features[0];
-    resetHoveredStates(targetFeature, hoveredFeature);
-    hoveredFeature.current = targetFeature;
+    let targetFeature = features[0];
+    if(targetFeature && !targetFeature.get('type')) {
+      // targetFeature = features[0].values_?.features[0];
+      const clusterFeatures = targetFeature.get('features');
 
-    // Set hover style if feature isn't clicked
-    switch (targetFeature.getProperties()['type']) {
+      if (clusterFeatures && clusterFeatures.length === 1) {
+          targetFeature = clusterFeatures[0];
+      }
+    }
+
+    const realFeature = targetFeature;
+    resetHoveredStates(realFeature, hoveredFeature);
+    hoveredFeature.current = realFeature;
+
+    switch (realFeature?.get('type')) {
       case 'camera':
-        if (!targetFeature.get('clicked')) {
-          targetFeature.setCameraStyle('hover');
+        if (!realFeature.get('clicked')) {
+          realFeature.setCameraStyle('hover');
+          realFeature.set('hovered', true);
         }
         return;
       case 'event':

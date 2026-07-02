@@ -254,6 +254,7 @@ const camClickHandler = (
   feature.setCameraStyle('active');
   feature.set('clicked', true, true);
   feature.set('unread', false);
+  feature.set('hovered', false);
 
   if (isCamDetail) {
     // Do not auto center on feature on cam details page
@@ -574,8 +575,14 @@ export const pointerClickHandler = (
   mapContext
 ) => {
   if (features.length) {
-    const clickedFeature = features[0];
-    switch (clickedFeature.getProperties()['type']) {
+    let clickedFeature = features[0];
+
+    if (!clickedFeature.get('type')) {
+      clickedFeature = features[0].values_?.features[0];
+    }
+
+
+    switch (clickedFeature?.getProperties()['type']) {
       case 'camera':
         trackEvent(
           'click',
