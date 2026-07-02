@@ -97,7 +97,7 @@ export const resizePanel = (panelRef, clickedFeature, setMaximizedPanel) => {
 
 export const togglePanel = (panelRef, resetClickedStates, clickedFeatureRef, updateClickedFeature, pushMargins, searchedRoutes) => {
   if (searchedRoutes) {
-    panelRef.current.classList.remove('maximized');
+    panelRef.current?.classList.remove('maximized');
     resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
     return;
   }
