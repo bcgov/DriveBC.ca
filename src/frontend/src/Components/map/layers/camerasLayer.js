@@ -1,6 +1,5 @@
 // OpenLayers
 import { Point } from 'ol/geom';
-// import { Style } from 'ol/style';
 import {Style, Fill, Stroke, Text} from 'ol/style';
 import * as ol from 'ol';
 import VectorLayer from 'ol/layer/Vector';
@@ -104,26 +103,9 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
     },
   });
 
-
-  
-  // expose clusterSource so we can control zoom behavior
   layer.getClusterSource = () => clusterSource;
 
-  
-
   return layer;
-
-
-
-  // return new VectorLayer({
-  //   classname: 'webcams',
-  //   visible: mapContext.visible_layers.highwayCams,
-  //   source: vectorSource,
-  //   style: () => null
-  // });
-
-
-
 }
 
 export function updateCamerasLayer(cameras, layer, setLoadingLayers) {
@@ -157,7 +139,6 @@ export function updateCamerasLayer(cameras, layer, setLoadingLayers) {
     catch {
       feature.values_.features[0].setCameraStyle('static');
     }
-    // feature.setCameraStyle('static');
   }
 
   setLoadingLayers(prevState => ({
