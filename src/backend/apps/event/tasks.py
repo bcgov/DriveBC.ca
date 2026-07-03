@@ -131,6 +131,7 @@ def populate_event_from_data(new_event_data):
             if new_display_category != EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
                 # Update without triggering save
                 Event.objects.filter(id=event_id).update(display_category=new_display_category)
+                return True
 
     except ObjectDoesNotExist:
         event = Event(id=event_id)
