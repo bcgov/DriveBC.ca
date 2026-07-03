@@ -22,3 +22,8 @@ infrastructure/yaml
 src/scripts/
 
 notes
+
+# Agent markdown files
+.cursor/
+.ai/
+*.mdc
