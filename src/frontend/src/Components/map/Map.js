@@ -1021,6 +1021,13 @@ export default function DriveBCMap(props) {
     }
   }, [filteredAdvisories]);
 
+  // DBC22-5326: clear selected feature when route swap clears reference params
+  useEffect(() => {
+    if (!referenceData?.type && clickedFeatureRef.current) {
+      resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
+    }
+  }, [referenceData?.type]);
+
   // Reset search params when panel is closed
   useEffect(() => {
     if (searchParamInitialized.current) {
