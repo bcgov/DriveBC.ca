@@ -171,7 +171,7 @@ export default function Legend() {
         {getLegendItem(
           wildfiresStaticIcon,
           'Wildfires',
-          'Active forest fires that may impact drivability and are near a road or population area.',
+          'Active forest fires that are important to note, out of control, or currently being held.',
           'major'
         )}
 

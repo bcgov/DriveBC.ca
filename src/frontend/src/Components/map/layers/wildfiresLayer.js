@@ -41,38 +41,45 @@ export function getWildfiresLayer(
     // feature ID to advisory ID for retrieval
     locationFeatureForMap.setId(wildfire.id.toString() + '-location');
 
-    // Area feature
-    const isPolygon = wildfire.geometry.type === 'Polygon'
-    const olGeometry = isPolygon ?
-      new Polygon(wildfire.geometry.coordinates) :
-      new MultiPolygon(wildfire.geometry.coordinates);
-
-    const areaFeature = new ol.Feature({ geometry: olGeometry, type: 'wildfire' });
-
-    // Transfer properties
-    areaFeature.set('data', wildfire);
-
-    // Transform the projection
-    const areaFeatureForMap = transformFeature(
-      areaFeature,
-      'EPSG:4326',
-      projectionCode,
-    );
-
-    // feature ID to advisory ID for retrieval
-    areaFeatureForMap.setId(wildfire.id.toString() + '-area');
-
-    // Set reference to each other and add to vector source
-    locationFeatureForMap.set('altFeature', areaFeatureForMap);
-    areaFeatureForMap.set('altFeature', locationFeatureForMap);
     vectorSource.addFeature(locationFeatureForMap);
-    vectorSource.addFeature(areaFeatureForMap);
+
+    // Area feature (only when polygon data is available)
+    const geometryType = wildfire.geometry?.type;
+    if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
+      const isPolygon = geometryType === 'Polygon';
+      const olGeometry = isPolygon ?
+        new Polygon(wildfire.geometry.coordinates) :
+        new MultiPolygon(wildfire.geometry.coordinates);
+
+      const areaFeature = new ol.Feature({ geometry: olGeometry, type: 'wildfire' });
+
+      // Transfer properties
+      areaFeature.set('data', wildfire);
+
+      // Transform the projection
+      const areaFeatureForMap = transformFeature(
+        areaFeature,
+        'EPSG:4326',
+        projectionCode,
+      );
+
+      // feature ID to advisory ID for retrieval
+      areaFeatureForMap.setId(wildfire.id.toString() + '-area');
+
+      // Set reference to each other and add to vector source
+      locationFeatureForMap.set('altFeature', areaFeatureForMap);
+      areaFeatureForMap.set('altFeature', locationFeatureForMap);
+      vectorSource.addFeature(areaFeatureForMap);
+    }
 
     // Update the reference feature if id is the reference
     if (referenceData?.type === 'wildfire') {
       if (wildfire.id == referenceData.id) {  // Intentional loose equality for string IDs
-        updateReferenceFeature(areaFeatureForMap);
         updateReferenceFeature(locationFeatureForMap);
+        const altFeature = locationFeatureForMap.get('altFeature');
+        if (altFeature) {
+          updateReferenceFeature(altFeature);
+        }
       }
     }
   });

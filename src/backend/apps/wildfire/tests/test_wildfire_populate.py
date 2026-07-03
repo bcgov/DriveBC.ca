@@ -10,7 +10,7 @@ from apps.shared.tests import BaseTest, MockResponse
 from apps.wildfire.models import Wildfire
 from apps.wildfire.tasks import populate_all_wildfire_data, populate_wildfire_from_data
 from apps.wildfire.tests.test_data.wildfire_parsed_feed import parsed_feed
-from django.contrib.gis.geos import MultiPolygon, Point, Polygon
+from django.contrib.gis.geos import MultiPolygon, Point
 from httpx import HTTPStatusError
 
 # suppress logged error messages to reduce noise
@@ -50,17 +50,9 @@ class TestWildfireModel(BaseTest):
         self.parsed_feed = parsed_feed
 
     def test_populate_wildfire_function(self):
-        # Polygon/Under Control
-        populate_wildfire_from_data(self.parsed_feed[0])
-        wildfire_one = Wildfire.objects.get(id='C50627')
-        assert wildfire_one.id == 'C50627'
-        assert wildfire_one.url == 'https://wildfiresituation.nrs.gov.bc.ca/incidents?fireYear=2025&incidentNumber=C50627'
-        assert wildfire_one.name == 'Martin Lake'
-        assert isinstance(wildfire_one.location, Point)
-        assert isinstance(wildfire_one.geometry, Polygon)
-        assert wildfire_one.size == 2244.5
-        assert wildfire_one.status == "Under Control"
-        assert wildfire_one.reported_date == datetime.date(2025, 6, 15)
+        # Under Control, not populated
+        assert populate_wildfire_from_data(self.parsed_feed[0]) is None
+        assert not Wildfire.objects.filter(id='C50627').exists()
 
         # Out, not populated
         populate_wildfire_from_data(self.parsed_feed[1])
@@ -78,6 +70,14 @@ class TestWildfireModel(BaseTest):
         assert wildfire_two.status == "Being Held"
         assert wildfire_two.reported_date == datetime.date(2025, 5, 28)
 
+        # Point-only/Out of Control
+        populate_wildfire_from_data(self.parsed_feed[3])
+        wildfire_three = Wildfire.objects.get(id='V12345')
+        assert wildfire_three.name == 'Point Only Fire'
+        assert isinstance(wildfire_three.location, Point)
+        assert isinstance(wildfire_three.geometry, Point)
+        assert wildfire_three.status == "Out of Control"
+
     @patch("httpx.get")
     def test_populate_and_update_wildfires(self, mock_requests_get):
         mock_requests_get.side_effect = [
@@ -90,10 +90,7 @@ class TestWildfireModel(BaseTest):
         populate_all_wildfire_data()
 
         # validate data
-        assert Wildfire.objects.count() == 2  # wildfires with "Out" not populated
-        wildfire_one = Wildfire.objects.get(id='C50627')
-        assert wildfire_one.reported_date == datetime.date(2025, 6, 15)
-
+        assert Wildfire.objects.count() == 1  # only Being Held wildfires are populated
         wildfire_two = Wildfire.objects.get(id='G70422')
         assert wildfire_two.reported_date == datetime.date(2025, 5, 28)
 

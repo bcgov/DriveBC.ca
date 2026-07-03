@@ -160,8 +160,11 @@ export const resetClickedStates = (
           clickedFeatureRef.current.set('clicked', false);
 
           // Alt feature
-          clickedFeatureRef.current.get('altFeature').setStyle((isCentroid ? wildfireAreaStyles['static'] : wildfireCentroidStyles['static']));
-          clickedFeatureRef.current.get('altFeature').set('clicked', false);
+          const altFeature = clickedFeatureRef.current.get('altFeature');
+          if (altFeature) {
+            altFeature.setStyle((isCentroid ? wildfireAreaStyles['static'] : wildfireCentroidStyles['static']));
+            altFeature.set('clicked', false);
+          }
 
           updateClickedFeature(null);
       }
@@ -186,9 +189,9 @@ export const resetClickedStates = (
         break;
     }
     if (isCamDetail && targetFeature && targetFeature.get('type') === 'camera') {
-      if (highlighted_camera_list.length > 0) {     
+      if (highlighted_camera_list.length > 0) {
           highlighted_camera_list[0].setCameraStyle('static');
-          highlighted_camera_list[0].set('clicked', false); 
+          highlighted_camera_list[0].set('clicked', false);
         }
     }
   }
@@ -387,7 +390,7 @@ const regionalClickHandler = (
       updateClickedFeature,
       isCamDetail,
     );
-    
+
   }
   else {
     highlighted_camera_list.push(clickedFeatureRef.current);
@@ -555,8 +558,11 @@ export const wildfireClickHandler = (
   feature.set('clicked', true);
 
   // alt feature
-  feature.get('altFeature').setStyle((isCentroidFeature ? wildfireAreaStyles['active'] : wildfireCentroidStyles['active']));
-  feature.get('altFeature').set('clicked', true);
+  const altFeature = feature.get('altFeature');
+  if (altFeature) {
+    altFeature.setStyle((isCentroidFeature ? wildfireAreaStyles['active'] : wildfireCentroidStyles['active']));
+    altFeature.set('clicked', true);
+  }
 
   updateClickedFeature(feature);
 };

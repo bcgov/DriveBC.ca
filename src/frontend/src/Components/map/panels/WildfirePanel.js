@@ -24,13 +24,15 @@ export default function WildfirePanel(props) {
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
 
   const wildfireStatusDescriptions = {
-    'wildfire of note': 'A wildfire that is creating an increased level of interest. We use this designation to make it easier to find and access response information on the wildfire map. A wildfire that is spreading or it is anticipated to spread beyond the current perimeter, or control line.',
+    'fire of note': 'A wildfire that is creating an increased level of interest. We use this designation to make it easier to find and access response information on the wildfire map.',
+    'wildfire of note': 'A wildfire that is creating an increased level of interest. We use this designation to make it easier to find and access response information on the wildfire map.',
     'out of control': 'A wildfire that is spreading or it is anticipated to spread beyond the current perimeter, or control line.',
     'being held': 'A wildfire that is projected, based on fuel and weather conditions and resource availability, to remain within the current perimeter, control line or boundary.',
     'under control': 'A wildfire that is not projected to spread beyond the current perimeter.',
   };
 
   const wildfireStatusClasses = {
+    'fire of note': 'wildfire-status--note',
     'wildfire of note': 'wildfire-status--note',
     'out of control': 'wildfire-status--out-of-control',
     'being held': 'wildfire-status--being-held',
