@@ -71,5 +71,15 @@ parsed_feed = [
         'size': 26276.8,
         'status': 'Being Held',
         'url': 'https://wildfiresituation.nrs.gov.bc.ca/incidents?fireYear=2025&incidentNumber=G70422'
+    },
+    {
+        'location': Point(-123.0, 54.0),
+        'geometry': Point(-123.0, 54.0),
+        'id': 'V12345',
+        'name': 'Point Only Fire',
+        'reported_date': datetime.date(2025, 7, 1),
+        'size': 100,
+        'status': 'Out of Control',
+        'url': 'https://wildfiresituation.nrs.gov.bc.ca/incidents?fireYear=2025&incidentNumber=V12345'
     }
 ]

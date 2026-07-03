@@ -23,6 +23,9 @@ class WildfirePointPropertiesField(serializers.Field):
             "id": data['FIRE_NUMBER'],
             "name": data['INCIDENT_NAME'],
             "reported_date": datetime.datetime.strptime(data['IGNITION_DATE'], "%Y-%m-%dZ").date(),
+            "size": data['CURRENT_SIZE'],
+            "status": data['FIRE_STATUS'],
+            "url": data['FIRE_URL'],
         }
 
         return res

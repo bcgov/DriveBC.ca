@@ -115,7 +115,10 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
           {
             const isCentroid = hoveredFeature.getGeometry().getType() === 'Point';
             hoveredFeature.setStyle((isCentroid ? wildfireCentroidStyles['static'] : wildfireAreaStyles['static']));
-            hoveredFeature.get('altFeature').setStyle((isCentroid ? wildfireAreaStyles['static'] : wildfireCentroidStyles['static']));
+            const altFeature = hoveredFeature.get('altFeature');
+            if (altFeature) {
+              altFeature.setStyle((isCentroid ? wildfireAreaStyles['static'] : wildfireCentroidStyles['static']));
+            }
           }
           break;
         case 'dms':
@@ -240,7 +243,10 @@ export const pointerMoveHandler = (e, mapRef, hoveredFeature) => {
         if (!targetFeature.get('clicked')) {
           const isCentroid = targetFeature.getGeometry().getType() === 'Point';
           targetFeature.setStyle((isCentroid ? wildfireCentroidStyles['hover'] : wildfireAreaStyles['hover']));
-          targetFeature.get('altFeature').setStyle((isCentroid ? wildfireAreaStyles['hover'] : wildfireCentroidStyles['hover']));
+          const altFeature = targetFeature.get('altFeature');
+          if (altFeature) {
+            altFeature.setStyle((isCentroid ? wildfireAreaStyles['hover'] : wildfireCentroidStyles['hover']));
+          }
         }
         return;
       case 'dms':

@@ -1,11 +1,12 @@
 import logging
 
 from apps.feed.client import FeedClient
+from apps.shared.enums import CacheKey
+from apps.wildfire.enums import WILDFIRE_HIDDEN_STATUSES
 from apps.wildfire.models import Wildfire
 from apps.wildfire.serializers import WildfireInternalSerializer
-from django.core.exceptions import ObjectDoesNotExist
-from apps.shared.enums import CacheKey
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 def populate_wildfire_from_data(wildfire_data):
     wildfire_id = wildfire_data.get('id')
     wildfire_status = wildfire_data.get('status')
-    if not wildfire_status or wildfire_status == 'Out':
+    if not wildfire_status or wildfire_status in WILDFIRE_HIDDEN_STATUSES:
         return
 
     try:
@@ -38,20 +39,21 @@ def populate_all_wildfire_data():
         wildfire_areas_dict[wildfire_area['id']] = wildfire_area
 
     logger.warning("wildfire area count: %s", len(wildfire_areas_list))
-    if len(wildfire_areas_list) == 0:
-        return
 
-    # Combine area data with point data
+    # Combine area data with point data when available
     wildfire_data = []
     wildfire_points_list = FeedClient().get_wildfire_location_list()['features']
+    if len(wildfire_points_list) == 0:
+        return
+
     for wildfire_point in wildfire_points_list:
+        combined_data = {
+            'location': wildfire_point['geometry'],
+            **wildfire_point,
+        }
         if wildfire_point['id'] in wildfire_areas_dict:
-            wildfire_area = wildfire_areas_dict[wildfire_point['id']]
-            wildfire_data.append({
-                'location': wildfire_point['geometry'],
-                **wildfire_point,
-                **wildfire_area
-            })
+            combined_data.update(wildfire_areas_dict[wildfire_point['id']])
+        wildfire_data.append(combined_data)
 
     logger.warning("wildfire data count: %s", len(wildfire_data))
     if len(wildfire_data) == 0:
