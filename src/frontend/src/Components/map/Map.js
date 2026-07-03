@@ -700,6 +700,8 @@ export default function DriveBCMap(props) {
     if (!type || !id) return;
 
     if (type === 'advisory') {
+      // Advisories haven't loaded yet — wait for them, don't give up.
+      if (!filteredAdvisories || !filteredAdvisories.length) return;
       const advisoryData = filteredAdvisories?.find(a => a.id === parseInt(id));
       if (advisoryData) {
         setTimeout(() => {
@@ -710,8 +712,12 @@ export default function DriveBCMap(props) {
           updateClickedFeature(olFeature);
         }, 500);
       }
+      else {
+        // Advisories loaded but this id genuinely doesn't exist
+        setStaleLinkMessage(true);
+      }
     }
-  }, [mapRendered]);
+  }, [mapRendered, filteredAdvisories]);
 
   /* Map operations on location search */
   useEffect(() => {
