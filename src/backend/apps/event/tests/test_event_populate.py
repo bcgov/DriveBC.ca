@@ -302,3 +302,56 @@ class TestEventModel(BaseTest):
             datetime.datetime(2025, 5, 28, 8, 1, tzinfo=zoneinfo.ZoneInfo(key='America/Vancouver'))
         )
         assert dc3 == event_enums.EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
+
+    def test_planned_event_activation_triggers_update(self):
+        data = {
+            'closed': False,
+            'closest_landmark': '5 km west of Purden Lake',
+            'description': 'Highway 16 (Yellowhead Highway). Paving operations.',
+            'direction': 'NONE',
+            'event_sub_type': 'ROAD_MAINTENANCE',
+            'event_type': 'CONSTRUCTION',
+            'first_created': datetime.datetime(
+                2025, 5, 27, 8, 0, 35, tzinfo=zoneinfo.ZoneInfo(key='America/Vancouver')),
+            'highway_segment_names': '',
+            'id': 'DBC-20342',
+            'last_updated': datetime.datetime(2025, 5, 28, 0, 0, tzinfo=zoneinfo.ZoneInfo(key='America/Vancouver')),
+            'location': {
+                'coordinates': [-122.063117, 53.903021],
+                'type': 'Point'
+            },
+            'location_description': 'Between Willow River Rest Area and Bowron Pit Rd',
+            'next_update': None,
+            'route_at': 'Highway 16',
+            'route_from': 'Willow River Rest Area',
+            'route_to': '',
+            'schedule': {
+                'recurring_schedules': [
+                    {
+                        'daily_end_time': '20:00',
+                        'daily_start_time': '08:00',
+                        'days': [3, 4, 5, 6],
+                        'end_date': '2025-06-01',
+                        'start_date': '2025-05-28'
+                    }
+                ]
+            },
+            'severity': 'MINOR',
+            'start_point_linear_reference': 1076.938270924779,
+            'status': 'ACTIVE',
+            'timezone': 'America/Vancouver'
+        }
+        populate_event_from_data(data)
+        Event.objects.filter(id='DBC-20342').update(
+            display_category=event_enums.EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
+        )
+
+        with patch(
+            'apps.event.tasks.get_display_category',
+            return_value=event_enums.EVENT_DISPLAY_CATEGORY.MINOR_DELAYS,
+        ):
+            updated = populate_event_from_data(data)
+
+        assert updated is True
+        event = Event.objects.get(id='DBC-20342')
+        assert event.display_category == event_enums.EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
