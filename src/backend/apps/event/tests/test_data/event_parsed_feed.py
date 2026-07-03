@@ -28,6 +28,7 @@ parsed_feed = OrderedDict([
         [-120.526853, 49.451003],
         [-120.526427, 49.451752]
     ])),
+    ("location_description", "Highway 3 between Bromley Pl and Frontage Rd"),
     ("first_created", datetime.datetime(
         2023, 5, 19, 14, 29, 20, tzinfo=zoneinfo.ZoneInfo(key="America/Vancouver")
     )),
@@ -54,6 +55,7 @@ parsed_feed_2 = OrderedDict([
     ("route_to", "Frontage Rd"),
     ("direction", "NONE"),
     ("location", Point(-120.526427, 49.451752)),
+    ("location_description", "Highway 3 between Bromley Pl and Frontage Rd"),
     # ("location", {"coordinates": [-120.526427, 49.451752]})
     ("coordinates", [-120.526427, 49.451752]),
     ("first_created", datetime.datetime(
