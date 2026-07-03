@@ -690,6 +690,35 @@ export default function DriveBCMap(props) {
     };
   }, []);
 
+  // Auto-open panel from URL params on initial load
+  useEffect(() => {
+    if (!mapRendered) return;
+
+    const type = searchParams.get('type');
+    const id = searchParams.get('id');
+
+    if (!type || !id) return;
+
+    if (type === 'advisory') {
+      // Advisories haven't loaded yet — wait for them, don't give up.
+      if (!filteredAdvisories || !filteredAdvisories.length) return;
+      const advisoryData = filteredAdvisories?.find(a => a.id === parseInt(id));
+      if (advisoryData) {
+        setTimeout(() => {
+          const olFeature = new Feature();
+          olFeature.set('type', 'advisory');
+          olFeature.set('id', advisoryData.id);
+          olFeature.set('data', advisoryData);
+          updateClickedFeature(olFeature);
+        }, 500);
+      }
+      else {
+        // Advisories loaded but this id genuinely doesn't exist
+        setStaleLinkMessage(true);
+      }
+    }
+  }, [mapRendered, filteredAdvisories]);
+
   /* Map operations on location search */
   useEffect(() => {
     if (searchLocationFrom && searchLocationFrom.length) {
@@ -996,9 +1025,11 @@ export default function DriveBCMap(props) {
   useEffect(() => {
     if (searchParamInitialized.current) {
       if (!clickedFeature) {
-        searchParams.delete('type');
+        if (searchParams.get('type') !== 'advisory') {
+          searchParams.delete('type');
+          searchParams.delete('id');
+        }
         searchParams.delete('display_category');
-        searchParams.delete('id');
         searchParams.delete('camIndex');
         setSearchParams(searchParams, { replace: true });
       }
