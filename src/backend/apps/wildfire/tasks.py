@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def populate_wildfire_from_data(wildfire_data):
     wildfire_id = wildfire_data.get('id')
     wildfire_status = wildfire_data.get('status')
-    if not wildfire_status or wildfire_status in WILDFIRE_HIDDEN_STATUSES:
+    if wildfire_status in WILDFIRE_HIDDEN_STATUSES:
         return
 
     try:
