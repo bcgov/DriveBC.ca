@@ -78,6 +78,12 @@ class TestWildfireModel(BaseTest):
         assert isinstance(wildfire_three.geometry, Point)
         assert wildfire_three.status == "Out of Control"
 
+        # Blank status
+        blank_status_data = {**self.parsed_feed[3], 'id': 'V12346', 'status': ''}
+        populate_wildfire_from_data(blank_status_data)
+        wildfire_four = Wildfire.objects.get(id='V12346')
+        assert wildfire_four.status == ''
+
     @patch("httpx.get")
     def test_populate_and_update_wildfires(self, mock_requests_get):
         mock_requests_get.side_effect = [
