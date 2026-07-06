@@ -81,6 +81,7 @@ class TestPopulateRideMerge(BaseTest):
         )
         return {"events": [ev]}
 
+    @patch("apps.event.tasks.RIDE_EVENT_PREFIX", "RIDE")
     @patch("apps.event.ride.requests.get")
     @patch("httpx.get")
     def test_ride_uses_ride_feed_not_dit(self, mock_httpx_get, mock_requests_get):
