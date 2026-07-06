@@ -163,6 +163,7 @@ const RouteSearch = forwardRef((props, ref) => {
   const swapHandler = () => {
     if (resetClickedStates) {
       resetClickedStates();
+      dispatch(updateShowRouteObjs(false));
     }
 
     searchParams.delete('type');

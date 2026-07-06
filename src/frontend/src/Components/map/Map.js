@@ -996,6 +996,7 @@ export default function DriveBCMap(props) {
   useEffect(() => {
     if (!referenceData?.type && clickedFeatureRef.current) {
       resetClickedStates(null, clickedFeatureRef, updateClickedFeature);
+      dispatch(updateShowRouteObjs(false));
     }
   }, [referenceData?.type]);
 
