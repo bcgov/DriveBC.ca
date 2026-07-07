@@ -61,8 +61,8 @@ def populate_all_wildfire_data():
 
     # Populate wildfires from the combined data
     active_wildfires = []
-    for wildfire_data in wildfire_data:
-        wildfire_id = populate_wildfire_from_data(wildfire_data)
+    for wildfire in wildfire_data:
+        wildfire_id = populate_wildfire_from_data(wildfire)
         if wildfire_id:
             active_wildfires.append(wildfire_id)
 
