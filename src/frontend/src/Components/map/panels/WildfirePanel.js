@@ -102,10 +102,19 @@ export default function WildfirePanel(props) {
           <p className="name">{wildfire.name ? wildfire.name : wildfire.id}</p>
         </div>
         <div className="popup__content__description">
-          <div className={`wildfire-status ${getWildfireStatusClass(wildfire.status)}`}>
-            <p className="wildfire-status__title">{wildfire.status}</p>
-            <p className="wildfire-status__description">{getWildfireStatusDescription(wildfire.status)}</p>
-          </div>
+          {wildfire.wildfire_of_note &&
+            <div className={`wildfire-status ${getWildfireStatusClass('fire of note')}`}>
+              <p className="wildfire-status__title">{'Fire of Note'}</p>
+              <p className="wildfire-status__description">{getWildfireStatusDescription('fire of note')}</p>
+            </div>
+          }
+
+          {wildfire.status &&
+            <div className={`wildfire-status ${getWildfireStatusClass(wildfire.status)}`}>
+              <p className="wildfire-status__title">{wildfire.status}</p>
+              <p className="wildfire-status__description">{getWildfireStatusDescription(wildfire.status)}</p>
+            </div>
+          }
 
           <div className="data-card">
             <div className="data-card__row">

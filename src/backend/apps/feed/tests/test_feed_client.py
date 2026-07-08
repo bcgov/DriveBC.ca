@@ -1,16 +1,17 @@
+import json
 import logging
+from pathlib import Path
 from unittest.mock import MagicMock, patch
+
 import pytest
+from apps.feed.client import OPEN511, FeedClient
+from apps.feed.constants import REST_STOP
+from apps.feed.serializers import EventAPISerializer
+from apps.shared.tests import BaseTest
+from apps.webcam.models import CameraSource
+from django.conf import settings
 from django.core.cache import cache
 from httpx import HTTPStatusError
-from apps.feed.client import FeedClient, OPEN511
-from apps.feed.constants import REST_STOP
-from apps.feed.serializers import WebcamAPISerializer, EventAPISerializer
-from apps.shared.tests import BaseTest
-from django.conf import settings
-from apps.webcam.models import CameraSource
-from pathlib import Path
-import json
 
 logging.getLogger().setLevel(logging.CRITICAL)
 
@@ -30,16 +31,15 @@ class TestFeedClientHelperMethods(BaseTest):
         super().setUp()
         self.client = FeedClient()
 
-
     def test_get_response_data_or_raise_success(self):
         mock_response = create_mock_response(200, {'key': 'value'})
         result = self.client._get_response_data_or_raise(mock_response)
-        self.assertEqual(result, {'key': 'value'})
+        assert result == {'key': 'value'}
 
     def test_get_response_data_or_raise_bad_request(self):
         mock_response = create_mock_response(400, {'error': 'bad request'})
         result = self.client._get_response_data_or_raise(mock_response)
-        self.assertEqual(result, {'error': 'bad request'})
+        assert result == {'error': 'bad request'}
 
     def test_get_response_data_or_raise_unauthorized(self):
         mock_response = MagicMock()
@@ -75,7 +75,7 @@ class TestFeedClientWeatherToken(BaseTest):
         mock_post.return_value = mock_response
 
         token = self.client.get_new_weather_access_token()
-        self.assertEqual(token, 'test_token_123')
+        assert token == 'test_token_123'
 
     @patch('apps.feed.client.requests.post')
     def test_get_new_weather_access_token_raises(self, mock_post):
@@ -95,7 +95,7 @@ class TestFeedClientWeatherToken(BaseTest):
         mock_get.return_value = mock_response
 
         result = self.client.make_weather_request(settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL)
-        self.assertEqual(result, mock_response)
+        assert result == mock_response
         mock_get_token.assert_not_called()
 
     @patch('apps.feed.client.requests.get')
@@ -106,7 +106,7 @@ class TestFeedClientWeatherToken(BaseTest):
         mock_get_token.return_value = 'new_token'
 
         result = self.client.make_weather_request(settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL, mock_token=None)
-        self.assertEqual(result, mock_response)
+        assert result == mock_response
 
     @patch('apps.feed.client.requests.get')
     @patch.object(FeedClient, 'get_new_weather_access_token')
@@ -119,8 +119,8 @@ class TestFeedClientWeatherToken(BaseTest):
         mock_get_token.return_value = 'new_token'
 
         result = self.client.make_weather_request(settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL)
-        self.assertEqual(result, new_response)
-        self.assertEqual(mock_get.call_count, 2)
+        assert result == new_response
+        assert mock_get.call_count == 2
 
     @patch('apps.feed.client.requests.get')
     @patch.object(FeedClient, 'get_new_weather_access_token')
@@ -129,7 +129,7 @@ class TestFeedClientWeatherToken(BaseTest):
         mock_get.return_value = mock_response
 
         result = self.client.make_weather_request(settings.DRIVEBC_WEATHER_CURRENT_API_BASE_URL, mock_token='explicit_token')
-        self.assertEqual(result, mock_response)
+        assert result == mock_response
         mock_get_token.assert_not_called()
 
 
@@ -166,7 +166,6 @@ class TestFeedClientGetSingleFeed(BaseTest):
         }
 
 
-
 class TestFeedClientGetListFeed(BaseTest):
     """Test get_list_feed method."""
 
@@ -174,19 +173,18 @@ class TestFeedClientGetListFeed(BaseTest):
         super().setUp()
         self.client = FeedClient()
 
-
     @patch('apps.feed.client.httpx.get')
     def test_get_list_feed_with_params(self, mock_get):
         mock_response = create_mock_response(200, {'events': []})
         mock_get.return_value = mock_response
 
         result = self.client.get_list_feed(OPEN511, 'events', EventAPISerializer, {'limit': 500})
-        self.assertIn('events', result)
+        assert 'events' in result
 
 
 class TestFeedClientWebcam(BaseTest):
     """Test webcam feed methods."""
-    
+
     def populate_webcam_data(self, mock_data=None):
         for cam in mock_data['webcams']:
             CameraSource.objects.using('mssql').create(
@@ -216,9 +214,9 @@ class TestFeedClientWebcam(BaseTest):
             mock_qs.all.return_value = [fake_cam]
             mock_using.return_value = mock_qs
             result = self.client.get_webcam_list()
-            self.assertEqual(len(result), 1)
-            self.assertEqual(result[0].cam_internetname, "TestWebCam New")
-            
+            assert len(result) == 1
+            assert result[0].cam_internetname == "TestWebCam New"
+
     def test_get_webcam_list_exception(self):
         with patch("apps.webcam.models.CameraSource.objects.using") as mock_using:
             mock_using.side_effect = Exception("DB error")
@@ -226,7 +224,6 @@ class TestFeedClientWebcam(BaseTest):
             result = self.client.get_webcam_list()
 
             assert result == []
-            
 
 
 class TestFeedClientEvent(BaseTest):
@@ -242,7 +239,7 @@ class TestFeedClientEvent(BaseTest):
         mock_get.return_value = mock_response
 
         result = self.client.get_event_list()
-        self.assertIsNotNone(result)
+        assert result is not None
 
     @patch('apps.feed.client.FeedClient.get_single_feed')
     def test_get_event(self, mock_get_single):
@@ -252,14 +249,11 @@ class TestFeedClientEvent(BaseTest):
             id = 'event1'
 
         result = self.client.get_event(MockEvent())
-        self.assertEqual(result, {'id': 'event1', 'status': 'closed'})
+        assert result == {'id': 'event1', 'status': 'closed'}
 
     @patch('apps.feed.client.FeedClient.get_single_feed')
     @patch('apps.feed.client.FeedClient.get_list_feed')
     def test_get_dit_event_dict(self, mock_get_list, mock_get_single):
-        from apps.feed.client import DIT
-        from apps.feed.serializers import CarsClosureSerializer
-
         mock_get_list.return_value = [
             {'id': 'event1', 'status': 'closed'},
             {'id': 'DBCCNUP001', 'status': 'active'}
@@ -271,10 +265,10 @@ class TestFeedClientEvent(BaseTest):
 
         closures, chain_ups = self.client.get_dit_event_dict()
 
-        self.assertEqual(len(closures), 2)
-        self.assertIn('event1', closures)
-        self.assertIn('DBCCNUP001', closures)
-        self.assertEqual(len(chain_ups), 1)
+        assert len(closures) == 2
+        assert 'event1' in closures
+        assert 'DBCCNUP001' in closures
+        assert len(chain_ups) == 1
 
 
 class TestFeedClientGetListFeedWithErrors(BaseTest):
@@ -283,7 +277,6 @@ class TestFeedClientGetListFeedWithErrors(BaseTest):
     def setUp(self):
         super().setUp()
         self.client = FeedClient()
-
 
 
 class TestFeedClientFerry(BaseTest):
@@ -299,7 +292,7 @@ class TestFeedClientFerry(BaseTest):
         mock_get.return_value = mock_response
 
         result = self.client.get_ferries_list()
-        self.assertIsNotNone(result)
+        assert result is not None
 
 
 class TestFeedClientRestStop(BaseTest):
@@ -318,14 +311,14 @@ class TestFeedClientRestStop(BaseTest):
 
         from apps.feed.serializers import RestStopSerializer
         result = self.client.get_rest_stop_list_feed(REST_STOP, 'reststop', RestStopSerializer)
-        self.assertIsNotNone(result)
+        assert result is not None
 
     @patch('apps.feed.client.FeedClient.get_rest_stop_list_feed')
     def test_get_rest_stop_list(self, mock_get_list_feed):
         mock_get_list_feed.return_value = [{'id': '1'}]
 
         result = self.client.get_rest_stop_list()
-        self.assertEqual(result, [{'id': '1'}])
+        assert result == [{'id': '1'}]
 
 
 class TestFeedClientDistrict(BaseTest):
@@ -341,7 +334,7 @@ class TestFeedClientDistrict(BaseTest):
         mock_get.return_value = mock_response
 
         result = self.client.get_district_list()
-        self.assertIsNotNone(result)
+        assert result is not None
 
 
 class TestFeedClientWildfire(BaseTest):
@@ -350,6 +343,9 @@ class TestFeedClientWildfire(BaseTest):
     def setUp(self):
         super().setUp()
         self.client = FeedClient()
+        test_data_dir = Path(__file__).resolve().parents[2] / 'wildfire' / 'tests' / 'test_data'
+        with open(test_data_dir / 'wildfire_feed_location_list.json') as wildfire_location_feed_data:
+            self.mock_wildfire_location_feed_result = json.load(wildfire_location_feed_data)
 
     @patch('apps.feed.client.httpx.get')
     def test_get_wildfire_area_list(self, mock_get):
@@ -357,15 +353,20 @@ class TestFeedClientWildfire(BaseTest):
         mock_get.return_value = mock_response
 
         result = self.client.get_wildfire_area_list()
-        self.assertIsNotNone(result)
+        assert result is not None
 
     @patch('apps.feed.client.httpx.get')
-    def test_get_wildfire_location_list(self, mock_get):
-        mock_response = create_mock_response(200, {'features': []})
+    def test_get_wildfire_list(self, mock_get):
+        mock_response = create_mock_response(200, self.mock_wildfire_location_feed_result)
         mock_get.return_value = mock_response
 
-        result = self.client.get_wildfire_location_list()
-        self.assertIsNotNone(result)
+        result = self.client.get_wildfire_list()
+
+        assert len(result['features']) == 7
+        assert result['features'][0]['id'] == 'G90400'
+        assert result['features'][0]['status'] == 'Being Held'
+        assert result['features'][3]['id'] == 'K70659'
+        assert result['features'][3]['status'] == 'Out of Control'
 
 
 class TestFeedClientDMS(BaseTest):
@@ -381,7 +382,7 @@ class TestFeedClientDMS(BaseTest):
         mock_get.return_value = mock_response
 
         result = self.client.get_dms_list()
-        self.assertIsNotNone(result)
+        assert result is not None
 
     @patch('apps.feed.client.httpx.get')
     def test_get_dms_list_http_error(self, mock_get):
@@ -396,7 +397,6 @@ class TestFeedClientDMS(BaseTest):
         )
         mock_get.return_value = mock_response
 
-        from apps.feed.serializers import DmsAPISerializer
         with pytest.raises(HTTPStatusError):
             self.client.get_dms_list()
 
@@ -417,7 +417,7 @@ class TestFeedClientHighElevation(BaseTest):
         mock_weather_request.return_value = mock_response
 
         result = self.client.get_high_elevation_forecast_list()
-        self.assertEqual(result, [])
+        assert result == []
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_high_elevation_forecast_list_with_data(self, mock_weather_request):
@@ -426,15 +426,19 @@ class TestFeedClientHighElevation(BaseTest):
             'ForecastIssuedUtc': '2024-01-01T12:00:00',
             'ForecastGroup': {
                 'Forecasts': [
-                    {'Period': {'TextForecastName': 'Today'}, 'TextSummary': 'Sunny', 'AbbreviatedForecast': {'IconCode': {'Code': '00'}}}
+                    {
+                        'Period': {'TextForecastName': 'Today'},
+                        'TextSummary': 'Sunny',
+                        'AbbreviatedForecast': {'IconCode': {'Code': '00'}}
+                    }
                 ]
             }
         })
         mock_weather_request.side_effect = [self.valid_area_response, forecast_response]
 
         result = self.client.get_high_elevation_forecast_list()
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0]['code'], 'ABC')
+        assert len(result) == 1
+        assert result[0]['code'] == 'ABC'
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_high_elevation_forecast_list_warnings(self, mock_weather_request):
@@ -447,8 +451,8 @@ class TestFeedClientHighElevation(BaseTest):
         mock_weather_request.side_effect = [self.valid_area_response, forecast_response]
 
         result = self.client.get_high_elevation_forecast_list()
-        self.assertEqual(len(result), 1)
-        self.assertIsNotNone(result[0]['warnings'])
+        assert len(result) == 1
+        assert result[0]['warnings'] is not None
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_high_elevation_forecast_list_warnings_ended(self, mock_weather_request):
@@ -461,8 +465,8 @@ class TestFeedClientHighElevation(BaseTest):
         mock_weather_request.side_effect = [self.valid_area_response, forecast_response]
 
         result = self.client.get_high_elevation_forecast_list()
-        self.assertEqual(len(result), 1)
-        self.assertIsNone(result[0]['warnings'])
+        assert len(result) == 1
+        assert result[0]['warnings'] is None
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_high_elevation_forecast_list_204_no_content(self, mock_weather_request):
@@ -471,7 +475,7 @@ class TestFeedClientHighElevation(BaseTest):
         mock_weather_request.side_effect = [self.valid_area_response, forecast_response]
 
         result = self.client.get_high_elevation_forecast_list()
-        self.assertEqual(len(result), 0)
+        assert len(result) == 0
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_high_elevation_forecast_list_invalid_issued_time(self, mock_weather_request):
@@ -483,8 +487,8 @@ class TestFeedClientHighElevation(BaseTest):
         mock_weather_request.side_effect = [self.valid_area_response, forecast_response]
 
         result = self.client.get_high_elevation_forecast_list()
-        self.assertEqual(len(result), 1)
-        self.assertIsNone(result[0]['issued_utc'])
+        assert len(result) == 1
+        assert result[0]['issued_utc'] is None
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_high_elevation_forecast_list_skips_non_echighelevn(self, mock_weather_request):
@@ -500,8 +504,8 @@ class TestFeedClientHighElevation(BaseTest):
         mock_weather_request.side_effect = [area_response, forecast_response]
 
         result = self.client.get_high_elevation_forecast_list()
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0]['code'], 'DEF')
+        assert len(result) == 1
+        assert result[0]['code'] == 'DEF'
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_high_elevation_forecast_list_request_exception(self, mock_weather_request):
@@ -512,7 +516,7 @@ class TestFeedClientHighElevation(BaseTest):
         mock_weather_request.side_effect = [area_response, requests.RequestException("API Error")]
 
         result = self.client.get_high_elevation_forecast_list()
-        self.assertEqual(result, [])
+        assert result == []
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_high_elevation_forecast_list_outer_exception(self, mock_weather_request):
@@ -520,7 +524,7 @@ class TestFeedClientHighElevation(BaseTest):
         mock_weather_request.side_effect = requests.RequestException("Connection Error")
 
         result = self.client.get_high_elevation_forecast_list()
-        self.assertEqual(result, [])
+        assert result == []
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_high_elevation_forecast_list_valid_issued_date(self, mock_weather_request):
@@ -535,13 +539,13 @@ class TestFeedClientHighElevation(BaseTest):
         mock_weather_request.side_effect = [area_response, forecast_response]
 
         result = self.client.get_high_elevation_forecast_list()
-        self.assertEqual(len(result), 1)
-        self.assertIsNotNone(result[0].get('issued_utc'))
+        assert len(result) == 1
+        assert result[0].get('issued_utc') is not None
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_high_elevation_forecast_list_invalid_data(self, mock_weather_request):
         """Test that valid items are returned and errors are logged when some entries have invalid data."""
-        
+
         # Area list with one valid and one invalid entry
         area_list_response = create_mock_response(200, [
             {'AreaType': 'ECHIGHELEVN', 'AreaCode': 'ABC', 'AreaName': 'Valid Area'},
@@ -553,7 +557,11 @@ class TestFeedClientHighElevation(BaseTest):
             'ForecastIssuedUtc': '2024-01-01T12:00:00',
             'ForecastGroup': {
                 'Forecasts': [
-                    {'Period': {'TextForecastName': 'Today'}, 'TextSummary': 'Sunny', 'AbbreviatedForecast': {'IconCode': {'Code': '00'}}}
+                    {
+                        'Period': {'TextForecastName': 'Today'},
+                        'TextSummary': 'Sunny',
+                        'AbbreviatedForecast': {'IconCode': {'Code': '00'}}
+                    }
                 ]
             }
         })
@@ -570,8 +578,8 @@ class TestFeedClientHighElevation(BaseTest):
             result = self.client.get_high_elevation_forecast_list()
 
             # Only valid item is returned
-            self.assertEqual(len(result), 1)
-            self.assertEqual(result[0]['code'], 'ABC')
+            assert len(result) == 1
+            assert result[0]['code'] == 'ABC'
 
             # Error was logged for the invalid item
             mock_log.assert_called_once()
@@ -604,7 +612,7 @@ class TestFeedClientCurrentWeather(BaseTest):
         mock_weather_request.side_effect = [stations_response, forecast_response, current_response]
 
         result = self.client.get_current_weather_list('test_token')
-        self.assertIsNotNone(result)
+        assert result is not None
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_current_weather_list_empty_stations(self, mock_weather_request):
@@ -612,7 +620,7 @@ class TestFeedClientCurrentWeather(BaseTest):
         mock_weather_request.return_value = stations_response
 
         result = self.client.get_current_weather_list('test_token')
-        self.assertEqual(result, [])
+        assert result == []
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_current_weather_list_stations_error(self, mock_weather_request):
@@ -620,7 +628,7 @@ class TestFeedClientCurrentWeather(BaseTest):
         mock_weather_request.return_value = stations_response
 
         result = self.client.get_current_weather_list('test_token')
-        self.assertEqual(result, [])
+        assert result == []
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_current_weather_list_with_vms_station(self, mock_weather_request):
@@ -640,7 +648,7 @@ class TestFeedClientCurrentWeather(BaseTest):
 
         from apps.feed.serializers import CurrentWeatherSerializer
         result = self.client.get_current_weather_list_feed(CurrentWeatherSerializer, 'test_token')
-        self.assertEqual(result, [])
+        assert result == []
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_current_weather_list_no_datasets(self, mock_weather_request):
@@ -660,7 +668,7 @@ class TestFeedClientCurrentWeather(BaseTest):
 
         from apps.feed.serializers import CurrentWeatherSerializer
         result = self.client.get_current_weather_list_feed(CurrentWeatherSerializer, 'test_token')
-        self.assertEqual(result, [])
+        assert result == []
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_current_weather_list_forecast_error(self, mock_weather_request):
@@ -670,7 +678,7 @@ class TestFeedClientCurrentWeather(BaseTest):
 
         from apps.feed.serializers import CurrentWeatherSerializer
         result = self.client.get_current_weather_list_feed(CurrentWeatherSerializer, 'test_token')
-        self.assertEqual(result, [])
+        assert result == []
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_current_weather_list_general_data_error(self, mock_weather_request):
@@ -681,7 +689,7 @@ class TestFeedClientCurrentWeather(BaseTest):
 
         from apps.feed.serializers import CurrentWeatherSerializer
         result = self.client.get_current_weather_list_feed(CurrentWeatherSerializer, 'test_token')
-        self.assertEqual(result, [])
+        assert result == []
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_current_weather_list_with_collection_utc(self, mock_weather_request):
@@ -697,10 +705,10 @@ class TestFeedClientCurrentWeather(BaseTest):
             },
             'Datasets': [
                 {
-                    'DataSetName': 'air_temp', 
-                    'DisplayName': 'Air Temp', 
-                    'CollectionUtc': '2024-01-01T12:00:00', 
-                    'Value': '20', 
+                    'DataSetName': 'air_temp',
+                    'DisplayName': 'Air Temp',
+                    'CollectionUtc': '2024-01-01T12:00:00',
+                    'Value': '20',
                     'Unit': 'C',
                     'Precedence': 1
                 }
@@ -710,7 +718,7 @@ class TestFeedClientCurrentWeather(BaseTest):
 
         from apps.feed.serializers import CurrentWeatherSerializer
         result = self.client.get_current_weather_list_feed(CurrentWeatherSerializer, 'test_token')
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
 
     @patch('apps.feed.client.FeedClient.make_weather_request')
     def test_get_current_weather_list_collection_utc_parse_error(self, mock_weather_request):
@@ -730,4 +738,4 @@ class TestFeedClientCurrentWeather(BaseTest):
 
         from apps.feed.serializers import CurrentWeatherSerializer
         result = self.client.get_current_weather_list_feed(CurrentWeatherSerializer, 'test_token')
-        self.assertEqual(len(result), 0)
+        assert len(result) == 0

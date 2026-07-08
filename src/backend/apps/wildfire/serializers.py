@@ -1,7 +1,11 @@
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 
-from .fields import WildfireAreaPropertiesField, WildfirePointPropertiesField
+from .fields import (
+    WildfireAreaPropertiesField,
+    WildfirePointGeometryField,
+    WildfirePointPropertiesField,
+)
 from .models import Wildfire
 
 
@@ -41,8 +45,11 @@ class WildfireAreaFeedSerializer(serializers.Serializer):
 
 
 class WildfirePointFeedSerializer(serializers.Serializer):
-    geometry = GeometryField()
-    properties = WildfirePointPropertiesField(source="*")
+    def to_internal_value(self, data):
+        return {
+            'geometry': WildfirePointGeometryField().to_internal_value(data),
+            **WildfirePointPropertiesField().to_internal_value(data),
+        }
 
 
 class WildfireAreaSerializer(serializers.Serializer):
@@ -51,3 +58,8 @@ class WildfireAreaSerializer(serializers.Serializer):
 
 class WildfirePointSerializer(serializers.Serializer):
     features = WildfirePointFeedSerializer(many=True)
+
+    def to_internal_value(self, data):
+        if 'collection' in data:
+            data = {**data, 'features': data['collection']}
+        return super().to_internal_value(data)

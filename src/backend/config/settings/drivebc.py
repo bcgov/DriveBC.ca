@@ -63,4 +63,10 @@ DRIVEBC_COSTAL_FERRY_DATA_URL = env("DRIVEBC_COSTAL_FERRY_DATA_URL")
 # Openmaps API Settings
 DRIVEBC_OPENMAPS_API_URL = env("DRIVEBC_OPENMAPS_API_URL")
 
+# Wildfire
+DRIVEBC_WILDFIRE_API_URL = env(
+    "DRIVEBC_WILDFIRE_API_URL",
+    default='https://wildfiresituation.nrs.gov.bc.ca/wfnews-api/publicPublishedIncident'
+)
+
 RIDE_EVENT_PREFIX = env("RIDE_EVENT_PREFIX", default="RIDE")

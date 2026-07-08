@@ -171,7 +171,7 @@ export default function Legend() {
         {getLegendItem(
           wildfiresStaticIcon,
           'Wildfires',
-          'Active forest fires that are important to note, out of control, or currently being held.',
+          'Active forest fires labeled by BC Wildfire as out of control, currently being held, under control, or important to note.',
           'major'
         )}
 

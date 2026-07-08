@@ -11,7 +11,8 @@ class Wildfire(ExportModelOperationsMixin('wildfire'), BaseModel):
     geometry = models.GeometryField()
     location = models.PointField()
 
-    size = models.FloatField()
+    size = models.FloatField(null=True, blank=True)
     status = models.CharField(max_length=128, blank=True, default='')
+    wildfire_of_note = models.BooleanField(default=False)
 
     reported_date = models.DateField()

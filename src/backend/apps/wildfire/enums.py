@@ -1,4 +1,19 @@
+from enum import StrEnum
+
+
+class WILDFIRE_STATUS(StrEnum):
+    HOLDING = "Being Held"
+    OUT_CNTRL = "Out of Control"
+    UNDR_CNTRL = "Under Control"
+    OUT = "Out"
+
+
 WILDFIRE_HIDDEN_STATUSES = [
-    'Out',
-    'Under Control',
+    WILDFIRE_STATUS.OUT,
+]
+
+WILDFIRE_FETCH_STAGES = [
+    WILDFIRE_STATUS.OUT_CNTRL,
+    WILDFIRE_STATUS.HOLDING,
+    WILDFIRE_STATUS.UNDR_CNTRL,
 ]
