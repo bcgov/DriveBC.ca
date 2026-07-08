@@ -33,6 +33,60 @@
     }
   }
 
+  .filters-btn {
+    position: relative;
+
+    .filters-btn__icon {
+      @media (min-width: 576px) {
+        margin-right: 8px;
+      }
+    }
+
+    .btn-text {
+      font-size: 0.875rem;
+      margin-bottom: 0;
+      white-space: nowrap;
+    }
+
+    &.filtered {
+      background: $Info;
+      color: $White;
+
+      .btn-text {
+        color: $White;
+      }
+    }
+
+    .filter-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      margin-left: 8px;
+      border-radius: 9px;
+      background: $Info;
+      color: $White;
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1;
+
+      @media (max-width: 575px) {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin-left: 0;
+      }
+    }
+
+    &.filtered .filter-count,
+    &.active .filter-count {
+      background: $White;
+      color: $Info;
+    }
+  }
+
   .advisories-btn {
     margin-top: 1rem;
     width: 100%;
@@ -83,5 +137,101 @@
         flex-direction: row;
       }
     }
+  }
+}
+
+.filters-overlay {
+
+  &.open {
+    padding: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: auto;
+    height: 100%;
+    z-index: 10001;
+    margin-top: 60px;
+
+    &__header {
+      color: $Type-Primary;
+      font-size: 0.875rem;
+      padding: 0;
+      margin-bottom: 0;
+    }
+  
+    &__subheader {
+      font-size: 0.875rem;
+      color: $Grey80;
+      padding: 1.5rem 1rem 0.5rem;
+      margin-bottom: 0;
+    }
+  }
+
+  .close-overlay {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $Type-Primary;
+    transition: background-color 0.2s ease-in-out;
+    font-size: 0.875rem;
+
+    &:hover {
+      background: $Grey30;
+    }
+  }
+
+  .filters-component {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 2rem;
+  }
+
+  .container--header {
+    display: flex;
+    align-items: center;
+
+    &:not(:first-of-type) {
+      margin-top: 1.5rem;
+    }
+  }
+
+  .all-filters {
+    .icon--all-filters {
+      border: 2px solid $Type-Primary;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+  }
+
+  .sorted-by {
+    .icon--sorted-by {
+      font-size: 0.75rem;
+    }
+  }
+
+  .filters-overlay__icon {
+    margin-right: 8px;
+  }
+
+  .area-filters,
+  .highway-filters {
+    position: relative;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: auto;
+    box-shadow: none;
+    overflow-y: visible;
   }
 }

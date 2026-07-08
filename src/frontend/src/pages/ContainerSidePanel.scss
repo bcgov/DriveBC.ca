@@ -116,12 +116,6 @@
   &__right {
     flex: 1 1 auto;
 
-    .sticky-sentinel {
-      height: 1px;
-      background: none;
-      margin: -1px;
-    }
-
     .sticky-filters {
       position: sticky;
       z-index: 1;
