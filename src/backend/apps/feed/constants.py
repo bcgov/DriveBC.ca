@@ -11,6 +11,7 @@ CURRENT_WEATHER_STATIONS = "current_weather_stations"
 REST_STOP = "rest_stop"
 DISTRICT_BOUNDARIES = "district_boundaries"
 WILDFIRE = "wildfire"
+WILDFIRE_AREAS = "wildfire_areas"
 DMS = "dms"
 
 DIRECTIONS = {

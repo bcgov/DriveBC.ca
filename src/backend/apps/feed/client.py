@@ -19,6 +19,7 @@ from apps.feed.constants import (  # WEBCAM,
     REGIONAL_WEATHER_AREAS,
     REST_STOP,
     WILDFIRE,
+    WILDFIRE_AREAS,
 )
 from apps.feed.serializers import (
     CarsClosureSerializer,
@@ -32,6 +33,7 @@ from apps.feed.serializers import (
 from apps.shared.serializers import DistrictAPISerializer
 from apps.weather.models import CurrentWeather
 from apps.webcam.models import CameraSource
+from apps.wildfire.enums import WILDFIRE_FETCH_STAGES
 from apps.wildfire.serializers import WildfireAreaSerializer, WildfirePointSerializer
 from django.conf import settings
 from django.contrib.gis.geos import Point
@@ -117,6 +119,9 @@ class FeedClient:
                 "base_url": settings.DRIVEBC_OPENMAPS_API_URL,
             },
             WILDFIRE: {
+                "base_url": settings.DRIVEBC_WILDFIRE_API_URL,
+            },
+            WILDFIRE_AREAS: {
                 "base_url": settings.DRIVEBC_OPENMAPS_API_URL,
             },
             DMS: {
@@ -614,7 +619,7 @@ class FeedClient:
 
     def get_wildfire_area_list(self):
         return self.get_list_feed(
-            WILDFIRE,
+            WILDFIRE_AREAS,
             'geo/ows',
             WildfireAreaSerializer,
             {
@@ -627,19 +632,12 @@ class FeedClient:
             }
         )
 
-    def get_wildfire_location_list(self):
+    def get_wildfire_list(self):
         return self.get_list_feed(
             WILDFIRE,
-            'geo/ows',
+            '',
             WildfirePointSerializer,
-            {
-                "service": "WFS",
-                "version": "1.1.0",
-                "request": "GetFeature",
-                "typeName": "pub:WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_PNTS_SP",
-                "srsName": "EPSG:4326",
-                "outputFormat": "json",
-            }
+            [("stageOfControlList", stage.name) for stage in WILDFIRE_FETCH_STAGES]
         )
 
     def get_dms_list(self):

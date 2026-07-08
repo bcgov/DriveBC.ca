@@ -42,7 +42,7 @@ def populate_all_wildfire_data():
 
     # Combine area data with point data when available
     wildfire_data = []
-    wildfire_points_list = FeedClient().get_wildfire_location_list()['features']
+    wildfire_points_list = FeedClient().get_wildfire_list()['features']
     if len(wildfire_points_list) == 0:
         return
 
