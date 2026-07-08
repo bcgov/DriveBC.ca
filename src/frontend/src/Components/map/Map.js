@@ -570,7 +570,8 @@ export default function DriveBCMap(props) {
       maxZoom: 15,
       minZoom: 5,
       extent: transformedExtent,
-      enableRotation: false
+      enableRotation: false,
+      zoomFactor: 2.2
     });
 
     // Apply the basemap style from the arcgis resource
