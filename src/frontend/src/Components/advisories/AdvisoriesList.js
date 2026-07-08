@@ -39,12 +39,9 @@ export default function AdvisoriesList(props) {
     }
 
     trackEvent('click', 'advisories-list', 'Advisory', advisory.title, advisory.teaser);
-    // dismissedHighlightsRef.current.add(advisory.id);
-    // sessionStorage.setItem(
-    //   'dismissedHighlights',
-    //   JSON.stringify([...dismissedHighlightsRef.current])
-    // );
-    dismissHighlight(advisory.id);  // use parent's function
+    if (dismissHighlight) {
+      dismissHighlight(advisory.id);  // use parent's function
+    }
     navigate(`/advisories/${advisory.slug}`);
   }
 
