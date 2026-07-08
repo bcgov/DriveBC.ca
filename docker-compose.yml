@@ -17,6 +17,8 @@ x-function: &backend
     - db
     - redis
 
+  platform: linux/amd64
+
 volumes:
   redis:
   postgres:
