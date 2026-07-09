@@ -213,37 +213,47 @@ def create_webcam_db(cam_data: dict):
             except (ValueError, TypeError):
                 geometry = None
 
-        webcam, created = Webcam.objects.update_or_create(
-            id=cam_id,
-            defaults={
-                "region": region_id,
-                "region_name": format_region_name(cam_data.cam_locationsregion),
-                "is_on": True if cam_data.cam_controldisabled == 0 else False,
-                "should_appear": True if cam_data.cam_controldisappear == 0 else False,
-                "name": cam_data.cam_internetname,
-                "caption": cam_data.cam_internetcaption,
-                "highway": raw_hw.split("_", 1)[0] if "_" in raw_hw else raw_hw,
-                "highway_group": highway_group,
-                "highway_cam_order": cam_data.seq,
-                "location": geometry,
-                "highway_description": raw_hw.split("_", 1)[1] if "_" in raw_hw else "",
-                "orientation": cam_data.cam_locationsorientation,
-                "elevation": cam_data.cam_locationselevation,
-                "dbc_mark": cam_data.cam_internetdbc_mark,
-                "credit": cam_data.cam_internetcredit,
-                "is_new": cam_data.isnew,
-                "is_on_demand": cam_data.cam_maintenanceis_on_demand,
-                "update_period_mean": camera_status["mean_interval"],
-                "update_period_stddev": camera_status["stddev_interval"],
-                "marked_stale": camera_status["stale"],
-                "marked_delayed": camera_status["delayed"],
-            },
-            create_defaults={  # only applied on INSERT, never on UPDATE
-                "last_update_attempt": dt_utc,
-                "last_update_modified": dt_utc,
-            }
-        )
-        return webcam, created
+        # applied on update/insert
+        update_dict = {
+            "region": region_id,
+            "region_name": format_region_name(cam_data.cam_locationsregion),
+            "is_on": True if cam_data.cam_controldisabled == 0 else False,
+            "should_appear": True if cam_data.cam_controldisappear == 0 else False,
+            "name": cam_data.cam_internetname,
+            "caption": cam_data.cam_internetcaption,
+            "highway": raw_hw.split("_", 1)[0] if "_" in raw_hw else raw_hw,
+            "highway_group": highway_group,
+            "highway_cam_order": cam_data.seq,
+            "location": geometry,
+            "highway_description": raw_hw.split("_", 1)[1] if "_" in raw_hw else "",
+            "orientation": cam_data.cam_locationsorientation,
+            "elevation": cam_data.cam_locationselevation,
+            "dbc_mark": cam_data.cam_internetdbc_mark,
+            "credit": cam_data.cam_internetcredit,
+            "is_new": cam_data.isnew,
+            "is_on_demand": cam_data.cam_maintenanceis_on_demand,
+            "update_period_mean": camera_status["mean_interval"],
+            "update_period_stddev": camera_status["stddev_interval"],
+            "marked_stale": camera_status["stale"],
+            "marked_delayed": camera_status["delayed"],
+        }
+
+        # only applied on INSERT
+        create_dict = {
+            "last_update_attempt": dt_utc,
+            "last_update_modified": dt_utc,
+        }
+
+        # Cam exists, update
+        cam_query = Webcam.objects.filter(id=cam_id)
+        camera = cam_query.first()
+        if camera:
+            cam_query.update(**update_dict, **create_dict)
+            return camera, False
+
+        # Create new cam otherwise
+        camera = Webcam.objects.create(**update_dict, **create_dict)
+        return camera, True
 
     except Exception as e:
         logging.exception(f"Failed to create webcam for cam_id {cam_id}: {e}")
