@@ -121,3 +121,8 @@ class QueuedEventNotification(ExportModelOperationsMixin('queued_event_notificat
 
     class Meta:
         unique_together = ('route_id', 'event_id')
+
+
+class QueuedDistrictEventNotification(ExportModelOperationsMixin('queued_district_event_notifications'), BaseModel):
+    subscription_id = models.PositiveIntegerField()
+    event_ids = models.JSONField(default=list, blank=True)  # list of Event IDs

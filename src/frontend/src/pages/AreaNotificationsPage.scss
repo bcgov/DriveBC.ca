@@ -1,0 +1,70 @@
+@import "../styles/variables.scss";
+
+.hidden-desktop {
+  @media (min-width: 992px) {
+    display: none;
+  }
+}
+
+.area-notifications-page {
+  position: relative;
+
+  .not-verified, .verified {
+    background-color: $MyAccountWarning;
+    color: $MyAccountWarningText;
+    padding: 0.5rem 4rem;
+    font-size: 0.875rem;
+
+    @media (max-width: 992px) {
+      padding: 1rem 0.75rem;
+    }
+
+    .verify-link {
+      margin-bottom: 0;
+
+      @media (min-width: 992px) {
+        margin-left: 1rem;
+      }
+
+      @media (max-width: 992px) {
+        margin-top: 1rem;
+      }
+    }
+  }
+
+  .verified {
+    background-color: $MyAccountSuccess;
+    color: $MyAccountSuccessText;
+  }
+
+  .container {
+    @media (min-width: 576px) {
+      max-width: 1880px;
+      padding: 32px 48px;
+    }
+
+    @media (min-width: 992px) {
+      padding: 44px 64px;
+    }
+  }
+
+  .content-container {
+    .area-list {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 1rem 1.5rem;
+
+      .area-notification-card {
+        flex: 0 1 407px;
+        max-width: 100%;
+      }
+    }
+
+    .login-prompt {
+      a {
+        color: $Type-Primary;
+      }
+    }
+  }
+}

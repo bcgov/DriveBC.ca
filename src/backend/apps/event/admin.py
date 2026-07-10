@@ -1,33 +1,53 @@
 from apps.cms.models import DriveBCMapWidget
-from apps.event.models import Event, QueuedEventNotification
-from apps.event.tasks import queue_event_notifications, send_queued_notifications
+from apps.event.models import (
+    Event,
+    QueuedDistrictEventNotification,
+    QueuedEventNotification,
+)
+from apps.event.tasks import (
+    queue_event_notifications,
+    send_queued_district_notifications,
+    send_queued_notifications,
+)
 from django.contrib.gis import admin
 
 
-@admin.action(description="Send route notifications")
-def queue_route_notifications(modeladmin, request, queryset):
+@admin.action(description="Send event update notifications")
+def queue_event_update_notifications(modeladmin, request, queryset):
     queue_event_notifications(list(queryset.values_list('id', flat=True)))
 
 
 class EventAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
-    actions = [queue_route_notifications]
+    actions = [queue_event_update_notifications]
     list_display = ('id', 'event_type', 'display_category',
                     'event_sub_type', 'severity', 'closed',
                     'first_created', 'last_updated')
     gis_widget = DriveBCMapWidget
 
 
-@admin.action(description="Send all queued notifications")
-def send_all_queued_notifications(modeladmin, request, queryset):
+@admin.action(description="Send all queued event notifications")
+def send_all_queued_event_notifications(modeladmin, request, queryset):
     send_queued_notifications()
 
 
 class QueuedEventNotificationAdmin(admin.ModelAdmin):
     readonly_fields = ('id', 'created_at', 'modified_at')
     list_display = ('id', 'event_id', 'route_id', 'created_at')
-    actions = [send_all_queued_notifications]
+    actions = [send_all_queued_event_notifications]
 
 
+@admin.action(description="Send all queued district notifications")
+def send_all_queued_district_notifications(modeladmin, request, queryset):
+    send_queued_district_notifications()
+
+
+class QueuedDistrictEventNotificationAdmin(admin.ModelAdmin):
+    readonly_fields = ('id', 'created_at', 'modified_at')
+    list_display = ('id', 'event_ids', 'subscription_id', 'created_at')
+    actions = [send_all_queued_district_notifications]
+
+
+admin.site.register(QueuedDistrictEventNotification, QueuedDistrictEventNotificationAdmin)
 admin.site.register(QueuedEventNotification, QueuedEventNotificationAdmin)
 admin.site.register(Event, EventAdmin)

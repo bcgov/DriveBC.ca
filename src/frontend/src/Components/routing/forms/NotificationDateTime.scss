@@ -5,7 +5,7 @@
   .notifications-targets {
     width: 100%;
     margin-top: 6px;
-  
+
     @media (min-width: 576px) {
       column-count: 2;
       column-gap: 12px;
@@ -64,7 +64,7 @@
     & +  .info-row.for-time-row {
       margin-top: 4px;
     }
-    
+
   }
 
   .date-row {
@@ -83,9 +83,13 @@
 
 .notifications-dates {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 
-  @media (min-width: 768px) {
-    column-count: 4;
+  .notifications-target {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 }
 

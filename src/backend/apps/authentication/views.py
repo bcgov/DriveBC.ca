@@ -18,9 +18,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..shared.helpers import attach_default_email_images
-from .models import DriveBCUser, FavouritedCameras, SavedRoutes
+from .models import DriveBCUser, EmailSubscription, FavouritedCameras, SavedRoutes
 from .serializers import (
     DriveBCUserSerializer,
+    EmailSubscriptionSerializer,
     FavouritedCamerasSerializer,
     SavedRoutesSerializer,
 )
@@ -154,6 +155,64 @@ class SavedRoutesViewset(viewsets.ModelViewSet):
             existing = self.request.user.routes.filter(label=label).first()
             if existing is not None:
                 return Response({'code': 'duplicate_name'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return super().create(request, *args, **kwargs)
+
+
+class EmailSubscriptionViewset(viewsets.ModelViewSet):
+    r'''
+    This viewset provides for listing, adding, and removing email subscriptions
+    for the authenticated user.  Unauthenticated users will receive a 403
+    response.
+
+    **GET /api/users/email-subscriptions/**
+
+    Returns a list of email subscriptions for the authenticated user.
+
+    **POST /api/users/email-subscriptions/**
+
+    Creates a new email subscription for the user.  A user may only subscribe
+    to each area once.
+
+        {
+            "area": <Area ID>,
+            "notification": <boolean>,
+            "notification_types": <list of event display types>,
+            "notification_days": <list of days of the week>,
+            "notification_start_date": <date or null>,
+            "notification_end_date": <date or null>,
+            "notification_start_time": <time or null>,
+            "notification_end_time": <time or null>
+        }
+
+    **DELETE /api/users/email-subscriptions/*<id\>*/**
+
+    Removes the subscription from the user's list, deleting it from the database.
+
+    **PUT /api/users/email-subscriptions/*<id\>*/**
+
+    Updates the subscription identified by *<id\>*.  Requires entire object to be sent.
+
+    **PATCH /api/users/email-subscriptions/*<id\>*/**
+
+    Updates the subscription identified by *<id\>*.  Partial update is allowed,
+    sending only those fields with changing values.
+    '''
+
+    queryset = EmailSubscription.objects.all()
+    serializer_class = EmailSubscriptionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+
+    def get_queryset(self):
+        return self.request.user.email_subscriptions.all().order_by('-created_at')
+
+    def create(self, request, *args, **kwargs):
+        area = request.data.get('area', None)
+        if area is not None:
+            existing = self.request.user.email_subscriptions.filter(area=area).first()
+            if existing is not None:
+                return Response({'code': 'duplicate_area'}, status=status.HTTP_400_BAD_REQUEST)
 
         return super().create(request, *args, **kwargs)
 
