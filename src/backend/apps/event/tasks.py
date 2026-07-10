@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from apps.authentication.models import SavedRoutes
+from apps.authentication.models import EmailSubscription, SavedRoutes
 from apps.event.enums import (
     EVENT_DIFF_FIELDS,
     EVENT_DISPLAY_CATEGORY,
@@ -13,7 +13,11 @@ from apps.event.enums import (
     EVENT_UPDATE_FIELDS,
 )
 from apps.event.helpers import get_display_category
-from apps.event.models import Event, QueuedEventNotification
+from apps.event.models import (
+    Event,
+    QueuedDistrictEventNotification,
+    QueuedEventNotification,
+)
 from apps.event.ride import get_ride_event_dict
 from apps.event.serializers import EventInternalSerializer
 from apps.feed.client import FeedClient
@@ -308,14 +312,48 @@ def get_notification_routes(dt=None):
     return filtered_routes
 
 
+def get_district_subscriptions(areas, dt=None):
+    current_dt = datetime.datetime.now(ZoneInfo('America/Vancouver')) if not dt else dt
+
+    # Get the current day of the week and time
+    current_day = current_dt.strftime('%A')
+    current_date = current_dt.date()
+    current_time = current_dt.time()
+
+    # Get all saved subscriptions that have notifications enabled
+    filtered_subscriptions = EmailSubscription.objects.filter(
+        user__verified=True, user__consent=True, notification=True, area__in=areas
+
+    ).filter(
+        # Routes that are always active
+        Q(notification_start_time=None) |
+
+        # Routes that match day of week and time frame
+        Q(notification_days__contains=[current_day],
+          notification_start_time__lte=current_time, notification_end_time__gte=current_time) |
+
+        # Routes that match date period and time frame
+        Q(notification_start_date__lte=current_date, notification_end_date__gte=current_date,
+          notification_start_time__lte=current_time, notification_end_time__gte=current_time) |
+
+        # Routes that match specific date and time frame
+        Q(notification_start_date=current_date, notification_end_date=None,
+          notification_start_time__lte=current_time, notification_end_time__gte=current_time)
+    )
+
+    return filtered_subscriptions
+
+
 def queue_event_notifications(updated_event_ids, dt=None):
-    for saved_route in get_notification_routes(dt):
+    for saved_route in get_notification_routes(dt=dt):
         queue_route_event_notifications(saved_route, updated_event_ids)
+
+    areas = Event.objects.filter(id__in=updated_event_ids).values_list('area', flat=True).distinct()
+    for sub in get_district_subscriptions(areas, dt=dt):
+        queue_district_event_notifications(sub, updated_event_ids)
 
 
 def generate_settings_message(route, test_time=None):
-    current_time = test_time or datetime.datetime.now(ZoneInfo('America/Vancouver'))
-    isDst = current_time.dst().total_seconds() > 0
     msg = 'Based on your settings, you are being notified for all new and updated '
 
     # Add event types
@@ -340,9 +378,8 @@ def generate_settings_message(route, test_time=None):
 
     else:
         msg += (f'between {route.notification_start_time.strftime("%I:%M%p").lower()} '
-                f'and {route.notification_end_time.strftime("%I:%M%p").lower()} ')
-
-        msg += 'Pacific Standard Time (PST) ' if not isDst else 'Pacific Daylight Time (PDT) '
+                f'and {route.notification_end_time.strftime("%I:%M%p").lower()} '
+                f'Pacific Daylight Time (PDT) ')
 
         # Specific date
         if route.notification_end_date:
@@ -359,6 +396,40 @@ def generate_settings_message(route, test_time=None):
 
         else:
             msg += f'every {", ".join(route.notification_days)}.'
+
+    return msg
+
+
+def generate_district_settings_message(subscription, test_time=None):
+    msg = (
+        'Based on your settings, you are being notified for all new and updated '
+        f'information in {subscription.area.name} '
+    )
+
+    # Immediately and all the time
+    if not subscription.notification_start_time:
+        msg += 'at any time.'
+
+    else:
+        msg += (f'between {subscription.notification_start_time.strftime("%I:%M%p").lower()} '
+                f'and {subscription.notification_end_time.strftime("%I:%M%p").lower()} '
+                f'Pacific Daylight Time (PDT) ')
+
+        # Date range
+        if subscription.notification_end_date:
+            msg += (f'from {subscription.notification_start_date.strftime("%B %d")} '
+                    f'to {subscription.notification_end_date.strftime("%B %d")}.')
+
+        # Specific date
+        elif subscription.notification_start_date:
+            msg += f'on {subscription.notification_start_date.strftime("%B %d")}.'
+
+        # Days of the week
+        elif len(subscription.notification_days) == 7:
+            msg += 'every day.'
+
+        else:
+            msg += f'every {", ".join(subscription.notification_days)}.'
 
     return msg
 
@@ -381,6 +452,30 @@ def queue_route_event_notifications(saved_route, updated_event_ids):
             queued_notifications.append(QueuedEventNotification(route_id=saved_route.id, event_id=event.id))
 
     QueuedEventNotification.objects.bulk_create(queued_notifications, ignore_conflicts=True)
+
+
+def queue_district_event_notifications(sub, updated_event_ids):
+    new_event_ids = list(Event.objects.filter(
+        id__in=updated_event_ids,
+        area=sub.area,
+        display_category__in=sub.notification_types
+    ).values_list('id', flat=True))
+
+    if not new_event_ids:
+        return
+
+    # Update queued notification with new event ids if it already exists
+    existing = QueuedDistrictEventNotification.objects.filter(subscription_id=sub.id).first()
+    if existing:
+        existing.event_ids = list(set(existing.event_ids or []) | set(new_event_ids))
+        existing.save()
+
+    # Create a new queued notification otherwise
+    else:
+        QueuedDistrictEventNotification.objects.create(
+            subscription_id=sub.id,
+            event_ids=new_event_ids
+        )
 
 
 def update_event_area_relations():
@@ -492,3 +587,85 @@ def send_queued_notifications():
 
     # Clear sent notifications
     QueuedEventNotification.objects.filter(id__in=queued_notification_ids).delete()
+
+
+def send_queued_district_notifications():
+    sent_notification_ids = []
+
+    # All related DB objects
+    all_queued_notifications = QueuedDistrictEventNotification.objects.all()
+
+    all_subscription_ids = all_queued_notifications.values_list('subscription_id', flat=True).distinct()
+    subscriptions_by_id = {
+        sub.id: sub
+        for sub in EmailSubscription.objects.filter(
+            id__in=all_subscription_ids
+        ).select_related('user', 'area')
+    }
+
+    all_event_ids = {
+        event_id
+        for ids in all_queued_notifications.values_list('event_ids', flat=True)
+        for event_id in (ids or [])
+    }
+    active_events_by_id = {
+        event.id: event
+        for event in Event.objects.filter(
+            id__in=all_event_ids,
+            status=EVENT_STATUS.ACTIVE
+        )
+    }
+
+    # Iterate and send each queued notification
+    for queued_notification in all_queued_notifications:
+        sent_notification_ids.append(queued_notification.id)
+
+        subscription = subscriptions_by_id.get(queued_notification.subscription_id)
+        if not subscription:
+            continue
+
+        sorted_active_events = sorted(
+            (
+                active_events_by_id[event_id]
+                for event_id in queued_notification.event_ids
+                if event_id in active_events_by_id
+            ),
+            key=lambda event: event.last_updated,
+            reverse=True
+        )
+        if len(sorted_active_events) == 0:
+            continue
+
+        context = {
+            'events': sorted_active_events,
+            'subscription': subscription,
+            'user': subscription.user,
+            'area': subscription.area,
+            'from_email': settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+            'footer_message': generate_district_settings_message(subscription),
+            'fe_base_url': settings.FRONTEND_BASE_URL,
+        }
+
+        text = render_to_string('email/district_event_updated.txt', context)
+        html = render_to_string('email/district_event_updated.html', context)
+
+        update_text = 'updates' if len(sorted_active_events) > 1 else 'update'
+        msg = EmailMultiAlternatives(
+            f'DriveBC: {len(sorted_active_events)} {update_text} in {subscription.area.name}',
+            text,
+            settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+            [subscription.user.email]
+        )
+
+        # image attachments
+        attach_default_email_images(msg)
+
+        file_names = get_unique_image_type_files_names(sorted_active_events)
+        for fn in file_names:
+            attach_image_to_email(msg, fn.split('.')[0], fn)  # use file name (without extension) as cid
+
+        msg.attach_alternative(html, 'text/html')
+        msg.send()
+
+    # Clear sent notifications
+    QueuedDistrictEventNotification.objects.filter(id__in=sent_notification_ids).delete()

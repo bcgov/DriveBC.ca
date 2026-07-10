@@ -7,7 +7,7 @@ import { Route, Routes, useSearchParams } from 'react-router-dom';
 // Redux
 import { memoize } from "proxy-memoize";
 import { useDispatch, useSelector } from 'react-redux';
-import { updateFavCams, updateFavRoutes } from './slices/userSlice';
+import { updateFavCams, updateFavRoutes, updateEmailSubscriptions } from './slices/userSlice';
 import { updateAreas } from './slices/feedsSlice';
 import { updateSearchedRoutes, updateSearchLocationFrom, updateSearchLocationTo } from "./slices";
 
@@ -21,6 +21,7 @@ import './App.scss';
 
 // Internal imports
 import { getAreas } from "./Components/data/areas";
+import { getEmailSubscriptions } from './Components/data/emailSubscriptions';
 import { getFavoriteCameraIds } from './Components/data/webcams';
 import { getFavoriteRoutes, linkRoute } from './Components/data/routes';
 import { getLocations } from "./Components/data/locations";
@@ -29,6 +30,7 @@ import AccountDeactivatedPage from "./pages/AccountDeactivatedPage";
 import AdvisoriesListPage from './pages/AdvisoriesListPage';
 import AdvisoryDetailsPage from './pages/AdvisoryDetailsPage';
 import Alert from './Components/shared/Alert';
+import AreaNotificationsPage from './pages/AreaNotificationsPage';
 import BulletinDetailsPage from './pages/BulletinDetailsPage';
 import BulletinsListPage from './pages/BulletinsListPage';
 import CameraDetailsPage from './pages/CameraDetailsPage';
@@ -165,6 +167,7 @@ function App() {
     if (authContext.username) {
       initCams();
       initRoutes();
+      initEmailSubscriptions();
 
       // if (!authContext.consent && !authContext.attempted_consent) {
       //   setShowConsentModal(true);
@@ -252,7 +255,7 @@ function App() {
 
   function getInitialAuthContext() {
     if (isMaintenanceMode) {
-      return { loginStateKnown: true }; 
+      return { loginStateKnown: true };
     }
     if (!sessionStateKnown && !callingSession) {
       callingSession = true;
@@ -317,6 +320,11 @@ function App() {
     }
   }
 
+  const initEmailSubscriptions = async () => {
+    const subscriptionsData = await getEmailSubscriptions();
+    dispatch(updateEmailSubscriptions(subscriptionsData));
+  }
+
   /* Rendering */
   // Main component
 
@@ -329,7 +337,7 @@ function App() {
               <EmergencyAlertContext.Provider value={{ emergencyAlertContext, setEmergencyAlertContext }}>
                 <FeatureContext.Provider value={{ featureContext, setFeatureContext }}>
                   <FilterContext.Provider value={{ filterContext, setFilterContext }}>
-                    
+
                     <div className="App">
                       <Header isMaintenance={isMaintenanceMode} />
 
@@ -354,6 +362,7 @@ function App() {
                             <Route path="/bulletins" element={<BulletinsListPage />} />
                             <Route path="/bulletins/:id/:subid?" element={<BulletinDetailsPage />} />
                             <Route path="/account" element={<AccountPage />} />
+                            <Route path="/my-areas" element={<AreaNotificationsPage />} />
                             <Route path="/account-deactivated" element={<AccountDeactivatedPage />} />
                             <Route path="/feedback" element={<FeedbackPage />} />
                             <Route path="/verify-email" element={<VerifyEmailPage />} />

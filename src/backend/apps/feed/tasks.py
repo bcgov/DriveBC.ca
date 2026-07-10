@@ -1,7 +1,13 @@
 import datetime
 
 from apps.border.tasks import update_border_crossing_lanes
-from apps.event.tasks import populate_all_event_data, send_queued_notifications
+from apps.consumer.tasks import generate_offline_camera_images
+from apps.dms.tasks import populate_all_dms_data
+from apps.event.tasks import (
+    populate_all_event_data,
+    send_queued_district_notifications,
+    send_queued_notifications,
+)
 from apps.ferry.tasks import populate_all_ferry_data, populate_coastal_ferry_data
 from apps.rest.tasks import populate_all_rest_stop_data
 from apps.shared.tasks import populate_all_district_data, update_object_relations
@@ -20,8 +26,6 @@ from apps.webcam.tasks import (
     update_camera_nearby_objs,
 )
 from apps.wildfire.tasks import populate_all_wildfire_data
-from apps.dms.tasks import populate_all_dms_data
-from apps.consumer.tasks import generate_offline_camera_images 
 from django.core.cache import cache
 from django.core.management import call_command
 from huey import crontab
@@ -68,6 +72,7 @@ def populate_event_task():
 @lock_task('notifications-lock')
 def send_queued_event_notifications():
     send_queued_notifications()
+    send_queued_district_notifications()
 
 
 @db_periodic_task(crontab(hour="*/1", minute="0"))
@@ -147,6 +152,7 @@ def update_relations():
 def update_wildfires():
     populate_all_wildfire_data()
 
+
 @db_periodic_task(crontab(minute="*/2"))
 @lock_task('dms-lock')
 def populate_dms_task():
@@ -161,6 +167,7 @@ def startup_timestamp(task, task_value, exc):
 @post_execute()
 def post_execute_timestamp(task, task_value, exc):
     cache.set("last_task_execution", datetime.datetime.now())
+
 
 @db_periodic_task(crontab(minute="*/1"))
 @lock_task('generate-offline-camera-images-lock')

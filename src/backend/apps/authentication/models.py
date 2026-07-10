@@ -1,5 +1,5 @@
 from apps.authentication.enums import ROUTE_CRITERIA, ROUTE_CRITERIA_CHOICES
-from apps.shared.models import BaseModel
+from apps.shared.models import Area, BaseModel
 from apps.webcam.models import Webcam
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.db import models as gis_models
@@ -87,6 +87,34 @@ class SavedRoutes(ExportModelOperationsMixin('saved-routes'), BaseModel):
     notification_end_time = models.TimeField(null=True, blank=True)  # Time of day for notifications
 
     class Meta:
+        indexes = [
+            models.Index(fields=['user', 'notification']),
+            models.Index(fields=['notification_days']),
+            models.Index(fields=['notification_start_date']),
+            models.Index(fields=['notification_end_date']),
+            models.Index(fields=['notification_start_time']),
+            models.Index(fields=['notification_end_time']),
+        ]
+
+
+class EmailSubscription(ExportModelOperationsMixin('email-subscriptions'), BaseModel):
+    user = models.ForeignKey(DriveBCUser, on_delete=models.CASCADE,
+                             related_name='email_subscriptions')
+    area = models.ForeignKey(Area, on_delete=models.CASCADE,
+                             related_name='email_subscriptions')
+
+    notification = models.BooleanField(default=False, blank=True)  # Whether to notify user of events in area
+    notification_types = models.JSONField(default=list, blank=True)  # list of event display types to notify
+    notification_days = models.JSONField(default=list, blank=True)  # List of days of the week
+    notification_start_date = models.DateField(null=True, blank=True)  # Date to start notifications
+    notification_end_date = models.DateField(null=True, blank=True)  # Date to end notifications
+    notification_start_time = models.TimeField(null=True, blank=True)  # Time of day for notifications
+    notification_end_time = models.TimeField(null=True, blank=True)  # Time of day for notifications
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['user', 'area'], name='user_area')
+        ]
         indexes = [
             models.Index(fields=['user', 'notification']),
             models.Index(fields=['notification_days']),

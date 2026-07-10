@@ -1,7 +1,12 @@
+from apps.authentication.models import (
+    DriveBCUser,
+    EmailSubscription,
+    FavouritedCameras,
+    SavedRoutes,
+)
 from apps.cms.models import DriveBCMapWidget
-from apps.authentication.models import DriveBCUser, FavouritedCameras, SavedRoutes
-from django.contrib.gis import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.gis import admin
 
 
 class DriveBCUserAdmin(UserAdmin):
@@ -25,7 +30,6 @@ class SavedRouteAdmin(admin.GISModelAdmin):
     gis_widget = DriveBCMapWidget
 
 
-
 admin.site.register(SavedRoutes, SavedRouteAdmin)
 
 
@@ -35,3 +39,14 @@ class FavouritedCamerasAdmin(admin.GISModelAdmin):
 
 
 admin.site.register(FavouritedCameras, FavouritedCamerasAdmin)
+
+
+class EmailSubscriptionAdmin(admin.ModelAdmin):
+    readonly_fields = ('id',)
+    list_display = (
+        'id', 'user', 'area', 'notification',
+        'notification_start_date', 'notification_end_date',
+    )
+
+
+admin.site.register(EmailSubscription, EmailSubscriptionAdmin)

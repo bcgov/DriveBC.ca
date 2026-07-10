@@ -58,7 +58,7 @@
         &.selected {
           background-color: $Focus;
           border-color: $Focus;
-          color: $White;        
+          color: $White;
         }
       }
 
@@ -218,8 +218,8 @@
 
     .route-item {
       // padding: 2px 0;
-      
-      
+
+
       &:first-child {
         padding-top: 0;
       }
@@ -355,7 +355,7 @@
       margin-left: auto;
       margin-right: auto;
     }
-    
+
     .modal-content {
       height: fit-content;
       max-height: calc(100vh - 7.75rem);
@@ -449,6 +449,18 @@
           &:has(.form-check-input:checked) {
             background-color: $Blue20;
           }
+        }
+      }
+
+      .notifications-dates .notifications-target {
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        margin-bottom: 0;
+        background-color: transparent;
+
+        &:has(.form-check-input:checked) {
+          background-color: transparent;
         }
       }
     }

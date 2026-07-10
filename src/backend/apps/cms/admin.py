@@ -1,17 +1,16 @@
-from apps.cms.models import DriveBCMapWidget
-from apps.cms.models import Advisory, Bulletin
+from apps.cms.models import Advisory, Bulletin, DriveBCMapWidget
 from apps.cms.tasks import send_advisory_notifications
 from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 
 
-@admin.action(description="Send route notifications")
-def send_route_notifications(modeladmin, request, queryset):
+@admin.action(description="Send advisory notifications")
+def send_advisory_notifications_action(modeladmin, request, queryset):
     send_advisory_notifications(list(queryset.values_list('id', flat=True))[0])
 
 
 class AdvisoryAdmin(GISModelAdmin):
-    actions = [send_route_notifications]
+    actions = [send_advisory_notifications_action]
     list_display = [
         'title', 'teaser', 'geometry', 'body',
         'created_at', 'modified_at'

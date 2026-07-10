@@ -4,6 +4,7 @@ from rest_framework import routers
 from .views import (
     DriveBCUserViewset,
     EmailConsentView,
+    EmailSubscriptionViewset,
     FavouritedCamerasViewset,
     SavedRoutesViewset,
     SendVerificationEmailView,
@@ -13,6 +14,7 @@ from .views import (
 router = routers.DefaultRouter()
 router.register("webcams", FavouritedCamerasViewset)
 router.register("routes", SavedRoutesViewset)
+router.register("email-subscriptions", EmailSubscriptionViewset)
 router.register("drivebcuser", DriveBCUserViewset)
 
 urlpatterns = [

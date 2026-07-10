@@ -5,6 +5,7 @@ export const userSlice = createSlice({
   initialState: {
     favCams: null,
     favRoutes: null,
+    emailSubscriptions: null,
     pendingAction: null
   },
   reducers: {
@@ -12,6 +13,7 @@ export const userSlice = createSlice({
     resetFavLists: (state, action) => {
       state.favCams = null;
       state.favRoutes = null;
+      state.emailSubscriptions = null;
     },
 
     // Cams
@@ -53,6 +55,29 @@ export const userSlice = createSlice({
       state.favRoutes = resFavRoutes.filter(route => route.id != action.payload);
     },
 
+    // Email subscriptions
+    updateEmailSubscriptions: (state, action) => {
+      state.emailSubscriptions = action.payload;
+    },
+    pushEmailSubscription: (state, action) => {
+      const resSubscriptions = !state.emailSubscriptions ? [] : [...state.emailSubscriptions];
+      resSubscriptions.push(action.payload);
+      state.emailSubscriptions = resSubscriptions;
+    },
+    updateSingleEmailSubscription: (state, action) => {
+      if (!state.emailSubscriptions) {
+        return;
+      }
+      const index = state.emailSubscriptions.findIndex(sub => sub.id === action.payload.id);
+      if (index !== -1) {
+        state.emailSubscriptions[index] = action.payload;
+      }
+    },
+    removeEmailSubscription: (state, action) => {
+      const resSubscriptions = !state.emailSubscriptions ? [] : [...state.emailSubscriptions];
+      state.emailSubscriptions = resSubscriptions.filter(sub => sub.id != action.payload);
+    },
+
     // Pending action
     updatePendingAction: (state, action) => {
       const originalState = !state.pendingAction ? {} : state.pendingAction;
@@ -68,6 +93,7 @@ export const {
   resetFavLists, // General
   updateFavCams, pushFavCam, removeFavCam, // Cams
   updateFavRoutes, pushFavRoute, removeFavRoute, updateSingleFavRoute, // Routes
+  updateEmailSubscriptions, pushEmailSubscription, updateSingleEmailSubscription, removeEmailSubscription, // Email subscriptions
   updatePendingAction, resetPendingAction // Pending action
 } = userSlice.actions;
 

@@ -1,0 +1,86 @@
+@import "../../styles/variables.scss";
+
+.area-notification-card {
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  width: 420px;
+  margin-bottom: .5rem;
+
+  .area-map-preview {
+    aspect-ratio: 2 / 1;
+    background-color: white;
+    width: 100%;
+
+    img {
+      display: block;
+      height: 100%;
+      object-fit: cover;
+      width: 100%;
+      border-radius: .5rem;
+    }
+  }
+
+  .area-name {
+    color: $Info;
+    font-size: 1.25rem;
+    font-weight: 700;
+    padding: 1rem 0;
+  }
+
+  .area-notification-card__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .675rem;
+    margin-bottom: .5rem;
+    border-radius: .5rem;
+    background-color: $Blue10;
+    font-size: .875rem;
+    font-weight: 700;
+
+    .notifications-settings {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .notifications-toggle {
+        align-items: center;
+        color: $GreyOnBlue;
+        display: flex;
+        margin-bottom: 0;
+
+        .form-switch {
+          align-items: center;
+          display: flex;
+          gap: 8px;
+          padding-left: 0;
+
+          .form-check-input {
+            flex-shrink: 0;
+            left: auto;
+            margin: 0;
+            order: 1;
+            position: static;
+            top: auto;
+          }
+
+          .form-check-label {
+            align-items: center;
+            display: flex;
+            font-size: 0.875rem;
+            font-weight: 700;
+            line-height: 20px;
+            margin: 0;
+            order: 2;
+          }
+        }
+      }
+
+      svg {
+        cursor: pointer;
+        color: $Type-Link;
+      }
+    }
+  }
+}

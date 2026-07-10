@@ -14,7 +14,8 @@ import {
   faRoute,
   faStar,
   faVideoCamera,
-  faChevronDown
+  faChevronDown,
+  faBell
 } from '@fortawesome/pro-solid-svg-icons';
 import {
   faGear,
@@ -146,6 +147,17 @@ export default function UserNavigation({ isNavbarExpanded, onCollapseNavbar }) {
             </a>
           }
 
+          { !largeScreen &&
+            <a className="menu-item" href="/my-areas">
+              <div className="menu-item-header">
+                <FontAwesomeIcon icon={faBell} />
+                My areas
+              </div>
+
+              <FontAwesomeIcon icon={faArrowRight} />
+            </a>
+          }
+
           <a className="menu-item" href="/account">
             <div className="menu-item-header">
               <FontAwesomeIcon icon={faGear} />
@@ -196,6 +208,15 @@ export default function UserNavigation({ isNavbarExpanded, onCollapseNavbar }) {
               <FontAwesomeIcon icon={faRoute} />
               My routes
               <span className="item-count">{favRoutes ? favRoutes.length : 0}</span>
+            </div>
+
+            <FontAwesomeIcon icon={faArrowRight} />
+          </a>
+
+          <a href="/my-areas" className="menu-item">
+            <div className="menu-item-header">
+              <FontAwesomeIcon icon={faBell} />
+              My areas
             </div>
 
             <FontAwesomeIcon icon={faArrowRight} />
