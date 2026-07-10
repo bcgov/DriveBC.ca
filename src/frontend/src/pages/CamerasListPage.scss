@@ -164,10 +164,20 @@
     }
   
     &__subheader {
-      font-size: 0.875rem;
-      color: $Grey80;
-      padding: 1.5rem 1rem 0.5rem;
-      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      padding: 1.5rem 0 1rem;
+
+      p {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: $Grey80;
+        margin-bottom: 0;
+      }
+
+      svg {
+        margin-right: 8px;
+      }
     }
   }
 

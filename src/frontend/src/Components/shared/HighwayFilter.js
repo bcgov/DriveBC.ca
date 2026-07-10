@@ -1,14 +1,6 @@
 // React
 import React, { useContext, useState, useEffect } from 'react';
 
-// External imports
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faMagnifyingGlass,
-  faXmark
- } from '@fortawesome/pro-solid-svg-icons';
-
 // Internal imports
 import { FilterContext } from '../../App.js';
 import { collator } from '../data/webcams';
@@ -26,8 +18,6 @@ export default function HighwayFilter(props) {
 
   // States
   const [orderedHighways, setOrderedHighways] = useState();
-  const [searchedHighways, setSearchedHighways] = useState();
-  const [searchText, setSearchText] = useState('');
 
   const getOrderedHighways = (cameras) => {
     const highways = Array.from(new Set(cameras.map(camera => camera.highway_display)));
@@ -55,22 +45,7 @@ export default function HighwayFilter(props) {
         setFilterContext({...filterContext, highwayFilterKey: null});
       }
     }
-
-    if (searchText === '') {
-      setSearchedHighways(orderedHighways);
-      return;
-    }
-
-    // search for highway name from text input
-    const searchFn = (highwayObj, targetText) => {
-      const targetLower = targetText.toLowerCase();
-      return highwayObj.display.toLowerCase().includes(targetLower);
-    };
-
-    const filteredHighways = orderedHighways.filter(highwayObj => searchFn(highwayObj, searchText));
-
-    setSearchedHighways(filteredHighways);
-  }, [searchText, orderedHighways]);
+  }, [orderedHighways]);
 
   /* Rendering */
 
@@ -82,49 +57,9 @@ export default function HighwayFilter(props) {
   // Main component
   return filterContext && (
     <div className="highway-filters">
-      <div className="search-container">
-        <FontAwesomeIcon className="search-icon" icon={faMagnifyingGlass} />
-
-        <AsyncTypeahead
-          id="highway-filter-search"
-          isLoading={false}
-          onSearch={() => {}}
-          onInputChange={text => setSearchText(text)}
-          placeholder={'Search Highways'}
-          inputProps={{
-            'aria-label': 'input field for highway filter search',
-          }} />
-      </div>
-
-      {!filterContext.highwayFilterKey && <div className="selected-filter-container no-selection">No filters selected</div>}
-
-      {filterContext.highwayFilterKey && (
-        <div className="selected-filter-container">
-          <div className="selected-filter space-between-row">
-            <div className="selected-filter-text">
-              {getHighwayDisplay(filterContext.highwayFilterKey)}
-            </div>
-
-            <div
-              className="remove-btn"
-              tabIndex={0}
-              onClick={() => {
-                setFilterContext({...filterContext, highwayFilterKey: null});
-                handleHwyFiltersClose();
-              }}
-              onKeyDown={() => {
-                setFilterContext({...filterContext, highwayFilterKey: null});
-                handleHwyFiltersClose();
-              }}>
-              <FontAwesomeIcon icon={faXmark} />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {searchedHighways &&
+      {orderedHighways &&
         <div className="highway-options">
-          {searchedHighways.map(highwayObj =>
+          {orderedHighways.map(highwayObj =>
             <div
               key={highwayObj.key}
               className="highway-row"
