@@ -223,7 +223,6 @@
 
           .camSearch-container {
             width: 100%;
-            margin-right: 20px;
 
             .rbt {
               .rbt-input {
@@ -243,7 +242,7 @@
             }
 
             @media (min-width: 768px) {
-              max-width: 400px;
+              max-width: 320px;
             }
 
             .rbt-menu {
@@ -279,7 +278,6 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-left: 12px;
 
           @media (max-width: 575px) {
             padding: 0;

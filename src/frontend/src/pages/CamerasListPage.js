@@ -14,7 +14,6 @@ import {
   faFlag,
   faXmark,
   faMagnifyingGlass,
-  faFilter,
   faSliders
 } from '@fortawesome/pro-solid-svg-icons';
 import {
@@ -357,7 +356,7 @@ export default function CamerasListPage() {
                       aria-label="show filters options"
                       onClick={() => setShowFilters(!showFilters)}>
 
-                      <FontAwesomeIcon className="filters-btn__icon" icon={faFilter} />
+                      <FontAwesomeIcon className="filters-btn__icon" icon={faSliders} />
 
                       {!smallScreen &&
                         <p className="btn-text">Filters</p>
