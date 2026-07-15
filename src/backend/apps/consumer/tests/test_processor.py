@@ -262,7 +262,7 @@ class TestRabbitMQConsumer(TestCase):
         mock_channel.declare_queue.return_value = mock_queue
 
         async def run_test():
-            conn, queue = await setup_rabbitmq(os.getenv("RABBITMQ_URL_GOLD"), "GOLD")
+            conn, queue = await setup_rabbitmq("142.34.229.61", "5064", "GOLD"),
             return conn, queue
 
         conn, queue = asyncio.run(run_test())
@@ -347,7 +347,7 @@ class TestRabbitMQConsumer(TestCase):
                 stop_event.set()
 
             await asyncio.gather(
-                consume_from(os.getenv("RABBITMQ_URL_GOLD"), "GOLD"),
+                consume_from("142.34.229.61", "5064", "GOLD"),
                 stop_later()
             )
 
@@ -373,7 +373,7 @@ class TestRabbitMQConsumer(TestCase):
                 stop_event.set()
 
             await asyncio.gather(
-                consume_from(os.getenv("RABBITMQ_URL_GOLD"), "GOLD"),
+                consume_from("142.34.229.61", "5064", "GOLD"),
                 stop_later()
             )
 
@@ -402,7 +402,7 @@ class TestRabbitMQConsumer(TestCase):
                 stop_event.set()
 
             await asyncio.gather(
-                consume_from(os.getenv("RABBITMQ_URL_GOLD"), "GOLD"),
+                consume_from("142.34.229.61", "5064", "GOLD"),
                 stop_later()
             )
 
@@ -444,7 +444,7 @@ class TestRabbitMQConsumer(TestCase):
 
             asyncio.run(run_test())
 
-        mock_consume.assert_called_once_with("amqp://gold", "GOLD")
+        mock_consume.assert_called_once_with("142.34.229.61", "5064", "GOLD")
 
 
     @patch("apps.consumer.processor.consume_from", new_callable=AsyncMock)
