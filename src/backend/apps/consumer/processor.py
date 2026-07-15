@@ -220,8 +220,8 @@ async def run_consumer():
     golddr_host = os.getenv("RABBITMQ_HOST_GOLDDR")
     golddr_port = os.getenv("RABBITMQ_PORT_GOLDDR")
 
-    if not gold_host and not golddr_host:
-        raise RuntimeError("No RabbitMQ URLs configured. At least one is required.")
+    # if not gold_host and not golddr_host:
+    #     raise RuntimeError("No RabbitMQ URLs configured. At least one is required.")
 
     tasks = []
 
