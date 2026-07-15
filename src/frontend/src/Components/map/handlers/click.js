@@ -1,6 +1,5 @@
 // External imports
 import { fromLonLat } from "ol/proj";
-import { boundingExtent } from 'ol/extent';
 
 // Internal imports
 import { isRestStopClosed } from '../../data/restStops.js';
