@@ -3,7 +3,6 @@ import os
 import aio_pika
 import logging
 from datetime import datetime, timedelta, timezone
-from aio_pika.connection import make_url
 
 RABBITMQ_HEARTBEAT = int(os.getenv("RABBITMQ_HEARTBEAT", "60"))
 RABBITMQ_TIMEOUT = int(os.getenv("RABBITMQ_TIMEOUT", "30")) 
