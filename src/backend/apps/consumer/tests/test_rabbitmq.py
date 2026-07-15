@@ -103,7 +103,7 @@ class TestRabbitMQTokenConnection(IsolatedAsyncioTestCase):
         mock_connection.reconnect_callbacks.add = MagicMock()
 
         with patch("apps.consumer.rabbitmq.aio_pika.connect_robust", new=AsyncMock(return_value=mock_connection)):
-            result = await self.conn.connect()
+            result = await self.conn.connect("142.34.229.61", 5064)
 
         self.assertEqual(result, mock_connection)
         self.assertEqual(self.conn._connection, mock_connection)
@@ -118,7 +118,7 @@ class TestRabbitMQTokenConnection(IsolatedAsyncioTestCase):
         mock_connection.reconnect_callbacks.add = MagicMock()
 
         with patch("apps.consumer.rabbitmq.aio_pika.connect_robust", new=AsyncMock(return_value=mock_connection)):
-            await self.conn.connect()
+            await self.conn.connect("142.34.229.61", 5064)
 
         mock_connection.reconnect_callbacks.add.assert_called_once_with(self.conn._on_reconnect)
 
@@ -131,7 +131,7 @@ class TestRabbitMQTokenConnection(IsolatedAsyncioTestCase):
         mock_connection.reconnect_callbacks.add = MagicMock()
 
         with patch("apps.consumer.rabbitmq.aio_pika.connect_robust", new=AsyncMock(return_value=mock_connection)) as mock_connect:
-            await self.conn.connect()
+            await self.conn.connect("142.34.229.61", 5064)
             _, kwargs = mock_connect.call_args
             self.assertEqual(kwargs["login"], "")
             self.assertEqual(kwargs["password"], "my-oauth-token")
