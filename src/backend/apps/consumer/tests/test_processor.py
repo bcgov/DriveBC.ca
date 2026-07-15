@@ -224,8 +224,8 @@ class TestRabbitMQConsumer(TestCase):
     def tearDown(self):
         super().tearDown()
 
-    # setup_rabbitmq tests
-    @patch("apps.consumer.processor.aio_pika.connect_robust")
+    # # setup_rabbitmq tests
+    @patch("apps.consumer.rabbitmq.RabbitMQTokenConnection.connect", new_callable=AsyncMock)
     def test_setup_rabbitmq_success(self, mock_connect):
         from apps.consumer.processor import setup_rabbitmq
 
@@ -238,14 +238,18 @@ class TestRabbitMQConsumer(TestCase):
         mock_channel.declare_queue.return_value = mock_queue
 
         async def run_test():
-            conn, queue = await setup_rabbitmq("142.34.229.61", 5064, "GOLD")
-            return conn, queue
+            return await setup_rabbitmq(
+                "142.34.229.61",
+                5064,
+                "GOLD",
+            )
 
         conn, queue = asyncio.run(run_test())
 
         self.assertEqual(conn, mock_connection)
         self.assertEqual(queue, mock_queue)
-        mock_connect.assert_called_once()
+
+        mock_connect.assert_awaited_once()
 
     # consume_queue tests
     @patch("apps.consumer.processor.process_message", new_callable=AsyncMock)
