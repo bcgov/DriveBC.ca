@@ -188,7 +188,7 @@ export const resetClickedStates = (
         updateClickedFeature(null);
         break;
     }
-    if (isCamDetail && targetFeature && targetFeature.get('type') === 'camera') {
+    if (isCamDetail && targetFeature?.get('type') === 'camera') {
       if (highlighted_camera_list.length > 0) {
           highlighted_camera_list[0].setCameraStyle('static');
           highlighted_camera_list[0].set('clicked', false);
@@ -232,8 +232,7 @@ const camClickHandler = (
   updateReferenceFeature,
   mapContext
 ) => {
-  if ((clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')
-    || (clickedFeatureRef.current && (clickedFeatureRef.current.values_.type != feature.values_.type))) {
+  if (clickedFeatureRef.current?.values_?.type === 'camera' || clickedFeatureRef.current?.values_?.type !== feature.values_?.type) {
     resetClickedStates(
       feature,
       clickedFeatureRef,
@@ -257,6 +256,7 @@ const camClickHandler = (
   feature.setCameraStyle('active');
   feature.set('clicked', true, true);
   feature.set('unread', false);
+  feature.set('hovered', false);
 
   if (isCamDetail) {
     // Do not auto center on feature on cam details page
@@ -295,7 +295,7 @@ export const eventClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
       resetClickedStates(
       feature,
       clickedFeatureRef,
@@ -330,7 +330,7 @@ export const ferryClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
       resetClickedStates(
       feature,
       clickedFeatureRef,
@@ -356,7 +356,7 @@ const weatherClickHandler = (
   updateClickedFeature,
   isCamDetail,
 ) => {
-  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
     // reset previous clicked feature
     resetClickedStates(
       feature,
@@ -382,7 +382,7 @@ const regionalClickHandler = (
   updateClickedFeature,
   isCamDetail,
 ) => {
-  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
     // reset previous clicked feature
     resetClickedStates(
       feature,
@@ -411,7 +411,7 @@ const hefClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
       resetClickedStates(
       feature,
       clickedFeatureRef,
@@ -438,7 +438,7 @@ const restStopClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
       resetClickedStates(
       feature,
       clickedFeatureRef,
@@ -477,7 +477,7 @@ const routeClickHandler = (
   updateClickedFeature,
 ) => {
   // reset previous clicked feature
-  if (!(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+  if (clickedFeatureRef.current?.values_?.type !== 'camera') {
       resetClickedStates(
       feature,
       clickedFeatureRef,
@@ -501,7 +501,7 @@ const borderCrossingClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
     resetClickedStates(
         feature,
         clickedFeatureRef,
@@ -543,7 +543,7 @@ export const wildfireClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!isCamDetail || !(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
     resetClickedStates(
         feature,
         clickedFeatureRef,
@@ -580,8 +580,36 @@ export const pointerClickHandler = (
   mapContext
 ) => {
   if (features.length) {
-    const clickedFeature = features[0];
-    switch (clickedFeature.getProperties()['type']) {
+    let clickedFeature = features[0];
+
+    const clusterFeatures = clickedFeature.get('features');
+
+    if (clusterFeatures) {
+      if (clusterFeatures.length > 1) {
+        clusterFeatures.forEach(feature => {
+          feature.set('hovered', false);
+          feature.set('clicked', false);
+          feature.setCameraStyle('static');
+        });
+        
+        mapView.current.animate({
+          center: clickedFeature.getGeometry().getCoordinates(),
+          zoom: mapView.current.getZoom() + 1,
+          duration: 300,
+        });
+
+        return;
+      }
+
+      clickedFeature = clusterFeatures[0];
+    }
+
+    if (!clickedFeature.get('type')) {
+      clickedFeature = features[0].values_?.features[0];
+    }
+
+
+    switch (clickedFeature?.getProperties()['type']) {
       case 'camera':
         trackEvent(
           'click',
@@ -793,7 +821,7 @@ export const dmsClickHandler = (
   isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!(clickedFeatureRef.current && clickedFeatureRef.current.values_.type == 'camera')) {
+  if (clickedFeatureRef.current?.values_?.type !== 'camera') {
       resetClickedStates(
       feature,
       clickedFeatureRef,

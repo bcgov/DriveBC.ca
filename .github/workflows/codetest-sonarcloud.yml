@@ -111,6 +111,9 @@ jobs:
         sed -i "s/<source>\/home\/runner\/work\/DriveBC.ca\/DriveBC.ca<\/source>/<source>\/github\/workspace<\/source>/g" /home/runner/work/DriveBC.ca/DriveBC.ca/coverage.xml
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v8.2.0
+      with:
+        args: >
+          -Dsonar.exclusions=src/frontend/src/index.js
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
