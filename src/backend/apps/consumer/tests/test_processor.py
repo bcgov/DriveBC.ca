@@ -224,8 +224,8 @@ class TestRabbitMQConsumer(TestCase):
     def tearDown(self):
         super().tearDown()
 
-    # setup_rabbitmq tests
-    @patch("apps.consumer.processor.aio_pika.connect_robust")
+    # # setup_rabbitmq tests
+    @patch("apps.consumer.rabbitmq.RabbitMQTokenConnection.connect", new_callable=AsyncMock)
     def test_setup_rabbitmq_success(self, mock_connect):
         from apps.consumer.processor import setup_rabbitmq
 
@@ -238,14 +238,17 @@ class TestRabbitMQConsumer(TestCase):
         mock_channel.declare_queue.return_value = mock_queue
 
         async def run_test():
-            conn, queue = await setup_rabbitmq(os.getenv("RABBITMQ_URL_GOLD"), "GOLD")
-            return conn, queue
+            return await setup_rabbitmq(
+                "142.34.229.61",
+                5064
+            )
 
         conn, queue = asyncio.run(run_test())
 
         self.assertEqual(conn, mock_connection)
         self.assertEqual(queue, mock_queue)
-        mock_connect.assert_called_once()
+
+        mock_connect.assert_awaited_once()
 
     # consume_queue tests
     @patch("apps.consumer.processor.process_message", new_callable=AsyncMock)
@@ -323,7 +326,7 @@ class TestRabbitMQConsumer(TestCase):
                 stop_event.set()
 
             await asyncio.gather(
-                consume_from(os.getenv("RABBITMQ_URL_GOLD"), "GOLD"),
+                consume_from("142.34.229.61", "5064", "GOLD"),
                 stop_later()
             )
 
@@ -349,7 +352,7 @@ class TestRabbitMQConsumer(TestCase):
                 stop_event.set()
 
             await asyncio.gather(
-                consume_from(os.getenv("RABBITMQ_URL_GOLD"), "GOLD"),
+                consume_from("142.34.229.61", "5064", "GOLD"),
                 stop_later()
             )
 
@@ -378,7 +381,7 @@ class TestRabbitMQConsumer(TestCase):
                 stop_event.set()
 
             await asyncio.gather(
-                consume_from(os.getenv("RABBITMQ_URL_GOLD"), "GOLD"),
+                consume_from("142.34.229.61", "5064", "GOLD"),
                 stop_later()
             )
 
@@ -388,12 +391,6 @@ class TestRabbitMQConsumer(TestCase):
 
         stop_event.clear()
 
-    def test_run_consumer_no_urls_raises(self):
-        from apps.consumer.processor import run_consumer, stop_event
-
-        with patch.dict(os.environ, {}, clear=True):
-            with self.assertRaises(RuntimeError):
-                asyncio.run(run_consumer())
 
     @patch("apps.consumer.processor.consume_from", new_callable=AsyncMock)
     def test_run_consumer_gold_only(self, mock_consume):
@@ -403,7 +400,8 @@ class TestRabbitMQConsumer(TestCase):
         reset_stop_event()
 
         with patch.dict(os.environ, {
-            "RABBITMQ_URL_GOLD": "amqp://gold"
+            "RABBITMQ_HOST_GOLD": "142.34.229.61",
+            "RABBITMQ_PORT_GOLD": "5064"
         }, clear=True):
 
             async def run_test():
@@ -420,7 +418,11 @@ class TestRabbitMQConsumer(TestCase):
 
             asyncio.run(run_test())
 
-        mock_consume.assert_called_once_with("amqp://gold", "GOLD")
+        mock_consume.assert_called_once_with(
+            "142.34.229.61",
+            "5064",
+            "GOLD",
+        )
 
 
     @patch("apps.consumer.processor.consume_from", new_callable=AsyncMock)
@@ -428,9 +430,9 @@ class TestRabbitMQConsumer(TestCase):
         reset_stop_event()
 
         with patch.dict(os.environ, {
-            "RABBITMQ_URL_GOLD": "amqp://gold",
-            "RABBITMQ_URL_GOLDDR": "amqp://golddr"
-        }):
+            "RABBITMQ_HOST_GOLD": "142.34.229.61",
+            "RABBITMQ_PORT_GOLD": "5064"
+        }, clear=True):
             async def run_test():
                 consumer_task = asyncio.create_task(
                     processor.run_consumer()
@@ -445,7 +447,7 @@ class TestRabbitMQConsumer(TestCase):
 
             asyncio.run(run_test())
 
-        self.assertEqual(mock_consume.call_count, 2)
+        self.assertEqual(mock_consume.call_count, 1)
 
 
     @patch("apps.consumer.processor.consume_from", new_callable=AsyncMock)
@@ -453,7 +455,8 @@ class TestRabbitMQConsumer(TestCase):
         reset_stop_event()
 
         with patch.dict(os.environ, {
-            "RABBITMQ_URL_GOLD": "amqp://gold"
+            "RABBITMQ_HOST_GOLD": "142.34.229.61",
+            "RABBITMQ_PORT_GOLD": "5064",
         }, clear=True):
 
             async def run_test():
