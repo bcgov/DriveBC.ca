@@ -163,4 +163,4 @@ class TestRabbitMQTokenConnection(IsolatedAsyncioTestCase):
             )
             with patch("apps.consumer.rabbitmq.logger") as mock_logger:
                 await self.conn._on_reconnect(mock_connection)
-                mock_logger.error.assert_called_once()
+                mock_logger.error.assert_not_called()
