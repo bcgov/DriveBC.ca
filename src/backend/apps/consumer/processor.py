@@ -106,10 +106,10 @@ def on_reconnect():
     global last_activity
     last_activity = time.time()
 
-async def on_close(exc=None):
+def on_close(exc=None):
     logger.warning(f"RabbitMQ connection closed: {exc}")
 
-async def on_channel_close(exc=None):
+def on_channel_close(exc=None):
     logger.warning(f"RabbitMQ channel closed: {exc}")
 
 async def setup_rabbitmq(host: str, port: int):
