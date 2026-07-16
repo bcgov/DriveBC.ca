@@ -240,8 +240,7 @@ class TestRabbitMQConsumer(TestCase):
         async def run_test():
             return await setup_rabbitmq(
                 "142.34.229.61",
-                5064,
-                "GOLD",
+                5064
             )
 
         conn, queue = asyncio.run(run_test())
