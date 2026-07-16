@@ -111,13 +111,13 @@ def on_reconnect():
     global last_activity
     last_activity = time.time()
 
-async def on_close(conn, exc=None):
+async def on_close(exc=None):
     logger.warning(f"RabbitMQ connection closed: {exc}")
 
-async def on_channel_close(ch, exc=None):
+async def on_channel_close(exc=None):
     logger.warning(f"RabbitMQ channel closed: {exc}")
 
-async def setup_rabbitmq(host: str, port: int, name: str):
+async def setup_rabbitmq(host: str, port: int):
     rabbitmq = RabbitMQTokenConnection()
     connection = await rabbitmq.connect(host=host, port=port)
     logger.info("RabbitMQ connection created.")
@@ -163,7 +163,7 @@ async def consume_from(host: str, port: str, name: str):
         connection = None
 
         try:
-            connection, queue = await setup_rabbitmq(host, int(port), name)
+            connection, queue = await setup_rabbitmq(host, int(port))
 
             logger.info(f"Starting message consumption from {name}...")
             await consume_queue(queue, name)
@@ -453,9 +453,9 @@ def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp:
         with open(filepath, "wb") as f:
             f.write(image_bytes)
         if is_on:
-            logger.info(f"Watermarked image saved to PVC at {filepath}")
+            logging.info(f"Watermarked image saved to PVC at {filepath}")
         else:
-            logger.info(f"Blank out image saved to PVC at {filepath}")
+            logging.info(f"Blank out image saved to PVC at {filepath}")
     except Exception as e:
         logging.exception(f"Error saving image to PVC {filepath}: {e}")
 

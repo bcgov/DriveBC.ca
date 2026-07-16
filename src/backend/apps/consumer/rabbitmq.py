@@ -73,4 +73,4 @@ class RabbitMQTokenConnection:
             token = await self._fetch_token()
             connection.password = token  # inject fresh token
         except Exception as e:
-            logger.error(f"Failed to refresh RabbitMQ token: {e}")
+            logging.exception(f"Failed to refresh RabbitMQ token: {e}")
