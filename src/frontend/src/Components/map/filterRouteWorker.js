@@ -27,6 +27,10 @@ self.onmessage = (event) => {
       case 'updateWeather':
         filteredData = filterByRoute(data, route, 5000, false);
         break;
+      case 'updateDms':
+      case 'setDmsCount':
+        filteredData = filterByRoute(data, route, 50, false);
+        break;
       default:
         filteredData = filterByRoute(data, route, 10, false);
         break;
