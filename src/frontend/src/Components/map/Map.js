@@ -110,7 +110,10 @@ export default function DriveBCMap(props) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  let mousePointXClicked = undefined;
+  // Refs so map click handler / updatePosition always see current values
+  const mousePointXClicked = useRef(undefined);
+  const largeScreenRef = useRef(largeScreen);
+  largeScreenRef.current = largeScreen;
 
   // Context
   const { mapContext, setMapContext } = useContext(MapContext);
@@ -400,20 +403,17 @@ export default function DriveBCMap(props) {
         geometry = feature.getProperties().altFeature.getGeometry(); // use the point feature's geometry
       }
 
-      // Center if panel from bottom or clicked within 390px from left of the screen
-      if (mousePointXClicked < 390 || smallScreen) {
+      // Bottom drawer when !largeScreen; otherwise side panel may cover left clicks
+      const bottomDrawer = !largeScreenRef.current;
+      if (mousePointXClicked.current < 390 || bottomDrawer) {
         const zoom = mapView.current.getZoom();
         const coords = geometry.flatCoordinates;
         const mapWidth = mapRef.current?.getSize()?.[0] ?? 0;
 
-        // Use anchored pan if panel from bottom or screen smaller than 1000px
-        const shouldUseAnchoredPan = mapWidth < 1000 || smallScreen;
-
-        // Center on top half of the screen, if panel open from bottom
-        const anchorYFraction = !viewportLargeScreen || isCamDetail ? 0.25 : 0.5;
-
-        // Center on right side of screen minus 390px panel, if panel open from left
-        const anchorXFraction = anchorYFraction !== 0.25 ? (((mapWidth-390)/2) + 390) / mapWidth : 0.5;
+        // Anchor into the visible map area (above bottom drawer / right of side panel)
+        const shouldUseAnchoredPan = bottomDrawer || mapWidth < 1000;
+        const anchorYFraction = bottomDrawer ? 0.25 : 0.5;
+        const anchorXFraction = bottomDrawer ? 0.5 : (((mapWidth - 390) / 2) + 390) / mapWidth;
 
         if (shouldUseAnchoredPan) {
           setZoomPanAnchored(mapRef, mapView, zoom, coords, anchorXFraction, anchorYFraction);
@@ -664,8 +664,7 @@ export default function DriveBCMap(props) {
         hitTolerance: 20,
       });
 
-      const mousePointX = e.pixel[0];
-      mousePointXClicked = mousePointX;
+      mousePointXClicked.current = e.pixel[0];
 
       pointerClickHandler(
         features, clickedFeatureRef, updateClickedFeature,
@@ -837,7 +836,10 @@ export default function DriveBCMap(props) {
     );
 
     if (localStorage.getItem("pendingFit") === 'true') {
-      fitMap(searchedRoutes, mapView);
+      // Reserve lower half of the map when the mobile route panel is open
+      const size = mapRef.current?.getSize();
+      const bottomPad = !largeScreenRef.current && size ? Math.round(size[1] * 0.5) : 50;
+      fitMap(searchedRoutes, mapView, [50, 50, bottomPad, 50]);
     }
 
     // Remove all overlays from previously searched routes
