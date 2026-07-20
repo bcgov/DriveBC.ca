@@ -29,7 +29,6 @@ import PollingComponent from "../Components/shared/PollingComponent";
 import './AdvisoriesListPage.scss';
 
 export default function AdvisoriesListPage() {
-  const isFirstVisitRef = useRef(!sessionStorage.getItem('lastAdvisoriesVisit'));
   document.title = 'DriveBC - Advisories';
 
   // Context
@@ -117,7 +116,7 @@ const loadAdvisories = async () => {
 
   const isDismissed = dismissedHighlightsRef.current.has(String(advisory.id));
 
-  const isUnread = !isFirstVisitRef.current &&
+  const isUnread =
     advisory.last_notified_at &&
     !currentContext.readAdvisories.includes(
       advisory.id.toString() + '-' + advisory.last_notified_at.toString()
@@ -160,14 +159,7 @@ const loadAdvisories = async () => {
 };
 
 useEffect(() => {
-  sessionStorage.setItem(
-    'lastAdvisoriesVisit',
-    new Date().toISOString()
-  );
-}, []);
-
-useEffect(() => {
-  if (!advisories?.length || isFirstVisitRef.current) return;
+  if (!advisories?.length) return;
 
   const initialTracked = advisories.reduce((acc, advisory) => {
     const isDismissed = dismissedHighlightsRef.current.has(String(advisory.id));
