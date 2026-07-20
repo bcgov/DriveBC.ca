@@ -94,6 +94,7 @@ export default function RouteDetails(props) {
       events: { list: events },
       ferries: { list: ferries },
       wildfires: { list: wildfires },
+      dms: { list: dms } = {},
     },
     advisories: { list: advisories },
     routes: { searchLocationFrom, searchLocationTo, selectedRoute },
@@ -107,6 +108,7 @@ export default function RouteDetails(props) {
           events: state.feeds.events,
           ferries: state.feeds.ferries,
           wildfires: state.feeds.wildfires,
+          dms: state.feeds.dms,
         },
         advisories: state.cms.advisories,
         routes: state.routes,
@@ -119,6 +121,7 @@ export default function RouteDetails(props) {
   const [eventCount, setEventCount] = useState();
   const [ferryCount, setFerryCount] = useState();
   const [wildfireCount, setWildfireCount] = useState();
+  const [dmsCount, setDmsCount] = useState();
   const [advisoryCount, setAdvisoryCount] = useState();
   const [nickName, setNickName] = useState('');
   const [showSavePopup, setShowSavePopup] = useState(false);
@@ -184,6 +187,9 @@ export default function RouteDetails(props) {
       } else if (action === 'setWildfireCount') {
         setWildfireCount(filteredData.length);
 
+      } else if (action === 'setDmsCount') {
+        setDmsCount(filteredData.length);
+
       // Data to be updated via dispatch
       } else {
         dispatch(
@@ -213,6 +219,7 @@ export default function RouteDetails(props) {
     if (!events) dataLoaders.loadEvents(routeData, null, dispatch, workerRef.current);
     if (!ferries) dataLoaders.loadFerries(routeData, null, dispatch, workerRef.current);
     if (!wildfires) dataLoaders.loadWildfires(routeData, null, dispatch, workerRef.current);
+    if (!dms) dataLoaders.loadDms(routeData, null, dispatch, workerRef.current);
 
     // Cleanup function to terminate the worker when the component unmounts
     return () => {
@@ -283,6 +290,16 @@ export default function RouteDetails(props) {
   }, [wildfires]);
 
   useEffect(() => {
+    if (dms) {
+      workerRef.current.postMessage({
+        data: dms,
+        route: route,
+        action: 'setDmsCount'
+      });
+    }
+  }, [dms]);
+
+  useEffect(() => {
     if (showSavePopup) {
       setNickName(getDefaultLabel());
     }
@@ -296,6 +313,7 @@ export default function RouteDetails(props) {
       isNaN(advisoryCount) ||
       isNaN(wildfireCount) ||
       isNaN(ferryCount) ||
+      isNaN(dmsCount) ||
       filteredFavCams === undefined
     ) return;
 
@@ -303,7 +321,7 @@ export default function RouteDetails(props) {
     const updatedRoutesLoaded = [...routesLoaded];
     updatedRoutesLoaded[index] = true;
     setRoutesLoaded(updatedRoutesLoaded);
-  }, [eventCount, advisoryCount, wildfireCount, ferryCount, filteredFavCams]);
+  }, [eventCount, advisoryCount, wildfireCount, ferryCount, dmsCount, filteredFavCams]);
 
   /* Helpers */
   const toggleAuthModal = (action) => {
@@ -775,6 +793,22 @@ export default function RouteDetails(props) {
             </div>
           }
           {isNaN(ferryCount) && <Skeleton height={32}/>}
+
+          {(typeof dmsCount === 'number' && dmsCount > 0 && mapContext.visible_layers.dms) &&
+            <div className="route-item route-item--dms">
+              <span className="route-item__count">
+                {dmsCount}
+              </span>
+              <span className="route-item__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
+                     alt="dynamic message signs" aria-hidden="true" focusable="false" role="img">
+                  <path d="M7.33333 6C7.74653 6 8.11111 6.38086 8.11111 6.8125H15.8889C15.8889 6.38086 16.2292 6 16.6667 6C17.0799 6 17.4444 6.38086 17.4444 6.8125H17.8333C18.4653 6.8125 19 7.37109 19 8.03125V15.3438C19 16.0293 18.4653 16.5625 17.8333 16.5625H6.16667C5.51042 16.5625 5 16.0293 5 15.3438V8.03125C5 7.37109 5.51042 6.8125 6.16667 6.8125H6.55556C6.55556 6.38086 6.89583 6 7.33333 6ZM8.11111 17.375V18.1875C8.11111 18.6445 7.74653 19 7.33333 19C6.89583 19 6.55556 18.6445 6.55556 18.1875V17.375H8.11111ZM15.8889 17.375H17.4444V18.1875C17.4444 18.6445 17.0799 19 16.6667 19C16.2292 19 15.8889 18.6445 15.8889 18.1875V17.375Z"/>
+                </svg>
+              </span>
+              <span className="route-item__name">{dmsCount !== 1 ? 'Message signs' : 'Message sign'}</span>
+            </div>
+          }
+          {isNaN(dmsCount) && mapContext.visible_layers.dms && <Skeleton height={32}/>}
 
           {isPanel &&
             <Button
