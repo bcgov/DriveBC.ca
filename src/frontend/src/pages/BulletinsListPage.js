@@ -28,7 +28,6 @@ import { useLocation } from "react-router-dom";
 import './BulletinsListPage.scss';
 
 export default function BulletinsListPage() {
-  const isFirstVisitRef = useRef(!sessionStorage.getItem('lastBulletinsVisit'));
   document.title = 'DriveBC - Bulletins';
 
   // Context
@@ -49,7 +48,7 @@ export default function BulletinsListPage() {
   const dismissedHighlightsRef = useRef(
     new Set(JSON.parse(sessionStorage.getItem('dismissedBulletinHighlights') || '[]'))
   );
-  
+
 
   // States
   const [showLoader, setShowLoader] = useState(true);
@@ -124,7 +123,7 @@ export default function BulletinsListPage() {
       );
     }
 
-      const isUnread = !isFirstVisitRef.current &&
+      const isUnread =
         bulletin.last_notified_at &&
         !currentContext.readBulletins.includes(
           bulletin.id.toString() + '-' + bulletin.last_notified_at.toString()
@@ -158,7 +157,7 @@ export default function BulletinsListPage() {
 
   useEffect(() => {
     cmsContextRef.current = cmsContext;
-  
+
     if (isFirstMount.current) {
       isFirstMount.current = false;
       loadBulletins();
@@ -221,13 +220,6 @@ export default function BulletinsListPage() {
 useEffect(() => {
   bulletinsRef.current = bulletins;
 }, [bulletins]);
-
-  useEffect(() => {
-    sessionStorage.setItem(
-      'lastBulletinsVisit',
-      new Date().toISOString()
-    );
-  }, []);
 
   const scrollToNextHighlightedHandler = (direction) => {
     const offset = 58 + 48;
