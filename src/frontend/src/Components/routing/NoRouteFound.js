@@ -13,12 +13,21 @@ import './NoRouteFound.scss';
 export default function NoRouteFound(props) {
   const { searchedRoutes, searchLocationFrom, searchLocationTo } = props;
 
+  // BC plus neighbouring provinces/territories and US border locations we list as routable
+  const isInBcRegion = (label) => (
+    label.includes(', BC') ||
+    label.includes(', AB') ||
+    label.includes(', YT') ||
+    label.includes(', NT') ||
+    label.includes(', US')
+  );
+
   const isInBc = (searchLocationFrom, searchLocationTo) => {
     return searchLocationFrom[0] && searchLocationTo[0] && (
-      (searchLocationFrom[0].label.includes(', BC') && searchLocationTo[0].label.includes(', BC')) ||
+      (isInBcRegion(searchLocationFrom[0].label) && isInBcRegion(searchLocationTo[0].label)) ||
       (searchLocationFrom[0].label.includes('Current location'))
     );
-}
+  }
 
   // Rendering
   return (
