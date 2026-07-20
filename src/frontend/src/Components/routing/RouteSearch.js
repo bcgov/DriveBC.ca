@@ -145,7 +145,10 @@ const RouteSearch = forwardRef((props, ref) => {
             setSearchParams(searchParams);
           }
 
-          fitMap(routes, mapView);
+          const mapSize = mapRef?.current?.getSize?.();
+          const isNarrow = typeof window !== 'undefined' && window.innerWidth < 768;
+          const bottomPad = isNarrow && mapSize ? Math.round(mapSize[1] * 0.5) : 50;
+          fitMap(routes, mapView, [50, 50, bottomPad, 50]);
           setMapContext({
             ...mapContext,
             pendingRouteFit: false
