@@ -1,5 +1,9 @@
 // React
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
+
+// Redux
+import { useSelector } from 'react-redux';
+import { memoize } from 'proxy-memoize';
 
 // Navigation
 import { useSearchParams } from 'react-router-dom';
@@ -126,18 +130,32 @@ export default function EventPanel(props) {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const eventData = feature.ol_uid ? feature.getProperties() : feature;
+  const featureProps = feature.ol_uid ? feature.getProperties() : feature;
+
+  // Prefer polled feed data so the panel updates when an event becomes current
+  // (OpenLayers feature properties are mutated in place without a React state change).
+  const { eventsList, filteredEventsList } = useSelector(
+    useCallback(
+      memoize(state => ({
+        eventsList: state.feeds.events.list,
+        filteredEventsList: state.feeds.events.filteredList,
+      })),
+    ),
+  );
+
+  const eventFromFeed = (eventsList || filteredEventsList || []).find(
+    (event) => event.id == featureProps.id
+  );
+  const eventData = eventFromFeed || featureProps;
   const severity = eventData.severity.toLowerCase();
 
   // useEffect hooks
   useEffect(() => {
-    const event = feature.getProperties();
-
     searchParams.set('type', 'event');
-    searchParams.set('display_category', event.display_category);
-    searchParams.set('id', event.id);
+    searchParams.set('display_category', eventData.display_category);
+    searchParams.set('id', eventData.id);
     setSearchParams(searchParams, { replace: true });
-  }, [feature]);
+  }, [feature, eventData.display_category, eventData.id]);
 
   return (
     <div

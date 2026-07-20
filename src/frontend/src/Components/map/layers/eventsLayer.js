@@ -198,7 +198,7 @@ export function updateEventsLayers(
   featureContext, setFeatureContext  // Feature context for route details panel
 ) {
   const featuresDict = {};
-  const contextFeaturesDict = featureContext.events || {};
+  const contextFeaturesDict = { ...(featureContext.events || {}) };
 
   const eventsDict = events.reduce((dict, obj) => {
     dict[obj.id] = obj;
@@ -210,25 +210,37 @@ export function updateEventsLayers(
   Object.values(mapLayers.current).forEach((layer) => {
     if (layer.get('classname') !== 'events') { return; }  // skip non-event layers
 
-    // for each feature in a layer, set the style or hide the
-    // feature, depending on whether the event is current
-    for (const feature of layer.getSource().getFeatures()) {
+    const isLineLayer = layer.name.endsWith('Lines');
+    const baseLayerName = isLineLayer ? layer.name.slice(0, -5) : layer.name;
+
+    // Copy before mutating source (category changes remove features)
+    for (const feature of [...layer.getSource().getFeatures()]) {
       const featureId = feature.getId();
       if (featureId in eventsDict) {
+        const event = eventsDict[featureId];
+
+        // Recreate on the correct layer when future→current (etc.)
+        if (event.display_category !== baseLayerName) {
+          layer.getSource().removeFeature(feature);
+          if (!isLineLayer) {
+            delete contextFeaturesDict[featureId];
+          }
+          continue;
+        }
+
         // Update the feature with the new event data
-        feature.setProperties(eventsDict[featureId]);
+        feature.setProperties(event);
         setEventStyle(feature, clickedFeature?.getId() === featureId ? 'active' : 'static');
         processedEvents.add(featureId);  // Track processed events
-        featuresDict[featureId] = feature;
+
+        if (!isLineLayer) {
+          featuresDict[featureId] = feature;
+          contextFeaturesDict[featureId] = feature;
+        }
 
       // Hide the feature if not in filtered data list
       } else {
         feature.setStyle(new Style(null));
-      }
-
-      // Store point features in dict for context
-      if (!(layer.name.endsWith('Lines')) && !(feature.featureId in contextFeaturesDict)) {
-        contextFeaturesDict[featureId] = feature;
       }
     }
   });
@@ -246,7 +258,15 @@ export function updateEventsLayers(
   Object.values(eventsDict).forEach((event) => {
     if (processedEvents.has(event.id)) { return; }
 
+    delete contextFeaturesDict[event.id];
     processEvent(mapContext, event, 'EPSG:3857', vsMap, lineVsMap, null, null, true, contextFeaturesDict);
+  });
+
+  // Include newly created point features (e.g. after category change)
+  Object.entries(contextFeaturesDict).forEach(([featureId, feature]) => {
+    if (featureId in eventsDict) {
+      featuresDict[featureId] = feature;
+    }
   });
 
   // Update feature context with new features
