@@ -1,5 +1,5 @@
 // React
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Navigation
 import { useSearchParams } from 'react-router-dom';
@@ -14,7 +14,15 @@ import {
   faTemperatureHalf,
   faWind
 } from '@fortawesome/pro-light-svg-icons';
+import {
+  faChevronUp,
+  faChevronDown,
+} from '@fortawesome/pro-regular-svg-icons';
+import {
+  faCircleInfo,
+} from '@fortawesome/pro-solid-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
+import Collapse from 'react-bootstrap/Collapse';
 
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
@@ -33,26 +41,21 @@ export default function LocalWeatherPanel(props) {
   const { feature, showRouteObjs } = props;
 
   const weatherData = feature.getProperties();
-  const now = new Date();
-  const dailyForecastData = (weatherData.forecast_group || [])
-  
+  const dailyForecastData = Array.isArray(weatherData.forecast_group)
+    ? weatherData.forecast_group
+    : [];
 
-  // Split forecast into current and future
-  const current_day_forecasts = [];
-  const future_forecasts = [];
-  let count = 0;
-  for (const forecast of weatherData.forecast_group) {
-    if (count == 0 || count == 1) {
-      current_day_forecasts.push(forecast);
-    } else {
-      future_forecasts.push(forecast);
-    }
+  const hasTemperatures = !!(weatherData.air_temperature || weatherData.road_temperature);
+  const hasConditions = !!(
+    weatherData.pavement_status || weatherData.pavement_grip || weatherData.elevation ||
+    weatherData.precipitation || weatherData.precipitation_stdobs || weatherData.snow ||
+    weatherData.snow_depth || weatherData.snow_stdobs || weatherData.average_wind ||
+    weatherData.maximum_wind || weatherData.present_weather
+  );
+  const hasForecast = dailyForecastData.length > 0;
+  const showIncompleteBanner = !hasTemperatures || !hasConditions || !hasForecast;
 
-    weatherData.current_day_forecasts = current_day_forecasts;
-    weatherData.future_forecasts = future_forecasts;
-    count += 1;
-  }
-
+  const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   // useEffect hooks
@@ -77,43 +80,81 @@ export default function LocalWeatherPanel(props) {
         <ShareURLButton/>
       </div>
 
+      {showIncompleteBanner &&
+        <div className="popup__info">
+          <div className="event">
+            <div>
+              <FontAwesomeIcon icon={faCircleInfo} />
+              <p className="advisory-title">Weather data incomplete</p>
+            </div>
+
+            <FontAwesomeIcon
+              icon={expanded ? faChevronUp : faChevronDown}
+              onClick={() => setExpanded(!expanded)}
+              onKeyDown={(keyEvent) => {
+                if (['Enter', 'NumpadEnter', 'Space'].includes(keyEvent.key)) {
+                  setExpanded(!expanded);
+                }
+              }}
+              tabIndex={0}
+              aria-controls="local-weather-incomplete"
+              aria-expanded={expanded}
+              className="expand-toggle" />
+          </div>
+
+          <Collapse in={expanded}>
+            <div id="local-weather-incomplete">
+              We haven’t received complete data from this roadside weather station.
+              {!hasForecast && ' Forecast is currently unavailable.'}
+              {(!hasTemperatures || !hasConditions) && ' Some current condition readings are unavailable.'}
+              {' '}It could be because the data hasn’t been observed or wasn’t transmitted.
+            </div>
+          </Collapse>
+        </div>
+      }
+
       <div className="popup__content">
         <div className="popup__content__title">
         <p className="name">{weatherData.weather_station_name}</p>
           <p className="description">{weatherData.location_description}</p>
-          <FriendlyTime date={weatherData.issuedUtc} asDate />
+          {weatherData.issuedUtc && <FriendlyTime date={weatherData.issuedUtc} asDate />}
         </div>
 
         <div className="popup__content__description">
-          {(weatherData.air_temperature || weatherData.road_temperature) && (
-            <div className="temperatures">
-              {weatherData.air_temperature && (
-                <div className="temperature temperature--air">
-                  <p className="label"><FontAwesomeIcon icon={faTemperatureHalf} /> Air</p>
-                  <p className="data">{weatherData.air_temperature}&deg;</p>
-                </div>
-              )}
-
-              {weatherData.road_temperature && (
-                <div className="temperature temperature--road">
-                  <p className="label"><FontAwesomeIcon icon={faRoad} /> Road</p>
-                  <p className="data">{weatherData.road_temperature}&deg;</p>
-                </div>
+          <div className="temperatures">
+            <div className="temperature temperature--air">
+              <p className="label"><FontAwesomeIcon icon={faTemperatureHalf} /> Air</p>
+              {weatherData.air_temperature ? (
+                <p className="data">{weatherData.air_temperature}&deg;</p>
+              ) : (
+                <p className="data unavailable">Unavailable</p>
               )}
             </div>
-          )}
 
-          {(weatherData.pavement_status || weatherData.pavement_grip || weatherData.elevation || weatherData.precipitation || weatherData.precipitation_stdobs || weatherData.snow || weatherData.snow_depth || weatherData.snow_stdobs || weatherData.average_wind || weatherData.maximum_wind) && (
+            <div className="temperature temperature--road">
+              <p className="label"><FontAwesomeIcon icon={faRoad} /> Road</p>
+              {weatherData.road_temperature ? (
+                <p className="data">{weatherData.road_temperature}&deg;</p>
+              ) : (
+                <p className="data unavailable">Unavailable</p>
+              )}
+            </div>
+          </div>
 
-            <div className="data-card-container">
-              <p className="container-label">Current conditions</p>
-                
+          <div className="data-card-container">
+            <p className="container-label">Current conditions</p>
+
+            {!hasConditions ? (
+              <div className="data-card">
+                <p className="data unavailable-conditions">Unavailable</p>
+              </div>
+            ) : (
               <div className="data-card">
                 {weatherData.present_weather && (
                   <div className="row--present-weather">
                     <div className="data-icon">
                       {weatherData.present_weather?.label && (
-                        <CurrentWeatherIcon code={weatherData.present_weather.code} /> 
+                        <CurrentWeatherIcon code={weatherData.present_weather.code} />
                       )}
                     </div>
                     <p className="container-label present-weather">
@@ -237,21 +278,26 @@ export default function LocalWeatherPanel(props) {
                   </div>
                 )}
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
-          {dailyForecastData.length > 0 && (
-            <div className="popup__content__forecasts">
+          <div className="popup__content__forecasts">
+            <p className="container-label">Forecast</p>
+            {hasForecast ? (
               <LocalForecastTabs forecasts={dailyForecastData} />
-            </div>
-          )}
+            ) : (
+              <div className="data-card">
+                <p className="data unavailable-conditions">Unavailable</p>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="popup__content__footer">
           <p>Temperatures displayed in Celsius (&deg;C) <br /></p>
           <p>
             Local weather is provided by local Ministry of Transportation and Transit weather stations. <br />
-            {dailyForecastData.length > 0 && <span>Forecasts courtesy of Weathernet.</span>}
+            {hasForecast && <span>Forecasts courtesy of Weathernet.</span>}
           </p>
         </div>
       </div>
