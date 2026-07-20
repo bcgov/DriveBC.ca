@@ -102,18 +102,14 @@ export default function Header({ isMaintenance }) {
       return 0;
     }
 
-    if (advisoriesData.length !== 0 && advisoriesData[0].last_notified_at == null) {
-      return 0;
-    }
-
     const readAdvisories = advisoriesData.filter(advisory => {
-      // Do not count preview items as unread
+      // Do not count preview items or never-notified items as unread
       if (!advisory.id || !advisory.last_notified_at) {
         return true;
       }
 
       return cmsContext.readAdvisories.includes(
-        advisory.id.toString() + '-' + advisory.last_notified_at
+        advisory.id.toString() + '-' + advisory.last_notified_at.toString()
       );
     });
 
@@ -125,13 +121,17 @@ export default function Header({ isMaintenance }) {
       return 0;
     }
 
-    if (bulletinsData.length !== 0 && bulletinsData[0].last_notified_at == null) {
-      return 0;
-    }
+    const readBulletins = bulletinsData.filter(bulletin => {
+      // Do not count preview items or never-notified items as unread
+      if (!bulletin.id || !bulletin.last_notified_at) {
+        return true;
+      }
 
-    const readBulletins = bulletinsData.filter(bulletin => cmsContext.readBulletins.includes(
-      bulletin.id.toString() + '-' + bulletin.last_notified_at
-    ));
+      return cmsContext.readBulletins.includes(
+        bulletin.id.toString() + '-' + bulletin.last_notified_at.toString()
+      );
+    });
+
     return bulletinsData.length - readBulletins.length;
   }
 
