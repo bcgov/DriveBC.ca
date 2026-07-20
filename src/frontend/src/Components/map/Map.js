@@ -52,7 +52,8 @@ import {
   zoomIn,
   zoomOut,
   fitMap,
-  removeOverlays
+  removeOverlays,
+  setEventStyle
 } from './helpers';
 import { layerNameMap, toggleableLayers } from "./enums";
 import { loadLayer, loadEventsLayers, updateEventsLayers, enableReferencedLayer } from './layers';
@@ -882,10 +883,22 @@ export default function DriveBCMap(props) {
     // Count filtered events to store in routeDetails
     if (filteredEvents) {
       // Toggle features visibility
-      updateEventsLayers(
+      const featuresDict = updateEventsLayers(
         mapContext, filteredEvents, mapLayers, setLoadingLayers, clickedFeature, mapView,
         featureContext, setFeatureContext // DBC22-5106
       );
+
+      // If the open event was recreated (e.g. future→current), point at the new feature
+      const clicked = clickedFeatureRef.current;
+      if (clicked?.get?.('type') === 'event' && featuresDict) {
+        const updatedFeature = featuresDict[clicked.getId()];
+        if (updatedFeature && updatedFeature !== clicked) {
+          updatedFeature.set('clicked', true);
+          setEventStyle(updatedFeature, 'active');
+          setEventStyle(updatedFeature.get('altFeature') || [], 'active');
+          updateClickedFeature(updatedFeature, false);
+        }
+      }
 
       const eventCounts = {
         closures: 0,
