@@ -400,20 +400,16 @@ export default function DriveBCMap(props) {
         geometry = feature.getProperties().altFeature.getGeometry(); // use the point feature's geometry
       }
 
-      // Center if panel from bottom or clicked within 390px from left of the screen
-      if (mousePointXClicked < 390 || smallScreen) {
+      // Bottom drawer when !largeScreen (matches Drawer render); shared links have no click X
+      const bottomDrawer = !largeScreen;
+      if (mousePointXClicked < 390 || bottomDrawer) {
         const zoom = mapView.current.getZoom();
         const coords = geometry.flatCoordinates;
         const mapWidth = mapRef.current?.getSize()?.[0] ?? 0;
 
-        // Use anchored pan if panel from bottom or screen smaller than 1000px
-        const shouldUseAnchoredPan = mapWidth < 1000 || smallScreen;
-
-        // Center on top half of the screen, if panel open from bottom
-        const anchorYFraction = !viewportLargeScreen || isCamDetail ? 0.25 : 0.5;
-
-        // Center on right side of screen minus 390px panel, if panel open from left
-        const anchorXFraction = anchorYFraction !== 0.25 ? (((mapWidth-390)/2) + 390) / mapWidth : 0.5;
+        const shouldUseAnchoredPan = bottomDrawer || mapWidth < 1000;
+        const anchorYFraction = bottomDrawer ? 0.25 : 0.5;
+        const anchorXFraction = bottomDrawer ? 0.5 : (((mapWidth - 390) / 2) + 390) / mapWidth;
 
         if (shouldUseAnchoredPan) {
           setZoomPanAnchored(mapRef, mapView, zoom, coords, anchorXFraction, anchorYFraction);
@@ -424,6 +420,19 @@ export default function DriveBCMap(props) {
       }
     }
   };
+
+  // Shared desktop URLs include pan/zoom for the full map; re-anchor into the
+  // visible area after the mobile drawer has opened (related: DBC22-4932).
+  useEffect(() => {
+    if (largeScreen || !openPanel || !clickedFeature) return;
+    if (!searchParams.get('type') || !searchParams.get('id')) return;
+
+    const timer = setTimeout(() => {
+      updatePosition(clickedFeature);
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [openPanel, clickedFeature, largeScreen]);
 
   const [showLocationAccessError, setShowLocationAccessError] = useState(false);
 
@@ -837,7 +846,9 @@ export default function DriveBCMap(props) {
     );
 
     if (localStorage.getItem("pendingFit") === 'true') {
-      fitMap(searchedRoutes, mapView);
+      const size = mapRef.current?.getSize();
+      const bottomPad = !largeScreen && size ? Math.round(size[1] * 0.5) : 50;
+      fitMap(searchedRoutes, mapView, [50, 50, bottomPad, 50]);
     }
 
     // Remove all overlays from previously searched routes

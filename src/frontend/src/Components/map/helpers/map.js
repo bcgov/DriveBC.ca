@@ -14,7 +14,8 @@ export const transformFeature = (feature, sourceCRS, targetCRS) => {
 };
 
 // Zoom and pan
-export const fitMap = (routes, mapView) => {
+// padding: OpenLayers [top, right, bottom, left] for visible-area fit above mobile panel
+export const fitMap = (routes, mapView, padding) => {
   // Only apply to map page when at least one route is returned
   if (!Array.isArray(routes) || routes.length === 0) {
     return;
@@ -41,7 +42,12 @@ export const fitMap = (routes, mapView) => {
   // Transform the combined bounding box to the map's projection
   const routeExtent = transformExtent(combinedBbox, 'EPSG:4326', 'EPSG:3857');
 
-  mapView.current.fit(routeExtent, { duration: 1000 });
+  const fitOptions = { duration: 1000 };
+  if (padding) {
+    fitOptions.padding = padding;
+  }
+
+  mapView.current.fit(routeExtent, fitOptions);
   localStorage.setItem("pendingFit", 'false');
 }
 
