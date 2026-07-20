@@ -3,23 +3,19 @@ from apps.shared.enums import CacheKey
 from apps.shared.models import BaseModel
 from config import settings
 from django.contrib.gis.db import models
-from django.contrib.gis.forms import OSMWidget
+from django.contrib.gis.forms import MultiPolygonField, OSMWidget
+from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from wagtail import blocks
-from wagtail.admin.panels import FieldPanel, HelpPanel
+from wagtail.admin.forms import WagtailAdminPageForm
+from wagtail.admin.panels import FieldPanel, HelpPanel, PageChooserPanel, Panel
 from wagtail.api import APIField
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.models import Image
 from wagtail.models import Page
 from wagtail.templatetags import wagtailcore_tags
-from wagtail.admin.panels import PageChooserPanel
-from django.contrib.gis.forms import MultiPolygonField
-from django.contrib.gis.geos import MultiPolygon, Polygon, GEOSGeometry
-from wagtail.admin.forms import WagtailAdminPageForm
-from wagtail.admin.panels import Panel
-from django.core.exceptions import ValidationError
-
 
 TABLE_OPTIONS = {'rowHeaders': True,
                  'colHeaders': True, }
@@ -29,6 +25,7 @@ This block is for information that needs to be presented as especially important
 styled according to the BC gov't's style guide (light grey background, blue
 border on the left).
 '''
+
 
 def reparent_orphan_advisories():
     """
@@ -50,6 +47,7 @@ def reparent_orphan_advisories():
     for advisory in orphans:
         advisory.move(index, pos="first-child")  # Use "first-child" for newest on top
 
+
 def reparent_orphan_bulletins():
     """
     Move all Bulletin pages that are not children of BulletinIndexPage
@@ -69,6 +67,7 @@ def reparent_orphan_bulletins():
 
     for bulletin in orphans:
         bulletin.move(index, pos="first-child")  # Use "first-child" for newest on top
+
 
 def get_or_create_advisory_index():
     index = AdvisoryIndexPage.objects.first()
@@ -95,6 +94,7 @@ def get_or_create_advisory_index():
 
     return index
 
+
 def get_or_create_bulletin_index():
     index = BulletinIndexPage.objects.first()
     if index:
@@ -120,6 +120,7 @@ def get_or_create_bulletin_index():
 
     return index
 
+
 class FlexibleMultiPolygonField(MultiPolygonField):
     def to_python(self, value):
         if not value:
@@ -141,6 +142,7 @@ class FlexibleMultiPolygonField(MultiPolygonField):
             print(f"DEBUG to_python error: {e}")
         return super().to_python(value)
 
+
 class DriveBCMapWidget(OSMWidget):
     # Defaults to Kelowna
     default_lon = -119.49662112970556
@@ -148,19 +150,30 @@ class DriveBCMapWidget(OSMWidget):
     default_zoom = 14
     template_name = 'cms/map.html'
 
+    # Serve OpenLayers locally (extend=False replaces Django's jsdelivr CDN media).
+    # CDN loads fail in some environments with ERR_CERT_AUTHORITY_INVALID (DBC22-6523).
     class Media:
+        extend = False
         css = {
-            'all': ('css/map-widget.css',)
+            'all': (
+                'vendor/ol/ol.css',
+                'gis/css/ol3.css',
+                'css/map-widget.css',
+            )
         }
         js = (
+            'vendor/ol/ol.js',
+            'gis/js/OLMapWidget.js',
             'js/map-widget.js',
         )
+
 
 class AdvisoryAdminForm(WagtailAdminPageForm):
     geometry = FlexibleMultiPolygonField(
         widget=DriveBCMapWidget,
         required=False  # allows autosave with incomplete geometry
     )
+
 
 class RichContent(blocks.StreamBlock):
     ''' Common set of rich content controls for all page types. '''
@@ -170,6 +183,7 @@ class RichContent(blocks.StreamBlock):
     table = TableBlock(table_options=TABLE_OPTIONS)
     callout = blocks.RichTextBlock(help_text=CALLOUT_HELP_TEXT,
                                    template='cms/callout.html')
+
 
 class ReadOnlyPanel(Panel):
     def __init__(self, field_name, **kwargs):
@@ -190,11 +204,13 @@ class ReadOnlyPanel(Panel):
             ctx['value'] = getattr(self.instance, self.panel.field_name, '')
             return ctx
 
+
 class AdvisoryIndexPage(Page):
     parent_page_types = ["wagtailcore.Page"]
     subpage_types = ["cms.Advisory"]
 
     max_count = 1
+
 
 class Advisory(Page, BaseModel):
     page_body = "Use this page for creating advisories."
@@ -276,7 +292,8 @@ class BulletinIndexPage(Page):
     parent_page_types = ["wagtailcore.Page"]
     subpage_types = ["cms.Bulletin"]
 
-    max_count = 1 
+    max_count = 1
+
 
 class Bulletin(Page, BaseModel):
     page_body = "Use this page for creating bulletins."
@@ -397,7 +414,6 @@ class EmergencyAlert(Page, BaseModel):
     ]
     promote_panels = []
 
-
     def get_url_parts(self, request=None):
         parts = super().get_url_parts(request)
         if parts is None:
@@ -436,6 +452,7 @@ class EmergencyAlertDetail(Page, BaseModel):
     class Meta:
         verbose_name = "Emergency Alert Detail"
         verbose_name_plural = "Emergency Alert Details"
+
 
 class SubPage(Page, BaseModel):
     '''
