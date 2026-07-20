@@ -204,14 +204,6 @@ useEffect(() => {
   loadAdvisories();
 }, [location.key]);
 
-useEffect(() => {
-  return () => {
-    if (advisoriesRef.current && advisoriesRef.current.length) {
-      markAdvisoriesAsRead(advisoriesRef.current, cmsContextRef.current, setCMSContext);
-    }
-  };
-}, []);
-
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {

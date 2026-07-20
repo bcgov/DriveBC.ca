@@ -49,7 +49,7 @@ export default function BulletinsListPage() {
   const dismissedHighlightsRef = useRef(
     new Set(JSON.parse(sessionStorage.getItem('dismissedBulletinHighlights') || '[]'))
   );
-  
+
 
   // States
   const [showLoader, setShowLoader] = useState(true);
@@ -158,7 +158,7 @@ export default function BulletinsListPage() {
 
   useEffect(() => {
     cmsContextRef.current = cmsContext;
-  
+
     if (isFirstMount.current) {
       isFirstMount.current = false;
       loadBulletins();
@@ -169,14 +169,6 @@ export default function BulletinsListPage() {
     setTrackedBulletins({});
     loadBulletins();
   }, [location.key]);
-
-  useEffect(() => {
-    return () => {
-      if (bulletinsRef.current && bulletinsRef.current.length) {
-        markBulletinsAsRead(bulletinsRef.current, cmsContextRef.current, setCMSContext);
-      }
-    };
-  }, []);
 
   // Intersection observer
   useEffect(() => {
