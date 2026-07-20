@@ -520,9 +520,10 @@ export default function DriveBCMap(props) {
     // Enable referenced layer
     enableReferencedLayer(referenceData, mapContext);
 
-    // Enable highway cams layer if in cam detail
+    // Enable highway cams and ferries layers if in cam detail (locked on)
     if (isCamDetail) {
       mapContext.visible_layers['highwayCams'] = true;
+      mapContext.visible_layers['inlandFerries'] = true;
     }
 
     const tileSource = new VectorTileSource({

@@ -63,7 +63,7 @@ export default function MapFilters(props) {
   const [roadConditions, setRoadConditions] = useState(mapContext.visible_layers.roadConditions);
   const [chainUps, setChainUps] = useState(mapContext.visible_layers.chainUps);
   const [highwayCams, setHighwayCams] = useState(isCamDetail ? true : mapContext.visible_layers.highwayCams);
-  const [inlandFerries, setInlandFerries] = useState(isCamDetail ? true : mapContext.visible_layers.highwayCams);
+  const [inlandFerries, setInlandFerries] = useState(isCamDetail ? true : mapContext.visible_layers.inlandFerries);
   const [weather, setWeather] = useState(mapContext.visible_layers.weather);
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
   const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
@@ -71,6 +71,18 @@ export default function MapFilters(props) {
   const [dms, setDms] = useState(mapContext.visible_layers.dms);
 
   // Effects
+  // Camera detail: ensure locked-on layers are visible once created
+  useEffect(() => {
+    if (!isCamDetail || !mapLayers?.current) return;
+
+    if (mapLayers.current.highwayCams) {
+      mapLayers.current.highwayCams.setVisible(true);
+    }
+    if (mapLayers.current.inlandFerries) {
+      mapLayers.current.inlandFerries.setVisible(true);
+    }
+  }, [isCamDetail, mapLayers, loadingLayers?.ferries, loadingLayers?.cameras]);
+
   useEffect(() => {
     if (isInitialLoad.current) {
       isInitialLoad.current = false;
@@ -393,7 +405,7 @@ export default function MapFilters(props) {
                   name="ferries"
                   id="filter--inland-ferries"
                   onChange={e => filterHandler('inlandFerries', e)}
-                  defaultChecked={mapContext.visible_layers.inlandFerries}
+                  defaultChecked={isCamDetail || mapContext.visible_layers.inlandFerries}
                   disabled={isCamDetail || disableFeatures} />
 
                 <label className="filter-item__button" htmlFor="filter--inland-ferries">
