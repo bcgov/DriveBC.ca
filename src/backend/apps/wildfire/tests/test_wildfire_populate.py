@@ -124,21 +124,22 @@ class TestWildfireModel(BaseTest):
         out_of_control_feature = self.feature_by_id(self.parsed_features, 'K70659')
         area_data = self.areas_dict['G70422']
 
-        # Under Control, not populated
-        under_control_data = {
-            **self.combine_with_area(holding_feature),
-            'status': WILDFIRE_STATUS.UNDR_CNTRL,
-        }
-        assert populate_wildfire_from_data(under_control_data) is None
-        assert not Wildfire.objects.filter(id='G90400').exists()
-
         # Out, not populated
         out_data = {
             **self.combine_with_area(holding_feature),
             'status': WILDFIRE_STATUS.OUT,
         }
-        populate_wildfire_from_data(out_data)
+        assert populate_wildfire_from_data(out_data) is None
         assert not Wildfire.objects.filter(id='G90400').exists()
+
+        # Under Control
+        under_control_data = {
+            **self.combine_with_area(holding_feature),
+            'status': WILDFIRE_STATUS.UNDR_CNTRL,
+        }
+        assert populate_wildfire_from_data(under_control_data) == 'G90400'
+        wildfire = Wildfire.objects.get(id='G90400')
+        assert wildfire.status == WILDFIRE_STATUS.UNDR_CNTRL
 
         # Being Held
         populate_wildfire_from_data(self.combine_with_area(holding_feature))
