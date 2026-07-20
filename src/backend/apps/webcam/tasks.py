@@ -520,11 +520,11 @@ def build_route_geometries(coords=hwy_coords):
             points_list = [Point(p) for p in response.json()['route']]
             ls_routes.append(LineString(points_list))
 
-        # DBC22-2456
+        # DBC22-2456 / DBC22-6513: reverse so camera order is south→north (and west→east)
         highways_to_reverse = [
-            '2', '3B', '9', '11', '13', '15', '17A', '23',
+            '2', '3B', '9', '11', '13', '15', '17A', '19', '19A', '23',
             '27', '29', '31', '33', '35', '37', '43', '91A',
-            '93', '95', '97', '97C'
+            '93', '95', '97', '97C', '99A'
         ]
 
         if key in highways_to_reverse:

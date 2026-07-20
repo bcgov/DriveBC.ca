@@ -222,7 +222,8 @@ export default function CamerasListPage() {
       } else {
         const highwayCompare = collator.compare(a.highway_display, b.highway_display);
         if (highwayCompare == 0) {
-          return collator.compare(a.route_order, b.route_order);
+          // Numeric compare — Collator stringifies null/undefined unpredictably
+          return (a.route_order ?? Number.MAX_SAFE_INTEGER) - (b.route_order ?? Number.MAX_SAFE_INTEGER);
         }
 
         return highwayCompare;
