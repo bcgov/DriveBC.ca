@@ -101,6 +101,9 @@ export const enableReferencedLayer = (referenceData, mapContext) => {
   } else if (featureType === 'wildfire') {
     mapContext.visible_layers['wildfires'] = true;
 
+  } else if (featureType === 'dms') {
+    mapContext.visible_layers['dms'] = true;
+
   } else {
     const featureDisplayCategory = referenceData.display_category;
     switch (featureDisplayCategory) {
