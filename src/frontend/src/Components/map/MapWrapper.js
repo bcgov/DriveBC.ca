@@ -124,12 +124,18 @@ export default function MapWrapper(props) {
   useEffect(() => {
     selectedRouteRef.current = selectedRoute;
 
+    // Recreate worker on route change so in-flight messages for the previous route are dropped
+    if (workerRef.current) {
+      workerRef.current.terminate();
+      workerRef.current = null;
+    }
+
     loadData();
 
-    // Cleanup function to terminate the worker when the component unmounts
     return () => {
       if (workerRef.current) {
         workerRef.current.terminate();
+        workerRef.current = null;
       }
     };
   }, [selectedRoute]);
@@ -179,17 +185,23 @@ export default function MapWrapper(props) {
     dmsRef.current = dms;
   }, [dms]);
 
-  const resetWorker = () => {
-    // Terminate the current worker if it exists
+  const ensureWorker = () => {
+    // Keep a single worker across polls — terminating on every reload drops
+    // in-flight filter results and can briefly show unfiltered icons (DBC22-5392).
     if (workerRef.current) {
-      workerRef.current.terminate();
+      return;
     }
 
     workerRef.current = new Worker(new URL('./filterRouteWorker.js', import.meta.url));
 
-    // Set up event listener for messages from the worker
     workerRef.current.onmessage = function (event) {
-      const { data, filteredData, action } = event.data;
+      const { data, filteredData, action, route } = event.data;
+
+      // Ignore stale unfiltered results when a route is still selected
+      const routeSelected = selectedRouteRef.current && selectedRouteRef.current.routeFound;
+      if (routeSelected && !route) {
+        return;
+      }
 
       dispatch(
         slices[action]({
@@ -203,7 +215,7 @@ export default function MapWrapper(props) {
 
   // Function to load all data
   const loadData = () => {
-    resetWorker();
+    ensureWorker();
 
     const routeData = selectedRouteRef.current && selectedRouteRef.current.routeFound ? selectedRouteRef.current : null;
 
