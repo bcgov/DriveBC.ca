@@ -133,9 +133,11 @@ export default function WildfirePanel(props) {
             </div>
           </div>
 
-          <div className="url-btn" >
-            <a href={wildfire.url} rel="noreferrer">View details</a>
-          </div>
+          {wildfire.url &&
+            <div className="url-btn">
+              <a href={wildfire.url} rel="noreferrer">View details</a>
+            </div>
+          }
         </div>
 
         <div className="popup__content__footer">
