@@ -87,8 +87,8 @@ class SendEventNotificationsTest(TestCase):
             notification_days=['Monday', 'Tuesday'],
             notification_start_date=None,
             notification_end_date=None,
-            notification_start_time=datetime.time(8, 0, tzinfo=ZoneInfo('America/Vancouver')),
-            notification_end_time=datetime.time(18, 0, tzinfo=ZoneInfo('America/Vancouver'))
+            notification_start_time=datetime.time(8, 0),
+            notification_end_time=datetime.time(18, 0)
         )
 
         # Case 3: Route matching date period and time frame
@@ -105,8 +105,8 @@ class SendEventNotificationsTest(TestCase):
             notification_days=[],
             notification_start_date=datetime.date(2023, 10, 10),
             notification_end_date=datetime.date(2023, 10, 20),
-            notification_start_time=datetime.time(8, 0, tzinfo=ZoneInfo('America/Vancouver')),
-            notification_end_time=datetime.time(18, 0, tzinfo=ZoneInfo('America/Vancouver'))
+            notification_start_time=datetime.time(8, 0),
+            notification_end_time=datetime.time(18, 0)
         )
 
         # Case 4: Route matching specific date and time frame
@@ -123,8 +123,8 @@ class SendEventNotificationsTest(TestCase):
             notification_days=[],
             notification_start_date=datetime.date(2023, 10, 11),
             notification_end_date=None,
-            notification_start_time=datetime.time(8, 0, tzinfo=ZoneInfo('America/Vancouver')),
-            notification_end_time=datetime.time(18, 0, tzinfo=ZoneInfo('America/Vancouver'))
+            notification_start_time=datetime.time(8, 0),
+            notification_end_time=datetime.time(18, 0)
         )
 
         # Case 5: Always active route with restricted notification types
