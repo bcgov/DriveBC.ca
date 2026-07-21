@@ -46,7 +46,7 @@ HUEY = {
 # Wagtail
 WAGTAIL_SITE_NAME = 'DriveBC'
 WAGTAILEMBEDS_RESPONSIVE_HTML = True
-WAGTAILADMIN_BASE_URL = "\\cms-admin"
+WAGTAILADMIN_BASE_URL = env("FRONTEND_BASE_URL", default="http://localhost:3000/").rstrip("/")
 WAGTAILDOCS_SERVE_METHOD = 'direct'
 
 # reCAPTCHA
