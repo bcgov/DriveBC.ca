@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 
-import { get } from "./helper.js";
+import { get } from "./helper";
 import { API_HOST } from '../../env';
 
 export function getEventDetails(id) {
