@@ -11,7 +11,9 @@ self.onmessage = (event) => {
         filteredData = filterAdvisoryByRoute(data, route);
         break;
       case 'updateCameras':
-        filteredData = filterByRoute(data, route, 50, false);
+        // populateProjection=true so camera order along the route is stable
+        // (DBC22-5976: intermittent wrong first camera / filter flash)
+        filteredData = filterByRoute(data, route, 50, true);
         break;
       case 'updateEvents':
         filteredData = filterByRoute(data, route, null, true);
