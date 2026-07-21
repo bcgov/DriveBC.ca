@@ -9,7 +9,6 @@ on:
       - "2. Create Tag & Build/Deploy to Test"
       - "3. Create Tag & Build/Deploy to UAT"
     types: [completed]
-
 jobs:
   retry-failed-job:
     runs-on: ubuntu-latest
@@ -20,6 +19,7 @@ jobs:
       - name: Re-run failed jobs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
           RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
-          gh run rerun $RUN_ID --failed
+          gh run rerun "$RUN_ID" --failed
