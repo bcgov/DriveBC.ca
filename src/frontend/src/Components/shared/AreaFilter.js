@@ -51,28 +51,40 @@ export default function AreaFilter(props) {
 
   }, [areas, objects]);
 
+  /* Handlers */
+  const selectArea = (areaObj) => {
+    setFilterContext({ ...filterContext, areaFilter: areaObj });
+    handleAreaFiltersClose();
+  };
+
   /* Rendering */
+  const selectedAreaId = filterContext && filterContext.areaFilter ? filterContext.areaFilter.id : null;
+
   // Main component
   return filterContext && (
     <div className="area-filters">
       {displayedAreas &&
-        <div className="area-options">
-          {displayedAreas.map(areaObj =>
-            <div
-              key={areaObj.id}
-              className="area-row"
-              tabIndex={0}
-              onClick={() => {
-                setFilterContext({...filterContext, areaFilter: areaObj});
-                handleAreaFiltersClose();
-              }}
-              onKeyDown={() => {
-                setFilterContext({...filterContext, areaFilter: areaObj});
-                handleAreaFiltersClose();
-              }}>
+        <div className="area-options" role="radiogroup" aria-label="Areas">
+          <label className="area-row">
+            <input
+              type="radio"
+              name="area-filter"
+              className="area-row__radio"
+              checked={selectedAreaId === null}
+              onChange={() => selectArea(null)} />
+            <span className="area-row__label">All areas</span>
+          </label>
 
-              <span>{areaObj.name}</span>
-            </div>
+          {displayedAreas.map(areaObj =>
+            <label key={areaObj.id} className="area-row">
+              <input
+                type="radio"
+                name="area-filter"
+                className="area-row__radio"
+                checked={selectedAreaId === areaObj.id}
+                onChange={() => selectArea(areaObj)} />
+              <span className="area-row__label">{areaObj.name}</span>
+            </label>
           )}
         </div>
       }

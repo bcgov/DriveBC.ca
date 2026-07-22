@@ -47,34 +47,45 @@ export default function HighwayFilter(props) {
     }
   }, [orderedHighways]);
 
-  /* Rendering */
+  /* Handlers */
+  const selectHighway = (highwayKey) => {
+    setFilterContext({ ...filterContext, highwayFilterKey: highwayKey });
+    handleHwyFiltersClose();
+  };
 
+  /* Rendering */
   // Sub components
   const getHighwayDisplay = (highway) => {
     return !isNaN(highway.charAt(0)) ? 'Highway ' + highway : highway;
   }
 
+  const selectedHighwayKey = filterContext && filterContext.highwayFilterKey ? filterContext.highwayFilterKey : null;
+
   // Main component
   return filterContext && (
     <div className="highway-filters">
       {orderedHighways &&
-        <div className="highway-options">
-          {orderedHighways.map(highwayObj =>
-            <div
-              key={highwayObj.key}
-              className="highway-row"
-              tabIndex={0}
-              onClick={() => {
-                setFilterContext({...filterContext, highwayFilterKey: highwayObj.key});
-                handleHwyFiltersClose();
-              }}
-              onKeyDown={() => {
-                setFilterContext({...filterContext, highwayFilterKey: highwayObj.key});
-                handleHwyFiltersClose();
-              }}>
+        <div className="highway-options" role="radiogroup" aria-label="Highways">
+          <label className="highway-row">
+            <input
+              type="radio"
+              name="highway-filter"
+              className="highway-row__radio"
+              checked={selectedHighwayKey === null}
+              onChange={() => selectHighway(null)} />
+            <span className="highway-row__label">All highways</span>
+          </label>
 
-              <span>{highwayObj.display}</span>
-            </div>
+          {orderedHighways.map(highwayObj =>
+            <label key={highwayObj.key} className="highway-row">
+              <input
+                type="radio"
+                name="highway-filter"
+                className="highway-row__radio"
+                checked={selectedHighwayKey === highwayObj.key}
+                onChange={() => selectHighway(highwayObj.key)} />
+              <span className="highway-row__label">{highwayObj.display}</span>
+            </label>
           )}
         </div>
       }

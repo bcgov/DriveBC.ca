@@ -146,6 +146,48 @@
     padding: 1rem;
   }
 
+  &__subheader {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid $Focus;
+      outline-offset: 2px;
+    }
+
+    .filters-overlay__subheader-chevron {
+      margin-left: auto;
+      margin-right: 0;
+      transition: transform 0.15s ease-in-out;
+    }
+
+    &.open .filters-overlay__subheader-chevron {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__collapsible {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.25s ease-in-out;
+
+    &.open {
+      grid-template-rows: 1fr;
+    }
+
+    &-inner {
+      overflow: hidden;
+      min-height: 0;
+      opacity: 0;
+      transition: opacity 0.1s ease-in-out;
+    }
+
+    &.open &-inner {
+      opacity: 1;
+    }
+  }
+
   @media (min-width: 768px) {
     position: fixed;
     top: 0;
