@@ -435,10 +435,8 @@ def generate_district_settings_message(subscription, test_time=None):
 
 
 def queue_route_event_notifications(saved_route, updated_event_ids):
-    # Apply a 150m buffer to the route geometry
-    saved_route.route.transform(3857)
-    buffered_route = saved_route.route.buffer(150)
-    buffered_route.transform(4326)
+    # Same 150m flattened-route buffer used when sending notifications
+    buffered_route = merge_multilinestring(saved_route.route)
 
     updated_interecting_events = Event.objects.filter(
         id__in=updated_event_ids,
@@ -484,14 +482,20 @@ def update_event_area_relations():
         event.area.set(intersecting_areas)
 
 
-def merge_multilinestring(multilinestring):
-    # Flatten all coordinates from each LineString in the MultiLineString
+def flatten_route_linestring(multilinestring):
+    """Flatten a MultiLineString into a single LineString (SRID unchanged)."""
     coords = []
     for line in multilinestring:
         coords.extend(line.coords)
-    ls = LineString(coords, srid=multilinestring.srid)
+    return LineString(coords, srid=multilinestring.srid)
 
-    # Apply a 150m buffer to the route geometry
+
+def merge_multilinestring(multilinestring):
+    """Return a 150m buffer (SRID 4326) around the flattened route."""
+    ls = flatten_route_linestring(multilinestring)
+    if ls.empty:
+        return ls
+
     ls.transform(3857)
     buffered_route = ls.buffer(150)
     buffered_route.transform(4326)
@@ -499,56 +503,39 @@ def merge_multilinestring(multilinestring):
     return buffered_route
 
 
-def get_event_reference_point(event_location, route):
-    # If event_location is a Point, return as is
-    if event_location.geom_type == 'Point':
-        return event_location
-
-    # If event_location is a LineString, get intersection with route
-    elif event_location.geom_type == 'LineString':
-        intersection = event_location.intersection(route)
-        # If intersection is a Point, return it
-        if intersection.geom_type == 'Point':
-            return intersection
-
-        # If intersection is a MultiPoint or LineString, return centroid or first point
-        elif intersection.geom_type in ['MultiPoint', 'LineString']:
-            return intersection.centroid
-
-    # Fallback: return centroid
-    return event_location.centroid
-
-
 def get_ordered_events(events, route):
-    events = list(events)
-    event_distances = []
-    for event in events:
-        # Get reference point from buffered route
-        ref_point = get_event_reference_point(event.location, merge_multilinestring(route))
-        distance = route.project(ref_point)
-        event_distances.append((distance, event))
+    """Sort events by distance along the route (point location, else centroid)."""
+    route_ls = flatten_route_linestring(route)
+    if route_ls.empty:
+        return list(events)
 
-    # Sort events by distance along the route
-    event_distances.sort(key=lambda x: x[0])
-    ordered_events = [e for _, e in event_distances]
+    def distance_along_route(event):
+        loc = event.location
+        if loc.empty:
+            return float('inf')
+        point = loc if loc.geom_type == 'Point' else loc.centroid
+        if point.empty:
+            return float('inf')
+        return route_ls.project(point)
 
-    return ordered_events
+    return sorted(events, key=distance_along_route)
 
 
 def send_queued_notifications():
     active_events = Event.objects.filter(status=EVENT_STATUS.ACTIVE)
-    queued_notification_ids = []
 
     for route_id in QueuedEventNotification.objects.values_list('route_id', flat=True).distinct():
         saved_route = SavedRoutes.objects.filter(id=route_id).first()
         if saved_route:  # Skip is route is missing
             queued_notifications = QueuedEventNotification.objects.filter(route_id=saved_route.id)
 
-            # Notifications to delete
-            queued_notification_ids += queued_notifications.values_list('id', flat=True)
-
             queued_event_ids = queued_notifications.values_list('event_id', flat=True)
-            events = active_events.filter(id__in=queued_event_ids)  # filter out inactive events
+            buffered_route = merge_multilinestring(saved_route.route)
+            # Active + still near the route (drops stale queue rows / geometry drift)
+            events = active_events.filter(
+                id__in=queued_event_ids,
+                location__intersects=buffered_route,
+            )
             ordered_events = get_ordered_events(events, saved_route.route)
 
             if not ordered_events:
@@ -578,15 +565,15 @@ def send_queued_notifications():
             # image attachments
             attach_default_email_images(msg)
 
-            file_names = get_unique_image_type_files_names(events)
+            file_names = get_unique_image_type_files_names(ordered_events)
             for fn in file_names:
                 attach_image_to_email(msg, fn.split('.')[0], fn)  # use file name (without extension) as cid
 
             msg.attach_alternative(html, 'text/html')
             msg.send()
 
-    # Clear sent notifications
-    QueuedEventNotification.objects.filter(id__in=queued_notification_ids).delete()
+            # Clear sent notifications every loop
+            queued_notifications.delete()
 
 
 def send_queued_district_notifications():
