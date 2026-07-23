@@ -99,6 +99,7 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
                 credit=F('cam_internetcredit'),
                 dbc_mark=F('cam_internetdbc_mark'),
                 isNew=F('isnew'),
+                cam_locations_weather_station=F('cam_locationsweather_station'),
             )
             .values(
                 'id',
@@ -114,14 +115,17 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
                 'credit',
                 'dbc_mark',
                 'isNew',
+                'cam_locations_weather_station',
             )
             .first()
         )
 
         if cam:
             update_webcam_db(id, cam)
+            update_current_weather_code(id, cam)
             return True
         else:
+            logging.info(f"No mattching camera {id} was found in DBC database.")
             return False
 
     except Exception as e:
@@ -142,13 +146,25 @@ def format_region_name(region_name):
     return ''.join(result)
 
 
+def update_current_weather_code(cam_id: int, cam_data: dict):
+    cam = Webcam.objects.get(id=cam_id)
+    code = cam_data.get("cam_locations_weather_station", "").strip()
+
+    # Remove the link if there is no weather station code
+    if not code:
+        cam.local_weather_station = None
+        cam.save(update_fields=["local_weather_station_id"])
+
+    # Update the linked CurrentWeather record
+    CurrentWeather.objects.filter(
+        id=cam.local_weather_station_id
+    ).update(code=code)
+
+    return True
+
 def update_webcam_db(cam_id: int, cam_data: dict):
     time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(cam_id, time_now_utc)
-
-    # Unused
-    # ts_seconds = int(camera_status["timestamp"])
-    # dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 
     existing_webcam = Webcam.objects.filter(id=cam_id).first()
     if not existing_webcam:
@@ -546,7 +562,6 @@ def update_camera_weather_station(camera, weather_class):
 
     if weather_class == CurrentWeather:
         stations_qs = stations_qs.filter(
-            distance__lte=D(km=30),
             elevation__lte=camera.elevation + 300,
             elevation__gte=camera.elevation - 300,
         )

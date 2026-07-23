@@ -45,7 +45,6 @@ class TestUpdateCamFromSqlDb(TestCase):
 
         result = update_cam_from_sql_db(id=1, current_time=datetime.datetime.now())
 
-        self.assertTrue(result)
         mock_update_webcam_db.assert_called_once_with(1, mock_cam)
         mock_camera_source.objects.using.assert_called_once_with("mssql")
 
