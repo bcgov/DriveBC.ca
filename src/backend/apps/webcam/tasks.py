@@ -166,10 +166,6 @@ def update_webcam_db(cam_id: int, cam_data: dict):
     time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(cam_id, time_now_utc)
 
-    # Unused
-    # ts_seconds = int(camera_status["timestamp"])
-    # dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
-
     existing_webcam = Webcam.objects.filter(id=cam_id).first()
     if not existing_webcam:
         return False
@@ -566,7 +562,6 @@ def update_camera_weather_station(camera, weather_class):
 
     if weather_class == CurrentWeather:
         stations_qs = stations_qs.filter(
-            # distance__lte=D(km=30),
             elevation__lte=camera.elevation + 300,
             elevation__gte=camera.elevation - 300,
         )
