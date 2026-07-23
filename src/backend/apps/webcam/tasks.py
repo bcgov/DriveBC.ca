@@ -36,6 +36,7 @@ from huey.exceptions import CancelExecution
 from PIL import ImageFile, ImageFont
 from psycopg import IntegrityError
 
+
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 logger = logging.getLogger(__name__)
@@ -53,7 +54,7 @@ SQL_DB_SERVER = os.getenv("SQL_DB_SERVER")
 SQL_DB_NAME = os.getenv("SQL_DB_NAME")
 SQL_DB_USER = os.getenv("SQL_DB_USER")
 SQL_DB_PASSWORD = os.getenv("SQL_DB_PASSWORD")
-SQL_DB_DRIVER = "ODBC Driver 17 for SQL Server"
+SQL_DB_DRIVER = "ODBC Driver 18 for SQL Server"
 S3_BUCKET = os.getenv("S3_BUCKET")
 S3_REGION = os.getenv("S3_REGION")
 S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
@@ -99,6 +100,7 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
                 credit=F('cam_internetcredit'),
                 dbc_mark=F('cam_internetdbc_mark'),
                 isNew=F('isnew'),
+                cam_locations_weather_station=F('cam_locationsweather_station'),
             )
             .values(
                 'id',
@@ -114,14 +116,17 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
                 'credit',
                 'dbc_mark',
                 'isNew',
+                'cam_locations_weather_station',
             )
             .first()
         )
 
         if cam:
             update_webcam_db(id, cam)
+            update_current_weather_code(id, cam)
             return True
         else:
+            logging.info(f"No mattching camera {id} was found in DBC database.")
             return False
 
     except Exception as e:
@@ -142,13 +147,37 @@ def format_region_name(region_name):
     return ''.join(result)
 
 
+def update_current_weather_code(cam_id: int, cam_data: dict):
+    cam = Webcam.objects.get(id=cam_id)
+    code = cam_data.get("cam_locations_weather_station", "").strip()
+    local_weather_station_id = cam.local_weather_station.id if cam.local_weather_station else None
+
+
+    if code:
+        if local_weather_station_id and cam.local_weather_station.id == code:
+            return True
+        else:
+            current_weather = CurrentWeather.objects.filter(code=code, id=local_weather_station_id).first()
+            if current_weather:
+                return True
+            else:
+                current_weather = CurrentWeather.objects.filter(code=code).first()
+                if current_weather:
+                    cam.local_weather_station = current_weather
+                    cam.save(update_fields=["local_weather_station"])
+                else:
+                    cam.local_weather_station = None
+                    cam.save(update_fields=["local_weather_station"])
+
+    else:
+        cam.local_weather_station = None
+        cam.save(update_fields=["local_weather_station"])
+
+    return True
+
 def update_webcam_db(cam_id: int, cam_data: dict):
     time_now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     camera_status = calculate_camera_status(cam_id, time_now_utc)
-
-    # Unused
-    # ts_seconds = int(camera_status["timestamp"])
-    # dt_utc = datetime.datetime.fromtimestamp(ts_seconds, tz=ZoneInfo("UTC"))
 
     existing_webcam = Webcam.objects.filter(id=cam_id).first()
     if not existing_webcam:
@@ -187,6 +216,7 @@ def update_webcam_db(cam_id: int, cam_data: dict):
     return True
 
 
+
 def create_webcam_db(cam_data: dict):
     cam_id = cam_data.id
 
@@ -200,16 +230,20 @@ def create_webcam_db(cam_data: dict):
         if not region_obj:
             logger.error(f"Region not found for camera {cam_id}, skipping webcam creation.")
             return None, False
-        region_id = region_obj.seq if region_obj else None
+
+        region_id = region_obj.seq
+
         raw_hw = cam_data.cam_locationshighway
-        highway_group = RegionHighway.objects.using("mssql").filter(highway_id=raw_hw).first().seq
-        cam_locations_geo_latitude = cam_data.cam_locationsgeo_latitude
-        cam_locations_geo_longitude = cam_data.cam_locationsgeo_longitude
+        highway_group_obj = RegionHighway.objects.using("mssql").filter(highway_id=raw_hw).first()
+        highway_group = highway_group_obj.seq if highway_group_obj else 0
 
         geometry = None
-        if cam_locations_geo_latitude and cam_locations_geo_longitude:
+        if cam_data.cam_locationsgeo_latitude and cam_data.cam_locationsgeo_longitude:
             try:
-                geometry = Point(float(cam_locations_geo_longitude), float(cam_locations_geo_latitude))
+                geometry = Point(
+                    float(cam_data.cam_locationsgeo_longitude),
+                    float(cam_data.cam_locationsgeo_latitude),
+                )
             except (ValueError, TypeError):
                 geometry = None
 
@@ -218,8 +252,8 @@ def create_webcam_db(cam_data: dict):
             defaults={
                 "region": region_id,
                 "region_name": format_region_name(cam_data.cam_locationsregion),
-                "is_on": True if cam_data.cam_controldisabled == 0 else False,
-                "should_appear": True if cam_data.cam_controldisappear == 0 else False,
+                "is_on": cam_data.cam_controldisabled == 0,
+                "should_appear": cam_data.cam_controldisappear == 0,
                 "name": cam_data.cam_internetname,
                 "caption": cam_data.cam_internetcaption,
                 "highway": raw_hw.split("_", 1)[0] if "_" in raw_hw else raw_hw,
@@ -237,16 +271,16 @@ def create_webcam_db(cam_data: dict):
                 "update_period_stddev": camera_status["stddev_interval"],
                 "marked_stale": camera_status["stale"],
                 "marked_delayed": camera_status["delayed"],
-            },
-            create_defaults={  # only applied on INSERT, never on UPDATE
+                # Set on create and update
                 "last_update_attempt": dt_utc,
                 "last_update_modified": dt_utc,
-            }
+            },
         )
+
         return webcam, created
 
-    except Exception as e:
-        logging.exception(f"Failed to create webcam for cam_id {cam_id}: {e}")
+    except Exception:
+        logger.exception(f"Failed to create webcam for cam_id {cam_id}")
         return None, False
 
 
@@ -367,14 +401,13 @@ def update_single_webcam_data(webcam):
 
     # Only update if existing data differs for at least one of the fields
     for field in CAMERA_DIFF_FIELDS:
+        if field == 'marked_stale' or field == 'marked_delayed':
+            continue
+        
         source_field = CAMERA_FIELD_MAPPING.get(field, field)  # fallback to same name if no mapping
         if getattr(webcam, field) != getattr(webcam_data, source_field):
-            if not webcam.https_cam:
-                webcam_serializer = WebcamSerializer(webcam, data=webcam_data.__dict__)
-                webcam_serializer.is_valid(raise_exception=True)
-                webcam_serializer.save()
-            return True
-
+            current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
+            update_cam_from_sql_db(webcam.id, current_time)
     return False
 
 
@@ -546,7 +579,6 @@ def update_camera_weather_station(camera, weather_class):
 
     if weather_class == CurrentWeather:
         stations_qs = stations_qs.filter(
-            distance__lte=D(km=30),
             elevation__lte=camera.elevation + 300,
             elevation__gte=camera.elevation - 300,
         )

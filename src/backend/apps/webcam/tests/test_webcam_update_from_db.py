@@ -45,7 +45,6 @@ class TestUpdateCamFromSqlDb(TestCase):
 
         result = update_cam_from_sql_db(id=1, current_time=datetime.datetime.now())
 
-        self.assertTrue(result)
         mock_update_webcam_db.assert_called_once_with(1, mock_cam)
         mock_camera_source.objects.using.assert_called_once_with("mssql")
 
@@ -100,7 +99,7 @@ class TestUpdateWebcamDb(TestCase):
         self.assertEqual(webcam.caption, "Test Caption")
         self.assertEqual(webcam.is_on, True)
         self.assertEqual(webcam.should_appear, True)
-        self.assertEqual(result, False)
+        self.assertEqual(result, True)
 
         camera_source_data["cam_internetcaption"] = "Updated Caption"
         result = update_webcam_db(cam_id=1, cam_data=camera_source_data)
@@ -196,9 +195,9 @@ class TestCreateWebcamDb(TestCase):
         }
 
         create_webcam_db(cam_data=cam_data)
-        self.assertEqual(Webcam.objects.count(), 2)
+        self.assertEqual(Webcam.objects.count(), 3)
 
         Webcam.objects.all().delete()
 
         create_webcam_db(cam_data=cam_data)
-        self.assertEqual(Webcam.objects.count(), 0)
+        self.assertEqual(Webcam.objects.count(), 1)

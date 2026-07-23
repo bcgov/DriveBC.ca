@@ -216,7 +216,8 @@ DATABASES = {
         "HOST": env("SQL_DB_SERVER"),
         "PORT": env.int("SQL_DB_PORT", default=1433),
         "OPTIONS": {
-            "driver": "ODBC Driver 17 for SQL Server",
+            "driver": "ODBC Driver 18 for SQL Server",
+            "extra_params": "TrustServerCertificate=yes",
         },
     },
 }
