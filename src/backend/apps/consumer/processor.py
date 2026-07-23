@@ -318,6 +318,7 @@ def process_camera_rows(rows):
             'cam_maintenanceis_on_demand': row.cam_maintenanceis_on_demand if hasattr(row, 'cam_maintenanceis_on_demand') else False,
             'is_new': row.isnew if hasattr(row, 'isnew') else False,
             'seq': row.seq if hasattr(row, 'seq') else 0,
+            'cam_locationsweather_station': row.cam_locationsweather_station if hasattr(row, 'cam_locationsweather_station') else '',
             
         }
         camera_list.append(camera_obj)
