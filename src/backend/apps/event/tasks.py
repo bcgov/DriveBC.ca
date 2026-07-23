@@ -523,15 +523,11 @@ def get_ordered_events(events, route):
 
 def send_queued_notifications():
     active_events = Event.objects.filter(status=EVENT_STATUS.ACTIVE)
-    queued_notification_ids = []
 
     for route_id in QueuedEventNotification.objects.values_list('route_id', flat=True).distinct():
         saved_route = SavedRoutes.objects.filter(id=route_id).first()
         if saved_route:  # Skip is route is missing
             queued_notifications = QueuedEventNotification.objects.filter(route_id=saved_route.id)
-
-            # Notifications to delete
-            queued_notification_ids += queued_notifications.values_list('id', flat=True)
 
             queued_event_ids = queued_notifications.values_list('event_id', flat=True)
             buffered_route = merge_multilinestring(saved_route.route)
@@ -576,8 +572,8 @@ def send_queued_notifications():
             msg.attach_alternative(html, 'text/html')
             msg.send()
 
-    # Clear sent notifications
-    QueuedEventNotification.objects.filter(id__in=queued_notification_ids).delete()
+            # Clear sent notifications every loop
+            queued_notifications.delete()
 
 
 def send_queued_district_notifications():
