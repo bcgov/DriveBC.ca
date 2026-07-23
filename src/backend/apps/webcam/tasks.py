@@ -125,6 +125,7 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
             update_current_weather_code(id, cam)
             return True
         else:
+            logging.info(f"No mattching camera {id} was found in DBC database.")
             return False
 
     except Exception as e:
