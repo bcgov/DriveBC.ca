@@ -136,7 +136,7 @@ jobs:
           DEBUG_BUILD=true
 
     - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2
+      uses: redhat-actions/push-to-registry@v3
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: ${{ steps.build_image.outputs.tags }}
@@ -146,7 +146,7 @@ jobs:
 
 # Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
     - name: Push to OpenShift ImageStream
-      uses: redhat-actions/push-to-registry@v2
+      uses: redhat-actions/push-to-registry@v3
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: latest latest-test
@@ -176,7 +176,7 @@ jobs:
         containerfiles: ./compose/redis/Dockerfile
 
     - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2
+      uses: redhat-actions/push-to-registry@v3
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: ${{ steps.build_image.outputs.tags }}
@@ -186,7 +186,7 @@ jobs:
 
 # Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
     - name: Push to OpenShift ImageStream
-      uses: redhat-actions/push-to-registry@v2
+      uses: redhat-actions/push-to-registry@v3
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: latest latest-test
@@ -217,7 +217,7 @@ jobs:
         containerfiles: ./compose/openshiftjobs/DockerFile
 
     - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v2
+      uses: redhat-actions/push-to-registry@v3
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: ${{ steps.build_image.outputs.tags }}
@@ -227,7 +227,7 @@ jobs:
 
 # Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
     - name: Push to OpenShift ImageStream
-      uses: redhat-actions/push-to-registry@v2
+      uses: redhat-actions/push-to-registry@v3
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: latest latest-test
