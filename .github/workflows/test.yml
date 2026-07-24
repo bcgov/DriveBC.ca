@@ -246,7 +246,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v7
     - name: Install CLI tools from OpenShift Mirror
-      uses: redhat-actions/openshift-tools-installer@v1
+      uses: redhat-actions/openshift-tools-installer@v2
       with:
         oc: "4"
         skip_cache: true
@@ -275,7 +275,7 @@ jobs:
       uses: actions/checkout@v7
 
     - name: Install CLI tools from OpenShift Mirror
-      uses: redhat-actions/openshift-tools-installer@v1
+      uses: redhat-actions/openshift-tools-installer@v2
       with:
         oc: "4"
         skip_cache: true
