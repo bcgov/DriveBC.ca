@@ -74,7 +74,7 @@ jobs:
         oc: "4"
           
     - name: Authenticate and set context for Gold
-      uses: redhat-actions/oc-login@v1
+      uses: redhat-actions/oc-login@v2
       with:
         openshift_server_url: ${{ vars.OPENSHIFT_GOLD_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
@@ -102,7 +102,7 @@ jobs:
         oc: "4"
 
     - name: Authenticate and set context for GoldDR
-      uses: redhat-actions/oc-login@v1
+      uses: redhat-actions/oc-login@v2
       with:
         openshift_server_url: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
         openshift_token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
