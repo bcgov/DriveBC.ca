@@ -27,6 +27,7 @@ from apps.shared.status import get_recent_timestamps, calculate_camera_status
 from botocore.config import Config
 from django.contrib.gis.geos import Point
 from django.db import close_old_connections, connection
+import shutil
 
 
 tf = TimezoneFinder()
@@ -159,7 +160,7 @@ async def consume_queue(queue, name: str):
             try:
                 await process_message(message)
             except Exception as e:
-                logger.error(f"Error processing message from {name}: {e}")
+                logging.exception(f"Error processing message from {name}: {e}")
 
 async def consume_from(rb_url: str, name: str):
     while not stop_event.is_set():
@@ -380,7 +381,7 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
         return buffer.read()
 
     except Exception as e:
-        logger.error(f"Error processing image from camera: {e}")
+        logging.exception(f"Error processing image from camera: {e}")
         return None
 
 def blank_out_image(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
@@ -426,7 +427,7 @@ def blank_out_image(webcam: any, image_data: bytes, tz: str, timestamp: str) -> 
         return buffer.read()
 
     except Exception as e:
-        logger.error(f"Error processing image from camera: {e}")
+        logging.exception(f"Error processing image from camera: {e}")
         return None
 
 
@@ -441,7 +442,7 @@ def save_original_image_to_pvc(camera_id: str, image_bytes: bytes):
         with open(filepath, "wb") as f:
             f.write(image_bytes)
     except Exception as e:
-        logger.error(f"Error saving original image to PVC {filepath}: {e}")
+        logging.exception(f"Error saving original image to PVC {filepath}: {e}")
     logger.info(f"Original image saved to PVC at {filepath}")
 
 def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp: str, is_on: bool):  
@@ -460,23 +461,44 @@ def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp:
         else:
             logger.info(f"Blank out image saved to PVC at {filepath}")
     except Exception as e:
-        logger.error(f"Error saving image to PVC {filepath}: {e}")
+        logging.exception(f"Error saving image to PVC {filepath}: {e}")
 
-def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes, is_on: bool):  
-    os.makedirs(os.path.dirname(f'{DRIVEBC_PVC_WATERMARKED_PATH}'), exist_ok=True)
+def check_backup_exists(camera_id: str) -> bool:
+    backup_dir = os.path.join(DRIVEBC_PVC_WATERMARKED_PATH, "backup")
+    backup_filepath = os.path.join(backup_dir, f"{camera_id}.jpg")
+    return os.path.exists(backup_filepath)
 
-    save_dir = os.path.join(DRIVEBC_PVC_WATERMARKED_PATH)
+def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes, is_on: bool):
+    save_dir = DRIVEBC_PVC_WATERMARKED_PATH
+    backup_dir = os.path.join(save_dir, "backup")
+
     os.makedirs(save_dir, exist_ok=True)
+    os.makedirs(backup_dir, exist_ok=True)
+
     filename = f"{camera_id}.jpg"
     filepath = os.path.join(save_dir, filename)
+    backup_filepath = os.path.join(backup_dir, filename)
 
     try:
+        if os.path.exists(filepath) and not is_on:
+            if not check_backup_exists(camera_id):
+                logger.info(
+                    f"Backing up existing image for camera {camera_id} to {backup_filepath}"
+                )
+                shutil.move(filepath, backup_filepath)
+            else:
+                logger.debug(
+                    f"Backup image already exists for camera {camera_id}. Skipping backup."
+                )
+        # Save the new image
         with open(filepath, "wb") as f:
             f.write(image_bytes)
+
         if is_on:
-            logger.info(f"Watermarked image saved to drivebc PVC at {filepath}")
+            logger.info(f"Watermarked image saved to DriveBC PVC at {filepath}")
+
     except Exception as e:
-        logger.error(f"Error saving image to drivebc PVC {filepath}: {e}")
+        logging.exception(f"Error saving image to DriveBC PVC {filepath}: {e}")
 
 def delete_watermarked_image_from_pvc(camera_id: str):
     save_dir = os.path.join(PVC_WATERMARKED_PATH, camera_id)
@@ -491,7 +513,7 @@ def delete_watermarked_image_from_pvc(camera_id: str):
             if os.path.isfile(filepath):
                 os.remove(filepath)
     except Exception as e:
-        logger.error(f"Error deleting watermarked images from PVC {save_dir}: {e}")
+        logging.exception(f"Error deleting watermarked images from PVC {save_dir}: {e}")
         
 async def get_images_within(camera_id: str, hours: int = 720) -> list:
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
