@@ -125,7 +125,7 @@ jobs:
 
     - name: Build Backend
       id: build_image
-      uses: redhat-actions/buildah-build@v2
+      uses: redhat-actions/buildah-build@v3
       with:
         image: drivebc-django
         tags: latest latest-uat ${{ github.sha }} ${{ needs.tag.outputs.tag }}
@@ -168,7 +168,7 @@ jobs:
 
     - name: Build Redis
       id: build_image
-      uses: redhat-actions/buildah-build@v2
+      uses: redhat-actions/buildah-build@v3
       with:
         image: drivebc-redis
         tags: latest latest-uat ${{ github.sha }} ${{ needs.tag.outputs.tag }}
@@ -210,7 +210,7 @@ jobs:
 
     - name: Build OpenShift Jobs
       id: build_image
-      uses: redhat-actions/buildah-build@v2
+      uses: redhat-actions/buildah-build@v3
       with:
         image: drivebc-openshiftjobs
         tags: latest latest-uat ${{ github.sha }} ${{ needs.tag.outputs.tag }}
