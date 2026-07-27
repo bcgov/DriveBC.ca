@@ -1060,11 +1060,14 @@ export default function DriveBCMap(props) {
 
   // Dms layer
   useEffect(() => {
-    loadLayer(
-      mapLayers, mapRef, mapContext,
-      'dms', dms, filteredDms, 60,
-      referenceData, updateReferenceFeature, setLoadingLayers
-    );
+    if (dms && filteredDms) {
+      const featuresDict = loadLayer(
+        mapLayers, mapRef, mapContext,
+        'dms', dms, filteredDms, 60,
+        referenceData, updateReferenceFeature, setLoadingLayers
+      );
+      setFeatureContext({...featureContext, dms: featuresDict});
+    }
   }, [filteredDms]);
 
   // Group and offset overlapping point features after all layers finish loading

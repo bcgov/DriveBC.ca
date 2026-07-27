@@ -27,11 +27,12 @@ import Modal from 'react-bootstrap/Modal';
 import Skeleton from "react-loading-skeleton";
 
 // Internal imports
-import { AlertContext, AuthContext, FeatureContext } from '../../App';
+import { AlertContext, AuthContext, FeatureContext, MapContext } from '../../App';
 import { removeRoute, saveRoute } from "../data/routes";
 import { collator } from "../data/webcams";
 import { populateRouteProjection } from '../map/helpers';
-import { eventClickHandler, ferryClickHandler, wildfireClickHandler } from "../map/handlers/click";
+import { eventClickHandler, ferryClickHandler, wildfireClickHandler, dmsClickHandler } from "../map/handlers/click";
+import DmsTypeIcon from '../map/DmsTypeIcon';
 import RouteMap from './RouteMap';
 
 // Styling
@@ -51,6 +52,7 @@ export default function RouteObjectList(props) {
   const { authContext, setAuthContext } = useContext(AuthContext);
   const { setAlertMessage } = useContext(AlertContext);
   const { featureContext } = useContext(FeatureContext);
+  const { mapContext } = useContext(MapContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -59,6 +61,7 @@ export default function RouteObjectList(props) {
       events: { filteredList: filteredEvents },
       ferries: { filteredList: filteredFerries },
       wildfires: { filteredList: filteredWildfires },
+      dms: { filteredList: filteredDms } = {},
     },
     advisories: { filteredList: filteredAdvisories },
     routes: { searchLocationFrom, searchLocationTo, selectedRoute },
@@ -71,6 +74,7 @@ export default function RouteObjectList(props) {
           events: state.feeds.events,
           ferries: state.feeds.ferries,
           wildfires: state.feeds.wildfires,
+          dms: state.feeds.dms,
         },
         advisories: state.cms.advisories,
         routes: state.routes,
@@ -102,7 +106,7 @@ export default function RouteObjectList(props) {
     if (!routeSwitched) {
       rankObjectList();
     }
-  }, [routeSwitched]);
+  }, [routeSwitched, filteredDms, mapContext.visible_layers.dms]);
 
   /* Helpers */
   const toggleAuthModal = (action) => {
@@ -116,7 +120,10 @@ export default function RouteObjectList(props) {
 
   /* Handlers */
   const rankObjectList = () => {
-    const objs = [...filteredEvents, ...filteredFerries, ...filteredAdvisories, ...filteredWildfires];
+    const dmsObjs = (mapContext.visible_layers.dms && filteredDms)
+      ? filteredDms.map(dms => ({ ...dms, display_category: 'dms' }))
+      : [];
+    const objs = [...filteredEvents, ...filteredFerries, ...filteredAdvisories, ...filteredWildfires, ...dmsObjs];
     const projectedObjs = populateRouteProjection(objs, selectedRoute);
     projectedObjs.sort(function(a, b) {
       return collator.compare(a.route_projection, b.route_projection);
@@ -194,6 +201,17 @@ export default function RouteObjectList(props) {
     if (featureContext.wildfires && wildfire.id in featureContext.wildfires) {
       wildfireClickHandler(
         featureContext.wildfires[wildfire.id],
+        clickedFeatureRef,
+        updateClickedFeature,
+        false,
+      );
+    }
+  }
+
+  const dmsFeatureHandler = (dms) => {
+    if (featureContext.dms && dms.id in featureContext.dms) {
+      dmsClickHandler(
+        featureContext.dms[dms.id],
         clickedFeatureRef,
         updateClickedFeature,
         false,
@@ -418,6 +436,24 @@ export default function RouteObjectList(props) {
 
               <span className="route-item__name">Ferry travel</span>
             </div>
+            </div>
+          );
+        case 'dms':
+          return (
+            <div
+              className="route-item route-item--dms"
+              key={index}
+              onClick={() => dmsFeatureHandler(obj)}
+              onKeyDown={() => dmsFeatureHandler(obj)}
+              role="button"
+              tabIndex={0}>
+              <div className="route-item--group">
+                <span className="route-item__icon">
+                  <DmsTypeIcon dms={obj} />
+                </span>
+
+                <span className="route-item__name">{obj.name || 'Message sign'}</span>
+              </div>
             </div>
           );
       }

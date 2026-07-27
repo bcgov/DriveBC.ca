@@ -25,7 +25,7 @@ const getDmsStyle = (dms) => {
   if (dms.roadway_direction === 'Northbound') {
     return dmsNorthStyles['static'];
   }
-  
+
 }
 
 export function getDmsLayer(dmsData, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers) {
@@ -88,6 +88,8 @@ export function getDmsLayer(dmsData, projectionCode, mapContext, referenceData, 
 }
 
 export function updateDmsLayer(dmsData, layer, setLoadingLayers) {
+  const featuresDict = {};
+
   const dmsDict = dmsData.reduce((dict, obj) => {
     dict[obj.id] = obj;
     return dict;
@@ -97,10 +99,14 @@ export function updateDmsLayer(dmsData, layer, setLoadingLayers) {
     if (!dmsFeature.getProperties()['clicked']) {
       dmsFeature.setStyle(dmsDict[dmsFeature.getId()] ? getDmsStyle(dmsFeature.getProperties()) : new Style(null));
     }
+
+    featuresDict[dmsFeature.getId()] = dmsFeature;
   }
 
   setLoadingLayers(prevState => ({
     ...prevState,
     dms: false
   }));
+
+  return featuresDict;
 }
