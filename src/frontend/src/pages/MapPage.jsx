@@ -16,7 +16,6 @@ import {
 
 // Internal imports
 // import { HeaderHeightContext } from '../App';
-import EmergencyAlert from "../Components/shared/EmergencyAlert";
 
 // External Imports
 import { DndProvider } from 'react-dnd-multi-backend';
