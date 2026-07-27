@@ -47,7 +47,7 @@ export function getExtraLocations(addressInput) {
 }
 
 export function getLocations(addressInput) {
-  const geocoderPromise = get(`${GEOCODER_HOST}/addresseson`, {
+  const geocoderPromise = get(`${GEOCODER_HOST}/addresses.json`, {
     minScore: 50,
     maxResults: 7,
     echo: "false",

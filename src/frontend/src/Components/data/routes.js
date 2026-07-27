@@ -197,7 +197,10 @@ const compareCoordinates = (coord1, coord2) => {
 }
 
 export const shortenToOneDecimal = (num) => {
-  const str = num.toFixed(2); // Convert to string with two decimals
+  if (num == null || Number.isNaN(Number(num))) {
+    return null;
+  }
+  const str = Number(num).toFixed(2); // Convert to string with two decimals
   return str.slice(0, str.indexOf('.') + 2); // Keep only one decimal place
 }
 
@@ -205,7 +208,11 @@ export const compareRoutes = (route1, route2) => {
   if (!route1 && !route2) return true;  // Return true if both routes are null
   if (!route1 || !route2) return false;  // Return false if only one route is null
 
-  return shortenToOneDecimal(route1.distance) === shortenToOneDecimal(route2.distance)
+  const distance1 = shortenToOneDecimal(route1.distance);
+  const distance2 = shortenToOneDecimal(route2.distance);
+  if (distance1 == null || distance2 == null) return false;
+
+  return distance1 === distance2;
 }
 
 export const linkRoute = (route, favRoutes) => {
