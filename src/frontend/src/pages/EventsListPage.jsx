@@ -662,7 +662,7 @@ export default function EventsListPage(props) {
                           </React.Fragment>
                           :
                           <React.Fragment>
-                            <span className="sr-only" aria-hidden="false">Sorting options</span>
+                            <span className="visually-hidden" aria-hidden="false">Sorting options</span>
                             <FontAwesomeIcon icon={faBarsSort} />
                             <span className="mobile-btn-text">Sort</span>
                           </React.Fragment>}

@@ -42,6 +42,9 @@ services:
 
   node:
     env_file: .env
+    environment:
+      # Vite must run with NODE_ENV=development; .env sets production for other services
+      NODE_ENV: development
     container_name: node
     build:
       context: ./
@@ -60,7 +63,7 @@ services:
       - ./src/images/webcams:/app/images/webcams
     # depends_on:
     #   - django
-    command: npm run start-frontend
+    command: npm start
 
   db:
     env_file: .env

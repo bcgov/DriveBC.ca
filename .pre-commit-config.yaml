@@ -66,29 +66,22 @@ repos:
     -   id: trailing-whitespace
         stages: [commit]
 -   repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.10.0
+    rev: v9.39.1
     hooks:
     -   id: eslint
-        args: [--ext, '.js', --ext, '.cjs', --ext, '.jsx', --rule, 'import/no-unresolved: 0', '--fix']
+        # Flat-config imports resolve from the config file's directory. Copy the
+        # project config into the hook env (as .mjs) so @eslint/js etc. resolve.
+        entry: bash -c 'HOOK_ROOT="$(cd "$(dirname "$(which eslint)")/.." && pwd)"; CONF_DIR="$HOOK_ROOT/lib"; if [ ! -d "$CONF_DIR/node_modules/@eslint" ]; then CONF_DIR="$HOOK_ROOT"; fi; REPO_ROOT="$(pwd)"; cp "$REPO_ROOT/src/frontend/eslint.config.js" "$CONF_DIR/eslint.config.mjs"; files=(); for f in "$@"; do files+=("$REPO_ROOT/$f"); done; cd "$CONF_DIR" && eslint -c "$CONF_DIR/eslint.config.mjs" --fix --no-warn-ignored "${files[@]}"' --
         additional_dependencies:
-        -   eslint@8.28.0
-        -   eslint-config-google@0.7.1
-        -   eslint-loader@1.6.1
-        -   babel-eslint@6.1.2
-        -   eslint-config-prettier@^3.3.0
-        -   eslint-plugin-prettier@^3.1.0
-        -   prettier@^3.0.2
-        -   eslint-plugin-mocha@8.0.0
-        -   eslint-plugin-compat@3.11.1
-        -   eslint-plugin-import@2.24.2
-        -   eslint-plugin-jsx-a11y@6.4.1
-        -   eslint-plugin-react-hooks@4.2.0
-        -   eslint-plugin-react@7.25.1
-        entry: bash -c "cd src/frontend && npx eslint --fix 'src/**/*.js'"
+        -   eslint@9.39.5
+        -   '@eslint/js@9.39.5'
+        -   globals@17.7.0
+        -   eslint-plugin-react@7.37.5
+        -   eslint-config-prettier@10.1.8
         stages: [commit]
         exclude: '^(frontend/(build/|dist/|public/)|backend/.+/static/.*/vendor/)'
         types: [file]
-        files: \.(js|jsx)$
+        files: ^src/frontend/.*\.(js|jsx)$
 -   repo: https://github.com/jorisroovers/gitlint
     rev: v0.17.0
     hooks:

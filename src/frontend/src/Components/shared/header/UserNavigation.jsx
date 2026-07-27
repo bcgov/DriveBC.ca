@@ -115,7 +115,7 @@ export default function UserNavigation({ isNavbarExpanded, onCollapseNavbar }) {
         variant="outline-primary"
         align="end"
         id="user-menu"
-        title={<><FontAwesomeIcon icon={faCircleUser} /> <FontAwesomeIcon icon={faChevronDown} className="dropdown-chevron" /> <span className="sr-only">Account</span></>}>
+        title={<><FontAwesomeIcon icon={faCircleUser} /> <FontAwesomeIcon icon={faChevronDown} className="dropdown-chevron" /> <span className="visually-hidden">Account</span></>}>
 
         <div id="user-menu-header">
           <FontAwesomeIcon id="user-icon" icon={faCircleUser} />
