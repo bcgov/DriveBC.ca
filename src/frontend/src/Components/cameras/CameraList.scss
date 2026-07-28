@@ -2,7 +2,11 @@
 
 .camera-list {
   margin-top: 32px;
-  
+
+  @media (min-width: 768px) {
+    margin-top: 8px;
+  }
+
   .highway-group {
     &:not(:first-of-type) {
       margin-top: 4rem;
@@ -75,7 +79,7 @@
     }
 
     .camera-card {
-      .card-img-box { 
+      .card-img-box {
         min-height: 180px;
         height: 40vw;
 

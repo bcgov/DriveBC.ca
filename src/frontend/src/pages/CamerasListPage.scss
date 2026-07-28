@@ -3,33 +3,59 @@
 .cameras-page {
   position: relative;
 
+  .container--sidepanel__right {
+    .page-header {
+      background: none;
+
+      .container {
+        padding: 0;
+
+        .page-description {
+          color: $Type-Primary;
+        }
+      }
+    }
+  }
+
   .network-error, .server-error {
     @media (max-width: 767px) {
       position: relative;
     }
   }
 
-  .selected-filters-container {
-    display: flex;
-    align-items: center;
-    font-size: 0.75rem;
-    margin-top: 8px;
+  .filters-btn {
+    position: relative;
 
-    .selected-filter {
-      display: flex;
+    .filters-btn__icon {
+      margin-right: 8px;
+    }
+
+    .btn-text {
+      font-size: 0.875rem;
+      margin-bottom: 0;
+      white-space: nowrap;
+    }
+
+    .filter-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      margin-left: 8px;
+      border-radius: 9px;
       background: $Info;
-      border-radius: 8px;
-      padding: 8px 8px 6px;
-      color: white;
+      color: $White;
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1;
+    }
 
-      .remove-btn {
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 0.875rem;
-        color: white;
-        margin-left: 8px;
-        margin-right: 4px;
-      }
+    &.filtered .filter-count,
+    &.active .filter-count {
+      background: $Blue20;
+      color: $BC-Blue;
     }
   }
 

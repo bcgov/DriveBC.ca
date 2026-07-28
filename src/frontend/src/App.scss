@@ -438,6 +438,7 @@ a[href^="https://" i]#{$external-link-optouts}:not([href*="drivebc.ca" i]) {
 
     &.open {
       height: 100%;
+      
       .overlay__header {
         // need to update if AB route alts are present
         padding: 1rem 1rem 0;
