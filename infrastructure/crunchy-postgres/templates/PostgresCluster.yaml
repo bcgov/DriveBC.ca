@@ -162,11 +162,15 @@ spec:
       global:
         repo1-retention-full: {{ .Values.crunchy.pgBackRest.pvc.retention | quote }}
         repo1-retention-full-type: {{ .Values.crunchy.pgBackRest.pvc.retentionFullType }}
+        repo1-bundle: "y"
+        repo1-block: "y"
         {{- if .Values.crunchy.pgBackRest.s3.enabled }}
         repo2-retention-full: {{ .Values.crunchy.pgBackRest.s3.retention | quote }}
         repo2-retention-full-type: {{ .Values.crunchy.pgBackRest.retentionFullType }}
         repo2-path: '{{ .Values.crunchy.pgBackRest.backupPath }}/{{ .Values.crunchy.pgBackRest.clusterCounter }}'
         repo2-s3-uri-style: path
+        repo2-bundle: "y"
+        repo2-block: "y"
         {{- end }}
       repos:
         - name: repo1
