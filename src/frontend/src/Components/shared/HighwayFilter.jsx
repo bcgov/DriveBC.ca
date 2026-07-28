@@ -1,14 +1,6 @@
 // React
 import React, { useContext, useState, useEffect } from 'react';
 
-// External imports
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faMagnifyingGlass,
-  faXmark
- } from '@fortawesome/pro-solid-svg-icons';
-
 // Internal imports
 import { FilterContext } from '../../App';
 import { collator } from '../data/webcams';
@@ -18,16 +10,15 @@ import './HighwayFilter.scss';
 
 export default function HighwayFilter(props) {
   /* Setup */
-  // Props
-  const { cameras, handleHwyFiltersClose } = props;
+  // Props — selectedHighway/onSelectHighway = controlled; optionsSearch filters labels
+  const { cameras, handleHwyFiltersClose, selectedHighway, onSelectHighway, optionsSearch = '' } = props;
+  const isControlled = onSelectHighway !== undefined;
 
   // Contexts
   const { filterContext, setFilterContext } = useContext(FilterContext);
 
   // States
   const [orderedHighways, setOrderedHighways] = useState();
-  const [searchedHighways, setSearchedHighways] = useState();
-  const [searchText, setSearchText] = useState('');
 
   const getOrderedHighways = (cameras) => {
     const highways = Array.from(new Set(cameras.map(camera => camera.highway_display)));
@@ -48,98 +39,74 @@ export default function HighwayFilter(props) {
 
   useEffect(() => {
     // Reset selected highway filter if it's filtered out by new route search
-    if (filterContext.highwayFilterKey) {
+    const currentKey = isControlled ? selectedHighway : filterContext.highwayFilterKey;
+    if (currentKey) {
       const orderedHighways = getOrderedHighways(cameras);
-      const selectedHighway = orderedHighways.find(highwayObj => highwayObj.key === filterContext.highwayFilterKey);
-      if (!selectedHighway) {
-        setFilterContext({...filterContext, highwayFilterKey: null});
+      const selectedHighwayObj = orderedHighways.find(highwayObj => highwayObj.key === currentKey);
+      if (!selectedHighwayObj) {
+        if (isControlled) {
+          onSelectHighway(null);
+        } else {
+          setFilterContext({...filterContext, highwayFilterKey: null});
+        }
       }
     }
+  }, [orderedHighways]);
 
-    if (searchText === '') {
-      setSearchedHighways(orderedHighways);
+  /* Handlers */
+  const selectHighway = (highwayKey) => {
+    if (isControlled) {
+      onSelectHighway(highwayKey);
       return;
     }
 
-    // search for highway name from text input
-    const searchFn = (highwayObj, targetText) => {
-      const targetLower = targetText.toLowerCase();
-      return highwayObj.display.toLowerCase().includes(targetLower);
-    };
-
-    const filteredHighways = orderedHighways.filter(highwayObj => searchFn(highwayObj, searchText));
-
-    setSearchedHighways(filteredHighways);
-  }, [searchText, orderedHighways]);
+    setFilterContext({ ...filterContext, highwayFilterKey: highwayKey });
+    handleHwyFiltersClose();
+  };
 
   /* Rendering */
-
   // Sub components
   const getHighwayDisplay = (highway) => {
     return !isNaN(highway.charAt(0)) ? 'Highway ' + highway : highway;
   }
 
+  const selectedHighwayKey = isControlled
+    ? (selectedHighway || null)
+    : (filterContext && filterContext.highwayFilterKey ? filterContext.highwayFilterKey : null);
+  const searchTerm = optionsSearch.trim().toLowerCase();
+  const matchesSearch = (label) => !searchTerm || label.toLowerCase().includes(searchTerm);
+  const filteredHighways = orderedHighways
+    ? orderedHighways.filter(highwayObj => matchesSearch(highwayObj.display))
+    : null;
+  const showAllHighways = matchesSearch('All highways');
+
   // Main component
   return filterContext && (
     <div className="highway-filters">
-      <div className="search-container">
-        <FontAwesomeIcon className="search-icon" icon={faMagnifyingGlass} />
+      {filteredHighways &&
+        <div className="highway-options" role="radiogroup" aria-label="Highways">
+          {showAllHighways &&
+            <label className="highway-row">
+              <input
+                type="radio"
+                name="highway-filter"
+                className="highway-row__radio"
+                checked={selectedHighwayKey === null}
+                onChange={() => selectHighway(null)} />
+              <span className="highway-row__label">All highways</span>
+            </label>
+          }
 
-        <AsyncTypeahead
-          id="highway-filter-search"
-          isLoading={false}
-          onSearch={() => {}}
-          onInputChange={text => setSearchText(text)}
-          placeholder={'Search Highways'}
-          inputProps={{
-            'aria-label': 'input field for highway filter search',
-          }} />
-      </div>
-
-      {!filterContext.highwayFilterKey && <div className="selected-filter-container no-selection">No filters selected</div>}
-
-      {filterContext.highwayFilterKey && (
-        <div className="selected-filter-container">
-          <div className="selected-filter space-between-row">
-            <div className="selected-filter-text">
-              {getHighwayDisplay(filterContext.highwayFilterKey)}
-            </div>
-
-            <div
-              className="remove-btn"
-              tabIndex={0}
-              onClick={() => {
-                setFilterContext({...filterContext, highwayFilterKey: null});
-                handleHwyFiltersClose();
-              }}
-              onKeyDown={() => {
-                setFilterContext({...filterContext, highwayFilterKey: null});
-                handleHwyFiltersClose();
-              }}>
-              <FontAwesomeIcon icon={faXmark} />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {searchedHighways &&
-        <div className="highway-options">
-          {searchedHighways.map(highwayObj =>
-            <div
-              key={highwayObj.key}
-              className="highway-row"
-              tabIndex={0}
-              onClick={() => {
-                setFilterContext({...filterContext, highwayFilterKey: highwayObj.key});
-                handleHwyFiltersClose();
-              }}
-              onKeyDown={() => {
-                setFilterContext({...filterContext, highwayFilterKey: highwayObj.key});
-                handleHwyFiltersClose();
-              }}>
-
-              <span>{highwayObj.display}</span>
-            </div>
+          {filteredHighways.map(highwayObj =>
+            <label key={highwayObj.key} className="highway-row">
+              <input
+                type="radio"
+                name="highway-filter"
+                className="highway-row__radio"
+                checked={selectedHighwayKey === highwayObj.key}
+                onChange={() => selectHighway(highwayObj.key)} />
+              <span className="highway-row__label">{highwayObj.display}</span>
+            </label>
           )}
         </div>
       }

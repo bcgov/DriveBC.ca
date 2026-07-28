@@ -1,0 +1,67 @@
+@import "../../styles/variables";
+
+.filter-options-search {
+  position: relative;
+  margin: 0.25rem 0;
+
+  &__input {
+    width: 100%;
+    height: 36px;
+    padding: 0.5rem 2.25rem 0.5rem 0.75rem;
+    border: 1px solid $Grey40;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: $Type-Primary;
+    background: $White;
+    line-height: 1;
+
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+
+    // Bootstrap .form-control focus (not $Focus ring)
+    &:focus,
+    &:focus-visible {
+      outline: 0;
+    }
+
+    &::placeholder {
+      color: $Type-Disabled;
+    }
+  }
+
+  &__clear,
+  &__icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    width: 36px;
+    background: none;
+    border: none;
+    padding: 0;
+    color: $Grey80;
+    font-size: 0.75rem;
+  }
+
+  &__icon {
+    pointer-events: none;
+  }
+
+  &__clear {
+    cursor: pointer;
+
+    &:hover {
+      color: $Type-Primary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $Focus;
+      outline-offset: -2px;
+      border-radius: 4px;
+    }
+  }
+}

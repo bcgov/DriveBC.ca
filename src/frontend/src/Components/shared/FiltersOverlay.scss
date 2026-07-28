@@ -1,0 +1,272 @@
+@import "../../styles/variables";
+
+.filters-overlay {
+
+  &.open {
+    padding: 0;
+  }
+
+  &__subheader {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: $Grey80;
+    padding-bottom: 1rem;
+
+    &:focus,
+    &:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }
+
+    &:not(:first-of-type) {
+      padding-top: 1.5rem;
+    }
+
+    &-chevron {
+      margin-left: 8px;
+      transition: transform 0.15s ease-in-out;
+    }
+
+    &.open .filters-overlay__subheader-chevron {
+      transform: rotate(180deg);
+    }
+
+    &-divider {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1.25rem;
+      font-size: 1rem;
+      border-top: 1px solid $Divider;
+
+      p {
+        font-size: 1rem;
+        font-weight: 700;
+        color: $Type-Primary;
+        margin-bottom: 0;
+      }
+
+      .reset-filters-btn {
+        border: none;
+        text-decoration: underline;
+        margin-bottom: 0;
+      }
+    }
+
+    p {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: $Grey80;
+      margin-bottom: 0;
+    }
+
+    svg {
+      margin-right: 8px;
+    }
+  }
+
+  &__selected-sort {
+    font-size: 0.875rem;
+  }
+
+  &__collapsible {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.25s ease-in-out;
+
+    &.open {
+      grid-template-rows: 1fr;
+    }
+
+    &-inner {
+      overflow: hidden;
+      min-height: 0;
+      opacity: 0;
+      transition: opacity 0.1s ease-in-out;
+    }
+
+    &.open &-inner {
+      opacity: 1;
+    }
+  }
+
+  @media (min-width: 768px) {
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    right: 0;
+    left: auto;
+    z-index: 10001;
+
+    &.overlay.open {
+      height: calc(100% - 60px);
+      min-height: calc(100% - 60px);
+    }
+  }
+
+  &__header {
+    color: $Type-Primary;
+    font-size: 0.875rem;
+    padding: 0;
+    margin-bottom: 0;
+  }
+
+  .close-overlay {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $Type-Primary;
+    transition: background-color 0.2s ease-in-out;
+    font-size: 0.875rem;
+
+    &:hover {
+      background: $Grey30;
+    }
+  }
+
+  .filters-component {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+
+  .apply-actions {
+    flex: 0 0 auto;
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+    margin-top: auto;
+    background: $White;
+    z-index: 3;
+    border-top: 1px solid $Divider;
+
+    &__btn {
+      margin-bottom: 0;
+      
+      &--reset, &--cancel {
+        border: none;
+      }
+
+      &--cancel {
+        margin-left: auto;
+      }
+    }
+  }
+
+  .container--header {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .all-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    border-bottom: 1px solid $Divider;
+
+    &__row {
+      display: flex;
+      align-items: center;
+    }
+
+    .icon--all-filters {
+      border: 2px solid $Type-Primary;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+  }
+
+  .sorted-by {
+    margin-top: .5rem;
+
+    .icon--sorted-by {
+      font-size: 0.75rem;
+    }
+  }
+
+  .filters-overlay__icon {
+    margin-right: 8px;
+  }
+
+  .area-filters,
+  .highway-filters,
+  .sort-filters {
+    position: relative;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: auto;
+    box-shadow: none;
+    overflow-y: visible;
+  }
+
+  .sort-options {
+    position: relative;
+    padding: 0.25rem;
+
+    .sort-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+      padding: .5rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $Grey10;
+      }
+
+      &:has(.sort-row__radio:checked) {
+        outline: 1px solid $Focus;
+        outline-offset: -1px;
+        color: $BC-Blue;
+        background-color: $Blue10;
+      }
+
+      &:focus-within {
+        outline: 2px solid $Focus;
+        outline-offset: -2px;
+      }
+
+      &:has(.sort-row__radio:disabled) {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .sort-row__radio {
+        flex-shrink: 0;
+        margin: 0;
+        cursor: pointer;
+
+        &:focus,
+        &:focus-visible {
+          outline: none;
+          box-shadow: none;
+        }
+
+        &:disabled {
+          cursor: not-allowed;
+        }
+      }
+
+      .sort-row__label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+}

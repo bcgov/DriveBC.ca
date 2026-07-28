@@ -13,20 +13,17 @@ import * as slices from '../slices';
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faAngleDown,
   faXmark,
   faFlag,
-  faChevronDown
+  faSliders
 } from '@fortawesome/pro-solid-svg-icons';
 import {
   faArrowUp,
   faArrowDown,
-  faBarsSort,
   faLayerGroup as faLayerGroupOutline
 } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import Container from 'react-bootstrap/Container';
-import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
@@ -40,6 +37,7 @@ import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Advisories from '../Components/advisories/Advisories';
 import EventCard from '../Components/events/EventCard';
+import EventListSearch, { filterEventsBySearch } from '../Components/events/EventListSearch';
 import EventsTable from '../Components/events/EventsTable';
 import ListFilters from '../Components/shared/ListFilters';
 import Footer from '../Footer';
@@ -48,11 +46,11 @@ import PollingComponent from '../Components/shared/PollingComponent';
 import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent';
 import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
+import FiltersOverlay from '../Components/shared/FiltersOverlay';
 
 // Styling
 import './EventsListPage.scss';
 import './ContainerSidePanel.scss';
-import AreaFilter from "../Components/shared/AreaFilter";
 
 // Helpers
 const sortEvents = (events, key) => {
@@ -154,8 +152,9 @@ export default function EventsListPage(props) {
   const [openAdvisoriesOverlay, setOpenAdvisoriesOverlay] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const [updateCounts, setUpdateCounts] = useState({above: 0, below: 0});
-  const [showAreaFilters, setShowAreaFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const [showTypeFilters, setShowTypeFilters] = useState(false);
+  const [searchText, setSearchText] = useState('');
 
   // Error handling
   const displayError = (error) => {
@@ -175,7 +174,6 @@ export default function EventsListPage(props) {
   const eventRefs = useRef({});
   const viewedHighlightedEvents = useRef(new Set());
   const eventsInViewport = useRef({});
-  const areaFilterRef = useRef();
 
   // Media queries
   const smallScreen = useMediaQuery('only screen and (max-width : 575px)');
@@ -277,6 +275,9 @@ export default function EventsListPage(props) {
       });
     }
 
+    // Text search — road name, start/end location, closest landmark, description
+    res = filterEventsBySearch(res, searchText);
+
     // Reset sorting key and sort
     setSortingKey(getDefaultSortingKey());
     if (selectedRoute && selectedRoute.routeFound) {
@@ -339,7 +340,10 @@ export default function EventsListPage(props) {
   useEffect(() => {
     // Create a new worker if it doesn't exist
     if (!workerRef.current) {
-      workerRef.current = new Worker(new URL('../Components/map/filterRouteWorker', import.meta.url));
+      workerRef.current = new Worker(
+        new URL('../Components/map/filterRouteWorker', import.meta.url),
+        { type: 'module' }
+      );
 
       // Set up event listener for messages from the worker
       workerRef.current.onmessage = function (event) {
@@ -378,7 +382,7 @@ export default function EventsListPage(props) {
       processEvents();
       setLoadData(false);
     }
-  }, [filteredEvents, eventCategoryFilter, filterContext.areaFilter]);
+  }, [filteredEvents, eventCategoryFilter, filterContext.areaFilter, searchText]);
 
   useEffect(() => {
     if (loadData) {
@@ -467,24 +471,6 @@ export default function EventsListPage(props) {
     };
   }, [processedEvents, trackedEvents]);
 
-  // Click outside to close filters
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (showAreaFilters && areaFilterRef.current && !areaFilterRef.current.contains(event.target)) {
-        setShowAreaFilters(false);
-      }
-    };
-
-    // Desktop only
-    if (!smallScreen && showAreaFilters) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showAreaFilters]);
-
   useEffect(() => {
     setEventCategoryFilter(getFilterState());
   }, [mapContext]);
@@ -505,13 +491,32 @@ export default function EventsListPage(props) {
     });
   };
 
-  const sortHandler = (e, key) => {
-    e.preventDefault();
-    if (sortingKey != key) {
-      setSortingKey(key);
-      localStorage.setItem('sorting-key', key);
-    }
-  }
+  const toggleFiltersOverlay = () => {
+    setShowFilters(!showFilters);
+  };
+
+  // Reset applied filters (pills)
+  const resetAllAppliedFilters = () => {
+    setFilterContext({
+      ...filterContext,
+      areaFilter: null
+    });
+
+    const defaultKey = getDefaultSortingKey();
+    setSortingKey(defaultKey);
+    localStorage.setItem('sorting-key', defaultKey);
+  };
+
+  const handleSortingKeyChange = (key) => {
+    setSortingKey(key);
+    localStorage.setItem('sorting-key', key);
+  };
+
+  const activeFilterCount = filterContext.areaFilter ? 1 : 0;
+
+  const sortingKeys = chainUpsOnly
+    ? ['route_order', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc']
+    : ['route_order', 'severity_desc', 'severity_asc', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc'];
 
   const updateHighlightHandler = (updatedEvent) => {
     setTrackedEvents((trackedEvents) => {
@@ -553,40 +558,6 @@ export default function EventsListPage(props) {
       scrollableContainer.scrollTo({ top: nextElementTopPosition, behavior: 'smooth' });
     }
   };
-
-  // Rendering - Sorting
-  const getSortingDisplay = (key) => {
-    const sortingDisplayMap = {
-      'route_order': 'In order encountered on route',
-      'severity_desc': 'Severity, Closure to Minor',
-      'severity_asc': 'Severity, Minor to Closure',
-      'road_name_asc': 'Road name, A–Z',
-      'road_name_desc': 'Road name, Z-A',
-      'last_updated_desc': 'Last updated, New to Old',
-      'last_updated_asc': 'Last updated, Old to New',
-    }
-
-    return sortingDisplayMap[key];
-  }
-
-  const allSortingKeys = chainUpsOnly ?
-    ['route_order', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc'] :
-    ['route_order', 'severity_desc', 'severity_asc', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc'];
-
-  const getSortingList = () => {
-    const res = [];
-
-    // Don't show first label if route is not selected or found
-    for (let i = selectedRoute && selectedRoute.routeFound ? 0 : 1; i < allSortingKeys.length; i++) {
-      res.push(
-        <Dropdown.Item key={allSortingKeys[i]} className={allSortingKeys[i] == sortingKey ? 'selected' : ''} onClick={(e) => sortHandler(e, allSortingKeys[i])}>
-          {getSortingDisplay(allSortingKeys[i])}
-        </Dropdown.Item>
-      );
-    }
-
-    return res;
-  }
 
   // Handle sticky filters on mobile
   useEffect(() => {
@@ -633,11 +604,6 @@ export default function EventsListPage(props) {
           <ServerErrorPopup setShowServerError={setShowServerError} />
         }
 
-        <PageHeader
-          title={chainUpsOnly ? 'Commercial chain-ups' : 'Delays'}
-          description={chainUpsOnly ? 'Segments of the highway that require commercial vehicles over 11,794 kg to have chains on.' : 'Find out if there are any delays that might impact your journey before you go.'}>
-        </PageHeader>
-
         <Container className="container--sidepanel">
           { !smallScreen &&
             <div className="container--sidepanel__left">
@@ -647,110 +613,127 @@ export default function EventsListPage(props) {
           }
 
           <div className="container--sidepanel__right">
+            <PageHeader
+              title={chainUpsOnly ? 'Commercial chain-ups' : 'Delays'}
+              description={chainUpsOnly ? 'Segments of the highway that require commercial vehicles over 11,794 kg to have chains on.' : 'Find out if there are any delays that might impact your journey before you go.'}>
+            </PageHeader>
             <div className="sticky-sentinel" />
             <div className="sticky-filters">
               <div className="controls-group">
                 <div className="controls-container">
-                  <div className="sort">
-                    <Dropdown>
-                      {!smallScreen && <span className="sort-text">Sort: </span>}
-                      <Dropdown.Toggle variant="outline-primary" disabled={selectedRoute && selectedRoute.routeFound} className={smallScreen ? 'filter-option-btn' : ''}>
-                        {!smallScreen ?
-                          <React.Fragment>
-                            {getSortingDisplay(sortingKey)}
-                            <FontAwesomeIcon icon={faAngleDown} />
-                          </React.Fragment>
-                          :
-                          <React.Fragment>
-                            <span className="visually-hidden" aria-hidden="false">Sorting options</span>
-                            <FontAwesomeIcon icon={faBarsSort} />
-                            <span className="mobile-btn-text">Sort</span>
-                          </React.Fragment>}
-                      </Dropdown.Toggle>
+                  <Button
+                    variant="outline-primary"
+                    className={'filter-option-btn filters-btn' + (activeFilterCount ? ' filtered' : '') + (showFilters ? ' active' : '')}
+                    aria-label="show filters options"
+                    onClick={toggleFiltersOverlay}>
 
-                      <Dropdown.Menu align="end" flip={false}>
-                        {getSortingList()}
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </div>
+                    <FontAwesomeIcon className="filters-btn__icon" icon={faSliders} />
+                    <p className="btn-text">Sort & Filter</p>
 
-                  <div className="tools-container">
-                    <span className="filters-text">Filters{!smallScreen && ':'} </span>
+                    {activeFilterCount > 0 &&
+                      <span className="filter-count">{activeFilterCount}</span>
+                    }
+                  </Button>
 
-                    <div ref={areaFilterRef} className="area-filter-container">
-                      <Button
-                        variant="outline-primary"
-                        className={'filter-option-btn area-filter-btn' + (filterContext.areaFilter ? ' filtered' : '') + (showAreaFilters ? ' active' : '')}
-                        aria-label="show filters options"
-                        onClick={() => setShowAreaFilters(!showAreaFilters)}>
-
-                        {!smallScreen &&
-                          <p className="btn-text">
-                            {filterContext.areaFilter ? filterContext.areaFilter.name : 'Area'}
-                          </p>
-                        }
-
-                        <svg className="area-filter-btn__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M10.9933 7.00752C10.9933 8.37761 9.16667 10.817 8.36667 11.8195C8.17333 12.0602 7.82 12.0602 7.62667 11.8195C6.82667 10.817 5 8.37761 5 7.00752C5 5.35004 6.34667 4 8 4C9.65333 4 11 5.35004 11 7.00752H10.9933ZM10.2467 7.00752C10.2467 5.76441 9.24 4.74854 7.99333 4.74854C6.74667 4.74854 5.74 5.75773 5.74 7.00752C5.74 7.20134 5.81333 7.50209 5.98 7.90309C6.14667 8.29073 6.38 8.71846 6.64667 9.15288C7.09333 9.87469 7.60667 10.5764 7.99333 11.071C8.38 10.5698 8.89333 9.87469 9.34 9.15288C9.60667 8.71846 9.84 8.29073 10.0067 7.90309C10.1733 7.50209 10.2467 7.20134 10.2467 7.00752ZM6.74667 7.00752C6.74667 6.55973 6.98667 6.14536 7.37333 5.92481C7.76 5.70426 8.23333 5.70426 8.62667 5.92481C9.02 6.14536 9.25333 6.55973 9.25333 7.00752C9.25333 7.45531 9.01333 7.86967 8.62667 8.09023C8.24 8.31078 7.76667 8.31078 7.37333 8.09023C6.98 7.86967 6.74667 7.45531 6.74667 7.00752ZM8.49333 7.00752C8.49333 6.7335 8.26667 6.50627 7.99333 6.50627C7.72 6.50627 7.49333 6.7335 7.49333 7.00752C7.49333 7.28154 7.72 7.50877 7.99333 7.50877C8.26667 7.50877 8.49333 7.28154 8.49333 7.00752Z" fill="currentColor"/>
-                          <path d="M3.14031 0H3.99491C4.30691 0 4.56465 0.257736 4.56465 0.569733C4.56465 0.881729 4.30691 1.13947 3.99491 1.13947H3.14031C2.03476 1.13947 1.13947 2.03476 1.13947 3.14031V3.99491C1.13947 4.30691 0.881729 4.56465 0.569733 4.56465C0.257736 4.56465 0 4.30691 0 3.99491V3.14031C0 1.40398 1.41077 0 3.14031 0ZM0.569733 5.71089C0.881729 5.71089 1.13947 5.96863 1.13947 6.28063V9.70581C1.13947 10.0178 0.881729 10.2755 0.569733 10.2755C0.257736 10.2755 0 10.0178 0 9.70581V6.28063C0 5.96863 0.257736 5.71089 0.569733 5.71089ZM1.14625 11.9983V12.8529C1.14625 13.9585 2.04154 14.8538 3.1471 14.8538H4.0017C4.31369 14.8538 4.57143 15.1115 4.57143 15.4235C4.57143 15.7355 4.31369 15.9932 4.0017 15.9932H3.1471C1.41077 15.9932 0.00678253 14.5892 0.00678253 12.8529V11.9983C0.00678253 11.6863 0.264519 11.4286 0.576515 11.4286C0.888512 11.4286 1.14625 11.6863 1.14625 11.9983ZM5.71768 0.569733C5.71768 0.257736 5.97541 0 6.28741 0H9.71937C10.0314 0 10.2891 0.257736 10.2891 0.569733C10.2891 0.881729 10.0314 1.13947 9.71937 1.13947H6.28741C5.97541 1.13947 5.71768 0.881729 5.71768 0.569733ZM6.28741 16C5.97541 16 5.71768 15.7423 5.71768 15.4303C5.71768 15.1183 5.97541 14.8605 6.28741 14.8605H9.71937C10.0314 14.8605 10.2891 15.1183 10.2891 15.4303C10.2891 15.7423 10.0314 16 9.71937 16H6.28741ZM15.4303 4.57143C15.1183 4.57143 14.8605 4.31369 14.8605 4.0017V3.1471C14.8605 2.04154 13.9652 1.14625 12.8597 1.14625H12.0051C11.6931 1.14625 11.4354 0.888512 11.4354 0.576515C11.4354 0.264519 11.6931 0.00678253 12.0051 0.00678253H12.8597C14.596 0.00678253 16 1.41077 16 3.1471V4.0017C16 4.31369 15.7423 4.57143 15.4303 4.57143ZM16 11.9983V12.8529C16 14.5892 14.5892 15.9932 12.8597 15.9932H12.0051C11.6931 15.9932 11.4354 15.7355 11.4354 15.4235C11.4354 15.1115 11.6931 14.8538 12.0051 14.8538H12.8597C13.9652 14.8538 14.8605 13.9585 14.8605 12.8529V11.9983C14.8605 11.6863 15.1183 11.4286 15.4303 11.4286C15.7423 11.4286 16 11.6863 16 11.9983ZM15.4303 5.71089C15.7423 5.71089 16 5.96863 16 6.28063V9.70581C16 10.0178 15.7423 10.2755 15.4303 10.2755C15.1183 10.2755 14.8605 10.0178 14.8605 9.70581V6.28063C14.8605 5.96863 15.1183 5.71089 15.4303 5.71089Z" fill="currentColor"/>
-                        </svg>
-
-                          {smallScreen &&
-                            <span className="mobile-btn-text">Area</span>
-                          }
-
-                          {!smallScreen &&
-                            <FontAwesomeIcon className="dropdown-icon" icon={faChevronDown} />
-                          }
+                  {largeScreen &&
+                    <div className="tools-container">
+                      {activeFilterCount > 0 &&
+                        <Button
+                          variant="outline-primary"
+                          className="filter-option-btn reset-filters-btn"
+                          aria-label="reset all filters"
+                          onClick={resetAllAppliedFilters}>
+                            Reset
                         </Button>
+                      }
+                      {filterContext.areaFilter &&
+                        <div className="selected-filters-container">
+                          <div className="selected-filter">
+                            <svg className="area-filter-btn__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M10.9933 7.00752C10.9933 8.37761 9.16667 10.817 8.36667 11.8195C8.17333 12.0602 7.82 12.0602 7.62667 11.8195C6.82667 10.817 5 8.37761 5 7.00752C5 5.35004 6.34667 4 8 4C9.65333 4 11 5.35004 11 7.00752H10.9933ZM10.2467 7.00752C10.2467 5.76441 9.24 4.74854 7.99333 4.74854C6.74667 4.74854 5.74 5.75773 5.74 7.00752C5.74 7.20134 5.81333 7.50209 5.98 7.90309C6.14667 8.29073 6.38 8.71846 6.64667 9.15288C7.09333 9.87469 7.60667 10.5764 7.99333 11.071C8.38 10.5698 8.89333 9.87469 9.34 9.15288C9.60667 8.71846 9.84 8.29073 10.0067 7.90309C10.1733 7.50209 10.2467 7.20134 10.2467 7.00752ZM6.74667 7.00752C6.74667 6.55973 6.98667 6.14536 7.37333 5.92481C7.76 5.70426 8.23333 5.70426 8.62667 5.92481C9.02 6.14536 9.25333 6.55973 9.25333 7.00752C9.25333 7.45531 9.01333 7.86967 8.62667 8.09023C8.24 8.31078 7.76667 8.31078 7.37333 8.09023C6.98 7.86967 6.74667 7.45531 6.74667 7.00752ZM8.49333 7.00752C8.49333 6.7335 8.26667 6.50627 7.99333 6.50627C7.72 6.50627 7.49333 6.7335 7.49333 7.00752C7.49333 7.28154 7.72 7.50877 7.99333 7.50877C8.26667 7.50877 8.49333 7.28154 8.49333 7.00752Z" fill="currentColor"/>
+                              <path d="M3.14031 0H3.99491C4.30691 0 4.56465 0.257736 4.56465 0.569733C4.56465 0.881729 4.30691 1.13947 3.99491 1.13947H3.14031C2.03476 1.13947 1.13947 2.03476 1.13947 3.14031V3.99491C1.13947 4.30691 0.881729 4.56465 0.569733 4.56465C0.257736 4.56465 0 4.30691 0 3.99491V3.14031C0 1.40398 1.41077 0 3.14031 0ZM0.569733 5.71089C0.881729 5.71089 1.13947 5.96863 1.13947 6.28063V9.70581C1.13947 10.0178 0.881729 10.2755 0.569733 10.2755C0.257736 10.2755 0 10.0178 0 9.70581V6.28063C0 5.96863 0.257736 5.71089 0.569733 5.71089ZM1.14625 11.9983V12.8529C1.14625 13.9585 2.04154 14.8538 3.1471 14.8538H4.0017C4.31369 14.8538 4.57143 15.1115 4.57143 15.4235C4.57143 15.7355 4.31369 15.9932 4.0017 15.9932H3.1471C1.41077 15.9932 0.00678253 14.5892 0.00678253 12.8529V11.9983C0.00678253 11.6863 0.264519 11.4286 0.576515 11.4286C0.888512 11.4286 1.14625 11.6863 1.14625 11.9983ZM5.71768 0.569733C5.71768 0.257736 5.97541 0 6.28741 0H9.71937C10.0314 0 10.2891 0.257736 10.2891 0.569733C10.2891 0.881729 10.0314 1.13947 9.71937 1.13947H6.28741C5.97541 1.13947 5.71768 0.881729 5.71768 0.569733ZM6.28741 16C5.97541 16 5.71768 15.7423 5.71768 15.4303C5.71768 15.1183 5.97541 14.8605 6.28741 14.8605H9.71937C10.0314 14.8605 10.2891 15.1183 10.2891 15.4303C10.2891 15.7423 10.0314 16 9.71937 16H6.28741ZM15.4303 4.57143C15.1183 4.57143 14.8605 4.31369 14.8605 4.0017V3.1471C14.8605 2.04154 13.9652 1.14625 12.8597 1.14625H12.0051C11.6931 1.14625 11.4354 0.888512 11.4354 0.576515C11.4354 0.264519 11.6931 0.00678253 12.0051 0.00678253H12.8597C14.596 0.00678253 16 1.41077 16 3.1471V4.0017C16 4.31369 15.7423 4.57143 15.4303 4.57143ZM16 11.9983V12.8529C16 14.5892 14.5892 15.9932 12.8597 15.9932H12.0051C11.6931 15.9932 11.4354 15.7355 11.4354 15.4235C11.4354 15.1115 11.6931 14.8538 12.0051 14.8538H12.8597C13.9652 14.8538 14.8605 13.9585 14.8605 12.8529V11.9983C14.8605 11.6863 15.1183 11.4286 15.4303 11.4286C15.7423 11.4286 16 11.6863 16 11.9983ZM15.4303 5.71089C15.7423 5.71089 16 5.96863 16 6.28063V9.70581C16 10.0178 15.7423 10.2755 15.4303 10.2755C15.1183 10.2755 14.8605 10.0178 14.8605 9.70581V6.28063C14.8605 5.96863 15.1183 5.71089 15.4303 5.71089Z" fill="currentColor"/>
+                            </svg>
 
-                      {!smallScreen && showAreaFilters &&
-                        <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={processedEvents} showAllByDefault={true} />
+                            <div className="selected-filter-text">
+                              {filterContext.areaFilter.name}
+                            </div>
+                            <div
+                              className="remove-btn"
+                              tabIndex={0}
+                              onClick={() => setFilterContext({...filterContext, areaFilter: null})}
+                              onKeyDown={() => setFilterContext({...filterContext, areaFilter: null})}>
+                              <FontAwesomeIcon icon={faXmark} />
+                            </div>
+                          </div>
+                        </div>
+                      }
+
+                      {/* Icons for the delay types' selected filter chips */}
+                        {/* icon for Minor events */}
+                        {/* <svg className="delays-filter-btn__icon" width="11" height="9" viewBox="0 0 11 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M5.5 7.64307C5.1693 7.64307 5.00525 7.50778 4.96875 7.44971L1.02149 1.16943C1.08212 1.10753 1.24354 1.00056 1.5293 1.00049L9.4707 1.00049C9.75722 1.00056 9.91924 1.1076 9.97949 1.16943L6.03125 7.44971C5.99475 7.50778 5.8307 7.64307 5.5 7.64307Z" stroke="#013366" stroke-width="2"/>
+                        </svg> */}
+
+                        {/* icon for Major events */}
+                        {/* <svg className="delays-filter-btn__icon" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="1.41421" y="6.36396" width="7" height="7" rx="1" transform="rotate(-45 1.41421 6.36396)" stroke="#013366" stroke-width="2"/>
+                        </svg> */}
+
+                        {/* icon for Future events */}
+                        {/* <svg className="delays-filter-btn__icon" width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M3.26562 0.515625V1.375H6.35938V0.515625C6.35938 0.236328 6.57422 0 6.875 0C7.1543 0 7.39062 0.236328 7.39062 0.515625V1.375H8.25C9.00195 1.375 9.625 1.99805 9.625 2.75V3.09375V4.125V9.625C9.625 10.3984 9.00195 11 8.25 11H1.375C0.601562 11 0 10.3984 0 9.625V4.125V3.09375V2.75C0 1.99805 0.601562 1.375 1.375 1.375H2.23438V0.515625C2.23438 0.236328 2.44922 0 2.75 0C3.0293 0 3.26562 0.236328 3.26562 0.515625ZM1.03125 4.125V5.32812H2.75V4.125H1.03125ZM1.03125 6.35938V7.73438H2.75V6.35938H1.03125ZM3.78125 6.35938V7.73438H5.84375V6.35938H3.78125ZM6.875 6.35938V7.73438H8.59375V6.35938H6.875ZM8.59375 5.32812V4.125H6.875V5.32812H8.59375ZM8.59375 8.76562H6.875V9.96875H8.25C8.42188 9.96875 8.59375 9.81836 8.59375 9.625V8.76562ZM5.84375 8.76562H3.78125V9.96875H5.84375V8.76562ZM2.75 8.76562H1.03125V9.625C1.03125 9.81836 1.18164 9.96875 1.375 9.96875H2.75V8.76562ZM5.84375 5.32812V4.125H3.78125V5.32812H5.84375Z" fill="#013366"/>
+                        </svg> */}
+
+                        {/* icon for Chain-ups */}
+                        {/* <svg className="delays-filter-btn__icon" width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12.3965 5.58594L9.96875 8.01367C8.74414 9.2168 6.78906 9.2168 5.58594 8.01367C4.44727 6.85352 4.38281 5.02734 5.43555 3.80273L5.54297 3.67383C5.73633 3.45898 6.05859 3.4375 6.27344 3.63086C6.48828 3.82422 6.50977 4.14648 6.31641 4.36133L6.23047 4.46875C5.5 5.28516 5.54297 6.50977 6.31641 7.2832C7.11133 8.07812 8.42188 8.07812 9.23828 7.2832L11.666 4.85547C12.4609 4.03906 12.4609 2.75 11.666 1.93359C10.8926 1.18164 9.66797 1.13867 8.85156 1.84766L8.72266 1.95508C8.50781 2.14844 8.18555 2.12695 7.99219 1.91211C7.79883 1.69727 7.82031 1.375 8.03516 1.18164L8.16406 1.07422C9.38867 0 11.2363 0.0644531 12.3965 1.20312C13.5996 2.40625 13.5996 4.36133 12.3965 5.58594ZM1.20312 5.0918L3.65234 2.66406C4.85547 1.46094 6.81055 1.46094 8.01367 2.66406C9.17383 3.80273 9.23828 5.65039 8.16406 6.875L8.03516 7.00391C7.86328 7.21875 7.51953 7.26172 7.30469 7.06836C7.08984 6.875 7.06836 6.55273 7.26172 6.33789L7.39062 6.20898C8.09961 5.39258 8.05664 4.16797 7.2832 3.39453C6.48828 2.57812 5.17773 2.57812 4.38281 3.39453L1.93359 5.82227C1.13867 6.61719 1.13867 7.92773 1.93359 8.74414C2.70703 9.49609 3.93164 9.53906 4.74805 8.83008L4.87695 8.72266C5.0918 8.5293 5.41406 8.55078 5.60742 8.76562C5.80078 8.98047 5.7793 9.30273 5.56445 9.49609L5.43555 9.60352C4.21094 10.6777 2.36328 10.6133 1.20312 9.47461C0 8.27148 0 6.29492 1.20312 5.0918Z" fill="#013366"/>
+                        </svg> */}
+
+                        {/* icon for Closures */}
+                        {/* <svg className="delays-filter-btn__icon" width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M9.96875 5.73633C9.96875 4.14648 9.10938 2.68555 7.73438 1.86914C6.33789 1.07422 4.64062 1.07422 3.26562 1.86914C1.86914 2.68555 1.03125 4.14648 1.03125 5.73633C1.03125 7.34766 1.86914 8.80859 3.26562 9.625C4.64062 10.4199 6.33789 10.4199 7.73438 9.625C9.10938 8.80859 9.96875 7.34766 9.96875 5.73633ZM0 5.73633C0 3.78125 1.03125 1.97656 2.75 0.988281C4.44727 0 6.53125 0 8.25 0.988281C9.94727 1.97656 11 3.78125 11 5.73633C11 7.71289 9.94727 9.51758 8.25 10.5059C6.53125 11.4941 4.44727 11.4941 2.75 10.5059C1.03125 9.51758 0 7.71289 0 5.73633ZM2.75 4.70508H8.25C8.61523 4.70508 8.9375 5.02734 8.9375 5.39258V6.08008C8.9375 6.4668 8.61523 6.76758 8.25 6.76758H2.75C2.36328 6.76758 2.0625 6.4668 2.0625 6.08008V5.39258C2.0625 5.02734 2.36328 4.70508 2.75 4.70508Z" fill="#013366"/>
+                        </svg> */}
+
+                    </div>
+                  }
+
+                  <EventListSearch
+                    id="event-list-search"
+                    searchText={searchText}
+                    setSearchText={setSearchText}
+                    chainUpsOnly={chainUpsOnly}
+                  />
+                </div>
+                {!largeScreen &&
+                    <div className="tools-container">
+                      {activeFilterCount > 0 &&
+                        <Button
+                          variant="outline-primary"
+                          className="filter-option-btn reset-filters-btn"
+                          aria-label="reset all filters"
+                          onClick={resetAllAppliedFilters}>
+                            Reset
+                        </Button>
+                      }
+                      {filterContext.areaFilter &&
+                        <div className="selected-filters-container">
+                          <div className="selected-filter">
+                            <div className="selected-filter-text">
+                              {filterContext.areaFilter.name}
+                            </div>
+                            <div
+                              className="remove-btn"
+                              tabIndex={0}
+                              onClick={() => setFilterContext({...filterContext, areaFilter: null})}
+                              onKeyDown={() => setFilterContext({...filterContext, areaFilter: null})}>
+                              <FontAwesomeIcon icon={faXmark} />
+                            </div>
+                          </div>
+                        </div>
                       }
                     </div>
-
-                    {smallScreen && !chainUpsOnly &&
-                      <Button
-                        variant="outline-primary"
-                        className={'map-btn open-filters filter-option-btn'  + (showTypeFilters ? ' active' : '')}
-                        aria-label="open filters options"
-                        onClick={() => setShowTypeFilters(!showTypeFilters)}>
-                        <FontAwesomeIcon icon={faLayerGroupOutline} />
-                        <span className="mobile-btn-text">Type</span>
-                      </Button>
-                    }
-
-                    {!smallScreen && !chainUpsOnly &&
-                      <div className="type filter-option-btn">
-                        <ListFilters
-                          disableFeatures={true}
-                          enableRoadConditions={false}
-                          enableChainUps={true}
-                          textOverride={'List'}
-                          iconOverride={true}
-                          isDelaysPage={true} />
-                      </div>
-                    }
-                  </div>
-                </div>
+                  }
               </div>
-
-              {smallScreen && filterContext.areaFilter &&
-                <div className="selected-filters-container">
-                  <div className="selected-filter">
-                    <div className="selected-filter-text">
-                      {filterContext.areaFilter ? filterContext.areaFilter.name : 'Highway'}
-                    </div>
-                    <div
-                      className="remove-btn"
-                      tabIndex={0}
-                      onClick={() => setFilterContext({...filterContext, areaFilter: null})}
-                      onKeyDown={() => setFilterContext({...filterContext, areaFilter: null})}>
-                      <FontAwesomeIcon icon={faXmark} />
-                    </div>
-                  </div>
-                </div>
-              }
             </div>
 
             {smallScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
@@ -814,10 +797,11 @@ export default function EventsListPage(props) {
                   <strong>Do you have a starting location and a destination entered?</strong>
                   <p>Adding a route will narrow down the information for the whole site, including the delays list. There might not be any delays between those two locations.</p>
 
-                  <strong>Have you applied filters (e.g. an area or a highway) to narrow down the list?</strong>
-                  <p>These filters also narrow down the delays on this page.</p>
+                  <strong>Have you entered search terms or applied filters (e.g. an area) to narrow down the list?</strong>
+                  <p>These also narrow down the {chainUpsOnly ? 'chain-ups' : 'delays'} on this page.</p>
                   <ul>
-                    <li>Remove or adjust the area or highway filters to reveal more delays if they are in effect.</li>
+                    <li>Try checking your spelling, changing, or removing your search terms.</li>
+                    <li>Remove or adjust the area filter to reveal more {chainUpsOnly ? 'chain-ups' : 'delays'} if they are in effect.</li>
                   </ul>
 
                   <strong>Have you hidden any of the layers using the list filter?</strong>
@@ -834,23 +818,18 @@ export default function EventsListPage(props) {
         <Footer />
       </div>
 
-      {smallScreen &&
-        <div className={`overlay filters-overlay ${showAreaFilters ? 'open' : ''}`}>
-          <button
-            className="close-overlay"
-            aria-label={`${showAreaFilters ? 'close overlay' : ''}`}
-            aria-labelledby="button-close-overlay"
-            aria-hidden={`${showAreaFilters ? false : true}`}
-            tabIndex={`${showAreaFilters ? 0 : -1}`}
-            onClick={() => setShowAreaFilters(false)}>
-
-            <FontAwesomeIcon icon={faXmark} />
-          </button>
-
-          <p className="overlay__header bold">Filter by area</p>
-          <AreaFilter handleAreaFiltersClose={() => setShowAreaFilters(false)} objects={processedEvents} showAllByDefault={true} />
-        </div>
-      }
+      <FiltersOverlay
+        open={showFilters}
+        onClose={() => setShowFilters(false)}
+        title="Sort & Filter"
+        showSort
+        showDelayTypes={!chainUpsOnly}
+        showAreas
+        sortingKey={sortingKey}
+        onSortingKeyChange={handleSortingKeyChange}
+        sortingKeys={sortingKeys}
+        areaObjects={processedEvents}
+      />
 
       {smallScreen &&
         <div className={`overlay filters-overlay ${showTypeFilters ? 'open' : ''}`}>
