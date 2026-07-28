@@ -5,14 +5,6 @@ import React, { useContext, useState, useEffect, useCallback } from 'react';
 import { useSelector } from "react-redux";
 import { memoize } from "proxy-memoize";
 
-// External imports
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faMagnifyingGlass,
-  faXmark
- } from '@fortawesome/pro-solid-svg-icons';
-
 // Internal imports
 import { FilterContext } from '../../App';
 
@@ -22,7 +14,10 @@ import './AreaFilter.scss';
 export default function AreaFilter(props) {
   /* Setup */
   // Props
-  const { handleAreaFiltersClose, objects, showAllByDefault } = props;
+  // selectedArea/onSelectArea enable controlled mode: selections are reported
+  // to the parent instead of being written to the filter context immediately
+  const { handleAreaFiltersClose, objects, showAllByDefault, selectedArea, onSelectArea } = props;
+  const isControlled = onSelectArea !== undefined;
 
   // Contexts
   const { filterContext, setFilterContext } = useContext(FilterContext);
@@ -35,40 +30,21 @@ export default function AreaFilter(props) {
 
   // States
   const [displayedAreas, setDisplayedAreas] = useState();
-  const [searchedAreas, setSearchedAreas] = useState();
-  const [searchText, setSearchText] = useState('');
 
   // Effects
   useEffect(() => {
-    if (!displayedAreas || displayedAreas.length === 0) {
-      setSearchedAreas([]);
-      return;
-    }
-
-    if (searchText === '') {
-      setSearchedAreas(displayedAreas);
-      return;
-    }
-
-    // search for area name from text input
-    const searchFn = (areaObj, targetText) => {
-      const targetLower = targetText.toLowerCase();
-      return areaObj.name.toLowerCase().includes(targetLower);
-    };
-
-    const filteredAreas = areas.filter(areaObj => searchFn(areaObj, searchText));
-    setSearchedAreas(filteredAreas);
-
-  }, [searchText, displayedAreas]);
-
-  useEffect(() => {
-    if (!areas || !objects) {
+    if (!areas) {
       return;
     }
 
     // DBC22-4686: delay list should show all areas when no route is selected
+    // Independent of objects, so areas populate even while the list is still loading
     if (showAllByDefault && !selectedRoute) {
       setDisplayedAreas(areas);
+      return;
+    }
+
+    if (!objects) {
       return;
     }
 
@@ -81,72 +57,48 @@ export default function AreaFilter(props) {
     const currentAreas = areas.filter(area => uniqueAreaIds.includes(area.id));
     setDisplayedAreas(currentAreas);
 
-  }, [areas, objects]);
+  }, [areas, objects, selectedRoute, showAllByDefault]);
+
+  /* Handlers */
+  const selectArea = (areaObj) => {
+    if (isControlled) {
+      onSelectArea(areaObj);
+      return;
+    }
+
+    setFilterContext({ ...filterContext, areaFilter: areaObj });
+    handleAreaFiltersClose();
+  };
 
   /* Rendering */
+  const selectedAreaObj = isControlled ? selectedArea : (filterContext ? filterContext.areaFilter : null);
+  const selectedAreaId = selectedAreaObj ? selectedAreaObj.id : null;
+
   // Main component
   return filterContext && (
     <div className="area-filters">
-      <div className="search-container">
-        <FontAwesomeIcon className="search-icon" icon={faMagnifyingGlass} />
+      {displayedAreas &&
+        <div className="area-options" role="radiogroup" aria-label="Areas">
+          <label className="area-row">
+            <input
+              type="radio"
+              name="area-filter"
+              className="area-row__radio"
+              checked={selectedAreaId === null}
+              onChange={() => selectArea(null)} />
+            <span className="area-row__label">All areas</span>
+          </label>
 
-        <AsyncTypeahead
-          id="area-filter-search"
-          isLoading={false}
-          onSearch={() => {}}
-          onInputChange={text => setSearchText(text)}
-          placeholder={'Search Areas'}
-          inputProps={{
-            'aria-label': 'input field for Area filter search',
-          }} />
-      </div>
-
-      {!filterContext.areaFilter && <div className="selected-filter-container no-selection">No filters selected</div>}
-
-      {filterContext.areaFilter && (
-        <div className="selected-filter-container">
-          <div className="selected-filter space-between-row">
-            <div className="selected-filter-text">
-              {filterContext.areaFilter &&
-                filterContext.areaFilter.name
-              }
-            </div>
-
-            <div
-              className="remove-btn"
-              tabIndex={0}
-              onClick={() => {
-                setFilterContext({...filterContext, areaFilter: null});
-                handleAreaFiltersClose();
-              }}
-              onKeyDown={() => {
-                setFilterContext({...filterContext, areaFilter: null});
-                handleAreaFiltersClose();
-              }}>
-              <FontAwesomeIcon icon={faXmark} />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {searchedAreas &&
-        <div className="area-options">
-          {searchedAreas.map(areaObj =>
-            <div
-              key={areaObj.id}
-              className="area-row"
-              tabIndex={0}
-              onClick={() => {
-                setFilterContext({...filterContext, areaFilter: areaObj});
-                handleAreaFiltersClose();
-              }}
-              onKeyDown={() => {
-                setFilterContext({...filterContext, areaFilter: areaObj});
-                handleAreaFiltersClose();
-              }}>
-
-              <span>{areaObj.name}</span>
-            </div>
+          {displayedAreas.map(areaObj =>
+            <label key={areaObj.id} className="area-row">
+              <input
+                type="radio"
+                name="area-filter"
+                className="area-row__radio"
+                checked={selectedAreaId === areaObj.id}
+                onChange={() => selectArea(areaObj)} />
+              <span className="area-row__label">{areaObj.name}</span>
+            </label>
           )}
         </div>
       }

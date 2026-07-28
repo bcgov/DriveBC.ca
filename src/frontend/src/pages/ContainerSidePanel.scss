@@ -116,12 +116,6 @@
   &__right {
     flex: 1 1 auto;
 
-    .sticky-sentinel {
-      height: 1px;
-      background: none;
-      margin: -1px;
-    }
-
     .sticky-filters {
       position: sticky;
       z-index: 1;
@@ -149,35 +143,10 @@
             font-weight: 700;
             color: $Grey80;
           }
-
-          .filter-option-btn {
-            display: flex;
-            flex-direction: column;
-            height: 42px;
-            width: 42px;
-            border: none;
-            padding: 0;
-            align-items: center;
-            justify-content: center;
-
-            svg {
-              height: 16px;
-              width: 16px;
-              margin-top: 4px;
-              margin-right: 0;
-            }
-          }
         }
       }
 
       .controls-group {
-        background-color: $Grey10;
-        padding: 4px 12px;
-        border-radius: 8px;
-
-        @media (min-width: 768px) {
-          padding: 8px;
-        }
 
         .controls-container {
           display: flex;
@@ -191,16 +160,6 @@
 
             .camSearch-container {
               margin-bottom: 12px;
-            }
-          }
-
-          @media (min-width: 880px) {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-
-            .camSearch-container {
-              margin-bottom: 0;
             }
           }
 
@@ -230,7 +189,11 @@
 
           .camSearch-container {
             width: 100%;
-            margin-right: 20px;
+            order: 1;
+
+            @media (min-width: 768px) {
+              order: 2;
+            }
 
             .rbt {
               .rbt-input {
@@ -250,11 +213,21 @@
             }
 
             @media (min-width: 768px) {
-              max-width: 400px;
+              max-width: 320px;
             }
 
             .rbt-menu {
               display: none !important;
+            }
+          }
+
+          .tools-container {
+            order: 2;
+            margin-left: 8px;
+
+            @media (min-width: 768px) {
+              order: 1;
+              margin-left: 0;
             }
           }
         }
@@ -286,22 +259,15 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-left: 12px;
 
-          @media (max-width: 575px) {
-            padding: 0;
-            height: 42px;
-            width: 42px;
-            border: none;
+          &:not(:first-of-type) {
+            margin-left: 8px;
           }
 
-          &.active {
-            background: $Info;
-            color: $White;
-
-            .btn-text {
-              color: $White;
-            }
+          .btn-text {
+            font-size: 0.875rem;
+            margin-bottom: 0;
+            white-space: nowrap;
           }
 
           .area-filter-btn__icon, .highway-filter-btn__icon {
@@ -309,6 +275,11 @@
               margin-left: 8px;
               margin-right: 8px;
             }
+          }
+
+          &.reset-filters-btn {
+            border: none;
+            text-decoration: underline;
           }
         }
 
@@ -319,12 +290,6 @@
               margin-left: 8px;
               margin-right: 8px;
             }
-          }
-
-          .btn-text {
-            font-size: 0.875rem;
-            margin-bottom: 0;
-            white-space: nowrap;
           }
 
           .dropdown-icon {
