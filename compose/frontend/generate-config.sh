@@ -63,6 +63,8 @@ fi
 cp /etc/nginx/conf.d/default.conf "${SHARED_CONFIG}/default.conf"
 cp /etc/nginx/conf.d/security_headers.conf "${SHARED_CONFIG}/security_headers.conf"
 sed -i "s~{ENVIRONMENT}~$ENVIRONMENT~g" "${SHARED_CONFIG}/default.conf"
+sed -i "s~{SYSLOG_SERVER}~$SYSLOG_SERVER~g" "${SHARED_CONFIG}/default.conf"
+sed -i "s~{SYSLOG_TAG}~$SYSLOG_TAG~g" "${SHARED_CONFIG}/default.conf"
 
 if [ "$ENVIRONMENT" = "prod-drivebc" ]; then
     echo "Environment is 'prod'; removing X-Robots-Tag noindex header."

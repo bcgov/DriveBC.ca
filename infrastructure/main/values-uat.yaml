@@ -160,6 +160,7 @@ static:
       variables:
         MAINTENANCE_MODE: 'false'
         ENVIRONMENT: uat-drivebc
+        SYSLOG_TAG: uat_drivebc_static_gold # Setting the tag here as it needs to be different in gold and golddr. The SYSLOG_SERVER is set in Vault and is the same for both clusters.
   vault:
     secretName: uat-static  # This is the name of the secret in vault that contains the environment variables for the app
     authPath: auth/k8s-gold # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
