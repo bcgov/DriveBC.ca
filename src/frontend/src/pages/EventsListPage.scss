@@ -51,17 +51,10 @@
       }
     }
 
-    &__right {
-      .sticky-filters .controls-group .controls-container {
-        flex-direction: row;
-      }
-    }
   }
 
 
   .controls-container {
-    flex-direction: row;
-
     .polling-filters-container {
       display: flex;
       align-items: flex-end;
@@ -69,6 +62,8 @@
     }
 
     .sort {
+      flex-shrink: 0;
+
       @media (max-width: 575px) {
         order: 2;
       }

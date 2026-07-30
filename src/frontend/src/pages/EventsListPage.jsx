@@ -16,7 +16,8 @@ import {
   faAngleDown,
   faXmark,
   faFlag,
-  faChevronDown
+  faChevronDown,
+  faMagnifyingGlass
 } from '@fortawesome/pro-solid-svg-icons';
 import {
   faArrowUp,
@@ -40,6 +41,7 @@ import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Advisories from '../Components/advisories/Advisories';
 import EventCard from '../Components/events/EventCard';
+import EventListSearch, { filterEventsBySearch } from '../Components/events/EventListSearch';
 import EventsTable from '../Components/events/EventsTable';
 import ListFilters from '../Components/shared/ListFilters';
 import Footer from '../Footer';
@@ -156,6 +158,8 @@ export default function EventsListPage(props) {
   const [updateCounts, setUpdateCounts] = useState({above: 0, below: 0});
   const [showAreaFilters, setShowAreaFilters] = useState(false);
   const [showTypeFilters, setShowTypeFilters] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [openEventSearch, setOpenEventSearch] = useState(false);
 
   // Error handling
   const displayError = (error) => {
@@ -277,6 +281,9 @@ export default function EventsListPage(props) {
       });
     }
 
+    // Text search — road name, start/end location, closest landmark, description
+    res = filterEventsBySearch(res, searchText);
+
     // Reset sorting key and sort
     setSortingKey(getDefaultSortingKey());
     if (selectedRoute && selectedRoute.routeFound) {
@@ -339,7 +346,10 @@ export default function EventsListPage(props) {
   useEffect(() => {
     // Create a new worker if it doesn't exist
     if (!workerRef.current) {
-      workerRef.current = new Worker(new URL('../Components/map/filterRouteWorker', import.meta.url));
+      workerRef.current = new Worker(
+        new URL('../Components/map/filterRouteWorker', import.meta.url),
+        { type: 'module' }
+      );
 
       // Set up event listener for messages from the worker
       workerRef.current.onmessage = function (event) {
@@ -378,7 +388,7 @@ export default function EventsListPage(props) {
       processEvents();
       setLoadData(false);
     }
-  }, [filteredEvents, eventCategoryFilter, filterContext.areaFilter]);
+  }, [filteredEvents, eventCategoryFilter, filterContext.areaFilter, searchText]);
 
   useEffect(() => {
     if (loadData) {
@@ -674,8 +684,33 @@ export default function EventsListPage(props) {
                     </Dropdown>
                   </div>
 
+                  {!smallScreen &&
+                    <EventListSearch
+                      id="event-list-search"
+                      searchText={searchText}
+                      setSearchText={setSearchText}
+                      chainUpsOnly={chainUpsOnly}
+                    />
+                  }
+
                   <div className="tools-container">
                     <span className="filters-text">Filters{!smallScreen && ':'} </span>
+
+                    {smallScreen &&
+                      <Button
+                        variant="outline-primary"
+                        className={'filter-option-btn camera-search-btn' + (openEventSearch ? ' active' : '')}
+                        aria-label={chainUpsOnly ? 'open chain-ups search' : 'open delays search'}
+                        onClick={() => {
+                          // Keep search open while text is present (same pattern as camera list)
+                          if (searchText && openEventSearch) return;
+
+                          setOpenEventSearch(!openEventSearch);
+                        }}>
+                        <FontAwesomeIcon icon={faMagnifyingGlass} />
+                        <span className="mobile-btn-text">Search</span>
+                      </Button>
+                    }
 
                     <div ref={areaFilterRef} className="area-filter-container">
                       <Button
@@ -733,6 +768,17 @@ export default function EventsListPage(props) {
                     }
                   </div>
                 </div>
+
+                {smallScreen &&
+                  <EventListSearch
+                    id="event-list-search-mobile"
+                    searchText={searchText}
+                    setSearchText={setSearchText}
+                    chainUpsOnly={chainUpsOnly}
+                    isMobile
+                    open={openEventSearch}
+                  />
+                }
               </div>
 
               {smallScreen && filterContext.areaFilter &&
@@ -814,10 +860,11 @@ export default function EventsListPage(props) {
                   <strong>Do you have a starting location and a destination entered?</strong>
                   <p>Adding a route will narrow down the information for the whole site, including the delays list. There might not be any delays between those two locations.</p>
 
-                  <strong>Have you applied filters (e.g. an area or a highway) to narrow down the list?</strong>
-                  <p>These filters also narrow down the delays on this page.</p>
+                  <strong>Have you entered search terms or applied filters (e.g. an area) to narrow down the list?</strong>
+                  <p>These also narrow down the {chainUpsOnly ? 'chain-ups' : 'delays'} on this page.</p>
                   <ul>
-                    <li>Remove or adjust the area or highway filters to reveal more delays if they are in effect.</li>
+                    <li>Try checking your spelling, changing, or removing your search terms.</li>
+                    <li>Remove or adjust the area filter to reveal more {chainUpsOnly ? 'chain-ups' : 'delays'} if they are in effect.</li>
                   </ul>
 
                   <strong>Have you hidden any of the layers using the list filter?</strong>
