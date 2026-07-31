@@ -92,7 +92,7 @@ class TestWildfireModel(BaseTest):
         assert len(self.parsed_features) == 7
         assert self.parsed_features[0]['id'] == 'G90400'
         assert self.parsed_features[0]['status'] == WILDFIRE_STATUS.HOLDING
-        assert self.parsed_features[0]['reported_date'] == datetime.date(2026, 5, 22)
+        assert self.parsed_features[0]['reported_date'] == datetime.date(2026, 5, 21)
         assert self.parsed_features[3]['id'] == 'K70659'
         assert self.parsed_features[3]['status'] == WILDFIRE_STATUS.OUT_CNTRL
         assert self.feature_by_id(self.parsed_features, 'G90400')['wildfire_of_note'] is False
@@ -159,7 +159,7 @@ class TestWildfireModel(BaseTest):
         assert isinstance(wildfire.geometry, MultiPolygon)
         assert wildfire.size == holding_feature['size']
         assert wildfire.status == WILDFIRE_STATUS.HOLDING
-        assert wildfire.reported_date == datetime.date(2026, 5, 22)
+        assert wildfire.reported_date == datetime.date(2026, 5, 21)
         assert wildfire.wildfire_of_note is False
 
         # Out of Control
@@ -202,7 +202,7 @@ class TestWildfireModel(BaseTest):
 
         assert Wildfire.objects.count() == 7
         wildfire = Wildfire.objects.get(id='G90400')
-        assert wildfire.reported_date == datetime.date(2026, 5, 22)
+        assert wildfire.reported_date == datetime.date(2026, 5, 21)
         assert isinstance(wildfire.location, Point)
         assert isinstance(wildfire.geometry, MultiPolygon)
         g90400 = self.feature_by_id(self.parsed_features, 'G90400')

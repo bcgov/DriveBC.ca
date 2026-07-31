@@ -1,4 +1,5 @@
 import datetime
+from zoneinfo import ZoneInfo
 
 from apps.wildfire.enums import WILDFIRE_STATUS
 from django.contrib.gis.geos import Point
@@ -25,7 +26,7 @@ class WildfirePointPropertiesField(serializers.Field):
         incident_number = data['incidentNumberLabel']
         discovery_date = datetime.datetime.fromtimestamp(
             data['discoveryDate'] / 1000,
-            tz=datetime.timezone.utc,
+            tz=ZoneInfo('America/Vancouver'),
         ).date()
 
         return {
