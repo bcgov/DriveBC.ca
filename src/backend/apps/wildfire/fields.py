@@ -10,8 +10,6 @@ class WildfireAreaPropertiesField(serializers.Field):
         res = {
             # General
             "id": data['FIRE_NUMBER'],
-            "size": data['FIRE_SIZE_HECTARES'],
-            "url": data['FIRE_URL'],
         }
 
         return res
@@ -37,4 +35,6 @@ class WildfirePointPropertiesField(serializers.Field):
             "wildfire_of_note": bool(data.get('fireOfNoteInd')),
             # Defensive, map won't show 'Out' fires
             "status": getattr(WILDFIRE_STATUS, data['stageOfControlCode'], WILDFIRE_STATUS.OUT),
+            "size": data.get('incidentSizeMappedHa'),
+            "fireYear": data.get('fireYear'),
         }

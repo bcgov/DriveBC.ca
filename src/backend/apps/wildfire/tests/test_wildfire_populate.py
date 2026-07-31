@@ -21,10 +21,19 @@ logging.getLogger().setLevel(logging.CRITICAL)
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
 
+def wildfire_incident_url(feature):
+    return (
+        'https://wildfiresituation.nrs.gov.bc.ca/incidents'
+        f'?fireYear={feature["fireYear"]}'
+        f'&incidentNumber={feature["id"]}'
+    )
+
+
 def wildfire_data_from_feature(feature):
     return {
         'location': feature['geometry'],
         **feature,
+        'url': wildfire_incident_url(feature),
     }
 
 
@@ -88,7 +97,8 @@ class TestWildfireModel(BaseTest):
         assert self.parsed_features[3]['status'] == WILDFIRE_STATUS.OUT_CNTRL
         assert self.feature_by_id(self.parsed_features, 'G90400')['wildfire_of_note'] is False
         assert self.feature_by_id(self.parsed_features, 'V10742')['wildfire_of_note'] is True
-        assert 'size' not in self.parsed_features[0]
+        assert self.parsed_features[0]['size'] == 0.2
+        assert self.parsed_features[0]['fireYear'] == 2026
         assert 'url' not in self.parsed_features[0]
 
     def test_wildfire_of_note_separate_from_status(self):
@@ -122,7 +132,6 @@ class TestWildfireModel(BaseTest):
     def test_populate_wildfire_function(self):
         holding_feature = self.feature_by_id(self.parsed_features, 'G90400')
         out_of_control_feature = self.feature_by_id(self.parsed_features, 'K70659')
-        area_data = self.areas_dict['G70422']
 
         # Out, not populated
         out_data = {
@@ -144,11 +153,11 @@ class TestWildfireModel(BaseTest):
         # Being Held
         populate_wildfire_from_data(self.combine_with_area(holding_feature))
         wildfire = Wildfire.objects.get(id='G90400')
-        assert wildfire.url == area_data['url']
+        assert wildfire.url == wildfire_incident_url(holding_feature)
         assert wildfire.name == 'G90400'
         assert isinstance(wildfire.location, Point)
         assert isinstance(wildfire.geometry, MultiPolygon)
-        assert wildfire.size == area_data['size']
+        assert wildfire.size == holding_feature['size']
         assert wildfire.status == WILDFIRE_STATUS.HOLDING
         assert wildfire.reported_date == datetime.date(2026, 5, 22)
         assert wildfire.wildfire_of_note is False
@@ -196,8 +205,9 @@ class TestWildfireModel(BaseTest):
         assert wildfire.reported_date == datetime.date(2026, 5, 22)
         assert isinstance(wildfire.location, Point)
         assert isinstance(wildfire.geometry, MultiPolygon)
-        assert wildfire.size == self.area_template['size']
-        assert wildfire.url == self.area_template['url']
+        g90400 = self.feature_by_id(self.parsed_features, 'G90400')
+        assert wildfire.size == g90400['size']
+        assert wildfire.url == wildfire_incident_url(g90400)
         assert Wildfire.objects.get(id='K70659').status == WILDFIRE_STATUS.OUT_CNTRL
 
         populate_all_wildfire_data()

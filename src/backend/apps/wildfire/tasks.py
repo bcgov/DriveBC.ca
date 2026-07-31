@@ -50,6 +50,11 @@ def populate_all_wildfire_data():
         combined_data = {
             'location': wildfire_point['geometry'],
             **wildfire_point,
+            'url': (
+                'https://wildfiresituation.nrs.gov.bc.ca/incidents'
+                f'?fireYear={wildfire_point["fireYear"]}'
+                f'&incidentNumber={wildfire_point["id"]}'
+            ),
         }
         if wildfire_point['id'] in wildfire_areas_dict:
             combined_data.update(wildfire_areas_dict[wildfire_point['id']])
