@@ -26,11 +26,21 @@ jobs:
     - name: Generate Incremental Tag
       id: generate_tag
       run: |
-        TAG="b${{ github.run_number }}"
-        git config --global user.name "${{ github.actor }}"
-        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-        git tag "$TAG"
-        git push origin "$TAG"
+        # Fetch existing tags
+        git fetch --tags
+        
+        # Find the highest existing "b" tag number
+        LAST_RUN_ID=$(git tag -l "b*" | sed -E "s/b//" | sort -n | tail -n 1)
+        
+        # Default to 0 if no previous run ID found
+        if [ -z "$LAST_RUN_ID" ]; then
+          LAST_RUN_ID=0
+        fi
+        
+        # Increment run ID
+        RUN_ID=$((LAST_RUN_ID + 1))
+        TAG="b${RUN_ID}"
+        
         echo "tag=$TAG" >> $GITHUB_OUTPUT
 
     - name: Create Tag
