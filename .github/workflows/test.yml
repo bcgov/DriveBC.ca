@@ -22,17 +22,19 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v7
+      with:
+        fetch-depth:
 
     - name: Generate Incremental Tag
       id: generate_tag
       run: |
-        # Fetch existing tags
-        git fetch --tags
+        # Fetch all tags explicitly
+        git fetch --tags --force
         
-        # Find the highest existing "b" tag number
-        LAST_RUN_ID=$(git tag -l "b*" | sed -E "s/b//" | sort -n | tail -n 1)
+        # Filter strictly for tags matching "b<number>", strip "b", and find max integer
+        LAST_RUN_ID=$(git tag -l "b*" | grep -E '^b[0-9]+$' | sed 's/^b//' | sort -n | tail -n 1)
         
-        # Default to 0 if no previous run ID found
+        # Default to 0 if no previous b<number> tag exists
         if [ -z "$LAST_RUN_ID" ]; then
           LAST_RUN_ID=0
         fi
@@ -41,7 +43,7 @@ jobs:
         RUN_ID=$((LAST_RUN_ID + 1))
         TAG="b${RUN_ID}"
         
-        echo "tag=$TAG" >> $GITHUB_OUTPUT
+        echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
     - name: Create Tag
       id: create_tag
