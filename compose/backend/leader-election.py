@@ -50,6 +50,8 @@ RETRY_INTERVAL = int(os.environ.get("RETRY_INTERVAL", "3"))
 
 huey_process: subprocess.Popen | None = None
 
+monitor_process = None
+
 # ---------------------------------------------------------------------------
 # Lease helpers
 # ---------------------------------------------------------------------------
@@ -202,7 +204,7 @@ def main():
                         # We hold the lease (e.g. after a container restart) 
                         # but haven't started the process yet.
                         logger.info("Already hold lease after restart — starting Huey")
-                        leading = True
+                        leading = True 
                         _start_huey()
                     elif not _huey_alive():
                         # Huey was running, but now it's not.

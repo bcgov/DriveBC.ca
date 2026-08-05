@@ -132,6 +132,35 @@ def update_cam_from_sql_db(id: int, current_time: datetime.datetime):
     except Exception as e:
         logging.exception(f"Failed to query camera from ORM: {e}")
         return {}
+    
+def update_cam_is_on_from_sql_db(id: int):
+    try:
+        cam = (
+            CameraSource.objects.using("mssql")
+            .filter(id=id)
+            .annotate(
+                isOn=Case(
+                    When(cam_controldisabled=0, then=Value(True)),
+                    default=Value(False),
+                    output_field=BooleanField()
+                ),
+            )
+            .values(
+                'id',
+                'isOn',
+            )
+            .first()
+        )
+
+        if cam:
+            update_webcam_is_on_status(id, cam)
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        logging.exception(f"Failed to query camera from ORM: {e}")
+        return {}
 
 
 def format_region_name(region_name):
@@ -200,7 +229,6 @@ def update_webcam_db(cam_id: int, cam_data: dict):
         return False
 
     update_data = {
-        "is_on": True if cam_data.get("isOn") == 1 else False,
         "should_appear": True if cam_data.get("should_appear") == 1 else False,
         "name": cam_data.get("cam_internetname"),
         "caption": cam_data.get("cam_internetcaption"),
@@ -214,6 +242,20 @@ def update_webcam_db(cam_id: int, cam_data: dict):
 
     Webcam.objects.filter(id=cam_id).update(**update_data)
     return True
+
+def update_webcam_is_on_status(cam_id: int, cam_data: dict):
+    is_on = cam_data.get("isOn") == 1
+
+    webcam = Webcam.objects.only("id", "is_on").filter(id=cam_id).first()
+    if not webcam:
+        return False
+
+    # Detect OFF -> ON transition
+    if webcam.is_on != is_on:
+        Webcam.objects.filter(id=cam_id).update(is_on=is_on)
+
+    return True
+
 
 
 
@@ -318,13 +360,7 @@ def purge_old_pvc_images(age: str = "24"):
             full_path = path
 
         files_to_delete.append(full_path)
-        ids_to_delete.append(row.timestamp)
-
-    ImageIndex.objects.filter(
-            timestamp__in=ids_to_delete,
-        ).update(
-            modified_at=timezone.now()
-        )
+        ids_to_delete.append(row.pk)
 
     # Delete files from PVC or s3
     logger.info(f"Deleting {len(files_to_delete)} old PVC images...")
@@ -340,9 +376,7 @@ def purge_old_pvc_images(age: str = "24"):
             logging.exception(f"Error deleting file {file_path}: {e}")
 
     # Delete all records if all images paths are NULL
-    ImageIndex.objects.filter(
-        timestamp__in=ids_to_delete,
-    ).delete()
+    ImageIndex.objects.filter(pk__in=ids_to_delete).delete()
 
     logger.info("All purged recordes are deleted successfully.")
 
@@ -408,6 +442,7 @@ def update_single_webcam_data(webcam):
         if getattr(webcam, field) != getattr(webcam_data, source_field):
             current_time = datetime.datetime.now(tz=ZoneInfo("America/Vancouver"))
             update_cam_from_sql_db(webcam.id, current_time)
+    update_cam_is_on_from_sql_db(webcam.id)
     return False
 
 
@@ -424,8 +459,15 @@ def update_all_webcam_data():
             updated = update_cam_from_sql_db(camera.id, current_time)
             if updated:
                 update_camera_group_id(camera)
+        update_cam_is_on_from_sql_db(camera.id)
     cache.delete(CacheKey.WEBCAM_LIST)
 
+def update_camera_is_on_status():
+    for camera in Webcam.objects.all():
+        updated = update_cam_is_on_from_sql_db(camera.id)
+        if updated:
+            update_camera_group_id(camera)
+    
 
 def wrap_text(text, pen, font, width):
     '''
