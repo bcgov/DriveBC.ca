@@ -7,3 +7,6 @@ class ImageIndex(BaseModel):
 
     class Meta:
         db_table = "image_index"
+        indexes = [
+            models.Index(fields=["camera_id", "-timestamp"]),
+        ]
