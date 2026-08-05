@@ -607,7 +607,7 @@ def update_camera_relations():
 def update_camera_group_id(camera):
     try:
         group_id = Webcam.objects.filter(location=camera.location).order_by('id').first().id
-        Webcam.objects.filter(id=camera.id).update(group_id=group_id)  # update without triggering save
+        Webcam.objects.filter(id=camera.id).exclude(group_id=group_id).update(group_id=group_id)  # update without triggering save
 
     except IntegrityError as e:
         logger.warning(f"Error updating group id for camera {camera.id}: {e}")
