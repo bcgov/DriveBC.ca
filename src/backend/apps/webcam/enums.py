@@ -6,14 +6,16 @@ CAMERA_DIFF_FIELDS = [
     'should_appear',
     'marked_stale',
     'marked_delayed',
+    'local_weather_station_id'
 ]
 
 CAMERA_FIELD_MAPPING = {
     'name': 'cam_internetname',
     'caption': 'cam_internetcaption',
-    'is_on': 'isOn',
-    'should_appear': 'should_appear',
+    'is_on': 'cam_controldisabled',
+    'should_appear': 'cam_controldisappear',
     'marked_stale': 'stale',
     'marked_delayed': 'delayed',
+    'local_weather_station_id': 'cam_locationsweather_station'
 
 }

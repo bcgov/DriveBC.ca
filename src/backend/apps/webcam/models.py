@@ -167,6 +167,7 @@ class CameraSource(models.Model):
     isnew = models.BooleanField(default=False)
     cam_maintenanceis_on_demand = models.BooleanField(default=False)
     seq = models.IntegerField(blank=True, null=True)
+    cam_locationsweather_station = models.CharField(max_length=10, blank=True, null=True)
 
     class Meta:
         db_table = 'Cams_Live'

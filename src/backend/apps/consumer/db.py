@@ -8,7 +8,7 @@ SQL_DB_SERVER = os.getenv("SQL_DB_SERVER")
 SQL_DB_NAME = os.getenv("SQL_DB_NAME")
 SQL_DB_USER = os.getenv("SQL_DB_USER")
 SQL_DB_PASSWORD = os.getenv("SQL_DB_PASSWORD")
-SQL_DB_DRIVER = "ODBC Driver 17 for SQL Server"
+SQL_DB_DRIVER = "ODBC Driver 18 for SQL Server"
 
 def get_all_from_db(camera_id=None):
     query = CameraSource.objects.using("mssql").all()

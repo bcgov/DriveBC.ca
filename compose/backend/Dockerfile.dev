@@ -24,7 +24,7 @@ RUN apt-get update && \
     if [ "$ARCH" = "arm64" ]; then \
       ACCEPT_EULA=Y apt-get install -y --no-install-recommends msodbcsql18; \
     else \
-      ACCEPT_EULA=Y apt-get install -y --no-install-recommends msodbcsql17; \
+      ACCEPT_EULA=Y apt-get install -y --no-install-recommends msodbcsql18; \
     fi && \
     apt-get install -y --no-install-recommends unixodbc-dev gcc g++ && \
     apt-get clean && \
