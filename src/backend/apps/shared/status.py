@@ -16,20 +16,6 @@ max_samples = 50
 timestamp_list: deque[Union[str, float]] = deque(maxlen=max_samples)
 
 # @sync_to_async
-# def get_recent_timestamps(camera_id: str):
-#     latest_50 = (
-#     ImageIndex.objects
-#     .filter(camera_id=camera_id)
-#     .order_by("-timestamp")
-#     .values_list("timestamp", flat=True)[:50]
-# )  
-#     timestamp_list.clear()
-
-#     for obj in reversed(latest_50):
-#         timestamp = obj.timestamp.strftime("%Y%m%d%H%M%S") + f"{int(obj.timestamp.microsecond / 1000):03d}"
-#         timestamp_list.append(timestamp)
-#     return timestamp_list[-1] if timestamp_list else None
-
 def get_recent_timestamps(camera_id: str):
     latest_50 = (
         ImageIndex.objects
