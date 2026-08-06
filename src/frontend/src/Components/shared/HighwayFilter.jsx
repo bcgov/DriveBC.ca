@@ -61,7 +61,7 @@ export default function HighwayFilter(props) {
     }
 
     setFilterContext({ ...filterContext, highwayFilterKey: highwayKey });
-    handleHwyFiltersClose();
+    handleHwyFiltersClose?.();
   };
 
   /* Rendering */

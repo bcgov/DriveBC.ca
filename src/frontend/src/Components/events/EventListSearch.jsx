@@ -40,24 +40,28 @@ export default function EventListSearch(props) {
       <AsyncTypeahead
         id={id}
         isLoading={false}
+        options={[]}
         onSearch={() => {}}
         onBlur={() => {
           trackEvent(chainUpsOnly ? 'chain-ups' : 'delays', 'event-list', 'search', searchText);
         }}
+        inputValue={searchText}
         onInputChange={(text) => setSearchText(text)}
         placeholder={chainUpsOnly ? 'Search chain-ups' : 'Search delays'}
         inputProps={{
           'aria-label': `input field for ${label} search`,
-        }}
-        defaultInputValue={searchText}>
+        }}>
 
-        {({ onClear, text }) => (
+        {({ onClear }) => (
           <>
-            {text ?
+            {searchText ?
               <button
                 className={isMobile ? 'close-camera-search-btn' : 'clear-btn'}
                 aria-label={`Clear ${label} search`}
-                onClick={onClear}>
+                onClick={() => {
+                  onClear();
+                  setSearchText('');
+                }}>
                 <FontAwesomeIcon icon={faXmark} />
               </button>
               :
