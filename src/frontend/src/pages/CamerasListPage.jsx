@@ -565,7 +565,7 @@ export default function CamerasListPage() {
         showAreas
         showHighways
         sortedByLabel={sortedByLabel}
-        areaObjects={displayedCameras}
+        areaObjects={processedCameras}
         highwayCameras={processedCameras}
       />
 

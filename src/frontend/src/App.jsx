@@ -139,10 +139,14 @@ function App() {
   const [mapContext, setMapContext] = useState(getInitialMapContext());
   // const [headerHeightContext, setHeaderHeightContext] = useState();
   const [featureContext, setFeatureContext] = useState({});
-  const [filterContext, setFilterContext] = useState({});
+  const [filterContext, setFilterContext] = useState(getInitialFilterContext);
   // const [showConsentModal, setShowConsentModal] = useState(false);
 
   // Effects
+  useEffect(() => {
+    localStorage.setItem('filterContext', JSON.stringify(filterContext));
+  }, [filterContext]);
+
   useEffect(() => {
     if (isInitialAlertMount.current) {
       isInitialAlertMount.current = false;
@@ -257,6 +261,11 @@ function App() {
         dms: false,
       },
     };
+  }
+
+  function getInitialFilterContext() {
+    const context = localStorage.getItem('filterContext');
+    return context ? JSON.parse(context) : {};
   }
 
   function getInitialAuthContext() {

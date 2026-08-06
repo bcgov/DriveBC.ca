@@ -65,7 +65,7 @@ export default function AreaFilter(props) {
     }
 
     setFilterContext({ ...filterContext, areaFilter: areaObj });
-    handleAreaFiltersClose();
+    handleAreaFiltersClose?.();
   };
 
   /* Rendering */
