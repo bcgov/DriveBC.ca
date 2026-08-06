@@ -73,7 +73,7 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
         if (cam.get('clicked') && cam.get('unread')) return unreadCameraStyles.active;
         if (cam.get('hovered') && cam.get('unread')) return unreadCameraStyles.hover;
 
-        return cameraStyles.static;
+        return cam.get('unread') ? unreadCameraStyles.static : cameraStyles.static;
       }
 
       const cam = features[0];
@@ -128,7 +128,7 @@ export function updateCamerasLayer(cameras, layer, setLoadingLayers) {
     if (!camera) {
       camera = camerasLookup[feature.values_.features[0].getId()];
     }
-    
+
 
     if (!camera) {  // camera no longer in list from API
       feature.setStyle(new Style(null));
