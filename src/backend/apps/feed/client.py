@@ -60,6 +60,7 @@ SERIALIZER_TO_DATASET_MAPPING = {
     "present_weather":      ("wx_code_pst15mins",      "Weather Code (15 min)"),
     "pavement_status":      ("sfc_stat_derived_state", "Pavement Status (State)"),
     "pavement_grip":        ("sfc_grip_lvl",           "Pavement Grip"),
+    "present_weather":      ("wx_code_pst15mins",      "Weather Code (15 min)")
 }
 
 # Generated list of DataSetName values for filtering excluded dataset entries
