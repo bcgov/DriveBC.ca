@@ -1,4 +1,6 @@
 import datetime
+import logging
+import time
 import setproctitle
 
 from apps.border.tasks import update_border_crossing_lanes
@@ -30,148 +32,25 @@ from apps.wildfire.tasks import populate_all_wildfire_data
 from django.core.cache import cache
 from django.core.management import call_command
 from huey import crontab
-from huey.contrib.djhuey import db_periodic_task, lock_task, on_startup, pre_execute, post_execute
+from huey.contrib.djhuey import (
+    db_periodic_task,
+    lock_task,
+    on_startup,
+    post_execute,
+    pre_execute,
+)
 
 logger = logging.getLogger(__name__)
 
-# Declare dictionary at module scope so pre_execute and post_execute can share it
+# Shared dictionary to store task CPU start times
 task_cpu_times = {}
 
-# Change the process name in htop when a task starts
+
 @pre_execute()
-def set_task_title(task):
+def task_pre_execute_hook(task):
+    # Set the htop process title and start tracking CPU process time
     setproctitle.setproctitle(f"Huey: {task.name}")
-
-@pre_execute()
-def record_start_cpu(task):
-    # Process time measures actual CPU time consumed
     task_cpu_times[task.id] = time.process_time()
-
-@db_periodic_task(crontab(hour="*/6", minute="0"))
-@lock_task('populate-camera-lock')
-def populate_webcam_task():
-    populate_all_webcam_data()
-
-
-@db_periodic_task(crontab(minute="*/1"))
-@lock_task('update-camera-lock')
-def update_camera_task():
-    update_all_webcam_data()
-
-
-@db_periodic_task(crontab(minute="*/1"))
-@lock_task('purge-image-lock')
-def purge_image_task():
-    purge_old_images()
-
-
-@db_periodic_task(crontab(minute=0, hour=0))
-@lock_task('backup-purge-image-lock')
-def backup_purge_image_task():
-    backup_purge_old_images()
-
-
-@db_periodic_task(crontab(hour="*/1", minute="0"))
-@lock_task('update-camera-nearby-lock')
-def update_camera_nearby_objs_task():
-    update_camera_nearby_objs()
-
-
-@db_periodic_task(crontab(minute="*/1"))
-@lock_task('events-lock')
-def populate_event_task():
-    populate_all_event_data()
-
-
-@db_periodic_task(crontab(minute="*/5"))
-@lock_task('notifications-lock')
-def send_queued_event_notifications():
-    send_queued_notifications()
-    send_queued_district_notifications()
-
-
-@db_periodic_task(crontab(hour="*/1", minute="0"))
-@lock_task('ferries-lock')
-def populate_ferry_task():
-    populate_all_ferry_data()
-
-
-@db_periodic_task(crontab(hour="*/24", minute="5", day_of_week="0"))
-@lock_task('ferries-lock')
-def populate_coastal_ferry_task():
-    populate_coastal_ferry_data()
-
-
-@db_periodic_task(crontab(minute="*/1"))
-@lock_task('publish-scheduled-lock')
-def publish_scheduled():
-    call_command('publish_scheduled')
-
-
-@db_periodic_task(crontab(minute="*/10"))
-@lock_task('regional-weather-lock')
-def populate_regional_weather_task():
-    populate_all_regional_weather_data()
-
-
-@db_periodic_task(crontab(minute="*/10"))
-@lock_task('current-weather-lock')
-def populate_current_weather_task():
-    populate_all_local_weather_data()
-
-
-@db_periodic_task(crontab(minute="*/10"))
-@lock_task('he-weather-lock')
-def populate_he_weather_task():
-    populate_all_high_elevation_forecast_data()
-
-
-@db_periodic_task(crontab(hour="*/24", minute="0"))
-@lock_task('popoulate-rest-stop-lock')
-def populate_rest_stop_task():
-    populate_all_rest_stop_data()
-
-
-@db_periodic_task(crontab(hour="*/24", minute="10", day_of_week="0"))
-@lock_task('reference-route-lock')
-def build_reference_route_geometries():
-    build_route_geometries()
-
-
-@db_periodic_task(crontab(hour="*/24", minute="15", day_of_week="0"))
-@lock_task('add-camera-lock')
-def add_camera_orders():
-    add_order_to_cameras()
-
-
-@db_periodic_task(crontab(minute="*/1"))
-@lock_task('update-border-crossings-lock')
-def update_border_crossings():
-    update_border_crossing_lanes()
-
-
-@db_periodic_task(crontab(hour="*/24", minute="20", day_of_week="0"))
-@lock_task('districts-lock')
-def update_districts():
-    populate_all_district_data()
-
-
-@db_periodic_task(crontab(hour="*/24", minute="30", day_of_week="0"))
-@lock_task('relations-lock')
-def update_relations():
-    update_object_relations()
-
-
-@db_periodic_task(crontab(minute="0,15,30,45"))
-@lock_task('wildfires-lock')
-def update_wildfires():
-    populate_all_wildfire_data()
-
-
-@db_periodic_task(crontab(minute="*/2"))
-@lock_task('dms-lock')
-def populate_dms_task():
-    populate_all_dms_data()
 
 
 @on_startup()
@@ -180,19 +59,12 @@ def startup_timestamp(task, task_value, exc):
 
 
 @post_execute()
-def post_execute_timestamp(task, task_value, exc):
-    cache.set("last_task_execution", datetime.datetime.now())
-
-@post_execute()
-def reset_task_title(task, task_value, exc):
+def task_post_execute_hook(task, task_value, exc):
+    # Reset cache timestamp and process title
     cache.set("last_task_execution", datetime.datetime.now())
     setproctitle.setproctitle("Huey: idle")
 
-@post_execute()
-def post_execute_timestamp(task, task_value, exc):
-    cache.set("last_task_execution", datetime.datetime.now())
-    
-    # Calculate CPU seconds consumed
+    # Calculate CPU seconds consumed by this task
     start_cpu = task_cpu_times.pop(task.id, None)
     if start_cpu is not None:
         cpu_used = round(time.process_time() - start_cpu, 3)
@@ -200,7 +72,134 @@ def post_execute_timestamp(task, task_value, exc):
             logger.info(f"TASK CPU METRIC: {task.name} consumed {cpu_used}s CPU time")
 
 
+@db_periodic_task(crontab(hour="*/6", minute="0"))
+@lock_task("populate-camera-lock")
+def populate_webcam_task():
+    populate_all_webcam_data()
+
+
 @db_periodic_task(crontab(minute="*/1"))
-@lock_task('generate-offline-camera-images-lock')
+@lock_task("update-camera-lock")
+def update_camera_task():
+    update_all_webcam_data()
+
+
+@db_periodic_task(crontab(minute="*/1"))
+@lock_task("purge-image-lock")
+def purge_image_task():
+    purge_old_images()
+
+
+@db_periodic_task(crontab(minute=0, hour=0))
+@lock_task("backup-purge-image-lock")
+def backup_purge_image_task():
+    backup_purge_old_images()
+
+
+@db_periodic_task(crontab(hour="*/1", minute="0"))
+@lock_task("update-camera-nearby-lock")
+def update_camera_nearby_objs_task():
+    update_camera_nearby_objs()
+
+
+@db_periodic_task(crontab(minute="*/1"))
+@lock_task("events-lock")
+def populate_event_task():
+    populate_all_event_data()
+
+
+@db_periodic_task(crontab(minute="*/5"))
+@lock_task("notifications-lock")
+def send_queued_event_notifications():
+    send_queued_notifications()
+    send_queued_district_notifications()
+
+
+@db_periodic_task(crontab(hour="*/1", minute="0"))
+@lock_task("ferries-lock")
+def populate_ferry_task():
+    populate_all_ferry_data()
+
+
+@db_periodic_task(crontab(hour="*/24", minute="5", day_of_week="0"))
+@lock_task("ferries-lock")
+def populate_coastal_ferry_task():
+    populate_coastal_ferry_data()
+
+
+@db_periodic_task(crontab(minute="*/1"))
+@lock_task("publish-scheduled-lock")
+def publish_scheduled():
+    call_command("publish_scheduled")
+
+
+@db_periodic_task(crontab(minute="*/10"))
+@lock_task("regional-weather-lock")
+def populate_regional_weather_task():
+    populate_all_regional_weather_data()
+
+
+@db_periodic_task(crontab(minute="*/10"))
+@lock_task("current-weather-lock")
+def populate_current_weather_task():
+    populate_all_local_weather_data()
+
+
+@db_periodic_task(crontab(minute="*/10"))
+@lock_task("he-weather-lock")
+def populate_he_weather_task():
+    populate_all_high_elevation_forecast_data()
+
+
+@db_periodic_task(crontab(hour="*/24", minute="0"))
+@lock_task("popoulate-rest-stop-lock")
+def populate_rest_stop_task():
+    populate_all_rest_stop_data()
+
+
+@db_periodic_task(crontab(hour="*/24", minute="10", day_of_week="0"))
+@lock_task("reference-route-lock")
+def build_reference_route_geometries():
+    build_route_geometries()
+
+
+@db_periodic_task(crontab(hour="*/24", minute="15", day_of_week="0"))
+@lock_task("add-camera-lock")
+def add_camera_orders():
+    add_order_to_cameras()
+
+
+@db_periodic_task(crontab(minute="*/1"))
+@lock_task("update-border-crossings-lock")
+def update_border_crossings():
+    update_border_crossing_lanes()
+
+
+@db_periodic_task(crontab(hour="*/24", minute="20", day_of_week="0"))
+@lock_task("districts-lock")
+def update_districts():
+    populate_all_district_data()
+
+
+@db_periodic_task(crontab(hour="*/24", minute="30", day_of_week="0"))
+@lock_task("relations-lock")
+def update_relations():
+    update_object_relations()
+
+
+@db_periodic_task(crontab(minute="0,15,30,45"))
+@lock_task("wildfires-lock")
+def update_wildfires():
+    populate_all_wildfire_data()
+
+
+@db_periodic_task(crontab(minute="*/2"))
+@lock_task("dms-lock")
+def populate_dms_task():
+    populate_all_dms_data()
+
+
+@db_periodic_task(crontab(minute="*/1"))
+@lock_task("generate-offline-camera-images-lock")
 def generate_offline_camera_images_task():
     generate_offline_camera_images()
