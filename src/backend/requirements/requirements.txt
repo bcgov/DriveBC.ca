@@ -36,3 +36,4 @@ cryptography==50.0.0
 django-http-compression[brotli]==1.4.0
 kubernetes==36.0.3
 gunicorn==26.0.0
+setproctitle
