@@ -30,12 +30,16 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY ./src/backend/requirements /app/backend/requirements
 RUN pip install --no-cache-dir -r requirements/requirements.txt
 
+# ADDITION 1: Install py-spy in the virtual environment
+RUN pip install --no-cache-dir py-spy
+
 
 # ==========================================
 # STAGE 2: Final Runtime
 # ==========================================
 FROM python:3.14-slim AS runner
 
+# ADDITION 2: Added gdb, htop, and libcap2-bin for process debugging/tracing
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       binutils \
@@ -45,6 +49,9 @@ RUN apt-get update \
       ca-certificates \
       gnupg2 \
       apt-transport-https \
+      htop \
+      gdb \
+      libcap2-bin \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
@@ -59,6 +66,9 @@ WORKDIR /app/backend
 
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
+
+# ADDITION 3: Grant py-spy permission to inspect non-child processes without root
+RUN setcap cap_sys_ptrace+ep /opt/venv/bin/py-spy
 
 COPY ./compose/backend/entrypoint \
      ./compose/backend/start.sh \
