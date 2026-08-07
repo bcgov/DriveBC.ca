@@ -114,7 +114,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Generate Build Attestation
-        uses: actions/attest@v4.2.0
+        uses: actions/attest@v4.2.2
         with:
           subject-name: ${{ needs.setup.outputs.image_registry }}/${{ matrix.image_name }}
           subject-digest: ${{ steps.push.outputs.digest }}
