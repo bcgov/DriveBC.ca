@@ -32,6 +32,11 @@ from django.core.management import call_command
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, lock_task, on_startup, pre_execute, post_execute
 
+logger = logging.getLogger(__name__)
+
+# Declare dictionary at module scope so pre_execute and post_execute can share it
+task_cpu_times = {}
+
 # Change the process name in htop when a task starts
 @pre_execute()
 def set_task_title(task):
