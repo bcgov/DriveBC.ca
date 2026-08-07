@@ -51,7 +51,7 @@ task_timing_data = {}
 def task_pre_execute_hook(task):
     # Truncate module path to function name so htop displays clean titles
     short_name = task.name.split(".")[-1]
-    setproctitle.setproctitle(f"Huey: {short_name}")
+    setproctitle.setproctitle(f"{short_name}")
     
     # Store process time (active CPU seconds) and wall clock time
     task_timing_data[task.id] = (time.process_time(), time.time())
