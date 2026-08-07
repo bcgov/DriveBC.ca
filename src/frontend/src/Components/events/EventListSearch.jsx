@@ -17,7 +17,7 @@ export const filterEventsBySearch = (events, searchText) => {
   const targetText = searchText.trim().toLowerCase();
   const includesSearch = (value) => {
     if (!value) return false;
-    return String(value).replace(/<[^>]*>/g, '').toLowerCase().includes(targetText);
+    return String(value).replace(/<[^>]*>?/g, '').toLowerCase().includes(targetText);
   };
 
   return events.filter((e) => {
