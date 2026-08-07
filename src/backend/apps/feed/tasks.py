@@ -38,6 +38,7 @@ from huey.contrib.djhuey import (
     on_startup,
     post_execute,
     pre_execute,
+    logger,
 )
 
 logger = logging.getLogger(__name__)
@@ -49,7 +50,7 @@ task_cpu_times = {}
 @pre_execute()
 def task_pre_execute_hook(task):
     # Set the htop process title and start tracking CPU process time
-    setproctitle.setproctitle(f"Huey: {task.name}")
+    setproctitle.setproctitle(f"Huey: {short_name}")
     task_cpu_times[task.id] = time.process_time()
 
 
@@ -60,16 +61,21 @@ def startup_timestamp(task, task_value, exc):
 
 @post_execute()
 def task_post_execute_hook(task, task_value, exc):
-    # Reset cache timestamp and process title
     cache.set("last_task_execution", datetime.datetime.now())
     setproctitle.setproctitle("Huey: idle")
 
-    # Calculate CPU seconds consumed by this task
-    start_cpu = task_cpu_times.pop(task.id, None)
-    if start_cpu is not None:
+    start_data = task_timing_data.pop(task.id, None)
+    if start_data is not None:
+        start_cpu, start_wall = start_data
+        
         cpu_used = round(time.process_time() - start_cpu, 3)
-        if cpu_used > 0.5:  # Log tasks taking more than 0.5 CPU seconds
-            logger.info(f"TASK CPU METRIC: {task.name} consumed {cpu_used}s CPU time")
+        wall_used = round(time.time() - start_wall, 3)
+        cpu_pct = round((cpu_used / wall_used) * 100, 1) if wall_used > 0 else 0.0
+
+        # Logs every execution with CPU vs Wall time comparison
+        logger.info(
+            f"TASK METRIC [{task.name}] -> CPU: {cpu_used}s | Wall: {wall_used}s | CPU Load: {cpu_pct}%"
+        )
 
 
 @db_periodic_task(crontab(hour="*/6", minute="0"))
