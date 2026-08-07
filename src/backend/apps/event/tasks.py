@@ -197,6 +197,10 @@ def populate_all_event_data():
             event_data["next_update"] = direct_data.get('next_update', None)
             event_data["start_point_linear_reference"] = direct_data.get('start_point_linear_reference', None)
 
+            # DBC22-7081: RIDE description from RIDE API, not Open511
+            if RIDE_EVENT_PREFIX in id and direct_data.get('description'):
+                event_data["description"] = direct_data['description']
+
             if 'route_at' in direct_data and direct_data['route_at'] != '':
                 event_data["route_at"] = direct_data['route_at']
 

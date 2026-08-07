@@ -94,6 +94,7 @@ class TestPopulateRideMerge(BaseTest):
             {
                 "id": "RIDE-TEST1",
                 "type": "INCIDENT",
+                "description": "Description from RIDE feed.",
                 "impacts": [{"closed": True}],
                 "location": {
                     "start": {
@@ -113,3 +114,4 @@ class TestPopulateRideMerge(BaseTest):
         event = Event.objects.get(id="RIDE-TEST1")
         assert event.closed is True
         assert event.route_at == "From RIDE feed"
+        assert event.description == "Description from RIDE feed."
