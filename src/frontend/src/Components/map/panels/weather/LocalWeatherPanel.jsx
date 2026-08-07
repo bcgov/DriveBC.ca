@@ -12,7 +12,8 @@ import {
   faRoad,
   faSnowflake,
   faTemperatureHalf,
-  faWind
+  faWind,
+  faEye
 } from '@fortawesome/pro-light-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
 
@@ -138,6 +139,16 @@ export default function LocalWeatherPanel(props) {
                         </p>
                       )}
                     </div>
+                  </div>
+                )}
+
+                {weatherData.visibility && (
+                  <div className="data-card__row">
+                    <div className="data-icon">
+                      <FontAwesomeIcon className="icon" icon={faEye} />
+                    </div>
+                    <p className="label">Visibility</p>
+                    <p className="data">{weatherData.visibility}</p>
                   </div>
                 )}
 
