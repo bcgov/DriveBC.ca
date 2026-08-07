@@ -1,4 +1,5 @@
 import datetime
+import setproctitle
 
 from apps.border.tasks import update_border_crossing_lanes
 from apps.consumer.tasks import generate_offline_camera_images
@@ -29,8 +30,17 @@ from apps.wildfire.tasks import populate_all_wildfire_data
 from django.core.cache import cache
 from django.core.management import call_command
 from huey import crontab
-from huey.contrib.djhuey import db_periodic_task, lock_task, on_startup, post_execute
+from huey.contrib.djhuey import db_periodic_task, lock_task, on_startup, pre_execute, post_execute
 
+# Change the process name in htop when a task starts
+@pre_execute()
+def set_task_title(task):
+    setproctitle.setproctitle(f"Huey: {task.name}")
+
+@pre_execute()
+def record_start_cpu(task):
+    # Process time measures actual CPU time consumed
+    task_cpu_times[task.id] = time.process_time()
 
 @db_periodic_task(crontab(hour="*/6", minute="0"))
 @lock_task('populate-camera-lock')
@@ -167,6 +177,22 @@ def startup_timestamp(task, task_value, exc):
 @post_execute()
 def post_execute_timestamp(task, task_value, exc):
     cache.set("last_task_execution", datetime.datetime.now())
+
+@post_execute()
+def reset_task_title(task, task_value, exc):
+    cache.set("last_task_execution", datetime.datetime.now())
+    setproctitle.setproctitle("Huey: idle")
+
+@post_execute()
+def post_execute_timestamp(task, task_value, exc):
+    cache.set("last_task_execution", datetime.datetime.now())
+    
+    # Calculate CPU seconds consumed
+    start_cpu = task_cpu_times.pop(task.id, None)
+    if start_cpu is not None:
+        cpu_used = round(time.process_time() - start_cpu, 3)
+        if cpu_used > 0.5:  # Log tasks taking more than 0.5 CPU seconds
+            logger.info(f"TASK CPU METRIC: {task.name} consumed {cpu_used}s CPU time")
 
 
 @db_periodic_task(crontab(minute="*/1"))
