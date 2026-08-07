@@ -6,6 +6,8 @@ CAMERA_DIFF_FIELDS = [
     'should_appear',
     'marked_stale',
     'marked_delayed',
+    'update_period_mean',
+    'update_period_stddev',
     'local_weather_station_id'
 ]
 
@@ -16,6 +18,8 @@ CAMERA_FIELD_MAPPING = {
     'should_appear': 'cam_controldisappear',
     'marked_stale': 'stale',
     'marked_delayed': 'delayed',
+    'update_period_mean': 'mean_interval',
+    'update_period_stddev': 'stddev_interval',
     'local_weather_station_id': 'cam_locationsweather_station'
 
 }

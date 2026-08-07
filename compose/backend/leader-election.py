@@ -50,6 +50,8 @@ RETRY_INTERVAL = int(os.environ.get("RETRY_INTERVAL", "3"))
 
 huey_process: subprocess.Popen | None = None
 
+monitor_process = None
+
 # ---------------------------------------------------------------------------
 # Lease helpers
 # ---------------------------------------------------------------------------
@@ -132,6 +134,17 @@ def _start_huey():
     )
     logger.info("Huey running (PID %d)", huey_process.pid)
 
+def _start_monitor():
+    global monitor_process
+
+    monitor_process = subprocess.Popen(
+        ["python", "manage.py", "monitor_camera_status"],
+        stdout=sys.stdout,
+        stderr=sys.stderr,
+        cwd="/app/backend",
+    )
+
+    logger.info("Monitor started (PID %d)", monitor_process.pid)
 
 def _stop_huey(timeout: int = 30):
     global huey_process
@@ -189,6 +202,7 @@ def main():
                 # No lease exists yet — race to create it
                 if _create_lease(api):
                     leading = True
+                    _start_monitor()
                     _start_huey()
 
             elif _i_hold_lease(lease):
@@ -202,7 +216,8 @@ def main():
                         # We hold the lease (e.g. after a container restart) 
                         # but haven't started the process yet.
                         logger.info("Already hold lease after restart — starting Huey")
-                        leading = True
+                        leading = True 
+                        _start_monitor()
                         _start_huey()
                     elif not _huey_alive():
                         # Huey was running, but now it's not.
@@ -225,6 +240,7 @@ def main():
                     )
                     logger.info("Takeover successful — we are the new leader")
                     leading = True
+                    _start_monitor()
                     _start_huey()
                 except ApiException as e:
                     logger.warning("Takeover failed (lost race?): %s", e)
