@@ -38,20 +38,23 @@ from huey.contrib.djhuey import (
     on_startup,
     post_execute,
     pre_execute,
-    logger,
 )
 
-logger = logging.getLogger(__name__)
+# Use Huey's logger hierarchy so metrics output directly into oc logs
+logger = logging.getLogger("huey")
 
-# Shared dictionary to store task CPU start times
-task_cpu_times = {}
+# Shared dictionary to store (start_cpu, start_wall) tuples
+task_timing_data = {}
 
 
 @pre_execute()
 def task_pre_execute_hook(task):
-    # Set the htop process title and start tracking CPU process time
+    # Truncate module path to function name so htop displays clean titles
+    short_name = task.name.split(".")[-1]
     setproctitle.setproctitle(f"Huey: {short_name}")
-    task_cpu_times[task.id] = time.process_time()
+    
+    # Store process time (active CPU seconds) and wall clock time
+    task_timing_data[task.id] = (time.process_time(), time.time())
 
 
 @on_startup()
@@ -72,7 +75,6 @@ def task_post_execute_hook(task, task_value, exc):
         wall_used = round(time.time() - start_wall, 3)
         cpu_pct = round((cpu_used / wall_used) * 100, 1) if wall_used > 0 else 0.0
 
-        # Logs every execution with CPU vs Wall time comparison
         logger.info(
             f"TASK METRIC [{task.name}] -> CPU: {cpu_used}s | Wall: {wall_used}s | CPU Load: {cpu_pct}%"
         )
