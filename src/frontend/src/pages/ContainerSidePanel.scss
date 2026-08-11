@@ -253,6 +253,7 @@
               border: none;
               background: none;
               box-shadow: none;
+              color: $Grey80;
             }
           }
 
@@ -301,6 +302,10 @@
                 color: $BC-Blue;
                 margin-left: 8px;
                 margin-right: 4px;
+
+                &:hover {
+                  color: $Type-LinkHover;
+                }
               }
             }
           }
