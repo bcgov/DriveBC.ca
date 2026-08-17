@@ -29,7 +29,8 @@ permissions:
 jobs:
   shutdown-gold-db:
     if: ${{ github.event.inputs.step == '1. Shutdown Gold DB' }}
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: 1. Shutdown Gold DB
     environment:
       name: ${{ github.event.inputs.environment }}
@@ -72,7 +73,8 @@ jobs:
 
   set-golddr-primary:
     if: ${{ github.event.inputs.step == '2. Set Gold DR as Primary DB' }}
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: 2. Set Gold DR as Primary DB
     environment:
       name: ${{ github.event.inputs.environment }}
@@ -124,7 +126,8 @@ jobs:
 
   delete-gold-db:
     if: ${{ github.event.inputs.step == '3. Delete Gold DB' }}
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: 3. Delete Gold DB
     environment:
       name: ${{ github.event.inputs.environment }}
@@ -161,7 +164,8 @@ jobs:
 
   rebuild-gold-standby:
     if: ${{ github.event.inputs.step == '4. Rebuild Gold as Standby' }}
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: 4. Rebuild Gold as Standby
     environment:
       name: ${{ github.event.inputs.environment }}
@@ -215,7 +219,8 @@ jobs:
 
   shutdown-golddr-db:
     if: ${{ github.event.inputs.step == '5. Shutdown Gold DR DB' }}
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: 5. Shutdown Gold DR DB
     environment:
       name: ${{ github.event.inputs.environment }}
@@ -259,7 +264,8 @@ jobs:
 
   set-gold-primary:
     if: ${{ github.event.inputs.step == '6. Set Gold as Primary' }}
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: 6. Set Gold as Primary
     environment:
       name: ${{ github.event.inputs.environment }}
@@ -310,7 +316,8 @@ jobs:
         
   delete-golddr-db:
     if: ${{ github.event.inputs.step == '7. Delete Gold DR DB' }}
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: 7. Delete Gold DR DB
     environment:
       name: ${{ github.event.inputs.environment }}
@@ -348,7 +355,8 @@ jobs:
 
   rebuild-golddr-standby:
     if: ${{ github.event.inputs.step == '8. Rebuild Gold DR as Standby' }}
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: 8. Rebuild Gold DR as Standby
     environment:
       name: ${{ github.event.inputs.environment }}
@@ -404,7 +412,8 @@ jobs:
   sync-monitoring-password:
     if: ${{ github.event.inputs.step == '9. Set Monitoring Password' }}
     name: 9. Sync Monitoring Password
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     environment:
       name: ${{ github.event.inputs.environment }}
     steps:

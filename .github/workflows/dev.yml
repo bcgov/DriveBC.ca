@@ -122,7 +122,8 @@ jobs:
 
   update-openshift-gold:
     needs: [setup, build-and-push]
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: Deploy to Gold. Tag ${{ needs.setup.outputs.tag_for_helm }}
     environment:
       name: ${{ needs.setup.outputs.environment_name }}
@@ -153,7 +154,8 @@ jobs:
   # GoldDR Runs after Gold Deployment due to GoldDR DB being read-only replica of Gold
   update-openshift-golddr:
     needs: [setup, update-openshift-gold] 
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: Deploy to GoldDR. Tag ${{ needs.setup.outputs.tag_for_helm }}
     environment:
       name: ${{ needs.setup.outputs.environment_name }}

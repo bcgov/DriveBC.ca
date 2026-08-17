@@ -237,7 +237,8 @@ jobs:
 
   update-openshift-gold:
     needs: [tag, build-static, build-backend, build-redis, build-openshiftjobs]
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: Deploy Latest Images to OpenShift Gold
     environment:
       name: test
@@ -245,19 +246,14 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v7
-    - name: Install CLI tools from OpenShift Mirror
-      uses: redhat-actions/openshift-tools-installer@v3
+
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
       with:
-        oc: "4"
-        skip_cache: true
-      
-    - name: Authenticate and set context
-      uses: redhat-actions/oc-login@v2
-      with:
-        openshift_server_url: ${{ vars.OPENSHIFT_GOLD_SERVER }}
-        openshift_token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        server: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
-        insecure_skip_tls_verify: false
+
     - name: Helm upgrade on OpenShift Gold Environment
       run: |
         helm upgrade test-drivebc -f ./infrastructure/main/values-test.yaml ./infrastructure/main --set static.image.tag=${{ needs.tag.outputs.tag }} --set django.image.tag=${{ needs.tag.outputs.tag }} --set tasks.image.tag=${{ needs.tag.outputs.tag }} --set image-consumer.image.tag=${{ needs.tag.outputs.tag }} --set redis.image.tag=${{ needs.tag.outputs.tag }} --set openshiftjobs.image.tag=${{ needs.tag.outputs.tag }}
@@ -265,7 +261,8 @@ jobs:
   # I have this run after the push to Gold because I want to make sure that Gold runs the migrations first. Gold DR can't run migrations as DB is read-only
   update-openshift-golddr:
     needs: [tag, update-openshift-gold] 
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: Deploy Latest Images to OpenShift GoldDR
     environment:
       name: test
@@ -274,19 +271,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v7
 
-    - name: Install CLI tools from OpenShift Mirror
-      uses: redhat-actions/openshift-tools-installer@v3
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
       with:
-        oc: "4"
-        skip_cache: true
-     
-    - name: Authenticate and set context
-      uses: redhat-actions/oc-login@v2
-      with:
-        openshift_server_url: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
-        openshift_token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
-        insecure_skip_tls_verify: false
 
     - name: Helm upgrade on OpenShift GoldDR Environment
       run: |

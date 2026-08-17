@@ -59,27 +59,22 @@ jobs:
 
   update-openshift-gold:
     needs: build-and-push-standbycheck
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: Deploy Latest Helm Chart to ${{ github.event.inputs.environment }} in Gold
     environment:
       name: ${{ github.event.inputs.environment }}
       url: https://${{ github.event.inputs.environment }}-drivebc.apps.gold.devops.gov.bc.ca/lbhealth/
     steps:
     - name: Checkout code
-      uses: actions/checkout@v7 
+      uses: actions/checkout@v7
 
-    - name: Install CLI tools from OpenShift Mirror
-      uses: redhat-actions/openshift-tools-installer@v3
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
       with:
-        oc: "4"
-          
-    - name: Authenticate and set context for Gold
-      uses: redhat-actions/oc-login@v2
-      with:
-        openshift_server_url: ${{ vars.OPENSHIFT_GOLD_SERVER }}
-        openshift_token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
+        server: ${{ vars.OPENSHIFT_GOLD_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLD_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
-        insecure_skip_tls_verify: true
 
     - name: Helm upgrade on OpenShift ${{ github.event.inputs.environment }} Environment
       run: |
@@ -87,27 +82,22 @@ jobs:
 
   update-openshift-golddr:
     needs: build-and-push-standbycheck
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: Deploy Latest Helm Chart to ${{ github.event.inputs.environment }} in GoldDR
     environment:
       name: ${{ github.event.inputs.environment }}
       url: https://${{ github.event.inputs.environment }}-drivebc.apps.golddr.devops.gov.bc.ca/lbhealth/
     steps:
     - name: Checkout code
-      uses: actions/checkout@v7 
+      uses: actions/checkout@v7
 
-    - name: Install CLI tools from OpenShift Mirror
-      uses: redhat-actions/openshift-tools-installer@v3
+    - name: OC Setup
+      uses: ./.github/actions/oc-setup
       with:
-        oc: "4"
-
-    - name: Authenticate and set context for GoldDR
-      uses: redhat-actions/oc-login@v2
-      with:
-        openshift_server_url: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
-        openshift_token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
+        server: ${{ vars.OPENSHIFT_GOLDDR_SERVER }}
+        token: ${{ secrets.OPENSHIFT_GOLDDR_TOKEN }}
         namespace: ${{ vars.OPENSHIFT_NAMESPACE }}
-        insecure_skip_tls_verify: true
   
     - name: Helm upgrade on OpenShift ${{ github.event.inputs.environment }} Environment
       run: |
