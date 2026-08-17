@@ -15,7 +15,6 @@ permissions:
   contents: read
   packages: write
   id-token: write
-  attestations: write
   artifact-metadata: write # 
 
 jobs:
@@ -112,13 +111,6 @@ jobs:
             ${{ matrix.needs_fontawesome && format('FONTAWESOME_PACKAGE_TOKEN={0}', secrets.FONTAWESOME_PACKAGE_TOKEN) || '' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Generate Build Attestation
-        uses: actions/attest@v4.2.2
-        with:
-          subject-name: ${{ needs.setup.outputs.image_registry }}/${{ matrix.image_name }}
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
 
   update-openshift-gold:
     needs: [setup, build-and-push]
