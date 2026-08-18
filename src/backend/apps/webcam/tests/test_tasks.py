@@ -1,15 +1,14 @@
 from unittest import IsolatedAsyncioTestCase
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import MagicMock, patch
 import time
 from django.test import TestCase
-from apps.webcam.tasks import backup_purge_old_images, backup_purge_old_pvc_images, populate_all_webcam_data, purge_old_images, purge_old_pvc_images, restore_backup_image, update_cam_is_on_from_sql_db, update_camera_is_on_status, update_camera_is_on_status, update_webcam_is_on_status, wrap_text
+from apps.webcam.tasks import backup_purge_old_images, backup_purge_old_pvc_images, populate_all_webcam_data, purge_old_images, purge_old_pvc_images, update_cam_is_on_from_sql_db, update_camera_is_on_status, update_camera_is_on_status, update_webcam_is_on_status, wrap_text
 
 from apps.consumer.processor import (
     on_reconnect,
     on_close,
     on_channel_close,
     save_original_image_to_pvc,
-    save_watermarked_image_to_drivebc_pvc,
     save_watermarked_image_to_pvc,
 )
 

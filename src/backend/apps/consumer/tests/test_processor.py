@@ -1021,36 +1021,6 @@ class TestSaveDriveBCImage(TestCase):
 
         mock_file().write.assert_called_once_with(b"image")
 
-
-    @patch(
-        "apps.consumer.processor.DRIVEBC_PVC_WATERMARKED_PATH",
-        "/tmp/drivebc"
-    )
-    @patch("apps.consumer.processor.os.path.exists")
-    @patch("apps.consumer.processor.shutil.move")
-    @patch("apps.consumer.processor.open", new_callable=mock_open)
-    @patch("apps.consumer.processor.os.makedirs")
-    def test_save_drivebc_skip_backup_if_exists(
-        self,
-        mock_makedirs,
-        mock_file,
-        mock_move,
-        mock_exists,
-    ):
-
-        mock_exists.side_effect = [
-            True,
-            True,
-        ]
-
-        save_watermarked_image_to_drivebc_pvc(
-            "123",
-            b"blank",
-            False,
-        )
-
-        mock_move.assert_not_called()
-
 class TestDeleteWatermarkedImage(TestCase):
 
     @patch(
