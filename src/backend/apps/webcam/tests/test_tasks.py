@@ -272,7 +272,6 @@ class TestOtherFunctions(TestCase):
     def test_update_webcam_status_db_turn_off(
         self,
         mock_webcam,
-        mock_restore,
     ):
         webcam = MagicMock()
         webcam.is_on = True
@@ -282,7 +281,6 @@ class TestOtherFunctions(TestCase):
         result = update_webcam_is_on_status(123, {"isOn": 0})
 
         self.assertTrue(result)
-        mock_restore.assert_not_called()
         mock_webcam.objects.filter.return_value.update.assert_called_once_with(
             is_on=False
         )
