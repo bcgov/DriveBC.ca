@@ -54,10 +54,13 @@ export default function NearbyWeathers(props) {
   const defaultActiveTab = weatherTabs.length ? weatherTabs[0].key : null;
   const [activeTab, setActiveTab] = useState(defaultActiveTab);
 
+  const hasWeather = localWeather || regionalWeather || hef;
+
   // Effects
   // find regional weather and set state
   useEffect(() => {
     if (!regionalWeatherList || !camera.regional_weather_station) {
+      setRegionalWeather(null);
       return;
     }
 
@@ -69,6 +72,7 @@ export default function NearbyWeathers(props) {
   // find local weather and set state
   useEffect(() => {
     if (!currentWeatherList || !camera.local_weather_station) {
+      setLocalWeather(null);
       return;
     }
 
@@ -80,6 +84,7 @@ export default function NearbyWeathers(props) {
   // find hef and set state
   useEffect(() => {
     if (!hefList || !camera.hev_station) {
+      setHef(null);
       return;
     }
 
@@ -102,7 +107,7 @@ export default function NearbyWeathers(props) {
 
   /* Rendering */
   // Loading state
-  if (!regionalWeather && !localWeather && !hef) {
+  if ((regionalWeather || localWeather || hef) && (!regionalWeather && !localWeather && !hef)) {
     return (
       <div>
         <Skeleton height={48}/>
@@ -139,18 +144,30 @@ export default function NearbyWeathers(props) {
             })}
           </div>
         </div>
+        <div>
+        {!hasWeather ? (
+          <div className="weather-empty">
+            <h3>No nearby weather available</h3>
+            <p>
+              Unfortunately there is no nearby weather data available for this camera.
+            </p>
+          </div>
+        ) : (
+          <>
+            {activeTab === 'Roadside' && localWeather && (
+              <NearbyLocalWeather weather={localWeather} />
+            )}
 
-        { activeTab === 'Roadside' && localWeather &&
-          <NearbyLocalWeather weather={localWeather} />
-        }
+            {activeTab === 'Regional' && regionalWeather && (
+              <NearbyRegionalWeather weather={regionalWeather} />
+            )}
 
-        { activeTab === 'Regional' && regionalWeather &&
-          <NearbyRegionalWeather weather={regionalWeather} />
-        }
-
-        { activeTab === 'High elevation' && hef &&
-          <NearbyHevWeather weather={hef} />
-        }
+            {activeTab === 'High elevation' && hef && (
+              <NearbyHevWeather weather={hef} />
+            )}
+          </>
+        )}
+        </div>
       </div>
     </React.Fragment>
   );
