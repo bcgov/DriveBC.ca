@@ -27,6 +27,11 @@ from apps.shared.status import get_recent_timestamps, calculate_camera_status
 from botocore.config import Config
 from django.contrib.gis.geos import Point
 from django.db import close_old_connections, connection
+from apps.webcam.enums import (
+    CAMERA_DIFF_FIELDS,
+    CAMERA_FIELD_MAPPING,
+)
+from asgiref.sync import sync_to_async
 
 
 tf = TimezoneFinder()
@@ -463,21 +468,27 @@ def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp:
     except Exception as e:
         logging.exception(f"Error saving image to PVC {filepath}: {e}")
 
-def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes, is_on: bool):  
-    os.makedirs(os.path.dirname(f'{DRIVEBC_PVC_WATERMARKED_PATH}'), exist_ok=True)
 
-    save_dir = os.path.join(DRIVEBC_PVC_WATERMARKED_PATH)
+def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes, is_on: bool):
+    save_dir = DRIVEBC_PVC_WATERMARKED_PATH
+    backup_dir = os.path.join(save_dir, "backup")
+
     os.makedirs(save_dir, exist_ok=True)
+    os.makedirs(backup_dir, exist_ok=True)
+
     filename = f"{camera_id}.jpg"
     filepath = os.path.join(save_dir, filename)
 
     try:
+        # Save the new image
         with open(filepath, "wb") as f:
             f.write(image_bytes)
+
         if is_on:
-            logger.info(f"Watermarked image saved to drivebc PVC at {filepath}")
+            logger.info(f"Watermarked image saved to DriveBC PVC at {filepath}")
+
     except Exception as e:
-        logging.exception(f"Error saving image to drivebc PVC {filepath}: {e}")
+        logging.exception(f"Error saving image to DriveBC PVC {filepath}: {e}")
 
 def delete_watermarked_image_from_pvc(camera_id: str):
     save_dir = os.path.join(PVC_WATERMARKED_PATH, camera_id)
@@ -731,6 +742,28 @@ async def handle_image_message(camera_id: str, body: bytes, timestamp: str, came
         save_watermarked_image_to_drivebc_pvc(camera_id, blank_out_image_bytes, webcam.get('is_on'))
         # Save watermarked images to S3 with timestamp
         push_to_s3(watermarked_image_bytes, camera_id, False, utc_timestamp_str)
+
+    existing_webcam = await sync_to_async(
+        Webcam.objects.filter(id=camera_id).first
+    )()
+    if not existing_webcam:
+        return
+    
+    should_update = False
+    for field in CAMERA_DIFF_FIELDS:
+        source_field = CAMERA_FIELD_MAPPING.get(field, field)
+        webcam_value = getattr(existing_webcam, field)
+        if field in ['marked_stale', 'marked_delayed', 'update_period_mean', 'update_period_stddev']:
+            source_value = camera_status[source_field]
+        else:
+            source_value = webcam.get(source_field)
+    
+        if webcam_value != source_value:
+            should_update = True
+            break
+    
+    if not should_update:
+            return
 
     await update_webcam(
             camera_id,

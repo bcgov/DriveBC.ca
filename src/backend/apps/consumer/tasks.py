@@ -1,15 +1,10 @@
 import logging
 import io
-
-from apps.consumer.processor import process_camera_rows, watermark, blank_out_image, save_watermarked_image_to_pvc, save_watermarked_image_to_drivebc_pvc, delete_watermarked_image_from_pvc, delete_offline_webcam_records
+from apps.consumer.processor import process_camera_rows, blank_out_image, save_watermarked_image_to_drivebc_pvc, delete_watermarked_image_from_pvc, delete_offline_webcam_records
 from datetime import datetime
-
 from apps.webcam.models import Webcam
 from .db import get_all_from_db
-import pytz
 from PIL import Image
-import pprint
-
 from asgiref.sync import async_to_sync
 
 logger = logging.getLogger(__name__)
@@ -23,6 +18,10 @@ def generate_offline_camera_images():
     timestamp = now.strftime("%Y%m%d%H%M%S%f")
     
     for camera in cameras:
+        exists = Webcam.objects.filter(id=camera["id"]).exists()
+        if not exists:
+            continue
+
         if not camera.get('is_on', True):
             camera_id = str(camera['id'])
             tz = 'America/Vancouver'
@@ -38,10 +37,4 @@ def generate_offline_camera_images():
                 delete_watermarked_image_from_pvc(camera_id)
                 # Delete all the records from image index table for offline cams
                 async_to_sync(delete_offline_webcam_records)(camera_id)
-                # Save blank image for current image displaying
                 save_watermarked_image_to_drivebc_pvc(camera_id, watermarked, False)
-            # Update postgres db is_on status to False for offline cameras
-            Webcam.objects.filter(id=camera['id']).update(is_on=False)
-        else:
-            # Update postgres db is_on status to True for online cameras
-            Webcam.objects.filter(id=camera['id']).update(is_on=True)

@@ -14,7 +14,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies for SQL database connection
-# msodbcsql17 is amd64-only; msodbcsql18 supports arm64 on Debian 12+
+# msodbcsql18 is amd64-only; msodbcsql18 supports arm64 on Debian 12+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl gnupg2 apt-transport-https && \
     curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/microsoft-prod.gpg && \
