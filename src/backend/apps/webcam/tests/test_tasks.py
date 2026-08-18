@@ -5,7 +5,6 @@ from django.test import TestCase
 from apps.webcam.tasks import backup_purge_old_images, backup_purge_old_pvc_images, populate_all_webcam_data, purge_old_images, purge_old_pvc_images, restore_backup_image, update_cam_is_on_from_sql_db, update_camera_is_on_status, update_camera_is_on_status, update_webcam_is_on_status, wrap_text
 
 from apps.consumer.processor import (
-    check_backup_exists,
     on_reconnect,
     on_close,
     on_channel_close,
@@ -118,64 +117,6 @@ class TestOtherFunctions(TestCase):
         )
 
         mock_exception.assert_called_once()
-
-    @patch("apps.consumer.processor.os.path.exists")
-    @patch("apps.consumer.processor.DRIVEBC_PVC_WATERMARKED_PATH", "/tmp/images")
-    def test_check_backup_exists_true(self, mock_exists):
-        mock_exists.return_value = True
-
-        self.assertTrue(check_backup_exists("123"))
-
-    @patch("apps.consumer.processor.check_backup_exists")
-    @patch("apps.consumer.processor.shutil.move")
-    @patch("apps.consumer.processor.os.path.exists")
-    @patch("builtins.open", new_callable=mock_open)
-    def test_backup_already_exists(
-        self,
-        mock_file,
-        mock_exists,
-        mock_move,
-        mock_backup,
-    ):
-        mock_exists.return_value = True
-        mock_backup.return_value = True
-        with patch(
-            "apps.consumer.processor.DRIVEBC_PVC_WATERMARKED_PATH",
-            "/tmp/images",
-        ):
-            save_watermarked_image_to_drivebc_pvc(
-                "123",
-                b"image",
-                False,
-            )
-
-        mock_move.assert_not_called()
-
-    @patch("apps.consumer.processor.check_backup_exists")
-    @patch("apps.consumer.processor.shutil.move")
-    @patch("apps.consumer.processor.os.path.exists")
-    @patch("builtins.open", new_callable=mock_open)
-    def test_backup_created(
-        self,
-        mock_file,
-        mock_exists,
-        mock_move,
-        mock_backup,
-    ):
-        mock_exists.return_value = True
-        mock_backup.return_value = False
-
-        with patch(
-            "apps.consumer.processor.DRIVEBC_PVC_WATERMARKED_PATH",
-            "/tmp/images",
-        ):
-            save_watermarked_image_to_drivebc_pvc(
-                "123",
-                b"image",
-                False,
-            )
-
-        mock_move.assert_called_once()
 
 
     @patch("apps.webcam.tasks.purge_old_pvc_images")

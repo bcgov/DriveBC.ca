@@ -18,20 +18,18 @@ class TestGenerateOfflineCameraImages(TestCase):
         cache.clear()
         Webcam.objects.all().delete()
 
-    @patch('apps.consumer.tasks.check_backup_exists')
+
     @patch('apps.consumer.tasks.get_all_from_db')
     @patch('apps.consumer.tasks.process_camera_rows')
     def test_generates_for_offline_cameras(
         self,
         mock_process_rows,
         mock_get_db,
-        mock_check_backup_exists,
     ):
         mock_get_db.return_value = []
         mock_process_rows.return_value = [
             {'id': 1, 'is_on': False, 'cam_internet_name': 'Camera 1'},
         ]
-        mock_check_backup_exists.return_value = False
 
         with patch('apps.consumer.tasks.delete_watermarked_image_from_pvc'), \
             patch('apps.consumer.tasks.save_watermarked_image_to_drivebc_pvc') as mock_save_drivebc:
@@ -41,7 +39,6 @@ class TestGenerateOfflineCameraImages(TestCase):
             mock_save_drivebc.assert_not_called()
 
     @patch("apps.consumer.tasks.save_watermarked_image_to_drivebc_pvc")
-    @patch("apps.consumer.tasks.check_backup_exists")
     @patch("apps.consumer.tasks.delete_offline_webcam_records")
     @patch("apps.consumer.tasks.delete_watermarked_image_from_pvc")
     @patch("apps.consumer.tasks.blank_out_image")
@@ -56,7 +53,6 @@ class TestGenerateOfflineCameraImages(TestCase):
         mock_blank_out_image,
         mock_delete_watermarked,
         mock_delete_records,
-        mock_check_backup_exists,
         mock_save_image,
     ):
 
@@ -81,8 +77,7 @@ class TestGenerateOfflineCameraImages(TestCase):
         # blank_out_image returns generated image bytes
         mock_blank_out_image.return_value = b"fake image bytes"
 
-        # No backup image exists, so save should happen
-        mock_check_backup_exists.return_value = False
+ 
 
         generate_offline_camera_images()
 

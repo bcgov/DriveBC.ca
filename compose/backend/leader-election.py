@@ -50,7 +50,6 @@ RETRY_INTERVAL = int(os.environ.get("RETRY_INTERVAL", "3"))
 
 huey_process: subprocess.Popen | None = None
 
-monitor_process = None
 
 # ---------------------------------------------------------------------------
 # Lease helpers

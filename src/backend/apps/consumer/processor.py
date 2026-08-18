@@ -468,10 +468,6 @@ def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp:
     except Exception as e:
         logging.exception(f"Error saving image to PVC {filepath}: {e}")
 
-def check_backup_exists(camera_id: str) -> bool:
-    backup_dir = os.path.join(DRIVEBC_PVC_WATERMARKED_PATH, "backup")
-    backup_filepath = os.path.join(backup_dir, f"{camera_id}.jpg")
-    return os.path.exists(backup_filepath)
 
 def save_watermarked_image_to_drivebc_pvc(camera_id: str, image_bytes: bytes, is_on: bool):
     save_dir = DRIVEBC_PVC_WATERMARKED_PATH

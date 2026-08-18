@@ -1,6 +1,6 @@
 import logging
 import io
-from apps.consumer.processor import check_backup_exists, process_camera_rows, blank_out_image, save_watermarked_image_to_drivebc_pvc, delete_watermarked_image_from_pvc, delete_offline_webcam_records
+from apps.consumer.processor import process_camera_rows, blank_out_image, save_watermarked_image_to_drivebc_pvc, delete_watermarked_image_from_pvc, delete_offline_webcam_records
 from datetime import datetime
 from apps.webcam.models import Webcam
 from .db import get_all_from_db
@@ -37,6 +37,4 @@ def generate_offline_camera_images():
                 delete_watermarked_image_from_pvc(camera_id)
                 # Delete all the records from image index table for offline cams
                 async_to_sync(delete_offline_webcam_records)(camera_id)
-                if not check_backup_exists(camera_id):
-                    # Save blank image for current image displaying
-                    save_watermarked_image_to_drivebc_pvc(camera_id, watermarked, False)
+                save_watermarked_image_to_drivebc_pvc(camera_id, watermarked, False)
