@@ -109,17 +109,18 @@ spec:
           imagePullPolicy: IfNotPresent
           image: >-
             {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
-          livenessProbe:
-            exec:
-              command:
-                - /bin/bash
-                - '-c'
-                - . /vault/secrets/secrets.env && python manage.py huey_health_check
-            initialDelaySeconds: 60
-            timeoutSeconds: 5
-            periodSeconds: 60
-            successThreshold: 1
-            failureThreshold: 3
+# Removing the livenessProbe for now as it is causing excessive resource usage. Will re-add once we have a better solution for the health check.            
+#          livenessProbe:
+#            exec:
+#              command:
+#                - /bin/bash
+#                - '-c'
+#                - . /vault/secrets/secrets.env && python manage.py huey_health_check
+#            initialDelaySeconds: 60
+#            timeoutSeconds: 5
+#            periodSeconds: 60
+#            successThreshold: 1
+#            failureThreshold: 3
           securityContext:
             seccompProfile:
               type: RuntimeDefault
