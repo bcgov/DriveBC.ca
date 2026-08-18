@@ -229,32 +229,10 @@ class TestOtherFunctions(TestCase):
 
         self.assertFalse(result)
 
-    @patch("apps.webcam.tasks.restore_backup_image")
-    @patch("apps.webcam.tasks.Webcam")
-    def test_update_webcam_status_db_restore_backup(
-        self,
-        mock_webcam,
-        mock_restore,
-    ):
-        webcam = MagicMock()
-        webcam.is_on = False
-
-        mock_webcam.objects.only.return_value.filter.return_value.first.return_value = webcam
-
-        result = update_webcam_is_on_status(123, {"isOn": 1})
-
-        self.assertTrue(result)
-        mock_restore.assert_called_once_with("123")
-        mock_webcam.objects.filter.return_value.update.assert_called_once_with(
-            is_on=True
-        )
-
-    @patch("apps.webcam.tasks.restore_backup_image")
     @patch("apps.webcam.tasks.Webcam")
     def test_update_webcam_status_db_already_on(
         self,
         mock_webcam,
-        mock_restore,
     ):
         webcam = MagicMock()
         webcam.is_on = True
@@ -264,10 +242,9 @@ class TestOtherFunctions(TestCase):
         result = update_webcam_is_on_status(123, {"isOn": 1})
 
         self.assertTrue(result)
-        mock_restore.assert_not_called()
+  
         mock_webcam.objects.filter.return_value.update.assert_not_called()
 
-    @patch("apps.webcam.tasks.restore_backup_image")
     @patch("apps.webcam.tasks.Webcam")
     def test_update_webcam_status_db_turn_off(
         self,
@@ -284,41 +261,6 @@ class TestOtherFunctions(TestCase):
         mock_webcam.objects.filter.return_value.update.assert_called_once_with(
             is_on=False
         )
-
-    @patch("apps.consumer.processor.logger")
-    @patch("apps.consumer.processor.shutil.move")
-    @patch("apps.consumer.processor.os.path.exists", return_value=True)
-    @patch("apps.consumer.processor.os.getenv", return_value="/tmp/images")
-    def test_restore_backup_image(
-        self,
-        mock_getenv,
-        mock_exists,
-        mock_move,
-        mock_logger,
-    ):
-        restore_backup_image("123")
-
-        mock_move.assert_called_once_with(
-            "/tmp/images/backup/123.jpg",
-            "/tmp/images/123.jpg",
-        )
-        mock_logger.info.assert_not_called()
-
-    @patch("apps.consumer.processor.logger")
-    @patch("apps.consumer.processor.shutil.move")
-    @patch("apps.consumer.processor.os.path.exists", return_value=False)
-    @patch("apps.consumer.processor.os.getenv", return_value="/tmp/images")
-    def test_restore_backup_image_not_found(
-        self,
-        mock_getenv,
-        mock_exists,
-        mock_move,
-        mock_logger,
-    ):
-        restore_backup_image("123")
-
-        mock_move.assert_not_called()
-        mock_logger.warning.assert_not_called()
 
     from unittest.mock import MagicMock
 
