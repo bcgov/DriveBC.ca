@@ -6,9 +6,11 @@ import { useSelector } from 'react-redux';
 import { memoize } from 'proxy-memoize';
 
 // External imports
+import { Drawer } from '@vladyoslav/drawer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faSliders, faXmark } from '@fortawesome/pro-solid-svg-icons';
 import { faArrowUpArrowDown, faTrafficCone } from '@fortawesome/pro-regular-svg-icons';
+import { useMediaQuery } from '@uidotdev/usehooks';
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
@@ -104,8 +106,46 @@ export default function FiltersOverlay(props) {
 
   const { filterContext, setFilterContext } = useContext(FilterContext);
   const { mapContext, setMapContext } = useContext(MapContext);
-  const selectedRoute = useSelector(useCallback(memoize(state => state.routes.selectedRoute), []));
+  const { selectedRoute, showRouteObjs } = useSelector(useCallback(memoize(state => ({
+    selectedRoute: state.routes.selectedRoute,
+    showRouteObjs: state.routes.showRouteObjs,
+  })), []));
   const routeFound = selectedRoute && selectedRoute.routeFound;
+
+  // Media query
+  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+
+  const snapPoints = (showRouteObjs && selectedRoute)
+    ? ['20%', '50%', '60%']
+    : ['20%', '50%', '100%'];
+  const [snap, setSnap] = useState('50%');
+  const [drawerContainer, setDrawerContainer] = useState(null);
+
+  // Anchor the drawer area below the header, tracking header height changes
+  const [drawerTop, setDrawerTop] = useState(58);
+
+  useEffect(() => {
+    if (largeScreen) {
+      return;
+    }
+
+    const navEl = document.querySelector('header .navbar');
+    if (!navEl) {
+      return;
+    }
+
+    const updateTop = () => {
+      if (navEl.querySelector('.navbar-collapse.show, .navbar-collapse.collapsing')) {
+        return;
+      }
+      setDrawerTop(Math.round(navEl.getBoundingClientRect().bottom));
+    };
+
+    updateTop();
+    const observer = new ResizeObserver(updateTop);
+    observer.observe(navEl);
+    return () => observer.disconnect();
+  }, [largeScreen]);
 
   const [showSortSection, setShowSortSection] = useState(true);
   const [showDelayTypeSection, setShowDelayTypeSection] = useState(true);
@@ -120,9 +160,10 @@ export default function FiltersOverlay(props) {
   );
   const [filterOptionsSearch, setFilterOptionsSearch] = useState('');
 
-  // Restage draft filters when opened
+  // Restage draft filters when opened, reset drawer snap when closed
   useEffect(() => {
     if (!open) {
+      setSnap('50%');
       return;
     }
 
@@ -239,8 +280,8 @@ export default function FiltersOverlay(props) {
     return options;
   };
 
-  return (
-    <div className={`overlay filters-overlay ${open ? 'open' : ''}`}>
+  const overlayContent = (
+    <React.Fragment>
       <button
         className="close-overlay"
         aria-label={open ? 'close overlay' : ''}
@@ -376,6 +417,64 @@ export default function FiltersOverlay(props) {
           Cancel
         </Button>
       </div>
+    </React.Fragment>
+  );
+
+  // Mobile: bottom drawer with drag/snap interactions, matching Map.jsx
+  if (!largeScreen) {
+    return (
+      <React.Fragment>
+        <div
+          className="filters-drawer-container"
+          ref={setDrawerContainer}
+          style={{ top: `${drawerTop}px` }}
+          data-vladyoslav-drawer-wrapper="" />
+
+        {open && drawerContainer &&
+          <Drawer.Root
+            open={true}
+            onOpenChange={(isOpen) => {
+              if (!isOpen) {
+                cancelFilters();
+              }
+            }}
+            snapPoints={snapPoints}
+            snap={snap}
+            setSnap={setSnap}
+            modal={false}
+            dismissible={true}
+            shouldScaleBackground={false}
+            scaleFrom={'50%'}>
+
+            <Drawer.Portal container={drawerContainer}>
+              <Drawer.Overlay className="filters-drawer-overlay" />
+              <Drawer.Content
+                className="filters-drawer"
+                style={{ '--drawer-snap-point': snap }}>
+
+                <div
+                  className="overlay filters-overlay open"
+                  onPointerDown={(e) => {
+                    // Let inner filter lists scroll without dragging the drawer
+                    if (e.target.closest('.filters-component, .apply-actions')) {
+                      e.stopPropagation();
+                    }
+                  }}>
+                  <div className="drawer-drag-handle"></div>
+                  {overlayContent}
+                </div>
+              </Drawer.Content>
+            </Drawer.Portal>
+          </Drawer.Root>
+        }
+      </React.Fragment>
+    );
+  }
+
+  // Desktop: existing slide-in overlay
+  return (
+    <div className={`overlay filters-overlay ${open ? 'open' : ''}`}>
+      {overlayContent}
     </div>
   );
 }
