@@ -19,20 +19,110 @@
     width: 100%;
     z-index: 11;
 
-    .swap-button{
-      position: absolute;
-      top: calc(50% - 16px);
-      right: 2rem;
-      padding: 4px;
-      color: $Type-Link;
-      border-radius: 32px 32px 32px 32px;
-      border: 1px solid #D9D9D9;
-      background: $White;
-      margin-bottom: 0;
+    .route-search-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .route-search-actions-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 4px 6px;
+      overflow: visible;
+    }
+
+    .route-alt-options {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+
+    .route-alt-option {
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid $Grey40;
+      background-color: $White;
+      color: $Grey80;
+      font-size: 0.75rem;
+      cursor: pointer;
+
+      &__label {
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        margin-right: 6px;
+        background-color: $White;
+        color: $Grey80;
+        border: 1px solid $Grey80;
+        flex-shrink: 0;
+      }
+
+      &__distance {
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      &.selected {
+        background-color: $Blue10;
+        border-color: $Focus;
+        color: $Focus;
+
+        .route-alt-option__label {
+          color: $Focus;
+          border-color: $Focus;
+          background-color: $Blue10;
+        }
+      }
+
+      &:not(.selected):hover {
+        background-color: $Distance-label-hover;
+        border-color: $Distance-label-hover;
+        color: $White;
+
+        .route-alt-option__label {
+          border-color: $BC-Blue;
+        }
+      }
+
+      &:focus {
+        outline: 2px solid $Focus;
+        outline-offset: 2px;
+      }
+    }
+
+    .route-search-link, .route-clear-link {
+      display: inline-block;
+      padding: 0;
+      border: none;
+      background: none;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: $Type-Secondary;
+      text-decoration: none;
+      cursor: pointer;
+      margin: 5px 0;
 
       &:hover {
-        background: $Type-Link;
-        color: $White;
+        text-decoration: underline;
+      }
+
+      &:focus {
+        outline: 2px solid $Focus;
+        outline-offset: 2px;
       }
     }
 
@@ -93,7 +183,7 @@
       &.stacked {
 
         .form-control {
-          padding: 0.625rem 3.5rem 0.625rem 2.25rem;
+          padding: 6px 3.5rem 6px 2.25rem;
 
           &.focus {
             z-index: 1;

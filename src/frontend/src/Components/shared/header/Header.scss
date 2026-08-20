@@ -6,6 +6,13 @@
 	padding: 0;
 	box-shadow: rgb(0,0,0,0.2) 0px 2px 10px 0px;
 
+	// Avoid stacked shadows when sticky filters are stuck (mobile)
+	body:has(.sticky-filters[stuck]) & {
+		@media (max-width: 575px) {
+			box-shadow: none;
+		}
+	}
+
 	&:has(.navbar-collapse.show) {
 		@media (max-height: 600px) {
 			height: calc(100%);
@@ -35,10 +42,6 @@
 				width: auto;
 			}
 
-			&:has(~.location-search.visible.selected-route) {
-				padding-bottom: 60px;
-			}
-
 			.search-trigger {
 				margin: 12px 18px;
 				height: 36px;
@@ -47,56 +50,183 @@
 				border: 1px solid #dee2e6;
 				width: calc(100% - 36px);
 				display: flex;
+				align-items: center;
+
+				svg {
+					margin-right: 8px;
+					font-size: 0.75rem;
+					color: $Type-Secondary;
+				}
 			}
 
-			.searched-route {
-				margin: 12px 18px;
-				padding: 4px 8px;
-				border-radius: 4px;
-				border: 1px solid #dee2e6;
-				width: calc(100% - 36px);
-				height: 0;
-				overflow: hidden;
+			.location-search {
+				width: 100%;
+				background-color: white;
+				padding: 0 8px;
+				display: flex;
 
-				& > div {
+				.btn.close-search {
+					margin: 12px 0;
+					height: 70px;
+				}
+
+				.routing {
+					padding: 12px 1rem 12px 0.5rem;
+					width: 100%;
+				}
+			}
+
+			.searched-route-container {
+				margin: 12px 18px;
+				width: calc(100% - 36px);
+
+				.searched-route {
+					margin: 0;
+					padding: 8px 8px;
+					border-radius: 4px;
+					border: 1px solid #dee2e6;
+					width: 100%;
+					height: 0;
+					overflow: hidden;
+
+					& > div {
+						display: flex;
+						align-items: center;
+					}
+
+					&.show {
+						height: 100%;
+						overflow: initial;
+						transition: height 0.3s ease-in-out;
+						transition-delay: 0.3s;
+					}
+
+					&__start {
+						margin-bottom: 9px;
+					}
+
+					&__icon {
+						width: 20px;
+						margin-right: 4px;
+					}
+				}
+
+				.route-search-actions-container {
 					display: flex;
 					align-items: center;
+					justify-content: space-between;
+					gap: 0.75rem;
+					padding-top: 0.75rem;
+					max-height: 8rem;
+					overflow: hidden;
+					opacity: 1;
+					visibility: visible;
+					transform: translateY(0);
+					transition: max-height 0.4s ease, opacity 0.35s ease, padding 0.4s ease, margin 0.4s ease, transform 0.4s ease, visibility 0.4s ease;
 				}
 
-				&.show {
-					height: 100%;
-					overflow: initial;
-					transition: height 0.3s ease-in-out;
-					transition-delay: 0.3s;
+				.route-alt-options {
+					display: flex;
+					align-items: center;
+					gap: 0.5rem;
+					flex-wrap: wrap;
+					min-width: 0;
 				}
 
-				&__start {
-					margin-bottom: 4px;
+				.route-alt-option {
+					display: flex;
+					align-items: center;
+					padding: 4px 8px;
+					border-radius: 4px;
+					border: 1px solid $Grey40;
+					background-color: $White;
+					color: $Grey80;
+					font-size: 0.75rem;
+					cursor: pointer;
+
+					&__label {
+						border-radius: 50%;
+						width: 18px;
+						height: 18px;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						font-size: 0.6875rem;
+						font-weight: 700;
+						margin-right: 6px;
+						background-color: $White;
+						color: $Grey80;
+						border: 1px solid $Grey80;
+						flex-shrink: 0;
+					}
+
+					&__distance {
+						font-weight: 700;
+						white-space: nowrap;
+					}
+
+					&.selected {
+						background-color: $Blue10;
+						border-color: $Focus;
+						color: $Focus;
+
+						.route-alt-option__label {
+							color: $Focus;
+							border-color: $Focus;
+							background-color: $Blue10;
+						}
+					}
+
+					&:not(.selected):hover {
+						background-color: $Distance-label-hover;
+						border-color: $Distance-label-hover;
+						color: $White;
+
+						.route-alt-option__label {
+							border-color: $BC-Blue;
+						}
+					}
+
+					&:focus {
+						outline: 2px solid $Focus;
+						outline-offset: 2px;
+					}
 				}
 
-				&__icon {
-					width: 20px;
-					margin-right: 4px;
+				.route-search-actions {
+					display: flex;
+					gap: 1rem;
+					justify-content: flex-end;
+					margin-left: auto;
+					flex-shrink: 0;
 				}
-			}
-		}
 
-		.location-search {
-			width: 100%;
-			z-index: 1000;
-			background-color: white;
-			position: absolute;
-			top: 0;
-			padding: 0 8px;
-			display: flex;
+				.route-search-link,
+				.route-edit-link {
+					display: inline-block;
+					padding: 0;
+					border: none;
+					background: none;
+					font-size: 0.75rem;
+					font-weight: 700;
+					color: $Type-Secondary;
+					text-decoration: none;
+					cursor: pointer;
+					margin: 5px 0;
 
-			.btn.close-search {
-				margin: 1rem 0;
-			}
+					svg {
+						margin-right: 4px;
+					}
 
-			.routing {
-				padding: 1rem 1rem 1rem 0.5rem;
-				width: 100%;
+					&:hover {
+						text-decoration: underline;
+					}
+
+					&:focus {
+						outline: 2px solid $Focus;
+						outline-offset: 2px;
+					}
+				}
 			}
 		}
 
@@ -107,6 +237,20 @@
 			@media (max-width: 1399px) {
 				width: 100%;
 				padding: 5px 0 5px 10px;
+			}
+		}
+
+		.header-left {
+			max-height: 5rem;
+			overflow: hidden;
+			opacity: 1;
+			visibility: visible;
+			transform: translateY(0);
+			transition: max-height 0.4s ease, opacity 0.35s ease, padding 0.4s ease, margin 0.4s ease, transform 0.4s ease, visibility 0.4s ease;
+
+			&:has(.dropdown-menu.show) {
+				overflow: visible;
+				max-height: none;
 			}
 		}
 
@@ -508,4 +652,29 @@
       }
     }
   }
+}
+
+body.list-header-hidden {
+	@media (max-width: 575px) {
+		.navbar .container .header-left,
+		.navbar .container .header .searched-route-container .route-search-actions-container {
+			max-height: 0;
+			opacity: 0;
+			visibility: hidden;
+			padding-top: 0;
+			padding-bottom: 0;
+			margin-top: 0;
+			margin-bottom: 0;
+			overflow: hidden;
+			pointer-events: none;
+			transform: translateY(-100%);
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.navbar .container .header-left,
+			.navbar .container .header .searched-route-container .route-search-actions-container {
+				transition: none;
+			}
+		}
+	}
 }

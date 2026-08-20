@@ -131,7 +131,7 @@ export default function EventsListPage(props) {
     };
   }
 
-  const getDefaultSortingKey = (resetting = false) => {
+  const getDefaultSortingKey = () => {
     if (selectedRoute && selectedRoute.routeFound) {
       return 'route_order';
     }
@@ -140,7 +140,7 @@ export default function EventsListPage(props) {
       return 'road_name_asc';
     }
 
-    if (!resetting && localStorage.getItem('sorting-key')) {
+    if (localStorage.getItem('sorting-key')) {
       return localStorage.getItem('sorting-key');
     }
 
@@ -491,10 +491,6 @@ export default function EventsListPage(props) {
     setShowFilters(!showFilters);
   };
 
-  const sortingKeys = chainUpsOnly
-    ? ['route_order', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc']
-    : ['route_order', 'severity_desc', 'severity_asc', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc'];
-
   // Reset applied filters (pills) — matches overlay Reset All
   const resetAllAppliedFilters = () => {
     setFilterContext({
@@ -502,7 +498,7 @@ export default function EventsListPage(props) {
       areaFilter: null
     });
 
-    const defaultKey = getDefaultSortingKey(true);
+    const defaultKey = getDefaultSortingKey();
     setSortingKey(defaultKey);
     localStorage.setItem('sorting-key', defaultKey);
 
@@ -544,17 +540,16 @@ export default function EventsListPage(props) {
     ? []
     : DELAY_TYPES.filter((delayType) => !!eventCategoryFilter[delayType.key]);
 
-  // Default = All areas + closures/major; chips only when either differs
-  const isDefaultArea = !filterContext.areaFilter;
-  const isDefaultDelayTypes = chainUpsOnly || DELAY_TYPES.every(
-    (delayType) => !!eventCategoryFilter[delayType.key] === !!RESET_DELAY_TYPE_STATE[delayType.key]
-  );
-  const filtersAtDefault = isDefaultArea && isDefaultDelayTypes;
-  const delayTypeChipCount = filtersAtDefault ? 0 : selectedDelayTypes.length;
-  const activeFilterCount = (filterContext.areaFilter ? 1 : 0) + delayTypeChipCount;
+  const delayTypeDiffCount = chainUpsOnly
+    ? 0
+    : DELAY_TYPES.filter(
+      (delayType) => !!eventCategoryFilter[delayType.key] !== !!RESET_DELAY_TYPE_STATE[delayType.key]
+    ).length;
+
+  const activeFilterCount = (filterContext.areaFilter ? 1 : 0) + delayTypeDiffCount;
 
   const renderSelectedFilterPills = () => {
-    if (!filterContext.areaFilter && delayTypeChipCount === 0) {
+    if (!filterContext.areaFilter && selectedDelayTypes.length === 0) {
       return null;
     }
 
@@ -579,7 +574,7 @@ export default function EventsListPage(props) {
           </div>
         }
 
-        {!filtersAtDefault && selectedDelayTypes.map((delayType) => (
+        {selectedDelayTypes.map((delayType) => (
           <div className="selected-filter" key={delayType.key}>
             <DelayTypeIcon typeKey={delayType.key} />
             <div className="selected-filter-text">
@@ -597,6 +592,10 @@ export default function EventsListPage(props) {
       </div>
     );
   };
+
+  const sortingKeys = chainUpsOnly
+    ? ['route_order', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc']
+    : ['route_order', 'severity_desc', 'severity_asc', 'road_name_asc', 'road_name_desc', 'last_updated_desc', 'last_updated_asc'];
 
   const updateHighlightHandler = (updatedEvent) => {
     setTrackedEvents((trackedEvents) => {

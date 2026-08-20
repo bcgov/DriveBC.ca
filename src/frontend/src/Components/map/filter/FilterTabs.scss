@@ -23,7 +23,7 @@ button.btn.open-filters {
   // Desktop
   @media (min-width: 576px) {
     // prevent panel from covering zoom/scale
-    max-height: calc(100vh - 166px);
+    max-height: calc(100vh - 212px);
 
     // layers tab only
     &.layers-tab {
