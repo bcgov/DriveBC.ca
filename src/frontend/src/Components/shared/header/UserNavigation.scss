@@ -135,15 +135,6 @@
     }
   }
 
-  #user-menu {
-    border: 1px solid #323130;
-    background: $BC-Blue;
-    color: $White;
-    &:hover {
-      background: $BtnHover-Primary;
-    }
-  }
-
   // User menu
   #user-menu-header {
     display: flex;

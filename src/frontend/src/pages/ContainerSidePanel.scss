@@ -21,8 +21,8 @@
     @media (min-width: 992px) {
       position: sticky;
       top: 1rem;
-      width: 310px;
-      min-width: 310px;
+      width: 360px;
+      min-width: 360px;
     }
 
     .routing {
@@ -127,8 +127,8 @@
       &[stuck] {
         @media (max-width: 575px) {
           box-shadow: 0px 0.6px 1.8px 0px rgba(0, 0, 0, 0.10), 0px 3.2px 7.2px 0px rgba(0, 0, 0, 0.13);
-          margin: 0 -20px;
-          background-color: $Grey10;
+          // Match .container horizontal padding (16px) so full-bleed doesn't overflow
+          margin: 0 -16px;
           padding: 8px 16px;
         }
       }
@@ -174,11 +174,6 @@
                 width: 100%;
               }
 
-              .swap-button {
-                position: absolute;
-                top: 22px;
-                right: -10px;
-              }
             }
           }
 
@@ -213,6 +208,8 @@
                 display: flex;
                 align-items: center;
                 height: 36px;
+                color: $Type-Secondary;
+                font-size: 0.75rem;
               }
             }
 
@@ -253,7 +250,6 @@
               border: none;
               background: none;
               box-shadow: none;
-              color: $Grey80;
             }
           }
 
@@ -302,10 +298,6 @@
                 color: $BC-Blue;
                 margin-left: 8px;
                 margin-right: 4px;
-
-                &:hover {
-                  color: $Type-LinkHover;
-                }
               }
             }
           }

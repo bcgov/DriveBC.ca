@@ -229,7 +229,7 @@ export default function UserNavigation({ isNavbarExpanded, onCollapseNavbar }) {
   const getSigninBtn = () => {
     return (
       <a
-      className="btn btn-primary"
+      className="btn btn-outline-primary"
       id="signin-btn"
       alt="Sign in button"
       onClick={() => {

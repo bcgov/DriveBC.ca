@@ -1,5 +1,5 @@
 // React
-import React, {useCallback, useEffect, useRef, forwardRef, useContext} from 'react';
+import React, {useCallback, useEffect, useRef, forwardRef, useContext, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 
@@ -7,7 +7,7 @@ import { memoize } from 'proxy-memoize'
 import { useSearchParams } from "react-router-dom";
 
 // Internal imports
-import { getRoutes, shortenToOneDecimal } from '../data/routes';
+import { compareRoutes, getRoutes, shortenToOneDecimal } from '../data/routes';
 import {
   clearSearchedRoutes,
   clearSelectedRoute,
@@ -27,10 +27,9 @@ import NoRouteFound from './NoRouteFound';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleDot,
-  faLocationDot,
-  faArrowUpArrowDown
+  faLocationDot
 } from '@fortawesome/pro-solid-svg-icons';
-import Button from 'react-bootstrap/Button';
+import { faArrowUpArrowDown, faMagnifyingGlass, faXmark} from '@fortawesome/pro-regular-svg-icons';
 import Spinner from 'react-bootstrap/Spinner';
 
 // Styling
@@ -57,7 +56,15 @@ const RouteSearch = forwardRef((props, ref) => {
     routeDistance: state.routes.routeDistance
   }))));
 
-  const validSearch = searchLocationFrom && !!searchLocationFrom.length && searchLocationTo && !!searchLocationTo.length;
+  const hasFromLocation = searchLocationFrom && !!searchLocationFrom.length;
+  const hasToLocation = searchLocationTo && !!searchLocationTo.length;
+  const validSearch = hasFromLocation && hasToLocation;
+  const hasLocation = hasFromLocation || hasToLocation;
+
+  // Map search expands from a collapsed trigger (desktop map only)
+  const [openSearch, setOpenSearch] = useState(
+    () => !!(searchParams.get('start') || searchParams.get('end') || searchParams.get('route_distance'))
+  );
 
   // Refs
   const isInitialMount = useRef(true);
@@ -160,7 +167,7 @@ const RouteSearch = forwardRef((props, ref) => {
   }, [showSpinner]);
 
   // Handlers
-  const swapHandler = () => {
+  const resetRouteParams = () => {
     if (resetClickedStates) {
       resetClickedStates();
       dispatch(updateShowRouteObjs(false));
@@ -170,16 +177,65 @@ const RouteSearch = forwardRef((props, ref) => {
     searchParams.delete('id');
     searchParams.delete('display_category');
     setSearchParams(searchParams, { replace: true });
+  }
+
+  const swapHandler = () => {
+    resetRouteParams();
 
     dispatch(updateSearchLocationFrom(searchLocationTo));
     dispatch(updateSearchLocationTo(searchLocationFrom));
   }
 
+  const clearHandler = () => {
+    resetRouteParams();
+
+    dispatch(updateSearchLocationFrom([]));
+    dispatch(updateSearchLocationTo([]));
+
+    if (mapRef) {
+      setOpenSearch(false);
+    }
+  }
+
+  const selectRouteOption = (route) => {
+    if (!compareRoutes(route, selectedRoute)) {
+      dispatch(updateSelectedRoute(route));
+    }
+  }
+
   // Rendering
+  if (mapRef && !openSearch) {
+    return (
+      <div ref={ref} className="routing routing-outer-container routing-outer-container--collapsed">
+        <button
+          type="button"
+          className="search-trigger btn"
+          aria-label="search location"
+          onClick={() => setOpenSearch(true)}>
+          <FontAwesomeIcon icon={faMagnifyingGlass} /> Focus the info: Enter your trip here
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div ref={ref} className='routing routing-outer-container'>
-      {showFilterText && selectedRoute &&
-        <p className={'routing-caption'}>Results below are filtered by this route:</p>
+    <div ref={ref} className={`routing routing-outer-container${mapRef ? ' routing-outer-container--expanded' : ''}`}>
+      {mapRef &&
+        <button
+          type="button"
+          className="close-filters"
+          aria-label="close search"
+          onClick={() => setOpenSearch(false)}>
+          <FontAwesomeIcon icon={faXmark} />
+        </button>
+      }
+
+      {(mapRef || (showFilterText && selectedRoute)) &&
+        <p className="routing-caption">
+          {mapRef
+            ? 'Map and site results filtered by trip: '
+            : 'Results below are filtered by this route:'}
+        </p>
       }
 
       <div className="routing-container">
@@ -224,12 +280,49 @@ const RouteSearch = forwardRef((props, ref) => {
           }
         </div>
 
-        {searchedRoutes &&
-          <NoRouteFound searchedRoutes={searchedRoutes} searchLocationFrom={searchLocationFrom} searchLocationTo={searchLocationTo}/>
+        {hasLocation &&
+          <div className="route-search-actions-container">
+            {!mapRef && searchedRoutes && searchedRoutes.length > 0 &&
+              <div className="route-alt-options">
+                {searchedRoutes.map((route, index) => {
+                  const isSelected = compareRoutes(route, selectedRoute);
+                  const routeLabel = route.criteria === 'fastest' ? 'A' : 'B';
+                  const roundedDistance = Math.round(route.distance);
+
+                  return (
+                    <button
+                      key={index}
+                      type="button"
+                      className={`route-alt-option${isSelected ? ' selected' : ''}`}
+                      onClick={() => selectRouteOption(route)}
+                      aria-label={`Route ${routeLabel}, ${roundedDistance} kilometers`}
+                      aria-pressed={isSelected}>
+                      {searchedRoutes.length > 1 &&
+                        <span className="route-alt-option__label">{routeLabel}</span>
+                      }
+                      <span className="route-alt-option__distance">{roundedDistance} km</span>
+                    </button>
+                  );
+                })}
+              </div>
+            }
+
+            <div className="route-search-actions">
+              {validSearch &&
+                <button type="button" className="route-search-link" onClick={() => swapHandler()}>
+                  <FontAwesomeIcon icon={faArrowUpArrowDown} /> Swap
+                </button>
+              }
+
+              <button type="button" className="route-clear-link" onClick={() => clearHandler()}>
+                <FontAwesomeIcon icon={faXmark} /> Clear
+              </button>
+            </div>
+          </div>
         }
 
-        {validSearch &&
-          <Button className="swap-button" aria-label="Swap start and destination" onClick={() => swapHandler()}><FontAwesomeIcon icon={faArrowUpArrowDown} /></Button>
+        {searchedRoutes &&
+          <NoRouteFound searchedRoutes={searchedRoutes} searchLocationFrom={searchLocationFrom} searchLocationTo={searchLocationTo}/>
         }
       </div>
     </div>

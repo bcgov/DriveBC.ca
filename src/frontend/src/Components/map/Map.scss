@@ -34,7 +34,7 @@
   }
 
   @media (min-width: 576px) {
-    top: 7rem;
+    top: 196px;
   }
 }
 
@@ -107,7 +107,12 @@
         margin-top: auto;
         margin-left: 1rem;
         margin-bottom: 16px;
-        height: calc(100% - 130px);
+        height: calc(100% - 166px);
+
+        .popup__title {
+          border-top-left-radius: 8px;
+          border-top-right-radius: 8px;
+        }
 
         &:not(.has-route) {
           transform: translateX(0%);
@@ -116,10 +121,10 @@
         }
 
         &.has-route{
-          height: calc(100% - 175px);
+          height: calc(100% - 210px);
 
           &:has(.route-object-list) {
-            height: calc(100% - 175px);
+            height: calc(100% - 255px);
           }
           .popup__title {
             padding-right: 1rem;
@@ -158,6 +163,32 @@
       }
     }
 
+    &:has(.route-search-actions-container) {
+      .side-panel.open {
+        height: calc(100% - 212px);
+
+        &.has-route {
+          &:has(.route-object-list) {
+            height: calc(100% - 255px);
+          }
+        }
+      }
+    }
+
+    &:has(.routing-outer-container--collapsed) {
+      .side-panel.open {
+        height: calc(100% - 70px);
+
+        &.has-route {
+          height: calc(100% - 70px);
+
+          &:has(.route-object-list) {
+            height: calc(100% - 70px);
+          }
+        }
+      }
+    }
+
     // Cam details page
     &.preview {
       flex-direction: column;
@@ -191,8 +222,50 @@
 
       .map-left-container {
         position: absolute;
+        z-index: 5;
         margin-left: 0;
+        margin: 1rem;
         transition: margin-left 0.25s ease-in-out;
+
+        .routing-outer-container {
+          padding: 12px;
+          background-color: white;
+          border-radius: 8px;
+          position: relative;
+
+          .routing-caption {
+            padding-right: 2rem;
+            font-weight: 400;
+          }
+
+          .routing-container .typeahead-container {
+            width: 366px;
+          }
+
+          &--collapsed {
+            width: 390px;
+
+            .search-trigger {
+              margin: 0;
+              height: 36px;
+              width: 100%;
+              border-radius: 4px;
+              color: $Type-Disabled;
+              background-color: $Grey10;
+              display: flex;
+              align-items: center;
+              padding: 0 12px;
+              text-align: left;
+
+              svg {
+                margin-right: 8px;
+                font-size: 0.75rem;
+                color: $Type-Secondary;
+              }
+            }
+          }
+        }
+
       }
 
       .ol-zoom .ol-zoom-out {
