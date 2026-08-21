@@ -7,6 +7,19 @@
   touch-action: pan-x pan-y;
 }
 
+// Semi-transparent backdrop behind every @vladyoslav/drawer.
+// radixPrimitive={false} when Root modal={false} (Radix Overlay is null otherwise).
+[vladyoslav-drawer-overlay] {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10001;
+  background-color: rgba(0, 0, 0, 0.4);
+
+  &[data-state="open"] {
+    opacity: 1 !important;
+  }
+}
+
 // Prevent refresh on swipe-down
 html,
 body {

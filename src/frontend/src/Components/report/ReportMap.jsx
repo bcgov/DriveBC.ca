@@ -578,7 +578,7 @@ export function ReportMap(props) {
           scaleFrom={'50%'}
         >
           <Drawer.Portal container={mapElement.current}>
-            <Drawer.Overlay className="drawer-overlay" />
+            <Drawer.Overlay className="drawer-overlay" radixPrimitive={false} />
             <Drawer.Content
               className={`drawer-content ${snap === '80%' ? 'snap-80' : ''}`}
               ref={drawerRef}>

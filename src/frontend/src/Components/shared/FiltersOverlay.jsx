@@ -447,7 +447,11 @@ export default function FiltersOverlay(props) {
             scaleFrom={'50%'}>
 
             <Drawer.Portal container={drawerContainer}>
-              <Drawer.Overlay className="filters-drawer-overlay" />
+              <Drawer.Overlay
+                className="filters-drawer-overlay"
+                radixPrimitive={false}
+                blockInteraction={true}
+              />
               <Drawer.Content
                 className="filters-drawer"
                 style={{ '--drawer-snap-point': snap }}>
