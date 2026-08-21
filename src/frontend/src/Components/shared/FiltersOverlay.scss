@@ -277,7 +277,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 9999;
+  z-index: 10001;
   pointer-events: none;
 
   @media (min-width: 768px) {
@@ -286,8 +286,9 @@
 }
 
 .filters-drawer-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
+  z-index: 10001;
   background-color: rgba(0, 0, 0, 0.4);
   pointer-events: auto;
 }
@@ -298,7 +299,7 @@
   left: 0;
   right: 0;
   height: 100%;
-  z-index: 1;
+  z-index: 10002;
   pointer-events: auto;
   background-color: $White;
   border-radius: 12px 12px 0 0;

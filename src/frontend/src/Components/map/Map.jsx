@@ -168,6 +168,7 @@ export default function DriveBCMap(props) {
   const locationPinRef = useRef();
   const locationToPinRef = useRef();
   const mapElement = useRef();
+  const mapContainerRef = useRef();
   const mapRef = useRef();
   const mapView = useRef();
   const panel = useRef();
@@ -1079,7 +1080,10 @@ export default function DriveBCMap(props) {
 
   /* Rendering */
   return (
-    <div className={`map-container ${isCamDetail ? 'preview' : ''}`} data-vladyoslav-drawer-wrapper="">
+    <div
+      className={`map-container ${isCamDetail ? 'preview' : ''}`}
+      ref={mapContainerRef}
+      data-vladyoslav-drawer-wrapper="">
       {smallScreen && openTabs &&
         <div className='mobile-mask'></div>
       }
@@ -1203,8 +1207,8 @@ export default function DriveBCMap(props) {
             shouldScaleBackground={false}
             scaleFrom={'50%'}>
 
-            <Drawer.Portal container={mapElement.current}>
-              <Drawer.Overlay className="drawer-overlay" />
+            <Drawer.Portal container={mapContainerRef.current}>
+              <Drawer.Overlay className="drawer-overlay" radixPrimitive={false} />
               <Drawer.Content
                 className="drawer-content"
                 ref={drawerRef}
