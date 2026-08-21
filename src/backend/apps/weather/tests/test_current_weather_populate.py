@@ -154,20 +154,20 @@ class TestCurrentWeatherSerializer(BaseTest):
         data = CurrentWeatherSerializer(obj).data
         assert data['road_condition'] == 'Wet'
 
-    def test_get_visibility_dense_fog(self):
+    def test_get_visibility_dense(self):
         obj = self._make_weather_obj({'visibility': {'value': '200'}})
         data = CurrentWeatherSerializer(obj).data
-        assert data['visibility'] == 'Dense fog'
+        assert data['visibility'] == 'Dense'
 
     def test_get_visibility_limited(self):
         obj = self._make_weather_obj({'visibility': {'value': '300'}})
         data = CurrentWeatherSerializer(obj).data
         assert data['visibility'] == 'Limited'
 
-    def test_get_visibility_clear_returns_none(self):
-        obj = self._make_weather_obj({'visibility': {'value': '1000'}})
+    def test_get_visibility_good(self):
+        obj = self._make_weather_obj({'visibility': {'value': '450'}})
         data = CurrentWeatherSerializer(obj).data
-        assert data['visibility'] is None
+        assert data['visibility'] == 'Good'
 
     def test_get_visibility_missing_returns_none(self):
         obj = self._make_weather_obj({})

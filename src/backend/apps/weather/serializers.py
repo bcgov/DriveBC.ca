@@ -141,11 +141,11 @@ class CurrentWeatherSerializer(serializers.ModelSerializer):
         if "visibility" in obj.datasets:
             data = obj.datasets["visibility"]
             value = round(float(data["value"]))
-            if value <= 250:
-                return "Dense fog"
-            elif 250 < value <= 450:
+            if value >= 450:
+                return "Good"
+            if value >= 250:
                 return "Limited"
-            return None
+            return "Dense fog"
 
     def get_present_weather(self, obj):
         if "present_weather" in obj.datasets:
