@@ -281,7 +281,7 @@ export default {
   },
   "TRANSPORTATION/DRA/Large/Resource Roads/Line": {
     layout: {
-      "visibility": "none"
+      // "visibility": "none" // DBC22-7142
     },
   },
   "TRANSPORTATION/DRA/Overpasses/Ramp/Line": {
@@ -437,12 +437,12 @@ export default {
 "TRANSPORTATION/DRA/Large/Trail": {
   layout: {
     "visibility": "none"
-  },  
+  },
 },
 "TRANSPORTATION/DRA/Large/Trail Recreation": {
   layout: {
     "visibility": "none"
-  },  
+  },
 },
 "TRANSPORTATION/DRA Roads (L)/Resource Roads/0": {
   layout: {
