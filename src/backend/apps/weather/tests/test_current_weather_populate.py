@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from apps.shared.tests import BaseTest, MockResponse
 from apps.weather.models import CurrentWeather
+from apps.weather.serializers import CurrentWeatherSerializer
 from apps.weather.tasks import (
     populate_all_local_weather_data,
     populate_local_weather_from_data,
@@ -15,7 +16,6 @@ from apps.weather.tests.test_data.local_weather_parsed_feed import (
     parsed_summer_feed,
 )
 from rest_framework.test import APIClient
-from apps.weather.serializers import CurrentWeatherSerializer
 
 # suppress logged error messages to reduce noise
 logging.getLogger().setLevel(logging.CRITICAL)
@@ -157,7 +157,7 @@ class TestCurrentWeatherSerializer(BaseTest):
     def test_get_visibility_dense(self):
         obj = self._make_weather_obj({'visibility': {'value': '200'}})
         data = CurrentWeatherSerializer(obj).data
-        assert data['visibility'] == 'Dense'
+        assert data['visibility'] == 'Dense fog'
 
     def test_get_visibility_limited(self):
         obj = self._make_weather_obj({'visibility': {'value': '300'}})
