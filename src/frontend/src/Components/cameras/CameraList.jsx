@@ -1,5 +1,5 @@
 // React
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 
 // Third party packages
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -11,12 +11,15 @@ import HighwayGroup from './HighwayGroup';
 // Styling
 import './CameraList.scss';
 
+const INITIAL_DISPLAY_LENGTH = 21;
+
 export default function CameraList(props) {
   // Props
   const { cameras, onscreenCameras, setOnscreenCameras, showLoader } = props;
 
   // Contexts
   const { camsContext } = useContext(CamsContext);
+  const prevCamerasLength = useRef(cameras?.length);
 
   // UseEffect hooks and data functions
   const getDisplayedCameras = (length) => {
@@ -26,7 +29,13 @@ export default function CameraList(props) {
   };
 
   useEffect(() => {
-    if (cameras && cameras.length > 0) { // Do nothing until cameras are processed
+    if (cameras && cameras.length > 0) {
+      // Result set size changed (filter/search/route) — reset the infinite-scroll
+      // window so a prior scroll depth does not dump hundreds of cards at once.
+      if (prevCamerasLength.current !== cameras.length) {
+        camsContext.displayLength = INITIAL_DISPLAY_LENGTH;
+        prevCamerasLength.current = cameras.length;
+      }
       getDisplayedCameras(camsContext.displayLength);
     }
   }, [cameras]);

@@ -231,6 +231,15 @@ export default function CamerasListPage() {
 
   }, [searchText, processedCameras, filterContext.highwayFilterKey, filterContext.areaFilter]);
 
+  // Keep list anchored at top when area/highway filters change so sticky filters
+  // do not cover highway headers after the result set grows/shrinks.
+  useEffect(() => {
+    const main = document.getElementById('main');
+    if (main) {
+      main.scrollTop = 0;
+    }
+  }, [filterContext.highwayFilterKey, filterContext.areaFilter]);
+
   useEffect(() => {
     if (isInitialMount.current) {
       const scrollPosition = sessionStorage.getItem('scrollPosition');
@@ -318,6 +327,12 @@ export default function CamerasListPage() {
     ? 'Sorted in order of appearance on route'
     : 'Sorted by highway';
 
+  const cameraCount = displayedCameras ? displayedCameras.length : 0;
+  const highwayCount = displayedCameras
+    ? new Set(displayedCameras.map(camera => camera.highway_display)).size
+    : 0;
+  const camerasDescription = `${cameraCount} camera${cameraCount === 1 ? '' : 's'}  •  ${highwayCount} highway${highwayCount === 1 ? '' : 's'}`;
+
   return (
     <React.Fragment>
       <div className="cameras-page">
@@ -340,7 +355,7 @@ export default function CamerasListPage() {
           <div className="container--sidepanel__right">
             <PageHeader
               title="Cameras"
-              description="Scroll to view all cameras sorted by highway.">
+              description={camerasDescription}>
             </PageHeader>
             <div className="sticky-sentinel" />
             <div className="sticky-filters">

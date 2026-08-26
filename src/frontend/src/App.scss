@@ -357,7 +357,10 @@ a[href^="https://" i]#{$external-link-optouts}:not([href*="drivebc.ca" i]) {
 }
 
 .App {
-  &:has(.auth-modal), &:has(.overlay.open) {
+  // Lock page scroll for auth modal / legacy overlays. Exclude .filters-overlay —
+  // it is already position:fixed (desktop) or a drawer (mobile); applying this lock
+  // jumps scroll to top and breaks list layout when filters open/close.
+  &:has(.auth-modal), &:has(.overlay.open:not(.filters-overlay)) {
     div[class*='-page'] {
       position: fixed;
       width: 100%;
