@@ -44,10 +44,12 @@ import trackEvent from '../Components/shared/TrackEvent';
 import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
 import PollingComponent from '../Components/shared/PollingComponent';
 import ListFilters from "../Components/shared/ListFilters";
+import Skeleton from 'react-loading-skeleton';
 
 // Styling
 import './CamerasListPage.scss';
 import './ContainerSidePanel.scss';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 export default function CamerasListPage() {
   /* Setup */
@@ -331,7 +333,28 @@ export default function CamerasListPage() {
   const highwayCount = displayedCameras
     ? new Set(displayedCameras.map(camera => camera.highway_display)).size
     : 0;
-  const camerasDescription = `${cameraCount} camera${cameraCount === 1 ? '' : 's'}  •  ${highwayCount} highway${highwayCount === 1 ? '' : 's'}`;
+  const advisoriesCount = filteredAdvisories?.length || 0;
+  const showAdvisoriesLink = smallScreen && advisoriesCount > 0;
+  const camerasDescription = (showLoader || displayedCameras === null) ? (
+    <Skeleton width={220} />
+  ) : (
+    <>
+      {showAdvisoriesLink &&
+        <>
+          <button
+            type="button"
+            className="cameras-advisories-link"
+            aria-label="open advisories list"
+            onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
+            <FontAwesomeIcon icon={faFlag} />
+            {`${advisoriesCount} ${advisoriesCount === 1 ? 'advisory' : 'advisories'}`}
+          </button>
+          {'  •  '}
+        </>
+      }
+      {`${cameraCount} camera${cameraCount === 1 ? '' : 's'}  •  ${highwayCount} highway${highwayCount === 1 ? '' : 's'}`}
+    </>
+  );
 
   return (
     <React.Fragment>
@@ -517,19 +540,6 @@ export default function CamerasListPage() {
                   }
               </div>
             </div>
-
-            {smallScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
-              <Button
-                className={'advisories-btn'}
-                aria-label="open advisories list"
-                onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
-                <span className="advisories-title">
-                  <FontAwesomeIcon icon={faFlag} />
-                  Route advisories
-                </span>
-                <span className="advisories-count">{filteredAdvisories.length}</span>
-              </Button>
-            }
 
             <CameraList
               cameras={ displayedCameras ? displayedCameras : [] }
