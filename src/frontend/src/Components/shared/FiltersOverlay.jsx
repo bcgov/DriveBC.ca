@@ -121,32 +121,6 @@ export default function FiltersOverlay(props) {
   const [snap, setSnap] = useState('50%');
   const [drawerContainer, setDrawerContainer] = useState(null);
 
-  // Anchor the drawer area below the header, tracking header height changes
-  const [drawerTop, setDrawerTop] = useState(58);
-
-  useEffect(() => {
-    if (largeScreen) {
-      return;
-    }
-
-    const navEl = document.querySelector('header .navbar');
-    if (!navEl) {
-      return;
-    }
-
-    const updateTop = () => {
-      if (navEl.querySelector('.navbar-collapse.show, .navbar-collapse.collapsing')) {
-        return;
-      }
-      setDrawerTop(Math.round(navEl.getBoundingClientRect().bottom));
-    };
-
-    updateTop();
-    const observer = new ResizeObserver(updateTop);
-    observer.observe(navEl);
-    return () => observer.disconnect();
-  }, [largeScreen]);
-
   const [showSortSection, setShowSortSection] = useState(true);
   const [showDelayTypeSection, setShowDelayTypeSection] = useState(true);
   const [showAreaSection, setShowAreaSection] = useState(true);
@@ -299,7 +273,9 @@ export default function FiltersOverlay(props) {
           </div>
           <p className="filters-overlay__header bold">{title}</p>
         </div>
+      </div>
 
+      <div className="filters-component">
         {sortedByLabel &&
           <div className="all-filters__row sorted-by">
             <div className="filters-overlay__icon icon--sorted-by">
@@ -308,9 +284,7 @@ export default function FiltersOverlay(props) {
             <p className="filters-overlay__header bold">{sortedByLabel}</p>
           </div>
         }
-      </div>
 
-      <div className="filters-component">
         {showSort &&
           <FiltersOverlaySection
             open={showSortSection}
@@ -427,7 +401,6 @@ export default function FiltersOverlay(props) {
         <div
           className="filters-drawer-container"
           ref={setDrawerContainer}
-          style={{ top: `${drawerTop}px` }}
           data-vladyoslav-drawer-wrapper="" />
 
         {open && drawerContainer &&
