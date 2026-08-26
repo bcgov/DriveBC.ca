@@ -147,7 +147,7 @@
 
     &__btn {
       margin-bottom: 0;
-      
+
       &--reset, &--cancel {
         border: none;
       }
@@ -188,7 +188,7 @@
   }
 
   .sorted-by {
-    margin-top: .5rem;
+    margin-bottom: .5rem;
 
     .icon--sorted-by {
       font-size: 0.75rem;
@@ -273,7 +273,7 @@
 
 .filters-drawer-container {
   position: fixed;
-  top: 58px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
