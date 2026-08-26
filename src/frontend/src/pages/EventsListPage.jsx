@@ -52,10 +52,12 @@ import {
   getDelayTypeState,
   toDelayTypeLayerVisibility,
 } from '../Components/shared/DelayTypeFilter';
+import Skeleton from 'react-loading-skeleton';
 
 // Styling
 import './EventsListPage.scss';
 import './ContainerSidePanel.scss';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 // Helpers
 const sortEvents = (events, key) => {
@@ -548,6 +550,49 @@ export default function EventsListPage(props) {
 
   const activeFilterCount = (filterContext.areaFilter ? 1 : 0) + delayTypeDiffCount;
 
+  const advisoriesCount = filteredAdvisories?.length || 0;
+  const advisoriesLabel = `${advisoriesCount} ${advisoriesCount === 1 ? 'advisory' : 'advisories'}`;
+  const closureCount = processedEvents.filter((e) => e.display_category === 'closures').length;
+  const eventCount = processedEvents.length - closureCount;
+  const advisoriesLink = advisoriesCount > 0 && (
+    <button
+      type="button"
+      className="events-advisories-link"
+      aria-label="open advisories list"
+      onClick={() => setOpenAdvisoriesOverlay(true)}>
+      <FontAwesomeIcon icon={faFlag} />
+      {advisoriesLabel}
+    </button>
+  );
+
+  let eventsDescription = null;
+  if (selectedRoute) {
+    eventsDescription = showLoader ? (
+      <Skeleton width={220} />
+    ) : (
+      <>
+        {smallScreen && advisoriesLink &&
+          <>
+            {advisoriesLink}
+            {'  •  '}
+          </>
+        }
+        {`${eventCount} event${eventCount === 1 ? '' : 's'}  •  ${closureCount} closure${closureCount === 1 ? '' : 's'}`}
+      </>
+    );
+  } else if (smallScreen && advisoriesCount > 0) {
+    eventsDescription = (
+      <button
+        type="button"
+        className="events-advisories-link"
+        aria-label="open advisories list"
+        onClick={() => setOpenAdvisoriesOverlay(true)}>
+        <FontAwesomeIcon icon={faFlag} />
+        {`${advisoriesLabel} province-wide`}
+      </button>
+    );
+  }
+
   const renderSelectedFilterPills = () => {
     if (!filterContext.areaFilter && selectedDelayTypes.length === 0) {
       return null;
@@ -694,7 +739,7 @@ export default function EventsListPage(props) {
           <div className="container--sidepanel__right">
             <PageHeader
               title={chainUpsOnly ? 'Commercial chain-ups' : 'Delays'}
-              description={chainUpsOnly ? 'Segments of the highway that require commercial vehicles over 11,794 kg to have chains on.' : 'Find out if there are any delays that might impact your journey before you go.'}>
+              description={chainUpsOnly ? 'Segments of the highway that require commercial vehicles over 11,794 kg to have chains on.' : eventsDescription}>
             </PageHeader>
             <div className="sticky-sentinel" />
             <div className="sticky-filters">
@@ -752,19 +797,6 @@ export default function EventsListPage(props) {
                   }
               </div>
             </div>
-
-            {smallScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
-              <Button
-                className={'advisories-btn'}
-                aria-label="open advisories list"
-                onClick={() => setOpenAdvisoriesOverlay(true)}>
-                <span className="advisories-title">
-                  <FontAwesomeIcon icon={faFlag} />
-                  Route advisories
-                </span>
-                <span className="advisories-count">{filteredAdvisories.length}</span>
-              </Button>
-            }
 
             <PollingComponent runnable={() => setLoadData(true)} interval={30000} />
 
@@ -827,12 +859,14 @@ export default function EventsListPage(props) {
               }
             </div>
 
-          {updateCounts.above > 0 && <button className="update-count-pill top" onClick={() => scrollToNextHighlightedEventHandler('above')}><FontAwesomeIcon icon={faArrowUp} /> {updateCounts.above} update{updateCounts.above !== 1 ? 's' : ''} available</button>}
-          {updateCounts.below > 0 && <button className="update-count-pill bottom" onClick={() => scrollToNextHighlightedEventHandler('below')}><FontAwesomeIcon icon={faArrowDown} /> {updateCounts.below} update{updateCounts.below !== 1 ? 's' : ''} available</button>}
+            {updateCounts.above > 0 && <button className="update-count-pill top" onClick={() => scrollToNextHighlightedEventHandler('above')}><FontAwesomeIcon icon={faArrowUp} /> {updateCounts.above} update{updateCounts.above !== 1 ? 's' : ''} available</button>}
+            {updateCounts.below > 0 && <button className="update-count-pill bottom" onClick={() => scrollToNextHighlightedEventHandler('below')}><FontAwesomeIcon icon={faArrowDown} /> {updateCounts.below} update{updateCounts.below !== 1 ? 's' : ''} available</button>}
 
+            {/* Keep footer inside sticky parent on mobile so filters stay pinned to the end */}
+            {smallScreen && <Footer />}
           </div>
         </Container>
-        <Footer />
+        {!smallScreen && <Footer />}
       </div>
 
       <FiltersOverlay

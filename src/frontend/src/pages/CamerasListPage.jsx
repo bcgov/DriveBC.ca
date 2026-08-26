@@ -334,27 +334,45 @@ export default function CamerasListPage() {
     ? new Set(displayedCameras.map(camera => camera.highway_display)).size
     : 0;
   const advisoriesCount = filteredAdvisories?.length || 0;
-  const showAdvisoriesLink = smallScreen && advisoriesCount > 0;
-  const camerasDescription = (showLoader || displayedCameras === null) ? (
-    <Skeleton width={220} />
-  ) : (
-    <>
-      {showAdvisoriesLink &&
-        <>
-          <button
-            type="button"
-            className="cameras-advisories-link"
-            aria-label="open advisories list"
-            onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
-            <FontAwesomeIcon icon={faFlag} />
-            {`${advisoriesCount} ${advisoriesCount === 1 ? 'advisory' : 'advisories'}`}
-          </button>
-          {'  •  '}
-        </>
-      }
-      {`${cameraCount} camera${cameraCount === 1 ? '' : 's'}  •  ${highwayCount} highway${highwayCount === 1 ? '' : 's'}`}
-    </>
+  const advisoriesLabel = `${advisoriesCount} ${advisoriesCount === 1 ? 'advisory' : 'advisories'}`;
+  const advisoriesLink = advisoriesCount > 0 && (
+    <button
+      type="button"
+      className="cameras-advisories-link"
+      aria-label="open advisories list"
+      onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
+      <FontAwesomeIcon icon={faFlag} />
+      {advisoriesLabel}
+    </button>
   );
+
+  let camerasDescription = null;
+  if (selectedRoute) {
+    camerasDescription = (showLoader || displayedCameras === null) ? (
+      <Skeleton width={220} />
+    ) : (
+      <>
+        {smallScreen && advisoriesLink &&
+          <>
+            {advisoriesLink}
+            {'  •  '}
+          </>
+        }
+        {`${cameraCount} camera${cameraCount === 1 ? '' : 's'}  •  ${highwayCount} highway${highwayCount === 1 ? '' : 's'}`}
+      </>
+    );
+  } else if (smallScreen && advisoriesCount > 0) {
+    camerasDescription = (
+      <button
+        type="button"
+        className="cameras-advisories-link"
+        aria-label="open advisories list"
+        onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
+        <FontAwesomeIcon icon={faFlag} />
+        {`${advisoriesLabel} province-wide`}
+      </button>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -562,10 +580,13 @@ export default function CamerasListPage() {
                 </ul>
               </div>
             }
+
+            {/* Keep footer inside sticky parent on mobile so filters stay pinned to the end */}
+            {smallScreen && <Footer />}
           </div>
         </Container>
 
-        <Footer />
+        {!smallScreen && <Footer />}
       </div>
 
       {smallScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&

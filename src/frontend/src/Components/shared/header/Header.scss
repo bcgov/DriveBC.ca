@@ -5,6 +5,11 @@
 	background: white;
 	padding: 0;
 	box-shadow: rgb(0,0,0,0.2) 0px 2px 10px 0px;
+	// Overlap #main so the sticky filters seam cannot show scrolling content
+	@media (max-width: 575px) {
+		margin-bottom: -2px;
+		padding-bottom: 2px;
+	}
 
 	// Avoid stacked shadows when sticky filters are stuck (mobile)
 	body:has(.sticky-filters[stuck]) & {
@@ -85,6 +90,13 @@
 			.searched-route-container {
 				margin: 12px 18px;
 				width: calc(100% - 36px);
+
+				.routing-caption {
+					margin: 0 0 8px;
+					font-size: 0.875rem;
+					line-height: 1.2;
+					color: $Type-Primary;
+				}
 
 				.searched-route {
 					margin: 0;
@@ -665,8 +677,8 @@
 
 body.list-header-hidden {
 	@media (max-width: 575px) {
-		.navbar .container .header-left,
-		.navbar .container .header .searched-route-container .route-search-actions-container {
+		// Collapse logo only; keep searched-route + A/B/Swap/Edit sticky together
+		.navbar .container .header-left {
 			max-height: 0;
 			opacity: 0;
 			visibility: hidden;
@@ -680,8 +692,7 @@ body.list-header-hidden {
 		}
 
 		@media (prefers-reduced-motion: reduce) {
-			.navbar .container .header-left,
-			.navbar .container .header .searched-route-container .route-search-actions-container {
+			.navbar .container .header-left {
 				transition: none;
 			}
 		}

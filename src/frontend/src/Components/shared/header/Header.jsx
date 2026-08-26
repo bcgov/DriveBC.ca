@@ -425,6 +425,10 @@ export default function Header({ isMaintenance }) {
 
             {smallScreen && showSearch && !openSearch && selectedRoute && isNavbarCollapsed &&
               <div className="searched-route-container">
+                <p className="routing-caption">
+                  {isListPage ? 'Map and site results filtered by trip: ': 'Results below are filtered by this route:'}
+                </p>
+
                 <button
                   className={`searched-route btn show`}
                   aria-label="searched route"
@@ -455,7 +459,7 @@ export default function Header({ isMaintenance }) {
                   </div>
                 </button>
 
-                <div className="route-search-actions-container" inert={listHeaderHidden ? '' : undefined}>
+                <div className="route-search-actions-container">
                   {searchedRoutes && searchedRoutes.length > 0 &&
                     <div className="route-alt-options">
                       {searchedRoutes.map((route, index) => {
