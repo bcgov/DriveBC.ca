@@ -65,14 +65,20 @@
 				padding: 0 8px;
 				display: flex;
 
+				&--hidden {
+					display: none;
+				}
+
 				.btn.close-search {
 					margin: 12px 0;
 					height: 70px;
+					flex-shrink: 0;
 				}
 
 				.routing {
 					padding: 12px 1rem 12px 0.5rem;
-					width: 100%;
+					flex: 1;
+					min-width: 0;
 				}
 			}
 
@@ -123,14 +129,16 @@
 					visibility: visible;
 					transform: translateY(0);
 					transition: max-height 0.4s ease, opacity 0.35s ease, padding 0.4s ease, margin 0.4s ease, transform 0.4s ease, visibility 0.4s ease;
+					flex-wrap: nowrap;
 				}
 
 				.route-alt-options {
 					display: flex;
 					align-items: center;
 					gap: 0.5rem;
-					flex-wrap: wrap;
+					flex-wrap: nowrap;
 					min-width: 0;
+					flex-shrink: 0;
 				}
 
 				.route-alt-option {
@@ -143,6 +151,7 @@
 					color: $Grey80;
 					font-size: 0.75rem;
 					cursor: pointer;
+					flex-shrink: 0;
 
 					&__label {
 						border-radius: 50%;
@@ -560,7 +569,7 @@
 						}
 
 						svg {
-							margin-left: 8px;	
+							margin-left: 8px;
 							font-size: 0.75rem;
 						}
 					}
@@ -639,13 +648,13 @@
 .maintenance-header {
   .navbar {
     .header-left {
-      padding: 10px 0 10px 20px; 
+      padding: 10px 0 10px 20px;
 
       @media (min-width: 1200px) {
-        padding-left: 0; 
+        padding-left: 0;
       }
     }
-    
+
     .nav-divider {
       @media (min-width: 1200px) {
         display: block;
