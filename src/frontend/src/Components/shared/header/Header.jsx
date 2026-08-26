@@ -402,8 +402,16 @@ export default function Header({ isMaintenance }) {
               </button>
             }
 
-            {smallScreen && showSearch && openSearch &&
-              <div className={'location-search' + (selectedRoute ? ' selected-route' : '')}>
+            {/* Keep RouteSearch mounted (hidden) when a trip is selected so Swap
+                in the collapsed header can still trigger a route refetch. */}
+            {smallScreen && showSearch && (openSearch || selectedRoute) &&
+              <div
+                className={
+                  'location-search' +
+                  (selectedRoute ? ' selected-route' : '') +
+                  (!openSearch ? ' location-search--hidden' : '')
+                }
+                aria-hidden={!openSearch}>
                 <button
                   className="close-search btn"
                   aria-label="close search"

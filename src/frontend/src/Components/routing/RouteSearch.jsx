@@ -61,10 +61,8 @@ const RouteSearch = forwardRef((props, ref) => {
   const validSearch = hasFromLocation && hasToLocation;
   const hasLocation = hasFromLocation || hasToLocation;
 
-  // Map search expands from a collapsed trigger (desktop map only)
-  const [openSearch, setOpenSearch] = useState(
-    () => !!(searchParams.get('start') || searchParams.get('end') || searchParams.get('route_distance'))
-  );
+  // openSearch when either location is populated
+  const [openSearch, setOpenSearch] = useState(hasLocation);
 
   // Refs
   const isInitialMount = useRef(true);
@@ -192,9 +190,7 @@ const RouteSearch = forwardRef((props, ref) => {
     dispatch(updateSearchLocationFrom([]));
     dispatch(updateSearchLocationTo([]));
 
-    if (mapRef) {
-      setOpenSearch(false);
-    }
+    setOpenSearch(false);
   }
 
   const selectRouteOption = (route) => {
@@ -220,7 +216,7 @@ const RouteSearch = forwardRef((props, ref) => {
 
   return (
     <div ref={ref} className={`routing routing-outer-container${mapRef ? ' routing-outer-container--expanded' : ''}`}>
-      {mapRef &&
+      {mapRef && !selectedRoute &&
         <button
           type="button"
           className="close-filters"
