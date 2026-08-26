@@ -2,6 +2,7 @@
 import React, {useCallback, useEffect, useRef, forwardRef, useContext, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
+import { useClickAway } from '@uidotdev/usehooks';
 
 // Routing
 import { useSearchParams } from "react-router-dom";
@@ -63,6 +64,22 @@ const RouteSearch = forwardRef((props, ref) => {
 
   // openSearch when either location is populated
   const [openSearch, setOpenSearch] = useState(hasLocation);
+
+  // Desktop (map): collapse search when clicking outside while a location is set
+  const clickAwayRef = useClickAway(() => {
+    if (mapRef && !hasLocation && openSearch) {
+      setOpenSearch(false);
+    }
+  });
+
+  const setContainerRef = useCallback((node) => {
+    clickAwayRef.current = node;
+    if (typeof ref === 'function') {
+      ref(node);
+    } else if (ref) {
+      ref.current = node;
+    }
+  }, [ref, clickAwayRef]);
 
   // Refs
   const isInitialMount = useRef(true);
@@ -189,8 +206,6 @@ const RouteSearch = forwardRef((props, ref) => {
 
     dispatch(updateSearchLocationFrom([]));
     dispatch(updateSearchLocationTo([]));
-
-    setOpenSearch(false);
   }
 
   const selectRouteOption = (route) => {
@@ -202,7 +217,7 @@ const RouteSearch = forwardRef((props, ref) => {
   // Rendering
   if (mapRef && !openSearch) {
     return (
-      <div ref={ref} className="routing routing-outer-container routing-outer-container--collapsed">
+      <div ref={setContainerRef} className="routing routing-outer-container routing-outer-container--collapsed">
         <button
           type="button"
           className="search-trigger btn"
@@ -215,18 +230,8 @@ const RouteSearch = forwardRef((props, ref) => {
   }
 
   return (
-    <div ref={ref} className={`routing routing-outer-container${mapRef ? ' routing-outer-container--expanded' : ''}`}>
-      {mapRef && !selectedRoute &&
-        <button
-          type="button"
-          className="close-filters"
-          aria-label="close search"
-          onClick={() => setOpenSearch(false)}>
-          <FontAwesomeIcon icon={faXmark} />
-        </button>
-      }
-
-      {(mapRef || (showFilterText && selectedRoute)) &&
+    <div ref={setContainerRef} className={`routing routing-outer-container${mapRef ? ' routing-outer-container--expanded' : ''}`}>
+      {showFilterText && selectedRoute &&
         <p className="routing-caption">
           {mapRef
             ? 'Map and site results filtered by trip: '

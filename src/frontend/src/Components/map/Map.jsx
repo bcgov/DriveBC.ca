@@ -1257,6 +1257,7 @@ export default function DriveBCMap(props) {
 
           <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'} ${isCamDetail && 'hidden'}`}>
             <RouteSearch
+              showFilterText={true}
               ref={routingContainerRef}
               routeEdit={true}
               showSpinner={showSpinner}
