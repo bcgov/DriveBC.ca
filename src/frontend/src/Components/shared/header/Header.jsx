@@ -487,10 +487,10 @@ export default function Header({ isMaintenance }) {
 
                   <div className="route-search-actions">
                     <button type="button" className="route-search-link" onClick={swapSearchLocations}>
-                      <FontAwesomeIcon icon={faArrowUpArrowDown} /> Swap
+                      <FontAwesomeIcon icon={faArrowUpArrowDown} />Swap
                     </button>
                     <button type="button" className="route-edit-link" onClick={() => setOpenSearch(true)}>
-                      <FontAwesomeIcon icon={faPenToSquare} /> Edit
+                      <FontAwesomeIcon icon={faPenToSquare} />Edit
                     </button>
                   </div>
                 </div>

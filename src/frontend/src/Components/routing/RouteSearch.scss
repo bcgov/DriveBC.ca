@@ -5,7 +5,7 @@
 }
 
 .routing-caption {
-  font-size: 0.875rem;
+  font-size: 12px;
   line-height: 0.75rem;
 }
 
@@ -34,6 +34,10 @@
       padding: 0.75rem 4px 6px;
       overflow: visible;
       flex-wrap: nowrap;
+
+      @media (min-width: 576px) {
+        padding: .75rem 0 6px;
+      }
     }
 
     .route-alt-options {
@@ -101,8 +105,14 @@
       }
 
       &:focus {
+        outline: none;
+        box-shadow: none;
+      }
+
+      &:focus-visible {
         outline: 2px solid $Focus;
         outline-offset: 2px;
+        box-shadow: none;
       }
     }
 
@@ -136,6 +146,14 @@
         width: 390px;
       }
 
+      .form-control {
+        font-size: 14px;
+
+        &::placeholder {
+          font-size: 14px;
+        }
+      }
+
       .typeahead-spinner {
         position: absolute;
         top: -0.5rem;
@@ -144,18 +162,18 @@
 
       .location-marker {
         position: absolute;
-        z-index: 1;
+        z-index: 2;
         margin: 0.25rem;
 
         &--from {
           font-size: 0.75rem;
-          margin: 0.6875rem 0.75rem;
+          margin: 8px 12px;
           color: $Type-Secondary;
         }
 
         &--to {
           font-size: 1rem;
-          margin: 0.5rem 0.75rem;
+          margin: 4px 10px;
           color: $Error;
         }
       }
@@ -164,10 +182,11 @@
         position: absolute;
         top: 0;
         right: 0;
+        z-index: 2;
         background: none;
         border: none;
         font-size: 0.75rem;
-        padding: 0.75rem 1rem;
+        padding: 0.5rem 1rem;
         border-radius: 50%;
         &:hover {
           color: $Grey80;
@@ -180,6 +199,10 @@
         border-top-right-radius: 0;
         border-color: $Blue10;
         transform: translate3d(0px, 36px, 0px) !important;
+
+        @media (max-width: 575px) {
+          font-size: 0.75rem;
+        }
       }
 
       &.stacked {

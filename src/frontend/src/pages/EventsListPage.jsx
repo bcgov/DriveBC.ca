@@ -30,6 +30,7 @@ import { CMSContext, MapContext, FilterContext } from '../App';
 import { filterAdvisoryByRoute } from "../Components/map/helpers";
 import { getAdvisories, markAdvisoriesAsRead } from '../Components/data/advisories';
 import { getEvents, getEventDetails } from '../Components/data/events';
+import { getRouteDisplayName } from '../Components/data/routes';
 import { defaultSortFn, routeAtSortFn, routeOrderSortFn, severitySortFn } from '../Components/events/functions';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
@@ -43,7 +44,7 @@ import PageHeader from '../PageHeader';
 import PollingComponent from '../Components/shared/PollingComponent';
 import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent';
-import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
+import AdvisoriesOverlay from '../Components/shared/AdvisoriesOverlay';
 import FiltersOverlay from '../Components/shared/FiltersOverlay';
 import {
   DELAY_TYPES,
@@ -538,23 +539,27 @@ export default function EventsListPage(props) {
     localStorage.setItem('sorting-key', key);
   };
 
-  const selectedDelayTypes = chainUpsOnly
+  // Default delay types = closures + major; pills only when selection differs
+  const isDefaultDelayTypes = chainUpsOnly || DELAY_TYPES.every(
+    (delayType) => !!eventCategoryFilter[delayType.key] === !!RESET_DELAY_TYPE_STATE[delayType.key]
+  );
+
+  const selectedDelayTypes = chainUpsOnly || isDefaultDelayTypes
     ? []
     : DELAY_TYPES.filter((delayType) => !!eventCategoryFilter[delayType.key]);
 
-  const delayTypeDiffCount = chainUpsOnly
-    ? 0
-    : DELAY_TYPES.filter(
-      (delayType) => !!eventCategoryFilter[delayType.key] !== !!RESET_DELAY_TYPE_STATE[delayType.key]
-    ).length;
-
-  const activeFilterCount = (filterContext.areaFilter ? 1 : 0) + delayTypeDiffCount;
+  // Badge matches visible pills: active delay layers + area filter
+  const activeFilterCount = selectedDelayTypes.length + (filterContext.areaFilter ? 1 : 0);
+  // Reset when area or delay types differ from default (incl. no layers selected)
+  const filtersAtDefault = !filterContext.areaFilter && isDefaultDelayTypes;
 
   const advisoriesCount = filteredAdvisories?.length || 0;
-  const advisoriesLabel = `${advisoriesCount} ${advisoriesCount === 1 ? 'advisory' : 'advisories'}`;
+  const advisoriesLabel = advisoriesCount === 0
+    ? 'No advisories'
+    : `${advisoriesCount} ${advisoriesCount === 1 ? 'advisory' : 'advisories'}`;
   const closureCount = processedEvents.filter((e) => e.display_category === 'closures').length;
   const eventCount = processedEvents.length - closureCount;
-  const advisoriesLink = advisoriesCount > 0 && (
+  const advisoriesLink = advisoriesCount === 0 ? advisoriesLabel : (
     <button
       type="button"
       className="events-advisories-link"
@@ -571,7 +576,7 @@ export default function EventsListPage(props) {
       <Skeleton width={220} />
     ) : (
       <>
-        {smallScreen && advisoriesLink &&
+        {smallScreen &&
           <>
             {advisoriesLink}
             {'  •  '}
@@ -580,8 +585,10 @@ export default function EventsListPage(props) {
         {`${eventCount} event${eventCount === 1 ? '' : 's'}  •  ${closureCount} closure${closureCount === 1 ? '' : 's'}`}
       </>
     );
-  } else if (smallScreen && advisoriesCount > 0) {
-    eventsDescription = (
+  } else if (smallScreen) {
+    eventsDescription = advisoriesCount === 0 ? (
+      `${advisoriesLabel} province-wide`
+    ) : (
       <button
         type="button"
         className="events-advisories-link"
@@ -592,6 +599,11 @@ export default function EventsListPage(props) {
       </button>
     );
   }
+
+  const listName = chainUpsOnly ? 'Commercial chain-ups' : 'Delays';
+  const eventsTitle = selectedRoute
+    ? `${listName} on ${getRouteDisplayName(selectedRoute)}`
+    : listName;
 
   const renderSelectedFilterPills = () => {
     if (!filterContext.areaFilter && selectedDelayTypes.length === 0) {
@@ -738,7 +750,7 @@ export default function EventsListPage(props) {
 
           <div className="container--sidepanel__right">
             <PageHeader
-              title={chainUpsOnly ? 'Commercial chain-ups' : 'Delays'}
+              title={eventsTitle}
               description={chainUpsOnly ? 'Segments of the highway that require commercial vehicles over 11,794 kg to have chains on.' : eventsDescription}>
             </PageHeader>
             <div className="sticky-sentinel" />
@@ -747,7 +759,7 @@ export default function EventsListPage(props) {
                 <div className="controls-container">
                   <Button
                     variant="outline-primary"
-                    className={'filter-option-btn filters-btn' + (activeFilterCount ? ' filtered' : '') + (showFilters ? ' active' : '')}
+                    className={'filter-option-btn filters-btn' + (!filtersAtDefault ? ' filtered' : '') + (showFilters ? ' active' : '')}
                     aria-label="show filters options"
                     onClick={toggleFiltersOverlay}>
 
@@ -761,7 +773,7 @@ export default function EventsListPage(props) {
 
                   {largeScreen &&
                     <div className="tools-container">
-                      {activeFilterCount > 0 &&
+                      {!filtersAtDefault &&
                         <Button
                           variant="outline-primary"
                           className="filter-option-btn reset-filters-btn"
@@ -783,7 +795,7 @@ export default function EventsListPage(props) {
                 </div>
                 {!largeScreen &&
                     <div className="tools-container">
-                      {activeFilterCount > 0 &&
+                      {!filtersAtDefault &&
                         <Button
                           variant="outline-primary"
                           className="filter-option-btn reset-filters-btn"
@@ -882,19 +894,11 @@ export default function EventsListPage(props) {
         areaObjects={processedEvents}
       />
 
-      {smallScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
-        <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}>
-          <button
-            className="close-panel close-overlay"
-            aria-label={`${openAdvisoriesOverlay ? 'close overlay' : ''}`}
-            aria-hidden={`${openAdvisoriesOverlay ? false : true}`}
-            tabIndex={`${openAdvisoriesOverlay ? 0 : -1}`}
-            onClick={() => {if (openAdvisoriesOverlay) setOpenAdvisoriesOverlay(false)}}>
-            <FontAwesomeIcon icon={faXmark} />
-          </button>
-          <AdvisoriesPanel advisories={advisories} openAdvisoriesOverlay={openAdvisoriesOverlay} />
-        </div>
-      }
+      <AdvisoriesOverlay
+        open={openAdvisoriesOverlay}
+        onClose={() => setOpenAdvisoriesOverlay(false)}
+        advisories={filteredAdvisories}
+      />
     </React.Fragment>
   );
 }

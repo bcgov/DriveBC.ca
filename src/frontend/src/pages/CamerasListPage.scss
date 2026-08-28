@@ -10,6 +10,10 @@
       .container {
         padding: 0;
 
+        .page-title {
+          margin-bottom: 4px;
+        }
+
         .page-description {
           color: $Type-Primary;
           font-size: 14px;
@@ -22,6 +26,10 @@
             font-weight: 700;
             padding: 0 4px;
             text-decoration: underline;
+
+            &:hover {
+              color: $Orange80;
+            }
 
             svg {
               margin-right: 6px;
@@ -75,6 +83,10 @@
   }
 
   .empty-cam-display {
+    @media (max-width: 575px) {
+      margin-top: 24px;
+    }
+
     h2, h6 {
       color: $Info;
     }

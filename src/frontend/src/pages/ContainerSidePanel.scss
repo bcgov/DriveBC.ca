@@ -201,7 +201,11 @@
             .rbt {
               .rbt-input {
                 height: 36px;
-                font-size: 0.875rem;
+                font-size: 14px;
+
+                &::placeholder {
+                  font-size: 14px;
+                }
               }
 
               .clear-btn,
@@ -260,6 +264,7 @@
             }
 
             &:hover {
+              color: $Grey80;
               border: none;
               background: none;
               box-shadow: none;
@@ -296,8 +301,8 @@
               align-items: center;
 
               svg {
-                width: 14px;
-                margin-right: 4px;
+                width: 12px;
+                margin-right: 6px;
                 margin-left: 4px;
               }
 
@@ -445,6 +450,11 @@
 
         .rbt-input {
           height: 36px;
+          font-size: 14px;
+
+          &::placeholder {
+            font-size: 14px;
+          }
         }
 
         .rbt-menu {

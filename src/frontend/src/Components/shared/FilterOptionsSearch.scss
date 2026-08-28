@@ -10,7 +10,7 @@
     padding: 0.5rem 2.25rem 0.5rem 0.75rem;
     border: 1px solid $Grey40;
     border-radius: 4px;
-    font-size: 0.875rem;
+    font-size: 14px;
     color: $Type-Primary;
     background: $White;
     line-height: 1;
@@ -27,6 +27,7 @@
 
     &::placeholder {
       color: $Type-Disabled;
+      font-size: 14px;
     }
   }
 

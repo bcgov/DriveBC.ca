@@ -177,13 +177,13 @@
 
     &:has(.routing-outer-container--collapsed) {
       .side-panel.open {
-        height: calc(100% - 70px);
+        height: calc(100% - 108px);
 
         &.has-route {
-          height: calc(100% - 70px);
+          height: calc(100% - 108px);
 
           &:has(.route-object-list) {
-            height: calc(100% - 70px);
+            height: calc(100% - 108px);
           }
         }
       }

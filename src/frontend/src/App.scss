@@ -9,7 +9,8 @@
 
 // Semi-transparent backdrop for filters drawers only (not map route panel).
 // radixPrimitive={false} when Root modal={false} (Radix Overlay is null otherwise).
-[vladyoslav-drawer-overlay].filters-drawer-overlay {
+[vladyoslav-drawer-overlay].filters-drawer-overlay,
+[vladyoslav-drawer-overlay].advisories-drawer-overlay {
   position: fixed !important;
   inset: 0 !important;
   z-index: 10001;

@@ -215,6 +215,11 @@ export const compareRoutes = (route1, route2) => {
   return distance1 === distance2;
 }
 
+export const getRouteDisplayName = (route) => {
+  if (!route) return null;
+  return route.label || `Route ${route.criteria === 'fastest' ? 'A' : 'B'}`;
+}
+
 export const linkRoute = (route, favRoutes) => {
   // route is already saved or favRoutes is not available
   if (route.saved || !favRoutes || !route.points) {

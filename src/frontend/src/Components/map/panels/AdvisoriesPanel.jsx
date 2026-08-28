@@ -23,6 +23,7 @@ import './AdvisoriesPanel.scss';
 export default function AdvisoriesPanel(props) {
   // Props
   const { advisories, openAdvisoriesOverlay, smallScreen, mapView, showRouteObjs, inMap } = props;
+  const advisoriesList = inMap ? (advisories ? [advisories] : []) : (advisories ?? []);
 
   // Navigation
   const [searchParams, setSearchParams] = useSearchParams();
@@ -36,7 +37,7 @@ export default function AdvisoriesPanel(props) {
       return;
     }
 
-    markAdvisoriesAsRead(inMap ? [advisories] : advisories, cmsContext, setCMSContext);
+    markAdvisoriesAsRead(advisoriesList, cmsContext, setCMSContext);
 
     if (inMap && advisories) {
       searchParams.set("type", 'advisory');
@@ -75,8 +76,8 @@ export default function AdvisoriesPanel(props) {
       </div>
 
       <div className="popup__content">
-        <AdvisoriesList advisories={inMap ? [advisories] : advisories} showDescription={false} showTimestamp={true} showPublished={true} showArrow={true} />
-        {advisories.length === 0 && <div className="popup__content">No advisory in view</div>}
+        <AdvisoriesList advisories={advisoriesList} showDescription={false} showTimestamp={true} showPublished={true} showArrow={true} />
+        {advisoriesList.length === 0 && <div className="popup__content">No advisory in view</div>}
       </div>
     </div>
   );

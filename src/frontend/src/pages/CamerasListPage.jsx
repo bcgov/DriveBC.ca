@@ -31,6 +31,7 @@ import {
 import { getAdvisories } from '../Components/data/advisories';
 import { collator, getCameras, addCameraGroups } from '../Components/data/webcams';
 import { markAdvisoriesAsRead } from '../Components/data/advisories';
+import { getRouteDisplayName } from '../Components/data/routes';
 import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
@@ -41,7 +42,7 @@ import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent';
-import AdvisoriesPanel from '../Components/map/panels/AdvisoriesPanel';
+import AdvisoriesOverlay from '../Components/shared/AdvisoriesOverlay';
 import PollingComponent from '../Components/shared/PollingComponent';
 import ListFilters from "../Components/shared/ListFilters";
 import Skeleton from 'react-loading-skeleton';
@@ -334,8 +335,10 @@ export default function CamerasListPage() {
     ? new Set(displayedCameras.map(camera => camera.highway_display)).size
     : 0;
   const advisoriesCount = filteredAdvisories?.length || 0;
-  const advisoriesLabel = `${advisoriesCount} ${advisoriesCount === 1 ? 'advisory' : 'advisories'}`;
-  const advisoriesLink = advisoriesCount > 0 && (
+  const advisoriesLabel = advisoriesCount === 0
+    ? 'No advisories'
+    : `${advisoriesCount} ${advisoriesCount === 1 ? 'advisory' : 'advisories'}`;
+  const advisoriesLink = advisoriesCount === 0 ? advisoriesLabel : (
     <button
       type="button"
       className="cameras-advisories-link"
@@ -352,7 +355,7 @@ export default function CamerasListPage() {
       <Skeleton width={220} />
     ) : (
       <>
-        {smallScreen && advisoriesLink &&
+        {smallScreen &&
           <>
             {advisoriesLink}
             {'  •  '}
@@ -361,8 +364,10 @@ export default function CamerasListPage() {
         {`${cameraCount} camera${cameraCount === 1 ? '' : 's'}  •  ${highwayCount} highway${highwayCount === 1 ? '' : 's'}`}
       </>
     );
-  } else if (smallScreen && advisoriesCount > 0) {
-    camerasDescription = (
+  } else if (smallScreen) {
+    camerasDescription = advisoriesCount === 0 ? (
+      `${advisoriesLabel} province-wide`
+    ) : (
       <button
         type="button"
         className="cameras-advisories-link"
@@ -373,6 +378,10 @@ export default function CamerasListPage() {
       </button>
     );
   }
+
+  const camerasTitle = selectedRoute
+    ? `Cameras on ${getRouteDisplayName(selectedRoute)}`
+    : 'Cameras';
 
   return (
     <React.Fragment>
@@ -395,7 +404,7 @@ export default function CamerasListPage() {
 
           <div className="container--sidepanel__right">
             <PageHeader
-              title="Cameras"
+              title={camerasTitle}
               description={camerasDescription}>
             </PageHeader>
             <div className="sticky-sentinel" />
@@ -589,20 +598,11 @@ export default function CamerasListPage() {
         {!smallScreen && <Footer />}
       </div>
 
-      {smallScreen && (filteredAdvisories && filteredAdvisories.length > 0) &&
-        <div className={`overlay advisories-overlay popup--advisories ${openAdvisoriesOverlay ? 'open' : ''}`}>
-          <button
-            className="close-panel close-overlay"
-            aria-label={`${openAdvisoriesOverlay ? 'close overlay' : ''}`}
-            aria-hidden={`${openAdvisoriesOverlay ? false : true}`}
-            tabIndex={`${openAdvisoriesOverlay ? 0 : -1}`}
-            onClick={() => setOpenAdvisoriesOverlay(!openAdvisoriesOverlay)}>
-            <FontAwesomeIcon icon={faXmark} />
-          </button>
-
-          <AdvisoriesPanel advisories={filteredAdvisories} openAdvisoriesOverlay={openAdvisoriesOverlay} />
-        </div>
-      }
+      <AdvisoriesOverlay
+        open={openAdvisoriesOverlay}
+        onClose={() => setOpenAdvisoriesOverlay(false)}
+        advisories={filteredAdvisories}
+      />
 
       <FiltersOverlay
         open={showFilters}
