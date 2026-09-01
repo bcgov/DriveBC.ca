@@ -23,6 +23,9 @@ import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import { API_HOST } from '../env';
 
+const MESSAGE_MIN_LENGTH = 10;
+const MESSAGE_MAX_LENGTH = 500;
+
 export default function FeedbackPage() {
   /* Setup */
   // Misc
@@ -159,7 +162,7 @@ export default function FeedbackPage() {
                 </div>
               }
 
-              <Form.Group controlId="validationEmail">
+              <Form.Group controlId="validationEmail" className="feedback-field">
                 <Form.Label>Email</Form.Label>
                 <Form.Control
                   type="email"
@@ -169,6 +172,9 @@ export default function FeedbackPage() {
                   isInvalid={
                     validated && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
                   }
+                  isValid={
+                    validated && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+                  }
                   onChange={e => setEmail(e.target.value)} />
 
                 <Form.Control.Feedback type="invalid">
@@ -176,7 +182,7 @@ export default function FeedbackPage() {
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group className={'subject-select'}>
+              <Form.Group className="feedback-field subject-select">
                 <Form.Label>Subject</Form.Label>
 
                 <div className={'dropdown-container'}>
@@ -197,19 +203,27 @@ export default function FeedbackPage() {
                   rows={5}
                   placeholder="Enter your message here"
                   required
-                  minLength={10}
-                  maxLength={200}
+                  minLength={MESSAGE_MIN_LENGTH}
+                  maxLength={MESSAGE_MAX_LENGTH}
                   value={message}
                   isInvalid={
-                    validated && (message.length < 10 || message.length > 200)
+                    validated && (message.length < MESSAGE_MIN_LENGTH || message.length > MESSAGE_MAX_LENGTH)
                   }
                   isValid={
-                    validated && message.length >= 10 && message.length <= 200
+                    validated && message.length >= MESSAGE_MIN_LENGTH && message.length <= MESSAGE_MAX_LENGTH
                   }
-                  onChange={e => setMessage(e.target.value)} />
+                  onChange={e => setMessage(e.target.value)}
+                  aria-describedby="message-char-count" />
+
+                <div
+                  id="message-char-count"
+                  className={`message-char-count${message.length >= MESSAGE_MAX_LENGTH ? ' message-char-count--max' : ''}`}
+                  aria-live="polite">
+                  {message.length}/{MESSAGE_MAX_LENGTH}
+                </div>
 
                 <Form.Control.Feedback type="invalid">
-                  Your message must include at least 10-200 characters of description.
+                  Your message must include at least {MESSAGE_MIN_LENGTH}-{MESSAGE_MAX_LENGTH} characters of description.
                 </Form.Control.Feedback>
               </Form.Group>
 
