@@ -59,7 +59,7 @@ export default function AdvisoriesOverlay(props) {
               style={{ '--drawer-snap-point': snap }}>
 
               <div
-                className="overlay advisories-overlay popup--advisories open"
+                className="overlay advisories-overlay open"
                 onPointerDown={(e) => {
                   // Let advisory list scroll without dragging the drawer
                   if (e.target.closest('.popup__content')) {
