@@ -46,23 +46,31 @@
     .advisories {
       margin-top: 36px;
       padding-right: 10px;
+      height: auto;
 
-      .title {
-        background: $Advisory-Bg;
+      .popup__title {
         padding: 12px 16px;
+        height: auto;
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
 
-        h4 {
+        &__name {
+          display: flex;
+          align-items: center;
+
+          svg {
+            margin-right: 8px;
+          }
+        }
+
+        .name {
           margin-bottom: 0;
-          font-weight: 400;
-          line-height: 2.125rem;
-          color: $Advisory-Text;
+          font-size: 0.875rem;
+          font-weight: 700;
         }
       }
 
-      .content {
-        background: $Grey10;
+      .popup__content {
         padding: 16px 16px 32px;
         border-bottom-left-radius: 8px;
         border-bottom-right-radius: 8px;
@@ -79,11 +87,8 @@
         .advisories-list {
           list-style: none;
 
-          .friendly-time {
-            margin-left: 0;
-          }
-
           .advisory-li {
+            border-radius: 8px;
             margin-left: 0;
             color: $Type-Link;
             display: flex;
@@ -93,9 +98,6 @@
             }
             &::marker {
               color: $Type-Link;
-            }
-            .friendly-time-text {
-              margin-left: 0;
             }
 
             .advisory-li-teaser {
