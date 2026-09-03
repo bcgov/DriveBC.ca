@@ -20,6 +20,7 @@ import {
   updateShowRouteObjs
 } from '../../slices/routesSlice'
 import { fitMap, removeOverlays } from "../map/helpers";
+import { applyDefaultRouteLayers } from "../map/enums";
 import { MapContext } from "../../App";
 import LocationSearch from './LocationSearch';
 import NoRouteFound from './NoRouteFound';
@@ -155,9 +156,12 @@ const RouteSearch = forwardRef((props, ref) => {
           dispatch(updateSelectedRoute(routes[0]));
         }
 
+        // Enable default route layers from any page (map or delays list)
+        let nextMapContext = applyDefaultRouteLayers(mapContext);
+
         // Fit map on routes after user input or notification link
         const fromNotification = searchParams.get('route_distance');
-        if ((mapContext && mapContext.pendingRouteFit) || fromNotification) {
+        if (nextMapContext.pendingRouteFit || fromNotification) {
           if (fromNotification) {
             searchParams.delete('route_start');
             searchParams.delete('route_start_point');
@@ -168,11 +172,14 @@ const RouteSearch = forwardRef((props, ref) => {
           }
 
           fitMap(routes, mapView);
-          setMapContext({
-            ...mapContext,
+          nextMapContext = {
+            ...nextMapContext,
             pendingRouteFit: false
-          });
+          };
         }
+
+        setMapContext(nextMapContext);
+        localStorage.setItem('mapContext', JSON.stringify(nextMapContext));
 
         dispatch(clearRouteDistance());
         dispatch(updateSearchedRoutes(routes));

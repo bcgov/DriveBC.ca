@@ -44,7 +44,6 @@ import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent';
 import AdvisoriesOverlay from '../Components/shared/AdvisoriesOverlay';
 import PollingComponent from '../Components/shared/PollingComponent';
-import ListFilters from "../Components/shared/ListFilters";
 import Skeleton from 'react-loading-skeleton';
 
 // Styling
@@ -618,17 +617,6 @@ export default function CamerasListPage() {
       />
 
       <PollingComponent runnable={() => getCamerasData(selectedRouteRef.current)} interval={30000} />
-
-      <ListFilters
-        hidden={true}
-        disableFeatures={true}
-        enableRoadConditions={false}
-        enableChainUps={true}
-        textOverride={'List'}
-        iconOverride={true}
-        isDelaysPage={true}
-        fullOverlay={true}
-      />
     </React.Fragment>
   );
 }

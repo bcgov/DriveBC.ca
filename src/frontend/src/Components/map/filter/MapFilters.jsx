@@ -6,10 +6,6 @@ import { memoize } from 'proxy-memoize';
 import { useSelector } from 'react-redux';
 
 // External imports
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faTruckContainer
-} from '@fortawesome/pro-solid-svg-icons';
 import Spinner from 'react-bootstrap/Spinner';
 
 // Internal imports
@@ -63,7 +59,7 @@ export default function MapFilters(props) {
   const [roadConditions, setRoadConditions] = useState(mapContext.visible_layers.roadConditions);
   const [chainUps, setChainUps] = useState(mapContext.visible_layers.chainUps);
   const [highwayCams, setHighwayCams] = useState(isCamDetail ? true : mapContext.visible_layers.highwayCams);
-  const [inlandFerries, setInlandFerries] = useState(isCamDetail ? true : mapContext.visible_layers.highwayCams);
+  const [inlandFerries, setInlandFerries] = useState(isCamDetail ? true : mapContext.visible_layers.inlandFerries);
   const [weather, setWeather] = useState(mapContext.visible_layers.weather);
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
   const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
@@ -83,6 +79,7 @@ export default function MapFilters(props) {
       if (!minorEvents) filterHandler('minorEvents');
       if (!roadConditions) filterHandler('roadConditions');
       if (!inlandFerries) filterHandler('inlandFerries');
+      if (!wildfires) filterHandler('wildfires');
     }
   }, [searchedRoutes]);
 
