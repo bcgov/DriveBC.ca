@@ -168,7 +168,7 @@
         height: calc(100% - 212px);
 
         &.has-route {
-          &:has(.route-object-list) {
+          &:has(.route-object-list), &:has(.from-route-objs) {
             height: calc(100% - 255px);
           }
         }
