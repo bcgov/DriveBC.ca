@@ -21,7 +21,8 @@ on:
 jobs:
   scale-down-gold:
     if: ${{ github.event.inputs.step == 'Scale down DriveBC Backend in Gold' }}
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: Scale down DriveBC Backend in Gold (${{ github.event.inputs.environment }})
     environment:
       name: ${{ github.event.inputs.environment }}
@@ -49,7 +50,8 @@ jobs:
 
   scale-down-golddr:
     if: ${{ github.event.inputs.step == 'Scale down DriveBC Backend in Gold DR' }}
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: Scale down DriveBC Backend in Gold DR (${{ github.event.inputs.environment }})
     environment:
       name: ${{ github.event.inputs.environment }}
@@ -76,7 +78,8 @@ jobs:
 
   scale-up-gold:
     if: ${{ github.event.inputs.step == 'Scale up DriveBC Backend in Gold' }}
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: Scale up DriveBC Backend in Gold (${{ github.event.inputs.environment }})
     environment:
       name: ${{ github.event.inputs.environment }}
@@ -108,7 +111,8 @@ jobs:
 
   scale-up-golddr-primary:
     if: ${{ github.event.inputs.step == 'Scale up DriveBC Backend in Gold DR as Primary' }}
-    runs-on: ubuntu-latest
+    runs-on:
+        group: Larger Runners - OpenShift Static-IP
     name: Scale up DriveBC Backend in Gold DR (${{ github.event.inputs.environment }})
     environment:
       name: ${{ github.event.inputs.environment }}
