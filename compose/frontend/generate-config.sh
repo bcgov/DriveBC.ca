@@ -64,12 +64,12 @@ cp /etc/nginx/conf.d/default.conf "${SHARED_CONFIG}/default.conf"
 cp /etc/nginx/conf.d/security_headers.conf "${SHARED_CONFIG}/security_headers.conf"
 sed -i "s~{ENVIRONMENT}~$ENVIRONMENT~g" "${SHARED_CONFIG}/default.conf"
 
-if [ "$ENVIRONMENT" = "prod-drivebc" ]; then
+if [ "$ENVIRONMENT" = "prod" ]; then
     echo "Environment is 'prod'; removing X-Robots-Tag noindex header."
     sed -i '/add_header X-Robots-Tag "noindex";/d' "${SHARED_CONFIG}/security_headers.conf"
 fi
 
-if [ "$ENVIRONMENT" = "dev-drivebc" ]; then
+if [ "$ENVIRONMENT" = "dev" ]; then
     echo "Environment is 'dev'; Adding the debug toolbar route."
     sed -i 's/healthcheck)/healthcheck|__debug__)/' "${SHARED_CONFIG}/default.conf"
 fi
