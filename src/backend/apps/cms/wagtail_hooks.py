@@ -232,8 +232,8 @@ class PublishMinorUpdateMenuItem(ActionMenuItem):
         if not isinstance(specific, (Advisory, Bulletin)):
             return False
 
-        # Only after at least one "Publish with notifications"
-        return specific.last_notified_at is not None
+        # After notify, or legacy pages published before last_notified_at existed
+        return (specific.last_notified_at or specific.last_published_at) is not None
 
     def render_html(self, parent_context):
         context = parent_context.get("context", parent_context)

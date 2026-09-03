@@ -164,7 +164,19 @@ def publish_minor_update(request, page_id):
 
     page = Page.objects.get(pk=page_id).specific
 
-    if not isinstance(page, (Advisory, Bulletin)) or page.last_notified_at is None:
+    if not isinstance(page, (Advisory, Bulletin)):
+        messages.error(
+            request,
+            'Publish minor update is only available after publishing with notifications at least once.',
+        )
+        return redirect(f"/drivebc-cms/pages/{page_id}/edit/")
+
+    # Prefer last notify time; fall back to last_published_at for legacy pages
+    # published before last_notified_at existed.
+    previous_last_notified_at = page.last_notified_at
+    date_to_preserve = previous_last_notified_at or page.last_published_at
+
+    if date_to_preserve is None:
         messages.error(
             request,
             'Publish minor update is only available after publishing with notifications at least once.',
@@ -174,19 +186,16 @@ def publish_minor_update(request, page_id):
     latest_revision = page.get_latest_revision()
 
     if latest_revision:
-        # Snapshot the current last_notified_at before publishing
-        last_notified_at = page.last_notified_at
-
         # Publish the revision (updates content but triggers after_publish_page)
         latest_revision.publish(changed=False)
 
-        # Restore last_notified_at and also revert last_published_at
-        # so the "Updated" panel field doesn't change
+        # Keep "Updated" as the last notify (or prior publish for legacy pages).
+        # Writing None here is what produced the 1969 dates on older content.
         Page.objects.filter(pk=page.pk).update(
-            last_published_at=last_notified_at
+            last_published_at=date_to_preserve
         )
         type(page).objects.filter(pk=page.pk).update(
-            last_notified_at=last_notified_at
+            last_notified_at=previous_last_notified_at
         )
 
     messages.success(request, f'"{page.title}" published as a minor update.')
