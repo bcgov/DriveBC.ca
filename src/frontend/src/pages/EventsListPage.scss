@@ -101,18 +101,27 @@
     }
 
     &__right {
-      .sticky-filters .controls-group .controls-container {
-        @media (min-width: 768px) {
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-          width: 100%;
+      .sticky-filters .controls-group {
+        .controls-container {
+          @media (min-width: 1200px) {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
 
-          .camSearch-container {
-            margin-bottom: 0;
-            margin-left: auto;
-            width: 278px;
-            max-width: 278px;
+            .camSearch-container {
+              margin-bottom: 0;
+              margin-left: auto;
+              width: 278px;
+              max-width: 278px;
+            }
+          }
+        }
+
+        // Keep mobile spacing for filter pills until desktop filter bar layout
+        .tools-container {
+          @media (max-width: 1199px) {
+            margin-top: 12px;
           }
         }
       }

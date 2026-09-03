@@ -110,6 +110,8 @@ export default function CamerasListPage() {
   // Media queries
   const smallScreen = useMediaQuery('only screen and (max-width : 575px)');
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+  // Keep filter pills below search until the side panel has enough room
+  const wideFilterBar = useMediaQuery('only screen and (min-width : 1200px)');
 
   // Data functions
   const getCamerasData = async route => {
@@ -425,7 +427,7 @@ export default function CamerasListPage() {
                     }
                   </Button>
 
-                  {largeScreen &&
+                  {wideFilterBar &&
                     <div className="tools-container">
                       {activeFilterCount > 0 &&
                         <Button
@@ -512,7 +514,7 @@ export default function CamerasListPage() {
                     </AsyncTypeahead>
                   </div>
                 </div>
-                {!largeScreen &&
+                {!wideFilterBar &&
                     <div className="tools-container">
                       {activeFilterCount > 0 &&
                         <Button

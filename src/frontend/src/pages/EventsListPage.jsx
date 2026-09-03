@@ -185,6 +185,8 @@ export default function EventsListPage(props) {
   // Media queries
   const smallScreen = useMediaQuery('only screen and (max-width : 575px)');
   const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
+  // Keep filter pills below search until the side panel has enough room
+  const wideFilterBar = useMediaQuery('only screen and (min-width : 1200px)');
 
   // Data functions
   const loadAdvisories = async () => {
@@ -771,7 +773,7 @@ export default function EventsListPage(props) {
                     }
                   </Button>
 
-                  {largeScreen &&
+                  {wideFilterBar &&
                     <div className="tools-container">
                       {!filtersAtDefault &&
                         <Button
@@ -793,7 +795,7 @@ export default function EventsListPage(props) {
                     chainUpsOnly={chainUpsOnly}
                   />
                 </div>
-                {!largeScreen &&
+                {!wideFilterBar &&
                     <div className="tools-container">
                       {!filtersAtDefault &&
                         <Button
