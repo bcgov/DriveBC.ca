@@ -2,23 +2,21 @@ from apps.cms.models import Advisory, Bulletin, EmergencyAlert, EmergencyAlertDe
 from apps.cms.serializers import (
     AdvisorySerializer,
     BulletinSerializer,
+    EmergencyAlertDetailSerializer,
     EmergencyAlertSerializer,
     EmergencyAlertTestSerializer,
-    EmergencyAlertDetailSerializer,
 )
 from apps.shared.enums import CacheKey, CacheTimeout
 from apps.shared.views import CachedListModelMixin
 from django.conf import settings
+from django.contrib import messages
 from django.core.mail import EmailMultiAlternatives
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, reverse
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import redirect, render, reverse
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
-from django.contrib import messages
-from django.shortcuts import redirect
 from wagtail.models import Page
-from django.http import Http404
 
 
 class CMSViewSet(viewsets.ReadOnlyModelViewSet):
@@ -99,10 +97,12 @@ class EmergencyAlertAPI(CachedListModelMixin, EmergencyAlertTestAPI):
     cache_key = CacheKey.EMERGENCY_ALERT_LIST
     cache_timeout = CacheTimeout.EMERGENCY_ALERT_LIST
 
+
 class EmergencyAlertDetailTestAPI(CMSViewSet):
     queryset = EmergencyAlertDetail.objects.all()
     serializer_class = EmergencyAlertDetailSerializer
     lookup_field = 'slug'
+
 
 class EmergencyAlertDetailAPI(CachedListModelMixin, EmergencyAlertDetailTestAPI):
     queryset = EmergencyAlertDetail.objects.all()
@@ -112,6 +112,7 @@ class EmergencyAlertDetailAPI(CachedListModelMixin, EmergencyAlertDetailTestAPI)
 
     def get_queryset(self):
         return EmergencyAlertDetail.objects.filter(live=True)  # live only
+
 
 @csrf_exempt
 def access_requested(request):
@@ -153,14 +154,23 @@ def access_denied_idir(request):
 
 
 def publish_minor_update(request, page_id):
+    try:
+        page_id = int(page_id)
+    except (TypeError, ValueError):
+        raise Http404()
+
     if request.method != "POST":
-        try:
-            page_id = int(page_id)
-        except (TypeError, ValueError):
-            raise Http404()
         return redirect(f"/drivebc-cms/pages/{page_id}/edit/")
 
     page = Page.objects.get(pk=page_id).specific
+
+    if not isinstance(page, (Advisory, Bulletin)) or page.last_notified_at is None:
+        messages.error(
+            request,
+            'Publish minor update is only available after publishing with notifications at least once.',
+        )
+        return redirect(f"/drivebc-cms/pages/{page_id}/edit/")
+
     latest_revision = page.get_latest_revision()
 
     if latest_revision:
@@ -180,8 +190,4 @@ def publish_minor_update(request, page_id):
         )
 
     messages.success(request, f'"{page.title}" published as a minor update.')
-    try:
-        page_id = int(page_id)
-    except (TypeError, ValueError):
-        raise Http404()
     return redirect(f"/drivebc-cms/pages/{page_id}/edit/")

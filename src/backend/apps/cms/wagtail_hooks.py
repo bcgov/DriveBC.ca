@@ -1,27 +1,28 @@
 import logging
 import os
 
-from apps.cms.models import EmergencyAlert, EmergencyAlertDetail
+from apps.cms.models import EmergencyAlert
 from apps.cms.tasks import send_advisory_notifications
 from django.contrib.auth.models import Permission
+from django.shortcuts import redirect
 from django.templatetags.static import static
-from django.urls import path
+from django.urls import path, reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from wagtail import hooks
+from wagtail.admin.action_menu import ActionMenuItem
 from wagtail.admin.rich_text.editors.draftail.features import ControlFeature
 from wagtail.admin.ui.components import Component
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 
-from .models import Advisory, Bulletin, SubPage, get_or_create_advisory_index, get_or_create_bulletin_index
+from .models import (
+    Advisory,
+    Bulletin,
+    SubPage,
+    get_or_create_advisory_index,
+    get_or_create_bulletin_index,
+)
 from .views import access_requested, publish_minor_update
-
-# from wagtail.admin.ui.components import ActionMenuItem
-from wagtail.admin.action_menu import ActionMenuItem
-from django.urls import reverse
-from django.utils.html import format_html
-
-from django.utils.safestring import mark_safe
-from django.shortcuts import redirect
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +30,7 @@ logger = logging.getLogger(__name__)
 @hooks.register("after_publish_page")
 def post_edit_hook(request, page):
     from django.utils import timezone
-    
+
     if page.specific_class == Advisory:
         try:
             Advisory.objects.filter(pk=page.pk).update(last_notified_at=timezone.now())
@@ -142,18 +143,12 @@ def add_access_request_panel(request, panels):
         panels.append(RequestAccessPanel())
 
 
-@hooks.register('register_admin_urls')
-def add_access_requested_url():
-    return [
-        path('access-requested', access_requested, name='cms-access-requested'),
-    ]
-
-
 @hooks.register('after_publish_page')
 def update_parent_page(request, page):
     ''' When saving a subpage, create a new revision for the parent page '''
     if page.specific_class == SubPage:
         page.get_parent().specific.save_revision().publish()
+
 
 class CopyPreviewURLMenuItem(ActionMenuItem):
     label = "Copy Preview URL"
@@ -214,11 +209,31 @@ class CopyPreviewURLMenuItem(ActionMenuItem):
             preview_url,
         )
 
+
 class PublishMinorUpdateMenuItem(ActionMenuItem):
     label = "Publish minor update"
     name = "publish-minor-update"
     icon_name = "upload"
     order = 15
+
+    def is_shown(self, context):
+        if not super().is_shown(context):
+            return False
+
+        page = None
+        if isinstance(context, dict):
+            inner = context.get("context", context)
+            page = inner.get("page") if isinstance(inner, dict) else None
+
+        if page is None:
+            return False
+
+        specific = page.specific
+        if not isinstance(specific, (Advisory, Bulletin)):
+            return False
+
+        # Only after at least one "Publish with notifications"
+        return specific.last_notified_at is not None
 
     def render_html(self, parent_context):
         context = parent_context.get("context", parent_context)
@@ -265,22 +280,24 @@ def register_copy_preview_button():
     """
     return CopyPreviewURLMenuItem(order=100)
 
+
 @hooks.register("insert_global_admin_js")
 def add_custom_emergency_alert_js():
-    return mark_safe("""
+    return mark_safe(  # nosec B308
+        """
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var path = window.location.pathname;
             if (path.includes('/drivebc-cms/') &&  !path.includes('/advisory/') && !path.includes('/bulletin/')) {
                 fetch('/api/cms/emergency-alert/')
-                        .then(function(response) { 
-                            return response.json(); 
+                        .then(function(response) {
+                            return response.json();
                         })
                         .then(function(data) {
                             if (data && data.length > 0) {
                                 var errorLi = document.querySelector('li.error');
                                 if (errorLi) {
-                                    errorLi.innerHTML = 
+                                    errorLi.innerHTML =
                                         '<svg class="icon icon-warning messages-icon" aria-hidden="true">' +
                                         '<use href="#icon-warning"></use>' +
                                         '</svg>' +
@@ -293,9 +310,10 @@ def add_custom_emergency_alert_js():
                             console.error('Error checking Emergency Alert:', error);
                         });
             }
-        });              
+        });
     </script>
     """)
+
 
 @hooks.register("before_create_page")
 def ensure_advisory_parent(request, parent_page, page_class, **kwargs):
@@ -326,15 +344,18 @@ def ensure_bulletin_parent(request, parent_page, page_class, **kwargs):
 
     return redirect(f"/drivebc-cms/pages/add/cms/bulletin/{index.pk}/")
 
+
 @hooks.register("after_create_page")
 def move_new_advisory_to_top(request, page):
     if page.specific_class == Advisory:
         parent = page.get_parent()
         page.move(parent, pos="first-child")
 
+
 @hooks.register("register_page_action_menu_item")
 def register_publish_minor_update():
     return PublishMinorUpdateMenuItem(order=25)
+
 
 @hooks.register("construct_page_action_menu")
 def customize_page_action_menu(menu_items, request, context):
