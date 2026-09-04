@@ -1,0 +1,156 @@
+[
+  {
+    "Status": "Ok",
+    "Message": "[pt25o0][jl3][fo1]HIGHWAY 1 OPEN[nl][jl3][fo1]AT BOSTON BAR[np][pt25o0][jl3][fo1]EXPECT DELAYS[nl][jl3][fo1]CHECK DRIVEBC.CA",
+    "IsBitmap": false,
+    "BitmapBase64Strings": null,
+    "PhaseTime": 2500,
+    "LastUpdated": "2026-09-04T22:06:30.005Z",
+    "StatusDetails": { "ShortStatus": [], "MessagePosting": [] },
+    "OperationalIssues": {
+      "FrequentUnexpectedMessages": "False",
+      "ExcessivePixelFailure": "False"
+    },
+    "Id": 1
+  },
+  {
+    "Status": "Ok",
+    "Message": "[jl3][fo4]KNOW BEFORE YOU GO[nl][jl3][fo4]CHECK DRIVEBC.CA",
+    "IsBitmap": false,
+    "BitmapBase64Strings": null,
+    "PhaseTime": null,
+    "LastUpdated": "2026-09-04T21:44:10.794Z",
+    "StatusDetails": { "ShortStatus": [], "MessagePosting": [] },
+    "OperationalIssues": {
+      "FrequentUnexpectedMessages": "False",
+      "ExcessivePixelFailure": "Unknown"
+    },
+    "Id": 2
+  },
+  {
+    "Status": "Ok",
+    "Message": "[pt25o0][jl3][fo1]ENTERING VARIABLE[nl][jl3][fo1]SPEED CORRIDOR[np][pt25o0][jl3][fo1]IF A SIGN IS BLANK[nl][jl3][fo1]LAST SPEED ENFORCED",
+    "IsBitmap": false,
+    "BitmapBase64Strings": null,
+    "PhaseTime": 2500,
+    "LastUpdated": "2026-09-04T22:06:27.974Z",
+    "StatusDetails": { "ShortStatus": [], "MessagePosting": [] },
+    "OperationalIssues": {
+      "FrequentUnexpectedMessages": "False",
+      "ExcessivePixelFailure": "False"
+    },
+    "Id": 3
+  },
+  {
+    "Status": "Ok",
+    "Message": "[jl3][fo1]SLOW DOWN MOVE OVER[nl][jl3][fo1]FOR FLASHING LIGHTS",
+    "IsBitmap": false,
+    "BitmapBase64Strings": null,
+    "PhaseTime": null,
+    "LastUpdated": "2026-09-04T22:13:50.983Z",
+    "StatusDetails": { "ShortStatus": [], "MessagePosting": [] },
+    "OperationalIssues": {
+      "FrequentUnexpectedMessages": "False",
+      "ExcessivePixelFailure": "False"
+    },
+    "Id": 4
+  },
+  {
+    "Status": "Device Error",
+    "Message": "",
+    "IsBitmap": false,
+    "BitmapBase64Strings": null,
+    "PhaseTime": null,
+    "LastUpdated": "2026-09-04T22:05:18.916Z",
+    "StatusDetails": { "ShortStatus": [], "MessagePosting": [] },
+    "OperationalIssues": {
+      "FrequentUnexpectedMessages": "False",
+      "ExcessivePixelFailure": "False"
+    },
+    "Id": 5
+  },
+  {
+    "Status": "Ok",
+    "Message": "[pt30o0][fo3][jl2]ALEX FRASER BR[jl4]<5 MIN[nl][jl2]MASSEY TUNNEL[jl4]<5 MIN[np][pt30o0][fo3][jl2]STAL'EW'ASEM BR[jl4]<5 MIN[nl][jl2]PORT MANN BR[jl4]<5 MIN",
+    "IsBitmap": false,
+    "BitmapBase64Strings": null,
+    "PhaseTime": 3000,
+    "LastUpdated": "2026-09-04T22:05:18.931Z",
+    "StatusDetails": { "ShortStatus": [], "MessagePosting": [] },
+    "OperationalIssues": {
+      "FrequentUnexpectedMessages": "False",
+      "ExcessivePixelFailure": "False"
+    },
+    "Id": 6
+  },
+  {
+    "Status": "Ok",
+    "Message": "[pt30o0][fo3][jl2]PORT MANN BR[jl4]<5 MIN[nl][jl2]STAL'EW'ASEM BR[jl4]6 MIN[np][pt30o0][fo3][jl2]ALEX FRASER BR[jl4]6 MIN[nl][jl2]MASSEY TUNNEL[jl4]<5 MIN",
+    "IsBitmap": false,
+    "BitmapBase64Strings": null,
+    "PhaseTime": 3000,
+    "LastUpdated": "2026-09-04T22:05:18.900Z",
+    "StatusDetails": { "ShortStatus": [], "MessagePosting": [] },
+    "OperationalIssues": {
+      "FrequentUnexpectedMessages": "False",
+      "ExcessivePixelFailure": "False"
+    },
+    "Id": 7
+  },
+  {
+    "Status": "Ok",
+    "Message": "[pt30o0][fo3][jl2]ALEX FRASER BR[jl4]N/A[nl][jl2]MASSEY TUNNEL[jl4]<5 MIN[np][pt30o0][fo3][jl2]STAL'EW'ASEM BR[jl4]<5 MIN[nl][jl2]PORT MANN BR[jl4]<5 MIN",
+    "IsBitmap": false,
+    "BitmapBase64Strings": null,
+    "PhaseTime": 3000,
+    "LastUpdated": "2026-09-04T22:05:18.931Z",
+    "StatusDetails": { "ShortStatus": [], "MessagePosting": [] },
+    "OperationalIssues": {
+      "FrequentUnexpectedMessages": "False",
+      "ExcessivePixelFailure": "False"
+    },
+    "Id": 8
+  },
+  {
+    "Status": "Ok",
+    "Message": "[pt30o0][fo3][jl2]ALEX FRASER BR[jl4]<5 MIN[nl][jl2]MASSEY TUNNEL[jl4]<5 MIN[np][pt30o0][fo3][jl2]STAL'EW'ASEM BR[jl4]<5 MIN[nl][jl2]PORT MANN BR[jl4]<5 MIN",
+    "IsBitmap": false,
+    "BitmapBase64Strings": null,
+    "PhaseTime": 3000,
+    "LastUpdated": "2026-09-04T22:05:18.916Z",
+    "StatusDetails": { "ShortStatus": [], "MessagePosting": [] },
+    "OperationalIssues": {
+      "FrequentUnexpectedMessages": "False",
+      "ExcessivePixelFailure": "False"
+    },
+    "Id": 9
+  },
+  {
+    "Status": "Ok",
+    "Message": "[pt30o0][fo3][jl2]MASSEY TUNNEL[jl4]<5 MIN[nl][jl2]ALEX FRASER BR[jl4]N/A[np][pt30o0][fo3][jl2]STAL'EW'ASEM BR[jl4]<5 MIN[nl][jl2]PORT MANN BR[jl4]<5 MIN",
+    "IsBitmap": false,
+    "BitmapBase64Strings": null,
+    "PhaseTime": 3000,
+    "LastUpdated": "2026-09-04T22:05:18.978Z",
+    "StatusDetails": { "ShortStatus": [], "MessagePosting": [] },
+    "OperationalIssues": {
+      "FrequentUnexpectedMessages": "False",
+      "ExcessivePixelFailure": "False"
+    },
+    "Id": 10
+  },
+  {
+    "Status": "Ok",
+    "Message": "[pt30o0][fo3][jl2]ALEX FRASER BR[jl4]<5 MIN[nl][jl2]MASSEY TUNNEL[jl4]<5 MIN[np][pt30o0][fo3][jl2]STAL'EW'ASEM BR[jl4]<5 MIN[nl][jl2]PORT MANN BR[jl4]<5 MIN",
+    "IsBitmap": false,
+    "BitmapBase64Strings": null,
+    "PhaseTime": 3000,
+    "LastUpdated": "2026-09-04T22:05:19.025Z",
+    "StatusDetails": { "ShortStatus": [], "MessagePosting": [] },
+    "OperationalIssues": {
+      "FrequentUnexpectedMessages": "False",
+      "ExcessivePixelFailure": "False"
+    },
+    "Id": 11
+  }
+]
