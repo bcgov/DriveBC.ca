@@ -2,6 +2,7 @@ from apps.shared.tests import BaseTest
 from apps.dms.models import Dms
 from apps.dms.serializers import DmsSerializer
 from django.contrib.gis.geos import Point
+from unittest.mock import patch
 
 
 class TestDmsSerializer(BaseTest):
@@ -50,3 +51,12 @@ class TestDmsSerializer(BaseTest):
                 "DMS11"
         assert self.serializer_two.data['location']['coordinates'] == \
                [-123.94, 57.06]
+
+    def test_serializer_does_not_save_unchanged_data(self):
+        serializer = DmsSerializer(self.dms, data=self.serializer.data)
+        assert serializer.is_valid()
+
+        with patch.object(self.dms, 'save') as save_mock:
+            serializer.save()
+
+        save_mock.assert_not_called()

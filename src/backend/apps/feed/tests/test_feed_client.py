@@ -378,11 +378,22 @@ class TestFeedClientDMS(BaseTest):
 
     @patch('apps.feed.client.httpx.get')
     def test_get_dms_list(self, mock_get):
-        mock_response = create_mock_response(200, {'features': []})
-        mock_get.return_value = mock_response
+        mock_get.side_effect = [
+            create_mock_response(200, [{'Id': 1, 'Name': 'DMS 1'}]),
+            create_mock_response(200, [{'Id': 1, 'Status': 'Ok'}]),
+        ]
 
         result = self.client.get_dms_list()
-        assert result is not None
+        assert result == {
+            'signs': [{'Id': 1, 'Name': 'DMS 1'}],
+            'statuses': [{'Id': 1, 'Status': 'Ok'}],
+        }
+        assert mock_get.call_count == 2
+        assert mock_get.call_args_list[0].args[0].endswith('/Signs')
+        assert mock_get.call_args_list[1].args[0].endswith('/Signs/Statuses')
+        assert mock_get.call_args_list[1].kwargs['params'] == {
+            'api_key': settings.DRIVEBC_DMS_API_KEY,
+        }
 
     @patch('apps.feed.client.httpx.get')
     def test_get_dms_list_http_error(self, mock_get):
