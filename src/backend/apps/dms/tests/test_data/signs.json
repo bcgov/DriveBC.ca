@@ -1,0 +1,222 @@
+[
+  {
+    "Name": "INFO-KAM-1W-1",
+    "Description": "WB Hwy 1 West of Aberdeen",
+    "Location": {
+      "RoadwayName": "Highway 1 West (East section)",
+      "Direction": null,
+      "Longitude": -120.38593,
+      "Latitude": 50.65537,
+      "County": "County Of Yale",
+      "Chainage": null,
+      "UpstreamLocation": null,
+      "UpstreamLocationDistanceMeters": null,
+      "DownstreamLocation": null,
+      "DownstreamLocationDistanceMeters": null
+    },
+    "Type": "DMS",
+    "LastModifiedDate": "2026-08-26T18:28:06.852Z",
+    "Organization": "RTMC",
+    "Id": 1
+  },
+  {
+    "Name": "INFO-COQ-5S-1",
+    "Description": "SB Hwy 5 at Falls Lake",
+    "Location": {
+      "RoadwayName": "Highway 5 South",
+      "Direction": null,
+      "Longitude": -121.05067,
+      "Latitude": 49.61203,
+      "County": "County Of Westminster",
+      "Chainage": null,
+      "UpstreamLocation": null,
+      "UpstreamLocationDistanceMeters": null,
+      "DownstreamLocation": null,
+      "DownstreamLocationDistanceMeters": null
+    },
+    "Type": "DMS",
+    "LastModifiedDate": "2026-08-26T18:28:19.556Z",
+    "Organization": "RTMC",
+    "Id": 2
+  },
+  {
+    "Name": "INFO-COQ-5S-2",
+    "Description": "SB Hwy 5 at Mine Creek",
+    "Location": {
+      "RoadwayName": "Highway 5 South",
+      "Direction": null,
+      "Longitude": -121.01447,
+      "Latitude": 49.67966,
+      "County": "County Of Yale",
+      "Chainage": null,
+      "UpstreamLocation": null,
+      "UpstreamLocationDistanceMeters": null,
+      "DownstreamLocation": null,
+      "DownstreamLocationDistanceMeters": null
+    },
+    "Type": "DMS",
+    "LastModifiedDate": "2026-08-26T18:28:30.900Z",
+    "Organization": "RTMC",
+    "Id": 3
+  },
+  {
+    "Name": "INFO-LTFT-5S-1",
+    "Description": "SB Hwy 5 at Hwy 24",
+    "Location": {
+      "RoadwayName": "Highway 5 South Yellowhead",
+      "Direction": null,
+      "Longitude": -120.19373,
+      "Latitude": 51.43336,
+      "County": "County Of Yale",
+      "Chainage": null,
+      "UpstreamLocation": null,
+      "UpstreamLocationDistanceMeters": null,
+      "DownstreamLocation": null,
+      "DownstreamLocationDistanceMeters": null
+    },
+    "Type": "DMS",
+    "LastModifiedDate": "2026-08-26T18:28:40.994Z",
+    "Organization": "RTMC",
+    "Id": 4
+  },
+  {
+    "Name": "DMS01",
+    "Description": "EB Hwy 1 in Burnaby",
+    "Location": {
+      "RoadwayName": "Highway 1 East (West section)",
+      "Direction": null,
+      "Longitude": -122.99575,
+      "Latitude": 49.25772,
+      "County": "County Of Westminster",
+      "Chainage": null,
+      "UpstreamLocation": null,
+      "UpstreamLocationDistanceMeters": null,
+      "DownstreamLocation": null,
+      "DownstreamLocationDistanceMeters": null
+    },
+    "Type": "Travel Time",
+    "LastModifiedDate": "2026-08-26T18:28:51.556Z",
+    "Organization": "RTMC",
+    "Id": 5
+  },
+  {
+    "Name": "DMS05",
+    "Description": "EB Marine Way at 9th Ave",
+    "Location": {
+      "RoadwayName": "Marine Way East",
+      "Direction": null,
+      "Longitude": -122.96395,
+      "Latitude": 49.19598,
+      "County": "County Of Westminster",
+      "Chainage": null,
+      "UpstreamLocation": null,
+      "UpstreamLocationDistanceMeters": null,
+      "DownstreamLocation": null,
+      "DownstreamLocationDistanceMeters": null
+    },
+    "Type": "Travel Time",
+    "LastModifiedDate": "2026-08-26T18:59:53.483Z",
+    "Organization": "RTMC",
+    "Id": 6
+  },
+  {
+    "Name": "DMS02",
+    "Description": "EB Hwy 1 at North Rd",
+    "Location": {
+      "RoadwayName": "Highway 1 East (West section)",
+      "Direction": null,
+      "Longitude": -122.88997,
+      "Latitude": 49.24059,
+      "County": "County Of Westminster",
+      "Chainage": null,
+      "UpstreamLocation": null,
+      "UpstreamLocationDistanceMeters": null,
+      "DownstreamLocation": null,
+      "DownstreamLocationDistanceMeters": null
+    },
+    "Type": "Travel Time",
+    "LastModifiedDate": "2026-08-26T19:01:14.032Z",
+    "Organization": "RTMC",
+    "Id": 7
+  },
+  {
+    "Name": "DMS07",
+    "Description": "EB Hwy 17 at 92 St",
+    "Location": {
+      "RoadwayName": "Highway 17 East",
+      "Direction": null,
+      "Longitude": -122.97388,
+      "Latitude": 49.14744,
+      "County": "County Of Westminster",
+      "Chainage": null,
+      "UpstreamLocation": null,
+      "UpstreamLocationDistanceMeters": null,
+      "DownstreamLocation": null,
+      "DownstreamLocationDistanceMeters": null
+    },
+    "Type": "Travel Time",
+    "LastModifiedDate": "2026-08-26T19:01:26.422Z",
+    "Organization": "RTMC",
+    "Id": 8
+  },
+  {
+    "Name": "DMS08",
+    "Description": "EB Hwy 17 West of Elevator Rd",
+    "Location": {
+      "RoadwayName": "Highway 17 East",
+      "Direction": null,
+      "Longitude": -122.91652,
+      "Latitude": 49.17371,
+      "County": "County Of Westminster",
+      "Chainage": null,
+      "UpstreamLocation": null,
+      "UpstreamLocationDistanceMeters": null,
+      "DownstreamLocation": null,
+      "DownstreamLocationDistanceMeters": null
+    },
+    "Type": "Travel Time",
+    "LastModifiedDate": "2026-08-26T19:01:45.751Z",
+    "Organization": "RTMC",
+    "Id": 9
+  },
+  {
+    "Name": "DMS06",
+    "Description": "WB Hwy 17 North of Deltaport",
+    "Location": {
+      "RoadwayName": "Highway 17 West",
+      "Direction": null,
+      "Longitude": -123.036,
+      "Latitude": 49.06766,
+      "County": "County Of Westminster",
+      "Chainage": null,
+      "UpstreamLocation": null,
+      "UpstreamLocationDistanceMeters": null,
+      "DownstreamLocation": null,
+      "DownstreamLocationDistanceMeters": null
+    },
+    "Type": "Travel Time",
+    "LastModifiedDate": "2026-08-26T19:02:02.220Z",
+    "Organization": "RTMC",
+    "Id": 10
+  },
+  {
+    "Name": "DMS04",
+    "Description": "SB Knight St at Bridgeport Rd",
+    "Location": {
+      "RoadwayName": "Knight Street South",
+      "Direction": null,
+      "Longitude": -123.07745,
+      "Latitude": 49.19075,
+      "County": "County Of Vancouver",
+      "Chainage": null,
+      "UpstreamLocation": null,
+      "UpstreamLocationDistanceMeters": null,
+      "DownstreamLocation": null,
+      "DownstreamLocationDistanceMeters": null
+    },
+    "Type": "Travel Time",
+    "LastModifiedDate": "2026-08-26T19:02:36.986Z",
+    "Organization": "RTMC",
+    "Id": 11
+  }
+]

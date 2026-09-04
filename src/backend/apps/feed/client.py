@@ -24,7 +24,6 @@ from apps.feed.constants import (  # WEBCAM,
 from apps.feed.serializers import (
     CarsClosureSerializer,
     CurrentWeatherSerializer,
-    DmsAPISerializer,
     EventAPISerializer,
     EventFeedSerializer,
     FerryAPISerializer,
@@ -643,24 +642,21 @@ class FeedClient:
 
     def get_dms_list(self):
         try:
-            result = self.get_list_feed(
+            signs = self._process_get_request(
+                self._get_dms_endpoint("Signs"),
+                {},
                 DMS,
-                'geoV05/ows',
-                DmsAPISerializer,
-                {
-                    "service": "WFS",
-                    "version": "1.0.0",
-                    "request": "GetFeature",
-                    "typeName": "dbc:DYNAMIC_MESSAGE_SIGNS",
-                    "maxFeatures": 500,
-                    "outputFormat": "application/json",
-                }
+            )
+            statuses = self._process_get_request(
+                self._get_dms_endpoint("Signs/Statuses"),
+                {"api_key": settings.DRIVEBC_DMS_API_KEY},
+                DMS,
             )
 
-            return result
+            return {"signs": signs, "statuses": statuses}
         except httpx.HTTPStatusError as e:
             logging.exception(
-                "DMS WFS request failed",
+                "DMS API request failed",
                 extra={
                     "url": str(e.request.url),
                     "method": e.request.method,
@@ -670,6 +666,9 @@ class FeedClient:
                 },
             )
             raise
+
+    def _get_dms_endpoint(self, path):
+        return f"{settings.DRIVEBC_DMS_API_BASE_URL.rstrip('/')}/{path.lstrip('/')}"
 
     def get_local_weather_icon_code(self, text, period):
         """
