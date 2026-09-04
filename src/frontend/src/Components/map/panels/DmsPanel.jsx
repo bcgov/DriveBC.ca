@@ -94,7 +94,7 @@ const displays = [
       </div>
       <div className="popup__content">
         <div className="popup__content__title">
-          <p className="name">{dmsData.name}</p>
+          <p className="name">{dmsData.description}</p>
           <FriendlyTime date={dmsData.updated_datetime_utc} asDate />          
         </div>
 
