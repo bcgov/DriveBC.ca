@@ -101,7 +101,8 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
             fill: new Fill({ color: textColor }),
             textAlign: 'center',
             textBaseline: 'middle',
-            offsetX: 4,
+            // Keep multi-digit counts clear of the camera icon (DBC22-7186)
+            offsetX: 8,
             offsetY: 1,
           }),
         });

@@ -59,9 +59,8 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filtered
         updateReferenceFeature,
         setLoadingLayers,
         // Pass the clustering distance (in screen pixels) to `getCamerasLayer`.
-        // A value of 50 provides a balanced level of clustering for grouping nearby camera icons.
-        50 
-      );
+        // ~icon diameter so cameras group only when markers would touch/overlap (DBC22-7185).
+        35);
 
       mapRef.current.addLayer(mapLayers.current[key]);
       mapLayers.current[key].setZIndex(zIndex);
