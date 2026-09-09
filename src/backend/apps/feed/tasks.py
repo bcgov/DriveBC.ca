@@ -27,6 +27,7 @@ from apps.webcam.tasks import (
 )
 from apps.wildfire.tasks import populate_all_wildfire_data
 from django.core.cache import cache
+from django.utils import timezone
 from django.core.management import call_command
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, lock_task, on_startup, post_execute
@@ -160,13 +161,13 @@ def populate_dms_task():
 
 
 @on_startup()
-def startup_timestamp(task, task_value, exc):
-    cache.set("last_task_execution", datetime.datetime.now())
+def startup_timestamp():
+    cache.set("last_task_execution", timezone.now(), timeout=None)
 
 
 @post_execute()
 def post_execute_timestamp(task, task_value, exc):
-    cache.set("last_task_execution", datetime.datetime.now())
+    cache.set("last_task_execution", timezone.now(), timeout=None)
 
 
 @db_periodic_task(crontab(minute="*/1"))
