@@ -5,8 +5,7 @@ import logo from './images/dbc-logo.svg';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
   faXTwitter,
-  faInstagram,
-  faLinkedin,
+  faFacebookSquare,
 } from '@fortawesome/free-brands-svg-icons';
 
 
@@ -44,14 +43,11 @@ export default function Footer(props) {
         </div>
         <div className='bottom'>
           <div className="connect">
-            <a href="https://twitter.com/DriveBC" className="footer-link social-icon" rel="noreferrer"  alt="Twitter" aria-label="X Twitter">
+            <a href="https://twitter.com/DriveBC" className="footer-link social-icon" rel="noreferrer" alt="Twitter" aria-label="X Twitter">
               <FontAwesomeIcon icon={faXTwitter} />
             </a>
-            <a href="https://www.instagram.com/ministryoftranbc/" className="footer-link social-icon" rel="noreferrer"  alt="Instagram" aria-label="Instagram">
-              <FontAwesomeIcon icon={faInstagram}/>
-            </a>
-            <a href="https://www.linkedin.com/company/british-columbia-ministry-of-transportation-and-transit/" className="footer-link social-icon" rel="noreferrer" alt="Linkedin" aria-label="Linkedin">
-              <FontAwesomeIcon icon={faLinkedin}/>
+            <a href="https://www.facebook.com/www.DriveBC.ca" className="footer-link social-icon" rel="noreferrer" alt="Facebook" aria-label="Facebook">
+              <FontAwesomeIcon icon={faFacebookSquare}/>
             </a>
           </div>
           <div className="copyright">© {currentYear} Government of British Columbia</div>
