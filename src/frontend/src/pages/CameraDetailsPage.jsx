@@ -327,6 +327,7 @@ export default function CameraDetailsPage() {
         type: "camera",
         camIndex: [...cameraGroupRefs.current].indexOf(id),
         id,
+        zoom: 13.5,
       })}`
     });
   };

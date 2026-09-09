@@ -591,7 +591,7 @@ export const pointerClickHandler = (
           feature.set('clicked', false);
           feature.setCameraStyle('static');
         });
-        
+
         mapView.current.animate({
           center: clickedFeature.getGeometry().getCoordinates(),
           zoom: mapView.current.getZoom() + 1,
@@ -603,13 +603,6 @@ export const pointerClickHandler = (
 
       clickedFeature = clusterFeatures[0];
     }
-
-    // Check whether a group icon was clicked. Grouped icons do not have a `type` property,
-    // so retrieve the first camera from the grouped cameras list and use it as the clicked feature.
-    if (!clickedFeature.get('type')) {
-      clickedFeature = features[0].get('features')[0];
-    }
-
 
     switch (clickedFeature?.getProperties()['type']) {
       case 'camera':
