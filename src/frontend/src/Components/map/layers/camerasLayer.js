@@ -76,11 +76,11 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
         return cam.get('unread') ? unreadCameraStyles.static : cameraStyles.static;
       }
 
-      const cam = features[0];
+      // Highlight group if any member is clicked/hovered
       let state = 'static';
-      if (cam.get('clicked')) {
+      if (features.some((cam) => cam.get('clicked'))) {
         state = 'active';
-      } else if (cam.get('hovered')) {
+      } else if (features.some((cam) => cam.get('hovered'))) {
         state = 'hover';
       }
 
