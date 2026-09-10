@@ -51,7 +51,7 @@ class WebcamSerializer(serializers.ModelSerializer):
 
         timestamp = int(time.time())
         links = {
-                "imageDisplay": f"{local_root}images/{webcam_id}.jpg?t={timestamp}",
+                "imageDisplay": f"{local_root}images/webcams/{webcam_id}.jpg?t={timestamp}",
                 "replayTheDay": f"{local_root}api/webcams/{webcam_id}/replayTheDay/",                
             }
 
