@@ -1,20 +1,5 @@
 // React
-import React, { useContext, useState } from 'react';
-
-// External imports
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/pro-solid-svg-icons';
-import { faHexagonExclamation } from '@fortawesome/pro-regular-svg-icons';
-import parse from 'html-react-parser';
-
-// local imports
-import { EmergencyAlertContext } from "../../App";
-import PollingComponent from "./PollingComponent";
-import { get } from "../data/helper";
-import { API_HOST } from '../../env';
-
-// Styling
-
+import React from 'react';
 
 export default function EmptyEventDisplay(props) {
   const { chainUpsOnly } = props;
