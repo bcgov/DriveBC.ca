@@ -124,12 +124,12 @@ export function updateCamerasLayer(cameras, layer, setLoadingLayers) {
     return dict;
   }, {});
 
-  for (const feature of layer.getSource().getFeatures()) {
-    let camera = camerasLookup[feature.getId()];
-    if (!camera) {
-      camera = camerasLookup[feature.values_.features[0].getId()];
-    }
+  // Get correct ungrouped source for list of cam features
+  const clusterSource = layer.getClusterSource ? layer.getClusterSource() : layer.getSource();
+  const vectorSource = clusterSource.getSource ? clusterSource.getSource() : clusterSource;
 
+  for (const feature of vectorSource.getFeatures()) {
+    const camera = camerasLookup[feature.getId()];
 
     if (!camera) {  // camera no longer in list from API
       feature.setStyle(new Style(null));
@@ -143,8 +143,8 @@ export function updateCamerasLayer(cameras, layer, setLoadingLayers) {
     feature.setProperties(camera); // update feature with latest API data.
 
     if (feature.get('clicked')) { continue; }
-    if (feature.get('features')[0].get('type') == 'camera') {
-      feature.get('features')[0].setCameraStyle('static');
+    if (feature.get('type') == 'camera') {
+      feature.setCameraStyle('static');
     }
   }
 
