@@ -36,6 +36,7 @@ import { NetworkError, ServerError } from '../Components/data/helper';
 import NetworkErrorPopup from '../Components//map/errors/NetworkError';
 import ServerErrorPopup from '../Components//map/errors/ServerError';
 import Advisories from '../Components/advisories/Advisories';
+import EmptyEventDisplay from "../Components/shared/EmptyEventDisplay.jsx";
 import EventCard from '../Components/events/EventCard';
 import EventListSearch, { filterEventsBySearch } from '../Components/events/EventListSearch';
 import EventsTable from '../Components/events/EventsTable';
@@ -731,6 +732,15 @@ export default function EventsListPage(props) {
   }, []);
 
   // Rendering - Main component
+  // Boolean for only chain-ups layer selected, used in special empty display
+  const chainUpsLayerOnly = (
+    eventCategoryFilter.chainUps &&
+    !eventCategoryFilter.closures &&
+    !eventCategoryFilter.majorEvents &&
+    !eventCategoryFilter.minorEvents &&
+    !eventCategoryFilter.futureEvents
+  )
+
   return (
     <React.Fragment>
       <div className="events-page">
@@ -854,22 +864,7 @@ export default function EventsListPage(props) {
               }
 
               {(!showLoader && !processedEvents.length) &&
-                <div className="empty-event-display">
-                  <h2>{`No ${chainUpsOnly ? 'chain-ups' : 'delays'} to display`}</h2>
-
-                  <strong>Do you have a starting location and a destination entered?</strong>
-                  <p>Adding a route will narrow down the information for the whole site, including the delays list. There might not be any delays between those two locations.</p>
-
-                  <strong>Have you entered search terms or applied filters (e.g. an area) to narrow down the list?</strong>
-                  <p>These also narrow down the {chainUpsOnly ? 'chain-ups' : 'delays'} on this page.</p>
-                  <ul>
-                    <li>Try checking your spelling, changing, or removing your search terms.</li>
-                    <li>Remove or adjust the area filter to reveal more {chainUpsOnly ? 'chain-ups' : 'delays'} if they are in effect.</li>
-                  </ul>
-
-                  <strong>Have you hidden any of the layers using the list filter?</strong>
-                  <p>Try toggling the filters on and off so that more information can be displayed.</p>
-                </div>
+                <EmptyEventDisplay chainUpsOnly={chainUpsOnly || chainUpsLayerOnly} />
               }
             </div>
 
