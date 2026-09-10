@@ -108,6 +108,7 @@ jobs:
             app=drivebc
           build-args: |
             DEBUG_BUILD=false
+            SOURCEMAP=false
           secrets: |
             "FONTAWESOME_PACKAGE_TOKEN=${{ secrets.FONTAWESOME_PACKAGE_TOKEN }}"
 
@@ -144,7 +145,7 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
-# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
+# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source.
     - name: Push to OpenShift ImageStream
       uses: redhat-actions/push-to-registry@v3
       with:
@@ -185,7 +186,7 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
-# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
+# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source.
     - name: Push to OpenShift ImageStream
       uses: redhat-actions/push-to-registry@v3
       with:
@@ -227,7 +228,7 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
 
-# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source. 
+# Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source.
     - name: Push to OpenShift ImageStream
       uses: redhat-actions/push-to-registry@v3
       with:
@@ -263,7 +264,7 @@ jobs:
 
   # I have this run after the push to Gold because I want to make sure that Gold runs the migrations first. Gold DR can't run migrations as DB is read-only
   update-openshift-golddr:
-    needs: [tag, update-openshift-gold] 
+    needs: [tag, update-openshift-gold]
     runs-on:
         group: Larger Runners - OpenShift Static-IP
     name: Deploy Latest Images to OpenShift GoldDR

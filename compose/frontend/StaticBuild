@@ -9,6 +9,7 @@ WORKDIR /app
 COPY ./src/frontend/ /app/
 
 ARG DEBUG_BUILD=false
+ARG SOURCEMAP=false
 
 RUN --mount=type=secret,id=FONTAWESOME_PACKAGE_TOKEN \
     test -s /run/secrets/FONTAWESOME_PACKAGE_TOKEN || { echo "FONTAWESOME_PACKAGE_TOKEN secret missing"; exit 1; }; \
@@ -17,6 +18,7 @@ RUN --mount=type=secret,id=FONTAWESOME_PACKAGE_TOKEN \
 
 COPY ./src/frontend/ /app/
 ENV NODE_ENV=production
+ENV SOURCEMAP=$SOURCEMAP
 RUN npm run openshift_build
 
 # Gzip and Brotli compress

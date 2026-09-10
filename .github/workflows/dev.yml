@@ -16,7 +16,7 @@ permissions:
   packages: write
   id-token: write
   attestations: write
-  artifact-metadata: write # 
+  artifact-metadata: write #
 
 jobs:
   setup:
@@ -28,8 +28,8 @@ jobs:
       image_registry: ghcr.io
       openshift_gold_url: https://dev-drivebc.apps.gold.devops.gov.bc.ca
       openshift_golddr_url: https://dev-drivebc.apps.golddr.devops.gov.bc.ca
-      custom_tag: '' 
-      tag_for_helm: sha-${{ github.sha }} 
+      custom_tag: ''
+      tag_for_helm: sha-${{ github.sha }}
     steps:
       - name: Set outputs
         run: echo "This step is required to set job outputs."
@@ -54,6 +54,7 @@ jobs:
             dockerfile: ./compose/frontend/StaticBuild
             build_args: |
               DEBUG_BUILD=true
+              SOURCEMAP=true
             needs_fontawesome: true
           - name: Redis
             image_name: bcgov/drivebc-redis
@@ -69,7 +70,7 @@ jobs:
             needs_fontawesome: false
 
 
-### EVERYTHING PAST THIS POINT SHOULD BE THE SAME IN DEV, TEST AND UAT WORKFLOWS ###            
+### EVERYTHING PAST THIS POINT SHOULD BE THE SAME IN DEV, TEST AND UAT WORKFLOWS ###
 
     steps:
       - name: Checkout repository
@@ -81,7 +82,7 @@ jobs:
           registry: ${{ needs.setup.outputs.image_registry }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-  
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v6
@@ -92,11 +93,11 @@ jobs:
             type=raw,value=latest-${{ needs.setup.outputs.environment_name }}
             type=sha,format=long
             ${{ needs.setup.outputs.custom_tag }}
-            
-  
+
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
-  
+
       - name: Build and push Docker image
         id: push
         uses: docker/build-push-action@v7
@@ -153,7 +154,7 @@ jobs:
 
   # GoldDR Runs after Gold Deployment due to GoldDR DB being read-only replica of Gold
   update-openshift-golddr:
-    needs: [setup, update-openshift-gold] 
+    needs: [setup, update-openshift-gold]
     runs-on:
         group: Larger Runners - OpenShift Static-IP
     name: Deploy to GoldDR. Tag ${{ needs.setup.outputs.tag_for_helm }}
