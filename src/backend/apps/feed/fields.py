@@ -1,8 +1,8 @@
+from apps.dms.models import parse_api_utc
 from apps.shared.helpers import parse_and_localize_time_str
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
-from apps.dms.models import parse_api_utc
 
 
 # Shared
@@ -188,6 +188,7 @@ class FerryGeographyField(DriveBCField, GeometryField):
 class RegionalWeatherPropertiesField(serializers.Field):
     pass
 
+
 # DMS
 class DmsPropertiesField(serializers.Field):
     def to_internal_value(self, data):
@@ -199,11 +200,8 @@ class DmsPropertiesField(serializers.Field):
             "description": data['Description'] or '',
             "roadway_name": data['RoadwayName'] or '',
             "roadway_direction": data['RoadwayDirection'] or '',
-            "static_text": data['StaticText'] or '',
             "message_text": data['MessageText'] or '',
             "status": data['Status'] or '',
-            "updated_datetime_utc": parse_api_utc(data['UpdatedDateTimeUtc']),
-            "message_expiry_datetime_utc": parse_api_utc(data['MessageExpiryDateTimeUtc']),
             "cache_datetime_utc": parse_api_utc(data['CacheDateTimeUtc']),
         }
 
