@@ -42,4 +42,3 @@ class TestDmsPopulate(BaseTest):
         assert Dms.objects.get(id='1').message_text.startswith('[pt25o0]')
         assert Dms.objects.get(id='2').roadway_name == 'Highway 5 South'
         assert Dms.objects.get(id='5').status == 'Device Error'
-        assert Dms.objects.get(id='5').is_on is True

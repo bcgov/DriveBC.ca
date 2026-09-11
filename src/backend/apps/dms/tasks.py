@@ -1,11 +1,10 @@
 import logging
-from datetime import datetime
 
-from django.contrib.gis.geos import Point
 from apps.dms.models import Dms
 from apps.dms.serializers import DmsSerializer
 from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
+from django.contrib.gis.geos import Point
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -18,13 +17,6 @@ DIRECTION_NAMES = {
     'EB': 'Eastbound',
     'WB': 'Westbound',
 }
-
-
-def _parse_datetime(value):
-    if not value:
-        return None
-
-    return datetime.fromisoformat(value.replace('Z', '+00:00'))
 
 
 def _normalize_dms(sign, status):
@@ -45,17 +37,13 @@ def _normalize_dms(sign, status):
         'id': str(sign['Id']),
         'name': sign.get('Name') or '',
         'category': sign.get('Type') or '',
-        'description': description, 
+        'description': description,
         'roadway_name': location.get('RoadwayName') or '',
         'roadway_direction': direction,
-        'static_text': '',
         'message_text': status.get('Message') or '',
         'status': status.get('Status') or '',
         'location': point,
-        'updated_datetime_utc': _parse_datetime(status.get('LastUpdated')),
-        'message_expiry_datetime_utc': None, # We can prob get rid of this field as new API doesn't have it
-        'cache_datetime_utc': None, # We can prob get rid of this field as new API doesn't have it. Name override can prob go to
-        'is_on': True,
+        'cache_datetime_utc': None,
     }
 
 
