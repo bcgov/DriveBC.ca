@@ -1,10 +1,7 @@
-from datetime import datetime
-
 from apps.dms.models import Dms
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
 from django.urls import reverse
-from pytz import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -14,12 +11,6 @@ class TestDmsAPIEndpoints(APITestCase):
     Comprehensive test suite for DMS API endpoints.
     Uses sign/status payload data shaped like the live DMS feed.
     """
-
-    @staticmethod
-    def _parse_utc(value):
-        if not value:
-            return None
-        return datetime.fromisoformat(value.replace('Z', '+00:00'))
 
     def setUp(self):
         """Set up test data using sign/status payloads similar to the live API."""
@@ -39,7 +30,8 @@ class TestDmsAPIEndpoints(APITestCase):
         status_1 = {
             'Id': 1,
             'Status': 'Ok',
-            'Message': '[pt25o0][jl3][fo1]HIGHWAY 1 OPEN[nl][jl3][fo1]AT BOSTON BAR[np][pt25o0][jl3][fo1]EXPECT DELAYS[nl][jl3][fo1]CHECK DRIVEBC.CA',
+            'Message': '[pt25o0][jl3][fo1]HIGHWAY 1 OPEN[nl][jl3][fo1]AT BOSTON BAR'
+                       '[np][pt25o0][jl3][fo1]EXPECT DELAYS[nl][jl3][fo1]CHECK DRIVEBC.CA',
             'LastUpdated': '2026-09-04T22:06:30.005Z',
         }
 
@@ -84,55 +76,40 @@ class TestDmsAPIEndpoints(APITestCase):
         self.dms1 = Dms.objects.create(
             id=str(sign_1['Id']),
             name=sign_1['Name'],
-            name_override='',
             category=sign_1['Type'],
             description=sign_1['Description'],
             roadway_name=sign_1['Location']['RoadwayName'],
             roadway_direction=direction_map.get(sign_1['Description'][:2].upper(), ''),
-            static_text='',
             message_text=status_1['Message'],
             status=status_1['Status'],
             location=Point(sign_1['Location']['Longitude'], sign_1['Location']['Latitude']),
-            updated_datetime_utc=self._parse_utc(status_1['LastUpdated']),
-            message_expiry_datetime_utc=None,
             cache_datetime_utc=None,
-            is_on=True,
         )
 
         self.dms2 = Dms.objects.create(
             id=str(sign_2['Id']),
             name=sign_2['Name'],
-            name_override='',
             category=sign_2['Type'],
             description=sign_2['Description'],
             roadway_name=sign_2['Location']['RoadwayName'],
             roadway_direction=direction_map.get(sign_2['Description'][:2].upper(), ''),
-            static_text='',
             message_text=status_2['Message'],
             status=status_2['Status'],
             location=Point(sign_2['Location']['Longitude'], sign_2['Location']['Latitude']),
-            updated_datetime_utc=self._parse_utc(status_2['LastUpdated']),
-            message_expiry_datetime_utc=None,
             cache_datetime_utc=None,
-            is_on=True,
         )
 
         self.dms3 = Dms.objects.create(
             id=str(sign_5['Id']),
             name=sign_5['Name'],
-            name_override='',
             category=sign_5['Type'],
             description=sign_5['Description'],
             roadway_name=sign_5['Location']['RoadwayName'],
             roadway_direction=direction_map.get(sign_5['Description'][:2].upper(), ''),
-            static_text='',
             message_text=status_5['Message'],
             status=status_5['Status'],
             location=Point(sign_5['Location']['Longitude'], sign_5['Location']['Latitude']),
-            updated_datetime_utc=self._parse_utc(status_5['LastUpdated']),
-            message_expiry_datetime_utc=None,
             cache_datetime_utc=None,
-            is_on=True,
         )
 
     def tearDown(self):
