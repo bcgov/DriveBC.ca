@@ -15,7 +15,7 @@ from apps.shared.status import get_image_list
 import boto3
 from botocore.config import Config
 from django.utils.dateparse import parse_date
-import zipstream
+from zipstream import ZipStream, ZIP_DEFLATED
 from django.utils import timezone
 from django.urls import reverse
 from drf_spectacular.utils import extend_schema, extend_schema_view
@@ -302,18 +302,18 @@ class CameraViewSet(WebcamAPI, viewsets.ReadOnlyModelViewSet):
                 yield chunk
 
         # --- STREAMING ZIP ---
-        z = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
+        zs = ZipStream(compress_type=ZIP_DEFLATED)
 
         for img in filtered_images:
             key = f"webcams/timelapse/{pk}/{img}.jpg"  # S3 key
             filename_in_zip = f"{img.split('/')[-1]}.jpg"
             try:
-                z.write_iter(filename_in_zip, s3_file_iterator(key))
+                zs.add(s3_file_iterator(key), filename_in_zip)
             except Exception as e:
                 print(f"Error adding {img}: {e}")
                 continue
 
-        response = StreamingHttpResponse(z, content_type='application/zip')
+        response = StreamingHttpResponse(zs, content_type='application/zip')
         response['Content-Disposition'] = 'attachment; filename="images.zip"'
         return response
 
