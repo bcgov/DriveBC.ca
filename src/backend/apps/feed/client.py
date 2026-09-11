@@ -24,7 +24,6 @@ from apps.feed.constants import (  # WEBCAM,
 from apps.feed.serializers import (
     CarsClosureSerializer,
     CurrentWeatherSerializer,
-    DmsAPISerializer,
     EventAPISerializer,
     EventFeedSerializer,
     FerryAPISerializer,
@@ -124,9 +123,6 @@ class FeedClient:
             },
             WILDFIRE_AREAS: {
                 "base_url": settings.DRIVEBC_OPENMAPS_API_URL,
-            },
-            DMS: {
-                "base_url": settings.DRIVEBC_DMS_API_BASE_URL,
             },
         }
 
@@ -641,35 +637,40 @@ class FeedClient:
             [("stageOfControlList", stage.name) for stage in WILDFIRE_FETCH_STAGES]
         )
 
-    def get_dms_list(self):
-        try:
-            result = self.get_list_feed(
-                DMS,
-                'geoV05/ows',
-                DmsAPISerializer,
-                {
-                    "service": "WFS",
-                    "version": "1.0.0",
-                    "request": "GetFeature",
-                    "typeName": "dbc:DYNAMIC_MESSAGE_SIGNS",
-                    "maxFeatures": 500,
-                    "outputFormat": "application/json",
-                }
-            )
+    def _get_dms_endpoint(self, base_url, path):
+        return f"{base_url.rstrip('/')}/{path.lstrip('/')}"
 
-            return result
-        except httpx.HTTPStatusError as e:
-            logging.exception(
-                "DMS WFS request failed",
-                extra={
-                    "url": str(e.request.url),
-                    "method": e.request.method,
-                    "status_code": e.response.status_code,
-                    "response_headers": dict(e.response.headers),
-                    "response_text": e.response.text[:2000],
-                },
-            )
-            raise
+    def _request_with_failover(self, path):
+        base_urls = [
+            settings.DRIVEBC_DMS_API_BASE_URL1,
+            settings.DRIVEBC_DMS_API_BASE_URL2,
+        ]
+        params = {"api_key": settings.DRIVEBC_DMS_API_KEY}
+
+        for i, base_url in enumerate(base_urls):
+            try:
+                endpoint = self._get_dms_endpoint(base_url, path)
+                return self._process_get_request(endpoint, params, DMS)
+            except (httpx.HTTPStatusError, httpx.RequestError) as e:
+                is_last = i == len(base_urls) - 1
+                logging.warning(
+                    f"DMS API request failed on {'primary' if i == 0 else 'failover'} URL ({base_url})",
+                    extra={
+                        "url": str(getattr(e, "request", None) and e.request.url),
+                        "status_code": getattr(getattr(e, "response", None), "status_code", None),
+                    },
+                    exc_info=is_last,  # Logs full stack trace only on final failure
+                )
+                if is_last:
+                    raise
+
+        raise RuntimeError("DMS API failover request did not return a response")
+
+    def get_dms_list(self):
+        signs = self._request_with_failover("Signs")
+        statuses = self._request_with_failover("Signs/Statuses")
+
+        return {"signs": signs, "statuses": statuses}
 
     def get_local_weather_icon_code(self, text, period):
         """
