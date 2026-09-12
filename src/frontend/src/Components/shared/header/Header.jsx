@@ -144,44 +144,47 @@ export default function Header({ isMaintenance }) {
     return bulletinsData.length - readBulletins.length;
   }
 
-
-
   /* Data loading */
   const loadAdvisories = async () => {
     // Flip ref once the key exists (set by AdvisoriesListPage on first visit)
     if (isFirstAdvisoriesVisit.current && sessionStorage.getItem('lastAdvisoriesVisit')) {
       isFirstAdvisoriesVisit.current = false;
     }
+
     const path = window.location.pathname;
+
     let advisoriesData;
     if (path.includes("preview")) {
       advisoriesData = await getAdvisoriesPreview();
+
     } else {
       advisoriesData = await getAdvisories();
     }
 
-  const filteredAdvisoriesData = selectedRoute
-    ? filterAdvisoryByRoute(advisoriesData, selectedRoute)
-    : advisoriesData;
+    const filteredAdvisoriesData = selectedRoute
+      ? filterAdvisoryByRoute(advisoriesData, selectedRoute)
+      : advisoriesData;
 
-  dispatch(updateAdvisories({
-    list: advisoriesData,
-    filteredList: filteredAdvisoriesData,
-    timeStamp: new Date().getTime()
-  }));
+    dispatch(updateAdvisories({
+      list: advisoriesData,
+      filteredList: filteredAdvisoriesData,
+      timeStamp: new Date().getTime()
+    }));
 
-  // Use advisoriesData directly, not filteredAdvisoriesData
-  setAdvisoriesCount(getUnreadAdvisoriesCount(advisoriesData));
-}
+    // Use advisoriesData directly, not filteredAdvisoriesData
+    setAdvisoriesCount(getUnreadAdvisoriesCount(advisoriesData));
+  }
 
   const loadBulletins = async () => {
     if (isFirstBulletinsVisit.current && sessionStorage.getItem('lastBulletinsVisit')) {
       isFirstBulletinsVisit.current = false;
     }
     const path = window.location.pathname;
+
     let bulletinsData;
     if (path.includes("preview")) {
       bulletinsData = await getBulletinsPreview();
+
     } else {
       bulletinsData = await getBulletins();
     }
@@ -191,9 +194,7 @@ export default function Header({ isMaintenance }) {
       timeStamp: new Date().getTime()
     }));
 
-    // setBulletinsCount(getUnreadBulletinsCount(bulletinsData));
     setBulletinsCount(getUnreadBulletinsCount(bulletinsData));
-
   }
 
   // Always point loadRef to the latest versions of load functions
@@ -347,17 +348,6 @@ export default function Header({ isMaintenance }) {
       </Nav.Link>
     );
   };
-
-  const getLegacyLink = () => {
-    return (LEGACY_URL && LEGACY_URL !== 'undefined') ? LEGACY_URL : 'https://drivebc.ca';
-  }
-
-  const legacyDBCHandler = () => {
-    window.open(
-      getLegacyLink(),
-      "_self"
-    );
-  }
 
   // Main component
   return (

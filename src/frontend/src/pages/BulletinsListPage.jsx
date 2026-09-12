@@ -10,6 +10,7 @@ import { updateBulletins } from '../slices/cmsSlice';
 import Container from 'react-bootstrap/Container';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/pro-regular-svg-icons';
+import { useLocation } from "react-router-dom";
 
 // Internal imports
 import { CMSContext } from '../App';
@@ -22,7 +23,6 @@ import EmptyBulletin from '../Components/bulletins/EmptyBulletin';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import PollingComponent from "../Components/shared/PollingComponent";
-import { useLocation } from "react-router-dom";
 
 // Styling
 import './BulletinsListPage.scss';
@@ -49,7 +49,6 @@ export default function BulletinsListPage() {
   const dismissedHighlightsRef = useRef(
     new Set(JSON.parse(sessionStorage.getItem('dismissedBulletinHighlights') || '[]'))
   );
-  
 
   // States
   const [showLoader, setShowLoader] = useState(true);
@@ -58,7 +57,7 @@ export default function BulletinsListPage() {
   const [showNetworkError, setShowNetworkError] = useState(false);
   const [showServerError, setShowServerError] = useState(false);
   const cmsContextRef = useRef(cmsContext);
-  const bulletinsRef = useRef(bulletins);
+  const bulletinsRef = useRef();
 
   const location = useLocation();
   const isFirstMount = useRef(true);
@@ -72,7 +71,6 @@ export default function BulletinsListPage() {
     }
   }
 
-
   const dismissHighlight = (bulletinId) => {
     dismissedHighlightsRef.current.add(String(bulletinId));
     sessionStorage.setItem(
@@ -83,6 +81,7 @@ export default function BulletinsListPage() {
     const bulletin = bulletinsRef.current?.find(
       b => String(b.id) === String(bulletinId)
     );
+
     if (bulletin) {
       markBulletinsAsRead([bulletin], cmsContextRef.current, setCMSContext);
     }
@@ -94,11 +93,9 @@ export default function BulletinsListPage() {
         highlight: false,
       }
     };
+
     setTrackedBulletins({ ...trackedBulletinsRef.current });
   };
-
-
-
 
   // Data loading
   const loadBulletins = async () => {
@@ -116,13 +113,13 @@ export default function BulletinsListPage() {
       bulletin.last_notified_at &&
       bulletin.last_notified_at !== tracked.last_notified_at;
 
-    if (notificationChanged) {
-      dismissedHighlightsRef.current.delete(String(bulletin.id));
-      sessionStorage.setItem(
-        'dismissedBulletinHighlights',  // note: use the bulletin-specific key
-        JSON.stringify([...dismissedHighlightsRef.current])
-      );
-    }
+      if (notificationChanged) {
+        dismissedHighlightsRef.current.delete(String(bulletin.id));
+        sessionStorage.setItem(
+          'dismissedBulletinHighlights',  // note: use the bulletin-specific key
+          JSON.stringify([...dismissedHighlightsRef.current])
+        );
+      }
 
       const isUnread = !isFirstVisitRef.current &&
         bulletin.last_notified_at &&
@@ -137,9 +134,9 @@ export default function BulletinsListPage() {
         live_revision: bulletin.live_revision,
         last_notified_at: bulletin.last_notified_at,
       };
+
       return acc;
     }, {});
-
 
     trackedBulletinsRef.current = {
       ...trackedBulletinsRef.current,
@@ -158,25 +155,18 @@ export default function BulletinsListPage() {
 
   useEffect(() => {
     cmsContextRef.current = cmsContext;
-  
+
     if (isFirstMount.current) {
       isFirstMount.current = false;
       loadBulletins();
       return;
     }
+
     trackedBulletinsRef.current = {};
     viewedHighlightedBulletins.current = new Set();
     setTrackedBulletins({});
     loadBulletins();
   }, [location.key]);
-
-  useEffect(() => {
-    return () => {
-      if (bulletinsRef.current && bulletinsRef.current.length) {
-        markBulletinsAsRead(bulletinsRef.current, cmsContextRef.current, setCMSContext);
-      }
-    };
-  }, []);
 
   // Intersection observer
   useEffect(() => {
@@ -218,9 +208,10 @@ export default function BulletinsListPage() {
     return () => observer.disconnect();
   }, [bulletins, trackedBulletins]);
 
-useEffect(() => {
-  bulletinsRef.current = bulletins;
-}, [bulletins]);
+  useEffect(() => {
+    bulletinsRef.current = bulletins;
+    markBulletinsAsRead(bulletins, cmsContextRef.current, setCMSContext);
+  }, [bulletins]);
 
   useEffect(() => {
     sessionStorage.setItem(
@@ -272,6 +263,7 @@ useEffect(() => {
       <Container>
         {isBulletinsEmpty ?
           <EmptyBulletin /> :
+
           <BulletinsList
             bulletins={bulletins}
             showLoader={showLoader}
