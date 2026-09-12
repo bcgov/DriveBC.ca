@@ -594,7 +594,7 @@ export const pointerClickHandler = (
 
         mapView.current.animate({
           center: clickedFeature.getGeometry().getCoordinates(),
-          zoom: mapView.current.getZoom() + 1,
+          zoom: mapView.current.getZoom() + 2,
           duration: 300,
         });
 
