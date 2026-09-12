@@ -37,14 +37,6 @@ export const DELAY_TYPES = [
   },
 ];
 
-export const RESET_DELAY_TYPE_STATE = {
-  closures: true,
-  majorEvents: true,
-  minorEvents: false,
-  futureEvents: false,
-  chainUps: false,
-};
-
 export const getDelayTypeState = (visibleLayers = {}) => (
   DELAY_TYPES.reduce((state, delayType) => {
     state[delayType.key] = !!visibleLayers[delayType.key];

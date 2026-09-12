@@ -316,15 +316,6 @@ export default function CamerasListPage() {
     setShowFilters(!showFilters);
   };
 
-  // Reset applied filters (pills)
-  const resetAllAppliedFilters = () => {
-    setFilterContext({
-      ...filterContext,
-      areaFilter: null,
-      highwayFilterKey: null
-    });
-  };
-
   const activeFilterCount = (filterContext.areaFilter ? 1 : 0) + (filterContext.highwayFilterKey ? 1 : 0);
 
   const sortedByLabel = selectedRoute && selectedRoute.routeFound
@@ -428,15 +419,6 @@ export default function CamerasListPage() {
 
                   {wideFilterBar &&
                     <div className="tools-container">
-                      {activeFilterCount > 0 &&
-                        <Button
-                          variant="outline-primary"
-                          className="filter-option-btn reset-filters-btn"
-                          aria-label="reset all filters"
-                          onClick={resetAllAppliedFilters}>
-                            Reset
-                        </Button>
-                      }
                       {(filterContext.highwayFilterKey || filterContext.areaFilter) &&
                         <div className="selected-filters-container">
                           {filterContext.areaFilter &&
@@ -515,15 +497,6 @@ export default function CamerasListPage() {
                 </div>
                 {!wideFilterBar &&
                     <div className="tools-container">
-                      {activeFilterCount > 0 &&
-                        <Button
-                          variant="outline-primary"
-                          className="filter-option-btn reset-filters-btn"
-                          aria-label="reset all filters"
-                          onClick={resetAllAppliedFilters}>
-                            Reset
-                        </Button>
-                      }
                       {(filterContext.highwayFilterKey || filterContext.areaFilter) &&
                         <div className="selected-filters-container">
                           {filterContext.areaFilter &&

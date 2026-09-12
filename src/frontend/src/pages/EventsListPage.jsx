@@ -50,7 +50,6 @@ import FiltersOverlay from '../Components/shared/FiltersOverlay';
 import {
   DELAY_TYPES,
   DelayTypeIcon,
-  RESET_DELAY_TYPE_STATE,
   getDelayTypeState,
   toDelayTypeLayerVisibility,
 } from '../Components/shared/DelayTypeFilter';
@@ -266,8 +265,11 @@ export default function EventsListPage(props) {
   const processEvents = () => {
     let res = [...filteredEvents];
 
-    // Layer filter — all-off shows nothing (including road conditions)
-    res = res.filter((e) => !!eventCategoryFilter[e.display_category]);
+    // Layer filter — all-off shows all delay types
+    const anyLayerSelected = DELAY_TYPES.some((delayType) => !!eventCategoryFilter[delayType.key]);
+    if (anyLayerSelected) {
+      res = res.filter((e) => !!eventCategoryFilter[e.display_category]);
+    }
 
     // Area Filter
     if (filterContext.areaFilter) {
@@ -497,30 +499,6 @@ export default function EventsListPage(props) {
     setShowFilters(!showFilters);
   };
 
-  // Reset applied filters (pills) — matches overlay Reset All
-  const resetAllAppliedFilters = () => {
-    setFilterContext({
-      ...filterContext,
-      areaFilter: null
-    });
-
-    const defaultKey = getDefaultSortingKey();
-    setSortingKey(defaultKey);
-    localStorage.setItem('sorting-key', defaultKey);
-
-    if (!chainUpsOnly) {
-      const newMapContext = {
-        ...mapContext,
-        visible_layers: {
-          ...mapContext.visible_layers,
-          ...toDelayTypeLayerVisibility(RESET_DELAY_TYPE_STATE),
-        },
-      };
-      setMapContext(newMapContext);
-      localStorage.setItem('mapContext', JSON.stringify(newMapContext));
-    }
-  };
-
   const removeDelayTypeFilter = (key) => {
     const nextDelayTypes = {
       ...getDelayTypeState(mapContext.visible_layers),
@@ -542,19 +520,12 @@ export default function EventsListPage(props) {
     localStorage.setItem('sorting-key', key);
   };
 
-  // Default delay types = closures + major; pills only when selection differs
-  const isDefaultDelayTypes = chainUpsOnly || DELAY_TYPES.every(
-    (delayType) => !!eventCategoryFilter[delayType.key] === !!RESET_DELAY_TYPE_STATE[delayType.key]
-  );
-
-  const selectedDelayTypes = chainUpsOnly || isDefaultDelayTypes
+  // Active delay layers + area filter (1 or 0); no special-case for defaults
+  const selectedDelayTypes = chainUpsOnly
     ? []
     : DELAY_TYPES.filter((delayType) => !!eventCategoryFilter[delayType.key]);
 
-  // Badge matches visible pills: active delay layers + area filter
   const activeFilterCount = selectedDelayTypes.length + (filterContext.areaFilter ? 1 : 0);
-  // Reset when area or delay types differ from default (incl. no layers selected)
-  const filtersAtDefault = !filterContext.areaFilter && isDefaultDelayTypes;
 
   const advisoriesCount = filteredAdvisories?.length || 0;
   const advisoriesLabel = advisoriesCount === 0
@@ -771,7 +742,7 @@ export default function EventsListPage(props) {
                 <div className="controls-container">
                   <Button
                     variant="outline-primary"
-                    className={'filter-option-btn filters-btn' + (!filtersAtDefault ? ' filtered' : '') + (showFilters ? ' active' : '')}
+                    className={'filter-option-btn filters-btn' + (activeFilterCount ? ' filtered' : '') + (showFilters ? ' active' : '')}
                     aria-label="show filters options"
                     onClick={toggleFiltersOverlay}>
 
@@ -785,15 +756,6 @@ export default function EventsListPage(props) {
 
                   {wideFilterBar &&
                     <div className="tools-container">
-                      {!filtersAtDefault &&
-                        <Button
-                          variant="outline-primary"
-                          className="filter-option-btn reset-filters-btn"
-                          aria-label="reset all filters"
-                          onClick={resetAllAppliedFilters}>
-                            Reset
-                        </Button>
-                      }
                       {renderSelectedFilterPills()}
                     </div>
                   }
@@ -807,15 +769,6 @@ export default function EventsListPage(props) {
                 </div>
                 {!wideFilterBar &&
                     <div className="tools-container">
-                      {!filtersAtDefault &&
-                        <Button
-                          variant="outline-primary"
-                          className="filter-option-btn reset-filters-btn"
-                          aria-label="reset all filters"
-                          onClick={resetAllAppliedFilters}>
-                            Reset
-                        </Button>
-                      }
                       {renderSelectedFilterPills()}
                     </div>
                   }

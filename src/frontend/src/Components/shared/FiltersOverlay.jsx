@@ -19,7 +19,6 @@ import trackEvent from './TrackEvent';
 import AreaFilter from './AreaFilter';
 import DelayTypeFilter, {
   DELAY_TYPES,
-  RESET_DELAY_TYPE_STATE,
   getDelayTypeState,
   toDelayTypeLayerVisibility,
 } from './DelayTypeFilter';
@@ -184,34 +183,6 @@ export default function FiltersOverlay(props) {
     onClose();
   };
 
-  const resetDraftFilters = () => {
-    if (showAreas) {
-      setPendingAreaFilter(null);
-    }
-    if (showHighways) {
-      setPendingHighwayFilterKey(null);
-    }
-    // First visible sort option (skip route_order when no route)
-    if (showSort && sortingKeys?.length) {
-      setPendingSortingKey(sortingKeys[routeFound ? 0 : 1]);
-    }
-    if (showDelayTypes) {
-      setPendingDelayTypes({ ...RESET_DELAY_TYPE_STATE });
-    }
-    setFilterOptionsSearch('');
-  };
-
-  // Divider Reset: clear area/highway draft only
-  const resetPendingLocationFilters = () => {
-    if (showAreas) {
-      setPendingAreaFilter(null);
-    }
-    if (showHighways) {
-      setPendingHighwayFilterKey(null);
-    }
-    setFilterOptionsSearch('');
-  };
-
   const togglePendingDelayType = (key) => {
     setPendingDelayTypes((prev) => ({
       ...prev,
@@ -225,7 +196,6 @@ export default function FiltersOverlay(props) {
   };
 
   const showSearch = showFilterSearch && (showAreas || showHighways || showDelayTypes);
-  const hasPendingFilters = (showAreas && pendingAreaFilter) || (showHighways && pendingHighwayFilterKey);
   const selectedDelayTypeCount = DELAY_TYPES.filter(
     (delayType) => !!pendingDelayTypes[delayType.key]
   ).length;
@@ -305,15 +275,6 @@ export default function FiltersOverlay(props) {
         {showSort &&
           <div className="filters-overlay__subheader-divider">
             <p className="bold">Filters</p>
-            {hasPendingFilters &&
-              <Button
-                variant="outline-primary"
-                className="filter-option-btn reset-filters-btn"
-                aria-label="reset location filters"
-                onClick={resetPendingLocationFilters}>
-                Reset
-              </Button>
-            }
           </div>
         }
 
@@ -377,12 +338,6 @@ export default function FiltersOverlay(props) {
           className="apply-actions__btn apply-actions__btn--apply"
           onClick={applyFilters}>
           Apply
-        </Button>
-        <Button
-          variant="outline-primary"
-          className="apply-actions__btn apply-actions__btn--reset"
-          onClick={resetDraftFilters}>
-          Reset All
         </Button>
         <Button
           variant="outline-primary"
