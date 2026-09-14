@@ -121,8 +121,8 @@ def populate_event_from_data(new_event_data):
                 event.refresh_from_db()
                 event.save()
 
-                # Update intersecting areas only when location changes
-                if field == 'location':
+                # Update areas on location changes
+                if 'location' in data_diff:
                     intersecting_areas = Area.objects.filter(geometry__intersects=event.location)
                     event.area.set(intersecting_areas)
 
