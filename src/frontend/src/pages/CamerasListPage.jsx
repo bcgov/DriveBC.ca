@@ -49,6 +49,7 @@ import Skeleton from 'react-loading-skeleton';
 // Styling
 import './CamerasListPage.scss';
 import './ContainerSidePanel.scss';
+import './ListPages.scss';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 export default function CamerasListPage() {

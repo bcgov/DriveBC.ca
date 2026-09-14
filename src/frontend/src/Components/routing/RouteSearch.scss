@@ -6,7 +6,8 @@
 
 .routing-caption {
   font-size: 12px;
-  line-height: 0.75rem;
+  padding-right: 2rem;
+  margin-bottom: 8px;
 }
 
 .routing {
@@ -14,7 +15,6 @@
 
   .routing-container {
     position: relative;
-    z-index: 5;
     width: 100%;
     z-index: 11;
 
@@ -24,6 +24,12 @@
       justify-content: flex-end;
       margin-left: auto;
       flex-shrink: 0;
+
+      button {
+        svg {
+          margin-right: 4px;
+        }
+      }
     }
 
     .route-search-actions-container {
@@ -31,13 +37,9 @@
       align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
-      padding: 0.75rem 4px 6px;
+      padding: 4px 0 0;
       overflow: visible;
       flex-wrap: nowrap;
-
-      @media (min-width: 576px) {
-        padding: .75rem 0 6px;
-      }
     }
 
     .route-alt-options {
@@ -142,6 +144,10 @@
       position: relative;
       width: 100%;
 
+      .rbt {
+        height: 36px;
+      }
+
       @media (min-width: 576px) {
         width: 390px;
       }
@@ -169,18 +175,20 @@
           font-size: 0.75rem;
           margin: 8px 12px;
           color: $Type-Secondary;
+          top: 2px;
         }
 
         &--to {
           font-size: 1rem;
           margin: 4px 10px;
           color: $Error;
+          top: 2px;
         }
       }
 
       .clear-btn {
         position: absolute;
-        top: 0;
+        top: 2px;
         right: 0;
         z-index: 2;
         background: none;

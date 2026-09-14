@@ -242,7 +242,7 @@ const RouteSearch = forwardRef((props, ref) => {
         <p className="routing-caption">
           {mapRef
             ? 'Map and site results filtered by trip: '
-            : 'Results below are filtered by this route:'}
+            : 'Page results are filtered by this route:'}
         </p>
       }
 
@@ -318,12 +318,12 @@ const RouteSearch = forwardRef((props, ref) => {
             <div className="route-search-actions">
               {validSearch &&
                 <button type="button" className="route-search-link" onClick={() => swapHandler()}>
-                  <FontAwesomeIcon icon={faArrowUpArrowDown} /> Swap
+                  <FontAwesomeIcon icon={faArrowUpArrowDown} />Swap
                 </button>
               }
 
               <button type="button" className="route-clear-link" onClick={() => clearHandler()}>
-                <FontAwesomeIcon icon={faXmark} /> Clear
+                <FontAwesomeIcon icon={faXmark} />Clear
               </button>
             </div>
           </div>

@@ -416,7 +416,7 @@ export default function Header({ isMaintenance }) {
             {smallScreen && showSearch && !openSearch && selectedRoute && isNavbarCollapsed &&
               <div className="searched-route-container">
                 <p className="routing-caption">
-                  {isListPage ? 'Map and site results filtered by trip: ': 'Results below are filtered by this route:'}
+                  {isListPage ? 'Map and site results filtered by trip: ': 'Page results are filtered by this route:'}
                 </p>
 
                 <button

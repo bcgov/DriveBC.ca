@@ -58,6 +58,7 @@ import Skeleton from 'react-loading-skeleton';
 // Styling
 import './EventsListPage.scss';
 import './ContainerSidePanel.scss';
+import './ListPages.scss';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 // Helpers

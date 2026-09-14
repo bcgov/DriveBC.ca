@@ -107,7 +107,7 @@
         margin-top: auto;
         margin-left: 1rem;
         margin-bottom: 16px;
-        height: calc(100% - 166px);
+        height: calc(100% - 146px);
 
         .popup__title {
           border-top-left-radius: 8px;
@@ -228,20 +228,18 @@
         transition: margin-left 0.25s ease-in-out;
 
         .routing-outer-container {
-          padding: 12px;
+          padding: 8px 12px;
           background-color: white;
           border-radius: 8px;
           position: relative;
-
-          .routing-caption {
-            padding-right: 2rem;
-          }
+          box-shadow: 0 3.2px 7.2px 0 #00000021;
 
           .routing-container .typeahead-container {
             width: 366px;
           }
 
           &--collapsed {
+            padding: 8px;
             width: 390px;
 
             .search-trigger {
