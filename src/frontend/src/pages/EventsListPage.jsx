@@ -266,11 +266,13 @@ export default function EventsListPage(props) {
   const processEvents = () => {
     let res = [...filteredEvents];
 
-    // Layer filter — all-off shows all delay types
-    const anyLayerSelected = DELAY_TYPES.some((delayType) => !!eventCategoryFilter[delayType.key]);
-    if (anyLayerSelected) {
-      res = res.filter((e) => !!eventCategoryFilter[e.display_category]);
-    }
+    const delayTypeKeys = DELAY_TYPES.map((delayType) => delayType.key);
+
+    // use all types except rcon when none selected
+    const selectedDelayKeys = delayTypeKeys.filter((key) => !!eventCategoryFilter[key]);
+    const allowedKeys = new Set(selectedDelayKeys.length ? selectedDelayKeys : delayTypeKeys);
+
+    res = res.filter((e) => allowedKeys.has(e.display_category));
 
     // Area Filter
     if (filterContext.areaFilter) {

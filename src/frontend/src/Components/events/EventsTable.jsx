@@ -35,12 +35,22 @@ export default function EventsTable(props) {
 
   // react-table columns
   const getEventTypeCell = (data) => {
+    const tooltip = getDelayTooltip(data);
+    const eventTypeButton = (
+      <button className="eventType" aria-label={getTypeDisplay(data)} aria-describedby={getDelayTooltipID(data)}>
+        <EventTypeIcon event={data} state={data.severity === 'MINOR' && data.display_category !== 'chainUps' ? 'active' : 'static'} alt={true} />
+        <span>{getTypeDisplay(data)}</span>
+      </button>
+    );
+
+    // OverlayTrigger crashes if overlay is undefined (e.g. unknown display_category)
+    if (!tooltip) {
+      return eventTypeButton;
+    }
+
     return (
-      <OverlayTrigger placement="top" overlay={getDelayTooltip(data)}>
-        <button className="eventType" aria-label={getTypeDisplay(data)} aria-describedby={getDelayTooltipID(data)}>
-          <EventTypeIcon event={data} state={data.severity === 'MINOR' && data.display_category !== 'chainUps' ? 'active' : 'static'} alt={true} />
-          <span>{getTypeDisplay(data)}</span>
-        </button>
+      <OverlayTrigger placement="top" overlay={tooltip}>
+        {eventTypeButton}
       </OverlayTrigger>
     );
   }
