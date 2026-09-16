@@ -204,6 +204,11 @@ class SendEventNotificationsTest(TestCase):
         assert 'Intersecting Event' in email.body
         assert 'verifieduser@example.com' in email.to
 
+        html = email.alternatives[0][0]
+        assert 'pan=0.5,0.5' in html
+        assert 'zoom=' in html
+        assert 'route_distance=' in html
+
     def test_day_and_time_route(self):
         queue_event_notifications(
             ['intersecting'],

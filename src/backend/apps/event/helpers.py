@@ -1,7 +1,75 @@
 import datetime
+import math
 from zoneinfo import ZoneInfo
 
 from apps.event.enums import EVENT_DISPLAY_CATEGORY, EVENT_SEVERITY
+from django.conf import settings
+
+# Match frontend Map.jsx View (EPSG:3857, zoomFactor 2.2, min/max zoom 5–15)
+_MERCATOR_HALF = 20037508.342789244
+_ZOOM_FACTOR = 2.2
+_TILE_SIZE = 256
+_MIN_ZOOM = 5
+_MAX_ZOOM = 15
+
+
+def get_pan_zoom_for_geometry(geometry, map_size=1024, padding=0.15):
+    """
+    Return (pan_lon, pan_lat, zoom) fitted to geometry extent.
+
+    Mirrors frontend fitMap for route notifications; used for area extent too.
+    """
+    if geometry is None or geometry.empty:
+        return None
+
+    extent = geometry.extent  # xmin, ymin, xmax, ymax
+    pan_lon = (extent[0] + extent[2]) / 2
+    pan_lat = (extent[1] + extent[3]) / 2
+
+    geom_3857 = geometry.clone()
+    if geom_3857.srid and geom_3857.srid != 3857:
+        geom_3857.transform(3857)
+    elif not geom_3857.srid:
+        geom_3857.srid = 4326
+        geom_3857.transform(3857)
+
+    xmin, ymin, xmax, ymax = geom_3857.extent
+    width = (xmax - xmin) * (1 + padding)
+    height = (ymax - ymin) * (1 + padding)
+    size = max(width, height, 1.0)
+
+    max_resolution = 2 * _MERCATOR_HALF / _TILE_SIZE
+    target_resolution = size / map_size
+    zoom = math.log(max_resolution / target_resolution) / math.log(_ZOOM_FACTOR)
+    zoom = max(_MIN_ZOOM, min(_MAX_ZOOM, zoom))
+
+    return pan_lon, pan_lat, zoom
+
+
+def build_event_site_link(event, geometry=None, route=None):
+    """Full DriveBC map URL for an event, with pan/zoom from geometry or route extent."""
+    link = (
+        f'{settings.FRONTEND_BASE_URL}?type=event'
+        f'&display_category={event.display_category}&id={event.id}'
+    )
+
+    if route is not None:
+        link += (
+            f'&route_start={route.start}'
+            f'&route_start_point={route.start_point.x},{route.start_point.y}'
+            f'&route_end={route.end}'
+            f'&route_end_point={route.end_point.x},{route.end_point.y}'
+            f'&route_distance={route.distance}'
+        )
+        if geometry is None:
+            geometry = route.route
+
+    pan_zoom = get_pan_zoom_for_geometry(geometry)
+    if pan_zoom:
+        pan_lon, pan_lat, zoom = pan_zoom
+        link += f'&pan={pan_lon},{pan_lat}&zoom={zoom}'
+
+    return link
 
 
 def parse_recurring_datetime(date_string, time_string):

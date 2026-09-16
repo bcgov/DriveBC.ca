@@ -227,6 +227,11 @@ class SendDistrictNotificationsTest(TestCase):
         assert 'Intersecting Event' in email.body
         assert 'verifieduser@example.com' in email.to
 
+        html = email.alternatives[0][0]
+        assert 'pan=0.5,0.5' in html
+        assert 'zoom=' in html
+        assert f'id={self.intersecting_event.id}' in html
+
     def test_queue_merges_event_ids_for_existing_subscription(self):
         dt = datetime.datetime(
             2025, 1, 8, 10, 0,

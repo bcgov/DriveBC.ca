@@ -12,7 +12,7 @@ from apps.event.enums import (
     EVENT_TYPE,
     EVENT_UPDATE_FIELDS,
 )
-from apps.event.helpers import get_display_category
+from apps.event.helpers import build_event_site_link, get_display_category
 from apps.event.models import (
     Event,
     QueuedDistrictEventNotification,
@@ -545,6 +545,9 @@ def send_queued_notifications():
             if not ordered_events:
                 continue
 
+            for event in ordered_events:
+                event.site_link = build_event_site_link(event, route=saved_route)
+
             context = {
                 'events': ordered_events,
                 'route': saved_route,
@@ -626,6 +629,11 @@ def send_queued_district_notifications():
         )
         if len(sorted_active_events) == 0:
             continue
+
+        for event in sorted_active_events:
+            event.site_link = build_event_site_link(
+                event, geometry=subscription.area.geometry
+            )
 
         context = {
             'events': sorted_active_events,
