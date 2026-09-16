@@ -80,3 +80,26 @@ class SendAdvisoryNotificationsTest(TestCase):
         assert email.subject == 'DriveBC route update: Always Active Route'
         assert advisory.teaser in email.body
         assert email.to == ['verifieduser@example.com']
+
+    def test_advisory_notification_uses_body_when_teaser_blank(self):
+        advisory = Advisory(
+            title="Advisory title",
+            teaser="",
+            body='[{"id": "1", "type": "rich_text", "value": "<p>Full advisory body text</p>"}]',
+            geometry=MultiPolygon(Polygon([(-119, 35), (-118, 32), (-117, 31), (-119, 35)])),
+            path="000100010002",
+            depth=3,
+            content_type=ContentType.objects.get(
+                app_label='cms',
+                model='advisory'
+            ),
+        )
+        advisory.save()
+        send_advisory_notifications(advisory.id)
+
+        assert len(mail.outbox) == 1
+        email = mail.outbox[0]
+        html = email.alternatives[0][0]
+        assert 'Full advisory body text' in email.body
+        assert 'Full advisory body text' in html
+        assert advisory.description == 'Full advisory body text'

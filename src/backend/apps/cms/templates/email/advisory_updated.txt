@@ -1,5 +1,5 @@
 Update for DriveBC route {{ route.label }}
 
 {{ advisory.title }}
-{{ advisory.teaser }}
+{{ advisory.description }}
 Last updated: {{ advisory.latest_revision_created_at }}
