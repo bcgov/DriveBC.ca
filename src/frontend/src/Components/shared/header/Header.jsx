@@ -63,7 +63,7 @@ export default function Header({ isMaintenance }) {
 
   // Check current page location
   const location = useLocation();
-  const showSearch = ['/cameras', '/delays'].some(path => location.pathname.startsWith(path)) || location.pathname === '/';
+  const showSearch = ['/cameras', '/delays', '/chain-ups'].some(path => location.pathname.startsWith(path)) || location.pathname === '/';
 
   // Redux
   const dispatch = useDispatch();
@@ -322,6 +322,7 @@ export default function Header({ isMaintenance }) {
     e.preventDefault();
     navigate('/chain-ups');
     setIsCommercialOpen(false);
+    setIsNavbarCollapsed(true);
     onClickActions();
   }
 
