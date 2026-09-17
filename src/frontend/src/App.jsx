@@ -2,7 +2,7 @@
 import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 
 // Navigation
-import { Route, Routes, useSearchParams } from 'react-router-dom';
+import { Navigate, Route, Routes, useParams, useSearchParams } from 'react-router-dom';
 
 // Redux
 import { memoize } from "proxy-memoize";
@@ -33,7 +33,6 @@ import Alert from './Components/shared/Alert';
 import AreaNotificationsPage from './pages/AreaNotificationsPage';
 import BulletinDetailsPage from './pages/BulletinDetailsPage';
 import BulletinsListPage from './pages/BulletinsListPage';
-import CameraDetailsPage from './pages/CameraDetailsPage';
 import CamerasListPage from './pages/CamerasListPage';
 import EventsListPage from './pages/EventsListPage';
 import FeedbackPage from './pages/FeedbackPage';
@@ -70,6 +69,11 @@ export const MapContext = createContext(null);
 // export const HeaderHeightContext = createContext();
 export const FeatureContext = createContext({});
 export const FilterContext = createContext({});
+
+function CameraToMapRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/?type=camera&id=${encodeURIComponent(id)}`} replace />;
+}
 
 let callingSession = false;
 let sessionStateKnown = false;
@@ -369,7 +373,7 @@ function App() {
                             <Route path="/my-cameras" element={<SavedCamerasPage />} />
                             <Route path="/my-routes" element={<SavedRoutesPage />} />
                             <Route path="/cameras" element={<CamerasListPage />} />
-                            <Route path="/cameras/:id" element={<CameraDetailsPage />} />
+                            <Route path="/cameras/:id" element={<CameraToMapRedirect />} />
                             <Route path="/delays" element={<EventsListPage key="/delays" />} />
                             <Route path="/chain-ups" element={<EventsListPage key="/chain-ups" chainUpsOnly={true} />} />
                             <Route path="/advisories" element={<AdvisoriesListPage />} />

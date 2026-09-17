@@ -24,17 +24,24 @@ export default function CameraOrientations(props) {
   const xXLargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   // Props
-  const { camData, loadCamDetails } = props;
+  const { camData, loadCamDetails, slidesPerView } = props;
 
   // States
-  const showCompactLayout = (camData.camGroup.length > 2) && smallScreen;
-  const showReducedLayout = (camData.camGroup.length > 3) && inBetweenScreen;
-  const showFullLayout = (
-    ((camData.camGroup.length < 3) && smallScreen) ||
-    ((camData.camGroup.length < 4) && inBetweenScreen) ||
-    xXLargeScreen
-  );
-  const perPane = showCompactLayout ? 2 : 3;
+  const useFixedSlides = slidesPerView === 2;
+  const showCompactLayout = useFixedSlides
+    ? camData.camGroup.length > 2
+    : (camData.camGroup.length > 2) && smallScreen;
+  const showReducedLayout = useFixedSlides
+    ? false
+    : (camData.camGroup.length > 3) && inBetweenScreen;
+  const showFullLayout = useFixedSlides
+    ? camData.camGroup.length <= 2
+    : (
+      ((camData.camGroup.length < 3) && smallScreen) ||
+      ((camData.camGroup.length < 4) && inBetweenScreen) ||
+      xXLargeScreen
+    );
+  const perPane = useFixedSlides ? 2 : (showCompactLayout ? 2 : 3);
 
   const [currentCamIndex, setCurrentCamIndex] = useState(0);
   const [currentPane, setCurrentPane] = useState(0);
@@ -84,18 +91,6 @@ export default function CameraOrientations(props) {
 
   return (
     <div className="camera-orientations-container">
-      <div className="header">
-        <button className="rotate-direction-btn" onClick={rotateCameraOrientation}>
-          <img
-            className="colocated-camera-icon"
-            src={colocatedCamIcon}
-            role="presentation"
-            alt="colocated cameras icon"
-          />
-          <span className="title">Direction</span>
-        </button>
-      </div>
-
       {(showCompactLayout || showReducedLayout) &&
         <div className="main-content carousel-container--camera-orientations">
 
