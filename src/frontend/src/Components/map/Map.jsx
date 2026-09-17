@@ -401,11 +401,16 @@ export default function DriveBCMap(props) {
         geometry = feature.getProperties().altFeature.getGeometry(); // use the point feature's geometry
       }
 
-      // Center if panel from bottom or clicked within 390px from left of the screen
-      if (mousePointXClicked < 390 || smallScreen) {
-        const zoom = mapView.current.getZoom();
+      // Center when opened programmatically (deep link), panel from bottom, or clicked within 390px from left
+      if (mousePointXClicked == null || mousePointXClicked < 390 || smallScreen) {
+        let zoom = mapView.current.getZoom();
         const coords = geometry.flatCoordinates;
         const mapWidth = mapRef.current?.getSize()?.[0] ?? 0;
+
+        // Deep-link camera open: zoom in so the camera is visible
+        if (mousePointXClicked == null && feature.get('type') === 'camera' && zoom < 12) {
+          zoom = 12;
+        }
 
         // Use anchored pan if panel from bottom or screen smaller than 1000px
         const shouldUseAnchoredPan = mapWidth < 1000 || smallScreen;
@@ -1066,6 +1071,7 @@ export default function DriveBCMap(props) {
         }
         searchParams.delete('display_category');
         searchParams.delete('camIndex');
+        searchParams.delete('from');
         setSearchParams(searchParams, { replace: true });
       }
 
