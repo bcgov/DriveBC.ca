@@ -1,6 +1,6 @@
 // React
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -131,7 +131,26 @@ export default function CameraCard(props) {
 
   /* Handlers */
   function handleClick() {
-    navigate(`/cameras/${camera.id}`);
+    const camIndex = camera.camGroup?.findIndex(cam => cam.id === camera.id) ?? 0;
+    const [lon, lat] = camera.location?.coordinates ?? [];
+
+    const params = {
+      type: 'camera',
+      id: camera.id,
+      camIndex: camIndex >= 0 ? camIndex : 0,
+      from: 'camera-list',
+    };
+
+    if (lon != null && lat != null) {
+      params.pan = `${lon},${lat}`;
+      params.zoom = '12';
+    }
+
+    navigate({
+      pathname: '/',
+      search: `?${createSearchParams(params)}`,
+    });
+
     window.snowplow('trackSelfDescribingEvent', {
       schema: 'iglu:ca.bc.gov.drivebc/action/jsonschema/1-0-0',
       data: {
