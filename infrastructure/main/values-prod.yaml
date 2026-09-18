@@ -67,7 +67,7 @@ tasks:
         cpu: 150m
         memory: 750Mi
       limits:
-        memory: 2Gi
+        memory: 3Gi
     volumes:
       claimName: prod-drivebc-django-app-images
     env:
