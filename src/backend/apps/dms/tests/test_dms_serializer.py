@@ -11,7 +11,7 @@ class TestDmsSerializer(BaseTest):
         super().setUp()
 
         self.dms = Dms(
-            name="DMS10",
+            name="Hwy 17 WB at 136 St.",
             category="ADDCO 2x20 LM-2 FRATIS",
             description="Hwy 17 WB at 136 St.",
             roadway_name="Highway 17",
@@ -24,7 +24,7 @@ class TestDmsSerializer(BaseTest):
         )
 
         self.dms_2 = Dms(
-            name="DMS11",
+            name="Hwy 17 WB at 136 St.",
             category="ADDCO 2x20 LM-2 FRATIS",
             description="Hwy 17 WB at 136 St.",
             roadway_name="Highway 17",
@@ -47,9 +47,9 @@ class TestDmsSerializer(BaseTest):
         self.serializer_two = DmsSerializer(self.dms_2)
 
     def test_serializer_data(self):
-        assert self.serializer.data['name'] == "DMS10"
+        assert self.serializer.data['name'] == "Hwy 17 WB at 136 St."
         assert self.serializer.data['location']['coordinates'] == [-124.64, 58.66]
-        assert self.serializer_two.data['name'] == "DMS11"
+        assert self.serializer_two.data['name'] == "Hwy 17 WB at 136 St."
         assert self.serializer_two.data['location']['coordinates'] == [-123.94, 57.06]
 
     def test_serializer_does_not_save_unchanged_data(self):

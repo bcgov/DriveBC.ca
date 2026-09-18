@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from apps.dms.models import Dms
 from apps.dms.serializers import DmsSerializer
@@ -17,6 +18,12 @@ DIRECTION_NAMES = {
     'EB': 'Eastbound',
     'WB': 'Westbound',
 }
+
+def _parse_datetime(value):
+    if not value:
+        return None
+
+    return datetime.fromisoformat(value.replace('Z', '+00:00'))
 
 
 def _normalize_dms(sign, status):
@@ -43,7 +50,7 @@ def _normalize_dms(sign, status):
         'message_text': status.get('Message') or '',
         'status': status.get('Status') or '',
         'location': point,
-        'cache_datetime_utc': None,
+        'updated_datetime_utc': _parse_datetime(status.get('LastUpdated')),
     }
 
 
@@ -57,6 +64,12 @@ def populate_dms_from_data(dms_data):
 
     except ObjectDoesNotExist:
         dms = Dms(id=dms_id)
+
+    name = dms_data.get('name') or ''
+    if dms.name != name:
+        dms.name = name
+        if not dms._state.adding:
+            dms.save(update_fields=['name'])
 
     dms_serializer = DmsSerializer(dms, data=dms_data)
     dms_serializer.is_valid(raise_exception=True)

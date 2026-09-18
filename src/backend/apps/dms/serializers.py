@@ -5,9 +5,10 @@ from rest_framework import serializers
 
 
 class DmsSerializer(serializers.ModelSerializer):
-    cache_datetime_utc = serializers.DateTimeField(
-        default_timezone=dt_timezone.utc,
-        allow_null=True,
+    name = serializers.SerializerMethodField()
+    updated_datetime_utc = serializers.DateTimeField(
+        default_timezone=dt_timezone.utc, 
+        allow_null=True, 
         required=False
     )
 
@@ -26,3 +27,7 @@ class DmsSerializer(serializers.ModelSerializer):
             "created_at",
             "modified_at",
         )
+
+    # The description field is used as the name for DMS in the UI, so we override the name field to return the description if it exists.
+    def get_name(self, obj): 
+        return obj.description if obj.description else obj.name
