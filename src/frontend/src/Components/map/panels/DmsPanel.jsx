@@ -10,6 +10,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import { isRestStopClosed } from '../../data/restStops';
 import DmsTypeIcon from '../DmsTypeIcon';
 import ShareURLButton from '../../shared/ShareURLButton';
+import FriendlyTime from '../../shared/FriendlyTime';
 
 // Styling
 import './DmsPanel.scss';
@@ -93,7 +94,8 @@ const displays = [
       </div>
       <div className="popup__content">
         <div className="popup__content__title">
-          <p className="name">{dmsData.description}</p>
+          <p className="name">{dmsData.name}</p>
+            <FriendlyTime date={dmsData.updated_datetime_utc} asDate />   
         </div>
 
         <div className='popup__content__description'>

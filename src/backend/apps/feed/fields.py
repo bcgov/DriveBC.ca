@@ -202,7 +202,7 @@ class DmsPropertiesField(serializers.Field):
             "roadway_direction": data['RoadwayDirection'] or '',
             "message_text": data['MessageText'] or '',
             "status": data['Status'] or '',
-            "cache_datetime_utc": parse_api_utc(data['CacheDateTimeUtc']),
+            "updated_datetime_utc": parse_api_utc(data['UpdatedDateTimeUtc']),
         }
 
         return res
