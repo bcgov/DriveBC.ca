@@ -37,7 +37,7 @@ export default function DmsPanel(props) {
 
   const parseMessageWithAlignment = (message) => {
   if (!message) return [];
-  
+
   const lines = message.split('\n');
   return lines.map(line => {
     // Extract alignment markers
@@ -95,14 +95,14 @@ const displays = [
       <div className="popup__content">
         <div className="popup__content__title">
           <p className="name">{dmsData.name}</p>
-          <FriendlyTime date={dmsData.updated_datetime_utc} asDate />          
+            <FriendlyTime date={dmsData.updated_datetime_utc} asDate />   
         </div>
 
         <div className='popup__content__description'>
           <div className="dms-container">
             {displays.map((display) => (
               <div key={display.id} className="display-item">
-                
+
                 {/* Header: Label and Badge */}
                 <div className="display-header">
                   <span className="display-label">

@@ -1,7 +1,7 @@
-from django.utils import timezone
+from datetime import timezone as dt_timezone  # Use standard Python timezone
+
 from apps.dms.models import Dms
 from rest_framework import serializers
-from datetime import timezone as dt_timezone  # Use standard Python timezone
 
 
 class DmsSerializer(serializers.ModelSerializer):
@@ -11,16 +11,15 @@ class DmsSerializer(serializers.ModelSerializer):
         allow_null=True, 
         required=False
     )
-    message_expiry_datetime_utc = serializers.DateTimeField(
-        default_timezone=dt_timezone.utc, 
-        allow_null=True, 
-        required=False
-    )
-    cache_datetime_utc = serializers.DateTimeField(
-        default_timezone=dt_timezone.utc, 
-        allow_null=True, 
-        required=False
-    )
+
+    def update(self, instance, validated_data):
+        if all(
+            getattr(instance, field_name) == value
+            for field_name, value in validated_data.items()
+        ):
+            return instance
+
+        return super().update(instance, validated_data)
 
     class Meta:
         model = Dms
@@ -29,5 +28,6 @@ class DmsSerializer(serializers.ModelSerializer):
             "modified_at",
         )
 
-    def get_name(self, obj):
-        return obj.name_override if obj.name_override else obj.name
+    # The description field is used as the name for DMS in the UI, so we override the name field to return the description if it exists.
+    def get_name(self, obj): 
+        return obj.description if obj.description else obj.name
