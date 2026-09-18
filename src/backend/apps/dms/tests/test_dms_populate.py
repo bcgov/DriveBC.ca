@@ -37,7 +37,7 @@ class TestDmsPopulate(BaseTest):
         assert Dms.objects.all().count() == len(self.mock_signs)
         dms = Dms.objects.get(id='1')
         assert dms.name == 'INFO-KAM-1W-1'
-        assert DmsSerializer(dms).data['name'] == 'INFO-KAM-1W-1'
+        assert DmsSerializer(dms).data['name'] == 'WB Hwy 1 West of Aberdeen'
         assert Dms.objects.get(id='1').roadway_direction == 'Westbound'
         assert Dms.objects.get(id='1').message_text.startswith('[pt25o0]')
         assert Dms.objects.get(id='2').roadway_name == 'Highway 5 South'

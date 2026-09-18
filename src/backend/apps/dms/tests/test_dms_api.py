@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from apps.dms.models import Dms
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
@@ -11,6 +13,12 @@ class TestDmsAPIEndpoints(APITestCase):
     Comprehensive test suite for DMS API endpoints.
     Uses sign/status payload data shaped like the live DMS feed.
     """
+
+    @staticmethod
+    def _parse_utc(value):
+        if not value:
+            return None
+        return datetime.fromisoformat(value.replace('Z', '+00:00'))
 
     def setUp(self):
         """Set up test data using sign/status payloads similar to the live API."""
@@ -83,7 +91,7 @@ class TestDmsAPIEndpoints(APITestCase):
             message_text=status_1['Message'],
             status=status_1['Status'],
             location=Point(sign_1['Location']['Longitude'], sign_1['Location']['Latitude']),
-            cache_datetime_utc=None,
+            updated_datetime_utc=self._parse_utc(status_1['LastUpdated']),
         )
 
         self.dms2 = Dms.objects.create(
@@ -96,7 +104,7 @@ class TestDmsAPIEndpoints(APITestCase):
             message_text=status_2['Message'],
             status=status_2['Status'],
             location=Point(sign_2['Location']['Longitude'], sign_2['Location']['Latitude']),
-            cache_datetime_utc=None,
+            updated_datetime_utc=self._parse_utc(status_2['LastUpdated']),
         )
 
         self.dms3 = Dms.objects.create(
@@ -109,7 +117,7 @@ class TestDmsAPIEndpoints(APITestCase):
             message_text=status_5['Message'],
             status=status_5['Status'],
             location=Point(sign_5['Location']['Longitude'], sign_5['Location']['Latitude']),
-            cache_datetime_utc=None,
+            updated_datetime_utc=self._parse_utc(status_5['LastUpdated']),
         )
 
     def tearDown(self):
@@ -138,7 +146,7 @@ class TestDmsAPIEndpoints(APITestCase):
         assert response.status_code == status.HTTP_200_OK
         assert isinstance(response.data, dict)
         assert response.data['id'] == '1'
-        assert response.data['name'] == 'INFO-KAM-1W-1'
+        assert response.data['name'] == 'WB Hwy 1 West of Aberdeen'
         assert response.data['category'] == 'DMS'
         assert response.data['roadway_name'] == 'Highway 1 West (East section)'
         assert response.data['roadway_direction'] == 'Westbound'

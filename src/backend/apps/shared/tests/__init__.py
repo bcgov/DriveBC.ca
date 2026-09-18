@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 from apps.event.models import Event
 from apps.ferry.models import Ferry
+from apps.dms.models import Dms
 from apps.weather.models import CurrentWeather, RegionalWeather
 from apps.webcam.models import Webcam
 from django.core.cache import cache
@@ -46,6 +47,7 @@ class BaseTest(TestCase):
         super().tearDown()
         cache.clear()
         Webcam.objects.all().delete()
+        Dms.objects.all().delete()
         Event.objects.all().delete()
         Ferry.objects.all().delete()
         RegionalWeather.objects.all().delete()

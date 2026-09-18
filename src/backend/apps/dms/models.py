@@ -55,7 +55,7 @@ def convert_message(input_string: str) -> list:
             visible_content = clean_tags(line)
 
             # Filter out empty lines or stray tag fragments
-            if not visible_content and '[jl4]' not in line and '__JUSTIFY_RIGHT__' not in line:
+            if not visible_content and '[jl4]' not in line and '__JUSTIFY_RIGHT__' not in line: 
                 continue
             if '[' in visible_content and ']' not in visible_content:
                 continue
@@ -181,7 +181,7 @@ class Dms(ExportModelOperationsMixin('dms'), BaseModel):
     message_text = models.CharField(max_length=512, blank=True, default='')
     status = models.CharField(max_length=512, blank=True, default='')
     location = models.GeometryField(blank=True, null=True)
-    cache_datetime_utc = models.DateTimeField(blank=True, null=True, verbose_name="Cache datetime")
+    updated_datetime_utc = models.DateTimeField(blank=True, null=True, verbose_name="Updated datetime")
 
     message_display_1 = models.TextField(blank=True, default="")
     message_display_2 = models.TextField(blank=True, default="")
