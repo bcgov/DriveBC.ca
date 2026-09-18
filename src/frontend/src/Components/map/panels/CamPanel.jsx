@@ -7,7 +7,7 @@ import { memoize } from 'proxy-memoize';
 import { pushFavCam, removeFavCam, updatePendingAction } from '../../../slices/userSlice';
 
 // Navigation
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -70,7 +70,6 @@ export default function CamPanel(props) {
   const { setAlertMessage } = useContext(AlertContext);
 
   // Navigation
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Redux
@@ -221,7 +220,7 @@ export default function CamPanel(props) {
     }
 
     const lastUpdatedDate = Date.parse(camera.last_update_modified);
-    const oneDayAgo = new Date().getTime() - 1 * 24 * 60 * 60 * 1000;
+    const oneDayAgo = Date.now() - 1 * 24 * 60 * 60 * 1000;
 
     return camera.is_on && lastUpdatedDate > oneDayAgo;
   };
@@ -255,7 +254,7 @@ export default function CamPanel(props) {
             max={replayImages.length}
             tooltip="off"
             onChange={e =>
-              refImg.current.slideToIndex(parseInt(e.target.value, 10))
+              refImg.current.slideToIndex(Number.parseInt(e.target.value, 10))
             }
           />
         </div>
@@ -439,18 +438,10 @@ export default function CamPanel(props) {
       {camera && (
         <div className="popup__content">
           {fromCameraList && (
-            <a
-              className="back-link"
-              onClick={() => navigate('/cameras')}
-              onKeyDown={keyEvent => {
-                if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                  navigate('/cameras');
-                }
-              }}
-              tabIndex={0}>
+            <Link className="back-link" to="/cameras">
               <FontAwesomeIcon icon={faArrowLeft} />
               Back to camera list
-            </a>
+            </Link>
           )}
           <div className="popup__content__title">
             <p className="name">{camera.name}</p>
@@ -588,18 +579,16 @@ export default function CamPanel(props) {
                         )}
 
                         {unavailable && !isLoading && (
-                          <>
-                            <div className="unavailable-message">
-                              <FontAwesomeIcon className="icon" icon={faVideoSlash} />
-                              <h3>Image unavailable due to technical difficulties</h3>
-                              <p>This is sometimes due to:</p>
-                              <ul>
-                                <li>Power disruptions to the camera</li>
-                                <li>Signal transmission issues</li>
-                              </ul>
-                              <p>Our technicians have been alerted and service will resume as soon as possible. Repairs are subject to the availability of repair parts and staff’s ability to access the location. Camera functions will return once repairs are complete.</p>
-                            </div>
-                          </>
+                          <div className="unavailable-message">
+                            <FontAwesomeIcon className="icon" icon={faVideoSlash} />
+                            <h3>Image unavailable due to technical difficulties</h3>
+                            <p>This is sometimes due to:</p>
+                            <ul>
+                              <li>Power disruptions to the camera</li>
+                              <li>Signal transmission issues</li>
+                            </ul>
+                            <p>Our technicians have been alerted and service will resume as soon as possible. Repairs are subject to the availability of repair parts and staff’s ability to access the location. Camera functions will return once repairs are complete.</p>
+                          </div>
                         )}
                       </>
                     ) : (

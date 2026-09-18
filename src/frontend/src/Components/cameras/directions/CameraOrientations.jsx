@@ -9,8 +9,6 @@ import Button from 'react-bootstrap/Button';
 import useEmblaCarousel from 'embla-carousel-react'; 
 
 // Internal imports
-import colocatedCamIcon from '../../../images/colocated-camera.svg';
-import trackEvent from "../../shared/TrackEvent";
 import CameraThumbnail from './CameraThumbnail';
 
 // Styling
@@ -41,7 +39,7 @@ export default function CameraOrientations(props) {
       ((camData.camGroup.length < 4) && inBetweenScreen) ||
       xXLargeScreen
     );
-  const perPane = useFixedSlides ? 2 : (showCompactLayout ? 2 : 3);
+  const perPane = (useFixedSlides || showCompactLayout) ? 2 : 3;
 
   const [currentCamIndex, setCurrentCamIndex] = useState(0);
   const [currentPane, setCurrentPane] = useState(0);
@@ -73,15 +71,6 @@ export default function CameraOrientations(props) {
   }, [camData]);
 
   /* Handlers */
-  const rotateCameraOrientation = () => {
-    const currentIndex = camData.camGroup.findIndex(cam => cam.id === camData.id);
-    const nextIndex = (currentIndex + 1) % camData.camGroup.length;
-    const nextCamera = camData.camGroup[nextIndex];
-    switchOrientation(nextIndex);
-    loadCamDetails(nextCamera);
-    trackEvent("click", "camera-details", "camera-rotate", nextCamera.name);
-  };
-
   const switchOrientation = (index) => {
     setCurrentCamIndex(index);
     setCurrentPane(Math.floor(index / perPane));
