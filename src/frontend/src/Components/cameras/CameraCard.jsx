@@ -137,7 +137,7 @@ export default function CameraCard(props) {
     const params = {
       type: 'camera',
       id: camera.id,
-      camIndex: camIndex >= 0 ? camIndex : 0,
+      camIndex: Math.max(camIndex, 0),
       from: 'camera-list',
     };
 
