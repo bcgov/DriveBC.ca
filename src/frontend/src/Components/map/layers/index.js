@@ -60,7 +60,8 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filtered
         setLoadingLayers,
         // Pass the clustering distance (in screen pixels) to `getCamerasLayer`.
         // ~icon diameter so cameras group only when markers would touch/overlap (DBC22-7185).
-        35);
+        35,
+        mapRef.current);
 
       mapRef.current.addLayer(mapLayers.current[key]);
       mapLayers.current[key].setZIndex(zIndex);
