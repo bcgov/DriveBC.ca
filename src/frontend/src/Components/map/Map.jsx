@@ -611,8 +611,25 @@ export default function DriveBCMap(props) {
           )),
         };
 
-        applyStyle(vectorLayer, glStyle, 'esri');
-        applyStyle(symbolLayer, symbolsStyle, 'esri');
+        Promise.all([
+          applyStyle(vectorLayer, glStyle, 'esri'),
+          applyStyle(symbolLayer, symbolsStyle, 'esri'),
+        ]).then(() => {
+          // First rendercomplete is often a white frame (null style). Wait until
+          // basemap style is applied and at least one tile has loaded/painted.
+          let done = false;
+          const markRendered = () => {
+            if (done) return;
+            done = true;
+            setMapRendered(true);
+          };
+
+          tileSource.once('tileloadend', () => {
+            mapRef.current?.once('rendercomplete', markRendered);
+          });
+          // Cached tiles / no reload after applyStyle — don't block cameras forever
+          setTimeout(markRendered, 2000);
+        });
       });
     });
 
@@ -637,6 +654,8 @@ export default function DriveBCMap(props) {
       if (smallScreen) {
         resetHoveredStates(null, hoveredFeature);
       }
+
+      mapLayers.current?.highwayCams?.get('syncViewport')?.();
 
       const [lon, lat] = toLonLat(mapView.current.getCenter());
 
@@ -679,17 +698,6 @@ export default function DriveBCMap(props) {
     mapRef.current.on('pointermove', (e) => {
       pointerMoveHandler(e, mapRef, hoveredFeature);
     });
-
-    // Update render complete state
-    const handleRenderComplete = () => setMapRendered(true);
-    mapRef.current.on('rendercomplete', handleRenderComplete);
-
-    // Cleanup on unmount
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.un('rendercomplete', handleRenderComplete);
-      }
-    };
   }, []);
 
   // Auto-open panel from URL params on initial load
@@ -828,6 +836,8 @@ export default function DriveBCMap(props) {
   }
 
   useEffect(() => {
+    if (!mapRendered) return;
+
     setLoadingLayers(getInitialLoadingLayers());
 
     // Use only selectedRoute in cam details page
@@ -845,28 +855,29 @@ export default function DriveBCMap(props) {
     if (!searchedRoutes || !searchedRoutes.length) {
       removeOverlays(mapRef);
     }
-  }, [searchedRoutes]);
+  }, [searchedRoutes, mapRendered]);
 
-  // Cameras layer
+  // Cameras layer — after first map paint so basemap tiles aren't blocked
   useEffect(() => {
-    // Do nothing if list empty
-    if (filteredCameras) {
-      // Deep clone and add group reference to each cam
-      const clonedCameras = typeof structuredClone === 'function' ? structuredClone(cameras) : cloneDeep(cameras);
-      const groupedCameras = addCameraGroups(clonedCameras);
-      const clonedFilteredCameras = typeof structuredClone === 'function' ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
-      const groupedFilteredCameras = addCameraGroups(clonedFilteredCameras);
+    if (!mapRendered || !filteredCameras) return;
 
-      loadLayer(
-        mapLayers, mapRef, mapContext,
-        'highwayCams', groupedCameras, groupedFilteredCameras, 63,
-        referenceData, updateReferenceFeature, setLoadingLayers
-      );
-    }
-  }, [filteredCameras]);
+    // Deep clone and add group reference to each cam
+    const clonedCameras = typeof structuredClone === 'function' ? structuredClone(cameras) : cloneDeep(cameras);
+    const groupedCameras = addCameraGroups(clonedCameras);
+    const clonedFilteredCameras = typeof structuredClone === 'function' ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
+    const groupedFilteredCameras = addCameraGroups(clonedFilteredCameras);
+
+    loadLayer(
+      mapLayers, mapRef, mapContext,
+      'highwayCams', groupedCameras, groupedFilteredCameras, 63,
+      referenceData, updateReferenceFeature, setLoadingLayers
+    );
+  }, [filteredCameras, mapRendered]);
 
   // Events layer
   useEffect(() => {
+    if (!mapRendered) return;
+
     // Add layers if not loaded
     if (events && mapLayers.current && !mapLayers.current['majorEvents']) {
       const eventFound = loadEventsLayers(events, mapContext, mapLayers, mapRef, referenceData, updateReferenceFeature, setLoadingLayers);
@@ -910,10 +921,12 @@ export default function DriveBCMap(props) {
       });
     }
 
-  }, [filteredEvents]);
+  }, [filteredEvents, mapRendered]);
 
   // Ferries layer
   useEffect(() => {
+    if (!mapRendered) return;
+
     if (ferries && filteredFerries) {
       const featuresDict = loadLayer(
         mapLayers, mapRef, mapContext,
@@ -927,37 +940,45 @@ export default function DriveBCMap(props) {
     if (Array.isArray(filteredFerries)) {
       setSelectedFerries(filteredFerries.length);
     }
-  }, [filteredFerries]);
+  }, [filteredFerries, mapRendered]);
 
   // Current weathers layer
   useEffect(() => {
+    if (!mapRendered) return;
+
     loadLayer(
       mapLayers, mapRef, mapContext,
       'weather', currentWeather, filteredCurrentWeathers, 68,
       referenceData, updateReferenceFeature, setLoadingLayers
     );
-  }, [filteredCurrentWeathers]);
+  }, [filteredCurrentWeathers, mapRendered]);
 
   // Regional weathers layer
   useEffect(() => {
+    if (!mapRendered) return;
+
     loadLayer(
       mapLayers, mapRef, mapContext,
       'regional', regionalWeather, filteredRegionalWeathers, 69,
       referenceData, updateReferenceFeature, setLoadingLayers
     );
-  }, [filteredRegionalWeathers]);
+  }, [filteredRegionalWeathers, mapRendered]);
 
   // High elevation forecasts layer
   useEffect(() => {
+    if (!mapRendered) return;
+
     loadLayer(
       mapLayers, mapRef, mapContext,
       'hef', hef, filteredHef, 70,
       referenceData, updateReferenceFeature, setLoadingLayers
     );
-  }, [filteredHef]);
+  }, [filteredHef, mapRendered]);
 
   // Rest stops layer
   useEffect(() => {
+    if (!mapRendered) return;
+
     loadLayer(
       mapLayers, mapRef, mapContext,
       'restStops', restStops, filteredRestStops, 60,
@@ -969,19 +990,23 @@ export default function DriveBCMap(props) {
       'largeRestStops', restStops, filteredRestStops, 60,
       referenceData, updateReferenceFeature, setLoadingLayers
     );
-  }, [filteredRestStops]);
+  }, [filteredRestStops, mapRendered]);
 
   // Border crossings layer
   useEffect(() => {
+    if (!mapRendered) return;
+
     loadLayer(
       mapLayers, mapRef, mapContext,
       'borderCrossings', borderCrossings, filteredBorderCrossings, 71,
       referenceData, updateReferenceFeature, setLoadingLayers
     );
-  }, [borderCrossings]);
+  }, [borderCrossings, mapRendered]);
 
   // Wildfires layer
   useEffect(() => {
+    if (!mapRendered) return;
+
     const featuresDict = loadLayer(
       mapLayers, mapRef, mapContext,
       'wildfires', wildfires, filteredWildfires, 72,
@@ -989,10 +1014,12 @@ export default function DriveBCMap(props) {
     );
 
     setFeatureContext({...featureContext, wildfires: featuresDict});
-  }, [wildfires]);
+  }, [wildfires, mapRendered]);
 
   // Advisories layer
   useEffect(() => {
+    if (!mapRendered) return;
+
     const featuresDict = loadLayer(
       mapLayers, mapRef, mapContext,
       'advisoriesLayer', advisories, filteredAdvisories, 5,
@@ -1000,7 +1027,7 @@ export default function DriveBCMap(props) {
     );
 
     setFeatureContext({...featureContext, advisories: featuresDict});
-  }, [advisories]);
+  }, [advisories, mapRendered]);
 
   useEffect(() => {
     const advisoriesData = (filteredAdvisories && filteredAdvisories.length) ? filteredAdvisories : [];
@@ -1061,21 +1088,25 @@ export default function DriveBCMap(props) {
 
   // Dms layer
   useEffect(() => {
+    if (!mapRendered) return;
+
     loadLayer(
       mapLayers, mapRef, mapContext,
       'dms', dms, filteredDms, 60,
       referenceData, updateReferenceFeature, setLoadingLayers
     );
-  }, [filteredDms]);
+  }, [filteredDms, mapRendered]);
 
   // Group and offset overlapping point features after all layers finish loading
   useEffect(() => {
+    if (!mapRendered) return;
+
     const allLoaded = Object.values(loadingLayers).every(v => v === false);
     if (allLoaded && mapView.current) {
       overlapGroups.current = groupNearbyFeatures(mapLayers);
       applyOverlapOffsets(overlapGroups.current, mapView);
     }
-  }, [loadingLayers]);
+  }, [loadingLayers, mapRendered]);
 
 
   /* Rendering */
