@@ -1,5 +1,5 @@
 // React
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,13 +16,13 @@ import { API_HOST } from '../../env';
 // Styling
 import './EmergencyAlert.scss';
 
-
 export default function EmergencyAlert() {
   // Context
   const { emergencyAlertContext, setEmergencyAlertContext } = useContext(EmergencyAlertContext);
 
   // States
   const [emergencyAlert, setEmergencyAlert] = useState();
+  const resizeObserverRef = useRef(null);
 
   // Data functions
   const fetchEmergencyAlert = async () => {
@@ -43,6 +43,26 @@ export default function EmergencyAlert() {
     setEmergencyAlertContext(read);
   };
 
+  // Expose .fg height for layout offsets (e.g. filters-menu)
+  const fgRef = useCallback((node) => {
+    if (resizeObserverRef.current) {
+      resizeObserverRef.current.disconnect();
+      resizeObserverRef.current = null;
+    }
+
+    if (!node) {
+      document.documentElement.style.removeProperty('--fg-height');
+      return;
+    }
+
+    const sync = () => {
+      document.documentElement.style.setProperty('--fg-height', `${node.getBoundingClientRect().height}px`);
+    };
+    sync();
+    resizeObserverRef.current = new ResizeObserver(sync);
+    resizeObserverRef.current.observe(node);
+  }, []);
+
   const id = emergencyAlert
     ? emergencyAlert.id.toString() + '-' + emergencyAlert.live_revision.toString()
     : null;
@@ -51,7 +71,7 @@ export default function EmergencyAlert() {
   return (
     <div>
       { emergencyAlert && !emergencyAlertContext.includes(id) &&
-        <div className={`fg`}>
+        <div className={`fg`} ref={fgRef}>
           <div className='fg-content'>
             <FontAwesomeIcon icon={faHexagonExclamation} className="fg-exclamation" />
             <span>

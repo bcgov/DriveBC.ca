@@ -29,6 +29,15 @@ button.btn.open-filters {
     &.layers-tab {
       height: 676.2px;
     }
+
+    // Shorten when emergency banner (.fg) is present; --fg-height from EmergencyAlert
+    html:has(.fg) & {
+      max-height: #{"calc(100vh - 212px - var(--fg-height, 3.5rem))"};
+
+      &.layers-tab {
+        height: #{"calc(676.2px - var(--fg-height, 3.5rem))"};
+      }
+    }
   }
 
   // Mobile
