@@ -35,6 +35,11 @@ spec:
         prometheus.io/scrape: 'true'
         {{- end }}
     spec:
+      # FIX FOR KSV-0118: Define securityContext at Pod level without hardcoded UIDs
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       volumes:
         - name: django-media-volume
           persistentVolumeClaim:
@@ -42,19 +47,27 @@ spec:
         - name: django-app-images-volume
           persistentVolumeClaim:
             claimName: {{ include "app.fullname" . }}-app-images
+        # Mount an emptyDir to /tmp to prevent failures when rootfs is read-only
+        - name: tmp-volume
+          emptyDir: {}
       containers:
         - resources:
             requests:
-              cpu: {{ .Values.deployment.resources.requests.cpu  }}
-              memory: {{ .Values.deployment.resources.requests.memory  }}
+              cpu: {{ .Values.deployment.resources.requests.cpu }}
+              memory: {{ .Values.deployment.resources.requests.memory }}
             limits:
-              memory: {{ .Values.deployment.resources.limits.memory  }}
+              memory: {{ .Values.deployment.resources.limits.memory }}
           name: {{ include "app.fullname" . }}
           securityContext:
             seccompProfile:
               type: RuntimeDefault
             runAsNonRoot: true
             allowPrivilegeEscalation: false
+            # FIX FOR KSV-0014: Enforce read-only root filesystem
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - '-c'
@@ -67,7 +80,7 @@ spec:
               value: {{ $deploymentTime | quote }}
             - name: RELEASE
               value: {{ .Values.global.release }}
-            {{- range $key, $value := .Values.deployment.env.variables }}
+            {{- range $key,$value := .Values.deployment.env.variables }}
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
@@ -78,27 +91,27 @@ spec:
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  name: {{ .Values.deployment.env.postgresSecret }}
                   key: host
             - name: DB_PORT
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  name: {{ .Values.deployment.env.postgresSecret }}
                   key: port
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  name: {{ .Values.deployment.env.postgresSecret }}
                   key: user
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  name: {{ .Values.deployment.env.postgresSecret }}
                   key: password
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.deployment.env.postgresSecret  }}
+                  name: {{ .Values.deployment.env.postgresSecret }}
                   key: dbname
           ports:
             - containerPort: 8000
@@ -109,9 +122,11 @@ spec:
               mountPath: /app/media
             - name: django-app-images-volume
               mountPath: /app/images/webcams
+            - name: tmp-volume
+              mountPath: /tmp
           terminationMessagePolicy: File
           image: >-
-            {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
+            {{ .Values.image.repository }}:{{ .Values.image.tag }}
           readinessProbe:
             httpGet:
               path: /healthcheck/

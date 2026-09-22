@@ -37,6 +37,10 @@ spec:
         prometheus.io/scrape: 'true'
         {{- end }}
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       volumes:
         - name: django-app-images-volume
           persistentVolumeClaim:
@@ -114,6 +118,7 @@ spec:
               type: RuntimeDefault
             runAsNonRoot: true
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
       serviceAccountName: {{ .Values.global.vault.licenceplate }}-vault
       affinity:
         podAntiAffinity:

@@ -31,6 +31,11 @@ spec:
         vault.hashicorp.com/namespace: platform-services
         vault.hashicorp.com/role: {{ .Values.global.vault.licenceplate }}-{{ .Values.global.vault.environment}}
     spec:
+      # Fixes Pod-level KSV-0118
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       volumes:
         - name: django-app-images-volume
           persistentVolumeClaim:
@@ -40,11 +45,20 @@ spec:
             claimName: {{ template "app.fullname" . }}-log-storage
         - name: shared-config
           emptyDir: {}
+        - name: tmp-volume
+          emptyDir: {}
       initContainers:
         - name: config-init
           image: "{{ .Values.image.repository  }}:{{ .Values.image.tag  }}"
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "/tmp/generate-config.sh"]
+          # Fixes Container-level KSV-0014 and KSV-0118 for config-init
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: SHARED_VOLUME_PATH
               value: "/shared-config"
@@ -54,13 +68,15 @@ spec:
               value: {{ $deploymentTime | quote }}
             - name: RELEASE
               value: {{ .Values.global.release }}
-            {{- range $key, $value := .Values.deployment.env.variables }}
+            {{- range $key,$value := .Values.deployment.env.variables }}
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
           volumeMounts:
             - name: shared-config
               mountPath: /shared-config
+            - name: tmp-volume
+              mountPath: /tmp
       containers:
         - resources:
             requests:
@@ -90,6 +106,8 @@ spec:
               mountPath: /etc/nginx/conf.d/security_headers.conf
               subPath: security_headers.conf
               readOnly: true
+            - name: tmp-volume
+              mountPath: /tmp
           image: >-
             {{ .Values.image.repository  }}:{{ .Values.image.tag  }}
           env:
@@ -99,15 +117,17 @@ spec:
               value: {{ $deploymentTime | quote }}
             - name: RELEASE
               value: {{ .Values.global.release }}
-            {{- range $key, $value := .Values.deployment.env.variables }}
+            {{- range $key,$value := .Values.deployment.env.variables }}
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
+          # Fixes KSV-0014 for main container
           securityContext:
-            seccompProfile:
-              type: RuntimeDefault
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
             allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
           readinessProbe:
             httpGet:
               path: /healthz

@@ -18,9 +18,15 @@ spec:
       labels:
         {{- include "app.selectorLabels" . | nindent 8 }}
     spec:
+      # Fixes Pod-level KSV-0118
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: {{ template "app.fullname" . }}
       volumes:
         - name: redis-1
+          emptyDir: {}
       containers:
         - resources:
             requests:
@@ -58,11 +64,13 @@ spec:
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
+          # Fixes Container-level KSV-0014 and KSV-0118
           securityContext:
-            seccompProfile:
-              type: RuntimeDefault
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
             allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
