@@ -73,6 +73,7 @@ Now we can setup the syncing of folders:
         1. Advanced Tab:
             1. Uncheck `Watch for Changes`
             1. Check `Ignore Permissions`
+            1. Uncheck `Block Indexing`
         1. Save
     1. Add Folder
         1. Folder Label: `Webcam Images`
@@ -82,6 +83,7 @@ Now we can setup the syncing of folders:
         1. Advanced Tab:
             1. Uncheck `Watch for Changes`
             1. Check `Ignore Permissions`
+            1. Uncheck `Block Indexing`
         1. Save
 1. In GoldDR
     1. Click Add on the `New Folder` request for CMS Media:
@@ -89,12 +91,14 @@ Now we can setup the syncing of folders:
         1. Advanced Tab:
             1. Uncheck `Watch for Changes`
             1. Check `Ignore Permissions`
+            1. Uncheck `Block Indexing`
         1. Save
     1. Click Add on the second request for Webcam Images
         1. Set folder path: `/app/images/webcams`
         1. Advanced Tab:
             1. Uncheck `Watch for Changes`
             1. Check `Ignore Permissions`
+            1. Uncheck `Block Indexing`
         1. Save
 1. In Both we need to adjust a few settings to improve performance:
     1. Click `Actions` (top right)
