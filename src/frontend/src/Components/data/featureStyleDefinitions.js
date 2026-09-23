@@ -10,6 +10,8 @@ import cameraIconStaticUnread from '../../images/mapIcons/camera-static-unread.p
 import cameraGroupedIconActive from '../../images/mapIcons/camera-grouped-active.png';
 import cameraGroupedIconHover from '../../images/mapIcons/camera-grouped-hover.png';
 import cameraGroupedIconStatic from '../../images/mapIcons/camera-grouped-static.png';
+import cameraGroupedIconHoverUnread from '../../images/mapIcons/camera-grouped-hover-unread.png';
+import cameraGroupedIconStaticUnread from '../../images/mapIcons/camera-grouped-static-unread.png';
 
 // Ferries
 import ferryIconActive from '../../images/mapIcons/ferry-active.png';
@@ -251,6 +253,27 @@ export const unreadCameraStyles = {
     image: new Icon({
       scale: 0.25,
       src: cameraIconActive,
+    }),
+  }),
+};
+
+export const unreadCameraGroupedStyles = {
+  static: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: cameraGroupedIconStaticUnread,
+    }),
+  }),
+  hover: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: cameraGroupedIconHoverUnread,
+    }),
+  }),
+  active: new Style({
+    image: new Icon({
+      scale: 0.25,
+      src: cameraGroupedIconActive,
     }),
   }),
 };

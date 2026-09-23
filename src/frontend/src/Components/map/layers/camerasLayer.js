@@ -10,7 +10,7 @@ import { transform } from 'ol/proj';
 // import CircleStyle from 'ol/style/Circle.js';
 
 // Styling
-import { cameraStyles, cameraGroupedStyles, unreadCameraStyles } from '../../data/featureStyleDefinitions';
+import { cameraStyles, cameraGroupedStyles, unreadCameraStyles, unreadCameraGroupedStyles } from '../../data/featureStyleDefinitions';
 
 export function getCamerasLayer(cameras, projectionCode, mapContext, referenceData, updateReferenceFeature, setLoadingLayers, pixelDistance, map) {
   const vectorSource = new VectorSource();
@@ -44,7 +44,7 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
         return cam.get('unread') ? unreadCameraStyles.static : cameraStyles.static;
       }
 
-      // Highlight group if any member is clicked/hovered
+      // Highlight group if any member is clicked/hovered; show update pip if any is unread
       let state = 'static';
       if (features.some((cam) => cam.get('clicked'))) {
         state = 'active';
@@ -52,7 +52,9 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
         state = 'hover';
       }
 
-      const cacheKey = `${state}_${size}`;
+      const hasUnread = features.some((cam) => cam.get('unread'));
+      const groupedStyles = hasUnread ? unreadCameraGroupedStyles : cameraGroupedStyles;
+      const cacheKey = `${state}_${size}_${hasUnread}`;
       let style = styleCache[cacheKey];
 
       if (!style) {
@@ -61,7 +63,7 @@ export function getCamerasLayer(cameras, projectionCode, mapContext, referenceDa
         style = new Style({
           image: new Icon({
             scale: 0.25,
-            src: cameraGroupedStyles[state].getImage().getSrc(),
+            src: groupedStyles[state].getImage().getSrc(),
           }),
           text: new Text({
             text: String(size),
