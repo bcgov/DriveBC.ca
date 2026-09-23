@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo
 
 from timezonefinder import TimezoneFinder
 
-tz_finder = TimezoneFinder(in_memory=True)
+tz_finder = TimezoneFinder()
 
 from apps.feed.fields import (
     DmsGeographyField,
