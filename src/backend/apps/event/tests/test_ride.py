@@ -30,6 +30,7 @@ class TestGetRideEventDict(BaseTest):
                     "start": {
                         "name": "Highway 1",
                         "nearby": [],
+                        "coords": [1, 1]
                     }
                 },
                 "segment": {"name": "Seg 1"},
@@ -100,6 +101,7 @@ class TestPopulateRideMerge(BaseTest):
                     "start": {
                         "name": "From RIDE feed",
                         "nearby": [],
+                        "coords": [1, 1]
                     }
                 },
                 "segment": None,

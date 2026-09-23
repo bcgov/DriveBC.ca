@@ -3,6 +3,10 @@ import zoneinfo
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+from timezonefinder import TimezoneFinder
+
+tz_finder = TimezoneFinder(in_memory=True)
+
 from apps.feed.fields import (
     DmsGeographyField,
     DmsPropertiesField,
@@ -204,6 +208,9 @@ class RIDEEventSerializer(serializers.Serializer):
         data["route_at"] = ''
         data["timezone"] = ''
 
+        # Timezone - default to Vancouver
+        timezone = 'America/Vancouver'
+
         # closed
         for impact in data.get("impacts", []):
             if impact.get('closed'):
@@ -227,6 +234,11 @@ class RIDEEventSerializer(serializers.Serializer):
                 if not start_or_end:
                     continue
 
+                if location_key == 'start':
+                    # Parse location timezone
+                    coords = start_or_end.get('coords')
+                    timezone = tz_finder.timezone_at(lng=coords[0], lat=coords[1])
+
                 # route_at - was "route-designator" but now "name"
                 route_name = start_or_end.get('name', '')
                 route_alias = start_or_end.get('alias')
@@ -248,15 +260,14 @@ class RIDEEventSerializer(serializers.Serializer):
 
             data["location_description"] = location_description
 
+        data['timezone'] = timezone
+
         # next_update
         timing = data.get("timing", {})
         data["next_update"] = timing.get('nextUpdate')
 
         # start_point_linear_reference
         data["start_point_linear_reference"] = data.get('route_projection', 0)
-
-        # timezone
-        data['timezone'] = 'America/Vancouver'
 
         return super().to_internal_value(data)
 

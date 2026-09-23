@@ -5,43 +5,42 @@ from unittest.mock import patch
 from apps.shared.models import RouteGeometry
 from apps.shared.tests import BaseTest, MockResponse
 from apps.webcam.models import Webcam
-from apps.webcam.tasks import (
+from apps.webcam.tasks import (  # populate_all_webcam_data,
     add_order_to_cameras,
     build_route_geometries,
-    # populate_all_webcam_data,
 )
 from django.contrib.gis.geos import Point
 
 
 def side_effect_populate(mock_data=None):
-            for cam in mock_data['webcams']:
-                Webcam.objects.update_or_create(
-                    id=cam['id'],
-                    defaults={
-                        'region': cam['region'],
-                        'region_name': cam['region_name'],
-                        'highway': cam['highway'],
-                        'name': cam['name'],
-                        'caption': cam['caption'],
-                        'orientation': cam['orientation'],
-                        'elevation': cam['elevation'],
-                        'highway_group': cam['highway_group'],
-                        'highway_cam_order': cam['highway_cam_order'],
-                        'highway_description': cam['highway_description'],
-                        'is_on': cam['is_on'],
-                        'should_appear': cam['should_appear'],
-                        'is_new': cam['is_new'],
-                        'is_on_demand': cam['is_on_demand'],
-                        'credit': cam['credit'],
-                        'marked_stale': cam['marked_stale'],
-                        'marked_delayed': cam['marked_delayed'],
-                        'location': Point(cam['location_longitude'], cam['location_latitude']),
-                        'update_period_mean': cam['update_period_mean'],
-                        'update_period_stddev': cam['update_period_stddev'],
-                        'last_update_attempt': cam['last_update_attempt'],
-                        'last_update_modified': cam['last_update_modified'],
-                    }
-                )
+    for cam in mock_data['webcams']:
+        Webcam.objects.update_or_create(
+            id=cam['id'],
+            defaults={
+                'region': cam['region'],
+                'region_name': cam['region_name'],
+                'highway': cam['highway'],
+                'name': cam['name'],
+                'caption': cam['caption'],
+                'orientation': cam['orientation'],
+                'elevation': cam['elevation'],
+                'highway_group': cam['highway_group'],
+                'highway_cam_order': cam['highway_cam_order'],
+                'highway_description': cam['highway_description'],
+                'is_on': cam['is_on'],
+                'should_appear': cam['should_appear'],
+                'is_new': cam['is_new'],
+                'is_on_demand': cam['is_on_demand'],
+                'credit': cam['credit'],
+                'marked_stale': cam['marked_stale'],
+                'marked_delayed': cam['marked_delayed'],
+                'location': Point(cam['location_longitude'], cam['location_latitude']),
+                'update_period_mean': cam['update_period_mean'],
+                'update_period_stddev': cam['update_period_stddev'],
+                'last_update_attempt': cam['last_update_attempt'],
+                'last_update_modified': cam['last_update_modified'],
+            }
+        )
 
 
 class TestWebcamOrdering(BaseTest):
@@ -70,6 +69,7 @@ class TestWebcamOrdering(BaseTest):
 
     def tearDown(self):
         super().tearDown()
+        RouteGeometry.objects.all().delete()
 
     @patch("apps.webcam.tasks.populate_all_webcam_data")
     @patch("httpx.get")
@@ -82,7 +82,6 @@ class TestWebcamOrdering(BaseTest):
         mock_populate.side_effect = lambda *args, **kwargs: side_effect_populate(self.mock_webcam_feed_result_1)
         from apps.webcam import tasks
         tasks.populate_all_webcam_data()
-        
 
         # Geometry doesn't exist, create
         build_route_geometries({
