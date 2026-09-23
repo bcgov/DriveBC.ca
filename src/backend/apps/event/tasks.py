@@ -209,11 +209,13 @@ def populate_all_event_data():
                 new_tz = ZoneInfo(direct_data['timezone'])
                 event_data['timezone'] = direct_data['timezone']
 
-                first_created_time = event_data["first_created"].replace(tzinfo=new_tz)
-                event_data["first_created"] = cap_time_to_now(first_created_time)
+                # For DIT events, replace timezone without changing time
+                if RIDE_EVENT_PREFIX not in id:
+                    first_created_time = event_data["first_created"].replace(tzinfo=new_tz)
+                    event_data["first_created"] = cap_time_to_now(first_created_time)
 
-                last_updated_time = event_data["last_updated"].replace(tzinfo=new_tz)
-                event_data["last_updated"] = cap_time_to_now(last_updated_time)
+                    last_updated_time = event_data["last_updated"].replace(tzinfo=new_tz)
+                    event_data["last_updated"] = cap_time_to_now(last_updated_time)
 
             else:
                 event_data['timezone'] = 'America/Vancouver'
