@@ -633,9 +633,7 @@ def send_queued_district_notifications():
             continue
 
         for event in sorted_active_events:
-            event.site_link = build_event_site_link(
-                event, geometry=subscription.area.geometry
-            )
+            event.site_link = build_event_site_link(event)
 
         context = {
             'events': sorted_active_events,

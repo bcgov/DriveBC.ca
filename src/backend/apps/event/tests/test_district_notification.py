@@ -229,8 +229,9 @@ class SendDistrictNotificationsTest(TestCase):
 
         html = email.alternatives[0][0]
         assert 'pan=0.5,0.5' in html
-        assert 'zoom=' in html
+        assert 'zoom=11' in html
         assert f'id={self.intersecting_event.id}' in html
+        assert 'route_distance=' not in html
 
     def test_queue_merges_event_ids_for_existing_subscription(self):
         dt = datetime.datetime(

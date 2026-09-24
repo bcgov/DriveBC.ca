@@ -6,6 +6,7 @@ from django.test import SimpleTestCase, override_settings
 class FakeEvent:
     id = 'EVT-1'
     display_category = 'closures'
+    location = Point(-120.5, 50.25)
 
 
 class FakeRoute:
@@ -33,19 +34,32 @@ class GetPanZoomForGeometryTest(SimpleTestCase):
 
 class BuildEventSiteLinkTest(SimpleTestCase):
     @override_settings(FRONTEND_BASE_URL='https://example.drivebc.ca/')
-    def test_area_link_includes_pan_zoom_from_geometry(self):
-        link = build_event_site_link(
-            FakeEvent(), geometry=Polygon.from_bbox((0, 0, 1, 1))
+    def test_area_link_matches_view_on_map(self):
+        link = build_event_site_link(FakeEvent())
+        assert link == (
+            'https://example.drivebc.ca/?type=event'
+            '&display_category=closures&id=EVT-1'
+            '&pan=-120.5,50.25&zoom=11'
         )
-        assert 'type=event&display_category=closures&id=EVT-1' in link
-        assert 'pan=0.5,0.5' in link
-        assert 'zoom=' in link
         assert 'route_distance=' not in link
+
+    @override_settings(FRONTEND_BASE_URL='https://example.drivebc.ca/')
+    def test_area_linestring_uses_centroid(self):
+        event = FakeEvent()
+        event.location = LineString((-120, 50), (-118, 52))
+        link = build_event_site_link(event)
+        assert 'zoom=11' in link
+        assert 'route_distance=' not in link
+        assert 'pan=-119.' in link
 
     @override_settings(FRONTEND_BASE_URL='https://example.drivebc.ca/')
     def test_route_link_includes_route_params_and_pan_zoom(self):
         link = build_event_site_link(FakeEvent(), route=FakeRoute())
         assert 'type=event&display_category=closures&id=EVT-1' in link
         assert 'route_distance=12.3' in link
+        assert 'route_start=A' in link
         assert 'pan=0.5,0.5' in link
         assert 'zoom=' in link
+        # Event location / fixed zoom=11 is not used for route links
+        assert 'pan=-120.5,50.25' not in link
+        assert '&zoom=11' not in link

@@ -17,7 +17,7 @@ def get_pan_zoom_for_geometry(geometry, map_size=1024, padding=0.15):
     """
     Return (pan_lon, pan_lat, zoom) fitted to geometry extent.
 
-    Mirrors frontend fitMap for route notifications; used for area extent too.
+    Mirrors frontend fitMap; used for route notification pan/zoom.
     """
     if geometry is None or geometry.empty:
         return None
@@ -46,8 +46,17 @@ def get_pan_zoom_for_geometry(geometry, map_size=1024, padding=0.15):
     return pan_lon, pan_lat, zoom
 
 
-def build_event_site_link(event, geometry=None, route=None):
-    """Full DriveBC map URL for an event, with pan/zoom from geometry or route extent."""
+# Match EventsListPage handleRoute ("View on map") for area notification emails
+_EVENT_VIEW_ZOOM = 11
+
+
+def build_event_site_link(event, route=None):
+    """
+    Full DriveBC map URL for an event.
+
+    Route notifications: include route params and fit pan/zoom to the route.
+    Area notifications: match delays-list "View on map" (event location, zoom 11).
+    """
     link = (
         f'{settings.FRONTEND_BASE_URL}?type=event'
         f'&display_category={event.display_category}&id={event.id}'
@@ -61,13 +70,20 @@ def build_event_site_link(event, geometry=None, route=None):
             f'&route_end_point={route.end_point.x},{route.end_point.y}'
             f'&route_distance={route.distance}'
         )
-        if geometry is None:
-            geometry = route.route
+        pan_zoom = get_pan_zoom_for_geometry(route.route)
+        if pan_zoom:
+            pan_lon, pan_lat, zoom = pan_zoom
+            link += f'&pan={pan_lon},{pan_lat}&zoom={zoom}'
+        return link
 
-    pan_zoom = get_pan_zoom_for_geometry(geometry)
-    if pan_zoom:
-        pan_lon, pan_lat, zoom = pan_zoom
-        link += f'&pan={pan_lon},{pan_lat}&zoom={zoom}'
+    location = getattr(event, 'location', None)
+    if location is not None and not location.empty:
+        if location.geom_type == 'Point':
+            pan_lon, pan_lat = location.x, location.y
+        else:
+            centroid = location.centroid
+            pan_lon, pan_lat = centroid.x, centroid.y
+        link += f'&pan={pan_lon},{pan_lat}&zoom={_EVENT_VIEW_ZOOM}'
 
     return link
 
