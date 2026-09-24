@@ -97,7 +97,10 @@ export default function CamPanel(props) {
   const [replay, setReplay] = useState(false);
   const [replayImages, setReplayImages] = useState([]);
   const [hasImageEnded, setHasImageEnded] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  // Camera list links include from=camera-list; map clicks do not.
+  const fromCameraList = searchParams.get('from') === 'camera-list';
+  const [expanded, setExpanded] = useState(fromCameraList && canExpand);
+  const autoExpanded = useRef(false);
   // Drawer is used when !largeScreen in Map (including isCamDetail preview)
   const [inDrawer, setInDrawer] = useState(!largeScreen || !!isCamDetail);
 
@@ -105,8 +108,14 @@ export default function CamPanel(props) {
   useEffect(() => {
     if (!canExpand) {
       setExpanded(false);
+      return;
     }
-  }, [canExpand]);
+
+    if (fromCameraList && !autoExpanded.current) {
+      setExpanded(true);
+      autoExpanded.current = true;
+    }
+  }, [canExpand, fromCameraList]);
 
   useEffect(() => {
     if (!camPanelRef.current) {
@@ -405,7 +414,6 @@ export default function CamPanel(props) {
   const unavailable = camera?.is_on ? '' : 'unavailable';
   const updated = isUpdated ? 'updated' : '';
   const isExpanded = canExpand && expanded;
-  const fromCameraList = searchParams.get('from') === 'camera-list';
 
   // Main component
   return (
