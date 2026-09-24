@@ -42,7 +42,7 @@ body,
 }
 
 // External link icon: absolute http(s) URLs only, excluding any href containing drivebc.ca.
-$external-link-optouts: ":not(.data-link):not(.commercial-dropdown-item):not(.route-links):not(.ferry-route-name):not(.social-icon)";
+$external-link-optouts: ":not(.data-link):not(.commercial-dropdown-item):not(.route-links):not(.ferry-route-name):not(.social-icon):not(.popup--ferry *)";
 a[href^="http://" i]#{$external-link-optouts}:not([href*="drivebc.ca" i]),
 a[href^="https://" i]#{$external-link-optouts}:not([href*="drivebc.ca" i]) {
   position: relative;
