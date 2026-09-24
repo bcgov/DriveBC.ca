@@ -34,7 +34,7 @@ RUN apk add --no-cache gzip brotli && \
 # Builder: compile brotli modules from     #
 # source against the exact nginx version   #
 ############################################
-FROM nginx:stable-alpine3.23 AS brotli-builder
+FROM nginx:stable-alpine3.24 AS brotli-builder
 
 RUN apk add --no-cache \
     git cmake gcc g++ make \
@@ -58,7 +58,7 @@ RUN mkdir /brotli-modules && \
 ############################################
 # Runtime: nginx serving built assets      #
 ############################################
-FROM nginx:stable-alpine3.23
+FROM nginx:stable-alpine3.24
 
 EXPOSE 3000
 
