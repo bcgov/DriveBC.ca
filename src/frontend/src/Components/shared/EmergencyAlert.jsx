@@ -67,7 +67,13 @@ export default function EmergencyAlert() {
             </span>
           </div>
 
-          <FontAwesomeIcon icon={faXmark} className="fg-close-btn" onClick={handleClose} onKeyDown={handleClose} tabIndex={0} />
+          <button
+            type="button"
+            className="fg-close-btn"
+            aria-label="Close emergency alert"
+            onClick={handleClose}>
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
         </div>
       }
 

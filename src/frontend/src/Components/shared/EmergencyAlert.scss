@@ -47,6 +47,10 @@
   .fg-close-btn {
     cursor: pointer;
     margin-left: 2rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
   }
 
   .fg-detail-link {
