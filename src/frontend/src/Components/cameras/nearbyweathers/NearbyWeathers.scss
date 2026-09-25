@@ -78,7 +78,6 @@
 
           &:hover {
             background: none;
-            color: $Grey80;
             border-bottom-color: #605E5C;
           }
         }
@@ -339,8 +338,11 @@
 }
 
 .weather-empty {
+  h3, p {
+    font-size: 0.875rem;
+  }
+
   h3 {
-    font-size: 16px;
     font-weight: 700;
   }
 }
