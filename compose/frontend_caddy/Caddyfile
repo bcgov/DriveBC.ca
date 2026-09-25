@@ -23,6 +23,7 @@
         key {
             disable_host
             disable_method
+            headers X-Cache-Encoding
         }
         redis {
             url {$REDIS_URL}
@@ -134,9 +135,15 @@ www.drivebc.ca:3000, :3000 {
         error @rss 404
 
         route {
+            map {header.Accept-Encoding} {cache_encoding} {
+                ~(?i)\bzstd\b  zstd
+                ~(?i)\bgzip\b  gzip
+                default        identity
+            }
             request_header -Cache-Control
             request_header -Pragma
             request_header -Cookie  # Strips cookies for public API routes so Souin treats them as public
+            request_header X-Cache-Encoding {cache_encoding}
 
             cache
 
