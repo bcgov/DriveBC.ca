@@ -68,9 +68,6 @@ www.drivebc.ca:3000, :3000 {
         error 404
     }
 
-    @souinApi path /souin-api*
-    cache @souinApi
-
     # Logging
     log {
         output stdout
