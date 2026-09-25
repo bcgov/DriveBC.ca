@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 // Internal imports
 import { MapContext } from "../../App";
 import { NetworkError, ServerError } from '../data/helper';
+import { filterByRoute } from './helpers';
 import * as dataLoaders from './dataLoaders'
 import * as slices from '../../slices';
 import DriveBCMap from './Map';
@@ -186,18 +187,24 @@ export default function MapWrapper(props) {
     }
 
     workerRef.current = new Worker(
-      new URL('./filterRouteWorker', import.meta.url), 
+      new URL('./filterRouteWorker', import.meta.url),
       { type: 'module' }
     );
 
     // Set up event listener for messages from the worker
     workerRef.current.onmessage = function (event) {
-      const { data, filteredData, action } = event.data;
+      const { data, filteredData, route, action } = event.data;
+
+      // DBC22-5976: never apply an unfiltered camera list while a route is selected
+      let nextFiltered = filteredData;
+      if (action === 'updateCameras' && selectedRouteRef.current?.routeFound && !route) {
+        nextFiltered = filterByRoute(data, selectedRouteRef.current, 50, false);
+      }
 
       dispatch(
         slices[action]({
           list: data,
-          filteredList: filteredData,
+          filteredList: nextFiltered,
           timeStamp: new Date().getTime()
         })
       );
@@ -237,7 +244,7 @@ export default function MapWrapper(props) {
       dms: reloadDms
     });
 
-    handleLoad(() => dataLoaders.loadCameras(routeData, reloadCameras ? null : camerasRef.current, dispatch, workerRef.current), displayError);
+    handleLoad(() => dataLoaders.loadCameras(reloadCameras ? null : camerasRef.current, dispatch, workerRef.current, selectedRouteRef), displayError);
     handleLoad(() => dataLoaders.loadEvents(routeData, reloadEvents ? null : eventsRef.current, dispatch, workerRef.current, isInitialLoad.current, trackedEventsRef), displayError);
     handleLoad(() => dataLoaders.loadFerries(routeData, reloadFerries ? null : ferriesRef.current, dispatch, workerRef.current), displayError);
     handleLoad(() => dataLoaders.loadCurrentWeather(routeData, reloadLocalWeathers ? null : currentWeathersRef.current, dispatch, workerRef.current), displayError);

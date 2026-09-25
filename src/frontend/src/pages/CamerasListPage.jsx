@@ -114,12 +114,18 @@ export default function CamerasListPage() {
   const wideFilterBar = useMediaQuery('only screen and (min-width : 1200px)');
 
   // Data functions
-  const getCamerasData = async route => {
+  const getCamerasData = async () => {
     // Fetch data
     const camData = await getCameras().catch((error) => displayError(error));
+    if (!camData) return;
 
-    // Filter data by route
-    const filteredCamData = route && route.routeFound ? filterByRoute(camData, route, null, true) : camData;
+    // DBC22-5976: always filter from the live selected-route ref
+    const activeRoute = selectedRouteRef.current?.routeFound
+      ? selectedRouteRef.current
+      : null;
+    const filteredCamData = activeRoute
+      ? filterByRoute(camData, activeRoute, null, true)
+      : camData;
 
     dispatch(
       updateCameras({
@@ -305,7 +311,7 @@ export default function CamerasListPage() {
   useEffect(() => {
     selectedRouteRef.current = selectedRoute;
     setShowLoader(true);
-    getCamerasData(selectedRoute);
+    getCamerasData();
   }, [selectedRoute]);
 
   // Sub components
@@ -590,7 +596,7 @@ export default function CamerasListPage() {
         highwayCameras={processedCameras}
       />
 
-      <PollingComponent runnable={() => getCamerasData(selectedRouteRef.current)} interval={30000} />
+      <PollingComponent runnable={() => getCamerasData()} interval={30000} />
     </React.Fragment>
   );
 }

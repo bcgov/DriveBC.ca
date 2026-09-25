@@ -120,7 +120,7 @@ export default function DriveBCMap(props) {
   const dispatch = useDispatch();
   const {
     feeds: {
-      cameras: { list: cameras, filteredList: filteredCameras },
+      cameras: { filteredList: filteredCameras },
       events: { list: events, filteredList: filteredEvents },
       ferries: { list: ferries, filteredList: filteredFerries },
       weather: { list: currentWeather, filteredList: filteredCurrentWeathers },
@@ -857,19 +857,17 @@ export default function DriveBCMap(props) {
     }
   }, [searchedRoutes, mapRendered]);
 
-  // Cameras layer — after first map paint so basemap tiles aren't blocked
+  // Cameras layer — after first map paint so basemap tiles aren't blocked.
+  // Seed and update from filteredCameras only so a poll never paints the full list (DBC22-5976).
   useEffect(() => {
     if (!mapRendered || !filteredCameras) return;
 
-    // Deep clone and add group reference to each cam
-    const clonedCameras = typeof structuredClone === 'function' ? structuredClone(cameras) : cloneDeep(cameras);
-    const groupedCameras = addCameraGroups(clonedCameras);
     const clonedFilteredCameras = typeof structuredClone === 'function' ? structuredClone(filteredCameras) : cloneDeep(filteredCameras);
     const groupedFilteredCameras = addCameraGroups(clonedFilteredCameras);
 
     loadLayer(
       mapLayers, mapRef, mapContext,
-      'highwayCams', groupedCameras, groupedFilteredCameras, 63,
+      'highwayCams', groupedFilteredCameras, groupedFilteredCameras, 63,
       referenceData, updateReferenceFeature, setLoadingLayers
     );
   }, [filteredCameras, mapRendered]);

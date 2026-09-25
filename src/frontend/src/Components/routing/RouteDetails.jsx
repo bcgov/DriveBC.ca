@@ -80,6 +80,7 @@ export default function RouteDetails(props) {
 
   // Ref
   const workerRef = useRef();
+  const selectedRouteRef = useRef();
   const EventTypeFormRef = useRef();
   const DateTimeFormRef = useRef();
 
@@ -165,7 +166,7 @@ export default function RouteDetails(props) {
     }
 
     workerRef.current = new Worker(
-      new URL('../map/filterRouteWorker', import.meta.url), 
+      new URL('../map/filterRouteWorker', import.meta.url),
       { type: 'module' }
     );
 
@@ -200,6 +201,11 @@ export default function RouteDetails(props) {
     };
   }
 
+  // Keep selected-route ref current for async camera loads
+  useEffect(() => {
+    selectedRouteRef.current = selectedRoute;
+  }, [selectedRoute]);
+
   // Effects
   useEffect(() => {
     resetWorker();
@@ -209,10 +215,11 @@ export default function RouteDetails(props) {
       return;
     }
 
+    selectedRouteRef.current = selectedRoute;
     const routeData = selectedRoute && selectedRoute.routeFound ? selectedRoute : null;
 
     if (!advisories) dataLoaders.loadAdvisories(routeData, null, dispatch, workerRef.current);
-    if (!cameras) dataLoaders.loadCameras(routeData, null, dispatch, workerRef.current);
+    if (!cameras) dataLoaders.loadCameras(null, dispatch, workerRef.current, selectedRouteRef);
     if (!events) dataLoaders.loadEvents(routeData, null, dispatch, workerRef.current);
     if (!ferries) dataLoaders.loadFerries(routeData, null, dispatch, workerRef.current);
     if (!wildfires) dataLoaders.loadWildfires(routeData, null, dispatch, workerRef.current);
