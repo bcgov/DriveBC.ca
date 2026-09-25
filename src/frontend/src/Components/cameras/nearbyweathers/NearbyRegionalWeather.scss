@@ -114,12 +114,15 @@
       overflow-x: hidden;
       padding: 4px;
 
-      p {
-        margin-bottom: 0;
-      }
-
       .time-container {
-        margin: 0 4px;
+        padding-bottom: 1rem;
+
+        span {
+          color: $Type-Secondary;
+          font-size: 12px;
+          line-height: 18px;
+          text-align: center;
+        }
 
         .friendly-time {
           &-text {
@@ -131,11 +134,14 @@
         }
       }
 
+      p {
+        margin-bottom: 0;
+      }
+
       &__title {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        margin-top: 12px;
 
         .info-container {
           flex: 1;
@@ -150,6 +156,7 @@
           .name {
             color: $Type-Primary;
             font-size: 1.5rem;
+            font-weight: 400;
             margin-bottom: 0;
           }
         }
