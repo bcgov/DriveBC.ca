@@ -40,6 +40,18 @@
       }
     }
 
+    &:not(.expanded) {
+      .camera-imagery {
+        .forecast-tabs-container .forecast-tab-list .nav-tabs {
+          justify-content: space-between;
+          
+          .nav-item {
+            padding-right: 0;
+          }
+        }
+      }
+    }
+
     &.expanded {
       .camera-imagery {
         display: flex;
@@ -94,6 +106,10 @@
           width: calc(50% - 12px);
           max-width: calc(50% - 12px);
           box-sizing: border-box;
+        }
+
+        .forecast-tabs-container .forecast-tab-list .nav-tabs .nav-item {
+          padding-right: 2rem;
         }
       }
     }
@@ -405,7 +421,7 @@
               .card-pill {
                 top: 8px;
                 right: 8px;
-                padding: 6px 12px;
+                padding: 4px 8px;
                 border-radius: 16px;
                 transform:translateY(-200%);
                 transition: background-color 0.1s ease-in-out;
@@ -417,7 +433,7 @@
                 }
   
                 p, svg {
-                  font-size: 0.875rem;
+                  font-size: 0.75rem;
                 }
   
                 svg {
