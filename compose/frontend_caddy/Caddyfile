@@ -212,6 +212,19 @@ www.drivebc.ca:3000, :3000 {
         }
     }
 
+    # Block specific webcam/original image paths
+    handle /images/originals/* {
+        error 403
+    }
+
+    handle /api/webcams/*/timelapse/* {
+        error 403
+    }
+
+    handle /api/webcams/*/originalImage/* {
+        error 403
+    }
+
     # --- STATIC IMAGES (SPECIFIC PATH FIRST) ---
     handle_path /images/replaytheday/* {
         root * /app/images/webcams/processed
