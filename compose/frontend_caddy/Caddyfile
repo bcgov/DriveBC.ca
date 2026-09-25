@@ -8,13 +8,13 @@
     }
 
     cache {
-        allowed_http_verbs GET HEAD PURGE
+        allowed_http_verbs GET HEAD PURGE # nots sure if this is actually needed.
 
         ttl 30s
         stale 5m
         api {
             souin
-            prometheus
+            prometheus # Need to see how we can get this into Sysdig if we also want regular metrics. 
         }
 
         regex {
@@ -158,10 +158,31 @@ www.drivebc.ca:3000, :3000 {
 
     # Django Media Route
     handle /django-media/* {
-        cache {
-            ttl 24h
+        route {
+            map {header.Accept-Encoding} {cache_encoding} {
+                ~(?i)\bzstd\b        zstd
+                ~(?i)\b(br|brotli)\b   br
+                ~(?i)\bgzip\b        gzip
+                default              identity
+            }
+            request_header -Cache-Control
+            request_header -Pragma
+            request_header -Cookie  # Strips cookies for public API routes so Souin treats them as public
+            request_header X-Cache-Encoding {cache_encoding}
+
+            cache {
+                ttl 24h
+            }
+
+            header {
+                -Vary
+                -Set-Cookie
+                Vary "Accept-Encoding"
+            }
+
+            encode zstd gzip
+            reverse_proxy {env.ENVIRONMENT}-drivebc-django:80
         }
-        reverse_proxy {env.ENVIRONMENT}-drivebc-django:80
     }
 
     # --- STATIC IMAGES (SPECIFIC PATH FIRST) ---
@@ -185,7 +206,7 @@ www.drivebc.ca:3000, :3000 {
     handle {
         encode zstd gzip
         file_server {
-            precompressed zstd br gzip
+            precompressed zstd br gzip # should prob just do precompessed br and gzip because br is more efficent space wise
         }
         try_files {path} {path}/ /index.html
     }
