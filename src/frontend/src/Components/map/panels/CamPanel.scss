@@ -347,10 +347,7 @@
               height: fit-content;
               position: relative;
               overflow: hidden;
-  
-              @media (min-width: 992px) {
-                border-radius: 4px;
-              }
+              border-radius: 8px;
   
               &:has(.image-gallery) {
                 overflow: visible;

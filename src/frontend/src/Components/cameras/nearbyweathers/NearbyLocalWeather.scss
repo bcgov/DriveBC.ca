@@ -31,12 +31,33 @@
         margin-bottom: 0.4rem;
       }
 
+      .time-container {
+        padding-bottom: 1rem;
+
+        span {
+          color: $Type-Secondary;
+          font-size: 12px;
+          line-height: 18px;
+          text-align: center;
+        }
+
+        .friendly-time {
+          &-text {
+            color: $Type-Secondary;
+            font-size: 12px;
+            line-height: 18px;
+            text-align: center;
+          }
+        }
+      }
+
       &__title {
         padding-bottom: 1rem;
 
         .name {
           color: $Type-Primary;
-          font-size: 2rem;
+          font-size: 1.5rem;
+          font-weight: 400;
         }
 
         .description {
