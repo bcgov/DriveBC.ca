@@ -166,7 +166,6 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            margin-right: 4rem;
 
             .weather-icon {
               font-size: 3rem;
@@ -183,6 +182,8 @@
 
       &__forecasts {
         flex-grow: 1;
+        min-width: 0;
+        width: 100%;
       }
 
       &__additional {
