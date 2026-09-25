@@ -53,7 +53,7 @@ export default function AdvisoriesList(props) {
       {!!sortedAdvisories && sortedAdvisories.map((advisory, index) => {
         if (isAdvisoriesListPage) {
           return (
-            <div
+            <li
               className={`advisory-li${trackedAdvisories[advisory.id]?.highlight ? ' highlighted' : ''}`}
               key={advisory.id}
               data-key={advisory.id}
@@ -128,12 +128,12 @@ export default function AdvisoriesList(props) {
                   </div>
                 }
               </div>
-            </div>
+            </li>
           );
 
         } else {
           return (
-            <div className={`advisory-li link-div ${!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.last_notified_at?.toString()) ? 'unread' : ''}`}
+            <li className={`advisory-li link-div ${!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.last_notified_at?.toString()) ? 'unread' : ''}`}
               key={advisory.id}
               onClick={() => handleClick(advisory)}
               onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}
@@ -186,7 +186,7 @@ export default function AdvisoriesList(props) {
                   </div>
                 }
               </div>
-            </div>
+            </li>
           );
         }
       })}
