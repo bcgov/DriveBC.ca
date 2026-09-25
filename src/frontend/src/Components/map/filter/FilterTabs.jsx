@@ -1,5 +1,5 @@
 // React
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // External imports
 import { createPortal } from 'react-dom';
@@ -47,6 +47,9 @@ export default function FilterTabs(props) {
   const [activeTab, setActiveTab] = useState('layers');
   const [mapContainer, setMapContainer] = useState(null);
 
+  // Refs
+  const tabsContainerRef = useRef(null);
+
   // Find the map element on component mount
   useEffect(() => {
     const container = document.querySelector('.map-container');
@@ -55,11 +58,35 @@ export default function FilterTabs(props) {
     }
   }, []);
 
+  // Keep arrow keys from panning the map; left/right switch tabs here since react-bootstrap's handler is skipped
+  useEffect(() => {
+    const tabsContainer = tabsContainerRef.current;
+    if (!tabsContainer) return;
+
+    const stopArrowPropagation = (e) => {
+      if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+
+      e.stopPropagation();
+
+      if (['ArrowLeft', 'ArrowRight'].includes(e.key) && e.target.getAttribute('role') === 'tab') {
+        e.preventDefault();
+        const tabs = [...tabsContainer.querySelectorAll('[role="tab"]')];
+        const offset = e.key === 'ArrowLeft' ? -1 : 1;
+        const nextTab = tabs[(tabs.indexOf(e.target) + offset + tabs.length) % tabs.length];
+        nextTab.click();
+        nextTab.focus();
+      }
+    };
+
+    tabsContainer.addEventListener('keydown', stopArrowPropagation);
+    return () => tabsContainer.removeEventListener('keydown', stopArrowPropagation);
+  }, [smallScreen, mapContainer]);
+
   // Rendering
   // Sub components
   const getTabsContainer = () => {
     return (
-      <div className={(smallScreen ? `mobile-filter-tabs` : `filter-tabs`) + (open ? '' : ' hide')}>
+      <div ref={tabsContainerRef} className={(smallScreen ? `mobile-filter-tabs` : `filter-tabs`) + (open ? '' : ' hide')}>
         <Tabs
           defaultActiveKey='layers'
           className='tabs-header'
@@ -80,7 +107,7 @@ export default function FilterTabs(props) {
               loadingLayers={loadingLayers} />
           </Tab>
 
-          <Tab eventKey='legend' title='Legend' tabClassName='map-tab legend'>
+          <Tab eventKey='legend' title='Legend' tabClassName='map-tab legend' tabIndex={0}>
             <Legend />
           </Tab>
         </Tabs>
