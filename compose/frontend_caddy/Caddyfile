@@ -133,9 +133,10 @@ www.drivebc.ca:3000, :3000 {
 
         route {
             map {header.Accept-Encoding} {cache_encoding} {
-                ~(?i)\bzstd\b  zstd
-                ~(?i)\bgzip\b  gzip
-                default        identity
+                ~(?i)\bzstd\b        zstd
+                ~(?i)\b(br|brotli)\b   br
+                ~(?i)\bgzip\b        gzip
+                default              identity
             }
             request_header -Cache-Control
             request_header -Pragma
