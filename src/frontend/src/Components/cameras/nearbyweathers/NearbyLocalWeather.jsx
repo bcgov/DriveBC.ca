@@ -39,10 +39,12 @@ export default function NearbyLocalWeather(props) {
   return (
     <div className="popup popup--weather popup--cam--weather--local">
       <div className="popup__content">
+        <div className="time-container">
+          <span>Updated </span><FriendlyTime date={weather.issuedUtc} asDate={true}/>
+        </div>
         <div className="popup__content__title">
         <p className="name">{weather.weather_station_name}</p>
           <p className="description">{weather.location_description}</p>
-          <FriendlyTime date={weather.issuedUtc} asDate />
         </div>
 
         <div className="popup__content__description">
