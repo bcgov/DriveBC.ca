@@ -7,7 +7,7 @@
         trusted_proxies static 10.0.0.0/8
     }
 
-    cache {
+    cache { # need to add a way to bypass the cache still
         allowed_http_verbs GET HEAD PURGE # nots sure if this is actually needed.
 
         ttl 30s
@@ -42,6 +42,19 @@
         Cross-Origin-Resource-Policy "cross-origin"
         Referrer-Policy "no-referrer-when-downgrade"
         Content-Security-Policy "default-src 'self' https://*.arcgis.com https://*.gov.bc.ca https://*.drivebc.ca https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ data: https://*.flickr.com https://*.staticflickr.com https://www.youtube.com https://*.ytimg.com; script-src 'self' https://*.gov.bc.ca https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://*.flickr.com https://*.staticflickr.com 'unsafe-inline'; style-src 'self' https://*.flickr.com https://*.staticflickr.com 'unsafe-inline'; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'self'; form-action 'self' https://*.drivebc.ca https://*.gov.bc.ca https://*.loginproxy.gov.bc.ca https://login.microsoftonline.com https://*.microsoftonline.com;"
+    }
+}
+
+(security_headers_admin) {
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        Permissions-Policy "geolocation=(self), fullscreen=*"
+        X-Content-Type-Options "nosniff"
+        X-Robots-Tag "noindex"
+        Cross-Origin-Opener-Policy "same-origin"
+        Cross-Origin-Resource-Policy "same-origin"
+        Cross-Origin-Embedder-Policy "credentialless"
+        Content-Security-Policy "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; img-src * data: blob:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src *; frame-ancestors 'self';"
     }
 }
 
@@ -102,14 +115,28 @@ www.drivebc.ca:3000, :3000 {
         expression `{env.ENVIRONMENT} == "dev-drivebc"`
         path /__debug__*
     }
+
     handle @adminPaths {
         @blocked not remote_ip 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 127.0.0.1
         abort @blocked
+        header {
+            -Content-Security-Policy
+            -Cross-Origin-Opener-Policy
+            -Cross-Origin-Resource-Policy
+        }
+        import security_headers_admin
         reverse_proxy {env.ENVIRONMENT}-drivebc-django:80
     }
+
     handle @debugPath {
         @blocked not remote_ip 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 127.0.0.1
         abort @blocked
+        header {
+            -Content-Security-Policy
+            -Cross-Origin-Opener-Policy
+            -Cross-Origin-Resource-Policy
+        }
+        import security_headers_admin
         reverse_proxy {env.ENVIRONMENT}-drivebc-django:80
     }
 
