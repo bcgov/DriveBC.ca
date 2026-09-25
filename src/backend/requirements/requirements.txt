@@ -20,8 +20,8 @@ boto3==1.43.52
 aio-pika==10.0.1
 pydantic==2.13.4
 pillow==12.3.0
-timezonefinder==8.2.5
-pytz==2026.2
+timezonefinder==9.0.0
+pytz==2026.4
 click==8.4.2
 aiofiles==25.1.0
 zipstream-ng==1.9.3
