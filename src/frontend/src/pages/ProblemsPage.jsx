@@ -21,6 +21,8 @@ import PageHeader from '../PageHeader';
 import './ProblemsPage.scss';
 
 const ProblemsPage = () => {
+  document.title = 'DriveBC - Problems';
+
   return (
     <div className="report-problem-page">
       <PageHeader title='Report a problem'>
