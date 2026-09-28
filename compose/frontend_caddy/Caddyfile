@@ -2,10 +2,12 @@
 # Get the metrics into sysdig for both caddy and caching
 # Only do br compression for static assets and not for API routes. Brotli has a smaller package.
 # Do one last pass to see if anything else is missing from nginx in caddy.
+# should prob just do precompessed br and gzip because br is more efficent space wise
+# Switch log level for caching
+# match the log structure from nginx for the caching logs. This will make it easier to parse and analyze.
 
 # Other to-do
 # Remove caching on the backend
-# Do some load testing to see how it compares to nginx.
 # Work through scenarios where redis may be down. Technically it should fall back to the backend but it also relies on Redis.
 # See if we can use cache headers
 
@@ -39,7 +41,7 @@
         redis {
             url {$REDIS_URL}
         }
-        log_level debug # can prob change this to info once we are happy with the caching. Debug is very chatty and will fill up the logs quickly.
+        log_level debug
     }
 }
 
@@ -80,16 +82,15 @@ www.drivebc.ca:3000, :3000 {
     }
 
     # Logging
-    log { # See if we can get it to match the nginx logs. Also see if we can export to Syslog using a sidecar.
-        output discard # temp for load testing.
-#        output stdout
-#        format filter {
-#            wrap json
-#            fields {
-#                resp_headers delete
-#            }
+    log {
+        output stdout
+        format filter {
+            wrap json
+            fields {
+                resp_headers delete
+            }
         }
-#    }  
+    }  
 
     # Legacy Redirects
     redir /cvrp* https://twm.th.gov.bc.ca/?c=hct 301
@@ -103,10 +104,6 @@ www.drivebc.ca:3000, :3000 {
     handle /healthz {
         respond "healthy\n" 200
     }
-
-    # Blocked paths
-    @blockedImages path /images/originals/* /api/webcams/*/timelapse/* /api/webcams/*/originalImage/* # We have this 2x, so this might be able to go
-    error @blockedImages 403
 
     # IP-Restricted Admin & Debug
     @adminPaths path /drivebc-admin* /drivebc-cms* /django-static* /healthcheck*
@@ -125,7 +122,6 @@ www.drivebc.ca:3000, :3000 {
         reverse_proxy {env.ENVIRONMENT}-drivebc-django:80
     }
 
-    # --- SPECIFIC API/AUTH ROUTES (MUST BE BEFORE /api/*) ---
     handle /api/users/* {
         reverse_proxy {env.ENVIRONMENT}-drivebc-django:80
     }
@@ -152,7 +148,7 @@ www.drivebc.ca:3000, :3000 {
             }
             request_header -Cache-Control
             request_header -Pragma
-            request_header -Cookie  # Strips cookies for public API routes so Souin treats them as public
+            request_header -Cookie
             request_header X-Cache-Encoding {cache_encoding}
 
             cache
@@ -231,7 +227,7 @@ www.drivebc.ca:3000, :3000 {
     handle {
         encode zstd gzip
         file_server {
-            precompressed zstd br gzip # should prob just do precompessed br and gzip because br is more efficent space wise
+            precompressed zstd br gzip
         }
         try_files {path} {path}/ /index.html
     }

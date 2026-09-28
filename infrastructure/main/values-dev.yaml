@@ -179,6 +179,8 @@ static:
     redirecthosts: # Mostly for the prod site. These will all redirect to www.drivebc.ca
   logpvc:
     storage: 1Gi
+  prometheus:
+    enabled: true #
   podDisruptionBudget: 
     enabled: false 
     minAvailable:  

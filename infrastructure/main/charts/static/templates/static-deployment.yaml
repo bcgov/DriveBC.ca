@@ -30,6 +30,11 @@ spec:
         vault.hashicorp.com/auth-path: {{ .Values.vault.authPath }}
         vault.hashicorp.com/namespace: platform-services
         vault.hashicorp.com/role: {{ .Values.global.vault.licenceplate }}-{{ .Values.global.vault.environment}}
+        {{- if .Values.prometheus.enabled }}
+        prometheus.io/port: '2019'
+        prometheus.io/path: /metrics
+        prometheus.io/scrape: 'true'
+        {{- end }}
     spec:
       volumes:
         - name: django-app-images-volume
