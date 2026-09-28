@@ -512,6 +512,7 @@ export default function CamPanel(props) {
                           src={camera.links.imageDisplay}
                           alt={camera.name}
                           onLoad={() => setIsLoading(false)}
+                          onError={() => setIsLoading(false)}
                           style={{ display: isLoading || unavailable ? 'none' : 'block' }}
                         />
 

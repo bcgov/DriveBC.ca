@@ -112,9 +112,11 @@ export default function NearbyRegionalWeather(props) {
       }
 
       <div className="popup__content">
-        <div className="time-container">
-          <span>Updated </span><FriendlyTime date={weather.observed} asDate={true}/>
-        </div>
+        {weather.observed && (
+          <div className="time-container">
+            <span>Updated </span><FriendlyTime date={weather.observed} asDate={true}/>
+          </div>
+        )}
         <div className="popup__content__title">
           <div className="info-container">
             <p className="name">{weather.name}</p>
