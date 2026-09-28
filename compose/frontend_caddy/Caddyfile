@@ -127,18 +127,19 @@ www.drivebc.ca:3000, :3000 {
     }
 
     # IP-Restricted Admin & Debug
-    # Note: @adminPaths matcher is now defined at the top of this block to handle headers securely
     @debugPath {
         expression `{env.ENVIRONMENT} == "dev-drivebc"`
         path /__debug__*
     }
-    handle @adminPaths { # Do some testing to confirm
-        @blocked not remote_ip 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 127.0.0.1
+
+    handle @adminPaths { 
+        @blocked not client_ip 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 127.0.0.1
         abort @blocked
         reverse_proxy {env.ENVIRONMENT}-drivebc-django:80
     }
+    
     handle @debugPath {
-        @blocked not remote_ip 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 127.0.0.1
+        @blocked not client_ip 142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32 127.0.0.1
         abort @blocked
         reverse_proxy {env.ENVIRONMENT}-drivebc-django:80
     }
