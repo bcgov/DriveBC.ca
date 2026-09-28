@@ -1,10 +1,10 @@
-# to do. Add separate CSP for /drivebc-admin and /drivebc-cms routes.
+# to do
 # Get the metrics into sysdig for both caddy and caching
-# Only do br compression for static assets and not for API routes. Brotli has a smaller package.
+# Confirm br is primary used for static assets.
 # Do one last pass to see if anything else is missing from nginx in caddy.
-# should prob just do precompessed br and gzip because br is more efficent space wise
 # Switch log level for caching
 # match the log structure from nginx for the caching logs. This will make it easier to parse and analyze.
+# See if we can syslog the access logs.
 
 # Other to-do
 # Remove caching on the backend
@@ -103,7 +103,9 @@ www.drivebc.ca:3000, :3000 {
     }
 
     # Logging
+    @loggedPaths not path /healthz
     log {
+        include @loggedPaths
         output stdout
         format filter {
             wrap json
@@ -249,7 +251,7 @@ www.drivebc.ca:3000, :3000 {
     handle {
         encode zstd gzip
         file_server {
-            precompressed zstd br gzip
+            precompressed br zstd gzip
         }
         try_files {path} {path}/ /index.html
     }

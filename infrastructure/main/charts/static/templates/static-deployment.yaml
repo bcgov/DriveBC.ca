@@ -77,6 +77,8 @@ spec:
           ports:
             - containerPort: 3000
               protocol: TCP
+            - containerPort: 2019
+              protocol: TCP
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: django-app-images-volume
