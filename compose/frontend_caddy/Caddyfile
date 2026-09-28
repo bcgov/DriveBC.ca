@@ -103,9 +103,7 @@ www.drivebc.ca:3000, :3000 {
     }
 
     # Logging
-    @loggedPaths not path /healthz
     log {
-        include @loggedPaths
         output stdout
         format filter {
             wrap json
@@ -125,6 +123,7 @@ www.drivebc.ca:3000, :3000 {
 
     # Health Check
     handle /healthz {
+        log_skip
         respond "healthy\n" 200
     }
 
