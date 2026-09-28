@@ -212,17 +212,6 @@ export default function CamPanel(props) {
     }
   };
 
-  const loadReplay = async (cam) => {
-    const replayImageList = await getWebcamReplay(cam);
-    const images = replayImageList.map(url => {
-      if (cam.https_cam) {
-        return { original: `${window.location.origin}/images/replaytheday/${cam.id}/${url}.jpg` };
-      }
-      return { original: `${REPLAY_THE_DAY}${cam.id}/${url}.jpg` };
-    });
-    setReplayImages(images);
-  };
-
   const shouldRenderReplay = () => {
     if (!camera?.last_update_modified) {
       return false;
@@ -232,6 +221,33 @@ export default function CamPanel(props) {
     const oneDayAgo = Date.now() - 1 * 24 * 60 * 60 * 1000;
 
     return camera.is_on && lastUpdatedDate > oneDayAgo;
+  };
+
+  const loadReplay = async (cam) => {
+    if (!shouldRenderReplay()) {
+      return;
+    }
+
+    try {
+      const replayImageList = await getWebcamReplay(cam);
+      if (!Array.isArray(replayImageList)) {
+        throw new TypeError('Replay response was not a list of images');
+      }
+
+      const images = replayImageList.map(url => {
+        if (cam.https_cam) {
+          return { original: `${window.location.origin}/images/replaytheday/${cam.id}/${url}.jpg` };
+        }
+        return { original: `${REPLAY_THE_DAY}${cam.id}/${url}.jpg` };
+      });
+
+      if (shouldRenderReplay()) {
+        setReplayImages(images);
+      }
+    } catch (error) {
+      console.error('Error loading camera replay:', error);
+      setReplayImages([]);
+    }
   };
 
   const toggleReplay = () => {
