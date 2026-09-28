@@ -19,7 +19,8 @@ export default function ForecastCard(props) {
   const { forecast_group } = props;
   const forecasts = forecast_group || [];
 
-  const [currentPane, setCurrentPane] = useState(0);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
     containScroll: 'trimSnaps',
@@ -31,7 +32,8 @@ export default function ForecastCard(props) {
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
-    setCurrentPane(emblaApi.selectedScrollSnap());
+    setCanScrollPrev(emblaApi.canScrollPrev());
+    setCanScrollNext(emblaApi.canScrollNext());
   }, [emblaApi]);
 
   const groupKey = forecasts.map((forecast) => forecast.Period.TextForecastName).join('|');
@@ -41,13 +43,16 @@ export default function ForecastCard(props) {
     onSelect();
     emblaApi.on('select', onSelect);
     emblaApi.on('reInit', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+    };
   }, [emblaApi, onSelect]);
 
   useEffect(() => {
     if (!emblaApi) return;
     emblaApi.reInit();
     emblaApi.scrollTo(0);
-    setCurrentPane(0);
   }, [emblaApi, groupKey]);
 
   /* Rendering */
@@ -88,13 +93,13 @@ export default function ForecastCard(props) {
         </div>
       </div>
 
-      {currentPane !== forecasts.length - 1 && forecasts.length > 1 && (
+      {canScrollNext && (
         <Button className="carousel-button next" onClick={scrollNext}>
           <FontAwesomeIcon icon={faChevronRight} />
         </Button>
       )}
 
-      {currentPane !== 0 && (
+      {canScrollPrev && (
         <Button className="carousel-button prev" onClick={scrollPrev}>
           <FontAwesomeIcon icon={faChevronLeft} />
         </Button>
