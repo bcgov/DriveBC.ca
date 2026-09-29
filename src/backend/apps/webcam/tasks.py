@@ -275,6 +275,11 @@ def create_webcam_db(cam_data: dict):
 
         region_id = region_obj.seq
 
+        elevation = cam_data.cam_locationselevation
+        if elevation in (None, ""):
+            logger.error(f"Elevation not found for camera {cam_id}, skipping webcam creation.")
+            return None, False
+
         raw_hw = cam_data.cam_locationshighway
         highway_group_obj = RegionHighway.objects.using("mssql").filter(highway_id=raw_hw).first()
         highway_group = highway_group_obj.seq if highway_group_obj else 0
