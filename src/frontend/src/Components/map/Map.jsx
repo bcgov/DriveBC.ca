@@ -10,7 +10,7 @@ import React, {
 } from 'react';
 
 // Navigation
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 // Redux
 import * as slices from '../../slices';
@@ -93,7 +93,7 @@ export default function DriveBCMap(props) {
   /* initialization */
   // Props
   const {
-    mapProps: {referenceData, rootCamera, isCamDetail, mapViewRoute, loadCamDetails},
+    mapProps: {referenceData, rootCamera, isCamDetail, mapViewRoute, loadCamDetails, fromCameraList},
     showNetworkError, showServerError, trackedEventsRef,
     loadingLayers, setLoadingLayers, getInitialLoadingLayers
   } = props;
@@ -108,6 +108,7 @@ export default function DriveBCMap(props) {
 
   // Navigation
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   let mousePointXClicked = undefined;
@@ -207,7 +208,14 @@ export default function DriveBCMap(props) {
   // Workaround for OL handlers not being able to read states
   const [clickedFeature, setClickedFeature] = useState();
   const [staleLinkMessage, setStaleLinkMessage] = useState();
+  const [openedFromCameraList, setOpenedFromCameraList] = useState(!!fromCameraList);
   const clickedFeatureRef = useRef();
+
+  useEffect(() => {
+    if (!/^\/cameras\/[^/]+/.test(location.pathname)) {
+      setOpenedFromCameraList(false);
+    }
+  }, [location.pathname]);
   const updateClickedFeature = (feature, center=true) => {
     // Remove highlight from feature on click
     if (feature && feature instanceof Feature && feature.get('highlight')) {
@@ -1061,22 +1069,38 @@ export default function DriveBCMap(props) {
     }
   }, [referenceData?.type]);
 
+  const clearClosedPanelUrl = () => {
+    const params = new URLSearchParams(searchParams);
+    if (params.get('type') !== 'advisory') {
+      params.delete('type');
+      params.delete('id');
+    }
+    params.delete('display_category');
+    params.delete('camIndex');
+
+    // Camera details URLs should return to the root map when the panel closes
+    if (/^\/cameras\/[^/]+/.test(location.pathname)) {
+      const search = params.toString();
+      navigate(
+        { pathname: '/', search: search ? `?${search}` : '' },
+        { replace: true },
+      );
+    } else {
+      setSearchParams(params, { replace: true });
+    }
+
+    setOpenedFromCameraList(false);
+  };
+
   // Reset search params when panel is closed
   useEffect(() => {
-    if (searchParamInitialized.current) {
-      if (!clickedFeature) {
-        if (searchParams.get('type') !== 'advisory') {
-          searchParams.delete('type');
-          searchParams.delete('id');
-        }
-        searchParams.delete('display_category');
-        searchParams.delete('camIndex');
-        searchParams.delete('from');
-        setSearchParams(searchParams, { replace: true });
-      }
-
-    } else {
+    if (!searchParamInitialized.current) {
       searchParamInitialized.current = true;
+      return;
+    }
+
+    if (!clickedFeature) {
+      clearClosedPanelUrl();
     }
 
     if (selectedRoute && clickedFeature && clickedFeature.get('type') !== 'route') {
@@ -1174,7 +1198,8 @@ export default function DriveBCMap(props) {
               clickedFeatureRef,
               updateClickedFeature,
               showRouteObjs,
-              handleSetShowRouteObjs
+              handleSetShowRouteObjs,
+              openedFromCameraList
             )}
           </div>
         </div>
@@ -1280,7 +1305,8 @@ export default function DriveBCMap(props) {
                     clickedFeatureRef,
                     updateClickedFeature,
                     showRouteObjs,
-                    handleSetShowRouteObjs
+                    handleSetShowRouteObjs,
+                    openedFromCameraList
                   )}
                 </div>
               </Drawer.Content>

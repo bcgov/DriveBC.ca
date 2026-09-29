@@ -28,7 +28,8 @@ export const renderPanel = (
   clickedFeatureRef,
   updateClickedFeature,
   showRouteObjs,
-  setShowRouteObjs
+  setShowRouteObjs,
+  fromCameraList = false,
 ) => {
   if (clickedFeature) {
     // Hack for rendering advisories panel since it's not a feature
@@ -39,7 +40,7 @@ export const renderPanel = (
 
     switch (clickedFeature.get('type')) {
       case 'camera':
-        return <CamPanel camFeature={clickedFeature} isCamDetail={isCamDetail} showRouteObjs={showRouteObjs} />;
+        return <CamPanel camFeature={clickedFeature} isCamDetail={isCamDetail} showRouteObjs={showRouteObjs} fromCameraList={fromCameraList} />;
       case 'event':
         return <EventPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
       case 'ferry':

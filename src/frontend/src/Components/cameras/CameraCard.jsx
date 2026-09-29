@@ -135,10 +135,7 @@ export default function CameraCard(props) {
     const [lon, lat] = camera.location?.coordinates ?? [];
 
     const params = {
-      type: 'camera',
-      id: camera.id,
       camIndex: Math.max(camIndex, 0),
-      from: 'camera-list',
     };
 
     if (lon != null && lat != null) {
@@ -146,10 +143,13 @@ export default function CameraCard(props) {
       params.zoom = '12';
     }
 
-    navigate({
-      pathname: '/',
-      search: `?${createSearchParams(params)}`,
-    });
+    navigate(
+      {
+        pathname: `/cameras/${camera.id}`,
+        search: `?${createSearchParams(params)}`,
+      },
+      { state: { fromCameraList: true } },
+    );
 
     window.snowplow('trackSelfDescribingEvent', {
       schema: 'iglu:ca.bc.gov.drivebc/action/jsonschema/1-0-0',
