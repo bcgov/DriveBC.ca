@@ -171,6 +171,13 @@ www.drivebc.ca:3000, :3000 {
         @rss query format=rss
         error @rss 404
 
+        @bypass header Cachebypass *
+
+        handle @bypass {
+            encode zstd gzip
+            reverse_proxy {env.ENVIRONMENT}-drivebc-django:80
+        }
+
         route {
             map {header.Accept-Encoding} {cache_encoding} {
                 ~(?i)\bzstd\b        zstd
