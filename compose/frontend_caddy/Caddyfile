@@ -113,8 +113,9 @@ www.drivebc.ca:3000, :3000 {
     log {
         output stdout
         format filter {
-            wrap json
-            time_format iso8601
+            wrap json {
+                time_format iso8601
+            }
             fields {
                 request>headers delete
                 resp_headers delete
