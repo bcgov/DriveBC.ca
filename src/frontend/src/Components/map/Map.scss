@@ -189,26 +189,6 @@
       }
     }
 
-    // Cam details page
-    &.preview {
-      flex-direction: column;
-
-      .side-panel {
-        transition: min-height 0.25s ease-in-out;
-        order: 2;
-        overflow-y: auto;
-
-        &.open {
-          min-height: 100%;
-          margin-right: auto;
-
-          @media (min-width: 576px) {
-            min-width: 390px;
-          }
-        }
-      }
-    }
-
     .map {
       flex: 1;
       position: absolute;
@@ -340,28 +320,10 @@
         color: $White;
       }
 
-      &.map-view, &.cam-location {
-        svg {
-          margin-right: 8px;
-        }
-      }
-
       &.my-location, &.open-filters {
         svg {
           margin-right: 8px;
         }
-      }
-
-      &.map-view {
-        position: absolute;
-        top: 2rem;
-        right: 2rem;
-      }
-
-      &.cam-location {
-        position: absolute;
-        bottom: 2rem;
-        left: 2rem;
       }
 
       &.my-location {
@@ -570,21 +532,6 @@
 
   @media (min-width: 769px) {
     display: none;
-  }
-}
-
-// Camera details embed uses the drawer on wide viewports too (map box is narrow; drawer was hidden by rule above)
-.map-container.preview {
-  .drawer-overlay {
-    @media (min-width: 769px) {
-      display: block;
-    }
-  }
-
-  .drawer-content {
-    @media (min-width: 769px) {
-      display: block;
-    }
   }
 }
 

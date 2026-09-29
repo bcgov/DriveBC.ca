@@ -1,9 +1,6 @@
-// External imports
-import { fromLonLat } from "ol/proj";
-
 // Internal imports
 import { isRestStopClosed } from '../../data/restStops';
-import { setEventStyle, setZoomPan } from '../helpers';
+import { setEventStyle } from '../helpers';
 import trackEvent from '../../shared/TrackEvent';
 
 // Styling
@@ -37,7 +34,6 @@ export const resetClickedStates = (
   targetFeature,
   clickedFeatureRef,
   updateClickedFeature,
-  isCamDetail,
 ) => {
   // No features were clicked before, do nothing
   if (!clickedFeatureRef.current) {
@@ -188,56 +184,19 @@ export const resetClickedStates = (
         updateClickedFeature(null);
         break;
     }
-    if (isCamDetail && targetFeature?.get('type') === 'camera') {
-      if (highlighted_camera_list.length > 0) {
-          highlighted_camera_list[0].setCameraStyle('static');
-          highlighted_camera_list[0].set('clicked', false);
-        }
-    }
   }
 };
-
-const getVisibleNearbyObjectsCount = (mapContext, feature) => {
-  const layers = ['closures', 'majorEvents', 'minorEvents', 'futureEvents', 'roadConditions', 'chainUps', 'weather'];
-
-  let count = feature.get('nearby_objs').cameras;
-  for (const layer of layers) {
-    if (mapContext.visible_layers[layer] && feature.get('nearby_objs')[layer]) {
-      count += feature.get('nearby_objs')[layer];
-    }
-  }
-
-  return count;
-}
-
-const getDefaultZoom = (nearbyCount) => {
-  if (nearbyCount > 2) {
-    return 13.5;
-  }
-
-  if (nearbyCount > 0) {
-    return 12;
-  }
-
-  return 9;
-}
 
 const camClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,
-  mapView,
-  isCamDetail,
-  loadCamDetails,
-  updateReferenceFeature,
-  mapContext
 ) => {
   if (clickedFeatureRef.current?.values_?.type === 'camera' || clickedFeatureRef.current?.values_?.type !== feature.values_?.type) {
     resetClickedStates(
       feature,
       clickedFeatureRef,
       updateClickedFeature,
-      isCamDetail,
     );
   }
 
@@ -246,7 +205,6 @@ const camClickHandler = (
       feature,
       highlighted_camera_list[0],
       updateClickedFeature,
-      isCamDetail,
     );
     highlighted_camera_list = [];
     highlighted_camera_list.push(feature);
@@ -258,54 +216,20 @@ const camClickHandler = (
   feature.set('unread', false);
   feature.set('hovered', false);
 
-  if (isCamDetail) {
-    // Do not auto center on feature on cam details page
-    updateClickedFeature(feature, false);
-
-    if (feature.get('focusCamera')) {
-      const zoom = feature.get('zoom');
-      const pan = feature.get('pan');
-
-      const nearbyCount = getVisibleNearbyObjectsCount(mapContext, feature);
-
-      setZoomPan(
-        mapView,
-        zoom ? zoom : getDefaultZoom(nearbyCount),
-        pan ? fromLonLat(pan.split(",").map(Number)) : feature.getGeometry().getCoordinates()
-      );
-
-      feature.unset('focusCamera');
-
-    } else {
-      setZoomPan(mapView, null, feature.getGeometry().getCoordinates());
-      loadCamDetails(feature.getProperties());
-    }
-
-    updateReferenceFeature(feature);
-
-  } else {
-    updateClickedFeature(feature);
-  }
+  updateClickedFeature(feature);
 };
 
 export const eventClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,
-  isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
-      resetClickedStates(
-      feature,
-      clickedFeatureRef,
-      updateClickedFeature,
-      isCamDetail,
-    );
-  }
-  else {
-    highlighted_camera_list.push(clickedFeatureRef.current);
-  }
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+  );
 
   // set new clicked event feature
   setEventStyle(feature, 'active');
@@ -327,20 +251,13 @@ export const ferryClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,
-  isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
-      resetClickedStates(
-      feature,
-      clickedFeatureRef,
-      updateClickedFeature,
-      isCamDetail,
-    );
-  }
-  else {
-    highlighted_camera_list.push(clickedFeatureRef.current);
-  }
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+  );
 
   const styles = feature.get('coastal') ? coastalFerryStyles : ferryStyles;
 
@@ -354,21 +271,13 @@ const weatherClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,
-  isCamDetail,
 ) => {
-  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
-    // reset previous clicked feature
-    resetClickedStates(
-      feature,
-      clickedFeatureRef,
-      updateClickedFeature,
-      isCamDetail,
-    );
-  }
-  else {
-     highlighted_camera_list.push(clickedFeatureRef.current);
-
-  }
+  // reset previous clicked feature
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+  );
 
   // set new clicked local weather feature
   feature.setStyle(roadWeatherStyles['active']);
@@ -380,22 +289,13 @@ const regionalClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,
-  isCamDetail,
 ) => {
-  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
-    // reset previous clicked feature
-    resetClickedStates(
-      feature,
-      clickedFeatureRef,
-      updateClickedFeature,
-      isCamDetail,
-    );
-
-  }
-  else {
-    highlighted_camera_list.push(clickedFeatureRef.current);
-
-  }
+  // reset previous clicked feature
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+  );
 
   // set new clicked regional weather feature
   const warnings = feature.get('warnings');
@@ -408,21 +308,13 @@ const hefClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,
-  isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
-      resetClickedStates(
-      feature,
-      clickedFeatureRef,
-      updateClickedFeature,
-      isCamDetail,
-    );
-
-  }
-  else {
-    highlighted_camera_list.push(clickedFeatureRef.current);
-  }
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+  );
 
   // set new clicked hef weather feature
   const warnings = feature.get('warnings');
@@ -435,20 +327,13 @@ const restStopClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,
-  isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
-      resetClickedStates(
-      feature,
-      clickedFeatureRef,
-      updateClickedFeature,
-      isCamDetail,
-    );
-  }
-  else {
-    highlighted_camera_list.push(clickedFeatureRef.current);
-  }
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+  );
 
   // set new clicked rest stop feature
   const isClosed = isRestStopClosed(feature.values_.properties);
@@ -482,7 +367,6 @@ const routeClickHandler = (
       feature,
       clickedFeatureRef,
       updateClickedFeature,
-      false,
     );
   }
   else {
@@ -498,17 +382,13 @@ const borderCrossingClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,
-  isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
-    resetClickedStates(
-        feature,
-        clickedFeatureRef,
-        updateClickedFeature,
-        isCamDetail,
-      );
-  }
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+  );
 
   // set new clicked border crossing feature
   feature.setStyle(borderCrossingStyles['active']);
@@ -520,14 +400,12 @@ export const advisoryClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,
-  isCamDetail,
 ) => {
   // reset previous clicked feature
   resetClickedStates(
     feature,
     clickedFeatureRef,
     updateClickedFeature,
-    isCamDetail,
   );
 
   // set new clicked advisory feature
@@ -540,17 +418,13 @@ export const wildfireClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,
-  isCamDetail,
 ) => {
   // reset previous clicked feature
-  if (!isCamDetail || clickedFeatureRef.current?.values_?.type !== 'camera') {
-    resetClickedStates(
-        feature,
-        clickedFeatureRef,
-        updateClickedFeature,
-        isCamDetail,
-      );
-  }
+  resetClickedStates(
+    feature,
+    clickedFeatureRef,
+    updateClickedFeature,
+  );
 
   const isCentroidFeature = feature.getGeometry().getType() === 'Point';
 
@@ -573,9 +447,6 @@ export const pointerClickHandler = (
   clickedFeatureRef,
   updateClickedFeature,
   mapView,
-  isCamDetail,
-  loadCamDetails,
-  updateReferenceFeature,
   updateRouteDisplay,
   mapContext
 ) => {
@@ -616,11 +487,6 @@ export const pointerClickHandler = (
           clickedFeature,
           clickedFeatureRef,
           updateClickedFeature,
-          mapView,
-          isCamDetail,
-          loadCamDetails,
-          updateReferenceFeature,
-          mapContext
         );
         return;
 
@@ -636,7 +502,6 @@ export const pointerClickHandler = (
           clickedFeature,
           clickedFeatureRef,
           updateClickedFeature,
-          isCamDetail,
         );
         return;
 
@@ -651,7 +516,6 @@ export const pointerClickHandler = (
           clickedFeature,
           clickedFeatureRef,
           updateClickedFeature,
-          isCamDetail,
         );
         return;
 
@@ -666,7 +530,6 @@ export const pointerClickHandler = (
           clickedFeature,
           clickedFeatureRef,
           updateClickedFeature,
-          isCamDetail,
         );
         return;
 
@@ -681,7 +544,6 @@ export const pointerClickHandler = (
           clickedFeature,
           clickedFeatureRef,
           updateClickedFeature,
-          isCamDetail,
         );
         return;
 
@@ -696,7 +558,6 @@ export const pointerClickHandler = (
           clickedFeature,
           clickedFeatureRef,
           updateClickedFeature,
-          isCamDetail,
         );
         return;
 
@@ -712,7 +573,6 @@ export const pointerClickHandler = (
           clickedFeature,
           clickedFeatureRef,
           updateClickedFeature,
-          isCamDetail,
         );
         if (clickedFeature.getProperties().type === 'largeRestStop') {
           const currentUrl = window.location.href;
@@ -805,7 +665,6 @@ export const pointerClickHandler = (
     null,
     clickedFeatureRef,
     updateClickedFeature,
-    isCamDetail,
   );
 };
 
@@ -813,7 +672,6 @@ export const dmsClickHandler = (
   feature,
   clickedFeatureRef,
   updateClickedFeature,
-  isCamDetail,
 ) => {
   // reset previous clicked feature
   if (clickedFeatureRef.current?.values_?.type !== 'camera') {
@@ -821,7 +679,6 @@ export const dmsClickHandler = (
       feature,
       clickedFeatureRef,
       updateClickedFeature,
-      isCamDetail,
     );
 
   }

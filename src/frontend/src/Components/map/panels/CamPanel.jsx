@@ -62,7 +62,7 @@ export default function CamPanel(props) {
   const canExpand = useMediaQuery('only screen and (min-width: 1400px)');
 
   // Props
-  const { camFeature, isCamDetail, showRouteObjs, fromCameraList } = props;
+  const { camFeature, showRouteObjs, fromCameraList } = props;
   const newCam = camFeature.id ? camFeature : camFeature.getProperties();
 
   // Context
@@ -139,8 +139,8 @@ export default function CamPanel(props) {
   const [hasImageEnded, setHasImageEnded] = useState(false);
   const [expanded, setExpanded] = useState(fromCameraList && canExpand);
   const autoExpanded = useRef(false);
-  // Drawer is used when !largeScreen in Map (including isCamDetail preview)
-  const [inDrawer, setInDrawer] = useState(!largeScreen || !!isCamDetail);
+  // Drawer is used when !largeScreen in Map
+  const [inDrawer, setInDrawer] = useState(!largeScreen);
 
   // Effects
   useEffect(() => {
@@ -163,7 +163,7 @@ export default function CamPanel(props) {
     setInDrawer(!!camPanelRef.current.closest(
       '.drawer-content, .vladyoslav-drawer-draggable, [class*="vladyoslav-drawer-draggable"]'
     ));
-  }, [camFeature, largeScreen, isCamDetail]);
+  }, [camFeature, largeScreen]);
 
   // Effects
   useEffect(() => {

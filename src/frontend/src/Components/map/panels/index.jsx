@@ -22,7 +22,6 @@ import WildfirePanel from "./WildfirePanel";
 
 export const renderPanel = (
   clickedFeature,
-  isCamDetail,
   smallScreen,
   mapView,
   clickedFeatureRef,
@@ -40,7 +39,7 @@ export const renderPanel = (
 
     switch (clickedFeature.get('type')) {
       case 'camera':
-        return <CamPanel camFeature={clickedFeature} isCamDetail={isCamDetail} showRouteObjs={showRouteObjs} fromCameraList={fromCameraList} />;
+        return <CamPanel camFeature={clickedFeature} showRouteObjs={showRouteObjs} fromCameraList={fromCameraList} />;
       case 'event':
         return <EventPanel feature={clickedFeature} showRouteObjs={showRouteObjs} />;
       case 'ferry':
