@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ############################################
-# Builder: Frontend (Same as before)       #
+# Builder: Frontend                        #
 ############################################
 FROM node:24-alpine AS buildnode
 WORKDIR /app/
