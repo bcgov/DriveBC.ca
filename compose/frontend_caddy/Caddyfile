@@ -45,7 +45,7 @@
 # Snippet for Public Security Headers
 (public_security_headers) {
     header @publicPaths {
-        defer
+        defer # test that this works as expected.
 
         -Cross-Origin-Opener-Policy # remove the header from django response
         -Referrer-Policy # remove the header from django response
