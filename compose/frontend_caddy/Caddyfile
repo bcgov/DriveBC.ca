@@ -2,9 +2,6 @@
 # Get the metrics into sysdig for both caddy and caching
 # Do one last pass to see if anything else is missing from nginx in caddy.
 # Switch log level for caching
-# match the log structure from nginx for the caching logs. This will make it easier to parse and analyze.
-# See if we can syslog the access logs.
-# add bypass method for caching
 
 # Other to-do
 # Remove caching on the backend
@@ -107,8 +104,6 @@ www.drivebc.ca:3000, :3000 {
     log_append sent_http_content_type {http.response.header.Content-Type}
     log_append http_user_agent        {http.request.header.User-Agent}
     log_append http_referer           {http.request.header.Referer}
-    log_append request_id             {http.request.uuid}
-    log_append upstream_host          {rp.upstream.host}
     log_append upstream_time_ms       {rp.upstream.duration_ms}
     log {
         output stdout
@@ -119,6 +114,7 @@ www.drivebc.ca:3000, :3000 {
             fields {
                 request>headers delete
                 resp_headers delete
+                user_id delete
             }
         }
     }  
