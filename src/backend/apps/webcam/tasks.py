@@ -313,11 +313,18 @@ def create_webcam_db(cam_data: dict):
                 "update_period_stddev": camera_status["stddev_interval"],
                 "marked_stale": camera_status["stale"],
                 "marked_delayed": camera_status["delayed"],
-                # Set on create and update
-                "last_update_attempt": dt_utc,
-                "last_update_modified": dt_utc,
+                
             },
         )
+
+        # Set on create
+        if created:
+            webcam.last_update_modified = dt_utc
+            webcam.last_update_attempt = dt_utc
+            webcam.save(update_fields=[
+                "last_update_modified",
+                "last_update_attempt",
+            ])
 
         return webcam, created
 
