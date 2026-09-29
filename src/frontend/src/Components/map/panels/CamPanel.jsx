@@ -7,7 +7,7 @@ import { memoize } from 'proxy-memoize';
 import { pushFavCam, removeFavCam, updatePendingAction } from '../../../slices/userSlice';
 
 // Navigation
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -62,7 +62,7 @@ export default function CamPanel(props) {
   const canExpand = useMediaQuery('only screen and (min-width: 1400px)');
 
   // Props
-  const { camFeature, isCamDetail, showRouteObjs } = props;
+  const { camFeature, isCamDetail, showRouteObjs, fromCameraList } = props;
   const newCam = camFeature.id ? camFeature : camFeature.getProperties();
 
   // Context
@@ -70,7 +70,47 @@ export default function CamPanel(props) {
   const { setAlertMessage } = useContext(AlertContext);
 
   // Navigation
+  const location = useLocation();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const isCameraDetailsPath = /^\/cameras\/[^/]+/.test(location.pathname);
+
+  const syncCameraUrl = (camId, index, sourceCam) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('camIndex', index);
+    newParams.delete('display_category');
+
+    const pathMatch = location.pathname.match(/^\/cameras\/([^/]+)/);
+    const pathId = pathMatch?.[1];
+    const belongsToDetailsPath = !!pathId && (
+      String(camId) === String(pathId) ||
+      String(sourceCam?.id) === String(pathId) ||
+      !!sourceCam?.camGroup?.some(cam => String(cam.id) === String(pathId))
+    );
+
+    // Keep camera details url only while viewing that camera (or its group). Map clicks on a different camera fall back to the normal map query URL.
+    if (belongsToDetailsPath) {
+      newParams.delete('type');
+      newParams.delete('id');
+      navigate(
+        { pathname: `/cameras/${camId}`, search: `?${newParams.toString()}` },
+        { replace: true, state: location.state },
+      );
+      return;
+    }
+
+    newParams.set('type', 'camera');
+    newParams.set('id', camId);
+
+    if (pathId) {
+      navigate(
+        { pathname: '/', search: `?${newParams.toString()}` },
+        { replace: true },
+      );
+    } else {
+      setSearchParams(newParams, { replace: true });
+    }
+  };
 
   // Redux
   const dispatch = useDispatch();
@@ -97,8 +137,6 @@ export default function CamPanel(props) {
   const [replay, setReplay] = useState(false);
   const [replayImages, setReplayImages] = useState([]);
   const [hasImageEnded, setHasImageEnded] = useState(false);
-  // Camera list links include from=camera-list; map clicks do not.
-  const fromCameraList = searchParams.get('from') === 'camera-list';
   const [expanded, setExpanded] = useState(fromCameraList && canExpand);
   const autoExpanded = useRef(false);
   // Drawer is used when !largeScreen in Map (including isCamDetail preview)
@@ -131,8 +169,6 @@ export default function CamPanel(props) {
   useEffect(() => {
     const newCam = camFeature.id ? camFeature : camFeature.getProperties();
     rootCamRef.current = newCam;
-    setCamera(newCam);
-    viewedCamera.current = { id: newCam.id, last_update_modified: newCam.last_update_modified };
 
     let initialIndex = 0;
     if (isFirstCamFeature.current) {
@@ -141,18 +177,14 @@ export default function CamPanel(props) {
       isFirstCamFeature.current = false;
     }
 
+    const displayCam = newCam.camGroup?.[initialIndex] || newCam;
+    setCamera(displayCam);
+    viewedCamera.current = { id: displayCam.id, last_update_modified: displayCam.last_update_modified };
     setCamIndex(initialIndex);
-
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set("type", 'camera');
-    newParams.set("id", newCam.id);
-    newParams.set("camIndex", initialIndex);
-    newParams.delete("display_category");
-
-    setSearchParams(newParams, { replace: true });
+    syncCameraUrl(displayCam.id, initialIndex, newCam);
     setIsUpdated(false);
     setIsLoading(false);
-    setNextUpdate(formatNextUpdate(newCam));
+    setNextUpdate(formatNextUpdate(displayCam));
 
   }, [camFeature]);
 
@@ -162,7 +194,7 @@ export default function CamPanel(props) {
 
   useEffect(() => {
     if (camera) {
-      loadReplay(camera);
+      void loadReplay(camera);
     }
   }, [camera?.id]);
 
@@ -177,11 +209,7 @@ export default function CamPanel(props) {
       const nextCam = rootCamRef.current.camGroup[camIndex];
       setCamera(nextCam);
       viewedCamera.current = { id: nextCam.id, last_update_modified: nextCam.last_update_modified };
-
-      // Sync the URL index
-      const newParams = new URLSearchParams(searchParams);
-      newParams.set("camIndex", camIndex);
-      setSearchParams(newParams, { replace: true });
+      syncCameraUrl(nextCam.id, camIndex, rootCamRef.current);
     }
   }, [camIndex]);
 
@@ -262,7 +290,7 @@ export default function CamPanel(props) {
     replayImages.forEach(img => {
       const cachedImage = new Image();
       cachedImage.src = img.original;
-      cachedImage.decode();
+      void cachedImage.decode();
     });
 
     if (hasImageEnded) {
@@ -461,7 +489,7 @@ export default function CamPanel(props) {
 
       {camera && (
         <div className="popup__content">
-          {fromCameraList && (
+          {fromCameraList && isCameraDetailsPath && (
             <Link className="back-link" to="/cameras">
               <FontAwesomeIcon icon={faArrowLeft} />
               Back to camera list
