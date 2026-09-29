@@ -45,9 +45,12 @@
 # Snippet for Public Security Headers
 (public_security_headers) {
     header @publicPaths {
-        -Cross-Origin-Opener-Policy
-        -Referrer-Policy
-        -X-Content-Type-Options
+        defer
+
+        -Cross-Origin-Opener-Policy # remove the header from django response
+        -Referrer-Policy # remove the header from django response
+        -X-Content-Type-Options # remove the header from django response
+
         Strict-Transport-Security "max-age=31536000; includeSubDomains"
         Permissions-Policy "geolocation=(self), fullscreen=*"
         X-Content-Type-Options "nosniff"
