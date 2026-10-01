@@ -17,7 +17,7 @@ import PollingComponent from '../shared/PollingComponent';
 export default function MapWrapper(props) {
   /* Setup */
   // Props
-  const { isCamDetail } = props;
+  const { isCamDetail, referenceData } = props;
 
   // Context
   const { mapContext } = useContext(MapContext);
@@ -244,8 +244,10 @@ export default function MapWrapper(props) {
       dms: reloadDms
     });
 
+    const ensureEventId = referenceData?.type === 'event' ? referenceData.id : null;
+
     handleLoad(() => dataLoaders.loadCameras(reloadCameras ? null : camerasRef.current, dispatch, workerRef.current, selectedRouteRef), displayError);
-    handleLoad(() => dataLoaders.loadEvents(routeData, reloadEvents ? null : eventsRef.current, dispatch, workerRef.current, isInitialLoad.current, trackedEventsRef), displayError);
+    handleLoad(() => dataLoaders.loadEvents(routeData, reloadEvents ? null : eventsRef.current, dispatch, workerRef.current, isInitialLoad.current, trackedEventsRef, ensureEventId), displayError);
     handleLoad(() => dataLoaders.loadFerries(routeData, reloadFerries ? null : ferriesRef.current, dispatch, workerRef.current), displayError);
     handleLoad(() => dataLoaders.loadCurrentWeather(routeData, reloadLocalWeathers ? null : currentWeathersRef.current, dispatch, workerRef.current), displayError);
     handleLoad(() => dataLoaders.loadRegionalWeather(routeData, reloadRegionalWeathers ? null : regionalWeathersRef.current, dispatch, workerRef.current), displayError);

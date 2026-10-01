@@ -7,10 +7,21 @@ const loadEventDetail = async (event_id) => {
 
 export const loadEvents = async (
   route, events, dispatch,
-  worker, isInitialLoad = true, trackedEventsRef
+  worker, isInitialLoad = true, trackedEventsRef,
+  ensureEventId = null
 ) => {
   // Fetch data
   const eventData = await getEvents(!isInitialLoad);
+
+  // Use detail endpoint on cache miss (new events)
+  if (ensureEventId && !eventData.some(event => event.id == ensureEventId)) {
+    try {
+      eventData.push(await loadEventDetail(ensureEventId));
+
+    } catch (e) {
+      // missing/unreachable → Map stale-link msg
+    }
+  }
 
   // Track unfiltered events' highlight status and last_updated timestamp
   const trackedEventsDict = eventData.reduce((acc, event) => {
