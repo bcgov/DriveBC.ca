@@ -30,7 +30,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
     - name: Create Tag (if manually triggered)
       if: github.event_name == 'workflow_dispatch'
@@ -62,19 +62,19 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ needs.tag.outputs.tag }}
 
       - name: Log in to the Container registry (GitHub)
-        uses: docker/login-action@v4.6.0
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ${{ env.IMAGE_REGISTRY }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
 
       - name: Log in to OpenShift Registry
-        uses: docker/login-action@v4.6.0
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ${{ vars.OPENSHIFT_IMAGESTREAM_URL }}
           username: ${{ secrets.OPENSHIFT_IMAGESTREAM_USERNAME }}
@@ -82,7 +82,7 @@ jobs:
 
       - name: Extract metadata
         id: meta
-        uses: docker/metadata-action@v6
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6
         with:
           images: |
             ${{ env.IMAGE_REGISTRY }}/drivebc-static
@@ -94,10 +94,10 @@ jobs:
             type=raw,value=${{ needs.tag.outputs.tag }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
 
       - name: Build and push to both registries
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
         with:
           context: .
           file: ./compose/frontend/StaticBuild
@@ -120,13 +120,13 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
         ref: ${{ needs.tag.outputs.tag }}
 
     - name: Build Backend
       id: build_image
-      uses: redhat-actions/buildah-build@v3
+      uses: redhat-actions/buildah-build@719e3c40d8af9790c23eca13f7daa339f2867034 # v3
       with:
         image: drivebc-django
         tags: latest latest-uat ${{ github.sha }} ${{ needs.tag.outputs.tag }}
@@ -137,7 +137,7 @@ jobs:
           DEBUG_BUILD=true
 
     - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v3
+      uses: redhat-actions/push-to-registry@94ade333c38ecc0e60e94785125d9a52ca423b37 # v3
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: ${{ steps.build_image.outputs.tags }}
@@ -147,7 +147,7 @@ jobs:
 
 # Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source.
     - name: Push to OpenShift ImageStream
-      uses: redhat-actions/push-to-registry@v3
+      uses: redhat-actions/push-to-registry@94ade333c38ecc0e60e94785125d9a52ca423b37 # v3
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: latest latest-uat ${{ needs.tag.outputs.tag }}
@@ -163,13 +163,13 @@ jobs:
     environment: uat
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
         ref: ${{ needs.tag.outputs.tag }}
 
     - name: Build Redis
       id: build_image
-      uses: redhat-actions/buildah-build@v3
+      uses: redhat-actions/buildah-build@719e3c40d8af9790c23eca13f7daa339f2867034 # v3
       with:
         image: drivebc-redis
         tags: latest latest-uat ${{ github.sha }} ${{ needs.tag.outputs.tag }}
@@ -178,7 +178,7 @@ jobs:
         containerfiles: ./compose/redis/Dockerfile
 
     - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v3
+      uses: redhat-actions/push-to-registry@94ade333c38ecc0e60e94785125d9a52ca423b37 # v3
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: ${{ steps.build_image.outputs.tags }}
@@ -188,7 +188,7 @@ jobs:
 
 # Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source.
     - name: Push to OpenShift ImageStream
-      uses: redhat-actions/push-to-registry@v3
+      uses: redhat-actions/push-to-registry@94ade333c38ecc0e60e94785125d9a52ca423b37 # v3
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: latest latest-uat ${{ needs.tag.outputs.tag }}
@@ -205,13 +205,13 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
         ref: ${{ needs.tag.outputs.tag }}
 
     - name: Build OpenShift Jobs
       id: build_image
-      uses: redhat-actions/buildah-build@v3
+      uses: redhat-actions/buildah-build@719e3c40d8af9790c23eca13f7daa339f2867034 # v3
       with:
         image: drivebc-openshiftjobs
         tags: latest latest-uat ${{ github.sha }} ${{ needs.tag.outputs.tag }}
@@ -220,7 +220,7 @@ jobs:
         containerfiles: ./compose/openshiftjobs/DockerFile
 
     - name: Push to Github Packages
-      uses: redhat-actions/push-to-registry@v3
+      uses: redhat-actions/push-to-registry@94ade333c38ecc0e60e94785125d9a52ca423b37 # v3
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: ${{ steps.build_image.outputs.tags }}
@@ -230,7 +230,7 @@ jobs:
 
 # Backup to handle scenarios where Github packages is down. Confluence has documentation on switching the source.
     - name: Push to OpenShift ImageStream
-      uses: redhat-actions/push-to-registry@v3
+      uses: redhat-actions/push-to-registry@94ade333c38ecc0e60e94785125d9a52ca423b37 # v3
       with:
         image: ${{ steps.build_image.outputs.image }}
         tags: latest latest-uat ${{ needs.tag.outputs.tag }}
@@ -249,7 +249,7 @@ jobs:
       url: https://uat-drivebc.apps.gold.devops.gov.bc.ca
     steps:
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
     - name: OC Setup
       uses: ./.github/actions/oc-setup
@@ -273,7 +273,7 @@ jobs:
       url: https://uat-drivebc.apps.golddr.devops.gov.bc.ca
     steps:
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
     - name: OC Setup
       uses: ./.github/actions/oc-setup

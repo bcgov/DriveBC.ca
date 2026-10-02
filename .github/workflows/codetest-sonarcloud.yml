@@ -7,6 +7,11 @@ on:
       types: [opened, synchronize, reopened]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  code-quality: write
+  pull-requests: read
+
 jobs:
   run-tests:
     runs-on: ubuntu-latest
@@ -24,7 +29,7 @@ jobs:
           POSTGRES_PASSWORD: testpw
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
         # Disabling shallow clone is recommended for improving relevancy of reporting for SonarCloud
         fetch-depth: 0
@@ -33,7 +38,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y gdal-bin
     - name: Set up Python 3.14
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
       with:
         python-version: '3.14'
     - name: Install Dependencies
@@ -107,11 +112,18 @@ jobs:
       run: |
         coverage run ./src/backend/manage.py test --noinput && coverage report && coverage xml
 
+    - name: Upload Code Coverage
+      uses: actions/upload-code-coverage@2b21a77928be8d5168c2b9581a67f2adbebacc52 # v1
+      with:
+        file: coverage.xml
+        language: Python
+        label: code-coverage/coverage.py
+
     - name: Override Coverage Source Path for Sonar
       run: |
         sed -i "s/<source>\/home\/runner\/work\/DriveBC.ca\/DriveBC.ca<\/source>/<source>\/github\/workspace<\/source>/g" /home/runner/work/DriveBC.ca/DriveBC.ca/coverage.xml
     - name: SonarCloud Scan
-      uses: SonarSource/sonarqube-scan-action@v8.2.2
+      uses: SonarSource/sonarqube-scan-action@ba9859eae8dd6bd29e412f25ddbbef3d032000f4 # v8.2.2
       timeout-minutes: 10
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any

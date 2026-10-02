@@ -1,18 +1,18 @@
 {% load event_extras %}
 <body style="margin:0; padding:0; font-family:Arial, sans-serif; font-size:16px line-height:1.75rem; color:#2D2D2D">
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#F1F8FE" style="padding:50px">
+    <table role="presentation" style="width:100%; border:0; border-collapse:collapse; border-spacing:0; background-color:#F1F8FE; padding:50px">
       <tr>
-        <td align="center" valign="top">
+        <td style="text-align:center; vertical-align:top">
           <!-- Email container -->
           {% if event.severity == 'MAJOR' %}
-          <table width="620" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#FFFFFF" style="border-top: 4px solid #CE3E39">
+          <table role="presentation" style="width:620px; border:0; border-collapse:collapse; border-spacing:0; margin:0 auto; background-color:#FFFFFF; border-top:4px solid #CE3E39">
           {% else %}
-          <table width="620" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#FFFFFF" style="border-top: 4px solid #F8BB47">
+          <table role="presentation" style="width:620px; border:0; border-collapse:collapse; border-spacing:0; margin:0 auto; background-color:#FFFFFF; border-top:4px solid #F8BB47">
           {% endif %}
             <!-- Body -->
             <tr>
               <td>
-                <table style="padding: 24px 24px 30px 24px;">
+                <table role="presentation" style="padding: 24px 24px 30px 24px;">
                   <!-- Logo Header -->
                   <tr>
                     <td>
@@ -24,7 +24,7 @@
                   <!-- Intro paragraph -->
                   <tr>
                     <td>
-                      <table style="padding-top:30px">
+                      <table role="presentation" style="padding-top:30px">
                         <tr>
                           <td style="padding-bottom:12px">
                             Hello {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.email }}{% endif %},
@@ -52,12 +52,12 @@
                   <!-- Updated events -->
 									<tr>
                     <td style="padding-top:30px">
-                      <table width="100%">
+                      <table role="presentation" style="width:100%">
                         {% for event in events %}
                           <tr>
 														<td style="padding-bottom:8px">
 															<!-- Event card -->
-															<table width="100%">
+															<table role="presentation" style="width:100%">
 																<tr>
 																	<td style="font-size:1.5rem; font-weight:700; color:#053662">
 																		{{ area.name }}
@@ -65,9 +65,9 @@
 																</tr>
 																<tr>
 																	{% if event.display_category == 'majorEvents' or event.display_category == 'closures' %}
-																	<td bgcolor="#FFE4E5" style="padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#D8292F">
+																	<td style="background-color:#FFE4E5; padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#D8292F">
 																	{% else %}
-																	<td bgcolor="#FEF0D8" style="padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#584215">
+																	<td style="background-color:#FEF0D8; padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#584215">
 																	{% endif %}
 																		<img src="cid:{{ event|event_image_id }}" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px;" alt="{{ event.display_category_title }}" />
 																		{{ event.display_category_title }}
@@ -107,43 +107,43 @@
 																{% endif %}
 																<tr>
 																	<td>
-																		<table width="100%" style="padding:0 12px 8px">
+																		<table style="width:100%; padding:0 12px 8px">
 																			<tr>
-																				<td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width:130px">
+																				<th scope="row" style="text-align:left; font-weight:normal; color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width:130px">
 																					Location
-																				</td>
+																				</th>
 																				<td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
-																					{{ event.location_description|safe }}
+																					{{ event.location_description|striptags|linebreaksbr }}
 																				</td>
 																			</tr>
 																			<tr>
-																				<td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
+																				<th scope="row" style="text-align:left; font-weight:normal; color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
 																					Closest landmark
-																				</td>
+																				</th>
 																				<td style="font-size: 0.875rem; font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
 																					{{ event.closest_landmark }}
 																				</td>
 																			</tr>
 																			<tr>
-																				<td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
+																				<th scope="row" style="text-align:left; font-weight:normal; color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
 																					Description
-																				</td>
+																				</th>
 																				<td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
 																					{{ event.optimized_description }}
 																				</td>
 																			</tr>
 																			<tr>
-																				<td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
+																				<th scope="row" style="text-align:left; font-weight:normal; color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
 																					Last updated
-																				</td>
+																				</th>
 																				<td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
 																					{{ event.last_updated }}
 																				</td>
 																			</tr>
 																			<tr>
-																				<td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
+																				<th scope="row" style="text-align:left; font-weight:normal; color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
 																					Next update
-																				</td>
+																				</th>
 																				<td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
 																					{{ event.next_update }}
 																				</td>
@@ -153,7 +153,7 @@
 																</tr>
 																<!-- View on DriveBC button -->
 																<tr>
-																	<td align="center" bgcolor="#255A90" style="border-radius:4px;">
+																	<td style="text-align:center; background-color:#255A90; border-radius:4px;">
 																		<a href="{{ event.site_link }}" style="color:#ffffff; text-decoration: none; font-size: 0.875rem; font-weight: 700">
 																			<div style="height:100%;width:100%; padding: 12px">
 																				View on DriveBC
@@ -185,7 +185,7 @@
             <!-- Footer -->
             <tr>
               <td >
-                <table style="padding: 24px; border-top: 4px solid #FCBA19" bgcolor="#FAF9F8">
+                <table role="presentation" style="padding: 24px; border-top: 4px solid #FCBA19; background-color:#FAF9F8">
                   <tr>
                     <td style="font-size:0.75rem; color:#605E5C; padding-bottom: 32px;">
                       Add {{ from_email }} to your address book to ensure that you receive these notifications to your inbox. If you do not want to receive emails related to this route, you can turn off or modify these notifications at any time.
@@ -193,7 +193,7 @@
                   </tr>
                   <tr>
                     <td style="padding-top: 16px; border-top: 1px solid #9F9D9C">
-                      <table>
+                      <table role="presentation">
                         <tr>
                           <td style="white-space: nowrap;">
                             <img src="cid:bclogo" alt="BC Logo" style="width: 131px" />

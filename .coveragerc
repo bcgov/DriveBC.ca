@@ -1,0 +1,12 @@
+[run]
+source =
+    src/backend/apps
+omit =
+    */migrations/*
+    */tests/*
+    */test_*.py
+    */test_data/*
+    */__init__.py
+    */management/commands/sandbox.py
+    src/backend/manage.py
+
