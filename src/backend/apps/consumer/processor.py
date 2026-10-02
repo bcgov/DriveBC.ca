@@ -4,7 +4,7 @@ import logging
 import time
 from math import floor
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 import sys
 from typing import Optional
 from click import wrap_text
@@ -103,7 +103,11 @@ last_camera_refresh = {}
 image_invalid = False
 
 
-tz_pst = 'America/Vancouver'
+tz_pct = 'America/Vancouver'
+PCT_TIMEZONES = frozenset({
+    'America/Vancouver',
+})
+PCT_EFFECTIVE_DATE = date(2026, 11, 1)
 
 async def on_reconnect(conn):
     logger.info("RabbitMQ connection re-established")
@@ -335,16 +339,21 @@ def get_timezone(webcam):
     lon_str = webcam.get('cam_locations_geo_longitude')
     
     if not lat_str or not lon_str:
-        return tz_pst
+        return tz_pct
     
     try:
         lat = float(lat_str)
         lon = float(lon_str)
     except (ValueError, TypeError):
-        return tz_pst
+        return tz_pct
 
     tz_name = tf.timezone_at(lat=lat, lng=lon)
-    return tz_name if tz_name else tz_pst  # Fallback to PST if no timezone found
+    return tz_name if tz_name else tz_pct  # Fallback to PCT if no timezone found
+
+def get_timezone_abbreviation(tz: str, local_dt: datetime) -> str:
+    if tz in PCT_TIMEZONES and local_dt.date() >= PCT_EFFECTIVE_DATE:
+        return 'PCT'
+    return local_dt.strftime('%Z')
 
 def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
     try:
@@ -371,7 +380,11 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
 
         month = dt_local.strftime('%b')
         day = dt_local.strftime('%d')
-        timestamp = f'{month} {day}, {dt_local.strftime("%Y %I:%M:%S %p %Z")}'
+        timezone_abbreviation = get_timezone_abbreviation(tz, dt_local)
+        timestamp = (
+            f'{month} {day}, '
+            f'{dt_local.strftime("%Y %I:%M:%S %p")} {timezone_abbreviation}'
+        )
         pen.text((width - 3,  height + 14), timestamp, fill="white",
                      anchor='rs', font=FONT)
         
@@ -518,7 +531,7 @@ async def get_images_within(camera_id: str, hours: int = 720) -> list:
 def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     webcams = [cam for cam in db_data if cam['id'] == int(camera_id)]
     webcam = webcams[0] if webcams else None
-    tz = get_timezone(webcam) if webcam else tz_pst
+    tz = get_timezone(webcam) if webcam else tz_pct
     # Parse it as UTC datetime
     utc_dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
     utc_dt = utc_dt.replace(tzinfo=pytz.utc)
