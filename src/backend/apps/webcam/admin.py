@@ -1,6 +1,5 @@
 import json
-
-import pytz
+from zoneinfo import ZoneInfo
 from apps.cms.models import DriveBCMapWidget
 from apps.shared.models import RouteGeometry
 from apps.webcam.models import Webcam
@@ -25,7 +24,7 @@ class WebcamAdmin(admin.GISModelAdmin):
         if webcam and webcam.location:
             lat, lon = webcam.location.y, webcam.location.x
             tz_name = TimezoneFinder().timezone_at(lat=lat, lng=lon) or "UTC"
-            tz = pytz.timezone(tz_name)
+            tz = ZoneInfo(tz_name)
             now_local = timezone.now().astimezone(tz)
 
             extra_context["timezone"] = tz_name

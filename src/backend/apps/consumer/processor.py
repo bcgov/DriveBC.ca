@@ -5,11 +5,11 @@ import time
 from math import floor
 import os
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 import sys
 from typing import Optional
 from click import wrap_text
 import logging
-import pytz
 import requests
 import boto3
 import aio_pika
@@ -366,8 +366,8 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
         dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
 
         # Localize the naive datetime to the given timezone
-        timezone = pytz.timezone(tz)
-        dt_local = timezone.localize(dt)
+        local_tz = ZoneInfo(tz)
+        dt_local = dt.replace(tzinfo=local_tz, fold=1)
 
         month = dt_local.strftime('%b')
         day = dt_local.strftime('%d')
@@ -521,9 +521,9 @@ def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     tz = get_timezone(webcam) if webcam else tz_pst
     # Parse it as UTC datetime
     utc_dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
-    utc_dt = utc_dt.replace(tzinfo=pytz.utc)
+    utc_dt = utc_dt.replace(tzinfo=timezone.utc)
     # Convert to local time
-    local_tz = pytz.timezone(tz)
+    local_tz = ZoneInfo(tz)
     local_dt = utc_dt.astimezone(local_tz)
     # Format back to string
     timestamp = local_dt.strftime("%Y%m%d%H%M%S%f")
@@ -653,7 +653,7 @@ async def is_camera_pushed_too_soon(camera_id: str, timestamp: str):
 
     # parse pushed in timestamp
     dt_pushed_in = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
-    dt_pushed_in_utc = dt_pushed_in.astimezone(pytz.UTC)
+    dt_pushed_in_utc = dt_pushed_in.astimezone(timezone.utc)
 
     # convert to seconds
     millis_pushed_in = int(dt_pushed_in_utc.timestamp())
@@ -697,10 +697,10 @@ async def handle_image_message(camera_id: str, body: bytes, timestamp: str, came
         return
 
     tz = get_timezone(webcam) if webcam else tz_pst
-    local_tz = pytz.timezone(tz)
+    local_tz = ZoneInfo(tz)
     naive_dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
-    local_dt = local_tz.localize(naive_dt)
-    utc_dt = local_dt.astimezone(pytz.utc)
+    local_dt = naive_dt.replace(tzinfo=local_tz, fold=1)
+    utc_dt = local_dt.astimezone(timezone.utc)
     utc_timestamp_str = utc_dt.strftime("%Y%m%d%H%M%S")
     save_original_image_to_pvc(camera_id, body)
     push_to_s3(body, camera_id, True, utc_timestamp_str)

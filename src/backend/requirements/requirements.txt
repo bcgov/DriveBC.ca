@@ -21,13 +21,12 @@ aio-pika==10.0.1
 pydantic==2.13.4
 pillow==12.3.0
 timezonefinder==9.0.0
-pytz==2026.4
 click==8.4.2
 aiofiles==25.1.0
 zipstream-ng==1.9.3
 drf-spectacular==0.30.0
 drf-spectacular-sidecar==2026.7.1
-mssql-django==1.7.3
+mssql-django==2.0.0
 django-debug-toolbar==7.0.0
 django-prometheus==2.5.0
 django-redis==7.0.0
