@@ -104,6 +104,11 @@ image_invalid = False
 
 
 tz_pst = 'America/Vancouver'
+PCT_TIMEZONES = frozenset({
+    'America/Vancouver',
+    'America/Dawson_Creek',
+    'America/Fort_Nelson',
+})
 
 async def on_reconnect(conn):
     logger.info("RabbitMQ connection re-established")
@@ -346,6 +351,11 @@ def get_timezone(webcam):
     tz_name = tf.timezone_at(lat=lat, lng=lon)
     return tz_name if tz_name else tz_pst  # Fallback to PST if no timezone found
 
+def get_timezone_abbreviation(tz: str, local_dt: datetime) -> str:
+    if tz in PCT_TIMEZONES:
+        return 'PCT'
+    return local_dt.strftime('%Z')
+
 def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
     try:
         if image_data is None:
@@ -371,7 +381,11 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
 
         month = dt_local.strftime('%b')
         day = dt_local.strftime('%d')
-        timestamp = f'{month} {day}, {dt_local.strftime("%Y %I:%M:%S %p %Z")}'
+        timezone_abbreviation = get_timezone_abbreviation(tz, dt_local)
+        timestamp = (
+            f'{month} {day}, '
+            f'{dt_local.strftime("%Y %I:%M:%S %p")} {timezone_abbreviation}'
+        )
         pen.text((width - 3,  height + 14), timestamp, fill="white",
                      anchor='rs', font=FONT)
         
