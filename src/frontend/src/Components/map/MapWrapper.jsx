@@ -16,8 +16,7 @@ import PollingComponent from '../shared/PollingComponent';
 
 export default function MapWrapper(props) {
   /* Setup */
-  // Props
-  const { isCamDetail, referenceData } = props;
+  const { referenceData } = props;
 
   // Context
   const { mapContext } = useContext(MapContext);
@@ -102,9 +101,6 @@ export default function MapWrapper(props) {
 
   // Error handling
   const displayError = (error) => {
-    // DBC22-4882: Suppress errors on camera detail page
-    if (isCamDetail) return;
-
     if (error instanceof ServerError) {
       setShowServerError(true);
 

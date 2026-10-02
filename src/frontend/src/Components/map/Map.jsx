@@ -10,7 +10,7 @@ import React, {
 } from 'react';
 
 // Navigation
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 // Redux
 import * as slices from '../../slices';
@@ -30,7 +30,6 @@ import {
   faLocationCrosshairs,
   faXmark,
   faArrowLeft,
-  faMap
 } from '@fortawesome/pro-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from '@uidotdev/usehooks';
@@ -61,7 +60,6 @@ import { resizePanel, renderPanel, togglePanel } from './panels';
 import { pointerMoveHandler, resetHoveredStates } from './handlers/hover';
 import { pointerClickHandler, resetClickedStates } from './handlers/click';
 import { groupNearbyFeatures, applyOverlapOffsets } from "./helpers";
-import CurrentCameraIcon from '../cameras/CurrentCameraIcon';
 import DistanceLabels from "../routing/DistanceLabels";
 import FilterTabs from './filter/FilterTabs';
 import RouteSearch from '../routing/RouteSearch';
@@ -87,13 +85,13 @@ import View from 'ol/View';
 
 // Styling
 import './Map.scss';
-import { cameraStyles, routeStyles } from "../data/featureStyleDefinitions";
+import { routeStyles } from "../data/featureStyleDefinitions";
 
 export default function DriveBCMap(props) {
   /* initialization */
   // Props
   const {
-    mapProps: {referenceData, rootCamera, isCamDetail, mapViewRoute, loadCamDetails},
+    mapProps: {referenceData, fromCameraList},
     showNetworkError, showServerError, trackedEventsRef,
     loadingLayers, setLoadingLayers, getInitialLoadingLayers
   } = props;
@@ -102,12 +100,12 @@ export default function DriveBCMap(props) {
   const viewportSmallScreen = useMediaQuery('only screen and (max-width: 575px)');
   const viewportLargeScreen = useMediaQuery('only screen and (min-width: 768px)');
 
-  // cam-detail map is narrow regardless of viewport - use mobile mode
-  const smallScreen = viewportSmallScreen || !!isCamDetail;
-  const largeScreen = viewportLargeScreen && !isCamDetail;
+  const smallScreen = viewportSmallScreen;
+  const largeScreen = viewportLargeScreen;
 
   // Navigation
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   let mousePointXClicked = undefined;
@@ -175,7 +173,6 @@ export default function DriveBCMap(props) {
   const myLocationRef = useRef();
   const locationSet = useRef();
   const routingContainerRef = useRef();
-  const cameraLocationButtonRef = useRef();
   const scaleLineRef = useRef();
 
   // Initialization flags
@@ -207,7 +204,14 @@ export default function DriveBCMap(props) {
   // Workaround for OL handlers not being able to read states
   const [clickedFeature, setClickedFeature] = useState();
   const [staleLinkMessage, setStaleLinkMessage] = useState();
+  const [openedFromCameraList, setOpenedFromCameraList] = useState(!!fromCameraList);
   const clickedFeatureRef = useRef();
+
+  useEffect(() => {
+    if (!/^\/cameras\/[^/]+/.test(location.pathname)) {
+      setOpenedFromCameraList(false);
+    }
+  }, [location.pathname]);
   const updateClickedFeature = (feature, center=true) => {
     // Remove highlight from feature on click
     if (feature && feature instanceof Feature && feature.get('highlight')) {
@@ -233,22 +237,18 @@ export default function DriveBCMap(props) {
   };
 
   /* Constants for conditional rendering */
-  // Disable cam panel in details page
-  const disablePanel = isCamDetail && clickedFeature && clickedFeature.get('type') === 'camera';
   const openPanel =
-    (!!clickedFeature ||
-      (searchedRoutes && searchedRoutes.length && !isCamDetail)
-    ) && !disablePanel;
+    !!clickedFeature ||
+    (searchedRoutes && searchedRoutes.length);
 
   // Matches renderPanel’s RouteDetailsPanel branch (no map feature selected)
   const drawerShowsRouteDetailsPanel =
     !clickedFeature &&
-    !isCamDetail &&
     !!(searchedRoutes && searchedRoutes.length);
 
   // Drawer state
   const getSnapPoints = () => {
-    if (!isCamDetail && showRouteObjs && selectedRoute) {
+    if (showRouteObjs && selectedRoute) {
       return !smallScreen ? ['25%', '50%', '80%'] : ['10%', '50%', '88%'];
     } else {
       return !smallScreen ? ['25%', '50%', '80%'] : ['10%', '50%', '100%'];
@@ -270,7 +270,7 @@ export default function DriveBCMap(props) {
   // Update snap when route details are shown/hidden (only when snap points actually change)
   const prevRouteDetailsActive = useRef(false);
   const prevSnapPoints = useRef(snapPoints);
-  const routeDetailsActive = !isCamDetail && showRouteObjs && selectedRoute;
+  const routeDetailsActive = showRouteObjs && selectedRoute;
 
   useEffect(() => {
     // Only adjust snap if the available snap points have changed
@@ -355,13 +355,13 @@ export default function DriveBCMap(props) {
     const el = attributionControlRef.current?.element;
     if (!el) return;
 
-    if (!(!isCamDetail && smallScreen)) {
+    if (!smallScreen) {
       el.style.transform = '';
       return;
     }
 
     el.style.transform = `translateY(${drawerY}px)`;
-  }, [isCamDetail, smallScreen, drawerY]);
+  }, [smallScreen, drawerY]);
 
   // ScaleLine
   const scaleLineControl = new ScaleLine({ units: 'metric' });
@@ -401,17 +401,22 @@ export default function DriveBCMap(props) {
         geometry = feature.getProperties().altFeature.getGeometry(); // use the point feature's geometry
       }
 
-      // Center if panel from bottom or clicked within 390px from left of the screen
-      if (mousePointXClicked < 390 || smallScreen) {
-        const zoom = mapView.current.getZoom();
+      // Center when opened programmatically (deep link), panel from bottom, or clicked within 390px from left
+      if (mousePointXClicked == null || mousePointXClicked < 390 || smallScreen) {
+        let zoom = mapView.current.getZoom();
         const coords = geometry.flatCoordinates;
         const mapWidth = mapRef.current?.getSize()?.[0] ?? 0;
+
+        // Deep-link camera open: zoom in so the camera is visible
+        if (mousePointXClicked == null && feature.get('type') === 'camera' && zoom < 12) {
+          zoom = 12;
+        }
 
         // Use anchored pan if panel from bottom or screen smaller than 1000px
         const shouldUseAnchoredPan = mapWidth < 1000 || smallScreen;
 
         // Center on top half of the screen, if panel open from bottom
-        const anchorYFraction = !viewportLargeScreen || isCamDetail ? 0.25 : 0.5;
+        const anchorYFraction = !viewportLargeScreen ? 0.25 : 0.5;
 
         // Center on right side of screen minus 390px panel, if panel open from left
         const anchorXFraction = anchorYFraction !== 0.25 ? (((mapWidth-390)/2) + 390) / mapWidth : 0.5;
@@ -509,7 +514,7 @@ export default function DriveBCMap(props) {
     const deniedBefore = localStorage.getItem('geoDenied') === 'true';
 
     // check if geolocation permission is granted
-    if (!isCamDetail && navigator.permissions) {  // only when permissions API is supported
+    if (navigator.permissions) {  // only when permissions API is supported
       navigator.permissions.query({ name: "geolocation" }).then((permissionStatus) => {
         if (!deniedBefore) {
           setShowLocationAccessError(permissionStatus.state === 'denied');
@@ -520,11 +525,6 @@ export default function DriveBCMap(props) {
 
     // Enable referenced layer
     enableReferencedLayer(referenceData, mapContext);
-
-    // Enable highway cams layer if in cam detail
-    if (isCamDetail) {
-      mapContext.visible_layers['highwayCams'] = true;
-    }
 
     const tileSource = new VectorTileSource({
       format: new MVT(),
@@ -560,7 +560,7 @@ export default function DriveBCMap(props) {
     const initialCenter = sharedPan ? sharedPan.split(",").map(Number) : pan;
 
     // Zoom
-    const defaultZoom = isCamDetail ? 5 : zoom;
+    const defaultZoom = zoom;
     const sharedZoom = searchParams.get('zoom');
     const initialZoom = sharedZoom ? sharedZoom : defaultZoom;
 
@@ -689,8 +689,7 @@ export default function DriveBCMap(props) {
 
       pointerClickHandler(
         features, clickedFeatureRef, updateClickedFeature,
-        mapView, isCamDetail, loadCamDetails, updateReferenceFeature,
-        updateRouteDisplay, mapContext
+        mapView, updateRouteDisplay, mapContext
       );
     });
 
@@ -806,8 +805,7 @@ export default function DriveBCMap(props) {
     if (referenceFeature && !referenceFeatureInitialized.current) {
       pointerClickHandler(
         [referenceFeature], clickedFeatureRef, updateClickedFeature,
-        mapView, isCamDetail, loadCamDetails, updateReferenceFeature,
-        updateRouteDisplay, mapContext
+        mapView, updateRouteDisplay, mapContext
       );
 
       referenceFeatureInitialized.current = true;
@@ -840,8 +838,7 @@ export default function DriveBCMap(props) {
 
     setLoadingLayers(getInitialLoadingLayers());
 
-    // Use only selectedRoute in cam details page
-    const routesData = isCamDetail ? (selectedRoute ? [selectedRoute] : null) : searchedRoutes;
+    const routesData = searchedRoutes;
     loadLayer(
       mapLayers, mapRef, mapContext,
       'routeLayer', routesData, routesData, 6, selectedRoute, updateReferenceFeature
@@ -1056,21 +1053,38 @@ export default function DriveBCMap(props) {
     }
   }, [referenceData?.type]);
 
+  const clearClosedPanelUrl = () => {
+    const params = new URLSearchParams(searchParams);
+    if (params.get('type') !== 'advisory') {
+      params.delete('type');
+      params.delete('id');
+    }
+    params.delete('display_category');
+    params.delete('camIndex');
+
+    // Camera details URLs should return to the root map when the panel closes
+    if (/^\/cameras\/[^/]+/.test(location.pathname)) {
+      const search = params.toString();
+      navigate(
+        { pathname: '/', search: search ? `?${search}` : '' },
+        { replace: true },
+      );
+    } else {
+      setSearchParams(params, { replace: true });
+    }
+
+    setOpenedFromCameraList(false);
+  };
+
   // Reset search params when panel is closed
   useEffect(() => {
-    if (searchParamInitialized.current) {
-      if (!clickedFeature) {
-        if (searchParams.get('type') !== 'advisory') {
-          searchParams.delete('type');
-          searchParams.delete('id');
-        }
-        searchParams.delete('display_category');
-        searchParams.delete('camIndex');
-        setSearchParams(searchParams, { replace: true });
-      }
-
-    } else {
+    if (!searchParamInitialized.current) {
       searchParamInitialized.current = true;
+      return;
+    }
+
+    if (!clickedFeature) {
+      clearClosedPanelUrl();
     }
 
     if (selectedRoute && clickedFeature && clickedFeature.get('type') !== 'route') {
@@ -1110,7 +1124,7 @@ export default function DriveBCMap(props) {
   /* Rendering */
   return (
     <div
-      className={`map-container ${isCamDetail ? 'preview' : ''}`}
+      className="map-container"
       ref={mapContainerRef}
       data-vladyoslav-drawer-wrapper="">
       {smallScreen && openTabs &&
@@ -1118,7 +1132,7 @@ export default function DriveBCMap(props) {
       }
 
       {searchedRoutes && searchedRoutes.length > 0 &&
-        <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} isCamDetail={isCamDetail} mapRendered={mapRendered} />
+        <DistanceLabels updateRouteDisplay={updateRouteDisplay} mapRef={mapRef} mapRendered={mapRendered} />
       }
 
       {!!openPanel && largeScreen &&
@@ -1126,7 +1140,7 @@ export default function DriveBCMap(props) {
           ref={panel}
           className={`side-panel ${openPanel ? 'open' : ''} ${selectedRoute ? 'has-route' : ''}`}>
 
-          {clickedFeature && !isCamDetail && smallScreen &&
+          {clickedFeature && smallScreen &&
             <button
               className={`resize-panel + ${selectedRoute ? '' : ' no-route'}`}
               aria-label={`${(maximizedPanel ? 'minimize' : 'maximize') + ' side panel'}`}
@@ -1142,7 +1156,7 @@ export default function DriveBCMap(props) {
             </button>
           }
 
-          {clickedFeature && (!selectedRoute || isCamDetail) &&
+          {clickedFeature && !selectedRoute &&
             <button
               className="close-panel"
               aria-label={`${openPanel ? 'close side panel' : ''}`}
@@ -1162,20 +1176,20 @@ export default function DriveBCMap(props) {
           <div className="panel-content">
             {renderPanel(
               clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature,
-              isCamDetail,
               smallScreen,
               mapView,
               clickedFeatureRef,
               updateClickedFeature,
               showRouteObjs,
-              handleSetShowRouteObjs
+              handleSetShowRouteObjs,
+              openedFromCameraList
             )}
           </div>
         </div>
       }
 
       <div ref={mapElement} className="map">
-        {(!isCamDetail && selectedRoute && showRouteObjs && !clickedFeature) && (
+        {(selectedRoute && showRouteObjs && !clickedFeature) && (
           <Button
             variant="primary-outline"
             className="btn-outline-primary back-to-routes"
@@ -1185,7 +1199,7 @@ export default function DriveBCMap(props) {
           </Button>
         )}
 
-        {(!isCamDetail && selectedRoute && showRouteObjs && clickedFeature) && (
+        {(selectedRoute && showRouteObjs && clickedFeature) && (
           <Button
             variant="primary-outline"
             className="btn-outline-primary back-to-details"
@@ -1268,13 +1282,13 @@ export default function DriveBCMap(props) {
 
                   {renderPanel(
                     clickedFeature && !clickedFeature.get ? advisoriesInView : clickedFeature,
-                    isCamDetail,
                     smallScreen,
                     mapView,
                     clickedFeatureRef,
                     updateClickedFeature,
                     showRouteObjs,
-                    handleSetShowRouteObjs
+                    handleSetShowRouteObjs,
+                    openedFromCameraList
                   )}
                 </div>
               </Drawer.Content>
@@ -1282,9 +1296,9 @@ export default function DriveBCMap(props) {
           </Drawer.Root>
         )}
 
-        {!isCamDetail && !smallScreen && (
+        {!smallScreen && (
 
-          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'} ${isCamDetail && 'hidden'}`}>
+          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
             <RouteSearch
               showFilterText={true}
               ref={routingContainerRef}
@@ -1298,20 +1312,18 @@ export default function DriveBCMap(props) {
           </div>
         )}
 
-        {(!isCamDetail && smallScreen && mapRef.current) && (
+        {(smallScreen && mapRef.current) && (
           <FilterTabs
           mapLayers={mapLayers}
-          disableFeatures={isCamDetail}
           enableRoadConditions={true}
           enableChainUps={true}
-          isCamDetail={isCamDetail}
           referenceData={referenceData}
           loadingLayers={loadingLayers}
           open={openTabs}
           setOpen={setOpenTabs} />
           )}
 
-        {(!isCamDetail && smallScreen && mapRef.current) && (
+        {(smallScreen && mapRef.current) && (
           <div className="fixed-to-mobile-group"
             style={{
               transform: `translateY(${drawerY}px)`,
@@ -1334,14 +1346,12 @@ export default function DriveBCMap(props) {
           </div>
         )}
 
-        {(!isCamDetail && !smallScreen && mapRef.current) && (
+        {(!smallScreen && mapRef.current) && (
           <React.Fragment>
             <FilterTabs
               mapLayers={mapLayers}
-              disableFeatures={isCamDetail}
               enableRoadConditions={true}
               enableChainUps={true}
-              isCamDetail={isCamDetail}
               referenceData={referenceData}
               loadingLayers={loadingLayers}
               open={openTabs}
@@ -1379,47 +1389,6 @@ export default function DriveBCMap(props) {
           <div className="zoom-divider" />
         </div>
       </div>
-
-      {isCamDetail && (
-        <Button
-          ref={cameraLocationButtonRef}
-          className="map-btn cam-location"
-          variant="primary"
-          onClick={() => {
-            setZoomPan(mapView, 9, fromLonLat(rootCamera.location.coordinates));
-
-            if (referenceFeature) {
-              referenceFeature.set('clicked', true);
-              referenceFeature.setStyle(cameraStyles.active);
-              updateClickedFeature(referenceFeature);
-            }
-          }}>
-          <CurrentCameraIcon />
-          Camera location
-        </Button>
-      )}
-
-      {isCamDetail && (
-        <Button
-          className="map-btn map-view"
-          variant="primary"
-          onClick={mapViewRoute}>
-          <FontAwesomeIcon icon={faMap} />
-          View on map page
-        </Button>
-      )}
-
-      {isCamDetail && (
-        <FilterTabs
-          mapLayers={mapLayers}
-          enableRoadConditions={true}
-          enableChainUps={true}
-          isCamDetail={isCamDetail}
-          referenceData={referenceData}
-          loadingLayers={loadingLayers}
-          open={openTabs}
-          setOpen={setOpenTabs} />
-      )}
 
       {showLocationAccessError &&
         <LocationAccessPopup marginPushed={!!openPanel} setShowLocationAccessError={setShowLocationAccessError} />

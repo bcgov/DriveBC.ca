@@ -50,7 +50,6 @@ export default function ListFilters(props) {
     enableChainUps,
     textOverride,
     iconOverride,
-    isCamDetail,
     referenceData,
     loadingLayers,
     isDelaysPage,
@@ -80,14 +79,14 @@ export default function ListFilters(props) {
   const [open, setOpen] = useState(largeScreen && !textOverride);
 
   // States for toggles
-  const chainUpsOnly = !isCamDetail && searchParams.get('chainUpsOnly') === 'true';
+  const chainUpsOnly = searchParams.get('chainUpsOnly') === 'true';
   const [closures, setClosures] = useState(chainUpsOnly ? false : (eventCategory && eventCategory == 'closures' ? true : mapContext.visible_layers.closures));
   const [majorEvents, setMajorEvents] = useState(chainUpsOnly ? false : (eventCategory && eventCategory == 'majorEvents' ? true : mapContext.visible_layers.majorEvents));
   const [minorEvents, setMinorEvents] = useState(chainUpsOnly ? false : (eventCategory && eventCategory == 'minorEvents' ? true : mapContext.visible_layers.minorEvents));
   const [futureEvents, setFutureEvents] = useState(chainUpsOnly ? false : (eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents));
   const [roadConditions, setRoadConditions] = useState(chainUpsOnly ? false : mapContext.visible_layers.roadConditions);
   const [chainUps, setChainUps] = useState(chainUpsOnly ? true : mapContext.visible_layers.chainUps);
-  const [highwayCams, setHighwayCams] = useState(chainUpsOnly ? false : (isCamDetail ? isCamDetail : mapContext.visible_layers.highwayCams));
+  const [highwayCams, setHighwayCams] = useState(chainUpsOnly ? false : mapContext.visible_layers.highwayCams);
   const [inlandFerries, setInlandFerries] = useState(chainUpsOnly ? false : mapContext.visible_layers.inlandFerries);
   const [weather, setWeather] = useState(chainUpsOnly ? false : mapContext.visible_layers.weather);
   const [restStops, setRestStops] = useState(chainUpsOnly ? false : mapContext.visible_layers.restStops);
@@ -515,8 +514,8 @@ export default function ListFilters(props) {
                       name="highway cameras"
                       id="filter--highway-cameras"
                       onChange={e => filterHandler('highwayCams', e)}
-                      defaultChecked={isCamDetail || mapContext.visible_layers.highwayCams}
-                      disabled={isCamDetail || disableFeatures} />
+                      defaultChecked={mapContext.visible_layers.highwayCams}
+                      disabled={disableFeatures} />
 
                     <label className="filter-item__button" htmlFor="filter--highway-cameras">
                       <span className="filter-item__button__icon">
@@ -868,8 +867,8 @@ export default function ListFilters(props) {
                     name="highway cameras"
                     id="filter--highway-cameras"
                     onChange={e => filterHandler('highwayCams', e)}
-                    defaultChecked={isCamDetail || mapContext.visible_layers.highwayCams}
-                    disabled={isCamDetail || disableFeatures} />
+                    defaultChecked={mapContext.visible_layers.highwayCams}
+                    disabled={disableFeatures} />
 
                   <label className="filter-item__button" htmlFor="filter--highway-cameras">
                     <span className="filter-item__button__icon">
