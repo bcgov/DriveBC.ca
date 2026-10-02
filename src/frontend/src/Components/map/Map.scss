@@ -223,8 +223,8 @@
       .map-left-container {
         position: absolute;
         z-index: 5;
-        margin-left: 0;
         margin: 1rem;
+        margin-left: 0;
         transition: margin-left 0.25s ease-in-out;
 
         .routing-outer-container {
