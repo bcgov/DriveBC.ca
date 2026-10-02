@@ -3,6 +3,7 @@ from PIL import Image
 from unittest.mock import patch, MagicMock, AsyncMock, mock_open
 from datetime import datetime
 import io
+import pytz
 
 from aiormq import AMQPConnectionError
 from django.test import TestCase
@@ -17,6 +18,7 @@ from apps.consumer.processor import (
     consume_queue,
     process_camera_rows,
     get_timezone,
+    get_timezone_abbreviation,
     process_message,
     safe_db_call,
     save_original_image_to_pvc,
@@ -677,7 +679,36 @@ class TestWatermark(TestCase):
         buf = io.BytesIO()
         img.save(buf, format="JPEG")
         return buf.getvalue()
-    
+
+    def test_pct_timezone_abbreviation_for_bc_timezones(self):
+        local_dt = datetime(2026, 11, 1, 1, 30)
+
+        for tz in (
+            "America/Vancouver",
+        ):
+            with self.subTest(tz=tz):
+                self.assertEqual(get_timezone_abbreviation(tz, local_dt), "PCT")
+
+    def test_bc_timezone_abbreviation_before_pct_effective_date(self):
+        local_dt = pytz.timezone("America/Vancouver").localize(
+            datetime(2026, 10, 31, 12, 30)
+        )
+
+        self.assertEqual(
+            get_timezone_abbreviation("America/Vancouver", local_dt),
+            "PDT",
+        )
+
+    def test_non_pct_timezone_uses_timezone_package_abbreviation(self):
+        local_dt = pytz.timezone("America/Edmonton").localize(
+            datetime(2026, 12, 1, 12, 30)
+        )
+
+        self.assertEqual(
+            get_timezone_abbreviation("America/Edmonton", local_dt),
+            local_dt.strftime("%Z"),
+        )
+
     def test_returns_none_when_image_is_none(self):
         webcam = {"dbc_mark": "TEST"}
 
