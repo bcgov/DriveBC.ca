@@ -1,13 +1,13 @@
 <body style="margin:0; padding:0; font-family:Arial, sans-serif; font-size:16px line-height:1.75rem; color:#2D2D2D">
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#F1F8FE" style="padding:50px">
+    <table role="presentation" style="width:100%; border:0; border-collapse:collapse; border-spacing:0; background-color:#F1F8FE; padding:50px">
       <tr>
-        <td align="center" valign="top">
+        <td style="text-align:center; vertical-align:top">
           <!-- Email container -->
-          <table width="620" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#FFFFFF" style="border-top: 4px solid #F24C27">
+          <table role="presentation" style="width:620px; border:0; border-collapse:collapse; border-spacing:0; margin:0 auto; background-color:#FFFFFF; border-top:4px solid #F24C27">
             <!-- Body -->
             <tr>
               <td>
-                <table style="padding: 24px 24px 30px 24px;">
+                <table role="presentation" style="padding: 24px 24px 30px 24px;">
                   <!-- Logo Header -->
                   <tr>
                     <td>
@@ -19,7 +19,7 @@
                   <!-- Intro paragraph -->
                   <tr>
                     <td>
-                      <table style="padding-top:30px">
+                      <table role="presentation" style="padding-top:30px">
                         <tr>
                           <td style="padding-bottom:8px">
                             Hello {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.email }}{% endif %},
@@ -42,18 +42,18 @@
                   <!-- Advisory details -->
                   <tr>
                     <td style="padding-top:30px">
-                      <table width="100%">
+                      <table role="presentation" style="width:100%">
                         <tr>
                           <td>
                             <!-- card -->
-                            <table width="100%">
+                            <table role="presentation" style="width:100%">
                               <tr>
                                 <td style="font-size:1.5rem; font-weight:700; color:#053662">
                                   {{ area_names }}
                                 </td>
                               </tr>
                               <tr>
-                                <td bgcolor="#FFF6F2" style="padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#C84507; border: 1px solid #F24C27">
+                                <td style="background-color:#FFF6F2; padding:12px; border-radius:4px; font-size: 0.875rem; font-weight:700; color:#C84507; border: 1px solid #F24C27">
                                   <img src="cid:dclogo" style="width: 12px; height: 14px; vertical-align: text-top; margin-right: 8px;" alt="{{ display_category_title }}" />
                                   Advisory
                                 </td>
@@ -65,19 +65,19 @@
                               </tr>
                               <tr>
                                 <td>
-                                  <table width="100%" style="padding:0 12px 8px">
+                                  <table style="width:100%; padding:0 12px 8px">
                                     <tr>
-                                      <td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
+                                      <th scope="row" style="text-align:left; font-weight:normal; color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
                                         Description
-                                      </td>
+                                      </th>
                                       <td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
                                         {{ advisory.description }}
                                       </td>
                                     </tr>
                                     <tr>
-                                      <td style="color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
+                                      <th scope="row" style="text-align:left; font-weight:normal; color:#013366; font-size: 0.875rem; vertical-align:top; padding-top:12px; width: 130px">
                                         Last updated
-                                      </td>
+                                      </th>
                                       <td style="font-size: 0.875rem; vertical-align:top; padding: 12px 0 0 8px">
                                         {{ advisory.latest_revision_created_at }}
                                       </td>
@@ -87,7 +87,7 @@
                               </tr>
                               <!-- View on DriveBC button -->
                               <tr>
-                                <td align="center" bgcolor="#255A90" style="border-radius:4px;">
+                                <td style="text-align:center; background-color:#255A90; border-radius:4px;">
                                   <a href="{{ site_link }}" style="color:#ffffff; text-decoration: none; font-size: 0.875rem; font-weight: 700">
                                     <div style="height:100%;width:100%; padding: 12px">
                                       Read full advisory on DriveBC
@@ -118,7 +118,7 @@
             <!-- Footer -->
             <tr>
               <td >
-                <table style="padding: 24px; border-top: 4px solid #FCBA19" bgcolor="#FAF9F8">
+                <table role="presentation" style="padding: 24px; border-top: 4px solid #FCBA19; background-color:#FAF9F8">
                   <tr>
                     <td style="font-size:0.75rem; color:#605E5C; padding-bottom: 32px;">
                       Add {{ from_email }} to your address book to ensure that you receive these notifications to your inbox. If you do not want to receive emails related to this route, you can turn off or modify these notifications at any time.
@@ -126,7 +126,7 @@
                   </tr>
                   <tr>
                     <td style="padding-top: 16px; border-top: 1px solid #9F9D9C">
-                      <table>
+                      <table role="presentation">
                         <tr>
                           <td style="white-space: nowrap;">
                             <img src="cid:bclogo" alt="BC Logo" style="width: 131px" />
