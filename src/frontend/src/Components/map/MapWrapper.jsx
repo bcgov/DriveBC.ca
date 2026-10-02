@@ -16,6 +16,8 @@ import PollingComponent from '../shared/PollingComponent';
 
 export default function MapWrapper(props) {
   /* Setup */
+  const { referenceData } = props;
+
   // Context
   const { mapContext } = useContext(MapContext);
 
