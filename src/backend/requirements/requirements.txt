@@ -21,7 +21,7 @@ aio-pika==10.1.0
 pydantic==2.13.5
 pillow==12.3.0
 timezonefinder==9.0.0
-pytz==2026.4
+tzdata==2026.5
 click==8.5.0
 aiofiles==25.1.0
 zipstream-ng==1.9.3
