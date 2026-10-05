@@ -2,7 +2,7 @@
 import { getMidPoint, setEventStyle } from '../helpers';
 
 // OpenLayers
-import { Point, LineString, Polygon } from 'ol/geom';
+import { Point, LineString, Polygon, MultiPolygon } from 'ol/geom';
 import { Style } from 'ol/style';
 import * as ol from 'ol';
 import GeoJSON from 'ol/format/GeoJSON';
@@ -57,13 +57,17 @@ const processEvent = (
     eventFound = true;
   }
 
-  // polygons are generated backend and used if available
+  // polygons/multipolygons are generated backend and used if available
   if (event.polygon) {
+    const olGeometry = event.polygon.type === 'MultiPolygon'
+      ? new MultiPolygon(event.polygon.coordinates)
+      : new Polygon(event.polygon.coordinates);
+
     const feature = new ol.Feature({
       ...event,
       type: 'event',
       altFeature: pointFeature,
-      geometry: new Polygon(event.polygon.coordinates)
+      geometry: olGeometry,
     });
     feature.setId(event.id);
 
