@@ -76,7 +76,7 @@
       &:not(.has-route) {
         transform: translateX(0%);
         transform: translateY(100%);
-        transition: all 0.25s ease-in-out;
+        transition: transform 0.25s ease-in-out;
 
         @media (min-width: 767px) {
           transform: translateX(-100%);
@@ -117,7 +117,7 @@
         &:not(.has-route) {
           transform: translateX(0%);
           transform: translateY(0%);
-          transition: all 0.25s ease-in-out;
+          transition: transform 0.25s ease-in-out;
         }
 
         &.has-route{
@@ -184,26 +184,6 @@
 
           &:has(.route-object-list) {
             height: calc(100% - 108px);
-          }
-        }
-      }
-    }
-
-    // Cam details page
-    &.preview {
-      flex-direction: column;
-
-      .side-panel {
-        transition: min-height 0.25s ease-in-out;
-        order: 2;
-        overflow-y: auto;
-
-        &.open {
-          min-height: 100%;
-          margin-right: auto;
-
-          @media (min-width: 576px) {
-            min-width: 390px;
           }
         }
       }
@@ -340,28 +320,10 @@
         color: $White;
       }
 
-      &.map-view, &.cam-location {
-        svg {
-          margin-right: 8px;
-        }
-      }
-
       &.my-location, &.open-filters {
         svg {
           margin-right: 8px;
         }
-      }
-
-      &.map-view {
-        position: absolute;
-        top: 2rem;
-        right: 2rem;
-      }
-
-      &.cam-location {
-        position: absolute;
-        bottom: 2rem;
-        left: 2rem;
       }
 
       &.my-location {
@@ -573,21 +535,6 @@
   }
 }
 
-// Camera details embed uses the drawer on wide viewports too (map box is narrow; drawer was hidden by rule above)
-.map-container.preview {
-  .drawer-overlay {
-    @media (min-width: 769px) {
-      display: block;
-    }
-  }
-
-  .drawer-content {
-    @media (min-width: 769px) {
-      display: block;
-    }
-  }
-}
-
 .drawer-content, .panel-content {
   &:focus, &:focus-visible {
     outline: none;
@@ -597,4 +544,16 @@
 
 .panel-content {
   height: 100%;
+}
+
+@media (min-width: 1400px) {
+  .map-wrap .map-container .side-panel.open:has(.popup--camera):not(.has-route),
+  .map-wrap .map-container .side-panel.open:has(.popup--camera):not(.has-route) .panel-content {
+    transition: none !important;
+  }
+
+  .map-wrap .map-container .side-panel.open:has(.popup--camera.expanded),
+  .map-wrap .map-container .side-panel.open:has(.popup--camera.expanded) .panel-content {
+    width: 1046px;
+  }
 }

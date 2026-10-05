@@ -1,6 +1,6 @@
 // React
-import React, { useEffect, useState, useContext } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
 // Redux
 import { useDispatch } from "react-redux";
@@ -34,11 +34,23 @@ export default function MapPage() {
   const dispatch = useDispatch();
 
   // Navigation
+  const location = useLocation();
+  const { id: cameraPathId } = useParams();
   const [searchParams] = useSearchParams();
+  // Snapshot before map navigations replace location.state (path string or false)
+  const fromCameraList = useRef(location.state?.fromCameraList || false).current;
 
   document.title = 'DriveBC';
 
   const getReferenceParams = () => {
+    if (cameraPathId) {
+      return {
+        type: 'camera',
+        id: cameraPathId,
+        display_category: null,
+      };
+    }
+
     return {
       type: searchParams.get('type'),
       id: searchParams.get('id'),
@@ -50,7 +62,7 @@ export default function MapPage() {
   // Effects
   useEffect(() => {
     setReferenceData(getReferenceParams());
-  }, [searchParams]);
+  }, [searchParams, cameraPathId]);
 
   useEffect(() => {
     populateRoutesFromNotification();
@@ -117,7 +129,7 @@ export default function MapPage() {
     <DndProvider options={HTML5toTouch}>
       <div className="map-page map-wrap">
         {referenceData &&
-          <MapWrapper referenceData={referenceData} />
+          <MapWrapper referenceData={referenceData} fromCameraList={fromCameraList} />
         }
       </div>
     </DndProvider>
