@@ -163,7 +163,6 @@ export default function RouteObjectList(props) {
         featureContext.events[event.id],
         clickedFeatureRef,
         updateClickedFeature,
-        false
       );
     }
   }
@@ -174,7 +173,6 @@ export default function RouteObjectList(props) {
         featureContext.ferries[ferry.id],
         clickedFeatureRef,
         updateClickedFeature,
-        false,
       );
     }
   }
@@ -196,7 +194,6 @@ export default function RouteObjectList(props) {
         featureContext.wildfires[wildfire.id],
         clickedFeatureRef,
         updateClickedFeature,
-        false,
       );
     }
   }

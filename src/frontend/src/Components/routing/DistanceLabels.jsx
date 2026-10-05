@@ -20,7 +20,7 @@ import distance from "@turf/distance";
 // Styling
 import './DistanceLabels.scss';
 
-export default function DistanceLabels({ updateRouteDisplay, mapRef, isCamDetail, mapRendered }) {
+export default function DistanceLabels({ updateRouteDisplay, mapRef, mapRendered }) {
   /* initialization */
 
   // Redux
@@ -58,7 +58,7 @@ export default function DistanceLabels({ updateRouteDisplay, mapRef, isCamDetail
   const addDistanceOverlay = (closing=false) => {
     removeOverlays(mapRef);
 
-    const routeData = isCamDetail ? [selectedRoute] : searchedRoutes;
+    const routeData = searchedRoutes;
 
     const latlngs = routeData.map((route) => {
       return new LineString((Array.isArray(route.route) ? route.route : route.route.coordinates[0])).getCoordinateAt(0.5);

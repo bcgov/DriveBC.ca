@@ -32,7 +32,6 @@ export default function FilterTabs(props) {
     enableRoadConditions,
     enableChainUps,
     textOverride,
-    isCamDetail,
     referenceData,
     loadingLayers,
     isDelaysPage,
@@ -41,7 +40,7 @@ export default function FilterTabs(props) {
   } = props;
 
   const viewportNarrowForFilters = useMediaQuery('only screen and (max-width : 768px)');
-  const smallScreen = viewportNarrowForFilters || !!isCamDetail;
+  const smallScreen = viewportNarrowForFilters;
 
   // States
   const [activeTab, setActiveTab] = useState('layers');
@@ -102,7 +101,6 @@ export default function FilterTabs(props) {
               disableFeatures={disableFeatures}
               enableRoadConditions={enableRoadConditions}
               enableChainUps={enableChainUps}
-              isCamDetail={isCamDetail}
               referenceData={referenceData}
               loadingLayers={loadingLayers} />
           </Tab>

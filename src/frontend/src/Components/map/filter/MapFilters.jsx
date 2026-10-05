@@ -28,7 +28,6 @@ export default function MapFilters(props) {
     disableFeatures,
     enableRoadConditions,
     enableChainUps,
-    isCamDetail,
     referenceData,
     loadingLayers,
   } = props;
@@ -58,8 +57,8 @@ export default function MapFilters(props) {
   const [futureEvents, setFutureEvents] = useState(eventCategory && eventCategory == 'futureEvents' ? true : mapContext.visible_layers.futureEvents);
   const [roadConditions, setRoadConditions] = useState(mapContext.visible_layers.roadConditions);
   const [chainUps, setChainUps] = useState(mapContext.visible_layers.chainUps);
-  const [highwayCams, setHighwayCams] = useState(isCamDetail ? true : mapContext.visible_layers.highwayCams);
-  const [inlandFerries, setInlandFerries] = useState(isCamDetail ? true : mapContext.visible_layers.inlandFerries);
+  const [highwayCams, setHighwayCams] = useState(mapContext.visible_layers.highwayCams);
+  const [inlandFerries, setInlandFerries] = useState(mapContext.visible_layers.inlandFerries);
   const [weather, setWeather] = useState(mapContext.visible_layers.weather);
   const [restStops, setRestStops] = useState(mapContext.visible_layers.restStops);
   const [largeRestStops, setLargeRestStops] = useState(mapContext.visible_layers.largeRestStops);
@@ -315,14 +314,14 @@ export default function MapFilters(props) {
           <p className="filter-group__title">Conditions and features</p>
           <div className="filter-items-group">
             <div className="filter-items filter-items--conditions">
-              <div className={'filter-item filter-item--highway-cameras' + (highwayCams ? ' checked' : '') + (isCamDetail || disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.cameras) ? ' loading' : '')}>
+              <div className={'filter-item filter-item--highway-cameras' + (highwayCams ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + (loadingLayers?.cameras ? ' loading' : '')}>
                 <input
                   type="checkbox"
                   name="highway cameras"
                   id="filter--highway-cameras"
                   onChange={e => filterHandler('highwayCams', e)}
-                  defaultChecked={isCamDetail || mapContext.visible_layers.highwayCams}
-                  disabled={isCamDetail || disableFeatures} />
+                  defaultChecked={mapContext.visible_layers.highwayCams}
+                  disabled={disableFeatures} />
 
                 <label className="filter-item__button" htmlFor="filter--highway-cameras">
                   <span className="filter-item__button__icon">
@@ -384,14 +383,14 @@ export default function MapFilters(props) {
                 }
               </div>
 
-              <div className={'filter-item filter-item--inland-ferries' + (inlandFerries ? ' checked' : '') + (isCamDetail || disableFeatures ? ' disabled' : '') + ((loadingLayers && loadingLayers.ferries) ? ' loading' : '')}>
+              <div className={'filter-item filter-item--inland-ferries' + (inlandFerries ? ' checked' : '') + (disableFeatures ? ' disabled' : '') + (loadingLayers?.ferries ? ' loading' : '')}>
                 <input
                   type="checkbox"
                   name="ferries"
                   id="filter--inland-ferries"
                   onChange={e => filterHandler('inlandFerries', e)}
                   defaultChecked={mapContext.visible_layers.inlandFerries}
-                  disabled={isCamDetail || disableFeatures} />
+                  disabled={disableFeatures} />
 
                 <label className="filter-item__button" htmlFor="filter--inland-ferries">
                   <span className="filter-item__button__icon">

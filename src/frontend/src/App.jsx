@@ -33,7 +33,6 @@ import Alert from './Components/shared/Alert';
 import AreaNotificationsPage from './pages/AreaNotificationsPage';
 import BulletinDetailsPage from './pages/BulletinDetailsPage';
 import BulletinsListPage from './pages/BulletinsListPage';
-import CameraDetailsPage from './pages/CameraDetailsPage';
 import CamerasListPage from './pages/CamerasListPage';
 import EventsListPage from './pages/EventsListPage';
 import FeedbackPage from './pages/FeedbackPage';
@@ -365,11 +364,13 @@ function App() {
                           <MaintenancePage />
                         ) : (
                           <Routes>
-                            <Route path="/" element={<MapPage />} />
+                            <Route path="/" element={<MapPage />}>
+                              <Route index element={null} />
+                              <Route path="cameras/:id" element={null} />
+                            </Route>
                             <Route path="/my-cameras" element={<SavedCamerasPage />} />
                             <Route path="/my-routes" element={<SavedRoutesPage />} />
                             <Route path="/cameras" element={<CamerasListPage />} />
-                            <Route path="/cameras/:id" element={<CameraDetailsPage />} />
                             <Route path="/delays" element={<EventsListPage key="/delays" />} />
                             <Route path="/chain-ups" element={<EventsListPage key="/chain-ups" chainUpsOnly={true} />} />
                             <Route path="/advisories" element={<AdvisoriesListPage />} />

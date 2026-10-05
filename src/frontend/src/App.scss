@@ -311,7 +311,8 @@ a[href^="https://" i]#{$external-link-optouts}:not([href*="drivebc.ca" i]) {
     margin-right: 8px;
     color: $Type-Link;
   }
-  &:hover {
+
+  &.viewMap-btn:hover {
     background: $BtnHover-Secondary;
   }
 
@@ -338,6 +339,16 @@ a[href^="https://" i]#{$external-link-optouts}:not([href*="drivebc.ca" i]) {
   &:hover {
     background: $BtnHover-Tertiary;
     transition: 0.2s ease-in-out all;
+  }
+}
+
+.favourite-btn:hover {
+  background: none;
+  color: $Type-LinkHover;
+  text-decoration: underline;
+
+  svg {
+    color: $Type-LinkHover;
   }
 }
 

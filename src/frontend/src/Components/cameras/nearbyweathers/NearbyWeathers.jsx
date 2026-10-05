@@ -7,9 +7,8 @@ import { useSelector } from "react-redux";
 
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import * as FA from "@fortawesome/pro-regular-svg-icons";
+import { faSunCloud, faTemperatureHalf, faMountain } from '@fortawesome/pro-regular-svg-icons';
 import Skeleton from "react-loading-skeleton";
-import Button from "react-bootstrap/Button";
 
 // Internal imports
 import NearbyRegionalWeather from "./NearbyRegionalWeather";
@@ -18,6 +17,12 @@ import NearbyHevWeather from "./NearbyHevWeather";
 
 // Styling
 import './NearbyWeathers.scss';
+
+const WEATHER_TAB_ICONS = {
+  Roadside: faTemperatureHalf,
+  Regional: faSunCloud,
+  'High elevation': faMountain,
+};
 
 // Main component
 export default function NearbyWeathers(props) {
@@ -121,28 +126,30 @@ export default function NearbyWeathers(props) {
       <div className="nearby-weathers-container">
         <div className="actions-bar actions-bar--weathers">
           <div className="title">
-            <FontAwesomeIcon className="weather-icon" icon={FA.faSunCloud}/>
-            <p>Weather</p>
+            <p>Nearby Weather</p>
           </div>
-          <div className="weather-types">
-            {weatherTabs.map(tab => {
-              return (
-                <Button
-                  variant="primary"
-                  className={activeTab === tab.key ? 'current' : ''}
-                  key={tab.key}
+        </div>
+        <div className="weather-types">
+          <ul className="nav nav-tabs">
+            {weatherTabs.map(tab => (
+              <li className="nav-item" key={tab.key}>
+                <button
+                  type="button"
+                  className={`nav-link ${activeTab === tab.key ? 'active' : ''}`}
                   onClick={() => setActiveTab(tab.key)}
                   onKeyDown={keyEvent => {
                     if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
                       setActiveTab(tab.key);
                     }
                   }}>
-
+                  <FontAwesomeIcon
+                    className="weather-type-icon"
+                    icon={WEATHER_TAB_ICONS[tab.key]} />
                   {tab.key}
-                </Button>
-              );
-            })}
-          </div>
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
         <div>
         {!hasWeather ? (
