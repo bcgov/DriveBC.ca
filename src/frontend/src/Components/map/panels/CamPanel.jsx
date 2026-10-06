@@ -258,6 +258,12 @@ export default function CamPanel(props) {
 
     try {
       const replayImageList = await getWebcamReplay(cam);
+
+      // ignore stale response if camera switched mid-fetch
+      if (viewedCamera.current?.id !== cam.id) {
+        return;
+      }
+
       if (!Array.isArray(replayImageList)) {
         throw new TypeError('Replay response was not a list of images');
       }
@@ -274,7 +280,11 @@ export default function CamPanel(props) {
       }
     } catch (error) {
       console.error('Error loading camera replay:', error);
-      setReplayImages([]);
+
+      // ignore error if camera switched mid-fetch
+      if (viewedCamera.current?.id === cam.id) {
+        setReplayImages([]);
+      }
     }
   };
 
@@ -679,7 +689,7 @@ export default function CamPanel(props) {
                 }
               </div>
             </div>
-            
+
             <div className="camera-details__description">
               <p className="bold">Camera details</p>
               <p className="camera-details-info">{parse(camera.caption)}</p>
