@@ -24,6 +24,19 @@ const WEATHER_TAB_ICONS = {
   'High elevation': faMountain,
 };
 
+// null = N/A or loaded-but-missing; undefined = feed not loaded yet
+const resolveStation = (list, stationId) => {
+  if (!stationId) {
+    return null;
+  }
+
+  if (list == null) {
+    return undefined;
+  }
+
+  return list.find(station => station.id === stationId) ?? null;
+};
+
 // Main component
 export default function NearbyWeathers(props) {
   /* Setup */
@@ -45,10 +58,14 @@ export default function NearbyWeathers(props) {
   // Props
   const { camera } = props;
 
-  // States
-  const [regionalWeather, setRegionalWeather] = useState();
-  const [localWeather, setLocalWeather] = useState();
-  const [hef, setHef] = useState();
+  const regionalWeather = resolveStation(regionalWeatherList, camera.regional_weather_station);
+  const localWeather = resolveStation(currentWeatherList, camera.local_weather_station);
+  const hef = resolveStation(hefList, camera.hev_station);
+
+  const isLoading =
+    regionalWeather === undefined ||
+    localWeather === undefined ||
+    hef === undefined;
 
   const weatherTabs = [
     { key: 'Roadside', station: localWeather },
@@ -59,44 +76,7 @@ export default function NearbyWeathers(props) {
   const defaultActiveTab = weatherTabs.length ? weatherTabs[0].key : null;
   const [activeTab, setActiveTab] = useState(defaultActiveTab);
 
-  const hasWeather = localWeather || regionalWeather || hef;
-
-  // Effects
-  // find regional weather and set state
-  useEffect(() => {
-    if (!regionalWeatherList || !camera.regional_weather_station) {
-      setRegionalWeather(null);
-      return;
-    }
-
-    const station = regionalWeatherList.find(station => station.id === camera.regional_weather_station);
-    setRegionalWeather(station);
-
-  }, [regionalWeatherList, camera]);
-
-  // find local weather and set state
-  useEffect(() => {
-    if (!currentWeatherList || !camera.local_weather_station) {
-      setLocalWeather(null);
-      return;
-    }
-
-    const station = currentWeatherList.find(station => station.id === camera.local_weather_station);
-    setLocalWeather(station);
-
-  }, [currentWeatherList, camera]);
-
-  // find hef and set state
-  useEffect(() => {
-    if (!hefList || !camera.hev_station) {
-      setHef(null);
-      return;
-    }
-
-    const station = hefList.find(station => station.id === camera.hev_station);
-    setHef(station);
-
-  }, [hefList, camera]);
+  const hasWeather = !!(localWeather || regionalWeather || hef);
 
   // Keep active tab valid across direct loads, refreshes, and camera changes.
   useEffect(() => {
@@ -111,8 +91,7 @@ export default function NearbyWeathers(props) {
   }, [activeTab, weatherTabs]);
 
   /* Rendering */
-  // Loading state
-  if ((regionalWeather || localWeather || hef) && (!regionalWeather && !localWeather && !hef)) {
+  if (isLoading) {
     return (
       <div>
         <Skeleton height={48}/>
