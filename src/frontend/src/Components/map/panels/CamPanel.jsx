@@ -184,6 +184,9 @@ export default function CamPanel(props) {
     syncCameraUrl(displayCam.id, initialIndex, newCam);
     setIsUpdated(false);
     setIsLoading(false);
+    setReplay(false);
+    setReplayImages([]);
+    pauseReplay();
     setNextUpdate(formatNextUpdate(displayCam));
 
   }, [camFeature]);
