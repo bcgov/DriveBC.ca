@@ -8,6 +8,11 @@
       "/(^|/)values.*\\.yaml$/"
     ]
   },
+  "pip_requirements": {
+    "managerFilePatterns": [
+      "/^src\\/backend\\/requirements\\/development\\.txt$/"
+    ]
+  },
   "packageRules": [
     {
       "matchDatasources": ["docker"],
