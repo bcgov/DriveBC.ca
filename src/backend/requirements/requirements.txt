@@ -28,7 +28,7 @@ zipstream-ng==1.9.3
 drf-spectacular==0.30.0
 drf-spectacular-sidecar==2026.7.1
 mssql-django==2.0.0
-django-debug-toolbar==7.0.0
+django-debug-toolbar==8.0.0
 django-prometheus==2.5.0
 django-redis==7.0.0
 PyJWT==2.15.0
