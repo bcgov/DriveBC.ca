@@ -845,7 +845,7 @@ export default function DriveBCMap(props) {
     );
 
     if (localStorage.getItem("pendingFit") === 'true') {
-      fitMap(searchedRoutes, mapView);
+      fitMap(searchedRoutes, mapView, mapRef);
     }
 
     // Remove all overlays from previously searched routes
