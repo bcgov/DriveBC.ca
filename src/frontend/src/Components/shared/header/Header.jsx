@@ -410,7 +410,7 @@ export default function Header({ isMaintenance }) {
                   <FontAwesomeIcon icon={faChevronLeft} />
                 </button>
 
-                <RouteSearch showSpinner={showSpinner} onShowSpinnerChange={setShowSpinner}/>
+                <RouteSearch showSpinner={showSpinner} onShowSpinnerChange={setShowSpinner} showAltOptions={false}/>
               </div>
             }
 
