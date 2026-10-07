@@ -4,8 +4,8 @@
     "local>bcgov/renovate-config"
   ],
   "helm-values": {
-    "fileMatch": [
-      "(^|/)values.*\\.yaml$"
+    "managerFilePatterns": [
+      "/(^|/)values.*\\.yaml$/"
     ]
   },
   "packageRules": [
