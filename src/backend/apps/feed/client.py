@@ -244,16 +244,16 @@ class FeedClient:
             return serializer.validated_data
 
         except (KeyError, ValidationError):
+            # DRF >= 3.18: errors[resource_name] is {index: errors}, only for failing items
+            resource_errors = serializer.errors.get(resource_name, {})
+
             res = []
             for index, data in enumerate(serializer.data[resource_name]):
-                if serializer.errors[resource_name][index]:
-                    logger.warning(
-                        f"Error parsing {resource_name} data" +
-                        f" for ID {data['id']}" if 'id' in data else ""
-                    )
-
-                    logger.warning(serializer.errors[resource_name][index])
-
+                item_errors = resource_errors.get(index)
+                if item_errors:
+                    id_suffix = f" for ID {data['id']}" if 'id' in data else ""
+                    logger.warning(f"Error parsing {resource_name} data{id_suffix}")
+                    logger.warning(item_errors)
                 else:
                     res.append(data)
 
