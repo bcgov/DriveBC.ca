@@ -94,7 +94,7 @@ export default function FilterTabs(props) {
             trackEvent('click', 'map', `Show ${key} tab`);
           }}>
 
-          <Tab eventKey='layers' title='Map Options' tabClassName='map-tab layers'>
+          <Tab eventKey='layers' title='Map layers' tabClassName='map-tab layers'>
             <MapFilters
               mapLayers={mapLayers}
               callback={callback}
@@ -132,7 +132,7 @@ export default function FilterTabs(props) {
           open ? setOpen(false) : setOpen(true)
         }}>
         <FontAwesomeIcon icon={faLayerGroup}/>
-        <span className='filters-btn__text'>{textOverride ? textOverride : 'Map Options'}</span>
+        <span className='filters-btn__text'>{textOverride ? textOverride : 'Map Layers'}</span>
       </Button>
 
       {smallScreen && mapContainer &&

@@ -496,7 +496,7 @@ function HeaderContent() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <LinkContainer to="/">
-                {getNavLink('Map view')}
+                {getNavLink('Map')}
               </LinkContainer>
 
               <LinkContainer to="/cameras">
@@ -504,7 +504,7 @@ function HeaderContent() {
               </LinkContainer>
 
               <LinkContainer to="/delays">
-                {getNavLink('Closures and delays')}
+                {getNavLink('Delays')}
               </LinkContainer>
 
               <div className="commercial-dropdown" ref={commercialDropdownRef}>
@@ -552,7 +552,7 @@ function HeaderContent() {
               </div>
 
               <LinkContainer to="/advisories">
-                {getNavLink('Area advisories', advisoriesCount)}
+                {getNavLink('Advisories', advisoriesCount)}
               </LinkContainer>
 
               <LinkContainer to="/bulletins">
