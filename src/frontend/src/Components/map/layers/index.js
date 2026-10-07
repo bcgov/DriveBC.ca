@@ -51,17 +51,21 @@ export const loadLayer = (mapLayers, mapRef, mapContext, key, dataList, filtered
   if (dataList) {
     if (!mapLayers.current[key] || key == 'routeLayer') {
       // Generate and add layer if it doesn't exist
-      mapLayers.current[key] = layerFuncMap[key](
+      const layerArgs = [
         dataList,
         mapRef.current.getView().getProjection().getCode(),
         mapContext,
         referenceData,
         updateReferenceFeature,
         setLoadingLayers,
-        // Pass the clustering distance (in screen pixels) to `getCamerasLayer`.
-        // ~icon diameter so cameras group only when markers would touch/overlap (DBC22-7185).
-        35,
-        mapRef.current);
+      ];
+
+      // DBC22-7398: cams-only extras — else getRouteLayer sees truthy `preview`
+      if (key === 'highwayCams') {
+        layerArgs.push(35, mapRef.current); // ~icon diameter (DBC22-7185)
+      }
+
+      mapLayers.current[key] = layerFuncMap[key](...layerArgs);
 
       mapRef.current.addLayer(mapLayers.current[key]);
       mapLayers.current[key].setZIndex(zIndex);

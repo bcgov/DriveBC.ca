@@ -14,7 +14,12 @@ export const transformFeature = (feature, sourceCRS, targetCRS) => {
 };
 
 // Zoom and pan
-export const fitMap = (routes, mapView) => {
+// Mobile drawer default snap is 50% (Map.jsx snapPointRef)
+const MOBILE_DRAWER_FRACTION = 0.5;
+const DESKTOP_PANEL_WIDTH = 390; // Map.scss .side-panel
+const FIT_MARGIN = 56; // keep endpoints off map edge
+
+export const fitMap = (routes, mapView, mapRef) => {
   // Only apply to map page when at least one route is returned
   if (!Array.isArray(routes) || routes.length === 0) {
     return;
@@ -41,7 +46,20 @@ export const fitMap = (routes, mapView) => {
   // Transform the combined bounding box to the map's projection
   const routeExtent = transformExtent(combinedBbox, 'EPSG:4326', 'EPSG:3857');
 
-  mapView.current.fit(routeExtent, { duration: 1000 });
+  // Assume panels open: mobile bottom drawer, desktop L/R side panels
+  const mapSize = mapRef?.current?.getSize?.();
+  const isMobile = window.matchMedia('only screen and (max-width: 767px)').matches;
+  const side = DESKTOP_PANEL_WIDTH + FIT_MARGIN;
+  const padding = isMobile && mapSize?.[1]
+    ? [
+        FIT_MARGIN,
+        FIT_MARGIN,
+        Math.round(mapSize[1] * MOBILE_DRAWER_FRACTION) + FIT_MARGIN,
+        FIT_MARGIN,
+      ]
+    : [FIT_MARGIN, side, FIT_MARGIN, side];
+
+  mapView.current.fit(routeExtent, { duration: 1000, padding });
   localStorage.setItem("pendingFit", 'false');
 }
 

@@ -171,7 +171,7 @@ const RouteSearch = forwardRef((props, ref) => {
             setSearchParams(searchParams);
           }
 
-          fitMap(routes, mapView);
+          fitMap(routes, mapView, mapRef);
           nextMapContext = {
             ...nextMapContext,
             pendingRouteFit: false
