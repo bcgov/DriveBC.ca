@@ -39,7 +39,7 @@ import './RouteSearch.scss';
 
 const RouteSearch = forwardRef((props, ref) => {
   // Props
-  const { showFilterText, showSpinner, onShowSpinnerChange, mapRef, myLocation, mapView, resetClickedStates } = props;
+  const { showFilterText, showSpinner, onShowSpinnerChange, mapRef, myLocation, mapView, resetClickedStates, showAltOptions = true } = props;
 
   // Routing
   const [searchParams, setSearchParams] = useSearchParams();
@@ -290,7 +290,7 @@ const RouteSearch = forwardRef((props, ref) => {
 
         {hasLocation &&
           <div className="route-search-actions-container">
-            {!mapRef && searchedRoutes && searchedRoutes.length > 0 &&
+            {showAltOptions && !mapRef && searchedRoutes && searchedRoutes.length > 0 &&
               <div className="route-alt-options">
                 {searchedRoutes.map((route, index) => {
                   const isSelected = compareRoutes(route, selectedRoute);
