@@ -1,5 +1,5 @@
 services:
    db:
-    image: tobi312/rpi-postgresql-postgis:15-3.4-alpine-arm
+    image: postgis/postgis:17-3.5-alpine
    django:
     platform: linux/amd64

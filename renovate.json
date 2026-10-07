@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>bcgov/renovate-config"
+  ],
+  "helm-values": {
+    "fileMatch": [
+      "(^|/)values.*\\.yaml$"
+    ]
+  },
+  "packageRules": [
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["registry.redhat.io/**"],
+      "enabled": false
+    },
+    {
+      "matchDatasources": ["npm"],
+      "matchPackageNames": ["@fortawesome/**", "@awesome.me/**"],
+      "enabled": false
+    }
+  ]
+}
