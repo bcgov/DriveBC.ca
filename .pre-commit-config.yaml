@@ -66,17 +66,17 @@ repos:
     -   id: trailing-whitespace
         stages: [commit]
 -   repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.39.1
+    rev: v10.12.0
     hooks:
     -   id: eslint
         # Flat-config imports resolve from the config file's directory. Copy the
         # project config into the hook env (as .mjs) so @eslint/js etc. resolve.
         entry: bash -c 'HOOK_ROOT="$(cd "$(dirname "$(which eslint)")/.." && pwd)"; CONF_DIR="$HOOK_ROOT/lib"; if [ ! -d "$CONF_DIR/node_modules/@eslint" ]; then CONF_DIR="$HOOK_ROOT"; fi; REPO_ROOT="$(pwd)"; cp "$REPO_ROOT/src/frontend/eslint.config.js" "$CONF_DIR/eslint.config.mjs"; files=(); for f in "$@"; do files+=("$REPO_ROOT/$f"); done; cd "$CONF_DIR" && eslint -c "$CONF_DIR/eslint.config.mjs" --fix --no-warn-ignored "${files[@]}"' --
         additional_dependencies:
-        -   eslint@9.39.5
-        -   '@eslint/js@9.39.5'
+        -   eslint@10.12.0
+        -   '@eslint/js@10.0.1'
         -   globals@17.7.0
-        -   eslint-plugin-react@7.37.5
+        -   '@eslint-react/eslint-plugin@5.24.9'
         -   eslint-config-prettier@10.1.8
         stages: [commit]
         exclude: '^(frontend/(build/|dist/|public/)|backend/.+/static/.*/vendor/)'
