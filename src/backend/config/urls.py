@@ -5,6 +5,7 @@ from allauth.account.decorators import secure_admin_login
 from apps.authentication import views as auth_views
 from apps.shared import views as shared_views
 from apps.shared.views import static_override
+from apps.shared.seo import seo_metadata, sitemap_xml
 from config.settings import SHOW_DEBUG_TOOLBAR
 from django.conf import settings
 from django.conf.urls import defaults
@@ -63,6 +64,10 @@ if settings.FORCE_IDIR_AUTHENTICATION:
 
 
 urlpatterns = [
+    path("sitemap.xml", sitemap_xml, name="sitemap"),
+    path("seo-metadata/", seo_metadata, name="seo-metadata"),
+    path("seo-metadata/<path:detail_path>", seo_metadata, name="seo-detail-metadata"),
+
     # django
     path('drivebc-admin/request-access', auth_views.request_access, name='admin-request-access'),
     path('drivebc-admin/access-requested', auth_views.access_requested, name='admin-access-requested'),

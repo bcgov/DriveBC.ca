@@ -35,12 +35,10 @@ export default function MapPage() {
 
   // Navigation
   const location = useLocation();
-  const { id: cameraPathId } = useParams();
+  const { id: cameraPathId, restStopId, ferryId, coastalFerryId } = useParams();
   const [searchParams] = useSearchParams();
   // Snapshot before map navigations replace location.state (path string or false)
   const fromCameraList = useRef(location.state?.fromCameraList || false).current;
-
-  document.title = 'DriveBC';
 
   const getReferenceParams = () => {
     if (cameraPathId) {
@@ -51,10 +49,36 @@ export default function MapPage() {
       };
     }
 
+    if (restStopId) {
+      return {
+        type: 'restStop',
+        id: restStopId,
+        display_category: null,
+      };
+    }
+
+    if (coastalFerryId) {
+      return {
+        type: 'ferry',
+        id: coastalFerryId,
+        display_category: null,
+        coastal: true,
+      };
+    }
+
+    if (ferryId) {
+      return {
+        type: 'ferry',
+        id: ferryId,
+        display_category: null,
+      };
+    }
+
     return {
       type: searchParams.get('type'),
       id: searchParams.get('id'),
       display_category: searchParams.get('display_category'),
+      coastal: searchParams.get('display_category') === 'coastalFerry' ? true : undefined,
     };
   }
   const [referenceData, setReferenceData] = useState(null);
@@ -62,7 +86,7 @@ export default function MapPage() {
   // Effects
   useEffect(() => {
     setReferenceData(getReferenceParams());
-  }, [searchParams, cameraPathId]);
+  }, [searchParams, cameraPathId, restStopId, ferryId, coastalFerryId]);
 
   useEffect(() => {
     populateRoutesFromNotification();

@@ -3,6 +3,7 @@ import React, { createContext, useCallback, useEffect, useRef, useState } from '
 
 // Navigation
 import { Route, Routes, useSearchParams } from 'react-router-dom';
+import SeoMetadataSync from './Components/shared/SeoMetadataSync';
 
 // Redux
 import { memoize } from "proxy-memoize";
@@ -353,6 +354,7 @@ function App() {
                   <FilterContext.Provider value={{ filterContext, setFilterContext }}>
 
                     <div className="App">
+                      <SeoMetadataSync />
                       <Header isMaintenance={isMaintenanceMode} />
 
                       {!isMaintenanceMode && <EmergencyAlert />}
@@ -367,6 +369,9 @@ function App() {
                             <Route path="/" element={<MapPage />}>
                               <Route index element={null} />
                               <Route path="cameras/:id" element={null} />
+                              <Route path="rest-stops/:restStopId" element={null} />
+                              <Route path="ferries/:ferryId" element={null} />
+                              <Route path="ferries/coastal/:coastalFerryId" element={null} />
                             </Route>
                             <Route path="/my-cameras" element={<SavedCamerasPage />} />
                             <Route path="/my-routes" element={<SavedRoutesPage />} />

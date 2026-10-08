@@ -43,7 +43,10 @@ export function getFerriesLayer(ferriesData, projectionCode, mapContext, referen
 
     vectorSource.addFeature(olFeatureForMap);
 
-    if (referenceData?.type === 'ferry') {
+    if (
+      referenceData?.type === 'ferry' &&
+      (referenceData.coastal === undefined || referenceData.coastal === isCoastal)
+    ) {
       // Update the reference feature if id is the reference
       if (ferry.id == referenceData.id) {  // Intentional loose equality for string IDs
         updateReferenceFeature(olFeatureForMap);

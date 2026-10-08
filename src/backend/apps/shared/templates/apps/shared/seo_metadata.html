@@ -1,0 +1,8 @@
+<title>{{ title }}</title>
+<meta name="description" content="{{ description }}">
+<meta property="og:title" content="{{ title }}">
+<meta property="og:description" content="{{ description }}">
+{% if canonical_url %}
+<meta property="og:url" content="{{ canonical_url }}">
+<link rel="canonical" href="{{ canonical_url }}">
+{% endif %}
