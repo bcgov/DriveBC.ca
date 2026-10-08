@@ -62,7 +62,7 @@ crunchy:
     containers:
       fluentBit:
         enabled: true
-        image: fluent/fluent-bit:5.0
+        image: fluent/fluent-bit:5.1
         resources:
           requests:
             cpu: 10m
