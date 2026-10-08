@@ -189,7 +189,7 @@ backup-storage:
   image:
     repository: ghcr.io/bcgov/backup-container
     pullPolicy: IfNotPresent
-    tag: 2.13.0
+    tag: 2.13.1
 
   backupConfig: |
     postgres=dev-drivebc-db-crunchy-primary:5432/dev-drivebc-db
