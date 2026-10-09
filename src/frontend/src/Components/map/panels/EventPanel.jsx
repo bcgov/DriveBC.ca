@@ -141,7 +141,7 @@ export default function EventPanel(props) {
 
   return (
     <div
-      className={`popup popup--event ${eventData.display_category} ${severity}`} tabIndex={0}>
+      className={`popup popup--event ${eventData.display_category} ${severity}`}>
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__name">
           {getEventSVGIcon(eventData)}
