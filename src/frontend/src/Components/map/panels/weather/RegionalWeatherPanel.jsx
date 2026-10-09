@@ -74,7 +74,7 @@ export default function RegionalWeatherPanel(props) {
   /* Rendering */
   // Main component
   return (
-    <div className={`popup popup--weather popup--weather--regional` + (weather.warnings ? " advisory-issued" : "")} tabIndex={0}>
+    <div className={`popup popup--weather popup--weather--regional` + (weather.warnings ? " advisory-issued" : "")}>
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__name">
           {weather.warnings ? (
