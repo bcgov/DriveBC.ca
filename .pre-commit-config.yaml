@@ -31,14 +31,14 @@ repos:
         stages: [commit]
         exclude: '^backend/\w+/migrations'
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.971
+    rev: v1.11.2
     hooks:
     -   id: mypy
         stages: [commit]
         files: '^backend/'
         exclude: '^backend/\w+/migrations'
         additional_dependencies:
-        - types-pytz==2022.1.2
+        - tzdata==2026.5
         - types-bleach==5.0.3
         - types-python-dateutil==2.8.19
         - types-requests==2.28.7
