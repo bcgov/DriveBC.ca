@@ -29,7 +29,7 @@ drf-spectacular==0.30.0
 drf-spectacular-sidecar==2026.10.1
 mssql-django==2.0.0
 django-debug-toolbar==8.0.0
-django-prometheus==2.5.0
+django-prometheus==2.4.0
 django-redis==7.0.0
 PyJWT==2.15.1
 cryptography==50.0.2
