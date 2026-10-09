@@ -1,6 +1,6 @@
 from datetime import timezone
 
-import pytz
+from zoneinfo import ZoneInfo
 from apps.shared.models import Area, BaseModel
 from apps.shared.status import get_image_list
 from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
@@ -89,8 +89,8 @@ class Webcam(ExportModelOperationsMixin('webcam'), BaseModel):
         tf = TimezoneFinder()
         # PointField stores as (x=lon, y=lat)
         tzname = tf.timezone_at(lng=self.location.x, lat=self.location.y)
-        return pytz.timezone(tzname) if tzname else timezone.utc
-    
+        return ZoneInfo(tzname) if tzname else timezone.utc
+
 
 
 class Region(models.Model):
