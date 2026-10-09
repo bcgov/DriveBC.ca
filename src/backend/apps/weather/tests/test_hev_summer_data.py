@@ -29,9 +29,17 @@ class TestHEVSummerData(BaseTest):
 
     @patch('requests.get')
     def test_populate_and_update_regional_weather(self, mock_requests_get):
+        self.hev_summer_area_list[0]["AreaName"] = (
+            "Yellowhead Highway - TÃªte Jaune Cache to the Alberta Border"
+        )
+        self.hev_summer_data["Location"]["Name"]["Value"] = (
+            "Yellowhead Highway - Tête Jaune Cache to the Alberta Border"
+        )
         mock_requests_get.side_effect = [
             MockResponse(self.hev_summer_area_list, status_code=200),  # hev areas/stations
             MockResponse(self.hev_summer_data, status_code=200),  # hev forecast data
         ]
         populate_all_high_elevation_forecast_data()
         assert HighElevationForecast.objects.all().count() == 1
+        forecast = HighElevationForecast.objects.get()
+        assert forecast.name == "Yellowhead Highway - Tête Jaune Cache to the Alberta Border"
