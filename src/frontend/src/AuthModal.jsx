@@ -39,11 +39,11 @@ function useFocusLock(isActive) {
     focusables[0]?.focus();
   };
 
-  // focus on mount
+  // Focus the dialog on open, not the first button, so it does not look hovered.
   useEffect(() => {
     if (!isActive || !containerRef.current) return;
 
-    getFocusableElements()[0]?.focus();
+    containerRef.current.focus();
   }, [isActive]);
 
   return { containerRef, handleFocusStart, handleFocusEnd };
@@ -136,7 +136,7 @@ export default function AuthModal() {
                 <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
                 <input type='hidden' name='next' value={window.location.href} />
 
-                <button type='submit' className="btn btn-primary" autoFocus={true}>Sign in with a one-time passcode</button>
+                <button type='submit' className="btn btn-primary">Sign in with a one-time passcode</button>
 
                 <p>Login with your email and we’ll send you a one-time passcode.</p>
               </form>
@@ -145,7 +145,7 @@ export default function AuthModal() {
                 <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
                 <input type='hidden' name='next' value={window.location.href} />
 
-                <button type='submit' className="btn btn-outline-primary" autoFocus={true}>Sign in with Basic BCeID</button>
+                <button type='submit' className="btn btn-outline-primary">Sign in with Basic BCeID</button>
 
                 <p>BCeID is a secure login service to access government services online for all residents and visitors. Don&apos;t have a BCeID account? <a href={BCEID_REGISTER_URL}>Create one</a></p>
               </form>
