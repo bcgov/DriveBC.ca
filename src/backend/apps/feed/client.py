@@ -350,8 +350,8 @@ class FeedClient:
 
                     # special handling for HEF locations not using 4326 coords
                     latitude = longitude = None
+                    location = data.get('Location', {}).get('Name', {})
                     try:
-                        location = data.get('Location', {}).get('Name', {})
                         latitude = float(location.get('Latitude').replace('N', ''))
                         longitude = float('-' + location.get('Longitude').replace('W', ''))
                     except ValueError:
@@ -384,7 +384,7 @@ class FeedClient:
 
                     json_objects.append({
                         'code': area_code,
-                        'name': entry.get('AreaName'),
+                        'name': location.get('Value') or entry.get('AreaName'),
                         'location': Point([longitude, latitude]),
                         'issued_utc': issued,
                         'forecasts': forecasts,
