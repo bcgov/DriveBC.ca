@@ -79,7 +79,7 @@ const displays = [
   }, [feature]);
 
   return (
-    <div className={`popup popup--dms ${isClosed ? 'closed' : ''}`} tabIndex={0}>
+    <div className={`popup popup--dms ${isClosed ? 'closed' : ''}`}>
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__name">
           <DmsTypeIcon dms={dmsData} />

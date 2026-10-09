@@ -91,7 +91,7 @@ export default function RestStopPanel(props) {
   }, [feature]);
 
   return (
-    <div className={`popup popup--reststop ${isClosed ? 'closed' : ''}`} tabIndex={0}>
+    <div className={`popup popup--reststop ${isClosed ? 'closed' : ''}`}>
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__name">
           <RestStopTypeIcon reststop={restStopData} />

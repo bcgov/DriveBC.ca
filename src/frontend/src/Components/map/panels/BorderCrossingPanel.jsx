@@ -182,7 +182,7 @@ export default function BorderCrossingPanel(props) {
   const orderedLaneTypes = ['FAST', 'Cars', 'NEXUS'];
 
   return borderCrossing && (
-    <div className="popup popup--border-crossing" tabIndex={0}>
+    <div className="popup popup--border-crossing">
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__name">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
