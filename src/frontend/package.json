@@ -84,9 +84,9 @@
     ]
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.5",
+    "@eslint/js": "^10.0.0",
     "@vitejs/plugin-react": "^6.0.3",
-    "eslint": "^9.39.5",
+    "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-react": "^7.37.5",
