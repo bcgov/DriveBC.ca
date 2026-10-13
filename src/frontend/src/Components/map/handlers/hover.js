@@ -151,7 +151,7 @@ export const resetHoveredStates = (targetFeature, hoveredFeatureRef) => {
       }
     }
 
-    hoveredFeature = null;
+    hoveredFeatureRef.current = null;
   }
 };
 

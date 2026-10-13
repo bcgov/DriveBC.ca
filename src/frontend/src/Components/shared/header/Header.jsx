@@ -35,29 +35,33 @@ import logo from '../../..//images/dbc-header-logo.svg';
 // Styling
 import './Header.scss';
 
+function MaintenanceHeader() {
+  return (
+    <header className="maintenance-header">
+      <Navbar expand="xl">
+        <Container>
+          <div className='header'>
+            <div className='header-left'>
+              <Navbar.Brand href="/">
+                <img className="header-logo" src={logo} alt="Government of British Columbia" />
+              </Navbar.Brand>
+              <div className="nav-divider"></div>
+            </div>
+          </div>
+        </Container>
+      </Navbar>
+    </header>
+  );
+}
+
 export default function Header({ isMaintenance }) {
+  return isMaintenance ? <MaintenanceHeader /> : <HeaderContent />;
+}
+
+function HeaderContent() {
   /* Setup */
   // Misc
   const xLargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
-
-  if (isMaintenance) {
-    return (
-      <header className="maintenance-header">
-        <Navbar expand="xl">
-          <Container>
-            <div className='header'>
-              <div className='header-left'>
-                <Navbar.Brand href="/">
-                  <img className="header-logo" src={logo} alt="Government of British Columbia" />
-                </Navbar.Brand>
-                <div className="nav-divider"></div>
-              </div>
-            </div>
-          </Container>
-        </Navbar>
-      </header>
-    );
-  }
 
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
 
