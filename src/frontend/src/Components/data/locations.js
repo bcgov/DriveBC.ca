@@ -2,11 +2,11 @@ import { get } from "./helper";
 import { GEOCODER_HOST, GEOCODER_API_CLIENT_ID, ROUTABLE_LOCATIONS_HOST } from '../../env';
 
 function escapeCqlString(value) {
-  return String(value).replace(/'/g, "''");
+  return String(value).replaceAll("'", "''");
 }
 
 function sanitizeForILikePrefix(value) {
-  return String(value).replace(/%/g, "").replace(/_/g, "");
+  return String(value).replaceAll("%", "").replaceAll("_", "");
 }
 
 function normalizeRoutableLocationFeature(feature) {

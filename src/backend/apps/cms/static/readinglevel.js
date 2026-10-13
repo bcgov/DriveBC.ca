@@ -43,7 +43,7 @@ function CalculateReadingLevel(text) {
 
   // Calculate the character count
   const textNoSpace = textClean.replace(/\s/g, "");
-  const textNoPeriod = textNoSpace.replace(/\./g, "");
+  const textNoPeriod = textNoSpace.replaceAll(".", "");
   charCount = textNoPeriod.length;
 
   // Calculate the word count -----------------
