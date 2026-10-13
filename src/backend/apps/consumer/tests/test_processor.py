@@ -3,7 +3,7 @@ from PIL import Image
 from unittest.mock import patch, MagicMock, AsyncMock, mock_open
 from datetime import datetime
 import io
-import pytz
+from zoneinfo import ZoneInfo
 
 from aiormq import AMQPConnectionError
 from django.test import TestCase
@@ -690,8 +690,8 @@ class TestWatermark(TestCase):
                 self.assertEqual(get_timezone_abbreviation(tz, local_dt), "PCT")
 
     def test_bc_timezone_abbreviation_before_pct_effective_date(self):
-        local_dt = pytz.timezone("America/Vancouver").localize(
-            datetime(2026, 10, 31, 12, 30)
+        local_dt = datetime(
+            2026, 10, 31, 12, 30, tzinfo=ZoneInfo("America/Vancouver")
         )
 
         self.assertEqual(
@@ -700,8 +700,8 @@ class TestWatermark(TestCase):
         )
 
     def test_non_pct_timezone_uses_timezone_package_abbreviation(self):
-        local_dt = pytz.timezone("America/Edmonton").localize(
-            datetime(2026, 12, 1, 12, 30)
+        local_dt = datetime(
+            2026, 12, 1, 12, 30, tzinfo=ZoneInfo("America/Edmonton")
         )
 
         self.assertEqual(
