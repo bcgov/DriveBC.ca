@@ -551,7 +551,7 @@ export function ReportMap(props) {
           <button
             className="close-panel"
             aria-label={`${openPanel ? 'close side panel' : ''}`}
-            aria-hidden={`${openPanel ? false : true}`}
+            aria-hidden={!openPanel}
             tabIndex={`${openPanel ? 0 : -1}`}
             onClick={() => setActiveFeature(false)}>
             <FontAwesomeIcon icon={faXmark} />
@@ -585,7 +585,7 @@ export function ReportMap(props) {
               <button
                 className="close-panel"
                 aria-label={`${openPanel ? 'close side panel' : ''}`}
-                aria-hidden={`${openPanel ? false : true}`}
+                aria-hidden={!openPanel}
                 tabIndex={`${openPanel ? 0 : -1}`}
                 onClick={(e) => {
                   e.stopPropagation();
