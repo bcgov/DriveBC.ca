@@ -113,8 +113,7 @@ export default function HefPanel(props) {
         </div>
         <div className="popup__content__additional">
           <p className="label">
-            Courtesy of&nbsp;
-
+            Courtesy of{" "}
             <a alt="Environment Canada"
               rel="noreferrer"
               href="https://weather.gc.ca/canada_e.html">

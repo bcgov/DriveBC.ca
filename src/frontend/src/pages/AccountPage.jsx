@@ -182,7 +182,8 @@ export default function AccountPage() {
 
           <Modal.Body>
             <p>
-              Deactivating your DriveBC account will <b>remove all saved cameras, saved routes, and all of your account settings. </b>
+              Deactivating your DriveBC account will{" "}
+              <b>remove all saved cameras, saved routes, and all of your account settings.</b>{" "}
               This will not affect your BCeID account. Please confirm.
             </p>
 
