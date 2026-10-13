@@ -6,7 +6,7 @@ from django.contrib.gis.admin import GISModelAdmin
 
 @admin.action(description="Send advisory notifications")
 def send_advisory_notifications_action(modeladmin, request, queryset):
-    send_advisory_notifications(list(queryset.values_list('id', flat=True))[0])
+    send_advisory_notifications(next(iter(queryset.values_list('id', flat=True))))
 
 
 class AdvisoryAdmin(GISModelAdmin):
