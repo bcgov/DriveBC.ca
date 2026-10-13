@@ -238,7 +238,7 @@ export default function BorderCrossingPanel(props) {
 
         <div className="popup__content__footer">
           <span>
-            Courtesy of
+            Courtesy of{" "}
             <a href="https://www.cascadegatewaydata.com/Dashboard" rel="noreferrer">Cascade Gateway Data</a>
           </span>
         </div>
