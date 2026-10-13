@@ -24,7 +24,7 @@
     "@fortawesome/pro-thin-svg-icons": "^7.3.1",
     "@fortawesome/react-fontawesome": "^3.5.0",
     "@reduxjs/toolkit": "^2.11.2",
-    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-table": "^9.0.0",
     "@testing-library/user-event": "^14.6.1",
     "@turf/along": "^7.3.4",
     "@turf/bbox": "^7.3.4",
