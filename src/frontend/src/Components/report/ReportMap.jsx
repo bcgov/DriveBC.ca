@@ -239,7 +239,7 @@ export function ReportMap(props) {
           const match = transform.match(/matrix.*\((.+)\)/);
           if (match) {
             const values = match[1].split(', ');
-            const translateY = parseFloat(values[5]);
+            const translateY = Number.parseFloat(values[5]);
 
             // Capture the initial offset on first read
             if (drawerInitialOffset.current === null) {

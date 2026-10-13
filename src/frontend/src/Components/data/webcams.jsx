@@ -96,12 +96,12 @@ export function getWebcamReplay(webcam) {
 
         // Filter only those within the last 24 hours
         const filtered = allTimestamps.filter(ts => {
-          const year = parseInt(ts.slice(0, 4));
-          const month = parseInt(ts.slice(4, 6)) - 1;
-          const day = parseInt(ts.slice(6, 8));
-          const hour = parseInt(ts.slice(8, 10));
-          const minute = parseInt(ts.slice(10, 12));
-          const second = parseInt(ts.slice(12, 14));
+          const year = Number.parseInt(ts.slice(0, 4));
+          const month = Number.parseInt(ts.slice(4, 6)) - 1;
+          const day = Number.parseInt(ts.slice(6, 8));
+          const hour = Number.parseInt(ts.slice(8, 10));
+          const minute = Number.parseInt(ts.slice(10, 12));
+          const second = Number.parseInt(ts.slice(12, 14));
           const timestampUtc = new Date(Date.UTC(year, month, day, hour, minute, second)); 
           return timestampUtc >= oneDayAgoUtc && timestampUtc <= nowUtc;
         });

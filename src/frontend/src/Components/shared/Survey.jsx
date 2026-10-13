@@ -35,7 +35,7 @@ export default function Survey() {
     const surveyTime = localStorage.getItem('surveyTime');
     const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
 
-    if (!surveyTime || (Date.now() - parseInt(surveyTime, 10)) > thirtyDaysInMs) {
+    if (!surveyTime || (Date.now() - Number.parseInt(surveyTime, 10)) > thirtyDaysInMs) {
       setTimeout(() => {
         setVisible(true);
       }, 120000); // 2 minutes

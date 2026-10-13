@@ -15,7 +15,7 @@ export default function HighwayGroup(props) {
   return (
     <div className="highway-group">
       <div className="highway-title">
-        {(!isNaN(highway.charAt(0)) || highway === 'loading') &&
+        {(!Number.isNaN(highway.charAt(0)) || highway === 'loading') &&
           <div className="highway-shield-box">
             {highwayShield(highway)}
           </div>
@@ -28,7 +28,7 @@ export default function HighwayGroup(props) {
           }
 
           {highway !== 'loading' &&
-            <p className="highway-name__number">{!isNaN(highway.charAt(0)) ? 'Highway' : ''} {highway}</p>
+            <p className="highway-name__number">{!Number.isNaN(highway.charAt(0)) ? 'Highway' : ''} {highway}</p>
           }
 
           {/* Highway name and alias */}
@@ -41,7 +41,7 @@ export default function HighwayGroup(props) {
           }
 
           {highway !== '1' && highway !== 'loading' &&
-            <h2 className="highway-name__alias">{!isNaN(highway.charAt(0)) ? 'Highway' : ''} {highway}</h2>
+            <h2 className="highway-name__alias">{!Number.isNaN(highway.charAt(0)) ? 'Highway' : ''} {highway}</h2>
           }
         </div>
       </div>
