@@ -82,13 +82,13 @@ export default function MapPage() {
     if (routeData.route_distance) {
       dispatch(clearSearchedRoutes());
       dispatch(clearSelectedRoute());
-      dispatch(updateRouteDistance(shortenToOneDecimal(parseFloat(routeData.route_distance))));
+      dispatch(updateRouteDistance(shortenToOneDecimal(Number.parseFloat(routeData.route_distance))));
       dispatch(updateShowRouteObjs(true));
 
       // Start point
       const route_start_coords = [
-        parseFloat(routeData.route_start_point.split(',')[0]),
-        parseFloat(routeData.route_start_point.split(',')[1])
+        Number.parseFloat(routeData.route_start_point.split(',')[0]),
+        Number.parseFloat(routeData.route_start_point.split(',')[1])
       ];
 
       const start_point = [{
@@ -103,8 +103,8 @@ export default function MapPage() {
 
       // End point
       const route_end_coords = [
-        parseFloat(routeData.route_end_point.split(',')[0]),
-        parseFloat(routeData.route_end_point.split(',')[1])
+        Number.parseFloat(routeData.route_end_point.split(',')[0]),
+        Number.parseFloat(routeData.route_end_point.split(',')[1])
       ];
 
       const end_point = [{

@@ -65,7 +65,7 @@ function CalculateReadingLevel(text) {
 
   let readingAge = (readabilityScore + 4).toFixed(1);
   // Modify the help area to include the new information
-  if (isFinite(readingAge)) {
+  if (Number.isFinite(readingAge)) {
     if (readingAge > 18) { readingAge = "18+" }
     else if (readingAge < 4) { readingAge = 4 }
     return {

@@ -280,9 +280,9 @@ export default function DriveBCMap(props) {
       // Check if current snap point is valid in new snap points array
       if (!snapPoints.includes(snapPointRef.current)) {
         // Current snap isn't valid, adjust to nearest valid snap
-        const currentSnapValue = parseInt(snapPointRef.current);
+        const currentSnapValue = Number.parseInt(snapPointRef.current);
         const closestSnap = snapPoints.reduce((prev, curr) => {
-          return Math.abs(parseInt(curr) - currentSnapValue) < Math.abs(parseInt(prev) - currentSnapValue) ? curr : prev;
+          return Math.abs(Number.parseInt(curr) - currentSnapValue) < Math.abs(Number.parseInt(prev) - currentSnapValue) ? curr : prev;
         }, snapPoints[0]);
         handleSnapChange(closestSnap);
       }
@@ -319,7 +319,7 @@ export default function DriveBCMap(props) {
           const match = transform.match(/matrix.*\((.+)\)/);
           if (match) {
             const values = match[1].split(', ');
-            const translateY = parseFloat(values[5]);
+            const translateY = Number.parseFloat(values[5]);
 
             // Calculate relative movement from initial position
             const relativeY = translateY - drawerRef.current.offsetHeight;
@@ -711,7 +711,7 @@ export default function DriveBCMap(props) {
     if (type === 'advisory') {
       // Advisories haven't loaded yet — wait for them, don't give up.
       if (!filteredAdvisories || !filteredAdvisories.length) return;
-      const advisoryData = filteredAdvisories?.find(a => a.id === parseInt(id));
+      const advisoryData = filteredAdvisories?.find(a => a.id === Number.parseInt(id));
       if (advisoryData) {
         setTimeout(() => {
           const olFeature = new Feature();

@@ -204,7 +204,7 @@ export default function FerryPanel(props) {
           {ferryData.vessels?.length > 1 ? (
             <Tabs
               activeKey={activeVesselTab}
-              onSelect={(k) => setActiveVesselTab(parseInt(k))}
+              onSelect={(k) => setActiveVesselTab(Number.parseInt(k))}
               className="vessel-tabs"
             >
               {ferryData.vessels.map((vessel, index) => {

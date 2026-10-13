@@ -67,7 +67,7 @@ export default function HighwayFilter(props) {
   /* Rendering */
   // Sub components
   const getHighwayDisplay = (highway) => {
-    return !isNaN(highway.charAt(0)) ? 'Highway ' + highway : highway;
+    return !Number.isNaN(highway.charAt(0)) ? 'Highway ' + highway : highway;
   }
 
   const selectedHighwayKey = isControlled

@@ -303,9 +303,9 @@ export default function RouteDetails(props) {
     if (
       !routesLoaded ||
       !eventCount ||
-      isNaN(advisoryCount) ||
-      isNaN(wildfireCount) ||
-      isNaN(ferryCount) ||
+      Number.isNaN(advisoryCount) ||
+      Number.isNaN(wildfireCount) ||
+      Number.isNaN(ferryCount) ||
       filteredFavCams === undefined
     ) return;
 
@@ -660,7 +660,7 @@ export default function RouteDetails(props) {
             : <Skeleton width={120}/>
           }
 
-          {!isNaN(advisoryCount)
+          {!Number.isNaN(advisoryCount)
             ? (advisoryCount >= 0 &&
               <div className="route-pill route-pill--advisories">
                   <span className="route-item__icon">
@@ -692,7 +692,7 @@ export default function RouteDetails(props) {
               <span className="route-item__name">{wildfireCount !== 1 ? 'Wildfires' : 'Wildfire'}</span>
             </div>
           }
-          {isNaN(wildfireCount) && <Skeleton height={32}/>}
+          {Number.isNaN(wildfireCount) && <Skeleton height={32}/>}
 
           {(eventCount && mapContext.visible_layers.majorEvents) &&
             <div className="route-item route-item--major">
@@ -784,7 +784,7 @@ export default function RouteDetails(props) {
               <span className="route-item__name">{ferryCount !== 1 ? 'Ferries' : 'Ferry'}</span>
             </div>
           }
-          {isNaN(ferryCount) && <Skeleton height={32}/>}
+          {Number.isNaN(ferryCount) && <Skeleton height={32}/>}
 
           {isPanel &&
             <Button

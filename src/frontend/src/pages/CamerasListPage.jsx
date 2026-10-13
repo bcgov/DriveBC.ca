@@ -259,7 +259,7 @@ export default function CamerasListPage() {
 
         setTimeout(function() {
           scrollableContainer.scrollTo({
-            top: parseInt(scrollPosition, 10),
+            top: Number.parseInt(scrollPosition, 10),
             left: 0,
             behavior: "instant"
           });
@@ -316,7 +316,7 @@ export default function CamerasListPage() {
 
   // Sub components
   const getHighwayDisplay = (highway) => {
-    return !isNaN(highway.charAt(0)) ? 'Highway ' + highway : highway;
+    return !Number.isNaN(highway.charAt(0)) ? 'Highway ' + highway : highway;
   }
 
   const toggleFiltersOverlay = () => {

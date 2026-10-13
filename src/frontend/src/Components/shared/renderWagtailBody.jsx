@@ -18,10 +18,10 @@ function replace(domNode) {
    * Resize YouTube videos based on screen size while keeping aspect ratio
    */
   if (domNode.name === 'iframe') {
-    const width = parseInt(domNode.attribs.width, 10);
-    const height = parseInt(domNode.attribs.height, 10);
+    const width = Number.parseInt(domNode.attribs.width, 10);
+    const height = Number.parseInt(domNode.attribs.height, 10);
 
-    if (width && height && !isNaN(width) && !isNaN(height)) {
+    if (width && height && !Number.isNaN(width) && !Number.isNaN(height)) {
       const aspectRatio = width / height;
 
       // Copy all original attributes
