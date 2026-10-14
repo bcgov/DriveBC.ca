@@ -28,6 +28,7 @@ import parse from 'html-react-parser';
 // Internal imports
 import { formatDate } from "../../shared/FriendlyTime";
 import ShareURLButton from '../../shared/ShareURLButton';
+import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../shared/cameraSeo';
 
 // Styling
 import './FerryPanel.scss';
@@ -167,9 +168,12 @@ export default function FerryPanel(props) {
   useEffect(() => {
     searchParams.set('type', 'ferry');
     searchParams.set('id', ferryData.id);
+    searchParams.delete('coastal');
     searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
     setActiveVesselTab(0);
+    setMapFeatureSeoMetadata('ferry', ferryData, window.location.origin);
+    return resetMapFeatureSeoMetadata;
   }, [feature]);
 
   // Main component

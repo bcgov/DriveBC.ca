@@ -15,6 +15,7 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
 import ShareURLButton from '../../../shared/ShareURLButton';
+import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../../shared/cameraSeo';
 import WeatherIcon from '../../WeatherIcon';
 
 // Styling
@@ -38,6 +39,8 @@ export default function HefPanel(props) {
     searchParams.set('type', 'hef');
     searchParams.set('id', data.id);
     setSearchParams(searchParams, { replace: true });
+    setMapFeatureSeoMetadata('hef', data, window.location.origin);
+    return resetMapFeatureSeoMetadata;
   }, [feature]);
 
   return (

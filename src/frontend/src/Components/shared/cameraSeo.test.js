@@ -2,6 +2,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   getCameraSeoMetadata,
+  getMapFeatureSeoMetadata,
   resetCameraSeoMetadata,
   setCameraSeoMetadata,
 } from './cameraSeo';
@@ -76,6 +77,45 @@ describe('camera SEO metadata', () => {
 
     expect(metadata.description).toBe(
       'View the live highway camera for Kootenay Pass on Highway 3 with DriveBC.',
+    );
+  });
+
+  it('uses normalized item parameters for ferry and rest-stop canonicals', () => {
+    const coastalFerry = getMapFeatureSeoMetadata(
+      'ferry',
+      { id: 42, name: 'Island Ferry', routes: [{ name: 'Route 1' }] },
+      'https://dev.drivebc.ca',
+      true,
+    );
+    const largeRestStop = getMapFeatureSeoMetadata(
+      'largeRestStop',
+      { id: 17, properties: { REST_AREA_NAME: 'Mountain View' } },
+      'https://dev.drivebc.ca/',
+    );
+
+    expect(coastalFerry.canonicalUrl).toBe(
+      'https://dev.drivebc.ca/?type=ferry&id=42&coastal=true',
+    );
+    expect(largeRestStop.canonicalUrl).toBe(
+      'https://dev.drivebc.ca/?type=restStop&id=17',
+    );
+  });
+
+  it('uses the station identity and canonical URL for weather', () => {
+    const metadata = getMapFeatureSeoMetadata(
+      'localWeather',
+      {
+        id: 8,
+        weather_station_name: 'Hope Airport',
+        location_description: 'Near Hope, British Columbia',
+      },
+      'https://dev.drivebc.ca',
+    );
+
+    expect(metadata.title).toBe('Hope Airport | DriveBC');
+    expect(metadata.description).toBe('Near Hope, British Columbia');
+    expect(metadata.canonicalUrl).toBe(
+      'https://dev.drivebc.ca/?type=localWeather&id=8',
     );
   });
 });

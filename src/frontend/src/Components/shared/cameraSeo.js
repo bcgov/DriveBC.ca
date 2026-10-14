@@ -65,6 +65,114 @@ export function setCameraSeoMetadata(camera, origin) {
   getMeta('link[rel="canonical"]', 'href', canonicalUrl);
 }
 
+function getEntityName(featureType, feature) {
+  const properties = feature?.properties || {};
+  switch (featureType) {
+    case 'ferry':
+      return feature?.route_name || feature?.name || 'Ferry service';
+    case 'restStop':
+    case 'largeRestStop':
+      return properties.REST_AREA_NAME || 'Rest area';
+    case 'localWeather':
+      return feature?.weather_station_name || 'Roadside weather station';
+    case 'regionalWeather':
+      return feature?.name || 'Regional weather';
+    case 'hef':
+      return (
+        feature?.hwyDescription || feature?.name || 'High elevation weather'
+      );
+    default:
+      return 'DriveBC';
+  }
+}
+
+function getEntityDescription(featureType, feature, name) {
+  const properties = feature?.properties || {};
+  switch (featureType) {
+    case 'ferry':
+      return (
+        feature?.route_description ||
+        `Ferry service for ${name} in British Columbia.`
+      );
+    case 'restStop': {
+      const highway = properties.HIGHWAY_NUMBER
+        ? ` on Highway ${properties.HIGHWAY_NUMBER}`
+        : '';
+      const distance = properties.DISTANCE_FROM_MUNICIPALITY
+        ? `, ${properties.DISTANCE_FROM_MUNICIPALITY}`
+        : '';
+      return `${name}${highway}${distance}. Rest area information from DriveBC.`;
+    }
+    case 'largeRestStop':
+    case 'localWeather':
+      return (
+        feature?.location_description ||
+        `Current road and weather information for ${name} from DriveBC.`
+      );
+    case 'regionalWeather':
+      return (
+        feature?.conditions?.TextSummary ||
+        `Weather forecast and current conditions for ${name} from DriveBC.`
+      );
+    case 'hef':
+      return `High elevation weather forecast for ${name} from DriveBC.`;
+    default:
+      return DEFAULT_DESCRIPTION;
+  }
+}
+
+export function getMapFeatureSeoMetadata(
+  featureType,
+  feature,
+  origin,
+  coastal = false,
+) {
+  const name = getPlainText(getEntityName(featureType, feature));
+  const title = `${name} | DriveBC`;
+  const description = getPlainText(
+    getEntityDescription(featureType, feature, name),
+  ).slice(0, 160);
+  const canonicalType =
+    featureType === 'largeRestStop' ? 'restStop' : featureType;
+  const params = new URLSearchParams({
+    type: canonicalType,
+    id: String(feature.id),
+  });
+  if (featureType === 'ferry' && coastal) {
+    params.set('coastal', 'true');
+  }
+
+  return {
+    title,
+    description: description || DEFAULT_DESCRIPTION,
+    canonicalUrl: `${origin.replace(/\/+$/, '')}/?${params.toString()}`,
+  };
+}
+
+export function setMapFeatureSeoMetadata(
+  featureType,
+  feature,
+  origin,
+  coastal = false,
+) {
+  const { title, description, canonicalUrl } = getMapFeatureSeoMetadata(
+    featureType,
+    feature,
+    origin,
+    coastal,
+  );
+  document.title = title;
+  getMeta('meta[name="description"]', 'content', description);
+  getMeta('meta[property="og:title"]', 'content', title);
+  getMeta('meta[property="og:description"]', 'content', description);
+  getMeta('meta[property="og:url"]', 'content', canonicalUrl);
+  getMeta('link[rel="canonical"]', 'href', canonicalUrl);
+}
+
+export function resetMapFeatureSeoMetadata() {
+  resetCameraSeoMetadata();
+}
+
 export function resetCameraSeoMetadata() {
   document.title = 'DriveBC';
   getMeta('meta[name="description"]', 'content', DEFAULT_DESCRIPTION);

@@ -14,6 +14,9 @@ from apps.cms.sitemaps import (
     CameraSitemap,
     StaticPageSitemap,
     SubPageSitemap,
+    FerrySitemap,
+    RestStopSitemap,
+    WeatherSitemap,
 )
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, override_settings
@@ -29,7 +32,24 @@ class SitemapTests(TestCase):
         return_value=[SimpleNamespace(pk=123)],
     )
     def test_sitemap_endpoint_contains_canonical_public_urls(self, _mock_camera_items):
-        response = self.client.get("/sitemap.xml")
+        with (
+            patch.object(
+                FerrySitemap,
+                "items",
+                return_value=[("ferry", 123, False), ("ferry", 124, True)],
+            ),
+            patch.object(
+                RestStopSitemap,
+                "items",
+                return_value=[("restStop", 456)],
+            ),
+            patch.object(
+                WeatherSitemap,
+                "items",
+                return_value=[("regionalWeather", 789)],
+            ),
+        ):
+            response = self.client.get("/sitemap.xml")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/xml")
@@ -45,6 +65,16 @@ class SitemapTests(TestCase):
         self.assertIn("https://www.drivebc.ca/", locations)
         self.assertIn("https://www.drivebc.ca/cameras", locations)
         self.assertIn("https://www.drivebc.ca/cameras/123", locations)
+        self.assertIn("https://www.drivebc.ca/?type=ferry&id=123", locations)
+        self.assertIn(
+            "https://www.drivebc.ca/?type=ferry&id=124&coastal=true",
+            locations,
+        )
+        self.assertIn("https://www.drivebc.ca/?type=restStop&id=456", locations)
+        self.assertIn(
+            "https://www.drivebc.ca/?type=regionalWeather&id=789",
+            locations,
+        )
         self.assertIn("https://www.drivebc.ca/advisories", locations)
         self.assertNotIn("https://www.drivebc.ca/account", locations)
 
@@ -60,6 +90,30 @@ class SitemapTests(TestCase):
         cameras.assert_called_once_with(should_appear=True)
         cameras.return_value.order_by.assert_called_once_with("pk")
         self.assertEqual(manager.location(camera), "/cameras/456")
+
+    def test_ferry_sitemap_distinguishes_coastal_and_inland_routes(self):
+        sitemap = FerrySitemap()
+
+        self.assertEqual(
+            sitemap.location(("ferry", 123, False)),
+            "/?type=ferry&id=123",
+        )
+        self.assertEqual(
+            sitemap.location(("ferry", 123, True)),
+            "/?type=ferry&id=123&coastal=true",
+        )
+
+    def test_rest_stop_sitemap_uses_public_feature_query_url(self):
+        self.assertEqual(
+            RestStopSitemap().location(("restStop", 456)),
+            "/?type=restStop&id=456",
+        )
+
+    def test_weather_sitemap_preserves_weather_type_in_url(self):
+        self.assertEqual(
+            WeatherSitemap().location(("regionalWeather", 789)),
+            "/?type=regionalWeather&id=789",
+        )
 
     def test_advisory_sitemap_uses_live_pages(self):
         published = SimpleNamespace(slug="published-advisory")

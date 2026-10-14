@@ -11,6 +11,7 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 
 // Internal imports
 import ShareURLButton from '../../shared/ShareURLButton';
+import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../shared/cameraSeo';
 
 // Styling
 import './CoastalFerryPanel.scss';
@@ -29,8 +30,11 @@ export default function CoastalFerryPanel(props) {
   useEffect(() => {
     searchParams.set('type', 'ferry');
     searchParams.set('id', ferryData.id);
+    searchParams.set('coastal', 'true');
     searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
+    setMapFeatureSeoMetadata('ferry', ferryData, window.location.origin, true);
+    return resetMapFeatureSeoMetadata;
   }, [feature]);
 
   // Rendering

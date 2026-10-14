@@ -23,13 +23,19 @@ from apps.cms.sitemaps import (
     BulletinSitemap,
     CameraSitemap,
     EmergencyAlertDetailSitemap,
+    FerrySitemap,
+    RestStopSitemap,
     StaticPageSitemap,
     SubPageSitemap,
+    WeatherSitemap,
 )
 
 sitemaps = {
     "pages": StaticPageSitemap,
     "cameras": CameraSitemap,
+    "ferries": FerrySitemap,
+    "rest-stops": RestStopSitemap,
+    "weather": WeatherSitemap,
     "advisories": AdvisorySitemap,
     "bulletins": BulletinSitemap,
     "subpages": SubPageSitemap,

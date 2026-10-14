@@ -25,6 +25,7 @@ import { isRestStopClosed } from '../../data/restStops';
 import OpenSeason from '../OpenSeason';
 import RestStopTypeIcon from '../RestStopTypeIcon';
 import ShareURLButton from '../../shared/ShareURLButton';
+import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../shared/cameraSeo';
 import { MapContext } from '../../../App';
 
 // Styling
@@ -88,6 +89,8 @@ export default function RestStopPanel(props) {
     searchParams.set('id', restStopData.id);
     searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
+    setMapFeatureSeoMetadata(featureType, restStopData, window.location.origin);
+    return resetMapFeatureSeoMetadata;
   }, [feature]);
 
   return (

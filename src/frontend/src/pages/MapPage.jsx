@@ -50,26 +50,25 @@ export default function MapPage() {
       };
     }
 
+    const coastal = searchParams.get('coastal');
     return {
       type: searchParams.get('type'),
       id: searchParams.get('id'),
       display_category: searchParams.get('display_category'),
+      coastal: coastal === 'true',
     };
   }
   const [referenceData, setReferenceData] = useState(null);
-  const cameraSelected = Boolean(
-    cameraPathId || (
-      searchParams.get('type') === 'camera' &&
-      searchParams.get('id')
-    )
+  const featureSelected = Boolean(
+    cameraPathId || (searchParams.get('type') && searchParams.get('id')),
   );
 
   // Effects
   useEffect(() => {
-    if (!cameraSelected) {
+    if (!featureSelected) {
       resetCameraSeoMetadata();
     }
-  }, [cameraSelected]);
+  }, [featureSelected]);
 
   useEffect(() => {
     setReferenceData(getReferenceParams());

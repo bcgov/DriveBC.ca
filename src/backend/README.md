@@ -100,7 +100,7 @@ The --keepdb option uses an existing test database if it already exists and save
 
 ## Sitemap
 
-The public `/sitemap.xml` endpoint is served by Django and routed through the frontend Nginx configuration. Canonical URLs use `FRONTEND_BASE_URL`. It includes public discovery routes, each camera visible in the public camera list, and published advisories, bulletins, their subpages, and emergency-alert detail pages; unpublished Wagtail pages and account-specific routes are excluded.
+The public `/sitemap.xml` endpoint is served by Django and routed through the frontend Nginx configuration. Canonical URLs use `FRONTEND_BASE_URL`. It includes public discovery routes, each camera visible in the public camera list, inland and coastal ferry routes, rest stops, current weather stations, and recent high-elevation forecasts, as well as published advisories, bulletins, their subpages, and emergency-alert detail pages. Map-feature entries use their stable `type` and `id` query parameters (with `coastal=true` to distinguish coastal ferries); unpublished Wagtail pages and account-specific routes are excluded.
 
 ### <a name="coverage-report"></a>Test coverage and report
 In the terminal tab on the bottom left:

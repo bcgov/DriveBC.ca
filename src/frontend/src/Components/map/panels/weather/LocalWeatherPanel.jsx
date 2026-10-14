@@ -20,6 +20,7 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
 import ShareURLButton from '../../../shared/ShareURLButton';
+import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../../shared/cameraSeo';
 import CurrentWeatherIcon from '../../CurrentWeatherIcon';
 import LocalForecastTabs from './LocalForecastTabs';
 
@@ -62,6 +63,8 @@ export default function LocalWeatherPanel(props) {
     searchParams.set('id', weatherData.id);
     searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
+    setMapFeatureSeoMetadata('localWeather', weatherData, window.location.origin);
+    return resetMapFeatureSeoMetadata;
   }, [feature]);
 
   return (

@@ -1,10 +1,16 @@
 from urllib.parse import urlsplit
 
 from apps.cms.models import Advisory, Bulletin, EmergencyAlertDetail, SubPage
+from apps.ferry.models import CoastalFerryStop, Ferry
+from apps.rest.models import RestStop
 from apps.webcam.models import Webcam
+from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalWeather
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.sitemaps import Sitemap
+from django.db.models import Q
+from django.utils import timezone
+from datetime import timedelta
 from wagtail.models import Page
 
 
@@ -52,6 +58,81 @@ class CameraSitemap(FrontendSitemap):
 
     def location(self, item):
         return f"/cameras/{item.pk}"
+
+
+class FerrySitemap(FrontendSitemap):
+    changefreq = "weekly"
+    priority = 0.6
+
+    def items(self):
+        inland_routes = [
+            ("ferry", route_id, False)
+            for route_id in Ferry.objects.order_by()
+            .values_list("route_id", flat=True)
+            .distinct()
+        ]
+        coastal_stops = [
+            ("ferry", stop_id, True)
+            for stop_id in CoastalFerryStop.objects.filter(parent_stop=None)
+            .filter(
+                Q(stop_times__trip__route__isnull=False)
+                    | Q(
+                        child_stops__stop_times__trip__route__isnull=False
+                    )
+                )
+            .values_list("id", flat=True)
+            .distinct()
+        ]
+        return inland_routes + coastal_stops
+
+    def location(self, item):
+        feature_type, feature_id, coastal = item
+        query = f"?type={feature_type}&id={feature_id}"
+        if coastal:
+            query += "&coastal=true"
+        return f"/{query}"
+
+
+class RestStopSitemap(FrontendSitemap):
+    changefreq = "weekly"
+    priority = 0.6
+
+    def items(self):
+        return [
+            ("restStop", stop.pk)
+            for stop in RestStop.objects.order_by("pk")
+        ]
+
+    def location(self, item):
+        feature_type, feature_id = item
+        return f"/?type={feature_type}&id={feature_id}"
+
+
+class WeatherSitemap(FrontendSitemap):
+    changefreq = "daily"
+    priority = 0.6
+
+    def items(self):
+        items = [
+            ("localWeather", weather.pk)
+            for weather in CurrentWeather.objects.exclude(code=None).order_by("pk")
+        ]
+        items.extend(
+            ("regionalWeather", weather.pk)
+            for weather in RegionalWeather.objects.exclude(code=None).order_by("pk")
+        )
+        cutoff = timezone.now() - timedelta(hours=24)
+        items.extend(
+            ("hef", weather.pk)
+            for weather in HighElevationForecast.objects.filter(
+                issued_utc__gte=cutoff
+            ).order_by("pk")
+        )
+        return items
+
+    def location(self, item):
+        feature_type, feature_id = item
+        return f"/?type={feature_type}&id={feature_id}"
 
 
 class AdvisorySitemap(FrontendSitemap):
