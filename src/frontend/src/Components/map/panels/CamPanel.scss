@@ -64,6 +64,10 @@
           flex-direction: row;
           margin-bottom: 0;
 
+          &.has-replay {
+            margin-top: 32px;
+          }
+
           &__left {
             flex: 1 1 75%;
           }
@@ -595,6 +599,8 @@
             align-items: center;
             margin-bottom: 0.5rem;
             font-weight: 700;
+            position: absolute;
+            top: -32px;
 
             .replay-the-day {
               .form-switch {
