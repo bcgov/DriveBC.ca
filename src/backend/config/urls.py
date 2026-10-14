@@ -10,6 +10,7 @@ from django.conf import settings
 from django.conf.urls import defaults
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
 from django.shortcuts import redirect
 from django.urls import include, path, re_path
 from drf_spectacular.views import (
@@ -17,6 +18,23 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from apps.cms.sitemaps import (
+    AdvisorySitemap,
+    BulletinSitemap,
+    CameraSitemap,
+    EmergencyAlertDetailSitemap,
+    StaticPageSitemap,
+    SubPageSitemap,
+)
+
+sitemaps = {
+    "pages": StaticPageSitemap,
+    "cameras": CameraSitemap,
+    "advisories": AdvisorySitemap,
+    "bulletins": BulletinSitemap,
+    "subpages": SubPageSitemap,
+    "emergency-alert-details": EmergencyAlertDetailSitemap,
+}
 
 
 def admin_permission_denied_handler(request, exception):
@@ -63,6 +81,13 @@ if settings.FORCE_IDIR_AUTHENTICATION:
 
 
 urlpatterns = [
+    path(
+        "sitemap.xml",
+        sitemap,
+        {"sitemaps": sitemaps},
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
+
     # django
     path('drivebc-admin/request-access', auth_views.request_access, name='admin-request-access'),
     path('drivebc-admin/access-requested', auth_views.access_requested, name='admin-access-requested'),

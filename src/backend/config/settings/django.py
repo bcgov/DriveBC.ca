@@ -123,9 +123,11 @@ DJANGO_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.gis",
+    "django.contrib.postgres",
     "django.contrib.sessions",
     "django.contrib.staticfiles",
     "django.contrib.messages",
+    "django.contrib.sitemaps",
 ]
 
 THIRD_PARTY_APPS = [
