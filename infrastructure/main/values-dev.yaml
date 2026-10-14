@@ -23,7 +23,7 @@ django:
         cpu: 20m
         memory: 200Mi
       limits:
-        memory: 500Mi
+        memory: 1000Mi
     env:
       postgresSecret: dev-drivebc-db-crunchy-pguser-dev-drivebc-db
       variables:
