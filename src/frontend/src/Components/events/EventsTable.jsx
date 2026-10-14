@@ -3,11 +3,14 @@ import React, { useEffect, useState } from 'react';
 
 // External Imports
 import {
+  createPaginatedRowModel,
+  createSortedRowModel,
+  columnVisibilityFeature,
   flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  getPaginationRowModel,
-  useReactTable,
+  rowPaginationFeature,
+  rowSortingFeature,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
@@ -25,6 +28,19 @@ import FriendlyTime from '../shared/FriendlyTime';
 
 // Styling
 import './EventsTable.scss';
+
+const features = tableFeatures({
+  columnVisibilityFeature,
+  rowSortingFeature,
+  rowPaginationFeature,
+  sortedRowModel: createSortedRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
+  sortFns: {
+    routeAtSort: routeAtSortFn,
+    severitySort: severitySortFn,
+    routeOrderSort: routeOrderSortFn,
+  },
+});
 
 export default function EventsTable(props) {
   // Props
@@ -101,19 +117,19 @@ export default function EventsTable(props) {
     {
       header: <span tabIndex={0}>{'Location'}</span>,
       accessorKey: 'location_description',
-      sortingFn: 'severitySort', // override to sort by severity instead
+      sortFn: 'severitySort', // override to sort by severity instead
       cell: (props) => <span>{parse(props.getValue())}</span>,
     },
     {
       header: <span tabIndex={0}>{'Closest Landmark'}</span>,
       accessorKey: 'closest_landmark',
-      sortingFn: 'routeAtSort', // override to sort by route at instead
+      sortFn: 'routeAtSort', // override to sort by route at instead
       cell: (props) => <span>{props.getValue() ? props.getValue() : '-'}</span>,
     },
     {
       header: <span tabIndex={0}>{'Description'}</span>,
       accessorKey: 'optimized_description',
-      sortingFn: 'routeOrderSort', // override to sort by route order instead
+      sortFn: 'routeOrderSort', // override to sort by route order instead
     },
     {
       header: <span tabIndex={0}>{'Last Update'}</span>,
@@ -131,7 +147,8 @@ export default function EventsTable(props) {
   const columnCount = columns.length
 
   // react-table initiation
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: data,
     columns: columns,
     state: {
@@ -139,20 +156,10 @@ export default function EventsTable(props) {
     },
     initialState: {
       pagination: {
-        // Large number to show all rows, do NOT use -1 here
-        // https://github.com/TanStack/table/issues/3740
-        pageSize: 65536,
+        pageSize: Infinity,
       },
     },
     onSortingChange: setSorting,
-    sortingFns: {
-      routeAtSort: routeAtSortFn,
-      severitySort: severitySortFn,
-      routeOrderSort: routeOrderSortFn,
-    },
-    getPaginationRowModel: getPaginationRowModel(),
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
   });
 
   // react-table sorting handler and hook
