@@ -30,8 +30,7 @@ class TestEventModel(BaseTest):
         # Normal feed
         event_feed_data = open(data_dir + "event_feed_list_of_five.json")
         self.mock_event_feed_result = json.load(event_feed_data)
-        cars_feed_data = open(data_dir + "cars_feed_list_of_five.json")
-        self.mock_cars_feed_result = json.load(cars_feed_data)
+        self.event_ids = [e["id"].split("/")[-1] for e in self.mock_event_feed_result["events"]]
 
         # Feed with one missing event from normal feed
         event_feed_data_with_missing_event = open(
@@ -149,22 +148,42 @@ class TestEventModel(BaseTest):
         self.mock_event_feed_result = json.load(event_feed_data)
         populate_event_from_data(self.mock_event_feed_result['events'][0])
 
+    def _ride_response(self, closed_ids=()):
+        ride_resp = MagicMock()
+        ride_resp.json.return_value = [{
+            "id": event_id,
+            "type": "INCIDENT",
+            "impacts": [{"closed": event_id in closed_ids}],
+            "location": {"start": {"name": "Highway 1", "nearby": [], "coords": [1, 1]}},
+            "segment": None,
+            "timings": {},
+            "route_projection": 0,
+        } for event_id in self.event_ids]
+        return ride_resp
+
     @patch("apps.event.ride.requests.get")
     @patch("httpx.get")
-    def test_populate_and_update_event(self, mock_httpx_get, mock_ride_requests_get):
-        # Each populate: Open511 (httpx), DIT/CARS list (httpx), RIDE API (requests)
-        mock_httpx_get.side_effect = [
-            MockResponse(self.mock_event_feed_result, status_code=200),
-            MockResponse(self.mock_cars_feed_result, status_code=200),
-            MockResponse(self.mock_event_feed_result_with_missing_event,
-                         status_code=200),
-            MockResponse(self.mock_cars_feed_result, status_code=200),
-            MockResponse(self.mock_updated_event_feed_result, status_code=200),
-            MockResponse(self.mock_cars_feed_result, status_code=200),
-        ]
+    def test_dit_events_skipped(self, mock_httpx_get, mock_ride_requests_get):
+        mock_httpx_get.return_value = MockResponse(self.mock_event_feed_result, status_code=200)
         ride_resp = MagicMock()
         ride_resp.json.return_value = []
         mock_ride_requests_get.return_value = ride_resp
+
+        populate_all_event_data()
+        assert Event.objects.count() == 0
+
+    # DIT phased out; fixture DBC-* ids routed through RIDE feed
+    @patch("apps.event.tasks.RIDE_EVENT_PREFIX", "DBC")
+    @patch("apps.event.ride.requests.get")
+    @patch("httpx.get")
+    def test_populate_and_update_event(self, mock_httpx_get, mock_ride_requests_get):
+        mock_httpx_get.side_effect = [
+            MockResponse(self.mock_event_feed_result, status_code=200),
+            MockResponse(self.mock_event_feed_result_with_missing_event,
+                         status_code=200),
+            MockResponse(self.mock_updated_event_feed_result, status_code=200),
+        ]
+        mock_ride_requests_get.return_value = self._ride_response(closed_ids={"DBC-46014"})
 
         populate_all_event_data()
         assert Event.objects.count() == 5
@@ -182,7 +201,7 @@ class TestEventModel(BaseTest):
         # NONE direction
         event = Event.objects.get(id="DBC-52446")
         assert event.direction == EVENT_DIRECTION.NONE
-        # closed value comes from CARS feed
+        # closed value comes from RIDE feed
         event = Event.objects.get(id="DBC-46014")
         assert event.closed is True
 
@@ -203,16 +222,12 @@ class TestEventModel(BaseTest):
         assert Event.objects.get(id="DBC-53145").route_from \
                == "Updated Trail"
 
+    @patch("apps.event.tasks.RIDE_EVENT_PREFIX", "DBC")
     @patch("apps.event.ride.requests.get")
     @patch("httpx.get")
     def test_populate_event_with_validation_error(self, mock_httpx_get, mock_ride_requests_get):
-        mock_httpx_get.side_effect = [
-            MockResponse(self.mock_event_feed_result_with_errors, status_code=200),
-            MockResponse(self.mock_cars_feed_result, status_code=200),
-        ]
-        ride_resp = MagicMock()
-        ride_resp.json.return_value = []
-        mock_ride_requests_get.return_value = ride_resp
+        mock_httpx_get.return_value = MockResponse(self.mock_event_feed_result_with_errors, status_code=200)
+        mock_ride_requests_get.return_value = self._ride_response()
 
         # Only events with validation error (DBC-46014) are omitted
         populate_all_event_data()
@@ -229,10 +244,7 @@ class TestEventModel(BaseTest):
     @patch("apps.event.ride.requests.get")
     @patch("httpx.get")
     def test_event_feed_client_error(self, mock_httpx_get, mock_ride_requests_get):
-        mock_httpx_get.side_effect = [
-            MockResponse(self.mock_event_feed_result, status_code=200),
-            MockResponse({}, status_code=INTERNAL_SERVER_ERROR),
-        ]
+        mock_httpx_get.return_value = MockResponse({}, status_code=INTERNAL_SERVER_ERROR)
         ride_resp = MagicMock()
         ride_resp.json.return_value = []
         mock_ride_requests_get.return_value = ride_resp

@@ -167,7 +167,7 @@ def populate_all_event_data():
         logger.warning('No open 511 events found, stopping task')
         return
 
-    closures, chain_ups = client.get_dit_event_dict()
+    closures, chain_ups = {}, []
     ride_events, ride_chainups = get_ride_event_dict()
 
     active_event_ids = []
