@@ -58,7 +58,7 @@ export default function AdvisoriesPanel(props) {
   // }, []);
 
   return (
-    <div className="popup popup--advisories" tabIndex={0}>
+    <div className="popup popup--advisories">
       <div className={`popup__title ${showRouteObjs && !smallScreen ? 'from-route-objs' : ''}`}>
         <div className="popup__title__name">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
