@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { configDefaults } from 'vitest/config';
 
 
 export default defineConfig({
@@ -20,6 +21,10 @@ export default defineConfig({
   build: {
     outDir: 'build',
     sourcemap: process.env.SOURCEMAP !== 'false',
+  },
+  test: {
+    // Playwright specs; run with `npm run test:e2e`
+    exclude: [...configDefaults.exclude, 'e2e/**'],
   },
   server: {
     host: '0.0.0.0',
