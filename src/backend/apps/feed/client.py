@@ -245,7 +245,10 @@ class FeedClient:
 
         except (KeyError, ValidationError):
             # DRF >= 3.18: errors[resource_name] is {index: errors}, only for failing items
+            # older DRF: list aligned with items
             resource_errors = serializer.errors.get(resource_name, {})
+            if isinstance(resource_errors, list):
+                resource_errors = dict(enumerate(resource_errors))
 
             res = []
             for index, data in enumerate(serializer.data[resource_name]):
