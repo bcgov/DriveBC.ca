@@ -41,6 +41,7 @@ import { addFavoriteCamera, deleteFavoriteCamera, getCameras, getWebcamReplay } 
 import trackEvent from '../../shared/TrackEvent';
 import ShareURLButton from '../../shared/ShareURLButton';
 import PollingComponent from '../../shared/PollingComponent';
+import { resetCameraSeoMetadata, setCameraSeoMetadata } from '../../shared/cameraSeo';
 import NearbyWeathers from '../../cameras/nearbyweathers/NearbyWeathers';
 import CameraOrientations from '../../cameras/directions/CameraOrientations';
 import { API_HOST, REPLAY_THE_DAY } from '../../../env';
@@ -194,6 +195,15 @@ export default function CamPanel(props) {
   useEffect(() => {
     setNextUpdate(formatNextUpdate(camera));
   }, [camera]);
+
+  useEffect(() => {
+    if (!camera?.id) {
+      return;
+    }
+
+    setCameraSeoMetadata(camera, window.location.origin);
+    return resetCameraSeoMetadata;
+  }, [camera, location.pathname, location.search]);
 
   useEffect(() => {
     if (camera) {
@@ -482,7 +492,7 @@ export default function CamPanel(props) {
             <rect x="1" y="1" width="22" height="22" rx="11" stroke="#255A90" strokeWidth="2"/>
             <path d="M6 9.125C6 8.37305 6.60156 7.75 7.375 7.75H12.875C13.627 7.75 14.25 8.37305 14.25 9.125V14.625C14.25 15.3984 13.627 16 12.875 16H7.375C6.60156 16 6 15.3984 6 14.625V9.125ZM18.0098 8.52344C18.2246 8.65234 18.375 8.88867 18.375 9.125V14.625C18.375 14.8828 18.2246 15.1191 18.0098 15.248C17.7734 15.3555 17.5156 15.3555 17.3008 15.2051L15.2383 13.8301L14.9375 13.6367V13.25V10.5V10.1348L15.2383 9.94141L17.3008 8.56641C17.5156 8.41602 17.7734 8.41602 18.0098 8.52344Z" fill="#255A90"/>
           </svg>
-          <p className="name">Camera</p>
+          <p className="name">{camera.name || 'Camera'}</p>
         </div>
         {canExpand && (
           <div className="expand-panel">

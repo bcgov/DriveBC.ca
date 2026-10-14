@@ -24,6 +24,7 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 
 import { shortenToOneDecimal } from "../Components/data/routes";
 import MapWrapper from '../Components/map/MapWrapper';
+import { resetCameraSeoMetadata } from '../Components/shared/cameraSeo';
 
 // Styling
 import '../Components/map/Map.scss';
@@ -39,8 +40,6 @@ export default function MapPage() {
   const [searchParams] = useSearchParams();
   // Snapshot before map navigations replace location.state (path string or false)
   const fromCameraList = useRef(location.state?.fromCameraList || false).current;
-
-  document.title = 'DriveBC';
 
   const getReferenceParams = () => {
     if (cameraPathId) {
@@ -58,8 +57,20 @@ export default function MapPage() {
     };
   }
   const [referenceData, setReferenceData] = useState(null);
+  const cameraSelected = Boolean(
+    cameraPathId || (
+      searchParams.get('type') === 'camera' &&
+      searchParams.get('id')
+    )
+  );
 
   // Effects
+  useEffect(() => {
+    if (!cameraSelected) {
+      resetCameraSeoMetadata();
+    }
+  }, [cameraSelected]);
+
   useEffect(() => {
     setReferenceData(getReferenceParams());
   }, [searchParams, cameraPathId]);
