@@ -24,6 +24,7 @@ import {
   faPause,
   faPlay,
   faArrowRightToLine,
+  faArrowLeftToLine,
   faArrowLeft,
 } from '@fortawesome/pro-solid-svg-icons';
 import { faStar as faStarOutline, faMountain } from '@fortawesome/pro-regular-svg-icons';
@@ -492,8 +493,8 @@ export default function CamPanel(props) {
               aria-label={isExpanded ? 'Collapse panel' : 'Expand panel'}
               aria-pressed={isExpanded}
               onClick={() => setExpanded(prev => !prev)}>
-              <FontAwesomeIcon icon={faArrowRightToLine} />
-              <span>{isExpanded ? 'Collapse' : 'Expand'}</span>
+              <FontAwesomeIcon icon={isExpanded ? faArrowLeftToLine : faArrowRightToLine} />
+              <span>{isExpanded ? 'Minimize' : 'Expand'}</span>
             </button>
           </div>
         )}
@@ -529,7 +530,7 @@ export default function CamPanel(props) {
             }
 
           <div className="camera-imagery">
-            <div className="camera-imagery__details d-flex">
+            <div className={`camera-imagery__details d-flex ${shouldRenderReplay() ? 'has-replay' : ''}`}>
               <div className="camera-imagery__details__left flex-grow-1">
                 <div className={`image-wrap ${updated} ${stale} ${delayed} ${unavailable} ${loading} ${replay ? 'replay' : ''}`}>
                   {shouldRenderReplay() && (

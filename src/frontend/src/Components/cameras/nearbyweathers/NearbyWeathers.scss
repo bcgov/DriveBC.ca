@@ -59,12 +59,8 @@
           font-weight: 400;
           transition: 0.2s border ease-in-out;
 
-          @media (max-width: 575px) {
-            font-size: 0.75rem;
-          }
-
           .weather-type-icon {
-            margin-right: 8px;
+            margin-right: 4px;
             flex-shrink: 0;
           }
 
