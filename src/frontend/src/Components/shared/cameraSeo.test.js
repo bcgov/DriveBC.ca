@@ -80,7 +80,12 @@ describe('camera SEO metadata', () => {
     );
   });
 
-  it('uses normalized item parameters for ferry and rest-stop canonicals', () => {
+  it('uses clean canonical URLs for ferries and rest stops', () => {
+    const inlandFerry = getMapFeatureSeoMetadata(
+      'ferry',
+      { id: 41, route_name: 'Glade Cable Ferry' },
+      'https://dev.drivebc.ca',
+    );
     const coastalFerry = getMapFeatureSeoMetadata(
       'ferry',
       { id: 42, name: 'Island Ferry', routes: [{ name: 'Route 1' }] },
@@ -89,15 +94,27 @@ describe('camera SEO metadata', () => {
     );
     const largeRestStop = getMapFeatureSeoMetadata(
       'largeRestStop',
-      { id: 17, properties: { REST_AREA_NAME: 'Mountain View' } },
+      {
+        id: 17,
+        properties: {
+          REST_AREA_NAME: 'OOTISCHENIA',
+          HIGHWAY_NUMBER: '3',
+          DISTANCE_FROM_MUNICIPALITY: '7.0KM EAST OF CASTLEGAR',
+        },
+      },
       'https://dev.drivebc.ca/',
     );
 
+    expect(inlandFerry.canonicalUrl).toBe('https://dev.drivebc.ca/ferry/41');
     expect(coastalFerry.canonicalUrl).toBe(
-      'https://dev.drivebc.ca/?type=ferry&id=42&coastal=true',
+      'https://dev.drivebc.ca/coastal-ferry/42',
     );
     expect(largeRestStop.canonicalUrl).toBe(
-      'https://dev.drivebc.ca/?type=restStop&id=17',
+      'https://dev.drivebc.ca/rest-stop/17',
+    );
+    expect(largeRestStop.title).toBe('Ootischenia Rest Stop | DriveBC');
+    expect(largeRestStop.description).toBe(
+      'Ootischenia on Highway 3, 7.0km East of Castlegar. Rest area information from DriveBC.',
     );
   });
 
@@ -112,10 +129,41 @@ describe('camera SEO metadata', () => {
       'https://dev.drivebc.ca',
     );
 
-    expect(metadata.title).toBe('Hope Airport | DriveBC');
+    expect(metadata.title).toBe('Hope Airport Roadside Weather | DriveBC');
     expect(metadata.description).toBe('Near Hope, British Columbia');
     expect(metadata.canonicalUrl).toBe(
-      'https://dev.drivebc.ca/?type=localWeather&id=8',
+      'https://dev.drivebc.ca/roadside-weather/8',
     );
+  });
+
+  it('adds the correct weather category to regional and high-elevation titles', () => {
+    expect(
+      getMapFeatureSeoMetadata(
+        'regionalWeather',
+        { id: 3, name: 'Castlegar' },
+        'https://dev.drivebc.ca',
+      ).title,
+    ).toBe('Castlegar Regional Weather | DriveBC');
+    expect(
+      getMapFeatureSeoMetadata(
+        'regionalWeather',
+        { id: 3, name: 'Castlegar' },
+        'https://dev.drivebc.ca',
+      ).canonicalUrl,
+    ).toBe('https://dev.drivebc.ca/regional-weather/3');
+    expect(
+      getMapFeatureSeoMetadata(
+        'hef',
+        { id: 4, hwyDescription: 'Paulson Summit to Kootenay Pass' },
+        'https://dev.drivebc.ca',
+      ).title,
+    ).toBe('Paulson Summit to Kootenay Pass High Elevation Weather | DriveBC');
+    expect(
+      getMapFeatureSeoMetadata(
+        'hef',
+        { id: 4, hwyDescription: 'Paulson Summit to Kootenay Pass' },
+        'https://dev.drivebc.ca',
+      ).canonicalUrl,
+    ).toBe('https://dev.drivebc.ca/high-elevation-weather/4');
   });
 });

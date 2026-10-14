@@ -1,3 +1,5 @@
+import { toTitleCase } from './textFormatting';
+
 const DEFAULT_DESCRIPTION =
   'Check real-time BC road conditions, closures, highway webcams, and delays with DriveBC.';
 
@@ -94,16 +96,16 @@ function getEntityDescription(featureType, feature, name) {
         feature?.route_description ||
         `Ferry service for ${name} in British Columbia.`
       );
-    case 'restStop': {
+    case 'restStop':
+    case 'largeRestStop': {
       const highway = properties.HIGHWAY_NUMBER
         ? ` on Highway ${properties.HIGHWAY_NUMBER}`
         : '';
       const distance = properties.DISTANCE_FROM_MUNICIPALITY
-        ? `, ${properties.DISTANCE_FROM_MUNICIPALITY}`
+        ? `, ${toTitleCase(properties.DISTANCE_FROM_MUNICIPALITY)}`
         : '';
       return `${name}${highway}${distance}. Rest area information from DriveBC.`;
     }
-    case 'largeRestStop':
     case 'localWeather':
       return (
         feature?.location_description ||
@@ -127,13 +129,32 @@ export function getMapFeatureSeoMetadata(
   origin,
   coastal = false,
 ) {
-  const name = getPlainText(getEntityName(featureType, feature));
-  const title = `${name} | DriveBC`;
+  const entityName = getPlainText(getEntityName(featureType, feature));
+  const name =
+    featureType === 'restStop' || featureType === 'largeRestStop'
+      ? toTitleCase(entityName)
+      : entityName;
+  const titleSuffix = {
+    restStop: 'Rest Stop',
+    largeRestStop: 'Rest Stop',
+    localWeather: 'Roadside Weather',
+    regionalWeather: 'Regional Weather',
+    hef: 'High Elevation Weather',
+  }[featureType];
+  const title = `${name}${titleSuffix ? ` ${titleSuffix}` : ''} | DriveBC`;
   const description = getPlainText(
     getEntityDescription(featureType, feature, name),
   ).slice(0, 160);
   const canonicalType =
     featureType === 'largeRestStop' ? 'restStop' : featureType;
+  const canonicalPath = {
+    restStop: `/rest-stop/${feature.id}`,
+    largeRestStop: `/rest-stop/${feature.id}`,
+    ferry: coastal ? `/coastal-ferry/${feature.id}` : `/ferry/${feature.id}`,
+    localWeather: `/roadside-weather/${feature.id}`,
+    regionalWeather: `/regional-weather/${feature.id}`,
+    hef: `/high-elevation-weather/${feature.id}`,
+  }[featureType];
   const params = new URLSearchParams({
     type: canonicalType,
     id: String(feature.id),
@@ -145,7 +166,9 @@ export function getMapFeatureSeoMetadata(
   return {
     title,
     description: description || DEFAULT_DESCRIPTION,
-    canonicalUrl: `${origin.replace(/\/+$/, '')}/?${params.toString()}`,
+    canonicalUrl: canonicalPath
+      ? `${origin.replace(/\/+$/, '')}${canonicalPath}`
+      : `${origin.replace(/\/+$/, '')}/?${params.toString()}`,
   };
 }
 

@@ -36,7 +36,15 @@ export default function MapPage() {
 
   // Navigation
   const location = useLocation();
-  const { id: cameraPathId } = useParams();
+  const {
+    id: cameraPathId,
+    restStopId,
+    ferryId,
+    coastalFerryId,
+    roadsideWeatherId,
+    regionalWeatherId,
+    highElevationWeatherId,
+  } = useParams();
   const [searchParams] = useSearchParams();
   // Snapshot before map navigations replace location.state (path string or false)
   const fromCameraList = useRef(location.state?.fromCameraList || false).current;
@@ -46,6 +54,32 @@ export default function MapPage() {
       return {
         type: 'camera',
         id: cameraPathId,
+        display_category: null,
+      };
+    }
+    if (restStopId) {
+      return {
+        type: 'restStop',
+        id: restStopId,
+        display_category: null,
+      };
+    }
+    if (ferryId || coastalFerryId) {
+      return {
+        type: 'ferry',
+        id: ferryId || coastalFerryId,
+        coastal: Boolean(coastalFerryId),
+        display_category: null,
+      };
+    }
+    if (roadsideWeatherId || regionalWeatherId || highElevationWeatherId) {
+      return {
+        type: roadsideWeatherId
+          ? 'localWeather'
+          : regionalWeatherId
+            ? 'regionalWeather'
+            : 'hef',
+        id: roadsideWeatherId || regionalWeatherId || highElevationWeatherId,
         display_category: null,
       };
     }
@@ -60,7 +94,14 @@ export default function MapPage() {
   }
   const [referenceData, setReferenceData] = useState(null);
   const featureSelected = Boolean(
-    cameraPathId || (searchParams.get('type') && searchParams.get('id')),
+    cameraPathId ||
+      restStopId ||
+    ferryId ||
+    coastalFerryId ||
+    roadsideWeatherId ||
+    regionalWeatherId ||
+    highElevationWeatherId ||
+    (searchParams.get('type') && searchParams.get('id')),
   );
 
   // Effects
@@ -72,7 +113,16 @@ export default function MapPage() {
 
   useEffect(() => {
     setReferenceData(getReferenceParams());
-  }, [searchParams, cameraPathId]);
+  }, [
+    searchParams,
+    cameraPathId,
+    restStopId,
+    ferryId,
+    coastalFerryId,
+    roadsideWeatherId,
+    regionalWeatherId,
+    highElevationWeatherId,
+  ]);
 
   useEffect(() => {
     populateRoutesFromNotification();

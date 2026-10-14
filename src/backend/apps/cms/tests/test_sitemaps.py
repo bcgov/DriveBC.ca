@@ -65,14 +65,14 @@ class SitemapTests(TestCase):
         self.assertIn("https://www.drivebc.ca/", locations)
         self.assertIn("https://www.drivebc.ca/cameras", locations)
         self.assertIn("https://www.drivebc.ca/cameras/123", locations)
-        self.assertIn("https://www.drivebc.ca/?type=ferry&id=123", locations)
+        self.assertIn("https://www.drivebc.ca/ferry/123", locations)
         self.assertIn(
-            "https://www.drivebc.ca/?type=ferry&id=124&coastal=true",
+            "https://www.drivebc.ca/coastal-ferry/124",
             locations,
         )
-        self.assertIn("https://www.drivebc.ca/?type=restStop&id=456", locations)
+        self.assertIn("https://www.drivebc.ca/rest-stop/456", locations)
         self.assertIn(
-            "https://www.drivebc.ca/?type=regionalWeather&id=789",
+            "https://www.drivebc.ca/regional-weather/789",
             locations,
         )
         self.assertIn("https://www.drivebc.ca/advisories", locations)
@@ -96,24 +96,30 @@ class SitemapTests(TestCase):
 
         self.assertEqual(
             sitemap.location(("ferry", 123, False)),
-            "/?type=ferry&id=123",
+            "/ferry/123",
         )
         self.assertEqual(
             sitemap.location(("ferry", 123, True)),
-            "/?type=ferry&id=123&coastal=true",
+            "/coastal-ferry/123",
         )
 
-    def test_rest_stop_sitemap_uses_public_feature_query_url(self):
+    def test_rest_stop_sitemap_uses_clean_canonical_url(self):
         self.assertEqual(
             RestStopSitemap().location(("restStop", 456)),
-            "/?type=restStop&id=456",
+            "/rest-stop/456",
         )
 
-    def test_weather_sitemap_preserves_weather_type_in_url(self):
+    def test_weather_sitemap_uses_distinct_clean_urls(self):
+        sitemap = WeatherSitemap()
         self.assertEqual(
-            WeatherSitemap().location(("regionalWeather", 789)),
-            "/?type=regionalWeather&id=789",
+            sitemap.location(("localWeather", 789)),
+            "/roadside-weather/789",
         )
+        self.assertEqual(
+            sitemap.location(("regionalWeather", 790)),
+            "/regional-weather/790",
+        )
+        self.assertEqual(sitemap.location(("hef", 791)), "/high-elevation-weather/791")
 
     def test_advisory_sitemap_uses_live_pages(self):
         published = SimpleNamespace(slug="published-advisory")

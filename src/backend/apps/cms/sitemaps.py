@@ -87,10 +87,9 @@ class FerrySitemap(FrontendSitemap):
 
     def location(self, item):
         feature_type, feature_id, coastal = item
-        query = f"?type={feature_type}&id={feature_id}"
         if coastal:
-            query += "&coastal=true"
-        return f"/{query}"
+            return f"/coastal-ferry/{feature_id}"
+        return f"/ferry/{feature_id}"
 
 
 class RestStopSitemap(FrontendSitemap):
@@ -104,8 +103,8 @@ class RestStopSitemap(FrontendSitemap):
         ]
 
     def location(self, item):
-        feature_type, feature_id = item
-        return f"/?type={feature_type}&id={feature_id}"
+        _, feature_id = item
+        return f"/rest-stop/{feature_id}"
 
 
 class WeatherSitemap(FrontendSitemap):
@@ -132,7 +131,12 @@ class WeatherSitemap(FrontendSitemap):
 
     def location(self, item):
         feature_type, feature_id = item
-        return f"/?type={feature_type}&id={feature_id}"
+        path_prefix = {
+            "localWeather": "roadside-weather",
+            "regionalWeather": "regional-weather",
+            "hef": "high-elevation-weather",
+        }[feature_type]
+        return f"/{path_prefix}/{feature_id}"
 
 
 class AdvisorySitemap(FrontendSitemap):

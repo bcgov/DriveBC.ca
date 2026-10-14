@@ -367,6 +367,24 @@ function App() {
                             <Route path="/" element={<MapPage />}>
                               <Route index element={null} />
                               <Route path="cameras/:id" element={null} />
+                              <Route path="rest-stop/:restStopId" element={null} />
+                              <Route path="ferry/:ferryId" element={null} />
+                              <Route
+                                path="coastal-ferry/:coastalFerryId"
+                                element={null}
+                              />
+                              <Route
+                                path="roadside-weather/:roadsideWeatherId"
+                                element={null}
+                              />
+                              <Route
+                                path="regional-weather/:regionalWeatherId"
+                                element={null}
+                              />
+                              <Route
+                                path="high-elevation-weather/:highElevationWeatherId"
+                                element={null}
+                              />
                             </Route>
                             <Route path="/my-cameras" element={<SavedCamerasPage />} />
                             <Route path="/my-routes" element={<SavedRoutesPage />} />
