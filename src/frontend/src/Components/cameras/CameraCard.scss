@@ -198,11 +198,17 @@
         width: 100%;
         justify-content: space-between;
 
+        p {
+          padding-right: 40px;
+        }
+
         p, svg {
           font-size: 0.6875rem;
         }
 
         svg {
+          position: absolute;
+          right: 1rem;
           padding: 6px 7px;
           border-radius: 12px;
 
