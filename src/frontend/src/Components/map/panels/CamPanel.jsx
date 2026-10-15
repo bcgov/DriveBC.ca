@@ -602,45 +602,33 @@ export default function CamPanel(props) {
                         {isLoading ? <Skeleton height={400} /> : null}
 
                         {!unavailable && !stale && !delayed && updated && !isLoading && show && (
-                          <div
+                          <button
+                            type="button"
                             className="card-pill"
-                            onClick={handleChildClick}
-                            onKeyDown={keyEvent => {
-                              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                                handleChildClick();
-                              }
-                            }}>
+                            onClick={handleChildClick}>
                             <p>Updated</p>
                             <FontAwesomeIcon icon={faCircleInfo} />
-                          </div>
+                          </button>
                         )}
 
                         {!unavailable && stale && !delayed && !isLoading && show && (
-                          <div
+                          <button
+                            type="button"
                             className="card-pill"
-                            onClick={handleChildClick}
-                            onKeyDown={keyEvent => {
-                              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                                handleChildClick();
-                              }
-                            }}>
+                            onClick={handleChildClick}>
                             <p>Stale</p>
                             <FontAwesomeIcon icon={faCircleInfo} />
-                          </div>
+                          </button>
                         )}
 
                         {!unavailable && stale && delayed && !isLoading && show && (
-                          <div
+                          <button
+                            type="button"
                             className="card-pill"
-                            onClick={handleChildClick}
-                            onKeyDown={keyEvent => {
-                              if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                                handleChildClick();
-                              }
-                            }}>
+                            onClick={handleChildClick}>
                             <p>Delayed</p>
                             <FontAwesomeIcon icon={faCircleInfo} />
-                          </div>
+                          </button>
                         )}
 
                         {unavailable && !isLoading && (
