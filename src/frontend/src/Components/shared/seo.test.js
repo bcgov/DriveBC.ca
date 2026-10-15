@@ -2,6 +2,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   getCameraSeoMetadata,
+  getCmsContentSeoDescription,
   getMapFeatureSeoMetadata,
   resetSeoMetadata,
   setCameraSeoMetadata,
@@ -202,6 +203,21 @@ describe('SEO metadata', () => {
     expect(
       document.querySelector('meta[property="og:description"]').content,
     ).toBe('Page-specific description.');
+  });
+
+  it('uses CMS teaser text for bulletin and advisory descriptions', () => {
+    expect(
+      getCmsContentSeoDescription({
+        teaser: 'Advisory tagline.',
+        rendered_body: '<p>Body text should not replace the teaser.</p>',
+      }),
+    ).toBe('Advisory tagline.');
+    expect(
+      getCmsContentSeoDescription({
+        teaser: '',
+        rendered_body: '<p>Body fallback for legacy content.</p>',
+      }),
+    ).toBe('Body fallback for legacy content.');
   });
 
   it('does not replace selected map-feature descriptions with the homepage description', () => {

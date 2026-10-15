@@ -4,8 +4,16 @@ const DEFAULT_DESCRIPTION =
   'Check real-time BC road conditions, closures, highway webcams, and delays with DriveBC.';
 
 export function setPageSeoDescription(description) {
-  getMeta('meta[name="description"]', 'content', description);
-  getMeta('meta[property="og:description"]', 'content', description);
+  const plainText = getPlainText(description).slice(0, 160);
+  getMeta('meta[name="description"]', 'content', plainText);
+  getMeta('meta[property="og:description"]', 'content', plainText);
+}
+
+export function getCmsContentSeoDescription(content) {
+  const description = getPlainText(
+    content?.teaser || content?.rendered_body,
+  ).slice(0, 160);
+  return description || DEFAULT_DESCRIPTION;
 }
 
 function getPlainText(value) {

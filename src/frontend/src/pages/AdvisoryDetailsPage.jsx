@@ -32,6 +32,7 @@ import { faAttributionToggleLabel } from '../Components/map/attributionControlLa
 import ShareURLButton from '../Components/shared/ShareURLButton';
 import { BASE_MAP, MAP_STYLE } from '../env';
 import PollingComponent from "../Components/shared/PollingComponent";
+import { getCmsContentSeoDescription, setPageSeoDescription } from '../Components/shared/seo';
 
 // Styling
 import './AdvisoryDetailsPage.scss';
@@ -291,6 +292,7 @@ export default function AdvisoryDetailsPage() {
         }
 
         document.title = `DriveBC - Advisories - ${latestData.title}`;
+        setPageSeoDescription(getCmsContentSeoDescription(latestData));
       }
 
       // Detect major update only
@@ -336,6 +338,7 @@ export default function AdvisoryDetailsPage() {
       fitMap(advisoryData);
 
       document.title = `DriveBC - Advisories - ${advisoryData.title}`;
+      setPageSeoDescription(getCmsContentSeoDescription(advisoryData));
 
       markAdvisoriesAsRead([advisoryData], cmsContext, setCMSContext);
     }
