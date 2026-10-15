@@ -2,7 +2,7 @@
 import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 
 // Navigation
-import { Route, Routes, useSearchParams } from 'react-router-dom';
+import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 
 // Redux
 import { memoize } from "proxy-memoize";
@@ -52,6 +52,8 @@ import SavedRoutesPage from './pages/SavedRoutesPage';
 import ScrollToTop from './Components/shared/ScrollToTop';
 import Survey from "./Components/shared/Survey";
 import { API_HOST, MAINTENANCE_MODE } from './env';
+import { setPageSeoDescription } from './Components/shared/cameraSeo';
+import { getPageSeoDescription } from './Components/shared/pageSeo';
 
 // FontAwesome Stylesheet
 import { config } from '@fortawesome/fontawesome-svg-core'
@@ -123,7 +125,21 @@ function App() {
   }))));
 
   // Routing
+  const location = useLocation();
   const [searchParams, _setSearchParams] = useSearchParams();
+  const hasSelectedMapFeature =
+    Boolean(location.pathname.match(/^\/(cameras|rest-stop|ferry|coastal-ferry|roadside-weather|regional-weather|high-elevation-weather)\//)) ||
+    Boolean(searchParams.get('type') && searchParams.get('id'));
+
+  useEffect(() => {
+    const description = getPageSeoDescription(
+      location.pathname,
+      hasSelectedMapFeature,
+    );
+    if (description) {
+      setPageSeoDescription(description);
+    }
+  }, [location.pathname, hasSelectedMapFeature]);
 
   // Refs
   const isInitialAlertMount = useRef(true);

@@ -3,6 +3,11 @@ import { toTitleCase } from './textFormatting';
 const DEFAULT_DESCRIPTION =
   'Check real-time BC road conditions, closures, highway webcams, and delays with DriveBC.';
 
+export function setPageSeoDescription(description) {
+  getMeta('meta[name="description"]', 'content', description);
+  getMeta('meta[property="og:description"]', 'content', description);
+}
+
 function getPlainText(value) {
   if (!value) {
     return '';

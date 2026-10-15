@@ -5,7 +5,9 @@ import {
   getMapFeatureSeoMetadata,
   resetCameraSeoMetadata,
   setCameraSeoMetadata,
+  setPageSeoDescription,
 } from './cameraSeo';
+import { getPageSeoDescription } from './pageSeo';
 
 describe('camera SEO metadata', () => {
   afterEach(() => {
@@ -165,5 +167,44 @@ describe('camera SEO metadata', () => {
         'https://dev.drivebc.ca',
       ).canonicalUrl,
     ).toBe('https://dev.drivebc.ca/high-elevation-weather/4');
+  });
+
+  it('provides custom descriptions for public landing pages', () => {
+    expect(getPageSeoDescription('/')).toBe(
+      'Check real-time BC highway road conditions, traffic delays, webcams, and weather advisories across British Columbia.',
+    );
+    expect(getPageSeoDescription('/cameras')).toBe(
+      'View highway webcams and real-time traffic camera feeds across British Columbia highways.',
+    );
+    expect(getPageSeoDescription('/delays')).toBe(
+      'Get updates on BC highway closures, construction, accidents, and travel delays.',
+    );
+    expect(getPageSeoDescription('/advisories')).toBe(
+      'Check active BC travel advisories, flood warnings, winter driving alerts, and emergency road closures.',
+    );
+    expect(getPageSeoDescription('/bulletins')).toContain(
+      'latest DriveBC bulletins',
+    );
+    expect(getPageSeoDescription('/problems')).toContain('Report highway');
+  });
+
+  it('updates standard and Open Graph page descriptions together', () => {
+    document.head.innerHTML = `
+      <meta name="description">
+      <meta property="og:description">
+    `;
+
+    setPageSeoDescription('Page-specific description.');
+
+    expect(document.querySelector('meta[name="description"]').content).toBe(
+      'Page-specific description.',
+    );
+    expect(
+      document.querySelector('meta[property="og:description"]').content,
+    ).toBe('Page-specific description.');
+  });
+
+  it('does not replace selected map-feature descriptions with the homepage description', () => {
+    expect(getPageSeoDescription('/', true)).toBeNull();
   });
 });
