@@ -23,6 +23,11 @@
       "matchDatasources": ["npm"],
       "matchPackageNames": ["@fortawesome/**", "@awesome.me/**"],
       "enabled": false
+    },
+    {
+      "description": "Disable automerge for major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
     }
   ]
 }
