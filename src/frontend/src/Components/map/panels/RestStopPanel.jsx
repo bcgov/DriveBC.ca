@@ -25,7 +25,7 @@ import { isRestStopClosed } from '../../data/restStops';
 import OpenSeason from '../OpenSeason';
 import RestStopTypeIcon from '../RestStopTypeIcon';
 import ShareURLButton from '../../shared/ShareURLButton';
-import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../shared/cameraSeo';
+import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../shared/seo';
 import { toTitleCase } from '../../shared/textFormatting';
 import { MapContext } from '../../../App';
 

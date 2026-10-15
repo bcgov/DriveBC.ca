@@ -41,7 +41,7 @@ import { addFavoriteCamera, deleteFavoriteCamera, getCameras, getWebcamReplay } 
 import trackEvent from '../../shared/TrackEvent';
 import ShareURLButton from '../../shared/ShareURLButton';
 import PollingComponent from '../../shared/PollingComponent';
-import { resetCameraSeoMetadata, setCameraSeoMetadata } from '../../shared/cameraSeo';
+import { resetSeoMetadata, setCameraSeoMetadata } from '../../shared/seo';
 import NearbyWeathers from '../../cameras/nearbyweathers/NearbyWeathers';
 import CameraOrientations from '../../cameras/directions/CameraOrientations';
 import { API_HOST, REPLAY_THE_DAY } from '../../../env';
@@ -202,7 +202,7 @@ export default function CamPanel(props) {
     }
 
     setCameraSeoMetadata(camera, window.location.origin);
-    return resetCameraSeoMetadata;
+    return resetSeoMetadata;
   }, [camera, location.pathname, location.search]);
 
   useEffect(() => {

@@ -24,7 +24,7 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 
 import { shortenToOneDecimal } from "../Components/data/routes";
 import MapWrapper from '../Components/map/MapWrapper';
-import { resetCameraSeoMetadata } from '../Components/shared/cameraSeo';
+import { resetSeoMetadata } from '../Components/shared/seo';
 
 // Styling
 import '../Components/map/Map.scss';
@@ -107,7 +107,7 @@ export default function MapPage() {
   // Effects
   useEffect(() => {
     if (!featureSelected) {
-      resetCameraSeoMetadata();
+      resetSeoMetadata();
     }
   }, [featureSelected]);
 

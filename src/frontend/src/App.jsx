@@ -52,7 +52,7 @@ import SavedRoutesPage from './pages/SavedRoutesPage';
 import ScrollToTop from './Components/shared/ScrollToTop';
 import Survey from "./Components/shared/Survey";
 import { API_HOST, MAINTENANCE_MODE } from './env';
-import { setPageSeoDescription } from './Components/shared/cameraSeo';
+import { setPageSeoDescription } from './Components/shared/seo';
 import { getPageSeoDescription } from './Components/shared/pageSeo';
 
 // FontAwesome Stylesheet

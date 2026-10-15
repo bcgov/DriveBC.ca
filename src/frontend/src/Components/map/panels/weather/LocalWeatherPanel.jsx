@@ -20,7 +20,7 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
 import ShareURLButton from '../../../shared/ShareURLButton';
-import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../../shared/cameraSeo';
+import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../../shared/seo';
 import CurrentWeatherIcon from '../../CurrentWeatherIcon';
 import LocalForecastTabs from './LocalForecastTabs';
 

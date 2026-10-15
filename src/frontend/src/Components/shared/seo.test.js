@@ -3,13 +3,13 @@ import { afterEach, describe, expect, it } from 'vitest';
 import {
   getCameraSeoMetadata,
   getMapFeatureSeoMetadata,
-  resetCameraSeoMetadata,
+  resetSeoMetadata,
   setCameraSeoMetadata,
   setPageSeoDescription,
-} from './cameraSeo';
+} from './seo';
 import { getPageSeoDescription } from './pageSeo';
 
-describe('camera SEO metadata', () => {
+describe('SEO metadata', () => {
   afterEach(() => {
     document.head.innerHTML = '';
     document.title = '';
@@ -62,7 +62,7 @@ describe('camera SEO metadata', () => {
       'https://dev.drivebc.ca/cameras/760',
     );
 
-    resetCameraSeoMetadata();
+    resetSeoMetadata();
 
     expect(document.title).toBe('DriveBC');
     expect(document.querySelector('link[rel="canonical"]')).toBeNull();

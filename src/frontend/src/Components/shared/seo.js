@@ -198,10 +198,10 @@ export function setMapFeatureSeoMetadata(
 }
 
 export function resetMapFeatureSeoMetadata() {
-  resetCameraSeoMetadata();
+  resetSeoMetadata();
 }
 
-export function resetCameraSeoMetadata() {
+export function resetSeoMetadata() {
   document.title = 'DriveBC';
   getMeta('meta[name="description"]', 'content', DEFAULT_DESCRIPTION);
   getMeta('meta[property="og:title"]', 'content', 'DriveBC');

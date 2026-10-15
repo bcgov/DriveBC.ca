@@ -11,7 +11,7 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 
 // Internal imports
 import ShareURLButton from '../../shared/ShareURLButton';
-import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../shared/cameraSeo';
+import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../shared/seo';
 
 // Styling
 import './CoastalFerryPanel.scss';

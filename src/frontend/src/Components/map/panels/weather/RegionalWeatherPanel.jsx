@@ -25,7 +25,7 @@ import ForecastCarousel from './ForecastCarousel';
 import ForecastTabs from './ForecastTabs';
 import FriendlyTime from '../../../shared/FriendlyTime';
 import ShareURLButton from '../../../shared/ShareURLButton';
-import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../../shared/cameraSeo';
+import { resetMapFeatureSeoMetadata, setMapFeatureSeoMetadata } from '../../../shared/seo';
 import WeatherIconThin from '../../WeatherIconThin';
 
 // Styling
