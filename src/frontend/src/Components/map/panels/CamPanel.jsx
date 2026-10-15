@@ -424,6 +424,7 @@ export default function CamPanel(props) {
     setIsUpdated(false);
     setIsLoading(false);
     setReplay(false);
+    setShow(true);
     pauseReplay();
     viewedCamera.current = { id: camData.id, last_update_modified: camData.last_update_modified };
 
@@ -471,6 +472,11 @@ export default function CamPanel(props) {
   const unavailable = camera?.is_on ? '' : 'unavailable';
   const updated = isUpdated ? 'updated' : '';
   const isExpanded = canExpand && expanded;
+  const bannerVisible = !replay && !isLoading && !show && !unavailable && (
+    (!!stale && !!delayed) ||
+    (!!stale && !delayed) ||
+    (!stale && !delayed && !!updated)
+  );
 
   // Main component
   return (
@@ -545,7 +551,42 @@ export default function CamPanel(props) {
                     </div>
                   )}
 
-                  <div className="card-img-box">
+                  {!replay && !isLoading && !show && !unavailable && !stale && !delayed && updated && (
+                    <div className="card-banner">
+                      <FontAwesomeIcon icon={faArrowsRotate} />
+                      <p>Image automatically updated to show the latest image received.</p>
+                      <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                    </div>
+                  )}
+
+                  {!replay && !isLoading && !show && !unavailable && stale && !delayed && (
+                    <div className="card-banner">
+                      <FontAwesomeIcon icon={faHourglassClock} />
+                      <p>Unable to retrieve latest image. Displaying last image received.</p>
+                      <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                    </div>
+                  )}
+
+                  {!replay && !isLoading && !show && !unavailable && stale && delayed && (
+                    <div className="card-banner">
+                      <div>
+                        <FontAwesomeIcon className="icon" icon={faWarning} />
+
+                        <p className="bold">Significant delays in receiving new images</p>
+                        <p>This is sometimes due to:</p>
+                        <ul>
+                          <li>Intermittent data signals in the areas</li>
+                          <li>Disruptions from weather</li>
+                          <li>Camera malfunction</li>
+                        </ul>
+                        <p>The image will be updated automatically as soon as the camera comes back online.</p>
+                      </div>
+
+                      <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                    </div>
+                  )}
+
+                  <div className="card-img-box" style={{ display: bannerVisible ? 'none' : undefined }}>
                     {!replay ? (
                       <>
                         <img
@@ -559,89 +600,34 @@ export default function CamPanel(props) {
 
                         {isLoading ? <Skeleton height={400} /> : null}
 
-                        {!unavailable && !stale && !delayed && updated && (
-                          <div className="card-notification">
-                            {!isLoading && (
-                              <>
-                                <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
-                                  <FontAwesomeIcon icon={faArrowsRotate} />
-                                  <p>Image automatically updated to show the latest image received.</p>
-                                  <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
-                                </div>
-                                <div className={'card-pill' + (show ? ' bounce' : ' hidden')}
-                                  onClick={handleChildClick}
-                                  onKeyDown={keyEvent => {
-                                    if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                                      handleChildClick();
-                                    }
-                                  }}>
-                                  <p>Updated</p>
-                                  <FontAwesomeIcon icon={faCircleInfo} />
-                                </div>
-                              </>
-                            )}
-                          </div>
+                        {!unavailable && !stale && !delayed && updated && !isLoading && show && (
+                          <button
+                            type="button"
+                            className="card-pill"
+                            onClick={handleChildClick}>
+                            <p>Updated</p>
+                            <FontAwesomeIcon icon={faCircleInfo} />
+                          </button>
                         )}
 
-                        {!unavailable && stale && !delayed && (
-                          <div className="card-notification">
-                            {!isLoading && (
-                              <>
-                                <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
-                                  <FontAwesomeIcon icon={faHourglassClock} />
-                                  <p>Unable to retrieve latest image. Displaying last image received.</p>
-                                  <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
-                                </div>
-                                <div
-                                  className={'card-pill' + (show ? ' bounce' : ' hidden')}
-                                  onClick={handleChildClick}
-                                  onKeyDown={keyEvent => {
-                                    if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                                      handleChildClick();
-                                    }
-                                  }}>
-                                  <p>Stale</p>
-                                  <FontAwesomeIcon icon={faCircleInfo} />
-                                </div>
-                              </>
-                            )}
-                          </div>
+                        {!unavailable && stale && !delayed && !isLoading && show && (
+                          <button
+                            type="button"
+                            className="card-pill"
+                            onClick={handleChildClick}>
+                            <p>Stale</p>
+                            <FontAwesomeIcon icon={faCircleInfo} />
+                          </button>
                         )}
 
-                        {!unavailable && stale && delayed && (
-                          <div className="card-notification">
-                            {!isLoading && (
-                              <>
-                                <div className={'card-banner' + (show ? ' hidden' : ' bounce')}>
-                                  <div>
-                                    <FontAwesomeIcon className="icon" icon={faWarning} />
-
-                                    <p className="bold">Significant delays in receiving new images</p>
-                                    <p>This is sometimes due to:</p>
-                                    <ul>
-                                      <li>Intermittent data signals in the areas</li>
-                                      <li>Disruptions from weather</li>
-                                      <li>Camera malfunction</li>
-                                    </ul>
-                                    <p>The image will be updated automatically as soon as the camera comes back online.</p>
-                                  </div>
-
-                                  <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
-                                </div>
-                                <div
-                                  className={'card-pill' + (show ? ' bounce' : ' hidden')}
-                                  onClick={handleChildClick}
-                                  onKeyDown={keyEvent => {
-                                    if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-                                      handleChildClick();
-                                    }
-                                  }}>
-                                  <p>Delayed</p>
-                                  <FontAwesomeIcon icon={faCircleInfo} />
-                                </div>
-                              </>
-                            )}
-                          </div>
+                        {!unavailable && stale && delayed && !isLoading && show && (
+                          <button
+                            type="button"
+                            className="card-pill"
+                            onClick={handleChildClick}>
+                            <p>Delayed</p>
+                            <FontAwesomeIcon icon={faCircleInfo} />
+                          </button>
                         )}
 
                         {unavailable && !isLoading && (
