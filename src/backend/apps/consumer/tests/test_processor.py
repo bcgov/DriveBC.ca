@@ -10,6 +10,11 @@ from django.test import TestCase
 from django.core.cache import cache
 import asyncio
 
+from unittest.mock import MagicMock, patch
+from django.db import OperationalError
+import apps.consumer.processor as processor
+from contextlib import asynccontextmanager
+
 
 from apps.consumer.processor import (
     PVC_ORIGINAL_PATH,
@@ -20,7 +25,7 @@ from apps.consumer.processor import (
     get_timezone,
     get_timezone_abbreviation,
     process_message,
-    safe_db_call,
+    db_retry,
     save_original_image_to_pvc,
     watermark,
     verify_image,
@@ -595,7 +600,7 @@ class TestProcessMessage(TestCase):
 
     @patch("apps.consumer.processor.logger")
     @patch("apps.consumer.processor.handle_image_message", new_callable=AsyncMock)
-    @patch("apps.consumer.processor.safe_db_call")
+    @patch("apps.consumer.processor.db_retry", side_effect=lambda func: func)
     @patch("apps.consumer.processor.generate_local_timestamp")
     @patch("apps.consumer.processor.calculate_camera_status")
     @patch("apps.consumer.processor.sync_to_async")
@@ -604,7 +609,7 @@ class TestProcessMessage(TestCase):
         mock_sync_to_async,
         mock_calculate_status,
         mock_generate_local_timestamp,
-        mock_safe_db_call,
+        mock_db_retry,
         mock_handle_image,
         mock_logger,
     ):
@@ -614,6 +619,9 @@ class TestProcessMessage(TestCase):
             "timestamp": "2025-01-01T00:00:00Z",
         }
         message.body = b"image"
+
+        message.ack = AsyncMock()
+        message.reject = AsyncMock()
 
         process_cm = AsyncMock()
         message.process.return_value = process_cm
@@ -638,7 +646,7 @@ class TestProcessMessage(TestCase):
             "Processed message for camera %s.",
             "12345",
         )
-
+    
     @patch("apps.consumer.processor.logger")
     @patch(
         "apps.consumer.processor.handle_image_message",
@@ -659,6 +667,8 @@ class TestProcessMessage(TestCase):
         }
         message.body = b""
 
+        message.ack = AsyncMock()
+        message.reject = AsyncMock()
         message.process.return_value = AsyncMock()
 
         mock_sync_to_async.side_effect = [
@@ -941,38 +951,191 @@ class TestSaveImage(TestCase):
         
 class TestDbCall(TestCase):
 
-    @patch("apps.consumer.processor.connection")
+    @patch("apps.consumer.processor.connections.close_all")
     @patch("apps.consumer.processor.close_old_connections")
-    def test_safe_db_call_success(
+    def test_db_retry_success(
         self,
         mock_close_old_connections,
-        mock_connection,
+        mock_close_all,
     ):
         mock_func = MagicMock(return_value="success")
 
-        result = safe_db_call(mock_func, 1, 2, key="value")
+        wrapped_func = db_retry(mock_func)
+        result = wrapped_func(1, 2, key="value")
 
         self.assertEqual(result, "success")
         mock_close_old_connections.assert_called_once()
-        mock_connection.ensure_connection.assert_called_once()
+        mock_close_all.assert_not_called()
         mock_func.assert_called_once_with(1, 2, key="value")
 
-    @patch("apps.consumer.processor.connection")
+    @patch("apps.consumer.processor.connections.close_all")
     @patch("apps.consumer.processor.close_old_connections")
-    def test_safe_db_call_propagates_exception(
+    def test_db_retry_propagates_exception(
         self,
         mock_close_old_connections,
-        mock_connection,
+        mock_close_all,
     ):
         mock_func = MagicMock(side_effect=RuntimeError("DB error"))
 
-        with self.assertRaises(RuntimeError):
-            safe_db_call(mock_func)
+        # db_retry is a decorator factory, so apply it to the mock function.
+        wrapped_func = db_retry(mock_func)
+
+        with self.assertRaisesRegex(RuntimeError, "DB error"):
+            wrapped_func(1, 2, key="value")
 
         mock_close_old_connections.assert_called_once()
-        mock_connection.ensure_connection.assert_called_once()
-        mock_func.assert_called_once_with()
+        mock_close_all.assert_not_called()
+        mock_func.assert_called_once_with(1, 2, key="value")
 
+    @patch("apps.consumer.processor.time.sleep")
+    @patch("apps.consumer.processor.logger")
+    @patch("apps.consumer.processor.connections.close_all")
+    @patch("apps.consumer.processor.close_old_connections")
+    def test_db_retry_succeeds_after_operational_error(
+        self,
+        mock_close_old_connections,
+        mock_close_all,
+        mock_logger,
+        mock_sleep,
+    ):
+        error = OperationalError("Connection lost")
+
+        mock_func = MagicMock(
+            side_effect=[
+                error,
+                "success",
+            ]
+        )
+        mock_func.__name__ = "mock_db_function"
+
+        wrapped_func = processor.db_retry(mock_func)
+        result = wrapped_func(1, 2, key="value")
+
+        self.assertEqual(result, "success")
+        self.assertEqual(mock_func.call_count, 2)
+
+        mock_close_all.assert_called_once()
+        self.assertEqual(mock_close_old_connections.call_count, 2)
+
+        mock_sleep.assert_called_once_with(
+            processor.DB_RETRY_BASE_DELAY
+        )
+
+        mock_logger.warning.assert_called_once_with(
+            "DB call %s failed (%s). Retry %d/%d in %.0fs",
+            "mock_db_function",
+            error,
+            1,
+            processor.DB_RETRY_ATTEMPTS,
+            processor.DB_RETRY_BASE_DELAY,
+        )
+
+        self.assertEqual(processor._consecutive_db_failures, 0)
+
+    @patch("apps.consumer.processor.time.sleep")
+    @patch("apps.consumer.processor.logger")
+    @patch("apps.consumer.processor.connections.close_all")
+    @patch("apps.consumer.processor.close_old_connections")
+    def test_db_retry_raises_after_all_attempts_fail(
+        self,
+        mock_close_old_connections,
+        mock_close_all,
+        mock_logger,
+        mock_sleep,
+    ):
+        error = OperationalError("Connection lost")
+        mock_func = MagicMock(side_effect=error)
+        mock_func.__name__ = "mock_db_function"
+
+        with (
+            patch.object(processor, "DB_RETRY_ATTEMPTS", 3),
+            patch.object(processor, "_consecutive_db_failures", 0),
+        ):
+            wrapped_func = processor.db_retry(mock_func)
+
+            with self.assertRaises(OperationalError) as context:
+                wrapped_func(1, 2, key="value")
+
+            # The original exception is re-raised.
+            self.assertIs(context.exception, error)
+
+            # All three attempts were made.
+            self.assertEqual(mock_func.call_count, 3)
+            self.assertEqual(mock_close_old_connections.call_count, 3)
+            self.assertEqual(mock_close_all.call_count, 3)
+
+            # Sleep happens only between attempts.
+            self.assertEqual(mock_sleep.call_count, 2)
+
+            # Two retry warnings and one final error.
+            self.assertEqual(mock_logger.warning.call_count, 2)
+            mock_logger.error.assert_called_once_with(
+                "DB call %s failed after %d attempts (%d consecutive): %s",
+                "mock_db_function",
+                3,
+                1,
+                error,
+            )
+
+            # The consecutive-failure counter was incremented.
+            self.assertEqual(processor._consecutive_db_failures, 1)
+
+    def test_db_retry_raises_runtime_error_when_attempts_are_zero(self):
+        mock_func = MagicMock()
+        mock_func.__name__ = "mock_db_function"
+
+        with patch.object(processor, "DB_RETRY_ATTEMPTS", 0):
+            wrapped_func = processor.db_retry(mock_func)
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                r"db_retry exhausted without return/raise for mock_db_function",
+            ):
+                wrapped_func()
+
+            # The loop never executes.
+            mock_func.assert_not_called()       
+
+    @patch("apps.consumer.processor.os._exit")
+    @patch("apps.consumer.processor.logger")
+    @patch("apps.consumer.processor.process_message", new_callable=AsyncMock)
+    async def test_consume_queue_exits_when_db_failures_exceed_threshold(
+        self,
+        mock_process_message,
+        mock_logger,
+        mock_exit,
+    ):
+        mock_process_message.side_effect = RuntimeError("Database unavailable")
+
+        message = MagicMock()
+
+        # Create an async iterator that yields one message.
+        async def message_iterator():
+            yield message
+
+        @asynccontextmanager
+        async def queue_iterator():
+            yield message_iterator()
+
+        queue = MagicMock()
+        queue.iterator.return_value = queue_iterator()
+
+        with (
+            patch.object(processor, "_consecutive_db_failures",
+                        processor.DB_MAX_CONSECUTIVE_FAILURES),
+            patch.object(processor, "stop_event") as mock_stop_event,
+        ):
+            mock_stop_event.is_set.return_value = False
+
+            await processor.consume_queue(queue, "test-queue")
+
+        mock_process_message.assert_awaited_once_with(message)
+
+        mock_logger.critical.assert_called_once_with(
+            "DB unavailable after repeated retries. Exiting so the container restarts."
+        )
+
+        mock_exit.assert_called_once_with(1)
 class TestSaveWatermarkedImageToPVC(TestCase):
 
     @patch("apps.consumer.processor.PVC_WATERMARKED_PATH", "/tmp/watermarked")

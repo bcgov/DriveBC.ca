@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import functools
 import io
 import logging
 import time
@@ -8,7 +9,6 @@ from datetime import date, datetime, timedelta, timezone
 import sys
 from typing import Optional
 from click import wrap_text
-import logging
 from zoneinfo import ZoneInfo
 import requests
 import boto3
@@ -16,7 +16,7 @@ import aio_pika
 import asyncio
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
-from .db import get_all_from_db, load_index_from_db 
+from .db import get_all_from_db, load_index_from_db
 from timezonefinder import TimezoneFinder
 from contextlib import asynccontextmanager
 from aiormq.exceptions import ChannelInvalidStateError
@@ -26,12 +26,11 @@ from apps.consumer.models import ImageIndex
 from apps.shared.status import get_recent_timestamps, calculate_camera_status
 from botocore.config import Config
 from django.contrib.gis.geos import Point
-from django.db import close_old_connections, connection
+from django.db import close_old_connections, connections, OperationalError, InterfaceError
 from apps.webcam.enums import (
     CAMERA_DIFF_FIELDS,
     CAMERA_FIELD_MAPPING,
 )
-from asgiref.sync import sync_to_async
 
 
 tf = TimezoneFinder()
@@ -70,8 +69,13 @@ EXCHANGE_NAME = os.getenv("RABBITMQ_EXCHANGE_NAME")
 CAMERA_CACHE_REFRESH_SECONDS = int(os.getenv("CAMERA_CACHE_REFRESH_SECONDS", "60"))
 
 RABBITMQ_HEARTBEAT = int(os.getenv("RABBITMQ_HEARTBEAT", "60"))
-RABBITMQ_TIMEOUT = int(os.getenv("RABBITMQ_TIMEOUT", "30")) 
+RABBITMQ_TIMEOUT = int(os.getenv("RABBITMQ_TIMEOUT", "30"))
 RABBITMQ_RECONNECT_INTERVAL = int(os.getenv("RABBITMQ_RECONNECT_INTERVAL", "5"))
+
+# DB resilience settings
+DB_RETRY_ATTEMPTS = max(1, int(os.getenv("DB_RETRY_ATTEMPTS", "5")))
+DB_RETRY_BASE_DELAY = float(os.getenv("DB_RETRY_BASE_DELAY", "2"))  # seconds, doubles each attempt
+DB_MAX_CONSECUTIVE_FAILURES = int(os.getenv("DB_MAX_CONSECUTIVE_FAILURES", "5"))
 
 # S3 client configuration
 config = Config(
@@ -102,6 +106,8 @@ db_data = []  # cached camera metadata from SQL
 last_camera_refresh = {}
 image_invalid = False
 
+_consecutive_db_failures = 0
+
 
 tz_pct = 'America/Vancouver'
 PCT_TIMEZONES = frozenset({
@@ -109,11 +115,50 @@ PCT_TIMEZONES = frozenset({
 })
 PCT_EFFECTIVE_DATE = date(2026, 11, 1)
 
+
+def db_retry(func):
+    """
+    Retry a sync ORM function when the DB connection is dead, with exponential backoff.
+
+    Discards all (thread-local) connections on failure so the next attempt opens a
+    fresh one. After DB_RETRY_ATTEMPTS failures the exception is re-raised and the
+    consecutive-failure counter is incremented (used by consume_queue to exit).
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        global _consecutive_db_failures
+        for attempt in range(1, DB_RETRY_ATTEMPTS + 1):
+            try:
+                close_old_connections()
+                result = func(*args, **kwargs)
+                _consecutive_db_failures = 0
+                return result
+            except (OperationalError, InterfaceError) as e:
+                # Covers both the default PostGIS DB and "mssql"
+                connections.close_all()
+                if attempt == DB_RETRY_ATTEMPTS:
+                    _consecutive_db_failures += 1
+                    logger.error(
+                        "DB call %s failed after %d attempts (%d consecutive): %s",
+                        func.__name__, attempt, _consecutive_db_failures, e,
+                    )
+                    raise
+                delay = DB_RETRY_BASE_DELAY * 2 ** (attempt - 1)
+                logger.warning(
+                    "DB call %s failed (%s). Retry %d/%d in %.0fs",
+                    func.__name__, e, attempt, DB_RETRY_ATTEMPTS, delay,
+                )
+                time.sleep(delay)
+        # Unreachable while DB_RETRY_ATTEMPTS >= 1; makes the failure path explicit
+        raise RuntimeError(f"db_retry exhausted without return/raise for {func.__name__}")
+    return wrapper
+
+
 async def on_reconnect(conn):
     logger.info("RabbitMQ connection re-established")
     global last_activity
     last_activity = time.time()
-   
+
 async def on_close(conn, exc=None):
     logger.warning(f"RabbitMQ connection closed: {exc}")
 
@@ -169,6 +214,13 @@ async def consume_queue(queue, name: str):
                 await process_message(message)
             except Exception as e:
                 logging.exception(f"Error processing message from {name}: {e}")
+                # Backstop: if the DB stays unreachable after repeated retries, don't
+                # swallow the error forever. Exit so the orchestrator restarts the pod.
+                if _consecutive_db_failures >= DB_MAX_CONSECUTIVE_FAILURES:
+                    logger.critical(
+                        "DB unavailable after repeated retries. Exiting so the container restarts."
+                    )
+                    os._exit(1)  # deliberate hard exit; sys.exit won't reliably end the process from here
 
 async def consume_from(rb_url: str, name: str):
     while not stop_event.is_set():
@@ -215,7 +267,7 @@ async def parse_rows(rb_url: str):
     """
     logger.info("Fetching DB camera rows for %s", rb_url)
 
-    rows = await sync_to_async(get_all_from_db)()
+    rows = await sync_to_async(db_retry(get_all_from_db))()
     db_data = process_camera_rows(rows)
 
     if not db_data:
@@ -269,33 +321,43 @@ def shutdown():
     stop_event.set()
 
 async def process_message(message: aio_pika.IncomingMessage):
-    """Process a single message from the queue."""
-    async with message.process(ignore_processed=True):
-        filename = message.headers.get("filename", "unknown.jpg")
-        camera_id = filename.split("_")[0].split(".")[0]
-        timestamp_utc = message.headers.get("timestamp", "unknown")
-        camera_status = await sync_to_async(calculate_camera_status)(camera_id, timestamp_utc)
-        
-        timestamp_local = await sync_to_async(safe_db_call)(
-            generate_local_timestamp, db_data, camera_id, timestamp_utc
+    """Process a single message; the ack/nack decision depends on the error type."""
+    try:
+        await _handle_message(message)
+    except (OperationalError, InterfaceError):
+        # Critical and retryable: DB was unreachable even after db_retry.
+        # Put the message back so it isn't lost, and re-raise so
+        # consume_queue's consecutive-failure backstop still counts it.
+        logger.exception("DB error processing message; requeueing")
+        await message.nack(requeue=True)
+        raise
+    except Exception:
+        # Non-retryable (bad image, bad headers, bug): drop it so it can't loop forever.
+        logger.exception("Non-retryable error processing message; discarding")
+        await message.reject(requeue=False)
+    else:
+        await message.ack()
+
+
+async def _handle_message(message: aio_pika.IncomingMessage):
+    filename = message.headers.get("filename", "unknown.jpg")
+    camera_id = filename.split("_")[0].split(".")[0]
+    timestamp_utc = message.headers.get("timestamp", "unknown")
+    camera_status = await sync_to_async(db_retry(calculate_camera_status))(camera_id, timestamp_utc)
+
+    timestamp_local = await sync_to_async(db_retry(generate_local_timestamp))(
+        db_data, camera_id, timestamp_utc
+    )
+
+    try:
+        await asyncio.wait_for(
+            handle_image_message(camera_id, message.body, timestamp_local, camera_status),
+            timeout=120
         )
-        
-        try:
-            await asyncio.wait_for(
-                handle_image_message(camera_id, message.body, timestamp_local, camera_status),
-                timeout=120
-            )
-        except asyncio.TimeoutError:
-            logger.error(f"Processing timeout for camera {camera_id}")
+    except asyncio.TimeoutError:
+        logger.error(f"Processing timeout for camera {camera_id}")
 
-        logger.info("Processed message for camera %s.", camera_id)
-
-def safe_db_call(func, *args, **kwargs):
-    """Call a sync ORM function safely after dropping dead connections"""
-    close_old_connections()
-    # This forces Django to open a fresh connection if needed
-    connection.ensure_connection()
-    return func(*args, **kwargs)
+    logger.info("Processed message for camera %s.", camera_id)
 
 
 def process_camera_rows(rows):
@@ -328,7 +390,7 @@ def process_camera_rows(rows):
             'is_new': row.isnew if hasattr(row, 'isnew') else False,
             'seq': row.seq if hasattr(row, 'seq') else 0,
             'cam_locationsweather_station': row.cam_locationsweather_station if hasattr(row, 'cam_locationsweather_station') else '',
-            
+
         }
         camera_list.append(camera_obj)
     return camera_list
@@ -337,10 +399,10 @@ def process_camera_rows(rows):
 def get_timezone(webcam):
     lat_str = webcam.get('cam_locations_geo_latitude')
     lon_str = webcam.get('cam_locations_geo_longitude')
-    
+
     if not lat_str or not lon_str:
         return tz_pct
-    
+
     try:
         lat = float(lat_str)
         lon = float(lon_str)
@@ -370,7 +432,7 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
 
         stamped = Image.new('RGB', (width, height + 18))
         pen = ImageDraw.Draw(stamped)
-        
+
         stamped.paste(raw)  # leaves 18 pixel black bar left at bottom
         dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
 
@@ -386,7 +448,7 @@ def watermark(webcam: any, image_data: bytes, tz: str, timestamp: str) -> bytes:
         )
         pen.text((width - 3,  height + 14), timestamp, fill="white",
                      anchor='rs', font=FONT)
-        
+
         # add mark and timestamp to black bar
         mark = webcam.get('dbc_mark', '')
         pen.text((3,  height + 14), mark, fill="white", anchor='ls', font=FONT)
@@ -432,7 +494,7 @@ def blank_out_image(webcam: any, image_data: bytes, tz: str, timestamp: str) -> 
         pen.polygon(((0, height), (width, height),
                          (width, height + 18), (0, height + 18)),
                         fill="red")
-        
+
         # add mark and timestamp to black bar
         mark = webcam.get('dbc_mark', '')
         pen.text((3,  height + 14), mark, fill="white", anchor='ls', font=FONT)
@@ -462,7 +524,7 @@ def save_original_image_to_pvc(camera_id: str, image_bytes: bytes):
         logging.exception(f"Error saving original image to PVC {filepath}: {e}")
     logger.info(f"Original image saved to PVC at {filepath}")
 
-def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp: str, is_on: bool):  
+def save_watermarked_image_to_pvc(camera_id: str, image_bytes: bytes, timestamp: str, is_on: bool):
     os.makedirs(os.path.dirname(f'{PVC_WATERMARKED_PATH}'), exist_ok=True)
 
     save_dir = os.path.join(PVC_WATERMARKED_PATH, camera_id)
@@ -516,7 +578,7 @@ def delete_watermarked_image_from_pvc(camera_id: str):
                 os.remove(filepath)
     except Exception as e:
         logging.exception(f"Error deleting watermarked images from PVC {save_dir}: {e}")
-        
+
 async def get_images_within(camera_id: str, hours: int = 720) -> list:
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     index_db = await load_index_from_db()
@@ -541,6 +603,7 @@ def generate_local_timestamp(db_data: list, camera_id: str, timestamp: str):
     return timestamp
 
 @sync_to_async
+@db_retry
 def insert_image_index(camera_id, timestamp):
     ImageIndex.objects.create(
         camera_id=camera_id,
@@ -548,6 +611,7 @@ def insert_image_index(camera_id, timestamp):
     )
 
 @sync_to_async
+@db_retry
 def update_webcam(camera_id, timestamp, webcam):
     region = webcam.get('cam_locations_region', '')
     region_obj = Region.objects.using("mssql").filter(id=region).first()
@@ -555,7 +619,7 @@ def update_webcam(camera_id, timestamp, webcam):
     region_name = region_obj.name if region_obj else ''
     cam_locations_geo_latitude = webcam.get('cam_locations_geo_latitude', None)
     cam_locations_geo_longitude = webcam.get('cam_locations_geo_longitude', None)
-     
+
     geometry = None
     if cam_locations_geo_latitude and cam_locations_geo_longitude:
         try:
@@ -615,16 +679,28 @@ def update_webcam(camera_id, timestamp, webcam):
 
 
 @sync_to_async
+@db_retry
 def delete_offline_webcam_records(camera_id):
     ImageIndex.objects.filter(camera_id=camera_id).delete()
-    
+
+
+@db_retry
+def _get_latest_image(camera_id):
+    return ImageIndex.objects.filter(camera_id=camera_id).order_by('-id').first()
+
+
+@db_retry
+def _get_webcam(camera_id):
+    return Webcam.objects.filter(id=camera_id).first()
+
+
 def push_to_s3(image_bytes: bytes, camera_id: str, is_original: bool, timestamp: str):
     """
     Pushes the image bytes to S3 using a presigned URL.
     """
     if image_bytes is None:
         return
-    key = f"webcams/originals/{camera_id}.jpg" if is_original else f"webcams/timelapse/{camera_id}/{timestamp}.jpg"   
+    key = f"webcams/originals/{camera_id}.jpg" if is_original else f"webcams/timelapse/{camera_id}/{timestamp}.jpg"
     # Generate presigned PUT URL (signed for simple PUT)
     url = s3_client.generate_presigned_url(
         'put_object',
@@ -653,10 +729,10 @@ def push_to_s3(image_bytes: bytes, camera_id: str, is_original: bool, timestamp:
                 logger.info(f"Original image saved to s3 at {key}")
 
 async def is_camera_pushed_too_soon(camera_id: str, timestamp: str):
-    image = await sync_to_async(lambda: ImageIndex.objects.filter(camera_id=camera_id).order_by('-id').first())()
+    image = await sync_to_async(_get_latest_image)(camera_id)
     if not image:
         return False
-    last_modified = image.timestamp 
+    last_modified = image.timestamp
     dt_last_modified_str = last_modified.isoformat(sep=" ")
     dt_last_modified = datetime.fromisoformat(dt_last_modified_str)
     # convert to seconds
@@ -686,13 +762,16 @@ async def refresh_camera_cache(camera_id: str):
         return
 
     try:
-        rows = await sync_to_async(get_all_from_db)(camera_id)
+        rows = await sync_to_async(db_retry(get_all_from_db))(camera_id)
         refreshed = process_camera_rows(rows)
         if refreshed:
             existing = [cam for cam in db_data if cam['id'] != int(camera_id)]
             db_data = existing + refreshed
             last_camera_refresh[camera_id] = now
             logger.info(f"Refreshed camera metadata cache for camera {camera_id}.")
+    except (OperationalError, InterfaceError):
+        # Let DB outages propagate so the message is requeued, not dropped
+        raise
     except Exception as e:
         logger.warning(f"Failed to refresh camera metadata cache: {e}")
 
@@ -702,12 +781,16 @@ async def handle_image_message(camera_id: str, body: bytes, timestamp: str, came
     webcams = [cam for cam in db_data if cam['id'] == int(camera_id)]
     webcam = webcams[0] if webcams else None
 
+    if webcam is None:
+        logger.warning(f"Camera {camera_id} not found in camera metadata cache, skipping.")
+        return
+
     camera_pushed_too_soon = await is_camera_pushed_too_soon(camera_id, timestamp)
     if camera_pushed_too_soon:
         logger.warning(f"Camera {camera_id} pushed too soon, skipping.")
         return
 
-    tz = get_timezone(webcam) if webcam else tz_pst
+    tz = get_timezone(webcam)
     naive_dt = datetime.strptime(timestamp, "%Y%m%d%H%M%S%f")
     local_dt = naive_dt.replace(tzinfo=ZoneInfo(tz))
     utc_dt = local_dt.astimezone(ZoneInfo("UTC"))
@@ -717,9 +800,9 @@ async def handle_image_message(camera_id: str, body: bytes, timestamp: str, came
 
     image_invalid = not verify_image(body, camera_id)
     if image_invalid:
-        logger.warning(f"Image from camera {camera_id} is invalid after watermarking. Skipping save and DB insert.") 
+        logger.warning(f"Image from camera {camera_id} is invalid after watermarking. Skipping save and DB insert.")
         return
-    
+
     watermarked_image_bytes = None
     blank_out_image_bytes = None
     watermarked_image_bytes = watermark(webcam, body, tz, timestamp)
@@ -733,7 +816,7 @@ async def handle_image_message(camera_id: str, body: bytes, timestamp: str, came
         if blank_out_image_bytes is None:
             logger.warning(f"Watermarking failed for camera {camera_id}. Skipping save and DB insert.")
             return
-    
+
     if webcam.get('is_on'):
         # Save watermarked images to PVC with timestamp for replay the day
         save_watermarked_image_to_pvc(camera_id, watermarked_image_bytes, utc_timestamp_str, webcam.get('is_on'))
@@ -753,12 +836,10 @@ async def handle_image_message(camera_id: str, body: bytes, timestamp: str, came
         # Save watermarked images to S3 with timestamp
         push_to_s3(watermarked_image_bytes, camera_id, False, utc_timestamp_str)
 
-    existing_webcam = await sync_to_async(
-        Webcam.objects.filter(id=camera_id).first
-    )()
+    existing_webcam = await sync_to_async(_get_webcam)(camera_id)
     if not existing_webcam:
         return
-    
+
     should_update = False
     for field in CAMERA_DIFF_FIELDS:
         source_field = CAMERA_FIELD_MAPPING.get(field, field)
@@ -767,19 +848,19 @@ async def handle_image_message(camera_id: str, body: bytes, timestamp: str, came
             source_value = camera_status[source_field]
         else:
             source_value = webcam.get(source_field)
-    
+
         if webcam_value != source_value:
             should_update = True
             break
-    
+
     if not should_update:
-            return
+        return
 
     await update_webcam(
-            camera_id,
-            utc_dt,
-            webcam
-        )
+        camera_id,
+        utc_dt,
+        webcam
+    )
 
 
 def verify_image(image_data: bytes, camera_id: str) -> bool:
@@ -791,11 +872,11 @@ def verify_image(image_data: bytes, camera_id: str) -> bool:
     except Exception as e:
         logger.warning(f"Invalid image for camera {camera_id}: {e}")
         return False
-    
+
 
 @dataclass
 class ConnectionMetrics:
     connect_time: float
-    last_activity: float  
+    last_activity: float
     reconnect_count: int = 0
     messages_processed: int = 0
