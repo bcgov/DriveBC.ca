@@ -45,9 +45,16 @@ RUN curl -fsSLO https://data.iana.org/time-zones/releases/tzcode2026e.tar.gz \
  && tar -xzf tzdata2026e.tar.gz \
  && make zic
 
+# Vancouver: final "-7:00 - MST" -> PCT
 RUN sed -i '/^Zone America\/Vancouver/,/^Zone America\/Dawson_Creek/ s/^\([[:space:]]*-7:00[[:space:]]*-[[:space:]]*\)MST/\1PCT/' northamerica \
- && sed -n '/^Zone America\/Vancouver/,/^Zone America\/Dawson_Creek/p' northamerica | grep -q 'PCT' \
- && ./zic -b fat -d /out -L /dev/null northamerica
+ && sed -n '/^Zone America\/Vancouver/,/^Zone America\/Dawson_Creek/p' northamerica | grep -q 'PCT'
+
+# Edmonton: final "-6:00 - CST" -> ABT
+RUN sed -i '/^Zone America\/Edmonton/,/^Zone America\/Vancouver/ s/^\([[:space:]]*-6:00[[:space:]]*-[[:space:]]*\)CST/\1ABT/' northamerica \
+ && sed -n '/^Zone America\/Edmonton/,/^Zone America\/Vancouver/p' northamerica | grep -q 'ABT'
+
+# Compile both patches
+RUN ./zic -b fat -d /out -L /dev/null northamerica
 
 
 # ==========================================
@@ -76,6 +83,7 @@ RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor
 
 # --- Temporary timezone patch for Vancouver, BC --- 
 COPY --from=tzbuild /out/America/Vancouver /usr/share/zoneinfo/America/Vancouver
+COPY --from=tzbuild /out/America/Edmonton  /usr/share/zoneinfo/America/Edmonton
 # --- End Temporary timezone patch for Vancouver, BC ---
 
 WORKDIR /app/backend
