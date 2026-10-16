@@ -49,9 +49,9 @@ RUN curl -fsSLO https://data.iana.org/time-zones/releases/tzcode2026e.tar.gz \
 RUN sed -i '/^Zone America\/Vancouver/,/^Zone America\/Dawson_Creek/ s/^\([[:space:]]*-7:00[[:space:]]*-[[:space:]]*\)MST/\1PCT/' northamerica \
  && sed -n '/^Zone America\/Vancouver/,/^Zone America\/Dawson_Creek/p' northamerica | grep -q 'PCT'
 
-# Edmonton: final "-6:00 - CST" -> ABT
-RUN sed -i '/^Zone America\/Edmonton/,/^Zone America\/Vancouver/ s/^\([[:space:]]*-6:00[[:space:]]*-[[:space:]]*\)CST/\1ABT/' northamerica \
- && sed -n '/^Zone America\/Edmonton/,/^Zone America\/Vancouver/p' northamerica | grep -q 'ABT'
+# Edmonton: final "-6:00 - CST" -> MDT
+RUN sed -i '/^Zone America\/Edmonton/,/^Zone America\/Vancouver/ s/^\([[:space:]]*-6:00[[:space:]]*-[[:space:]]*\)CST/\1MDT/' northamerica \
+ && sed -n '/^Zone America\/Edmonton/,/^Zone America\/Vancouver/p' northamerica | grep -qE '^[[:space:]]*-6:00[[:space:]]+-[[:space:]]+MDT'
 
 # Compile both patches
 RUN ./zic -b fat -d /out -L /dev/null northamerica
