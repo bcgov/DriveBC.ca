@@ -3,6 +3,13 @@
   "extends": [
     "github>bcgov/renovate-config#2026.9.26"
   ],
+  "hostRules": [
+    {
+      "hostType": "npm",
+      "matchHost": "npm.fontawesome.com",
+      "token": "{{ secrets.FONTAWESOME_PACKAGE_TOKEN }}"
+    }
+  ],
   "helm-values": {
     "managerFilePatterns": [
       "/(^|/)values.*\\.yaml$/"
@@ -17,11 +24,6 @@
     {
       "matchDatasources": ["docker"],
       "matchPackageNames": ["registry.redhat.io/**"],
-      "enabled": false
-    },
-    {
-      "matchDatasources": ["npm"],
-      "matchPackageNames": ["@fortawesome/**", "@awesome.me/**"],
       "enabled": false
     },
     {
