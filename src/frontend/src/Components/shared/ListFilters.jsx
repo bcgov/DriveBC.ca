@@ -347,7 +347,7 @@ export default function ListFilters(props) {
 
   const tooltipCurrentRoutes = (
     <Tooltip id="tooltipCurrentRoutes" className="tooltip-content">
-      <p>Map Layers are updated to show relevant layers for your routes. To revert to your previous settings, cancel the route search.</p>
+      <p>Map Options are updated to show relevant layers for your routes. To revert to your previous settings, cancel the route search.</p>
     </Tooltip>
   );
 
@@ -363,7 +363,7 @@ export default function ListFilters(props) {
             open ? setOpen(false) : setOpen(true) }
           }>
           <FontAwesomeIcon icon={iconOverride ? faLayerGroupOutline : faLayerGroup } />
-          <span className="filters-btn__text">{textOverride ? textOverride : 'Map Layers'}</span>
+          <span className="filters-btn__text">{textOverride ? textOverride : 'Map Options'}</span>
           {isDelaysPage && <span className="mobile-btn-text">Type</span>}
         </Button>
       }
@@ -371,7 +371,7 @@ export default function ListFilters(props) {
       {open &&
         <div className={'filters legacy-filters-menu' + (isDelaysPage ? ' delays' : '')}>
           <div className="filters-title__container">
-            <h4 className="filters-title">{textOverride ? textOverride : 'Map Layers'}</h4>
+            <h4 className="filters-title">{textOverride ? textOverride : 'Map Options'}</h4>
             {
               (mapLayers && mapLayers.current.routeLayer && mapLayers.current.routeLayer.rendered)
               &&

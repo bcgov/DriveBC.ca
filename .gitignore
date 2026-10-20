@@ -27,3 +27,7 @@ notes
 .cursor/
 .ai/
 *.mdc
+
+# Playwright
+playwright-report/
+test-results/
