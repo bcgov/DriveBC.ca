@@ -3,10 +3,9 @@ from PIL import Image
 from unittest.mock import patch, MagicMock, AsyncMock, mock_open
 from datetime import datetime
 import io
-from zoneinfo import ZoneInfo
 
 from aiormq import AMQPConnectionError
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 from django.core.cache import cache
 import asyncio
 
@@ -23,7 +22,6 @@ from apps.consumer.processor import (
     consume_queue,
     process_camera_rows,
     get_timezone,
-    get_timezone_abbreviation,
     process_message,
     db_retry,
     save_original_image_to_pvc,
@@ -682,7 +680,7 @@ class TestProcessMessage(TestCase):
             "Processing timeout for camera 123"
         )
 
-class TestWatermark(TestCase):
+class TestWatermark(SimpleTestCase):
 
     def create_image(self, width=640, height=480):
         img = Image.new("RGB", (width, height), color="red")
@@ -690,34 +688,28 @@ class TestWatermark(TestCase):
         img.save(buf, format="JPEG")
         return buf.getvalue()
 
-    def test_pct_timezone_abbreviation_for_bc_timezones(self):
-        local_dt = datetime(2026, 11, 1, 1, 30)
-
-        for tz in (
-            "America/Vancouver",
-        ):
-            with self.subTest(tz=tz):
-                self.assertEqual(get_timezone_abbreviation(tz, local_dt), "PCT")
-
-    def test_bc_timezone_abbreviation_before_pct_effective_date(self):
-        local_dt = datetime(
-            2026, 10, 31, 12, 30, tzinfo=ZoneInfo("America/Vancouver")
+    @patch("apps.consumer.processor.ImageDraw.Draw")
+    def test_timezone_abbreviation_before_and_after_november_transition(
+        self, mock_draw
+    ):
+        expected_timestamps = (
+            ("20261101015900000000", "Nov 01, 2026 01:59:00 AM PDT"),
+            ("20261101020000000000", "Nov 01, 2026 02:00:00 AM PCT"),
         )
 
-        self.assertEqual(
-            get_timezone_abbreviation("America/Vancouver", local_dt),
-            "PDT",
-        )
+        for timestamp, expected in expected_timestamps:
+            with self.subTest(timestamp=timestamp):
+                watermark(
+                    {"dbc_mark": "DriveBC"},
+                    self.create_image(),
+                    "America/Vancouver",
+                    timestamp,
+                )
 
-    def test_non_pct_timezone_uses_timezone_package_abbreviation(self):
-        local_dt = datetime(
-            2026, 12, 1, 12, 30, tzinfo=ZoneInfo("America/Edmonton")
-        )
-
-        self.assertEqual(
-            get_timezone_abbreviation("America/Edmonton", local_dt),
-            local_dt.strftime("%Z"),
-        )
+                rendered_timestamp = (
+                    mock_draw.return_value.text.call_args_list[-2].args[1]
+                )
+                self.assertEqual(rendered_timestamp, expected)
 
     def test_returns_none_when_image_is_none(self):
         webcam = {"dbc_mark": "TEST"}
