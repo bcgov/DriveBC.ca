@@ -1,6 +1,12 @@
 @use "styles/variables";
 
 .auth-modal {
+  // modal focus invisible since it cannot be tabbed to
+  #modal-content:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
   .form-container {
     button {
       margin-bottom: .25rem;
