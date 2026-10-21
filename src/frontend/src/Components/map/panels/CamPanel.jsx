@@ -562,9 +562,14 @@ export default function CamPanel(props) {
 
                   {!replay && !isLoading && !show && !unavailable && stale && !delayed && (
                     <div className="card-banner">
-                      <FontAwesomeIcon icon={faHourglassClock} />
-                      <p>Unable to retrieve latest image. Displaying last image received.</p>
-                      <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                      <div>
+                        <FontAwesomeIcon className="icon" icon={faHourglassClock} />
+
+                        <p className="bold">Unable to retrieve latest image.</p>
+                        <p className="normal-text">Displaying the last image received. An attempt to retrieve the latest image will be made at the next refresh.</p>
+                        
+                        <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                      </div>
                     </div>
                   )}
 
