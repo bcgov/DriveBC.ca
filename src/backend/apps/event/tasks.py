@@ -18,13 +18,11 @@ from apps.event.models import (
     QueuedDistrictEventNotification,
     QueuedEventNotification,
 )
-from apps.event.ride import get_ride_event_dict
+from apps.event.ride import get_ride_events
 from apps.event.serializers import EventInternalSerializer
-from apps.feed.client import FeedClient
 from apps.shared.enums import CacheKey
 from apps.shared.helpers import attach_default_email_images, attach_image_to_email
 from apps.shared.models import Area
-from config.settings import RIDE_EVENT_PREFIX
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.core.cache import cache
@@ -149,97 +147,29 @@ def populate_event_from_data(new_event_data):
         return True
 
 
-def cap_time_to_now(datetime_value):
-    # Use current time instead of future time
-    if datetime_value and datetime_value > datetime.datetime.now(ZoneInfo('UTC')):
-        return datetime.datetime.now(ZoneInfo('America/Vancouver'))
-
-    return datetime_value
-
-
 def populate_all_event_data():
-    client = FeedClient()
-
-    open511_data = client.get_event_list()['events']
+    # DBC22-7577: RIDE only, Open511 no longer used
+    ride_events = get_ride_events()
 
     # DBC22-5979: skip task when result is empty
-    if not len(open511_data):
-        logger.warning('No open 511 events found, stopping task')
+    if not len(ride_events):
+        logger.warning('No RIDE events found, stopping task')
         return
-
-    closures, chain_ups = {}, []
-    ride_events, ride_chainups = get_ride_event_dict()
 
     active_event_ids = []
     updated_event_ids = []
-    for event_data in open511_data:
+    for event_data in ride_events:
         try:
-            id = event_data.get("id", "").split("/")[-1]
-            event_data["id"] = id
-
-            # Data pulled directly from DIT or RIDE
-            direct_data_source = ride_events if RIDE_EVENT_PREFIX in id else closures
-            if id not in direct_data_source:
-                logger.warning(f'Direct event data for {id} not found')
-                continue
-
-            direct_data = direct_data_source[id]
-            event_data["closed"] = direct_data.get('closed', False)
-            event_data["highway_segment_names"] = direct_data.get('highway_segment_names', '')
-
-            location_description = direct_data.get('location_description', '')
-            location_extent = direct_data.get('location_extent', '')
-            if location_extent:
-                location_description += ' for ' + location_extent
-
-            event_data["location_description"] = location_description
-            event_data["closest_landmark"] = direct_data.get('closest_landmark', '')
-            event_data["next_update"] = direct_data.get('next_update', None)
-            event_data["start_point_linear_reference"] = direct_data.get('start_point_linear_reference', None)
-
-            # DBC22-7081: RIDE description from RIDE API, not Open511
-            if RIDE_EVENT_PREFIX in id and direct_data.get('description'):
-                event_data["description"] = direct_data['description']
-
-            if 'route_at' in direct_data and direct_data['route_at'] != '':
-                event_data["route_at"] = direct_data['route_at']
-
-            # DBC22-3081 replace timezone with DIT API data, to be removed if source is corrected
-            if 'timezone' in direct_data and direct_data['timezone']:
-                new_tz = ZoneInfo(direct_data['timezone'])
-                event_data['timezone'] = direct_data['timezone']
-
-                # For DIT events, replace timezone without changing time
-                if RIDE_EVENT_PREFIX not in id:
-                    first_created_time = event_data["first_created"].replace(tzinfo=new_tz)
-                    event_data["first_created"] = cap_time_to_now(first_created_time)
-
-                    last_updated_time = event_data["last_updated"].replace(tzinfo=new_tz)
-                    event_data["last_updated"] = cap_time_to_now(last_updated_time)
-
-            else:
-                event_data['timezone'] = 'America/Vancouver'
-
             # Populate db obj
             updated = populate_event_from_data(event_data)
             if updated:
                 updated_event_ids.append(event_data['id'])
 
-            if id:  # Mark event as active
-                active_event_ids.append(id)
+            # Mark event as active
+            active_event_ids.append(event_data['id'])
 
         except Exception as e:
             logger.warning(e)
-
-    all_chainups = chain_ups + ride_chainups
-    for chain_up in all_chainups:
-        # Active
-        active_event_ids.append(chain_up.validated_data['id'])
-
-        # Updated
-        updated = populate_event_from_data(chain_up.validated_data)
-        if updated:
-            updated_event_ids.append(chain_up.validated_data['id'])
 
     # Purge events absent in the feed
     Event.objects.filter(status=EVENT_STATUS.ACTIVE)\

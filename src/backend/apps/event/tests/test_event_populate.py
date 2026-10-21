@@ -1,21 +1,22 @@
+import copy
 import datetime
 import json
 import logging
 import zoneinfo
-from http.client import INTERNAL_SERVER_ERROR
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
+import requests
 from apps.event import enums as event_enums
-from apps.event.enums import EVENT_DIRECTION, EVENT_STATUS
+from apps.event.enums import EVENT_STATUS
 from apps.event.helpers import get_display_category
 from apps.event.models import Event
 from apps.event.tasks import populate_all_event_data, populate_event_from_data
 from apps.event.tests.test_data.event_parsed_feed import parsed_feed, parsed_feed_2
-from apps.shared.tests import BaseTest, MockResponse
+from apps.event.tests.test_ride import ride_event, ride_http_response
+from apps.shared.tests import BaseTest
 from django.contrib.gis.geos import LineString, Point
-from httpx import HTTPStatusError
 
 # suppress logged error messages to reduce noise
 logging.getLogger().setLevel(logging.CRITICAL)
@@ -24,33 +25,6 @@ logging.getLogger().setLevel(logging.CRITICAL)
 class TestEventModel(BaseTest):
     def setUp(self):
         super().setUp()
-
-        data_dir = str(Path(__file__).parent) + "/test_data/"
-
-        # Normal feed
-        event_feed_data = open(data_dir + "event_feed_list_of_five.json")
-        self.mock_event_feed_result = json.load(event_feed_data)
-        self.event_ids = [e["id"].split("/")[-1] for e in self.mock_event_feed_result["events"]]
-
-        # Feed with one missing event from normal feed
-        event_feed_data_with_missing_event = open(
-            data_dir + "event_feed_list_of_four.json"
-        )
-        self.mock_event_feed_result_with_missing_event = json.load(
-            event_feed_data_with_missing_event
-        )
-
-        # Updated feed with one missing event
-        event_feed_data = open(data_dir + "event_feed_list_of_four_updated.json")
-        self.mock_updated_event_feed_result = json.load(event_feed_data)
-
-        # Feed with error in data
-        event_feed_data_with_errors = open(
-            data_dir + "event_feed_list_of_five_with_validation_error.json"
-        )
-        self.mock_event_feed_result_with_errors = json.load(
-            event_feed_data_with_errors
-        )
 
         # Parsed python dict
         self.parsed_feed = parsed_feed
@@ -148,108 +122,70 @@ class TestEventModel(BaseTest):
         self.mock_event_feed_result = json.load(event_feed_data)
         populate_event_from_data(self.mock_event_feed_result['events'][0])
 
-    def _ride_response(self, closed_ids=()):
-        ride_resp = MagicMock()
-        ride_resp.json.return_value = [{
-            "id": event_id,
-            "type": "INCIDENT",
-            "impacts": [{"closed": event_id in closed_ids}],
-            "location": {"start": {"name": "Highway 1", "nearby": [], "coords": [1, 1]}},
-            "segment": None,
-            "timings": {},
-            "route_projection": 0,
-        } for event_id in self.event_ids]
-        return ride_resp
+    @patch("apps.event.ride.requests.get")
+    def test_empty_ride_feed_skipped(self, mock_ride_requests_get):
+        mock_ride_requests_get.return_value = ride_http_response([ride_event()])
+        populate_all_event_data()
+
+        # DBC22-5979: empty feed does not purge existing events
+        mock_ride_requests_get.return_value = ride_http_response([])
+        populate_all_event_data()
+        assert Event.objects.count() == 1
 
     @patch("apps.event.ride.requests.get")
-    @patch("httpx.get")
-    def test_dit_events_skipped(self, mock_httpx_get, mock_ride_requests_get):
-        mock_httpx_get.return_value = MockResponse(self.mock_event_feed_result, status_code=200)
-        ride_resp = MagicMock()
-        ride_resp.json.return_value = []
-        mock_ride_requests_get.return_value = ride_resp
+    def test_populate_and_update_event(self, mock_ride_requests_get):
+        events = [ride_event(id=f"RIDE-{i}") for i in range(1, 6)]
+        events[1]["impacts"] = []
+        updated_events = copy.deepcopy(events[:4])
+        updated_events[2]["description"] = "Not updated"
+        updated_events[3]["description"] = "Updated"
+        updated_events[3]["last_updated"] = "2026-10-02T18:00:00Z"
 
-        populate_all_event_data()
-        assert Event.objects.count() == 0
-
-    # DIT phased out; fixture DBC-* ids routed through RIDE feed
-    @patch("apps.event.tasks.RIDE_EVENT_PREFIX", "DBC")
-    @patch("apps.event.ride.requests.get")
-    @patch("httpx.get")
-    def test_populate_and_update_event(self, mock_httpx_get, mock_ride_requests_get):
-        mock_httpx_get.side_effect = [
-            MockResponse(self.mock_event_feed_result, status_code=200),
-            MockResponse(self.mock_event_feed_result_with_missing_event,
-                         status_code=200),
-            MockResponse(self.mock_updated_event_feed_result, status_code=200),
-        ]
-        mock_ride_requests_get.return_value = self._ride_response(closed_ids={"DBC-46014"})
-
-        populate_all_event_data()
-        assert Event.objects.count() == 5
-
-        event_id_list = sorted(Event.objects.all().order_by("id")
-                               .values_list("id", flat=True))
-        assert event_id_list == [
-            "DBC-28386",
-            "DBC-46014",
-            "DBC-52446",
-            "DBC-52791",
-            "DBC-53145"
+        mock_ride_requests_get.side_effect = [
+            ride_http_response(events),
+            ride_http_response(events[:4]),
+            ride_http_response(updated_events),
         ]
 
-        # NONE direction
-        event = Event.objects.get(id="DBC-52446")
-        assert event.direction == EVENT_DIRECTION.NONE
-        # closed value comes from RIDE feed
-        event = Event.objects.get(id="DBC-46014")
-        assert event.closed is True
+        populate_all_event_data()
+        assert sorted(Event.objects.values_list("id", flat=True)) == [
+            "RIDE-1", "RIDE-2", "RIDE-3", "RIDE-4", "RIDE-5",
+        ]
+        assert Event.objects.get(id="RIDE-1").closed is True
+        assert Event.objects.get(id="RIDE-2").closed is False
 
         # Second call with one missing event
         populate_all_event_data()
 
         assert Event.objects.filter(status=EVENT_STATUS.ACTIVE).count() == 4
         # Inactive events are deleted
-        assert Event.objects.filter(id="DBC-28386").count() == 0
+        assert Event.objects.filter(id="RIDE-5").count() == 0
 
         # Third call with updated data
         populate_all_event_data()
         # Not updated due to same updated datetime
-        assert Event.objects.get(id="DBC-46014").route_from \
-               != "Updated Rd"
+        assert Event.objects.get(id="RIDE-3").description != "Not updated"
 
         # Updated due to different updated datetime
-        assert Event.objects.get(id="DBC-53145").route_from \
-               == "Updated Trail"
+        assert Event.objects.get(id="RIDE-4").description == "Updated"
 
-    @patch("apps.event.tasks.RIDE_EVENT_PREFIX", "DBC")
     @patch("apps.event.ride.requests.get")
-    @patch("httpx.get")
-    def test_populate_event_with_validation_error(self, mock_httpx_get, mock_ride_requests_get):
-        mock_httpx_get.return_value = MockResponse(self.mock_event_feed_result_with_errors, status_code=200)
-        mock_ride_requests_get.return_value = self._ride_response()
+    def test_populate_event_with_validation_error(self, mock_ride_requests_get):
+        events = [ride_event(id=f"RIDE-{i}") for i in range(1, 6)]
+        events[1]["timing"] = {"nextUpdate": "not-a-datetime"}
+        mock_ride_requests_get.return_value = ride_http_response(events)
 
-        # Only events with validation error (DBC-46014) are omitted
+        # Only events with validation error (RIDE-2) are omitted
         populate_all_event_data()
-        assert Event.objects.count() == 4
-
-        event_id_list = sorted(Event.objects.all().values_list("id", flat=True))
-        assert event_id_list == [
-            "DBC-28386",
-            "DBC-52446",
-            "DBC-52791",
-            "DBC-53145"
+        assert sorted(Event.objects.values_list("id", flat=True)) == [
+            "RIDE-1", "RIDE-3", "RIDE-4", "RIDE-5",
         ]
 
     @patch("apps.event.ride.requests.get")
-    @patch("httpx.get")
-    def test_event_feed_client_error(self, mock_httpx_get, mock_ride_requests_get):
-        mock_httpx_get.return_value = MockResponse({}, status_code=INTERNAL_SERVER_ERROR)
-        ride_resp = MagicMock()
-        ride_resp.json.return_value = []
-        mock_ride_requests_get.return_value = ride_resp
+    def test_event_feed_client_error(self, mock_ride_requests_get):
+        mock_ride_requests_get.side_effect = requests.ConnectionError
 
-        with pytest.raises(HTTPStatusError):
+        with pytest.raises(requests.ConnectionError):
             populate_all_event_data()
 
         assert Event.objects.count() == 0
