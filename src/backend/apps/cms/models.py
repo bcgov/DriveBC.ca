@@ -16,7 +16,6 @@ from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.models import Image
 from wagtail.models import Page
-from wagtail.templatetags import wagtailcore_tags
 
 TABLE_OPTIONS = {'rowHeaders': True,
                  'colHeaders': True, }
@@ -211,6 +210,7 @@ class Advisory(Page, BaseModel):
     base_form_class = AdvisoryAdminForm
 
     def rendered_body(self):
+        from wagtail.templatetags import wagtailcore_tags
         blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
         return '\n'.join(blocks)
 
@@ -303,6 +303,7 @@ class Bulletin(Page, BaseModel):
     last_notified_at = models.DateTimeField(null=True, blank=True)
 
     def rendered_body(self):
+        from wagtail.templatetags import wagtailcore_tags
         blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
         return '\n'.join(blocks)
 
@@ -482,6 +483,7 @@ class SubPage(Page, BaseModel):
     ]
 
     def rendered_body(self):
+        from wagtail.templatetags import wagtailcore_tags
         blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
         return '\n'.join(blocks)
 
