@@ -441,7 +441,11 @@ export default function CamPanel(props) {
   /* Handlers */
   function handleChildClick(e) {
     e.stopPropagation();
+    const nextFocusSelector = show
+      ? '.popup--camera .banner-close'
+      : '.popup--camera .card-pill';
     setShow(!show);
+    setTimeout(() => document.querySelector(nextFocusSelector)?.focus(), 0);
   }
 
   const favoriteHandler = () => {
@@ -556,7 +560,9 @@ export default function CamPanel(props) {
                     <div className="card-banner">
                       <FontAwesomeIcon icon={faArrowsRotate} />
                       <p>Image automatically updated to show the latest image received.</p>
-                      <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                      <button type="button" className="banner-close" aria-label="Close" onClick={handleChildClick}>
+                        <FontAwesomeIcon icon={faXmark} />
+                      </button>
                     </div>
                   )}
 
@@ -568,7 +574,9 @@ export default function CamPanel(props) {
                         <p className="bold">Unable to retrieve latest image.</p>
                         <p className="normal-text">Displaying the last image received. An attempt to retrieve the latest image will be made at the next refresh.</p>
                         
-                        <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                        <button type="button" className="banner-close" aria-label="Close" onClick={handleChildClick}>
+                          <FontAwesomeIcon icon={faXmark} />
+                        </button>
                       </div>
                     </div>
                   )}
@@ -588,7 +596,9 @@ export default function CamPanel(props) {
                         <p>The image will be updated automatically as soon as the camera comes back online.</p>
                       </div>
 
-                      <FontAwesomeIcon icon={faXmark} onClick={handleChildClick} />
+                      <button type="button" className="banner-close" aria-label="Close" onClick={handleChildClick}>
+                        <FontAwesomeIcon icon={faXmark} />
+                      </button>
                     </div>
                   )}
 

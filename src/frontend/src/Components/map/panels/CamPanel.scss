@@ -351,18 +351,42 @@
                 cursor: pointer;
                 flex-shrink: 0;
 
-                &.fa-xmark {
-                  position: absolute;
-                  top: 12px;
-                  right: 12px;
-                }
-
                 &.icon {
                   padding: 0;
                 }
 
                 &:not(.icon):hover {
                   background-color: rgba(0,0, 0,0.1);
+                }
+              }
+
+              .banner-close {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 5px 8px;
+                border: 0;
+                border-radius: 16px;
+                background: transparent;
+                color: inherit;
+                cursor: pointer;
+                line-height: 1;
+
+                svg {
+                  position: static;
+                  padding: 0;
+                  font-size: 1rem;
+
+                  &:hover {
+                    background-color: transparent;
+                  }
+                }
+
+                &:hover {
+                  background-color: rgba(0, 0, 0, 0.1);
                 }
               }
             }

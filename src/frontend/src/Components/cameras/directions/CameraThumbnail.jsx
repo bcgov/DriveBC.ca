@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 
 // Internal imports
-import { getCameraOrientation, getFullOrientation } from "../helper";
+import { getFullOrientation } from "../helper";
 import trackEvent from "../../shared/TrackEvent";
 
 // External imports
@@ -75,24 +75,24 @@ export default function CameraThumbnail(props) {
     )
   }
 
+  const selectOrientation = () => {
+    if ((mainCamera.id !== camData.id) && updated) {
+      setUpdated(false);
+    }
+    switchOrientation(index);
+    trackEvent("click", "camera-details", "mobile-camera-orientation", camData.name);
+  };
+
   /* Rendering */
   // Main component
   return mainCamera && (
-    <div className={'camera-thumbnail orientation' + (mainCamera.id === camData.id ? ' current' : '') + (stale ? ' stale' : '') + (delayed ? ' delayed' : '') + (unavailable ? ' unavailable' : '') + (updated ? ' updated' : '')}
+    <button
+      type="button"
+      className={'camera-thumbnail orientation' + (mainCamera.id === camData.id ? ' current' : '') + (stale ? ' stale' : '') + (delayed ? ' delayed' : '') + (unavailable ? ' unavailable' : '') + (updated ? ' updated' : '')}
       key={camData.id}
-      onClick={() => {
-        if ((mainCamera.id !== camData.id) && updated) {
-          setUpdated(false);
-        }
-        switchOrientation(index);
-        trackEvent("click", "camera-details", "mobile-camera-orientation", camData.name);
-      }}
-      onKeyDown={keyEvent => {
-        if (['Enter', 'NumpadEnter'].includes(keyEvent.key)) {
-          switchOrientation(index);
-          trackEvent("click", "camera-details", "mobile-camera-orientation", camData.name);
-        }
-      }}>
+      aria-label={camData.name}
+      aria-pressed={mainCamera.id === camData.id}
+      onClick={selectOrientation}>
 
       {unavailable &&
         <div className="overlay-unavailable">
@@ -103,16 +103,13 @@ export default function CameraThumbnail(props) {
       <img
         ref={imageRef}
         src={camData.links.imageDisplay}
-        alt={camData.name}/>
+        alt=""/>
 
       {getStateMessage()}
 
-      <span
-        aria-label={getCameraOrientation(camData.orientation)}
-        className={'label' + (mainCamera.id === camData.id ? ' current' : '')}>
-
+      <span className={'label' + (mainCamera.id === camData.id ? ' current' : '')}>
         {getFullOrientation(camData.orientation)}
       </span>
-    </div>
+    </button>
   );
 }
