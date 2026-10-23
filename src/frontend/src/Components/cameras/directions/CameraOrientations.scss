@@ -121,6 +121,11 @@
       justify-content: center;
       border: 3px solid transparent;
       opacity: 1;
+      padding: 0;
+      background: transparent;
+      font: inherit;
+      color: inherit;
+      text-align: left;
 
       @media (min-width: 768px) {
         width: fit-content;
@@ -150,8 +155,10 @@
         margin-right: 0;
       }
 
-      &.current {
+      &.current,
+      &:focus-visible {
         border: 3px solid $Focus;
+        outline: none;
       }
 
       img {
