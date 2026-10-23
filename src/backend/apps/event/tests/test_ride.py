@@ -87,6 +87,12 @@ class TestGetRideEvents(BaseTest):
         assert event["start_point_linear_reference"] == 1.5
         assert event["timezone"] == "America/Vancouver"
 
+    def test_route_at_skips_highway_number_alias(self):
+        data = ride_event()
+        data["location"]["start"]["alias"] = "Highway 1 And 95"
+
+        assert self.get_events([data])[0]["route_at"] == "Highway 1"
+
     def test_skips_unapproved_and_inactive_versions(self):
         events = self.get_events([
             ride_event(id="RIDE-PENDING", latest_approved=False),
