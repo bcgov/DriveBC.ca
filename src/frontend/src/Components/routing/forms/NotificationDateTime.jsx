@@ -5,7 +5,7 @@ import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} fro
 import Form from "react-bootstrap/Form";
 
 // Internal imports
-import { getPacficMidnight, getCurrentPacificDateString, isDaylightSavingTime } from "../../data/date";
+import { getPacficMidnight, getCurrentPacificDateString, isDaylightSavingTime, TZ_CHANGES } from "../../data/date";
 
 // Styling
 import './NotificationDateTime.scss';
@@ -311,7 +311,8 @@ const NotificationDateTime = forwardRef((props, ref) => {
               </div>
 
               <p className='tz-note'>
-                Times above are in {!isDaylightSavingTime() ? 'Pacific Standard Time (PST)' : 'Pacific Daylight Time (PDT)'}
+                Times above are in {Date.now() >= TZ_CHANGES['America/Vancouver'].start ? 'Pacific Time (PCT)' :
+                  !isDaylightSavingTime() ? 'Pacific Standard Time (PST)' : 'Pacific Daylight Time (PDT)'}
               </p>
             </div>
           }

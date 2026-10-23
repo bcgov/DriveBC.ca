@@ -30,3 +30,22 @@ export const isDaylightSavingTime = (dateString) => {
   // it means the current date is in DST.
   return dateTime.getTimezoneOffset() < Math.max(startOfYear.getTimezoneOffset(), midYear.getTimezoneOffset());
 }
+
+// DBC22-7627: official BC/AB abbreviations from Nov 1 2026 02:00 local, not in browser tzdata
+export const TZ_CHANGES = {
+  'America/Vancouver': { abbreviation: 'PCT', start: Date.UTC(2026, 10, 1, 9) },
+  'America/Edmonton': { abbreviation: 'MDT', start: Date.UTC(2026, 10, 1, 8) },
+};
+
+export const formatDateTime = (date, options) => {
+  const dt = new Date(date);
+  const formatter = new Intl.DateTimeFormat('en-US', options);
+  const change = TZ_CHANGES[formatter.resolvedOptions().timeZone];
+  if (!change || dt < change.start) {
+    return formatter.format(dt);
+  }
+
+  return formatter.formatToParts(dt)
+    .map((part) => part.type === 'timeZoneName' ? change.abbreviation : part.value)
+    .join('');
+}

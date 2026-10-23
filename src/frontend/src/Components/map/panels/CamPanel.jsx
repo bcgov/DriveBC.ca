@@ -39,6 +39,7 @@ import Skeleton from 'react-loading-skeleton';
 // Internal imports
 import { AlertContext, AuthContext } from '../../../App';
 import { addFavoriteCamera, deleteFavoriteCamera, getCameras, getWebcamReplay } from "../../data/webcams";
+import { formatDateTime } from '../../data/date';
 import trackEvent from '../../shared/TrackEvent';
 import ShareURLButton from '../../shared/ShareURLButton';
 import PollingComponent from '../../shared/PollingComponent';
@@ -230,11 +231,11 @@ export default function CamPanel(props) {
       return null;
     }
 
-    return new Intl.DateTimeFormat('en-US', {
+    return formatDateTime(calculateNextUpdateTime(cam), {
       hour: 'numeric',
       minute: 'numeric',
       timeZoneName: 'short',
-    }).format(calculateNextUpdateTime(cam));
+    });
   };
 
   const pauseReplay = () => {

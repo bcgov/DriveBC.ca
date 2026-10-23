@@ -1,4 +1,5 @@
 import datetime
+from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
 from apps.authentication.models import DriveBCUser, SavedRoutes
@@ -335,9 +336,14 @@ class SendEventNotificationsTest(TestCase):
             notification_start_date=datetime.date(2023, 1, 1),
             notification_end_date=datetime.date(2023, 1, 7)
         )
-        msg = generate_settings_message(route)
+        with patch('apps.event.tasks.PCT_START', datetime.datetime.max.replace(tzinfo=datetime.timezone.utc)):
+            msg = generate_settings_message(route)
         assert 'between 08:00am and 05:00pm Pacific Daylight Time (PDT) ' in msg
         assert 'from January 01 and January 07.' in msg
+
+        with patch('apps.event.tasks.PCT_START', datetime.datetime.min.replace(tzinfo=datetime.timezone.utc)):
+            msg = generate_settings_message(route)
+        assert 'between 08:00am and 05:00pm Pacific Time (PCT) ' in msg
 
         # Days of the week
         route = SavedRoutes(
