@@ -86,9 +86,9 @@
 																	<td style="font-size: 1.25rem; font-weight:700; color:#013366; padding: 8px 12px 0">
 																	{% endif %}
                                   {% if event.highway_segment_names %}
-																		{{ event.highway_segment_names }}
+																		{{ event.highway_segment_names|no_autolink }}
                                   {% else %}
-                                    {{ event.route_at }}
+                                    {{ event.route_at|no_autolink }}
                                   {% endif %}
 																	</td>
 																</tr>
