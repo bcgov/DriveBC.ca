@@ -1,11 +1,8 @@
 import html  # Importing html module for unescaping HTML entities
+import re
 import zoneinfo
 from datetime import datetime
 from zoneinfo import ZoneInfo
-
-from timezonefinder import TimezoneFinder
-
-tz_finder = TimezoneFinder()
 
 from apps.feed.fields import (
     DmsGeographyField,
@@ -29,6 +26,9 @@ from apps.weather.models import CurrentWeather, HighElevationForecast, RegionalW
 from django.conf import settings
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
+from timezonefinder import TimezoneFinder
+
+tz_finder = TimezoneFinder()
 
 
 # Webcam
@@ -242,6 +242,11 @@ class RIDEEventSerializer(serializers.Serializer):
                 # route_at - was "route-designator" but now "name"
                 route_name = start_or_end.get('name', '')
                 route_alias = start_or_end.get('alias')
+
+                # DBC22-6838: skip highway-number aliases, e.g. "Highway 3 And 95"
+                if route_alias and re.match(r'(highway|hwy)\s*\d', route_alias, re.I):
+                    route_alias = None
+
                 data['route_at'] = route_name + ', ' + route_alias if route_alias else route_name
 
                 # closest_landmark / location_description
