@@ -33,18 +33,20 @@ export const isDaylightSavingTime = (dateString) => {
 
 // DBC22-7627: official BC/AB abbreviations from Nov 1 2026 02:00 local, not in browser tzdata
 export const TZ_CHANGES = {
-  'America/Vancouver': { abbreviation: 'PCT', start: Date.UTC(2026, 10, 1, 9) },
-  'America/Edmonton': { abbreviation: 'MDT', start: Date.UTC(2026, 10, 1, 8) },
+  'America/Vancouver': { abbreviation: 'PCT', start: Date.UTC(2026, 10, 1, 9) },  // 02:00 PDT
+  'America/Edmonton': { abbreviation: 'MDT', start: Date.UTC(2026, 10, 1, 8) },  // 02:00 MDT, stays MDT instead of MST
 };
 
 export const formatDateTime = (date, options) => {
   const dt = new Date(date);
   const formatter = new Intl.DateTimeFormat('en-US', options);
+
   const change = TZ_CHANGES[formatter.resolvedOptions().timeZone];
-  if (!change || dt < change.start) {
+  if (!change || dt < change.start) {  // timezone n/a or before nov 1st, no replacement
     return formatter.format(dt);
   }
 
+  // timeZoneName part is replaced
   return formatter.formatToParts(dt)
     .map((part) => part.type === 'timeZoneName' ? change.abbreviation : part.value)
     .join('');
