@@ -16,6 +16,7 @@ from apps.event.tasks import (
     queue_event_notifications,
     send_queued_notifications,
 )
+from apps.event.templatetags.event_extras import no_autolink
 from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core import mail
 from django.test import TestCase
@@ -358,3 +359,8 @@ class SendEventNotificationsTest(TestCase):
         )
         msg = generate_settings_message(route)
         assert 'every day.' in msg
+
+
+class NoAutolinkFilterTest(TestCase):
+    def test_breaks_address_detection(self):
+        assert no_autolink('Highway 20') == 'Highway ‌20'
