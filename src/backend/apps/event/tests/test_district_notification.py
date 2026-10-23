@@ -1,4 +1,5 @@
 import datetime
+from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
 from apps.authentication.models import DriveBCUser, EmailSubscription
@@ -340,9 +341,15 @@ class SendDistrictNotificationsTest(TestCase):
         assert 'between' in msg
         assert 'every Monday, Tuesday' in msg
 
-        msg = generate_district_settings_message(self.subscription_date_time)
+        with patch('apps.event.tasks.PCT_START', datetime.datetime.max.replace(tzinfo=datetime.timezone.utc)):
+            msg = generate_district_settings_message(self.subscription_date_time)
         assert 'Date and Time Range Area' in msg
         assert 'from October 10 to October 20' in msg
+        assert 'Pacific Daylight Time (PDT) ' in msg
+
+        with patch('apps.event.tasks.PCT_START', datetime.datetime.min.replace(tzinfo=datetime.timezone.utc)):
+            msg = generate_district_settings_message(self.subscription_date_time)
+        assert 'Pacific Time (PCT) ' in msg
 
         msg = generate_district_settings_message(self.subscription_specific_date_time)
         assert 'Specific Date and Time Area' in msg

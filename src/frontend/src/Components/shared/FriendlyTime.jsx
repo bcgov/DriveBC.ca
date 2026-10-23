@@ -1,6 +1,9 @@
 // React
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
+// Internal imports
+import { formatDateTime } from '../data/date';
+
 // Styling
 import './FriendlyTime.scss';
 
@@ -38,11 +41,10 @@ export const formatDate = (date, tz, isNextUpdate=false) => {
     timeZoneName: 'short',
     timeZone: tz !== null ? tz: 'America/Vancouver',
   };
-  const formatter = new Intl.DateTimeFormat('en-US', datetimeFormat);
 
   // get time difference in milliseconds
   const timeDiff = (new Date() - new Date(date));
-  return (isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." : formatter.format(new Date(date));
+  return (isNextUpdate && timeDiff > 0) ? "Update expected as soon as possible, please continue to check back." : formatDateTime(date, datetimeFormat);
 }
 
 const getRelativeTime = (date) => {

@@ -36,6 +36,16 @@ logger = logging.getLogger(__name__)
 # Backend dir and env
 BACKEND_DIR = Path(__file__).resolve().parents[2]
 
+# DBC22-7627: BC 'PCT' from Nov 1 2026 02:00 PDT
+PCT_START = datetime.datetime(2026, 11, 1, 9, tzinfo=datetime.timezone.utc)
+
+
+def get_pacific_tz_label():
+    if datetime.datetime.now(datetime.timezone.utc) >= PCT_START:
+        return 'Pacific Time (PCT)'
+
+    return 'Pacific Daylight Time (PDT)'
+
 
 def compare_data(current_field_data, new_field_data):
     if isinstance(current_field_data, Point):
@@ -315,7 +325,7 @@ def generate_settings_message(route, test_time=None):
     else:
         msg += (f'between {route.notification_start_time.strftime("%I:%M%p").lower()} '
                 f'and {route.notification_end_time.strftime("%I:%M%p").lower()} '
-                f'Pacific Daylight Time (PDT) ')
+                f'{get_pacific_tz_label()} ')
 
         # Specific date
         if route.notification_end_date:
@@ -349,7 +359,7 @@ def generate_district_settings_message(subscription, test_time=None):
     else:
         msg += (f'between {subscription.notification_start_time.strftime("%I:%M%p").lower()} '
                 f'and {subscription.notification_end_time.strftime("%I:%M%p").lower()} '
-                f'Pacific Daylight Time (PDT) ')
+                f'{get_pacific_tz_label()} ')
 
         # Date range
         if subscription.notification_end_date:
