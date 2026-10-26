@@ -98,6 +98,12 @@ export default function RouteMap(props) {
     window.el = mapElement;
   });
 
+  // cleanup OL resources, important for performance
+  useEffect(() => () => {
+    mapRef.current?.dispose();
+    mapRef.current = null;
+  }, []);
+
   useEffect(() => {
     // Only run when save popup is showing
     if (!showSavePopup) return;

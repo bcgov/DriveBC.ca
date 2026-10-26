@@ -87,7 +87,7 @@ function loadReportMap(setActiveFeature, wmsLayer, styles, smallScreen, attribut
       // const autoAttribution = sourceKeys.length > 0 ? glStyle.sources[sourceKeys[0]].attribution : '';
 
       // const esriPower = "Powered by <a href='https://www.esri.com/en-us/home' target='_blank'>Esri | </a>";
-      
+
       // tileLayer.getSource().setAttributions([esriPower, autoAttribution]);
 
       const esriPower =
@@ -312,6 +312,12 @@ export function ReportMap(props) {
   useEffect(() => {
     loadMap();
   });
+
+  // cleanup OL resources, important for performance
+  useEffect(() => () => {
+    mapRef.current?.dispose();
+    mapRef.current = null;
+  }, []);
 
   useEffect(() => {
     if (mapRef.current) {

@@ -698,6 +698,13 @@ export default function DriveBCMap(props) {
     mapRef.current.on('pointermove', (e) => {
       pointerMoveHandler(e, mapRef, hoveredFeature);
     });
+
+    // cleanup OL resources, important for performance
+    return () => {
+      mapRef.current.dispose();
+      mapRef.current = null;
+      mapLayers.current = {};
+    };
   }, []);
 
   // Auto-open panel from URL params on initial load

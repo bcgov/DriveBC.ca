@@ -9,21 +9,27 @@ export default function PollingComponent(props) {
   useEffect(() => {
     let intervalId;
 
+    // DBC22-7406: clear before set; overwritten ids leaked intervals
+    const startInterval = () => {
+      clearInterval(intervalId);
+      intervalId = setInterval(() => {
+        runnable();
+      }, interval);
+    };
+
     const handleVisibilityChange = () => {
       if (document.hidden) {
         clearInterval(intervalId);
       } else {
-        intervalId = setInterval(() => {
-          runnable();
-        }, interval);
+        startInterval();
       }
     };
 
     // Set up initial timeout to delay the first execution
     const timeoutId = setTimeout(() => {
-      intervalId = setInterval(() => {
-        runnable();
-      }, interval);
+      if (!document.hidden) {
+        startInterval();
+      }
     }, interval);
 
     if (runImmediately) {
