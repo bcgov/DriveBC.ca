@@ -24,21 +24,26 @@ class EmergencyAlertPreviewTest(TestCase):
         with patch.dict('os.environ', {'FRONTEND_BASE_URL': 'https://drivebc.ca/'}):
             return CopyPreviewURLMenuItem(order=100).render_html(context)
 
-    def test_copy_preview_url_for_emergency_alert(self):
-        html = self.render_menu_item(self.alert)
-        assert 'https://drivebc.ca/?emergency_alert_preview=test-alert' in html
+    def test_no_copy_preview_url_for_emergency_alert(self):
+        assert self.render_menu_item(self.alert) == ''
 
     def test_copy_preview_url_for_emergency_alert_detail(self):
         html = self.render_menu_item(self.detail)
         assert 'https://drivebc.ca/emergency-alert-detail/test-detail?preview=true' in html
 
-    def test_unpublished_alert_only_returned_in_preview(self):
+    def test_unpublished_alert_never_returned(self):
         url = '/api/cms/emergency-alert/test-alert/'
         assert self.client.get(url).status_code == 404
+        assert self.client.get(url, {'preview': 'true'}).status_code == 404
 
-        response = self.client.get(url, {'preview': 'true'})
+    def test_alert_preview_returns_live_not_draft(self):
+        self.alert.save_revision().publish()
+        self.alert.alert = '<p>Draft alert v2</p>'
+        self.alert.save_revision()
+
+        response = self.client.get('/api/cms/emergency-alert/test-alert/', {'preview': 'true'})
         assert response.status_code == 200
-        assert response.data['slug'] == 'test-alert'
+        assert 'v2' not in response.data['alert']
 
     def test_unpublished_detail_only_returned_in_preview(self):
         url = '/api/cms/emergency-alert-detail/test-detail/'

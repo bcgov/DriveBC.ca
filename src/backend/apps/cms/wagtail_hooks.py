@@ -178,9 +178,6 @@ class CopyPreviewURLMenuItem(ActionMenuItem):
             preview_url = f"{base_url}bulletins/{page.slug}?preview=true"
         elif isinstance(page, EmergencyAlertDetail):
             preview_url = f"{base_url}emergency-alert-detail/{page.slug}?preview=true"
-        elif isinstance(page, EmergencyAlert):
-            # banner shows on every page; FE reads slug from param
-            preview_url = f"{base_url}?emergency_alert_preview={page.slug}"
         else:
             return ""
 

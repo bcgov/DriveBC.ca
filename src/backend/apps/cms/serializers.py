@@ -127,13 +127,11 @@ class EmergencyAlertSerializer(EmergencyAlertTestSerializer):
     detail_url = serializers.SerializerMethodField()
 
     def get_detail_url(self, obj):
-        request = self.context.get('request')
-        preview = request is not None and request.query_params.get('preview') == 'true'
-        if not obj.detail_page or not (obj.detail_page.live or preview):
+        if not obj.detail_page or not obj.detail_page.live:
             return None
         base_url = settings.FRONTEND_BASE_URL
         slug = obj.detail_page.specific.slug
-        return f"{base_url}emergency-alert-detail/{slug}" + ('?preview=true' if preview else '')
+        return f"{base_url}emergency-alert-detail/{slug}"
 
     def get_alert(self, obj):
         return self.get_richtext(obj.alert)

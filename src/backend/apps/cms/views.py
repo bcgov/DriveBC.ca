@@ -86,13 +86,17 @@ class BulletinAPI(CachedListModelMixin, BulletinTestAPI):
 
 
 class EmergencyAlertTestAPI(CMSViewSet):
-    queryset = EmergencyAlert.objects.all()
+    queryset = EmergencyAlert.objects.filter(live=True)
     serializer_class = EmergencyAlertTestSerializer
     lookup_field = 'slug'
 
+    def get_object(self):
+        # DBC22-7044: never serve alert drafts, even with ?preview=true
+        return super(CMSViewSet, self).get_object()
+
 
 class EmergencyAlertAPI(CachedListModelMixin, EmergencyAlertTestAPI):
-    queryset = EmergencyAlert.objects.all()
+    queryset = EmergencyAlert.objects.filter(live=True)
     serializer_class = EmergencyAlertSerializer
     cache_key = CacheKey.EMERGENCY_ALERT_LIST
     cache_timeout = CacheTimeout.EMERGENCY_ALERT_LIST

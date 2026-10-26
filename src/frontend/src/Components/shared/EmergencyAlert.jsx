@@ -16,9 +16,6 @@ import { API_HOST } from '../../env';
 // Styling
 import './EmergencyAlert.scss';
 
-// DBC22-7044: CMS "Copy Preview URL" adds ?emergency_alert_preview=<slug>
-const previewSlug = new URLSearchParams(window.location.search).get('emergency_alert_preview');
-
 export default function EmergencyAlert() {
   // Context
   const { emergencyAlertContext, setEmergencyAlertContext } = useContext(EmergencyAlertContext);
@@ -29,12 +26,6 @@ export default function EmergencyAlert() {
 
   // Data functions
   const fetchEmergencyAlert = async () => {
-    if (previewSlug) {
-      const data = await get(`${API_HOST}/api/cms/emergency-alert/${previewSlug}/?preview=true&timestamp=${Date.now()}`);
-      setEmergencyAlert(data?.id ? data : null);
-      return;
-    }
-
     const data = await get(`${API_HOST}/api/cms/emergency-alert/`);
 
     if (!data || !Array.isArray(data)) { // endpoint returned nothing, distinct from an empty list
@@ -46,11 +37,6 @@ export default function EmergencyAlert() {
 
   // Handlers
   const handleClose = () => {
-    if (previewSlug) {
-      setEmergencyAlert(null);
-      return;
-    }
-
     const id = emergencyAlert.id.toString() + '-' + emergencyAlert.live_revision.toString();
     const read = Array.from(new Set([...emergencyAlertContext, id]));
     localStorage.setItem('emergencyAlertContext', JSON.stringify(read));
@@ -78,13 +64,13 @@ export default function EmergencyAlert() {
   }, []);
 
   const id = emergencyAlert
-    ? `${emergencyAlert.id}-${emergencyAlert.live_revision}`
+    ? emergencyAlert.id.toString() + '-' + emergencyAlert.live_revision.toString()
     : null;
 
   /* Main rendering function */
   return (
     <div>
-      { emergencyAlert && (previewSlug || !emergencyAlertContext.includes(id)) &&
+      { emergencyAlert && !emergencyAlertContext.includes(id) &&
         <div className={`fg`} ref={fgRef}>
           <div className='fg-content'>
             <FontAwesomeIcon icon={faHexagonExclamation} className="fg-exclamation" />
