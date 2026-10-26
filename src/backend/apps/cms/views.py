@@ -58,7 +58,7 @@ class CMSViewSet(viewsets.ReadOnlyModelViewSet):
 
                 # Revision geometry may be stored as SRID=3857 (Web Mercator),
                 # but the frontend expects SRID=4326 (WGS84) — normalize it.
-                if obj.geometry and obj.geometry.srid != 4326:
+                if getattr(obj, 'geometry', None) and obj.geometry.srid != 4326:
                     obj.geometry.transform(4326)
 
         return obj
@@ -86,13 +86,13 @@ class BulletinAPI(CachedListModelMixin, BulletinTestAPI):
 
 
 class EmergencyAlertTestAPI(CMSViewSet):
-    queryset = EmergencyAlert.objects.filter(live=True)
+    queryset = EmergencyAlert.objects.all()
     serializer_class = EmergencyAlertTestSerializer
     lookup_field = 'slug'
 
 
 class EmergencyAlertAPI(CachedListModelMixin, EmergencyAlertTestAPI):
-    queryset = EmergencyAlert.objects.filter(live=True)
+    queryset = EmergencyAlert.objects.all()
     serializer_class = EmergencyAlertSerializer
     cache_key = CacheKey.EMERGENCY_ALERT_LIST
     cache_timeout = CacheTimeout.EMERGENCY_ALERT_LIST
@@ -109,9 +109,6 @@ class EmergencyAlertDetailAPI(CachedListModelMixin, EmergencyAlertDetailTestAPI)
     serializer_class = EmergencyAlertDetailSerializer
     cache_key = CacheKey.EMERGENCY_ALERT_DETAIL_LIST
     cache_timeout = CacheTimeout.EMERGENCY_ALERT_DETAIL_LIST
-
-    def get_queryset(self):
-        return EmergencyAlertDetail.objects.filter(live=True)  # live only
 
 
 @csrf_exempt

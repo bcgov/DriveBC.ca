@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 // Navigation
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 
 // External imports
 import Container from 'react-bootstrap/Container';
@@ -34,6 +34,8 @@ export default function EmergencyAlertDetail() {
   // Navigation
   const { slug } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get('preview') === 'true';
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
@@ -79,7 +81,9 @@ export default function EmergencyAlertDetail() {
   // Data function and initialization
   const loadDetail = async () => {
     try {
-      const url = `${API_HOST}/api/cms/emergency-alert-detail/${slug}`;
+      const url = isPreview
+        ? `${API_HOST}/api/cms/emergency-alert-detail/${slug}/?preview=true&timestamp=${Date.now()}`
+        : `${API_HOST}/api/cms/emergency-alert-detail/${slug}`;
       const data = await get(url);
       if (data) {
         setDetailData(data);
@@ -124,6 +128,7 @@ export default function EmergencyAlertDetail() {
       <Container className="page-header__title">
         {detailData && !showLoader &&
           <React.Fragment>
+            {isPreview && <span className="preview-badge">Preview</span>}
             <h1 className="page-title">{detailData.title}</h1>
 
             {detailData.teaser &&

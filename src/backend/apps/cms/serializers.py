@@ -1,8 +1,14 @@
-from apps.cms.models import Advisory, Bulletin, EmergencyAlert, EmergencyAlertDetail, SubPage
+from apps.cms.models import (
+    Advisory,
+    Bulletin,
+    EmergencyAlert,
+    EmergencyAlertDetail,
+    SubPage,
+)
 from config.settings import env
+from django.conf import settings
 from rest_framework import serializers
 from wagtail.templatetags.wagtailcore_tags import richtext
-from django.conf import settings
 
 CMS_FIELDS = [
     "live",
@@ -121,18 +127,21 @@ class EmergencyAlertSerializer(EmergencyAlertTestSerializer):
     detail_url = serializers.SerializerMethodField()
 
     def get_detail_url(self, obj):
-        if not obj.detail_page or not obj.detail_page.live:
+        request = self.context.get('request')
+        preview = request is not None and request.query_params.get('preview') == 'true'
+        if not obj.detail_page or not (obj.detail_page.live or preview):
             return None
         base_url = settings.FRONTEND_BASE_URL
         slug = obj.detail_page.specific.slug
-        return f"{base_url}emergency-alert-detail/{slug}"
+        return f"{base_url}emergency-alert-detail/{slug}" + ('?preview=true' if preview else '')
 
     def get_alert(self, obj):
         return self.get_richtext(obj.alert)
-    
+
     class Meta:
         model = EmergencyAlert
         fields = "__all__"
+
 
 class EmergencyAlertDetailSerializer(serializers.ModelSerializer):
     class Meta:

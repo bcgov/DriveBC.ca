@@ -18,6 +18,7 @@ from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 from .models import (
     Advisory,
     Bulletin,
+    EmergencyAlertDetail,
     SubPage,
     get_or_create_advisory_index,
     get_or_create_bulletin_index,
@@ -175,6 +176,11 @@ class CopyPreviewURLMenuItem(ActionMenuItem):
             preview_url = f"{base_url}advisories/{page.slug}?preview=true"
         elif isinstance(page, Bulletin):
             preview_url = f"{base_url}bulletins/{page.slug}?preview=true"
+        elif isinstance(page, EmergencyAlertDetail):
+            preview_url = f"{base_url}emergency-alert-detail/{page.slug}?preview=true"
+        elif isinstance(page, EmergencyAlert):
+            # banner shows on every page; FE reads slug from param
+            preview_url = f"{base_url}?emergency_alert_preview={page.slug}"
         else:
             return ""
 
