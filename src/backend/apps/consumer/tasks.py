@@ -3,7 +3,7 @@ import io
 from apps.consumer.processor import process_camera_rows, blank_out_image, save_watermarked_image_to_drivebc_pvc, delete_watermarked_image_from_pvc, delete_offline_webcam_records
 from datetime import datetime
 from apps.webcam.models import Webcam
-from .db import get_all_from_db
+from .db import get_all_from_db, get_all
 from PIL import Image
 from asgiref.sync import async_to_sync
 
@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 
 def generate_offline_camera_images():
     """Generate placeholder images for offline cameras."""
-    rows = get_all_from_db()
+    # rows = get_all_from_db()
+    rows = get_all()
     cameras = process_camera_rows(rows)
     
     now = datetime.now()

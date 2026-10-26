@@ -16,7 +16,7 @@ import aio_pika
 import asyncio
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
-from .db import get_all_from_db, load_index_from_db
+from .db import get_all_from_db, load_index_from_db, get_all
 from timezonefinder import TimezoneFinder
 from contextlib import asynccontextmanager
 from aiormq.exceptions import ChannelInvalidStateError
@@ -263,7 +263,7 @@ async def parse_rows(rb_url: str):
     """
     logger.info("Fetching DB camera rows for %s", rb_url)
 
-    rows = await sync_to_async(db_retry(get_all_from_db))()
+    rows = await sync_to_async(db_retry(get_all))()
     db_data = process_camera_rows(rows)
 
     if not db_data:
@@ -752,7 +752,7 @@ async def refresh_camera_cache(camera_id: str):
         return
 
     try:
-        rows = await sync_to_async(db_retry(get_all_from_db))(camera_id)
+        rows = await sync_to_async(db_retry(get_all))(camera_id)
         refreshed = process_camera_rows(rows)
         if refreshed:
             existing = [cam for cam in db_data if cam['id'] != int(camera_id)]
