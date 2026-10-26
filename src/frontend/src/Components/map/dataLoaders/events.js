@@ -10,6 +10,11 @@ export const loadEvents = async (
   worker, isInitialLoad = true, trackedEventsRef,
   ensureEventId = null
 ) => {
+  // DBC22-7055: route set before first load done; polling feed lacks locations
+  if (trackedEventsRef && !Object.keys(trackedEventsRef.current).length) {
+    isInitialLoad = true;
+  }
+
   // Fetch data
   const eventData = await getEvents(!isInitialLoad);
 
