@@ -1,5 +1,6 @@
 // React
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
 // Third party packages
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -12,6 +13,25 @@ import HighwayGroup from './HighwayGroup';
 import './CameraList.scss';
 
 const INITIAL_DISPLAY_LENGTH = 21;
+const CAMERA_LIST_RETURN_KEY = 'cameraListReturn';
+
+const readCameraListReturn = () => {
+  try {
+    const raw = sessionStorage.getItem(CAMERA_LIST_RETURN_KEY);
+    if (!raw) {
+      return null;
+    }
+
+    const data = JSON.parse(raw);
+    if (!data || !data.list) {
+      return null;
+    }
+
+    return data;
+  } catch {
+    return null;
+  }
+};
 
 export default function CameraList(props) {
   // Props
@@ -19,7 +39,11 @@ export default function CameraList(props) {
 
   // Contexts
   const { camsContext } = useContext(CamsContext);
+  const location = useLocation();
   const prevCamerasLength = useRef(cameras?.length);
+  const returnApplied = useRef(false);
+  // Scroll offset to apply once, after the saved window of cards is on screen.
+  const pendingScrollTop = useRef(null);
 
   // UseEffect hooks and data functions
   const getDisplayedCameras = (length) => {
@@ -36,9 +60,43 @@ export default function CameraList(props) {
         camsContext.displayLength = INITIAL_DISPLAY_LENGTH;
         prevCamerasLength.current = cameras.length;
       }
+
+      if (!returnApplied.current) {
+        const returnInfo = readCameraListReturn();
+        if (returnInfo && returnInfo.list === location.pathname) {
+          const savedLength = Number(returnInfo.displayLength);
+          if (Number.isFinite(savedLength) && savedLength > camsContext.displayLength) {
+            camsContext.displayLength = Math.min(savedLength, cameras.length);
+          }
+
+          const savedTop = Number(returnInfo.scrollTop);
+          pendingScrollTop.current = Number.isFinite(savedTop) ? savedTop : 0;
+          returnApplied.current = true;
+          try {
+            sessionStorage.removeItem(CAMERA_LIST_RETURN_KEY);
+          } catch {
+            // The scroll restore still runs from the ref if storage cannot be cleared.
+          }
+        }
+      }
+
       getDisplayedCameras(camsContext.displayLength);
     }
-  }, [cameras]);
+  }, [cameras, location.pathname]);
+
+  useLayoutEffect(() => {
+    if (pendingScrollTop.current == null || showLoader || !onscreenCameras.length) {
+      return;
+    }
+
+    const main = document.getElementById('main');
+    if (!main) {
+      return;
+    }
+
+    main.scrollTop = pendingScrollTop.current;
+    pendingScrollTop.current = null;
+  }, [onscreenCameras, showLoader]);
 
   // Rendering
   const groupDisplayedCameras = () => {
@@ -81,7 +139,8 @@ export default function CameraList(props) {
           dataLength={camsContext.displayLength}
           next={getDisplayedCameras}
           hasMore={getHasMore}
-          scrollableTarget="main">
+          scrollableTarget="main"
+          style={{ overflow: 'visible' }}>
 
           {renderHighways()}
         </InfiniteScroll>
