@@ -10,6 +10,7 @@ from apps.event.enums import (
     EVENT_SUB_TYPE,
     EVENT_TYPE,
 )
+from apps.event.helpers import parse_direction_from_text
 from apps.feed.serializers import RIDEEventSerializer
 from config.settings import RIDE_EVENT_API_URL
 from rest_framework import serializers
@@ -208,23 +209,28 @@ class RIDEChainupSerializer(RIDEEventSerializer):
         payload['status'] = EVENT_STATUS.ACTIVE if data.get('status') == 'Active' else EVENT_STATUS.INACTIVE
         payload['severity'] = EVENT_SEVERITY.MINOR \
             if data.get('details', {}).get('severity') == 'Minor' else EVENT_SEVERITY.MAJOR
-        payload['direction'] = EVENT_DIRECTION.NONE
         payload['first_created'] = parse_ride_iso_datetime(data.get('created'))
         payload['last_updated'] = parse_ride_iso_datetime(data.get('last_updated'))
 
         # Parsed from chainup description
-        description = data.get('chainup', {}).get('description')
+        chainup = data.get('chainup') or {}
+        description = chainup.get('description') or ''
+        name = chainup.get('name') or ''
         highway = description.split(', ')[0]
         highway_description = description.split(', ')[1]
         payload['description'] = 'Commercial chain up in effect ' + highway_description + '.'
-        payload['route_from'] = data.get('chainup', {}).get('name')
+        payload['route_from'] = name
         payload['route_to'] = ''  # Unused on FE
+
+        # RIDE hardcodes details.direction to empty/NONE for chain-ups; direction
+        # is encoded in route_from (e.g. "Highway 20, Westbound, Heckman Pass ...").
+        payload['direction'] = parse_direction_from_text(payload['route_from'])
 
         res = super().to_internal_value(payload)
         res['route_at'] = highway
 
         # Override these fields
-        res["highway_segment_names"] = data.get('chainup', {}).get('name')
-        res["location_description"] = data.get('chainup', {}).get('description')
+        res["highway_segment_names"] = name
+        res["location_description"] = description
 
         return res

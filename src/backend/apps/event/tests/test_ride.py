@@ -139,6 +139,25 @@ class TestGetRideEvents(BaseTest):
 
         assert events == []
 
+    def test_chainup_direction_from_segment_name(self):
+        events = self.get_events([ride_event(
+            id="RIDE-CHAINUP",
+            type="CHAIN_UP",
+            details={"severity": "Minor", "direction": ""},
+            chainup={
+                "name": "Highway 20, Westbound, Heckman Pass 97km west of Bella Coola",
+                "description": "Highway 20, between Rainbow Range Trailhead and Elsey Road (Anahim Lake)",
+            },
+        )])
+
+        assert len(events) == 1
+        event = events[0]
+        assert event["event_type"] == EVENT_TYPE.CHAIN_UP
+        assert event["direction"] == EVENT_DIRECTION.WEST
+        assert event["route_from"] == (
+            "Highway 20, Westbound, Heckman Pass 97km west of Bella Coola"
+        )
+
 
 class TestPopulateRideEvents(BaseTest):
     @patch("apps.event.ride.requests.get")

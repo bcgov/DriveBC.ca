@@ -136,6 +136,13 @@ def populate_event_from_data(new_event_data):
 
                 return True
 
+        # Sync chain-up direction even when last_updated is unchanged
+        # (parsed from route_from). Not notification-worthy.
+        if event.event_type == EVENT_TYPE.CHAIN_UP:
+            new_direction = new_event_data.get('direction')
+            if new_direction and new_direction != event.direction:
+                Event.objects.filter(id=event_id).update(direction=new_direction)
+
         # Update future events display category
         # https://moti-imb.atlassian.net/browse/DBC22-2259
         if event.display_category == EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
