@@ -134,6 +134,30 @@ import chainUpsHoverUnreadIcon from '../../images/mapIcons/chain-ups-hover-unrea
 import chainUpsStaticIcon from '../../images/mapIcons/chain-ups-static.png';
 import chainUpsStaticUnreadIcon from '../../images/mapIcons/chain-ups-static-unread.png';
 
+import chainUpsEastActiveIcon from '../../images/mapIcons/chain-ups-east-active.png';
+import chainUpsEastHoverIcon from '../../images/mapIcons/chain-ups-east-hover.png';
+import chainUpsEastHoverUnreadIcon from '../../images/mapIcons/chain-ups-east-hover-unread.png';
+import chainUpsEastStaticIcon from '../../images/mapIcons/chain-ups-east-static.png';
+import chainUpsEastStaticUnreadIcon from '../../images/mapIcons/chain-ups-east-static-unread.png';
+
+import chainUpsNorthActiveIcon from '../../images/mapIcons/chain-ups-north-active.png';
+import chainUpsNorthHoverIcon from '../../images/mapIcons/chain-ups-north-hover.png';
+import chainUpsNorthHoverUnreadIcon from '../../images/mapIcons/chain-ups-north-hover-unread.png';
+import chainUpsNorthStaticIcon from '../../images/mapIcons/chain-ups-north-static.png';
+import chainUpsNorthStaticUnreadIcon from '../../images/mapIcons/chain-ups-north-static-unread.png';
+
+import chainUpsSouthActiveIcon from '../../images/mapIcons/chain-ups-south-active.png';
+import chainUpsSouthHoverIcon from '../../images/mapIcons/chain-ups-south-hover.png';
+import chainUpsSouthHoverUnreadIcon from '../../images/mapIcons/chain-ups-south-hover-unread.png';
+import chainUpsSouthStaticIcon from '../../images/mapIcons/chain-ups-south-static.png';
+import chainUpsSouthStaticUnreadIcon from '../../images/mapIcons/chain-ups-south-static-unread.png';
+
+import chainUpsWestActiveIcon from '../../images/mapIcons/chain-ups-west-active.png';
+import chainUpsWestHoverIcon from '../../images/mapIcons/chain-ups-west-hover.png';
+import chainUpsWestHoverUnreadIcon from '../../images/mapIcons/chain-ups-west-hover-unread.png';
+import chainUpsWestStaticIcon from '../../images/mapIcons/chain-ups-west-static.png';
+import chainUpsWestStaticUnreadIcon from '../../images/mapIcons/chain-ups-west-static-unread.png';
+
 // Constructions
 import constructionsMajorActiveIcon from '../../images/mapIcons/delay-major-active.png';
 import constructionsMajorHoverIcon from '../../images/mapIcons/delay-major-hover.png';
@@ -1032,6 +1056,190 @@ export const eventStyles = {
       image: new Icon({
         scale: 0.25,
         src: chainUpsActiveIcon,
+      }),
+    }),
+  },
+
+  chain_ups_east: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsEastStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsEastHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsEastActiveIcon,
+      }),
+    }),
+  },
+
+  chain_ups_east_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsEastStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsEastHoverUnreadIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsEastActiveIcon,
+      }),
+    }),
+  },
+
+  chain_ups_north: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsNorthStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsNorthHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsNorthActiveIcon,
+      }),
+    }),
+  },
+
+  chain_ups_north_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsNorthStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsNorthHoverUnreadIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsNorthActiveIcon,
+      }),
+    }),
+  },
+
+  chain_ups_south: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsSouthStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsSouthHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsSouthActiveIcon,
+      }),
+    }),
+  },
+
+  chain_ups_south_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsSouthStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsSouthHoverUnreadIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsSouthActiveIcon,
+      }),
+    }),
+  },
+
+  chain_ups_west: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsWestStaticIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsWestHoverIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsWestActiveIcon,
+      }),
+    }),
+  },
+
+  chain_ups_west_unread: {
+    static: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsWestStaticUnreadIcon,
+      }),
+    }),
+
+    hover: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsWestHoverUnreadIcon,
+      }),
+    }),
+
+    active: new Style({
+      image: new Icon({
+        scale: 0.25,
+        src: chainUpsWestActiveIcon,
       }),
     }),
   },

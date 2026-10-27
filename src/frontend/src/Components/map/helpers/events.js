@@ -6,6 +6,21 @@ const getStyleKey = (baseKey, isHighlighted) => {
   return isHighlighted ? `${baseKey}_unread` : baseKey;
 };
 
+const getChainUpsStyleKey = (direction) => {
+  switch (direction) {
+    case 'E':
+      return 'chain_ups_east';
+    case 'W':
+      return 'chain_ups_west';
+    case 'N':
+      return 'chain_ups_north';
+    case 'S':
+      return 'chain_ups_south';
+    default:
+      return 'chain_ups';
+  }
+};
+
 // Static assets
 export const setEventStyle = (events, state) => {
   if (!Array.isArray(events)) { events = [events]; }
@@ -45,7 +60,9 @@ export const setEventStyle = (events, state) => {
           return event.setStyle(eventStyles[getStyleKey('road_conditions', is_highlighted)][state]);
 
         case 'chainUps':
-            return event.setStyle(eventStyles[getStyleKey('chain_ups', is_highlighted)][state]);
+          return event.setStyle(eventStyles[
+            getStyleKey(getChainUpsStyleKey(event.get('direction')), is_highlighted)
+          ][state]);
 
         default: {
           const type = event.get('event_type').toLowerCase();

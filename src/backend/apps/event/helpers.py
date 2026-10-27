@@ -2,8 +2,31 @@ import datetime
 import math
 from zoneinfo import ZoneInfo
 
-from apps.event.enums import EVENT_DISPLAY_CATEGORY, EVENT_SEVERITY
+from apps.event.enums import EVENT_DIRECTION, EVENT_DISPLAY_CATEGORY, EVENT_SEVERITY
+from apps.feed.constants import DIRECTIONS
 from django.conf import settings
+
+
+def parse_direction_from_text(*texts):
+    '''
+    Derive EVENT_DIRECTION from free-text fields that contain
+    eastbound/westbound/northbound/southbound phrases.
+
+    Used for chain-ups where RIDE encodes direction in route_from
+    (e.g. "Hwy 20, Westbound, ...").
+    '''
+    for text in texts:
+        if not text:
+            continue
+        lower = text.lower()
+        # "Both Directions" appears in chain-up names; check before cardinals
+        if 'both directions' in lower:
+            return EVENT_DIRECTION.BOTH
+        for phrase, code in DIRECTIONS.items():
+            if phrase in lower:
+                return code
+    return EVENT_DIRECTION.NONE
+
 
 # Match frontend Map.jsx View (EPSG:3857, zoomFactor 2.2, min/max zoom 5–15)
 _MERCATOR_HALF = 20037508.342789244
