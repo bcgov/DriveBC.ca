@@ -303,3 +303,82 @@ class TestEventModel(BaseTest):
         assert updated is True
         event = Event.objects.get(id='DBC-20342')
         assert event.display_category == event_enums.EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
+
+    def _chainup_event_data(self, **overrides):
+        last_updated = datetime.datetime(
+            2025, 5, 28, 0, 0, tzinfo=zoneinfo.ZoneInfo(key='America/Vancouver')
+        )
+        data = {
+            'closed': False,
+            'closest_landmark': '',
+            'description': 'Commercial chain up in effect between A and B.',
+            'direction': event_enums.EVENT_DIRECTION.WEST,
+            'event_sub_type': '',
+            'event_type': event_enums.EVENT_TYPE.CHAIN_UP,
+            'first_created': last_updated,
+            'highway_segment_names': 'Highway 20, Westbound, Heckman Pass',
+            'id': 'RIDE-CHAINUP-1',
+            'last_updated': last_updated,
+            'location': {
+                'coordinates': [[-125.768, 52.536], [-125.766, 52.537]],
+                'type': 'LineString',
+            },
+            'location_description': 'Highway 20, between A and B',
+            'next_update': None,
+            'route_at': 'Highway 20',
+            'route_from': 'Highway 20, Westbound, Heckman Pass',
+            'route_to': '',
+            'schedule': {'intervals': []},
+            'severity': event_enums.EVENT_SEVERITY.MINOR,
+            'start_point_linear_reference': 100.82,
+            'status': EVENT_STATUS.ACTIVE,
+            'timezone': 'America/Vancouver',
+        }
+        data.update(overrides)
+        return data
+
+    def test_populate_syncs_chainup_direction_when_last_updated_unchanged(self):
+        data = self._chainup_event_data(direction=event_enums.EVENT_DIRECTION.NONE)
+        populate_event_from_data(data)
+
+        event = Event.objects.get(id='RIDE-CHAINUP-1')
+        assert event.direction == event_enums.EVENT_DIRECTION.NONE
+
+        # Same last_updated, but direction now parsed as Westbound from route_from
+        updated = populate_event_from_data(
+            self._chainup_event_data(direction=event_enums.EVENT_DIRECTION.WEST)
+        )
+
+        # Direction sync is not treated as a notification-worthy update
+        assert updated is not True
+        event.refresh_from_db()
+        assert event.direction == event_enums.EVENT_DIRECTION.WEST
+
+    def test_populate_skips_chainup_direction_sync_when_unchanged(self):
+        data = self._chainup_event_data(direction=event_enums.EVENT_DIRECTION.EAST)
+        populate_event_from_data(data)
+
+        updated = populate_event_from_data(data)
+
+        assert updated is not True
+        event = Event.objects.get(id='RIDE-CHAINUP-1')
+        assert event.direction == event_enums.EVENT_DIRECTION.EAST
+
+    def test_populate_does_not_sync_direction_for_non_chainup(self):
+        data = self._chainup_event_data(
+            id='RIDE-INCIDENT-1',
+            event_type=event_enums.EVENT_TYPE.INCIDENT,
+            event_sub_type=event_enums.EVENT_SUB_TYPE.HAZARD,
+            direction=event_enums.EVENT_DIRECTION.NONE,
+            location={'coordinates': [-125.768, 52.536], 'type': 'Point'},
+        )
+        populate_event_from_data(data)
+
+        updated = populate_event_from_data({
+            **data,
+            'direction': event_enums.EVENT_DIRECTION.WEST,
+        })
+
+        assert updated is not True
+        event = Event.objects.get(id='RIDE-INCIDENT-1')
+        assert event.direction == event_enums.EVENT_DIRECTION.NONE
