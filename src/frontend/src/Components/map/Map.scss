@@ -34,7 +34,7 @@
   }
 
   @media (min-width: 576px) {
-    top: 196px;
+    top: 179px;
   }
 }
 
@@ -165,13 +165,17 @@
 
     &:has(.route-search-actions-container) {
       .side-panel.open {
-        height: calc(100% - 212px);
+        height: calc(100% - 195px);
 
         &.has-route {
           &:has(.route-object-list), &:has(.from-route-objs) {
-            height: calc(100% - 255px);
+            height: calc(100% - 246px);
           }
         }
+      }
+
+      &:not(:has(.routing-caption)) .side-panel.open {
+        height: calc(100% - 168px);
       }
     }
 
