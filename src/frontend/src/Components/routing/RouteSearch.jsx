@@ -1,5 +1,5 @@
 // React
-import React, {useCallback, useEffect, useRef, forwardRef, useContext, useState} from 'react';
+import React, {useCallback, useEffect, useLayoutEffect, useRef, forwardRef, useContext, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
 import { useClickAway } from '@uidotdev/usehooks';
@@ -66,14 +66,36 @@ const RouteSearch = forwardRef((props, ref) => {
   // openSearch when either location is populated
   const [openSearch, setOpenSearch] = useState(hasLocation);
 
+  // Box height just before opening/closing, so the new box can animate from it
+  const boxRef = useRef(null);
+  const heightBeforeToggleRef = useRef(null);
+  const toggleSearch = (open) => {
+    heightBeforeToggleRef.current = boxRef.current?.offsetHeight ?? null;
+    setOpenSearch(open);
+  };
+
+  useLayoutEffect(() => {
+    const box = boxRef.current;
+    const from = heightBeforeToggleRef.current;
+    heightBeforeToggleRef.current = null;
+    if (!box || from == null || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    box.getAnimations().forEach((animation) => animation.cancel());
+    box.animate([
+      { height: `${from}px`, overflow: 'hidden' },
+      { height: `${box.offsetHeight}px`, overflow: 'hidden' },
+    ], { duration: 200, easing: 'ease-in-out' });
+  }, [openSearch]);
+
   // Desktop (map): collapse search when clicking outside while a location is set
   const clickAwayRef = useClickAway(() => {
     if (mapRef && !hasLocation && openSearch) {
-      setOpenSearch(false);
+      toggleSearch(false);
     }
   });
 
   const setContainerRef = useCallback((node) => {
+    boxRef.current = node;
     clickAwayRef.current = node;
     if (typeof ref === 'function') {
       ref(node);
@@ -229,7 +251,7 @@ const RouteSearch = forwardRef((props, ref) => {
           type="button"
           className="search-trigger btn"
           aria-label="search location"
-          onClick={() => setOpenSearch(true)}>
+          onClick={() => toggleSearch(true)}>
           <FontAwesomeIcon icon={faMagnifyingGlass} /> Focus the info: Enter your trip here
         </button>
       </div>
