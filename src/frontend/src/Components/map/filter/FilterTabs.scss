@@ -61,6 +61,7 @@ button.btn.open-filters {
     left: auto;
     right: 1rem;
     width: 300px;
+    border-radius: 8px;
   }
 }
 
@@ -174,17 +175,46 @@ button.btn.open-filters {
   }
 }
 
+.filter-tabs {
+  min-height: 0;
+
+  .tabs-header {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  .tab-content {
+    min-height: 0;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+
+    .tab-pane {
+      height: auto;
+    }
+  }
+}
+
 button.close-filters {
   position: absolute;
   top: 0.5rem;
-  right: .75rem;
-  padding: 0;
+  right: 0.5rem;
+  padding: 4px;
   min-width: 0;
-  line-height: 1.25rem;
+  border-radius: 50%;
   background: none;
   border:none;
-  font-size: 1.25rem;
   color: #070707;
+  transition: background 0.2s ease-in-out;
+
+  &:hover {
+    background: lighten($Type-Primary, 70%);
+  }
+
+  svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+  }
 }
 
 .mobile-filter-tabs {
