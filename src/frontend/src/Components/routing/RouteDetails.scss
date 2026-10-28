@@ -11,13 +11,14 @@
   font-weight: 700;
   background-color: $Grey10;
   font-size: 0.875rem;
-  color: $Type-Link;
+  color: $ViewDetailsText;
   margin-top: 1rem;
   margin-bottom: 0;
   z-index: 10;
   position: relative;
   border: none;
-  padding: 10px 0;
+  border-radius: 8px;
+  padding: 9px 0;
 
   &:hover {
     background-color: $Grey20;
@@ -77,9 +78,13 @@
         padding: 0;
         background: none;
         z-index: 10;
+        color: $ViewDetailsText;
+        font-size: 0.75rem;
+        line-height: 18px;
 
         svg {
-          font-size: 16px;
+          font-size: 14px;
+          margin-right: 4px;
         }
       }
     }
@@ -146,7 +151,8 @@
 
       .route-distance {
         font-size: 0.875rem;
-        color: $Grey80;
+        line-height: 21px;
+        color: #3B3A39;
         white-space: nowrap;
       }
     }
@@ -169,19 +175,18 @@
       justify-content: center;
       align-items: center;
       border-radius: 20px;
-      padding: 4px 12px;
+      padding: 2px 8px;
       font-weight: 700;
       font-size: 0.75rem;
       width: 100%;
 
       @media (min-width: 768px) {
         border-radius: 24px;
-        padding: 4px 12px;
         width: auto;
       }
 
       .route-item__icon {
-        margin-right: 8px;
+        margin-right: 4px;
       }
 
       .route-item__count {
@@ -199,8 +204,8 @@
 
       &--advisories {
         background: $Advisory-Bg;
-        border: 1px solid $Advisory-Text;
-        color: $Advisory-Text;
+        border: 1px solid $Advisory;
+        color: #B94006;
       }
 
       &:first-of-type {
@@ -230,10 +235,14 @@
 
       &__count {
         display: inline-block;
-        width: 2ch;
+        width: 20px;
         font-weight: 700;
         margin-left: 12px;
         font-size: 0.875rem;
+      }
+
+      &__count ~ .route-item__name {
+        color: $Grey80;
       }
 
       &__icon {
