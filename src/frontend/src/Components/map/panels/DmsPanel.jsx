@@ -61,11 +61,6 @@ const displays = [
     id: 2,
     status: dms.values_.message_display_2?.trim() ? 'Active' : 'No message',
     messages: parseMessageWithAlignment(dms.values_.message_display_2)
-  },
-  {
-    id: 3,
-    status: dms.values_.message_display_3?.trim() ? 'Active' : 'No message',
-    messages: parseMessageWithAlignment(dms.values_.message_display_3)
   }
 ];
 
@@ -95,7 +90,7 @@ const displays = [
       <div className="popup__content">
         <div className="popup__content__title">
           <p className="name">{dmsData.name}</p>
-            <FriendlyTime date={dmsData.updated_datetime_utc} asDate />   
+            <FriendlyTime date={dmsData.updated_datetime_utc} asDate />
         </div>
 
         <div className='popup__content__description'>
