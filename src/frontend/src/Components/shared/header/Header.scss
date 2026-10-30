@@ -67,23 +67,50 @@
 			.location-search {
 				width: 100%;
 				background-color: white;
-				padding: 0 8px;
-				display: flex;
+				padding: 12px 16px 0 8px;
+				display: grid;
+				grid-template-columns: auto minmax(0, 1fr);
+				column-gap: 8px;
 
 				&--hidden {
 					display: none;
 				}
 
-				.btn.close-search {
-					margin: 12px 0;
-					height: 70px;
-					flex-shrink: 0;
+				&:not(:has(.route-search-actions-container)) {
+					padding-bottom: 12px;
 				}
 
-				.routing {
-					padding: 12px .5rem 0 0.5rem;
-					flex: 1;
-					min-width: 0;
+				.routing, .routing-container {
+					display: contents;
+				}
+
+				.routing-container > * {
+					grid-column: 2;
+				}
+
+				.no-route-found-container {
+					grid-column: 1 / -1;
+					grid-row: 1;
+				}
+
+				.typeahead-container--from {
+					grid-row: 2;
+				}
+
+				.typeahead-container--to {
+					grid-row: 3;
+				}
+
+				.route-search-actions-container {
+					grid-row: 4;
+				}
+
+				.btn.close-search {
+					grid-column: 1;
+					grid-row: 2 / span 2;
+					align-self: center;
+					margin: 0;
+					height: 70px;
 				}
 			}
 

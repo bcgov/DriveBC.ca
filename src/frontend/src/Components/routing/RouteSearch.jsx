@@ -272,6 +272,10 @@ const RouteSearch = forwardRef((props, ref) => {
       }
 
       <div className="routing-container">
+        {searchedRoutes &&
+          <NoRouteFound searchedRoutes={searchedRoutes} searchLocationFrom={searchLocationFrom} searchLocationTo={searchLocationTo}/>
+        }
+
         <div className={"typeahead-container typeahead-container--from stacked"}>
           <span className="location-marker location-marker--from">
             <FontAwesomeIcon icon={faCircleDot} />
@@ -352,10 +356,6 @@ const RouteSearch = forwardRef((props, ref) => {
               </button>
             </div>
           </div>
-        }
-
-        {searchedRoutes &&
-          <NoRouteFound searchedRoutes={searchedRoutes} searchLocationFrom={searchLocationFrom} searchLocationTo={searchLocationTo}/>
         }
       </div>
     </div>

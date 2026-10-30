@@ -35,7 +35,7 @@
   }
 
   @media (min-width: 576px) {
-    top: 179px;
+    top: calc(var(--search-bottom, 167px) + 12px);
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -117,8 +117,12 @@
         margin-top: auto;
         margin-left: 1rem;
         margin-bottom: 16px;
-        height: calc(100% - 146px);
+        height: calc(100% - var(--search-bottom, 130px) - 12px - 16px);
         box-shadow: 0 3.2px 7.2px 0 #00000021;
+
+        &.with-back-btn {
+          height: calc(100% - var(--search-bottom, 130px) - 12px - 31px - 12px - 16px);
+        }
 
         .popup__title {
           border-top-left-radius: 8px;
@@ -132,11 +136,6 @@
         }
 
         &.has-route{
-          height: calc(100% - 210px);
-
-          &:has(.route-object-list) {
-            height: calc(100% - 255px);
-          }
           .popup__title {
             padding-right: 1rem;
           }
@@ -181,36 +180,6 @@
       }
     }
 
-    &:has(.route-search-actions-container) {
-      .side-panel.open {
-        height: calc(100% - 195px);
-
-        &.has-route {
-          &:has(.route-object-list), &:has(.from-route-objs) {
-            height: calc(100% - 242px);
-          }
-        }
-      }
-
-      &:not(:has(.routing-caption)) .side-panel.open {
-        height: calc(100% - 168px);
-      }
-    }
-
-    &:has(.routing-outer-container--collapsed) {
-      .side-panel.open {
-        height: calc(100% - 108px);
-
-        &.has-route {
-          height: calc(100% - 108px);
-
-          &:has(.route-object-list) {
-            height: calc(100% - 108px);
-          }
-        }
-      }
-    }
-
     .map {
       flex: 1;
       position: absolute;
@@ -230,18 +199,18 @@
         transition: margin-left 0.25s ease-in-out;
 
         .routing-outer-container {
-          padding: 8px;
+          padding: 12px;
           background-color: white;
           border-radius: 8px;
           position: relative;
           box-shadow: 0 3.2px 7.2px 0 #00000021;
 
           .routing-container .typeahead-container {
-            width: 374px;
+            width: 366px;
           }
 
           &--collapsed {
-            padding: 8px;
+            padding: 12px;
             width: 390px;
 
             .search-trigger {

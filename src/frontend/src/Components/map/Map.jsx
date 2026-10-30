@@ -284,6 +284,21 @@ export default function DriveBCMap(props) {
     if (panel.current) lastPanelNodeRef.current = panel.current;
   });
 
+  // The side panel and back buttons sit below the route search, so track where it ends
+  const mapLeftContainerRef = useRef(null);
+  useEffect(() => {
+    const searchBox = mapLeftContainerRef.current;
+    const container = mapContainerRef.current;
+    if (!searchBox || !container) return;
+
+    const observer = new ResizeObserver(() => {
+      const bottom = searchBox.getBoundingClientRect().bottom - container.getBoundingClientRect().top;
+      container.style.setProperty('--search-bottom', `${bottom}px`);
+    });
+    observer.observe(searchBox);
+    return () => observer.disconnect();
+  }, [smallScreen]);
+
   // Drawer state
   const getSnapPoints = () => {
     if (showRouteObjs && selectedRoute) {
@@ -1183,7 +1198,7 @@ export default function DriveBCMap(props) {
       {!!openPanel && largeScreen &&
         <div
           ref={panel}
-          className={`side-panel ${openPanel ? 'open' : ''} ${selectedRoute ? 'has-route' : ''}`}>
+          className={`side-panel ${openPanel ? 'open' : ''} ${selectedRoute ? 'has-route' : ''} ${selectedRoute && showRouteObjs ? 'with-back-btn' : ''}`}>
 
           {clickedFeature && smallScreen &&
             <button
@@ -1278,7 +1293,7 @@ export default function DriveBCMap(props) {
           </Button>
         )}
 
-        {!largeScreen && openPanel && mapRendered && (
+        {!largeScreen && !!openPanel && mapRendered && (
           <Drawer.Root
             key={pendingAction && pendingAction.action === 'showSavePopup' ? pendingAction.action : 'defaultKey'}
             open={true}
@@ -1343,7 +1358,9 @@ export default function DriveBCMap(props) {
 
         {!smallScreen && (
 
-          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
+          <div
+            ref={mapLeftContainerRef}
+            className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
             <RouteSearch
               showFilterText={true}
               ref={routingContainerRef}
