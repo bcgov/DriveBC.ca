@@ -17,6 +17,7 @@
   z-index: 1;
   top: 1rem;
   left: 1rem;
+  padding: 4px 8px;
   background-color: white;
   color: $Type-Link;
   font-size: 0.875rem;
@@ -177,7 +178,7 @@
 
         &.has-route {
           &:has(.route-object-list), &:has(.from-route-objs) {
-            height: calc(100% - 246px);
+            height: calc(100% - 242px);
           }
         }
       }
