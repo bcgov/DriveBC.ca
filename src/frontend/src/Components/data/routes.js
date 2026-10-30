@@ -10,7 +10,7 @@ import { compareRouteDistance } from "../map/helpers";
 import { API_HOST, ROUTE_PLANNER, ROUTE_PLANNER_CLIENT_ID, ALTERNATE_ROUTE_GDF, ALTERNATE_ROUTE_XINGCOST, ALTERNATE_ROUTE_TURNCOST, PRIMARY_ROUTE_GDF, PRIMARY_ROUTE_XINGCOST, PRIMARY_ROUTE_TURNCOST, DISABLE_FSR_ROUTING, DISABLE_CLOSURE_ROUTING } from '../../env';
 
 export function getRoute(points, alternate=false) {
-  const url = `${ROUTE_PLANNER}/directions.json`;
+  const url = `${ROUTE_PLANNER}/route.json`;
 
   const payload = {
     points: points,
@@ -59,7 +59,7 @@ export function getRoute(points, alternate=false) {
   }
 
   if (DISABLE_FSR_ROUTING === 'true') {
-    payload.excludedRoadClasses = 'local,resource,ferry';
+    payload.excludedRoadClasses = 'resource';
   }
 
   return get(url, payload, {
