@@ -3,14 +3,14 @@
 .camera-thumbnail {
   .label {
     position: absolute;
-    bottom: 8px;
-    left: 8px;
+    bottom: 4px;
+    left: 4px;
     background-color: $Grey20;
     color: $BC-Blue;
     font-weight: 700;
-    padding: 4px 8px;
+    padding: 2px 8px;
     border-radius: 8px;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
 
     &:hover {
       .label {
@@ -35,7 +35,7 @@
     background-color: $Grey20;
     color: $BC-Blue;
     font-weight: 700;
-    padding: 4px 8px;
+    padding: 2px 8px;
     border-radius: 16px;
     font-size: 0.75rem;
 
