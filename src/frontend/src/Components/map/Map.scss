@@ -37,6 +37,15 @@
   @media (min-width: 576px) {
     top: 179px;
   }
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: back-btn-slide-in 0.15s ease-out;
+  }
+}
+
+@keyframes back-btn-slide-in {
+  from { transform: translateX(-16px); }
+  to { transform: none; }
 }
 
 .zoom-btn, .my-location {
