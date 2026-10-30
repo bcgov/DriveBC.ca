@@ -18,12 +18,15 @@ export const BCEID_REGISTER_URL = `${getEnv('BCEID_REGISTER_URL')}`;
 export const FROM_EMAIL = `${getEnv('FROM_EMAIL')}`;
 export const LEGACY_URL = `${getEnv('LEGACY_URL')}`;
 export const RECAPTCHA_CLIENT_ID = `${getEnv('RECAPTCHA_CLIENT_ID')}`;
+
 export const PRIMARY_ROUTE_GDF = `${getEnv('PRIMARY_ROUTE_GDF')}`;
 export const PRIMARY_ROUTE_TURNCOST = `${getEnv('PRIMARY_ROUTE_TURNCOST')}`;
 export const PRIMARY_ROUTE_XINGCOST = `${getEnv('PRIMARY_ROUTE_XINGCOST')}`;
 export const ALTERNATE_ROUTE_GDF = `${getEnv('ALTERNATE_ROUTE_GDF')}`;
 export const ALTERNATE_ROUTE_TURNCOST = `${getEnv('ALTERNATE_ROUTE_TURNCOST')}`;
 export const ALTERNATE_ROUTE_XINGCOST = `${getEnv('ALTERNATE_ROUTE_XINGCOST')}`;
+export const DISABLE_CLOSURE_ROUTING = `${getEnv('DISABLE_CLOSURE_ROUTING')}`;
+export const DISABLE_FSR_ROUTING = `${getEnv('DISABLE_FSR_ROUTING')}`;
 
 export const DEPLOYMENT_TAG = runtimeEnv.DEPLOYMENT_TAG ?? import.meta.env.VITE_DEPLOYMENT_TAG ?? '';
 export const MAINTENANCE_MODE = runtimeEnv.MAINTENANCE_MODE ?? import.meta.env.VITE_MAINTENANCE_MODE ?? 'false';

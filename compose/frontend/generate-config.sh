@@ -36,6 +36,8 @@ window.__ENV__ = {
   ALTERNATE_ROUTE_GDF: '${VITE_ALTERNATE_ROUTE_GDF:-$REACT_APP_ALTERNATE_ROUTE_GDF}',
   ALTERNATE_ROUTE_TURNCOST: '${VITE_ALTERNATE_ROUTE_TURNCOST:-$REACT_APP_ALTERNATE_ROUTE_TURNCOST}',
   ALTERNATE_ROUTE_XINGCOST: '${VITE_ALTERNATE_ROUTE_XINGCOST:-$REACT_APP_ALTERNATE_ROUTE_XINGCOST}',
+  DISABLE_CLOSURE_ROUTING: '${VITE_DISABLE_CLOSURE_ROUTING:-$REACT_APP_DISABLE_CLOSURE_ROUTING}',
+  DISABLE_FSR_ROUTING: '${VITE_DISABLE_FSR_ROUTING:-$REACT_APP_DISABLE_FSR_ROUTING}',
   DEPLOYMENT_TAG: '${DEPLOYMENT_TAG}',
   MAINTENANCE_MODE: '${MAINTENANCE_MODE}',
   RELEASE: '${RELEASE:-}',
@@ -49,9 +51,9 @@ TARGET_INDEX="${SHARED_CONFIG}/index.html"
 # --- Inject Config into HTML Safely ---
 if [ -f "$TARGET_INDEX" ]; then
     echo "Injecting runtime config into ${TARGET_INDEX}..."
-    
+
     SAFE_CONFIG=$(echo "$CONFIG_ONE_LINE" | sed 's/&/\\&/g')
-    
+
     sed -i "s~<head>~<head>${SAFE_CONFIG}~" "$TARGET_INDEX"
     rm "${SHARED_CONFIG}/config_snippet.html"
 else
@@ -81,7 +83,7 @@ if [ -n "$BLOCKED_IPS" ]; then
     echo "Processing blocked IPs..."
     for ip in $(echo "$BLOCKED_IPS" | tr ';' ' '); do
         CLEAN_IP=$(echo "$ip" | tr -d ' ')
-        if [ -n "$CLEAN_IP" ]; then 
+        if [ -n "$CLEAN_IP" ]; then
             echo "deny $CLEAN_IP;" >> "$BLOCKED_CONF"
         fi
     done
