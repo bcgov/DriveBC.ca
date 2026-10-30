@@ -211,10 +211,12 @@ const RouteSearch = forwardRef((props, ref) => {
   }, [showSpinner]);
 
   // Handlers
-  const resetRouteParams = () => {
+  const resetRouteParams = (keepRouteObjs = false) => {
     if (resetClickedStates) {
       resetClickedStates();
-      dispatch(updateShowRouteObjs(false));
+      if (!keepRouteObjs) {
+        dispatch(updateShowRouteObjs(false));
+      }
     }
 
     searchParams.delete('type');
@@ -231,7 +233,8 @@ const RouteSearch = forwardRef((props, ref) => {
   }
 
   const clearHandler = () => {
-    resetRouteParams();
+    // updateSearch resets route objects with the cleared routes, so details stay visible while the panel slides out
+    resetRouteParams(true);
 
     dispatch(updateSearchLocationFrom([]));
     dispatch(updateSearchLocationTo([]));

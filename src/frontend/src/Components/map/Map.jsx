@@ -5,6 +5,7 @@ import React, {
   useContext,
   useRef,
   useEffect,
+  useLayoutEffect,
   useState,
   useCallback,
 } from 'react';
@@ -245,6 +246,43 @@ export default function DriveBCMap(props) {
   const drawerShowsRouteDetailsPanel =
     !clickedFeature &&
     !!searchedRoutes?.length;
+
+  // Slide the side panel in when it opens and out when it closes
+  const panelShown = !!openPanel;
+  const prevPanelShownRef = useRef(panelShown);
+  const lastPanelNodeRef = useRef(null);
+  const exitingPanelRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const wasShown = prevPanelShownRef.current;
+    prevPanelShownRef.current = panelShown;
+    if (wasShown === panelShown) return;
+
+    exitingPanelRef.current?.remove();
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const offscreen = { transform: 'translateX(calc(-100% - 1rem))' };
+    const onscreen = { transform: 'none' };
+
+    if (panelShown) {
+      panel.current?.animate([offscreen, onscreen], { duration: 250, easing: 'ease-in-out' });
+
+    // React has already removed the panel, so slide out a detached copy of it
+    } else if (largeScreen && lastPanelNodeRef.current && mapContainerRef.current) {
+      const exiting = lastPanelNodeRef.current;
+      exiting.classList.add('open');
+      exiting.inert = true;
+      exiting.style.pointerEvents = 'none';
+      mapContainerRef.current.prepend(exiting);
+      exitingPanelRef.current = exiting;
+      exiting.animate([onscreen, offscreen], { duration: 250, easing: 'ease-in-out' })
+        .finished.then(() => exiting.remove(), () => {});
+    }
+  }, [panelShown]);
+
+  useLayoutEffect(() => {
+    if (panel.current) lastPanelNodeRef.current = panel.current;
+  });
 
   // Drawer state
   const getSnapPoints = () => {
