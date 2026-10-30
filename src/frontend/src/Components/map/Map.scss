@@ -149,6 +149,13 @@
 
         .popup__content {
           overflow-y: auto;
+          border-bottom-left-radius: 8px;
+          border-bottom-right-radius: 8px;
+
+          .popup__content {
+            overflow: visible;
+            border-radius: 0;
+          }
         }
 
         &:has(.selected) {
