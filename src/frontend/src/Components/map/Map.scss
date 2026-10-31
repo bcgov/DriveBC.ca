@@ -199,18 +199,18 @@
         transition: margin-left 0.25s ease-in-out;
 
         .routing-outer-container {
-          padding: 12px;
+          padding: 8px;
           background-color: white;
           border-radius: 8px;
           position: relative;
           box-shadow: 0 3.2px 7.2px 0 #00000021;
 
           .routing-container .typeahead-container {
-            width: 366px;
+            width: 374px;
           }
 
           &--collapsed {
-            padding: 12px;
+            padding: 8px;
             width: 390px;
 
             .search-trigger {
