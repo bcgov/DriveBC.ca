@@ -8,6 +8,11 @@
       font-weight: 700;
       text-align: left;
     }
+
+    .forecast-tab-list .nav-tabs {
+      justify-content: flex-start;
+      gap: 24px;
+    }
     .popup__title {
       background-color: $Grey30;
 
