@@ -18,6 +18,7 @@ import Footer from '../../Footer';
 import FriendlyTime from './FriendlyTime';
 import ShareURLButton from './ShareURLButton';
 import PollingComponent from "./PollingComponent";
+import { getCmsContentSeoDescription, setPageSeoDescription } from './seo';
 
 // Styling
 import './EmergencyAlertDetail.scss';
@@ -60,6 +61,16 @@ export default function EmergencyAlertDetail() {
     navigate(-1);
   };
 
+  // Rich text html for SEO description; same parsing as renderBody
+  const getRichTextHtml = (body) => {
+    try {
+      const blocks = typeof body === 'string' ? JSON.parse(body) : body;
+      return blocks.filter((block) => block.type === 'rich_text').map((block) => block.value).join(' ');
+    } catch {
+      return typeof body === 'string' ? body : '';
+    }
+  };
+
   // Render body blocks
   const renderBody = (body) => {
     try {
@@ -88,6 +99,7 @@ export default function EmergencyAlertDetail() {
       if (data) {
         setDetailData(data);
         document.title = `DriveBC - Emergency Alerts - ${data.title}`;
+        setPageSeoDescription(getCmsContentSeoDescription({ rendered_body: getRichTextHtml(data.body) }));
 
         if (data.id) {
           const readAlerts = Array.from(new Set([
