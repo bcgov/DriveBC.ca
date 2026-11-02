@@ -175,6 +175,13 @@ export const setPageSeoDescription = description => {
   setHeadTag('meta[property="og:description"]', 'content', plainText);
 };
 
+export const setPageSeoUrl = () =>
+  setHeadTag(
+    'meta[property="og:url"]',
+    'content',
+    window.location.origin + window.location.pathname,
+  );
+
 export const setMapFeatureSeoMetadata = (path, feature) => {
   const { title, description, canonicalUrl } = getMapFeatureSeoMetadata(
     path,
