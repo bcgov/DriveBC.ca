@@ -38,6 +38,7 @@ import RouteMap from './RouteMap';
 import './RouteObjectList.scss';
 import 'react-loading-skeleton/dist/skeleton.css'
 import { advisoryStyles } from "../data/featureStyleDefinitions";
+import trackEvent from '../shared/TrackEvent';
 
 export default function RouteObjectList(props) {
   /* Setup */
@@ -159,6 +160,7 @@ export default function RouteObjectList(props) {
 
   const eventFeatureHandler = (event) => {
     if (featureContext.events && event.id in featureContext.events) {
+      trackEvent('click', 'route-list', 'event', event.display_category, event.id);
       eventClickHandler(
         featureContext.events[event.id],
         clickedFeatureRef,
@@ -169,6 +171,7 @@ export default function RouteObjectList(props) {
 
   const ferryFeatureHandler = (ferry) => {
     if (featureContext.ferries && ferry.id in featureContext.ferries) {
+      trackEvent('click', 'route-list', 'ferry', featureContext.ferries[ferry.id].get('title'));
       ferryClickHandler(
         featureContext.ferries[ferry.id],
         clickedFeatureRef,
@@ -179,6 +182,7 @@ export default function RouteObjectList(props) {
 
   const advisoryFeatureHandler = (advisory) => {
     if (featureContext.advisories && advisory.id in featureContext.advisories) {
+      trackEvent('click', 'route-list', 'advisory', 'selected advisory');
       const feature = featureContext.advisories[advisory.id];
 
       // set new clicked ferry feature
@@ -190,6 +194,7 @@ export default function RouteObjectList(props) {
 
   const wildfireFeatureHandler = (wildfire) => {
     if (featureContext.wildfires && wildfire.id in featureContext.wildfires) {
+      trackEvent('click', 'route-list', 'wildfire', 'selected wildfire');
       wildfireClickHandler(
         featureContext.wildfires[wildfire.id],
         clickedFeatureRef,

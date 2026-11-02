@@ -6,7 +6,7 @@ export default function EmptyEventDisplay(props) {
 
   /* Main rendering function */
   return (
-    <div className="empty-event-display">
+    <div className="empty-event-display" data-nosnippet="">
       <h2>{`No ${chainUpsOnly ? 'commercial vehicle chain-ups in effect' : 'delays to display'}`}</h2>
       <>
         <strong>Do you have a starting location and a destination entered?</strong>

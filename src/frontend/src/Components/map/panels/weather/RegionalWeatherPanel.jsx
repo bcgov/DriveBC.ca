@@ -25,6 +25,7 @@ import ForecastCarousel from './ForecastCarousel';
 import ForecastTabs from './ForecastTabs';
 import FriendlyTime from '../../../shared/FriendlyTime';
 import ShareURLButton from '../../../shared/ShareURLButton';
+import { resetSeoMetadata, setMapFeatureSeoMetadata } from '../../../shared/seo';
 import WeatherIconThin from '../../WeatherIconThin';
 
 // Styling
@@ -69,6 +70,8 @@ export default function RegionalWeatherPanel(props) {
     searchParams.set('id', weather.id);
     searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
+    setMapFeatureSeoMetadata('regional-weather', weather);
+    return resetSeoMetadata;
   }, [feature]);
 
   /* Rendering */
@@ -160,7 +163,7 @@ export default function RegionalWeatherPanel(props) {
           { weather.observed && <FriendlyTime date={weather.observed} asDate={true} /> }
         </div>
 
-        <div className="popup__content__description">
+        <div className="popup__content__description" data-nosnippet="">
           { conditions.temperature_value &&
             <div className="temp-and-icon">
               <p className="temperature">
@@ -220,7 +223,7 @@ export default function RegionalWeatherPanel(props) {
           </div>
         </div>
 
-        <div className="popup__content__forecasts">
+        <div className="popup__content__forecasts" data-nosnippet="">
           {weather.current_day_forecasts.length &&
             <ForecastCarousel forecast_group={weather.current_day_forecasts} currentPane />
           }

@@ -28,6 +28,7 @@ import parse from 'html-react-parser';
 // Internal imports
 import { formatDate } from "../../shared/FriendlyTime";
 import ShareURLButton from '../../shared/ShareURLButton';
+import { resetSeoMetadata, setMapFeatureSeoMetadata } from '../../shared/seo';
 
 // Styling
 import './FerryPanel.scss';
@@ -126,7 +127,7 @@ function FerryVessel({ vessel, isFirstVessel = false, ferryData }) {
         </div>
       )}
 
-      <div className='info__container'>
+      <div className='info__container' data-nosnippet="">
         {vessel.schedule_detail && <p>{parse(vessel.schedule_detail)}</p>}
         {vessel.special_restriction && <p>{vessel.special_restriction}</p>}
       </div>
@@ -167,9 +168,12 @@ export default function FerryPanel(props) {
   useEffect(() => {
     searchParams.set('type', 'ferry');
     searchParams.set('id', ferryData.id);
+    searchParams.delete('coastal');
     searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
     setActiveVesselTab(0);
+    setMapFeatureSeoMetadata('ferry', ferryData);
+    return resetSeoMetadata;
   }, [feature]);
 
   // Main component
@@ -194,7 +198,7 @@ export default function FerryPanel(props) {
             className="ferry-route-name"
             href={ferryData.url}
             rel="noreferrer">{`${ferryData.route_name}`}</a></p>
-            <div className="popup__title__updated">
+            <div className="popup__title__updated" data-nosnippet="">
               Updated {formatDate(ferryData.feed_modified_at)}
             </div>
           </div>
@@ -249,7 +253,7 @@ export default function FerryPanel(props) {
                   <p className="data"><a href={"tel:" + formatPhoneNumber(ferryData.contact_alt_phone)}>{formatPhoneNumber(ferryData.contact_alt_phone)}</a>
                   </p>
                 </div>
-              }                
+              }
               {ferryData.contact_fax &&
                 <div className="data-card__row">
                   <div className="data-icon">

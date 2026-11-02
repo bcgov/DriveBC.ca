@@ -1,6 +1,6 @@
 // React
 import React, { useEffect, useState, useRef } from 'react';
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 
 // Redux
 import { useDispatch } from "react-redux";
@@ -24,6 +24,13 @@ import { useMediaQuery } from '@uidotdev/usehooks';
 
 import { shortenToOneDecimal } from "../Components/data/routes";
 import MapWrapper from '../Components/map/MapWrapper';
+import {
+  getMapFeatureRoute,
+  isMapFeatureNoindex,
+  isMapFeatureSelected,
+  resetSeoMetadata,
+  setSeoNoindex,
+} from '../Components/shared/seo';
 
 // Styling
 import '../Components/map/Map.scss';
@@ -35,19 +42,19 @@ export default function MapPage() {
 
   // Navigation
   const location = useLocation();
-  const { id: cameraPathId } = useParams();
   const [searchParams] = useSearchParams();
+  const featureRoute = getMapFeatureRoute(location.pathname);
+  const featureSelected = isMapFeatureSelected(location.pathname, searchParams);
   // Snapshot before map navigations replace location.state (path string or false)
   const fromCameraList = useRef(location.state?.fromCameraList || false).current;
 
-  document.title = 'DriveBC';
-
   const getReferenceParams = () => {
-    if (cameraPathId) {
+    if (featureRoute) {
       return {
-        type: 'camera',
-        id: cameraPathId,
+        type: featureRoute.type,
+        id: featureRoute.id,
         display_category: null,
+        coastal: featureRoute.path === 'coastal-ferry',
       };
     }
 
@@ -55,14 +62,27 @@ export default function MapPage() {
       type: searchParams.get('type'),
       id: searchParams.get('id'),
       display_category: searchParams.get('display_category'),
+      coastal: searchParams.get('coastal') === 'true',
     };
   }
   const [referenceData, setReferenceData] = useState(null);
 
   // Effects
   useEffect(() => {
+    if (!featureSelected) {
+      resetSeoMetadata();
+    }
+  }, [featureSelected]);
+
+  const featureNoindex = isMapFeatureNoindex(location.pathname, searchParams);
+  useEffect(() => {
+    setSeoNoindex(featureNoindex);
+    return () => setSeoNoindex(false);
+  }, [featureNoindex]);
+
+  useEffect(() => {
     setReferenceData(getReferenceParams());
-  }, [searchParams, cameraPathId]);
+  }, [searchParams, location.pathname]);
 
   useEffect(() => {
     populateRoutesFromNotification();

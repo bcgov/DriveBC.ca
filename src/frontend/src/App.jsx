@@ -2,7 +2,7 @@
 import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 
 // Navigation
-import { Route, Routes, useSearchParams } from 'react-router-dom';
+import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 
 // Redux
 import { memoize } from "proxy-memoize";
@@ -52,6 +52,12 @@ import SavedRoutesPage from './pages/SavedRoutesPage';
 import ScrollToTop from './Components/shared/ScrollToTop';
 import Survey from "./Components/shared/Survey";
 import { API_HOST, MAINTENANCE_MODE } from './env';
+import {
+  MAP_FEATURE_ROUTES,
+  getPageSeoDescription,
+  isMapFeatureSelected,
+  setPageSeoDescription,
+} from './Components/shared/seo';
 
 // FontAwesome Stylesheet
 import { config } from '@fortawesome/fontawesome-svg-core'
@@ -123,7 +129,15 @@ function App() {
   }))));
 
   // Routing
+  const location = useLocation();
   const [searchParams, _setSearchParams] = useSearchParams();
+  const mapFeatureSelected = isMapFeatureSelected(location.pathname, searchParams);
+
+  useEffect(() => {
+    if (!mapFeatureSelected) {
+      setPageSeoDescription(getPageSeoDescription(location.pathname));
+    }
+  }, [location.pathname, mapFeatureSelected]);
 
   // Refs
   const isInitialAlertMount = useRef(true);
@@ -366,7 +380,9 @@ function App() {
                           <Routes>
                             <Route path="/" element={<MapPage />}>
                               <Route index element={null} />
-                              <Route path="cameras/:id" element={null} />
+                              {Object.keys(MAP_FEATURE_ROUTES).map(path => (
+                                <Route key={path} path={`${path}/:id`} element={null} />
+                              ))}
                             </Route>
                             <Route path="/my-cameras" element={<SavedCamerasPage />} />
                             <Route path="/my-routes" element={<SavedRoutesPage />} />
