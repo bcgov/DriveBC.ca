@@ -57,6 +57,7 @@ import {
   getPageSeoDescription,
   isMapFeatureSelected,
   setPageSeoDescription,
+  setPageSeoUrl,
 } from './Components/shared/seo';
 
 // FontAwesome Stylesheet
@@ -136,6 +137,7 @@ function App() {
   useEffect(() => {
     if (!mapFeatureSelected) {
       setPageSeoDescription(getPageSeoDescription(location.pathname));
+      setPageSeoUrl();
     }
   }, [location.pathname, mapFeatureSelected]);
 
