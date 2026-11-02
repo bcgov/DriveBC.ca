@@ -3,7 +3,7 @@
 ############################################
 # Builder: install deps and build frontend #
 ############################################
-FROM node:24-alpine AS buildnode
+FROM node:26-alpine AS buildnode
 
 WORKDIR /app
 COPY ./src/frontend/ /app/
