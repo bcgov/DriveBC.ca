@@ -15,6 +15,7 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
 import ShareURLButton from '../../../shared/ShareURLButton';
+import { resetSeoMetadata, setMapFeatureSeoMetadata } from '../../../shared/seo';
 import WeatherIcon from '../../WeatherIcon';
 
 // Styling
@@ -38,6 +39,8 @@ export default function HefPanel(props) {
     searchParams.set('type', 'hef');
     searchParams.set('id', data.id);
     setSearchParams(searchParams, { replace: true });
+    setMapFeatureSeoMetadata('high-elevation-weather', data);
+    return resetSeoMetadata;
   }, [feature]);
 
   return (
@@ -97,7 +100,7 @@ export default function HefPanel(props) {
           { data.issued_utc && <FriendlyTime date={data.issued_utc} asDate={true} /> }
         </div>
 
-        <div className="popup__content__forecasts">
+        <div className="popup__content__forecasts" data-nosnippet="">
           <p className="forecasts-title">Conditions</p>
           { data.forecasts.map((forecast) => (
             <div className='forecast' key={forecast.label}>
