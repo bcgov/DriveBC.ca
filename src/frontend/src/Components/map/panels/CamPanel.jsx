@@ -62,6 +62,7 @@ export default function CamPanel(props) {
   // Side panel (desktop) vs mobile drawer — match Map.jsx breakpoint
   const largeScreen = useMediaQuery('only screen and (min-width: 768px)');
   const canExpand = useMediaQuery('only screen and (min-width: 1400px)');
+  const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   // Props
   const { camFeature, showRouteObjs, fromCameraList } = props;
@@ -179,7 +180,7 @@ export default function CamPanel(props) {
     beforeToggleRef.current = null;
     const root = camPanelRef.current;
     const sidePanel = root?.closest('.side-panel');
-    if (!before || !sidePanel || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!before || !sidePanel || reduceMotion) return;
 
     const options = { duration: 250, easing: 'ease-in-out' };
     const content = root.querySelector(':scope > .popup__content');

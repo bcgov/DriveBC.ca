@@ -2,7 +2,7 @@
 import React, {useCallback, useEffect, useLayoutEffect, useRef, forwardRef, useContext, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
-import { useClickAway } from '@uidotdev/usehooks';
+import { useClickAway, useMediaQuery } from '@uidotdev/usehooks';
 
 // Routing
 import { useSearchParams } from "react-router-dom";
@@ -66,6 +66,8 @@ const RouteSearch = forwardRef((props, ref) => {
   // openSearch when either location is populated
   const [openSearch, setOpenSearch] = useState(hasLocation);
 
+  const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+
   // Box height just before opening/closing, so the new box can animate from it
   const boxRef = useRef(null);
   const heightBeforeToggleRef = useRef(null);
@@ -78,7 +80,7 @@ const RouteSearch = forwardRef((props, ref) => {
     const box = boxRef.current;
     const from = heightBeforeToggleRef.current;
     heightBeforeToggleRef.current = null;
-    if (!box || from == null || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!box || from == null || reduceMotion) return;
 
     box.getAnimations().forEach((animation) => animation.cancel());
     box.animate([
