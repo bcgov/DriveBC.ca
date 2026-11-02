@@ -376,7 +376,7 @@ export default function RouteObjectList(props) {
                   </svg>
                 </span>
 
-                <span className="route-item__name">Commercial chain up</span>
+                <span className="route-item__name">Commercial chain-up in effect</span>
               </div>
             </div>
           );

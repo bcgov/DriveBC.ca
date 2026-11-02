@@ -577,7 +577,7 @@ export default function EventsListPage(props) {
     );
   }
 
-  const listName = chainUpsOnly ? 'Commercial chain-ups' : 'Delays';
+  const listName = chainUpsOnly ? 'Commercial chain-ups in effect' : 'Delays';
   const eventsTitle = selectedRoute
     ? `${listName} on ${getRouteDisplayName(selectedRoute)}`
     : listName;
@@ -737,7 +737,7 @@ export default function EventsListPage(props) {
           <div className="container--sidepanel__right">
             <PageHeader
               title={eventsTitle}
-              description={chainUpsOnly ? 'Segments of the highway that require commercial vehicles over 11,794 kg to have chains on.' : eventsDescription}>
+              description={chainUpsOnly ? 'Segments of the highway that currently require commercial vehicles over 11,794 kg to have chains on.' : eventsDescription}>
             </PageHeader>
             <div className="sticky-sentinel" />
             <div className="sticky-filters">

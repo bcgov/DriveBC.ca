@@ -32,7 +32,7 @@ export const DELAY_TYPES = [
   {
     key: 'chainUps',
     lineKey: 'chainUpsLines',
-    label: 'Chain-ups',
+    label: 'Chain-ups in effect',
     trackLabel: 'Toggle chain ups layer',
   },
 ];

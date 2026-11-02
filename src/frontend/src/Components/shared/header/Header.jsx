@@ -525,7 +525,7 @@ function HeaderContent() {
                 </Nav.Link>
                 <div className={`commercial-dropdown-content ${isCommercialOpen ? 'open' : ''}`}>
                   <a href="/delays?chainUpsOnly=true" className='commercial-dropdown-item' onClick={handleChainUpsClick}>
-                    Chain-ups
+                    Chain-ups in effect
                     {xLargeScreen && <FontAwesomeIcon icon={faArrowRight} />}
                   </a>
                   <a href="https://twm.th.gov.bc.ca/?c=cvrt" className='commercial-dropdown-item' onClick={() => { setIsCommercialOpen(false); onClickActions(); }}>
