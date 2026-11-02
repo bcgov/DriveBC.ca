@@ -98,6 +98,10 @@ The --keepdb option uses an existing test database if it already exists and save
 
 `migrate` - executes db migrations, see Django [documentation](https://docs.djangoproject.com/en/4.2/ref/django-admin/#migrate)
 
+## Sitemap
+
+The public `/sitemap.xml` endpoint is served by Django and routed through the frontend Nginx configuration. Canonical URLs use `FRONTEND_BASE_URL`. It includes public discovery routes, each camera visible in the public camera list, inland and coastal ferry routes, rest stops, current weather stations, and recent high-elevation forecasts, as well as published advisories, bulletins, their subpages, and emergency-alert detail pages. Rest stops use `/rest-stop/<id>` URLs; inland and coastal ferries use `/ferry/<id>` and `/coastal-ferry/<id>`, and weather features use `/roadside-weather/<id>`, `/regional-weather/<id>`, and `/high-elevation-weather/<id>`. Unpublished Wagtail pages and account-specific routes are excluded.
+
 ### <a name="coverage-report"></a>Test coverage and report
 In the terminal tab on the bottom left:
 1. Switch to the backend folder `cd src/backend/`
