@@ -100,6 +100,7 @@ export default function DriveBCMap(props) {
   // width breakpoints
   const viewportSmallScreen = useMediaQuery('only screen and (max-width: 575px)');
   const viewportLargeScreen = useMediaQuery('only screen and (min-width: 768px)');
+  const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   const smallScreen = viewportSmallScreen;
   const largeScreen = viewportLargeScreen;
@@ -259,7 +260,7 @@ export default function DriveBCMap(props) {
     if (wasShown === panelShown) return;
 
     exitingPanelRef.current?.remove();
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (reduceMotion) return;
 
     const offscreen = { transform: 'translateX(calc(-100% - 1rem))' };
     const onscreen = { transform: 'none' };
