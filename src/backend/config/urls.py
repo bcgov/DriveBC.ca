@@ -3,6 +3,17 @@ import os
 from allauth.account import views
 from allauth.account.decorators import secure_admin_login
 from apps.authentication import views as auth_views
+from apps.cms.sitemaps import (
+    AdvisorySitemap,
+    BulletinSitemap,
+    CameraSitemap,
+    EmergencyAlertDetailSitemap,
+    FerrySitemap,
+    RestStopSitemap,
+    StaticPageSitemap,
+    SubPageSitemap,
+    WeatherSitemap,
+)
 from apps.shared import views as shared_views
 from apps.shared.views import static_override
 from config.settings import SHOW_DEBUG_TOOLBAR
@@ -10,6 +21,7 @@ from django.conf import settings
 from django.conf.urls import defaults
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
 from django.shortcuts import redirect
 from django.urls import include, path, re_path
 from drf_spectacular.views import (
@@ -17,6 +29,18 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+
+sitemaps = {
+    "pages": StaticPageSitemap,
+    "cameras": CameraSitemap,
+    "ferries": FerrySitemap,
+    "rest-stops": RestStopSitemap,
+    "weather": WeatherSitemap,
+    "advisories": AdvisorySitemap,
+    "bulletins": BulletinSitemap,
+    "subpages": SubPageSitemap,
+    "emergency-alert-details": EmergencyAlertDetailSitemap,
+}
 
 
 def admin_permission_denied_handler(request, exception):
@@ -63,6 +87,13 @@ if settings.FORCE_IDIR_AUTHENTICATION:
 
 
 urlpatterns = [
+    path(
+        "sitemap.xml",
+        sitemap,
+        {"sitemaps": sitemaps},
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
+
     # django
     path('drivebc-admin/request-access', auth_views.request_access, name='admin-request-access'),
     path('drivebc-admin/access-requested', auth_views.access_requested, name='admin-access-requested'),
