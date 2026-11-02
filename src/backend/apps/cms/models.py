@@ -16,7 +16,6 @@ from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.models import Image
 from wagtail.models import Page
-from wagtail.templatetags import wagtailcore_tags
 
 TABLE_OPTIONS = {'rowHeaders': True,
                  'colHeaders': True, }
@@ -211,7 +210,10 @@ class Advisory(Page, BaseModel):
     base_form_class = AdvisoryAdminForm
 
     def rendered_body(self):
-        blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
+        from wagtail.templatetags.wagtailcore_tags import (
+            richtext,  # DBC22-7634: wagtail 8 loads Page on import
+        )
+        blocks = [richtext(block.render()) for block in self.body]
         return '\n'.join(blocks)
 
     api_fields = [
@@ -303,7 +305,10 @@ class Bulletin(Page, BaseModel):
     last_notified_at = models.DateTimeField(null=True, blank=True)
 
     def rendered_body(self):
-        blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
+        from wagtail.templatetags.wagtailcore_tags import (
+            richtext,  # DBC22-7634: wagtail 8 loads Page on import
+        )
+        blocks = [richtext(block.render()) for block in self.body]
         return '\n'.join(blocks)
 
     api_fields = [
@@ -482,7 +487,10 @@ class SubPage(Page, BaseModel):
     ]
 
     def rendered_body(self):
-        blocks = [wagtailcore_tags.richtext(block.render()) for block in self.body]
+        from wagtail.templatetags.wagtailcore_tags import (
+            richtext,  # DBC22-7634: wagtail 8 loads Page on import
+        )
+        blocks = [richtext(block.render()) for block in self.body]
         return '\n'.join(blocks)
 
     def save(self, *args, **kwargs):
