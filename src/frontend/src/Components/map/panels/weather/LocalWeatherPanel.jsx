@@ -20,6 +20,7 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 // Internal imports
 import FriendlyTime from '../../../shared/FriendlyTime';
 import ShareURLButton from '../../../shared/ShareURLButton';
+import { resetSeoMetadata, setMapFeatureSeoMetadata } from '../../../shared/seo';
 import CurrentWeatherIcon from '../../CurrentWeatherIcon';
 import LocalForecastTabs from './LocalForecastTabs';
 
@@ -36,7 +37,7 @@ export default function LocalWeatherPanel(props) {
   const weatherData = feature.getProperties();
   const now = new Date();
   const dailyForecastData = (weatherData.forecast_group || [])
-  
+
 
   // Split forecast into current and future
   const current_day_forecasts = [];
@@ -62,6 +63,8 @@ export default function LocalWeatherPanel(props) {
     searchParams.set('id', weatherData.id);
     searchParams.delete("display_category");
     setSearchParams(searchParams, { replace: true });
+    setMapFeatureSeoMetadata('roadside-weather', weatherData);
+    return resetSeoMetadata;
   }, [feature]);
 
   return (
@@ -85,7 +88,7 @@ export default function LocalWeatherPanel(props) {
           <FriendlyTime date={weatherData.issuedUtc} asDate />
         </div>
 
-        <div className="popup__content__description">
+        <div className="popup__content__description" data-nosnippet="">
           {(weatherData.air_temperature || weatherData.road_temperature) && (
             <div className="temperatures">
               {weatherData.air_temperature && (
@@ -108,13 +111,13 @@ export default function LocalWeatherPanel(props) {
 
             <div className="data-card-container">
               <p className="container-label">Current conditions</p>
-                
+
               <div className="data-card">
                 {weatherData.present_weather && (
                   <div className="row--present-weather">
                     <div className="data-icon">
                       {weatherData.present_weather?.label && (
-                        <CurrentWeatherIcon code={weatherData.present_weather.code} /> 
+                        <CurrentWeatherIcon code={weatherData.present_weather.code} />
                       )}
                     </div>
                     <p className="container-label present-weather">
