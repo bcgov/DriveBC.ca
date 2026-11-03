@@ -11,7 +11,7 @@ export default function Advisories(props) {
   const { advisories, selectedRoute } = props;
 
   return advisories &&
-    <div className="advisories popup popup--advisories" tabIndex={0}>
+    <div className="advisories popup popup--advisories">
       <div className="popup__title">
         <div className="popup__title__name">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
