@@ -518,7 +518,10 @@
 
 				.nav-link {
 					background: none;
-					border-bottom: none;
+
+					@media (max-width: 991px) {
+						border-bottom: none;
+					}
 
 					&:hover {
 						background-color: hsla(0,0%,7%,.15);
