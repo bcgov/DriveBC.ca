@@ -67,17 +67,13 @@
 			.location-search {
 				width: 100%;
 				background-color: white;
-				padding: 12px 16px 8px 4px;
+				padding: 12px 16px 12px 4px;
 				display: grid;
 				grid-template-columns: auto minmax(0, 1fr);
 				column-gap: 8px;
 
 				&--hidden {
 					display: none;
-				}
-
-				&:not(:has(.route-search-actions-container)) {
-					padding-bottom: 12px;
 				}
 
 				.routing, .routing-container {
@@ -103,6 +99,7 @@
 
 				.route-search-actions-container {
 					grid-row: 4;
+					margin-bottom: -4px;
 				}
 
 				.btn.close-search {
@@ -768,4 +765,157 @@ body.list-header-hidden {
 			}
 		}
 	}
+}
+
+@media (max-width: 575px) {
+	:root:active-view-transition {
+		.navbar {
+			view-transition-name: site-header;
+		}
+
+		header {
+			+ div {
+				view-transition-name: site-content;
+			}
+
+			.close-search {
+				view-transition-name: route-back;
+			}
+
+			.search-trigger, .typeahead-container--from, .searched-route__start {
+				view-transition-name: route-from;
+			}
+
+			.typeahead-container--to, .searched-route__end {
+				view-transition-name: route-to;
+			}
+
+			.searched-route {
+				view-transition-name: route-box;
+			}
+
+			.searched-route__start, .searched-route__end {
+				margin-left: -9px;
+				padding-left: 9px;
+			}
+
+			.routing-caption {
+				view-transition-name: route-caption;
+			}
+
+			.route-alt-options {
+				view-transition-name: route-options;
+			}
+
+			.route-search-link {
+				view-transition-name: route-swap;
+			}
+
+			.route-edit-link {
+				view-transition-name: route-edit;
+			}
+
+			.route-clear-link {
+				view-transition-name: route-clear;
+			}
+		}
+	}
+
+	:root:active-view-transition-type(route-found) {
+		view-transition-name: none;
+
+		header + div {
+			view-transition-name: none;
+		}
+	}
+}
+
+::view-transition-group(*) {
+	animation-duration: 0.22s;
+	animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+::view-transition-group(site-header) {
+	box-shadow: rgb(0,0,0,0.2) 0px 2px 10px 0px;
+}
+
+::view-transition-image-pair(*) {
+	overflow: clip;
+}
+
+::view-transition-old(*), ::view-transition-new(*) {
+	height: 100%;
+	object-fit: none;
+	object-position: left top;
+}
+
+::view-transition-old(*) {
+	display: none;
+}
+
+::view-transition-new(*) {
+	animation: none;
+}
+
+::view-transition-old(route-from), ::view-transition-old(route-to), ::view-transition-old(route-box):only-child {
+	display: block;
+	animation: route-fade-out 0.1s ease-out both;
+}
+
+::view-transition-new(route-from), ::view-transition-new(route-to), ::view-transition-new(route-box):only-child {
+	animation: route-fade-in 0.1s ease-out both;
+}
+
+::view-transition-old(route-from), ::view-transition-new(route-from), ::view-transition-old(route-to), ::view-transition-new(route-to) {
+	object-position: left center;
+	mix-blend-mode: plus-lighter;
+}
+
+::view-transition-old(*):only-child {
+	display: block;
+	animation: route-slide-out 0.12s ease-in both;
+}
+
+::view-transition-new(*):only-child {
+	animation: route-slide-in 0.16s cubic-bezier(0.2, 0, 0, 1) 0.06s both;
+}
+
+::view-transition-old(route-back):only-child {
+	animation-name: route-back-out;
+}
+
+::view-transition-new(route-back):only-child {
+	animation-name: route-back-in;
+}
+
+::view-transition-new(route-to):only-child {
+	animation-name: route-unfold;
+}
+
+@keyframes route-slide-out {
+	to { transform: translateY(-100%); }
+}
+
+@keyframes route-slide-in {
+	from { transform: translateY(100%); }
+}
+
+@keyframes route-unfold {
+	from { transform: translateY(-100%); }
+}
+
+@keyframes route-fade-in {
+	from { opacity: 0; }
+}
+
+@keyframes route-fade-out {
+	to { opacity: 0; }
+}
+
+@keyframes route-back-out {
+	to { transform: translateX(-100%); }
+}
+
+@keyframes route-back-in {
+	from { transform: translateX(-100%); }
 }

@@ -37,6 +37,19 @@ import Spinner from 'react-bootstrap/Spinner';
 // Styling
 import './RouteSearch.scss';
 
+// Slides an element's height (with its top padding and bottom margin) open or closed; held closed until removed
+const slideHeight = (element, open) => {
+  element.getAnimations().forEach((animation) => animation.cancel());
+  const { paddingTop, marginBottom } = getComputedStyle(element);
+  const shown = { height: `${element.offsetHeight}px`, paddingTop, marginBottom, overflow: 'hidden' };
+  const hidden = { height: '0px', paddingTop: '0px', marginBottom: '0px', overflow: 'hidden' };
+  return element.animate(open ? [hidden, shown] : [shown, hidden], {
+    duration: 200,
+    easing: 'ease-in-out',
+    fill: open ? 'none' : 'forwards',
+  });
+};
+
 const RouteSearch = forwardRef((props, ref) => {
   // Props
   const { showFilterText, showSpinner, onShowSpinnerChange, mapRef, myLocation, mapView, resetClickedStates, showAltOptions = true } = props;
@@ -88,6 +101,29 @@ const RouteSearch = forwardRef((props, ref) => {
       { height: `${box.offsetHeight}px`, overflow: 'hidden' },
     ], { duration: 200, easing: 'ease-in-out' });
   }, [openSearch]);
+
+  // Controls row stays mounted while it slides closed
+  const actionsRef = useRef(null);
+  const [showActions, setShowActions] = useState(hasLocation);
+  const actionsShownRef = useRef(showActions);
+
+  useEffect(() => {
+    const row = actionsRef.current;
+    row?.getAnimations().forEach((animation) => animation.cancel());
+    if (hasLocation || !row || reduceMotion) {
+      setShowActions(hasLocation);
+      return;
+    }
+    slideHeight(row, false).onfinish = () => setShowActions(false);
+  }, [hasLocation]);
+
+  useLayoutEffect(() => {
+    const row = actionsRef.current;
+    if (showActions && !actionsShownRef.current && row && !reduceMotion) {
+      slideHeight(row, true);
+    }
+    actionsShownRef.current = showActions;
+  }, [showActions]);
 
   // Desktop (map): collapse search when clicking outside while a location is set
   const clickAwayRef = useClickAway(() => {
@@ -319,8 +355,8 @@ const RouteSearch = forwardRef((props, ref) => {
           }
         </div>
 
-        {hasLocation &&
-          <div className="route-search-actions-container">
+        {showActions &&
+          <div ref={actionsRef} className="route-search-actions-container">
             {showAltOptions && !mapRef && searchedRoutes && searchedRoutes.length > 0 &&
               <div className="route-alt-options">
                 {searchedRoutes.map((route, index) => {
