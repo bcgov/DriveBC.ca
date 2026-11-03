@@ -520,6 +520,10 @@
 					background: none;
 					border-bottom: none;
 
+					&:hover {
+						background-color: hsla(0,0%,7%,.15);
+					}
+
 					.title {
 						.chevron-icon {
 							font-size: 0.875rem;
@@ -601,6 +605,11 @@
 
 						@media (min-width: 1200px) {
 							padding: 6px 12px;
+							transition: background-color 0.15s ease-in-out;
+
+							&:hover {
+								background-color: hsla(0,0%,7%,.15);
+							}
 						}
 
 						&:focus {
