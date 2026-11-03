@@ -33,9 +33,12 @@
         border-radius: 8px;
         width: 100%;
 
-        &:hover {
-          background-color: $Grey10;
-          transition: 0.1s ease-in-out background-color;
+        &:hover .advisory-li-title {
+          text-decoration: none;
+        }
+
+        .advisory-li-title:hover {
+          text-decoration: underline;
         }
       }
 
