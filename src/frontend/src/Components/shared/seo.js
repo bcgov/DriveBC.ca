@@ -5,17 +5,16 @@ const DEFAULT_DESCRIPTION =
   'Check real-time BC road conditions, closures, highway webcams, and delays with DriveBC.';
 
 export const PAGE_DESCRIPTIONS = {
-  '/': 'Check real-time BC highway road conditions, traffic delays, webcams, and weather advisories across British Columbia.',
+  '/': 'Check real-time BC highway road conditions, traffic delays, webcams, and weather information across British Columbia.',
   '/cameras':
     'View highway webcams and real-time traffic camera feeds across British Columbia highways.',
   '/delays':
     'Get updates on BC highway closures, construction, accidents, and travel delays.',
   '/chain-ups':
-    'Check current commercial vehicle chain-up requirements and locations across British Columbia.',
+    'Check current commercial vehicle (truck) chain-up requirements and locations across British Columbia.',
   '/advisories':
-    'Check active BC travel advisories, flood warnings, winter driving alerts, and emergency road closures.',
-  '/bulletins':
-    'Read the latest DriveBC bulletins about highway conditions, planned work, and travel information across British Columbia.',
+    'Check active BC travel advisories and emergency closures.',
+  '/bulletins': 'Stay safe and informed with seasonal travel updates.',
   '/problems':
     'Report highway, bridge, electrical, or website problems to help keep British Columbia roads safe and information up to date.',
   '/feedback':
@@ -23,7 +22,7 @@ export const PAGE_DESCRIPTIONS = {
   '/highway-problem':
     'Report potholes, highway or bridge damage, drainage issues, fallen rocks, and other road maintenance problems in British Columbia.',
   '/road-electrical-problem':
-    'Report problems with highway signs, street lights, pedestrian lighting, and traffic signals in British Columbia.',
+    'Report problems with highway signs, street lights, pedestrian lighting, and traffic signals on British Columbia highways.',
 };
 
 // Map panel routes (/<path>/:id) and their map feature types; paths match backend sitemaps

@@ -173,7 +173,7 @@ describe('SEO metadata', () => {
 
   it('provides custom descriptions for public landing pages', () => {
     expect(getPageSeoDescription('/')).toBe(
-      'Check real-time BC highway road conditions, traffic delays, webcams, and weather advisories across British Columbia.',
+      'Check real-time BC highway road conditions, traffic delays, webcams, and weather information across British Columbia.',
     );
     expect(getPageSeoDescription('/cameras')).toBe(
       'View highway webcams and real-time traffic camera feeds across British Columbia highways.',
@@ -182,10 +182,10 @@ describe('SEO metadata', () => {
       'Get updates on BC highway closures, construction, accidents, and travel delays.',
     );
     expect(getPageSeoDescription('/advisories')).toBe(
-      'Check active BC travel advisories, flood warnings, winter driving alerts, and emergency road closures.',
+      'Check active BC travel advisories and emergency closures.',
     );
     expect(getPageSeoDescription('/bulletins')).toContain(
-      'latest DriveBC bulletins',
+      'seasonal travel updates',
     );
     expect(getPageSeoDescription('/problems')).toContain('Report highway');
   });
