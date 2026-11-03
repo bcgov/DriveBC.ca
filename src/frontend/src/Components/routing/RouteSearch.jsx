@@ -269,7 +269,7 @@ const RouteSearch = forwardRef((props, ref) => {
         <p className="routing-caption">
           {mapRef
             ? 'Map and site results filtered by trip: '
-            : 'Page results are filtered by this route:'}
+            : 'Page results are filtered by this trip:'}
         </p>
       }
 
