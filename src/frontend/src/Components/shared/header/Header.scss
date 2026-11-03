@@ -567,7 +567,8 @@
 				.commercial-dropdown-content {
 					max-height: 0;
 					overflow: hidden;
-					transition: max-height 0.3s ease-in-out;
+					visibility: hidden;
+					transition: max-height 0.3s ease-in-out, visibility 0s linear 0.3s;
 					background: none;
 					will-change: max-height;
 					display: flex;
@@ -590,12 +591,14 @@
 						min-width: 260px;
 						border-radius: 4px;
 						opacity: 0;
-						transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+						transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0s linear 0.3s;
 						pointer-events: none;
 					}
 
 					&.open {
 						max-height: 500px;
+						visibility: visible;
+						transition-delay: 0s;
 
 						@media (max-width: 1199px) {
 							overflow: visible;
