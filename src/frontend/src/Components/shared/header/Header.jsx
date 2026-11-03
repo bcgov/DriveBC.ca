@@ -509,7 +509,7 @@ function HeaderContent() {
 
               <div className="commercial-dropdown" ref={commercialDropdownRef}>
                 <Nav.Link
-                  active={false}
+                  active={location.pathname.startsWith('/chain-ups')}
                   onClick={() => {
                     setIsCommercialOpen(!isCommercialOpen);
                   }}
