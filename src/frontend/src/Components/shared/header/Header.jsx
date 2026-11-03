@@ -421,7 +421,7 @@ function HeaderContent() {
             {smallScreen && showSearch && !openSearch && selectedRoute && isNavbarCollapsed &&
               <div className="searched-route-container">
                 <p className="routing-caption">
-                  {isListPage ? 'Map and site results filtered by trip: ': 'Page results are filtered by this route:'}
+                  {isListPage ? 'Page results are filtered by this trip:' : 'Map and site results filtered by trip: '}
                 </p>
 
                 <button
