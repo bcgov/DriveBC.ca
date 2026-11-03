@@ -159,7 +159,7 @@ export default function AdvisoriesList(props) {
                   }
 
                   <Button variant="light" className='view-details-btn'>
-                    View Details
+                    View details
                     <FontAwesomeIcon icon={faChevronRight}/>
                   </Button>
                 </div>
