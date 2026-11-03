@@ -411,14 +411,23 @@
 
 	&-brand {
 		padding: 0;
-		margin: 0;
+		margin: 0 18px 0 0;
+
+		&:focus:not(:focus-visible) {
+			outline: none;
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			outline-offset: -2px;
+			box-shadow: none;
+		}
 
 		.header-logo {
 			width: 116px;
 			height: 36px;
 			top: 6px;
 			left: 32px;
-			margin-right: 18px
 		}
 
 		& + .nav-divider {
