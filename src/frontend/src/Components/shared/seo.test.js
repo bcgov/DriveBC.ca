@@ -5,6 +5,8 @@ import {
   getBulletinSeoDescription,
   getCmsContentSeoDescription,
   getMapFeatureRoute,
+  getMapPanelSearchParams,
+  hasMapFeatureRouteMismatch,
   getMapFeatureSeoMetadata,
   getPageSeoDescription,
   isMapFeatureNoindex,
@@ -269,6 +271,67 @@ describe('SEO metadata', () => {
     expect(isMapFeatureSelected('/', featureParams)).toBe(true);
     expect(isMapFeatureSelected('/', noParams)).toBe(false);
     expect(isMapFeatureSelected('/delays', featureParams)).toBe(false);
+  });
+
+  it('detects when a canonical map route no longer matches the selected panel', () => {
+    const params = query => new URLSearchParams(query);
+
+    expect(
+      hasMapFeatureRouteMismatch(
+        '/rest-stop/247882',
+        params('type=localWeather&id=1943127'),
+      ),
+    ).toBe(true);
+    expect(
+      hasMapFeatureRouteMismatch(
+        '/cameras/1136',
+        params('type=localWeather&id=1943127'),
+      ),
+    ).toBe(true);
+    expect(
+      hasMapFeatureRouteMismatch(
+        '/cameras/1136',
+        params('type=camera&id=1137'),
+      ),
+    ).toBe(false);
+    expect(
+      hasMapFeatureRouteMismatch(
+        '/rest-stop/247882',
+        params('type=restStop&id=247882'),
+      ),
+    ).toBe(false);
+    expect(
+      hasMapFeatureRouteMismatch(
+        '/rest-stop/247882',
+        params('type=largeRestStop&id=247882'),
+      ),
+    ).toBe(false);
+    expect(
+      hasMapFeatureRouteMismatch(
+        '/coastal-ferry/2505855',
+        params('type=ferry&id=2505855&coastal=true'),
+      ),
+    ).toBe(false);
+    expect(
+      hasMapFeatureRouteMismatch(
+        '/coastal-ferry/2505855',
+        params('type=ferry&id=2505855'),
+      ),
+    ).toBe(true);
+  });
+
+  it('removes camera-only query state after switching to another panel type', () => {
+    expect(
+      getMapPanelSearchParams(
+        '?type=localWeather&id=1943127&camIndex=2&pan=1,2',
+      ).toString(),
+    ).toBe('type=localWeather&id=1943127&pan=1%2C2');
+    expect(
+      getMapPanelSearchParams('?type=camera&id=1136&camIndex=2').toString(),
+    ).toBe('type=camera&id=1136&camIndex=2');
+    expect(
+      getMapPanelSearchParams('?camIndex=2&pan=1,2').toString(),
+    ).toBe('camIndex=2&pan=1%2C2');
   });
 
   it('marks only non-allowlisted map panels as noindex', () => {

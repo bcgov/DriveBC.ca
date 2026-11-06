@@ -43,6 +43,44 @@ export const getMapFeatureRoute = pathname => {
     : null;
 };
 
+export const getMapPanelSearchParams = search => {
+  const searchParams = new URLSearchParams(search);
+  const selectedType = searchParams.get('type');
+
+  if (selectedType && selectedType !== 'camera') {
+    searchParams.delete('camIndex');
+  }
+
+  return searchParams;
+};
+
+export const hasMapFeatureRouteMismatch = (pathname, searchParams) => {
+  const featureRoute = getMapFeatureRoute(pathname);
+  const selectedType = searchParams.get('type');
+  const selectedId = searchParams.get('id');
+
+  if (!featureRoute || !selectedType || !selectedId) {
+    return false;
+  }
+
+  if (featureRoute.path === 'cameras' && selectedType === 'camera') {
+    return false;
+  }
+
+  const isMatchingRestStop =
+    featureRoute.type === 'restStop' &&
+    ['restStop', 'largeRestStop'].includes(selectedType);
+  const isMatchingCoastalFerry =
+    (featureRoute.path === 'coastal-ferry') ===
+    (searchParams.get('coastal') === 'true');
+
+  return (
+    featureRoute.id !== selectedId ||
+    (featureRoute.type !== selectedType && !isMatchingRestStop) ||
+    !isMatchingCoastalFerry
+  );
+};
+
 // Open map panels set their own metadata
 export const isMapFeatureSelected = (pathname, searchParams) =>
   Boolean(
