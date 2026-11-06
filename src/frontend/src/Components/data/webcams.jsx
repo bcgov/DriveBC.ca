@@ -196,4 +196,16 @@ export function addCameraGroups(cameras, favCams) {
   return res;
 }
 
+export function getInitialCameraIndex(camGroup, pathId, urlIndex) {
+  const index = urlIndex === null ? -1 : Number(urlIndex);
+  if (Number.isInteger(index) && index >= 0 && index < (camGroup?.length || 0)) {
+    return index;
+  }
+
+  const pathIndex = camGroup?.findIndex(
+    camera => String(camera.id) === String(pathId),
+  );
+  return pathIndex >= 0 ? pathIndex : 0;
+}
+
 export const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
