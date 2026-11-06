@@ -52,7 +52,10 @@ import {
   zoomIn,
   zoomOut,
   fitMap,
-  removeOverlays
+  removeOverlays,
+  DESKTOP_PANEL_WIDTH,
+  EXPANDED_CAMERA_PANEL_WIDTH,
+  getPanelAnchorXFraction,
 } from './helpers';
 import { layerNameMap, toggleableLayers } from "./enums";
 import { loadLayer, loadEventsLayers, updateEventsLayers, enableReferencedLayer } from './layers';
@@ -207,6 +210,8 @@ export default function DriveBCMap(props) {
   const locationSet = useRef();
   const routingContainerRef = useRef();
   const scaleLineRef = useRef();
+  // Survives OL click-handler closure; CamPanel keeps this in sync
+  const cameraPanelExpandedRef = useRef(false);
 
   // Initialization flags
   const isInitialMountLocation = useRef();
@@ -477,6 +482,14 @@ export default function DriveBCMap(props) {
     }
   }, [clickedFeature])
 
+  const setCameraPanelExpanded = useCallback((expanded) => {
+    cameraPanelExpandedRef.current = !!expanded;
+    // Expanded camera panel overlaps the filters menu — close it
+    if (expanded) {
+      setOpenTabs(false);
+    }
+  }, []);
+
   const updatePosition = (feature) => {
     // Do not process empty features, routes and advisories
     if (feature != null && !Array.isArray(feature) && feature.get('type') !== 'route'&& feature.get('type') !== 'advisory') {
@@ -486,8 +499,14 @@ export default function DriveBCMap(props) {
         geometry = feature.getProperties().altFeature.getGeometry(); // use the point feature's geometry
       }
 
-      // Center when opened programmatically (deep link), panel from bottom, or clicked within 390px from left
-      if (mousePointXClicked == null || mousePointXClicked < 390 || smallScreen) {
+      const isExpandedCamera =
+        feature.get('type') === 'camera' && cameraPanelExpandedRef.current;
+      const panelWidth = isExpandedCamera
+        ? EXPANDED_CAMERA_PANEL_WIDTH
+        : DESKTOP_PANEL_WIDTH;
+
+      // Center when opened programmatically (deep link), panel from bottom, or clicked within panel width from left
+      if (mousePointXClicked == null || mousePointXClicked < panelWidth || smallScreen) {
         let zoom = mapView.current.getZoom();
         const coords = geometry.flatCoordinates;
         const mapWidth = mapRef.current?.getSize()?.[0] ?? 0;
@@ -497,14 +516,17 @@ export default function DriveBCMap(props) {
           zoom = 12;
         }
 
-        // Use anchored pan if panel from bottom or screen smaller than 1000px
-        const shouldUseAnchoredPan = mapWidth < 1000 || smallScreen;
+        // Use anchored pan if panel from bottom, screen smaller than 1000px, or camera panel is expanded
+        // (true center would sit under the expanded panel)
+        const shouldUseAnchoredPan = mapWidth < 1000 || smallScreen || isExpandedCamera;
 
         // Center on top half of the screen, if panel open from bottom
         const anchorYFraction = !viewportLargeScreen ? 0.25 : 0.5;
 
-        // Center on right side of screen minus 390px panel, if panel open from left
-        const anchorXFraction = anchorYFraction !== 0.25 ? (((mapWidth-390)/2) + 390) / mapWidth : 0.5;
+        // Center on right side of screen minus side panel, if panel open from left
+        const anchorXFraction = anchorYFraction !== 0.25
+          ? getPanelAnchorXFraction(mapWidth, panelWidth)
+          : 0.5;
 
         if (shouldUseAnchoredPan) {
           setZoomPanAnchored(mapRef, mapView, zoom, coords, anchorXFraction, anchorYFraction);
@@ -1274,7 +1296,9 @@ export default function DriveBCMap(props) {
               updateClickedFeature,
               showRouteObjs,
               handleSetShowRouteObjs,
-              openedFromCameraList
+              openedFromCameraList,
+              mapRef,
+              setCameraPanelExpanded
             )}
           </div>
         </div>
@@ -1380,7 +1404,9 @@ export default function DriveBCMap(props) {
                     updateClickedFeature,
                     showRouteObjs,
                     handleSetShowRouteObjs,
-                    openedFromCameraList
+                    openedFromCameraList,
+                    mapRef,
+                    setCameraPanelExpanded
                   )}
                 </div>
               </Drawer.Content>
