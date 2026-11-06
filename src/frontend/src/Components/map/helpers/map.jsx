@@ -16,8 +16,18 @@ export const transformFeature = (feature, sourceCRS, targetCRS) => {
 // Zoom and pan
 // Mobile drawer default snap is 50% (Map.jsx snapPointRef)
 const MOBILE_DRAWER_FRACTION = 0.5;
-const DESKTOP_PANEL_WIDTH = 390; // Map.scss .side-panel
+export const DESKTOP_PANEL_WIDTH = 390; // Map.scss .side-panel
+export const EXPANDED_CAMERA_PANEL_WIDTH = 1046; // Map.scss .popup--camera.expanded
 const FIT_MARGIN = 56; // keep endpoints off map edge
+
+// Center of the map area beside a left-side panel (panel overlays the map)
+export const getPanelAnchorXFraction = (mapWidth, panelWidth) => {
+  if (!mapWidth) {
+    return 0.5;
+  }
+
+  return (((mapWidth - panelWidth) / 2) + panelWidth) / mapWidth;
+};
 
 export const fitMap = (routes, mapView, mapRef) => {
   // Only apply to map page when at least one route is returned
