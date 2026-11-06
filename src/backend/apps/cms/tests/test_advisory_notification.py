@@ -77,7 +77,7 @@ class SendAdvisoryNotificationsTest(TestCase):
 
         # Verify the email contents
         email = mail.outbox[0]
-        assert email.subject == 'DriveBC route update: Always Active Route'
+        assert email.subject == 'Updated advisory on Always Active Route'
         assert advisory.teaser in email.body
         assert email.to == ['verifieduser@example.com']
 

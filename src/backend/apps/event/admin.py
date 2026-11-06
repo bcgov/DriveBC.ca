@@ -5,6 +5,7 @@ from apps.event.models import (
     QueuedEventNotification,
 )
 from apps.event.tasks import (
+    get_event_state,
     queue_event_notifications,
     send_queued_district_notifications,
     send_queued_notifications,
@@ -12,14 +13,44 @@ from apps.event.tasks import (
 from django.contrib.gis import admin
 
 
-@admin.action(description="Send event update notifications")
-def queue_event_update_notifications(modeladmin, request, queryset):
-    queue_event_notifications(list(queryset.values_list('id', flat=True)))
+def queue_and_send_event_notifications(previous_states, cleared=False):
+    queue_event_notifications(list(previous_states), previous_states=previous_states, cleared=cleared)
+    send_queued_notifications()
+    send_queued_district_notifications()
+
+
+@admin.action(description="Send event 'New' notifications")
+def send_event_new_notifications(modeladmin, request, queryset):
+    previous_states = {event.id: None for event in queryset}
+    queue_and_send_event_notifications(previous_states)
+
+
+@admin.action(description="Send event 'Updated' notifications")
+def send_event_updated_notifications(modeladmin, request, queryset):
+    previous_states = {}
+    for event in queryset:
+        state = get_event_state(event)
+        # fake old highlight fields to test changes
+        state['description'] = 'Old description'
+        state['closest_landmark'] = 'Old landmark'
+        previous_states[event.id] = state
+
+    queue_and_send_event_notifications(previous_states)
+
+
+@admin.action(description="Send event 'Cleared' notifications")
+def send_event_cleared_notifications(modeladmin, request, queryset):
+    previous_states = {event.id: get_event_state(event) for event in queryset}
+    queue_and_send_event_notifications(previous_states, cleared=True)
 
 
 class EventAdmin(admin.GISModelAdmin):
     readonly_fields = ('id', )
-    actions = [queue_event_update_notifications]
+    actions = [
+        send_event_new_notifications,
+        send_event_updated_notifications,
+        send_event_cleared_notifications,
+    ]
     list_display = ('id', 'event_type', 'display_category',
                     'event_sub_type', 'severity', 'closed',
                     'first_created', 'last_updated')

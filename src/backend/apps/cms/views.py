@@ -138,7 +138,7 @@ def access_requested(request):
         msg = EmailMultiAlternatives(
             f'{name} requests access to Wagtail admin',
             text,
-            settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+            settings.DRIVEBC_FROM_EMAIL_SENDER,
             settings.ACCESS_REQUEST_RECEIVERS,
         )
         msg.attach_alternative(html, 'text/html')

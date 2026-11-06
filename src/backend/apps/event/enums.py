@@ -123,6 +123,17 @@ EVENT_UPDATE_FIELDS = [
     'end',
 ]
 
+# RIDE-only details; absent from chain-up data
+EVENT_DETAIL_FIELDS = [
+    'impacts',
+    'restrictions',
+    'schedules',
+    'delay_amount',
+    'delay_unit',
+    'additional',
+    'link',
+]
+
 
 class EVENT_DISPLAY_CATEGORY:
     ADVISORY = 'advisories'

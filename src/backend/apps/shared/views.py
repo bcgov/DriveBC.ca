@@ -68,7 +68,7 @@ class FeedbackView(APIView):
             msg = EmailMultiAlternatives(
                 'DriveBC feedback received: ' + SUBJECT_TITLE[serializer.data['subject']],
                 text,
-                settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+                settings.DRIVEBC_FROM_EMAIL_SENDER,
                 [settings.DRIVEBC_FEEDBACK_EMAIL_DEFAULT],
             )
 
@@ -115,7 +115,7 @@ class SurveyView(APIView):
             msg = EmailMultiAlternatives(
                 'DriveBC survey about your experience today',
                 text,
-                settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+                settings.DRIVEBC_FROM_EMAIL_SENDER,
                 [user_email],
             )
 

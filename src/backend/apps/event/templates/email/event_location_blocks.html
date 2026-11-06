@@ -1,0 +1,8 @@
+{# Pin blocks: bold first line, grey rest; tone 'added' green, 'removed' strikethrough #}
+{% for lines in blocks %}
+  <div style="{% if not forloop.first %}margin-top:8px; {% endif %}{% if tone == 'added' %}color:#3B7142; background-color:#F5FAF6; padding:0 4px; border-radius:4px{% elif tone == 'removed' %}color:#B73433; text-decoration:line-through; padding:0 4px{% endif %}">
+    {% for line in lines %}
+      <div style="{% if forloop.first %}font-weight:700{% elif not tone %}color:#605E5C{% endif %}">{{ line|safe }}</div>
+    {% endfor %}
+  </div>
+{% endfor %}

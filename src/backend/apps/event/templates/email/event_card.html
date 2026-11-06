@@ -1,0 +1,98 @@
+{% load event_extras %}
+{% with theme=event|event_theme %}
+<table width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:392px; margin:0 auto; border:1px solid #D8D8D8; border-radius:8px; border-collapse:separate">
+  <!-- Header -->
+  <tr>
+    <td bgcolor="{{ theme.bg }}" style="padding:8px 12px; border-radius:8px 8px 0 0; font-size:14px; line-height:20px; color:{{ theme.color }}">
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td width="32" style="width:32px; vertical-align:middle">
+            <img src="cid:{{ event|event_image_id }}" width="24" height="24" style="width:24px; height:24px; vertical-align:middle" alt="" />
+          </td>
+          <td style="font-weight:700; vertical-align:middle">{{ event|event_label|capfirst }}</td>
+          <td align="right" style="font-size:12px; font-weight:700; vertical-align:middle; white-space:nowrap">{{ event.notification_status }}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Title -->
+  <tr>
+    <td style="padding:12px 12px 0">
+      {% with heading=event|event_title %}
+      <div style="font-size:22px; line-height:26px; font-weight:700; color:#2D2D2D">{{ heading.title|no_autolink }}</div>
+      {% if heading.subtitle %}
+      <div style="font-size:14px; line-height:20px; color:#605E5C">{{ heading.subtitle|no_autolink }}</div>
+      {% endif %}
+      {% endwith %}
+    </td>
+  </tr>
+
+  {% if event.notification_status == 'Cleared' %}
+  <tr>
+    <td style="padding:12px 12px 0">
+      <div style="padding:12px; border-radius:8px; background-color:#F5FAF6; color:#3B7142; font-size:14px; line-height:21px">
+        This {{ event|event_label }} has been cleared.
+      </div>
+    </td>
+  </tr>
+  {% endif %}
+
+  <!-- Details -->
+  <tr>
+    <td>
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+        {% with extent=event|location_extent %}
+        {% if extent %}
+          {% include 'email/event_location_extent.html' %}
+        {% elif event.location_description or event.closest_landmark %}
+          {% include 'email/event_location.html' %}
+        {% endif %}
+        {% endwith %}
+
+        {% include 'email/event_items.html' with label='Traffic impact' items=event|item_changes:'impacts' field='impacts' %}
+
+        {% include 'email/event_items.html' with label='In effect' items=event|item_changes:'in_effect' field='in_effect' %}
+
+        {% include 'email/event_items.html' with label='Restrictions' items=event|item_changes:'restrictions' field='restrictions' %}
+
+        {% if event.additional or event.link or event.previous.additional %}
+          {% include 'email/event_field.html' with label='Additional information' value=event.additional previous=event.previous.additional changed=event|has_changed:'additional' link=event.link %}
+        {% endif %}
+
+        {% include 'email/event_field.html' with label='Last update' value=event.last_updated|date:'M j, Y \a\t g:i a' depth4=True %}
+
+        {% if event.next_update or event.previous.next_update %}
+          {% include 'email/event_field.html' with label='Next update' value=event.next_update|date:'M j, Y \a\t g:i a' previous=event.previous.next_update|date:'M j, Y \a\t g:i a' changed=event|has_changed:'next_update' depth4=True %}
+        {% endif %}
+
+        {% if event.display_category == 'chainUps' %}
+        <tr>
+          <td style="padding:12px 12px 0">
+            <div style="font-size:16px; line-height:27px; font-weight:700; color:#2D2D2D; padding-bottom:8px">Who does this impact?</div>
+            <div style="padding:12px; border:1px solid #EDEBE9; border-radius:8px; box-shadow:0 3px 7px rgba(0,0,0,0.13); font-size:14px; line-height:21px; color:#2D2D2D">
+              <a href="https://www2.gov.bc.ca/gov/content/transportation/driving-and-cycling/traveller-information/seasonal/winter-driving/commercial" target="_blank" rel="noopener noreferrer" style="color:#255A90">Chain-up requirements</a>
+              apply to Commercial Vehicles with a weight of 11,794 kg or greater.
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+      </table>
+    </td>
+  </tr>
+
+  <!-- Reference + link -->
+  <tr>
+    <td style="padding:24px 16px 0; font-size:12px; line-height:16px; color:#605E5C">
+      Reference ID: {{ event.id }}
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:12px 0 16px">
+      {% if event.site_link %}
+      <a href="{{ event.site_link }}" target="_blank" rel="noopener noreferrer" style="color:#255A90; font-size:16px; line-height:24px; font-weight:700; text-decoration:underline">More information on DriveBC</a>
+      {% endif %}
+    </td>
+  </tr>
+</table>
+{% endwith %}
