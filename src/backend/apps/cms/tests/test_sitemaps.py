@@ -56,6 +56,9 @@ class SitemapTests(TestCase):
             "/rest-stop/456",
             "/regional-weather/789",
             "/advisories",
+            "/feedback",
+            "/highway-problem",
+            "/road-electrical-problem",
         ]:
             assert f"https://www.drivebc.ca{path}" in locations
         assert "https://www.drivebc.ca/account" not in locations
