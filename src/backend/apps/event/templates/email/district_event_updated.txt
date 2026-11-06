@@ -1,7 +1,0 @@
-Update for DriveBC areas
-
-{% for event in events %}
-{{ event.event_type }}
-{{ event.optimized_description }}
-Last updated: {{ event.last_updated }}
-{% endfor %}
