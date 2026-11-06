@@ -38,7 +38,18 @@ class StaticPageSitemap(FrontendSitemap):
     priority = 0.7
 
     def items(self):
-        return ["/", "/cameras", "/delays", "/chain-ups", "/advisories", "/bulletins", "/problems"]
+        return [
+            "/",
+            "/cameras",
+            "/delays",
+            "/chain-ups",
+            "/advisories",
+            "/bulletins",
+            "/problems",
+            "/feedback",
+            "/highway-problem",
+            "/road-electrical-problem",
+        ]
 
 
 class CameraSitemap(FrontendSitemap):
