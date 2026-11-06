@@ -38,7 +38,13 @@ import Skeleton from 'react-loading-skeleton';
 
 // Internal imports
 import { AlertContext, AuthContext } from '../../../App';
-import { addFavoriteCamera, deleteFavoriteCamera, getCameras, getWebcamReplay } from "../../data/webcams";
+import {
+  addFavoriteCamera,
+  deleteFavoriteCamera,
+  getCameras,
+  getInitialCameraIndex,
+  getWebcamReplay,
+} from "../../data/webcams";
 import { formatDateTime } from '../../data/date';
 import trackEvent from '../../shared/TrackEvent';
 import ShareURLButton from '../../shared/ShareURLButton';
@@ -301,7 +307,8 @@ export default function CamPanel(props) {
     let initialIndex = 0;
     if (isFirstCamFeature.current) {
       const urlIndex = searchParams.get("camIndex");
-      initialIndex = urlIndex ? Number.parseInt(urlIndex, 10) : 0;
+      const pathId = location.pathname.match(/^\/cameras\/([^/]+)/)?.[1];
+      initialIndex = getInitialCameraIndex(newCam.camGroup, pathId, urlIndex);
       isFirstCamFeature.current = false;
     }
 
