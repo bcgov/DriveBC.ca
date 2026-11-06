@@ -27,7 +27,7 @@ import './SavedRoutesPage.scss';
 
 export default function SavedRoutesPage() {
   /* Setup */
-  document.title = 'DriveBC - My Routes';
+  document.title = 'My Routes | DriveBC';
 
   // Navigation
   const navigate = useNavigate();

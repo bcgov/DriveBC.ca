@@ -44,6 +44,7 @@ import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent';
 import AdvisoriesOverlay from '../Components/shared/AdvisoriesOverlay';
 import PollingComponent from '../Components/shared/PollingComponent';
+import { setPageSeoTitle } from '../Components/shared/seo';
 import Skeleton from 'react-loading-skeleton';
 
 // Styling
@@ -54,7 +55,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 export default function CamerasListPage() {
   /* Setup */
-  document.title = 'DriveBC - Cameras';
+  setPageSeoTitle('Cameras | DriveBC');
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
