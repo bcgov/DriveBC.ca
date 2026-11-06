@@ -70,6 +70,7 @@ import LocationAccessPopup from './errors/LocationAccessError';
 import overrides from '../map/overrides';
 import { faAttributionToggleLabel } from './attributionControlLabels';
 import { BASE_MAP, MAP_STYLE } from '../../env';
+import { getMapFeatureRoute } from '../shared/seo';
 
 // Map & geospatial imports
 import { applyStyle } from 'ol-mapbox-style';
@@ -1069,8 +1070,7 @@ export default function DriveBCMap(props) {
     params.delete('display_category');
     params.delete('camIndex');
 
-    // Camera details URLs should return to the root map when the panel closes
-    if (/^\/cameras\/[^/]+/.test(location.pathname)) {
+    if (getMapFeatureRoute(location.pathname)) {
       const search = params.toString();
       navigate(
         { pathname: '/', search: search ? `?${search}` : '' },

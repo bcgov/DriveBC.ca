@@ -18,7 +18,7 @@ import {
 import './ReportElectricalPage.scss';
 
 export default function ReportElectricalPage() {
-  document.title = `DriveBC - Report Electrical Problem`;
+  document.title = 'Report Electrical Problem | DriveBC';
 
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
 

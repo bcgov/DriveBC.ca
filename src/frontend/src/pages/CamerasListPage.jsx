@@ -54,7 +54,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 export default function CamerasListPage() {
   /* Setup */
-  document.title = 'DriveBC - Cameras';
+  document.title = 'Cameras | DriveBC';
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);

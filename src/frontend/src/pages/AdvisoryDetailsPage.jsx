@@ -32,6 +32,7 @@ import { faAttributionToggleLabel } from '../Components/map/attributionControlLa
 import ShareURLButton from '../Components/shared/ShareURLButton';
 import { BASE_MAP, MAP_STYLE } from '../env';
 import PollingComponent from "../Components/shared/PollingComponent";
+import { getAdvisorySeoDescription, setPageSeoDescription } from '../Components/shared/seo';
 
 // Styling
 import './AdvisoryDetailsPage.scss';
@@ -281,7 +282,7 @@ export default function AdvisoryDetailsPage() {
         currentRevision.current = latestData.live_revision;
 
         if (latestData.geometry && mapRef.current) {
-          updateMapGeometry(latestData); 
+          updateMapGeometry(latestData);
           // Only fitMap if map tab is visible, otherwise defer
           if (activeTab === 'map') {
             fitMap(latestData);
@@ -290,7 +291,8 @@ export default function AdvisoryDetailsPage() {
           }
         }
 
-        document.title = `DriveBC - Advisories - ${latestData.title}`;
+        document.title = `${latestData.title} Advisory | DriveBC`;
+        setPageSeoDescription(getAdvisorySeoDescription(latestData));
       }
 
       // Detect major update only
@@ -309,7 +311,7 @@ export default function AdvisoryDetailsPage() {
       // silently ignore
     }
   };
-  
+
   const loadAdvisory = async () => {
     let advisoryData;
 
@@ -322,7 +324,7 @@ export default function AdvisoryDetailsPage() {
         displayError(error);
       }
     }
-    
+
     setAdvisory(advisoryData);
 
     if (advisoryData.id) {
@@ -335,7 +337,8 @@ export default function AdvisoryDetailsPage() {
 
       fitMap(advisoryData);
 
-      document.title = `DriveBC - Advisories - ${advisoryData.title}`;
+      document.title = `${advisoryData.title} Advisory | DriveBC`;
+      setPageSeoDescription(getAdvisorySeoDescription(advisoryData));
 
       markAdvisoriesAsRead([advisoryData], cmsContext, setCMSContext);
     }

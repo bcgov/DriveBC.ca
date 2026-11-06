@@ -107,18 +107,19 @@ export default function FriendlyTime({ date, timezone, asDate=false, includeFull
     // Convert '0' to '12'
     hour = hour ? hour : 12;
 
-    return <p className="friendly-time-text formatted-date">{`${hour}:00${period}`}</p>;
+    return <p className="friendly-time-text formatted-date" data-nosnippet="">{`${hour}:00${period}`}</p>;
   }
 
   if (humanize && !asDate) {
     return (
       <React.Fragment>
         { includeFullIfHumanized &&
-          <span className="friendly-time-text formatted-date">{dateFormatted}</span>
+          <span className="friendly-time-text formatted-date" data-nosnippet="">{dateFormatted}</span>
         }
 
         <div
           className="friendly-time"
+          data-nosnippet=""
           title={dateFormatted}
           onClick={(event) => {
             event.stopPropagation();
@@ -148,5 +149,5 @@ export default function FriendlyTime({ date, timezone, asDate=false, includeFull
     )
   }
 
-  return <span className="friendly-time-text formatted-date">{dateFormatted}</span>;
+  return <span className="friendly-time-text formatted-date" data-nosnippet="">{dateFormatted}</span>;
 }

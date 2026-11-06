@@ -29,7 +29,7 @@ import './BulletinsListPage.scss';
 
 export default function BulletinsListPage() {
   const isFirstVisitRef = useRef(!sessionStorage.getItem('lastBulletinsVisit'));
-  document.title = 'DriveBC - Bulletins';
+  document.title = 'Bulletins | DriveBC';
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);

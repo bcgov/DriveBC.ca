@@ -18,7 +18,7 @@ import {
 import './ReportRoadPage.scss';
 
 export default function ReportRoadPage() {
-  document.title = `DriveBC - Report Road Maintenance`;
+  document.title = 'Report Road Maintenance | DriveBC';
 
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
 
