@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Internal imports
 import { ReportMap } from '../Components/report/ReportMap';
+import { setPageSeoTitle } from '../Components/shared/seo';
 import Footer from '../Footer';
 
 // External imports
@@ -18,7 +19,7 @@ import {
 import './ReportElectricalPage.scss';
 
 export default function ReportElectricalPage() {
-  document.title = `DriveBC - Report Electrical Problem`;
+  setPageSeoTitle('Report Electrical Problem | DriveBC');
 
   const xLargeScreen = useMediaQuery('only screen and (min-width : 992px)');
 

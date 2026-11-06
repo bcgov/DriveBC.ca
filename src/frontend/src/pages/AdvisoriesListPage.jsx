@@ -24,13 +24,14 @@ import EmptyAdvisory from '../Components/advisories/EmptyAdvisory';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import PollingComponent from "../Components/shared/PollingComponent";
+import { setPageSeoTitle } from '../Components/shared/seo';
 
 // Styling
 import './AdvisoriesListPage.scss';
 
 export default function AdvisoriesListPage() {
   const isFirstVisitRef = useRef(!sessionStorage.getItem('lastAdvisoriesVisit'));
-  document.title = 'DriveBC - Advisories';
+  setPageSeoTitle('Advisories | DriveBC');
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);
