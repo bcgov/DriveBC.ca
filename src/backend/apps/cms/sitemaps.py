@@ -34,9 +34,6 @@ class FrontendSitemap(Sitemap):
 
 
 class StaticPageSitemap(FrontendSitemap):
-    changefreq = "weekly"
-    priority = 0.7
-
     def items(self):
         return [
             "/",
@@ -53,18 +50,12 @@ class StaticPageSitemap(FrontendSitemap):
 
 
 class CameraSitemap(FrontendSitemap):
-    changefreq = "daily"
-    priority = 0.6
-
     def items(self):
         cameras = Webcam.objects.filter(should_appear=True).order_by("pk")
         return [f"/cameras/{pk}" for pk in cameras.values_list("pk", flat=True)]
 
 
 class FerrySitemap(FrontendSitemap):
-    changefreq = "weekly"
-    priority = 0.6
-
     def items(self):
         inland_ids = Ferry.objects.order_by().values_list("route_id", flat=True).distinct()
         # only coastal terminals with scheduled trips, on the stop or its child stops
@@ -81,17 +72,11 @@ class FerrySitemap(FrontendSitemap):
 
 
 class RestStopSitemap(FrontendSitemap):
-    changefreq = "weekly"
-    priority = 0.6
-
     def items(self):
         return [f"/rest-stop/{pk}" for pk in RestStop.objects.order_by("pk").values_list("pk", flat=True)]
 
 
 class WeatherSitemap(FrontendSitemap):
-    changefreq = "daily"
-    priority = 0.6
-
     def items(self):
         roadside = CurrentWeather.objects.exclude(code=None).order_by("pk")
         regional = RegionalWeather.objects.exclude(code=None).order_by("pk")
@@ -111,9 +96,6 @@ class CmsPageSitemap(FrontendSitemap):
 
 
 class AdvisorySitemap(CmsPageSitemap):
-    changefreq = "daily"
-    priority = 0.8
-
     def items(self):
         return Advisory.objects.live()
 
@@ -122,9 +104,6 @@ class AdvisorySitemap(CmsPageSitemap):
 
 
 class BulletinSitemap(CmsPageSitemap):
-    changefreq = "weekly"
-    priority = 0.8
-
     def items(self):
         return Bulletin.objects.live()
 
@@ -133,9 +112,6 @@ class BulletinSitemap(CmsPageSitemap):
 
 
 class EmergencyAlertDetailSitemap(CmsPageSitemap):
-    changefreq = "weekly"
-    priority = 0.6
-
     def items(self):
         return EmergencyAlertDetail.objects.live()
 
@@ -144,9 +120,6 @@ class EmergencyAlertDetailSitemap(CmsPageSitemap):
 
 
 class SubPageSitemap(FrontendSitemap):
-    changefreq = "weekly"
-    priority = 0.6
-
     def items(self):
         parent_paths = {
             page.path: f"/{'advisories' if page.content_type.model == 'advisory' else 'bulletins'}/{page.slug}"
