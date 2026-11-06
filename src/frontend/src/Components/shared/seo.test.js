@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from 'vitest';
 import {
+  getAdvisorySeoDescription,
+  getBulletinSeoDescription,
   getCmsContentSeoDescription,
   getMapFeatureRoute,
   getMapFeatureSeoMetadata,
@@ -10,6 +12,7 @@ import {
   resetSeoMetadata,
   setMapFeatureSeoMetadata,
   setPageSeoDescription,
+  setPageSeoTitle,
   setSeoNoindex,
 } from './seo';
 
@@ -27,14 +30,16 @@ describe('SEO metadata', () => {
         id: 760,
         name: 'Kootenay Pass',
         highway_display: '3',
-        caption: '<p>View <strong>road conditions</strong> at the pass.</p>',
+        caption:
+          '<p>Highway 5 at the <strong>Great Bear Snowshed</strong>, looking north.</p>',
       },
       'https://dev.drivebc.ca/',
     );
 
     expect(metadata).toEqual({
       title: 'Kootenay Pass - Highway 3 Camera | DriveBC',
-      description: 'View road conditions at the pass.',
+      description:
+        'Highway webcam on Highway 5 at the Great Bear Snowshed, looking north.',
       canonicalUrl: 'https://dev.drivebc.ca/cameras/760',
     });
   });
@@ -55,7 +60,7 @@ describe('SEO metadata', () => {
 
     expect(document.title).toBe('Kootenay Pass | DriveBC');
     expect(document.querySelector('meta[name="description"]').content).toBe(
-      'Live camera view',
+      'Highway webcam: Live camera view',
     );
     expect(document.querySelector('link[rel="canonical"]').href).toBe(
       `${window.location.origin}/cameras/760`,
@@ -73,6 +78,17 @@ describe('SEO metadata', () => {
     );
   });
 
+  it('keeps the Open Graph title in sync with the document title', () => {
+    document.head.innerHTML = '<meta property="og:title">';
+
+    setPageSeoTitle('Closures and Delays | DriveBC');
+
+    expect(document.title).toBe('Closures and Delays | DriveBC');
+    expect(document.querySelector('meta[property="og:title"]').content).toBe(
+      document.title,
+    );
+  });
+
   it('uses a plain-text fallback description when the camera has no caption', () => {
     const metadata = getMapFeatureSeoMetadata(
       'cameras',
@@ -81,7 +97,7 @@ describe('SEO metadata', () => {
     );
 
     expect(metadata.description).toBe(
-      'View the live highway camera for Kootenay Pass on Highway 3 with DriveBC.',
+      'Highway webcam for Kootenay Pass on Highway 3.',
     );
   });
 
@@ -101,9 +117,9 @@ describe('SEO metadata', () => {
       {
         id: 17,
         properties: {
-          REST_AREA_NAME: 'OOTISCHENIA',
-          HIGHWAY_NUMBER: '3',
-          DISTANCE_FROM_MUNICIPALITY: '7.0KM EAST OF CASTLEGAR',
+          REST_AREA_NAME: 'BULKLEY VIEW',
+          HIGHWAY_NUMBER: '16',
+          DISTANCE_FROM_MUNICIPALITY: '4.5KM EAST OF TELKWA',
         },
       },
       'https://dev.drivebc.ca/',
@@ -116,9 +132,9 @@ describe('SEO metadata', () => {
     expect(largeRestStop.canonicalUrl).toBe(
       'https://dev.drivebc.ca/rest-stop/17',
     );
-    expect(largeRestStop.title).toBe('Ootischenia Rest Stop | DriveBC');
+    expect(largeRestStop.title).toBe('Bulkley View Rest Stop | DriveBC');
     expect(largeRestStop.description).toBe(
-      'Ootischenia on Highway 3, 7.0km East of Castlegar. Rest area information from DriveBC.',
+      'Rest area at Bulkley View on Highway 16, 4.5 km East of Telkwa',
     );
   });
 
@@ -128,13 +144,15 @@ describe('SEO metadata', () => {
       {
         id: 8,
         weather_station_name: 'Hope Airport',
-        location_description: 'Near Hope, British Columbia',
+        location_description: 'E side of Hwy 1, South of Jackass summit',
       },
       'https://dev.drivebc.ca',
     );
 
     expect(metadata.title).toBe('Hope Airport Roadside Weather | DriveBC');
-    expect(metadata.description).toBe('Near Hope, British Columbia');
+    expect(metadata.description).toBe(
+      'Weather at E side of Hwy 1, South of Jackass summit',
+    );
     expect(metadata.canonicalUrl).toBe(
       'https://dev.drivebc.ca/roadside-weather/8',
     );
@@ -219,6 +237,21 @@ describe('SEO metadata', () => {
         rendered_body: '<p>Body fallback for legacy content.</p>',
       }),
     ).toBe('Body fallback for legacy content.');
+  });
+
+  it('labels advisory and bulletin descriptions', () => {
+    expect(
+      getAdvisorySeoDescription({
+        teaser: 'See if this works after the switch',
+      }),
+    ).toBe('Advisory: see if this works after the switch');
+    expect(
+      getBulletinSeoDescription({
+        title: 'Test Bulletin 4 - Testing the notification-major update',
+      }),
+    ).toBe(
+      'Bulletin: Test Bulletin 4 - Testing the notification-major update Bulletin',
+    );
   });
 
   it('detects map panel routes and selected map features', () => {

@@ -15,13 +15,14 @@ import {
 // Internal imports
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
+import { setPageSeoTitle } from '../Components/shared/seo';
 
 
 // Styling
 import './ProblemsPage.scss';
 
 const ProblemsPage = () => {
-  document.title = 'DriveBC - Problems';
+  setPageSeoTitle('Problems | DriveBC');
 
   return (
     <div className="report-problem-page">

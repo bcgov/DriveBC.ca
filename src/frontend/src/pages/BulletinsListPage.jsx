@@ -23,13 +23,14 @@ import EmptyBulletin from '../Components/bulletins/EmptyBulletin';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import PollingComponent from "../Components/shared/PollingComponent";
+import { setPageSeoTitle } from '../Components/shared/seo';
 
 // Styling
 import './BulletinsListPage.scss';
 
 export default function BulletinsListPage() {
   const isFirstVisitRef = useRef(!sessionStorage.getItem('lastBulletinsVisit'));
-  document.title = 'DriveBC - Bulletins';
+  setPageSeoTitle('Bulletins | DriveBC');
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);

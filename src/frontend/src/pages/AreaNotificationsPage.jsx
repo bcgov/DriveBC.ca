@@ -24,7 +24,7 @@ import './AreaNotificationsPage.scss';
 
 export default function AreaNotificationsPage() {
   /* Setup */
-  document.title = 'DriveBC - Area notifications';
+  document.title = 'Area notifications | DriveBC';
 
   // Navigation
   const navigate = useNavigate();

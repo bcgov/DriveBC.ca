@@ -43,6 +43,7 @@ import EventsTable from '../Components/events/EventsTable';
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import PollingComponent from '../Components/shared/PollingComponent';
+import { setPageSeoTitle } from '../Components/shared/seo';
 import RouteSearch from '../Components/routing/RouteSearch';
 import trackEvent from '../Components/shared/TrackEvent';
 import AdvisoriesOverlay from '../Components/shared/AdvisoriesOverlay';
@@ -94,7 +95,9 @@ export default function EventsListPage(props) {
   // Props
   const { chainUpsOnly } = props;
 
-  document.title = chainUpsOnly ? 'DriveBC - Chain-ups' : 'DriveBC - Delays';
+  setPageSeoTitle(chainUpsOnly
+    ? 'Chain-ups | DriveBC'
+    : 'Closures and Delays | DriveBC');
 
   // Navigation
   const navigate = useNavigate();

@@ -22,6 +22,7 @@ import { useRecaptchaVerification } from "../Components/shared/hooks/reCAPTCHA";
 import Footer from '../Footer';
 import PageHeader from '../PageHeader';
 import { API_HOST } from '../env';
+import { setPageSeoTitle } from '../Components/shared/seo';
 
 const MESSAGE_MIN_LENGTH = 10;
 const MESSAGE_MAX_LENGTH = 500;
@@ -29,7 +30,7 @@ const MESSAGE_MAX_LENGTH = 500;
 export default function FeedbackPage() {
   /* Setup */
   // Misc
-  document.title = 'DriveBC - Feedback';
+  setPageSeoTitle('Feedback | DriveBC');
 
   // reCAPTCHA
   const { checkRecaptcha, getRecaptchaAPIToken } = useRecaptchaVerification();

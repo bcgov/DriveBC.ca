@@ -18,7 +18,11 @@ import Footer from '../../Footer';
 import FriendlyTime from './FriendlyTime';
 import ShareURLButton from './ShareURLButton';
 import PollingComponent from "./PollingComponent";
-import { getCmsContentSeoDescription, setPageSeoDescription } from './seo';
+import {
+  getCmsContentSeoDescription,
+  setPageSeoDescription,
+  setPageSeoTitle,
+} from './seo';
 
 // Styling
 import './EmergencyAlertDetail.scss';
@@ -98,7 +102,7 @@ export default function EmergencyAlertDetail() {
       const data = await get(url);
       if (data) {
         setDetailData(data);
-        document.title = `DriveBC - Emergency Alerts - ${data.title}`;
+        setPageSeoTitle(`${data.title} Emergency Alert | DriveBC`);
         setPageSeoDescription(getCmsContentSeoDescription({ rendered_body: getRichTextHtml(data.body) }));
 
         if (data.id) {
