@@ -5,6 +5,17 @@ import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 // External imports
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMapPin } from '@fortawesome/pro-solid-svg-icons';
+import {
+  faArrowUpRightFromSquare,
+  faCircleDot,
+  faCircleExclamation,
+  faClock,
+  faDoNotEnter,
+  faLocationDot,
+  faTriangleExclamation,
+} from '@fortawesome/pro-regular-svg-icons';
 import { useMediaQuery } from "@uidotdev/usehooks";
 import Linkify from 'linkify-react';
 import parse from "html-react-parser";
@@ -114,6 +125,35 @@ const getEventSVGIcon = (eventData) => {
   }
 };
 
+// Figma 6801: one block per pin, no "Starts:"/"Ends:"; landmark under first line
+const getLocationBlocks = (description, landmark) => {
+  const blocks = (description || '').split('<br><br>')
+    .map(block => block.split('<br>').map(line => line.replace(/^(Starts|Ends):/, '').trim()).filter(Boolean))
+    .filter(lines => lines.length);
+
+  if (landmark && !blocks.some(lines => lines.includes(landmark))) {
+    blocks.length ? blocks[0].splice(1, 0, landmark) : blocks.push([landmark]);
+  }
+  return blocks;
+}
+
+// Figma 6801 extent: {Starts: [...], Ends: [...]} from 'Starts: <br>a<br><br>Ends: <br>b'
+const getLocationEnds = (description) => {
+  const ends = {};
+  (description || '').split('<br><br>').forEach(block => {
+    const key = block.slice(0, block.indexOf(':'));
+    const lines = block.slice(block.indexOf(':') + 1).split('<br>').map(line => line.trim()).filter(Boolean);
+    if (['Starts', 'Ends'].includes(key) && lines.length) ends[key] = lines;
+  });
+  return ends;
+}
+
+// shortcut: "clos" label match, RIDE has no lane-closure flag
+const getImpactIcon = (item) => {
+  if (item.startsWith('Estimated ') && item.endsWith(' delay')) return faClock;
+  return item.toLowerCase().includes('clos') ? faDoNotEnter : faCircleExclamation;
+}
+
 // Styling
 import './EventPanel.scss';
 
@@ -128,6 +168,10 @@ export default function EventPanel(props) {
 
   const eventData = feature.ol_uid ? feature.getProperties() : feature;
   const severity = eventData.severity.toLowerCase();
+  const [routeAt, ...routeAlias] = (eventData.route_at || '').split(', ');
+  const routeName = eventData.highway_segment_names || routeAt;
+  const direction = convertDirection(eventData.direction).trim();
+  const locationEnds = getLocationEnds(eventData.location_description);
 
   // useEffect hooks
   useEffect(() => {
@@ -152,31 +196,89 @@ export default function EventPanel(props) {
 
       <div className="popup__content">
         <div className="popup__content__title">
-          <p className="name">{eventData.highway_segment_names ? eventData.highway_segment_names : eventData.route_at}</p>
-          <p className="direction">{convertDirection(eventData.direction)}</p>
+          <p className="name">{direction && `${direction} on `}{routeName}</p>
+          {!eventData.highway_segment_names && routeAlias.length > 0 &&
+            <p className="direction">{routeAlias.join(', ')}</p>
+          }
         </div>
+
+        {locationEnds.Starts && locationEnds.Ends ?
+          <div className="popup__content__description extent-box">
+            {['Starts', 'Ends'].map(key =>
+              <React.Fragment key={key}>
+                <div className="extent-box__end">
+                  <FontAwesomeIcon icon={key === 'Starts' ? faCircleDot : faLocationDot} className="extent-box__icon" />
+                  <div className="popup__content__shadow-box">
+                    <p className="extent-box__label">{key}</p>
+                    {locationEnds[key].map((line, i) => <p key={i} className="extent-box__text">{parse(line)}</p>)}
+                  </div>
+                </div>
+
+                {key === 'Starts' && eventData.location_length &&
+                  <p className="extent-box__length"><span>For {eventData.location_length} km</span></p>
+                }
+              </React.Fragment>
+            )}
+          </div> :
 
         <div className="popup__content__description">
           <p className="location">Location</p>
 
-          <div className="popup__content__shadow-box">
-            {parse(eventData.location_description)}
+          <div className="popup__content__shadow-box location-box">
+            <FontAwesomeIcon icon={faMapPin} className="location-box__icon" />
+            <div className="location-box__blocks">
+              {getLocationBlocks(eventData.location_description, eventData.closest_landmark).map((lines, i) =>
+                <div key={i}>
+                  {lines.map((line, j) => <p key={j} className={j ? 'location-box__landmark' : 'location-box__text'}>{parse(line)}</p>)}
+                </div>
+              )}
+            </div>
           </div>
         </div>
+        }
 
-        <div className="popup__content__description">
-          <p>Description</p>
-          <div className="popup__content__shadow-box">
-            <p><Linkify>{parse(eventData.optimized_description)}</Linkify></p>
-          </div>
-        </div>
-
-        {eventData.closest_landmark &&
+        {eventData.traffic_impact_items?.length > 0 &&
           <div className="popup__content__description">
-            <p>Closest Landmark</p>
-
+            <p>Traffic impact</p>
             <div className="popup__content__shadow-box">
-              <p>{eventData.closest_landmark}</p>
+              {eventData.traffic_impact_items.map((item, i) =>
+                <p key={i} className="icon-item"><FontAwesomeIcon icon={getImpactIcon(item)} />{item}</p>
+              )}
+            </div>
+          </div>
+        }
+
+        {eventData.in_effect_items?.length > 0 &&
+          <div className="popup__content__description">
+            <p>In effect</p>
+            <div className="popup__content__shadow-box">
+              {eventData.in_effect_items.map((item, i) => <p key={i}>{item}</p>)}
+            </div>
+          </div>
+        }
+
+        {eventData.restriction_items?.length > 0 &&
+          <div className="popup__content__description">
+            <p>Restrictions</p>
+            <div className="popup__content__shadow-box">
+              {eventData.restriction_items.map((item, i) =>
+                <p key={i} className="icon-item"><FontAwesomeIcon icon={faTriangleExclamation} />{item}</p>
+              )}
+            </div>
+          </div>
+        }
+
+        {(eventData.additional || eventData.link) &&
+          <div className="popup__content__description">
+            <p>Additional information</p>
+            <div className="popup__content__shadow-box">
+              <p>
+                {eventData.additional && <Linkify>{eventData.additional}</Linkify>}
+                {eventData.link &&
+                  <> See <a href={eventData.link} target="_blank" rel="noreferrer">website</a>
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="external-link-icon" /> for more information.</>
+                }
+              </p>
             </div>
           </div>
         }

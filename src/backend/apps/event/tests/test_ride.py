@@ -21,7 +21,11 @@ RIDE_EVENT = {
     "created": "2026-10-01T17:00:00Z",
     "last_updated": "2026-10-01T18:00:00.123456Z",
     "details": {"direction": "Eastbound", "severity": "Major", "situation": 160},
-    "impacts": [{"closed": True}],
+    "impacts": [{"id": 1, "label": "Closed", "closed": True}],
+    "restrictions": [{"id": 2, "label": "Speed limit", "text": "50 km/h"}],
+    "delays": {"amount": 20, "unit": "minutes"},
+    "additional": "Use alternate route.",
+    "external": {"url": "https://example.com/info"},
     "location": {
         "start": {
             "name": "Highway 1",
@@ -39,7 +43,7 @@ RIDE_EVENT = {
         ],
     },
     "segment": None,
-    "timing": {"startTime": "2026-10-01T16:00:00Z", "endTime": None, "nextUpdate": None},
+    "timing": {"startTime": "2026-10-01T16:00:00Z", "endTime": None, "nextUpdate": None, "schedules": []},
     "route_projection": 1.5,
 }
 
@@ -86,6 +90,13 @@ class TestGetRideEvents(BaseTest):
         assert event["schedule"] == {"intervals": ["2026-10-01T09:00:00-07:00/"]}
         assert event["start_point_linear_reference"] == 1.5
         assert event["timezone"] == "America/Vancouver"
+        assert event["impacts"] == [{"id": 1, "label": "Closed", "closed": True}]
+        assert event["restrictions"] == [{"id": 2, "label": "Speed limit", "text": "50 km/h"}]
+        assert event["schedules"] == []
+        assert event["delay_amount"] == 20
+        assert event["delay_unit"] == "minutes"
+        assert event["additional"] == "Use alternate route."
+        assert event["link"] == "https://example.com/info"
 
     def test_route_at_skips_highway_number_alias(self):
         data = ride_event()
