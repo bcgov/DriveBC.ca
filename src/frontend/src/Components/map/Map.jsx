@@ -71,6 +71,11 @@ import LocationAccessPopup from './errors/LocationAccessError';
 import overrides from '../map/overrides';
 import { faAttributionToggleLabel } from './attributionControlLabels';
 import { BASE_MAP, MAP_STYLE } from '../../env';
+import {
+  getMapPanelSearchParams,
+  getMapFeatureRoute,
+  hasMapFeatureRouteMismatch,
+} from '../shared/seo';
 
 // Map & geospatial imports
 import { applyStyle } from 'ol-mapbox-style';
@@ -109,6 +114,32 @@ export default function DriveBCMap(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
+  const pathnameRef = useRef(location.pathname);
+
+  useEffect(() => {
+    pathnameRef.current = location.pathname;
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const params = getMapPanelSearchParams(location.search);
+    const hasRouteMismatch = hasMapFeatureRouteMismatch(
+      location.pathname,
+      params,
+    );
+    const search = params.toString();
+    const currentSearch = new URLSearchParams(location.search).toString();
+
+    if (!hasRouteMismatch && search === currentSearch) {
+      return;
+    }
+
+    const pathname = hasRouteMismatch ? '/' : location.pathname;
+    pathnameRef.current = pathname;
+    navigate(
+      { pathname, search: search ? `?${search}` : '' },
+      { replace: true },
+    );
+  }, [location.pathname, location.search, navigate, searchParams]);
 
   let mousePointXClicked = undefined;
 
@@ -720,9 +751,9 @@ export default function DriveBCMap(props) {
         applyOverlapOffsets(overlapGroups.current, mapView);
       }
 
-      params.set("pan", lon + ',' + lat);
-      params.set("zoom", mapView.current.getZoom());
-      navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+      params.set('pan', lon + ',' + lat);
+      params.set('zoom', mapView.current.getZoom());
+      navigate(`${pathnameRef.current}?${params.toString()}`, { replace: true });
 
       dispatch(
         slices.updateMapState({
@@ -1122,9 +1153,9 @@ export default function DriveBCMap(props) {
     }
     params.delete('display_category');
     params.delete('camIndex');
+    params.delete('coastal');
 
-    // Camera details URLs should return to the root map when the panel closes
-    if (/^\/cameras\/[^/]+/.test(location.pathname)) {
+    if (getMapFeatureRoute(location.pathname)) {
       const search = params.toString();
       navigate(
         { pathname: '/', search: search ? `?${search}` : '' },
