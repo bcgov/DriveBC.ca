@@ -1,5 +1,6 @@
 // React
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
 // Third party packages
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -12,6 +13,68 @@ import HighwayGroup from './HighwayGroup';
 import './CameraList.scss';
 
 const INITIAL_DISPLAY_LENGTH = 21;
+const CAMERA_LIST_RETURN_KEY = 'cameraListReturn';
+
+const readCameraListReturn = () => {
+  try {
+    const raw = sessionStorage.getItem(CAMERA_LIST_RETURN_KEY);
+    if (!raw) {
+      return null;
+    }
+
+    const data = JSON.parse(raw);
+    if (!data?.list) {
+      return null;
+    }
+
+    return data;
+  } catch {
+    return null;
+  }
+};
+
+const clearCameraListReturn = () => {
+  try {
+    sessionStorage.removeItem(CAMERA_LIST_RETURN_KEY);
+  } catch {
+  }
+};
+
+const resetDisplayWindow = (camsContext, cameras, prevCamerasLength) => {
+  if (prevCamerasLength.current === cameras.length) {
+    return;
+  }
+
+  camsContext.displayLength = INITIAL_DISPLAY_LENGTH;
+  prevCamerasLength.current = cameras.length;
+};
+
+const restoreSavedDisplayLength = (camsContext, cameras, returnInfo) => {
+  const savedLength = Number(returnInfo.displayLength);
+  if (!Number.isFinite(savedLength) || savedLength <= camsContext.displayLength) {
+    return;
+  }
+
+  camsContext.displayLength = Math.min(savedLength, cameras.length);
+};
+
+const applyCameraListReturn = (camsContext, cameras, pathname, returnApplied, pendingScrollTop) => {
+  if (returnApplied.current) {
+    return;
+  }
+
+  const returnInfo = readCameraListReturn();
+  if (!returnInfo || returnInfo.list !== pathname) {
+    return;
+  }
+
+  restoreSavedDisplayLength(camsContext, cameras, returnInfo);
+
+  const savedTop = Number(returnInfo.scrollTop);
+  pendingScrollTop.current = Number.isFinite(savedTop) ? savedTop : 0;
+  returnApplied.current = true;
+  clearCameraListReturn();
+};
 
 export default function CameraList(props) {
   // Props
@@ -19,7 +82,11 @@ export default function CameraList(props) {
 
   // Contexts
   const { camsContext } = useContext(CamsContext);
+  const location = useLocation();
   const prevCamerasLength = useRef(cameras?.length);
+  const returnApplied = useRef(false);
+  // Scroll offset to apply once, after the saved window of cards is on screen.
+  const pendingScrollTop = useRef(null);
 
   // UseEffect hooks and data functions
   const getDisplayedCameras = (length) => {
@@ -29,16 +96,34 @@ export default function CameraList(props) {
   };
 
   useEffect(() => {
-    if (cameras && cameras.length > 0) {
-      // Result set size changed (filter/search/route) — reset the infinite-scroll
-      // window so a prior scroll depth does not dump hundreds of cards at once.
-      if (prevCamerasLength.current !== cameras.length) {
-        camsContext.displayLength = INITIAL_DISPLAY_LENGTH;
-        prevCamerasLength.current = cameras.length;
-      }
-      getDisplayedCameras(camsContext.displayLength);
+    if (!cameras || cameras.length === 0) {
+      return;
     }
-  }, [cameras]);
+
+    resetDisplayWindow(camsContext, cameras, prevCamerasLength);
+    applyCameraListReturn(
+      camsContext,
+      cameras,
+      location.pathname,
+      returnApplied,
+      pendingScrollTop,
+    );
+    getDisplayedCameras(camsContext.displayLength);
+  }, [cameras, location.pathname]);
+
+  useLayoutEffect(() => {
+    if (pendingScrollTop.current == null || showLoader || !onscreenCameras.length) {
+      return;
+    }
+
+    const main = document.getElementById('main');
+    if (!main) {
+      return;
+    }
+
+    main.scrollTop = pendingScrollTop.current;
+    pendingScrollTop.current = null;
+  }, [onscreenCameras, showLoader]);
 
   // Rendering
   const groupDisplayedCameras = () => {
@@ -81,7 +166,8 @@ export default function CameraList(props) {
           dataLength={camsContext.displayLength}
           next={getDisplayedCameras}
           hasMore={getHasMore}
-          scrollableTarget="main">
+          scrollableTarget="main"
+          style={{ overflow: 'visible' }}>
 
           {renderHighways()}
         </InfiniteScroll>

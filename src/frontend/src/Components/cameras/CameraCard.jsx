@@ -20,7 +20,7 @@ import { faStar as faStarOutline } from '@fortawesome/pro-regular-svg-icons';
 import Button from 'react-bootstrap/Button';
 
 // Internal imports
-import { AlertContext, AuthContext } from '../../App';
+import { AlertContext, AuthContext, CamsContext } from '../../App';
 import { getCameraOrientation } from './helper';
 import { addFavoriteCamera, deleteFavoriteCamera } from "../data/webcams";
 import FriendlyTime from '../shared/FriendlyTime';
@@ -43,6 +43,7 @@ export default function CameraCard(props) {
   // Contexts
   const { authContext, setAuthContext } = useContext(AuthContext);
   const { setAlertMessage } = useContext(AlertContext);
+  const { camsContext } = useContext(CamsContext);
 
   // Redux
   const dispatch = useDispatch();
@@ -144,6 +145,8 @@ export default function CameraCard(props) {
       params.zoom = '12';
     }
 
+    const listPath = location.pathname === '/my-cameras' ? '/my-cameras' : '/cameras';
+
     navigate(
       {
         pathname: `/cameras/${camera.id}`,
@@ -151,10 +154,23 @@ export default function CameraCard(props) {
       },
       {
         state: {
-          fromCameraList: location.pathname === '/my-cameras' ? '/my-cameras' : '/cameras',
+          fromCameraList: listPath,
         },
       },
     );
+
+    // Save the loaded window and scroll offset. Restoring a card offset
+    // forces a large re-render and shifts the list again as more cards load.
+    const scrollableContainer = document.querySelector('#main');
+    try {
+      sessionStorage.setItem('cameraListReturn', JSON.stringify({
+        list: listPath,
+        scrollTop: scrollableContainer ? scrollableContainer.scrollTop : 0,
+        displayLength: camsContext?.displayLength,
+      }));
+    } catch {
+      // sessionStorage can be unavailable; the list just opens at the top.
+    }
 
     window.snowplow('trackSelfDescribingEvent', {
       schema: 'iglu:ca.bc.gov.drivebc/action/jsonschema/1-0-0',
@@ -166,11 +182,6 @@ export default function CameraCard(props) {
         sub_label: '',
       },
     });
-
-    // Record scroll position
-    const scrollableContainer = document.querySelector('#main');
-    const scrollPosition = scrollableContainer.scrollTop;
-    sessionStorage.setItem('scrollPosition', scrollPosition);
   }
 
   function handleKeyDown(event) {

@@ -184,6 +184,11 @@ a[href^="https://" i]#{$external-link-optouts}:not([href*="drivebc.ca" i]) {
 .camera-orientations {
   display: flex;
   align-items: center;
+  // Keep a long direction row inside the card. A nowrap row otherwise
+  // widens the camera grid and the list scrolls sideways.
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
   background-color: $Blue10;
   border-radius: 8px;
   margin-top: 8px;
@@ -196,6 +201,7 @@ a[href^="https://" i]#{$external-link-optouts}:not([href*="drivebc.ca" i]) {
     cursor: pointer;
     display: flex;
     align-items: center;
+    flex-shrink: 0;
 
     img {
       margin: 0 8px;
@@ -214,6 +220,7 @@ a[href^="https://" i]#{$external-link-optouts}:not([href*="drivebc.ca" i]) {
     font-size: 0.875rem;
     font-weight: 700;
     width: 5ch;
+    flex-shrink: 0;
     margin-right: 8px;
 
     &:hover {
