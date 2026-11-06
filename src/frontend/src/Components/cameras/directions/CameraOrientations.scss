@@ -8,7 +8,7 @@
 
 .embla__container {
   display: flex;
-  gap: 16px;
+  gap: 12px;
 }
 
 .embla__slide {
@@ -52,7 +52,7 @@
   }
 
   .main-content {
-    @media (min-width: 1200px) {
+    @media (min-width: 768px) {
       height: fit-content;
       overflow-y: scroll; 
       max-height: 388px;   
@@ -62,7 +62,7 @@
       column-count: unset;
       overflow-y: hidden;
 
-      @media (min-width: 1440px) {
+      @media (min-width: 768px) {
         column-count: 2;
         column-gap: 12px;
         padding: 8px 0;
@@ -81,27 +81,14 @@
     }
 
     &.camCount2, &.camCount3 {
-      @media (min-width: 768px) and (max-width: 1199px) {
-        display: flex;
-        justify-content: flex-start;
-
-        .orientation + .orientation {
-          margin-left: 12px;
-        }
-      }
-
       @media (min-width: 768px) {
-        column-count: unset;
-      }
-
-      @media (min-width: 1440px) {
         column-count: 2;
         column-gap: 12px;
         padding: 8px 0;
       }
     }
 
-    @media (min-width: 1440px) {
+    @media (min-width: 768px) {
       display: flex;
       flex-flow: wrap;
       column-count: unset;
@@ -128,31 +115,13 @@
       text-align: left;
 
       @media (min-width: 768px) {
-        width: fit-content;
-        height: 160px;  // Crop off 20px timestamp from the bottom
-
-        &:nth-child(odd) {
-          margin-right: 12px;
-        }
-      }
-
-      @media (min-width: 992px) {
-        width: 170px;
-        height: 130px;
-      }
-
-      @media (min-width: 1200px) {
-        width: 100%;
+        width: calc(50% - 6px);
         height: 120px;
+        margin-right: 0;
 
         &:nth-child(odd) {
           margin-right: 0;
         }
-      }
-      
-      @media (min-width: 1440px) {
-        width: calc(50% - 6px) ;
-        margin-right: 0;
       }
 
       &.current,
@@ -178,26 +147,11 @@
 
       .orientation {
         width: 100%;
-        height: 110px;
+        height: 120px;
         margin-right: 0;
 
         &:nth-child(odd) {
           margin-right: 0;
-        }
-
-        @media (min-width: 768px) {
-          width: 100%;
-          height: 110px;
-        }
-
-        @media (min-width: 992px) {
-          width: 100%;
-          height: 110px;
-        }
-
-        @media (min-width: 1200px) {
-          width: 100%;
-          height: 110px;
         }
       }
 

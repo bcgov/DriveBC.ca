@@ -113,34 +113,92 @@
 
           .route-title {
             .route-tools {
-              padding: 0.5rem;
+              padding: 2px 4px;
+              margin-bottom: 8px;
               background-color: $Blue10;
-              border-top-left-radius: 4px;
-              border-top-right-radius: 4px;
+              border-radius: 8px;
 
               .notifications-toggle {
                 .form-switch {
+                  display: flex;
+                  align-items: center;
+                  min-height: 0;
+                  margin: 0;
+
                   .form-check-input {
-                    margin-left: 0;
-                    margin-right: 8px;
+                    float: none;
+                    order: 0;
+                    width: 28px;
+                    height: 16px;
+                    margin: 0 8px;
+                    transition: background-position 0.15s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+
+                    @media (prefers-reduced-motion: reduce) {
+                      transition: none;
+                    }
                   }
                   .form-check-label{
-                    font-size: 0.875rem;
+                    font-size: 0.75rem;
                     font-weight: 700;
                     color: $GreyOnBlue;
+                    text-decoration: underline;
+                    text-decoration-color: transparent;
+                    transition: text-decoration-color 0.2s ease-in-out;
+                  }
+
+                  @media (hover: hover) {
+                    &:hover {
+                      .form-check-label {
+                        text-decoration-color: currentColor;
+                      }
+
+                      .form-check-input:not(:checked) {
+                        --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%2338598A'/%3e%3c/svg%3e");
+                        border-color: $BC-Blue-Alt;
+                      }
+
+                      .form-check-input:checked {
+                        background-color: $BC-Blue-Alt;
+                        border-color: $BC-Blue-Alt;
+                      }
+                    }
+                  }
+                }
+              }
+
+              .notifications-settings > svg {
+                font-size: 14px;
+                cursor: pointer;
+                transition: color 0.2s ease-in-out;
+
+                @media (hover: hover) {
+                  &:hover {
+                    color: $BC-Blue-Alt;
                   }
                 }
               }
             }
 
             .card-img-box {
-              border-top-left-radius: 0;
-              border-top-right-radius: 0;
+              height: 196px;
+              border-radius: 8px;
+            }
+
+            .route-name-and-distance {
+              margin-top: 12px;
             }
           }
 
           .route-alt-name {
+            font-size: 0.875rem;
             margin-bottom: 0;
+          }
+
+          .route-items .route-item {
+            .route-item__count,
+            .route-item__count ~ .route-item__name {
+              color: $Type-Primary;
+            }
           }
 
           .myRoute-actions {
@@ -148,19 +206,35 @@
             justify-content: space-between;
             flex-grow: 1;
             align-items: flex-end;
-            margin-top: 16px;
+            margin-top: 8px;
           }
 
           .viewCams-btn, .favourite-btn {
             font-size: 0.875rem;
             font-weight: 700;
-            color: $Type-Link;
+            color: $ViewDetailsText;
             border: none;
             background: none;
             padding: 0;
 
             svg {
               margin-right: 8px;
+            }
+          }
+
+          .favourite-btn {
+            display: inline-flex;
+            align-items: center;
+            color: $GreyOnBlue;
+            font-size: 0.75rem;
+            line-height: inherit;
+            padding: 6px 8px;
+
+            svg {
+              font-size: 14px;
+              margin-right: 8px;
+              color: $BC-Yellow;
+              transform: translateY(1px);
             }
           }
 

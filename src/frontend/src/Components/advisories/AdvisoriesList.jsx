@@ -133,15 +133,17 @@ export default function AdvisoriesList(props) {
 
         } else {
           return (
-            <li className={`advisory-li link-div ${!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.last_notified_at?.toString()) ? 'unread' : ''}`}
-              key={advisory.id}
-              onClick={() => handleClick(advisory)}
-              onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}
-              tabIndex={0}>
+            <li className={`advisory-li ${!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.last_notified_at?.toString()) ? 'unread' : ''}`}
+              key={advisory.id}>
 
               <div className="advisory-li__content">
                 <div className="advisory-li-title-container">
-                  <p className='advisory-li-title'>{advisory.title}</p>
+                  <p className='advisory-li-title link-div'
+                    tabIndex={0}
+                    onClick={() => handleClick(advisory)}
+                    onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}>
+                    {advisory.title}
+                  </p>
                   {trackedAdvisories[advisory.id]?.highlight &&
                     <div className="updated-pill">Updated</div>
                   }
@@ -158,8 +160,12 @@ export default function AdvisoriesList(props) {
                     </div>
                   }
 
-                  <Button variant="light" className='view-details-btn'>
-                    View Details
+                  <Button
+                    variant="light"
+                    className='view-details-btn'
+                    aria-label={`View advisory details for ${advisory.title}`}
+                    onClick={() => handleClick(advisory)}>
+                    View details
                     <FontAwesomeIcon icon={faChevronRight}/>
                   </Button>
                 </div>

@@ -71,6 +71,7 @@ a[href^="https://" i]#{$external-link-optouts}:not([href*="drivebc.ca" i]) {
   .page-header {
     .back-link {
       display: block;
+      width: fit-content;
       margin-bottom: 1rem;
     }
 

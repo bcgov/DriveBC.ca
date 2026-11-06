@@ -76,7 +76,7 @@ export default function CameraOrientations(props) {
     setCurrentPane(Math.floor(index / perPane));
   }
 
-  const slideWidth = `calc((100% - ${(perPane - 1) * 16}px - 12px) / ${perPane})`;
+  const slideWidth = `calc((100% - ${(perPane - 1) * 12}px - 12px) / ${perPane})`;
 
   return (
     <div className="camera-orientations-container">
