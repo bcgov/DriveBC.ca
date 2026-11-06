@@ -53,6 +53,12 @@ import { resetSeoMetadata, setMapFeatureSeoMetadata } from '../../shared/seo';
 import NearbyWeathers from '../../cameras/nearbyweathers/NearbyWeathers';
 import CameraOrientations from '../../cameras/directions/CameraOrientations';
 import { API_HOST, REPLAY_THE_DAY } from '../../../env';
+import {
+  DESKTOP_PANEL_WIDTH,
+  EXPANDED_CAMERA_PANEL_WIDTH,
+  getPanelAnchorXFraction,
+  setZoomPanAnchored,
+} from '../helpers';
 
 // Styling
 import './CamPanel.scss';
@@ -72,7 +78,7 @@ export default function CamPanel(props) {
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   // Props
-  const { camFeature, showRouteObjs, fromCameraList } = props;
+  const { camFeature, showRouteObjs, fromCameraList, mapRef, mapView, onExpandedChange } = props;
   const newCam = camFeature.id ? camFeature : camFeature.getProperties();
 
   // Context
@@ -152,6 +158,42 @@ export default function CamPanel(props) {
   // Drawer is used when !largeScreen in Map
   const [inDrawer, setInDrawer] = useState(!largeScreen);
 
+  // Recenter the active camera in the visible map area beside the (expanded/collapsed) panel
+  const recenterCameraBesidePanel = useCallback((panelExpanded) => {
+    if (!mapRef?.current || !mapView?.current || !camFeature?.getGeometry) {
+      return;
+    }
+
+    let geometry = camFeature.getGeometry();
+    if (geometry.getType() !== 'Point' && camFeature.getProperties()?.altFeature) {
+      geometry = camFeature.getProperties().altFeature.getGeometry();
+    }
+
+    const coords = geometry?.flatCoordinates;
+    if (!coords) {
+      return;
+    }
+
+    const mapWidth = mapRef.current.getSize()?.[0] ?? 0;
+    const panelWidth = panelExpanded ? EXPANDED_CAMERA_PANEL_WIDTH : DESKTOP_PANEL_WIDTH;
+    const anchorXFraction = getPanelAnchorXFraction(mapWidth, panelWidth);
+
+    setZoomPanAnchored(
+      mapRef,
+      mapView,
+      mapView.current.getZoom(),
+      coords,
+      anchorXFraction,
+      0.5,
+    );
+  }, [camFeature, mapRef, mapView]);
+
+  // Keep Map.jsx in sync so left-side clicks recenter for the expanded width
+  useEffect(() => {
+    onExpandedChange?.(canExpand && expanded);
+    return () => onExpandedChange?.(false);
+  }, [canExpand, expanded, onExpandedChange]);
+
   // Effects
   useEffect(() => {
     if (!canExpand) {
@@ -162,8 +204,10 @@ export default function CamPanel(props) {
     if (fromCameraList && !autoExpanded.current) {
       setExpanded(true);
       autoExpanded.current = true;
+      // Panel opens already expanded — recenter for the wider panel
+      recenterCameraBesidePanel(true);
     }
-  }, [canExpand, fromCameraList]);
+  }, [canExpand, fromCameraList, recenterCameraBesidePanel]);
 
   // Expand/minimize: slide the panel edge and glide each block from its old spot to its new one
   const beforeToggleRef = useRef(null);
@@ -179,7 +223,10 @@ export default function CamPanel(props) {
         '.image-wrap, .camera-thumbnail, .camera-details__description, .nearby-weathers-container'
       )].map(el => [el, el.getBoundingClientRect()]),
     };
-    setExpanded(prev => !prev);
+    const next = !expanded;
+    setExpanded(next);
+    // Recenter the camera in the map area beside the resized panel
+    recenterCameraBesidePanel(next);
   };
 
   useLayoutEffect(() => {
