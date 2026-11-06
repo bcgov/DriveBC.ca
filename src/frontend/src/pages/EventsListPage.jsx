@@ -94,7 +94,9 @@ export default function EventsListPage(props) {
   // Props
   const { chainUpsOnly } = props;
 
-  document.title = chainUpsOnly ? 'DriveBC - Chain-ups' : 'DriveBC - Delays';
+  document.title = chainUpsOnly
+    ? 'Chain-ups | DriveBC'
+    : 'Closures and Delays | DriveBC';
 
   // Navigation
   const navigate = useNavigate();

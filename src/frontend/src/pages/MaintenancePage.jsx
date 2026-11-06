@@ -8,7 +8,7 @@ import Footer from '../Footer';
 import './MaintenancePage.scss';
 
 export default function MaintenancePage() {
-  document.title = 'DriveBC - Maintenance';
+  document.title = 'Maintenance | DriveBC';
 
   return (
     <div className='maintenance-page'>

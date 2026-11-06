@@ -59,9 +59,23 @@ export const isMapFeatureNoindex = (pathname, searchParams) =>
 export const getPageSeoDescription = pathname =>
   PAGE_DESCRIPTIONS[pathname] || DEFAULT_DESCRIPTION;
 
+const getCmsContentText = content =>
+  getPlainText(content?.teaser || content?.rendered_body);
+
 export const getCmsContentSeoDescription = content =>
-  getPlainText(content?.teaser || content?.rendered_body).slice(0, 160) ||
-  DEFAULT_DESCRIPTION;
+  getCmsContentText(content).slice(0, 160) || DEFAULT_DESCRIPTION;
+
+export const getAdvisorySeoDescription = advisory => {
+  const description = getCmsContentText(advisory);
+  return description
+    ? `Advisory: ${description.charAt(0).toLowerCase()}${description.slice(1)}`.slice(0, 160)
+    : DEFAULT_DESCRIPTION;
+};
+
+export const getBulletinSeoDescription = bulletin => {
+  const title = getPlainText(bulletin?.title);
+  return title ? `Bulletin: ${title} Bulletin`.slice(0, 160) : DEFAULT_DESCRIPTION;
+};
 
 const getPlainText = value =>
   value
@@ -79,11 +93,12 @@ const getMapFeatureSeoText = (path, feature) => {
       const name = getPlainText(feature.name) || 'Highway camera';
       const highway = getPlainText(feature.highway_display || feature.highway);
       const onHighway = highway ? ` on Highway ${highway}` : '';
+      const caption = getPlainText(feature.caption);
       return {
         title: highway ? `${name} - Highway ${highway} Camera` : name,
-        description:
-          feature.caption ||
-          `View the live highway camera for ${name}${onHighway} with DriveBC.`,
+        description: caption
+          ? `Highway webcam${/^highway\b/i.test(caption) ? ' on ' : ': '}${caption}`
+          : `Highway webcam for ${name}${onHighway}.`,
       };
     }
     case 'rest-stop': {
@@ -94,11 +109,11 @@ const getMapFeatureSeoText = (path, feature) => {
         ? ` on Highway ${properties.HIGHWAY_NUMBER}`
         : '';
       const distance = properties.DISTANCE_FROM_MUNICIPALITY
-        ? `, ${toTitleCase(properties.DISTANCE_FROM_MUNICIPALITY)}`
+        ? `, ${toTitleCase(properties.DISTANCE_FROM_MUNICIPALITY).replace(/(\d)km\b/i, '$1 km')}`
         : '';
       return {
         title: `${name} Rest Stop`,
-        description: `${name}${highway}${distance}. Rest area information from DriveBC.`,
+        description: `Rest area at ${name}${highway}${distance}`,
       };
     }
     case 'ferry':
@@ -119,9 +134,9 @@ const getMapFeatureSeoText = (path, feature) => {
       );
       return {
         title: `${name} Roadside Weather`,
-        description:
-          feature.location_description ||
-          `Current road and weather information for ${name} from DriveBC.`,
+        description: feature.location_description
+          ? `Weather at ${getPlainText(feature.location_description)}`
+          : `Weather at ${name}.`,
       };
     }
     case 'regional-weather': {

@@ -24,7 +24,7 @@ import FriendlyTime from '../Components/shared/FriendlyTime';
 import renderWagtailBody from '../Components/shared/renderWagtailBody';
 import ShareURLButton from '../Components/shared/ShareURLButton';
 import PollingComponent from "../Components/shared/PollingComponent";
-import { getCmsContentSeoDescription, setPageSeoDescription } from '../Components/shared/seo';
+import { getBulletinSeoDescription, setPageSeoDescription } from '../Components/shared/seo';
 
 // Styling
 import './BulletinDetailsPage.scss';
@@ -90,8 +90,8 @@ export default function BulletinDetailsPage() {
 
         currentRevision.current = latestData.live_revision;
 
-        document.title = `DriveBC - Bulletins - ${latestData.title}`;
-        setPageSeoDescription(getCmsContentSeoDescription(latestData));
+        document.title = `${latestData.title} Bulletin | DriveBC`;
+        setPageSeoDescription(getBulletinSeoDescription(latestData));
       }
 
       // Detect major update only
@@ -122,8 +122,8 @@ export default function BulletinDetailsPage() {
     });
     setBulletin(bulletinData);
 
-    document.title = `DriveBC - Bulletins - ${bulletinData.title}`;
-    setPageSeoDescription(getCmsContentSeoDescription(bulletinData));
+    document.title = `${bulletinData.title} Bulletin | DriveBC`;
+    setPageSeoDescription(getBulletinSeoDescription(bulletinData));
 
     if (bulletinData.id) {
       initialNotifiedAt.current = bulletinData.last_notified_at;

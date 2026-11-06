@@ -30,7 +30,7 @@ import './AdvisoriesListPage.scss';
 
 export default function AdvisoriesListPage() {
   const isFirstVisitRef = useRef(!sessionStorage.getItem('lastAdvisoriesVisit'));
-  document.title = 'DriveBC - Advisories';
+  document.title = 'Advisories | DriveBC';
 
   // Context
   const { cmsContext, setCMSContext } = useContext(CMSContext);

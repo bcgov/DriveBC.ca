@@ -98,7 +98,7 @@ export default function EmergencyAlertDetail() {
       const data = await get(url);
       if (data) {
         setDetailData(data);
-        document.title = `DriveBC - Emergency Alerts - ${data.title}`;
+        document.title = `${data.title} Emergency Alert | DriveBC`;
         setPageSeoDescription(getCmsContentSeoDescription({ rendered_body: getRichTextHtml(data.body) }));
 
         if (data.id) {

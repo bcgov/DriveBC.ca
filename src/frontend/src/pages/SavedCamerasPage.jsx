@@ -29,7 +29,7 @@ import './SavedCamerasPage.scss';
 
 export default function SavedCamerasPage() {
   /* Setup */
-  document.title = 'DriveBC - My Cameras';
+  document.title = 'My Cameras | DriveBC';
 
   // Context
   const { authContext, setAuthContext } = useContext(AuthContext);

@@ -29,7 +29,7 @@ const MESSAGE_MAX_LENGTH = 500;
 export default function FeedbackPage() {
   /* Setup */
   // Misc
-  document.title = 'DriveBC - Feedback';
+  document.title = 'Feedback | DriveBC';
 
   // reCAPTCHA
   const { checkRecaptcha, getRecaptchaAPIToken } = useRecaptchaVerification();

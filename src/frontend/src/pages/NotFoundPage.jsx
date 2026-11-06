@@ -9,7 +9,7 @@ import Footer from '../Footer';
 import './NotFoundPage.scss';
 
 export default function NotFoundPage() {
-  document.title = 'DriveBC - Not Found';
+  document.title = 'Not Found | DriveBC';
 
   return (
     <div className='not-found-page'>
