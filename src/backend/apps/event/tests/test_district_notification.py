@@ -255,7 +255,7 @@ class SendDistrictNotificationsTest(TestCase):
         always_active_email = next(
             email for email in mail.outbox if 'Always Active Area' in email.subject
         )
-        assert '2 updates' in always_active_email.subject
+        assert 'Updates to 2 events in Always Active Area' in always_active_email.subject
         assert 'Intersecting Event' in always_active_email.body
         assert 'Intersecting Event Minor' in always_active_email.body
 
@@ -387,10 +387,10 @@ class SendDistrictNotificationsTest(TestCase):
         verified_email = by_recipient['verifieduser@example.com']
         other_email = by_recipient['otheruser@example.com']
 
-        assert '1 update' in verified_email.subject
+        assert verified_email.subject.startswith('New ')
         assert 'Intersecting Event Minor' not in verified_email.body
         assert 'Intersecting Event' in verified_email.body
 
-        assert '1 update' in other_email.subject
+        assert other_email.subject.startswith('New ')
         assert 'Intersecting Event Minor' in other_email.body
         assert other_email.body.replace('Intersecting Event Minor', '').count('Intersecting Event') == 0

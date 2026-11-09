@@ -5,9 +5,11 @@ from zoneinfo import ZoneInfo
 
 from apps.authentication.models import EmailSubscription, SavedRoutes
 from apps.event.enums import (
+    EVENT_DETAIL_FIELDS,
     EVENT_DIFF_FIELDS,
     EVENT_DISPLAY_CATEGORY,
     EVENT_DISPLAY_CATEGORY_TITLE,
+    EVENT_SEVERITY,
     EVENT_STATUS,
     EVENT_TYPE,
     EVENT_UPDATE_FIELDS,
@@ -24,7 +26,7 @@ from apps.shared.enums import CacheKey
 from apps.shared.helpers import attach_default_email_images, attach_image_to_email
 from apps.shared.models import Area
 from django.conf import settings
-from django.contrib.gis.geos import LineString, Point
+from django.contrib.gis.geos import GEOSGeometry, LineString, Point
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMultiAlternatives
@@ -38,6 +40,32 @@ BACKEND_DIR = Path(__file__).resolve().parents[2]
 
 # DBC22-7627: BC 'PCT' from Nov 1 2026 02:00 PDT
 PCT_START = datetime.datetime(2026, 11, 1, 9, tzinfo=datetime.timezone.utc)
+
+
+# DBC22-6954: event fields kept for change highlights and cleared emails
+EVENT_STATE_FIELDS = [
+    'id', 'description', 'event_type', 'event_sub_type', 'status', 'severity', 'closed',
+    'direction', 'location', 'route_at', 'route_from', 'route_to', 'highway_segment_names',
+    'location_description', 'closest_landmark', 'next_update', 'first_created', 'last_updated',
+    'start', 'end', 'schedule', 'timezone', 'display_category', *EVENT_DETAIL_FIELDS,
+]
+
+# Fields highlighted in emails when changed; item sections diffed in item_changes
+EVENT_HIGHLIGHT_FIELDS = ['location_description', 'closest_landmark', 'next_update', 'additional']
+
+
+def get_event_state(event):
+    return {
+        field: getattr(event, field).ewkt if field == 'location' else getattr(event, field)
+        for field in EVENT_STATE_FIELDS
+    }
+
+
+def event_from_state(state):
+    return Event(**{
+        field: GEOSGeometry(value) if field == 'location' else Event._meta.get_field(field).to_python(value)
+        for field, value in state.items()
+    })
 
 
 def get_pacific_tz_label():
@@ -111,7 +139,44 @@ def build_data_diff(current_obj, new_obj_data):
     return data_diff
 
 
-def populate_event_from_data(new_event_data):
+def build_detail_diff(current_obj, new_obj_data):
+    return {
+        field: new_obj_data[field] for field in EVENT_DETAIL_FIELDS
+        if field in new_obj_data and getattr(current_obj, field) != new_obj_data[field]
+    }
+
+
+def sync_chain_up_direction(event, new_event_data):
+    # Sync chain-up direction even when last_updated is unchanged
+    # (parsed from route_from). Not notification-worthy.
+    if event.event_type != EVENT_TYPE.CHAIN_UP:
+        return
+
+    new_direction = new_event_data.get('direction')
+    if new_direction and new_direction != event.direction:
+        Event.objects.filter(id=event.id).update(direction=new_direction)
+
+
+def update_future_event_category(event, previous_states):
+    # Update future events display category
+    # https://moti-imb.atlassian.net/browse/DBC22-2259
+    if event.display_category != EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
+        return False
+
+    new_display_category = get_display_category(event)
+    if new_display_category == EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
+        return False
+
+    # DBC22-6954: existing event, email as Updated not New
+    if previous_states is not None:
+        previous_states[event.id] = get_event_state(event)
+
+    # Update without triggering save
+    Event.objects.filter(id=event.id).update(display_category=new_display_category)
+    return True
+
+
+def populate_event_from_data(new_event_data, previous_states=None):
     event_id = new_event_data.get('id')
     try:
         event = Event.objects.get(id=event_id)
@@ -121,8 +186,11 @@ def populate_event_from_data(new_event_data):
             old_data = getattr(event, field)
             new_data = new_event_data.get(field)
             if not compare_data(old_data, new_data):
+                if previous_states is not None:
+                    previous_states[event_id] = get_event_state(event)
+
                 # Found diff, update and stop loop
-                data_diff = build_data_diff(event, new_event_data)
+                data_diff = {**build_data_diff(event, new_event_data), **build_detail_diff(event, new_event_data)}
                 Event.objects.filter(id=event_id).update(**data_diff)
 
                 # Refresh from DB and save to update display category
@@ -136,21 +204,14 @@ def populate_event_from_data(new_event_data):
 
                 return True
 
-        # Sync chain-up direction even when last_updated is unchanged
-        # (parsed from route_from). Not notification-worthy.
-        if event.event_type == EVENT_TYPE.CHAIN_UP:
-            new_direction = new_event_data.get('direction')
-            if new_direction and new_direction != event.direction:
-                Event.objects.filter(id=event_id).update(direction=new_direction)
+        sync_chain_up_direction(event, new_event_data)
 
-        # Update future events display category
-        # https://moti-imb.atlassian.net/browse/DBC22-2259
-        if event.display_category == EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
-            new_display_category = get_display_category(event)
-            if new_display_category != EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
-                # Update without triggering save
-                Event.objects.filter(id=event_id).update(display_category=new_display_category)
-                return True
+        # DBC22-6954: backfill RIDE details on existing events; not notification-worthy
+        detail_diff = build_detail_diff(event, new_event_data)
+        if detail_diff:
+            Event.objects.filter(id=event_id).update(**detail_diff)
+
+        return update_future_event_category(event, previous_states)
 
     except ObjectDoesNotExist:
         event = Event(id=event_id)
@@ -175,10 +236,11 @@ def populate_all_event_data():
 
     active_event_ids = []
     updated_event_ids = []
+    previous_states = {}
     for event_data in ride_events:
         try:
             # Populate db obj
-            updated = populate_event_from_data(event_data)
+            updated = populate_event_from_data(event_data, previous_states)
             if updated:
                 updated_event_ids.append(event_data['id'])
 
@@ -189,16 +251,21 @@ def populate_all_event_data():
             logger.warning(e)
 
     # Purge events absent in the feed
-    Event.objects.filter(status=EVENT_STATUS.ACTIVE)\
-        .exclude(id__in=active_event_ids)\
-        .delete()
+    purged_events = Event.objects.filter(status=EVENT_STATUS.ACTIVE)\
+        .exclude(id__in=active_event_ids)
+
+    # DBC22-6954: queue cleared notifications while event rows still exist
+    cleared_states = {event.id: get_event_state(event) for event in purged_events}
+    queue_event_notifications(list(cleared_states), previous_states=cleared_states, cleared=True)
+
+    purged_events.delete()
 
     # Rebuild cache
     cache.delete(CacheKey.EVENT_LIST)
     cache.delete(CacheKey.EVENT_LIST_POLLING)
 
     # Send notifications
-    queue_event_notifications(updated_event_ids)
+    queue_event_notifications(updated_event_ids, previous_states=previous_states)
 
 
 def get_image_type_file_name(event):
@@ -297,13 +364,15 @@ def get_district_subscriptions(areas, dt=None):
     return filtered_subscriptions
 
 
-def queue_event_notifications(updated_event_ids, dt=None):
+def queue_event_notifications(updated_event_ids, dt=None, previous_states=None, cleared=False):
+    previous_states = previous_states or {}
+
     for saved_route in get_notification_routes(dt=dt):
-        queue_route_event_notifications(saved_route, updated_event_ids)
+        queue_route_event_notifications(saved_route, updated_event_ids, previous_states, cleared)
 
     areas = Event.objects.filter(id__in=updated_event_ids).values_list('area', flat=True).distinct()
     for sub in get_district_subscriptions(areas, dt=dt):
-        queue_district_event_notifications(sub, updated_event_ids)
+        queue_district_event_notifications(sub, updated_event_ids, previous_states, cleared)
 
 
 def generate_settings_message(route, test_time=None):
@@ -387,7 +456,9 @@ def generate_district_settings_message(subscription, test_time=None):
     return msg
 
 
-def queue_route_event_notifications(saved_route, updated_event_ids):
+def queue_route_event_notifications(saved_route, updated_event_ids, previous_states=None, cleared=False):
+    previous_states = previous_states or {}
+
     # Same 150m flattened-route buffer used when sending notifications
     buffered_route = merge_multilinestring(saved_route.route)
 
@@ -397,15 +468,30 @@ def queue_route_event_notifications(saved_route, updated_event_ids):
         display_category__in=saved_route.notification_types  # Only notify for selected event types
     )
 
-    queued_notifications = []
-    if updated_interecting_events.count() > 0:
+    if cleared:
+        # Cleared replaces any pending new/updated notification
         for event in updated_interecting_events:
-            queued_notifications.append(QueuedEventNotification(route_id=saved_route.id, event_id=event.id))
+            QueuedEventNotification.objects.update_or_create(
+                route_id=saved_route.id,
+                event_id=event.id,
+                defaults={'previous_state': previous_states.get(event.id), 'cleared': True},
+            )
+        return
 
+    # Existing rows win to keep the oldest previous state
+    queued_notifications = [
+        QueuedEventNotification(
+            route_id=saved_route.id,
+            event_id=event.id,
+            previous_state=previous_states.get(event.id),
+        )
+        for event in updated_interecting_events
+    ]
     QueuedEventNotification.objects.bulk_create(queued_notifications, ignore_conflicts=True)
 
 
-def queue_district_event_notifications(sub, updated_event_ids):
+def queue_district_event_notifications(sub, updated_event_ids, previous_states=None, cleared=False):
+    previous_states = previous_states or {}
     new_event_ids = list(Event.objects.filter(
         id__in=updated_event_ids,
         area=sub.area,
@@ -416,17 +502,22 @@ def queue_district_event_notifications(sub, updated_event_ids):
         return
 
     # Update queued notification with new event ids if it already exists
-    existing = QueuedDistrictEventNotification.objects.filter(subscription_id=sub.id).first()
-    if existing:
-        existing.event_ids = list(set(existing.event_ids or []) | set(new_event_ids))
-        existing.save()
+    queued = QueuedDistrictEventNotification.objects.filter(subscription_id=sub.id).first() or \
+        QueuedDistrictEventNotification(subscription_id=sub.id)
 
-    # Create a new queued notification otherwise
-    else:
-        QueuedDistrictEventNotification.objects.create(
-            subscription_id=sub.id,
-            event_ids=new_event_ids
-        )
+    queued.event_ids = list(set(queued.event_ids or []) | set(new_event_ids))
+    for event_id in new_event_ids:
+        if cleared:
+            queued.previous_states[event_id] = previous_states.get(event_id)
+
+        else:
+            # Keep the oldest previous state
+            queued.previous_states.setdefault(event_id, previous_states.get(event_id))
+
+    if cleared:
+        queued.cleared_event_ids = list(set(queued.cleared_event_ids or []) | set(new_event_ids))
+
+    queued.save()
 
 
 def update_event_area_relations():
@@ -474,62 +565,166 @@ def get_ordered_events(events, route):
     return sorted(events, key=distance_along_route)
 
 
-def send_queued_notifications():
+def set_notification_fields(event, previous_state=None, cleared=False, route=None):
+    """Annotate event with email status, previous version and changed fields."""
+    event.notification_status = 'Updated' if previous_state else 'New'
+    if cleared:
+        event.notification_status = 'Cleared'
+
+    event.previous = event_from_state(previous_state) if previous_state and not cleared else None
+    event.changed = [
+        field for field in EVENT_HIGHLIGHT_FIELDS
+        if event.previous and getattr(event.previous, field) != getattr(event, field)
+    ]
+    event.site_link = None if cleared else build_event_site_link(event, route=route)
+    return event
+
+
+def get_event_subject_label(event):
+    # DBC22-6954: closures omit the event type
+    if event.display_category == EVENT_DISPLAY_CATEGORY.CLOSURE:
+        return 'closure'
+
+    if event.display_category == EVENT_DISPLAY_CATEGORY.ROAD_CONDITION:
+        return 'road condition'
+
+    if event.display_category == EVENT_DISPLAY_CATEGORY.CHAIN_UP:
+        return 'commercial chain-up'
+
+    severity = 'major' if event.severity == EVENT_SEVERITY.MAJOR else 'minor'
+    if event.display_category == EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
+        # model severity is never CLOSURE; API derives it from closed
+        return 'future closure' if event.closed else f'{severity} future event'
+
+    event_type = 'incident' if event.event_type == EVENT_TYPE.INCIDENT else 'delay'
+    return f'{severity} {event_type}'
+
+
+def get_event_subject(events, location_label):
+    if len(events) > 1:
+        return f'Updates to {len(events)} events {location_label}'
+
+    return f'{events[0].notification_status} {get_event_subject_label(events[0])} {location_label}'
+
+
+def send_event_emails(events, location_label, template_name, context, recipient):
+    # DBC22-6954: closures sent in a separate email
+    closures = [e for e in events if e.display_category == EVENT_DISPLAY_CATEGORY.CLOSURE]
+    others = [e for e in events if e.display_category != EVENT_DISPLAY_CATEGORY.CLOSURE]
+
+    for group in (closures, others):
+        if not group:
+            continue
+
+        group_context = {
+            **context,
+            'events': group,
+            'has_changes': any(event.changed for event in group),
+        }
+        text = render_to_string(f'email/{template_name}.txt', group_context)
+        html = render_to_string(f'email/{template_name}.html', group_context)
+
+        msg = EmailMultiAlternatives(
+            get_event_subject(group, location_label),
+            text,
+            settings.DRIVEBC_FROM_EMAIL_SENDER,
+            [recipient]
+        )
+
+        # image attachments
+        attach_default_email_images(msg)
+        for cid in ('map-pin', 'circle-dot', 'location-dot', 'impact-clock', 'impact-do-not-enter',
+                    'impact-exclamation-circle', 'restriction-triangle', 'external-link'):
+            attach_image_to_email(msg, cid, f'{cid}.png')
+
+        file_names = get_unique_image_type_files_names(group)
+        for fn in file_names:
+            attach_image_to_email(msg, fn.split('.')[0], fn)  # use file name (without extension) as cid
+
+        msg.attach_alternative(html, 'text/html')
+        msg.send()
+
+
+def send_route_notifications(saved_route, active_events, match_route=True):
+    queued_notifications = QueuedEventNotification.objects.filter(route_id=saved_route.id)
+    queued_by_event_id = {queued.event_id: queued for queued in queued_notifications}
+
+    # Active + still near the route (drops stale queue rows / geometry drift)
+    events = active_events.filter(
+        id__in=[event_id for event_id, queued in queued_by_event_id.items() if not queued.cleared],
+    )
+    # admin test sends skip the route match
+    if match_route:
+        events = events.filter(location__intersects=merge_multilinestring(saved_route.route))
+    events = list(events)
+
+    # Cleared events no longer exist, rebuild from last state
+    events += [
+        event_from_state(queued.previous_state)
+        for queued in queued_by_event_id.values()
+        if queued.cleared and queued.previous_state
+    ]
+
+    ordered_events = get_ordered_events(events, saved_route.route)
+    if not ordered_events:
+        return
+
+    for event in ordered_events:
+        queued = queued_by_event_id[event.id]
+        set_notification_fields(event, queued.previous_state, queued.cleared, route=saved_route)
+
+    context = {
+        'route': saved_route,
+        'user': saved_route.user,
+        'from_email': settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+        'footer_message': generate_settings_message(saved_route),
+        'fe_base_url': settings.FRONTEND_BASE_URL,
+        'settings_path': 'my-routes',
+        'settings_label': 'route',
+    }
+
+    route_label = saved_route.label if saved_route.label else f'{saved_route.start} to {saved_route.end}'
+    send_event_emails(
+        ordered_events, f'on {route_label}', 'event_updated', context, saved_route.user.email
+    )
+
+    # Clear sent notifications every loop
+    queued_notifications.delete()
+
+
+def send_queued_notifications(route_id=None, match_route=True):
     active_events = Event.objects.filter(status=EVENT_STATUS.ACTIVE)
 
-    for route_id in QueuedEventNotification.objects.values_list('route_id', flat=True).distinct():
-        saved_route = SavedRoutes.objects.filter(id=route_id).first()
+    queued_rows = QueuedEventNotification.objects.all()
+    if route_id:
+        queued_rows = queued_rows.filter(route_id=route_id)
+
+    for queued_route_id in queued_rows.values_list('route_id', flat=True).distinct():
+        saved_route = SavedRoutes.objects.filter(id=queued_route_id).first()
         if saved_route:  # Skip is route is missing
-            queued_notifications = QueuedEventNotification.objects.filter(route_id=saved_route.id)
+            send_route_notifications(saved_route, active_events, match_route)
 
-            queued_event_ids = queued_notifications.values_list('event_id', flat=True)
-            buffered_route = merge_multilinestring(saved_route.route)
-            # Active + still near the route (drops stale queue rows / geometry drift)
-            events = active_events.filter(
-                id__in=queued_event_ids,
-                location__intersects=buffered_route,
-            )
-            ordered_events = get_ordered_events(events, saved_route.route)
 
-            if not ordered_events:
-                continue
+def get_district_notification_events(queued_notification, active_events_by_id):
+    previous_states = queued_notification.previous_states or {}
+    cleared_event_ids = set(queued_notification.cleared_event_ids or [])
 
-            for event in ordered_events:
-                event.site_link = build_event_site_link(event, route=saved_route)
+    events = []
+    for event_id in queued_notification.event_ids:
+        cleared = event_id in cleared_event_ids
+        if cleared and previous_states.get(event_id):
+            # Cleared events no longer exist, rebuild from last state
+            event = event_from_state(previous_states[event_id])
 
-            context = {
-                'events': ordered_events,
-                'route': saved_route,
-                'user': saved_route.user,
-                'from_email': settings.DRIVEBC_FROM_EMAIL_DEFAULT,
-                'footer_message': generate_settings_message(saved_route),
-                'fe_base_url': settings.FRONTEND_BASE_URL,
-            }
+        elif not cleared and event_id in active_events_by_id:
+            event = active_events_by_id[event_id]
 
-            text = render_to_string('email/event_updated.txt', context)
-            html = render_to_string('email/event_updated.html', context)
+        else:
+            continue
 
-            update_text = 'updates' if len(ordered_events) > 1 else 'update'
-            route_label = saved_route.label if saved_route.label else f'{saved_route.start} to {saved_route.end}'
-            msg = EmailMultiAlternatives(
-                f'DriveBC: {len(ordered_events)} {update_text} on {route_label}',
-                text,
-                settings.DRIVEBC_FROM_EMAIL_DEFAULT,
-                [saved_route.user.email]
-            )
+        events.append(set_notification_fields(event, previous_states.get(event_id), cleared))
 
-            # image attachments
-            attach_default_email_images(msg)
-
-            file_names = get_unique_image_type_files_names(ordered_events)
-            for fn in file_names:
-                attach_image_to_email(msg, fn.split('.')[0], fn)  # use file name (without extension) as cid
-
-            msg.attach_alternative(html, 'text/html')
-            msg.send()
-
-            # Clear sent notifications every loop
-            queued_notifications.delete()
+    return events
 
 
 def send_queued_district_notifications():
@@ -567,51 +762,27 @@ def send_queued_district_notifications():
         if not subscription:
             continue
 
-        sorted_active_events = sorted(
-            (
-                active_events_by_id[event_id]
-                for event_id in queued_notification.event_ids
-                if event_id in active_events_by_id
-            ),
-            key=lambda event: event.last_updated,
-            reverse=True
-        )
-        if len(sorted_active_events) == 0:
+        events = get_district_notification_events(queued_notification, active_events_by_id)
+        if len(events) == 0:
             continue
 
-        for event in sorted_active_events:
-            event.site_link = build_event_site_link(event)
+        sorted_events = sorted(events, key=lambda event: event.last_updated, reverse=True)
 
         context = {
-            'events': sorted_active_events,
             'subscription': subscription,
             'user': subscription.user,
             'area': subscription.area,
             'from_email': settings.DRIVEBC_FROM_EMAIL_DEFAULT,
             'footer_message': generate_district_settings_message(subscription),
             'fe_base_url': settings.FRONTEND_BASE_URL,
+            'settings_path': 'my-areas',
+            'settings_label': 'area',
         }
 
-        text = render_to_string('email/district_event_updated.txt', context)
-        html = render_to_string('email/district_event_updated.html', context)
-
-        update_text = 'updates' if len(sorted_active_events) > 1 else 'update'
-        msg = EmailMultiAlternatives(
-            f'DriveBC: {len(sorted_active_events)} {update_text} in {subscription.area.name}',
-            text,
-            settings.DRIVEBC_FROM_EMAIL_DEFAULT,
-            [subscription.user.email]
+        send_event_emails(
+            sorted_events, f'in {subscription.area.name}', 'event_updated', context,
+            subscription.user.email
         )
-
-        # image attachments
-        attach_default_email_images(msg)
-
-        file_names = get_unique_image_type_files_names(sorted_active_events)
-        for fn in file_names:
-            attach_image_to_email(msg, fn.split('.')[0], fn)  # use file name (without extension) as cid
-
-        msg.attach_alternative(html, 'text/html')
-        msg.send()
 
     # Clear sent notifications
     QueuedDistrictEventNotification.objects.filter(id__in=sent_notification_ids).delete()

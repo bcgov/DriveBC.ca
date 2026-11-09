@@ -14,10 +14,12 @@ from apps.event.enums import (
 from apps.event.models import Event
 from apps.event.tasks import (
     generate_settings_message,
+    get_event_state,
     queue_event_notifications,
     send_queued_notifications,
 )
-from apps.event.templatetags.event_extras import no_autolink
+from apps.event.templatetags.event_extras import item_changes, no_autolink
+from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core import mail
 from django.test import TestCase
@@ -188,6 +190,8 @@ class SendEventNotificationsTest(TestCase):
         self.non_intersecting_event.location = Point(0.5, 0.5)
         self.non_intersecting_event.save()
 
+    always_dt = datetime.datetime(2025, 1, 8, 10, 0, tzinfo=ZoneInfo('America/Vancouver'))
+
     def test_always_active_route(self):
         queue_event_notifications(
             ['intersecting'],
@@ -282,6 +286,92 @@ class SendEventNotificationsTest(TestCase):
         assert any('Always Active Minor Route' in subject for subject in subjects)
         assert any('Intersecting Event Minor' in body for body in bodies)
 
+    def test_updated_event_highlights_changes(self):
+        event = Event.objects.get(id='intersecting')
+        previous_state = {**get_event_state(event), 'additional': 'Old additional info'}
+        queue_event_notifications(['intersecting'], dt=self.always_dt, previous_states={'intersecting': previous_state})
+
+        send_queued_notifications()
+
+        assert len(mail.outbox) == 1
+        email = mail.outbox[0]
+        assert email.subject == 'Updated major incident on Always Active Route'
+        assert email.from_email == settings.DRIVEBC_FROM_EMAIL_SENDER
+        html = email.alternatives[0][0]
+        assert 'Old additional info' in html
+        assert 'line-through' in html
+        assert '>Description<' not in html
+
+    def test_updated_event_item_changes(self):
+        event = Event.objects.get(id='intersecting')
+        previous_state = {**get_event_state(event), 'impacts': [{'label': 'Right lane closed'}]}
+        event.impacts = [{'label': 'Both lanes closed'}]
+        event.restrictions = [{'label': 'Speed limit', 'text': '50 km/h'}]
+        event.additional = 'Work delayed by weather'
+        event.save()
+        queue_event_notifications(['intersecting'], dt=self.always_dt, previous_states={'intersecting': previous_state})
+
+        send_queued_notifications()
+
+        html = mail.outbox[0].alternatives[0][0]
+        assert 'Traffic impact' in html
+        assert 'Both lanes closed' in html
+        assert 'Right lane closed' in html
+        assert 'Speed limit 50 km/h' in html
+        assert 'Work delayed by weather' in html
+
+    def test_updated_event_extent_location(self):
+        event = Event.objects.get(id='intersecting')
+        previous_state = {
+            **get_event_state(event), 'location_description': 'Starts: <br>Point A<br><br>Ends: <br>Point B',
+        }
+        event.location_description = 'Starts: <br>Point A<br><br>Ends: <br>Point C'
+        event.location = LineString((0.5, 0.4), (0.5, 0.6), srid=4326)
+        event.save()
+        queue_event_notifications(['intersecting'], dt=self.always_dt, previous_states={'intersecting': previous_state})
+
+        send_queued_notifications()
+
+        email = mail.outbox[0]
+        html = email.alternatives[0][0]
+        assert 'cid:circle-dot' in html
+        assert 'cid:location-dot' in html
+        assert '>Starts<' in html
+        assert '>Ends<' in html
+        assert 'Point C' in html
+        assert 'Point B' in html
+        assert '>For ' in html  # km exact in test_event_extras; fixture is far from BC
+        assert {part['Content-ID'] for part in email.attachments} >= {'<circle-dot>', '<location-dot>'}
+
+    def test_cleared_event(self):
+        event = Event.objects.get(id='intersecting')
+        state = get_event_state(event)
+        # queued before purge, same as populate_all_event_data
+        queue_event_notifications(
+            ['intersecting'], dt=self.always_dt, previous_states={'intersecting': state}, cleared=True
+        )
+        event.delete()
+
+        send_queued_notifications()
+
+        assert len(mail.outbox) == 1
+        email = mail.outbox[0]
+        assert email.subject == 'Cleared major incident on Always Active Route'
+        assert 'has been cleared' in email.alternatives[0][0]
+
+    def test_closure_sent_separately(self):
+        Event.objects.filter(id='intersecting_minor').delete()
+        closure = Event.objects.get(id='intersecting')
+        closure.id = 'closure'
+        closure.closed = True
+        closure.save()
+        queue_event_notifications(['intersecting', 'closure'], dt=self.always_dt)
+
+        send_queued_notifications()
+
+        subjects = sorted(email.subject for email in mail.outbox)
+        assert subjects == ['New closure on Always Active Route', 'New major incident on Always Active Route']
+
     def test_generate_footer_message(self):
         # All notification types
         route = SavedRoutes(notification_types=[
@@ -369,4 +459,24 @@ class SendEventNotificationsTest(TestCase):
 
 class NoAutolinkFilterTest(TestCase):
     def test_breaks_address_detection(self):
-        assert no_autolink('Highway 20') == 'Highway ‌20'
+        assert no_autolink('Highway 20') == 'Highway ‌20'
+        assert no_autolink('Northbound on Highway 5') == 'Northbound ‌on ‌Highway ‌5'
+
+
+class ItemChangesFilterTest(TestCase):
+    def test_marks_added_and_removed(self):
+        previous = Event(impacts=[{'label': 'Right lane closed'}, {'label': 'Blasting'}], delay_amount=20)
+        event = Event(impacts=[{'label': 'Both lanes closed'}, {'label': 'Blasting'}], delay_amount=0)
+        event.previous = previous
+
+        assert item_changes(event, 'impacts') == [
+            ('Both lanes closed', 'added'),
+            ('Blasting', ''),
+            ('Estimated 20 minute delay', 'removed'),
+            ('Right lane closed', 'removed'),
+        ]
+
+    def test_no_previous_is_unchanged(self):
+        event = Event(restrictions=[{'label': 'Speed limit', 'text': '50 km/h'}])
+
+        assert item_changes(event, 'restrictions') == [('Speed limit 50 km/h', '')]

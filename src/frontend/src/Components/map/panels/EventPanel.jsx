@@ -217,7 +217,7 @@ export default function EventPanel(props) {
                   <FontAwesomeIcon icon={key === 'Starts' ? faCircleDot : faLocationDot} className="extent-box__icon" />
                   <div className="popup__content__shadow-box">
                     <p className="extent-box__label">{key}</p>
-                    {locationEnds[key].map((line, i) => <p key={i} className="extent-box__text">{parse(line)}</p>)}
+                    {locationEnds[key].map(line => <p key={line} className="extent-box__text">{parse(line)}</p>)}
                   </div>
                 </div>
 
@@ -236,9 +236,9 @@ export default function EventPanel(props) {
             <div className="popup__content__shadow-box location-box">
               <FontAwesomeIcon icon={faMapPin} className="location-box__icon" />
               <div className="location-box__blocks">
-                {getLocationBlocks(eventData.location_description, eventData.closest_landmark).map((lines, i) =>
-                  <div key={i}>
-                    {lines.map((line, j) => <p key={j} className={j ? 'location-box__landmark' : 'location-box__text'}>{parse(line)}</p>)}
+                {getLocationBlocks(eventData.location_description, eventData.closest_landmark).map(lines =>
+                  <div key={lines[0]}>
+                    {lines.map((line, j) => <p key={line} className={j ? 'location-box__landmark' : 'location-box__text'}>{parse(line)}</p>)}
                   </div>
                 )}
               </div>
@@ -250,8 +250,8 @@ export default function EventPanel(props) {
           <div className="popup__content__description">
             <p>Traffic impact</p>
             <div className="popup__content__shadow-box">
-              {eventData.traffic_impact_items.map((item, i) =>
-                <p key={i} className="icon-item"><FontAwesomeIcon icon={getImpactIcon(item)} />{item}</p>
+              {eventData.traffic_impact_items.map(item =>
+                <p key={item} className="icon-item"><FontAwesomeIcon icon={getImpactIcon(item)} />{item}</p>
               )}
             </div>
           </div>
@@ -261,7 +261,7 @@ export default function EventPanel(props) {
           <div className="popup__content__description">
             <p>In effect</p>
             <div className="popup__content__shadow-box">
-              {eventData.in_effect_items.map((item, i) => <p key={i}>{item}</p>)}
+              {eventData.in_effect_items.map(item => <p key={item}>{item}</p>)}
             </div>
           </div>
         }
@@ -270,8 +270,8 @@ export default function EventPanel(props) {
           <div className="popup__content__description">
             <p>Restrictions</p>
             <div className="popup__content__shadow-box">
-              {eventData.restriction_items.map((item, i) =>
-                <p key={i} className="icon-item"><FontAwesomeIcon icon={faTriangleExclamation} />{item}</p>
+              {eventData.restriction_items.map(item =>
+                <p key={item} className="icon-item"><FontAwesomeIcon icon={faTriangleExclamation} />{item}</p>
               )}
             </div>
           </div>

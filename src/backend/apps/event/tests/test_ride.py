@@ -185,3 +185,18 @@ class TestPopulateRideEvents(BaseTest):
         assert event.first_created == datetime.datetime(
             2026, 10, 1, 10, tzinfo=zoneinfo.ZoneInfo("America/Vancouver")
         )
+
+    @patch("apps.event.tasks.queue_event_notifications")
+    @patch("apps.event.ride.requests.get")
+    def test_backfills_details_without_notifying(self, mock_requests_get, mock_queue):
+        mock_requests_get.return_value = ride_http_response([ride_event()])
+        populate_all_event_data()
+        Event.objects.filter(id="RIDE-A").update(impacts=[], additional="")
+        mock_queue.reset_mock()
+
+        populate_all_event_data()
+
+        event = Event.objects.get(id="RIDE-A")
+        assert event.impacts == [{"id": 1, "label": "Closed", "closed": True}]
+        assert event.additional == "Use alternate route."
+        assert not any(call.args[0] for call in mock_queue.call_args_list)

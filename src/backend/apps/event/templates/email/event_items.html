@@ -1,0 +1,33 @@
+{# Event list section; added items green, removed items strikethrough; icons per Figma 26730:29457 #}
+{% load event_extras %}
+{% if items %}
+<tr>
+  <td style="padding:24px 16px 0">
+    <div style="font-size:16px; line-height:27px; font-weight:700; color:#2D2D2D; padding-bottom:12px">{{ label }}</div>
+    <div style="padding:12px; border:1px solid #EDEBE9; border-bottom:2px solid #DDDBD9; border-radius:8px; box-shadow:0 3px 7px rgba(0,0,0,0.13); font-size:14px; line-height:21px; color:#2D2D2D">
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+        {% for text, status in items %}
+        {% with icon=text|item_icon:field %}
+        <tr>
+          {% if icon %}
+          <td width="19" style="width:19px; vertical-align:top; padding-top:{% if forloop.first %}3{% else %}15{% endif %}px">
+            <img src="cid:{{ icon }}" width="14" style="width:14px" alt="" />
+          </td>
+          {% endif %}
+          <td style="vertical-align:top; padding-left:{% if icon %}12{% else %}0{% endif %}px; padding-top:{% if forloop.first %}0{% else %}12{% endif %}px">
+            {% if status == 'added' %}
+              <span style="color:#3B7142; background-color:#F5FAF6; padding:0 4px; border-radius:4px">{{ text }}</span>
+            {% elif status == 'removed' %}
+              <span style="color:#B73433; text-decoration:line-through">{{ text }}</span>
+            {% else %}
+              {{ text }}
+            {% endif %}
+          </td>
+        </tr>
+        {% endwith %}
+        {% endfor %}
+      </table>
+    </div>
+  </td>
+</tr>
+{% endif %}

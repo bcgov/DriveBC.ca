@@ -1,7 +1,7 @@
-Update for DriveBC route {% if route.label %}{{ route.label }}{% else %}{{ route.start }} to {{ route.end }}{% endif %}
+DriveBC {{ settings_label }} update
 
 {% for event in events %}
-{{ event.event_type }}
+{{ event.notification_status }}: {{ event.display_category_title }}
 {{ event.optimized_description }}
 Last updated: {{ event.last_updated }}
 {% endfor %}

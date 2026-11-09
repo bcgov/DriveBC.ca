@@ -52,7 +52,7 @@ def access_requested(request):
         msg = EmailMultiAlternatives(
             f'{name} requests access to DriveBC admin',
             text,
-            settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+            settings.DRIVEBC_FROM_EMAIL_SENDER,
             settings.ACCESS_REQUEST_RECEIVERS,
         )
         msg.attach_alternative(html, 'text/html')
@@ -277,7 +277,7 @@ class SendVerificationEmailView(APIView):
         msg = EmailMultiAlternatives(
             'Please verify your email address to setup email notifications',
             text,
-            settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+            settings.DRIVEBC_FROM_EMAIL_SENDER,
             [request.user.email]
         )
 

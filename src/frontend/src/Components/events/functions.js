@@ -2,7 +2,7 @@ import { collator } from '../data/webcams';
 
 // 'PARTLY_ICY' -> 'Partly icy'
 export const getSubTypeDisplay = (event) =>
-  (event.event_sub_type || '').replace(/_/g, ' ').toLowerCase().replace(/^./, c => c.toUpperCase());
+  (event.event_sub_type || '').replaceAll('_', ' ').toLowerCase().replace(/^./, c => c.toUpperCase());
 
 export const getTypeDisplay = (event) => {
   switch (event.display_category) {

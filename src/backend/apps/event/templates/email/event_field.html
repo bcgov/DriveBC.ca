@@ -1,0 +1,14 @@
+{# Event detail section; changed values show new (green) and previous (strikethrough) #}
+<tr>
+  <td style="padding:24px 16px 0">
+    <div style="font-size:16px; line-height:27px; font-weight:700; color:#2D2D2D; padding-bottom:12px">{{ label }}</div>
+    <div style="padding:12px; border:1px solid #EDEBE9; border-bottom:2px solid #DDDBD9; border-radius:8px; box-shadow:{% if depth4 %}0 1.6px 3.6px{% else %}0 3px 7px{% endif %} rgba(0,0,0,0.13); font-size:14px; line-height:21px; color:#2D2D2D">
+      {% if changed %}
+        <div style="color:#3B7142; background-color:#F5FAF6; padding:0 4px; border-radius:4px">{{ value }}{% if link %} {% include 'email/event_link.html' %}{% endif %}</div>
+        {% if previous %}<div style="color:#B73433; text-decoration:line-through; padding:0 4px">{{ previous }}</div>{% endif %}
+      {% else %}
+        {{ value }}{% if link %} {% include 'email/event_link.html' %}{% endif %}
+      {% endif %}
+    </div>
+  </td>
+</tr>

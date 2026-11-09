@@ -17,10 +17,10 @@ from django.template.loader import render_to_string
 logger = logging.getLogger(__name__)
 
 
-def send_advisory_notifications(advisory_id):
+def send_advisory_notifications(advisory_id, is_new=False):
     # Route
     for saved_route in get_notification_routes():
-        send_route_advisory_notifications(saved_route, advisory_id)
+        send_route_advisory_notifications(saved_route, advisory_id, is_new)
 
     # Area
     updated_advisory = Advisory.objects.filter(id=advisory_id).first()
@@ -42,10 +42,14 @@ def send_advisory_notifications(advisory_id):
         subs_by_user.setdefault(sub.user_id, []).append(sub)
 
     for user_subs in subs_by_user.values():
-        send_area_advisory_notifications(user_subs, updated_advisory)
+        send_area_advisory_notifications(user_subs, updated_advisory, is_new)
 
 
-def send_route_advisory_notifications(saved_route, updated_advisory_id):
+def get_advisory_subject(is_new, location_label):
+    return f'{"New" if is_new else "Updated"} advisory {location_label}'
+
+
+def send_route_advisory_notifications(saved_route, updated_advisory_id, is_new=False):
     # Apply a 150m buffer to the route geometry
     saved_route.route.transform(3857)
     buffered_route = saved_route.route.buffer(150)
@@ -66,15 +70,19 @@ def send_route_advisory_notifications(saved_route, updated_advisory_id):
                 'site_link': advisory.site_link,
                 'footer_message': generate_settings_message(saved_route),
                 'fe_base_url': settings.FRONTEND_BASE_URL,
+                'item_type': 'advisories',
+                'settings_path': 'my-routes',
+                'settings_label': 'route',
             }
 
             text = render_to_string('email/advisory_updated.txt', context)
             html = render_to_string('email/advisory_updated.html', context)
 
+            route_label = saved_route.label if saved_route.label else f'{saved_route.start} to {saved_route.end}'
             msg = EmailMultiAlternatives(
-                f'DriveBC route update: {saved_route.label}' if saved_route.label else 'DriveBC route update',
+                get_advisory_subject(is_new, f'on {route_label}'),
                 text,
-                settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+                settings.DRIVEBC_FROM_EMAIL_SENDER,
                 [saved_route.user.email]
             )
 
@@ -86,7 +94,7 @@ def send_route_advisory_notifications(saved_route, updated_advisory_id):
             msg.send()
 
 
-def send_area_advisory_notifications(user_subs, advisory):
+def send_area_advisory_notifications(user_subs, advisory, is_new=False):
     if not user_subs:
         return
 
@@ -110,15 +118,18 @@ def send_area_advisory_notifications(user_subs, advisory):
         'site_link': advisory.site_link,
         'footer_message': footer_message,
         'fe_base_url': settings.FRONTEND_BASE_URL,
+        'item_type': 'advisories',
+        'settings_path': 'my-areas',
+        'settings_label': 'area',
     }
 
-    text = render_to_string('email/district_advisory_updated.txt', context)
-    html = render_to_string('email/district_advisory_updated.html', context)
+    text = render_to_string('email/advisory_updated.txt', context)
+    html = render_to_string('email/advisory_updated.html', context)
 
     msg = EmailMultiAlternatives(
-        f'DriveBC: advisory update in {area_names}',
+        get_advisory_subject(is_new, f'in {area_names}'),
         text,
-        settings.DRIVEBC_FROM_EMAIL_DEFAULT,
+        settings.DRIVEBC_FROM_EMAIL_SENDER,
         [subscription.user.email]
     )
 

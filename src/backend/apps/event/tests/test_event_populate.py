@@ -298,9 +298,11 @@ class TestEventModel(BaseTest):
             'apps.event.tasks.get_display_category',
             return_value=event_enums.EVENT_DISPLAY_CATEGORY.MINOR_DELAYS,
         ):
-            updated = populate_event_from_data(data)
+            previous_states = {}
+            updated = populate_event_from_data(data, previous_states)
 
         assert updated is True
+        assert previous_states['DBC-20342']['display_category'] == event_enums.EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS
         event = Event.objects.get(id='DBC-20342')
         assert event.display_category == event_enums.EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
 

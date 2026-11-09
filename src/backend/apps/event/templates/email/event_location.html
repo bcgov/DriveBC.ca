@@ -1,0 +1,24 @@
+{# Location section with pin icon (Figma 26730:29447) #}
+{% load event_extras %}
+<tr>
+  <td style="padding:24px 16px 0">
+    <div style="font-size:16px; line-height:27px; font-weight:700; color:#2D2D2D; padding-bottom:12px">Location</div>
+    <div style="padding:12px; border:1px solid #EDEBE9; border-bottom:2px solid #DDDBD9; border-radius:8px; box-shadow:0 3px 7px rgba(0,0,0,0.13); font-size:14px; line-height:21px; color:#2D2D2D">
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td width="19" style="width:19px; vertical-align:top; padding-top:3px">
+            <img src="cid:map-pin" width="8" height="15" style="width:8px; height:15px" alt="" />
+          </td>
+          <td style="vertical-align:top; padding-left:12px">
+            {% if event|has_changed:'location_description' or event|has_changed:'closest_landmark' %}
+              {% include 'email/event_location_blocks.html' with blocks=event.location_description|location_blocks:event.closest_landmark tone='added' %}
+              {% include 'email/event_location_blocks.html' with blocks=event.previous.location_description|location_blocks:event.previous.closest_landmark tone='removed' %}
+            {% else %}
+              {% include 'email/event_location_blocks.html' with blocks=event.location_description|location_blocks:event.closest_landmark tone='' %}
+            {% endif %}
+          </td>
+        </tr>
+      </table>
+    </div>
+  </td>
+</tr>

@@ -108,20 +108,27 @@ def format_schedule_datetime(value):
     return value.astimezone(ZoneInfo('America/Vancouver')).isoformat(timespec='seconds') if value else ''
 
 
+def get_ride_road_name(data):
+    # Bulk road conditions: "Highway 1, between ..."
+    description = (data.get('segment') or {}).get('description')
+    return description.split(', ')[0] if description else 'Other Roads'
+
+
+def get_ride_location(data, start):
+    geometry = data.get('geometry') or {}
+    return get_linestring_from_collection(geometry) or \
+        next(iter(geometry.get('geometries') or []), None) or \
+        {'type': 'Point', 'coordinates': start.get('coords')}
+
+
 def get_ride_event_data(data, ride_fields):
     """Adds fields previously sourced from Open511, built the same way RIDE builds its Open511 payload."""
     details = data.get('details', {})
     start = data.get('location', {}).get('start') or {}
     timing = data.get('timing', {})
 
-    # Bulk road conditions: "Highway 1, between ..."
-    segment = data.get('segment')
-    road_name = segment['description'].split(', ')[0] if segment and segment.get('description') else 'Other Roads'
-
-    geometry = data.get('geometry') or {}
-    location = get_linestring_from_collection(geometry) or \
-        next(iter(geometry.get('geometries') or []), None) or \
-        {'type': 'Point', 'coordinates': start.get('coords')}
+    road_name = get_ride_road_name(data)
+    location = get_ride_location(data, start)
 
     first_created = parse_ride_datetime_seconds(data.get('created'))
     start_time = parse_ride_datetime_seconds(timing.get('startTime')) or first_created
