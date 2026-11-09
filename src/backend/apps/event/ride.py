@@ -126,6 +126,7 @@ def get_ride_event_data(data, ride_fields):
     first_created = parse_ride_datetime_seconds(data.get('created'))
     start_time = parse_ride_datetime_seconds(timing.get('startTime')) or first_created
     end_time = parse_ride_datetime_seconds(timing.get('endTime'))
+    delays = data.get('delays') or {}
 
     return {
         **ride_fields,
@@ -144,6 +145,13 @@ def get_ride_event_data(data, ride_fields):
         'schedule': {'intervals': [f'{format_schedule_datetime(start_time)}/{format_schedule_datetime(end_time)}']},
         'start': start_time,
         'end': end_time,
+        'impacts': data.get('impacts') or [],
+        'restrictions': data.get('restrictions') or [],
+        'schedules': timing.get('schedules') or [],
+        'delay_amount': delays.get('amount') or 0,
+        'delay_unit': delays.get('unit') or 'minutes',
+        'additional': data.get('additional') or '',
+        'link': (data.get('external') or {}).get('url') or '',
     }
 
 

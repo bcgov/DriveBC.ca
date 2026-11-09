@@ -23,6 +23,8 @@ class EventAdmin(admin.GISModelAdmin):
     list_display = ('id', 'event_type', 'display_category',
                     'event_sub_type', 'severity', 'closed',
                     'first_created', 'last_updated')
+    list_filter = ('status', 'event_type', 'display_category', 'event_sub_type',
+                   'severity', 'closed', 'last_updated')
     gis_widget = DriveBCMapWidget
 
 
