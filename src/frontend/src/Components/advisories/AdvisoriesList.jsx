@@ -138,12 +138,10 @@ export default function AdvisoriesList(props) {
 
               <div className="advisory-li__content">
                 <div className="advisory-li-title-container">
-                  <p className='advisory-li-title link-div'
-                    tabIndex={0}
-                    onClick={() => handleClick(advisory)}
-                    onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}>
+                  <button type="button" className='advisory-li-title link-div'
+                    onClick={() => handleClick(advisory)}>
                     {advisory.title}
-                  </p>
+                  </button>
                   {trackedAdvisories[advisory.id]?.highlight &&
                     <div className="updated-pill">Updated</div>
                   }
@@ -163,7 +161,9 @@ export default function AdvisoriesList(props) {
                   <Button
                     variant="light"
                     className='view-details-btn'
-                    aria-label={`View advisory details for ${advisory.title}`}
+                    // Mouse-only duplicate of the title button; one tab stop per card
+                    tabIndex={-1}
+                    aria-hidden="true"
                     onClick={() => handleClick(advisory)}>
                     View details
                     <FontAwesomeIcon icon={faChevronRight}/>
