@@ -180,10 +180,10 @@ export default function CamPanel(props) {
     beforeToggleRef.current = null;
     const root = camPanelRef.current;
     const sidePanel = root?.closest('.side-panel');
-    if (!before || !sidePanel || reduceMotion) return;
+    const content = root?.querySelector(':scope > .popup__content');
+    if (!before || !sidePanel || !content || reduceMotion) return;
 
     const options = { duration: 250, easing: 'ease-in-out' };
-    const content = root.querySelector(':scope > .popup__content');
     const scrollTop = content.scrollTop;
     const blocks = before.blocks
       .filter(([el]) => el.isConnected)
@@ -241,13 +241,18 @@ export default function CamPanel(props) {
 
       // Scale the photo only; its pills keep their size and ride along with the photo's corner
       const scale = from.width / to.width;
+      // No img in error/placeholder states
       const img = el.querySelector('img');
-      animations.push(img.animate([
-        { transformOrigin: 'top left', transform: `scale(${scale})` },
-        { transformOrigin: 'top left', transform: 'none' },
-      ], glide));
+      if (img) {
+        animations.push(img.animate([
+          { transformOrigin: 'top left', transform: `scale(${scale})` },
+          { transformOrigin: 'top left', transform: 'none' },
+        ], glide));
+      }
       el.querySelectorAll('.card-pill').forEach(pill => {
+        // Hidden pills have no offsetParent
         const parent = pill.offsetParent;
+        if (!parent) return;
         const rightGap = parent.clientWidth - pill.offsetLeft - pill.offsetWidth;
         const bottomGap = parent.clientHeight - pill.offsetTop - pill.offsetHeight;
         const dx = rightGap < pill.offsetLeft ? (scale - 1) * to.width : 0;
@@ -694,7 +699,7 @@ export default function CamPanel(props) {
 
                         <p className="bold">Unable to retrieve latest image.</p>
                         <p className="normal-text">Displaying the last image received. An attempt to retrieve the latest image will be made at the next refresh.</p>
-                        
+
                         <button type="button" className="banner-close" aria-label="Close" onClick={handleChildClick}>
                           <FontAwesomeIcon icon={faXmark} />
                         </button>
