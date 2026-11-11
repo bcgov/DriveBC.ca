@@ -62,7 +62,7 @@ export default function MapPage() {
       type: searchParams.get('type'),
       id: searchParams.get('id'),
       display_category: searchParams.get('display_category'),
-      coastal: searchParams.get('coastal') === 'true',
+      coastal: searchParams.has('coastal') ? searchParams.get('coastal') === 'true' : undefined,
     };
   }
   const [referenceData, setReferenceData] = useState(null);
