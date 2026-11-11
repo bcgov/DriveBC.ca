@@ -452,8 +452,9 @@
   z-index: 10;
 }
 
-
-// Drawer Styles - Mobile Only (768px and under)
+[vladyoslav-drawer].drawer-content:not(:has(.popup--problem))::after {
+  height: 0;
+}
 
 .drawer-overlay {
   background-color: transparent;

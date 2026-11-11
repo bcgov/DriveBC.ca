@@ -587,7 +587,8 @@ export function ReportMap(props) {
             <Drawer.Overlay className="drawer-overlay" radixPrimitive={false} />
             <Drawer.Content
               className={`drawer-content ${snap === '80%' ? 'snap-80' : ''}`}
-              ref={drawerRef}>
+              ref={drawerRef}
+              style={{ '--drawer-snap-point': snap }}>
               <button
                 className="close-panel"
                 aria-label={`${openPanel ? 'close side panel' : ''}`}
