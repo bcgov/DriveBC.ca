@@ -1,8 +1,8 @@
 // React
-import React, {useCallback, useEffect, useRef, forwardRef, useContext, useState} from 'react';
+import React, {useCallback, useEffect, useLayoutEffect, useRef, forwardRef, useContext, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { memoize } from 'proxy-memoize'
-import { useClickAway } from '@uidotdev/usehooks';
+import { useClickAway, useMediaQuery } from '@uidotdev/usehooks';
 
 // Routing
 import { useSearchParams } from "react-router-dom";
@@ -37,6 +37,19 @@ import Spinner from 'react-bootstrap/Spinner';
 // Styling
 import './RouteSearch.scss';
 
+// Slides an element's height (with its top padding and bottom margin) open or closed; held closed until removed
+const slideHeight = (element, open) => {
+  element.getAnimations().forEach((animation) => animation.cancel());
+  const { paddingTop, marginBottom } = getComputedStyle(element);
+  const shown = { height: `${element.offsetHeight}px`, paddingTop, marginBottom, overflow: 'hidden' };
+  const hidden = { height: '0px', paddingTop: '0px', marginBottom: '0px', overflow: 'hidden' };
+  return element.animate(open ? [hidden, shown] : [shown, hidden], {
+    duration: 200,
+    easing: 'ease-in-out',
+    fill: open ? 'none' : 'forwards',
+  });
+};
+
 const RouteSearch = forwardRef((props, ref) => {
   // Props
   const { showFilterText, showSpinner, onShowSpinnerChange, mapRef, myLocation, mapView, resetClickedStates, showAltOptions = true } = props;
@@ -66,14 +79,61 @@ const RouteSearch = forwardRef((props, ref) => {
   // openSearch when either location is populated
   const [openSearch, setOpenSearch] = useState(hasLocation);
 
+  const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+
+  // Box height just before opening/closing, so the new box can animate from it
+  const boxRef = useRef(null);
+  const heightBeforeToggleRef = useRef(null);
+  const toggleSearch = (open) => {
+    heightBeforeToggleRef.current = boxRef.current?.offsetHeight ?? null;
+    setOpenSearch(open);
+  };
+
+  useLayoutEffect(() => {
+    const box = boxRef.current;
+    const from = heightBeforeToggleRef.current;
+    heightBeforeToggleRef.current = null;
+    if (!box || from == null || reduceMotion) return;
+
+    box.getAnimations().forEach((animation) => animation.cancel());
+    box.animate([
+      { height: `${from}px`, overflow: 'hidden' },
+      { height: `${box.offsetHeight}px`, overflow: 'hidden' },
+    ], { duration: 200, easing: 'ease-in-out' });
+  }, [openSearch]);
+
+  // Controls row stays mounted while it slides closed
+  const actionsRef = useRef(null);
+  const [showActions, setShowActions] = useState(hasLocation);
+  const actionsShownRef = useRef(showActions);
+
+  useEffect(() => {
+    const row = actionsRef.current;
+    row?.getAnimations().forEach((animation) => animation.cancel());
+    if (hasLocation || !row || reduceMotion) {
+      setShowActions(hasLocation);
+      return;
+    }
+    slideHeight(row, false).onfinish = () => setShowActions(false);
+  }, [hasLocation]);
+
+  useLayoutEffect(() => {
+    const row = actionsRef.current;
+    if (showActions && !actionsShownRef.current && row && !reduceMotion) {
+      slideHeight(row, true);
+    }
+    actionsShownRef.current = showActions;
+  }, [showActions]);
+
   // Desktop (map): collapse search when clicking outside while a location is set
   const clickAwayRef = useClickAway(() => {
     if (mapRef && !hasLocation && openSearch) {
-      setOpenSearch(false);
+      toggleSearch(false);
     }
   });
 
   const setContainerRef = useCallback((node) => {
+    boxRef.current = node;
     clickAwayRef.current = node;
     if (typeof ref === 'function') {
       ref(node);
@@ -189,10 +249,12 @@ const RouteSearch = forwardRef((props, ref) => {
   }, [showSpinner]);
 
   // Handlers
-  const resetRouteParams = () => {
+  const resetRouteParams = (keepRouteObjs = false) => {
     if (resetClickedStates) {
       resetClickedStates();
-      dispatch(updateShowRouteObjs(false));
+      if (!keepRouteObjs) {
+        dispatch(updateShowRouteObjs(false));
+      }
     }
 
     searchParams.delete('type');
@@ -209,7 +271,8 @@ const RouteSearch = forwardRef((props, ref) => {
   }
 
   const clearHandler = () => {
-    resetRouteParams();
+    // updateSearch resets route objects with the cleared routes, so details stay visible while the panel slides out
+    resetRouteParams(true);
 
     dispatch(updateSearchLocationFrom([]));
     dispatch(updateSearchLocationTo([]));
@@ -229,7 +292,7 @@ const RouteSearch = forwardRef((props, ref) => {
           type="button"
           className="search-trigger btn"
           aria-label="search location"
-          onClick={() => setOpenSearch(true)}>
+          onClick={() => toggleSearch(true)}>
           <FontAwesomeIcon icon={faMagnifyingGlass} /> Focus the info: Enter your trip here
         </button>
       </div>
@@ -242,11 +305,15 @@ const RouteSearch = forwardRef((props, ref) => {
         <p className="routing-caption">
           {mapRef
             ? 'Map and site results filtered by trip: '
-            : 'Page results are filtered by this route:'}
+            : 'Page results are filtered by this trip:'}
         </p>
       }
 
       <div className="routing-container">
+        {searchedRoutes &&
+          <NoRouteFound searchedRoutes={searchedRoutes} searchLocationFrom={searchLocationFrom} searchLocationTo={searchLocationTo}/>
+        }
+
         <div className={"typeahead-container typeahead-container--from stacked"}>
           <span className="location-marker location-marker--from">
             <FontAwesomeIcon icon={faCircleDot} />
@@ -288,8 +355,8 @@ const RouteSearch = forwardRef((props, ref) => {
           }
         </div>
 
-        {hasLocation &&
-          <div className="route-search-actions-container">
+        {showActions &&
+          <div ref={actionsRef} className="route-search-actions-container">
             {showAltOptions && !mapRef && searchedRoutes && searchedRoutes.length > 0 &&
               <div className="route-alt-options">
                 {searchedRoutes.map((route, index) => {
@@ -327,10 +394,6 @@ const RouteSearch = forwardRef((props, ref) => {
               </button>
             </div>
           </div>
-        }
-
-        {searchedRoutes &&
-          <NoRouteFound searchedRoutes={searchedRoutes} searchLocationFrom={searchLocationFrom} searchLocationTo={searchLocationTo}/>
         }
       </div>
     </div>

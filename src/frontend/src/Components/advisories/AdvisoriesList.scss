@@ -39,6 +39,14 @@
           }
         }
 
+        button.advisory-li-title {
+          display: block;
+          padding: 0;
+          border: 0;
+          background: none;
+          text-align: left;
+        }
+
         .view-details-btn {
           width: 100%;
           font-weight: 700;
@@ -79,7 +87,7 @@
     .unread-display {
       height: 8px;
       width: 8px;
-      background-color: $Error;
+      background-color: $Blue80;
       border-radius: 50%;
       display: inline-block;
       margin-right: 5px;

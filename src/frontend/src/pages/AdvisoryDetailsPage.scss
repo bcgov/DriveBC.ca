@@ -48,7 +48,8 @@
 
           .copy-btn {
             background: $Advisory-Bg;
-    
+            color: $Advisory-Text;
+
             &:hover {
               background: darken($Advisory-Bg, 15%);
             }

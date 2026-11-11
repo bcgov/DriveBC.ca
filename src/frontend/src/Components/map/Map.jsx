@@ -5,6 +5,7 @@ import React, {
   useContext,
   useRef,
   useEffect,
+  useLayoutEffect,
   useState,
   useCallback,
 } from 'react';
@@ -99,6 +100,7 @@ export default function DriveBCMap(props) {
   // width breakpoints
   const viewportSmallScreen = useMediaQuery('only screen and (max-width: 575px)');
   const viewportLargeScreen = useMediaQuery('only screen and (min-width: 768px)');
+  const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   const smallScreen = viewportSmallScreen;
   const largeScreen = viewportLargeScreen;
@@ -245,6 +247,58 @@ export default function DriveBCMap(props) {
   const drawerShowsRouteDetailsPanel =
     !clickedFeature &&
     !!searchedRoutes?.length;
+
+  // Slide the side panel in when it opens and out when it closes
+  const panelShown = !!openPanel;
+  const prevPanelShownRef = useRef(panelShown);
+  const lastPanelNodeRef = useRef(null);
+  const exitingPanelRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const wasShown = prevPanelShownRef.current;
+    prevPanelShownRef.current = panelShown;
+    if (wasShown === panelShown) return;
+
+    exitingPanelRef.current?.remove();
+    if (reduceMotion) return;
+
+    const offscreen = { transform: 'translateX(calc(-100% - 1rem))' };
+    const onscreen = { transform: 'none' };
+
+    if (panelShown) {
+      panel.current?.animate([offscreen, onscreen], { duration: 250, easing: 'ease-in-out' });
+
+    // React has already removed the panel, so slide out a detached copy of it
+    } else if (largeScreen && lastPanelNodeRef.current && mapContainerRef.current) {
+      const exiting = lastPanelNodeRef.current;
+      exiting.classList.add('open');
+      exiting.inert = true;
+      exiting.style.pointerEvents = 'none';
+      mapContainerRef.current.prepend(exiting);
+      exitingPanelRef.current = exiting;
+      exiting.animate([onscreen, offscreen], { duration: 250, easing: 'ease-in-out' })
+        .finished.then(() => exiting.remove(), () => {});
+    }
+  }, [panelShown]);
+
+  useLayoutEffect(() => {
+    if (panel.current) lastPanelNodeRef.current = panel.current;
+  });
+
+  // The side panel and back buttons sit below the route search, so track where it ends
+  const mapLeftContainerRef = useRef(null);
+  useEffect(() => {
+    const searchBox = mapLeftContainerRef.current;
+    const container = mapContainerRef.current;
+    if (!searchBox || !container) return;
+
+    const observer = new ResizeObserver(() => {
+      const bottom = searchBox.getBoundingClientRect().bottom - container.getBoundingClientRect().top;
+      container.style.setProperty('--search-bottom', `${bottom}px`);
+    });
+    observer.observe(searchBox);
+    return () => observer.disconnect();
+  }, [smallScreen]);
 
   // Drawer state
   const getSnapPoints = () => {
@@ -1145,7 +1199,7 @@ export default function DriveBCMap(props) {
       {!!openPanel && largeScreen &&
         <div
           ref={panel}
-          className={`side-panel ${openPanel ? 'open' : ''} ${selectedRoute ? 'has-route' : ''}`}>
+          className={`side-panel ${openPanel ? 'open' : ''} ${selectedRoute ? 'has-route' : ''} ${selectedRoute && showRouteObjs ? 'with-back-btn' : ''}`}>
 
           {clickedFeature && smallScreen &&
             <button
@@ -1240,7 +1294,7 @@ export default function DriveBCMap(props) {
           </Button>
         )}
 
-        {!largeScreen && openPanel && mapRendered && (
+        {!largeScreen && !!openPanel && mapRendered && (
           <Drawer.Root
             key={pendingAction && pendingAction.action === 'showSavePopup' ? pendingAction.action : 'defaultKey'}
             open={true}
@@ -1305,7 +1359,9 @@ export default function DriveBCMap(props) {
 
         {!smallScreen && (
 
-          <div className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
+          <div
+            ref={mapLeftContainerRef}
+            className={`map-left-container ${(showServerError || showNetworkError) ? 'error-showing' : ''} ${openPanel && 'margin-pushed'}`}>
             <RouteSearch
               showFilterText={true}
               ref={routingContainerRef}

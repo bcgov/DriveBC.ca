@@ -793,7 +793,7 @@ export default function RouteDetails(props) {
               onClick={() => {setShowRouteObjs(true)}}
               onKeyDown={() => {setShowRouteObjs(true)}}>
 
-              View Details
+              View details
               <FontAwesomeIcon icon={faChevronRight}/>
             </Button>
           }

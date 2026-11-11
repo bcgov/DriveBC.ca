@@ -48,12 +48,12 @@
 			}
 
 			.search-trigger {
-				margin: 12px 18px;
+				margin: 12px 16px;
 				height: 36px;
 				border-radius: 4px;
 				color: $Grey80;
 				border: 1px solid #dee2e6;
-				width: calc(100% - 36px);
+				width: calc(100% - 28px);
 				display: flex;
 				align-items: center;
 
@@ -67,28 +67,52 @@
 			.location-search {
 				width: 100%;
 				background-color: white;
-				padding: 0 8px;
-				display: flex;
+				padding: 12px 16px 12px 4px;
+				display: grid;
+				grid-template-columns: auto minmax(0, 1fr);
+				column-gap: 8px;
 
 				&--hidden {
 					display: none;
 				}
 
-				.btn.close-search {
-					margin: 12px 0;
-					height: 70px;
-					flex-shrink: 0;
+				.routing, .routing-container {
+					display: contents;
 				}
 
-				.routing {
-					padding: 12px .5rem 0 0.5rem;
-					flex: 1;
-					min-width: 0;
+				.routing-container > * {
+					grid-column: 2;
+				}
+
+				.no-route-found-container {
+					grid-column: 1 / -1;
+					grid-row: 1;
+				}
+
+				.typeahead-container--from {
+					grid-row: 2;
+				}
+
+				.typeahead-container--to {
+					grid-row: 3;
+				}
+
+				.route-search-actions-container {
+					grid-row: 4;
+					margin-bottom: -4px;
+				}
+
+				.btn.close-search {
+					grid-column: 1;
+					grid-row: 2 / span 2;
+					align-self: center;
+					margin: 0;
+					height: 70px;
 				}
 			}
 
 			.searched-route-container {
-				margin: 12px 18px;
+				margin: 12px 16px 8px;
 				width: calc(100% - 32px);
 
 				.routing-caption {
@@ -134,7 +158,7 @@
 					align-items: center;
 					justify-content: space-between;
 					gap: 0.75rem;
-					padding-top: 0.75rem;
+					padding-top: 0.5rem;
 					max-height: 8rem;
 					overflow: hidden;
 					opacity: 1;
@@ -169,6 +193,7 @@
 						border-radius: 50%;
 						width: 18px;
 						height: 18px;
+						padding-bottom: 1px;
 						display: flex;
 						align-items: center;
 						justify-content: center;
@@ -263,7 +288,7 @@
 
 			@media (max-width: 1399px) {
 				width: 100%;
-				padding: 5px 0 5px 10px;
+				padding: 5px 16px 5px 8px;
 			}
 		}
 
@@ -278,6 +303,8 @@
 			&:has(.dropdown-menu.show) {
 				overflow: visible;
 				max-height: none;
+				position: relative;
+				z-index: 12;
 			}
 		}
 
@@ -383,14 +410,23 @@
 
 	&-brand {
 		padding: 0;
-		margin: 0;
+		margin: 0 18px 0 0;
+
+		&:focus:not(:focus-visible) {
+			outline: none;
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			outline-offset: -2px;
+			box-shadow: none;
+		}
 
 		.header-logo {
 			width: 116px;
 			height: 36px;
 			top: 6px;
 			left: 32px;
-			margin-right: 18px
 		}
 
 		& + .nav-divider {
@@ -419,6 +455,7 @@
 				color: $Type-Primary;
 				padding: 16px;
 				border-bottom: 1px solid $Nav-link-border;
+				box-shadow: none;
 				cursor: pointer;
 				display: flex;
 				align-items: center;
@@ -439,7 +476,11 @@
 					}
 				}
 
-				&:focus {
+				&:focus:not(:focus-visible) {
+					outline: none;
+				}
+
+				&:focus-visible {
 					border: rgb(46, 93, 215) solid 2px;
 					background-color: hsla(0, 32%, 83%, 0.15);
 				}
@@ -450,7 +491,9 @@
 					@media (min-width: 992px) {
 						color: $Type-Primary;
 						font-weight: normal;
-						border-bottom: rgb(46, 93, 215) solid 2px;
+						border-bottom-width: 0;
+						padding-bottom: 18px;
+						box-shadow: inset 0 -2px 0 $Focus;
 					}
 				}
 
@@ -490,7 +533,14 @@
 
 				.nav-link {
 					background: none;
-					border-bottom: none;
+
+					@media (max-width: 991px) {
+						border-bottom: none;
+					}
+
+					&:hover {
+						background-color: hsla(0,0%,7%,.15);
+					}
 
 					.title {
 						.chevron-icon {
@@ -516,7 +566,8 @@
 				.commercial-dropdown-content {
 					max-height: 0;
 					overflow: hidden;
-					transition: max-height 0.3s ease-in-out;
+					visibility: hidden;
+					transition: max-height 0.3s ease-in-out, visibility 0s linear 0.3s;
 					background: none;
 					will-change: max-height;
 					display: flex;
@@ -539,12 +590,14 @@
 						min-width: 260px;
 						border-radius: 4px;
 						opacity: 0;
-						transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+						transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0s linear 0.3s;
 						pointer-events: none;
 					}
 
 					&.open {
 						max-height: 500px;
+						visibility: visible;
+						transition-delay: 0s;
 
 						@media (max-width: 1199px) {
 							overflow: visible;
@@ -572,7 +625,12 @@
 						}
 
 						@media (min-width: 1200px) {
-							padding: 6px 12px;
+							padding: 8px 12px;
+							transition: background-color 0.15s ease-in-out;
+
+							&:hover {
+								background-color: hsla(0,0%,7%,.15);
+							}
 						}
 
 						&:focus {
@@ -582,7 +640,7 @@
 						&:last-of-type {
 							padding-bottom: 16px;
 							@media (min-width: 1200px) {
-								padding-bottom: 12px;
+								padding-bottom: 8px;
 							}
 						}
 
@@ -698,7 +756,7 @@ body.list-header-hidden {
 		}
 
 		.navbar .container .searched-route-container {
-			margin: 12px 18px 8px;
+			margin: 12px 16px 8px 18px;
 		}
 
 		@media (prefers-reduced-motion: reduce) {
@@ -707,4 +765,157 @@ body.list-header-hidden {
 			}
 		}
 	}
+}
+
+@media (max-width: 575px) {
+	:root:active-view-transition {
+		.navbar {
+			view-transition-name: site-header;
+		}
+
+		header {
+			+ div {
+				view-transition-name: site-content;
+			}
+
+			.close-search {
+				view-transition-name: route-back;
+			}
+
+			.search-trigger, .typeahead-container--from, .searched-route__start {
+				view-transition-name: route-from;
+			}
+
+			.typeahead-container--to, .searched-route__end {
+				view-transition-name: route-to;
+			}
+
+			.searched-route {
+				view-transition-name: route-box;
+			}
+
+			.searched-route__start, .searched-route__end {
+				margin-left: -9px;
+				padding-left: 9px;
+			}
+
+			.routing-caption {
+				view-transition-name: route-caption;
+			}
+
+			.route-alt-options {
+				view-transition-name: route-options;
+			}
+
+			.route-search-link {
+				view-transition-name: route-swap;
+			}
+
+			.route-edit-link {
+				view-transition-name: route-edit;
+			}
+
+			.route-clear-link {
+				view-transition-name: route-clear;
+			}
+		}
+	}
+
+	:root:active-view-transition-type(route-found) {
+		view-transition-name: none;
+
+		header + div {
+			view-transition-name: none;
+		}
+	}
+}
+
+::view-transition-group(*) {
+	animation-duration: 0.22s;
+	animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+::view-transition-group(site-header) {
+	box-shadow: rgb(0,0,0,0.2) 0px 2px 10px 0px;
+}
+
+::view-transition-image-pair(*) {
+	overflow: clip;
+}
+
+::view-transition-old(*), ::view-transition-new(*) {
+	height: 100%;
+	object-fit: none;
+	object-position: left top;
+}
+
+::view-transition-old(*) {
+	display: none;
+}
+
+::view-transition-new(*) {
+	animation: none;
+}
+
+::view-transition-old(route-from), ::view-transition-old(route-to), ::view-transition-old(route-box):only-child {
+	display: block;
+	animation: route-fade-out 0.1s ease-out both;
+}
+
+::view-transition-new(route-from), ::view-transition-new(route-to), ::view-transition-new(route-box):only-child {
+	animation: route-fade-in 0.1s ease-out both;
+}
+
+::view-transition-old(route-from), ::view-transition-new(route-from), ::view-transition-old(route-to), ::view-transition-new(route-to) {
+	object-position: left center;
+	mix-blend-mode: plus-lighter;
+}
+
+::view-transition-old(*):only-child {
+	display: block;
+	animation: route-slide-out 0.12s ease-in both;
+}
+
+::view-transition-new(*):only-child {
+	animation: route-slide-in 0.16s cubic-bezier(0.2, 0, 0, 1) 0.06s both;
+}
+
+::view-transition-old(route-back):only-child {
+	animation-name: route-back-out;
+}
+
+::view-transition-new(route-back):only-child {
+	animation-name: route-back-in;
+}
+
+::view-transition-new(route-to):only-child {
+	animation-name: route-unfold;
+}
+
+@keyframes route-slide-out {
+	to { transform: translateY(-100%); }
+}
+
+@keyframes route-slide-in {
+	from { transform: translateY(100%); }
+}
+
+@keyframes route-unfold {
+	from { transform: translateY(-100%); }
+}
+
+@keyframes route-fade-in {
+	from { opacity: 0; }
+}
+
+@keyframes route-fade-out {
+	to { opacity: 0; }
+}
+
+@keyframes route-back-out {
+	to { transform: translateX(-100%); }
+}
+
+@keyframes route-back-in {
+	from { transform: translateX(-100%); }
 }
