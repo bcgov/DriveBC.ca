@@ -3,6 +3,8 @@
 
 .route-object-list {
   .route-details {
+    max-height: calc(60vh);
+
     &.selected {
       h4 {
         color: $Focus;

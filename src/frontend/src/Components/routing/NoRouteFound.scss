@@ -6,16 +6,17 @@
   background: var(--surface-color-brand-gray-20, #F3F2F1);
   border-radius: 4px;
   font-size: 0.875rem;
+  line-height: 1.25rem;
   overflow: hidden;
   transition: height 0.25s ease-in-out;
   width: 100%;
 
   position: relative;
+  top: 1rem;
 
   .svg-inline--fa {
-    font-size: 0.875rem;
-    padding: 0;
-    margin-right: 4px;
+    font-size: 1rem;
+    padding: 0 10px;
   }
 
   /* Properties for transition */
@@ -26,10 +27,9 @@
 
   // Opened state
   &.open {
-    height: auto;
+    height: 3rem;
     border: 1px solid #D9D9D9;
-    margin-bottom: 0.5rem;
-    padding: 8px 12px;
-    line-height: initial;
+    margin-bottom: 1rem;
+    padding-right: 1rem;
   }
 }

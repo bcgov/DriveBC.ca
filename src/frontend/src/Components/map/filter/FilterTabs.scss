@@ -15,7 +15,7 @@ button.btn.open-filters {
   width: 100%;
   border-radius: 4px;
   background-color: white;
-  box-shadow: 0 3.2px 7.2px 0 #00000021;
+  box-shadow: 0px 1.937px 4.358px 0px rgba(0, 0, 0, 0.13), 0px 0.363px 1.089px 0px rgba(0, 0, 0, 0.10);
   display: flex;
   flex-direction: column;
   transition: all 0.25s ease-in-out;
@@ -61,7 +61,6 @@ button.btn.open-filters {
     left: auto;
     right: 1rem;
     width: 300px;
-    border-radius: 8px;
   }
 }
 
@@ -175,46 +174,17 @@ button.btn.open-filters {
   }
 }
 
-.filter-tabs {
-  min-height: 0;
-
-  .tabs-header {
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-  }
-
-  .tab-content {
-    min-height: 0;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-
-    .tab-pane {
-      height: auto;
-    }
-  }
-}
-
 button.close-filters {
   position: absolute;
   top: 0.5rem;
-  right: 0.5rem;
-  padding: 4px;
+  right: .75rem;
+  padding: 0;
   min-width: 0;
-  border-radius: 50%;
+  line-height: 1.25rem;
   background: none;
   border:none;
+  font-size: 1.25rem;
   color: #070707;
-  transition: background 0.2s ease-in-out;
-
-  &:hover {
-    background: lighten($Type-Primary, 70%);
-  }
-
-  svg {
-    display: block;
-    width: 14px;
-    height: 14px;
-  }
 }
 
 .mobile-filter-tabs {

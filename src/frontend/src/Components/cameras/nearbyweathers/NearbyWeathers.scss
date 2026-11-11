@@ -38,13 +38,9 @@
 
       .nav-item {
         display: flex;
-        flex-shrink: 0;
+        min-width: 0;
         margin-right: 24px;
         align-items: flex-start;
-
-        &:last-child {
-          margin-right: 0;
-        }
 
         button.nav-link {
           display: inline-flex;
@@ -52,7 +48,7 @@
           align-items: center;
           align-self: flex-start;
           width: max-content;
-          white-space: nowrap;
+          max-width: 100%;
           padding: 4px 0;
           border: none;
           border-radius: 0;

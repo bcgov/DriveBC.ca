@@ -1,6 +1,5 @@
 // React
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { flushSync } from 'react-dom';
 
 // Navigation
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -65,7 +64,6 @@ function HeaderContent() {
   const xLargeScreen = useMediaQuery('only screen and (min-width : 1200px)');
 
   const smallScreen = useMediaQuery('only screen and (max-width: 575px)');
-  const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   // Check current page location
   const location = useLocation();
@@ -100,17 +98,6 @@ function HeaderContent() {
   const [isCommercialOpen, setIsCommercialOpen] = useState(false);
   const commercialDropdownRef = useRef(null);
   const loadRef = useRef(null);
-
-  // Animate the mobile search opening/closing as a view transition, styled in Header.scss (which needs :active-view-transition)
-  const toggleSearch = (open, types = []) => {
-    if (open === !!openSearch) return;
-    if (reduceMotion || !CSS.supports('selector(:active-view-transition)')) {
-      setOpenSearch(open);
-      return;
-    }
-    // eslint-disable-next-line @eslint-react/dom-no-flush-sync -- the transition snapshots the DOM once update returns
-    document.startViewTransition({ update: () => flushSync(() => setOpenSearch(open)), types });
-  };
 
   const isFirstAdvisoriesVisit = useRef(!sessionStorage.getItem('lastAdvisoriesVisit'));
   const isFirstBulletinsVisit = useRef(!sessionStorage.getItem('lastBulletinsVisit'));
@@ -242,14 +229,10 @@ function HeaderContent() {
     return () => clearInterval(interval);
   }, [location.pathname]);
 
-  // Close the search when a new route is found, not when the same route is stored again (as on page load)
-  const prevRouteRef = useRef(selectedRoute);
   useEffect(() => {
-    if (searchLocationFrom.length && searchLocationTo.length && !compareRoutes(prevRouteRef.current, selectedRoute)) {
-      // Keep the map live so its fly to the route isn't frozen
-      toggleSearch(false, ['route-found']);
+    if (searchLocationFrom.length && searchLocationTo.length) {
+      setOpenSearch(false);
     }
-    prevRouteRef.current = selectedRoute;
   }, [selectedRoute]);
 
   useEffect(() => {
@@ -409,7 +392,7 @@ function HeaderContent() {
               <button
                 className="search-trigger btn"
                 aria-label="search location"
-                onClick={() => toggleSearch(true)}>
+                onClick={() => setOpenSearch(true)}>
                 <FontAwesomeIcon icon={faMagnifyingGlass} /> Focus the info: Enter your trip here
               </button>
             }
@@ -427,7 +410,7 @@ function HeaderContent() {
                 <button
                   className="close-search btn"
                   aria-label="close search"
-                  onClick={() => toggleSearch(false)}>
+                  onClick={() => setOpenSearch(false)}>
                   <FontAwesomeIcon icon={faChevronLeft} />
                 </button>
 
@@ -438,13 +421,13 @@ function HeaderContent() {
             {smallScreen && showSearch && !openSearch && selectedRoute && isNavbarCollapsed &&
               <div className="searched-route-container">
                 <p className="routing-caption">
-                  {isListPage ? 'Page results are filtered by this trip:' : 'Map and site results filtered by trip: '}
+                  {isListPage ? 'Map and site results filtered by trip: ': 'Page results are filtered by this route:'}
                 </p>
 
                 <button
                   className={`searched-route btn show`}
                   aria-label="searched route"
-                  onClick={() => toggleSearch(true)}>
+                  onClick={() => setOpenSearch(true)}>
                   <div className="searched-route__start">
                     <div className="searched-route__icon">
                       <svg width="14" height="13" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -501,7 +484,7 @@ function HeaderContent() {
                     <button type="button" className="route-search-link" onClick={swapSearchLocations}>
                       <FontAwesomeIcon icon={faArrowUpArrowDown} />Swap
                     </button>
-                    <button type="button" className="route-edit-link" onClick={() => toggleSearch(true)}>
+                    <button type="button" className="route-edit-link" onClick={() => setOpenSearch(true)}>
                       <FontAwesomeIcon icon={faPenToSquare} />Edit
                     </button>
                   </div>
@@ -526,7 +509,7 @@ function HeaderContent() {
 
               <div className="commercial-dropdown" ref={commercialDropdownRef}>
                 <Nav.Link
-                  active={location.pathname.startsWith('/chain-ups')}
+                  active={false}
                   onClick={() => {
                     setIsCommercialOpen(!isCommercialOpen);
                   }}

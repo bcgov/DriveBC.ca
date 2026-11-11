@@ -114,7 +114,7 @@ export default function LocalWeatherPanel(props) {
                   <div className="row--present-weather">
                     <div className="data-icon">
                       {weatherData.present_weather?.label && (
-                        <CurrentWeatherIcon className="icon" code={weatherData.present_weather.code} />
+                        <CurrentWeatherIcon code={weatherData.present_weather.code} /> 
                       )}
                     </div>
                     <p className="container-label present-weather">

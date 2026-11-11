@@ -78,7 +78,7 @@ export default function NearbyLocalWeather(props) {
                   <div className="row--present-weather">
                     <div className="data-icon">
                       {weather.present_weather?.label && (
-                        <CurrentWeatherIcon className="icon" code={weather.present_weather.code} />
+                        <CurrentWeatherIcon code={weather.present_weather.code} /> 
                       )}
                     </div>
                     <p className="container-label present-weather">

@@ -135,11 +135,11 @@ button:focus:not(:focus-visible) {
 
 // Tooltip
 .tooltip {
-  --bs-tooltip-bg: #{$Grey80};
 
   .tooltip-inner {
     width: 256px;
     max-width: 256px;
+    background-color: $Grey80;
 
     p {
       font-size: 0.875rem;

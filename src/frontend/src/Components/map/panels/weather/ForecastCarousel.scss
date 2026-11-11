@@ -6,8 +6,7 @@
 
   .embla {
     overflow: hidden;
-    margin: 0 -16px -12px;
-    padding: 10px 16px 22px;
+    padding: 10px 0;
   }
 
   .embla__container {
@@ -61,7 +60,7 @@
     margin: 0.25rem 0 0.5rem 0;
 
     .forecast-name {
-      font-size: 0.875rem;
+      font-size: 1rem;
       font-weight: 700;
       margin-bottom: 0;
     }
@@ -75,7 +74,7 @@
   }
 
   .forecast-text {
-    font-size: 0.875rem;
+    font-size: 1rem; 
     line-height: 1.6;
     margin-bottom: 0;
   }

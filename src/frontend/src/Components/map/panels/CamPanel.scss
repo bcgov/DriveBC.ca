@@ -414,9 +414,9 @@
                 position: absolute;
                 display: flex;
                 align-items: center;
-                top: 4px;
-                right: 4px;
-                padding: 2px 8px;
+                top: 8px;
+                right: 8px;
+                padding: 4px 8px;
                 border: 0;
                 border-radius: 16px;
                 font: inherit;
@@ -630,9 +630,8 @@
           }
   
           .credit {
-            font-size: 0.75rem;
+            font-size: 0.875rem;
             line-height: 1.5;
-            margin-top: 4px;
   
             &.under-replay {
               margin-top: 112px;

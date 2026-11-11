@@ -204,7 +204,6 @@
   top: 10px;
   right: 6px;
   color: $Type-Primary;
-  transition: background 0.2s ease-in-out;
   &:hover {
     background: lighten($Type-Primary, 70%);
   }

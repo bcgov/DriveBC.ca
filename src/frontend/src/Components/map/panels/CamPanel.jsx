@@ -1,5 +1,5 @@
 // React
-import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -62,7 +62,6 @@ export default function CamPanel(props) {
   // Side panel (desktop) vs mobile drawer — match Map.jsx breakpoint
   const largeScreen = useMediaQuery('only screen and (min-width: 768px)');
   const canExpand = useMediaQuery('only screen and (min-width: 1400px)');
-  const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   // Props
   const { camFeature, showRouteObjs, fromCameraList } = props;
@@ -157,130 +156,6 @@ export default function CamPanel(props) {
       autoExpanded.current = true;
     }
   }, [canExpand, fromCameraList]);
-
-  // Expand/minimize: slide the panel edge and glide each block from its old spot to its new one
-  const beforeToggleRef = useRef(null);
-  const finishResizeRef = useRef(null);
-  const toggleExpanded = () => {
-    finishResizeRef.current?.();
-    const root = camPanelRef.current;
-    const sidePanel = root?.closest('.side-panel');
-    beforeToggleRef.current = sidePanel && {
-      width: sidePanel.offsetWidth,
-      blocks: [...root.querySelectorAll(
-        '.expand-panel, .share-url, .popup__content__title, .next-update, .popup__content > .favourite-btn, ' +
-        '.image-wrap, .camera-thumbnail, .camera-details__description, .nearby-weathers-container'
-      )].map(el => [el, el.getBoundingClientRect()]),
-    };
-    setExpanded(prev => !prev);
-  };
-
-  useLayoutEffect(() => {
-    const before = beforeToggleRef.current;
-    beforeToggleRef.current = null;
-    const root = camPanelRef.current;
-    const sidePanel = root?.closest('.side-panel');
-    const content = root?.querySelector(':scope > .popup__content');
-    if (!before || !sidePanel || !content || reduceMotion) return;
-
-    const options = { duration: 250, easing: 'ease-in-out' };
-    const scrollTop = content.scrollTop;
-    const blocks = before.blocks
-      .filter(([el]) => el.isConnected)
-      .map(([el, from]) => [el, from, el.getBoundingClientRect()]);
-
-    // Minimizing narrows the scroll area at once, which would cut off blocks still gliding in from the right,
-    // so open its right edge only; the panel edge still clips
-    const shrinking = sidePanel.offsetWidth < before.width;
-    if (shrinking) {
-      // Keep the scrollbar's width as padding so the content doesn't widen while it's gone
-      const scrollbarWidth = content.offsetWidth - content.clientWidth;
-      content.style.paddingRight = `${parseFloat(getComputedStyle(content).paddingRight) + scrollbarWidth}px`;
-      content.style.overflow = 'visible';
-      content.style.clipPath = 'inset(0 -100vw 0 0)';
-    }
-
-    // Wrappers like the thumbnail carousel would hide blocks while they travel
-    const unclipped = new Set();
-    blocks.forEach(([el]) => {
-      for (let node = el.parentElement; node && node !== content && node !== root; node = node.parentElement) {
-        if (getComputedStyle(node).overflow !== 'visible') unclipped.add(node);
-      }
-    });
-    unclipped.forEach(node => { node.style.overflow = 'visible'; });
-
-    // Thumbnails and nearby weather cross the image and details on the way; pass under them, not over
-    const raised = blocks.map(([el]) => el).filter(el => el.matches('.image-wrap, .camera-details__description'));
-    const panelBackground = getComputedStyle(sidePanel).backgroundColor;
-    raised.forEach(el => {
-      el.style.position = 'relative';
-      el.style.zIndex = '1';
-      // The details card is see-through; the image covers itself
-      if (!el.matches('.image-wrap')) el.style.backgroundColor = panelBackground;
-    });
-
-    // min-width, not width: the side panel is sized by its content, which overflow: hidden would drop
-    const animations = [sidePanel.animate([
-      { minWidth: `${before.width}px`, maxWidth: `${before.width}px`, overflow: 'hidden' },
-      { minWidth: `${sidePanel.offsetWidth}px`, maxWidth: `${sidePanel.offsetWidth}px`, overflow: 'hidden' },
-    ], options)];
-
-    const glide = { ...options, fill: 'forwards' };
-    blocks.forEach(([el, from, to]) => {
-      // Without its scroll, content sits lower by scrollTop, so hold it up by that much
-      const shift = shrinking && content.contains(el) ? scrollTop : 0;
-      // Cards change their real width so text rewraps instead of stretching; min/max so flex items obey too
-      const resizes = el.matches('.camera-thumbnail, .camera-details__description, .nearby-weathers-container');
-      const width = px => (resizes ? { minWidth: px, maxWidth: px } : {});
-      animations.push(el.animate([
-        { transform: `translate(${from.left - to.left}px, ${from.top - to.top - shift}px)`, ...width(`${from.width}px`) },
-        { transform: `translateY(${-shift}px)`, ...width(`${to.width}px`) },
-      ], glide));
-
-      if (!el.matches('.image-wrap')) return;
-
-      // Scale the photo only; its pills keep their size and ride along with the photo's corner
-      const scale = from.width / to.width;
-      // No img in error/placeholder states
-      const img = el.querySelector('img');
-      if (img) {
-        animations.push(img.animate([
-          { transformOrigin: 'top left', transform: `scale(${scale})` },
-          { transformOrigin: 'top left', transform: 'none' },
-        ], glide));
-      }
-      el.querySelectorAll('.card-pill').forEach(pill => {
-        // Hidden pills have no offsetParent
-        const parent = pill.offsetParent;
-        if (!parent) return;
-        const rightGap = parent.clientWidth - pill.offsetLeft - pill.offsetWidth;
-        const bottomGap = parent.clientHeight - pill.offsetTop - pill.offsetHeight;
-        const dx = rightGap < pill.offsetLeft ? (scale - 1) * to.width : 0;
-        const dy = bottomGap < pill.offsetTop ? (scale - 1) * to.height : 0;
-        animations.push(pill.animate([
-          { transform: `translate(${dx}px, ${dy}px)` },
-          { transform: 'none' },
-        ], glide));
-      });
-    });
-
-    const finish = () => {
-      finishResizeRef.current = null;
-      content.style.overflow = '';
-      content.style.clipPath = '';
-      content.style.paddingRight = '';
-      unclipped.forEach(node => { node.style.overflow = ''; });
-      raised.forEach(el => {
-        el.style.position = '';
-        el.style.zIndex = '';
-        el.style.backgroundColor = '';
-      });
-      content.scrollTop = scrollTop;
-      animations.forEach(animation => animation.cancel());
-    };
-    finishResizeRef.current = finish;
-    animations[0].finished.then(finish, () => {});
-  }, [expanded]);
 
   useEffect(() => {
     if (!camPanelRef.current) {
@@ -628,7 +503,7 @@ export default function CamPanel(props) {
               type="button"
               aria-label={isExpanded ? 'Collapse panel' : 'Expand panel'}
               aria-pressed={isExpanded}
-              onClick={toggleExpanded}>
+              onClick={() => setExpanded(prev => !prev)}>
               <FontAwesomeIcon icon={isExpanded ? faArrowLeftToLine : faArrowRightToLine} />
               <span>{isExpanded ? 'Minimize' : 'Expand'}</span>
             </button>
@@ -699,7 +574,7 @@ export default function CamPanel(props) {
 
                         <p className="bold">Unable to retrieve latest image.</p>
                         <p className="normal-text">Displaying the last image received. An attempt to retrieve the latest image will be made at the next refresh.</p>
-
+                        
                         <button type="button" className="banner-close" aria-label="Close" onClick={handleChildClick}>
                           <FontAwesomeIcon icon={faXmark} />
                         </button>

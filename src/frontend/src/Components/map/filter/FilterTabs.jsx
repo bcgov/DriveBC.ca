@@ -1,5 +1,5 @@
 // React
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // External imports
 import { createPortal } from 'react-dom';
@@ -41,52 +41,13 @@ export default function FilterTabs(props) {
 
   const viewportNarrowForFilters = useMediaQuery('only screen and (max-width : 768px)');
   const smallScreen = viewportNarrowForFilters;
-  const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   // States
   const [activeTab, setActiveTab] = useState('layers');
   const [mapContainer, setMapContainer] = useState(null);
-  // Stays true while the card slides out, so it isn't hidden mid-slide
-  const [shown, setShown] = useState(open);
-  if (open && !shown) setShown(true);
 
   // Refs
   const tabsContainerRef = useRef(null);
-  const menuRef = useRef(null);
-  const slideRef = useRef(null);
-  const isInitialMount = useRef(true);
-
-  // Desktop: slide the card in and out
-  useLayoutEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-
-    const menu = menuRef.current;
-    if (smallScreen || !menu || reduceMotion) {
-      setShown(open);
-      return;
-    }
-
-    const offscreen = { transform: 'translateX(calc(100% + 16px))' };
-    const onscreen = { transform: 'none' };
-
-    // Start from wherever a slide in progress has the card, so reopening mid-close doesn't jump
-    const current = getComputedStyle(menu).transform;
-    slideRef.current?.cancel();
-    const start = current !== 'none' ? { transform: current } : (open ? offscreen : onscreen);
-
-    slideRef.current = menu.animate([start, open ? onscreen : offscreen], {
-      duration: 250,
-      easing: 'ease-in-out',
-      fill: open ? 'none' : 'forwards',
-    });
-
-    if (!open) {
-      slideRef.current.finished.then(() => setShown(false), () => {});
-    }
-  }, [open]);
 
   // Find the map element on component mount
   useEffect(() => {
@@ -124,7 +85,7 @@ export default function FilterTabs(props) {
   // Sub components
   const getTabsContainer = () => {
     return (
-      <div ref={tabsContainerRef} className={(smallScreen ? `mobile-filter-tabs` : `filter-tabs`) + (shown ? '' : ' hide')}>
+      <div ref={tabsContainerRef} className={(smallScreen ? `mobile-filter-tabs` : `filter-tabs`) + (open ? '' : ' hide')}>
         <Tabs
           defaultActiveKey='layers'
           className='tabs-header'
@@ -133,7 +94,7 @@ export default function FilterTabs(props) {
             trackEvent('click', 'map', `Show ${key} tab`);
           }}>
 
-          <Tab eventKey='layers' title='Map options' tabClassName='map-tab layers'>
+          <Tab eventKey='layers' title='Map Options' tabClassName='map-tab layers'>
             <MapFilters
               mapLayers={mapLayers}
               callback={callback}
@@ -162,8 +123,7 @@ export default function FilterTabs(props) {
 
   // Main Component
   return (
-    <React.Fragment>
-      {/* Outside the card so it stays put underneath while the card slides away */}
+    <div className={'filters-menu'  + (!open ? ' closed' : '') + (activeTab === 'layers' ? ' layers-tab' : ' legend-tab')}>
       <Button
         variant={isDelaysPage ? 'outline-primary' : 'primary'}
         className={'map-btn open-filters' + (open ? ' hide' : '')  + (smallScreen ? ' fixed-to-mobile-panel' : '')}
@@ -172,16 +132,14 @@ export default function FilterTabs(props) {
           open ? setOpen(false) : setOpen(true)
         }}>
         <FontAwesomeIcon icon={faLayerGroup}/>
-        <span className='filters-btn__text'>{textOverride ? textOverride : 'Map options'}</span>
+        <span className='filters-btn__text'>{textOverride ? textOverride : 'Map Options'}</span>
       </Button>
 
-      <div ref={menuRef} className={'filters-menu'  + (!shown ? ' closed' : '') + (activeTab === 'layers' ? ' layers-tab' : ' legend-tab')}>
-        {smallScreen && mapContainer &&
-          createPortal(getTabsContainer(), mapContainer)
-        }
+      {smallScreen && mapContainer &&
+        createPortal(getTabsContainer(), mapContainer)
+      }
 
-        {!smallScreen && getTabsContainer()}
-      </div>
-    </React.Fragment>
+      {!smallScreen && getTabsContainer()}
+    </div>
   );
 }

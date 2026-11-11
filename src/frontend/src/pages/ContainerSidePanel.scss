@@ -92,12 +92,22 @@
             margin-left: 0;
             color: $Type-Link;
             display: flex;
+            &:hover {
+              background-color: $Grey10;
+              transition: 0.1s ease-in-out background-color;
+            }
             &::marker {
               color: $Type-Link;
             }
 
             .advisory-li-teaser {
               max-width: 95%;
+            }
+
+            .advisory-li-title-container {
+              .advisory-li-title {
+                font-size: 1rem;
+              }
             }
           }
         }
@@ -132,7 +142,7 @@
           // Match .container horizontal padding (16px) so full-bleed doesn't overflow
           margin: 0 -16px;
           // Extra top padding offsets top: -2px so controls stay aligned
-          padding: 4px 16px 0;
+          padding: 10px 16px 8px;
         }
       }
 

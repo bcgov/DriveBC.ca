@@ -133,15 +133,15 @@ export default function AdvisoriesList(props) {
 
         } else {
           return (
-            <li className={`advisory-li ${!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.last_notified_at?.toString()) ? 'unread' : ''}`}
-              key={advisory.id}>
+            <li className={`advisory-li link-div ${!cmsContext.readAdvisories.includes(advisory.id.toString() + '-' + advisory.last_notified_at?.toString()) ? 'unread' : ''}`}
+              key={advisory.id}
+              onClick={() => handleClick(advisory)}
+              onKeyDown={(keyEvent) => handleClick(advisory, keyEvent)}
+              tabIndex={0}>
 
               <div className="advisory-li__content">
                 <div className="advisory-li-title-container">
-                  <button type="button" className='advisory-li-title link-div'
-                    onClick={() => handleClick(advisory)}>
-                    {advisory.title}
-                  </button>
+                  <p className='advisory-li-title'>{advisory.title}</p>
                   {trackedAdvisories[advisory.id]?.highlight &&
                     <div className="updated-pill">Updated</div>
                   }
@@ -158,14 +158,8 @@ export default function AdvisoriesList(props) {
                     </div>
                   }
 
-                  <Button
-                    variant="light"
-                    className='view-details-btn'
-                    // Mouse-only duplicate of the title button; one tab stop per card
-                    tabIndex={-1}
-                    aria-hidden="true"
-                    onClick={() => handleClick(advisory)}>
-                    View details
+                  <Button variant="light" className='view-details-btn'>
+                    View Details
                     <FontAwesomeIcon icon={faChevronRight}/>
                   </Button>
                 </div>

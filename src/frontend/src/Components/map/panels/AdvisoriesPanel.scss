@@ -18,13 +18,8 @@
         display: none;
       }
 
-      .description {
-        font-size: 0.875rem;
-      }
-
       .advisories-list .advisory-li .advisory-li__content .advisory-li-title-container .advisory-li-title {
-        font-size: 0.875rem;
-        line-height: 1.6;
+        font-size: 1rem;
       }
 
 
@@ -33,12 +28,9 @@
         border-radius: 8px;
         width: 100%;
 
-        &:hover .advisory-li-title {
-          text-decoration: none;
-        }
-
-        .advisory-li-title:hover {
-          text-decoration: underline;
+        &:hover {
+          background-color: $Grey10;
+          transition: 0.1s ease-in-out background-color;
         }
       }
 
@@ -52,15 +44,6 @@
 
       .advisory-li-teaser {
         max-width: 95%;
-        font-size: 0.875rem;
-        line-height: 1.6;
-      }
-
-      .timestamp-container {
-        .advisory-li-state, .friendly-time, .friendly-time-text, .formatted-date {
-          color: $Type-Secondary;
-          font-size: 0.75rem;
-        }
       }
     }
   }
