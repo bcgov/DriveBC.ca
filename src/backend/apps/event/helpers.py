@@ -150,3 +150,95 @@ def get_display_category(event, test_datetime=None):
     return EVENT_DISPLAY_CATEGORY.MAJOR_DELAYS \
         if event.severity == EVENT_SEVERITY.MAJOR \
         else EVENT_DISPLAY_CATEGORY.MINOR_DELAYS
+
+
+SCHEDULE_DAYS = {
+    'mon': 'Monday', 'tue': 'Tuesday', 'wed': 'Wednesday', 'thu': 'Thursday',
+    'fri': 'Friday', 'sat': 'Saturday', 'sun': 'Sunday',
+}
+
+
+def format_schedule_time(value):
+    # RIDE 'HH:MM' -> '5:04 pm'
+    try:
+        return datetime.datetime.strptime(value, '%H:%M').strftime('%-I:%M %p').lower()
+    except (TypeError, ValueError):
+        return None
+
+
+def get_schedule_text(schedule):
+    '''Mirrors RIDE desc(), e.g. "Monday to Friday, 7:00 am to 5:00 pm"'''
+    groups = [[]]
+    for day, name in SCHEDULE_DAYS.items():
+        if schedule.get(day):
+            groups[-1].append(name)
+        elif groups[-1]:
+            groups.append([])
+
+    names = []
+    for group in groups:
+        if len(group) == 7:
+            names.append('Every day')
+        elif len(group) > 2:
+            names.append(f'{group[0]} to {group[-1]}')
+        else:
+            names.extend(group)
+
+    days = ', '.join(names)
+    if schedule.get('allDay'):
+        return f'{days}, all day'
+
+    start = format_schedule_time(schedule.get('startTime'))
+    end = format_schedule_time(schedule.get('endTime'))
+    if start and end:
+        return f'{days}, {start} to {end}'
+    if start:
+        return f'{days}, from {start}'
+    if end:
+        return f'{days}, until {end}'
+    return days
+
+
+def format_in_effect_datetime(value, tz):
+    dt = value.astimezone(ZoneInfo(tz or 'America/Vancouver'))
+    return dt.strftime('%-I:%M %p').lower() + dt.strftime(' on %A, %B %-d, %Y')
+
+
+def get_in_effect_items(event):
+    '''Lines for the "In effect" section; empty for ongoing events with no end or schedule'''
+    start = event.start and event.start > datetime.datetime.now(datetime.timezone.utc)
+    start_text = f'From {format_in_effect_datetime(event.start, event.timezone)}' if start else ''
+    schedules = [get_schedule_text(schedule) for schedule in event.schedules or []]
+
+    if event.end:
+        end_text = f'until {format_in_effect_datetime(event.end, event.timezone)}'
+    elif start or schedules:
+        end_text = 'until further notice'
+    else:
+        return []
+
+    period = f'{start_text} {end_text}' if start_text else 'U' + end_text[1:]
+    return [period] + schedules
+
+
+def get_traffic_impact_items(event):
+    unit = (event.delay_unit or 'minutes').rstrip('s')
+    delay = [f'Estimated {event.delay_amount} {unit} delay'] if event.delay_amount else []
+    return delay + [impact.get('label', '') for impact in event.impacts or []]
+
+
+def get_restriction_items(event):
+    return [f"{item.get('label', '')} {item.get('text') or ''}".strip() for item in event.restrictions or []]
+
+
+# "For N km" on extents; RIDE sends no length
+# TODO: populate and send this from RIDE
+def get_location_length(event):
+    if not event.location or event.location.geom_type == 'Point':
+        return ''
+
+    geom = event.location.clone()
+    geom.srid = geom.srid or 4326
+    geom.transform(3005)  # BC Albers, metres
+    km = geom.length / 1000
+    return f'{km:.0f}' if km >= 10 else f'{km:.1f}'

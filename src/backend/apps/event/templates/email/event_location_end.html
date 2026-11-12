@@ -1,0 +1,9 @@
+<div style="padding:8px 12px; border:1px solid #EDEBE9; border-bottom:2px solid #DDDBD9; border-radius:8px; box-shadow:0 3px 7px rgba(0,0,0,0.13); font-size:14px; line-height:21px; color:#2D2D2D">
+  <div style="color:#605E5C; padding-bottom:4px">{{ side.label }}</div>
+  {% if side.changed %}
+    <div style="display:inline-block; color:#3B7142; background-color:#F5FAF6; font-weight:700">{% for line in side.lines %}{{ line|safe }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</div>
+    {% if side.previous %}<div style="color:#B73433; text-decoration:line-through">{% for line in side.previous %}{{ line|safe }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</div>{% endif %}
+  {% else %}
+    <div style="font-weight:700">{% for line in side.lines %}{{ line|safe }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</div>
+  {% endif %}
+</div>

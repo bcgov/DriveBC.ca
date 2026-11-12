@@ -3,7 +3,15 @@
 .popup {
   // Events panel
   &--event {
+    --event-theme: #{$Gold110};
+
     .popup__title {
+      .sub-name {
+        margin-bottom: 0;
+        font-size: 0.875rem;
+        color: var(--event-theme);
+      }
+
       &__icon {
         width: initial;
         height: initial;
@@ -44,6 +52,10 @@
         }
 
         &.last-update, &.next-update {
+          .popup__content__shadow-box {
+            box-shadow: 0 0.3px 0.9px 0 rgba(0, 0, 0, 0.10), 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.13);
+          }
+
           .friendly-time-text {
             font-size: 0.875rem;
           }
@@ -56,6 +68,121 @@
               transform: none;
             }
           }
+        }
+      }
+
+      &__description.extent-box {
+        position: relative;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: 6px;
+          top: 27px;  // 4px gap below start icon
+          bottom: 30px;  // 4px gap above end icon
+          width: 6px;
+          border-radius: 16px;
+          background-color: var(--event-theme);
+        }
+
+        .extent-box__end {
+          display: flex;
+          gap: 12px;
+
+          .popup__content__shadow-box {
+            flex: 1;
+            margin-top: 0;
+            padding: 8px 12px;
+          }
+        }
+
+        .extent-box__icon {
+          width: 18px;
+          flex-shrink: 0;
+          margin-top: 11px;
+          font-size: 12px;
+          color: $Grey80;
+
+          &.fa-location-dot {
+            align-self: flex-end;
+            height: 16px;
+            margin: 0 0 10px;
+          }
+        }
+
+        .extent-box__label {
+          color: $Grey80;
+          margin-bottom: 4px;
+        }
+
+        .extent-box__text {
+          font-weight: bold;
+        }
+
+        .extent-box__length {
+          margin: 8px 0;
+          padding-left: 30px;
+
+          span {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 80px;
+            background-color: var(--event-theme);
+            color: $White;
+            font-size: 0.75rem;
+            line-height: 18px;
+            font-weight: bold;
+          }
+        }
+      }
+
+      &__shadow-box {
+        &.location-box {
+          display: flex;
+          gap: 12px;
+
+          .location-box__icon {
+            width: 19px;
+            flex-shrink: 0;
+            margin-top: 3px;
+            color: $Type-Secondary;
+          }
+
+          .location-box__blocks {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+          }
+
+          .location-box__text {
+            font-weight: bold;
+          }
+
+          .location-box__landmark {
+            color: $Grey80;
+          }
+        }
+
+        .icon-item {
+          display: flex;
+          gap: 12px;
+
+          & + .icon-item {
+            margin-top: 12px;
+          }
+
+          svg {
+            width: 19px;
+            flex-shrink: 0;
+            margin-top: 3px;
+            color: $Type-Secondary;
+          }
+        }
+
+        .external-link-icon {
+          font-size: 0.6875rem;
+          margin-left: 4px;
+          color: $Grey80;
         }
       }
 
@@ -72,6 +199,8 @@
     }
 
     &.major, &.closures, &.futureEvents.closure {
+      --event-theme: #{$Red-dark};
+
       .popup__title {
         background-color: $Surface-major;
 
@@ -92,6 +221,8 @@
     }
 
     &.chainUps {
+      --event-theme: #{$Type-Primary};
+
       .popup__title {
         background-color: $Yellow-10;
 

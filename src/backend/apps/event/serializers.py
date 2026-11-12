@@ -3,6 +3,12 @@ import html
 from zoneinfo import ZoneInfo
 
 from apps.event.enums import EVENT_DIRECTION_DISPLAY
+from apps.event.helpers import (
+    get_in_effect_items,
+    get_location_length,
+    get_restriction_items,
+    get_traffic_impact_items,
+)
 from apps.event.models import Event
 from config.settings import RIDE_EVENT_PREFIX
 from django.contrib.gis.geos import Point
@@ -53,6 +59,10 @@ class EventInternalSerializer(serializers.ModelSerializer):
     direction_display = serializers.SerializerMethodField()
     route_display = serializers.SerializerMethodField()
     optimized_description = serializers.SerializerMethodField()
+    traffic_impact_items = serializers.SerializerMethodField()
+    in_effect_items = serializers.SerializerMethodField()
+    restriction_items = serializers.SerializerMethodField()
+    location_length = serializers.SerializerMethodField()
     schedule = ScheduleSerializer()
     area = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
@@ -90,6 +100,18 @@ class EventInternalSerializer(serializers.ModelSerializer):
 
     def get_optimized_description(self, obj):
         return obj.description if RIDE_EVENT_PREFIX in obj.id else optimize_description(obj.description)
+
+    def get_traffic_impact_items(self, obj):
+        return get_traffic_impact_items(obj)
+
+    def get_in_effect_items(self, obj):
+        return get_in_effect_items(obj)
+
+    def get_restriction_items(self, obj):
+        return get_restriction_items(obj)
+
+    def get_location_length(self, obj):
+        return get_location_length(obj)
 
 
 class EventSerializer(EventInternalSerializer):

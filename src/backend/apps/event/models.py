@@ -6,6 +6,7 @@ from apps.shared.models import Area, BaseModel
 from config.settings import RIDE_EVENT_PREFIX
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry
+from django.core.serializers.json import DjangoJSONEncoder
 from django_prometheus.models import ExportModelOperationsMixin
 
 
@@ -51,6 +52,15 @@ class Event(ExportModelOperationsMixin('event'), BaseModel):
 
     # Timezone
     timezone = models.CharField(max_length=32, null=True, blank=True)
+
+    # RIDE details, lists as sent by RIDE
+    impacts = models.JSONField(default=list, blank=True)
+    restrictions = models.JSONField(default=list, blank=True)
+    schedules = models.JSONField(default=list, blank=True)
+    delay_amount = models.PositiveIntegerField(default=0)
+    delay_unit = models.CharField(max_length=16, default='minutes')
+    additional = models.TextField(blank=True, default='')
+    link = models.URLField(max_length=2048, blank=True, default='')
 
     # Display category for emails
     display_category = models.CharField(max_length=32, blank=True, default='', db_index=True)
@@ -119,6 +129,10 @@ class QueuedEventNotification(ExportModelOperationsMixin('queued_event_notificat
     route_id = models.PositiveIntegerField()
     event_id = models.CharField(max_length=32)
 
+    # event state before update (None = new); last state if cleared
+    previous_state = models.JSONField(null=True, blank=True, encoder=DjangoJSONEncoder)
+    cleared = models.BooleanField(default=False)
+
     class Meta:
         unique_together = ('route_id', 'event_id')
 
@@ -126,3 +140,7 @@ class QueuedEventNotification(ExportModelOperationsMixin('queued_event_notificat
 class QueuedDistrictEventNotification(ExportModelOperationsMixin('queued_district_event_notifications'), BaseModel):
     subscription_id = models.PositiveIntegerField()
     event_ids = models.JSONField(default=list, blank=True)  # list of Event IDs
+
+    # {event_id: state before update / last state if cleared}
+    previous_states = models.JSONField(default=dict, blank=True, encoder=DjangoJSONEncoder)
+    cleared_event_ids = models.JSONField(default=list, blank=True)

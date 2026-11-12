@@ -1,4 +1,4 @@
-Update for DriveBC route {{ route.label }}
+DriveBC {{ settings_label }} update
 
 {{ advisory.title }}
 {{ advisory.description }}
