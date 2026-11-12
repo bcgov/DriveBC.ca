@@ -13,67 +13,22 @@ import HighwayGroup from './HighwayGroup';
 import './CameraList.scss';
 
 const INITIAL_DISPLAY_LENGTH = 21;
-const CAMERA_LIST_RETURN_KEY = 'cameraListReturn';
+const RETURN_KEY = 'cameraListReturn';
 
-const readCameraListReturn = () => {
+// Returns the scroll position and card count saved by CameraCard for this list (then clears it),
+// so going back from a camera lands where the user left off.
+const takeSavedReturn = (pathname) => {
   try {
-    const raw = sessionStorage.getItem(CAMERA_LIST_RETURN_KEY);
-    if (!raw) {
+    const saved = JSON.parse(sessionStorage.getItem(RETURN_KEY));
+    if (saved?.list !== pathname) {
       return null;
     }
 
-    const data = JSON.parse(raw);
-    if (!data?.list) {
-      return null;
-    }
-
-    return data;
+    sessionStorage.removeItem(RETURN_KEY);
+    return saved;
   } catch {
     return null;
   }
-};
-
-const clearCameraListReturn = () => {
-  try {
-    sessionStorage.removeItem(CAMERA_LIST_RETURN_KEY);
-  } catch {
-  }
-};
-
-const resetDisplayWindow = (camsContext, cameras, prevCamerasLength) => {
-  if (prevCamerasLength.current === cameras.length) {
-    return;
-  }
-
-  camsContext.displayLength = INITIAL_DISPLAY_LENGTH;
-  prevCamerasLength.current = cameras.length;
-};
-
-const restoreSavedDisplayLength = (camsContext, cameras, returnInfo) => {
-  const savedLength = Number(returnInfo.displayLength);
-  if (!Number.isFinite(savedLength) || savedLength <= camsContext.displayLength) {
-    return;
-  }
-
-  camsContext.displayLength = Math.min(savedLength, cameras.length);
-};
-
-const applyCameraListReturn = (camsContext, cameras, pathname, returnApplied, pendingScrollTop) => {
-  if (returnApplied.current) {
-    return;
-  }
-
-  const returnInfo = readCameraListReturn();
-  if (!returnInfo || returnInfo.list !== pathname) {
-    return;
-  }
-
-  restoreSavedDisplayLength(camsContext, cameras, returnInfo);
-
-  const savedTop = Number(returnInfo.scrollTop);
-  pendingScrollTop.current = Number.isFinite(savedTop) ? savedTop : 0;
-  returnApplied.current = true;
-  clearCameraListReturn();
 };
 
 export default function CameraList(props) {
@@ -84,8 +39,6 @@ export default function CameraList(props) {
   const { camsContext } = useContext(CamsContext);
   const location = useLocation();
   const prevCamerasLength = useRef(cameras?.length);
-  const returnApplied = useRef(false);
-  // Scroll offset to apply once, after the saved window of cards is on screen.
   const pendingScrollTop = useRef(null);
 
   // UseEffect hooks and data functions
@@ -100,24 +53,29 @@ export default function CameraList(props) {
       return;
     }
 
-    resetDisplayWindow(camsContext, cameras, prevCamerasLength);
-    applyCameraListReturn(
-      camsContext,
-      cameras,
-      location.pathname,
-      returnApplied,
-      pendingScrollTop,
-    );
+    // Result set changed (filter/search/route): start back at the first page of cards
+    if (prevCamerasLength.current !== cameras.length) {
+      camsContext.displayLength = INITIAL_DISPLAY_LENGTH;
+      prevCamerasLength.current = cameras.length;
+    }
+
+    // Coming back from a camera: reload as many cards as before and queue the old scroll position
+    const saved = takeSavedReturn(location.pathname);
+    if (saved) {
+      camsContext.displayLength = Math.min(
+        Math.max(Number(saved.displayLength) || 0, camsContext.displayLength),
+        cameras.length,
+      );
+      pendingScrollTop.current = Number(saved.scrollTop) || 0;
+    }
+
     getDisplayedCameras(camsContext.displayLength);
   }, [cameras, location.pathname]);
 
+  // Apply the queued scroll once those cards are rendered, before paint to avoid a jump
   useLayoutEffect(() => {
-    if (pendingScrollTop.current == null || showLoader || !onscreenCameras.length) {
-      return;
-    }
-
     const main = document.getElementById('main');
-    if (!main) {
+    if (pendingScrollTop.current == null || showLoader || !onscreenCameras.length || !main) {
       return;
     }
 
