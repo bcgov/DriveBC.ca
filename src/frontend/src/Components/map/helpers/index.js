@@ -1,27 +1,31 @@
-// Import all helper functions for map component
-import { onMoveEnd } from './advisories';
-import { setEventStyle } from './events';
-import { blueLocationMarkup, redLocationMarkup, redLocationToMarkup, setLocationPin } from './location';
-import { calculateCenter, fitMap, removeOverlays, setZoomPan, setZoomPanAnchored, toggleMyLocation, transformFeature, zoomIn, zoomOut } from './map';
-import {
+export { onMoveEnd } from './advisories';
+export { setEventStyle } from './events';
+export {
+  blueLocationMarkup,
+  redLocationMarkup,
+  redLocationToMarkup,
+  setLocationPin,
+} from './location';
+export {
+  calculateCenter,
+  DESKTOP_PANEL_WIDTH,
+  EXPANDED_CAMERA_PANEL_WIDTH,
+  fitMap,
+  getPanelAnchorXFraction,
+  removeOverlays,
+  setZoomPan,
+  setZoomPanAnchored,
+  toggleMyLocation,
+  transformFeature,
+  zoomIn,
+  zoomOut,
+} from './map';
+export {
   compareRouteDistance,
   filterByRoute,
   filterAdvisoryByRoute,
   groupNearbyFeatures,
   applyOverlapOffsets,
   getMidPoint,
-  populateRouteProjection
+  populateRouteProjection,
 } from './spatial';
-
-export {
-  // advisories,
-  onMoveEnd,
-  // events
-  setEventStyle,
-  // location
-  blueLocationMarkup, redLocationMarkup, redLocationToMarkup, setLocationPin,
-  // map
-  calculateCenter, fitMap, setZoomPan, setZoomPanAnchored, toggleMyLocation, transformFeature, zoomIn, zoomOut, removeOverlays,
-  // spatial
-  compareRouteDistance, filterByRoute, filterAdvisoryByRoute, groupNearbyFeatures, applyOverlapOffsets, getMidPoint, populateRouteProjection
-};
