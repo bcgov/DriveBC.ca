@@ -136,7 +136,7 @@ export default function AuthModal() {
                 <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
                 <input type='hidden' name='next' value={window.location.href} />
 
-                <button type='submit' className="btn btn-primary">Sign in with a one-time passcode</button>
+                <button type='submit' className="btn btn-primary">Login with email</button>
 
                 <p>Login with your email and we’ll send you a one-time passcode.</p>
               </form>
