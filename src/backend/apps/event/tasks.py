@@ -42,7 +42,7 @@ BACKEND_DIR = Path(__file__).resolve().parents[2]
 PCT_START = datetime.datetime(2026, 11, 1, 9, tzinfo=datetime.timezone.utc)
 
 
-# DBC22-6954: event fields kept for change highlights and cleared emails
+# event fields kept for change highlights and cleared emails
 EVENT_STATE_FIELDS = [
     'id', 'description', 'event_type', 'event_sub_type', 'status', 'severity', 'closed',
     'direction', 'location', 'route_at', 'route_from', 'route_to', 'highway_segment_names',
@@ -159,7 +159,6 @@ def sync_chain_up_direction(event, new_event_data):
 
 def update_future_event_category(event, previous_states):
     # Update future events display category
-    # https://moti-imb.atlassian.net/browse/DBC22-2259
     if event.display_category != EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
         return False
 
@@ -167,7 +166,7 @@ def update_future_event_category(event, previous_states):
     if new_display_category == EVENT_DISPLAY_CATEGORY.FUTURE_DELAYS:
         return False
 
-    # DBC22-6954: existing event, email as Updated not New
+    # existing event, email as Updated not New
     if previous_states is not None:
         previous_states[event.id] = get_event_state(event)
 
@@ -206,7 +205,7 @@ def populate_event_from_data(new_event_data, previous_states=None):
 
         sync_chain_up_direction(event, new_event_data)
 
-        # DBC22-6954: backfill RIDE details on existing events; not notification-worthy
+        # backfill RIDE details on existing events; not notification-worthy
         detail_diff = build_detail_diff(event, new_event_data)
         if detail_diff:
             Event.objects.filter(id=event_id).update(**detail_diff)
@@ -254,7 +253,7 @@ def populate_all_event_data():
     purged_events = Event.objects.filter(status=EVENT_STATUS.ACTIVE)\
         .exclude(id__in=active_event_ids)
 
-    # DBC22-6954: queue cleared notifications while event rows still exist
+    # queue cleared notifications while event rows still exist
     cleared_states = {event.id: get_event_state(event) for event in purged_events}
     queue_event_notifications(list(cleared_states), previous_states=cleared_states, cleared=True)
 
@@ -581,7 +580,7 @@ def set_notification_fields(event, previous_state=None, cleared=False, route=Non
 
 
 def get_event_subject_label(event):
-    # DBC22-6954: closures omit the event type
+    # closures omit the event type
     if event.display_category == EVENT_DISPLAY_CATEGORY.CLOSURE:
         return 'closure'
 
@@ -608,7 +607,7 @@ def get_event_subject(events, location_label):
 
 
 def send_event_emails(events, location_label, template_name, context, recipient):
-    # DBC22-6954: closures sent in a separate email
+    # closures sent in a separate email
     closures = [e for e in events if e.display_category == EVENT_DISPLAY_CATEGORY.CLOSURE]
     others = [e for e in events if e.display_category != EVENT_DISPLAY_CATEGORY.CLOSURE]
 

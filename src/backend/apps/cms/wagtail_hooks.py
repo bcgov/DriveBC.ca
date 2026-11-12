@@ -34,7 +34,7 @@ def post_edit_hook(request, page):
 
     if page.specific_class == Advisory:
         try:
-            # DBC22-6954: never notified before = new advisory
+            # never notified before = new advisory
             is_new = not Advisory.objects.filter(pk=page.pk, last_notified_at__isnull=False).exists()
             Advisory.objects.filter(pk=page.pk).update(last_notified_at=timezone.now())
             send_advisory_notifications(page.id, is_new)

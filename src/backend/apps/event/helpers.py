@@ -200,7 +200,6 @@ def get_schedule_text(schedule):
 
 
 def format_in_effect_datetime(value, tz):
-    # Figma 6801: "12:05 pm on Saturday, September 9, 2025"
     dt = value.astimezone(ZoneInfo(tz or 'America/Vancouver'))
     return dt.strftime('%-I:%M %p').lower() + dt.strftime(' on %A, %B %-d, %Y')
 
@@ -223,7 +222,6 @@ def get_in_effect_items(event):
 
 
 def get_traffic_impact_items(event):
-    # Figma 6801: "Estimated 20 minute delay"
     unit = (event.delay_unit or 'minutes').rstrip('s')
     delay = [f'Estimated {event.delay_amount} {unit} delay'] if event.delay_amount else []
     return delay + [impact.get('label', '') for impact in event.impacts or []]
@@ -233,8 +231,9 @@ def get_restriction_items(event):
     return [f"{item.get('label', '')} {item.get('text') or ''}".strip() for item in event.restrictions or []]
 
 
+# "For N km" on extents; RIDE sends no length
+# TODO: populate and send this from RIDE
 def get_location_length(event):
-    # DBC22-6954: "For N km" on extents; RIDE sends no length
     if not event.location or event.location.geom_type == 'Point':
         return ''
 

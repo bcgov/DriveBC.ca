@@ -128,7 +128,8 @@ class Event(ExportModelOperationsMixin('event'), BaseModel):
 class QueuedEventNotification(ExportModelOperationsMixin('queued_event_notifications'), BaseModel):
     route_id = models.PositiveIntegerField()
     event_id = models.CharField(max_length=32)
-    # DBC22-6954: event state before update (None = new); last state if cleared
+
+    # event state before update (None = new); last state if cleared
     previous_state = models.JSONField(null=True, blank=True, encoder=DjangoJSONEncoder)
     cleared = models.BooleanField(default=False)
 
@@ -139,6 +140,7 @@ class QueuedEventNotification(ExportModelOperationsMixin('queued_event_notificat
 class QueuedDistrictEventNotification(ExportModelOperationsMixin('queued_district_event_notifications'), BaseModel):
     subscription_id = models.PositiveIntegerField()
     event_ids = models.JSONField(default=list, blank=True)  # list of Event IDs
-    # DBC22-6954: {event_id: state before update / last state if cleared}
+
+    # {event_id: state before update / last state if cleared}
     previous_states = models.JSONField(default=dict, blank=True, encoder=DjangoJSONEncoder)
     cleared_event_ids = models.JSONField(default=list, blank=True)

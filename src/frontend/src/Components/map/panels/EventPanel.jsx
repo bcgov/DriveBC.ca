@@ -125,7 +125,6 @@ const getEventSVGIcon = (eventData) => {
   }
 };
 
-// Figma 6801: one block per pin, no "Starts:"/"Ends:"; landmark under first line
 const getLocationBlocks = (description, landmark) => {
   const blocks = (description || '').split('<br><br>')
     .map(block => block.split('<br>').map(line => line.replace(/^(Starts|Ends):/, '').trim()).filter(Boolean))
@@ -137,7 +136,6 @@ const getLocationBlocks = (description, landmark) => {
   return blocks;
 }
 
-// Figma 6801 extent: {Starts: [...], Ends: [...]} from 'Starts: <br>a<br><br>Ends: <br>b'
 const getLocationEnds = (description) => {
   const ends = {};
   (description || '').split('<br><br>').forEach(block => {
