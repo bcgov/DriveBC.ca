@@ -513,7 +513,7 @@ function HeaderContent() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <LinkContainer to="/">
-                {getNavLink('Map view')}
+                {getNavLink('Map')}
               </LinkContainer>
 
               <LinkContainer to="/cameras">

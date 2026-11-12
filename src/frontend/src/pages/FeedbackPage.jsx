@@ -254,7 +254,7 @@ export default function FeedbackPage() {
               </p>
 
               <ul>
-                <li><a href='/'>Map view</a></li>
+                <li><a href='/'>Map</a></li>
                 <li><a href='/delays'>Delay listings</a></li>
                 <li><a href='/cameras'>Cameras</a></li>
               </ul>
