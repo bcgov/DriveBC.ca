@@ -372,9 +372,7 @@ const RouteSearch = forwardRef((props, ref) => {
                       onClick={() => selectRouteOption(route)}
                       aria-label={`Route ${routeLabel}, ${roundedDistance} kilometers`}
                       aria-pressed={isSelected}>
-                      {searchedRoutes.length > 1 &&
-                        <span className="route-alt-option__label">{routeLabel}</span>
-                      }
+                      <span className="route-alt-option__label">{routeLabel}</span>
                       <span className="route-alt-option__distance">{roundedDistance} km</span>
                     </button>
                   );
