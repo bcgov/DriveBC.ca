@@ -91,7 +91,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "globals": "^17.7.0",
-    "jsdom": "^30.0.0",
+    "jsdom": "^31.0.0",
     "prettier": "^3.9.5",
     "sass": "^1.101.0",
     "vite": "^8.1.5",
