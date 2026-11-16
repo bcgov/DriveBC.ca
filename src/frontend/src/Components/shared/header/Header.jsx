@@ -336,7 +336,7 @@ function HeaderContent() {
   /* Handlers */
   const onClickActions = () => {
     setTimeout(() => setExpanded(false));
-    sessionStorage.setItem('scrollPosition', 0);
+    sessionStorage.removeItem('cameraListReturn');
   }
 
   const handleChainUpsClick = (e) => {

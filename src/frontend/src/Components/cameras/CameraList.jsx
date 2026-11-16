@@ -1,5 +1,6 @@
 // React
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
 // Third party packages
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -12,6 +13,23 @@ import HighwayGroup from './HighwayGroup';
 import './CameraList.scss';
 
 const INITIAL_DISPLAY_LENGTH = 21;
+const RETURN_KEY = 'cameraListReturn';
+
+// Returns the scroll position and card count saved by CameraCard for this list (then clears it),
+// so going back from a camera lands where the user left off.
+const takeSavedReturn = (pathname) => {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(RETURN_KEY));
+    if (saved?.list !== pathname) {
+      return null;
+    }
+
+    sessionStorage.removeItem(RETURN_KEY);
+    return saved;
+  } catch {
+    return null;
+  }
+};
 
 export default function CameraList(props) {
   // Props
@@ -19,7 +37,9 @@ export default function CameraList(props) {
 
   // Contexts
   const { camsContext } = useContext(CamsContext);
+  const location = useLocation();
   const prevCamerasLength = useRef(cameras?.length);
+  const pendingScrollTop = useRef(null);
 
   // UseEffect hooks and data functions
   const getDisplayedCameras = (length) => {
@@ -29,16 +49,39 @@ export default function CameraList(props) {
   };
 
   useEffect(() => {
-    if (cameras && cameras.length > 0) {
-      // Result set size changed (filter/search/route) — reset the infinite-scroll
-      // window so a prior scroll depth does not dump hundreds of cards at once.
-      if (prevCamerasLength.current !== cameras.length) {
-        camsContext.displayLength = INITIAL_DISPLAY_LENGTH;
-        prevCamerasLength.current = cameras.length;
-      }
-      getDisplayedCameras(camsContext.displayLength);
+    if (!cameras || cameras.length === 0) {
+      return;
     }
-  }, [cameras]);
+
+    // Result set changed (filter/search/route): start back at the first page of cards
+    if (prevCamerasLength.current !== cameras.length) {
+      camsContext.displayLength = INITIAL_DISPLAY_LENGTH;
+      prevCamerasLength.current = cameras.length;
+    }
+
+    // Coming back from a camera: reload as many cards as before and queue the old scroll position
+    const saved = takeSavedReturn(location.pathname);
+    if (saved) {
+      camsContext.displayLength = Math.min(
+        Math.max(Number(saved.displayLength) || 0, camsContext.displayLength),
+        cameras.length,
+      );
+      pendingScrollTop.current = Number(saved.scrollTop) || 0;
+    }
+
+    getDisplayedCameras(camsContext.displayLength);
+  }, [cameras, location.pathname]);
+
+  // Apply the queued scroll once those cards are rendered, before paint to avoid a jump
+  useLayoutEffect(() => {
+    const main = document.getElementById('main');
+    if (pendingScrollTop.current == null || showLoader || !onscreenCameras.length || !main) {
+      return;
+    }
+
+    main.scrollTop = pendingScrollTop.current;
+    pendingScrollTop.current = null;
+  }, [onscreenCameras, showLoader]);
 
   // Rendering
   const groupDisplayedCameras = () => {
@@ -81,7 +124,8 @@ export default function CameraList(props) {
           dataLength={camsContext.displayLength}
           next={getDisplayedCameras}
           hasMore={getHasMore}
-          scrollableTarget="main">
+          scrollableTarget="main"
+          style={{ overflow: 'visible' }}>
 
           {renderHighways()}
         </InfiniteScroll>
