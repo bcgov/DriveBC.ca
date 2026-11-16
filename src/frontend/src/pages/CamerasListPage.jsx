@@ -254,21 +254,6 @@ export default function CamerasListPage() {
 
   useEffect(() => {
     if (isInitialMount.current) {
-      const scrollPosition = sessionStorage.getItem('scrollPosition');
-      if (scrollPosition) {
-        const scrollableContainer = document.querySelector('#main');
-
-        setTimeout(function() {
-          scrollableContainer.scrollTo({
-            top: parseInt(scrollPosition, 10),
-            left: 0,
-            behavior: "instant"
-          });
-
-          sessionStorage.setItem('scrollPosition', 0);
-        }, 300);
-      }
-
       isInitialMount.current = false;
 
     } else {

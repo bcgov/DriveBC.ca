@@ -2,6 +2,7 @@
 
 .camera-list {
   margin-top: 32px;
+  min-width: 0;
 
   @media (min-width: 768px) {
     margin-top: 8px;
@@ -63,11 +64,11 @@
     display: grid;
     column-gap: 1.5em;
     row-gap: 3.5em;
-    grid-template-columns: repeat(1, 1fr );
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto;
 
     @media (min-width: 668px) {
-      grid-template-columns: repeat(2, 1fr );
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     @media (min-width: 1240px) {
@@ -75,7 +76,7 @@
     }
 
     @media (min-width: 1750px) {
-      grid-template-columns: repeat(4, 1fr );
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .camera-card {
