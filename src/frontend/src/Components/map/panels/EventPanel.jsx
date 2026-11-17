@@ -1,5 +1,5 @@
 // React
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Navigation
 import { useSearchParams } from 'react-router-dom';
@@ -19,6 +19,7 @@ import {
 import { useMediaQuery } from "@uidotdev/usehooks";
 import Linkify from 'linkify-react';
 import parse from "html-react-parser";
+import { unByKey } from 'ol/Observable';
 
 // Internal imports
 import { getTypeDisplay, getSubTypeDisplay, convertDirection } from '../../events/functions';
@@ -164,9 +165,19 @@ export default function EventPanel(props) {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const [_, setRevision] = useState(0);
+  useEffect(() => {
+    if (!feature.ol_uid) return;
+
+    // trigger rerender via setRevision on propertychange
+    const key = feature.on('propertychange', () => setRevision(r => r + 1));
+    return () => unByKey(key);
+  }, [feature]);
+
   const eventData = feature.ol_uid ? feature.getProperties() : feature;
   const severity = eventData.severity.toLowerCase();
   const [routeAt, ...routeAlias] = (eventData.route_at || '').split(', ');
+
   // nbsp keeps "Highway 5" on one line
   const routeName = (eventData.highway_segment_names || routeAt).replace(/Highway (?=\d)/g, 'Highway ');
   const direction = convertDirection(eventData.direction).trim();
@@ -180,7 +191,7 @@ export default function EventPanel(props) {
     searchParams.set('display_category', event.display_category);
     searchParams.set('id', event.id);
     setSearchParams(searchParams, { replace: true });
-  }, [feature]);
+  }, [feature, eventData.display_category]);
 
   return (
     <div
