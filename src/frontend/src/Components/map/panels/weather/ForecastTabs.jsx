@@ -15,7 +15,7 @@ import ForecastCard from "./ForecastCard";
 
 // Main component
 export default function ForecastTabs(props) {
-  const { forecasts, sunset, showCards } = props;
+  const { forecasts, timezone, showCards } = props;
 
   // Split forecasts into groups of day and night
   const all_forecast_groups = [];
@@ -36,19 +36,19 @@ export default function ForecastTabs(props) {
   const [activeKey, setActiveKey] = useState(0);
 
   /* Component helpers */
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const getTabTitle = (forecast_group, index) => {
-    // Parse the date string into a Date object
-    const date = new Date(sunset);
-
-    // Add a day to the date
-    date.setDate(date.getDate() + (index + 1));
-
-    // Define an array of month names
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    // date from forecast weekday name, not sunset (rolls at UTC midnight)
+    const [m, d, y] = new Date().toLocaleDateString('en-US', { timeZone: timezone, month: 'numeric', day: 'numeric', year: 'numeric' }).split('/');
+    const date = new Date(Date.UTC(y, m - 1, d, 12));
+    for (let i = 0; i < 7; i++) {
+      date.setUTCDate(date.getUTCDate() + 1);
+      if (date.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' }) === forecast_group[0].Period.TextForecastName) break;
+    }
 
     // Get the month name and the day from the date
-    const month = monthNames[date.getMonth()];
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = monthNames[date.getUTCMonth()];
+    const day = String(date.getUTCDate()).padStart(2, '0');
 
     return (
       <div className="tab-title">

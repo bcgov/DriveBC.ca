@@ -17,6 +17,7 @@ import Collapse from 'react-bootstrap/Collapse';
 // Internal imports
 import ForecastCarousel from '../../map/panels/weather/ForecastCarousel';
 import ForecastTabs from '../../map/panels/weather/ForecastTabs';
+import { getWeatherTimezone } from '../../data/date';
 import FriendlyTime from '../../shared/FriendlyTime';
 import WeatherIconThin from '../../map/WeatherIconThin';
 
@@ -143,7 +144,7 @@ export default function NearbyRegionalWeather(props) {
             )
           }
 
-          <ForecastTabs forecasts={weather.future_forecasts} sunset={weather.sunset} showCards={!smallScreen} />
+          <ForecastTabs forecasts={weather.future_forecasts} timezone={getWeatherTimezone(weather.code)} showCards={!smallScreen} />
         </div>
       </div>
     </div>

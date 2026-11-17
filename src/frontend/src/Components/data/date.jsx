@@ -2,6 +2,11 @@ export const getCurrentPacificDateString = () => {
   return new Date().toLocaleString('en-CA', { timeZone: 'America/Vancouver' }).split(',')[0];
 }
 
+// Mountain (UTC-6) weather stations by EC code: Golden, Kootenay NP, Yoho NP, Invermere, Cranbrook, Sparwood
+const MOUNTAIN_WEATHER_CODES = ['s0000527', 's0000391', 's0000392', 's0000008', 's0000741', 's0000175'];
+
+export const getWeatherTimezone = (code) => MOUNTAIN_WEATHER_CODES.includes(code) ? 'America/Edmonton' : 'America/Vancouver';
+
 export const getPacficMidnight = (UTCDateString) => {
   // DateTime of midnight GMT+0 of the dateString in current timezone
   // e.g. '2025-02-12' -> Tue Feb 11 2025 16:00:00 GMT-0800 (Pacific Standard Time)

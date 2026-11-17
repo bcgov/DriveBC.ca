@@ -23,6 +23,7 @@ import Collapse from 'react-bootstrap/Collapse';
 // Internal imports
 import ForecastCarousel from './ForecastCarousel';
 import ForecastTabs from './ForecastTabs';
+import { getWeatherTimezone } from '../../../data/date';
 import FriendlyTime from '../../../shared/FriendlyTime';
 import ShareURLButton from '../../../shared/ShareURLButton';
 import { resetSeoMetadata, setMapFeatureSeoMetadata } from '../../../shared/seo';
@@ -228,7 +229,7 @@ export default function RegionalWeatherPanel(props) {
             <ForecastCarousel forecast_group={weather.current_day_forecasts} currentPane />
           }
 
-          <ForecastTabs forecasts={weather.future_forecasts} sunset={weather.sunset} />
+          <ForecastTabs forecasts={weather.future_forecasts} timezone={getWeatherTimezone(weather.code)} />
         </div>
 
         <div className="popup__content__additional">
