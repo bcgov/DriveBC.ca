@@ -16,7 +16,7 @@ wagtail==8.1
 wagtail-modeladmin==2.5.0
 django-email-log==1.5.0
 pyodbc==5.5.0
-boto3==1.43.126
+boto3==1.43.127
 aio-pika==10.2.3
 pydantic==2.14.3
 pillow==13.0.0
@@ -33,6 +33,6 @@ django-prometheus==2.5.0
 django-redis==7.0.0
 PyJWT==2.15.1
 cryptography==50.0.2
-django-http-compression[brotli]==1.4.0
-kubernetes==37.0.1
+django-http-compression[brotli]==1.5.0
+kubernetes==37.0.2
 gunicorn==27.0.0
