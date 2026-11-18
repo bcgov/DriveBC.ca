@@ -21,6 +21,10 @@ class EventDetailHelpersTest(SimpleTestCase):
         assert get_schedule_text({day: True for day in WEEKDAYS} | {'endTime': '06:00'}) == \
             'Every day, until 6:00 am'
 
+    def test_schedule_text_next_day(self):
+        assert get_schedule_text({**WEEKDAYS, 'startTime': '22:00', 'endTime': '06:00'}) == \
+            'Monday to Friday, 10:00 pm to 6:00 am next day'
+
     def test_in_effect_until_end(self):
         event = Event(
             start=datetime.datetime(2020, 1, 1, tzinfo=UTC),

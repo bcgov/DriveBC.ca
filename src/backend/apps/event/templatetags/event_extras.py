@@ -141,3 +141,9 @@ def item_icon(text, field):
         return 'impact-clock'
 
     return 'impact-do-not-enter' if 'clos' in text.lower() else 'impact-exclamation-circle'
+
+
+@register.filter
+def is_schedule(text, field):
+    # in effect period lines start with From/Until; the rest are schedules
+    return field == 'in_effect' and not text.startswith(('From ', 'Until '))

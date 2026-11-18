@@ -12,8 +12,10 @@
           <td width="19" style="width:19px; vertical-align:top; padding-top:{% if forloop.first %}3{% else %}15{% endif %}px">
             <img src="cid:{{ icon }}" width="14" style="width:14px" alt="" />
           </td>
+          {% elif text|is_schedule:field %}
+          <td width="19" style="width:19px; vertical-align:top; padding-left:4px; padding-top:{% if forloop.first %}0{% else %}4{% endif %}px">&bull;</td>
           {% endif %}
-          <td style="vertical-align:top; padding-left:{% if icon %}12{% else %}0{% endif %}px; padding-top:{% if forloop.first %}0{% else %}12{% endif %}px">
+          <td{% if field == 'in_effect' and not text|is_schedule:field %} colspan="2"{% endif %} style="vertical-align:top; padding-left:{% if icon %}12{% else %}0{% endif %}px; padding-top:{% if forloop.first %}0{% elif text|is_schedule:field %}4{% else %}12{% endif %}px">
             {% if status == 'added' %}
               <span style="color:#3B7142; background-color:#F5FAF6; padding:0 4px; border-radius:4px">{{ text }}</span>
             {% elif status == 'removed' %}

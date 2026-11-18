@@ -191,7 +191,9 @@ def get_schedule_text(schedule):
     start = format_schedule_time(schedule.get('startTime'))
     end = format_schedule_time(schedule.get('endTime'))
     if start and end:
-        return f'{days}, {start} to {end}'
+        # zero-padded 'HH:MM' compares correctly as strings
+        next_day = ' next day' if schedule['endTime'] < schedule['startTime'] else ''
+        return f'{days}, {start} to {end}{next_day}'
     if start:
         return f'{days}, from {start}'
     if end:

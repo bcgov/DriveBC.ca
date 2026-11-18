@@ -270,7 +270,12 @@ export default function EventPanel(props) {
           <div className="popup__content__description">
             <p>In effect</p>
             <div className="popup__content__shadow-box">
-              {eventData.in_effect_items.map(item => <p key={item}>{item}</p>)}
+              <p>{eventData.in_effect_items[0]}</p>
+              {eventData.in_effect_items.length > 1 &&
+                <ul className="schedule-list">
+                  {eventData.in_effect_items.slice(1).map(item => <li key={item}>{item}</li>)}
+                </ul>
+              }
             </div>
           </div>
         }
