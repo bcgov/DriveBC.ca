@@ -8,12 +8,11 @@ import { updatePendingAction } from './slices/userSlice';
 // External imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/pro-solid-svg-icons';
-import Tooltip from 'react-bootstrap/Tooltip';
 
 // Internal imports
 import { AuthContext } from "./App";
 import { getCookie } from "./util";
-import { API_HOST, DEPLOYMENT_TAG, RELEASE, BCEID_REGISTER_URL } from './env';
+import { API_HOST, DEPLOYMENT_TAG, RELEASE } from './env';
 
 // Styling
 import './Modal.scss';
@@ -92,16 +91,6 @@ export default function AuthModal() {
     }));
   };
 
-  const whatIsBCeID = (
-    "BCeID is a secure login service that allows you to access various government services online."
-  );
-
-  const tooltipBCeID = (
-    <Tooltip id="tooltipID" className="tooltip-content">
-      <p>{whatIsBCeID}</p>
-    </Tooltip>
-  );
-
   // Main component
   return authContext.showingModal && (
     <div
@@ -139,16 +128,10 @@ export default function AuthModal() {
                 <button type='submit' className="btn btn-primary">Sign in with a one-time passcode</button>
 
                 <p>Login with your email and we’ll send you a one-time passcode.</p>
+
               </form>
 
-              <form className={'bceid-form'} method='post' action={`${API_HOST}/accounts/oidc/bceid/login/`}>
-                <input type='hidden' name='csrfmiddlewaretoken' value={getCookie('csrftoken')} />
-                <input type='hidden' name='next' value={window.location.href} />
-
-                <button type='submit' className="btn btn-outline-primary">Sign in with Basic BCeID</button>
-
-                <p>BCeID is a secure login service to access government services online for all residents and visitors. Don&apos;t have a BCeID account? <a href={BCEID_REGISTER_URL}>Create one</a></p>
-              </form>
+              <p className='bceid-notice'>BCeID is no longer available. You can still access your account through the "Login with email" link above.</p>
             </div>
           }
         </div>

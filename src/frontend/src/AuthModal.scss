@@ -15,5 +15,15 @@
     form {
       margin-top: .5rem;
     }
+
+    .bceid-notice {
+      width: 75%;
+      margin-top: .75rem;
+      padding: .5rem 1rem;
+      border-radius: 6px;
+      background-color: variables.$BC-Blue-Light;
+      color: variables.$Info;
+      font-size: 13px;
+    }
   }
 }
