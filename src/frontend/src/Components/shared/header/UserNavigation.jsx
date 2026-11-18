@@ -12,17 +12,13 @@ import { faChevronRight, faArrowRight } from '@fortawesome/pro-regular-svg-icons
 import {
   faCircleUser,
   faRoute,
-  faStar,
   faVideoCamera,
   faChevronDown,
-  faBell
-} from '@fortawesome/pro-solid-svg-icons';
-import {
+  faBell,
   faGear,
   faArrowRightFromBracket
-} from '@fortawesome/pro-regular-svg-icons';
+} from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useMediaQuery } from '@uidotdev/usehooks';
 
 // Internal imports
 import { AuthContext } from "../../../App";
@@ -106,8 +102,6 @@ export default function UserNavigation({ isNavbarExpanded, onCollapseNavbar }) {
     logoutDispatch(dispatch, selectedRoute, searchedRoutes);
   };
 
-  const largeScreen = useMediaQuery('only screen and (min-width : 768px)');
-
   /* Components */
   const getUserMenu = () => {
     return (
@@ -117,46 +111,35 @@ export default function UserNavigation({ isNavbarExpanded, onCollapseNavbar }) {
         id="user-menu"
         title={<><FontAwesomeIcon icon={faCircleUser} /> <FontAwesomeIcon icon={faChevronDown} className="dropdown-chevron" /> <span className="visually-hidden">Account</span></>}>
 
-        <div id="user-menu-header">
-          <FontAwesomeIcon id="user-icon" icon={faCircleUser} />
-          <p id="user-email">{authContext.email}</p>
-        </div>
-
         <div className="menu-items">
-          { !largeScreen &&
-            <a className="menu-item" href="/my-cameras">
-              <div className="menu-item-header">
-                <FontAwesomeIcon icon={faVideoCamera} />
-                My cameras
-                <span className="item-count">{favCams ? favCams.length : 0}</span>
-              </div>
+          <a className="menu-item" href="/my-cameras">
+            <div className="menu-item-header">
+              <FontAwesomeIcon icon={faVideoCamera} />
+              My cameras
+              <span className="item-count">{favCams ? favCams.length : 0}</span>
+            </div>
 
-              <FontAwesomeIcon icon={faArrowRight} />
-            </a>
-          }
+            <FontAwesomeIcon icon={faArrowRight} />
+          </a>
 
-          { !largeScreen &&
-            <a className="menu-item" href="/my-routes">
-              <div className="menu-item-header">
-                <FontAwesomeIcon icon={faRoute} />
-                My routes
-                <span className="item-count">{favRoutes ? favRoutes.length : 0}</span>
-              </div>
+          <a className="menu-item" href="/my-routes">
+            <div className="menu-item-header">
+              <FontAwesomeIcon icon={faRoute} />
+              My routes
+              <span className="item-count">{favRoutes ? favRoutes.length : 0}</span>
+            </div>
 
-              <FontAwesomeIcon icon={faArrowRight} />
-            </a>
-          }
+            <FontAwesomeIcon icon={faArrowRight} />
+          </a>
 
-          { !largeScreen &&
-            <a className="menu-item" href="/my-areas">
-              <div className="menu-item-header">
-                <FontAwesomeIcon icon={faBell} />
-                My areas
-              </div>
+          <a className="menu-item" href="/my-areas">
+            <div className="menu-item-header">
+              <FontAwesomeIcon icon={faBell} />
+              My areas
+            </div>
 
-              <FontAwesomeIcon icon={faArrowRight} />
-            </a>
-          }
+            <FontAwesomeIcon icon={faArrowRight} />
+          </a>
 
           <a className="menu-item" href="/account">
             <div className="menu-item-header">
@@ -180,47 +163,10 @@ export default function UserNavigation({ isNavbarExpanded, onCollapseNavbar }) {
             { RELEASE ? ` (${RELEASE})` : '' }
           </div>
         </div>
-      </DropdownButton>
-    );
-  }
 
-  const getFavoritesMenu = () => {
-    return (
-      <DropdownButton
-        variant="outline-primary"
-        align="end"
-        id="favorites-menu"
-        title={<><FontAwesomeIcon icon={faStar} /> Favourites <FontAwesomeIcon icon={faChevronDown} className="dropdown-chevron" /></>}>
-
-        <div className="menu-items">
-          <a href="/my-cameras" className="menu-item">
-            <div className="menu-item-header">
-              <FontAwesomeIcon icon={faVideoCamera} />
-              My cameras
-              <span className="item-count">{favCams ? favCams.length : 0}</span>
-            </div>
-
-            <FontAwesomeIcon icon={faArrowRight} />
-          </a>
-
-          <a href="/my-routes" className="menu-item">
-            <div className="menu-item-header">
-              <FontAwesomeIcon icon={faRoute} />
-              My routes
-              <span className="item-count">{favRoutes ? favRoutes.length : 0}</span>
-            </div>
-
-            <FontAwesomeIcon icon={faArrowRight} />
-          </a>
-
-          <a href="/my-areas" className="menu-item">
-            <div className="menu-item-header">
-              <FontAwesomeIcon icon={faBell} />
-              My areas
-            </div>
-
-            <FontAwesomeIcon icon={faArrowRight} />
-          </a>
+        <div id="user-menu-header">
+          <FontAwesomeIcon id="user-icon" icon={faCircleUser} />
+          <p id="user-email">{authContext.email}</p>
         </div>
       </DropdownButton>
     );
@@ -253,10 +199,6 @@ export default function UserNavigation({ isNavbarExpanded, onCollapseNavbar }) {
   /* Main component */
   return authContext.loginStateKnown && (
     <div id="user-navigation">
-      { authContext.username && largeScreen &&
-        getFavoritesMenu()
-      }
-
       { authContext.username &&
         getUserMenu()
       }

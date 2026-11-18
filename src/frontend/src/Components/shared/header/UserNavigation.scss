@@ -40,12 +40,6 @@
       transition: transform 0.3s ease-in-out;
     }
 
-    #favorites-menu.show {
-      .dropdown-chevron {
-        transform: rotate(180deg);
-      }
-    }
-
     #user-menu.show {
       .dropdown-chevron {
         transform: rotate(180deg);
@@ -138,8 +132,8 @@
   // User menu
   #user-menu-header {
     display: flex;
-    justify-content: center;
-    flex-direction: column;
+    align-items: center;
+    gap: 4px;
 
     background: $Grey10;
 
@@ -147,7 +141,7 @@
     cursor: default;
 
     #user-icon {
-      font-size: 2.25rem;
+      font-size: 1.75rem;
       padding: 0.5rem;
     }
 
@@ -155,7 +149,8 @@
       font-size: 14px;
       font-weight: 700;
       color: $Type-Primary;
-      text-align: center;
+      margin: 0;
+      overflow-wrap: anywhere;
     }
 
     #signout-link {

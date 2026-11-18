@@ -287,8 +287,11 @@
 			align-items: center;
 
 			@media (max-width: 1399px) {
-				width: 100%;
 				padding: 5px 16px 5px 8px;
+			}
+
+			@media (max-width: 1199px) {
+				width: 100%;
 			}
 		}
 
@@ -500,6 +503,7 @@
 				.title {
 					display: flex;
 					align-items: center;
+					white-space: nowrap;
 
 					.unread-count {
 						font-size: 10px;
