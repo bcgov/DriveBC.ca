@@ -1,0 +1,91 @@
+@import "../../styles/variables.scss";
+
+.selected-filters-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 12px;
+  margin-right: 8px;
+
+  .selected-filters-measure {
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .selected-filter {
+    flex-shrink: 0;
+  }
+
+  .selected-filters-more-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .selected-filters-more {
+    border: none;
+    cursor: pointer;
+    gap: 6px;
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: $BC-Blue;
+    background: $Blue20;
+
+    svg {
+      width: 10px;
+      margin: 0 4px 0 0;
+      transition: transform 0.15s ease;
+    }
+
+    &.open svg {
+      transform: rotate(180deg);
+    }
+
+    &:hover {
+      background: $Blue30;
+    }
+  }
+
+  .selected-filters-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    left: auto;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 100%;
+    padding: 12px;
+    background: $White;
+    border: 1px solid $Divider;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+    &__header {
+      width: 100%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: $Grey80;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .selected-filter {
+      width: max-content;
+      max-width: 100%;
+    }
+  }
+}
