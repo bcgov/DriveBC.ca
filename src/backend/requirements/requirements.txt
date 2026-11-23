@@ -1,5 +1,5 @@
 Django==5.2.19
-django-allauth==65.22.0
+django-allauth==65.22.1
 django-environ==0.14.0
 djangorestframework==3.18.3
 djangorestframework-gis==1.3.0
@@ -10,13 +10,13 @@ whitenoise==6.12.0
 httpx==0.28.1
 huey==3.5.4
 markdown==3.11.3
-psycopg==3.3.8
+psycopg==3.3.9
 redis==8.1.0
 wagtail==8.1
 wagtail-modeladmin==2.5.0
 django-email-log==1.5.0
 pyodbc==5.5.0
-boto3==1.44.1
+boto3==1.44.3
 aio-pika==10.2.3
 pydantic==2.14.3
 pillow==13.0.0
