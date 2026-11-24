@@ -123,7 +123,7 @@
       position: sticky;
       z-index: 1;
       top: 0;
-      padding: 20px 0;
+      padding: 20px 0 0 0;
       background: $White;
 
       &[stuck] {
@@ -237,6 +237,7 @@
           align-items: center;
           position: relative;
           margin-top: 12px;
+          width: 100%;
           max-width: 100%;
           min-width: 0;
 
@@ -266,58 +267,35 @@
             }
           }
 
-          .selected-filters-container {
+          .selected-filter {
             display: flex;
+            background: $Blue20;
+            border-radius: 24px;
+            padding: 4px;
+            color: $BC-Blue;
+            font-weight: bold;
+            font-size: 0.75rem;
             align-items: center;
-            gap: 8px;
-            margin-left: 8px;
-            margin-right: 8px;
 
-            @media (max-width: 991px) {
-              overflow-x: auto;
-              min-width: 0;
-              flex: 1 1 0;
-
-              .selected-filter {
-                flex-shrink: 0;
-              }
+            svg {
+              width: 12px;
+              margin-right: 6px;
+              margin-left: 4px;
             }
 
-            @media (max-width: 575px) {
-              margin-right: -16px;
-              padding-right: 16px;
+            &-text {
+              white-space: nowrap;
             }
 
-            .selected-filter {
-              display: flex;
-              background: $Blue20;
-              border-radius: 24px;
-              padding: 4px;
+            .remove-btn {
+              cursor: pointer;
+              font-size: 0.875rem;
               color: $BC-Blue;
-              font-weight: bold;
-              font-size: 0.75rem;
-              align-items: center;
+              margin-left: 8px;
+              margin-right: 4px;
 
-              svg {
-                width: 12px;
-                margin-right: 6px;
-                margin-left: 4px;
-              }
-
-              &-text {
-                white-space: nowrap;
-              }
-
-              .remove-btn {
-                cursor: pointer;
-                font-size: 0.875rem;
-                color: $BC-Blue;
-                margin-left: 8px;
-                margin-right: 4px;
-
-                &:hover {
-                  color: $Type-LinkHover;
-                }
+              &:hover {
+                color: $Type-LinkHover;
               }
             }
           }
