@@ -82,11 +82,8 @@
           }
         }
 
-        // Keep mobile spacing for filter pills until desktop filter bar layout
         .tools-container {
-          @media (max-width: 1199px) {
-            margin-top: 12px;
-          }
+          margin-top: 12px;
         }
       }
     }
