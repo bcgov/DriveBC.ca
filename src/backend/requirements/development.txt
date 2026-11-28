@@ -2,7 +2,7 @@
 
 django-extensions==4.1
 pytest==9.2.0
-coverage==7.17.3
+coverage==7.17.4
 
 # Experimental packages, could be removed or moved to base later
 pylint==4.1.4
